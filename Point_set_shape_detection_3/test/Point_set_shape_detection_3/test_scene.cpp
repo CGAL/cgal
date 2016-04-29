@@ -5,6 +5,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/regularize_planes.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
@@ -126,6 +127,10 @@ bool test_scene() {
     return false;
   }
 
+  // Test regularization
+  CGAL::regularize_planes (ransac, true, true, true, true,
+                           (FT)50., (FT)0.01);
+  
   Point_index_range pts = ransac.indices_of_unassigned_points();
 
   std::cout << " succeeded" << std::endl;

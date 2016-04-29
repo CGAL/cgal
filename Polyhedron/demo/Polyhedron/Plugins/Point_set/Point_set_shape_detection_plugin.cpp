@@ -8,6 +8,7 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/regularize_planes.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
@@ -38,6 +39,12 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
     QAction* actionDetect;
 
+  typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
+  typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
+
+  typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
+  typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
+  
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     actionDetect = new QAction(tr("Point Set Shape Detection"), mainWindow);
@@ -65,7 +72,7 @@ private:
 
   typedef Kernel::Plane_3 Plane_3;
   
-  void build_alpha_shape (Point_set& points, const Plane_3& plane,
+  void build_alpha_shape (Point_set& points, boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > plane,
                           Scene_polyhedron_item* item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
@@ -93,6 +100,7 @@ public:
   bool detect_cone() const { return coneCB->isChecked(); }
   bool generate_alpha() const { return m_generate_alpha->isChecked(); }
   bool generate_subset() const { return !(m_do_not_generate_subset->isChecked()); }
+  bool regularize() const { return m_regularize->isChecked(); }
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
@@ -123,12 +131,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
-    typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
-
-    typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
-    typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
-
+    
     Shape_detection shape_detection;
     shape_detection.set_input(*points);
 
@@ -161,6 +164,18 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     shape_detection.detect(op);
 
     std::cout << shape_detection.shapes().size() << " shapes found" << std::endl;
+
+    if (dialog.regularize ())
+      {
+        std::cerr << "Regularization of planes... " << std::endl;
+        CGAL::regularize_planes (shape_detection, true, true, true, true,
+                                 180 * std::acos (op.normal_threshold) / CGAL_PI, op.epsilon);
+    
+        std::cerr << "done" << std::endl;
+      }
+
+    std::map<Kernel::Point_3, QColor> color_map;
+    
     //print_message(QString("%1 shapes found.").arg(shape_detection.number_of_shapes()));
     int index = 0;
     BOOST_FOREACH(boost::shared_ptr<Shape_detection::Shape> shape, shape_detection.shapes())
@@ -178,9 +193,11 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         point_item->point_set()->push_back((*points)[i]);
       
       unsigned char r, g, b;
+
       r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+
       point_item->setRbgColor(r, g, b);
 
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
@@ -194,16 +211,33 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         {
           ss << item->name().toStdString() << "_plane_";
 
+          boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > pshape
+            = boost::dynamic_pointer_cast<CGAL::Shape_detection_3::Plane<Traits> > (shape);
+          
+          Kernel::Point_3 ref = CGAL::ORIGIN + pshape->plane_normal ();
+
+          if (color_map.find (ref) == color_map.end ())
+            {
+              ref = CGAL::ORIGIN + (-1.) * pshape->plane_normal ();
+              if (color_map.find (ref) == color_map.end ())
+                color_map[ref] = point_item->color ();
+              else
+                point_item->setColor (color_map[ref]);
+            }
+          else
+            point_item->setColor (color_map[ref]);
+
+          ss << "(" << ref << ")_";
+      
           if (dialog.generate_alpha ())
             {
               // If plane, build alpha shape
               Scene_polyhedron_item* poly_item = new Scene_polyhedron_item;
 
-              Plane_3 plane = (Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ())));
-              build_alpha_shape (*(point_item->point_set()), plane,
+              build_alpha_shape (*(point_item->point_set()), pshape,
                                  poly_item, dialog.cluster_epsilon());
           
-              poly_item->setRbgColor(r-32, g-32, b-32);
+              poly_item->setColor(point_item->color ());
               poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                  .arg (QString::number (shape->indices_of_assigned_points().size())));
               poly_item->setRenderingMode (Flat);
@@ -250,7 +284,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 }
 
 void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
-(Point_set& points, const Plane_3& plane, Scene_polyhedron_item* item, double epsilon)
+(Point_set& points,  boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > plane,
+ Scene_polyhedron_item* item, double epsilon)
 {
   typedef Kernel::Point_2  Point_2;
   typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
@@ -264,7 +299,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
   projections.reserve (points.size ());
 
   for (std::size_t i = 0; i < points.size (); ++ i)
-    projections.push_back (plane.to_2d (points[i]));
+    projections.push_back (plane->to_2d (points[i]));
 
   Alpha_shape_2 ashape (projections.begin (), projections.end (), epsilon);
   
@@ -286,7 +321,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
           if (map_v2i.find (it->vertex (i)) == map_v2i.end ())
             {
               map_v2i.insert (std::make_pair (it->vertex (i), current_index ++));
-              Point p = plane.to_3d (it->vertex (i)->point ());
+              Point p = plane->to_3d (it->vertex (i)->point ());
               soup_item->new_vertex (p.x (), p.y (), p.z ());
             }
         }
@@ -297,6 +332,14 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
 
   soup_item->orient();
   soup_item->exportAsPolyhedron (item->polyhedron());
+
+  if (soup_item->isEmpty ())
+    {
+      std::cerr << "POLYGON SOUP EMPTY" << std::endl;
+      for (std::size_t i = 0; i < projections.size (); ++ i)
+        std::cerr << projections[i] << std::endl;
+      
+    }
   
   delete soup_item;
 }

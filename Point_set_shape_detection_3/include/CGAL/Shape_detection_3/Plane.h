@@ -46,6 +46,7 @@ namespace CGAL {
      ///< property map to access the unoriented normal of an input point.
     typedef typename Traits::FT FT; ///< number type.
     typedef typename Traits::Point_3 Point_3; ///< point type.
+    typedef typename Traits::Point_2 Point_2; ///< point 2D type.
     typedef typename Traits::Vector_3 Vector_3;
     /// \endcond
 
@@ -85,7 +86,34 @@ namespace CGAL {
       return d * d;
     }
 
-    
+    /*!
+      Computes the orthogonal projection of a query point on the shape.
+     */
+    Point_3 projection (const Point_3& p) const {
+      return to_3d (to_2d (p));
+    }
+
+    Point_2 to_2d (const Point_3& p) const {
+      Vector_3 v (m_point_on_primitive, p);
+      return Point_2 (v * m_base1, v * m_base2);
+    }
+
+    Point_3 to_3d (const Point_2& p) const {
+      return m_point_on_primitive + p.x () * m_base1 + p.y () * m_base2;
+    }
+
+    /*!
+      Replaces the plane by p
+    */
+    void update (const Plane_3& p) {
+      m_base1 = p.base1 () / std::sqrt (p.base1() * p.base1 ());
+      m_base2 = p.base2 () / std::sqrt (p.base2() * p.base2 ());
+      m_normal = p.orthogonal_vector () / std::sqrt (p.orthogonal_vector () * p.orthogonal_vector ());
+      
+      m_d = p.d();
+
+    }
+
     /*!
       Helper function to write the plane equation and
       number of assigned points into a string.
