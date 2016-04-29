@@ -105,7 +105,6 @@ void isotropic_remeshing(const FaceRange& faces
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PM>::edge_descriptor   edge_descriptor;
   using boost::choose_pmap;
   using boost::get_param;
   using boost::choose_param;
@@ -278,8 +277,6 @@ void split_long_edges(const EdgeRange& edges
                     , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
-  typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   using boost::choose_pmap;
