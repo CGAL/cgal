@@ -58,7 +58,7 @@ int main()
     if(intersection)
     {
         // gets intersection object
-      const Point* p = boost::get<Point>(&(intersection->first))
+      const Point* p = boost::get<Point>(&(intersection->first));
       if(p)
         std::cout << "intersection object is a point " << *p << std::endl;
 
