@@ -105,9 +105,11 @@ struct property_map<CGAL::Surface_mesh<Point>, boost::edge_weight_t >
   typedef CGAL::SM_edge_weight_pmap<Point> type;
   typedef CGAL::SM_edge_weight_pmap<Point> const_type;
 };
+}
+namespace CGAL{
 
 template <typename Point>
-typename property_map<CGAL::Surface_mesh<Point>, boost::edge_weight_t>::const_type
+typename boost::property_map<CGAL::Surface_mesh<Point>, boost::edge_weight_t>::const_type
 get(boost::edge_weight_t, const CGAL::Surface_mesh<Point>& sm)
 {
   return CGAL::SM_edge_weight_pmap<Point>(sm);
@@ -120,7 +122,9 @@ get(boost::edge_weight_t, const CGAL::Surface_mesh<Point>& sm,
 {
   return CGAL::SM_edge_weight_pmap<Point>(sm)[e];
 }
+}
 
+namespace boost {
 //
 // vertex_index
 //
@@ -131,14 +135,18 @@ struct property_map<CGAL::Surface_mesh<K>, boost::vertex_index_t >
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor> type;
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor> const_type;
 };
+}
 
+namespace CGAL {
 template <typename K>
 CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor>
 get(const boost::vertex_index_t&, const CGAL::Surface_mesh<K>&)
 {
   return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor>();
 }
+}
 
+namespace boost {
 //
 // face_index
 //
@@ -149,14 +157,18 @@ struct property_map<CGAL::Surface_mesh<K>, boost::face_index_t >
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::face_descriptor> type;
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::face_descriptor> const_type;
 };
+}
 
+namespace CGAL {
 template <typename K>
-typename property_map<CGAL::Surface_mesh<K>, boost::face_index_t>::const_type
+typename boost::property_map<CGAL::Surface_mesh<K>, boost::face_index_t>::const_type
 get(const boost::face_index_t&, const CGAL::Surface_mesh<K>&)
 {
   return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::face_descriptor>();
 }
+}
 
+namespace boost {
 //
 // edge_index
 //
@@ -167,14 +179,18 @@ struct property_map<CGAL::Surface_mesh<K>, boost::edge_index_t >
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor> type;
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor> const_type;
 };
+}
 
+namespace CGAL {
 template <typename K>
 CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor>
 get(const boost::edge_index_t&, const CGAL::Surface_mesh<K>&)
 {
   return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor>();
 }
+}
 
+namespace boost {
 //
 // halfedge_index
 //
@@ -185,14 +201,18 @@ struct property_map<CGAL::Surface_mesh<K>, boost::halfedge_index_t >
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor> type;
   typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor> const_type;
 };
+}
 
+namespace CGAL {
 template <typename K>
 CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor>
 get(const boost::halfedge_index_t&, const CGAL::Surface_mesh<K>&)
 {
   return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor>();
 }
+}
 
+namespace boost {
 //
 // vertex_point
 // 
@@ -210,9 +230,11 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_point_t >
   typedef type const_type;
   
 };
+}
 
+namespace CGAL {
 template<typename K>
-typename property_map<CGAL::Surface_mesh<K>, CGAL::vertex_point_t >::const_type
+typename boost::property_map<CGAL::Surface_mesh<K>, CGAL::vertex_point_t >::const_type
 get(CGAL::vertex_point_t, const CGAL::Surface_mesh<K>& g) {
   return g.points();
 }
@@ -248,7 +270,7 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<K>& g,
   prop[x] = point;
 }
 
-} // boost
+} // CGAL
 
 #if 0
 // 
