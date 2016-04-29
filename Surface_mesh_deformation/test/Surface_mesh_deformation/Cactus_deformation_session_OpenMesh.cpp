@@ -47,7 +47,8 @@ void compare_mesh(const Mesh& mesh_1, const Mesh& mesh_2)
   {
     total_dif = total_dif + (get(ppmap_1, *it_1) - get(ppmap_2, *it_2));
   }
-  double average_mesh_dif = squared_length(total_dif / num_vertices(mesh_1));
+  const double n = static_cast<double>(num_vertices(mesh_1));
+  double average_mesh_dif = squared_length(total_dif) / n / n;
 
   std::cerr << "Average mesh difference: " << average_mesh_dif << std::endl;
 
