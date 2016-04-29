@@ -502,7 +502,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 
   viewer->glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-  glPolygonOffset(-1.f, 1.f);
+  glPolygonOffset(-0.1f, 0.2f);
   vaos[6]->bind();
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
@@ -536,7 +536,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
     draw_points(viewer);
     viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
     viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-    glPolygonOffset(-1.f, 1.f);
 
     vaos[0]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
