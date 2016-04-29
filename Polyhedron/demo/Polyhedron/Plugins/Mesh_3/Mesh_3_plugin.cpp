@@ -127,6 +127,7 @@ void Mesh_3_plugin::mesh_3()
 
     if(poly_item == NULL){
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -146,6 +147,18 @@ void Mesh_3_plugin::mesh_3()
   bool features_protection_available = false;
   if(NULL != poly_item)
   {
+    if (!poly_item->polyhedron()->is_closed())
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected Scene_polyhedron_item is not closed."));
+      return;
+    }
+    if (!poly_item->polyhedron()->is_pure_triangle())
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected Scene_polyhedron_item is not triangulated."));
+      return;
+    }
     item = poly_item;
     features_protection_available = true;
   }
@@ -154,19 +167,18 @@ void Mesh_3_plugin::mesh_3()
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   else if (NULL != image_item)
-    { 
-      item = image_item;
-      features_protection_available = true;
-    }
+  {
+    item = image_item;
+    features_protection_available = true;
+  }
 #endif
 
   if (NULL == item)
   {
     QMessageBox::warning(mw, tr(""),
-      tr("Selected object can't be meshed"));
+                         tr("Selected object can't be meshed"));
     return;
   }
-
   // -----------------------------------
   // Create Mesh dialog
   // -----------------------------------
