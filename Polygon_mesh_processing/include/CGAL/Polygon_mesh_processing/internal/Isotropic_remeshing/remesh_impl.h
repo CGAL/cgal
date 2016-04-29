@@ -683,10 +683,10 @@ namespace internal {
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
         //only the patch edges are allowed to be flipped
-        halfedge_descriptor he = halfedge(e, mesh_);
-        if (!is_on_patch(he))
+        if (!is_flip_allowed(e))
           continue;
 
+        halfedge_descriptor he = halfedge(e, mesh_);
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
@@ -1114,6 +1114,24 @@ private:
       }
       CGAL_assertion(is_on_mesh(hopp) || is_on_border(hopp));
       return true;//we already checked we're not pinching a hole in the patch
+    }
+
+    bool is_flip_allowed(const edge_descriptor& e) const
+    {
+      return is_flip_allowed(halfedge(e, mesh_))
+          && is_flip_allowed(opposite(halfedge(e, mesh_), mesh_));
+    }
+
+    bool is_flip_allowed(const halfedge_descriptor& h) const
+    {
+      if (!is_on_patch(h))
+        return false;
+      if (!is_on_patch_border(target(h, mesh_)))
+        return true;
+      if ( is_on_patch_border(next(h, mesh_))
+        && is_on_patch_border(prev(opposite(h, mesh_), mesh_)))
+        return false;
+      return true;
     }
 
     bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
