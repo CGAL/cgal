@@ -4,6 +4,9 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation2TraitsClasses
 
+\deprecated This class is deprecated since \cgal 4.9.  Instead of using it, pass directly the kernel.
+
+
 The class `Triangulation_euclidean_traits_2` can be used to instantiate the geometric traits 
 class of basic and Delaunay triangulations. 
 The template parameter `K` has to 

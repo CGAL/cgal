@@ -1,24 +1,23 @@
 // This file tests the deprecated headers
 // Triangulation_euclidean_traits_.._3 on purpose.
-#define CGAL_NO_DEPRECATION_WARNINGS 1
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
-#include <CGAL/Triangulation_euclidean_traits_yz_3.h>
-#include <CGAL/Triangulation_euclidean_traits_xz_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Projection_traits_yz_3.h>
+#include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <iostream>
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Triangulation_euclidean_traits_xy_3<Kernel>   Gt_xy;
-typedef CGAL::Triangulation_euclidean_traits_yz_3<Kernel>   Gt_yz;
-typedef CGAL::Triangulation_euclidean_traits_xz_3<Kernel>   Gt_xz;
-typedef CGAL::Delaunay_triangulation_2<Gt_xy>               DT_xy;
-typedef CGAL::Delaunay_triangulation_2<Gt_xz>               DT_xz;
-typedef CGAL::Delaunay_triangulation_2<Gt_yz>               DT_yz;
-typedef Gt_yz::Point_2                                      Point;
+typedef CGAL::Projection_traits_xy_3<Kernel>   Gt_xy;
+typedef CGAL::Projection_traits_yz_3<Kernel>   Gt_yz;
+typedef CGAL::Projection_traits_xz_3<Kernel>   Gt_xz;
+typedef CGAL::Delaunay_triangulation_2<Gt_xy>  DT_xy;
+typedef CGAL::Delaunay_triangulation_2<Gt_xz>  DT_xz;
+typedef CGAL::Delaunay_triangulation_2<Gt_yz>  DT_yz;
+typedef Gt_yz::Point_2                         Point;
 
 typedef CGAL::Triangulation_data_structure_2 <
                        CGAL::Triangulation_vertex_base_2<Gt_xy>,

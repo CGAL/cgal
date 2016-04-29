@@ -437,8 +437,6 @@ of `TriangulationTraits_2`
 using the kernel geometric objects and predicates.
 These classes are themselves templated with a \cgal kernel
 and extract the required types and predicates from the kernel.
-The traits class `Triangulation_euclidean_traits_2<R>`
-is designed to deal with ordinary two dimensional points.
 The class `Projection_traits_xy_3<R>` 
 is a geometric traits class to build the triangulation
 of a terrain. Such a triangulation is a two-dimensional
@@ -532,9 +530,8 @@ and can be ensured for other metrics (like \f$ L_{\infty}\f$)
 by the addition to the point set of well chosen sentinel points.
 
 The \cgal kernel classes 
-and the class `Triangulation_euclidean_traits_2<R>`
 are models of the concept `DelaunayTriangulationTraits_2`
-for the euclidean metric.
+for the Euclidean metric.
 The traits class for terrains,
 `Projection_traits_xy_3<R>`,
 `Projection_traits_yz_3<R>`, and
@@ -589,8 +586,7 @@ but the predicates used to build the Delaunay triangulation
 are computed using only the \f$ x\f$ and \f$ y\f$ coordinates 
 of these points.
 
-The class `Projection_traits_xy_3<K>` is part of the 2D and 3D Linear Geometric Kernel,
-and replaces the class `Triangulation_euclidean_traits_xy_3<K>` which is deprecated.
+The class `Projection_traits_xy_3<K>` is part of the 2D and 3D Linear Geometric Kernel.
 
 \cgalExample{Triangulation_2/terrain.cpp}
 
@@ -745,12 +741,6 @@ the class
 `Regular_triangulation_euclidean_traits_2<Rep,Weight>`
 which is a model for the traits concept
 `RegularTriangulationTraits_2`.
-The class `Regular_triangulation_euclidean_traits_2<Rep,Weight>`
-derives from the class
-`Triangulation_euclidean_traits_2<Rep>`
-and uses a `Weighted_point` type
-derived from the type `Point_2` of
-`Triangulation_euclidean_traits_2<Rep>`.
 
 \attention Note that, since the type `Weighted_point` is not defined 
 in \cgal kernels, plugging a filtered kernel such as 

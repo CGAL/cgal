@@ -33,7 +33,6 @@
 
 #include <CGAL/_test_types.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
@@ -48,8 +47,7 @@ int main()
 {
   std::cout << "Testing Delaunay Triangulation_2 " << std::endl; 
   std::cout << " with Euclidean cartesian points : " << std::endl;
-  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
-  typedef CGAL::Delaunay_triangulation_2<Gt1>                 Cls1;
+  typedef CGAL::Delaunay_triangulation_2<Test_rep_cartesian> Cls1;
 
   _test_cls_delaunay_triangulation_2( Cls1() );
 
