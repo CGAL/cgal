@@ -66,7 +66,7 @@ public:
 
     // this is not the right way to do it, but using
     // numeric_limits<FT>::{max,infinity} will not work with Epeck.
-    FT t = std::numeric_limits<double>::max();
+    FT t = (std::numeric_limits<double>::max)();
     // Start with the root node.
     pq.push(Node_ptr_with_ft(tree_.root_node(), 0, tree_.size()));
 
