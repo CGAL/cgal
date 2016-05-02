@@ -224,15 +224,6 @@ void push_back_xyz(const TypeWithXYZ& t,
   vector.push_back(t.z());
 }
 
-typedef Polyhedron::Traits Traits;
-typedef Polyhedron::Facet Facet;
-typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
-typedef Polyhedron::Halfedge_handle Halfedge_handle;
-struct Face_info {
-    Polyhedron::Halfedge_handle e[3];
-    bool is_external;
-};
-
 
 //Make sure all the facets are triangles
 template<typename FaceNormalPmap, typename VertexNormalPmap>

@@ -40,6 +40,7 @@ typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 class Scene_spheres_item;
+namespace PMP = CGAL::Polygon_mesh_processing;
 struct Array_based_vertex_point_map
 {
 public:
