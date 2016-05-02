@@ -208,6 +208,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp
+    Scene_spheres_item.cpp
 )
   target_link_libraries(scene_basic_objects 
     demo_framework
@@ -225,10 +226,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries(${item_name} demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   endmacro(add_item)
 
-  add_item(scene_spheres_item Scene_spheres_item)
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
-  target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item scene_spheres_item ${TBB_LIBRARIES})
+  target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
 
@@ -242,7 +242,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
-  target_link_libraries(scene_polylines_item scene_spheres_item)
+  target_link_libraries(scene_polylines_item scene_basic_objects)
 
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
@@ -262,7 +262,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp)
     add_item(scene_edit_polyhedron_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
            ${editionUI_FILES})
-    target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_polyhedron_item_k_ring_selection scene_spheres_item)
+           target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_polyhedron_item_k_ring_selection
+               scene_basic_objects)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp  Color_ramp.cpp )
@@ -345,7 +346,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_points_with_normal_item
     scene_implicit_function_item
     scene_polylines_item
-    scene_spheres_item
+    scene_basic_objects
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 
