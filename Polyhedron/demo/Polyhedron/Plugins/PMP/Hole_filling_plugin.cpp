@@ -429,7 +429,8 @@ void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(CGAL::Three
   Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
   if(poly_item) {
     // erase assoc polylines item
-    scene->erase( scene->item_id( get_hole_visualizer(poly_item) ) );
+    if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(poly_item))
+      scene->erase( scene->item_id( hole_visualizer ) );
     visualizers.remove(poly_item);
     // close accept-reject dialog if it is open
     if(last_active_item == poly_item) {
