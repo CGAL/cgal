@@ -26,8 +26,11 @@
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/variant/apply_visitor.hpp>
+#if BOOST_VERSION >= 105000
 #include <boost/heap/priority_queue.hpp>
-
+#else
+#include <queue>
+#endif
 #include <CGAL/assertions.h>
 
 namespace CGAL {
@@ -47,8 +50,13 @@ public:
     // nb_primitives through a variable in each Node on the stack. In
     // BVH_node::traversal this is done through the function parameter
     // nb_primitives in the recursion.
-    typedef boost::heap::priority_queue< Node_ptr_with_ft, boost::heap::compare< std::greater<Node_ptr_with_ft> > >
-      Heap_type;
+        typedef
+#if BOOST_VERSION >= 105000
+          boost::heap::priority_queue< Node_ptr_with_ft, boost::heap::compare< std::greater<Node_ptr_with_ft> > >
+#else
+          std::priority_queue< Node_ptr_with_ft>
+#endif
+          Heap_type;
 
     typename AABB_traits::Intersection
       intersection_obj = tree_.traits().intersection_object();
@@ -156,8 +164,14 @@ private:
     const Node* node;
     size_type nb_primitives;
     FT value;
+#if BOOST_VERSION >= 105000
     bool operator<(const Node_ptr_with_ft& other) const { return value < other.value; }
     bool operator>(const Node_ptr_with_ft& other) const { return value > other.value; }
+#else
+    bool operator>(const Node_ptr_with_ft& other) const { return value < other.value; }
+    bool operator<(const Node_ptr_with_ft& other) const { return value > other.value; }
+
+#endif
   };
 
   struct as_ray_param_visitor {

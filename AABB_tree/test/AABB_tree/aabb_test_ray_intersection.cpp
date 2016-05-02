@@ -17,6 +17,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Epeck K;
 typedef K::FT FT;
@@ -29,13 +30,14 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Primitive_id Primitive_id;
+typedef CGAL::Timer Timer;
 
 FT point_on_ray_dist(const Ray& ray, const Point& point) {
   Vector i_ray(point, ray.source());
   return i_ray.squared_length();
 }
 
-static long accum = 0;
+std::size_t accum = 0;
 
 boost::optional<
   Tree::template Intersection_and_primitive_id<Ray>::Type
@@ -85,6 +87,9 @@ int main()
     return 1;
   }
 
+  Timer t;
+  t.start();
+
   Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
   Tree::Bounding_box bbox = tree.bbox();
   Vector bbox_center((bbox.xmin() + bbox.xmax()) / 2, 
@@ -104,7 +109,7 @@ int main()
   std::vector<Point> v1, v2;
   v1.reserve(NB_RAYS); v2.reserve(NB_RAYS);
 
-  const float r = max_extent / 2;
+  const double r = max_extent / 2;
   // Generate NB_RAYS*2 points that lie on a sphere of radius r, centered around bbox_center
   CGAL::Random rand = CGAL::Random(23); // fix the seed to yield the same results each run
   CGAL::cpp11::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v1));
@@ -143,6 +148,7 @@ int main()
   std::cout << "Intersected " << c << " primitives with " << NB_RAYS << " rays" << std::endl;
   std::cout << "Primitive method had to sort " << accum/NB_RAYS 
             << " intersections on average." << std::endl;
-
+  t.stop();
+  std::cout << t.time() << std::endl;
   return 0;
 }
