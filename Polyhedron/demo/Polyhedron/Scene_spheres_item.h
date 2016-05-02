@@ -21,7 +21,7 @@ class SCENE_BASIC_OBJECTS_EXPORT Scene_spheres_item
   Q_OBJECT
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef std::pair<CGAL::Sphere_3<Kernel>*, CGAL::Color> sphere_pair ;
+  typedef std::pair<CGAL::Sphere_3<Kernel>*, CGAL::Color> Sphere_pair ;
 
   Scene_spheres_item(Scene_group_item* parent, bool planed = false)
     :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos)
@@ -34,7 +34,7 @@ public:
   }
 
   ~Scene_spheres_item() {
-    Q_FOREACH(sphere_pair sphere, spheres)
+    Q_FOREACH(Sphere_pair sphere, spheres)
       delete sphere.first;
   }
 
@@ -81,7 +81,7 @@ private:
   mutable CGAL::Plane_3<Kernel> plane;
   bool has_plane;
 
-  QList<sphere_pair> spheres;
+  QList<Sphere_pair> spheres;
   mutable std::vector<float> vertices;
   mutable std::vector<float> normals;
   mutable std::vector<float> edges;

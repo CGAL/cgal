@@ -742,41 +742,41 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
                          int /*column*/,
                          const QModelIndex &parent)
 {
-  //gets the moving items
-  QList<Scene_item*> items;
-  QList<int> groups_children;
+    //gets the moving items
+    QList<Scene_item*> items;
+    QList<int> groups_children;
 
-  //get IDs of all children of selected groups
-  Q_FOREACH(int i, selected_items_list)
-  {
-    CGAL::Three::Scene_group_item* group =
-        qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
-    if(group)
-      Q_FOREACH(Scene_item* child, group->getChildren())
-        groups_children << item_id(child);
-  }
-  // Insure that children of selected groups will not be added twice
-  Q_FOREACH(int i, selected_items_list)
-  {
-    if(!groups_children.contains(i))
+    //get IDs of all children of selected groups
+    Q_FOREACH(int i, selected_items_list)
     {
-      items << item(i);
+      CGAL::Three::Scene_group_item* group =
+          qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
+      if(group)
+        Q_FOREACH(Scene_item* child, group->getChildren())
+          groups_children << item_id(child);
     }
-  }
-  //Gets the group at the drop position
-  CGAL::Three::Scene_group_item* group =
-      qobject_cast<CGAL::Three::Scene_group_item*>(this->item(index_map[parent]));
-  bool one_contained = false;
-  if(group)
-  {
-    Q_FOREACH(int id, selected_items_list)
-      if(group->getChildren().contains(item(id)))
+    // Insure that children of selected groups will not be added twice
+    Q_FOREACH(int i, selected_items_list)
+    {
+      if(!groups_children.contains(i))
       {
-        one_contained = true;
-        break;
-
+        items << item(i);
       }
-  }
+    }
+    //Gets the group at the drop position
+    CGAL::Three::Scene_group_item* group =
+        qobject_cast<CGAL::Three::Scene_group_item*>(this->item(index_map[parent]));
+    bool one_contained = false;
+    if(group)
+    {
+      Q_FOREACH(int id, selected_items_list)
+        if(group->getChildren().contains(item(id)))
+        {
+          one_contained = true;
+          break;
+
+        }
+    }
     //if the drop item is not a group_item or if it already contains the item, then the drop action must be ignored
     if(!group ||one_contained)
     {

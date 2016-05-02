@@ -7,7 +7,7 @@ void Scene_spheres_item::computeElements() const
   edges_colors.clear();
   centers.clear();
   radius.clear();
-  Q_FOREACH(sphere_pair sp, spheres)
+  Q_FOREACH(Sphere_pair sp, spheres)
   {
     colors.push_back((float)sp.second.red()/255);
     colors.push_back((float)sp.second.green()/255);
@@ -191,13 +191,13 @@ void Scene_spheres_item::draw_edges(Viewer_interface *viewer) const
 }
 void Scene_spheres_item::add_sphere(CGAL::Sphere_3<Kernel> *sphere, CGAL::Color color)
 {
-  sphere_pair pair_(sphere, color);
+  Sphere_pair pair_(sphere, color);
   spheres.append(pair_);
 }
 
 void Scene_spheres_item::remove_sphere(CGAL::Sphere_3<Kernel> *sphere)
 {
-  Q_FOREACH(sphere_pair pair_, spheres)
+  Q_FOREACH(Sphere_pair pair_, spheres)
     if(pair_.first == sphere)
     {
       spheres.removeAll(pair_);
