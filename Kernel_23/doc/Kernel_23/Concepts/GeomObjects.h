@@ -786,7 +786,7 @@ A type representing weighted points in two dimensions.
 \cgalRefines Assignable
 \cgalRefines DefaultConstructible
 
-\sa `CGAL::Weighted_point_3<Kernel>` 
+\sa `CGAL::Weighted_point_2<Kernel>`
 
 \sa `ComparePowerDistance_2`
 \sa `ConstructWeightedCircumcenter_2`
