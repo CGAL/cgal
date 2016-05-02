@@ -2,7 +2,8 @@
 #define SCENE_SPHERES_ITEM_H
 #include "Scene_basic_objects_config.h"
 #include "create_sphere.h"
-#include "CGAL/Three/Scene_group_item.h"
+
+#include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Viewer_interface.h>
@@ -12,7 +13,7 @@
 #include <QOpenGLShaderProgram>
 
 #include <QList>
-#include<vector>
+#include <vector>
 
 class SCENE_BASIC_OBJECTS_EXPORT Scene_spheres_item
     : public CGAL::Three::Scene_item
