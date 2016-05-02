@@ -58,6 +58,7 @@ public:
     bool load(std::istream& in);
     bool load_obj(std::istream& in);
     bool save(std::ostream& out) const;
+    bool save_obj(std::ostream& out) const;
 
     // Function for displaying meta-data of the item
     virtual QString toolTip() const;
