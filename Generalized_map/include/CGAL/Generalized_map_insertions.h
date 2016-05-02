@@ -76,7 +76,7 @@ namespace CGAL
       {
         // We copy all the attributes except for dim=0
         CMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Group_attribute_functor_of_dart<CMap>, 0>::
+          <CGAL::internal::GMap_group_attribute_functor_of_dart<CMap>, 0>::
           run(&amap,*it,d1);
       }
       if (ah != CMap::null_handle)
@@ -104,7 +104,7 @@ namespace CGAL
     {
       if ( !amap.template is_free<1>(amap.template alpha<0>(adart)) )
       {
-        CGAL::internal::Degroup_attribute_functor_run<CMap, 1>::
+        CGAL::internal::GMap_degroup_attribute_functor_run<CMap, 1>::
           run(&amap, adart, amap.template alpha<0,1>(adart));
       }
     }
@@ -184,7 +184,7 @@ namespace CGAL
       {
         // We copy all the attributes except for dim=1
         CMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Group_attribute_functor_of_dart<CMap>, 1>::
+          <CGAL::internal::GMap_group_attribute_functor_of_dart<CMap>, 1>::
           run(&amap,*it,d1);
         // We initialise the 0-atttrib to ah
         CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
@@ -207,7 +207,7 @@ namespace CGAL
     {
       for (it = todegroup.begin(); it != todegroup.end(); ++it)
       {
-        CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
+        CGAL::internal::GMap_degroup_attribute_functor_run<CMap, 2>::
           run(&amap, adart, *it);
       }
     }
@@ -305,7 +305,7 @@ namespace CGAL
     if (amap.are_attributes_automatically_managed() && update_attributes)
     {
       if ( !amap.template is_free<2>(d1) && d2!=amap.null_handle )
-        CGAL::internal::Degroup_attribute_functor_run<CMap, 2>::
+        CGAL::internal::GMap_degroup_attribute_functor_run<CMap, 2>::
           run(&amap, d1, amap.template alpha<2>(d1));
     }
 
@@ -551,7 +551,7 @@ namespace CGAL
     if ( withAlpha3 )
     { // Here we cannot use Degroup_attribute_functor_run as new darts do not
       // have their 3-attribute
-      CGAL::internal::Degroup_attribute_functor_run<CMap, 3>::
+      CGAL::internal::GMap_degroup_attribute_functor_run<CMap, 3>::
         run(&amap, first, amap.template alpha<3>(first));
     }
 

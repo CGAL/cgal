@@ -116,7 +116,7 @@ namespace CGAL
       {
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
-          CGAL::internal::Group_attribute_functor_run<GMap, i+1>::
+          CGAL::internal::GMap_group_attribute_functor_run<GMap, i+1>::
               run(&amap, dg1, dg2);
       }
 
@@ -160,7 +160,7 @@ namespace CGAL
         // We test the split of all the incident cells for all the non
         // void attributes.
         GMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<GMap,i>, i>::
+          <CGAL::internal::GMap_test_split_attribute_functor<GMap,i>, i>::
           run(&amap, modified_darts, mark_modified_darts);
       }
 
@@ -238,7 +238,7 @@ namespace CGAL
         // We test the split of all the incident cells for all the non
         // void attributes.
         GMap::Helper::template Foreach_enabled_attributes_except
-            <CGAL::internal::Test_split_attribute_functor<GMap,i>,
+            <CGAL::internal::GMap_test_split_attribute_functor<GMap,i>,
             GMap::dimension>::run(&amap, modified_darts);
       }
 
@@ -353,7 +353,7 @@ namespace CGAL
       {
          // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
-           CGAL::internal::Group_attribute_functor_run<GMap,i-1>::
+           CGAL::internal::GMap_group_attribute_functor_run<GMap,i-1>::
                run(&amap, dg1, dg2);
       }
 
@@ -394,7 +394,7 @@ namespace CGAL
         // We test the split of all the incident cells for all the non
         // void attributes.
         GMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<GMap,i>, i>::
+          <CGAL::internal::GMap_test_split_attribute_functor<GMap,i>, i>::
           run(&amap, modified_darts, mark_modified_darts);
       }
 

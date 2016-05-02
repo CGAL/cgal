@@ -31,24 +31,24 @@
  * Foreach_enabled_attributes to iterate through all the non void attribs.
  * These functors used other functors defined in Combinatorial_map_functors.h
  *
- * Group_attribute_functor_of_dart<CMap> to group the <i>-attributes of two
+ * GMap_group_attribute_functor_of_dart<CMap> to group the <i>-attributes of two
  *    given darts (except for j-dim). Only the attributes of the two given
  *    darts are possibly modified.
  *
- * Group_attribute_functor_of_dart_run<CMap,i> same than
- *   Group_attribute_functor_of_dart<CMap>::run<i>, with i template argument
+ * GMap_group_attribute_functor_of_dart_run<CMap,i> same than
+ *   GMap_group_attribute_functor_of_dart<CMap>::run<i>, with i template argument
  *   given in the struct to enable specialization.
  *
- * Group_attribute_functor<CMap> to group the <i>-attributes of two
+ * GMap_group_attribute_functor<CMap> to group the <i>-attributes of two
  *    given i-cells (except for j-adim). If one i-attribute is NULL, we set the
  *    darts of its i-cell to the second attribute. If both i-attributes are
  *    non NULL, we overide all the i-attribute of the second i-cell to the
  *    first i-attribute.
  *
- * Degroup_attribute_functor_run<CMap> to degroup one i-attributes in two
+ * GMap_degroup_attribute_functor_run<CMap> to degroup one i-attributes in two
  *   (except for j-adim).
  *
- * Test_split_attribute_functor<CMap,i> to test if there is some i-attributes
+ * GMap_test_split_attribute_functor<CMap,i> to test if there is some i-attributes
  *   that are split after an operation. Modified darts are given in a
  *   std::deque.
  */
@@ -66,7 +66,7 @@ namespace internal
 /// If both attributes are non null, dh2 takes the attribute of dh1.
 template<typename CMap, unsigned int i, unsigned int j=CMap::dimension+1,
          typename T=typename CMap::template Attribute_type<i>::type>
-struct Group_attribute_functor_of_dart_run
+struct GMap_group_attribute_functor_of_dart_run
 {
   /// Group the i-attribute of dh1 and dh2.
   static void run(CMap* amap,
@@ -77,7 +77,7 @@ struct Group_attribute_functor_of_dart_run
     CGAL_static_assertion( i!=j );
     CGAL_static_assertion_msg(CMap::Helper::template
                               Dimension_index<i>::value>=0,
-                              "Group_attribute_functor_of_dart_run<i> but "
+                              "GMap_group_attribute_functor_of_dart_run<i> but "
                               "i-attributes are disabled");
     typename CMap::template Attribute_handle<i>::type
         a1=amap->template attribute<i>(dh1);
@@ -93,7 +93,7 @@ struct Group_attribute_functor_of_dart_run
 };
 // Specialization for void attributes.
 template<typename CMap, unsigned int i, unsigned int j>
-struct Group_attribute_functor_of_dart_run<CMap, i, j, CGAL::Void>
+struct GMap_group_attribute_functor_of_dart_run<CMap, i, j, CGAL::Void>
 {
   static void run(CMap*,
                   typename CMap::Dart_handle,
@@ -102,7 +102,7 @@ struct Group_attribute_functor_of_dart_run<CMap, i, j, CGAL::Void>
 };
 // Specialization for i=j. Do nothing as j is the dimension to not consider.
 template<typename CMap, unsigned int i, typename T>
-struct Group_attribute_functor_of_dart_run<CMap,i,i,T>
+struct GMap_group_attribute_functor_of_dart_run<CMap,i,i,T>
 {
   static void run(CMap*,
                   typename CMap::Dart_handle,
@@ -117,16 +117,16 @@ struct Group_attribute_functor_of_dart_run<CMap,i,i,T>
 /// We define run<i> to allows to use this functor with
 /// Foreach_enabled_attributes.
 ///   If you know i at compiling time, use directly
-///   Group_attribute_functor_of_dart_run.
+///   GMap_group_attribute_functor_of_dart_run.
 template<typename CMap, unsigned int j=CMap::dimension+1>
-struct Group_attribute_functor_of_dart
+struct GMap_group_attribute_functor_of_dart
 {
   template <unsigned int i>
   static void run(CMap* amap,
                   typename CMap::Dart_handle adart1,
                   typename CMap::Dart_handle adart2)
   {
-    CGAL::internal::Group_attribute_functor_of_dart_run<CMap,i,j>::
+    CGAL::internal::GMap_group_attribute_functor_of_dart_run<CMap,i,j>::
         run(amap,adart1,adart2);
   }
 };
@@ -136,7 +136,7 @@ struct Group_attribute_functor_of_dart
 //    (j is the dimension of the beta modified between adart1 and adart2).
 template<typename CMap, unsigned int i, unsigned int j=CMap::dimension+1,
          typename T=typename CMap::template Attribute_type<i>::type>
-struct Group_attribute_functor_run
+struct GMap_group_attribute_functor_run
 {
   static void run(CMap* amap,
                   typename CMap::Dart_handle adart1,
@@ -146,7 +146,7 @@ struct Group_attribute_functor_run
     CGAL_static_assertion( i!=j );
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<i>::value>=0,
-          "Group_attribute_functor_run<i> but i-attributes are disabled" );
+          "GMap_group_attribute_functor_run<i> but i-attributes are disabled" );
     typename CMap::template Attribute_handle<i>::type
         a1=amap->template attribute<i>(adart1);
     typename CMap::template Attribute_handle<i>::type
@@ -174,7 +174,7 @@ struct Group_attribute_functor_run
 };
 // Specialization for void attributes.
 template<typename CMap, unsigned int i, unsigned int j>
-struct Group_attribute_functor_run<CMap, i, j, CGAL::Void>
+struct GMap_group_attribute_functor_run<CMap, i, j, CGAL::Void>
 {
   static void run( CMap*,
                    typename CMap::Dart_handle,
@@ -183,7 +183,7 @@ struct Group_attribute_functor_run<CMap, i, j, CGAL::Void>
 };
 // Specialization for i=j. Do nothing as j is the dimension to not consider.
 template<typename CMap, unsigned int i, typename T>
-struct Group_attribute_functor_run<CMap,i,i,T>
+struct GMap_group_attribute_functor_run<CMap,i,i,T>
 {
   static void run(CMap*,
                   typename CMap::Dart_handle,
@@ -198,15 +198,15 @@ struct Group_attribute_functor_run<CMap,i,i,T>
 /// We define run<i> to allows to use this functor with
 /// Foreach_enabled_attributes.
 ///   If you know i at compiling time, use directly
-///   Group_attribute_functor_run.
+///   GMap_group_attribute_functor_run.
 template<typename CMap, unsigned int j=CMap::dimension+1>
-struct Group_attribute_functor
+struct GMap_group_attribute_functor
 {
   template <unsigned int i>
   static void run(CMap* amap,
                   typename CMap::Dart_handle adart1,
                   typename CMap::Dart_handle adart2)
-  { CGAL::internal::Group_attribute_functor_run<CMap,i,j>::
+  { CGAL::internal::GMap_group_attribute_functor_run<CMap,i,j>::
         run(amap,adart1,adart2); }
 };
 // ************************************************************************
@@ -214,7 +214,7 @@ struct Group_attribute_functor
 // attribute of j.
 template<typename CMap, unsigned int i, unsigned int j=CMap::dimension+1,
          typename T=typename CMap::template Attribute_type<i>::type>
-struct Degroup_attribute_functor_run
+struct GMap_degroup_attribute_functor_run
 {
   static void run(CMap* amap,
                   typename CMap::Dart_handle adart1,
@@ -224,7 +224,7 @@ struct Degroup_attribute_functor_run
     CGAL_static_assertion( i!=j );
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<i>::value>=0,
-          "Degroup_attribute_functor_run<i> but i-attributes are disabled" );
+          "GMap_degroup_attribute_functor_run<i> but i-attributes are disabled" );
 
     typename CMap::template Attribute_handle<i>::type
         a1=amap->template attribute<i>(adart1);
@@ -254,7 +254,7 @@ struct Degroup_attribute_functor_run
 };
 // Specialization for void attributes.
 template<typename CMap, unsigned int i, unsigned int j>
-struct Degroup_attribute_functor_run<CMap, i, j, CGAL::Void>
+struct GMap_degroup_attribute_functor_run<CMap, i, j, CGAL::Void>
 {
   static void run(CMap*,
                   typename CMap::Dart_handle,
@@ -263,7 +263,7 @@ struct Degroup_attribute_functor_run<CMap, i, j, CGAL::Void>
 };
 // Specialization for i==j.
 template<typename CMap, unsigned int i, typename T>
-struct Degroup_attribute_functor_run<CMap, i, i, T>
+struct GMap_degroup_attribute_functor_run<CMap, i, i, T>
 {
   static void run(CMap*,
                   typename CMap::Dart_handle,
@@ -271,7 +271,7 @@ struct Degroup_attribute_functor_run<CMap, i, i, T>
   {}
 };
 // ************************************************************************
-// Function used by Test_split_attribute_functor_run to process one dart.
+// Function used by GMap_test_split_attribute_functor_run to process one dart.
 // Test the split of the i-cell containing the given dart adart.
 // When we process a dart, we search in the Unique_hash_map if its
 // i-attribute was already found. If yes, it means that we already
@@ -288,7 +288,7 @@ void test_split_attribute_functor_one_dart
   CGAL_assertion( amap!=NULL );
   CGAL_static_assertion_msg(CMap::Helper::template
                             Dimension_index<i>::value>=0,
-                            "Test_split_attribute_functor_one_dart<i> but "
+                            "GMap_test_split_attribute_functor_one_dart<i> but "
                             "i-attributes are disabled");
 
   typedef typename CMap::template Attribute_handle<i>::type
@@ -335,7 +335,7 @@ void test_split_attribute_functor_one_dart
 ///    if j==0 modified_darts2 are the darts modified for beta_1).
 template<typename CMap, unsigned int i, unsigned int j=CMap::dimension+1,
          typename T=typename CMap::template Attribute_type<i>::type>
-struct Test_split_attribute_functor_run
+struct GMap_test_split_attribute_functor_run
 {
   // modified_darts is the set of modified darts for beta_j
   static void run( CMap* amap,
@@ -348,7 +348,7 @@ struct Test_split_attribute_functor_run
     CGAL_assertion( amap!=NULL );
     CGAL_static_assertion_msg(CMap::Helper::template
                               Dimension_index<i>::value>=0,
-                              "Test_split_attribute_functor_run<i> but "
+                              "GMap_test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");
 
     typedef typename CMap::template Attribute_handle<i>::type
@@ -392,7 +392,7 @@ struct Test_split_attribute_functor_run
     CGAL_assertion( amap!=NULL );
     CGAL_static_assertion_msg(CMap::Helper::template
                               Dimension_index<i>::value>=0,
-                              "Test_split_attribute_functor_run<i> but "
+                              "GMap_test_split_attribute_functor_run<i> but "
                               "i-attributes are disabled");
 
     typedef typename CMap::template Attribute_handle<i>::type
@@ -442,7 +442,7 @@ struct Test_split_attribute_functor_run
 };
 // Specialization for void attributes.
 template<typename CMap, unsigned int i, unsigned int j>
-struct Test_split_attribute_functor_run<CMap, i, j, CGAL::Void>
+struct GMap_test_split_attribute_functor_run<CMap, i, j, CGAL::Void>
 {
   static void run( CMap*, const std::deque<typename CMap::Dart_handle>&,
                    typename CMap::size_type=CMap::INVALID_MARK)
@@ -453,7 +453,7 @@ struct Test_split_attribute_functor_run<CMap, i, j, CGAL::Void>
 };
 // Specialization for i=j.
 template<typename CMap, unsigned int i, typename T>
-struct Test_split_attribute_functor_run<CMap, i, i, T>
+struct GMap_test_split_attribute_functor_run<CMap, i, i, T>
 {
   static void run( CMap*, const std::deque<typename CMap::Dart_handle>&,
                    typename CMap::size_type=CMap::INVALID_MARK)
@@ -465,7 +465,7 @@ struct Test_split_attribute_functor_run<CMap, i, i, T>
 // Specialization for i=1 and j=0 (edge attributes are not modified
 // when we modify beta_0).
 template<typename CMap, typename T>
-struct Test_split_attribute_functor_run<CMap, 1, 0, T>
+struct GMap_test_split_attribute_functor_run<CMap, 1, 0, T>
 {
   static void run( CMap*, const std::deque<typename CMap::Dart_handle>&,
                    typename CMap::size_type=CMap::INVALID_MARK)
@@ -480,7 +480,7 @@ struct Test_split_attribute_functor_run<CMap, 1, 0, T>
 /// We define run<i> to allows to use this functor with
 /// Foreach_enabled_attributes.
 template<typename CMap, unsigned int j=CMap::dimension+1>
-struct Test_split_attribute_functor
+struct GMap_test_split_attribute_functor
 {
   // Test the split of i-attributes, for all modified darts given in
   // modified_darts, and marked with mark_modified_darts.
@@ -492,7 +492,7 @@ struct Test_split_attribute_functor
                    &modified_darts,
                    typename CMap::size_type mark_modified_darts=CMap::INVALID_MARK)
   {
-    CGAL::internal::Test_split_attribute_functor_run<CMap, i, j>::
+    CGAL::internal::GMap_test_split_attribute_functor_run<CMap, i, j>::
         run(amap, modified_darts, mark_modified_darts);
   }
   template <unsigned int i>
@@ -503,7 +503,7 @@ struct Test_split_attribute_functor
                    &modified_darts2,
                    typename CMap::size_type mark_modified_darts=CMap::INVALID_MARK)
   {
-    CGAL::internal::Test_split_attribute_functor_run<CMap, i, j>::
+    CGAL::internal::GMap_test_split_attribute_functor_run<CMap, i, j>::
         run(amap, modified_darts, modified_darts2, mark_modified_darts);
   }
 };

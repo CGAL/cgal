@@ -1511,7 +1511,7 @@ namespace CGAL {
     {
       CGAL_assertion( i<=dimension );
       Helper::template Foreach_enabled_attributes_except
-        <internal::Group_attribute_functor_of_dart<Self, i>, i>::
+        <internal::GMap_group_attribute_functor_of_dart<Self, i>, i>::
         run(this,adart1,adart2);
       this->template dart_link_alpha<i>(adart1, adart2);
       this->template dart_link_alpha<i>(adart2, adart1);
@@ -1621,7 +1621,7 @@ namespace CGAL {
       for ( ; I1.cont(); ++I1, ++I2 )
       {
         Helper::template Foreach_enabled_attributes_except
-            <CGAL::internal::Group_attribute_functor<Self, i>, i>::
+            <CGAL::internal::GMap_group_attribute_functor<Self, i>, i>::
             run(this, I1, I2);
       }
 
@@ -1698,7 +1698,7 @@ namespace CGAL {
       // We test the split of all the incident cells for all the non
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<Self, i>, i>::
+          <CGAL::internal::GMap_test_split_attribute_functor<Self, i>, i>::
           run(this, modified_darts);
     }
 
