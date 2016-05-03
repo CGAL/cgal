@@ -29,6 +29,8 @@
 
 namespace CGAL {
 
+namespace Properties {
+
 /// \addtogroup PkgSurface_mesh
 ///
 /// @{
@@ -173,17 +175,6 @@ private:
     value_type  value_;
 };
 
-
-#if 0
-// specialization for bool properties
-template <>
-inline const bool*
-Property_array<bool>::data() const
-{
-    CGAL_assertion(false);
-    return NULL;
-}
-#endif 
 
   /// @endcond
 
@@ -432,7 +423,6 @@ public:
 #ifndef DOXYGEN_RUNNING
     friend class Property_container<I>;
 
-    template <typename K>  friend class Surface_mesh;
 #endif
 
 public:
