@@ -189,10 +189,10 @@ public Q_SLOTS:
         scene->itemChanged(point_item);
       }
     }
-    if(!found && !generated_points.empty())
+    if(!found && !generated_points.empty()) {
       generated_points.last()->invalidateOpenGLBuffers();
       scene->itemChanged(generated_points.last());
-
+    }
   }
 
   void on_Sample_random_points_from_bbox() {
