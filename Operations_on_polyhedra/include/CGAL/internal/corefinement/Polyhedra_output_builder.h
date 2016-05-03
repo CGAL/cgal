@@ -1304,7 +1304,7 @@ private:
       remove_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P);
 
       if (reverse_patch_orientation_P){
-       Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
+       Polygon_mesh_processing::reverse_face_orientations_of_mesh_with_polylines(*P_ptr);
        // here we need to update the mapping to use the correct border
        // halfedges while appending the patches from Q
        BOOST_FOREACH(typename Edge_map::value_type& v, Qhedge_to_Phedge)
@@ -2217,10 +2217,8 @@ public:
                                    inplace_operation_Q==P_MINUS_Q,
                                    inplace_operation_Q==Q_MINUS_P,
                                    disconnected_patches_hedge_to_Qhedge);
-        // post-processing in P
+        // now remove patches temporarily kept
          remove_disconnected_patches(*P_ptr, patches_of_P, patches_of_P_removed);
-         if (inplace_operation_P == Q_MINUS_P)
-           CGAL::Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
         // remove polylines only on the border of patches not kept
         remove_unused_polylines(P_ptr,
                                 ~patches_of_P_used[inplace_operation_P],
@@ -2228,6 +2226,9 @@ public:
         remove_unused_polylines(Q_ptr,
                                 ~patches_of_Q_used[inplace_operation_Q],
                                 patches_of_Q);
+         // finally reverse orientation if needed
+         if (inplace_operation_P == Q_MINUS_P)
+           CGAL::Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
       }
       else{
         compute_inplace_operation(
