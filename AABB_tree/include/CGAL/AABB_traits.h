@@ -133,13 +133,13 @@ struct AABB_traits_base_2<GeomTraits,true>{
 
       for(int i = 0; i < 3; ++i, ++source_iter, ++direction_iter) {
         if(*direction_iter == 0) {
-          if((*source_iter < bbox.min(i)) || (*source_iter > bbox.max(i))) {
+          if((*source_iter < (bbox.min)(i)) || (*source_iter > (bbox.max)(i))) {
             return boost::none;
           }
         } else {
-          FT t1 = (bbox.min(i) - *source_iter) / *direction_iter;
-          FT t2 = (bbox.max(i) - *source_iter) / *direction_iter;
-
+          FT t1 = ((bbox.min)(i) - *source_iter) / *direction_iter;
+          FT t2 = ((bbox.max)(i) - *source_iter) / *direction_iter;
+ 
           t_near = (std::max)(t_near, (std::min)(t1, t2));
           t_far = (std::min)(t_far, (std::max)(t1, t2));
 
