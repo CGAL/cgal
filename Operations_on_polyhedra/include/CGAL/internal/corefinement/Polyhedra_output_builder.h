@@ -1113,8 +1113,8 @@ private:
     }
   }
 
-  // function used to remove polylines imported or kept that are incident to
-  // a coplanar patch not used for the operation P_ptr is used for storing
+  // function used to remove polylines imported or kept that are incident only
+  // to patches not kept for the operation P_ptr is used for storing
   // the result. We look for edges with halfedges both on the border of
   // the mesh. The vertices incident only to such edges should be removed.
   // Here to detect vertices that should be kept, we abuse the fact that
@@ -1123,14 +1123,14 @@ private:
   // the result.
   void remove_unused_polylines(
     Polyhedron* P_ptr,
-    const boost::dynamic_bitset<>& coplanar_patches_to_remove,
+    const boost::dynamic_bitset<>& patches_to_remove,
     Patch_container& patches_of_P)
   {
     std::set<Vertex_handle> vertices_to_remove;
     std::set<Halfedge_handle> edges_to_remove;
-    for (std::size_t i=coplanar_patches_to_remove.find_first();
-                     i < coplanar_patches_to_remove.npos;
-                     i = coplanar_patches_to_remove.find_next(i))
+    for (std::size_t i = patches_to_remove.find_first();
+                     i < patches_to_remove.npos;
+                     i = patches_to_remove.find_next(i))
     {
       Patch_description& patch=patches_of_P[i];
       BOOST_FOREACH(Halfedge_handle h, patch.patch_border_halfedges)
@@ -2139,13 +2139,12 @@ public:
       CGAL_assertion(P_ptr!=ouput_ptr && Q_ptr!=ouput_ptr);
 
       Intersection_polylines polylines(P_polylines, Q_polylines, polyline_lengths);
-      // skip the import of polylines from the border of coplanar patches
+      // skip the import of polylines only incident to patch(es)
       // not used by the current operation
-      if (coplanar_patches_of_P.any())
-        fill_polylines_to_skip(
-          polylines, P_patch_ids, Q_patch_ids,
-          patches_of_P_used[operation], patches_of_Q_used[operation],
-          P_facet_id_pmap, Q_facet_id_pmap
+      fill_polylines_to_skip(
+        polylines, P_patch_ids, Q_patch_ids,
+        patches_of_P_used[operation], patches_of_Q_used[operation],
+        P_facet_id_pmap, Q_facet_id_pmap
       );
 
       std::vector<Halfedge_handle> shared_halfedges;
@@ -2180,17 +2179,17 @@ public:
           patches_of_P.facet_id_pmap,
           patches_of_P.border_halfedges,
           patches_of_P.patches.size());
-        if (coplanar_patches_of_P.any())
-          for (std::size_t i=coplanar_patches_of_P.find_first();
-                           i < coplanar_patches_of_P.npos;
-                           i = coplanar_patches_of_P.find_next(i))
-         {
-           // we are only interested by patch border halfedges so
-           // squeeze the auto-filling mechanism
-           tmp_patches_of_P.patches[i].is_initialized=true;
-           tmp_patches_of_P.patches[i].patch_border_halfedges=
-             patches_of_P[i].patch_border_halfedges;
-         }
+        boost::dynamic_bitset<> patches_of_P_removed = ~patches_of_P_used[inplace_operation_P];
+        for (std::size_t i = patches_of_P_removed.find_first();
+                         i < patches_of_P_removed.npos;
+                         i = patches_of_P_removed.find_next(i))
+        {
+          // we are only interested by patch border halfedges so
+          // squeeze the auto-filling mechanism
+          tmp_patches_of_P.patches[i].is_initialized=true;
+          tmp_patches_of_P.patches[i].patch_border_halfedges=
+            patches_of_P[i].patch_border_halfedges;
+        }
 
         // force the initialization of the patches of P used
         // for the operation in Q before P is modified
@@ -2219,18 +2218,16 @@ public:
                                    inplace_operation_Q==Q_MINUS_P,
                                    disconnected_patches_hedge_to_Qhedge);
         // post-processing in P
-         remove_disconnected_patches(*P_ptr, patches_of_P, ~patches_of_P_used[inplace_operation_P]);
+         remove_disconnected_patches(*P_ptr, patches_of_P, patches_of_P_removed);
          if (inplace_operation_P == Q_MINUS_P)
            CGAL::Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
-        // remove unused polylines on the border of coplanar patches not kept
-        if (coplanar_patches_of_Q.any()){
-          remove_unused_polylines(P_ptr,
-                                  ~patches_of_P_used[inplace_operation_P] & coplanar_patches_of_P,
-                                  tmp_patches_of_P);
-          remove_unused_polylines(Q_ptr,
-                                  ~patches_of_Q_used[inplace_operation_Q] & coplanar_patches_of_Q,
-                                  patches_of_Q);
-        }
+        // remove polylines only on the border of patches not kept
+        remove_unused_polylines(P_ptr,
+                                ~patches_of_P_used[inplace_operation_P],
+                                tmp_patches_of_P);
+        remove_unused_polylines(Q_ptr,
+                                ~patches_of_Q_used[inplace_operation_Q],
+                                patches_of_Q);
       }
       else{
         compute_inplace_operation(
@@ -2242,11 +2239,10 @@ public:
           inplace_operation_P == P_MINUS_Q,
           Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
         );
-        // remove unused polylines on the border of coplanar patches not kept
-        if (coplanar_patches_of_P.any())
-          remove_unused_polylines(P_ptr,
-                                    ~patches_of_P_used[inplace_operation_P] & coplanar_patches_of_P,
-                                    patches_of_P);
+        // remove polylines only on the border of patches not kept
+        remove_unused_polylines(P_ptr,
+                                ~patches_of_P_used[inplace_operation_P],
+                                patches_of_P);
       }
     }
     else
@@ -2261,11 +2257,10 @@ public:
                                    inplace_operation_Q==P_MINUS_Q,
                                    inplace_operation_Q==Q_MINUS_P,
                                    Intersection_polylines(Q_polylines, P_polylines, polyline_lengths));
-        // remove unused polylines on the border of coplanar patches not kept
-        if (coplanar_patches_of_Q.any())
-          remove_unused_polylines(Q_ptr,
-                                    ~patches_of_Q_used[inplace_operation_Q] & coplanar_patches_of_Q,
-                                    patches_of_Q);
+        // remove polylines only on the border of patches not kept
+        remove_unused_polylines(Q_ptr,
+                                ~patches_of_Q_used[inplace_operation_Q],
+                                patches_of_Q);
       }
   }
 };
