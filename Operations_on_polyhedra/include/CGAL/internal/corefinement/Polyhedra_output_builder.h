@@ -531,6 +531,8 @@ struct Intersection_polylines{
   const std::vector<Halfedge_handle>& Q;
   const std::vector<int>& lengths;
   boost::dynamic_bitset<> to_skip;
+  boost::dynamic_bitset<> to_skip_in_P;
+  boost::dynamic_bitset<> to_skip_in_Q;
   Intersection_polylines(
     const std::vector<Halfedge_handle>& P_polylines,
     const std::vector<Halfedge_handle>& Q_polylines,
@@ -539,6 +541,8 @@ struct Intersection_polylines{
     , Q( Q_polylines )
     , lengths( lengths_ )
     , to_skip(P.size(),false)
+    , to_skip_in_P(P.size(),false)
+    , to_skip_in_Q(P.size(),false)
   {}
 };
 
@@ -1452,39 +1456,48 @@ private:
   // detect if a polyline is incident to two patches that won't be imported
   // for the current operation (polylines skipt are always incident to a
   // coplanar patch)
+  template <class FacetIdPmap>
+  static
   void fill_polylines_to_skip(
     Intersection_polylines& polylines,
     const std::vector<std::size_t>& P_patch_ids,
     const std::vector<std::size_t>& Q_patch_ids,
     const boost::dynamic_bitset<>& patches_of_P_used,
-    const boost::dynamic_bitset<>& patches_of_Q_used )
+    const boost::dynamic_bitset<>& patches_of_Q_used,
+    const FacetIdPmap& P_face_id_pmap,
+    const FacetIdPmap& Q_face_id_pmap)
   {
     for (std::size_t i=0;i<polylines.P.size();++i)
     {
       Halfedge_handle h_P = polylines.P[i];
       Halfedge_handle h_Q = polylines.Q[i];
-      bool skip_polyline=true;
+      bool skip_polyline_in_P=true;
       if (!h_P->is_border()){
-        std::size_t patch_id = P_patch_ids[ get( P_facet_id_pmap, h_P->facet() ) ];
+        std::size_t patch_id = P_patch_ids[ get( P_face_id_pmap, h_P->facet() ) ];
         if (patches_of_P_used.test(patch_id))
-          skip_polyline=false;
+          skip_polyline_in_P=false;
       }
-      if (skip_polyline && !h_P->opposite()->is_border()){
-        std::size_t patch_id = P_patch_ids[ get( P_facet_id_pmap, h_P->opposite()->facet() ) ];
+      if (skip_polyline_in_P && !h_P->opposite()->is_border()){
+        std::size_t patch_id = P_patch_ids[ get( P_face_id_pmap, h_P->opposite()->facet() ) ];
         if (patches_of_P_used.test(patch_id))
-          skip_polyline=false;
+          skip_polyline_in_P=false;
       }
-      if (skip_polyline && !h_Q->is_border()){
-        std::size_t patch_id = Q_patch_ids[ get( Q_facet_id_pmap, h_Q->facet() ) ];
+      bool skip_polyline_in_Q=true;
+      if (!h_Q->is_border()){
+        std::size_t patch_id = Q_patch_ids[ get( Q_face_id_pmap, h_Q->facet() ) ];
         if (patches_of_Q_used.test(patch_id))
-          skip_polyline=false;
+          skip_polyline_in_Q=false;
       }
-      if (skip_polyline && !h_Q->opposite()->is_border()){
-        std::size_t patch_id = Q_patch_ids[ get( Q_facet_id_pmap, h_Q->opposite()->facet() ) ];
+      if (skip_polyline_in_Q && !h_Q->opposite()->is_border()){
+        std::size_t patch_id = Q_patch_ids[ get( Q_face_id_pmap, h_Q->opposite()->facet() ) ];
         if (patches_of_Q_used.test(patch_id))
-          skip_polyline=false;
+          skip_polyline_in_Q=false;
       }
-      if (skip_polyline) polylines.to_skip.set(i);
+
+      if (skip_polyline_in_P) polylines.to_skip_in_P.set(i);
+      if (skip_polyline_in_Q) polylines.to_skip_in_Q.set(i);
+      if (skip_polyline_in_P && skip_polyline_in_Q)
+        polylines.to_skip.set(i);
     }
   }
 
@@ -2131,8 +2144,9 @@ public:
       if (coplanar_patches_of_P.any())
         fill_polylines_to_skip(
           polylines, P_patch_ids, Q_patch_ids,
-          patches_of_P_used[operation], patches_of_Q_used[operation]
-        );
+          patches_of_P_used[operation], patches_of_Q_used[operation],
+          P_facet_id_pmap, Q_facet_id_pmap
+      );
 
       std::vector<Halfedge_handle> shared_halfedges;
       fill_new_polyhedron(
