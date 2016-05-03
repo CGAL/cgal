@@ -31,25 +31,28 @@
 #include <vector>
 # include <CGAL/gl.h>
 
-/// The Point_set_3 class is array of points + normals of type
-/// Point_with_normal_3<Gt> (in fact
-/// UI_point_3 to support a selection flag and an optional radius).
-/// It provides:
-/// - accessors: points and normals iterators, property maps
-/// - OpenGL rendering
-/// - bounding box
-///
-/// CAUTION:
-/// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
-/// - Selecting points changes the order of the points in the
-///   container. If selection is *not* empty, it becomes invalid after
-///   adding, moving or removing points, user is reponsible to call
-///   unselect_all() in those cases.
-///
-/// @heading Parameters:
-/// @param Gt       Geometric traits class.
-
 namespace CGAL {
+
+
+/*!
+
+  \ingroup PkgPointSetProcessing
+
+  \brief A collection of 3D points.
+
+  This class provides the user with a flexible way to store and access
+  a point set:
+
+  - it can embed a random number of additional attributes such as
+    normal vectors, colors, indices, etc.;
+
+  - all functions of the package \ref PkgPointSetProcessing are
+    provided with an overload that take a `Point_set_3` object as an
+    argument.
+
+  \tparam Gt Geometric traits class.
+
+ */
 
 template <class Gt>
 class Point_set_3
@@ -227,7 +230,8 @@ public:
   {
     m_base.push_back();
   }
-  
+
+
   void apply_indices_change()
   {
     for (std::size_t i = 0; i < size(); ++ i)
@@ -341,6 +345,8 @@ public:
   {
     return property (name, index);
   }
+
+
   
 }; // end of class Point_set_3
 
