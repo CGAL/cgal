@@ -298,17 +298,15 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
     {
         program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
-        bbox_program.bind();
         vaos[Frame_plane]->bind();
         buffers[Frame_vertices].bind();
         buffers[Frame_vertices].allocate(pos_frame_plane.data(),
                              static_cast<int>(pos_frame_plane.size()*sizeof(double)));
-        bbox_program.enableAttributeArray("vertex");
-        bbox_program.setAttributeBuffer("vertex",GL_DOUBLE,0,3);
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[Frame_vertices].release();
-
+        program->disableAttributeArray("colors");
         vaos[Frame_plane]->release();
-        bbox_program.release();
         program->release();
     }
     are_buffers_filled = true;
