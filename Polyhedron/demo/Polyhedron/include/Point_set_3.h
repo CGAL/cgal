@@ -150,7 +150,7 @@ public:
       }
     else if (!currently && selected)
       {
-        std::swap (*it, *first);
+        std::swap (*it, *(-- first));
         ++ m_nb_selected;
       }
   }
