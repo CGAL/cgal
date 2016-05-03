@@ -21,15 +21,7 @@
 #ifndef CGAL_POINT_SET_3_H
 #define CGAL_POINT_SET_3_H
 
-#include <CGAL/property_map.h>
-#include <CGAL/Min_sphere_of_spheres_d.h>
-#include <CGAL/Min_sphere_of_points_d_traits_3.h>
-#include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 #include <CGAL/Surface_mesh/Properties.h>
-
-#include <algorithm>
-#include <vector>
-# include <CGAL/gl.h>
 
 namespace CGAL {
 
@@ -74,8 +66,8 @@ public:
   typedef typename Properties::Property_map<Item, Point> Point_pmap;
   typedef typename Properties::Property_map<Item, Vector> Vector_pmap;
 
-  typedef typename Index_pmap::Array::vector_type::iterator iterator;
-  typedef typename Index_pmap::Array::vector_type::const_iterator const_iterator;
+  typedef typename Index_pmap::iterator iterator;
+  typedef typename Index_pmap::const_iterator const_iterator;
 
 protected:
 
@@ -188,10 +180,10 @@ public:
     return m_normals;
   }
 
-  iterator begin() { return m_indices.array().begin(); }
-  iterator end() { return m_indices.array().end(); }
-  const_iterator begin() const { return m_indices.array().begin(); }
-  const_iterator end() const { return m_indices.array().end(); }
+  iterator begin() { return m_indices.begin(); }
+  iterator end() { return m_indices.end(); }
+  const_iterator begin() const { return m_indices.begin(); }
+  const_iterator end() const { return m_indices.end(); }
   bool empty() const { return (m_base.size() == 0); }
   std::size_t size () const { return m_base.size(); }
   void clear()
@@ -216,7 +208,7 @@ public:
     
     if (are_indices_up_to_date())
       {
-        m_base.erase (*first, *beyond);
+        //        m_base.erase (*first, *beyond);
       }
     else
       {
