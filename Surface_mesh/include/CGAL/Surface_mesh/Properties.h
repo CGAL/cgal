@@ -33,8 +33,6 @@ namespace CGAL {
 ///
 /// @{
 
-namespace Properties {
-
 /// @cond CGAL_DOCUMENT_INTERNALS
 class Base_property_array
 {
@@ -144,9 +142,6 @@ public: // virtual interface of Base_property_array
     }
 
     virtual const std::type_info& type() { return typeid(T); }
-
-  typename vector_type::iterator begin () { return data_.begin (); }
-  typename vector_type::iterator end () { return data_.end (); }
 
 
 public:
@@ -420,8 +415,7 @@ public:
     typedef I key_type;
     typedef T value_type;
     typedef boost::lvalue_property_map_tag category;
-  typedef Property_array<T> Array;
-  
+
 #ifndef DOXYGEN_RUNNING
 
     typedef typename Property_array<T>::reference reference;
@@ -496,6 +490,7 @@ public:
     }
 
     //@}
+private:
 
     Property_array<T>& array()
     {
@@ -508,13 +503,10 @@ public:
         CGAL_assertion(parray_ != NULL);
         return *parray_;
     }
-private:
+
     Property_array<T>* parray_;
 };
 
-
-
-  
 #endif // DOXYGEN_RUNNING
 
 ///@}
