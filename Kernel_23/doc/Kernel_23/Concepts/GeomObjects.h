@@ -780,7 +780,7 @@ public:
   \ingroup PkgKernel23ConceptsGeomObject
 \cgalConcept
 
-A type representing weighted points in two dimensions. 
+A type representing weighted points in two dimensions.
 
 \cgalRefines CopyConstructible
 \cgalRefines Assignable
@@ -796,7 +796,9 @@ A type representing weighted points in two dimensions.
 class WeightedPoint_2 {
 public:
 
-}; /* end Kernel::WeightedPoint_3 */
+}; /* end Kernel::WeightedPoint_2 */
+
+
 
 /*!
   \ingroup PkgKernel23ConceptsGeomObject
