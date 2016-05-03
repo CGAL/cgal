@@ -482,7 +482,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 void Scene_polyhedron_selection_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
 
-  viewer->glLineWidth(3.f);
+  viewer->glLineWidth(2.0f);
   if(!are_temp_buffers_filled)
   {
     compute_temp_elements();
@@ -498,7 +498,7 @@ void Scene_polyhedron_selection_item::draw_edges(CGAL::Three::Viewer_interface* 
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_temp_lines/3));
   program->release();
   vaos[4]->release();
-
+  viewer->glLineWidth(3.0f);
   if(!are_buffers_filled)
   {
     compute_elements();
@@ -522,7 +522,7 @@ void Scene_polyhedron_selection_item::draw_edges(CGAL::Three::Viewer_interface* 
 void Scene_polyhedron_selection_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
 
-  viewer->glPointSize(5.f);
+  viewer->glPointSize(5.5f);
 
   if(!are_temp_buffers_filled)
   {
@@ -533,11 +533,12 @@ void Scene_polyhedron_selection_item::draw_points(CGAL::Three::Viewer_interface*
   program = getShaderProgram(PROGRAM_NO_SELECTION);
   attrib_buffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
-  program->setAttributeValue("colors",QColor(0,125,0));
+  program->setAttributeValue("colors",QColor(0,50,0));
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_temp_points/3));
   program->release();
   vaos[5]->release();
 
+  viewer->glPointSize(5.5f);
   if(!are_buffers_filled)
   {
     compute_elements();
@@ -629,7 +630,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Split face
   case 4:
-    Q_EMIT updateInstructions("Select the facet you want to split (degree >4). (1/3)");
+    Q_EMIT updateInstructions("Select the facet you want to split (degree >= 4). (1/3)");
     //set the selection type to Facet
     set_active_handle_type(static_cast<Active_handle::Type>(1));
     break;
@@ -789,7 +790,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         bool is_same(false), are_next(false);
         Polyhedron::Halfedge_around_facet_circulator hafc = to_split_fh->facet_begin();
         Polyhedron::Halfedge_around_facet_circulator end = hafc;
-
+        for(int i=0; i<1; i++) //seems useless but allow the use of break.
+        {
           //Is the vertex on the face ?
           CGAL_For_all(hafc, end)
 
@@ -799,34 +801,35 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             found_h2 = true;
             break;
           }
-        if(!found_h2)
-        {
-          break;
+          if(!found_h2)
+          {
+            break;
+          }
+          //Are they different ?
+          if(h1 == h2)
+          {
+            is_same = true;
+            break;
+          }
+          is_same = false;
+          //Are they directly following each other?
+          if(next(h1, *polyhedron()) == h2 ||
+             next(h2, *polyhedron()) == h1)
+          {
+            are_next = true;
+            break;
+          }
+          are_next = false;
         }
-        //Are they different ?
-        if(h1 == h2)
-        {
-          is_same = true;
-          break;
-        }
-        is_same = false;
-        //Are they directly following each other?
-        if(next(h1, *polyhedron()) == h2 ||
-           next(h2, *polyhedron()) == h1)
-        {
-          are_next = true;
-          break;
-        }
-        are_next = false;
         if(!found_h2)
           tempInstructions("Vertex not selected : The vertex is not on the face.",
-                           "Select the second vertex .");
+                           "Select the second vertex (3/3).");
         else if(is_same)
           tempInstructions("Vertex not selected : The vertices must be different.",
-                           "Select the second vertex .");
+                           "Select the second vertex (3/3).");
         else if(are_next)
           tempInstructions("Vertex not selected : The vertices must not directly follow each other.",
-                           "Select the second vertex .");
+                           "Select the second vertex (3/3).");
         else
         {
           CGAL::Euler::split_face(h1,h2, *polyhedron());
@@ -837,7 +840,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           //reset selection type to Facet
           set_active_handle_type(static_cast<Active_handle::Type>(1));
           tempInstructions("Face split.",
-                           "Select a facet.");
+                           "Select a facet (1/3).");
           polyhedron_item()->invalidateOpenGLBuffers();
         }
       }
@@ -916,7 +919,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
            facet_degree(halfedge(ed, *polyhedron())->opposite())< 4)
         {
           tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
-                           "Select the edge with extremities you want to join.");
+                           "Select the edge with extremities you want to join.(1/2)");
         }
         else
         {
@@ -1092,7 +1095,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
           tempInstructions("Face and vertex added.",
-                           "Select a border edge.");
+                           "Select a border edge. (1/2)");
         }
       }
       break;
@@ -1119,6 +1122,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           {
             first_selected = true;
             temp_selected_edges.insert(edge(t, *polyhedron()));
+            temp_selected_vertices.insert(t->vertex());
             invalidateOpenGLBuffers();
             Q_EMIT updateInstructions("Select second edge. (2/2)");
             set_active_handle_type(static_cast<Active_handle::Type>(2));
@@ -1126,7 +1130,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           else
           {
             tempInstructions("Edge not selected : no border found.",
-                             "Select a border edge.");
+                             "Select a border edge. (1/2)");
           }
       }
       else
@@ -1134,7 +1138,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         bool found(false), is_equal(true), is_next(true), is_border(false);
           Halfedge_handle hc = halfedge(ed, *polyhedron());
           //seems strange but allows to use break efficiently
-          for(int i= 0; i<2; i++)
+          for(int i= 0; i<1; i++)
           {
             //if the selected halfedge is not a border, stop and signal it.
             if(hc->is_border())
@@ -1252,11 +1256,11 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             first_selected = true;
             temp_selected_facets.insert(fh);
             invalidateOpenGLBuffers();
-            Q_EMIT updateInstructions("Select second facet. (3/3)");
+            Q_EMIT updateInstructions("Select the second facet. (3/3)");
           }
           else
             tempInstructions("Facet not selected : no valid halfedge",
-                             "Select first facet(2/3)");
+                             "Select first facet. (2/3)");
       }
       //call the function with point and facets.
       else
@@ -1293,15 +1297,15 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             //reset selection mode
             set_active_handle_type(static_cast<Active_handle::Type>(0));
             poly_item->invalidateOpenGLBuffers();
-            tempInstructions("Vertex splitted.", "Select the vertex you want splitted (1/3)");
+            tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
           }
           else if(h1 == h2)
           {
-             tempInstructions("Facet not selected : same as the first.", "Select the second facet.");
+             tempInstructions("Facet not selected : same as the first.", "Select the second facet. (3/3)");
           }
           else
           {
-            tempInstructions("Facet not selected : no valid halfedge.", "Select the second facet.");
+            tempInstructions("Facet not selected : no valid halfedge.", "Select the second facet. (3/3)");
           }
       }
       break;
@@ -1350,13 +1354,13 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
 void Scene_polyhedron_selection_item::tempInstructions(QString s1, QString s2)
 {
   m_temp_instructs = s2;
-  Q_EMIT updateInstructions(s1);
+  Q_EMIT updateInstructions(QString("<font color='red'>%1</font>").arg(s1));
   QTimer timer;
-  timer.singleShot(3000, this, SLOT(emitTempInstruct()));
+  timer.singleShot(5500, this, SLOT(emitTempInstruct()));
 }
 void Scene_polyhedron_selection_item::emitTempInstruct()
 {
-  Q_EMIT updateInstructions(m_temp_instructs);
+  Q_EMIT updateInstructions(QString("<font color='black'>%1</font>").arg(m_temp_instructs));
 }
 
 void Scene_polyhedron_selection_item::on_Ctrlz_pressed()

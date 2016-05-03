@@ -75,7 +75,7 @@ public:
     messages = m;
     actionSelection = new QAction(tr("Selection"), mw);
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
-
+    last_mode = 0;
     dock_widget = new QDockWidget("Selection", mw);
     dock_widget->setVisible(false);
 
@@ -218,10 +218,9 @@ public Q_SLOTS:
     if (scene_ptr)
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     scene->setSelectedItem(item_id);
+    ui_widget.modeBox->setCurrentIndex(last_mode);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
     on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
-    ui_widget.modeBox->setCurrentIndex(0);
-    on_ModeBox_changed(0);
 
   }
   void on_Selection_type_combo_box_changed(int index) {
@@ -377,6 +376,7 @@ public Q_SLOTS:
 
   void on_ModeBox_changed(int index)
   {
+    last_mode = index;
     switch(index)
     {
     //Selection mode
@@ -549,6 +549,7 @@ private:
   Ui::Selection ui_widget;
 typedef std::multimap<Scene_polyhedron_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
+  int last_mode;
 }; // end Polyhedron_demo_selection_plugin
 
 //Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_plugin, Polyhedron_demo_selection_plugin)

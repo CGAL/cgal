@@ -483,12 +483,12 @@
            </item>
            <item>
             <property name="text">
-             <string>Add vertex and face to border</string>
+             <string>Add vertex and face to border (Advanced)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Add face to border</string>
+             <string>Add face to border (Advanced)</string>
             </property>
            </item>
           </widget>
