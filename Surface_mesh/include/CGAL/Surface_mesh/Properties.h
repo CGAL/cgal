@@ -94,6 +94,8 @@ public:
     typedef std::vector<value_type>                 vector_type;
     typedef typename vector_type::reference         reference;
     typedef typename vector_type::const_reference   const_reference;
+    typedef typename vector_type::iterator          iterator;
+    typedef typename vector_type::const_iterator    const_iterator;
 
     Property_array(const std::string& name, T t=T()) : Base_property_array(name), value_(t) {}
 
@@ -168,7 +170,10 @@ public:
         return data_[_idx];
     }
 
-
+    iterator begin() { return data_.begin(); }
+    iterator end() { return data_.end(); }
+    const_iterator begin() const { return data_.begin(); }
+    const_iterator end() const { return data_.end(); }
 
 private:
     vector_type data_;
@@ -410,8 +415,9 @@ public:
 #ifndef DOXYGEN_RUNNING
 
     typedef typename Property_array<T>::reference reference;
-
     typedef typename Property_array<T>::const_reference const_reference;
+    typedef typename Property_array<T>::iterator iterator;
+    typedef typename Property_array<T>::const_iterator const_iterator;
 #else 
     /// A reference to the value type of the property.
   typedef unspecified_type reference;
@@ -461,6 +467,11 @@ public:
       CGAL_assertion(parray_ != NULL);
       return (*parray_)[i];
     }
+
+    iterator begin() { return parray_->begin(); }
+    iterator end() { return parray_->end(); }
+    const_iterator begin() const { return parray_->begin(); }
+    const_iterator end() const { return parray_->end(); }
 
     bool transfer (const Property_map& other)
     {
