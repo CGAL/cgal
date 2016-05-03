@@ -214,7 +214,6 @@ private:
   mutable std::vector<float> *normals;
   mutable std::vector<float> *edges;
   mutable std::vector<float> *colors;
-  mutable int nb_pos;
   mutable QOpenGLShaderProgram *program;
 }; //end of class Scene_triangle_item
 
