@@ -7,6 +7,7 @@
 #include <QFileDialog>
 
 #include <QGLViewer/qglviewer.h>
+#include <QMessageBox>
 
 #include "ui_Deform_mesh.h"
 using namespace CGAL::Three;
@@ -325,22 +326,41 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ReadROIPushButton_clicked()
   edit_item->invalidateOpenGLBuffers();
   scene->itemChanged(edit_item); 
 }
+
 void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool visible)
 {
-  for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
-      i < end; ++i)
+  if(!visible)
   {
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
-    if (poly_item) 
-    { poly_item->update_halfedge_indices(); }
-    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
+        i < end; ++i)
+    {
+      Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
 
-    if(visible && poly_item) {
-      ui_widget.ShowAsSphereCheckBox->setChecked(false);
-      convert_to_edit_polyhedron(i, poly_item);
-    } else if(!visible && edit_item) {
-      edit_item->ShowAsSphere(false);
-      convert_to_plain_polyhedron(i, edit_item);
+      if(edit_item) {
+        edit_item->ShowAsSphere(false);
+        convert_to_plain_polyhedron(i, edit_item);
+      }
+    }
+  }
+  else
+  {
+    ui_widget.ShowAsSphereCheckBox->setChecked(false);
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id i , scene->selectionIndices())
+    {
+      Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
+      if (poly_item &&
+          poly_item->polyhedron()->is_pure_triangle())
+      {
+        poly_item->update_halfedge_indices();
+        convert_to_edit_polyhedron(i, poly_item);
+      }
+      else if(poly_item &&
+              !(poly_item->polyhedron()->is_pure_triangle()) )
+      {
+        QMessageBox::warning(mw,
+                             tr("Cannot edit non-triangle polyhedron_items"),
+                             tr(" %1 is not pure-triangle, therefore it is not editable.").arg(poly_item->name()));
+      }
     }
   }
 }
