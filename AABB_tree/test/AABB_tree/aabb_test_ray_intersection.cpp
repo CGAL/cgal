@@ -128,7 +128,7 @@ int main()
   rays.reserve(NB_RAYS);
   std::transform(v1.begin(), v1.end(), v2.begin(),
                  std::back_inserter(rays), boost::value_factory<Ray>());
-  std::vector< boost::optional<Tree::template Intersection_and_primitive_id<Ray>::Type > > primitives1, primitives2;
+  std::vector< boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type > > primitives1, primitives2;
   primitives1.reserve(NB_RAYS); primitives2.reserve(NB_RAYS);
 
 
