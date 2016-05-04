@@ -111,12 +111,11 @@ public Q_SLOTS:
     if(is_ready_to_paint_select)
     {
       // paint with mouse move event
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(paint_event);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
 
       bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+      const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found);
       if(found)
       {
         const qglviewer::Vec& orig = camera->position();
@@ -132,12 +131,11 @@ public Q_SLOTS:
     if(is_ready_to_highlight)
     {
       // highlight with mouse move event
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(hl_event);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
 
       bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+      const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found);
       if(found)
       {
         const qglviewer::Vec& orig = camera->position();
@@ -315,9 +313,9 @@ protected:
         return false;
       }
       is_ready_to_paint_select = true;
-      paint_event = event;
-      //QTimer::singleShot(0,this,SLOT(paint_selection()));
-      paint_selection();
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+      paint_pos = mouse_event->pos();
+      QTimer::singleShot(0,this,SLOT(paint_selection()));
     }
     //if in edit_mode and the mouse is moving without left button pressed :
     // highlight the primitive under cursor
@@ -331,7 +329,8 @@ protected:
       }
 
       is_ready_to_highlight = true;
-      hl_event = event;
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+      hl_pos = mouse_event->pos();
       QTimer::singleShot(0, this, SLOT(highlight()));
     }//end MouseMove
     return false;
@@ -340,8 +339,8 @@ protected:
   bool is_edit_mode;
   bool is_ready_to_highlight;
   bool is_ready_to_paint_select;
-  QEvent *hl_event;
-  QEvent *paint_event;
+  QPoint hl_pos;
+  QPoint paint_pos;
   QMainWindow *mainwindow;
 };
 
