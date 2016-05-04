@@ -68,44 +68,52 @@ void run_boolean_operations(
 
   if ( output_builder.union_valid() ){
    std::cout << "  Union is a valid operation\n";
-   CGAL_assertion(union_.is_valid());
+   assert(union_.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_P_union_Q.off";
    std::ofstream output(fname.str().c_str());
    output << union_;
+   #endif
   }
   else
     std::cout << "  Union is invalid\n";
 
   if ( output_builder.intersection_valid() ){
    std::cout << "  Intersection is a valid operation\n";
-   CGAL_assertion(inter.is_valid());
+   assert(inter.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_P_inter_Q.off";
    std::ofstream output(fname.str().c_str());
    output << inter;
+   #endif
   }
   else
     std::cout << "  Intersection is invalid\n";
 
   if ( output_builder.P_minus_Q_valid() ){
    std::cout << "  P-Q is a valid operation\n";
-   CGAL_assertion(P_minus_Q.is_valid());
+   assert(P_minus_Q.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_P_minus_Q.off";
    std::ofstream output(fname.str().c_str());
    output << P_minus_Q;
+   #endif
   }
   else
     std::cout << "  P-Q is invalid\n";
 
   if ( output_builder.Q_minus_P_valid() ){
    std::cout << "  Q-P is a valid operation\n";
-   CGAL_assertion(Q_minus_P.is_valid());
+   assert(Q_minus_P.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_Q_minus_P.off";
    std::ofstream output(fname.str().c_str());
    output << Q_minus_P;
+   #endif
   }
   else
     std::cout << "  Q-P is invalid\n";
