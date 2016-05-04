@@ -479,7 +479,6 @@ public:
         decorator.set_face(hedges[i], new_f);
       }
     }
-
     // For all interior vertices, update the vertex pointer
     // of all but the vertex halfedge
     BOOST_FOREACH(Halfedge_handle h, interior_vertex_halfedges)
@@ -594,17 +593,17 @@ public:
       decorator.set_prev(next,h);
       decorator.set_vertex_halfedge(h->vertex(),h);
     }
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    #warning I am rather sure we can avoid this and set prev above see what I did below
-#endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    //check if there are border hedges, if which case non-interior halfedges
-    //sharing a source with a border hedge does not have a valid previous.
+
+    // In case a ccb of the patch is not a cycle (the source and target vertices
+    // are border vertices), the first halfedge of that ccb will not have its
+    // prev pointer set correctly. To fix that, we consider all interior edges
+    // and check for one that is on the border of the patch and that is incident
+    // to a border vertex and use it to get the missing prev pointer.
     BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
       if(h->is_border_edge())
       {
         if (h->is_border()) h=h->opposite();
-        if (    interior_vertices.find(h->vertex())
-             == interior_vertices.end() )
+        if ( !interior_vertices.count(h->vertex()) )
         {
           CGAL_assertion( h->next()->is_border() );//we marked it above!
           Halfedge_handle prev=h->opposite()->prev();
