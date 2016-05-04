@@ -451,7 +451,7 @@ treat_result(Scene_item& source_item,
 
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   scene->itemChanged(index);
-
+  scene->setSelectedItem(-1);
   Scene_interface::Item_id new_item_id = scene->addItem(&result_item);
   scene->setSelectedItem(new_item_id);
 }

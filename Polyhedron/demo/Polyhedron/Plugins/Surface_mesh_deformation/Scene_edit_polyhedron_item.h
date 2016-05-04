@@ -3,6 +3,10 @@
 //#define CGAL_PROFILE 
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
+
+
+#include <CGAL/Three/Scene_group_item.h>
+
 #include "Scene_polyhedron_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
@@ -35,7 +39,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
-
+class Scene_spheres_item;
 struct Array_based_vertex_point_map
 {
 public:
@@ -191,7 +195,7 @@ struct Mouse_keyboard_state_deformation
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
-  : public CGAL::Three::Scene_item {
+  : public CGAL::Three::Scene_group_item {
   Q_OBJECT
 public:  
   /// Create an Scene_edit_polyhedron_item from a Scene_polyhedron_item.
@@ -236,6 +240,7 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   void compute_bbox() const;
+  Bbox bbox() const{return Scene_item::bbox();}
 
   int get_k_ring()       { return k_ring_selector.k_ring; }
   void set_k_ring(int v) { k_ring_selector.k_ring = v; }
@@ -244,12 +249,17 @@ public:
   // take keyboard events from main-window, which is more stable
   bool eventFilter(QObject *target, QEvent *event);
   void update_frame_plane();
+  void ShowAsSphere(bool b);
   
 protected:
   void timerEvent(QTimerEvent *event);
 
 
 public Q_SLOTS:
+  void reset_spheres()
+  {
+    spheres = NULL;
+  }
   void invalidateOpenGLBuffers();
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
@@ -259,7 +269,7 @@ public Q_SLOTS:
       vertex_descriptor vh = *it;
       bool changed = false;
       if(ui_widget->ROIRadioButton->isChecked()) {
-        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh); }
+        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh);}
         else          { changed = erase_roi_vertex(vh);  }
       }
       else {
@@ -298,16 +308,14 @@ private:
   mutable std::vector<GLdouble> normals;
   mutable std::vector<GLdouble> pos_bbox;
   mutable std::vector<GLdouble> pos_axis;
-  mutable std::vector<GLdouble> pos_sphere;
-  mutable std::vector<GLdouble> normals_sphere;
   mutable std::vector<GLdouble> pos_frame_plane;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
   mutable std::size_t nb_ROI;
-  mutable std::size_t nb_sphere;
   mutable std::size_t nb_control;
   mutable std::size_t nb_axis;
   mutable std::size_t nb_bbox;
+  mutable Scene_spheres_item* spheres;
 
   enum Buffer
   {
@@ -315,8 +323,6 @@ private:
       Facet_normals,
       Roi_vertices,
       Control_vertices,
-      Sphere_vertices,
-      Sphere_normals,
       Bbox_vertices,
       Axis_vertices,
       Axis_colors,
@@ -328,10 +334,8 @@ private:
       Facets=0,
       Roi_points,
       Edges,
-      ROI_spheres,
       BBox,
       Control_points,
-      Control_spheres,
       Axis,
       Frame_plane,
       NumberOfVaos
@@ -341,7 +345,6 @@ private:
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
   void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);
-  void create_Sphere(double);
   void reset_drawing_data();
 
   Deform_mesh* deform_mesh;

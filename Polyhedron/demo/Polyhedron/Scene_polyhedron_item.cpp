@@ -986,8 +986,8 @@ Scene_polyhedron_item::setColor(QColor c)
   // reset patch ids
   if (colors_.size()>2 || plugin_has_set_color_vector_m)
   {
-   colors_.clear();
-   is_monochrome = true;
+    colors_.clear();
+    is_monochrome = true;
   }
   Scene_item::setColor(c);
 }

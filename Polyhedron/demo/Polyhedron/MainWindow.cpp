@@ -1711,7 +1711,7 @@ void MainWindow::restoreCollapseState()
 void MainWindow::make_new_group()
 {
     Scene_group_item * group = new Scene_group_item("New group");
-    scene->add_group(group);
+    scene->addItem(group);
 }
 
 void MainWindow::on_upButton_pressed()

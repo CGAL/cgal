@@ -225,17 +225,19 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
     if(!edit_item) { continue; }
-    
     scene->itemChanged(edit_item);  // just for redraw   
   }  
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int /*state*/)
+void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int state)
 {
   for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
     if(!edit_item) { continue; }
-    
+    if(state == 0)
+      edit_item->ShowAsSphere(false);
+    else
+      edit_item->ShowAsSphere(true);
     scene->itemChanged(edit_item);  // just for redraw   
   }  
 }
@@ -334,8 +336,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
 
     if(visible && poly_item) {
+      ui_widget.ShowAsSphereCheckBox->setChecked(false);
       convert_to_edit_polyhedron(i, poly_item);
     } else if(!visible && edit_item) {
+      edit_item->ShowAsSphere(false);
       convert_to_plain_polyhedron(i, edit_item);
     }
   }
@@ -401,7 +405,9 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   int k_ring = ui_widget.ROIRadioButton->isChecked() ? ui_widget.BrushSpinBoxRoi->value() : 
                                                        ui_widget.BrushSpinBoxCtrlVert->value();
   edit_poly->set_k_ring(k_ring);
+  scene->setSelectedItem(-1);
   scene->replaceItem(i, edit_poly);
+  scene->setSelectedItem(i);
   return edit_poly;
 }
 
