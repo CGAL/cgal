@@ -86,7 +86,7 @@ protected:
     std::size_t ind;
   
   public:
-  
+    
     Index_back_inserter(Point_set& ps, std::size_t ind=0) : ps(ps), ind(ind) {}
     Index_back_inserter& operator++() { return *this; }
     Index_back_inserter& operator++(int) { return *this; }
@@ -129,6 +129,7 @@ protected:
   Point_pmap m_points;
   Index_pmap m_indices;
   Vector_pmap m_normals;
+  std::size_t m_nb_removed;
 
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
@@ -150,6 +151,7 @@ public:
   {
     m_indices = m_base.template add<std::size_t> ("index").first;
     m_points = m_base.template add<Point> ("point").first;
+    m_nb_removed = 0;
   }
 
   void push_back (const Point& p)
@@ -181,50 +183,31 @@ public:
   }
 
   iterator begin() { return m_indices.begin(); }
-  iterator end() { return m_indices.end(); }
+  iterator end() { return m_indices.end() - m_nb_removed; }
   const_iterator begin() const { return m_indices.begin(); }
-  const_iterator end() const { return m_indices.end(); }
-  bool empty() const { return (m_base.size() == 0); }
-  std::size_t size () const { return m_base.size(); }
-  void clear()
+  const_iterator end() const { return m_indices.end() - m_nb_removed; }
+  bool empty() const { return (m_base.size() == m_nb_removed); }
+  std::size_t size () const { return m_base.size() - m_nb_removed; }
+  void reserve (std::size_t s) { m_base.reserve (s); }
+  void resize (std::size_t s)
   {
-    m_base.clear();
-    m_indices = m_base.template add<std::size_t> ("index").first;
-    m_points = m_base.template add<Point> ("point").first;
-  }
-  Point& operator[] (Item index) { return m_points[m_indices[index]]; }
-  const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
-  Point& point (Item index) { return m_points[m_indices[index]]; }
-  const Point& point (Item index) const { return m_points[m_indices[index]]; }
-  std::size_t& item (Item index) { return m_indices[index]; }
-  const std::size_t& item (Item index) const { return m_indices[index]; }
-
-  void erase (iterator first, iterator beyond)
-  {
-    if (beyond != end())
-      {
-        // TODO
-      }
-    
-    if (are_indices_up_to_date())
-      {
-        //        m_base.erase (*first, *beyond);
-      }
+    m_base.resize (s);
+    if (s > size ())
+      m_nb_removed += s;
+    else if (m_base.size() - s > m_nb_removed)
+      m_nb_removed = 0;
     else
-      {
-        std::size_t size = (beyond - first);
-        apply_indices_change();
-        m_base.resize (m_base.size() - size);
-      }
+      m_nb_removed -= s;
   }
 
-  void add_item ()
-  {
-    m_base.push_back();
-  }
+  iterator removed_begin () { return m_indices.end() - m_nb_removed; }
+  iterator removed_end () { return m_indices.end(); }
+  const_iterator removed_begin () const { return m_indices.end() - m_nb_removed; }
+  const_iterator removed_end () const { return m_indices.end(); }
+  std::size_t removed_size () const { return m_nb_removed; }
+  bool has_garbage () const { return (m_nb_removed != 0); }  
 
-
-  void apply_indices_change()
+  void collect_garbage ()
   {
     for (std::size_t i = 0; i < size(); ++ i)
       if (i != m_indices[i])
@@ -232,24 +215,41 @@ public:
           m_base.swap (i, m_indices[i]);
           -- i;
         }
+    m_base.resize (size ());
+    m_base.shrink_to_fit ();
+    m_nb_removed = 0;
   }
   
-  void reset_indices()
+  void clear()
   {
-    std::size_t i = 0;
-    for (iterator it = begin(); it != end(); ++ it, ++ i)
-      *it = i;
+    m_base.clear();
+    m_indices = m_base.template add<std::size_t> ("index").first;
+    m_points = m_base.template add<Point> ("point").first;
+    m_nb_removed = 0;
+  }
+  
+  Point& operator[] (Item index) { return m_points[m_indices[index]]; }
+  const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
+  Point& point (Item index) { return m_points[m_indices[index]]; }
+  const Point& point (Item index) const { return m_points[m_indices[index]]; }
+
+  void add_item ()
+  {
+    m_base.push_back();
   }
 
-  bool are_indices_up_to_date()
+  void remove_from (iterator it)
   {
-    std::size_t i = 0;
-    for (iterator it = begin(); it != end(); ++ it, ++ i)
-      if (*it != i)
-        return false;
-    return true;
+    m_nb_removed = static_cast<std::size_t>(std::distance (it, end()));
   }
   
+  void remove (iterator it)
+  {
+    iterator first = removed_begin();
+    std::swap (*it, *(removed_begin() - 1));
+    -- m_nb_removed;
+  }
+
   Index_back_inserter index_back_inserter ()
   {
     return Index_back_inserter (*this, size());
