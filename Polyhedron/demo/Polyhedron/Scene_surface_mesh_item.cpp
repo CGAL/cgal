@@ -562,4 +562,3 @@ Scene_surface_mesh_item::triangulate_facet(face_descriptor fd,
 
   }
 }
-#include "Scene_surface_mesh_item.moc"
