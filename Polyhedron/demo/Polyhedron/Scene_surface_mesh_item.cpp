@@ -25,7 +25,7 @@ struct Face_info {
   halfedge_descriptor e[3];
   bool is_external;
 };
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Scene_surface_mesh_item::Kernel>                       P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Scene_surface_mesh_item::Kernel>                                P_traits;
 typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,P_traits>                                 Vb;
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits >                                           Fb1;
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>                                                Fb;
