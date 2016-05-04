@@ -128,25 +128,6 @@ public:
 protected:
     friend struct Scene_polyhedron_item_priv;
     Scene_polyhedron_item_priv* d;
-private:
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
-    enum VAOs {
-      Facets=0,
-      Edges,
-      Feature_edges,
-      Gouraud_Facets,
-      NbOfVaos
-    };
-    enum VBOs {
-      Facets_vertices = 0,
-      Facets_normals_flat,
-      Facets_color,
-      Edges_vertices,
-      Feature_edges_vertices,
-      Edges_color,
-      Facets_normals_gouraud,
-      NbOfVbos
-    };
 
 
 }; // end class Scene_polyhedron_item
