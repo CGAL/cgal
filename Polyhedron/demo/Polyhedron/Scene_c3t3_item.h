@@ -124,6 +124,10 @@ private:
     const Kernel::Point_3& pb,
     const Kernel::Point_3& pc)const;
 
+  void draw_triangle_edges_cnc(const Kernel::Point_3& pa,
+                           const Kernel::Point_3& pb,
+                           const Kernel::Point_3& pc)const;
+
   double complex_diag() const;
 
   void compute_color_map(const QColor& c);
@@ -144,6 +148,14 @@ private:
   }
   void show_spheres(bool b);
   void show_intersection(bool b);
+
+  void show_cnc(bool b)
+  {
+    cnc_are_shown = b;
+    Q_EMIT redraw();
+
+  }
+
   virtual QPixmap graphicalToolTip() const;
 
   void update_histogram();
@@ -176,6 +188,7 @@ private:
       Facet_normals,
       Facet_colors,
       Edges_vertices,
+      Edges_CNC,
       Grid_vertices,
       iEdges_vertices,
       iFacet_vertices,
@@ -188,6 +201,7 @@ private:
       Facets=0,
       Edges,
       Grid,
+      CNC,
       iEdges,
       iFacets,
       NumberOfVaos
@@ -214,9 +228,12 @@ private:
 
   mutable std::size_t positions_poly_size;
   mutable std::size_t positions_lines_size;
+  mutable std::size_t positions_lines_not_in_complex_size;
   mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_lines_not_in_complex;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
+
   mutable std::vector<float> normals;
   mutable std::vector<float> f_colors;
   mutable std::vector<float> s_normals;
@@ -233,6 +250,7 @@ private:
   void compute_spheres();
   void compute_elements();
   void compute_intersections();
+  bool cnc_are_shown;
 };
 
 #endif // SCENE_C3T3_ITEM_H
