@@ -595,10 +595,12 @@ Scene_segmented_image_item::compute_bbox() const
   if(!m_image)
     _bbox = Bbox();
   else
-    _bbox = Bbox(0, 0, 0,
-              m_image->xdim() * m_image->vx(),
-              m_image->ydim() * m_image->vy(),
-              m_image->zdim() * m_image->vz());
+    _bbox = Bbox(-0.5*m_image->vx(),
+                 -0.5*m_image->vy(),
+                 -0.5*m_image->vz(),
+              m_image->xdim() * m_image->vx()-0.5*m_image->vx(),
+              m_image->ydim() * m_image->vy()-0.5*m_image->vy(),
+              m_image->zdim() * m_image->vz()-0.5*m_image->vz());
 }
 
 void

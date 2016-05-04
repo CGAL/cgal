@@ -184,8 +184,9 @@ public Q_SLOTS:
   void setSelectedItemIndex(int i)
   {
     selected_item = i;
+    Q_EMIT selectionChanged(i);
   }
-  //! Sets the selected item to the target index and emits selectionChanged(i).
+  //! Same as setSelectedItemIndex.
   void setSelectedItem(int i )
   {
     selected_item = i;
@@ -250,6 +251,7 @@ private Q_SLOTS:
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
   void add_group(Scene_group_item* group);
+  void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
 private:
   /*! Calls the drawing functions of each visible item according
    * to its current renderingMode. If with_names is true, uses
