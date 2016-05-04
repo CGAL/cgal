@@ -2191,6 +2191,19 @@ public:
             patches_of_P[i].patch_border_halfedges;
         }
 
+        Intersection_polylines polylines_in_P(
+          P_polylines, Q_polylines, polyline_lengths);
+        Intersection_polylines polylines_in_Q=polylines_in_P;
+        fill_polylines_to_skip(
+          polylines_in_P, P_patch_ids, Q_patch_ids,
+          patches_of_P_used[inplace_operation_P],
+          patches_of_Q_used[inplace_operation_P],
+          P_facet_id_pmap, Q_facet_id_pmap);
+        fill_polylines_to_skip(
+          polylines_in_Q, P_patch_ids, Q_patch_ids,
+          patches_of_P_used[inplace_operation_Q],
+          patches_of_Q_used[inplace_operation_Q],
+          P_facet_id_pmap, Q_facet_id_pmap);
         // force the initialization of the patches of P used
         // for the operation in Q before P is modified
         for (std::size_t i=patches_of_P_used[inplace_operation_Q].find_first();
@@ -2205,9 +2218,7 @@ public:
           patches_of_P_used[inplace_operation_P], patches_of_Q_used[inplace_operation_P],
           patches_of_P, patches_of_Q,
           inplace_operation_P == P_MINUS_Q || inplace_operation_P == Q_MINUS_P,
-          Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
-          , disconnected_patches_hedge_to_Qhedge
-        );
+          polylines_in_P, disconnected_patches_hedge_to_Qhedge);
         // Operation in Q: discard patches and append the one from Q
         CGAL_assertion( *desired_output[inplace_operation_Q] == Q_ptr );
         compute_inplace_operation( Q_ptr,
@@ -2217,20 +2228,34 @@ public:
                                    inplace_operation_Q==P_MINUS_Q,
                                    inplace_operation_Q==Q_MINUS_P,
                                    disconnected_patches_hedge_to_Qhedge);
-        // now remove patches temporarily kept
+        // remove polylines only on the border of patches not kept in Q
+        if (polylines_in_Q.to_skip.any())
+          remove_unused_polylines(Q_ptr,
+                                  ~patches_of_Q_used[inplace_operation_Q],
+                                  patches_of_Q);
+        // now remove patches temporarily kept in P
          remove_disconnected_patches(*P_ptr, patches_of_P, patches_of_P_removed);
-        // remove polylines only on the border of patches not kept
-        remove_unused_polylines(P_ptr,
-                                ~patches_of_P_used[inplace_operation_P],
-                                tmp_patches_of_P);
-        remove_unused_polylines(Q_ptr,
-                                ~patches_of_Q_used[inplace_operation_Q],
-                                patches_of_Q);
-         // finally reverse orientation if needed
+        // remove polylines only on the border of patches not kept in P
+        if (polylines_in_P.to_skip.any())
+          remove_unused_polylines(P_ptr,
+                                  ~patches_of_P_used[inplace_operation_P],
+                                  tmp_patches_of_P);
+         // finally reverse orientation of P if needed
          if (inplace_operation_P == Q_MINUS_P)
            CGAL::Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
       }
       else{
+        /// handle the operation updating only P
+        CGAL_assertion( *desired_output[inplace_operation_P] == P_ptr );
+        Intersection_polylines polylines(
+          P_polylines, Q_polylines, polyline_lengths);
+        fill_polylines_to_skip(
+          polylines, P_patch_ids, Q_patch_ids,
+          patches_of_P_used[inplace_operation_P],
+          patches_of_Q_used[inplace_operation_P],
+          P_facet_id_pmap, Q_facet_id_pmap
+        );
+
         compute_inplace_operation(
           P_ptr,
           patches_of_P_used[inplace_operation_P],
@@ -2238,30 +2263,42 @@ public:
           patches_of_P, patches_of_Q,
           inplace_operation_P == Q_MINUS_P,
           inplace_operation_P == P_MINUS_Q,
-          Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
+          polylines
         );
         // remove polylines only on the border of patches not kept
-        remove_unused_polylines(P_ptr,
-                                ~patches_of_P_used[inplace_operation_P],
-                                patches_of_P);
+        if (polylines.to_skip.any())
+          remove_unused_polylines(P_ptr,
+                                  ~patches_of_P_used[inplace_operation_P],
+                                  patches_of_P);
       }
     }
     else
       if ( inplace_operation_Q!=NONE )
       {
-        /// handle the operation updating Q
+        /// handle the operation updating only Q
         CGAL_assertion( *desired_output[inplace_operation_Q] == Q_ptr );
+        Intersection_polylines polylines(
+          Q_polylines, P_polylines, polyline_lengths);
+        fill_polylines_to_skip(
+          polylines, Q_patch_ids, P_patch_ids,
+          patches_of_Q_used[inplace_operation_Q],
+          patches_of_P_used[inplace_operation_Q],
+          Q_facet_id_pmap, P_facet_id_pmap
+        );
+
         compute_inplace_operation( Q_ptr,
                                    patches_of_Q_used[inplace_operation_Q],
                                    patches_of_P_used[inplace_operation_Q],
                                    patches_of_Q, patches_of_P,
                                    inplace_operation_Q==P_MINUS_Q,
                                    inplace_operation_Q==Q_MINUS_P,
-                                   Intersection_polylines(Q_polylines, P_polylines, polyline_lengths));
+                                   polylines);
+
         // remove polylines only on the border of patches not kept
-        remove_unused_polylines(Q_ptr,
-                                ~patches_of_Q_used[inplace_operation_Q],
-                                patches_of_Q);
+        if (polylines.to_skip.any())
+          remove_unused_polylines(Q_ptr,
+                                  ~patches_of_Q_used[inplace_operation_Q],
+                                  patches_of_Q);
       }
   }
 };
