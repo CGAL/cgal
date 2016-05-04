@@ -250,16 +250,16 @@ public:
   bool eventFilter(QObject *target, QEvent *event);
   void update_frame_plane();
   void ShowAsSphere(bool b);
-  
-protected:
-  void timerEvent(QTimerEvent *event);
-
 
 public Q_SLOTS:
   void reset_spheres()
   {
     spheres = NULL;
   }
+
+  void updateDeform();
+  void change();
+
   void invalidateOpenGLBuffers();
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
@@ -295,6 +295,7 @@ public Q_SLOTS:
 private:
   Ui::DeformMesh* ui_widget;
   Scene_polyhedron_item* poly_item;
+  bool need_change;
   // For drawing
   mutable std::vector<GLdouble> positions;
   mutable std::vector<unsigned int> tris;
@@ -437,6 +438,7 @@ public:
     // No empty group of control vertices
     qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
+    connect(new_frame, SIGNAL(manipulated()), this, SLOT(change()));
 
     Control_vertices_data hgd(deform_mesh, new_frame);
     ctrl_vertex_frame_map.push_back(hgd);

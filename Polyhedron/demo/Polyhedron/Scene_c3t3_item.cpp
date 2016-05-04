@@ -316,7 +316,6 @@ Scene_c3t3_item::Scene_c3t3_item()
   spheres = NULL;
   intersection = NULL;
   compute_bbox();
-  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
@@ -343,7 +342,6 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   spheres = NULL;
   intersection = NULL;
   compute_bbox();
-  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   reset_cut_plane();
   c3t3_changed();
@@ -399,9 +397,10 @@ void
 Scene_c3t3_item::changed()
 {
   need_changed = true;
+  QTimer::singleShot(0,this, SLOT(updateCutPlane()));
 }
 
-void Scene_c3t3_item::timerEvent(QTimerEvent* /*event*/)
+void Scene_c3t3_item::updateCutPlane()
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(need_changed) {
     are_intersection_buffers_filled = false;
@@ -1257,8 +1256,6 @@ Scene_c3t3_item::setColor(QColor c)
   color_ = c;
   compute_color_map(c);
   invalidateOpenGLBuffers();
-// changed() doesn't work because the timerEvent delays it out of the draw
-// function and the intersection is not drawn before the next draw call
   are_intersection_buffers_filled = false;
 }
 void Scene_c3t3_item::show_spheres(bool b)

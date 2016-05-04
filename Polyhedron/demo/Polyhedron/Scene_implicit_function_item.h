@@ -71,9 +71,9 @@ public:
   virtual QString toolTip() const;
   virtual void invalidateOpenGLBuffers();
 public Q_SLOTS:
-  void plane_was_moved() { need_update_ = true; }
+  void plane_was_moved() { need_update_ = true; QTimer::singleShot(0, this, SLOT(updateCutPlane())); }
   void compute_function_grid() const;
-  void timerEvent(QTimerEvent*);
+  void updateCutPlane();
 
 private:
   typedef qglviewer::Vec                  Point;

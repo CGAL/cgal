@@ -145,7 +145,6 @@ public:
     Scene_edges_item():CGAL::Three::Scene_item(1,1)
     {
         positions_lines.resize(0);
-        top = true;
     }
   ~Scene_edges_item()
   {
@@ -209,14 +208,8 @@ public:
 
 public:
   std::vector<Epic_kernel::Segment_3> edges;
-  bool top;
-
 private:
     mutable std::vector<float> positions_lines;
-    void timerEvent(QTimerEvent* /*event*/)
-    {
-       top = true;
-    }
 
   mutable QOpenGLShaderProgram *program;
 
@@ -346,6 +339,12 @@ public:
   QList<QAction*> actions() const;
 
 public Q_SLOTS:
+
+  void updateCutPlane()
+  {
+     ready_to_cut = true;
+     QTimer::singleShot(0,this,SLOT(cut()));
+  }
   void createCutPlane();
   void enableAction();
   void cut();
@@ -359,6 +358,7 @@ private:
   Scene_plane_item* plane_item;
   Scene_edges_item* edges_item;
   QAction* actionCreateCutPlane;
+  bool ready_to_cut;
 
   typedef std::map<QObject*,  AABB_tree*> Trees;
   Trees trees;
@@ -383,6 +383,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   messages = m;
   actionCreateCutPlane = new QAction(tr("Create Cutting Plane"), mainWindow);
   actionCreateCutPlane->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
+  ready_to_cut = true;
   connect(actionCreateCutPlane, SIGNAL(triggered()),
           this, SLOT(createCutPlane()));
 }
@@ -405,7 +406,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   plane_item->setColor(Qt::green);
   plane_item->setName(tr("Cutting plane"));
   connect(plane_item->manipulatedFrame(), SIGNAL(modified()),
-          this, SLOT(cut()));
+          this, SLOT(updateCutPlane()));
   scene->addItem(plane_item);
   actionCreateCutPlane->setEnabled(false);
 
@@ -427,12 +428,11 @@ void Polyhedron_demo_cut_plugin::cut() {
     edges_item = new Scene_edges_item;
     edges_item->setName("Edges of the Cut");
     edges_item->setColor(Qt::red);
-    edges_item->startTimer(0);
     connect(edges_item, SIGNAL(destroyed()),
             this, SLOT(reset_edges()));
     scene->addItem(edges_item);
   }
-  if(edges_item->top)
+  if(ready_to_cut)
   {
   const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
   const qglviewer::Vec& n =
@@ -477,6 +477,7 @@ void Polyhedron_demo_cut_plugin::cut() {
       if ( NULL != inter_seg )
         edges_item->edges.push_back(*inter_seg);
     }
+    ready_to_cut = false;
   }
 
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
@@ -484,8 +485,6 @@ void Polyhedron_demo_cut_plugin::cut() {
   scene->itemChanged(edges_item);
   }
   QApplication::restoreOverrideCursor();
-
-    edges_item->top = false;
 }
 
 void Polyhedron_demo_cut_plugin::enableAction() {
