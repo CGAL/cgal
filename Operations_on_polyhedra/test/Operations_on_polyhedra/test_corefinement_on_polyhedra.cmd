@@ -16,3 +16,5 @@ data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_inside.off
 data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_outside.off
 data-coref/P7.off data-coref/Q7.off
 data-coref/cow.off data-coref/cross.off
+data-coref/sphere.off data-coref/sphere-2.off
+data-coref/square1.off data-coref/square2.off
