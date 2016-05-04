@@ -203,6 +203,13 @@ public:
   bool save(const CGAL::Three::Scene_item*, QFileInfo) { return false; }
   QString name() const { return "segmented images"; }
 public Q_SLOTS:
+  void on_imageType_changed(int index)
+  {
+    if(index == 0)
+      ui.groupBox->setVisible(true);
+    else
+      ui.groupBox->setVisible(false);
+  }
   void selectPlanes() {
     std::vector< Scene_image_item* > seg_items;
     Scene_image_item* seg_img = NULL;
@@ -313,6 +320,7 @@ public Q_SLOTS:
 private:
   QAction* planeSwitch;
   PixelReader pxr_;
+  Ui::ImagePrecisionDialog ui;
 
   std::vector<Volume_plane_thread*> threads;
   unsigned int intersectionId;
@@ -429,6 +437,7 @@ bool Io_image_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Io_image_plugin::load(QFileInfo fileinfo) {
+  QApplication::restoreOverrideCursor();
   Image* image = new Image;
   QApplication::restoreOverrideCursor();
   if(!image->read(fileinfo.filePath().toUtf8()))
@@ -483,11 +492,13 @@ Io_image_plugin::load(QFileInfo fileinfo) {
     }
   // Get display precision
   QDialog dialog;
-  Ui::ImagePrecisionDialog ui;
   ui.setupUi(&dialog);
   
   connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+  connect(ui.imageType, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(on_imageType_changed(int)));
+
   
   // Add precision values to the dialog
   for ( int i=1 ; i<9 ; ++i )
