@@ -30,16 +30,11 @@
 #ifndef CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
-#endif
-
 #define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Implicit_to_labeling_function_wrapper.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
-#include <vector>
+#include <CGAL/Implicit_to_labeling_function_wrapper.h>
 
 namespace CGAL {
 
@@ -56,34 +51,15 @@ namespace Mesh_3 {
  */
 template<class Function_, class BGT>
 class Implicit_to_labeled_function_wrapper
+  : public CGAL::Implicit_to_labeling_function_wrapper<Function_, BGT>
 {
+  typedef CGAL::Implicit_to_labeling_function_wrapper<Function_, BGT> Base;
 public:
-  // Types
-  typedef int                     return_type;
-  typedef typename BGT::Point_3   Point_3;
-
   /// Constructor
   Implicit_to_labeled_function_wrapper(const Function_& f)
-    : r_f_(f) {}
-
-  // Default copy constructor and assignment operator are ok
-
-  /// Destructor
-  ~Implicit_to_labeled_function_wrapper() {}
-
-  /// Operator ()
-  return_type operator()(const Point_3& p, const bool = true) const
-  {
-    return ( (r_f_(p)<0) ? 1 : 0 );
-  }
-
-private:
-  /// Function to wrap
-  const Function_& r_f_;
-
+    : Base(f)
+  {}
 };  // end class Implicit_to_labeled_function_wrapper
-
-
 
 /**
  * \deprecated
@@ -100,56 +76,19 @@ private:
  */
 template<class Function_, class BGT>
 class Implicit_vector_to_labeled_function_wrapper
+  : public CGAL::Implicit_vector_to_labeling_function_wrapper<Function_, BGT>
 {
+  typedef CGAL::Implicit_vector_to_labeling_function_wrapper<Function_,
+                                                             BGT> Base;
 public:
-  // Types
-  typedef int                       return_type;
-  typedef std::vector<Function_*>   Function_vector;
-  typedef typename BGT::Point_3     Point_3;
-
   /// Constructor
   Implicit_vector_to_labeled_function_wrapper(const std::vector<Function_*>& v)
-    : function_vector_(v) {}
-
-  // Default copy constructor and assignment operator are ok
-
-  /// Destructor
-  ~Implicit_vector_to_labeled_function_wrapper() {}
-
-  /// Operator ()
-  return_type operator()(const Point_3& p, const bool = true) const
-  {
-    int nb_func = static_cast<int>(function_vector_.size());
-    if ( nb_func > 8 )
-    {
-      CGAL_error_msg("We support at most 8 functions !");
-    }
-
-    char bits = 0;
-    for ( int i = 0 ; i < nb_func ; ++i )
-    {
-      // Insert value into bits : we compute fi(p) and insert result at
-      // bit i of bits
-      bits |= ( ((*function_vector_[i])(p) < 0) << i );
-    }
-
-    return ( static_cast<return_type>(bits) );
-  }
-
-private:
-  /// Functions to wrap
-  const Function_vector function_vector_;
+    : Base(v) {}
 
 };  // end class Implicit_to_labeled_function_wrapper
 
 }  // end namespace Mesh_3
 
 }  // end namespace CGAL
-
-
-
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
 
 #endif // CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H

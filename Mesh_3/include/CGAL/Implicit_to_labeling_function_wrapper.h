@@ -36,6 +36,7 @@
 #  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
+#include <vector>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>

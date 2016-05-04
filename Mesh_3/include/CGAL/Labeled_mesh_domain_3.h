@@ -38,6 +38,7 @@
 #include <boost/optional.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Random.h>
 
 namespace CGAL {
 
@@ -66,7 +67,6 @@ public:
   typedef typename BGT::Sphere_3   Sphere_3;
   typedef CGAL::Bbox_3             Bbox_3;
 
-protected:
   typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
 
 public:
