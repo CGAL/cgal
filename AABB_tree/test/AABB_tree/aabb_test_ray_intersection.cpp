@@ -3,19 +3,17 @@
 #include <iterator>
 
 #include <boost/functional/value_factory.hpp>
-#include <boost/timer/timer.hpp>
 #include <boost/array.hpp>
 
 #include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Timer.h>
 
