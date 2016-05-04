@@ -510,7 +510,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           HF_circulator end = he;
           CGAL_For_all(he,end)
           {
-            if (!item->isItemMulticolor())
+            if (item->isItemMulticolor())
             {
               color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
               color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
