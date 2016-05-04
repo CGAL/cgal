@@ -1484,15 +1484,23 @@ void MainWindow::on_actionSaveAs_triggered()
 
 void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
   QFileInfo fileinfo(filename);
-
+  bool saved = false;
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(  plugin->canSave(item) &&
         file_matches_filter(plugin->saveNameFilters(),filename) )
     {
       if(plugin->save(item, fileinfo))
+      {
+        saved = true;
         break;
+      }
     }
   }
+  if(!saved)
+    QMessageBox::warning(this,
+                         tr("Cannot save"),
+                         tr("The selected object %1 was not saved. (Maybe a wrong extension ?)")
+                         .arg(item->name()));
 }
 
 void MainWindow::on_actionSaveSnapshot_triggered()
