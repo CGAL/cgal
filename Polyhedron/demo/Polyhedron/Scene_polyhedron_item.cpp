@@ -3,6 +3,8 @@
 #include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/File_writer_wavefront.h>
+#include <CGAL/IO/generic_copy_OFF.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -729,6 +731,15 @@ Scene_polyhedron_item::save(std::ostream& out) const
     out << *poly;
     return (bool) out;
 }
+
+bool
+Scene_polyhedron_item::save_obj(std::ostream& out) const
+{
+  CGAL::File_writer_wavefront  writer;
+  CGAL::generic_print_polyhedron(out, *poly, writer);
+  return out.good();
+}
+
 
 QString
 Scene_polyhedron_item::toolTip() const
