@@ -38,6 +38,8 @@ struct Selection_traits<typename SelectionItem::Vertex_handle, SelectionItem>
 {
   typedef typename SelectionItem::Selection_set_vertex Container;
   typedef boost::graph_traits<Polyhedron>::vertex_iterator Iterator;
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+
   Selection_traits(SelectionItem* item) : item(item) { }
 
   Container& container() { return item->selected_vertices; }
@@ -172,6 +174,9 @@ public:
   typedef Polyhedron::Vertex_handle   Vertex_handle;
   typedef Polyhedron::Facet_handle    Facet_handle;
   typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
   typedef Polyhedron::Vertex_iterator Vertex_iterator;
   typedef Polyhedron::Facet_iterator  Facet_iterator;
   typedef Scene_polyhedron_item_k_ring_selection::Active_handle Active_handle;
@@ -266,6 +271,11 @@ public:
     return this->poly_item->polyhedron();
   }
 
+  const Polyhedron* polyhedron() const
+  {
+    return this->poly_item->polyhedron();
+  }
+
     using Scene_polyhedron_item_decorator::draw;
     virtual void draw(CGAL::Three::Viewer_interface*) const;
     virtual void draw_edges() const { }
@@ -330,9 +340,10 @@ public:
 
   bool save(const std::string& file_name) const {
     // update id fields before using
-    if(selected_vertices.size() > 0) { poly_item->update_vertex_indices();   }
-    if(selected_facets.size() > 0)   { poly_item->update_facet_indices();    }
-    if(selected_edges.size() > 0)    { poly_item->update_halfedge_indices(); }
+    if(selected_vertices.size() > 0) { poly_item->update_vertex_indices(); }
+    if(selected_facets.size() > 0)   { poly_item->update_facet_indices();  }
+    if( (selected_edges.size() > 0) &&
+        selected_vertices.empty() )   { poly_item->update_vertex_indices(); }
 
     std::ofstream out(file_name.c_str());
     if(!out) { return false; }
@@ -346,14 +357,22 @@ public:
     out << std::endl;
 
     for(Selection_set_edge::const_iterator it = selected_edges.begin(); it != selected_edges.end(); ++it) 
-    { out << it->id() << " "; }
+    {
+      edge_descriptor ed = *it;
+      out << source(ed,*polyhedron())->id() << " " << target(ed,*polyhedron())->id() << " ";
+    }
+
     out << std::endl;
     return true;
   }
+
+
   bool load(const std::string& file_name) {
     file_name_holder = file_name;
     return true;
   }
+
+
   // this function is called by selection_plugin, since at the time of the call of load(...) 
   // we do not have access to selected polyhedron item
   bool actual_load(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
@@ -376,7 +395,7 @@ public:
     if(!in) { return false; }
 
     std::string line;
-    std::size_t id;
+    std::size_t id, id2;
 
     if(!std::getline(in, line)) { return true; }
     std::istringstream vertex_line(line);
@@ -394,9 +413,15 @@ public:
 
     if(!std::getline(in, line)) { return true; }
     std::istringstream edge_line(line);
-    while(edge_line >> id) {
-      if(id >= all_edges.size()) { return false; }
-      selected_edges.insert(all_edges[id]);
+    while(edge_line >> id >> id2) {
+      if(id >= all_edges.size() || id2 >= all_edges.size()) { return false; }
+      vertex_descriptor s = all_vertices[id];
+      vertex_descriptor t = all_vertices[id2];
+      halfedge_descriptor hd;
+      bool exists;
+      boost::tie(hd,exists) = halfedge(s,t,*polyhedron());
+      if(! exists) { return false; }
+      selected_edges.insert(edge(hd,*polyhedron()));
     }
     return true;
   }
