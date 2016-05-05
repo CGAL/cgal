@@ -14,13 +14,13 @@
 #include <CGAL/minkowski_sum_3.h>
 #include <CGAL/convex_decomposition_3.h>
 
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
 typedef Nef_polyhedron::Traits Traits;
 typedef Nef_polyhedron::Halffacet Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Nef_polyhedron::Halfedge_const_handle Halfedge_handle;
 struct Face_info {
     Nef_polyhedron::Halfedge_const_handle e[3];

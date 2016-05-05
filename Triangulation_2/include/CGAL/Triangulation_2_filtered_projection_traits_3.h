@@ -22,64 +22,10 @@
 #ifndef CGAL_TRIANGULATION_2_FILTERED_PROJECTION_TRAITS_3_H
 #define CGAL_TRIANGULATION_2_FILTERED_PROJECTION_TRAITS_3_H
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
-#include <CGAL/Filtered_predicate.h>
+#define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_2_filtered_projection_traits_3.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Triangulation_2_projection_traits_3.h>"
+#include <CGAL/internal/deprecation_warning.h>
 
-namespace CGAL {
-
-template < class Filtered_kernel >
-class Triangulation_2_filtered_projection_traits_3
-  : public Triangulation_2_projection_traits_3<Filtered_kernel>
-{
-  typedef Filtered_kernel K;
-  typedef Triangulation_2_filtered_projection_traits_3<K> Self;
-  typedef Triangulation_2_projection_traits_3<K> Base;
-
-  typedef typename K::Exact_kernel Exact_kernel;
-  typedef typename K::Approximate_kernel Approximate_kernel;
-  typedef typename K::C2E C2E;
-  typedef typename K::C2F C2F;
-
-public:
-  typedef Triangulation_2_projection_traits_3<Exact_kernel> Exact_traits;
-  typedef Triangulation_2_projection_traits_3<Approximate_kernel> Filtering_traits;
-
-public:
-  explicit Triangulation_2_filtered_projection_traits_3(const typename K::Vector_3& n)
-    : Base(n)
-  {
-  }
-
-#define CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(P, Pf, ACCESSOR)    \
-  typedef  Filtered_predicate< \
-    typename Exact_traits::P, \
-    typename Filtering_traits::P, \
-    C2E, \
-    C2F > P; \
-  P Pf() const { \
-    return P(this->ACCESSOR()); \
-  }
-  CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Orientation_2,
-                                               orientation_2_object,
-                                               normal)
-  CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Side_of_oriented_circle_2,
-                                               side_of_oriented_circle_2_object,
-                                               normal)
-  CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Less_x_2,
-					       less_x_2_object,
-					       base1)
-  CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Less_y_2,
-					       less_y_2_object,
-					       base2)
-  CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Compare_x_2,
-					       compare_x_2_object,
-					       base1)
-  CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Compare_y_2,
-					       compare_y_2_object,
-					       base2)
-}; // end class Triangulation_2_projection_traits_3<Filtered_kernel>
-
-} // end namespace CGAL
-
+#include <CGAL/internal/Triangulation_2_filtered_projection_traits_3.h>
 
 #endif // CGAL_TRIANGULATION_2_FILTERED_PROJECTION_TRAITS_3_H

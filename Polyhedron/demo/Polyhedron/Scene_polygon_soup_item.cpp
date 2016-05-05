@@ -28,7 +28,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
@@ -154,7 +154,7 @@ Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewe
 
 typedef Polyhedron::Traits Traits;
 typedef Polygon_soup::Polygon_3 Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 struct Face_info {
     Polyhedron::Halfedge_handle e[3];
