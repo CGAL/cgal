@@ -453,12 +453,15 @@ Mesh_3/examples/Mesh_3/test_off
 /Mesh_3/test/Mesh_3/test_mesh_3_implicit_vector_to_labeled_function_wrapper
 /Mesh_3/test/Mesh_3/test_mesh_3_labeled_mesh_domain_3
 /Mesh_3/test/Mesh_3/test_mesh_criteria_creation
+/Mesh_3/test/Mesh_3/test_mesh_implicit_domains
 /Mesh_3/test/Mesh_3/test_meshing_3D_gray_image
 /Mesh_3/test/Mesh_3/test_meshing_3D_image
+/Mesh_3/test/Mesh_3/test_meshing_determinism
 /Mesh_3/test/Mesh_3/test_meshing_implicit_function
 /Mesh_3/test/Mesh_3/test_meshing_polyhedron
 /Mesh_3/test/Mesh_3/test_meshing_polyhedron_with_features
 /Mesh_3/test/Mesh_3/test_meshing_polylines_only
+/Mesh_3/test/Mesh_3/test_meshing_unit_tetrahedron
 /Mesh_3/test/Mesh_3/test_off
 /Mesh_3/test/Mesh_3/test_robust_weighted_circumcenter
 /Mesh_3/test/Mesh_3/test-tetgen.elem
