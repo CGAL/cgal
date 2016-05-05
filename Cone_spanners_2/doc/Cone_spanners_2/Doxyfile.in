@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Cone-Based Spanners"
+INPUT        = ${CMAKE_SOURCE_DIR}/Cone_spanners_2/doc/Cone_spanners_2/ \
+               ${CMAKE_SOURCE_DIR}/Cone_spanners_2/include
+EXCLUDE      = ${CMAKE_SOURCE_DIR}/Cone_spanners_2/include/CGAL/Cone_spanners_2
+EXTRACT_ALL                =  NO
+HIDE_UNDOC_CLASSES         =  YES
+HIDE_UNDOC_MEMBERS         =  YES
+
