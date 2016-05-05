@@ -38,17 +38,17 @@ FT point_on_ray_dist(const Ray& ray, const Point& point) {
 std::size_t accum = 0;
 
 boost::optional<
-  Tree::template Intersection_and_primitive_id<Ray>::Type
+  Tree::Intersection_and_primitive_id<Ray>::Type
   >
 min_intersection(const Tree& tree, const Ray& ray) {
-  typedef std::vector< Tree::template Intersection_and_primitive_id<Ray>::Type > IntersectionVector;
+  typedef std::vector< Tree::Intersection_and_primitive_id<Ray>::Type > IntersectionVector;
   IntersectionVector all_intersections;
 
   tree.all_intersections(ray, std::back_inserter(all_intersections));
   accum += all_intersections.size();
   Tree::FT min_distance = DBL_MAX;
   boost::optional<
-    Tree::template Intersection_and_primitive_id<Ray>::Type
+    Tree::Intersection_and_primitive_id<Ray>::Type
     > mini = boost::none;
 
   for(IntersectionVector::iterator it2 = all_intersections.begin(); it2 != all_intersections.end(); ++it2) {
