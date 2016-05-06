@@ -178,6 +178,7 @@ public Q_SLOTS:
   //!Removes item from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
 
+  void addGroup(Scene_group_item* group);
   //!Re-organizes the sceneView.
   void redraw_model();
   //! Sets the selected item to the target index.
@@ -250,7 +251,6 @@ private Q_SLOTS:
   //! Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
-  void addGroup(Scene_group_item*);
   void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
 private:
   /*! Calls the drawing functions of each visible item according

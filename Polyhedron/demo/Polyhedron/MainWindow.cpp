@@ -1197,7 +1197,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
             menu->addAction(tr("Statistics..."));
         actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
         connect(actionStatistics, SIGNAL(triggered()),
-                this, SLOT(statistics_on_item()));
+                this, SLOT(statisticsOnItem()));
       }
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
@@ -1296,14 +1296,12 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
-  {
     QSettings settings;
     // enable anti-aliasing 
     ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-  }
 }
 
 void MainWindow::writeSettings()

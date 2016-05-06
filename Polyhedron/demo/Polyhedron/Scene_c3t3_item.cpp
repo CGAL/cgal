@@ -750,6 +750,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(renderingMode() == Wireframe)
   {
     vaos[Grid]->bind();
+
     program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program->bind();
@@ -785,8 +786,6 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     else if(frame->isManipulated() && intersection->visible())
       intersection->setVisible(false);
   }
-
-
   if(spheres_are_shown)
   {
       spheres->setPlane(this->plane());
@@ -1019,6 +1018,7 @@ QMenu* Scene_c3t3_item::contextMenu()
   }
   return menu;
 }
+
 
 void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 {
