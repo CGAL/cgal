@@ -31,18 +31,18 @@ struct Scene_polyhedron_transform_item_priv
       NbOfVbos
   };
 
-  Scene_polyhedron_transform_item *item;
   const Scene_polyhedron_item* poly_item;
+  bool manipulable;
   qglviewer::ManipulatedFrame* frame;
   const Polyhedron* poly;
   qglviewer::Vec center_;
+  Scene_polyhedron_transform_item *item;
 
 
   mutable QOpenGLShaderProgram *program;
   mutable std::vector<float> positions_lines;
   mutable std::size_t nb_lines;
   mutable bool are_buffers_filled;
-  bool manipulable;
 };
 
 Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const CGAL::Three::Scene_interface*):
