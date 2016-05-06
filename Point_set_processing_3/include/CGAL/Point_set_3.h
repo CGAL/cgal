@@ -26,6 +26,7 @@
 namespace CGAL {
 
 
+
 /*!
 
   \ingroup PkgPointSetProcessing
@@ -121,7 +122,8 @@ protected:
       ++pm.ind;
     }
   };
-  
+
+
   typedef Property_push_pmap<Point_pmap> Point_push_pmap;
   typedef Property_push_pmap<Vector_pmap> Normal_push_pmap;
 
@@ -209,17 +211,23 @@ public:
 
   void collect_garbage ()
   {
-    for (std::size_t i = 0; i < size(); ++ i)
-      if (i != m_indices[i])
-        {
-          m_base.swap (i, m_indices[i]);
-          -- i;
-        }
+    // Indices indicate where to get the properties
+    std::vector<std::size_t> indices (m_base.size());
+    for (std::size_t i = 0; i < m_base.size(); ++ i)
+      indices[m_indices[i]] = i;
+
+    // Indices now indicate where to put the properties
+    for (std::size_t i = 0; i < m_base.size(); ++ i)
+      m_indices[i] = indices[i];
+
+    // Sorting based on the indices reorders the point set correctly
+    quick_sort_on_indices ((std::ptrdiff_t)0, (std::ptrdiff_t)(m_base.size() - 1));
+
     m_base.resize (size ());
     m_base.shrink_to_fit ();
     m_nb_removed = 0;
   }
-  
+
   void clear()
   {
     m_base.clear();
@@ -232,6 +240,8 @@ public:
   const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
   Point& point (Item index) { return m_points[m_indices[index]]; }
   const Point& point (Item index) const { return m_points[m_indices[index]]; }
+  Point& point (iterator it) { return m_points[*it]; }
+  const Point& point (iterator it) const { return m_points[*it]; }
 
   void add_item ()
   {
@@ -240,7 +250,7 @@ public:
 
   void remove_from (iterator it)
   {
-    m_nb_removed = static_cast<std::size_t>(std::distance (it, end()));
+    m_nb_removed = static_cast<std::size_t>(std::distance (it, removed_end()));
   }
   
   void remove (iterator it)
@@ -281,6 +291,8 @@ public:
   }
   Vector& normal (Item index) { return m_normals[m_indices[index]]; }
   const Vector& normal (Item index) const { return m_normals[m_indices[index]]; }
+  Vector& normal (iterator it) { return m_normals[*it]; }
+  const Vector& normal (iterator it) const { return m_normals[*it]; }
 
   template <typename T>
   bool has_property (const std::string& name) const
@@ -339,9 +351,38 @@ public:
   }
 
 
+private:
+
+    void quick_sort_on_indices (std::ptrdiff_t begin, std::ptrdiff_t end)
+  {
+    if (begin < end)
+      {
+        std::ptrdiff_t p = begin + (rand() % (end - begin));
+        p = quick_sort_partition (begin, end, p);
+        quick_sort_on_indices (begin, p-1);
+        quick_sort_on_indices (p+1, end);
+      }
+  }
+
+  std::ptrdiff_t quick_sort_partition (std::ptrdiff_t begin, std::ptrdiff_t end, std::ptrdiff_t p)
+  {
+    m_base.swap (p, end);
+    std::ptrdiff_t j = begin;
+    for (std::ptrdiff_t i = begin; i < end; ++ i)
+      if (m_indices[i] <= m_indices[end])
+        {
+          m_base.swap (i, j);
+          j ++;
+        }
+    m_base.swap (end, j);
+    return j;
+  }
+  
+
   
 }; // end of class Point_set_3
 
 } // namespace CGAL
+
 
 #endif // CGAL_POINT_SET_3_H
