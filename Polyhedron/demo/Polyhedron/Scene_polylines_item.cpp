@@ -76,7 +76,7 @@ Scene_polylines_item::computeElements() const
 }
 
 void
-Scene_polylines_item::compute_Spheres()
+Scene_polylines_item::computeSpheres()
 {
       // FIRST, count the number of incident cycles and polylines
       // for all extremities.
@@ -301,7 +301,7 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     vaos[Edges]->release();
     if(d->draw_extremities)
     {
-       Scene_group_item::draw_edges(viewer);
+       Scene_group_item::drawEdges(viewer);
     }
 
 }
@@ -326,7 +326,7 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
    program->release();
    if(d->draw_extremities)
    {
-      Scene_group_item::draw_points(viewer);
+      Scene_group_item::drawPoints(viewer);
    }
 }
 
@@ -403,7 +403,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(spheres);
           scene->changeGroup(spheres, this);
           lockChild(spheres);
-          compute_Spheres();
+          computeSpheres();
           spheres->invalidateOpenGLBuffers();
         }
         else if (r<=0 && spheres!=NULL)

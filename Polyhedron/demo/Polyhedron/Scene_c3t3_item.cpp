@@ -116,7 +116,7 @@ public :
   {
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
     program->bind();
 
     // positions_poly is also used for the faces in the cut plane
@@ -125,11 +125,11 @@ public :
     program->release();
     vaos[Facets]->release();
   }
-  void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const
   {
     vaos[Lines]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(edges->size() / 3));
@@ -751,9 +751,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   {
     vaos[Grid]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(Qt::black));
     QMatrix4x4 f_mat;
@@ -793,7 +791,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   {
       spheres->setPlane(this->plane());
   }
-  Scene_group_item::draw_edges(viewer);
+  Scene_group_item::drawEdges(viewer);
   if(cnc_are_shown)
   {
     vaos[CNC]->bind();
@@ -804,49 +802,6 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines_not_in_complex_size / 3));
     program->release();
     vaos[Edges]->release();
-  }
-  if(spheres_are_shown)
-  {
-      vaos[Wired_spheres]->bind();
-      program_sphere->bind();
-      //ModelViewMatrix used for the transformation of the camera.
-      QMatrix4x4 mvp_mat;
-      // ModelView Matrix used for the lighting system
-      QMatrix4x4 mv_mat;
-      GLdouble d_mat[16];
-      GLint is_both_sides = 0;
-      viewer->camera()->getModelViewProjectionMatrix(d_mat);
-      //Convert the GLdoubles matrices in GLfloats
-      for (int i=0; i<16; ++i){
-          mvp_mat.data()[i] = GLfloat(d_mat[i]);
-      }
-      viewer->camera()->getModelViewMatrix(d_mat);
-      for (int i=0; i<16; ++i)
-          mv_mat.data()[i] = GLfloat(d_mat[i]);
-      QVector4D position(0.0f,0.0f,1.0f, 1.0f );
-      QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-      // Diffuse
-      QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-      // Specular
-      QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
-      viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
-
-
-      program_sphere->setUniformValue("mvp_matrix", mvp_mat);
-      program_sphere->setUniformValue("mv_matrix", mv_mat);
-      program_sphere->setUniformValue("light_pos", position);
-      program_sphere->setUniformValue("light_diff",diffuse);
-      program_sphere->setUniformValue("light_spec", specular);
-      program_sphere->setUniformValue("light_amb", ambient);
-      program_sphere->setUniformValue("spec_power", 51.8f);
-      program_sphere->setUniformValue("is_two_side", is_both_sides);
-
-      viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(ws_vertex.size()/3),
-                                    static_cast<GLsizei>(s_radius.size()));
-      program_sphere->release();
-      vaos[Wired_spheres]->release();
->>>>>>> Plugin API made in CamelCase
   }
 }
 
@@ -871,7 +826,7 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
 
   vaos[Grid]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+  attribBuffers(viewer, PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors", this->color());
   QMatrix4x4 f_mat;
@@ -885,7 +840,7 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
   {
     spheres->setPlane(this->plane());
   }
-  Scene_group_item::draw_edges(viewer);
+  Scene_group_item::drawEdges(viewer);
 
 }
 
@@ -1065,7 +1020,7 @@ QMenu* Scene_c3t3_item::contextMenu()
   return menu;
 }
 
-void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
+void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 {
   //vao containing the data for the facets
   {

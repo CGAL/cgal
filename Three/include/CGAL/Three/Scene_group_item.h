@@ -85,9 +85,9 @@ public :
     /// Draw functions
     ///@{
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_splats(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+    virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
     //!Adds a Scene_item* to the list of children.
@@ -147,8 +147,6 @@ public :
       item->has_group=0;
       Scene_group_item* group =
          qobject_cast<Scene_group_item*>(item);
-      if(group)
-        resetHasGroup(group);
       children.removeOne(item);
     }
     //!Moves a child up in the list.

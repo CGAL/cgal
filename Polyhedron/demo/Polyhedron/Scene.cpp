@@ -80,7 +80,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
-        add_group(group);
+        addGroup(group);
     //if group selected, add item to it
     if(mainSelectionIndex() >=0)
     {
@@ -123,7 +123,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
     {
-        add_group(group);
+        addGroup(group);
     }
     itemChanged(index);
     Q_EMIT restoreCollapsedState();

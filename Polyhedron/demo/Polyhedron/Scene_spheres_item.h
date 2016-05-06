@@ -52,7 +52,7 @@ public:
   void setPrecision(int prec) { precision = prec; }
 
   void draw(CGAL::Three::Viewer_interface* viewer) const;
-  void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
   void invalidateOpenGLBuffers(){are_buffers_filled = false;}
   void computeElements() const;
   void setPlane(Kernel::Plane_3 p_plane) { plane = p_plane; }

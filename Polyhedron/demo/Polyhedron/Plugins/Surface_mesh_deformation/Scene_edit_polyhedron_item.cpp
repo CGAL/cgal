@@ -651,6 +651,7 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* ) const
     }
 }
 
+
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer) const {
 
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
@@ -683,83 +684,71 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
         program->release();
         vaos[Control_points]->release();
     }
-    else{
-        vaos[Control_spheres]->bind();
-        program = getShaderProgram(PROGRAM_INSTANCED);
-        attribBuffers(viewer,PROGRAM_INSTANCED);
-        program->bind();
-        program->setAttributeValue("colors", QColor(255,0,0));
-        viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(nb_sphere/3),
-                                    static_cast<GLsizei>(nb_control/3));
-        program->release();
-        vaos[Control_spheres]->release();
-    }
 
     QGLViewer* viewerB = *QGLViewer::QGLViewerPool().begin();
-  for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
-  {
-        if(hgb_data->frame == viewerB->manipulatedFrame())
-    {      
-            GLfloat f_matrix[16];
-            for(int i =0; i<16; i++)
-                f_matrix[i] = hgb_data->frame->matrix()[i];
-            QMatrix4x4 f_mat;
-                for(int i=0; i<16; i++)
-                    f_mat.data()[i] = (float)f_matrix[i];
-            vaos[Axis]->bind();
-            program = getShaderProgram(PROGRAM_NO_SELECTION);
-            attribBuffers(viewer, PROGRAM_NO_SELECTION);
-            program->bind();
-            program->setUniformValue("f_matrix", f_mat);
-            viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));
-            program->release();
-            vaos[Axis]->release();
+    for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
+    {
+         if(hgb_data->frame == viewerB->manipulatedFrame())
+         {
+              GLfloat f_matrix[16];
+              for(int i =0; i<16; i++)
+                  f_matrix[i] = hgb_data->frame->matrix()[i];
+              QMatrix4x4 f_mat;
+                  for(int i=0; i<16; i++)
+                      f_mat.data()[i] = (float)f_matrix[i];
+              vaos[Axis]->bind();
+              program = getShaderProgram(PROGRAM_NO_SELECTION);
+              attribBuffers(viewer, PROGRAM_NO_SELECTION);
+              program->bind();
+              program->setUniformValue("f_matrix", f_mat);
+              viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));
+              program->release();
+              vaos[Axis]->release();
 
-            //QGLViewer::drawAxis(length_of_axis);
-      // draw bbox
-      if(!ui_widget->ActivatePivotingCheckBox->isChecked())
-      {
-                GLfloat f_matrix[16];
-                GLfloat trans[3];
-                GLfloat trans2[3];
+              //QGLViewer::drawAxis(length_of_axis);
+              // draw bbox
+              if(!ui_widget->ActivatePivotingCheckBox->isChecked())
+              {
+                        GLfloat f_matrix[16];
+                        GLfloat trans[3];
+                        GLfloat trans2[3];
 
-                trans[0] = hgb_data->frame->position().x;
-                trans[1] = hgb_data->frame->position().y;
-                trans[2] = hgb_data->frame->position().z;
+                        trans[0] = hgb_data->frame->position().x;
+                        trans[1] = hgb_data->frame->position().y;
+                        trans[2] = hgb_data->frame->position().z;
 
-                trans2[0] = -hgb_data->frame_initial_center.x;
-                trans2[1] = -hgb_data->frame_initial_center.y;
-                trans2[2] = -hgb_data->frame_initial_center.z;
+                        trans2[0] = -hgb_data->frame_initial_center.x;
+                        trans2[1] = -hgb_data->frame_initial_center.y;
+                        trans2[2] = -hgb_data->frame_initial_center.z;
 
-                for(int i =0; i<16; i++)
-                    f_matrix[i] = hgb_data->frame->orientation().matrix()[i];
-                QMatrix4x4 f_mat;
-                QMatrix4x4 mvp_mat;
+                        for(int i =0; i<16; i++)
+                            f_matrix[i] = hgb_data->frame->orientation().matrix()[i];
+                        QMatrix4x4 f_mat;
+                        QMatrix4x4 mvp_mat;
 
-                QVector3D vec(trans[0], trans[1], trans[2]);
-                QVector3D vec2(trans2[0], trans2[1], trans2[2]);
-                    for(int i=0; i<16; i++)
-                        f_mat.data()[i] = (float)f_matrix[i];
-                    GLdouble temp_mat[16];
-                    viewer->camera()->getModelViewProjectionMatrix(temp_mat);
-                    for(int i=0; i<16; i++)
-                        mvp_mat.data()[i] = (float)temp_mat[i];
-                vaos[BBox]->bind();
-                bbox_program.bind();
-                bbox_program.setUniformValue("rotations", f_mat);
-                bbox_program.setUniformValue("translation", vec);
-                bbox_program.setUniformValue("translation_2", vec2);
-                bbox_program.setUniformValue("mvp_matrix", mvp_mat);
-                program->setAttributeValue("colors", QColor(255,0,0));
-                viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_bbox/3));
-                bbox_program.release();
-                vaos[BBox]->release();
+                        QVector3D vec(trans[0], trans[1], trans[2]);
+                        QVector3D vec2(trans2[0], trans2[1], trans2[2]);
+                            for(int i=0; i<16; i++)
+                                f_mat.data()[i] = (float)f_matrix[i];
+                            GLdouble temp_mat[16];
+                            viewer->camera()->getModelViewProjectionMatrix(temp_mat);
+                            for(int i=0; i<16; i++)
+                                mvp_mat.data()[i] = (float)temp_mat[i];
+                        vaos[BBox]->bind();
+                        bbox_program.bind();
+                        bbox_program.setUniformValue("rotations", f_mat);
+                        bbox_program.setUniformValue("translation", vec);
+                        bbox_program.setUniformValue("translation_2", vec2);
+                        bbox_program.setUniformValue("mvp_matrix", mvp_mat);
+                        program->setAttributeValue("colors", QColor(255,0,0));
+                        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_bbox/3));
+                        bbox_program.release();
+                        vaos[BBox]->release();
+              }
+         }
     }
-    }
-  }
 
-  } 
+}
 
 
 void Scene_edit_polyhedron_item::compute_bbox(const CGAL::Three::Scene_interface::Bbox& bb){
