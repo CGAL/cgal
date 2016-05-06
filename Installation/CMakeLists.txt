@@ -44,6 +44,7 @@ if ( CGAL_BRANCH_BUILD )
 
   # list packages
   file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/*")
+  list(SORT CGAL_CONFIGURED_PACKAGES)
   list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES copyright CMakeLists.txt .svn .git)
 
   # detect and remove not existing package-directories
@@ -188,6 +189,7 @@ if ( CGAL_BRANCH_BUILD )
     foreach (package ${CGAL_CONFIGURED_PACKAGES})
 
       file(GLOB_RECURSE CGAL_PACKAGE_HEADER_FILES FOLLOW_SYMLINKS ${package}/*.h)
+      list(SORT CGAL_PACKAGE_HEADER_FILES)
       foreach (file ${CGAL_PACKAGE_HEADER_FILES})
         string(REPLACE "${package}/" "" pure_file ${file})
         if (NOT ${pure_file} MATCHES ".*CMakeFiles.*")
@@ -196,6 +198,7 @@ if ( CGAL_BRANCH_BUILD )
       endforeach()
 
       file(GLOB_RECURSE CGAL_PACKAGE_CPP_FILES FOLLOW_SYMLINKS ${package}/*.cpp)
+      list(SORT CGAL_PACKAGE_CPP_FILES)
       foreach (file ${CGAL_PACKAGE_CPP_FILES})
         string(REPLACE "${package}/" "" pure_file ${file})
         if (NOT ${pure_file} MATCHES ".*CMakeFiles.*")
@@ -778,6 +781,7 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
       message(STATUS "  File '${hfile}' multiply found in ")
       foreach (package ${CGAL_CONFIGURED_PACKAGES})
         file(GLOB_RECURSE CGAL_PACKAGE_HEADER_FILES FOLLOW_SYMLINKS ${package}/*.h)
+        list(SORT CGAL_PACKAGE_HEADER_FILES)
         foreach (file ${CGAL_PACKAGE_HEADER_FILES})
           string(REPLACE "${package}/" "" pure_file ${file})
           if ("${pure_file}" STREQUAL "${hfile}")
@@ -794,6 +798,7 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
       message(STATUS "  File '${cfile}' multiply found in ")
       foreach (package ${CGAL_CONFIGURED_PACKAGES})
         file(GLOB_RECURSE CGAL_PACKAGE_CPP_FILES FOLLOW_SYMLINKS ${package}/*.cpp)
+        list(SORT CGAL_PACKAGE_CPP_FILES)
         foreach (file ${CGAL_PACKAGE_CPP_FILES})
           string(REPLACE "${package}/" "" pure_file ${file})
           if ("${pure_file}" STREQUAL "${cfile}")
@@ -831,6 +836,7 @@ endforeach()
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
 
 file(GLOB scripts "scripts/*")
+list(SORT scripts)
 list(REMOVE_ITEM scripts 
   ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_assertions.sh 
   ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_cmake_script_with_options)
@@ -1011,6 +1017,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         file(GLOB ${package}_HEADERS 
           RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
           "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
+        list(SORT ${package}_HEADERS)
         foreach(header ${${package}_HEADERS})
           string(REPLACE "/" "__" header2 "${header}")
           string(REPLACE "." "_" header2 "${header2}")

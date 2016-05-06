@@ -53,6 +53,7 @@ set(RESOURCE_FILES "")
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES} )
   file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGAL_Qt5/*.qtmoc.cmake")
+  list(SORT PACKAGE_QTMOC_FILES)
   foreach(package_qtmoc_file ${PACKAGE_QTMOC_FILES})
     # includes 'moccing' for sources/headers in package + collects lists of moc-files for dependency (to properly build the lib)
     include(${package_qtmoc_file}) 
