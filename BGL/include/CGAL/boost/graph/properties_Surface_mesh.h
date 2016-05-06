@@ -262,7 +262,7 @@ namespace internal {
   template<typename Point>                                              \
   RET                                                                   \
   get(PROP p, const CGAL::Surface_mesh<Point>& sm,                      \
-      typename boost::disable_if<                                       \
+      typename boost::lazy_disable_if<                                       \
         boost::is_const<Point>, internal::Get_graph_traits_of_SM<Point> \
         >::type::TYPE x)                                                \
   { return get(get(p, sm), x); }                                        \
