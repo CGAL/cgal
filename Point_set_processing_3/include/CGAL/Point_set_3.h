@@ -21,6 +21,8 @@
 #ifndef CGAL_POINT_SET_3_H
 #define CGAL_POINT_SET_3_H
 
+#include <stack>
+
 #include <CGAL/Surface_mesh/Properties.h>
 
 namespace CGAL {
@@ -353,14 +355,25 @@ public:
 
 private:
 
-    void quick_sort_on_indices (std::ptrdiff_t begin, std::ptrdiff_t end)
+  void quick_sort_on_indices (std::ptrdiff_t begin, std::ptrdiff_t end)
   {
-    if (begin < end)
+    std::stack<std::pair<std::ptrdiff_t, std::ptrdiff_t> >
+      todo;
+    todo.push (std::make_pair (begin, end));
+    
+    while (!(todo.empty()))
       {
-        std::ptrdiff_t p = begin + (rand() % (end - begin));
-        p = quick_sort_partition (begin, end, p);
-        quick_sort_on_indices (begin, p-1);
-        quick_sort_on_indices (p+1, end);
+        std::pair<std::ptrdiff_t, std::ptrdiff_t>
+          current = todo.top();
+        todo.pop();
+        
+        if (current.first < current.second)
+          {
+            std::ptrdiff_t p = current.first + (rand() % (current.second - current.first));
+            p = quick_sort_partition (current.first, current.second, p);
+            todo.push (std::make_pair (current.first, p-1));
+            todo.push (std::make_pair (p+1, current.second));
+          }
       }
   }
 
