@@ -140,15 +140,12 @@ public :
     //!Removes a Scene_item from the list of children.
     //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
-    {
-      if(isChildLocked(item))
-        return;
-      update_group_number(item,0);
-      item->has_group=0;
-      Scene_group_item* group =
-         qobject_cast<Scene_group_item*>(item);
-      children.removeOne(item);
-    }
+        {
+         if(isChildLocked(item))
+          return;
+          update_group_number(item,0);
+          children.removeOne(item);
+        }
     //!Moves a child up in the list.
     void moveUp(int);
     //!Moves a child down in the list.

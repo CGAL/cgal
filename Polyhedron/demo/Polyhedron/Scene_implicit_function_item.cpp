@@ -405,7 +405,6 @@ Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
     :CGAL::Three::Scene_item(4,3)
 {
-  startTimer(0);
   d = new Scene_implicit_function_item_priv(f, this);
   //Generates an integer which will be used as ID for each buffer
   d->compute_min_max();
@@ -422,6 +421,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
 
 Scene_implicit_function_item::~Scene_implicit_function_item()
 {
+  delete d;
 }
 
 

@@ -113,6 +113,7 @@ Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_p
 Scene_polyhedron_shortest_path_item::~Scene_polyhedron_shortest_path_item()
 {
   deinitialize();
+  delete d;
 }
 
 void Scene_polyhedron_shortest_path_item_priv::compute_elements() const
