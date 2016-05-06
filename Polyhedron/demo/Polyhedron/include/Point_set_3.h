@@ -69,15 +69,6 @@ public:
   typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
-
-
-  using Base::m_points;
-  using Base::begin;
-  using Base::end;
-  using Base::empty;
-  using Base::size;
-  using Base::clear;
-  using Base::erase;
   
 private:
   
@@ -88,8 +79,6 @@ private:
   mutable Sphere m_bounding_sphere; // point set's bounding sphere
   mutable Point m_barycenter; // point set's barycenter
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
-
-  std::size_t m_nb_selected; // handle selection
 
   bool m_radii_are_uptodate;
 
@@ -106,7 +95,6 @@ public:
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
-    m_nb_selected = 0;
   }
 
   // copy constructor 
@@ -117,53 +105,57 @@ public:
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
     m_radii_are_uptodate = p.m_radii_are_uptodate;
-    m_nb_selected = 0;
   }
 
+  iterator begin() { return Base::begin(); }
+  iterator end() { return Base::removed_end(); }
+  const_iterator begin() const { return Base::begin(); }
+  const_iterator end() const { return Base::removed_end(); }
+  std::size_t size() const { return this->m_base.size(); }
 
-  iterator first_selected() { return end() - m_nb_selected; }
-  const_iterator first_selected() const { return end() - m_nb_selected; }
+  iterator first_selected() { return this->removed_begin(); }
+  const_iterator first_selected() const { return this->removed_begin(); }
   void set_first_selected(iterator it)
   {
-    m_nb_selected = static_cast<std::size_t>(std::distance (it, end()));
+    this->remove_from (it);
   }
   
   // Test if point is selected
   bool is_selected(const_iterator it) const
   {
-    return static_cast<std::size_t>(std::distance (it, end())) <= m_nb_selected;
+    return static_cast<std::size_t>(std::distance (it, end())) <= this->m_nb_removed;
   }
 
   /// Gets the number of selected points.
   std::size_t nb_selected_points() const
   {
-    return m_nb_selected;
+    return this->m_nb_removed;
   }
 
   /// Mark a point as selected/not selected.
   void select(iterator it, bool selected = true)
   {
     bool currently = is_selected (it);
-    iterator first = first_selected();
+    iterator first = this->removed_begin();
     if (currently && !selected)
       {
         std::swap (*it, *first);
-        -- m_nb_selected;
+        -- this->m_nb_removed;
       }
     else if (!currently && selected)
       {
         std::swap (*it, *first);
-        ++ m_nb_selected;
+        ++ this->m_nb_removed;
       }
   }
 
   void select_all()
   {
-    m_nb_selected = size ();
+    this->m_nb_removed = size ();
   }
   void unselect_all()
   {
-    m_nb_selected = 0;
+    this->m_nb_removed = 0;
   }
 
   // Invert selection
@@ -172,19 +164,18 @@ public:
     iterator sel = end() - 1;
     iterator unsel = begin();
 
-    iterator first = first_selected();
+    iterator first = this->removed_begin();
 
     while (sel != first - 1 && unsel != first)
       std::swap (*(sel --), *(unsel ++));
     
-    m_nb_selected = size() - m_nb_selected;
+    this->m_nb_removed = size() - this->m_nb_removed;
   }
 
   /// Deletes selected points.
   void delete_selection()
   {
-    erase (first_selected(), end());
-    m_nb_selected = 0;
+    this->collect_garbage();
     invalidate_bounds();
   }
 
@@ -266,9 +257,8 @@ private:
     FT norm = 0;
     for (const_iterator it = begin(); it != end(); it++)
     {
-      const Point& p = (*this)[*it];
+      const Point& p = this->point(*it);
       
-
       // update bbox
       xmin = (std::min)(p.x(),xmin);
       ymin = (std::min)(p.y(),ymin);
@@ -292,7 +282,7 @@ private:
     typedef CGAL::Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
 
-    Min_sphere ms(m_points.array().begin(), m_points.array().end());
+    Min_sphere ms(this->m_points.begin(), this->m_points.end());
 
     typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
     FT cx = *coord++;
@@ -304,7 +294,7 @@ private:
     typename Gt::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (const_iterator it = begin(); it != end(); it++)
-      sq_radius += sqd((*this)[*it], m_barycenter);
+      sq_radius += sqd(this->point(*it), m_barycenter);
     sq_radius /= FT(size());
     m_diameter_standard_deviation = CGAL::sqrt(sq_radius);
 
