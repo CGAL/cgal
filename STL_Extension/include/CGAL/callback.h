@@ -36,7 +36,7 @@
 #  define CGAL_CALLBACK(f, p1, p2, p3)
 #  define CGAL_CALLBACK(f, p1, p2, p3, p4)
 #  define CGAL_CALLBACK(f, p1, p2, p3, p4, p5)
-##  define CGAL_CALLBACK_VAR(x) 0
+#  define CGAL_CALLBACK_VAR(x) 0
 #endif
 
 #endif // CGAL_CALLBACK_H
