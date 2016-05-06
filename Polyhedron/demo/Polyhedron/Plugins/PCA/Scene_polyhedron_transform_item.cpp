@@ -52,6 +52,7 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
     invalidateOpenGLBuffers();
 }
 
+
 void Scene_polyhedron_transform_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
 {
     //vao for the edges
@@ -77,6 +78,7 @@ void Scene_polyhedron_transform_item_priv::initialize_buffers(CGAL::Three::Viewe
     are_buffers_filled = true;
 }
 
+
 void Scene_polyhedron_transform_item_priv::compute_elements() const
 {
     positions_lines.resize(0);
@@ -101,13 +103,13 @@ void Scene_polyhedron_transform_item_priv::compute_elements() const
     }
 }
 
-void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_polyhedron_transform_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!d->are_buffers_filled)
         d->initialize_buffers(viewer);
     vaos[Scene_polyhedron_transform_item_priv::Edges]->bind();
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     d->program->bind();
     QMatrix4x4 f_matrix;
     for (int i=0; i<16; ++i){

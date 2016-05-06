@@ -2,7 +2,6 @@
 #include "config_mesh_3.h"
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
 
@@ -40,14 +39,16 @@ const QColor default_mesh_color(45,169,70);
 
 class Mesh_3_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  using Polyhedron_demo_plugin_helper::init;
+  void init(QMainWindow*,
+            CGAL::Three::Scene_interface*){}
+
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* msg_interface)
@@ -100,6 +101,8 @@ private:
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
+  CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
 }; // end class Mesh_3_plugin
 
 double
@@ -127,6 +130,7 @@ void Mesh_3_plugin::mesh_3()
 
     if(poly_item == NULL){
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -146,6 +150,18 @@ void Mesh_3_plugin::mesh_3()
   bool features_protection_available = false;
   if(NULL != poly_item)
   {
+    if (!poly_item->polyhedron()->is_closed())
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected Scene_polyhedron_item is not closed."));
+      return;
+    }
+    if (!poly_item->polyhedron()->is_pure_triangle())
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected Scene_polyhedron_item is not triangulated."));
+      return;
+    }
     item = poly_item;
     features_protection_available = true;
   }
@@ -154,19 +170,18 @@ void Mesh_3_plugin::mesh_3()
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   else if (NULL != image_item)
-    { 
-      item = image_item;
-      features_protection_available = true;
-    }
+  {
+    item = image_item;
+    features_protection_available = true;
+  }
 #endif
 
   if (NULL == item)
   {
     QMessageBox::warning(mw, tr(""),
-      tr("Selected object can't be meshed"));
+                         tr("Selected object can't be meshed"));
     return;
   }
-
   // -----------------------------------
   // Create Mesh dialog
   // -----------------------------------
@@ -198,11 +213,11 @@ void Mesh_3_plugin::mesh_3()
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
   ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
-                             .arg(bbox.width(),0,'g',3)
-                             .arg(bbox.height(),0,'g',3)
-                             .arg(bbox.depth(),0,'g',3) );
+                             .arg(bbox.xmax() - bbox.xmin(),0,'g',3)
+                             .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
+                             .arg(bbox.zmax() - bbox.zmin(),0,'g',3) );
 
-  double diag = bbox.diagonal_length();
+  double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   int decimals = 0;
   double sizing_default = get_approximate(diag * 0.05, 2, decimals);
   ui.facetSizing->setDecimals(-decimals+2);
@@ -395,12 +410,12 @@ meshing_done(Meshing_thread* thread)
   Scene_c3t3_item* result_item = thread->item();
   const Scene_item::Bbox& bbox = result_item->bbox();
   str.append(QString("BBox (x,y,z): [ %1, %2 ], [ %3, %4 ], [ %5, %6 ], <br>")
-    .arg(bbox.xmin)
-    .arg(bbox.xmax)
-    .arg(bbox.ymin)
-    .arg(bbox.ymax)
-    .arg(bbox.zmin)
-    .arg(bbox.zmax));
+    .arg(bbox.xmin())
+    .arg(bbox.xmax())
+    .arg(bbox.ymin())
+    .arg(bbox.ymax())
+    .arg(bbox.zmin())
+    .arg(bbox.zmax()));
 
   msg->information(qPrintable(str));
 
@@ -427,9 +442,9 @@ treat_result(Scene_item& source_item,
   result_item.c3t3_changed();
 
   const Scene_item::Bbox& bbox = result_item.bbox();
-  result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
-                          (bbox.ymin + bbox.ymax)/2.f,
-                          (bbox.zmin + bbox.zmax)/2.f);
+  result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
+                          (bbox.ymin() + bbox.ymax())/2.f,
+                          (bbox.zmin() + bbox.zmax())/2.f);
 
   result_item.setColor(default_mesh_color);
   result_item.setRenderingMode(source_item.renderingMode());
@@ -439,7 +454,7 @@ treat_result(Scene_item& source_item,
 
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   scene->itemChanged(index);
-
+  scene->setSelectedItem(-1);
   Scene_interface::Item_id new_item_id = scene->addItem(&result_item);
   scene->setSelectedItem(new_item_id);
 }

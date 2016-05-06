@@ -66,14 +66,14 @@ public:
   // actually draw() is also overloaded to detect when the cut plane is moved
   virtual void draw()const {}
   virtual void draw(CGAL::Three::Viewer_interface*) const;
-  virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
+  virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
 
   virtual QString toolTip() const;
   virtual void invalidateOpenGLBuffers();
 public Q_SLOTS:
   void plane_was_moved();
   void compute_function_grid() const;
-  void timerEvent(QTimerEvent*);
+  void updateCutPlane();
 
 protected:
   friend struct Scene_implicit_function_item_priv;

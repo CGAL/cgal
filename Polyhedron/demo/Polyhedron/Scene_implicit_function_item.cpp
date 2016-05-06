@@ -176,46 +176,46 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
     const CGAL::Three::Scene_item::Bbox& b = item->bbox();
     float x,y,z;
     z = 0;
-    x = (b.xmax-b.xmin)/10.0;
-    y = (b.ymax-b.ymin)/10.0;
+    x = (b.xmax()-b.xmin())/10.0;
+    y = (b.ymax()-b.ymin())/10.0;
     // The Quad
     {
 
 
         //A
-        positions_tex_quad.push_back(b.xmin);
-        positions_tex_quad.push_back(b.ymin);
+        positions_tex_quad.push_back(b.xmin());
+        positions_tex_quad.push_back(b.ymin());
         positions_tex_quad.push_back(z);
 
 
         //B
-        positions_tex_quad.push_back(b.xmin);
-        positions_tex_quad.push_back(b.ymax);
+        positions_tex_quad.push_back(b.xmin());
+        positions_tex_quad.push_back(b.ymax());
         positions_tex_quad.push_back(z);
 
 
         //C
-        positions_tex_quad.push_back(b.xmax);
-        positions_tex_quad.push_back(b.ymax);
+        positions_tex_quad.push_back(b.xmax());
+        positions_tex_quad.push_back(b.ymax());
         positions_tex_quad.push_back(z);
 
 
 
         //A
-        positions_tex_quad.push_back(b.xmin);
-        positions_tex_quad.push_back(b.ymin);
+        positions_tex_quad.push_back(b.xmin());
+        positions_tex_quad.push_back(b.ymin());
         positions_tex_quad.push_back(z);
 
 
         //C
-        positions_tex_quad.push_back(b.xmax);
-        positions_tex_quad.push_back(b.ymax);
+        positions_tex_quad.push_back(b.xmax());
+        positions_tex_quad.push_back(b.ymax());
         positions_tex_quad.push_back(z);
 
 
         //D
-        positions_tex_quad.push_back(b.xmax);
-        positions_tex_quad.push_back(b.ymin);
+        positions_tex_quad.push_back(b.xmax());
+        positions_tex_quad.push_back(b.ymin());
         positions_tex_quad.push_back(z);
 
 
@@ -247,23 +247,23 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
         for(int u = 0; u < 11; u++)
         {
 
-            positions_grid.push_back(b.xmin + x* u);
-            positions_grid.push_back(b.ymin);
+            positions_grid.push_back(b.xmin() + x* u);
+            positions_grid.push_back(b.ymin());
             positions_grid.push_back(z);
 
-            positions_grid.push_back(b.xmin + x* u);
-            positions_grid.push_back(b.ymax);
+            positions_grid.push_back(b.xmin() + x* u);
+            positions_grid.push_back(b.ymax());
             positions_grid.push_back(z);
         }
         for(int v=0; v<11; v++)
         {
 
-            positions_grid.push_back(b.xmin);
-            positions_grid.push_back(b.ymin + v * y);
+            positions_grid.push_back(b.xmin());
+            positions_grid.push_back(b.ymin() + v * y);
             positions_grid.push_back(z);
 
-            positions_grid.push_back(b.xmax);
-            positions_grid.push_back(b.ymin + v * y);
+            positions_grid.push_back(b.xmax());
+            positions_grid.push_back(b.ymin() + v * y);
             positions_grid.push_back(z);
         }
 
@@ -271,123 +271,123 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
     //the Box
     {
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmin());
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmax);
-
-
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmin);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmin());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmin);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymax);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmin());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmax());
 
 
-        positions_cube.push_back(b.xmax);
-        positions_cube.push_back(b.ymin);
-        positions_cube.push_back(b.zmax);
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymax());
+        positions_cube.push_back(b.zmax());
+
+
+        positions_cube.push_back(b.xmax());
+        positions_cube.push_back(b.ymin());
+        positions_cube.push_back(b.zmax());
 
     }
 
@@ -410,9 +410,9 @@ Scene_implicit_function_item(Implicit_function_interface* f)
   //Generates an integer which will be used as ID for each buffer
   d->compute_min_max();
   compute_function_grid();
-  double offset_x = (bbox().xmin + bbox().xmax) / 2;
-  double offset_y = (bbox().ymin + bbox().ymax) / 2;
-  double offset_z = (bbox().zmin + bbox().zmax) / 2;
+  double offset_x = (bbox().xmin() + bbox().xmax()) / 2;
+  double offset_y = (bbox().ymin() + bbox().ymax()) / 2;
+  double offset_z = (bbox().zmin() + bbox().zmax()) / 2;
   d->frame_->setPosition(offset_x, offset_y, offset_z);
   d->frame_->setOrientation(1., 0, 0, 0);
   connect(d->frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
@@ -436,7 +436,6 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         d->initialize_buffers(viewer);
-
     if(d->frame_->isManipulated()) {
         if(d->need_update_) {
             compute_function_grid();
@@ -446,7 +445,7 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
     vaos[Scene_implicit_function_item_priv::Plane]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
     viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
-    attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
+    attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
     QMatrix4x4 f_mat;
     GLdouble d_mat[16];
     d->frame_->getMatrix(d_mat);
@@ -466,12 +465,12 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 }
 
 void
-Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+Scene_implicit_function_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         d->initialize_buffers(viewer);
     vaos[Scene_implicit_function_item_priv::BBox]->bind();
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     d->program->bind();
     d->program->setAttributeValue("colors", QVector3D(0.f,0.f,0.f));
@@ -560,7 +559,7 @@ compute_function_grid() const
             m[1], m[5], m[9], m[13],
             m[2], m[6], m[10], m[14]);
 
-    double diag = bbox().diagonal_length() * .6;
+    double diag = (CGAL::sqrt((bbox().xmax()-bbox().xmin())*(bbox().xmax()-bbox().xmin()) + (bbox().ymax()-bbox().ymin())*(bbox().ymax()-bbox().ymin())  + (bbox().zmax()-bbox().zmin())*(bbox().zmax()-bbox().zmin()) )) * .6;
 
     const double dx = diag;
     const double dy = diag;
@@ -602,15 +601,15 @@ compute_min_max()
 
     for ( int i = 0 ; i <= probes_nb ; ++i )
     {
-        double x = b.xmin + double(i) * (b.xmax - b.xmin) / probes_nb;
+        double x = b.xmin() + double(i) * (b.xmax() - b.xmin()) / probes_nb;
 
         for ( int j = 0 ; j <= probes_nb ; ++j )
         {
-            double y = b.ymin + double(j) * (b.ymax - b.ymin) / probes_nb;
+            double y = b.ymin() + double(j) * (b.ymax() - b.ymin()) / probes_nb;
 
             for ( int k = 0 ; k <= probes_nb ; ++k )
             {
-                double z = b.zmin + double(k) * (b.zmax - b.zmin) / probes_nb;
+                double z = b.zmin() + double(k) * (b.zmax() - b.zmin()) / probes_nb;
 
                 double v = (*function_)(x,y,z);
                 if(is_nan(v)) continue;
@@ -631,7 +630,7 @@ Scene_implicit_function_item::invalidateOpenGLBuffers()
 }
 
 
-void Scene_implicit_function_item::timerEvent(QTimerEvent* /*event*/)
+void Scene_implicit_function_item::updateCutPlane()
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(d->need_update_) {
     compute_function_grid();
@@ -642,4 +641,4 @@ void Scene_implicit_function_item::timerEvent(QTimerEvent* /*event*/)
 
 Implicit_function_interface* Scene_implicit_function_item::function() const { return d->function_; }
 Scene_implicit_function_item::ManipulatedFrame* Scene_implicit_function_item::manipulatedFrame() { return d->frame_; }
-void Scene_implicit_function_item::plane_was_moved() { d->need_update_ = true; }
+void Scene_implicit_function_item::plane_was_moved() { d->need_update_ = true; QTimer::singleShot(0, this, SLOT(updateCutPlane()));}

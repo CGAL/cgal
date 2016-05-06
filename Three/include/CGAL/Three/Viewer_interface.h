@@ -45,9 +45,9 @@ class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions
 public:
  /*!
    * \brief The OpenGL_program_IDs enum
-   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attrib_buffers().
+   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attribBuffers().
    *@see getShaderProgram
-   * @see attrib_buffers
+   * @see attribBuffers
    */
   enum OpenGL_program_IDs
   {
@@ -61,6 +61,8 @@ public:
    PROGRAM_INSTANCED_WIRE,      /** Used to display instanced rendered wired spheres. Not affected by light.*/
    PROGRAM_C3T3,                /** Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.*/
    PROGRAM_C3T3_EDGES,          /** Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.*/
+   PROGRAM_CUTPLANE_SPHERES,    /** Used to render the spheres of an item with a cut plane.*/
+   PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
    NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
   };
 
@@ -87,7 +89,7 @@ public:
    * According to program_name, this data may change.
    * @see OpenGL_program_IDs
    */
-  virtual void attrib_buffers(int program_name) const = 0;
+  virtual void attribBuffers(int program_name) const = 0;
 
   /*! Returns a program according to name.
    * If the program does not exist yet, it is created and stored in shader_programs.
@@ -132,13 +134,13 @@ public:
   }
 
 Q_SIGNALS:
-  //!Defined automatically in moc.
+  //!Is emitted after an item is picked.
   void selected(int);
-  //!Defined automatically in moc.
+  //!Is emitted to require a contextual menu to appear at global_pos.
   void requestContextMenu(QPoint global_pos);
-  //!Defined automatically in moc.
+  //!Is emitted after a point is selected.
   void selectedPoint(double, double, double);
-  //!Defined automatically in moc.
+  //!Is emitted to request the currently selected item to perform a selection based on an AABB_Tree and a raycasting.
   void selectionRay(double, double, double, double, double, double);
 
 public Q_SLOTS:

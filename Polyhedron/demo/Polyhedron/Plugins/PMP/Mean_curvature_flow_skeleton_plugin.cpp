@@ -102,12 +102,11 @@ class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
   QAction* actionConvert_to_medial_skeleton;
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionMCFSkeleton" << "actionConvert_to_medial_skeleton";
-  }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+
+    this->mw = mainWindow;
+    this->scene = scene_interface;
     mcs = NULL;
     dockWidget = NULL;
     ui = NULL;
@@ -120,8 +119,6 @@ public:
     actionConvert_to_medial_skeleton->setProperty("subMenuName", "Triangulated Surface Mesh Skeletonization");
     actionConvert_to_medial_skeleton->setObjectName("actionConvert_to_medial_skeleton");
 
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
-
     dockWidget = new QDockWidget(mw);
     dockWidget->setVisible(false);
     ui = new Ui::Mean_curvature_flow_skeleton_plugin();
@@ -130,7 +127,7 @@ public:
                           | QDockWidget::DockWidgetFloatable
                           | QDockWidget::DockWidgetClosable);
     dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
-    add_dock_widget(dockWidget);
+    addDockWidget(dockWidget);
 
     connect(ui->pushButton_contract, SIGNAL(clicked()),
             this, SLOT(on_actionContract()));
@@ -512,6 +509,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
                                       CGAL::internal::IsTerminalDefault() );
 
     skeleton_item->setName(QString("Medial skeleton curve of %1").arg(item->name()));
+    scene->setSelectedItem(-1);
     scene->addItem(skeleton_item);
     skeleton_item->invalidateOpenGLBuffers();
 

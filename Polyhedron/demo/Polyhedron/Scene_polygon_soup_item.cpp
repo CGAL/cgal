@@ -28,7 +28,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
@@ -79,7 +79,7 @@ struct Polyhedron_to_polygon_soup_writer {
 }; // end struct Polyhedron_to_soup_writer
 
 void
-Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
+Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the facets
     {
@@ -154,7 +154,7 @@ Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewe
 
 typedef Polyhedron::Traits Traits;
 typedef Polygon_soup::Polygon_3 Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 struct Face_info {
     Polyhedron::Halfedge_handle e[3];
@@ -533,7 +533,9 @@ Scene_polygon_soup_item::save(std::ostream& out) const
 bool 
 Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
-  orient();
+  if (!orient())
+    return false;
+
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
     soup->points, soup->polygons, *out_polyhedron);
   std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_polyhedron);
@@ -574,13 +576,13 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
      compute_normals_and_vertices();
-     initialize_buffers(viewer);
+     initializeBuffers(viewer);
     }
     if(soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
     vaos[Facets]->bind();
-    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
     //fills the arraw of colors with the current color
 
     QColor v_colors = this->color();
@@ -597,15 +599,15 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   }
 
 void
-Scene_polygon_soup_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
       compute_normals_and_vertices();
-      initialize_buffers(viewer);
+      initializeBuffers(viewer);
     }
     if(soup == 0) return;
     vaos[Edges]->bind();
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     QColor color = this->color();
@@ -618,15 +620,15 @@ Scene_polygon_soup_item::draw_points(CGAL::Three::Viewer_interface* viewer) cons
 }
 
 void
-Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
   {
      compute_normals_and_vertices();
-     initialize_buffers(viewer);
+     initializeBuffers(viewer);
   }
     if(soup == 0) return;
     vaos[Edges]->bind();
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     QColor color = this->color().lighter(120);
@@ -640,7 +642,7 @@ Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
     if(displayNonManifoldEdges())
     {
         vaos[NM_Edges]->bind();
-        attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+        attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         program->bind();
         QColor c = QColor(255,0,0,255);

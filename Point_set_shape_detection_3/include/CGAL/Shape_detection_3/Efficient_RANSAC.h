@@ -210,6 +210,26 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     }
 
     /*!
+      Retrieves the point property map.
+    */
+    const Point_map& point_map() const { return m_point_pmap; }
+    
+    /*!
+      Retrieves the normal property map.
+    */
+    const Normal_map& normal() const { return m_normal_pmap; }
+
+
+    Input_iterator input_iterator_first() const
+    {
+      return m_input_iterator_first;
+    }
+    Input_iterator input_iterator_beyond() const
+    {
+      return m_input_iterator_beyond;
+    }
+
+    /*!
       Sets the input data. The range must stay valid
       until the detection has been performed and the access to the
       results is no longer required. The data in the input is reordered by the methods

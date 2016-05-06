@@ -3,7 +3,7 @@
 #include "Scene_polylines_item_config.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_group_item.h>
 
 #include <QString>
 #include <QMenu>
@@ -12,8 +12,9 @@
 #include <vector>
 
 class Scene_polylines_item_private;
+class Scene_spheres_item;
 
-class SCENE_POLYLINES_ITEM_EXPORT Scene_polylines_item : public CGAL::Three::Scene_item
+class SCENE_POLYLINES_ITEM_EXPORT Scene_polylines_item : public CGAL::Three::Scene_group_item
 {
     Q_OBJECT
 public:
@@ -43,11 +44,11 @@ public:
     void draw(CGAL::Three::Viewer_interface*) const;
 
     // Wireframe OpenGL drawing
-    void draw_edges() const{}
-    void draw_edges(CGAL::Three::Viewer_interface*) const;
+    void drawEdges() const{}
+    void drawEdges(CGAL::Three::Viewer_interface*) const;
 
-    void draw_points() const{}
-    void draw_points(CGAL::Three::Viewer_interface*) const;
+    void drawPoints() const{}
+    void drawPoints(CGAL::Three::Viewer_interface*) const;
 
 
     void smooth(std::vector<Point_3>& polyline){
@@ -76,6 +77,10 @@ public Q_SLOTS:
     void change_corner_radii(double);
     void change_corner_radii();
     void split_at_sharp_angles();
+    void reset_spheres()
+    {
+      spheres = NULL;
+    }
 
     void merge(Scene_polylines_item*);
 
@@ -94,39 +99,23 @@ private:
 
     enum VAOs {
         Edges=0,
-        Spheres,
-        Wired_Spheres,
-        NbOfVaos = Wired_Spheres+1
+        NbOfVaos
     };
     enum VBOs {
         Edges_Vertices = 0,
-        Spheres_Vertices,
-        Spheres_Normals,
-        Spheres_Colors,
-        Spheres_Center,
-        Wired_Spheres_Vertices,
-        NbOfVbos = Wired_Spheres_Vertices+1
+        NbOfVbos
     };
 
+    mutable Scene_spheres_item *spheres;
     mutable std::vector<float> positions_lines;
-    mutable std::vector<float> positions_spheres;
-    mutable std::vector<float> positions_wire_spheres;
-    mutable std::vector<float> positions_center;
-    mutable std::vector<float> normals_spheres;
-    mutable std::vector<float> color_spheres;
-    mutable std::vector<float> color_wire_spheres;
-    mutable std::size_t nb_spheres;
-    mutable std::size_t nb_wire;
-    mutable std::size_t nb_centers;
     mutable std::size_t nb_lines;
-    mutable   GLuint nbSpheres;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
-    void create_Sphere(float) const;
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
-    using CGAL::Three::Scene_item::compute_elements;
-    void compute_elements() const;
+    void computeSpheres();
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+    using CGAL::Three::Scene_item::computeElements;
+    void computeElements() const;
 
 
 

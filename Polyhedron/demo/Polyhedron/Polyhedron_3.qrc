@@ -39,5 +39,6 @@
         <file>resources/shader_c3t3.v</file>
         <file>resources/shader_c3t3.f</file>
         <file>resources/shader_plane_two_faces.f</file>
+        <file>resources/shader_spheres.v</file>
     </qresource>
 </RCC>

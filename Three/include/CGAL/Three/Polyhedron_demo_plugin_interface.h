@@ -39,20 +39,19 @@ class Scene_interface;
 class Polyhedron_demo_plugin_interface 
 {
 public:
-  //! Destructor
-  virtual ~Polyhedron_demo_plugin_interface() {}
   //!Initializes the plugin.
-  virtual void init(QMainWindow*, CGAL::Three::Scene_interface*) {}
-  //!Initializes the plugin.
+  //! This acts like a constructor for a plugin. Do all you want to do when the plugin is created :
+  //! get the references to the mainwindow and the scene, connect your signals and slots, etc.
+  virtual void init(QMainWindow*, CGAL::Three::Scene_interface*) = 0;
+  //!This is an overloaded function.
+  //! Initializes the plugin and gives access to a Message interface, that
+  //! can be used to display messages in the console dock widget.
+  //! @see init(QMainWindow*, CGAL::Three::Scene_interface*)
   virtual void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) {
     init(mw, sc);
   }
 
-  //! Checks the current state of the `Scene` or `MainWindow` and decides
-  //! if the plugin can function, given that state.  Its actions are
-  //! visible in contextmenus, if this returns true, not visible
-  //! otherwise.  
-  //!
+  //! Decides if the plugin's actions will be displayed or not.
   //! @returns \c true, if the plugin is applicable, \c false
   //! otherwise
   virtual bool applicable(QAction*) const = 0;
@@ -61,6 +60,7 @@ public:
   //!If you need to do something when the plugin is closed, do it here
   virtual void closure() {
  }
+protected :
 };
 }
 }

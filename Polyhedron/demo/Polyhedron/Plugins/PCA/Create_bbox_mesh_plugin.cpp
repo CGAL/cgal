@@ -42,14 +42,14 @@ public:
     B.begin_surface( 8, 12, 24);
     typedef HDS::Vertex   Vertex;
     typedef Vertex::Point Point;
-    B.add_vertex( Point( bbox.xmin, bbox.ymin, bbox.zmin)); // -1 -1 -1
-    B.add_vertex( Point( bbox.xmin, bbox.ymax, bbox.zmin)); // -1 1 -1
-    B.add_vertex( Point( bbox.xmax, bbox.ymax, bbox.zmin)); // 1 1 -1
-    B.add_vertex( Point( bbox.xmax, bbox.ymin, bbox.zmin)); // 1 -1 -1
-    B.add_vertex( Point( bbox.xmin, bbox.ymin, bbox.zmax)); // -1 -1 1
-    B.add_vertex( Point( bbox.xmin, bbox.ymax, bbox.zmax)); // -1 1 1
-    B.add_vertex( Point( bbox.xmax, bbox.ymax, bbox.zmax)); // 1 1 1 
-    B.add_vertex( Point( bbox.xmax, bbox.ymin, bbox.zmax)); // 1 -1 1
+    B.add_vertex( Point( bbox.xmin(), bbox.ymin(), bbox.zmin())); // -1 -1 -1
+    B.add_vertex( Point( bbox.xmin(), bbox.ymax(), bbox.zmin())); // -1 1 -1
+    B.add_vertex( Point( bbox.xmax(), bbox.ymax(), bbox.zmin())); // 1 1 -1
+    B.add_vertex( Point( bbox.xmax(), bbox.ymin(), bbox.zmin())); // 1 -1 -1
+    B.add_vertex( Point( bbox.xmin(), bbox.ymin(), bbox.zmax())); // -1 -1 1
+    B.add_vertex( Point( bbox.xmin(), bbox.ymax(), bbox.zmax())); // -1 1 1
+    B.add_vertex( Point( bbox.xmax(), bbox.ymax(), bbox.zmax())); // 1 1 1
+    B.add_vertex( Point( bbox.xmax(), bbox.ymin(), bbox.zmax())); // 1 -1 1
     for(int i = 0; i < 12; ++i) {
       B.begin_facet();
       B.add_vertex_to_facet( cube[i][0]);
@@ -124,22 +124,22 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
       }
     }
   }
-  std::cerr << "bbox dimensions: " << bbox.xmax - bbox.xmin
-            << "\n                 " << bbox.ymax - bbox.ymin
-            << "\n                 " << bbox.zmax - bbox.zmin
+  std::cerr << "bbox dimensions: " << bbox.xmax() - bbox.xmin()
+            << "\n                 " << bbox.ymax() - bbox.ymin()
+            << "\n                 " << bbox.zmax() - bbox.zmin()
             << std::endl;
 
   if(extended) {
-    const double delta_x = ( bbox.xmax - bbox.xmin ) / 20.;
-    const double delta_y = ( bbox.ymax - bbox.ymin ) / 20.;
-    const double delta_z = ( bbox.zmax - bbox.zmin ) / 20.;
-
-    bbox.xmin -= delta_x;
-    bbox.xmax += delta_x;
-    bbox.ymin -= delta_y;
-    bbox.ymax += delta_y;
-    bbox.zmin -= delta_z;
-    bbox.zmax += delta_z;
+    const double delta_x = ( bbox.xmax() - bbox.xmin() ) / 20.;
+    const double delta_y = ( bbox.ymax() - bbox.ymin() ) / 20.;
+    const double delta_z = ( bbox.zmax() - bbox.zmin() ) / 20.;
+bbox = Scene_interface::Bbox(
+    bbox.xmin() - delta_x,
+    bbox.xmax() + delta_x,
+    bbox.ymin() - delta_y,
+    bbox.ymax() + delta_y,
+    bbox.zmin() - delta_z,
+    bbox.zmax() + delta_z);
   }
 
   Polyhedron p;

@@ -52,7 +52,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-  p_new_item->set_scene(scene);
+  p_new_item->setScene(scene);
 
   Mesh_parameters param;
   param.facet_angle = facet_angle;
@@ -82,18 +82,18 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 {
   if (pfunction == NULL) { return NULL; }
 
-  CGAL::Bbox_3 domain_bbox(pfunction->bbox().xmin,
-                           pfunction->bbox().ymin,
-                           pfunction->bbox().zmin,
-                           pfunction->bbox().xmax,
-                           pfunction->bbox().ymax,
-                           pfunction->bbox().zmax);
+  CGAL::Bbox_3 domain_bbox(pfunction->bbox().xmin(),
+                           pfunction->bbox().ymin(),
+                           pfunction->bbox().zmin(),
+                           pfunction->bbox().xmax(),
+                           pfunction->bbox().ymax(),
+                           pfunction->bbox().zmax());
 
   Function_mesh_domain* p_domain =
     new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7);
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-  p_new_item->set_scene(scene);
+  p_new_item->setScene(scene);
 
   Mesh_parameters param;
   param.protect_features = false;
@@ -143,7 +143,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   CGAL::Timer timer;
   timer.start();
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-  p_new_item->set_scene(scene);
+  p_new_item->setScene(scene);
 
   Mesh_parameters param;
   param.protect_features = protect_features;

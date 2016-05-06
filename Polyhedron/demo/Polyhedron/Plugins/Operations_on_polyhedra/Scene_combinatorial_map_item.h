@@ -45,8 +45,8 @@ public:
     //Event handling
     virtual bool keyPressEvent(QKeyEvent*);
     //drawing of the scene
-    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
     virtual void draw(CGAL::Three::Viewer_interface*) const;
 
     bool isFinite() const { return true; }
@@ -64,7 +64,49 @@ public:
         return *m_combinatorial_map;
     }
 
+<<<<<<< HEAD
      Combinatorial_map_3* m_combinatorial_map;
+=======
+    Combinatorial_map_3* m_combinatorial_map;
+
+private:
+    Kernel::Vector_3 compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const;
+    CGAL::Three::Scene_interface* last_known_scene;
+    std::size_t volume_to_display;
+    QAction* exportSelectedVolume;
+    void* address_of_A;
+    template <class Predicate> void export_as_polyhedron(Predicate,const QString&) const;
+
+   enum VAOs {
+       Edges = 0,
+       Points,
+       Facets,
+       NbOfVaos = Facets +1
+   };
+   enum VBOs {
+       Edges_vertices = 0,
+       Points_vertices,
+       Facets_vertices,
+       Facets_normals,
+       NbOfVbos = Facets_normals +1
+   };
+
+   mutable std::vector<double> positions_lines;
+   mutable std::vector<double> positions_points;
+   mutable std::vector<double> positions_facets;
+   mutable std::vector<double> normals;
+   mutable std::size_t nb_lines;
+   mutable std::size_t nb_points;
+   mutable std::size_t nb_facets;
+
+    mutable QOpenGLShaderProgram *program;
+
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+
+    using CGAL::Three::Scene_item::computeElements;
+    void computeElements(void) const;
+>>>>>>> Three_doc_for_review_rebase-GF
 
 public Q_SLOTS:
     void set_next_volume();

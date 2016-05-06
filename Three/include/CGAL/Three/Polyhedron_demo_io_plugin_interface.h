@@ -17,7 +17,7 @@
 //
 //
 // Author(s)     : Laurent RINEAU
-
+//! \file Polyhedron_demo_io_plugin_interface.h
 #ifndef POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
 #define POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H
 
@@ -28,7 +28,6 @@ namespace CGAL{
 namespace Three {
 class Scene_item;
   /*!
-   * \file Polyhedron_demo_io_plugin_interface.h
    * This class provides a base for creating a new IO plugin.
    */
 class Polyhedron_demo_io_plugin_interface 

@@ -23,8 +23,9 @@ public:
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
-
-  bool applicable(QAction* action) const {
+  void init(QMainWindow*,
+            CGAL::Three::Scene_interface*){}
+            bool applicable(QAction* action) const {
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()) {
       if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;

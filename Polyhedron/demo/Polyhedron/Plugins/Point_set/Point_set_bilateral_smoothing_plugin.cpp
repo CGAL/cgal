@@ -37,10 +37,10 @@ class Polyhedron_demo_point_set_bilateral_smoothing_plugin :
 
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+    scene = scene_interface;
     actionBilateralSmoothing = new QAction(tr("Point Set Bilateral Smoothing"), mainWindow);
     actionBilateralSmoothing->setObjectName("actionBilateralSmoothing");
 
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
   bool applicable(QAction*) const {

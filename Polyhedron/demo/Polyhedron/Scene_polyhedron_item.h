@@ -44,8 +44,9 @@ public:
       MAX_ANGLE,
       MEAN_ANGLE
     };
-    QString compute_stats(int type);
-     bool has_stats()const {return true;}
+
+    bool has_stats()const {return true;}
+    QString computeStats(int type);
     CGAL::Three::Scene_item::Header_data header() const;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
@@ -59,6 +60,7 @@ public:
     bool load(std::istream& in);
     bool load_obj(std::istream& in);
     bool save(std::ostream& out) const;
+    bool save_obj(std::ostream& out) const;
 
     // Function for displaying meta-data of the item
     virtual QString toolTip() const;
@@ -71,9 +73,9 @@ public:
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     void draw() const {}
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges() const {}
-    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges() const {}
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
 
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
@@ -128,8 +130,6 @@ public:
 protected:
     friend struct Scene_polyhedron_item_priv;
     Scene_polyhedron_item_priv* d;
-
-
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

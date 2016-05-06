@@ -11,7 +11,6 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include "Scene_polylines_item.h"
 
@@ -27,7 +26,7 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_intersection_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -43,9 +42,8 @@ public:
     return QList<QAction*>() << actionPolyhedronIntersection_3;
   }
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
-    this->mw = mainWindow;
     actionPolyhedronIntersection_3 = new QAction("Intersect Polyhedra (A/B)", mw);
     actionPolyhedronIntersection_3->setProperty("subMenuName", "Operations on Polyhedra");
     if(actionPolyhedronIntersection_3) {
@@ -57,6 +55,7 @@ public:
 private:
 
   QAction*  actionPolyhedronIntersection_3;
+  Scene_interface *scene;
 
 public Q_SLOTS:
   void intersection();

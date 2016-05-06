@@ -3,6 +3,8 @@
 #include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/File_writer_wavefront.h>
+#include <CGAL/IO/generic_copy_OFF.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -12,7 +14,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -186,7 +188,7 @@ void push_back_xyz(const TypeWithXYZ& t,
 
 typedef Polyhedron::Traits Traits;
 typedef Polyhedron::Facet Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 struct Face_info {
     Polyhedron::Halfedge_handle e[3];
@@ -797,6 +799,15 @@ Scene_polyhedron_item::save(std::ostream& out) const
     return (bool) out;
 }
 
+bool
+Scene_polyhedron_item::save_obj(std::ostream& out) const
+{
+  CGAL::File_writer_wavefront  writer;
+  CGAL::generic_print_polyhedron(out, *(d->poly), writer);
+  return out.good();
+}
+
+
 QString
 Scene_polyhedron_item::toolTip() const
 {
@@ -912,7 +923,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     {
         vaos[Scene_polyhedron_item_priv::Gouraud_Facets]->bind();
     }
-    attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
     d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
     d->program->bind();
     if(!d->is_multicolor)
@@ -932,7 +943,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if (!are_buffers_filled)
     {
@@ -945,7 +956,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
     {
         vaos[Scene_polyhedron_item_priv::Edges]->bind();
 
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
         d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         d->program->bind();
         //draw the edges
@@ -964,7 +975,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
 
     //draw the feature edges
     vaos[Scene_polyhedron_item_priv::Feature_edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     d->program = getShaderProgram(PROGRAM_NO_SELECTION);
     d->program->bind();
     if(d->show_feature_edges_m || d->show_only_feature_edges_m)
@@ -982,7 +993,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
     }
 
 void
-Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         d->compute_normals_and_vertices();
@@ -991,7 +1002,7 @@ Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const 
     }
 
     vaos[Scene_polyhedron_item_priv::Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     d->program->bind();
     //draw the points
@@ -1203,7 +1214,7 @@ void Scene_polyhedron_item::invalidate_aabb_tree()
 {
   delete_aabb_tree(this);
 }
-QString Scene_polyhedron_item::compute_stats(int type)
+QString Scene_polyhedron_item::computeStats(int type)
 {
   double minl, maxl, meanl, midl;
   switch (type)

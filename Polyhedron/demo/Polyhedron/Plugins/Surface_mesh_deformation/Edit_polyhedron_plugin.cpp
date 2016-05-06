@@ -7,6 +7,7 @@
 #include <QFileDialog>
 
 #include <QGLViewer/qglviewer.h>
+#include <QMessageBox>
 
 #include "ui_Deform_mesh.h"
 using namespace CGAL::Three;
@@ -225,17 +226,19 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
     if(!edit_item) { continue; }
-    
     scene->itemChanged(edit_item);  // just for redraw   
   }  
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int /*state*/)
+void Polyhedron_demo_edit_polyhedron_plugin::on_ShowAsSphereCheckBox_stateChanged(int state)
 {
   for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
     if(!edit_item) { continue; }
-    
+    if(state == 0)
+      edit_item->ShowAsSphere(false);
+    else
+      edit_item->ShowAsSphere(true);
     scene->itemChanged(edit_item);  // just for redraw   
   }  
 }
@@ -323,20 +326,41 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ReadROIPushButton_clicked()
   edit_item->invalidateOpenGLBuffers();
   scene->itemChanged(edit_item); 
 }
+
 void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool visible)
 {
-  for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
-      i < end; ++i)
+  if(!visible)
   {
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
-    if (poly_item) 
-    { poly_item->update_halfedge_indices(); }
-    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
+        i < end; ++i)
+    {
+      Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
 
-    if(visible && poly_item) {
-      convert_to_edit_polyhedron(i, poly_item);
-    } else if(!visible && edit_item) {
-      convert_to_plain_polyhedron(i, edit_item);
+      if(edit_item) {
+        edit_item->ShowAsSphere(false);
+        convert_to_plain_polyhedron(i, edit_item);
+      }
+    }
+  }
+  else
+  {
+    ui_widget.ShowAsSphereCheckBox->setChecked(false);
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id i , scene->selectionIndices())
+    {
+      Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
+      if (poly_item &&
+          poly_item->polyhedron()->is_pure_triangle())
+      {
+        poly_item->update_halfedge_indices();
+        convert_to_edit_polyhedron(i, poly_item);
+      }
+      else if(poly_item &&
+              !(poly_item->polyhedron()->is_pure_triangle()) )
+      {
+        QMessageBox::warning(mw,
+                             tr("Cannot edit non-triangle polyhedron_items"),
+                             tr(" %1 is not pure-triangle, therefore it is not editable.").arg(poly_item->name()));
+      }
     }
   }
 }
@@ -401,7 +425,9 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   int k_ring = ui_widget.ROIRadioButton->isChecked() ? ui_widget.BrushSpinBoxRoi->value() : 
                                                        ui_widget.BrushSpinBoxCtrlVert->value();
   edit_poly->set_k_ring(k_ring);
+  scene->setSelectedItem(-1);
   scene->replaceItem(i, edit_poly);
+  scene->setSelectedItem(i);
   return edit_poly;
 }
 

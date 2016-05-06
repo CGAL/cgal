@@ -55,7 +55,8 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
 
-  using Polyhedron_demo_plugin_helper::init;
+
+  void init(QMainWindow*, CGAL::Three::Scene_interface* ){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     mw = mainWindow;
@@ -70,7 +71,7 @@ public:
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
 
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(ui_widget.Select_button,  SIGNAL(clicked()), this, SLOT(on_Select_button())); 
     connect(ui_widget.Sample_random_points_from_bbox,  SIGNAL(clicked()), this, SLOT(on_Sample_random_points_from_bbox())); 
@@ -123,9 +124,15 @@ public Q_SLOTS:
       if(point_item) { point_sets.push_back(point_item->point_set()); }
     }
 
+
     // there should be at least one selected polyhedron and point item
     if(inside_testers.empty()) { print_message("Error: there is no selected polyhedron item(s)."); }
-    if(point_sets.empty()) { print_message("Error: there is no selected point set item(s)."); }
+    if(point_sets.empty()) {
+    if(!generated_points.empty())
+      point_sets.push_back(generated_points.last()->point_set());
+    else
+      print_message("Error: there is no selected point set item(s).");
+    }
     if(inside_testers.empty() || point_sets.empty()) { return; }
 
     // deselect all points
@@ -173,15 +180,20 @@ public Q_SLOTS:
     for (std::size_t i = 0; i < inside_testers.size(); ++i)
       delete inside_testers[i];
 
+    bool found = false;
     // for repaint
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
+        found = true;
         point_item->invalidateOpenGLBuffers();
         scene->itemChanged(point_item);
       }
     }
-
+    if(!found && !generated_points.empty()) {
+      generated_points.last()->invalidateOpenGLBuffers();
+      scene->itemChanged(generated_points.last());
+    }
   }
 
   void on_Sample_random_points_from_bbox() {
@@ -230,25 +242,37 @@ public Q_SLOTS:
     point_item->setName(QString("sample-%1").arg(nb_points));
     CGAL::Random rg(1340818006);
 
-    double grid_dx = bbox->xmax - bbox->xmin;
-    double grid_dy = bbox->ymax - bbox->ymin;
-    double grid_dz = bbox->zmax - bbox->zmin;
+    double grid_dx = bbox->xmax() - bbox->xmin();
+    double grid_dy = bbox->ymax() - bbox->ymin();
+    double grid_dz = bbox->zmax() - bbox->zmin();
 
     for(int i=0; i < nb_points; i++){
       point_item->point_set()->push_back(
-      Epic_kernel::Point_3(bbox->xmin + rg.get_double()* grid_dx, 
-        bbox->ymin + rg.get_double()* grid_dy,
-        bbox->zmin + rg.get_double()* grid_dz)
+      Epic_kernel::Point_3(bbox->xmin ()+ rg.get_double()* grid_dx,
+        bbox->ymin() + rg.get_double()* grid_dy,
+        bbox->zmin() + rg.get_double()* grid_dz)
       );
     }
 
     scene->addItem(point_item);
     scene->itemChanged(point_item);
+    generated_points.append(point_item);
+    connect(point_item, SIGNAL(destroyed(QObject*)),
+            this, SLOT(resetGeneratedPoints(QObject*)));
+  }
+private Q_SLOTS:
+  void resetGeneratedPoints(QObject* o)
+  {
+    Q_FOREACH(Scene_points_with_normal_item* item , generated_points)
+    if(item == o)
+    {
+      generated_points.removeAll(item);
+    }
   }
 private:
   Messages_interface* messages;
   QAction* actionPointInsidePolyhedron;
-
+  QList<Scene_points_with_normal_item*> generated_points;
   QDockWidget* dock_widget;
   Ui::Point_inside_polyhedron ui_widget;
 

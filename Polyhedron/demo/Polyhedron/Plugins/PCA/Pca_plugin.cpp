@@ -5,7 +5,6 @@
 #include "Scene_plane_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/centroid.h>
@@ -28,34 +27,34 @@ typedef Kernel::FT FT;
 using namespace CGAL::Three;
 class Polyhedron_demo_pca_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionFitPlane"
-                         << "actionFitLine";
+
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
-  void init(QMainWindow* mainWindow,
+  void init(QMainWindow* mw,
             Scene_interface* scene_interface)
   {
-      mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionFitPlane"] = new QAction("Fit Plane", mw);
-      actions_map["actionFitPlane"]->setProperty("subMenuName", "Principal Component Analysis");
+      QAction *actionFitPlane = new QAction("Fit Plane", mw);
+      QAction *actionFitLine = new QAction("Fit Line", mw);
 
-      actions_map["actionFitLine"] = new QAction("Fit Line", mw);
-      actions_map["actionFitLine"]->setProperty("subMenuName", "Principal Component Analysis");
-
-      connect(actions_map["actionFitPlane"], SIGNAL(triggered()),
+      connect(actionFitPlane, SIGNAL(triggered()),
               this, SLOT(on_actionFitPlane_triggered()));
-      connect(actions_map["actionFitLine"], SIGNAL(triggered()),
+      connect(actionFitLine, SIGNAL(triggered()),
               this, SLOT(on_actionFitLine_triggered()));
+      _actions << actionFitPlane
+               << actionFitLine;
+      Q_FOREACH(QAction* action, _actions)
+        action->setProperty("subMenuName", "Principal Component Analysis");
+
 
   }
 
@@ -69,6 +68,9 @@ public Q_SLOTS:
   void on_actionFitPlane_triggered();
   void on_actionFitLine_triggered();
 
+private:
+  Scene_interface* scene;
+  QList<QAction*> _actions;
 }; // end Polyhedron_demo_pca_plugin
 
 void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()

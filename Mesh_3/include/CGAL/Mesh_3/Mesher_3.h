@@ -530,7 +530,7 @@ initialize()
 #  endif
       Random_points_on_sphere_3<Point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-        tbb::task_scheduler_init::default_num_threads()
+        float(tbb::task_scheduler_init::default_num_threads())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(*random_point + center);

@@ -155,9 +155,16 @@ bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFile
 
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
-  return (poly_item && poly_item->save(out)) || 
-    (soup_item && soup_item->save(out)) ||
-    (points_item && points_item->write_off_point_set(out));
+
+  if(fileinfo.suffix().toLower() == "off"){
+    return (poly_item && poly_item->save(out)) || 
+      (soup_item && soup_item->save(out)) ||
+      (points_item && points_item->write_off_point_set(out));
+  }
+  if(fileinfo.suffix().toLower() == "obj"){
+    return (poly_item && poly_item->save_obj(out));
+  }
+  return false;
 }
 
 #include "OFF_io_plugin.moc"

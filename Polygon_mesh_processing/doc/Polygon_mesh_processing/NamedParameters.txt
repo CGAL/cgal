@@ -121,6 +121,7 @@ the  value type
     typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type>::value_type
 \endcode
 \b Default value is \code boost::get(CGAL::face_index, pmesh)\endcode
+If this internal property map exists, its values should be initialized
 \cgalNPEnd
 
 \cgalNPBegin{vertex_index_map} \anchor PMP_vertex_index_map

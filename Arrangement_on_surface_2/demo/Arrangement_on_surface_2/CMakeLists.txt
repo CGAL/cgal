@@ -12,7 +12,7 @@ include( ${CGAL_USE_FILE} )
 
 find_package( Qt5 QUIET COMPONENTS Script Widgets )
 
-if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   include_directories( ./ )
   # Arrangement package includes
   include_directories( BEFORE ../../include )
@@ -76,7 +76,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, CGAL-Core and Qt5, and will not be compiled.")
 
 endif()
 

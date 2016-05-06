@@ -298,13 +298,7 @@ struct Tester
         assert(index.first != index.second);
         Cell_handle c1 = f.first;
         Cell_handle c2 = f.first->neighbor(f.second);
-        if( ! (
-               (c1->subdomain_index() == index.first
-                && c2->subdomain_index() == index.second)
-               ||
-               (c2->subdomain_index() == index.first
-                && c1->subdomain_index() == index.second)
-               ))
+        if( c1->subdomain_index() == c2->subdomain_index() )
         {
           std::cerr << "ERROR:"
                     << "\nc1->subdomain_index(): " << c1->subdomain_index()

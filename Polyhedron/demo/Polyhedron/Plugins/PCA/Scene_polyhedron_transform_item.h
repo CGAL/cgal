@@ -18,7 +18,7 @@ public:
     Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item,const CGAL::Three::Scene_interface* scene_interface);
     Scene_item* clone() const{return NULL;}
     QString toolTip() const;
-    void draw_edges(CGAL::Three::Viewer_interface*) const;
+    void drawEdges(CGAL::Three::Viewer_interface*) const;
     void compute_bbox() const;
     ~Scene_polyhedron_transform_item();
     bool manipulatable() const;

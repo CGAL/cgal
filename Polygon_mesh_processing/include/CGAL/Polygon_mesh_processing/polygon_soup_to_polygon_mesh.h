@@ -25,7 +25,12 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <set>
+
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
+#include <boost/range/reference.hpp>
 
 namespace CGAL
 {
@@ -91,45 +96,77 @@ public:
 }//end namespace internal
 
 
-  /// \cond SKIP_IN_MANUAL
   /**
-  * \ingroup PMP_repairing_grp
-  * returns `true` if the soup of polygons defines a valid polygon mesh
-  * that can be handled by `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
-  *
-  * @tparam Polygon a `std::vector<std::size_t>` containing the indices
-  *         of the points of the polygon face
-  *
-  * @param polygons each element in the vector describes a polygon using the index of the vertices
-  *
-  */
-  template<class Polygon>
-  bool is_polygon_soup_a_polygon_mesh(const std::vector<Polygon>& polygons)
+   * \ingroup PMP_repairing_grp
+   *
+   * returns `true` if the soup of polygons defines a valid polygon
+   * mesh that can be handled by
+   * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
+   * It checks that each edge has at most two incident faces and such an edge
+   * is visited in opposite direction along the two face boundaries,
+   * no polygon has twice the same vertex,
+   * and the polygon soup describes a manifold surface.
+   * This function does not require a range of points as an argument
+   * since the check is purely topological. To each vertex of the mesh
+   * is associated an index that is used in the description of the
+   * boundaries of the polygons provided in `polygons`.
+   *
+   * @tparam PolygonRange a model of the concept `RandomAccessContainer`
+   * whose value_type is a model of the concept `RandomAccessContainer`
+   * whose value_type is `std::size_t`.
+   *
+   * @param polygons each element in the range describes a polygon
+   * using the indices of the vertices.
+   *
+   * @sa `orient_polygon_soup()`
+   */
+  template<class PolygonRange>
+  bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   {
-    typedef typename std::iterator_traits<
-              typename Polygon::iterator >::value_type                   V_ID;
+    typedef typename boost::range_value<
+      typename boost::range_value<
+        PolygonRange>::type >::type V_ID;
+    typedef typename boost::range_value<
+      PolygonRange>::type           Polygon;
 
+    //check there is no duplicated ordered edge, and
+    //check there is no polygon with twice the same vertex
     std::set< std::pair<V_ID, V_ID> > edge_set;
+    V_ID max_id=0;
     BOOST_FOREACH(const Polygon& polygon, polygons)
     {
-      std::size_t nb_edges = polygon.size();
+      std::size_t nb_edges = boost::size(polygon);
       if (nb_edges<3) return false;
-      V_ID prev=polygon.back();
+
+      std::set<V_ID> polygon_vertices;
+      V_ID prev= *cpp11::prev(boost::end(polygon));
       BOOST_FOREACH(V_ID id, polygon)
+      {
+        if (max_id<id) max_id=id;
         if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
           return false;
         else
           prev=id;
+
+        if (!polygon_vertices.insert(id).second)
+          return false;//vertex met twice in the same polygon
+      }
     }
 
-    return true;
+    //check manifoldness
+    typedef std::vector<V_ID> PointRange;
+    typedef internal::Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
+    typename Orienter::Edge_map edges;
+    typename Orienter::Marked_edges marked_edges;
+    Orienter::fill_edge_map(edges, marked_edges, polygons);
+    //returns false if duplication is necessary
+    return Orienter::has_singular_vertices(static_cast<std::size_t>(max_id+1),polygons,edges,marked_edges);
   }
-  /// \endcond
 
   /**
   * \ingroup PMP_repairing_grp
   * builds a polygon mesh from a soup of polygons.
-  * @pre the input polygon soup describes consistently oriented
+  * @pre the input polygon soup describes a consistently oriented
   * polygon mesh.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point property map
@@ -141,7 +178,10 @@ public:
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
   * @param out the polygon mesh to be built
   *
+  * @pre `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)`
+  *
   * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+  * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
   *
   */
   template<class PolygonMesh, class Point, class Polygon>
@@ -150,6 +190,9 @@ public:
     const std::vector<Polygon>& polygons,
     PolygonMesh& out)
   {
+    CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
+                          "Input soup needs to be a polygon mesh!");
+
     internal::Polygon_soup_to_polygon_mesh<PolygonMesh, Point, Polygon>
       converter(points, polygons);
     converter(out);

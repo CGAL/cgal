@@ -426,7 +426,7 @@ QString Viewer::dumpCameraCoordinates()
   }
 }
 
-void Viewer::attrib_buffers(int program_name) const {
+void Viewer::attribBuffers(int program_name) const {
     GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
     QMatrix4x4 mvp_mat;
@@ -458,96 +458,47 @@ void Viewer::attrib_buffers(int program_name) const {
     QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
+    program->setUniformValue("mvp_matrix", mvp_mat);
     switch(program_name)
     {
-    case PROGRAM_NO_SELECTION:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-
-        program->setUniformValue("f_matrix",f_mat);
-        break;
     case PROGRAM_WITH_LIGHT:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        break;
     case PROGRAM_C3T3:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        break;
-    case PROGRAM_C3T3_EDGES:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        break;
-    case PROGRAM_WITHOUT_LIGHT:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff", diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        program->setAttributeValue("normals", 0.0,0.0,0.0);
-        program->setUniformValue("f_matrix",f_mat);
-
-
-        break;
-    case PROGRAM_WITH_TEXTURE:
-
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("s_texture",0);
-        program->setUniformValue("f_matrix",f_mat);
-
-        break;
     case PROGRAM_PLANE_TWO_FACES:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        break;
-
-    case PROGRAM_WITH_TEXTURED_EDGES:
-
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("s_texture",0);
-
-        break;
     case PROGRAM_INSTANCED:
-
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-
+    case PROGRAM_WITH_TEXTURE:
+    case PROGRAM_CUTPLANE_SPHERES:
+    case PROGRAM_SPHERES:
         program->setUniformValue("light_pos", position);
         program->setUniformValue("light_diff",diffuse);
         program->setUniformValue("light_spec", specular);
         program->setUniformValue("light_amb", ambient);
         program->setUniformValue("spec_power", 51.8f);
         program->setUniformValue("is_two_side", is_both_sides);
-
         break;
-    case PROGRAM_INSTANCED_WIRE:
-        program->setUniformValue("mvp_matrix", mvp_mat);
+    }
+    switch(program_name)
+    {
+    case PROGRAM_WITH_LIGHT:
+    case PROGRAM_C3T3:
+    case PROGRAM_PLANE_TWO_FACES:
+    case PROGRAM_INSTANCED:
+    case PROGRAM_CUTPLANE_SPHERES:
+    case PROGRAM_SPHERES:
+      program->setUniformValue("mv_matrix", mv_mat);
+      break;
+    case PROGRAM_WITHOUT_LIGHT:
+      program->setUniformValue("f_matrix",f_mat);
+      break;
+    case PROGRAM_WITH_TEXTURE:
+      program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("s_texture",0);
+      program->setUniformValue("f_matrix",f_mat);
+      break;
+    case PROGRAM_WITH_TEXTURED_EDGES:
+        program->setUniformValue("s_texture",0);
+        break;
+    case PROGRAM_NO_SELECTION:
+        program->setUniformValue("f_matrix",f_mat);
         break;
     }
     program->release();
@@ -1110,6 +1061,51 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
 
         }
         break;
+    case PROGRAM_CUTPLANE_SPHERES:
+      if( d->shader_programs[PROGRAM_CUTPLANE_SPHERES])
+      {
+          return d->shader_programs[PROGRAM_CUTPLANE_SPHERES];
+      }
+      else
+      {
+        QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v"))
+        {
+            std::cerr<<"adding vertex shader FAILED"<<std::endl;
+        }
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3.f" ))
+        {
+            std::cerr<<"adding fragment shader FAILED"<<std::endl;
+        }
+        program->bindAttributeLocation("colors", 1);
+        program->link();
+        d->shader_programs[PROGRAM_CUTPLANE_SPHERES] = program;
+        return program;
+      }
+    case PROGRAM_SPHERES:
+        if( d->shader_programs[PROGRAM_SPHERES])
+        {
+            return d->shader_programs[PROGRAM_SPHERES];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->bindAttributeLocation("colors", 1);
+            program->link();
+            d->shader_programs[PROGRAM_SPHERES] = program;
+            return program;
+
+        }
+      break;
+
     default:
         std::cerr<<"ERROR : Program not found."<<std::endl;
         return 0;

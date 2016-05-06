@@ -147,7 +147,10 @@ public:
 
   // Sets the dimension of the lowest dimensional face of the input 3D complex
   // that contains the vertex
-  void set_dimension(const int dimension) { dimension_ = dimension; }
+  void set_dimension(const int dimension) {
+    CGAL_assertion(dimension < 4);
+    dimension_ = short(dimension);
+  }
 
   // Tells if the vertex is marked as a special protecting ball
   bool is_special() const { return dimension_ < -1; }
@@ -155,7 +158,7 @@ public:
   // Marks or unmarks the vertex as a special protecting ball
   void set_special(bool special = true) {
     if(special != (dimension_ < -1) )
-      dimension_ = -2-dimension_;
+      dimension_ = short(-2-dimension_);
   }
 
   // Returns the index of the lowest dimensional face of the input 3D complex

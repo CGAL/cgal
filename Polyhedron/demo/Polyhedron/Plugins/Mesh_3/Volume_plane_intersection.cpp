@@ -60,7 +60,7 @@ void Volume_plane_intersection::compile_shaders()
     }
 }
 
-void Volume_plane_intersection::compute_elements()
+void Volume_plane_intersection::computeElements()
 {
    a_vertex.resize(0);
    b_vertex.resize(0);
@@ -113,7 +113,7 @@ void Volume_plane_intersection::init_buffers()
 
 }
 
-void Volume_plane_intersection::attrib_buffers(Viewer_interface* viewer) const
+void Volume_plane_intersection::attribBuffers(Viewer_interface* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];
@@ -131,7 +131,8 @@ void Volume_plane_intersection::attrib_buffers(Viewer_interface* viewer) const
 
 void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
   viewer->glLineWidth(4.0f);
-  attrib_buffers(viewer);
+  attribBuffers(viewer);
+  glDepthRange(0.0,0.9999);
   if(b && c) {
 
     vao[0].bind();
@@ -195,6 +196,6 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
       rendering_program.release();
       vao[2].release();
   }
-
   viewer->glLineWidth(1.0f);
+  glDepthRange(0.00001,1.0);
 }

@@ -407,7 +407,11 @@ public Q_SLOTS:
       }
     }
 
-    double diag = bbox.diagonal_length();
+    double diag = CGAL::sqrt(
+          (bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
+          +(bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
+          +(bbox.zmax()-bbox.zmax()) *(bbox.zmax()-bbox.zmax())
+          );
     switch( detect_constant_coordinate(polylines_items, points_items) )
     {
       using namespace CGAL;

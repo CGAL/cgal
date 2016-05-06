@@ -19,35 +19,33 @@ class Polyhedron_demo_subdivision_methods_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionLoop"
-                         << "actionCatmullClark"
-                         << "actionSqrt3";
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
-  void init(QMainWindow* mainWindow,
+  void init(QMainWindow* mw,
             Scene_interface* scene_interface)
   {
-      mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionLoop"] = new QAction("Loop", mw);
-      actions_map["actionLoop"]->setProperty("subMenuName", "3D Surface Subdivision Methods");
+      QAction *actionLoop = new QAction("Loop", mw);
+      QAction *actionCatmullClark = new QAction("Catmull Clark", mw);
+      QAction *actionSqrt3 = new QAction("Sqrt3", mw);
 
-      actions_map["actionCatmullClark"] = new QAction("Catmull Clark", mw);
-      actions_map["actionCatmullClark"]->setProperty("subMenuName", "3D Surface Subdivision Methods");
-
-      actions_map["actionSqrt3"] = new QAction("Sqrt3", mw);
-      actions_map["actionSqrt3"]->setProperty("subMenuName", "3D Surface Subdivision Methods");
-
-      //autoConnectActions();
-      connect(actions_map["actionLoop"], SIGNAL(triggered()),
+      connect(actionLoop, SIGNAL(triggered()),
               this, SLOT(on_actionLoop_triggered()));
 
-      connect(actions_map["actionCatmullClark"], SIGNAL(triggered()),
+      connect(actionCatmullClark, SIGNAL(triggered()),
               this, SLOT(on_actionCatmullClark_triggered()));
 
-      connect(actions_map["actionSqrt3"], SIGNAL(triggered()),
+      connect(actionSqrt3, SIGNAL(triggered()),
               this, SLOT(on_actionSqrt3_triggered()));
+
+      _actions << actionLoop
+               << actionCatmullClark
+               << actionSqrt3;
+      Q_FOREACH(QAction* action, _actions)
+        action->setProperty("subMenuName", "3D Surface Subdivision Methods");
+
 
   }
 
@@ -58,6 +56,8 @@ public Q_SLOTS:
   void on_actionLoop_triggered();
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
+private :
+  QList<QAction*> _actions;
 }; // end Polyhedron_demo_subdivision_methods_plugin
 
 void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()

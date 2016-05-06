@@ -22,7 +22,6 @@
 
 #include <CGAL/_test_types.h>
 
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/internal/Projection_traits_3.h>
 #include <CGAL/_test_traits.h>
 #include <CGAL/_test_cls_geom_traits.h>
@@ -49,9 +48,8 @@ class Triangulation_euclidean_traits_xy_3
 int
 main()
 {
-  std::cout << "Testing Triangulation_euclidean_traits_2" << std::endl;
-  std::cout << "   with Cartesian" << std::endl;
-  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Cls1;
+  std::cout << "Testing with Cartesian" << std::endl;
+  typedef Test_rep_cartesian Cls1;
   typedef Cls1::Point_2  Pt1;
   Pt1 p1[34] = {
 	Pt1(1,3), Pt1(3,5), Pt1(3,8), 
@@ -68,7 +66,7 @@ main()
   _test_cls_delaunay_geom_traits( p1, Cls1() );
 
   std::cout << "   with Kernel traits" << std::endl;
-  typedef CGAL::Triangulation_euclidean_traits_2<TestK> Cls1b;
+  typedef TestK Cls1b;
   typedef Cls1b::Point_2  Pt1b;
   Pt1b p1b[34] = {
 	Pt1b(1,3), Pt1b(3,5), Pt1b(3,8), 
@@ -85,7 +83,7 @@ main()
   _test_cls_delaunay_geom_traits( p1b, Cls1b() );
 
   std::cout << "   with Homogeneous" << std::endl;
-  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_homogeneous> Cls2;
+  typedef Test_rep_homogeneous Cls2;
   typedef Cls2::Point_2  Pt2;
   Pt2 p2[34] = {
 	Pt2(1,3,1), Pt2(6,10,2), Pt2(3,8,1), 

@@ -275,7 +275,11 @@ bool Scene_combinatorial_map_item::keyPressEvent(QKeyEvent* e){
     return false;
 }
 
+<<<<<<< HEAD
 void Scene_combinatorial_map_item_priv::compute_elements(void) const{
+=======
+void Scene_combinatorial_map_item::computeElements(void) const{
+>>>>>>> Three_doc_for_review_rebase-GF
 
     positions_facets.resize(0);
     normals.resize(0);
@@ -388,7 +392,11 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
 
 }
 
+<<<<<<< HEAD
 void Scene_combinatorial_map_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+=======
+void Scene_combinatorial_map_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
+>>>>>>> Three_doc_for_review_rebase-GF
 {
     //vao for the edges
     {
@@ -522,6 +530,7 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
 {
     if(!are_buffers_filled)
     {
+<<<<<<< HEAD
         d->compute_elements();
         d->initialize_buffers(viewer);
     }
@@ -533,12 +542,26 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
     vaos[Scene_combinatorial_map_item_priv::Facets]->release();
     d->program->release();
+=======
+        computeElements();
+        initializeBuffers(viewer);
+    }
+    vaos[Facets]->bind();
+    program=getShaderProgram(PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
+    program->bind();
+    program->setAttributeValue("colors", this->color());
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
+    vaos[Facets]->release();
+    program->release();
+>>>>>>> Three_doc_for_review_rebase-GF
 
 }
- void Scene_combinatorial_map_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+ void Scene_combinatorial_map_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
      if(!are_buffers_filled)
      {
+<<<<<<< HEAD
          d->compute_elements();
          d->initialize_buffers(viewer);
      }
@@ -550,12 +573,26 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
      viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
      vaos[Scene_combinatorial_map_item_priv::Edges]->release();
      d->program->release();
+=======
+         computeElements();
+         initializeBuffers(viewer);
+     }
+     vaos[Edges]->bind();
+     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
+     program->bind();
+     program->setAttributeValue("colors", this->color());
+     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
+     vaos[Edges]->release();
+     program->release();
+>>>>>>> Three_doc_for_review_rebase-GF
 
 }
- void Scene_combinatorial_map_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+ void Scene_combinatorial_map_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
      if(!are_buffers_filled)
      {
+<<<<<<< HEAD
          d->compute_elements();
          d->initialize_buffers(viewer);
      }
@@ -567,6 +604,19 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
      viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_points/3));
      vaos[Scene_combinatorial_map_item_priv::Points]->release();
      d->program->release();
+=======
+         computeElements();
+         initializeBuffers(viewer);
+     }
+     vaos[Points]->bind();
+     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
+     program->bind();
+     program->setAttributeValue("colors", this->color());
+     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
+     vaos[Points]->release();
+     program->release();
+>>>>>>> Three_doc_for_review_rebase-GF
 
 }
 

@@ -1,11 +1,10 @@
 #include "Scene_polylines_item.h"
-#include "create_sphere.h"
+#include "Scene_spheres_item.h"
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/gl.h>
 #include <QMenu>
 #include <QAction>
-
 #include <QInputDialog>
 
 class Scene_polylines_item_private {
@@ -18,21 +17,13 @@ public:
         spheres_drawn_radius(0)
     {}
 
-    void draw_sphere(const K::Point_3&, double) const;
-    void draw_spheres(const Scene_polylines_item*) const;
-
     bool draw_extremities;
     double spheres_drawn_radius;
 };
 
-void
-Scene_polylines_item::create_Sphere(float R) const
-{
-  create_flat_and_wire_sphere(R, positions_spheres, normals_spheres, positions_wire_spheres);
-}
 
 void
-Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
+Scene_polylines_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     QOpenGLShaderProgram *program;
    //vao for the lines
@@ -49,143 +40,17 @@ Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =
         buffers[Edges_Vertices].release();
         vaos[Edges]->release();
         program->release();
+
+        nb_lines = positions_lines.size();
+        positions_lines.clear();
+        positions_lines.swap(positions_lines);
     }
-   //vao for the spheres
-    {
-        if(viewer->extension_is_found)
-        {
-            program = getShaderProgram(PROGRAM_INSTANCED, viewer);
-            program->bind();
-
-            vaos[Spheres]->bind();
-            buffers[Spheres_Vertices].bind();
-            buffers[Spheres_Vertices].allocate(positions_spheres.data(),
-                                static_cast<int>(positions_spheres.size()*sizeof(float)));
-            program->enableAttributeArray("vertex");
-            program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-            buffers[Spheres_Vertices].release();
-
-            buffers[Spheres_Normals].bind();
-            buffers[Spheres_Normals].allocate(normals_spheres.data(),
-                                static_cast<int>(normals_spheres.size()*sizeof(float)));
-            program->enableAttributeArray("normals");
-            program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-            buffers[Spheres_Normals].release();
-
-            buffers[Spheres_Colors].bind();
-            buffers[Spheres_Colors].allocate(color_spheres.data(),
-                                static_cast<int>(color_spheres.size()*sizeof(float)));
-            program->enableAttributeArray("colors");
-            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[Spheres_Colors].release();
-
-            buffers[Spheres_Center].bind();
-            buffers[Spheres_Center].allocate(positions_center.data(),
-                                static_cast<int>(positions_center.size()*sizeof(float)));
-            program->enableAttributeArray("center");
-            program->setAttributeBuffer("center",GL_FLOAT,0,3);
-            buffers[Spheres_Center].release();
-
-            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-
-        }
-        else
-        {
-            program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
-            program->bind();
-
-            vaos[Spheres]->bind();
-            buffers[Spheres_Vertices].bind();
-            buffers[Spheres_Vertices].allocate(positions_center.data(),
-                                static_cast<int>(positions_center.size()*sizeof(float)));
-            program->enableAttributeArray("vertex");
-            program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-            buffers[Spheres_Vertices].release();
-
-            buffers[Spheres_Normals].bind();
-            buffers[Spheres_Normals].allocate(color_spheres.data(),
-                                static_cast<int>(color_spheres.size()*sizeof(float)));
-            program->enableAttributeArray("colors");
-            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[Spheres_Normals].release();
-        }
-        vaos[Spheres]->release();
-
-        program->release();
-    }
-
-//vao for the wired spheres
-    {
-        if(viewer->extension_is_found)
-        {
-            program = getShaderProgram(PROGRAM_INSTANCED_WIRE, viewer);
-            program->bind();
-
-            vaos[Wired_Spheres]->bind();
-            buffers[Wired_Spheres_Vertices].bind();
-            buffers[Wired_Spheres_Vertices].allocate(positions_wire_spheres.data(),
-                                static_cast<int>(positions_wire_spheres.size()*sizeof(float)));
-            program->enableAttributeArray("vertex");
-            program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-            buffers[Wired_Spheres_Vertices].release();
-
-            buffers[Spheres_Colors].bind();
-            program->enableAttributeArray("colors");
-            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[Spheres_Colors].release();
-
-            buffers[Spheres_Normals].bind();
-            program->enableAttributeArray("normals");
-            program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-            buffers[Spheres_Normals].release();
-
-
-            buffers[Spheres_Center].bind();
-            program->enableAttributeArray("center");
-            program->setAttributeBuffer("center",GL_FLOAT,0,3);
-            buffers[Spheres_Center].release();
-
-
-            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-
-            vaos[Wired_Spheres]->release();
-            program->release();
-
-            nb_lines = positions_lines.size();
-            positions_lines.resize(0);
-            std::vector<float>(positions_lines).swap(positions_lines);
-            nb_spheres = positions_spheres.size();
-            positions_spheres.resize(0);
-            std::vector<float>(positions_spheres).swap(positions_spheres);
-            normals_spheres.resize(0);
-            std::vector<float>(normals_spheres).swap(normals_spheres);
-            color_spheres.resize(0);
-            std::vector<float>(color_spheres).swap(color_spheres);
-            nb_centers = positions_center.size();
-            positions_center.resize(0);
-            std::vector<float>(positions_center).swap(positions_center);
-            nb_wire = positions_wire_spheres.size();
-            positions_wire_spheres.resize(0);
-            std::vector<float>(positions_wire_spheres).swap(positions_wire_spheres);
-        }
-    }
-
    are_buffers_filled = true;
-
 }
 void
-Scene_polylines_item::compute_elements() const
+Scene_polylines_item::computeElements() const
 {
-    positions_spheres.resize(0);
-    positions_wire_spheres.resize(0);
     positions_lines.resize(0);
-    color_spheres.resize(0);
-    normals_spheres.resize(0);
-    positions_center.resize(0);
-    nbSpheres = 0;
-
     //Fills the VBO with the lines
     for(std::list<std::vector<Point_3> >::const_iterator it = polylines.begin();
         it != polylines.end();
@@ -205,132 +70,115 @@ Scene_polylines_item::compute_elements() const
             positions_lines.push_back(b.y());
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
-
         }
-
-    }
-    //Fills the VBO with the spheres
-    if(d->draw_extremities)
-    {
-
-        // FIRST, count the number of incident cycles and polylines
-        // for all extremities.
-        typedef std::map<Point_3, int> Point_to_int_map;
-        typedef Point_to_int_map::iterator iterator;
-        Point_to_int_map corner_polyline_nb;
-
-        { // scope to fill corner_polyline_nb'
-            Point_to_int_map corner_cycles_nb;
-
-            for(std::list<std::vector<Point_3> >::const_iterator
-                it = this->polylines.begin(),
-                end = this->polylines.end();
-                it != end; ++it)
-            {
-                const K::Point_3& a = *it->begin();
-                const K::Point_3& b = *it->rbegin();
-                if(a == b) {
-                    if ( it->size()>1 )
-                        ++corner_cycles_nb[a];
-                    else
-                        ++corner_polyline_nb[a];
-                }
-                else {
-                    ++corner_polyline_nb[a];
-                    ++corner_polyline_nb[b];
-                }
-            }
-            // THEN, ignore points that are incident to one cycle only.
-            for(iterator
-                c_it = corner_cycles_nb.begin(),
-                end = corner_cycles_nb.end();
-                c_it != end; ++c_it)
-            {
-                const Point_3& a = c_it->first;
-
-                iterator p_it = corner_polyline_nb.find(a);
-
-                // If the point 'a'=c_it->first has only incident cycles...
-                if(p_it == corner_polyline_nb.end()) {
-                    // ...then count it as a corner only if it has two incident cycles
-                    // or more.
-                    if(c_it->second > 1) {
-                        corner_polyline_nb[a] = c_it->second;
-                    }
-                } else {
-                    // else add the number of cycles.
-                    p_it->second += c_it->second;
-                }
-            }
-        }
-        // At this point, 'corner_polyline_nb' gives the multiplicity of all
-        // corners.
-        //Finds the centers of the spheres and their color
-        for(iterator
-            p_it = corner_polyline_nb.begin(),
-            end = corner_polyline_nb.end();
-            p_it != end; ++p_it)
-        {
-            nbSpheres++;
-            const K::Point_3& centre = p_it->first;
-            positions_center.push_back(centre.x());
-            positions_center.push_back(centre.y());
-            positions_center.push_back(centre.z());
-
-            float colors[3];
-            switch(p_it->second) {
-            case 1:
-                colors[0] = 0.0; // black
-                colors[1] = 0.0;
-                colors[2] = 0.0;
-                break;
-            case 2:
-                colors[0] = 0.0; // green
-                colors[1] = 0.8f;
-                colors[2] = 0.0;
-                break;
-            case 3:
-                colors[0] = 0.0; // blue
-                colors[1] = 0.0;
-                colors[2] = 0.8f;
-                break;
-            case 4:
-                colors[0] = 0.8f; //red
-                colors[1] = 0.0;
-                colors[2] = 0.0;
-                break;
-            default:
-                colors[0] = 0.8f; //fuschia
-                colors[1] = 0.0;
-                colors[2] = 0.8f;
-            }
-
-            color_spheres.push_back(colors[0]);
-            color_spheres.push_back(colors[1]);
-            color_spheres.push_back(colors[2]);
-            color_wire_spheres.push_back(colors[0]);
-            color_wire_spheres.push_back(colors[1]);
-            color_wire_spheres.push_back(colors[2]);
-            color_wire_spheres.push_back(colors[0]);
-            color_wire_spheres.push_back(colors[1]);
-            color_wire_spheres.push_back(colors[2]);
-        }
-        create_Sphere(d->spheres_drawn_radius);
 
     }
 }
 
+void
+Scene_polylines_item::computeSpheres()
+{
+      // FIRST, count the number of incident cycles and polylines
+      // for all extremities.
+      typedef std::map<Point_3, int> Point_to_int_map;
+      typedef Point_to_int_map::iterator iterator;
+      Point_to_int_map corner_polyline_nb;
+
+      { // scope to fill corner_polyline_nb'
+          Point_to_int_map corner_cycles_nb;
+
+          for(std::list<std::vector<Point_3> >::const_iterator
+              it = this->polylines.begin(),
+              end = this->polylines.end();
+              it != end; ++it)
+          {
+              const K::Point_3& a = *it->begin();
+              const K::Point_3& b = *it->rbegin();
+              if(a == b) {
+                  if ( it->size()>1 )
+                      ++corner_cycles_nb[a];
+                  else
+                      ++corner_polyline_nb[a];
+              }
+              else {
+                  ++corner_polyline_nb[a];
+                  ++corner_polyline_nb[b];
+              }
+          }
+          // THEN, ignore points that are incident to one cycle only.
+          for(iterator
+              c_it = corner_cycles_nb.begin(),
+              end = corner_cycles_nb.end();
+              c_it != end; ++c_it)
+          {
+              const Point_3& a = c_it->first;
+
+              iterator p_it = corner_polyline_nb.find(a);
+
+              // If the point 'a'=c_it->first has only incident cycles...
+              if(p_it == corner_polyline_nb.end()) {
+                  // ...then count it as a corner only if it has two incident cycles
+                  // or more.
+                  if(c_it->second > 1) {
+                      corner_polyline_nb[a] = c_it->second;
+                  }
+              } else {
+                  // else add the number of cycles.
+                  p_it->second += c_it->second;
+              }
+          }
+      }
+      // At this point, 'corner_polyline_nb' gives the multiplicity of all
+      // corners.
+      //Finds the centers of the spheres and their color
+      for(iterator
+          p_it = corner_polyline_nb.begin(),
+          end = corner_polyline_nb.end();
+          p_it != end; ++p_it)
+      {
+          const K::Point_3& center = p_it->first;
+          int colors[3];
+          switch(p_it->second) {
+          case 1:
+              colors[0] = 0; // black
+              colors[1] = 0;
+              colors[2] = 0;
+              break;
+          case 2:
+              colors[0] = 0; // green
+              colors[1] = 200;
+              colors[2] = 0;
+              break;
+          case 3:
+              colors[0] = 0; // blue
+              colors[1] = 0;
+              colors[2] = 200;
+              break;
+          case 4:
+              colors[0] = 200; //red
+              colors[1] = 0;
+              colors[2] = 0;
+              break;
+          default:
+              colors[0] = 200; //fuschia
+              colors[1] = 0;
+              colors[2] = 200;
+          }
+
+          CGAL::Color c(colors[0], colors[1], colors[2]);
+
+          K::Sphere_3 *sphere = new K::Sphere_3(center, d->spheres_drawn_radius);
+          spheres->add_sphere(sphere, c);
+      }
+}
 
 Scene_polylines_item::Scene_polylines_item() 
-    :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos)
+    :CGAL::Three::Scene_group_item("unnamed",NbOfVbos,NbOfVaos)
     ,d(new Scene_polylines_item_private())
-    ,nbSpheres(0)
 {
     setRenderingMode(FlatPlusEdges);
-    nb_spheres = 0;
-    nb_wire = 0;
-    nb_centers = 0;
     nb_lines = 0;
+    spheres = NULL;
     invalidateOpenGLBuffers();
 
 }
@@ -425,49 +273,26 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
     if(d->draw_extremities)
     {
-        if(viewer->extension_is_found)
-        {
-            vaos[Spheres]->bind();
-            QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_INSTANCED);
-            attrib_buffers(viewer, PROGRAM_INSTANCED);
-            program->bind();
-            viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                          static_cast<GLsizei>(nb_spheres/3), nbSpheres);
-            program->release();
-            vaos[Spheres]->release();
-        }
-        else
-        {
-            vaos[Spheres]->bind();
-            QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_NO_SELECTION);
-            attrib_buffers(viewer, PROGRAM_NO_SELECTION);
-            glPointSize(8.0f);
-            glEnable(GL_POINT_SMOOTH);
-            program->bind();
-            viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_centers/3));
-            glDisable(GL_POINT_SMOOTH);
-            program->release();
-            vaos[Spheres]->release();
-        }
+      Scene_group_item::draw(viewer);
     }
 }
 
 // Wireframe OpenGL drawing
 void 
-Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
@@ -476,31 +301,21 @@ Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     vaos[Edges]->release();
     if(d->draw_extremities)
     {
-        if(viewer->extension_is_found)
-        {
-            vaos[Wired_Spheres]->bind();
-            attrib_buffers(viewer, PROGRAM_INSTANCED_WIRE);
-            program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
-            program->bind();
-            viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                          static_cast<GLsizei>(nb_wire/3), nbSpheres);
-            program->release();
-            vaos[Wired_Spheres]->release();
-        }
+       Scene_group_item::drawEdges(viewer);
     }
 
 }
 
 void 
-Scene_polylines_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     QColor temp = this->color();
@@ -509,6 +324,10 @@ Scene_polylines_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
     // Clean-up
    vaos[Edges]->release();
    program->release();
+   if(d->draw_extremities)
+   {
+      Scene_group_item::drawPoints(viewer);
+   }
 }
 
 QMenu* Scene_polylines_item::contextMenu() 
@@ -550,11 +369,11 @@ void Scene_polylines_item::change_corner_radii() {
     double proposed_radius = d->spheres_drawn_radius;
     if(proposed_radius == 0) {
         CGAL::Three::Scene_interface::Bbox b = bbox();
-        proposed_radius = (std::max)(b.xmax - b.xmin,
+        proposed_radius = (std::max)(b.xmax() - b.xmin(),
                                      proposed_radius);
-        proposed_radius = (std::max)(b.ymax - b.ymin,
+        proposed_radius = (std::max)(b.ymax() - b.ymin(),
                                      proposed_radius);
-        proposed_radius = (std::max)(b.zmax - b.zmin,
+        proposed_radius = (std::max)(b.zmax() - b.zmin(),
                                      proposed_radius);
         proposed_radius /= 100;
     }
@@ -575,7 +394,23 @@ void Scene_polylines_item::change_corner_radii(double r) {
     if(r >= 0) {
         d->spheres_drawn_radius = r;
         d->draw_extremities = (r > 0);
-        this->invalidateOpenGLBuffers();
+        if(r>0 && !spheres)
+        {
+          spheres = new Scene_spheres_item(this, false);
+          spheres->setName("Corner spheres");
+          spheres->setRenderingMode(Gouraud);
+          connect(spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+          scene->addItem(spheres);
+          scene->changeGroup(spheres, this);
+          lockChild(spheres);
+          computeSpheres();
+          spheres->invalidateOpenGLBuffers();
+        }
+        else if (r<=0 && spheres!=NULL)
+        {
+          unlockChild(spheres);
+          scene->erase(scene->item_id(spheres));
+        }
     Q_EMIT itemChanged();
     }
 }
