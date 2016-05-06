@@ -84,7 +84,10 @@ public:
     bool isEmpty() const;
     void compute_bbox() const;
     std::vector<QColor>& color_vector() {return colors_;}
-    void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
+    void set_color_vector_read_only(bool on_off) {
+      plugin_has_set_color_vector_m=on_off;
+      if (on_off) m_min_patch_id=0;
+    }
     int getNumberOfNullLengthEdges(){return number_of_null_length_edges;}
     int getNumberOfDegeneratedFaces(){return number_of_degenerated_faces;}
     bool triangulated(){return poly->is_pure_triangle();}
