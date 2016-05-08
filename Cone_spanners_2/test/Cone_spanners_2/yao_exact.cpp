@@ -13,7 +13,6 @@
 #include <string>
 #include <vector>
 #include <boost/lexical_cast.hpp>
-#include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
 #include <CGAL/Construct_yao_graph_2.h>
 #include <CGAL/gnuplot_output_2.h>
