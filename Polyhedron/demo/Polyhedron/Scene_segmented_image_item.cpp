@@ -446,7 +446,6 @@ struct Scene_segmented_image_item_priv
   mutable QOpenGLBuffer *m_ibo;
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
-  mutable bool are_buffers_filled;
   Scene_segmented_image_item* item;
 
 //#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE

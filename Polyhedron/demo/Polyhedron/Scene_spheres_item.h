@@ -14,7 +14,7 @@
 
 #include <QList>
 #include <vector>
-
+struct Scene_spheres_item_priv;
 class SCENE_BASIC_OBJECTS_EXPORT Scene_spheres_item
     : public CGAL::Three::Scene_item
 {
@@ -23,20 +23,9 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef std::pair<CGAL::Sphere_3<Kernel>*, CGAL::Color> Sphere_pair ;
 
-  Scene_spheres_item(Scene_group_item* parent, bool planed = false)
-    :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos)
-    ,precision(36)
-    ,has_plane(planed)
+  Scene_spheres_item(Scene_group_item* parent, bool planed = false);
 
-  {
-    setParent(parent);
-    create_flat_and_wire_sphere(1.0f,vertices,normals, edges);
-  }
-
-  ~Scene_spheres_item() {
-    Q_FOREACH(Sphere_pair sphere, spheres)
-      delete sphere.first;
-  }
+  ~Scene_spheres_item();
 
   bool isFinite() const { return false; }
   bool isEmpty() const { return false; }
@@ -49,50 +38,17 @@ public:
   void add_sphere(CGAL::Sphere_3<Kernel>* sphere, CGAL::Color = CGAL::Color(120,120,120));
   void remove_sphere(CGAL::Sphere_3<Kernel>* sphere);
   void clear_spheres();
-  void setPrecision(int prec) { precision = prec; }
+  void setPrecision(int prec);
 
   void draw(CGAL::Three::Viewer_interface* viewer) const;
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
-  void invalidateOpenGLBuffers(){are_buffers_filled = false;}
+  void invalidateOpenGLBuffers();
   void computeElements() const;
-  void setPlane(Kernel::Plane_3 p_plane) { plane = p_plane; }
+  void setPlane(Kernel::Plane_3 p_plane);
 
-private:
-  enum Vbos
-  {
-    Vertices = 0,
-    Edge_vertices,
-    Normals,
-    Center,
-    Radius,
-    Color,
-    Edge_color,
-    NbOfVbos
-  };
-  enum Vaos
-  {
-    Facets = 0,
-    Edges,
-    NbOfVaos
-  };
-
-
-  int precision;
-  mutable CGAL::Plane_3<Kernel> plane;
-  bool has_plane;
-
-  QList<Sphere_pair> spheres;
-  mutable std::vector<float> vertices;
-  mutable std::vector<float> normals;
-  mutable std::vector<float> edges;
-  mutable std::vector<float> colors;
-  mutable std::vector<float> edges_colors;
-  mutable std::vector<float> centers;
-  mutable std::vector<float> radius;
-  mutable QOpenGLShaderProgram *program;
-  mutable int nb_centers;
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const;
-
+protected:
+  friend struct Scene_spheres_item_priv;
+  Scene_spheres_item_priv* d;
 };
 
 #endif // SCENE_SPHERES_ITEM_H
