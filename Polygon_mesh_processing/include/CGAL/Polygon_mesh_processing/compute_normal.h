@@ -98,7 +98,7 @@ void sum_normals(const PM& pmesh,
     sum = sum + n;
 
     Vector n = internal::triangle_normal(prv, curr, nxt, traits);
-    traits.construct_sum_of_vectors_3_object()(sum, n);
+    sum = traits.construct_sum_of_vectors_3_object()(sum, n);
 
     he = next(he, pmesh);
   }
@@ -141,9 +141,9 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const NamedParameters& np)
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
+  typedef typename GT::FT FT;
+  typedef typename GT::Point_3 Point;
+  typedef typename GT::Vector_3 Vector;
 
   using boost::choose_param;
   using boost::get_param;
