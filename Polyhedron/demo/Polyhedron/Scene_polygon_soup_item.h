@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-
+struct Scene_polygon_soup_item_priv;
 struct Polygon_soup
 {
     typedef Kernel::Point_3 Point_3;
@@ -111,29 +111,7 @@ public:
     void load(Scene_polyhedron_item*);
 
     template <class Point, class Polygon>
-    inline void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
-    {
-        if(!soup)
-            soup = new Polygon_soup;
-        soup->clear();
-
-        /// add points
-        soup->points.reserve(points.size());
-        BOOST_FOREACH(const Point& p, points)
-                soup->points.push_back( Point_3(p[0], p[1], p[2]) );
-
-        /// add polygons
-        std::size_t nb_polygons=polygons.size();
-        soup->polygons.resize(nb_polygons);
-        for(std::size_t i=0; i<nb_polygons; ++i)
-            soup->polygons[i].assign(polygons[i].begin(), polygons[i].end());
-
-        /// fill non-manifold edges container
-        //soup->fill_edges();
-        oriented = false;
-
-        Q_EMIT invalidateOpenGLBuffers();
-    }
+    void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
 
     bool save(std::ostream& out) const;
 
@@ -156,7 +134,7 @@ public:
 
     void init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons);
 
-    const Points& points() const { return soup->points; }
+    const Points& points() const;
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
@@ -165,38 +143,9 @@ public Q_SLOTS:
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;
-
-private:
-    typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
-    Polygon_soup* soup;
-    bool oriented;
-
-    enum VAOs {
-        Facets=0,
-        Edges,
-        NM_Edges,
-        NbOfVaos = NM_Edges+1
-    };
-    enum VBOs {
-        Facets_vertices = 0,
-        Facets_normals,
-        Edges_vertices,
-        NM_Edges_vertices,
-        NbOfVbos = NM_Edges_vertices+1
-    };
-
-    mutable std::vector<float> positions_poly;
-    mutable std::vector<float> positions_lines;
-    mutable std::vector<float> normals;
-    mutable std::vector<float> positions_nm_lines;
-    mutable std::size_t nb_nm_edges;
-    mutable std::size_t nb_polys;
-    mutable std::size_t nb_lines;
-    using CGAL::Three::Scene_item::initializeBuffers;
-    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-    void compute_normals_and_vertices(void) const;
-    void triangulate_polygon(Polygons_iterator ) const;
-    mutable QOpenGLShaderProgram *program;
+protected:
+    friend struct Scene_polygon_soup_item_priv;
+    Scene_polygon_soup_item_priv* d;
 
 }; // end class Scene_polygon_soup_item
 

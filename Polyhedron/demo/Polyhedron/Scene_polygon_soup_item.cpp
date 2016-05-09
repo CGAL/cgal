@@ -32,7 +32,57 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
+struct Scene_polygon_soup_item_priv{
 
+  typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
+  typedef Kernel::Point_3 Point_3;
+
+  Scene_polygon_soup_item_priv(Scene_polygon_soup_item* parent)
+    : soup(0),
+      oriented(false)
+  {
+    item = parent;
+    nb_polys = 0;
+    nb_lines = 0;
+    nb_nm_edges = 0;
+  }
+  ~Scene_polygon_soup_item_priv()
+  {
+    delete soup;
+  }
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+  void compute_normals_and_vertices(void) const;
+  void triangulate_polygon(Polygons_iterator ) const;
+  mutable QOpenGLShaderProgram *program;
+
+
+  enum VAOs {
+      Facets=0,
+      Edges,
+      NM_Edges,
+      NbOfVaos
+  };
+  enum VBOs {
+      Facets_vertices = 0,
+      Facets_normals,
+      Edges_vertices,
+      NM_Edges_vertices,
+      NbOfVbos
+  };
+
+  Polygon_soup* soup;
+  bool oriented;
+  mutable std::vector<float> positions_poly;
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> normals;
+  mutable std::vector<float> positions_nm_lines;
+  mutable std::size_t nb_nm_edges;
+  mutable std::size_t nb_polys;
+  mutable std::size_t nb_lines;
+  mutable bool are_buffers_filled;
+  Scene_polygon_soup_item* item;
+
+};
 
 
 struct Polyhedron_to_polygon_soup_writer {
@@ -79,32 +129,32 @@ struct Polyhedron_to_polygon_soup_writer {
 }; // end struct Polyhedron_to_soup_writer
 
 void
-Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
+Scene_polygon_soup_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the facets
     {
-        program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_polygon_soup_item::PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[Facets]->bind();
-        buffers[Facets_vertices].bind();
-        buffers[Facets_vertices].allocate(positions_poly.data(),
+        item->vaos[Facets]->bind();
+        item->buffers[Facets_vertices].bind();
+        item->buffers[Facets_vertices].allocate(positions_poly.data(),
                             static_cast<int>(positions_poly.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[Facets_vertices].release();
+        item->buffers[Facets_vertices].release();
 
 
 
-        buffers[Facets_normals].bind();
-        buffers[Facets_normals].allocate(normals.data(),
+        item->buffers[Facets_normals].bind();
+        item->buffers[Facets_normals].allocate(normals.data(),
                             static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-        buffers[Facets_normals].release();
+        item->buffers[Facets_normals].release();
 
         program->release();
-        vaos[Facets]->release();
+        item->vaos[Facets]->release();
         nb_polys = positions_poly.size();
         positions_poly.resize(0);
         std::vector<float>(positions_poly).swap(positions_poly);
@@ -115,18 +165,18 @@ Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer
     }
     //vao containing the data for the edges
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_polygon_soup_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[Edges]->bind();
+        item->vaos[Edges]->bind();
 
-        buffers[Edges_vertices].bind();
-        buffers[Edges_vertices].allocate(positions_lines.data(),
+        item->buffers[Edges_vertices].bind();
+        item->buffers[Edges_vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[Edges_vertices].release();
+        item->buffers[Edges_vertices].release();
         program->release();
-        vaos[Edges]->release();
+        item->vaos[Edges]->release();
 
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
@@ -135,16 +185,16 @@ Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer
     }
     //vao containing the data for the non manifold edges
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_polygon_soup_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[NM_Edges]->bind();
-        buffers[NM_Edges_vertices].bind();
-        buffers[NM_Edges_vertices].allocate(positions_nm_lines.data(),
+        item->vaos[NM_Edges]->bind();
+        item->buffers[NM_Edges_vertices].bind();
+        item->buffers[NM_Edges_vertices].allocate(positions_nm_lines.data(),
                             static_cast<int>(positions_nm_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[NM_Edges_vertices].release();
-        vaos[NM_Edges]->release();
+        item->buffers[NM_Edges_vertices].release();
+        item->vaos[NM_Edges]->release();
         nb_nm_edges = positions_nm_lines.size();
         positions_nm_lines.resize(0);
         std::vector<float> (positions_nm_lines).swap(positions_nm_lines);
@@ -172,7 +222,7 @@ TDS,
 Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 void
-Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
+Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit) const
 {
     //Computes the normal of the facet
     const Point_3& pa = soup->points[pit->at(0)];
@@ -281,7 +331,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
     }
 }
 void
-Scene_polygon_soup_item::compute_normals_and_vertices() const{
+Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
     //get the vertices and normals
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.resize(0);
@@ -369,26 +419,21 @@ Scene_polygon_soup_item::compute_normals_and_vertices() const{
 
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
-    : Scene_item(NbOfVbos,NbOfVaos),
-    soup(0),
-    oriented(false)
+    : Scene_item(Scene_polygon_soup_item_priv::NbOfVbos,Scene_polygon_soup_item_priv::NbOfVaos)
 {
-    nb_polys = 0;
-    nb_lines = 0;
-    nb_nm_edges = 0;
+  d = new Scene_polygon_soup_item_priv(this);
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
-
-  delete soup;
+  delete d;
 }
 
 Scene_polygon_soup_item* 
 Scene_polygon_soup_item::clone() const {
   Scene_polygon_soup_item* new_soup = new Scene_polygon_soup_item();
-  new_soup->soup = soup->clone();
-  new_soup->oriented = oriented;
+  new_soup->d->soup = d->soup->clone();
+  new_soup->d->oriented = d->oriented;
   return new_soup;
 }
 
@@ -396,21 +441,21 @@ Scene_polygon_soup_item::clone() const {
 bool
 Scene_polygon_soup_item::load(std::istream& in)
 {
-  if (!soup) soup=new Polygon_soup();
-  else soup->clear();
+  if (!d->soup) d->soup=new Polygon_soup();
+  else d->soup->clear();
 
-    bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
-    Q_EMIT invalidateOpenGLBuffers();
+    bool result = CGAL::read_OFF(in, d->soup->points, d->soup->polygons);
+    invalidateOpenGLBuffers();
     return result;
 }
 
 void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons){
-  if(!soup)
-    soup = new Polygon_soup;
-  soup->clear();
-  soup->points.reserve(nb_pts);
-  soup->polygons.reserve(nb_polygons);
-  oriented = false;
+  if(!d->soup)
+    d->soup = new Polygon_soup;
+  d->soup->clear();
+  d->soup->points.reserve(nb_pts);
+  d->soup->polygons.reserve(nb_polygons);
+  d->oriented = false;
 }
 
 
@@ -422,45 +467,45 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   if(!poly_item) return;
   if(!poly_item->polyhedron()) return;
 
-  if(!soup)
-    soup = new Polygon_soup;
+  if(!d->soup)
+    d->soup = new Polygon_soup;
 
-  Polyhedron_to_polygon_soup_writer writer(soup);
+  Polyhedron_to_polygon_soup_writer writer(d->soup);
   CGAL::generic_print_polyhedron(std::cerr,
                                  *poly_item->polyhedron(),
                                  writer);
-  Q_EMIT invalidateOpenGLBuffers();
+  invalidateOpenGLBuffers();
 }
 
 void
 Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
 {
 
-  soup->display_non_manifold_edges = b;
+  d->soup->display_non_manifold_edges = b;
 }
 
 bool
 Scene_polygon_soup_item::displayNonManifoldEdges() const {
 
-  return soup->display_non_manifold_edges;
+  return d->soup->display_non_manifold_edges;
 }
 
 void Scene_polygon_soup_item::shuffle_orientations()
 {
-  for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
+  for(Polygon_soup::size_type i = 0, end = d->soup->polygons.size();
       i < end; ++i)
   {
-    if(std::rand() % 2 == 0) soup->inverse_orientation(i);
+    if(std::rand() % 2 == 0) d->soup->inverse_orientation(i);
   }
   invalidateOpenGLBuffers();
 }
 
 void Scene_polygon_soup_item::inside_out()
 {
-  for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
+  for(Polygon_soup::size_type i = 0, end = d->soup->polygons.size();
       i < end; ++i)
   {
-    soup->inverse_orientation(i);
+    d->soup->inverse_orientation(i);
   }
   invalidateOpenGLBuffers();
 }
@@ -469,14 +514,14 @@ bool
 Scene_polygon_soup_item::orient()
 {
 
-  if(isEmpty() || this->oriented)
+  if(isEmpty() || d->oriented)
     return true; // nothing to do
-  oriented=true;
+  d->oriented=true;
 
   //first skip degenerate polygons
   Polygon_soup::Polygons valid_polygons;
-  valid_polygons.reserve(soup->polygons.size());
-  BOOST_FOREACH(Polygon_soup::Polygon_3& polygon, soup->polygons)
+  valid_polygons.reserve(d->soup->polygons.size());
+  BOOST_FOREACH(Polygon_soup::Polygon_3& polygon, d->soup->polygons)
   {
     std::set<std::size_t> vids;
     bool to_remove=false;
@@ -489,11 +534,11 @@ Scene_polygon_soup_item::orient()
     }
     if (!to_remove) valid_polygons.push_back(polygon);
   }
-  if (valid_polygons.size()!=soup->polygons.size())
-    soup->polygons.swap(valid_polygons);
+  if (valid_polygons.size()!=d->soup->polygons.size())
+    d->soup->polygons.swap(valid_polygons);
 
   return CGAL::Polygon_mesh_processing::
-    orient_polygon_soup(soup->points, soup->polygons);
+    orient_polygon_soup(d->soup->points, d->soup->polygons);
 }
 
 
@@ -504,20 +549,20 @@ Scene_polygon_soup_item::save(std::ostream& out) const
   typedef Polygon_soup::size_type size_type;
   CGAL::File_writer_OFF writer;
   writer.write_header(out,
-                      soup->points.size(),
+                      d->soup->points.size(),
                       0,
-                      soup->polygons.size());
-  for(size_type i = 0, end = soup->points.size();
+                      d->soup->polygons.size());
+  for(size_type i = 0, end = d->soup->points.size();
       i < end; ++i)
   {
-    const Point_3& p = soup->points[i];
+    const Point_3& p = d->soup->points[i];
     writer.write_vertex( p.x(), p.y(), p.z() );
   }
   writer.write_facet_header();
-  for(size_type i = 0, end = soup->polygons.size();
+  for(size_type i = 0, end = d->soup->polygons.size();
       i < end; ++i)
   {
-    const Polygon_soup::Polygon_3& polygon = soup->polygons[i]; 
+    const Polygon_soup::Polygon_3& polygon = d->soup->polygons[i];
     const size_type size = polygon.size();
     writer.write_facet_begin(size);
     for(size_type j = 0; j < size; ++j) {
@@ -537,7 +582,7 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
     return false;
 
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
-    soup->points, soup->polygons, *out_polyhedron);
+    d->soup->points, d->soup->polygons, *out_polyhedron);
   std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_polyhedron);
   if(rv > 0)
     std::cerr << "Ignore isolated vertices: " << rv << std::endl;
@@ -555,7 +600,7 @@ QString
 Scene_polygon_soup_item::toolTip() const
 {
 
-  if(!soup)
+  if(!d->soup)
     return QString();
 
   QString str = QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
@@ -563,8 +608,8 @@ Scene_polygon_soup_item::toolTip() const
                      "<p>Number of vertices: %2<br />"
                      "Number of polygons: %3</p>")
     .arg(this->name())
-    .arg(soup->points.size())
-    .arg(soup->polygons.size())
+    .arg(d->soup->points.size())
+    .arg(d->soup->polygons.size())
     .arg(this->renderingModeName())
     .arg(this->color().name());
     str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
@@ -573,86 +618,86 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
+    if(!d->are_buffers_filled)
     {
-     compute_normals_and_vertices();
-     initializeBuffers(viewer);
+     d->compute_normals_and_vertices();
+     d->initializeBuffers(viewer);
     }
-    if(soup == 0) return;
+    if(d->soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
-    vaos[Facets]->bind();
+    vaos[Scene_polygon_soup_item_priv::Facets]->bind();
     attribBuffers(viewer,PROGRAM_WITH_LIGHT);
     //fills the arraw of colors with the current color
 
     QColor v_colors = this->color();
     // tells the GPU to use the program just created
-    program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    program->bind();
-    program->setAttributeValue("colors", v_colors);
+    d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
+    d->program->bind();
+    d->program->setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_polys/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_polys/4));
     // Clean-up
-    program->release();
-    vaos[Facets]->release();
+    d->program->release();
+    vaos[Scene_polygon_soup_item_priv::Facets]->release();
   }
 
 void
 Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
+    if(!d->are_buffers_filled)
     {
-      compute_normals_and_vertices();
-      initializeBuffers(viewer);
+      d->compute_normals_and_vertices();
+      d->initializeBuffers(viewer);
     }
-    if(soup == 0) return;
-    vaos[Edges]->bind();
+    if(d->soup == 0) return;
+    vaos[Scene_polygon_soup_item_priv::Edges]->bind();
     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    program->bind();
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
     QColor color = this->color();
-    program->setAttributeValue("colors", color);
+    d->program->setAttributeValue("colors", color);
     //draw the points
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_lines/4));
     // Clean-up
-    program->release();
-    vaos[Edges]->release();
+    d->program->release();
+    vaos[Scene_polygon_soup_item_priv::Edges]->release();
 }
 
 void
 Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
+    if(!d->are_buffers_filled)
   {
-     compute_normals_and_vertices();
-     initializeBuffers(viewer);
+     d->compute_normals_and_vertices();
+     d->initializeBuffers(viewer);
   }
-    if(soup == 0) return;
-    vaos[Edges]->bind();
+    if(d->soup == 0) return;
+    vaos[Scene_polygon_soup_item_priv::Edges]->bind();
     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    program->bind();
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
     QColor color = this->color().lighter(120);
 
-    program->setAttributeValue("colors", color);
+    d->program->setAttributeValue("colors", color);
     //draw the edges
-    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_lines/4));
+    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( d->nb_lines/4));
     // Clean-up
-    program->release();
-    vaos[Edges]->release();
+    d->program->release();
+    vaos[Scene_polygon_soup_item_priv::Edges]->release();
     if(displayNonManifoldEdges())
     {
-        vaos[NM_Edges]->bind();
+        vaos[Scene_polygon_soup_item_priv::NM_Edges]->bind();
         attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        program->bind();
+        d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        d->program->bind();
         QColor c = QColor(255,0,0,255);
 
-        program->setAttributeValue("colors", c);
+        d->program->setAttributeValue("colors", c);
         //draw the edges
-        viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_nm_edges/4));
+        viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( d->nb_nm_edges/4));
         // Clean-up
-        program->release();
-        vaos[NM_Edges]->release();
+        d->program->release();
+        vaos[Scene_polygon_soup_item_priv::NM_Edges]->release();
     }
 
 }
@@ -660,12 +705,12 @@ Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const 
 bool
 Scene_polygon_soup_item::isEmpty() const {
 
-  return (soup == 0 || soup->points.empty());
+  return (d->soup == 0 || d->soup->points.empty());
 }
 void
 Scene_polygon_soup_item::invalidateOpenGLBuffers()
 {
-    are_buffers_filled = false;
+    d->are_buffers_filled = false;
     compute_bbox();
 }
 
@@ -673,10 +718,10 @@ void Scene_polygon_soup_item::compute_bbox() const {
 
   if (isEmpty())
     return;
-  const Point_3& p = *(soup->points.begin());
+  const Point_3& p = *(d->soup->points.begin());
   CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-  for(Polygon_soup::Points::const_iterator it = soup->points.begin();
-      it != soup->points.end();
+  for(Polygon_soup::Points::const_iterator it = d->soup->points.begin();
+      it != d->soup->points.end();
       ++it) {
     bbox = bbox + it->bbox();
   }
@@ -690,7 +735,7 @@ Scene_polygon_soup_item::new_vertex(const double& x,
                                     const double& z)
 {
 
-    soup->points.push_back(Point_3(x, y, z));
+    d->soup->points.push_back(Point_3(x, y, z));
 }
                                
 void 
@@ -703,11 +748,36 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
   new_polygon[0] = i;
   new_polygon[1] = j;
   new_polygon[2] = k;
-  soup->polygons.push_back(new_polygon);
+  d->soup->polygons.push_back(new_polygon);
 }
                                
+template <class Point, class Polygon>
+void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
+{
+    if(!d->soup)
+        d->soup = new Polygon_soup;
+    d->soup->clear();
+
+    /// add points
+    d->soup->points.reserve(points.size());
+    BOOST_FOREACH(const Point& p, points)
+            d->soup->points.push_back( Point_3(p[0], p[1], p[2]) );
+
+    /// add polygons
+    std::size_t nb_polygons=polygons.size();
+    d->soup->polygons.resize(nb_polygons);
+    for(std::size_t i=0; i<nb_polygons; ++i)
+        d->soup->polygons[i].assign(polygons[i].begin(), polygons[i].end());
+
+    /// fill non-manifold edges container
+    //soup->fill_edges();
+    d->oriented = false;
+
+    invalidateOpenGLBuffers();
+}
 
 // Local Variables:
 // c-basic-offset: 4
 // End:
 
+const Scene_polygon_soup_item::Points& Scene_polygon_soup_item::points() const { return d->soup->points; }
