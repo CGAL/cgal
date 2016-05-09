@@ -65,15 +65,12 @@ public:
   typedef typename std::size_t Item;
 
   typedef typename Properties::Property_container<Item> Base;
-  typedef typename Properties::Property_map<Item, std::size_t> Index_pmap;
-  typedef typename Properties::Property_map<Item, Point> Point_pmap;
-  typedef typename Properties::Property_map<Item, Vector> Vector_pmap;
+  typedef typename Properties::Property_map<Item, std::size_t> Index_prop;
+  typedef typename Properties::Property_map<Item, Point> Point_prop;
+  typedef typename Properties::Property_map<Item, Vector> Vector_prop;
 
-  typedef typename Index_pmap::iterator iterator;
-  typedef typename Index_pmap::const_iterator const_iterator;
-
-protected:
-
+  typedef typename Index_prop::iterator iterator;
+  typedef typename Index_prop::const_iterator const_iterator;
   
   struct Index_back_inserter {
 
@@ -106,16 +103,20 @@ protected:
   };
 
   template <typename Property>
-  struct Property_push_pmap
+  struct Property_pmap
   {
+    typedef std::size_t key_type;
     typedef typename Property::value_type value_type;
-
+    typedef value_type& reference;
+    typedef boost::lvalue_property_map_tag category;
+    
     Point_set& ps;
     Property& prop;
     std::size_t ind;
 
-    Property_push_pmap(Point_set& ps, Property& prop, std::size_t ind=0) : ps(ps), prop(prop), ind(ind) {}
-    inline friend void put(Property_push_pmap& pm, std::size_t& i, typename Property::value_type& t)
+    Property_pmap(Point_set& ps, Property& prop, std::size_t ind=0) : ps(ps), prop(prop), ind(ind) {}
+
+    friend void put(Property_pmap& pm, std::size_t& i, typename Property::value_type& t)
     {
       if(pm.ps.size() <= (pm.ind))
         pm.ps.add_item();
@@ -123,16 +124,24 @@ protected:
       i = pm.ind;
       ++pm.ind;
     }
+
+    friend const value_type& get (const Property_pmap& pm, const std::size_t& i)
+    {
+      return get(&(pm.prop[0]), i);
+    }
   };
 
 
-  typedef Property_push_pmap<Point_pmap> Point_push_pmap;
-  typedef Property_push_pmap<Vector_pmap> Normal_push_pmap;
+  typedef Property_pmap<Point_prop> Point_pmap;
+  typedef Property_pmap<Vector_prop> Normal_pmap;
+
+
+protected:
 
   Base m_base;
-  Point_pmap m_points;
-  Index_pmap m_indices;
-  Vector_pmap m_normals;
+  Index_prop m_indices;
+  Point_prop m_points;
+  Vector_prop m_normals;
   std::size_t m_nb_removed;
 
   // Assignment operator not implemented and declared private to make
@@ -171,19 +180,9 @@ public:
     m_normals[size()-1] = n;
   }
 
-  Index_pmap& indices()
+  Index_prop& indices()
   {
     return m_indices;
-  }
-
-  Point_pmap& points()
-  {
-    return m_points;
-  }
-
-  Vector_pmap& normals()
-  {
-    return m_normals;
   }
 
   iterator begin() { return m_indices.begin(); }
@@ -222,8 +221,16 @@ public:
     for (std::size_t i = 0; i < m_base.size(); ++ i)
       m_indices[i] = indices[i];
 
+    for (std::size_t i = 0; i < 10; ++ i)
+      std::cerr << m_indices[i] << " ";
+    std::cerr << std::endl;
+
     // Sorting based on the indices reorders the point set correctly
     quick_sort_on_indices ((std::ptrdiff_t)0, (std::ptrdiff_t)(m_base.size() - 1));
+
+    for (std::size_t i = 0; i < 10; ++ i)
+      std::cerr << m_indices[i] << " ";
+    std::cerr << std::endl;
 
     m_base.resize (size ());
     m_base.shrink_to_fit ();
@@ -237,13 +244,13 @@ public:
     m_points = m_base.template add<Point> ("point").first;
     m_nb_removed = 0;
   }
-  
+
   Point& operator[] (Item index) { return m_points[m_indices[index]]; }
   const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
   Point& point (Item index) { return m_points[m_indices[index]]; }
   const Point& point (Item index) const { return m_points[m_indices[index]]; }
   Point& point (iterator it) { return m_points[*it]; }
-  const Point& point (iterator it) const { return m_points[*it]; }
+  const Point& point (const_iterator it) const { return m_points[*it]; }
 
   void add_item ()
   {
@@ -266,19 +273,19 @@ public:
   {
     return Index_back_inserter (*this, size());
   }
-  Point_push_pmap point_push_pmap ()
+  Point_pmap point_pmap ()
   {
-    return Property_push_pmap<Point_pmap> (*this, m_points, size());
+    return Point_pmap (*this, m_points, size());
   }
-  Normal_push_pmap normal_push_pmap ()
+  Normal_pmap normal_pmap ()
   {
-    return Property_push_pmap<Vector_pmap> (*this, m_normals, size());
+    return Normal_pmap (*this, m_normals, size());
   }
 
     
   bool has_normals() const
   {
-    std::pair<Vector_pmap, bool> pm = m_base.template get<Vector> ("normal");
+    std::pair<Vector_prop, bool> pm = m_base.template get<Vector> ("normal");
     return pm.second;
   }
   bool add_normal_property()
@@ -294,7 +301,7 @@ public:
   Vector& normal (Item index) { return m_normals[m_indices[index]]; }
   const Vector& normal (Item index) const { return m_normals[m_indices[index]]; }
   Vector& normal (iterator it) { return m_normals[*it]; }
-  const Vector& normal (iterator it) const { return m_normals[*it]; }
+  const Vector& normal (const_iterator it) const { return m_normals[*it]; }
 
   template <typename T>
   bool has_property (const std::string& name) const
