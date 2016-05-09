@@ -94,10 +94,7 @@ void sum_normals(const PM& pmesh,
     const Point& pvn  = get(vpmap, target(he, pmesh));
     const Point& pvnn = get(vpmap, target(next(he, pmesh), pmesh));
 
-    Vector n = internal::triangle_normal(pv, pvn, pvnn);
-    sum = sum + n;
-
-    Vector n = internal::triangle_normal(prv, curr, nxt, traits);
+    Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
 
     he = next(he, pmesh);
@@ -154,12 +151,13 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   sum_normals<Point>(pmesh, f
     , choose_const_pmap(get_param(np, CGAL::vertex_point), pmesh, CGAL::vertex_point)
-    , normal);
+    , normal
+    , traits);
 
-  if (normal == CGAL::NULL_VECTOR)
-    return normal;
-  else
-  return normal / FT( std::sqrt( to_double(normal * normal) ) );
+  if (normal != CGAL::NULL_VECTOR)
+    internal::normalize(normal, traits);
+
+  return normal;
 }
 
 /**
