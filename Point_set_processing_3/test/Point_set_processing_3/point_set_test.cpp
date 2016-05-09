@@ -38,15 +38,15 @@ int main (int, char**)
   std::ifstream f ("data/oni.pwn");
   CGAL::read_xyz_points_and_normals(f,
                                     point_set.index_back_inserter(),
-                                    point_set.point_push_pmap(),
-                                    point_set.normal_push_pmap(),
+                                    point_set.point_pmap(),
+                                    point_set.normal_pmap(),
                                     Kernel());
   f.close ();
 
   Point_set::iterator
     first_to_remove = CGAL::grid_simplify_point_set (point_set.begin(),
                                                      point_set.end(),
-                                                     &(point_set[0]),
+                                                     point_set.point_pmap(),
                                                      0.1);
 
   std::size_t size = point_set.size ();
