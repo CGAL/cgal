@@ -145,8 +145,6 @@ public :
         return;
       update_group_number(item,0);
       item->has_group=0;
-      Scene_group_item* group =
-         qobject_cast<Scene_group_item*>(item);
       children.removeOne(item);
     }
     //!Moves a child up in the list.
