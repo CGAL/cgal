@@ -11,7 +11,7 @@
 #include <list>
 #include <vector>
 
-class Scene_polylines_item_private;
+struct Scene_polylines_item_private;
 class Scene_spheres_item;
 
 class SCENE_POLYLINES_ITEM_EXPORT Scene_polylines_item : public CGAL::Three::Scene_group_item
@@ -77,10 +77,7 @@ public Q_SLOTS:
     void change_corner_radii(double);
     void change_corner_radii();
     void split_at_sharp_angles();
-    void reset_spheres()
-    {
-      spheres = NULL;
-    }
+    void reset_spheres();
 
     void merge(Scene_polylines_item*);
 
@@ -94,28 +91,9 @@ public:
     Polylines_container polylines;
 
     // http://en.wikipedia.org/wiki/D-pointer
+    friend struct Scene_polylines_item_private;
     Scene_polylines_item_private* d;
-private:
 
-    enum VAOs {
-        Edges=0,
-        NbOfVaos
-    };
-    enum VBOs {
-        Edges_Vertices = 0,
-        NbOfVbos
-    };
-
-    mutable Scene_spheres_item *spheres;
-    mutable std::vector<float> positions_lines;
-    mutable std::size_t nb_lines;
-    typedef std::map<Point_3, int> Point_to_int_map;
-    typedef Point_to_int_map::iterator iterator;
-    void computeSpheres();
-    using CGAL::Three::Scene_item::initializeBuffers;
-    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-    using CGAL::Three::Scene_item::computeElements;
-    void computeElements() const;
 
 
 

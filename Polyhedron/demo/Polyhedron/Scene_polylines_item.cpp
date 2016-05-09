@@ -7,53 +7,73 @@
 #include <QAction>
 #include <QInputDialog>
 
-class Scene_polylines_item_private {
-public:
+struct Scene_polylines_item_private {
     typedef Scene_polylines_item::K K;
     typedef K::Point_3 Point_3;
 
-    Scene_polylines_item_private() :
+    Scene_polylines_item_private(Scene_polylines_item *parent) :
         draw_extremities(false),
         spheres_drawn_radius(0)
-    {}
+    {
+      item = parent;
+    }
 
+    enum VAOs {
+        Edges=0,
+        NbOfVaos
+    };
+    enum VBOs {
+        Edges_Vertices = 0,
+        NbOfVbos
+    };
+
+    mutable Scene_spheres_item *spheres;
+    mutable std::vector<float> positions_lines;
+    mutable std::size_t nb_lines;
+    mutable bool are_buffers_filled;
+    typedef std::map<Point_3, int> Point_to_int_map;
+    typedef Point_to_int_map::iterator iterator;
+    void computeSpheres();
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+    void computeElements() const;
     bool draw_extremities;
     double spheres_drawn_radius;
+    Scene_polylines_item *item;
 };
 
 
 void
-Scene_polylines_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
+Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     QOpenGLShaderProgram *program;
    //vao for the lines
     {
-        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+        program = item->getShaderProgram(Scene_polylines_item::PROGRAM_NO_SELECTION, viewer);
         program->bind();
 
-        vaos[Edges]->bind();
-        buffers[Edges_Vertices].bind();
-        buffers[Edges_Vertices].allocate(positions_lines.data(),
+        item->vaos[Edges]->bind();
+        item->buffers[Edges_Vertices].bind();
+        item->buffers[Edges_Vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[Edges_Vertices].release();
-        vaos[Edges]->release();
+        item->buffers[Edges_Vertices].release();
+        item->vaos[Edges]->release();
         program->release();
 
         nb_lines = positions_lines.size();
         positions_lines.clear();
         positions_lines.swap(positions_lines);
     }
-   are_buffers_filled = true;
+    are_buffers_filled = true;
 }
 void
-Scene_polylines_item::computeElements() const
+Scene_polylines_item_private::computeElements() const
 {
     positions_lines.resize(0);
     //Fills the VBO with the lines
-    for(std::list<std::vector<Point_3> >::const_iterator it = polylines.begin();
-        it != polylines.end();
+    for(std::list<std::vector<Point_3> >::const_iterator it = item->polylines.begin();
+        it != item->polylines.end();
         ++it){
         if(it->empty()) continue;
         for(size_t i = 0, end = it->size()-1;
@@ -76,7 +96,7 @@ Scene_polylines_item::computeElements() const
 }
 
 void
-Scene_polylines_item::computeSpheres()
+Scene_polylines_item_private::computeSpheres()
 {
       // FIRST, count the number of incident cycles and polylines
       // for all extremities.
@@ -88,8 +108,8 @@ Scene_polylines_item::computeSpheres()
           Point_to_int_map corner_cycles_nb;
 
           for(std::list<std::vector<Point_3> >::const_iterator
-              it = this->polylines.begin(),
-              end = this->polylines.end();
+              it = item->polylines.begin(),
+              end = item->polylines.end();
               it != end; ++it)
           {
               const K::Point_3& a = *it->begin();
@@ -167,18 +187,18 @@ Scene_polylines_item::computeSpheres()
 
           CGAL::Color c(colors[0], colors[1], colors[2]);
 
-          K::Sphere_3 *sphere = new K::Sphere_3(center, d->spheres_drawn_radius);
+          K::Sphere_3 *sphere = new K::Sphere_3(center, spheres_drawn_radius);
           spheres->add_sphere(sphere, c);
       }
 }
 
 Scene_polylines_item::Scene_polylines_item() 
-    :CGAL::Three::Scene_group_item("unnamed",NbOfVbos,NbOfVaos)
-    ,d(new Scene_polylines_item_private())
+    :CGAL::Three::Scene_group_item("unnamed",Scene_polylines_item_private::NbOfVbos,Scene_polylines_item_private::NbOfVaos)
+    ,d(new Scene_polylines_item_private(this))
 {
     setRenderingMode(FlatPlusEdges);
-    nb_lines = 0;
-    spheres = NULL;
+    d->nb_lines = 0;
+    d->spheres = NULL;
     invalidateOpenGLBuffers();
 
 }
@@ -273,8 +293,8 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
     if(!are_buffers_filled)
     {
-        computeElements();
-        initializeBuffers(viewer);
+        d->computeElements();
+        d->initializeBuffers(viewer);
     }
     if(d->draw_extremities)
     {
@@ -287,18 +307,18 @@ void
 Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        computeElements();
-        initializeBuffers(viewer);
+        d->computeElements();
+        d->initializeBuffers(viewer);
     }
 
-    vaos[Edges]->bind();
+    vaos[Scene_polylines_item_private::Edges]->bind();
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/4));
     program->release();
-    vaos[Edges]->release();
+    vaos[Scene_polylines_item_private::Edges]->release();
     if(d->draw_extremities)
     {
        Scene_group_item::drawEdges(viewer);
@@ -310,19 +330,19 @@ void
 Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        computeElements();
-        initializeBuffers(viewer);
+        d->computeElements();
+        d->initializeBuffers(viewer);
     }
 
-    vaos[Edges]->bind();
+    vaos[Scene_polylines_item_private::Edges]->bind();
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     QColor temp = this->color();
     program->setAttributeValue("colors", temp);
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_lines/4));
     // Clean-up
-   vaos[Edges]->release();
+   vaos[Scene_polylines_item_private::Edges]->release();
    program->release();
    if(d->draw_extremities)
    {
@@ -358,7 +378,7 @@ QMenu* Scene_polylines_item::contextMenu()
 
 void Scene_polylines_item::invalidateOpenGLBuffers()
 {
-    are_buffers_filled = false;
+    d->are_buffers_filled = false;
     compute_bbox();
 
 
@@ -394,22 +414,22 @@ void Scene_polylines_item::change_corner_radii(double r) {
     if(r >= 0) {
         d->spheres_drawn_radius = r;
         d->draw_extremities = (r > 0);
-        if(r>0 && !spheres)
+        if(r>0 && !d->spheres)
         {
-          spheres = new Scene_spheres_item(this, false);
-          spheres->setName("Corner spheres");
-          spheres->setRenderingMode(Gouraud);
-          connect(spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-          scene->addItem(spheres);
-          scene->changeGroup(spheres, this);
-          lockChild(spheres);
-          computeSpheres();
-          spheres->invalidateOpenGLBuffers();
+          d->spheres = new Scene_spheres_item(this, false);
+          d->spheres->setName("Corner spheres");
+          d->spheres->setRenderingMode(Gouraud);
+          connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+          scene->addItem(d->spheres);
+          scene->changeGroup(d->spheres, this);
+          lockChild(d->spheres);
+          d->computeSpheres();
+          d->spheres->invalidateOpenGLBuffers();
         }
-        else if (r<=0 && spheres!=NULL)
+        else if (r<=0 && d->spheres!=NULL)
         {
-          unlockChild(spheres);
-          scene->erase(scene->item_id(spheres));
+          unlockChild(d->spheres);
+          scene->erase(scene->item_id(d->spheres));
         }
     Q_EMIT itemChanged();
     }
@@ -515,3 +535,7 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
     invalidateOpenGLBuffers();
 }
 
+void Scene_polylines_item::reset_spheres()
+{
+  d->spheres = NULL;
+}
