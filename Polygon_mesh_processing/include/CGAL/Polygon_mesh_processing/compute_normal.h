@@ -154,7 +154,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
     , normal
     , traits);
 
-  if (normal != CGAL::NULL_VECTOR)
+  if (!typename GT::Equal_3()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
 
   return normal;
@@ -271,7 +271,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
 
-  if (normal != CGAL::NULL_VECTOR)
+  if ( ! typename GT::Equal_3()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
   return normal;
 }
