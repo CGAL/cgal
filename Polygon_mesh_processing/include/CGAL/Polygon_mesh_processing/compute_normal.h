@@ -234,47 +234,46 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
                       const NamedParameters& np
                       )
 {
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
-  typedef typename Kernel::FT FT;
+  using boost::choose_param;
+
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+  typedef typename GT::FT FT;
+  typedef typename GT::Vector_3 Vector;
+  GT traits = choose_param(get_param(np, CGAL::geom_traits), GT());
 
   typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap DefaultMap;
-
   typedef typename boost::lookup_named_param_def <
     CGAL::face_normal_t,
     NamedParameters,
     DefaultMap> ::type FaceNormalMap;
-
-  FaceNormalMap fnmap
-    = boost::choose_param(get_param(np, face_normal), DefaultMap());
-
+  FaceNormalMap fnmap = choose_param(get_param(np, face_normal), DefaultMap());
   bool fnmap_valid
     = !boost::is_same<FaceNormalMap,
                       DefaultMap
                      >::value;
 
-  typedef typename Kernel::Vector_3 Vector;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  Vector normal = CGAL::NULL_VECTOR;
+  Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
+
   halfedge_descriptor he = halfedge(v, pmesh);
   // handle isolated vertices
   if (he==boost::graph_traits<PolygonMesh>::null_halfedge()) return normal;
   halfedge_descriptor end = he;
   do
-    {
+  {
     if (!is_border(he, pmesh))
     {
       Vector n = fnmap_valid ? get(fnmap, face(he, pmesh))
                              : compute_face_normal(face(he, pmesh), pmesh, np);
-      normal = normal + n;
+      normal = traits.construct_sum_of_vectors_3_object()(normal, n);
     }
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
 
-  if (normal == CGAL::NULL_VECTOR)
-    return normal;
-  else
-  return normal / FT( std::sqrt( to_double(normal * normal)  ) );
+  if (normal != CGAL::NULL_VECTOR)
+    internal::normalize(normal, traits);
+  return normal;
 }
 
 /**
