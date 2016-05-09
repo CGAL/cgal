@@ -54,24 +54,14 @@ namespace internal {
   triangle_normal(const Point& p0, const Point& p1, const Point& p2
                 , const GT& traits)
   {
-    typedef typename GT::Vector_3 Vector;
-
-    Vector v1 = traits.construct_vector_3_object()(p1, p2);
-    normalize(v1, traits);
-    Vector v2 = traits.construct_vector_3_object()(p1, p0);
-    normalize(v2, traits);
-
-    double cosine = traits.compute_scalar_product_3_object()(v1, v2);
-    if (cosine < -1.0)      cosine = -1.0;
-    else if (cosine >  1.0) cosine = 1.0;
-    double angle = acos(cosine);
-
-    Vector n = traits.construct_cross_product_vector_3_object()(
+    typename GT::Vector_3 n = traits.construct_cross_product_vector_3_object()(
       traits.construct_vector_3_object()(p1, p2),
       traits.construct_vector_3_object()(p1, p0));
-    normalize(n, traits);
 
-    return traits.construct_scaled_vector_3_object()(n, angle);
+    //cross-product(AB, AC)'s norm is the area of the parallelogram 
+    //formed by these 2 vectors.
+    //the triangle's area is half of it
+    return traits.construct_scaled_vector_3_object()(n, 0.5);
   }
 }
 
