@@ -168,7 +168,21 @@ during the remeshing process.\n
 \b Default value is `false`
 \cgalNPEnd
 
-
+\cgalNPBegin{face_patch_map} \anchor PMP_face_patch_map
+a property map containing information about faces.
+It is particularly well-suited for preserving surface patch IDs,
+or face colors.
+The edges at the interface between surface patches are treated similarly
+to the ones of `edge_is_constrained_map`
+\n
+\b Type : a class model of `ReadWritePropertyMap` with
+`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+the desired property, model of `CopyConstructible` as value type.\n
+\b Default : if this parameter is omitted,
+a default property map where each face is associated with the ID of
+the connected component it belongs to. Connected components are
+computed with respect to the constrained edges listed in the property map
+`edge_is_constrained_map`
 \cgalNPTableEnd
 
 */

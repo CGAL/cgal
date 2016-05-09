@@ -347,6 +347,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_implicit_function_item
     scene_polylines_item
     scene_basic_objects
+    scene_polyhedron_selection_item
+    scene_polyhedron_item_decorator
+    scene_polyhedron_item_k_ring_selection
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 

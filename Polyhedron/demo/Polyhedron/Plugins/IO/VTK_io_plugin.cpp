@@ -61,6 +61,7 @@
 #include <vtkAppendFilter.h>
 #include <vtkSphereSource.h>
 #include <vtkVersion.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
@@ -349,6 +350,27 @@ public:
         data = vtkUnstructuredGrid::SafeDownCast(reader->GetOutput());
      }
 
+    if (obs->GetError())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("This type of data can't be opened");
+      msgBox.setInformativeText(QString("VTK error message :\n")
+        .append(QString(obs->GetErrorMessage().data())));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.exec();
+      return NULL;
+    }
+    if (obs->GetWarning())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("This file generates a warning");
+      msgBox.setInformativeText(QString("VTK warning message :\n")
+        .append(QString(obs->GetWarningMessage().data())));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.exec();
+    }
     if (obs->GetError())
     {
       QMessageBox msgBox;

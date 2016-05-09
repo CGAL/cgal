@@ -145,6 +145,49 @@ namespace internal {
     }
   };
 
+  template <typename PM,
+            typename EdgeIsConstrainedMap>
+  struct Connected_components_pmap
+  {
+    typedef typename boost::graph_traits<PM>::face_descriptor   face_descriptor;
+    typedef std::size_t                                         Patch_id;
+    typedef Connected_components_pmap<PM, EdgeIsConstrainedMap> CCMap;
+
+    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
+
+  public:
+    typedef face_descriptor                     key_type;
+    typedef Patch_id                            value_type;
+    typedef Patch_id&                           reference;
+    typedef boost::read_write_property_map_tag  category;
+
+    Connected_components_pmap()
+      : patch_ids_map()
+    {}
+    Connected_components_pmap(const PM& pmesh, EdgeIsConstrainedMap ecmap)
+      : patch_ids_map()
+    {
+      PMP::connected_components(pmesh,
+        boost::make_assoc_property_map(patch_ids_map),
+        PMP::parameters::edge_is_constrained_map(ecmap));
+    }
+
+    friend value_type get(const CCMap& m, const key_type& f)
+    {
+      CGAL_assertion(!m.patch_ids_map.empty());
+      CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
+
+      return m.patch_ids_map.at(f);
+    }
+    friend void put(CCMap& m, const key_type& f, const value_type i)
+    {
+      if (m.patch_ids_map.find(f) == m.patch_ids_map.end())
+        m.patch_ids_map.insert(std::make_pair(f, i));
+      else
+        m.patch_ids_map[f] = i;
+    }
+  };
+
   template<typename PM,
            typename EdgeConstraintMap,
            typename VertexPointMap>
@@ -178,6 +221,8 @@ namespace internal {
               typename boost::graph_traits<PolygonMesh>::edge_descriptor>
          , typename VertexIsConstrainedMap = No_constraint_pmap<
               typename boost::graph_traits<PolygonMesh>::vertex_descriptor>
+         , typename FacePatchMap = Connected_components_pmap<
+              PolygonMesh, EdgeIsConstrainedMap>
   >
   class Incremental_remesher
   {
@@ -196,10 +241,11 @@ namespace internal {
                                , GeomTraits
                                , EdgeIsConstrainedMap
                                , VertexIsConstrainedMap
+                               , FacePatchMap
                                > Self;
 
   private:
-    typedef std::size_t                                  Patch_id;
+    typedef typename boost::property_traits<FacePatchMap>::value_type Patch_id;
     typedef std::vector<Triangle_3>                      Triangle_list;
     typedef std::vector<Patch_id>                        Patch_id_list;
 
@@ -212,8 +258,9 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
                        , const bool protect_constraints
-                       , EdgeIsConstrainedMap ecmap = EdgeIsConstrainedMap()
-                       , VertexIsConstrainedMap vcmap = VertexIsConstrainedMap()
+                       , EdgeIsConstrainedMap ecmap
+                       , VertexIsConstrainedMap vcmap
+                       , FacePatchMap fpmap
                        , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
@@ -222,7 +269,7 @@ namespace internal {
       , input_patch_ids_()
       , halfedge_status_map_()
       , protect_constraints_(protect_constraints)
-      , patch_ids_map_()
+      , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
       , vcmap_(vcmap)
     {
@@ -239,12 +286,6 @@ namespace internal {
     void init_remeshing(const FaceRange& face_range)
     {
       tag_halfedges_status(face_range); //called first
-      Constraint_property_map cpmap(*this);
-
-      //build AABB tree of input surface
-      PMP::connected_components(mesh_,
-        boost::make_assoc_property_map(patch_ids_map_),// set patch_id() for each face
-        PMP::parameters::edge_is_constrained_map(cpmap));
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
@@ -392,6 +433,10 @@ namespace internal {
         if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
           continue;
 
+        //collect patch_ids
+        Patch_id patch_id = get_patch_id(face(he, mesh_));
+        Patch_id patch_id_opp = get_patch_id(face(opposite(he, mesh_), mesh_));
+
         //split edge
         Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
@@ -422,7 +467,6 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
         {
-          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
@@ -445,7 +489,6 @@ namespace internal {
         //do it again on the other side if we're not on boundary
         if (!is_on_border(hnew_opp))
         {
-          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
@@ -454,8 +497,8 @@ namespace internal {
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
-          set_patch_id(face(hnew2, mesh_), patch_id);
-          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
+          set_patch_id(face(hnew2, mesh_), patch_id_opp);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id_opp);
 
           if (snew == PATCH)
           {
@@ -699,6 +742,8 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
 
+        Patch_id pid = get_patch_id(face(he, mesh_));
+
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
 
@@ -743,6 +788,9 @@ namespace internal {
                (va == source(he, mesh_) && vb == target(he, mesh_))
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
+
+        set_patch_id(face(he, mesh_), pid);
+        set_patch_id(face(opposite(he, mesh_), mesh_), pid);
       }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -865,23 +913,6 @@ namespace internal {
 #endif
     }
 
-    struct Constraint_property_map
-    {
-      typedef boost::readable_property_map_tag      category;
-      typedef bool                                  value_type;
-      typedef bool                                  reference;
-      typedef edge_descriptor                       key_type;
-      const Self* remesher_ptr_;
-      Constraint_property_map(): remesher_ptr_(NULL) {}
-      Constraint_property_map(const Self& remesher)
-        : remesher_ptr_(&remesher) {}
-      friend bool get(const Constraint_property_map& m,
-                      const edge_descriptor& e) {
-        return m.remesher_ptr_->is_on_border(e) ||
-               m.remesher_ptr_->is_on_patch_border(e);
-      }
-    };
-
     // PMP book :
     // "maps the vertices back to the surface"
     void project_to_surface()
@@ -894,7 +925,7 @@ namespace internal {
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v) || is_constrained(v))
+        if (is_constrained(v) || !is_on_patch(v))
           continue;
         //note if v is constrained, it has not moved
 
@@ -933,18 +964,14 @@ namespace internal {
 private:
   Patch_id get_patch_id(const face_descriptor& f) const
   {
-    if (patch_ids_map_.empty())
-      return -1;
-    else
-      return patch_ids_map_.at(f);
+    if (f == boost::graph_traits<PM>::null_face())
+      return Patch_id();
+    return get(patch_ids_map_, f);
   }
 
   void set_patch_id(const face_descriptor& f, const Patch_id& i)
   {
-    if (patch_ids_map_.find(f) == patch_ids_map_.end())
-      patch_ids_map_.insert(std::make_pair(f, i));
-    else
-      patch_ids_map_[f] = i;
+    put(patch_ids_map_, f, i);
   }
 
   struct Patch_id_property_map
@@ -1049,7 +1076,7 @@ private:
 
     bool is_constrained(const edge_descriptor& e) const
     {
-      return get(Constraint_property_map(*this), e);
+      return is_on_border(e) || is_on_patch_border(e);
     }
 
     bool is_split_allowed(const edge_descriptor& e) const
@@ -1240,7 +1267,10 @@ private:
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (get(ecmap_, e) || get(border_map, e))
+        if (get(ecmap_, e)
+          || get(border_map, e)
+          || get_patch_id(face(halfedge(e, mesh_), mesh_))
+              != get_patch_id(face(opposite(halfedge(e, mesh_), mesh_), mesh_)))
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
@@ -1250,8 +1280,6 @@ private:
           halfedge_descriptor hopp = opposite(h, mesh_);
           if (halfedge_status_map_[hopp] == PATCH)
             halfedge_status_map_[hopp] = PATCH_BORDER;
-
-          put(ecmap_, e, false);
         }
       }
 
@@ -1618,7 +1646,7 @@ private:
     Patch_id_list input_patch_ids_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
-    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map_;
+    FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
 

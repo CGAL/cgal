@@ -109,7 +109,6 @@ struct halfedge2edge
   std::set<edge_descriptor>& m_edges;
 };
 
-
 struct Constraints_pmap
 {
   std::set<edge_descriptor>* set_ptr_;
@@ -123,12 +122,18 @@ public:
   Constraints_pmap(std::set<edge_descriptor>* set_ptr)
     : set_ptr_(set_ptr)
   {}
-  friend bool get(const Constraints_pmap& map, const edge_descriptor& e)
+  Constraints_pmap()
+    : set_ptr_(NULL)
+  {}
+
+  friend value_type get(const Constraints_pmap& map, const key_type& e)
   {
     CGAL_assertion(map.set_ptr_ != NULL);
-    return map.set_ptr_->count(e) != 0;
+    return !map.set_ptr_->empty()
+         && map.set_ptr_->count(e);
   }
-  friend void put(Constraints_pmap& map, const edge_descriptor& e, const bool is)
+  friend void put(Constraints_pmap& map
+                , const key_type& e, const value_type is)
   {
     CGAL_assertion(map.set_ptr_ != NULL);
     if (is)                map.set_ptr_->insert(e);
@@ -215,6 +220,7 @@ int main(int argc, char* argv[])
     m,
     PMP::parameters::number_of_iterations(nb_iter)
     .protect_constraints(true) //only borders. they have been refined by previous remeshing
+    .edge_is_constrained_map(ecmap)
     );
   t.stop();
   std::cout << "Remeshing all took " << t.time() << std::endl;

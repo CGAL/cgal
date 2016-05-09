@@ -206,6 +206,22 @@ public:
     return false;
   }
 
+  template <typename FacetHandle>
+  struct Patch_id_pmap
+  {
+    typedef FacetHandle                        key_type;
+    typedef Patch_id                           value_type;
+    typedef Patch_id                           reference;
+    typedef boost::read_write_property_map_tag category;
+
+    friend value_type get(const Patch_id_pmap&, const key_type& f){
+      return f->patch_id();
+    }
+    friend void put(Patch_id_pmap&, const key_type& f, const value_type i){
+      f->set_patch_id(i);
+    }
+  };
+
   void detect_and_split_duplicates(std::vector<Scene_polyhedron_item*>& selection,
                                    std::map<Polyhedron*,Edge_set>& edges_to_protect,
                                    double target_length)
@@ -351,15 +367,31 @@ public Q_SLOTS:
         }
         else
         {
-         CGAL::Polygon_mesh_processing::isotropic_remeshing(
-           selection_item->selected_facets
-         , target_length
-         , *selection_item->polyhedron()
-         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-         .protect_constraints(protect)
-         .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-         .smooth_along_features(smooth_features)
-         .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
+          selection_item->setItemIsMulticolor(true);
+
+          if (selection_item->selected_facets.empty() &&
+            (!selection_item->selected_edges.empty() || !selection_item->selected_vertices.empty()))
+            CGAL::Polygon_mesh_processing::isotropic_remeshing(
+              faces(*selection_item->polyhedron())
+              , target_length
+              , *selection_item->polyhedron()
+              , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+              .protect_constraints(protect)
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+              .smooth_along_features(smooth_features)
+              .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+              .face_patch_map(Patch_id_pmap<face_descriptor>()));
+          else
+            CGAL::Polygon_mesh_processing::isotropic_remeshing(
+              selection_item->selected_facets
+              , target_length
+              , *selection_item->polyhedron()
+              , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+              .protect_constraints(protect)
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+              .smooth_along_features(smooth_features)
+              .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+              .face_patch_map(Patch_id_pmap<face_descriptor>()));
         }
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
@@ -402,7 +434,7 @@ public Q_SLOTS:
             BOOST_FOREACH(face_descriptor f, faces(pmesh))
               put(fim, f, id++);
           }
-          Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(edges_to_protect);
+          Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
 
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
            faces(*poly_item->polyhedron())
@@ -410,6 +442,7 @@ public Q_SLOTS:
          , *poly_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
+         .face_patch_map(Patch_id_pmap<face_descriptor>())
          .edge_is_constrained_map(ecm)
          .smooth_along_features(smooth_features));
         }
@@ -575,7 +608,7 @@ private:
       {
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " started..." << std::endl;
-        Scene_polyhedron_selection_item::Is_constrained_map<Edge_set > ecm(edges_to_protect);
+        Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
             faces(*poly_item->polyhedron())
           , target_length_
@@ -583,6 +616,7 @@ private:
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
           .edge_is_constrained_map(ecm)
+          .face_patch_map(Patch_id_pmap<face_descriptor>())
           .smooth_along_features(smooth_features_));
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " done." << std::endl;

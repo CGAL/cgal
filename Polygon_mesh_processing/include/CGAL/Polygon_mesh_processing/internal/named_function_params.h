@@ -36,6 +36,7 @@ namespace CGAL{
   enum number_of_iterations_t       { number_of_iterations };
   enum protect_constraints_t        { protect_constraints };
   enum vertex_is_constrained_t      { vertex_is_constrained };
+  enum face_patch_t                 { face_patch };
 
   //to be documented
   enum smooth_along_features_t      { smooth_along_features };
@@ -157,6 +158,14 @@ namespace CGAL{
     {
       typedef pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t, self> Params;
       return Params(vm, *this);
+    }
+
+    template <typename FacetPatch>
+    pmp_bgl_named_params<FacetPatch, face_patch_t, self>
+    face_patch_map(const FacetPatch& fp) const
+    {
+      typedef pmp_bgl_named_params<FacetPatch, face_patch_t, self> Params;
+      return Params(fp, *this);
     }
 
     //overload
@@ -303,6 +312,14 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t> Params;
     return Params(vm);
+  }
+
+  template <typename FacetPatch>
+  pmp_bgl_named_params<FacetPatch, face_patch_t>
+  face_patch_map(const FacetPatch& fp)
+  {
+    typedef pmp_bgl_named_params<FacetPatch, face_patch_t> Params;
+    return Params(fp);
   }
 
   //overload
