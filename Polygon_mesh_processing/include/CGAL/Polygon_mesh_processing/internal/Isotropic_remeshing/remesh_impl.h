@@ -870,8 +870,8 @@ namespace internal {
           {
             vertex_descriptor ph0 = source(border_halfedges[0], mesh_);
             vertex_descriptor ph1 = source(border_halfedges[1], mesh_);
-            double dot = Vector_3(get(vpmap_, v), get(vpmap_, ph0))
-                       * Vector_3(get(vpmap_, v), get(vpmap_, ph1));
+            double dot = to_double(Vector_3(get(vpmap_, v), get(vpmap_, ph0))
+                                   * Vector_3(get(vpmap_, v), get(vpmap_, ph1)));
             //check squared cosine is < 0.25 (~120 degrees)
             if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
               barycenters[v] = CGAL::midpoint(midpoint(border_halfedges[0]),
@@ -938,17 +938,13 @@ namespace internal {
           tree_ptr_->traits(),
           pid_pmap
           );
-
         tree_ptr_->traversal(get(vpmap_, v), projection_traits);
         CGAL_assertion(projection_traits.found());
-
         Point proj = projection_traits.closest_point();
         put(vpmap_, v, proj);
       }
-
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
-
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
 #endif
@@ -1015,7 +1011,7 @@ private:
     double sqlength(const vertex_descriptor& v1,
                     const vertex_descriptor& v2) const
     {
-      return CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2));
+      return to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
     }
 
     double sqlength(const halfedge_descriptor& h) const
@@ -1600,7 +1596,7 @@ private:
       //check all normals have same orientation
       for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
       {
-        double dot = normals[i - 1] * normals[i];
+        double dot = to_double(normals[i - 1] * normals[i]);
         if(dot <= 0.)
           return false;
       }
