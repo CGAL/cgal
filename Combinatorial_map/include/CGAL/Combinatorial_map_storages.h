@@ -25,7 +25,7 @@
 #include <CGAL/Compact_container.h>
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 49000)
+#if  (BOOST_GCC >= 40900)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
