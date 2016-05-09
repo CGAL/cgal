@@ -1,4 +1,3 @@
-#ifndef CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAVERSAL_TRAITS_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -14,6 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
+#ifndef CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAVERSAL_TRAITS_H
 #define CGAL_INTERNAL_SURFACE_MESH_SEGMENTATION_AABB_TRAVERSAL_TRAITS_H
 
 namespace CGAL
@@ -35,7 +35,6 @@ class Listing_intersection_traits_ray_or_segment_triangle
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
   typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
-  typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
   typedef ::CGAL::AABB_node<AABBTraits> Node;
   typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
@@ -51,10 +50,12 @@ public:
   void intersection(const Query& query, const Primitive& primitive) {
     //SL: using Kernel_traits is not bad in this context cause we expect a Ray/Segment from a CGAL Kernel here
     typedef typename Kernel_traits<Query>::Kernel GeomTraits;
+    typedef typename AABBTraits:: template Intersection_and_primitive_id<Query>::Type Intersection_and_primitive_id;
+
     if ( GeomTraits().do_intersect_3_object()(query,
          primitive.datum(m_traits.shared_data())) ) {
-      boost::optional<Object_and_primitive_id> intersection;
-      intersection = m_traits.intersection_object()(query, primitive);
+      boost::optional<Intersection_and_primitive_id> intersection
+        = m_traits.intersection_object()(query, primitive);
       if(intersection) {
         *m_out_it++ = *intersection;
       }

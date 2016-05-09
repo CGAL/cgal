@@ -246,7 +246,10 @@ public:
   calculate_sdf_values(double cone_angle, std::size_t number_of_rays,
                        SDFPropertyMap sdf_pmap, bool postprocess_req) {
     // calculate sdf values
-    SDF_calculation_class sdf_calculator(mesh, vertex_point_pmap, false, true, traits);
+    SDF_calculation_class sdf_calculator(mesh, vertex_point_pmap,
+                                         false, /* build_kd_ree */
+                                         true, /* use_diagonal --> set to false to use `AABB_tree::first_intersection()` */
+                                         traits);
     sdf_calculator.calculate_sdf_values(faces(mesh).first, faces(mesh).second,
                                         cone_angle, number_of_rays, sdf_pmap);
 

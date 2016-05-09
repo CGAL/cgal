@@ -29,6 +29,7 @@
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 #include <boost/optional.hpp>
+#include <boost/lambda/lambda.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -250,7 +251,7 @@ namespace CGAL {
 
     ///@}
 
-private:
+	private:
     #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template <typename ... T>
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T ... ){}
@@ -353,7 +354,8 @@ public:
 		OutputIterator all_intersected_primitives(const Query& query, OutputIterator out) const;
 
 
-    /// Returns the first encountered intersected primitive id, iff
+    /// Returns the intersected primitive id that is encountered first 
+		/// in the tree traversal, iff
     /// the query intersects at least one of the input primitives. No
     /// particular order is guaranteed over the tree traversal, such
     /// that, e.g, the primitive returned is not necessarily the
@@ -363,7 +365,6 @@ public:
     /// in the traits class `AABBTraits`.
 		template <typename Query>
 		boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
-    
     ///@}
 
     /// \name Intersections
@@ -379,7 +380,8 @@ public:
 		OutputIterator all_intersections(const Query& query, OutputIterator out) const;
 
 
-    /// Returns the first encountered intersection. No particular
+    /// Returns the intersection that is encountered first 
+		/// in the tree traversal. No particular
     /// order is guaranteed over the tree traversal, e.g, the
     /// primitive returned is not necessarily the closest from the
     /// source point of a ray query. Type `Query` must be a type
@@ -393,6 +395,53 @@ public:
     #endif
     any_intersection(const Query& query) const;
 
+
+
+    /// Returns the intersection and  primitive id closest to the source point of the ray
+    /// query.
+    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// `do_intersect` predicates and intersections for it must be
+    /// defined.
+    /// \tparam Skip a functor with an operator
+    /// `bool operator()(const Primitive_id& id) const`
+    /// that returns `true` in order to skip the primitive.
+    /// Defaults to a functor that always returns `false`.
+    ///
+    /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
+    /// call this member function.
+    template<typename Ray, typename SkipFunctor>
+    boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
+    first_intersection(const Ray& query, const SkipFunctor& skip) const;
+
+    template<typename Ray>
+    boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
+    first_intersection(const Ray& query) const
+    {
+      return first_intersection(query, boost::lambda::constant(false));
+    }
+
+    /// Returns the primitive id closest to the source point of the ray
+    /// query.
+    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// `do_intersect` predicates and intersections for it must be
+    /// defined.
+    /// \tparam Skip a functor with an operator
+    /// `bool operator()(const Primitive_id& id) const`
+    /// that returns `true` in order to skip the primitive.
+    /// Defaults to a functor that always returns `false`.
+    ///
+    /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
+    /// call this member function.
+    template<typename Ray, typename SkipFunctor>
+    boost::optional<Primitive_id>
+    first_intersected_primitive(const Ray& query, const SkipFunctor& skip) const;
+
+    template<typename Ray>
+    boost::optional<Primitive_id>
+    first_intersected_primitive(const Ray& query) const
+    {
+      return first_intersected_primitive(query, boost::lambda::constant(false));
+    }
     ///@}
 
     /// \name Distance Queries
@@ -528,6 +577,9 @@ public:
     ///@}
 
 	private:
+    template<typename AABBTree, typename SkipFunctor>
+    friend class AABB_ray_intersection;
+
     // clear nodes
     void clear_nodes()
     {
@@ -1229,6 +1281,9 @@ public:
 	}
 
 } // end namespace CGAL
+
+#include <CGAL/internal/AABB_tree/AABB_ray_intersection.h>
+
 
 #endif // CGAL_AABB_TREE_H
 

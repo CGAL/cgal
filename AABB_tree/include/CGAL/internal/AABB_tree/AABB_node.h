@@ -87,6 +87,8 @@ private:
   typedef AABB_node<AABB_traits> Node;
   typedef typename AABB_traits::Primitive Primitive;
 
+
+public:
   /// Helper functions
   const Node& left_child() const
                      { return *static_cast<Node*>(m_p_left_child); }
@@ -97,6 +99,7 @@ private:
   const Primitive& right_data() const
                      { return *static_cast<Primitive*>(m_p_right_child); }
 
+private:
   Node& left_child() { return *static_cast<Node*>(m_p_left_child); }
   Node& right_child() { return *static_cast<Node*>(m_p_right_child); }
   Primitive& left_data() { return *static_cast<Primitive*>(m_p_left_child); }

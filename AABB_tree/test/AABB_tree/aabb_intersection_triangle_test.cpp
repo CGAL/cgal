@@ -33,7 +33,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>

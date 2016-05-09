@@ -75,6 +75,9 @@ the corresponding intersection object, and stops after the first
 encountered intersection. Note that the traversal order of the tree is
 such that first herein does not refer to any particular ordering of
 the intersections with respect to the query.
+- Function `AABB_tree::first_intersected_primitive()` returns
+the intersecting primitive id (if any) of the corresponding
+intersection object that is closest to the source of the ray.
 
 Constructions: 
 
@@ -83,6 +86,9 @@ intersection objects with the input primitives.
 - Function  `AABB_tree::any_intersection()` detects and constructs the first
 encountered intersection and constructs the corresponding object. This
 function is fast as it stops after the first encountered intersection.
+- Function `AABB_tree::first_intersection()` detects and constructs
+the intersection object that is closest to the source of the ray.
+
 
 \b Distance. An AABB tree computes the closest point from a
 given point query to the input primitives through the function
@@ -127,9 +133,22 @@ and one primitive id - here a face handle) and compute all intersected
 primitives. The latter involves only tests and no predicates and is
 hence faster than computing all intersections. We also compute the
 first encountered intersection with a plane query, which is generally
-a segment.
+a segment.  We finally compute the first intersection along a ray.
 
 \cgalExample{AABB_tree/AABB_polyhedron_facet_intersection_example.cpp}
+
+
+\subsection aabb_tree_examples_2 Ray Shooting
+
+In the following example we load a closed polyhedral surface and perform a
+ray shooting query from the centroid of each face, orthogonally to the face
+towards the interior.  As the centroid is computed with floating point
+arithmetic the first face hit by the ray may be the face of the centroid.
+The skip functor takes care of ignoring the face.
+
+\cgalExample{AABB_tree/AABB_ray_shooting_example.cpp}
+
+
 
 \subsection aabb_tree_examples_3 Tree of Polyhedron Triangle Facets for Distance Queries
 
