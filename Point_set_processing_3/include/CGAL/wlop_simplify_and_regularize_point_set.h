@@ -518,9 +518,9 @@ wlop_simplify_and_regularize_point_set(
   for (it = first_original_iter, i=0 ; it != beyond ; ++it, ++i)
   {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point& p0 = get(point_pmap, it);
+      const Point& p0 = get(point_pmap, it);
 #else
-      Point& p0 = get(point_pmap, *it);
+      const Point& p0 = get(point_pmap, *it);
 #endif 
     
     original_treeElements.push_back(Kd_tree_element(p0, i));
