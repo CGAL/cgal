@@ -259,19 +259,22 @@ namespace internal {
 
 // get for intrinsic properties
 #define CGAL_SM_INTRINSIC_PROPERTY(RET, PROP, TYPE)                     \
-  template<typename Point>                                              \
-  RET                                                                   \
-  get(PROP p, const CGAL::Surface_mesh<Point>& sm,                      \
-      typename boost::lazy_disable_if<                                       \
-        boost::is_const<Point>, internal::Get_graph_traits_of_SM<Point> \
-        >::type::TYPE x)                                                \
-  { return get(get(p, sm), x); }                                        \
+ template<typename Point>                                              \
+ RET                                                                   \
+ get(PROP p, const CGAL::Surface_mesh<Point>& sm,                      \
+     const TYPE& x)                                                \
+ { return get(get(p, sm), x); }                                        \
 
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t, vertex_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::edge_index_t, edge_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::halfedge_index_t, halfedge_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::face_index_t, face_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(Point&, CGAL::vertex_point_t, vertex_descriptor)
+
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t,
+SM_Vertex_index)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::edge_index_t,
+SM_Edge_index)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::halfedge_index_t,
+SM_Halfedge_index)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::face_index_t,
+SM_Face_index)
+CGAL_SM_INTRINSIC_PROPERTY(Point&, CGAL::vertex_point_t, SM_Vertex_index)
 
 #undef CGAL_SM_INTRINSIC_PROPERTY
 
