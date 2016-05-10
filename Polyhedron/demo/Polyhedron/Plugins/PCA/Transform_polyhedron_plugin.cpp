@@ -35,7 +35,7 @@ public:
            qobject_cast<Scene_polyhedron_transform_item*>(scene->item(scene->mainSelectionIndex()));
   }
   
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     this->scene = scene_interface;
     actionTransformPolyhedron = new QAction("Affine Transformation", mw);
     if(actionTransformPolyhedron) {

@@ -94,9 +94,6 @@ class Q_DECL_EXPORT Clip_polyhedron_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public :
-
-  void init(QMainWindow*,
-            CGAL::Three::Scene_interface*) {}
   // Adds an action to the menu and configures the widget
   void init(QMainWindow* mw,
             CGAL::Three::Scene_interface* scene_interface,

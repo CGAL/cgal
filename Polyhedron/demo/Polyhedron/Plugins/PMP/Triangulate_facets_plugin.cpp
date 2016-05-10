@@ -18,8 +18,6 @@ class Polyhedron_demo_triangulate_facets_plugin :
 
 public:
 
-  void init(QMainWindow*,
-            CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m) {

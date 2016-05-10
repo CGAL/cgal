@@ -22,7 +22,7 @@ class Polyhedron_demo_features_detection_plugin :
   QAction* actionDetectFeatures;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectFeatures; }
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
   {
     scene = scene_interface;
     actionDetectFeatures= new QAction(tr("VCM Features Estimation"), mainWindow);

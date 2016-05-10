@@ -42,7 +42,6 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
 
 
-  void init(QMainWindow*, CGAL::Three::Scene_interface*) {}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;

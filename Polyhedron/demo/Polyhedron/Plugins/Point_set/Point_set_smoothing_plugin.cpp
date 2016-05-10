@@ -31,7 +31,7 @@ class Polyhedron_demo_point_set_smoothing_plugin :
   QAction* actionJetSmoothing;
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     actionJetSmoothing = new QAction(tr("Point Set Jet Smoothing"), mainWindow);
     actionJetSmoothing->setObjectName("actionJetSmoothing");

@@ -145,7 +145,7 @@ class Polyhedron_demo_trivial_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
+    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
     QList<QAction*> actions() const {
         return QList<QAction*>() << actionBbox;
     }
@@ -165,7 +165,7 @@ private:
 
 }; // end Polyhedron_demo_trivial_plugin
 
-void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
+void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
 {
     scene = scene_interface;
     actionBbox = new QAction(tr("Create Bbox"), mainWindow);

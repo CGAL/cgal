@@ -39,17 +39,10 @@ class Scene_interface;
 class Polyhedron_demo_plugin_interface 
 {
 public:
-  //!Initializes the plugin.
-  //! This acts like a constructor for a plugin. Do all you want to do when the plugin is created :
-  //! get the references to the mainwindow and the scene, connect your signals and slots, etc.
-  virtual void init(QMainWindow*, CGAL::Three::Scene_interface*) = 0;
-  //!This is an overloaded function.
   //! Initializes the plugin and gives access to a Message interface, that
   //! can be used to display messages in the console dock widget.
   //! @see init(QMainWindow*, CGAL::Three::Scene_interface*)
-  virtual void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) {
-    init(mw, sc);
-  }
+  virtual void init(QMainWindow* , CGAL::Three::Scene_interface* , Messages_interface*) = 0;
 
   //! Decides if the plugin's actions will be displayed or not.
   //! @returns \c true, if the plugin is applicable, \c false

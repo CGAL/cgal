@@ -22,7 +22,8 @@ class Polyhedron_demo_nef_plugin :
 public:
 
 void init(QMainWindow* mw,
-          Scene_interface* scene_interface)
+          Scene_interface* scene_interface,
+          Messages_interface* )
 {
     scene = scene_interface;
     this->mw = mw;

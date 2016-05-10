@@ -28,7 +28,8 @@ public:
   }
 
   void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
       mw = mainWindow;
       scene = scene_interface;

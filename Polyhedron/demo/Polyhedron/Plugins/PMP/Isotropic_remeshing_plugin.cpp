@@ -171,7 +171,7 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface)
+  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;

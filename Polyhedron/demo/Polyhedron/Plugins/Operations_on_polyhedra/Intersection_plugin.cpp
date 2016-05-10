@@ -42,7 +42,7 @@ public:
     return QList<QAction*>() << actionPolyhedronIntersection_3;
   }
 
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     this->scene = scene_interface;
     actionPolyhedronIntersection_3 = new QAction("Intersect Polyhedra (A/B)", mw);
     actionPolyhedronIntersection_3->setProperty("subMenuName", "Operations on Polyhedra");

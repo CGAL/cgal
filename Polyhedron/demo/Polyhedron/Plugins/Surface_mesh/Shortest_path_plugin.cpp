@@ -71,8 +71,6 @@ public:
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-
-  void init(QMainWindow*, CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* messages)
   {
     this->scene = scene_interface;

@@ -46,7 +46,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
   
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     actionDetect = new QAction(tr("Point Set Shape Detection"), mainWindow);
     actionDetect->setObjectName("actionDetect");

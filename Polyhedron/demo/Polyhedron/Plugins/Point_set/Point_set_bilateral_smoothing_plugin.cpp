@@ -36,7 +36,7 @@ class Polyhedron_demo_point_set_bilateral_smoothing_plugin :
   QAction* actionBilateralSmoothing;
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     actionBilateralSmoothing = new QAction(tr("Point Set Bilateral Smoothing"), mainWindow);
     actionBilateralSmoothing->setObjectName("actionBilateralSmoothing");

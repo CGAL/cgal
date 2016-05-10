@@ -31,7 +31,8 @@ public:
 
     //! Adds an action to the menu and configures the widget
     void init(QMainWindow* mainWindow,
-              CGAL::Three::Scene_interface* scene_interface) {
+              CGAL::Three::Scene_interface* scene_interface,
+              Messages_interface*) {
       //get the references
       this->scene = scene_interface;
       this->mw = mainWindow;

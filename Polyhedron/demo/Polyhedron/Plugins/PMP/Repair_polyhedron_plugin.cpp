@@ -26,7 +26,6 @@ class Polyhedron_demo_repair_polyhedron_plugin :
 
 public:
 
-  void init(QMainWindow*, Scene_interface*){}
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
             Messages_interface* m)

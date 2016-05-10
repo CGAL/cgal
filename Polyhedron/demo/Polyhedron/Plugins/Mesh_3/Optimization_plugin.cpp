@@ -84,8 +84,6 @@ class Mesh_3_optimization_plugin :
   typedef Polyhedron_demo_plugin_interface Base;
 public:
   Mesh_3_optimization_plugin();
-  
-  virtual void init(QMainWindow*, Scene_interface*){}
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;
   

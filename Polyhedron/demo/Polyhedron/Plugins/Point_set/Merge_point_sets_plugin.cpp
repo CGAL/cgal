@@ -24,7 +24,7 @@ private:
   QAction* actionMergePointSets;
   
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     actionMergePointSets = new QAction(tr("Merge"), mainWindow);
     actionMergePointSets->setObjectName("actionMergePointSets");

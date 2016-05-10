@@ -56,7 +56,6 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
 
 
-  void init(QMainWindow*, CGAL::Three::Scene_interface* ){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     mw = mainWindow;

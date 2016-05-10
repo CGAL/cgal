@@ -192,7 +192,6 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointSetSelection; }
 
-  void init(QMainWindow*, CGAL::Three::Scene_interface*) {}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;

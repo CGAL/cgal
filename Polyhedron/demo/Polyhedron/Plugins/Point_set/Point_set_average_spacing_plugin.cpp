@@ -34,7 +34,7 @@ private:
   QAction* actionAverageSpacing;
   
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     mw = mainWindow;
     actionAverageSpacing = new QAction(tr("Point Set Average Spacing"), mainWindow);

@@ -19,7 +19,7 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow*, CGAL::Three::Scene_interface* sc )
+  void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
   {
     this->scene = sc;
   }

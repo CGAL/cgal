@@ -70,7 +70,7 @@ class Create_bbox_mesh_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*);
   QList<QAction*> actions() const;
   bool applicable(QAction*) const {
     if(scene->mainSelectionIndex() != -1)
@@ -91,7 +91,7 @@ private:
 
 }; // end Create_bbox_mesh_plugin
 
-void Create_bbox_mesh_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface)
+void Create_bbox_mesh_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
 {
   scene = scene_interface;
   actionBbox = new QAction(tr("Create &Bbox Mesh"), mainWindow);

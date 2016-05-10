@@ -304,7 +304,6 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
 
 
-  void init(QMainWindow*, CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
 
   virtual void closure()

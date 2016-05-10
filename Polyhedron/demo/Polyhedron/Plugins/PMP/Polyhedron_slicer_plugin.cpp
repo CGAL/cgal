@@ -39,7 +39,6 @@ public:
   bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message);}
 
-  void init(QMainWindow*, CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
   virtual void closure()
   {

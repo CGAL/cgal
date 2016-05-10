@@ -26,7 +26,8 @@ public:
     return _actions;
   }
   void init(QMainWindow* mw,
-            Scene_interface* scene_interface)
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
       scene = scene_interface;
       QAction *actionEstimateCurvature = new QAction(tr("Curvature Estimation"), mw);

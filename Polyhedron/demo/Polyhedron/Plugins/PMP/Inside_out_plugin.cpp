@@ -24,7 +24,8 @@ public:
   }
 
   void init(QMainWindow* mw,
-            Scene_interface* scene_interface)
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
       scene = scene_interface;
       QAction* actionInsideOut = new QAction(tr("Inside Out"), mw);

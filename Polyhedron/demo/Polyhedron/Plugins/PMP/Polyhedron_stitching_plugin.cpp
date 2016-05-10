@@ -47,7 +47,6 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
   QAction* actionStitchBorders;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders; }
-  void init(QMainWindow*, CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     scene = scene_interface;

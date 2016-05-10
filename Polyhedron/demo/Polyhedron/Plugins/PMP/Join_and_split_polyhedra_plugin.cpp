@@ -27,7 +27,6 @@ class Polyhedron_demo_join_and_split_polyhedra_plugin:
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionJoinPolyhedra << actionSplitPolyhedra << actionColorConnectedComponents; }
 
-  void init(QMainWindow*, CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     scene = scene_interface;

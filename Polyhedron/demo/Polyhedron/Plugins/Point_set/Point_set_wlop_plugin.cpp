@@ -36,7 +36,7 @@ class Polyhedron_demo_point_set_wlop_plugin :
   QAction* actionSimplifyAndRegularize;
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     actionSimplifyAndRegularize = new QAction(tr("Point Set WLOP Simplification and Regularization Selection"), mainWindow);
     actionSimplifyAndRegularize->setObjectName("actionSimplifyAndRegularize");
