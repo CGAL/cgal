@@ -412,7 +412,7 @@ namespace CGAL {
 } // namespace CGAL
 
 
-#if  (BOOST_GCC >= 50000)
+#if  (BOOST_GCC >= 40900)
  _Pragma("GCC diagnostic pop")
 #endif
 #endif // CGAL_COMBINATORIAL_MAP_H //
