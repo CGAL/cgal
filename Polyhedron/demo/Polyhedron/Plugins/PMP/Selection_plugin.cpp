@@ -376,6 +376,8 @@ public Q_SLOTS:
 
   void on_ModeBox_changed(int index)
   {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    selection_item->on_Ctrlz_pressed();
     last_mode = index;
     switch(index)
     {
@@ -443,6 +445,8 @@ public Q_SLOTS:
 
   void on_editionBox_changed(int mode )
   {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    selection_item->on_Ctrlz_pressed();
     if(ui_widget.modeBox->currentIndex() == 0)
     {
       Q_EMIT set_operation_mode(-1);
