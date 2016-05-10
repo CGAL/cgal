@@ -386,6 +386,7 @@ public Q_SLOTS:
       ui_widget.selection_groupBox->setVisible(true);
       ui_widget.edition_groupBox->setVisible(false);
       Q_EMIT set_operation_mode(-1);
+      on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
       break;
       //Edition mode
     case 1:
@@ -397,51 +398,6 @@ public Q_SLOTS:
     }
   }
 
-  void on_validate_editionButton_clicked()
-  {
-
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
-    if (!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return;
-    }
-   switch(ui_widget.editionBox->currentIndex())
-   {
-   //Join vertex
-   case 0:
-     break;
-     //Split vertex
-   case 1:
-     break;
-     //Split edge
-   case 2:
-     break;
-     //Join face
-   case 3:
-     break;
-     //Split face
-   case 4:
-     break;
-     //Collapse edge
-   case 5:
-     break;
-     //Flip edge
-   case 6:
-     break;
-     //Add center vertex
-   case 7:
-     break;
-     //Remove center vertex
-   case 8:
-     break;
-     //Add vertex and face to border
-   case 9:
-     break;
-     //Add face to border
-   case 10:
-     break;
-   }
-  }
 
   void on_editionBox_changed(int mode )
   {

@@ -8,8 +8,6 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_face_graph_triangulated_primitive.h>
-
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -39,9 +37,37 @@
 #include <boost/container/flat_map.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+//Used to triangulate the AABB_Tree
+class Primitive
+{
+public:
+  // types
+  typedef Polyhedron::Facet_iterator Id; // Id type
+  typedef Kernel::Point_3 Point; // point type
+  typedef Kernel::Triangle_3 Datum; // datum type
 
+private:
+  // member data
+  Id m_it; // iterator
+  Datum m_datum; // 3D triangle
 
-typedef CGAL::AABB_face_graph_triangulated_primitive<Polyhedron> Primitive;
+  // constructor
+public:
+  Primitive() {}
+  Primitive(Datum triangle, Id it)
+    : m_it(it), m_datum(triangle)
+  {
+  }
+public:
+  Id& id() { return m_it; }
+  const Id& id() const { return m_it; }
+  Datum& datum() { return m_datum; }
+  const Datum& datum() const { return m_datum; }
+
+  /// Returns a point on the primitive
+  Point reference_point() const { return m_datum.vertex(0); }
+};
+
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
@@ -73,13 +99,10 @@ typedef Kernel::Vector_3	    Vector;
 typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
 QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
-                                                const boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >& fnmap)
+                                                Traits::Vector_3 normal)
 {
   //The output list
   QList<Kernel::Triangle_3> res;
-  //Computes the normal of the facet
-  Traits::Vector_3 normal = get(fnmap, fit);
-
   //check if normal contains NaN values
   if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
   {
@@ -153,47 +176,46 @@ QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
 }
 
 
-Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
+
+void* Scene_polyhedron_item::get_aabb_tree()
 {
-  QVariant aabb_tree_property = item->property(aabb_property_name);
+  QVariant aabb_tree_property = this->property(aabb_property_name);
   if(aabb_tree_property.isValid()) {
     void* ptr = aabb_tree_property.value<void*>();
     return static_cast<Input_facets_AABB_tree*>(ptr);
   }
   else {
-    Polyhedron* poly = item->polyhedron();
+    Polyhedron* poly = this->polyhedron();
     if(poly) {
-      //creates an empty AABB_Tree
+
       Input_facets_AABB_tree* tree =
-          new Input_facets_AABB_tree()/*faces(*poly).first,
-                                                               faces(*poly).second,
-                                                               *poly)*/;
+          new Input_facets_AABB_tree();
       typedef Polyhedron::Traits	    Kernel;
-      typedef Kernel::Vector_3	    Vector;
-      typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
-      typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-
-      boost::container::flat_map<face_descriptor, Vector> face_normals_map;
-      boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >
-        nf_pmap(face_normals_map);
-      boost::container::flat_map<vertex_descriptor, Vector> vertex_normals_map;
-      boost::associative_property_map< boost::container::flat_map<vertex_descriptor, Vector> >
-        nv_pmap(vertex_normals_map);
-
-      PMP::compute_normals(*poly, nv_pmap, nf_pmap);
+      int index =0;
       Q_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
-        //triangulates the primitives
-        triangulate_primitive(f,nf_pmap);
-        Q_FOREACH(Kernel::Triangle_3 triangle, triangulate_primitive(f,nf_pmap))
+        if(!f->is_triangle())
         {
-          //creates a Primitive
-          Primitive primitive(triangle, f, *poly);
-          //fills the AABB_Tree with it.
+          Traits::Vector_3 normal = f->plane().orthogonal_vector(); //initialized in compute_normals_and_vertices
+          index +=3;
+          Q_FOREACH(Kernel::Triangle_3 triangle, triangulate_primitive(f,normal))
+          {
+            Primitive primitive(triangle, f);
+            tree->insert(primitive);
+          }
+        }
+        else
+        {
+          Kernel::Triangle_3 triangle(
+                f->halfedge()->vertex()->point(),
+                f->halfedge()->next()->vertex()->point(),
+                f->halfedge()->next()->next()->vertex()->point()
+                );
+          Primitive primitive(triangle, f);
           tree->insert(primitive);
         }
       }
-      item->setProperty(aabb_property_name,
+      this->setProperty(aabb_property_name,
                         QVariant::fromValue<void*>(tree));
       return tree;
     }
@@ -521,7 +543,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
     {
       if (f == boost::graph_traits<Polyhedron>::null_face())
         continue;
-
+      Vector normal = get(nf_pmap, f);
+      f->plane() = Kernel::Plane_3(f->halfedge()->vertex()->point(), normal);
       if(is_triangle(f->halfedge(),*poly))
       {
           const int this_patch_id = f->patch_id();
@@ -1130,7 +1153,7 @@ Scene_polyhedron_item::select(double orig_x,
     typedef Input_facets_AABB_tree Tree;
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
-    Tree* aabb_tree = get_aabb_tree(this);
+    Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(get_aabb_tree());
     if(aabb_tree) {
       const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
       const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);

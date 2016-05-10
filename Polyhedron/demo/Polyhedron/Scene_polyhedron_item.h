@@ -148,7 +148,7 @@ private:
         Edges,
         Feature_edges,
         Gouraud_Facets,
-        NbOfVaos = Gouraud_Facets+1
+        NbOfVaos
     };
     enum VBOs {
         Facets_vertices = 0,
@@ -158,7 +158,7 @@ private:
         Feature_edges_vertices,
         Edges_color,
         Facets_normals_gouraud,
-        NbOfVbos = Facets_normals_gouraud+1
+        NbOfVbos
     };
 
     mutable std::vector<float> positions_lines;
@@ -183,6 +183,7 @@ private:
     void triangulate_facet(Facet_iterator,
       const FaceNormalPmap&, const VertexNormalPmap&,
       const bool colors_only) const;
+    void* get_aabb_tree();
     double volume, area;
 
   int m_min_patch_id; // the min value of the patch ids initialized in init()
