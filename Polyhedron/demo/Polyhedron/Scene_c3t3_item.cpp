@@ -267,6 +267,129 @@ struct Scene_c3t3_item_priv {
     is_aabb_tree_built = true;
     QGuiApplication::restoreOverrideCursor();
   }
+  bool need_changed;
+  void reset_cut_plane();
+  void draw_triangle(const Kernel::Point_3& pa,
+    const Kernel::Point_3& pb,
+    const Kernel::Point_3& pc) const;
+
+  void draw_triangle_edges(const Kernel::Point_3& pa,
+    const Kernel::Point_3& pb,
+    const Kernel::Point_3& pc)const;
+
+  void draw_triangle_edges_cnc(const Kernel::Point_3& pa,
+                           const Kernel::Point_3& pb,
+                           const Kernel::Point_3& pc)const;
+
+  double complex_diag() const;
+
+  void compute_color_map(const QColor& c);
+
+  public Q_SLOTS:
+  void export_facets_in_complex();
+
+  void data_item_destroyed();
+
+  void reset_spheres()
+  {
+    spheres = NULL;
+  }
+
+  void reset_intersection_item()
+  {
+    intersection = NULL;
+  }
+  void show_spheres(bool b);
+  void show_intersection(bool b);
+
+  void show_cnc(bool b)
+  {
+    cnc_are_shown = b;
+    Q_EMIT redraw();
+
+  }
+
+  virtual QPixmap graphicalToolTip() const;
+
+  void update_histogram();
+
+  void changed();
+
+  void updateCutPlane();
+
+  void build_histogram();
+
+  QColor get_histogram_color(const double v) const;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer);
+  void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer);
+  void computeSpheres();
+  void computeElements();
+  void computeIntersections();
+
+  mutable bool are_intersection_buffers_filled;
+  enum Buffer
+  {
+      Facet_vertices =0,
+      Facet_normals,
+      Facet_colors,
+      Edges_vertices,
+      Edges_CNC,
+      Grid_vertices,
+      iEdges_vertices,
+      iFacet_vertices,
+      iFacet_normals,
+      iFacet_colors,
+      NumberOfBuffers
+  };
+  enum Vao
+  {
+      Facets=0,
+      Edges,
+      Grid,
+      CNC,
+      iEdges,
+      iFacets,
+      NumberOfVaos
+  };
+  qglviewer::ManipulatedFrame* frame;
+
+  Scene_spheres_item *spheres;
+  Scene_intersection_item *intersection;
+  bool spheres_are_shown;
+  const Scene_item* data_item_;
+  QPixmap histogram_;
+
+  typedef std::set<int> Indices;
+  Indices indices_;
+
+  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
+  typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+  //!Allows OpenGL 2.1 context to get access to gkFrameBufferTexture2D.
+  PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
+
+  mutable std::size_t positions_poly_size;
+  mutable std::size_t positions_lines_size;
+  mutable std::size_t positions_lines_not_in_complex_size;
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_lines_not_in_complex;
+  mutable std::vector<float> positions_grid;
+  mutable std::vector<float> positions_poly;
+
+  mutable std::vector<float> normals;
+  mutable std::vector<float> f_colors;
+  mutable std::vector<float> s_normals;
+  mutable std::vector<float> s_colors;
+  mutable std::vector<float> s_vertex;
+  mutable std::vector<float> ws_vertex;
+  mutable std::vector<float> s_radius;
+  mutable std::vector<float> s_center;
+  mutable QOpenGLShaderProgram *program;
+  mutable bool are_buffers_filled;
+  bool cnc_are_shown;
 
   Scene_c3t3_item* item;
   C3t3 c3t3;
@@ -274,6 +397,7 @@ struct Scene_c3t3_item_priv {
   QVector<QColor> colors;
   bool show_tetrahedra;
   bool is_aabb_tree_built;
+  Scene_c3t3_item* item;
 };
 
 struct Set_show_tetrahedra {
@@ -298,7 +422,7 @@ double complex_diag(const Scene_item* item) {
 }
 
 Scene_c3t3_item::Scene_c3t3_item()
-  : Scene_group_item("unnamed", NumberOfBuffers, NumberOfVaos)
+  : Scene_group_item("unnamed", Scene_c3t3_item_priv::NumberOfBuffers, Scene_c3t3_item_priv::NumberOfVaos)
   , d(new Scene_c3t3_item_priv(this))
   , frame(new ManipulatedFrame())
   , data_item_(NULL)
@@ -322,7 +446,6 @@ Scene_c3t3_item::Scene_c3t3_item()
   spheres_are_shown = false;
   cnc_are_shown = false;
     create_flat_and_wire_sphere(1.0f,s_vertex,s_normals, ws_vertex);
-
 }
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
@@ -688,7 +811,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->initializeBuffers(viewer);
   }
 
-  vaos[Grid]->bind();
+  vaos[Scene_c3t3_item_priv::Grid]->bind();
   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
   attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
   program->bind();
@@ -699,9 +822,9 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   program->setUniformValue("f_matrix", f_mat);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
   program->release();
-  vaos[Grid]->release();
+  vaos[Scene_c3t3_item_priv::Grid]->release();
 
-  vaos[Facets]->bind();
+  vaos[Scene_c3t3_item_priv::Facets]->bind();
   program = getShaderProgram(PROGRAM_C3T3);
   attribBuffers(viewer, PROGRAM_C3T3);
   program->bind();
@@ -711,7 +834,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   // it is only computed once and positions_poly is emptied at the end
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly_size / 3));
   program->release();
-  vaos[Facets]->release();
+  vaos[Scene_c3t3_item_priv::Facets]->release();
 
   if(d->show_tetrahedra){
     if(!frame->isManipulated() && !are_intersection_buffers_filled)
@@ -749,7 +872,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
 
   if(renderingMode() == Wireframe)
   {
-    vaos[Grid]->bind();
+    vaos[Scene_c3t3_item_priv::Grid]->bind();
 
     program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
@@ -761,9 +884,9 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     program->setUniformValue("f_matrix", f_mat);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
     program->release();
-    vaos[Grid]->release();
+    vaos[Scene_c3t3_item_priv::Grid]->release();
   }
-  vaos[Edges]->bind();
+  vaos[Scene_c3t3_item_priv::Edges]->bind();
   program = getShaderProgram(PROGRAM_C3T3_EDGES);
   attribBuffers(viewer, PROGRAM_C3T3_EDGES);
   program->bind();
@@ -772,7 +895,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines_size / 3));
   program->release();
-  vaos[Edges]->release();
+  vaos[Scene_c3t3_item_priv::Edges]->release();
 
   if(d->show_tetrahedra){
     if(!frame->isManipulated() && !are_intersection_buffers_filled)
@@ -793,14 +916,14 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   Scene_group_item::drawEdges(viewer);
   if(cnc_are_shown)
   {
-    vaos[CNC]->bind();
+    vaos[Scene_c3t3_item_priv::CNC]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines_not_in_complex_size / 3));
     program->release();
-    vaos[Edges]->release();
+    vaos[Scene_c3t3_item_priv::CNC]->release();
   }
 }
 
@@ -812,7 +935,7 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
     ncthis->computeElements();
     ncthis-> initializeBuffers(viewer);
   }
-  vaos[Edges]->bind();
+  vaos[Scene_c3t3_item_priv::Edges]->bind();
   program = getShaderProgram(PROGRAM_C3T3_EDGES);
   attribBuffers(viewer, PROGRAM_C3T3_EDGES);
   program->bind();
@@ -820,10 +943,10 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
   program->setUniformValue("cutplane", cp);
   program->setAttributeValue("colors", this->color());
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size() / 3));
-  vaos[Edges]->release();
+  vaos[Scene_c3t3_item_priv::Edges]->release();
   program->release();
 
-  vaos[Grid]->bind();
+  vaos[Scene_c3t3_item_priv::Grid]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer, PROGRAM_NO_SELECTION);
   program->bind();
@@ -834,7 +957,7 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
   program->setUniformValue("f_matrix", f_mat);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
   program->release();
-  vaos[Grid]->release();
+  vaos[Scene_c3t3_item_priv::Grid]->release();
   if(spheres_are_shown)
   {
     spheres->setPlane(this->plane());
@@ -1020,11 +1143,11 @@ QMenu* Scene_c3t3_item::contextMenu()
 }
 
 
-void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
+void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 {
   //vao containing the data for the facets
   {
-    program = getShaderProgram(PROGRAM_C3T3, viewer);
+    program = getShaderProgram(Scene_c3t3_item::PROGRAM_C3T3, viewer);
     program->bind();
 
     vaos[Facets]->bind();
@@ -1063,7 +1186,7 @@ void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 
   //vao containing the data for the lines
   {
-    program = getShaderProgram(PROGRAM_C3T3_EDGES, viewer);
+    program = getShaderProgram(Scene_c3t3_item::PROGRAM_C3T3_EDGES, viewer);
     program->bind();
 
     vaos[Edges]->bind();
@@ -1085,7 +1208,7 @@ void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 
   // vao containing the data for the cnc
   {
-    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program = getShaderProgram(Scene_c3t3_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
 
     vaos[CNC]->bind();
@@ -1107,7 +1230,7 @@ void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 
   //vao containing the data for the grid
   {
-    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program = getShaderProgram(Scene_c3t3_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
 
     vaos[Grid]->bind();

@@ -51,26 +51,7 @@ public:
     void drawPoints(CGAL::Three::Viewer_interface*) const;
 
 
-    void smooth(std::vector<Point_3>& polyline){
-        bool is_closed = polyline.front()==polyline.back();
-        typedef K::Vector_3 Vector_3;
-
-        std::size_t start = is_closed ? 0:1;
-        std::size_t end   = polyline.size()-1;
-
-        Vector_3 prev = (is_closed ? polyline[end-1] : polyline[0]) - CGAL::ORIGIN;
-
-        for (std::size_t i=start; i!=end; ++i)
-        {
-            Vector_3 curr = polyline[i] - CGAL::ORIGIN;
-            Vector_3 next = polyline[i+1] - CGAL::ORIGIN;
-
-            polyline[i] = CGAL::ORIGIN+(prev+2*curr+next)/4;
-            prev=curr;
-        }
-
-        if (is_closed) polyline[end]=polyline[0];
-    }
+    void smooth(std::vector<Point_3>& polyline);
 
 public Q_SLOTS:
     virtual void invalidateOpenGLBuffers();
@@ -81,21 +62,13 @@ public Q_SLOTS:
 
     void merge(Scene_polylines_item*);
 
-    void smooth(){
-        for (Polylines_container::iterator pit=polylines.begin(),pit_end=polylines.end();pit!=pit_end;++pit)
-            smooth(*pit);
-      invalidateOpenGLBuffers();
-      Q_EMIT itemChanged();
-    }
+    void smooth();
 public:
     Polylines_container polylines;
 
     // http://en.wikipedia.org/wiki/D-pointer
     friend struct Scene_polylines_item_private;
     Scene_polylines_item_private* d;
-
-
-
 
 }; // end class Scene_polylines_item
 
