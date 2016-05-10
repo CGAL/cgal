@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>479</width>
-    <height>586</height>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -433,7 +433,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1">
+        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0">
          <item>
           <widget class="QComboBox" name="editionBox">
            <item>
@@ -499,6 +499,13 @@
             <string>Instructions 
 
 </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Ctrl+Z to cancel the temporary selection.</string>
            </property>
           </widget>
          </item>

@@ -1312,12 +1312,20 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
       //Split face
     case 4:
+      if(is_triangle(fh->halfedge(), *poly))
+      {
+        tempInstructions("Facet not selected : Facet must not be a triangle.",
+                         "Select the facet you want to split (degree >= 4). (1/3)");
+      }
+      else
+      {
         to_split_fh = fh;
         temp_selected_facets.insert(to_split_fh);
         invalidateOpenGLBuffers();
         //set to select vertex
         set_active_handle_type(static_cast<Active_handle::Type>(0));
         Q_EMIT updateInstructions("Select first vertex. (2/3)");
+      }
       break;
       //Add center vertex
     case 7:
