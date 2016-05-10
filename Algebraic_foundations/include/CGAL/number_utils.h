@@ -107,7 +107,7 @@ sqrt( const AS& x ) {
 template <typename NT>
 NT approximate_sqrt(const NT& nt, CGAL::Field_tag)
 {
-  return NT(sqrt(CGAL::to_double(nt)));
+  return NT(sqrt(to_double(nt)));
 }
 
 template <typename NT>
