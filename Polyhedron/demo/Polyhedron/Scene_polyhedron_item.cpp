@@ -74,7 +74,7 @@ const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
 
 typedef Polyhedron::Traits Traits;
 typedef Polyhedron::Facet Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Polyhedron::Halfedge_handle Halfedge_handle;
 struct Face_info {
     Polyhedron::Halfedge_handle e[3];
@@ -1151,41 +1151,20 @@ Scene_polyhedron_item::select(double orig_x,
   void* vertex_to_emit = 0;
   if(facet_picking_m) {
     typedef Input_facets_AABB_tree Tree;
-    typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+
 
     Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(get_aabb_tree());
     if(aabb_tree) {
       const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
       const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
       const Kernel::Ray_3 ray(ray_origin, ray_dir);
-      typedef std::list<Object_and_primitive_id> Intersections;
-      Intersections intersections;
-      aabb_tree->all_intersections(ray, std::back_inserter(intersections));
-      Intersections::iterator closest = intersections.begin();
-      if(closest != intersections.end()) {
-        const Kernel::Point_3* closest_point =
-            CGAL::object_cast<Kernel::Point_3>(&closest->first);
-        for(Intersections::iterator
-            it = boost::next(intersections.begin()),
-            end = intersections.end();
-            it != end; ++it)
-        {
-          if(! closest_point) {
-            closest = it;
-          }
-          else {
-            const Kernel::Point_3* it_point =
-                CGAL::object_cast<Kernel::Point_3>(&it->first);
-            if(it_point &&
-               (ray_dir * (*it_point - *closest_point)) < 0)
-            {
-              closest = it;
-              closest_point = it_point;
-            }
-          }
-        }
+      const boost::optional< typename Tree::template Intersection_and_primitive_id<Kernel::Ray_3>::Type >
+      variant = aabb_tree->first_intersection(ray);
+      if(variant)
+      {
+        const Kernel::Point_3* closest_point = boost::get<Kernel::Point_3>( &variant->first );
         if(closest_point) {
-          Polyhedron::Facet_handle selected_fh = closest->second;
+          Polyhedron::Facet_handle selected_fh = variant->second;
           // The computation of the nearest vertex may be costly.  Only
           // do it if some objects are connected to the signal
           // 'selected_vertex'.
