@@ -19,6 +19,14 @@
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_root_of   Kernel;
 typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
+/* Note: due to a bug from the boost library, the typedef below will cause a compilation error 
+ * with g++ 5.3.1 and clang++ 3.5.2-1 when using c++11 standard. Otherwise, this example will 
+ * compile successfully, which is the case with most platforms.
+ * The link for this bug report is at http://lists.boost.org/Archives/boost/2016/05/229458.php.
+ * The boost has replied that the fix for this bug will be merged into a future version of 
+ * boost distribution, hopefully, Boost 1.61.0.
+ * Also, if 'directedS' below is replaced by 'undirectedS', the bug won't cause compilation error. 
+ */
 // define the graph type
 typedef boost::adjacency_list<boost::listS,
                               boost::vecS,
