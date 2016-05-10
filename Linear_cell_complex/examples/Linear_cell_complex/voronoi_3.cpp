@@ -49,7 +49,7 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
   
   while( !toremove.empty() )
   {
-    CGAL::remove_cell<LCC_3, 3>(alcc, toremove.top());
+    alcc.remove_cell<3>(toremove.top());
     toremove.pop();
   }
 

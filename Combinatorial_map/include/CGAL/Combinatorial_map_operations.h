@@ -74,9 +74,12 @@ namespace CGAL
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be removed.
    */
+#ifndef CGAL_NO_DEPRECATED_CODE
   template < class CMap, unsigned int i >
-  bool is_removable(const CMap& amap, typename CMap::Dart_const_handle adart)
+  CGAL_DEPRECATED bool is_removable(const CMap& amap,
+                                    typename CMap::Dart_const_handle adart)
   { return CGAL::Is_removable_functor<CMap, i>::run(amap,adart); }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /** Remove an i-cell, 0<i<dimension, and merge eventually both incident
    *  (i+1)-cells.
@@ -89,10 +92,11 @@ namespace CGAL
   template<class CMap, unsigned int i, unsigned int nmi>
   struct Remove_cell_functor
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart,
+                      bool update_attributes)
     {
       CGAL_static_assertion ( 1<=i && i<CMap::dimension );
-      CGAL_assertion( (is_removable<CMap,i>(amap, adart)) );
+      CGAL_assertion( (amap.template is_removable<i>(adart)) );
 
       size_t res = 0;
 
@@ -278,7 +282,8 @@ namespace CGAL
   template<class CMap,unsigned int i>
   struct Remove_cell_functor<CMap,i,0>
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart,
+                      bool update_attributes)
     {
       typename CMap::size_type mark = amap.get_new_mark();
       std::deque<typename CMap::Dart_handle> to_erase;
@@ -348,7 +353,7 @@ namespace CGAL
     static size_t run(CMap& amap, typename CMap::Dart_handle adart,
                       bool update_attributes)
     {
-      CGAL_assertion( (is_removable<CMap,0>(amap,adart)) );
+      CGAL_assertion( (amap.template is_removable<0>(adart)) );
 
       size_t res = 0;
 
@@ -470,12 +475,15 @@ namespace CGAL
    * @param update_attributes a boolean to update the enabled attributes
    * @return the number of deleted darts.
    */
+#ifndef CGAL_NO_DEPRECATED_CODE
   template < class CMap, unsigned int i >
-  size_t remove_cell(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes = true)
+  CGAL_DEPRECATED size_t remove_cell(CMap& amap, typename CMap::Dart_handle adart,
+                                     bool update_attributes = true)
   {
-    return
-        CGAL::Remove_cell_functor<CMap,i,CMap::dimension-i>::run(amap,adart,update_attributes);
+    return CGAL::Remove_cell_functor<CMap,i,CMap::dimension-i>::
+      run(amap,adart,update_attributes);
   }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /** Test if an i-cell can be contracted.
    *  An i-cell can be contracted if i==1
@@ -520,9 +528,11 @@ namespace CGAL
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be contracted.
    */
+#ifndef CGAL_NO_DEPRECATED_CODE
   template < class CMap, unsigned int i >
-  bool is_contractible(const CMap& amap, typename CMap::Dart_const_handle adart)
+  CGAL_DEPRECATED bool is_contractible(const CMap& amap, typename CMap::Dart_const_handle adart)
   { return CGAL::Is_contractible_functor<CMap, i>::run(amap,adart); }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /** Contract an i-cell, 1<i<=dimension, and merge eventually both incident
    *  (i-1)-cells.
@@ -533,10 +543,11 @@ namespace CGAL
   template<class CMap, unsigned int i>
   struct Contract_cell_functor
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart,
+                      bool update_attributes)
     {
       CGAL_static_assertion ( 2<=i && i<=CMap::dimension );
-      CGAL_assertion( (is_contractible<CMap,i>(amap, adart)) );
+      CGAL_assertion( (amap.template is_contractible<i>(adart)) );
 
       size_t res = 0;
 
@@ -560,7 +571,7 @@ namespace CGAL
         ++res;
       }
 
-      if ( amap.are_attributes_automatically_managed() )
+      if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
@@ -643,7 +654,7 @@ namespace CGAL
         }
       }
 
-      if ( amap.are_attributes_automatically_managed() )
+      if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
@@ -689,9 +700,10 @@ namespace CGAL
   template<class CMap>
   struct Contract_cell_functor<CMap,1>
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
+    static size_t run(CMap& amap, typename CMap::Dart_handle adart,
+                      bool update_attributes)
     {
-      CGAL_assertion( (is_contractible<CMap,1>(amap,adart)) );
+      CGAL_assertion( (amap.template is_contractible<1>(adart)) );
 
       size_t res = 0;
 
@@ -713,7 +725,7 @@ namespace CGAL
         ++res;
       }
 
-      if ( amap.are_attributes_automatically_managed() )
+      if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
         // We group the two vertices incident if they exist.
         if ( dg1!=amap.null_handle )
@@ -740,7 +752,7 @@ namespace CGAL
             {
                /*modified_darts2.push_back((*it)->template beta<0>());
               if ( (*it)->beta(0)!=(*it)->beta(1) )*/
-              if ( amap.are_attributes_automatically_managed() )
+              if ( amap.are_attributes_automatically_managed() && update_attributes )
               {
                 modified_darts.push_back(amap.template beta<1>(*it));
               }
@@ -750,7 +762,7 @@ namespace CGAL
           }
           else
           {
-            if ( amap.are_attributes_automatically_managed() )
+            if ( amap.are_attributes_automatically_managed() && update_attributes )
             {
               modified_darts2.push_back(amap.template beta<0>(*it));
             }
@@ -761,7 +773,7 @@ namespace CGAL
         {
           if ( !amap.template is_free<1>(*it) )
           {
-            if ( amap.are_attributes_automatically_managed() )
+            if ( amap.are_attributes_automatically_managed() && update_attributes )
             {
               modified_darts.push_back(amap.template beta<1>(*it));
             }
@@ -777,7 +789,7 @@ namespace CGAL
       CGAL_assertion( amap.is_whole_map_unmarked(mark) );
       amap.free_mark(mark);
 
-      if ( amap.are_attributes_automatically_managed() )
+      if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
@@ -799,9 +811,12 @@ namespace CGAL
    * @param adart a dart of the i-cell to remove.
    * @return the number of deleted darts.
    */
+#ifndef CGAL_NO_DEPRECATED_CODE
   template < class CMap, unsigned int i >
-  size_t contract_cell(CMap& amap, typename CMap::Dart_handle adart)
-  { return CGAL::Contract_cell_functor<CMap,i>::run(amap,adart); }
+  CGAL_DEPRECATED size_t contract_cell(CMap& amap, typename CMap::Dart_handle adart,
+                                       bool update_attributes)
+  { return CGAL::Contract_cell_functor<CMap,i>::run(amap,adart, update_attributes); }
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

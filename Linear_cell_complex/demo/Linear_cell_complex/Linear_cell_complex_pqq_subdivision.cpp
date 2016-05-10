@@ -278,8 +278,8 @@ subdivide_lcc_pqq (LCC & m)
       for (std::vector <Dart_handle>::iterator dit = remove.begin ();
           dit != remove.end (); ++dit)
       {
-        CGAL_assertion( (CGAL::is_removable<LCC, 1>(m,*dit)) );
-        CGAL::remove_cell<LCC, 1>(m, *dit);
+        CGAL_assertion( (m.is_removable<1>(*dit)) );
+        m.remove_cell<1>(*dit);
       }
       remove.resize(0); 
       // CGAL_assertion( m.is_valid() );

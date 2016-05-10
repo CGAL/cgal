@@ -177,7 +177,7 @@ bool test_LCC_2()
 
   // Removal operations
   trace_test_begin();
-  CGAL::remove_cell<LCC,1>(lcc, dh11);
+  lcc.template remove_cell<1>(dh11);
   if ( !check_number_of_cells_2(lcc, 12, 16, 10, 2) )
     return false;
 
@@ -191,13 +191,13 @@ bool test_LCC_2()
 
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
-    CGAL::remove_cell<LCC,1>(lcc, *it);
+    lcc.template remove_cell<1>(*it);
   toremove.clear();
   if ( !check_number_of_cells_2(lcc, 11, 13, 8, 2) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<LCC,0>(lcc, dh9);
+  lcc.template remove_cell<0>(dh9);
   if ( !check_number_of_cells_2(lcc, 10, 12, 8, 2) )
     return false;
 
@@ -210,13 +210,13 @@ bool test_LCC_2()
 
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
-    CGAL::remove_cell<LCC,1>(lcc, *it);
+    lcc.template remove_cell<1>(*it);
   toremove.clear();
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<LCC,0>(lcc, dh7);
+  lcc.template remove_cell<0>(dh7);
   if ( !check_number_of_cells_2(lcc, 8, 8, 6, 2) )
     return false;
 
@@ -226,8 +226,8 @@ bool test_LCC_2()
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<LCC,2>(lcc, dh6);
-  CGAL::remove_cell<LCC,2>(lcc, dh5);
+  lcc.template remove_cell<2>(dh6);
+  lcc.template remove_cell<2>(dh5);
   if ( !check_number_of_cells_2(lcc, 4, 3, 4, 1) )
     return false;
 
@@ -242,9 +242,9 @@ bool test_LCC_2()
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<LCC,1>(lcc, dh1);
-  CGAL::remove_cell<LCC,1>(lcc, dh2);
-  CGAL::remove_cell<LCC,1>(lcc, dh3);
+  lcc.template remove_cell<1>(dh1);
+  lcc.template remove_cell<1>(dh2);
+  lcc.template remove_cell<1>(dh3);
   if ( !check_number_of_cells_2(lcc, 0, 0, 0, 0) )
     return false;
 

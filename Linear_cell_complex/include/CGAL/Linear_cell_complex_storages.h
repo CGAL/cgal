@@ -23,7 +23,7 @@
 #include <CGAL/Combinatorial_map_storages.h>
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 50000)
+#if  (BOOST_GCC >= 40900)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
@@ -443,7 +443,7 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#if  (BOOST_GCC >= 50000)
+#if  (BOOST_GCC >= 40900)
  _Pragma("GCC diagnostic pop")
 #endif
 #endif // CGAL_LINEAR_CELL_COMPLEX_STORAGES_H //

@@ -377,9 +377,8 @@ the intersection of their two sets of darts is non empty (whatever the
 dimension of the two cells). Two <I>i</I>-cells <I>c1</I> and
 <I>c2</I>,  1\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>, are
 <I>adjacent</I> if there is  <I>d1</I>\f$ \in\f$<I>c1</I> and
-<I>d2</I>\f$ \in\f$<I>c2</I> such that <I>d1</I>=\f$
-\beta_i\f$(<I>d2</I>) (or <I>d2</I>=\f$ \beta_i\f$(<I>d1</I>)  for
-<I>i</I>=1).
+<I>d2</I>\f$ \in\f$<I>c2</I> such that <I>d1</I> and <I>d2</I>
+belong to the same <I>(i-1)</I>-cell.
 
 In the example of \cgalFigureRef{figexemplecarte3d}, vertex <I>v</I> and
 edge <I>e</I> are incident since the intersection of the two
@@ -390,7 +389,7 @@ intersection of the two corresponding sets of darts is {1,6}\f$
 incident since the intersection of the two corresponding sets of darts
 is {10}\f$ \neq\f$\f$ \emptyset\f$. Finally, facets <I>f1</I> and
 <I>f2</I> are adjacent because 10\f$ \in\f$<I>f1</I>, 1\f$
-\in\f$<I>f2</I> and 10=\f$ \beta_2\f$(1).
+\in\f$<I>f2</I> and 1 and 10 belong to the same edge.
 
 We can consider <I>i</I>-cells in a dimension <I>d'</I> with
 <I>i</I>\f$ \leq\f$<I>d'</I>\f$ \leq\f$ <I>d</I>. The idea is to
@@ -867,26 +866,25 @@ For each range, there is an associated const range, a model of the
 
 \subsection ssecconstruction Construction Operations
 
-Several global functions allow to create specific configurations of
+Several functions allow to create specific configurations of
 darts into a combinatorial map. Existing darts in the combinatorial
 map are not modified. Note that the dimension of the combinatorial map
 must be large enough: darts must contain all the \f$ \beta\f$ pointers
-used by the operation. All these functions take an instance of
-`CombinatorialMap` as first parameter (called `cm`) and return a
+used by the operation. All these functions return a
 \link CombinatorialMap::Dart_handle `Dart_handle`\endlink to a new dart
 created during the operation.
 
 <UL>
-<LI>`::make_edge<CMap>(cm)`: creates an isolated edge (two darts linked
+<LI>`cm.make_edge()`: creates an isolated edge (two darts linked
 by \f$ \beta_2\f$); dimension must be greater or equal than two;
-<LI>`::make_combinatorial_polygon<CMap>(cm,lg)`: creates an isolated
+<LI>`cm.make_combinatorial_polygon(lg)`: creates an isolated
 combinatorial polygon of length `lg` (`lg` darts linked by \f$
 \beta_1\f$), for `lg>0`; dimension must be greater or equal than one;
-<LI>`::make_combinatorial_tetrahedron<CMap>(cm)`: creates an isolated
+<LI>`cm.make_combinatorial_tetrahedron()`: creates an isolated
 combinatorial tetrahedron (four combinatorial triangles linked
 together by \f$ \beta_2\f$); dimension must be greater or equal than
 two;
-<LI>`::make_combinatorial_hexahedron<CMap>(cm)`: creates an isolated
+<LI>`cm.make_combinatorial_hexahedron()`: creates an isolated
 combinatorial hexahedron (six combinatorial quadrangles linked
 together by \f$ \beta_2\f$); dimension must be greater or equal than
 two.
@@ -1139,17 +1137,14 @@ A call latter to \link CombinatorialMap::set_automatic_attributes_management `se
 
 \subsection ssecoperations Removal and Insertion Operations
 
-The following high level operations are defined as global functions
-taking an instance `cm` of `CombinatorialMap` as first argument. All
-these methods ensure that given a valid combinatorial map and a
-possible operation, the modified combinatorial map is also valid.
+The following high level operations are defined. All these methods ensure that given a valid combinatorial map and a possible operation, the modified combinatorial map is also valid.
 
-The first one is `::remove_cell<CMap,i>(cm,dh0)` which modifies the
+The first one is `cm.remove_cell<i>(dh0)` which modifies the
 combinatorial map to remove the <I>i</I>-cell containing dart `d0`,
 with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>. This operation is
 possible  if <I>i</I>=<I>d</I> or if the given <I>i</I>-cell is
 incident to at most two <I>(i+1)</I>-cells which can be tested thanks
-to `::is_removable<CMap,i>(cm,dh0)`. If the removed <I>i</I>-cell was
+to `cm.is_removable<i>(dh0)`. If the removed <I>i</I>-cell was
 incident to two different <I>(i+1)</I>-cells, these two cells are
 merged into one <I>(i+1)</I>-cell. In this case, the \ref CellAttribute::On_merge "On_merge"
 functor is called if two <I>(i+1)</I>-attributes are associated to the
@@ -1160,7 +1155,7 @@ and \cgalFigureRef{figinsertface}).
 
 
 \cgalFigureBegin{figinsertvertex,insert-vertex.png}
-Example of `::insert_cell_0_in_cell_1` and `::remove_cell<0>`
+Example of `insert_cell_0_in_cell_1` and `remove_cell<0>`
 operations. Left: Initial combinatorial map. Right:
 After the insertion of a 0-cell in the 1-cell containing dart
 `d1`. Now if we remove the 0-cell containing dart `d2`, we obtain the
@@ -1171,36 +1166,31 @@ The inverse operation of the removal is the insertion operation.
 Several versions exist, sharing a common principle. They consist in
 adding a new <I>i</I>-cell "inside" an existing <I>j</I>-cell,
 <I>i</I>\f$ <\f$<I>j</I>, by splitting the <I>j</I>-cell into several
-<I>j</I>-cells. Contrary to `::remove_cell<CMap,i>`, is it not possible
-to define a unique `insert_cell_i_in_cell_j<CMap,i,j>` function
+<I>j</I>-cells. Contrary to `remove_cell<i>`, is it not possible
+to define a unique `insert_cell_i_in_cell_j<i,j>` function
 because parameters are different depending on `i` and `j`.
 
-`::insert_cell_0_in_cell_1<CMap>(cm,dh0)` adds a 0-cell in the 1-cell
-containing dart `d0`. The 1-cell is split in two. This operation is
-possible if `d0`\f$ \in\f$\ref CombinatorialMap::darts "cm.darts()" (see example on
-\cgalFigureRef{figinsertvertex}).
+`cm.insert_cell_0_in_cell_1(dh0)` adds a 0-cell in the 1-cell containing dart `d0`. The 1-cell is split in two. This operation is possible if `d0`\f$ \in\f$\ref CombinatorialMap::darts "cm.darts()" (see example on \cgalFigureRef{figinsertvertex}).
 
-`::insert_cell_0_in_cell_2<CMap>(cm,dh0)` adds a 0-cell in the 2-cell
-containing dart `d0`. The 2-cell is split in triangles, one for each
-initial edge of the facet. This operation is possible if `d0`\f$
+`cm.insert_cell_0_in_cell_2(dh0)` adds a 0-cell in the 2-cell containing dart `d0`. The 2-cell is split in triangles, one for each initial edge of the facet. This operation is possible if `d0`\f$
 \in\f$\ref CombinatorialMap::darts "cm.darts()" (see example on \cgalFigureRef{figtriangulate}).
 
 \cgalFigureBegin{figtriangulate,triangulation.png}
-Example of `::insert_cell_0_in_cell_2` operation.
+Example of `insert_cell_0_in_cell_2` operation.
 \cgalFigureEnd
 
-`::insert_cell_1_in_cell_2<CMap>(cm,dh1,dh2)` adds a 1-cell in the
+`cm.insert_cell_1_in_cell_2(dh1,dh2)` adds a 1-cell in the
 2-cell containing darts `d1` and `d2`, between the two 0-cells
 containing darts `d1` and `d2`. The 2-cell is split in two. This
 operation is possible if <I>d1</I>\f$ \in\f$\f$ \langle{}\f$\f$
 \beta_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to
-`::is_insertable_cell_1_in_cell_2<CMap>(cm,dh1,dh2)`. In the example on
+`cm.is_insertable_cell_1_in_cell_2(dh1,dh2)`. In the example on
 \cgalFigureRef{figinsertedge}, it is possible to insert an edge between darts
 <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge
 between <I>d1</I> and <I>d3</I>.
 
 \cgalFigureBegin{figinsertedge,insert-edge.png}
-Example of `::insert_cell_1_in_cell_2` and `::remove_cell<1>`
+Example of `insert_cell_1_in_cell_2` and `remove_cell<1>`
 operations. Left: Initial combinatorial map. Right:
 After the insertion of two 1-cells: a first one between the two
 0-cells containing darts `d2` and `d3`, and a second one incident to
@@ -1210,30 +1200,29 @@ map.
 \cgalFigureEnd
 
 
-`::insert_dangling_cell_1_in_cell_2<CMap>(cm,dh0)` adds a 1-cell in the
+`cm.insert_dangling_cell_1_in_cell_2(dh0)` adds a 1-cell in the
 2-cell containing dart `d0`, the 1-cell being attached by only one of
 its vertex to the 0-cell containing dart `d0`.  This operation is
 possible if `d0`\f$ \in\f$\ref CombinatorialMap::darts "cm.darts()".
 
-`::insert_cell_2_in_cell_3<CMap>(cm,itbegin,itend)` adds a 2-cell in the
+`cm.insert_cell_2_in_cell_3<CMap>(itbegin,itend)` adds a 2-cell in the
 3-cell containing all the darts between `itbegin` and `itend`, along
 the path of 1-cells containing darts in [`itbegin`,`itend`). The
 3-cell is split in two. This operation is possible if all the  darts
 in [`itbegin`,`itend`) form a closed path inside a same 3-cell  which
 can be tested thanks to
-`::is_insertable_cell_2_in_cell_3<CMap>(cm,itbegin,itend)` (see example on
+`cm.is_insertable_cell_2_in_cell_3(itbegin,itend)` (see example on
 \cgalFigureRef{figinsertface}).
 
 \cgalFigureBegin{figinsertface,insert-facet.png}
-Example of `::insert_cell_2_in_cell_3` and `::remove_cell<2>`
+Example of `insert_cell_2_in_cell_3` and `remove_cell<2>`
 operations.  Left: Initial combinatorial map. Right: After the
 insertion of a 2-cell along the path of 1-cells containing
 respectively `d1,d2,d3,d4`. Now if we remove the 2-cell containing
 dart `d5`, we obtain the initial combinatorial map.
 \cgalFigureEnd
 
-Some examples of use of these operations are given in Section \ref
-ssecexempleoperations "High Level Operations".
+Some examples of use of these operations are given in Section \ref ssecexempleoperations "High Level Operations".
 
 \cgalAdvancedBegin
 If \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link CombinatorialMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
@@ -1406,7 +1395,7 @@ cube with an attribute having 13 as value. During the  \ref CombinatorialMap::se
 two associated 2-attributes, and the value of the new 2-cell is the
 sum of the two previous one: 20.
 
-Then we call `::insert_cell_0_in_cell_2` on a dart which belong to
+Then we call `insert_cell_0_in_cell_2` on a dart which belong to
 this 2-cell. This method splits the existing 2-cell in <I>k</I>
 2-cells, <I>k</I> being the number of 1-cells of the initial 2-cell (4
 in this example). These splits are made consecutively, thus for the
