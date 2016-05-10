@@ -64,17 +64,11 @@ public:
   bool manipulatable() const {
     return true;
   }
-  ManipulatedFrame* manipulatedFrame() {
-    return frame;
-  }
+  ManipulatedFrame* manipulatedFrame();
 
-  void setPosition(float x, float y, float z) {
-    frame->setPosition(x, y, z);
-  }
+  void setPosition(float x, float y, float z) ;
 
-  void setNormal(float x, float y, float z) {
-    frame->setOrientation(x, y, z, 0.f);
-  }
+  void setNormal(float x, float y, float z) ;
 
   Kernel::Plane_3 plane() const;
 
@@ -114,10 +108,33 @@ public:
   void drawPoints(CGAL::Three::Viewer_interface * viewer) const;
   public:
     QMenu* contextMenu();
+  public Q_SLOTS:
+  void export_facets_in_complex();
+
+  void data_item_destroyed();
+
+  void reset_spheres();
+
+  void reset_intersection_item();
+  void show_spheres(bool b);
+  void show_intersection(bool b);
+
+  void show_cnc(bool b);
+
+  virtual QPixmap graphicalToolTip() const;
+
+  void update_histogram();
+
+  void changed();
+
+  void updateCutPlane();
+
+  void build_histogram();
+
+  QColor get_histogram_color(const double v) const;
 
   protected:
     friend struct Scene_c3t3_item_priv;
-
     Scene_c3t3_item_priv* d;
 
 };
