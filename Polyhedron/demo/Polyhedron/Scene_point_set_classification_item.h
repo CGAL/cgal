@@ -40,13 +40,131 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
 public:
   
-  Scene_point_set_classification_item();
+  Scene_point_set_classification_item(PSC* psc = NULL);
   Scene_point_set_classification_item(const Scene_points_with_normal_item* points,
                                       double grid_resolution);
   Scene_point_set_classification_item(const Scene_point_set_classification_item& toCopy);
   ~Scene_point_set_classification_item();
+  
   Scene_point_set_classification_item* clone() const;
 
+  struct Region
+  {
+    std::vector<std::size_t> indices;
+    double x_min, x_max, y_min, y_max;
+    Region () : indices(),
+                x_min(std::numeric_limits<double>::max()),
+                x_max(-std::numeric_limits<double>::max()),
+                y_min(std::numeric_limits<double>::max()),
+                y_max(-std::numeric_limits<double>::max()) { }
+  };
+      
+  
+  template <typename OutputIterator>
+  bool segment_point_set (std::size_t nb_max_pt, OutputIterator output)
+  {
+    if (m_psc->HPS.size() < nb_max_pt)
+      return false;
+
+    std::list<Region> queue;
+    queue.push_front (Region());
+    
+    for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+      {
+        queue.front().indices.push_back (i);
+        if (m_psc->HPS[i].position.x() < queue.front().x_min)
+          queue.front().x_min = m_psc->HPS[i].position.x();
+        if (m_psc->HPS[i].position.x() > queue.front().x_max)
+          queue.front().x_max = m_psc->HPS[i].position.x();
+        if (m_psc->HPS[i].position.y() < queue.front().y_min)
+          queue.front().y_min = m_psc->HPS[i].position.y();
+        if (m_psc->HPS[i].position.y() > queue.front().y_max)
+          queue.front().y_max = m_psc->HPS[i].position.y();
+      }
+
+    while (!(queue.empty()))
+      {
+        Region& current = queue.front();
+
+        // TODO sort points and use median (split in 2 equal parts)
+        if (current.indices.size() < nb_max_pt)
+          {
+            std::vector<Kernel::Point_3> dummy;
+
+            PSC* psc = new PSC (dummy.begin(), dummy.end(), m_psc->m_grid_resolution);
+            for (std::size_t i = 0; i < current.indices.size(); ++ i)
+              {
+                psc->HPS.push_back (PSC::HPoint());
+                psc->HPS.back().position = m_psc->HPS[current.indices[i]].position;
+                psc->HPS.back().echo = m_psc->HPS[current.indices[i]].echo;
+                psc->HPS.back().ind_x = m_psc->HPS[current.indices[i]].ind_x;
+                psc->HPS.back().ind_y = m_psc->HPS[current.indices[i]].ind_y;
+                psc->HPS.back().group = m_psc->HPS[current.indices[i]].group;
+                psc->HPS.back().AE_label = m_psc->HPS[current.indices[i]].AE_label;
+                psc->HPS.back().neighbor = m_psc->HPS[current.indices[i]].neighbor;
+                psc->HPS.back().confidence = m_psc->HPS[current.indices[i]].confidence;
+                psc->HPS.back().color = m_psc->HPS[current.indices[i]].color;
+              }
+            *(output ++) = new Scene_point_set_classification_item (psc);
+          }
+        else
+          {
+            if (current.x_max - current.x_min > current.y_max - current.y_min)
+              {
+                double med_x = (current.x_max + current.x_min) * 0.5;
+                queue.push_back(Region());
+                queue.push_back(Region());
+                std::list<Region>::iterator it = queue.end();
+                Region& positive = *(-- it);
+                Region& negative = *(-- it);
+                
+                negative.y_min = current.y_min;
+                positive.y_min = current.y_min;
+                negative.y_max = current.y_max;
+                positive.y_max = current.y_max;
+                
+                negative.x_min = current.x_min;
+                negative.x_max = med_x;
+                positive.x_min = med_x;
+                positive.x_max = current.x_max;
+                for (std::size_t i = 0; i < current.indices.size(); ++ i)
+                  if (m_psc->HPS[current.indices[i]].position.x() > med_x)
+                    positive.indices.push_back (current.indices[i]);
+                  else
+                    negative.indices.push_back (current.indices[i]);
+              }
+            else
+              {
+                double med_y = (current.y_max + current.y_min) * 0.5;
+                queue.push_back(Region());
+                queue.push_back(Region());
+                std::list<Region>::iterator it = queue.end();
+                Region& positive = *(-- it);
+                Region& negative = *(-- it);
+
+                negative.x_min = current.x_min;
+                positive.x_min = current.x_min;
+                negative.x_max = current.x_max;
+                positive.x_max = current.x_max;
+
+                negative.y_min = current.y_min;
+                negative.y_max = med_y;
+                positive.y_min = med_y;
+                positive.y_max = current.y_max;
+                for (std::size_t i = 0; i < current.indices.size(); ++ i)
+                  if (m_psc->HPS[current.indices[i]].position.y() > med_y)
+                    positive.indices.push_back (current.indices[i]);
+                  else
+                    negative.indices.push_back (current.indices[i]);
+              }
+          }
+        
+        queue.pop_front ();
+      }
+    
+    return true;
+  }
+  
   // Function to override the context menu
   QMenu* contextMenu();
 
@@ -81,7 +199,8 @@ public:
                             double& radius_dtm);
   void compute_features (const double& grid_resolution,
                          const double& radius_neighbors,
-                         const double& radius_dtm);
+                         const double& radius_dtm,
+                         const QColor& c);
   void compute_ransac (const double& radius_neighbors);
   void compute_clusters (const double& radius_neighbors);
 
@@ -90,16 +209,26 @@ public:
   template <typename Classes>
   bool run (double weight_scat, double weight_plan,
             double weight_hori, double weight_elev, double weight_colo,
-            bool multiply, Classes& classes, int method)
+            bool multiply, Classes& classes, int method, double weight)
   {
   if (m_scat == NULL || m_plan == NULL || m_hori == NULL || m_elev == NULL || m_colo == NULL)
     return false;
 
-  m_scat->weight = 2 * (1. - weight_scat) * m_scat->max;
-  m_plan->weight = 2 * (1. - weight_plan) * m_plan->max;
-  m_hori->weight = 2 * (1. - weight_hori) * m_hori->max;
-  m_elev->weight = 2 * (1. - weight_elev) * m_elev->mean;
-  m_colo->weight = 2 * (1. - weight_colo) * m_colo->max;
+  m_psc->m_grid_resolution = weight;
+
+  m_scat->weight = std::tan ((1. - weight_scat) * (CGAL_PI/2));
+  m_plan->weight = std::tan ((1. - weight_plan) * (CGAL_PI/2));
+  m_hori->weight = std::tan ((1. - weight_hori) * (CGAL_PI/2));
+  m_elev->weight = std::tan ((1. - weight_elev) * (CGAL_PI/2));
+  m_colo->weight = std::tan ((1. - weight_colo) * (CGAL_PI/2));
+  
+  // m_scat->weight = 2 * (1. - weight_scat) * m_scat->max;
+  // m_plan->weight = 2 * (1. - weight_plan) * m_plan->max;
+  // m_hori->weight = 2 * (1. - weight_hori) * m_hori->max;
+  // m_elev->weight = 2 * (1. - weight_elev) * m_elev->mean;
+  // m_colo->weight = 2 * (1. - weight_colo) * m_colo->max;
+
+  
   if (!(m_psc->segmentation_classes.empty()))
     {
       for (std::size_t i = 0; i < m_psc->segmentation_classes.size(); ++ i)
@@ -133,8 +262,8 @@ public:
   
   m_psc->point_cloud_classification(method);
 
-  if (method != 0)
-    save_2d_image();
+  // if (method != 0)
+  //   save_2d_image();
   
   invalidateOpenGLBuffers();
   return false;
@@ -222,16 +351,22 @@ class My_ply_interpreter
 {
   std::vector<Kernel::Point_3>& points;
   std::vector<Color>& colors;
-    
+  std::vector<unsigned char>& echo;
+  bool echo_float;
+  
 public:
   My_ply_interpreter (std::vector<Kernel::Point_3>& points,
-                      std::vector<Color>& colors)
-    : points (points), colors (colors)
+                      std::vector<Color>& colors,
+                      std::vector<unsigned char>& echo)
+    : points (points), colors (colors), echo (echo), echo_float (false)
   { }
 
   // Init and test if input file contains the right properties
   bool is_applicable (CGAL::Ply_reader& reader)
   {
+    if (reader.does_tag_exist<float> ("scalar_Return_Number"))
+      echo_float = true;
+    
     return reader.does_tag_exist<Floating> ("x")
       && reader.does_tag_exist<Floating> ("y")
       && reader.does_tag_exist<Floating> ("z");
@@ -242,6 +377,7 @@ public:
   {
     Floating x = (Floating)0., y = (Floating)0., z = (Floating)0.;
     Color c = {{ 0, 0, 0 }};
+    unsigned char e = 0;
 
     reader.assign (x, "x");
     reader.assign (y, "y");
@@ -249,9 +385,18 @@ public:
     reader.assign (c[0], "red");
     reader.assign (c[1], "green");
     reader.assign (c[2], "blue");
+    if (echo_float)
+      {
+        float f = 0.;
+        reader.assign (f, "scalar_Return_Number");
+        e = (unsigned char)f;
+      }
+    else
+      reader.assign (e, "echo");
 
     points.push_back (Kernel::Point_3 (x, y, z));
     colors.push_back (c);
+    echo.push_back (e);
   }
 
 };
