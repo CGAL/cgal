@@ -119,7 +119,7 @@ void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer
 
   program->release();
 
-  nb_centers = centers.size();
+  nb_centers = static_cast<int>(centers.size());
   centers.clear();
   centers.swap(centers);
   colors.clear();
