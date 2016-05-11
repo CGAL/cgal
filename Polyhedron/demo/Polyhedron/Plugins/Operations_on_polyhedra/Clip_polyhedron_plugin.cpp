@@ -6,7 +6,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/internal/Polyhedron_plane_clipping_3.h>
 #include "ui_Clip_polyhedron_plugin.h"
 #include "Viewer.h"
@@ -27,10 +27,10 @@ public:
   void draw(CGAL::Three::Viewer_interface* viewer)const
   {
     if(!are_buffers_filled)
-      initialize_buffers(viewer);
+      initializeBuffers(viewer);
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_PLANE_TWO_FACES);
-    attrib_buffers(viewer, PROGRAM_PLANE_TWO_FACES);
+    attribBuffers(viewer, PROGRAM_PLANE_TWO_FACES);
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
       f_matrix.data()[i] = (float)frame->matrix()[i];
@@ -54,7 +54,7 @@ public:
   void selection_changed(bool b){is_selected = b;}
 
 private:
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
   {
     program = getShaderProgram(PROGRAM_PLANE_TWO_FACES, viewer);
     program->bind();
@@ -87,23 +87,19 @@ private:
 
 class Q_DECL_EXPORT Clip_polyhedron_plugin :
     public QObject,
-    public CGAL::Three::Polyhedron_demo_plugin_helper
+    public CGAL::Three::Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public :
-  // To silent a warning -Woverloaded-virtual
-  // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-  using Polyhedron_demo_plugin_helper::init;
   // Adds an action to the menu and configures the widget
-  void init(QMainWindow* mainWindow,
+  void init(QMainWindow* mw,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* mi) {
     //get the references
     this->scene = scene_interface;
-    this->mw = mainWindow;
     this->messages = mi;
     plane = NULL;
     //creates and link the actions
@@ -153,9 +149,9 @@ public Q_SLOTS:
       const Scene_interface::Bbox scene_bbox = scene->bbox();
       plane = new Scene_clipping_plane_item(scene);
       plane->setNormal(0., 0., 1.);
-      plane->setPosition((scene_bbox.xmin + scene_bbox.xmax)/2.,
-                         (scene_bbox.ymin + scene_bbox.ymax)/2.,
-                         (scene_bbox.zmin + scene_bbox.zmax)/2.);
+      plane->setPosition((scene_bbox.xmin() + scene_bbox.xmax())/2.,
+                         (scene_bbox.ymin() + scene_bbox.ymax())/2.,
+                         (scene_bbox.zmin() + scene_bbox.zmax())/2.);
       plane->setManipulatable(true);
       plane->setClonable(false);
       plane->setColor(QColor(0,126,255));
@@ -294,5 +290,6 @@ private:
   QDockWidget* dock_widget;
   Scene_clipping_plane_item* plane;
   Messages_interface* messages;
+  Scene_interface* scene;
 }; //end of plugin class
 #include "Clip_polyhedron_plugin.moc"

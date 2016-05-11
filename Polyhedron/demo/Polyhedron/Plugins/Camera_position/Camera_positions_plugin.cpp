@@ -19,7 +19,7 @@ class Polyhedron_demo_camera_positions_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* );
   QList<QAction*> actions() const;
 
   QString name() const { return "camera_positions_plugin"; }
@@ -34,7 +34,7 @@ private:
   Camera_positions_list* cpl;
 };
 
-void Polyhedron_demo_camera_positions_plugin::init(QMainWindow* mainWindow, Scene_interface*)
+void Polyhedron_demo_camera_positions_plugin::init(QMainWindow* mainWindow, Scene_interface*, Messages_interface *)
 {
 
   cpl = new Camera_positions_list(mainWindow);

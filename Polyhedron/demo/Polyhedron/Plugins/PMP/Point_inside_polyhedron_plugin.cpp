@@ -55,7 +55,7 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
 
-  using Polyhedron_demo_plugin_helper::init;
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     mw = mainWindow;
@@ -70,7 +70,7 @@ public:
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
 
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(ui_widget.Select_button,  SIGNAL(clicked()), this, SLOT(on_Select_button())); 
     connect(ui_widget.Sample_random_points_from_bbox,  SIGNAL(clicked()), this, SLOT(on_Sample_random_points_from_bbox())); 
@@ -241,15 +241,15 @@ public Q_SLOTS:
     point_item->setName(QString("sample-%1").arg(nb_points));
     CGAL::Random rg(1340818006);
 
-    double grid_dx = bbox->xmax - bbox->xmin;
-    double grid_dy = bbox->ymax - bbox->ymin;
-    double grid_dz = bbox->zmax - bbox->zmin;
+    double grid_dx = bbox->xmax() - bbox->xmin();
+    double grid_dy = bbox->ymax() - bbox->ymin();
+    double grid_dz = bbox->zmax() - bbox->zmin();
 
     for(int i=0; i < nb_points; i++){
       point_item->point_set()->push_back(
-      Epic_kernel::Point_3(bbox->xmin + rg.get_double()* grid_dx, 
-        bbox->ymin + rg.get_double()* grid_dy,
-        bbox->zmin + rg.get_double()* grid_dz)
+      Epic_kernel::Point_3(bbox->xmin ()+ rg.get_double()* grid_dx,
+        bbox->ymin() + rg.get_double()* grid_dy,
+        bbox->zmin() + rg.get_double()* grid_dz)
       );
     }
 

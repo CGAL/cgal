@@ -64,7 +64,7 @@ public:
         qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
     }    
     
-    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
         this->scene = scene_interface;
         this->mw = mainWindow;
         actionSegmentation = new QAction("Mesh Segmentation", mw);

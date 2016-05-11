@@ -167,10 +167,10 @@ void CGAL::Three::Scene_item::select(double /*orig_x*/,
 }
 
 // set-up the uniform attributes of the shader programs.
-void CGAL::Three::Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer,
+void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewer,
                                              int program_name) const
 {
-    viewer->attrib_buffers(program_name);
+    viewer->attribBuffers(program_name);
     viewer->getShaderProgram(program_name)->bind();
     if(is_selected)
         viewer->getShaderProgram(program_name)->setUniformValue("is_selected", true);
@@ -210,7 +210,7 @@ CGAL::Three::Scene_item::Header_data CGAL::Three::Scene_item::header() const
   return data;
 }
 
-QString CGAL::Three::Scene_item::compute_stats(int )
+QString CGAL::Three::Scene_item::computeStats(int )
 {
   return QString();
 }

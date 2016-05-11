@@ -23,7 +23,7 @@ public:
     setColor(QColor(255, 0, 0));
     setName("Volume plane intersection");
     compile_shaders();
-    compute_elements();
+    computeElements();
     init_buffers();
   }
 
@@ -68,9 +68,9 @@ private:
   mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
-  void compute_elements();
+  void computeElements();
   void init_buffers();
-  void attrib_buffers(Viewer_interface*) const;
+  void attribBuffers(Viewer_interface*) const;
   void compile_shaders();
 };
 

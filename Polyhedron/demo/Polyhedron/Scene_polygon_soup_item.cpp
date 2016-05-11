@@ -79,7 +79,7 @@ struct Polyhedron_to_polygon_soup_writer {
 }; // end struct Polyhedron_to_soup_writer
 
 void
-Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
+Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the facets
     {
@@ -576,13 +576,13 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
      compute_normals_and_vertices();
-     initialize_buffers(viewer);
+     initializeBuffers(viewer);
     }
     if(soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
     vaos[Facets]->bind();
-    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
     //fills the arraw of colors with the current color
 
     QColor v_colors = this->color();
@@ -599,15 +599,15 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   }
 
 void
-Scene_polygon_soup_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
       compute_normals_and_vertices();
-      initialize_buffers(viewer);
+      initializeBuffers(viewer);
     }
     if(soup == 0) return;
     vaos[Edges]->bind();
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     QColor color = this->color();
@@ -620,15 +620,15 @@ Scene_polygon_soup_item::draw_points(CGAL::Three::Viewer_interface* viewer) cons
 }
 
 void
-Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
   {
      compute_normals_and_vertices();
-     initialize_buffers(viewer);
+     initializeBuffers(viewer);
   }
     if(soup == 0) return;
     vaos[Edges]->bind();
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     QColor color = this->color().lighter(120);
@@ -642,7 +642,7 @@ Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
     if(displayNonManifoldEdges())
     {
         vaos[NM_Edges]->bind();
-        attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+        attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         program->bind();
         QColor c = QColor(255,0,0,255);

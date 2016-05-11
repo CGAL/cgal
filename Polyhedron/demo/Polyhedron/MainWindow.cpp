@@ -124,7 +124,7 @@ MainWindow::MainWindow(QWidget* parent)
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
-  ui->menuBar->removeAction(ui->actionLoad_Script);
+  ui->menuBar->removeAction(ui->actionloadScript);
 #endif
   
   // Save some pointers from ui, for latter use.
@@ -348,7 +348,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   if(actionAddToGroup) {
     connect(actionAddToGroup, SIGNAL(triggered()),
-            this, SLOT(make_new_group()));
+            this, SLOT(makeNewGroup()));
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
@@ -828,12 +828,12 @@ void MainWindow::error(QString text) {
 void MainWindow::updateViewerBBox()
 {
   const Scene::Bbox bbox = scene->bbox();
-  const double xmin = bbox.xmin;
-  const double ymin = bbox.ymin;
-  const double zmin = bbox.zmin;
-  const double xmax = bbox.xmax;
-  const double ymax = bbox.ymax;
-  const double zmax = bbox.zmax;
+  const double xmin = bbox.xmin();
+  const double ymin = bbox.ymin();
+  const double zmin = bbox.zmin();
+  const double xmax = bbox.xmax();
+  const double ymax = bbox.ymax();
+  const double zmax = bbox.zmax();
    //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
    //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
   qglviewer::Vec 
@@ -844,7 +844,7 @@ void MainWindow::updateViewerBBox()
   viewer->camera()->showEntireScene();
 }
 
-void MainWindow::reload_item() {
+void MainWindow::reloadItem() {
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(!sender_action) return;
   
@@ -871,10 +871,10 @@ void MainWindow::reload_item() {
     return;
   }
 
-  CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
+  CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = findLoader(loader_name);
   QFileInfo fileinfo(filename);
 
-  CGAL::Three::Scene_item* new_item = load_item(fileinfo, fileloader);
+  CGAL::Three::Scene_item* new_item = loadItem(fileinfo, fileloader);
 
   new_item->setName(item->name());
   new_item->setColor(item->color());
@@ -885,7 +885,7 @@ void MainWindow::reload_item() {
   item->deleteLater();
 }
 
-CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
+CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::findLoader(const QString& loader_name) const {
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin,
             io_plugins) {
     if(io_plugin->name() == loader_name) {
@@ -937,7 +937,7 @@ void MainWindow::open(QString filename)
     program=filename.right(filename.size() - 9);
   }
   if(filename.endsWith(".js")) {
-    load_script(fileinfo);
+    loadScript(fileinfo);
     return;
   }
   if(!program.isEmpty())
@@ -1009,9 +1009,7 @@ void MainWindow::open(QString filename)
   QSettings settings;
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
-
-  CGAL::Three::Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
-
+  CGAL::Three::Scene_item* scene_item = loadItem(fileinfo, findLoader(load_pair.first));
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
@@ -1022,7 +1020,7 @@ bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename); 
   CGAL::Three::Scene_item* item;
   try {
-    item = load_item(fileinfo, find_loader(loader_name));
+    item = loadItem(fileinfo, findLoader(loader_name));
   }
   catch(std::logic_error e) {
     std::cerr << e.what() << std::endl;
@@ -1033,7 +1031,7 @@ bool MainWindow::open(QString filename, QString loader_name) {
 }
 
 
-CGAL::Three::Scene_item* MainWindow::load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
+CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
   CGAL::Three::Scene_item* item = NULL;
   if(!fileinfo.isFile() || !fileinfo.isReadable()) {
     throw std::invalid_argument(QString("File %1 is not a readable file.")
@@ -1199,14 +1197,14 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
             menu->addAction(tr("Statistics..."));
         actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
         connect(actionStatistics, SIGNAL(triggered()),
-                this, SLOT(statistics_on_item()));
+                this, SLOT(statisticsOnItem()));
       }
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload Item from File"));
         reload->setData(qVariantFromValue(selectedItemIndex));
         connect(reload, SIGNAL(triggered()),
-                this, SLOT(reload_item()));
+                this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
       saveas->setData(qVariantFromValue(selectedItemIndex));
@@ -1274,12 +1272,12 @@ void MainWindow::updateInfo() {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
     item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
-            .arg(item->bbox().xmin)
-            .arg(item->bbox().ymin)
-            .arg(item->bbox().zmin)
-            .arg(item->bbox().xmax)
-            .arg(item->bbox().ymax)
-            .arg(item->bbox().zmax);
+            .arg(item->bbox().xmin())
+            .arg(item->bbox().ymin())
+            .arg(item->bbox().zmin())
+            .arg(item->bbox().xmax())
+            .arg(item->bbox().ymax())
+            .arg(item->bbox().zmax());
     if(!item_filename.isEmpty()) {
       item_text += QString("<br />File:<i> %1").arg(item_filename);
     }
@@ -1298,14 +1296,12 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
-  {
     QSettings settings;
     // enable anti-aliasing 
     ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-  }
 }
 
 void MainWindow::writeSettings()
@@ -1339,13 +1335,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-bool MainWindow::load_script(QString filename)
+bool MainWindow::loadScript(QString filename)
 {
   QFileInfo fileinfo(filename);
-  return load_script(fileinfo);
+  return loadScript(fileinfo);
 }
 
-bool MainWindow::load_script(QFileInfo info)
+bool MainWindow::loadScript(QFileInfo info)
 {
 #if defined(QT_SCRIPT_LIB)
   QString program;
@@ -1365,7 +1361,7 @@ bool MainWindow::load_script(QFileInfo info)
   return false;
 }
 
-void MainWindow::on_actionLoad_Script_triggered() 
+void MainWindow::on_actionloadScript_triggered() 
 {
 #if defined(QT_SCRIPT_LIB)
   QString filename = QFileDialog::getOpenFileName(
@@ -1374,7 +1370,7 @@ void MainWindow::on_actionLoad_Script_triggered()
     ".",
     "QTScripts (*.js);;All Files (*)");
 
-  load_script(QFileInfo(filename));
+  loadScript(QFileInfo(filename));
 #endif
 }
 
@@ -1426,7 +1422,7 @@ void MainWindow::on_actionLoad_triggered()
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
-      item = load_item(info, selectedPlugin);
+      item = loadItem(info, selectedPlugin);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);
       this->addToRecentFiles(filename);
@@ -1633,12 +1629,12 @@ void MainWindow::viewerShowObject()
   }
   if(index >= 0) {
     const Scene::Bbox bbox = scene->item(index)->bbox();
-    viewerShow((float)bbox.xmin, (float)bbox.ymin, (float)bbox.zmin,
-               (float)bbox.xmax, (float)bbox.ymax, (float)bbox.zmax);
+    viewerShow((float)bbox.xmin(), (float)bbox.ymin(), (float)bbox.zmin(),
+               (float)bbox.xmax(), (float)bbox.ymax(), (float)bbox.zmax());
   }
 }
 
-QString MainWindow::camera_string() const
+QString MainWindow::cameraString() const
 {
   return viewer->dumpCameraCoordinates();
 }
@@ -1646,12 +1642,12 @@ QString MainWindow::camera_string() const
 void MainWindow::on_actionDumpCamera_triggered()
 {
   information(QString("Camera: %1")
-              .arg(camera_string()));
+              .arg(cameraString()));
 }
 
 void MainWindow::on_action_Copy_camera_triggered()
 {
-  qApp->clipboard()->setText(this->camera_string());
+  qApp->clipboard()->setText(this->cameraString());
 }
 
 void MainWindow::on_action_Paste_camera_triggered()
@@ -1716,7 +1712,7 @@ void MainWindow::restoreCollapseState()
     if(modelIndex.isValid())
         recurseExpand(modelIndex);
 }
-void MainWindow::make_new_group()
+void MainWindow::makeNewGroup()
 {
     Scene_group_item * group = new Scene_group_item("New group");
     scene->addItem(group);
@@ -1743,7 +1739,7 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
     }
 }
 
-void MainWindow::statistics_on_item()
+void MainWindow::statisticsOnItem()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -1754,7 +1750,7 @@ void MainWindow::statistics_on_item()
     connect(statistics_ui->okButtonBox, SIGNAL(accepted()),
             statistics_dlg, SLOT(accept()));
     connect(statistics_ui->updateButton, SIGNAL(clicked()),
-            this, SLOT(statistics_on_item()));
+            this, SLOT(statisticsOnItem()));
   }
   statistics_ui->label_htmltab->setText(get_item_stats());
 
@@ -1816,7 +1812,7 @@ QString MainWindow::get_item_stats()
         str.append(QString("<td> %1 </td>").arg(data.titles.at(title)));
         Q_FOREACH(Scene_item* sit, items[i])
         {
-          str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+          str.append(QString("<td>%1</td>").arg(sit->computeStats(title)));
         }
         title++;
         for(;title<titles_limit; title++)
@@ -1824,7 +1820,7 @@ QString MainWindow::get_item_stats()
           str.append(QString("</tr><tr><td> %1 </td>").arg(data.titles.at(title)));
           Q_FOREACH(Scene_item* sit, items[i])
           {
-            str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+            str.append(QString("<td>%1</td>").arg(sit->computeStats(title)));
           }
         }
 

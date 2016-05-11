@@ -1,6 +1,5 @@
 /// \defgroup PkgThree Three
 /// 
-
 /*!
 \addtogroup PkgThree
 
@@ -17,4 +16,17 @@
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+## Interfaces ##
+- `CGAL::Three::Viewer_interface`
+- `CGAL::Three::Scene_interface`
+- `CGAL::Three::Polyhedron_demo_plugin_interface`
+- `CGAL::Three::Polyhedron_demo_io_plugin_interface`
+
+## Classes ##
+-  `MainWindow`
+-  `CGAL::Three::Scene_item`
+-  `CGAL::Three::Scene_group_item`
+
 */

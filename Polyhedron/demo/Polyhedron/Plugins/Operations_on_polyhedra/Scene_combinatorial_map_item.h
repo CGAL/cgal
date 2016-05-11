@@ -45,8 +45,8 @@ public:
     //Event handling
     virtual bool keyPressEvent(QKeyEvent*);
     //drawing of the scene
-    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
     virtual void draw(CGAL::Three::Viewer_interface*) const;
 
     bool isFinite() const { return true; }
@@ -98,11 +98,11 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
 
-    using CGAL::Three::Scene_item::compute_elements;
-    void compute_elements(void) const;
+    using CGAL::Three::Scene_item::computeElements;
+    void computeElements(void) const;
 
 public Q_SLOTS:
     void set_next_volume();

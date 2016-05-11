@@ -26,7 +26,7 @@ public:
   ~Polyhedron_demo_edit_polyhedron_plugin()
   { }
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
   virtual void closure()
   {
     dock_widget->hide();
@@ -87,7 +87,7 @@ bool Polyhedron_demo_edit_polyhedron_plugin::applicable(QAction*) const {
   return false;
 }
 
-void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
+void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
 {
   mw = mainWindow;
   scene = scene_interface;

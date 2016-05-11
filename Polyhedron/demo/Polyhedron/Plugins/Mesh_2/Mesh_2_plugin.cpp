@@ -146,7 +146,8 @@ class Polyhedron_demo_mesh_2_plugin :
 
 public:
   void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface)
+            CGAL::Three::Scene_interface* scene_interface,
+            Messages_interface*)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -407,7 +408,11 @@ public Q_SLOTS:
       }
     }
 
-    double diag = bbox.diagonal_length();
+    double diag = CGAL::sqrt(
+          (bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
+          +(bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
+          +(bbox.zmax()-bbox.zmax()) *(bbox.zmax()-bbox.zmax())
+          );
     switch( detect_constant_coordinate(polylines_items, points_items) )
     {
       using namespace CGAL;

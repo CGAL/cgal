@@ -8,7 +8,6 @@
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Messages_interface.h"
@@ -76,17 +75,15 @@ QString translate(CGAL::Mesh_optimization_return_code rc);
 using namespace CGAL::Three;
 class Mesh_3_optimization_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef Polyhedron_demo_plugin_helper Base;
+  typedef Polyhedron_demo_plugin_interface Base;
 public:
   Mesh_3_optimization_plugin();
-  
-  using Base::init;
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;
   
@@ -128,6 +125,8 @@ private:
   QMessageBox* message_box_;
   
   Scene_c3t3_item* source_item_;
+  Scene_interface *scene;
+  QMainWindow* mw;
 }; // end class Mesh_3_optimization_plugin
 
 Mesh_3_optimization_plugin::
@@ -139,6 +138,8 @@ Mesh_3_optimization_plugin()
   , msg(NULL)
   , message_box_(NULL)
   , source_item_(NULL)
+  , scene(NULL)
+  , mw(NULL)
 {
 }
 
@@ -503,9 +504,9 @@ treat_result(Scene_c3t3_item& source_item,
   if ( &source_item != &result_item)
   {
     const Scene_item::Bbox& bbox = result_item.bbox();
-    result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
-                            (bbox.ymin + bbox.ymax)/2.f,
-                            (bbox.zmin + bbox.zmax)/2.f);
+    result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
+                            (bbox.ymin() + bbox.ymax())/2.f,
+                            (bbox.zmin() + bbox.zmax())/2.f);
     
     result_item.setColor(QColor(59,74,226));
     result_item.setRenderingMode(source_item.renderingMode());

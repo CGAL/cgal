@@ -413,7 +413,7 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im,
 
   v_box = new std::vector<float>();
   compile_shaders();
-  initialize_buffers();
+  initializeBuffers();
   setRenderingMode(Flat);
 }
 
@@ -524,7 +524,7 @@ void Scene_segmented_image_item::compile_shaders()
     }
 }
 
-void Scene_segmented_image_item::attrib_buffers(Viewer_interface* viewer) const
+void Scene_segmented_image_item::attribBuffers(Viewer_interface* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -653,7 +653,7 @@ Scene_segmented_image_item::supportsRenderingMode(RenderingMode m) const
 }
 
 void
-Scene_segmented_image_item::initialize_buffers() 
+Scene_segmented_image_item::initializeBuffers() 
 {
   internal::Image_accessor image_data_accessor (*m_image,
                                                 m_voxel_scale,
@@ -732,7 +732,7 @@ Scene_segmented_image_item::initialize_buffers()
 void
 Scene_segmented_image_item::draw_gl(Viewer_interface* viewer) const
 {
-  attrib_buffers(viewer);
+  attribBuffers(viewer);
   rendering_program.bind();
   vao[0].bind();
   viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
@@ -759,106 +759,106 @@ Scene_segmented_image_item::ibo_size() const
 
 void Scene_segmented_image_item::changed()
 {
-    initialize_buffers();
+    initializeBuffers();
 }
 
 void Scene_segmented_image_item::draw_Bbox(Bbox bbox, std::vector<float> *vertices)
 {
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmin);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmin());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmin);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmin());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymax);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymax());
+    vertices->push_back(bbox.zmax());
 
-    vertices->push_back(bbox.xmax);
-    vertices->push_back(bbox.ymin);
-    vertices->push_back(bbox.zmax);
+    vertices->push_back(bbox.xmax());
+    vertices->push_back(bbox.ymin());
+    vertices->push_back(bbox.zmax());
 
 }
 

@@ -153,12 +153,12 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     const Implicit_function_interface* p_function = function_item->function();
     if ( NULL == p_function ) { return NULL; }
     
-    CGAL::Bbox_3 dom_bbox (p_function->bbox().xmin,
-                           p_function->bbox().ymin,
-                           p_function->bbox().zmin,
-                           p_function->bbox().xmax,
-                           p_function->bbox().ymax,
-                           p_function->bbox().zmax);
+    CGAL::Bbox_3 dom_bbox (p_function->bbox().xmin(),
+                           p_function->bbox().ymin(),
+                           p_function->bbox().zmin(),
+                           p_function->bbox().xmax(),
+                           p_function->bbox().ymax(),
+                           p_function->bbox().zmax());
     
     Function_mesh_domain* p_domain =
       new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7);

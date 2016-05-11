@@ -77,7 +77,7 @@ public :
     Bbox bbox() const;
     //!Not supported.
     Scene_item* clone() const {return 0;}
-    //! Indicate if rendering mode is supported.
+    //! Indicates if the rendering mode is supported.
     bool supportsRenderingMode(RenderingMode m) const;
     //!Prints the number of children.
     QString toolTip() const;
@@ -85,9 +85,9 @@ public :
     /// Draw functions
     ///@{
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_splats(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+    virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
     //!Adds a Scene_item* to the list of children.
@@ -135,15 +135,16 @@ public :
     void setSplattingMode(){
       setRenderingMode(Splatting);
     }
-    //!Returns a list of all the children.
+    //!Returns a list of all the direct children.
     QList<Scene_item*> getChildren() const {return children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
     {
-     if(isChildLocked(item))
-      return;
+      if(isChildLocked(item))
+        return;
       update_group_number(item,0);
+      item->has_group=0;
       children.removeOne(item);
     }
     //!Moves a child up in the list.
@@ -163,7 +164,6 @@ protected:
     Scene_interface *scene;
     //!Contains a reference to all the children of this group.
     QList<Scene_item*> children;
-
 
 }; //end of class Scene_group_item
 

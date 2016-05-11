@@ -44,11 +44,11 @@ public:
     void draw(CGAL::Three::Viewer_interface*) const;
 
     // Wireframe OpenGL drawing
-    void draw_edges() const{}
-    void draw_edges(CGAL::Three::Viewer_interface*) const;
+    void drawEdges() const{}
+    void drawEdges(CGAL::Three::Viewer_interface*) const;
 
-    void draw_points() const{}
-    void draw_points(CGAL::Three::Viewer_interface*) const;
+    void drawPoints() const{}
+    void drawPoints(CGAL::Three::Viewer_interface*) const;
 
 
     void smooth(std::vector<Point_3>& polyline){
@@ -111,12 +111,11 @@ private:
     mutable std::size_t nb_lines;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
-    using CGAL::Three::Scene_item::compute_elements;
-    void compute_elements() const;
-    void compute_spheres();
-
+    void computeSpheres();
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+    using CGAL::Three::Scene_item::computeElements;
+    void computeElements() const;
 
 
 

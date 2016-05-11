@@ -7,7 +7,6 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Polyhedron_kernel.h>
@@ -26,24 +25,36 @@ typedef Kernel::FT FT;
 using namespace CGAL::Three;
 class Polyhedron_demo_kernel_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionKernel";
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
+   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
+   {
+     scene = scene_interface;
+     mw = mainWindow;
+     QAction* actionKernel = new QAction(tr("Kernel"), mainWindow);
+     connect(actionKernel, SIGNAL(triggered()),
+             this, SLOT(on_actionKernel_triggered()));
+     _actions << actionKernel;
+   }
 public Q_SLOTS:
   void on_actionKernel_triggered();
+private:
+  QList<QAction*> _actions;
+  CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
 
 }; // end Polyhedron_demo_kernel_plugin
 

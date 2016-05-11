@@ -116,7 +116,7 @@ public :
   {
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
     program->bind();
 
     // positions_poly is also used for the faces in the cut plane
@@ -125,11 +125,11 @@ public :
     program->release();
     vaos[Facets]->release();
   }
-  void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const
   {
     vaos[Lines]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(edges->size() / 3));
@@ -235,7 +235,7 @@ struct Scene_c3t3_item_priv {
     is_aabb_tree_built = false;
   }
 
-  void compute_intersection(const Primitive& facet);
+  void computeIntersection(const Primitive& facet);
 
   void fill_aabb_tree() {
     if(item->isEmpty()) return;
@@ -288,9 +288,9 @@ struct Set_show_tetrahedra {
 
 double complex_diag(const Scene_item* item) {
   const Scene_item::Bbox& bbox = item->bbox();
-  const double& xdelta = bbox.xmax-bbox.xmin;
-  const double& ydelta = bbox.ymax-bbox.ymin;
-  const double& zdelta = bbox.zmax-bbox.zmin;
+  const double& xdelta = bbox.xmax()-bbox.xmin();
+  const double& ydelta = bbox.ymax()-bbox.ymin();
+  const double& zdelta = bbox.zmax()-bbox.zmin();
   const double diag = std::sqrt(xdelta*xdelta +
                                 ydelta*ydelta +
                                 zdelta*zdelta);
@@ -684,13 +684,13 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
   if (!are_buffers_filled)
   {
-    ncthis->compute_elements();
-    ncthis->initialize_buffers(viewer);
+    ncthis->computeElements();
+    ncthis->initializeBuffers(viewer);
   }
 
   vaos[Grid]->bind();
-  program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+  attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
   program->bind();
   program->setAttributeValue("colors", QColor(Qt::black));
   QMatrix4x4 f_mat;
@@ -703,7 +703,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
   vaos[Facets]->bind();
   program = getShaderProgram(PROGRAM_C3T3);
-  attrib_buffers(viewer, PROGRAM_C3T3);
+  attribBuffers(viewer, PROGRAM_C3T3);
   program->bind();
   QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
   program->setUniformValue("cutplane", cp);
@@ -718,7 +718,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     {
       if(!intersection->visible())
         intersection->setVisible(true);
-      ncthis->compute_intersections();
+      ncthis->computeIntersections();
       intersection->initialize_buffers(viewer);
       are_intersection_buffers_filled = true;
     }
@@ -733,7 +733,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   Scene_group_item::draw(viewer);
 }
 
-void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(renderingMode() == FlatPlusEdges)
   {
     GLint renderMode;
@@ -743,15 +743,16 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
   if (!are_buffers_filled)
   {
-    ncthis->compute_elements();
-    ncthis->initialize_buffers(viewer);
+    ncthis->computeElements();
+    ncthis->initializeBuffers(viewer);
   }
 
   if(renderingMode() == Wireframe)
   {
     vaos[Grid]->bind();
+
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(Qt::black));
     QMatrix4x4 f_mat;
@@ -764,7 +765,7 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   }
   vaos[Edges]->bind();
   program = getShaderProgram(PROGRAM_C3T3_EDGES);
-  attrib_buffers(viewer, PROGRAM_C3T3_EDGES);
+  attribBuffers(viewer, PROGRAM_C3T3_EDGES);
   program->bind();
   QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
   program->setUniformValue("cutplane", cp);
@@ -778,25 +779,23 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     {
       if(!intersection->visible())
         intersection->setVisible(true);
-      ncthis->compute_intersections();
+      ncthis->computeIntersections();
       intersection->initialize_buffers(viewer);
       are_intersection_buffers_filled = true;
     }
     else if(frame->isManipulated() && intersection->visible())
       intersection->setVisible(false);
   }
-
-
   if(spheres_are_shown)
   {
       spheres->setPlane(this->plane());
   }
-  Scene_group_item::draw_edges(viewer);
+  Scene_group_item::drawEdges(viewer);
   if(cnc_are_shown)
   {
     vaos[CNC]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines_not_in_complex_size / 3));
@@ -805,17 +804,17 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   }
 }
 
-void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
+void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
 {
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
   if (!are_buffers_filled)
   {
-    ncthis->compute_elements();
-    ncthis-> initialize_buffers(viewer);
+    ncthis->computeElements();
+    ncthis-> initializeBuffers(viewer);
   }
   vaos[Edges]->bind();
   program = getShaderProgram(PROGRAM_C3T3_EDGES);
-  attrib_buffers(viewer, PROGRAM_C3T3_EDGES);
+  attribBuffers(viewer, PROGRAM_C3T3_EDGES);
   program->bind();
   QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
   program->setUniformValue("cutplane", cp);
@@ -826,7 +825,7 @@ void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
 
   vaos[Grid]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+  attribBuffers(viewer, PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors", this->color());
   QMatrix4x4 f_mat;
@@ -840,7 +839,7 @@ void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
   {
     spheres->setPlane(this->plane());
   }
-  Scene_group_item::draw_edges(viewer);
+  Scene_group_item::drawEdges(viewer);
 
 }
 
@@ -939,9 +938,9 @@ void Scene_c3t3_item::draw_triangle_edges_cnc(const Kernel::Point_3& pa,
 
 double Scene_c3t3_item::complex_diag() const {
   const Bbox& bbox = this->bbox();
-  const double& xdelta = bbox.xmax - bbox.xmin;
-  const double& ydelta = bbox.ymax - bbox.ymin;
-  const double& zdelta = bbox.zmax - bbox.zmin;
+  const double& xdelta = bbox.xmax() - bbox.xmin();
+  const double& ydelta = bbox.ymax() - bbox.ymin();
+  const double& zdelta = bbox.zmax() - bbox.zmin();
   const double diag = std::sqrt(xdelta*xdelta +
     ydelta*ydelta +
     zdelta*zdelta);
@@ -1020,7 +1019,8 @@ QMenu* Scene_c3t3_item::contextMenu()
   return menu;
 }
 
-void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
+
+void Scene_c3t3_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)
 {
   //vao containing the data for the facets
   {
@@ -1127,7 +1127,7 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
 
 
 
-void Scene_c3t3_item_priv::compute_intersection(const Primitive& facet)
+void Scene_c3t3_item_priv::computeIntersection(const Primitive& facet)
 {
   const Kernel::Point_3& pa = facet.id().first->vertex(0)->point();
   const Kernel::Point_3& pb = facet.id().first->vertex(1)->point();
@@ -1160,20 +1160,20 @@ void Scene_c3t3_item_priv::compute_intersection(const Primitive& facet)
 
 }
 
-struct Compute_intersection {
+struct ComputeIntersection {
   Scene_c3t3_item_priv& item_priv;
 
-  Compute_intersection(Scene_c3t3_item_priv& item_priv)
+  ComputeIntersection(Scene_c3t3_item_priv& item_priv)
     : item_priv(item_priv)
   {}
 
   void operator()(const Primitive& facet) const
   {
-    item_priv.compute_intersection(facet);
+    item_priv.computeIntersection(facet);
   }
 };
 
-void Scene_c3t3_item::compute_intersections()
+void Scene_c3t3_item::computeIntersections()
 {
   if(!d->is_aabb_tree_built) d->fill_aabb_tree();
 
@@ -1183,10 +1183,10 @@ void Scene_c3t3_item::compute_intersections()
   positions_lines.clear();
   const Kernel::Plane_3& plane = this->plane();
   d->tree.all_intersected_primitives(plane,
-        boost::make_function_output_iterator(Compute_intersection(*this->d)));
+        boost::make_function_output_iterator(ComputeIntersection(*this->d)));
 }
 
-void Scene_c3t3_item::compute_spheres()
+void Scene_c3t3_item::computeSpheres()
 {
   if(!spheres)
     return;
@@ -1225,7 +1225,7 @@ void Scene_c3t3_item::compute_spheres()
   spheres->invalidateOpenGLBuffers();
 }
 
-void Scene_c3t3_item::compute_elements()
+void Scene_c3t3_item::computeElements()
 {
   positions_poly.clear();
   normals.clear();
@@ -1345,9 +1345,9 @@ bool Scene_c3t3_item::load_binary(std::istream& is)
 void
 Scene_c3t3_item::reset_cut_plane() {
   const Bbox& bbox = this->bbox();
-  const float xcenter = static_cast<float>((bbox.xmax+bbox.xmin)/2.);
-  const float ycenter = static_cast<float>((bbox.ymax+bbox.ymin)/2.);
-  const float zcenter = static_cast<float>((bbox.zmax+bbox.zmin)/2.);
+  const float xcenter = static_cast<float>((bbox.xmax()+bbox.xmin())/2.);
+  const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
+  const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
 
   frame->setPosition(qglviewer::Vec(xcenter, ycenter, zcenter));
 }
@@ -1372,7 +1372,7 @@ void Scene_c3t3_item::show_spheres(bool b)
     scene->addItem(spheres);
     scene->changeGroup(spheres, this);
     lockChild(spheres);
-    compute_spheres();
+    computeSpheres();
   }
   else if (!b && spheres!=NULL)
   {

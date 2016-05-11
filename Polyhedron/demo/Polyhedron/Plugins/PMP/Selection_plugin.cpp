@@ -68,7 +68,7 @@ public:
   }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
-  using Polyhedron_demo_plugin_helper::init;
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;
@@ -80,7 +80,7 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
@@ -116,7 +116,7 @@ public Q_SLOTS:
     dock_widget->show();
     dock_widget->raise();
     if(scene->numberOfEntries() < 2) {
-      Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
+      Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
       if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
       Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
       int item_id = scene->addItem(new_item);
@@ -128,7 +128,7 @@ public Q_SLOTS:
   }
   // Select all
   void on_Select_all_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -138,7 +138,7 @@ public Q_SLOTS:
   }
   // Clear selection
   void on_Clear_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -147,7 +147,7 @@ public Q_SLOTS:
     selection_item->clear();
   }
   void on_Clear_all_button_clicked(){
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
@@ -157,7 +157,7 @@ public Q_SLOTS:
   }
   void on_Inverse_selection_button_clicked()
   {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
@@ -166,7 +166,7 @@ public Q_SLOTS:
   }
   // Isolated component related functions
   void on_Select_isolated_components_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -179,7 +179,7 @@ public Q_SLOTS:
     }
   }
   void on_Get_minimum_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -191,7 +191,7 @@ public Q_SLOTS:
   }
   // Create selection item for selected polyhedron item
   void on_Create_selection_item_button_clicked() {
-    Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
+    Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
     if(!poly_item) {
       print_message("Error: there is no selected polyhedron item!");
       return; 
@@ -223,7 +223,7 @@ public Q_SLOTS:
   }
 
   void on_Create_point_set_item_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -243,7 +243,7 @@ public Q_SLOTS:
   }
 
   void on_Create_polyline_item_button_clicked(){
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
@@ -299,7 +299,7 @@ public Q_SLOTS:
   }
 
   void on_Erase_selected_facets_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -308,7 +308,7 @@ public Q_SLOTS:
     selection_item->erase_selected_facets();
   }
   void on_Keep_connected_components_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if (!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
@@ -316,7 +316,7 @@ public Q_SLOTS:
     selection_item->keep_connected_components();
   }
   void on_Create_polyhedron_item_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -336,7 +336,7 @@ public Q_SLOTS:
   }
 
   void on_Select_sharp_edges_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if (!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
@@ -348,7 +348,7 @@ public Q_SLOTS:
   }
 
   void on_Expand_reduce_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
@@ -364,7 +364,7 @@ public Q_SLOTS:
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
     if(!selection_item) { return; }
 
-    Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
+    Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
     if(!poly_item) {
       CGAL_assertion(selection_item->polyhedron_item() == NULL); // which means it is coming from selection_io loader
       print_message("Error: please select corresponding polyhedron item from Geometric Objects list.");

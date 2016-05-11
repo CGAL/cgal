@@ -25,9 +25,6 @@ class Polyhedron_demo_repair_polyhedron_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // To silent a warning -Woverloaded-virtual
-  // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-  using Polyhedron_demo_plugin_helper::init;
 
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,

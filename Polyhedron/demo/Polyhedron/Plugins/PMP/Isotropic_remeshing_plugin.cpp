@@ -4,7 +4,6 @@
 
 #include <QtCore/qglobal.h>
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Scene_polyhedron_item.h"
@@ -158,7 +157,7 @@ void split_long_duplicated_edge(const HedgeRange& hedge_range,
 using namespace CGAL::Three;
 class Polyhedron_demo_isotropic_remeshing_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -172,7 +171,7 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface)
+  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -565,6 +564,8 @@ public Q_SLOTS:
   }
 
 private:
+  Scene_interface *scene;
+  QMainWindow* mw;
   struct Remesh_polyhedron_item
   {
     typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
@@ -725,11 +726,11 @@ private:
 
     ui.objectNameSize->setText(
       tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
-      .arg(bbox.width(), 0, 'g', 3)
-      .arg(bbox.height(), 0, 'g', 3)
-      .arg(bbox.depth(), 0, 'g', 3));
+      .arg(bbox.xmax()-bbox.xmin(), 0, 'g', 3)
+      .arg(bbox.xmax()-bbox.xmin(), 0, 'g', 3)
+      .arg(bbox.xmax()-bbox.xmin(), 0, 'g', 3));
 
-    double diago_length = bbox.diagonal_length();
+    double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
     ui.edgeLength_dspinbox->setDecimals(3);
     ui.edgeLength_dspinbox->setSingleStep(0.001);
     ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min

@@ -35,35 +35,36 @@ class Polyhedron_demo_parameterization_plugin :
 
 public:
   // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionMVC"
-                         << "actionDCP"
-                         << "actionLSC";
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
   void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
       mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionMVC"] = new QAction("Mean Value Coordinates", mw);
-      actions_map["actionMVC"]->setProperty("subMenuName",
-        "Triangulated Surface Mesh Parameterization");
+      QAction* actionMVC = new QAction("Mean Value Coordinates", mw);
+      QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
+      QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
 
-      actions_map["actionDCP"] = new QAction ("Discrete Conformal Map", mw);
-      actions_map["actionDCP"]->setProperty("subMenuName",
-        "Triangulated Surface Mesh Parameterization");
 
-      actions_map["actionLSC"] = new QAction("Least Square Conformal Map", mw);
-      actions_map["actionLSC"]->setProperty("subMenuName",
-        "Triangulated Surface Mesh Parameterization");
 
-      connect(actions_map["actionMVC"], SIGNAL(triggered()),
+      connect(actionMVC, SIGNAL(triggered()),
               this, SLOT(on_actionMVC_triggered()));
-      connect(actions_map["actionDCP"], SIGNAL(triggered()),
+      connect(actionDCP, SIGNAL(triggered()),
               this, SLOT(on_actionDCP_triggered()));
-      connect(actions_map["actionLSC"], SIGNAL(triggered()),
+      connect(actionLSC, SIGNAL(triggered()),
               this, SLOT(on_actionLSC_triggered()));
+      _actions << actionMVC
+               << actionDCP
+               << actionLSC;
+      Q_FOREACH(QAction *action, _actions)
+        action->setProperty("subMenuName",
+                            "Triangulated Surface Mesh Parameterization");
+
+
   }
 
   bool applicable(QAction*) const { 
@@ -78,6 +79,8 @@ public Q_SLOTS:
 protected:
   enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC };
   void parameterize(Parameterization_method method);
+private:
+  QList<QAction*> _actions;
 }; // end Polyhedron_demo_parameterization_plugin
 
 

@@ -31,12 +31,12 @@ void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer
   if(has_plane)
   {
     program = getShaderProgram(PROGRAM_CUTPLANE_SPHERES, viewer);
-    attrib_buffers(viewer, PROGRAM_CUTPLANE_SPHERES);
+    attribBuffers(viewer, PROGRAM_CUTPLANE_SPHERES);
   }
   else
   {
     program = getShaderProgram(PROGRAM_SPHERES, viewer);
-    attrib_buffers(viewer, PROGRAM_SPHERES);
+    attribBuffers(viewer, PROGRAM_SPHERES);
   }
 
   program->bind();
@@ -119,7 +119,7 @@ void Scene_spheres_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer
 
   program->release();
 
-  nb_centers = centers.size();
+  nb_centers = static_cast<int>(centers.size());
   centers.clear();
   centers.swap(centers);
   colors.clear();
@@ -143,7 +143,7 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
   if(has_plane)
   {
     program = getShaderProgram(PROGRAM_CUTPLANE_SPHERES, viewer);
-    attrib_buffers(viewer, PROGRAM_CUTPLANE_SPHERES);
+    attribBuffers(viewer, PROGRAM_CUTPLANE_SPHERES);
     program->bind();
     QVector4D cp(plane.a(),plane.b(),plane.c(),plane.d());
     program->setUniformValue("cutplane", cp);
@@ -152,7 +152,7 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
   else
   {
     program = getShaderProgram(PROGRAM_SPHERES, viewer);
-    attrib_buffers(viewer, PROGRAM_SPHERES);
+    attribBuffers(viewer, PROGRAM_SPHERES);
     program->bind();
   }
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
@@ -161,7 +161,7 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
   program->release();
   vaos[Facets]->release();
 }
-void Scene_spheres_item::draw_edges(Viewer_interface *viewer) const
+void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 {
   if (!are_buffers_filled)
   {
@@ -172,7 +172,7 @@ void Scene_spheres_item::draw_edges(Viewer_interface *viewer) const
   if(has_plane)
   {
     program = getShaderProgram(PROGRAM_CUTPLANE_SPHERES, viewer);
-    attrib_buffers(viewer, PROGRAM_CUTPLANE_SPHERES);
+    attribBuffers(viewer, PROGRAM_CUTPLANE_SPHERES);
     program->bind();
     QVector4D cp(plane.a(),plane.b(),plane.c(),plane.d());
     program->setUniformValue("cutplane", cp);
@@ -180,7 +180,7 @@ void Scene_spheres_item::draw_edges(Viewer_interface *viewer) const
   else
   {
     program = getShaderProgram(PROGRAM_SPHERES, viewer);
-    attrib_buffers(viewer, PROGRAM_SPHERES);
+    attribBuffers(viewer, PROGRAM_SPHERES);
     program->bind();
   }
   viewer->glDrawArraysInstanced(GL_LINES, 0,

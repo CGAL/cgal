@@ -38,8 +38,8 @@ void Scene_polyhedron_item_decorator::draw() const {
   poly_item->draw();
 }
 
-void Scene_polyhedron_item_decorator::draw_edges() const {
-  poly_item->draw_edges();
+void Scene_polyhedron_item_decorator::drawEdges() const {
+  poly_item->drawEdges();
 }
 
 Polyhedron* 
