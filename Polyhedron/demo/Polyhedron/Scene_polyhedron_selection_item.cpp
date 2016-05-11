@@ -444,7 +444,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   glPolygonOffset(-1.f, 1.f);
   vaos[3]->bind();
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
-  attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+  attribBuffers(viewer,PROGRAM_WITH_LIGHT);
   program->bind();
   program->setAttributeValue("colors",QColor(0,255,0));
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_temp_facets/3));
@@ -457,8 +457,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
         initializeBuffers(viewer);
     }
 
-    GLfloat offset_factor;
-    GLfloat offset_units;
     drawPoints(viewer);
     viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
     viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
@@ -489,7 +487,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 
   vaos[4]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  attribBuffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
 
   program->setAttributeValue("colors",QColor(0,200,0));
@@ -505,7 +503,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 
   vaos[1]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  attribBuffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
 
   program->setAttributeValue("colors",edge_color);
@@ -527,7 +525,7 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
   }
   vaos[5]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  attribBuffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors",QColor(0,50,0));
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_temp_points/3));
@@ -542,7 +540,7 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
   }
   vaos[2]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  attribBuffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors",vertex_color);
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));

@@ -262,7 +262,7 @@ public Q_SLOTS:
          begin != selection_item->selected_vertices.end(); ++begin) {
          point_item->point_set()->push_back((*begin)->point());
       break;
-
+      }
     }
       //Create Polyline Item from Selected Edges
     case 1:
