@@ -40,7 +40,7 @@
 #include <CGAL/Data_classification/Image.h>
 #include <CGAL/Data_classification/Color.h>
 #include <CGAL/Data_classification/Segmentation_attribute.h>
-
+#include <CGAL/gco/GCoptimization.h>
 #include <boost/iterator/counting_iterator.hpp>
 
 #define CGAL_CLASSIFICATION_VERBOSE
@@ -183,6 +183,7 @@ public:
     int ind_y;
     std::size_t group; 
     unsigned char AE_label;
+    unsigned char neighbor;
     double confidence;
     RGB_Color color;
   };
@@ -213,8 +214,9 @@ public:
   typedef CGAL::Kd_tree<Search_traits> Tree;
   typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
   typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
-
-
+  typedef typename Neighbor_search::Tree KTree;
+  typedef typename Neighbor_search::Distance Distance;
+  
   std::vector<Classification_type*> segmentation_classes;
   std::vector<Segmentation_attribute*> segmentation_attributes;
 
@@ -271,6 +273,7 @@ public:
         HPS.back().ind_y = -1;
         HPS.back().group = (std::size_t)(-1);
         HPS.back().AE_label = (unsigned char)(-1);
+        HPS.back().neighbor = (unsigned char)(-1);
         HPS.back().confidence = 0;
         RGB_Color c = {{ 0, 0, 0 }};
         HPS.back().color = c;
@@ -480,7 +483,7 @@ public:
     planes.push_back (plane);
   }
 
-  double classification_value (std::size_t segmentation_class, int pt_index)
+  double classification_value (std::size_t segmentation_class, int pt_index) const
   {
     double out = 0.;
     if (m_multiplicative)
@@ -621,6 +624,113 @@ public:
     return true;
   }
 
+
+  class Edge_score
+  {
+    const Point_set_classification& M;
+
+  public:
+    Edge_score(const Point_set_classification& _M) : M(_M) {}
+
+    float compute(int, int, int l1, int l2)
+    {
+      double res=0;
+      double smooth_seg= M.m_grid_resolution;
+
+      if(l1!=l2) res=1; 
+
+      return smooth_seg*res;
+    }
+  };
+
+
+  class Facet_score
+  {
+    const Point_set_classification& M;
+
+  public:
+    Facet_score(const Point_set_classification& _M) : M(_M) {}
+
+    double compute(int s, int l)
+    {
+      return M.classification_value (l, s);
+    }
+  };
+  
+  bool graphcut_labeling_PC()
+  {
+
+    std::size_t nb_alpha_exp = 2;
+    
+    // data term initialisation
+    CGAL_CLASSIFICATION_CERR << "Labeling... ";
+
+    std::vector<std::vector<double> > values
+      (segmentation_classes.size(),
+       std::vector<double> (HPS.size(), -1.));
+
+    My_point_property_map pmap (HPS);
+
+    KTree tree (boost::counting_iterator<std::size_t> (0),
+                boost::counting_iterator<std::size_t> (HPS.size()),
+                typename KTree::Splitter(),
+                Search_traits (pmap));
+
+    GCoptimizationGeneralGraph<float, float> *gc= new GCoptimizationGeneralGraph<float, float>
+      ((int)HPS.size(),(int)(segmentation_classes.size()));
+
+    gc->specializeDataCostFunctor(Facet_score(*this));
+    gc->specializeSmoothCostFunctor(Edge_score(*this));
+
+    Distance tr_dist(pmap);
+    for (std::size_t s=0; s < HPS.size(); ++ s)
+      {
+        std::vector<std::size_t> neighbors;
+
+        Neighbor_search search (tree, HPS[s].position, 12, 0, true, tr_dist);
+        for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++ it)
+          gc->setNeighbors (s, it->first);
+        
+        int nb_class_best=0; 
+        double val_class_best = std::numeric_limits<double>::max();
+        for(std::size_t k = 0; k < effect_table.size(); ++ k)
+          {
+            double value = classification_value (k, s);
+
+            if(val_class_best > value)
+              {
+                val_class_best = value;
+                nb_class_best=k;
+              }
+          }
+        gc->setLabel (s, nb_class_best);
+
+      }
+
+    CGAL_CLASSIFICATION_CERR << "Graph cut... ";
+    for (std::size_t iter = 0; iter < nb_alpha_exp; ++ iter)
+      {
+        for (std::size_t i = 0; i< segmentation_classes.size(); ++ i)
+          {
+				
+            // Compute vector of active sites
+            std::vector<int> sites;
+            for (std::size_t s = 0; s < HPS.size(); ++ s)
+              sites.push_back ((int)s);
+            
+            // Compute alpha expansion for this label on these sites
+            gc->alpha_expansion((int)i, &(sites[0]), sites.size());
+          }
+      }
+    
+    for (std::size_t s=0; s < HPS.size(); ++ s)
+      HPS[s].AE_label = gc->whatLabel (s);
+
+    delete gc;
+      
+    return true;
+  }
+
   void reset_groups()
   {
     groups.clear();
@@ -630,69 +740,158 @@ public:
 
   void cluster_points (const double& tolerance)
   {
-    clusters.clear();
-    
-    My_point_property_map pmap (HPS);
-
-    Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (HPS.size()),
-               typename Tree::Splitter(),
-               Search_traits (pmap));
-
-    std::vector<std::size_t> done (HPS.size(), (std::size_t)(-1));
-    
-    for (std::size_t s=0; s < HPS.size(); ++ s)
+    if (clusters.empty())
       {
-        if (done[s] != (std::size_t)(-1))
-          continue;
-        unsigned char label = HPS[s].AE_label;
-        
-        clusters.push_back (Cluster());
+        My_point_property_map pmap (HPS);
 
-        std::queue<std::size_t> todo;
-        todo.push (s);
-        done[s] = clusters.size()-1;
+        Tree tree (boost::counting_iterator<std::size_t> (0),
+                   boost::counting_iterator<std::size_t> (HPS.size()),
+                   typename Tree::Splitter(),
+                   Search_traits (pmap));
 
-        while (!(todo.empty()))
+        std::vector<std::size_t> done (HPS.size(), (std::size_t)(-1));
+
+        for (std::size_t s=0; s < HPS.size(); ++ s)
+          HPS[s].neighbor = (unsigned char)(-1);
+    
+        for (std::size_t s=0; s < HPS.size(); ++ s)
           {
-            std::size_t current = todo.front();
-            todo.pop();
-            clusters.back().indices.push_back (current);
-            
-            std::vector<std::size_t> neighbors;
-            Fuzzy_sphere fs(current, tolerance, 0, tree.traits());
-            tree.search(std::back_inserter(neighbors), fs);
+            if (done[s] != (std::size_t)(-1))
+              continue;
+            unsigned char label = HPS[s].AE_label;
+        
+            clusters.push_back (Cluster());
 
-            for (std::size_t n = 0; n < neighbors.size(); ++ n)
+            std::queue<std::size_t> todo;
+            todo.push (s);
+            done[s] = clusters.size()-1;
+
+            while (!(todo.empty()))
               {
-                if (done[neighbors[n]] == (std::size_t)(-1))
+                std::size_t current = todo.front();
+                todo.pop();
+                clusters.back().indices.push_back (current);
+            
+                std::vector<std::size_t> neighbors;
+                Fuzzy_sphere fs(current, tolerance, 0, tree.traits());
+                tree.search(std::back_inserter(neighbors), fs);
+            
+                for (std::size_t n = 0; n < neighbors.size(); ++ n)
                   {
-                    if (HPS[neighbors[n]].AE_label == label)
+                    if (done[neighbors[n]] == (std::size_t)(-1))
                       {
-                        todo.push (neighbors[n]);
-                        done[neighbors[n]] = clusters.size()-1;
+                        if (HPS[neighbors[n]].AE_label == label)
+                          {
+                            todo.push (neighbors[n]);
+                            done[neighbors[n]] = clusters.size()-1;
+                          }
+                        else
+                          {
+                            HPS[current].neighbor = HPS[neighbors[n]].AE_label;
+                            HPS[neighbors[n]].neighbor = HPS[current].AE_label;
+                            continue;
+                          }
                       }
-                    else
-                      continue;
-                  }
-                else if (done[neighbors[n]] != clusters.size()-1)
-                  {
-                    clusters.back().neighbors.insert (done[neighbors[n]]);
-                    clusters[done[neighbors[n]]].neighbors.insert (clusters.size()-1);
+                    else if (done[neighbors[n]] != clusters.size()-1)
+                      {
+                        clusters.back().neighbors.insert (done[neighbors[n]]);
+                        clusters[done[neighbors[n]]].neighbors.insert (clusters.size()-1);
+                      }
                   }
               }
           }
-      }
-    std::cerr << "Found " << clusters.size() << " cluster(s)" << std::endl;
+        std::cerr << "Found " << clusters.size() << " cluster(s)" << std::endl;
 
-    for (std::size_t i = 0; i < clusters.size(); ++ i)
-      {
-        std::vector<Point> pts;
-        for (std::size_t j = 0; j < clusters[i].indices.size(); ++ j)
-          pts.push_back (HPS[clusters[i].indices[j]].position);
-        clusters[i].centroid = CGAL::centroid (pts.begin(), pts.end());
+        for (std::size_t i = 0; i < clusters.size(); ++ i)
+          {
+            std::vector<Point> pts;
+            for (std::size_t j = 0; j < clusters[i].indices.size(); ++ j)
+              pts.push_back (HPS[clusters[i].indices[j]].position);
+            clusters[i].centroid = CGAL::centroid (pts.begin(), pts.end());
         
+          }
       }
+    else
+      {
+        std::size_t index_ground = 0;
+        std::size_t index_roof = 0;
+        std::size_t index_facade = 0;
+        std::size_t index_vege = 0;
+  
+        for (std::size_t i = 0; i < segmentation_classes.size(); ++ i)
+          if (segmentation_classes[i]->id() == "ground")
+            index_ground = i;
+          else if (segmentation_classes[i]->id() == "roof")
+            index_roof = i;
+          else if (segmentation_classes[i]->id() == "facade")
+            index_facade = i;
+          else if (segmentation_classes[i]->id() == "vegetation")
+            index_vege = i;
+
+        std::size_t min_ind = 0;
+        double min = 1.;
+        
+        for (std::size_t i = 0; i < clusters.size(); ++ i)
+          {
+            std::size_t nb_border = 0;
+            std::size_t nb_good = 0;
+
+            for (std::size_t n = 0; n < clusters[i].indices.size(); ++ n)
+              {
+                if (HPS[clusters[i].indices[n]].neighbor == (unsigned char)(-1))
+                  continue;
+
+                std::size_t c0 = HPS[clusters[i].indices[n]].AE_label;
+                std::size_t c1 = HPS[clusters[i].indices[n]].neighbor;
+                nb_border ++;
+                if ((c0 == index_ground && c1 == index_facade) || (c0 == index_facade && c1 == index_ground) ||
+                    (c0 == index_ground && c1 == index_vege) || (c0 == index_vege && c1 == index_ground) ||
+                    (c0 == index_facade && c1 == index_roof) || (c0 == index_roof && c1 == index_facade))
+                  nb_good ++;
+              }
+
+            if (nb_border == 0)
+              continue;
+
+            double ratio = nb_good / (double)nb_border;
+            if (ratio < min)
+              {
+                min = ratio;
+                min_ind = i;
+              }
+          }
+
+        std::cerr << "Found cluster " << min_ind << " with only " << (int)(100. * min) << "% of correct border." << std::endl;
+
+        std::vector<double> values (segmentation_classes.size(), 0.);
+        
+        for (std::size_t n = 0; n < clusters[min_ind].indices.size(); ++ n)
+          {
+            for (std::size_t i = 0; i < values.size(); ++ i)
+              values[i] += classification_value (i, clusters[min_ind].indices[n]);
+          }
+
+        std::size_t nb_class_best = 0;
+        double val_class_best = std::numeric_limits<double>::max();
+        
+        for (std::size_t i = 0; i < values.size(); ++ i)
+          {
+            if (i == HPS[clusters[min_ind].indices[0]].AE_label)
+              continue;
+
+            if (values[i] < val_class_best)
+              {
+                nb_class_best = i;
+                val_class_best = values[i];
+              }
+          }
+
+        for (std::size_t n = 0; n < clusters[min_ind].indices.size(); ++ n)
+          HPS[clusters[min_ind].indices[n]].AE_label = nb_class_best;
+        
+        clusters.clear();        
+      }
+
   }
 
   bool regularized_labeling_PC()
@@ -827,7 +1026,8 @@ public:
     if (method == 0)
       quick_labeling_PC();
     else if (method == 1)
-      smoothed_labeling_PC();
+      //      smoothed_labeling_PC();
+      graphcut_labeling_PC();
     else if (method == 2)
       regularized_labeling_PC();
     else
