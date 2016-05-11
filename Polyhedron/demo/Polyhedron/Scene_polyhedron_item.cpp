@@ -248,16 +248,13 @@ void push_back_xyz(const TypeWithXYZ& t,
 
 
 //Make sure all the facets are triangles
-template<typename FaceNormalPmap, typename VertexNormalPmap>
+template<typename VertexNormalPmap>
 void
 Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
-                                         const FaceNormalPmap& fnmap,
+                                         const Traits::Vector_3& normal,
                                          const VertexNormalPmap& vnmap,
                                          const bool colors_only) const
 {
-    //Computes the normal of the facet
-    Traits::Vector_3 normal = get(fnmap, fit);
-
     //check if normal contains NaN values
     if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
     {
@@ -543,8 +540,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
     {
       if (f == boost::graph_traits<Polyhedron>::null_face())
         continue;
-      Vector normal = get(nf_pmap, f);
-      f->plane() = Kernel::Plane_3(f->halfedge()->vertex()->point(), normal);
+      Vector nf = get(nf_pmap, f);
+      f->plane() = Kernel::Plane_3(f->halfedge()->vertex()->point(), nf);
       if(is_triangle(f->halfedge(),*poly))
       {
           const int this_patch_id = f->patch_id();
@@ -562,7 +559,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
               continue;
 
             // If Flat shading:1 normal per polygon added once per vertex
-            push_back_xyz(normal, normals_flat);
+            push_back_xyz(nf, normals_flat);
 
             //// If Gouraud shading: 1 normal per vertex
             Vector nv = get(nv_pmap, he->vertex());
@@ -588,8 +585,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
         }
         if (colors_only)
           continue;
-
-        Vector nf = get(nf_pmap, f);
 
         //1st half-quad
         Point p0 = f->halfedge()->vertex()->point();
@@ -647,7 +642,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
       }
       else
       {
-        triangulate_facet(f, nf_pmap, nv_pmap, colors_only);
+        triangulate_facet(f, nf, nv_pmap, colors_only);
       }
 
     }
