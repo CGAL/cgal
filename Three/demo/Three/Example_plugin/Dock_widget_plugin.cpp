@@ -40,8 +40,10 @@ public:
   }
   //! [init]
   //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc  )
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi)
   {
+    //gets the reference to the message interface, to display text in the console widget
+    this->messageInterface = mi;
     //get the references
     this->scene = sc;
     this->mw = mainWindow;
@@ -64,16 +66,9 @@ public:
 
     connect(dock_widget->pushButton, SIGNAL(clicked(bool)),
             this, SLOT(on_dock_button_clicked()));
-
   }
   //! [init]
 
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi)
-  {
-    //gets the reference to the message interface, to display text in the console widget
-    this->messageInterface = mi;
-    init(mw, sc);
-  }
 private Q_SLOTS:
 //! [action]
   void helloWorld()

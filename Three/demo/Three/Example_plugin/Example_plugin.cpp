@@ -162,12 +162,8 @@ class Q_DECL_EXPORT Polyhedron_demo_example_plugin :
 
 
 public :
-  // To silent a warning -Woverloaded-virtual
-  // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-  using Polyhedron_demo_plugin_helper::init;
   // Adds an action to the menu and configures the widget
-  void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     //get the references
     this->scene = scene_interface;
     this->mw = mainWindow;
