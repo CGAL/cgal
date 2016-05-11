@@ -1,5 +1,6 @@
 #include <QtCore/qglobal.h>
 #include <QFileDialog>
+#include <QColorDialog> 
 #include <fstream>
 #include "opengl_tools.h"
 
@@ -11,6 +12,9 @@
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+
+#include <CGAL/Random.h>
+
 #include "ui_Point_set_classification_widget.h"
 
 #include <QAction>
@@ -56,6 +60,8 @@ public:
 
     add_class_rows();
 
+    color_att = QColor (75, 75, 77);
+    
     connect(ui_widget.create_from_file,  SIGNAL(clicked()), this,
             SLOT(on_create_from_file_button_clicked()));
     connect(ui_widget.create_from_item,  SIGNAL(clicked()), this,
@@ -86,6 +92,8 @@ public:
             SLOT(on_save_config_button_clicked()));
     connect(ui_widget.load_config,  SIGNAL(clicked()), this,
             SLOT(on_load_config_button_clicked()));
+    connect(ui_widget.colorButton,  SIGNAL(clicked()), this,
+            SLOT(on_colorButton_clicked()));
     connect(ui_widget.run_with_smoothing,  SIGNAL(clicked()), this,
             SLOT(on_run_with_smoothing_button_clicked()));
     connect(ui_widget.run_with_ransac,  SIGNAL(clicked()), this,
@@ -135,6 +143,8 @@ public Q_SLOTS:
   
   void on_create_from_file_button_clicked()
   {
+    CGAL::Random rand(time(0));
+    
     QString filename = QFileDialog::getOpenFileName(mw,
                                                     tr("Open PLY point set"),
                                                     ".",
@@ -148,9 +158,31 @@ public Q_SLOTS:
     Scene_point_set_classification_item* new_item
       = new Scene_point_set_classification_item ();
     new_item->read_ply_point_set (in, ui_widget.gridResolutionDoubleSpinBox->value());
-    new_item->setName(QString("%1 (classification)").arg(name));
-    int item_id = scene->addItem(new_item);
-    scene->setSelectedItem(item_id);
+
+    std::vector<Scene_point_set_classification_item*> items;
+    if (new_item->segment_point_set (ui_widget.max_nb_points->value(), std::back_inserter (items)))
+      {
+        for (std::size_t i = 0; i < items.size(); ++ i)
+          {
+            unsigned char r, g, b;
+
+            r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+            g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+            b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+            items[i]->setRbgColor (r, g, b);
+            items[i]->setName(QString("%1 %2 (classification)").arg(name).arg (i+1));
+            int item_id = scene->addItem(items[i]);
+            scene->setSelectedItem(item_id);
+          }
+        delete new_item;
+      }
+    else
+      {
+        new_item->setName(QString("%1 (classification)").arg(name));
+        int item_id = scene->addItem(new_item);
+        scene->setSelectedItem(item_id);
+      }
+    
     QApplication::restoreOverrideCursor();
   }
 
@@ -208,7 +240,8 @@ public Q_SLOTS:
                               (double)(ui_widget.colorSlider->maximum()+1),
                               ui_widget.multiply_weights->isChecked (),
                               class_rows,
-                              method);
+                              method,
+                              ui_widget.smoothingDoubleSpinBox->value());
   }
 
   void on_compute_features_button_clicked()
@@ -226,7 +259,8 @@ public Q_SLOTS:
     time.start();
     classification_item->compute_features (ui_widget.gridResolutionDoubleSpinBox->value(),
                                            ui_widget.radiusNeighborsDoubleSpinBox->value(),
-                                           ui_widget.radiusDTMDoubleSpinBox->value());
+                                           ui_widget.radiusDTMDoubleSpinBox->value(),
+                                           color_att);
 
     run (classification_item, 0);
     std::cerr << "Features computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
@@ -344,6 +378,13 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
 
     in.close();
+  }
+
+
+  void on_colorButton_clicked()
+  {
+    color_att = QColorDialog::getColor (QColor (33, 37, 33), (QWidget*)mw,
+                                        QString ("Select favored color"));
   }
 
 
@@ -672,6 +713,8 @@ private:
   std::vector<ClassRow> class_rows;
   
   Ui::PointSetClassification ui_widget;
+
+  QColor color_att;
 
 }; // end Polyhedron_demo_point_set_classification_plugin
 
