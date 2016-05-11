@@ -38,7 +38,14 @@
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="2" column="0">
+        <item row="2" column="1">
+         <widget class="QComboBox" name="precisionList">
+          <property name="editable">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
          <widget class="QLabel" name="label_2">
           <property name="font">
            <font>
@@ -54,7 +61,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QLabel" name="label">
           <property name="lineWidth">
            <number>1</number>
@@ -67,20 +74,9 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="precisionList">
-          <property name="editable">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
-     <zorder>label_2</zorder>
-     <zorder>label</zorder>
-     <zorder>precisionList</zorder>
-     <zorder>verticalLayoutWidget</zorder>
     </widget>
    </item>
    <item row="0" column="0">
