@@ -548,7 +548,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
       if(is_triangle(f->halfedge(),*poly))
       {
           const int this_patch_id = f->patch_id();
-          Vector n = get(nf_pmap, f);
           HF_circulator he = f->facet_begin();
           HF_circulator end = he;
           CGAL_For_all(he,end)
@@ -563,7 +562,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
               continue;
 
             // If Flat shading:1 normal per polygon added once per vertex
-            push_back_xyz(n, normals_flat);
+            push_back_xyz(normal, normals_flat);
 
             //// If Gouraud shading: 1 normal per vertex
             Vector nv = get(nv_pmap, he->vertex());
