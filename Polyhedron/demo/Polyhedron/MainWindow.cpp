@@ -1184,6 +1184,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
+  qDebug()<<selectedItemIndex;
   CGAL::Three::Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0,QModelIndex())));
   if(!item) return;
 
@@ -1249,7 +1250,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
       }
       else
       {
-          index = proxyModel->mapToSource(modelIndex).row();
+          index = scene->getIdFromModelIndex(proxyModel->mapToSource(modelIndex));
           scene->setSelectedItemIndex(index);
       }
   }

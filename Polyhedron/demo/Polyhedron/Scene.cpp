@@ -91,7 +91,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
                     qobject_cast<CGAL::Three::Scene_group_item*>(m_entries.at(mainSelectionIndex()));
             if(selected_group)
             {
-                selected_group->addChild(item);
+                changeGroup(item,selected_group);
                 redraw_model();
             }
         }
@@ -143,13 +143,6 @@ Scene::erase(Scene::Item_id index)
     index_map.clear();
     if(index < 0 || index >= m_entries.size())
         return -1;
-//if it is a group, remove it from m_group_entries
-    CGAL::Three::Scene_group_item* group =
-            qobject_cast<CGAL::Three::Scene_group_item*>(item);
-  if(group)
-  {
-      m_group_entries.removeAll(group);
-  }
   if(item->parentGroup())
     item->parentGroup()->removeChild(item);
 
@@ -195,12 +188,6 @@ Scene::erase(QList<int> indices)
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
-    CGAL::Three::Scene_group_item* group =
-        qobject_cast<CGAL::Three::Scene_group_item*>(item);
-    if(group)
-    {
-      m_group_entries.removeAll(group);
-    }
       if(item->parentGroup())
         item->parentGroup()->removeChild(item);
     Q_EMIT itemAboutToBeDestroyed(item);
@@ -233,12 +220,10 @@ Scene::erase(QList<int> indices)
 
 void Scene::remove_item_from_groups(Scene_item* item)
 {
-    Q_FOREACH(CGAL::Three::Scene_group_item* group, m_group_entries)
+    CGAL::Three::Scene_group_item* group = item->parentGroup();
+    if(group)
     {
-        if(group->getChildren().contains(item))
-        {
-            group->removeChild(item);
-        }
+        group->removeChild(item);
     }
 }
 Scene::~Scene()
@@ -777,8 +762,9 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
       }
     }
     //Gets the group at the drop position
-    CGAL::Three::Scene_group_item* group =
-        qobject_cast<CGAL::Three::Scene_group_item*>(this->item(index_map[parent]));
+    CGAL::Three::Scene_group_item* group = NULL;
+    if(parent.isValid())
+        group = qobject_cast<CGAL::Three::Scene_group_item*>(this->item(index_map[parent]));
     bool one_contained = false;
     if(group)
     {
@@ -810,7 +796,6 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     }
     Q_FOREACH(Scene_item* item, items)
       changeGroup(item, group);
-    //group->addChild(item(mainSelectionIndex()));
     redraw_model();
     return true;
 }
@@ -822,12 +807,12 @@ void Scene::moveRowUp()
     {
         if(item(mainSelectionIndex())->has_group >0)
         {
-            Q_FOREACH(Scene_group_item* group, m_group_entries)
-                if(group->getChildren().contains(selected_item))
-                {
-                    int id = group->getChildren().indexOf(selected_item);
-                    group->moveUp(id);
-                }
+            Scene_group_item* group = selected_item->parentGroup();
+            if(group)
+            {
+                int id = group->getChildren().indexOf(selected_item);
+                group->moveUp(id);
+            }
         }
         else
         {
@@ -847,12 +832,12 @@ void Scene::moveRowDown()
     {
         if(item(mainSelectionIndex())->has_group >0)
         {
-            Q_FOREACH(Scene_group_item* group, m_group_entries)
-                if(group->getChildren().contains(selected_item))
-                {
-                    int id = group->getChildren().indexOf(selected_item);
-                    group->moveDown(id);
-                }
+            Scene_group_item* group = selected_item->parentGroup();
+            if(group)
+            {
+                int id = group->getChildren().indexOf(selected_item);
+                group->moveDown(id);
+            }
         }
         else
         {
@@ -1109,10 +1094,6 @@ Scene::Bbox Scene::bbox() const
     }
     return bbox;
 }
-QList<CGAL::Three::Scene_group_item*> Scene::group_entries() const
-{
-    return m_group_entries;
-}
 
 QList<Scene_item*> Scene::item_entries() const
 {
@@ -1236,20 +1217,15 @@ void Scene::add_group(Scene_group_item* group)
         //if the selected item is in a group
         if(item(id)->has_group!=0){
             //for each group
-            Q_FOREACH(CGAL::Three::Scene_group_item *group, group_entries())
-            {
-                //if the group contains the selected item
-                if(group->getChildren().contains(item(id))){
-                    //if it is the first one, we initialize existing_group
-                    if(existing_group == 0)
-                        existing_group = group;
-                    //else we check if it is the same group as before.
-                    //If not, all selected items are not in the same group
-                    else if(existing_group != group)
-                        all_in_one = false;
-                    break;
-                }
-            }//end for each group
+            CGAL::Three::Scene_group_item *group = item(id)->parentGroup();
+            //if it is the first pass, we initialize existing_group
+            if(existing_group == 0)
+                existing_group = group;
+            //else we check if it is the same group as before.
+            //If not, all selected items are not in the same group
+            else if(existing_group != group)
+                all_in_one = false;
+            break;
         }
         //else it is impossible that all the selected items are in the same group
         else{
