@@ -3,10 +3,6 @@
 
 #include <CGAL/IO/read_ply_points.h>
 #include <CGAL/IO/write_ply_points.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/write_off_points.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -31,9 +27,9 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
-Scene_point_set_classification_item::Scene_point_set_classification_item()
+Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* psc)
 : Scene_item(NbOfVbos,NbOfVaos),
-  m_psc (NULL),
+  m_psc (psc),
   m_scat (NULL),
   m_elev (NULL),
   m_hori (NULL),
@@ -403,14 +399,15 @@ bool Scene_point_set_classification_item::read_ply_point_set(std::istream& strea
   timer.start();
   std::vector<Kernel::Point_3> points;
   std::vector<Color> colors;
+  std::vector<unsigned char> echo;
 
-  My_ply_interpreter<float> interpreter_f (points, colors);
+  My_ply_interpreter<float> interpreter_f (points, colors, echo);
 
   if (!CGAL::read_ply_custom_points (stream, interpreter_f, Kernel()))
     {
       std::cerr << "PLY reader with float not applicable." << std::endl;
       stream.seekg(0);
-      My_ply_interpreter<double> interpreter_d (points, colors);
+      My_ply_interpreter<double> interpreter_d (points, colors, echo);
       if (!CGAL::read_ply_custom_points (stream, interpreter_d, Kernel()))
         {
           std::cerr << "PLY reader with double not applicable." << std::endl;
@@ -429,11 +426,15 @@ bool Scene_point_set_classification_item::read_ply_point_set(std::istream& strea
   m_psc = new PSC(points.begin(), points.end(), grid_resolution);
 
   Color black = {{ 0, 0, 0 }};
+  
   for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
     {
       m_psc->HPS[i].color = colors[i];
       if (colors[i] != black)
         m_psc->has_colors = true;
+      m_psc->HPS[i].echo = echo[i];
+      if (echo[i] != 0)
+        m_psc->is_echo_given = true;
     }
 
   timer.stop();
@@ -654,7 +655,8 @@ void Scene_point_set_classification_item::estimate_parameters (double& grid_reso
 
 void Scene_point_set_classification_item::compute_features (const double& grid_resolution,
                                                             const double& radius_neighbors,
-                                                            const double& radius_dtm)
+                                                            const double& radius_dtm,
+                                                            const QColor& c)
 {
   Q_ASSERT (m_psc != NULL);
 
@@ -680,7 +682,7 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   m_psc->segmentation_attributes.push_back (m_elev);
 
   if (m_colo != NULL) delete m_colo;
-  m_colo = new ColorSeg (*m_psc, 1.);
+  m_colo = new ColorSeg (*m_psc, 1., c.hue(), c.saturation(), c.value());
   m_psc->segmentation_attributes.push_back (m_colo);
 
 }
@@ -766,29 +768,50 @@ void Scene_point_set_classification_item::compute_clusters (const double& radius
     else if (m_psc->segmentation_classes[i]->id() == "vegetation")
       index_vege = i;
 
-  for (std::size_t i = 0; i < m_psc->clusters.size(); ++ i)
+  for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
     {
-      std::size_t c0 = m_psc->HPS[m_psc->clusters[i].indices[0]].AE_label;
-      std::size_t nb_good = 1;
-      std::size_t nb_tot = 1;
-      
-      for (std::set<std::size_t>::iterator it = m_psc->clusters[i].neighbors.begin ();
-           it != m_psc->clusters[i].neighbors.end (); ++ it)
+      if (m_psc->HPS[i].neighbor == (unsigned char)(-1))
         {
-          std::size_t c1 = m_psc->HPS[m_psc->clusters[*it].indices[0]].AE_label;
-          std::size_t weight = 1;//std::min (m_psc->clusters[*it].indices.size(), m_psc->clusters[i].indices.size());
-          nb_tot += weight;
-          
-          if ((c0 == index_ground && c1 == index_facade) || (c0 == index_facade && c1 == index_ground) ||
-              (c0 == index_ground && c1 == index_vege) || (c0 == index_vege && c1 == index_ground) ||
-              (c0 == index_facade && c1 == index_roof) || (c0 == index_roof && c1 == index_facade))
-            nb_good += weight;
+          m_psc->HPS[i].confidence = 0.;
+          continue;
         }
+
+      std::size_t c0 = m_psc->HPS[i].AE_label;
+      std::size_t c1 = m_psc->HPS[i].neighbor;
       
-      double confidence = nb_good / (double)nb_tot;
-      for (std::size_t j = 0; j < m_psc->clusters[i].indices.size(); ++ j)
-        m_psc->HPS[m_psc->clusters[i].indices[j]].confidence = confidence;
+      if ((c0 == index_ground && c1 == index_facade) || (c0 == index_facade && c1 == index_ground) ||
+          (c0 == index_ground && c1 == index_vege) || (c0 == index_vege && c1 == index_ground) ||
+          (c0 == index_facade && c1 == index_roof) || (c0 == index_roof && c1 == index_facade))
+        m_psc->HPS[i].confidence = 1.;
+      else
+        m_psc->HPS[i].confidence = 0.2;
     }
+  
+  // for (std::size_t i = 0; i < m_psc->clusters.size(); ++ i)
+  //   {
+  //     std::size_t c0 = m_psc->HPS[m_psc->clusters[i].indices[0]].AE_label;
+  //     std::size_t nb_good = 1;
+  //     std::size_t nb_tot = 1;
+      
+  //     for (std::set<std::size_t>::iterator it = m_psc->clusters[i].neighbors.begin ();
+  //          it != m_psc->clusters[i].neighbors.end (); ++ it)
+  //       {
+  //         std::size_t c1 = m_psc->HPS[m_psc->clusters[*it].indices[0]].AE_label;
+  //         std::size_t weight = 1;//std::min (m_psc->clusters[*it].indices.size(), m_psc->clusters[i].indices.size());
+  //         nb_tot += weight;
+          
+  //         if ((c0 == index_ground && c1 == index_facade) || (c0 == index_facade && c1 == index_ground) ||
+  //             (c0 == index_ground && c1 == index_vege) || (c0 == index_vege && c1 == index_ground) ||
+  //             (c0 == index_facade && c1 == index_roof) || (c0 == index_roof && c1 == index_facade))
+  //           nb_good += weight;
+  //       }
+      
+  //     double confidence = nb_good / (double)nb_tot;
+  //     for (std::size_t j = 0; j < m_psc->clusters[i].indices.size(); ++ j)
+  //       m_psc->HPS[m_psc->clusters[i].indices[j]].confidence = confidence;
+  //   }
+
+  invalidateOpenGLBuffers();
 }
 
 
