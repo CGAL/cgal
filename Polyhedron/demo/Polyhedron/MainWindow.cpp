@@ -1071,7 +1071,7 @@ void MainWindow::selectSceneItem(int i)
       proxyModel->mapSelectionFromSource(scene->createSelection(i));
 
     sceneView->selectionModel()->select(s,
-                                        QItemSelectionModel::ClearAndSelect);
+                                        QItemSelectionModel::Select);
   }
 }
 
@@ -1135,7 +1135,6 @@ int MainWindow::getSelectedSceneItemIndex() const
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
-
   QModelIndexList selectedIndices = sceneView->selectionModel()->selectedIndexes();
   QList<int> result;
   Q_FOREACH(QModelIndex index, selectedIndices) {
@@ -1184,7 +1183,6 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  qDebug()<<selectedItemIndex;
   CGAL::Three::Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0,QModelIndex())));
   if(!item) return;
 

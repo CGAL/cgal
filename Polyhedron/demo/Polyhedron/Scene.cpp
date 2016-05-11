@@ -868,6 +868,7 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
+
     return QItemSelection(index_map.keys(i).at(0),
                           index_map.keys(i).at(4));
 }
