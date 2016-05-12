@@ -1566,7 +1566,10 @@ public:
       Halfedge_handle first_hedge  = epp_it->second.first[P_ptr];
       Halfedge_handle second_hedge = epp_it->second.first[Q_ptr];
 
-      if (first_hedge->is_border_edge() || second_hedge->is_border_edge()) continue;
+      if (first_hedge->is_border_edge() || second_hedge->is_border_edge()){
+        ++epp_it;
+        continue;
+      }
 
       //vertices from P
       Vertex_handle P1=first_hedge->opposite()->next()->vertex();
