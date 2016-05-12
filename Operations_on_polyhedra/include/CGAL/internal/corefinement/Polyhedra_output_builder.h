@@ -850,7 +850,7 @@ void extract_patch_simplices(
       Halfedge_handle hedges[]={fit->halfedge(), fit->halfedge()->next(), fit->halfedge()->prev()};
       for (int i=0;i<3;++i)
       {
-        if ( is_marked_edge.find(hedges[i])==is_marked_edge.end() )
+        if ( !is_marked_edge.count(hedges[i]) )
         {
           if ( hedges[i] < hedges[i]->opposite() )
             interior_halfedges.push_back( hedges[i] );
@@ -865,6 +865,8 @@ void extract_patch_simplices(
   for (std::size_t k=0, end=patch_border_halfedges.size(); k!=end; ++k)
   {
     border_vertices.insert( patch_border_halfedges[k]->vertex() );
+    // if the model is not closed i.e. patch_border_halfedge is not cycle only
+    border_vertices.insert( patch_border_halfedges[k]->opposite()->vertex() );
   }
 
   for (std::size_t k=0, end=interior_halfedges.size(); k!=end; ++k)
