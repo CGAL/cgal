@@ -8,7 +8,6 @@
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-
 void Scene_polyhedron_selection_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
 {
   //vao containing the data for the facets
@@ -775,6 +774,11 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
+  case 11:
+    Q_EMIT updateInstructions("Select a vertex. (1/2)");
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    break;
   default:
     break;
   }
@@ -953,30 +957,40 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
       //Remove center vertex
     case 8:
-
-        bool has_hole = false;
-        Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
-        Polyhedron::Halfedge_around_vertex_circulator end(hc);
-        CGAL_For_all(hc, end)
+    {
+      bool has_hole = false;
+      Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
+      Polyhedron::Halfedge_around_vertex_circulator end(hc);
+      CGAL_For_all(hc, end)
+      {
+        if(hc->is_border())
         {
-          if(hc->is_border())
-          {
-            has_hole = true;
-            break;
-          }
+          has_hole = true;
+          break;
         }
-        if(!has_hole)
-        {
-          CGAL::Euler::remove_center_vertex(vh->halfedge(),*polyhedron());
-          polyhedron_item()->invalidateOpenGLBuffers();
-        }
-        else
-        {
-          tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
-                           "Select the vertex you want to remove.");
-        }
+      }
+      if(!has_hole)
+      {
+        CGAL::Euler::remove_center_vertex(vh->halfedge(),*polyhedron());
+        polyhedron_item()->invalidateOpenGLBuffers();
+      }
+      else
+      {
+        tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
+                         "Select the vertex you want to remove.");
+      }
       break;
-
+    }
+    case 11:
+      temp_selected_vertices.insert(vh);
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      k_ring_selector.setEditMode(false);
+      manipulated_frame->setPosition(vh->point().x(), vh->point().y(), vh->point().z());
+      viewer->setManipulatedFrame(manipulated_frame);
+      connect(manipulated_frame, SIGNAL(modified()), this, SLOT(updateTick()));
+      invalidateOpenGLBuffers();
+      Q_EMIT updateInstructions("Ctrl+Right-click to move the point. Click vlaidate to save the new position. (2/2)");
+      break;
     }
   }
   is_treated = true;
@@ -1495,4 +1509,34 @@ void Scene_polyhedron_selection_item::compute_normal_maps()
   nf_pmap = boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3> >(face_normals_map);
   nv_pmap = boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3> >(vertex_normals_map);
   PMP::compute_normals(*poly, nv_pmap, nf_pmap);
+}
+
+void Scene_polyhedron_selection_item::updateTick()
+{
+    ready_to_move = true;
+    QTimer::singleShot(0,this,SLOT(moveVertex()));
+}
+
+void Scene_polyhedron_selection_item::moveVertex()
+{
+  if(ready_to_move)
+  {
+    Vertex_handle vh = *temp_selected_vertices.begin();
+    vh->point() = Kernel::Point_3(manipulated_frame->position().x,
+                                  manipulated_frame->position().y,
+                                  manipulated_frame->position().z);
+    invalidateOpenGLBuffers();
+    poly_item->invalidateOpenGLBuffers();
+    ready_to_move = false;
+  }
+}
+
+void Scene_polyhedron_selection_item::validateMoveVertex()
+{
+  temp_selected_vertices.clear();
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  k_ring_selector.setEditMode(true);
+  viewer->setManipulatedFrame(NULL);
+  invalidateOpenGLBuffers();
+  Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }

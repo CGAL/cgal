@@ -29,6 +29,8 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
+#include <QGLViewer/manipulatedFrame.h>
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 
@@ -205,11 +207,13 @@ public:
         first_selected = false;
         is_treated = false;
         poly_need_update = false;
+        ready_to_move = false;
+
     }
 
-  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
+  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw)
     : Scene_polyhedron_item_decorator(NULL, false)
-    {
+  {
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
         nb_facets = 0;
@@ -226,6 +230,7 @@ public:
         {
             buffers[i].create();
         }
+        ready_to_move = false;
         init(poly_item, mw);
         this->setColor(facet_color);
         invalidateOpenGLBuffers();
@@ -233,11 +238,13 @@ public:
         first_selected = false;
         is_treated = false;
         poly_need_update = false;
-    }
 
-   ~Scene_polyhedron_selection_item()
-    {
-    }
+  }
+
+  ~Scene_polyhedron_selection_item()
+  {
+    delete manipulated_frame;
+  }
   void inverse_selection();
 protected: 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
@@ -264,8 +271,8 @@ protected:
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
     connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
-
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    manipulated_frame = new ManipulatedFrame();
     viewer->installEventFilter(this);
     mw->installEventFilter(this);
     facet_color = QColor(87,87,87);
@@ -806,6 +813,7 @@ Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
+  void validateMoveVertex();
   void compute_normal_maps();
   void update_poly()
   {
@@ -886,6 +894,8 @@ public Q_SLOTS:
    is_insert = b;
   }
 
+  void updateTick();
+  void moveVertex();
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event)
   {
@@ -1088,6 +1098,9 @@ private:
   void triangulate_facet(Facet_handle, const FaceNormalPmap&,
                          std::vector<float> &p_facets,std::vector<float> &p_normals) const;
   void tempInstructions(QString s1, QString s2);
+
+  ManipulatedFrame *manipulated_frame;
+  bool ready_to_move;
 };
 
 #endif
