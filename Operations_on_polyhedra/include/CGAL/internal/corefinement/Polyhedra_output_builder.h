@@ -441,6 +441,9 @@ public:
     BOOST_FOREACH(Halfedge_handle h, interior_halfedges){
       Halfedge_handle new_h = hds.edges_push_back( *h );
       Qhedge_to_Phedge[ h ] = new_h;
+      // put new halfedges on the border of the mesh
+      decorator.set_face(new_h, Face_handle());
+      decorator.set_face(new_h->opposite(), Face_handle());
 
       //create a copy of interior vertices only once
       if (  h->vertex()->halfedge()==h && interior_vertices.count(h->vertex()) )
@@ -479,6 +482,64 @@ public:
         decorator.set_face(hedges[i], new_f);
       }
     }
+
+    // handle interior edges that are on the border of the mesh:
+    // they do not have a prev/next pointer set since only the pointers
+    // of patch interior halfedges part a face have been. In the following
+    // (i) we set the next/prev pointer around interior vertices on the mesh
+    // boundary and (ii) we collect interior mesh border halfedges incident to
+    // a patch border vertex and set their next/prev pointer (possibly of
+    // another patch)
+
+    // Containers used for step (ii) for collecting mesh border halfedges
+    // with source/target on an intersection polyline that needs it prev/next
+    // pointer to be set
+    std::vector<Halfedge_handle> border_halfedges_source_to_link;
+    std::vector<Halfedge_handle> border_halfedges_target_to_link;
+    BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
+      if (h->is_border_edge())
+      {
+        if (!h->is_border()) h=h->opposite();
+
+        Vertex_handle src = h->opposite()->vertex();
+        Vertex_handle tgt = h->vertex();
+        if (reverse_patch_orientation) std::swap(src, tgt);
+
+        if ( !interior_vertices.count(src) )
+          border_halfedges_source_to_link.push_back(get_hedge(h));
+        if ( !interior_vertices.count(tgt) ){
+          border_halfedges_target_to_link.push_back(get_hedge(h));
+          continue; // since the next halfedge should not be in the same patch
+        }
+        CGAL_assertion( h->is_border() &&
+                        h->prev()->is_border() && h->next()->is_border() );
+        // step (i)
+        Halfedge_handle qhedge=get_hedge(h);
+        Halfedge_handle qnext = reverse_patch_orientation ?
+                               get_hedge(h->prev()) : get_hedge(h->next());
+        CGAL_assertion( qhedge->is_border() && qnext->is_border()  );
+        qhedge->HBase::set_next(qnext);
+        decorator.set_prev(qnext, qhedge);
+      }
+    // now the step (ii) we look for the candidate halfedge by turning around
+    // the vertex in the direction of the interior of the patch
+    BOOST_FOREACH(Halfedge_handle h, border_halfedges_target_to_link)
+    {
+      Halfedge_handle candidate=h->opposite()->prev()->opposite();
+      while (!candidate->is_border())
+        candidate=candidate->prev()->opposite();
+      h->HBase::set_next(candidate);
+      decorator.set_prev(candidate,h);
+    }
+    BOOST_FOREACH(Halfedge_handle h, border_halfedges_source_to_link)
+    {
+      Halfedge_handle candidate=h->opposite()->next()->opposite();
+      while (!candidate->is_border())
+        candidate=candidate->next()->opposite();
+      candidate->HBase::set_next(h);
+      decorator.set_prev(h,candidate);
+    }
+
     // For all interior vertices, update the vertex pointer
     // of all but the vertex halfedge
     BOOST_FOREACH(Halfedge_handle h, interior_vertex_halfedges)
