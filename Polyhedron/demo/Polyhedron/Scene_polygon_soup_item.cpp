@@ -667,11 +667,7 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
      initializeBuffers(viewer);
     }
     if(soup == 0) return;
-    //Calls the buffer info again so that it's the right one used even if
-    //there are several objects drawn
-    vaos[Facets]->bind();
     attribBuffers(viewer,PROGRAM_WITH_LIGHT);
-    QColor v_colors = this->color();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     program->bind();
 
