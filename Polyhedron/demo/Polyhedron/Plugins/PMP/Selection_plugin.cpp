@@ -126,7 +126,6 @@ public Q_SLOTS:
       Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
       connect(this, SIGNAL(save_handleType()),new_item, SLOT(save_handleType()));
       connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
-      connect(ui_widget.validateMoveButton, SIGNAL(clicked()), new_item, SLOT(validateMoveVertex()));
 
       connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
       int item_id = scene->addItem(new_item);
@@ -413,14 +412,6 @@ public Q_SLOTS:
     {
       Q_EMIT set_operation_mode(mode);
     }
-
-    if(ui_widget.editionBox->currentIndex() == 11)
-    {
-      ui_widget.validateMoveButton->setVisible(true);
-      Q_EMIT set_operation_mode(11);
-    }
-    else
-      ui_widget.validateMoveButton->setVisible(false);
     switch(mode)
     {
     //Join vertex

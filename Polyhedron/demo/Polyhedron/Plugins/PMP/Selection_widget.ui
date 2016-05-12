@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>479</width>
-    <height>629</height>
+    <height>627</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -435,79 +435,68 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
+          <widget class="QComboBox" name="editionBox">
            <item>
-            <widget class="QComboBox" name="editionBox">
-             <item>
-              <property name="text">
-               <string>Join vertex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Split vertex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Split edges</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Join face</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Split face</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Collapse edge</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Flip edge</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Add center vertex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Remove center vertex</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Add vertex and face to border (Advanced)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Add face to border (Advanced)</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Move point</string>
-              </property>
-             </item>
-            </widget>
+            <property name="text">
+             <string>Join vertex</string>
+            </property>
            </item>
            <item>
-            <widget class="QPushButton" name="validateMoveButton">
-             <property name="text">
-              <string>Validate</string>
-             </property>
-            </widget>
+            <property name="text">
+             <string>Split vertex</string>
+            </property>
            </item>
-          </layout>
+           <item>
+            <property name="text">
+             <string>Split edges</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Join face</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Split face</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Collapse edge</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Flip edge</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Add center vertex</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Remove center vertex</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Add vertex and face to border (Advanced)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Add face to border (Advanced)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Move point</string>
+            </property>
+           </item>
+          </widget>
          </item>
          <item>
           <widget class="QLabel" name="instructionsLabel">

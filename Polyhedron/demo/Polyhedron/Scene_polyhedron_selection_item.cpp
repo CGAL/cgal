@@ -982,14 +982,24 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       break;
     }
     case 11:
-      temp_selected_vertices.insert(vh);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      k_ring_selector.setEditMode(false);
-      manipulated_frame->setPosition(vh->point().x(), vh->point().y(), vh->point().z());
-      viewer->setManipulatedFrame(manipulated_frame);
-      connect(manipulated_frame, SIGNAL(modified()), this, SLOT(updateTick()));
-      invalidateOpenGLBuffers();
-      Q_EMIT updateInstructions("Ctrl+Right-click to move the point. Click vlaidate to save the new position. (2/2)");
+      if(viewer->manipulatedFrame() != manipulated_frame)
+      {
+        temp_selected_vertices.insert(vh);
+        k_ring_selector.setEditMode(false);
+        manipulated_frame->setPosition(vh->point().x(), vh->point().y(), vh->point().z());
+        viewer->setManipulatedFrame(manipulated_frame);
+        connect(manipulated_frame, SIGNAL(modified()), this, SLOT(updateTick()));
+        invalidateOpenGLBuffers();
+        Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
+      }
+      else
+      {
+        temp_selected_vertices.clear();
+        temp_selected_vertices.insert(vh);
+        manipulated_frame->setPosition(vh->point().x(), vh->point().y(), vh->point().z());
+        invalidateOpenGLBuffers();
+      }
       break;
     }
   }
@@ -1492,6 +1502,7 @@ void Scene_polyhedron_selection_item::emitTempInstruct()
 
 void Scene_polyhedron_selection_item::on_Ctrlz_pressed()
 {
+  validateMoveVertex();
   first_selected = false;
   temp_selected_vertices.clear();
   temp_selected_edges.clear();
