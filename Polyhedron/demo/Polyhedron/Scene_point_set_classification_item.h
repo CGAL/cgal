@@ -58,7 +58,20 @@ public:
                 y_min(std::numeric_limits<double>::max()),
                 y_max(-std::numeric_limits<double>::max()) { }
   };
-      
+
+  template <bool use_y>
+  struct Sort_by_coordinate
+  {
+    std::vector<PSC::HPoint>& m_hps;
+    Sort_by_coordinate (std::vector<PSC::HPoint>& hps) : m_hps (hps) { }
+    bool operator() (const std::size_t& a, const std::size_t& b)
+    {
+      if (use_y)
+        return m_hps[a].position.y() < m_hps[b].position.y();
+      else
+        return m_hps[a].position.x() < m_hps[b].position.x();
+    }
+  };
   
   template <typename OutputIterator>
   bool segment_point_set (std::size_t nb_max_pt, OutputIterator output)
@@ -86,7 +99,6 @@ public:
       {
         Region& current = queue.front();
 
-        // TODO sort points and use median (split in 2 equal parts)
         if (current.indices.size() < nb_max_pt)
           {
             std::vector<Kernel::Point_3> dummy;
@@ -111,7 +123,9 @@ public:
           {
             if (current.x_max - current.x_min > current.y_max - current.y_min)
               {
-                double med_x = (current.x_max + current.x_min) * 0.5;
+                std::sort (current.indices.begin(), current.indices.end(),
+                           Sort_by_coordinate<false>(m_psc->HPS));
+                
                 queue.push_back(Region());
                 queue.push_back(Region());
                 std::list<Region>::iterator it = queue.end();
@@ -124,18 +138,24 @@ public:
                 positive.y_max = current.y_max;
                 
                 negative.x_min = current.x_min;
+                positive.x_max = current.x_max;
+                std::size_t i = 0;
+                
+                for (; i < current.indices.size() / 2; ++ i)
+                  negative.indices.push_back (current.indices[i]);
+                double med_x = 0.5 * (m_psc->HPS[current.indices[i]].position.x()
+                                      + m_psc->HPS[current.indices[i+1]].position.x());
                 negative.x_max = med_x;
                 positive.x_min = med_x;
-                positive.x_max = current.x_max;
-                for (std::size_t i = 0; i < current.indices.size(); ++ i)
-                  if (m_psc->HPS[current.indices[i]].position.x() > med_x)
-                    positive.indices.push_back (current.indices[i]);
-                  else
-                    negative.indices.push_back (current.indices[i]);
+                
+                for (; i < current.indices.size(); ++ i)
+                  positive.indices.push_back (current.indices[i]);
               }
             else
               {
-                double med_y = (current.y_max + current.y_min) * 0.5;
+                std::sort (current.indices.begin(), current.indices.end(),
+                           Sort_by_coordinate<true>(m_psc->HPS));
+
                 queue.push_back(Region());
                 queue.push_back(Region());
                 std::list<Region>::iterator it = queue.end();
@@ -148,14 +168,18 @@ public:
                 positive.x_max = current.x_max;
 
                 negative.y_min = current.y_min;
+                positive.y_max = current.y_max;
+                std::size_t i = 0;
+                
+                for (; i < current.indices.size() / 2; ++ i)
+                  negative.indices.push_back (current.indices[i]);
+                double med_y = 0.5 * (m_psc->HPS[current.indices[i]].position.y()
+                                      + m_psc->HPS[current.indices[i+1]].position.y());
                 negative.y_max = med_y;
                 positive.y_min = med_y;
-                positive.y_max = current.y_max;
-                for (std::size_t i = 0; i < current.indices.size(); ++ i)
-                  if (m_psc->HPS[current.indices[i]].position.y() > med_y)
-                    positive.indices.push_back (current.indices[i]);
-                  else
-                    negative.indices.push_back (current.indices[i]);
+                
+                for (; i < current.indices.size(); ++ i)
+                  positive.indices.push_back (current.indices[i]);
               }
           }
         
