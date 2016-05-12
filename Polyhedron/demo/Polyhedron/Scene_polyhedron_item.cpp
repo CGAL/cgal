@@ -1152,7 +1152,7 @@ Scene_polyhedron_item::select(double orig_x,
       const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
       const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
       const Kernel::Ray_3 ray(ray_origin, ray_dir);
-      const boost::optional< typename Tree::template Intersection_and_primitive_id<Kernel::Ray_3>::Type >
+      const boost::optional< Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type >
       variant = aabb_tree->first_intersection(ray);
       if(variant)
       {
