@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>479</width>
-    <height>608</height>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -433,7 +433,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0">
+        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0">
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
            <item>
@@ -515,6 +515,13 @@
             <string>Instructions 
 
 </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="docImage_Label">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>

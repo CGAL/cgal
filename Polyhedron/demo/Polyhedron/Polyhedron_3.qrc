@@ -40,5 +40,11 @@
         <file>resources/shader_c3t3.f</file>
         <file>resources/shader_plane_two_faces.f</file>
         <file>resources/shader_spheres.v</file>
+        <file>resources/general_collapse.png</file>
+        <file>resources/add_facet1.png</file>
+        <file>resources/add_facet2.png</file>
+        <file>resources/euler_center.png</file>
+        <file>resources/euler_facet.png</file>
+        <file>resources/euler_vertex.png</file>
     </qresource>
 </RCC>

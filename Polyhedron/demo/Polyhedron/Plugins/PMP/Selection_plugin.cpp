@@ -421,7 +421,62 @@ public Q_SLOTS:
     }
     else
       ui_widget.validateMoveButton->setVisible(false);
-
+    switch(mode)
+    {
+    //Join vertex
+    case 0:
+    //Split vertex
+    case 1:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/euler_vertex.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //Join face
+    case 3:
+    //Split face
+    case 4:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/euler_facet.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //Collapse edge
+    case 5:
+    {
+      QMatrix mat;
+      mat.scale(0.6,0.6);
+      QPixmap pm(":/cgal/Polyhedron_3/resources/general_collapse.png");
+      ui_widget.docImage_Label->setPixmap(pm.transformed(mat));
+      break;
+    }
+    //Add center vertex
+    case 7:
+    //Remove center vertex
+    case 8:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/euler_center.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //Add vertex and face to border
+    case 9:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/add_facet1.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //add facet to border
+    case 10:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/add_facet2.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    default:
+      ui_widget.docImage_Label->clear();
+      break;
+    }
   }
   void on_Select_sharp_edges_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
