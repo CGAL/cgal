@@ -497,10 +497,8 @@ public:
     BOOST_FOREACH(Halfedge_handle qhedge, patch_border_halfedges)
     {
       //check for a halfedge pointing inside an already imported patch
-      Halfedge_handle h = Qhedge_to_Phedge[qhedge];
-      if (h->next() == Halfedge_handle()) h=h->opposite();
+      Halfedge_handle h = get_hedge(qhedge);
       CGAL_assertion( h->next()!=Halfedge_handle() );
-
       // update the pointers on the target
       Halfedge_handle next_around_target=h;
       Vertex_handle v=h->vertex();
@@ -508,8 +506,7 @@ public:
         next_around_target = next_around_target->next()->opposite();
         decorator.set_vertex(next_around_target, v);
       }while( next_around_target->next()!=Halfedge_handle() &&
-              next_around_target!=h);
-
+              next_around_target!=h && !next_around_target->is_border());
       // update the pointers on the source
       Halfedge_handle next_around_source=h->prev();
       CGAL_assertion(next_around_source!=Halfedge_handle());
@@ -518,7 +515,8 @@ public:
         decorator.set_vertex(next_around_source, v);
         next_around_source = next_around_source->opposite()->prev();
       }while( next_around_source!=Halfedge_handle() &&
-              next_around_source!=h->opposite());
+              next_around_source!=h->opposite() &&
+              !next_around_target->is_border());
     }
   }
 };
