@@ -149,7 +149,6 @@ public:
   /*! Sets the column data for the target index. Returns false if index is not valid and
    * if role is not EditRole.*/
   bool setData(const QModelIndex &index, const QVariant &value, int role);
-  QList<CGAL::Three::Scene_group_item*> group_entries() const ;
   QList<CGAL::Three::Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   //!Selects the row at index i in the sceneView.
@@ -265,8 +264,6 @@ private:
   Entries m_entries;
   //! Index of the currently selected item.
   int selected_item;
-  //!List containing all the scene_group_items.
-  QList<CGAL::Three::Scene_group_item*> m_group_entries;
   //!List of indices of the currently selected items.
   QList<int> selected_items_list;
   //!Index of the item_A.
