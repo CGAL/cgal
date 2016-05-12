@@ -75,7 +75,7 @@ public:
     messages = m;
     actionSelection = new QAction(tr("Selection"), mw);
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
-
+    last_mode = 0;
     dock_widget = new QDockWidget("Selection", mw);
     dock_widget->setVisible(false);
 
@@ -93,13 +93,11 @@ public:
             this, SLOT(on_Selection_type_combo_box_changed(int)));
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
-    connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
-    connect(ui_widget.Create_polyline_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyline_item_button_clicked()));
-    connect(ui_widget.Erase_selected_facets_button, SIGNAL(clicked()), this, SLOT(on_Erase_selected_facets_button_clicked()));
-    connect(ui_widget.Keep_connected_components_button, SIGNAL(clicked()), this, SLOT(on_Keep_connected_components_button_clicked()));
+    connect(ui_widget.validateButton, SIGNAL(clicked()), this, SLOT(on_validateButton_clicked()));
     connect(ui_widget.Expand_reduce_button, SIGNAL(clicked()), this, SLOT(on_Expand_reduce_button_clicked()));
-    connect(ui_widget.Create_polyhedron_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyhedron_item_button_clicked()));
     connect(ui_widget.Select_sharp_edges_button, SIGNAL(clicked()), this, SLOT(on_Select_sharp_edges_button_clicked()));
+    connect(ui_widget.modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ModeBox_changed(int)));
+    connect(ui_widget.editionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_editionBox_changed(int)));
 
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
@@ -111,7 +109,14 @@ public:
   {
     dock_widget->hide();
   }
+Q_SIGNALS:
+  void save_handleType();
+  void set_operation_mode(int);
 public Q_SLOTS:
+  void setInstructions(QString s)
+  {
+    ui_widget.instructionsLabel->setText(s);
+  }
   void selection_action() { 
     dock_widget->show();
     dock_widget->raise();
@@ -119,12 +124,17 @@ public Q_SLOTS:
       Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
       if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
       Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+      connect(this, SIGNAL(save_handleType()),new_item, SLOT(save_handleType()));
+      connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
+      connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
       int item_id = scene->addItem(new_item);
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
         connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
       scene->setSelectedItem(item_id);
+      on_ModeBox_changed(ui_widget.modeBox->currentIndex());
     }
+    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   // Select all
   void on_Select_all_button_clicked() {
@@ -199,11 +209,19 @@ public Q_SLOTS:
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+    //To specify what action should be performed on shift+left-click
+    connect(this, SIGNAL(save_handleType()),new_item, SLOT(save_handleType()));
+    connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
+    connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
     int item_id = scene->addItem(new_item);
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     scene->setSelectedItem(item_id);
+    ui_widget.modeBox->setCurrentIndex(last_mode);
+    on_ModeBox_changed(ui_widget.modeBox->currentIndex());
+    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
@@ -222,119 +240,178 @@ public Q_SLOTS:
     }
   }
 
-  void on_Create_point_set_item_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    if(!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return; 
-    }
-    if(selection_item->selected_vertices.empty()) {
-      print_message("Error: there is no selected vertex in polyhedron selection item!");
-      return;
-    }
-    Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
-    point_item->setName(QString("%1-points").arg(selection_item->name()));
-    for(Scene_polyhedron_selection_item::Selection_set_vertex::iterator begin = selection_item->selected_vertices.begin(); 
-       begin != selection_item->selected_vertices.end(); ++begin) {
-       point_item->point_set()->push_back((*begin)->point());
-    }
-    scene->setSelectedItem( scene->addItem(point_item) );
-    scene->itemChanged(point_item);
-  }
 
-  void on_Create_polyline_item_button_clicked(){
-    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    if(!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return;
-    }
-    if(selection_item->selected_edges.empty()) {
-      print_message("Error: there is no selected edge in polyhedron selection item!");
-      return;
-    }
-    Scene_polylines_item* polyline_item = new Scene_polylines_item();
-    polyline_item->setName(QString("%1-edges").arg(selection_item->name()));
-
-    typedef boost::adjacency_list < boost::listS,
-                                    boost::vecS,
-                                    boost::undirectedS,
-                                    Kernel::Point_3 > Edge_graph;
-    typedef Polyhedron::Vertex_handle Vertex_handle;
-    Edge_graph edge_graph;
-    std::map<Vertex_handle, Edge_graph::vertex_descriptor> p2vd;
-    std::map<Vertex_handle, Edge_graph::vertex_descriptor>::iterator it_find;
-    bool insert_OK;
-
-    for(Scene_polyhedron_selection_item::Selection_set_edge::iterator begin = selection_item->selected_edges.begin();
-       begin != selection_item->selected_edges.end(); ++begin)
+  void on_validateButton_clicked() {
+    switch(ui_widget.operationsBox->currentIndex())
     {
-      Vertex_handle source = begin->halfedge()->opposite()->vertex();
-      boost::tie(it_find, insert_OK)
-        = p2vd.insert(std::make_pair(source, Edge_graph::vertex_descriptor()));
-      if (insert_OK)
-      {
-        it_find->second = add_vertex(edge_graph);
-        edge_graph[it_find->second] = source->point();
+    //Create Point Set Item from Selected Vertices
+    case 0:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
       }
-      Edge_graph::vertex_descriptor src=it_find->second;
-
-      Vertex_handle target = begin->halfedge()->vertex();
-      boost::tie(it_find, insert_OK)
-        = p2vd.insert(std::make_pair(target, Edge_graph::vertex_descriptor()));
-      if (insert_OK)
-      {
-        it_find->second = add_vertex(edge_graph);
-        edge_graph[it_find->second] = target->point();
+      if(selection_item->selected_vertices.empty()) {
+        print_message("Error: there is no selected vertex in polyhedron selection item!");
+        return;
       }
-      Edge_graph::vertex_descriptor tgt=it_find->second;
-      boost::add_edge(src, tgt, edge_graph);
+      Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
+      point_item->setName(QString("%1-points").arg(selection_item->name()));
+      for(Scene_polyhedron_selection_item::Selection_set_vertex::iterator begin = selection_item->selected_vertices.begin();
+         begin != selection_item->selected_vertices.end(); ++begin) {
+         point_item->point_set()->push_back((*begin)->point());
+      break;
+      }
     }
+      //Create Polyline Item from Selected Edges
+    case 1:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_edges.empty()) {
+        print_message("Error: there is no selected edge in polyhedron selection item!");
+        return;
+      }
+      Scene_polylines_item* polyline_item = new Scene_polylines_item();
+      polyline_item->setName(QString("%1-edges").arg(selection_item->name()));
 
-    Polyline_visitor<Edge_graph> polyline_visitor(polyline_item, edge_graph);
-    CGAL::split_graph_into_polylines( edge_graph,
-                                      polyline_visitor,
-                                      Is_terminal() );
-    scene->setSelectedItem( scene->addItem(polyline_item) );
-    scene->itemChanged(polyline_item);
+      typedef boost::adjacency_list < boost::listS,
+          boost::vecS,
+          boost::undirectedS,
+          Kernel::Point_3 > Edge_graph;
+      typedef Polyhedron::Vertex_handle Vertex_handle;
+      Edge_graph edge_graph;
+      std::map<Vertex_handle, Edge_graph::vertex_descriptor> p2vd;
+      std::map<Vertex_handle, Edge_graph::vertex_descriptor>::iterator it_find;
+      bool insert_OK;
+
+      for(Scene_polyhedron_selection_item::Selection_set_edge::iterator begin = selection_item->selected_edges.begin();
+          begin != selection_item->selected_edges.end(); ++begin)
+      {
+        Vertex_handle source = begin->halfedge()->opposite()->vertex();
+        boost::tie(it_find, insert_OK)
+            = p2vd.insert(std::make_pair(source, Edge_graph::vertex_descriptor()));
+        if (insert_OK)
+        {
+          it_find->second = add_vertex(edge_graph);
+          edge_graph[it_find->second] = source->point();
+        }
+        Edge_graph::vertex_descriptor src=it_find->second;
+
+        Vertex_handle target = begin->halfedge()->vertex();
+        boost::tie(it_find, insert_OK)
+            = p2vd.insert(std::make_pair(target, Edge_graph::vertex_descriptor()));
+        if (insert_OK)
+        {
+          it_find->second = add_vertex(edge_graph);
+          edge_graph[it_find->second] = target->point();
+        }
+        Edge_graph::vertex_descriptor tgt=it_find->second;
+        boost::add_edge(src, tgt, edge_graph);
+      }
+
+
+      Polyline_visitor<Edge_graph> polyline_visitor(polyline_item, edge_graph);
+      CGAL::split_graph_into_polylines( edge_graph,
+                                        polyline_visitor,
+                                        Is_terminal() );
+      scene->setSelectedItem( scene->addItem(polyline_item) );
+      scene->itemChanged(polyline_item);
+      break;
+    }
+      //Create Polyhedron Item from Selected Facets
+    case 2:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+
+      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+      if(selection_item->export_selected_facets_as_polyhedron(poly_item->polyhedron())) {
+        poly_item->setName(QString("%1-facets").arg(selection_item->name()));
+        poly_item->invalidateOpenGLBuffers(); // for init()
+        scene->setSelectedItem( scene->addItem(poly_item) );
+        scene->itemChanged(poly_item);
+      }
+      else {
+        delete poly_item;
+        print_message("Error: polyhedron item is not created!");
+      }
+      break;
+    }
+      //Erase Selected Facets from Polyhedron Item
+    case 3:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+
+      selection_item->erase_selected_facets();
+      break;
+    }
+      //Keep connected components of Selected Facets
+    case 4:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if (!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      selection_item->keep_connected_components();
+      break;
+    }
+    default :
+      break;
+    }
+    return;
   }
 
-  void on_Erase_selected_facets_button_clicked() {
+  void on_ModeBox_changed(int index)
+  {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    if(!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return; 
+    selection_item->on_Ctrlz_pressed();
+    last_mode = index;
+    switch(index)
+    {
+    //Selection mode
+    case 0:
+      ui_widget.selection_groupBox->setVisible(true);
+      ui_widget.edition_groupBox->setVisible(false);
+      Q_EMIT set_operation_mode(-1);
+      on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+      break;
+      //Edition mode
+    case 1:
+      ui_widget.selection_groupBox->setVisible(false);
+      ui_widget.edition_groupBox->setVisible(true);
+      Q_EMIT save_handleType();
+      Q_EMIT set_operation_mode(ui_widget.editionBox->currentIndex());
+      break;
     }
-
-    selection_item->erase_selected_facets();
   }
-  void on_Keep_connected_components_button_clicked() {
+
+  void on_editionBox_changed(int mode )
+  {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    if (!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return;
+    selection_item->on_Ctrlz_pressed();
+    if(ui_widget.modeBox->currentIndex() == 0)
+    {
+      Q_EMIT set_operation_mode(-1);
     }
-    selection_item->keep_connected_components();
-  }
-  void on_Create_polyhedron_item_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    if(!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return; 
+    else
+    {
+      Q_EMIT set_operation_mode(mode);
     }
 
-    Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-    if(selection_item->export_selected_facets_as_polyhedron(poly_item->polyhedron())) {
-      poly_item->setName(QString("%1-facets").arg(selection_item->name()));
-      poly_item->invalidateOpenGLBuffers(); // for init()
-      scene->setSelectedItem( scene->addItem(poly_item) );
-      scene->itemChanged(poly_item);
-    }
-    else {
-      delete poly_item;
-      print_message("Error: polyhedron item is not created!");
-    }
   }
-
   void on_Select_sharp_edges_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if (!selection_item) {
@@ -431,6 +508,7 @@ private:
   Ui::Selection ui_widget;
 typedef std::multimap<Scene_polyhedron_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
+  int last_mode;
 }; // end Polyhedron_demo_selection_plugin
 
 //Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_plugin, Polyhedron_demo_selection_plugin)

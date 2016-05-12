@@ -109,13 +109,13 @@ public Q_SLOTS:
                 double dir_x,
                 double dir_y,
                 double dir_z);
-
     void update_vertex_indices();
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
 
 Q_SIGNALS:
+    void selection_done();
     void selected_vertex(void*);
     void selected_facet(void*);
     void selected_edge(void*);
@@ -149,7 +149,7 @@ private:
         Edges,
         Feature_edges,
         Gouraud_Facets,
-        NbOfVaos = Gouraud_Facets+1
+        NbOfVaos
     };
     enum VBOs {
         Facets_vertices = 0,
@@ -159,7 +159,7 @@ private:
         Feature_edges_vertices,
         Edges_color,
         Facets_normals_gouraud,
-        NbOfVbos = Facets_normals_gouraud+1
+        NbOfVbos
     };
 
     mutable std::vector<float> positions_lines;
@@ -180,10 +180,11 @@ private:
     using CGAL::Three::Scene_item::initializeBuffers;
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(const bool colors_only = false) const;
-    template<typename FaceNormalPmap, typename VertexNormalPmap>
+    template<typename VertexNormalPmap>
     void triangulate_facet(Facet_iterator,
-      const FaceNormalPmap&, const VertexNormalPmap&,
+      const Polyhedron::Traits::Vector_3&, const VertexNormalPmap&,
       const bool colors_only) const;
+    void* get_aabb_tree();
     double volume, area;
 
   int m_min_patch_id; // the min value of the patch ids initialized in init()

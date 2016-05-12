@@ -8,8 +8,6 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
-
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -39,33 +37,190 @@
 #include <boost/container/flat_map.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+//Used to triangulate the AABB_Tree
+class Primitive
+{
+public:
+  // types
+  typedef Polyhedron::Facet_iterator Id; // Id type
+  typedef Kernel::Point_3 Point; // point type
+  typedef Kernel::Triangle_3 Datum; // datum type
 
+private:
+  // member data
+  Id m_it; // iterator
+  Datum m_datum; // 3D triangle
 
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+  // constructor
+public:
+  Primitive() {}
+  Primitive(Datum triangle, Id it)
+    : m_it(it), m_datum(triangle)
+  {
+  }
+public:
+  Id& id() { return m_it; }
+  const Id& id() const { return m_it; }
+  Datum& datum() { return m_datum; }
+  const Datum& datum() const { return m_datum; }
+
+  /// Returns a point on the primitive
+  Point reference_point() const { return m_datum.vertex(0); }
+};
+
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
 
-Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
+typedef Polyhedron::Traits Traits;
+typedef Polyhedron::Facet Facet;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
+struct Face_info {
+    Polyhedron::Halfedge_handle e[3];
+    bool is_external;
+};
+typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
+P_traits>        Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+P_traits>          Fb1;
+typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+typedef CGAL::Exact_predicates_tag                                    Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+TDS,
+Itag>             CDTbase;
+typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+
+//Make sure all the facets are triangles
+typedef Polyhedron::Traits	    Kernel;
+typedef Kernel::Point_3	    Point;
+typedef Kernel::Vector_3	    Vector;
+typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
+QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
+                                                Traits::Vector_3 normal)
 {
-    QVariant aabb_tree_property = item->property(aabb_property_name);
-    if(aabb_tree_property.isValid()) {
-        void* ptr = aabb_tree_property.value<void*>();
-        return static_cast<Input_facets_AABB_tree*>(ptr);
+  //The output list
+  QList<Kernel::Triangle_3> res;
+  //check if normal contains NaN values
+  if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+  {
+    qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
+    return QList<Kernel::Triangle_3>();
+  }
+  P_traits cdt_traits(normal);
+  CDT cdt(cdt_traits);
+
+  Facet::Halfedge_around_facet_circulator
+      he_circ = fit->facet_begin(),
+      he_circ_end(he_circ);
+
+  // Iterates on the vector of facet handles
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
+  CDT::Vertex_handle previous, first;
+  do {
+    CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
+    v2v.insert(std::make_pair(vh, he_circ->vertex()));
+    if(first == 0) {
+      first = vh;
     }
-    else {
-        Polyhedron* poly = item->polyhedron();
-        if(poly) {
-            Input_facets_AABB_tree* tree =
-                    new Input_facets_AABB_tree(faces(*poly).first,
-                                               faces(*poly).second,
-                                               *poly);
-            item->setProperty(aabb_property_name,
-                              QVariant::fromValue<void*>(tree));
-            return tree;
+    vh->info() = he_circ;
+    if(previous != 0 && previous != vh) {
+      cdt.insert_constraint(previous, vh);
+    }
+    previous = vh;
+  } while( ++he_circ != he_circ_end );
+  cdt.insert_constraint(previous, first);
+  // sets mark is_external
+  for(CDT::All_faces_iterator
+      fit2 = cdt.all_faces_begin(),
+      end = cdt.all_faces_end();
+      fit2 != end; ++fit2)
+  {
+    fit2->info().is_external = false;
+  }
+  //check if the facet is external or internal
+  std::queue<CDT::Face_handle> face_queue;
+  face_queue.push(cdt.infinite_vertex()->face());
+  while(! face_queue.empty() ) {
+    CDT::Face_handle fh = face_queue.front();
+    face_queue.pop();
+    if(fh->info().is_external) continue;
+    fh->info().is_external = true;
+    for(int i = 0; i <3; ++i) {
+      if(!cdt.is_constrained(std::make_pair(fh, i)))
+      {
+        face_queue.push(fh->neighbor(i));
+      }
+    }
+  }
+  //iterates on the internal faces to add the vertices to the positions
+  //and the normals to the appropriate vectors
+  for(CDT::Finite_faces_iterator
+      ffit = cdt.finite_faces_begin(),
+      end = cdt.finite_faces_end();
+      ffit != end; ++ffit)
+  {
+    if(ffit->info().is_external)
+      continue;
+
+
+    res << Kernel::Triangle_3(ffit->vertex(0)->point(),
+    ffit->vertex(1)->point(),
+    ffit->vertex(2)->point());
+
+  }
+  return res;
+}
+
+
+
+void* Scene_polyhedron_item::get_aabb_tree()
+{
+  QVariant aabb_tree_property = this->property(aabb_property_name);
+  if(aabb_tree_property.isValid()) {
+    void* ptr = aabb_tree_property.value<void*>();
+    return static_cast<Input_facets_AABB_tree*>(ptr);
+  }
+  else {
+    Polyhedron* poly = this->polyhedron();
+    if(poly) {
+
+      Input_facets_AABB_tree* tree =
+          new Input_facets_AABB_tree();
+      typedef Polyhedron::Traits	    Kernel;
+      int index =0;
+      Q_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
+      {
+        if(!f->is_triangle())
+        {
+          Traits::Vector_3 normal = f->plane().orthogonal_vector(); //initialized in compute_normals_and_vertices
+          index +=3;
+          Q_FOREACH(Kernel::Triangle_3 triangle, triangulate_primitive(f,normal))
+          {
+            Primitive primitive(triangle, f);
+            tree->insert(primitive);
+          }
         }
-        else return 0;
+        else
+        {
+          Kernel::Triangle_3 triangle(
+                f->halfedge()->vertex()->point(),
+                f->halfedge()->next()->vertex()->point(),
+                f->halfedge()->next()->next()->vertex()->point()
+                );
+          Primitive primitive(triangle, f);
+          tree->insert(primitive);
+        }
+      }
+      this->setProperty(aabb_property_name,
+                        QVariant::fromValue<void*>(tree));
+      return tree;
     }
+    else return 0;
+  }
 }
 
 void delete_aabb_tree(Scene_polyhedron_item* item)
@@ -91,38 +246,15 @@ void push_back_xyz(const TypeWithXYZ& t,
   vector.push_back(t.z());
 }
 
-typedef Polyhedron::Traits Traits;
-typedef Polyhedron::Facet Facet;
-typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
-typedef Polyhedron::Halfedge_handle Halfedge_handle;
-struct Face_info {
-    Polyhedron::Halfedge_handle e[3];
-    bool is_external;
-};
-typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
-P_traits>        Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-P_traits>          Fb1;
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::No_intersection_tag                                    Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-TDS,
-Itag>             CDTbase;
-typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
 //Make sure all the facets are triangles
-
-template<typename FaceNormalPmap, typename VertexNormalPmap>
+template<typename VertexNormalPmap>
 void
 Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
-                                         const FaceNormalPmap& fnmap,
+                                         const Traits::Vector_3& normal,
                                          const VertexNormalPmap& vnmap,
                                          const bool colors_only) const
 {
-    //Computes the normal of the facet
-    Traits::Vector_3 normal = get(fnmap, fit);
-
     //check if normal contains NaN values
     if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
     {
@@ -408,11 +540,11 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
     {
       if (f == boost::graph_traits<Polyhedron>::null_face())
         continue;
-
+      Vector nf = get(nf_pmap, f);
+      f->plane() = Kernel::Plane_3(f->halfedge()->vertex()->point(), nf);
       if(is_triangle(f->halfedge(),*poly))
       {
           const int this_patch_id = f->patch_id();
-          Vector n = get(nf_pmap, f);
           HF_circulator he = f->facet_begin();
           HF_circulator end = he;
           CGAL_For_all(he,end)
@@ -427,7 +559,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
               continue;
 
             // If Flat shading:1 normal per polygon added once per vertex
-            push_back_xyz(n, normals_flat);
+            push_back_xyz(nf, normals_flat);
 
             //// If Gouraud shading: 1 normal per vertex
             Vector nv = get(nv_pmap, he->vertex());
@@ -453,8 +585,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
         }
         if (colors_only)
           continue;
-
-        Vector nf = get(nf_pmap, f);
 
         //1st half-quad
         Point p0 = f->halfedge()->vertex()->point();
@@ -512,7 +642,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
       }
       else
       {
-        triangulate_facet(f, nf_pmap, nv_pmap, colors_only);
+        triangulate_facet(f, nf, nv_pmap, colors_only);
       }
 
     }
@@ -576,6 +706,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     nb_lines = 0;
     nb_f_lines = 0;
     invalidate_stats();
+    init();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -1011,107 +1142,94 @@ Scene_polyhedron_item::select(double orig_x,
                               double dir_y,
                               double dir_z)
 {
-    if(facet_picking_m) {
-        typedef Input_facets_AABB_tree Tree;
-        typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+  void* vertex_to_emit = 0;
+  if(facet_picking_m) {
+    typedef Input_facets_AABB_tree Tree;
 
-        Tree* aabb_tree = get_aabb_tree(this);
-        if(aabb_tree) {
-            const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
-            const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
-            const Kernel::Ray_3 ray(ray_origin, ray_dir);
-            typedef std::list<Object_and_primitive_id> Intersections;
-            Intersections intersections;
-            aabb_tree->all_intersections(ray, std::back_inserter(intersections));
-            Intersections::iterator closest = intersections.begin();
-            if(closest != intersections.end()) {
-                const Kernel::Point_3* closest_point =
-                        CGAL::object_cast<Kernel::Point_3>(&closest->first);
-                for(Intersections::iterator
-                    it = boost::next(intersections.begin()),
-                    end = intersections.end();
-                    it != end; ++it)
-                {
-                    if(! closest_point) {
-                        closest = it;
-                    }
-                    else {
-                        const Kernel::Point_3* it_point =
-                                CGAL::object_cast<Kernel::Point_3>(&it->first);
-                        if(it_point &&
-                                (ray_dir * (*it_point - *closest_point)) < 0)
-                        {
-                            closest = it;
-                            closest_point = it_point;
-                        }
-                    }
-                }
-                if(closest_point) {
-                    Polyhedron::Facet_handle selected_fh = closest->second;
 
-                    // The computation of the nearest vertex may be costly.  Only
-                    // do it if some objects are connected to the signal
-                    // 'selected_vertex'.
-                    if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0)
-                    {
-                        Polyhedron::Halfedge_around_facet_circulator
-                                he_it = selected_fh->facet_begin(),
-                                around_end = he_it;
+    Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(get_aabb_tree());
+    if(aabb_tree) {
+      const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
+      const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
+      const Kernel::Ray_3 ray(ray_origin, ray_dir);
+      const boost::optional< Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type >
+      variant = aabb_tree->first_intersection(ray);
+      if(variant)
+      {
+        const Kernel::Point_3* closest_point = boost::get<Kernel::Point_3>( &variant->first );
+        if(closest_point) {
+          Polyhedron::Facet_handle selected_fh = variant->second;
+          // The computation of the nearest vertex may be costly.  Only
+          // do it if some objects are connected to the signal
+          // 'selected_vertex'.
+          if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0)
+          {
+            Polyhedron::Halfedge_around_facet_circulator
+                he_it = selected_fh->facet_begin(),
+                around_end = he_it;
 
-                        Polyhedron::Vertex_handle v = he_it->vertex(), nearest_v = v;
+            Polyhedron::Vertex_handle v = he_it->vertex(), nearest_v = v;
 
-                        Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
-                                                                    v->point());
-                        while(++he_it != around_end) {
-                            v = he_it->vertex();
-                            Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
-                                                                            v->point());
-                            if(new_sq_dist < sq_dist) {
-                                sq_dist = new_sq_dist;
-                                nearest_v = v;
-                            }
-                        }
-                        //bottleneck
-            Q_EMIT selected_vertex((void*)(&*nearest_v));
-                    }
+            Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+                                                        v->point());
+            while(++he_it != around_end) {
+              v = he_it->vertex();
+              Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                                                              v->point());
+              if(new_sq_dist < sq_dist) {
+                sq_dist = new_sq_dist;
+                nearest_v = v;
+              }
+            }
+          vertex_to_emit = (void*)(&*nearest_v);
+          }
 
-                    if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
+          if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
                             || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0)
-                    {
-                        Polyhedron::Halfedge_around_facet_circulator
-                                he_it = selected_fh->facet_begin(),
-                                around_end = he_it;
+          {
+            Polyhedron::Halfedge_around_facet_circulator
+                he_it = selected_fh->facet_begin(),
+                around_end = he_it;
 
-                        Polyhedron::Halfedge_handle nearest_h = he_it;
-                        Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
-                                                                    Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+            Polyhedron::Halfedge_handle nearest_h = he_it;
+            Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+                                                        Kernel::Segment_3(he_it->vertex()->point(),
+                                                                          he_it->opposite()->
+                                                                          vertex()->
+                                                                          point()));
 
-                        while(++he_it != around_end) {
-                            Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
-                                                                            Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
-                            if(new_sq_dist < sq_dist) {
-                                sq_dist = new_sq_dist;
-                                nearest_h = he_it;
-                            }
-                        }
+            while(++he_it != around_end)
+            {
+              Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                                                              Kernel::Segment_3(he_it->vertex()->point(),
+                                                                                he_it->opposite()->
+                                                                                vertex()->
+                                                                                point()));
+              if(new_sq_dist < sq_dist) {
+                sq_dist = new_sq_dist;
+                nearest_h = he_it;
+              }
+            }
 
             Q_EMIT selected_halfedge((void*)(&*nearest_h));
             Q_EMIT selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
-                    }
-
+          }
+            Q_EMIT selected_vertex(vertex_to_emit);
           Q_EMIT selected_facet((void*)(&*selected_fh));
-                    if(erase_next_picked_facet_m) {
-                        polyhedron()->erase_facet(selected_fh->halfedge());
-                        polyhedron()->normalize_border();
-                        //set_erase_next_picked_facet(false);
-                        invalidateOpenGLBuffers();
+
+          if(erase_next_picked_facet_m) {
+            polyhedron()->erase_facet(selected_fh->halfedge());
+            polyhedron()->normalize_border();
+            //set_erase_next_picked_facet(false);
+            invalidateOpenGLBuffers();
             Q_EMIT itemChanged();
-                    }
-                }
-            }
+          }
         }
+      }
     }
-    Base::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
+  }
+  Base::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
+  Q_EMIT selection_done();
 }
 
 void Scene_polyhedron_item::update_vertex_indices()
