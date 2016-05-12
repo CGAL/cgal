@@ -101,7 +101,7 @@
                 </item>
                 <item>
                  <property name="text">
-                  <string>Selected components (facet)</string>
+                  <string>Connected components (facet)</string>
                  </property>
                 </item>
                </widget>

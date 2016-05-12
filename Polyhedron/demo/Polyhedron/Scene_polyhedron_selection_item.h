@@ -180,6 +180,7 @@ public:
   typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
   typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
   typedef Polyhedron::Vertex_iterator Vertex_iterator;
   typedef Polyhedron::Facet_iterator  Facet_iterator;
@@ -1101,6 +1102,9 @@ private:
 
   ManipulatedFrame *manipulated_frame;
   bool ready_to_move;
+
+  bool canAddFace(Halfedge_handle hc, Halfedge_handle t);
+  bool canAddFaceAndVertex(Halfedge_handle hc, Halfedge_handle t);
 };
 
 #endif
