@@ -33,7 +33,7 @@ public:
     scene = scene_interface;
     actionOutlierRemoval = new QAction(tr("Point Set Outliers Selection"), mainWindow);
     actionOutlierRemoval->setObjectName("actionOutlierRemoval");
-
+    autoConnectActions();
   }
   
   //! Applicate for Point_sets with normals.

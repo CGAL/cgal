@@ -50,6 +50,7 @@ public:
     scene = scene_interface;
     actionDetect = new QAction(tr("Point Set Shape Detection"), mainWindow);
     actionDetect->setObjectName("actionDetect");
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {

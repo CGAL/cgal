@@ -39,7 +39,7 @@ public:
     mw = mainWindow;
     actionAverageSpacing = new QAction(tr("Point Set Average Spacing"), mainWindow);
     actionAverageSpacing->setObjectName("actionAverageSpacing");
-
+    autoConnectActions();
   }
 
   QList<QAction*> actions() const {

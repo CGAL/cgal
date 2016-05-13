@@ -22,8 +22,6 @@
 // File Description : 
 //******************************************************************************
 
-//#include <CGAL_demo/Plugin_interface.h>
-//#include <CGAL_demo/Plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
@@ -129,7 +127,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Mes
     {
       menuFile->insertAction(actionAfterLoad,actionLoadFunction);      
     }
-    
+
   }
 }
 

@@ -35,16 +35,10 @@ public:
     this->messages = m;
 
     actionRemoveIsolatedVertices = new QAction(tr("Remove Isolated Vertices"), mw);
-    if (actionRemoveIsolatedVertices){
-      connect(actionRemoveIsolatedVertices, SIGNAL(triggered()),
-              this, SLOT(on_actionRemoveIsolatedVertices_triggered()));
-    }
-
     actionRemoveDegenerateFaces = new QAction(tr("Remove Degenerate Faces"), mw);
-    if (actionRemoveDegenerateFaces){
-      connect(actionRemoveDegenerateFaces, SIGNAL(triggered()),
-        this, SLOT(on_actionRemoveDegenerateFaces_triggered()));
-    }
+    actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
+    actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
+    autoConnectActions();
   }
 
   QList<QAction*> actions() const

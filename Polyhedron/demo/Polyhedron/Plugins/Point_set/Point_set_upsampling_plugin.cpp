@@ -39,6 +39,7 @@ public:
     scene = scene_interface;
     actionEdgeAwareUpsampling = new QAction(tr("Point Set Edge Aware Upsampling"), mainWindow);
     actionEdgeAwareUpsampling->setObjectName("actionEdgeAwareUpsampling");
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {

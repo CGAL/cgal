@@ -472,6 +472,7 @@ public:
     scene = scene_interface;
     actionSurfaceReconstruction = new QAction(tr("Surface Reconstruction"), mainWindow);
     actionSurfaceReconstruction->setObjectName("actionSurfaceReconstruction");
+    autoConnectActions();
 
   }
 

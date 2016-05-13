@@ -79,7 +79,11 @@ public:
    * Adds a dock widget in the left section of the MainWindow. If the slot is already taken, the dock widgets will be tabified.
    */
   void addDockWidget(QDockWidget* dock);
-  
+  /*! \brief Automatically connects each action of the plugin to the corresponding slot.
+   *
+   * All actions in actions() must have their slot name on_ActionsName_triggered().
+   */
+  void autoConnectActions();
 protected:
   //!The reference to the scene
   CGAL::Three::Scene_interface* scene;

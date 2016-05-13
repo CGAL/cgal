@@ -27,7 +27,7 @@ public:
     scene = scene_interface;
     actionDetectFeatures= new QAction(tr("VCM Features Estimation"), mainWindow);
     actionDetectFeatures->setObjectName("actionDetectFeatures");
-
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {

@@ -48,18 +48,14 @@ public:
       QAction* actionMVC = new QAction("Mean Value Coordinates", mw);
       QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
       QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
+      actionMVC->setObjectName("actionMVC");
+      actionDCP->setObjectName("actionDCP");
+      actionLSC->setObjectName("actionLSC");
 
-
-
-      connect(actionMVC, SIGNAL(triggered()),
-              this, SLOT(on_actionMVC_triggered()));
-      connect(actionDCP, SIGNAL(triggered()),
-              this, SLOT(on_actionDCP_triggered()));
-      connect(actionLSC, SIGNAL(triggered()),
-              this, SLOT(on_actionLSC_triggered()));
       _actions << actionMVC
                << actionDCP
                << actionLSC;
+      autoConnectActions();
       Q_FOREACH(QAction *action, _actions)
         action->setProperty("subMenuName",
                             "Triangulated Surface Mesh Parameterization");

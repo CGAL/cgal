@@ -35,6 +35,7 @@ public:
     scene = scene_interface;
     actionJetSmoothing = new QAction(tr("Point Set Jet Smoothing"), mainWindow);
     actionJetSmoothing->setObjectName("actionJetSmoothing");
+    autoConnectActions();
   }
 
   QList<QAction*> actions() const {
