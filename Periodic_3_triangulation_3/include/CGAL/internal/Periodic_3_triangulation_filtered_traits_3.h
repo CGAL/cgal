@@ -21,8 +21,8 @@
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
 
-#ifndef CGAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
-#define CGAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
+#ifndef CGAL_INTERNAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
+#define CGAL_INTERNAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
 
 #include <string>
 #include <CGAL/basic.h>
@@ -207,4 +207,4 @@ class Periodic_3_triangulation_filtered_traits_3<K, Off, false>
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
+#endif // CGAL_INTERNAL_PERIODIC_3_TRIANGULATION_FILTERED_TRAITS_3_H
