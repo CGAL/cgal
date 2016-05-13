@@ -664,7 +664,13 @@ public:
         if (h->is_border()) h=h->opposite();
         if ( !interior_vertices.count(h->vertex()) )
         {
-          CGAL_assertion( h->next()->is_border() );//we marked it above!
+          // look for the halfedge belonging to patch_border_halfedge
+          // having the prev pointer not correctly set
+          Halfedge_handle next=h->next();
+          while(!next->is_border())
+            next=next->opposite()->next();
+          CGAL_assertion( next->is_border() );//we marked it above!
+          // now update the prev pointer
           Halfedge_handle prev=h->opposite()->prev();
           prev->HBase::set_next(h->next());
           decorator.set_prev(h->next(),prev);
