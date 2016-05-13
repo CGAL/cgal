@@ -40,8 +40,8 @@ public:
 
   Scene_surface_mesh_item* clone() const;
   void draw(CGAL::Three::Viewer_interface *) const;
-  void draw_edges(CGAL::Three::Viewer_interface *) const;
-  void draw_points(CGAL::Three::Viewer_interface *) const;
+  void drawEdges(CGAL::Three::Viewer_interface *) const;
+  void drawPoints(CGAL::Three::Viewer_interface *) const;
 
   bool supportsRenderingMode(RenderingMode m) const;
   bool isFinite() const { return true; }

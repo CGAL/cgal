@@ -347,7 +347,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   glShadeModel(GL_SMOOTH);
   if(!are_buffers_filled)
     initializeBuffers(viewer);
-  attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+  attribBuffers(viewer, PROGRAM_WITH_LIGHT);
   program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
   program->bind();
 
@@ -381,11 +381,11 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   program->release();
 }
 
-void Scene_surface_mesh_item::draw_edges(CGAL::Three::Viewer_interface *viewer) const
+void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) const
 {
  if(!are_buffers_filled)
    initializeBuffers(viewer);
- attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+ attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
  program->bind();
  vaos[Edges]->bind();
@@ -400,7 +400,7 @@ void Scene_surface_mesh_item::draw_edges(CGAL::Three::Viewer_interface *viewer) 
  program->release();
 }
 
-void Scene_surface_mesh_item::draw_points(CGAL::Three::Viewer_interface *) const
+void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *) const
 {
 
 }
