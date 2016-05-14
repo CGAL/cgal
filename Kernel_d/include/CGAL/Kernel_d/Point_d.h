@@ -93,6 +93,14 @@ public:
   Self& operator-=(const Vector_d<R>& v)
   { return static_cast<Self&>(Base::operator-=(v)); }
   
+  inline bool operator<(const Self& q) const
+  { return R().less_lexicographically_d_object()(*this, q); }
+  inline bool operator>(const Self& q) const
+  { return R().less_lexicographically_d_object()(q, *this); }
+  inline bool operator<=(const Self& q) const
+  { return ! R().less_lexicographically_d_object()(q, *this); }
+  inline bool operator>=(const Self& q) const
+  { return ! R().less_lexicographically_d_object()(*this, q); }
 };
 
 } //namespace CGAL

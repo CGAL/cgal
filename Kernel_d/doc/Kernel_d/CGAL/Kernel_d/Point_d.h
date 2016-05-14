@@ -241,6 +241,38 @@ the origin.
 */ 
 bool operator==(const Origin&) ; 
 
+/*!
+returns true iff `p` is lexicographically
+smaller than `q` with respect to %Cartesian
+lexicographic order of points.
+\pre `p.dimension() == q.dimension()`.
+*/
+bool operator<(const Point_d<Kernel>& q);
+
+/*!
+returns true iff `p` is lexicographically
+greater than `q` with respect to %Cartesian
+lexicographic order of points.
+\pre `p.dimension() == q.dimension()`.
+*/
+bool operator>(const Point_d<Kernel>& q);
+
+/*!
+returns true iff `p` is lexicographically
+smaller than or equal to `q` with respect to %Cartesian
+lexicographic order of points.
+\pre `p.dimension() == q.dimension()`.
+*/
+bool operator<=(const Point_d<Kernel>& q);
+
+/*!
+returns true iff `p` is lexicographically
+greater than or equal to `q` with respect to %Cartesian
+lexicographic order of points.
+\pre `p.dimension() == q.dimension()`.
+*/
+bool operator>=(const Point_d<Kernel>& q);
+
 /// @}
 
 }; /* end Point_d */
