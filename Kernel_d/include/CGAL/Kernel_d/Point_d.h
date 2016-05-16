@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Seel
 
@@ -61,11 +61,11 @@ public:
   Point_d(int d=0) : Base(d) {}
   Point_d(int d, const Origin &o) : Base(d,o) {}
 
-  Point_d(int a, int b, int c = 1) : 
-    Base(RT(a),RT(b),RT(c)) {} 
+  Point_d(int a, int b, int c = 1) :
+    Base(RT(a),RT(b),RT(c)) {}
   Point_d(const RT& a, const RT& b, const RT& c = 1) :
-    Base(a,b,c) {}  
-  Point_d(int a, int b, int c, int d) : 
+    Base(a,b,c) {}
+  Point_d(int a, int b, int c, int d) :
     Base(RT(a),RT(b),RT(c),RT(d)) {}
   Point_d(const RT& a, const RT& b, const RT& c, const RT& d) :
     Base(a,b,c,d) {}
@@ -79,8 +79,8 @@ public:
 
   Point_d(const Self &p) : Base(p) {}
   Point_d(const Base& p) : Base(p) {}
- 
-  Vector_d<R> operator-(const Origin& o) const 
+
+  Vector_d<R> operator-(const Origin& o) const
   { return Base::operator-(o); }
   Vector_d<R> operator-(const Self& q) const
   { return Base::operator-(q); }
@@ -88,11 +88,19 @@ public:
   { return Base::operator+(v); }
   Self operator-(const Vector_d<R>& v) const
   { return Base::operator-(v); }
-  Self& operator+=(const Vector_d<R>& v) 
+  Self& operator+=(const Vector_d<R>& v)
   { return static_cast<Self&>(Base::operator+=(v)); }
   Self& operator-=(const Vector_d<R>& v)
   { return static_cast<Self&>(Base::operator-=(v)); }
-  
+
+  inline bool operator<(const Self& q) const
+  { return R().less_lexicographically_d_object()(*this, q); }
+  inline bool operator>(const Self& q) const
+  { return R().less_lexicographically_d_object()(q, *this); }
+  inline bool operator<=(const Self& q) const
+  { return ! R().less_lexicographically_d_object()(q, *this); }
+  inline bool operator>=(const Self& q) const
+  { return ! R().less_lexicographically_d_object()(*this, q); }
 };
 
 } //namespace CGAL
