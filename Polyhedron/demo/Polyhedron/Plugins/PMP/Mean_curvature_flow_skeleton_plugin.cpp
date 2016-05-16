@@ -148,6 +148,7 @@ public:
     connect(ui->pushButton_segment, SIGNAL(clicked()),
             this, SLOT(on_actionSegment()));
 
+    autoConnectActions();
     QObject* scene_object = dynamic_cast<QObject*>(scene);
     connect(scene_object, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
             this, SLOT(on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item*)));

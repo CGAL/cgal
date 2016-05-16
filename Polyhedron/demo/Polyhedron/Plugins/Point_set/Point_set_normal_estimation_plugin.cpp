@@ -54,7 +54,7 @@ public:
 
     actionNormalInversion = new QAction(tr("Point Set Inverse Normal Orientations"), mainWindow);
     actionNormalInversion->setObjectName("actionNormalInversion");
-    
+    autoConnectActions();
   }
 
   QList<QAction*> actions() const {

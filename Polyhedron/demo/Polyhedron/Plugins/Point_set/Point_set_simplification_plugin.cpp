@@ -43,6 +43,7 @@ public:
     scene = scene_interface;
     actionSimplify = new QAction(tr("Point Set Simplification Selection"), mainWindow);
     actionSimplify->setObjectName("actionSimplify");
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {

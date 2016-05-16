@@ -56,6 +56,7 @@ public:
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing");
     actionDetectBorders->setProperty("subMenuName", "Polygon Mesh Processing");
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {

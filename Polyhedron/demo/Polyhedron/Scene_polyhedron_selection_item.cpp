@@ -874,7 +874,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
 
 //returns true if halfedge's facet's degree >= degree
 
-int facet_degree(Halfedge_handle h)
+std::size_t facet_degree(Halfedge_handle h)
 {
   if(h->is_border())
   {

@@ -40,6 +40,7 @@ public:
     scene = scene_interface;
     actionSimplifyAndRegularize = new QAction(tr("Point Set WLOP Simplification and Regularization Selection"), mainWindow);
     actionSimplifyAndRegularize->setObjectName("actionSimplifyAndRegularize");
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {

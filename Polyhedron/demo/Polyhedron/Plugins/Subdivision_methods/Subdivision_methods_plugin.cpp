@@ -31,22 +31,15 @@ public:
       QAction *actionLoop = new QAction("Loop", mw);
       QAction *actionCatmullClark = new QAction("Catmull Clark", mw);
       QAction *actionSqrt3 = new QAction("Sqrt3", mw);
-
-      connect(actionLoop, SIGNAL(triggered()),
-              this, SLOT(on_actionLoop_triggered()));
-
-      connect(actionCatmullClark, SIGNAL(triggered()),
-              this, SLOT(on_actionCatmullClark_triggered()));
-
-      connect(actionSqrt3, SIGNAL(triggered()),
-              this, SLOT(on_actionSqrt3_triggered()));
-
+      actionLoop->setObjectName("actionLoop");
+      actionCatmullClark->setObjectName("actionCatmullClark");
+      actionSqrt3->setObjectName("actionSqrt3");
       _actions << actionLoop
                << actionCatmullClark
                << actionSqrt3;
       Q_FOREACH(QAction* action, _actions)
         action->setProperty("subMenuName", "3D Surface Subdivision Methods");
-
+      autoConnectActions();
 
   }
 

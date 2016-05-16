@@ -89,8 +89,7 @@ public:
 
     actionMakeShortestPaths = new QAction("Make Shortest Path", this->mw);
     actionMakeShortestPaths->setProperty("subMenuName", "Triangulated Surface Mesh Shortest Paths");
-
-    connect(actionMakeShortestPaths, SIGNAL(triggered()), this, SLOT(on_actionMakeShortestPaths_triggered()));
+    actionMakeShortestPaths->setObjectName("actionMakeShortestPaths");
 
     Scene* trueScene = dynamic_cast<Scene*>(scene_interface);
     // This is for later
@@ -98,6 +97,7 @@ public:
         connect(trueScene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
         connect(trueScene, SIGNAL(newItem(int)), this, SLOT(new_item(int)));
     }
+    autoConnectActions();
   }
 
   virtual void closure()

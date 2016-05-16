@@ -40,7 +40,7 @@ public:
     scene = scene_interface;
     actionBilateralSmoothing = new QAction(tr("Point Set Bilateral Smoothing"), mainWindow);
     actionBilateralSmoothing->setObjectName("actionBilateralSmoothing");
-
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {
