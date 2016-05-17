@@ -1088,7 +1088,19 @@ private:
           return false;//too many cases to be handled
         else if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
           return false;//collapse would induce pinching the selection
-        else return true;
+        else if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
+        {
+          if (is_on_patch_border(next_on_patch_border(next(he, mesh_)))
+            && is_on_patch_border(prev_on_patch_border(prev(hopp, mesh_))))
+            return false;
+        }
+        else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(he, mesh_)))
+        {
+          if (is_on_patch_border(next_on_patch_border(next(hopp, mesh_)))
+            && is_on_patch_border(prev_on_patch_border(prev(he, mesh_))))
+            return false;
+        }
+        return true;
       }
       else if (is_on_patch_border(he))
         return is_collapse_allowed_on_patch_border(he);
@@ -1114,6 +1126,48 @@ private:
       }
       CGAL_assertion(is_on_mesh(hopp) || is_on_border(hopp));
       return true;//we already checked we're not pinching a hole in the patch
+    }
+
+    halfedge_descriptor next_on_patch_border(const halfedge_descriptor& h) const
+    {
+      CGAL_precondition(is_on_patch_border(h));
+
+      halfedge_descriptor end = opposite(h, mesh_);
+      halfedge_descriptor nxt = next(h, mesh_);
+      do
+      {
+        if (is_on_patch_border(nxt))
+        { 
+          CGAL_assertion(patch_ids_map_[nxt] == patch_ids_map_[face(h, mesh_));
+          return nxt;
+        }
+        nxt = next(opposite(nxt, mesh_), mesh_);
+      }
+      while (end != nxt);
+
+      CGAL_assertion(is_on_patch_border(end));
+      return end;
+    }
+
+    halfedge_descriptor prev_on_patch_border(const halfedge_descriptor& h) const
+    {
+      CGAL_precondition(is_on_patch_border(h));
+
+      halfedge_descriptor end = opposite(h, mesh_);
+      halfedge_descriptor prv = prev(h, mesh_);
+      do
+      {
+        if (is_on_patch_border(prv))
+        {
+          CGAL_assertion(patch_ids_map_[prv] == patch_ids_map_[face(h, mesh_));
+          return prv;
+        }
+        prv = prev(opposite(prv, mesh_), mesh_);
+      }
+      while (end != prv);
+
+      CGAL_assertion(is_on_patch_border(end));
+      return end;
     }
 
     bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
