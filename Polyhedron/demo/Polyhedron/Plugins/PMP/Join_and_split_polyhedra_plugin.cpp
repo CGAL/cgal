@@ -9,6 +9,7 @@
 #include "Messages_interface.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <CGAL/Polyhedron_copy_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -23,7 +24,7 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_join_and_split_polyhedra_plugin:
   public QObject,
-  public Polyhedron_demo_plugin_interface
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
@@ -35,8 +36,10 @@ public:
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
+    mw = mainWindow;
     scene = scene_interface;
     msg_interface = m;
+
     actionJoinPolyhedra= new QAction(tr("Join Selected Polyhedra"), mainWindow);
     actionJoinPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
@@ -48,6 +51,8 @@ public:
     actionColorConnectedComponents = new QAction(tr("Color Each Connected Component"), mainWindow);
     actionColorConnectedComponents ->setProperty("subMenuName", "Polygon Mesh Processing");
     actionColorConnectedComponents->setObjectName("actionColorConnectedComponents");
+
+    autoConnectActions();
   }
 
   bool applicable(QAction* a) const
@@ -205,6 +210,8 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         boost::vector_property_map<int,
           boost::property_map<Polyhedron, boost::face_external_index_t>::type>
           fccmap(fim);
+
+        std::cout << "color CC" << std::endl;
 
         PMP::connected_components(pmesh
           , fccmap
