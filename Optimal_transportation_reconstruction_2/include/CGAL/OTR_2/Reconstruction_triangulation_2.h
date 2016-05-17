@@ -791,10 +791,12 @@ public:
       pt, geom_traits().construct_vector_2_object()(pt, ps));
 
     FT Dqt = (std::numeric_limits<FT>::max)();
-    CGAL::Object result = CGAL::intersection(lab, lts);
-    const Point* iq = CGAL::object_cast<Point>(&result);
-    if (iq)
-      Dqt = CGAL::sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
+
+    typename CGAL::cpp11::result_of<typename Traits_::Intersect_2(Line, Line)>::type
+      result = intersection(lab, lts);
+    if (result)
+      if (const Point* iq = boost::get<Point>(&*result))
+        Dqt = CGAL::sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
 
     if (Dabt < FT(0))
       Dqt = -Dqt;
