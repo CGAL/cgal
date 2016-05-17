@@ -1119,6 +1119,7 @@ private:
 #ifdef CGAL_PSP3_VERBOSE
             std::cerr << "Warning: bad plane/plane intersection" << std::endl;
 #endif
+            m_corners[i].active = false;
             continue;
           }
         else
@@ -1129,6 +1130,7 @@ private:
 #ifdef CGAL_PSP3_VERBOSE
                 std::cerr << "Warning: bad plane/line intersection" << std::endl;
 #endif
+                m_corners[i].active = false;
                 continue;
               }
           }
@@ -1184,7 +1186,7 @@ private:
           continue;
 
         int count_plane_number=3;
-          
+        
         for (std::size_t kb = k + 1; kb < m_corners.size(); ++ kb)
           {
             if (!(m_corners[kb].active))
