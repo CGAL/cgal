@@ -118,7 +118,7 @@ public:
   typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
   typedef OTR_2::Sample_with_priority<Sample_> PSample;
-  typedef std::priority_queue<PSample, std::vector<PSample>,
+  typedef std::priority_queue<PSample, std::deque<PSample>,
       OTR_2::greater_priority<PSample> > SQueue;
 
   typedef Reconstruction_edge_2<FT, Edge, 
@@ -716,12 +716,12 @@ public:
   }
 
   FT compute_distance2(const Point& query, const Segment& segment) const {
-    Line line = geom_traits().construct_line_2_object()(segment);
-    if (geom_traits().has_on_2_object()(line, query))
+
+    if (geom_traits().orientation_2_object()(segment.source(), segment.target(), query) == COLLINEAR)
       return FT(0);
 
-    Point proj = geom_traits().construct_projected_point_2_object()(line, query);
-    return geom_traits().compute_squared_distance_2_object()(query, proj);
+    Line line = geom_traits().construct_line_2_object()(segment);
+    return geom_traits().compute_squared_distance_2_object()(query, line);
   }
 
   FT compute_coordinate(const Point& q, const Segment& segment) const {
