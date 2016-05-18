@@ -184,9 +184,8 @@ public Q_SLOTS:
   void setSelectedItemIndex(int i)
   {
     selected_item = i;
-    Q_EMIT selectionChanged(i);
   }
-  //! Same as setSelectedItemIndex.
+  //! Clears the current selection then sets the selected item to the target index.
   void setSelectedItem(int i )
   {
     selected_item = i;
