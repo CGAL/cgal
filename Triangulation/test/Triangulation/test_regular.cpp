@@ -29,8 +29,6 @@ void test(const int d, const string & type, const int N)
   assert(rt.empty());
 
   vector<Point> points;
-  //CGAL::Random rng;
-  //Random_points_iterator rand_it(d, 2.0, rng); // CJTODO: unused
 
   srand(10);
   for( int i = 0; i < N; ++i )
@@ -40,7 +38,7 @@ void test(const int d, const string & type, const int N)
       coords[j] = static_cast<double>(rand() % 100000)/10000;
     points.push_back(Point(
       Bare_point(d, coords.begin(), coords.end()), 
-      /*static_cast<double>(rand() % 100000)/100000*/static_cast<double>(i)/20
+      static_cast<double>(rand() % 100000)/100000
     ));
   }
   rt.insert(points.begin(),  points.end());
