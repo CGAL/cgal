@@ -29,6 +29,7 @@ public:
     bool isFinite() const { return true; }
     bool isEmpty() const;
     void compute_bbox() const;
+    Bbox bbox() const;
 
     Scene_polylines_item* clone() const;
 

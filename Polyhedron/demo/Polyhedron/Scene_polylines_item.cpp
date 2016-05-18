@@ -226,6 +226,13 @@ Scene_polylines_item::compute_bbox() const {
                 bbox.zmax());
 }
 
+Scene_item::Bbox Scene_polylines_item::bbox() const
+{
+  if(!is_bbox_computed)
+      compute_bbox();
+  is_bbox_computed = true;
+  return _bbox;
+}
 Scene_polylines_item* 
 Scene_polylines_item::clone() const {
     Scene_polylines_item* item = new Scene_polylines_item;
