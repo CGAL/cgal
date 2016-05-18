@@ -107,7 +107,8 @@ void go(const int N)
 {
   //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK;
   typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
-  typedef CGAL::Regular_triangulation<CGAL::Regular_triangulation_euclidean_traits<FK> > Triangulation;
+  typedef CGAL::Regular_triangulation<
+    CGAL::Regular_triangulation_euclidean_traits<FK> > Triangulation;
   //test<Triangulation>(D, "dynamic", N);
   test<Triangulation>(D, "static", N);
 }
