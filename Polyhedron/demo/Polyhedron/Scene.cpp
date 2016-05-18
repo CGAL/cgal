@@ -337,6 +337,15 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(index == selected_item || selected_items_list.contains(index))
+        {
+            item.selection_changed(true);
+        }
+        else
+
+        {
+            item.selection_changed(false);
+        }
         if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
@@ -349,16 +358,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 viewer->glEnable(GL_LIGHTING);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item || selected_items_list.contains(index))
-                {
-                    item.selection_changed(true);
-                }
-                else
-
-                {
-                    item.selection_changed(false);
-                }
-
                 if(item.renderingMode() == Gouraud)
                     viewer->glShadeModel(GL_SMOOTH);
                 else
@@ -387,6 +386,15 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(index == selected_item || selected_items_list.contains(index))
+        {
+            item.selection_changed(true);
+        }
+        else
+        {
+            item.selection_changed(false);
+        }
+
         if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
@@ -402,16 +410,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 viewer->glDisable(GL_LIGHTING);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item || selected_items_list.contains(index))
-                {
-                    item.selection_changed(true);
-                }
-                else
-                {
-                    item.selection_changed(false);
-                }
-
-
 
                 if(viewer)
                     item.drawEdges(viewer);
