@@ -10,15 +10,15 @@ namespace CGAL {
 \section sec_CBS_Introduction Introduction
 
 This chapter describes the package for constructing two kinds of cone-based spanners:
-Yao graph and Theta graph, given a set of vertices on the plane and the directions of cone boundaries. 
+<i>Yao graph</i> and <i>Theta graph</i>, given a set of vertices on the plane and the directions of cone boundaries. 
 Both exact and inexact constructions are supported.
 In exact construction, the cone boundaries are calculated using roots of polynomials,
 which achieves the exactness by avoiding using \f$ \pi \f$ in the computation.
-In inexact construction, the cone boundaries are calculated with an approximate
-\f$ \pi \f$ value, which uses the constant `CGAL_PI`  and is still accurate 
-enough for most applications. 
+In inexact construction, the cone boundaries are calculated with a floating point
+approximation of \f$ \pi \f$ value and is still accurate
+enough for most applications.
 Moreover, for visualization purpose, this chapter describes a global function 
-that, given a constructed graph as input, can generate the data and script files for Gnuplot
+that, given a constructed graph as input, can generate the data and script files for \gnuplot
 to plot that graph.
  
 \section sec_CBS_mydefinitions Definitions
@@ -49,10 +49,10 @@ Cones and an example of Yao Graph with \f$k=5\f$.
 \cgalFigureEnd
 
 Similar to Yao graph, the directed or undirected Theta Graph is also obtained by letting each 
-vertex \f$u \in V\f$ select a 'closest' vertex in each of its cones to have an edge. 
-The only difference is that 'closest' in Theta Graph means the smallest projection distance 
+vertex \f$u \in V\f$ select a <i>closest</i> vertex in each of its cones to have an edge. 
+The only difference is that <i>closest</i> in Theta Graph means the smallest projection distance 
 onto the bisector of that cone, not the direct Euclidean distance. For instance, 
-in \cgalFigureRef{f-theta}, vertex \f$u\f$'s 'closest' vertex will be vertex \f$b\f$. 
+in \cgalFigureRef{f-theta}, vertex \f$u\f$'s <i>closest</i> vertex will be vertex \f$b\f$. 
 
 \cgalFigureBegin{f-theta, BisectorInThetaGraph.jpg}
 The bisector in a cone of a Theta Graph.
@@ -68,8 +68,8 @@ This package provides the following template functors:
 - `Construct_yao_graph_2`: The functor for constructing Yao graphs given a set of vertices 
   on the plane. 
 
-In addition to the these functors, for visualizing the constructed graphs, this package provides a global function 
-called `gnuplot_output_2()` to output a `boost::adjacency_list` data structure to Gnuplot data and script files.
+In addition to these functors, for visualizing the constructed graphs, this package provides a global function 
+called `CGAL::gnuplot_output_2()` to output a `boost::adjacency_list` data structure to \gnuplot data and script files.
 Below, we detail the design and the usage of the above functors and function.
 
 \subsection subsec_CBS_cone Computing Cone Boundaries
@@ -138,21 +138,20 @@ to the further processing of the constructed graphs, since BGL includes most com
 Note that BGL altogether provides two template classes for representing graphs: 
 `boost::adjacency_list` and `boost::adjacency_matrix`, with the former suitable for 
 sparse graphs and the latter suitable for dense graphs. While cone-based spanners
-are sparse graphs and the interfaces provided by `boost::adjacency_list` and `boost::adjaceny_matrix`
+are sparse graphs and the interfaces provided by `boost::adjacency_list` and `boost::adjacency_matrix`
 are different, our package only supports `boost::adjacency_list`.
 
 Note that there are seven template parameters for `boost::adjacency_list` in BGL: `OutEdgeList`, `VertexList`, 
 `Directed`, `VertexProperties`, `EdgeProperties`, `GraphProperties`, `EdgeList`, 
 of which we require `VertexProperties` to be `Traits::Point_2`, 
 and other parameters can be chosen freely. 
-Also note that, here we make `Point_2` passed
-directly as bundled properties to `boost::adjacency_list`, because this makes our implementation of this 
-package more straightforward than using property maps from BGL. For detailed information about 
-bundled properties, please refer to http://www.boost.org/doc/libs/1_58_0/libs/graph/doc/bundles.html.
+Also note that, here we pass `Point_2` directly as 
+<a href="http://www.boost.org/doc/libs/release/libs/graph/doc/bundles.html"><i>bundled properties</i></a>
+to `boost::adjacency_list`, because this makes our implementation more straightforward than using a property map.
 If you want more properties other than `Point_2` for vertices, you can still
 construct external properties by using property maps.
 
-In constructing Theta graphs, this functor uses the algorithm from 
+In constructing Theta graphs, this functor uses the algorithm from
 Chapter 4 of the book by Narasimhan and Smid \cgalCite{cgal:ns-gsn-07}. 
 Basically, it is a sweep line algorithm and uses a 
 balanced search tree to store the vertices that have already been scanned. 
@@ -187,8 +186,8 @@ so it is not implemented in this package right now.
 
 \subsection subsec_CBS_gnuplot Gnuplot Output
 
-This package also implements a template function `gnuplot_output_2()`, which reads a 
-`boost::adjacency_list` object and generate two files used by Gnuplot to visualize the graph stored 
+This package also implements a template function `CGAL::gnuplot_output_2()`, which reads a 
+`boost::adjacency_list` object and generate two files used by \gnuplot to visualize the graph stored 
 in the `boost::adjacency_list` object. This template function has the following definition: 
 
 \code{.cpp}
@@ -202,15 +201,15 @@ As for the two arguments to the function, `g` gives the graph to be plotted, and
 prefix for the names of the files generated by the function. Specifically, this function will
 generate the following two files:
 - A data file named `prefix.v` that contains the \f$(x, y)\f$-coordinates 
-  of each vertex. To be read by Gnuplot, 
+  of each vertex. To be read by \gnuplot, 
   the \f$(x, y)\f$-coordinates are written into the data file with decimal format, 
   no matter which number type is used in the \cgal kernel. 
-  This is achieved by calling `to_double()` on \f$x\f$ or \f$y\f$ coordinate before outputing them. 
-- A Gnuplot script file named `prefix.plt` to be loaded by Gnuplot to plot the set of vertices and the set of edges. 
+  This is achieved by calling `to_double()` on \f$x\f$ or \f$y\f$ coordinate before outputting them.
+- A \gnuplot script file named `prefix.plt` to be loaded by \gnuplot to plot the set of vertices and the set of edges. 
   The set of vertices is read from the above data file and the set of edges are included in the script file
   with the syntax `set arrow from x1, y1 to x2, y2`. 
 
-For details on how to use this function to generate Gnuplot files, please refer to Section \ref sec_CBS_examples.
+For details on how to use this function to generate \gnuplot files, please refer to Section \ref sec_CBS_examples.
  
 \section sec_CBS_examples Examples
 
@@ -242,7 +241,7 @@ As a final note, to compute the cone boundaries inexactly, just define the `Kern
 
 \subsection CBS_construction Constructing Graphs Exactly or Inexactly and Generating Gnuplot Files
 
-The following example shows how to construct Theta graphs exactly and generate Gnuplot files. 
+The following example shows how to construct Theta graphs exactly and generate \gnuplot files. 
 This example basically consists of the following steps:
 1. Define `Exact_predicates_exact_constructions_kernel_with_root_of` as the kernel type
    to construct the graph exactly.
@@ -251,7 +250,7 @@ This example basically consists of the following steps:
    as constructor arguments.
 4. Construct a graph object `g` to store the constructed graph.
 5. Use `theta` to construct the Theta graph by passing the input vertices and `g` to it.
-6. Generate Gnuplot files for plotting the construct graph.
+6. Generate \gnuplot files for plotting the construct graph.
 
 \cgalExample{Cone_spanners_2/theta_io.cpp}
 
@@ -269,37 +268,10 @@ is defined as the kernel, but `Exact_predicates_inexact_constructions_kernel` wi
 since it supports `CAL::sqrt()`. For Yao graph, there is no such restriction, since its construction 
 does not need `CGAL::sqrt()`. 
 
-Also note that, for the above step 2, if we use the following code,
-this example will compile successfully in most cases except when the compilation is done by
-g++ 5.3.1 or clang++ 3.5.2-1 with the c++11 standard, which will give an error arising from
-the boost header file `boost/graph/adjacency_list.hpp`. 
-
-\code{.cpp}
-typedef boost::adjacency_list<boost::listS,
-                              boost::vecS,
-                              boost::directedS,
-                              Point_2
-                             > Graph;
-\endcode
-
-This compilation error is due to a bug from the boost library, and
-the link for this bug report is at http://lists.boost.org/Archives/boost/2016/05/229458.php.
-The boost has replied that the fix for this bug will be merged into a future version of 
-boost distribution, hopefully, Boost 1.61.0. Also, if 'directedS' below is replaced by 'undirectedS', 
-the bug won't cause compilation error. Therefore, we provide a workaround for this bug as below
-in the `theta_io.cpp`.
-
-\code{.cpp}
-typedef boost::adjacency_list<boost::listS,
-                              boost::vecS,
-                              #ifdef CGAL_CXX11
-                              boost::undirectedS,
-                              #else
-                              boost::directedS,
-                              #endif
-                              Point_2
-                             > Graph;
-\endcode
+Also note that when using g++ or clang++ compilers with the c++11 standard,
+using a directed graph will cause a compilation error due to a
+<a href="http://lists.boost.org/Archives/boost/2016/05/229458.php">bug</a> in the boost library.
+As a workaround you can use a undirected graph instead.
 
 After compiling `theta_io.cpp`, execute the executable `theta_io` to construct a Theta graph with 4 cones 
 on a set of 20 vertices (which is given in the file `data/n20.cin`):
@@ -308,13 +280,13 @@ on a set of 20 vertices (which is given in the file `data/n20.cin`):
       $ ./theta_io  4  data/n20.cin
 \endcode
 
-The following two files will be generated for Gnuplot: 
+The following two files will be generated for \gnuplot: 
 - `t4n20.v`:  This file contains the \f$(x, y)\f$-coordinates of the 20 vertices. 
-- `t4n20.plt`: This is the script to be loaded by Gnuplot. It will read 
+- `t4n20.plt`: This is the script to be loaded by \gnuplot. It will read 
           `t4n20.v` to plot the vertices. It will also plot all the edges, 
 		  which are included in this script itself.
 
-\cgalFigureRef{f-t4} shows the Theta graph plotted when the above `t4n20.plt` is loaded by Gnuplot.
+\cgalFigureRef{f-t4} shows the Theta graph plotted when the above `t4n20.plt` is loaded by \gnuplot.
   
 \cgalFigureBegin{f-t4, t4n20.jpg}
 A directed Theta graph of 20 vertices with \f$k=4\f$.
@@ -352,7 +324,7 @@ The correct Theta graph produced by the exact construction.
 On the other hand, the inexact construction will produce the Theta graph
 depicted in \cgalFigureRef{f-t4n9inexact}. We can see that this Theta graph is not constructed
 correctly, since the inexact construction will make wrong decisions on whether
-those vetices on the cone boundaries belong to a certain cone.
+those vertices on the cone boundaries belong to a certain cone.
   
 \cgalFigureBegin{f-t4n9inexact, t4n9inexact.jpg}
 The incorrect Theta graph produced by the inexact construction.

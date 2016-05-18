@@ -4,7 +4,6 @@
 
 /*!
 \addtogroup PkgConeBasedSpanners
-\todo check generated documentation
 
 \cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeBasedSpannersSummary}
 \cgalPkgPicture{Logo-ConeSpanners.png}
@@ -24,7 +23,7 @@ generate the data and script files used by Gnuplot to plot the constructed graph
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{X.X}
+\cgalPkgSince{4.9}
 \cgalPkgBib{cgal:st-cbs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
@@ -38,5 +37,8 @@ generate the data and script files used by Gnuplot to plot the constructed graph
 - `CGAL::Compute_cone_boundaries_2`
 - `CGAL::Construct_yao_graph_2`
 - `CGAL::Construct_theta_graph_2`
+
+## Functions ##
+- `CGAL::gnuplot_output_2()`
 
 */
