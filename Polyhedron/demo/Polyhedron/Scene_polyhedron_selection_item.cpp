@@ -8,6 +8,9 @@
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <boost/container/flat_map.hpp>
+#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/property_map/function_property_map.hpp>
+#include <functional>
 
 
 void Scene_polyhedron_selection_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
@@ -87,9 +90,6 @@ void Scene_polyhedron_selection_item::initializeBuffers(CGAL::Three::Viewer_inte
   nb_points = positions_points.size();
   positions_points.resize(0);
   std::vector<float>(positions_points).swap(positions_points);
-
-
-
   are_buffers_filled = true;
 }
 
@@ -119,7 +119,6 @@ void Scene_polyhedron_selection_item::initialize_temp_buffers(CGAL::Three::Viewe
 
     vaos[3]->release();
     program->release();
-
   }
   //vao containing the data for the temp lines
   {
@@ -139,7 +138,7 @@ void Scene_polyhedron_selection_item::initialize_temp_buffers(CGAL::Three::Viewe
     vaos[4]->release();
 
   }
-  //vao containing the data for the temp points
+  //vaos containing the data for the temp points
   {
     program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
     program->bind();
@@ -151,10 +150,26 @@ void Scene_polyhedron_selection_item::initialize_temp_buffers(CGAL::Three::Viewe
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
     buffers[7].release();
+    vaos[5]->release();
+
+    vaos[6]->bind();
+
+    buffers[8].bind();
+    buffers[8].allocate(positions_fixed_points.data(),
+                        static_cast<int>(positions_fixed_points.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[8].release();
+    buffers[9].bind();
+    buffers[9].allocate(color_fixed_points.data(),
+                        static_cast<int>(color_fixed_points.size()*sizeof(float)));
+    program->enableAttributeArray("colors");
+    program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+    buffers[9].release();
+    vaos[6]->release();
+
 
     program->release();
-
-    vaos[5]->release();
   }
   nb_temp_facets = positions_temp_facets.size();
   positions_temp_facets.resize(0);
@@ -171,6 +186,9 @@ void Scene_polyhedron_selection_item::initialize_temp_buffers(CGAL::Three::Viewe
   positions_temp_points.resize(0);
   std::vector<float>(positions_temp_points).swap(positions_temp_points);
 
+  nb_fixed_points = positions_fixed_points.size();
+  positions_fixed_points.resize(0);
+  std::vector<float>(positions_fixed_points).swap(positions_fixed_points);
   are_temp_buffers_filled = true;
 }
 
@@ -426,52 +444,80 @@ void Scene_polyhedron_selection_item::compute_temp_elements()const
 {
   compute_any_elements(positions_temp_facets, positions_temp_lines, positions_temp_points, temp_normals,
                        temp_selected_vertices, temp_selected_facets, temp_selected_edges);
+  //The fixed points
+  {
+    color_fixed_points.clear();
+    positions_fixed_points.clear();
+    int i=0;
+    for(Selection_set_vertex::iterator
+        it = fixed_vertices.begin(),
+        end = fixed_vertices.end();
+        it != end; ++it)
+    {
+      const Kernel::Point_3& p = (*it)->point();
+      positions_fixed_points.push_back(p.x());
+      positions_fixed_points.push_back(p.y());
+      positions_fixed_points.push_back(p.z());
+
+      if(*it == constrained_vertices.first()|| *it == constrained_vertices.last())
+      {
+        color_fixed_points.push_back(0.0);
+        color_fixed_points.push_back(0.0);
+        color_fixed_points.push_back(1.0);
+      }
+      else
+      {
+        color_fixed_points.push_back(1.0);
+        color_fixed_points.push_back(0.0);
+        color_fixed_points.push_back(0.0);
+      }
+      i++;
+    }
+  }
 }
 
 void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
   GLfloat offset_factor;
   GLfloat offset_units;
-
   if(!are_temp_buffers_filled)
   {
-      compute_temp_elements();
-      initialize_temp_buffers(viewer);
+    compute_temp_elements();
+    initialize_temp_buffers(viewer);
   }
-
   viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
   glPolygonOffset(-1.f, 1.f);
   vaos[3]->bind();
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
+
   program->bind();
   program->setAttributeValue("colors",QColor(0,255,0));
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_temp_facets/3));
   program->release();
   vaos[3]->release();
   glPolygonOffset(offset_factor, offset_units);
-    if(!are_buffers_filled)
-    {
-        computeElements();
-        initializeBuffers(viewer);
-    }
+  if(!are_buffers_filled)
+  {
+    computeElements();
+    initializeBuffers(viewer);
+  }
+  drawPoints(viewer);
+  viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+  viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+  glPolygonOffset(-1.f, 1.f);
 
-    drawPoints(viewer);
-    viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-    viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-    glPolygonOffset(-1.f, 1.f);
-
-    vaos[0]->bind();
-    program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
-    program->bind();
-    program->setAttributeValue("colors",this->color());
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
-    program->release();
-    vaos[0]->release();
-    glPolygonOffset(offset_factor, offset_units);
-    drawEdges(viewer);
+  vaos[0]->bind();
+  program = getShaderProgram(PROGRAM_WITH_LIGHT);
+  attribBuffers(viewer,PROGRAM_WITH_LIGHT);
+  program->bind();
+  program->setAttributeValue("colors",this->color());
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
+  program->release();
+  vaos[0]->release();
+  glPolygonOffset(offset_factor, offset_units);
+  drawEdges(viewer);
 
 }
 
@@ -517,22 +563,24 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 
 void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-
   if(!are_temp_buffers_filled)
   {
     compute_temp_elements();
     initialize_temp_buffers(viewer);
   }
+  viewer->glPointSize(5.5f);
+
   vaos[5]->bind();
   program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors",QColor(0,50,0));
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_temp_points/3));
-  program->release();
   vaos[5]->release();
-
-  viewer->glPointSize(5.5f);
+  vaos[6]->bind();
+  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_fixed_points/3));
+  program->release();
+  vaos[6]->release();
   if(!are_buffers_filled)
   {
     computeElements();
@@ -593,6 +641,10 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   Q_EMIT updateInstructions(QString("SHIFT + left click to apply operation."));
   switch(mode)
   {
+  case -2:
+    set_active_handle_type(original_sel_mode);
+    Q_EMIT updateInstructions("Select two vertices to create the path between them. (1/2)");
+    break;
   case -1:
     //restore original selection_type
     set_active_handle_type(original_sel_mode);
@@ -696,9 +748,23 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     switch(operation_mode)
     {
     //classic selection
+    case -2:
     case -1:
     {
-      return treat_classic_selection(selection);
+      if(!is_path_selecting)
+      {
+        return treat_classic_selection(selection);
+      }
+      else
+      {
+        if(is_insert)
+        {
+          selectPath(*selection.begin());
+          invalidateOpenGLBuffers();
+          Q_EMIT itemChanged();
+        }
+      }
+      return false;
       break;
     }
       //Join vertex
@@ -1365,8 +1431,256 @@ void Scene_polyhedron_selection_item::emitTempInstruct()
   Q_EMIT updateInstructions(QString("<font color='black'>%1</font>").arg(m_temp_instructs));
 }
 
+
+typedef boost::graph_traits<Polyhedron>::edge_descriptor Polyhedron_edge_descriptor;
+
+struct Edge_length
+{
+  typedef double value_type;
+  typedef double reference;
+  typedef Polyhedron_edge_descriptor key_type;
+  typedef boost::readable_property_map_tag category;
+  Polyhedron& p;
+
+  Edge_length(Polyhedron& p)
+    : p(p)
+  {}
+
+  friend
+  double get (const Edge_length el, Polyhedron_edge_descriptor e)
+  {
+    return sqrt(squared_distance(source(e,el.p)->point(),
+                                 target(e,el.p)->point()));
+  }
+};
+
+void Scene_polyhedron_selection_item::computeAndDisplayPath()
+{
+  temp_selected_edges.clear();
+  path.clear();
+  Edge_length el(*polyhedron());
+  std::map<vertex_descriptor,vertex_descriptor> pred;
+  boost::associative_property_map< std::map<vertex_descriptor,vertex_descriptor> >
+      pred_map(pred);
+
+  vertex_on_path vop;
+  QList<Vertex_handle>::iterator it;
+  for(it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
+  {
+    Vertex_handle t(*it), s(*(it+1));
+    boost::dijkstra_shortest_paths(*polyhedron(), s, boost::predecessor_map(pred_map).weight_map(el));
+    do
+    {
+      vop.vertex = t;
+      if(constrained_vertices.contains(t))
+      {
+        vop.is_constrained = true;
+      }
+      else
+        vop.is_constrained = false;
+      path.append(vop);
+      t = pred[t];
+    }
+    while(t != s);
+  }
+    //add the last vertex
+    vop.vertex = constrained_vertices.last();
+    vop.is_constrained = true;
+    path.append(vop);
+  //display path
+  QList<vertex_on_path>::iterator path_it;
+  for(path_it = path.begin(); path_it!=path.end()-1; ++path_it)
+  {
+    std::pair<Halfedge_handle, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*polyhedron());
+    if(h.second)
+      temp_selected_edges.insert(edge(h.first, *polyhedron()));
+  }
+}
+
+void Scene_polyhedron_selection_item::addVertexToPath(Vertex_handle vh, vertex_on_path &first)
+{
+  vertex_on_path source;
+  source.vertex = vh;
+  source.is_constrained = true;
+  path.append(source);
+  first = source;
+}
+void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
+{
+
+  bool replace = !temp_selected_edges.empty();
+  static vertex_on_path first;
+  if(!first_selected)
+  {
+    //if the path doesnt exist, add the vertex as the source of the path.
+    if(!replace)
+    {
+      addVertexToPath(vh, first);
+    }
+    //if the path exists, get the vertex_on_path corresponding to the selected vertex.
+    else
+    {
+      //The first vertex of the path can not be moved, but you can close your path on it to make a loop.
+      bool alone = true;
+      QList<vertex_on_path>::iterator it;
+      for(it = path.begin(); it!=path.end(); ++it)
+      {
+        if(it->vertex == vh&& it!=path.begin())
+          alone = false;
+      }
+      if(path.begin()->vertex == vh )
+        if(alone)
+        {
+          constrained_vertices.append(vh); //if the path loops, the indexOf may be invalid, hence the check.
+          //Display the new path
+          computeAndDisplayPath();
+          first_selected = false;
+          constrained_vertices.clear();
+          fixed_vertices.clear();
+          for(it = path.begin(); it!=path.end(); ++it)
+          {
+            if(it->is_constrained )
+            {
+              constrained_vertices.append(it->vertex);
+              fixed_vertices.insert(it->vertex);
+            }
+          }
+
+          return;
+        }
+      bool found = false;
+      Q_FOREACH(vertex_on_path vop, path)
+      {
+        if(vop.vertex == vh)
+        {
+          first = vop;
+          found = true;
+          break;
+        }
+      }
+      if(!found)//add new end_point;
+      {
+        constrained_vertices.append(vh);
+        //Display the new path
+        computeAndDisplayPath();
+        first_selected = false;
+        constrained_vertices.clear();
+        fixed_vertices.clear();
+        for(it = path.begin(); it!=path.end(); ++it)
+        {
+          if(it->is_constrained )
+          {
+            constrained_vertices.append(it->vertex);
+            fixed_vertices.insert(it->vertex);
+          }
+        }
+
+        return;
+      }
+    }
+    temp_selected_vertices.insert(vh);
+    first_selected = true;
+  }
+  else
+  {
+    if(!replace)
+    {
+      constrained_vertices.append(vh);
+      temp_selected_vertices.erase(first.vertex);
+
+      updateInstructions("You can select a vertex on the green path to move it. "
+                         "If you do so, it will become a red fixed point. "
+                         "The path will be recomputed to go through that point. "
+                         "Click on 'Add to selection' to validate the selection.   (2/2)");
+    }
+    else
+    {
+      bool is_same(false), alone(true);
+      if( (vh == constrained_vertices.first() && first.vertex == constrained_vertices.last())
+          || (vh == constrained_vertices.last() && first.vertex == constrained_vertices.first()))
+
+      {
+        is_same = true;
+      }
+      if(first.vertex == path.begin()->vertex)
+        alone =false;
+      bool is_last = true;
+      //find the previous constrained vertex on path
+      vertex_on_path closest = path.last();
+      QList<vertex_on_path>::iterator it;
+      int index = 0;
+      int closest_index = 0;
+      //get first's index
+      for(it = path.begin(); it!=path.end(); ++it)
+      {
+        bool end_of_path_is_prio = true;//makes the end of the path prioritary over the other points when there is a conflict
+        if(first.vertex == (path.end()-1)->vertex)
+          if(it != path.end()-1)
+            end_of_path_is_prio = false;
+        //makes the end of the path prioritary over the other points when there is a conflict
+        if(it->vertex == first.vertex &&
+           !(it == path.begin())&&// makes the begining of the path impossible to move
+           end_of_path_is_prio)
+        {
+          if(it!=path.end()-1 &&! is_same )
+          {
+            constrained_vertices.removeAll(it->vertex);
+            if(!alone)
+              constrained_vertices.prepend(it->vertex);
+          }
+          path.erase(it);
+          break;
+        }
+        if(it->is_constrained)
+          closest_index++;
+        index++;
+      }
+      //get first constrained vertex following first in path
+      for(it = path.begin() + index; it!=path.end(); ++it)
+      {
+        if(it->is_constrained )
+        {
+          is_last = false;
+          closest = *it;
+          break;
+        }
+      }
+      //mark the new vertex as constrained before closest.
+      temp_selected_vertices.erase(first.vertex);
+      //check if the vertex is contained several times in the path
+      if(!is_last)
+      {
+        constrained_vertices.insert(closest_index, vh);//cannot really use indexOf in case a fixed_point is used several times
+      }
+      else
+        constrained_vertices.replace(constrained_vertices.size()-1, vh);
+
+
+    }
+    //Display the new path
+    computeAndDisplayPath();
+    first_selected = false;
+  }
+  //update constrained_vertices
+  constrained_vertices.clear();
+  fixed_vertices.clear();
+  QList<vertex_on_path>::iterator it;
+  for(it = path.begin(); it!=path.end(); ++it)
+  {
+    if(it->is_constrained )
+    {
+      constrained_vertices.append(it->vertex);
+      fixed_vertices.insert(it->vertex);
+    }
+  }
+}
+
+
 void Scene_polyhedron_selection_item::on_Ctrlz_pressed()
 {
+  path.clear();
+  constrained_vertices.clear();
+  fixed_vertices.clear();
   first_selected = false;
   temp_selected_vertices.clear();
   temp_selected_edges.clear();

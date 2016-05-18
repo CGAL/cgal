@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
-    <height>606</height>
+    <width>474</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,1">
       <item>
        <widget class="QComboBox" name="modeBox">
         <item>
@@ -61,50 +61,76 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0">
               <item>
-               <widget class="QLabel" name="label_2">
-                <property name="text">
-                 <string>Selection Type :</string>
-                </property>
-               </widget>
+               <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,1">
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>Selection Type :</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="Selection_type_combo_box">
+                  <item>
+                   <property name="text">
+                    <string>Vertex</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Facet</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Edge</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Selected Components (facet)</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Path Between Vertices</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QComboBox" name="Selection_type_combo_box">
+               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,1">
                 <item>
-                 <property name="text">
-                  <string>Vertex</string>
-                 </property>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
-                 <property name="text">
-                  <string>Facet</string>
-                 </property>
+                 <widget class="QPushButton" name="Add_to_selection_button">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Add to Selection</string>
+                  </property>
+                 </widget>
                 </item>
-                <item>
-                 <property name="text">
-                  <string>Edge</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Selected components (facet)</string>
-                 </property>
-                </item>
-               </widget>
+               </layout>
               </item>
              </layout>
             </item>
@@ -433,7 +459,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0">
+        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,0">
          <item>
           <widget class="QComboBox" name="editionBox">
            <item>
@@ -494,15 +520,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="instructionsLabel">
-           <property name="text">
-            <string>Instructions 
-
-</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QLabel" name="label_4">
            <property name="text">
             <string>Ctrl+Z to cancel the temporary selection.</string>
@@ -512,6 +529,30 @@
         </layout>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="instructionsLabel">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="text">
+       <string>Instructions 
+
+</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>

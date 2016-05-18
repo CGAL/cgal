@@ -21,7 +21,8 @@ class SCENE_POLYHEDRON_ITEM_K_RING_SELECTION_EXPORT Scene_polyhedron_item_k_ring
   Q_OBJECT
 public:
   struct Active_handle {
-    enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 , CONNECTED_COMPONENT = 3}; };
+    enum Type{ VERTEX = 0, FACET = 1, EDGE = 2 , CONNECTED_COMPONENT = 3, PATH = 4};
+  };
 
   typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
 
@@ -33,7 +34,7 @@ public:
   };
 
   Mouse_keyboard_state  state;
-
+  QMainWindow* mainwindow;
   Active_handle::Type    active_handle_type;
   int                    k_ring;
   Scene_polyhedron_item* poly_item;
@@ -54,7 +55,7 @@ public:
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
-      mainwindow = mw;
+    mainwindow = mw;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -76,7 +77,7 @@ public Q_SLOTS:
   void vertex_has_been_selected(void* void_ptr) 
   {
     is_active=true;
-    if(active_handle_type == Active_handle::VERTEX)
+    if(active_handle_type == Active_handle::VERTEX || active_handle_type == Active_handle::PATH)
       process_selection( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
     updateIsTreated();
   }
@@ -264,7 +265,6 @@ protected:
   }
 
   bool is_edit_mode;
-  QMainWindow *mainwindow;
 };
 
 #endif
