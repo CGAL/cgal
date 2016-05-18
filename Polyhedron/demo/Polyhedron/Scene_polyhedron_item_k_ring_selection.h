@@ -118,8 +118,9 @@ Q_SIGNALS:
   void selected(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
-  void resetIsTreated();
-  void selection_request(QEvent *);
+  void resetIsTreated(); 
+  void selectionRequest(QEvent *);
+
 
 protected:
 
@@ -262,7 +263,7 @@ protected:
         viewer->setFocus();
         return false;
       }
-      Q_EMIT selection_request(event);
+      Q_EMIT selectionRequest(event);
       // paint with mouse move event
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();

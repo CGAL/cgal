@@ -268,8 +268,8 @@ protected:
 
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
-    connect(&k_ring_selector, SIGNAL(selection_request(QEvent*)), this,
-      SIGNAL(selection_request(QEvent*)));
+    connect(&k_ring_selector, SIGNAL(selectionRequest(QEvent*)), this,
+      SIGNAL(selectionRequest(QEvent*)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
     connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
 
@@ -850,7 +850,7 @@ public:
 Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);
-  void selection_request(QEvent*);
+  void selectionRequest(QEvent*);
 public Q_SLOTS:
   void update_poly()
   {
