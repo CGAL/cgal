@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-template < class K, class Weight = typename K::RT >
+template <class K>
 class Regular_triangulation_euclidean_traits
   : public K
 {
