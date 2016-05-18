@@ -48,6 +48,10 @@ public:
     actionColorConnectedComponents = new QAction(tr("Color Each Connected Component"), mainWindow);
     actionColorConnectedComponents ->setProperty("subMenuName", "Polygon Mesh Processing");
     actionColorConnectedComponents->setObjectName("actionColorConnectedComponents");
+
+    connect(actionJoinPolyhedra , SIGNAL(triggered()), this, SLOT(on_actionJoinPolyhedra_triggered()));
+    connect(actionSplitPolyhedra , SIGNAL(triggered()), this, SLOT(on_actionSplitPolyhedra_triggered() ));
+    connect(actionColorConnectedComponents , SIGNAL(triggered()), this, SLOT(on_actionColorConnectedComponents_triggered()));
   }
 
   bool applicable(QAction* a) const
