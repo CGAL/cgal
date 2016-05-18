@@ -55,6 +55,8 @@ public:
     QAction *actionMovingPoint;
     QAction *actionInsertPoint;
     QAction *actionClear;
+    QAction *actionInsertPointOnFundamentalSide;
+    QAction *actionInsertPointOnAxis;
     QAction *actionInsertOrigin;
     QAction *actionInsertDummyPoints;
     QAction *actionModifyDepth;
@@ -101,6 +103,13 @@ public:
         actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
         actionInsertRandomPoints = new QAction(Periodic_4_hyperbolic_Delaunay_triangulation_2);
         actionInsertRandomPoints->setObjectName(QString::fromUtf8("actionInsertRandomPoints"));
+        
+        actionInsertPointOnAxis = new QAction(Periodic_4_hyperbolic_Delaunay_triangulation_2);
+        actionInsertPointOnAxis->setObjectName(QString::fromUtf8("actionInsertPointOnAxis"));
+
+        actionInsertPointOnFundamentalSide = new QAction(Periodic_4_hyperbolic_Delaunay_triangulation_2);
+        actionInsertPointOnFundamentalSide->setObjectName(QString::fromUtf8("actionInsertPointOnFundamentalSide"));
+
         actionInsertOrigin = new QAction(Periodic_4_hyperbolic_Delaunay_triangulation_2);
         actionInsertOrigin->setObjectName(QString::fromUtf8("actionInsertOrigin"));
         actionInsertDummyPoints = new QAction(Periodic_4_hyperbolic_Delaunay_triangulation_2);
@@ -279,6 +288,8 @@ public:
         menuFile->addSeparator();
         menuFile->addAction(actionQuit);
         menuEdit->addAction(actionInsertRandomPoints);
+        menuEdit->addAction(actionInsertPointOnFundamentalSide);
+        menuEdit->addAction(actionInsertPointOnAxis);
         menuEdit->addAction(actionInsertOrigin);
         menuEdit->addAction(actionInsertDummyPoints);
         menuEdit->addAction(actionModifyDepth);
@@ -315,6 +326,10 @@ public:
         actionQuit->setShortcut(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "Ctrl+Q", 0));
         actionInsertRandomPoints->setText(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "&Insert random points", 0));
         actionInsertRandomPoints->setShortcut(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "Ctrl+I", 0));
+        
+        actionInsertPointOnAxis->setText(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "Insert point on Y-axis", 0));
+        actionInsertPointOnFundamentalSide->setText(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "Insert point on side of D_o", 0));
+
         actionInsertOrigin->setText(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "Insert Origin", 0));
         actionInsertOrigin->setShortcut(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "Ctrl+Alt+O", 0));
         actionInsertDummyPoints->setText(QApplication::translate("Periodic_4_hyperbolic_Delaunay_triangulation_2", "Insert dummy points", 0));

@@ -165,7 +165,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   //delete
   QPen temp = painter->pen();
   QPen old = temp;
-  temp.setWidthF(/*0.0035*/0.0025);
+  temp.setWidthF(0.0035);
   painter->setPen(temp);
   //
   
@@ -264,19 +264,19 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       double py = to_double(it->point().y());
       double dist = px*px + py*py;
       if(dist > 0.25) {
-        temp.setWidth(6);//6
+        temp.setWidth(7);//6
       }
       if(dist > 0.64) {
-        temp.setWidth(4);//5
+        temp.setWidth(6);//5
       }
       if(dist > 0.81) {
-        temp.setWidth(3);//3
+        temp.setWidth(6);//3
       }
       if(dist > 0.92) {
-        temp.setWidth(2);//3
+        temp.setWidth(5);//3
       }
       if(dist > 0.98) {
-        temp.setWidth(1);//3
+        temp.setWidth(3);//3
       }
       painter->setPen(temp);
       
