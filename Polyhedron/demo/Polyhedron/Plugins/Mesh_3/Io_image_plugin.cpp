@@ -32,6 +32,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QFontMetrics>
+#include <QFileDialog>
 
 #include <cassert>
 #include <iostream>
@@ -181,6 +182,8 @@ public:
     z_control = NULL;
     current_control = NULL;
     planeSwitch = new QAction("Add Volume Planes", mw);
+    QAction *actionLoadDCM = new QAction("Load a .dcm image", mw);
+    connect(actionLoadDCM, SIGNAL(triggered()), this, SLOT(on_actionLoadDCM_triggered()));
     if(planeSwitch) {
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
       connect(planeSwitch, SIGNAL(triggered()),
@@ -195,6 +198,32 @@ public:
     connect(v, SIGNAL(pointSelected(const QMouseEvent *)), &pxr_, SLOT(update(const QMouseEvent *)));
     createOrGetDockLayout();
 
+    QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
+    if ( NULL != menuFile )
+    {
+      QList<QAction*> menuFileActions = menuFile->actions();
+
+      // Look for action just after "Load..." action
+      QAction* actionAfterLoad = NULL;
+      for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
+           end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+      {
+        if ( NULL != *it_action && (*it_action)->text().contains("Load Plugin") )
+        {
+          ++it_action;
+          if ( it_action != end && NULL != *it_action )
+          {
+            actionAfterLoad = *it_action;
+          }
+        }
+      }
+
+      // Insert "Load implicit function" action
+      if ( NULL != actionAfterLoad )
+      {
+        menuFile->insertAction(actionAfterLoad,actionLoadDCM);
+      }
+    }
   }
   QList<QAction*> actions() const {
     return QList<QAction*>() << planeSwitch;
@@ -342,6 +371,29 @@ public Q_SLOTS:
 
   }
 
+  void on_actionLoadDCM_triggered()
+  {
+    QSettings settings;
+    QString start_dir = settings.value("Open directory",
+                                       QDir::current().dirName()).toString();
+    QString dir =
+      QFileDialog::getExistingDirectory(mw,
+                                        tr("Open directory"),
+                                        start_dir,
+                                        QFileDialog::ShowDirsOnly
+                                        | QFileDialog::DontResolveSymlinks);
+
+    if (!dir.isEmpty()) {
+      QFileInfo fileinfo(dir);
+      if (fileinfo.isDir() && fileinfo.isReadable())
+      {
+        settings.setValue("Open directory",
+          fileinfo.absoluteDir().absolutePath());
+        load(dir);
+      }
+    }
+
+  }
 private:
   Messages_interface* message_interface;
   QMessageBox msgBox;
