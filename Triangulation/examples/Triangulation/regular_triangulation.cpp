@@ -10,7 +10,8 @@
 const int D = 5;    // Dimension
 const int N = 100;  // Number of points
 typedef CGAL::Epick_d< CGAL::Dimension_tag<D> >         K;
-typedef CGAL::Regular_triangulation<K>                  T;
+typedef CGAL::Regular_triangulation<
+  CGAL::Regular_triangulation_euclidean_traits<K> >     T;
 typedef T::Bare_point                                   Bare_point;
 typedef T::Weighted_point                               Weighted_point;
 
