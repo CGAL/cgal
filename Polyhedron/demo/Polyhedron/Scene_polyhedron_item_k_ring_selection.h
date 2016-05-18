@@ -111,7 +111,7 @@ Q_SIGNALS:
   void selected(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
-  void selection_request(QEvent *);
+  void selectionRequest(QEvent *);
 
 protected:
 
@@ -232,7 +232,7 @@ protected:
              && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton))
       && (state.shift_pressing && state.left_button_pressing) )
     {
-      Q_EMIT selection_request(event);
+      Q_EMIT selectionRequest(event);
       //processEvent(event);
 
     }//end MouseMove

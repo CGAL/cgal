@@ -160,7 +160,7 @@ public Q_SLOTS:
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
         connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
-      connect(new_item,SIGNAL(selection_request(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
+      connect(new_item,SIGNAL(selectionRequest(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
       scene->setSelectedItem(item_id);
       new_item->processEvent(event);
     }
@@ -176,7 +176,7 @@ public Q_SLOTS:
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
         connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
-      connect(new_item,SIGNAL(selection_request(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
+      connect(new_item,SIGNAL(selectionRequest(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
       scene->setSelectedItem(item_id);
     }
   }
@@ -257,7 +257,7 @@ public Q_SLOTS:
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
-      connect(new_item,SIGNAL(selection_request(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
+      connect(new_item,SIGNAL(selectionRequest(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
     scene->setSelectedItem(item_id);
   }
   void on_Selection_type_combo_box_changed(int index) {
