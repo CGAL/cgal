@@ -29,6 +29,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Default.h>
+#include <CGAL/Random.h>
 
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -226,7 +227,35 @@ public:
     {
         return tds().index_of_covertex(f);
     }
+    
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - UTILITIES
+    
+    // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
+    // the two "covertices" around the sub-simplex. Useful for traversing the
+    // boundary of a hole. NOT DOCUMENTED
+    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
 
+    // Commented out because it was causing "internal compiler error" in MSVC
+    /*Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
+    {
+        return cpp11::get<0>(r);
+    }
+    int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
+    {
+        return cpp11::get<1>(r);
+    }
+    int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
+    {
+        return cpp11::get<2>(r);
+    }*/
+    Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
+    {
+        int opposite = cpp11::get<0>(r)->mirror_index(cpp11::get<1>(r));
+        Full_cell_handle s = cpp11::get<0>(r)->neighbor(cpp11::get<1>(r));
+        int new_second = s->index(cpp11::get<0>(r)->vertex(cpp11::get<2>(r)));
+        return Rotor(s, new_second, opposite);
+    }
+    
     // - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
     Triangulation(int dim, const Geom_traits k = Geom_traits())
@@ -539,7 +568,7 @@ public:
     }
 
     template< typename OutputIterator >
-    OutputIterator incident_faces(Vertex_const_handle v, int d, OutputIterator out)
+    OutputIterator incident_faces(Vertex_const_handle v, int d, OutputIterator out) const
     {
         return tds().incident_faces(v, d, out);
     }
@@ -601,7 +630,12 @@ public:
         return tds().new_full_cell();
     }
 
-    Vertex_handle  new_vertex(const Point & p) 
+    Vertex_handle new_vertex()
+    {
+      return tds().new_vertex();
+    }
+
+    Vertex_handle new_vertex(const Point & p) 
     {
         return tds().new_vertex(p);
     }
@@ -706,6 +740,43 @@ public:
     // make sure all full_cells have positive orientation
     void reorient_full_cells();
 
+protected:
+  // This is used in the |remove(v)| member function to manage sets of Full_cell_handles
+  template< typename FCH >
+  struct Full_cell_set : public std::vector<FCH>
+  {
+    typedef std::vector<FCH> Base_set;
+    using Base_set::begin;
+    using Base_set::end;
+    void make_searchable()
+    {   // sort the full cell handles
+      std::sort(begin(), end());
+    }
+    bool contains(const FCH & fch) const
+    {
+      return std::binary_search(begin(), end(), fch);
+    }
+    bool contains_1st_and_not_2nd(const FCH & fst, const FCH & snd) const
+    {
+      return ( ! contains(snd) ) && ( contains(fst) );
+    }
+  };
+
+  void display_all_full_cells__debugging() const
+  {
+    std::cerr << "ALL FULL CELLS:" << std::endl;
+    for (Full_cell_const_iterator cit = full_cells_begin() ;
+          cit != full_cells_end() ; ++cit )
+    {
+      std::cerr << std::hex << &*cit << ": ";
+      for (int jj = 0 ; jj <= current_dimension() ; ++jj)
+        std::cerr << (is_infinite(cit->vertex(jj)) ? 0xFFFFFFFF : (unsigned int)&*cit->vertex(jj)) << " - ";
+      std::cerr << std::dec << std::endl;
+    }
+    std::cerr << std::endl;
+  }
+
+
 }; // Triangulation<...>
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
@@ -719,17 +790,15 @@ Triangulation<TT, TDS>
 {
     if( current_dimension() < 1 )
         return;
+
     Full_cell_iterator sit = full_cells_begin();
     Full_cell_iterator send = full_cells_end();
-    while( sit != send )
+    for ( ; sit != send ; ++sit)
     {
-        if( is_infinite(sit) && (1 == current_dimension()) )
+        if( ! (is_infinite(sit) && (1 == current_dimension())) )
         {
-            ++sit;
-            continue;
+            sit->swap_vertices(current_dimension() - 1, current_dimension());
         }
-        sit->swap_vertices(current_dimension() - 1, current_dimension());
-        ++sit;
     }
 }
 
@@ -851,13 +920,8 @@ Triangulation<TT, TDS>
     CGAL_precondition( is_infinite(s) );
     CGAL_precondition( 1 == current_dimension() );
     int inf_v_index = s->index(infinite_vertex());
-    bool swap = (0 == s->neighbor(inf_v_index)->index(s));
     Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
-    if( swap )
-    {
-        s->swap_vertices(0, 1);
-    }
     return v;
 }
 
@@ -914,6 +978,36 @@ Triangulation<TT, TDS>
         CGAL_assertion( COPLANAR != o );
             if( NEGATIVE == o )
                 reorient_full_cells();
+
+            
+        // We just inserted the second finite point and the right infinite
+        // cell is like : (inf_v, v), but we want it to be (v, inf_v) to be
+        // consistent with the rest of the cells
+        if (current_dimension() == 1)
+        {
+            // Is "inf_v_cell" the right infinite cell? 
+            // Then inf_v_index should be 1
+            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                && inf_v_index == 0)
+            {
+                inf_v_cell->swap_vertices(
+                    current_dimension() - 1, current_dimension());
+            }
+            // Otherwise, let's find the right infinite cell
+            else
+            {
+                inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
+                inf_v_index = inf_v_cell->index(infinite_vertex());
+                // Is "inf_v_cell" the right infinite cell? 
+                // Then inf_v_index should be 1
+                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                    && inf_v_index == 0)
+                {
+                    inf_v_cell->swap_vertices(
+                        current_dimension() - 1, current_dimension());
+                }
+            }
+        }
     }
     return v;
 }

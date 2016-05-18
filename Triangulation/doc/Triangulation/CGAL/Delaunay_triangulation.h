@@ -20,35 +20,32 @@ A <I>circumscribing ball</I> of a simplex is a ball
 having all vertices of the simplex on its boundary.
 
 
-\tparam DelaunayTriangulationTraits is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits` must be a model of
+\tparam DelaunayTriangulationTraits_ is the geometric traits class that provides the geometric types
+and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits_` must be a model of
 the concept `DelaunayTriangulationTraits`.
 
-\tparam TriangulationDataStructure must be a model of the concept
+\tparam TriangulationDataStructure_ must be a model of the concept
 `TriangulationDataStructure`. This model is used to store 
-the faces of the triangulation. The parameter `TriangulationDataStructure` defaults to
+the faces of the triangulation. The parameter `TriangulationDataStructure_` defaults to
 `Triangulation_data_structure` whose template parameters are instantiated as
 follows:
 <UL>
-<LI>`DelaunayTriangulationTraits::Dimension`</LI>
-<LI>`Triangulation_vertex<DelaunayTriangulationTraits>`</LI>
-<LI>`Triangulation_full_cell<DelaunayTriangulationTraits>`.</LI>
+<LI>`DelaunayTriangulationTraits_::Dimension`</LI>
+<LI>`Triangulation_vertex<DelaunayTriangulationTraits_>`</LI>
+<LI>`Triangulation_full_cell<DelaunayTriangulationTraits_>`.</LI>
 </UL>
 
-The class template `Delaunay_triangulation` can
+\tparam Delaunay_triangulation can
 be defined by specifying only the first parameter, or by using the
 tag `CGAL::Default` as the second parameter. 
 
-The class `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` inherits all the types
-defined in the base class `Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. Additionally, it
-defines or overloads the following methods:
-
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
+\sa `Regular_triangulation`
+\sa `Triangulation_data_structure`
 
 */
-template< typename DelaunayTriangulationTraits, typename TriangulationDataStructure >
+template< typename DelaunayTriangulationTraits_, typename TriangulationDataStructure_ >
 class Delaunay_triangulation
-  : public Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>
+  : public Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>
 {
 public:
 
@@ -139,7 +136,7 @@ is called.)
 The parameters `lt`, `f`, `ft`
 and `c` must be consistent with the localization of point `p` in the
 Delaunay triangulation e.g. by a call to
-`c = locate(p, lt, f, ft)`.
+`Triangulation::locate(const Point &, Locate_type &, Face &, Vertex_handle) const`.
 \cgalAdvancedEnd
 */
 Vertex_handle insert(const Point & p, const Locate_type lt,
@@ -151,8 +148,7 @@ Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position. 
 \pre The point `p`
 must lie outside the affine hull of the Delaunay triangulation. This implies that
-`dt`.`current_dimension()` must be less that
-`dt`.`maximal_dimension()`.
+`dt`.`current_dimension()` must be less than `dt`.`maximal_dimension()`.
 \cgalAdvancedEnd
 */
 Vertex_handle insert_outside_affine_hull(const Point & p);
@@ -182,15 +178,13 @@ const;
 
 /*!
 \cgalAdvancedBegin
-Outputs handles to the full cells in confict with
+Outputs handles to the full cells in conflict with
 point `p` into the `OutputIterator out`. The full cell `c` is used
 as a starting point for gathering the full cells in conflict with
 `p`.
 A facet `(cc,i)` on the boundary of the conflict zone with
 `cc` in conflict is returned.
-\pre `c` is in conflict
-with `p`.
-`dt`.`current_dimension()`\f$ \geq2\f$.
+\pre `c` is in conflict with `p` and `dt`.`current_dimension()`\f$ \geq2\f$.
 \cgalAdvancedEnd
 */
 template< typename OutputIterator >

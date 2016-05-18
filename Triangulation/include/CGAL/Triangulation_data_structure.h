@@ -417,7 +417,6 @@ private:
   void clear_visited_marks(Full_cell_handle) const;
 
   //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  DANGEROUS UPDATE OPERATIONS
-    //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  DANGEROUS UPDATE OPERATIONS
 
 private:
 
@@ -612,7 +611,7 @@ public:
         return incident_faces(v, dim, out, cmp, true);
     }
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
-    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false) const;
 #else
     template< typename OutputIterator, typename Comparator >
     OutputIterator incident_upper_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp = Comparator())
@@ -625,10 +624,10 @@ public:
         return incident_faces(v, dim, out, std::less<Vertex_const_handle>(), true);
     }
     template< typename OutputIterator, typename Comparator >
-    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false) const;
     template< typename OutputIterator >
     OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator,
-        std::less<Vertex_const_handle> = std::less<Vertex_const_handle>(), bool = false);
+        std::less<Vertex_const_handle> = std::less<Vertex_const_handle>(), bool = false) const;
 #endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
@@ -724,7 +723,7 @@ template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Fcb>
 ::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out,
-    std::less<Vertex_const_handle> cmp, bool upper_faces)
+    std::less<Vertex_const_handle> cmp, bool upper_faces) const
 {
     return incident_faces<OutputIterator, std::less<Vertex_const_handle> >(v, dim, out, cmp, upper_faces);
 }
@@ -734,7 +733,7 @@ template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator, typename Comparator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Fcb>
-::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp, bool upper_faces)
+::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp, bool upper_faces) const
 {
     CGAL_precondition( 0 < dim );
     if( dim >= current_dimension() )
@@ -788,13 +787,13 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         // init state for enumerating all candidate faces:
         internal::Combination_enumerator f_idx(dim, v_idx + 1, current_dimension());
         Face f(*s);
-        f.set_index(0, v_idx);
+        f.set_index(0, sorted_idx[v_idx]);
         while( ! f_idx.end() )
         {
-            // check if face has already been found
             for( int i = 0; i < dim; ++i )
                 f.set_index(1 + i, sorted_idx[f_idx[i]]);
-            face_set.insert(f);
+            face_set.insert(f); // checks if face has already been found
+
             // compute next sorted face (lexicographic enumeration)
             ++f_idx;
         }
@@ -889,8 +888,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         if( v_idx != current_dimension() )
         {
             (*it)->swap_vertices(v_idx, current_dimension());
-            if( ( ! (*it)->has_vertex(star) ) || (current_dimension() > 2) )
-                (*it)->swap_vertices(current_dimension() - 2, current_dimension() - 1);
+            (*it)->swap_vertices(current_dimension() - 2, current_dimension() - 1);
         }
         (*it)->set_vertex(current_dimension(), Vertex_handle());
         (*it)->set_neighbor(current_dimension(), Full_cell_handle());
@@ -1000,7 +998,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
       associate_vertex_with_full_cell(new_s, facet_index, v);
       set_neighbors(new_s,
                     facet_index,
-                    neighbor(old_s, facet_index),
+                    outside_neighbor,
                     mirror_index(old_s, facet_index));
 
       // add the new full_cell to the list of new full_cells
@@ -1138,11 +1136,6 @@ void Triangulation_data_structure<Dim, Vb, Fcb>
             // here, we could be clever so as to get consistent orientation
             for( int k = 1; k <= cur_dim; ++k )
                 associate_vertex_with_full_cell(S_new, k, vertex(S, k - 1));
-        }
-        else if( cur_dim == 2 )
-        {   // if cur. dim. is 2, we must take care of the 'rightmost' infinite vertex.
-            if( S->mirror_index(S->index(star)) == 0 )
-                swap_me = S;
         }
     }
     // now we setup the neighbors
@@ -1523,7 +1516,9 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Fcb> & tr)
   // - the neighbors of each full_cell by their index in the preceding list
 {
     typedef Triangulation_data_structure<Dimen, Vb, Fcb> TDS;
-    typedef typename TDS::Vertex_handle                  Vertex_handle;
+    typedef typename TDS::Full_cell_handle      Full_cell_handle;
+    typedef typename TDS::Full_cell_iterator    Full_cell_iterator;
+    typedef typename TDS::Vertex_handle         Vertex_handle;
 
     // read current dimension and number of vertices
     std::size_t n;
@@ -1573,8 +1568,10 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
   // - the neighbors of each full_cell by their index in the preceding list
 {
     typedef Triangulation_data_structure<Dimen, Vb, Fcb> TDS;
-    typedef typename TDS::Vertex_const_handle            Vertex_handle;
-    typedef typename TDS::Vertex_const_iterator          Vertex_iterator;
+    typedef typename TDS::Full_cell_const_handle      Full_cell_handle;
+    typedef typename TDS::Full_cell_const_iterator    Full_cell_iterator;
+    typedef typename TDS::Vertex_const_handle         Vertex_handle;
+    typedef typename TDS::Vertex_const_iterator       Vertex_iterator;
 
     // outputs dimension and number of vertices
     std::size_t n = tr.number_of_vertices();
@@ -1594,7 +1591,7 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
     int i = 0;
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
     {
-        os << *it; // write the vertex
+        os << *it << std::endl; // write the vertex
         index_of_vertex[it] = i;
     }
     CGAL_assertion( (std::size_t) i == n );

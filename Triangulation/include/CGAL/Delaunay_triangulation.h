@@ -76,17 +76,23 @@ public: // PUBLIC NESTED TYPES
     typedef typename Base::Full_cell_iterator         Full_cell_iterator;
     typedef typename Base::Full_cell_const_handle     Full_cell_const_handle;
     typedef typename Base::Full_cell_const_iterator   Full_cell_const_iterator;
+    typedef typename Base::Finite_full_cell_const_iterator
+                                                    Finite_full_cell_const_iterator;
 
     typedef typename Base::size_type                size_type;
     typedef typename Base::difference_type          difference_type;
 
     typedef typename Base::Locate_type              Locate_type;
 
+  //Tag to distinguish triangulations with weighted_points
+  typedef Tag_false                                 Weighted_tag;
+
 protected: // DATA MEMBERS
 
 
 public:
-    
+
+    using typename Base::Rotor;
     using Base::maximal_dimension;
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
@@ -96,11 +102,12 @@ public:
     //using Base::incident_full_cells;
     using Base::geom_traits;
     using Base::index_of_covertex;
+    //using Base::index_of_second_covertex;
     using Base::infinite_vertex;
+    using Base::rotate_rotor;
     using Base::insert_in_hole;
     using Base::insert_outside_convex_hull_1;
     using Base::is_infinite;
-    using Base::is_valid;
     using Base::locate;
     using Base::points_begin;
     using Base::set_neighbors;
@@ -112,6 +119,8 @@ public:
     using Base::full_cell;
     using Base::full_cells_begin;
     using Base::full_cells_end;
+    using Base::finite_full_cells_begin;
+    using Base::finite_full_cells_end;
     using Base::vertices_begin;
     using Base::vertices_end;
     // using Base::
@@ -144,36 +153,9 @@ private:
     };
 public:
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - UTILITIES
-
-    // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
-    // the two "covertices" around the sub-simplex. Useful for traversing the
-    // boundary of a hole. NOT DOCUMENTED
-    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
-
-    /*Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
-    {
-        return cpp11::get<0>(r);
-    }
-    int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
-    {
-        return cpp11::get<1>(r);
-    }
-    int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
-    {
-        return cpp11::get<2>(r);
-    }*/
-    Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
-    {
-        int opposite = cpp11::get<0>(r)->mirror_index(cpp11::get<1>(r));
-        Full_cell_handle s = cpp11::get<0>(r)->neighbor(cpp11::get<1>(r));
-        int new_second = s->index(cpp11::get<0>(r)->vertex(cpp11::get<2>(r)));
-        return Rotor(s, new_second, opposite);
-    }
-    
 // - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
-    Delaunay_triangulation(int dim, const Geom_traits k = Geom_traits())
+    Delaunay_triangulation(int dim, const Geom_traits &k = Geom_traits())
     : Base(dim, k)
     {
     }
@@ -186,7 +168,7 @@ public:
     Delaunay_triangulation(
       int dim, 
       const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
-      const Geom_traits k = Geom_traits())
+      const Geom_traits &k = Geom_traits())
     : Base(dim, preset_flat_orientation, k)
     {
     }
@@ -341,6 +323,10 @@ public:
             return pred_(dc_.full_cell(f)->neighbor(dc_.index_of_covertex(f)));
         }
     };
+    
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  VALIDITY
+    
+    bool is_valid(bool verbose = false, int level = 0) const;
 
 private:
     // Some internal types to shorten notation
@@ -354,27 +340,6 @@ private:
             Conflict_traversal_pred_in_subspace;
     typedef Conflict_traversal_predicate<Conflict_pred_in_fullspace>
             Conflict_traversal_pred_in_fullspace;
-
-    // This is used in the |remove(v)| member function to manage sets of Full_cell_handles
-    template< typename FCH >
-    struct Full_cell_set : public std::vector<FCH>
-    {
-        typedef std::vector<FCH> Base_set;
-        using Base_set::begin;
-        using Base_set::end;
-        void make_searchable()
-        {   // sort the full cell handles
-            std::sort(begin(), end());
-        }
-        bool contains(const FCH & fch) const
-        {
-            return std::binary_search(begin(), end(), fch);
-        }
-        bool contains_1st_and_not_2nd(const FCH & fst, const FCH & snd) const
-        {
-            return ( ! contains(snd) ) && ( contains(fst) );
-        }
-    };
 };
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
@@ -404,24 +369,14 @@ Delaunay_triangulation<DCTraits, TDS>
             return Full_cell_handle();
         }
         Full_cell_handle left = v->full_cell();
-        if( is_infinite(left) && left->neighbor(0)->index(left) == 0 ) // we are on the infinite right.
-            left = left->neighbor(0);
         if( 0 == left->index(v) )
             left = left->neighbor(1);
         CGAL_assertion( 1 == left->index(v) );
         Full_cell_handle right = left->neighbor(0);
-        if( ! is_infinite(right) )
-        {
+
             tds().associate_vertex_with_full_cell(left, 1, right->vertex(1));
             set_neighbors(left, 0, right->neighbor(0), right->mirror_index(0));
-        }
-        else
-        {
-            tds().associate_vertex_with_full_cell(left, 1, left->vertex(0));
-            tds().associate_vertex_with_full_cell(left, 0, infinite_vertex());
-            set_neighbors(left, 0, left->neighbor(1), left->mirror_index(1));
-            set_neighbors(left, 1, right->neighbor(1), right->mirror_index(1));
-        }
+
         tds().delete_vertex(v);
         tds().delete_full_cell(right);
         return left;
@@ -429,7 +384,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
     // THE CASE cur_dim >= 2
     // Gather the finite vertices sharing an edge with |v|
-    typedef Full_cell_set<Full_cell_handle> Simplices;
+    typedef typename Base::template Full_cell_set<Full_cell_handle> Simplices;
     Simplices simps;
     std::back_insert_iterator<Simplices> out(simps);
     tds().incident_full_cells(v, out);
@@ -510,24 +465,16 @@ Delaunay_triangulation<DCTraits, TDS>
             {
                 int v_idx = (*it)->index(v);
                 tds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
-                if( v_idx != 0 )
-                {
-                    // we must put the infinite vertex at index 0.
-                    // OK, now with the new convention that the infinite vertex
-                    // does not have to be at index 0, this is not necessary,
-                    // but still, I prefer to keep this piece of code here. [-- Samuel Hornus]
-                    (*it)->swap_vertices(0, v_idx);
-                    // Now, we preserve the positive orientation of the full_cell
-                    (*it)->swap_vertices(current_dimension() - 1, current_dimension());
                 }
-            }
             // Make the handles to infinite full cells searchable
             infinite_simps.make_searchable();
             // Then, modify the neighboring relation
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
-                for( int i = 1; i <= current_dimension(); ++i )
+                for( int i = 0; i <= current_dimension(); ++i )
                 {
+                    if (is_infinite((*it)->vertex(i)))
+                        continue;
                     (*it)->vertex(i)->set_full_cell(*it);
                     Full_cell_handle n = (*it)->neighbor(i);
                     // Was |n| a finite full cell prior to removing |v| ?
@@ -565,7 +512,7 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_s_handle dark_ret_s = dark_s;
     Full_cell_handle ret_s;
 
-    typedef Full_cell_set<Dark_s_handle> Dark_full_cells;
+    typedef typename Base::template Full_cell_set<Dark_s_handle> Dark_full_cells;
     Dark_full_cells conflict_zone;
     std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
     
@@ -771,6 +718,35 @@ Delaunay_triangulation<DCTraits, TDS>
         CGAL_assertion( ZERO != o );
             if( NEGATIVE == o )
                 reorient_full_cells();
+
+        // We just inserted the second finite point and the right infinite
+        // cell is like : (inf_v, v), but we want it to be (v, inf_v) to be
+        // consistent with the rest of the cells
+        if (current_dimension() == 1)
+        {
+            // Is "inf_v_cell" the right infinite cell? 
+            // Then inf_v_index should be 1
+            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                && inf_v_index == 0)
+            {
+                inf_v_cell->swap_vertices(
+                    current_dimension() - 1, current_dimension());
+    }
+            // Otherwise, let's find the right infinite cell
+            else
+            {
+                inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
+                inf_v_index = inf_v_cell->index(infinite_vertex());
+                // Is "inf_v_cell" the right infinite cell? 
+                // Then inf_v_index should be 1
+                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                    && inf_v_index == 0)
+                {
+                    inf_v_cell->swap_vertices(
+                        current_dimension() - 1, current_dimension());
+                }
+            }
+        }
     }
     return v;
 }
@@ -891,6 +867,48 @@ Delaunay_triangulation<DCTraits, TDS>
         return tds().gather_full_cells(s, tp, out);
     }
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
+
+template< typename DCTraits, typename TDS >
+bool
+Delaunay_triangulation<DCTraits, TDS>
+::is_valid(bool verbose, int level) const
+{ 
+  if (!Base::is_valid(verbose, level))
+    return false;
+
+  int dim = current_dimension();
+  if (dim == maximal_dimension())
+  {
+    for (Finite_full_cell_const_iterator cit = finite_full_cells_begin() ;
+         cit != finite_full_cells_end() ; ++cit )
+    {
+      Full_cell_const_handle ch = cit.base();
+      for(int i = 0; i < dim+1 ; ++i ) 
+      {
+        // If the i-th neighbor is not an infinite cell
+        Vertex_handle opposite_vh = 
+          ch->neighbor(i)->vertex(ch->neighbor(i)->index(ch));
+        if (!is_infinite(opposite_vh))
+        {
+          Side_of_oriented_sphere_d side = 
+            geom_traits().side_of_oriented_sphere_d_object();
+          if (side(Point_const_iterator(ch->vertices_begin()), 
+                   Point_const_iterator(ch->vertices_end()),
+                   opposite_vh->point()) == ON_BOUNDED_SIDE)
+          {
+            if (verbose)
+              CGAL_warning_msg(false, "Non-empty sphere");
+            return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
 
 } //namespace CGAL
 

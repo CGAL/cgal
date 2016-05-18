@@ -172,6 +172,7 @@ namespace CGAL {
 	CGAL_DECL_OBJ(Iso_box, Object);
 	CGAL_DECL_OBJ(Bbox, Object);
 	CGAL_DECL_OBJ(Aff_transformation, Object);
+	CGAL_DECL_OBJ(Weighted_point, Object);
 #undef CGAL_DECL_OBJ_
 #undef CGAL_DECL_OBJ
 
@@ -214,6 +215,7 @@ namespace CGAL {
 	CGAL_DECL_COMPUTE(Scalar_product);
 	CGAL_DECL_COMPUTE(Hyperplane_translation);
 	CGAL_DECL_COMPUTE(Value_at);
+	CGAL_DECL_COMPUTE(Point_weight);
 #undef CGAL_DECL_COMPUTE
 
 #define CGAL_DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
@@ -266,6 +268,7 @@ namespace CGAL {
 	CGAL_DECL_CONSTRUCT(Construct_min_vertex,Point);
 	CGAL_DECL_CONSTRUCT(Construct_max_vertex,Point);
 	CGAL_DECL_CONSTRUCT(Construct_circumcenter,Point);
+	CGAL_DECL_CONSTRUCT(Point_drop_weight,Point);
 #undef CGAL_DECL_CONSTRUCT
 #if 0
 #define CGAL_DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
@@ -306,6 +309,10 @@ namespace CGAL {
 	CGAL_DECL_PREDICATE(Affinely_independent);
 	CGAL_DECL_PREDICATE(Contained_in_linear_hull);
 	CGAL_DECL_PREDICATE(Contained_in_simplex);
+	CGAL_DECL_PREDICATE(Power_test_raw);
+	CGAL_DECL_PREDICATE(Power_test);
+	CGAL_DECL_PREDICATE(In_flat_power_test_raw);
+	CGAL_DECL_PREDICATE(In_flat_power_test);
 #undef CGAL_DECL_PREDICATE
 
 #define CGAL_DECL_MISC(X) struct X##_tag {}; \
