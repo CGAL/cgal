@@ -53,6 +53,11 @@ int main()
   BOOST_FOREACH( vertex_descriptor vd, m.vertices()) { 
     std::cout << name[vd] << " @ " << location[vd] << std::endl;
   }
+
+  std::vector<std::string> props = m.properties<vertex_descriptor>();
+  BOOST_FOREACH(std::string p, props){
+    std::cout << p << std::endl;
+  }
   
   // delete the string property again
   m.remove_property_map(name);
