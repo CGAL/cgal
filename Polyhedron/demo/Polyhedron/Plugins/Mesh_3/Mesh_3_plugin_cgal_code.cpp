@@ -113,6 +113,10 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+#include <CGAL/Gray_image_mesh_domain_3.h>
+typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel> Gray_image_domain1;
+typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Gray_image_domain1> Gray_image_domain;
+typedef CGAL::Mesh_domain_with_polyline_features_3<Gray_image_domain> Gray_Image_mesh_domain;
 
 Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const Polylines_container& polylines,
@@ -123,41 +127,77 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
-                                 CGAL::Three::Scene_interface* scene)
+                                 CGAL::Three::Scene_interface* scene,
+                                 bool is_gray)
 {
   if (NULL == pImage) { return NULL; }
 
-  Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
+  if(!is_gray)
+  {
+    Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
 
+    if(protect_features && polylines.empty()){
+      std::vector<std::vector<Point_3> > polylines_on_bbox;
+      CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
+      p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+    }
+    if(! polylines.empty()){
+      // Insert edge in domain
+      p_domain->add_features(polylines.begin(), polylines.end());
+      protect_features = true; // so that it will be passed in make_mesh_3
+    }
+    CGAL::Timer timer;
+    timer.start();
+    Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+    p_new_item->setScene(scene);
 
-  if(protect_features && polylines.empty()){
-    std::vector<std::vector<Point_3> > polylines_on_bbox;
-    CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
-    p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+    Mesh_parameters param;
+    param.protect_features = protect_features;
+    param.facet_angle = facet_angle;
+    param.facet_sizing = facet_sizing;
+    param.facet_approx = facet_approx;
+    param.tet_sizing = tet_sizing;
+    param.tet_shape = tet_shape;
+    param.manifold = manifold;
+
+    typedef ::Mesh_function<Image_mesh_domain> Mesh_function;
+    Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
+                                                       p_domain, param);
+    return new Meshing_thread(p_mesh_function, p_new_item);
   }
-  if(! polylines.empty()){
-    // Insert edge in domain
-    p_domain->add_features(polylines.begin(), polylines.end());
-    protect_features = true; // so that it will be passed in make_mesh_3
-  }
-  CGAL::Timer timer;
-  timer.start();
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-  p_new_item->setScene(scene);
+  else
+  {
+    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain(*pImage, 2.9f, 0.0001f);
 
-  Mesh_parameters param;
-  param.protect_features = protect_features;
-  param.facet_angle = facet_angle;
-  param.facet_sizing = facet_sizing;
-  param.facet_approx = facet_approx;
-  param.tet_sizing = tet_sizing;
-  param.tet_shape = tet_shape;
-  param.manifold = manifold;
-  
-  typedef ::Mesh_function<Image_mesh_domain> Mesh_function;
-  Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
-                                                     p_domain, param);
-  return new Meshing_thread(p_mesh_function, p_new_item);
+    if(protect_features && polylines.empty()){
+      std::vector<std::vector<Point_3> > polylines_on_bbox;
+      CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
+      p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+    }
+    if(! polylines.empty()){
+      // Insert edge in domain
+      p_domain->add_features(polylines.begin(), polylines.end());
+      protect_features = true; // so that it will be passed in make_mesh_3
+    }
+    CGAL::Timer timer;
+    timer.start();
+    Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+    p_new_item->setScene(scene);
+
+    Mesh_parameters param;
+    param.protect_features = protect_features;
+    param.facet_angle = facet_angle;
+    param.facet_sizing = facet_sizing;
+    param.facet_approx = facet_approx;
+    param.tet_sizing = tet_sizing;
+    param.tet_shape = tet_shape;
+    param.manifold = manifold;
+
+    typedef ::Mesh_function<Gray_Image_mesh_domain> Mesh_function;
+    Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
+                                                       p_domain, param);
+    return new Meshing_thread(p_mesh_function, p_new_item);
+  }
 }
 
 #endif //CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES

@@ -85,6 +85,16 @@ public:
            p_rng)
   {}
 
+  ///Constructor for the Gray-level Images
+  Polyhedron_demo_labeled_mesh_domain_3(
+    const Image& img,
+    const float iso_value = 2.9f,
+    const float value_outside = 0.f)
+   : Base(img, iso_value)
+  {}
+
+
+
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
    * by \c index.

@@ -325,7 +325,8 @@ void Mesh_3_plugin::mesh_3()
                                  radius_edge,
                                  protect_features,
                                  manifold,
-                                 scene);
+                                 scene,
+                                 image_item->isGray());
   }
 #endif
 

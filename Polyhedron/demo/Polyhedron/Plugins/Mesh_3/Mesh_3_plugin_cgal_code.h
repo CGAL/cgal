@@ -51,5 +51,6 @@ Meshing_thread* cgal_code_mesh_3(const CGAL::Image_3* pImage,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
-                                 CGAL::Three::Scene_interface* scene);
+                                 CGAL::Three::Scene_interface* scene,
+                                 bool is_gray = false);
 #endif

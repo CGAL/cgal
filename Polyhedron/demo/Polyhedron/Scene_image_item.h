@@ -45,6 +45,7 @@ public:
   virtual QString toolTip() const;
   
   const Image* image() const { return m_image; }
+  bool isGray() { return is_hidden;}
 
 private:
   void draw_gl(CGAL::Three::Viewer_interface* viewer) const;
