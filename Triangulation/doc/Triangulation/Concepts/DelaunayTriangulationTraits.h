@@ -79,7 +79,7 @@ DelaunayTriangulationTraits();
 /// @}
 
 /// \name Operations
-/// The following methods permit access to the traits class's predicates:
+/// The following methods permit access to the traits class's predicates and functors:
 /// @{
 
 /*!

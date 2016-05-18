@@ -53,7 +53,7 @@ public:
 /// @{
 
 /*!
-A point in Euclidean space.
+A point in Euclidean space with an associated weight.
 */
 typedef RegularTriangulationTraits::Weighted_point Weighted_point;
 
@@ -107,7 +107,7 @@ Inserts the weighted points found in range `[s,e)` in the regular triangulation.
 Returns the difference of the number of vertices between after and
 before the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the points
-following the order of `InputIterator`, as `spatial_sort()`
+following the order of `ForwardIterator` because `spatial_sort()`
 is used to improve efficiency.
 
 \tparam ForwardIterator must be an input iterator with the value

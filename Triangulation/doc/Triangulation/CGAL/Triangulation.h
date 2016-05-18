@@ -49,7 +49,7 @@ full cell, plus the non-combinatorial information about each full cell, then the
 indices of the neighbors of each full cell, where the index corresponds to the
 preceding list of full cells.
 
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
 \sa `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
 
 */

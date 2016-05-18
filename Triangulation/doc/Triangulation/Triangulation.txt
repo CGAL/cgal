@@ -32,7 +32,7 @@ singular of which is <I>simplex</I>).
 A simplex \f$ s\in S\f$ is <I>maximal</I> if it is not a proper subset of some other
 set in \f$ S\f$.
 A simplex having \f$ k+1 \f$ vertices is said of dimension \f$ k \f$.
-An \f$ k\f$-face denotes a \f$ k\f$-dimensional simplex, or a simplex with \f$ k+1\f$
+An \f$ k\f$-face denotes a \f$ k\f$-dimensional simplex, i.e., a simplex with \f$ k+1\f$
 vertices. 
 The simplicial complex is <I>pure</I> if all the maximal simplices
 have the same dimension.
@@ -66,7 +66,7 @@ we deal with
 <I>finite simplicial complexes</I>, which have slightly different simplices
 and additional requirements:
 <UL>
-<LI>vertices corresponds to points in space.
+<LI>vertices correspond to points in space.
 <LI>a simplex \f$ s\in S\f$ is the convex hull of its vertices.
 <LI>the vertices of a simplex \f$ s\in S\f$ are affinely independent.
 <LI>the intersection of any two simplices of \f$ S\f$ is a proper face of both
@@ -114,9 +114,9 @@ A triangulation data structure can represent an abstract triangulation.
 The <I>maximal dimension</I> of a triangulation data structure is a 
 positive integer equal to the maximum dimension a full cell can have.
 This maximal dimension can be chosen by the user at the creation of the 
-triangulation data structure and can then be queried using the method `tds.maximal_dimension()`.
+triangulation data structure and can then be obtained using the method `tds.maximal_dimension()`.
 A triangulation data structure also knows the <I>current dimension</I> of its full cells,
-which can be queried with `tds.current_dimension()`. In the sequel, let
+which can be obtained using `tds.current_dimension()`. In the sequel, let
 us denote the maximal dimension with \f$ D \f$ and the current dimension with \f$ d \f$.
 The inequalities \f$ -2 \leq d \leq D\f$ and \f$ 0 \le D\f$ always hold.
 The special meaning of negative values for \f$d\f$ is explained below.
@@ -415,8 +415,8 @@ hole is ``star shaped'' around `p` and thus is re-triangulated using
 
 Delaunay triangulations support insertion of points, removal of vertices,
 and location of a query point inside the triangulation.
-Note that inserting a set of points at once is much faster
-than inserting the points one by one.
+Note that inserting a large set of points at once is much faster
+than inserting the same points one by one.
 
 ## Implementation ##
 
@@ -480,8 +480,8 @@ of all simplices are regular.
 
 Regular triangulations support insertion of weighted points, 
 and location of a query point inside the triangulation.
-Note that inserting a set of points at once is much faster
-than inserting the points one by one.
+Note that inserting a large set of points at once is much faster
+than inserting the same points one by one.
 \warning The removal of vertices is not supported yet.
 
 
