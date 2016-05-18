@@ -39,6 +39,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
+#include <boost/container/deque.hpp>
 
 // STL
 #include <map>
@@ -118,7 +119,7 @@ public:
   typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
   typedef OTR_2::Sample_with_priority<Sample_> PSample;
-  typedef std::priority_queue<PSample, std::deque<PSample>,
+  typedef std::priority_queue<PSample, boost::container::deque<PSample>,
       OTR_2::greater_priority<PSample> > SQueue;
 
   typedef Reconstruction_edge_2<FT, Edge, 
@@ -900,6 +901,7 @@ public:
     Vertex_handle t = target_vertex(edge);
 
     Edge_vector hull;
+    hull.reserve(16);
     get_edges_from_star_minus_link(s, hull);
     return is_in_kernel(t->point(), hull.begin(), hull.end());
   }
