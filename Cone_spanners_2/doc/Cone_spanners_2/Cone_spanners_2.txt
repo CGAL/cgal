@@ -269,7 +269,39 @@ is defined as the kernel, but `Exact_predicates_inexact_constructions_kernel` wi
 since it supports `CAL::sqrt()`. For Yao graph, there is no such restriction, since its construction 
 does not need `CGAL::sqrt()`. 
 
-After compiling 'theta_io.cpp', execute the executable `theta_io` to construct a Theta graph with 4 cones 
+Also note that, for the above step 2, if we use the following code,
+this example will compile successfully in most cases except when the compilation is done by
+g++ 5.3.1 or clang++ 3.5.2-1 with the c++11 standard, which will give an error arising from
+the boost header file `boost/graph/adjacency_list.hpp`. 
+
+\code{.cpp}
+typedef boost::adjacency_list<boost::listS,
+                              boost::vecS,
+                              boost::directedS,
+                              Point_2
+                             > Graph;
+\endcode
+
+This compilation error is due to a bug from the boost library, and
+the link for this bug report is at http://lists.boost.org/Archives/boost/2016/05/229458.php.
+The boost has replied that the fix for this bug will be merged into a future version of 
+boost distribution, hopefully, Boost 1.61.0. Also, if 'directedS' below is replaced by 'undirectedS', 
+the bug won't cause compilation error. Therefore, we provide a workaround for this bug as below
+in the `theta_io.cpp`.
+
+\code{.cpp}
+typedef boost::adjacency_list<boost::listS,
+                              boost::vecS,
+                              #ifdef CGAL_CXX11
+                              boost::undirectedS,
+                              #else
+                              boost::directedS,
+                              #endif
+                              Point_2
+                             > Graph;
+\endcode
+
+After compiling `theta_io.cpp`, execute the executable `theta_io` to construct a Theta graph with 4 cones 
 on a set of 20 vertices (which is given in the file `data/n20.cin`):
 
 \code{.txt}
