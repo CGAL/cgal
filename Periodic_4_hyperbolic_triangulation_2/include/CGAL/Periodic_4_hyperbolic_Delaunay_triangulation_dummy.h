@@ -92,6 +92,38 @@ namespace CGAL {
                                 std::vector<typename GT::Point_2>& points_on_boundary,
                                 std::vector<typename GT::Point_2>& points_on_vertex)
     {
+
+        typedef typename GT::FT FT;
+        typedef typename GT::Point_2 Point_2;
+
+        typedef Aff_transformation_2<GT> Transformation; 
+        //Transformation rotate(ROTATION, 1./sqrt(2.), 1./sqrt(2.)); 
+        Transformation rotate(ROTATION, 1., 0.);                                    // Rotation by pi 
+        //Transformation rotate_pi8(ROTATION, sin(CGAL_PI/8.), cos(CGAL_PI/8.));      // Rotation by pi/8
+
+        points_on_vertex.push_back(Point_2( sqrt(sqrt(2.) + 1.)/ 2. , - sqrt(sqrt(2.) - 1.)/ 2.) );           //  v_0
+        points_on_boundary.push_back(Point_2( sqrt(sqrt(2.) - 1.), 0.));                                                         //  μ(s_0)
+        points_on_boundary.push_back(Point_2( sqrt( (sqrt(2.) - 1.) / 2.) , sqrt( (sqrt(2.) - 1.) / 2.)) );      //  μ(s_1)
+        points_on_boundary.push_back(Point_2(0., sqrt(sqrt(2.) - 1.)));                                                         //  μ(s_2)
+        points_on_boundary.push_back(Point_2(-sqrt( (sqrt(2.) - 1.) / 2.), sqrt( (sqrt(2.) - 1.) / 2.)) );       //  μ(s_3)
+
+        Point_2 a0((2. + sqrt(2.) - sqrt(6.))/(4.*sqrt(sqrt(2.) - 1.)), (sqrt(2.) - 2.*sqrt(3.) + sqrt(6.)) / (4.*sqrt(sqrt(2.) - 1.)));
+
+        /* Consistency reasons (has to be corresponding to vertex 5 of the figure) */
+        //
+        a0 = rotate(a0);
+        a0 = rotate(a0);
+        a0 = rotate(a0);
+
+        inner_points.push_back(a0);
+        for (int k = 1; k < 8; k++) {
+            a0 = rotate(a0);
+            inner_points.push_back(a0);
+        }
+
+        inner_points.push_back(Point_2( 0., 0. ));
+
+        /*
         assert(inner_points.size()        == 0);
         assert(points_on_boundary.size()  == 0);
         assert(points_on_vertex.size()    == 0);
@@ -136,6 +168,7 @@ namespace CGAL {
         
 
         points_on_vertex.push_back(apply_rotation<K>(fr));
+        */
     }
     
     /*

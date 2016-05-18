@@ -258,6 +258,9 @@ public slots:
   
   void on_actionInsertRandomPoints_triggered();
 
+  void on_actionInsertPointOnFundamentalSide_triggered();
+  void on_actionInsertPointOnAxis_triggered();
+
   void on_actionInsertOrigin_triggered();
 
   void on_actionInsertDummyPoints_triggered();
@@ -310,42 +313,42 @@ MainWindow::MainWindow()
   QPen pen;  // creates a default pen
   pen.setWidth(0);
   //pen.setBrush(Qt::black);
-  pen.setBrush(QColor(200, 200, 0));
+  pen.setBrush(Qt::black);
   disk->setPen(pen);
 
   scene.addItem(disk);
   
   // another input point, instead of the origin
   
-  double phi = CGAL_PI / 8.;
-  double psi = CGAL_PI / 3.;
-  double rho = std::sqrt(cos(psi)*cos(psi) - sin(phi)*sin(phi));
+  //double phi = CGAL_PI / 8.;
+  //double psi = CGAL_PI / 3.;
+  //double rho = std::sqrt(cos(psi)*cos(psi) - sin(phi)*sin(phi));
   
-  Point origin = Point(0, 0);
-  const Point a(cos(phi)*cos(phi + psi)/rho, sin(phi)*cos(phi + psi)/rho);
+  //Point origin = Point(0, 0);
+  //const Point a(cos(phi)*cos(phi + psi)/rho, sin(phi)*cos(phi + psi)/rho);
   
   
   // dt to form the octagon tessellation
-  vector<Point> origin_orbit;
-  apply_unique_words(origin_orbit, origin, 10, 6);
-  origin_orbit.push_back(Point(0, 0));
+  //vector<Point> origin_orbit;
+  //apply_unique_words(origin_orbit, origin, 10, 6);
+  //origin_orbit.push_back(Point(0, 0));
   // for(long i = 0; i < origin_orbit.size(); i++) {
   //   cout << origin_orbit[i] << endl;
   // }
-  cout << "nb of points on the orbit of the origin: " << origin_orbit.size() << endl;
+  //cout << "nb of points on the orbit of the origin: " << origin_orbit.size() << endl;
 
-  Delaunay* dtO = new Delaunay(K(1));
-  dtO->insert(origin_orbit.begin(), origin_orbit.end());
+  //Delaunay* dtO = new Delaunay(K(1));
+  //dtO->insert(origin_orbit.begin(), origin_orbit.end());
   
-  origin_vgi = new CGAL::Qt::VoronoiGraphicsItem<Delaunay>(dtO);
-  origin_vgi->setVisible(true);
+  //origin_vgi = new CGAL::Qt::VoronoiGraphicsItem<Delaunay>(dtO);
+  //origin_vgi->setVisible(true);
   
-  QObject::connect(this, SIGNAL(changed()),
-                   origin_vgi, SLOT(modelChanged()));
+  //QObject::connect(this, SIGNAL(changed()),
+  //                 origin_vgi, SLOT(modelChanged()));
   
-  QColor br(149, 179, 179);
-  origin_vgi->setEdgesPen(QPen(br, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  scene.addItem(origin_vgi);
+  //QColor br(149, 179, 179);
+  //origin_vgi->setEdgesPen(QPen(br, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  //scene.addItem(origin_vgi);
   
   
   // Add a GraphicItem for the Delaunay triangulation
@@ -365,7 +368,7 @@ MainWindow::MainWindow()
 		   vgi, SLOT(modelChanged()));
 
   QColor brown(139, 69, 19);
-  vgi->setEdgesPen(QPen(brown, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
   vgi->hide();
 
@@ -476,13 +479,13 @@ MainWindow::processInput(CGAL::Object o)
       Vertex_handle v;
       for(size_t j = 0; j < points.size() ; j++) {
         v = dt.insert(points[j]);
-        if (!dummy_mode) {
+        if (/*!dummy_mode*/ true) {
           v->info().setColor(ccol[cidx]);
         } else {
           v->info().setColor(-1);  // This will default to gray
         }
       }
-      if (!dummy_mode) {
+      if (/*!dummy_mode*/ true) {
         cidx = (cidx + 1) % ccol.size();
       }
       //
@@ -661,7 +664,8 @@ MainWindow::on_actionInsertOrigin_triggered()
   std::vector<Point> pts;
   cout << "Inserting Origin now! " << endl;
 
-  processInput(make_object(Point(0,0)));
+  cidx = 0;
+  processInput(make_object(Point(0, 0)));
 
   cout << "Origin inserted! " << endl;
   emit(changed());
@@ -669,6 +673,35 @@ MainWindow::on_actionInsertOrigin_triggered()
 }
 
 
+void
+MainWindow::on_actionInsertPointOnAxis_triggered()
+{
+
+  std::vector<Point> pts;
+  cout << "Inserting point on axis now! " << endl;
+
+  cidx = 0;
+  processInput(make_object(Point(0, 0.29)));
+
+  cout << "Point on axis inserted! " << endl;
+  emit(changed());
+
+}
+
+void
+MainWindow::on_actionInsertPointOnFundamentalSide_triggered()
+{
+
+  std::vector<Point> pts;
+  cout << "Inserting point on side of fundamental octagon now! " << endl;
+
+  cidx = 0;
+  processInput(make_object(Point(0, sqrt(sqrt(2.)-1.))));
+
+  cout << "Point on side of fundamental octagon inserted! " << endl;
+  emit(changed());
+
+}
 
 void
 MainWindow::on_actionInsertDummyPoints_triggered()

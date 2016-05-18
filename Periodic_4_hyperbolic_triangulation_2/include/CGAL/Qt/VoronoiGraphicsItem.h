@@ -102,7 +102,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   // delete
   QPen temp = painter->pen();
   QPen old = temp;
-  temp.setWidthF(0.005);
+  temp.setWidthF(0.01);
   painter->setPen(temp);
   //
   
