@@ -19,7 +19,7 @@ with some additional attributes tuned for a specific application.
 Parameters 
 -------------- 
 
-The first template parameter, `TriangulationDataStructure`, must be a model of the 
+The first template parameter, `TriangulationDataStructure_`, must be a model of the 
 `TriangulationDataStructure` concept. 
 
 The second parameter, `TriangulationDSFullCellStoragePolicy`, indicates whether or not 
@@ -55,11 +55,11 @@ Rebind mechanism
 In case of derivation from that class, the nested class 
 `Rebind_TDS` need to be provided in the derived class. 
 
-\sa `Triangulation_ds_vertex<TriangulationDataStructure>` 
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>>` 
+\sa `Triangulation_ds_vertex<TriangulationDataStructure_>` 
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>` 
 
 */
-template< typename TriangulationDataStructure, typename TriangulationDSFullCellStoragePolicy >
+template< typename TriangulationDataStructure_, typename TriangulationDSFullCellStoragePolicy >
 class Triangulation_ds_full_cell {
 public:
 

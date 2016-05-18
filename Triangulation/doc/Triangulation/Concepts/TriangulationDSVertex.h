@@ -37,7 +37,7 @@ of `CGAL::Triangulation_data_structure::Vertex`.
 \cgalRefines `TriangulationDataStructure::Vertex`
 
 \cgalHasModel CGAL::Triangulation_ds_vertex<Tds>
-\cgalHasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>
+\cgalHasModel CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>
 
 \sa `TriangulationDSFullCell`
 \sa `TriangulationDSFace`

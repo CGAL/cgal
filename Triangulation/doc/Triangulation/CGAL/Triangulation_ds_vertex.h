@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgTriangulationsVertexCellClasses
 
 The class `Triangulation_ds_vertex` serves as the default vertex template parameter in the 
-class `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`. 
+class `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`. 
 
 This class does not contain any geometric information but only combinatorial 
 (adjacency) information. Thus, if the `Triangulation_data_structure` is 
@@ -20,7 +20,7 @@ example).
 Parameters 
 -------------- 
 
-The template parameter `TriangulationDataStructure` must be a model of the 
+The template parameter `TriangulationDataStructure_` must be a model of the 
 `TriangulationDataStructure` concept. 
 
 \cgalModels ::TriangulationDSVertex 
@@ -31,11 +31,11 @@ Rebind mechanism
 In case of derivation from that class, the nested class 
 `Rebind_TDS` need to be provided in the derived class. 
 
-\sa `Triangulation_ds_full_cell<TriangulationDataStructure, TriangulationDSFullCellStoragePolicy>` 
-\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>>` 
+\sa `Triangulation_ds_full_cell<TriangulationDataStructure_, TriangulationDSFullCellStoragePolicy>` 
+\sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>` 
 
 */
-template< typename TriangulationDataStructure >
+template< typename TriangulationDataStructure_ >
 class Triangulation_ds_vertex {
 public:
 

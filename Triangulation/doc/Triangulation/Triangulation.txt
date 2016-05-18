@@ -83,21 +83,21 @@ models an <I>abstract triangulation</I>: vertices in this
 class are not embedded in Euclidean space but are only of combinatorial
 nature.
 
-The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+The class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>` 
 describes an embedded triangulation that has as vertices a given set of points.
 Methods are provided for the insertion of points in the triangulation, the
 traversal of various elements of the triangulation, as well as the location of a
 query point inside the triangulation. 
 The triangulation covers the convex hull of the set of points.
 
-The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` 
+The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` 
 builds the Delaunay triangulation of a set of points. 
 In a Delaunay triangulation, each face has the so-called
 <I>Delaunay</I> or <I>empty-ball</I> property: there exists a
 circumscribing ball whose interior does not contain 
 any vertex of the triangulation.
 
-The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` 
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` 
 builds the regular triangulation 
 -- also known as weighted Delaunay triangulation -- of a set of points. 
 A detailed definition of such a triangulation is available in section
@@ -192,7 +192,7 @@ indices alongside the references to the vertices and neighbors in a
 full cell. This improves speed a little, but requires more memory.
 
 \cgalAdvanced \cgal provides the class template
-`Triangulation_ds_full_cell<TriangulationDataStructure,
+`Triangulation_ds_full_cell<TriangulationDataStructure_,
 TriangulationDSFullCellStoragePolicy>` for representing full cells in a
 triangulation. Its second template parameter is used to specify wether
 or not the mirror indices should be kept in memory or computed
@@ -228,10 +228,10 @@ constructor (see `TriangulationDataStructure`).
 The `TriangulationDSVertex_` and `TriangulationDSFullCell_` parameters to the class template
 must be models of the concepts `TriangulationDSVertex` and
 `TriangulationDSFullCell` respectively. \cgal provides models for these
-concepts: `Triangulation_ds_vertex<TriangulationDataStructure>` and
-`Triangulation_ds_full_cell<TriangulationDataStructure, TriangulationDSFullCellStoragePolicy>`, which, as one
-can see, take the `TriangulationDataStructure` as a template parameter in order to get access to
-some nested types in `TriangulationDataStructure`.
+concepts: `Triangulation_ds_vertex<TriangulationDataStructure_>` and
+`Triangulation_ds_full_cell<TriangulationDataStructure_, TriangulationDSFullCellStoragePolicy>`, which, as one
+can see, take the triangulation data structure as a template parameter in order to get access to
+some nested types in `TriangulationDataStructure_`.
 
 The default values are `CGAL::Triangulation_ds_vertex<TDS>`
 and `CGAL::Triangulation_ds_full_cell<TDS>`
@@ -288,7 +288,7 @@ Barycentric subdivision in dimension \f$ d=2\f$.
 
 \section TriangulationSecTriangulations Triangulations
 
-The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+The class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>` 
 maintains a triangulation embedded in Euclidean space. The triangulation 
 covers the convex hull of the input points (the embedded vertices of the
 triangulation).
@@ -318,11 +318,11 @@ the hyperplane supported by its finite facet where there is no other point.
 
 ## Implementation ##
 
-The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+The class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>` 
 stores a model of the concept `TriangulationDataStructure` that is 
 instantiated with a vertex type that stores a point.
 
-The template parameter `TriangulationTraits` must be a model of the concept
+The template parameter `TriangulationTraits_` must be a model of the concept
 `TriangulationTraits`, which provides the point type as well
 as various geometric predicates used by the `Triangulation` class.
 
@@ -333,7 +333,7 @@ given as arguments to the predicates. This type is either
 In any case, the dimension of the traits
 must match the maximal dimension of the triangulation data structure.
 
-The template parameter `TriangulationDataStructure` must be a model of the concept
+The template parameter `TriangulationDataStructure_` must be a model of the concept
 `TriangulationDataStructure` which provides the triangulation data
 structure as described in the previous section.
 
@@ -385,8 +385,8 @@ visits <I>only</I> the infinite full cells but stores handles to them into the
 
 \section TriangulationSecDT Delaunay Triangulations
 
-The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` derives from
-`CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
+The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`
 and represents Delaunay triangulations.
 
 A <I>circumscribing ball</I> of a simplex is a ball
@@ -420,12 +420,12 @@ than inserting the same points one by one.
 
 ## Implementation ##
 
-The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` derives from
-`CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. It thus stores a model of
+The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`. It thus stores a model of
 the concept `TriangulationDataStructure`, which is instantiated with a vertex
 type that stores a geometric point and allows its retrieval.
 
-The template parameter `DelaunayTriangulationTraits` must be a model of the concept
+The template parameter `DelaunayTriangulationTraits_` must be a model of the concept
 `DelaunayTriangulationTraits` which provides the geometric `Point` type as
 well as various geometric predicates used by the `Delaunay_triangulation` class.
 The concept `DelaunayTriangulationTraits` refines the concept
@@ -447,8 +447,8 @@ retaining an efficient update of the Delaunay triangulation.
 
 \section TriangulationSecRT Regular Triangulations
 
-The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` derives from
-`CGAL::Triangulation<RegularTriangulationTraits, TriangulationDataStructure>`
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`
 and represents regular triangulations.
 
 Regular triangulations are similar to Delaunay triangulations, but 
@@ -487,12 +487,12 @@ than inserting the same points one by one.
 
 ## Implementation ##
 
-The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` derives from
-`CGAL::Triangulation<RegularTriangulationTraits, TriangulationDataStructure>`. It thus stores a model of
-the concept `TriangulationDataStructure` which is instantiated with a vertex
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`. It thus stores a model of
+the concept `TriangulationDataStructure_` which is instantiated with a vertex
 type that stores a weighted point and allows its retrieval.
 
-The template parameter `RegularTriangulationTraits` must be a model of the concept
+The template parameter `RegularTriangulationTraits_` must be a model of the concept
 `RegularTriangulationTraits`. It must provide the `%Weighted_point` 
 type as well as various geometric predicates used by the 
 `Regular_triangulation` class.

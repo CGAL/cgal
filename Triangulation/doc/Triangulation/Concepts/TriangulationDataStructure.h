@@ -26,8 +26,8 @@ which is also the unique vertex and the unique full cell in the
 `TriangulationDataStructure`.
 In a
 geometric realization of the `TriangulationDataStructure` (<I>e.g.</I>, in a
-`Triangulation<TriangulationTraits, TriangulationDataStructure>` or a
-`Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`), this vertex
+`Triangulation<TriangulationTraits_, TriangulationDataStructure_>` or a
+`Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`), this vertex
 corresponds to <I>the vertex at infinity</I>.
 
 <DT><B>0</B><DD> This corresponds to two vertices, each incident to one \f$ 0\f$-face;
@@ -70,7 +70,7 @@ The classes `Vertex` and
 `Full_cell` have to provide the relevant I/O operators
 (possibly empty).
 
-\cgalHasModel `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
+\cgalHasModel `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
 
 \sa `TriangulationDataStructure::Vertex`
 \sa `TriangulationDataStructure::FullCell`
@@ -665,8 +665,8 @@ It sets requirements of combinatorial nature
 only, as geometry is not concerned here. In particular, we only require that
 the vertex holds a handle to a full cell incident to it in the triangulation.
 
-\cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
-\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
+\cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
+\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`
@@ -772,8 +772,8 @@ full cell as well as handles to the adjacent full cells. Two full cells
 are said to be adjacent when they share a facet. Adjacent full cells are
 called hereafter neighbors.
 
-\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>`
-\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
+\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>`
+\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`

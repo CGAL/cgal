@@ -5,7 +5,7 @@
 
 This concept describes the geometric types and predicates required to build
 a triangulation. It corresponds to the first template parameter of the class 
-`CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`.
+`CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`.
 
 \cgalRefines `SpatialSortingTraits_d`
 

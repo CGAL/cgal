@@ -22,19 +22,19 @@ having all vertices of the simplex on its boundary.
 Parameters
 --------------
 
-\tparam DelaunayTriangulationTraits is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits` must be a model of
+\tparam DelaunayTriangulationTraits_ is the geometric traits class that provides the geometric types
+and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits_` must be a model of
 the concept `DelaunayTriangulationTraits`.
 
-\tparam TriangulationDataStructure must be a model of the concept
+\tparam TriangulationDataStructure_ must be a model of the concept
 `TriangulationDataStructure`. This model is used to store 
-the faces of the triangulation. The parameter `TriangulationDataStructure` defaults to
+the faces of the triangulation. The parameter `TriangulationDataStructure_` defaults to
 `Triangulation_data_structure` whose template parameters are instantiated as
 follows:
 <UL>
-<LI>`DelaunayTriangulationTraits::Dimension`</LI>
-<LI>`Triangulation_vertex<DelaunayTriangulationTraits>`</LI>
-<LI>`Triangulation_full_cell<DelaunayTriangulationTraits>`.</LI>
+<LI>`DelaunayTriangulationTraits_::Dimension`</LI>
+<LI>`Triangulation_vertex<DelaunayTriangulationTraits_>`</LI>
+<LI>`Triangulation_full_cell<DelaunayTriangulationTraits_>`.</LI>
 </UL>
 
 \tparam Delaunay_triangulation can
@@ -45,9 +45,9 @@ tag `CGAL::Default` as the second parameter.
 \sa `Triangulation_data_structure`
 
 */
-template< typename DelaunayTriangulationTraits, typename TriangulationDataStructure >
+template< typename DelaunayTriangulationTraits_, typename TriangulationDataStructure_ >
 class Delaunay_triangulation
-  : public Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>
+  : public Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>
 {
 public:
 

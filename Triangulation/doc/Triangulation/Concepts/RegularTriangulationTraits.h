@@ -5,7 +5,7 @@
 
 This concept describes the geometric types and predicates required to build
 a regular triangulation. It corresponds to the first template parameter of the class 
-`CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>`.
+`CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`.
 
 \cgalRefines ::TriangulationTraits.
 

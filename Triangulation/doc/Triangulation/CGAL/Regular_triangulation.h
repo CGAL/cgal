@@ -19,20 +19,20 @@ User Manual.
 Parameters
 --------------
 
-\tparam RegularTriangulationTraits is the geometric traits class that provides the
+\tparam RegularTriangulationTraits_ is the geometric traits class that provides the
 geometric types and predicates needed by regular triangulations. 
-`RegularTriangulationTraits` must be a model of the concept 
+`RegularTriangulationTraits_` must be a model of the concept 
 `RegularTriangulationTraits`.
 
-\tparam TriangulationDataStructure must be a model of the concept
+\tparam TriangulationDataStructure_ must be a model of the concept
 `TriangulationDataStructure`. This model is used to store 
-the faces of the triangulation. The parameter `TriangulationDataStructure` 
+the faces of the triangulation. The parameter `TriangulationDataStructure_` 
 defaults to `Triangulation_data_structure` whose template parameters are 
 instantiated as follows:
 <UL>
-<LI>`RegularTriangulationTraits::Dimension`</LI>
-<LI>`Triangulation_vertex<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits> >`</LI>
-<LI>`Triangulation_full_cell<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits> >`.</LI>
+<LI>`RegularTriangulationTraits_::Dimension`</LI>
+<LI>`Triangulation_vertex<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits_> >`</LI>
+<LI>`Triangulation_full_cell<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits_> >`.</LI>
 </UL>
 
 \tparam Regular_triangulation can
@@ -43,9 +43,9 @@ tag `CGAL::Default` as the second parameter.
 \sa `Triangulation_data_structure`
 
 */
-template< typename RegularTriangulationTraits, typename TriangulationDataStructure >
+template< typename RegularTriangulationTraits_, typename TriangulationDataStructure_ >
 class Regular_triangulation
-  : public Triangulation<RegularTriangulationTraits, TriangulationDataStructure>
+  : public Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>
 {
 public:
 
@@ -55,7 +55,7 @@ public:
 /*!
 A point in Euclidean space with an associated weight.
 */
-typedef RegularTriangulationTraits::Weighted_point Weighted_point;
+typedef RegularTriangulationTraits_::Weighted_point Weighted_point;
 
 /// @}
 
