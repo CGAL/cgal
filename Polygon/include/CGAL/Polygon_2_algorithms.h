@@ -309,7 +309,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::oriented_side_2()`
 /// \sa `CGAL::Polygon_2 `
-/// \sa \ref CGAL::Bounded_side
+/// \sa `CGAL::Bounded_side`
 template <class ForwardIterator, class Point, class PolygonTraits>
 Bounded_side bounded_side_2(ForwardIterator first,
 			    ForwardIterator last,
@@ -332,7 +332,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::is_simple_2()`
 /// \sa `CGAL::Polygon_2`
-/// \sa `CGAL::Orientation`
+/// \sa `CGAL::Orientation_2`
 template <class ForwardIterator, class Traits>
 Orientation orientation_2(ForwardIterator first,
 			  ForwardIterator last,
