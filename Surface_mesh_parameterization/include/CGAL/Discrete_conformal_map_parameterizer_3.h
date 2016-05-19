@@ -26,7 +26,6 @@
 
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
-#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Eigen_solver_traits.h>
 
 /// \file Discrete_conformal_map_parameterizer_3.h

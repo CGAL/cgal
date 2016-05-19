@@ -26,7 +26,7 @@
 
 
 #include <CGAL/Kernel/global_functions.h>
-#include <CGAL/surface_mesh_parameterization_assertions.h>
+#include <CGAL/assertions.h>
 
 /// \file Parameterizer_traits_3.h
 
@@ -149,7 +149,6 @@ protected:
         double dot = (u*v);
         Vector_3 cross_vector = CGAL::cross_product(u,v);
         double cross_norm = std::sqrt(cross_vector*cross_vector);
-        CGAL_surface_mesh_parameterization_assertion(cross_norm != 0.0);
         if(cross_norm != 0.0)
             return (dot/cross_norm);
         else
@@ -166,7 +165,6 @@ protected:
         Vector_3 v = R - Q;
         // (u . v)/((u x v).len)
         double dot = (u*v);
-        CGAL_surface_mesh_parameterization_assertion(dot != 0.0);
         Vector_3 cross_vector = CGAL::cross_product(u,v);
         double cross_norm = std::sqrt(cross_vector*cross_vector);
         if(dot != 0.0)

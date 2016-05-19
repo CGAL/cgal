@@ -25,7 +25,6 @@ typedef CGAL::Seam_mesh<SurfaceMesh>        Mesh;
 typedef boost::graph_traits<SurfaceMesh>::edge_descriptor SM_edge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::halfedge_descriptor SM_halfedge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor SM_vertex_descriptor;
-typedef boost::graph_traits<SurfaceMesh>::face_descriptor SM_face_descriptor;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
@@ -44,11 +43,6 @@ SM_vertex_descriptor find(const Point_3& p, const SurfaceMesh& sm)
   return SM_vertex_descriptor();
 }
 
-void
-print(SM_halfedge_descriptor hd, const SurfaceMesh& sm)
-{
-  std::cout << "2 " << sm.point(source(hd, sm)) << "  " << sm.point(target(hd, sm)) << std::endl;
-}
 
 int main(int argc, char * argv[])
 {
@@ -86,24 +80,23 @@ int main(int argc, char * argv[])
                            CGAL::Two_vertices_parameterizer_3<Mesh> > Parameterizer;
 #endif
 
-  // The 2D points of the uv parametrisation will be written into this map  
-  typedef std::map<vertex_descriptor,Point_2> uv_map;
-  typedef boost::associative_property_map<uv_map> uv_pmap;
-  uv_map uvm; uv_pmap uvpm(uvm);
-  
- 
-  typedef std::map<vertex_descriptor,bool> vertex_parameterized_map;
-  typedef boost::associative_property_map<vertex_parameterized_map> vertex_parameterized_pmap;
-  vertex_parameterized_map vpam; vertex_parameterized_pmap vpapm(vpam);
-
   SM_halfedge_descriptor smhd = halfedge(seam.front(),sm);    
   Mesh mesh(sm, seam);
-
+ 
+  // The 2D points of the uv parametrisation will be written into this map
+  // Note that this is a halfedge property map, and that the uv
+  // is only stored for the canonical halfedges representing a vertex  
+  SurfaceMesh::Property_map<SM_halfedge_descriptor,Point_2> uvpm;
+  bool created;
+  boost::tie(uvpm, created) = sm.add_property_map<SM_halfedge_descriptor,Point_2>("h:uv");
+  assert(created);
+ 
   halfedge_descriptor bhd(smhd);
 
   bhd = opposite(bhd,mesh); // a halfedge on the virtual border
 
-  Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, uvpm, vpapm);
+ 
+  Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, uvpm);
 
   switch(err) {
   case Parameterizer::OK: // Success
@@ -124,11 +117,11 @@ int main(int argc, char * argv[])
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){  
     halfedge_descriptor hd = halfedge(fd,mesh); 
   
-    std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
+    std::cout << "4 " << uvpm[target(hd,mesh)].x() << " " << uvpm[target(hd,mesh)].y() << " 0 ";
     
     hd = next(hd,mesh);
     BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
-      std::cout << uvm[vd].x() << " " << uvm[vd].y() << " 0 ";
+      std::cout << uvpm[vd].x() << " " << uvpm[vd].y() << " 0 ";
     }
     std::cout << std::endl;
   

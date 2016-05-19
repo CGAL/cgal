@@ -26,7 +26,6 @@
 
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
-#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Eigen_solver_traits.h>
 
 /// \file Barycentric_mapping_parameterizer_3.h
@@ -133,19 +132,6 @@ protected:
         return 1;
     }
 
-    /// Check if 3D -> 2D mapping is one-to-one.
-    virtual bool  is_one_to_one_mapping (const TriangleMesh& /* mesh */,
-				       const Matrix& /* A */,
-				       const Vector& /* Bu */,
-				       const Vector& /* Bv */)
-    {
-        /// Theorem: one-to-one mapping is guaranteed if all w_ij coefficients
-        ///          are > 0 (for j vertex neighbor of i) and if the surface
-        ///          border is mapped onto a 2D convex polygon.
-        /// All w_ij coefficients = 1 (for j vertex neighbor of i), thus mapping
-        /// is guaranteed if the surface border is mapped onto a 2D convex polygon.
-        return Base::get_border_parameterizer().is_border_convex ();
-    }
 };
 
 

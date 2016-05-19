@@ -25,7 +25,6 @@
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 
-#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 
 /// \file Circular_border_parameterizer_3.h
@@ -146,62 +145,7 @@ public:
   };
 
 
-#if 0
 
-
-
-
-    //
-    // Class Circular_border_uniform_parameterizer_3
-    //
-
-    /// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
-    ///
-    /// This class parameterizes the border of a 3D surface onto a circle
-    /// in a uniform manner: points are equally spaced.
-    /// Circular_border_parameterizer_3 implements most of the border parameterization
-    /// algorithm. This class implements only `compute_edge_length()` to compute a
-    /// segment's length.
-    ///
-    /// \cgalModels `BorderParameterizer_3`
-    ///
-    /// \sa `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
-    /// \sa `CGAL::Circular_border_parameterizer_3<TriangleMesh>`
-
-    template<class TriangleMesh>      //< 3D surface
-      class Circular_border_uniform_parameterizer_3
-        : public Circular_border_parameterizer_3<TriangleMesh>
-    {
-      // Public types
-    public:
-      // We have to repeat the types exported by superclass
-      /// @cond SKIP_IN_MANUAL
-      typedef TriangleMesh          Adaptor;
-      /// @endcond
-
-      // Private types
-    private:
-      // Mesh_Adaptor_3 subtypes:
-      typedef typename Parameterizer_traits_3<TriangleMesh>::Point_2 Point_2;
-      typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3 Vector_3;
-
-      // Public operations
-    public:
-      // Default constructor, copy constructor and operator =() are fine
-
-      // Protected operations
-    protected:
-      /// Compute the length of an edge.
-      virtual double compute_edge_length(const Adaptor& /* mesh */,
-                                         vertex_descriptor /* source */,
-                                         vertex_descriptor /* target */)
-      {
-        /// Uniform border parameterization: points are equally spaced.
-        return 1;
-      }
-    };
-
-#endif
 
     //
     // Class Circular_border_arc_length_parameterizer_3

@@ -26,7 +26,6 @@
 
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
-#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Eigen_solver_traits.h>
 
 /// \file Mean_value_coordinates_parameterizer_3.h
@@ -162,28 +161,14 @@ protected:
         double delta_ij = compute_angle_rad(position_v_l, position_v_i, position_v_j);
 
         double weight = 0.0;
-        CGAL_surface_mesh_parameterization_assertion(len != 0.0);    // two points are identical!
+        CGAL_assertion(len != 0.0);    // two points are identical!
         if(len != 0.0)
             weight = (std::tan(0.5*gamma_ij) + std::tan(0.5*delta_ij)) / len;
-        CGAL_surface_mesh_parameterization_assertion(weight > 0);
+        CGAL_assertion(weight > 0);
 
         return weight;
     }
 
-    /// Check if 3D -> 2D mapping is one-to-one.
-    virtual bool  is_one_to_one_mapping (const TriangleMesh& ,
-                                         const Matrix& ,
-                                         const Vector& ,
-                                         const Vector& )
-    {
-        /// Theorem: one-to-one mapping is guaranteed if all w_ij coefficients
-        ///          are > 0 (for j vertex neighbor of i) and if the surface
-        ///          border is mapped onto a 2D convex polygon.
-        /// Floater formula above implies that w_ij > 0 (for j vertex neighbor
-        /// of i), thus mapping is guaranteed if the surface border is mapped
-        /// onto a 2D convex polygon.
-        return Base::get_border_parameterizer().is_border_convex();
-    }
 };
 
 

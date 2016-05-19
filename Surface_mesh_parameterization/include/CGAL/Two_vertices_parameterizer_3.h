@@ -25,7 +25,6 @@
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 
-#include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterizer_traits_3.h>
 
 #include <cfloat>
@@ -159,7 +158,7 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
         V1_max = zmax;
         break;
     default:
-        CGAL_surface_mesh_parameterization_assertion(false);
+        CGAL_assertion(false);
     }
     switch (second_longest_axis)
     {
@@ -179,7 +178,7 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
         V2_max = zmax;
         break;
     default:
-        CGAL_surface_mesh_parameterization_assertion(false);
+        CGAL_assertion(false);
     }
 
     // Project onto longest bounding box axes,
@@ -199,8 +198,8 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
         double v = position_as_vector * V2 ;
 
         // convert to unit square coordinates
-        CGAL_surface_mesh_parameterization_assertion(V1_max > V1_min);
-        CGAL_surface_mesh_parameterization_assertion(V2_max > V2_min);
+        CGAL_assertion(V1_max > V1_min);
+        CGAL_assertion(V2_max > V2_min);
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 
@@ -219,6 +218,8 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
     }
     put(vpmap, vxmin, true);
     put(vpmap, vxmax, true);
+
+    std::cerr << "2 " << get(uvmap, vxmin)  << " 0 " << get(uvmap, vxmax) << " 0 " << std::endl;
 
 #ifdef DEBUG_TRACE
     std::cerr << "  map two vertices..." << std::endl;

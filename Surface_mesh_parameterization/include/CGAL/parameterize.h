@@ -28,10 +28,50 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 
 /// \file parameterize.h
 
 namespace CGAL {
+
+  namespace internal {
+
+  template <typename Set>
+  class Bool_property_map
+  {
+    typedef Set S;
+    typedef Bool_property_map<S> Self;
+
+  public:
+    typedef typename Set::key_type key_type;
+    typedef bool value_type;
+    typedef bool reference;
+    typedef boost::read_write_property_map_tag category;
+   
+    friend value_type get(const Self& pm, const key_type& k) 
+    {
+      return pm.m_s->find(k) != pm.m_s->end();
+    }
+
+    friend void put(const Self& pm, key_type& k, const value_type& v)
+    {
+      if(v){
+        pm.m_s->insert(k);
+      } else {
+        pm.m_s->erase(k);
+      }
+    }
+
+    Bool_property_map() : m_s(0) { }
+    Bool_property_map(S& s) : m_s(&s) { }
+   
+  private:
+    S* m_s;
+  };
+
+  } // namespace internal
+
 
 
 /// \ingroup  PkgSurfaceParameterizationMainFunction
@@ -95,18 +135,18 @@ parameterize(TriangleMesh& mesh)  ///< 3D mesh, model of TriangleMesh concept
 /// \pre The mesh border must be mapped onto a convex polygon
 ///   (for fixed border parameterizations).
 
-template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
+template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
 parameterize(TriangleMesh& mesh,
              Parameterizer parameterizer,
              HD bhd,
-             VertexUVmap uvm,
-             VertexIndexMap vimap,
-             VertexParameterizedMap vpm)
+             VertexUVmap uvm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef std::map<vertex_descriptor,int> Indices;
   Indices indices;
+  boost::unordered_set<vertex_descriptor> vs;
+  internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpm(vs);
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(Parameterization::Vertices<TriangleMesh,Indices>(mesh,indices)));
@@ -114,19 +154,17 @@ parameterize(TriangleMesh& mesh,
 }
 
   
-template <class TriangleMesh, class HD, class VertexUVmap, typename VertexParameterizedMap>
+template <class TriangleMesh, class HD, class VertexUVmap>
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
 parameterize(TriangleMesh& mesh,
              HD bhd,
-             VertexUVmap uvm,
-             VertexParameterizedMap vpm)
+             VertexUVmap uvm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef std::map<vertex_descriptor,int> Indices;
+  typedef boost::unordered_map<vertex_descriptor,int> Indices;
   Indices indices;
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
-    indices[v] = -1;
-  }
+  boost::unordered_set<vertex_descriptor> vs;
+  internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(Parameterization::Vertices<TriangleMesh,Indices>(mesh,indices)));
@@ -138,23 +176,25 @@ template <class TM>
 class Seam_mesh;
 
 
-template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap, typename VertexParameterizedMap>
+template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>
 typename Parameterizer_traits_3<Seam_mesh<TriangleMesh> >::Error_code
 parameterize(Seam_mesh<TriangleMesh>& mesh,
              Parameterizer parameterizer,
              HD bhd,
-             VertexUVmap uvm,
-             VertexParameterizedMap vpm)
+             VertexUVmap uvm)
 { 
   typedef typename boost::graph_traits<Seam_mesh<TriangleMesh> >::vertex_descriptor vertex_descriptor;
-  typedef std::map<vertex_descriptor,int> Vertex_index_map;
+
+  boost::unordered_set<vertex_descriptor> vs;
+  internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
+
+  typedef boost::unordered_map<vertex_descriptor,int> Vertex_index_map;
   Vertex_index_map vim;
   boost::associative_property_map<Vertex_index_map> vipm(vim);
   mesh.initialize_vertex_index_map(bhd,vipm);
-  Seam_mesh_uv_map<TriangleMesh,VertexUVmap>  putter(mesh,uvm);
-  return parameterizer.parameterize(mesh, bhd, putter, vipm, vpm);
-}
 
+  return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
+}
 
 } //namespace CGAL
 
