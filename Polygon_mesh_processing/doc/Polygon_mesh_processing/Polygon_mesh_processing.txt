@@ -50,7 +50,7 @@ Section 8 deals with methods to compute \ref PMPConnectedComponents
 of a polygon mesh, and discard the smallest ones.
 
 \todo Section 9 provides some extensive examples of how a polygon mesh can be treated using this package.
-
+\todo update me
 ****************************************
 \section PMPMeshing Meshing
 
@@ -149,6 +149,85 @@ Since the boundary edges will be considered as constrained and protected in this
 Once this is done, remeshing is run on all the surface, with protection of constraints activated, for 3 iterations.
 
 \cgalExample{Polygon_mesh_processing/isotropic_remeshing_example.cpp}
+
+\section Coref_section Corefinement and Boolean Operations
+
+\subsection coref_def_subsec Definitions
+
+<b>Corefinement</b> Given two triangulated surface meshes, the <i>corefinement</i>
+operation consists in refining both meshes so that their intersection polylines
+are a subset of edges in both refined meshes.
+\todo more information on coplanar patches.
+
+<b>Volume bounded by a triangulated surface mesh</b> Given a closed triangulated surface
+mesh, each connected component splits the 3D space into two subspaces. The vertex
+sequence of each face of a component is seen either clockwise or counterclockwise
+from these two subspaces. The subspace that sees the sequence clockwise
+(counterclockwise) is on the negative (positive) side of the component. Given a
+closed triangulated surface mesh `tm` without self-intersection,
+the connected components of `tm` divide
+the 3D space into subspaces. We say that `tm` bounds a volume if each
+subspace is either exclusively on the positive (or negative) side of all the
+incident connected components of `tm`. The volume bounded by `tm` is the union
+of all subspaces that are on negative sides of their incident connected components
+of `tm`.
+
+\subsection coref_coref_subsec Corefinement
+The corefinement of two triangulated surface meshes can be done using the function
+`CGAL::Polygon_mesh_processing::corefine()`. It takes as input the two meshes
+to corefine. If constrained edge maps are provided, edges belonging to the
+intersection of the input meshes will be marked as constrained. In addition,
+if an edge that was marked as constrained is split during the corefinement,
+sub-edges will be marked as constrained as well.
+
+\subsection coref_bolop_subsec Boolean Operations
+The corefinement of two triangulated surface meshes can naturally be used
+for computing Boolean operations on volumes.
+Considering two triangulated surface meshes each bounding
+a volume, the functions `CGAL::Polygon_mesh_processing::join()`,
+`CGAL::Polygon_mesh_processing::intersection()` and
+`CGAL::Polygon_mesh_processing::difference()` respectively compute the union,
+the intersection and the difference of the two volumes.
+Note that there is no restriction on the topology of the input volumes
+as long as the input meshes bounding them do not self-intersect.
+However, there are some requirements on the input to guarantee that
+the operation is possible. Basically the operation is possible only if the output
+can be bounded by a manifold triangulated surface mesh.
+In particular this means that the output volume has no part with zero thickness.
+Mathematically speaking, the intersection with an infinitesimally small ball
+centered in the output volume is a topological ball. At the surface level this means
+that no non-manifold vertex or edge is allowed in the output.
+In case you have to deal with such scenarios, you should consider using the
+package \ref PkgNef3Summary.
+
+It is possible to update the input to contain the result (in-place operation).
+In that case the whole mesh will not be copied and only the region around the
+intersection polyline will be modified. In case the Boolean operation is not,
+possible the input mesh will be nevertheless corefined.
+
+
+\subsection coref_valid_subsec Kernel and Validity of the Output
+The corefinement operation (which is also used internally in the three
+Boolean operations) will correctly change the topology of the input surface mesh
+if the point type used in the point property maps of the input meshes is
+from a \cgal Kernel with exact predicates. If that kernel does not
+have exact constructions, the embedding of the output surface mesh might
+feature self-intersections. In case of consecutive operations, it is thus
+recommanded to use a point property map with points from a kernel with exact
+predicates and exact constructions
+(such as `CGAL::Exact_predicates_exact_constructions_kernel`).
+
+In practice, this means that with exact predicates and inexact constructions,
+that edges will be split at each intersection with a triangle but the
+position of the intersection point might create self-intersections due to
+the limited precision of floating point numbers.
+
+
+\subsection coref_ex_subsec Examples
+\todo add examples
+- Boolean operation with region around the intersection polyline remeshed
+  using isotropric remeshing
+- Boolean operation with an internal inexact point but an exact point in ppmap
 
 
 ********************************************

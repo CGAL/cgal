@@ -40,6 +40,11 @@
 /// Functions to orient polygon soups  and to stitch geometrically identical boundaries.
 /// \ingroup PkgPolygonMeshProcessing
 
+/// \defgroup PMP_corefinement_grp Corefinement and Boolean Operations
+/// Functions corefine triangulated surface meshes and compute the union, difference and intersection
+/// of the bounded volumes.
+/// \ingroup PkgPolygonMeshProcessing
+
 /*!
 \addtogroup PkgPolygonMeshProcessing
  
@@ -91,7 +96,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
 
-
 ## Orientation Functions ##
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - \link reverse_face_orientations_grp `CGAL::Polygon_mesh_processing::reverse_face_orientations()` \endlink
@@ -117,6 +121,13 @@ and provides a list of the parameters that are used in this package.
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
+## Corefinement and Boolean Operation Functions ##
+- `CGAL::Polygon_mesh_processing::join()`
+- `CGAL::Polygon_mesh_processing::difference()`
+- `CGAL::Polygon_mesh_processing::intersection()`
+- `CGAL::Polygon_mesh_processing::corefine()`
+- `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
+
 ## Geometric Measure functions
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
@@ -130,7 +141,8 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::bbox_3()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 
-
+\todo fix the link issue with `intersection`
+\todo add function that orient a mesh to bound a volume
 \todo add in BGL `clear(pmesh)` and use it in `keep_largest_connected_components(pmesh, 0);`
 \todo document BGL/include/CGAL/boost/graph/Dual.h and remove the example from dont_submit
 \todo fix and restore remove_degenerate_faces in the user and the reference manual
