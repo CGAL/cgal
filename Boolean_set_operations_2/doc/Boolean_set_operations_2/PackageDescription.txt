@@ -56,15 +56,15 @@ containment predicates.
 - `CGAL::Gps_default_dcel<Traits>`
 
 ## Functions ##
-- `CGAL::complement`
-- `CGAL::do_intersect`
-- `CGAL::intersection`
-- `CGAL::join`
-- `CGAL::difference`
-- `CGAL::symmetric_difference`
-- `CGAL::oriented_side`
-- `CGAL::connect_holes`
-- `operator<<` for `CGAL::Polygon_with_holes_2`, `CGAL::General_polygon_2` and `CGAL::General_polygon_with_holes_2`
+- \link boolean_complement `CGAL::complement()` \endlink
+- \link boolean_do_intersect `CGAL::do_intersect()` \endlink
+- \link boolean_intersection `CGAL::intersection()` \endlink
+- \link boolean_join `CGAL::join()` \endlink
+- \link boolean_difference `CGAL::difference()` \endlink
+- \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
+- \link boolean_oriented_side `CGAL::oriented_side()` \endlink
+- \link boolean_connect_holes `CGAL::connect_holes()` \endlink
+- `operator<<()` for `CGAL::Polygon_with_holes_2`, `CGAL::General_polygon_2` and `CGAL::General_polygon_with_holes_2`
 - `operator>>()` for `CGAL::Polygon_with_holes_2`, `CGAL::General_polygon_2` and `CGAL::General_polygon_with_holes_2`
 
 
