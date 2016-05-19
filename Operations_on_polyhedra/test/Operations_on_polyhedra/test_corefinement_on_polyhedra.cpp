@@ -27,7 +27,7 @@ typedef CGAL::Corefinement
             ::Polyhedra_output_builder< Polyhedron,
                                         Facet_id_pmap>           Output_builder;
 typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron,
-                                            Output_builder>       Split_visitor;
+                                            Output_builder&>       Split_visitor;
 
 
 void run_boolean_operations(
