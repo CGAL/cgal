@@ -250,7 +250,6 @@ namespace CGAL
     {
       next=next->opposite()->next();
     }
-    while(is_marked.find(next)==is_marked.end());
     CGAL_assertion(next!=h);
     return next;
   }
