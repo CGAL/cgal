@@ -27,6 +27,8 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+# Use GNUInstallDirst to get canonical paths
+include(GNUInstallDirs)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -42,6 +44,7 @@ if ( CGAL_BRANCH_BUILD )
 
   # list packages
   file(GLOB CGAL_CONFIGURED_PACKAGES RELATIVE ${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/*")
+  list(SORT CGAL_CONFIGURED_PACKAGES)
   list(REMOVE_ITEM CGAL_CONFIGURED_PACKAGES copyright CMakeLists.txt .svn .git)
 
   # detect and remove not existing package-directories
@@ -186,6 +189,7 @@ if ( CGAL_BRANCH_BUILD )
     foreach (package ${CGAL_CONFIGURED_PACKAGES})
 
       file(GLOB_RECURSE CGAL_PACKAGE_HEADER_FILES FOLLOW_SYMLINKS ${package}/*.h)
+      list(SORT CGAL_PACKAGE_HEADER_FILES)
       foreach (file ${CGAL_PACKAGE_HEADER_FILES})
         string(REPLACE "${package}/" "" pure_file ${file})
         if (NOT ${pure_file} MATCHES ".*CMakeFiles.*")
@@ -194,6 +198,7 @@ if ( CGAL_BRANCH_BUILD )
       endforeach()
 
       file(GLOB_RECURSE CGAL_PACKAGE_CPP_FILES FOLLOW_SYMLINKS ${package}/*.cpp)
+      list(SORT CGAL_PACKAGE_CPP_FILES)
       foreach (file ${CGAL_PACKAGE_CPP_FILES})
         string(REPLACE "${package}/" "" pure_file ${file})
         if (NOT ${pure_file} MATCHES ".*CMakeFiles.*")
@@ -341,10 +346,11 @@ endif()
 #   CGAL-4.6   : 11.0.0 (int->size_t in CGAL_ImageIO)
 #   CGAL-4.7   : 11.0.1 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.8   : 11.0.2 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.9   : 11.0.3 (Nothing different in CGAL compiled libraries.)
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "11" )
-set( CGAL_SOVERSION      "11.0.2" )
+set( CGAL_SOVERSION      "11.0.3" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -634,8 +640,6 @@ option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external l
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
 # and the example/test must be configured with MPFI (just one is not sufficient)
 
-option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow to use all preconfigured external libraries" OFF)
- 
 include(CGAL_SetupDependencies)
 
 message("== Detect external libraries (DONE) ==\n")
@@ -709,28 +713,28 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
-set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_INC_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_LIB_DIR "${CMAKE_INSTALL_LIBDIR}"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
 if ( CGAL_WIN32_CMAKE_ON_CYGWIN )
   exec_program(cygpath ARGS -w "${CMAKE_INSTALL_PREFIX}" OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
   file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
 endif()
 
-set ( CGAL_INSTALL_BIN_DIR    "bin"                     
-  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_BIN_DIR   "${CMAKE_INSTALL_BINDIR}"
+  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
 set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
-set ( CGAL_INSTALL_DOC_DIR "share/doc/${CGAL_VERSION_DIR}"  
-  CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+  CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "share/man/man1"  
-  CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/man/man1"
+  CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
 message("== Write compiler_config.h (DONE) ==\n")
@@ -777,6 +781,7 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
       message(STATUS "  File '${hfile}' multiply found in ")
       foreach (package ${CGAL_CONFIGURED_PACKAGES})
         file(GLOB_RECURSE CGAL_PACKAGE_HEADER_FILES FOLLOW_SYMLINKS ${package}/*.h)
+        list(SORT CGAL_PACKAGE_HEADER_FILES)
         foreach (file ${CGAL_PACKAGE_HEADER_FILES})
           string(REPLACE "${package}/" "" pure_file ${file})
           if ("${pure_file}" STREQUAL "${hfile}")
@@ -793,6 +798,7 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
       message(STATUS "  File '${cfile}' multiply found in ")
       foreach (package ${CGAL_CONFIGURED_PACKAGES})
         file(GLOB_RECURSE CGAL_PACKAGE_CPP_FILES FOLLOW_SYMLINKS ${package}/*.cpp)
+        list(SORT CGAL_PACKAGE_CPP_FILES)
         foreach (file ${CGAL_PACKAGE_CPP_FILES})
           string(REPLACE "${package}/" "" pure_file ${file})
           if ("${pure_file}" STREQUAL "${cfile}")
@@ -830,6 +836,7 @@ endforeach()
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
 
 file(GLOB scripts "scripts/*")
+list(SORT scripts)
 list(REMOVE_ITEM scripts 
   ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_assertions.sh 
   ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cgal_create_cmake_script_with_options)
@@ -1010,6 +1017,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         file(GLOB ${package}_HEADERS 
           RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
           "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
+        list(SORT ${package}_HEADERS)
         foreach(header ${${package}_HEADERS})
           string(REPLACE "/" "__" header2 "${header}")
           string(REPLACE "." "_" header2 "${header2}")

@@ -3,6 +3,10 @@
 //#define CGAL_PROFILE 
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
+
+
+#include <CGAL/Three/Scene_group_item.h>
+
 #include "Scene_polyhedron_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
@@ -35,7 +39,8 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
-
+class Scene_spheres_item;
+namespace PMP = CGAL::Polygon_mesh_processing;
 struct Array_based_vertex_point_map
 {
 public:
@@ -191,7 +196,7 @@ struct Mouse_keyboard_state_deformation
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
-  : public CGAL::Three::Scene_item {
+  : public CGAL::Three::Scene_group_item {
   Q_OBJECT
 public:  
   /// Create an Scene_edit_polyhedron_item from a Scene_polyhedron_item.
@@ -218,7 +223,7 @@ public:
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const{}
   void draw(CGAL::Three::Viewer_interface*) const;
-  void draw_edges(CGAL::Three::Viewer_interface*) const;
+  void drawEdges(CGAL::Three::Viewer_interface*) const;
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
   void draw_frame_plane(QGLViewer *) const;
@@ -236,6 +241,7 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   void compute_bbox() const;
+  Bbox bbox() const{return Scene_item::bbox();}
 
   int get_k_ring()       { return k_ring_selector.k_ring; }
   void set_k_ring(int v) { k_ring_selector.k_ring = v; }
@@ -244,12 +250,17 @@ public:
   // take keyboard events from main-window, which is more stable
   bool eventFilter(QObject *target, QEvent *event);
   void update_frame_plane();
-  
-protected:
-  void timerEvent(QTimerEvent *event);
-
+  void ShowAsSphere(bool b);
 
 public Q_SLOTS:
+  void reset_spheres()
+  {
+    spheres = NULL;
+  }
+
+  void updateDeform();
+  void change();
+
   void invalidateOpenGLBuffers();
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
@@ -259,7 +270,7 @@ public Q_SLOTS:
       vertex_descriptor vh = *it;
       bool changed = false;
       if(ui_widget->ROIRadioButton->isChecked()) {
-        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh); }
+        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh);}
         else          { changed = erase_roi_vertex(vh);  }
       }
       else {
@@ -285,6 +296,7 @@ public Q_SLOTS:
 private:
   Ui::DeformMesh* ui_widget;
   Scene_polyhedron_item* poly_item;
+  bool need_change;
   // For drawing
   mutable std::vector<GLdouble> positions;
   mutable std::vector<unsigned int> tris;
@@ -298,16 +310,14 @@ private:
   mutable std::vector<GLdouble> normals;
   mutable std::vector<GLdouble> pos_bbox;
   mutable std::vector<GLdouble> pos_axis;
-  mutable std::vector<GLdouble> pos_sphere;
-  mutable std::vector<GLdouble> normals_sphere;
   mutable std::vector<GLdouble> pos_frame_plane;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
   mutable std::size_t nb_ROI;
-  mutable std::size_t nb_sphere;
   mutable std::size_t nb_control;
   mutable std::size_t nb_axis;
   mutable std::size_t nb_bbox;
+  mutable Scene_spheres_item* spheres;
 
   enum Buffer
   {
@@ -315,8 +325,6 @@ private:
       Facet_normals,
       Roi_vertices,
       Control_vertices,
-      Sphere_vertices,
-      Sphere_normals,
       Bbox_vertices,
       Axis_vertices,
       Axis_colors,
@@ -328,20 +336,17 @@ private:
       Facets=0,
       Roi_points,
       Edges,
-      ROI_spheres,
       BBox,
       Control_points,
-      Control_spheres,
       Axis,
       Frame_plane,
       NumberOfVaos
   };
   mutable QOpenGLBuffer *in_bu;
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
   void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);
-  void create_Sphere(double);
   void reset_drawing_data();
 
   Deform_mesh* deform_mesh;
@@ -434,6 +439,7 @@ public:
     // No empty group of control vertices
     qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
+    connect(new_frame, SIGNAL(manipulated()), this, SLOT(change()));
 
     Control_vertices_data hgd(deform_mesh, new_frame);
     ctrl_vertex_frame_map.push_back(hgd);
@@ -763,9 +769,9 @@ protected:
   }
 
   double scene_diag() const {
-    const double& xdelta = bbox().xmax - bbox().xmin;
-    const double& ydelta = bbox().ymax - bbox().ymin;
-    const double& zdelta = bbox().zmax - bbox().zmin;
+    const double& xdelta = bbox().xmax() - bbox().xmin();
+    const double& ydelta = bbox().ymax() - bbox().ymin();
+    const double& zdelta = bbox().zmax() - bbox().zmin();
     const double diag = std::sqrt(xdelta*xdelta +
       ydelta*ydelta +
       zdelta*zdelta);

@@ -70,6 +70,7 @@
 <td width="28%">
 
 <table CELLSPACING=0>
+<tr><td><a href="#release4.9">4.9</a>&nbsp;<td> (September 2016)
 <tr><td><a href="#release4.8">4.8</a>&nbsp;<td> (April 2016)
 <tr><td><a href="#release4.7">4.7</a>&nbsp;<td> (October 2015)
 <tr><td><a href="#release4.6.2">4.6.2</a>&nbsp;<td> (August 2015)
@@ -126,6 +127,85 @@ and <code>src/</code> directories).
 </table>
 
 <HR>
+<h2 id="release4.9">Release 4.9 </h2>
+<div>
+  <p>Release date: Sept 2016 </p>
+<!-- Installation (and general changes) -->
+<!-- New packages -->
+<!-- Major and breaking changes -->
+<!-- Arithmetic and Algebra -->
+<!-- Combinatorial Algorithms -->
+<!-- Geometry Kernels -->
+<!-- Convex Hull Algorithms -->
+<!-- Polygons -->
+<!-- Cell Complexes and Polyhedra -->
+<h3>Combinatorial Maps</h3>
+  <ul>
+    <li>
+    Deprecate global functions (<code>make_combinatorial_hexahedron()</code>, <code>make_combinatorial_polygon()</code>, <code>make_combinatorial_tetrahedron()</code>,
+    <code>make_edge, insert_cell_0_in_cell_1()</code>, <code>insert_cell_0_in_cell_2()</code>, <code>insert_cell_1_in_cell_2()</code>,
+    <code>insert_cell_2_in_cell_3()</code>, <code>insert_dangling_cell_1_in_cell_2()</code>, <code>is_insertable_cell_1_in_cell_2()</code>,
+    <code>is_insertable_cell_2_in_cell_3()</code>, <code>is_removable()</code>, <code>remove_cell()</code>)
+    which are now member functions in the <code>CombinatorialMap</code> concept.</li>
+  </ul>
+<!-- Arrangements -->
+<!-- Triangulations and Delaunay Triangulations -->
+<!-- Voronoi Diagrams -->
+<!-- Mesh Generation -->
+<!-- Surface Reconstruction -->
+<!-- Geometry Processing -->
+  <h3>Point Set Processing</h3>
+  <ul>
+    <li>New function <code>CGAL::read_ply_custom_points()</code> that
+    allows the user to read any additional point attribute from a PLY
+    input point set.</li>
+  </ul>
+  <h3>Point Set Shape Detection</h3>
+  <ul>
+    <li>New post-processing
+      algorithm: <code>CGAL::regularize_planes()</code>. This allows the user
+      to favor parallelism, orthogonality, coplanarity and/or axial
+      symmetry between detected planes.</li>
+  </ul>
+  <h3>Polygon Mesh Processing</h3>
+  <ul>
+    <li>Add the function <code>CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()</code>
+    to check whether a polygon soup is a polygon mesh.</li>
+    <li>
+      Add some new features to <code>CGAL::isotropic_remeshing()</code>.
+      It is now possible to select fixed vertices that survive the remeshing process,
+      and to keep face attributes such as colors valid after remeshing.
+    </li>
+  </ul>
+<!-- Spatial Searching and Sorting -->
+ <h3>3D Fast Intersection and Distance Computation</h3>
+  <ul>
+    <li>Add the functions <code>AABB_tree::first_intersection()</code>
+     and <code>AABB_tree::first_intersected_primitive()</code> that compute
+     the intersection which is closest to the source of a ray</li>
+  </ul>
+<!-- Geometric Optimization -->
+<!-- Interpolation -->
+<!-- Kinetic Data Structures -->
+<!-- Support Library -->
+  <h3>CGAL and the Boost Graph Library (BGL)</h3>
+  <ul>
+    <li>
+      Add a helper function <code>CGAL::copy_face_graph()</code> to
+      copy a source FaceListGraph into another FaceListGraph of
+      different type.
+    </li>
+    <li>
+      Add a class <code>CGAL::Dual</code> that creates the dual view
+      of a <code>FaceGraph</code> and a creation function <code>CGAL::dual(primal)</code>.
+    </li>
+  </ul>
+
+<!-- Visualization -->
+
+<!-- end of the div for 4.9 -->
+</div>
+
 <h2 id="release4.8">Release 4.8 </h2>
 <div>
   <p>Release date: April 2016 </p>
@@ -313,7 +393,6 @@ and <code>src/</code> directories).
       <code>CGAL::expand_edge_selection()</code>, <code>CGAL::reduce_edge_selection()</code>
       <code>CGAL::expand_vertex_selection()</code>, <code>CGAL::reduce_vertex_selection()</code>
       and <code>CGAL::select_incident_faces()</code>.
-    </li>
     <li>
       Add a helper function <code>CGAL::clear</code> which clears a
       MutableFaceGraph efficiently and generically.

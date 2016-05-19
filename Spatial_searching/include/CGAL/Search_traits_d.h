@@ -38,6 +38,7 @@ namespace CGAL {
     typedef typename K::Construct_max_vertex_d Construct_max_vertex_d;
     typedef typename K::Point_d Point_d;
     typedef typename K::Iso_box_d Iso_box_d;
+    typedef typename K::Sphere_d Sphere_d;
     typedef typename K::FT FT;
     
     Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {

@@ -30,18 +30,6 @@ Enriched incremental builder for CGAL Polyhedral Surfaces.
 #define Enriched_polyhedron_incremental_builder_3_H 1
 
 #include <CGAL/basic.h>
-// MS Visual C++ 6.0 does not work with the new design.
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
-#ifndef CGAL_USE_POLYHEDRON_DESIGN_TWO
-#define CGAL_USE_POLYHEDRON_DESIGN_ONE 1
-#endif
-#endif
-
-#ifdef CGAL_USE_POLYHEDRON_DESIGN_ONE
-#include <CGAL/Polyhedron_old/Polyhedron_incremental_builder_3.h>
-#else // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-#define CGAL_USE_POLYHEDRON_DESIGN_TWO 1
-
 #include <CGAL/Random_access_adaptor.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/Unique_hash_map.h>
@@ -838,6 +826,6 @@ remove_unconnected_vertices( Tag_true) {
 
 } //namespace CGAL
 
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
+
 #endif // CGAL_Enriched_polyhedron_incremental_builder_3_H //
 // EOF //

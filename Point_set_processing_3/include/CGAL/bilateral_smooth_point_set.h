@@ -33,13 +33,7 @@
 #include <ctime>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
-
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-#include <boost/property_map/property_map.hpp>
-#else
-#include <boost/property_map.hpp>
-#endif
+#include <CGAL/property_map.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -576,15 +570,18 @@ bilateral_smooth_point_set(
    for(unsigned int i = 0 ; it != beyond; ++it, ++i)
    {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-     Point& p = get(point_pmap, it);
-     Vector& n = get(normal_pmap, it);
+     const Point& p = get(point_pmap, it);
 #else
-     Point& p = get(point_pmap, *it);
-     Vector& n = get(normal_pmap, *it);
+     const Point& p = get(point_pmap, *it);
 #endif
      sum_move_error += CGAL::squared_distance(p, update_pwns[i].position());
-     p = update_pwns[i].position();
-     n = update_pwns[i].normal();
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+     put (point_pmap, it, update_pwns[i].position());
+     put (normal_pmap, it, update_pwns[i].normal());
+#else
+     put (point_pmap, *it, update_pwns[i].position());
+     put (normal_pmap, *it, update_pwns[i].normal());
+#endif
    }
      
    return sum_move_error / nb_points;

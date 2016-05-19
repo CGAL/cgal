@@ -13,7 +13,14 @@
 
 #include <CGAL/Timer.h>
 
-typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/>               Mesh;
+struct DoubleTraits : public OpenMesh::DefaultTraits
+{
+  typedef OpenMesh::Vec3d Point;
+  typedef OpenMesh::Vec3d Normal;
+};
+
+
+typedef OpenMesh::PolyMesh_ArrayKernelT<DoubleTraits>               Mesh;
 typedef Mesh::Point                                                 Point;
 typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_iterator        vertex_iterator;
@@ -24,6 +31,7 @@ const double squared_threshold = 0.001; // alert if average difs between precomp
 
 double squared_length(const Point& p)
 {
+  std::cerr << typeid(p[0]).name() << std::endl;
   return p[0]*p[0]+p[1]*p[1]+p[2]*p[2];
 }
 
@@ -39,7 +47,8 @@ void compare_mesh(const Mesh& mesh_1, const Mesh& mesh_2)
   {
     total_dif = total_dif + (get(ppmap_1, *it_1) - get(ppmap_2, *it_2));
   }
-  double average_mesh_dif = squared_length(total_dif / num_vertices(mesh_1));
+  const double n = static_cast<double>(num_vertices(mesh_1));
+  double average_mesh_dif = squared_length(total_dif) / n / n;
 
   std::cerr << "Average mesh difference: " << average_mesh_dif << std::endl;
 

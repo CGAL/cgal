@@ -4,15 +4,15 @@
 \cgalConcept
 
 The concept `TriangulationVertex` describes the requirements on the type used by the 
-class `Triangulation<TriangulationTraits, TriangulationDataStructure>`, and its derived classes, to 
+class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`, and its derived classes, to 
 represent a vertex. 
 
-\cgalRefines ::TriangulationDSVertex 
+\cgalRefines `TriangulationDSVertex` 
 We only list below the additional specific requirements of ::TriangulationVertex. 
 Compared to ::TriangulationDSVertex, the main difference is the addition of 
 an association of the vertex with a geometric point. 
 
-\cgalHasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex> 
+\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex> `
 
 Input/Output 
 -------------- 
@@ -20,9 +20,9 @@ Input/Output
 These operators can be used directly and are called by the I/O 
 operator of class `Triangulation`. 
 
-\sa `Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>` 
+\sa `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>` 
 \sa `TriangulationFullCell` 
-\sa `Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+\sa `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
 
 */
 

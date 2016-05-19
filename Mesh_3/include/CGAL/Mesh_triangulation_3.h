@@ -56,18 +56,20 @@ namespace CGAL {
 // Struct Mesh_triangulation_3
 //
 template<class MD,
-         class K=typename Kernel_traits<MD>::Kernel,
+         class K_ = Default,
          class Concurrency_tag = Sequential_tag,
          class Vertex_base_ = Default,
          class Cell_base_   = Default>
 struct Mesh_triangulation_3;
 
 // Sequential version (default)
-template<class MD, class K, class Concurrency_tag,
+template<class MD, class K_, class Concurrency_tag,
          class Vertex_base_, class Cell_base_>
 struct Mesh_triangulation_3
 {
 private:
+  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
+
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
   typedef typename Default::Get<
@@ -88,11 +90,13 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
 // Parallel version (specialization)
 //
-template<class MD, class K,
+template<class MD, class K_,
          class Vertex_base_, class Cell_base_>
-struct Mesh_triangulation_3<MD, K, Parallel_tag, Vertex_base_, Cell_base_>
+struct Mesh_triangulation_3<MD, K_, Parallel_tag, Vertex_base_, Cell_base_>
 {
 private:
+  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
+
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
 
   typedef typename Default::Get<

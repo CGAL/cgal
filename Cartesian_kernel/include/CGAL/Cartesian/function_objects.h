@@ -462,6 +462,7 @@ namespace CartesianKernelFunctors {
   class Compare_distance_3
   {
     typedef typename K::Point_3            Point_3;
+    typedef typename K::Segment_3          Segment_3;
   public:
     typedef typename K::Comparison_result  result_type;
 
@@ -471,6 +472,24 @@ namespace CartesianKernelFunctors {
       return cmp_dist_to_pointC3(p.x(), p.y(), p.z(),
 				 q.x(), q.y(), q.z(),
 				 r.x(), r.y(), r.z());
+    }
+
+    result_type
+    operator()(const Point_3& p1, const Segment_3& s1, const Segment_3& s2) const
+    {
+      return CGAL::internal::compare_distance_pssC3(p1,s1,s2, K());
+    }
+
+    result_type
+    operator()(const Point_3& p1, const Point_3& p2, const Segment_3& s2) const
+    {
+      return CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K());
+    }
+
+    result_type
+    operator()(const Point_3& p1, const Segment_3& s2, const Point_3& p2) const
+    {
+      return opposite(CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K()));
     }
 
     template <class T1, class T2, class T3>

@@ -2,6 +2,7 @@
 #include "Scene_c3t3_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
@@ -9,18 +10,31 @@
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
-  public CGAL::Three::Polyhedron_demo_io_plugin_interface
+  public CGAL::Three::Polyhedron_demo_io_plugin_interface,
+  public CGAL::Three::Polyhedron_demo_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
+  void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
+  {
+    this->scene = sc;
+  }
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
   QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am)"; }
   QString loadNameFilters() const { return "binary files (*.cgal)" ; }
-
+  QList<QAction*> actions() const
+  {
+    return QList<QAction*>();
+  }
+  bool applicable(QAction*) const
+  {
+    return false;
+  }
   bool canLoad() const;
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
@@ -30,6 +44,7 @@ public:
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
+  CGAL::Three::Scene_interface* scene;
 };
 
 
@@ -55,11 +70,10 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
         Scene_c3t3_item* item = new Scene_c3t3_item();
         item->setName(fileinfo.baseName());
+        item->setScene(scene);
 
 
         if(item->load_binary(in)) {
-          item->c3t3_changed();
-          item->changed();
           return item;
         }
 
@@ -138,7 +152,7 @@ save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 struct Fake_mesh_domain {
   typedef CGAL::Tag_true Has_features;
   typedef int Subdomain_index;
-  typedef int Surface_patch_index;
+  typedef std::pair<int,int> Surface_patch_index;
   typedef int Curve_segment_index;
   typedef int Corner_index;
   typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
@@ -269,10 +283,35 @@ operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
 typedef CGAL::Triangulation_data_structure_3<Fake_CDT_3_vertex_base<>, Fake_CDT_3_cell_base<> > Fake_CDT_3_TDS;
 typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
 
+typedef Fake_mesh_domain::Surface_patch_index Fake_patch_id;
+
+#include <CGAL/Mesh_3/io_signature.h>
+
+#ifdef CGAL_MESH_3_IO_SIGNATURE_H
 namespace CGAL {
 template <>
-class Output_rep<Patch_id> {
-  typedef Patch_id T;
+struct Get_io_signature<Fake_patch_id> {
+  std::string operator()() const
+  {
+    return std::string("std::pair<i,i>");
+  }
+}; // end Get_io_signature<Fake_patch_id>
+} // end namespace CGAL
+#endif
+
+namespace std {
+  inline std::ostream& operator<<(std::ostream& out, const Fake_patch_id& id) {
+    return out << id.first << " " << id.second;
+  }
+  inline std::istream& operator>>(std::istream& in, Fake_patch_id& id) {
+    return in >> id.first >> id.second;
+  }
+} // end namespace std
+
+namespace CGAL {
+template <>
+class Output_rep<Fake_patch_id> {
+  typedef Fake_patch_id T;
   const T& t;
 public:
   //! initialize with a const reference to \a t.
@@ -280,17 +319,18 @@ public:
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& out) const {
     if(is_ascii(out)) {
-      out << t;
+      out << t.first << " " << t.second;
     } else {
-      CGAL::write(out, t);
+      CGAL::write(out, t.first);
+      CGAL::write(out, t.second);
     }
     return out;
   }
 };
 
 template <>
-class Input_rep<Patch_id> {
-  typedef Patch_id T;
+class Input_rep<Fake_patch_id> {
+  typedef Fake_patch_id T;
   T& t;
 public:
   //! initialize with a const reference to \a t.
@@ -298,9 +338,10 @@ public:
   //! perform the output, calls \c operator\<\< by default.
   std::istream& operator()( std::istream& in) const {
     if(is_ascii(in)) {
-      in >> t;
+      in >> t.first >> t.second;
     } else {
-      CGAL::read(in, t);
+      CGAL::read(in, t.first);
+      CGAL::read(in, t.second);
     }
     return in;
   }
@@ -323,7 +364,7 @@ struct Update_vertex {
     default: // case 2
       const typename V1::Index& index = v1.index();
       const Sp_index sp_index = boost::get<Sp_index>(index);
-      v2.set_index(sp_index);
+      v2.set_index((std::max)(sp_index.first, sp_index.second));
     }
     return true;
   }
@@ -336,7 +377,10 @@ struct Update_cell {
     c2.set_subdomain_index(c1.subdomain_index());
     for(int i = 0; i < 4; ++i) {
       const Sp_index sp_index = c1.surface_patch_index(i);
-      c2.set_surface_patch_index(i, sp_index);
+      c2.set_surface_patch_index(i, (std::max)(sp_index.first,
+                                               sp_index.second));
+      CGAL_assertion(c1.is_facet_on_surface(i) ==
+                     c2.is_facet_on_surface(i));
     }
     return true;
   }
@@ -378,6 +422,7 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
      Update_vertex_from_CDT_3,
      Update_cell_from_CDT_3>(is, c3t3.triangulation()))
   {
+    c3t3.rescan_after_load_of_triangulation();
     std::cerr << "Try load a CDT_3... DONE";
     return true;
   }
@@ -392,10 +437,13 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
 {
   CGAL::set_ascii_mode(is);
   std::string s;
-  is >> s;
-  if (s != "binary" ||
-      !(is >> s) ||
-      s != "CGAL" ||
+  if(!(is >> s)) return false;
+  bool binary = false;
+  if(s == "binary") {
+    binary = true;
+    if(!(is >> s)) return false;
+  }
+  if( s != "CGAL" ||
       !(is >> s) ||
       s != "c3t3")
   {
@@ -410,13 +458,15 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
       return false;
     }
   }
-  CGAL::set_binary_mode(is);
+  if(binary) CGAL::set_binary_mode(is);
+  else CGAL::set_ascii_mode(is);
   std::istream& f_is = CGAL::file_input<
     Fake_c3t3::Triangulation,
     C3t3::Triangulation,
     Update_vertex,
     Update_cell>(is, c3t3.triangulation());
 
+  c3t3.rescan_after_load_of_triangulation();
   return f_is.good();
 }
 

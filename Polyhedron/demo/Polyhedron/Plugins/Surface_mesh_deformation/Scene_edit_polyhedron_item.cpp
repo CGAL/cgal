@@ -1,8 +1,9 @@
 //#define CGAL_PMP_REMESHING_VERBOSE
 
 #include "opengl_tools.h"
-#include "create_sphere.h"
 #include "Scene_edit_polyhedron_item.h"
+#include "Scene_spheres_item.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include <boost/foreach.hpp>
 #include <algorithm>
 #include <QTime>
@@ -13,7 +14,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,
  QMainWindow* mw)
-  : Scene_item(NumberOfBuffers,NumberOfVaos),
+  : Scene_group_item("unnamed",NumberOfBuffers,NumberOfVaos),
     ui_widget(ui_widget),
     poly_item(poly_item),
     is_rot_free(true),
@@ -21,10 +22,11 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true)
 {
   nb_ROI = 0;
-  nb_sphere = 0;
   nb_control = 0;
   nb_axis = 0;
   nb_bbox = 0;
+  spheres = NULL;
+  need_change = false;
   mw->installEventFilter(this);
   // bind vertex picking
   connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
@@ -38,7 +40,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
                                 Deform_mesh::Hedge_index_map(),
                                 Array_based_vertex_point_map(&positions));
 
-  length_of_axis = bbox().diagonal_length() / 15.0;
+  length_of_axis = (CGAL::sqrt((bbox().xmax()-bbox().xmin())*(bbox().xmax()-bbox().xmin()) + (bbox().ymax()-bbox().ymin())*(bbox().ymax()-bbox().ymin()) + (bbox().zmax()-bbox().zmin())*(bbox().zmax()-bbox().zmin()))) / 15.0;
 
   // interleave events of viewer (there is only one viewer) 
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -46,10 +48,6 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     
   // create an empty group of control vertices for starting
   create_ctrl_vertices_group();
-   
-  // start QObject's timer for continuous effects 
-  // (deforming mesh while mouse not moving)
-  startTimer(0);
 
   // Required for drawing functionality
   reset_drawing_data();
@@ -97,8 +95,6 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     connect(ui_widget->remeshingEdgeLengthInput_checkBox, SIGNAL(toggled(bool)),
             ui_widget->remeshing_edge_length_spinbox, SLOT(setEnabled(bool)));
 
-    //the spheres :
-    create_Sphere(length_of_axis/15.0);
     invalidateOpenGLBuffers();
 }
 
@@ -114,7 +110,7 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 }
 /////////////////////////////
 /// For the Shader gestion///
-void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
+void Scene_edit_polyhedron_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer =0) const
 {
     //vao for the facets
     {
@@ -149,8 +145,11 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[Roi_vertices].release();
         vaos[Roi_points]->release();
-
         program->release();
+
+        nb_ROI = ROI_points.size();
+        ROI_points.clear();
+        ROI_points.swap(ROI_points);
     }
    //vao for the edges
     {
@@ -164,46 +163,10 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         vaos[Edges]->release();
         program->release();
     }
-    //vao for the ROI spheres
-    {
-        program = getShaderProgram(PROGRAM_INSTANCED, viewer);
-        program->bind();
-        vaos[ROI_spheres]->bind();
-        buffers[Sphere_vertices].bind();
-        buffers[Sphere_vertices].allocate(pos_sphere.data(),
-                            static_cast<int>(pos_sphere.size()*sizeof(double)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[Sphere_vertices].release();
-
-        buffers[Sphere_normals].bind();
-        buffers[Sphere_normals].allocate(normals_sphere.data(),
-                            static_cast<int>(normals_sphere.size()*sizeof(double)));
-        program->enableAttributeArray("normals");
-        program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[Sphere_normals].release();
-
-        buffers[Roi_vertices].bind();
-        program->enableAttributeArray("center");
-        program->setAttributeBuffer("center",GL_DOUBLE,0,3);
-        buffers[Roi_vertices].release();
-
-        if(viewer->extension_is_found)
-        {
-            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-        }
-        vaos[ROI_spheres]->release();
-        ROI_color.resize(0);
-        std::vector<double>(ROI_color).swap(ROI_color);
-        nb_ROI = ROI_points.size();
-        ROI_points.resize(0);
-        std::vector<double>(ROI_points).swap(ROI_points);
-    }
     //vao for the BBOX
     {
         bbox_program.bind();
-        vaos[4]->bind();
+        vaos[BBox]->bind();
         buffers[Bbox_vertices].bind();
         buffers[Bbox_vertices].allocate(pos_bbox.data(),
                              static_cast<int>(pos_bbox.size()*sizeof(double)));
@@ -211,7 +174,7 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         bbox_program.setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[Bbox_vertices].release();
 
-        vaos[4]->release();
+        vaos[BBox]->release();
         nb_bbox = pos_bbox.size();
         pos_bbox.resize(0);
         std::vector<double>(pos_bbox).swap(pos_bbox);
@@ -233,41 +196,9 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
 
         vaos[Control_points]->release();
         program->release();
-    }
-    //vao for the control spheres
-    {
-        program = getShaderProgram(PROGRAM_INSTANCED, viewer);
-        program->bind();
-        vaos[Control_spheres]->bind();
-        buffers[Sphere_vertices].bind();
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-
-        buffers[Sphere_normals].bind();
-        program->enableAttributeArray("normals");
-        program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[Sphere_normals].release();
-
-        buffers[Control_vertices].bind();
-        program->enableAttributeArray("center");
-        program->setAttributeBuffer("center",GL_DOUBLE,0,3);
-        buffers[Control_vertices].release();
-
-        if(viewer->extension_is_found)
-        {
-            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-        }
-        vaos[Control_spheres]->release();
-        nb_sphere = pos_sphere.size();
-        //pos_sphere.resize(0);
-        //std::vector<double>(pos_sphere).swap(pos_sphere);
-       // normals_sphere.resize(0);
-       // std::vector<double>(normals_sphere).swap(normals_sphere);
-        control_color.resize(0);
-        std::vector<double>(control_color).swap(control_color);
         nb_control = control_points.size();
-        control_points.resize(0);
-        std::vector<double>(control_points).swap(control_points);
+        control_points.clear();
+        control_points.swap(control_points);
     }
     //vao for the axis
     {
@@ -367,11 +298,19 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
     {
         if(!deform_mesh->is_control_vertex(vd))
-        {//gl_draw_point( vd->point() );
+        {
             ROI_points.push_back(vd->point().x());
             ROI_points.push_back(vd->point().y());
             ROI_points.push_back(vd->point().z());
+
+            if(spheres)
+            {
+              CGAL::Color c(0,255,0);
+              Kernel::Sphere_3 *sphere = new Kernel::Sphere_3(vd->point(), length_of_axis/15.0);
+              spheres->add_sphere(sphere, c);
+            }
         }
+
     }
     ROI_color.assign(ROI_points.size(),0);
     for(std::size_t i=0; i<ROI_color.size()/3; i++)
@@ -400,6 +339,13 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
             control_color.push_back(r);
             control_color.push_back(0);
             control_color.push_back(b);
+
+            if(spheres)
+            {
+              CGAL::Color c(255,0,0);
+              Kernel::Sphere_3 *sphere = new Kernel::Sphere_3((*hb)->point(), length_of_axis/15.0);
+              spheres->add_sphere(sphere, c);
+            }
         }
     }
 
@@ -444,6 +390,24 @@ void Scene_edit_polyhedron_item::deform()
   Q_EMIT itemChanged();
 }
 
+struct ROI_faces_pmap
+{
+  typedef face_descriptor                    key_type;
+  typedef bool                               value_type;
+  typedef bool                               reference;
+  typedef boost::read_write_property_map_tag category;
+
+  friend bool get(const ROI_faces_pmap&, const key_type& f)
+  {
+    return f->patch_id() == 12345;/*magic number*/
+  }
+  friend void put(ROI_faces_pmap&, const key_type& f, const value_type b)
+  {
+    if (b)  f->set_patch_id(12345);
+    else    f->set_patch_id(patch_id_default_value(1));
+  }
+};
+
 struct ROI_border_pmap
 {
   std::set<edge_descriptor>* m_set_ptr;
@@ -470,6 +434,19 @@ struct ROI_border_pmap
   }
 };
 
+struct halfedge2edge
+{
+  halfedge2edge(const Polyhedron& m, std::set<edge_descriptor>& edges)
+    : m_mesh(m), m_edges(edges)
+  {}
+  void operator()(const halfedge_descriptor& h) const
+  {
+    m_edges.insert(edge(h, m_mesh));
+  }
+  const Polyhedron& m_mesh;
+  std::set<edge_descriptor>& m_edges;
+};
+
 void Scene_edit_polyhedron_item::remesh()
 {
   const Polyhedron& g = deform_mesh->halfedge_graph();
@@ -479,6 +456,7 @@ void Scene_edit_polyhedron_item::remesh()
   std::set<vertex_descriptor> roi_vertices(
     deform_mesh->roi_vertices().begin(),deform_mesh->roi_vertices().end());
 
+  ROI_faces_pmap roi_faces_pmap;
   BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
@@ -488,7 +466,10 @@ void Scene_edit_polyhedron_item::remesh()
         if (roi_vertices.count(vfd)==0)
           add_face=false;
       if(add_face)
+      {
         roi_facets.insert(fv);
+        put(roi_faces_pmap, fv, true);
+      }
     }
   }
 
@@ -500,23 +481,26 @@ void Scene_edit_polyhedron_item::remesh()
   // estimate the target_length using the perimeter of the region to remesh
   bool automatic_target_length = !ui_widget->remeshingEdgeLengthInput_checkBox->isChecked();
   double estimated_target_length = 0.;
-  if (automatic_target_length)
-  {
+  
     BOOST_FOREACH(face_descriptor f, faces(*polyhedron()))
       put(fim, f, id++);
-    std::set<halfedge_descriptor> roi_border_halfedges;
-    CGAL::Polygon_mesh_processing::border_halfedges(roi_facets, g,
-      std::inserter(roi_border_halfedges, roi_border_halfedges.begin()));
 
-    double sum_len=0.;
-    BOOST_FOREACH(halfedge_descriptor h, roi_border_halfedges)
+    std::set<edge_descriptor> roi_border;
+    CGAL::Polygon_mesh_processing::border_halfedges(roi_facets, g,
+      boost::make_function_output_iterator(halfedge2edge(g, roi_border)));
+
+  if (automatic_target_length)
+  {
+    double sum_len = 0.;
+    BOOST_FOREACH(edge_descriptor e, roi_border)
     {
+      halfedge_descriptor h = halfedge(e, g);
       sum_len += CGAL::sqrt(CGAL::squared_distance(
                     get(vpmap, source(h, g)), get(vpmap, target(h, g))));
     }
     if (sum_len==0) automatic_target_length = false;
     else
-      estimated_target_length = sum_len / (0. + roi_border_halfedges.size());
+      estimated_target_length = sum_len / (0. + roi_border.size());
   }
 
   double target_length = automatic_target_length
@@ -526,6 +510,8 @@ void Scene_edit_polyhedron_item::remesh()
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
   std::cout << "Remeshing...";
+
+  ROI_border_pmap border_pmap(&roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
       roi_facets
     , target_length
@@ -533,6 +519,8 @@ void Scene_edit_polyhedron_item::remesh()
     , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
     .protect_constraints(false)
     .vertex_point_map(vpmap)
+    .edge_is_constrained_map(border_pmap)
+    .face_patch_map(roi_faces_pmap)
     );
   std::cout << "done." << std::endl;
 
@@ -551,6 +539,16 @@ void Scene_edit_polyhedron_item::remesh()
                                 Deform_mesh::Hedge_index_map(),
                                 vpmap);
 
+  BOOST_FOREACH(face_descriptor f, faces(g))
+  {
+    if (!get(roi_faces_pmap, f))
+      continue;
+    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, g), g))
+      insert_roi_vertex(target(h, g));
+
+    put(roi_faces_pmap, f, false); //reset ids
+  }
+
   reset_drawing_data();
   compute_normals_and_vertices();
 
@@ -560,19 +558,29 @@ void Scene_edit_polyhedron_item::remesh()
   Q_EMIT itemChanged();
 }
 
-void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
-{ // just handle deformation - paint like selection is handled in eventFilter()
-  if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing)) {
-      invalidateOpenGLBuffers();
+void Scene_edit_polyhedron_item::updateDeform()
+{
+  if(need_change)
+  {
+    // just handle deformation - paint like selection is handled in eventFilter()
+    invalidateOpenGLBuffers();
     if(!ui_widget->ActivatePivotingCheckBox->isChecked()) {
-        deform();
+      deform();
     }
     else {
-      Q_EMIT itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting, 
-                          // for now redraw with timer)
+      Q_EMIT itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting,
+      // for now redraw with timer)
     }
+    need_change = 0;
   }
 }
+
+void Scene_edit_polyhedron_item::change()
+{
+  need_change = true;
+  QTimer::singleShot(0, this, SLOT(updateDeform()));
+}
+
 bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 {
   // This filter is both filtering events from 'viewer' and 'main window'
@@ -624,12 +632,12 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 }
 
 #include "opengl_tools.h"
-void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Edges]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(0,0,0));
     viewer->glDrawElements(GL_LINES, (GLsizei) edges.size(), GL_UNSIGNED_INT, edges.data());
@@ -639,7 +647,7 @@ void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewe
 
     vaos[Frame_plane]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(0,0,0));
     viewer->glDrawArrays(GL_LINE_LOOP, 0, (GLsizei)pos_frame_plane.size()/3);
@@ -653,17 +661,17 @@ void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewe
 }
 void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
     QColor color = this->color();
     program->setAttributeValue("colors", color);
     viewer->glDrawElements(GL_TRIANGLES, (GLsizei) tris.size(), GL_UNSIGNED_INT, tris.data());
     program->release();
     vaos[Facets]->release();
-    draw_edges(viewer);
+    drawEdges(viewer);
     draw_ROI_and_control_vertices(viewer);
 
 }
@@ -695,19 +703,18 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* ) const
     }
 }
 
+
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer) const {
 
-  CGAL::GL::Color color;
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
 
-  color.set_rgb_color(0, 1.f, 0);
   if(ui_widget->ShowROICheckBox->isChecked()) {
 
         if(!ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
 
             vaos[Roi_points]->bind();
             program = getShaderProgram(PROGRAM_NO_SELECTION);
-            attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+            attribBuffers(viewer,PROGRAM_NO_SELECTION);
             program->bind();
             program->setAttributeValue("colors", QColor(0,255,0));
             viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_ROI/3));
@@ -715,150 +722,132 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
             vaos[Roi_points]->release();
         }
         else{
-            vaos[ROI_spheres]->bind();
-            program = getShaderProgram(PROGRAM_INSTANCED);
-            attrib_buffers(viewer,PROGRAM_INSTANCED);
-            program->bind();
-
-            program->setAttributeValue("colors", QColor(0,255,0));
-            viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                        static_cast<GLsizei>(nb_sphere/3),
-                                        static_cast<GLsizei>(nb_ROI/3));
-            program->release();
-            vaos[ROI_spheres]->release();
+          Scene_group_item::draw(viewer);
     }
   }
 
     if(!ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
         vaos[Control_points]->bind();
         program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+        attribBuffers(viewer,PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors", QColor(255,0,0));
         viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_control/3));
         program->release();
         vaos[Control_points]->release();
     }
-    else{
-        vaos[Control_spheres]->bind();
-        program = getShaderProgram(PROGRAM_INSTANCED);
-        attrib_buffers(viewer,PROGRAM_INSTANCED);
-        program->bind();
-        program->setAttributeValue("colors", QColor(255,0,0));
-        viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(nb_sphere/3),
-                                    static_cast<GLsizei>(nb_control/3));
-        program->release();
-        vaos[Control_spheres]->release();
-    }
 
     QGLViewer* viewerB = *QGLViewer::QGLViewerPool().begin();
-  for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
-  {
-        if(hgb_data->frame == viewerB->manipulatedFrame())
-    {      
-            GLfloat f_matrix[16];
-            for(int i =0; i<16; i++)
-                f_matrix[i] = hgb_data->frame->matrix()[i];
-            QMatrix4x4 f_mat;
-                for(int i=0; i<16; i++)
-                    f_mat.data()[i] = (float)f_matrix[i];
-            vaos[Axis]->bind();
-            program = getShaderProgram(PROGRAM_NO_SELECTION);
-            attrib_buffers(viewer, PROGRAM_NO_SELECTION);
-            program->bind();
-            program->setUniformValue("f_matrix", f_mat);
-            viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));
-            program->release();
-            vaos[Axis]->release();
+    for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
+    {
+         if(hgb_data->frame == viewerB->manipulatedFrame())
+         {
+              GLfloat f_matrix[16];
+              for(int i =0; i<16; i++)
+                  f_matrix[i] = hgb_data->frame->matrix()[i];
+              QMatrix4x4 f_mat;
+                  for(int i=0; i<16; i++)
+                      f_mat.data()[i] = (float)f_matrix[i];
+              vaos[Axis]->bind();
+              program = getShaderProgram(PROGRAM_NO_SELECTION);
+              attribBuffers(viewer, PROGRAM_NO_SELECTION);
+              program->bind();
+              program->setUniformValue("f_matrix", f_mat);
+              viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));
+              program->release();
+              vaos[Axis]->release();
 
-            //QGLViewer::drawAxis(length_of_axis);
-      // draw bbox
-      if(!ui_widget->ActivatePivotingCheckBox->isChecked())
-      {
-                GLfloat f_matrix[16];
-                GLfloat trans[3];
-                GLfloat trans2[3];
+              //QGLViewer::drawAxis(length_of_axis);
+              // draw bbox
+              if(!ui_widget->ActivatePivotingCheckBox->isChecked())
+              {
+                        GLfloat f_matrix[16];
+                        GLfloat trans[3];
+                        GLfloat trans2[3];
 
-                trans[0] = hgb_data->frame->position().x;
-                trans[1] = hgb_data->frame->position().y;
-                trans[2] = hgb_data->frame->position().z;
+                        trans[0] = hgb_data->frame->position().x;
+                        trans[1] = hgb_data->frame->position().y;
+                        trans[2] = hgb_data->frame->position().z;
 
-                trans2[0] = -hgb_data->frame_initial_center.x;
-                trans2[1] = -hgb_data->frame_initial_center.y;
-                trans2[2] = -hgb_data->frame_initial_center.z;
+                        trans2[0] = -hgb_data->frame_initial_center.x;
+                        trans2[1] = -hgb_data->frame_initial_center.y;
+                        trans2[2] = -hgb_data->frame_initial_center.z;
 
-                for(int i =0; i<16; i++)
-                    f_matrix[i] = hgb_data->frame->orientation().matrix()[i];
-                QMatrix4x4 f_mat;
-                QMatrix4x4 mvp_mat;
+                        for(int i =0; i<16; i++)
+                            f_matrix[i] = hgb_data->frame->orientation().matrix()[i];
+                        QMatrix4x4 f_mat;
+                        QMatrix4x4 mvp_mat;
 
-                QVector3D vec(trans[0], trans[1], trans[2]);
-                QVector3D vec2(trans2[0], trans2[1], trans2[2]);
-                    for(int i=0; i<16; i++)
-                        f_mat.data()[i] = (float)f_matrix[i];
-                    GLdouble temp_mat[16];
-                    viewer->camera()->getModelViewProjectionMatrix(temp_mat);
-                    for(int i=0; i<16; i++)
-                        mvp_mat.data()[i] = (float)temp_mat[i];
-                vaos[4]->bind();
-                bbox_program.bind();
-                bbox_program.setUniformValue("rotations", f_mat);
-                bbox_program.setUniformValue("translation", vec);
-                bbox_program.setUniformValue("translation_2", vec2);
-                bbox_program.setUniformValue("mvp_matrix", mvp_mat);
-                program->setAttributeValue("colors", QColor(255,0,0));
-                viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_bbox/3));
-                bbox_program.release();
-                vaos[4]->release();
+                        QVector3D vec(trans[0], trans[1], trans[2]);
+                        QVector3D vec2(trans2[0], trans2[1], trans2[2]);
+                            for(int i=0; i<16; i++)
+                                f_mat.data()[i] = (float)f_matrix[i];
+                            GLdouble temp_mat[16];
+                            viewer->camera()->getModelViewProjectionMatrix(temp_mat);
+                            for(int i=0; i<16; i++)
+                                mvp_mat.data()[i] = (float)temp_mat[i];
+                        vaos[BBox]->bind();
+                        bbox_program.bind();
+                        bbox_program.setUniformValue("rotations", f_mat);
+                        bbox_program.setUniformValue("translation", vec);
+                        bbox_program.setUniformValue("translation_2", vec2);
+                        bbox_program.setUniformValue("mvp_matrix", mvp_mat);
+                        program->setAttributeValue("colors", QColor(255,0,0));
+                        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_bbox/3));
+                        bbox_program.release();
+                        vaos[BBox]->release();
+              }
+         }
     }
-    }
-  }
 
-  } 
+}
 
 
 void Scene_edit_polyhedron_item::compute_bbox(const CGAL::Three::Scene_interface::Bbox& bb){
     pos_bbox.resize(24*3);
 
-    pos_bbox[0]=bb.xmin; pos_bbox[1]=bb.ymin; pos_bbox[2]=bb.zmin;
-    pos_bbox[3]=bb.xmax; pos_bbox[4]=bb.ymin; pos_bbox[5]=bb.zmin;
-    pos_bbox[6]=bb.xmin; pos_bbox[7]=bb.ymin; pos_bbox[8]=bb.zmin;
-    pos_bbox[9]=bb.xmin; pos_bbox[10]=bb.ymax; pos_bbox[11]=bb.zmin;
+    pos_bbox[0]=bb.xmin(); pos_bbox[1]=bb.ymin(); pos_bbox[2]=bb.zmin();
+    pos_bbox[3]=bb.xmax(); pos_bbox[4]=bb.ymin(); pos_bbox[5]=bb.zmin();
+    pos_bbox[6]=bb.xmin(); pos_bbox[7]=bb.ymin(); pos_bbox[8]=bb.zmin();
+    pos_bbox[9]=bb.xmin(); pos_bbox[10]=bb.ymax(); pos_bbox[11]=bb.zmin();
     
-    pos_bbox[12]=bb.xmin; pos_bbox[13]=bb.ymin; pos_bbox[14]=bb.zmin;
-    pos_bbox[15]=bb.xmin; pos_bbox[16]=bb.ymin; pos_bbox[17]=bb.zmax;
-    pos_bbox[18]= bb.xmax; pos_bbox[19]=bb.ymin; pos_bbox[20]=bb.zmin;
-    pos_bbox[21]= bb.xmax; pos_bbox[22]=bb.ymax; pos_bbox[23]=bb.zmin;
+    pos_bbox[12]=bb.xmin(); pos_bbox[13]=bb.ymin(); pos_bbox[14]=bb.zmin();
+    pos_bbox[15]=bb.xmin(); pos_bbox[16]=bb.ymin(); pos_bbox[17]=bb.zmax();
+    pos_bbox[18]= bb.xmax(); pos_bbox[19]=bb.ymin(); pos_bbox[20]=bb.zmin();
+    pos_bbox[21]= bb.xmax(); pos_bbox[22]=bb.ymax(); pos_bbox[23]=bb.zmin();
     
-    pos_bbox[24]= bb.xmax; pos_bbox[25]=bb.ymin; pos_bbox[26]=bb.zmin;
-    pos_bbox[27]= bb.xmax; pos_bbox[28]=bb.ymin; pos_bbox[29]=bb.zmax;
-    pos_bbox[30]=bb.xmin; pos_bbox[31]=bb.ymax; pos_bbox[32]=bb.zmin;
-    pos_bbox[33]=bb.xmax; pos_bbox[34]=bb.ymax; pos_bbox[35]=bb.zmin;
+    pos_bbox[24]= bb.xmax(); pos_bbox[25]=bb.ymin(); pos_bbox[26]=bb.zmin();
+    pos_bbox[27]= bb.xmax(); pos_bbox[28]=bb.ymin(); pos_bbox[29]=bb.zmax();
+    pos_bbox[30]=bb.xmin(); pos_bbox[31]=bb.ymax(); pos_bbox[32]=bb.zmin();
+    pos_bbox[33]=bb.xmax(); pos_bbox[34]=bb.ymax(); pos_bbox[35]=bb.zmin();
     
-    pos_bbox[36]=bb.xmin; pos_bbox[37]=bb.ymax; pos_bbox[38]=bb.zmin;
-    pos_bbox[39]=bb.xmin; pos_bbox[40]=bb.ymax; pos_bbox[41]=bb.zmax;
-    pos_bbox[42]=bb.xmin; pos_bbox[43]=bb.ymin; pos_bbox[44]=bb.zmax;
-    pos_bbox[45]=bb.xmax; pos_bbox[46]=bb.ymin; pos_bbox[47]=bb.zmax;
+    pos_bbox[36]=bb.xmin(); pos_bbox[37]=bb.ymax(); pos_bbox[38]=bb.zmin();
+    pos_bbox[39]=bb.xmin(); pos_bbox[40]=bb.ymax(); pos_bbox[41]=bb.zmax();
+    pos_bbox[42]=bb.xmin(); pos_bbox[43]=bb.ymin(); pos_bbox[44]=bb.zmax();
+    pos_bbox[45]=bb.xmax(); pos_bbox[46]=bb.ymin(); pos_bbox[47]=bb.zmax();
 
-    pos_bbox[48]=bb.xmin; pos_bbox[49]=bb.ymin; pos_bbox[50]=bb.zmax;
-    pos_bbox[51]=bb.xmin; pos_bbox[52]=bb.ymax; pos_bbox[53]=bb.zmax;
-    pos_bbox[54]=bb.xmax; pos_bbox[55]=bb.ymax; pos_bbox[56]=bb.zmax;
-    pos_bbox[57]=bb.xmin; pos_bbox[58]=bb.ymax; pos_bbox[59]=bb.zmax;
+    pos_bbox[48]=bb.xmin(); pos_bbox[49]=bb.ymin(); pos_bbox[50]=bb.zmax();
+    pos_bbox[51]=bb.xmin(); pos_bbox[52]=bb.ymax(); pos_bbox[53]=bb.zmax();
+    pos_bbox[54]=bb.xmax(); pos_bbox[55]=bb.ymax(); pos_bbox[56]=bb.zmax();
+    pos_bbox[57]=bb.xmin(); pos_bbox[58]=bb.ymax(); pos_bbox[59]=bb.zmax();
 
-    pos_bbox[60]=bb.xmax; pos_bbox[61]=bb.ymax; pos_bbox[62]=bb.zmax;
-    pos_bbox[63]=bb.xmax; pos_bbox[64]=bb.ymin; pos_bbox[65]=bb.zmax;
-    pos_bbox[66]=bb.xmax; pos_bbox[67]=bb.ymax; pos_bbox[68]=bb.zmax;
-    pos_bbox[69]=bb.xmax; pos_bbox[70]=bb.ymax; pos_bbox[71]=bb.zmin;
+    pos_bbox[60]=bb.xmax(); pos_bbox[61]=bb.ymax(); pos_bbox[62]=bb.zmax();
+    pos_bbox[63]=bb.xmax(); pos_bbox[64]=bb.ymin(); pos_bbox[65]=bb.zmax();
+    pos_bbox[66]=bb.xmax(); pos_bbox[67]=bb.ymax(); pos_bbox[68]=bb.zmax();
+    pos_bbox[69]=bb.xmax(); pos_bbox[70]=bb.ymax(); pos_bbox[71]=bb.zmin();
     
 }
 
 void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
 {
+    if(spheres)
+      spheres->clear_spheres();
     compute_normals_and_vertices();
     update_normals();
     compute_bbox();
     are_buffers_filled = false;
+    if(spheres)
+      spheres->invalidateOpenGLBuffers();
 }
 
 Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
@@ -956,10 +945,6 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
   return false;
 }
 
-void Scene_edit_polyhedron_item::create_Sphere(double R)
-{
-  create_flat_sphere(R, pos_sphere, normals_sphere);
-}
 
 //#include "Scene_edit_polyhedron_item.moc"
 void Scene_edit_polyhedron_item::update_frame_plane()
@@ -967,5 +952,27 @@ void Scene_edit_polyhedron_item::update_frame_plane()
   for(Ctrl_vertices_group_data_list::iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
   {
       hgb_data->refresh();
+  }
+}
+
+void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
+{
+  if(b && !spheres)
+  {
+    spheres = new Scene_spheres_item(this, false);
+    spheres->setName("ROI & Control spheres");
+    spheres->setRenderingMode(Gouraud);
+    connect(spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+    scene->setSelectedItem(scene->item_id(this));
+    scene->addItem(spheres);
+    scene->changeGroup(spheres, this);
+    lockChild(spheres);
+    invalidateOpenGLBuffers();
+  }
+  else if(!b && spheres!=0)
+  {
+    unlockChild(spheres);
+    removeChild(spheres);
+    scene->erase(scene->item_id(spheres));
   }
 }

@@ -25,9 +25,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/triangulation_assertions.h>
-// #include <CGAL/Triangulation_face_2.h>
-// #include <CGAL/Triangulation_vertex_2.h>
-// #include <CGAL/Triangulation_handles_2.h>
 
 namespace CGAL {
 

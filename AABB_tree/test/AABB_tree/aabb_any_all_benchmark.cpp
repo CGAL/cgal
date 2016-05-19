@@ -4,7 +4,6 @@
 #include <fstream>
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
-#include <boost/timer.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
@@ -17,8 +16,10 @@
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polyhedron_3.h>
 
+
+#include <CGAL/Timer.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
@@ -128,7 +129,8 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   boost::tuple<std::size_t, std::size_t, std::size_t, long> tu;
 
     {
-      boost::timer t;
+      CGAL::Timer t;
+      t.start();
 
       for(int i = 0; i < runs; ++i)
       {
@@ -140,7 +142,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
                                0);
         boost::get<3>(tu) = counter;
       }
-      std::cout << t.elapsed();
+      std::cout << t.time();
     }
 
   return tu;

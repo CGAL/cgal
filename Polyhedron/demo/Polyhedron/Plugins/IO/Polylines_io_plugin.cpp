@@ -28,20 +28,17 @@ class Polyhedron_demo_polylines_io_plugin :
 public:
     // To silent a warning -Woverloaded-virtual
     // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-    using Polyhedron_demo_plugin_helper::init;
+
     //! Adds an action to the menu and configures the widget
     void init(QMainWindow* mainWindow,
-              CGAL::Three::Scene_interface* scene_interface) {
+              CGAL::Three::Scene_interface* scene_interface,
+              Messages_interface*) {
       //get the references
       this->scene = scene_interface;
       this->mw = mainWindow;
       //creates and link the actions
       actionAdd_polylines= new QAction("Add Polylines", mw);
-      if(actionAdd_polylines) {
-        connect(actionAdd_polylines, SIGNAL(triggered()),
-                this, SLOT(on_actionAdd_polylines_triggered()));
-      }
-
+     autoConnectActions();
       QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
       if ( NULL != menuFile )
       {
@@ -254,8 +251,15 @@ void Polyhedron_demo_polylines_io_plugin::addPolylineButton_clicked()
         add_polydiagui->textEdit->clear();
         Scene_polylines_item* item = new Scene_polylines_item;
         item->polylines = polylines;
-        nb_of_polylines++;
-        QString name = QString("Polyline #%1").arg(QString::number(nb_of_polylines));
+        QString name;
+        if(add_polydiagui->name_lineEdit->text() != "")
+          name = add_polydiagui->name_lineEdit->text();
+        else
+        {
+          nb_of_polylines++;
+          name = QString("Polyline #%1").arg(QString::number(nb_of_polylines));
+        }
+        add_polydiagui->name_lineEdit->clear();
         item->setName(name);
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);

@@ -64,7 +64,7 @@ public:
   typedef Polyhedron_demo_plugin_helper Plugin_helper;
   
   using Plugin_helper::init;
-  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
+  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
   
   QList<QAction*> actions() const
   {
@@ -92,7 +92,7 @@ Io_implicit_function_plugin()
 
 void
 Io_implicit_function_plugin::
-init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
+init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *)
 {
 
   this->scene = scene_interface;

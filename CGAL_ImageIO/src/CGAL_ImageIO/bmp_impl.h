@@ -135,6 +135,7 @@ void *_readBmpImage( const char *name,
     filePos = ftell(fp);
     rc = readUINT16little(fp, &fileType);
     if (rc != 0) {
+      fclose(fp);
       if ( get_static_verbose_bmp() ) 
 	fprintf( stderr, "%s: error in getting file type %s\n", proc, name );
       return( (void*)NULL );

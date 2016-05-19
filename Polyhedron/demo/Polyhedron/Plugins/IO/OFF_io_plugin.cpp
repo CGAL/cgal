@@ -1,5 +1,6 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
+#include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -55,8 +56,24 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     return NULL;
   }
 
-  // to detect isolated vertices
+
   CGAL::File_scanner_OFF scanner( in, false);
+
+  // Try to read .off in a point set
+  if (scanner.size_of_facets() == 0)
+    {
+      in.seekg(0);
+      Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
+      if(!item->read_off_point_set(in))
+        {
+          delete item;
+          return 0;
+        }
+
+      return item;
+    }
+  
+  // to detect isolated vertices
   std::size_t total_nb_of_vertices = scanner.size_of_vertices();
   in.seekg(0);
 
@@ -81,8 +98,9 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   else
     if( total_nb_of_vertices!= item->polyhedron()->size_of_vertices())
     {
-      QApplication::restoreOverrideCursor();
       item->setNbIsolatedvertices(total_nb_of_vertices - item->polyhedron()->size_of_vertices());
+      //needs two restore, it's not a typo
+      QApplication::restoreOverrideCursor();
       QMessageBox::warning((QWidget*)NULL,
                      tr("Isolated vertices found"),
                      tr("%1 isolated vertices ignored")
@@ -118,24 +136,35 @@ bool Polyhedron_demo_off_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
   // This plugin supports polyhedrons and polygon soups
   return qobject_cast<const Scene_polyhedron_item*>(item) ||
-    qobject_cast<const Scene_polygon_soup_item*>(item);
+    qobject_cast<const Scene_polygon_soup_item*>(item) ||
+    qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
 bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
-  // This plugin supports polyhedrons and polygon soups
+  // This plugin supports point sets, polyhedrons and polygon soups
+  const Scene_points_with_normal_item* points_item =
+    qobject_cast<const Scene_points_with_normal_item*>(item);
   const Scene_polyhedron_item* poly_item = 
     qobject_cast<const Scene_polyhedron_item*>(item);
   const Scene_polygon_soup_item* soup_item = 
     qobject_cast<const Scene_polygon_soup_item*>(item);
 
-  if(!poly_item && !soup_item)
+  if(!poly_item && !soup_item && !points_item)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
-  return (poly_item && poly_item->save(out)) || 
-    (soup_item && soup_item->save(out));
+
+  if(fileinfo.suffix().toLower() == "off"){
+    return (poly_item && poly_item->save(out)) || 
+      (soup_item && soup_item->save(out)) ||
+      (points_item && points_item->write_off_point_set(out));
+  }
+  if(fileinfo.suffix().toLower() == "obj"){
+    return (poly_item && poly_item->save_obj(out));
+  }
+  return false;
 }
 
 #include "OFF_io_plugin.moc"

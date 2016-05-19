@@ -53,19 +53,26 @@ Since portability and backward compatibility are a concern in \cgal,
 we have decided that the list of Boost libraries usable in \cgal will be
 decided by the \cgal editorial board.  The requirements are higher
 when it appears in the user visible interface than when Boost code
-is used only internally.  Requirements are even lower for code that
-is not released such as the test-suite.  Boost libraries already accepted
+is used only internally.  Requirements are lower for code that
+is not released such as the test-suite. Boost libraries already accepted
 in the C++ Standard Library Technical Report will be the first easy
-candidates (these are marked <TT>[TR1]</TT> in the list below).
-
+candidates (these are marked <TT>[TR1]</TT> in the list below). However,
+wrapping the use within \cgal is generally adviced (like what is done
+in the `cpp11` namespace).
 Finally, the policy is that if a better alternative exists in Boost and is
 allowed, then \cgal code must use it instead of a \cgal version (which
 probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
 
-A list of reasonnable Boost libraries to use is:
-Any, Array, Function, Graph, Optional, Property Map,
-Range, Smart Pointers, Tuple, Utility and Variant.
+A list of reasonnable Boost libraries to use in the \cgal API is
+Graph, Optional, Parameter (for packages already using it),
+Property Map, Smart Pointers (for packages already using it),
+Variant.
+
+Before using a Boost libraries internally, first check whether it is already
+used, and if not indicate it while submitting your changes (feature, small-feature
+or pull request), or even by sending an email to cgal-develop during the development.
+
 
 \section secusing_version_macros Using the version-number and configuration macros and flags 
 

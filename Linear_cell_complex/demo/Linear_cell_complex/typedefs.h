@@ -26,7 +26,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Combinatorial_map_save_load.h>
 
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -187,7 +187,7 @@ struct Face_info {
   bool is_process;
 };
 
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Mytraits> P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Mytraits> P_traits;
 typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;

@@ -66,7 +66,7 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
   if(!is) return is;
   tr.tds().set_dimension(d);
 
-  std::map< std::size_t, Vertex_handle > V;
+  std::vector< Vertex_handle > V(n+1);
   V[0] = tr.infinite_vertex();
   // the infinite vertex is numbered 0
 
@@ -80,7 +80,7 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
     }
   }
 
-  std::map< std::size_t, Cell_handle > C;
+  std::vector< Cell_handle > C;
 
   std::size_t m;
   tr.tds().read_cells(is, V, m, C);

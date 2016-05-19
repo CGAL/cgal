@@ -2,7 +2,7 @@ project( Scale_space )
 
 cmake_minimum_required(VERSION 2.8.11)
 
-find_package( CGAL QUIET COMPONENTS Core )
+find_package( CGAL QUIET)
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )

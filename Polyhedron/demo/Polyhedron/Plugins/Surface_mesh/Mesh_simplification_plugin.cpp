@@ -1,4 +1,3 @@
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Scene_polyhedron_item.h"
@@ -16,27 +15,29 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_mesh_simplification_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionSimplify";
+
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
   void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
       mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionSimplify"] = getActionFromMainWindow(mw, "actionSimplify");
-      actions_map["actionSimplify"]->setProperty("subMenuName",
-                                                 "Triangulated Surface Mesh Simplification");
-      autoConnectActions();
+     QAction *actionSimplify = new QAction("Simplification", mw);
+      actionSimplify->setProperty("subMenuName",
+                                  "Triangulated Surface Mesh Simplification");
+      connect(actionSimplify, SIGNAL(triggered()), this, SLOT(on_actionSimplify_triggered()));
+      _actions <<actionSimplify;
 
   }
   bool applicable(QAction*) const { 
@@ -44,6 +45,10 @@ public:
   }
 public Q_SLOTS:
   void on_actionSimplify_triggered();
+private :
+  Scene_interface *scene;
+  QMainWindow *mw;
+  QList<QAction*> _actions;
 
 }; // end Polyhedron_demo_mesh_simplification_plugin
 

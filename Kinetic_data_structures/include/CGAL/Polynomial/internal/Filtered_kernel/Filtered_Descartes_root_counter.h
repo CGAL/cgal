@@ -23,8 +23,8 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-#include <CGAL/Polynomial/Tools/Alternation_counter.h>
-#include <CGAL/Polynomial/Tools/interval_arithmetic.h>
+#include <CGAL/Polynomial/internal/Alternation_counter.h>
+#include <CGAL/Polynomial/internal/interval_arithmetic.h>
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {;
 

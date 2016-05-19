@@ -1,10 +1,10 @@
 // Copyright (c) 20009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -20,8 +20,6 @@
 #ifndef CGAL_INDEX_PROPERTY_MAP_H
 #define CGAL_INDEX_PROPERTY_MAP_H
 
-#include <CGAL/point_set_processing_assertions.h>
-#include <CGAL/trace.h>
 #include <CGAL/property_map.h>
 #include <boost/shared_ptr.hpp>
 
@@ -95,8 +93,6 @@ public:
     
   : m_index_map(new Index_map)  // Allocate std::map
   {
-    CGAL_TRACE("  Index_property_map: index elements in temporary std::map\n");
-
     // Index elements in std::map
     Iter it;
     unsigned int index;
@@ -129,9 +125,7 @@ public:
     Iter first,  ///< iterator over the first element (index 0)
     Iter /*beyond*/) ///< past-the-end iterator over the elements
   : m_first(first)
-  {
-    CGAL_TRACE("  Index_property_map: optimized version for a random access container\n");
-  }
+  {}
 
   /// Free function to access the map elements.
   friend inline

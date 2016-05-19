@@ -5,18 +5,15 @@
 
 #include <vector>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel        K;
-typedef CGAL::Polygon_2<K>                                       Polygon_2;
-typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
-typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
-typedef CGAL::Exact_intersections_tag                            Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS, Itag>  CDT;
-typedef CGAL::Constrained_triangulation_plus_2<CDT>              CDTP;
+typedef CGAL::Exact_predicates_exact_constructions_kernel                 K;
+typedef CGAL::Polygon_2<K>                                                Polygon_2;
+typedef CGAL::Exact_intersections_tag                                     Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K,CGAL::Default, Itag> CDT;
+typedef CGAL::Constrained_triangulation_plus_2<CDT>                       CDTP;
 
-typedef CDTP::Point                                              Point;
-typedef CDTP::Constraint_id                                      Cid;
-typedef CDTP::Vertex_handle                                      Vertex_handle;
+typedef CDTP::Point                                                       Point;
+typedef CDTP::Constraint_id                                               Cid;
+typedef CDTP::Vertex_handle                                               Vertex_handle;
 
 void 
 print(const CDTP& cdtp, Cid cid)

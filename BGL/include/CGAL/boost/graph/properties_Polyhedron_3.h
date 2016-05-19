@@ -172,6 +172,8 @@ typename boost::property_traits< typename boost::property_map<CGAL::Polyhedron_3
 get(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A> const& g, const Key& key)
 { return get(get(p, g), key); }
 
+
+
 // generalized put
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class PropertyTag, class Key,class Value>
 void put(PropertyTag p, CGAL::Polyhedron_3<Gt,I,HDS,A>& g, const Key& key, const Value& value)

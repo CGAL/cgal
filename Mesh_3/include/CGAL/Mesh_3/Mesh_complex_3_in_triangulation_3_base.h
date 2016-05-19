@@ -747,6 +747,8 @@ public:
   operator>> (std::istream& is,
               Mesh_complex_3_in_triangulation_3_base<Tr2,Ct2> &c3t3);
 
+  void rescan_after_load_of_triangulation();
+
   static
   std::string io_signature()
   {
@@ -920,27 +922,35 @@ operator>> (std::istream& is,
     return is;
   }
 
+  c3t3.rescan_after_load_of_triangulation();
+  return is;
+}
+
+template <typename Tr, typename Ct>
+void
+Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::
+rescan_after_load_of_triangulation() {
+  this->number_of_facets_ = 0;
   for(typename Tr::Finite_facets_iterator
-        fit = c3t3.triangulation().finite_facets_begin(),
-        end = c3t3.triangulation().finite_facets_end();
+        fit = this->triangulation().finite_facets_begin(),
+        end = this->triangulation().finite_facets_end();
       fit != end; ++fit)
   {
-    if ( c3t3.is_in_complex(*fit) ) {
-      ++c3t3.number_of_facets_;
+    if ( this->is_in_complex(*fit) ) {
+      ++this->number_of_facets_;
     }
   }
 
+  this->number_of_cells_ = 0;
   for(typename Tr::Finite_cells_iterator
-        cit = c3t3.triangulation().finite_cells_begin(),
-        end = c3t3.triangulation().finite_cells_end();
+        cit = this->triangulation().finite_cells_begin(),
+        end = this->triangulation().finite_cells_end();
       cit != end; ++cit)
   {
-    if ( c3t3.is_in_complex(cit) ) {
-      ++c3t3.number_of_cells_;
+    if ( this->is_in_complex(cit) ) {
+      ++this->number_of_cells_;
     }
   }
-
-  return is;
 }
 
 }  // end namespace Mesh_3

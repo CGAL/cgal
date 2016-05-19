@@ -31,6 +31,7 @@
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Combinatorial_map_storages.h>
+#include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Unique_hash_map.h>
 #include <bitset>
 #include <vector>
@@ -3733,6 +3734,953 @@ namespace CGAL {
       }
 
       this->automatic_attributes_management = newval;
+    }
+
+  /** @file Combinatorial_map_constructors.h
+   * Basic creation operations  for a combinatorial map.
+   * Create edge, triangle, quadrilateral, tetrahedron, hexahedron.
+   */
+
+  /** Create an edge.
+   * @return a dart of the new edge.
+   */
+    Dart_handle make_edge()
+    {
+      Dart_handle d1 = create_dart();
+      Dart_handle d2 = create_dart();
+      this->template basic_link_beta_for_involution<2>(d1, d2);
+      return d1;
+    }
+
+  /** Create a combinatorial polygon of length alg
+   * (a cycle of alg darts beta1 links together).
+   * @return a new dart.
+   */
+    Dart_handle make_combinatorial_polygon(unsigned int alg)
+    {
+      CGAL_assertion(alg>0);
+
+      Dart_handle start = create_dart();
+      Dart_handle prev = start;
+      for ( unsigned int nb=1; nb<alg; ++nb )
+      {
+        Dart_handle cur = create_dart();
+        basic_link_beta_1(prev, cur);
+        prev=cur;
+      }
+
+      basic_link_beta_1(prev, start);
+      return start;
+    }
+
+    /** Test if a face is a combinatorial polygon of length alg
+     *  (a cycle of alg darts beta1 links together).
+     * @param adart an intial dart
+     * @return true iff the face containing adart is a polygon of length alg.
+     */
+    bool is_face_combinatorial_polygon(Dart_const_handle adart,
+                                       unsigned int alg) const
+    {
+      CGAL_assertion(alg>0);
+
+      unsigned int nb = 0;
+      Dart_const_handle cur = adart;
+      do
+      {
+        ++nb;
+        if ( cur==null_dart_handle ) return false; // Open face
+        cur = beta(cur,1);
+      }
+      while( cur!=adart );
+      return (nb==alg);
+    }
+
+    /** Create a combinatorial tetrahedron from 4 triangles.
+     * @param d1 a dart onto a first triangle.
+     * @param d2 a dart onto a second triangle.
+     * @param d3 a dart onto a third triangle.
+     * @param d4 a dart onto a fourth triangle.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_tetrahedron(Dart_handle d1,
+                                               Dart_handle d2,
+                                               Dart_handle d3,
+                                               Dart_handle d4)
+    {
+      basic_link_beta_for_involution(d1, d2, 2);
+      basic_link_beta_for_involution(d3, beta(d2, 0), 2);
+      basic_link_beta_for_involution(beta(d1, 1), beta(d3, 0), 2);
+      basic_link_beta_for_involution(d4, beta(d2, 1), 2);
+      basic_link_beta_for_involution(beta(d4, 0), beta(d3, 1), 2);
+      basic_link_beta_for_involution(beta(d4, 1), beta(d1, 0), 2);
+
+      return d1;
+    }
+
+    /** Test if a volume is a combinatorial tetrahedron.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial tetrahedron.
+     */
+    bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1) const
+    {
+      Dart_const_handle d2 = beta(d1, 2);
+      Dart_const_handle d3 = beta(d2, 0, 2);
+      Dart_const_handle d4 = beta(d2, 1, 2);
+
+      if ( d1==null_dart_handle || d2==null_dart_handle ||
+           d3==null_dart_handle || d4==null_dart_handle ) return false;
+
+      if ( !is_face_combinatorial_polygon(d1, 3) ||
+           !is_face_combinatorial_polygon(d2, 3) ||
+           !is_face_combinatorial_polygon(d3, 3) ||
+           !is_face_combinatorial_polygon(d4, 3) ) return false;
+
+      // TODO do better with marks (?).
+      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d4) ) return false;
+
+      if ( beta(d1,1,2)!=beta(d3,0) ||
+           beta(d4,0,2)!=beta(d3,1) ||
+           beta(d4,1,2)!=beta(d1,0) ) return false;
+
+      return true;
+    }
+
+    /** Create a new combinatorial tetrahedron.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_tetrahedron()
+    {
+      Dart_handle d1 = make_combinatorial_polygon(3);
+      Dart_handle d2 = make_combinatorial_polygon(3);
+      Dart_handle d3 = make_combinatorial_polygon(3);
+      Dart_handle d4 = make_combinatorial_polygon(3);
+
+      return make_combinatorial_tetrahedron(d1, d2, d3, d4);
+    }
+
+    /** Create a combinatorial hexahedron from 6 quadrilaterals.
+     * @param d1 a dart onto a first quadrilateral.
+     * @param d2 a dart onto a second quadrilateral.
+     * @param d3 a dart onto a third quadrilateral.
+     * @param d4 a dart onto a fourth quadrilateral.
+     * @param d5 a dart onto a fifth quadrilateral.
+     * @param d6 a dart onto a sixth quadrilateral.
+     * @return a dart of the new cuboidal_cell.
+     */
+    Dart_handle make_combinatorial_hexahedron(Dart_handle d1,
+                                              Dart_handle d2,
+                                              Dart_handle d3,
+                                              Dart_handle d4,
+                                              Dart_handle d5,
+                                              Dart_handle d6)
+    {
+      basic_link_beta_for_involution(d1,
+                                     beta(d4, 1, 1), 2);
+      basic_link_beta_for_involution(beta(d1, 1),
+                                     beta(d6, 0)   , 2);
+      basic_link_beta_for_involution(beta(d1, 1, 1),
+                                     d2            , 2);
+      basic_link_beta_for_involution(beta(d1, 0),
+                                     d5            , 2);
+
+      basic_link_beta_for_involution(d3,
+                                     beta(d2, 1, 1), 2);
+      basic_link_beta_for_involution(beta(d3, 1),
+                                     beta(d6, 1)   , 2);
+      basic_link_beta_for_involution(beta(d3, 1, 1),
+                                     d4            , 2);
+      basic_link_beta_for_involution(beta(d3, 0),
+                                     beta(d5, 1, 1), 2);
+
+      basic_link_beta_for_involution(d6,
+                                     beta(d4, 1)   , 2);
+      basic_link_beta_for_involution(beta(d6, 1, 1),
+                                     beta(d2, 1)   , 2);
+
+      basic_link_beta_for_involution(beta(d5, 0),
+                                     beta(d4, 0)   , 2);
+      basic_link_beta_for_involution(beta(d5, 1),
+                                     beta(d2, 0)   , 2);
+
+      return d1;
+  }
+
+    /** Test if a volume is a combinatorial hexahedron.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial hexahedron.
+     */
+    bool is_volume_combinatorial_hexahedron(Dart_const_handle d1) const
+    {
+      Dart_const_handle d2 = beta(d1, 1, 1, 2);
+      Dart_const_handle d3 = beta(d2, 1, 1, 2);
+      Dart_const_handle d4 = beta(d3, 1, 1, 2);
+      Dart_const_handle d5 = beta(d1, 0, 2);
+      Dart_const_handle d6 = beta(d4, 1, 2);
+
+      if ( d1==null_dart_handle || d2==null_dart_handle ||
+           d3==null_dart_handle || d4==null_dart_handle ||
+           d5==null_dart_handle || d6==null_dart_handle ) return false;
+
+      if (!is_face_combinatorial_polygon(d1, 4) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 4) ||
+          !is_face_combinatorial_polygon(d6, 4) ) return false;
+
+      // TODO do better with marks.
+      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d4, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d4, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d5, d6) )
+        return false;
+
+      if ( beta(d1,2)    !=beta(d4,1,1) ||
+           beta(d1,1,2)  !=beta(d6,0)   ||
+           beta(d3,1,2)  !=beta(d6,1)   ||
+           beta(d3,0,2)  !=beta(d5,1,1) ||
+           beta(d6,1,1,2)!=beta(d2,1)   ||
+           beta(d5,0,2)  !=beta(d4,0)   ||
+           beta(d5,1,2)  !=beta(d2,0) ) return false;
+
+      return true;
+    }
+
+    /** Create a new combinatorial hexahedron.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_hexahedron()
+    {
+      Dart_handle d1 = make_combinatorial_polygon(4);
+      Dart_handle d2 = make_combinatorial_polygon(4);
+      Dart_handle d3 = make_combinatorial_polygon(4);
+      Dart_handle d4 = make_combinatorial_polygon(4);
+      Dart_handle d5 = make_combinatorial_polygon(4);
+      Dart_handle d6 = make_combinatorial_polygon(4);
+
+      return make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
+    }
+
+    /** Test if an i-cell can be removed.
+     *  An i-cell can be removed if i==dimension or i==dimension-1,
+     *     or if there are at most two (i+1)-cell incident to it.
+     * @param adart a dart of the i-cell.
+     * @return true iff the i-cell can be removed.
+     */
+    template < unsigned int i >
+    bool is_removable(Dart_const_handle adart) const
+    { return CGAL::Is_removable_functor<Self, i>::run(*this, adart); }
+
+    /** Remove an i-cell, 0<=i<=dimension.
+     * @param adart a dart of the i-cell to remove.
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return the number of deleted darts.
+     */
+    template < unsigned int i >
+    size_t remove_cell(Dart_handle adart, bool update_attributes = true)
+    {
+      return CGAL::Remove_cell_functor<Self,i,Self::dimension-i>::
+        run(*this,adart,update_attributes);
+    }
+
+    /** Test if an i-cell can be contracted.
+     *  An i-cell can be contracted if i==1
+     *     or if there are at most two (i-1)-cell incident to it.
+     * @param adart a dart of the i-cell.
+     * @return true iff the i-cell can be contracted.
+     */
+    template < unsigned int i >
+    bool is_contractible(Dart_const_handle adart) const
+    { return CGAL::Is_contractible_functor<Self, i>::run(*this,adart); }
+
+    /** Contract an i-cell, 1<=i<=dimension.
+     * @param adart a dart of the i-cell to remove.
+     * @return the number of deleted darts.
+     */
+    template < unsigned int i >
+    size_t contract_cell(Dart_handle adart, bool update_attributes = true)
+    {
+      return CGAL::Contract_cell_functor<Self,i>::
+        run(*this,adart, update_attributes);
+    }
+
+    /** Insert a vertex in a given edge.
+     * @param adart a dart of the edge (!=NULL && !=null_dart_handle).
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return a dart of the new vertex.
+     */
+    Dart_handle insert_cell_0_in_cell_1( Dart_handle adart,
+                                         typename Attribute_handle<0>::type
+                                         ah=null_handle,
+                                         bool update_attributes=true )
+    {
+      Dart_handle d1, d2;
+      size_type amark=get_new_mark();
+
+      // 1) We store all the darts of the edge.
+      std::deque<Dart_handle> vect;
+      size_type m=get_new_mark();
+      {
+        for ( typename Dart_of_cell_basic_range<1>::iterator
+                it=darts_of_cell_basic<1>(adart, m).begin();
+              it != darts_of_cell_basic<1>(adart, m).end(); ++it )
+          vect.push_back(it);
+      }
+
+      // 2) For each dart of the cell, we modify link of neighbors.
+      typename std::deque<Dart_handle>::iterator it = vect.begin();
+      for (; it != vect.end(); ++it)
+      {
+        d1 = create_dart();
+
+        if (!this->template is_free<1>(*it))
+        { basic_link_beta_1(d1, this->template beta<1>(*it)); }
+
+        for ( unsigned int dim=2; dim<=dimension; ++dim )
+        {
+          if (!is_free(*it, dim) && is_marked(beta(*it, dim), amark))
+          {
+            basic_link_beta_for_involution(beta(*it, dim), d1, dim);
+            basic_link_beta_for_involution(*it, beta(*it, dim, 1), dim);
+          }
+        }
+
+        basic_link_beta_1(*it, d1);
+
+        if (are_attributes_automatically_managed() && update_attributes)
+        {
+          // We copy all the attributes except for dim=0
+          Helper::template Foreach_enabled_attributes_except
+            <internal::Group_attribute_functor_of_dart<Self>, 0>::
+            run(this,*it,d1);
+        }
+        if (ah != null_handle)
+        {
+          // We initialise the 0-atttrib to ah
+          internal::Set_i_attribute_of_dart_functor<Self, 0>::
+            run(this, d1, ah);
+        }
+        mark(*it, amark);
+      }
+
+      for (it = vect.begin(); it != vect.end(); ++it)
+      {
+        unmark(*it, m);
+        unmark(*it, amark);
+      }
+
+      CGAL_assertion(is_whole_map_unmarked(m));
+      CGAL_assertion(is_whole_map_unmarked(amark));
+
+      free_mark(m);
+      free_mark(amark);
+
+      if (are_attributes_automatically_managed() && update_attributes)
+      {
+        internal::Degroup_attribute_functor_run<Self, 1>::
+          run(this, adart, this->template beta<1>(adart));
+      }
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+      CGAL_assertion( is_valid() );
+#endif
+
+      return this->template beta<1>(adart);
+    }
+
+    /** Insert a vertex in the given 2-cell which is splitted in triangles,
+     *  once for each inital edge of the facet.
+     * @param adart a dart of the facet to triangulate.
+     * @param update_attributes a boolean to update the enabled attributes
+     *        (deprecated, now we use are_attributes_automatically_managed())
+     * @return A dart incident to the new vertex.
+     */
+    Dart_handle insert_cell_0_in_cell_2( Dart_handle adart,
+                                         typename Attribute_handle<0>::type
+                                         ah=null_handle,
+                                         bool update_attributes=true )
+    {
+      CGAL_assertion(adart!=null_dart_handle);
+
+      Dart_handle first=adart, prev=null_handle,
+        cur=null_handle, next=null_handle,
+        n1=null_handle, n2=null_handle,
+        nn1=null_handle, nn2=null_handle;
+
+      // If the facet is open, we search the dart 0-free
+      while ( !this->template is_free<0>(first) &&
+              this->template beta<0>(first)!=adart )
+        first = this->template beta<0>(first);
+
+      // Mark used to mark darts already treated.
+      size_type treated = get_new_mark();
+
+      // Stack of marked darts
+      std::deque<Dart_handle> tounmark;
+
+      // Now we run through the facet
+      cur = first;
+      do
+      {
+        next = this->template beta<1>(cur);
+        mark(cur, treated);
+        tounmark.push_back(cur);
+
+        if (!this->template is_free<0>(cur))
+        {
+          n1=create_dart();
+          link_beta_0(cur, n1);
+        }
+        else n1 = null_handle;
+
+        if (!this->template is_free<1>(cur))
+        {
+          n2 = create_dart();
+          link_beta_1(cur, n2);
+        }
+        else n2 = null_handle;
+
+        if ( n1!=null_handle )
+        {
+          if ( n2!=null_handle )
+            basic_link_beta_0(n1, n2);
+
+          if ( prev!=null_handle )
+            this->template basic_link_beta_for_involution<2>(prev, n1);
+
+          if (are_attributes_automatically_managed() && update_attributes)
+          {
+            internal::Set_i_attribute_of_dart_functor<Self, 0>::
+              run(this, n1, ah);
+          }
+        }
+
+        for (unsigned int dim=3; dim<=dimension; ++dim)
+        {
+          if ( !is_free(adart, dim) )
+          {
+            if ( !is_marked(beta(cur, dim), treated) )
+            {
+              if (n1!=null_handle)
+              {
+                nn1=create_dart();
+                link_beta_1(beta(cur, dim), nn1);
+                basic_link_beta_for_involution(n1, nn1, dim);
+              }
+              else nn1=null_handle;
+
+              if (n2!=null_handle)
+              {
+                nn2=create_dart();
+                link_beta_0(beta(cur, dim), nn2);
+                basic_link_beta_for_involution(n2, nn2, dim);
+                if (are_attributes_automatically_managed() && update_attributes)
+                {
+                  internal::Set_i_attribute_of_dart_functor<Self, 0>::
+                    run(this, nn2, ah);
+                }
+              }
+              else nn2=null_handle;
+
+              if (nn1 != null_handle && nn2 != null_handle)
+                basic_link_beta_1(nn1, nn2);
+
+              if (nn1 != null_handle && prev != null_handle)
+                this->template basic_link_beta_for_involution<2>(nn1, beta(prev, dim));
+
+              mark(beta(cur, dim), treated);
+            }
+            else
+            {
+              if ( n1!=null_handle )
+                basic_link_beta_for_involution(n1,
+                                               beta(cur, dim, 1), dim);
+              if ( n2!=null_handle )
+                basic_link_beta_for_involution(n2,
+                                               beta(cur, dim, 0), dim);
+            }
+          }
+        }
+
+        prev = n2;
+        cur = next;
+      }
+      while(cur!=first && cur!=null_dart_handle);
+
+      if (n2 != null_handle)
+      {
+        this->template basic_link_beta_for_involution<2>
+          (this->template beta<0>(first), n2);
+        for (unsigned int dim=3; dim<=dimension; ++dim)
+        {
+          if ( !is_free(adart, dim) )
+          {
+            this->template basic_link_beta_for_involution<2>(beta(first, 0, dim),
+                                                             beta(n2, dim));
+          }
+        }
+      }
+
+      // Now we unmark all marked darts, and we degroup the new faces with the
+      // initial one (if 2-attributes are non void).
+      for ( typename std::deque<Dart_handle>::iterator
+              itd=tounmark.begin(); itd!=tounmark.end(); ++itd )
+      {
+        unmark(*itd, treated);
+        for (unsigned int dim=3; dim<=dimension; ++dim)
+        {
+          if ( !is_free(*itd, dim) )
+            unmark(beta(*itd, dim), treated);
+        }
+        if ( *itd!=adart )
+          if (are_attributes_automatically_managed() && update_attributes)
+          {
+            internal::Degroup_attribute_functor_run<Self, 2>::
+              run(this, adart, *itd);
+          }
+      }
+
+      CGAL_assertion(is_whole_map_unmarked(treated));
+      free_mark(treated);
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+      CGAL_assertion( is_valid() );
+#endif
+
+      return n1;
+    }
+
+    /** Insert a dangling edge in a 2-cell between given by a dart.
+     * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return a dart of the new edge, not incident to the vertex of adart1.
+     */
+    Dart_handle insert_dangling_cell_1_in_cell_2( Dart_handle adart1,
+                                                  typename Attribute_handle<0>::type
+                                                  ah=null_handle,
+                                                  bool update_attributes=true )
+    {
+      size_type mark1 = get_new_mark();
+      std::deque<Dart_handle> to_unmark;
+      {
+        for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,mark1);
+              it.cont(); ++it )
+        {
+          to_unmark.push_back(it);
+          mark(it,mark1);
+        }
+      }
+
+      Dart_handle d1 = null_handle;
+      Dart_handle d2 = null_handle;
+      unsigned int s1 = 0;
+
+      size_type treated=get_new_mark();
+
+      CMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, treated);
+
+      for ( ; it1.cont(); ++it1)
+      {
+        d1 = create_dart();
+        d2 = create_dart();
+
+        if ( is_marked(it1, mark1) ) s1 = 0;
+        else s1 = 1;
+
+        if ( !is_free(it1, s1) )
+        {
+          if ( s1==0 )
+            link_beta_1(beta<0>(it1), d2);
+          else
+            link_beta_0(beta<1>(it1), d2);
+        }
+
+        if (s1==0)
+        {
+          link_beta_0(it1, d1);
+          link_beta_0(d1, d2);
+        }
+        else
+        {
+          link_beta_1(it1, d1);
+          link_beta_1(d1, d2);
+        }
+
+        basic_link_beta_for_involution<2>(d1, d2);
+
+        for ( unsigned int dim=3; dim<=dimension; ++dim)
+        {
+          if ( !is_free(it1, dim) &&
+               is_marked(beta(it1, dim), treated) )
+          {
+            basic_link_beta_for_involution
+              (beta(it1, dim, CGAL_BETAINV(s1)), d1, dim);
+            basic_link_beta_for_involution
+              (beta(it1, dim, CGAL_BETAINV(s1), 2), d2, dim);
+          }
+        }
+        if (are_attributes_automatically_managed() && update_attributes)
+        {
+          internal::Set_i_attribute_of_dart_functor<Self, 0>::run(this, d1, ah);
+        }
+        mark(it1, treated);
+      }
+
+      negate_mark(treated);
+      for ( it1.rewind(); it1.cont(); ++it1 )
+      { mark(it1, treated); }
+
+      CGAL_assertion( is_whole_map_marked(treated) );
+      free_mark(treated);
+
+      for ( typename std::deque<Dart_handle>::iterator it=to_unmark.begin();
+            it!=to_unmark.end(); ++it)
+      { unmark(*it, mark1); }
+
+      CGAL_assertion( is_whole_map_unmarked(mark1) );
+      free_mark(mark1);
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+      CGAL_assertion( is_valid() );
+#endif
+
+      return this->template beta<0>(adart1);
+    }
+
+    /** Test if an edge can be inserted onto a 2-cell between two given darts.
+     * @param adart1 a first dart.
+     * @param adart2 a second dart.
+     * @return true iff an edge can be inserted between adart1 and adart2.
+     */
+    bool is_insertable_cell_1_in_cell_2(Dart_const_handle adart1,
+                                        Dart_const_handle adart2) const
+    {
+      if ( adart1==adart2 ) return false;
+      for ( CMap_dart_const_iterator_of_orbit<Self,1> it(*this,adart1);
+            it.cont(); ++it )
+      {
+        if ( it==adart2 )  return true;
+      }
+      return false;
+    }
+
+    /** Insert an edge in a 2-cell between two given darts.
+     * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+     * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return a dart of the new edge, and not incident to the
+     *         same vertex than adart1.
+     */
+    Dart_handle insert_cell_1_in_cell_2(Dart_handle adart1,
+                                        Dart_handle adart2,
+                                        bool update_attributes=true)
+    {
+      if ( adart2==null_handle )
+        return insert_dangling_cell_1_in_cell_2(adart1, null_handle,
+                                                update_attributes);
+
+      CGAL_assertion(is_insertable_cell_1_in_cell_2(adart1, adart2));
+
+      size_type m1=get_new_mark();
+      CMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, m1);
+
+      size_type m2=get_new_mark();
+      CMap_dart_iterator_basic_of_involution<Self,1> it2(*this, adart2, m2);
+
+      size_type mark1=get_new_mark();
+      std::deque<Dart_handle> to_unmark;
+      {
+        for ( CMap_dart_iterator_basic_of_cell<Self,0> it(*this,adart1,mark1);
+              it.cont(); ++it )
+        {
+          to_unmark.push_back(it);
+          mark(it, mark1);
+        }
+      }
+
+      Dart_handle d1=null_handle;
+      Dart_handle d2=null_handle;
+      unsigned int s1=0;
+
+      size_type treated=get_new_mark();
+
+      for ( ; it1.cont(); ++it1, ++it2)
+      {
+        CGAL_assertion ( it2.cont() );
+        d1 = create_dart();
+        d2 = create_dart();
+
+        if ( is_marked(it1, mark1) ) s1 = 0;
+        else s1 = 1;
+
+        if ( !is_free(it1, s1) )
+        {
+          if ( s1==0 ) link_beta_1(this->template beta<0>(it1), d2);
+          else link_beta_0(this->template beta<1>(it1), d2);
+        }
+
+        if ( !is_free(it2, s1) )
+        {
+          if ( s1==0 ) link_beta_1(this->template beta<0>(it2), d1);
+          else link_beta_0(this->template beta<1>(it2), d1);
+        }
+
+        if ( s1==0 )
+        {
+          link_beta_0(it1, d1);
+          link_beta_0(it2, d2);
+        }
+        else
+        {
+          link_beta_1(it1, d1);
+          link_beta_1(it2, d2);
+        }
+        this->template basic_link_beta_for_involution<2>(d2, d1);
+
+        for ( unsigned int dim=3; dim<=dimension; ++dim)
+        {
+          if ( !is_free(it1, dim) &&
+               is_marked(beta(it1, dim), treated) )
+          {
+            basic_link_beta_for_involution
+              (beta(it1, dim, CGAL_BETAINV(s1)), d1, dim);
+            basic_link_beta_for_involution
+              (beta(it1, dim, CGAL_BETAINV(s1), 2), d2, dim);
+          }
+        }
+
+        mark(it1,treated);
+      }
+
+      if (are_attributes_automatically_managed() && update_attributes)
+      {
+        internal::Degroup_attribute_functor_run<Self, 2>::run(this, d1, d2);
+      }
+
+      negate_mark(m1);
+      negate_mark(m2);
+      it1.rewind(); it2.rewind();
+      for ( ; it1.cont(); ++it1, ++it2)
+      {
+        mark(it1,m1);
+        unmark(it1,treated);
+        mark(it2,m2);
+      }
+      negate_mark(m1);
+      negate_mark(m2);
+      CGAL_assertion( is_whole_map_unmarked(m1) );
+      CGAL_assertion( is_whole_map_unmarked(m2) );
+      CGAL_assertion( is_whole_map_unmarked(treated) );
+      free_mark(m1);
+      free_mark(m2);
+      free_mark(treated);
+
+      typename std::deque<Dart_handle>::iterator it = to_unmark.begin();
+      for (; it != to_unmark.end(); ++it)
+      { unmark(*it, mark1); }
+      CGAL_assertion( is_whole_map_unmarked(mark1) );
+      free_mark(mark1);
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+      CGAL_assertion( is_valid() );
+#endif
+
+      return this->template beta<0>(adart1);
+    }
+
+    /** Test if a 2-cell can be inserted onto a given 3-cell along
+     * a path of edges.
+     * @param afirst iterator on the begining of the path.
+     * @param alast  iterator on the end of the path.
+     * @return true iff a 2-cell can be inserted along the path.
+     */
+    template <class InputIterator>
+    bool is_insertable_cell_2_in_cell_3(InputIterator afirst,
+                                        InputIterator alast) const
+    {
+      CGAL_assertion( dimension>= 3 );
+
+      // The path must have at least one dart.
+      if (afirst==alast) return false;
+      Dart_const_handle prec = null_handle;
+      Dart_const_handle od = null_handle;
+
+      for (InputIterator it(afirst); it!=alast; ++it)
+      {
+        // The path must contain only non empty darts.
+        if (*it == null_handle || *it==null_dart_handle) return false;
+
+        // Two consecutive darts of the path must belong to two edges
+        // incident to the same vertex of the same volume.
+        if (prec != null_handle)
+        {
+          od = other_extremity(prec);
+          if ( od==null_handle ) return false;
+
+          // of and *it must belong to the same vertex of the same volume
+          if ( !belong_to_same_cell<Self, 0, 2>(*this, od, *it) )
+            return false;
+        }
+        prec = *it;
+      }
+
+      // The path must be closed.
+      od = other_extremity(prec);
+      if ( od==null_handle ) return false;
+
+      if (!belong_to_same_cell<Self, 0, 2>(*this, od, *afirst))
+        return false;
+
+      return true;
+    }
+
+    /** Insert a 2-cell in a given 3-cell along a path of darts.
+     * @param afirst iterator on the begining of the path.
+     * @param alast  iterator on the end of the path.
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return a dart of the new 2-cell.
+     */
+    template<class InputIterator>
+    Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast,
+                                        bool update_attributes=true)
+    {
+      CGAL_assertion(is_insertable_cell_2_in_cell_3(afirst,alast));
+
+      Dart_handle prec = null_handle, d = null_handle,
+        dd = null_handle, first = null_handle;
+      bool withBeta3 = false;
+
+      {
+        for (InputIterator it(afirst); !withBeta3 && it!=alast; ++it)
+        {
+          if (!this->template is_free<2>(*it)) withBeta3 = true;
+        }
+      }
+
+      {
+        for (InputIterator it(afirst); it!=alast; ++it)
+        {
+          d = create_dart();
+          if ( withBeta3 )
+            dd = create_dart();
+
+          if (prec != null_handle)
+          {
+            basic_link_beta_0(prec, d);
+            if (withBeta3)
+              basic_link_beta_1(this->template beta<3>(prec), dd);
+          }
+          else first = d;
+
+          if ( !this->template is_free<2>((*it)) )
+            basic_link_beta_for_involution<2>(this->template beta<2>(*it), dd);
+
+          this->template link_beta_for_involution<2>(*it, d);
+          if ( withBeta3 )
+            this->template link_beta_for_involution<3>(d, dd);
+
+          prec = d;
+        }
+      }
+
+      basic_link_beta_0(prec, first);
+      if ( withBeta3 )
+      {
+        basic_link_beta_1(this->template beta<3>(prec),
+                          this->template beta<3>(first));
+      }
+
+      // Make copies of the new facet for dimension >=4
+      for ( unsigned int dim=4; dim<=dimension; ++dim )
+      {
+        if ( !is_free(first, dim) )
+        {
+          Dart_handle first2 = null_handle;
+          prec = null_handle;
+          for ( CMap_dart_iterator_basic_of_orbit<Self, 1> it(*this, first);
+                it.cont(); ++it )
+          {
+            d = create_dart();
+            basic_link_beta_for_involution(this->template beta<2>(it), d, dim);
+            if ( withBeta3 )
+            {
+              dd = create_dart();
+              basic_link_beta_for_involution(this->template beta<2,3>(it), dd, dim);
+              this->template basic_link_beta_for_involution<3>(d, dd);
+            }
+            if ( prec!=null_handle )
+            {
+              link_beta_0(prec, d);
+              if ( withBeta3 )
+              {
+                basic_link_beta_1(this->template beta<3>(prec), dd);
+              }
+            }
+            else first2 = prec;
+
+            // We consider dim2=2 out of the loop to use link_beta instead of
+            // basic _link_beta (to modify non void attributes only once).
+            if ( !this->template is_free<2>(it) && is_free(this->template beta<2>(it), dim) )
+              this->template link_beta_for_involution<2>(beta(it,2,dim), d);
+            if ( withBeta3 && !this->template is_free<2>(this->template beta<3>(it)) &&
+                 is_free(this->template beta<3,2>(it), dim) )
+             this->template link_beta_for_involution<2>(beta(it,3,2,dim), dd);
+
+            for ( unsigned int dim2=3; dim2<=dimension; ++dim2 )
+            {
+              if ( dim2+1!=dim && dim2!=dim && dim2!=dim+1 )
+              {
+                if ( !is_free(it, dim2) && is_free(beta(it, dim2), dim) )
+                  basic_link_beta_for_involution(beta(it, dim2, dim),
+                                                 d, dim2);
+                if ( withBeta3 && !is_free(this->template beta<3>(it), dim2) &&
+                     is_free(beta(it, 3, dim2), dim) )
+                  basic_link_beta_for_involution(beta(it, 3, dim2, dim), dd,
+                                                 dim2);
+              }
+            }
+            prec = d;
+          }
+          basic_link_beta_0( prec, first2 );
+          if ( withBeta3 )
+          {
+            basic_link_beta_1( this->template beta<3>(prec), this->template beta<3>(first2) );
+          }
+        }
+      }
+
+      // Degroup the attributes
+      if ( withBeta3 )
+      { // Here we cannot use Degroup_attribute_functor_run as new darts do not
+        // have their 3-attribute
+        if (are_attributes_automatically_managed() && update_attributes)
+        {
+          CGAL::internal::Degroup_attribute_functor_run<Self, 3>::
+            run(this, first, this->template beta<3>(first));
+        }
+      }
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+      CGAL_assertion( is_valid() );
+#endif
+
+      return first;
     }
 
   protected:

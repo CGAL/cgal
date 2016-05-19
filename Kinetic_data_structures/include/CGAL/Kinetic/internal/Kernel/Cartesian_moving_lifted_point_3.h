@@ -22,7 +22,7 @@
 #define CGAL_KINETIC_CARTESIAN_WEIGHTED_MOVING_LIFTED_3_H_
 #include <CGAL/Kinetic/basic.h>
 #include <iostream>
-#include <CGAL/Kinetic/Kernel/Cartesian_moving_point_3.h>
+#include <CGAL/Kinetic/internal/Kernel/Cartesian_moving_point_3.h>
 
 namespace CGAL { namespace Kinetic { namespace internal {;
 

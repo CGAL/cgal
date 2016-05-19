@@ -1,6 +1,7 @@
 #include "Scene_polyhedron_transform_item.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
+#include <CGAL/Three/Viewer_interface.h>
 
 Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const CGAL::Three::Scene_interface*):
     Scene_item(NbOfVbos,NbOfVaos),
@@ -16,7 +17,7 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
     invalidateOpenGLBuffers();
 }
 
-void Scene_polyhedron_transform_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
+void Scene_polyhedron_transform_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer =0) const
 {
     //vao for the edges
     {
@@ -41,7 +42,7 @@ void Scene_polyhedron_transform_item::initialize_buffers(CGAL::Three::Viewer_int
     are_buffers_filled = true;
 }
 
-void Scene_polyhedron_transform_item::compute_elements() const
+void Scene_polyhedron_transform_item::computeElements() const
 {
      positions_lines.resize(0);
     typedef Kernel::Point_3		Point;
@@ -65,13 +66,13 @@ void Scene_polyhedron_transform_item::compute_elements() const
     }
 }
 
-void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_polyhedron_transform_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Edges]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     QMatrix4x4 f_matrix;
     for (int i=0; i<16; ++i){
@@ -117,7 +118,7 @@ Scene_polyhedron_transform_item::compute_bbox() const {
 
 void Scene_polyhedron_transform_item::invalidateOpenGLBuffers()
 {
-    compute_elements();
+    computeElements();
     are_buffers_filled = false;
     compute_bbox();
 }

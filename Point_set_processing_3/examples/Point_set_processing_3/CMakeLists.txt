@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8.11)
 
 
 # Find CGAL
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
@@ -51,6 +51,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "property_map.cpp" )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
   create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
+  create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" )
   create_single_source_cgal_program( "remove_outliers_example.cpp" )
   create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )

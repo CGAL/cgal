@@ -5,7 +5,6 @@
 #include  <CGAL/Three/Scene_item.h> //<- modif ?
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
-#include "Viewer.h"
 #include <iostream>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -44,7 +43,9 @@ public:
       MAX_ANGLE,
       MEAN_ANGLE
     };
-    QString compute_stats(int type);
+
+    bool has_stats()const {return true;}
+    QString computeStats(int type);
     CGAL::Three::Scene_item::Header_data header() const;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
@@ -58,6 +59,7 @@ public:
     bool load(std::istream& in);
     bool load_obj(std::istream& in);
     bool save(std::ostream& out) const;
+    bool save_obj(std::ostream& out) const;
 
     // Function for displaying meta-data of the item
     virtual QString toolTip() const;
@@ -70,9 +72,9 @@ public:
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     void draw() const {}
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges() const {}
-    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges() const {}
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
 
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
@@ -83,7 +85,10 @@ public:
     bool isEmpty() const;
     void compute_bbox() const;
     std::vector<QColor>& color_vector() {return colors_;}
-    void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
+    void set_color_vector_read_only(bool on_off) {
+      plugin_has_set_color_vector_m=on_off;
+      if (on_off) m_min_patch_id=0;
+    }
     int getNumberOfNullLengthEdges(){return number_of_null_length_edges;}
     int getNumberOfDegeneratedFaces(){return number_of_degenerated_faces;}
     bool triangulated(){return poly->is_pure_triangle();}
@@ -104,13 +109,13 @@ public Q_SLOTS:
                 double dir_x,
                 double dir_y,
                 double dir_z);
-
     void update_vertex_indices();
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
 
 Q_SIGNALS:
+    void selection_done();
     void selected_vertex(void*);
     void selected_facet(void*);
     void selected_edge(void*);
@@ -144,7 +149,7 @@ private:
         Edges,
         Feature_edges,
         Gouraud_Facets,
-        NbOfVaos = Gouraud_Facets+1
+        NbOfVaos
     };
     enum VBOs {
         Facets_vertices = 0,
@@ -154,7 +159,7 @@ private:
         Feature_edges_vertices,
         Edges_color,
         Facets_normals_gouraud,
-        NbOfVbos = Facets_normals_gouraud+1
+        NbOfVbos
     };
 
     mutable std::vector<float> positions_lines;
@@ -172,15 +177,17 @@ private:
     mutable unsigned int number_of_degenerated_faces;
     mutable bool self_intersect;
 
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(const bool colors_only = false) const;
-    template<typename FaceNormalPmap, typename VertexNormalPmap>
+    template<typename VertexNormalPmap>
     void triangulate_facet(Facet_iterator,
-      const FaceNormalPmap&, const VertexNormalPmap&,
+      const Polyhedron::Traits::Vector_3&, const VertexNormalPmap&,
       const bool colors_only) const;
+    void* get_aabb_tree();
     double volume, area;
 
+  int m_min_patch_id; // the min value of the patch ids initialized in init()
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

@@ -25,9 +25,6 @@ class Polyhedron_demo_repair_polyhedron_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // To silent a warning -Woverloaded-virtual
-  // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-  using Polyhedron_demo_plugin_helper::init;
 
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
@@ -38,16 +35,10 @@ public:
     this->messages = m;
 
     actionRemoveIsolatedVertices = new QAction(tr("Remove Isolated Vertices"), mw);
-    if (actionRemoveIsolatedVertices){
-      connect(actionRemoveIsolatedVertices, SIGNAL(triggered()),
-              this, SLOT(on_actionRemoveIsolatedVertices_triggered()));
-    }
-
     actionRemoveDegenerateFaces = new QAction(tr("Remove Degenerate Faces"), mw);
-    if (actionRemoveDegenerateFaces){
-      connect(actionRemoveDegenerateFaces, SIGNAL(triggered()),
-        this, SLOT(on_actionRemoveDegenerateFaces_triggered()));
-    }
+    actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
+    actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
+    autoConnectActions();
   }
 
   QList<QAction*> actions() const

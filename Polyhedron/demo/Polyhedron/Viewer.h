@@ -21,6 +21,7 @@ class Scene_draw_interface;
 }
 class QMouseEvent;
 class QKeyEvent;
+class QContextMenuEvent;
 
 class Viewer_impl;
 //!The viewer class. Deals with all the openGL rendering and the mouse/keyboard events.
@@ -33,16 +34,15 @@ public:
   ~Viewer();
 
   // overload several QGLViewer virtual functions
-  //! Deprecated and does nothing.
+  //! Draws the scene.
   void draw();
-  //!This step happens after draw(). It is here that the axis system is
-  //!displayed.
+  //!This step happens after draw(). It is here that all the useful information is displayed, like the axis system or the informative text.
   void drawVisualHints();
   //! Deprecated. Does the same as draw().
   void fastDraw();
   //! Initializes the OpenGL functions and sets the backGround color.
   void initializeGL();
-  //! Deprecated and does nothing.
+  //! Draws the scene "with names" to allow picking.
   void drawWithNames();
   /*! Uses the parameter pixel's coordinates to get the corresponding point
    * in the World frame. If this point is found, emits selectedPoint, selected,
@@ -59,8 +59,10 @@ public:
   bool antiAliasing() const;
   //! @returns the fastDrawing state.
   bool inFastDrawing() const;
-  //! Implementation of `Viewer_interface::attrib_buffers()`
-  void attrib_buffers(int program_name) const;
+  //! Implementation of `Viewer_interface::inDrawWithNames()`
+  bool inDrawWithNames() const;
+  //! Implementation of `Viewer_interface::attribBuffers()`
+  void attribBuffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
 
@@ -73,7 +75,7 @@ public Q_SLOTS:
   //! If b is true, some items are displayed in a simplified version when moving the camera.
   //! If b is false, items display is never altered, even when moving.
   void setFastDrawing(bool b);
-  //! Make the camera turn around.
+  //! Makes the camera turn around.
   void turnCameraBy180Degres();
   //! @returns a QString containing the position and orientation of the camera.
   QString dumpCameraCoordinates();
@@ -108,13 +110,9 @@ protected:
   void wheelEvent(QWheelEvent *);
   //!Defines the behaviour for the key press events
   void keyPressEvent(QKeyEvent*);
-  /*! \brief Encapsulates the pickMatrix.
-  * Source code of gluPickMatrix slightly modified : instead of multiplying the current matrix by this value,
-  * sets the viewer's pickMatrix_ so that the drawing area is only around the cursor. This is because since CGAL 4.7,
-  * the drawing system changed to use shaders, and these need this value. pickMatrix_ is passed to the shaders in
-  * Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name).*/
-  void pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
-                  GLint viewport[4]);
+  //!Deal with context menu events
+  void contextMenuEvent(QContextMenuEvent*);
+
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.

@@ -44,7 +44,6 @@ public:
   bool isFinite() const { return false; }
   bool isEmpty() const { return false; }
   void compute_bbox() const { _bbox = Bbox(); }
-
   bool manipulatable() const {
     return manipulable;
   }
@@ -96,10 +95,10 @@ public:
     return (m == Wireframe || m == Flat || m == FlatPlusEdges);
   }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
- virtual void draw_edges(CGAL::Three::Viewer_interface* viewer)const;
+ virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const;
   Plane_3 plane() const {
     const qglviewer::Vec& pos = frame->position();
-    const qglviewer::Vec& n = 
+    const qglviewer::Vec& n =
       frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
     return Plane_3(n[0], n[1],  n[2], - n * pos);
   }
@@ -107,9 +106,9 @@ public:
 private:
   double scene_diag() const {
     const Bbox& bbox = scene->bbox();
-    const double& xdelta = bbox.xmax-bbox.xmin;
-    const double& ydelta = bbox.ymax-bbox.ymin;
-    const double& zdelta = bbox.zmax-bbox.zmin;
+    const double& xdelta = bbox.xmax()-bbox.xmin();
+    const double& ydelta = bbox.ymax()-bbox.ymin();
+    const double& zdelta = bbox.zmax()-bbox.zmin();
     const double diag = std::sqrt(xdelta*xdelta + 
                             ydelta*ydelta +
                             zdelta*zdelta);
@@ -134,16 +133,32 @@ public Q_SLOTS:
   
   void setNormal(float x, float y, float z) {
     QVector3D normal(x,y,z);
+    if(normal == QVector3D(0,0,0))
+      return;
     QVector3D origin(0,0,1);
-    QQuaternion q(CGAL::sqrt((normal.lengthSquared()) * (origin.lengthSquared())) + QVector3D::dotProduct(origin, normal),QVector3D::crossProduct(origin, normal));
-    q.normalize();
-    frame->setOrientation(q.x(), q.y(), q.z(), q.scalar());
+    qglviewer::Quaternion q;
+    if(origin == normal)
+    {
+      return;
+    }
+     if(origin == -normal)
+    {
+      q.setAxisAngle(qglviewer::Vec(0,1,0),M_PI);
+      frame->setOrientation(q);
+      return;
+    }
+
+    QVector3D cp = QVector3D::crossProduct(origin, normal);
+    cp.normalize();
+    q.setAxisAngle(qglviewer::Vec(cp.x(),cp.y(), cp.z()),acos(QVector3D::dotProduct(origin, normal)/(normal.length()*origin.length())));
+
+    frame->setOrientation(q.normalized());
   }
 
   void setNormal(double x, double y, double z) {
     setNormal((float)x, (float)y, (float)z);
   }
-
+  void flipPlane();
   void setClonable(bool b = true) {
     can_clone = b;
   }
@@ -174,8 +189,8 @@ protected:
   mutable bool smooth_shading;
   mutable QOpenGLShaderProgram *program;
 
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface*)const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface*)const;
   void compute_normals_and_vertices(void);
 };
 

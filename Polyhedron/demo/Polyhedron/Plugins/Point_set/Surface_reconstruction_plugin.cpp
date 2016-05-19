@@ -468,12 +468,12 @@ class Polyhedron_demo_surface_reconstruction_plugin :
   QAction* actionSurfaceReconstruction;
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
-
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+    scene = scene_interface;
     actionSurfaceReconstruction = new QAction(tr("Surface Reconstruction"), mainWindow);
     actionSurfaceReconstruction->setObjectName("actionSurfaceReconstruction");
+    autoConnectActions();
 
-    CGAL::Three::Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
   void automatic_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);

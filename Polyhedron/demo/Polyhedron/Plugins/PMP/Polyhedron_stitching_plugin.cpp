@@ -47,16 +47,16 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
   QAction* actionStitchBorders;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders; }
-  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* /* m */)
   {
+    scene = scene_interface;
     actionDetectBorders= new QAction(tr("Detect Boundaries"), mainWindow);
     actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionDetectBorders->setObjectName("actionDetectBorders");
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing");
     actionDetectBorders->setProperty("subMenuName", "Polygon Mesh Processing");
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {

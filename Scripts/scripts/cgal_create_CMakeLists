@@ -119,7 +119,6 @@ if [ -n "$ENABLE_CTEST" ]; then
 fi
   #---------------------------------------------------------------------------
   # echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
-  # echo "CGAL_PRECONFIGURED_LIBS: $CGAL_PRECONFIGURED_LIBS"
   if [ ! -z "$CGAL_COMPONENTS" ]; then
     # ensure capitalization
 
@@ -170,10 +169,6 @@ fi
     done
     IFS=$OLDIFS
 
-  fi
-
-  if [ "$CGAL_PRECONFIGURED_LIBS" = "y" ]; then
-    CGAL_COMPONENTS=${CGAL_COMPONENTS}" ALL_PRECONFIGURED_LIBS"
   fi
 
   echo "find_package( CGAL QUIET COMPONENTS ${CGAL_COMPONENTS//:/ } )"
@@ -511,7 +506,6 @@ usage()
   echo "  -s source If this parameter is given the script will create one single executable for 'source' with all source files; otherwise it creates one executable for each main'ed source." >&2
   echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','ImageIO','Qt4' ('benchmark', 'symbolic')." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
-  echo "  -p use all of CGAL's preconfigured libraries" >&2
   echo "  -o options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
   echo "  -v the version" >&2
   echo "  -h this info screen" >&2
@@ -524,8 +518,6 @@ SOURCE=""
 
 CGAL_COMPONENTS_GIVEN=""
 CGAL_COMPONENTS=""
-
-CGAL_PRECONFIGURED_LIBS='n'
 
 BOOST_COMPONENTS_GIVEN=""
 BOOST_COMPONENTS=""
@@ -598,8 +590,6 @@ while getopts s:c:b:o:phvt OPT; do
           echo "Options-file '$OPTIONS_FILE' does not exist." >&2
           exit 1
         fi
-        ;;
-    p)  CGAL_PRECONFIGURED_LIBS='y'
         ;;
     t)  ENABLE_CTEST='y'
         ;;

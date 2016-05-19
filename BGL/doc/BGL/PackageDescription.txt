@@ -126,6 +126,7 @@ user might encounter.
 - `CGAL::HalfedgeDS_face_max_base_with_id`
 - `CGAL::Polyhedron_items_with_id_3`
 - `CGAL::set_halfedgeds_items_id()`
+- `CGAL::Dual`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
@@ -151,6 +152,7 @@ user might encounter.
 - `CGAL::make_hexahedron()`
 
 - `CGAL::clear()`
+- `CGAL::copy_face_graph()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`

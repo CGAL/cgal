@@ -733,7 +733,7 @@ operator()(int nb_iterations, Visitor visitor)
     //Pb with Freeze : sometimes a few vertices continue moving indefinitely
     //if the nb of moving vertices is < 1% of total nb AND does not decrease
     if(do_freeze_
-      && nb_vertices_moved < 0.005 * initial_vertices_nb
+      && nb_vertices_moved < 0.005 * double(initial_vertices_nb)
       && nb_vertices_moved == moving_vertices.size())
     {
       // we should stop because we are
@@ -1041,7 +1041,7 @@ check_convergence() const
     sum += CGAL::sqrt(*it);
   }
 
-  FT average_move = sum/big_moves_size_;/*even if set is not full, divide*/
+  FT average_move = sum/FT(big_moves_size_);/*even if set is not full, divide*/
        /*by max size so that if only 1 point moves, it goes to 0*/
 #ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
   sum_moves_ = average_move;

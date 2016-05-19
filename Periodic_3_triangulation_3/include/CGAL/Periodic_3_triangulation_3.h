@@ -3731,7 +3731,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
 
   if ( n==0 ) return is;
 
-  std::map< std::size_t, Vertex_handle > V;
+  std::vector< Vertex_handle > V(n);
 
   if (cx==1 && cy==1 && cz==1) {
     for (std::size_t i=0; i < n; i++) {
@@ -3759,7 +3759,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
     }
   }
   
-  std::map< std::size_t, Cell_handle > C;
+  std::vector< Cell_handle > C;
   std::size_t m;
   tr._tds.read_cells(is, V, m, C);
 

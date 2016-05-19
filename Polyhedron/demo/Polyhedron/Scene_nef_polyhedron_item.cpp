@@ -1,4 +1,5 @@
 #include "Scene_nef_polyhedron_item.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include "Scene_polyhedron_item.h"
 #include "Nef_type.h"
 #include "Polyhedron_type.h"
@@ -13,13 +14,13 @@
 #include <CGAL/minkowski_sum_3.h>
 #include <CGAL/convex_decomposition_3.h>
 
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
 typedef Nef_polyhedron::Traits Traits;
 typedef Nef_polyhedron::Halffacet Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Nef_polyhedron::Halfedge_const_handle Halfedge_handle;
 struct Face_info {
     Nef_polyhedron::Halfedge_const_handle e[3];
@@ -31,7 +32,7 @@ typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
 P_traits>          Fb1;
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Exact_predicates_tag                                    Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
 TDS,
 Itag>             CDTbase;
@@ -82,7 +83,7 @@ Scene_nef_polyhedron_item::~Scene_nef_polyhedron_item()
     delete nef_poly;
 }
 
-void Scene_nef_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_nef_polyhedron_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
     //vao for the facets
     {
@@ -404,13 +405,13 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
     if(!are_buffers_filled)
     {
         compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     }
     vaos[Facets]->bind();
 
     // tells the GPU to use the program just created
     program=getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
     program->setUniformValue("is_two_side", 1);
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
@@ -420,21 +421,21 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
     viewer->glPointSize(10.f);
 
-    draw_points(viewer);
+    drawPoints(viewer);
     viewer->glPointSize(point_size);
 
 }
-void Scene_nef_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
         compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     }
 
     vaos[Edges]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(nb_lines/3));
     vaos[Edges]->release();
@@ -445,20 +446,20 @@ void Scene_nef_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer
         viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
         viewer->glPointSize(10.f);
 
-        draw_points(viewer);
+        drawPoints(viewer);
         viewer->glPointSize(point_size);
     }
 }
-void Scene_nef_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+void Scene_nef_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
         compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     }
     vaos[Points]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(nb_points/3));

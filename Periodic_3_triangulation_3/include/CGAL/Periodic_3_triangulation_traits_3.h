@@ -27,7 +27,7 @@
 #include <CGAL/Periodic_3_construct_point_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Traits_with_offsets_adaptor.h>
-
+#include <CGAL/internal/Has_boolean_tags.h>
 
 namespace CGAL { 
 
@@ -111,48 +111,33 @@ protected:
   Iso_cuboid_3 _domain;
 };
 
-namespace future_release
-{
-template < typename K, typename Off = CGAL::Periodic_3_offset_3 >
+
+template < typename K, typename Off = CGAL::Periodic_3_offset_3, bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
 class Periodic_3_triangulation_traits_3;
-}
 
 } //namespace CGAL
 
-// Partial specialization for Filtered_kernel<CK>.
-#include <CGAL/Filtered_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
+#include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 // This declaration is needed to break the cyclic dependency.
-template < typename K, typename Off >
+template < typename K, typename Off, bool Has_static_filters >
 class Periodic_3_triangulation_filtered_traits_3;
 
-namespace future_release {
-template < class K, class Off>
+template < class K, class Off, bool Has_filtered_predicates >
 class Periodic_3_triangulation_traits_3
   : public Periodic_3_triangulation_traits_base_3<K, Off>
 {
 };
 
-template < typename CK, typename Off >
-class Periodic_3_triangulation_traits_3 < Filtered_kernel<CK>, Off>
-  : public Periodic_3_triangulation_filtered_traits_3 <
-  Filtered_kernel<CK>, Off >
+template < typename K, typename Off >
+class Periodic_3_triangulation_traits_3 < K, Off, true>
+  : public Periodic_3_triangulation_filtered_traits_3 < K, Off, internal::Has_static_filters<K>::value >
 {
 public:
-  typedef Filtered_kernel<CK>  Kernel;
+  typedef K Kernel;
 };
 
-template < class Off >
-class Periodic_3_triangulation_traits_3<CGAL::Epick, Off>
-  : public Periodic_3_triangulation_filtered_traits_3<CGAL::Epick, Off>
-{
-  typedef CGAL::Epick Kernel;
-};
-
-}
 } //namespace CGAL
 
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
@@ -160,14 +145,8 @@ class Periodic_3_triangulation_traits_3<CGAL::Epick, Off>
 
 namespace CGAL
 {
-template < typename K, typename Off >
+template < typename K, typename Off, bool Has_filtered_predicates >
 class Periodic_3_Delaunay_triangulation_traits_3;
-
-// Periodic_3_triangulation_traits_3 should not be used as traits for Periodic_3_Delaunay_triangulation_3 anymore.
-template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
-class CGAL_DEPRECATED Periodic_3_triangulation_traits_3 : public Periodic_3_Delaunay_triangulation_traits_3<Kernel, Off>
-{
-};
 }
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H

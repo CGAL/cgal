@@ -460,8 +460,10 @@ void refine_mesh_3_impl(C3T3& c3t3,
                           parameters::convergence = lloyd.convergence(),
                           parameters::freeze_bound = lloyd.bound());
   }
-    
-  dump_c3t3(c3t3, mesh_options.dump_after_glob_opt_prefix);
+
+  if( odt || lloyd) {
+    dump_c3t3(c3t3, mesh_options.dump_after_glob_opt_prefix);
+  }
 
   // Perturbation
   if ( perturb )
@@ -475,9 +477,9 @@ void refine_mesh_3_impl(C3T3& c3t3,
                    domain,
                    parameters::time_limit = perturb_time_limit,
                    parameters::sliver_bound = perturb.bound());
+
+    dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
-  
-  dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
 
   // Exudation
   if ( exude )
@@ -490,9 +492,9 @@ void refine_mesh_3_impl(C3T3& c3t3,
     exude_mesh_3(c3t3,
                  parameters::time_limit = exude_time_limit,
                  parameters::sliver_bound = exude.bound());
+
+    dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
   }
-  
-  dump_c3t3(c3t3, mesh_options.dump_after_exude_prefix);
 
 }
 

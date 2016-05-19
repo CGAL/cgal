@@ -87,8 +87,6 @@ are described in Chapter \ref PkgTDS2 "2D Triangulation Data Structure".
 - `CGAL::Constrained_triangulation_plus_2<Tr>`
 - `CGAL::Triangulation_hierarchy_2<Tr>`
 
-- `CGAL::Triangulation_euclidean_traits_2<K>`
-- `CGAL::Triangulation_euclidean_traits_xy_3<K>`
 - `CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>`
 - `CGAL::Regular_triangulation_filtered_traits_2<FK>`
 
@@ -101,7 +99,6 @@ are described in Chapter \ref PkgTDS2 "2D Triangulation Data Structure".
 - `CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>`
 - `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
 
-- `CGAL::Weighted_point<Pt,Wt>`
 - `CGAL::Triangulation_cw_ccw_2`
 
 ## Enum ##

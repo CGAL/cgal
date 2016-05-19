@@ -3,12 +3,6 @@
 
 - \subpage installation describes how to install %CGAL, and lists the third party libraries on which %CGAL depends, or for which %CGAL provides interfaces. 
 
-- \subpage introduction presents you some short example programs to
-  get a first idea for the look and feel of a program that uses \cgal.
-  We introduce the notion of the \em kernel which defines geometric primitives,
-  the notion of  <em>traits classes</em> which define what primitives are used
-  by a geometric algorithm, the notions of \em concept and \em model.
-  
 - \subpage manual gives an idea where you should look for documentation.
   The documentation for a class, may be spread over manual pages of
   base classes, and reference manual pages of concepts the class is a model of.

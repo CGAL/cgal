@@ -19,14 +19,12 @@ any vertex of the triangulation.
 A <I>circumscribing ball</I> of a simplex is a ball
 having all vertices of the simplex on its boundary.
 
-Parameters
---------------
 
-`DelaunayTriangulationTraits` is the geometric traits class that provides the geometric types
+\tparam DelaunayTriangulationTraits is the geometric traits class that provides the geometric types
 and predicates needed by Delaunay triangulations. `DelaunayTriangulationTraits` must be a model of
 the concept `DelaunayTriangulationTraits`.
 
-The parameter `TriangulationDataStructure` must be a model of the concept
+\tparam TriangulationDataStructure must be a model of the concept
 `TriangulationDataStructure`. This model is used to store 
 the faces of the triangulation. The parameter `TriangulationDataStructure` defaults to
 `Triangulation_data_structure` whose template parameters are instantiated as
@@ -68,7 +66,7 @@ Delaunay_triangulation(const int dim, const Geom_traits gt = Geom_traits());
 
 /// @}
 
-/// \name Point removal
+/// \name Point Removal
 /// @{
 
 /*!
@@ -91,7 +89,7 @@ void remove(ForwardIterator start, ForwardIterator end);
 
 /// @}
 
-/// \name Point insertion
+/// \name Point Insertion
 /// @{
 
 /*!

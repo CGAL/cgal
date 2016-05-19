@@ -13,7 +13,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "efficient_RANSAC_custom_shape.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_parameters.cpp" )
   create_single_source_cgal_program( "efficient_RANSAC_point_access.cpp" )
+  create_single_source_cgal_program( "plane_regularization.cpp" )
 
 else()
   

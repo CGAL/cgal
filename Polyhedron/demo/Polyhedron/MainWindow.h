@@ -62,12 +62,12 @@ public:
   /*! Find an IO plugin.
    * throws std::invalid_argument if no loader with that argument can be found
    @returns the IO plugin associated with `loader_name`*/
-  CGAL::Three::Polyhedron_demo_io_plugin_interface* find_loader(const QString& loader_name) const;
-  
+  CGAL::Three::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
+
   /*! \brief Load an item with a given loader.
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
-  CGAL::Three::Scene_item* load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
+  CGAL::Three::Scene_item* loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
 
 Q_SIGNALS:
   void on_closure();
@@ -77,7 +77,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
   //!Creates a new group and adds it to the scene.
-  void make_new_group();
+  void makeNewGroup();
   void updateViewerBBox();
   void open(QString);
   void on_upButton_pressed();
@@ -85,10 +85,9 @@ public Q_SLOTS:
   void restoreCollapseState();
   void setExpanded(QModelIndex);
   void setCollapsed(QModelIndex);
-  /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
   //!Prints a dialog containing statistics on the selected polyhedrons.
-  void statistics_on_item();
+  void statisticsOnItem();
   /*! Open a file with a given loader, and return true if it was successful.
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
@@ -96,19 +95,19 @@ public Q_SLOTS:
   /*! Reloads an item. Expects to be called by a QAction with the
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/
-  void reload_item();
+  void reloadItem();
   
   /*!
    * This is an overloaded function.
    * If QT_SCRIPT_LIB is defined, returns true if the script is valid.
    * If not, returns false.
    */
-  bool load_script(QString filename);
+  bool loadScript(QString filename);
 
   /*! If QT_SCRIPT_LIB is defined, returns true if the script is valid.
   * If not, returns false.
   */
-  bool load_script(QFileInfo);
+  bool loadScript(QFileInfo);
 
   /*!
    * Gives the keyboard input focus to the widget searchEdit.
@@ -269,7 +268,7 @@ protected Q_SLOTS:
   //!Duplicates the selected item and selects the new item.
   void on_actionDuplicate_triggered();
   //!If QT_SCRIPT_LIB is defined, opens a dialog to choose a script.
-  void on_actionLoad_Script_triggered();
+  void on_actionloadScript_triggered();
   //!Loads a plugin from a specified directory
   void on_actionLoad_plugin_triggered();
   // Show/Hide
@@ -300,9 +299,9 @@ protected Q_SLOTS:
    */
   void on_action_Look_at_triggered();
   //!Returns the position and orientation of the current camera frame.
-  QString camera_string() const;
+  QString cameraString() const;
   /*! Prints the position and orientation of the current camera frame.
-   * @see camera_string()
+   * @see cameraString()
    */
   void on_actionDumpCamera_triggered();
   //!Sets the coordinates of the camera in the clipboard text.
@@ -344,7 +343,10 @@ protected:
   //! Returns a list of the selected items in the sceneView.
   QList<int> getSelectedSceneItemIndices() const;
 private:
+  void updateMenus();
+  void load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
+  QMap<QString, QMenu*> menu_map;
   QString get_item_stats();
   QString strippedName(const QString &fullFileName);
   void setMenus(QString, QString, QAction *a);

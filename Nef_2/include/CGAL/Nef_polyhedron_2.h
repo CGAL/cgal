@@ -37,7 +37,6 @@
 #include <CGAL/Nef_2/PM_decorator.h>
 #include <CGAL/Nef_2/PM_io_parser.h>
 #include <CGAL/Nef_2/PM_overlayer.h>
-//#include <CGAL/Nef_2/PM_transformer.h>
 #include <CGAL/Nef_2/PM_point_locator.h>
 #include <CGAL/Nef_2/Bounding_box_2.h>
 #include <vector>

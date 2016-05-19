@@ -115,6 +115,12 @@ struct Test {
     check_squared_distance (p(6, 1, 2), S(p( 2, 0, 0), p( 3, 0, 0)), 14);
   }
 
+  void P_T()
+  {
+    std::cout << "Point - Segment\n";
+    check_squared_distance (p(0, 1, 2), T(p(0, 0, 0), p( 2, 0, 0), p( 0, 2, 0)), 4);
+  }
+
   void S_S()
   {
     std::cout << "Segment - Segment\n";
@@ -228,6 +234,7 @@ struct Test {
     std::cout << "3D Distance tests\n";
     P_P();
     P_S();
+    P_T();
     S_S();
     P_R();
     R_R();

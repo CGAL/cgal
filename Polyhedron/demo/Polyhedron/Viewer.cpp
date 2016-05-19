@@ -16,6 +16,7 @@ public:
   bool twosides;
   bool macro_mode;
   bool inFastDrawing;
+  bool inDrawWithNames;
   
   void draw_aux(bool with_names, Viewer*);
 
@@ -31,6 +32,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->twosides = false;
   d->macro_mode = false;
   d->inFastDrawing = true;
+  d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
@@ -55,12 +57,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                              tr("Selects and display context "
                                 "menu of the selected item"));
 #endif // QGLVIEWER_VERSION >= 2.5.0
-  for(int i=0; i<16; i++)
-      pickMatrix_[i]=0;
-  pickMatrix_[0]=1;
-  pickMatrix_[5]=1;
-  pickMatrix_[10]=1;
-  pickMatrix_[15]=1;
   prev_radius = sceneRadius();
   axis_are_displayed = true;
 }
@@ -237,12 +233,25 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::RightButton &&
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
+
     select(event->pos());
     requestContextMenu(event->globalPos());
     event->accept();
   }
   else {
     QGLViewer::mousePressEvent(event);
+  }
+}
+
+#include <QContextMenuEvent>
+void Viewer::contextMenuEvent(QContextMenuEvent* event)
+{
+  if(event->reason() != QContextMenuEvent::Mouse) {
+    requestContextMenu(event->globalPos());
+    event->accept();
+  }
+  else {
+    QGLViewer::contextMenuEvent(event);
   }
 }
 
@@ -307,7 +316,7 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
   else
     viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
-  if(antialiasing)
+  if(!with_names && antialiasing)
   {
     viewer->glEnable(GL_BLEND);
     viewer->glEnable(GL_LINE_SMOOTH);
@@ -321,12 +330,17 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     viewer->glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     viewer->glBlendFunc(GL_ONE, GL_ZERO);
   }
+  inDrawWithNames = with_names;
   if(with_names)
     scene->drawWithNames(viewer);
   else
     scene->draw(viewer);
   viewer->glDisable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+}
+
+bool Viewer::inDrawWithNames() const {
+  return d->inDrawWithNames;
 }
 
 void Viewer::drawWithNames()
@@ -412,7 +426,7 @@ QString Viewer::dumpCameraCoordinates()
   }
 }
 
-void Viewer::attrib_buffers(int program_name) const {
+void Viewer::attribBuffers(int program_name) const {
     GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
     QMatrix4x4 mvp_mat;
@@ -420,8 +434,7 @@ void Viewer::attrib_buffers(int program_name) const {
     QMatrix4x4 mv_mat;
     // transformation of the manipulated frame
     QMatrix4x4 f_mat;
-    // used for the picking. Is Identity except while selecting an item.
-    QMatrix4x4 pick_mat;
+
     f_mat.setToIdentity();
     //fills the MVP and MV matrices.
     GLdouble d_mat[16];
@@ -433,10 +446,6 @@ void Viewer::attrib_buffers(int program_name) const {
     this->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
-    for (int i=0; i<16; ++i)
-        pick_mat.data()[i] = this->pickMatrix_[i];
-
-    mvp_mat = pick_mat * mvp_mat;
 
     const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
                                              &is_both_sides);
@@ -449,154 +458,65 @@ void Viewer::attrib_buffers(int program_name) const {
     QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
+    program->setUniformValue("mvp_matrix", mvp_mat);
     switch(program_name)
     {
-    case PROGRAM_NO_SELECTION:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-
-        program->setUniformValue("f_matrix",f_mat);
-        break;
     case PROGRAM_WITH_LIGHT:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        break;
     case PROGRAM_C3T3:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        break;
-    case PROGRAM_C3T3_EDGES:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        break;
-    case PROGRAM_WITHOUT_LIGHT:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff", diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        program->setAttributeValue("normals", 0.0,0.0,0.0);
-        program->setUniformValue("f_matrix",f_mat);
-
-
-        break;
-    case PROGRAM_WITH_TEXTURE:
-
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("s_texture",0);
-        program->setUniformValue("f_matrix",f_mat);
-
-        break;
     case PROGRAM_PLANE_TWO_FACES:
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-        program->setUniformValue("light_pos", position);
-        program->setUniformValue("light_diff",diffuse);
-        program->setUniformValue("light_spec", specular);
-        program->setUniformValue("light_amb", ambient);
-        program->setUniformValue("spec_power", 51.8f);
-        program->setUniformValue("is_two_side", is_both_sides);
-        break;
-
-    case PROGRAM_WITH_TEXTURED_EDGES:
-
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("s_texture",0);
-
-        break;
     case PROGRAM_INSTANCED:
-
-        program->setUniformValue("mvp_matrix", mvp_mat);
-        program->setUniformValue("mv_matrix", mv_mat);
-
+    case PROGRAM_WITH_TEXTURE:
+    case PROGRAM_CUTPLANE_SPHERES:
+    case PROGRAM_SPHERES:
         program->setUniformValue("light_pos", position);
         program->setUniformValue("light_diff",diffuse);
         program->setUniformValue("light_spec", specular);
         program->setUniformValue("light_amb", ambient);
         program->setUniformValue("spec_power", 51.8f);
         program->setUniformValue("is_two_side", is_both_sides);
-
         break;
-    case PROGRAM_INSTANCED_WIRE:
-        program->setUniformValue("mvp_matrix", mvp_mat);
+    }
+    switch(program_name)
+    {
+    case PROGRAM_WITH_LIGHT:
+    case PROGRAM_C3T3:
+    case PROGRAM_PLANE_TWO_FACES:
+    case PROGRAM_INSTANCED:
+    case PROGRAM_CUTPLANE_SPHERES:
+    case PROGRAM_SPHERES:
+      program->setUniformValue("mv_matrix", mv_mat);
+      break;
+    case PROGRAM_WITHOUT_LIGHT:
+      program->setUniformValue("f_matrix",f_mat);
+      break;
+    case PROGRAM_WITH_TEXTURE:
+      program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("s_texture",0);
+      program->setUniformValue("f_matrix",f_mat);
+      break;
+    case PROGRAM_WITH_TEXTURED_EDGES:
+        program->setUniformValue("s_texture",0);
+        break;
+    case PROGRAM_NO_SELECTION:
+        program->setUniformValue("f_matrix",f_mat);
         break;
     }
     program->release();
 }
 
-
-void Viewer::pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
-GLint viewport[4])
-{
- //GLfloat m[16];
- GLfloat sx, sy;
- GLfloat tx, ty;
-
- sx = viewport[2] / width;
- sy = viewport[3] / height;
- tx = (viewport[2] + 2.0 * (viewport[0] - x)) / width;
- ty = (viewport[3] + 2.0 * (viewport[1] - y)) / height;
-
- #define M(row, col) pickMatrix_[col*4+row]
-  M(0, 0) = sx;
-  M(0, 1) = 0.0;
-  M(0, 2) = 0.0;
-  M(0, 3) = tx;
-  M(1, 0) = 0.0;
-  M(1, 1) = sy;
-  M(1, 2) = 0.0;
-  M(1, 3) = ty;
-  M(2, 0) = 0.0;
-  M(2, 1) = 0.0;
-  M(2, 2) = 1.0;
-  M(2, 3) = 0.0;
-  M(3, 0) = 0.0;
-  M(3, 1) = 0.0;
-  M(3, 2) = 0.0;
-  M(3, 3) = 1.0;
- #undef M
-
- //pickMatrix_[i] = m[i];
-}
 void Viewer::beginSelection(const QPoint &point)
 {
-    QGLViewer::beginSelection(point);
-    //set the picking matrix to allow the picking
-    static GLint viewport[4];
-    camera()->getViewport(viewport);
-    pickMatrix(point.x(), point.y(), selectRegionWidth(), selectRegionHeight(), viewport);
+    makeCurrent();
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
+    d->scene->setPickedPixel(point);
 
 }
-void Viewer::endSelection(const QPoint& point)
+void Viewer::endSelection(const QPoint&)
 {
-  QGLViewer::endSelection(point);
-   //set the pick matrix to Identity
-    for(int i=0; i<16; i++)
-        pickMatrix_[i]=0;
-    pickMatrix_[0]=1;
-    pickMatrix_[5]=1;
-    pickMatrix_[10]=1;
-    pickMatrix_[15]=1;
+    glDisable(GL_SCISSOR_TEST);
+    //redraw thetrue scene for the glReadPixel in postSelection();
+    updateGL();
 }
 
 void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data)
@@ -1141,6 +1061,51 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
 
         }
         break;
+    case PROGRAM_CUTPLANE_SPHERES:
+      if( d->shader_programs[PROGRAM_CUTPLANE_SPHERES])
+      {
+          return d->shader_programs[PROGRAM_CUTPLANE_SPHERES];
+      }
+      else
+      {
+        QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v"))
+        {
+            std::cerr<<"adding vertex shader FAILED"<<std::endl;
+        }
+        if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3.f" ))
+        {
+            std::cerr<<"adding fragment shader FAILED"<<std::endl;
+        }
+        program->bindAttributeLocation("colors", 1);
+        program->link();
+        d->shader_programs[PROGRAM_CUTPLANE_SPHERES] = program;
+        return program;
+      }
+    case PROGRAM_SPHERES:
+        if( d->shader_programs[PROGRAM_SPHERES])
+        {
+            return d->shader_programs[PROGRAM_SPHERES];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->bindAttributeLocation("colors", 1);
+            program->link();
+            d->shader_programs[PROGRAM_SPHERES] = program;
+            return program;
+
+        }
+      break;
+
     default:
         std::cerr<<"ERROR : Program not found."<<std::endl;
         return 0;

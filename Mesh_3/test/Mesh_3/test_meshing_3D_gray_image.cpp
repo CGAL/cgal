@@ -54,7 +54,7 @@ public:
       Image,
       K_e_i,
       Image_word_type,
-      Greater_than<Image_word_type> >                   Mesh_domain;
+      Greater_than<double> >                            Mesh_domain;
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,

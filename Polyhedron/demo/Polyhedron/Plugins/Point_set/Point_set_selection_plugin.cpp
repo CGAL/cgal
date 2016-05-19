@@ -73,10 +73,10 @@ public:
     return (m == Wireframe);
   }
   
-  void draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glLineWidth(3.f);
     polyline->setRbgColor(0, 255, 0); 
-    polyline->draw_edges(viewer);
+    polyline->drawEdges(viewer);
   }
 
   Scene_polylines_item::Polyline& poly() const
@@ -191,7 +191,7 @@ public:
   }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointSetSelection; }
-  using Polyhedron_demo_plugin_helper::init;
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;
@@ -203,7 +203,7 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(ui_widget.Selection_tool_combo_box, SIGNAL(currentIndexChanged(int)), 
             this, SLOT(on_Selection_tool_combo_box_changed(int)));
@@ -311,7 +311,7 @@ protected:
 
   void select_points()
   {
-    Scene_points_with_normal_item* point_set_item = get_selected_item<Scene_points_with_normal_item>();
+    Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
     if(!point_set_item)
       {
 	print_message("Error: no point set selected!");
@@ -404,7 +404,7 @@ public Q_SLOTS:
   
   // Select all
   void on_Select_all_button_clicked() {
-    Scene_points_with_normal_item* point_set_item = get_selected_item<Scene_points_with_normal_item>();
+    Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
     if(!point_set_item)
       {
 	print_message("Error: no point set selected!");

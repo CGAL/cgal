@@ -13,7 +13,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 
@@ -29,6 +29,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_cylinder_parameters.cpp" )
   create_single_source_cgal_program( "test_plane_connected_component.cpp" )
   create_single_source_cgal_program( "test_plane_parameters.cpp" )
+  create_single_source_cgal_program( "test_regularization.cpp" )
   create_single_source_cgal_program( "test_sphere_connected_component.cpp" )
   create_single_source_cgal_program( "test_sphere_parameters.cpp" )
   create_single_source_cgal_program( "test_torus_connected_component.cpp" )

@@ -2,7 +2,7 @@
 
 
 
-void Scene_plane_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_plane_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
     program->bind();
@@ -94,10 +94,10 @@ void Scene_plane_item::compute_normals_and_vertices(void)
 void Scene_plane_item::draw(CGAL::Three::Viewer_interface* viewer)const
 {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
         f_matrix.data()[i] = (float)frame->matrix()[i];
@@ -111,13 +111,13 @@ void Scene_plane_item::draw(CGAL::Three::Viewer_interface* viewer)const
 
 }
 
-void Scene_plane_item::draw_edges(CGAL::Three::Viewer_interface* viewer)const
+void Scene_plane_item::drawEdges(CGAL::Three::Viewer_interface* viewer)const
 {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Edges]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
         f_matrix.data()[i] = (float)frame->matrix()[i];
@@ -127,4 +127,18 @@ void Scene_plane_item::draw_edges(CGAL::Three::Viewer_interface* viewer)const
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     program->release();
     vaos[Edges]->release();
+}
+
+void Scene_plane_item::flipPlane()
+{
+  qglviewer::Quaternion q;
+  qglviewer::Vec axis(0,1,0);
+  if(frame->orientation().axis() == axis)
+    q.setAxisAngle(qglviewer::Vec(1,0,0), M_PI);
+  else
+    q.setAxisAngle(axis, M_PI);
+  frame->rotate(q.normalized());
+  invalidateOpenGLBuffers();
+  Q_EMIT itemChanged();
+
 }

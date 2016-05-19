@@ -284,6 +284,8 @@ public:
     return corners_.size();
   }
 
+  void rescan_after_load_of_triangulation();
+
   /**
    * Returns true if edge \c e is in complex
    */
@@ -725,6 +727,22 @@ is_valid(bool verbose) const
   return true;
 }
 
+template <typename Tr, typename CI_, typename CSI_>
+void
+Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
+rescan_after_load_of_triangulation() {
+  corners_.clear();
+  for(typename Tr::Finite_vertices_iterator
+        vit = this->triangulation().finite_vertices_begin(),
+        end = this->triangulation().finite_vertices_end();
+      vit != end; ++vit)
+  {
+    if ( vit->in_dimension() == 0 ) {
+      add_to_complex(vit, Corner_index(1));
+    }
+  }
+  Base::rescan_after_load_of_triangulation();
+}
 
 template <typename Tr, typename CI_, typename CSI_>
 std::ostream &
@@ -747,6 +765,7 @@ operator>> (std::istream& is,
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   is >> static_cast<
     Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
+  c3t3.rescan_after_load_of_triangulation();
   return is;
 }
 

@@ -673,7 +673,6 @@ public:
   #include <CGAL/Homogeneous.h>
   #include <CGAL/leda_integer.h>
   #include <CGAL/Nef_polyhedron_S2.h>
-  #include <CGAL/SM_items.h>
 
   using namespace CGAL;
   typedef  Homogeneous<leda_integer>   Kernel;

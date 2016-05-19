@@ -79,14 +79,14 @@ public:
   void set_facet_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet <4);
-    bits_ |= (1 << facet);
+    bits_ |= char(1 << facet);
   }
 
   /// Marks \c facet as not visited
   void reset_visited (const int facet)
   {
     CGAL_precondition(facet>=0 && facet<4);
-    bits_ &= (15 & ~(1 << facet));
+    bits_ = char(bits_ & (15 & ~(1 << facet)));
   }
 
   /// Returns \c true if \c facet is marked as visited
@@ -153,7 +153,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits | (1 << facet), current_bits) != current_bits)
+    while (bits_.compare_and_swap(current_bits | char(1 << facet), current_bits) != current_bits)
     {
       current_bits = bits_;
     }
@@ -164,7 +164,9 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits & (15 & ~(1 << facet)), current_bits) != current_bits)
+    char mask = char(15 & ~(1 << facet));
+    char wanted_value = current_bits & mask;
+    while (bits_.compare_and_swap(wanted_value, current_bits) != current_bits)
     {
       current_bits = bits_;
     }
@@ -174,7 +176,7 @@ public:
   bool is_facet_visited (const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
-    return ( (bits_ & (1 << facet)) != 0 );
+    return ( (bits_ & char(1 << facet)) != 0 );
   }
 
   /// If the circumcenter is already set (circumcenter_ != NULL),
@@ -664,7 +666,7 @@ operator>>(std::istream &is,
     {
       typename Compact_mesh_cell_base_3<GT, MT, Cb>::Surface_patch_index i2;
       if(is_ascii(is))
-        is >> i2;
+        is >> iformat(i2);
       else
       {
         read(is, i2);
@@ -687,7 +689,7 @@ operator<<(std::ostream &os,
   for(int i = 0; i < 4; ++i)
   {
     if(is_ascii(os))
-      os << ' ' << c.surface_patch_index(i);
+      os << ' ' << oformat(c.surface_patch_index(i));
     else
       write(os, c.surface_patch_index(i));
   }

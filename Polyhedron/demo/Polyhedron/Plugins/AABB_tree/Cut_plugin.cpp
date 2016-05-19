@@ -84,7 +84,7 @@ public:
   // Wireframe OpenGL drawing in a display list
   void invalidateOpenGLBuffers()
   {
-      compute_elements();
+      computeElements();
       are_buffers_filled = false;
       compute_bbox();
   }
@@ -95,8 +95,8 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
@@ -114,7 +114,7 @@ private:
         are_buffers_filled = true;
     }
 
-    void compute_elements() const
+    void computeElements() const
     {
        positions_lines.clear();
 
@@ -123,13 +123,13 @@ private:
 
        tree.traversal(0, traits);
     }
-    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
-            initialize_buffers(viewer);
+            initializeBuffers(viewer);
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+        attribBuffers(viewer, PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors",this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
@@ -145,7 +145,6 @@ public:
     Scene_edges_item():CGAL::Three::Scene_item(1,1)
     {
         positions_lines.resize(0);
-        top = true;
     }
   ~Scene_edges_item()
   {
@@ -169,7 +168,7 @@ public:
   }
   void invalidateOpenGLBuffers()
   {
-      compute_elements();
+      computeElements();
       are_buffers_filled = false;
       compute_bbox();
   }
@@ -209,19 +208,13 @@ public:
 
 public:
   std::vector<Epic_kernel::Segment_3> edges;
-  bool top;
-
 private:
     mutable std::vector<float> positions_lines;
-    void timerEvent(QTimerEvent* /*event*/)
-    {
-       top = true;
-    }
 
   mutable QOpenGLShaderProgram *program;
 
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
@@ -238,7 +231,7 @@ private:
         vaos[0]->release();
         are_buffers_filled = true;
     }
-    void compute_elements() const
+    void computeElements() const
     {
        positions_lines.clear();
 
@@ -251,13 +244,13 @@ private:
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
     }
-    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
-            initialize_buffers(viewer);
+            initializeBuffers(viewer);
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+        attribBuffers(viewer, PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors",this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
@@ -339,13 +332,17 @@ public:
     return (out && edges_item->save(out));
   }
 
-
-
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
   QList<QAction*> actions() const;
 
 public Q_SLOTS:
+
+  void updateCutPlane()
+  {
+     ready_to_cut = true;
+     QTimer::singleShot(0,this,SLOT(cut()));
+  }
   void createCutPlane();
   void enableAction();
   void cut();
@@ -359,6 +356,7 @@ private:
   Scene_plane_item* plane_item;
   Scene_edges_item* edges_item;
   QAction* actionCreateCutPlane;
+  bool ready_to_cut;
 
   typedef std::map<QObject*,  AABB_tree*> Trees;
   Trees trees;
@@ -383,6 +381,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   messages = m;
   actionCreateCutPlane = new QAction(tr("Create Cutting Plane"), mainWindow);
   actionCreateCutPlane->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
+  ready_to_cut = true;
   connect(actionCreateCutPlane, SIGNAL(triggered()),
           this, SLOT(createCutPlane()));
 }
@@ -394,9 +393,9 @@ QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
 void Polyhedron_demo_cut_plugin::createCutPlane() {
   plane_item = new Scene_plane_item(scene);
   const CGAL::Three::Scene_interface::Bbox& bbox = scene->bbox();
-  plane_item->setPosition((bbox.xmin+bbox.xmax)/2.f,
-                          (bbox.ymin+bbox.ymax)/2.f,
-                          (bbox.zmin+bbox.zmax)/2.f);
+  plane_item->setPosition((bbox.xmin()+bbox.xmax())/2.f,
+                          (bbox.ymin()+bbox.ymax())/2.f,
+                          (bbox.zmin()+bbox.zmax())/2.f);
   plane_item->setNormal(0., 0., 1.);
   connect(plane_item, SIGNAL(destroyed()),
           this, SLOT(enableAction()));
@@ -405,7 +404,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   plane_item->setColor(Qt::green);
   plane_item->setName(tr("Cutting plane"));
   connect(plane_item->manipulatedFrame(), SIGNAL(modified()),
-          this, SLOT(cut()));
+          this, SLOT(updateCutPlane()));
   scene->addItem(plane_item);
   actionCreateCutPlane->setEnabled(false);
 
@@ -427,12 +426,11 @@ void Polyhedron_demo_cut_plugin::cut() {
     edges_item = new Scene_edges_item;
     edges_item->setName("Edges of the Cut");
     edges_item->setColor(Qt::red);
-    edges_item->startTimer(0);
     connect(edges_item, SIGNAL(destroyed()),
             this, SLOT(reset_edges()));
     scene->addItem(edges_item);
   }
-  if(edges_item->top)
+  if(ready_to_cut)
   {
   const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
   const qglviewer::Vec& n =
@@ -477,6 +475,7 @@ void Polyhedron_demo_cut_plugin::cut() {
       if ( NULL != inter_seg )
         edges_item->edges.push_back(*inter_seg);
     }
+    ready_to_cut = false;
   }
 
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
@@ -484,8 +483,6 @@ void Polyhedron_demo_cut_plugin::cut() {
   scene->itemChanged(edges_item);
   }
   QApplication::restoreOverrideCursor();
-
-    edges_item->top = false;
 }
 
 void Polyhedron_demo_cut_plugin::enableAction() {

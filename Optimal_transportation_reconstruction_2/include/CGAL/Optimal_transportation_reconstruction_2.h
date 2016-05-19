@@ -25,6 +25,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Random.h>
 
 #include <iterator>
 #include <iostream>
@@ -393,8 +394,8 @@ public:
   template <class Vector>
   Vector random_vec(const FT scale) const
   {
-    FT dx = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
-    FT dy = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
+    FT dx = -scale + get_default_random().get_double() * 2* scale;
+    FT dy = -scale + get_default_random().get_double() * 2* scale;
     return m_traits.construct_vector_2_object()(dx, dy);
   }
 

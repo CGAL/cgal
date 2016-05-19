@@ -46,7 +46,7 @@ template<class Image_,
          class BGT,
          typename Image_word_type = unsigned char,
          typename Return_type = int,
-         typename Transform = Identity<Image_word_type>,
+         typename Transform = Identity<Return_type>,
          bool labeled_image = true,
          bool use_trilinear_interpolation=true>
 class Image_to_labeled_function_wrapper
@@ -60,12 +60,11 @@ public:
   /// Constructor
   Image_to_labeled_function_wrapper(const Image_& image, 
                                     const Transform& transform = Transform(),
-                                    const Image_word_type value_outside = 0)
+                                    const Return_type value_outside = 0)
     : r_im_(image)
     , transform(transform)
     , value_outside(value_outside)
   {
-    CGAL_assertion(transform(value_outside) == return_type());
   }
 
   // Default copy constructor and assignment operator are ok
@@ -80,57 +79,68 @@ public:
    */
   return_type operator()(const Point_3& p, const bool = true) const
   {
-    if ( use_trilinear_interpolation )
-    {
-      if ( labeled_image )
-      {
-        return static_cast<return_type>(transform(
-          r_im_.labellized_trilinear_interpolation(
-              CGAL::to_double(p.x()),
-              CGAL::to_double(p.y()),
-              CGAL::to_double(p.z()),
-              value_outside)));
-      } else {
-        return static_cast<return_type>(transform(
-          static_cast<typename Transform::argument_type>(
-            r_im_.template trilinear_interpolation<Image_word_type, double>(
-              CGAL::to_double(p.x()),
-              CGAL::to_double(p.y()),
-              CGAL::to_double(p.z()),
-              value_outside))));
-      }
-    }
-    else
-    {
-      const std::ptrdiff_t px = static_cast<std::ptrdiff_t>(p.x()/r_im_.vx());
-      const std::ptrdiff_t py = static_cast<std::ptrdiff_t>(p.y()/r_im_.vy());
-      const std::ptrdiff_t pz = static_cast<std::ptrdiff_t>(p.z()/r_im_.vz());
-
-      const std::ptrdiff_t dimx = static_cast<std::ptrdiff_t>(r_im_.xdim());
-      const std::ptrdiff_t dimy = static_cast<std::ptrdiff_t>(r_im_.ydim());
-      const std::ptrdiff_t dimz = static_cast<std::ptrdiff_t>(r_im_.zdim());
-
-      if(px < 0 ||
-         py < 0 ||
-         pz < 0 ||
-         px+1 >= dimx ||
-         py+1 >= dimy ||
-         pz+1 >= dimz)
-      {
-        return 0;
-      }
-
-      const word_type* data = static_cast<const word_type*>(r_im_.data());
-      return static_cast<return_type>(transform(
-                data[pz*dimy*dimx + py*dimx + px]));
-    }
+    return eval(p,
+                CGAL::Boolean_tag<use_trilinear_interpolation>(),
+                CGAL::Boolean_tag<labeled_image>());
   }
 
 private:
+  return_type eval(const Point_3& p,
+                   CGAL::Tag_true /*trilinear*/,
+                   CGAL::Tag_true /*labeled*/) const
+  {
+    return static_cast<return_type>(transform(
+      r_im_.template labellized_trilinear_interpolation<Image_word_type>(
+          CGAL::to_double(p.x()),
+          CGAL::to_double(p.y()),
+          CGAL::to_double(p.z()),
+          value_outside)));
+  }
+
+  return_type eval(const Point_3& p,
+                   CGAL::Tag_true /*trilinear*/,
+                   CGAL::Tag_false /*labeled*/) const
+  {
+    return transform(
+        r_im_.template trilinear_interpolation<Image_word_type, double>(
+          CGAL::to_double(p.x()),
+          CGAL::to_double(p.y()),
+          CGAL::to_double(p.z()),
+          value_outside));
+  }
+
+  template <typename Labeled_tag>
+  return_type eval(const Point_3& p,
+                   CGAL::Tag_false /*trilinear*/,
+                   Labeled_tag /*labeled*/) const
+  {
+    const std::ptrdiff_t px = static_cast<std::ptrdiff_t>(p.x()/r_im_.vx());
+    const std::ptrdiff_t py = static_cast<std::ptrdiff_t>(p.y()/r_im_.vy());
+    const std::ptrdiff_t pz = static_cast<std::ptrdiff_t>(p.z()/r_im_.vz());
+
+    const std::ptrdiff_t dimx = static_cast<std::ptrdiff_t>(r_im_.xdim());
+    const std::ptrdiff_t dimy = static_cast<std::ptrdiff_t>(r_im_.ydim());
+    const std::ptrdiff_t dimz = static_cast<std::ptrdiff_t>(r_im_.zdim());
+
+    if(px < 0 ||
+       py < 0 ||
+       pz < 0 ||
+       px+1 >= dimx ||
+       py+1 >= dimy ||
+       pz+1 >= dimz)
+    {
+      return 0;
+    }
+
+    const word_type* data = static_cast<const word_type*>(r_im_.data());
+    return static_cast<return_type>(transform(
+              data[pz*dimy*dimx + py*dimx + px]));
+  }
+
   /// Labeled image to wrap
   const Image_& r_im_;
   const Transform transform;
-  const Image_word_type value_outside;
+  const Return_type value_outside;
 
 };  // end class Image_to_labeled_function_wrapper
 

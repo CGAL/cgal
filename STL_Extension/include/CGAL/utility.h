@@ -30,6 +30,7 @@
 #include <CGAL/config.h>
 #include <utility>
 #include <functional>
+#include <boost/functional/hash.hpp>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
 // We recommend that you use cpp11::tuple or cpp11::array instead
@@ -127,6 +128,17 @@ public:
   {
     return internal::Tuple_get<i, Self>::get(*this);
   }
+
+
+  friend std::size_t hash_value(Triple<T1,T2,T3> const& t)
+    {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, t.first);
+        boost::hash_combine(seed, t.second);
+        boost::hash_combine(seed, t.third);
+
+        return seed;
+    }
 
 };
 

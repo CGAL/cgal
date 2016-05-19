@@ -9,7 +9,7 @@
 typedef EPIC_kernel::Point_3 Point;
 
 
-void Scene_textured_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
+void Scene_textured_polyhedron_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     if(GLuint(-1) == textureId) {
         viewer->glGenTextures(1, &textureId);
@@ -293,13 +293,13 @@ void Scene_textured_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer)
     if(!are_buffers_filled)
     {
         compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     }
 
     vaos[Facets]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
     viewer->glBindTexture(GL_TEXTURE_2D, textureId);
-    attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
+    attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
     program=getShaderProgram(PROGRAM_WITH_TEXTURE);
     program->bind();
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/4));
@@ -307,14 +307,14 @@ void Scene_textured_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer)
     program->release();
     vaos[Facets]->release();
 }
-void Scene_textured_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+void Scene_textured_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
 
     vaos[Edges]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
     viewer->glBindTexture(GL_TEXTURE_2D, textureId);
-    attrib_buffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
+    attribBuffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
 
     program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
     program->bind();
@@ -358,7 +358,7 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-        initialize_buffers();
+        initializeBuffers();
     }
     else
         is_selected = p_is_selected;

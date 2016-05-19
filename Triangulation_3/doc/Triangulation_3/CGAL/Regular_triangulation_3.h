@@ -31,10 +31,11 @@ of all simplices are regular.
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
+`Default` may be used.
 
 \tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
         It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
-        TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
+        `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`).
         It must be a model of the `SurjectiveLockDataStructure` concept,
         with `Object` being a `Point`.
         The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if

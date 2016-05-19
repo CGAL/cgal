@@ -2,7 +2,6 @@
 #define SCENE_POLYGON_SOUP_ITEM_H
 #include "Scene_polygon_soup_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
-#include "Viewer.h"
 #include "Polyhedron_type.h"
 
 #include <boost/foreach.hpp>
@@ -100,6 +99,7 @@ class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item
         : public CGAL::Three::Scene_item
 {
     typedef Kernel::Point_3 Point_3;
+    typedef Polygon_soup::Points Points;
 
     Q_OBJECT
 public:  
@@ -144,8 +144,8 @@ public:
     // OpenGL drawing in a display list
     virtual void draw() const {}
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
     void invalidateOpenGLBuffers();
     bool isFinite() const { return true; }
     bool isEmpty() const;
@@ -156,6 +156,7 @@ public:
 
     void init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons);
 
+    const Points& points() const { return soup->points; }
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
@@ -191,8 +192,8 @@ private:
     mutable std::size_t nb_nm_edges;
     mutable std::size_t nb_polys;
     mutable std::size_t nb_lines;
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void) const;
     void triangulate_polygon(Polygons_iterator ) const;
     mutable QOpenGLShaderProgram *program;

@@ -22,8 +22,6 @@
 // File Description : 
 //******************************************************************************
 
-//#include <CGAL_demo/Plugin_interface.h>
-//#include <CGAL_demo/Plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
@@ -65,7 +63,7 @@ public:
   typedef Polyhedron_demo_plugin_helper Plugin_helper;
   
   using Plugin_helper::init;
-  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
+  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
   
   QList<QAction*> actions() const
   {
@@ -93,7 +91,7 @@ Io_implicit_function_plugin()
 
 void
 Io_implicit_function_plugin::
-init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
+init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *)
 {
   this->scene = scene_interface;
   this->mw = mainWindow;
@@ -129,7 +127,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
     {
       menuFile->insertAction(actionAfterLoad,actionLoadFunction);      
     }
-    
+
   }
 }
 

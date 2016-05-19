@@ -37,55 +37,54 @@ class QDockWidget;
 #include <CGAL/Three/Scene_interface.h>
 namespace CGAL {
 namespace Three {
-  /*!
-   * This class provides a base for creating a new plugin.
+  /*! \brief Provides convenient functions for a plugin.
+   * This class provides convenient functions to manage dock_widgets and to access a certain type of items in the scene.
+   * It also provides member variables for a Scene_interface and a QMainWindow.
    */
 class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface
 {
 public:
-  //! get action object from its name
-  static QAction* getActionFromMainWindow(QMainWindow*, QString action_name);
-  
-  //! Init plugin
-  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
-  
-  //! Get list of actions supported by this plugin
-  virtual QStringList actionsNames() const;
-  //!List of the actions of the plugin
-  virtual QList<QAction*> actions() const;
 
-  //! To get a selected item with the type of SceneType
+  /*! \brief Gets an item of the templated type.
+   *
+   * The function first checks if the selected item is of the wanted type. If not, it  will look in the scene entries if there is at least one item of the
+   * right type, make it the selection and return it.
+   * \return the first item found with the templated type
+   * \return NULL if none is found
+   */
   template<class SceneType>
-  SceneType* get_selected_item() const {
-    int item_id = scene->mainSelectionIndex();
-    SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
-    if(!scene_item) {
-      // no selected SceneType - if there is only one in list return it, otherwise NULL
-      int counter = 0;
-      int last_selected = 0;
-      for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
-        if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
-          scene_item = tmp;
-          counter++; 
-          last_selected=i;
-        }
-      }
-      if(counter != 1) { return NULL; }
-      scene->setSelectedItem(last_selected);
-    }
-    return scene_item;
-  }
+  SceneType* getSelectedItem() const{
+   int item_id = scene->mainSelectionIndex();
+   SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
+   if(!scene_item) {
+     // no selected SceneType - if there is only one in list return it, otherwise NULL
+     int counter = 0;
+     int last_selected = 0;
+     for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
+       if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) {
+         scene_item = tmp;
+         counter++;
+         last_selected=i;
+       }
+     }
+     if(counter != 1) { return NULL; }
+     scene->setSelectedItem(last_selected);
+   }
+   return scene_item;
+ }
 
-  //!To add a dock widget to the interface
-  void add_dock_widget(QDockWidget* dock);
-
-  //! Auto-connects actions to slots. Called by init().
+  /*! \brief Adds a dock widget to the interface
+   *
+   * Adds a dock widget in the left section of the MainWindow. If the slot is already taken, the dock widgets will be tabified.
+   */
+  void addDockWidget(QDockWidget* dock);
+  /*! \brief Automatically connects each action of the plugin to the corresponding slot.
+   *
+   * All actions in actions() must have their slot name on_ActionsName_triggered().
+   */
   void autoConnectActions();
-  
 protected:
-  //!The list of actions
-  QMap<QString, QAction*> actions_map;
   //!The reference to the scene
   CGAL::Three::Scene_interface* scene;
   //!The reference to the main window

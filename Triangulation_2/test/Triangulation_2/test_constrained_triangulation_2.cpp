@@ -24,7 +24,6 @@
 #include <CGAL/_test_types.h>
 
 #include <CGAL/intersections.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/_test_cls_constrained_triangulation_2.h>
 
@@ -35,8 +34,7 @@ int main()
 {
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with No_intersection_tag : " << std::endl;
-  typedef CGAL::Triangulation_euclidean_traits_2<TestK> Gt;
-  typedef CGAL::Constrained_triangulation_2<Gt>         Ct;
+  typedef CGAL::Constrained_triangulation_2<TestK>         Ct;
   _test_cls_constrained_triangulation(Ct());
 
   std::cout << "Testing constrained_triangulation "<< std::endl;

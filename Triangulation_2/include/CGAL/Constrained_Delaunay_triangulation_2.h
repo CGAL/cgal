@@ -55,17 +55,18 @@ struct Get_iterator_value_type<T,true>{
 namespace CGAL {
 
 
-template <class Gt, 
-          class Tds = Triangulation_data_structure_2 <
-                      Triangulation_vertex_base_2<Gt>,
-		      Constrained_triangulation_face_base_2<Gt> >,
-	  class Itag = No_intersection_tag >		
+template <class Gt,
+          class Tds_ = Default ,
+	  class Itag_ = Default>
 class Constrained_Delaunay_triangulation_2
-  : public  Constrained_triangulation_2<Gt, Tds, Itag> 
+  : public  Constrained_triangulation_2<Gt, Tds_, Itag_>
 {
 public:
-  typedef Constrained_triangulation_2<Gt,Tds,Itag>             Ctr;
-  typedef Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>    CDt;
+  typedef Constrained_triangulation_2<Gt,Tds_,Itag_>            Ctr;
+  typedef typename Ctr::Tds Tds;
+  typedef typename Ctr::Itag Itag;
+
+  typedef Constrained_Delaunay_triangulation_2<Gt,Tds_,Itag_>    CDt;
   typedef typename Ctr::Geom_traits      Geom_traits;
   typedef typename Ctr::Intersection_tag Intersection_tag;
 

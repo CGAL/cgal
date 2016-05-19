@@ -32,7 +32,6 @@
 
 #include <cmath>
 #include <CGAL/basic.h>
-//#include <CGAL/number_type_utils.h>
 #include <cstdlib>
 
 namespace CGAL {

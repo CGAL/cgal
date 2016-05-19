@@ -64,21 +64,21 @@ public:
         qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
     }    
     
-    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
         this->scene = scene_interface;
         this->mw = mainWindow;
         actionSegmentation = new QAction("Mesh Segmentation", mw);
         actionSegmentation->setProperty("subMenuName", "Triangulated Surface Mesh Segmentation");
-        connect(actionSegmentation, SIGNAL(triggered()),this, SLOT(on_actionSegmentation_triggered()));
+        actionSegmentation->setObjectName("actionSegmentation");
 
         // adding slot for itemAboutToBeDestroyed signal, aim is removing item from item-functor map.
         
         if( Scene* scene = dynamic_cast<Scene*>(scene_interface) ) {
             connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
         }
-        
         init_color_map_sdf();
         init_color_map_segmentation();
+        autoConnectActions();
 
         dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
         dock_widget->setVisible(false); // do not show at the beginning

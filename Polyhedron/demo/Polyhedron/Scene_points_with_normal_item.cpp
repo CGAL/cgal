@@ -94,7 +94,7 @@ Scene_points_with_normal_item::~Scene_points_with_normal_item()
 
 
 
-void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_points_with_normal_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
     compute_normals_and_vertices();
     //vao for the edges
@@ -404,7 +404,7 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
               ( m==PointsPlusNormals || m==Splatting ) );
 }
 
-void Scene_points_with_normal_item::draw_splats(CGAL::Three::Viewer_interface* viewer) const
+void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const
 {
    // TODO add support for selection
    viewer->glBegin(GL_POINTS);
@@ -422,7 +422,7 @@ void Scene_points_with_normal_item::draw_splats(CGAL::Three::Viewer_interface* v
 
 }
 
-void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     double ratio_displayed = 1.0;
     if (viewer->inFastDrawing () &&
@@ -430,10 +430,10 @@ void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* vi
       ratio_displayed = 6 * 300000. / (double)(nb_lines);
 
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Edges]->bind();
     program=getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0,
@@ -441,10 +441,10 @@ void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* vi
     vaos[Edges]->release();
     program->release();
 }
-void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
 
     double ratio_displayed = 1.0;
     if (viewer->inFastDrawing () &&
@@ -453,7 +453,7 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
 
     vaos[ThePoints]->bind();
     program=getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0,
@@ -466,7 +466,7 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
 
     vaos[Selected_points]->bind();
     program=getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(255,0,0));
     viewer->glDrawArrays(GL_POINTS, 0,
