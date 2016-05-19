@@ -267,11 +267,10 @@ Vertex_buffer_helper::
 fill_buffer_data()
 {
   std::size_t i,j,k;
-  
   for ( i = 0 ; i <= data_.xdim() ; i+=dx() )
-  {  
+  {
     for ( j = 0 ; j <= data_.ydim() ; j+=dy() )
-    {   
+    {
       for ( k = 0 ; k <= data_.zdim() ; k+=dz() )
       {
         treat_vertex(i,j,k);
@@ -658,15 +657,12 @@ Scene_image_item::initialize_buffers()
                                                 m_voxel_scale,
                                                 m_voxel_scale,
                                                 m_voxel_scale);
-  
   internal::Vertex_buffer_helper helper (image_data_accessor);
   helper.fill_buffer_data();
-
   draw_Bbox(bbox(), v_box);
   std::vector<float> nul_vec(0);
   for(std::size_t i=0; i<v_box->size(); i++)
       nul_vec.push_back(0.0);
-
   rendering_program.bind();
   vao[0].bind();
   m_vbo[0].bind();
@@ -723,7 +719,6 @@ Scene_image_item::initialize_buffers()
   m_ibo->bind();
   vao[1].release();
   rendering_program.release();
-
   m_initialized = true;
 }
 

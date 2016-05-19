@@ -46,6 +46,16 @@
 #include "Raw_image_dialog.h"
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <fstream>
+#ifdef CGAL_USE_VTK
+#include <CGAL/read_vtk_image_data.h>
+
+#include <vtkImageData.h>
+#include <vtkDICOMImageReader.h>
+#include <vtkImageReader.h>
+#include <vtkImageGaussianSmooth.h>
+#include <vtkDemandDrivenPipeline.h>
+#endif
+
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
 
@@ -182,7 +192,7 @@ public:
     z_control = NULL;
     current_control = NULL;
     planeSwitch = new QAction("Add Volume Planes", mw);
-    QAction *actionLoadDCM = new QAction("Load a .dcm image", mw);
+    QAction *actionLoadDCM = new QAction("Open directory", mw);
     connect(actionLoadDCM, SIGNAL(triggered()), this, SLOT(on_actionLoadDCM_triggered()));
     if(planeSwitch) {
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
@@ -389,12 +399,22 @@ public Q_SLOTS:
       {
         settings.setValue("Open directory",
           fileinfo.absoluteDir().absolutePath());
-        load(dir);
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        loadDCM(dir);
+        QApplication::restoreOverrideCursor();
       }
     }
 
   }
 private:
+#ifdef CGAL_USE_VTK
+
+  vtkImageReader* vtk_reader;
+  vtkImageData* vtk_image;
+  vtkDICOMImageReader* dicom_reader;
+  vtkDemandDrivenPipeline* executive;
+  vtkImageGaussianSmooth* smoother;
+#endif // CGAL_USE_VTK
   Messages_interface* message_interface;
   QMessageBox msgBox;
   QAction* planeSwitch;
@@ -419,7 +439,8 @@ private:
   controls *current_control;
   QMap<CGAL::Three::Scene_item*, controls> group_map;
   unsigned int intersectionId;
-
+  bool loadDCM(QString filename);
+  Image* createDCMImage(QString dirname);
   QLayout* createOrGetDockLayout() {
     QLayout* layout = NULL;
     QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");;
@@ -877,4 +898,132 @@ bool Io_image_plugin::canSave(const CGAL::Three::Scene_item*)
   return false;
 }
 
+bool Io_image_plugin::loadDCM(QString dirname)
+{
+  QApplication::restoreOverrideCursor();
+#ifdef CGAL_USE_VTK
+  QFileInfo fileinfo;
+  fileinfo.setFile(dirname);
+  bool result = true;
+  if(!fileinfo.isReadable())
+  {
+    QMessageBox::warning(mw, mw->windowTitle(),
+                         tr("Cannot read directory <tt>%1</tt>!").arg(dirname));
+    message_interface->warning(tr("Opening of directory %1 failed!").arg(dirname));
+    result = false;
+  }
+  else
+  {
+    // Get display precision
+    QDialog dialog;
+    ui.setupUi(&dialog);
+
+    connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+    connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    connect(ui.imageType, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(on_imageType_changed(int)));
+
+
+    // Add precision values to the dialog
+    for ( int i=1 ; i<9 ; ++i )
+    {
+      QString s = tr("1:%1").arg(i*i*i);
+      ui.precisionList->addItem(s);
+    }
+
+    //Adds Image type
+    ui.imageType->addItem(QString("Segmented image"));
+    ui.imageType->addItem(QString("Gray-level image"));
+
+
+    // Open window
+    QApplication::restoreOverrideCursor();
+    int return_code = dialog.exec();
+    if(return_code != QDialog::Accepted)
+    {
+      return NULL;
+    }
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    // Get selected precision
+    int voxel_scale = ui.precisionList->currentIndex() + 1;
+
+    //Get the image type
+    QString type = ui.imageType->currentText();
+    Scene_image_item* image_item;
+    if(type == "Gray-level image")
+    {
+
+      Image *image = createDCMImage(dirname);
+      if(image->image() == 0)
+      {
+        QMessageBox::warning(mw, mw->windowTitle(),
+                             tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
+        message_interface->warning(tr("Opening of file %1/ failed!").arg(dirname));
+        result = false;
+      }
+      else
+      {
+        message_interface->information(tr("File %1/ successfully opened.").arg(dirname));
+      }
+      if(result)
+      {
+      //Create planes
+      image_item = new Scene_image_item(image,125, true);
+      createPlanes(image_item);
+      image_item->setName(fileinfo.baseName());
+      scene->addItem(image_item);
+      }
+    }
+    else
+    {
+      Image *image = createDCMImage(dirname);
+      if(image->image() == 0)
+      {
+        QMessageBox::warning(mw, mw->windowTitle(),
+                             tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
+        message_interface->warning(tr("Opening of file %1/ failed!").arg(dirname));
+        result = false;
+      }
+      else
+      {
+        message_interface->information(tr("File %1/ successfully opened.").arg(dirname));
+      }
+      if(result)
+      {
+        image_item = new Scene_image_item(image,voxel_scale, false);
+        image_item->setName(fileinfo.baseName());
+        scene->addItem(image_item);
+      }
+    }
+  }
+  return result;
+#else
+  message_interface->warning("You need VTK to read a DCM file");
+#endif
+}
+
+Image* Io_image_plugin::createDCMImage(QString dirname)
+{
+  dicom_reader = vtkDICOMImageReader::New();
+  dicom_reader->SetDirectoryName(dirname.toUtf8());
+
+  executive =
+    vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
+  if (executive)
+  {
+    executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
+  }
+
+  smoother = vtkImageGaussianSmooth::New();
+  smoother->SetStandardDeviations(1., 1., 1.);
+  smoother->SetInputConnection(dicom_reader->GetOutputPort());
+  smoother->Update();
+  vtk_image = smoother->GetOutput();
+  vtk_image->Print(std::cerr);
+  Image* image = new Image;
+  *image = CGAL::read_vtk_image_data(vtk_image);
+  return image;
+
+}
 #include "Io_image_plugin.moc"
