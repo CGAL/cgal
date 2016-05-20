@@ -28,15 +28,20 @@
 #include <CGAL/internal/Mesh_3/split_in_polylines.h>
 #include <CGAL/internal/Mesh_3/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
+#include <CGAL/Labeled_image_mesh_domain_3.h> // for CGAL::Null_subdomain_index
 
 namespace CGAL {
 
 
-template <typename P>
+template <typename P,
+          typename Image_word_type,
+          typename Null_subdomain_index>
 void
 polylines_to_protect(const CGAL::Image_3& cgal_image,
-                     const double, const double, const double,
-                     std::vector<std::vector<P> >& polylines)
+                     const double vx, const double vy, const double vz,
+                     std::vector<std::vector<P> >& polylines,
+                     Image_word_type*,
+                     Null_subdomain_index null)
 {
   typedef typename Kernel_traits<P>::Kernel K;
   typedef P Point_3;
@@ -85,7 +90,6 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
             // we have gone too far
             continue;
           }
-          typedef unsigned char Image_word_type;
           typedef tuple<Pixel, Point_3, Image_word_type> Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
@@ -99,9 +103,9 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
             for(int jj = 0; jj < 2; ++jj)
             {
               const Pixel& pixel = get<0>(square[ii][jj]);
-              double x = pixel[0] * cgal_image.vx();
-              double y = pixel[1] * cgal_image.vy();
-              double z = pixel[2] * cgal_image.vz();
+              double x = pixel[0] * vx;
+              double y = pixel[1] * vy;
+              double z = pixel[2] * vz;
               get<1>(square[ii][jj]) = Point_3(x, y, z);
               get<2>(square[ii][jj]) = static_cast<Image_word_type>(cgal_image.value(pixel[0],
                                                                                      pixel[1],
@@ -340,7 +344,22 @@ case_4:
 }
 
 
-template <typename P>
+template <typename P, typename Image_word_type, typename Null_subdomain_index>
+void
+polylines_to_protect(const CGAL::Image_3& cgal_image,
+                     std::vector<std::vector<P> >& polylines,
+                     Image_word_type* word_type,
+                     Null_subdomain_index null)
+{
+  polylines_to_protect<P>
+    (cgal_image,
+     cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
+     polylines,
+     word_type,
+     null);
+}
+
+template <typename P, typename Image_word_type>
 void
 polylines_to_protect(const CGAL::Image_3& cgal_image,
                      std::vector<std::vector<P> >& polylines)
@@ -348,7 +367,9 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
   polylines_to_protect<P>
     (cgal_image,
      cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
-     polylines);
+     polylines,
+     (Image_word_type*)0,
+     CGAL::Null_subdomain_index());
 }
 
 } // namespace CGAL
