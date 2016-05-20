@@ -477,6 +477,9 @@ called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
 of all simplices are regular.
 
+Note that as a result, some points can be hidden and do not result in vertices
+in the triangulation.
+
 Regular triangulations support insertion of weighted points, 
 and location of a query point inside the triangulation.
 Note that inserting a large set of points at once is much faster
