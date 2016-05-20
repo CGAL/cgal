@@ -170,6 +170,32 @@ void Mesh_3_plugin::mesh_3()
   {
     item = image_item;
     features_protection_available = true;
+    bool fit_wrdtp = true;
+    std::size_t img_wdim = image_item->image()->image()->wdim;
+    WORD_KIND img_wordKind = image_item->image()->image()->wordKind;
+    //check if the word type fits the hardcoded values in the plugin
+    if(image_item->isGray())
+    {
+      if(img_wordKind != WK_FLOAT)
+        fit_wrdtp = false;
+      else
+        if(img_wdim != 4)
+          fit_wrdtp = false;
+    }
+    else
+    {
+      if(img_wordKind != WK_FIXED)
+        fit_wrdtp = false;
+      else
+        if(img_wdim != 1)
+          fit_wrdtp = false;
+    }
+    if(!fit_wrdtp)
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected object can't be meshed because the image's word type is not supported by this plugin."));
+      return;
+    }
   }
 #endif
 

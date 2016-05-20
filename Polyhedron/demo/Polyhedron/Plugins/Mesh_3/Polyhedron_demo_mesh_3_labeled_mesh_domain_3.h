@@ -88,8 +88,8 @@ public:
   ///Constructor for the Gray-level Images
   Polyhedron_demo_labeled_mesh_domain_3(
     const Image& img,
-    const float iso_value = 2.9f,
-    const float value_outside = 0.f)
+    const std::binder1st<std::less<float> > iso_value = std::bind1st(std::less<float>(), 3),
+    const float value_outside = 0)
    : Base(img, iso_value)
   {}
 

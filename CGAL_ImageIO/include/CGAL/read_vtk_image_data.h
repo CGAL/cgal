@@ -81,6 +81,7 @@ read_vtk_image_data(vtkImageData* vtk_image)
   image->wordKind = imageio_type.wordKind;
   image->sign = imageio_type.sign;
   image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
+  std::cerr<<"Alloc : "<<dims[0]*dims[1]*dims[2]*image->wdim<<std::endl;
   std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
             << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
             << "\nwdim=" << image->wdim << '\n';

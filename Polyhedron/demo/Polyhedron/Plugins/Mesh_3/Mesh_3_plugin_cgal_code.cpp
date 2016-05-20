@@ -114,7 +114,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include <CGAL/Gray_image_mesh_domain_3.h>
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel> Gray_image_domain1;
+typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel, float, std::binder1st< std::less<float> > > Gray_image_domain1;
 typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Gray_image_domain1> Gray_image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Gray_image_domain> Gray_Image_mesh_domain;
 
@@ -167,7 +167,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   }
   else
   {
-    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain(*pImage, 2.9f, 0.0001f);
+    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain(*pImage, std::bind1st(std::less<float>(), 3), 0);
 
     if(protect_features && polylines.empty()){
       std::vector<std::vector<Point_3> > polylines_on_bbox;
