@@ -495,7 +495,7 @@ the concept `TriangulationDataStructure_` which is instantiated with a vertex
 type that stores a weighted point and allows its retrieval.
 
 The template parameter `RegularTriangulationTraits_` must be a model of the concept
-`RegularTriangulationTraits`. It must provide the `%Weighted_point` 
+`RegularTriangulationTraits`. It must provide the `%Weighted_point_d` 
 type as well as various geometric predicates used by the 
 `Regular_triangulation` class.
 The concept `RegularTriangulationTraits` refines the concept

@@ -52,7 +52,7 @@ public:
 /*!
 A point in Euclidean space with an associated weight.
 */
-typedef RegularTriangulationTraits_::Weighted_point Weighted_point;
+typedef RegularTriangulationTraits_::Weighted_point_d Weighted_point;
 
 /// @}
 
@@ -63,8 +63,8 @@ typedef RegularTriangulationTraits_::Weighted_point Weighted_point;
 Instantiates a regular triangulation with one vertex (the vertex
 at infinity). See the description of the inherited nested type
 `Triangulation::Maximal_dimension` for an explanation of
-the use of the parameter `dim`. The complex stores a copy of the geometric
-traits `gt`.
+the use of the parameter `dim`. The triangulation stores a copy of the
+geometric traits `gt`.
 */
 Regular_triangulation(const int dim, const Geom_traits gt = Geom_traits());
 
@@ -75,8 +75,22 @@ Regular_triangulation(const int dim, const Geom_traits gt = Geom_traits());
 
 /*!
 Inserts weighted point `p` in the triangulation and returns the corresponding
-vertex. Returns a handle to the (possibly newly created) vertex at that 
-position.
+vertex. 
+
+If this insertion creates a vertex, this vertex is returned.
+
+If `p` coincides with an existing vertex and has a greater weight,
+then the existing weighted point becomes hidden and `p` replaces it as vertex
+of the triangulation.
+
+If `p` coincides with an already existing vertex (both point and
+weights being equal), then this vertex is returned and the triangulation
+remains unchanged.
+
+Otherwise if `p` does not appear as a vertex of the triangulation,
+then it is stored as a hidden point and this method returns the default
+constructed handle.
+
 Prior to the actual insertion, `p` is located in the triangulation;
 `hint` is used as a starting place for locating `p`.
 */
@@ -89,12 +103,10 @@ Same as above but uses a vertex as starting place for the search.
 Vertex_handle insert(const Weighted_point & p, Vertex_handle hint);
 
 /*!
-\cgalAdvancedBegin
-Inserts weighted point `p` in the triangulation and returns the corresponding
-vertex. Similar to the above `insert()` function, but takes as additional
+Inserts weighted point `p` in the triangulation.
+Similar to the above `insert()` function, but takes as additional
 parameter the return values of a previous location query. See description of
 `Triangulation::locate()`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert(const Weighted_point & p, const Locate_type lt,
   const Face & f, const Facet & ft, const Full_cell_handle c);
@@ -114,22 +126,32 @@ template< typename ForwardIterator >
 std::ptrdiff_t insert(ForwardIterator s, ForwardIterator e);
 
 /*!
-\cgalAdvancedBegin
 Inserts the point `p` in the regular triangulation. Returns a handle to the
-(possibly newly created) vertex at that position. 
+newly created vertex at that position. 
 \pre The point `p`
 must lie outside the affine hull of the regular triangulation. This implies that
-`rt`.`current_dimension()` must be less than `rt`.`maximal_dimension()`.
-\cgalAdvancedEnd
+`rt`.`current_dimension()` must be smaller than `rt`.`maximal_dimension()`.
 */
 Vertex_handle insert_outside_affine_hull(const Weighted_point & p);
 
 /*!
-\cgalAdvancedBegin
-Inserts the point `p` in the regular triangulation. Returns a handle to the
-(possibly newly created) vertex at that position.
+Inserts the point `p` in the regular triangulation.
+
+If this insertion creates a vertex, this vertex is returned.
+
+If `p` coincides with an existing vertex and has a greater weight,
+then the existing weighted point becomes hidden and `p` replaces it as vertex
+of the triangulation.
+
+If `p` coincides with an already existing vertex (both point and
+weights being equal), then this vertex is returned and the triangulation
+remains unchanged.
+
+Otherwise if `p` does not appear as a vertex of the triangulation,
+then it is stored as a hidden point and this method returns the default
+constructed handle.
+
 \pre The point `p` must be in conflict with the full cell `c`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_in_conflicting_cell(const Weighted_point & p, const
 Full_cell_handle c);
@@ -148,15 +170,13 @@ bool is_in_conflict(const Weighted_point & p, Full_cell_const_handle c)
 const;
 
 /*!
-\cgalAdvancedBegin
 Outputs handles to the full cells in conflict with
 point `p` into the `OutputIterator out`. The full cell `c` is used
 as a starting point for gathering the full cells in conflict with
 `p`.
 A facet `(cc,i)` on the boundary of the conflict zone with
 `cc` in conflict is returned.
-\pre `c` is in conflict with `p` and `rt`.`current_dimension()`\f$ \geq2\f$.
-\cgalAdvancedEnd
+\pre `c` is in conflict with `p` and `rt`.`current_dimension()`\f$ \geq 1\f$.
 */
 template< typename OutputIterator >
 Facet compute_conflict_zone(const Weighted_point & p, const Full_cell_handle c,

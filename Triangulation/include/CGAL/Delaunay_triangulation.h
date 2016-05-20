@@ -56,7 +56,7 @@ class Delaunay_triangulation
 public: // PUBLIC NESTED TYPES
 
     typedef DCTraits                                Geom_traits;
-    typedef typename Base::Triangulation_ds          Triangulation_ds;
+    typedef typename Base::Triangulation_ds         Triangulation_ds;
 
     typedef typename Base::Vertex                   Vertex;
     typedef typename Base::Full_cell                Full_cell;

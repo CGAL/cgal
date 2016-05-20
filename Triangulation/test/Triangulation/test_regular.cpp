@@ -105,13 +105,172 @@ void test(const int d, const string & type, const int N)
 template< int D >
 void go(const int N)
 {
-  //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK;
   typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
   typedef CGAL::Regular_triangulation<
     CGAL::Regular_triangulation_euclidean_traits<FK> > Triangulation;
-  //test<Triangulation>(D, "dynamic", N);
   test<Triangulation>(D, "static", N);
+
+  typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK_dyn;
+  typedef CGAL::Regular_triangulation<
+    CGAL::Regular_triangulation_euclidean_traits<FK_dyn> > Triangulation_dyn;
+  test<Triangulation_dyn>(D, "dynamic", N);
 }
+
+void test_inserting_points_at_the_same_position()
+{
+  const int DIM = 5;
+  typedef CGAL::Epick_d<CGAL::Dimension_tag<DIM> > FK;
+  typedef CGAL::Regular_triangulation<
+    CGAL::Regular_triangulation_euclidean_traits<FK> > RTri;
+
+  typedef RTri::Vertex_handle Vertex_handle;
+  typedef RTri::Full_cell_handle Full_cell_handle;
+  typedef RTri::Face Face;
+  typedef RTri::Point Point;
+  typedef RTri::Bare_point Bare_point;
+  typedef RTri::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
+  typedef RTri::Finite_vertex_iterator Finite_vertex_iterator;
+
+  RTri rt(DIM);
+
+  cerr << "\nTesting insertion of points at the same position";
+  assert(rt.empty());
+
+  std::vector<double> pt;
+  pt.push_back(1.2);
+  pt.push_back(20.3);
+  pt.push_back(10.);
+  pt.push_back(8.);
+  pt.push_back(7.1);
+
+  //=======================
+
+  // First point
+  Vertex_handle vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  assert(rt.number_of_vertices() == 1);
+  assert(rt.number_of_hidden_points() == 0);
+  assert(vh != Vertex_handle());
+
+  // Same point
+  Vertex_handle vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  assert(rt.number_of_vertices() == 1);
+  assert(rt.number_of_hidden_points() == 0);
+  assert(vh == vh2);
+  
+  // Same position, bigger weight
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  assert(rt.number_of_vertices() == 1);
+  assert(rt.number_of_hidden_points() == 1);
+  assert(vh != Vertex_handle());
+  
+  // Same point
+  vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  assert(rt.number_of_vertices() == 1);
+  assert(rt.number_of_hidden_points() == 1);
+  assert(vh == vh2);
+
+  // Same position, lower weight
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.1));
+  assert(rt.number_of_vertices() == 1);
+  assert(rt.number_of_hidden_points() == 2);
+  assert(vh == Vertex_handle());
+
+  //=======================
+
+  // New position
+  pt[3] = 0.78;
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  assert(rt.number_of_vertices() == 2);
+  assert(rt.number_of_hidden_points() == 2);
+  assert(vh != Vertex_handle());
+
+  // Same point
+  vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
+  assert(rt.number_of_vertices() == 2);
+  assert(rt.number_of_hidden_points() == 2);
+  assert(vh == vh2);
+
+  // Same position, bigger weight
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  assert(rt.number_of_vertices() == 2);
+  assert(rt.number_of_hidden_points() == 3);
+  assert(vh != Vertex_handle());
+
+  // Same point
+  vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  assert(rt.number_of_vertices() == 2);
+  assert(rt.number_of_hidden_points() == 3);
+  assert(vh == vh2);
+
+  // Same position, lower weight
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.1));
+  assert(rt.number_of_vertices() == 2);
+  assert(rt.number_of_hidden_points() == 4);
+  assert(vh == Vertex_handle());
+
+  //=======================
+
+  // New position
+  pt[4] = 1.78;
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.2));
+  assert(rt.number_of_vertices() == 3);
+  assert(rt.number_of_hidden_points() == 4);
+  assert(vh != Vertex_handle());
+
+  //=======================
+
+  // New position
+  pt[1] = 1.78;
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.8));
+  assert(rt.number_of_vertices() == 4);
+  assert(rt.number_of_hidden_points() == 4);
+  assert(vh != Vertex_handle());
+
+  //=======================
+
+  // New position
+  pt[2] = 1.78;
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.25));
+  assert(rt.number_of_vertices() == 5);
+  assert(rt.number_of_hidden_points() == 4);
+  assert(vh != Vertex_handle());
+
+  //=======================
+
+  // New position
+  pt[0] = 12.13;
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.25));
+  assert(rt.number_of_vertices() == 6);
+  assert(rt.number_of_hidden_points() == 4);
+  assert(vh != Vertex_handle());
+
+  // Same position, bigger weight
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
+  assert(rt.number_of_vertices() == 6);
+  assert(rt.number_of_hidden_points() == 5);
+  assert(vh != Vertex_handle());
+
+  //=======================
+
+  // New position
+  pt[0] = 9.13;
+  vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.25));
+  assert(rt.number_of_vertices() == 7);
+  assert(rt.number_of_hidden_points() == 5);
+  assert(vh != Vertex_handle());
+
+  //=======================
+
+  cerr << "\nChecking topology and geometry...";
+  assert(rt.is_valid(true));
+
+  rt.clear();
+  assert(-1 == rt.current_dimension());
+  assert(rt.empty());
+  assert(rt.is_valid());
+  //std::cerr << ((rt.is_valid(true)) ? "VALID!" : "NOT VALID :(") << std::endl;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -119,12 +278,15 @@ int main(int argc, char **argv)
   int N = 10;
   if( argc > 1 )
     N = atoi(argv[1]);
+
+  test_inserting_points_at_the_same_position();
+
   //go<5>(N);
   go<4>(N);
   go<3>(N);
   go<2>(N);
   go<1>(N);
-
+  
   cerr << endl;
   return 0;
 }

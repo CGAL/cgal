@@ -555,8 +555,8 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 #endif
 
 namespace CartesianDKernelFunctors {
-template<class R_> struct Power_test_raw : private Store_kernel<R_> {
-	CGAL_FUNCTOR_INIT_STORE(Power_test_raw)
+template<class R_> struct Power_side_of_power_sphere_raw : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Power_side_of_power_sphere_raw)
 	typedef R_ R;
 	typedef typename Get_type<R, RT_tag>::type RT;
 	typedef typename Get_type<R, FT_tag>::type FT;
@@ -605,9 +605,9 @@ template<class R_> struct Power_test_raw : private Store_kernel<R_> {
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Power_test_raw_tag,(CartesianDKernelFunctors::Power_test_raw<K>),(Point_tag),(Point_dimension_tag,Squared_distance_to_origin_tag,Compute_point_cartesian_coordinate_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Power_side_of_power_sphere_raw_tag,(CartesianDKernelFunctors::Power_side_of_power_sphere_raw<K>),(Point_tag),(Point_dimension_tag,Squared_distance_to_origin_tag,Compute_point_cartesian_coordinate_tag));
 
-// TODO: make Side_of_oriented_sphere call Power_test_raw
+// TODO: make Side_of_oriented_sphere call Power_side_of_power_sphere_raw
 namespace CartesianDKernelFunctors {
 template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Side_of_oriented_sphere)

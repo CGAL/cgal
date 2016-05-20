@@ -269,8 +269,8 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 	}
 };
 
-template<class R_> struct In_flat_power_test_raw : private Store_kernel<R_> {
-        CGAL_FUNCTOR_INIT_STORE(In_flat_power_test_raw)
+template<class R_> struct In_flat_power_side_of_power_sphere_raw : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(In_flat_power_side_of_power_sphere_raw)
         typedef R_ R;
 	typedef typename Get_type<R, FT_tag>::type FT;
         typedef typename Get_type<R, Point_tag>::type Point;
@@ -323,7 +323,7 @@ template<class R_> struct In_flat_power_test_raw : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_TYPE(Flat_orientation_tag,(CGAL::CartesianDKernelFunctors::Flat_orientation),(),());
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation_tag,(CartesianDKernelFunctors::In_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_side_of_oriented_sphere_tag,(CartesianDKernelFunctors::In_flat_side_of_oriented_sphere<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
-CGAL_KD_DEFAULT_FUNCTOR(In_flat_power_test_raw_tag,(CartesianDKernelFunctors::In_flat_power_test_raw<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
+CGAL_KD_DEFAULT_FUNCTOR(In_flat_power_side_of_power_sphere_raw_tag,(CartesianDKernelFunctors::In_flat_power_side_of_power_sphere_raw<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Construct_flat_orientation_tag,(CartesianDKernelFunctors::Construct_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag,In_flat_orientation_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Contained_in_affine_hull_tag,(CartesianDKernelFunctors::Contained_in_affine_hull<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 }

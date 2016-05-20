@@ -56,8 +56,9 @@ class Regular_triangulation
   typedef Regular_triangulation<Traits_, TDS_>             Self;
                                                            
   typedef typename RTTraits::Orientation_d                 Orientation_d;
-  typedef typename RTTraits::Power_test_d                  Power_test_d;
-  typedef typename RTTraits::In_flat_power_test_d          In_flat_power_test_d;
+  typedef typename RTTraits::Power_side_of_power_sphere_d  Power_side_of_power_sphere_d;
+  typedef typename RTTraits::In_flat_power_side_of_power_sphere_d          
+                                                           In_flat_power_side_of_power_sphere_d;
   typedef typename RTTraits::Flat_orientation_d            Flat_orientation_d;
   typedef typename RTTraits::Construct_flat_orientation_d  Construct_flat_orientation_d;
 
@@ -72,8 +73,8 @@ public: // PUBLIC NESTED TYPES
   typedef typename Base::Face                     Face;
   
   typedef Maximal_dimension_                      Maximal_dimension;
-  typedef typename RTTraits::Bare_point           Bare_point;
-  typedef typename RTTraits::Weighted_point       Weighted_point;
+  typedef typename RTTraits::Bare_point_d         Bare_point;
+  typedef typename RTTraits::Weighted_point_d     Weighted_point;
 
   typedef typename Base::Point_const_iterator     Point_const_iterator;
   typedef typename Base::Vertex_handle            Vertex_handle;
@@ -131,18 +132,18 @@ public:
   using Base::vertices_end;
 
 private:
-  //*** Power_test_in_flat_d *** CJTODO: better name?
+
   // Wrapper
-  struct Power_test_in_flat_d
+  struct Power_side_of_power_sphere_for_non_maximal_dim_d
   {
     boost::optional<Flat_orientation_d>* fop;
     Construct_flat_orientation_d cfo;
-    In_flat_power_test_d ifpt;
+    In_flat_power_side_of_power_sphere_d ifpt;
 
-    Power_test_in_flat_d(
+    Power_side_of_power_sphere_for_non_maximal_dim_d(
       boost::optional<Flat_orientation_d>& x,
       Construct_flat_orientation_d const&y,
-      In_flat_power_test_d const&z)
+      In_flat_power_side_of_power_sphere_d const&z)
     : fop(&x), cfo(y), ifpt(z) {}
 
     template<class Iter>
@@ -153,6 +154,7 @@ private:
       return ifpt(fop->get(),a,b,p);
     }
   };
+
 public:
   
 // - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
@@ -180,12 +182,12 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ACCESS
 
   // Not Documented
-  Power_test_in_flat_d power_test_in_flat_predicate() const
+  Power_side_of_power_sphere_for_non_maximal_dim_d power_side_of_power_sphere_for_non_maximal_dim_predicate() const
   {
-    return Power_test_in_flat_d (
+    return Power_side_of_power_sphere_for_non_maximal_dim_d (
       flat_orientation_, 
       geom_traits().construct_flat_orientation_d_object(), 
-      geom_traits().in_flat_power_test_d_object()
+      geom_traits().in_flat_power_side_of_power_sphere_d_object()
     );
   }
 
@@ -302,7 +304,7 @@ public:
   bool is_in_conflict(const Weighted_point &, Full_cell_const_handle) const;
 
   template< class OrientationPredicate >
-  Oriented_side perturbed_power_test(const Weighted_point &,
+  Oriented_side perturbed_power_side_of_power_sphere(const Weighted_point &,
       Full_cell_const_handle, const OrientationPredicate &) const;
 
   template< typename OutputIterator >
@@ -314,15 +316,15 @@ public:
     const Self & rt_;
     const Weighted_point & p_;
     OrientationPredicate ori_;
-    PowerTestPredicate power_test_;
+    PowerTestPredicate power_side_of_power_sphere_;
     int cur_dim_;
   public:
     Conflict_predicate(
       const Self & rt,
       const Weighted_point & p,
       const OrientationPredicate & ori,
-      const PowerTestPredicate & power_test)
-    : rt_(rt), p_(p), ori_(ori), power_test_(power_test), cur_dim_(rt.current_dimension()) {}
+      const PowerTestPredicate & power_side_of_power_sphere)
+    : rt_(rt), p_(p), ori_(ori), power_side_of_power_sphere_(power_side_of_power_sphere), cur_dim_(rt.current_dimension()) {}
 
     inline
     bool operator()(Full_cell_const_handle s) const
@@ -330,13 +332,13 @@ public:
       bool ok;
       if( ! rt_.is_infinite(s) )
       {
-        Oriented_side power_test = power_test_(rt_.points_begin(s), rt_.points_begin(s) + cur_dim_ + 1, p_);
-        if( ON_POSITIVE_SIDE == power_test )
+        Oriented_side power_side_of_power_sphere = power_side_of_power_sphere_(rt_.points_begin(s), rt_.points_begin(s) + cur_dim_ + 1, p_);
+        if( ON_POSITIVE_SIDE == power_side_of_power_sphere )
           ok = true;
-        else if( ON_NEGATIVE_SIDE == power_test )
+        else if( ON_NEGATIVE_SIDE == power_side_of_power_sphere )
           ok = false;
         else
-          ok = ON_POSITIVE_SIDE == rt_.perturbed_power_test<OrientationPredicate>(p_, s, ori_);
+          ok = ON_POSITIVE_SIDE == rt_.perturbed_power_side_of_power_sphere<OrientationPredicate>(p_, s, ori_);
       }
       else
       {
@@ -379,6 +381,13 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  VALIDITY
     
     bool is_valid(bool verbose = false, int level = 0) const;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  MISC
+
+    std::size_t number_of_hidden_points() const
+    {
+      return m_hidden_points.size();
+    }
 
 private:
   
@@ -446,9 +455,9 @@ private:
   // Some internal types to shorten notation
   using typename Base::Coaffine_orientation_d;
   using Base::flat_orientation_;
-  typedef Conflict_predicate<Coaffine_orientation_d, Power_test_in_flat_d>
+  typedef Conflict_predicate<Coaffine_orientation_d, Power_side_of_power_sphere_for_non_maximal_dim_d>
       Conflict_pred_in_subspace;
-  typedef Conflict_predicate<Orientation_d, Power_test_d>
+  typedef Conflict_predicate<Orientation_d, Power_side_of_power_sphere_d>
       Conflict_pred_in_fullspace;
   typedef Conflict_traversal_predicate<Conflict_pred_in_subspace>
       Conflict_traversal_pred_in_subspace;
@@ -808,13 +817,21 @@ Regular_triangulation<Traits, TDS>
       if (pw(p) == pw(v->point()))
         return v;
       // If dim == 0 and the new point has a bigger weight, 
-      // we replace the point
+      // we just replace the point, and the former point gets hidden
       else if (current_dimension() == 0)
       {
         if (pw(p) > pw(v->point()))
+        {
+          m_hidden_points.push_back(v->point());
           v->set_point(p);
-        else
           return v;
+        }
+        // Otherwise, the new point is hidden
+        else
+        {
+          m_hidden_points.push_back(p);
+          return Vertex_handle();
+        }
       }
       // Otherwise, we apply the "normal" algorithm
 
@@ -968,7 +985,7 @@ template< typename Traits, typename TDS >
 template< typename OrientationPred >
 Oriented_side
 Regular_triangulation<Traits, TDS>
-::perturbed_power_test(const Weighted_point & p, Full_cell_const_handle s,
+::perturbed_power_side_of_power_sphere(const Weighted_point & p, Full_cell_const_handle s,
     const OrientationPred & ori) const
 {
   CGAL_precondition_msg( ! is_infinite(s), "full cell must be finite");
@@ -1033,13 +1050,13 @@ Regular_triangulation<Traits, TDS>
     Conflict_pred_in_subspace c(
       *this, p, 
       coaffine_orientation_predicate(), 
-      power_test_in_flat_predicate());
+      power_side_of_power_sphere_for_non_maximal_dim_predicate());
     return c(s);
   }
   else
   {
     Orientation_d ori = geom_traits().orientation_d_object();
-    Power_test_d side = geom_traits().power_test_d_object();
+    Power_side_of_power_sphere_d side = geom_traits().power_side_of_power_sphere_d_object();
     Conflict_pred_in_fullspace c(*this, p, ori, side);
     return c(s);
   }
@@ -1057,14 +1074,14 @@ Regular_triangulation<Traits, TDS>
     Conflict_pred_in_subspace c(
       *this, p, 
       coaffine_orientation_predicate(), 
-      power_test_in_flat_predicate());
+      power_side_of_power_sphere_for_non_maximal_dim_predicate());
     Conflict_traversal_pred_in_subspace tp(*this, c);
     return tds().gather_full_cells(s, tp, out);
   }
   else
   {
     Orientation_d ori = geom_traits().orientation_d_object();
-    Power_test_d side = geom_traits().power_test_d_object();
+    Power_side_of_power_sphere_d side = geom_traits().power_side_of_power_sphere_d_object();
     Conflict_pred_in_fullspace c(*this, p, ori, side);
     Conflict_traversal_pred_in_fullspace tp(*this, c);
     return tds().gather_full_cells(s, tp, out);
@@ -1095,8 +1112,8 @@ Regular_triangulation<Traits, TDS>
           ch->neighbor(i)->vertex(ch->neighbor(i)->index(ch));
         if (!is_infinite(opposite_vh))
         {
-          Power_test_d side = 
-            geom_traits().power_test_d_object();
+          Power_side_of_power_sphere_d side = 
+            geom_traits().power_side_of_power_sphere_d_object();
           if (side(Point_const_iterator(ch->vertices_begin()), 
                    Point_const_iterator(ch->vertices_end()),
                    opposite_vh->point()) == ON_POSITIVE_SIDE)

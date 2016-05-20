@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTriangulationClasses
 
-This class implements triangulations of point sets in dimensions \f$ d \f$.
+This class implements triangulations of point sets in dimension \f$ d \f$.
 The triangulation covers the convex hull of the input points 
 (the embedded vertices of the triangulation).
 
@@ -72,8 +72,8 @@ This indicates whether the maximal dimension is static
 (i.e.\ if the type of `Maximal_dimension` is `CGAL::Dimension_tag<int dim>`)
 or dynamic (i.e.\ if the type of `Maximal_dimension` is 
 `CGAL::Dynamic_dimension_tag`).
-In the latter case, the `dim` parameter passed to the class's constructor
-is used.
+In the latter case, the `dim` parameter passed to the constructor
+of the class is used.
 */
 typedef TriangulationTraits_::Dimension Maximal_dimension;
 
@@ -201,19 +201,18 @@ iterator over finite facets
 typedef unspecified_type Finite_facet_iterator;
 
 /*!
-Size type (an unsigned integral
-type).
+size type (an unsigned integral type)
 */
 typedef TriangulationDataStructure_::size_type size_type;
 
 /*!
-Difference
-type (a signed integral type).
+difference
+type (a signed integral type)
 */
 typedef TriangulationDataStructure_::difference_type difference_type;
 
 /*!
-specifies which case occurs when locating a point in the triangulation. 
+used by `Triangulation` to specify which case occurs when locating a point in the triangulation
 */
 enum Locate_type { ON_VERTEX=0, /*!< when the located point coincides with a vertex of the triangulation */
                    IN_FACE, /*!< when the point is in the interior of a face of dimension equal or less than `maximal_dimension()` - 2 */
@@ -248,15 +247,15 @@ Triangulation(const Triangulation & t2);
 /// @{
 
 /*!
-\cgalAdvancedBegin
 Returns a const reference to the underlying triangulation data structure.
-\cgalAdvancedEnd
 */
 const Triangulation_ds & tds() const;
 
 /*!
+\cgalAdvancedBegin
 Returns a non-const
 reference to the underlying triangulation data structure.
+\cgalAdvancedEnd
 */
 Triangulation_ds & tds();
 
@@ -553,7 +552,6 @@ Same as above but uses a vertex `hint` as the starting place for the search.
 Vertex_handle insert(const Point p, Vertex_handle hint);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` into the triangulation and returns a handle to the
 `Vertex` at that position. The action taken depends on the value of
 `loc_type`:
@@ -567,12 +565,10 @@ of `loc_type`, using the full cell `c`.
 </DL>
 
 This method is used internally by the other `insert()` methods.
-\cgalAdvancedEnd
 */
 Vertex_handle insert(const Point p, Locate_type loc_type, Face & f, Facet & ft, Full_cell_handle c);
 
 /*!
-\cgalAdvancedBegin
 Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 
 at position `p` and fills the hole by connecting
 each face of the boundary to `p`.
@@ -582,62 +578,49 @@ defining full cell, `tr`.`full_cell(ft)` must lie inside \f$ C\f$. Handles
 to the newly created full cells are output in the `out` output iterator.
 \pre \f$C\f$ must be a topological ball, must contain `p` in its
 interior and must not contain any vertex of the triangulation.
-\cgalAdvancedEnd
 */
 template < typename ForwardIterator, typename OutputIterator >
 Vertex_handle insert_in_hole(const Point & p, ForwardIterator s,
 ForwardIterator e, const Facet & ft, OutputIterator out);
 
 /*!
-\cgalAdvancedBegin
 Same as above, but the newly created full cells are not
 retrieved.
-\cgalAdvancedEnd
 */
 template < typename ForwardIterator > Vertex_handle
 insert_in_hole(const Point & p, ForwardIterator s, ForwardIterator e, const
 Facet & ft);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie in the relative interior of `f`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_in_face(const Point & p, const Face & f);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie in the relative interior of `ft`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_in_facet(const Point & p, const Facet & ft);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation. \pre `p` must lie in the
 interior of `c`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_in_full_cell(const Point & p, Full_cell_handle
 c);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie outside the convex hull of `tr`. The half-space
 defined by the infinite full cell `c` must contain `p`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_outside_convex_hull(const Point &,
 Full_cell_handle c);
 
 /*!
-\cgalAdvancedBegin
 Inserts point `p` in the triangulation.
 \pre `p` must lie outside the affine hull of `tr`.
-\cgalAdvancedEnd
 */
 Vertex_handle insert_outside_affine_hull(const Point &);
 
