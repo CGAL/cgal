@@ -1131,6 +1131,7 @@ private:
     halfedge_descriptor next_on_patch_border(const halfedge_descriptor& h) const
     {
       CGAL_precondition(is_on_patch_border(h));
+      CGAL_assertion_code(const Patch_id& pid = get_patch_id(face(h, mesh_)));
 
       halfedge_descriptor end = opposite(h, mesh_);
       halfedge_descriptor nxt = next(h, mesh_);
@@ -1138,7 +1139,7 @@ private:
       {
         if (is_on_patch_border(nxt))
         { 
-          CGAL_assertion(patch_ids_map_[nxt] == patch_ids_map_[face(h, mesh_));
+          CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
           return nxt;
         }
         nxt = next(opposite(nxt, mesh_), mesh_);
@@ -1146,12 +1147,14 @@ private:
       while (end != nxt);
 
       CGAL_assertion(is_on_patch_border(end));
+      CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
       return end;
     }
 
     halfedge_descriptor prev_on_patch_border(const halfedge_descriptor& h) const
     {
       CGAL_precondition(is_on_patch_border(h));
+      CGAL_assertion_code(const Patch_id& pid = get_patch_id(face(h, mesh_)));
 
       halfedge_descriptor end = opposite(h, mesh_);
       halfedge_descriptor prv = prev(h, mesh_);
@@ -1159,7 +1162,7 @@ private:
       {
         if (is_on_patch_border(prv))
         {
-          CGAL_assertion(patch_ids_map_[prv] == patch_ids_map_[face(h, mesh_));
+          CGAL_assertion(get_patch_id(face(prv, mesh_)) == pid);
           return prv;
         }
         prv = prev(opposite(prv, mesh_), mesh_);
@@ -1167,6 +1170,7 @@ private:
       while (end != prv);
 
       CGAL_assertion(is_on_patch_border(end));
+      CGAL_assertion(get_patch_id(face(prv, mesh_)) == pid);
       return end;
     }
 
