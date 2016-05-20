@@ -16,9 +16,6 @@ section in the user manual for what reasonable means.
 A comprehensive definition of regular triangulations is available in the
 User Manual.
 
-Parameters
---------------
-
 \tparam RegularTriangulationTraits_ is the geometric traits class that provides the
 geometric types and predicates needed by regular triangulations. 
 `RegularTriangulationTraits_` must be a model of the concept 
@@ -73,7 +70,7 @@ Regular_triangulation(const int dim, const Geom_traits gt = Geom_traits());
 
 /// @}
 
-/// \name Point insertion
+/// \name Point Insertion
 /// @{
 
 /*!
