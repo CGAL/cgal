@@ -7,7 +7,7 @@ namespace CGAL {
 This class is used to maintain the
 regular triangulation -- also known as weighted Delaunay triangulation --
 of a set of weighted points in \f$ \mathbb{R}^D \f$.
-The dimension \f$ D\f$ can be specified at compile-time or
+The maximal dimension \f$ D\f$ can be specified at compile-time or
 run-time. It should be kept reasonably small -- see the performance 
 section in the user manual for what reasonable means.
 

@@ -7,7 +7,7 @@ namespace CGAL {
 This class is used to maintain the
 Delaunay triangulation of a set of points in \f$ \mathbb{R}^D \f$.
 It permits point insertion and
-removal. The dimension \f$ D\f$ can be specified at compile-time or
+removal. The maximal dimension \f$ D\f$ can be specified at compile-time or
 run-time. It should be kept reasonably small,
 see the performance section in the user manual for what reasonable
 means.
