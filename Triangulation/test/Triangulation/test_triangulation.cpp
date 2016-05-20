@@ -53,7 +53,6 @@ void test(const int d, const string & type, int N)
     Finite_full_cell_const_iterator fsit = tri.finite_full_cells_begin();
     while( fsit != tri.finite_full_cells_end() )
     {
-        fsit->circumcenter();
         ++fsit, ++nbfs;
     }
     cerr << nbfs << " + ";

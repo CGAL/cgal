@@ -9,7 +9,7 @@ a regular triangulation. It corresponds to the first template parameter of the c
 
 \cgalRefines TriangulationTraits.
 
-\cgalHasModel `CGAL::Epick_d<Dim>`
+\cgalHasModel `CGAL::Regular_triangulation_euclidean_traits<K>`
 */
 class RegularTriangulationTraits {
 public:
@@ -18,14 +18,14 @@ public:
 /// @{
 
 /*!
-A number type that is a model for `RingNumberType`.
+A number type that is a model for `FieldNumberType`.
 */
-typedef unspecified_type RT;
+typedef unspecified_type FT;
 
 /*!
 The weighted point type.
 */
-typedef unspecified_type Weighted_point_d;
+typedef unspecified_type Weighted_point;
 
 /*!
 A function object that must provide the operator
@@ -36,14 +36,14 @@ typedef unspecified_type Point_drop_weight_d;
 
 /*!
 A function object that must provide the operator
-`RT operator()(const Weighted_point & wp)`, returning
+`FT operator()(const Weighted_point & wp)`, returning
 the weight of `wp`.
 */
 typedef unspecified_type Point_weight_d;
 
 /*!
 A predicate object that must provide the templated operator
-`template<typename ForwardIterator> Oriented_side operator()(ForwardIterator start, ForwardIterator end, const Weighted_point_d & p)`.
+`template<typename ForwardIterator> Oriented_side operator()(ForwardIterator start, ForwardIterator end, const Weighted_point & p)`.
 Let \f$ S \f$ be the power sphere of the weighted points in range `[start,end)`.
 The operator returns:
 - `ON_ORIENTED_BOUNDARY` if `p` is orthogonal to 
@@ -64,7 +64,7 @@ typedef unspecified_type Power_test_d;
 
 /*!
 A predicate object that must provide the templated operator
-`template<typename ForwardIterator> Oriented_side operator()(Flat_orientation_d orient, ForwardIterator start, ForwardIterator end, const Weighted_point_d & p)`.
+`template<typename ForwardIterator> Oriented_side operator()(Flat_orientation_d orient, ForwardIterator start, ForwardIterator end, const Weighted_point & p)`.
 
 The points in range `[start,end)` and `p` are supposed to belong to the lower-dimensional flat
 whose orientation is given by `orient`.
