@@ -474,7 +474,7 @@ Lastly we remove the dynamic onmerge functor (step 8). This is done by initializ
 
 \section sec_definition Mathematical Definitions
 
-The initial definition of combinatorial map in any dimension is given in \cgalCite{cgal:l-tmbrc-91}, \cgalCite{l-ndgcm-94}. But it allows only to represent objects without boundaries. This definition was extended \cgalCite{cgal:pabl-cco-07}, \cgalCite{cgal:d-ccccg-10} in order to allow to represent  objects with boundaries, based on the notions of partial permutations  and partial involutions.
+The initial definition of combinatorial map in any dimension is given in \cgalCite{cgal:l-tmbrc-91}, \cgalCite{l-ndgcm-94}. But it allows only to represent objects without boundaries. This definition was extended \cgalCite{cgal:pabl-cco-07}, \cgalCite{cgal:d-ccccg-10} in order to allow to represent  objects with boundaries, based on the notions of partial permutations  and partial involutions. See also the book \cgalCite{dl-14} which regroups many definitions, operations and algorithms about combinatorial and generalized maps.
 
 Intuitively, a <I>partial permutation</I> on a finite set <I>E</I> is a mapping from <I>E</I>\f$ \cup\{\varnothing\}\f$ to <I>E</I>\f$ \cup\{\varnothing\}\f$ which is injective on the subset of the domain that does not map to \f$\varnothing\f$. More precisely, a mapping <I>p</I>: <I>E</I>\f$ \cup\{\varnothing\} \rightarrow\f$ <I>E</I>\f$ \cup\{\varnothing\}\f$ is a <I>partial permutation</I> defined on <I>E</I> if:
 <OL>
