@@ -215,13 +215,13 @@ public:
         nb_points = 0;
         nb_lines = 0;
 
-        for(int i=0; i<6; i++)
+        for(int i=0; i<7; i++)
         {
             addVaos(i);
             vaos[i]->create();
         }
 
-        for(int i=0; i<8; i++)
+        for(int i=0; i<10; i++)
         {
             buffers[i].create();
         }
@@ -237,6 +237,18 @@ public:
     {
     }
   void inverse_selection();
+
+  void setPathSelection(bool b) {
+    k_ring_selector.setEditMode(b);
+    is_path_selecting = b;
+    if(is_path_selecting){
+      int ind = 0;
+      BOOST_FOREACH(Vertex_handle vd, vertices(*polyhedron())){
+        vd->id() = ind++;
+      }
+    }
+  }
+
 protected: 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
   {
@@ -440,6 +452,21 @@ public:
     return true;
   }
 
+  //adds the content of temp_selection to the current selection
+  void add_to_selection()
+  {
+    Q_FOREACH(edge_descriptor ed, temp_selected_edges)
+    {
+      selected_edges.insert(ed);
+      temp_selected_edges.erase(ed);
+    }
+    on_Ctrlz_pressed();
+    invalidateOpenGLBuffers();
+    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+    v->update();
+    tempInstructions("Path added to selection.",
+                     "Select two vertices to create the path between them. (1/2)");
+  }
   // select all of `active_handle_type`(vertex, facet or edge)
   void select_all() {
     switch(get_active_handle_type()) {
@@ -449,11 +476,12 @@ public:
     case Active_handle::CONNECTED_COMPONENT:
       select_all<Facet_handle>(); break;
     case Active_handle::EDGE:
+    case Active_handle::PATH:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
       invalidateOpenGLBuffers();
       QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
       v->update();
-
+      break;
     }
   }
   // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, edge_descriptor as template argument)
@@ -477,6 +505,7 @@ public:
     case Active_handle::CONNECTED_COMPONENT:
       clear<Facet_handle>(); break;
     case Active_handle::EDGE:
+    case Active_handle::PATH:
       clear<edge_descriptor>(); break;
     }
   }
@@ -555,6 +584,9 @@ public:
         break;
         case Active_handle::EDGE:
           expand_selection<edge_descriptor>(steps);
+        break;
+        case Active_handle::PATH:
+        break;
       }
     }
     else
@@ -569,6 +601,9 @@ public:
         break;
         case Active_handle::EDGE:
           reduce_selection<edge_descriptor>(-steps);
+        break;
+        case Active_handle::PATH:
+        break;
       }
     }
   }
@@ -889,17 +924,18 @@ protected:
     }
   }
 
+  void selectPath(Vertex_handle vh);
 
 //Generic class
   template<typename HandleRange>
   bool treat_selection(const HandleRange&)
   {
     qDebug()<<"ERROR : unknown HandleRange";
-return false;
-}
+    return false;
+  }
+
 template<typename HandleRange>
   bool treat_classic_selection(const HandleRange& selection);
-
 //Specialization for set<Vertex_handle>
   bool treat_selection(const std::set<Polyhedron::Vertex_handle>& selection);
   bool treat_selection(const std::set<edge_descriptor>& selection);
@@ -984,13 +1020,22 @@ public:
   Selection_set_facet  selected_facets;
   Selection_set_edge   selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
 
+  Selection_set_vertex fixed_vertices;
   Selection_set_vertex temp_selected_vertices;
   Selection_set_facet  temp_selected_facets;
   Selection_set_edge   temp_selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
-// 
   QColor vertex_color, facet_color, edge_color;
 
 private:
+  struct vertex_on_path
+  {
+    Vertex_handle vertex;
+    bool is_constrained;
+  };
+  QList<vertex_on_path> path;
+  QList<Vertex_handle> constrained_vertices;
+  bool is_path_selecting;
+
   bool poly_need_update;
   mutable bool are_temp_buffers_filled;
   //Specifies Selection/edition mode
@@ -1013,12 +1058,15 @@ private:
   mutable std::size_t nb_lines;
 
   mutable std::vector<float> positions_temp_facets;
+  mutable std::vector<float> positions_fixed_points;
+  mutable std::vector<float> color_fixed_points;
   mutable std::vector<float> temp_normals;
   mutable std::vector<float> positions_temp_lines;
   mutable std::vector<float> positions_temp_points;
   mutable std::size_t nb_temp_facets;
   mutable std::size_t nb_temp_points;
   mutable std::size_t nb_temp_lines;
+  mutable std::size_t nb_fixed_points;
 
   mutable QOpenGLShaderProgram *program;
 
@@ -1034,6 +1082,9 @@ private:
   void triangulate_facet(Facet_handle, const FaceNormalPmap&,
                          std::vector<float> &p_facets,std::vector<float> &p_normals) const;
   void tempInstructions(QString s1, QString s2);
+
+  void computeAndDisplayPath();
+  void addVertexToPath(Vertex_handle, vertex_on_path &);
 };
 
 #endif

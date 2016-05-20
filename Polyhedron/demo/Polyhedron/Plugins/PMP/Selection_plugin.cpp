@@ -83,6 +83,7 @@ public:
     addDockWidget(dock_widget);
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
+    connect(ui_widget.Add_to_selection_button,  SIGNAL(clicked()), this, SLOT(on_Add_to_selection_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
     connect(ui_widget.Inverse_selection_button,  SIGNAL(clicked()), this, SLOT(on_Inverse_selection_button_clicked()));
@@ -99,6 +100,7 @@ public:
     connect(ui_widget.modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ModeBox_changed(int)));
     connect(ui_widget.editionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_editionBox_changed(int)));
 
+    ui_widget.Add_to_selection_button->hide();
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
       connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
@@ -145,6 +147,18 @@ public Q_SLOTS:
     }
 
     selection_item->select_all();
+  }
+
+  void on_Add_to_selection_button_clicked()
+  {
+
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+
+    selection_item->add_to_selection();
   }
   // Clear selection
   void on_Clear_button_clicked() {
@@ -221,12 +235,24 @@ public Q_SLOTS:
     ui_widget.modeBox->setCurrentIndex(last_mode);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
     on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
-
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
+      Q_EMIT save_handleType();
+      if(index == 4)
+      {
+        it->second->setPathSelection(true);
+        ui_widget.Add_to_selection_button->show();
+        Q_EMIT set_operation_mode(-2);
+      }
+      else
+      {
+        ui_widget.Add_to_selection_button->hide();
+        it->second->setPathSelection(false);
+        Q_EMIT set_operation_mode(-1);
+      }
     }
   }
   void on_Insertion_radio_button_toggled(bool toggle){
@@ -239,7 +265,6 @@ public Q_SLOTS:
       it->second->set_k_ring(value);
     }
   }
-
 
   void on_validateButton_clicked() {
     switch(ui_widget.operationsBox->currentIndex())
