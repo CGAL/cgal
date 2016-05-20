@@ -21,6 +21,8 @@ to higher dimension. Indeed, a 2D combinatorial map is equivalent to a
 halfedge data structure: there is a one-to-one mapping between elements
 of both data structures, halfedges corresponding to darts.
 
+\tred{Note that you can use the \ref ChapterGeneralizedMap Generalized_map package if you need to represent non-orientable objects.}
+
 We denote <I>i</I>-cell for an <I>i</I>-dimensional cell (for example
 in 3D, 0-cells are <I>vertices</I>, 1-cells are <I>edges</I>, 2-cells
 are <I>facets</I>, and 3-cells are <I>volumes</I>). A <I>boundary
