@@ -56,7 +56,8 @@ or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 /// @{
 
 /*!
-The weighted point type. 
+The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_3`,
+and it must be implicitely convertible from and to `Bare_point`.
 */ 
 typedef unspecified_type Weighted_point_3; 
 

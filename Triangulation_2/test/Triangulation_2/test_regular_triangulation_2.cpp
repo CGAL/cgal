@@ -29,19 +29,6 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#if 0
-typedef CGAL::Simple_cartesian<CGAL::Interval_nt<> > K;
-
-int main()
-{
-  K::Weighted_point_2 wp(K::Point_2(7.8, 1),2);
-  std::cout << wp << std::endl;
-  std::cout << wp.x() << std::endl;
-  std::cout << K::Compute_x_2()(wp.point()) << std::endl;
-  return 0;
-}
-
-#else
 
 typedef CGAL::Regular_triangulation_euclidean_traits_2
               <CGAL::Exact_predicates_exact_constructions_kernel>  RGt;
@@ -71,4 +58,4 @@ int main()
   std::cout << "done" << std::endl;
   return 0;
 }
-#endif
+

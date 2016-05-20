@@ -2524,6 +2524,7 @@ public:
     - `Kernel::Segment_2` 
     - `Kernel::Triangle_2` 
 
+    as well as any combination of `Kernel::Point_2` and `Kernel::Weighted_point_2`
   */ 
   Kernel::FT operator()(Type1 obj1, Type2 obj2); 
 
@@ -2558,6 +2559,8 @@ public:
     - `Kernel::Ray_3` 
     - `Kernel::Segment_3` 
     - `Kernel::Plane_3` 
+
+    as well as any combination of `Kernel::Point_3` and `Kernel::Weighted_point_3`
   */ 
   Kernel::FT operator()(Type1 obj1, Type2 obj2); 
 
@@ -5592,6 +5595,11 @@ public:
   */ 
   Kernel::Point_2 operator()(const CGAL::Origin &CGAL::ORIGIN); 
 
+ /*!
+    extracts the bare point from the weighted point. 
+  */ 
+  Kernel::Point_2 operator()(const CGAL::Weighted_point_2& wp); 
+
   ///@}
 
 }; /* end Kernel::ConstructPoint_2 */
@@ -5616,6 +5624,11 @@ public:
     introduces a point with Cartesian coordinates\f$ (0,0,0)\f$. 
   */ 
   Kernel::Point_3 operator()(const CGAL::Origin &CGAL::ORIGIN); 
+
+ /*!
+    extracts the bare point from the weighted point. 
+  */ 
+  Kernel::Point_3 operator()(const CGAL::Weighted_point_3& wp); 
 
   ///@}
 
@@ -5732,6 +5745,17 @@ public:
 
 */
 class ConstructRadicalAxis_2 {
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the radical line of the weighted points. 
+  */ 
+  Kernel::Line_2 operator() 
+  (const Kernel::Weighted_point_2& wp1, 
+   const Kernel::Weighted_point_2& wp2); 
+  /// @}
 };
 
 

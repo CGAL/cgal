@@ -146,7 +146,12 @@ and <code>src/</code> directories).
 <!-- Major and breaking changes -->
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels -->
+<!-- Geometry Kernels --> 
+ <h3>Linear Kernel</h3>
+  <ul>
+    <li>Added a 2D and 3D weighted point class and predicates and constructions.
+    </li>
+  </ul>
 <!-- Convex Hull Algorithms -->
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->
@@ -164,6 +169,20 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
+ <h3>2D Triangulations</h3>
+  <ul>
+    <li><b>Breaking change</b>: Removed the arbitrary dimensional weighted point class.</li>
+    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_2</code></li>
+    <li><b>Breaking change</b>:The number type of weighted points in regular triangulations is no longer
+        a template parameter but the field type of the geometric traits class.</li>
+  </ul>
+
+ <h3>3D Triangulations</h3>
+  <ul>
+    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_3</code></li>
+    <li><b>Breaking change</b>: The number type of weighted points in regular triangulations is no longer
+        a template parameter but the field type of the geometric traits class.</li>
+  </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
 <!-- Surface Reconstruction -->

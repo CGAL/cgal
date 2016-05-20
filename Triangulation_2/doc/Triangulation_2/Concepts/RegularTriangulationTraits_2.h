@@ -37,8 +37,8 @@ Another name for the point type.
   typedef unspecified_type Bare_point; 
 
 /*!
-The weighted point type. It has to be 
-a model of the concept `Kernel::WeightedPoint_2`. 
+The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_2`,
+and it must be implicitely convertible from and to `Bare_point`.
 */ 
   typedef unspecified_type Weighted_point_2; 
 

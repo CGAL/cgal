@@ -37,6 +37,11 @@ introduces a weighted point from point `p` and  weight `w`.
 */ 
   Weighted_point_2(const Point_2<Kernel>& p, Kernel::FT& w); 
 
+/*!
+introduces a weighted point with coordinates `x`, `y`, and  weight 0. 
+*/ 
+  Weighted_point_2(const Kernel::FT& x, const Kernel::FT& y); 
+
 
 /// @} 
 
