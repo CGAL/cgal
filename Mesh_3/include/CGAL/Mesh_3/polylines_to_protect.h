@@ -32,21 +32,21 @@
 namespace CGAL {
 
 
-  template <typename P>
-  void
-  polylines_to_protect(const CGAL::Image_3& cgal_image,
-                       const double, const double, const double,
-                       std::vector<std::vector<P> >& polylines)
-  {
-    typedef typename Kernel_traits<P>::Kernel K;
-    typedef P Point_3;
-    typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, Point_3> Graph;
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-   // typedef typename boost::graph_traits<Graph>::edge_iterator edge_iterator;
+template <typename P>
+void
+polylines_to_protect(const CGAL::Image_3& cgal_image,
+                     const double, const double, const double,
+                     std::vector<std::vector<P> >& polylines)
+{
+  typedef typename Kernel_traits<P>::Kernel K;
+  typedef P Point_3;
+  typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, Point_3> Graph;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  // typedef typename boost::graph_traits<Graph>::edge_iterator edge_iterator;
 
-    const int xdim = static_cast<int>(cgal_image.xdim());
-    const int ydim = static_cast<int>(cgal_image.ydim());
-    const int zdim = static_cast<int>(cgal_image.zdim());
+  const int xdim = static_cast<int>(cgal_image.xdim());
+  const int ydim = static_cast<int>(cgal_image.ydim());
+  const int zdim = static_cast<int>(cgal_image.zdim());
 
   const int image_dims[3] = { xdim, ydim, zdim };
 
@@ -270,19 +270,19 @@ case_4:
                 // central symmetry
                 std::swap(square[0][1], square[1][0]);
                 std::swap(square[0][0], square[1][1]);
-              assert(get<2>(square[1][0]) == value_alone);
+                assert(get<2>(square[1][0]) == value_alone);
               }
               if(get<2>(square[1][1]) == value_alone) {
                 // vertical swap
                 std::swap(square[0][0], square[0][1]);
                 std::swap(square[1][0], square[1][1]);
-              assert(get<2>(square[1][0]) == value_alone);
+                assert(get<2>(square[1][0]) == value_alone);
               }
               if(get<2>(square[0][0]) == value_alone) {
                 // horizontal swap
                 std::swap(square[0][1], square[1][1]);
                 std::swap(square[0][0], square[1][0]);
-              assert(get<2>(square[1][0]) == value_alone);
+                assert(get<2>(square[1][0]) == value_alone);
               }
               ++case31;
               assert(get<2>(square[1][0]) == value_alone);
@@ -337,20 +337,19 @@ case_4:
 
 
   internal::Mesh_3::split_in_polylines(graph, polylines, K());
-  }
+}
 
 
-  template <typename P>
-  void
-  polylines_to_protect(const CGAL::Image_3& cgal_image,
-                       std::vector<std::vector<P> >& polylines)
-  {
-    polylines_to_protect<P>
-      (cgal_image,
-       cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
-       polylines);
-  }
-
+template <typename P>
+void
+polylines_to_protect(const CGAL::Image_3& cgal_image,
+                     std::vector<std::vector<P> >& polylines)
+{
+  polylines_to_protect<P>
+    (cgal_image,
+     cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
+     polylines);
+}
 
 } // namespace CGAL
 
