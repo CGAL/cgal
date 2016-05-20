@@ -644,40 +644,24 @@ private Q_SLOTS:
   // Avoids the segfault after the deletion of an item
   void erase_group()
   {
-    Scene_image_item* img_itm = qobject_cast<Scene_image_item*>(sender());
-    if(img_itm)
-    {
-      if(group_map.contains(img_itm))
-      {
-        int iD = scene->item_id(group_map[img_itm].group);
-        CGAL::Three::Scene_group_item* group = qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(iD));
-        if(!group)
-          return;
-        Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
-          scene->erase(scene->item_id(child));
-        scene->erase(iD);
-        group_map.remove(img_itm);
-      }
-    }
-    else
-    {
-      CGAL::Three::Scene_group_item* group_item = qobject_cast<CGAL::Three::Scene_group_item*>(sender());
-      if(group_item)
-      {
 
-        Q_FOREACH(CGAL::Three::Scene_item* key, group_map.keys())
+    CGAL::Three::Scene_group_item* group_item = qobject_cast<CGAL::Three::Scene_group_item*>(sender());
+    if(group_item)
+    {
+
+      Q_FOREACH(CGAL::Three::Scene_item* key, group_map.keys())
+      {
+        if(group_map[key].group == group_item)
         {
-          if(group_map[key].group == group_item)
-          {
-            group_map[key].xitem = NULL;
-            group_map[key].yitem = NULL;
-            group_map[key].zitem = NULL;
-            group_map.remove(key);
-            break;
-          }
+          group_map[key].xitem = NULL;
+          group_map[key].yitem = NULL;
+          group_map[key].zitem = NULL;
+          group_map.remove(key);
+          break;
         }
       }
     }
+
     //try to re-connect to another group
     if(!group_map.isEmpty())
     {
