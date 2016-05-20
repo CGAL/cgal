@@ -868,7 +868,11 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   if(type == "Gray-level image")
   {
     //Create planes
-    image_item = new Scene_image_item(image,voxel_scale, true);
+    image_item = new Scene_image_item(image,125, true);
+    msgBox.setText("Planes created : 0/3");
+    msgBox.setStandardButtons(QMessageBox::NoButton);
+    msgBox.show();
+
     createPlanes(image_item);
   }
   else
@@ -954,6 +958,9 @@ bool Io_image_plugin::loadDCM(QString dirname)
       {
       //Create planes
       image_item = new Scene_image_item(image,125, true);
+      msgBox.setText("Planes created : 0/3");
+      msgBox.setStandardButtons(QMessageBox::NoButton);
+      msgBox.show();
       createPlanes(image_item);
       image_item->setName(fileinfo.baseName());
       scene->addItem(image_item);
