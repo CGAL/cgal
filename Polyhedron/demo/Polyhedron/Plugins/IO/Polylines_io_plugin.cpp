@@ -38,7 +38,7 @@ public:
       this->mw = mainWindow;
       //creates and link the actions
       actionAdd_polylines= new QAction("Add Polylines", mw);
-     autoConnectActions();
+      connect(actionAdd_polylines, SIGNAL(triggered()), this, SLOT(on_actionAdd_polylines_triggered()));
       QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
       if ( NULL != menuFile )
       {

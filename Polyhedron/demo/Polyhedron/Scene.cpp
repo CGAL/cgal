@@ -81,21 +81,6 @@ Scene::addItem(CGAL::Three::Scene_item* item)
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
         addGroup(group);
-    //if group selected, add item to it
-    if(mainSelectionIndex() >=0)
-    {
-        //if new item is a group, don't do that, to avoid any ambiguity
-        if(!group)
-        {
-            CGAL::Three::Scene_group_item* selected_group =
-                    qobject_cast<CGAL::Three::Scene_group_item*>(m_entries.at(mainSelectionIndex()));
-            if(selected_group)
-            {
-                changeGroup(item,selected_group);
-                redraw_model();
-            }
-        }
-    }
     return id;
 }
 
@@ -352,6 +337,15 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(index == selected_item || selected_items_list.contains(index))
+        {
+            item.selection_changed(true);
+        }
+        else
+
+        {
+            item.selection_changed(false);
+        }
         if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
@@ -364,16 +358,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 viewer->glEnable(GL_LIGHTING);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item || selected_items_list.contains(index))
-                {
-                    item.selection_changed(true);
-                }
-                else
-
-                {
-                    item.selection_changed(false);
-                }
-
                 if(item.renderingMode() == Gouraud)
                     viewer->glShadeModel(GL_SMOOTH);
                 else
@@ -402,6 +386,15 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(index == selected_item || selected_items_list.contains(index))
+        {
+            item.selection_changed(true);
+        }
+        else
+        {
+            item.selection_changed(false);
+        }
+
         if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
@@ -417,16 +410,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 viewer->glDisable(GL_LIGHTING);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item || selected_items_list.contains(index))
-                {
-                    item.selection_changed(true);
-                }
-                else
-                {
-                    item.selection_changed(false);
-                }
-
-
 
                 if(viewer)
                     item.drawEdges(viewer);
@@ -1192,62 +1175,6 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
 
 void Scene::addGroup(Scene_group_item* group)
 {
-    //Find the indices of the selected items
-    QList<int> indices;
-    QList<int> blacklist;
-    Q_FOREACH(int id, selectionIndices()){
-        CGAL::Three::Scene_group_item* group =
-                qobject_cast<CGAL::Three::Scene_group_item*>(item(id));
-        if(group)
-            Q_FOREACH(CGAL::Three::Scene_item *item, group->getChildren())
-                blacklist<<item_id(item);
-
-        if(!indices.contains(id) && !blacklist.contains(id))
-            indices<<id;
-}
-    //checks if all the selected items are in the same group
-    bool all_in_one = true;
-    if(indices.isEmpty())
-        all_in_one = false;
-    //group containing the selected item
-    CGAL::Three::Scene_group_item * existing_group = 0;
-    //for each selected item
-    Q_FOREACH(int id, indices){
-        //if the selected item is in a group
-        if(item(id)->has_group!=0){
-            //for each group
-            CGAL::Three::Scene_group_item *group = item(id)->parentGroup();
-            //if it is the first pass, we initialize existing_group
-            if(existing_group == 0)
-                existing_group = group;
-            //else we check if it is the same group as before.
-            //If not, all selected items are not in the same group
-            else if(existing_group != group)
-                all_in_one = false;
-            break;
-        }
-        //else it is impossible that all the selected items are in the same group
-        else{
-            all_in_one = false;
-            break;
-        }
-    }//end foreach selected item
-
-    //If all the selected items are in the same group, we put them in a sub_group of this group
-    if(all_in_one)
-    {
-        Q_FOREACH(int id, indices)
-            changeGroup(item(id),group);
-        changeGroup(group, existing_group);
-        redraw_model();
-    }
-    //else we create a new group
-    else
-    {
-        Q_FOREACH(int id, indices)
-            changeGroup(item(id),group);
-        redraw_model();
-    }
     connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
     group->setScene(this);
 }

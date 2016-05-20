@@ -35,7 +35,7 @@ public:
       this->mw = mainWindow;
       //creates and link the actions
       actionAdd_point_set= new QAction("Add Point Sets", mw);
-      autoConnectActions();
+      connect(actionAdd_point_set, SIGNAL(triggered()), this, SLOT(on_actionAdd_point_set_triggered()));
 
       QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
       if ( NULL != menuFile )

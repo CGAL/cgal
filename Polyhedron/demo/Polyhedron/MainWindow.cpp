@@ -1069,7 +1069,7 @@ void MainWindow::selectSceneItem(int i)
       proxyModel->mapSelectionFromSource(scene->createSelection(i));
 
     sceneView->selectionModel()->select(s,
-                                        QItemSelectionModel::Select);
+                                        QItemSelectionModel::ClearAndSelect);
   }
 }
 

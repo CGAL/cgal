@@ -28,7 +28,7 @@ public:
     scene = scene_interface;
     actionMergePointSets = new QAction(tr("Merge"), mainWindow);
     actionMergePointSets->setObjectName("actionMergePointSets");
-
+    connect(actionMergePointSets, SIGNAL(triggered()), this, SLOT(on_actionMergePointSets_triggered()));
   }
 
   QList<QAction*> actions() const {
