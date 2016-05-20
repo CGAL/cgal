@@ -250,11 +250,30 @@ the limited precision of floating point numbers.
 
 
 \subsection coref_ex_subsec Examples
-\todo add examples
-- Boolean operation with region around the intersection polyline remeshed
-  using isotropric remeshing
-- Boolean operation with an internal inexact point but an exact point in ppmap
 
+\subsubsection coref_ex_union_subsec Computing the Union of Two Volumes
+
+\cgalExample{Polygon_mesh_processing/corefinement_mesh_union.cpp}
+
+\subsubsection coref_ex_refine_subsec Boolean Operation and Local Remeshing
+
+This example is similar to the previous one, but here we
+substract a volume and update the first input trianguled surface mesh
+(in-place operation). The edges that were on the intersection of the input
+meshes were marked and the region around them is remeshed isotropically
+but preserving the intersection polyline.
+\cgalExample{Polygon_mesh_processing/corefinement_difference_remeshed.cpp}
+
+
+\subsubsection coref_ex_consq_subsec Robustness of Consecutive Operations
+This example computes the intersection of two volumes and then does the
+union of the result with one of the input volume. This operations is in
+general not possible when using inexact constructions. Instead of using a
+mesh with a point from a kernel with exact constructions, the exact points
+are a property of the mesh vertices we can reuse in a later operations.
+That way we can manipulate a mesh with points having floating point coordinates
+but benefit from the robustness provided by the exact constructions.
+\cgalExample{Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp}
 
 ********************************************
 \section PMPHoleFilling Hole Filling
