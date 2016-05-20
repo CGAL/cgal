@@ -1,4 +1,4 @@
-// Copyright (c) 2015 GeometryFactory
+// Copyright (c) 2015,2016 GeometryFactory
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -18,8 +18,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_POLYLINES_TO_PROTECT_H
-#define CGAL_POLYLINES_TO_PROTECT_H
+#ifndef CGAL_MESH_3_POLYLINES_TO_PROTECT_H
+#define CGAL_MESH_3_POLYLINES_TO_PROTECT_H
 
 #include <vector>
 #include <map>
@@ -353,6 +353,4 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 
 } // namespace CGAL
 
-
-#endif // CGAL_POLYLINES_TO_PROTECT_H
-
+#endif // CGAL_MESH_3_POLYLINES_TO_PROTECT_H
