@@ -99,7 +99,7 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
  
-  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
 
     // Mesh_TriangleMesh_3 subtypes:
   typedef typename Parameterizer_traits_3<TriangleMesh>::NT            NT;
@@ -132,7 +132,7 @@ protected:
     /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
     virtual NT compute_w_ij(const TriangleMesh& mesh,
                             vertex_descriptor main_vertex_v_i,
-                            halfedge_around_target_circulator neighbor_vertex_v_j)
+                            vertex_around_target_circulator neighbor_vertex_v_j)
     {
  
       typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
@@ -140,7 +140,7 @@ protected:
       PPmap ppmap = get(vertex_point, mesh);
 
         Point_3 position_v_i = get(ppmap,main_vertex_v_i);
-        Point_3 position_v_j = get(ppmap,source(*neighbor_vertex_v_j,mesh));
+        Point_3 position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
         // Compute the norm of v_j -> v_i vector
         Vector_3 edge = position_v_i - position_v_j;
@@ -148,16 +148,16 @@ protected:
 
         // Compute angle of (v_j,v_i,v_k) corner (i.e. angle of v_i corner)
         // if v_k is the vertex before v_j when circulating around v_i
-        halfedge_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
+        vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
         previous_vertex_v_k --;
-        Point_3 position_v_k = get(ppmap, source(*previous_vertex_v_k,mesh));
+        Point_3 position_v_k = get(ppmap, *previous_vertex_v_k);
         double gamma_ij  = compute_angle_rad(position_v_j, position_v_i, position_v_k);
 
         // Compute angle of (v_l,v_i,v_j) corner (i.e. angle of v_i corner)
         // if v_l is the vertex after v_j when circulating around v_i
-        halfedge_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
+        vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
         next_vertex_v_l ++;
-        Point_3 position_v_l = get(ppmap,source(*next_vertex_v_l, mesh));
+        Point_3 position_v_l = get(ppmap, *next_vertex_v_l);
         double delta_ij = compute_angle_rad(position_v_l, position_v_i, position_v_j);
 
         double weight = 0.0;

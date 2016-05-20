@@ -341,10 +341,9 @@ public:
   }
 
 
-  vertex_descriptor m_target(const halfedge_descriptor& hd) const
+  vertex_descriptor m_target(TM_halfedge_descriptor tmhd) const
   {
     // find the canonical halfedge
-    TM_halfedge_descriptor tmhd = hd.tmhd;
     if(has_on_seam(target(tmhd,tm))){
       while(! has_on_seam(tmhd)){
         tmhd = prev(opposite(tmhd,tm),tm);
@@ -356,9 +355,15 @@ public:
   }
 
 
+  vertex_descriptor m_target(const halfedge_descriptor& hd) const
+  {
+    return m_target(hd.tmhd);
+  }
+
+
   vertex_descriptor m_source(const halfedge_descriptor& hd) const
   {
-    return vertex_descriptor(opposite(hd.tmhd, tm));
+    return m_target(opposite(hd.tmhd, tm));
   }
 };
 

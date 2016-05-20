@@ -72,9 +72,9 @@ int main(int argc, char * argv[])
   
 #if 1
   // typedef CGAL::Barycentric_mapping_parameterizer_3<Mesh> Parameterizer;
-  //typedef CGAL::Mean_value_coordinates_parameterizer_3<Mesh> Parameterizer;
+  typedef CGAL::Mean_value_coordinates_parameterizer_3<Mesh> Parameterizer;
   // typedef CGAL::Discrete_authalic_parameterizer_3<Mesh> Parameterizer;
-   typedef CGAL::Discrete_conformal_map_parameterizer_3<Mesh> Parameterizer;
+   // typedef CGAL::Discrete_conformal_map_parameterizer_3<Mesh> Parameterizer;
 #else
  typedef CGAL::LSCM_parameterizer_3<Mesh,
                            CGAL::Two_vertices_parameterizer_3<Mesh> > Parameterizer;

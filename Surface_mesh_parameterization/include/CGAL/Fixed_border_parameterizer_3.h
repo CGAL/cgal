@@ -111,7 +111,6 @@ private:
   
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
-  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
   
   // Mesh_Adaptor_3 subtypes:
   typedef typename Base::NT            NT;
@@ -176,7 +175,6 @@ protected:
   {
     // AF: loop over border halfedges
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
-      // AF: get the halfedge-as-vertex index
       // Get vertex index in sparse linear system
       int index = get(vimap, target(opposite(next(hd,tmesh),tmesh),tmesh));
       // Write a diagonal coefficient of A
@@ -193,7 +191,7 @@ protected:
   /// Implementation note: Subclasses must at least implement compute_w_ij().
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
-                          halfedge_around_target_circulator neighbor_vertex_v_j)
+                          vertex_around_target_circulator neighbor_vertex_v_j)
   = 0;
 
   /// Compute the line i of matrix A for i inner vertex:/// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
@@ -215,11 +213,10 @@ protected:
     int i = get(vimap,vertex);
   
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
-    // use halfedge_around_target to get the right "vertex" if it is on a seam
     NT w_ii = 0;
     int vertexIndex = 0;
   
-    halfedge_around_target_circulator v_j(halfedge(vertex,mesh), mesh), end = v_j;
+    vertex_around_target_circulator v_j(halfedge(vertex,mesh), mesh), end = v_j;
     CGAL_For_all(v_j, end){
       // Call to virtual method to do the actual coefficient computation
       NT w_ij = -1.0 * compute_w_ij(mesh, vertex, v_j);
@@ -227,7 +224,7 @@ protected:
       w_ii -= w_ij;
     
       // Get j index
-      int j = get(vimap, target(opposite(*v_j,mesh),mesh));
+      int j = get(vimap, *v_j);
     
       // Set w_ij in matrix
       A.set_coef(i,j, w_ij, true /*new*/);
@@ -304,7 +301,7 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, VertexUVmap uvmap, Ver
     // from the linear systems in order to have a symmetric positive definite
     // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
     initialize_system_from_mesh_border (A, Bu, Bv, mesh, bhd, uvmap, vimap);
-    // AF: no change, as this are only concerns inner vertices
+
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
     boost::unordered_set<vertex_descriptor> main_border;

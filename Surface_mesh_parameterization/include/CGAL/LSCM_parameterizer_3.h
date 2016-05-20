@@ -120,8 +120,6 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
  
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
-  typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
 
     // Mesh_Adaptor_3 subtypes:
   typedef Parameterizer_traits_3<TriangleMesh> Traits;

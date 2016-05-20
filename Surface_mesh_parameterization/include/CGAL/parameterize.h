@@ -143,7 +143,7 @@ parameterize(TriangleMesh& mesh,
              VertexUVmap uvm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef std::map<vertex_descriptor,int> Indices;
+  typedef boost::unordered_map<vertex_descriptor,int> Indices;
   Indices indices;
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpm(vs);
