@@ -56,7 +56,9 @@ struct Graph_manipulations
     }
   }
 
-  vertex_descriptor split(const Point_3& a, const Point_3& b) {
+  vertex_descriptor split(const Point_3& a, const Point_3& b,
+                          bool a_is_outside, bool b_is_outside)
+  {
     const Point_3 mid = a < b ? midpoint(a, b) : midpoint(b, a);
     vertex_descriptor vmid = get_vertex(mid);
     typename std::map<Point_3, vertex_descriptor>::iterator
@@ -72,8 +74,8 @@ struct Graph_manipulations
       remove_edge(edge, g);
       if(!b) {
         // The edge was already here.
-        try_add_edge(va, vmid);
-        try_add_edge(vb, vmid);
+        if(!a_is_outside) try_add_edge(va, vmid);
+        if(!b_is_outside) try_add_edge(vb, vmid);
         return vmid;
       }
     }

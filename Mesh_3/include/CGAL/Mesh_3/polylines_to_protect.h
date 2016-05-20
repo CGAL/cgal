@@ -117,22 +117,35 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
           const Point_3& p01 = get<1>(square[0][1]);
           const Point_3& p11 = get<1>(square[1][1]);
 
+          const bool out00 = null(get<2>(square[0][0]));
+          const bool out10 = null(get<2>(square[1][0]));
+          const bool out01 = null(get<2>(square[0][1]));
+          const bool out11 = null(get<2>(square[1][1]));
+
           //
           // Protect the edges of the cube
           //
-          if(pix00[axis_xx] == 0) {
+          if(pix00[axis_xx] == 0 &&
+             ! ( out00 && out01 ) )
+          {
             g_manip.try_add_edge(g_manip.get_vertex(p00),
                                  g_manip.get_vertex(p01));
           }
-          if(pix11[axis_xx] == image_dims[axis_xx]-1) {
+          if(pix11[axis_xx] == image_dims[axis_xx]-1 &&
+             ! ( out10 && out11 ) )
+          {
             g_manip.try_add_edge(g_manip.get_vertex(p10),
                                  g_manip.get_vertex(p11));
           }
-          if(pix00[axis_yy] == 0) {
+          if(pix00[axis_yy] == 0 &&
+             ! ( out00 && out10 ) )
+          {
             g_manip.try_add_edge(g_manip.get_vertex(p00),
                                  g_manip.get_vertex(p10));
           }
-          if(pix11[axis_yy] == image_dims[axis_yy]-1) {
+          if(pix11[axis_yy] == image_dims[axis_yy]-1 &&
+             ! ( out01 && out11 ) )
+          {
             g_manip.try_add_edge(g_manip.get_vertex(p01),
                                  g_manip.get_vertex(p11));
           }
@@ -151,10 +164,10 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 case_4:
             // case 4 or case 2-2
             ++case4;
-            vertex_descriptor left   = g_manip.split(p00, p01);
-            vertex_descriptor right  = g_manip.split(p10, p11);
-            vertex_descriptor top    = g_manip.split(p01, p11);
-            vertex_descriptor bottom = g_manip.split(p00, p10);
+            vertex_descriptor left   = g_manip.split(p00, p01, out00, out01);
+            vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
+            vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
+            vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
             vertex_descriptor vmid   = g_manip.get_vertex(midpoint(p00, p11));
             g_manip.try_add_edge(left   , vmid);
             g_manip.try_add_edge(right  , vmid);
@@ -176,10 +189,10 @@ case_4:
               assert(get<2>(square[0][1]) != get<2>(square[0][0]));
               assert(get<2>(square[0][1]) != get<2>(square[1][1]));
               ++case121;
-              vertex_descriptor left   = g_manip.split(p00, p01);
-              vertex_descriptor right  = g_manip.split(p10, p11);
-              vertex_descriptor top    = g_manip.split(p01, p11);
-              vertex_descriptor bottom = g_manip.split(p00, p10);
+              vertex_descriptor left   = g_manip.split(p00, p01, out00, out01);
+              vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
+              vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
+              vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
               Point_3 inter_left = p00 + (1./3.) * (p11 - p00);
               Point_3 inter_right = p00 + (2./3.) * (p11 - p00);
               vertex_descriptor v_int_left = g_manip.get_vertex(inter_left);
@@ -211,9 +224,9 @@ case_4:
               Point_3 midright = midpoint(p10, p11);
               Point_3 inter = midleft + (2./3)*(midright-midleft);
               vertex_descriptor v_inter = g_manip.get_vertex(inter);
-              vertex_descriptor right  = g_manip.split(p10, p11);
-              vertex_descriptor top    = g_manip.split(p01, p11);
-              vertex_descriptor bottom = g_manip.split(p00, p10);
+              vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
+              vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
+              vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
               g_manip.try_add_edge(top,    v_inter);
               g_manip.try_add_edge(bottom, v_inter);
               g_manip.try_add_edge(right,  v_inter);
@@ -248,8 +261,8 @@ case_4:
                 ++case22;
                 assert(get<2>(square[1][0])==get<2>(square[1][1]));
                 assert(get<2>(square[1][0])!=get<2>(square[0][1]));
-                vertex_descriptor top    = g_manip.split(p01, p11);
-                vertex_descriptor bottom = g_manip.split(p00, p10);
+                vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
+                vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
                 g_manip.try_add_edge(top, bottom);
               } else {
                 // Else diagonal case case 2-2
@@ -293,7 +306,7 @@ case_4:
               assert(get<2>(square[1][0]) != get<2>(square[0][0]));
               assert(get<2>(square[1][1]) == get<2>(square[0][0]));
               assert(get<2>(square[0][1]) == get<2>(square[0][0]));
-              vertex_descriptor bottom = g_manip.split(p00, p10);
+              vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
               vertex_descriptor old = bottom;
 
               Point_3 inter;
@@ -309,7 +322,7 @@ case_4:
                 old = v_int;
               }
 
-              vertex_descriptor right  = g_manip.split(p10, p11);
+              vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
               g_manip.try_add_edge(v_int, right);
             }
           }
