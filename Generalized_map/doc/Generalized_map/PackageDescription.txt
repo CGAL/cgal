@@ -12,7 +12,7 @@
 \cgalPkgPicture{logo-gmap-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
-\cgalPkgDesc{This package implements Generalized Maps in <I>d</I>-dimension. A generalized map is a data structure allowing to represent an orientable or non orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. Information can be associated to cells thanks to attributes (if you are only interested by orientable objects, it is perhaps better to use Combinatorial Maps). The package provides basic creations, modification operations, and several iterators allowing to run through some specific part of the object.}
+\cgalPkgDesc{This package implements Generalized Maps in <I>d</I> dimensions. A generalized map is a data structure enabling to represent an orientable or non orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. Information can be associated to cells thanks to attributes. The package provides basic creation, modification operations, and several iterators enabling to run through some specific part of the object.}
 \cgalPkgManuals{Chapter_Generalized_Maps,PkgGeneralizedMaps}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

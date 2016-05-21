@@ -155,6 +155,18 @@ To avoid these two kinds of configurations, conditions are added on \f$ \beta\f$
 
 We say that a combinatorial map is <I>valid</I> if it satisfies all the conditions on \f$ \beta\f$ pointers and on association between darts and attributes. High level operations provided on combinatorial maps ensure that these conditions are always satisfied. Sometimes, it can be useful to use low level operations in a specific algorithm, for example to modify locally a combinatorial map in a really fast way. In such a case, additional operations may be needed to restore these validity conditions.
 
+\cgalModifBegin
+
+\subsection ssec-comparison-cmaps-with-gmaps Comparison with generalized maps
+
+Combinatorial maps and generalilzed maps are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects.
+
+However they have two main differences. Firstly, generalized maps allow to represent non-orientable and orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all applications are involutions, while combinatorial maps are not homogeneous since one application is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
+
+Considering these different advantages and drawbacks, you can choose to use generalized maps or combinatorial maps depending on the needs of your application.
+
+\cgalModifEnd
+
 \section secsoftwaredesign Software Design
 
 The diagram in \cgalFigureRef{figdiagram_class} shows the different classes of the package. `Combinatorial_map` is the main class (see Section \ref sseccombinatorialmap "Combinatorial Maps"). It allows to manage darts (see Section \ref ssecdarts "Darts") and attributes (see Section \ref ssecattributes "Cell Attributes"). Users can customize a combinatorial map thanks to an items class (see Section \ref ssecitem "Combinatorial Map Items"), which defines the dart type and the attribute types. These types may be different for different dimensions, and they may also be void.

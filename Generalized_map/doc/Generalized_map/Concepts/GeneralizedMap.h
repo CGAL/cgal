@@ -508,12 +508,12 @@ void clear();
 /*!
 Assignment operator. All darts and attributes are duplicated, and the former generalized map is deleted.
 */
-GeneralizedMap& operator= (const GeneralizedMap& cmap);
+GeneralizedMap& operator= (const GeneralizedMap& gmap);
 
 /*!
-Swap the current generalized map with `cmap`. There is no copy of darts and attributes thus this method runs in constant time.
+Swap the current generalized map with `gmap`. There is no copy of darts and attributes thus this method runs in constant time.
 */
-void swap(GeneralizedMap& cmap);
+void swap(GeneralizedMap& gmap);
 
 /// @}
 
@@ -746,7 +746,7 @@ Dart_handle make_edge();
 
 /*!
 Inserts a 0-cell in the 1-cell containing `dh`. Returns a handle on one dart belonging to the new 0-cell.
-\pre \ref GeneralizedMap::dimension "CMap::dimension"\f$ \geq\f$ 1 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 1 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 See example in \cgalFigureRef{figinsertvertex}.
 
@@ -767,7 +767,7 @@ Dart_handle insert_cell_0_in_cell_1(Dart_handle dh);
 
 /*!
 Inserts a 0-cell in the 2-cell containing `dh`. The 2-cell is split in triangles, one for each initial edge of the facet. Returns a handle on one dart belonging to the new 0-cell.
-\pre \ref GeneralizedMap::dimension "CMap::dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 See example in \cgalFigureRef{figtriangulate}.
 
@@ -833,7 +833,7 @@ Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 
 /*!
 Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns a handle on the dart belonging to the new 1-cell and to the new 0-cell. 
-\pre \ref GeneralizedMap::dimension "CMap::dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 See example in \cgalFigureRef{figinsertedge}.
 
@@ -854,7 +854,7 @@ Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh);
 Returns true iff it is possible to insert a 1-cell in the generalized map between `dh1` and `dh2`.
 
 This is possible if `dh1`\f$ \neq\f$`dh2` and `dh1`\f$ \in\f$\f$ \langle{}\f$\f$ \beta_1\f$\f$ \rangle{}\f$(`dh2`).
-\pre \ref GeneralizedMap::dimension "CMap::dimension"\f$ \geq\f$ 2, `*dh1`\f$ \in\f$\ref GeneralizedMap::darts "darts()", and `*dh2`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2, `*dh1`\f$ \in\f$\ref GeneralizedMap::darts "darts()", and `*dh2`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 \sa `insert_cell_1_in_cell_2`
 \sa `is_insertable_cell_2_in_cell_3<InputIterator>`
@@ -864,7 +864,7 @@ bool is_insertable_cell_1_in_cell_2(Dart_const_handle dh1, Dart_const_handle dh2
 
 /*!
 Returns true iff it is possible to insert a 2-cell in the generalized map along the path of darts given by the range `[afirst,alast)`. The 2-cell can be inserted iff each couple of consecutive darts of the path <I>a1</I> and <I>a2</I> belong to the same vertex and the same volume, and if the path is closed.
-\pre \ref GeneralizedMap::dimension "CMap::dimension"\f$ \geq\f$ 3.
+\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 3.
 
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `is_insertable_cell_1_in_cell_2`
@@ -876,8 +876,8 @@ bool is_insertable_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 /*!
 Returns true iff the <I>i</I>-cell containing `dh` can be removed.
 
-An <I>i</I>-cell can be removed if `i`==\ref GeneralizedMap::dimension "CMap::dimension" or if `i`==\ref GeneralizedMap::dimension "CMap::dimension"-1 or if `i`\f$ <\f$\ref GeneralizedMap::dimension "CMap::dimension"-1 and the <I>i</I>-cell containing `dh` is incident to at most two (<I>i+1</I>)-cells.
-\pre 0\f$ \leq\f$`i`\f$ \leq\f$\ref GeneralizedMap::dimension "CMap::dimension" and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "cm.darts()".
+An <I>i</I>-cell can be removed if `i`==\ref GeneralizedMap::dimension "dimension" or if `i`==\ref GeneralizedMap::dimension "dimension"-1 or if `i`\f$ <\f$\ref GeneralizedMap::dimension "dimension"-1 and the <I>i</I>-cell containing `dh` is incident to at most two (<I>i+1</I>)-cells.
+\pre 0\f$ \leq\f$`i`\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 \sa `remove_cell<i>`
 
@@ -891,7 +891,7 @@ Removes the <I>i</I>-cell containing `dh`. Returns the number of darts removed f
 
 See examples in \cgalFigureRef{figinsertvertex}, \cgalFigureRef{figinsertedge} and \cgalFigureRef{figinsertface}.
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if `i`\f$ <\f$\ref GeneralizedMap::dimension "CMap::dimension", and <I>i+1</I>-attributes are non `void`, and if there are two distinct (<I>i+1</I>)-cells around dart `dh`, \ref CellAttribute::On_merge "Attribute_type<i+1>::type::On_merge"(<I>a1</I>,<I>a2</I>) is called, with <I>a1</I> the (<I>i+1</I>)-attribute associated to `dh`, and <I>a2</I> the (<I>i+1</I>)-attribute associated to \f$ \beta_{i+1}\f$(<I>dh</I>). If set, the dynamic onmerge function of <I>i+1</I>-attributes is also called on <I>a1</I> and <I>a2</I>.
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if `i`\f$ <\f$\ref GeneralizedMap::dimension "dimension", and <I>i+1</I>-attributes are non `void`, and if there are two distinct (<I>i+1</I>)-cells around dart `dh`, \ref CellAttribute::On_merge "Attribute_type<i+1>::type::On_merge"(<I>a1</I>,<I>a2</I>) is called, with <I>a1</I> the (<I>i+1</I>)-attribute associated to `dh`, and <I>a2</I> the (<I>i+1</I>)-attribute associated to \f$ \beta_{i+1}\f$(<I>dh</I>). If set, the dynamic onmerge function of <I>i+1</I>-attributes is also called on <I>a1</I> and <I>a2</I>.
 
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if a <I>j</I>-cell is disconnected in two <I>j</I>-cells during the operation, and if <I>j</I>-attributes are non void, \ref CellAttribute::On_split "Attribute_type<j>::type::On_split"(<I>a</I>,<I>a'</I>) is called with <I>a</I> the original <I>j</I>-attribute and <I>a'</I> the new <I>j</I>-attribute created due to the disconnection. If set, the dynamic onsplit function of <i>j</i>-attributes is also called on <I>a</I> and <I>a'</I>.
 
