@@ -960,6 +960,7 @@ std::size_t facet_degree(Halfedge_handle h)
 
 bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descriptor>& selection)
 {
+
   edge_descriptor ed =  *selection.begin();
   if(!is_treated)
   {
