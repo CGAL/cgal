@@ -96,7 +96,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   actionDeformation->setObjectName("actionDeformation");
   autoConnectActions();
   actionDeformation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
-  connect(actionDeformation, SIGNAL(triggered()), this, SLOT(on_actionDeformation_triggered()));
 
   // Connect Scene::newItem so that, if dock_widget is visible, convert
   // automatically polyhedron items to "edit polyhedron" items.
