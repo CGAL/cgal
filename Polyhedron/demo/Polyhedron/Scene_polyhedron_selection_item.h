@@ -472,6 +472,7 @@ public:
     v->update();
     tempInstructions("Path added to selection.",
                      "Select two vertices to create the path between them. (1/2)");
+  }
 
   void processEvent(QEvent *event)
   {
