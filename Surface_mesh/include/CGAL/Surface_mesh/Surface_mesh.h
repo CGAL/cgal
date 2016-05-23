@@ -2363,7 +2363,7 @@ private: //--------------------------------------------------- property handling
     template<class I>
     std::vector<std::string> properties() const
     {
-      return Property_selector<I>(this)().properties();
+      return Property_selector<I>(const_cast<Self*>(this))().properties();
     }
 
     /// returns the property for the string "v:point".
