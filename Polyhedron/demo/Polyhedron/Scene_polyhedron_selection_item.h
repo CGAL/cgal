@@ -660,8 +660,13 @@ public:
 
     for (Selection_set_edge::iterator eit = selected_edges.begin(); eit != selected_edges.end();)
     {
-      if (selected_facets.find(eit->halfedge()->face()) != selected_facets.end()
-        && selected_facets.find(eit->halfedge()->opposite()->face()) != selected_facets.end())
+      if(//both incident faces will be erased
+        (selected_facets.find(eit->halfedge()->face()) != selected_facets.end()
+         && selected_facets.find(eit->halfedge()->opposite()->face()) != selected_facets.end())
+         //OR eit is a boundary edge and its incident face will be erased
+         || (eit->halfedge()->is_border_edge()
+             && (selected_facets.find(eit->halfedge()->face()) != selected_facets.end()
+              || selected_facets.find(eit->halfedge()->opposite()->face()) != selected_facets.end())))
       {
         edge_descriptor tmp = *eit;
         ++eit;
