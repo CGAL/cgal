@@ -146,9 +146,6 @@ Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer
         std::vector<float>(normals).swap(normals);
         v_colors.resize(0);
         std::vector<float>(v_colors).swap(v_colors);
-        //f_colors.resize(0);
-        //std::vector<float>(f_colors).swap(f_colors);
-
 
     }
     //vao containing the data for the edges

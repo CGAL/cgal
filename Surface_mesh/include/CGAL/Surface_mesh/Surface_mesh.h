@@ -29,7 +29,6 @@
 #include <typeinfo>
 #include <functional>
 
-//#include <boost/fusion/container/map.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>

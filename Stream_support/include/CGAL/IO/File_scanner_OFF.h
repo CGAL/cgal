@@ -36,7 +36,6 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
 
-
 namespace CGAL {
 
 class CGAL_EXPORT File_scanner_OFF : public File_header_OFF {
