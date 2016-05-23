@@ -64,7 +64,7 @@ namespace CGAL {
 
 template
 <
-    class TriangleMesh,     ///< 3D surface mesh
+    class TriangleMesh,     ///< a model of `FaceGraph`
     class BorderParameterizer_3       ///< Strategy to parameterize the surface border
                 = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
     class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system

@@ -54,7 +54,7 @@ namespace CGAL {
 /// \cgalModels `ParameterizerTraits_3`
 ///
 ///
-/// \param TriangleMesh       3D surface mesh.
+/// \param TriangleMesh       a model of `FaceGraph`
 /// \param BorderParameterizer_3        Strategy to parameterize the surface border.
 /// \param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
 ///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`

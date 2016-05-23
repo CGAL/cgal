@@ -73,7 +73,7 @@ namespace CGAL {
 
 template
 <
-    class TriangleMesh,     ///< 3D surface mesh.
+    class TriangleMesh,     ///< a model of `FaceGraph`
     class BorderParameterizer_3
   = Two_vertices_parameterizer_3<TriangleMesh>,
                                       ///< Strategy to parameterize the surface border.

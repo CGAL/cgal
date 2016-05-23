@@ -58,12 +58,13 @@ namespace CGAL {
 /// \cgalModels `BorderParameterizer_3`
 ///
 
-template<class TriangleMesh>      //< 3D surface
+template<class TriangleMesh_>      //< 3D surface
 class Square_border_parameterizer_3
 {
 // Public types
 public:
-    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef TriangleMesh_ TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef Halfedge_around_face_iterator<TriangleMesh> halfedge_around_face_iterator;
 
 // Private types
@@ -108,8 +109,8 @@ private:
 // Compute the total length of the border.
 template<class TriangleMesh>
 inline
-double Square_border_parameterizer_3<TriangleMesh>::compute_border_length(
-                                                        const TriangleMesh& mesh, halfedge_descriptor bhd)
+double Square_border_parameterizer_3<TriangleMesh>::compute_border_length(const TriangleMesh& mesh,
+                                                                          halfedge_descriptor bhd)
 {
   VPM vpm = get(CGAL::vertex_point,mesh);
   double len = 0.0;
@@ -125,9 +126,9 @@ template<class TriangleMesh>
 inline
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
 Square_border_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& mesh,
-                      halfedge_descriptor bhd,
-                      VertexUVmap uvmap,
-                      VertexParameterizedMap vpmap)
+                                                                 halfedge_descriptor bhd,
+                                                                 VertexUVmap uvmap,
+                                                                 VertexParameterizedMap vpmap)
 {
     VPM vpm = get(vertex_point, mesh);
 #ifdef DEBUG_TRACE
@@ -251,16 +252,17 @@ Square_border_parameterizer_3<TriangleMesh>::closest_iterator(TriangleMesh& mesh
 /// \cgalModels `BorderParameterizer_3`
 ///
 
-template<class TriangleMesh>      //< 3D surface
+template<class TriangleMesh_>      //< 3D surface
 class Square_border_uniform_parameterizer_3
-    : public Square_border_parameterizer_3<TriangleMesh>
+    : public Square_border_parameterizer_3<TriangleMesh_>
 {
 // Public types
 public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
 
-    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef TriangleMesh_ TriangleMesh;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
     /// @endcond
 
@@ -305,24 +307,20 @@ protected:
 /// \cgalModels `BorderParameterizer_3`
 ///
 
-template<class TriangleMesh>      //< 3D surface
+template<class TriangleMesh_>      //< 3D surface
 class Square_border_arc_length_parameterizer_3
-    : public Square_border_parameterizer_3<TriangleMesh>
+    : public Square_border_parameterizer_3<TriangleMesh_>
 {
-// Public types
 public:
+  typedef TriangleMesh_ TriangleMesh;
 
-// Private types
 private:
-    // Mesh_TriangleMesh_3 subtypes:
     typedef typename TriangleMesh::Point_2       Point_2;
     typedef typename TriangleMesh::Vector_3      Vector_3;
 
-// Public operations
 public:
     // Default constructor, copy constructor and operator =() are fine
 
-// Protected operations
 protected:
     /// Compute the length of an edge.
     virtual double compute_edge_length(const TriangleMesh& mesh,

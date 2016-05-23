@@ -63,7 +63,7 @@ namespace CGAL {
 
 template
 <
-    class TriangleMesh,     ///< 3D surface mesh
+    class TriangleMesh,     ///< a model of `FaceGraph`
     class BorderParameterizer_3       ///< Strategy to parameterize the surface border
                 = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
     class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
@@ -137,7 +137,7 @@ protected:
  
       typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
  
-      PPmap ppmap = get(vertex_point, mesh);
+      const PPmap ppmap = get(vertex_point, mesh);
 
         Point_3 position_v_i = get(ppmap,main_vertex_v_i);
         Point_3 position_v_j = get(ppmap, *neighbor_vertex_v_j);

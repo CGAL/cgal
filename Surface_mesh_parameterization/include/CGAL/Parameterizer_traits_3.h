@@ -78,7 +78,7 @@ public:
     };
 
 
-  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type VPM;
+  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type VPM;
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
 

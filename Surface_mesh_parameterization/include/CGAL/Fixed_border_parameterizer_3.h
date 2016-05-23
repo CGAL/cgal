@@ -78,7 +78,7 @@ namespace CGAL {
 
 template
 <
-    class TriangleMesh,       ///< 3D surface mesh
+    class TriangleMesh,       ///< a model of  FaceGraph
     class BorderParameterizer_3         ///< Strategy to parameterize the surface border
                 = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
     class SparseLinearAlgebraTraits_d   ///< Traits class to solve a sparse linear system
@@ -275,8 +275,11 @@ template <class TriangleMesh, class Border_param, class Sparse_LA>
 template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
 typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
-parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, VertexUVmap uvmap, VertexIndexMap vimap,
-                           VertexParameterizedMap vpm)
+parameterize(TriangleMesh& mesh,
+             halfedge_descriptor bhd,
+             VertexUVmap uvmap,
+             VertexIndexMap vimap,
+             VertexParameterizedMap vpm)
 {
     Error_code status = Base::OK; 
 

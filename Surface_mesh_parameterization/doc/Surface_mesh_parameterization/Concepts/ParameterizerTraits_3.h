@@ -3,7 +3,7 @@
 \ingroup PkgSurfaceParameterizationConcepts
 \cgalConcept
 
-`ParameterizerTraits_3` is a concept of parameterization object for a given type of mesh, `Adaptor`, which is a model of the `ParameterizationMesh_3` concept. 
+`ParameterizerTraits_3` is a concept of parameterization object for a given type of mesh, `TriangleMesh`, which must be a model of the `FaceGraph` concept. 
 
 Design Pattern 
 -------------- 
@@ -15,15 +15,13 @@ Creation
 
 Construction and destruction are undefined. 
 
-\cgalHasModel `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
-\cgalHasModel `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\cgalHasModel `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\cgalHasModel `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\cgalHasModel `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\cgalHasModel `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-\cgalHasModel `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-
-\sa `ParameterizationMesh_3`
+\cgalHasModel `CGAL::Parameterizer_traits_3<TriangleMesh>`
+\cgalHasModel `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 */
 
@@ -70,7 +68,7 @@ Compute a one-to-one mapping from a triangular 3D surface `mesh` to a piece of t
 \pre `mesh` must be a surface with one connected component and no hole. `mesh` must be a triangular mesh. 
 
 */ 
-Error_code parameterize(Adaptor& mesh); 
+Error_code parameterize(TriangleMesh& mesh); 
 
 /// @}
 
