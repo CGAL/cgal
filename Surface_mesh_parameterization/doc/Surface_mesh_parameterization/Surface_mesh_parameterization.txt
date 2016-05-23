@@ -7,7 +7,7 @@ namespace CGAL {
 \anchor chapsurface_mesh_parameterization
 \cgalAutoToc
 
-\authors Laurent Saboret, Pierre Alliez and Bruno L&eacute;vy
+\authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, and Andreas Fabri
 
 \section Surface_mesh_parameterizationIntroduction Introduction
 
@@ -85,8 +85,6 @@ The result is stored in a property map for the mesh vertices.
 `Parameterizer_traits_3<TriangleMesh>` is a base class of all surface
 parameterizations and defines the error codes.
 
-
-\subsection Surface_mesh_parameterizationDefaultParameterization Default Parameterization Example
 
 In the following example, we apply the default parameterization to a
 `Polyhedron_3` mesh, and we use a ` Unique_hash_map` to store the uv-coordinates
