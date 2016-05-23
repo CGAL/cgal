@@ -12,7 +12,7 @@ and uses the type `K::Weighted_point_3` for weighted points`.
 
 \tparam Weight This template parameter is ignored, as  `K::Weighted_point_3` uses the type `K::FT`.
 
-\deprecated The template parameter `Weight` is deprecated.
+\deprecated The template parameter `Weight` is deprecated. Users who need this feature must use a CGAL version prior to 4.9.
 
 The class is a model of the concept `RegularTriangulationTraits_3` 
 but it also contains predicates and constructors on weighted points 

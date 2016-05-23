@@ -171,17 +171,22 @@ and <code>src/</code> directories).
 
  <h3>2D Triangulations</h3>
   <ul>
-    <li><b>Breaking change</b>: Removed the arbitrary dimensional weighted point class.</li>
-    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_2</code></li>
+    <li><b>Breaking change</b>: Removed the arbitrary dimensional weighted point class.
+      Users must use a version prior to 4.9 if they need this class.</li>
+    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_2</code>.
+      Users must replace it by the filtered kernel that they passed as template argument.</li>
     <li><b>Breaking change</b>:The number type of weighted points in regular triangulations is no longer
-        a template parameter but the field type of the geometric traits class.</li>
+      a template parameter but the field type of the geometric traits class.
+      Users who need this feature must use a version prior to 4.9</li>
   </ul>
 
  <h3>3D Triangulations</h3>
   <ul>
-    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_3</code></li>
+    <li><b>Breaking change</b>: Removed the class <code>Regular_triangulation_filtered_traits_3</code>.
+      Users must replace it by the filtered kernel that they passed as template argument.</li>
     <li><b>Breaking change</b>: The number type of weighted points in regular triangulations is no longer
-        a template parameter but the field type of the geometric traits class.</li>
+        a template parameter but the field type of the geometric traits class.
+        Users who need this feature must use a version prior to 4.9.</li>
   </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->

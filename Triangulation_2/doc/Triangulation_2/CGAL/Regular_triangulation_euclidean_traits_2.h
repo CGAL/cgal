@@ -8,7 +8,8 @@ namespace CGAL {
 
 \tparam K must be a model of the `Kernel` concept.
 \tparam Weight  This template parameter is ignored, as  `K::Weighted_point_2` uses the type `K::FT`.
-\deprecated The template parameter `Weight` is deprecated.
+
+\deprecated The template parameter `Weight` is deprecated. Users who need this feature must use a CGAL version prior to 4.9.
  
 This class inherits from `K` 
 and uses a `K::Weighted_point_2` as point type.
