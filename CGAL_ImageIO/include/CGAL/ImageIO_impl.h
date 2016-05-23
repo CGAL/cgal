@@ -62,14 +62,6 @@
 #include "mincio.h"
 #endif
 
-
-
-/** the first file format is initialized to null */
-static PTRIMAGE_FORMAT firstFormat=NULL;
-
-/** the Inrimage file format (default format) is initialized to null */
-static PTRIMAGE_FORMAT InrimageFormat=NULL;
-
 struct Remove_supported_file_format {
   ~Remove_supported_file_format()
   {
@@ -77,9 +69,52 @@ struct Remove_supported_file_format {
   }
 };
 
+#ifdef CGAL_HEADER_ONLY
+
+inline PTRIMAGE_FORMAT & get_static_firstFormat()
+{
+  static PTRIMAGE_FORMAT firstFormat = NULL;
+  return firstFormat;
+}
+
+inline PTRIMAGE_FORMAT & get_static_inrimageFormat()
+{
+  static PTRIMAGE_FORMAT inrimageFormat = NULL;
+  return inrimageFormat;
+}
+
+inline Remove_supported_file_format & get_static_rsff()
+{
+  static Remove_supported_file_format rsff;
+  return rsff;
+}
+// Dummy call to get_static_rsff(), otherwise it would not get instanced
+static Remove_supported_file_format &rsff_dummy_ref = get_static_rsff();
+
+
+#else // not header-only
+
+/** the first file format is initialized to null */
+static PTRIMAGE_FORMAT firstFormat = NULL;
+inline PTRIMAGE_FORMAT & get_static_firstFormat()
+{
+  return firstFormat;
+}
+
+/** the Inrimage file format (default format) is initialized to null */
+static PTRIMAGE_FORMAT InrimageFormat = NULL;
+inline PTRIMAGE_FORMAT & get_static_inrimageFormat()
+{
+  return InrimageFormat;
+}
+
 static Remove_supported_file_format rsff;
+inline Remove_supported_file_format & get_static_rsff()
+{
+  return rsff;
+}
 
-
+#endif
 
 /*--------------------------------------------------
  *
@@ -508,7 +543,7 @@ _image *_initImage() {
   im->imageFormat = NULL;
 
   /** eventually initializes the supported file formats */
-  if (firstFormat==NULL)
+  if (get_static_firstFormat()==NULL)
     initSupportedFileFormat();
   /* return image descriptor */
   return im;
@@ -566,7 +601,7 @@ _image *_createImage(int x, int y, int z, int v,
   im->imageFormat = NULL;
 
   /** eventually initializes the supported file formats */
-  if (firstFormat==NULL)
+  if (get_static_firstFormat()==NULL)
     initSupportedFileFormat();
   /* return image descriptor */
   return im;
@@ -809,7 +844,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
   /* what is the wanted format
    */
   if ( name == NULL ) {
-    im->imageFormat = InrimageFormat;
+    im->imageFormat = get_static_inrimageFormat();
   } else {
     int i,extLength;
     PTRIMAGE_FORMAT f;
@@ -821,7 +856,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
     im->imageFormat=NULL;
     length=strlen(name);
 
-    for(f=firstFormat;(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
+    for(f=get_static_firstFormat();(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
       /* scan all extensions for that format */
       ptr=&f->fileExtension[0];
 
@@ -854,7 +889,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
 
     if (!im->imageFormat) { 
       fprintf(stderr, "_writeImage: warning : unknown extension in %s = assuming Inrimage\n",name);
-      im->imageFormat=InrimageFormat;
+      im->imageFormat=get_static_inrimageFormat();
       baseName=strdup(name);
     }
   }
@@ -876,7 +911,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
   if (im->imageFormat) {
 
     if (im->imageFormat->writeImage==NULL) {
-      im->imageFormat=InrimageFormat;
+      im->imageFormat=get_static_inrimageFormat();
     }
 
     if ( 0 ) {
@@ -981,7 +1016,7 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
      assume that stdin is inrimage
    */
   if(im->openMode == OM_STD) {
-    im->imageFormat=InrimageFormat;
+    im->imageFormat=get_static_inrimageFormat();
   }
   else {
    /* get magic string for disk files
@@ -990,7 +1025,7 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
     magic[4] = '\0';
     ImageIO_seek(im, 0L, SEEK_SET);
     /** test each format */
-    for(f=firstFormat;(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
+    for(f=get_static_firstFormat();(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
       /* test if it is the correct format based on magic and file extension */
       if (((*f->testImageFormat)(magic, name)) >=0) {
 	im->imageFormat=f;
@@ -1374,10 +1409,10 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
   if(fileName) fclose( f );
 #endif
 
-  if (firstFormat==NULL)
+  if (get_static_firstFormat()==NULL)
     initSupportedFileFormat();
 
-  for(format=firstFormat;(format!=NULL);format=format->next) {
+  for(format=get_static_firstFormat();(format!=NULL);format=format->next) {
     /* test if it is the correct header based on magic and file extension */
     if (((*format->testImageFormat)(magic,fileName)) >=0) {
       return format;
@@ -1411,8 +1446,8 @@ int addImageFormat( PTRIMAGE_FORMAT format)
        (strlen(format->fileExtension)>0) &&
        (strlen(format->realName)>0) ) {
 
-    format->next=firstFormat;
-    firstFormat=format;
+    format->next=get_static_firstFormat();
+    get_static_firstFormat()=format;
     
     return 0;
 
@@ -1437,11 +1472,11 @@ int addImageFormatAtEnd( PTRIMAGE_FORMAT format)
 
     format->next = NULL;
     
-    if (firstFormat == NULL) {
-      firstFormat=format;
+    if (get_static_firstFormat() == NULL) {
+      get_static_firstFormat()=format;
     }
     else {
-      for(f=firstFormat;(f->next!=NULL);f=f->next)
+      for(f=get_static_firstFormat();(f->next!=NULL);f=f->next)
 	;
       f->next=format;    
     }
@@ -1462,7 +1497,7 @@ CGAL_INLINE_FUNCTION
 void initSupportedFileFormat() 
 {
   PTRIMAGE_FORMAT f;
-  if ( InrimageFormat == NULL ) {
+  if ( get_static_inrimageFormat() == NULL ) {
     f = createAnalyzeFormat();
     addImageFormatAtEnd( f );
     f = createBMPFormat();
@@ -1479,8 +1514,8 @@ void initSupportedFileFormat()
     addImageFormatAtEnd( f );
     f = createPpmFormat();
     addImageFormatAtEnd( f );
-    InrimageFormat = createInrimageFormat();
-    addImageFormat( InrimageFormat );
+    get_static_inrimageFormat() = createInrimageFormat();
+    addImageFormat( get_static_inrimageFormat() );
   }
 }
 
@@ -1488,7 +1523,7 @@ void initSupportedFileFormat()
 
 CGAL_INLINE_FUNCTION
 PTRIMAGE_FORMAT firstImageFormat() {
-  return firstFormat;
+  return get_static_firstFormat();
 }
 
 
@@ -1501,7 +1536,7 @@ void printSupportedFileFormat() {
 
   initSupportedFileFormat();
 
-  for(i=0, f=firstFormat;(f!=NULL);i++, f=f->next) {
+  for(i=0, f=get_static_firstFormat();(f!=NULL);i++, f=f->next) {
     if ( (f->testImageFormat) &&
 	 (f->readImageHeader) &&
 	 (strlen(f->fileExtension)>0) &&
@@ -1521,14 +1556,14 @@ void printSupportedFileFormat() {
 /** remove supported image formats */
 CGAL_INLINE_FUNCTION
 void removeSupportedFileFormat() {    
-  PTRIMAGE_FORMAT f=firstFormat;
+  PTRIMAGE_FORMAT f=get_static_firstFormat();
   
   while( f != NULL) {
     PTRIMAGE_FORMAT f_old = f;
     f = f->next;
     ImageIO_free( f_old);
   }
-  InrimageFormat=NULL;
+  get_static_inrimageFormat()=NULL;
 
 }
 
