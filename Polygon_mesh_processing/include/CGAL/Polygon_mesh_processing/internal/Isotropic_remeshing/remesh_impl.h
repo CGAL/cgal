@@ -1089,7 +1089,7 @@ private:
         if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
           return false;//collapse would induce pinching the selection
         else
-          return is_collapse_allowed(he);
+          return is_collapse_allowed(he) && is_collapse_allowed(hopp);
       }
       else if (is_on_patch_border(he))
         return is_collapse_allowed_on_patch_border(he);
