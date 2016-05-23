@@ -86,7 +86,7 @@ Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[Facets]->bind();
+        vaos[Flat_Facets]->bind();
         buffers[Facets_vertices].bind();
         buffers[Facets_vertices].allocate(positions_poly.data(),
                             static_cast<int>(positions_poly.size()*sizeof(float)));
@@ -102,15 +102,50 @@ Scene_polygon_soup_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[Facets_normals].release();
+        if(!f_colors.empty())
+        {
+          buffers[F_Colors].bind();
+          buffers[F_Colors].allocate(f_colors.data(),
+                                     static_cast<int>(f_colors.size()*sizeof(float)));
+          program->enableAttributeArray("colors");
+          program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+          buffers[F_Colors].release();
+        }
+        vaos[Flat_Facets]->release();
 
+
+
+        vaos[Smooth_Facets]->bind();
+        buffers[Facets_vertices].bind();
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[Facets_vertices].release();
+
+        buffers[Facets_normals].bind();
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+        buffers[Facets_normals].release();
+        if(!v_colors.empty())
+        {
+          buffers[V_Colors].bind();
+          buffers[V_Colors].allocate(v_colors.data(),
+                                     static_cast<int>(v_colors.size()*sizeof(float)));
+          program->enableAttributeArray("colors");
+          program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+          buffers[V_Colors].release();
+        }
+        vaos[Smooth_Facets]->release();
         program->release();
-        vaos[Facets]->release();
+
+
         nb_polys = positions_poly.size();
         positions_poly.resize(0);
         std::vector<float>(positions_poly).swap(positions_poly);
 
         normals.resize(0);
         std::vector<float>(normals).swap(normals);
+        v_colors.resize(0);
+        std::vector<float>(v_colors).swap(v_colors);
 
     }
     //vao containing the data for the edges
@@ -172,7 +207,7 @@ TDS,
 Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 void
-Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
+Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit, int polygon_id) const
 {
     //Computes the normal of the facet
     const Point_3& pa = soup->points[pit->at(0)];
@@ -184,6 +219,9 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
     P_traits cdt_traits(normal);
 
     CDT cdt(cdt_traits);
+    //A map used to associate the vertices in the triangulation to the points
+    //in the soup. This is needed to retrieve the colors of the points.
+    QMap<CDT::Vertex_handle, int> p2p;
 
     std::size_t it = 0;
     std::size_t it_end =pit->size();
@@ -193,6 +231,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
     do {
 
         CDT::Vertex_handle vh = cdt.insert(soup->points[pit->at(it)]);
+        p2p[vh]=pit->at(it);
         if(first == 0) {
             first = vh;
         }
@@ -246,6 +285,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
         positions_poly.push_back(ffit->vertex(0)->point().z());
         positions_poly.push_back(1.0);
 
+
         positions_poly.push_back(ffit->vertex(1)->point().x());
         positions_poly.push_back(ffit->vertex(1)->point().y());
         positions_poly.push_back(ffit->vertex(1)->point().z());
@@ -263,21 +303,28 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
 
         Kernel::Vector_3 n = CGAL::cross_product(pb-pa, pc -pa);
         n = n / std::sqrt(n * n);
-
-        normals.push_back(n.x());
-        normals.push_back(n.y());
-        normals.push_back(n.z());
-
-        normals.push_back(n.x());
-        normals.push_back(n.y());
-        normals.push_back(n.z());
-
-
-        normals.push_back(n.x());
-        normals.push_back(n.y());
-        normals.push_back(n.z());
-
-
+        CGAL::Color color;
+        if(!soup->fcolors.empty())
+          color = soup->fcolors[polygon_id];
+        for(int i=0; i<3; i++)
+        {
+          normals.push_back(n.x());
+          normals.push_back(n.y());
+          normals.push_back(n.z());
+          if(!soup->fcolors.empty())
+          {
+            f_colors.push_back((float)color.red()/255);
+            f_colors.push_back((float)color.green()/255);
+            f_colors.push_back((float)color.blue()/255);
+          }
+          if(!soup->vcolors.empty())
+          {
+            CGAL::Color vcolor = soup->vcolors[p2p[ffit->vertex(i)]];
+            v_colors.push_back((float)vcolor.red()/255);
+            v_colors.push_back((float)vcolor.green()/255);
+            v_colors.push_back((float)vcolor.blue()/255);
+          }
+        }
     }
 }
 void
@@ -288,16 +335,18 @@ Scene_polygon_soup_item::compute_normals_and_vertices() const{
     positions_lines.resize(0);
     normals.resize(0);
     positions_nm_lines.resize(0);
+    f_colors.resize(0);
+    v_colors.resize(0);
     soup->fill_edges();
+    int nb = 0;
     for(Polygons_iterator it = soup->polygons.begin();
         it != soup->polygons.end(); ++it)
     {
         if(it->size()!=3)
         {
-            triangulate_polygon(it);
+            triangulate_polygon(it, nb);
         }
         else{
-
             const Point_3& pa = soup->points[it->at(0)];
             const Point_3& pb = soup->points[it->at(1)];
             const Point_3& pc = soup->points[it->at(2)];
@@ -326,8 +375,24 @@ Scene_polygon_soup_item::compute_normals_and_vertices() const{
                 positions_poly.push_back(p.y());
                 positions_poly.push_back(p.z());
                 positions_poly.push_back(1.0);
+                if(!soup->fcolors.empty())
+                {
+                  const CGAL::Color color = soup->fcolors[nb];
+                    f_colors.push_back((float)color.red()/255);
+                    f_colors.push_back((float)color.green()/255);
+                    f_colors.push_back((float)color.blue()/255);
+                }
+
+                if(!soup->vcolors.empty())
+                {
+                  const CGAL::Color color = soup->vcolors[it->at(i)];
+                  v_colors.push_back((float)color.red()/255);
+                  v_colors.push_back((float)color.green()/255);
+                  v_colors.push_back((float)color.blue()/255);
+                }
             }
         }
+        nb++;
 
         //Lines
         for(size_type i = 0; i < it->size(); ++i)
@@ -399,7 +464,8 @@ Scene_polygon_soup_item::load(std::istream& in)
   if (!soup) soup=new Polygon_soup();
   else soup->clear();
 
-    bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
+    bool result = CGAL::read_OFF(in, soup->points, soup->polygons,
+                                 soup->fcolors, soup->vcolors);
     Q_EMIT invalidateOpenGLBuffers();
     return result;
 }
@@ -410,6 +476,10 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
   soup->clear();
   soup->points.reserve(nb_pts);
   soup->polygons.reserve(nb_polygons);
+  soup->vcolors.resize(0);
+  soup->fcolors.resize(0);
+
+
   oriented = false;
 }
 
@@ -551,6 +621,21 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
   }
   return false;
 }
+
+bool
+Scene_polygon_soup_item::exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3> *out_surface_mesh)
+{
+  orient();
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
+    soup->points, soup->polygons, *out_surface_mesh);
+  std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_surface_mesh);
+  if(rv > 0)
+    std::cerr << "Ignore isolated vertices: " << rv << std::endl;
+  if(out_surface_mesh->vertices().size() > 0) {
+    return true;
+  }
+  return false;
+}
 QString 
 Scene_polygon_soup_item::toolTip() const
 {
@@ -579,23 +664,31 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
      initializeBuffers(viewer);
     }
     if(soup == 0) return;
-    //Calls the buffer info again so that it's the right one used even if
-    //there are several objects drawn
-    vaos[Facets]->bind();
     attribBuffers(viewer,PROGRAM_WITH_LIGHT);
-    //fills the arraw of colors with the current color
-
-    QColor v_colors = this->color();
-    // tells the GPU to use the program just created
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     program->bind();
-    program->setAttributeValue("colors", v_colors);
+
+    if(renderingMode() == Flat || renderingMode() == FlatPlusEdges)
+    {
+      vaos[Flat_Facets]->bind();
+      if(soup->fcolors.empty())
+      {
+        program->setAttributeValue("colors", this->color());
+      }
+    }
+    else if(renderingMode() == Gouraud)
+    {
+     vaos[Smooth_Facets]->bind();
+      if(soup->vcolors.empty())
+        program->setAttributeValue("colors", this->color());
+    }
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_polys/4));
     // Clean-up
     program->release();
-    vaos[Facets]->release();
+    vaos[Smooth_Facets]->release();
+    vaos[Flat_Facets]->release();
   }
 
 void
@@ -631,9 +724,7 @@ Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const 
     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    QColor color = this->color().lighter(120);
-
-    program->setAttributeValue("colors", color);
+    program->setAttributeValue("colors", QColor(Qt::black));
     //draw the edges
     viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_lines/4));
     // Clean-up
@@ -645,7 +736,7 @@ Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const 
         attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         program->bind();
-        QColor c = QColor(255,0,0,255);
+        QColor c = QColor(Qt::red);
 
         program->setAttributeValue("colors", c);
         //draw the edges

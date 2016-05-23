@@ -44,6 +44,7 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/IO/File_scanner_OFF.h>
 
 namespace CGAL {
 
@@ -2502,41 +2503,90 @@ private: //------------------------------------------------------- private data
   inline std::istream& sm_skip_comments( std::istream& in) {
       char c;
       in >> c;
-      if (c == '#')
-        in.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
-      else
-        in.putback(c);
+      while(c == '#')
+      {
+       in.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+       in >> c;
+      }
+      in.putback(c);
       return in;
   }
 /// @endcond
 
 
   /// \relates Surface_mesh
-  /// Extracts the surface mesh from an input stream in Ascii OFF format.
-  /// The operator only reads the point property and does not read files 
-  /// with vertex normals or textures.
+
+  /// \relates Surface_mesh
+  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
+  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
+  /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
-    typedef Surface_mesh<P> Mesh;
-    typedef typename Mesh::size_type size_type;
+   typedef Surface_mesh<P> Mesh;
+   typedef typename Kernel_traits<P>::Kernel K;
+   typedef typename K::Vector_3 Vector_3;
+   typedef typename Mesh::Face_index Face_index;
+   typedef typename Mesh::Vertex_index Vertex_index;
+   typedef typename Mesh::size_type size_type;
     sm.clear();
     int n, f, e;
     std::string off;
+    is >> sm_skip_comments;
     is >> off;
-    CGAL_assertion(off == "OFF" || off == "COFF");
+    assert( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
+
     is >> n >> f >> e;
+
     sm.reserve(n,2*f,e);
     P p;
+    Vector_3 v;
+    typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
+    typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
+    bool vcolored = false, v_has_normals = false;
+
+    if((off == "NOFF") || (off == "CNOFF")){
+      bool created;
+      boost::tie(vnormal, created) = sm.template add_property_map<Vertex_index,Vector_3>("v:normal",Vector_3(0,0,0));
+      v_has_normals = true;
+    }
+    char ci;
+
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
       is >> p;
-      sm.add_vertex(p);
-      is.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+      Vertex_index vi= sm.add_vertex(p);
+      if(v_has_normals){
+        is >> v;
+        vnormal[vi] = v;
+      }
+
+
+      if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
+        std::string col;
+        std::getline(is, col);
+        std::istringstream iss(col);
+        if(iss >> ci){
+         bool created;
+         boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
+         std::istringstream iss2(col);
+         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss2);
+         vcolored = true;
+        }
+      }else{
+         if(vcolored){
+           //stores the RGB value
+           vcolor[vi] = File_scanner_OFF::get_color_from_line(is);
+         }
+       }
     }
     std::vector<size_type> vr;
     std::size_t d;
+
+    bool fcolored = false;
+    typename Mesh::template Property_map<Face_index,CGAL::Color> fcolor;
+
     for(int i=0; i < f; i++){
       is >> sm_skip_comments;
       is >> d;
@@ -2544,7 +2594,32 @@ private: //------------------------------------------------------- private data
       for(std::size_t j=0; j<d; j++){
         is >> vr[j];
       }
-      sm.add_face(vr);
+      Face_index fi = sm.add_face(vr);
+      if(fi == sm.null_face())
+      {
+       std::cout<< "Warning: Facets don't seem to be oriented. Loading a Soup of polygons instead."<<std::endl;
+       sm.clear();
+       return is;
+      }
+
+      // the first face will tell us if faces have a color map
+      // TODO: extend this to RGBA
+      if(i == 0 ){
+        std::string col;
+        std::getline(is, col);
+        std::istringstream iss(col);
+        if(iss >> ci){
+          bool created;
+          boost::tie(fcolor, created) = sm.template add_property_map<Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
+          fcolored = true;
+          std::istringstream iss2(col);
+          fcolor[fi] = File_scanner_OFF::get_color_from_line(iss2);
+        }
+      } else {
+          if(fcolored){
+            fcolor[fi] = File_scanner_OFF::get_color_from_line(is);
+          }
+        }
     }
     return is;
   }

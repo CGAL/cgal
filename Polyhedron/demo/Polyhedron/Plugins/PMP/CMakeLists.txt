@@ -30,7 +30,7 @@ endif()
 
 
 polyhedron_demo_plugin(orient_soup_plugin Orient_soup_plugin)
-target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)
+target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item scene_surface_mesh_item)
 
 
 polyhedron_demo_plugin(inside_out_plugin Inside_out_plugin)

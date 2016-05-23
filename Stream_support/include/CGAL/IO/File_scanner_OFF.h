@@ -30,6 +30,7 @@
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_header_OFF.h>
 #include <iostream>
+#include <sstream>
 #include <boost/cstdint.hpp>
 
 #include <CGAL/Point_3.h>
@@ -377,6 +378,228 @@ public:
         }
     }
 
+    static const Color& get_indexed_color(int id)
+    {
+      static const Color color[149] = {
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(178, 38, 25, 191),
+        Color(51, 51, 204, 191),
+        Color(229, 153, 5, 191),
+        Color(25, 76, 204, 191),
+        Color(25, 178, 51, 191),
+        Color(204, 204, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 51, 191),
+        Color(51, 229, 0, 191),
+        Color(0, 51, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(204, 102, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(12, 76, 25, 191),
+        Color(178, 2, 25, 191),
+        Color(51, 12, 153, 191),
+        Color(229, 229, 5, 191),
+        Color(0, 51, 102, 191),
+        Color(25, 102, 102, 191),
+        Color(204, 204, 204, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(204, 102, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(120, 120, 120, 120) };
+      if(id > 148) id =148;
+      return color[id];
+    }
+
+    static CGAL::Color get_color_from_line(std::istream &is)
+    {
+
+        std::string color_info;
+        bool is_float = false;
+
+        std::string col;
+        //get the line content
+        std::getline(is, col);
+        //split it into strings
+        std::istringstream iss(col);
+        //holds the rgb values
+        unsigned char rgb[3];
+        int index =0;
+        //split the string into numbers
+        while(iss>>color_info){
+            //stop if comment is read
+            if(color_info.at(0) == '#')
+                break;
+            //detect if the value is float
+            for(int c = 0; c<static_cast<int>(color_info.length()); c++)
+            {
+                if(color_info.at(c) == '.')
+                {
+                    is_float = true;
+                    break;
+                }
+            }
+            //if the value is of float type, convert it into an int
+            if(is_float)
+                rgb[index] = static_cast<unsigned char>(atof(color_info.c_str())*255);
+            //else stores the value
+            else
+                rgb[index] = static_cast<unsigned char>(atoi(color_info.c_str()));
+            index++;
+            if(index == 3)
+             break;
+        }
+        CGAL::Color color;
+        //if there were only one number, fetch the color in the color map
+        if(index<2)
+            color = get_indexed_color(rgb[0]);
+        //else create the coor with the 3 values;
+        else
+            color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
+        return color;
+    }
+
+    void scan_color( unsigned char& r, unsigned char& g, unsigned char& b) {
+        if ( binary()) {
+            float fr, fg, fb;
+            I_Binary_read_big_endian_float32( m_in, fr);
+            I_Binary_read_big_endian_float32( m_in, fg);
+            I_Binary_read_big_endian_float32( m_in, fb);
+            r = (unsigned char)(fr);
+            g = (unsigned char)(fg);
+            b = (unsigned char)(fb);
+
+        } else {
+            CGAL::Color color = get_color_from_line(m_in);
+            r = color.red();
+            g = color.green();
+            b = color.blue();
+        }
+    }
+
   void skip_to_next_vertex( std::size_t current_vertex);
 
   void scan_facet( std::size_t& size, std::size_t CGAL_assertion_code(current_facet)) {
@@ -444,6 +667,15 @@ file_scan_vertex( File_scanner_OFF& scanner, Point& p) {
     else
         p = Point( RT(x), RT(y), RT(z), RT(w));
     return p;
+}
+
+template < class T_Color> inline
+T_Color&
+file_scan_color( File_scanner_OFF& scanner, T_Color& c) {
+    unsigned char r, g, b;
+    scanner.scan_color(r,g,b);
+        c = T_Color(r,g,b);
+    return c;
 }
 
 template < class Vector> inline

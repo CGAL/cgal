@@ -867,7 +867,7 @@ void MainWindow::reloadItem() {
   QString loader_name = item->property("loader_name").toString();
   if(filename.isEmpty() || loader_name.isEmpty()) {
     std::cerr << "Cannot reload item: "
-              << "the item has no \"source filename\" or no \"loader_name\" attached attached\n";
+              << "the item has no \"source filename\" or no \"loader_name\" attached\n";
     return;
   }
 

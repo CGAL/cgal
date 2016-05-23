@@ -3,6 +3,7 @@
 #include "Scene_polygon_soup_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
 #include "Polyhedron_type.h"
+#include "CGAL/Surface_mesh/Surface_mesh.h"
 
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
@@ -21,11 +22,14 @@ struct Polygon_soup
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
     typedef boost::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
+    typedef std::vector<CGAL::Color> Colors;
     typedef std::set<Edge> Edges;
     typedef Polygons::size_type size_type;
     Points points;
     Polygons polygons;
     Edges_map edges;
+    Colors fcolors;
+    Colors vcolors;
     Edges non_manifold_edges;
     bool display_non_manifold_edges;
 
@@ -109,7 +113,7 @@ public:
     Scene_polygon_soup_item* clone() const;
     bool load(std::istream& in);
     void load(Scene_polyhedron_item*);
-
+    bool isDataColored() { return soup->fcolors.size()>0 || soup->vcolors.size()>0;}
     template <class Point, class Polygon>
     inline void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
     {
@@ -136,11 +140,12 @@ public:
     }
 
     bool save(std::ostream& out) const;
-
+    std::vector<CGAL::Color> getVColors() const{return soup->vcolors;}
+    std::vector<CGAL::Color> getFColors() const{return soup->fcolors;}
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
+    virtual bool supportsRenderingMode(RenderingMode m) const { return ( m!=PointsPlusNormals && m!=Splatting); }
     // OpenGL drawing in a display list
     virtual void draw() const {}
     virtual void draw(CGAL::Three::Viewer_interface*) const;
@@ -161,6 +166,7 @@ public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
     bool exportAsPolyhedron(Polyhedron*);
+    bool exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3>*);
     void inside_out();
 
     void setDisplayNonManifoldEdges(const bool);
@@ -172,21 +178,26 @@ private:
     bool oriented;
 
     enum VAOs {
-        Facets=0,
+        Flat_Facets=0,
+        Smooth_Facets,
         Edges,
         NM_Edges,
-        NbOfVaos = NM_Edges+1
+        NbOfVaos
     };
     enum VBOs {
         Facets_vertices = 0,
         Facets_normals,
         Edges_vertices,
         NM_Edges_vertices,
-        NbOfVbos = NM_Edges_vertices+1
+        F_Colors,
+        V_Colors,
+        NbOfVbos
     };
 
     mutable std::vector<float> positions_poly;
     mutable std::vector<float> positions_lines;
+    mutable std::vector<float> f_colors;
+    mutable std::vector<float> v_colors;
     mutable std::vector<float> normals;
     mutable std::vector<float> positions_nm_lines;
     mutable std::size_t nb_nm_edges;
@@ -195,7 +206,7 @@ private:
     using CGAL::Three::Scene_item::initializeBuffers;
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void) const;
-    void triangulate_polygon(Polygons_iterator ) const;
+    void triangulate_polygon(Polygons_iterator , int polygon_id) const;
     mutable QOpenGLShaderProgram *program;
 
 }; // end class Scene_polygon_soup_item
