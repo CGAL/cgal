@@ -93,12 +93,12 @@ bool test_GMAP_4()
   Dart_handle dh8=gmap.template alpha<2,1,0,1,2>(dh7); // f2 opposite to f1
   Dart_handle dh9=gmap.template alpha<2>(dh7); // face incident to f1 and d2
 
-  gmap.remove_cell<2>(dh7);
+  gmap.template remove_cell<2>(dh7);
   if ( !check_number_of_cells_4(gmap, 8, 12, 5, 1, 1, 1) )
     return false;
 
   trace_test_begin();
-  gmap.remove_cell<2>(dh8);
+  gmap.template remove_cell<2>(dh8);
   if ( !check_number_of_cells_4(gmap, 8, 12, 4, 1, 1, 1) )
     return false;
 
@@ -147,19 +147,19 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  gmap.remove_cell<4>(gmap.alpha(dh9, 2, 3, 4));
+  gmap.template remove_cell<4>(gmap.alpha(dh9, 2, 3, 4));
   if ( !check_number_of_cells_4(gmap, 12, 20, 11, 4, 2, 1) )
     return false;
 
   trace_test_begin();
-  gmap.remove_cell<3>(gmap.alpha(dh9, 2, 3));
-  gmap.remove_cell<3>(gmap.alpha(dh10, 2, 4, 3));
+  gmap.template remove_cell<3>(gmap.alpha(dh9, 2, 3));
+  gmap.template remove_cell<3>(gmap.alpha(dh10, 2, 4, 3));
   if ( !check_number_of_cells_4(gmap, 12, 20, 11, 2, 2, 1) )
     return false;
 
   trace_test_begin();
-  gmap.remove_cell<2>(gmap.alpha(dh9, 2));
-  gmap.remove_cell<2>(gmap.alpha(dh9, 1, 0, 1, 2));
+  gmap.template remove_cell<2>(gmap.alpha(dh9, 2));
+  gmap.template remove_cell<2>(gmap.alpha(dh9, 1, 0, 1, 2));
   if ( !check_number_of_cells_4(gmap, 12, 20, 9, 2, 2, 1) )
     return false;
 

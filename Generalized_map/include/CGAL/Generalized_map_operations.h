@@ -20,8 +20,7 @@
 #ifndef CGAL_GENERALIZED_MAP_OPERATIONS_H
 #define CGAL_GENERALIZED_MAP_OPERATIONS_H 1
 
-#include <CGAL/Generalized_map.h>
-#include <CGAL/Generalized_map_insertions.h>
+#include <CGAL/Combinatorial_map_basic_operations.h>
 #include <deque>
 #include <stack>
 
@@ -77,10 +76,11 @@ namespace CGAL
   template<class GMap, unsigned int i, unsigned int nmi>
   struct Remove_cell_functor_gmap
   {
-    static size_t run(GMap& amap, typename GMap::Dart_handle adart)
+    static size_t run(GMap& amap, typename GMap::Dart_handle adart,
+                      bool update_attributes)
     {
       CGAL_static_assertion ( i<GMap::dimension );
-      CGAL_assertion( (is_removable<GMap,i>(amap, adart)) );
+      CGAL_assertion( (amap.template is_removable<i>(adart)) );
 
       size_t res = 0;
 
@@ -146,7 +146,7 @@ namespace CGAL
         }
       }
 
-      if (amap.are_attributes_automatically_managed())
+      if (amap.are_attributes_automatically_managed() && update_attributes)
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
@@ -191,7 +191,8 @@ namespace CGAL
   template<class GMap,unsigned int i>
   struct Remove_cell_functor_gmap<GMap,i,0>
   {
-    static size_t run(GMap& amap, typename GMap::Dart_handle adart)
+    static size_t run(GMap& amap, typename GMap::Dart_handle adart,
+                      bool update_attributes)
     {
       typename GMap::size_type mark = amap.get_new_mark();
       std::deque<typename GMap::Dart_handle> to_erase;
@@ -224,7 +225,7 @@ namespace CGAL
         }
       }
 
-      if (amap.are_attributes_automatically_managed())
+      if (amap.are_attributes_automatically_managed() && update_attributes)
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
@@ -294,10 +295,11 @@ namespace CGAL
   template<class GMap, unsigned int i>
   struct Contract_cell_functor_gmap
   {
-    static size_t run(GMap& amap, typename GMap::Dart_handle adart)
+    static size_t run(GMap& amap, typename GMap::Dart_handle adart,
+                      bool update_attributes)
     {
       CGAL_static_assertion ( 1<=i && i<=GMap::dimension );
-      CGAL_assertion( (is_contractible<GMap,i>(amap, adart)) );
+      CGAL_assertion( (amap.template is_contractible<i>(adart)) );
 
       size_t res = 0;
 
@@ -359,7 +361,7 @@ namespace CGAL
         }
       }
 
-      if ( amap.are_attributes_automatically_managed() )
+      if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
         // We test the split of all the incident cells for all the non
         // void attributes.

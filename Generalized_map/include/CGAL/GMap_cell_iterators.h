@@ -20,6 +20,7 @@
 #ifndef CGAL_GMAP_CELL_ITERATORS_H
 #define CGAL_GMAP_CELL_ITERATORS_H 1
 
+#include <CGAL/Dart_iterators.h>
 #include <CGAL/Cell_iterators.h>
 
 // TODO do all the orbit iterator of any orbit ?
@@ -28,9 +29,9 @@ namespace CGAL {
 
   /** @file Cell_iterators.h
    * Cell iterators. There are 3 classes:
-   * * - GMap_cell_iterator<Map,i,dim>: one dart per each i-cell
-   * * - GMap_one_dart_per_incident_cell_iterator<Map,Ite,i,dim>
-   * * - GMap_one_dart_per_cell_iterator<Map,Ite,i,dim>
+   * - GMap_cell_iterator<Map,i,dim>: one dart per each i-cell
+   * - GMap_one_dart_per_incident_cell_iterator<Map,Ite,i,dim>
+   * - GMap_one_dart_per_cell_iterator<Map,Ite,i,dim>
    */
 
   //****************************************************************************

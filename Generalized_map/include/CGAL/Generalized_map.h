@@ -32,6 +32,7 @@
 #include <CGAL/GMap_cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Generalized_map_storages.h>
+#include <CGAL/Generalized_map_operations.h>
 #include <CGAL/Unique_hash_map.h>
 #include <bitset>
 #include <vector>
@@ -1651,7 +1652,7 @@ namespace CGAL {
     template<unsigned int i>
     void topo_unsew(Dart_handle adart)
     {
-      CGAL_assertion( !is_free<i>(adart) );
+      CGAL_assertion( !(is_free<i>(adart)) );
       CGAL_assertion( i<=Self::dimension );
 
       for ( CGAL::GMap_dart_iterator_of_involution<Self,i> it(*this, adart);
@@ -3112,7 +3113,7 @@ namespace CGAL {
      */
     template < unsigned int i >
     bool is_removable(Dart_const_handle adart) const
-    { return CGAL::Is_removable_functor<Self, i>::run(*this, adart); }
+    { return CGAL::Is_removable_functor_gmap<Self, i>::run(*this, adart); }
 
     /** Remove an i-cell, 0<=i<=dimension.
      * @param adart a dart of the i-cell to remove.
@@ -3122,7 +3123,7 @@ namespace CGAL {
     template < unsigned int i >
     size_t remove_cell(Dart_handle adart, bool update_attributes = true)
     {
-      return CGAL::Remove_cell_functor<Self,i,Self::dimension-i>::
+      return CGAL::Remove_cell_functor_gmap<Self,i,Self::dimension-i>::
         run(*this,adart,update_attributes);
     }
 
@@ -3134,7 +3135,7 @@ namespace CGAL {
      */
     template < unsigned int i >
     bool is_contractible(Dart_const_handle adart) const
-    { return CGAL::Is_contractible_functor<Self, i>::run(*this,adart); }
+    { return CGAL::Is_contractible_functor_gmap<Self, i>::run(*this,adart); }
 
     /** Contract an i-cell, 1<=i<=dimension.
      * @param adart a dart of the i-cell to remove.
@@ -3143,8 +3144,8 @@ namespace CGAL {
     template < unsigned int i >
     size_t contract_cell(Dart_handle adart, bool update_attributes = true)
     {
-      return CGAL::Contract_cell_functor<Self,i>::
-        run(*this,adart, update_attributes);
+      return CGAL::Contract_cell_functor_gmap<Self,i>::
+        run(*this, adart, update_attributes);
     }
 
     /** Insert a vertex in a given edge.
@@ -3152,7 +3153,9 @@ namespace CGAL {
      * @return a dart of the new vertex.
      */
     Dart_handle
-    insert_cell_0_in_cell_1( Attribute_handle<0>::type ah=GMap::null_handle,
+    insert_cell_0_in_cell_1( Dart_handle adart,
+                             typename Attribute_handle<0>::type
+                             ah=null_handle,
                              bool update_attributes=true )
     {
       Dart_handle d1, d2;
@@ -3174,13 +3177,13 @@ namespace CGAL {
       {
         d1 = create_dart();
 
-        if (!is_free<0>(*it) && is_marked(alpha<0>(*it), mark))
+        if (!(is_free<0>(*it)) && is_marked(alpha<0>(*it), mark))
           basic_link_alpha<1>(d1, alpha<0,0>(*it));
 
         basic_link_alpha<0>(*it, d1);
         mark(*it, mark);
 
-        for ( unsigned int dim=2; dim<=GMap::dimension; ++dim )
+        for ( unsigned int dim=2; dim<=dimension; ++dim )
         {
           if (!is_free(*it, dim) && is_marked(alpha(*it, dim), mark))
           {
@@ -3191,7 +3194,7 @@ namespace CGAL {
         if (are_attributes_automatically_managed() && update_attributes)
         {
           // We copy all the attributes except for dim=0
-          GMap::Helper::template Foreach_enabled_attributes_except
+          Helper::template Foreach_enabled_attributes_except
             <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 0>::
             run(this,*it,d1);
         }
@@ -3218,7 +3221,7 @@ namespace CGAL {
 
       if (are_attributes_automatically_managed() && update_attributes)
     {
-      if ( !is_free<1>(alpha<0>(adart)) )
+      if ( !(is_free<1>(alpha<0>(adart))) )
       {
         CGAL::internal::GMap_degroup_attribute_functor_run<Self, 1>::
           run(this, adart, alpha<0,1>(adart));
@@ -3239,12 +3242,13 @@ namespace CGAL {
      */
     Dart_handle
     insert_cell_0_in_cell_2( Dart_handle adart,
-                             Attribute_handle<0>::type ah=GMap::null_handle,
+                             typename Attribute_handle<0>::type
+                             ah=null_handle,
                              bool update_attributes=true )
     {
-      CGAL_assertion(adart!=amap.null_handle);
+      CGAL_assertion(adart!=null_handle);
 
-      Dart_handle d1=amap.null_handle, d2=amap.null_handle;
+      Dart_handle d1=null_handle, d2=null_handle;
 
       // Mark used to mark darts already treated.
       size_type treated = get_new_mark();
@@ -3253,7 +3257,7 @@ namespace CGAL {
       // Stack of darts of the face
       std::deque<Dart_handle> vect;
       {
-        for ( Dart_of_cell_basic_range<2>::iterator
+        for ( typename Dart_of_cell_basic_range<2>::iterator
                 it=darts_of_cell_basic<2>(adart,m).begin();
               it!=darts_of_cell_basic<2>(adart,m).end(); ++it )
           vect.push_back(it);
@@ -3262,7 +3266,7 @@ namespace CGAL {
       // Stack of darts to degroup (one dart per edge of the face)
       std::deque<Dart_handle> todegroup;
       {
-        for ( Dart_of_cell_basic_range<2,2>::iterator
+        for ( typename Dart_of_cell_basic_range<2,2>::iterator
               it=darts_of_cell_basic<2,2>(adart).begin();
               it!=darts_of_cell_basic<2,2>(adart).end(); ++it )
           if ( it!=adart && it!=alpha<0>(adart) )
@@ -3270,66 +3274,66 @@ namespace CGAL {
       }
 
     // 2) For each dart of the cell, we modify link of neighbors.
-    typename std::deque<typename GMap::Dart_handle>::iterator it = vect.begin();
+    typename std::deque<Dart_handle>::iterator it = vect.begin();
     for (; it != vect.end(); ++it)
     {
-      d1 = amap.create_dart();
-      d2 = amap.create_dart();
-      amap.template basic_link_alpha<0>(d1, d2);
-      amap.mark(*it, treated);
+      d1 = create_dart();
+      d2 = create_dart();
+      basic_link_alpha<0>(d1, d2);
+      mark(*it, treated);
 
-      amap.template basic_link_alpha<1>(*it, d1);
+      basic_link_alpha<1>(*it, d1);
 
-      if (!amap.template is_free<0>(*it) &&
-          amap.is_marked(amap.template alpha<0>(*it), treated))
-        amap.template basic_link_alpha<1>(d2, amap.template alpha<0,1,0>(*it));
+      if (!(is_free<0>(*it)) &&
+          is_marked(alpha<0>(*it), treated))
+        basic_link_alpha<1>(d2, alpha<0,1,0>(*it));
 
-      for ( unsigned int dim=3; dim<=GMap::dimension; ++dim )
+      for ( unsigned int dim=3; dim<=dimension; ++dim )
       {
-        if (!amap.is_free(*it, dim) && amap.is_marked(amap.alpha(*it, dim), treated))
+        if (!is_free(*it, dim) && is_marked(alpha(*it, dim), treated))
         {
-          amap.basic_link_alpha(amap.beta(*it, dim, 1), d1, dim);
-          amap.basic_link_alpha(amap.beta(*it, dim, 1, 0), d2, dim);
+          basic_link_alpha(alpha(*it, dim, 1), d1, dim);
+          basic_link_alpha(alpha(*it, dim, 1, 0), d2, dim);
         }
       }
 
-      if (amap.are_attributes_automatically_managed() && update_attributes)
+      if (are_attributes_automatically_managed() && update_attributes)
       {
         // We copy all the attributes except for dim=1
-        GMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::GMap_group_attribute_functor_of_dart<GMap>, 1>::
-          run(&amap,*it,d1);
+        Helper::template Foreach_enabled_attributes_except
+          <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 1>::
+          run(this,*it,d1);
         // We initialise the 0-atttrib to ah
-        CGAL::internal::Set_i_attribute_of_dart_functor<GMap, 0>::
-          run(&amap, d2, ah);
+        CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
+          run(this, d2, ah);
       }
     }
 
     for (it = vect.begin(); it != vect.end(); ++it)
     {
-      amap.unmark(*it, m);
-      amap.unmark(*it, treated);
+      unmark(*it, m);
+      unmark(*it, treated);
     }
 
-    CGAL_assertion(amap.is_whole_map_unmarked(m));
-    CGAL_assertion(amap.is_whole_map_unmarked(treated));
-    amap.free_mark(m);
-    amap.free_mark(treated);
+    CGAL_assertion(is_whole_map_unmarked(m));
+    CGAL_assertion(is_whole_map_unmarked(treated));
+    free_mark(m);
+    free_mark(treated);
 
-    if (amap.are_attributes_automatically_managed() && update_attributes)
+    if (are_attributes_automatically_managed() && update_attributes)
     {
       for (it = todegroup.begin(); it != todegroup.end(); ++it)
       {
-        CGAL::internal::GMap_degroup_attribute_functor_run<GMap, 2>::
-          run(&amap, adart, *it);
+        CGAL::internal::GMap_degroup_attribute_functor_run<Self, 2>::
+          run(this, adart, *it);
       }
     }
 
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
-    CGAL_assertion( amap.is_valid() );
+    CGAL_assertion( is_valid() );
 #endif
 
-    return amap.template alpha<1,0>(adart);
+    return alpha<1,0>(adart);
   }
 
   /** Test if an edge can be inserted onto a 2-cell between two given darts.
@@ -3705,13 +3709,6 @@ namespace CGAL {
     typename Helper::Split_functors m_onsplit_functors;
     typename Helper::Merge_functors m_onmerge_functors;
   };
-
-  template < unsigned int d_, class Refs, class Items_, class Alloc_,
-             class Storage_ >
-  typename Generalized_map_base<d_,Refs,Items_,Alloc_,Storage_>::
-     Base::Null_handle_type
-     Generalized_map_base<d_,Refs,Items_,Alloc_,Storage_>::null_handle =
-     Generalized_map_base<d_,Refs,Items_,Alloc_,Storage_>::Base::null_handle;
 
   template < unsigned int d_,
              class Items_=Generalized_map_min_items<d_>,

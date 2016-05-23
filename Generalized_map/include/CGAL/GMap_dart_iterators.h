@@ -37,7 +37,6 @@ namespace CGAL {
    * but many specializations to optimize specific cases.
    *
    */
-
   //****************************************************************************
   //**********************BASIC ITERATORS***************************************
   //****************************************************************************
@@ -130,11 +129,9 @@ namespace CGAL {
   template<typename Map,bool Const>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
                                                -1,-1,-1,-1,-1,-1,-1,-1,-1>
-
   {
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const> type;
   };
-
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   // Case when Alpha... is empty: iterator of self
@@ -340,7 +337,7 @@ namespace CGAL {
     { Self res=*this; operator ++(); return res; }
 
   private:
-    /// Char: number of the current dart (0,1,2 or 3).
+    /// mcurdart: number of the current dart (0,1,2 or 3).
     char mcurdart;
   };
   //****************************************************************************

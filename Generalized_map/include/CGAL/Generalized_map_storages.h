@@ -49,7 +49,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type      size_type;
 
     typedef CGAL::Void* Null_handle_type;
-    static Null_handle_type null_handle;
+    static const Null_handle_type null_handle;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -350,7 +350,7 @@ namespace CGAL {
 
   /// null_handle
   template < unsigned int d_, class Items_, class Alloc_ >
-  typename Generalized_map_storage_1<d_, Items_, Alloc_>::Null_handle_type
+  const typename Generalized_map_storage_1<d_, Items_, Alloc_>::Null_handle_type
   Generalized_map_storage_1<d_, Items_, Alloc_>::null_handle = NULL;
 
 } // namespace CGAL
