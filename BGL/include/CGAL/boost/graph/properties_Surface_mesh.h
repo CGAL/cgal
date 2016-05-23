@@ -44,7 +44,7 @@ public:
   typedef typename SM::Edge_index                        key_type;
 
   SM_edge_weight_pmap(const CGAL::Surface_mesh<Point>& sm)
-    : pm_(sm. template property_map< 
+    : pm_(sm. template property_map<
             typename SM::Vertex_index,
             typename SM::Point >("v:point").first),
       sm_(sm)
@@ -105,153 +105,197 @@ struct property_map<CGAL::Surface_mesh<Point>, boost::edge_weight_t >
   typedef CGAL::SM_edge_weight_pmap<Point> type;
   typedef CGAL::SM_edge_weight_pmap<Point> const_type;
 };
-
+}
+namespace CGAL{
 template <typename Point>
-typename property_map<CGAL::Surface_mesh<Point>, boost::edge_weight_t>::const_type
+typename boost::property_map<CGAL::Surface_mesh<Point>, boost::edge_weight_t>::const_type
 get(boost::edge_weight_t, const CGAL::Surface_mesh<Point>& sm)
 {
   return CGAL::SM_edge_weight_pmap<Point>(sm);
 }
 
+// forward declarations, see <CGAL/Surface_mesh.h>
+class SM_Vertex_index;
+class SM_Edge_index;
+class SM_Halfedge_index;
+class SM_Face_index;
+
 template <typename Point>
-typename CGAL::SM_edge_weight_pmap<Point>::value_type
-get(boost::edge_weight_t, const CGAL::Surface_mesh<Point>& sm, 
-    const typename boost::graph_traits<CGAL::Surface_mesh<Point> >::edge_descriptor& e)
+typename CGAL::Kernel_traits<Point>::type::FT
+get(boost::edge_weight_t, const CGAL::Surface_mesh<Point>& sm,
+    const SM_Edge_index& e)
 {
   return CGAL::SM_edge_weight_pmap<Point>(sm)[e];
 }
-
+}
 //
 // vertex_index
 //
 
-template <typename K>
-struct property_map<CGAL::Surface_mesh<K>, boost::vertex_index_t >
+namespace boost{
+template <typename Point>
+struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_index_t >
 {
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor> type;
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor> const_type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::vertex_descriptor> type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::vertex_descriptor> const_type;
 };
-
-template <typename K>
-CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor>
-get(const boost::vertex_index_t&, const CGAL::Surface_mesh<K>&)
-{
-  return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::vertex_descriptor>();
 }
+namespace CGAL{
 
+template <typename Point>
+CGAL::SM_index_pmap<Point, SM_Vertex_index>
+get(const boost::vertex_index_t&, const CGAL::Surface_mesh<Point>&)
+{
+  return CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::vertex_descriptor>();
+}
+}
 //
 // face_index
 //
-
-template <typename K>
-struct property_map<CGAL::Surface_mesh<K>, boost::face_index_t >
+namespace boost{
+template <typename Point>
+struct property_map<CGAL::Surface_mesh<Point>, boost::face_index_t >
 {
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::face_descriptor> type;
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::face_descriptor> const_type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::face_descriptor> type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::face_descriptor> const_type;
 };
-
-template <typename K>
-typename property_map<CGAL::Surface_mesh<K>, boost::face_index_t>::const_type
-get(const boost::face_index_t&, const CGAL::Surface_mesh<K>&)
-{
-  return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::face_descriptor>();
 }
+namespace CGAL{
 
+template <typename Point>
+CGAL::SM_index_pmap<Point, SM_Face_index>
+get(const boost::face_index_t&, const CGAL::Surface_mesh<Point>&)
+{
+  return CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::face_descriptor>();
+}
+}
 //
 // edge_index
 //
-
-template <typename K>
-struct property_map<CGAL::Surface_mesh<K>, boost::edge_index_t >
+namespace boost{
+template <typename Point>
+struct property_map<CGAL::Surface_mesh<Point>, boost::edge_index_t >
 {
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor> type;
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor> const_type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::edge_descriptor> type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::edge_descriptor> const_type;
 };
-
-template <typename K>
-CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor>
-get(const boost::edge_index_t&, const CGAL::Surface_mesh<K>&)
-{
-  return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::edge_descriptor>();
 }
-
+namespace CGAL{
+template <typename Point>
+CGAL::SM_index_pmap<Point, SM_Edge_index>
+get(const boost::edge_index_t&, const CGAL::Surface_mesh<Point>&)
+{
+  return CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::edge_descriptor>();
+}
+}
 //
 // halfedge_index
 //
-
-template <typename K>
-struct property_map<CGAL::Surface_mesh<K>, boost::halfedge_index_t >
+namespace boost{
+template <typename Point>
+struct property_map<CGAL::Surface_mesh<Point>, boost::halfedge_index_t >
 {
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor> type;
-  typedef CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor> const_type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::halfedge_descriptor> type;
+  typedef CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::halfedge_descriptor> const_type;
 };
-
-template <typename K>
-CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor>
-get(const boost::halfedge_index_t&, const CGAL::Surface_mesh<K>&)
-{
-  return CGAL::SM_index_pmap<K, typename boost::graph_traits<CGAL::Surface_mesh<K> >::halfedge_descriptor>();
 }
+namespace CGAL{
 
+template <typename Point>
+CGAL::SM_index_pmap<Point, SM_Halfedge_index>
+get(const boost::halfedge_index_t&, const CGAL::Surface_mesh<Point>&)
+{
+  return CGAL::SM_index_pmap<Point, typename boost::graph_traits<CGAL::Surface_mesh<Point> >::halfedge_descriptor>();
+}
+}
 //
 // vertex_point
-// 
-
+//
+namespace boost{
 template<typename P>
 struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_point_t >
 {
-  typedef CGAL::Surface_mesh<P> SM; 
+  typedef CGAL::Surface_mesh<P> SM;
 
   typedef typename
-    SM::template Property_map< typename SM::Vertex_index, 
+    SM::template Property_map< typename SM::Vertex_index,
                                P
                                > type;
-  
-  typedef type const_type;
-  
-};
 
-template<typename K>
-typename property_map<CGAL::Surface_mesh<K>, CGAL::vertex_point_t >::const_type
-get(CGAL::vertex_point_t, const CGAL::Surface_mesh<K>& g) {
+  typedef type const_type;
+
+};
+}
+namespace CGAL{
+
+namespace internal {
+  template <typename Point>
+  struct Get_vertex_point_map_for_Surface_mesh_return_type {
+    typedef typename boost::property_map
+    <
+      CGAL::Surface_mesh<Point>,
+      CGAL::vertex_point_t
+      >::const_type type;
+  };
+} // end namespace internal
+
+template<typename Point>
+typename
+boost::lazy_disable_if
+<
+  boost::is_const<Point>,
+  internal::Get_vertex_point_map_for_Surface_mesh_return_type<Point>
+>::type
+get(CGAL::vertex_point_t, const CGAL::Surface_mesh<Point>& g) {
   return g.points();
 }
 
+namespace internal {
+  template <typename Point>
+  struct Get_graph_traits_of_SM {
+    typedef boost::graph_traits< CGAL::Surface_mesh<Point> > type;
+  };
+} // end namespace internal
 
 // get for intrinsic properties
 #define CGAL_SM_INTRINSIC_PROPERTY(RET, PROP, TYPE)                     \
-  template<typename Point>                                              \
-  RET                                                                   \
-  get(PROP p, const CGAL::Surface_mesh<Point>& sm,                      \
-      typename boost::graph_traits< CGAL::Surface_mesh<Point> >::TYPE x) \
-  { return get(get(p, sm), x); }                                        \
+ template<typename Point>                                              \
+ RET                                                                   \
+ get(PROP p, const CGAL::Surface_mesh<Point>& sm,                      \
+     const TYPE& x)                                                \
+ { return get(get(p, sm), x); }                                        \
 
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t, vertex_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::edge_index_t, edge_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::halfedge_index_t, halfedge_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::face_index_t, face_descriptor)
-CGAL_SM_INTRINSIC_PROPERTY(Point&, CGAL::vertex_point_t, vertex_descriptor)
+
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t,
+SM_Vertex_index)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::edge_index_t,
+SM_Edge_index)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::halfedge_index_t,
+SM_Halfedge_index)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::face_index_t,
+SM_Face_index)
+CGAL_SM_INTRINSIC_PROPERTY(Point&, CGAL::vertex_point_t, SM_Vertex_index)
 
 #undef CGAL_SM_INTRINSIC_PROPERTY
 
 // put for intrinsic properties
 // only available for vertex_point
-template<typename K>
+template<typename Point>
 void
-put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<K>& g,
-    typename boost::graph_traits< CGAL::Surface_mesh<K> >::vertex_descriptor x,
-    const K& point) {
-  typedef CGAL::Surface_mesh<K> SM;
+put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<Point>& g,
+    typename boost::graph_traits< CGAL::Surface_mesh<Point> >::vertex_descriptor x,
+    const Point& point) {
+  typedef CGAL::Surface_mesh<Point> SM;
   CGAL_assertion(g.is_valid(x));
-  typename SM::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor, 
-                    K> prop = get(p, g);
+  typename SM::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor,
+                    Point> prop = get(p, g);
   prop[x] = point;
 }
 
-} // boost
+} // CGAL
 
 #if 0
-// 
+//
 namespace CGAL {
 template <typename Point, typename T>
 typename boost::property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >::const_type
