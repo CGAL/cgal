@@ -1052,7 +1052,6 @@ namespace CGAL {
      *  @param i the dimension to close
      *  @return the number of new darts.
      *  @pre 2<=i<=n (TODO case i==1)
-     *  @TODO move into Combinatorial_map_operations ?
      */
     template<unsigned int i>
     unsigned int close()
@@ -3748,14 +3747,9 @@ namespace CGAL {
       this->automatic_attributes_management = newval;
     }
 
-  /** @file Combinatorial_map_constructors.h
-   * Basic creation operations  for a combinatorial map.
-   * Create edge, triangle, quadrilateral, tetrahedron, hexahedron.
-   */
-
-  /** Create an edge.
-   * @return a dart of the new edge.
-   */
+    /** Create an edge.
+     * @return a dart of the new edge.
+     */
     Dart_handle make_edge()
     {
       Dart_handle d1 = create_dart();
@@ -3764,10 +3758,10 @@ namespace CGAL {
       return d1;
     }
 
-  /** Create a combinatorial polygon of length alg
-   * (a cycle of alg darts beta1 links together).
-   * @return a new dart.
-   */
+    /** Create a combinatorial polygon of length alg
+     * (a cycle of alg darts beta1 links together).
+     * @return a new dart.
+     */
     Dart_handle make_combinatorial_polygon(unsigned int alg)
     {
       CGAL_assertion(alg>0);
@@ -3920,7 +3914,7 @@ namespace CGAL {
                                      beta(d2, 0)   , 2);
 
       return d1;
-  }
+    }
 
     /** Test if a volume is a combinatorial hexahedron.
      * @param adart an intial dart
