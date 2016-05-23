@@ -17,25 +17,24 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #include <CGAL/Generalized_map.h>
-#include<CGAL/Generalized_map_constructors.h>
 #include <iostream>
 #include <cstdlib>
 
-typedef CGAL::Generalized_map<4> CMap_4;
-typedef CMap_4::Dart_handle Dart_handle;
+typedef CGAL::Generalized_map<4> GMap_4;
+typedef GMap_4::Dart_handle Dart_handle;
 
 int main()
 {
-  CMap_4 cm;
-  Dart_handle d1 = CGAL::make_combinatorial_tetrahedron(cm);
-  Dart_handle d2 = CGAL::make_combinatorial_tetrahedron(cm);
+  GMap_4 gm;
+  Dart_handle d1 = gm.make_combinatorial_tetrahedron();
+  Dart_handle d2 = gm.make_combinatorial_tetrahedron();
 
-  CGAL_assertion(cm.is_valid());
+  CGAL_assertion(gm.is_valid());
 
-  cm.sew<4>(d1,d2);
+  gm.sew<4>(d1,d2);
 
-  cm.display_characteristics(std::cout);
-  std::cout<<", valid="<<cm.is_valid()<<std::endl;
+  gm.display_characteristics(std::cout);
+  std::cout<<", valid="<<gm.is_valid()<<std::endl;
 
   return EXIT_SUCCESS;
 }

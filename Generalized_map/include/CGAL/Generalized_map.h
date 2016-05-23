@@ -58,19 +58,15 @@ namespace CGAL {
              class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
   class Generalized_map_base: public Storage_
   {
-    template<typename CMap,unsigned int i,typename Enabled>
+    template<typename Gmap,unsigned int i,typename Enabled>
     friend struct CGAL::internal::Call_merge_functor;
-    template<typename CMap,unsigned int i,typename Enabled>
+    template<typename Gmap,unsigned int i,typename Enabled>
     friend struct CGAL::internal::Call_split_functor;
     template<class Map, unsigned int i, unsigned int nmi>
     friend struct Remove_cell_functor;
     template<class Map, unsigned int i>
     friend struct Contract_cell_functor;
-    template <typename CMap, typename Attrib>
-    friend struct internal::Reverse_orientation_of_map_functor;
-    template <typename CMap, typename Attrib>
-    friend struct internal::Reverse_orientation_of_connected_component_functor;
-    template<typename CMap>
+    template<typename Gmap>
     friend struct internal::Init_attribute_functor;
 
   public:
@@ -100,7 +96,7 @@ namespace CGAL {
     static const unsigned int dimension = Base::dimension;
 
     typedef typename Base::Null_handle_type Null_handle_type;
-    static Null_handle_type null_handle;
+    using Base::null_handle;
 
     using Base::mdarts;
     using Base::get_alpha;
@@ -176,12 +172,12 @@ namespace CGAL {
     }
 
     /** Copy the given generalized map into *this.
-     *  Note that both CMap can have different dimensions and/or non void attributes.
+     *  Note that both Gmap can have different dimensions and/or non void attributes.
      *  @param amap the generalized map to copy.
      *  @post *this is valid.
      */
-    template <typename CMap2, typename Converters, typename Pointconverter>
-    void copy(const CMap2& amap, const Converters& converters,
+    template <typename Gmap2, typename Converters, typename Pointconverter>
+    void copy(const Gmap2& amap, const Converters& converters,
               const Pointconverter& pointconverter)
     {
       this->clear();
@@ -201,9 +197,9 @@ namespace CGAL {
       // TODO: replace the std::map by a boost::unordered_map
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      std::map<typename CMap2::Dart_const_handle, Dart_handle> dartmap;
+      std::map<typename Gmap2::Dart_const_handle, Dart_handle> dartmap;
 
-      for (typename CMap2::Dart_const_range::const_iterator
+      for (typename Gmap2::Dart_const_range::const_iterator
              it=amap.darts().begin(), itend=amap.darts().end();
            it!=itend; ++it)
       {
@@ -213,7 +209,7 @@ namespace CGAL {
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
 
-      typename std::map<typename CMap2::Dart_const_handle,Dart_handle>
+      typename std::map<typename Gmap2::Dart_const_handle,Dart_handle>
         ::iterator dartmap_iter, dartmap_iter_end=dartmap.end();
       for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
@@ -234,7 +230,7 @@ namespace CGAL {
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
-          < internal::Copy_attributes_functor <CMap2, Refs, Converters,
+          < internal::Copy_attributes_functor <Gmap2, Refs, Converters,
             Pointconverter> >::
           run(&amap, static_cast<Refs*>(this),
               dartmap_iter->first, dartmap_iter->second,
@@ -244,22 +240,22 @@ namespace CGAL {
       CGAL_assertion (is_valid () == 1);
     }
 
-    template <typename CMap2>
-    void copy(const CMap2& amap)
+    template <typename Gmap2>
+    void copy(const Gmap2& amap)
     {
       CGAL::cpp11::tuple<> converters;
-      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy< CMap2, CGAL::cpp11::tuple<>,
-          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
+      Default_converter_cmap_0attributes_with_point<Gmap2, Refs> pointconverter;
+      return copy< Gmap2, CGAL::cpp11::tuple<>,
+          Default_converter_cmap_0attributes_with_point<Gmap2, Refs> >
           (amap, converters, pointconverter);
     }
 
-    template <typename CMap2, typename Converters>
-    void copy(const CMap2& amap, const Converters& converters)
+    template <typename Gmap2, typename Converters>
+    void copy(const Gmap2& amap, const Converters& converters)
     {
-      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy< CMap2, Converters,
-          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
+      Default_converter_cmap_0attributes_with_point<Gmap2, Refs> pointconverter;
+      return copy< Gmap2, Converters,
+          Default_converter_cmap_0attributes_with_point<Gmap2, Refs> >
           (amap, converters, pointconverter);
     }
 
@@ -268,20 +264,20 @@ namespace CGAL {
     { copy<Self>(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2>
-    Generalized_map_base(const CMap2& amap)
-    { copy<CMap2>(amap); }
+    template <typename Gmap2>
+    Generalized_map_base(const Gmap2& amap)
+    { copy<Gmap2>(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters>
-    Generalized_map_base(const CMap2& amap, Converters& converters)
-    { copy<CMap2,Converters>(amap, converters); }
+    template <typename Gmap2, typename Converters>
+    Generalized_map_base(const Gmap2& amap, Converters& converters)
+    { copy<Gmap2,Converters>(amap, converters); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters, typename Pointconverter>
-    Generalized_map_base(const CMap2& amap, Converters& converters,
+    template <typename Gmap2, typename Converters, typename Pointconverter>
+    Generalized_map_base(const Gmap2& amap, Converters& converters,
                          const Pointconverter& pointconverter)
-    { copy<CMap2,Converters, Pointconverter>
+    { copy<Gmap2,Converters, Pointconverter>
           (amap, converters, pointconverter); }
 
     /** Affectation operation. Copies one map to the other.
@@ -516,18 +512,8 @@ namespace CGAL {
 
     /** Return a dart belonging to the same edge and to the second vertex
      * of the current edge (NULL if such a dart does not exist).
-     * @return An handle to the opposite dart.
+     * @return An handle to a dart belonging to the other extremity.
      */
-    Dart_handle opposite(Dart_handle dh)
-    {
-      if (!is_free(dh, 0)) return alpha(dh, 0);
-      return null_handle;
-    }
-    Dart_const_handle opposite(Dart_const_handle dh) const
-    {
-      if (!is_free(dh, 0)) return alpha(dh, 0);
-      return null_handle;
-    }
     Dart_handle other_extremity(Dart_handle dh)
     {
       if (!is_free(dh, 0)) return alpha(dh, 0);
@@ -823,7 +809,10 @@ namespace CGAL {
      *  @param amark the mark to share.
      */
     size_type get_number_of_times_mark_reserved(size_type amark) const
-    { return mnb_times_reserved_marks[amark]; }
+    {
+      CGAL_assertion( amark<NB_MARKS );
+      return mnb_times_reserved_marks[amark];
+    }
 
     /** Negate the mark of all the darts for a given mark.
      * After this call, all the marked darts become unmarked and all the
@@ -979,7 +968,6 @@ namespace CGAL {
      *  @param i the dimension to close
      *  @return the number of new darts.
      *  @pre 0<=i<=n
-     *  @TODO move into Generalized_map_operations ?
      */
     template<unsigned int i>
     unsigned int close()
@@ -1526,7 +1514,7 @@ namespace CGAL {
      * @param adart1 a first dart.
      * @param adart2 a second dart.
      * @param update_attributes a boolean to update the enabled attributes.
-     *       (deprecated, now we use are_attributes_automatically_managed()) 
+     *       (deprecated, now we use are_attributes_automatically_managed())
      */
     template<unsigned int i>
     void link_alpha(Dart_handle adart1, Dart_handle adart2,
@@ -1643,7 +1631,7 @@ namespace CGAL {
      * @param adart1 the first dart.
      * @param adart2 the second dart.
      * @param update_attributes a boolean to update the enabled attributes
-     *       (deprecated, now we use are_attributes_automatically_managed()) 
+     *       (deprecated, now we use are_attributes_automatically_managed())
      * @pre is_sewable<i>(adart1, adart2).
      */
     template<unsigned int i>
@@ -1707,7 +1695,7 @@ namespace CGAL {
      * are updated only if update_attributes==true.
      * @param adart first dart.
      * @param update_attributes a boolean to update the enabled attributes
-     *       (deprecated, now we use are_attributes_automatically_managed()) 
+     *       (deprecated, now we use are_attributes_automatically_managed())
      * @pre !adart->is_free(i).
      */
     template<unsigned int i>
@@ -1723,7 +1711,7 @@ namespace CGAL {
      * @return a vector containing the number of cells.
      */
     std::vector<unsigned int>
-    count_marked_cells(int amark, const std::vector<unsigned int>& acells) const
+    count_marked_cells(size_type amark, const std::vector<unsigned int>& acells) const
     {
       std::vector<unsigned int> res(dimension+2);
       std::vector<size_type> marks(dimension+2);
@@ -2614,7 +2602,7 @@ namespace CGAL {
   public:
 
     /** Compute the dual of a Generalized_map.
-     * @param amap the cmap in which we build the dual of this map.
+     * @param amap the gmap in which we build the dual of this map.
      * @param adart a dart of the initial map, NULL by default.
      * @return adart of the dual map, the dual of adart if adart!=NULL,
      *         any dart otherwise.
@@ -2666,7 +2654,7 @@ namespace CGAL {
     }
 
 
-    /** Test if the connected component of cmap containing dart dh1 is
+    /** Test if the connected component of gmap containing dart dh1 is
      *  isomorphic to the connected component of map2 containing dart dh2,
      *  starting from dh1 and dh2.
      * @param dh1  initial dart for this map
@@ -2848,8 +2836,8 @@ namespace CGAL {
       return match;
     }
 
-    /** Test if this cmap is isomorphic to map2.
-     * @pre cmap is connected.
+    /** Test if this gmap is isomorphic to map2.
+     * @pre gmap is connected.
      * @param map2 the second generalized map
      * @param testAttributes Boolean to test the equality of attributes (true)
      *                       or not (false)
@@ -2898,6 +2886,794 @@ namespace CGAL {
 
       this->automatic_attributes_management = newval;
     }
+
+    /** Create an edge.
+     * @return a dart of the new edge.
+     */
+    Dart_handle make_edge()
+    {
+      Dart_handle d1 = create_dart();
+      Dart_handle d2 = create_dart();
+      basic_link_alpha(d1, d2, 0);
+      return d1;
+    }
+
+    /** Create a combinatorial polygon of length alg
+     * (a cycle of alg edges alpha1 links together).
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_polygon(unsigned int alg)
+    {
+      CGAL_assertion(alg>0);
+
+      Dart_handle start = make_edge();
+      Dart_handle prev = alpha<0>(start);
+      for ( unsigned int nb=1; nb<alg; ++nb )
+      {
+        Dart_handle cur = make_edge();
+        basic_link_alpha<1>(prev, cur);
+        prev=alpha<0>(cur);
+      }
+
+      basic_link_alpha<1>(prev, start);
+      return start;
+    }
+
+    /** Test if a face is a combinatorial polygon of length alg
+     *  (a cycle of alg edges alpha1 links together).
+     * @param adart an intial dart
+     * @return true iff the face containing adart is a polygon of length alg.
+     */
+    bool is_face_combinatorial_polygon(Dart_const_handle adart,
+                                       unsigned int alg)
+    {
+      CGAL_assertion(alg>0);
+
+      unsigned int nb = 0;
+      Dart_const_handle cur = adart;
+      do
+      {
+        ++nb;
+        if ( is_free(cur, 0) || is_free(alpha(cur, 0), 1) )
+          return false; // Open face
+        cur = alpha(cur,0,1);
+      }
+      while( cur!=adart );
+      return (nb==alg);
+    }
+
+    /** Create a combinatorial tetrahedron from 4 triangles.
+     * @param d1 a dart onto a first triangle.
+     * @param d2 a dart onto a second triangle.
+     * @param d3 a dart onto a third triangle.
+     * @param d4 a dart onto a fourth triangle.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_tetrahedron(Dart_handle d1,
+                                               Dart_handle d2,
+                                               Dart_handle d3,
+                                               Dart_handle d4)
+    {
+      topo_sew<2>(d1, d2);
+      topo_sew<2>(d3, alpha(d2, 1));
+      topo_sew<2>(alpha(d1, 1), alpha(d3, 1));
+      topo_sew<2>(d4, alpha(d2, 0, 1));
+      topo_sew<2>(alpha(d4, 0, 1), alpha(d3, 0, 1));
+      topo_sew<2>(alpha(d4, 1), alpha(d1, 0, 1));
+
+      return d1;
+    }
+
+    /** Test if a volume is a combinatorial tetrahedron.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial tetrahedron.
+     */
+    bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1)
+    {
+      Dart_const_handle d2 = alpha(d1, 2);
+      Dart_const_handle d3 = alpha(d2, 1, 2);
+      Dart_const_handle d4 = alpha(d2, 0, 1, 2);
+
+      if ( !is_face_combinatorial_polygon(d1, 3) ||
+           !is_face_combinatorial_polygon(d2, 3) ||
+           !is_face_combinatorial_polygon(d3, 3) ||
+           !is_face_combinatorial_polygon(d4, 3) ) return false;
+
+      // TODO do better with marks (?).
+      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d4) ) return false;
+
+      if ( alpha(d1,1,2)!=alpha(d3,1) ||
+           alpha(d4,0,1,2)!=alpha(d3,0,1) ||
+           alpha(d4,1,2)!=alpha(d1,0,1) ) return false;
+
+      return true;
+    }
+
+    /** Create a new combinatorial tetrahedron.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_tetrahedron()
+    {
+      Dart_handle d1 = make_combinatorial_polygon(3);
+      Dart_handle d2 = make_combinatorial_polygon(3);
+      Dart_handle d3 = make_combinatorial_polygon(3);
+      Dart_handle d4 = make_combinatorial_polygon(3);
+
+      return make_combinatorial_tetrahedron(d1, d2, d3, d4);
+    }
+
+    /** Create a combinatorial hexahedron from 6 quadrilaterals.
+     * @param d1 a dart onto a first quadrilateral.
+     * @param d2 a dart onto a second quadrilateral.
+     * @param d3 a dart onto a third quadrilateral.
+     * @param d4 a dart onto a fourth quadrilateral.
+     * @param d5 a dart onto a fifth quadrilateral.
+     * @param d6 a dart onto a sixth quadrilateral.
+     * @return a dart of the new cuboidal_cell.
+     */
+    Dart_handle make_combinatorial_hexahedron(Dart_handle d1,
+                                              Dart_handle d2,
+                                              Dart_handle d3,
+                                              Dart_handle d4,
+                                              Dart_handle d5,
+                                              Dart_handle d6)
+    {
+      topo_sew<2>(d1, alpha(d4,1,0,1,0));
+      topo_sew<2>(alpha(d1,0,1), alpha(d6,1));
+      topo_sew<2>(alpha(d1,1,0,1), d2);
+      topo_sew<2>(alpha(d1,1), d5);
+
+      topo_sew<2>(d3, alpha(d2,1,0,1));
+      topo_sew<2>(alpha(d3,0,1,0), alpha(d6,0,1));
+      topo_sew<2>(alpha(d3,1,0,1,0), d4);
+      topo_sew<2>(alpha(d3,1), alpha(d5,0,1,0,1));
+
+      topo_sew<2>(d6, alpha(d4,1,0));
+      topo_sew<2>(alpha(d6,1,0,1), alpha(d2,0,1));
+
+      topo_sew<2>(alpha(d5,1,0), alpha(d4,0,1));
+      topo_sew<2>(alpha(d5,0,1), alpha(d2,1));
+      return d1;
+    }
+
+    /** Test if a volume is a combinatorial hexahedron.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial hexahedron.
+     */
+    bool is_volume_combinatorial_hexahedron(Dart_const_handle d1)
+    {
+      Dart_const_handle d2 = alpha(d1,1,0,1,2);
+      Dart_const_handle d3 = alpha(d2,1,0,1,2);
+      Dart_const_handle d4 = alpha(d3,1,0,1,0,2);
+      Dart_const_handle d5 = alpha(d1,1,2);
+      Dart_const_handle d6 = alpha(d4,1,0,2);
+
+      if (!is_face_combinatorial_polygon(d1, 4) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 4) ||
+          !is_face_combinatorial_polygon(d6, 4) ) return false;
+
+      // TODO do better with marks.
+      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d4, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d4, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d5, d6) )
+        return false;
+
+      if ( alpha(d1,2)      !=alpha(d4,0,1,0,1) ||
+           alpha(d1,0,1,2)  !=alpha(d6,1)       ||
+           alpha(d3,0,1,2)  !=alpha(d6,0,1,0)   ||
+           alpha(d3,1,2)    !=alpha(d5,0,1,0,1) ||
+           alpha(d6,1,0,1,2)!=alpha(d2,0,1)     ||
+           alpha(d5,1,2)    !=alpha(d4,0,1,0)   ||
+           alpha(d5,0,1,2)  !=alpha(d2,1) ) return false;
+
+      return true;
+    }
+
+    /** Create a new combinatorial hexahedron.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_hexahedron()
+    {
+      Dart_handle d1 = make_combinatorial_polygon(4);
+      Dart_handle d2 = make_combinatorial_polygon(4);
+      Dart_handle d3 = make_combinatorial_polygon(4);
+      Dart_handle d4 = make_combinatorial_polygon(4);
+      Dart_handle d5 = make_combinatorial_polygon(4);
+      Dart_handle d6 = make_combinatorial_polygon(4);
+
+      return make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
+    }
+
+    /** Test if an i-cell can be removed.
+     *  An i-cell can be removed if i==dimension or i==dimension-1,
+     *     or if there are at most two (i+1)-cell incident to it.
+     * @param adart a dart of the i-cell.
+     * @return true iff the i-cell can be removed.
+     */
+    template < unsigned int i >
+    bool is_removable(Dart_const_handle adart) const
+    { return CGAL::Is_removable_functor<Self, i>::run(*this, adart); }
+
+    /** Remove an i-cell, 0<=i<=dimension.
+     * @param adart a dart of the i-cell to remove.
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return the number of deleted darts.
+     */
+    template < unsigned int i >
+    size_t remove_cell(Dart_handle adart, bool update_attributes = true)
+    {
+      return CGAL::Remove_cell_functor<Self,i,Self::dimension-i>::
+        run(*this,adart,update_attributes);
+    }
+
+    /** Test if an i-cell can be contracted.
+     *  An i-cell can be contracted if i==1
+     *     or if there are at most two (i-1)-cell incident to it.
+     * @param adart a dart of the i-cell.
+     * @return true iff the i-cell can be contracted.
+     */
+    template < unsigned int i >
+    bool is_contractible(Dart_const_handle adart) const
+    { return CGAL::Is_contractible_functor<Self, i>::run(*this,adart); }
+
+    /** Contract an i-cell, 1<=i<=dimension.
+     * @param adart a dart of the i-cell to remove.
+     * @return the number of deleted darts.
+     */
+    template < unsigned int i >
+    size_t contract_cell(Dart_handle adart, bool update_attributes = true)
+    {
+      return CGAL::Contract_cell_functor<Self,i>::
+        run(*this,adart, update_attributes);
+    }
+
+    /** Insert a vertex in a given edge.
+     * @param adart a dart of the edge (!=NULL).
+     * @return a dart of the new vertex.
+     */
+    Dart_handle
+    insert_cell_0_in_cell_1( Attribute_handle<0>::type ah=GMap::null_handle,
+                             bool update_attributes=true )
+    {
+      Dart_handle d1, d2;
+      size_type  mark=get_new_mark();
+
+      // 1) We store all the darts of the edge.
+      std::deque<Dart_handle> vect;
+      size_type m=get_new_mark();
+      {
+        for ( typename Dart_of_cell_basic_range<1>::iterator
+                it=darts_of_cell_basic<1>(adart, m).begin();
+              it != darts_of_cell_basic<1>(adart, m).end(); ++it )
+          vect.push_back(it);
+      }
+
+      // 2) For each dart of the cell, we modify link of neighbors.
+      typename std::deque<Dart_handle>::iterator it = vect.begin();
+      for (; it != vect.end(); ++it)
+      {
+        d1 = create_dart();
+
+        if (!is_free<0>(*it) && is_marked(alpha<0>(*it), mark))
+          basic_link_alpha<1>(d1, alpha<0,0>(*it));
+
+        basic_link_alpha<0>(*it, d1);
+        mark(*it, mark);
+
+        for ( unsigned int dim=2; dim<=GMap::dimension; ++dim )
+        {
+          if (!is_free(*it, dim) && is_marked(alpha(*it, dim), mark))
+          {
+            basic_link_alpha(beta(*it, dim, 0), d1, dim);
+          }
+        }
+
+        if (are_attributes_automatically_managed() && update_attributes)
+        {
+          // We copy all the attributes except for dim=0
+          GMap::Helper::template Foreach_enabled_attributes_except
+            <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 0>::
+            run(this,*it,d1);
+        }
+        if (ah != null_handle)
+        {
+          // We initialise the 0-atttrib to ah
+          CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
+            run(this, d1, ah);
+          mark(*it, mark);
+        }
+      }
+
+      for (it = vect.begin(); it != vect.end(); ++it)
+      {
+        unmark(*it, m);
+        unmark(*it, mark);
+      }
+
+      CGAL_assertion(is_whole_map_unmarked(m));
+      CGAL_assertion(is_whole_map_unmarked(mark));
+
+      free_mark(m);
+      free_mark(mark);
+
+      if (are_attributes_automatically_managed() && update_attributes)
+    {
+      if ( !is_free<1>(alpha<0>(adart)) )
+      {
+        CGAL::internal::GMap_degroup_attribute_functor_run<Self, 1>::
+          run(this, adart, alpha<0,1>(adart));
+      }
+    }
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+      CGAL_assertion( is_valid() );
+#endif
+
+      return alpha<0>(adart);
+    }
+
+    /** Insert a vertex in the given 2-cell which is splitted in triangles,
+     * once for each inital edge of the facet.
+     * @param adart a dart of the facet to triangulate.
+     * @return A dart incident to the new vertex.
+     */
+    Dart_handle
+    insert_cell_0_in_cell_2( Dart_handle adart,
+                             Attribute_handle<0>::type ah=GMap::null_handle,
+                             bool update_attributes=true )
+    {
+      CGAL_assertion(adart!=amap.null_handle);
+
+      Dart_handle d1=amap.null_handle, d2=amap.null_handle;
+
+      // Mark used to mark darts already treated.
+      size_type treated = get_new_mark();
+      size_type m = get_new_mark();
+
+      // Stack of darts of the face
+      std::deque<Dart_handle> vect;
+      {
+        for ( Dart_of_cell_basic_range<2>::iterator
+                it=darts_of_cell_basic<2>(adart,m).begin();
+              it!=darts_of_cell_basic<2>(adart,m).end(); ++it )
+          vect.push_back(it);
+      }
+
+      // Stack of darts to degroup (one dart per edge of the face)
+      std::deque<Dart_handle> todegroup;
+      {
+        for ( Dart_of_cell_basic_range<2,2>::iterator
+              it=darts_of_cell_basic<2,2>(adart).begin();
+              it!=darts_of_cell_basic<2,2>(adart).end(); ++it )
+          if ( it!=adart && it!=alpha<0>(adart) )
+            todegroup.push_back(it);
+      }
+
+    // 2) For each dart of the cell, we modify link of neighbors.
+    typename std::deque<typename GMap::Dart_handle>::iterator it = vect.begin();
+    for (; it != vect.end(); ++it)
+    {
+      d1 = amap.create_dart();
+      d2 = amap.create_dart();
+      amap.template basic_link_alpha<0>(d1, d2);
+      amap.mark(*it, treated);
+
+      amap.template basic_link_alpha<1>(*it, d1);
+
+      if (!amap.template is_free<0>(*it) &&
+          amap.is_marked(amap.template alpha<0>(*it), treated))
+        amap.template basic_link_alpha<1>(d2, amap.template alpha<0,1,0>(*it));
+
+      for ( unsigned int dim=3; dim<=GMap::dimension; ++dim )
+      {
+        if (!amap.is_free(*it, dim) && amap.is_marked(amap.alpha(*it, dim), treated))
+        {
+          amap.basic_link_alpha(amap.beta(*it, dim, 1), d1, dim);
+          amap.basic_link_alpha(amap.beta(*it, dim, 1, 0), d2, dim);
+        }
+      }
+
+      if (amap.are_attributes_automatically_managed() && update_attributes)
+      {
+        // We copy all the attributes except for dim=1
+        GMap::Helper::template Foreach_enabled_attributes_except
+          <CGAL::internal::GMap_group_attribute_functor_of_dart<GMap>, 1>::
+          run(&amap,*it,d1);
+        // We initialise the 0-atttrib to ah
+        CGAL::internal::Set_i_attribute_of_dart_functor<GMap, 0>::
+          run(&amap, d2, ah);
+      }
+    }
+
+    for (it = vect.begin(); it != vect.end(); ++it)
+    {
+      amap.unmark(*it, m);
+      amap.unmark(*it, treated);
+    }
+
+    CGAL_assertion(amap.is_whole_map_unmarked(m));
+    CGAL_assertion(amap.is_whole_map_unmarked(treated));
+    amap.free_mark(m);
+    amap.free_mark(treated);
+
+    if (amap.are_attributes_automatically_managed() && update_attributes)
+    {
+      for (it = todegroup.begin(); it != todegroup.end(); ++it)
+      {
+        CGAL::internal::GMap_degroup_attribute_functor_run<GMap, 2>::
+          run(&amap, adart, *it);
+      }
+    }
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+    CGAL_assertion( amap.is_valid() );
+#endif
+
+    return amap.template alpha<1,0>(adart);
+  }
+
+  /** Test if an edge can be inserted onto a 2-cell between two given darts.
+   * @param amap the used generalized map.
+   * @param adart1 a first dart.
+   * @param adart2 a second dart.
+   * @return true iff an edge can be inserted between adart1 and adart2.
+   */
+  template < class GMap >
+  bool is_insertable_cell_1_in_cell_2(const GMap& amap,
+                                      typename GMap::Dart_const_handle adart1,
+                                      typename GMap::Dart_const_handle adart2)
+  {
+    if ( adart1==adart2 || adart1==amap.template alpha<0>(adart2) ) return false;
+    for ( CGAL::GMap_dart_const_iterator_of_orbit<GMap,0,1> it(amap,adart1);
+          it.cont(); ++it )
+    {
+      if ( it==adart2 )  return true;
+    }
+    return false;
+  }
+
+  /** Insert an edge in a 2-cell between two given darts.
+   * @param amap the used generalized map.
+   * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+   * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+   * @return a dart of the new edge, and not incident to the
+   *         same vertex than adart1.
+   */
+  template<class GMap>
+  typename GMap::Dart_handle
+  insert_cell_1_in_cell_2(GMap& amap,
+                          typename GMap::Dart_handle adart1,
+                          typename GMap::Dart_handle adart2,
+                          bool update_attributes=true)
+  {
+    if ( adart2!=amap.null_handle)
+    {
+      CGAL_assertion(is_insertable_cell_1_in_cell_2<GMap>(amap, adart1, adart2));
+    }
+
+    typename GMap::size_type m1=amap.get_new_mark();
+    CGAL::GMap_dart_iterator_basic_of_involution<GMap,0,1> it1(amap, adart1, m1);
+
+    typename GMap::size_type m2=amap.get_new_mark();
+    CGAL::GMap_dart_iterator_basic_of_involution<GMap,0,1> it2(amap, adart2, m2);
+
+    typename GMap::Dart_handle d1=amap.null_handle;
+    typename GMap::Dart_handle d2=amap.null_handle;
+
+    typename GMap::size_type treated=amap.get_new_mark();
+
+    for ( ; it1.cont(); ++it1)
+    {
+      CGAL_assertion (it2.cont() );
+      d1 = amap.create_dart();
+      d2 = amap.create_dart();
+      amap.template basic_link_alpha<0>(d1, d2);
+      amap.mark(it1,treated);
+
+      if ( !amap.template is_free<1>(it1) &&
+           amap.is_marked(amap.template alpha<1>(it1), treated) )
+      {
+        amap.template basic_link_alpha<2>(amap.template alpha<1,1>(it1), d1);
+        amap.template basic_link_alpha<2>(amap.template alpha<2,0>(d1), d2);
+      }
+
+      for ( unsigned int dim=3; dim<=GMap::dimension; ++dim)
+      {
+        if ( !amap.is_free(it1, dim) &&
+             amap.is_marked(amap.alpha(it1, dim), treated) )
+        {
+          amap.basic_link_alpha(amap.alpha(it1, dim, 1), d1, dim);
+          amap.basic_link_alpha(amap.alpha(d1, dim, 0), d2, dim);
+        }
+      }
+
+      amap.template link_alpha<1>(it1, d1);
+      if ( adart2!=amap.null_handle )
+      {
+        amap.template link_alpha<1>(it2, d2);
+        ++it2;
+      }
+    }
+
+    if (amap.are_attributes_automatically_managed() && update_attributes)
+    {
+      if ( !amap.template is_free<2>(d1) && d2!=amap.null_handle )
+        CGAL::internal::GMap_degroup_attribute_functor_run<GMap, 2>::
+          run(&amap, d1, amap.template alpha<2>(d1));
+    }
+
+    amap.negate_mark(m1);
+    it1.rewind();
+
+    if ( adart2!=amap.null_handle )
+    { it2.rewind(); amap.negate_mark(m2); }
+
+    for ( ; it1.cont(); ++it1, ++it2)
+    {
+      amap.mark(it1,m1);
+      amap.unmark(it1,treated);
+      if ( adart2!=amap.null_handle ) amap.mark(it2,m2);
+    }
+    amap.negate_mark(m1);
+    CGAL_assertion( amap.is_whole_map_unmarked(m1) );
+    CGAL_assertion( amap.is_whole_map_unmarked(treated) );
+    amap.free_mark(m1);
+    amap.free_mark(treated);
+
+    if ( adart2!=amap.null_handle )
+    {
+      amap.negate_mark(m2);
+      CGAL_assertion( amap.is_whole_map_unmarked(m2) );
+    }
+    amap.free_mark(m2);
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+    CGAL_assertion( amap.is_valid() );
+#endif
+
+    return amap.template alpha<1>(adart1);
+  }
+
+  /** Test if a 2-cell can be inserted onto a given 3-cell along
+   * a path of edges.
+   * @param amap the used generalized map.
+   * @param afirst iterator on the begining of the path.
+   * @param alast  iterator on the end of the path.
+   * @return true iff a 2-cell can be inserted along the path.
+   * the path is a sequence of dartd, one per edge
+   * where the face will be inserted.
+   */
+  template <class GMap, class InputIterator>
+  bool is_insertable_cell_2_in_cell_3(const GMap& amap,
+                                      InputIterator afirst,
+                                      InputIterator alast)
+  {
+    CGAL_assertion( GMap::dimension>= 3 );
+
+    // The path must have at least one dart.
+    if (afirst==alast) return false;
+    typename GMap::Dart_const_handle prec = amap.null_handle;
+    typename GMap::Dart_const_handle od = amap.null_handle;
+
+    for (InputIterator it(afirst); it!=alast; ++it)
+    {
+      // The path must contain only non empty darts.
+      if (*it == amap.null_handle) return false;
+
+      // Two consecutive darts of the path must belong to two edges
+      // incident to the same vertex of the same volume.
+      if (prec != amap.null_handle)
+      {
+        if ( amap.template is_free<0>(prec) ) return false;
+
+        // alpha0(prec) and *it must belong to the same vertex of the same volume
+        if ( !CGAL::belong_to_same_cell<GMap, 0, 2>
+             (amap,  amap.template alpha<0>(prec), *it) )
+          return false;
+      }
+      prec = *it;
+    }
+
+    // The path must be closed.
+    if ( amap.template is_free<0>(prec) ) return false;
+    if (!CGAL::belong_to_same_cell<GMap, 0, 2>
+        (amap, amap.template alpha<0>(prec), *afirst))
+      return false;
+
+    return true;
+  }
+
+  /** Insert a 2-cell in a given 3-cell along a path of darts.
+   * @param amap the used generalized map.
+   * @param afirst iterator on the begining of the path.
+   * @param alast  iterator on the end of the path.
+   * the path is a sequence of dartd, one per edge
+   * where the face will be inserted.
+   * @return a dart of the new 2-cell.
+   */
+  template<class GMap, class InputIterator>
+  typename GMap::Dart_handle
+  insert_cell_2_in_cell_3(GMap& amap, InputIterator afirst, InputIterator alast,
+                          bool update_attributes=true)
+  {
+    CGAL_assertion(is_insertable_cell_2_in_cell_3(amap,afirst,alast));
+
+    typename GMap::Dart_handle prec = amap.null_handle, d = amap.null_handle,
+      dd = amap.null_handle, first = amap.null_handle;
+    bool withAlpha3 = false;
+
+    typename GMap::size_type treated = amap.get_new_mark();
+
+    {
+      for (InputIterator it(afirst); !withAlpha3 && it!=alast; ++it)
+      {
+        if (!amap.template is_free<2>(*it)) withAlpha3 = true;
+      }
+    }
+
+    {
+      for (InputIterator it(afirst); it!=alast; ++it)
+      {
+        d = amap.create_dart();
+        amap.template basic_link_alpha<0>(d, amap.create_dart());
+
+        if ( withAlpha3 )
+        {
+          dd = amap.create_dart();
+          amap.template basic_link_alpha<0>(dd, amap.create_dart());
+        }
+
+        if ( prec!=amap.null_handle )
+        {
+          amap.template basic_link_alpha<1>(prec, d);
+          if (withAlpha3)
+            amap.template basic_link_alpha<1>(amap.template alpha<3>(prec), dd);
+        }
+        else first = amap.template alpha<0>(d);
+
+        if ( !amap.template is_free<2>(*it) )
+        {
+          amap.template link_alpha<2>(amap.template alpha<2>(*it), dd);
+        }
+
+        amap.template link_alpha<2>(*it, d);
+        if (withAlpha3) amap.template basic_link_alpha<3>(d, dd);
+
+        prec = amap.template alpha<0>(d);
+      }
+    }
+
+    amap.template basic_link_alpha<1>(prec, first);
+    if ( withAlpha3 )
+    {
+      amap.template basic_link_alpha<1>(amap.template alpha<3>(prec),
+                                        amap.template alpha<3>(first));
+    }
+
+    // Make copies of the new facet for dimension >=4
+    /*  for ( unsigned int dim=4; dim<=GMap::dimension; ++dim )
+        {
+        if ( !amap.is_free(*it, dim) )
+        {
+        ddd = amap.create_dart();
+        amap.template basic_link_alpha<0>(ddd, amap.create_dart());
+        amap.basic_link_alpha(d, ddd, dim);
+        amap.basic_link_alpha(amap.template alpha<0>(d),
+        amap.template alpha<0>(ddd), dim);
+
+        if ( withAlpha3 )
+        {
+        dddd = amap.create_dart();
+        amap.template basic_link_alpha<0>(dddd, amap.create_dart());
+
+        amap.basic_link_alpha(dd, dddd, dim);
+        amap.basic_link_alpha(amap.template alpha<0>(dd),
+        amap.template alpha<0>(dddd), dim);
+        }
+
+
+
+        }
+        }*/
+
+    // Make copies of the new facet for dimension >=4
+    for ( unsigned int dim=4; dim<=GMap::dimension; ++dim )
+    {
+      if ( !amap.is_free(first, dim) )
+      {
+        typename GMap::Dart_handle first2 = amap.null_handle;
+        prec = amap.null_handle;
+        for ( GMap_dart_iterator_basic_of_orbit<GMap,0,1> it(amap, first);
+              it.cont(); ++it )
+        {
+          d = amap.create_dart();
+          amap.basic_link_alpha(amap.template alpha<2>(it), d, dim);
+          if ( withAlpha3 )
+          {
+            dd = amap.create_dart();
+            amap.basic_link_alpha_for_involution
+              (amap.template alpha<2,3>(it), dd, dim);
+            amap.template basic_link_alpha_for_involution<3>(d, dd);
+          }
+          if ( prec!=amap.null_handle )
+          {
+            amap.link_alpha_0(prec, d);
+            if ( withAlpha3 )
+            {
+              amap.basic_link_alpha_1(amap.template alpha<3>(prec), dd);
+            }
+          }
+          else first2 = prec;
+
+          // We consider dim2=2 out of the loop to use link_alpha instead of
+          // basic _link_alpha (to modify non void attributes only once).
+          if ( !amap.template is_free<2>(it) &&
+               amap.is_free(amap.template alpha<2>(it), dim) )
+            amap.template link_alpha_for_involution<2>
+              (amap.alpha(it,2,dim), d);
+          if ( withAlpha3 &&
+               !amap.template is_free<2>(amap.template alpha<3>(it)) &&
+               amap.is_free(amap.template alpha<3,2>(it), dim) )
+            amap.template link_alpha_for_involution<2>(amap.alpha(it,3,2,dim), dd);
+
+          for ( unsigned int dim2=3; dim2<=GMap::dimension; ++dim2 )
+          {
+            if ( dim2+1!=dim && dim2!=dim && dim2!=dim+1 )
+            {
+              if ( !amap.is_free(it, dim2) && amap.is_free(amap.alpha(it, dim2), dim) )
+                amap.basic_link_alpha_for_involution(amap.alpha(it, dim2, dim),
+                                                     d, dim2);
+              if ( withAlpha3 && !amap.is_free(amap.template alpha<3>(it), dim2) &&
+                   amap.is_free(amap.alpha(it, 3, dim2), dim) )
+                amap.basic_link_alpha_for_involution
+                  (amap.alpha(it, 3, dim2, dim), dd, dim2);
+            }
+          }
+          prec = d;
+        }
+        amap.basic_link_alpha_0( prec, first2 );
+        if ( withAlpha3 )
+        {
+          amap.basic_link_alpha_1( amap.template alpha<3>(prec),
+                                   amap.template alpha<3>(first2) );
+        }
+      }
+    }
+
+    // Degroup the attributes
+    if ( withAlpha3 )
+    { // Here we cannot use Degroup_attribute_functor_run as new darts do not
+      // have their 3-attribute
+      CGAL::internal::GMap_degroup_attribute_functor_run<GMap, 3>::
+        run(&amap, first, amap.template alpha<3>(first));
+    }
+
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
+    CGAL_assertion( amap.is_valid() );
+#endif
+
+    return first;
+  }
 
   protected:
     /// Number of times each mark is reserved. 0 if the mark is free.
@@ -2962,19 +3738,19 @@ namespace CGAL {
     Generalized_map(const Self & amap) : Base()
     { Base::template copy<Self>(amap); }
 
-    template < class CMap >
-    Generalized_map(const CMap & amap) : Base()
-    { Base::template copy<CMap>(amap); }
+    template < class Gmap >
+    Generalized_map(const Gmap & amap) : Base()
+    { Base::template copy<Gmap>(amap); }
 
-    template < class CMap, typename Converters >
-    Generalized_map(const CMap & amap, const Converters& converters) : Base()
-    { Base::template copy<CMap, Converters>
+    template < class Gmap, typename Converters >
+    Generalized_map(const Gmap & amap, const Converters& converters) : Base()
+    { Base::template copy<Gmap, Converters>
           (amap, converters); }
 
-    template < class CMap, typename Converters, typename Pointconverter >
-    Generalized_map(const CMap & amap, const Converters& converters,
+    template < class Gmap, typename Converters, typename Pointconverter >
+    Generalized_map(const Gmap & amap, const Converters& converters,
                       const Pointconverter& pointconverter) : Base()
-    { Base::template copy<CMap, Converters, Pointconverter>
+    { Base::template copy<Gmap, Converters, Pointconverter>
           (amap, converters, pointconverter); }
   };
 

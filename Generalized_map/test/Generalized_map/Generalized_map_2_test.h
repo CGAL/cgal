@@ -20,7 +20,6 @@
 #ifndef CGAL_GENERALIZED_MAP_2_TEST
 #define CGAL_GENERALIZED_MAP_2_TEST 1
 
-#include <CGAL/Generalized_map_constructors.h>
 #include <CGAL/Generalized_map_operations.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -96,9 +95,9 @@ bool test_GMAP_2()
 
   // Construction operations
   trace_test_begin();
-  Dart_handle dh1=CGAL::make_edge(gmap);
-  Dart_handle dh2=CGAL::make_edge(gmap);
-  Dart_handle dh3=CGAL::make_edge(gmap);
+  Dart_handle dh1=gmap.make_edge();
+  Dart_handle dh2=gmap.make_edge();
+  Dart_handle dh3=gmap.make_edge();
   if ( !check_number_of_cells_2(gmap, 6, 3, 3, 3) )
     return false;
 
@@ -109,8 +108,8 @@ bool test_GMAP_2()
     return false;
 
   trace_test_begin();
-  Dart_handle dh5=CGAL::make_combinatorial_polygon(gmap, 3);
-  Dart_handle dh6=CGAL::make_combinatorial_polygon(gmap, 3);
+  Dart_handle dh5=gmap.make_combinatorial_polygon(3);
+  Dart_handle dh6=gmap.make_combinatorial_polygon(3);
   if ( !check_number_of_cells_2(gmap, 10, 9, 3, 3) )
     return false;
 
@@ -122,51 +121,51 @@ bool test_GMAP_2()
   trace_test_begin();
   dh5=gmap.template alpha<1>(dh5);
   dh6=gmap.template alpha<1>(dh6);
-  CGAL::contract_cell<Gmap, 1>(gmap, gmap.template alpha<1>(dh5));
+  gmap.contract_cell<1>(gmap.template alpha<1>(dh5));
   if ( !check_number_of_cells_2(gmap, 8, 7, 3, 3) )
     return false;
 
   trace_test_begin();
-  CGAL::contract_cell<Gmap, 2>(gmap, dh6);
+  gmap.contract_cell<2>(dh6);
   if ( !check_number_of_cells_2(gmap, 6, 5, 2, 2) )
     return false;
 
   trace_test_begin();
-  CGAL::contract_cell<Gmap, 1>(gmap, gmap.template alpha<1>(dh5));
+  gmap.contract_cell<1>(gmap.template alpha<1>(dh5));
   if ( !check_number_of_cells_2(gmap, 5, 4, 2, 2) )
     return false;
 
   trace_test_begin();
-  CGAL::contract_cell<Gmap, 1>(gmap, dh5);
+  gmap.contract_cell<1>(dh5);
   if ( !check_number_of_cells_2(gmap, 4, 3, 1, 1) )
     return false;
 
   trace_test_begin();
-  CGAL::contract_cell<Gmap, 1>(gmap, dh2);
+  gmap.contract_cell<1>(dh2);
   if ( !check_number_of_cells_2(gmap, 3, 2, 1, 1) )
     return false;
 
   trace_test_begin();
-  CGAL::contract_cell<Gmap, 1>(gmap, dh1);
+  gmap.contract_cell<1>(dh1);
   if ( !check_number_of_cells_2(gmap, 2, 1, 1, 1) )
     return false;
 
   trace_test_begin();
-  CGAL::contract_cell<Gmap, 1>(gmap, dh3);
+  gmap.contract_cell<1>(dh3);
   if ( !check_number_of_cells_2(gmap, 0, 0, 0, 0) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh7=CGAL::make_combinatorial_hexahedron(gmap); // f1
+  Dart_handle dh7=gmap.make_combinatorial_hexahedron(); // f1
   Dart_handle dh8=gmap.template alpha<2,1,0,1,2>(dh7); // f2 opposite to f1
   Dart_handle dh9=gmap.template alpha<2>(dh7); // face incident to f1 and d2
 
-  CGAL::remove_cell<Gmap,2>(gmap, dh7);
+  gmap.remove_cell<2>(dh7);
   if ( !check_number_of_cells_2(gmap, 8, 12, 5, 1) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<Gmap,2>(gmap, dh8);
+  gmap.remove_cell<2>(dh8);
   if ( !check_number_of_cells_2(gmap, 8, 12, 4, 1) )
     return false;
 
@@ -174,7 +173,7 @@ bool test_GMAP_2()
   gmap.template close<2>();
   if ( !check_number_of_cells_2(gmap, 8, 12, 6, 1) )
     return false;
-  if ( !CGAL::is_volume_combinatorial_hexahedron(gmap, dh9) )
+  if ( !gmap.is_volume_combinatorial_hexahedron(dh9) )
   {
     std::cout<<"Error: the closed volume is not a combinatorial hexahedron.\n";
     assert(false);

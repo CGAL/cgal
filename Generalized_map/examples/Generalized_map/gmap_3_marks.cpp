@@ -17,19 +17,18 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #include <CGAL/Generalized_map.h>
-#include <CGAL/Generalized_map_constructors.h>
 #include <iostream>
 #include <cstdlib>
 
-typedef CGAL::Generalized_map<3> CMap_3;
-typedef CMap_3::Dart_handle Dart_handle;
+typedef CGAL::Generalized_map<3> GMap_3;
+typedef GMap_3::Dart_handle Dart_handle;
 
 int main()
 {
-  CMap_3 cm;
+  GMap_3 gm;
 
   // Reserve a mark
-  int mark = cm.get_new_mark();
+  int mark = gm.get_new_mark();
   if ( mark==-1 )
     {
       std::cerr<<"No more free mark, exit."<<std::endl;
@@ -37,37 +36,37 @@ int main()
     }
 
   // Create two tetrahedra.
-  Dart_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm);
-  Dart_handle dh2 = CGAL::make_combinatorial_tetrahedron(cm);
+  Dart_handle dh1 = gm.make_combinatorial_tetrahedron();
+  Dart_handle dh2 = gm.make_combinatorial_tetrahedron();
 
-  CGAL_assertion( cm.is_valid() );
-  CGAL_assertion( CGAL::is_volume_combinatorial_tetrahedron(cm, dh1) );
-  CGAL_assertion( CGAL::is_volume_combinatorial_tetrahedron(cm, dh2) );
+  CGAL_assertion( gm.is_valid() );
+  CGAL_assertion( gm.is_volume_combinatorial_tetrahedron(dh1) );
+  CGAL_assertion( gm.is_volume_combinatorial_tetrahedron(dh2) );
 
   // 3-sew them.
-  cm.sew<3>(dh1, dh2);
+  gm.sew<3>(dh1, dh2);
 
   // Mark the darts belonging to the first tetrahedron.
-  for  (CMap_3::Dart_of_cell_range<3>::iterator
-          it(cm.darts_of_cell<3>(dh1).begin()),
-          itend(cm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
-    cm.mark(it, mark);
+  for  (GMap_3::Dart_of_cell_range<3>::iterator
+          it(gm.darts_of_cell<3>(dh1).begin()),
+          itend(gm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
+    gm.mark(it, mark);
 
   // Remove the common 2-cell between the two cubes:
   // the two tetrahedra are merged.
-  //  cm.remove_cell<2>(dh1);
+  //TODO  gm.remove_cell<2>(dh1);
 
   // Thanks to the mark, we know which darts come from the first tetrahedron.
   unsigned int res=0;
-  for (CMap_3::Dart_range::iterator it(cm.darts().begin()),
-         itend(cm.darts().end()); it!=itend; ++it)
+  for (GMap_3::Dart_range::iterator it(gm.darts().begin()),
+         itend(gm.darts().end()); it!=itend; ++it)
   {
-    if ( cm.is_marked(it, mark) )
+    if ( gm.is_marked(it, mark) )
       ++res;
   }
 
   std::cout<<"Number of darts from the first tetrahedron: "<<res<<std::endl;
-  cm.free_mark(mark);
+  gm.free_mark(mark);
 
   return EXIT_SUCCESS;
 }

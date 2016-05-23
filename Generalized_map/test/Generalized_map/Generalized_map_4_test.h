@@ -64,9 +64,9 @@ bool test_GMAP_4()
 
   // Construction operations
   trace_test_begin();
-  Dart_handle dh1=CGAL::make_edge(gmap);
-  Dart_handle dh2=CGAL::make_edge(gmap);
-  Dart_handle dh3=CGAL::make_edge(gmap);
+  Dart_handle dh1=gmap.make_edge();
+  Dart_handle dh2=gmap.make_edge();
+  Dart_handle dh3=gmap.make_edge();
   if ( !check_number_of_cells_4(gmap, 6, 3, 3, 3, 3, 3) )
     return false;
 
@@ -77,8 +77,8 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  Dart_handle dh5=CGAL::make_combinatorial_polygon(gmap, 3);
-  Dart_handle dh6=CGAL::make_combinatorial_polygon(gmap, 3);
+  Dart_handle dh5=gmap.make_combinatorial_polygon(3);
+  Dart_handle dh6=gmap.make_combinatorial_polygon(3);
   if ( !check_number_of_cells_4(gmap, 10, 9, 3, 3, 3, 3) )
     return false;
 
@@ -89,27 +89,27 @@ bool test_GMAP_4()
 
   trace_test_begin();
   gmap.clear();
-  Dart_handle dh7=CGAL::make_combinatorial_hexahedron(gmap); // f1
+  Dart_handle dh7=gmap.make_combinatorial_hexahedron(); // f1
   Dart_handle dh8=gmap.template alpha<2,1,0,1,2>(dh7); // f2 opposite to f1
   Dart_handle dh9=gmap.template alpha<2>(dh7); // face incident to f1 and d2
 
-  CGAL::remove_cell<GMAP,2>(gmap, dh7);
+  gmap.remove_cell<2>(dh7);
   if ( !check_number_of_cells_4(gmap, 8, 12, 5, 1, 1, 1) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,2>(gmap, dh8);
+  gmap.remove_cell<2>(dh8);
   if ( !check_number_of_cells_4(gmap, 8, 12, 4, 1, 1, 1) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh10=CGAL::make_combinatorial_hexahedron(gmap);
+  Dart_handle dh10=gmap.make_combinatorial_hexahedron();
   gmap.template sew<3>(dh9,dh10);
   if ( !check_number_of_cells_4(gmap, 12, 20, 9, 2, 1, 1) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh11=CGAL::make_combinatorial_hexahedron(gmap);
+  Dart_handle dh11=gmap.make_combinatorial_hexahedron();
   gmap.template sew<4>(dh10,dh11);
   if ( !check_number_of_cells_4(gmap, 12, 20, 9, 2, 2, 1) )
     return false;
@@ -129,7 +129,7 @@ bool test_GMAP_4()
   gmap.template close<2>();
   if ( !check_number_of_cells_4(gmap, 12, 20, 11, 2, 2, 1) )
     return false;
-  if ( !CGAL::is_volume_combinatorial_hexahedron(gmap, dh9) )
+  if ( !gmap.is_volume_combinatorial_hexahedron(dh9) )
   {
     std::cout<<"Error: the closed volume is not a combinatorial hexahedron.\n";
     assert(false);
@@ -147,19 +147,19 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,4>(gmap, gmap.alpha(dh9, 2, 3, 4));
+  gmap.remove_cell<4>(gmap.alpha(dh9, 2, 3, 4));
   if ( !check_number_of_cells_4(gmap, 12, 20, 11, 4, 2, 1) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,3>(gmap, gmap.alpha(dh9, 2, 3));
-  CGAL::remove_cell<GMAP,3>(gmap, gmap.alpha(dh10, 2, 4, 3));
+  gmap.remove_cell<3>(gmap.alpha(dh9, 2, 3));
+  gmap.remove_cell<3>(gmap.alpha(dh10, 2, 4, 3));
   if ( !check_number_of_cells_4(gmap, 12, 20, 11, 2, 2, 1) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,2>(gmap, gmap.alpha(dh9, 2));
-  CGAL::remove_cell<GMAP,2>(gmap, gmap.alpha(dh9, 1, 0, 1, 2));
+  gmap.remove_cell<2>(gmap.alpha(dh9, 2));
+  gmap.remove_cell<2>(gmap.alpha(dh9, 1, 0, 1, 2));
   if ( !check_number_of_cells_4(gmap, 12, 20, 9, 2, 2, 1) )
     return false;
 
@@ -244,14 +244,14 @@ bool test_GMAP_4()
     toremove.push( it );
   while ( !toremove.empty() )
   {
-    CGAL::remove_cell<GMAP,1>(gmap, toremove.top());
+    gmap.remove_cell<1>(gmap, toremove.top());
     toremove.pop();
   }
   if ( !check_number_of_cells_4(gmap, 20, 28, 16, 3, 3, 3) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,0>(gmap, dh16);
+  gmap.remove_cell<0>(gmap, dh16);
   if ( !check_number_of_cells_4(gmap, 19, 27, 16, 3, 3, 3) )
     return false;
 
@@ -261,14 +261,14 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,0>(gmap, dh15);
+  gmap.remove_cell<0>(gmap, dh15);
   if ( !check_number_of_cells_4(gmap, 19, 29, 19, 4, 3, 3) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,1>(gmap, gmap.beta(dh14,2,1));
-  CGAL::remove_cell<GMAP,1>(gmap, gmap.beta(dh14,0));
-  CGAL::remove_cell<GMAP,1>(gmap, dh14);
+  gmap.remove_cell<1>(gmap, gmap.beta(dh14,2,1));
+  gmap.remove_cell<1>(gmap, gmap.beta(dh14,0));
+  gmap.remove_cell<1>(gmap, dh14);
   if ( !check_number_of_cells_4(gmap, 18, 26, 17, 4, 3, 3) )
     return false;
 
@@ -278,13 +278,13 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,3>(gmap, dh13);
-  CGAL::remove_cell<GMAP,3>(gmap, dh12);
+  gmap.remove_cell<3>(gmap, dh13);
+  gmap.remove_cell<3>(gmap, dh12);
   if ( !check_number_of_cells_4(gmap, 13, 17, 10, 2, 2, 2) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,1>(gmap, dh11);
+  gmap.remove_cell<1>(gmap, dh11);
   if ( !check_number_of_cells_4(gmap, 12, 16, 10, 2, 2, 2) )
     return false;
 
@@ -296,14 +296,14 @@ bool test_GMAP_4()
     toremove.push( it );
   while ( !toremove.empty() )
   {
-    CGAL::remove_cell<GMAP,1>(gmap, toremove.top());
+    gmap.remove_cell<1>(gmap, toremove.top());
     toremove.pop();
   }
   if ( !check_number_of_cells_4(gmap, 11, 13, 8, 2, 2, 2) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,0>(gmap, dh9);
+  gmap.remove_cell<0>(gmap, dh9);
   if ( !check_number_of_cells_4(gmap, 10, 12, 8, 2, 2, 2) )
     return false;
 
@@ -315,14 +315,14 @@ bool test_GMAP_4()
     toremove.push( it );
   while ( !toremove.empty() )
   {
-    CGAL::remove_cell<GMAP,1>(gmap, toremove.top());
+    gmap.remove_cell<1>(gmap, toremove.top());
     toremove.pop();
   }
   if ( !check_number_of_cells_4(gmap, 9, 9, 6, 2, 2, 2) )
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,0>(gmap, dh7);
+  gmap.remove_cell<0>(gmap, dh7);
   if ( !check_number_of_cells_4(gmap, 8, 8, 6, 2, 2, 2) )
     return false;
 
@@ -332,8 +332,8 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,2>(gmap, dh6);
-  CGAL::remove_cell<GMAP,2>(gmap, dh5);
+  gmap.remove_cell<2>(gmap, dh6);
+  gmap.remove_cell<2>(gmap, dh5);
   if ( !check_number_of_cells_4(gmap, 4, 3, 4, 1, 1, 1) )
     return false;
 
@@ -348,9 +348,9 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  CGAL::remove_cell<GMAP,1>(gmap, dh1);
-  CGAL::remove_cell<GMAP,1>(gmap, dh2);
-  CGAL::remove_cell<GMAP,1>(gmap, dh3);
+  gmap.remove_cell<1>(dh1);
+  gmap.remove_cell<1>(dh2);
+  gmap.remove_cell<1>(dh3);
   if ( !check_number_of_cells_4(gmap, 0, 0, 0, 0, 0, 0) )
     return false;
 

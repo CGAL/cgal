@@ -1,5 +1,4 @@
 #include <CGAL/Generalized_map.h>
-#include <CGAL/Generalized_map_constructors.h>
 #include <CGAL/Cell_attribute.h>
 #include <iostream>
 #include <cstdlib>
@@ -7,19 +6,19 @@
 // My item class: no functor is associated with Face_attribute.
 struct Myitem
 {
-  template<class CMap>
+  template<class GMap>
   struct Dart_wrapper
   {
-    typedef CGAL::Dart<3, CMap> Dart;
-    typedef CGAL::Cell_attribute<CMap, int> Face_attribute;
+    typedef CGAL::GMap_dart<3, GMap> Dart;
+    typedef CGAL::Cell_attribute<GMap, int> Face_attribute;
     typedef CGAL::cpp11::tuple<void,void,Face_attribute> Attributes;
   };
 };
 
 // Definition of my combinatorial map.
-typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
-typedef CMap_3::Dart_handle               Dart_handle;
-typedef CMap_3::Attribute_type<2>::type   Face_attribute;
+typedef CGAL::Generalized_map<3,Myitem> GMap_3;
+typedef GMap_3::Dart_handle             Dart_handle;
+typedef GMap_3::Attribute_type<2>::type Face_attribute;
 
 // Functor called when two faces are merged.
 struct Merge_functor
@@ -36,7 +35,7 @@ struct Merge_functor
 // Functor called when one face is split in two.
 struct Split_functor
 {
-  Split_functor(CMap_3& amap) : mmap(amap)
+  Split_functor(GMap_3& amap) : mmap(amap)
   {}
 
   // operator() automatically called after a split.
@@ -51,84 +50,84 @@ struct Split_functor
 private:
 
   // The info of a face is the mean of the info of all its neighboors faces.
-  void set_color_of_face(CMap_3::Dart_handle dh)
+  void set_color_of_face(GMap_3::Dart_handle dh)
   {
     int nb=0;
     int sum=0;
-    for (CMap_3::Dart_of_orbit_range<1>::iterator
-           it=mmap.darts_of_orbit<1>(dh).begin(),
-           itend=mmap.darts_of_orbit<1>(dh).end();
+    for (GMap_3::Dart_of_cell_range<1>::iterator
+           it=mmap.darts_of_cell<1>(dh).begin(),
+           itend=mmap.darts_of_cell<1>(dh).end();
          it!=itend; ++it, ++nb)
-    { sum+=mmap.info<2>(mmap.beta<2>(it)); }
+    { sum+=mmap.info<2>(mmap.alpha<2>(it)); }
 
     mmap.info<2>(dh)=(sum/nb);
   }
 
-  CMap_3& mmap;
+  GMap_3& mmap;
 };
 
 // Function allowing to display all the 2-attributes, and the characteristics
 // of a given combinatorial map.
-void display_map_and_2attributes(CMap_3& cm)
+void display_map_and_2attributes(GMap_3& gm)
 {
-  for (CMap_3::Attribute_range<2>::type::iterator
-       it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end();
+  for (GMap_3::Attribute_range<2>::type::iterator
+       it=gm.attributes<2>().begin(), itend=gm.attributes<2>().end();
        it!=itend; ++it)
   {
-    std::cout<<cm.info_of_attribute<2>(it)<<"; ";
+    std::cout<<gm.info_of_attribute<2>(it)<<"; ";
   }
   std::cout<<std::endl;
-  cm.display_characteristics(std::cout);
-  std::cout<<", valid="<<cm.is_valid()<<std::endl;
+  gm.display_characteristics(std::cout);
+  std::cout<<", valid="<<gm.is_valid()<<std::endl;
 }
 
 int main()
 {
-  CMap_3 cm;
+  GMap_3 gm;
 
   // 0) Create 2 hexahedra.
-  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
-  Dart_handle dh2 = cm.make_combinatorial_hexahedron();
+  Dart_handle dh1 = gm.make_combinatorial_hexahedron();
+  Dart_handle dh2 = gm.make_combinatorial_hexahedron();
 
   // 1) Create 2-attributes of the first hexahedron, info()==7.
-  for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator
-       it=cm.one_dart_per_incident_cell<2,3>(dh1).begin(),
-       itend=cm.one_dart_per_incident_cell<2,3>(dh1).end(); it!=itend; ++it)
-  { cm.set_attribute<2>(it, cm.create_attribute<2>(7)); }
+  for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator
+       it=gm.one_dart_per_incident_cell<2,3>(dh1).begin(),
+       itend=gm.one_dart_per_incident_cell<2,3>(dh1).end(); it!=itend; ++it)
+  { gm.set_attribute<2>(it, gm.create_attribute<2>(7)); }
 
   // 2) Create 2-attributes of the second hexahedron, info()==13.
-  for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
-       cm.one_dart_per_incident_cell<2,3>(dh2).begin(),
-       itend=cm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
-  { cm.set_attribute<2>(it, cm.create_attribute<2>(13)); }
+  for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
+       gm.one_dart_per_incident_cell<2,3>(dh2).begin(),
+       itend=gm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
+  { gm.set_attribute<2>(it, gm.create_attribute<2>(13)); }
 
   // 3) Set the onsplit and onmerge functors.
-  cm.onsplit_functor<2>()=Split_functor(cm);
-  cm.onmerge_functor<2>()=Merge_functor();
+  gm.onsplit_functor<2>()=Split_functor(gm);
+  gm.onmerge_functor<2>()=Merge_functor();
 
   // 4) 3-Sew the two hexahedra along one face. This calls 1 onmerge.
-  cm.sew<3>(dh1, dh2);
+  gm.sew<3>(dh1, dh2);
 
   // 5) Display all the values of 2-attributes.
-  display_map_and_2attributes(cm);
+  display_map_and_2attributes(gm);
 
   // 6) Insert a vertex in the face between the two hexahedra.
   //    This calls 4 onsplit.
-  Dart_handle resdart=cm.insert_cell_0_in_cell_2(dh2);
+  // TODO Dart_handle resdart=gm.insert_cell_0_in_cell_2(dh2);
 
   // 7) Display all the values of 2-attributes.
-  display_map_and_2attributes(cm);
+  display_map_and_2attributes(gm);
 
   // 8) "Remove" the dynamic onmerge functor.
-  cm.onmerge_functor<2>()=boost::function<void(Face_attribute&,
+  gm.onmerge_functor<2>()=boost::function<void(Face_attribute&,
                                                Face_attribute&)>();
 
   // 9) Remove one edge: this merges two faces, however no dynamic
   //    functor is called (because it was removed).
-  cm.remove_cell<1>(resdart);
+  // TODO  gm.remove_cell<1>(resdart);
 
   // 10) Display all the values of 2-attributes.
-  display_map_and_2attributes(cm);
+  display_map_and_2attributes(gm);
 
   return EXIT_SUCCESS;
 }

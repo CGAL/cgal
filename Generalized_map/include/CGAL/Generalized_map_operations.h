@@ -38,7 +38,7 @@ namespace CGAL
    * @return true iff the i-cell can be removed.
    */
   template <class GMap, unsigned int i, unsigned int nmi=GMap::dimension-i>
-  struct Is_removable_functor
+  struct Is_removable_functor_gmap
   {
     static bool run(const GMap& amap, typename GMap::Dart_const_handle adart)
     {
@@ -55,27 +55,18 @@ namespace CGAL
   };
   // Specialization for i=GMap::dimension
   template <class GMap, unsigned int i>
-  struct Is_removable_functor<GMap, i, 0>
+  struct Is_removable_functor_gmap<GMap, i, 0>
   {
     static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return true; }
   };
   // Specialization for i=GMap::dimension-1
   template <class GMap, unsigned int i>
-  struct Is_removable_functor<GMap, i, 1>
+  struct Is_removable_functor_gmap<GMap, i, 1>
   {
     static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return true; }
   };
-  /** Test if an i-cell can be removed.
-   *  An i-cell can be removed if i==GMap::dimension or i==GMap::dimension-1,
-   *     or if there are at most two (i+1)-cell incident to it.
-   * @param adart a dart of the i-cell.
-   * @return true iff the i-cell can be removed.
-   */
-  template < class GMap, unsigned int i >
-  bool is_removable(const GMap& amap, typename GMap::Dart_const_handle adart)
-  { return CGAL::Is_removable_functor<GMap, i>::run(amap,adart); }
 
   /** Remove an i-cell, 0<=i<dimension, and merge eventually both incident
    *  (i+1)-cells.
@@ -84,7 +75,7 @@ namespace CGAL
    *  @return the number of deleted darts.
    */
   template<class GMap, unsigned int i, unsigned int nmi>
-  struct Remove_cell_functor
+  struct Remove_cell_functor_gmap
   {
     static size_t run(GMap& amap, typename GMap::Dart_handle adart)
     {
@@ -193,12 +184,12 @@ namespace CGAL
   };
 
   /** Remove a d-cell, in a d-map (special case).
-   *  @param amap the used combinatorial map.
+   *  @param amap the used generalized map.
    *  @param adart a dart of the volume to remove.
    *  @return the number of deleted darts.
    */
   template<class GMap,unsigned int i>
-  struct Remove_cell_functor<GMap,i,0>
+  struct Remove_cell_functor_gmap<GMap,i,0>
   {
     static size_t run(GMap& amap, typename GMap::Dart_handle adart)
     {
@@ -257,18 +248,6 @@ namespace CGAL
     }
   };
 
-  /** Remove an i-cell, 0<=i<=dimension.
-   * @param amap the used generalized map.
-   * @param adart a dart of the i-cell to remove.
-   * @return the number of deleted darts.
-   */
-  template< class GMap, unsigned int i >
-  size_t remove_cell(GMap& amap, typename GMap::Dart_handle adart)
-  {
-    return
-        CGAL::Remove_cell_functor<GMap,i,GMap::dimension-i>::run(amap,adart);
-  }
-
   /** Test if an i-cell can be contracted.
    *  An i-cell can be contracted if i==1
    *     or if there are at most two (i-1)-cell incident to it.
@@ -276,7 +255,7 @@ namespace CGAL
    * @return true iff the i-cell can be contracted.
    */
   template <class GMap, unsigned int i>
-  struct Is_contractible_functor
+  struct Is_contractible_functor_gmap
   {
     static bool run(const GMap& amap, typename GMap::Dart_const_handle adart)
     {
@@ -293,27 +272,18 @@ namespace CGAL
   };
   // Specialization for i=0
   template <class GMap>
-  struct Is_contractible_functor<GMap, 0>
+  struct Is_contractible_functor_gmap<GMap, 0>
   {
     static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return false; }
   };
   // Specialization for i=1
   template <class GMap>
-  struct Is_contractible_functor<GMap, 1>
+  struct Is_contractible_functor_gmap<GMap, 1>
   {
     static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return true; }
   };
-  /** Test if an i-cell can be contracted.
-   *  An i-cell can be contracted if i==1
-   *     or if there are at most two (i-1)-cell incident to it.
-   * @param adart a dart of the i-cell.
-   * @return true iff the i-cell can be contracted.
-   */
-  template < class GMap, unsigned int i >
-  bool is_contractible(const GMap& amap, typename GMap::Dart_const_handle adart)
-  { return CGAL::Is_contractible_functor<GMap, i>::run(amap,adart); }
 
   /** Contract an i-cell, 1<=i<=dimension, and merge eventually both incident
    *  (i-1)-cells.
@@ -322,7 +292,7 @@ namespace CGAL
    * @return the number of deleted darts.
    */
   template<class GMap, unsigned int i>
-  struct Contract_cell_functor
+  struct Contract_cell_functor_gmap
   {
     static size_t run(GMap& amap, typename GMap::Dart_handle adart)
     {
@@ -424,15 +394,6 @@ namespace CGAL
       return res;
     }
   };
-
-  /** Contract an i-cell, 1<=i<=dimension.
-   * @param amap the used generalized map.
-   * @param adart a dart of the i-cell to remove.
-   * @return the number of deleted darts.
-   */
-  template < class GMap, unsigned int i >
-  size_t contract_cell(GMap& amap, typename GMap::Dart_handle adart)
-  { return CGAL::Contract_cell_functor<GMap,i>::run(amap,adart); }
 
 } // namespace CGAL
 
