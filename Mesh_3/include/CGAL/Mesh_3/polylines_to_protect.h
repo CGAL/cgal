@@ -83,9 +83,8 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
           const int axis_yy = (axis + 2) % 3;
 
           ++pix10[axis_xx];
-          ++pix11[axis_xx];
+          ++pix11[axis_xx]; ++pix11[axis_yy];
           ++pix01[axis_yy];
-          ++pix11[axis_yy];
           if(pix11[0] >= xdim || pix11[1] >= ydim || pix11[2] >= zdim) {
             // we have gone too far
             continue;
@@ -117,10 +116,10 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
           const Point_3& p01 = get<1>(square[0][1]);
           const Point_3& p11 = get<1>(square[1][1]);
 
-          const bool out00 = null(get<2>(square[0][0]));
-          const bool out10 = null(get<2>(square[1][0]));
-          const bool out01 = null(get<2>(square[0][1]));
-          const bool out11 = null(get<2>(square[1][1]));
+          bool out00 = null(get<2>(square[0][0]));
+          bool out10 = null(get<2>(square[1][0]));
+          bool out01 = null(get<2>(square[0][1]));
+          bool out11 = null(get<2>(square[1][1]));
 
           //
           // Protect the edges of the cube
@@ -179,8 +178,8 @@ case_4:
             if(get<2>(square[0][0]) == get<2>(square[1][1])) {
               // Diagonal, but the wrong one.
               // Vertical swap
-              std::swap(square[0][1], square[0][0]);
-              std::swap(square[1][1], square[1][0]);
+              std::swap(square[0][1], square[0][0]); std::swap(out01, out00);
+              std::swap(square[1][1], square[1][0]); std::swap(out11, out10);
             }
             if(get<2>(square[0][1]) == get<2>(square[1][0])) {
               // diagonal case 1-2-1
@@ -205,16 +204,16 @@ case_4:
               // case 2-1-1
               if(get<2>(square[0][0]) == get<2>(square[1][0])) {
                 // Diagonal swap
-                std::swap(square[0][1], square[1][0]);
+                std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
               } else
               if(get<2>(square[0][1]) == get<2>(square[1][1])) {
                 // The other diagonal swap
-                std::swap(square[0][0], square[1][1]);
+                std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
               } else
               if(get<2>(square[1][0]) == get<2>(square[1][1])) {
                 // Vertical swap
-                std::swap(square[0][0], square[1][0]);
-                std::swap(square[0][1], square[1][1]);
+                std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
+                std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
               }
               assert(get<2>(square[0][0]) == get<2>(square[0][1]));
               assert(get<2>(square[0][0]) != get<2>(square[1][0]));
@@ -241,18 +240,18 @@ case_4:
 
               if(get<2>(square[0][0])==get<2>(square[1][0])) {
                 // case 2-2, diagonal swap
-                std::swap(square[0][1], square[1][0]);
+                std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
                 assert(get<2>(square[0][0])==get<2>(square[0][1]));
               }
               if(get<2>(square[1][0])==get<2>(square[1][1])) {
                 // case 2-2, vertical swap
-                std::swap(square[0][1], square[1][1]);
-                std::swap(square[0][0], square[1][0]);
+                std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
+                std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
                 assert(get<2>(square[0][0])==get<2>(square[0][1]));
               }
               if(get<2>(square[0][1])==get<2>(square[1][1])) {
                 // case 2-2, diagonal swap
-                std::swap(square[0][0], square[1][1]);
+                std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
                 assert(get<2>(square[0][0])==get<2>(square[0][1]));
               }
 
@@ -285,20 +284,20 @@ case_4:
               }
               if(get<2>(square[0][1]) == value_alone) {
                 // central symmetry
-                std::swap(square[0][1], square[1][0]);
-                std::swap(square[0][0], square[1][1]);
+                std::swap(square[0][1], square[1][0]); std::swap(out01, out10);
+                std::swap(square[0][0], square[1][1]); std::swap(out00, out11);
                 assert(get<2>(square[1][0]) == value_alone);
               }
               if(get<2>(square[1][1]) == value_alone) {
                 // vertical swap
-                std::swap(square[0][0], square[0][1]);
-                std::swap(square[1][0], square[1][1]);
+                std::swap(square[0][0], square[0][1]); std::swap(out00, out01);
+                std::swap(square[1][0], square[1][1]); std::swap(out10, out11);
                 assert(get<2>(square[1][0]) == value_alone);
               }
               if(get<2>(square[0][0]) == value_alone) {
                 // horizontal swap
-                std::swap(square[0][1], square[1][1]);
-                std::swap(square[0][0], square[1][0]);
+                std::swap(square[0][1], square[1][1]); std::swap(out01, out11);
+                std::swap(square[0][0], square[1][0]); std::swap(out00, out10);
                 assert(get<2>(square[1][0]) == value_alone);
               }
               ++case31;
