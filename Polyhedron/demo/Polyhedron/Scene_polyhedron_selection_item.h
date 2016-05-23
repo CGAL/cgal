@@ -235,9 +235,12 @@ public:
         poly_need_update = false;
     }
 
-   ~Scene_polyhedron_selection_item()
-    {
-    }
+  ~Scene_polyhedron_selection_item()
+  {
+    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+    viewer->setBindingSelect();
+  }
 
   void inverse_selection();
 
@@ -270,6 +273,7 @@ protected:
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
     connect(&k_ring_selector, SIGNAL(selectionRequest(QEvent*)), this,
       SIGNAL(selectionRequest(QEvent*)));
+    connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
     connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
 
@@ -852,6 +856,7 @@ Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);
   void selectionRequest(QEvent*);
+  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
 public Q_SLOTS:
   void update_poly()
   {
