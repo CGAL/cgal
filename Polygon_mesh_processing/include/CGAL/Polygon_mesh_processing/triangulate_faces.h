@@ -28,7 +28,6 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -75,11 +74,10 @@ class Triangulate_modifier
                                                     P_traits>          Fb1;
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-  typedef CGAL::No_intersection_tag                                    Itag;
+  typedef CGAL::Exact_intersections_tag                                Itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
                                                      TDS,
-                                                     Itag>             CDTbase;
-  typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+                                                     Itag>             CDT;
 
   VertexPointMap _vpmap;
 
@@ -93,11 +91,12 @@ public:
     return fh->info().is_external;
   }
 
-  void triangulate_face(face_descriptor f, PM& pmesh)
+  bool triangulate_face(face_descriptor f, PM& pmesh)
   {
     typename Traits::Vector_3 normal =
       Polygon_mesh_processing::compute_face_normal(f, pmesh);
-
+    if(normal == typename Traits::Vector_3(0,0,0))
+      return false;
     P_traits cdt_traits(normal);
     CDT cdt(cdt_traits);
 
@@ -148,6 +147,11 @@ public:
         }
       }
     }
+   int original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
+
+    if(cdt.dimension() != 2 ||
+       cdt.number_of_vertices() != original_size)
+      return false;
 
     // then modify the polyhedron
     // make_hole. (see comment in function body)
@@ -208,6 +212,7 @@ public:
         Euler::fill_hole(h0, pmesh);
       }
     }
+    return true;
   }
 
   template<typename FaceRange>
