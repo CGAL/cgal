@@ -247,8 +247,9 @@ public:
   }
 
   template<typename FaceRange>
-  void operator()(FaceRange face_range, PM& pmesh)
+  bool operator()(FaceRange face_range, PM& pmesh)
   {
+   bool result = true;
     // One need to store facet handles into a vector, because the list of
     // facets of the polyhedron will be modified during the loop, and
     // that invalidates the range [facets_begin(), facets_end()[.
@@ -264,8 +265,10 @@ public:
     // Iterates on the vector of face descriptors
     BOOST_FOREACH(face_descriptor f, facets)
     {
-      this->triangulate_face(f, pmesh);
+     if(!this->triangulate_face(f, pmesh))
+       result = false;
     }
+    return result;
   }
 
   void make_hole(halfedge_descriptor h, PM& pmesh)
@@ -356,7 +359,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *
 */
 template <typename FaceRange, typename PolygonMesh, typename NamedParameters>
-void triangulate_faces(FaceRange face_range,
+bool triangulate_faces(FaceRange face_range,
                        PolygonMesh& pmesh,
                        const NamedParameters& np)
 {
@@ -372,13 +375,13 @@ void triangulate_faces(FaceRange face_range,
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
-  modifier(face_range, pmesh);
+  return modifier(face_range, pmesh);
 }
 
 template <typename FaceRange, typename PolygonMesh>
-void triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
+bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 {
-  triangulate_faces(face_range, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+  return triangulate_faces(face_range, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /**
@@ -398,16 +401,16 @@ void triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 *
 */
 template <typename PolygonMesh, typename NamedParameters>
-void triangulate_faces(PolygonMesh& pmesh,
+bool  triangulate_faces(PolygonMesh& pmesh,
                        const NamedParameters& np)
 {
-  triangulate_faces(faces(pmesh), pmesh, np);
+  return triangulate_faces(faces(pmesh), pmesh, np);
 }
 
 template <typename PolygonMesh>
-void triangulate_faces(PolygonMesh& pmesh)
+bool triangulate_faces(PolygonMesh& pmesh)
 {
-  triangulate_faces(faces(pmesh), pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+  return triangulate_faces(faces(pmesh), pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 } // end namespace Polygon_mesh_processing
