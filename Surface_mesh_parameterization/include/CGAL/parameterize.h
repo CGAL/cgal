@@ -172,8 +172,31 @@ parameterize(TriangleMesh& mesh,
   return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
 }
 
+
 template <class TM>
 class Seam_mesh;
+
+
+template <class TriangleMesh, class HD, class VertexUVmap>
+typename Parameterizer_traits_3<Seam_mesh<TriangleMesh> >::Error_code
+parameterize(Seam_mesh<TriangleMesh>& mesh,
+             HD bhd,
+             VertexUVmap uvm)
+{ 
+  typedef typename boost::graph_traits<Seam_mesh<TriangleMesh> >::vertex_descriptor vertex_descriptor;
+  std::cerr << " D" << std::endl;
+  boost::unordered_set<vertex_descriptor> vs;
+  internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
+
+  typedef boost::unordered_map<vertex_descriptor,int> Vertex_index_map;
+  Vertex_index_map vim;
+  boost::associative_property_map<Vertex_index_map> vipm(vim);
+  mesh.initialize_vertex_index_map(bhd,vipm);
+
+  std::cerr << " hello" << std::endl;
+  Mean_value_coordinates_parameterizer_3<Seam_mesh<TriangleMesh> > parameterizer;
+  return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
+}
 
 
 template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>

@@ -156,7 +156,7 @@ public:
 
     template<class TriangleMesh_>           //< 3D surface
       class Circular_border_arc_length_parameterizer_3
-        : public Circular_border_parameterizer_3<TriangleMesh>
+        : public Circular_border_parameterizer_3<TriangleMesh_>
     {
       // Public types
     public:

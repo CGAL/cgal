@@ -268,10 +268,12 @@ public:
    
     std::vector<face_descriptor> faces;
     boost::graph_traits<Seam_mesh>::halfedge_descriptor shd(opposite(bhd,*this));
+    std::cerr << " W " << shd << std::endl;
     CGAL::Polygon_mesh_processing::connected_component(face(shd,*this),
                                                        *this,
                                                        std::back_inserter(faces));
 
+  std::cerr << " X" << std::endl;
     BOOST_FOREACH(face_descriptor fd, faces){
       BOOST_FOREACH(TM_halfedge_descriptor tmhd , halfedges_around_face(halfedge(fd,tm),tm)){
         halfedge_descriptor hd(tmhd);
@@ -279,7 +281,7 @@ public:
           put(vipm,vd,-1);
       }
     }
-
+  std::cerr << " Y" << std::endl;
     BOOST_FOREACH(face_descriptor fd, faces){
       BOOST_FOREACH(TM_halfedge_descriptor tmhd , halfedges_around_face(halfedge(fd,tm),tm)){
         halfedge_descriptor hd(tmhd);
