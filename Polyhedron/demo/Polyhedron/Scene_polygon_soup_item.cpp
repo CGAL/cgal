@@ -221,7 +221,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit, int polygon_
     CDT cdt(cdt_traits);
     //A map used to associate the vertices in the triangulation to the points
     //in the soup. This is needed to retrieve the colors of the points.
-    QMap<CDT::Vertex_handle, int> p2p;
+    QMap < CDT::Vertex_handle, std::size_t> p2p;
 
     std::size_t it = 0;
     std::size_t it_end =pit->size();
