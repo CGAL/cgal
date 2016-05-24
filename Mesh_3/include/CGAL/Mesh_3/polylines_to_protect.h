@@ -23,25 +23,83 @@
 
 #include <vector>
 #include <map>
+#include <utility> // std::swap
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/internal/Mesh_3/split_in_polylines.h>
 #include <CGAL/internal/Mesh_3/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/Labeled_image_mesh_domain_3.h> // for CGAL::Null_subdomain_index
+#include <CGAL/Labeled_image_mesh_domain_3.h> // for
+                                              // CGAL::Null_subdomain_index
+#include <boost/utility.hpp> // for boost::prior
+#include <boost/foreach.hpp>
+
+#include <CGAL/Search_traits_3.h>
+#include <CGAL/Orthogonal_incremental_neighbor_search.h>
 
 namespace CGAL {
 
+// this function is overloaded for when `PolylineInputIterator` is `int`.
+template <typename K,
+          typename Graph,
+          typename PolylineInputIterator>
+void snap_graph_vertices(Graph& graph,
+                         const double vx, const double vy, const double vz,
+                         PolylineInputIterator existing_polylines_begin,
+                         PolylineInputIterator existing_polylines_end,
+                         K k)
+{
+  const double dist_bound = (std::min)(vx,
+                                       (std::min)(vy, vz)) / 256;
+  const double sq_dist_bound = dist_bound * dist_bound;
+
+  typedef CGAL::Search_traits_3<K> Tree_traits;
+  typedef CGAL::Orthogonal_incremental_neighbor_search<Tree_traits> NN_search;
+  typedef typename NN_search::Tree Tree;
+
+  Tree tree;
+  // insert the extremities of the polylines in the kd-tree
+  for(PolylineInputIterator poly_it = existing_polylines_begin;
+      poly_it != existing_polylines_end; ++poly_it)
+  {
+    if(poly_it->begin() != poly_it->end()) {
+      tree.insert(*poly_it->begin());
+      if(boost::next(poly_it->begin()) != poly_it->end()) {
+        tree.insert(*boost::prior(poly_it->end()));
+      }
+    }
+  }
+  if(tree.size() == 0) return;
+
+  BOOST_FOREACH(typename boost::graph_traits<Graph>::vertex_descriptor v,
+                vertices(graph))
+  {
+    const typename K::Point_3 p = graph[v];
+    NN_search nn(tree, p);
+    CGAL_assertion(nn.begin() != nn.end());
+    if(squared_distance(nn.begin()->first, p) < sq_dist_bound) {
+      graph[v] = nn.begin()->first;
+    }
+  }
+}
+
+template <typename K,
+          typename Graph>
+void snap_graph_vertices(Graph&, double, double, double, int, int, K)
+{}
 
 template <typename P,
           typename Image_word_type,
-          typename Null_subdomain_index>
+          typename Null_subdomain_index,
+          typename PolylineInputIterator>
 void
 polylines_to_protect(const CGAL::Image_3& cgal_image,
                      const double vx, const double vy, const double vz,
                      std::vector<std::vector<P> >& polylines,
                      Image_word_type*,
-                     Null_subdomain_index null)
+                     Null_subdomain_index null,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
 {
   typedef typename Kernel_traits<P>::Kernel K;
   typedef P Point_3;
@@ -351,6 +409,10 @@ case_4:
   CGAL_assertion(nb_facets == expected_nb_facets);
   CGAL_USE(nb_facets); CGAL_USE(expected_nb_facets);
 
+  snap_graph_vertices(graph,
+                      vx, vy, vz,
+                      existing_polylines_begin, existing_polylines_end,
+                      K());
 
   internal::Mesh_3::split_in_polylines(graph, polylines, K());
 }
@@ -368,7 +430,9 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
      polylines,
      word_type,
-     null);
+     null,
+     0,
+     0);
 }
 
 template <typename P, typename Image_word_type>
@@ -381,7 +445,51 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
      cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
      polylines,
      (Image_word_type*)0,
-     CGAL::Null_subdomain_index());
+     CGAL::Null_subdomain_index(),
+     0,
+     0);
+}
+
+
+template <typename P,
+          typename Image_word_type,
+          typename PolylineInputIterator>
+void
+polylines_to_protect(const CGAL::Image_3& cgal_image,
+                     std::vector<std::vector<P> >& polylines,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
+{
+  polylines_to_protect<P>
+    (cgal_image,
+     cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
+     polylines,
+     (Image_word_type*)0,
+     CGAL::Null_subdomain_index(),
+     existing_polylines_begin,
+     existing_polylines_end);
+}
+
+template <typename P,
+          typename Image_word_type,
+          typename Null_subdomain_index,
+          typename PolylineInputIterator>
+void
+polylines_to_protect(const CGAL::Image_3& cgal_image,
+                     std::vector<std::vector<P> >& polylines,
+                     Image_word_type* word_type,
+                     Null_subdomain_index null,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
+{
+  polylines_to_protect<P>
+    (cgal_image,
+     cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
+     polylines,
+     word_type,
+     null,
+     existing_polylines_begin,
+     existing_polylines_end);
 }
 
 } // namespace CGAL
