@@ -338,6 +338,8 @@ void
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     QMap<float, int> picked_item_IDs;
+    if(with_names)
+      glEnable(GL_DEPTH_TEST);
     if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
     if(!gl_init)
@@ -500,48 +502,48 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     picked_item_IDs[depth] = index;
                 }
             }
-        }
-    }
-    if(!with_names)
-    {
-        glDepthFunc(GL_LESS);
-        // Splatting
-        if(!with_names && ms_splatting->isSupported())
-        {
-            ms_splatting->beginVisibilityPass();
-            for(int index = 0; index < m_entries.size(); ++index)
+
+            if(!with_names)
             {
-                CGAL::Three::Scene_item& item = *m_entries[index];
-                if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-                if(item.visible() && item.renderingMode() == Splatting)
+                glDepthFunc(GL_LESS);
+                // Splatting
+                if(!with_names && ms_splatting->isSupported())
                 {
-
-                    if(viewer)
+                    ms_splatting->beginVisibilityPass();
+                    for(int index = 0; index < m_entries.size(); ++index)
                     {
-                        item.draw_splats(viewer);
+                        CGAL::Three::Scene_item& item = *m_entries[index];
+                        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
+                        if(item.visible() && item.renderingMode() == Splatting)
+                        {
+
+                          if(viewer)
+                          {
+                             item.draw_splats(viewer);
+                          }
+                          else
+                              item.draw_splats();
+                        }
+
                     }
-                    else
-                        item.draw_splats();
-                }
-
-            }
-            ms_splatting->beginAttributePass();
-            for(int index = 0; index < m_entries.size(); ++index)
-            {  CGAL::Three::Scene_item& item = *m_entries[index];
-                if(item.visible() && item.renderingMode() == Splatting)
-                {
-                    viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
-                    if(viewer)
-                        item.draw_splats(viewer);
-                    else
-                        item.draw_splats();
+                    ms_splatting->beginAttributePass();
+                    for(int index = 0; index < m_entries.size(); ++index)
+                    {  CGAL::Three::Scene_item& item = *m_entries[index];
+                        if(item.visible() && item.renderingMode() == Splatting)
+                        {
+                            viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
+                            if(viewer)
+                                item.draw_splats(viewer);
+                            else
+                                item.draw_splats();
+                        }
+                    }
+                    ms_splatting->finalize();
                 }
             }
-            ms_splatting->finalize();
-
         }
     }
-    else
+    if(with_names)
     {
         QList<float> depths = picked_item_IDs.keys();
         if(!depths.isEmpty())

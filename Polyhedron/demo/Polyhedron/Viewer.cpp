@@ -256,7 +256,6 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::RightButton &&
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
-
     select(event->pos());
     requestContextMenu(event->globalPos());
     event->accept();
