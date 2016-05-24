@@ -99,7 +99,7 @@ public:
       Polygon_mesh_processing::compute_face_normal(f, pmesh);
     if(normal == typename Traits::Vector_3(0,0,0))
       return false;
-    int original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
+    std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
     if(original_size == 4)
     {
       typename Kernel::Point_3 p0, p1, p2, p3;
@@ -304,11 +304,15 @@ public:
 * @param pmesh the polygon mesh to which the face to be triangulated belongs
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
+*
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
+* @return true if the face has been triangulated. The triangulation can fail if the normal computed for the projection plane is null,
+*  if the number of points in the triangulation is different from the number of input points
+*  or if the dimension of the CDT is not 2.
 */
 template<typename PolygonMesh, typename NamedParameters>
 bool  triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
@@ -357,6 +361,8 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
+* @return true if all the faces have been triangulated.
+* @see triangulate_face()
 */
 template <typename FaceRange, typename PolygonMesh, typename NamedParameters>
 bool triangulate_faces(FaceRange face_range,
