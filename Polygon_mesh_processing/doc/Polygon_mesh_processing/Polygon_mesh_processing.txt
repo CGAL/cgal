@@ -191,8 +191,9 @@ tetrahedral meshes of the corresponding bounded volumes.
 
 \subsection coref_coref_subsec Corefinement
 The corefinement of two triangulated surface meshes can be done using the function
-`CGAL::Polygon_mesh_processing::corefine()`. It takes as input the two meshes
-to corefine. If constrained edge maps are provided, edges belonging to the
+`CGAL::Polygon_mesh_processing::corefine()`. It takes as input the two
+triangulated surface meshes to corefine.
+If constrained edge maps are provided, edges belonging to the
 intersection of the input meshes will be marked as constrained. In addition,
 if an edge that was marked as constrained is split during the corefinement,
 sub-edges will be marked as constrained as well.
@@ -200,7 +201,7 @@ sub-edges will be marked as constrained as well.
 \subsection coref_bolop_subsec Boolean Operations
 
 \cgalFigureBegin{boolop_fig, bool_op.png}
-Let `C` and `S` be the volume bounded by the triangulated surface meshes of
+Let `C` and `S` be the volumes bounded by the triangulated surface meshes of
 a cube and a sphere, respectively. From left to right, the picture shows
 the triangulated surface meshes bounding the union of `C` and `S`,
 `C` minus `S`, the intersection of `C` and `S` and `S` minus `C`.
@@ -209,7 +210,7 @@ the triangulated surface meshes bounding the union of `C` and `S`,
 
 The corefinement of two triangulated surface meshes can naturally be used
 for computing Boolean operations on volumes.
-Considering two triangulated surface meshes each bounding
+Considering two triangulated surface meshes, each bounding
 a volume, the functions `CGAL::Polygon_mesh_processing::join()`,
 `CGAL::Polygon_mesh_processing::intersection()` and
 `CGAL::Polygon_mesh_processing::difference()` respectively compute the union,
@@ -223,24 +224,24 @@ In particular this means that the output volume has no part with zero thickness.
 Mathematically speaking, the intersection with an infinitesimally small ball
 centered in the output volume is a topological ball. At the surface level this means
 that no non-manifold vertex or edge is allowed in the output. For example, it
-is not possible to compute the union of two cubes disjoint but sharing an edge.
-In case you have to deal with such scenarios, you should consider using the
+is not possible to compute the union of two cubes that are disjoint but sharing an edge.
+In case you have to deal with such scenarii, you should consider using the
 package \ref PkgNef3Summary.
 
-It is possible to update the input to contain the result (in-place operation).
+It is possible to update the input so that it contains the result (in-place operation).
 In that case the whole mesh will not be copied and only the region around the
-intersection polyline will be modified. In case the Boolean operation is not,
-possible the input mesh will be nevertheless corefined.
+intersection polyline will be modified. In case the Boolean operation is not
+possible, the input mesh will nevertheless be corefined.
 
 
 \subsection coref_valid_subsec Kernel and Validity of the Output
-The corefinement operation (which is also used internally in the three
+The corefinement operation (which is also internally used in the three
 Boolean operations) will correctly change the topology of the input surface mesh
 if the point type used in the point property maps of the input meshes is
 from a \cgal Kernel with exact predicates. If that kernel does not
 have exact constructions, the embedding of the output surface mesh might
 have self-intersections. In case of consecutive operations, it is thus
-recommanded to use a point property map with points from a kernel with exact
+recommended to use a point property map with points from a kernel with exact
 predicates and exact constructions
 (such as `CGAL::Exact_predicates_exact_constructions_kernel`).
 
@@ -259,7 +260,7 @@ the limited precision of floating point numbers.
 \subsubsection coref_ex_refine_subsec Boolean Operation and Local Remeshing
 
 This example is similar to the previous one, but here we
-substract a volume and update the first input trianguled surface mesh
+substract a volume and update the first input triangulated surface mesh
 (in-place operation). The edges that were on the intersection of the input
 meshes were marked and the region around them is remeshed isotropically
 but preserving the intersection polyline.
@@ -268,11 +269,11 @@ but preserving the intersection polyline.
 
 \subsubsection coref_ex_consq_subsec Robustness of Consecutive Operations
 This example computes the intersection of two volumes and then does the
-union of the result with one of the input volume. This operations is in
+union of the result with one of the input volumes. This operation is in
 general not possible when using inexact constructions. Instead of using a
 mesh with a point from a kernel with exact constructions, the exact points
-are a property of the mesh vertices we can reuse in a later operations.
-That way we can manipulate a mesh with points having floating point coordinates
+are a property of the mesh vertices that we can reuse in a later operations.
+With that property, we can manipulate a mesh with points having floating point coordinates
 but benefit from the robustness provided by the exact constructions.
 \cgalExample{Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp}
 
