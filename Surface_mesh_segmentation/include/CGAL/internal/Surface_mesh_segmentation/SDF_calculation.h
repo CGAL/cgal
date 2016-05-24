@@ -81,6 +81,7 @@ private:
 
   typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_handle;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_handle;
 
   typedef AABB_face_graph_triangle_primitive<Polyhedron, VertexPointPmap> Primitive;
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
@@ -115,7 +116,7 @@ private:
   bool   use_diagonal;
 public:
   /**
-   * Construct AABB tree with a mesh.
+   * Construct AABB tree with a mesh. Ignores degenerated faces.
    * @param mesh `CGAL Polyhedron` on which AABB tree constructed
    * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
    * @param use_diagonal if true: calculates diagonal of AABB tree and cast segments instead of rays using diagonal length
@@ -137,7 +138,20 @@ public:
     centroid_functor(traits.construct_centroid_3_object()),
     use_diagonal(use_diagonal) 
   {
-    tree.insert(faces(mesh).first, faces(mesh).second, mesh, vertex_point_map);
+
+   face_iterator it, end;
+   for(it = faces(mesh).begin(), end = faces(mesh).end(); it!=end; it++)
+   {
+       typename boost::property_traits<VertexPointPmap>::reference a,b,c;
+       halfedge_handle h = halfedge(*it, mesh);
+       a = vertex_point_map[target(h, mesh)];
+       h = next(h, mesh);
+       b = vertex_point_map[target(h, mesh)];
+       h = next(h, mesh);
+       c = vertex_point_map[target(h, mesh)];
+       if(!CGAL::collinear(a,b,c))
+         tree.insert(Primitive(it, mesh, vertex_point_map));
+   }
     tree.build();
 
     if(build_kd_tree) {
