@@ -41,7 +41,8 @@
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_corefinement_grp Corefinement and Boolean Operations
-/// Functions corefine triangulated surface meshes and compute the union, difference and intersection
+/// Functions to corefine triangulated surface meshes and compute triangulated
+/// surface meshes of the union, difference and intersection
 /// of the bounded volumes.
 /// \ingroup PkgPolygonMeshProcessing
 

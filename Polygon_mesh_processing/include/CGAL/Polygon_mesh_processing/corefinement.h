@@ -155,18 +155,17 @@ difference(const TriangleMesh& P,
 
 /**
  * \ingroup PMP_corefinement_grp
- * \link coref_def_subsec orefines \endlink `P` and `Q`. For each input
- * triangulated surface mesh, if an constrained edge is provided, intersection
- * edges will be marked as constrained. If a edge that was marked as
- * constrained is split, sub-edge will be marked as constrained as well.
+ * \link coref_def_subsec corefines \endlink `P` and `Q`. For each input
+ * triangulated surface mesh, if a constrained edge is provided, intersection
+ * edges will be marked as constrained. If an edge that was marked as
+ * constrained is split, its sub-edges will be marked as constrained as well.
  *
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(P)` \endlink
- * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersec(Q)` \endlink
+ * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(Q)` \endlink
  *
  * @tparam TriangleMesh a model of `FaceGraph`
  * @tparam NamedParametersP a sequence of \ref namedparameters
  * @tparam NamedParametersQ a sequence of \ref namedparameters
- * @tparam NamedParametersO a sequence of \ref namedparameters
  *
  * @param P first input triangulated surface mesh
  * @param Q second input triangulated surface mesh
@@ -174,10 +173,10 @@ difference(const TriangleMesh& P,
  * @param np_for_Q optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `P` (`Q`) \cgalParamEnd
+ *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `P` (resp. `Q`) \cgalParamEnd
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
- *     constrained-or-not status of each edge of `P` (`Q`).
- *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `P` (`Q`) \cgalParamEnd
+ *     constrained-or-not status of each edge of `P` (resp. `Q`)\cgalParamEnd
+ *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `P` (resp. `Q`) \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
