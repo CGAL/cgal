@@ -9,7 +9,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <boost/container/flat_map.hpp>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
-#include <boost/property_map/function_property_map.hpp>
+#include <CGAL/property_map.h>
 #include <functional>
 
 

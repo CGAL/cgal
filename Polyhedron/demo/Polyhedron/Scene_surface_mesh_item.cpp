@@ -360,7 +360,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       program->setAttributeValue("is_selected", false);
       if(!has_vcolors)
         program->setAttributeValue("colors", this->color());
-    glDrawElements(GL_TRIANGLES, idx_data_.size(),
+    glDrawElements(GL_TRIANGLES, static_cast<GLuint>(idx_data_.size()),
                    GL_UNSIGNED_INT, idx_data_.data());
     vaos[Smooth_facets]->release();
   }
@@ -394,7 +394,7 @@ void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) c
    program->setAttributeValue("is_selected", true);
  else
    program->setAttributeValue("is_selected", false);
- glDrawElements(GL_LINES, idx_edge_data_.size(),
+ glDrawElements(GL_LINES, static_cast<GLuint>(idx_edge_data_.size()),
                 GL_UNSIGNED_INT, idx_edge_data_.data());
  vaos[Edges]->release();
  program->release();
