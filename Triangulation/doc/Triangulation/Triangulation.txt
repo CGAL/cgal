@@ -480,6 +480,9 @@ of all simplices are regular.
 Note that as a result, some points can be hidden and do not result in vertices
 in the triangulation.
 
+A weighted point `p` is said to be in conflict 
+with a cell `c` if it has a negative power distance to the power sphere of `c`.
+
 Regular triangulations support insertion of weighted points, 
 and location of a query point inside the triangulation.
 Note that inserting a large set of points at once is much faster
