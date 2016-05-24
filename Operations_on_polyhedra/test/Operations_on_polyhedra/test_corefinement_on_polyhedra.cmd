@@ -19,6 +19,7 @@ data-coref/elephant_split_1.off data-coref/elephant_split_2.off
 data-coref/cube.off data-coref/cube_on_cube_edge.off
 data-coref/cube.off data-coref/cube_on_cube_corner.off
 data-coref/cow.off data-coref/cross.off
+data-coref/sphere.off data-coref/sphere_trans_cut.off
 data-coref/cube.off data-coref/coplanar_with_cube3.off
 data-coref/cube.off data-coref/coplanar_with_cube4.off
 data-coref/square1.off data-coref/square_pair.off
