@@ -524,6 +524,10 @@ namespace internal {
         std::cout.flush();
 #endif
 
+        edge_descriptor e = edge(he, mesh_);
+        if (!is_collapse_allowed(e))
+          continue; //situation could have changed since it was added to the bimap
+
         //handle the boundary case :
         //a PATCH_BORDER edge can be collapsed,
         //and an edge incident to PATCH_BORDER can be collapsed,
@@ -566,11 +570,11 @@ namespace internal {
           CGAL_assertion(collapse_does_not_invert_face(he));
         }
 
-        CGAL_assertion(is_collapse_allowed(edge(he, mesh_)));
+        CGAL_assertion(is_collapse_allowed(e));
 
         if (degree(va, mesh_) < 3
           || degree(vb, mesh_) < 3
-          || !CGAL::Euler::does_satisfy_link_condition(edge(he, mesh_), mesh_))//necessary to collapse
+          || !CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
           continue;
 
         //check that collapse would not create an edge with length > high
@@ -626,7 +630,7 @@ namespace internal {
 
           //perform collapse
           Point target_point = get(vpmap_, vb);
-          vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
+          vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
 
@@ -1082,19 +1086,41 @@ private:
         return false;
       if (is_on_patch(he)) //hopp is also on patch
       {
-        if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
-          return false;//too many cases to be handled
-        else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
-          return false;//too many cases to be handled
-        else if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
+        if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
           return false;//collapse would induce pinching the selection
-        else return true;
+        else
+          return is_collapse_allowed(he) && is_collapse_allowed(hopp);
       }
       else if (is_on_patch_border(he))
         return is_collapse_allowed_on_patch_border(he);
       else if (is_on_patch_border(hopp))
         return is_collapse_allowed_on_patch_border(hopp);
       return false;
+    }
+
+    bool is_collapse_allowed(const halfedge_descriptor& he) const
+    {
+      halfedge_descriptor hopp = opposite(he, mesh_);
+
+      if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
+        return false;//too many cases to be handled
+      if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
+        return false;//too many cases to be handled
+      else if (is_on_patch_border(next(he, mesh_)))
+      {
+        //avoid generation of degenerate faces, and self-intersections
+        if (source(he, mesh_) ==
+          target(next(next_on_patch_border(next(he, mesh_)), mesh_), mesh_))
+          return false;
+      }
+      else if (is_on_patch_border(prev(hopp, mesh_)))
+      {
+        //avoid generation of degenerate faces, and self-intersections
+        if (target(hopp, mesh_) ==
+          source(prev(prev_on_patch_border(prev(hopp, mesh_)), mesh_), mesh_))
+          return false;
+      }
+      return true;
     }
 
     bool is_collapse_allowed_on_patch_border(const halfedge_descriptor& h) const
@@ -1114,6 +1140,52 @@ private:
       }
       CGAL_assertion(is_on_mesh(hopp) || is_on_border(hopp));
       return true;//we already checked we're not pinching a hole in the patch
+    }
+
+    halfedge_descriptor next_on_patch_border(const halfedge_descriptor& h) const
+    {
+      CGAL_precondition(is_on_patch_border(h));
+      CGAL_assertion_code(const Patch_id& pid = get_patch_id(face(h, mesh_)));
+
+      halfedge_descriptor end = opposite(h, mesh_);
+      halfedge_descriptor nxt = next(h, mesh_);
+      do
+      {
+        if (is_on_patch_border(nxt))
+        { 
+          CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
+          return nxt;
+        }
+        nxt = next(opposite(nxt, mesh_), mesh_);
+      }
+      while (end != nxt);
+
+      CGAL_assertion(is_on_patch_border(end));
+      CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
+      return end;
+    }
+
+    halfedge_descriptor prev_on_patch_border(const halfedge_descriptor& h) const
+    {
+      CGAL_precondition(is_on_patch_border(h));
+      CGAL_assertion_code(const Patch_id& pid = get_patch_id(face(h, mesh_)));
+
+      halfedge_descriptor end = opposite(h, mesh_);
+      halfedge_descriptor prv = prev(h, mesh_);
+      do
+      {
+        if (is_on_patch_border(prv))
+        {
+          CGAL_assertion(get_patch_id(face(prv, mesh_)) == pid);
+          return prv;
+        }
+        prv = prev(opposite(prv, mesh_), mesh_);
+      }
+      while (end != prv);
+
+      CGAL_assertion(is_on_patch_border(end));
+      CGAL_assertion(get_patch_id(face(prv, mesh_)) == pid);
+      return end;
     }
 
     bool collapse_does_not_invert_face(const halfedge_descriptor& h) const

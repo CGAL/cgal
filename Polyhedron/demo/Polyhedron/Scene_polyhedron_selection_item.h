@@ -658,6 +658,24 @@ public:
     if(selected_facets.empty()) {return;}
     // no-longer-valid vertices and edges will be handled when item_about_to_be_changed() 
 
+    for (Selection_set_edge::iterator eit = selected_edges.begin(); eit != selected_edges.end();)
+    {
+      if(//both incident faces will be erased
+        (selected_facets.find(eit->halfedge()->face()) != selected_facets.end()
+         && selected_facets.find(eit->halfedge()->opposite()->face()) != selected_facets.end())
+         //OR eit is a boundary edge and its incident face will be erased
+         || (eit->halfedge()->is_border_edge()
+             && (selected_facets.find(eit->halfedge()->face()) != selected_facets.end()
+              || selected_facets.find(eit->halfedge()->opposite()->face()) != selected_facets.end())))
+      {
+        edge_descriptor tmp = *eit;
+        ++eit;
+        selected_edges.erase(tmp);
+      }
+      else
+        ++eit;
+    }
+
     // erase facets from poly
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
       polyhedron()->erase_facet((*fb)->halfedge());
