@@ -169,23 +169,24 @@ drawn in green.
 mesh, each connected component splits the 3D space into two subspaces. The vertex
 sequence of each face of a component is seen either clockwise or counterclockwise
 from these two subspaces. The subspace that sees the sequence clockwise
-(counterclockwise) is on the negative (positive) side of the component. Given a
-closed triangulated surface mesh `tm` without self-intersection,
+(resp. counterclockwise) is on the negative (resp. positive) side of the component. Given a
+closed triangulated surface mesh `tm` with no self-intersections,
 the connected components of `tm` divide
 the 3D space into subspaces. We say that `tm` bounds a volume if each
-subspace is either exclusively on the positive (or negative) side of all the
+subspace lies exclusively on the positive (or negative) side of all the
 incident connected components of `tm`. The volume bounded by `tm` is the union
 of all subspaces that are on negative sides of their incident connected components
 of `tm`.
 
 \cgalFigureBegin{boundedvol_fig, bounded_vols.jpg}
-Volumes bounded by a triangulated surface mesh: The figure shows a mesh
-representing three nested spheres (i.e. three connected components).
-The left side of the picture shows the clipped mesh with the two possible
-orientations of the faces in which case a volume is bounded by the mesh.
+Volumes bounded by a triangulated surface mesh: The figure shows meshes
+representing three nested spheres (three connected components).
+The left side of the picture shows a clipped triangulated surface mesh,
+with the two possible orientations of the faces for which
+a volume is bounded by the mesh.
 The positive and negative sides of each connected component is displayed in
-light and dark blue, respectively. The right part of the picture shows
-the corresponding bounded volumes clipped.
+light and dark blue, respectively. The right part of the picture shows clipped
+tetrahedral meshes of the corresponding bounded volumes.
 \cgalFigureEnd
 
 \subsection coref_coref_subsec Corefinement
