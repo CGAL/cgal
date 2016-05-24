@@ -45,10 +45,8 @@ int main(int argc, char * argv[])
       seam.push_back(edge(SM_vertex_descriptor(v),SM_vertex_descriptor(w),sm).first);
     }
   }
-  std::cerr << " A" << std::endl;
   SM_halfedge_descriptor smhd = halfedge(seam.front(),sm);   
   Mesh mesh(sm, seam);
-   std::cerr << " B" << std::endl;
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that the uv
   // is only stored for the canonical halfedges representing a vertex  
@@ -60,7 +58,6 @@ int main(int argc, char * argv[])
   halfedge_descriptor bhd(smhd);
   bhd = opposite(bhd,mesh); // a halfedge on the virtual border
 
-  std::cerr << " C" << std::endl;
   CGAL::parameterize(mesh, bhd, uvpm);
  
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){  

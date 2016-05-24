@@ -184,7 +184,6 @@ parameterize(Seam_mesh<TriangleMesh>& mesh,
              VertexUVmap uvm)
 { 
   typedef typename boost::graph_traits<Seam_mesh<TriangleMesh> >::vertex_descriptor vertex_descriptor;
-  std::cerr << " D" << std::endl;
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
 
@@ -193,7 +192,6 @@ parameterize(Seam_mesh<TriangleMesh>& mesh,
   boost::associative_property_map<Vertex_index_map> vipm(vim);
   mesh.initialize_vertex_index_map(bhd,vipm);
 
-  std::cerr << " hello" << std::endl;
   Mean_value_coordinates_parameterizer_3<Seam_mesh<TriangleMesh> > parameterizer;
   return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
 }
