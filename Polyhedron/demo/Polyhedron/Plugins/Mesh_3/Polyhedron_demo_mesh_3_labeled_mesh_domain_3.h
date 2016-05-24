@@ -85,7 +85,7 @@ public:
            p_rng)
   {}
 
-  ///Constructor for the Gray-level Images
+  ///Constructors for the Gray-level Images
   Polyhedron_demo_labeled_mesh_domain_3(
     const Image& img,
     const std::binder1st<std::less<float> > iso_value = std::bind1st(std::less<float>(), 3),
@@ -93,7 +93,12 @@ public:
    : Base(img, iso_value)
   {}
 
-
+  Polyhedron_demo_labeled_mesh_domain_3(
+    const Image& img,
+    const std::binder1st<std::greater<float> > iso_value = std::bind1st(std::greater<float>(), 3),
+    const float value_outside = 0)
+   : Base(img, iso_value)
+  {}
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified

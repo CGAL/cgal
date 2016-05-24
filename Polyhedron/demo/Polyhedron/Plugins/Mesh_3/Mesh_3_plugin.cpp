@@ -269,6 +269,12 @@ void Mesh_3_plugin::mesh_3()
   // -----------------------------------
   // Get values
   // -----------------------------------
+  if(image_item && image_item->isGray())
+    ui.groupBox_3->setVisible(true);
+  else
+    ui.groupBox_3->setVisible(false);
+
+
   int i = dialog.exec();
   if( i == QDialog::Rejected ) { return; }
 
@@ -280,6 +286,9 @@ void Mesh_3_plugin::mesh_3()
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const bool protect_features = ui.protect->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
+  const float iso_value = !ui.groupBox_3->isVisible() ? 0  : ui.iso_value_spinBox->value();
+  const float value_outside = !ui.groupBox_3->isVisible() ? 0  : ui.value_outside_spinBox->value();
+  const float inside_is_less = !ui.groupBox_3->isVisible() ? false  : ui.inside_is_less_checkBox->isChecked();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -352,7 +361,10 @@ void Mesh_3_plugin::mesh_3()
                                  protect_features,
                                  manifold,
                                  scene,
-                                 image_item->isGray());
+                                 image_item->isGray(),
+                                 iso_value,
+                                 value_outside,
+                                 inside_is_less);
   }
 #endif
 
