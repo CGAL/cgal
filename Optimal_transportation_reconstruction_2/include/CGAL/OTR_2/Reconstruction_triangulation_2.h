@@ -815,8 +815,7 @@ public:
   bool compute_triangle_ccw(
     const Point& pa, const Point& pb, const Point& pc) const
   {
-    FT dist = compute_signed_distance(pa, pb, pc);
-    return (dist > -EPS);
+    return geom_traits().orientation_2_object()(pa,pb,pc) != RIGHT_TURN;
   }
 
   // COMBINATORIAL TESTS //
