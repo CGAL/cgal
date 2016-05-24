@@ -113,11 +113,13 @@ void test(const int d, const string & type, const int N)
 template< int D >
 void go(const int N)
 {
-    //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK;
     typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
     typedef CGAL::Delaunay_triangulation<FK> Triangulation;
-    //test<Triangulation>(D, "dynamic", N);
     test<Triangulation>(D, "static", N);
+
+    typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK_dyn;
+    typedef CGAL::Delaunay_triangulation<FK> Triangulation_dyn;
+    test<Triangulation_dyn>(D, "dynamic", N);
 }
 
 int main(int argc, char **argv)
