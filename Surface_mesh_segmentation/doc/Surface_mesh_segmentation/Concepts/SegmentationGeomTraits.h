@@ -100,7 +100,24 @@ Function object model of Kernel::ConstructSumOfVectors_3 for the aforementioned 
 */
 typedef unspecified_type Construct_sum_of_vectors_3;
 
+/*!
+Function object model of Kernel::Collinear_3 for the aforementioned geometric types.
+*/
+class Collinear_3
+{
+public:
+ //!determines if points `p`, `q` and `r` are collinear.
+  bool operator()(const Point_3 &p,
+                  const Point_3 &q,
+                  const Point_3 &r);
+};
+
 /// @}
+
+Collinear_3
+collinear_3_object()const
+{return Collinear_3();}
+
 
 }; /* end SegmentationGeomTraits */
 

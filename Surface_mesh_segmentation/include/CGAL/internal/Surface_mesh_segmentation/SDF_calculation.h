@@ -138,18 +138,19 @@ public:
     centroid_functor(traits.construct_centroid_3_object()),
     use_diagonal(use_diagonal) 
   {
-
+   typedef typename boost::property_traits<VertexPointPmap>::reference Point_ref;
+   typename GeomTraits::Collinear_3  collinear = traits.collinear_3_object();
    face_iterator it, end;
    for(it = faces(mesh).begin(), end = faces(mesh).end(); it!=end; it++)
    {
-       typename boost::property_traits<VertexPointPmap>::reference a,b,c;
        halfedge_handle h = halfedge(*it, mesh);
-       a = vertex_point_map[target(h, mesh)];
+       Point_ref a(vertex_point_map[target(h, mesh)]);
        h = next(h, mesh);
-       b = vertex_point_map[target(h, mesh)];
+       Point_ref b(vertex_point_map[target(h, mesh)]);
        h = next(h, mesh);
-       c = vertex_point_map[target(h, mesh)];
-       if(!CGAL::collinear(a,b,c))
+       Point_ref c(vertex_point_map[target(h, mesh)]);
+       bool test = collinear(a,b,c);
+       if(!test)
          tree.insert(Primitive(it, mesh, vertex_point_map));
    }
     tree.build();
