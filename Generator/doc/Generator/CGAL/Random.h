@@ -18,6 +18,9 @@ It can be very useful, e.g. for debugging, to reproduce a sequence of
 random numbers. This can be done by either initialising with a fixed 
 seed, or by using the state functions as described below. 
 
+\note A `Random` object is not deterministic when used by several threads at 
+the same time, even if a fixed seed has been chosen.
+
 \cgalHeading{Implementation}
 
 We use the boost random library function `boost::rand48` to generate the random 
