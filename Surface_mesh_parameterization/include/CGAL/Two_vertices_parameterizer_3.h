@@ -219,8 +219,6 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
     put(vpmap, vxmin, true);
     put(vpmap, vxmax, true);
 
-    std::cerr << "2 " << get(uvmap, vxmin)  << " 0 " << get(uvmap, vxmax) << " 0 " << std::endl;
-
 #ifdef DEBUG_TRACE
     std::cerr << "  map two vertices..." << std::endl;
     // std::cerr << "    #" << mesh.get_vertex_index(vxmin) << "(" << vxmin->vertex()->index() << ") parameterized " << std::endl;

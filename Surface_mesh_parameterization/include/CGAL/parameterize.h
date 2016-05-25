@@ -106,8 +106,11 @@ parameterize(TriangleMesh& mesh)  ///< 3D mesh, model of TriangleMesh concept
       void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
       {
         BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
-          if(map->find(vd) == map->end()){
-            (*map)[vd] = index++;
+          typename Map::iterator it;
+          bool new_element;
+          boost::tie(it,new_element) = map->find(vd);
+          if(new_element){
+            it->second = index++;
           }
         }
       }
