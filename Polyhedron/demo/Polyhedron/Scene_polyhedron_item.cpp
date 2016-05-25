@@ -1472,7 +1472,7 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
       }
       //add the QList to the render's pool
       renderer->addTextList(textItems);
-      if(textItems->size() > renderer->getMax_textItems())
+      if(textItems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
         all_ids_displayed = !all_ids_displayed;
     }
     if(all_ids_displayed)
