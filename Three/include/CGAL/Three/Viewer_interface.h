@@ -102,9 +102,6 @@ public:
   virtual bool inFastDrawing() const = 0;
   //! @returns if the viewer is in `drawWithNames()`
   virtual bool inDrawWithNames() const = 0;
-  //!Specifies if the Viewer prints the text or not. It is used, for example, in the items to
-  //! decide if the TextItems for the primitives IDs should be computed or not.
-  virtual bool textDisplayed() const =0;
 
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.

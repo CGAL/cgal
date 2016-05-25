@@ -7,32 +7,32 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
       painter->begin(viewer);
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
-    if(viewer->textDisplayed())
-    {
-      Q_FOREACH(TextListItem* list, textItems)
-        if(list->item() == scene->item(scene->mainSelectionIndex()))
-          Q_FOREACH(TextItem* item, list->textList())
+    //Display the items textItems
+    Q_FOREACH(TextListItem* list, textItems)
+      if(list->item() == scene->item(scene->mainSelectionIndex()))
+        Q_FOREACH(TextItem* item, list->textList())
+        {
+          qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
+          if(viewer->testDisplayId(src.x, src.y, src.z))
           {
-            qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
-            if(viewer->testDisplayId(src.x, src.y, src.z))
-            {
-              if(item->is_3D())
-                rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+            if(item->is_3D())
+              rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
                            camera->projectedCoordinatesOf(src).y-item->height()/2,
                            item->width(),
                            item->height());
-              else
-                rect = QRect(src.x-item->width()/2,
+            else
+              rect = QRect(src.x-item->width()/2,
                            src.y-item->height()/2,
                            item->width(),
                            item->height());
 
-              painter->setFont(item->font());
-              painter->setPen(QPen(item->color()));
-              painter->drawText(rect, item->text());
-            }
+            painter->setFont(item->font());
+            painter->setPen(QPen(item->color()));
+            painter->drawText(rect, item->text());
           }
-    }
+        }
+
+    //Display the local TextItems
     Q_FOREACH(TextItem* item, local_textItems)
     {
       qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());

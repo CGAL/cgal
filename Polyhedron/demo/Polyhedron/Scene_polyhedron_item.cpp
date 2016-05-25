@@ -591,6 +591,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     textItems = new TextListItem(this);
     init();
     targeted_id = NULL;
+    all_ids_displayed = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -611,6 +612,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     init();
     invalidateOpenGLBuffers();
     targeted_id = NULL;
+    all_ids_displayed = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -631,6 +633,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     nb_f_lines = 0;
     invalidateOpenGLBuffers();
     targeted_id = NULL;
+    all_ids_displayed = false;
 }
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
@@ -1322,6 +1325,8 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 {
     TextRenderer *renderer = viewer->textRenderer;
     renderer->getLocalTextItems().removeAll(targeted_id);
+    renderer->removeTextList(textItems);
+    textItems->clear();
     QFont font;
     font.setBold(true);
 
@@ -1415,7 +1420,8 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                 if (targeted_id == NULL || targeted_id->position() != text_item.position() )
                 {
                     targeted_id = new TextItem(text_item);
-                    renderer->addText(targeted_id);
+                    textItems->append(targeted_id);
+                    renderer->addTextList(textItems);
                 }
                 else
                   targeted_id=NULL;
@@ -1427,45 +1433,60 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
 void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *viewer) const 
 {
-
     TextRenderer *renderer = viewer->textRenderer;
-    //clears textitems
-    renderer->removeTextList(textItems);
-    textItems->clear();
-    QFont font;
-    font.setBold(true);
 
-    //fills textItems
-    Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*poly))
+
+    if(!all_ids_displayed)
     {
+      QFont font;
+      font.setBold(true);
+
+      //fills textItems
+      Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*poly))
+      {
         const Point& p = vh->point();
         textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), true, font, Qt::red));
 
-    }
+      }
 
-    Q_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*poly))
-    {
+      Q_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*poly))
+      {
         const Point& p1 = source(e, *poly)->point();
         const Point& p2 = target(e, *poly)->point();
         textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2, (float)(p1.y() + p2.y()) / 2, (float)(p1.z() + p2.z()) / 2, QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
-    }
+      }
 
-    Q_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
-    {
+      Q_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
+      {
         double x(0), y(0), z(0);
         int total(0);
         Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(fh->halfedge(), *poly))
         {
-                x += vh->point().x();
-                y += vh->point().y();
-                z += vh->point().z();
-                ++total;
+          x += vh->point().x();
+          y += vh->point().y();
+          z += vh->point().z();
+          ++total;
         }
 
         textItems->append(new TextItem((float)x / total, (float)y / total, (float)z / total, QString("%1").arg(fh->id()), true, font, Qt::blue));
+      }
+      //add the QList to the render's pool
+      renderer->addTextList(textItems);
+      if(textItems->size() > renderer->getMax_textItems())
+        all_ids_displayed = !all_ids_displayed;
     }
-    //add the QList to the render's pool
-    renderer->addTextList(textItems);
+    if(all_ids_displayed)
+    {
+      //clears TextItems
+      textItems->clear();
+      renderer->removeTextList(textItems);
+      if(targeted_id)
+      {
+        textItems->append(targeted_id);
+        renderer->addTextList(textItems);
+      }
+    }
+    all_ids_displayed = !all_ids_displayed;
 }
 
 bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)

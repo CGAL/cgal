@@ -1170,9 +1170,8 @@ bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_inte
         bool res = i->testDisplayId(x,y,z, viewer);
         return res;
     }
-    else return false;
-
-
+    else
+      return false;
 }
 #include "Scene_find_items.h"
 

@@ -149,7 +149,7 @@ private:
         Edges,
         Feature_edges,
         Gouraud_Facets,
-        NbOfVaos = Gouraud_Facets+1
+        NbOfVaos
     };
     enum VBOs {
         Facets_vertices = 0,
@@ -159,9 +159,10 @@ private:
         Feature_edges_vertices,
         Edges_color,
         Facets_normals_gouraud,
-        NbOfVbos = Facets_normals_gouraud+1
+        NbOfVbos
     };
 
+    mutable bool all_ids_displayed;
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> positions_feature_lines;
     mutable std::vector<float> positions_facets;

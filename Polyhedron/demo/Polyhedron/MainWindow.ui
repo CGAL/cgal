@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -299,8 +299,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>534</width>
-            <height>174</height>
+            <width>541</width>
+            <height>175</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -679,7 +679,7 @@
   </action>
   <action name="actionMax_text_items_displayed">
    <property name="text">
-    <string>Max text items displayed</string>
+    <string>Set Maximum  Text Items Displayed :</string>
    </property>
   </action>
  </widget>

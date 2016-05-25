@@ -73,6 +73,8 @@ public:
     QList<TextItem*> textList()const {return _list;}
     void append(TextItem* ti) {_list.append(ti);}
     void clear(){_list.clear();}
+    bool isEmpty()const {return _list.empty();}
+    std::size_t size()const{return _list.size();}
 private:
     CGAL::Three::Scene_item* _item;
     QList<TextItem*> _list;

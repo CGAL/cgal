@@ -137,7 +137,7 @@ MainWindow::MainWindow(QWidget* parent)
   scene = new Scene(this);
   viewer->textRenderer->setScene(scene);
   viewer->setScene(scene);
-  ui->actionMax_text_items_displayed->setText(QString("Max text items displayed %1").arg(viewer->textRenderer->getMax_textItems()));
+  ui->actionMax_text_items_displayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -1847,12 +1847,12 @@ void MainWindow::on_actionMaxItemsDisplayed_triggered()
 {
   bool ok;
   bool valid;
-  QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                       tr("Maximum text items diplayed:"), QLineEdit::Normal,
-                                       "30000", &ok);
+  QString text = QInputDialog::getText(this, tr("Maximum Number of Text Items"),
+                                       tr("Maximum Text Items Diplayed:"), QLineEdit::Normal,
+                                       QString("%1").arg(viewer->textRenderer->getMax_textItems()), &ok);
   text.toInt(&valid);
   if (ok && valid){
     viewer->textRenderer->setMax(text.toInt());
-    ui->actionMax_text_items_displayed->setText(QString("Max text items displayed %1").arg(text.toInt()));
+    ui->actionMax_text_items_displayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
   }
 }

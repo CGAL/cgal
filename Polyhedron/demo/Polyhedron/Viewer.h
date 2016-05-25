@@ -36,7 +36,6 @@ public:
   Viewer(QWidget * parent, bool antialiasing = false);
   ~Viewer();
   bool testDisplayId(double, double, double);
-  bool textDisplayed() const;
   // overload several QGLViewer virtual functions
   //! Deprecated and does nothing.
   void draw();
@@ -62,7 +61,6 @@ public:
   void setScene(CGAL::Three::Scene_draw_interface* scene);
   //! @returns the antialiasing state.
   bool antiAliasing() const;
-  bool hasText() const{ return has_text; }
   //! @returns the fastDrawing state.
   bool inFastDrawing() const;
   //! Implementation of `Viewer_interface::inDrawWithNames()`

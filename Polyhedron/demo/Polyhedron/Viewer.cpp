@@ -313,9 +313,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
-    has_text = !has_text;
-    if (has_text)
-      d->scene->printPrimitiveIds(this);
+    d->scene->printPrimitiveIds(this);
     update();
       }
   //forward the event to the scene (item handling of the event)
@@ -1204,11 +1202,6 @@ void Viewer::wheelEvent(QWheelEvent* e)
 bool Viewer::testDisplayId(double x, double y, double z)
 {
     return d->scene->testDisplayId(x,y,z,this);
-}
-
-bool Viewer::textDisplayed() const
-{
-    return has_text;
 }
 
 QPainter* Viewer::getPainter(){return d->painter;}
