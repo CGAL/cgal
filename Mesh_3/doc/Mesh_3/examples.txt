@@ -1,6 +1,7 @@
 /*!
 \example Mesh_3/implicit_functions.cpp
 \example Mesh_3/mesh_3D_image.cpp
+\example Mesh_3/mesh_3D_image_with_features.cpp
 \example Mesh_3/mesh_3D_image_variable_size.cpp
 \example Mesh_3/mesh_implicit_domains.cpp
 \example Mesh_3/mesh_implicit_domains_2.cpp

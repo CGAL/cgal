@@ -708,6 +708,47 @@ domain. We add by hand the intersection of the spheres as a sharp feature.
 View of a 3D mesh with sharp features generated from two intersected implicit spheres. On the left, one can see the mesh without feature preservation, and on the right the mesh with feature preservation.
 \cgalFigureEnd
 
+\subsubsection Mesh_3DomainsFromSegmented3DImagesWithFeatures Domains from Segmented 3D Images, with 1D Features
+
+The example \ref Mesh_3/mesh_3D_image_with_features.cpp is a modification
+of \ref Mesh_3/mesh_3D_image.cpp. That example shows how to generate a mesh
+from a 3D labeled image (also known as "a segmented image"), that has 2D
+surfaces that intersect the box that corresponds to boundary of the
+image. The intersection of the 2D surface with the box of the image is
+composed of 1D curves, and must be defined as 1D-features in the domain.
+
+The first modification is the type of the mesh domain. Instead of being
+`Labeled_image_mesh_domain_3`, it is a
+`Mesh_domain_with_polyline_features_3` templated by a
+`Labeled_image_mesh_domain_3`.
+
+\snippet Mesh_3/mesh_3D_image_with_features.cpp Domain definition
+
+Then, in the `%main` function, after the `%domain` object has been created,
+a dedicated function computes the 1D-features, and add them to the domain.
+
+\snippet Mesh_3/mesh_3D_image_with_features.cpp Call add_1D_features
+
+The function template `%add_1D_features` is defined in the example file. It
+uses non-documented code from %CGAL, that should be copy-paste in any
+user-code willing to use similar code. It uses the undocumented function
+template `%CGAL::polylines_to_protect` that computes the 1D-features that
+correspond to the intersection of the box of the image with the surfaces
+defined by the image. At the same time, a few other polylines are added as
+1D-features, to protect 1D curves in the inside of the image. Then, the
+method `CGAL::Mesh_domain_with_polyline_features_3::add_features` is called
+twice to add the computes 1D-features to the mesh domain.
+
+\snippet Mesh_3/mesh_3D_image_with_features.cpp Add 1D features
+
+In the meshing criteria, if 1D features are added to the domain, it is very
+important to define the parameter `edge_size` of the criteria class
+`Mesh_criteria_3`, as follows.
+
+\snippet Mesh_3/mesh_3D_image_with_features.cpp Mesh criteria
+
+The rest of the example is similar to \ref Mesh_3/mesh_3D_image.cpp.
+
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
 \anchor Mesh_3_subsection_examples_optimization
