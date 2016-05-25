@@ -749,6 +749,26 @@ important to define the parameter `edge_size` of the criteria class
 
 The rest of the example is similar to \ref Mesh_3/mesh_3D_image.cpp.
 
+\cgalFigureRef{mesh3protectionimage3D} shows the results with or with the
+protection of the 1D-features.
+
+\cgalFigureAnchor{mesh3protectionimage3D}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" height="435px" src="./no-protection.png"></td>
+  <td><img border="0" height="435px" src="./protection-box.png"></td>
+  <td><img border="0" height="435px" src="./protection-all.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3protectionimage3D}
+Left: the mesh without any call to `%add_features()`.
+Middle: the mesh with only the 1D-features computed by
+`%CGAL::polylines_to_protect()`.
+Right: the mesh with added 1D-features in the inside of the box.
+\cgalFigureCaptionEnd
+
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
 \anchor Mesh_3_subsection_examples_optimization
