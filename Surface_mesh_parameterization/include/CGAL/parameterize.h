@@ -94,7 +94,6 @@ parameterize(TriangleMesh& mesh)  ///< 3D mesh, model of TriangleMesh concept
     return parameterizer.parameterize(mesh);
 }
 
-
   namespace Parameterization {
     
     template <typename Mesh, typename Map>

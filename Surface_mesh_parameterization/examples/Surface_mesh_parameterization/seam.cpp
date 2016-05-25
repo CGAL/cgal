@@ -59,8 +59,12 @@ int main(int argc, char * argv[])
   bhd = opposite(bhd,mesh); // a halfedge on the virtual border
 
   CGAL::parameterize(mesh, bhd, uvpm);
- 
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){  
+
+  std::vector<face_descriptor> ccfaces;
+  CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
+                                                     mesh,
+                                                     std::back_inserter(ccfaces));
+  BOOST_FOREACH(face_descriptor fd, ccfaces){  
     halfedge_descriptor hd = halfedge(fd,mesh); 
   
     std::cout << "4 " << uvpm[target(hd,mesh)].x() << " " << uvpm[target(hd,mesh)].y() << " 0 ";

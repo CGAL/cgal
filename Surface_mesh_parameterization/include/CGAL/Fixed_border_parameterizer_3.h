@@ -257,6 +257,27 @@ private:
   Sparse_LA       m_linearAlgebra;
 };
 
+  namespace Parameterization {
+    
+    template <typename Mesh, typename Set>
+    struct Vertices_set {
+
+      Vertices_set(const Mesh& mesh, Set& set)
+        : mesh(mesh), set(&set)
+      {}
+    
+      void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
+      {
+        BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
+          set->insert(vd);
+        }
+      }
+
+      const Mesh& mesh;
+      mutable Set* set;
+    };
+  }
+
 
 // ------------------------------------------------------------------------------------
 // Implementation
@@ -283,6 +304,11 @@ parameterize(TriangleMesh& mesh,
 {
     Error_code status = Base::OK; 
 
+    typedef boost::unordered_set<vertex_descriptor> Vertex_set;
+    Vertex_set vertices;
+    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
+                                                     mesh,
+                                                     boost::make_function_output_iterator(Parameterization::Vertices_set<TriangleMesh,Vertex_set>(mesh,vertices)));
     // Count vertices
     int nbVertices= num_vertices(mesh);
     // Compute (u,v) for border vertices
@@ -313,7 +339,7 @@ parameterize(TriangleMesh& mesh,
       main_border.insert(v);
     }
     int count = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
+    BOOST_FOREACH(vertex_descriptor v, vertices){
       // inner vertices only
       if( main_border.find(v) == main_border.end() )
         {
@@ -346,7 +372,7 @@ parameterize(TriangleMesh& mesh,
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+    BOOST_FOREACH(vertex_descriptor v, vertices)
     {
       // inner vertices only
       if( main_border.find(v) == main_border.end() )

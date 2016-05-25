@@ -32,7 +32,6 @@
 
 namespace CGAL {
 
-
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class `Parameterizer_traits_3`
