@@ -190,7 +190,7 @@ Error_code  parameterize(TriangleMesh& mesh,
     CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                        mesh,
                                                        std::back_inserter(ccfaces));
-    BOOST_FOREACH(face_descriptor fd, ccfaces) // faces(mesh)
+    BOOST_FOREACH(face_descriptor fd, ccfaces)
     {
         // Create two lines in the linear system per triangle (one for u, one for v)
       status = setup_triangle_relations(solver, mesh, fd,vimap);

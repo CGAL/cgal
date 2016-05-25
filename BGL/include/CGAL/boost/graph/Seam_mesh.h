@@ -271,6 +271,7 @@ public:
   {
     Self& mesh=*this;
    
+    index = 0;
     std::vector<face_descriptor> faces;
     boost::graph_traits<Seam_mesh>::halfedge_descriptor shd(opposite(bhd,*this));
     CGAL::Polygon_mesh_processing::connected_component(face(shd,*this),
