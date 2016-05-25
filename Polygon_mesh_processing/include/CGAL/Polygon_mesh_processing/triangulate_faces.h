@@ -79,6 +79,7 @@ class Triangulate_modifier
                                                      TDS,
                                                      Itag>             CDT;
 
+  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   VertexPointMap _vpmap;
 
 public:
@@ -102,19 +103,30 @@ public:
     std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
     if(original_size == 4)
     {
-      typename Kernel::Point_3 p0, p1, p2, p3;
       halfedge_descriptor v0, v1, v2, v3;
       v0 = halfedge(f, pmesh);
-      p0 = _vpmap[target(v0, pmesh)];
+      Point_ref p0 = _vpmap[target(v0, pmesh)];
       v1 = next(v0, pmesh);
-      p1 = _vpmap[target(v1, pmesh)];
+      Point_ref p1 = _vpmap[target(v1, pmesh)];
       v2 = next(v1, pmesh);
-      p2 = _vpmap[target(v2, pmesh)];
+      Point_ref p2 = _vpmap[target(v2, pmesh)];
       v3 = next(v2, pmesh);
-      p3 = _vpmap[target(v3, pmesh)];
+      Point_ref p3 = _vpmap[target(v3, pmesh)];
 
-      bool predicate = CGAL::cross_product(p2-p1,p0-p1) * CGAL::cross_product(p0-p3,p2-p3) > 0;
-      if(predicate)
+      /* Chooses the diagonal that will split the quad in two triangles that maximize
+       * the scalar product of of the un-normalized normals of the two triangles.
+       * The lengths of the un-normalized normals (computed using cross-products of two vectors)
+       *  are proportional to the area of the triangles.
+       * Maximize the scalar product of the two normals will avoid skinny triangles,
+       * and will also taken into account the cosine of the angle between the two normals.
+       * In particular, if the two triangles are oriented in different directions,
+       * the scalar product will be negative.
+       */
+      double p1p3= CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
+      double p0p2= CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
+
+
+      if(p0p2>p1p3)
       {
         CGAL::Euler::split_face(v0, v2, pmesh);
       }
@@ -310,9 +322,7 @@ public:
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
-* @return true if the face has been triangulated. The triangulation can fail if the normal computed for the projection plane is null,
-*  if the number of points in the triangulation is different from the number of input points
-*  or if the dimension of the CDT is not 2.
+* @return `true` if the face has been triangulated.
 */
 template<typename PolygonMesh, typename NamedParameters>
 bool  triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
@@ -361,7 +371,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
-* @return true if all the faces have been triangulated.
+* @return `true` if all the faces have been triangulated.
 * @see triangulate_face()
 */
 template <typename FaceRange, typename PolygonMesh, typename NamedParameters>
@@ -405,6 +415,8 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
+* @return `true` if all the faces have been triangulated.
+* @see triangulate_face()
 */
 template <typename PolygonMesh, typename NamedParameters>
 bool  triangulate_faces(PolygonMesh& pmesh,
