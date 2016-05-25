@@ -176,6 +176,7 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
   //return 0;
 }
 
+CGAL_INLINE_FUNCTION
 size_t ImageIO_limit_read(size_t to_be_read)
 {
   return (std::min)(to_be_read, size_t(1u<<30));
