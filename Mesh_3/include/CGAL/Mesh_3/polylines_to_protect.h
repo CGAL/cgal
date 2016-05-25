@@ -276,6 +276,7 @@ case_4:
               assert(get<2>(square[0][0]) == get<2>(square[0][1]));
               assert(get<2>(square[0][0]) != get<2>(square[1][0]));
               assert(get<2>(square[0][0]) != get<2>(square[1][1]));
+              assert(get<2>(square[1][0]) != get<2>(square[1][1]));
               ++case211;
               Point_3 midleft =  midpoint(p00, p01);
               Point_3 midright = midpoint(p10, p11);
@@ -284,11 +285,36 @@ case_4:
               vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
               vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
               vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
-              g_manip.try_add_edge(top,    v_inter);
-              g_manip.try_add_edge(bottom, v_inter);
+
+              vertex_descriptor old_top = top;
+              vertex_descriptor old_bottom = bottom;
+              vertex_descriptor v_int_top, v_int_bottom;
+
+              // approximate the arcs by 10 segments
+              //   -> 9 intermediate vertices
+              for(double x = 0.51666; x < 0.66; x+= 0.016666)
+              {
+                const Point_3 inter_top =
+                  p00
+                  +      x         * (p10 - p00)  // x
+                  + ((1./x) - 1.)  * (p01 - p00); // y
+                const Point_3 inter_bottom =
+                  p00
+                  +      x         * (p10 - p00)  // x
+                  + (2.-(1./x))    * (p01 - p00); // y
+                v_int_top    = g_manip.get_vertex(inter_top);
+                v_int_bottom = g_manip.get_vertex(inter_bottom);
+                g_manip.try_add_edge(old_top,    v_int_top);
+                g_manip.try_add_edge(old_bottom, v_int_bottom);
+                old_top = v_int_top;
+                old_bottom = v_int_bottom;
+              }
+
+              g_manip.try_add_edge(v_int_bottom,    v_inter);
+              g_manip.try_add_edge(v_int_top, v_inter);
               g_manip.try_add_edge(right,  v_inter);
-            }
-          }
+            } // end case 2-1-1
+          } // end `case 3:`
             break;
           case 2: {
             if(pixel_values_set.begin()->second ==
@@ -366,12 +392,11 @@ case_4:
               vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
               vertex_descriptor old = bottom;
 
-              Point_3 inter;
-
               vertex_descriptor v_int;
               for(double x = 0.55; x < 1.; x+= 0.05)
               {
-                inter = p00
+                const Point_3 inter =
+                  p00
                   +      x         * (p10 - p00)  // x
                   + (1.-1./(2.*x)) * (p01 - p00); // y
                 v_int = g_manip.get_vertex(inter);
