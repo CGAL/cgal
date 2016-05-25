@@ -250,14 +250,32 @@ case_4:
               vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
               vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
               vertex_descriptor bottom = g_manip.split(p00, p10, out00, out10);
-              Point_3 inter_left = p00 + (1./3.) * (p11 - p00);
-              Point_3 inter_right = p00 + (2./3.) * (p11 - p00);
-              vertex_descriptor v_int_left = g_manip.get_vertex(inter_left);
-              vertex_descriptor v_int_right = g_manip.get_vertex(inter_right);
-              g_manip.try_add_edge(left, v_int_left);
-              g_manip.try_add_edge(v_int_left, bottom);
-              g_manip.try_add_edge(top, v_int_right);
-              g_manip.try_add_edge(v_int_right, right);
+
+              vertex_descriptor old_left = left;
+              vertex_descriptor old_right = right;
+              vertex_descriptor v_int_left, v_int_right;
+
+              // approximate the arcs by 10 segments
+              //   -> 9 intermediate vertices
+              for(double x = 0.05; x < 0.5; x+= 0.05)
+              {
+                const Point_3 inter_left =
+                  p00
+                  +      x                * (p10 - p00)  // x
+                  + ((1.-2.*x)/(2.-3.*x)) * (p01 - p00); // y
+                const Point_3 inter_right =
+                  p11
+                  +      x                * (p01 - p11)  // x
+                  + ((1.-2.*x)/(2.-3.*x)) * (p10 - p11); // y
+                v_int_left  = g_manip.get_vertex(inter_left);
+                v_int_right = g_manip.get_vertex(inter_right);
+                g_manip.try_add_edge(old_left,  v_int_left);
+                g_manip.try_add_edge(old_right, v_int_right);
+                old_left = v_int_left;
+                old_right = v_int_right;
+              }
+              g_manip.try_add_edge(v_int_left,  bottom);
+              g_manip.try_add_edge(v_int_right, top);
             } else {
               // case 2-1-1
               if(get<2>(square[0][0]) == get<2>(square[1][0])) {
