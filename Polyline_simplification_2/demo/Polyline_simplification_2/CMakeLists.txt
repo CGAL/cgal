@@ -27,13 +27,13 @@ add_definitions(-DQT_NO_KEYWORDS)
 qt5_wrap_ui( CDT_UI_FILES Polyline_simplification_2.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( CDT_RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.qrc )
+qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 qt5_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.cpp Polyline_simplification_2.moc )
 
 # The executable itself.
-add_executable  ( Polyline_simplification_2 ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.cpp Polyline_simplification_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
+add_executable  ( Polyline_simplification_2 ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.cpp Polyline_simplification_2.moc ${CDT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
 qt5_use_modules(Polyline_simplification_2 Xml Script OpenGL Widgets Svg)
 # Link with Qt libraries

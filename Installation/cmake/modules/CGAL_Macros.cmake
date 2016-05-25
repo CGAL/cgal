@@ -286,11 +286,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         find_package( ZLIB QUIET )
       endif()
 
-      if (${component} STREQUAL "Qt5")
-        find_package( OpenGL QUIET )
-        find_package( Qt5 QUIET COMPONENTS OpenGL Svg )
-      endif()
-
     else(WITH_CGAL_${component})
 
       # now we are talking about 3rd party libs
@@ -449,7 +444,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
-
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
 

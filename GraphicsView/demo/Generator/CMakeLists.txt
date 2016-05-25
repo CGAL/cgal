@@ -26,13 +26,13 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   qt5_wrap_ui( DT_UI_FILES Generator_2.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources ( DT_RESOURCE_FILES ./Generator_2.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Generator_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   qt5_generate_moc( "Generator_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Generator_2.moc" )
 
   # The executable itself.
-  add_executable  ( Generator_2 Generator_2.cpp Generator_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+  add_executable  ( Generator_2 Generator_2.cpp Generator_2.moc ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
 
   qt5_use_modules(Generator_2 Xml Script OpenGL Svg)
 

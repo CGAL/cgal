@@ -28,6 +28,10 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+#ifdef CGAL_HEADER_ONLY
+#  define CGAL_NO_AUTOLINK 1
+#endif
+
 // Workaround for a bug in Boost, that checks WIN64 instead of _WIN64
 //   https://svn.boost.org/trac/boost/ticket/5519
 #if defined(_WIN64) && ! defined(WIN64)

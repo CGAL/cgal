@@ -19,7 +19,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include ./ )
 
-  add_executable  ( Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp )
+  add_executable (Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
   qt5_use_modules( Circular_kernel_3 Xml Script OpenGL)
 

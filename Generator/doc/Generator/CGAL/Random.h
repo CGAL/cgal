@@ -23,7 +23,7 @@ seed, or by using the state functions as described below.
 We use the boost random library function `boost::rand48` to generate the random 
 numbers. 
 
-\sa `CGAL::default_random` 
+\sa `CGAL::get_default_random` 
 
 */
 
@@ -178,8 +178,16 @@ bool operator == ( Random const& random2) const;
 
 /*!
   \ingroup PkgGenerators
-  The variable `default_random` is the default random numbers generator used for
-  the generator functions and classes.
+  The global function `get_default_random()` returns the default random 
+  numbers generator used for the generator functions and classes.
+*/
+Random &get_default_random();
+
+/*!
+  \ingroup PkgGenerators
+  \deprecated The variable `default_random` is the default random
+  numbers generator used for the generator functions and
+  classes. Deprecated. Use `get_default_random()` instead.
 */
 extern CGAL::Random default_random;
 

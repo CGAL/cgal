@@ -525,7 +525,7 @@ namespace CGAL {
           }
           if (enough >= requiredSamples) {
             do {
-              std::size_t p = CGAL::default_random.
+              std::size_t p = CGAL::get_default_random().
                 uniform_int<std::size_t>(0, cur->size() - 1);
               std::size_t j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
