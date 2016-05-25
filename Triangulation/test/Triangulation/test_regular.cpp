@@ -148,31 +148,31 @@ void test_inserting_points_at_the_same_position()
   // First point
   Vertex_handle vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 1);
-  assert(rt.number_of_hidden_points() == 0);
+  assert(rt.number_of_hidden_vertices() == 0);
   assert(vh != Vertex_handle());
 
   // Same point
   Vertex_handle vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 1);
-  assert(rt.number_of_hidden_points() == 0);
+  assert(rt.number_of_hidden_vertices() == 0);
   assert(vh == vh2);
   
   // Same position, bigger weight
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
-  assert(rt.number_of_hidden_points() == 1);
+  assert(rt.number_of_hidden_vertices() == 1);
   assert(vh != Vertex_handle());
   
   // Same point
   vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 1);
-  assert(rt.number_of_hidden_points() == 1);
+  assert(rt.number_of_hidden_vertices() == 1);
   assert(vh == vh2);
 
   // Same position, lower weight
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.1));
   assert(rt.number_of_vertices() == 1);
-  assert(rt.number_of_hidden_points() == 2);
+  assert(rt.number_of_hidden_vertices() == 2);
   assert(vh == Vertex_handle());
 
   //=======================
@@ -181,31 +181,31 @@ void test_inserting_points_at_the_same_position()
   pt[3] = 0.78;
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 2);
-  assert(rt.number_of_hidden_points() == 2);
+  assert(rt.number_of_hidden_vertices() == 2);
   assert(vh != Vertex_handle());
 
   // Same point
   vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.));
   assert(rt.number_of_vertices() == 2);
-  assert(rt.number_of_hidden_points() == 2);
+  assert(rt.number_of_hidden_vertices() == 2);
   assert(vh == vh2);
 
   // Same position, bigger weight
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 2);
-  assert(rt.number_of_hidden_points() == 3);
+  assert(rt.number_of_hidden_vertices() == 3);
   assert(vh != Vertex_handle());
 
   // Same point
   vh2 = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 2);
-  assert(rt.number_of_hidden_points() == 3);
+  assert(rt.number_of_hidden_vertices() == 3);
   assert(vh == vh2);
 
   // Same position, lower weight
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.1));
   assert(rt.number_of_vertices() == 2);
-  assert(rt.number_of_hidden_points() == 4);
+  assert(rt.number_of_hidden_vertices() == 4);
   assert(vh == Vertex_handle());
 
   //=======================
@@ -214,7 +214,7 @@ void test_inserting_points_at_the_same_position()
   pt[4] = 1.78;
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.2));
   assert(rt.number_of_vertices() == 3);
-  assert(rt.number_of_hidden_points() == 4);
+  assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
 
   //=======================
@@ -223,7 +223,7 @@ void test_inserting_points_at_the_same_position()
   pt[1] = 1.78;
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.8));
   assert(rt.number_of_vertices() == 4);
-  assert(rt.number_of_hidden_points() == 4);
+  assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
 
   //=======================
@@ -232,7 +232,7 @@ void test_inserting_points_at_the_same_position()
   pt[2] = 1.78;
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 0.25));
   assert(rt.number_of_vertices() == 5);
-  assert(rt.number_of_hidden_points() == 4);
+  assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
 
   //=======================
@@ -241,13 +241,13 @@ void test_inserting_points_at_the_same_position()
   pt[0] = 12.13;
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.25));
   assert(rt.number_of_vertices() == 6);
-  assert(rt.number_of_hidden_points() == 4);
+  assert(rt.number_of_hidden_vertices() == 4);
   assert(vh != Vertex_handle());
 
   // Same position, bigger weight
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.3));
   assert(rt.number_of_vertices() == 6);
-  assert(rt.number_of_hidden_points() == 5);
+  assert(rt.number_of_hidden_vertices() == 5);
   assert(vh != Vertex_handle());
 
   //=======================
@@ -256,7 +256,7 @@ void test_inserting_points_at_the_same_position()
   pt[0] = 9.13;
   vh = rt.insert(Point(Bare_point(pt.begin(), pt.end()), 1.25));
   assert(rt.number_of_vertices() == 7);
-  assert(rt.number_of_hidden_points() == 5);
+  assert(rt.number_of_hidden_vertices() == 5);
   assert(vh != Vertex_handle());
 
   //=======================

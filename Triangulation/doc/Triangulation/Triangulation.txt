@@ -475,7 +475,7 @@ A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
 of all simplices are regular.
 
 Note that as a result, some points can be hidden and do not result in vertices
-in the triangulation.
+in the triangulation. Those points are discarded and cannot be retrieved.
 
 A weighted point `p` is said to be in conflict 
 with a cell `c` if it has a negative power distance to the power sphere of `c`.

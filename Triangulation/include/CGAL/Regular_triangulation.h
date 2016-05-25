@@ -384,7 +384,7 @@ public:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  MISC
 
-    std::size_t number_of_hidden_points() const
+    std::size_t number_of_hidden_vertices() const
     {
       return m_hidden_points.size();
     }

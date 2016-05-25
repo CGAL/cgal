@@ -184,5 +184,21 @@ OutputIterator out) const;
 
 /// @}
 
+/// \name Access Functions
+/// @{
+
+/*!
+Returns the number of finite vertices that are not hidden.
+*/
+size_type number_of_vertices() const;
+
+/*!
+Returns the number of hidden vertices.
+*/
+size_type number_of_hidden_vertices() const;
+
+/// @}
+
+
 }; /* end regular_triangulation */
 } /* end namespace CGAL */
