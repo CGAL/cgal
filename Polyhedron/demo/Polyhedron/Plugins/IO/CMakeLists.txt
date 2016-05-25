@@ -27,11 +27,6 @@ target_link_libraries(selection_io_plugin scene_polyhedron_selection_item)
 polyhedron_demo_plugin(stl_plugin STL_io_plugin)
 target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
 
-polyhedron_demo_plugin(surface_mesh_io_plugin Surface_mesh_io_plugin)
-target_link_libraries(surface_mesh_io_plugin scene_surface_mesh_item scene_polygon_soup_item)
-
-
-
 find_package(VTK QUIET COMPONENTS
   vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if (VTK_FOUND)
