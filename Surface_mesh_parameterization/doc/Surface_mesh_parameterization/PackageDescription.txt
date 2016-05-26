@@ -173,10 +173,3 @@ The general definition of input meshes handled directly by `CGAL::parameterize()
 
 
 
-
-/*!
-\defgroup PkgSurfaceParameterizationHelper Helper Class
-\ingroup PkgSurfaceParameterization
-*/
-
-

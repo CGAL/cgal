@@ -77,9 +77,10 @@ The sparse linear solver used is from the \ref thirdpartyEigen library.
 The mesh of type `TriangleMesh` which must be a model of the concept
 `FaceGraph`, additionally must be triangulated, 2-manifold, oriented,
 and homeomorphic to a disc (possibly with holes). We will later show
-hpw to parameterize a mesh that is not a topological disk.
+how to parameterize a mesh that is not a topological disk.
 
-The result is stored in a property map for the mesh vertices.
+The result is stored in a property map for the mesh vertices. See also
+Chapter \ref PkgProperty_mapSummary.
 
 
 `Parameterizer_traits_3<TriangleMesh>` is a base class of all surface
@@ -87,7 +88,7 @@ parameterizations and defines the error codes.
 
 
 In the following example, we apply the default parameterization to a
-`Polyhedron_3` mesh, and we use a ` Unique_hash_map` to store the uv-coordinates
+`Polyhedron_3` mesh, and we use a `Unique_hash_map` to store the uv-coordinates
 of each vertex.
 
 \cgalExample{Surface_mesh_parameterization/Simple_parameterization.cpp}
@@ -109,7 +110,7 @@ parameterize(TriangleMesh& mesh,
 
 
 
-In the following example, we apply the circular borde parameterizations
+In the following example, we apply the circular border parameterizations
 and then the discrete authalic parameterization to a
 `Surface_mesh`. We store the uv-coordinates as a vertex property
 using the built-in property mechanism.
@@ -367,7 +368,13 @@ and is therefore non-singular (Gram theorem).
 
 \section Surface_mesh_parameterizationExtendingthe Implementation History
 
+The main author of the first version of this package was Laurent Saboret,
+who worked as an engineer at Inria Sophia-Antipolis.
 
+For CGAL 4.10 the package has undergone a major rewrite by Andreas Fabri.
+The algorithms are the same, but they are now written for the `FaceGraph` API.
+Additionally the `Seam_mesh` got introduced, which is also a model of
+a `FaceGraph`, and replaces a wrapper with a clumsy API.
 
 
 
