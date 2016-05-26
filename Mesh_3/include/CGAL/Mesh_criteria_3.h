@@ -32,7 +32,7 @@
 #include <CGAL/Mesh_edge_criteria_3.h>
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
-
+#include <cfloat> // for the macro DBL_MAX
 namespace CGAL {
   
 namespace parameters {
@@ -99,7 +99,7 @@ public:
   Mesh_criteria_3_impl(const ArgumentPack& args)
     : edge_criteria_(args[parameters::edge_size
                           | args[parameters::edge_sizing_field
-                                 | args[parameters::sizing_field | FT(0)] ] ])
+                                 | args[parameters::sizing_field | FT(DBL_MAX)] ] ])
     , facet_criteria_(args[parameters::facet_angle | FT(0)],
                       args[parameters::facet_size
                            | args[parameters::facet_sizing_field
