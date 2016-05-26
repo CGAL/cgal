@@ -114,10 +114,18 @@ public:
 
 /// @}
 
+/// \name Operations
+/// @{
+/*! For each of the above function and predicate object types, `Func_obj_type`,
+ * a function must exist with the name `func_obj_type_object` that creates
+ * an instance of the function or predicate object type.
+
+For example:
+*/
 Collinear_3
 collinear_3_object()const
 {return Collinear_3();}
 
-
+/// @}
 }; /* end SegmentationGeomTraits */
 
