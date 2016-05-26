@@ -47,7 +47,7 @@ void snap_graph_vertices(Graph& graph,
                          const double vx, const double vy, const double vz,
                          PolylineInputIterator existing_polylines_begin,
                          PolylineInputIterator existing_polylines_end,
-                         K k)
+                         K)
 {
   const double dist_bound = (std::min)(vx,
                                        (std::min)(vy, vz)) / 256;
