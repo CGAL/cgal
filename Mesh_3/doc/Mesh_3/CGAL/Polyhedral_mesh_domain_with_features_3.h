@@ -51,7 +51,8 @@ Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface 
 The only requirement on type `Polyhedron` is that `CGAL::Mesh_polyhedron_3<IGT>::%type` should 
 be constructible from `Polyhedron`. 
 No feature detection is done at this level. Note that a copy of `bounding_polyhedron` will be done. 
-The interior of `bounding_polyhedron` will be meshed.
+The polyhedron `bounding_polyhedron` has to be closed and free of intersections.
+Its interior of `bounding_polyhedron` will be meshed.
 */ 
 template <typename Polyhedron> 
 Polyhedral_mesh_domain_with_features_3(Polyhedron bounding_polyhedron); 
@@ -63,7 +64,7 @@ detection is done at this level.
 Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
 
 /*!
-Constructs  a `Polyhedral_mesh_domain_with_features_3` a polyhedral surface, and a bounding polyhedral surface,.
+Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface, and a bounding polyhedral surface.
 `CGAL::Mesh_polyhedron_3<IGT>::%type` should be constructible from `Polyhedron`. 
 The first polyhedron should be entirely included inside `bounding_polyhedron`, which has to be closed 
 and free of intersections. 
