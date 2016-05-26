@@ -5,12 +5,14 @@ namespace CGAL {
 
 The class `Polyhedral_mesh_domain_with_features_3` implements a domain whose 
 boundary is a simplicial polyhedral surface. 
-This surface must be free of intersection. 
-It must also be either closed 
-or included inside another polyhedral surface which is closed and free of intersection.	
+This surface must be free of intersection.
+It can either be closed,
+included inside another polyhedral surface which is closed and free of intersection,
+or open. In the latter case, the meshing process will only take care of the quality
+of the 1D (features and boundaries) and 2D (surfaces) components of the mesh.
 
 It is a model of the concept `MeshDomainWithFeatures_3`. It also 
-provides a member function to automatically detect sharp features from 
+provides a member function to automatically detect sharp features and boundaries from 
 the input polyhedral surface(s). 
 
 \tparam IGT stands for a geometric traits class providing the types 
@@ -78,16 +80,17 @@ Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron,
 /// @{
 
 /*!
-Detects sharp features of the internal bounding polyhedron (and the potential internal polyhedron) 
+Detects sharp features and boundaries of the internal bounding polyhedron (and the potential internal polyhedron) 
 and inserts them in as features of the domain. `angle_bound` gives the maximum dihedral angle 
 (in degrees) between two triangles of the input polyhedron/a which is used to consider that the edge between 
-those triangles is a feature edge. 
+those triangles is a feature edge.
 */ 
 void detect_features(FT angle_bound=120); 
 
 
 /*!
 Detects border edges of the bounding polyhedron and inserts them as features of the domain.
+This function should be called alone only, and not before or after `detect_features()`.
 */
    void detect_borders();
 
