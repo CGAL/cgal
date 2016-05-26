@@ -246,10 +246,10 @@ check_is_triangulation() const
 }
 
 
-\subsection{Plane map input and output}
+/*\subsection{Plane map input and output}
 The input and output is mainly triggered by an IO Decorator which
 has the control over the IO format and does some basic parsing when
-reading input.
+reading input.*/
 
 } //namespace CGAL
 
