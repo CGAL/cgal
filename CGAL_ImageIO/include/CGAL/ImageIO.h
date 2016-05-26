@@ -614,13 +614,22 @@ static_evaluate(const _image* image,
 
 template <typename Word>
 inline
-Word
+Word&
 static_evaluate(const _image* image,
                 const std::size_t i,
                 const std::size_t j,
                 const std::size_t k)
 {
   return ((Word*)image->data)[(k * image->ydim + j) * image->xdim + i];
+}
+
+template <typename Word>
+inline
+Word&
+static_evaluate(const _image* image,
+                const std::size_t i)
+{
+  return ((Word*)image->data)[i];
 }
 
 } // end namespace IMAGEIO
