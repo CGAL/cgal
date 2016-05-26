@@ -551,9 +551,10 @@ private:
       const CGAL::Image_3* img = seg_img->image();
       CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(seg_img, seg_img->name()))
 
-          Volume_plane_intersection* i = new Volume_plane_intersection(img->xdim() * img->vx(),
-                                                                       img->ydim() * img->vy(),
-                                                                       img->zdim() * img->vz());
+          Volume_plane_intersection* i
+          = new Volume_plane_intersection(img->xdim() * img->vx(),
+                                          img->ydim() * img->vy(),
+                                          img->zdim() * img->vz());
       this->intersectionId = scene->addItem(i);
       scene->changeGroup(i, group);
       group->lockChild(i);
