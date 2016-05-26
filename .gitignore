@@ -262,7 +262,7 @@ Linear_cell_complex/examples/Linear_cell_complex/voronoi_2
 Linear_cell_complex/examples/Linear_cell_complex/voronoi_3
 Maintenance/infrastructure/*/reference*platforms/*/*.bak
 Maintenance/infrastructure/*/reference*platforms/*/bin
-Maintenance/infrastructure/*/reference*platforms/*/CGALConfig.cmake
+Maintenance/infrastructure/*/reference*platforms/*/CGAL*Config.cmake
 Maintenance/infrastructure/*/reference*platforms/*/CGALExports.cmake
 Maintenance/infrastructure/*/reference*platforms/*/cmake
 Maintenance/infrastructure/*/reference*platforms/*/CMakeCache.txt.backup
