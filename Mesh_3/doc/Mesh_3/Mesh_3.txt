@@ -626,14 +626,14 @@ View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1
 
 \subsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
 
-The following code create a polyhedral domain, with only one polyhedron,
-and no "bounding polyhedron": the volumic part of the domain will be empty.
+The following code creates a polyhedral domain, with only one polyhedron,
+and no "bounding polyhedron", so the volumetric part of the domain will be empty.
 This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`. 
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
 
 \cgalFigureBegin{figureremeshing,remeshing.jpg}
-View of a remeshed surface. (i) input mesh (ii) output mesh. Code from subsection \ref Mesh_3RemeshingPolyhedralSurface generates the file."
+View of a remeshed surface. (Left) input mesh (Right) output mesh. Code from subsection \ref Mesh_3RemeshingPolyhedralSurface generates the file.
 \cgalFigureEnd
 
 \subsection Mesh_3DomainsFromSegmented3DImages Domains From Segmented 3D Images

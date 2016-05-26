@@ -35,7 +35,7 @@ int main()
   std::vector<Polyhedron*> poly_ptrs_vector(1, &poly);
 
   // Create a polyhedral domain, with only one polyhedron,
-  // and no "bounding polyhedron": the volumic part of the domain will be
+  // and no "bounding polyhedron", so the volumetric part of the domain will be
   // empty.
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
   
