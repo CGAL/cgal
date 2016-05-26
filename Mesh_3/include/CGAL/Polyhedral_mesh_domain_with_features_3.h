@@ -112,6 +112,7 @@ public:
   Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b,
                                          CGAL::Random* p_rng = NULL)
     : Base(a, b)
+    , borders_detected_(false)
   { this->set_random_generator(p_rng); }
 
 
@@ -119,6 +120,7 @@ public:
   Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c,
                                          CGAL::Random* p_rng = NULL)
     : Base(a, b, c)
+    , borders_detected(false)
   { this->set_random_generator(p_rng); }
 
   /// Destructor
