@@ -13,7 +13,7 @@
 typedef CGAL::internal_IOP::Item_with_points_and_volume_info<Kernel,Polyhedron> Items;
 typedef CGAL::Combinatorial_map<3,Items> Combinatorial_map_3;
 //=========
-
+struct Scene_combinatorial_map_item_priv;
 class QMenu;
 class QAction;
 namespace CGAL { namespace Three{
@@ -50,7 +50,7 @@ public:
     virtual void draw(CGAL::Three::Viewer_interface*) const;
 
     bool isFinite() const { return true; }
-    bool is_from_corefinement() const {return address_of_A!=NULL;}
+    bool is_from_corefinement() const;
     bool isEmpty() const;
     void compute_bbox() const;
 
@@ -98,11 +98,6 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
-    using CGAL::Three::Scene_item::initializeBuffers;
-    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-
-    using CGAL::Three::Scene_item::computeElements;
-    void computeElements(void) const;
 
 public Q_SLOTS:
     void set_next_volume();
@@ -111,6 +106,9 @@ public Q_SLOTS:
     void export_intersection_as_polyhedron() const;
     void export_A_minus_B_as_polyhedron() const;
     void export_B_minus_A_as_polyhedron() const;
+protected:
+    friend struct Scene_combinatorial_map_item_priv;
+    Scene_combinatorial_map_item_priv* d;
 
 }; // end class Scene_combinatorial_map_item
 

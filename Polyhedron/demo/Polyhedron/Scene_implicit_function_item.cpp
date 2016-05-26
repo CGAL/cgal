@@ -16,7 +16,71 @@ bool is_nan(double d)
     return !CGAL::Is_valid<double>()( d );
 }
 
-void Scene_implicit_function_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
+struct Scene_implicit_function_item_priv
+{
+  Scene_implicit_function_item_priv(Implicit_function_interface* f, Scene_implicit_function_item* parent)
+    : function_(f)
+    , frame_(new ManipulatedFrame())
+    , need_update_(true)
+    , grid_size_(SCENE_IMPLICIT_GRID_SIZE)
+    , max_value_(0.)
+    , min_value_(0.)
+    , blue_color_ramp_()
+    , red_color_ramp_()
+    , textureId(-1)
+  {
+    item = parent;
+    texture = new Texture(grid_size_-1,grid_size_-1);
+    blue_color_ramp_.build_blue();
+    red_color_ramp_.build_red();
+  }
+  ~Scene_implicit_function_item_priv()
+  {
+    delete frame_;
+  }
+  typedef qglviewer::Vec                  Point;
+  typedef std::pair <Point,double>        Point_value;
+  typedef qglviewer::ManipulatedFrame ManipulatedFrame;
+  void compute_min_max();
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  void compute_vertices_and_texmap(void);
+  void compute_texture(int, int);
+  enum VAOs {
+      Plane = 0,
+      BBox,
+      Grid,
+      NbOfVaos
+  };
+  enum VBOs {
+      Quad_vertices = 0,
+      TexMap,
+      Cube_vertices,
+      Grid_vertices,
+      NbOfVbos
+  };
+  Implicit_function_interface* function_;
+  ManipulatedFrame* frame_;
+  mutable bool need_update_;
+  int grid_size_;
+  double max_value_;
+  double min_value_;
+  mutable Point_value implicit_grid_[SCENE_IMPLICIT_GRID_SIZE][SCENE_IMPLICIT_GRID_SIZE];
+  Color_ramp blue_color_ramp_;
+  Color_ramp red_color_ramp_;
+  std::vector<float> positions_cube;
+  std::vector<float> positions_grid;
+  std::vector<float> positions_tex_quad;
+  std::vector<float> texture_map;
+  Texture *texture;
+  GLuint vao;
+  GLuint buffer[4];
+  mutable QOpenGLShaderProgram *program;
+  mutable GLuint textureId;
+  mutable bool are_buffers_filled;
+  Scene_implicit_function_item* item;
+};
+
+void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     if(GLuint(-1) == textureId) {
         viewer->glGenTextures(1, &textureId);
@@ -24,61 +88,61 @@ void Scene_implicit_function_item::initializeBuffers(CGAL::Three::Viewer_interfa
 
     //vao fot the cutting plane
     {
-        program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
+        program = item->getShaderProgram(Scene_implicit_function_item::PROGRAM_WITH_TEXTURE, viewer);
         program->bind();
-        vaos[Plane]->bind();
+        item->vaos[Plane]->bind();
 
 
-        buffers[Quad_vertices].bind();
-        buffers[Quad_vertices].allocate(positions_tex_quad.data(),
+        item->buffers[Quad_vertices].bind();
+        item->buffers[Quad_vertices].allocate(positions_tex_quad.data(),
                             static_cast<int>(positions_tex_quad.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[Quad_vertices].release();
+        item->buffers[Quad_vertices].release();
 
-        buffers[TexMap].bind();
-        buffers[TexMap].allocate(texture_map.data(),
+        item->buffers[TexMap].bind();
+        item->buffers[TexMap].allocate(texture_map.data(),
                             static_cast<int>(texture_map.size()*sizeof(float)));
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
-        buffers[TexMap].release();
+        item->buffers[TexMap].release();
         program->setAttributeValue("normal", QVector3D(0.f,0.f,0.f));
 
         program->release();
-        vaos[Plane]->release();
+        item->vaos[Plane]->release();
     }
     //vao fot the bbox
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_implicit_function_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[BBox]->bind();
+        item->vaos[BBox]->bind();
 
 
-        buffers[Cube_vertices].bind();
-        buffers[Cube_vertices].allocate(positions_cube.data(),
+        item->buffers[Cube_vertices].bind();
+        item->buffers[Cube_vertices].allocate(positions_cube.data(),
                             static_cast<int>(positions_cube.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[Cube_vertices].release();
+        item->buffers[Cube_vertices].release();
 
         program->release();
-        vaos[BBox]->release();
+        item->vaos[BBox]->release();
     }
     //vao fot the grid
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_implicit_function_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[Grid]->bind();
+        item->vaos[Grid]->bind();
 
 
-        buffers[Grid_vertices].bind();
-        buffers[Grid_vertices].allocate(positions_grid.data(),
+        item->buffers[Grid_vertices].bind();
+        item->buffers[Grid_vertices].allocate(positions_grid.data(),
                             static_cast<int>(positions_grid.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[Grid_vertices].release();
+        item->buffers[Grid_vertices].release();
         program->release();
-        vaos[Grid]->release();
+        item->vaos[Grid]->release();
     }
 
 
@@ -102,14 +166,14 @@ void Scene_implicit_function_item::initializeBuffers(CGAL::Three::Viewer_interfa
        are_buffers_filled = true;
 }
 
-void Scene_implicit_function_item::compute_vertices_and_texmap(void)
+void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
 {
     positions_tex_quad.resize(0);
     positions_cube.resize(0);
     positions_grid.resize(0);
     texture_map.resize(0);
 
-    const Bbox& b = bbox();
+    const CGAL::Three::Scene_item::Bbox& b = item->bbox();
     float x,y,z;
     z = 0;
     x = (b.xmax()-b.xmin())/10.0;
@@ -340,107 +404,91 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
 Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
     :CGAL::Three::Scene_item(4,3)
-    , function_(f)
-    , frame_(new ManipulatedFrame())
-    , need_update_(true)
-    , grid_size_(SCENE_IMPLICIT_GRID_SIZE)
-    , max_value_(0.)
-    , min_value_(0.)
-    , blue_color_ramp_()
-    , red_color_ramp_()
-    , textureId(-1)
 {
-    texture = new Texture(grid_size_-1,grid_size_-1);
-    blue_color_ramp_.build_blue();
-    red_color_ramp_.build_red();
-    //Generates an integer which will be used as ID for each buffer
-    compute_min_max();
-    compute_function_grid();
-    double offset_x = (bbox().xmin() + bbox().xmax()) / 2;
-    double offset_y = (bbox().ymin() + bbox().ymax()) / 2;
-    double offset_z = (bbox().zmin() + bbox().zmax()) / 2;
-    frame_->setPosition(offset_x, offset_y, offset_z);
-    frame_->setOrientation(1., 0, 0, 0);
-    connect(frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
-
-    invalidateOpenGLBuffers();
+  d = new Scene_implicit_function_item_priv(f, this);
+  //Generates an integer which will be used as ID for each buffer
+  d->compute_min_max();
+  compute_function_grid();
+  double offset_x = (bbox().xmin() + bbox().xmax()) / 2;
+  double offset_y = (bbox().ymin() + bbox().ymax()) / 2;
+  double offset_z = (bbox().zmin() + bbox().zmax()) / 2;
+  d->frame_->setPosition(offset_x, offset_y, offset_z);
+  d->frame_->setOrientation(1., 0, 0, 0);
+  connect(d->frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
+  invalidateOpenGLBuffers();
 }
 
 
 Scene_implicit_function_item::~Scene_implicit_function_item()
 {
-
-    delete frame_;
-
+  delete d;
 }
 
 
 void
 Scene_implicit_function_item::compute_bbox() const
 {
-    _bbox = function_->bbox();
+    _bbox = d->function_->bbox();
 }
 
 void
 Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
-        initializeBuffers(viewer);
-
-    if(frame_->isManipulated()) {
-        if(need_update_) {
+        d->initialize_buffers(viewer);
+    if(d->frame_->isManipulated()) {
+        if(d->need_update_) {
             compute_function_grid();
-            need_update_ = false;
+            d->need_update_ = false;
         }
     }
-    vaos[Plane]->bind();
+    vaos[Scene_implicit_function_item_priv::Plane]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
-    viewer->glBindTexture(GL_TEXTURE_2D, textureId);
+    viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
     attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
     QMatrix4x4 f_mat;
     GLdouble d_mat[16];
-    frame_->getMatrix(d_mat);
+    d->frame_->getMatrix(d_mat);
     //Convert the GLdoubles matrices in GLfloats
     for (int i=0; i<16; ++i){
         f_mat.data()[i] = GLfloat(d_mat[i]);
     }
-    program = getShaderProgram(PROGRAM_WITH_TEXTURE);
-    program->bind();
-    program->setUniformValue("f_matrix", f_mat);
-    program->setUniformValue("light_amb", QVector4D(1.f,1.f,1.f,1.f));
-    program->setUniformValue("light_diff", QVector4D(0.f,0.f,0.f,1.f));
-    program->setAttributeValue("color_facets", QVector3D(1.f,1.f,1.f));
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_tex_quad.size()/3));
-    vaos[Plane]->release();
-    program->release();
+    d->program = getShaderProgram(PROGRAM_WITH_TEXTURE);
+    d->program->bind();
+    d->program->setUniformValue("f_matrix", f_mat);
+    d->program->setUniformValue("light_amb", QVector4D(1.f,1.f,1.f,1.f));
+    d->program->setUniformValue("light_diff", QVector4D(0.f,0.f,0.f,1.f));
+    d->program->setAttributeValue("color_facets", QVector3D(1.f,1.f,1.f));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->positions_tex_quad.size()/3));
+    vaos[Scene_implicit_function_item_priv::Plane]->release();
+    d->program->release();
 }
 
 void
 Scene_implicit_function_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
-        initializeBuffers(viewer);
-    //  draw_aux(viewer, true);
-    vaos[BBox]->bind();
+        d->initialize_buffers(viewer);
+    vaos[Scene_implicit_function_item_priv::BBox]->bind();
     attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    program->bind();
-    program->setAttributeValue("colors", QVector3D(0.f,0.f,0.f));
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_cube.size()/3));
-    vaos[BBox]->release();
-    vaos[Grid]->bind();
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setAttributeValue("colors", QVector3D(0.f,0.f,0.f));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_cube.size()/3));
+    vaos[Scene_implicit_function_item_priv::BBox]->release();
+    vaos[Scene_implicit_function_item_priv::Grid]->bind();
     QMatrix4x4 f_mat;
     GLdouble d_mat[16];
-    frame_->getMatrix(d_mat);
+    d->frame_->getMatrix(d_mat);
     //Convert the GLdoubles matrices in GLfloats
     for (int i=0; i<16; ++i){
         f_mat.data()[i] = double(d_mat[i]);
     }
-    program->setUniformValue("f_matrix", f_mat);
-    program->setAttributeValue("colors", QVector3D(0.6f, 0.6f, 0.6f));
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
-    vaos[Grid]->release();
-    program->release();
+    d->program->setUniformValue("f_matrix", f_mat);
+    d->program->setAttributeValue("colors", QVector3D(0.6f, 0.6f, 0.6f));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size()/3));
+    vaos[Scene_implicit_function_item_priv::Grid]->release();
+    d->program->release();
 }
 
 QString
@@ -472,7 +520,7 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
     return false;
 }
 
-void Scene_implicit_function_item::compute_texture(int i, int j)
+void Scene_implicit_function_item_priv::compute_texture(int i, int j)
 {
     double v = (implicit_grid_[i][j]).second;
 
@@ -504,7 +552,7 @@ compute_function_grid() const
     typedef K::Point_3                      Point_3;
 
     // Get transformation
-    const GLdouble* m = frame_->matrix();
+    const GLdouble* m = d->frame_->matrix();
 
     // OpenGL matrices are row-major matrices
     Aff_transformation t (m[0], m[4], m[8], m[12],
@@ -517,20 +565,20 @@ compute_function_grid() const
     const double dy = diag;
     const double z (0);
 
-    int nb_quad = grid_size_ - 1;
+    int nb_quad = d->grid_size_ - 1;
 
-    for(int i=0 ; i<grid_size_ ; ++i)
+    for(int i=0 ; i<d->grid_size_ ; ++i)
     {
         double x = -diag/2. + double(i)/double(nb_quad) * dx;
 
-        for(int j=0 ; j<grid_size_ ; ++j)
+        for(int j=0 ; j<d->grid_size_ ; ++j)
         {
             double y = -diag/2. + double(j)/double(nb_quad) * dy;
 
             Point_3 query = t( Point_3(x, y, z) );
-            double v = function_->operator()(query.x(), query.y(), query.z());
+            double v = d->function_->operator()(query.x(), query.y(), query.z());
 
-            implicit_grid_[i][j] = Point_value(Point(query.x(),query.y(),query.z()),v);
+            d->implicit_grid_[i][j] = Scene_implicit_function_item_priv::Point_value(Scene_implicit_function_item_priv::Point(query.x(),query.y(),query.z()),v);
         }
     }
 
@@ -540,7 +588,7 @@ compute_function_grid() const
 }
 
 void
-Scene_implicit_function_item::
+Scene_implicit_function_item_priv::
 compute_min_max()
 {
     if(function_->get_min_max(min_value_, max_value_))
@@ -549,7 +597,7 @@ compute_min_max()
     double probes_nb = double(grid_size_) / 2;
 
     // Probe bounding box
-    const Bbox& b = bbox();
+    const CGAL::Three::Scene_item::Bbox& b = item->bbox();
 
     for ( int i = 0 ; i <= probes_nb ; ++i )
     {
@@ -577,16 +625,20 @@ Scene_implicit_function_item::invalidateOpenGLBuffers()
 {
     Scene_item::invalidateOpenGLBuffers();
     compute_bbox();
-    compute_vertices_and_texmap();
-    are_buffers_filled = false;
+    d->compute_vertices_and_texmap();
+    d->are_buffers_filled = false;
 }
 
 
 void Scene_implicit_function_item::updateCutPlane()
 { // just handle deformation - paint like selection is handled in eventFilter()
-  if(need_update_) {
+  if(d->need_update_) {
     compute_function_grid();
-    compute_vertices_and_texmap();
-    need_update_= false;
+    d->compute_vertices_and_texmap();
+    d->need_update_= false;
   }
 }
+
+Implicit_function_interface* Scene_implicit_function_item::function() const { return d->function_; }
+Scene_implicit_function_item::ManipulatedFrame* Scene_implicit_function_item::manipulatedFrame() { return d->frame_; }
+void Scene_implicit_function_item::plane_was_moved() { d->need_update_ = true; QTimer::singleShot(0, this, SLOT(updateCutPlane()));}

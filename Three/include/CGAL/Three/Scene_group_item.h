@@ -141,11 +141,10 @@ public :
     //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
     {
-      if(isChildLocked(item))
-        return;
-      update_group_number(item,0);
-      item->has_group=0;
-      children.removeOne(item);
+     if(isChildLocked(item))
+      return;
+     update_group_number(item,0);
+     children.removeOne(item);
     }
     //!Moves a child up in the list.
     void moveUp(int);
