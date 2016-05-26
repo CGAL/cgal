@@ -610,9 +610,12 @@ resulting mesh.
 View of a 3D mesh of the relative complement of a torus in a sphere.
 \cgalFigureEnd
 
-\subsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
+
+\subsection Mesh_3PolyhedralDomains Polyhedral Domains
 
 \anchor Mesh_3_subsection_examples_polyhedral
+
+\subsubsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 The following code produces a 3D mesh for a domain
 defined by polyhedral surfaces. \cgalFigureRef{figurepolyhedral_domain} 
@@ -624,7 +627,7 @@ shows the resulting mesh.
 View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
 \cgalFigureEnd
 
-\subsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
+\subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
 
 The following code creates a polyhedral domain, with only one polyhedron,
 and no "bounding polyhedron", so the volumetric part of the domain will be empty.
