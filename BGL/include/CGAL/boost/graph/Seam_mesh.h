@@ -8,9 +8,11 @@
 
 namespace CGAL {
 
-  /**
-     
-   **/
+/*!
+\ingroup PkgBGLHelper
+
+The class template `Seam_mesh` is an adaptor that allows 
+*/
 template <class TM>
   class Seam_mesh {
 

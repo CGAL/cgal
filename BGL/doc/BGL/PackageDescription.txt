@@ -317,6 +317,7 @@ user might encounter.
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Face_filtered_graph`
+- `CGAL::Seam_mesh`
 
 ## Helper Functions ##
 - `CGAL::is_border()`
