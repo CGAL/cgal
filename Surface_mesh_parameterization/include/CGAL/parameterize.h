@@ -74,26 +74,6 @@ namespace CGAL {
 
 
 
-/// \ingroup  PkgSurfaceParameterizationMainFunction
-///
-/// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
-/// 2D circle, using Floater Mean Value Coordinates algorithm.
-/// A one-to-one mapping is guaranteed.
-///
-/// The mapping is piecewise linear on the input mesh triangles.
-/// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
-///
-/// \pre `mesh` must be a surface with one connected component.
-/// \pre `mesh` must be a triangular mesh.
-///
-template <class TriangleMesh>
-typename Parameterizer_traits_3<TriangleMesh>::Error_code
-parameterize(TriangleMesh& mesh)  ///< 3D mesh, model of TriangleMesh concept
-{
-    Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
-    return parameterizer.parameterize(mesh);
-}
-
   namespace Parameterization {
     
     template <typename Mesh, typename Map>
@@ -155,7 +135,17 @@ parameterize(TriangleMesh& mesh,
   return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
 }
 
-  
+/// \ingroup  PkgSurfaceParameterizationMainFunction
+///
+/// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
+/// 2D circle, using Floater Mean Value Coordinates algorithm.
+/// A one-to-one mapping is guaranteed.
+///
+/// The mapping is piecewise linear on the input mesh triangles.
+/// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
+///
+/// \pre `mesh` must be a surface with one connected component.
+/// \pre `mesh` must be a triangular mesh.
 template <class TriangleMesh, class HD, class VertexUVmap>
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
 parameterize(TriangleMesh& mesh,

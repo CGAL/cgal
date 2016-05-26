@@ -11,11 +11,14 @@ namespace CGAL {
 /*!
 \ingroup PkgBGLHelper
 
-The class template `Seam_mesh` is an adaptor that allows 
+The class template `Seam_mesh` is an adaptor for a triangle mesh and some marked edges
+which look like boundary edges, when exploring the seam mesh with the generic BGL style
+functions, and `boost::graph_traits<Seam_mesh<TM> >`. 
 */
 template <class TM>
   class Seam_mesh {
 
+private:
   typedef Seam_mesh<TM> Self;
   typedef typename boost::graph_traits<TM>::halfedge_descriptor TM_halfedge_descriptor;
   typedef typename boost::graph_traits<TM>::halfedge_iterator TM_halfedge_iterator;
@@ -23,7 +26,7 @@ template <class TM>
   typedef typename boost::graph_traits<TM>::vertex_descriptor TM_vertex_descriptor;
   
 public:
-
+/// @cond CGAL_DOCUMENT_INTERNALS
 typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
 
   const TM& mesh()const
@@ -256,7 +259,12 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
 
   int index;
   
+  /// @endcond
+
 public:
+
+
+  /// Constructs a seam mesh for a triangle mesh and a range of edges of the triangle mesh.
   template <typename EdgeRange>
   Seam_mesh(const TM& tm, EdgeRange er) 
     : tm(tm), seam_edges(er.begin(), er.end()), index(0)
@@ -267,7 +275,11 @@ public:
       }
     }
 
-  /// Sets indices to 0,1,2,... for vertices in the region
+  /// Sets indices to 0,1,2,... for vertices in the connected component with the boundary on which lies `bhd`.
+  /// The values are written into a property map with keytype `vertex_dscriptor` and
+  /// value type `boost::graph_traits<TM>::vertices_size_type`.
+  /// 
+  /// The highest index is cached and returned when calling `num_vertices(sm)`.
   template <typename VertexIndexMap>
   void initialize_vertex_index_map(halfedge_descriptor bhd, VertexIndexMap& vipm)
   {
@@ -299,17 +311,14 @@ public:
     }
   }
 
+/// @cond CGAL_DOCUMENT_INTERNALS
+
   // this is the number of different halfedge indices
   int m_num_vertices() const
   {
     return index;
   }
 
-
-  bool is_on_seam(const halfedge_descriptor hd) const
-  {
-    return seam_edges.find(edge(hd, tm)) != seam_edges.end();
-  }
 
 
   halfedge_descriptor m_next(const halfedge_descriptor& hd) const
@@ -377,6 +386,14 @@ public:
   vertex_descriptor m_source(const halfedge_descriptor& hd) const
   {
     return m_target(opposite(hd.tmhd, tm));
+  }
+
+  /// @endcond
+
+  /// returns `true` if the halfedge is on the seam.
+  bool is_on_seam(const halfedge_descriptor& hd) const
+  {
+    return seam_edges.find(edge(hd, tm)) != seam_edges.end();
   }
 
 };

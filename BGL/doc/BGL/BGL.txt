@@ -452,6 +452,39 @@ using `boost::filtered_graph` as shown in the following example.
 
 \cgalExample{BGL_surface_mesh/surface_mesh_dual.cpp}
 
+\subsection BGLEulerOperations The Seam Mesh Adapter 
+
+The class `Seam_mesh` allows to mark edges as <em>seam edges</em>, so that they appear
+like border edges, when exploring a seam mesh with the BGL API. In the figure below 
+when we circulate around the target of `h7`, we will traverse `h7`, `h1`, `h3`, `h5`, and we are back at `h7`.
+When we circulate in the seam graph we will traverse `h7`, `h1`, `h3*`, and we are back  at `h7`.
+When we start at `h3`, we will traverse `h3`, `h5`, `h7*`, and we are back at `h3`.
+
+
+\cgalFigureBegin{fig_Seam_mesh_1, Seam_mesh_1.png}
+A seam mesh with two seam edges `(2,3)` and `(6,7)`. 
+\cgalFigureEnd
+
+With the function `next(halfedge_descriptor, FaceGraph)` we can walk around a face, but also around 
+a border of a mesh. When we have a seam mesh `opposite(h2,sm) == h3*`, and it holds that `face(h3*,sm) == null_face()`.
+We now can walk aling this "border", that is applying `next(..,sm)` starting at `h3*`, we will traverse `h6*`,
+`h7*`, `h2*`, and we are back at `h3*`.
+
+A seam is not necessarily a simple polyline, as we can see in the next figure.
+In <em>(a)</em> the seam forms a tree which makes that we pass at a vertex as often as
+it has incident seam edges.
+In <em>(b)</em> the seam has a vertex on the border of the adapted mesh. Walking along the seam we switch
+to the real border, and switch back on the "other side" of the seam.
+in<em>(c)</em> the seam forms a closed polyline. While the first two define a single border, a cycle defines two borders
+and splits the set of faces in two connected components. Something similar happens when the seam touches the same border
+more than once. A seam can also connect different borders what changes the genus of the mesh.
+
+\cgalFigureBegin{fig_Seam_mesh_2, Seam_mesh_2.png}
+Walking around a seam <em>(a)</em> with no seam vertex on the real border, 
+<em>(b)</em> with a seam vertex on the real border, <em>(c)</em> with a closed polyline.
+\cgalFigureEnd
+
+Seam meshes are used in the Chapter \ref PkgSurfaceParameterizationSummary.
 
 \subsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
 

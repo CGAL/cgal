@@ -50,7 +50,7 @@ namespace CGAL {
 /// The class `Fixed_border_parameterizer_3`
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 ///
-/// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// One-to-one mapping is guaranteed if the border of the surface is mapped onto a convex polygon.
 ///
 /// This class is a pure virtual class, thus cannot be instantiated.
 /// Anyway, it implements most of the parameterization algorithm `parameterize()`.
@@ -173,7 +173,6 @@ protected:
                                             VertexUVmap uvmap,
                                             VertexIndexMap vimap)
   {
-    // AF: loop over border halfedges
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
       // Get vertex index in sparse linear system
       int index = get(vimap, target(opposite(next(hd,tmesh),tmesh),tmesh));

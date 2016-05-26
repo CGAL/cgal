@@ -42,7 +42,7 @@ namespace CGAL {
 /// This class is used by the main
 /// parameterization algorithm Fixed_border_parameterizer_3::parameterize().
 /// - It provides default BorderParameterizer_3 and SparseLinearAlgebraTraits_d template
-///   parameters that make sense.
+///   parameters.
 /// - It implements compute_w_ij() to compute `w_ij = (i,j)` coefficient of matrix A
 ///   for `j` neighbor vertex of `i` based on Tutte Barycentric Mapping method.
 /// - It implements an optimized version of is_one_to_one_mapping().
@@ -95,10 +95,9 @@ public:
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
     /// @endcond
 
-// Private types
-private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
+protected:
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
   typedef typename Parameterizer_traits_3<TriangleMesh>::NT  NT;
 

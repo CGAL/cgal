@@ -55,7 +55,6 @@ int main(int argc, char * argv[])
   std::ifstream in_mesh((argc>1)?argv[1]:"data/lion.off");
   in_mesh >> sm;
 
-  std::string s;
   std::ifstream in((argc>2)?argv[2]:"data/lion.selection.txt");
   int v,w;
   while(in >> v >> w){

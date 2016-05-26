@@ -157,16 +157,6 @@ vertices).
 
 
 
-/*! \defgroup PkgSurfaceParameterizationMesh Mesh
-    \ingroup PkgSurfaceParameterization
-
-The general definition of input meshes handled directly by `CGAL::parameterize()` is:
-
- - Model of `FaceGraph`.
- - Triangulated.
- - 2-manifold.
- - Oriented.
- - Homeomorphic to a disc (may have holes).
 
 
 */

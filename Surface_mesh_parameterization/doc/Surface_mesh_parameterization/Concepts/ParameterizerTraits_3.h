@@ -5,10 +5,6 @@
 
 `ParameterizerTraits_3` is a concept of parameterization object for a given type of mesh, `TriangleMesh`, which must be a model of the `FaceGraph` concept. 
 
-Design Pattern 
--------------- 
-
-`ParameterizerTraits_3` models are Strategies \cgalCite{cgal:ghjv-dpero-95} : they implement a strategy of surface parameterization for models of `ParameterizationMesh_3`. 
 
 Creation 
 -------------- 

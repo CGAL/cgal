@@ -49,7 +49,7 @@ namespace CGAL {
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
 /// `Discrete_authalic_parameterizer_3`:
 /// - It provides default `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
-///   parameters that make sense.
+///   parameters.
 /// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.
 ///

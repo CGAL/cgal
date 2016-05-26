@@ -48,7 +48,7 @@ namespace CGAL {
 /// cannot be instantiated.
 ///
 /// It implements most of the algorithm. Subclasses just
-/// have to implement `compute_edge_length(`) to compute a segment's length.
+/// have to implement `compute_edge_length()` to compute a segment's length.
 ///
 /// Implementation note:
 /// To simplify the implementation, `BorderParameterizer_3` models know only the
