@@ -257,6 +257,10 @@ void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
 {
+  CGAL_assertion(!borders_detected_);
+  if (borders_detected_)
+    return;//prevent from not-terminating
+
   for (std::size_t i = 0; i < poly.size(); ++i)
   {
   Polyhedron& p = poly[i];
@@ -284,7 +288,7 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     boost::make_transform_iterator(polylines.end(),extractor));
   }
 
-  detect_borders();
+  borders_detected_ = true;/*done by Mesh_3::detect_features*/
 }
 
 
