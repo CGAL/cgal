@@ -40,8 +40,7 @@ int main()
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
   
   // Get sharp features
-  domain.detect_features();
-  domain.detect_borders();
+  domain.detect_features(); //includes detection of borders
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.025,

@@ -134,6 +134,7 @@ public:
 
 private:
   Polyhedron polyhedron_;
+  bool borders_detected_;
 
 private:
   // Disabled copy constructor & assignment operator
@@ -151,6 +152,7 @@ Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
                                        CGAL::Random* p_rng)
   : Base()
   , polyhedron_(p)
+  , borders_detected_(false)
 {
   this->add_primitives(polyhedron_);
   this->set_random_generator(p_rng);
@@ -163,6 +165,7 @@ Polyhedral_mesh_domain_with_features_3(const char* filename,
                                        CGAL::Random* p_rng)
   : Base()
   , polyhedron_()
+  , borders_detected_(false)
 {
   // Create input polyhedron
   std::ifstream input(filename);
@@ -178,6 +181,7 @@ Polyhedral_mesh_domain_with_features_3(const std::string& filename,
                                        CGAL::Random* p_rng)
   : Base()
   , polyhedron_()
+  , borders_detected_(false)
 {
   // Create input polyhedron
   std::ifstream input(filename.c_str());
@@ -239,6 +243,8 @@ detect_features(FT angle_in_degree, Polyhedron& p)
   this->add_features(
     boost::make_transform_iterator(polylines.begin(),extractor),
     boost::make_transform_iterator(polylines.end(),extractor));
+
+  detect_borders();
 }
 
 
@@ -248,6 +254,9 @@ void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 detect_borders()
 {
+  if (borders_detected_)
+    return;//border detection has already been done
+
   typedef std::vector<Point_3> Polyline;
   typedef std::vector<Polyline>Polylines;
 
@@ -271,6 +280,7 @@ detect_borders()
     }
   }
   this->add_features(polylines.begin(), polylines.end());
+  borders_detected_ = true;
 }
 
 
