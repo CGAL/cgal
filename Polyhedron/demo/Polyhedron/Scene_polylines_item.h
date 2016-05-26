@@ -66,7 +66,7 @@ public Q_SLOTS:
     void smooth();
 public:
     Polylines_container polylines;
-
+protected:
     // http://en.wikipedia.org/wiki/D-pointer
     friend struct Scene_polylines_item_private;
     Scene_polylines_item_private* d;
