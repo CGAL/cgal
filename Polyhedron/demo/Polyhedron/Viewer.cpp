@@ -1,4 +1,5 @@
 #include "Viewer.h"
+#include <CGAL/Three/TextRenderer.h>
 #include <CGAL/gl.h>
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
@@ -8,6 +9,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <cmath>
+#include <QApplication>
 
 class Viewer_impl {
 public:
@@ -17,9 +19,8 @@ public:
   bool macro_mode;
   bool inFastDrawing;
   bool inDrawWithNames;
-  
+  QPainter *painter;
   void draw_aux(bool with_names, Viewer*);
-
   //! Contains all the programs for the item rendering.
   mutable std::vector<QOpenGLShaderProgram*> shader_programs;
 };
@@ -34,6 +35,10 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
+  textRenderer = new TextRenderer();
+  connect( textRenderer, SIGNAL(sendMessage(QString,int)),
+           this, SLOT(printMessage(QString,int)) );
+  connect(&messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
@@ -43,6 +48,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                        "but decrease the z-buffer precision"));
   setKeyDescription(Qt::Key_A,
                       tr("Toggle the axis system visibility."));
+  setKeyDescription(Qt::Key_I + Qt::CTRL,
+                      tr("Toggle the primitive IDs visibility of the selected Item."));
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
@@ -51,14 +58,27 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
   //use the new API for these
   setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
+
+  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
+                             tr("Selects and display context "
+                                "menu of the selected item"));
+  setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
+                             tr("Show/hide the primitive ID."));
 #else
   setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
   setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
                              tr("Selects and display context "
                                 "menu of the selected item"));
+
 #endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
   axis_are_displayed = true;
+  has_text = false;
+  i_is_pressed = false;
+  fpsTime.start();
+  fpsCounter=0;
+  f_p_s=0.0;
+  fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
 }
 
 Viewer::~Viewer()
@@ -103,7 +123,8 @@ bool Viewer::inFastDrawing() const
 }
 
 void Viewer::draw()
-{
+{ 
+  makeCurrent();
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -224,6 +245,8 @@ void Viewer::initializeGL()
   {
       qDebug() << rendering_program.log();
   }
+
+  d->painter = new QPainter(this);
 }
 
 #include <QMouseEvent>
@@ -233,10 +256,14 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::RightButton &&
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
-
     select(event->pos());
     requestContextMenu(event->globalPos());
     event->accept();
+  }
+  else if(event->button() == Qt::LeftButton &&
+          i_is_pressed)
+  {
+      d->scene->printPrimitiveId(event->pos(), this);
   }
   else {
     QGLViewer::mousePressEvent(event);
@@ -281,12 +308,26 @@ void Viewer::keyPressEvent(QKeyEvent* e)
           axis_are_displayed = !axis_are_displayed;
           updateGL();
         }
+    else if(e->key() == Qt::Key_I) {
+          i_is_pressed = true;
+        }
   }
+  else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
+    d->scene->printPrimitiveIds(this);
+    update();
+      }
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
     QGLViewer::keyPressEvent(e);
 }
 
+void Viewer::keyReleaseEvent(QKeyEvent *e)
+{
+    if(e->key() == Qt::Key_I) {
+        i_is_pressed = false;
+    }
+    QGLViewer::keyReleaseEvent(e);
+}
 void Viewer::turnCameraBy180Degres() {
   qglviewer::Camera* camera = this->camera();
   using qglviewer::ManipulatedCameraFrame;
@@ -510,7 +551,6 @@ void Viewer::beginSelection(const QPoint &point)
     glEnable(GL_SCISSOR_TEST);
     glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
     d->scene->setPickedPixel(point);
-
 }
 void Viewer::endSelection(const QPoint&)
 {
@@ -695,6 +735,7 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
 
 void Viewer::drawVisualHints()
 {
+
     QGLViewer::drawVisualHints();
     if(axis_are_displayed)
     {
@@ -758,7 +799,33 @@ void Viewer::drawVisualHints()
         vao[0].release();
     }
 
-}
+    if (!d->painter->isActive())
+      d->painter->begin(this);
+    //So that the text is drawn in front of everything
+    d->painter->beginNativePainting();
+    glDisable(GL_DEPTH_TEST);
+    d->painter->endNativePainting();
+    //prints FPS
+    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,fpsString,false, QFont(), Qt::gray);
+    if(FPSIsDisplayed())
+    {
+      textRenderer->addText(fps_text);
+    }
+    //Prints the displayMessage
+    QFont font = QFont();
+    QFontMetrics fm(font);
+    TextItem *message_text = new TextItem(10 + fm.width(message)/2, height()-20, 0, message, false, QFont(), Qt::gray );
+    if (_displayMessage)
+    {
+      textRenderer->addText(message_text);
+    }
+    textRenderer->draw(this);
+    if(FPSIsDisplayed())
+      textRenderer->removeText(fps_text);
+    if (_displayMessage)
+      textRenderer->removeText(message_text);
+    }
+
 
 void Viewer::resizeGL(int w, int h)
 {
@@ -1126,4 +1193,74 @@ void Viewer::wheelEvent(QWheelEvent* e)
     }
     else
         QGLViewer::wheelEvent(e);
+}
+
+bool Viewer::testDisplayId(double x, double y, double z)
+{
+    return d->scene->testDisplayId(x,y,z,this);
+}
+
+QPainter* Viewer::getPainter(){return d->painter;}
+
+void Viewer::paintEvent(QPaintEvent *)
+{
+    paintGL();
+}
+
+void Viewer::paintGL()
+{
+  if (!d->painter->isActive())
+    d->painter->begin(this);
+  d->painter->beginNativePainting();
+  glClearColor(1.0, 1.0, 1.0, 1.0);
+  d->painter->endNativePainting();
+  preDraw();
+  draw();
+  postDraw();
+  d->painter->end();
+}
+void Viewer::postDraw()
+{
+
+#ifdef GL_RESCALE_NORMAL  // OpenGL 1.2 Only...
+  glEnable(GL_RESCALE_NORMAL);
+#endif
+
+  if (cameraIsEdited())
+    camera()->drawAllPaths();
+
+  // Pivot point, line when camera rolls, zoom region
+  drawVisualHints();
+
+  if (gridIsDrawn()) { glLineWidth(1.0); drawGrid(camera()->sceneRadius()); }
+  if (axisIsDrawn()) { glLineWidth(2.0); drawAxis(camera()->sceneRadius()); }
+
+  // FPS computation
+  const unsigned int maxCounter = 20;
+  if (++fpsCounter == maxCounter)
+  {
+    f_p_s = 1000.0 * maxCounter / fpsTime.restart();
+    fpsString = tr("%1Hz", "Frames per seconds, in Hertz").arg(f_p_s, 0, 'f', ((f_p_s < 10.0)?1:0));
+    fpsCounter = 0;
+  }
+
+}
+void Viewer::displayMessage(const QString &_message, int delay)
+{
+          message = _message;
+          _displayMessage = true;
+          // Was set to single shot in defaultConstructor.
+          messageTimer.start(delay);
+          if (textIsEnabled())
+                  update();
+}
+void Viewer::hideMessage()
+{
+        _displayMessage = false;
+        if (textIsEnabled())
+                update();
+}
+void Viewer::printMessage(QString _message, int ms_delay)
+{
+  displayMessage(_message, ms_delay);
 }

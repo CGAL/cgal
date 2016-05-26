@@ -4,6 +4,7 @@
 #define VIEWER_H
 
 #include <CGAL/Three/Viewer_config.h>
+#include <CGAL/Three/Scene_interface.h>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
@@ -11,6 +12,8 @@
 
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
+#include <QFont>
+#include <QOpenGLFramebufferObject>
 
 // forward declarations
 class QWidget;
@@ -32,7 +35,7 @@ class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
 public:
   Viewer(QWidget * parent, bool antialiasing = false);
   ~Viewer();
-
+  bool testDisplayId(double, double, double);
   // overload several QGLViewer virtual functions
   //! Draws the scene.
   void draw();
@@ -65,6 +68,7 @@ public:
   void attribBuffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
+  QPainter* getPainter();
 
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
@@ -82,8 +86,16 @@ public Q_SLOTS:
   //!Moves the camera to the new coordinates (position and orientation) through an animation.
   bool moveCameraToCoordinates(QString, 
                                float animation_duration = 0.5f);
+  //!Makes the Viewer display a message
+  void printMessage(QString message, int ms_delay );
+  void displayMessage(const QString &_message, int delay);
+  void displayMessage(const QString &_message){displayMessage(_message, 2000);}
+  void hideMessage();
 
 protected:
+  void postDraw();
+  void paintEvent(QPaintEvent *);
+  void paintGL();
   //! Holds useful data to draw the axis system
   struct AxisData
   {
@@ -91,6 +103,7 @@ protected:
       std::vector<float> *normals;
       std::vector<float> *colors;
   };
+
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffers[3];
   //! The VAO used to draw the axis system
@@ -105,6 +118,8 @@ protected:
   std::vector<float> c_Axis;
   //! Decides if the axis system must be drawn or not
   bool axis_are_displayed;
+  //! Decides if the text is displayed in the drawVisualHints function.
+  bool has_text;
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*);
   void wheelEvent(QWheelEvent *);
@@ -112,7 +127,8 @@ protected:
   void keyPressEvent(QKeyEvent*);
   //!Deal with context menu events
   void contextMenuEvent(QContextMenuEvent*);
-
+  //!Defines the behaviour for the key release events
+  void keyReleaseEvent(QKeyEvent *);
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.
@@ -126,11 +142,24 @@ protected:
 
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);
+  bool i_is_pressed;
 
 
 protected:
   Viewer_impl* d;
   double prev_radius;
+
+private:
+  // F P S    d i s p l a y
+  QTime fpsTime;
+  unsigned int fpsCounter;
+  QString fpsString;
+  float f_p_s;
+  // M e s s a g e s
+  QString message;
+  bool _displayMessage;
+  QTimer messageTimer;
 }; // end class Viewer
+
 
 #endif // VIEWER_H

@@ -5,6 +5,7 @@
 #include "config.h"
 #include "Scene.h"
 #include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_print_interface_item.h>
 
 #include <QObject>
 #include <QMetaObject>
@@ -329,6 +330,8 @@ void
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     QMap<float, int> picked_item_IDs;
+    if(with_names)
+      glEnable(GL_DEPTH_TEST);
     if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
     if(!gl_init)
@@ -485,46 +488,50 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     picked_item_IDs[depth] = index;
                 }
             }
-        }
-    }
-    if(!with_names)
-    {
-        glDepthFunc(GL_LESS);
-        // Splatting
-        if(!with_names && ms_splatting->isSupported())
-        {
-            ms_splatting->beginVisibilityPass();
-            for(int index = 0; index < m_entries.size(); ++index)
+
+            if(!with_names)
             {
-                CGAL::Three::Scene_item& item = *m_entries[index];
-                if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-                if(item.visible() && item.renderingMode() == Splatting)
+                glDepthFunc(GL_LESS);
+                // Splatting
+                if(!with_names && ms_splatting->isSupported())
                 {
-
-                    if(viewer)
+                    ms_splatting->beginVisibilityPass();
+                    for(int index = 0; index < m_entries.size(); ++index)
                     {
-                        item.drawSplats(viewer);
-                    }
-                    else
-                        item.drawSplats();
-                }
+                        CGAL::Three::Scene_item& item = *m_entries[index];
+                        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
+                        if(item.visible() && item.renderingMode() == Splatting)
+                        {
 
-            }
-            ms_splatting->beginAttributePass();
-            for(int index = 0; index < m_entries.size(); ++index)
-            {  CGAL::Three::Scene_item& item = *m_entries[index];
-                if(item.visible() && item.renderingMode() == Splatting)
-                {
-                    item.drawSplats(viewer);
+                          if(viewer)
+                          {
+                             item.drawSplats(viewer);
+                          }
+                          else
+                              item.drawSplats();
+                        }
+
+                    }
+                    ms_splatting->beginAttributePass();
+                    for(int index = 0; index < m_entries.size(); ++index)
+                    {  CGAL::Three::Scene_item& item = *m_entries[index];
+                        if(item.visible() && item.renderingMode() == Splatting)
+                        {
+                            viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
+                            if(viewer)
+                                item.drawSplats(viewer);
+                            else
+                                item.drawSplats();
+                        }
+                    }
+                    ms_splatting->finalize();
                 }
                 else
                     item.drawSplats();
             }
-            ms_splatting->finalize();
-
         }
     }
-    else
+    if(with_names)
     {
         QList<float> depths = picked_item_IDs.keys();
         if(!depths.isEmpty())
@@ -1114,7 +1121,39 @@ float Scene::get_bbox_length() const
     return bbox().ymax()-bbox().ymin();
 }
 
-
+void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer)
+{
+  Scene_item *it = item(mainSelectionIndex());
+  if(it)
+  {
+    //Only call printPrimitiveId if the item is a Scene_print_interface_item
+    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    if(item)
+      item->printPrimitiveId(point, viewer);
+  }
+}
+void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
+{
+  Scene_item *it = item(mainSelectionIndex());
+  if(it)
+  {
+    //Only call printPrimitiveIds if the item is a Scene_print_interface_item
+    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    if(item)
+      item->printPrimitiveIds(viewer);
+  }
+}
+bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
+{
+    CGAL::Three::Scene_item *i = item(mainSelectionIndex());
+    if(i && i->visible())
+    {
+        bool res = i->testDisplayId(x,y,z, viewer);
+        return res;
+    }
+    else
+      return false;
+}
 #include "Scene_find_items.h"
 
 void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)

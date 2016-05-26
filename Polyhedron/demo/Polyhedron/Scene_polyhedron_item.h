@@ -2,7 +2,8 @@
 #define SCENE_POLYHEDRON_ITEM_H
 
 #include "Scene_polyhedron_item_config.h"
-#include  <CGAL/Three/Scene_item.h> //<- modif ?
+#include  <CGAL/Three/Scene_item.h>
+#include  <CGAL/Three/TextRenderer.h>
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
 #include <iostream>
@@ -10,7 +11,6 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
-
 #include <set>
 #include <vector>
 
@@ -47,6 +47,7 @@ public:
     bool has_stats()const {return true;}
     QString computeStats(int type);
     CGAL::Three::Scene_item::Header_data header() const;
+    TextListItem* textItems;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);
@@ -94,11 +95,15 @@ public:
     bool triangulated(){return poly->is_pure_triangle();}
     bool self_intersected(){return !self_intersect;}
 
+    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
+    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
+    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*);
+
 public Q_SLOTS:
     virtual void invalidateOpenGLBuffers();
     virtual void selection_changed(bool);
     virtual void setColor(QColor c);
-	virtual void show_feature_edges(bool);
+    virtual void show_feature_edges(bool);
     void show_only_feature_edges(bool);
     void enable_facets_picking(bool);
     void set_erase_next_picked_facet(bool);
@@ -162,6 +167,7 @@ private:
         NbOfVbos
     };
 
+    mutable bool all_ids_displayed;
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> positions_feature_lines;
     mutable std::vector<float> positions_facets;
@@ -186,7 +192,8 @@ private:
       const bool colors_only) const;
     void* get_aabb_tree();
     double volume, area;
-
+    mutable QList<double> text_ids;
+    mutable TextItem* targeted_id;
   int m_min_patch_id; // the min value of the patch ids initialized in init()
 }; // end class Scene_polyhedron_item
 

@@ -30,6 +30,8 @@
 #include <QOpenGLVertexArrayObject>
 #include <vector>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Three/Scene_print_interface_item.h>
+
 namespace CGAL {
 namespace Three {
   class Viewer_interface;
@@ -47,7 +49,7 @@ namespace Three {
 class Scene_group_item;
 class Viewer_interface;
 //! This class represents an object in the OpenGL scene
-class SCENE_ITEM_EXPORT Scene_item : public QObject {
+class SCENE_ITEM_EXPORT Scene_item : public QObject, public CGAL::Three::Scene_print_interface_item {
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString name READ name WRITE setName)
@@ -164,6 +166,11 @@ public:
       is_bbox_computed = true;
       return _bbox;
   }
+  //!Finds the spot the closest to point and prints the id of the corresponding Primitive (vertex, edg or Facet).
+  virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
+  virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const;
+
+  virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*);
   // Function about manipulation
   //! returns true  if the item can have a ManipulatedFrame.
   virtual bool manipulatable() const { return false; }
