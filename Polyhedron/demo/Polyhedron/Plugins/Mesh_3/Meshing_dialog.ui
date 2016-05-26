@@ -357,8 +357,11 @@ p, li { white-space: pre-wrap; }
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip">
+         <string>if unchecked, value inside the domain is greater than isovalue</string>
+        </property>
         <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
+         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
          <string/>
@@ -380,11 +383,14 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_4">
+        <property name="toolTip">
+         <string>image value outside the image bounding box</string>
+        </property>
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string>Value outside: </string>
+         <string>Value outside</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -397,7 +403,7 @@ p, li { white-space: pre-wrap; }
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string>Iso value:</string>
+         <string>Iso value</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -407,7 +413,7 @@ p, li { white-space: pre-wrap; }
       <item row="2" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Value &quot;inside&quot; is less that iso value:</string>
+         <string>Value inside is less than iso value</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
