@@ -163,7 +163,7 @@ struct Selection_traits<typename SelectionItem::edge_descriptor, SelectionItem>
 };
 
 //////////////////////////////////////////////////////////////////////////
-
+struct Scene_polyhedron_selection_item_priv;
 class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item 
   : public Scene_polyhedron_item_decorator
 {
@@ -182,72 +182,12 @@ public:
   typedef Polyhedron::Facet_iterator  Facet_iterator;
   typedef Scene_polyhedron_item_k_ring_selection::Active_handle Active_handle;
   // To be used inside loader
-  Scene_polyhedron_selection_item() 
-    : Scene_polyhedron_item_decorator(NULL, false)
-    {
-        original_sel_mode = static_cast<Active_handle::Type>(0);
-        this ->operation_mode = -1;
-        for(int i=0; i<6; i++)
-        {
-            addVaos(i);
-            vaos[i]->create();
-        }
-
-        for(int i=0; i<10; i++)
-        {
-            buffers[i].create();
-        }
-        nb_facets = 0;
-        nb_points = 0;
-        nb_lines = 0;
-        this->setColor(facet_color);
-        first_selected = false;
-        is_treated = false;
-        poly_need_update = false;
-    }
-
-  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
-    : Scene_polyhedron_item_decorator(NULL, false)
-    {
-        original_sel_mode = static_cast<Active_handle::Type>(0);
-        this ->operation_mode = -1;
-        nb_facets = 0;
-        nb_points = 0;
-        nb_lines = 0;
-
-        for(int i=0; i<7; i++)
-        {
-            addVaos(i);
-            vaos[i]->create();
-        }
-
-        for(int i=0; i<10; i++)
-        {
-            buffers[i].create();
-        }
-        init(poly_item, mw);
-        this->setColor(facet_color);
-        invalidateOpenGLBuffers();
-        first_selected = false;
-        is_treated = false;
-        poly_need_update = false;
-    }
-
-   ~Scene_polyhedron_selection_item()
-    {
-    }
+  Scene_polyhedron_selection_item() ;
+  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw);
+   ~Scene_polyhedron_selection_item();
   void inverse_selection();
 
-  void setPathSelection(bool b) {
-    k_ring_selector.setEditMode(b);
-    is_path_selecting = b;
-    if(is_path_selecting){
-      int ind = 0;
-      BOOST_FOREACH(Vertex_handle vd, vertices(*polyhedron())){
-        vd->id() = ind++;
-      }
-    }
-  }
+  void setPathSelection(bool b);
 
 protected: 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
@@ -453,20 +393,7 @@ public:
   }
 
   //adds the content of temp_selection to the current selection
-  void add_to_selection()
-  {
-    Q_FOREACH(edge_descriptor ed, temp_selected_edges)
-    {
-      selected_edges.insert(ed);
-      temp_selected_edges.erase(ed);
-    }
-    on_Ctrlz_pressed();
-    invalidateOpenGLBuffers();
-    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
-    v->update();
-    tempInstructions("Path added to selection.",
-                     "Select two vertices to create the path between them. (1/2)");
-  }
+  void add_to_selection();
   // select all of `active_handle_type`(vertex, facet or edge)
   void select_all() {
     switch(get_active_handle_type()) {
@@ -858,30 +785,14 @@ Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
-  void update_poly()
-  {
-    if(poly_need_update)
-      poly_item->invalidateOpenGLBuffers();
-  }
+  void update_poly();
   void on_Ctrlz_pressed();
   void emitTempInstruct();
-  void resetIsTreated() { is_treated = false;}
-  void save_handleType()
-  {
-    original_sel_mode = get_active_handle_type();
-  }
-
+  void resetIsTreated();
+  void save_handleType();
   void set_operation_mode(int mode);
 
-  void invalidateOpenGLBuffers() {
-
-    // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
-      //  poly_item->invalidateOpenGLBuffers();
-        are_buffers_filled = false;
-        are_temp_buffers_filled = false;
-        poly = polyhedron();
-        compute_bbox();
-  }
+  void invalidateOpenGLBuffers();
   // slots are called by signals of polyhedron_k_ring_selector
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   { has_been_selected(m); }
@@ -1044,65 +955,9 @@ public:
   Selection_set_edge   temp_selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
   QColor vertex_color, facet_color, edge_color;
 
-private:
-  struct vertex_on_path
-  {
-    Vertex_handle vertex;
-    bool is_constrained;
-  };
-  QList<vertex_on_path> path;
-  QList<Vertex_handle> constrained_vertices;
-  bool is_path_selecting;
-
-  bool poly_need_update;
-  mutable bool are_temp_buffers_filled;
-  //Specifies Selection/edition mode
-  bool first_selected;
-  int operation_mode;
-  QString m_temp_instructs;
-  bool is_treated;
-  Vertex_handle to_split_vh;
-  Facet_handle to_split_fh;
-  edge_descriptor to_join_ed;
-  Active_handle::Type original_sel_mode;
-  //Only needed for the triangulation
-  Polyhedron* poly;
-  mutable std::vector<float> positions_facets;
-  mutable std::vector<float> normals;
-  mutable std::vector<float> positions_lines;
-  mutable std::vector<float> positions_points;
-  mutable std::size_t nb_facets;
-  mutable std::size_t nb_points;
-  mutable std::size_t nb_lines;
-
-  mutable std::vector<float> positions_temp_facets;
-  mutable std::vector<float> positions_fixed_points;
-  mutable std::vector<float> color_fixed_points;
-  mutable std::vector<float> temp_normals;
-  mutable std::vector<float> positions_temp_lines;
-  mutable std::vector<float> positions_temp_points;
-  mutable std::size_t nb_temp_facets;
-  mutable std::size_t nb_temp_points;
-  mutable std::size_t nb_temp_lines;
-  mutable std::size_t nb_fixed_points;
-
-  mutable QOpenGLShaderProgram *program;
-
-  using CGAL::Three::Scene_item::initializeBuffers;
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-  void initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer) const;
-  void computeElements() const;
-  void compute_any_elements(std::vector<float> &p_facets, std::vector<float> &p_lines, std::vector<float> &p_points, std::vector<float> &p_normals,
-                            const Selection_set_vertex& p_sel_vertex, const Selection_set_facet &p_sel_facet, const Selection_set_edge &p_sel_edges) const;
-  void compute_temp_elements() const;
-
-  template<typename FaceNormalPmap>
-  void triangulate_facet(Facet_handle, const FaceNormalPmap&,
-                         std::vector<float> &p_facets,std::vector<float> &p_normals) const;
-  void tempInstructions(QString s1, QString s2);
-
-  void computeAndDisplayPath();
-  void addVertexToPath(Vertex_handle, vertex_on_path &);
+protected :
+  friend struct Scene_polyhedron_selection_item_priv;
+  Scene_polyhedron_selection_item_priv *d;
 };
 
 #endif
