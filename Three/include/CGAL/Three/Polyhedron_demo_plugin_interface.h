@@ -18,7 +18,7 @@
 //
 // Author(s)     : Laurent RINEAU
 
-   //! \file Polyhedron_demo_plugin_interface.h 
+//! \file Polyhedron_demo_plugin_interface.h
 #ifndef POLYHEDRON_DEMO_PLUGIN_INTERFACE_H
 #define POLYHEDRON_DEMO_PLUGIN_INTERFACE_H
 
