@@ -90,14 +90,14 @@ public:
     const Image& img,
     const std::binder1st<std::less<float> > iso_value = std::bind1st(std::less<float>(), 3),
     const float value_outside = 0)
-   : Base(img, iso_value)
+   : Base(img, iso_value, value_outside)
   {}
 
   Polyhedron_demo_labeled_mesh_domain_3(
     const Image& img,
     const std::binder1st<std::greater<float> > iso_value = std::bind1st(std::greater<float>(), 3),
     const float value_outside = 0)
-   : Base(img, iso_value)
+   : Base(img, iso_value, value_outside)
   {}
 
   /**
