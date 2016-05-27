@@ -408,8 +408,6 @@ public Q_SLOTS:
   }
 private:
 #ifdef CGAL_USE_VTK
-
-  vtkImageReader* vtk_reader;
   vtkImageData* vtk_image;
   vtkDICOMImageReader* dicom_reader;
   vtkDemandDrivenPipeline* executive;
@@ -930,7 +928,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
     int return_code = dialog.exec();
     if(return_code != QDialog::Accepted)
     {
-      return NULL;
+      return false;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
