@@ -137,6 +137,18 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  bool inside_is_less)
 {
   if (NULL == pImage) { return NULL; }
+  if(! polylines.empty())
+    protect_features = true; // so that it will be passed in make_mesh_3
+
+  Mesh_parameters param;
+  param.protect_features = protect_features;
+  param.facet_angle = facet_angle;
+  param.facet_sizing = facet_sizing;
+  param.facet_approx = facet_approx;
+  param.tet_sizing = tet_sizing;
+  param.tet_shape = tet_shape;
+  param.manifold = manifold;
+  CGAL::Timer timer;
 
   if(!is_gray)
   {
@@ -150,21 +162,12 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     if(! polylines.empty()){
       // Insert edge in domain
       p_domain->add_features(polylines.begin(), polylines.end());
-      protect_features = true; // so that it will be passed in make_mesh_3
     }
-    CGAL::Timer timer;
     timer.start();
     Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
     p_new_item->setScene(scene);
 
-    Mesh_parameters param;
-    param.protect_features = protect_features;
-    param.facet_angle = facet_angle;
-    param.facet_sizing = facet_sizing;
-    param.facet_approx = facet_approx;
-    param.tet_sizing = tet_sizing;
-    param.tet_shape = tet_shape;
-    param.manifold = manifold;
+
 
     typedef ::Mesh_function<Image_mesh_domain> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
@@ -187,21 +190,10 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       if(! polylines.empty()){
         // Insert edge in domain
         p_domain->add_features(polylines.begin(), polylines.end());
-        protect_features = true; // so that it will be passed in make_mesh_3
       }
-      CGAL::Timer timer;
       timer.start();
       Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
       p_new_item->setScene(scene);
-
-      Mesh_parameters param;
-      param.protect_features = protect_features;
-      param.facet_angle = facet_angle;
-      param.facet_sizing = facet_sizing;
-      param.facet_approx = facet_approx;
-      param.tet_sizing = tet_sizing;
-      param.tet_shape = tet_shape;
-      param.manifold = manifold;
 
       typedef ::Mesh_function<Gray_Image_mesh_less_domain> Mesh_function;
       Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
@@ -219,21 +211,11 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       if(! polylines.empty()){
         // Insert edge in domain
         p_domain->add_features(polylines.begin(), polylines.end());
-        protect_features = true; // so that it will be passed in make_mesh_3
       }
-      CGAL::Timer timer;
       timer.start();
       Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
       p_new_item->setScene(scene);
 
-      Mesh_parameters param;
-      param.protect_features = protect_features;
-      param.facet_angle = facet_angle;
-      param.facet_sizing = facet_sizing;
-      param.facet_approx = facet_approx;
-      param.tet_sizing = tet_sizing;
-      param.tet_shape = tet_shape;
-      param.manifold = manifold;
 
       typedef ::Mesh_function<Gray_Image_mesh_more_domain> Mesh_function;
       Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
