@@ -176,7 +176,10 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     if(inside_is_less)
     {
       Gray_Image_mesh_less_domain* p_domain = new Gray_Image_mesh_less_domain(*pImage, std::bind1st(std::less<float>(), iso_value), value_outside);
-      if(protect_features && polylines.empty()){
+      if(protect_features && polylines.empty())
+      {
+        std::cerr << "Warning : Automatic detection of features"
+                  << " in Gray images is not implemented yet" << std::endl;
         std::vector<std::vector<Point_3> > polylines_on_bbox;
         CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
         p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
