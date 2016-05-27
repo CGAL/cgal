@@ -380,6 +380,34 @@ public:
     assign_samples(m_samples.begin(), m_samples.end());
   }
 
+  template <class InputIterator>
+  void initialize_with_custom_vertices(InputIterator samples_start,
+                                       InputIterator samples_beyond,
+                                       InputIterator vertices_start,
+                                       InputIterator vertices_beyond,
+                                       PointPMap point_map,
+                                       MassPMap  mass_map) {
+    point_pmap = point_map;
+    mass_pmap  = mass_map;
+    clear();
+    insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
+    init(vertices_start, vertices_beyond);
+
+    std::vector<Sample_*> m_samples;
+    for (InputIterator it = samples_start; it != samples_beyond; it++) {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      Point point = get(point_pmap, it);
+      FT    mass  = get( mass_pmap, it);
+#else
+      Point point = get(point_pmap, *it);
+      FT    mass  = get( mass_pmap, *it);
+#endif
+      Sample_* s = new Sample_(point, mass);
+      m_samples.push_back(s);
+    }
+    assign_samples(m_samples.begin(), m_samples.end());
+  }
+
 
   template <class Vector>
   Vector random_vec(const FT scale) const

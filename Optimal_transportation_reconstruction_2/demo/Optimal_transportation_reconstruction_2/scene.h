@@ -415,10 +415,15 @@ public:
     Sample_vector vertices, samples;
     select_samples(percentage, vertices, samples);
 
-    PointMassList point_mass_list;
+    PointMassList vertices_mass_list;
     Sample_vector_const_iterator it;
     for (it = vertices.begin(); it != vertices.end(); it++) {
-      point_mass_list.push_back(
+      vertices_mass_list.push_back(
+        std::make_pair((*it)->point(), (*it)->mass()));
+    }
+    PointMassList samples_mass_list;
+    for (it = samples.begin(); it != samples.end(); it++) {
+      samples_mass_list.push_back(
         std::make_pair((*it)->point(), (*it)->mass()));
     }
 
@@ -426,8 +431,10 @@ public:
     Mass_property_map mass_pmap;
     MassPoint mp;
 
-    m_pwsrec->initialize(point_mass_list.begin(), point_mass_list.end(),
-      point_pmap, mass_pmap);
+    m_pwsrec->initialize_with_custom_vertices
+      (samples_mass_list.begin(), samples_mass_list.end(),
+       vertices_mass_list.begin(), vertices_mass_list.end(),
+       point_pmap, mass_pmap);
 
     m_init_done = true;
 
