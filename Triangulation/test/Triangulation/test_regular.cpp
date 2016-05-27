@@ -106,13 +106,11 @@ template< int D >
 void go(const int N)
 {
   typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
-  typedef CGAL::Regular_triangulation<
-    CGAL::Regular_triangulation_euclidean_traits<FK> > Triangulation;
+  typedef CGAL::Regular_triangulation<FK> Triangulation;
   test<Triangulation>(D, "static", N);
 
   typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK_dyn;
-  typedef CGAL::Regular_triangulation<
-    CGAL::Regular_triangulation_euclidean_traits<FK_dyn> > Triangulation_dyn;
+  typedef CGAL::Regular_triangulation<FK_dyn> Triangulation_dyn;
   test<Triangulation_dyn>(D, "dynamic", N);
 }
 
@@ -120,8 +118,7 @@ void test_inserting_points_at_the_same_position()
 {
   const int DIM = 5;
   typedef CGAL::Epick_d<CGAL::Dimension_tag<DIM> > FK;
-  typedef CGAL::Regular_triangulation<
-    CGAL::Regular_triangulation_euclidean_traits<FK> > RTri;
+  typedef CGAL::Regular_triangulation<FK> RTri;
 
   typedef RTri::Vertex_handle Vertex_handle;
   typedef RTri::Full_cell_handle Full_cell_handle;

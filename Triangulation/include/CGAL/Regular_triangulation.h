@@ -33,17 +33,17 @@ namespace CGAL {
 template< typename Traits_, typename TDS_ = Default >
 class Regular_triangulation
 : public Triangulation<
-    Traits_,
+    Regular_triangulation_euclidean_traits<Traits_>,
     typename Default::Get<
       TDS_, 
       Triangulation_data_structure<
-        typename Traits_::Dimension,
-        Triangulation_vertex<Traits_>,
-        Triangulation_full_cell<Traits_>
+        typename Regular_triangulation_euclidean_traits<Traits_>::Dimension,
+        Triangulation_vertex<Regular_triangulation_euclidean_traits<Traits_> >,
+        Triangulation_full_cell<Regular_triangulation_euclidean_traits<Traits_> >
       >
     >::type>
 {
-  typedef Traits_                                          RTTraits;
+  typedef Regular_triangulation_euclidean_traits<Traits_>  RTTraits;
   typedef typename RTTraits::Dimension                     Maximal_dimension_;
   typedef typename Default::Get<
     TDS_, 

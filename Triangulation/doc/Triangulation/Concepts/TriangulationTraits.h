@@ -131,7 +131,7 @@ the same and `LARGER` otherwise.
 */ 
 typedef unspecified_type Compare_lexicographically_d; 
 
-/// @} 
+/// @}
 
 /// \name Creation 
 /// @{
