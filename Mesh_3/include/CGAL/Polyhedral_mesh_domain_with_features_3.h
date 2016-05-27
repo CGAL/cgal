@@ -306,7 +306,7 @@ detect_borders(const std::vector<Polyhedron>& poly)
 
   Polylines polylines;
   Polyline empty;
-  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
 
 
   for (std::size_t i = 0; i < poly.size(); ++i)
