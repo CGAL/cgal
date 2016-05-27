@@ -99,7 +99,7 @@ namespace internal {
 
   @pre `is_triangle_mesh(tmesh)`
 
-  @warning This function involves square root computations that will be done approximately.
+  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
 
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
