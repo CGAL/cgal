@@ -1,5 +1,4 @@
 #include "Viewer.h"
-#include <CGAL/Three/TextRenderer.h>
 #include <CGAL/gl.h>
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
@@ -10,6 +9,7 @@
 #include <QOpenGLShaderProgram>
 #include <cmath>
 #include <QApplication>
+
 
 class Viewer_impl {
 public:
@@ -384,6 +384,12 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         if(!is_d_pressed)
         {
             distance_is_displayed = false;
+            Q_FOREACH(TextItem* ti, distance_text)
+            {
+              textRenderer->removeText(ti);
+              delete ti;
+              distance_text.removeOne(ti);
+            }
         }
         is_d_pressed = true;
         updateGL();
@@ -887,32 +893,6 @@ void Viewer::drawVisualHints()
         vao[0].release();
     }
 
-    if (!d->painter->isActive())
-      d->painter->begin(this);
-    //So that the text is drawn in front of everything
-    d->painter->beginNativePainting();
-    glDisable(GL_DEPTH_TEST);
-    d->painter->endNativePainting();
-    //prints FPS
-    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,fpsString,false, QFont(), Qt::gray);
-    if(FPSIsDisplayed())
-    {
-      textRenderer->addText(fps_text);
-    }
-    //Prints the displayMessage
-    QFont font = QFont();
-    QFontMetrics fm(font);
-    TextItem *message_text = new TextItem(10 + fm.width(message)/2, height()-20, 0, message, false, QFont(), Qt::gray );
-    if (_displayMessage)
-    {
-      textRenderer->addText(message_text);
-    }
-    textRenderer->draw(this);
-    if(FPSIsDisplayed())
-      textRenderer->removeText(fps_text);
-    if (_displayMessage)
-      textRenderer->removeText(message_text);
-
     if(distance_is_displayed)
     {
         glDisable(GL_DEPTH_TEST);
@@ -938,6 +918,31 @@ void Viewer::drawVisualHints()
         glPointSize(1.0f);
 
     }
+    if (!d->painter->isActive())
+      d->painter->begin(this);
+    //So that the text is drawn in front of everything
+    d->painter->beginNativePainting();
+    glDisable(GL_DEPTH_TEST);
+    d->painter->endNativePainting();
+    //prints FPS
+    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,fpsString,false, QFont(), Qt::gray);
+    if(FPSIsDisplayed())
+    {
+      textRenderer->addText(fps_text);
+    }
+    //Prints the displayMessage
+    QFont font = QFont();
+    QFontMetrics fm(font);
+    TextItem *message_text = new TextItem(10 + fm.width(message)/2, height()-20, 0, message, false, QFont(), Qt::gray );
+    if (_displayMessage)
+    {
+      textRenderer->addText(message_text);
+    }
+    textRenderer->draw(this);
+    if(FPSIsDisplayed())
+      textRenderer->removeText(fps_text);
+    if (_displayMessage)
+      textRenderer->removeText(message_text);
 }
 
 void Viewer::resizeGL(int w, int h)
@@ -1398,12 +1403,10 @@ void Viewer::showDistance(QPoint pixel)
         isAset = false;
 
         // fills the buffers
-        //float v[6];
         std::vector<float> v;
         v.resize(6);
         v[0] = APoint.x; v[1] = APoint.y; v[2] = APoint.z;
         v[3] = BPoint.x; v[4] = BPoint.y; v[5] = BPoint.z;
-
         rendering_program_dist.bind();
         vao[1].bind();
         buffers[3].bind();
@@ -1415,6 +1418,18 @@ void Viewer::showDistance(QPoint pixel)
         rendering_program_dist.release();
         distance_is_displayed = true;
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
+        QFont font;
+        font.setBold(true);
+        TextItem *ACoord = new TextItem(APoint.x, APoint.y, APoint.z,QString("A(%1,%2,%3)").arg(APoint.x).arg(APoint.y).arg(APoint.z), true, font, Qt::red, true);
+        distance_text.append(ACoord);
+        TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x).arg(BPoint.y).arg(BPoint.z), true, font, Qt::red, true);
+        distance_text.append(BCoord);
+        qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
+        TextItem *centerCoord = new TextItem(centerPoint.x, centerPoint.y, centerPoint.z,QString(" distance: %1").arg(dist), true, font, Qt::red, true);
+
+        distance_text.append(centerCoord);
+        Q_FOREACH(TextItem* ti, distance_text)
+          textRenderer->addText(ti);
         Q_EMIT(sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
                   .arg(APoint.x)
                   .arg(APoint.y)

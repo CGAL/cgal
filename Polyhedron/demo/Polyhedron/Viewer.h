@@ -14,7 +14,7 @@
 #include <QPoint>
 #include <QFont>
 #include <QOpenGLFramebufferObject>
-
+#include <CGAL/Three/TextRenderer.h>
 // forward declarations
 class QWidget;
 namespace CGAL{
@@ -114,7 +114,7 @@ protected:
   QOpenGLShaderProgram rendering_program;
   //! The rendering program used to draw the distance
   QOpenGLShaderProgram rendering_program_dist;
-
+  QList<TextItem*>  distance_text;
   //! Holds the vertices data for the axis system
   std::vector<float> v_Axis;
   //! Holds the normals data for the axis system

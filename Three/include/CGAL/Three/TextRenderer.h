@@ -53,8 +53,8 @@ public :
      * \param font the font used for the rendering.
      * \param p_color the color of the text.
      */
-    TextItem(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true, QFont font = QFont(), QColor p_color = Qt::black)
-        :x(p_x), y(p_y), z(p_z),_3D(p_3D), m_text(p_text), m_font(font), m_color(p_color)
+    TextItem(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true, QFont font = QFont(), QColor p_color = Qt::black, bool always_visible = false)
+        :x(p_x), y(p_y), z(p_z),_3D(p_3D), m_text(p_text), m_font(font), m_color(p_color), _is_always_visible(always_visible)
     {
        QFontMetrics fm(m_font);
        _width = fm.width(m_text);
@@ -68,6 +68,7 @@ public :
     QFont font(){return m_font;}
     QColor color() {return m_color;}
     bool is_3D()const{return _3D;}
+    bool is_always_visible(){return _is_always_visible;}
 private:
     float x;
     float y;
@@ -75,6 +76,7 @@ private:
     float _width;
     float _height;
     bool _3D;
+    bool _is_always_visible;
     QString m_text;
     QFont m_font;
     QColor m_color;

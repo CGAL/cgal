@@ -38,7 +38,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
       qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
       if(item->is_3D())
       {
-        if(viewer->testDisplayId(src.x, src.y, src.z))
+        if(item->is_always_visible() || viewer->testDisplayId(src.x, src.y, src.z))
         {
             rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
                        camera->projectedCoordinatesOf(src).y-item->height()/2,
