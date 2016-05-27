@@ -56,7 +56,9 @@ struct Polyline_visitor
 
   void end_polyline()
   {
-
+    // ignore degenerated polylines
+    if(polylines.back().size() < 2)
+      polylines.resize(polylines.size() - 1);
   }
 };
 }//namespace Mesh_3
