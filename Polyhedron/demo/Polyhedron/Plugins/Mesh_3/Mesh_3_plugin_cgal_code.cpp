@@ -183,9 +183,9 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       {
         std::cerr << "Warning : Automatic detection of features"
                   << " in Gray images is not implemented yet" << std::endl;
-        std::vector<std::vector<Point_3> > polylines_on_bbox;
-        CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
-        p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+        //std::vector<std::vector<Point_3> > polylines_on_bbox;
+        //CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
+        //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
       }
       if(! polylines.empty()){
         // Insert edge in domain
@@ -203,10 +203,13 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     else
     {
       Gray_Image_mesh_more_domain*p_domain = new Gray_Image_mesh_more_domain(*pImage, std::bind1st(std::greater<float>(), iso_value), value_outside);
-      if(protect_features && polylines.empty()){
-        std::vector<std::vector<Point_3> > polylines_on_bbox;
-        CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
-        p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+      if(protect_features && polylines.empty())
+      {
+        std::cerr << "Warning : Automatic detection of features"
+          << " in Gray images is not implemented yet" << std::endl;
+        //std::vector<std::vector<Point_3> > polylines_on_bbox;
+        //CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
+        //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
       }
       if(! polylines.empty()){
         // Insert edge in domain
