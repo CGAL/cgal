@@ -68,7 +68,6 @@ struct Polyline_visitor
                        const double, const double, const double,
                        std::vector<std::vector<P> >& polylines)
   {
-    typedef typename Kernel_traits<P>::Kernel K;
     typedef P Point_3;
     typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, Point_3> Graph;
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
