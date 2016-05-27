@@ -187,7 +187,7 @@ public:
     {
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
-        for(int i=0; i<6; i++)
+        for(int i=0; i<7; i++)
         {
             addVaos(i);
             vaos[i]->create();
@@ -200,6 +200,9 @@ public:
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
+        are_buffers_filled = false;
+        are_temp_buffers_filled = false;
+        poly = NULL;
         this->setColor(facet_color);
         first_selected = false;
         is_treated = false;
@@ -225,6 +228,7 @@ public:
         {
             buffers[i].create();
         }
+        poly = NULL;
         init(poly_item, mw);
         this->setColor(facet_color);
         invalidateOpenGLBuffers();
