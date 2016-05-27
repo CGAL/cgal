@@ -49,7 +49,7 @@ namespace internal {
   }
 
   template<typename Point
-         , typename GT = typename CGAL::Kernel_traits<Point>::Kernel>
+         , typename GT>
   typename GT::Vector_3
   triangle_normal(const Point& p0, const Point& p1, const Point& p2
                 , const GT& traits)
