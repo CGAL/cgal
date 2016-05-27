@@ -55,7 +55,7 @@ struct Cotangent_value_Meyer_impl
     //double divider = CGAL::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
 
     Vector cross_ab = CGAL::cross_product(a, b);
-    double divider = CGAL::approximate_sqrt(cross_ab*cross_ab);
+    double divider = to_double(CGAL::approximate_sqrt(cross_ab*cross_ab));
 
     if(divider == 0 /*|| divider != divider*/) 
     {
@@ -314,7 +314,7 @@ public:
         voronoi_area += (1.0 / 8.0) * (term1 + term2);
       }
       else {
-        double area_t = CGAL::approximate_sqrt(squared_area(v0_p, v1_p, v_op_p));
+        double area_t = to_double(CGAL::approximate_sqrt(squared_area(v0_p, v1_p, v_op_p)));
         if(angle0 == CGAL::OBTUSE) {
           voronoi_area += area_t / 2.0;
         }

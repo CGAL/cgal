@@ -113,9 +113,9 @@ private:
       vertex_descriptor vk = target(prev(halfedge(fd,pmesh),pmesh),pmesh);
       Point_3 c = CGAL::centroid(vpmap[vi], vpmap[vj], vpmap[vk]);
       double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
-      double dist_c_vi = CGAL::approximate_sqrt(CGAL::squared_distance(c,vpmap[vi]));
-      double dist_c_vj = CGAL::approximate_sqrt(CGAL::squared_distance(c, vpmap[vj]));
-      double dist_c_vk = CGAL::approximate_sqrt(CGAL::squared_distance(c, vpmap[vk]));
+      double dist_c_vi = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c,vpmap[vi])));
+      double dist_c_vj = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c, vpmap[vj])));
+      double dist_c_vk = to_double(CGAL::approximate_sqrt(CGAL::squared_distance(c, vpmap[vk])));
       if((alpha * dist_c_vi > sac) &&
          (alpha * dist_c_vj > sac) &&
          (alpha * dist_c_vk > sac) &&
@@ -218,7 +218,7 @@ private:
       }
 
       const Point_3& vq = vpmap[target(opposite(*circ,pmesh),pmesh)];
-      sum += CGAL::approximate_sqrt(CGAL::squared_distance(vp, vq));
+      sum += to_double(CGAL::approximate_sqrt(CGAL::squared_distance(vp, vq)));
       ++deg;
     } while(++circ != done);
 

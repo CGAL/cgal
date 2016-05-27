@@ -260,7 +260,7 @@ private:
       ang_max = (std::max)(ang_max, angle);
     }
    
-    w = std::make_pair(ang_max, CGAL::approximate_sqrt(CGAL::squared_area(P[i],P[j],P[k])));
+    w = std::make_pair(ang_max, to_double(CGAL::approximate_sqrt(CGAL::squared_area(P[i],P[j],P[k]))));
   }
 
 public:

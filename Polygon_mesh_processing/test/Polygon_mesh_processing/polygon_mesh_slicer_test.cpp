@@ -1,6 +1,7 @@
 // #define USE_SURFACE_MESH
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #ifdef USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
@@ -19,7 +20,12 @@
 
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epec;
+
+template <typename K>
+int test()
+{
 #ifdef USE_SURFACE_MESH
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 #else
@@ -32,9 +38,6 @@ typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 typedef std::vector<K::Point_3> Polyline_type;
 typedef std::list< Polyline_type > Polylines;
 
-
-int main()
-{
   //API test
   {
     std::ifstream input("data/U.off");
@@ -95,6 +98,17 @@ int main()
   polylines.clear();
   slicer(K::Plane_3(0,0,1,333), std::back_inserter(polylines));
   assert(polylines.empty());
+
+  return 0;
+}
+
+
+int main()
+{
+  int r = test<Epic>();
+  assert(r==0);
+  r = test<Epec>();
+  assert(r==0);
 
   return 0;
 }

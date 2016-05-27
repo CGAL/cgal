@@ -43,7 +43,7 @@ namespace internal {
   template <class GT>
   void normalize(typename GT::Vector_3& v, const GT& traits)
   {
-    double norm = CGAL::approximate_sqrt(
+    typename GT::FT norm = CGAL::approximate_sqrt(
         traits.compute_squared_length_3_object()(v));
     v = traits.construct_divided_vector_3_object()(v, norm);
   }

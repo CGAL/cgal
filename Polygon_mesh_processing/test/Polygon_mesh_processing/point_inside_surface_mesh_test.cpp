@@ -1,5 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -8,13 +9,16 @@
 
 #include "point_inside_helpers.h"
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> Mesh;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
-int main(int argc, char** argv)
+
+template <class K>
+int test(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  typedef K::Point_3 Point;
+  typedef CGAL::Surface_mesh<Point> Mesh;
+ const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
   std::ifstream input(filename);
   Mesh mesh;
 
@@ -44,6 +48,12 @@ int main(int argc, char** argv)
 
   CGAL::Bounded_side bs = inside_test(CGAL::ORIGIN);
   std::cout << "Origin is " << bs << std::endl;
+  return 0;
+}
 
+int main(int argc, char** argv)
+{
+  assert(test<Epic>(argc,argv));
+  assert(test<Epec>(argc,argv));
   return 0;
 }
