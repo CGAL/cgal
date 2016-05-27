@@ -50,6 +50,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                       tr("Toggle the axis system visibility."));
   setKeyDescription(Qt::Key_I + Qt::CTRL,
                       tr("Toggle the primitive IDs visibility of the selected Item."));
+  setKeyDescription(Qt::Key_D,
+                      tr("Disable the distance between two points  visibility."));
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
@@ -64,6 +66,9 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                                 "menu of the selected item"));
   setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
                              tr("Show/hide the primitive ID."));
+  setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
+                             tr("Selects a point. When the second point is selected,  "
+                                "displays the two points and the distance between them."));
 #else
   setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
   setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
@@ -79,6 +84,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   fpsCounter=0;
   f_p_s=0.0;
   fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
+  distance_is_displayed = false;
+  is_d_pressed = false;
 }
 
 Viewer::~Viewer()
@@ -192,59 +199,111 @@ void Viewer::initializeGL()
   //Fragment source code
   const char fragment_source[] =
   {
-      "#version 120 \n"
-      "varying highp vec4 color; \n"
-      "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"
-      "uniform highp vec4 light_pos;  \n"
-      "uniform highp vec4 light_diff; \n"
-      "uniform highp vec4 light_spec; \n"
-      "uniform highp vec4 light_amb;  \n"
-      "uniform highp float spec_power ; \n"
+          "#version 120 \n"
+          "varying highp vec4 color; \n"
+          "varying highp vec4 fP; \n"
+          "varying highp vec3 fN; \n"
+          "uniform highp vec4 light_pos;  \n"
+          "uniform highp vec4 light_diff; \n"
+          "uniform highp vec4 light_spec; \n"
+          "uniform highp vec4 light_amb;  \n"
+          "uniform highp float spec_power ; \n"
 
-      "void main(void) { \n"
+          "void main(void) { \n"
 
-      "   vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   vec3 V = -fP.xyz; \n"
-      "   vec3 N; \n"
-      "   if(fN == vec3(0.0,0.0,0.0)) \n"
-      "       N = vec3(0.0,0.0,0.0); \n"
-      "   else \n"
-      "       N = normalize(fN); \n"
-      "   L = normalize(L); \n"
-      "   V = normalize(V); \n"
-      "   vec3 R = reflect(-L, N); \n"
-      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+          "   vec3 L = light_pos.xyz - fP.xyz; \n"
+          "   vec3 V = -fP.xyz; \n"
+          "   vec3 N; \n"
+          "   if(fN == vec3(0.0,0.0,0.0)) \n"
+          "       N = vec3(0.0,0.0,0.0); \n"
+          "   else \n"
+          "       N = normalize(fN); \n"
+          "   L = normalize(L); \n"
+          "   V = normalize(V); \n"
+          "   vec3 R = reflect(-L, N); \n"
+          "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+          "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-      "gl_FragColor = color*light_amb + diffuse + specular; \n"
-      "} \n"
-      "\n"
-  };
-  QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-  if(!vertex_shader->compileSourceCode(vertex_source))
-  {
-      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-  }
+          "gl_FragColor = color*light_amb + diffuse + specular; \n"
+          "} \n"
+          "\n"
+      };
 
-  QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
-  if(!fragment_shader->compileSourceCode(fragment_source))
-  {
-      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
-  }
+      QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+      if(!vertex_shader->compileSourceCode(vertex_source))
+      {
+          std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
 
-  if(!rendering_program.addShader(vertex_shader))
-  {
-      std::cerr<<"adding vertex shader FAILED"<<std::endl;
-  }
-  if(!rendering_program.addShader(fragment_shader))
-  {
-      std::cerr<<"adding fragment shader FAILED"<<std::endl;
-  }
-  if(!rendering_program.link())
-  {
-      qDebug() << rendering_program.log();
-  }
+      QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+      if(!fragment_shader->compileSourceCode(fragment_source))
+      {
+          std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+
+      if(!rendering_program.addShader(vertex_shader))
+      {
+          std::cerr<<"adding vertex shader FAILED"<<std::endl;
+      }
+      if(!rendering_program.addShader(fragment_shader))
+      {
+          std::cerr<<"adding fragment shader FAILED"<<std::endl;
+      }
+      if(!rendering_program.link())
+      {
+          //std::cerr<<"linking Program FAILED"<<std::endl;
+          qDebug() << rendering_program.log();
+      }
+  //setting the program used for the distance
+     {
+         vao[1].create();
+         buffers[3].create();
+         //Vertex source code
+         const char vertex_source_dist[] =
+         {
+             "#version 120 \n"
+             "attribute highp vec4 vertex;\n"
+             "uniform highp mat4 mvp_matrix;\n"
+             "void main(void)\n"
+             "{\n"
+             "   gl_Position = mvp_matrix * vertex; \n"
+             "} \n"
+             "\n"
+         };
+         //Fragment source code
+         const char fragment_source_dist[] =
+         {
+             "#version 120 \n"
+             "void main(void) { \n"
+             "gl_FragColor = vec4(0.0,0.0,0.0,1.0); \n"
+             "} \n"
+             "\n"
+         };
+         vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+         if(!vertex_shader->compileSourceCode(vertex_source_dist))
+         {
+             std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+         }
+
+         fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+         if(!fragment_shader->compileSourceCode(fragment_source_dist))
+         {
+             std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+         }
+
+         if(!rendering_program_dist.addShader(vertex_shader))
+         {
+             std::cerr<<"adding vertex shader FAILED"<<std::endl;
+         }
+         if(!rendering_program_dist.addShader(fragment_shader))
+         {
+             std::cerr<<"adding fragment shader FAILED"<<std::endl;
+         }
+         if(!rendering_program_dist.link())
+         {
+             qDebug() << rendering_program_dist.log();
+         }
+     }
 
   d->painter = new QPainter(this);
 }
@@ -264,6 +323,12 @@ void Viewer::mousePressEvent(QMouseEvent* event)
           i_is_pressed)
   {
       d->scene->printPrimitiveId(event->pos(), this);
+  }
+  else if(event->button() == Qt::LeftButton &&
+          is_d_pressed)
+  {
+      showDistance(event->pos());
+      event->accept();
   }
   else {
     QGLViewer::mousePressEvent(event);
@@ -311,6 +376,19 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     else if(e->key() == Qt::Key_I) {
           i_is_pressed = true;
         }
+    else if(e->key() == Qt::Key_D) {
+        if(e->isAutoRepeat())
+        {
+            return;
+        }
+        if(!is_d_pressed)
+        {
+            distance_is_displayed = false;
+        }
+        is_d_pressed = true;
+        updateGL();
+        return;
+    }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
     d->scene->printPrimitiveIds(this);
@@ -323,11 +401,21 @@ void Viewer::keyPressEvent(QKeyEvent* e)
 
 void Viewer::keyReleaseEvent(QKeyEvent *e)
 {
-    if(e->key() == Qt::Key_I) {
-        i_is_pressed = false;
+  if(e->key() == Qt::Key_I) {
+    i_is_pressed = false;
+  }
+  else if(!e->modifiers() && e->key() == Qt::Key_D)
+  {
+    if(e->isAutoRepeat())
+    {
+      return;
     }
-    QGLViewer::keyReleaseEvent(e);
+    is_d_pressed = false;
+    return;
+  }
+  QGLViewer::keyReleaseEvent(e);
 }
+
 void Viewer::turnCameraBy180Degres() {
   qglviewer::Camera* camera = this->camera();
   using qglviewer::ManipulatedCameraFrame;
@@ -740,8 +828,8 @@ void Viewer::drawVisualHints()
     if(axis_are_displayed)
     {
         QMatrix4x4 mvpMatrix;
-        QMatrix4x4 mvMatrix;
         double mat[16];
+        QMatrix4x4 mvMatrix;
         //camera()->frame()->rotation().getMatrix(mat);
         camera()->getModelViewProjectionMatrix(mat);
         //nullifies the translation
@@ -824,8 +912,33 @@ void Viewer::drawVisualHints()
       textRenderer->removeText(fps_text);
     if (_displayMessage)
       textRenderer->removeText(message_text);
-    }
 
+    if(distance_is_displayed)
+    {
+        glDisable(GL_DEPTH_TEST);
+        glPointSize(5.0f);
+        //draws the distance
+        QMatrix4x4 mvpMatrix;
+        double mat[16];
+        //camera()->frame()->rotation().getMatrix(mat);
+        camera()->getModelViewProjectionMatrix(mat);
+        //nullifies the translation
+        for(int i=0; i < 16; i++)
+        {
+            mvpMatrix.data()[i] = (float)mat[i];
+        }
+        rendering_program_dist.bind();
+        rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
+        vao[1].bind();
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(2));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(2));
+        vao[1].release();
+        rendering_program_dist.release();
+        glEnable(GL_DEPTH_TEST);
+        glPointSize(1.0f);
+
+    }
+}
 
 void Viewer::resizeGL(int w, int h)
 {
@@ -1263,4 +1376,53 @@ void Viewer::hideMessage()
 void Viewer::printMessage(QString _message, int ms_delay)
 {
   displayMessage(_message, ms_delay);
+}
+
+void Viewer::showDistance(QPoint pixel)
+{
+    static bool isAset = false;
+    bool found;
+    qglviewer::Vec point;
+    point = camera()->pointUnderPixel(pixel, found);
+    if(!isAset && found)
+    {
+        //set APoint
+        APoint = point;
+        isAset = true;
+        distance_is_displayed = false;
+    }
+    else if (found)
+    {
+        //set BPoint
+        BPoint = point;
+        isAset = false;
+
+        // fills the buffers
+        //float v[6];
+        std::vector<float> v;
+        v.resize(6);
+        v[0] = APoint.x; v[1] = APoint.y; v[2] = APoint.z;
+        v[3] = BPoint.x; v[4] = BPoint.y; v[5] = BPoint.z;
+
+        rendering_program_dist.bind();
+        vao[1].bind();
+        buffers[3].bind();
+        buffers[3].allocate(v.data(),6*sizeof(float));
+        rendering_program_dist.enableAttributeArray("vertex");
+        rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[3].release();
+        vao[1].release();
+        rendering_program_dist.release();
+        distance_is_displayed = true;
+        double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
+        Q_EMIT(sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
+                  .arg(APoint.x)
+                  .arg(APoint.y)
+                  .arg(APoint.z)
+                  .arg(BPoint.x)
+                  .arg(BPoint.y)
+                  .arg(BPoint.z)
+                  .arg(dist)));
+    }
+
 }

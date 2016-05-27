@@ -70,6 +70,8 @@ public:
   QOpenGLShaderProgram* getShaderProgram(int name) const;
   QPainter* getPainter();
 
+Q_SIGNALS:
+  void sendMessage(QString);
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b);
@@ -105,11 +107,14 @@ protected:
   };
 
   //! The buffers used to draw the axis system
-  QOpenGLBuffer buffers[3];
+  QOpenGLBuffer buffers[4];
   //! The VAO used to draw the axis system
-  QOpenGLVertexArrayObject vao[1];
+  QOpenGLVertexArrayObject vao[2];
   //! The rendering program used to draw the axis system
   QOpenGLShaderProgram rendering_program;
+  //! The rendering program used to draw the distance
+  QOpenGLShaderProgram rendering_program_dist;
+
   //! Holds the vertices data for the axis system
   std::vector<float> v_Axis;
   //! Holds the normals data for the axis system
@@ -120,6 +125,8 @@ protected:
   bool axis_are_displayed;
   //! Decides if the text is displayed in the drawVisualHints function.
   bool has_text;
+  //! Decides if the distance between APoint and BPoint must be drawn;
+  bool distance_is_displayed;
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*);
   void wheelEvent(QWheelEvent *);
@@ -144,6 +151,11 @@ protected:
   void resizeGL(int w, int h);
   bool i_is_pressed;
 
+  //!Draws the distance between two selected points.
+  void showDistance(QPoint);
+  qglviewer::Vec APoint;
+  qglviewer::Vec BPoint;
+  bool is_d_pressed;
 
 protected:
   Viewer_impl* d;
