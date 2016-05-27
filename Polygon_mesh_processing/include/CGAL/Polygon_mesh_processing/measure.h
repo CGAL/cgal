@@ -308,12 +308,8 @@ namespace Polygon_mesh_processing {
   }
 
   template<typename FaceRange, typename TriangleMesh > 
-  /* AF   what is wrong here???
-   typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
-                                                            CGAL::vertex_point_t>::type>::Kernel::FT
-  */
-     double 
-area(FaceRange face_range, const TriangleMesh& tmesh)
+  double
+  area(FaceRange face_range, const TriangleMesh& tmesh)
   {
     return to_double(area(face_range, tmesh,
                           CGAL::Polygon_mesh_processing::parameters::all_default()));
