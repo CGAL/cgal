@@ -465,17 +465,17 @@ When we start at `h3`, we will traverse `h3`, `h5`, `h7*`, and we are back at `h
 A seam mesh with two seam edges `(2,3)` and `(6,7)`. 
 \cgalFigureEnd
 
-As vertex in the adapted mesh which lies on the seam can have several circular
-sequences of halfedges, this vertex cannot be a vertex in a seam mesh.
-Instead we declare the halfedge that lies on the seam as vertex, and
-the function `target(hd,sm)` will return us this canonical halfedge.
-For halfedges whose target vertex `v` in the underlying mesh is not on a seam
-we choose `halfedge(v,mesh)` as its canonical halfedge.
- 
+As a vertex `v`in the adapted mesh which lies on the seam can have several circular
+sequences of halfedges, this vertex cannot be considered as a vertex in a seam mesh.
+Instead we consider the halfedge that has `v` as target and that lies on the seam 
+and that has an incident face as vertex. The function `target(hd,sm)` will return 
+us this canonical halfedge. For halfedges whose target vertex `v` in the underlying 
+mesh is not on a seam we choose `halfedge(v,mesh)` as its canonical halfedge.
+
 
 With the function `next(halfedge_descriptor, FaceGraph)` we can walk around a face, but also around 
 a border of a mesh. When we have a seam mesh `opposite(h2,sm) == h3*`, and it holds that `face(h3*,sm) == null_face()`.
-We now can walk aling this "border", that is applying `next(..,sm)` starting at `h3*`, we will traverse `h6*`,
+We now can walk along this "border": When we call `next(..,sm)` starting at `h3*`, we will traverse `h6*`,
 `h7*`, `h2*`, and we are back at `h3*`.
 
 A seam is not necessarily a simple polyline, as we can see in the next figure.

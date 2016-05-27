@@ -372,9 +372,9 @@ The main author of the first version of this package was Laurent Saboret,
 who worked as an engineer at Inria Sophia-Antipolis.
 
 For CGAL 4.10 the package has undergone a major rewrite by Andreas Fabri.
-The algorithms are the same, but they are now written for the `FaceGraph` API.
-Additionally the `Seam_mesh` got introduced, which is also a model of
-a `FaceGraph`, and replaces a wrapper with a clumsy API.
+The algorithms are the same, but they are now based on the `FaceGraph` API.
+Additionally, the class `Seam_mesh` got introduced, which is also a model of
+a `FaceGraph`, and it replaces a wrapper which had a more complicated API.
 
 
 
