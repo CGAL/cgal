@@ -26,6 +26,14 @@
 
 namespace CGAL {
 
+// Wrapper class to make a model of `RegularTriangulationTraits` easily usable
+// by the `Regular_triangulation` class. By using this class:
+// - Point_d (used by `Triangulation` and the TDS) becomes a weighted point
+// - Predicates and functors such as Less_coordinate_d or Orientation_d
+//   can be called using weighted points instead of bare points (this is
+//   needed because `Weighted_point_d` is not convertible to `Point_d`)
+// This way, `Triangulation` works perfectly well with weighted points.
+
 template <class K>
 class Regular_triangulation_euclidean_traits
   : public K

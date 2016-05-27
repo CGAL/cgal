@@ -42,7 +42,7 @@ tag `CGAL::Default` as the second parameter.
 */
 template< typename RegularTriangulationTraits_, typename TriangulationDataStructure_ >
 class Regular_triangulation
-  : public Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>
+  : public Triangulation
 {
 public:
 
