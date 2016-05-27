@@ -218,10 +218,10 @@ public:
   
   void fill_buffer_data();
 
-  const GLfloat* colors() const { return &(colors_[0]); }
-  const GLfloat* normals() const { return &(normals_[0]); }
-  const GLfloat* vertices() const { return &(vertices_[0]); }
-  const GLuint* quads() const { return &(quads_[0]); }
+  const GLfloat* colors() const { return colors_.data(); }
+  const GLfloat* normals() const { return normals_.data(); }
+  const GLfloat* vertices() const { return vertices_.data(); }
+  const GLuint* quads() const { return quads_.data(); }
   
   std::size_t color_size() const { return colors_.size()*sizeof(GLfloat); }
   std::size_t normal_size() const { return normals_.size()*sizeof(GLfloat); }
@@ -716,7 +716,6 @@ Scene_image_item::initialize_buffers()
   rendering_program.setAttributeBuffer(colorLocation[0],GL_FLOAT,0,3);
   m_vbo[5].release();
 
-  m_ibo->bind();
   vao[1].release();
   rendering_program.release();
   m_initialized = true;
