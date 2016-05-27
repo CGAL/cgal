@@ -428,6 +428,31 @@ as adding a center vertex to a face, which means also adding halfedges
 and faces, and updating incidence information. The %Euler operations 
 enable manipulating models of `MutableFaceGraph`.
 
+
+\subsection BGLDual The Dual Graph
+
+The <em>dual graph</em> of a `FaceGraph` `G` is a graph that has a vertex for each
+face of `G`. The dual graph has an edge whenever two faces of `G` are
+separated from each other by an edge. Thus, each edge `e` of `G` has a
+corresponding dual edge, the edge that connects the two faces on
+either side of `e`.
+
+The class template `Dual` is an adaptor that creates the dual view of
+a `FaceGraph`. Faces of the original graph correspond to vertices in
+the `Dual` and vice versa.
+
+The dual graph comes in handy when one wants to compute the connected
+component of a surface mesh.
+
+Note that border edges in a `Dual` have the `null_face` of the
+original graph as either source or target. This is unusual and might
+break other algorithms since edges are always assumed to have non-null
+vertices as a source and target. It is possible to filter border edges
+using `boost::filtered_graph` as shown in the following example.
+
+\cgalExample{BGL_surface_mesh/surface_mesh_dual.cpp}
+
+
 \subsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
 
 The following example shows several functions that enable navigating in a `HalfedgeGraph`.
