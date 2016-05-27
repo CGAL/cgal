@@ -32,6 +32,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
