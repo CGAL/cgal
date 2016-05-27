@@ -128,7 +128,6 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const NamedParameters& np)
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename GT::FT FT;
   typedef typename GT::Point_3 Point;
   typedef typename GT::Vector_3 Vector;
 
@@ -227,7 +226,6 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   using boost::choose_param;
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename GT::FT FT;
   typedef typename GT::Vector_3 Vector;
   GT traits = choose_param(get_param(np, CGAL::geom_traits), GT());
 
