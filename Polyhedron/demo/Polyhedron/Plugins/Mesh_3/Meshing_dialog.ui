@@ -344,7 +344,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="grayImgGroup">
      <property name="title">
       <string>Gray Images</string>
      </property>
