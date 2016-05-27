@@ -30,7 +30,6 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 template<typename Mesh, typename K>
 void test(const Mesh& pmesh)
 {
-  typedef typename K::Point_3 Point;
   typedef typename K::FT FT;
 
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
