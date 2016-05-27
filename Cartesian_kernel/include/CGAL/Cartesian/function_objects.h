@@ -4092,7 +4092,7 @@ public:
 			     const Weighted_point_3 & s,
 			     const Weighted_point_3 & t) const
     {
-      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
+      return power_side_of_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
                           q.x(), q.y(), q.z(), q.weight(),
                           r.x(), r.y(), r.z(), r.weight(),
                           s.x(), s.y(), s.z(), s.weight(),
@@ -4104,7 +4104,7 @@ public:
 			     const Weighted_point_3 & r,
 			     const Weighted_point_3 & s) const
     {
-      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
+      return power_side_of_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
                           q.x(), q.y(), q.z(), q.weight(),
                           r.x(), r.y(), r.z(), r.weight(),
                           s.x(), s.y(), s.z(), s.weight());
@@ -4114,7 +4114,7 @@ public:
 			     const Weighted_point_3 & q,
 			     const Weighted_point_3 & r) const
     {
-      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
+      return power_side_of_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
                           q.x(), q.y(), q.z(), q.weight(),
                           r.x(), r.y(), r.z(), r.weight());
     }
@@ -4122,7 +4122,7 @@ public:
   Oriented_side operator() ( const Weighted_point_3 & p,
 			     const Weighted_point_3 & q) const
     {
-      return power_testC3(p.weight(),q.weight());
+      return power_side_of_power_sphereC3(p.weight(),q.weight());
     }
 };
 
@@ -4142,7 +4142,7 @@ public:
 			     const Weighted_point_2 & t) const
     {
       //CGAL_kernel_precondition( ! collinear(p, q, r) );
-      return power_testC2(p.x(), p.y(), p.weight(),
+      return power_side_of_power_circleC2(p.x(), p.y(), p.weight(),
                           q.x(), q.y(), q.weight(),
                           r.x(), r.y(), r.weight(),
                           t.x(), t.y(), t.weight());
@@ -4154,7 +4154,7 @@ public:
     {
       //CGAL_kernel_precondition( collinear(p, q, r) );
       //CGAL_kernel_precondition( p.point() != q.point() );
-      return power_testC2(p.point().x(), p.y(), p.weight(),
+      return power_side_of_power_circleC2(p.point().x(), p.y(), p.weight(),
                           q.x(), q.y(), q.weight(),
                           t.x(), t.y(), t.weight());
     }  

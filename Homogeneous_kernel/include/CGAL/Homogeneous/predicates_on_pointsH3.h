@@ -1,4 +1,4 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999,2016  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -20,7 +20,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Stefan Schirra
+// Author(s)     : Stefan Schirra, Olivier Devillers, Mariette Yvinec
  
 
 #ifndef CGAL_PREDICATES_ON_POINTSH3_H

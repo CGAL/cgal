@@ -14,14 +14,16 @@ and uses the type `K::Weighted_point_3` for weighted points`.
 
 \deprecated The template parameter `Weight` is deprecated. Users who need this feature must use a CGAL version prior to 4.9.
 
-The class is a model of the concept `RegularTriangulationTraits_3` 
-but it also contains predicates and constructors on weighted points 
-that are not required in the 
-concept `RegularTriangulationTraits_3`. 
+The class is a model of the concept `RegularTriangulationTraits_3`.
+
+It also contains some additional predicates and constructors on weighted points 
+that are not required in the concept `RegularTriangulationTraits_3`,
+and hence documented here. 
 
 Note that filtered predicates are automatically used if the 
 Boolean `Has_filtered_predicates` in the kernel provided as template parameter 
-of that class is set to `true`. 
+of that class is set to `true`. This is the case for the predefined kernels
+\ref kernel_predef.
 
 \cgalModels `RegularTriangulationTraits_3`
 
@@ -58,17 +60,6 @@ The type for points.
 /// \name Types for Predicate Functors 
 /// @{
 
-/*!
-A predicate type for power test. Belongs to the 
-`RegularTriangulationTraits_3` concept. 
-*/ 
-typedef unspecified_type Power_side_of_power_sphere_3; 
-
-/*!
-A predicate type to compare power distance. Belongs to the 
-`RegularTriangulationTraits_3` concept. 
-*/ 
-typedef unspecified_type Compare_power_distance_3; 
 
 /*!
 A predicate type. The operator() takes weighted point(s) as arguments, 
@@ -126,19 +117,6 @@ typedef unspecified_type Side_of_bounded_orthogonal_sphere_3;
 /// \name Types for Constructor Functors 
 /// @{
 
-/*!
-A constructor type. The operator() constructs the bare point 
-which is the center of the smallest orthogonal sphere to the input 
-weighted points. 
-
-`Bare_point operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s);` 
-
-`Bare_point operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r);` 
-
-`Bare_point operator() ( Weighted_point_3 p, 			 Weighted_point_3 q);` 
-
-*/ 
-typedef unspecified_type Construct_weighted_circumcenter_3; 
 
 /*!
 A functor type. The operator() computes the power distance between its 
@@ -184,16 +162,6 @@ for a given last point should be needed.
 /// \name Operations 
 /// @{
 
-/*!
-
-*/ 
-Power_side_of_power_sphere_3 power_side_of_power_sphere_3_object(); 
-
-/*!
-
-*/ 
-Compare_power_distance_3 
-compare_power_distance_3_object(); 
 
 /*!
 
@@ -213,12 +181,6 @@ in_smallest_orthogonal_sphere_3_object();
 Side_of_bounded_orthogonal_sphere_3 
 side_of_bounded_orthogonal_sphere_3_object(); 
 
-
-/*!
-
-*/ 
-Construct_weighted_circumcenter_3 
-construct_weighted_circumcenter_3_object(); 
 
 /*!
 

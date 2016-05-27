@@ -1,4 +1,4 @@
-// Copyright (c) 1999  
+// Copyright (c) 2016  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -20,7 +20,7 @@
 // $Id$
 //
 //
-// Author(s)     : Andreas Fabri, Stefan Schirra
+// Author(s)     : Mariette Yvinec, Sylvain Pion
 
 #ifndef CGAL_WEIGHTED_POINT_3_H
 #define CGAL_WEIGHTED_POINT_3_H

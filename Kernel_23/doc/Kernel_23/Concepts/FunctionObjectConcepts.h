@@ -8741,6 +8741,9 @@ Oriented_side operator() ( Wconst Kernel::eighted_point_2& p,
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \sa `CGAL::Weighted_point_3<Kernel>`
+  \sa `ComputePowerProduct_3` for the definition of power distance.
+
 */
   class PowerSideOfPowerSphere_3 {
   public:

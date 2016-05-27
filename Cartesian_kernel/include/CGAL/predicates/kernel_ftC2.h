@@ -1,4 +1,4 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000, 2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -20,8 +20,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
-//                 Sylvain Pion
+// Author(s)     : Herve Bronnimann, Sylvain Pion, Olivier Devillers
+//                
 
 #ifndef CGAL_PREDICATES_KERNEL_FTC2_H
 #define CGAL_PREDICATES_KERNEL_FTC2_H
@@ -651,7 +651,7 @@ compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
 
 template <class FT>
 Oriented_side
-power_testC2( const FT &px, const FT &py, const FT &pwt,
+power_side_of_power_sphereC2( const FT &px, const FT &py, const FT &pwt,
               const FT &qx, const FT &qy, const FT &qwt,
               const FT &rx, const FT &ry, const FT &rwt,
               const FT &tx, const FT &ty, const FT &twt)
@@ -677,11 +677,10 @@ power_testC2( const FT &px, const FT &py, const FT &pwt,
 
 template <class FT>
 Oriented_side
-power_testC2( const FT &px, const FT &py, const FT &pwt,
+power_side_of_power_sphereC2( const FT &px, const FT &py, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qwt,
 	      const FT &tx, const FT &ty, const FT &twt)
 {
-  std::cerr << px << "  " <<  py << "  "  << pwt << std::endl;
     // Same translation as above.
     FT dpx = px - tx;
     FT dpy = py - ty;

@@ -1,4 +1,4 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000, 2016  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -20,7 +20,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Herve Bronnimann, Sylvain Pion
+// Author(s)     : Herve Bronnimann, Sylvain Pion, Oliver Devillers, Mariette Yvinec
+
 
 #ifndef CGAL_PREDICATES_KERNEL_FTC3_H
 #define CGAL_PREDICATES_KERNEL_FTC3_H
@@ -559,7 +560,7 @@ has_smaller_signed_dist_to_planeC3(
 // where column [P] = transpose[px,py,pz,p^2 -wp,1]
 template <class FT>
 Oriented_side
-power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
               const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
               const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
               const FT &sx, const FT &sy, const FT &sz, const FT &swt,
@@ -596,7 +597,7 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 
 template <class FT>
 Oriented_side
-power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
 	      const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
 	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
@@ -646,7 +647,7 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 
 template <class FT>
 Oriented_side
-power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
 	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
 {
@@ -680,7 +681,7 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 
 template <class FT>
 Oriented_side
-power_testC3(const FT &pwt, const FT &qwt)
+power_side_of_power_sphereC3(const FT &pwt, const FT &qwt)
 {
     return CGAL_NTS compare(qwt, pwt);
 }

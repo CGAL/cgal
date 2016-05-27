@@ -20,7 +20,7 @@
 // $Id$
 //
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Mariette Yvinec, Sylvain Pion
 
 #ifndef CGAL_WEIGHTED_POINT_2_H
 #define CGAL_WEIGHTED_POINT_2_H

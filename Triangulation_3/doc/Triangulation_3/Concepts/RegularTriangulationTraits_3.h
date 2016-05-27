@@ -117,8 +117,7 @@ segment with endpoints `p` and `q`.
 
 `Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q)`, 
 
-which is the same for equal points, that is when `p` and `q` 
-have equal coordinates, then it returns the comparison of the weights 
+which is the same for equal bare points, then it returns the comparison of the weights 
 (`ON_POSITIVE_SIDE` when `q` is heavier than `p`). 
 \pre `p` and `q` have equal bare points.
 

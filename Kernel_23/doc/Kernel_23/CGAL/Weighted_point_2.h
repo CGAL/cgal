@@ -49,7 +49,7 @@ introduces a weighted point with coordinates `x`, `y`, and  weight 0.
 /// @{
 
 /*!
-returns the weight of the weighted point.
+returns the point of the weighted point.
 */ 
   Point_2<Kernel> point() const;
 
