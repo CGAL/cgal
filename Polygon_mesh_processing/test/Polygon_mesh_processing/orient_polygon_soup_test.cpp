@@ -97,7 +97,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
 
 template <typename K>
 int test() {
-  typedef K::Point_3 Point_3;
+  typedef typename K::Point_3 Point_3;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 

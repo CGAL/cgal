@@ -19,12 +19,7 @@ template <typename K>
 void test(const char* filename, const K&)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
-  
-  typedef K::Point_3 Point;
-  typedef K::Vector_3 Vector;
-  typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
-  
+
   //run test for a Polyhedron
   Polyhedron poly; // file should contain oriented polyhedron
   std::ifstream input(filename);

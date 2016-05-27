@@ -19,7 +19,7 @@ template <typename K>
 void test(std::string fname, bool expected)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
-  std::vector<K::Point_3> points;
+  std::vector<typename K::Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
   std::ifstream input(fname.c_str());
 

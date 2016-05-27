@@ -32,12 +32,12 @@ public:
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
     B.begin_surface(polyline->size() -1, triangles->size());
 
-    for(std::vector<Point_3>::iterator it = polyline->begin();
+    for(typename std::vector<Point_3>::iterator it = polyline->begin();
       it != --polyline->end(); ++it) {
         B.add_vertex(*it);
     }
 
-    for(std::vector<boost::tuple<int, int, int> >::iterator it = triangles->begin();
+    for(typename std::vector<boost::tuple<int, int, int> >::iterator it = triangles->begin();
       it != triangles->end(); ++it) {
         B.begin_facet();
         B.add_vertex_to_facet(it->get<0>());
@@ -126,7 +126,7 @@ void check_constructed_polyhedron(const char* file_name,
   std::vector<Point_3>* polyline) 
 {
   Polyhedron poly;
-  Polyhedron_builder<Polyhedron::HalfedgeDS,K> patch_builder(triangles, polyline);
+  Polyhedron_builder<typename Polyhedron::HalfedgeDS,K> patch_builder(triangles, polyline);
   poly.delegate(patch_builder);
 
   if(!poly.is_valid()) {

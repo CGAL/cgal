@@ -105,7 +105,6 @@ void test_triangulate_hole_weight(const char* file_name, std::size_t nb_remainin
 
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
 
   std::cout << "test_triangulate_hole_weight"<< std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
@@ -129,7 +128,6 @@ template <class Polyhedron>
 void test_triangulate_hole(const char* file_name) {
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
 
   std::cout << "test_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
@@ -157,7 +155,7 @@ template <class Polyhedron>
 void test_triangulate_hole_should_be_no_output(const char* file_name) {
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
+
   std::cout << "test_triangulate_hole_should_be_no_output:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -195,7 +193,7 @@ void test_triangulate_and_refine_hole(const char* file_name) {
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
 
-  for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
+  for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, *it, 
@@ -226,7 +224,7 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
 
-  for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
+  for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
     CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
@@ -250,7 +248,7 @@ template <class Polyhedron>
 void test_ouput_iterators_triangulate_hole(const char* file_name) {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
+
   std::cout << "test_ouput_iterators_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
@@ -260,8 +258,8 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
   read_poly_with_borders(file_name, poly, border_reps);
   read_poly_with_borders(file_name, poly_2, border_reps_2);
 
-  std::vector<Halfedge_handle>::iterator it_2 = border_reps_2.begin();
-  for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++it_2) {
+  typename std::vector<Halfedge_handle>::iterator it_2 = border_reps_2.begin();
+  for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++it_2) {
     std::vector<Facet_handle> patch;
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch));
 
@@ -292,8 +290,8 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
   read_poly_with_borders(file_name, poly, border_reps);
   read_poly_with_borders(file_name, poly_2, border_reps_2);
 
-  std::vector<Halfedge_handle>::iterator it_2 = border_reps_2.begin();
-  for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++it_2) {
+  typename std::vector<Halfedge_handle>::iterator it_2 = border_reps_2.begin();
+  for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++it_2) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly,
@@ -365,7 +363,7 @@ void generate_elephant_with_hole()
 {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
+
   Polyhedron poly;
   read_poly("data/elephant.off", poly);
   int i=0;
@@ -389,7 +387,7 @@ void test() {
 #ifdef POLY
 typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
 #else
-typedef CGAL::Surface_mesh<Kernel::Point_3> Polyhedron;
+typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
 #endif
   generate_elephant_with_hole<Polyhedron>();
 

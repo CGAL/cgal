@@ -36,7 +36,7 @@ test()
                                                    CGAL::Polygon_mesh_processing::parameters::all_default());
 
 
-  BOOST_FOREACH(boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
+  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
     if (next(next(halfedge(fit, mesh), mesh), mesh)
         !=   prev(halfedge(fit, mesh), mesh)) {
       CGAL::Polygon_mesh_processing::triangulate_face(fit, mesh);

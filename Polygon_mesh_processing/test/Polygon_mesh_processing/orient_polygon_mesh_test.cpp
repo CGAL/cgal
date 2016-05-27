@@ -20,7 +20,7 @@ void test(const char* file_name)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   
-  typedef K::Point_3 Point;
+  typedef typename K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Surface_mesh;
   
   //run test for a Polyhedron

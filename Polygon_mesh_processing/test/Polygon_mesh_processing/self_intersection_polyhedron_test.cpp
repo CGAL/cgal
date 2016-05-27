@@ -19,7 +19,7 @@ int
 test(const char* filename)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
-  typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
   std::ifstream input(filename);
   Polyhedron poly;

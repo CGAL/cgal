@@ -62,7 +62,7 @@ void collect_patch(const char* file,
   std::istringstream facet_line(line);
   while (facet_line >> id) {
     if (id >= m.number_of_faces()) { return; }
-    patch.insert(Mesh::Face_index(Mesh::size_type(id)));
+    patch.insert(typename Mesh::Face_index(typename Mesh::size_type(id)));
   }
 
   if (!std::getline(in, line)) { return ; }
