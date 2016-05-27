@@ -127,7 +127,6 @@ void Mesh_3_plugin::mesh_3()
 
     if(poly_item == NULL){
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
-
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -169,7 +168,8 @@ void Mesh_3_plugin::mesh_3()
   else if (NULL != image_item)
   {
     item = image_item;
-    features_protection_available = true;
+    features_protection_available = (polylines_item != NULL);
+
     bool fit_wrdtp = true;
     std::size_t img_wdim = image_item->image()->image()->wdim;
     WORD_KIND img_wordKind = image_item->image()->image()->wordKind;
@@ -263,8 +263,7 @@ void Mesh_3_plugin::mesh_3()
   ui.approx->setValue(approx_default);
 
   ui.protect->setEnabled(features_protection_available);
-  if (!features_protection_available)
-    ui.protect->setChecked(false);
+  ui.protect->setChecked(features_protection_available);
 
   // -----------------------------------
   // Get values
@@ -273,7 +272,6 @@ void Mesh_3_plugin::mesh_3()
     ui.groupBox_3->setVisible(true);
   else
     ui.groupBox_3->setVisible(false);
-
 
   int i = dialog.exec();
   if( i == QDialog::Rejected ) { return; }
