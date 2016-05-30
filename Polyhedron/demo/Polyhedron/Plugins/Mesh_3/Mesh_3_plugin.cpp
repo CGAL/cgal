@@ -281,9 +281,10 @@ void Mesh_3_plugin::mesh_3()
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const bool protect_features = ui.protect->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
-  const float iso_value = !ui.grayImgGroup->isVisible() ? 0 : ui.iso_value_spinBox->value();
-  const float value_outside = !ui.grayImgGroup->isVisible() ? 0 : ui.value_outside_spinBox->value();
-  const float inside_is_less = !ui.grayImgGroup->isVisible() ? false : ui.inside_is_less_checkBox->isChecked();
+  const float iso_value = ui.iso_value_spinBox->value();
+  const float value_outside = ui.value_outside_spinBox->value();
+  const float inside_is_less =  ui.inside_is_less_checkBox->isChecked();
+
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 

@@ -170,6 +170,12 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   }
   else
   {
+    if(CGAL::Compare_to_isovalue(iso_value, inside_is_less)(value_outside) !=0)
+    {
+      std::cerr << "Warning : \"Value inside is less than iso value\"'s value has been inverted to avoid crash.  "
+                << " " << std::endl;
+      inside_is_less = !inside_is_less;
+    }
     Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain(*pImage, CGAL::Compare_to_isovalue(iso_value, inside_is_less), value_outside);
     if(protect_features && polylines.empty())
     {
