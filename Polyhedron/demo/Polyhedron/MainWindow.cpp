@@ -270,7 +270,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
 connect(ui->actionMax_text_items_displayed, SIGNAL(triggered()),
-        this, SLOT(on_actionMaxItemsDisplayed_triggered()));
+        this, SLOT(on_actionMax_text_items_displayed_triggered()));
   // Connect "Select all items"
   connect(ui->actionSelect_all_items, SIGNAL(triggered()),
           this, SLOT(selectAll()));
@@ -1363,7 +1363,7 @@ bool MainWindow::loadScript(QFileInfo info)
   return false;
 }
 
-void MainWindow::on_actionloadScript_triggered() 
+void MainWindow::on_actionLoad_Script_triggered()
 {
 #if defined(QT_SCRIPT_LIB)
   QString filename = QFileDialog::getOpenFileName(
@@ -1846,7 +1846,7 @@ void MainWindow::setExpanded(QModelIndex index)
 }
 
 
-void MainWindow::on_actionMaxItemsDisplayed_triggered()
+void MainWindow::on_actionMax_text_items_displayed_triggered()
 {
   bool ok;
   bool valid;
