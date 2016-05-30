@@ -114,12 +114,10 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include <CGAL/Gray_image_mesh_domain_3.h>
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel, float, std::binder1st< std::less<float> > > Gray_image_domain1;
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel, float, std::binder1st< std::greater<float> > > Gray_image_domain2;
-typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Gray_image_domain1> Gray_image_less_domain;
-typedef CGAL::Mesh_domain_with_polyline_features_3<Gray_image_less_domain> Gray_Image_mesh_less_domain;
-typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Gray_image_domain2> Gray_image_more_domain;
-typedef CGAL::Mesh_domain_with_polyline_features_3<Gray_image_more_domain> Gray_Image_mesh_more_domain;
+
+typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, Kernel, float, CGAL::Compare_to_isovalue > Gray_image_domain1;
+typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Gray_image_domain1> Gray_image_domain;
+typedef CGAL::Mesh_domain_with_polyline_features_3<Gray_image_domain> Gray_Image_mesh_domain;
 
 Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const Polylines_container& polylines,
@@ -149,7 +147,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   CGAL::Timer timer;
-
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+  p_new_item->setScene(scene);
   if(!is_gray)
   {
     Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
@@ -164,11 +163,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       p_domain->add_features(polylines.begin(), polylines.end());
     }
     timer.start();
-    Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-    p_new_item->setScene(scene);
-
-
-
     typedef ::Mesh_function<Image_mesh_domain> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
                                                        p_domain, param);
@@ -176,55 +170,24 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   }
   else
   {
-    if(inside_is_less)
+    Gray_Image_mesh_domain* p_domain = new Gray_Image_mesh_domain(*pImage, CGAL::Compare_to_isovalue(iso_value, inside_is_less), value_outside);
+    if(protect_features && polylines.empty())
     {
-      Gray_Image_mesh_less_domain* p_domain = new Gray_Image_mesh_less_domain(*pImage, std::bind1st(std::less<float>(), iso_value), value_outside);
-      if(protect_features && polylines.empty())
-      {
-        std::cerr << "Warning : Automatic detection of features"
-                  << " in Gray images is not implemented yet" << std::endl;
-        //std::vector<std::vector<Point_3> > polylines_on_bbox;
-        //CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
-        //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
-      }
-      if(! polylines.empty()){
-        // Insert edge in domain
-        p_domain->add_features(polylines.begin(), polylines.end());
-      }
-      timer.start();
-      Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-      p_new_item->setScene(scene);
-
-      typedef ::Mesh_function<Gray_Image_mesh_less_domain> Mesh_function;
-      Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
-                                                         p_domain, param);
-      return new Meshing_thread(p_mesh_function, p_new_item);
+      std::cerr << "Warning : Automatic detection of features"
+                << " in Gray images is not implemented yet" << std::endl;
+      //std::vector<std::vector<Point_3> > polylines_on_bbox;
+      //CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
+      //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
     }
-    else
-    {
-      Gray_Image_mesh_more_domain*p_domain = new Gray_Image_mesh_more_domain(*pImage, std::bind1st(std::greater<float>(), iso_value), value_outside);
-      if(protect_features && polylines.empty())
-      {
-        std::cerr << "Warning : Automatic detection of features"
-          << " in Gray images is not implemented yet" << std::endl;
-        //std::vector<std::vector<Point_3> > polylines_on_bbox;
-        //CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
-        //p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
-      }
-      if(! polylines.empty()){
-        // Insert edge in domain
-        p_domain->add_features(polylines.begin(), polylines.end());
-      }
-      timer.start();
-      Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
-      p_new_item->setScene(scene);
-
-
-      typedef ::Mesh_function<Gray_Image_mesh_more_domain> Mesh_function;
-      Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
-                                                         p_domain, param);
-      return new Meshing_thread(p_mesh_function, p_new_item);
+    if(! polylines.empty()){
+      // Insert edge in domain
+      p_domain->add_features(polylines.begin(), polylines.end());
     }
+    timer.start();
+    typedef ::Mesh_function<Gray_Image_mesh_domain> Mesh_function;
+    Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
+                                                       p_domain, param);
+    return new Meshing_thread(p_mesh_function, p_new_item);
   }
 }
 
