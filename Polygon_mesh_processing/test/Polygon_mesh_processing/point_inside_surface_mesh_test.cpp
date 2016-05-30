@@ -53,7 +53,7 @@ int test(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-  assert(test<Epic>(argc,argv));
-  assert(test<Epec>(argc,argv));
+  assert(test<Epic>(argc,argv)==0);
+  assert(test<Epec>(argc,argv)==0);
   return 0;
 }

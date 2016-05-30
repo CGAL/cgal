@@ -133,7 +133,7 @@ int test() {
 
 int main()
 {
-  assert(test<Epic>());
-  assert(test<Epec>());
+  assert(test<Epic>()==0);
+  assert(test<Epec>()==0);
   return 0;
 }
