@@ -275,7 +275,7 @@ protected Q_SLOTS:
   //!Swap the visibility of the selected item(s).
   void on_actionShowHide_triggered();
   //!Pops a dialog to change the max TextItems
-  void on_actionMaxItemsDisplayed_triggered();
+  void on_actionMaxTextItemsDisplayed_triggered();
   // Select A/B
   //!Sets the selected item as item_A.
   void on_actionSetPolyhedronA_triggered();

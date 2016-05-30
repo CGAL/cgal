@@ -95,7 +95,7 @@
     <addaction name="actionAntiAliasing"/>
     <addaction name="actionDraw_two_sides"/>
     <addaction name="actionQuick_camera_mode"/>
-    <addaction name="actionMax_text_items_displayed"/>
+    <addaction name="actionMaxTextItemsDisplayed"/>
     <addaction name="actionSetBackgroundColor"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
@@ -659,7 +659,7 @@
     <string>Quick Camera Mode</string>
    </property>
   </action>
-  <action name="actionMax_text_items_displayed">
+  <action name="actionMaxTextItemsDisplayed">
    <property name="text">
     <string>Set Maximum  Text Items Displayed :</string>
    </property>

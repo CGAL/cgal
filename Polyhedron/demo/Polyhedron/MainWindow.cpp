@@ -137,7 +137,7 @@ MainWindow::MainWindow(QWidget* parent)
   scene = new Scene(this);
   viewer->textRenderer->setScene(scene);
   viewer->setScene(scene);
-  ui->actionMax_text_items_displayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
+  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -269,8 +269,6 @@ MainWindow::MainWindow(QWidget* parent)
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
-connect(ui->actionMax_text_items_displayed, SIGNAL(triggered()),
-        this, SLOT(on_actionMaxItemsDisplayed_triggered()));
   // Connect "Select all items"
   connect(ui->actionSelect_all_items, SIGNAL(triggered()),
           this, SLOT(selectAll()));
@@ -1846,7 +1844,7 @@ void MainWindow::setExpanded(QModelIndex index)
 }
 
 
-void MainWindow::on_actionMaxItemsDisplayed_triggered()
+void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
 {
   bool ok;
   bool valid;
@@ -1856,6 +1854,6 @@ void MainWindow::on_actionMaxItemsDisplayed_triggered()
   text.toInt(&valid);
   if (ok && valid){
     viewer->textRenderer->setMax(text.toInt());
-    ui->actionMax_text_items_displayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
+    ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
   }
 }
