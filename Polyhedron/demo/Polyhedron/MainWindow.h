@@ -268,7 +268,7 @@ protected Q_SLOTS:
   //!Duplicates the selected item and selects the new item.
   void on_actionDuplicate_triggered();
   //!If QT_SCRIPT_LIB is defined, opens a dialog to choose a script.
-  void on_actionloadScript_triggered();
+  void on_actionLoadScript_triggered();
   //!Loads a plugin from a specified directory
   void on_actionLoad_plugin_triggered();
   // Show/Hide

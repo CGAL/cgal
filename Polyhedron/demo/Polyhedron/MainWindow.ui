@@ -51,7 +51,7 @@
     <addaction name="actionSaveAs"/>
     <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_Script"/>
+    <addaction name="actionLoadScript"/>
     <addaction name="separator"/>
     <addaction name="actionLoad_plugin"/>
     <addaction name="separator"/>
@@ -628,7 +628,7 @@
     <string>Ctrl+A</string>
    </property>
   </action>
-  <action name="actionLoad_Script">
+  <action name="actionLoadScript">
    <property name="text">
     <string>Load &amp;Script</string>
    </property>

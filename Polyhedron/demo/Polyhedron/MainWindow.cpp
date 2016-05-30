@@ -125,7 +125,7 @@ MainWindow::MainWindow(QWidget* parent)
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
-  ui->menuBar->removeAction(ui->actionloadScript);
+  ui->menuBar->removeAction(ui->actionLoadScript);
 #endif
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
@@ -1361,7 +1361,7 @@ bool MainWindow::loadScript(QFileInfo info)
   return false;
 }
 
-void MainWindow::on_actionloadScript_triggered() 
+void MainWindow::on_actionLoadScript_triggered() 
 {
 #if defined(QT_SCRIPT_LIB)
   QString filename = QFileDialog::getOpenFileName(
