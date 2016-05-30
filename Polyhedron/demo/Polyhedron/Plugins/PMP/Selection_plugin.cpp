@@ -81,6 +81,8 @@ public:
 
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
+    connect(dock_widget, SIGNAL(visibilityChanged(bool)),
+            this, SLOT(setItemsActive(bool)));
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Add_to_selection_button,  SIGNAL(clicked()), this, SLOT(on_Add_to_selection_button_clicked()));
@@ -115,27 +117,96 @@ Q_SIGNALS:
   void save_handleType();
   void set_operation_mode(int);
 public Q_SLOTS:
+
+  // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
+  // set the k-ring_selector as currently selected. (A k-ring_selector tha tis not "currently selected" will
+  // not process selection events)
+  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection* item)
+  {
+    if(scene->item_id(selection_item_map.find(item->poly_item)->second) == scene->mainSelectionIndex() ||
+       scene->item_id(item->poly_item)== scene->mainSelectionIndex() )
+      item->setCurrentlySelected(true);
+    else
+      item->setCurrentlySelected(false);
+  }
   void setInstructions(QString s)
   {
     ui_widget.instructionsLabel->setText(s);
   }
-  void selection_action() { 
-    dock_widget->show();
-    dock_widget->raise();
-    if(scene->numberOfEntries() < 2) {
-      Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
-      if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
+
+  void setItemsActive(bool b)
+  {
+    for(int i=0; i<scene->numberOfEntries(); i++)
+    {
+      Scene_polyhedron_selection_item* sel_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
+      if(sel_item)
+        sel_item->setActive(b);
+    }
+  }
+  //This slot is called when a shift+click is got by a k-ring selector.
+  /*
+   * It checks if the selected poly_item has an associated selection_item.
+   * If not, it creates one and gives it the QEvent to process.
+   */
+  void checkSelectionItem(QEvent* event)
+  {
+    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+    //If the dock widget is not visible, re-bind the viewer's selection and stop here.
+    if(!dock_widget->isVisible())
+    {
+      if(!viewer)
+          return;
+        viewer->setBindingSelect();
+      return;
+    }
+    //else unbind the viewer's selection.
+    viewer->setNoBinding();
+    int item_id = scene->mainSelectionIndex();
+    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
+    if(!poly_item)
+    {
+      Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
+      if(!selection_item)
+        return;
+      poly_item = selection_item->polyhedron_item();
+    }
+    if(selection_item_map.find(poly_item) != selection_item_map.end())
+    {
+      selection_item_map.find(poly_item)->second->processEvent(event);
+    }
+    else{
       Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
-      connect(this, SIGNAL(save_handleType()),new_item, SLOT(save_handleType()));
-      connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
-      connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
       int item_id = scene->addItem(new_item);
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
         connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+      connect(new_item,SIGNAL(selectionRequest(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
+      connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
+
       scene->setSelectedItem(item_id);
-      on_ModeBox_changed(ui_widget.modeBox->currentIndex());
+      new_item->processEvent(event);
     }
+  }
+
+  void selection_action() {
+    dock_widget->show();
+    dock_widget->raise();
+    Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
+    if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
+    Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+    connect(this, SIGNAL(save_handleType()),new_item, SLOT(save_handleType()));
+    connect(new_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
+    connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
+    int item_id = scene->addItem(new_item);
+    QObject* scene_ptr = dynamic_cast<QObject*>(scene);
+    if (scene_ptr)
+      connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+    connect(new_item,SIGNAL(selectionRequest(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
+    connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
+    scene->setSelectedItem(item_id);
+    on_ModeBox_changed(ui_widget.modeBox->currentIndex());
+
     on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   // Select all
@@ -231,6 +302,8 @@ public Q_SLOTS:
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+      connect(new_item,SIGNAL(selectionRequest(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
+      connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     scene->setSelectedItem(item_id);
     ui_widget.modeBox->setCurrentIndex(last_mode);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
@@ -402,7 +475,8 @@ public Q_SLOTS:
   void on_ModeBox_changed(int index)
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    selection_item->on_Ctrlz_pressed();
+    if(selection_item)
+      selection_item->on_Ctrlz_pressed();
     last_mode = index;
     switch(index)
     {
@@ -426,7 +500,8 @@ public Q_SLOTS:
   void on_editionBox_changed(int mode )
   {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
-    selection_item->on_Ctrlz_pressed();
+    if(selection_item)
+      selection_item->on_Ctrlz_pressed();
     if(ui_widget.modeBox->currentIndex() == 0)
     {
       Q_EMIT set_operation_mode(-1);

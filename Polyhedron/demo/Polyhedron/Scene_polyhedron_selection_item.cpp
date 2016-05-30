@@ -435,6 +435,7 @@ if(!poly)
         }
     }
 }
+
 void Scene_polyhedron_selection_item::computeElements()const
 {
   compute_any_elements(positions_facets, positions_lines, positions_points, normals,
@@ -751,6 +752,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     case -2:
     case -1:
     {
+      if(!is_active)
+        return false;
       if(!is_path_selecting)
       {
         return treat_classic_selection(selection);
@@ -960,6 +963,7 @@ std::size_t facet_degree(Halfedge_handle h)
 
 bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descriptor>& selection)
 {
+
   edge_descriptor ed =  *selection.begin();
   if(!is_treated)
   {
@@ -969,6 +973,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     //classic selection
     case -1:
     {
+      if(!is_active)
+        return false;
       return treat_classic_selection(selection);
       break;
     }
@@ -1288,6 +1294,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     //classic selection
     case -1:
     {
+      if(!is_active)
+        return false;
       return treat_classic_selection(selection);
       break;
     }

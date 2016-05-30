@@ -185,9 +185,10 @@ public:
   Scene_polyhedron_selection_item() 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        is_active = true;
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
-        for(int i=0; i<6; i++)
+        for(int i=0; i<7; i++)
         {
             addVaos(i);
             vaos[i]->create();
@@ -200,6 +201,9 @@ public:
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
+        are_buffers_filled = false;
+        are_temp_buffers_filled = false;
+        poly = NULL;
         this->setColor(facet_color);
         first_selected = false;
         is_treated = false;
@@ -209,6 +213,7 @@ public:
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        is_active = true;
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
         nb_facets = 0;
@@ -225,6 +230,7 @@ public:
         {
             buffers[i].create();
         }
+        poly = NULL;
         init(poly_item, mw);
         this->setColor(facet_color);
         invalidateOpenGLBuffers();
@@ -233,9 +239,13 @@ public:
         poly_need_update = false;
     }
 
-   ~Scene_polyhedron_selection_item()
-    {
-    }
+  ~Scene_polyhedron_selection_item()
+  {
+    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+    viewer->setBindingSelect();
+  }
+
   void inverse_selection();
 
   void setPathSelection(bool b) {
@@ -249,6 +259,7 @@ public:
     }
   }
 
+  void setActive(bool b){ is_active = b; }
 protected: 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
   {
@@ -264,6 +275,9 @@ protected:
 
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
+    connect(&k_ring_selector, SIGNAL(selectionRequest(QEvent*)), this,
+      SIGNAL(selectionRequest(QEvent*)));
+    connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
     connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
 
@@ -466,6 +480,11 @@ public:
     v->update();
     tempInstructions("Path added to selection.",
                      "Select two vertices to create the path between them. (1/2)");
+  }
+
+  void processEvent(QEvent *event)
+  {
+    k_ring_selector.processEvent(event);
   }
   // select all of `active_handle_type`(vertex, facet or edge)
   void select_all() {
@@ -683,6 +702,8 @@ public:
   template <class Handle>
   void expand_selection(unsigned int steps)
   {
+    if(!is_active)
+      return;
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
 
@@ -856,7 +877,8 @@ public:
 Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);
-
+  void selectionRequest(QEvent*);
+  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
 public Q_SLOTS:
   void update_poly()
   {
@@ -1045,6 +1067,7 @@ public:
   QColor vertex_color, facet_color, edge_color;
 
 private:
+
   struct vertex_on_path
   {
     Vertex_handle vertex;
@@ -1087,6 +1110,7 @@ private:
   mutable std::size_t nb_fixed_points;
 
   mutable QOpenGLShaderProgram *program;
+  bool is_active;
 
   using CGAL::Three::Scene_item::initializeBuffers;
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;

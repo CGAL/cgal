@@ -39,12 +39,13 @@ public:
   int                    k_ring;
   Scene_polyhedron_item* poly_item;
   bool is_active;
+  bool is_current_selection;
 
   Scene_polyhedron_item_k_ring_selection() {}
 
   Scene_polyhedron_item_k_ring_selection
     (Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring)
-      :is_active(false), is_edit_mode(false)
+      :is_active(false),is_current_selection(true), is_edit_mode(false)
   {
     init(poly_item, mw, aht, k_ring);
   }
@@ -71,7 +72,10 @@ public:
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
   }
-
+  void setCurrentlySelected(bool b)
+  {
+    is_current_selection = b;
+  }
 public Q_SLOTS:
   // slots are called by signals of polyhedron_item
   void vertex_has_been_selected(void* void_ptr) 
@@ -96,15 +100,32 @@ public Q_SLOTS:
       process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
     updateIsTreated();
   }
+  void processEvent(QEvent* event)
+  {
+    // paint with mouse move event
+    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    qglviewer::Camera* camera = viewer->camera();
 
-
+    bool found = false;
+    const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+    if(found)
+    {
+      const qglviewer::Vec& orig = camera->position();
+      const qglviewer::Vec& dir = point - orig;
+      poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+    }
+  }
 Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
-  void resetIsTreated();
+  void resetIsTreated(); 
+  void selectionRequest(QEvent *);
+  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
+
 
 protected:
 
@@ -241,14 +262,18 @@ protected:
          ||
          (event->type() == QEvent::MouseButtonPress && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton && state.shift_pressing ))
     {
+      Q_EMIT isCurrentlySelected(this);
+      if(!is_current_selection)
+        return false;
       if(target == mainwindow)
       {
         QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
         viewer->setFocus();
         return false;
       }
+      Q_EMIT selectionRequest(event);
       // paint with mouse move event
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+     /* QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
 
@@ -259,7 +284,7 @@ protected:
         const qglviewer::Vec& orig = camera->position();
         const qglviewer::Vec& dir = point - orig;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
-      }
+      }*/
     }//end MouseMove
     return false;
   }
