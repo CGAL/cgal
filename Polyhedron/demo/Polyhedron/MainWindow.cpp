@@ -251,9 +251,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 
-  connect(ui->actionDraw_two_sides, SIGNAL(toggled(bool)),
+  connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-  connect(ui->actionQuick_camera_mode, SIGNAL(toggled(bool)),
+  connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
 
   // add the "About CGAL..." and "About demo..." entries
@@ -270,7 +270,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
   // Connect "Select all items"
-  connect(ui->actionSelect_all_items, SIGNAL(triggered()),
+  connect(ui->actionSelectAllItems, SIGNAL(triggered()),
           this, SLOT(selectAll()));
 
   // Recent files menu
@@ -1606,7 +1606,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   }
 }
 
-void MainWindow::on_action_Look_at_triggered()
+void MainWindow::on_actionLookAt_triggered()
 {
   Show_point_dialog dialog(this);
   dialog.setWindowTitle(tr("Look at..."));
@@ -1645,12 +1645,12 @@ void MainWindow::on_actionDumpCamera_triggered()
               .arg(cameraString()));
 }
 
-void MainWindow::on_action_Copy_camera_triggered()
+void MainWindow::on_actionCopyCamera_triggered()
 {
   qApp->clipboard()->setText(this->cameraString());
 }
 
-void MainWindow::on_action_Paste_camera_triggered()
+void MainWindow::on_actionPasteCamera_triggered()
 {
   QString s = qApp->clipboard()->text();
   viewer->moveCameraToCoordinates(s, 0.5f);
@@ -1667,7 +1667,7 @@ void MainWindow::on_actionRecenterScene_triggered()
   viewer->camera()->interpolateToFitScene();
 }
 
-void MainWindow::on_actionLoad_plugin_triggered()
+void MainWindow::on_actionLoadPlugin_triggered()
 {
     //pop a dialog of path selection, get the path and add it to plugins_directory
 
