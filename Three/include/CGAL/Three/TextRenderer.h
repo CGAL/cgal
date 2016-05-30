@@ -54,7 +54,7 @@ public :
      * \param p_color the color of the text.
      */
     TextItem(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true, QFont font = QFont(), QColor p_color = Qt::black, bool always_visible = false)
-        :x(p_x), y(p_y), z(p_z),_3D(p_3D), m_text(p_text), m_font(font), m_color(p_color), _is_always_visible(always_visible)
+        :x(p_x), y(p_y), z(p_z),_3D(p_3D), _is_always_visible(always_visible), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
        _width = fm.width(m_text);
