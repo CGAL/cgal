@@ -81,6 +81,7 @@ private:
 
   typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_handle;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_handle;
 
   typedef AABB_face_graph_triangle_primitive<Polyhedron, VertexPointPmap> Primitive;
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
@@ -98,6 +99,14 @@ private:
 
 // member variables
 private:
+  static AABB_traits_internal
+  create_traits(const Polyhedron& mesh,
+                VertexPointPmap vertex_point_map )
+  {
+    AABB_traits_internal traits;
+    traits.set_shared_data(mesh, vertex_point_map);
+    return traits;
+  }
   GeomTraits traits;
   const Polyhedron& mesh;
   VertexPointPmap vertex_point_map;
@@ -115,7 +124,7 @@ private:
   bool   use_diagonal;
 public:
   /**
-   * Construct AABB tree with a mesh.
+   * Construct AABB tree with a mesh. Ignores degenerated faces.
    * @param mesh `CGAL Polyhedron` on which AABB tree constructed
    * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
    * @param use_diagonal if true: calculates diagonal of AABB tree and cast segments instead of rays using diagonal length
@@ -135,9 +144,24 @@ public:
     normal_functor(traits.construct_normal_3_object()),
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
+    tree(create_traits(mesh, vertex_point_map)),
     use_diagonal(use_diagonal) 
   {
-    tree.insert(faces(mesh).first, faces(mesh).second, mesh, vertex_point_map);
+    typedef typename boost::property_traits<VertexPointPmap>::reference Point_ref;
+    typename GeomTraits::Collinear_3  collinear = traits.collinear_3_object();
+    face_iterator it, end;
+    for(it = faces(mesh).begin(), end = faces(mesh).end(); it!=end; it++)
+    {
+        halfedge_handle h = halfedge(*it, mesh);
+        Point_ref a(vertex_point_map[target(h, mesh)]);
+        h = next(h, mesh);
+        Point_ref b(vertex_point_map[target(h, mesh)]);
+        h = next(h, mesh);
+        Point_ref c(vertex_point_map[target(h, mesh)]);
+        bool test = collinear(a,b,c);
+        if(!test)
+          tree.insert(Primitive(it, mesh, vertex_point_map));
+    }
     tree.build();
 
     if(build_kd_tree) {
