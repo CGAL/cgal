@@ -125,7 +125,7 @@ MainWindow::MainWindow(QWidget* parent)
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
-  ui->menuBar->removeAction(ui->actionloadScript);
+  ui->menuBar->removeAction(ui->actionLoadScript);
 #endif
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
@@ -137,7 +137,7 @@ MainWindow::MainWindow(QWidget* parent)
   scene = new Scene(this);
   viewer->textRenderer->setScene(scene);
   viewer->setScene(scene);
-  ui->actionMax_text_items_displayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
+  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -251,9 +251,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 
-  connect(ui->actionDraw_two_sides, SIGNAL(toggled(bool)),
+  connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-  connect(ui->actionQuick_camera_mode, SIGNAL(toggled(bool)),
+  connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
 
   // add the "About CGAL..." and "About demo..." entries
@@ -269,10 +269,8 @@ MainWindow::MainWindow(QWidget* parent)
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
-connect(ui->actionMax_text_items_displayed, SIGNAL(triggered()),
-        this, SLOT(on_actionMaxItemsDisplayed_triggered()));
   // Connect "Select all items"
-  connect(ui->actionSelect_all_items, SIGNAL(triggered()),
+  connect(ui->actionSelectAllItems, SIGNAL(triggered()),
           this, SLOT(selectAll()));
 
   // Recent files menu
@@ -1363,7 +1361,7 @@ bool MainWindow::loadScript(QFileInfo info)
   return false;
 }
 
-void MainWindow::on_actionloadScript_triggered() 
+void MainWindow::on_actionLoadScript_triggered() 
 {
 #if defined(QT_SCRIPT_LIB)
   QString filename = QFileDialog::getOpenFileName(
@@ -1608,7 +1606,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   }
 }
 
-void MainWindow::on_action_Look_at_triggered()
+void MainWindow::on_actionLookAt_triggered()
 {
   Show_point_dialog dialog(this);
   dialog.setWindowTitle(tr("Look at..."));
@@ -1647,12 +1645,12 @@ void MainWindow::on_actionDumpCamera_triggered()
               .arg(cameraString()));
 }
 
-void MainWindow::on_action_Copy_camera_triggered()
+void MainWindow::on_actionCopyCamera_triggered()
 {
   qApp->clipboard()->setText(this->cameraString());
 }
 
-void MainWindow::on_action_Paste_camera_triggered()
+void MainWindow::on_actionPasteCamera_triggered()
 {
   QString s = qApp->clipboard()->text();
   viewer->moveCameraToCoordinates(s, 0.5f);
@@ -1669,7 +1667,7 @@ void MainWindow::on_actionRecenterScene_triggered()
   viewer->camera()->interpolateToFitScene();
 }
 
-void MainWindow::on_actionLoad_plugin_triggered()
+void MainWindow::on_actionLoadPlugin_triggered()
 {
     //pop a dialog of path selection, get the path and add it to plugins_directory
 
@@ -1846,7 +1844,7 @@ void MainWindow::setExpanded(QModelIndex index)
 }
 
 
-void MainWindow::on_actionMaxItemsDisplayed_triggered()
+void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
 {
   bool ok;
   bool valid;
@@ -1856,6 +1854,6 @@ void MainWindow::on_actionMaxItemsDisplayed_triggered()
   text.toInt(&valid);
   if (ok && valid){
     viewer->textRenderer->setMax(text.toInt());
-    ui->actionMax_text_items_displayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
+    ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
   }
 }

@@ -51,9 +51,9 @@
     <addaction name="actionSaveAs"/>
     <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_Script"/>
+    <addaction name="actionLoadScript"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_plugin"/>
+    <addaction name="actionLoadPlugin"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -64,7 +64,7 @@
     <addaction name="actionShowHide"/>
     <addaction name="actionSetPolyhedronA"/>
     <addaction name="actionSetPolyhedronB"/>
-    <addaction name="actionSelect_all_items"/>
+    <addaction name="actionSelectAllItems"/>
     <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
@@ -87,15 +87,15 @@
       <string>Ca&amp;mera</string>
      </property>
      <addaction name="actionDumpCamera"/>
-     <addaction name="action_Copy_camera"/>
-     <addaction name="action_Paste_camera"/>
+     <addaction name="actionCopyCamera"/>
+     <addaction name="actionPasteCamera"/>
     </widget>
     <addaction name="actionRecenterScene"/>
-    <addaction name="action_Look_at"/>
+    <addaction name="actionLookAt"/>
     <addaction name="actionAntiAliasing"/>
-    <addaction name="actionDraw_two_sides"/>
-    <addaction name="actionQuick_camera_mode"/>
-    <addaction name="actionMax_text_items_displayed"/>
+    <addaction name="actionDrawTwoSides"/>
+    <addaction name="actionQuickCameraMode"/>
+    <addaction name="actionMaxTextItemsDisplayed"/>
     <addaction name="actionSetBackgroundColor"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
@@ -563,7 +563,7 @@
     <string>Convert to Normal Polyhedron</string>
    </property>
   </action>
-  <action name="actionDraw_two_sides">
+  <action name="actionDrawTwoSides">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -595,7 +595,7 @@
     <string>Ctrl+O, M</string>
    </property>
   </action>
-  <action name="action_Look_at">
+  <action name="actionLookAt">
    <property name="text">
     <string>&amp;Look at...</string>
    </property>
@@ -610,17 +610,17 @@
     <string>&amp;Dump Camera Coordinates</string>
    </property>
   </action>
-  <action name="action_Copy_camera">
+  <action name="actionCopyCamera">
    <property name="text">
     <string>&amp;Copy Camera</string>
    </property>
   </action>
-  <action name="action_Paste_camera">
+  <action name="actionPasteCamera">
    <property name="text">
     <string>&amp;Paste Camera</string>
    </property>
   </action>
-  <action name="actionSelect_all_items">
+  <action name="actionSelectAllItems">
    <property name="text">
     <string>Select All Items</string>
    </property>
@@ -628,7 +628,7 @@
     <string>Ctrl+A</string>
    </property>
   </action>
-  <action name="actionLoad_Script">
+  <action name="actionLoadScript">
    <property name="text">
     <string>Load &amp;Script</string>
    </property>
@@ -643,12 +643,12 @@
     <string>Least Square Conformal Maps</string>
    </property>
   </action>
-  <action name="actionLoad_plugin">
+  <action name="actionLoadPlugin">
    <property name="text">
     <string>Load Plugin</string>
    </property>
   </action>
-  <action name="actionQuick_camera_mode">
+  <action name="actionQuickCameraMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -659,7 +659,7 @@
     <string>Quick Camera Mode</string>
    </property>
   </action>
-  <action name="actionMax_text_items_displayed">
+  <action name="actionMaxTextItemsDisplayed">
    <property name="text">
     <string>Set Maximum  Text Items Displayed :</string>
    </property>

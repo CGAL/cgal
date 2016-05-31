@@ -268,14 +268,14 @@ protected Q_SLOTS:
   //!Duplicates the selected item and selects the new item.
   void on_actionDuplicate_triggered();
   //!If QT_SCRIPT_LIB is defined, opens a dialog to choose a script.
-  void on_actionloadScript_triggered();
+  void on_actionLoadScript_triggered();
   //!Loads a plugin from a specified directory
-  void on_actionLoad_plugin_triggered();
+  void on_actionLoadPlugin_triggered();
   // Show/Hide
   //!Swap the visibility of the selected item(s).
   void on_actionShowHide_triggered();
   //!Pops a dialog to change the max TextItems
-  void on_actionMaxItemsDisplayed_triggered();
+  void on_actionMaxTextItemsDisplayed_triggered();
   // Select A/B
   //!Sets the selected item as item_A.
   void on_actionSetPolyhedronA_triggered();
@@ -298,7 +298,7 @@ protected Q_SLOTS:
    * with viewerShow.
    *@see viewerShow(float, float, float, float, float, float)
    */
-  void on_action_Look_at_triggered();
+  void on_actionLookAt_triggered();
   //!Returns the position and orientation of the current camera frame.
   QString cameraString() const;
   /*! Prints the position and orientation of the current camera frame.
@@ -306,10 +306,10 @@ protected Q_SLOTS:
    */
   void on_actionDumpCamera_triggered();
   //!Sets the coordinates of the camera in the clipboard text.
-  void on_action_Copy_camera_triggered();
+  void on_actionCopyCamera_triggered();
   //!Gets coordinates from the clipboard and sets them as the current ones for
   //!the camera.
-  void on_action_Paste_camera_triggered();
+  void on_actionPasteCamera_triggered();
   //!Hides not available operations and show available operations in all the
   //!menus.
   void filterOperations();
