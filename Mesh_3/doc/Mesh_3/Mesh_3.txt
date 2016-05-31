@@ -759,9 +759,9 @@ protection of the 1D-features.
 <center>
 <table border=0>
 <tr>
-  <td><img border="0" height="435px" src="./no-protection.png"></td>
-  <td><img border="0" height="435px" src="./protection-box.png"></td>
-  <td><img border="0" height="435px" src="./protection-all.png"></td>
+  <td><img border="0" src="./no-protection.png"></td>
+  <td><img border="0" src="./protection-box.png"></td>
+  <td><img border="0" src="./protection-all.png"></td>
 </tr>
 </table>
 </center>
