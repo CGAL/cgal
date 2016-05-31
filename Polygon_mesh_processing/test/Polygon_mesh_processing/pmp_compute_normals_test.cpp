@@ -59,4 +59,5 @@ int main()
   test<Epec>("data/elephant.off");
 
   std::cerr << "All done." << std::endl;
+  return EXIT_SUCCESS;
 }
