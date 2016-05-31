@@ -4,4 +4,4 @@ EXCLUDE      = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Cone_spanners_2
 EXTRACT_ALL                =  NO
 HIDE_UNDOC_CLASSES         =  YES
 HIDE_UNDOC_MEMBERS         =  YES
-ALIASES +=  gnuplot="<a href=\"http://www.gnuplot.info\">`Gnuplot`</a>" 
+ALIASES +=  gnuplot="<a href=\"http://www.gnuplot.info\">`Gnuplot`</a>"

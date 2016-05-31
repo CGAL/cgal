@@ -40,10 +40,10 @@
 namespace CGAL {
 
 /*! \ingroup PkgConeBasedSpanners
- 
-  \brief A template functor for constructing Theta graphs with a given set of 2D points and 
+
+  \brief A template functor for constructing Theta graphs with a given set of 2D points and
          a given initial direction for the cone boundaries.
- 
+
  \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
 \tparam Graph_ is the graph type to store the constructed cone based spanner.
@@ -60,10 +60,10 @@ public:
     /*! the specific type of `boost::adjacency_list`. */
     typedef Graph_                           Graph;
 
-  /*! the point type */
+    /*! the point type */
     typedef typename Traits::Point_2                 Point_2;
 
-  /*! the direction type */
+    /*! the direction type */
     typedef typename Traits::Direction_2             Direction_2;
 
 private:
@@ -83,14 +83,14 @@ private:
 
 public:
     /*! \brief Constructor.
-     
+
      \param k     Number of cones to divide space into
      \param initial_direction  A direction denoting one of the rays dividing the
                    cones. This allows arbitary rotations of the rays that divide
                    the plane.  (default: positive x-axis)
      */
     Construct_theta_graph_2 (unsigned int k,
-                             Direction_2 initial_direction = Direction_2(1,0) 
+                             Direction_2 initial_direction = Direction_2(1,0)
                             ): cone_number(k), rays(std::vector<Direction_2>(k))
 
     {
@@ -99,7 +99,7 @@ public:
             CGAL_assertion(false);
         }
 
-        /* Initialize a functor, specialization will happen here depending on the kernel type to 
+        /* Initialize a functor, specialization will happen here depending on the kernel type to
          compute the cone boundaries either exactly or inexactly */
         Compute_cone_boundaries_2<Traits> compute_cones;
         // compute the rays using the functor
@@ -113,11 +113,11 @@ public:
        Construct_theta_graph_2 (const Construct_theta_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
     */
 
-    /*! 
+    /*!
      \brief Function operator to construct a Theta graph.
 
      \details For the details of this algorithm, please refer to the User Manual.
-     
+
      \tparam  PointInputIterator an `InputIterator` with value type `Point_2`.
      \param[in] start An iterator pointing to the first vertex of the input.
      \param[in] end   An iterator pointing to the past-the-end location of the input.
@@ -152,7 +152,7 @@ public:
     }
 
     /*! \brief outputs the set of directions to the iterator `result`.
-     
+
       \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
        \return `result`
      */
@@ -202,9 +202,9 @@ protected:
 
         // Step 2: Initialise an empty set to store vertices sorted by orderD2
         typedef CGAL::ThetaDetail::Plane_scan_tree<typename Graph_::vertex_descriptor,
-                                                   typename Graph_::vertex_descriptor,
-                                                   Less_by_direction, 
-                                                   Less_by_direction > PSTree;
+                typename Graph_::vertex_descriptor,
+                Less_by_direction,
+                Less_by_direction > PSTree;
         PSTree pst(orderD2, orderMid);
 #ifndef NDEBUG
 #ifdef REALLY_VERBOSE_TREE_STATE_AFTER_EVERY_TREE_UPDATE__SAFE_TO_REMOVE_FOR_PRODUCTION
@@ -223,7 +223,7 @@ protected:
                 bool                    existing;
                 // check whether the edge already exists
                 boost::tie(existing_e, existing)=boost::edge(*it, *ri, g);
-                if (!existing) 
+                if (!existing)
                     boost::add_edge(*it, *ri, g);
                 //else
                 //    std::cout << "Edge " << *it << ", " << *ri << " already exists!" << std::endl;
@@ -242,7 +242,7 @@ protected:
 //
 // The tree output shades the new value added, and states what action was taken.
             std::cout << "graph Plane_scan_tree {" << std::endl <<
-            pst << std::endl << std::endl;
+                      pst << std::endl << std::endl;
             int j = 1;
             for (auto rit = S.rbegin(); rit <= it; ++rit) {
                 auto p = g[*rit];

@@ -57,10 +57,10 @@ public:
     /*! the specific type of `boost::adjacency_list`. */
     typedef Graph_                        Graph;
 
-  /*! the point type */
+    /*! the point type */
     typedef typename Traits::Point_2                 Point_2;
 
-  /*! the direction type */
+    /*! the direction type */
     typedef typename Traits::Direction_2             Direction_2;
 
 private:
@@ -77,7 +77,7 @@ private:
     std::vector<Direction_2>   rays;
 
 public:
-    /*! 
+    /*!
       \brief    Constructor.
 
       \param k     Number of cones to divide space into
@@ -86,7 +86,7 @@ public:
                    the plane.  (default: positive x-axis)
      */
     Construct_yao_graph_2 (unsigned int k,
-                           Direction_2 initial_direction = Direction_2(1,0) 
+                           Direction_2 initial_direction = Direction_2(1,0)
                           ): cone_number(k), rays(std::vector<Direction_2>(k))
 
     {
@@ -108,11 +108,11 @@ public:
     Construct_yao_graph_2 (const Construct_yao_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
     */
 
-    /*! 
+    /*!
       \brief Function operator to construct a Yao graph.
 
       \details For the details of this algorithm, please refer to the User Manual.
-     
+
       \tparam  PointInputIterator an `InputIterator` with value type `Point_2`.
 
       \param[in] start An iterator pointing to the first vertex of the input.
@@ -148,17 +148,17 @@ public:
     }
 
     /*! \brief outputs the set of directions to the iterator `result`.
-           
+
       \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
         \return `result`
     */
     template<class DirectionOutputIterator>
     DirectionOutputIterator directions(DirectionOutputIterator result) {
-    typename std::vector<Direction_2>::iterator it;
-    for (it=rays.begin(); it!=rays.end(); it++) {
+        typename std::vector<Direction_2>::iterator it;
+        for (it=rays.begin(); it!=rays.end(); it++) {
             *result++ = *it;
-       }
-       return result;
+        }
+        return result;
     }
 
 protected:
@@ -211,7 +211,7 @@ protected:
                 if (!existing)
                     boost::add_edge(*it, *min, g);
                 //else
-                 //   std::cout << "Edge " << *it << ", " << *min << " already exists!" << std::endl;
+                //   std::cout << "Edge " << *it << ", " << *min << " already exists!" << std::endl;
             }
 
         } // end of for

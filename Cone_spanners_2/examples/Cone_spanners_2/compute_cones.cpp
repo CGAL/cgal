@@ -35,13 +35,13 @@ int main(int argc, char ** argv) {
 
   // construct the functor
   CGAL::Compute_cone_boundaries_2<Kernel> cones;
-  // create the vector rays to store the results 
+  // create the vector rays to store the results
   std::vector<Direction_2> rays(k);
   // compute the cone boundaries and store them in rays
   cones(k, initial_direction, rays.begin());
 
   // display the computed rays, starting from the initial direction, ccw order
-  for (unsigned int i=0; i<k; i++) 
+  for (unsigned int i=0; i<k; i++)
     std::cout << "Ray " << i << ": " << rays[i] << std::endl;
 
   return 0;

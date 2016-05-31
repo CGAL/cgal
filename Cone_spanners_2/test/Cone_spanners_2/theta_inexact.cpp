@@ -3,7 +3,7 @@
  * A test application that constructs a Theta graph inexactly with the vertex list
  * given in a file, and then generates the Gnuplot files for plotting the constructed Theta graph.
  *
- * Authors: Weisheng Si and Quincy Tse, University of Western Sydney 
+ * Authors: Weisheng Si and Quincy Tse, University of Western Sydney
  */
 #include <cstdlib>
 #include <iostream>

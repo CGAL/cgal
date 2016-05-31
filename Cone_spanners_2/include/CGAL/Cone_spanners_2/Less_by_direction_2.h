@@ -36,23 +36,23 @@
 namespace CGAL {
 
 /*  Function object that orders 2D graph vertex_descriptors based on the order
- *  induced by the direction D described in the book: 
+ *  induced by the direction D described in the book:
  *
  *  Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Theta graph, Geometric Spanner Networks,
  *  Cambridge University Press, 2007.
  *
- *  The ties are broken according to the direction of ccw90(D). 
+ *  The ties are broken according to the direction of ccw90(D).
  *  The way of breaking ties in this functor is intended to prevent the overlapping of cone boundaries.
- *  As a result, a vertex on the cw boundary will be considered to be inside this cone, 
+ *  As a result, a vertex on the cw boundary will be considered to be inside this cone,
  *  while a vertex on the ccw boundary will not.
  *
  *  This function object is implemented using the function `CGAL::compare_signed_distance_to_line_2()`,
- *  which orders two points according to their signed distance to a base line. 
+ *  which orders two points according to their signed distance to a base line.
  *
  */
 template <typename Kernel_, typename Graph_>
 class  Less_by_direction_2 : public std::binary_function <typename Graph_::vertex_descriptor,
-            typename Graph_::vertex_descriptor, bool> {
+        typename Graph_::vertex_descriptor, bool> {
 
 public:
     // typedef for C++11 - doesn't hurt to also have for C++98
@@ -68,7 +68,7 @@ public:
 
     // constructor
     Less_by_direction_2(const Graph_& g, const Direction_2& d)
-            : graph(g), base_line(Point_2(0,0), d) {};
+        : graph(g), base_line(Point_2(0,0), d) {};
 
     bool operator() (const typename Graph_::vertex_descriptor& p,
                      const typename Graph_::vertex_descriptor& q) const {
@@ -81,7 +81,7 @@ public:
                 return false;
         }
 
-        /* otherwise, outcome == CGAL::EQUAL, ties will be broken by a second order 
+        /* otherwise, outcome == CGAL::EQUAL, ties will be broken by a second order
          * according to the ccw90(base_line) direction.
          */
         // define a rotation of counter clockwise 90

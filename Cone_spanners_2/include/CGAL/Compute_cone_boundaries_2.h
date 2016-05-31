@@ -46,19 +46,19 @@ namespace CGAL {
 /*! \ingroup PkgConeBasedSpanners
  *
  *  \brief The functor for computing the directions of cone boundaries with a given
- *  cone number and a given initial direction. 
+ *  cone number and a given initial direction.
  *
  *  This computation can be either inexact by simply dividing an approximate \f$ \pi \f$ by the cone number
  *  (which is quick), or exact by using roots of polynomials (requiring number types such as `CORE::Expr` or `leda_real`,
  *  which are slow). The inexact computation is done by the general functor definition,
  *  while the exact computation is done by a specialization of this functor.
- *   
+ *
  *  In the construction of cone-based spanners such as Yao graph and Theta graph implemented by this package,
  *  this functor is called first to compute the cone boundaries.
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
  *  into equally-angled cones.
  *
- * \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`. 
+ * \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`.
  *
  */
 template <typename Traits_>
@@ -68,7 +68,7 @@ public:
     /*! the geometric traits class. */
     typedef  Traits_      Traits;
 
-  /*! the direction type. */
+    /*! the direction type. */
     typedef  typename Traits::Direction_2       Direction_2;
 
 private:
@@ -79,14 +79,14 @@ public:
     /* No member variables in this class, so a custom constructor is not needed. */
     // Compute_cone_boundaries_2() {};
 
-    /*! \brief The operator(). 
+    /*! \brief The operator().
      *
-     * \details The direction of the first ray can be specified by the parameter `initial_direction`, 
-     * which allows the first ray to start at any direction. 
-     * This operator first places the `initial_direction` at the 
+     * \details The direction of the first ray can be specified by the parameter `initial_direction`,
+     * which allows the first ray to start at any direction.
+     * This operator first places the `initial_direction` at the
      * position pointed by `result`. Then, it calculates the remaining directions (cone boundaries)
      * and output them to `result` in the counterclockwise order.
-     * Finally, the past-the-end iterator for the resulting directions is returned. 
+     * Finally, the past-the-end iterator for the resulting directions is returned.
      *
          * \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
      * \param cone_number The number of cones
@@ -95,8 +95,8 @@ public:
      */
     template<class DirectionOutputIterator>
     DirectionOutputIterator operator()(const unsigned int cone_number,
-                    const Direction_2& initial_direction,
-                    DirectionOutputIterator result)  {
+                                       const Direction_2& initial_direction,
+                                       DirectionOutputIterator result)  {
         if (cone_number<2) {
             std::cout << "The number of cones must be larger than 1!" << std::endl;
             CGAL_assertion(false);
@@ -120,9 +120,9 @@ public:
 };
 
 
-/* 
+/*
  The specialised functor for computing the directions of cone boundaries exactly
- with a given cone number and a given initial direction. 
+ with a given cone number and a given initial direction.
 */
 template <>
 class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_root_of> {
@@ -140,10 +140,10 @@ public:
     /* No member variables in this class, so a Constructor is not needed. */
     // Compute_cone_boundaries_2() {};
 
-    /* The operator().  
+    /* The operator().
 
       The direction of the first ray can be specified by the parameter
-      initial_direction, which allows the first ray to start at any direction. 
+      initial_direction, which allows the first ray to start at any direction.
       The remaining directions are calculated in counter-clockwise order.
 
       \param cone_number The number of cones
@@ -152,8 +152,8 @@ public:
     */
     template<typename DirectionOutputIterator>
     DirectionOutputIterator operator()(const unsigned int cone_number,
-                    const Direction_2& initial_direction,
-                    DirectionOutputIterator result)  {
+                                       const Direction_2& initial_direction,
+                                       DirectionOutputIterator result)  {
 
         if (cone_number<2) {
             std::cout << "The number of cones must be larger than 1!" << std::endl;
@@ -163,7 +163,7 @@ public:
         //std::cout << "Specialization is called!" << std::endl;
 
         // Since CGAL::root_of() gives the k-th smallest root,
-        // here -x is actually used instead of x. 
+        // here -x is actually used instead of x.
         // But we want the second largest one with no need to count.
         Polynomial<FT> x(CGAL::shift(Polynomial<FT>(-1), 1));
         Polynomial<FT> double_x(2*x);
@@ -190,7 +190,7 @@ public:
         // for storing the intermediate result
         Direction_2 ray;
         // For saving the first half number of rays when cone_number is even
-        std::vector<Direction_2> ray_store; 
+        std::vector<Direction_2> ray_store;
 
         // add the first half number of rays in counter clockwise order
         for (i = 1; i <= m; i++) {
@@ -199,7 +199,7 @@ public:
             ray = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
             *result++ = ray;
             if (is_even)
-               ray_store.push_back(ray);
+                ray_store.push_back(ray);
         }
 
         // add the remaining half number of rays in ccw order
