@@ -89,6 +89,7 @@ void Polyhedron_demo_transform_polyhedron_plugin::start(Scene_polyhedron_item* p
   transform_item = new Scene_polyhedron_transform_item(qglviewer::Vec(x,y,z),poly_item,scene);
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
+  transform_item->setRenderingMode(Wireframe);
   transform_item->setName(tr("Affine Transformation"));
   connect(transform_item, SIGNAL(stop()),this, SLOT(go()));
   connect(transform_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
@@ -106,7 +107,7 @@ struct Modifier_transform_vertices : public CGAL::Modifier_base<Polyhedron::Half
     transform(m[0],m[4], m[8],m[12],
               m[1],m[5], m[9],m[13],
               m[2],m[6],m[10],m[14],
-              /*m[3],m[7],m[11],*/m[15]),
+              m[15]),
     frame_center_translation(-tr.x,-tr.y,-tr.z)
   {
     CGAL_assertion(m[3]==0);

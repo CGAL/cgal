@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-
+struct Scene_points_with_normal_item_priv;
 // point set
 typedef Point_set_3<Kernel> Point_set;
 typedef Point_set::UI_point UI_point; // type of points in Point_set_3
@@ -86,41 +86,9 @@ public Q_SLOTS:
   void selectDuplicates();
 
 // Data
-private:
-  Point_set* m_points;
-  bool m_has_normals;
-  QAction* actionDeleteSelection;
-  QAction* actionResetSelection;
-  QAction* actionSelectDuplicatedPoints;
-
-  enum VAOs {
-      Edges=0,
-      ThePoints,
-      Selected_points,
-      NbOfVaos = Selected_points+1
-  };
-  enum VBOs {
-      Edges_vertices = 0,
-      Points_vertices,
-      Selected_points_vertices,
-      NbOfVbos = Selected_points_vertices+1
-  };
-
-  mutable std::vector<double> positions_lines;
-  mutable std::vector<double> positions_points;
-  mutable std::vector<double> positions_selected_points;
-  mutable std::vector<double> normals;
-  mutable std::size_t nb_points;
-  mutable std::size_t nb_selected_points;
-  mutable std::size_t nb_lines;
-
-  mutable QOpenGLShaderProgram *program;
-
-  using CGAL::Three::Scene_item::initializeBuffers;
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-
-  void compute_normals_and_vertices() const;
-
+protected:
+  friend struct Scene_points_with_normal_item_priv;
+  Scene_points_with_normal_item_priv* d;
 
 }; // end class Scene_points_with_normal_item
 
