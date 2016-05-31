@@ -30,7 +30,6 @@ struct Scene_polyhedron_selection_item_priv{
   Scene_polyhedron_selection_item_priv(Scene_polyhedron_selection_item* parent):
     item(parent)
   {
-
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
@@ -48,7 +47,29 @@ struct Scene_polyhedron_selection_item_priv{
   void computeAndDisplayPath();
   void addVertexToPath(Vertex_handle, vertex_on_path &);
 
-
+  enum VAOs{
+    Facets = 0,
+    TempFacets,
+    Edges,
+    TempEdges,
+    Points,
+    TempPoints,
+    FixedPoints,
+    NumberOfVaos
+  };
+  enum VBOs{
+    VertexFacets = 0,
+    NormalFacets,
+    VertexEdges,
+    VertexPoints,
+    VertexTempFacets,
+    NormalTempFacets,
+    VertexTempEdges,
+    VertexTempPoints,
+    VertexFixedPoints,
+    ColorFixedPoints,
+    NumberOfVbos
+  };
 
   QList<vertex_on_path> path;
   QList<Vertex_handle> constrained_vertices;
@@ -100,24 +121,24 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
     program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_WITH_LIGHT, viewer);
     program->bind();
 
-    item->vaos[0]->bind();
-    item->buffers[0].bind();
-    item->buffers[0].allocate(positions_facets.data(),
+    item->vaos[Facets]->bind();
+    item->buffers[VertexFacets].bind();
+    item->buffers[VertexFacets].allocate(positions_facets.data(),
                         static_cast<int>(positions_facets.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[0].release();
+    item->buffers[VertexFacets].release();
 
 
 
-    item->buffers[1].bind();
-    item->buffers[1].allocate(normals.data(),
+    item->buffers[NormalFacets].bind();
+    item->buffers[NormalFacets].allocate(normals.data(),
                         static_cast<int>(normals.size()*sizeof(float)));
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    item->buffers[1].release();
+    item->buffers[NormalFacets].release();
 
-    item->vaos[0]->release();
+    item->vaos[Facets]->release();
     program->release();
 
   }
@@ -125,35 +146,35 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
   {
     program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    item->vaos[1]->bind();
+    item->vaos[Edges]->bind();
 
-    item->buffers[2].bind();
-    item->buffers[2].allocate(positions_lines.data(),
+    item->buffers[VertexEdges].bind();
+    item->buffers[VertexEdges].allocate(positions_lines.data(),
                         static_cast<int>(positions_lines.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[2].release();
+    item->buffers[VertexEdges].release();
 
     program->release();
 
-    item->vaos[1]->release();
+    item->vaos[Edges]->release();
 
   }
   //vao containing the data for the points
   {
     program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    item->vaos[2]->bind();
+    item->vaos[Points]->bind();
 
-    item->buffers[3].bind();
-    item->buffers[3].allocate(positions_points.data(),
+    item->buffers[VertexPoints].bind();
+    item->buffers[VertexPoints].allocate(positions_points.data(),
                         static_cast<int>(positions_points.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[3].release();
+    item->buffers[VertexPoints].release();
     program->release();
 
-    item->vaos[2]->release();
+    item->vaos[Points]->release();
   }
 
   nb_facets = positions_facets.size();
@@ -180,74 +201,73 @@ void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::
     program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_WITH_LIGHT, viewer);
     program->bind();
 
-    item->vaos[3]->bind();
-    item->buffers[4].bind();
-    item->buffers[4].allocate(positions_temp_facets.data(),
+    item->vaos[TempFacets]->bind();
+    item->buffers[VertexTempFacets].bind();
+    item->buffers[VertexTempFacets].allocate(positions_temp_facets.data(),
                         static_cast<int>(positions_temp_facets.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[4].release();
+    item->buffers[VertexTempFacets].release();
 
 
 
-    item->buffers[5].bind();
-    item->buffers[5].allocate(temp_normals.data(),
+    item->buffers[NormalTempFacets].bind();
+    item->buffers[NormalTempFacets].allocate(temp_normals.data(),
                         static_cast<int>(temp_normals.size()*sizeof(float)));
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    item->buffers[5].release();
+    item->buffers[NormalTempFacets].release();
 
-    item->vaos[3]->release();
+    item->vaos[TempFacets]->release();
     program->release();
   }
   //vao containing the data for the temp lines
   {
     program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    item->vaos[4]->bind();
+    item->vaos[TempEdges]->bind();
 
-    item->buffers[6].bind();
-    item->buffers[6].allocate(positions_temp_lines.data(),
+    item->buffers[VertexTempEdges].bind();
+    item->buffers[VertexTempEdges].allocate(positions_temp_lines.data(),
                         static_cast<int>(positions_temp_lines.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[6].release();
+    item->buffers[VertexTempEdges].release();
 
     program->release();
 
-    item->vaos[4]->release();
+    item->vaos[TempEdges]->release();
 
   }
   //vaos containing the data for the temp points
   {
     program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    item->vaos[5]->bind();
+    item->vaos[TempPoints]->bind();
 
-    item->buffers[7].bind();
-    item->buffers[7].allocate(positions_temp_points.data(),
+    item->buffers[VertexTempPoints].bind();
+    item->buffers[VertexTempPoints].allocate(positions_temp_points.data(),
                         static_cast<int>(positions_temp_points.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[7].release();
-    item->vaos[5]->release();
+    item->buffers[VertexTempPoints].release();
+    item->vaos[TempPoints]->release();
 
-    item->vaos[6]->bind();
+    item->vaos[FixedPoints]->bind();
 
-    item->buffers[8].bind();
-    item->buffers[8].allocate(positions_fixed_points.data(),
+    item->buffers[VertexFixedPoints].bind();
+    item->buffers[VertexFixedPoints].allocate(positions_fixed_points.data(),
                         static_cast<int>(positions_fixed_points.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    item->buffers[8].release();
-    item->buffers[9].bind();
-    item->buffers[9].allocate(color_fixed_points.data(),
+    item->buffers[VertexFixedPoints].release();
+    item->buffers[ColorFixedPoints].bind();
+    item->buffers[ColorFixedPoints].allocate(color_fixed_points.data(),
                         static_cast<int>(color_fixed_points.size()*sizeof(float)));
     program->enableAttributeArray("colors");
     program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-    item->buffers[9].release();
-    item->vaos[6]->release();
-
+    item->buffers[ColorFixedPoints].release();
+    item->vaos[FixedPoints]->release();
 
     program->release();
   }
@@ -568,7 +588,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
   glPolygonOffset(-1.f, 1.f);
-  vaos[3]->bind();
+  vaos[Scene_polyhedron_selection_item_priv::TempFacets]->bind();
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
 
@@ -576,7 +596,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   d->program->setAttributeValue("colors",QColor(0,255,0));
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_temp_facets/3));
   d->program->release();
-  vaos[3]->release();
+  vaos[Scene_polyhedron_selection_item_priv::TempFacets]->release();
   glPolygonOffset(offset_factor, offset_units);
   if(!d->are_buffers_filled)
   {
@@ -588,14 +608,14 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
   glPolygonOffset(-1.f, 1.f);
 
-  vaos[0]->bind();
+  vaos[Scene_polyhedron_selection_item_priv::Facets]->bind();
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
   d->program->bind();
   d->program->setAttributeValue("colors",this->color());
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
   d->program->release();
-  vaos[0]->release();
+  vaos[Scene_polyhedron_selection_item_priv::Facets]->release();
   glPolygonOffset(offset_factor, offset_units);
   drawEdges(viewer);
 
@@ -611,7 +631,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
     d->initialize_temp_buffers(viewer);
   }
 
-  vaos[4]->bind();
+  vaos[Scene_polyhedron_selection_item_priv::TempEdges]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
   d->program->bind();
@@ -619,7 +639,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   d->program->setAttributeValue("colors",QColor(0,200,0));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_temp_lines/3));
   d->program->release();
-  vaos[4]->release();
+  vaos[Scene_polyhedron_selection_item_priv::TempEdges]->release();
   viewer->glLineWidth(3.0f);
   if(!d->are_buffers_filled)
   {
@@ -627,7 +647,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
     d->initializeBuffers(viewer);
   }
 
-  vaos[1]->bind();
+  vaos[Scene_polyhedron_selection_item_priv::Edges]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
   d->program->bind();
@@ -635,7 +655,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   d->program->setAttributeValue("colors",edge_color);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
   d->program->release();
-  vaos[1]->release();
+  vaos[Scene_polyhedron_selection_item_priv::Edges]->release();
 
 
   viewer->glLineWidth(1.f);
@@ -650,30 +670,30 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
   }
   viewer->glPointSize(5.5f);
 
-  vaos[5]->bind();
+  vaos[Scene_polyhedron_selection_item_priv::TempPoints]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
   d->program->bind();
   d->program->setAttributeValue("colors",QColor(0,50,0));
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_temp_points/3));
-  vaos[5]->release();
-  vaos[6]->bind();
+  vaos[Scene_polyhedron_selection_item_priv::TempPoints]->release();
+  vaos[Scene_polyhedron_selection_item_priv::FixedPoints]->bind();
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_fixed_points/3));
   d->program->release();
-  vaos[6]->release();
+  vaos[Scene_polyhedron_selection_item_priv::FixedPoints]->release();
   if(!d->are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  vaos[2]->bind();
+  vaos[Scene_polyhedron_selection_item_priv::Points]->bind();
   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
   d->program->bind();
   d->program->setAttributeValue("colors",vertex_color);
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_points/3));
   d->program->release();
-  vaos[2]->release();
+  vaos[Points]->release();
 
   viewer->glPointSize(1.f);
 }
@@ -1776,13 +1796,13 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
   d = new Scene_polyhedron_selection_item_priv(this);
   d->original_sel_mode = static_cast<Active_handle::Type>(0);
   d->operation_mode = -1;
-  for(int i=0; i<6; i++)
+  for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVaos; i++)
   {
     addVaos(i);
     vaos[i]->create();
   }
 
-  for(int i=0; i<10; i++)
+  for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVbos; i++)
   {
     buffers[i].create();
   }
