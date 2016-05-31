@@ -70,7 +70,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
   {
     Polyhedron* pMesh = item->polyhedron();
 
-    typedef CGAL::Exact_integer ET; // choose exact integral type
+    typedef typename CGAL::internal::Exact_field_selector<void*>::Type ET;
     typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
 
     // get triangles from polyhedron
@@ -136,9 +136,9 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
     new_item->setName(tr("%1 (kernel)").arg(item->name()));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
-    scene->addItem(new_item);
-
     item->setRenderingMode(Wireframe);
+
+    scene->addItem(new_item);
     scene->itemChanged(item);
 
     QApplication::restoreOverrideCursor();
