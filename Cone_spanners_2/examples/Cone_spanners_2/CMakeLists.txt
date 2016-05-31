@@ -16,6 +16,11 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
+  if (MSVC)
+    # Turn off a boost related warning that appears with VC2015
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4172")
+  endif()
+
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
