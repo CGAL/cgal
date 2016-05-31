@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTraitsClasses
 
-The class `Regular_triangulation_euclidean_traits` is used iternally by the
+The class `Regular_triangulation_euclidean_traits` is used internally by the
 class `Regular_triangulation` to wrap its first template parameter
 (`RegularTriangulationTraits_`)
 so that the base class `Triangulation` manipulates weighted points instead 
