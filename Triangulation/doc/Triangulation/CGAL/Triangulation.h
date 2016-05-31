@@ -63,7 +63,9 @@ Type for the model of the `TriangulationTraits_` concept.
 typedef TriangulationTraits_ Geom_traits;
 
 /*!
-A point in Euclidean space.
+A point in Euclidean space. Note that in the context of a 
+`Regular_triangulation` class (which derives from this class), 
+`TriangulationTraits_::Point_d` is a weighted point.
 */
 typedef TriangulationTraits_::Point_d Point;
 
