@@ -39,8 +39,11 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/helpers.h>
 
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/foreach.hpp>
 
 #include <string>
 #include <vector>
@@ -105,18 +108,51 @@ public:
   Polyhedral_mesh_domain_with_features_3(const char* filename,
     CGAL::Random* p_rng = NULL);
 
-  template <typename T1, typename T2>
-  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b,
+  // Inherited constructors
+  template <typename T2>
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
+                                         const T2& b,
                                          CGAL::Random* p_rng = NULL)
-    : Base(a, b)
-  { this->set_random_generator(p_rng); }
+    : Base(p, b)
+    , borders_detected_(false)
+  {
+    poly_.resize(1);
+    poly_[0] = p;
+    this->set_random_generator(p_rng);
+  }
 
-
-  template <typename T1, typename T2, typename T3>
-  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c,
+  template <typename InputPolyhedraPtrIterator>
+  Polyhedral_mesh_domain_with_features_3(InputPolyhedraPtrIterator begin,
+                                         InputPolyhedraPtrIterator end,
                                          CGAL::Random* p_rng = NULL)
-    : Base(a, b, c)
-  { this->set_random_generator(p_rng); }
+    : Base(begin, end)
+    , borders_detected_(false)
+  {
+    if (begin != end) {
+      for (; begin != end; ++begin)
+        poly_.push_back(**begin);
+    }
+    else
+      poly_.push_back(**begin);
+    this->set_random_generator(p_rng);
+  }
+
+  template <typename InputPolyhedraPtrIterator>
+  Polyhedral_mesh_domain_with_features_3(InputPolyhedraPtrIterator begin,
+                                         InputPolyhedraPtrIterator end,
+                                         const Polyhedron& bounding_polyhedron,
+                                         CGAL::Random* p_rng = NULL)
+    : Base(begin, end, bounding_polyhedron)
+    , borders_detected_(false)
+  {
+    if (begin != end) {
+      for (; begin != end; ++begin)
+        poly_.push_back(**begin);
+    }
+    else
+      poly_.push_back(**begin);
+    this->set_random_generator(p_rng);
+  }
 
   /// Destructor
   ~Polyhedral_mesh_domain_with_features_3() {}
@@ -124,11 +160,15 @@ public:
   /// Detect features
   void initialize_ts(Polyhedron& p);
 
-  void detect_features(FT angle_in_degree, Polyhedron& p);
-  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, polyhedron_); }
+  void detect_features(FT angle_in_degree, std::vector<Polyhedron>& p);
+  void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, poly_); }
+
+  void detect_borders(const std::vector<Polyhedron>& p);
+  void detect_borders() { detect_borders(poly_); };
 
 private:
-  Polyhedron polyhedron_;
+  std::vector<Polyhedron> poly_;
+  bool borders_detected_;
 
 private:
   // Disabled copy constructor & assignment operator
@@ -145,9 +185,11 @@ Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
                                        CGAL::Random* p_rng)
   : Base()
-  , polyhedron_(p)
+  , borders_detected_(false)
 {
-  this->add_primitives(polyhedron_);
+  poly_.resize(1);
+  poly_[0] = p;
+  this->add_primitives(p);
   this->set_random_generator(p_rng);
 }
 
@@ -157,12 +199,13 @@ Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const char* filename,
                                        CGAL::Random* p_rng)
   : Base()
-  , polyhedron_()
+  , borders_detected_(false)
 {
   // Create input polyhedron
   std::ifstream input(filename);
-  input >> polyhedron_;
-  this->add_primitives(polyhedron_);
+  poly_.resize(1);
+  input >> poly_[0];
+  this->add_primitives(poly_[0]);
   this->set_random_generator(p_rng);
 }
 
@@ -172,12 +215,13 @@ Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const std::string& filename,
                                        CGAL::Random* p_rng)
   : Base()
-  , polyhedron_()
+  , borders_detected_(false)
 {
   // Create input polyhedron
   std::ifstream input(filename.c_str());
-  input >> polyhedron_;
-  this->add_primitives(polyhedron_);
+  poly_.resize(1);
+  input >> poly_[0];
+  this->add_primitives(poly_[0]);
   this->set_random_generator(p_rng);
 }
 
@@ -211,9 +255,17 @@ template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 void
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
-detect_features(FT angle_in_degree, Polyhedron& p)
+detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
 {
+  CGAL_assertion(!borders_detected_);
+  if (borders_detected_)
+    return;//prevent from not-terminating
+
+  for (std::size_t i = 0; i < poly.size(); ++i)
+  {
+  Polyhedron& p = poly[i];
   initialize_ts(p);
+
   // Get sharp features
   Mesh_3::detect_features(p,angle_in_degree);
   
@@ -234,7 +286,54 @@ detect_features(FT angle_in_degree, Polyhedron& p)
   this->add_features(
     boost::make_transform_iterator(polylines.begin(),extractor),
     boost::make_transform_iterator(polylines.end(),extractor));
+  }
+
+  borders_detected_ = true;/*done by Mesh_3::detect_features*/
 }
+
+
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
+void
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+detect_borders(const std::vector<Polyhedron>& poly)
+{
+  if (borders_detected_)
+    return;//border detection has already been done
+
+  typedef std::vector<Point_3> Polyline;
+  typedef std::vector<Polyline>Polylines;
+
+  Polylines polylines;
+  Polyline empty;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+
+
+  for (std::size_t i = 0; i < poly.size(); ++i)
+  {
+    const Polyhedron& p = poly[i];
+  std::set<halfedge_descriptor> visited;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(p)){
+    if(visited.find(h) == visited.end()){
+      if(is_border(h,p)){
+        polylines.push_back(empty);
+        Polyline&  polyline = polylines.back();
+        polyline.push_back(source(h,p)->point());
+        BOOST_FOREACH(halfedge_descriptor h,halfedges_around_face(h,p)){
+          polyline.push_back(target(h,p)->point());
+          visited.insert(h);
+        }
+      } else {
+        visited.insert(h);
+      }
+    }
+  }
+  }
+
+  this->add_features(polylines.begin(), polylines.end());
+  borders_detected_ = true;
+}
+
 
 } //namespace CGAL
 

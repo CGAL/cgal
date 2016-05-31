@@ -592,7 +592,7 @@ is the isosurface associated to an isovalue inside the input gray-level
 
 \anchor Mesh_3_subsection_examples_multi_domain
 
-\subsubsection Mesh_3MeshingMultipleDomains_1 Construction from a vector of implicit functions
+\subsubsection Mesh_3MeshingMultipleDomains_1 Construction from a Vector of Implicit Functions
 
 The following code produces a 3D mesh for a domain consisting of several subdomains.
 It uses `Implicit_multi_domain_to_labeling_function_wrapper` as model of `ImplicitFunction` which is required by `Labeled_mesh_domain_3`.
@@ -605,7 +605,7 @@ resulting mesh.
 View (left) and cut view (right) of a 3D mesh of a torus intersecting sphere.
 \cgalFigureEnd
 
-\subsubsection Mesh_3MeshingMultipleDomains_2 Construction from a vector of implicit functions and a vector of strings
+\subsubsection Mesh_3MeshingMultipleDomains_2 Construction from a Vector of Implicit Functions and a Vector of Strings
 
 The following code produces a 3D mesh for a domain consisting of several subdomains too.
 Here, the set of subdomains is given by a vector of vector of signs, whereas the set was built automatically in the previous example.
@@ -619,9 +619,12 @@ resulting mesh.
 View of a 3D mesh of the relative complement of a torus in a sphere.
 \cgalFigureEnd
 
-\subsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
+
+\subsection Mesh_3PolyhedralDomains Polyhedral Domains
 
 \anchor Mesh_3_subsection_examples_polyhedral
+
+\subsubsection Mesh_33DPolyhedralDomains 3D Polyhedral Domains
 
 The following code produces a 3D mesh for a domain
 defined by polyhedral surfaces. \cgalFigureRef{figurepolyhedral_domain} 
@@ -631,6 +634,18 @@ shows the resulting mesh.
 
 \cgalFigureBegin{figurepolyhedral_domain,polyhedral_domain.jpg,polyhedral_domain_2.jpg}
 View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1.mesh and (ii) is a view of file out_2.mesh. Code from subsection \ref Mesh_3_subsection_examples_polyhedral generates these files."
+\cgalFigureEnd
+
+\subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
+
+The following code creates a polyhedral domain, with only one polyhedron,
+and no "bounding polyhedron", so the volumetric part of the domain will be empty.
+This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`. 
+
+\cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
+
+\cgalFigureBegin{figureremeshing,remeshing.jpg}
+View of a remeshed surface. (Left) input mesh (Right) output mesh. Code from subsection \ref Mesh_3RemeshingPolyhedralSurface generates the file.
 \cgalFigureEnd
 
 \subsection Mesh_3DomainsFromSegmented3DImages Domains From Segmented 3D Images
