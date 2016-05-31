@@ -199,34 +199,34 @@ void Viewer::initializeGL()
   //Fragment source code
   const char fragment_source[] =
   {
-          "#version 120 \n"
-          "varying highp vec4 color; \n"
-          "varying highp vec4 fP; \n"
-          "varying highp vec3 fN; \n"
-          "uniform highp vec4 light_pos;  \n"
-          "uniform highp vec4 light_diff; \n"
-          "uniform highp vec4 light_spec; \n"
-          "uniform highp vec4 light_amb;  \n"
-          "uniform highp float spec_power ; \n"
+      "#version 120 \n"
+      "varying highp vec4 color; \n"
+      "varying highp vec4 fP; \n"
+      "varying highp vec3 fN; \n"
+      "uniform highp vec4 light_pos;  \n"
+      "uniform highp vec4 light_diff; \n"
+      "uniform highp vec4 light_spec; \n"
+      "uniform highp vec4 light_amb;  \n"
+      "uniform highp float spec_power ; \n"
 
-          "void main(void) { \n"
+      "void main(void) { \n"
 
-          "   vec3 L = light_pos.xyz - fP.xyz; \n"
-          "   vec3 V = -fP.xyz; \n"
-          "   vec3 N; \n"
-          "   if(fN == vec3(0.0,0.0,0.0)) \n"
-          "       N = vec3(0.0,0.0,0.0); \n"
-          "   else \n"
-          "       N = normalize(fN); \n"
-          "   L = normalize(L); \n"
-          "   V = normalize(V); \n"
-          "   vec3 R = reflect(-L, N); \n"
-          "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-          "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+      "   vec3 L = light_pos.xyz - fP.xyz; \n"
+      "   vec3 V = -fP.xyz; \n"
+      "   vec3 N; \n"
+      "   if(fN == vec3(0.0,0.0,0.0)) \n"
+      "       N = vec3(0.0,0.0,0.0); \n"
+      "   else \n"
+      "       N = normalize(fN); \n"
+      "   L = normalize(L); \n"
+      "   V = normalize(V); \n"
+      "   vec3 R = reflect(-L, N); \n"
+      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-          "gl_FragColor = color*light_amb + diffuse + specular; \n"
-          "} \n"
-          "\n"
+      "gl_FragColor = color*light_amb + diffuse + specular; \n"
+      "} \n"
+      "\n"
       };
 
       QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -383,13 +383,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         }
         if(!is_d_pressed)
         {
-            distance_is_displayed = false;
-            Q_FOREACH(TextItem* ti, distance_text)
-            {
-              textRenderer->removeText(ti);
-              delete ti;
-              distance_text.removeOne(ti);
-            }
+            clearDistancedisplay();
         }
         is_d_pressed = true;
         updateGL();
@@ -836,7 +830,6 @@ void Viewer::drawVisualHints()
         QMatrix4x4 mvpMatrix;
         double mat[16];
         QMatrix4x4 mvMatrix;
-        //camera()->frame()->rotation().getMatrix(mat);
         camera()->getModelViewProjectionMatrix(mat);
         //nullifies the translation
         mat[12]=0;
@@ -896,7 +889,9 @@ void Viewer::drawVisualHints()
     if(distance_is_displayed)
     {
         glDisable(GL_DEPTH_TEST);
-        glPointSize(5.0f);
+
+        glLineWidth(3.0f);
+        glPointSize(6.0f);
         //draws the distance
         QMatrix4x4 mvpMatrix;
         double mat[16];
@@ -916,6 +911,7 @@ void Viewer::drawVisualHints()
         rendering_program_dist.release();
         glEnable(GL_DEPTH_TEST);
         glPointSize(1.0f);
+        glLineWidth(1.0f);
 
     }
     if (!d->painter->isActive())
@@ -1394,7 +1390,7 @@ void Viewer::showDistance(QPoint pixel)
         //set APoint
         APoint = point;
         isAset = true;
-        distance_is_displayed = false;
+        clearDistancedisplay();
     }
     else if (found)
     {
@@ -1440,4 +1436,15 @@ void Viewer::showDistance(QPoint pixel)
                   .arg(dist)));
     }
 
+}
+
+void Viewer::clearDistancedisplay()
+{
+  distance_is_displayed = false;
+  Q_FOREACH(TextItem* ti, distance_text)
+  {
+    textRenderer->removeText(ti);
+    delete ti;
+  }
+  distance_text.clear();
 }

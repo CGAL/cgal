@@ -136,6 +136,8 @@ protected:
   void contextMenuEvent(QContextMenuEvent*);
   //!Defines the behaviour for the key release events
   void keyReleaseEvent(QKeyEvent *);
+  //!Clears the distance display
+  void clearDistancedisplay();
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.
