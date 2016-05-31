@@ -18,13 +18,13 @@
 //
 // Author(s)     : Quincy Tse, Weisheng Si
 
-/* _Plane_Scan_Tree.h
+/* Plane_scan_tree_impl.h
  *
  * This header implements the details of the class Plane_Scan_Tree.
  */
 
-#ifndef CGAL__PLANE_SCAN_TREE_2_H
-#define CGAL__PLANE_SCAN_TREE_2_H
+#ifndef CGAL_PLANE_SCAN_TREE_IMPL_H
+#define CGAL_PLANE_SCAN_TREE_IMPL_H_H
 
 #include <stdexcept>
 

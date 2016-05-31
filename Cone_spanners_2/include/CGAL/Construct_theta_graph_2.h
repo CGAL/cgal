@@ -32,7 +32,7 @@
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Compute_cone_boundaries_2.h>
 #include <CGAL/Cone_spanners_2/Less_by_direction_2.h>
-#include <CGAL/Cone_spanners_2/Plane_Scan_Tree.h>
+#include <CGAL/Cone_spanners_2/Plane_scan_tree.h>
 
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>

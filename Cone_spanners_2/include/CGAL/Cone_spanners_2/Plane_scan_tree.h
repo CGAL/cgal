@@ -18,22 +18,22 @@
 //
 // Author(s)     : Quincy Tse, Weisheng Si
 
-/* Plane_Scan_Tree.h
+/* Plane_scan_tree.h
  *
  * This header defines the class Plane_Scan_Tree, the data structure for the balanced search tree used in
  * the Narasimhan and Smid's algorithm for constructing Theta graph.
- * Implementations of members in this class can be found in _Plane_Scan_Tree.h.
+ * Implementations of members in this class can be found in Plane_scan_tree_impl.h.
  */
 
-#ifndef CGAL_PLANE_SCAN_TREE_2_H
-#define CGAL_PLANE_SCAN_TREE_2_H
+#ifndef CGAL_PLANE_SCAN_TREE_H
+#define CGAL_PLANE_SCAN_TREE_H
 
 #include <iostream>
 #include <algorithm>
 #include <functional>
 #include <cstring>
 
-#include <CGAL/Cone_spanners_2/_Plane_Scan_Tree.h>
+#include <CGAL/Cone_spanners_2/Plane_scan_tree_impl.h>
 
 namespace CGAL {
 
