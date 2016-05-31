@@ -52,9 +52,9 @@ template <typename Traits_, typename Graph_>
 class Construct_yao_graph_2 {
 
 public:
-	/*! the geometric traits class. */
+    /*! the geometric traits class. */
     typedef Traits_      Traits;
-	/*! the specific type of `boost::adjacency_list`. */
+    /*! the specific type of `boost::adjacency_list`. */
     typedef Graph_                        Graph;
 
   /*! the point type */
@@ -78,7 +78,7 @@ private:
 
 public:
     /*! 
-	  \brief    Constructor.
+      \brief    Constructor.
 
       \param k     Number of cones to divide space into
       \param initial_direction  A direction denoting one of the rays dividing the
@@ -87,7 +87,7 @@ public:
      */
     Construct_yao_graph_2 (unsigned int k,
                            Direction_2 initial_direction = Direction_2(1,0) 
-						  ): cone_number(k), rays(std::vector<Direction_2>(k))
+                          ): cone_number(k), rays(std::vector<Direction_2>(k))
 
     {
         if (k<2) {
@@ -148,7 +148,7 @@ public:
     }
 
     /*! \brief outputs the set of directions to the iterator `result`.
-	       
+           
       \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
         \return `result`
     */
@@ -202,17 +202,17 @@ protected:
             typename Point_set::iterator it2 = pst.find(*it);
             // Find minimum in pst from last ended node - O(n)
             typename Point_set::iterator min = std::min_element(++it2, pst.end(), comp);
-			// add an edge
+            // add an edge
             if (min != pst.end()) {
                 typename Graph_::edge_descriptor existing_e;
-			    bool                    existing;
-				// check whether the edge already exists
-				boost::tie(existing_e, existing)=boost::edge(*it, *min, g);
-				if (!existing)
+                bool                    existing;
+                // check whether the edge already exists
+                boost::tie(existing_e, existing)=boost::edge(*it, *min, g);
+                if (!existing)
                     boost::add_edge(*it, *min, g);
                 //else
-				 //   std::cout << "Edge " << *it << ", " << *min << " already exists!" << std::endl;
-			}
+                 //   std::cout << "Edge " << *it << ", " << *min << " already exists!" << std::endl;
+            }
 
         } // end of for
 
@@ -226,10 +226,10 @@ protected:
         const Point_2& p;
         const Graph_& g;
 
-		// constructor
+        // constructor
         Less_euclidean_distance(const Point_2&p, const Graph_& g) : p(p), g(g) {}
 
-		// operator
+        // operator
         bool operator() (const typename Point_set::iterator::value_type& i, const typename Point_set::iterator::value_type& j) {
             const Point_2& p1 = g[i];
             const Point_2& p2 = g[j];

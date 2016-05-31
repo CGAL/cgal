@@ -61,10 +61,10 @@ namespace ThetaDetail {
  *        University Press, 2007, p. 71
  */
 template <typename Key, 
-		  typename T,
-		  typename Comp=std::less<Key>, 
-		  typename VComp=std::less<const T>
-	      >
+          typename T,
+          typename Comp=std::less<Key>, 
+          typename VComp=std::less<const T>
+          >
 class Plane_Scan_Tree {
   private:
     typedef _Node<Key, T, Comp, VComp>            _node_type;
@@ -97,14 +97,14 @@ class Plane_Scan_Tree {
         : less (comp), vless (vcomp), root (NULL), m_min (NULL),
           m_max (NULL), _size (0) {}
 
-	/* Constructor */
+    /* Constructor */
     template <typename InputIterator>
     Plane_Scan_Tree (InputIterator first, InputIterator last,
                     const key_compare& comp = key_compare(),
                     const value_compare& vcomp = value_compare())
         : less (comp), vless (vcomp), root (NULL), m_min (NULL),
           m_max (NULL), _size (0) 
-	{
+    {
       // TODO - Inplement a more efficient algorithm that builds the tree bottom up
       for (;first != last; ++first)
         add (first->first, first->second);
@@ -160,13 +160,13 @@ class Plane_Scan_Tree {
       _size++;
     }
 
-	/* find a key */
+    /* find a key */
     iterator find(const key_type& k) {
       _leaf_type* l = root->leafNode(k);
       return iterator (l, k);
     }
 
-	/* find a constant key */
+    /* find a constant key */
     const_iterator find(const key_type& k) const {
       _leaf_type* l = root->leafNode(k);
       return const_iterator (l, k);
@@ -242,22 +242,22 @@ class Plane_Scan_Tree {
 
   protected:
   private:
-	/* key_compare funtor */
+    /* key_compare funtor */
     const key_compare less;
 
-	/* value_compare funtor */
+    /* value_compare funtor */
     const value_compare vless;
 
-	/* pointer to root */
+    /* pointer to root */
     _node_type* root;
 
-	/* pointer to m_min */
+    /* pointer to m_min */
     _leaf_type* m_min;
 
-	/* pointer to m_max */
+    /* pointer to m_max */
     _leaf_type* m_max;
 
-	/* size of the tree */
+    /* size of the tree */
     size_t _size;
 };
 

@@ -54,10 +54,10 @@ class Construct_theta_graph_2 {
 
 public:
 
-	/*! the geometric traits class.  */
+    /*! the geometric traits class.  */
     typedef Traits_ Traits;
 
-	/*! the specific type of `boost::adjacency_list`. */
+    /*! the specific type of `boost::adjacency_list`. */
     typedef Graph_                           Graph;
 
   /*! the point type */
@@ -91,7 +91,7 @@ public:
      */
     Construct_theta_graph_2 (unsigned int k,
                              Direction_2 initial_direction = Direction_2(1,0) 
-							): cone_number(k), rays(std::vector<Direction_2>(k))
+                            ): cone_number(k), rays(std::vector<Direction_2>(k))
 
     {
         if (k<2) {
@@ -100,21 +100,21 @@ public:
         }
 
         /* Initialize a functor, specialization will happen here depending on the kernel type to 
-		 compute the cone boundaries either exactly or inexactly */
+         compute the cone boundaries either exactly or inexactly */
         Compute_cone_boundaries_2<Traits> compute_cones;
         // compute the rays using the functor
         compute_cones(k, initial_direction, rays.begin());
     }
 
     /* \brief Copy constructor. As commented by Michael Hemmer, copy constructor is not needed for
-	          a functor.
+              a functor.
        \param x  another Construct_theta_graph_2 object to copy from.
 
        Construct_theta_graph_2 (const Construct_theta_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
     */
 
     /*! 
-	 \brief Function operator to construct a Theta graph.
+     \brief Function operator to construct a Theta graph.
 
      \details For the details of this algorithm, please refer to the User Manual.
      
@@ -128,7 +128,7 @@ public:
                        const PointInputIterator& end,
                        Graph_& g) {
 
-		// add vertices into the graph
+        // add vertices into the graph
         for (PointInputIterator curr = start; curr != end; ++curr) {
             g[boost::add_vertex(g)] = *curr;
         }
@@ -136,7 +136,7 @@ public:
         unsigned int i;   // ray index of the cw ray
         unsigned int j;   // index of the ccw ray
 
-		// add edges into the graph for every cone
+        // add edges into the graph for every cone
         for (i = 0; i < cone_number; i++) {
             j = (i+1) % cone_number;
             add_edges_in_cone(rays[i], rays[j], g);
@@ -156,14 +156,14 @@ public:
       \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
        \return `result`
      */
-	template<class DirectionOutputIterator>
-	DirectionOutputIterator directions(DirectionOutputIterator result) {
-		typename std::vector<Direction_2>::iterator it;
-		for (it=rays.begin(); it!=rays.end(); it++) {
-			*result++ = *it;
-		}
-		return result;
-	}
+    template<class DirectionOutputIterator>
+    DirectionOutputIterator directions(DirectionOutputIterator result) {
+        typename std::vector<Direction_2>::iterator it;
+        for (it=rays.begin(); it!=rays.end(); it++) {
+            *result++ = *it;
+        }
+        return result;
+    }
 
 protected:
 
@@ -171,7 +171,7 @@ protected:
 
      \param cwBound      The direction of the clockwise boundary of the cone.
      \param ccwBound     The direction of the counter-clockwise boundary.
-	 \param g            The Theta graph to be built.
+     \param g            The Theta graph to be built.
     */
     void add_edges_in_cone(const Direction_2& cwBound, const Direction_2& ccwBound, Graph_& g) {
         if (ccwBound == cwBound) {
@@ -204,7 +204,7 @@ protected:
         typedef CGAL::ThetaDetail::Plane_Scan_Tree<typename Graph_::vertex_descriptor,
                                                    typename Graph_::vertex_descriptor,
                                                    Less_by_direction, 
-												   Less_by_direction > PSTree;
+                                                   Less_by_direction > PSTree;
         PSTree pst(orderD2, orderMid);
 #ifndef NDEBUG
 #ifdef REALLY_VERBOSE_TREE_STATE_AFTER_EVERY_TREE_UPDATE__SAFE_TO_REMOVE_FOR_PRODUCTION
@@ -219,15 +219,15 @@ protected:
             pst.add(*it, *it);
             const typename Graph_::vertex_descriptor *const ri = pst.minAbove(*it);
             if ( ri != NULL ) {
-				typename Graph_::edge_descriptor existing_e;
-				bool                    existing;
-				// check whether the edge already exists
-				boost::tie(existing_e, existing)=boost::edge(*it, *ri, g);
-				if (!existing) 
+                typename Graph_::edge_descriptor existing_e;
+                bool                    existing;
+                // check whether the edge already exists
+                boost::tie(existing_e, existing)=boost::edge(*it, *ri, g);
+                if (!existing) 
                     boost::add_edge(*it, *ri, g);
-				//else
-				//	std::cout << "Edge " << *it << ", " << *ri << " already exists!" << std::endl;
-			}
+                //else
+                //    std::cout << "Edge " << *it << ", " << *ri << " already exists!" << std::endl;
+            }
 
 #ifndef NDEBUG
 #ifdef REALLY_VERBOSE_TREE_STATE_AFTER_EVERY_TREE_UPDATE__SAFE_TO_REMOVE_FOR_PRODUCTION

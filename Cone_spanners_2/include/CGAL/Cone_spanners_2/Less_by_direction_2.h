@@ -82,7 +82,7 @@ public:
         }
 
         /* otherwise, outcome == CGAL::EQUAL, ties will be broken by a second order 
-		 * according to the ccw90(base_line) direction.
+         * according to the ccw90(base_line) direction.
          */
         // define a rotation of counter clockwise 90
         Transformation ccw90(0, -1, 1,  0);

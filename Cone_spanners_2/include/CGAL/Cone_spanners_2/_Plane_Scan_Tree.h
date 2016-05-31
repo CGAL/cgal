@@ -159,8 +159,8 @@ class _Leaf : public _Node<Key, T, Comp, VComp> {
     }
 
     virtual bool isLeaf() const {
-		return true;
-	}
+        return true;
+    }
 
     virtual _leaf_type* leafNode(const key_type&) {
       return this;
@@ -293,8 +293,8 @@ class _Internal : public _Node<Key, T, Comp, VComp> {
     }
 
     virtual bool isLeaf() const {
-		return false;
-	}
+        return false;
+    }
 
     virtual _leaf_type* leafNode(const key_type& k) {
       int i = 0;

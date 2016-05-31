@@ -192,7 +192,7 @@ in the `boost::adjacency_list` object. This template function has the following 
 
 \code{.cpp}
     template <typename Graph_>
-	void gnuplot_output_2(const Graph_& g, const std::string& prefix);
+    void gnuplot_output_2(const Graph_& g, const std::string& prefix);
 \endcode
 
 The template parameter `Graph_` specifies the type of the graph to be plotted. For this function to work,
@@ -284,7 +284,7 @@ The following two files will be generated for \gnuplot:
 - `t4n20.v`:  This file contains the \f$(x, y)\f$-coordinates of the 20 vertices. 
 - `t4n20.plt`: This is the script to be loaded by \gnuplot. It will read 
           `t4n20.v` to plot the vertices. It will also plot all the edges, 
-		  which are included in this script itself.
+          which are included in this script itself.
 
 \cgalFigureRef{f-t4} shows the Theta graph plotted when the above `t4n20.plt` is loaded by \gnuplot.
   
