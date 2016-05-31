@@ -73,9 +73,16 @@ void split_in_polylines(Graph& G, Kernel)
     vertex_descriptor v = *it;
     bool split = false;
 
-    if(out_degree(v,G) > 2) {
+    const std::size_t out_degree_v_G = out_degree(v,G);
+
+    if(out_degree_v_G == 0) {
+      remove_vertex(v, G);
+      continue;
+    }
+
+    if(out_degree_v_G > 2) {
       split = true;
-    } else if(out_degree(v, G) == 2) {
+    } else if(out_degree_v_G == 2) {
       out_edge_iterator out_edge_it, out_edges_end;
       boost::tie(out_edge_it, out_edges_end) = out_edges(v, G);
 

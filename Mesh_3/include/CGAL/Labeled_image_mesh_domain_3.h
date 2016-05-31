@@ -42,7 +42,7 @@ namespace CGAL {
  */
 template<class Image,
          class BGT,
-         typename Image_word_type = unsigned char,
+         typename Image_word_type_ = unsigned char,
          typename Subdomain_index = int,
          class Null_subdomain_index = Default,
          class Wrapper_ = Default >
@@ -51,7 +51,7 @@ class Labeled_image_mesh_domain_3
 <typename Default::Get
    <Wrapper_,
     Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
-                                              Image_word_type,
+                                              Image_word_type_,
                                               Subdomain_index>
     >::type,
  BGT,
@@ -59,6 +59,7 @@ class Labeled_image_mesh_domain_3
  >
 {
 public:
+  typedef Image_word_type_ Image_word_type;
   typedef typename Default::Get
     <Wrapper_,
      Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
