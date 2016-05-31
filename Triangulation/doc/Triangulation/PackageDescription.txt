@@ -5,6 +5,9 @@
 /// \defgroup PkgTriangulationsTriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulations
 
+/// \defgroup PkgTriangulationsTraitsClasses Traits Classes
+/// \ingroup PkgTriangulations
+
 /// \defgroup PkgTriangulationsVertexCellClasses Vertex, Face and Cell Classes
 /// \ingroup PkgTriangulations
 
@@ -106,6 +109,10 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 - `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`
 - `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
 - `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
+
+## Traits Classes ##
+
+-  `CGAL::Regular_triangulation_euclidean_traits<K>`
 
 ## Enums ##
 

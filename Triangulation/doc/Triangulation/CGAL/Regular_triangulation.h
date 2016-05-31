@@ -38,11 +38,12 @@ tag `CGAL::Default` as the second parameter.
 
 \sa `Delaunay_triangulation`
 \sa `Triangulation_data_structure`
+\sa `Regular_triangulation_euclidean_traits`
 
 */
 template< typename RegularTriangulationTraits_, typename TriangulationDataStructure_ >
 class Regular_triangulation
-  : public Triangulation
+  : public Triangulation<Regular_triangulation_euclidean_traits<RegularTriangulationTraits_>, TriangulationDataStructure_>
 {
 public:
 
