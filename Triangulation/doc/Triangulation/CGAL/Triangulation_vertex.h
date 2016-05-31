@@ -44,6 +44,11 @@ public:
 /// @{
 
 /*!
+The point type.
+*/
+typedef TriangulationTraits_::Point_d Point;
+
+/*!
 The type of the additional data stored in the
 vertex. If you read a `Triangulation_vertex` from a stream (a file) or write a `Triangulation_vertex` to a stream, then streaming operators `<<` and `>>` must be provided for this
 type.
