@@ -143,12 +143,12 @@ int main(int argc, char* argv[])
   const char* filename_polyhedron =
     (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   test_polyhedron<CGAL::Polyhedron_3<Epic>,Epic>(filename_polyhedron);
-  test_polyhedron<CGAL::Polyhedron_3<Epec>,Epec>(filename_polyhedron);
+  //test_polyhedron<CGAL::Polyhedron_3<Epec>,Epec>(filename_polyhedron);
 
   const char* filename_surface_mesh =
     (argc > 1) ? argv[1] : "data/elephant.off";
   test_closed_surface_mesh<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
-  test_closed_surface_mesh<CGAL::Surface_mesh<Epec::Point_3>,Epec>(filename_surface_mesh);
+  //test_closed_surface_mesh<CGAL::Surface_mesh<Epec::Point_3>,Epec>(filename_surface_mesh);
 
   std::cerr << "All done." << std::endl;
   return 0;
