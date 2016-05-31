@@ -26,7 +26,7 @@
 #include <utility> // std::swap
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
-#include <CGAL/internal/Mesh_3/split_in_polylines.h>
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/internal/Mesh_3/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Labeled_image_mesh_domain_3.h> // for
@@ -38,6 +38,37 @@
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 
 namespace CGAL {
+
+namespace Mesh_3{
+template<typename P, typename G>
+struct Polyline_visitor
+{
+  std::vector<std::vector<P> >& polylines;
+  G& graph;
+  Polyline_visitor(typename std::vector<std::vector<P> >& lines, G& p_graph)
+    : polylines(lines), graph(p_graph)
+  {}
+
+  void start_new_polyline()
+  {
+    std::vector<P> V;
+    polylines.push_back(V);
+  }
+
+  void add_node(typename boost::graph_traits<G>::vertex_descriptor vd)
+  {
+    std::vector<P>& polyline = polylines.back();
+    polyline.push_back(graph[vd]);
+  }
+
+  void end_polyline()
+  {
+    // ignore degenerated polylines
+    if(polylines.back().size() < 2)
+      polylines.resize(polylines.size() - 1);
+  }
+};
+}//namespace Mesh_3
 
 // this function is overloaded for when `PolylineInputIterator` is `int`.
 template <typename K,
@@ -457,7 +488,8 @@ case_4:
                       existing_polylines_begin, existing_polylines_end,
                       K());
 
-  internal::Mesh_3::split_in_polylines(graph, polylines, K());
+  Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
+  split_graph_into_polylines(graph, visitor);
 }
 
 
