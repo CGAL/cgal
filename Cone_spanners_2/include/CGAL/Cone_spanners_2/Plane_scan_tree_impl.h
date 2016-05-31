@@ -20,7 +20,7 @@
 
 /* Plane_scan_tree_impl.h
  *
- * This header implements the details of the class Plane_Scan_Tree.
+ * This header implements the details of the class Plane_scan_tree.
  */
 
 #ifndef CGAL_PLANE_SCAN_TREE_IMPL_H
@@ -35,12 +35,12 @@ namespace CGAL {
  */
 namespace ThetaDetail {
 
-/* Contains the internal data structure for the Plane_Scan_Tree.
+/* Contains the internal data structure for the Plane_scan_tree.
  *
- * Plane_Scan_Tree is a ternary B+ tree using linked structures.
+ * Plane_scan_tree is a ternary B+ tree using linked structures.
  */
 template < typename Key, typename T, typename Comp, typename VComp >
-class Plane_Scan_Tree;
+class Plane_scan_tree;
 
 template < typename Key, typename T, typename Comp=std::less<Key>, typename VComp=std::less<const T> >
 class _Node;
@@ -68,7 +68,7 @@ class _Node {
     typedef _Node<Key, T, Comp, VComp>          _node_type;
     typedef _Leaf<Key, T, Comp, VComp>          _leaf_type;
     typedef _Internal<Key, T, Comp, VComp>      _internal_type;
-    typedef Plane_Scan_Tree<Key, T, Comp, VComp>  tree_type;
+    typedef Plane_scan_tree<Key, T, Comp, VComp>  tree_type;
 
     /* Constructor */
     _Node(const key_compare& less, const value_compare& vless, tree_type *const t)

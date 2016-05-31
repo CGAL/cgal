@@ -201,7 +201,7 @@ protected:
         std::sort(S.begin (), S.end (), orderD1);
 
         // Step 2: Initialise an empty set to store vertices sorted by orderD2
-        typedef CGAL::ThetaDetail::Plane_Scan_Tree<typename Graph_::vertex_descriptor,
+        typedef CGAL::ThetaDetail::Plane_scan_tree<typename Graph_::vertex_descriptor,
                                                    typename Graph_::vertex_descriptor,
                                                    Less_by_direction, 
                                                    Less_by_direction > PSTree;
@@ -241,7 +241,7 @@ protected:
 // ...etc...
 //
 // The tree output shades the new value added, and states what action was taken.
-            std::cout << "graph Plane_Scan_Tree {" << std::endl <<
+            std::cout << "graph Plane_scan_tree {" << std::endl <<
             pst << std::endl << std::endl;
             int j = 1;
             for (auto rit = S.rbegin(); rit <= it; ++rit) {

@@ -20,7 +20,7 @@
 
 /* Plane_scan_tree.h
  *
- * This header defines the class Plane_Scan_Tree, the data structure for the balanced search tree used in
+ * This header defines the class Plane_scan_tree, the data structure for the balanced search tree used in
  * the Narasimhan and Smid's algorithm for constructing Theta graph.
  * Implementations of members in this class can be found in Plane_scan_tree_impl.h.
  */
@@ -65,7 +65,7 @@ template <typename Key,
           typename Comp=std::less<Key>, 
           typename VComp=std::less<const T>
           >
-class Plane_Scan_Tree {
+class Plane_scan_tree {
   private:
     typedef _Node<Key, T, Comp, VComp>            _node_type;
     typedef typename  _node_type::_leaf_type      _leaf_type;
@@ -92,14 +92,14 @@ class Plane_Scan_Tree {
     typedef           size_t                    size_type;
 
     /* Explicit Constructor. */
-    explicit Plane_Scan_Tree (const key_compare& comp = key_compare(),
+    explicit Plane_scan_tree (const key_compare& comp = key_compare(),
                             const value_compare& vcomp = value_compare())
         : less (comp), vless (vcomp), root (NULL), m_min (NULL),
           m_max (NULL), _size (0) {}
 
     /* Constructor */
     template <typename InputIterator>
-    Plane_Scan_Tree (InputIterator first, InputIterator last,
+    Plane_scan_tree (InputIterator first, InputIterator last,
                     const key_compare& comp = key_compare(),
                     const value_compare& vcomp = value_compare())
         : less (comp), vless (vcomp), root (NULL), m_min (NULL),
@@ -113,7 +113,7 @@ class Plane_Scan_Tree {
     /* Destructor. This will recursively destroy all nodes in the tree, making
      * all iterators and pointers to values stored in this tree invalid.
      */
-    ~Plane_Scan_Tree () {
+    ~Plane_scan_tree () {
       delete root;
       root = NULL;
       m_min = NULL;
@@ -124,7 +124,7 @@ class Plane_Scan_Tree {
 /*
 #ifdef GXX11
     /// Move constructor.  
-    Plane_Scan_Tree (Plane_Scan_Tree<Key, T, Comp>&& x) : less (x.less), _size(x._size) {
+    Plane_scan_tree (Plane_scan_tree<Key, T, Comp>&& x) : less (x.less), _size(x._size) {
       root = x.root;
       x.root = NULL;
 
@@ -234,7 +234,7 @@ class Plane_Scan_Tree {
     friend class _Leaf<Key, T, Comp, VComp>;
     friend class _Internal<Key, T, Comp, VComp>;
 
-    friend std::ostream& operator<< (std::ostream& os, const Plane_Scan_Tree<Key, T, Comp, VComp>& pst) {
+    friend std::ostream& operator<< (std::ostream& os, const Plane_scan_tree<Key, T, Comp, VComp>& pst) {
       os << *pst.root << std::endl;
 
       return os;
