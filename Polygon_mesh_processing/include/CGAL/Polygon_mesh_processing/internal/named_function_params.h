@@ -46,9 +46,12 @@ namespace CGAL{
   enum weight_calculator_t          { weight_calculator };
   enum all_default_t                { all_default };
 
+  struct dummy_named_params {};
+
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct pmp_bgl_named_params
     : CGAL::cgal_bgl_named_params<T, Tag, Base>
+    , dummy_named_params
   {
     typedef CGAL::cgal_bgl_named_params<T, Tag, Base> base;
     typedef pmp_bgl_named_params self;

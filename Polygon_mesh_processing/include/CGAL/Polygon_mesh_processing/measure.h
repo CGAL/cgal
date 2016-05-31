@@ -25,6 +25,9 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/identity.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -307,12 +310,18 @@ namespace Polygon_mesh_processing {
     return result;
   }
 
-  template<typename FaceRange, typename TriangleMesh > 
-  double
+  template<typename FaceRange, typename TriangleMesh>
+  typename CGAL::Kernel_traits<
+    typename boost::mpl::eval_if<
+      boost::is_base_of<CGAL::dummy_named_params, TriangleMesh>,
+      boost::mpl::identity<TriangleMesh>,
+      property_map_value<TriangleMesh, CGAL::vertex_point_t>
+    >::type
+  >::Kernel::FT
   area(FaceRange face_range, const TriangleMesh& tmesh)
   {
-    return to_double(area(face_range, tmesh,
-                          CGAL::Polygon_mesh_processing::parameters::all_default()));
+    return area(face_range, tmesh,
+                CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   /**
@@ -360,7 +369,8 @@ namespace Polygon_mesh_processing {
     CGAL::vertex_point_t>::type>::Kernel::FT
   area(const TriangleMesh& tmesh)
   {
-    return area(faces(tmesh), tmesh);
+    return area(faces(tmesh), tmesh
+      , CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   /**
