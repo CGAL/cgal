@@ -14,14 +14,13 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template <class K>
-int test(int argc, char** argv)
+int test_surface_mesh(const char* filename)
 {
   typedef typename K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
-  std::ifstream input(filename);
   Mesh mesh;
 
+  std::ifstream input(filename);
   if (!input || !(input >> mesh)){
     std::cerr << "Error: can not read file.";
     return 1;
@@ -53,7 +52,9 @@ int test(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-  assert(test<Epic>(argc,argv)==0);
-  assert(test<Epec>(argc,argv)==0);
+  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+
+  assert(test_surface_mesh<Epic>(filename) == 0);
+  assert(test_surface_mesh<Epec>(filename) == 0);
   return 0;
 }
