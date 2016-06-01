@@ -14,8 +14,9 @@ of bare points.
 
 In addition to the types described below, the following predicates and functors
 are adapted so that they can be called
-with weighted points as parameters. In practice, the functors from the
-base class `K` are called, ignoring the weights.
+with weighted points instead of bare points as parameters.
+In practice, the functors from the base class `K` are called,
+ignoring the weights.
 - `Orientation_d`
 - `Construct_flat_orientation_d`
 - `In_flat_orientation_d`
