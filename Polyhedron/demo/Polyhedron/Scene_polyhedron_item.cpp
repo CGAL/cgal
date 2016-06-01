@@ -47,22 +47,22 @@ struct Face_info {
     bool is_external;
 };
 typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
-P_traits>        Vb;
+P_traits>                                                            Vb;
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-P_traits>          Fb1;
+P_traits>                                                            Fb1;
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::Exact_predicates_tag                                    Itag;
+typedef CGAL::Exact_predicates_tag                                   Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
 TDS,
-Itag>             CDTbase;
-typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+Itag>                                                                CDT;
+
 
 //Make sure all the facets are triangles
-typedef Polyhedron::Traits	    Kernel;
-typedef Kernel::Point_3	    Point;
-typedef Kernel::Vector_3	    Vector;
-typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+typedef Polyhedron::Traits	                           Kernel;
+typedef Kernel::Point_3	                                   Point;
+typedef Kernel::Vector_3	                           Vector;
+typedef Polyhedron::Halfedge_around_facet_circulator       HF_circulator;
 typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
 //Used to triangulate the AABB_Tree
 class Primitive
@@ -198,6 +198,7 @@ struct Scene_polyhedron_item_priv{
   };
   // Initialization
 };
+
 
 
 const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
@@ -752,7 +753,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
       }
       else
       {
-        triangulate_facet(f, nf, nv_pmap, colors_only);
+       triangulate_facet(f, nf, nv_pmap, colors_only);
       }
 
     }
