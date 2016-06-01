@@ -208,35 +208,34 @@ literature. However, we use the term <em>face</em> to describe a
 in \f$ \cal C\f$.
 
 The curves in \f$ \cal C\f$ can intersect each other (a single curve
-may also be self-intersecting or may be comprised of several
-disconnected branches) and are not necessarily \f$
-x\f$-monotone.\cgalFootnote{A continuous planar curve \f$ C\f$ is
-<em>\f$ x\f$-monotone</em> if every vertical line intersects it at most
-once. For example, a non-vertical line segment is always \f$
-x\f$-monotone and so is the graph of any continuous function \f$ y =
-f(x)\f$. For convenience, we treat vertical line segments as <em>weakly
-\f$ x\f$-monotone</em>, as there exists a single vertical line that
-overlaps them. A circle of radius \f$ r\f$ centered at \f$ (x_0,
-y_0)\f$ is not \f$ x\f$-monotone, as the vertical line \f$ x = x_0\f$
-intersects it at \f$ (x_0, y_0 - r)\f$ and at \f$ (x_0, y_0 + r)\f$.}
-We construct a collection \f$ \cal C''\f$ of \f$ x\f$-monotone
-subcurves that are pairwise disjoint in their interiors in two steps
-as follows. First, we decompose each curve in \f$ \cal C\f$ into
-maximal \f$ x\f$-monotone subcurves (and possibly isolated points),
-obtaining the collection \f$ \cal C'\f$. Note that an \f$
-x\f$-monotone curve cannot be self-intersecting. Then, we decompose
-each curve in \f$ \cal C'\f$ into maximal connected subcurves not
-intersecting any other curve (or point) in \f$ \cal C'\f$. The
-collection \f$ \cal C''\f$ may also contain isolated points, if the
-curves of \f$ \cal C\f$ contain such points. The arrangement induced
-by the collection \f$ \cal C''\f$ can be conveniently embedded as a
-planar graph, whose vertices are associated with curve endpoints or
-with isolated points, and whose edges are associated with
-subcurves. It is easy to see that \f$ \cal A(\cal C) = \cal A(\cal
-C'')\f$. This graph can be represented using a <em>doubly-connected
-edge list</em> data-structure (\sc{Dcel} for short), which consists of
-containers of vertices, edges and faces and maintains the incidence
-relations among these cells.
+may also be self-intersecting or may comprise several disconnected
+branches) and are not necessarily \f$ x\f$-monotone.\cgalFootnote{A
+continuous planar curve \f$ C\f$ is <em>\f$ x\f$-monotone</em> if
+every vertical line intersects it at most once. For example, a
+non-vertical line segment is always \f$ x\f$-monotone and so is the
+graph of any continuous function \f$ y = f(x)\f$. For convenience, we
+treat vertical line segments as <em>weakly \f$ x\f$-monotone</em>, as
+there exists a single vertical line that overlaps them. A circle of
+radius \f$ r\f$ centered at \f$ (x_0, y_0)\f$ is not \f$
+x\f$-monotone, as the vertical line \f$ x = x_0\f$ intersects it at
+\f$ (x_0, y_0 - r)\f$ and at \f$ (x_0, y_0 + r)\f$.}  We construct a
+collection \f$ \cal C''\f$ of \f$ x\f$-monotone subcurves that are
+pairwise disjoint in their interiors in two steps as follows. First,
+we decompose each curve in \f$ \cal C\f$ into maximal \f$
+x\f$-monotone subcurves (and possibly isolated points), obtaining the
+collection \f$ \cal C'\f$. Note that an \f$ x\f$-monotone curve cannot
+be self-intersecting. Then, we decompose each curve in \f$ \cal C'\f$
+into maximal connected subcurves not intersecting any other curve (or
+point) in \f$ \cal C'\f$. The collection \f$ \cal C''\f$ may also
+contain isolated points, if the curves of \f$ \cal C\f$ contain such
+points. The arrangement induced by the collection \f$ \cal C''\f$ can
+be conveniently embedded as a planar graph, whose vertices are
+associated with curve endpoints or with isolated points, and whose
+edges are associated with subcurves. It is easy to see that \f$ \cal
+A(\cal C) = \cal A(\cal C'')\f$. This graph can be represented using a
+<em>doubly-connected edge list</em> data-structure (\sc{Dcel} for
+short), which consists of containers of vertices, edges and faces and
+maintains the incidence relations among these cells.
 
 The \sc{Dcel} data-structure represents each edge using a pair of
 directed <em>halfedges</em>, one going from the
@@ -1098,6 +1097,48 @@ disk, and hence an \sc{EDcel} data-structure suffices for representing
 arrangements on these surfaces. The croissant is, at the pinch point,
 not locally homeomorphic to a disk, and hence a more general
 cell-tuple data structure than an \sc{EDcel} would be needed.
+
+A curve \f$\gamma\f$ is a continuous function \f$\gamma: I \rightarrow
+\Phi\f$, where \f$I\f$ is an open, half-open, or closed interval with
+endpoints 0 and 1, and \f$\gamma\f$ is injective except for at a
+finite number of points. If \f$0 \not\in I\f$, \f$\lim_{t \rightarrow
+0+} \gamma(t)\f$ exists (in the closure of \f$\Phi\f$) and lies in an
+open side of the boundary. Similarly, if \f$1 \not\in I\f$, \f$\lim_{t
+\rightarrow 1-} \gamma(t)\f$ exists and lies in an open side of the
+boundary. A curve \f$C\f$ in \f$S\f$ is the image of a curve
+\f$\gamma\f$ in the domain.
+
+A curve is <em>closed in the domain</em> if \f$\gamma(0) =
+\gamma(1)\f$; in particular, \f$0 \in I\f$ and \f$1 \in I\f$. A curve
+is <em>closed in the surface \f$S\f$ (or simply closed)</em> if
+\f$\phi_S(\gamma(0)) = \phi_S(\gamma(1))\f$. A curve \f$\gamma\f$ has
+two <em>ends</em>, the 0-end \f$\langle \gamma,0 \rangle\f$ and the
+1-end \f$\langle \gamma,1 \rangle\f$. If \f$d \in I\f$, the
+\f$d\f$-end has a geometric interpretation. It is a point in
+\f$\Phi\f$. If \f$d \not\in I\f$, the \f$d\f$-end has no geometric
+interpretation. You may think of it as a point on an open side of the
+domain or an initial or terminal segment of \f$\gamma\f$. If \f$d
+\not\in I\f$, we say that the \f$d\f$-end of the curve is open. The
+equator curve on the sphere in standard parameterization is given by
+\f$\gamma(t) = (\pi(2t - 1),0)\f$ for \f$t \in [0,1]\f$. The
+\f$0\f$-end of \f$\gamma\f$ is the point \f$(-\pi,0)\f$ in \f$\Phi\f$
+and a point on the equator of the sphere. It is closed on the sphere,
+but non-closed in \f$\Phi\f$. The diagonal \f$(u,u)\f$ in the plane
+is, for example, given by \f$\gamma(t) = (u(t),v(t))\f$ and \f$u(t) =
+v(t) = (t - 1/2)/(t(1-t))\f$.  Both ends of this curve are open. The
+\f$d\f$-end of a curve \f$\gamma\f$ is incident to the left side if
+either \f$d \in I\f$ and \f$\gamma(d)\f$ lies on the left side or \f$d
+\not\in I\f$ and \f$\lim_{t \rightarrow d} \gamma(t)\f$ lies on the
+left side, which is then an open side. Similarly for the other sides.
+
+A <em>strongly \f$u\f$-monotone curve</em> is the image of a curve
+\f$\gamma\f$, such that if \f$t_1 < t_2\f$, then \f$u(\gamma(t_1)) <
+u(\gamma(t_2))\f$. A <em>vertical curve</em> is the image of a curve
+\f$\gamma\f$, such that \f$u(\gamma(t)) = c\f$ for all \f$t \in I\f$
+and some \f$c \in U\f$ and \f$v(\gamma(t_1)) < v(\gamma(t_2))\f$ for
+\f$t_1 < t_2\f$. For instance, every Meridian curve of a sphere
+parameterized as above is vertical. A <em>\f$u\f$-monotone curve</em>
+is either vertical or strongly \f$u\f$-monotone.
 
 \subsection aos_ssec-curved_surfaces-aos_class The Arrangement on Surface Class Template
 
@@ -2130,13 +2171,13 @@ using the following procedure:
 
 \section aos_sec-geom_traits The Geometry Traits
 
-As mentioned in the introduction, a traits class encapsulates the
-definitions of the geometric entities and implements the geometric
-predicates and constructions needed by instances of the
-`Arrangement_on_surface_2` class template and by the peripheral
-algorithms that operate on objects of such instances. Observe that
-that there are different levels of requirements from the traits class;
-namely, the traits class can model different concept refinement-levels.
+A traits class encapsulates the definitions of the geometric entities
+and implements the geometric predicates and constructions needed by
+instances of the `Arrangement_on_surface_2` class template and by the
+peripheral algorithms that operate on objects of such
+instances. Observe that that there are different levels of
+requirements from the traits class; namely, the traits class can model
+different concept refinement-levels.
 
 This section is roughly made of three parts. The first part desribes
 the refinement hierarchy of the arrangement-traits conepts. The seond
@@ -2265,14 +2306,14 @@ define an additional type called `Multiplicity`.  An object of this
 type indicates the multiplicity of the intersection point of two
 curves, also referred to as the <em>intersection
 number</em>.\cgalFootnote{See,
-e.g.,~http://en.wikipedia.org/wiki/Intersection_number for more
+e.g., http://en.wikipedia.org/wiki/Intersection_number for more
 information about intersection numbers.} Loosely speaking, if two
 curves intersect at a point \f$p\f$ but have different tangents (first
-derivatives) at \f$p\f$, \f$p\f$ is of multiplicity~1. If the curve
+derivatives) at \f$p\f$, \f$p\f$ is of multiplicity 1. If the curve
 tangents are equal but their curvatures (second derivatives) are not,
 \f$p\f$ is of multiplicity 2, and so on. The multiplicity of points of
 intersection between line segments is always 1, and the multiplicity
-of a point of intersection between two polylines is~1 if the
+of a point of intersection between two polylines is 1 if the
 intersection point is interior to the corresponding two line segments
 of the polylines, and undefined (coded as 0) otherwise. A model of the
 refined concept thus has to support the following additional
@@ -2298,7 +2339,7 @@ operations:
   the multiplicity of an intersection point is not required, but it can
   expedite the arrangement construction. Typically, the multiplicity is
   a byproduct of the intersection computation. However, if it is not
-  available, undefined multiplicity (coded as~$0$) is assumed. Having the
+  available, undefined multiplicity (coded as $0$) is assumed. Having the
   multiplicity of intersection points while constructing arrangements
   enables the exploitation of the geometric knowledge intersection points
   may have.
@@ -2365,20 +2406,203 @@ to fulfilling the requirements listed by the `ArrangementBasicTraits_2`
 concept).
 <DL>
 <DT><B>`Approximate_2`:</B>
-<DD> Given a point `p`, approximate the \f$ x\f$ and \f$ y\f$-coordinates of
-`p` using the fixed precision number type. We use this operation for
-approximate computations---there are certain operations in the search
-for the location of the point that need not be exact and we can
-perform them faster than other operations.
+<DD> Given a point `p`, approximate the \f$x\f$ and
+\f$y\f$-coordinates of `p` using a not necessarily multi-precision
+number type. We use this operation for approximate
+computations---there are certain operations performed during the
+search for the location of the point that need not be exact, and that
+can be performed faster when carried out, for example, using a
+fixed-precision number type.
 </DL>
-
 A model of the `ArrangementConstructXMonotoneCurveTraits_2` concept
-support the operation below (in addition to fulfilling the requirements
-listed by the `ArrangementBasicTraits_2` concept).
+must support the operation below (in addition to fulfilling the
+requirements listed by the `ArrangementBasicTraits_2` concept).
 <DL>
 <DT><B>`Construct_x_monotone_curve_2`:</B>
-<DD> Given two points \f$ p_1\f$ and \f$ p_2\f$, this predicate constructs an
-\f$ x\f$-monotone curve connecting \f$ p_1\f$ and \f$ p_2\f$.
+<DD> Given two points \f$p_1\f$ and \f$p_2\f$, construct
+an \f$x\f$-monotone curve connecting \f$p_1\f$ and \f$ p_2\f$.
+</DL>
+
+Most traits classes model the `ArrangementTraits_2` concept, and some
+also model the `ArrangementLandmarkTraits_2` concept.
+
+\subsubsection aos_ssec-traits-curved Curved Surface Concepts
+
+\cgalFigureBegin{aos_fig-unbounded_concept_hierarchy,unbounded_concept_hierarchy.png}
+Bottom portion of the refinement hierarchy of the geometry-traits
+concept for curves embedded on an open surface, for instance, the
+entire plane.
+\cgalFigureEnd
+
+\cgalFigureBegin{aos_fig-spherical_concept_hierarchy,spherical_concept_hierarchy.png}
+Bottom portion of the refinement hierarchy of the geometry-traits
+concept for curves embedded on a spherical-like parameterized surface
+\cgalFigureEnd
+
+We descend to the bottom level of the hierarchy. For each side of the
+parameter space there are four available concepts: `OpenSideTraits`,
+`ContractedSideTraits`, `ClosedSideTraits`, and
+`IdentifiedSideTraits`.\cgalFootnote{Note that we explicitly
+distinguish closed-only, contracted, and identified sides, although
+the latter two are closed in \f$\Phi\f$ as well.} Theoretically, this
+makes for a total of \f$4^4 = 256\f$ combinations. Only a subset of
+them is meaningful. If a side is identified, the opposite side must
+also be identified.  This implies that there are exactly 10 possible
+combinations of left and right sides, and similarly for the bottom of
+top sides, which makes a total of 100 combinations. A suitable
+geometry-traits component for unbounded curves in the plane is a model
+of the `OpenTraits` concept shown in Figure
+\cgalFigureRef{aos_fig-unbounded_concept_hierarchy}, while one for
+surfaces homeomorphic to a sphere can be a model of the combined
+concept `SphericalTraits` shown in Figure
+\cgalFigureRef{aos_fig-spherical_concept_hierarchy}. Similarly, one
+can derive an own concept that suits a chosen parameterization.
+
+\cgalFigureBegin{aos_fig-curved_concept_cluster,curved_concept_cluster.png}
+Top portion of the refinement hierarchy of the geometry-traits
+concepts. There are four copies of the concepts at the bottom---one
+for each side; see also Figure
+\cgalFigureRef{aos_fig-unbounded_concept_hierarchy} and
+\cgalFigureRef{aos_fig-spherical_concept_hierarchy}.  \cgalFigureEnd
+
+The shared requirements for the four options of a side are collected
+in abstract layers called `HasSpecialSideTraits, `PointOnSideTraits`,
+and `ComparePointOnSideTraits` shown in grey in Figure
+\cgalFigureRef{aos_fig-curved_concept_cluster}. The first concept
+collects the operations required by all side-specific refinements, and
+the other two provide operations that handle points, curve-ends, and
+curves that are contained in the boundary of the domain.
+
+The concept `HasSpecialSideTraits` requires the following predicates:
+<DL>
+<DT><B>Locate curve-end in \f$u\f$ (resp. \f$v\f$):</B>
+<DD>Given a curve \f$C\f$ and an index \f$d \in \{0,1\}\f$, determine
+the location of the \f$d\f$-end of \f$C\f$ with respect to the
+\f$u\f$-axis. More precisely, determine whether \f$\lim_{t \rightarrow
+d} u(\gamma(t))\f$ is equal to \f$u_{\rm min}\f$, equal to \f$u_{\rm
+max}\f$, or falls in between. These predicates determine the location
+of a curve-end in parameter space.
+</DL>
+
+The next two operations determine the order of curve-ends lying on
+the boundary with respect to regular points and among each
+other.
+
+<DL>
+<DT><B>Compare \f$u\f$ near boundary (resp. \f$v\f$):</B>
+<DD>Given two curves \f$C_1\f$ and \f$C_2\f$ and an index \f$d \in
+\{0,1\}\f$ that identifies either the minimum ends or the maximum ends
+of the two curves, respectively, compare the \f$u\f$-coordinate of the
+curves near their limit. For an open side, a precondition assures that
+the \f$u\f$-coordinates of the curves at their limits are equal. That
+is, the predicate <B>Compare \f$u\f$ on boundary</B> (see
+`OpenSideTraits` below) applied to \f$C_1\f$, \f$C_2\f$, and \f$d\f$
+evaluates to ``equal''. For a closed or identified side, again a
+precondition assures that the \f$u\f$-coordinates of the curves at
+their ends are equal. That is, the predicate <B>Compare \f$u\f$ on
+boundary</B> (see `ComparePointOnSideTraits` below) applied to the two
+points, which are the \f$d\f$-ends of \f$C_1\f$ and \f$C_2\f$,
+respectively, evaluates to ``equal''.
+</DL>
+
+The concept `OpenSideTraits` requires three additional predicates:
+<DL>
+<DT><B>Is closed:</B>
+<DD> Given a curve \f$C\f$ and an index \f$d \in \{0,1\}\f$, determine
+whether the pre-image of \f$C\f$'s \f$d\f$-end belongs to the domain
+of \f$\gamma\f$ or not. This predicate tells whether the \f$d\f$-end
+of \f$C\f$ is a point (closed) or open, otherwise.
+
+<DT><B>Compare \f$u\f$ on boundary:</B>
+<DD>There are different predicates for \f$u\f$ and \f$v\f$, due to the
+asymmetry mentioned in Section \ref
+aos_ssec-curved_surfaces-parameteric. This predicate is overloaded
+with two versions as follows: (i) Given a regular point \f$p\f$, a
+curve \f$C\f$, and an index \f$d \in \{0,1\}\f$, compare \f$u_p\f$ and
+\f$\lim_{t \rightarrow d} u(\gamma(t))\f$. A precondition assures that
+\f$C\f$ has a vertical asymptote at its \f$d\f$-end; that is
+\f$\lim_{t \rightarrow d} u(\gamma(t))\f$ is a real value.  (ii) Given
+two curves \f$C_1\f$ and \f$C_2\f$ and indices \f$d_1, d_2 \in
+\{0,1\}\f$, compare the \f$u\f$-coordinates of the curves at their
+respective limits. More precisely, compare the values \f$\lim_{t
+\rightarrow d_1} u(\gamma_1(t))\f$ and \f$\lim_{t \rightarrow d_2}
+u(\gamma_2(t))\f$. A precondition assures that \f$C_1\f$ and \f$C_2\f$
+have vertical asymptote at their respective \f$d\f$-ends; that is
+\f$\lim_{t \rightarrow d_1} u(\gamma_1(t))\f$ and \f$\lim_{t
+\rightarrow d_2} u(\gamma_2(t))\f$ are real values.
+
+<DT><B>Compare \f$v\f$ on boundary:</B>
+<DD> Given two curves \f$C_1\f$ and \f$C_2\f$, and a single index \f$d
+\in \{0,1\}\f$ that identifies either the minimum ends or the maximum
+ends of the two curves, respectively, compare the \f$v\f$-coordinates
+of the curves at their respective limits.  More precisely, compare the
+values \f$\lim_{t \rightarrow d} v(\gamma_1(t))\f$ and \f$\lim_{t
+\rightarrow d} v(\gamma_2(t))\f$. If the two limits evaluate to
+infinity and have the same sign, i.e., they both evaluate to
+\f$-\infty\f$ or to \f$+\infty\f$, then compare \f$\lim_{t \rightarrow
+d} \frac{v(\gamma_1(t))}{v(\gamma_2(t))}\f$ and \f$1\f$.
+</DL>
+
+A closed or contracted side may contain points. The concept
+`PointOnSideTraits` requires two additional predicate:
+<DL>
+<DT><B>Locate point in \f$u\f$ (resp. \f$v\f$):</B>
+
+<DD> This predicate is similar to <B>Locate curve-end in \f$u\f$</B>.
+Given a point \f$p\f$ determine the location of its pre-image in the
+domain \f$\Phi\f$ along the \f$u\f$-dimension. More precisely, check
+whether \f$u_p\f$ is equal to \f$u_{\rm min}\f$ or equal to
+\f$u_{\rm max}\f$, or falls in between. This function is only applied
+if one of the opposite vertical sides is contracted or closed. The
+pre-image of a contracted point is the entire side, and hence the
+outcome is independent of the choice of a particular pre-image, while
+the pre-image of a point in a closed side is unique.
+</DL>
+
+A model of the concept `ComparePointOnSideTraits` must be able to
+order points that lie on the image of a closed or identified
+boundary-side; it is not needed for contracted sides, as they map to a
+single point on the surface. The concept requires the following
+additional pair of predicates:
+<DL>
+<DT><B>Compare \f$u\f$ on boundary (resp. \f$v\f$):</B>
+<DD>Given two points \f$p_1\f$ and \f$p_2\f$, such that \f$v_{p_1} \in
+\{v_{\rm min},v_{\rm max}\}\f$ or \f$v_{p_2} \in \{v_{\rm min},v_{\rm
+max}\}\f$ (resp. \f$u_{p_1} \in \{u_{\rm min},u_{\rm max}\}\f$ and
+\f$u_{p_2} \in \{u_{\rm min},u_{\rm max}\}\f$), compare \f$u_{p_1}\f$
+and \f$u_{p_2}\f$. A point on the identification curve has two
+pre-images, one for \f$v_{\rm min}\f$ and one for \f$v_{\rm
+max}\f$. The \f$u\f$-coordinates of both pre-images are the same and
+so the operation is well-defined.
+</DL>
+
+We are almost done. For a contracted boundary side no additional
+operation (beyond those required by the concept `PointOnSideTraits`)
+are needed. For a closed side, we have to handle curves whose
+pre-image is fully contained in the boundary of the parameter
+space. Therefore, the concept `ClosedSideTraits` requires yet another
+pair of predicates:
+
+<DL>
+<DT><B>Locate curve in \f$u\f$ (resp. \f$v\f$):</B>
+
+<DD>Locate a curve \f$C\f$ along the \f$u\f$-dimension. More
+precisely, determine whether \f$u(\gamma(t))\f$ is equal to \f$u_{\rm
+min}\f$, equal to \f$u_{\rm max}\f$, or falls in between for all \f$t
+\in (0,1)\f$.
+</DL>
+
+In contrast, handling identified boundary sides demand a slightly
+different predicate. Thus, the concept `IdentifiedSideTraits`
+introduces the following requirement:
+<DL>
+<DT><B>Is on \f$u\f$-identification (resp. \f$v\f$):</B>
+<DD> Given a point \f$p\f$ (respectively a curve \f$C\f$), determine
+whether \f$p\f$ (respectively \f$C\f$) lies in the image of the
+vertical and identified sides of the boundary. More precisely,
+determine whether \f$u_p \in \{u_{\rm min},u_{\rm max}\}\f$ for all
+pre-images of \f$p\f$. Similar for all points of \f$C\f$,
+respectively.
 </DL>
 
 \subsubsection aos_ssec-traits-unbounded Supporting Unbounded Curves
@@ -2414,18 +2638,20 @@ x\f$ monotone curve \f$ C\f$ can be considered as a parametric curve
 \f$ C(t) = (X(t),Y(t))\f$ defined over a closed, open, or half open
 interval with endpoints \f$ 0\f$ and \f$ 1\f$.
 
-Models of the concept `ArrangementOpenBoundaryTraits_2` handle
-curves that approach the boundary of the parameter space. This concept
+Models of the concept `ArrangementOpenBoundaryTraits_2` handle curves
+that approach the boundary of the parameter space. This concept
 refines the concept `ArrangementBasicTraits_2`. The arrangement
-template instantiated with a traits class that models this concept
-can handle curves that are unbounded in any direction. If some curves
-inserted into an arrangement object are expected to be unbounded, namely,
-there exists \f$ d \in \{0,1\}\f$ such that
-\f$ \lim_{t \rightarrow d}X(t) = \pm\infty\f$ or
-\f$ \lim_{t \rightarrow d}y(t) = \pm\infty\f$
-holds for at least one input curve \f$ C(t) = (X(t),Y(t))\f$, the arrangement
-template must be instantiated with a model of the
-`ArrangementOpenBoundaryTraits` concept.\cgalFootnote{We intend to enhance the arrangement template to handle curves confined to a bounded yet open parameter space. A curve that reaches the boundary of the parameter space in this case is bounded and open.}
+template instantiated with a traits class that models this concept can
+handle curves that are unbounded in any direction. If some curves
+inserted into an arrangement object are expected to be unbounded,
+namely, there exists \f$ d \in \{0,1\}\f$ such that \f$ \lim_{t
+\rightarrow d}X(t) = \pm\infty\f$ or \f$ \lim_{t \rightarrow d}y(t) =
+\pm\infty\f$ holds for at least one input curve \f$ C(t) =
+(X(t),Y(t))\f$, the arrangement template must be instantiated with a
+model of the `ArrangementOpenBoundaryTraits` concept.\cgalFootnote{We
+intend to enhance the arrangement template to handle curves confined
+to a bounded yet open parameter space. A curve that reaches the
+boundary of the parameter space in this case is bounded and open.}
 
 All the four types `Left_side_category`, `Right_side_category`,
 `Bottom_side_category`, and `Top_side_category` nested in a model of
@@ -2455,83 +2681,86 @@ inserted into an arrangement. This asymmetry is also reflected in the
 additional predicates listed below.
 
 <DL>
-<DT><B>`Parameter_space_in_x_2`:</B><DD>
-Given a parametric \f$ x\f$-monotone curve \f$ C(t) = (X(t),Y(t))\f$ and an
-enumerator that specifies either the minimum end or the maximum end
-of the curve, and thus maps to a parameter value \f$ d \in \{0,1\}\f$,
-this predicate determines the location of the curve end along the
-\f$ x\f$-dimension. Formally, the predicate determines whether
-\f$ \lim_{t \rightarrow d} X(t)\f$ evaluates to \f$ b_l\f$, \f$ b_r\f$, or a value
-in between.
-<DT><B>`Compare_y_near_boundary_2`:</B><DD>
-Given two \f$ x\f$-monotone curves \f$ C_1\f$ and \f$ C_2\f$ and an enumerator \f$ i\f$
-that specifies either the minimum ends or the maximum ends of the
-two curves, this predicate compares the \f$ y\f$-coordinates of the
-curves near their respective ends. That is, the predicate compares
-the \f$ y\f$-coordinates of the vertical projection of a point \f$ p\f$ onto
-\f$ C_1\f$ and onto \f$ C_2\f$. If the enumerator \f$ i\f$ specifies the minimum
-ends, the curves must approach the left boundary-side. In this case
-\f$ p\f$ is located far to the left, such that the result is invariant
-under a translation of \f$ p\f$ farther to the left. If \f$ i\f$ specifies the
-maximum ends, the curves must approach the right boundary-side. In
-that case \f$ p\f$ is located far to the right in a similar manner.
-<DT><B>`Parameter_space_in_y_2`:</B><DD>
-Given a parametric \f$ x\f$-monotone curve \f$ C(t) = (X(t),Y(t))\f$ and an
-enumerator that specifies either the minimum end or the maximum end
-of the curve, and thus maps to a parameter value \f$ d \in \{0,1\}\f$,
-this predicate determines the location of the curve end along the
-\f$ y\f$-dimension. Formally, the predicate determines whether
-\f$ \lim_{t \rightarrow d} Y(t)\f$ evaluates to \f$ b_b\f$, \f$ b_t\f$, or a value
-in between.
-<DT><B>`Compare_x_on_boundary_2`:</B><DD>
-Two versions of this predicate are provided:
-(i) Given a point \f$ p\f$, a parametric \f$ x\f$-monotone curve
-\f$ C(t) = (X(t),Y(t))\f$, and an enumerator that specifies either the
-minimum end or the maximum end of the curve, and thus maps to a
-parameter value \f$ d \in \{0,1\}\f$, this predicate compares the
-\f$ x\f$-coordinate of \f$ p\f$ and \f$ \lim_{t \rightarrow d} X(t)\f$. If the
-parameter space is unbounded, a precondition assures that \f$ C\f$
-has a vertical asymptote at its \f$ d\f$-end; that is
-\f$ \lim_{t \rightarrow d} X(t)\f$ is finite.
-(ii) Given two parametric \f$ x\f$-monotone curves
-\f$ C_1(t) = (X_1(t),Y_1(t))\f$ and \f$ C_2(t) = (X_2(t),Y_2(t))\f$ and two
-enumerators that specify either the minimum end or the maximum
-end of each curve, and thus map to parameter values
-\f$ d_1\in \{0,1\}\f$ and \f$ d_2 \in \{0,1\}\f$ for \f$ C_1\f$ and for \f$ C_2\f$,
-respectively, this predicate compares
-\f$ \lim_{t \rightarrow d_1} X_1(t)\f$ and \f$ \lim_{t \rightarrow d_2} X_2(t)\f$.
-If the parameter space is unbounded, a precondition assures that
-\f$ C_1\f$ and \f$ C_2\f$ have vertical asymptote at their respective ends;
-that is \f$ \lim_{t \rightarrow d_1} X_1(t)\f$ and
-\f$ \lim_{t \rightarrow d_2} X_2(t)\f$ are finite.
-<DT><B>`Compare_x_near_boundary_2`:</B><DD>
-Given two \f$ x\f$-monotone curves \f$ C_1\f$ and \f$ C_2\f$ and an enumerator \f$ i\f$
-that specifies either the minimum ends or the maximum ends of the
-two curves, this predicate compares the \f$ x\f$-coordinates of the
-curves near their respective ends. That is, the predicate compares
-the \f$ x\f$-coordinates of the horizontal projection of a point \f$ p\f$
-onto \f$ C_1\f$ and onto \f$ C_2\f$. If the parameter space is unbounded, a
-precondition assures that \f$ C_1\f$ and \f$ C_2\f$ have vertical asymptote
-at their respective ends. Furthermore, both curves approach the
-same boundary-side, either the bottom or the top, at their
-respective ends. If both curves approach the bottom boundary-side,
-\f$ p\f$ is located far to the bottom, such that the result is invariant
-under a translation of \f$ p\f$ farther to the bottom. If both curves
-approach the top boundary-side, \f$ p\f$ is located far to the top in a
-similar manner. Another precondition assures that the
-\f$ x\f$-coordinates of the limits of the curves at their respective
-ends are equal. That is, the predicate `Compare_x_on_boundary_2`
-applied to \f$ C_1\f$, \f$ C_2\f$, and \f$ i\f$ evaluates to `EQUAL`.
-</DL>
+<DT><B>`Parameter_space_in_x_2`:</B>
+<DD> Given a parametric \f$ x\f$-monotone curve \f$ C(t) =
+(X(t),Y(t))\f$ and an enumerator that specifies either the minimum end
+or the maximum end of the curve, and thus maps to a parameter value
+\f$ d \in \{0,1\}\f$, this predicate determines the location of the
+curve end along the \f$ x\f$-dimension. Formally, the predicate
+determines whether \f$ \lim_{t \rightarrow d} X(t)\f$ evaluates to \f$
+b_l\f$, \f$ b_r\f$, or a value in between.
 
-In the rest of this section we review the traits classes
-included in the public distribution of \cgal, that handle line
-segments, polylines, conic arcs, rational functions, and arcs of
-B&eacute;zier and algebraic curves.
-The last subsection overviews
-decorators for geometric traits classes distributed with \cgal,
-which extend other geometric traits-class by attaching auxiliary
-data with the geometric objects.
+<DT><B>`Compare_y_near_boundary_2`:</B>
+<DD>Given two \f$ x\f$-monotone curves \f$ C_1\f$ and \f$ C_2\f$ and
+an enumerator \f$ i\f$ that specifies either the minimum ends or the
+maximum ends of the two curves, this predicate compares the \f$
+y\f$-coordinates of the curves near their respective ends. That is,
+the predicate compares the \f$ y\f$-coordinates of the vertical
+projection of a point \f$ p\f$ onto \f$ C_1\f$ and onto \f$ C_2\f$. If
+the enumerator \f$ i\f$ specifies the minimum ends, the curves must
+approach the left boundary-side. In this case \f$ p\f$ is located far
+to the left, such that the result is invariant under a translation of
+\f$ p\f$ farther to the left. If \f$ i\f$ specifies the maximum ends,
+the curves must approach the right boundary-side. In that case \f$
+p\f$ is located far to the right in a similar manner.
+
+<DT><B>`Parameter_space_in_y_2`:</B>
+<DD> Given a parametric \f$ x\f$-monotone curve \f$ C(t) =
+(X(t),Y(t))\f$ and an enumerator that specifies either the minimum end
+or the maximum end of the curve, and thus maps to a parameter value
+\f$ d \in \{0,1\}\f$, this predicate determines the location of the
+curve end along the \f$ y\f$-dimension. Formally, the predicate
+determines whether \f$ \lim_{t \rightarrow d} Y(t)\f$ evaluates to \f$
+b_b\f$, \f$ b_t\f$, or a value in between.
+
+<DT><B>`Compare_x_on_boundary_2`:</B>
+<DD>Two versions of this predicate are provided: (i) Given a point \f$
+p\f$, a parametric \f$ x\f$-monotone curve \f$ C(t) = (X(t),Y(t))\f$,
+and an enumerator that specifies either the minimum end or the maximum
+end of the curve, and thus maps to a parameter value \f$ d \in
+\{0,1\}\f$, this predicate compares the \f$ x\f$-coordinate of \f$
+p\f$ and \f$ \lim_{t \rightarrow d} X(t)\f$. If the parameter space is
+unbounded, a precondition assures that \f$ C\f$ has a vertical
+asymptote at its \f$ d\f$-end; that is \f$ \lim_{t \rightarrow d}
+X(t)\f$ is finite.  (ii) Given two parametric \f$ x\f$-monotone curves
+\f$ C_1(t) = (X_1(t),Y_1(t))\f$ and \f$ C_2(t) = (X_2(t),Y_2(t))\f$
+and two enumerators that specify either the minimum end or the maximum
+end of each curve, and thus map to parameter values \f$ d_1\in
+\{0,1\}\f$ and \f$ d_2 \in \{0,1\}\f$ for \f$ C_1\f$ and for \f$
+C_2\f$, respectively, this predicate compares \f$ \lim_{t \rightarrow
+d_1} X_1(t)\f$ and \f$ \lim_{t \rightarrow d_2} X_2(t)\f$.  If the
+parameter space is unbounded, a precondition assures that \f$ C_1\f$
+and \f$ C_2\f$ have vertical asymptote at their respective ends; that
+is \f$ \lim_{t \rightarrow d_1} X_1(t)\f$ and \f$ \lim_{t \rightarrow
+d_2} X_2(t)\f$ are finite.
+
+<DT><B>`Compare_x_near_boundary_2`:</B>
+<DD> Given two \f$ x\f$-monotone curves \f$ C_1\f$ and \f$ C_2\f$ and
+an enumerator \f$ i\f$ that specifies either the minimum ends or the
+maximum ends of the two curves, this predicate compares the \f$
+x\f$-coordinates of the curves near their respective ends. That is,
+the predicate compares the \f$ x\f$-coordinates of the horizontal
+projection of a point \f$ p\f$ onto \f$ C_1\f$ and onto \f$ C_2\f$. If
+the parameter space is unbounded, a precondition assures that \f$
+C_1\f$ and \f$ C_2\f$ have vertical asymptote at their respective
+ends. Furthermore, both curves approach the same boundary-side, either
+the bottom or the top, at their respective ends. If both curves
+approach the bottom boundary-side, \f$ p\f$ is located far to the
+bottom, such that the result is invariant under a translation of \f$
+p\f$ farther to the bottom. If both curves approach the top
+boundary-side, \f$ p\f$ is located far to the top in a similar
+manner. Another precondition assures that the \f$ x\f$-coordinates of
+the limits of the curves at their respective ends are equal. That is,
+the predicate `Compare_x_on_boundary_2` applied to \f$ C_1\f$, \f$
+C_2\f$, and \f$ i\f$ evaluates to `EQUAL`.  </DL>
+
+In the rest of this section we review the traits classes included in
+the public distribution of \cgal, that handle line segments,
+polylines, conic arcs, rational functions, and arcs of B&eacute;zier
+and algebraic curves.  The last subsection overviews decorators for
+geometric traits classes distributed with \cgal, which extend other
+geometric traits-class by attaching auxiliary data with the geometric
+objects.
 
 \subsection aos_ssec-geom_traits-models Models of the Geometry Traits Concepts
 
@@ -2614,21 +2843,20 @@ in \cgalFigureRef{arr_figpredef_kernels} (a):
 
 The arrangement package also offers a simpler alternative
 segment-traits class. The traits class
-`Arr_non_caching_segment_basic_traits_2<Kernel>` models
-the `ArrangementBasicTraits_2` concept. It uses
-`Kernel::Point_2` as its point type and
-`Kernel::Segment_2` as its \f$ x\f$-monotone curve type. As this
-traits class does not support intersecting and splitting segments,
-the kernel representation is sufficient. It is still less
-efficient than `Arr_segment_traits_2` for constructing
-arrangements of pairwise disjoint line segments in many cases, as
-it performs no caching at all, but using this traits class may be
-preferable as it reduces the memory consumption a bit, since no extra
-data is stored with the line segments.
+`Arr_non_caching_segment_basic_traits_2<Kernel>` models the
+`ArrangementBasicTraits_2` concept. It uses `Kernel::Point_2` as its
+point type and `Kernel::Segment_2` as its \f$ x\f$-monotone curve
+type. As this traits class does not support intersecting and splitting
+segments, the kernel representation is sufficient. It is still less
+efficient than `Arr_segment_traits_2` for constructing arrangements of
+pairwise disjoint line segments in many cases, as it performs no
+caching at all, but using this traits class may be preferable as it
+reduces the memory consumption a bit, since no extra data is stored
+with the line segments.
 
-The class `Arr_non_caching_segment_traits_2<Kernel>` inherits
-from `Arr_non_caching_segment_basic_traits_2<Kernel>` and
-extends it to be a model of the concepts `ArrangementTraits_2`,
+The class `Arr_non_caching_segment_traits_2<Kernel>` inherits from
+`Arr_non_caching_segment_basic_traits_2<Kernel>` and extends it to be
+a model of the concepts `ArrangementTraits_2`,
 `ArrangementLandmarkTraits_2`,and
 `ArrangementDirectionalXMonotoneTraits_2`. It may thus be used to
 construct arrangement of intersecting line segments, but as explained
@@ -2641,26 +2869,26 @@ line segments that are pairwise disjoint in their interior. As the
 segments do not intersect, no new points are constructed and we can
 instantiate the `Arr_non_caching_segment_traits_basic_2<Kernel>`
 class-template with the predefined
-`Exact_predicates_inexact_constructions_kernel`. Note that we use
-the `insert_non_intersecting_curves()` function to construct the
-arrangement.
-By default, the example opens the `Europe.dat` input-file,
-located in the examples folder, which contains more than \f$ 3000\f$ line segments
-with floating-point coordinates that form the map of Europe, as depicted in
+`Exact_predicates_inexact_constructions_kernel`. Note that we use the
+`insert_non_intersecting_curves()` function to construct the
+arrangement.  By default, the example opens the `Europe.dat`
+input-file, located in the examples folder, which contains more than
+\f$ 3000\f$ line segments with floating-point coordinates that form
+the map of Europe, as depicted in
 \cgalFigureRef{arr_figpredef_kernels} (b):
 
 \cgalExample{Arrangement_on_surface_2/predefined_kernel_non_intersecting.cpp}
 
 The `Arr_linear_traits_2<Kernel>` class used for demonstrating the
-construction of arrangements of unbounded curves is capable of handling
-bounded and unbounded linear objects, namely lines, rays and line
-segments. It is parameterized by a geometric kernel and such that
+construction of arrangements of unbounded curves is capable of
+handling bounded and unbounded linear objects, namely lines, rays and
+line segments. It is parameterized by a geometric kernel and such that
 its nested `Point_2` type is the same as the kernel point. The
-`Curve_2` (and `X_monotone_curve_2`) type it defines is
-constructible from a `Kernel::Line_2`, a `Kernel::Ray_2` or
-from a `Kernel::Segment_2` object. Just like the default
-segment-traits class, the linear-traits class also use caching
-techniques to speed up its predicates and constructions.
+`Curve_2` (and `X_monotone_curve_2`) type it defines is constructible
+from a `Kernel::Line_2`, a `Kernel::Ray_2` or from a
+`Kernel::Segment_2` object. Just like the default segment-traits
+class, the linear-traits class also use caching techniques to speed up
+its predicates and constructions.
 
 \subsubsection arr_ssectr_polylines The Polyline and Polycurve Traits Classes
 
@@ -2748,12 +2976,10 @@ points (or overlapping sections) between two polylines can also
 be large.
 
 \cgalAdvancedBegin
-
 Technically speaking, it is possible to construct a general polyline
 that is neither well-oriented nor continuous. However, it is
 impossible to use such polylines for the purpose of computing an
 arrangement.
-
 \cgalAdvancedEnd
 
 You can traverse over the range of defining segments of a given
@@ -2796,7 +3022,7 @@ The following example program constructs an arrangement of three
 polylines, as depicted in \cgalFigureRef{arr_figex_12}. Note that
 most points defining the polylines are not associated with arrangement
 vertices. The arrangement vertices are either the endpoints of
-each \f$ x\f$-monotone polyline or the intersection points between two
+each \f$x\f$-monotone polyline or the intersection points between two
 polylines:
 
 \cgalExample{Arrangement_on_surface_2/polylines.cpp}
@@ -2821,51 +3047,58 @@ of a non-empty polycurve.
 
 Circles and circular arcs are the simplest form of non-linear curves.
 We handle circles whose centers have rational coordinates and whose
-squared radii is also rational. If we denote the circle center by \f$ (x_0,y_0)\f$
-and its radius by \f$ r\f$, then the equation of the circle - that is,
-\f$ (x - x_0)^2 + (y - y_0)^2 = r^2\f$ - has rational coefficients.
-The intersection points of two such circles are therefore solutions
-of a quadratic equation with rational coefficients, or algebraic numbers
-of degree \f$ 2\f$. The same applies for intersection points between such a
-rational circle and a line, or a line segment, with rational coefficients
-(a line whose equation is \f$ ax + by + c = 0\f$, where \f$ a\f$, \f$ b\f$ and \f$ c\f$ are
-rational). Such numbers can be expressed as \f$ \alpha + \beta\sqrt{\gamma}\f$,
-where \f$ \alpha\f$, \f$ \beta\f$ and \f$ \gamma\f$ are all rational numbers.
+squared radii is also rational. If we denote the circle center by \f$
+(x_0,y_0)\f$ and its radius by \f$ r\f$, then the equation of the
+circle - that is, \f$ (x - x_0)^2 + (y - y_0)^2 = r^2\f$ - has
+rational coefficients.  The intersection points of two such circles
+are therefore solutions of a quadratic equation with rational
+coefficients, or algebraic numbers of degree \f$ 2\f$. The same
+applies for intersection points between such a rational circle and a
+line, or a line segment, with rational coefficients (a line whose
+equation is \f$ ax + by + c = 0\f$, where \f$ a\f$, \f$ b\f$ and \f$
+c\f$ are rational). Such numbers can be expressed as \f$ \alpha +
+\beta\sqrt{\gamma}\f$, where \f$ \alpha\f$, \f$ \beta\f$ and \f$
+\gamma\f$ are all rational numbers.
 
-Arrangement of circular arcs and of line segment are very useful, as they
-occur in many applications. For example, when dilating a polygon by some
-radius we obtain a shape whose boundary is comprised of line segments,
-which correspond to dilated polygon edges, and circular arcs, which
-result from dilated polygon vertices. Using the arrangement of the
-boundary curves it is possible, for example, to compute the union of a set
-of dilated polygons.
+Arrangement of circular arcs and of line segment are very useful, as
+they occur in many applications. For example, when dilating a polygon
+by some radius we obtain a shape whose boundary is comprised of line
+segments, which correspond to dilated polygon edges, and circular
+arcs, which result from dilated polygon vertices. Using the
+arrangement of the boundary curves it is possible, for example, to
+compute the union of a set of dilated polygons.
 
 The `Arr_circle_segment_traits_2<Kernel>` class-template is designed
-for efficient handling of arrangements of circular arcs and line segments.
-It is a model of the concepts `ArrangementTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`; the later enables
-Boolean set operations. Note that it is not a model of
-`ArrangementLandmarkTraits_2` concept, so it is impossible to
-use the landmark point-location strategy. The traits class template
-is parameterized by a geometric kernel, and can handle arrangements of
-segments of `Kernel::Circle_2` objects (full circles are also supported)
-or of `Kernel::Line_2` objects - namely circular arcs and line segments.
-It is important to observe that the nested `Point_2` type defined by the
-traits class, whose coordinates are typically algebraic numbers of degree 2,
-is <em>not</em> the same as the `Kernel::Point_2` type, which is capable of
-representing a point with rational coordinates. The coordinates of a
-point are represented using the nested `CoordNT` number-type.
+for efficient handling of arrangements of circular arcs and line
+segments.  It is a model of the concepts `ArrangementTraits_2` and
+`ArrangementDirectionalXMonotoneTraits_2`; the later enables Boolean
+set operations. Note that it is not a model of
+`ArrangementLandmarkTraits_2` concept, so it is impossible to use the
+landmark point-location strategy. The traits class template is
+parameterized by a geometric kernel, and can handle arrangements of
+segments of `Kernel::Circle_2` objects (full circles are also
+supported) or of `Kernel::Line_2` objects - namely circular arcs and
+line segments.  It is important to observe that the nested `Point_2`
+type defined by the traits class, whose coordinates are typically
+algebraic numbers of degree 2, is <em>not</em> the same as the
+`Kernel::Point_2` type, which is capable of representing a point with
+rational coordinates. The coordinates of a point are represented using
+the nested `CoordNT` number-type.
 
 \cgalFigureBegin{arr_figex_13,ex_13.png}
-An arrangement of three circles constructed in `circles.cpp`. Each circle is split into two \f$ x\f$-monotone circular arcs, whose endpoints are drawn as disks. Circles mark vertices that correspond to intersection points. The vertex \f$ v_{\rm max}\f$ is a common intersection point of all three circles.
+An arrangement of three circles constructed in `circles.cpp`. Each
+circle is split into two \f$ x\f$-monotone circular arcs, whose
+endpoints are drawn as disks. Circles mark vertices that correspond to
+intersection points. The vertex \f$ v_{\rm max}\f$ is a common
+intersection point of all three circles.
 \cgalFigureEnd
 
 
 In the following example an arrangement of three full circles is
-constructed, as shown in \cgalFigureRef{arr_figex_13}. Then, the vertex
-of maximal degree is searched for. The geometric mapping of this
-vertex is the point \f$ (4,3)\f$, as all three circles intersect at this point
-and the associated vertex has six incident edges:
+constructed, as shown in \cgalFigureRef{arr_figex_13}. Then, the
+vertex of maximal degree is searched for. The geometric mapping of
+this vertex is the point \f$ (4,3)\f$, as all three circles intersect
+at this point and the associated vertex has six incident edges:
 
 \cgalExample{Arrangement_on_surface_2/circles.cpp}
 
@@ -2893,10 +3126,11 @@ lies on the arc in between its endpoint. In this case, all three
 points are required to have rational coordinates (to be kernel
 points).
 
-The following example demonstrates the usage of the various construction
-methods for circular arcs and line segments. Note the usage of the constructor
-of `CoordNT (alpha, beta, gamma)`, which creates a degree-\f$ 2\f$ algebraic
-number whose value is \f$ \alpha + \beta\sqrt{\gamma}\f$.
+The following example demonstrates the usage of the various
+construction methods for circular arcs and line segments. Note the
+usage of the constructor of `CoordNT (alpha, beta, gamma)`, which
+creates a degree-\f$ 2\f$ algebraic number whose value is \f$ \alpha +
+\beta\sqrt{\gamma}\f$.
 
 \cgalExample{Arrangement_on_surface_2/circular_arcs.cpp}
 
@@ -2932,15 +3166,16 @@ we have a line, which can be considered as a degenerate parabola.
 is comprised of two disconnected unbounded branches.
 </UL>
 
-As the arrangement package is suitable for bounded curves, we
-consider bounded segments of conic curves, referred to as <em>conic arcs</em>. A conic arc \f$ a\f$ may be either (i) a full ellipse, or
+As the arrangement package is suitable for bounded curves, we consider
+bounded segments of conic curves, referred to as <em>conic
+arcs</em>. A conic arc \f$ a\f$ may be either (i) a full ellipse, or
 (ii) defined by the tuple \f$ \langle C, p_s, p_t, o \rangle\f$, where
-\f$ C\f$ is a conic curve and \f$ p_s\f$ and \f$ p_t\f$ are two points on \f$ C\f$
-(namely \f$ C(p_s) = C(p_t) = 0\f$) that define the <em>source</em> and
-<em>target</em> of the arc, respectively. The arc is formed by
-traversing \f$ C\f$ from the source to the target going in the
-orientation specified by \f$ o\f$, which is typically clockwise or
-counterclockwise orientation (but may also be collinear in case of
+\f$ C\f$ is a conic curve and \f$ p_s\f$ and \f$ p_t\f$ are two points
+on \f$ C\f$ (namely \f$ C(p_s) = C(p_t) = 0\f$) that define the
+<em>source</em> and <em>target</em> of the arc, respectively. The arc
+is formed by traversing \f$ C\f$ from the source to the target going
+in the orientation specified by \f$ o\f$, which is typically clockwise
+or counterclockwise orientation (but may also be collinear in case of
 degenerate conic curves).
 
 We always assume that the conic coefficients \f$ \langle r, s, t, u,
@@ -2972,49 +3207,47 @@ template is designed for efficient handling of arrangements of
 bounded conic arcs. The template has three parameters, defined as
 follows:
 <UL>
-<LI>The `RatKernel` class is a geometric kernel, whose field
-type is an exact rational type. It is used to define basic
-geometric entities (e.g., a line segment or a circle) with rational
+
+<LI>The `RatKernel` class is a geometric kernel, whose field type is
+an exact rational type. It is used to define basic geometric entities
+(e.g., a line segment or a circle) with rational
 coefficients. Typically we use one of the standard \cgal kernels,
-instantiated with the number type `NtTraits::Rational` (see
-below).
-<LI>The `AlgKernel` class is a geometric kernel whose field
-type is an exact algebraic type. It is used to define points with
-algebraic coordinates. Typically we use one of the standard
-\cgal kernels, instantiated with the number type
-`NtTraits::Algebraic` (see below).
-<LI>The `NtTraits` class (the number-type traits class)
-encapsulates all the numeric operations needed for performing the
-geometric computation carried out by the geometric traits class.
-It defines the `Integer`, `Rational` and `Algebraic`
-number-types, and supports several operations on these types, such
-as conversion between number types, solving quadratic equations
-and extracting the real roots of a polynomial with integer
-coefficients. It is highly recommended to use the
-`CORE_algebraic_number_traits` class, which is included in the
-arrangement package. It relies on the exact number types
-implemented in the <span class="textsc">Core</span> library and performs exact
+instantiated with the number type `NtTraits::Rational` (see below).
+
+<LI>The `AlgKernel` class is a geometric kernel whose field type is an
+exact algebraic type. It is used to define points with algebraic
+coordinates. Typically we use one of the standard \cgal kernels,
+instantiated with the number type `NtTraits::Algebraic` (see below).
+
+<LI>The `NtTraits` class (the number-type traits class) encapsulates
+all the numeric operations needed for performing the geometric
+computation carried out by the geometric traits class.  It defines the
+`Integer`, `Rational` and `Algebraic` number-types, and supports
+several operations on these types, such as conversion between number
+types, solving quadratic equations and extracting the real roots of a
+polynomial with integer coefficients. It is highly recommended to use
+the `CORE_algebraic_number_traits` class, which is included in the
+arrangement package. It relies on the exact number types implemented
+in the <span class="textsc">Core</span> library and performs exact
 computations on the number types it defines.
 </UL>
 
 The `Arr_conic_traits_2` models the `ArrangementTraits_2` and
-`ArrangementLandmarkTraits_2` concepts. (It supports
-the landmark point-location strategy). Its `Point_2` type is
-derived from `AlgKernel::Point_2`, while the `Curve_2`
-type represents a bounded, not necessarily \f$ x\f$-monotone, conic arc.
-The `X_monotone_curve_2` type is derived from `Curve_2`,
-but its constructors are to be used only by the traits class.
-You should therefore construct only `Curve_2` objects and
-insert them into the arrangement using the `insert()`
-or `insert()` functions.
+`ArrangementLandmarkTraits_2` concepts. (It supports the landmark
+point-location strategy). Its `Point_2` type is derived from
+`AlgKernel::Point_2`, while the `Curve_2` type represents a bounded,
+not necessarily \f$ x\f$-monotone, conic arc.  The
+`X_monotone_curve_2` type is derived from `Curve_2`, but its
+constructors are to be used only by the traits class.  You should
+therefore construct only `Curve_2` objects and insert them into the
+arrangement using the `insert()` or `insert()` functions.
 
-Conic arcs can be constructed from full ellipses or by specifying
-a supporting curve, two endpoints and an orientation. However,
-several constructors of `Curve_2` are available to allow for some
-special cases, such as circular arcs or line segments. The
-`Curve_2` (and the derived `X_monotone_curve_2`) classes
-also support basic access functions such as `source()`,
-`target()` and `orientation()`.
+Conic arcs can be constructed from full ellipses or by specifying a
+supporting curve, two endpoints and an orientation. However, several
+constructors of `Curve_2` are available to allow for some special
+cases, such as circular arcs or line segments. The `Curve_2` (and the
+derived `X_monotone_curve_2`) classes also support basic access
+functions such as `source()`, `target()` and `orientation()`.
 
 \subsubsection Arrangement_on_surface_2ExamplesforArrangements Examples for Arrangements of Conics
 
@@ -3024,18 +3257,18 @@ An arrangement of mixed conic arcs, as constructed in conics.cpp
 
 
 The following example demonstrates the usage of the various
-constructors for conic arcs. The resulting arrangement is depicted
-in \cgalFigureRef{arr_figex_14}. Especially noteworthy are the
+constructors for conic arcs. The resulting arrangement is depicted in
+\cgalFigureRef{arr_figex_14}. Especially noteworthy are the
 constructor of a circular arc that accepts three points and the
 constructor that allows specifying approximate endpoints, where the
-exact endpoints are given explicitly as intersections of
-the supporting conic with two other conic curves. Also note that as the
+exact endpoints are given explicitly as intersections of the
+supporting conic with two other conic curves. Also note that as the
 preconditions required by some of these constructors are rather
-complicated (see the Reference Manual for the details), a
-precondition violation does not cause the program to terminate -
-instead, an <em>invalid</em> arc is created. We can verify the validity
-of an arc by using the `is_valid()` method. Needless to say, inserting
-invalid arcs into an arrangement is not allowed.
+complicated (see the Reference Manual for the details), a precondition
+violation does not cause the program to terminate - instead, an
+<em>invalid</em> arc is created. We can verify the validity of an arc
+by using the `is_valid()` method. Needless to say, inserting invalid
+arcs into an arrangement is not allowed.
 
 \cgalExample{Arrangement_on_surface_2/conics.cpp}
 
@@ -3055,112 +3288,111 @@ they have another intersection point at \f$
 
 \subsubsection arr_ssectr_ratfunc A Traits Class for Arcs of Rational Functions
 
-The traits class
-`Arr_rational_function_traits_2<AlgebraicKernel_d_1>` handles
-bounded and unbounded arcs of rational functions, referred to as
-<em>rational arcs</em> (in particular, such an arc may correspond to the
-entire graph of a rational function), and enables the construction and
-maintenance of arrangements of such arcs. Rational functions, and
-polynomial functions in particular, are not only interesting in their
-own right, they are also very useful for approximating or
-interpolating more complicated curves; see,
-e.g., [\cgalCite{cgal:ptvf-nrcpp-02} Chapter 3.
+The traits class `Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
+handles bounded and unbounded arcs of rational functions, referred to
+as <em>rational arcs</em> (in particular, such an arc may correspond
+to the entire graph of a rational function), and enables the
+construction and maintenance of arrangements of such arcs. Rational
+functions, and polynomial functions in particular, are not only
+interesting in their own right, they are also very useful for
+approximating or interpolating more complicated curves; see, e.g.,
+[\cgalCite{cgal:ptvf-nrcpp-02} Chapter 3.
 
-`Arr_rational_function_traits_2<AlgebraicKernel_d_1>` is a model
-of the concepts `ArrangementTraits_2`,
-`ArrangementOpenBoundaryTraits_2`, and
-`ArrangementDirectionalXMonotoneTraits_2`; the later enables
+`Arr_rational_function_traits_2<AlgebraicKernel_d_1>` is a model of
+the concepts `ArrangementTraits_2`, `ArrangementOpenBoundaryTraits_2`,
+and `ArrangementDirectionalXMonotoneTraits_2`; the later enables
 Boolean set operations. Note that it is not a model of
-`ArrangementLandmarkTraits_2` concept, so it is impossible to use
-the landmark point-location strategy with this traits class.
+`ArrangementLandmarkTraits_2` concept, so it is impossible to use the
+landmark point-location strategy with this traits class.
 
 A rational function \f$ y = \frac{P(x)}{Q(x)}\f$ is defined by two
-polynomials \f$ P\f$ and \f$ Q\f$ of arbitrary degrees. If \f$ Q(x) = 1\f$ then
-the function is a simple polynomial function. Usually the domain is
-\f$ \mathbb{R}\f$ but the function may also be restricted to a bounded interval
-\f$ [x_{\rm min}, x_{\rm max}]\f$ or defined over a ray
-\f$ (-\infty, x_{\rm max}]\f$ or \f$ [x_{\rm min}, \infty)\f$. Rational
-functions are represented by the nested type `Curve_2`.
-A rational arc is always \f$ x\f$-monotone in the mathematical
-sense. However, it is not necessarily continuous, as it may have
-singularities. An arc that has singularities must
-be split into continuous portions before being inserted into the
+polynomials \f$ P\f$ and \f$ Q\f$ of arbitrary degrees. If \f$ Q(x) =
+1\f$ then the function is a simple polynomial function. Usually the
+domain is \f$ \mathbb{R}\f$ but the function may also be restricted to
+a bounded interval \f$ [x_{\rm min}, x_{\rm max}]\f$ or defined over a
+ray \f$ (-\infty, x_{\rm max}]\f$ or \f$ [x_{\rm min},
+\infty)\f$. Rational functions are represented by the nested type
+`Curve_2`.  A rational arc is always \f$ x\f$-monotone in the
+mathematical sense. However, it is not necessarily continuous, as it
+may have singularities. An arc that has singularities must be split
+into continuous portions before being inserted into the
 arrangement. Arbitrary rational functions are represented by the
-nested type `Curve_2` and continuous portions of rational
-functions are represented by the nested type
-`X_monotone_curve_2`. Constructors for both types are provided by
-the traits. A `Curve_2` may be split up into several
-`X_monotone_curve_2` using `Make_x_monotone_2`.
+nested type `Curve_2` and continuous portions of rational functions
+are represented by the nested type `X_monotone_curve_2`. Constructors
+for both types are provided by the traits. A `Curve_2` may be split up
+into several `X_monotone_curve_2` using `Make_x_monotone_2`.
 
-Using the `Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
-class template it is possible to construct and maintain arrangement
-of rational arcs. The template parameter of the traits must be a model
-of the concept `AlgebraicKernel_d_1`. A rational function is
-represented as the quotient of two polynomials \f$ P\f$ and \f$ Q\f$ of type
-`AlgebraicKernel_d_1::Polynomial_1` and an \f$ x\f$-interval over which
-the polynomials are defined. The type of the polynomial coefficients,
-namely `AlgebraicKernel_d_1::Coefficient`, cannot be algebraic.
-Moreover, it is recommended that this type is not made rational either,
-since using rational, as opposed to integral, coefficients does not
-extend the range of the rational arcs and is typically less efficient.
-The type of the interval bounds, namely
+Using the `Arr_rational_function_traits_2<AlgebraicKernel_d_1>` class
+template it is possible to construct and maintain arrangement of
+rational arcs. The template parameter of the traits must be a model of
+the concept `AlgebraicKernel_d_1`. A rational function is represented
+as the quotient of two polynomials \f$ P\f$ and \f$ Q\f$ of type
+`AlgebraicKernel_d_1::Polynomial_1` and an \f$ x\f$-interval over
+which the polynomials are defined. The type of the polynomial
+coefficients, namely `AlgebraicKernel_d_1::Coefficient`, cannot be
+algebraic.  Moreover, it is recommended that this type is not made
+rational either, since using rational, as opposed to integral,
+coefficients does not extend the range of the rational arcs and is
+typically less efficient.  The type of the interval bounds, namely
 `AlgebraicKernel_d_1::Bound`, however, can be algebraic. A point is
-represented by a rational function and its \f$ x\f$-coordinate, which is of
-type `AlgebraicKernel_d_1::Algebraic_real_1`. Note that an explicit
-representation of the \f$ y\f$-coordinate is only computed upon request, as
-it can be a rather costly operation.
+represented by a rational function and its \f$ x\f$-coordinate, which
+is of type `AlgebraicKernel_d_1::Algebraic_real_1`. Note that an
+explicit representation of the \f$ y\f$-coordinate is only computed
+upon request, as it can be a rather costly operation.
 
 The constructed rational functions are cached by the traits class. The
 cache is local to each traits class object. It is therefore necessary
 to construct curves using only the constructor objects provided by
-member functions of the traits class.
-Moreover, a curve must only be used by the traits class object that
-was used to construct it. The cache is automatically cleaned up from
-time to time. The amortized clean up costs are constant. In addition,
-there is also a separate member function that cleans up the cache on
-demand.
+member functions of the traits class.  Moreover, a curve must only be
+used by the traits class object that was used to construct it. The
+cache is automatically cleaned up from time to time. The amortized
+clean up costs are constant. In addition, there is also a separate
+member function that cleans up the cache on demand.
 
 The curve constructors have an additional advantage. They conveniently
 enable the provision of two polynomials that define a rational arc
-using rational coefficients. For example, let \f$ P\f$ and \f$ Q\f$ denote two
-polynomials with integral coefficients that define a rational arc at
-interest, and let \f$ P'\f$ and \f$ Q'\f$ denote two polynomials with rational
-coefficients that define the same rational arc; that is, the quotients
-\f$ P/Q\f$ and \f$ P'/Q'\f$ are identical. You can construct the rational arc
-providing the coefficients of \f$ P'\f$ and \f$ Q'\f$ to the constructor. In this
-case the constructor normalizes the coefficients and stores the desired
-polynomials \f$ P\f$ and \f$ Q\f$.
+using rational coefficients. For example, let \f$ P\f$ and \f$ Q\f$
+denote two polynomials with integral coefficients that define a
+rational arc at interest, and let \f$ P'\f$ and \f$ Q'\f$ denote two
+polynomials with rational coefficients that define the same rational
+arc; that is, the quotients \f$ P/Q\f$ and \f$ P'/Q'\f$ are
+identical. You can construct the rational arc providing the
+coefficients of \f$ P'\f$ and \f$ Q'\f$ to the constructor. In this
+case the constructor normalizes the coefficients and stores the
+desired polynomials \f$ P\f$ and \f$ Q\f$.
 
 \cgalFigureBegin{arr_figex_16,ex_16.png}
 An arrangement of four arcs of rational functions, as constructed in rational_functions.cpp.
 \cgalFigureEnd
 
-The following example demonstrates the construction of an
-arrangement of rational arcs depicted in
-\cgalFigureRef{arr_figex_16}. Note the usage of the two
-constructors, for polynomial arcs and for rational arcs:
+The following example demonstrates the construction of an arrangement
+of rational arcs depicted in \cgalFigureRef{arr_figex_16}. Note the
+usage of the two constructors, for polynomial arcs and for rational
+arcs:
 
 \cgalExample{Arrangement_on_surface_2/rational_functions.cpp}
 
-\cgalFigureBegin{arr_figex_unb_rat,ex_unb_rat.png}
-An arrangement of six arcs of rational functions, as constructed in unbounded_rational_functions.cpp
+\cgalFigureBegin{arr_figex_unb_rat,ex_unb_rat.png} An arrangement of
+six arcs of rational functions, as constructed in
+unbounded_rational_functions.cpp
 \cgalFigureEnd
 
-The following example demonstrates the construction of an
-arrangement of six rational arcs - four unbounded arcs and two
-bounded ones - as depicted in \cgalFigureRef{arr_figex_unb_rat}. Note
-the usage of the constructors of an entire rational function and of
-an infinite "ray" of such a function. Also observe that the hyperbolas
-\f$ y = \pm\frac{1}{x}\f$ and \f$ y = \pm\frac{1}{2x}\f$ never intersect, although
-they have common vertical and horizontal asymptotes, so very "thin"
-unbounded faces are created between them:
+The following example demonstrates the construction of an arrangement
+of six rational arcs - four unbounded arcs and two bounded ones - as
+depicted in \cgalFigureRef{arr_figex_unb_rat}. Note the usage of the
+constructors of an entire rational function and of an infinite "ray"
+of such a function. Also observe that the hyperbolas \f$ y =
+\pm\frac{1}{x}\f$ and \f$ y = \pm\frac{1}{2x}\f$ never intersect,
+although they have common vertical and horizontal asymptotes, so very
+"thin" unbounded faces are created between them:
 
 \cgalExample{Arrangement_on_surface_2/unbounded_rational_functions.cpp}
 
 \subsubsection arr_ssectr_bez A Traits Class for Planar B&eacute;zier Curves
 
-A planar <em>B&eacute;zier curve</em> \f$ B\f$ is a parametric curve defined by a sequence
-of <em>control points</em> \f$ p_0, \ldots, p_n\f$ as follows:
+A planar <em>B&eacute;zier curve</em> \f$ B\f$ is a parametric curve
+defined by a sequence of <em>control points</em> \f$ p_0, \ldots,
+p_n\f$ as follows:
 
 \f{eqnarray*}{
 B(t) = \left(X(t), Y(t)\right)
@@ -3168,46 +3400,48 @@ B(t) = \left(X(t), Y(t)\right)
 t^k (1-t)^{n-k}}\ .
 \f}
 
-where \f$ t \in [0, 1]\f$. The degree of the curve is therefore \f$ n\f$ -
-namely, \f$ X(t)\f$ and \f$ Y(t)\f$ are polynomials of degree \f$ n\f$. B&eacute;zier curves
-have numerous applications in computer graphics and solid modelling. They
-are used, for example, in free-form sketches and for defining the true-type
-fonts.
+where \f$ t \in [0, 1]\f$. The degree of the curve is therefore \f$
+n\f$ - namely, \f$ X(t)\f$ and \f$ Y(t)\f$ are polynomials of degree
+\f$ n\f$. B&eacute;zier curves have numerous applications in computer
+graphics and solid modelling. They are used, for example, in free-form
+sketches and for defining the true-type fonts.
 
 Using the `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
-class template it is possible to construct and maintain arrangements of
-B&eacute;zier curves that are given by rational control points (a sequence
-of objects of the `RatKernel::Point_2` type). We can handle curves
-of arbitrary degree (in general, a sequence of \f$ n+1\f$ control points define a
-B&eacute;zier curve of degree \f$ n\f$). The template parameters are the same ones
-used by the `Arr_conic_traits_2` class template, and here it is also
-recommended to use the `CORE_algebraic_number_traits` class, with
-Cartesian kernels instantiated with the `Rational` and `Algebraic`
-number-types defined by this class.
+class template it is possible to construct and maintain arrangements
+of B&eacute;zier curves that are given by rational control points (a
+sequence of objects of the `RatKernel::Point_2` type). We can handle
+curves of arbitrary degree (in general, a sequence of \f$ n+1\f$
+control points define a B&eacute;zier curve of degree \f$ n\f$). The
+template parameters are the same ones used by the `Arr_conic_traits_2`
+class template, and here it is also recommended to use the
+`CORE_algebraic_number_traits` class, with Cartesian kernels
+instantiated with the `Rational` and `Algebraic` number-types defined
+by this class.
 
 As mentioned above, we assume that the coordinates of all control
-points that define a B&eacute;zier curve are rational numbers, so both \f$ X(t)\f$
-and \f$ Y(t)\f$ are polynomials with rational coefficients. The intersection
-points between curves are however algebraic numbers, and their exact
-computation is time-consuming. The traits class therefore contains a layer
-of geometric filtering that performs all computation in an approximate
-manner whenever possible. Thus, it resorts to exact computations only when
-the approximate computation fails to produce an unambiguous result.
-Note that most arrangement vertices are therefore associated with approximated
-points. You cannot access the coordinates of such points and obtain them as
-algebraic numbers, and only access to the approximate coordinates in possible.
-See the Reference Manual for the exact interface of the `Point_2`,
-`Curve_2` and `X_monotone_curve_2` defined by the traits class.
+points that define a B&eacute;zier curve are rational numbers, so both
+\f$ X(t)\f$ and \f$ Y(t)\f$ are polynomials with rational
+coefficients. The intersection points between curves are however
+algebraic numbers, and their exact computation is time-consuming. The
+traits class therefore contains a layer of geometric filtering that
+performs all computation in an approximate manner whenever
+possible. Thus, it resorts to exact computations only when the
+approximate computation fails to produce an unambiguous result.  Note
+that most arrangement vertices are therefore associated with
+approximated points. You cannot access the coordinates of such points
+and obtain them as algebraic numbers, and only access to the
+approximate coordinates in possible.  See the Reference Manual for the
+exact interface of the `Point_2`, `Curve_2` and `X_monotone_curve_2`
+defined by the traits class.
 
 The `Arr_Bezier_curve_traits_2` is a model of the
 `ArrangementTraits_2` concept (but not of the
-`ArrangementLandmarkTraits_2` concept, so it is impossible
-to use the landmark point-location strategy for arrangements of
-rational arcs).
+`ArrangementLandmarkTraits_2` concept, so it is impossible to use the
+landmark point-location strategy for arrangements of rational arcs).
 
-\cgalFigureBegin{arr_figex_bez,Bezier_arr.png}
-An arrangement of ten B&eacute;zier curves of degree \f$ 5\f$, as constructed in `Bezier_curves.cpp`.
-\cgalFigureEnd
+\cgalFigureBegin{arr_figex_bez,Bezier_arr.png} An arrangement of ten
+B&eacute;zier curves of degree \f$ 5\f$, as constructed in
+`Bezier_curves.cpp`.  \cgalFigureEnd
 
 
 The following example reads a set of B&eacute;zier curves from an input
@@ -3227,15 +3461,14 @@ of a polynomial \f$ f(x,y)\f$ in two variables. The curve is uniquely defined
 by \f$ f\f$ (although several polynomials might define the same curve).
 We call \f$ f\f$ a <em>defining polynomial</em> of \f$ C\f$.
 
-We consider arrangements induced by algebraic curves
-or by (weakly) \f$ x\f$-monotone segments for algebraic curves
-(Such a segment is not necessarily the maximal possible
-(weakly) x-monotone segment; see below.)
-When talking about algebraic curves,
-we use the term "segment" for a continuous, possibly non-linear subset
-of an algebraic curve - see the definition below.
-There are no restrictions on the algebraic curve, that means,
-we support unbounded curves, vertical curves or segments, and isolated points.
+We consider arrangements induced by algebraic curves or by (weakly)
+\f$ x\f$-monotone segments for algebraic curves (Such a segment is not
+necessarily the maximal possible (weakly) x-monotone segment; see
+below.)  When talking about algebraic curves, we use the term
+"segment" for a continuous, possibly non-linear subset of an algebraic
+curve - see the definition below.  There are no restrictions on the
+algebraic curve, that means, we support unbounded curves, vertical
+curves or segments, and isolated points.
 
 The `Arr_algebraic_segment_traits_2<Coefficient>` class template
 is a model of the `ArrangementTraits_2` concept (but not of the
@@ -3255,8 +3488,9 @@ This polynomial type is also available by the traits class
 and constitutes a valid model
 of the concept `Polynomial_d` with two variables (see ??).
 
-\cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.png}
-An arrangement of algebraic curves of degrees \f$ 1\f$, \f$ 2\f$, \f$ 3\f$, and \f$ 6\f$, as constructed in `algebraic_curves.cpp`.
+\cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.png} An
+arrangement of algebraic curves of degrees \f$ 1\f$, \f$ 2\f$, \f$
+3\f$, and \f$ 6\f$, as constructed in `algebraic_curves.cpp`.
 \cgalFigureEnd
 
 The following examples computes the arrangement induced by the four curves
@@ -3264,82 +3498,89 @@ in \cgalFigureRef{arr_figex_alg_curves}
 
 \cgalExample{Arrangement_on_surface_2/algebraic_curves.cpp}
 
-We first give a precise definition of segments of algebraic curves.
-A point \f$ p\f$ on a curve \f$ C_f\subset\mathbb{R}^2\f$
-(with \f$ f\f$ its defining equation) is called
-<em>semi-regular</em>, if locally around \f$ p\f$, \f$ C_f\f$ can be written as
-a function graph of some continuous function in \f$ x\f$ or in \f$ y\f$
-(we also say that \f$ p\f$ is parameterizable in \f$ x\f$ or \f$ y\f$, respectively).
-The only two cases of non-semi-regular points are isolated points, and
-self-intersections.
-A <em>segment</em> of a curve is a closed and continuous point set
-such that each interior point is semi-regular.
-It follows that a weakly \f$ x\f$-monotone segment is either a completely vertical
-segment, or a segment whose interior points are all parameterizable in \f$ x\f$.
+We first give a precise definition of segments of algebraic curves.  A
+point \f$ p\f$ on a curve \f$ C_f\subset\mathbb{R}^2\f$ (with \f$ f\f$
+its defining equation) is called <em>semi-regular</em>, if locally
+around \f$ p\f$, \f$ C_f\f$ can be written as a function graph of some
+continuous function in \f$ x\f$ or in \f$ y\f$ (we also say that \f$
+p\f$ is parameterizable in \f$ x\f$ or \f$ y\f$, respectively).  The
+only two cases of non-semi-regular points are isolated points, and
+self-intersections.  A <em>segment</em> of a curve is a closed and
+continuous point set such that each interior point is semi-regular.
+It follows that a weakly \f$ x\f$-monotone segment is either a
+completely vertical segment, or a segment whose interior points are
+all parameterizable in \f$ x\f$.
 
-The traits class allows to construct weakly \f$ x\f$-monotone segments of a curve
-using the `Construct_x_monotone_segment_2` functor.
-The `X_monotone_curve_2` type of the traits class represents
-weakly \f$ x\f$-monotone segments of a curve; however,
-segments may need to be further subdivided into several (sub-)segments,
-for technical reasons. Therefore, `Construct_x_monotone_segment_2`
-constructs a sequence of `X_monotone_curve_2` objects, whose union
-represents the weakly \f$ x\f$-monotone segment that was queried.
-We call a segment <em>terminal</em> if it can be represented
-by the type `X_monotone_curve_2`.
+The traits class allows to construct weakly \f$ x\f$-monotone segments
+of a curve using the `Construct_x_monotone_segment_2` functor.  The
+`X_monotone_curve_2` type of the traits class represents weakly \f$
+x\f$-monotone segments of a curve; however, segments may need to be
+further subdivided into several (sub-)segments, for technical
+reasons. Therefore, `Construct_x_monotone_segment_2` constructs a
+sequence of `X_monotone_curve_2` objects, whose union represents the
+weakly \f$ x\f$-monotone segment that was queried.  We call a segment
+<em>terminal</em> if it can be represented by the type
+`X_monotone_curve_2`.
 
 \cgalAdvancedBegin
+
 The subdivision of segments is due to the internal representation of
-\f$ x\f$-monotone segments, which is based on a vertical decomposition.
-We assume the defining polynomial \f$ f\f$ of the curve \f$ C\f$
-to be <em>square-free</em>, that means, it contains no divisor \f$ g^2\f$ of total
-degree greater than zero. We define a <em>(complex) critical point</em>
-\f$ p\in\mathbb{C}^2\f$ by
-\f[ f(p)=0=\frac{\partial f}{\partial y}(p). \f]
-An \f$ x\f$-coordinate \f$ \alpha\in\mathbb{R}\f$ is <em>critical</em>
-if either some critical point has \f$ x\f$-coordinate \f$ \alpha\f$,
-or if the leading coefficient of \f$ f\f$, considered as a polynomial in \f$ y\f$,
-vanishes. In particular, vertical lines of and isolated point of \f$ C\f$
-can only take place at critical \f$ x\f$-coordinates.
-Between two consecutive critical \f$ x\f$-coordinates, the curve decomposes
-into a finite number of \f$ x\f$-monotone segments (the same is true on the left
-of the leftmost, and on the right of the rightmost critical \f$ x\f$-coordinate).
-The type `X_monotone_curve_2` is only able to represent such segments
-(and sub-segments of them). See \cgalFigureRef{arr_figcylindrical_decomposition}
-for an example of a decomposition into terminal segments. Formally,
-a terminal segment is a weakly \f$ x\f$-monotone segment that is either vertical, or
-its \f$ x\f$-range contains no critical point in its interior.
+\f$ x\f$-monotone segments, which is based on a vertical
+decomposition.  We assume the defining polynomial \f$ f\f$ of the
+curve \f$ C\f$ to be <em>square-free</em>, that means, it contains no
+divisor \f$ g^2\f$ of total degree greater than zero. We define a
+<em>(complex) critical point</em> \f$ p\in\mathbb{C}^2\f$ by \f[
+f(p)=0=\frac{\partial f}{\partial y}(p). \f] An \f$ x\f$-coordinate
+\f$ \alpha\in\mathbb{R}\f$ is <em>critical</em> if either some
+critical point has \f$ x\f$-coordinate \f$ \alpha\f$, or if the
+leading coefficient of \f$ f\f$, considered as a polynomial in \f$
+y\f$, vanishes. In particular, vertical lines of and isolated point of
+\f$ C\f$ can only take place at critical \f$ x\f$-coordinates.
+Between two consecutive critical \f$ x\f$-coordinates, the curve
+decomposes into a finite number of \f$ x\f$-monotone segments (the
+same is true on the left of the leftmost, and on the right of the
+rightmost critical \f$ x\f$-coordinate).  The type
+`X_monotone_curve_2` is only able to represent such segments (and
+sub-segments of them). See
+\cgalFigureRef{arr_figcylindrical_decomposition} for an example of a
+decomposition into terminal segments. Formally, a terminal segment is
+a weakly \f$ x\f$-monotone segment that is either vertical, or its \f$
+x\f$-range contains no critical point in its interior.
 \cgalAdvancedEnd
 
 \cgalFigureBegin{arr_figcylindrical_decomposition,cylindrical_decomposition.png}
-The critical \f$ x\f$-coordinates of an algebraic curve (dashed lines), and its decomposition into terminal segments (in different colors). The segment from \f$ p\f$ to \f$ q\f$ consists of the union of three terminal segments.
+The critical \f$ x\f$-coordinates of an algebraic curve (dashed
+lines), and its decomposition into terminal segments (in different
+colors). The segment from \f$ p\f$ to \f$ q\f$ consists of the union
+of three terminal segments.
 \cgalFigureEnd
 
 
 Coordinates of points are represented by the type `Algebraic_real_1`,
-which is defined in the traits class.
-This type is taken from a model of the `AlgebraicKernel_1` concept,
-which is also available by the type `Algebraic_kernel_1`.
-One can use this model to create algebraic numbers as roots of univariate
-polynomials, and process them, for instance,
-compare them, or approximate them to any precision. See the documentation
-of `AlgebraicKernel_1` for more information.
-One can construct an object of type `Point_2` by a triple
-(\f$ x_0\f$,cv,i), which means that the \f$ i\f$-th point (counted from below)
-in the fiber of cv at the \f$ x\f$-coordinate \f$ x_0\f$ is constructed.
-This is also how points are presented internally.
-In the example displayed in \cgalFigureRef{arr_figcylindrical_decomposition},
-if \f$ x_1\f$ denotes the \f$ x\f$-coordinate of \f$ p\f$, and \f$ cv\f$ represents the algebraic
-curve, then \f$ p\f$ could be represented by \f$ (x_1,cv,3)\f$. If \f$ x_2\f$
-is the \f$ x\f$-coordinate of \f$ q\f$,
-then \f$ (x_2,cv,1)\f$ is a valid representation of \f$ q\f$.
-Although the \f$ y\f$-coordinate of an object of type `Point_2` can be queried,
-we recommend to be careful with that option, since computing an explicit
-representation of the \f$ y\f$-coordinate as an `Algebraic_real_1` object
-can become rather expensive.
+which is defined in the traits class.  This type is taken from a model
+of the `AlgebraicKernel_1` concept, which is also available by the
+type `Algebraic_kernel_1`.  One can use this model to create algebraic
+numbers as roots of univariate polynomials, and process them, for
+instance, compare them, or approximate them to any precision. See the
+documentation of `AlgebraicKernel_1` for more information.  One can
+construct an object of type `Point_2` by a triple (\f$ x_0\f$,cv,i),
+which means that the \f$ i\f$-th point (counted from below) in the
+fiber of cv at the \f$ x\f$-coordinate \f$ x_0\f$ is constructed.
+This is also how points are presented internally.  In the example
+displayed in \cgalFigureRef{arr_figcylindrical_decomposition}, if \f$
+x_1\f$ denotes the \f$ x\f$-coordinate of \f$ p\f$, and \f$ cv\f$
+represents the algebraic curve, then \f$ p\f$ could be represented by
+\f$ (x_1,cv,3)\f$. If \f$ x_2\f$ is the \f$ x\f$-coordinate of \f$
+q\f$, then \f$ (x_2,cv,1)\f$ is a valid representation of \f$ q\f$.
+Although the \f$ y\f$-coordinate of an object of type `Point_2` can be
+queried, we recommend to be careful with that option, since computing
+an explicit representation of the \f$ y\f$-coordinate as an
+`Algebraic_real_1` object can become rather expensive.
 
-\cgalFigureBegin{arr_figex_alg_segments,algebraic_segments.png}
-An arrangement of algebraic segments (solid lines), as constructed in `algebraic_segments.cpp`. The supporting curves are drawn in dashed lines.
+\cgalFigureBegin{arr_figex_alg_segments,algebraic_segments.png} An
+arrangement of algebraic segments (solid lines), as constructed in
+`algebraic_segments.cpp`. The supporting curves are drawn in dashed
+lines.
 \cgalFigureEnd
 
 The following code exemplifies various methods to construct
@@ -3359,68 +3600,78 @@ extending the vertex, halfedge, or face types provided by the
 \ref arr_secex_dcel.
 
 The arrangement package includes a generic traits-class decorator
-template named
-`Arr_curve_data_traits_2<BaseTraits, XMonotoneCurveData, Merge, CurveData, Convert>`.
-This decorator is used to attach a data field to curves and to
-\f$ x\f$-monotone curves. It is parameterized by a base-traits class, which is
-one of the geometric traits classes described in the previous subsections, or
-a user-defined traits class. The curve-data decorator derives itself from the
-base-traits class, and in particular inherits its `Point_2` type.
-In addition:
+template named `Arr_curve_data_traits_2<BaseTraits,
+XMonotoneCurveData, Merge, CurveData, Convert>`.  This decorator is
+used to attach a data field to curves and to \f$ x\f$-monotone
+curves. It is parameterized by a base-traits class, which is one of
+the geometric traits classes described in the previous subsections, or
+a user-defined traits class. The curve-data decorator derives itself
+from the base-traits class, and in particular inherits its `Point_2`
+type.  In addition:
+
 <UL>
 <LI>`Curve_2` is derived from the basic `BaseTraits::Curve_2`
 class, extending it by an extra field of type `CurveData`.
+
 <LI>`X_monotone_curve_2` is derived from the basic
-`BaseTraits::X_monotone_curve_2` class, extending it by an extra field of
-type `XMonotoneCurveData`.
+`BaseTraits::X_monotone_curve_2` class, extending it by an extra field
+of type `XMonotoneCurveData`.
+
 </UL>
-Note that the `Curve_2` and `X_monotone_curve_2` are not
-the same, even if the `BaseTraits::Curve_2` and
-`BaseTraits::X_monotone_curve_2` are (as in the case of the
-segment-traits class for example). The extended curve types support the
-additional methods `data()` and `set_data()` for
-accessing and modifying the data field.
+Note that the `Curve_2` and `X_monotone_curve_2` are not the same,
+even if the `BaseTraits::Curve_2` and `BaseTraits::X_monotone_curve_2`
+are (as in the case of the segment-traits class for example). The
+extended curve types support the additional methods `data()` and
+`set_data()` for accessing and modifying the data field.
 
 You can create an extended curve (or an extended \f$ x\f$-monotone curve)
 from a basic curve and a curve-data object. When curves are
 inserted into an arrangement, they may be split, and the
 decorator handles their data fields automatically:
 <UL>
+
 <LI>When a curve is subdivided into \f$ x\f$-monotone subcurves, its
 data field of type `CurveData` is converted to an `XMonotoneCurveData`
-object \f$ d\f$ using the `Convert` functor. The object \f$ d\f$ is automatically
-associated with each of the resulting \f$ x\f$-monotone subcurves.
+object \f$ d\f$ using the `Convert` functor. The object \f$ d\f$ is
+automatically associated with each of the resulting \f$ x\f$-monotone
+subcurves.
 
 Note that by default, the `CurveData` type is identical to the
-`XMonotoneCurveData` type (and the conversion functor `Convert`
-is trivially defined). Thus, the data field associated with the original
-curve is just duplicated and stored with the \f$ x\f$-monotone subcurves.
+`XMonotoneCurveData` type (and the conversion functor `Convert` is
+trivially defined). Thus, the data field associated with the original
+curve is just duplicated and stored with the \f$ x\f$-monotone
+subcurves.
+
 <LI>When an \f$ x\f$-monotone curve is split into two, the decorator
 class automatically copies its data field to both resulting subcurves.
-<LI>When intersecting two \f$ x\f$-monotone curves \f$ c_1\f$ and \f$ c_2\f$, the
-result may include overlapping sections, represented as
-\f$ x\f$-monotone curves. In this case the data fields of \f$ c_1\f$ and \f$ c_2\f$
-are merged into a single `XMonotoneCurveData` object,
-using the `Merge` functor, which is supplied as a
-parameter to the traits class-template. The resulting object is
-assigned to the data field of the overlapping subcurves.
-<LI>Merging two \f$ x\f$-monotone curves is allowed only when (i) the two
-curves are geometrically mergeable - that is, the base-traits class
-allows to merge them - and (ii) the two curves store the same data field.
+
+<LI>When intersecting two \f$ x\f$-monotone curves \f$ c_1\f$ and \f$
+c_2\f$, the result may include overlapping sections, represented as
+\f$ x\f$-monotone curves. In this case the data fields of \f$ c_1\f$
+and \f$ c_2\f$ are merged into a single `XMonotoneCurveData` object,
+using the `Merge` functor, which is supplied as a parameter to the
+traits class-template. The resulting object is assigned to the data
+field of the overlapping subcurves.
+
+<LI>Merging two \f$ x\f$-monotone curves is allowed only when (i) the
+two curves are geometrically mergeable - that is, the base-traits
+class allows to merge them - and (ii) the two curves store the same
+data field.
 </UL>
 
 The `Arr_consolidated_curve_data_traits_2<BaseTraits, Data>` decorator
 specializes the generic curve-data decorator. It extends the basic
 `BaseTraits::Curve_2` by a single `Data` field, and the basic
-`BaseTraits::X_monotone_curve_2` with a <em>set</em> of (distinct) data
-objects. The `Data` type is required to support the equality operator,
-used to ensure that each set contains only distinct data objects with no
-duplicates.
-When a curve with a data field \f$ d\f$ is subdivided into \f$ x\f$-monotone subcurves,
-each subcurve is associated with a set \f$ S = \{ d \}\f$. In case of an overlap
-between two \f$ x\f$-monotone curves \f$ c_1\f$ and \f$ c_2\f$ with associated data sets
-\f$ S_1\f$ and \f$ S_2\f$, respectively, the overlapping subcurve is associated with
-the consolidated set \f$ S_1 \cup S_2\f$.
+`BaseTraits::X_monotone_curve_2` with a <em>set</em> of (distinct)
+data objects. The `Data` type is required to support the equality
+operator, used to ensure that each set contains only distinct data
+objects with no duplicates.  When a curve with a data field \f$ d\f$
+is subdivided into \f$ x\f$-monotone subcurves, each subcurve is
+associated with a set \f$ S = \{ d \}\f$. In case of an overlap
+between two \f$ x\f$-monotone curves \f$ c_1\f$ and \f$ c_2\f$ with
+associated data sets \f$ S_1\f$ and \f$ S_2\f$, respectively, the
+overlapping subcurve is associated with the consolidated set \f$ S_1
+\cup S_2\f$.
 
 \subsubsection Arrangement_on_surface_2Examples Examples
 
@@ -3720,21 +3971,23 @@ records in the overlaid arrangement from the \sc{Dcel} features of
 
 In principle, we distinguish between three levels of overlay:
 <DL>
-<DT><B>Simple overlay:</B><DD>
-An overlay of two arrangements that store no additional data
-with their \sc{Dcel} records. That is, they are defined using the default
+<DT><B>Simple overlay:</B>
+
+<DD>An overlay of two arrangements that store no additional data with
+their \sc{Dcel} records. That is, they are defined using the default
 \sc{Dcel} class `Arr_default_dcel`. Typically, the overlaid
-arrangement in this case stores no extra data with its \sc{Dcel} records as
-well (or if it does, the additional data fields cannot be computed by
-the overlay operation), so by overlaying the two arrangement we just
-compute the arrangement of all curves that induce `arr_a` and `arr_b`.
-Note that the same result can be obtained using the standard insertion
-operations, but users may choose to use overlay computation in order to
-achieve better running times.
+arrangement in this case stores no extra data with its \sc{Dcel}
+records as well (or if it does, the additional data fields cannot be
+computed by the overlay operation), so by overlaying the two
+arrangement we just compute the arrangement of all curves that induce
+`arr_a` and `arr_b`.  Note that the same result can be obtained using
+the standard insertion operations, but users may choose to use overlay
+computation in order to achieve better running times.
 
 The `Arr_default_overlay_traits` class should be used as an overlay
-traits-class for such simple overlay operations.  <DT><B>Face
-overlay:</B><DD> An overlay of two arrangements that store additional
+traits-class for such simple overlay operations.
+<DT><B>Face overlay:</B>
+<DD> An overlay of two arrangements that store additional
 data fields with their faces (e.g., the geographic-map example given
 in the beginning of this section). The resulting overlaid arrangement
 typically also stores extraneous data fields with its faces, where the
@@ -3751,13 +4004,14 @@ face-data fields of types `Dcel_A::Face_data` and
 `Dcel_B::Face_data`, and computing the output `Dcel_R::Face_data`
 object. The overlay traits-class uses this functor to properly construct
 the overlaid faces.
-<DT><B>Full overlay:</B><DD>
-An overlay of two arrangements that store additional data
-fields with all their \sc{Dcel} records. That is, their \sc{Dcel} classes
-are instantiations of the `Arr_extended_dcel` class-template (see
-Section \ref arr_ssecex_dcel_all), where the resulting arrangement
-also extends it \sc{Dcel} records with data fields computed on the basis
-of the overlapping \sc{Dcel} features of the two input arrangements.
+
+<DT><B>Full overlay:</B>
+<DD>An overlay of two arrangements that store additional data fields
+with all their \sc{Dcel} records. That is, their \sc{Dcel} classes are
+instantiations of the `Arr_extended_dcel` class-template (see Section
+\ref arr_ssecex_dcel_all), where the resulting arrangement also
+extends it \sc{Dcel} records with data fields computed on the basis of
+the overlapping \sc{Dcel} features of the two input arrangements.
 </DL>
 
 In the following subsections we give some examples for the simple and the
