@@ -990,10 +990,12 @@ bool Io_image_plugin::loadDCM(QString dirname)
   return result;
 #else
   message_interface->warning("You need VTK to read a DCM file");
+  return false;
 #endif
 }
 Image* Io_image_plugin::createDCMImage(QString dirname)
 {
+  Image* image = NULL;
 #ifdef CGAL_USE_VTK
   dicom_reader = vtkDICOMImageReader::New();
   dicom_reader->SetDirectoryName(dirname.toUtf8());
@@ -1011,10 +1013,11 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
   smoother->Update();
   vtk_image = smoother->GetOutput();
   vtk_image->Print(std::cerr);
-  Image* image = new Image;
+  image = new Image;
   *image = CGAL::read_vtk_image_data(vtk_image);
-  return image;
 #endif
+  return image;
+
 }
 
 #include "Io_image_plugin.moc"
