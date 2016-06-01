@@ -97,6 +97,18 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    CGAL::Three::Scene_group_item* group =
+            qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
+    if(group)
+    {
+      QList<int> children;
+      Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+      {
+        group->unlockChild(child);
+        children << item_id(child);
+      }
+      erase(children);
+    }
     std::swap(m_entries[index], item);
     if ( item->isFinite() && !item->isEmpty() &&
          m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
@@ -105,7 +117,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     Q_EMIT updated_bbox();
     }
   Q_EMIT updated();
-    CGAL::Three::Scene_group_item* group =
+    group =
             qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
     if(group)
     {
