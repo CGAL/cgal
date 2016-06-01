@@ -632,7 +632,7 @@ scan_triangulation_impl()
   typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
 
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
 

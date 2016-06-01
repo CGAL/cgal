@@ -46,7 +46,7 @@ class Regular_triangulation
   typedef Regular_triangulation_euclidean_traits<Traits_>  RTTraits;
   typedef typename RTTraits::Dimension                     Maximal_dimension_;
   typedef typename Default::Get<
-    TDS_, 
+    TDS_,
     Triangulation_data_structure<
       Maximal_dimension_,
       Triangulation_vertex<RTTraits>,
@@ -71,7 +71,7 @@ public: // PUBLIC NESTED TYPES
   typedef typename Base::Full_cell                Full_cell;
   typedef typename Base::Facet                    Facet;
   typedef typename Base::Face                     Face;
-  
+
   typedef Maximal_dimension_                      Maximal_dimension;
   typedef typename RTTraits::Bare_point_d         Bare_point;
   typedef typename RTTraits::Weighted_point_d     Weighted_point;
@@ -156,7 +156,7 @@ private:
   };
 
 public:
-  
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
   Regular_triangulation(int dim, const Geom_traits &k = Geom_traits())
@@ -165,12 +165,12 @@ public:
   }
 
   // With this constructor,
-  // the user can specify a Flat_orientation_d object to be used for 
-  // orienting simplices of a specific dimension 
+  // the user can specify a Flat_orientation_d object to be used for
+  // orienting simplices of a specific dimension
   // (= preset_flat_orientation_.first)
   // It it used by the dark triangulations created by DT::remove
   Regular_triangulation(
-    int dim, 
+    int dim,
     const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
     const Geom_traits &k = Geom_traits())
   : Base(dim, preset_flat_orientation, k)
@@ -185,8 +185,8 @@ public:
   Power_side_of_power_sphere_for_non_maximal_dim_d power_side_of_power_sphere_for_non_maximal_dim_predicate() const
   {
     return Power_side_of_power_sphere_for_non_maximal_dim_d (
-      flat_orientation_, 
-      geom_traits().construct_flat_orientation_d_object(), 
+      flat_orientation_,
+      geom_traits().construct_flat_orientation_d_object(),
       geom_traits().in_flat_power_side_of_power_sphere_d_object()
     );
   }
@@ -246,13 +246,13 @@ public:
     return number_of_vertices() - n;
   }
 
-  Vertex_handle insert(const Weighted_point &, 
-                       const Locate_type, 
-                       const Face &, 
-                       const Facet &, 
+  Vertex_handle insert(const Weighted_point &,
+                       const Locate_type,
+                       const Face &,
+                       const Facet &,
                        const Full_cell_handle);
 
-  Vertex_handle insert(const Weighted_point & p, 
+  Vertex_handle insert(const Weighted_point & p,
                        const Full_cell_handle start = Full_cell_handle())
   {
     Locate_type lt;
@@ -272,14 +272,14 @@ public:
   Vertex_handle insert_in_conflicting_cell(
     const Weighted_point &, const Full_cell_handle,
     const Vertex_handle only_if_this_vertex_is_in_the_cz = Vertex_handle());
-  
-  Vertex_handle insert_if_in_star(const Weighted_point &, 
-                                  const Vertex_handle, 
-                                  const Locate_type, 
-                                  const Face &, 
-                                  const Facet &, 
+
+  Vertex_handle insert_if_in_star(const Weighted_point &,
+                                  const Vertex_handle,
+                                  const Locate_type,
+                                  const Face &,
+                                  const Facet &,
                                   const Full_cell_handle);
-  
+
   Vertex_handle insert_if_in_star(
     const Weighted_point & p, const Vertex_handle star_center,
     const Full_cell_handle start = Full_cell_handle())
@@ -292,7 +292,7 @@ public:
   }
 
   Vertex_handle insert_if_in_star(
-    const Weighted_point & p, const Vertex_handle star_center, 
+    const Weighted_point & p, const Vertex_handle star_center,
     const Vertex_handle hint)
   {
     CGAL_assertion( Vertex_handle() != hint );
@@ -348,7 +348,7 @@ public:
 
         Orientation o =  ori_(
           boost::make_transform_iterator(s->vertices_begin(), spivi),
-          boost::make_transform_iterator(s->vertices_begin() + cur_dim_ + 1, 
+          boost::make_transform_iterator(s->vertices_begin() + cur_dim_ + 1,
                                          spivi));
 
         if( POSITIVE == o )
@@ -377,9 +377,9 @@ public:
       return pred_(rt_.full_cell(f)->neighbor(rt_.index_of_covertex(f)));
     }
   };
-  
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  VALIDITY
-    
+
     bool is_valid(bool verbose = false, int level = 0) const;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  MISC
@@ -390,10 +390,10 @@ public:
     }
 
 private:
-  
+
   template<typename InputIterator>
   bool
-  does_cell_range_contain_vertex(InputIterator cz_begin, InputIterator cz_end, 
+  does_cell_range_contain_vertex(InputIterator cz_begin, InputIterator cz_end,
                                  Vertex_handle vh) const
   {
     // Check all vertices
@@ -412,7 +412,7 @@ private:
 
   template<typename InputIterator, typename OutputIterator>
   void
-  process_conflict_zone(InputIterator cz_begin, InputIterator cz_end, 
+  process_conflict_zone(InputIterator cz_begin, InputIterator cz_end,
                         OutputIterator vertices_out) const
   {
     // Get all vertices
@@ -432,10 +432,10 @@ private:
     }
   }
 
-  
+
   template<typename InputIterator>
   void
-  process_cz_vertices_after_insertion(InputIterator vertices_begin, 
+  process_cz_vertices_after_insertion(InputIterator vertices_begin,
                                       InputIterator vertices_end)
   {
     // Get all vertices
@@ -463,14 +463,14 @@ private:
       Conflict_traversal_pred_in_subspace;
   typedef Conflict_traversal_predicate<Conflict_pred_in_fullspace>
       Conflict_traversal_pred_in_fullspace;
-   
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  MEMBER VARIABLES
   std::vector<Weighted_point> m_hidden_points;
 
 }; // class Regular_triangulation
 
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // FUNCTIONS THAT ARE MEMBER METHODS:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
@@ -536,8 +536,8 @@ Regular_triangulation<Traits, TDS>
   typedef Triangulation_full_cell<
     Geom_traits,
     internal::Triangulation::Dark_full_cell_data<TDS> >    Dark_full_cell_base;
-  typedef Triangulation_data_structure<Maximal_dimension, 
-                                       Dark_vertex_base, 
+  typedef Triangulation_data_structure<Maximal_dimension,
+                                       Dark_vertex_base,
                                        Dark_full_cell_base
                                       >                    Dark_tds;
   typedef Regular_triangulation<Traits, Dark_tds>               Dark_triangulation;
@@ -648,7 +648,7 @@ Regular_triangulation<Traits, TDS>
   typedef typename Base::template Full_cell_set<Dark_s_handle> Dark_full_cells;
   Dark_full_cells conflict_zone;
   std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
-  
+
   dark_ft = dark_side.compute_conflict_zone(v->point(), dark_s, dark_out);
   // Make the dark simplices in the conflict zone searchable
   conflict_zone.make_searchable();
@@ -673,8 +673,8 @@ Regular_triangulation<Traits, TDS>
     dark_incident_s.clear();
     dark_out = std::back_inserter(dark_incident_s);
     dark_side.tds().incident_full_cells(dark_v, dark_out);
-    for(typename Dark_full_cells::iterator it = dark_incident_s.begin(); 
-        it != dark_incident_s.end(); 
+    for(typename Dark_full_cells::iterator it = dark_incident_s.begin();
+        it != dark_incident_s.end();
         ++it)
     {
       (*it)->data().count_ += 1;
@@ -748,7 +748,7 @@ Regular_triangulation<Traits, TDS>
       int li = light_s->index(dark_s->vertex(di)->data());
       Rotor light_r(light_s, li, light_i);
       typename Dark_triangulation::Rotor dark_r(dark_s, di, dark_i);
-      
+
       while( simps.contains(cpp11::get<0>(light_r)->neighbor(cpp11::get<1>(light_r))) )
         light_r = rotate_rotor(light_r);
 
@@ -894,9 +894,9 @@ Regular_triangulation<Traits, TDS>
 template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
-::insert_if_in_star(const Weighted_point & p, 
+::insert_if_in_star(const Weighted_point & p,
                     const Vertex_handle star_center,
-                    const Locate_type lt, const Face & f, const Facet & ft, 
+                    const Locate_type lt, const Face & f, const Facet & ft,
                     const Full_cell_handle s)
 {
   switch( lt )
@@ -934,7 +934,7 @@ Regular_triangulation<Traits, TDS>
 template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
-::insert_in_conflicting_cell(const Weighted_point & p, 
+::insert_in_conflicting_cell(const Weighted_point & p,
                              const Full_cell_handle s,
                              const Vertex_handle only_if_this_vertex_is_in_the_cz)
 {
@@ -955,10 +955,10 @@ Regular_triangulation<Traits, TDS>
     cs.reserve(64);
     std::back_insert_iterator<Full_cell_h_vector> out(cs);
     Facet ft = compute_conflict_zone(p, s, out);
-    
+
     // Check if the CZ contains "only_if_this_vertex_is_in_the_cz"
     if (only_if_this_vertex_is_in_the_cz != Vertex_handle()
-     && !does_cell_range_contain_vertex(cs.begin(), cs.end(), 
+     && !does_cell_range_contain_vertex(cs.begin(), cs.end(),
                                         only_if_this_vertex_is_in_the_cz))
     {
       return Vertex_handle();
@@ -967,7 +967,7 @@ Regular_triangulation<Traits, TDS>
     // Otherwise, proceed with the insertion
     std::vector<Vertex_handle> cz_vertices;
     cz_vertices.reserve(64);
-    process_conflict_zone(cs.begin(), cs.end(), 
+    process_conflict_zone(cs.begin(), cs.end(),
                           std::back_inserter(cz_vertices));
 
     Vertex_handle ret = insert_in_hole(p, cs.begin(), cs.end(), ft);
@@ -1048,8 +1048,8 @@ Regular_triangulation<Traits, TDS>
   if( current_dimension() < maximal_dimension() )
   {
     Conflict_pred_in_subspace c(
-      *this, p, 
-      coaffine_orientation_predicate(), 
+      *this, p,
+      coaffine_orientation_predicate(),
       power_side_of_power_sphere_for_non_maximal_dim_predicate());
     return c(s);
   }
@@ -1072,8 +1072,8 @@ Regular_triangulation<Traits, TDS>
   if( current_dimension() < maximal_dimension() )
   {
     Conflict_pred_in_subspace c(
-      *this, p, 
-      coaffine_orientation_predicate(), 
+      *this, p,
+      coaffine_orientation_predicate(),
       power_side_of_power_sphere_for_non_maximal_dim_predicate());
     Conflict_traversal_pred_in_subspace tp(*this, c);
     return tds().gather_full_cells(s, tp, out);
@@ -1094,7 +1094,7 @@ template< typename Traits, typename TDS >
 bool
 Regular_triangulation<Traits, TDS>
 ::is_valid(bool verbose, int level) const
-{ 
+{
   if (!Base::is_valid(verbose, level))
     return false;
 
@@ -1105,16 +1105,16 @@ Regular_triangulation<Traits, TDS>
          cit != finite_full_cells_end() ; ++cit )
     {
       Full_cell_const_handle ch = cit.base();
-      for(int i = 0; i < dim+1 ; ++i ) 
+      for(int i = 0; i < dim+1 ; ++i )
       {
         // If the i-th neighbor is not an infinite cell
-        Vertex_handle opposite_vh = 
+        Vertex_handle opposite_vh =
           ch->neighbor(i)->vertex(ch->neighbor(i)->index(ch));
         if (!is_infinite(opposite_vh))
         {
           Power_side_of_power_sphere_d side = 
             geom_traits().power_side_of_power_sphere_d_object();
-          if (side(Point_const_iterator(ch->vertices_begin()), 
+          if (side(Point_const_iterator(ch->vertices_begin()),
                    Point_const_iterator(ch->vertices_end()),
                    opposite_vh->point()) == ON_POSITIVE_SIDE)
           {

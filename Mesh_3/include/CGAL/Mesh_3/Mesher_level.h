@@ -194,7 +194,7 @@ protected:
 
 #ifdef CGAL_MESH_3_PROFILING
 protected:
-  WallClockTimer m_timer;
+  Wall_clock_timer m_timer;
 #endif
 
 public:

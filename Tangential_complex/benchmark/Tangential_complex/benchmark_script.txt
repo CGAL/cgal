@@ -1,0 +1,136 @@
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
+# Input															PARAM1	PARAM2	PARAM3	NUM_P	AMB		INTR	SPARSIFY	SPARSITY	PERTURB	ADD_HDIM	COLLAPSE	FIX_TIME_LIMIT	NUM_ITERATIONS
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+#---------------------------------------------------------------- Alpha TC tests ------------------------------------------------------------------------
+#generate_sphere_d												1 		0		-		8		2		1		Y			0.005		N		Y			N			3  				1 #No noise => OK: 6 2d with a perturb sometimes
+#generate_sphere_d												1 		0		-		50		2		1		Y			0.005		N		Y			N			3  				1 #No noise => OK: 49 1d
+#generate_sphere_d												1 		1		-		50		2		1		Y			0.005		N		Y			N			3  				1 #Noise => OK: 45 2d + 3 3d
+#generate_torus_d     											N		-		-		15  	2		1		Y			0.05 		N		Y			N			10   			1
+#generate_sphere_d												0.302 	0		-		8		3		2		Y			0.005		N		Y			N			60  			1 #No noise => OK: 7 3d with a perturb sometimes
+#generate_sphere_d												0.302 	0		-		50		3		2		Y			0.005		N		Y			N			60  			1 #No noise => no inconsitencies
+#generate_sphere_d												0.302 	3		-		50		3		2		Y			0.005		N		Y			N			60  			1 #Noise => OK: 90 2d + 3 3d
+#generate_sphere_d												1    	1		-		500		4		3		Y			0.005		N		Y			N			60  			1 #Noise 1% => OK: 3113 3d + 35 4d
+#generate_sphere_d												1    	2		-		500		4		3		Y			0.005		N		Y			N			60  			1 #Noise 2% => OK: 2969 3d + 91 4d
+#generate_sphere_d												1    	2		-		5000	4		3		Y			0.005		N		Y			N			60  			1 #Noise 2% => OK: 27905 3d + 2485 4d
+#generate_sphere_d												0.302 	2		-		300		2		1		Y			0.005		N		Y			N			60  			1
+#generate_torus_3D   											2		1		N		200   	3		2		Y			0.05  		N		Y			N			600   			1 #OK: 1048 3d ~170s
+#generate_torus_3D   											2		1		N		2000   	3		2		Y			0.05  		N		Y			N			600   			1 #OK: 3545 2d + 27 3d ~35s
+#generate_torus_d     											N		1		-		50  	4		2		Y			0.05 		N		Y			N			3   			1 #OK: 431 4d
+#generate_torus_d     											N		1		-		500  	4		2		Y			0.05 		N		Y			N			3   			1 #OK: 881 2d + 37 3d
+#generate_torus_d     											Y		1		-		250  	4		2		Y			0.05 		N		Y			N			3   			1 #OK: 80 d2 + 185 d3
+#generate_torus_d    											N		-		-		50  	6		3		Y			0.05 		Y		Y			N			10      		1 #
+#generate_torus_d    											Y		-		-		700  	6		3		Y			0.05 		Y		Y			N			100      		1 #Grid
+#generate_torus_d    											N		-		-		50000  	6		3		Y			0.05 		Y		Y			N			0       		1 #Too long...
+#generate_moment_curve											0		1		-		10  	3		1		Y			0.005		N		Y			N			60  			1
+#generate_two_spheres_d											3		4 		-		500  	3		2		Y			0.05		N		Y			N			10  			1 #OK: 320 2d + 1167 3d
+#generate_klein_bottle_4D										40		15		-		500  	4		2		Y			0.2			N		Y			N			60  			1 #OK: 901 d2 + 50 d3 + 1 d4
+#data/SO3_10000.txt  											-		-		-		0		9 		3 		Y			0.05 		Y		Y			N			300  			1 #Too long. Be careful with the memory consumption!
+#data/buddha_100kv.txt 											-		-		-		0		3 		2 		Y			0.005  		Y		Y			N			120  			1 #Too long...
+#data/fandisk.txt 												-		-		-		0		3 		2 		Y			0.005 		Y		Y			N			5   			1 #NOT OK: Tq & V do not intersect
+
+#---------------------------------------------------------------- Fixed-alpha TC tests ------------------------------------------------------------------------
+#generate_sphere_d												0.302 	-		-		70		2		1		Y			0.005		N		N			N			60  			1
+#generate_sphere_d												0.304	0 		-		100  	3		2		Y			0.05		N		N			N			60  			1
+#generate_sphere_d												3		0 		-		100  	4		3		Y			0.05		N		N			N			60    			1
+#generate_sphere_d												3		0 		-		1000  	5		4		Y			0.05		N		N			N			60  			1
+#generate_two_spheres_d											3		4 		-		1000  	3		2		Y			0.05		N		N			N			10  			1
+#generate_two_spheres_d											3		10 		-		1000  	4		3		Y			0.05		N		N			N			10  			1
+#generate_two_spheres_d											3		10 		-		2000  	5		4		Y			0.05		N		N			N			10  			1
+#generate_3sphere_and_circle_d									3		- 		-		100000 	5		3		Y			0.05		N		N			N			7000  			1
+#generate_plane													-		-		-		100  	4		3		Y			0.005		N		N			N			3000			1
+#generate_plane													-		-		-		10  	5		4		Y			0.005		N		N			N			3000			1
+#generate_klein_bottle_4D										40		15		-		500  	4		2		Y			0.2			N		N			N			60  			1
+#generate_klein_bottle_4D										40		15		-		2000  	4		2		Y			0.2			N		N			N			60  			1
+#generate_klein_bottle_4D										8		5		-		5000	4		2		Y			0.2			N		N			N			60  			1	#Takes forever
+#generate_torus_3D   											2		1		Y		150   	3		2		Y			0.05  		N		N			N			600   			1
+#generate_torus_3D   											2		1		N		100000 	3		2		Y			0.55  		N		N			N			600   			1
+#generate_torus_d     											N		-		-		18    	2		1		Y			0.01 		N		N			N			30   			1
+#generate_torus_d     											N		-		-		50000  	2		1		Y			0.7 		N		N			N			30   			1
+#generate_torus_d     											Y		-		-		2    	2		1		N			0.01   		N		N			N			30   			1
+#generate_torus_d     											Y		-		-		15  	4		2		Y			0.05 		N		N			N			30   			1
+#generate_torus_d     											N		0		-		150  	4		2		Y			0.05 		N		N			N			10   			1
+#generate_torus_d     											N		-		-		20000  	4		2		Y			1.0 		N		N			N			30   			1
+#generate_torus_d    											Y		0		-		5000  	6		3		Y			0.05 		N		N			N			300     		1
+#generate_torus_d    											N		-		-		20000  	6		3		Y			0.05 		N		N			N			60      		1
+#generate_torus_d    											N		-		-		100000 	6		3		Y			0.05 		N		N			N			3000    		1
+#generate_torus_d    											N		-		-		1000000	6		3		Y			0.3 		N		N			N			3000      		1
+#generate_torus_d    											Y		-		-		1000  	8		4		Y			0.05 		N		N			N			60   			1
+#data/SO3_10000.txt  											-		-		-		0		9 		3 		Y			0.1 		N		N			N			60  			1
+
+#---------------------------------------------------------- Spatial search benchmarking --------------------------------------------------------------
+#generate_torus_3D   											2		1		Y		10000   3		2		N			0  			Y		N			N			600   			1
+#data/buddha_100kv.txt 											-		-		-		0		3 		2 		N			0     		N		Y			N			120  			1
+#generate_torus_d    											N		-		-		10000	30		15		N			0 			Y		N			N			3600   			1
+#generate_torus_d    											N		-		-		100000	12		6		N			0 			Y		N			N			3600   			1
+#data/SO3_50000.txt  											-		-		-		0		9 		3 		N			0    		Y		N			N			60  			1
+#data/Cy8.txt	 												-		-		-		0		24 		2 		N			0    		N		Y			N			60				1
+#generate_sphere_d												0.5 	-		-		10000	2		1		N			0			N		N			Y			60  			1
+#generate_sphere_d												0.5 	-		-		10000	3		2		N			0			N		N			Y			60  			1
+#generate_sphere_d												0.5 	-		-		10000	4		3		N			0			N		N			Y			60  			1
+#generate_sphere_d												0.5 	-		-		10000	5		4		N			0			N		N			Y			60  			1
+#generate_sphere_d												0.5 	-		-		10000	6		5		N			0			N		N			Y			60  			1
+#generate_sphere_d												0.5 	-		-		10000	7		6		N			0			N		N			Y			60  			1
+
+#---------------------------------------------------------- Very small cases for Debug mode --------------------------------------------------------------
+#generate_sphere_d												4		-		-		20		3		2		Y			0.05		N		N			N			60  			1
+#generate_sphere_d												3		-		-		70		3		2		Y			0.05		N		N			N			60  			1
+#generate_sphere_d												3		-		-		1000 	3		2		Y			0.05		N		N			N			60  			1
+#generate_sphere_d												3		-		-		70		4		3		Y			0.05		N		N			N			60  			1
+#generate_sphere_d												3		-		-		70		5		4		Y			0.05		N		N			N			60  			1
+#generate_klein_bottle_variant_5D								4		3		-		70  	5		2		Y			0.05		N		N			N			60  			1
+#data/SO3_10000.txt  											-		-		-		0		9 		3 		Y			0.7 		N		N			N			60  			1
+#generate_moment_curve											0		1		-		30  	3		1		Y			0.005		N		N			N			60  			1
+
+#------------------------------------------------------------------ From files --------------------------------------------------------------------------
+#data/SO3_50000.txt  											-		-		-		0		9 		3 		Y			0.05 		Y		Y			N			60  			1
+#data/SO3_10000.txt  											-		-		-		0		9 		3 		Y			0.05 		Y		N			N			60  			1
+#data/cube3D_eps_0.1.txt 										-		-		-		0		3 		2 		Y			0.05 		N		Y			N			3000			1
+#data/cube4D_eps_0.1.txt 										-		-		-		0		4 		3 		Y			0.05 		N		Y			N			3000			1
+#data/cube5D_eps_0.1.txt 										-		-		-		0		5 		4 		Y			0.05 		N		Y			N			3000			1
+#data/Cy8.txt	 												-		-		-		0		24 		2 		Y			0.1 		N		Y			N			60				1
+#data/Kl.txt 													-		-		-		0		5 		2 		Y			0.05 		N		Y			N			60  			1
+#data/S3.txt 													-		-		-		0		4 		3 		Y			0.05 		N		Y			N			60  			1
+
+data/Alvarez_variete_k2_D4_29700p.txt							-       -       -       0       4       2       Y			0.01  		Y       N           N           36000  			1
+#data/Alvarez_variete_k2_D4_300k_random.txt  					-       -       -       0       4       2       Y			0.01  		Y       N           N           36000           1
+
+#data/Alvarez_variete_k2_D4_29700p.txt							-       -       -       0       4       2       Y			0.01  		Y       N           N           500000   		1
+#data/Alvarez_variete_k2_D4_297k.txt   							-       -       -       0       4       2       Y			0.001  		Y       N           N           500000          1
+#data/Alvarez_variete_k2_D4_297k.txt   							-       -       -       0       4       2       Y			0.5  		Y       N           N           500000          1
+#data/Alvarez_variete_k2_D4_300k_random.txt  					-       -       -       0       4       2       Y			0.001  		Y       N           N           500000          1
+#data/Alvarez_variete_k2_D4_300k_random.txt  					-       -       -       0       4       2       Y			0.2  		Y       N           N           500000          1
+
+# With pre-computed tangent spaces
+#data/test.pwt													-       -       -       0       4       2       Y			0.01  		N       N           N           500000   		1
+#data/Alvarez_variete_k2_D4_30000p.txt							-       -       -       0       4       2       Y			0.01  		Y       N           N           500000   		1
+#data/Alvarez_variete_k2_D4_30000p_with_TSB.pwt					-       -       -       0       4       2       N			0.01  		Y       N           N           500000   		1
+
+#---------------------------------------------------------------------- 3D meshes -----------------------------------------------------------------------
+#data/buddha_100kv.txt 											-		-		-		0		3 		2 		Y			0.005 		N		Y			N			120  			1
+#data/fandisk.txt 												-		-		-		0		3 		2 		Y			0.01 		N		Y			N			60  			1
+#data/fertility.txt  											-		-		-		0		3 		2 		Y			0.4 		N		Y			N			60  			1
+#data/bunny.txt  												-		-		-		0		3 		2 		Y			0.5 		Y		N			N			60  			1
+#data/blob.txt 													-		-		-		0		3 		2 		Y			0.01 		N		Y			N			60  			1
+#data/3holes.txt 												-		-		-		0		3 		2 		Y			0.01 		N		Y			N			60  			1
+#data/785_hand_2500v.txt										-		-		-		0		3 		2 		Y			0.01 		N		Y			N			60  			1
+#data/785_hand_50kv.txt											-		-		-		0		3 		2 		Y			0.01 		N		Y			N			60  			1
+#data/bumpy_sphere.txt											-		-		-		0		3 		2 		Y			0.01 		N		Y			N			60  			1
+
+#----------------------------------------------------------- Generated point sets -----------------------------------------------------------------------
+#generate_sphere_d												3		-		-		4		3		2		Y			0.05		N		N			N			3000			1
+#generate_sphere_d												3		-		-		30000	2		1		Y			0.005		N		N			N			3000			1
+#generate_sphere_d												3		-		-		30000	3		2		Y			0.005		N		N			N			3000			1
+#generate_sphere_d												3		-		-		30000	4		3		Y			0.05		N		N			N			3000			1
+#generate_sphere_d												3		0		-		300  	3		2		Y			0.005		N		N			N			60				1
+#generate_sphere_d												3		4		-		3000  	3		2		Y			0.005		N		N			N			60				1
+#generate_sphere_d												3		7		-		3000  	3		2		Y			0.005		N		N			N			60				1
+#generate_plane													-		-		-		30000	3		2		Y			0.005		N		N			N			3000			1
+#generate_moment_curve											0		1		-		30000	6		1		Y			0.005		N		N			N			60  			1
+#generate_klein_bottle_4D										4		3		-		1000  	4		2		Y			0.01		N		N			N			3   			1
+#generate_klein_bottle_variant_5D								4		3		-		30000	5		2		Y			0.05		N		N			N			60  			1
+#generate_klein_bottle_4D										8		5		-		5000	4		2		Y			0.2			N		N			N			60  			1	#Takes forever
+
+#----------------------------------------------------------- Performance testing ------------------------------------------------------------------------
+# TC: 5.55 / 1st fix step : 0.2                                                                                                                 
+#data/fertility.txt  											-		-		-		0		3 		2 		Y			0.1 		N		Y			N			100				1

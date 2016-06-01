@@ -930,7 +930,7 @@ scan_triangulation_impl()
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE

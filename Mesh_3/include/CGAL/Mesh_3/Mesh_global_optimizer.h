@@ -309,7 +309,7 @@ private:
 
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Computing moves...";
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
 
@@ -688,7 +688,7 @@ operator()(int nb_iterations, Visitor visitor)
   running_time_.start();
 
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
   // Fill set containing moving vertices
@@ -899,7 +899,7 @@ update_mesh(const Moves_vector& moves,
 
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Moving vertices...";
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB

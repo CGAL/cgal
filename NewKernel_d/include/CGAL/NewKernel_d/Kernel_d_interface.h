@@ -66,6 +66,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Point_dimension_tag>::type Point_dimension_d;
 	typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type Side_of_oriented_sphere_d;
 	typedef typename Get_functor<Base, Power_side_of_power_sphere_tag>::type Power_side_of_power_sphere_d;
+	typedef typename Get_functor<Base, Power_center_tag>::type Power_center_d;
+	typedef typename Get_functor<Base, Power_distance_tag>::type Power_distance_d;
 	typedef typename Get_functor<Base, Contained_in_affine_hull_tag>::type Contained_in_affine_hull_d;
 	typedef typename Get_functor<Base, Construct_flat_orientation_tag>::type Construct_flat_orientation_d;
 	typedef typename Get_functor<Base, In_flat_orientation_tag>::type In_flat_orientation_d;
@@ -73,6 +75,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, In_flat_power_side_of_power_sphere_tag>::type In_flat_power_side_of_power_sphere_d;
 	typedef typename Get_functor<Base, Point_to_vector_tag>::type Point_to_vector_d;
 	typedef typename Get_functor<Base, Vector_to_point_tag>::type Vector_to_point_d;
+	typedef typename Get_functor<Base, Translated_point_tag>::type Translated_point_d;
 	typedef typename Get_functor<Base, Scaled_vector_tag>::type Scaled_vector_d;
 	typedef typename Get_functor<Base, Difference_of_vectors_tag>::type Difference_of_vectors_d;
 	typedef typename Get_functor<Base, Difference_of_points_tag>::type Difference_of_points_d;
@@ -188,6 +191,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Point_of_sphere_d point_of_sphere_d_object()const{ return Point_of_sphere_d(*this); }
 	Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
 	Power_side_of_power_sphere_d power_side_of_power_sphere_d_object()const{ return Power_side_of_power_sphere_d(*this); }
+	Power_center_d power_center_d_object()const{ return Power_center_d(*this); }
+	Power_distance_d power_distance_d_object()const{ return Power_distance_d(*this); }
 	Side_of_bounded_sphere_d side_of_bounded_sphere_d_object()const{ return Side_of_bounded_sphere_d(*this); }
 	Contained_in_affine_hull_d contained_in_affine_hull_d_object()const{ return Contained_in_affine_hull_d(*this); }
 	Contained_in_linear_hull_d contained_in_linear_hull_d_object()const{ return Contained_in_linear_hull_d(*this); }
@@ -198,6 +203,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	In_flat_power_side_of_power_sphere_d in_flat_power_side_of_power_sphere_d_object()const{ return In_flat_power_side_of_power_sphere_d(*this); }
 	Point_to_vector_d point_to_vector_d_object()const{ return Point_to_vector_d(*this); }
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
+	Translated_point_d translated_point_d_object()const{ return Translated_point_d(*this); }
 	Scaled_vector_d scaled_vector_d_object()const{ return Scaled_vector_d(*this); }
 	Difference_of_vectors_d difference_of_vectors_d_object()const{ return Difference_of_vectors_d(*this); }
 	Difference_of_points_d difference_of_points_d_object()const{ return Difference_of_points_d(*this); }

@@ -325,7 +325,7 @@ Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Refining facets..." << std::endl;
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
   facets_mesher_.refine(facets_visitor_);
 #ifdef CGAL_MESH_3_PROFILING
@@ -481,7 +481,7 @@ initialize()
 {
 #ifdef CGAL_MESH_3_PROFILING
   std::cerr << "Initializing... ";
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
   //=====================================
   // Bounding box estimation

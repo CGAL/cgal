@@ -124,7 +124,7 @@ public:
     using Base::vertices_begin;
     using Base::vertices_end;
     // using Base::
-    
+
 private:
     //*** Side_of_oriented_subsphere_d ***
     typedef typename Base::Flat_orientation_d Flat_orientation_d;
@@ -161,12 +161,12 @@ public:
     }
 
     // With this constructor,
-    // the user can specify a Flat_orientation_d object to be used for 
-    // orienting simplices of a specific dimension 
+    // the user can specify a Flat_orientation_d object to be used for
+    // orienting simplices of a specific dimension
     // (= preset_flat_orientation_.first)
     // It it used by the dark triangulations created by DT::remove
     Delaunay_triangulation(
-      int dim, 
+      int dim,
       const std::pair<int, const Flat_orientation_d *> &preset_flat_orientation,
       const Geom_traits &k = Geom_traits())
     : Base(dim, preset_flat_orientation, k)
@@ -181,8 +181,8 @@ public:
     Side_of_oriented_subsphere_d side_of_oriented_subsphere_predicate() const
     {
       return Side_of_oriented_subsphere_d (
-        flat_orientation_, 
-        geom_traits().construct_flat_orientation_d_object(), 
+        flat_orientation_,
+        geom_traits().construct_flat_orientation_d_object(),
         geom_traits().in_flat_side_of_oriented_sphere_d_object()
       );
     }
@@ -294,7 +294,7 @@ public:
 
                 Orientation o =  ori_(
                   boost::make_transform_iterator(s->vertices_begin(), spivi),
-                  boost::make_transform_iterator(s->vertices_begin() + cur_dim_ + 1, 
+                  boost::make_transform_iterator(s->vertices_begin() + cur_dim_ + 1,
                                                  spivi));
 
                 if( POSITIVE == o )
@@ -323,9 +323,9 @@ public:
             return pred_(dc_.full_cell(f)->neighbor(dc_.index_of_covertex(f)));
         }
     };
-    
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  VALIDITY
-    
+
     bool is_valid(bool verbose = false, int level = 0) const;
 
 private:
@@ -342,7 +342,7 @@ private:
             Conflict_traversal_pred_in_fullspace;
 };
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 // FUNCTIONS THAT ARE MEMBER METHODS:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
@@ -515,7 +515,7 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef typename Base::template Full_cell_set<Dark_s_handle> Dark_full_cells;
     Dark_full_cells conflict_zone;
     std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
-    
+
     dark_ft = dark_side.compute_conflict_zone(v->point(), dark_s, dark_out);
     // Make the dark simplices in the conflict zone searchable
     conflict_zone.make_searchable();
@@ -613,7 +613,7 @@ Delaunay_triangulation<DCTraits, TDS>
             int li = light_s->index(dark_s->vertex(di)->data());
             Rotor light_r(light_s, li, light_i);
             typename Dark_triangulation::Rotor dark_r(dark_s, di, dark_i);
-            
+
             while (simps.contains(cpp11::get<0>(light_r)->neighbor(cpp11::get<1>(light_r))))
                 light_r = rotate_rotor(light_r);
 
@@ -874,27 +874,27 @@ template< typename DCTraits, typename TDS >
 bool
 Delaunay_triangulation<DCTraits, TDS>
 ::is_valid(bool verbose, int level) const
-{ 
+{
   if (!Base::is_valid(verbose, level))
     return false;
 
   int dim = current_dimension();
   if (dim == maximal_dimension())
   {
-    for (Finite_full_cell_const_iterator cit = finite_full_cells_begin() ;
-         cit != finite_full_cells_end() ; ++cit )
+    for (Finite_full_cell_const_iterator cit = this->finite_full_cells_begin() ;
+         cit != this->finite_full_cells_end() ; ++cit )
     {
       Full_cell_const_handle ch = cit.base();
-      for(int i = 0; i < dim+1 ; ++i ) 
+      for(int i = 0; i < dim+1 ; ++i )
       {
         // If the i-th neighbor is not an infinite cell
-        Vertex_handle opposite_vh = 
+        Vertex_handle opposite_vh =
           ch->neighbor(i)->vertex(ch->neighbor(i)->index(ch));
         if (!is_infinite(opposite_vh))
         {
-          Side_of_oriented_sphere_d side = 
+          Side_of_oriented_sphere_d side =
             geom_traits().side_of_oriented_sphere_d_object();
-          if (side(Point_const_iterator(ch->vertices_begin()), 
+          if (side(Point_const_iterator(ch->vertices_begin()),
                    Point_const_iterator(ch->vertices_end()),
                    opposite_vh->point()) == ON_BOUNDED_SIDE)
           {
