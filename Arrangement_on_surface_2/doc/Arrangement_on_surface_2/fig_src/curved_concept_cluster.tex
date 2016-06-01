@@ -1,0 +1,24 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+  \psset{treevshift=0,unit=1em,xunit=2em,yunit=1em,everytree={},
+        etcratio=.75,triratio=.5}
+     \jtree[everylabel=\sl,xunit=70pt,arrows=->]
+     \! = {\psframebox{\concept{OnlyInteriorTraits}}}
+           <vert>[scaleby=0 1]{\psframebox{\concept{HasSpecialSideTraits}}}@hst !hst
+           .
+     \!hst = <left>[scaleby=2.2 3.7]{\psframebox{\concept{OpenSideTraits}}}@ust !ust
+      ^<vert>[scaleby=0 1]{\psframebox[framesep=4pt]{\concept{PointOnSideTraits}}}@pst !pst
+      ^<right>[scaleby=1.8 1]{\psframebox{\concept{ComparePointNearSideTraits}}}@cpst !cpst
+      .
+     \!pst = <left>[scaleby=0.78 1]{\psframebox[framesep=4pt]{\concept{ContractedSideTraits}}}@cst !cst
+          ^<right>[scaleby=0.72 1]{\psframebox[framesep=4pt]{\concept{ClosedSideTraits}}}@bst !bst
+      .
+     \!cpst = <right>[scaleby=0.34 1]{\psframebox{\concept{IdentifiedSideTraits}}}@ist !ist
+          .
+     \ncline{cpst:b}{bst:t}
+     \endjtree
+  \psset{treevshift=0,unit=1cm,xunit=1cm,yunit=1cm,everytree={},
+         etcratio=.75,triratio=.5}
+\end{document}
