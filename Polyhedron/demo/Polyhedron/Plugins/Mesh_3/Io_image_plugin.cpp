@@ -18,6 +18,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/config.h>
+#include <CGAL/use.h>
 #include <QAction>
 #include <QMenu>
 #include <QMouseEvent>
@@ -990,6 +991,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
   return result;
 #else
   message_interface->warning("You need VTK to read a DCM file");
+  CGAL_USE(dirname);
   return false;
 #endif
 }
@@ -1015,6 +1017,9 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
   vtk_image->Print(std::cerr);
   image = new Image;
   *image = CGAL::read_vtk_image_data(vtk_image);
+#else
+  message_interface->warning("You need VTK to read a DCM file");
+  CGAL_USE(dirname);
 #endif
   return image;
 
