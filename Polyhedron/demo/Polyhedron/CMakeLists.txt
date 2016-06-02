@@ -58,7 +58,7 @@ find_package(OpenGL)
 if(Qt5_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
-  add_definitions(-DSCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE)
+  add_definitions(-DSCENE_IMAGE_GL_BUFFERS_AVAILABLE)
   find_package(QGLViewer )
 
 endif(Qt5_FOUND)
@@ -247,7 +247,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
 
-  add_item(scene_segmented_image_item Scene_segmented_image_item.cpp)
+  add_item(scene_image_item Scene_image_item.cpp)
  
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)

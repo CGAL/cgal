@@ -1507,6 +1507,9 @@ void MainWindow::on_actionSaveSnapshot_triggered()
 bool MainWindow::on_actionErase_triggered()
 {
   int next_index = scene->erase(scene->selectionIndices());
+  //Secure the case where erase triggers other items deletions
+  if(scene->numberOfEntries()>= next_index)
+    next_index = -1;
   selectSceneItem(next_index);
   return next_index >= 0;
 }

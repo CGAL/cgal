@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>473</width>
-    <height>482</height>
+    <height>637</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -254,17 +254,46 @@
      <property name="title">
       <string>Volume</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,1,0">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
+     <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,0,0">
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="noTetSizing">
+        <property name="toolTip">
+         <string>Enable/Disable parameter</string>
+        </property>
         <property name="text">
-         <string>&amp;Tetrahedron max. size</string>
+         <string/>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="checked">
+         <bool>true</bool>
         </property>
-        <property name="buddy">
-         <cstring>tetSizing</cstring>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="noTetShape">
+        <property name="toolTip">
+         <string>Enable/Disable parameter</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="tetShape">
+        <property name="minimumSize">
+         <size>
+          <width>110</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="minimum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>3.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -298,45 +327,96 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>&amp;Tetrahedron max. size</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>tetSizing</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grayImgGroup">
+     <property name="title">
+      <string>Gray Images</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4" columnstretch="2,0">
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="inside_is_less_checkBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>if unchecked, value inside the domain is greater than isovalue</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="tetShape">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <double>1.000000000000000</double>
-        </property>
+       <widget class="QDoubleSpinBox" name="iso_value_spinBox">
         <property name="value">
          <double>3.000000000000000</double>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="noTetShape">
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="value_outside_spinBox"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
         <property name="toolTip">
-         <string>Enable/Disable parameter</string>
+         <string>image value outside the image bounding box</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string/>
+         <string>Value outside</string>
         </property>
-        <property name="checked">
-         <bool>true</bool>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="noTetSizing">
-        <property name="toolTip">
-         <string>Enable/Disable parameter</string>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string/>
+         <string>Iso value</string>
         </property>
-        <property name="checked">
-         <bool>true</bool>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Value inside is less than iso value</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>

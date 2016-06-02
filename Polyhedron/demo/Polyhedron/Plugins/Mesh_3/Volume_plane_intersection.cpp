@@ -74,6 +74,9 @@ void Volume_plane_intersection::computeElements()
 
    c_vertex.push_back(0.0); c_vertex.push_back(0.0); c_vertex.push_back(0.0);
    c_vertex.push_back(0.0); c_vertex.push_back(0.0); c_vertex.push_back(z);
+
+   _bbox =  Bbox( 0, 0, 0,
+                  x, y, z);
 }
 
 void Volume_plane_intersection::init_buffers()

@@ -1,9 +1,9 @@
-#ifndef SCENE_SEGMENTED_IMAGE_ITEM_H
-#define SCENE_SEGMENTED_IMAGE_ITEM_H
+#ifndef SCENE_IMAGE_ITEM_H
+#define SCENE_IMAGE_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
 #include "Image_type_fwd.h"
-#include "Scene_segmented_image_item_config.h"
+#include "Scene_image_item_config.h"
 #include <CGAL/gl.h>
 
 #include <QOpenGLVertexArrayObject>
@@ -15,20 +15,20 @@
 
 typedef CGAL::Image_3 Image;
 using namespace CGAL::Three;
-class SCENE_SEGMENTED_IMAGE_ITEM_EXPORT Scene_segmented_image_item 
+class SCENE_IMAGE_ITEM_EXPORT Scene_image_item
   : public Scene_item
 {
   Q_OBJECT
 public:
 
-  Scene_segmented_image_item(Image* im, int drawing_scale);
-  ~Scene_segmented_image_item();
+  Scene_image_item(Image* im, int drawing_scale, bool hidden);
+  ~Scene_image_item();
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }
   void compute_bbox() const;
 
-  Scene_segmented_image_item* clone() const { return NULL; }
+  Scene_image_item* clone() const { return NULL; }
 
   // rendering mode
   virtual bool supportsRenderingMode(RenderingMode m) const;
@@ -36,20 +36,21 @@ public:
   // draw
   virtual void direct_draw(CGAL::Three::Viewer_interface* viewer) const
   { draw(viewer); }
-  virtual void direct_drawEdges(CGAL::Three::Viewer_interface* viewer) const
-  { drawEdges(viewer); }
+  virtual void direct_draw_edges(CGAL::Three::Viewer_interface* viewer) const
+  { draw_edges(viewer); }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
-  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const
+  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const
   { draw_gl(viewer); }
   
   virtual QString toolTip() const;
   
   const Image* image() const { return m_image; }
+  bool isGray() { return is_hidden;}
 
 private:
   void draw_gl(CGAL::Three::Viewer_interface* viewer) const;
   
-  void initializeBuffers();
+  void initialize_buffers();
   GLint ibo_size() const;
   
 public:
@@ -57,7 +58,8 @@ public:
 
 private:
   bool m_initialized;
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  bool is_hidden;
+#ifdef SCENE_IMAGE_GL_BUFFERS_AVAILABLE
   int m_voxel_scale;
   static const int vaoSize = 2;
   static const int vboSize = 6;
@@ -78,12 +80,12 @@ private:
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   void draw_bbox();
-  void attribBuffers(CGAL::Three::Viewer_interface*) const;
+  void attrib_buffers(CGAL::Three::Viewer_interface*) const;
   void compile_shaders();
   void draw_Bbox(Bbox bbox, std::vector<float> *vertices);
 public Q_SLOTS:
     void changed();
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+#endif // SCENE_IMAGE_GL_BUFFERS_AVAILABLE
 };
 
-#endif // SCENE_SEGMENTED_IMAGE_ITEM_H
+#endif // SCENE_IMAGE_ITEM_H

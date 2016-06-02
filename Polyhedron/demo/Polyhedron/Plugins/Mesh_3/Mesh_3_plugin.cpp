@@ -23,7 +23,7 @@
 #include "Scene_implicit_function_item.h"
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 #endif
 
 #include "Meshing_thread.h"
@@ -73,7 +73,7 @@ public:
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
     Q_FOREACH(int ind, scene->selectionIndices()){
-      if( qobject_cast<Scene_segmented_image_item*>(scene->item(ind)))
+      if( qobject_cast<Scene_image_item*>(scene->item(ind)))
         return true;
     }
 #endif  
@@ -120,14 +120,13 @@ void Mesh_3_plugin::mesh_3()
 {
   Scene_polyhedron_item* poly_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
-  Scene_segmented_image_item* image_item = NULL;
+  Scene_image_item* image_item = NULL;
   Scene_polylines_item* polylines_item = NULL;
 
   Q_FOREACH(int ind, scene->selectionIndices()) {
 
     if(poly_item == NULL){
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
-
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -136,7 +135,7 @@ void Mesh_3_plugin::mesh_3()
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
     if(image_item == NULL){
-      image_item = qobject_cast<Scene_segmented_image_item*>(scene->item(ind));
+      image_item = qobject_cast<Scene_image_item*>(scene->item(ind));
     }
 #endif
     if(polylines_item == NULL){
@@ -169,7 +168,34 @@ void Mesh_3_plugin::mesh_3()
   else if (NULL != image_item)
   {
     item = image_item;
-    features_protection_available = true;
+    features_protection_available = (polylines_item != NULL);
+
+    bool fit_wrdtp = true;
+    std::size_t img_wdim = image_item->image()->image()->wdim;
+    WORD_KIND img_wordKind = image_item->image()->image()->wordKind;
+    //check if the word type fits the hardcoded values in the plugin
+    if(image_item->isGray())
+    {
+      if(img_wordKind != WK_FLOAT)
+        fit_wrdtp = false;
+      else
+        if(img_wdim != 4)
+          fit_wrdtp = false;
+    }
+    else
+    {
+      if(img_wordKind != WK_FIXED)
+        fit_wrdtp = false;
+      else
+        if(img_wdim != 1)
+          fit_wrdtp = false;
+    }
+    if(!fit_wrdtp)
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected object can't be meshed because the image's word type is not supported by this plugin."));
+      return;
+    }
   }
 #endif
 
@@ -237,8 +263,9 @@ void Mesh_3_plugin::mesh_3()
   ui.approx->setValue(approx_default);
 
   ui.protect->setEnabled(features_protection_available);
-  if (!features_protection_available)
-    ui.protect->setChecked(false);
+  ui.protect->setChecked(features_protection_available);
+
+  ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
 
   // -----------------------------------
   // Get values
@@ -254,6 +281,10 @@ void Mesh_3_plugin::mesh_3()
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const bool protect_features = ui.protect->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
+  const float iso_value = ui.iso_value_spinBox->value();
+  const float value_outside = ui.value_outside_spinBox->value();
+  const float inside_is_less =  ui.inside_is_less_checkBox->isChecked();
+
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -325,7 +356,11 @@ void Mesh_3_plugin::mesh_3()
                                  radius_edge,
                                  protect_features,
                                  manifold,
-                                 scene);
+                                 scene,
+                                 image_item->isGray(),
+                                 iso_value,
+                                 value_outside,
+                                 inside_is_less);
   }
 #endif
 

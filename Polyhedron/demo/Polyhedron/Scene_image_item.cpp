@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 #include "Image_type.h"
 #include <QColor>
 #include <map>
@@ -218,10 +218,10 @@ public:
   
   void fill_buffer_data();
 
-  const GLfloat* colors() const { return &(colors_[0]); }
-  const GLfloat* normals() const { return &(normals_[0]); }
-  const GLfloat* vertices() const { return &(vertices_[0]); }
-  const GLuint* quads() const { return &(quads_[0]); }
+  const GLfloat* colors() const { return colors_.data(); }
+  const GLfloat* normals() const { return normals_.data(); }
+  const GLfloat* vertices() const { return vertices_.data(); }
+  const GLuint* quads() const { return quads_.data(); }
   
   std::size_t color_size() const { return colors_.size()*sizeof(GLfloat); }
   std::size_t normal_size() const { return normals_.size()*sizeof(GLfloat); }
@@ -267,11 +267,10 @@ Vertex_buffer_helper::
 fill_buffer_data()
 {
   std::size_t i,j,k;
-  
   for ( i = 0 ; i <= data_.xdim() ; i+=dx() )
-  {  
+  {
     for ( j = 0 ; j <= data_.ydim() ; j+=dy() )
-    {   
+    {
       for ( k = 0 ; k <= data_.zdim() ; k+=dz() )
       {
         treat_vertex(i,j,k);
@@ -400,25 +399,24 @@ vertex_index(std::size_t i, std::size_t j, std::size_t k) const
 
 
 // -----------------------------------
-// Scene_segmented_image_item
+// Scene_image_item
 // -----------------------------------
-Scene_segmented_image_item::Scene_segmented_image_item(Image* im,
-                                                       int display_scale)
+Scene_image_item::Scene_image_item(Image* im, int display_scale, bool hidden = false)
   : m_image(im)
   , m_initialized(false)
   , m_voxel_scale(display_scale)
 
 {
   CGAL_USE(display_scale);
-
+  is_hidden = hidden;
   v_box = new std::vector<float>();
   compile_shaders();
-  initializeBuffers();
+  initialize_buffers();
   setRenderingMode(Flat);
 }
 
 
-Scene_segmented_image_item::~Scene_segmented_image_item()
+Scene_image_item::~Scene_image_item()
 {
     for(int i=0; i<vboSize; i++)
         m_vbo[i].destroy();
@@ -429,7 +427,7 @@ Scene_segmented_image_item::~Scene_segmented_image_item()
 /**************************************************
 ****************SHADER FUNCTIONS******************/
 
-void Scene_segmented_image_item::compile_shaders()
+void Scene_image_item::compile_shaders()
 {
 
     for(int i=0; i< vboSize; i++)
@@ -524,7 +522,7 @@ void Scene_segmented_image_item::compile_shaders()
     }
 }
 
-void Scene_segmented_image_item::attribBuffers(Viewer_interface* viewer) const
+void Scene_image_item::attrib_buffers(Viewer_interface* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -590,21 +588,21 @@ void Scene_segmented_image_item::attribBuffers(Viewer_interface* viewer) const
 }
 
 void
-Scene_segmented_image_item::compute_bbox() const
+Scene_image_item::compute_bbox() const
 {
   if(!m_image)
     _bbox = Bbox();
   else
-    _bbox = Bbox(-0.5*m_image->vx(),
-                 -0.5*m_image->vy(),
-                 -0.5*m_image->vz(),
-              m_image->xdim() * m_image->vx()-0.5*m_image->vx(),
-              m_image->ydim() * m_image->vy()-0.5*m_image->vy(),
-              m_image->zdim() * m_image->vz()-0.5*m_image->vz());
+   _bbox = Bbox(-0.5*m_image->vx(),
+                -0.5*m_image->vy(),
+                -0.5*m_image->vz(),
+              m_image->xdim() * m_image->vx(),
+              m_image->ydim() * m_image->vy(),
+              m_image->zdim() * m_image->vz());
 }
 
 void
-Scene_segmented_image_item::draw(Viewer_interface* viewer) const
+Scene_image_item::draw(Viewer_interface* viewer) const
 {
   if(m_image)
   {
@@ -615,7 +613,7 @@ Scene_segmented_image_item::draw(Viewer_interface* viewer) const
 }
 
 QString
-Scene_segmented_image_item::toolTip() const
+Scene_image_item::toolTip() const
 {
   return tr("<p>Image <b>%1</b></p>"
             "<p>Word type: %2</p>"
@@ -632,7 +630,7 @@ Scene_segmented_image_item::toolTip() const
 }
 
 bool
-Scene_segmented_image_item::supportsRenderingMode(RenderingMode m) const
+Scene_image_item::supportsRenderingMode(RenderingMode m) const
 { 
   switch ( m )
   {
@@ -653,21 +651,18 @@ Scene_segmented_image_item::supportsRenderingMode(RenderingMode m) const
 }
 
 void
-Scene_segmented_image_item::initializeBuffers() 
+Scene_image_item::initialize_buffers() 
 {
   internal::Image_accessor image_data_accessor (*m_image,
                                                 m_voxel_scale,
                                                 m_voxel_scale,
                                                 m_voxel_scale);
-  
   internal::Vertex_buffer_helper helper (image_data_accessor);
   helper.fill_buffer_data();
-
   draw_Bbox(bbox(), v_box);
   std::vector<float> nul_vec(0);
   for(std::size_t i=0; i<v_box->size(); i++)
       nul_vec.push_back(0.0);
-
   rendering_program.bind();
   vao[0].bind();
   m_vbo[0].bind();
@@ -721,23 +716,23 @@ Scene_segmented_image_item::initializeBuffers()
   rendering_program.setAttributeBuffer(colorLocation[0],GL_FLOAT,0,3);
   m_vbo[5].release();
 
-  m_ibo->bind();
   vao[1].release();
   rendering_program.release();
-
   m_initialized = true;
 }
 
 
 void
-Scene_segmented_image_item::draw_gl(Viewer_interface* viewer) const
+Scene_image_item::draw_gl(Viewer_interface* viewer) const
 {
-  attribBuffers(viewer);
+  attrib_buffers(viewer);
   rendering_program.bind();
-  vao[0].bind();
-  viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
-  vao[0].release();
-
+  if(!is_hidden)
+  {
+    vao[0].bind();
+    viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
+    vao[0].release();
+  }
   vao[1].bind();
   viewer->glLineWidth(3);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_box->size()/3));
@@ -746,7 +741,7 @@ Scene_segmented_image_item::draw_gl(Viewer_interface* viewer) const
 }
 
 GLint
-Scene_segmented_image_item::ibo_size() const
+Scene_image_item::ibo_size() const
 {
       m_ibo->bind();
     GLint nb_elts = m_ibo->size();
@@ -757,12 +752,12 @@ Scene_segmented_image_item::ibo_size() const
   return 0;
 }
 
-void Scene_segmented_image_item::changed()
+void Scene_image_item::changed()
 {
-    initializeBuffers();
+    initialize_buffers();
 }
 
-void Scene_segmented_image_item::draw_Bbox(Bbox bbox, std::vector<float> *vertices)
+void Scene_image_item::draw_Bbox(Bbox bbox, std::vector<float> *vertices)
 {
     vertices->push_back(bbox.xmin());
     vertices->push_back(bbox.ymin());

@@ -5,7 +5,7 @@
 #include "Scene_polyhedron_item.h"
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #include "Scene_implicit_function_item.h"
@@ -98,8 +98,8 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   // Image
-  const Scene_segmented_image_item* image_item = 
-    qobject_cast<const Scene_segmented_image_item*>(c3t3_item.data_item());
+  const Scene_image_item* image_item = 
+    qobject_cast<const Scene_image_item*>(c3t3_item.data_item());
   
   if ( NULL != image_item )
   {
