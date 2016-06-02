@@ -25,6 +25,7 @@
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_conv_2.h>
 #include <CGAL/Minkowski_sum_2/Minkowski_sum_decomp_2.h>
 #include <CGAL/Polygon_nop_decomposition_2.h>
+#include <CGAL/Gps_segment_traits_2.h>
 
 #include <list>
 
@@ -306,6 +307,17 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
  * \param[in] decomposition_strategy A functor for decomposing polygons.
  * \param[in] traits The traits.
  * \return The resulting polygon with holes, representing the sum.
+ *
+ * The type of the last argument, namely,
+ *   Gps_segment_traits_2<Kernel_, Container_>
+ * and the type
+ *   const typename Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
+ *                                                   DecompositionStrategy2_,
+ *                                                   Container_>::Traits_2>
+ * are exchangable except for in one case, where there is an ambiguity.
+ * Thus, we use the former, even though it is less generic, as change to the
+ * traits type in Minkowski_sum_by_decomposition_2 would require a similar
+ * change here.
  */
 template <typename Kernel_, typename Container_,
           typename DecompositionStrategy1_, typename DecompositionStrategy2_>
@@ -314,10 +326,7 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
                 const Polygon_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
                 const DecompositionStrategy2_& decomposition_strategy2,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy2_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Container_                            Container;
   typedef DecompositionStrategy1_               Decomposition_strategy1;
@@ -372,10 +381,7 @@ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
                 const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
                 const DecompositionStrategy2_& decomposition_strategy2,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy2_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Kernel_                               Kernel;
   typedef Container_                            Container;
@@ -435,10 +441,7 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
                 const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
                 const DecompositionStrategy2_& decomposition_strategy2,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy2_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Kernel_                               Kernel;
   typedef Container_                            Container;
@@ -449,7 +452,7 @@ minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
                                    Decomposition_strategy2, Container>
     mink_sum(decomposition_strategy1, decomposition_strategy2, traits);
   Hole_filter_2<Kernel, Container> hole_filter;
-  Polygon_with_holes_2<Kernel,Container> filtered_pgn2;
+  Polygon_with_holes_2<Kernel, Container> filtered_pgn2;
   hole_filter(pgn2, pgn1, filtered_pgn2);
   return mink_sum(pgn1, filtered_pgn2);
 }
@@ -496,10 +499,7 @@ minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
                 const Polygon_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
                 const DecompositionStrategy2_& decomposition_strategy2,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy2_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   return minkowski_sum_2(pgn2, pgn1,
                          decomposition_strategy2, decomposition_strategy1,
@@ -550,10 +550,7 @@ Polygon_with_holes_2<Kernel_, Container_>
 minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
                 const Polygon_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy1_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Container_                            Container;
   typedef DecompositionStrategy1_               Decomposition_strategy1;
@@ -605,10 +602,7 @@ Polygon_with_holes_2<Kernel_, Container_>
 minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
                 const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy1_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Kernel_                               Kernel;
   typedef Container_                            Container;
@@ -665,10 +659,7 @@ Polygon_with_holes_2<Kernel_, Container_>
 minkowski_sum_2(const Polygon_2<Kernel_, Container_>& pgn1,
                 const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy1_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Kernel_                               Kernel;
   typedef Container_                            Container;
@@ -723,10 +714,7 @@ Polygon_with_holes_2<Kernel_, Container_>
 minkowski_sum_2(const Polygon_with_holes_2<Kernel_, Container_>& pgn1,
                 const Polygon_2<Kernel_, Container_>& pgn2,
                 const DecompositionStrategy1_& decomposition_strategy1,
-                const typename
-                Minkowski_sum_by_decomposition_2<DecompositionStrategy1_,
-                                                 DecompositionStrategy1_,
-                                                 Container_>::Traits_2& traits)
+                const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   return minkowski_sum_2(pgn2, pgn1,
                          decomposition_strategy1, decomposition_strategy1,
@@ -773,8 +761,7 @@ minkowski_sum_by_decomposition_2
 (const Polygon_2<Kernel_, Container_>& pgn1,
  const Polygon_2<Kernel_, Container_>& pgn2,
  const Decomposition_& decomp,
- const typename Minkowski_sum_by_decomposition_2<Decomposition_, Decomposition_,
-                                                 Container_>::Traits_2& traits)
+ const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Kernel_                               Kernel;
   typedef Container_                            Container;
@@ -852,9 +839,7 @@ minkowski_sum_by_decomposition_2
  const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
  const NoHolesDecomposition_& decomp_no_holes,
  const WithHolesDecomposition_& decomp_with_holes,
- const typename Minkowski_sum_by_decomposition_2<NoHolesDecomposition_,
-                                                 WithHolesDecomposition_,
-                                                 Container_>::Traits_2& traits)
+ const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Kernel_                               Kernel;
   typedef Container_                            Container;
@@ -997,9 +982,7 @@ minkowski_sum_by_decomposition_2
  const Polygon_with_holes_2<Kernel_, Container_>& pgn2,
  const NoHolesDecomposition_& decomp_no_holes,
  const WithHolesDecomposition_& decomp_with_holes,
- const typename Minkowski_sum_by_decomposition_2<NoHolesDecomposition_,
-                                                 WithHolesDecomposition_,
-                                                 Container_>::Traits_2& traits)
+ const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   typedef Kernel_                               Kernel;
   typedef Container_                            Container;
@@ -1106,9 +1089,7 @@ minkowski_sum_by_decomposition_2
  const Polygon_2<Kernel_, Container_>& pgn2,
  const NoHoleDecomposition_& decomp_no_holes,
  const WithHolesDecomposition_& decomp_with_holes,
- const typename Minkowski_sum_by_decomposition_2<NoHoleDecomposition_,
-                                                 WithHolesDecomposition_,
-                                                 Container_>::Traits_2& traits)
+ const Gps_segment_traits_2<Kernel_, Container_>& traits)
 {
   return minkowski_sum_by_decomposition_2(pgn2, pgn1,
                                           decomp_no_holes, decomp_with_holes,
