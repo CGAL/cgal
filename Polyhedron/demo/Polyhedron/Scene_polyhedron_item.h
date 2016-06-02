@@ -136,6 +136,7 @@ public:
 protected:
     friend struct Scene_polyhedron_item_priv;
     Scene_polyhedron_item_priv* d;
+
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

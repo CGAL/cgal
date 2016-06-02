@@ -12,7 +12,6 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -99,6 +98,7 @@ typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 
 struct Scene_polyhedron_item_priv{
+  typedef Polyhedron::Facet_iterator Facet_iterator;
   typedef std::vector<QColor> Color_vector;
   Scene_polyhedron_item_priv(Scene_polyhedron_item* item)
     : item(item), poly(new Polyhedron)
@@ -134,6 +134,12 @@ struct Scene_polyhedron_item_priv{
 
 
   void compute_normals_and_vertices(const bool colors_only = false) const;
+  bool isFacetConvex(Facet_iterator, const Polyhedron::Traits::Vector_3&)const;
+  template<typename VertexNormalPmap>
+  void triangulate_convex_facet(Facet_iterator,
+                                const Polyhedron::Traits::Vector_3&,
+                                const VertexNormalPmap&,
+                                const bool)const;
   template<typename VertexNormalPmap>
   void triangulate_facet(Scene_polyhedron_item::Facet_iterator,
                          const Traits::Vector_3& normal,
@@ -352,78 +358,265 @@ void push_back_xyz(const TypeWithXYZ& t,
   vector.push_back(t.z());
 }
 
+bool Scene_polyhedron_item_priv::isFacetConvex(Facet_iterator f, const Polyhedron::Traits::Vector_3& N) const
+{
+  typedef Polyhedron::Traits::Vector_3 Vector;
+  typedef Polyhedron::Traits::Orientation Orientation;
+  Orientation orientation;
+  Vector normal = N;
+  Facet::Halfedge_around_facet_circulator
+          he = f->facet_begin(),
+          he_end(he);
+  bool normal_is_ok;
+  do{
+    normal_is_ok = true;
 
+    //Initializes the facet orientation
+
+    Polyhedron::Traits::Point_3 S,T;
+    S = source(he, *poly)->point();
+    T = target(he, *poly)->point();
+    Vector V1 = Vector((T-S).x(), (T-S).y(), (T-S).z());
+    S = source(he->next(), *poly)->point();
+    T = target(he->next(), *poly)->point();
+    Vector V2 = Vector((T-S).x(), (T-S).y(), (T-S).z());
+
+    if(normal == Vector(0,0,0))
+      normal_is_ok = false;
+    if(normal_is_ok)
+    {
+      orientation = Polyhedron::Traits::Orientation_3()(V1, V2, normal);
+      if( orientation == CGAL::COPLANAR )
+        normal_is_ok = false;
+    }
+    //Checks if the normal is good : if the normal is null
+    // or if it is coplanar to the facet, we need another one.
+    if(!normal_is_ok)
+    {
+      normal = CGAL::cross_product(V1,V2);
+    }
+
+  }while( ++he != he_end && !normal_is_ok);
+  //if no good normal can be found, stop here.
+  if (!normal_is_ok)
+    return false;
+
+  //computes convexness
+
+  //re-initializes he_end;
+  he = f->facet_begin(),
+  he_end = he;
+  do
+  {
+    Polyhedron::Traits::Point_3 S,T;
+    S = source(he, *poly)->point();
+    T = target(he, *poly)->point();
+    Vector V1 = Vector((T-S).x(), (T-S).y(), (T-S).z());
+    S = source(he->next(), *poly)->point();
+    T = target(he->next(), *poly)->point();
+    Vector V2 = Vector((T-S).x(), (T-S).y(), (T-S).z());
+    Orientation res = Polyhedron::Traits::Orientation_3()(V1, V2, normal) ;
+
+    if(res!= orientation && res != CGAL::ZERO)
+      return false;
+  }while( ++he != he_end);
+  return true;
+}
+
+template<typename VertexNormalPmap>
+void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
+                                                     const Traits::Vector_3& normal,
+                                                     const VertexNormalPmap& vnmap,
+                                                     const bool colors_only)const
+{
+  Polyhedron::Traits::Point_3 p0,p1,p2;
+  Facet::Halfedge_around_facet_circulator
+      he = f->facet_begin(),
+      he_end(he);
+  const int this_patch_id = f->patch_id();
+  while( next(he, *poly) != prev(he_end, *poly))
+  {
+    ++he;
+    if (is_multicolor)
+    {
+      for (int i = 0; i<3; ++i)
+      {
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
+
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
+      }
+    }
+    if (colors_only)
+      continue;
+
+
+    p0 = he_end->vertex()->point();
+    p1 = he->vertex()->point();
+    p2 = next(he, *poly)->vertex()->point();
+    push_back_xyz(p0, positions_facets);
+    positions_facets.push_back(1.0);
+    push_back_xyz(p1, positions_facets);
+    positions_facets.push_back(1.0);
+    push_back_xyz(p2, positions_facets);
+    positions_facets.push_back(1.0);
+
+    push_back_xyz(normal, normals_flat);
+    push_back_xyz(normal, normals_flat);
+    push_back_xyz(normal, normals_flat);
+
+    Traits::Vector_3 ng = get(vnmap, he_end->vertex());
+    push_back_xyz(ng, normals_gouraud);
+
+    ng = get(vnmap, he->vertex());
+    push_back_xyz(ng, normals_gouraud);
+
+    ng = get(vnmap, next(he, *poly)->vertex());
+    push_back_xyz(ng, normals_gouraud);
+  }
+
+
+}
 //Make sure all the facets are triangles
 template<typename VertexNormalPmap>
 void
 Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_iterator fit,
-                                         const Traits::Vector_3& normal,
+                                         const Traits::Vector_3& N,
                                          const VertexNormalPmap& vnmap,
                                          const bool colors_only) const
 {
+  Traits::Vector_3 normal = N;
+  Traits::Orientation orientation;
+  bool normal_is_ok;
+  Facet::Halfedge_around_facet_circulator
+      he = fit->facet_begin(),
+      he_end(he);
+  //Check if the normal is good, else find another one.
+  do{
+    normal_is_ok = true;
+
+    //Initializes the facet orientation
+
+    Polyhedron::Traits::Point_3 S,T;
+    S = source(he, *poly)->point();
+    T = target(he, *poly)->point();
+    Vector V1(S,T);
+    S = source(he->next(), *poly)->point();
+    T = target(he->next(), *poly)->point();
+    Vector V2(S,T);
+
     //check if normal contains NaN values
-    if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+    if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z()
+        || normal == Traits::Vector_3(0,0,0))
+      normal_is_ok = false;
+    if(normal_is_ok)
     {
-        qDebug()<<"Warning : normal is not valid. Facet not displayed";
-        return;
+      orientation = Polyhedron::Traits::Orientation_3()(V1, V2, normal);
+      if( orientation == CGAL::COPLANAR )
+        normal_is_ok = false;
     }
-    P_traits cdt_traits(normal);
-    CDT cdt(cdt_traits);
+    //Checks if the normal is good : if the normal is null
+    // or if it is coplanar to the facet, we need another one.
+    if(!normal_is_ok)
+    {
+      normal = CGAL::cross_product(V1,V2);
+    }
 
-    Facet::Halfedge_around_facet_circulator
-            he_circ = fit->facet_begin(),
-            he_circ_end(he_circ);
+  }while( ++he != he_end && !normal_is_ok);
+  //if no good normal can be found, stop here.
+  if (!normal_is_ok)
+  {
+    qDebug()<<"Warning : normal is not valid. Facet not displayed";
+    return;
+  }
+  P_traits cdt_traits(normal);
+  CDT cdt(cdt_traits);
 
-    // Iterates on the vector of facet handles
-    typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-    boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
-    CDT::Vertex_handle previous, first;
-    do {
-        CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
-        v2v.insert(std::make_pair(vh, he_circ->vertex()));
-        if(first == 0) {
-            first = vh;
-        }
-        vh->info() = he_circ;
-        if(previous != 0 && previous != vh) {
-            cdt.insert_constraint(previous, vh);
-        }
-        previous = vh;
-    } while( ++he_circ != he_circ_end );
+  Facet::Halfedge_around_facet_circulator
+      he_circ = fit->facet_begin(),
+      he_circ_end(he_circ);
+  // Iterates on the vector of facet handles
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
+  CDT::Vertex_handle previous, first, last_inserted;
+  /*Compute a reasonable precision level used to decide
+   * if two consecutive points in a facet can be estimated
+   * equal.*/
+  double min_sq_dist = CGAL::square(0.0001*item->DiagonalBbox());
+
+  // Iterate the points of the facet and decide if they must be inserted in the CDT
+  do {
+    /* If this is the first vertex, we insert it. Else, it must be reasonnably
+     * far from the previous vertex to be considered as a separated point.
+     * This is done to avoid problems with exact/inexact behavior, that causes
+     * the CDT's intersection calculation to crash.
+    */
+    double sq_dist =
+        (first == 0) ? DBL_MAX :
+                       (std::min)(
+                         CGAL::squared_distance(previous->point(), he_circ->vertex()->point()),
+                         CGAL::squared_distance(first->point(), he_circ->vertex()->point())
+                         );
+    if( sq_dist < min_sq_dist)
+      continue;
+    CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
+    v2v.insert(std::make_pair(vh, he_circ->vertex()));
+    if(first == 0) {
+      first = vh;
+    }
+    vh->info() = he_circ;
+    if(previous != 0 && previous != vh) {
+      cdt.insert_constraint(previous, vh);
+      last_inserted = previous;
+    }
+    previous = vh;
+  } while( ++he_circ != he_circ_end );
+  double sq_dist = CGAL::squared_distance(previous->point(), first->point());
+  if(sq_dist > min_sq_dist)
     cdt.insert_constraint(previous, first);
-    // sets mark is_external
-    for(CDT::All_faces_iterator
-        fit2 = cdt.all_faces_begin(),
-        end = cdt.all_faces_end();
-        fit2 != end; ++fit2)
-    {
-        fit2->info().is_external = false;
+  else
+    cdt.insert_constraint(last_inserted, first);
+  // sets mark is_external
+  for(CDT::All_faces_iterator
+      fit2 = cdt.all_faces_begin(),
+      end = cdt.all_faces_end();
+      fit2 != end; ++fit2)
+  {
+    fit2->info().is_external = false;
+  }
+  //check if the facet is external or internal
+  std::queue<CDT::Face_handle> face_queue;
+  face_queue.push(cdt.infinite_vertex()->face());
+  while(! face_queue.empty() ) {
+    CDT::Face_handle fh = face_queue.front();
+    face_queue.pop();
+    if(fh->info().is_external) continue;
+    fh->info().is_external = true;
+    for(int i = 0; i <3; ++i) {
+      if(!cdt.is_constrained(std::make_pair(fh, i)))
+      {
+        face_queue.push(fh->neighbor(i));
+      }
     }
-    //check if the facet is external or internal
-    std::queue<CDT::Face_handle> face_queue;
-    face_queue.push(cdt.infinite_vertex()->face());
-    while(! face_queue.empty() ) {
-        CDT::Face_handle fh = face_queue.front();
-        face_queue.pop();
-        if(fh->info().is_external) continue;
-        fh->info().is_external = true;
-        for(int i = 0; i <3; ++i) {
-            if(!cdt.is_constrained(std::make_pair(fh, i)))
-            {
-                face_queue.push(fh->neighbor(i));
-            }
-        }
-    }
-    //iterates on the internal faces to add the vertices to the positions
-    //and the normals to the appropriate vectors
-    const int this_patch_id = fit->patch_id();
-    for(CDT::Finite_faces_iterator
-        ffit = cdt.finite_faces_begin(),
-        end = cdt.finite_faces_end();
-        ffit != end; ++ffit)
-    {
-        if(ffit->info().is_external)
-            continue;
+  }
+  if(cdt.dimension() != 2 )
+  {
+    qDebug()<<"Warning : cdt not right. Facet not displayed";
+    return;
+  }
+  //iterates on the internal faces to add the vertices to the positions
+  //and the normals to the appropriate vectors
+  const int this_patch_id = fit->patch_id();
+  for(CDT::Finite_faces_iterator
+      ffit = cdt.finite_faces_begin(),
+      end = cdt.finite_faces_end();
+      ffit != end; ++ffit)
+  {
+    if(ffit->info().is_external)
+      continue;
 
         if (item->isItemMulticolor())
         {
@@ -433,36 +626,36 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
             color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
             color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
 
-            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
-          }
-        }
-        if (colors_only)
-          continue;
-
-        push_back_xyz(ffit->vertex(0)->point(), positions_facets);
-        positions_facets.push_back(1.0);
-
-        push_back_xyz(ffit->vertex(1)->point(), positions_facets);
-        positions_facets.push_back(1.0);
-
-        push_back_xyz(ffit->vertex(2)->point(), positions_facets);
-        positions_facets.push_back(1.0);
-
-        push_back_xyz(normal, normals_flat);
-        push_back_xyz(normal, normals_flat);
-        push_back_xyz(normal, normals_flat);
-
-        Traits::Vector_3 ng = get(vnmap, v2v[ffit->vertex(0)]);
-        push_back_xyz(ng, normals_gouraud);
-
-        ng = get(vnmap, v2v[ffit->vertex(1)]);
-        push_back_xyz(ng, normals_gouraud);
-
-        ng = get(vnmap, v2v[ffit->vertex(2)]);
-        push_back_xyz(ng, normals_gouraud);
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
+      }
     }
+    if (colors_only)
+      continue;
+
+    push_back_xyz(ffit->vertex(0)->point(), positions_facets);
+    positions_facets.push_back(1.0);
+
+    push_back_xyz(ffit->vertex(1)->point(), positions_facets);
+    positions_facets.push_back(1.0);
+
+    push_back_xyz(ffit->vertex(2)->point(), positions_facets);
+    positions_facets.push_back(1.0);
+
+    push_back_xyz(normal, normals_flat);
+    push_back_xyz(normal, normals_flat);
+    push_back_xyz(normal, normals_flat);
+
+    Traits::Vector_3 ng = get(vnmap, v2v[ffit->vertex(0)]);
+    push_back_xyz(ng, normals_gouraud);
+
+    ng = get(vnmap, v2v[ffit->vertex(1)]);
+    push_back_xyz(ng, normals_gouraud);
+
+    ng = get(vnmap, v2v[ffit->vertex(2)]);
+    push_back_xyz(ng, normals_gouraud);
+  }
 }
 
 
@@ -684,7 +877,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
       }
       else if (is_quad(f->halfedge(), *poly))
       {
-        if (!item->isItemMulticolor())
+        if (item->isItemMulticolor())
         {
           const int this_patch_id = f->patch_id();
           for (unsigned int i = 0; i < 6; ++i)
@@ -753,7 +946,14 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
       }
       else
       {
-       triangulate_facet(f, nf, nv_pmap, colors_only);
+        if(isFacetConvex(f, nf))
+        {
+          triangulate_convex_facet(f, nf, nv_pmap, colors_only);
+        }
+        else
+        {
+          triangulate_facet(f, nf, nv_pmap, colors_only);
+        }
       }
 
     }
