@@ -187,7 +187,7 @@ public:
     {
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
-        for(int i=0; i<6; i++)
+        for(int i=0; i<7; i++)
         {
             addVaos(i);
             vaos[i]->create();
@@ -200,6 +200,9 @@ public:
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
+        are_buffers_filled = false;
+        are_temp_buffers_filled = false;
+        poly = NULL;
         this->setColor(facet_color);
         first_selected = false;
         is_treated = false;
@@ -225,6 +228,7 @@ public:
         {
             buffers[i].create();
         }
+        poly = NULL;
         init(poly_item, mw);
         this->setColor(facet_color);
         invalidateOpenGLBuffers();
@@ -233,9 +237,13 @@ public:
         poly_need_update = false;
     }
 
-   ~Scene_polyhedron_selection_item()
-    {
-    }
+  ~Scene_polyhedron_selection_item()
+  {
+    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+    viewer->setBindingSelect();
+  }
+
   void inverse_selection();
 
   void setPathSelection(bool b) {
@@ -264,6 +272,7 @@ protected:
 
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
+    connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
     connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
 
@@ -313,17 +322,7 @@ public:
   bool isEmpty() const {
     return selected_vertices.empty() && selected_edges.empty() && selected_facets.empty();
   }
-  void selection_changed(bool b)
-  {
-      QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
-      CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
-      if(!viewer)
-          return;
-      if(!b)
-        viewer->setBindingSelect();
-      else
-        viewer->setNoBinding();
-  }
+
   void compute_bbox() const
   {
     // Workaround a bug in g++-4.8.3:
@@ -856,6 +855,7 @@ public:
 Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);
+  void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
 
 public Q_SLOTS:
   void update_poly()
