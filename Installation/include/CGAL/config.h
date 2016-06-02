@@ -422,6 +422,22 @@ using std::max;
 #  define CGAL_DEPRECATED
 #endif
 
+// Macro to trigger deprecation warnings with a custom message
+#ifdef CGAL_NO_DEPRECATION_WARNINGS
+#  define CGAL_DEPRECATED_MSG
+#elif defined(__GNUC__) || __has_attribute(__deprecated__)
+#  if BOOST_GCC >= 40500 || __has_attribute(__deprecated__)
+#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
+#  else
+#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated))
+#  endif
+#elif defined (_MSC_VER) && (_MSC_VER > 1300)
+#  define CGAL_DEPRECATED_MSG(msg) __declspec(deprecated(msg))
+#elif defined(__clang__)
+#  define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
+#else
+#  define CGAL_DEPRECATED_MSG(msg)
+#endif
 
 // Macro to specify a 'noreturn' attribute.
 #if defined(__GNUG__) || __has_attribute(__noreturn__)
