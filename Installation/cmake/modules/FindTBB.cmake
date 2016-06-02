@@ -218,11 +218,7 @@ macro(TBB_CORRECT_LIB_DIR var_name)
         string(REPLACE em64t "${_TBB_ARCHITECTURE}" ${var_name} ${${var_name}})
 #    endif (NOT "${_TBB_ARCHITECTURE}" STREQUAL "em64t")
     string(REPLACE ia32 "${_TBB_ARCHITECTURE}" ${var_name} ${${var_name}})
-    string(REPLACE vc7.1 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
-    string(REPLACE vc8 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
-    string(REPLACE vc9 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
-    string(REPLACE vc10 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
-    string(REPLACE vc11 "${_TBB_COMPILER}" ${var_name} ${${var_name}})
+    string(REGEX REPLACE "vc[0-9]+(\.[0-9]+)?" "${_TBB_COMPILER}" ${var_name} ${${var_name}})
 endmacro(TBB_CORRECT_LIB_DIR var_content)
 
 
