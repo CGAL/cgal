@@ -157,6 +157,8 @@ Scene::erase(Scene::Item_id index)
 int
 Scene::erase(QList<int> indices)
 {
+  if(indices.empty())
+    return -1;
   QList<CGAL::Three::Scene_item*> to_be_removed;
   int max_index = -1;
   Q_FOREACH(int index, indices) {
@@ -1114,6 +1116,7 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
     target_group->addChild(item);
     item->moveToGroup(target_group);
     redraw_model();
+    Q_EMIT updated();
 }
 
 float Scene::get_bbox_length() const
