@@ -413,6 +413,11 @@ void Scene_polylines_item::change_corner_radii(double r) {
           computeSpheres();
           spheres->invalidateOpenGLBuffers();
         }
+        else if(r>0 && spheres)
+        {
+          computeSpheres();
+          spheres->invalidateOpenGLBuffers();
+        }
         else if (r<=0 && spheres!=NULL)
         {
           unlockChild(spheres);
