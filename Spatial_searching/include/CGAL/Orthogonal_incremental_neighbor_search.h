@@ -283,8 +283,8 @@ namespace CGAL {
 	    int new_cut_dim=node->cutting_dimension();
 	    FT new_rd,dst = dists[new_cut_dim];
 	    FT val = *(query_point_it + new_cut_dim);
-            FT diff1 = val - node->high_value();
-            FT diff2 = val - node->low_value();
+            FT diff1 = val - node->upper_low_value();
+            FT diff2 = val - node->lower_high_value();
 	    if (diff1 + diff2 < FT(0.0)) {
               new_rd=
 		Orthogonal_distance_instance.new_distance(copy_rd,dst,diff1,new_cut_dim);
@@ -369,8 +369,8 @@ namespace CGAL {
 	    int new_cut_dim=node->cutting_dimension();
 	    FT new_rd,dst = dists[new_cut_dim];
 	    FT val = *(query_point_it + new_cut_dim);
-            FT diff1 = val - node->high_value();
-            FT diff2 = val - node->low_value();
+            FT diff1 = val - node->upper_low_value();
+            FT diff2 = val - node->lower_high_value();
 	    if (diff1 + diff2 < FT(0.0)) {
               new_rd=
 		Orthogonal_distance_instance.new_distance(copy_rd,dst,diff1,new_cut_dim);

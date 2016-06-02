@@ -345,8 +345,11 @@ namespace CGAL {
 
 
     // private variables for extended internal nodes
-    FT low_val;
-    FT high_val;
+    FT upper_low_val;
+    FT upper_high_val;
+    FT lower_low_val;
+    FT lower_high_val;
+
                 
   public:
 
@@ -414,18 +417,31 @@ namespace CGAL {
     // members for extended internal node only
     inline 
     FT
-    low_value() const 
-    { 
-      return low_val; 
-    }
-    
-    inline 
-    FT
-    high_value() const 
+    upper_low_value() const
     {
-      return high_val; 
+      return upper_low_val;
     }
-       
+
+    inline
+    FT
+    upper_high_value() const
+    {
+      return upper_high_val;
+    }
+
+    inline
+    FT
+    lower_low_value() const
+    {
+      return lower_low_val;
+    }
+
+    inline
+    FT
+    lower_high_value() const
+    {
+      return lower_high_val;
+    }
 
     /*Separator& 
     separator() 
