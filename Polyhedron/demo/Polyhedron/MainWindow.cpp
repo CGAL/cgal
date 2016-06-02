@@ -1184,7 +1184,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  CGAL::Three::Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0,QModelIndex())));
+  CGAL::Three::Scene_item* item = scene->item(selectedItemIndex);
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";
