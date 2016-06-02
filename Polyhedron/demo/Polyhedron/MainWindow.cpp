@@ -239,6 +239,8 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
+  connect(viewer, SIGNAL(sendMessage(QString)),
+          this, SLOT(information(QString)));
 
   // The contextMenuPolicy of infoLabel is now the default one, so that one
   // can easily copy-paste its text.
