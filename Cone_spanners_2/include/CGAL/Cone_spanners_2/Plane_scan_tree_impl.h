@@ -23,8 +23,8 @@
  * This header implements the details of the class Plane_scan_tree.
  */
 
-#ifndef CGAL_PLANE_SCAN_TREE_IMPL_H
-#define CGAL_PLANE_SCAN_TREE_IMPL_H_H
+#ifndef CGAL_CONE_SPANNER_PLANE_SCAN_TREE_IMPL_H
+#define CGAL_CONE_SPANNER_PLANE_SCAN_TREE_IMPL_H
 
 #include <stdexcept>
 
