@@ -31,11 +31,101 @@
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Regular_triangulation_filtered_traits_2.h>
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include "../../../Hyperbolic_triangulation_2/include/CGAL/Triangulation_hyperbolic_traits_2.h"
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
 
 namespace CGAL {
+
+
+template < class K, class Predicate_ >
+class Hyperbolic_traits_with_offsets_2_adaptor
+{
+  typedef K Kernel;
+  typedef Predicate_ Predicate;
+
+  typedef typename Kernel::Point_2                  Point;
+  typedef Hyperbolic_word_4<unsigned short int>     Offset;
+
+  // Use the construct_point_2 predicate from the kernel to convert the periodic points to Euclidean points
+  typedef typename Kernel::Construct_point_2        Construct_point_2;
+public:
+  typedef typename Kernel::Circle_2                 Circle_2;
+
+public:
+  typedef typename Predicate::result_type           result_type;
+
+  Hyperbolic_traits_with_offsets_2_adaptor(const Circle_2 * dom) : _domain(dom) { }
+
+  result_type operator()(const Point& p0, const Point& p1,
+                         const Offset& o0, const Offset& o1) const
+  {
+    return Predicate()(pp(p0, o0), pp(p1, o1));
+  }
+  result_type operator()(const Point& p0, const Point& p1, const Point& p2,
+                         const Offset& o0, const Offset& o1, const Offset& o2) const
+  {
+    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
+  }
+  result_type operator()(const Point& p0, const Point& p1,
+                         const Point& p2, const Point& p3,
+                         const Offset& o0, const Offset& o1,
+                         const Offset& o2, const Offset& o3) const
+  {
+    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3));
+  }
+
+  result_type operator()(const Point& p0, const Point& p1) const
+  {
+    return Predicate()(p0, p1);
+  }
+  result_type operator()(const Point& p0, const Point& p1,
+                         const Point& p2) const
+  {
+    return Predicate()(p0, p1, p2);
+  }
+  result_type operator()(const Point& p0, const Point& p1,
+                         const Point& p2, const Point& p3) const
+  {
+    return Predicate()(p0, p1, p2, p3);
+  }
+
+private:
+  Point pp(const Point &p, const Offset &o) const
+  {
+    return o.apply(p);
+  }
+public:
+  const Circle_2* _domain;
+};
+
+
+
+template < typename K, typename Construct_point_base>
+class Periodic_4_hyperbolic_construct_point_2 : public Construct_point_base
+{
+  typedef K Kernel;
+
+public:
+  typedef typename Kernel::Point_2         Point;
+  typedef typename Kernel::Offset          Offset;
+  typedef typename Kernel::Circle_2        Circle_2;
+
+  typedef Point                            result_type;
+
+  Periodic_4_hyperbolic_construct_point_2(const Circle_2 & dom) : _dom(dom) { }
+
+  Point operator() ( const Point& p, const Offset& o ) const
+  {
+    return o.apply(p);
+  }
+
+private:
+  Circle_2 _dom;
+};
+
+
+
 
 template< class R >
 class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 {
@@ -43,13 +133,13 @@ class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 {
 public:
 
   typedef R                                               Kernel;
+  typedef R                                               K;
   typedef typename R::Kernel_base                         Kernel_base;
   typedef typename R::Direction_2                         Direction_2;
 
   typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<R>
                                                           Self;
-
-	typedef Triangulation_hyperbolic_traits_2<R> 				    Base;	                                                          
+	typedef Triangulation_hyperbolic_traits_2<R> 				    Base;	    
 
 	// Basic types
 	typedef typename Base::RT 									            RT;
@@ -69,27 +159,31 @@ public:
   typedef typename Base::Line_segment_2 			            Line_segment_2;
   typedef typename Base::Segment_2 						            Segment_2;
   typedef typename Base::Euclidean_line_2 		            Euclidean_line_2;
-
-	// Predicates and comparisons
- 	typedef typename Base::Less_x_2                   			Less_x_2;
- 	typedef typename Base::Less_y_2                   			Less_y_2;
- 	typedef typename Base::Compare_x_2                			Compare_x_2;
- 	typedef typename Base::Compare_y_2                			Compare_y_2;
- 	typedef typename Base::Orientation_2              			Orientation_2;
- 	typedef typename Base::Side_of_oriented_circle_2  			Side_of_oriented_circle_2;
- 	typedef typename Base::Compare_distance_2         			Compare_distance_2;
- 	typedef typename Base::Compute_squared_distance_2    		Compute_squared_distance_2;
+          
 
  	// Constructions
- 	typedef typename Base::Construct_bisector_2       			Construct_bisector_2;
- 	typedef typename Base::Construct_hyperbolic_bisector_2 	Construct_hyperbolic_bisector_2;
- 	typedef typename Base::Construct_triangle_2       			Construct_triangle_2;
- 	typedef typename Base::Construct_direction_2      			Construct_direction_2;
- 	typedef typename Base::Construct_midpoint_2          		Construct_midpoint_2;
- 	typedef typename Base::Construct_circumcenter_2 			  Construct_circumcenter_2;
- 	typedef typename Base::Construct_segment_2 					    Construct_segment_2;
- 	typedef typename Base::Construct_ray_2 						      Construct_ray_2;
- 	typedef typename Base::Is_hyperbolic 						        Is_hyperbolic;
+
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Less_x_2>                   Less_x_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Less_y_2>                   Less_y_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Compare_x_2>                Compare_x_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Compare_y_2>                Compare_y_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Compare_xy_2>               Compare_xy_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Orientation_2>              Orientation_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Side_of_oriented_circle_2>  Side_of_oriented_circle_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Compute_squared_radius_2>   Compute_squared_radius_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_center_2>         Construct_center_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_circumcenter_2>   Construct_circumcenter_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_bisector_2>       Construct_bisector_2;
+  typedef Periodic_4_hyperbolic_construct_point_2<Self,  typename K::Construct_point_2>          Construct_point_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_midpoint_2>       Construct_midpoint_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Compare_distance_2>         Compare_distance_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_segment_2>        Construct_segment_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_triangle_2>       Construct_triangle_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_direction_2>      Construct_direction_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_ray_2>            Construct_ray_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, 
+                                              typename Base::Construct_hyperbolic_bisector_2>    Construct_hyperbolic_bisector_2;
+  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename Base::Is_hyperbolic>           Is_hyperbolic;
 
 private:
 	Circle_2 _domain;
@@ -150,7 +244,7 @@ public:
   
   	Orientation_2
   	orientation_2_object() const { 
-  		return Orientation_2();
+  		return Orientation_2(&_domain);
   	}
   
   	Side_of_oriented_circle_2
@@ -189,7 +283,7 @@ public:
   	}
 
   	Is_hyperbolic 
-  	Is_hyperbolic_object() const { 
+  	is_hyperbolic_object() const { 
   		return Is_hyperbolic(); 
   	}
 

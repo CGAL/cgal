@@ -17,7 +17,7 @@ template <typename DT>
 class TriangulationConflictZone : public GraphicsViewInput
 {
 public:
-  typedef typename DT::Geom_traits K;
+  typedef typename DT::Geometric_traits K;
   typedef typename DT::Face_handle Face_handle;
   typedef typename DT::Point Point;
 

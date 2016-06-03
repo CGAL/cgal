@@ -95,14 +95,14 @@ void
 VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
 {
   QRectF rect = option->exposedRect;
-  PainterOstream<typename DT::Geom_traits> pos(painter, rect);
+  PainterOstream<typename DT::Geometric_traits> pos(painter, rect);
   
   painter->setPen(edgesPen());
   
   // delete
   QPen temp = painter->pen();
   QPen old = temp;
-  temp.setWidthF(0.01);
+  temp.setWidthF(0.005);
   painter->setPen(temp);
   //
   
@@ -111,8 +111,8 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
       eit++){
     CGAL::Object o = dt->dual(eit);
     typename DT::Segment s;
-    typename DT::Geom_traits::Ray_2 r;
-    typename DT::Geom_traits::Line_2 l;
+    typename DT::Geometric_traits::Ray_2 r;
+    typename DT::Geometric_traits::Line_2 l;
     if(CGAL::assign(s,o)){
       pos << s;
     } else if(CGAL::assign(r,o)) {
