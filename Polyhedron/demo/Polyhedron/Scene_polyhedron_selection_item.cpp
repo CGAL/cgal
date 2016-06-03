@@ -12,68 +12,169 @@
 #include <CGAL/property_map.h>
 #include <functional>
 
+struct Scene_polyhedron_selection_item_priv{
 
-void Scene_polyhedron_selection_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
+  typedef Polyhedron::Vertex_handle   Vertex_handle;
+  typedef Polyhedron::Facet_handle    Facet_handle;
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+  typedef Scene_polyhedron_item_k_ring_selection::Active_handle Active_handle;
+  typedef boost::unordered_set<Vertex_handle, CGAL::Handle_hash_function>    Selection_set_vertex;
+  typedef boost::unordered_set<Facet_handle, CGAL::Handle_hash_function>      Selection_set_facet;
+  typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
+  struct vertex_on_path
+  {
+    Vertex_handle vertex;
+    bool is_constrained;
+  };
+
+  Scene_polyhedron_selection_item_priv(Scene_polyhedron_selection_item* parent):
+    item(parent)
+  {
+  }
+
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+  void initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  void computeElements() const;
+  void compute_any_elements(std::vector<float> &p_facets, std::vector<float> &p_lines, std::vector<float> &p_points, std::vector<float> &p_normals,
+                            const Selection_set_vertex& p_sel_vertex, const Selection_set_facet &p_sel_facet, const Selection_set_edge &p_sel_edges) const;
+  void compute_temp_elements() const;
+
+  template<typename FaceNormalPmap>
+  void triangulate_facet(Facet_handle, const FaceNormalPmap&,
+                         std::vector<float> &p_facets,std::vector<float> &p_normals) const;
+  void tempInstructions(QString s1, QString s2);
+
+  void computeAndDisplayPath();
+  void addVertexToPath(Vertex_handle, vertex_on_path &);
+
+  enum VAOs{
+    Facets = 0,
+    TempFacets,
+    Edges,
+    TempEdges,
+    Points,
+    TempPoints,
+    FixedPoints,
+    NumberOfVaos
+  };
+  enum VBOs{
+    VertexFacets = 0,
+    NormalFacets,
+    VertexEdges,
+    VertexPoints,
+    VertexTempFacets,
+    NormalTempFacets,
+    VertexTempEdges,
+    VertexTempPoints,
+    VertexFixedPoints,
+    ColorFixedPoints,
+    NumberOfVbos
+  };
+
+  QList<vertex_on_path> path;
+  QList<Vertex_handle> constrained_vertices;
+  bool is_path_selecting;
+
+  bool poly_need_update;
+  mutable bool are_temp_buffers_filled;
+  //Specifies Selection/edition mode
+  bool first_selected;
+  int operation_mode;
+  QString m_temp_instructs;
+  bool is_treated;
+  Vertex_handle to_split_vh;
+  Facet_handle to_split_fh;
+  edge_descriptor to_join_ed;
+  Active_handle::Type original_sel_mode;
+  //Only needed for the triangulation
+  Polyhedron* poly;
+  mutable std::vector<float> positions_facets;
+  mutable std::vector<float> normals;
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_points;
+  mutable std::size_t nb_facets;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_lines;
+
+  mutable std::vector<float> positions_temp_facets;
+  mutable std::vector<float> positions_fixed_points;
+  mutable std::vector<float> color_fixed_points;
+  mutable std::vector<float> temp_normals;
+  mutable std::vector<float> positions_temp_lines;
+  mutable std::vector<float> positions_temp_points;
+  mutable std::size_t nb_temp_facets;
+  mutable std::size_t nb_temp_points;
+  mutable std::size_t nb_temp_lines;
+  mutable std::size_t nb_fixed_points;
+
+  mutable QOpenGLShaderProgram *program;
+  Scene_polyhedron_selection_item* item;
+  mutable bool are_buffers_filled;
+};
+
+
+
+void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
 {
   //vao containing the data for the facets
   {
-    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_WITH_LIGHT, viewer);
     program->bind();
 
-    vaos[0]->bind();
-    buffers[0].bind();
-    buffers[0].allocate(positions_facets.data(),
+    item->vaos[Facets]->bind();
+    item->buffers[VertexFacets].bind();
+    item->buffers[VertexFacets].allocate(positions_facets.data(),
                         static_cast<int>(positions_facets.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[0].release();
+    item->buffers[VertexFacets].release();
 
 
 
-    buffers[1].bind();
-    buffers[1].allocate(normals.data(),
+    item->buffers[NormalFacets].bind();
+    item->buffers[NormalFacets].allocate(normals.data(),
                         static_cast<int>(normals.size()*sizeof(float)));
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    buffers[1].release();
+    item->buffers[NormalFacets].release();
 
-    vaos[0]->release();
+    item->vaos[Facets]->release();
     program->release();
 
   }
   //vao containing the data for the  lines
   {
-    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    vaos[1]->bind();
+    item->vaos[Edges]->bind();
 
-    buffers[2].bind();
-    buffers[2].allocate(positions_lines.data(),
+    item->buffers[VertexEdges].bind();
+    item->buffers[VertexEdges].allocate(positions_lines.data(),
                         static_cast<int>(positions_lines.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[2].release();
+    item->buffers[VertexEdges].release();
 
     program->release();
 
-    vaos[1]->release();
+    item->vaos[Edges]->release();
 
   }
   //vao containing the data for the points
   {
-    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    vaos[2]->bind();
+    item->vaos[Points]->bind();
 
-    buffers[3].bind();
-    buffers[3].allocate(positions_points.data(),
+    item->buffers[VertexPoints].bind();
+    item->buffers[VertexPoints].allocate(positions_points.data(),
                         static_cast<int>(positions_points.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[3].release();
+    item->buffers[VertexPoints].release();
     program->release();
 
-    vaos[2]->release();
+    item->vaos[Points]->release();
   }
 
   nb_facets = positions_facets.size();
@@ -93,81 +194,80 @@ void Scene_polyhedron_selection_item::initializeBuffers(CGAL::Three::Viewer_inte
   are_buffers_filled = true;
 }
 
-void Scene_polyhedron_selection_item::initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer)const
+void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer)const
 {
   //vao containing the data for the temp facets
   {
-    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_WITH_LIGHT, viewer);
     program->bind();
 
-    vaos[3]->bind();
-    buffers[4].bind();
-    buffers[4].allocate(positions_temp_facets.data(),
+    item->vaos[TempFacets]->bind();
+    item->buffers[VertexTempFacets].bind();
+    item->buffers[VertexTempFacets].allocate(positions_temp_facets.data(),
                         static_cast<int>(positions_temp_facets.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[4].release();
+    item->buffers[VertexTempFacets].release();
 
 
 
-    buffers[5].bind();
-    buffers[5].allocate(temp_normals.data(),
+    item->buffers[NormalTempFacets].bind();
+    item->buffers[NormalTempFacets].allocate(temp_normals.data(),
                         static_cast<int>(temp_normals.size()*sizeof(float)));
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-    buffers[5].release();
+    item->buffers[NormalTempFacets].release();
 
-    vaos[3]->release();
+    item->vaos[TempFacets]->release();
     program->release();
   }
   //vao containing the data for the temp lines
   {
-    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    vaos[4]->bind();
+    item->vaos[TempEdges]->bind();
 
-    buffers[6].bind();
-    buffers[6].allocate(positions_temp_lines.data(),
+    item->buffers[VertexTempEdges].bind();
+    item->buffers[VertexTempEdges].allocate(positions_temp_lines.data(),
                         static_cast<int>(positions_temp_lines.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[6].release();
+    item->buffers[VertexTempEdges].release();
 
     program->release();
 
-    vaos[4]->release();
+    item->vaos[TempEdges]->release();
 
   }
   //vaos containing the data for the temp points
   {
-    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program = item->getShaderProgram(Scene_polyhedron_selection_item::PROGRAM_NO_SELECTION, viewer);
     program->bind();
-    vaos[5]->bind();
+    item->vaos[TempPoints]->bind();
 
-    buffers[7].bind();
-    buffers[7].allocate(positions_temp_points.data(),
+    item->buffers[VertexTempPoints].bind();
+    item->buffers[VertexTempPoints].allocate(positions_temp_points.data(),
                         static_cast<int>(positions_temp_points.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[7].release();
-    vaos[5]->release();
+    item->buffers[VertexTempPoints].release();
+    item->vaos[TempPoints]->release();
 
-    vaos[6]->bind();
+    item->vaos[FixedPoints]->bind();
 
-    buffers[8].bind();
-    buffers[8].allocate(positions_fixed_points.data(),
+    item->buffers[VertexFixedPoints].bind();
+    item->buffers[VertexFixedPoints].allocate(positions_fixed_points.data(),
                         static_cast<int>(positions_fixed_points.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[8].release();
-    buffers[9].bind();
-    buffers[9].allocate(color_fixed_points.data(),
+    item->buffers[VertexFixedPoints].release();
+    item->buffers[ColorFixedPoints].bind();
+    item->buffers[ColorFixedPoints].allocate(color_fixed_points.data(),
                         static_cast<int>(color_fixed_points.size()*sizeof(float)));
     program->enableAttributeArray("colors");
     program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-    buffers[9].release();
-    vaos[6]->release();
-
+    item->buffers[ColorFixedPoints].release();
+    item->vaos[FixedPoints]->release();
 
     program->release();
   }
@@ -233,7 +333,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
 template<typename FaceNormalPmap>
 void
-Scene_polyhedron_selection_item::triangulate_facet(Facet_handle fit,const FaceNormalPmap& fnmap,
+Scene_polyhedron_selection_item_priv::triangulate_facet(Facet_handle fit,const FaceNormalPmap& fnmap,
                                                    std::vector<float> &p_facets,std::vector<float> &p_normals ) const
 {
     //Computes the normal of the facet
@@ -313,7 +413,7 @@ Scene_polyhedron_selection_item::triangulate_facet(Facet_handle fit,const FaceNo
 }
 
 
-void Scene_polyhedron_selection_item::compute_any_elements(std::vector<float>& p_facets, std::vector<float>& p_lines, std::vector<float>& p_points, std::vector<float>& p_normals,
+void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<float>& p_facets, std::vector<float>& p_lines, std::vector<float>& p_points, std::vector<float>& p_normals,
                                                            const Selection_set_vertex& p_sel_vertices, const Selection_set_facet& p_sel_facets, const Selection_set_edge& p_sel_edges)const
 {
     p_facets.clear();
@@ -342,7 +442,7 @@ if(!poly)
       if(is_triangle(f->halfedge(),*poly))
       {
         const Kernel::Vector_3 n =
-            CGAL::Polygon_mesh_processing::compute_face_normal(f, *this->poly_item->polyhedron());
+            CGAL::Polygon_mesh_processing::compute_face_normal(f, *item->poly_item->polyhedron());
 
         p_normals.push_back(n.x());
         p_normals.push_back(n.y());
@@ -435,23 +535,23 @@ if(!poly)
         }
     }
 }
-void Scene_polyhedron_selection_item::computeElements()const
+void Scene_polyhedron_selection_item_priv::computeElements()const
 {
   compute_any_elements(positions_facets, positions_lines, positions_points, normals,
-                       selected_vertices, selected_facets, selected_edges);
+                       item->selected_vertices, item->selected_facets, item->selected_edges);
 }
-void Scene_polyhedron_selection_item::compute_temp_elements()const
+void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
 {
   compute_any_elements(positions_temp_facets, positions_temp_lines, positions_temp_points, temp_normals,
-                       temp_selected_vertices, temp_selected_facets, temp_selected_edges);
+                       item->temp_selected_vertices, item->temp_selected_facets, item->temp_selected_edges);
   //The fixed points
   {
     color_fixed_points.clear();
     positions_fixed_points.clear();
     int i=0;
-    for(Selection_set_vertex::iterator
-        it = fixed_vertices.begin(),
-        end = fixed_vertices.end();
+    for(Scene_polyhedron_selection_item::Selection_set_vertex::iterator
+        it = item->fixed_vertices.begin(),
+        end = item->fixed_vertices.end();
         it != end; ++it)
     {
       const Kernel::Point_3& p = (*it)->point();
@@ -480,42 +580,42 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 {
   GLfloat offset_factor;
   GLfloat offset_units;
-  if(!are_temp_buffers_filled)
+  if(!d->are_temp_buffers_filled)
   {
-    compute_temp_elements();
-    initialize_temp_buffers(viewer);
+    d->compute_temp_elements();
+    d->initialize_temp_buffers(viewer);
   }
   viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
   glPolygonOffset(-1.f, 1.f);
-  vaos[3]->bind();
-  program = getShaderProgram(PROGRAM_WITH_LIGHT);
+  vaos[Scene_polyhedron_selection_item_priv::TempFacets]->bind();
+  d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
 
-  program->bind();
-  program->setAttributeValue("colors",QColor(0,255,0));
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_temp_facets/3));
-  program->release();
-  vaos[3]->release();
+  d->program->bind();
+  d->program->setAttributeValue("colors",QColor(0,255,0));
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_temp_facets/3));
+  d->program->release();
+  vaos[Scene_polyhedron_selection_item_priv::TempFacets]->release();
   glPolygonOffset(offset_factor, offset_units);
-  if(!are_buffers_filled)
+  if(!d->are_buffers_filled)
   {
-    computeElements();
-    initializeBuffers(viewer);
+    d->computeElements();
+    d->initializeBuffers(viewer);
   }
   drawPoints(viewer);
   viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
   glPolygonOffset(-1.f, 1.f);
 
-  vaos[0]->bind();
-  program = getShaderProgram(PROGRAM_WITH_LIGHT);
+  vaos[Scene_polyhedron_selection_item_priv::Facets]->bind();
+  d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
-  program->bind();
-  program->setAttributeValue("colors",this->color());
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
-  program->release();
-  vaos[0]->release();
+  d->program->bind();
+  d->program->setAttributeValue("colors",this->color());
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
+  d->program->release();
+  vaos[Scene_polyhedron_selection_item_priv::Facets]->release();
   glPolygonOffset(offset_factor, offset_units);
   drawEdges(viewer);
 
@@ -525,37 +625,37 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 {
 
   viewer->glLineWidth(2.0f);
-  if(!are_temp_buffers_filled)
+  if(!d->are_temp_buffers_filled)
   {
-    compute_temp_elements();
-    initialize_temp_buffers(viewer);
+    d->compute_temp_elements();
+    d->initialize_temp_buffers(viewer);
   }
 
-  vaos[4]->bind();
-  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  vaos[Scene_polyhedron_selection_item_priv::TempEdges]->bind();
+  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
-  program->bind();
+  d->program->bind();
 
-  program->setAttributeValue("colors",QColor(0,200,0));
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_temp_lines/3));
-  program->release();
-  vaos[4]->release();
+  d->program->setAttributeValue("colors",QColor(0,200,0));
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_temp_lines/3));
+  d->program->release();
+  vaos[Scene_polyhedron_selection_item_priv::TempEdges]->release();
   viewer->glLineWidth(3.0f);
-  if(!are_buffers_filled)
+  if(!d->are_buffers_filled)
   {
-    computeElements();
-    initializeBuffers(viewer);
+    d->computeElements();
+    d->initializeBuffers(viewer);
   }
 
-  vaos[1]->bind();
-  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  vaos[Scene_polyhedron_selection_item_priv::Edges]->bind();
+  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
-  program->bind();
+  d->program->bind();
 
-  program->setAttributeValue("colors",edge_color);
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
-  program->release();
-  vaos[1]->release();
+  d->program->setAttributeValue("colors",edge_color);
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
+  d->program->release();
+  vaos[Scene_polyhedron_selection_item_priv::Edges]->release();
 
 
   viewer->glLineWidth(1.f);
@@ -563,37 +663,37 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
 
 void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!are_temp_buffers_filled)
+  if(!d->are_temp_buffers_filled)
   {
-    compute_temp_elements();
-    initialize_temp_buffers(viewer);
+    d->compute_temp_elements();
+    d->initialize_temp_buffers(viewer);
   }
   viewer->glPointSize(5.5f);
 
-  vaos[5]->bind();
-  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  vaos[Scene_polyhedron_selection_item_priv::TempPoints]->bind();
+  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
-  program->bind();
-  program->setAttributeValue("colors",QColor(0,50,0));
-  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_temp_points/3));
-  vaos[5]->release();
-  vaos[6]->bind();
-  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_fixed_points/3));
-  program->release();
-  vaos[6]->release();
-  if(!are_buffers_filled)
+  d->program->bind();
+  d->program->setAttributeValue("colors",QColor(0,50,0));
+  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_temp_points/3));
+  vaos[Scene_polyhedron_selection_item_priv::TempPoints]->release();
+  vaos[Scene_polyhedron_selection_item_priv::FixedPoints]->bind();
+  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_fixed_points/3));
+  d->program->release();
+  vaos[Scene_polyhedron_selection_item_priv::FixedPoints]->release();
+  if(!d->are_buffers_filled)
   {
-    computeElements();
-    initializeBuffers(viewer);
+    d->computeElements();
+    d->initializeBuffers(viewer);
   }
-  vaos[2]->bind();
-  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  vaos[Scene_polyhedron_selection_item_priv::Points]->bind();
+  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
   attribBuffers(viewer,PROGRAM_NO_SELECTION);
-  program->bind();
-  program->setAttributeValue("colors",vertex_color);
-  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
-  program->release();
-  vaos[2]->release();
+  d->program->bind();
+  d->program->setAttributeValue("colors",vertex_color);
+  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_points/3));
+  d->program->release();
+  vaos[Points]->release();
 
   viewer->glPointSize(1.f);
 }
@@ -642,12 +742,12 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   switch(mode)
   {
   case -2:
-    set_active_handle_type(original_sel_mode);
+    set_active_handle_type(d->original_sel_mode);
     Q_EMIT updateInstructions("Select two vertices to create the path between them. (1/2)");
     break;
   case -1:
     //restore original selection_type
-    set_active_handle_type(original_sel_mode);
+    set_active_handle_type(d->original_sel_mode);
     k_ring_selector.setEditMode(false);
     break;
     //Join vertex
@@ -719,7 +819,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   default:
     break;
   }
-  operation_mode = mode;
+  d->operation_mode = mode;
 }
 template<typename HandleRange>
 bool Scene_polyhedron_selection_item::treat_classic_selection(const HandleRange& selection)
@@ -741,17 +841,17 @@ bool Scene_polyhedron_selection_item::treat_classic_selection(const HandleRange&
 
 bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron::Vertex_handle>& selection)
 {
-  if(!is_treated)
+  if(!d->is_treated)
   {
     Vertex_handle vh = *selection.begin();
     Selection_traits<Vertex_handle, Scene_polyhedron_selection_item> tr(this);
-    switch(operation_mode)
+    switch(d->operation_mode)
     {
     //classic selection
     case -2:
     case -1:
     {
-      if(!is_path_selecting)
+      if(!d->is_path_selecting)
       {
         return treat_classic_selection(selection);
       }
@@ -771,17 +871,17 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     case 0:
     {
       bool belong = false;
-      Halfedge_handle target = halfedge(to_join_ed, *polyhedron());
-      if(halfedge(to_join_ed, *polyhedron())->vertex() == vh)
+      Halfedge_handle target = halfedge(d->to_join_ed, *polyhedron());
+      if(halfedge(d->to_join_ed, *polyhedron())->vertex() == vh)
         belong = true;
-      if(halfedge(to_join_ed, *polyhedron())->opposite()->vertex() == vh)
+      if(halfedge(d->to_join_ed, *polyhedron())->opposite()->vertex() == vh)
       {
         belong = true;
-        target = halfedge(to_join_ed, *polyhedron())->opposite();
+        target = halfedge(d->to_join_ed, *polyhedron())->opposite();
       }
       if(!belong)
       {
-        tempInstructions("Vertices not joined : the vertex must belong to the selected edge.",
+        d->tempInstructions("Vertices not joined : the vertex must belong to the selected edge.",
                          "Select the vertex that will remain. (2/2)");
       }
       else
@@ -792,7 +892,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         temp_selected_edges.clear();
         //set to select edge
         set_active_handle_type(static_cast<Active_handle::Type>(2));
-        tempInstructions("Vertices joined.",
+        d->tempInstructions("Vertices joined.",
                          "Select the edge with extremities you want to join. (1/2)");
         invalidateOpenGLBuffers();
         polyhedron_item()->invalidateOpenGLBuffers();
@@ -803,8 +903,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     case 1:
     {
       //save VH
-      to_split_vh = vh;
-      temp_selected_vertices.insert(to_split_vh);
+      d->to_split_vh = vh;
+      temp_selected_vertices.insert(d->to_split_vh);
       //set to select facet
       set_active_handle_type(static_cast<Active_handle::Type>(1));
       invalidateOpenGLBuffers();
@@ -817,10 +917,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       static Vertex_handle s;
       static Polyhedron::Halfedge_handle h1,h2;
       static bool found_h1(false), found_h2(false);
-      if(!first_selected)
+      if(!d->first_selected)
       {
           //Is the vertex on the face ?
-          Polyhedron::Halfedge_around_facet_circulator hafc = to_split_fh->facet_begin();
+          Polyhedron::Halfedge_around_facet_circulator hafc = d->to_split_fh->facet_begin();
           Polyhedron::Halfedge_around_facet_circulator end = hafc;
           CGAL_For_all(hafc, end)
           {
@@ -834,12 +934,12 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           }
           if(!found_h1)
           {
-            tempInstructions("Vertex not selected : The vertex is not on the face.",
+            d->tempInstructions("Vertex not selected : The vertex is not on the face.",
                              "Select the first vertex. (2/3)");
           }
           else
           {
-            first_selected = true;
+            d->first_selected = true;
             temp_selected_vertices.insert(s);
             invalidateOpenGLBuffers();
             Q_EMIT updateInstructions("Select the second vertex (3/3)");
@@ -848,7 +948,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       else
       {
         bool is_same(false), are_next(false);
-        Polyhedron::Halfedge_around_facet_circulator hafc = to_split_fh->facet_begin();
+        Polyhedron::Halfedge_around_facet_circulator hafc = d->to_split_fh->facet_begin();
         Polyhedron::Halfedge_around_facet_circulator end = hafc;
         for(int i=0; i<1; i++) //seems useless but allow the use of break.
         {
@@ -882,24 +982,24 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           are_next = false;
         }
         if(!found_h2)
-          tempInstructions("Vertex not selected : The vertex is not on the face.",
+          d->tempInstructions("Vertex not selected : The vertex is not on the face.",
                            "Select the second vertex (3/3).");
         else if(is_same)
-          tempInstructions("Vertex not selected : The vertices must be different.",
+          d->tempInstructions("Vertex not selected : The vertices must be different.",
                            "Select the second vertex (3/3).");
         else if(are_next)
-          tempInstructions("Vertex not selected : The vertices must not directly follow each other.",
+          d->tempInstructions("Vertex not selected : The vertices must not directly follow each other.",
                            "Select the second vertex (3/3).");
         else
         {
           CGAL::Euler::split_face(h1,h2, *polyhedron());
-          first_selected = false;
+          d->first_selected = false;
           temp_selected_vertices.clear();
           temp_selected_facets.clear();
           invalidateOpenGLBuffers();
           //reset selection type to Facet
           set_active_handle_type(static_cast<Active_handle::Type>(1));
-          tempInstructions("Face split.",
+          d->tempInstructions("Face split.",
                            "Select a facet (1/3).");
           polyhedron_item()->invalidateOpenGLBuffers();
         }
@@ -927,14 +1027,14 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         }
         else
         {
-          tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
+          d->tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
                            "Select the vertex you want to remove.");
         }
       break;
 
     }
   }
-  is_treated = true;
+  d->is_treated = true;
   return false;
 }
 
@@ -962,10 +1062,10 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
 {
 
   edge_descriptor ed =  *selection.begin();
-  if(!is_treated)
+  if(!d->is_treated)
   {
     Selection_traits<edge_descriptor, Scene_polyhedron_selection_item> tr(this);
-    switch(operation_mode)
+    switch(d->operation_mode)
     {
     //classic selection
     case -1:
@@ -979,13 +1079,13 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
            ||
            facet_degree(halfedge(ed, *polyhedron())->opposite())< 4)
         {
-          tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
+          d->tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
                            "Select the edge with extremities you want to join.(1/2)");
         }
         else
         {
-          to_join_ed = ed;
-          temp_selected_edges.insert(to_join_ed);
+          d->to_join_ed = ed;
+          temp_selected_edges.insert(d->to_join_ed);
           invalidateOpenGLBuffers();
           //set to select vertex
           set_active_handle_type(static_cast<Active_handle::Type>(0));
@@ -1003,7 +1103,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         selected_vertices.insert(hhandle->vertex());
         invalidateOpenGLBuffers();
         poly_item->invalidateOpenGLBuffers();
-      tempInstructions("Edge splitted.",
+      d->tempInstructions("Edge splitted.",
                        "Select the edge you want to split.");
       break;
     }
@@ -1011,7 +1111,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 3:
         if(out_degree(source(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3 ||
            out_degree(target(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3)
-          tempInstructions("Faces not joined : the two ends of the edge must have a degree of at least 3.",
+          d->tempInstructions("Faces not joined : the two ends of the edge must have a degree of at least 3.",
                            "Select the edge separating the faces you want to join.");
         else
         {
@@ -1023,19 +1123,19 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 5:
         if(!is_triangle_mesh(*polyhedron()))
         {
-          tempInstructions("Edge not collapsed : the graph must be triangulated.",
+          d->tempInstructions("Edge not collapsed : the graph must be triangulated.",
                            "Select the edge you want to collapse.");
         }
         else if(!CGAL::Euler::does_satisfy_link_condition(ed, *polyhedron()))
         {
-          tempInstructions("Edge not collapsed : link condition not satidfied.",
+          d->tempInstructions("Edge not collapsed : link condition not satidfied.",
                            "Select the edge you want to collapse.");
         }
         else
         {
           CGAL::Euler::collapse_edge(ed, *polyhedron());
           polyhedron_item()->invalidateOpenGLBuffers();
-          tempInstructions("Edge collapsed.",
+          d->tempInstructions("Edge collapsed.",
                            "Select the edge you want to collapse.");
         }
       break;
@@ -1050,7 +1150,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         }
         else
         {
-          tempInstructions("Edge not selected : incident facets must be triangles.",
+          d->tempInstructions("Edge not selected : incident facets must be triangles.",
                            "Select the edge you want to flip.");
         }
 
@@ -1059,7 +1159,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 9:
     {
       static Halfedge_handle t;
-      if(!first_selected)
+      if(!d->first_selected)
       {
           bool found = false;
           Halfedge_handle hc = halfedge(ed, *polyhedron());
@@ -1075,7 +1175,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           }
           if(found)
           {
-            first_selected = true;
+            d->first_selected = true;
             temp_selected_edges.insert(edge(t, *polyhedron()));
             temp_selected_vertices.insert(t->vertex());
             invalidateOpenGLBuffers();
@@ -1083,7 +1183,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           }
           else
           {
-            tempInstructions("Edge not selected : no border found.",
+            d->tempInstructions("Edge not selected : no border found.",
                              "Select a border edge. (1/2)");
           }
       }
@@ -1138,24 +1238,24 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           }
         if(is_equal)
         {
-          tempInstructions("Edge not selected : halfedges must be different.",
+          d->tempInstructions("Edge not selected : halfedges must be different.",
                            "Select the second edge.");
         }
         else if(!is_border || !found)
         {
-          tempInstructions("Edge not selected : no shared border found.",
+          d->tempInstructions("Edge not selected : no shared border found.",
                            "Select the second edge.");
         }
         else
         {
-          first_selected = false;
+          d->first_selected = false;
 
 
           temp_selected_edges.clear();
           temp_selected_vertices.clear();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
-          tempInstructions("Face and vertex added.",
+          d->tempInstructions("Face and vertex added.",
                            "Select a border edge. (1/2)");
         }
       }
@@ -1165,7 +1265,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 10:
     {
       static Halfedge_handle t;
-      if(!first_selected)
+      if(!d->first_selected)
       {
           bool found = false;
           Halfedge_handle hc = halfedge(ed, *polyhedron());
@@ -1181,7 +1281,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           }
           if(found)
           {
-            first_selected = true;
+            d->first_selected = true;
             temp_selected_edges.insert(edge(t, *polyhedron()));
             temp_selected_vertices.insert(t->vertex());
             invalidateOpenGLBuffers();
@@ -1190,7 +1290,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           }
           else
           {
-            tempInstructions("Edge not selected : no border found.",
+            d->tempInstructions("Edge not selected : no border found.",
                              "Select a border edge. (1/2)");
           }
       }
@@ -1240,28 +1340,28 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           }
         if(is_equal)
         {
-          tempInstructions("Edge not selected : halfedges must be different.",
+          d->tempInstructions("Edge not selected : halfedges must be different.",
                            "Select the second edge. (2/2)");
         }
 
         else if(is_next)
         {
-          tempInstructions("Edge not selected : halfedges must not be adjacent.",
+          d->tempInstructions("Edge not selected : halfedges must not be adjacent.",
                            "Select the second edge. (2/2)");
         }
         else if(!is_border || !found)
         {
-          tempInstructions("Edge not selected : no shared border found.",
+          d->tempInstructions("Edge not selected : no shared border found.",
                            "Select the second edge. (2/2)");
         }
         else
         {
-          first_selected = false;
+          d->first_selected = false;
           temp_selected_vertices.clear();
           temp_selected_edges.clear();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
-          tempInstructions("Face added.",
+          d->tempInstructions("Face added.",
                            "Select a border edge. (1/2)");
         }
       }
@@ -1269,7 +1369,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     }
     }
   }
-  is_treated = true;
+  d->is_treated = true;
   return false;
 }
 
@@ -1280,11 +1380,11 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::vector<Polyhedr
 
 bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron::Facet_handle>& selection)
 {
-  if(!is_treated)
+  if(!d->is_treated)
   {
     Facet_handle fh = *selection.begin();
     Selection_traits<Facet_handle, Scene_polyhedron_selection_item> tr(this);
-    switch(operation_mode)
+    switch(d->operation_mode)
     {
     //classic selection
     case -1:
@@ -1297,7 +1397,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     {
       static Polyhedron::Halfedge_handle h1;
       //stores first fh and emit change label
-      if(!first_selected)
+      if(!d->first_selected)
       {
           bool found = false;
           //test preco
@@ -1305,7 +1405,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           Polyhedron::Halfedge_around_facet_circulator end = hafc;
           CGAL_For_all(hafc, end)
           {
-            if(hafc->vertex()==to_split_vh)
+            if(hafc->vertex()==d->to_split_vh)
             {
               h1 = hafc;
               found = true;
@@ -1314,13 +1414,13 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           }
           if(found)
           {
-            first_selected = true;
+            d->first_selected = true;
             temp_selected_facets.insert(fh);
             invalidateOpenGLBuffers();
             Q_EMIT updateInstructions("Select the second facet. (3/3)");
           }
           else
-            tempInstructions("Facet not selected : no valid halfedge",
+            d->tempInstructions("Facet not selected : no valid halfedge",
                              "Select first facet. (2/3)");
       }
       //call the function with point and facets.
@@ -1333,7 +1433,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           Polyhedron::Halfedge_around_facet_circulator end = hafc;
           CGAL_For_all(hafc, end)
           {
-            if(hafc->vertex()==to_split_vh)
+            if(hafc->vertex()==d->to_split_vh)
             {
               h2 = hafc;
               found = true;
@@ -1352,36 +1452,36 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             double y =  p1t.y() + 0.01 * (p1s.y() - p1t.y());
             double z =  p1t.z() + 0.01 * (p1s.z() - p1t.z());
             hhandle->opposite()->vertex()->point() = Polyhedron::Point_3(x,y,z);;
-            first_selected = false;
+            d->first_selected = false;
             temp_selected_vertices.clear();
             invalidateOpenGLBuffers();
             //reset selection mode
             set_active_handle_type(static_cast<Active_handle::Type>(0));
             poly_item->invalidateOpenGLBuffers();
-            tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
+            d->tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
           }
           else if(h1 == h2)
           {
-             tempInstructions("Facet not selected : same as the first.", "Select the second facet. (3/3)");
+             d->tempInstructions("Facet not selected : same as the first.", "Select the second facet. (3/3)");
           }
           else
           {
-            tempInstructions("Facet not selected : no valid halfedge.", "Select the second facet. (3/3)");
+            d->tempInstructions("Facet not selected : no valid halfedge.", "Select the second facet. (3/3)");
           }
       }
       break;
     }
       //Split face
     case 4:
-      if(is_triangle(fh->halfedge(), *poly))
+      if(is_triangle(fh->halfedge(), *d->poly))
       {
-        tempInstructions("Facet not selected : Facet must not be a triangle.",
+        d->tempInstructions("Facet not selected : Facet must not be a triangle.",
                          "Select the facet you want to split (degree >= 4). (1/3)");
       }
       else
       {
-        to_split_fh = fh;
-        temp_selected_facets.insert(to_split_fh);
+        d->to_split_fh = fh;
+        temp_selected_facets.insert(d->to_split_fh);
         invalidateOpenGLBuffers();
         //set to select vertex
         set_active_handle_type(static_cast<Active_handle::Type>(0));
@@ -1392,7 +1492,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     case 7:
         if(fh->halfedge()->is_border())
         {
-          tempInstructions("Facet not selected : Facet must not be null.",
+          d->tempInstructions("Facet not selected : Facet must not be null.",
                            "Select a Facet. (1/3)");
         }
         else
@@ -1416,20 +1516,20 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       break;
     }
   }
-  is_treated = true;
+  d->is_treated = true;
   return false;
 }
 
-void Scene_polyhedron_selection_item::tempInstructions(QString s1, QString s2)
+void Scene_polyhedron_selection_item_priv::tempInstructions(QString s1, QString s2)
 {
   m_temp_instructs = s2;
-  Q_EMIT updateInstructions(QString("<font color='red'>%1</font>").arg(s1));
+  Q_EMIT item->updateInstructions(QString("<font color='red'>%1</font>").arg(s1));
   QTimer timer;
-  timer.singleShot(5500, this, SLOT(emitTempInstruct()));
+  timer.singleShot(5500, item, SLOT(emitTempInstruct()));
 }
 void Scene_polyhedron_selection_item::emitTempInstruct()
 {
-  Q_EMIT updateInstructions(QString("<font color='black'>%1</font>").arg(m_temp_instructs));
+  Q_EMIT updateInstructions(QString("<font color='black'>%1</font>").arg(d->m_temp_instructs));
 }
 
 
@@ -1455,11 +1555,11 @@ struct Edge_length
   }
 };
 
-void Scene_polyhedron_selection_item::computeAndDisplayPath()
+void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
 {
-  temp_selected_edges.clear();
+  item->temp_selected_edges.clear();
   path.clear();
-  Edge_length el(*polyhedron());
+  Edge_length el(*item->polyhedron());
   std::map<vertex_descriptor,vertex_descriptor> pred;
   boost::associative_property_map< std::map<vertex_descriptor,vertex_descriptor> >
       pred_map(pred);
@@ -1469,7 +1569,7 @@ void Scene_polyhedron_selection_item::computeAndDisplayPath()
   for(it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
   {
     Vertex_handle t(*it), s(*(it+1));
-    boost::dijkstra_shortest_paths(*polyhedron(), s, boost::predecessor_map(pred_map).weight_map(el));
+    boost::dijkstra_shortest_paths(*item->polyhedron(), s, boost::predecessor_map(pred_map).weight_map(el));
     do
     {
       vop.vertex = t;
@@ -1492,13 +1592,13 @@ void Scene_polyhedron_selection_item::computeAndDisplayPath()
   QList<vertex_on_path>::iterator path_it;
   for(path_it = path.begin(); path_it!=path.end()-1; ++path_it)
   {
-    std::pair<Halfedge_handle, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*polyhedron());
+    std::pair<Halfedge_handle, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*item->polyhedron());
     if(h.second)
-      temp_selected_edges.insert(edge(h.first, *polyhedron()));
+      item->temp_selected_edges.insert(edge(h.first, *item->polyhedron()));
   }
 }
 
-void Scene_polyhedron_selection_item::addVertexToPath(Vertex_handle vh, vertex_on_path &first)
+void Scene_polyhedron_selection_item_priv::addVertexToPath(Vertex_handle vh, vertex_on_path &first)
 {
   vertex_on_path source;
   source.vertex = vh;
@@ -1510,39 +1610,39 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
 {
 
   bool replace = !temp_selected_edges.empty();
-  static vertex_on_path first;
-  if(!first_selected)
+  static Scene_polyhedron_selection_item_priv::vertex_on_path first;
+  if(!d->first_selected)
   {
     //if the path doesnt exist, add the vertex as the source of the path.
     if(!replace)
     {
-      addVertexToPath(vh, first);
+      d->addVertexToPath(vh, first);
     }
     //if the path exists, get the vertex_on_path corresponding to the selected vertex.
     else
     {
       //The first vertex of the path can not be moved, but you can close your path on it to make a loop.
       bool alone = true;
-      QList<vertex_on_path>::iterator it;
-      for(it = path.begin(); it!=path.end(); ++it)
+      QList<Scene_polyhedron_selection_item_priv::vertex_on_path>::iterator it;
+      for(it = d->path.begin(); it!=d->path.end(); ++it)
       {
-        if(it->vertex == vh&& it!=path.begin())
+        if(it->vertex == vh&& it!=d->path.begin())
           alone = false;
       }
-      if(path.begin()->vertex == vh )
+      if(d->path.begin()->vertex == vh )
         if(alone)
         {
-          constrained_vertices.append(vh); //if the path loops, the indexOf may be invalid, hence the check.
+          d->constrained_vertices.append(vh); //if the path loops, the indexOf may be invalid, hence the check.
           //Display the new path
-          computeAndDisplayPath();
-          first_selected = false;
-          constrained_vertices.clear();
+          d->computeAndDisplayPath();
+          d->first_selected = false;
+          d->constrained_vertices.clear();
           fixed_vertices.clear();
-          for(it = path.begin(); it!=path.end(); ++it)
+          for(it = d->path.begin(); it!=d->path.end(); ++it)
           {
             if(it->is_constrained )
             {
-              constrained_vertices.append(it->vertex);
+              d->constrained_vertices.append(it->vertex);
               fixed_vertices.insert(it->vertex);
             }
           }
@@ -1550,7 +1650,7 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
           return;
         }
       bool found = false;
-      Q_FOREACH(vertex_on_path vop, path)
+      Q_FOREACH(Scene_polyhedron_selection_item_priv::vertex_on_path vop, d->path)
       {
         if(vop.vertex == vh)
         {
@@ -1561,17 +1661,17 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
       }
       if(!found)//add new end_point;
       {
-        constrained_vertices.append(vh);
+        d->constrained_vertices.append(vh);
         //Display the new path
-        computeAndDisplayPath();
-        first_selected = false;
-        constrained_vertices.clear();
+        d->computeAndDisplayPath();
+        d->first_selected = false;
+        d->constrained_vertices.clear();
         fixed_vertices.clear();
-        for(it = path.begin(); it!=path.end(); ++it)
+        for(it = d->path.begin(); it!=d->path.end(); ++it)
         {
           if(it->is_constrained )
           {
-            constrained_vertices.append(it->vertex);
+            d->constrained_vertices.append(it->vertex);
             fixed_vertices.insert(it->vertex);
           }
         }
@@ -1580,13 +1680,13 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
       }
     }
     temp_selected_vertices.insert(vh);
-    first_selected = true;
+    d->first_selected = true;
   }
   else
   {
     if(!replace)
     {
-      constrained_vertices.append(vh);
+      d->constrained_vertices.append(vh);
       temp_selected_vertices.erase(first.vertex);
 
       updateInstructions("You can select a vertex on the green path to move it. "
@@ -1597,39 +1697,39 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
     else
     {
       bool is_same(false), alone(true);
-      if( (vh == constrained_vertices.first() && first.vertex == constrained_vertices.last())
-          || (vh == constrained_vertices.last() && first.vertex == constrained_vertices.first()))
+      if( (vh == d->constrained_vertices.first() && first.vertex == d->constrained_vertices.last())
+          || (vh == d->constrained_vertices.last() && first.vertex == d->constrained_vertices.first()))
 
       {
         is_same = true;
       }
-      if(first.vertex == path.begin()->vertex)
+      if(first.vertex == d->path.begin()->vertex)
         alone =false;
       bool is_last = true;
       //find the previous constrained vertex on path
-      vertex_on_path closest = path.last();
-      QList<vertex_on_path>::iterator it;
+      Scene_polyhedron_selection_item_priv::vertex_on_path closest = d->path.last();
+      QList<Scene_polyhedron_selection_item_priv::vertex_on_path>::iterator it;
       int index = 0;
       int closest_index = 0;
       //get first's index
-      for(it = path.begin(); it!=path.end(); ++it)
+      for(it = d->path.begin(); it!=d->path.end(); ++it)
       {
         bool end_of_path_is_prio = true;//makes the end of the path prioritary over the other points when there is a conflict
-        if(first.vertex == (path.end()-1)->vertex)
-          if(it != path.end()-1)
+        if(first.vertex == (d->path.end()-1)->vertex)
+          if(it != d->path.end()-1)
             end_of_path_is_prio = false;
         //makes the end of the path prioritary over the other points when there is a conflict
         if(it->vertex == first.vertex &&
-           !(it == path.begin())&&// makes the begining of the path impossible to move
+           !(it == d->path.begin())&&// makes the begining of the path impossible to move
            end_of_path_is_prio)
         {
-          if(it!=path.end()-1 &&! is_same )
+          if(it!=d->path.end()-1 &&! is_same )
           {
-            constrained_vertices.removeAll(it->vertex);
+            d->constrained_vertices.removeAll(it->vertex);
             if(!alone)
-              constrained_vertices.prepend(it->vertex);
+              d->constrained_vertices.prepend(it->vertex);
           }
-          path.erase(it);
+          d->path.erase(it);
           break;
         }
         if(it->is_constrained)
@@ -1637,7 +1737,7 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
         index++;
       }
       //get first constrained vertex following first in path
-      for(it = path.begin() + index; it!=path.end(); ++it)
+      for(it = d->path.begin() + index; it!=d->path.end(); ++it)
       {
         if(it->is_constrained )
         {
@@ -1651,26 +1751,26 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
       //check if the vertex is contained several times in the path
       if(!is_last)
       {
-        constrained_vertices.insert(closest_index, vh);//cannot really use indexOf in case a fixed_point is used several times
+        d->constrained_vertices.insert(closest_index, vh);//cannot really use indexOf in case a fixed_point is used several times
       }
       else
-        constrained_vertices.replace(constrained_vertices.size()-1, vh);
+        d->constrained_vertices.replace(d->constrained_vertices.size()-1, vh);
 
 
     }
     //Display the new path
-    computeAndDisplayPath();
-    first_selected = false;
+    d->computeAndDisplayPath();
+    d->first_selected = false;
   }
   //update constrained_vertices
-  constrained_vertices.clear();
+  d->constrained_vertices.clear();
   fixed_vertices.clear();
-  QList<vertex_on_path>::iterator it;
-  for(it = path.begin(); it!=path.end(); ++it)
+  QList<Scene_polyhedron_selection_item_priv::vertex_on_path>::iterator it;
+  for(it = d->path.begin(); it!=d->path.end(); ++it)
   {
     if(it->is_constrained )
     {
-      constrained_vertices.append(it->vertex);
+      d->constrained_vertices.append(it->vertex);
       fixed_vertices.insert(it->vertex);
     }
   }
@@ -1679,14 +1779,128 @@ void Scene_polyhedron_selection_item::selectPath(Vertex_handle vh)
 
 void Scene_polyhedron_selection_item::on_Ctrlz_pressed()
 {
-  path.clear();
-  constrained_vertices.clear();
+  d->path.clear();
+  d->constrained_vertices.clear();
   fixed_vertices.clear();
-  first_selected = false;
+  d->first_selected = false;
   temp_selected_vertices.clear();
   temp_selected_edges.clear();
   temp_selected_facets.clear();
-  are_temp_buffers_filled = false;
-  set_operation_mode(operation_mode);
+  d->are_temp_buffers_filled = false;
+  set_operation_mode(d->operation_mode);
   Q_EMIT itemChanged();
+}
+
+Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
+  : Scene_polyhedron_item_decorator(NULL, false)
+{
+  d = new Scene_polyhedron_selection_item_priv(this);
+  d->original_sel_mode = static_cast<Active_handle::Type>(0);
+  d->operation_mode = -1;
+  for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVaos; i++)
+  {
+    addVaos(i);
+    vaos[i]->create();
+  }
+
+  for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVbos; i++)
+  {
+    buffers[i].create();
+  }
+  d->nb_facets = 0;
+  d->nb_points = 0;
+  d->nb_lines = 0;
+  this->setColor(facet_color);
+  d->first_selected = false;
+  d->is_treated = false;
+  d->poly_need_update = false;
+  d->are_buffers_filled = false;
+  d->are_temp_buffers_filled = false;
+  d->poly = NULL;
+}
+
+Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw)
+  : Scene_polyhedron_item_decorator(NULL, false)
+{
+  d = new Scene_polyhedron_selection_item_priv(this);
+  d->original_sel_mode = static_cast<Active_handle::Type>(0);
+  d->operation_mode = -1;
+  d->nb_facets = 0;
+  d->nb_points = 0;
+  d->nb_lines = 0;
+
+  for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVaos; i++)
+  {
+    addVaos(i);
+    vaos[i]->create();
+  }
+
+  for(int i=0; i<Scene_polyhedron_selection_item_priv::NumberOfVbos; i++)
+  {
+    buffers[i].create();
+  }
+  d->poly = NULL;
+  init(poly_item, mw);
+  this->setColor(facet_color);
+  invalidateOpenGLBuffers();
+  d->first_selected = false;
+  d->is_treated = false;
+  d->poly_need_update = false;
+}
+
+Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
+{
+  delete d;
+  QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+  CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+  viewer->setBindingSelect();
+}
+
+void Scene_polyhedron_selection_item::setPathSelection(bool b) {
+  k_ring_selector.setEditMode(b);
+  d->is_path_selecting = b;
+  if(d->is_path_selecting){
+    int ind = 0;
+    BOOST_FOREACH(Vertex_handle vd, vertices(*polyhedron())){
+      vd->id() = ind++;
+    }
+  }
+}
+
+void Scene_polyhedron_selection_item::update_poly()
+{
+  if(d->poly_need_update)
+    poly_item->invalidateOpenGLBuffers();
+}
+
+void Scene_polyhedron_selection_item::resetIsTreated() { d->is_treated = false;}
+
+void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
+
+  // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
+    //  poly_item->invalidateOpenGLBuffers();
+      d->are_buffers_filled = false;
+      d->are_temp_buffers_filled = false;
+      d->poly = polyhedron();
+      compute_bbox();
+}
+
+void Scene_polyhedron_selection_item::add_to_selection()
+{
+  Q_FOREACH(edge_descriptor ed, temp_selected_edges)
+  {
+    selected_edges.insert(ed);
+    temp_selected_edges.erase(ed);
+  }
+  on_Ctrlz_pressed();
+  invalidateOpenGLBuffers();
+  QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+  v->update();
+  d->tempInstructions("Path added to selection.",
+                   "Select two vertices to create the path between them. (1/2)");
+}
+
+void Scene_polyhedron_selection_item::save_handleType()
+{
+  d->original_sel_mode = get_active_handle_type();
 }

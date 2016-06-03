@@ -15,6 +15,7 @@
 
 typedef CGAL::Image_3 Image;
 using namespace CGAL::Three;
+struct Scene_image_item_priv;
 class SCENE_IMAGE_ITEM_EXPORT Scene_image_item
   : public Scene_item
 {
@@ -37,55 +38,18 @@ public:
   virtual void direct_draw(CGAL::Three::Viewer_interface* viewer) const
   { draw(viewer); }
   virtual void direct_draw_edges(CGAL::Three::Viewer_interface* viewer) const
-  { draw_edges(viewer); }
+  { drawEdges(viewer); }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
-  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const
-  { draw_gl(viewer); }
-  
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
   virtual QString toolTip() const;
-  
   const Image* image() const { return m_image; }
-  bool isGray() { return is_hidden;}
-
-private:
-  void draw_gl(CGAL::Three::Viewer_interface* viewer) const;
-  
-  void initialize_buffers();
-  GLint ibo_size() const;
-  
-public:
+  bool isGray();
   Image* m_image;
-
-private:
-  bool m_initialized;
-  bool is_hidden;
-#ifdef SCENE_IMAGE_GL_BUFFERS_AVAILABLE
-  int m_voxel_scale;
-  static const int vaoSize = 2;
-  static const int vboSize = 6;
-  mutable int poly_vertexLocation[1];
-  mutable int normalsLocation[1];
-  mutable int mvpLocation[1];
-  mutable int mvLocation[1];
-  mutable int colorLocation[1];
-  mutable int lightLocation[5];
-  mutable int twosideLocation;
-
-   std::vector<float> *v_box;
-   std::vector<float> color;
-
-
-  mutable QOpenGLBuffer m_vbo[vboSize];
-  mutable QOpenGLBuffer *m_ibo;
-  mutable QOpenGLVertexArrayObject vao[vaoSize];
-  mutable QOpenGLShaderProgram rendering_program;
-  void draw_bbox();
-  void attrib_buffers(CGAL::Three::Viewer_interface*) const;
-  void compile_shaders();
-  void draw_Bbox(Bbox bbox, std::vector<float> *vertices);
+protected :
+  friend struct Scene_image_item_priv;
+  Scene_image_item_priv* d;
 public Q_SLOTS:
     void changed();
-#endif // SCENE_IMAGE_GL_BUFFERS_AVAILABLE
 };
 
 #endif // SCENE_IMAGE_ITEM_H

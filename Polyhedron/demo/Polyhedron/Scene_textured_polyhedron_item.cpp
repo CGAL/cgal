@@ -8,62 +8,127 @@
 
 typedef EPIC_kernel::Point_3 Point;
 
+struct Scene_textured_polyhedron_item_priv
+{
+  Scene_textured_polyhedron_item_priv(Scene_textured_polyhedron_item* parent)
+    :poly(new Textured_polyhedron), textureId(-1)
+  {
+    item = parent;
+    texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
+    nb_facets = 0;
+    nb_lines = 0;
+  }
+  Scene_textured_polyhedron_item_priv(const Textured_polyhedron& p, Scene_textured_polyhedron_item* parent)
+    : poly(new Textured_polyhedron(p)),textureId(-1),smooth_shading(true)
 
-void Scene_textured_polyhedron_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
+  {
+    item = parent;
+    texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
+    nb_facets = 0;
+    nb_lines = 0;
+  }
+  Scene_textured_polyhedron_item_priv(Textured_polyhedron* const p,Scene_textured_polyhedron_item* parent)
+    :poly(p),textureId(-1),smooth_shading(true)
+  {
+    item = parent;
+    texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
+    nb_facets = 0;
+    nb_lines = 0;
+
+  }
+  ~Scene_textured_polyhedron_item_priv()
+  {
+    delete poly;
+  }
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+  void compute_normals_and_vertices(void) const;
+
+  enum VAOs {
+      Facets=0,
+      Edges,
+      NbOfVaos
+  };
+  enum VBOs {
+      Facets_Vertices=0,
+      Facets_Normals,
+      Facets_Texmap,
+      Edges_Vertices,
+      Edges_Texmap,
+      NbOfVbos
+  };
+
+  Textured_polyhedron* poly;
+  Texture texture;
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_facets;
+  mutable std::vector<float> normals;
+  mutable std::vector<float> textures_map_facets;
+  mutable std::vector<float> textures_map_lines;
+  mutable std::size_t nb_facets;
+  mutable std::size_t nb_lines;
+
+  mutable GLuint textureId;
+  mutable QOpenGLShaderProgram* program;
+  mutable bool are_buffers_filled;
+  bool smooth_shading;
+
+  Scene_textured_polyhedron_item* item;
+};
+void Scene_textured_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     if(GLuint(-1) == textureId) {
         viewer->glGenTextures(1, &textureId);
     }
     //vao for the facets
     {
-        program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
+        program = item->getShaderProgram(Scene_textured_polyhedron_item::PROGRAM_WITH_TEXTURE, viewer);
         program->bind();
-        vaos[Facets]->bind();
-        buffers[Facets_Vertices].bind();
-        buffers[Facets_Vertices].allocate(positions_facets.data(),
+        item->vaos[Facets]->bind();
+        item->buffers[Facets_Vertices].bind();
+        item->buffers[Facets_Vertices].allocate(positions_facets.data(),
                             static_cast<int>(positions_facets.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[Facets_Vertices].release();
+        item->buffers[Facets_Vertices].release();
 
-        buffers[Facets_Normals].bind();
-        buffers[Facets_Normals].allocate(normals.data(),
+        item->buffers[Facets_Normals].bind();
+        item->buffers[Facets_Normals].allocate(normals.data(),
                             static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normal");
         program->setAttributeBuffer("normal",GL_FLOAT,0,3);
-        buffers[Facets_Normals].release();
+        item->buffers[Facets_Normals].release();
 
 
-        buffers[Facets_Texmap].bind();
-        buffers[Facets_Texmap].allocate(textures_map_facets.data(),
+        item->buffers[Facets_Texmap].bind();
+        item->buffers[Facets_Texmap].allocate(textures_map_facets.data(),
                             static_cast<int>(textures_map_facets.size()*sizeof(float)));
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
-        buffers[Facets_Texmap].release();
-        vaos[Facets]->release();
+        item->buffers[Facets_Texmap].release();
+        item->vaos[Facets]->release();
         program->release();
     }
 
     //vao for the lines
     {
-        program = getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES, viewer);
+        program = item->getShaderProgram(Scene_textured_polyhedron_item::PROGRAM_WITH_TEXTURED_EDGES, viewer);
         program->bind();
-        vaos[Edges]->bind();
-        buffers[Edges_Vertices].bind();
-        buffers[Edges_Vertices].allocate(positions_lines.data(),
+        item->vaos[Edges]->bind();
+        item->buffers[Edges_Vertices].bind();
+        item->buffers[Edges_Vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[Edges_Vertices].release();
+        item->buffers[Edges_Vertices].release();
 
 
-        buffers[Edges_Texmap].bind();
-        buffers[Edges_Texmap].allocate(textures_map_lines.data(),
+        item->buffers[Edges_Texmap].bind();
+        item->buffers[Edges_Texmap].allocate(textures_map_lines.data(),
                             static_cast<int>(textures_map_lines.size()*sizeof(float)));
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
-        buffers[Edges_Texmap].release();
-        vaos[Edges]->release();
+        item->buffers[Edges_Texmap].release();
+        item->vaos[Edges]->release();
         program->release();
     }
 
@@ -103,7 +168,7 @@ void Scene_textured_polyhedron_item::initializeBuffers(CGAL::Three::Viewer_inter
 }
 
 void
-Scene_textured_polyhedron_item::compute_normals_and_vertices(void) const
+Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
 {
     positions_facets.resize(0);
     positions_lines.resize(0);
@@ -136,7 +201,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void) const
         {
 
             // If Flat shading:1 normal per polygon added once per vertex
-            if (cur_shading == Flat || cur_shading == FlatPlusEdges)
+            if (item->cur_shading == Flat || item->cur_shading == FlatPlusEdges)
             {
 
                 Vector n = CGAL::Polygon_mesh_processing::
@@ -147,7 +212,7 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void) const
             }
 
             // If Gouraud shading: 1 normal per vertex
-            else if(cur_shading == Gouraud)
+            else if(item->cur_shading == Gouraud)
             {
 
                 const Facet::Normal_3& n = he->vertex()->normal();
@@ -209,46 +274,40 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void) const
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
-    : Scene_item(NbOfVbos,NbOfVaos),poly(new Textured_polyhedron), textureId(-1)
+    : Scene_item(Scene_textured_polyhedron_item_priv::NbOfVbos,Scene_textured_polyhedron_item_priv::NbOfVaos)
 {
-    texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=FlatPlusEdges;
     is_selected=false;
-    nb_facets = 0;
-    nb_lines = 0;
+    d = new Scene_textured_polyhedron_item_priv(this);
     invalidateOpenGLBuffers();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedron* const p)
-    : Scene_item(NbOfVbos,NbOfVaos),poly(p),textureId(-1),smooth_shading(true)
+    : Scene_item(Scene_textured_polyhedron_item_priv::NbOfVbos,Scene_textured_polyhedron_item_priv::NbOfVaos)
 {
     cur_shading=FlatPlusEdges;
     is_selected=false;
-    texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    nb_facets = 0;
-    nb_lines = 0;
+    d = new Scene_textured_polyhedron_item_priv(p,this);
     invalidateOpenGLBuffers();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_polyhedron& p)
-    : Scene_item(NbOfVbos,NbOfVaos), poly(new Textured_polyhedron(p)),textureId(-1),smooth_shading(true)
+    : Scene_item(Scene_textured_polyhedron_item_priv::NbOfVbos,Scene_textured_polyhedron_item_priv::NbOfVaos)
 {
-    texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=FlatPlusEdges;
     is_selected=false;
-    nb_facets = 0;
-    nb_lines = 0;
+    d = new Scene_textured_polyhedron_item_priv(p,this);
     invalidateOpenGLBuffers();
 }
 
 Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
 {
-    delete poly;
+    delete d;
 }
 
 Scene_textured_polyhedron_item* 
 Scene_textured_polyhedron_item::clone() const {
-    return new Scene_textured_polyhedron_item(*poly);
+    return new Scene_textured_polyhedron_item(*d->poly);
 }
 
 // Load textured_polyhedron from .OFF file
@@ -256,7 +315,7 @@ bool
 Scene_textured_polyhedron_item::load(std::istream& in)
 {
     std::cout<<"LOAD"<<std::endl;
-    in >> *poly;
+    in >> *d->poly;
     invalidateOpenGLBuffers();
     return in && !isEmpty();
 }
@@ -265,14 +324,14 @@ Scene_textured_polyhedron_item::load(std::istream& in)
 bool 
 Scene_textured_polyhedron_item::save(std::ostream& out) const
 {
-    out << *poly;
+    out << *d->poly;
     return (bool) out;
 }
 
 QString 
 Scene_textured_polyhedron_item::toolTip() const
 {
-    if(!poly)
+    if(!d->poly)
         return QString();
 
     return QObject::tr("<p>Textured polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
@@ -280,9 +339,9 @@ Scene_textured_polyhedron_item::toolTip() const
                        "Number of edges: %3<br />"
                        "Number of facets: %4</p>")
             .arg(this->name())
-            .arg(poly->size_of_vertices())
-            .arg(poly->size_of_halfedges()/2)
-            .arg(poly->size_of_facets())
+            .arg(d->poly->size_of_vertices())
+            .arg(d->poly->size_of_halfedges()/2)
+            .arg(d->poly->size_of_facets())
             .arg(this->renderingModeName())
             .arg(this->color().name());
 }
@@ -290,56 +349,56 @@ Scene_textured_polyhedron_item::toolTip() const
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_textured_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
-    if(!are_buffers_filled)
+    if(!d->are_buffers_filled)
     {
-        compute_normals_and_vertices();
-        initializeBuffers(viewer);
+        d->compute_normals_and_vertices();
+        d->initializeBuffers(viewer);
     }
 
-    vaos[Facets]->bind();
+    vaos[Scene_textured_polyhedron_item_priv::Facets]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
-    viewer->glBindTexture(GL_TEXTURE_2D, textureId);
+    viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
     attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
-    program=getShaderProgram(PROGRAM_WITH_TEXTURE);
-    program->bind();
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/4));
+    d->program=getShaderProgram(PROGRAM_WITH_TEXTURE);
+    d->program->bind();
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/4));
     //Clean-up
-    program->release();
-    vaos[Facets]->release();
+    d->program->release();
+    vaos[Scene_textured_polyhedron_item_priv::Facets]->release();
 }
 void Scene_textured_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
-        initializeBuffers(viewer);
+    if(!d->are_buffers_filled)
+        d->initializeBuffers(viewer);
 
-    vaos[Edges]->bind();
+    vaos[Scene_textured_polyhedron_item_priv::Edges]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
-    viewer->glBindTexture(GL_TEXTURE_2D, textureId);
+    viewer->glBindTexture(GL_TEXTURE_2D, d->textureId);
     attribBuffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
 
-    program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
-    program->bind();
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
+    d->program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
+    d->program->bind();
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/4));
     //Clean-up
-    program->release();
-    vaos[Edges]->release();
+    d->program->release();
+    vaos[Scene_textured_polyhedron_item_priv::Edges]->release();
 }
 
 Textured_polyhedron* 
-Scene_textured_polyhedron_item::textured_polyhedron()       { return poly; }
+Scene_textured_polyhedron_item::textured_polyhedron()       { return d->poly; }
 const Textured_polyhedron* 
-Scene_textured_polyhedron_item::textured_polyhedron() const { return poly; }
+Scene_textured_polyhedron_item::textured_polyhedron() const { return d->poly; }
 
 bool
 Scene_textured_polyhedron_item::isEmpty() const {
-    return (poly == 0) || poly->empty();
+    return (d->poly == 0) || d->poly->empty();
 }
 
 void
 Scene_textured_polyhedron_item::compute_bbox() const {
-    const Point& p = *(poly->points_begin());
+    const Point& p = *(d->poly->points_begin());
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-    for(Textured_polyhedron::Point_iterator it = poly->points_begin();
-        it != poly->points_end();
+    for(Textured_polyhedron::Point_iterator it = d->poly->points_begin();
+        it != d->poly->points_end();
         ++it) {
         bbox = bbox + it->bbox();
     }
@@ -349,7 +408,7 @@ Scene_textured_polyhedron_item::compute_bbox() const {
 void
 Scene_textured_polyhedron_item::invalidateOpenGLBuffers()
 {
-    are_buffers_filled = false;
+    d->are_buffers_filled = false;
     compute_bbox();
 }
 void
@@ -358,7 +417,6 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-        initializeBuffers();
     }
     else
         is_selected = p_is_selected;
