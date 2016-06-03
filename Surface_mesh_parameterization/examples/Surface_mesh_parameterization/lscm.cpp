@@ -1,7 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
+
 #include <CGAL/parameterize.h>
+#include <CGAL/Two_vertices_parameterizer_3.h>
+#include <CGAL/LSCM_parameterizer_3.h>
 
 #include <boost/foreach.hpp>
 #include <iostream>
@@ -87,8 +90,11 @@ int main(int argc, char * argv[])
 
   halfedge_descriptor bhd(smhd);
   bhd = opposite(bhd,mesh); // a halfedge on the virtual border
+ typedef CGAL::LSCM_parameterizer_3<Mesh,
+                           CGAL::Two_vertices_parameterizer_3<Mesh> > Parameterizer;
 
-  CGAL::parameterize(mesh, bhd, uv_pm);
+
+ CGAL::parameterize(mesh, Parameterizer(), bhd, uv_pm);
 
   Face2Polyline f2p(mesh,uv_pm);
   // As the seam may define a patch we write
