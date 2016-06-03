@@ -165,17 +165,17 @@ parameterize(TriangleMesh& mesh,
 }
 
 
-template <class TM>
+  template <class TM, class SEM, class SVM>
 class Seam_mesh;
 
 
-template <class TriangleMesh, class HD, class VertexUVmap>
-typename Parameterizer_traits_3<Seam_mesh<TriangleMesh> >::Error_code
-parameterize(Seam_mesh<TriangleMesh>& mesh,
+  template <class TM, class SEM, class SVM, class HD, class VertexUVmap>
+  typename Parameterizer_traits_3<Seam_mesh<TM,SEM,SVM> >::Error_code
+  parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
              HD bhd,
              VertexUVmap uvm)
 { 
-  typedef typename boost::graph_traits<Seam_mesh<TriangleMesh> >::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Seam_mesh<TM,SEM,SVM> >::vertex_descriptor vertex_descriptor;
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
 
@@ -184,19 +184,19 @@ parameterize(Seam_mesh<TriangleMesh>& mesh,
   boost::associative_property_map<Vertex_index_map> vipm(vim);
   mesh.initialize_vertex_index_map(bhd,vipm);
 
-  Mean_value_coordinates_parameterizer_3<Seam_mesh<TriangleMesh> > parameterizer;
+  Mean_value_coordinates_parameterizer_3<Seam_mesh<TM,SEM,SVM> > parameterizer;
   return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
 }
 
 
-template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>
-typename Parameterizer_traits_3<Seam_mesh<TriangleMesh> >::Error_code
-parameterize(Seam_mesh<TriangleMesh>& mesh,
+template <class TM, class SEM, class SVM, class Parameterizer, class HD, class VertexUVmap>
+typename Parameterizer_traits_3<Seam_mesh<TM,SEM,SVM> >::Error_code
+parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
              Parameterizer parameterizer,
              HD bhd,
              VertexUVmap uvm)
 { 
-  typedef typename boost::graph_traits<Seam_mesh<TriangleMesh> >::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Seam_mesh<TM,SEM,SVM> >::vertex_descriptor vertex_descriptor;
 
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);

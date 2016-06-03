@@ -428,7 +428,6 @@ as adding a center vertex to a face, which means also adding halfedges
 and faces, and updating incidence information. The %Euler operations 
 enable manipulating models of `MutableFaceGraph`.
 
-
 \subsection BGLDual The Dual Graph
 
 The <em>dual graph</em> of a `FaceGraph` `G` is a graph that has a vertex for each
@@ -452,7 +451,7 @@ using `boost::filtered_graph` as shown in the following example.
 
 \cgalExample{BGL_surface_mesh/surface_mesh_dual.cpp}
 
-\subsection BGLEulerOperations The Seam Mesh Adapter 
+\subsection BGLSeamMeshAdapter The Seam Mesh Adapter 
 
 The class `Seam_mesh` allows to mark edges as <em>seam edges</em>, so that they appear
 like border edges, when exploring a seam mesh with the BGL API. In the figure below 
@@ -465,7 +464,7 @@ When we start at `h3`, we will traverse `h3`, `h5`, `h7*`, and we are back at `h
 A seam mesh with two seam edges `(2,3)` and `(6,7)`. 
 \cgalFigureEnd
 
-As a vertex `v`in the adapted mesh which lies on the seam can have several circular
+As a vertex `v` in the adapted mesh which lies on the seam can have several circular
 sequences of halfedges, this vertex cannot be considered as a vertex in a seam mesh.
 Instead we consider the halfedge that has `v` as target and that lies on the seam 
 and that has an incident face as vertex. The function `target(hd,sm)` will return 
@@ -474,7 +473,8 @@ mesh is not on a seam we choose `halfedge(v,mesh)` as its canonical halfedge.
 
 
 With the function `next(halfedge_descriptor, FaceGraph)` we can walk around a face, but also around 
-a border of a mesh. When we have a seam mesh `opposite(h2,sm) == h3*`, and it holds that `face(h3*,sm) == null_face()`.
+a border of a mesh. For the seam mesh `sm` from the figure above we have `opposite(h2,sm) == h3*`, 
+and it holds that `face(h3*,sm) == null_face()`.
 We now can walk along this "border": When we call `next(..,sm)` starting at `h3*`, we will traverse `h6*`,
 `h7*`, `h2*`, and we are back at `h3*`.
 
@@ -486,6 +486,7 @@ to the real border, and switch back on the "other side" of the seam.
 in<em>(c)</em> the seam forms a closed polyline. While the first two define a single border, a cycle defines two borders
 and splits the set of faces in two connected components. Something similar happens when the seam touches the same border
 more than once. A seam can also connect different borders what changes the genus of the mesh.
+Finally, a seam may have more than one connected components.
 
 \cgalFigureBegin{fig_Seam_mesh_2, Seam_mesh_2.png}
 Walking around a seam <em>(a)</em> with no seam vertex on the real border, 
@@ -494,7 +495,9 @@ Walking around a seam <em>(a)</em> with no seam vertex on the real border,
 
 Seam meshes are used in the Chapter \ref PkgSurfaceParameterizationSummary.
 
-\subsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
+subsection BGLExamples Examples
+
+\subsubsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
 
 The following example shows several functions that enable navigating in a `HalfedgeGraph`.
 We have two implementations of the operation that finds the vertices adjacent to a vertex `v`.
@@ -514,7 +517,7 @@ stored in the vertex record.)
 
 \cgalExample{BGL_polyhedron_3/incident_vertices.cpp}
 
-\subsection BGLExampleNormalHalfedgeGraph Example: Calculating Facet Normals using HalfedgeGraph
+\subsubsection BGLExampleNormalHalfedgeGraph Example: Calculating Facet Normals using HalfedgeGraph
 
 The following example program shows a simple algorithm for calculating
 facet normals for a polyhedron using the \sc{Bgl} API. A
