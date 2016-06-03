@@ -166,7 +166,7 @@ public:
       is_bbox_computed = true;
       return _bbox;
   }
-  virtual double DiagonalBbox() const {
+  virtual double diagonalBbox() const {
    if(!is_diag_bbox_computed)
        compute_diag_bbox();
    is_diag_bbox_computed = true;

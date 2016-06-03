@@ -8,13 +8,8 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -35,29 +30,11 @@
 
 #include <boost/foreach.hpp>
 #include <boost/container/flat_map.hpp>
+#include "triangulate_primitive.h"
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef Polyhedron::Traits Traits;
 typedef Polyhedron::Facet Facet;
-typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
-typedef Polyhedron::Halfedge_handle Halfedge_handle;
-struct Face_info {
-    Polyhedron::Halfedge_handle e[3];
-    bool is_external;
-};
-typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
-P_traits>                                                            Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-P_traits>                                                            Fb1;
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::Exact_predicates_tag                                   Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-TDS,
-Itag>                                                                CDT;
-
-
-//Make sure all the facets are triangles
 typedef Polyhedron::Traits	                           Kernel;
 typedef Kernel::Point_3	                                   Point;
 typedef Kernel::Vector_3	                           Vector;
@@ -153,6 +130,8 @@ struct Scene_polyhedron_item_priv{
     delete targeted_id;
   }
   void* get_aabb_tree();
+  QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
+                                                  Traits::Vector_3 normal);
   Color_vector colors_;
   bool show_only_feature_edges_m;
   bool show_feature_edges_m;
@@ -210,9 +189,10 @@ struct Scene_polyhedron_item_priv{
 const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
 
 
-QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
+QList<Kernel::Triangle_3> Scene_polyhedron_item_priv::triangulate_primitive(Polyhedron::Facet_iterator fit,
                                                 Traits::Vector_3 normal)
 {
+  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, typename boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
   //The output list
   QList<Kernel::Triangle_3> res;
   //check if normal contains NaN values
@@ -221,58 +201,17 @@ QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
     qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
     return QList<Kernel::Triangle_3>();
   }
-  P_traits cdt_traits(normal);
-  CDT cdt(cdt_traits);
-
-  Facet::Halfedge_around_facet_circulator
-      he_circ = fit->facet_begin(),
-      he_circ_end(he_circ);
-
-  // Iterates on the vector of facet handles
-  typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
-  CDT::Vertex_handle previous, first;
-  do {
-    CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
-    v2v.insert(std::make_pair(vh, he_circ->vertex()));
-    if(first == 0) {
-      first = vh;
-    }
-    vh->info() = he_circ;
-    if(previous != 0 && previous != vh) {
-      cdt.insert_constraint(previous, vh);
-    }
-    previous = vh;
-  } while( ++he_circ != he_circ_end );
-  cdt.insert_constraint(previous, first);
-  // sets mark is_external
-  for(CDT::All_faces_iterator
-      fit2 = cdt.all_faces_begin(),
-      end = cdt.all_faces_end();
-      fit2 != end; ++fit2)
-  {
-    fit2->info().is_external = false;
-  }
-  //check if the facet is external or internal
-  std::queue<CDT::Face_handle> face_queue;
-  face_queue.push(cdt.infinite_vertex()->face());
-  while(! face_queue.empty() ) {
-    CDT::Face_handle fh = face_queue.front();
-    face_queue.pop();
-    if(fh->info().is_external) continue;
-    fh->info().is_external = true;
-    for(int i = 0; i <3; ++i) {
-      if(!cdt.is_constrained(std::make_pair(fh, i)))
-      {
-        face_queue.push(fh->neighbor(i));
-      }
-    }
-  }
+  double diagonal;
+  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
+    diagonal = item->diagonalBbox();
+  else
+    diagonal = 0.0;
+  FT triangulation(fit,normal,poly,diagonal);
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
-  for(CDT::Finite_faces_iterator
-      ffit = cdt.finite_faces_begin(),
-      end = cdt.finite_faces_end();
+  for(typename FT::CDT::Finite_faces_iterator
+      ffit = triangulation.cdt->finite_faces_begin(),
+      end = triangulation.cdt->finite_faces_end();
       ffit != end; ++ffit)
   {
     if(ffit->info().is_external)
@@ -280,8 +219,8 @@ QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
 
 
     res << Kernel::Triangle_3(ffit->vertex(0)->point(),
-    ffit->vertex(1)->point(),
-    ffit->vertex(2)->point());
+                              ffit->vertex(1)->point(),
+                              ffit->vertex(2)->point());
 
   }
   return res;
@@ -356,6 +295,16 @@ void push_back_xyz(const TypeWithXYZ& t,
   vector.push_back(t.x());
   vector.push_back(t.y());
   vector.push_back(t.z());
+}
+
+
+template<typename TypeWithRGB, typename ContainerWithPushBack>
+void push_back_rgb(const TypeWithRGB& t,
+                   ContainerWithPushBack& vector)
+{
+  vector.push_back(t.redF());
+  vector.push_back(t.greenF());
+  vector.push_back(t.blueF());
 }
 
 bool Scene_polyhedron_item_priv::isFacetConvex(Facet_iterator f, const Polyhedron::Traits::Vector_3& N) const
@@ -484,155 +433,45 @@ void Scene_polyhedron_item_priv::triangulate_convex_facet(Facet_iterator f,
 template<typename VertexNormalPmap>
 void
 Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_iterator fit,
-                                         const Traits::Vector_3& N,
+                                         const Traits::Vector_3& normal,
                                          const VertexNormalPmap& vnmap,
                                          const bool colors_only) const
 {
-  Traits::Vector_3 normal = N;
-  Traits::Orientation orientation;
-  bool normal_is_ok;
-  Facet::Halfedge_around_facet_circulator
-      he = fit->facet_begin(),
-      he_end(he);
-  //Check if the normal is good, else find another one.
-  do{
-    normal_is_ok = true;
-
-    //Initializes the facet orientation
-
-    Polyhedron::Traits::Point_3 S,T;
-    S = source(he, *poly)->point();
-    T = target(he, *poly)->point();
-    Vector V1(S,T);
-    S = source(he->next(), *poly)->point();
-    T = target(he->next(), *poly)->point();
-    Vector V2(S,T);
-
-    //check if normal contains NaN values
-    if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z()
-        || normal == Traits::Vector_3(0,0,0))
-      normal_is_ok = false;
-    if(normal_is_ok)
-    {
-      orientation = Polyhedron::Traits::Orientation_3()(V1, V2, normal);
-      if( orientation == CGAL::COPLANAR )
-        normal_is_ok = false;
-    }
-    //Checks if the normal is good : if the normal is null
-    // or if it is coplanar to the facet, we need another one.
-    if(!normal_is_ok)
-    {
-      normal = CGAL::cross_product(V1,V2);
-    }
-
-  }while( ++he != he_end && !normal_is_ok);
-  //if no good normal can be found, stop here.
-  if (!normal_is_ok)
-  {
-    qDebug()<<"Warning : normal is not valid. Facet not displayed";
-    return;
-  }
-  P_traits cdt_traits(normal);
-  CDT cdt(cdt_traits);
-
-  Facet::Halfedge_around_facet_circulator
-      he_circ = fit->facet_begin(),
-      he_circ_end(he_circ);
-  // Iterates on the vector of facet handles
-  typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-  boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
-  CDT::Vertex_handle previous, first, last_inserted;
-  /*Compute a reasonable precision level used to decide
-   * if two consecutive points in a facet can be estimated
-   * equal.*/
-  double min_sq_dist = CGAL::square(0.0001*item->DiagonalBbox());
-
-  // Iterate the points of the facet and decide if they must be inserted in the CDT
-  do {
-    /* If this is the first vertex, we insert it. Else, it must be reasonnably
-     * far from the previous vertex to be considered as a separated point.
-     * This is done to avoid problems with exact/inexact behavior, that causes
-     * the CDT's intersection calculation to crash.
-    */
-    double sq_dist =
-        (first == 0) ? DBL_MAX :
-                       (std::min)(
-                         CGAL::squared_distance(previous->point(), he_circ->vertex()->point()),
-                         CGAL::squared_distance(first->point(), he_circ->vertex()->point())
-                         );
-    if( sq_dist < min_sq_dist)
-      continue;
-    CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
-    v2v.insert(std::make_pair(vh, he_circ->vertex()));
-    if(first == 0) {
-      first = vh;
-    }
-    vh->info() = he_circ;
-    if(previous != 0 && previous != vh) {
-      cdt.insert_constraint(previous, vh);
-      last_inserted = previous;
-    }
-    previous = vh;
-  } while( ++he_circ != he_circ_end );
-  double sq_dist = CGAL::squared_distance(previous->point(), first->point());
-  if(sq_dist > min_sq_dist)
-    cdt.insert_constraint(previous, first);
+  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, typename boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
+  double diagonal;
+  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
+    diagonal = item->diagonalBbox();
   else
-    cdt.insert_constraint(last_inserted, first);
-  // sets mark is_external
-  for(CDT::All_faces_iterator
-      fit2 = cdt.all_faces_begin(),
-      end = cdt.all_faces_end();
-      fit2 != end; ++fit2)
-  {
-    fit2->info().is_external = false;
-  }
-  //check if the facet is external or internal
-  std::queue<CDT::Face_handle> face_queue;
-  face_queue.push(cdt.infinite_vertex()->face());
-  while(! face_queue.empty() ) {
-    CDT::Face_handle fh = face_queue.front();
-    face_queue.pop();
-    if(fh->info().is_external) continue;
-    fh->info().is_external = true;
-    for(int i = 0; i <3; ++i) {
-      if(!cdt.is_constrained(std::make_pair(fh, i)))
-      {
-        face_queue.push(fh->neighbor(i));
-      }
-    }
-  }
-  if(cdt.dimension() != 2 )
+    diagonal = 0.0;
+  FT triangulation(fit,normal,poly,diagonal);
+
+  if(triangulation.cdt->dimension() != 2 )
   {
     qDebug()<<"Warning : cdt not right. Facet not displayed";
     return;
   }
+
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
   const int this_patch_id = fit->patch_id();
-  for(CDT::Finite_faces_iterator
-      ffit = cdt.finite_faces_begin(),
-      end = cdt.finite_faces_end();
+
+  for(typename FT::CDT::Finite_faces_iterator
+      ffit = triangulation.cdt->finite_faces_begin(),
+      end = triangulation.cdt->finite_faces_end();
       ffit != end; ++ffit)
   {
     if(ffit->info().is_external)
       continue;
 
-        if (item->isItemMulticolor())
-        {
-          for (int i = 0; i<3; ++i)
-          {
-            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
-
-        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
-        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
-        color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
-      }
+    if (is_multicolor)
+    {
+     for (int i = 0; i<3; ++i)
+     {
+      push_back_rgb(colors_[this_patch_id-m_min_patch_id], color_facets);
+     }
     }
     if (colors_only)
-      continue;
+     continue;
 
     push_back_xyz(ffit->vertex(0)->point(), positions_facets);
     positions_facets.push_back(1.0);
@@ -647,13 +486,13 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
     push_back_xyz(normal, normals_flat);
     push_back_xyz(normal, normals_flat);
 
-    Traits::Vector_3 ng = get(vnmap, v2v[ffit->vertex(0)]);
+    typename Traits::Vector_3 ng = get(vnmap, triangulation.v2v[ffit->vertex(0)]);
     push_back_xyz(ng, normals_gouraud);
 
-    ng = get(vnmap, v2v[ffit->vertex(1)]);
+    ng = get(vnmap, triangulation.v2v[ffit->vertex(1)]);
     push_back_xyz(ng, normals_gouraud);
 
-    ng = get(vnmap, v2v[ffit->vertex(2)]);
+    ng = get(vnmap, triangulation.v2v[ffit->vertex(2)]);
     push_back_xyz(ng, normals_gouraud);
   }
 }
@@ -952,7 +791,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         }
         else
         {
-          triangulate_facet(f, nf, nv_pmap, colors_only);
+          this->triangulate_facet(f, nf, nv_pmap, colors_only);
         }
       }
 

@@ -10,29 +10,12 @@
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
-
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include "triangulate_primitive.h"
 
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
-struct Face_info {
-  halfedge_descriptor e[3];
-  bool is_external;
-};
-typedef CGAL::Triangulation_2_projection_traits_3<Scene_surface_mesh_item::Kernel>                                P_traits;
-typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,P_traits>                                 Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits >                                           Fb1;
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>                                                Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                                                               TDS;
-typedef CGAL::Exact_intersections_tag                                                                             Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>                                           CDTbase;
-typedef CGAL::Constrained_triangulation_plus_2<CDTbase>                                                           CDT;
 
 
 struct Scene_surface_mesh_item_priv{
@@ -560,58 +543,18 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     qDebug()<<"Warning : normal is not valid. Facet not displayed";
     return;
   }
-  P_traits cdt_traits(normal);
-  CDT cdt(cdt_traits);
 
-  SMesh::Halfedge_around_face_circulator
-      he_circ(halfedge(fd,*smesh_), *smesh_),
-      he_circ_end(he_circ);
-
-
-  // Iterates on the vector of facet handles
-  boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
-  CDT::Vertex_handle previous, first;
-  do {
-    CDT::Vertex_handle vh = cdt.insert(smesh_->point(source(*he_circ, *smesh_)));
-    if(index)
-      v2v.insert(std::make_pair(vh, source(*he_circ, *smesh_)));
-    if(first == 0) {
-      first = vh;
-    }
-    vh->info() = *he_circ;
-    if(previous != 0 && previous != vh) {
-      cdt.insert_constraint(previous, vh);
-    }
-    previous = vh;
-  } while( ++he_circ != he_circ_end );
-  cdt.insert_constraint(previous, first);
-  // sets mark is_external
-  for( CDT::All_faces_iterator
-       fit2 = cdt.all_faces_begin(),
-       end = cdt.all_faces_end();
-       fit2 != end; ++fit2)
-  {
-    fit2->info().is_external = false;
-  }
-  //check if the facet is external or internal
-  std::queue< CDT::Face_handle> face_queue;
-  face_queue.push(cdt.infinite_vertex()->face());
-  while(! face_queue.empty() ) {
-    CDT::Face_handle fh = face_queue.front();
-    face_queue.pop();
-    if(fh->info().is_external) continue;
-    fh->info().is_external = true;
-    for(int i = 0; i <3; ++i) {
-      if(!cdt.is_constrained(std::make_pair(fh, i)))
-      {
-        face_queue.push(fh->neighbor(i));
-      }
-    }
-  }
+  typedef FacetTriangulator<SMesh, Kernel, typename boost::graph_traits<SMesh>::vertex_descriptor> FT;
+  double diagonal;
+  if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
+    diagonal = item->diagonalBbox();
+  else
+    diagonal = 0.0;
+  FT triangulation(fd,normal,smesh_,diagonal);
   //iterates on the internal faces
-  for( CDT::Finite_faces_iterator
-       ffit = cdt.finite_faces_begin(),
-       end = cdt.finite_faces_end();
+  for( typename FT::CDT::Finite_faces_iterator
+       ffit = triangulation.cdt->finite_faces_begin(),
+       end = triangulation.cdt->finite_faces_end();
        ffit != end; ++ffit)
   {
     if(ffit->info().is_external)
@@ -640,9 +583,9 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     //adds the indices to the appropriate vector
     else
     {
-      idx_data_.push_back((*im)[v2v[ffit->vertex(0)]]);
-      idx_data_.push_back((*im)[v2v[ffit->vertex(1)]]);
-      idx_data_.push_back((*im)[v2v[ffit->vertex(2)]]);
+      idx_data_.push_back((*im)[triangulation.v2v[ffit->vertex(0)]]);
+      idx_data_.push_back((*im)[triangulation.v2v[ffit->vertex(1)]]);
+      idx_data_.push_back((*im)[triangulation.v2v[ffit->vertex(2)]]);
     }
 
   }

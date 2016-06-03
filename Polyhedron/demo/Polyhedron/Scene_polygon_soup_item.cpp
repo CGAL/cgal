@@ -24,14 +24,8 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
-
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-
+#include "triangulate_primitive.h"
 struct Scene_polygon_soup_item_priv{
 
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
@@ -242,23 +236,7 @@ Scene_polygon_soup_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* v
 
 typedef Polyhedron::Traits Traits;
 typedef Polygon_soup::Polygon_3 Facet;
-typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
-typedef Polyhedron::Halfedge_handle Halfedge_handle;
-struct Face_info {
-    Polyhedron::Halfedge_handle e[3];
-    bool is_external;
-};
-typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
-P_traits>        Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-P_traits>          Fb1;
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::Exact_predicates_tag                                    Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-TDS,
-Itag>             CDTbase;
-typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+
 void
 Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int polygon_id) const
 {
@@ -268,8 +246,26 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     const Point_3& pc = soup->points[pit->at(2)];
     Traits::Vector_3 normal = CGAL::cross_product(pb-pa, pc -pa);
     normal = normal / std::sqrt(normal * normal);
+    typedef FacetTriangulator<Polyhedron, Kernel, std::size_t> FT;
 
-    P_traits cdt_traits(normal);
+    double diagonal;
+    if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
+      diagonal = item->diagonalBbox();
+    else
+      diagonal = 0.0;
+    std::size_t it = 0;
+    std::size_t it_end =pit->size();
+    std::vector<FT::PointAndId> pointIds;
+    do {
+      FT::PointAndId pointId;
+
+      pointId.point = soup->points[pit->at(it)];
+      pointId.id = pit->at(it);
+      pointIds.push_back(pointId);
+    } while( ++it != it_end );
+
+    FT triangulation(pointIds,normal,diagonal);
+  /*  P_traits cdt_traits(normal);
 
     CDT cdt(cdt_traits);
     //A map used to associate the vertices in the triangulation to the points
@@ -320,16 +316,14 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
             }
         }
     }
-
+*/
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
-    int count =0;
-    for(CDT::Finite_faces_iterator
-        ffit = cdt.finite_faces_begin(),
-        end = cdt.finite_faces_end();
+    for(typename FT::CDT::Finite_faces_iterator
+        ffit = triangulation.cdt->finite_faces_begin(),
+        end = triangulation.cdt->finite_faces_end();
         ffit != end; ++ffit)
     {
-        count ++;
         if(ffit->info().is_external)
             continue;
 
@@ -372,7 +366,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
           }
           if(!soup->vcolors.empty())
           {
-            CGAL::Color vcolor = soup->vcolors[p2p[ffit->vertex(i)]];
+            CGAL::Color vcolor = soup->vcolors[triangulation.v2v[ffit->vertex(i)]];
             v_colors.push_back((float)vcolor.red()/255);
             v_colors.push_back((float)vcolor.green()/255);
             v_colors.push_back((float)vcolor.blue()/255);
