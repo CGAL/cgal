@@ -166,6 +166,13 @@ public:
       is_bbox_computed = true;
       return _bbox;
   }
+  virtual double DiagonalBbox() const {
+   if(!is_diag_bbox_computed)
+       compute_diag_bbox();
+   is_diag_bbox_computed = true;
+   return _diag_bbox;
+  }
+
   //!Finds the spot the closest to point and prints the id of the corresponding Primitive (vertex, edg or Facet).
   virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
   virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const;
@@ -326,8 +333,11 @@ Q_SIGNALS:
 protected:
   //!Holds the BBox of the item
   mutable Bbox _bbox;
+  mutable double _diag_bbox;
   mutable bool is_bbox_computed;
+  mutable bool is_diag_bbox_computed;
   virtual void compute_bbox()const{}
+  virtual void compute_diag_bbox()const;
   // The four basic properties
   //!The name of the item.
   QString name_;

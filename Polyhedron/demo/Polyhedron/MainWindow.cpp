@@ -1273,13 +1273,19 @@ void MainWindow::updateInfo() {
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
-    item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
-            .arg(item->bbox().xmin())
-            .arg(item->bbox().ymin())
-            .arg(item->bbox().zmin())
-            .arg(item->bbox().xmax())
-            .arg(item->bbox().ymax())
-            .arg(item->bbox().zmax());
+    if(!(item->bbox().xmax() == - std::numeric_limits<double>::infinity()
+      && item->bbox().ymax() == - std::numeric_limits<double>::infinity()
+      && item->bbox().zmax() == - std::numeric_limits<double>::infinity()
+      && item->bbox().xmin() == std::numeric_limits<double>::infinity()
+      && item->bbox().ymin() == std::numeric_limits<double>::infinity()
+      && item->bbox().zmin() == std::numeric_limits<double>::infinity() ))
+      item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
+          .arg(item->bbox().xmin())
+          .arg(item->bbox().ymin())
+          .arg(item->bbox().zmin())
+          .arg(item->bbox().xmax())
+          .arg(item->bbox().ymax())
+          .arg(item->bbox().zmax());
     if(!item_filename.isEmpty()) {
       item_text += QString("<br />File:<i> %1").arg(item_filename);
     }
