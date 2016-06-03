@@ -17,9 +17,6 @@
 #ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 #define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
-
 #include <complex>
 #include <iostream>
 #include <vector>
@@ -30,10 +27,20 @@
 #include <string>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel                   R;
-typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<R>      K;
-typedef K::FT                                                               FT;
-typedef K::Point_2                                                          Point;
+#include <CGAL/Square_root_2_field.h>
+#include <CGAL/number_utils.h>
+
+typedef unsigned short int                                                  Word_idx_type;
+
+
+template <class Word_idx_type>
+std::ostream& operator<<(std::ostream& s, const std::vector<Word_idx_type>& o) {
+  for (int i = 0; i < o.size(); i++) {
+    s << o[i];
+  }
+  return s;
+} 
+
 
 template<class Square_root_2_field>
 class Hyperbolic_octagon_translation_matrix_base
@@ -43,20 +50,20 @@ public:
   static Square_root_2_field factor;    // The multiplicative factor present in the general formula: sqrt(2) - 1
 
   typedef Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>   Self;  
-  typedef complex<Square_root_2_field>                                      Matrix_element;
+  typedef std::complex<Square_root_2_field>                                      Matrix_element;
 
   Matrix_element  A;
   Matrix_element  B;
-  string          label;  
+  std::string     label;  
 
   Hyperbolic_octagon_translation_matrix_base(const Matrix_element& A_, const Matrix_element& B_, 
-    const string& label_ = string("") ) :
+    const std::string& label_ = std::string("") ) :
   A( A_ ), B( B_ ), label( label_ ) {}
 
   Hyperbolic_octagon_translation_matrix_base() :
-  A( Matrix_element(1,0) ), B( Matrix_element(0,0) ), label( string("") ) {}
+  A( Matrix_element(1,0) ), B( Matrix_element(0,0) ), label( std::string("") ) {}
 
-  string merge_labels(const Self& rh) const
+  std::string merge_labels(const Self& rh) const
   {
     return label + "*" + rh.label;
   }
@@ -70,7 +77,7 @@ public:
   Self inverse() const
   {
     Self inv = Self(conj(A), -B);
-    string inv_label;
+    std::string inv_label;
     for(long i = label.size() - 1; i >= 0; i--) {
       if(label[i] >= 'a' && label[i] <= 'd') {
         inv_label.push_back('\\');
@@ -142,17 +149,17 @@ public:
     return norm(A) - factor * norm(B);
   }
   
-  static complex<double> toComplexDouble(Matrix_element M) //const
+  static std::complex<double> toComplexDouble(Matrix_element M) //const
   {
     Square_root_2_field rl  = real(M);
     Square_root_2_field img = imag(M);
     
-    return complex<double>(rl.l + sqrt(2.)*rl.r, img.l + sqrt(2.)*img.r);
+    return std::complex<double>(rl.l + sqrt(2.)*rl.r, img.l + sqrt(2.)*img.r);
   }
 
-  pair<double, double> apply(double x, double y)
+  std::pair<double, double> apply(double x, double y)
   {
-    typedef complex<double> Cmpl;
+    typedef std::complex<double> Cmpl;
     Cmpl Aa = toComplexDouble(A);
     Cmpl Bb = toComplexDouble(B);
 
@@ -160,13 +167,16 @@ public:
     
     Cmpl z(x, y);
     Cmpl res = (Aa*z + ax*Bb)/(ax*(conj(Bb)*z) + conj(Aa));
-    return pair<double, double>(real(res), imag(res)); 
+    return std::pair<double, double>(real(res), imag(res)); 
   }
 
+
+  template<class Point>
   Point apply(Point p) {
-    pair<double, double> arg = apply(to_double(p.x()), to_double(p.y()));
-    return Point(FT(arg.first), FT(arg.second));
+    pair<double, double> arg = apply(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
+    return Point(arg.first, arg.second);
   }
+
 
 };
 
@@ -176,9 +186,9 @@ template<class Square_root_2_field>
 Square_root_2_field Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>::factor = Square_root_2_field(-1, 1); 
 
 // just to give an order(ing)
-template<class Int>
-bool operator < (const complex<Square_root_2_field<Int> >& lh,
-  const complex<Square_root_2_field<Int> >& rh)
+template<typename Int>
+bool operator < (const std::complex<Square_root_2_field<Int> >& lh,
+  const std::complex<Square_root_2_field<Int> >& rh)
 {
   if (real(lh) < real(rh)) {
     return true;
@@ -219,7 +229,7 @@ bool operator == (const Hyperbolic_octagon_translation_matrix_base<Square_root_2
 }
 
 template<class Square_root_2_field>
-ostream& operator<<(ostream& os, const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& m)
+std::ostream& operator<<(std::ostream& os, const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& m)
 {
   os << m.A << " " << m.B;
   return os;
@@ -245,13 +255,13 @@ enum Direction {
 
 
 
-void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
+void get_generators(std::vector<Hyperbolic_octagon_translation_matrix>& gens)
 {
   // This is a in the matrix, equal to sqrt(2) + 1
   Matrix_element A = Matrix_element(Sqrt_field(1, 1), Sqrt_field(0, 0));
 
   // This vector holds all other Matrix_elements, results of the exponentials for various k
-  vector<Matrix_element> B(8, Matrix_element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
+  std::vector<Matrix_element> B(8, Matrix_element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
 
   // Corrected ordering (initial ordering is present in backup file)
   B[DIRECTION_A]     = A * Matrix_element(Sqrt_field( 0,  1), Sqrt_field( 0,  0));
@@ -263,7 +273,7 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
   B[DIRECTION_C_BAR] = A * Matrix_element(Sqrt_field( 0,  0), Sqrt_field( 0, -1));
   B[DIRECTION_D_BAR] = A * Matrix_element(Sqrt_field(-1,  0), Sqrt_field( 1,  0));
   
-  string labels[8] = {string("a"), string("\\bar{b}"), string("c"), string("\\bar{d}"),
+  std::string labels[8] = {string("a"), string("\\bar{b}"), string("c"), string("\\bar{d}"),
   string("\\bar{a}"), string("b"), string("\\bar{c}"), string("d")};
   for(int i = 0; i < 8; i++) {
     gens.push_back(Hyperbolic_octagon_translation_matrix(A, B[i], labels[i]));
@@ -279,9 +289,9 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
 
 
   // Check whether two Matrix_elements of the group are inverse of each other
-  bool Dehn_are_inverse(int x, int y) {
-    int idx = x % 4;
-    int idy = y % 4;
+  bool Dehn_are_inverse(Word_idx_type x, Word_idx_type y) {
+    Word_idx_type idx = x % 4;
+    Word_idx_type idy = y % 4;
     bool r = ((idx == idy) && (x != y));
     return r;
   }
@@ -289,12 +299,12 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
 
 
   // Recursively eliminate neighboring inverse Matrix_elements present in the word
-  void Dehn_simplify_adjacent_inverses(vector<int>& w) {
-    vector<int> t;
+  void Dehn_simplify_adjacent_inverses(vector<Word_idx_type>& w) {
+    vector<Word_idx_type> t;
     bool reduced = false;
-    int N = w.size();
+    Word_idx_type N = w.size();
     if (N > 1) {
-      for (int i = 0; i < N-1; i++) {
+      for (Word_idx_type i = 0; i < N-1; i++) {
         if (!Dehn_are_inverse(w[i], w[i+1])) {
           t.push_back(w[i]);
         } else {
@@ -318,30 +328,30 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
 
 
   // Computes and returns the next index in the identity Matrix_element chain
-  int Dehn_next_identity_index(int idx) {
+  Word_idx_type Dehn_next_relation_index(Word_idx_type idx) {
     return ( (idx + 5) % 8 );
   }
 
 
   // Checks whether y is the next Matrix_element from x
-  bool Dehn_is_next_identity_index(int x, int y) {
-    return ( Dehn_next_identity_index(y) == x);
+  bool Dehn_is_next_relation_index(Word_idx_type x, Word_idx_type y) {
+    return ( Dehn_next_relation_index(y) == x);
   }
 
 
   // Given a word, find the largest subsequence of consecutive Matrix_elements it contains.
   // The sequence itself is placed in 'seq', while the index at which it starts is
   // the return argument of the function.
-  int Dehn_longest_identity_subsequence(vector<int>& seq, vector<int> const w) {
-    int start = 0; 
-    int mstart = 0;
-    int end = 1;
-    int max = 1;
-    int len = 1;
-    vector<int> tmp, mvec;
+  Word_idx_type Dehn_longest_relation_subsequence(vector<Word_idx_type>& seq, vector<Word_idx_type> const w) {
+    Word_idx_type start = 0; 
+    Word_idx_type mstart = 0;
+    Word_idx_type end = 1;
+    Word_idx_type max = 1;
+    Word_idx_type len = 1;
+    vector<Word_idx_type> tmp, mvec;
     tmp.push_back(w[0]);
-    for (int i = 1; i < w.size(); i++) {
-      if ( Dehn_is_next_identity_index( w[i], w[i-1] ) ) {
+    for (Word_idx_type i = 1; i < w.size(); i++) {
+      if ( Dehn_is_next_relation_index( w[i], w[i-1] ) ) {
         end++;
         len++;
         tmp.push_back(w[i]);
@@ -363,16 +373,16 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
   }
 
 
-  int Dehn_identity_index_of_inverse(int x) {
+  Word_idx_type Dehn_relation_index_of_inverse(Word_idx_type x) {
     return ((x + 4) % 8);
   }
 
 
   // Given a word, construct its inverse
-  void Dehn_invert_word(vector<int>& w, vector<int> const original) {
+  void Dehn_invert_word(vector<Word_idx_type>& w, vector<Word_idx_type> const original) {
     w.clear();
     for (int i = original.size() - 1; i >= 0; i--) {
-      w.push_back( Dehn_identity_index_of_inverse(original[i]) );
+      w.push_back( Dehn_relation_index_of_inverse(original[i]) );
     }
   }
 
@@ -380,21 +390,21 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
 
   // Given a sequence of consecutive indices, return the complementary set of consecutive indices in mod 8.
   // For instance, if start = 5 and end = 1, the output is the sequence 2, 3, 4
-  void Dehn_complementary_identity_indices(vector<int>& v, int begin, int end) {
-    vector<int> tmp;
-    for (int i = Dehn_next_identity_index(end); i != begin; i = Dehn_next_identity_index(i)) {
+  void Dehn_complementary_relation_indices(vector<Word_idx_type>& v, Word_idx_type begin, Word_idx_type end) {
+    vector<Word_idx_type> tmp;
+    for (Word_idx_type i = Dehn_next_relation_index(end); i != begin; i = Dehn_next_relation_index(i)) {
       tmp.push_back(i);
     }
 
-    for (int i = tmp.size() - 1; i >= 0; i--) {
+    for (Word_idx_type i = tmp.size() - 1; i >= 0; i--) {
       v.push_back(tmp[i]);
     }
   }
 
 
-  void Dehn_complementary_identity_indices(vector<int>& v, vector<int> const original) {
-    std::vector<int> tmp;
-    Dehn_complementary_identity_indices(tmp, original[0], original[original.size() - 1]);
+  void Dehn_complementary_relation_indices(vector<Word_idx_type>& v, vector<Word_idx_type> const original) {
+    std::vector<Word_idx_type> tmp;
+    Dehn_complementary_relation_indices(tmp, original[0], original[original.size() - 1]);
     for (int i = tmp.size() - 1; i >= 0; i--) {
       v.push_back(tmp[i]);
     }
@@ -404,7 +414,7 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
   // Given a word, identifies the longest subword consisting of consecutive Matrix_elements and substitutes 
   // it with its equivalent shorter word. The search is executed in both the original word and its
   // inverse, and the substitution is made considering the longest subword from both cases.
-  bool Dehn_replace_identity_subword(vector<int>& w, const vector<int> original) {
+  bool Dehn_replace_relation_subword(vector<Word_idx_type>& w, const vector<Word_idx_type> original) {
 
     bool replaced = false;
 
@@ -414,23 +424,23 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
     }
 
     // Look for longest subword forward
-    vector<int> lfwd;
-    int idxf = Dehn_longest_identity_subsequence(lfwd, original);
-    int Nf = lfwd.size();
+    vector<Word_idx_type> lfwd;
+    Word_idx_type idxf = Dehn_longest_relation_subsequence(lfwd, original);
+    Word_idx_type Nf = lfwd.size();
 
     // Get inverse of the original word
-    vector<int> inv;
+    vector<Word_idx_type> inv;
     Dehn_invert_word(inv, original);
 
     // Look for longest subword backwards
-    vector<int> lbwd;
-    int idxb = Dehn_longest_identity_subsequence(lbwd, inv);
-    int Nb = lbwd.size();
+    vector<Word_idx_type> lbwd;
+    Word_idx_type idxb = Dehn_longest_relation_subsequence(lbwd, inv);
+    Word_idx_type Nb = lbwd.size();
 
     // Assign parameters based on results to homogenise the logic
-    vector<int> word, sub;
+    vector<Word_idx_type> word, sub;
     bool is_inverse;
-    int N, idx;
+    Word_idx_type N, idx;
     //cout << "Nb = " << Nb << ", Nf = " << Nf << endl;
     if (Nb > Nf) {
       word = inv;
@@ -450,19 +460,19 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
     // is by default equal to the identity Matrix_element and can be directly eliminated.
     while (N >= 8) {
       replaced = true;
-      vector<int> ttt = word;
+      vector<Word_idx_type> ttt = word;
       word.clear();
-      for (int i = 0; i < idx; i++) {
+      for (Word_idx_type i = 0; i < idx; i++) {
         word.push_back(ttt[i]);
       }
-      for (int i = idx + 8; i < ttt.size(); i++) {
+      for (Word_idx_type i = idx + 8; i < ttt.size(); i++) {
         word.push_back(ttt[i]);
       }
       w = word;
 
       ttt = sub;
       sub.clear();
-      for (int i = 8; i < ttt.size(); i++) {
+      for (Word_idx_type i = 8; i < ttt.size(); i++) {
         sub.push_back(ttt[i]);
       }
       N -= 8;
@@ -474,28 +484,28 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
     // substitution becomes cyclic.
     if (N > 4) {
       replaced = true;
-      vector<int> cmpl;
-      Dehn_complementary_identity_indices(cmpl, sub);
+      vector<Word_idx_type> cmpl;
+      Dehn_complementary_relation_indices(cmpl, sub);
 
       if(is_inverse) {
-        vector<int> tmp;
+        vector<Word_idx_type> tmp;
         Dehn_invert_word(tmp, cmpl);
         cmpl = tmp;
       }
 
-      for (int i = 0; i < idx; i++) {
+      for (Word_idx_type i = 0; i < idx; i++) {
         w.push_back(word[i]);
       }
-      for (int i = 0; i < cmpl.size(); i++) {
+      for (Word_idx_type i = 0; i < cmpl.size(); i++) {
         w.push_back(cmpl[i]);
       }
-      for (int i = N + idx; i < word.size(); i++) {
+      for (Word_idx_type i = N + idx; i < word.size(); i++) {
         w.push_back(word[i]);
       }
     } else if (N == 4) {
       if (is_inverse) {
-        vector<int> tmp;
-        Dehn_invert_word(tmp, w);
+        vector<Word_idx_type> tmp;
+        Dehn_invert_word(tmp, word);
         w = tmp;
         replaced = true;
       }
@@ -503,7 +513,7 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
 
     // If we have been working with the inverse of the original, the result has to be inverted.
     if (is_inverse) {
-      vector<int> tmp;
+      vector<Word_idx_type> tmp;
       Dehn_invert_word(tmp, w);
       w = tmp;
     }
@@ -512,19 +522,17 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
   }
 
 
-
   // Applies Dehn's algorithm to a given word. The result is the equivalent ireducible word
   // of the original. The boolean return argument of the function indicates whether the
   // resulting equivalent irreducible word is the identity Matrix_element or not.
-  bool Dehn_reduce_word(vector<int>& w, vector<int> const original) {
+  bool Dehn_reduce_word(vector<Word_idx_type>& w, vector<Word_idx_type> const original) {
     bool is_identity = false;
-    vector<int> tmp;
+    vector<Word_idx_type> tmp;
     tmp = original;
     while (tmp.size() > 0) {
       Dehn_simplify_adjacent_inverses(tmp);
-      vector<int> sub;
-      bool replaced = Dehn_replace_identity_subword(sub, tmp);
-
+      vector<Word_idx_type> sub;
+      bool replaced = Dehn_replace_relation_subword(sub, tmp);
       if (!replaced) {
         w = tmp;
         return false;
@@ -538,6 +546,20 @@ void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
   }
 
 
+  // Applies Dehn's algorithm to a given word. The result is the equivalent ireducible word
+  // of the original. The boolean return argument of the function indicates whether the
+  // resulting equivalent irreducible word is the identity Matrix_element or not.
+  // Overload for generic type.
+  template <class Word>
+  bool Dehn_reduce_word(Word& w, Word const original) {
+
+    std::vector<Word_idx_type> in = original.get_vector();
+    std::vector<Word_idx_type> out;
+    bool result = Dehn_reduce_word(out, in);
+    w = Word(out);
+    return result;
+
+  }
 
 /**************************************************************/
 

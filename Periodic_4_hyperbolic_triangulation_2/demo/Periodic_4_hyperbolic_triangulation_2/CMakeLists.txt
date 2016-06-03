@@ -1,37 +1,42 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Periodic_4_hyperbolic_triangulation_2_demo)
+project (Playground)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON) 
+#set(CMAKE_AUTOMOC ON) 
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL QUIET COMPONENTS Core)
 include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
-include_directories (BEFORE ../../../Hyperbolic_triangulation_2/include ../../include include)
+find_package( Boost REQUIRED )
+include_directories(${Boost_INCLUDE_DIRS})
+
+include_directories (BEFORE ../../../Hyperbolic_triangulation_2/include ../../../Hyperbolic_triangulation_2/demo/Hyperbolic_triangulation_2/include ../../include include)
 
 # ui files, created with Qt Designer
-qt5_wrap_ui( uis Periodic_4_hyperbolic_triangulation_2.ui )
+#qt5_wrap_ui( uis Periodic_4_hyperbolic_triangulation_2.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( RESOURCE_FILES resources/Periodic_4_hyperbolic_triangulation_2.qrc )
+#qt5_add_resources ( RESOURCE_FILES resources/Periodic_4_hyperbolic_triangulation_2.qrc )
 
 
 # cpp files
 
-add_executable ( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.cpp )
-qt5_use_modules( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo Widgets)
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_4_hyperbolic_Delaunay_triangulation_2_demo )
-target_link_libraries( Periodic_4_hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
+add_executable ( Playground playground.cpp )
+add_executable ( Triangulation triangulation.cpp )
+#qt5_use_modules( Playground Widgets )
+target_link_libraries( Playground ${CGAL_LIBRARIES} )
+target_link_libraries( Triangulation ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
+
 
