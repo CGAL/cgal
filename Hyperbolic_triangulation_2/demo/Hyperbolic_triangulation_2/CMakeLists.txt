@@ -19,6 +19,7 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
+#include_directories (BEFORE ../../include ../../../Periodic_4_hyperbolic_triangulation_2/include include ui)
 include_directories (BEFORE ../../include include ui)
 
 # ui files, created with Qt Designer
@@ -32,23 +33,29 @@ qt5_add_resources ( RESOURCE_FILES resources/Hyperbolic_translations_2.qrc )
 add_executable ( Hyperbolic_Dirichlet_region_2_demo Hyperbolic_Dirichlet_region_2_demo.cpp )
 add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp )
 add_executable ( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp )
-add_executable ( Hyperbolic_translations_2_demo Hyperbolic_translations_2_demo.cpp )
+#add_executable ( Hyperbolic_translations_2_demo Hyperbolic_translations_2_demo.cpp )
+add_executable ( Modified_hyperbolic_Delaunay_triangulation_2_demo Modified_Hyperbolic_Delaunay_triangulation_2_demo.cpp )
+
 
 qt5_use_modules( Hyperbolic_Dirichlet_region_2_demo Widgets)
 qt5_use_modules( Hyperbolic_Delaunay_triangulation_2_demo Widgets)
 qt5_use_modules( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo Widgets)
-qt5_use_modules( Hyperbolic_translations_2_demo Widgets)
+#qt5_use_modules( Hyperbolic_translations_2_demo Widgets)
+qt5_use_modules( Modified_hyperbolic_Delaunay_triangulation_2_demo Widgets)
+
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_Dirichlet_region_2_demo )
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_Delaunay_triangulation_2_demo )
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_2_Delaunay_hyperbolic_triangulation_2_demo )
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_translations_2_demo )
+#add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_translations_2_demo )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Modified_hyperbolic_Delaunay_triangulation_2_demo )
+
 
 target_link_libraries( Hyperbolic_Dirichlet_region_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
 target_link_libraries( Hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
 target_link_libraries( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
-target_link_libraries( Hyperbolic_translations_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
-
+#target_link_libraries( Hyperbolic_translations_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
+target_link_libraries( Modified_hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
 
 
 
