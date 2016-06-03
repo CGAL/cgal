@@ -135,6 +135,11 @@ public:
   {   CGAL_triangulation_postcondition( this->is_valid() );}
 
   
+public:
+  void insert_dummy_points() {}
+  void insert_dummy_points(std::vector<Point>) {}
+
+
   void mark_star(Vertex_handle v) const
   {
     if(!is_star_bounded(v)) {
@@ -462,6 +467,7 @@ private:
     Mark_face& operator= (const Mark_face&);
     
     const Self& _tr;
+
   }; 
   
 public:
