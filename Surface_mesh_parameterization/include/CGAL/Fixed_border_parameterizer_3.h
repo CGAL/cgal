@@ -175,12 +175,12 @@ protected:
   {
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
       // Get vertex index in sparse linear system
-      int index = get(vimap, target(opposite(next(hd,tmesh),tmesh),tmesh));
+      int index = get(vimap, target(hd,tmesh));
       // Write a diagonal coefficient of A
       A.set_coef(index, index, 1, true /*new*/);
       // get the halfedge uv
       // Write constant in Bu and Bv
-      Point_2 uv = get(uvmap, target(opposite(next(hd,tmesh),tmesh),tmesh));
+      Point_2 uv = get(uvmap, target(hd,tmesh));
       Bu[index] = uv.x();
       Bv[index] = uv.y();
     }

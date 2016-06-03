@@ -366,7 +366,7 @@ public:
     }
 
     if(hd.seam){
-      return m_opposite(m_next(hd));
+      return m_target(halfedge_descriptor(prev(opposite(tmhd,tm),tm)));
     }
 
     while((! has_on_seam(tmhd)) && (! is_border(opposite(tmhd,tm),tm))){
