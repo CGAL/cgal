@@ -64,19 +64,98 @@ minkowski_sum_by_full_convolution_2(const Polygon_2<Kernel, Container>& P,
 \ingroup PkgMinkowskiSum2
 
 Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
-If the input polygons `P` and `Q` are not convex, the function
-decomposes them into convex sub-polygons \f$ P_1, \ldots, P_k\f$ and
-\f$ Q_1, \ldots, Q_{\ell}\f$ and computes the union of pairwise sub-sums
-(namely \f$ \bigcup_{i,j}{(P_i \oplus Q_j)}\f$).
-The decomposition is performed using the given decomposition method
-`decomp`, which must be an instance of a class template that models
-the concept `PolygonConvexDecomposition_2`.
+The function decomposes the summand `P` into convex sub-polygons
+\f$ P_1, \ldots, P_k\f$ using the given decomposition method `decomp_P`.
+If the summand `P` is of type `Polygon_2`, then `decomp_P` must be an
+instance of a class template that models the concept
+`PolygonConvexDecomposition_2`. If `P` is of type `Polygon_with_holes_2`,
+then `decomp_P` must be an instance of a class template that models the
+concept `PolygonWithHolesConvexDecomposition_2`.
+Similarly, the function decomposes the summand `Q` into convex sub-polygons
+\f$ Q_1, \ldots, Q_k\f$ using the given decomposition method `decomp_Q`.
+If the summand `Q` is of type `Polygon_2`, then `decomp_Q` must be an
+instance of a class template that models the concept
+`PolygonConvexDecomposition_2`. If `Q` is of type `Polygon_with_holes_2`,
+then `decomp_Q` must be an instance of a class template that models the
+concept `PolygonWithHolesConvexDecomposition_2`.
+Then, the function computes the union of pairwise sub-sums (namely
+\f$ \bigcup_{i,j}{(P_i \oplus Q_j)}\f$).
 */
-template <typename Kernel, typename Container, typename PolygonConvexDecomposition_2>
+template <typename Kernel, typename Container,
+          typename PolygonConvexDecompositionP_2_,
+          typename PolygonConvexDecompositionQ_2_>
 Polygon_with_holes_2<Kernel, Container>
 minkowski_sum_2(const PolygonType1<Kernel, Container>& P,
                 const PolygonType2<Kernel, Container>& Q,
-                const PolygonConvexDecomposition_2& decomp,
+                const PolygonConvexDecompositionP_2_& decomp_P,
+                const PolygonConvexDecompositionQ_2_& decomp_Q,
+                const Gps_segment_traits_2& traits = Gps_segment_traits_2<Kernel,Container, Arr_segment_traits>());
+
+/*!
+\ingroup PkgMinkowskiSum2
+
+Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons.
+The function decomposes the summands `P` and `Q` into convex sub-polygons
+\f$ P_1, \ldots, P_k\f$ and \f$ Q_1, \ldots, Q_{\ell}\f$, respectively.
+Then, it computes the union of pairwise sub-sums (namely
+\f$ \bigcup_{i,j}{(P_i \oplus Q_j)}\f$). The decomposition is performed
+using the given decomposition method `decomp`. If both summands
+\f$ P \oplus Q\f$ are of type `Polygon_2`, then `decomp` must be instance
+of a class template that models the concept `PolygonConvexDecomposition_2`.
+If both summands are of type `Polygon_with_holes_2`, then `decomp` must be
+a model of the concept `PolygonWithHolesConvexDecomposition_2`.
+*/
+template <typename Kernel, typename Container,
+          typename PolygonConvexDecomposition_2_>
+Polygon_with_holes_2<Kernel, Container>
+minkowski_sum_2(const PolygonType1<Kernel, Container>& P,
+                const PolygonType2<Kernel, Container>& Q,
+                const PolygonConvexDecomposition_2_& decomp,
+                const Gps_segment_traits_2& traits = Gps_segment_traits_2<Kernel,Container, Arr_segment_traits>());
+
+/*!
+\ingroup PkgMinkowskiSum2
+
+Computes the Minkowski sum \f$ P \oplus Q\f$ of the two given polygons
+using the decomposition strategy. It decomposes the summands `P` and `Q`
+into convex sub-polygons \f$ P_1, \ldots, P_k\f$ and
+\f$ Q_1, \ldots, Q_{\ell}\f$, respectively. Then, it computes the union
+of pairwise sub-sums (namely \f$ \bigcup_{i,j}{(P_i \oplus Q_j)}\f$).
+
+If the summand `P` is of type `Polygon_with_holes_2`, then the function
+first applies the hole filteration on `P`. If the summand `P` remains a
+polygon with holes, then the function decomposes the summand `P` using
+the given decomposition method `with_holes_decomp`. If, however, `P`
+turns into a polygon without holes, then the function decomposes the
+summand `P` using the given decomposition method `no_holes_decomp`,
+unless the result is a convex polygon, in which case the nop strategy is
+applied; namely, an instance of the class template
+`Polygon_nop_decomposition_2` is used. If `P` is a polygon without holes
+to start with, then only convexity is checked (checking whether the
+result is convex inccurs a small overhead though). Then depending on
+the result either `no_holes_decomp` or the nop strategy is applied.
+Similarly, if the summand `Q` is of type `Polygon_with_holes_2`, then
+the function first applies the hole filteration on `Q`. If the summand
+`Q` remains a polygon with holes, then the function decomposes the
+summand `Q` using the given decomposition method `with_holes_decomp`.
+If, however, `Q` turns into a polygon without holes, then the function
+decomposes the summand `Q` using the given decomposition method
+`no_holes_decomp`, unless the result is a convex polygon, in which case
+the nop strategy is applied. If `Q` is a polygon without holes to start
+with, then only convexity is checked and the decomposition strategy is
+chosen accordingly.
+
+\tparam PolygonNoHolesConvexDecomposition_2_ a model of the concept `PolygonConvexDecomposition_2`.
+\tparam PolygonWithHolesConvexDecomposition_2_ a model of the concept `PolygonWithHolesConvexDecomposition_2`.
+*/
+  template <typename Kernel, typename Container,
+            typename PolygonNoHolesConvexDecomposition_2_,
+            typename PolygonWithHolesConvexDecomposition_2_>
+Polygon_with_holes_2<Kernel, Container>
+minkowski_sum_by_decomposition_2(const PolygonType1<Kernel, Container>& P,
+                const PolygonType2<Kernel, Container>& Q,
+                const PolygonNoHolesConvexDecomposition_2_& no_holes_decomp,
+                const PolygonWithHolesConvexDecomposition_2_& with_holes_decomp,
                 const Gps_segment_traits_2& traits = Gps_segment_traits_2<Kernel,Container, Arr_segment_traits>());
 
 } /* namespace CGAL */

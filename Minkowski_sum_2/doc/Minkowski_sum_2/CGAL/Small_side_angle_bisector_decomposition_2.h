@@ -3,8 +3,6 @@ namespace CGAL {
 /*!
 \ingroup PkgMinkowskiSum2
 
-\anchor mink_refssab_decomp
-
 The `Small_side_angle_bisector_decomposition_2` class implements a simple yet efficient heuristic for
 decomposing an input polygon into convex sub-polygons. It is based
 on the algorithm suggested by Flato and Halperin \cgalCite{fh-recpm-00},

@@ -3,8 +3,6 @@ namespace CGAL {
 /*!
 \ingroup PkgMinkowskiSum2
 
-\anchor mink_refvert_decomp
-
 The `Polygon_vertical_decomposition_2` class implements a convex
 decompistion of a polygon or a polygon with holes into pseudo trapezoids
 utilizing the CGAL::decompose() free function of the

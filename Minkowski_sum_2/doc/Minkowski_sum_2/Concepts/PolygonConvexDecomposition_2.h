@@ -10,6 +10,7 @@ decomposing an input polygon \f$ P\f$ into a set of convex sub-polygons
 \cgalHasModel `CGAL::Optimal_convex_decomposition_2<Kernel,Container>`
 \cgalHasModel `CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel,Container>`
 \cgalHasModel `CGAL::Greene_convex_decomposition_2<Kernel,Container>`
+\cgalHasModel `CGAL::Polygon_nop_decomposition_2<Kernel,Container>`
 
 */
 
