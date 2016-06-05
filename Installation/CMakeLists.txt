@@ -35,7 +35,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" OFF )
+option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" ON )
 
 if (CGAL_HEADER_ONLY)
   set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
