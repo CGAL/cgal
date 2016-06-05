@@ -105,7 +105,9 @@ public:
         : less (comp), vless (vcomp), root (NULL), m_min (NULL),
           m_max (NULL), _size (0)
     {
-        // TODO - Inplement a more efficient algorithm that builds the tree bottom up
+        // buids the tree
+        /* Note: a more efficient algorithm building the tree bottom up may be
+          worth implementing later */
         for (; first != last; ++first)
             add (first->first, first->second);
     }
@@ -121,21 +123,6 @@ public:
         _size = 0;;
     }
 
-    /*
-    #ifdef GXX11
-        /// Move constructor.
-        Plane_scan_tree (Plane_scan_tree<Key, T, Comp>&& x) : less (x.less), _size(x._size) {
-          root = x.root;
-          x.root = NULL;
-
-          m_min = x.m_min;
-          x.m_min = NULL;
-
-          m_max = x.m_max;
-          x.m_max = NULL;
-        }
-    #endif
-    */
 
     /* Returns the number of key-value pairs in the tree
      *
@@ -183,24 +170,24 @@ public:
         return root->minAbove(x);
     }
 
-    /* Begin  Iterator */
+    /* Begin Iterator */
     inline iterator begin() {
         return iterator (this->m_min);
     }
 
-    /* Const Begin  Iterator */
+    /* Const Begin Iterator */
     inline const_iterator begin() const {
         return const_iterator (this->m_min);
     }
 
-    /* End  Iterator */
+    /* End Iterator */
     inline iterator end() {
         static iterator res;
 
         return res;
     }
 
-    /* Constant End  Iterator */
+    /* Constant End Iterator */
     inline const_iterator end() const {
         static const_iterator res;
 
