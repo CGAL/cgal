@@ -41,13 +41,15 @@ namespace CGAL {
 
 /*! \ingroup PkgConeBasedSpanners
 
-  \brief A template functor for constructing Theta graphs with a given set of 2D points and
+ \brief A template functor for constructing Theta graphs with a given set of 2D points and
          a given initial direction for the cone boundaries.
 
- \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`.
+ \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` 
+                  or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
-\tparam Graph_ is the graph type to store the constructed cone based spanner.
-        It must be  <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A> with `Traits_::Point_2` as `VertexProperties`.
+ \tparam Graph_   The graph type to store the constructed cone based spanner.
+                  It must be <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A> 
+                  with `Traits_::Point_2` as `VertexProperties`.
  */
 template <typename Traits_, typename Graph_>
 class Construct_theta_graph_2 {
@@ -106,13 +108,6 @@ public:
         compute_cones(k, initial_direction, rays.begin());
     }
 
-    /* \brief Copy constructor. As commented by Michael Hemmer, copy constructor is not needed for
-              a functor.
-       \param x  another Construct_theta_graph_2 object to copy from.
-
-       Construct_theta_graph_2 (const Construct_theta_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
-    */
-
     /*!
      \brief Function operator to construct a Theta graph.
 
@@ -127,7 +122,6 @@ public:
     Graph_& operator()(const PointInputIterator& start,
                        const PointInputIterator& end,
                        Graph_& g) {
-
         // add vertices into the graph
         for (PointInputIterator curr = start; curr != end; ++curr) {
             g[boost::add_vertex(g)] = *curr;
@@ -207,9 +201,10 @@ protected:
                 Less_by_direction > PSTree;
         PSTree pst(orderD2, orderMid);
 
-        // Step 3: visit S in orderD1
-        //     * insert pi into T
-        //     * ri = T.minAbove(pi)
+        // Step 3: visit S in orderD1 
+        //         insert '*it' into T
+        //         find ri = T.minAbove(*it)
+        //         add an edge 
         for (typename std::vector<typename Graph_::vertex_descriptor>::const_iterator
                 it = S.begin(); it != S.end(); ++it) {
             pst.add(*it, *it);
