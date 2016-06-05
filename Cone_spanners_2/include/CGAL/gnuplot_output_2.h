@@ -172,7 +172,7 @@ void gnuplot_output_2 (const Graph& g, const std::string& prefix)
     fs << "unset ytics" << std::endl;
     fs << "unset border" << std::endl;
 
-    /*
+    /* Uncomment if you need the following:
     ss << "set xtics" << std::endl;
     ss << "set ytics" << std::endl;
     ss << "set border" << std::endl;

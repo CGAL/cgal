@@ -39,14 +39,15 @@ namespace CGAL {
 
 /*! \ingroup PkgConeBasedSpanners
 
-  \brief A template functor for constructing Yao graphs with a given set of 2D points and
+ \brief A template functor for constructing Yao graphs with a given set of 2D points and
          a given initial direction for the cone boundaries.
 
- \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`.
+ \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` 
+                  or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
-\tparam Graph_ is the graph type to store the constructed cone based spanner.
-        It must be  <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A> with `Traits_::Point_2` as `VertexProperties`
-
+ \tparam Graph_  The graph type to store the constructed cone based spanner.
+                 It must be <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A> 
+                 with `Traits_::Point_2` as `VertexProperties`
  */
 template <typename Traits_, typename Graph_>
 class Construct_yao_graph_2 {
@@ -102,12 +103,6 @@ public:
         compute_cones(k, initial_direction, rays.begin());
     }
 
-    /* \brief Copy constructor. Not needed.
-       \param x  another Construct_yao_graph_2 object to copy from.
-
-    Construct_yao_graph_2 (const Construct_yao_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
-    */
-
     /*!
       \brief Function operator to construct a Yao graph.
 
@@ -123,7 +118,6 @@ public:
     Graph_& operator()(const PointInputIterator& start,
                        const PointInputIterator& end,
                        Graph_& g) {
-
         // add vertices into the graph
         for (PointInputIterator curr = start; curr != end; ++curr) {
             g[boost::add_vertex(g)] = *curr;
@@ -210,8 +204,6 @@ protected:
                 boost::tie(existing_e, existing)=boost::edge(*it, *min, g);
                 if (!existing)
                     boost::add_edge(*it, *min, g);
-                //else
-                //   std::cout << "Edge " << *it << ", " << *min << " already exists!" << std::endl;
             }
 
         } // end of for

@@ -27,9 +27,6 @@
 #ifndef CGAL_COMPUTE_CONE_BOUNDARIES_2_H
 #define CGAL_COMPUTE_CONE_BOUNDARIES_2_H
 
-// if leda::real is used, pls modify the following definition
-//#define CGAL_USE_CORE 1
-
 #include <iostream>
 #include <cstdlib>
 #include <vector>
@@ -58,7 +55,8 @@ namespace CGAL {
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
  *  into equally-angled cones.
  *
- * \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`.
+ * \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` 
+ *                  or `CGAL::Exact_predicates_inexact_constructions_kernel`.
  *
  */
 template <typename Traits_>
@@ -76,8 +74,7 @@ private:
     typedef  typename Traits::Aff_transformation_2    Transformation;
 
 public:
-    /* No member variables in this class, so a custom constructor is not needed. */
-    // Compute_cone_boundaries_2() {};
+    /* Note: No member variables in this class, so a custom constructor is not needed. */
 
     /*! \brief The operator().
      *
@@ -137,8 +134,7 @@ private:
     typedef Kernel_type::Aff_transformation_2   Transformation;
 
 public:
-    /* No member variables in this class, so a Constructor is not needed. */
-    // Compute_cone_boundaries_2() {};
+    /* Note: No member variables in this class, so a Constructor is not needed. */
 
     /* The operator().
 
@@ -159,8 +155,6 @@ public:
             std::cout << "The number of cones must be larger than 1!" << std::endl;
             std::exit(1);
         }
-
-        //std::cout << "Specialization is called!" << std::endl;
 
         // Since CGAL::root_of() gives the k-th smallest root,
         // here -x is actually used instead of x.

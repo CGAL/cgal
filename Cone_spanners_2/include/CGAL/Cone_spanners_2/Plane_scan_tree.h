@@ -211,7 +211,7 @@ public:
         return res;
     }
 
-    /* Constant  Reverse order End Iterator */
+    /* Constant Reverse order End Iterator */
     const_reverse_iterator rend() const {
         static const_reverse_iterator res;
 
