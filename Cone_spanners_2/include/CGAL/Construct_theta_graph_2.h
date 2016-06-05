@@ -206,11 +206,7 @@ protected:
                 Less_by_direction,
                 Less_by_direction > PSTree;
         PSTree pst(orderD2, orderMid);
-#ifndef NDEBUG
-#ifdef REALLY_VERBOSE_TREE_STATE_AFTER_EVERY_TREE_UPDATE__SAFE_TO_REMOVE_FOR_PRODUCTION
-        int i = 0;
-#endif
-#endif
+
         // Step 3: visit S in orderD1
         //     * insert pi into T
         //     * ri = T.minAbove(pi)
@@ -225,52 +221,8 @@ protected:
                 boost::tie(existing_e, existing)=boost::edge(*it, *ri, g);
                 if (!existing)
                     boost::add_edge(*it, *ri, g);
-                //else
-                //    std::cout << "Edge " << *it << ", " << *ri << " already exists!" << std::endl;
             }
 
-#ifndef NDEBUG
-#ifdef REALLY_VERBOSE_TREE_STATE_AFTER_EVERY_TREE_UPDATE__SAFE_TO_REMOVE_FOR_PRODUCTION
-// Prints the current tree
-// To see the tree, pipe output to dot. eg
-//    ./a.out <whatever arguments...> | dot -Tpng -O
-// You'll get a sequence of png files:
-// noname.dot.png
-// noname.dot.2.png
-// noname.dot.3.png
-// ...etc...
-//
-// The tree output shades the new value added, and states what action was taken.
-            std::cout << "graph Plane_scan_tree {" << std::endl <<
-                      pst << std::endl << std::endl;
-            int j = 1;
-            for (auto rit = S.rbegin(); rit <= it; ++rit) {
-                auto p = g[*rit];
-                std::cout << "\t\"" << *rit << "\"[label=\"" << j++ << "\"";
-                if (rit == it)
-                    std::cout << ",style=filled";
-                std::cout << "];" << std::endl;
-            }
-
-            if (pst.size() > 1) {
-                std::cout << "\t{rank=same;" << std::endl;
-                std::cout << "\"" << pst.begin()->first << "\"";
-                for (auto pit = ++(pst.begin()); pit != pst.end(); ++pit) {
-                    std::cout << "--\"" << pit->first << "\"";
-                }
-                std::cout << "[color=white];" << std::endl;
-                std::cout << "rankdir=LR;" << std::endl;
-                std::cout << "}" << std::endl;
-            }
-
-            std::cout << "\tlabel=\"" << ++i << ": Added (" << g[*it].x().to_double() << "," << g[*it].y().to_double() << ").";
-            if (NULL != ri)
-                std::cout << " -- (" << g[*ri].x().to_double() << "," << g[*ri].y().to_double() << ").";
-            std::cout << "\";" << std::endl;
-            std::cout << "\ttableloc=\"b\";" << std:: endl;
-            std::cout << "}" << std::endl << std::endl;
-#endif
-#endif
         }  // end of for
     };     // end of add edges in cone
 
