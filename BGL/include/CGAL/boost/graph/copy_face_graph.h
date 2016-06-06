@@ -50,6 +50,8 @@ namespace CGAL {
   where the prefix `sm_` and `tm_` mean belonging to the source and
   target mesh respectively.
 
+  The types `sm_vertex_descriptor` and `sm_face_descriptor` must be models of the concept `Hashable`.
+
   \param sm the source mesh
   \param tm the target mesh
   \param v2v pairs of `vertex_descriptors` from `sm` and corresponding `vertex_descriptors` in `tm` are added to `v2v`
