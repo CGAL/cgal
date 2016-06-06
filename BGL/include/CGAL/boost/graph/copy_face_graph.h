@@ -137,7 +137,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   
 }
 
-#if !defined(CGAL_CXX11)
+#if !defined(CGAL_CXX11)  && !defined(DOXYGEN_RUNNING)
 template <typename SourceMesh, typename TargetMesh>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
 { copy_face_graph(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator()); }
