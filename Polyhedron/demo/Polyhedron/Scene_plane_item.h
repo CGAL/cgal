@@ -63,6 +63,34 @@ public Q_SLOTS:
 protected:
   friend struct Scene_plane_item_priv;
   Scene_plane_item_priv* d;
+
+
+  const CGAL::Three::Scene_interface* scene;
+  bool manipulable;
+  bool can_clone;
+  qglviewer::ManipulatedFrame* frame;
+
+  enum VAOs {
+      Facets = 0,
+      Edges,
+      NbOfVaos
+  };
+  enum VBOs {
+      Facets_vertices = 0,
+      Edges_vertices,
+      NbOfVbos
+  };
+
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_quad;
+  mutable GLint sampler_location;
+  mutable bool smooth_shading;
+  mutable QOpenGLShaderProgram *program;
+
+  void initializeBuffers(CGAL::Three::Viewer_interface*)const;
+  void compute_normals_and_vertices(void);
+  mutable bool are_buffers_filled;
+
 };
 
 #endif // SCENE_PLANE_ITEM_H
