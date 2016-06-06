@@ -12,13 +12,6 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
-
-namespace OpenMesh { // auxiliary functions so OpenMesh Handles can be hashed
-inline std::size_t hash_value(const VertexHandle&  i) { return i.idx(); }
-inline std::size_t hash_value(const HalfedgeHandle&  i) { return i.idx(); }
-inline std::size_t hash_value(const FaceHandle&  i) { return i.idx(); }
-}
-
 #endif
 
 #include <CGAL/boost/graph/copy_face_graph.h>

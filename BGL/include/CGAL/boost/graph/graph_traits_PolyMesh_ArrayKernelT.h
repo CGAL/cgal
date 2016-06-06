@@ -37,6 +37,8 @@
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
+#include <CGAL/hash_openmesh.h>
+
 // http://openmesh.org/Documentation/OpenMesh-Doc-Latest/classOpenMesh_1_1Concepts_1_1KernelT.html
 
 #if defined(BOOST_MSVC)
@@ -672,8 +674,6 @@ void clear(OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 }
 
 }
-
-
 #ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/boost/graph/backward_compatibility_functions.h>
 
