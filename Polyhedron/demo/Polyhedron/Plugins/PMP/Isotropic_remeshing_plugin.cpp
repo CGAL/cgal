@@ -307,6 +307,7 @@ public Q_SLOTS:
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
+      unsigned int nb_smooth = ui.nbSmoothing_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
       bool smooth_features = ui.smooth1D_checkbox->isChecked();
 
@@ -378,6 +379,7 @@ public Q_SLOTS:
               .protect_constraints(protect)
               .edge_is_constrained_map(selection_item->constrained_edges_pmap())
               .smooth_along_features(smooth_features)
+              .number_of_laplacian_iterations(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
               .face_patch_map(Patch_id_pmap<face_descriptor>()));
           else
@@ -389,6 +391,7 @@ public Q_SLOTS:
               .protect_constraints(protect)
               .edge_is_constrained_map(selection_item->constrained_edges_pmap())
               .smooth_along_features(smooth_features)
+              .number_of_laplacian_iterations(nb_smooth)
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
               .face_patch_map(Patch_id_pmap<face_descriptor>()));
         }
@@ -441,6 +444,7 @@ public Q_SLOTS:
          , *poly_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
+         .number_of_laplacian_iterations(nb_smooth)
          .face_patch_map(Patch_id_pmap<face_descriptor>())
          .edge_is_constrained_map(ecm)
          .smooth_along_features(smooth_features));

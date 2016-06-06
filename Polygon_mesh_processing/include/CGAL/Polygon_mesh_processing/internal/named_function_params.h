@@ -34,6 +34,7 @@ namespace CGAL{
   enum sparse_linear_solver_t       { sparse_linear_solver };
   enum geom_traits_t                { geom_traits };
   enum number_of_iterations_t       { number_of_iterations };
+  enum number_of_laplacian_iterations_t { number_of_laplacian_iterations };
   enum protect_constraints_t        { protect_constraints };
   enum vertex_is_constrained_t      { vertex_is_constrained };
   enum face_patch_t                 { face_patch };
@@ -133,6 +134,14 @@ namespace CGAL{
     number_of_iterations(const NT& n) const
     {
       typedef pmp_bgl_named_params<NT, number_of_iterations_t, self> Params;
+      return Params(n, *this);
+    }
+
+    template<typename NT>
+    pmp_bgl_named_params<NT, number_of_laplacian_iterations_t, self>
+    number_of_laplacian_iterations(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, number_of_laplacian_iterations_t, self> Params;
       return Params(n, *this);
     }
 
@@ -287,6 +296,14 @@ namespace parameters{
     number_of_iterations(const NT& n)
   {
     typedef pmp_bgl_named_params<NT, number_of_iterations_t> Params;
+    return Params(n);
+  }
+
+  template<typename NT>
+  pmp_bgl_named_params<NT, number_of_laplacian_iterations_t>
+  number_of_laplacian_iterations(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, number_of_laplacian_iterations_t> Params;
     return Params(n);
   }
 

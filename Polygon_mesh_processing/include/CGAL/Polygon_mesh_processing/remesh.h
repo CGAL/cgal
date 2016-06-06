@@ -95,6 +95,7 @@ namespace Polygon_mesh_processing {
 * @sa `split_long_edges()`
 *
 *@todo document `1d_smoothing`
+*@todo document `number_of_laplacian_iterations`
 *@todo add possibility to provide a functor that projects to a prescribed surface
 */
 template<typename PolygonMesh
@@ -190,6 +191,7 @@ void isotropic_remeshing(const FaceRange& faces
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
   bool smoothing_1d = choose_param(get_param(np, smooth_along_features), false);
+  unsigned int nb_laplacian = choose_param(get_param(np, number_of_laplacian_iterations), 1);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -207,7 +209,7 @@ void isotropic_remeshing(const FaceRange& faces
     remesher.split_long_edges(high);
     remesher.collapse_short_edges(low, high);
     remesher.equalize_valences();
-    remesher.tangential_relaxation(smoothing_1d);
+    remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     remesher.project_to_surface();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE

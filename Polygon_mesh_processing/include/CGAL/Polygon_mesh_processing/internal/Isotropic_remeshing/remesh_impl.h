@@ -819,14 +819,16 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    void tangential_relaxation(const bool smooth_along_features/*1d smoothing*/)
+    void tangential_relaxation(const bool smooth_along_features/*1d smoothing*/
+                             , const unsigned int nb_iterations)
     {
       //todo : move border vertices along 1-dimensional features
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Tangential relaxation...";
       std::cout.flush();
 #endif
-
+      for (unsigned int nit = 0; nit < nb_iterations; ++nit)
+      {
       //todo : use boost::vector_property_map to improve computing time
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
       VNormalsMap vnormals;
@@ -904,8 +906,9 @@ namespace internal {
       }
 
       CGAL_assertion(is_valid(mesh_));
-
       CGAL_assertion(is_triangle_mesh(mesh_));
+      }//end for loop (nit == nb_iterations)
+
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
 #endif
