@@ -8,8 +8,6 @@ combined to achieve extensive and complex geometric tasks. The tutorials aim at
 providing help and ideas on how to use CGAL beyond the simple examples of the
 User Manual.
 
-
-
 \section tuto_list List of available tutorials
 
 - \subpage tutorial_hello_world presents you some short example
@@ -18,5 +16,7 @@ User Manual.
   geometric primitives, the notion of <em>traits classes</em> which
   define what primitives are used by a geometric algorithm, the
   notions of \em concept and \em model.
+- \subpage tuto_reconstruction
+
 
 */

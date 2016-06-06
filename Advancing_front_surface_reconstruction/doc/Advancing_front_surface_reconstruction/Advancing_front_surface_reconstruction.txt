@@ -47,6 +47,9 @@ not provide any guarantee on the topology of the surface.
 
 We describe next the algorithm and provide examples.
 
+\note A \ref tuto_reconstruction "detailed tutorial on surface reconstruction"
+is provided with a guide to choose the most appropriate method along
+with pre- and post-processing.
 
 \section AFSR_Definitions Definitions and the Algorithm
 
