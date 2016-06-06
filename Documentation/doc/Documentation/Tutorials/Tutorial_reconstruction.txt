@@ -5,10 +5,14 @@
 
 \author Simon Giraudot
 
-Surface reconstruction from point clouds is a wide research topic in
-geometry processing and can be achieved in many different ways. This
-tutorials explains how to use the different algorithms of \cgal to
-perform reconstruction in the most relevant way.
+Surface reconstruction from point clouds is a core topic of
+geometry. It is an ill-posed problem: there is an infinite number of
+surfaces that can match a single point cloud and a point cloud does
+not define a surface in itself. Thus additional assumptions and
+constraints must be defined by the user and reconstruction can be
+achieved in many different ways. This tutorials explains how to use
+the different algorithms of \cgal to perform reconstruction in the
+most relevant way.
 
 \section TutorialsReconstruction_algorithms Which algorithm should I use?
 
@@ -18,13 +22,16 @@ perform reconstruction in the most relevant way.
 - \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front Surface Reconstruction"
 - \ref Chapter_Scale_space_reconstruction "Scale Space Surface Reconstruction"
 
-Choosing one or the other of these methods is strongly dependent on
-the input properties and the output requirement. For example, Poisson
-always generates closed shapes (surrounding a volume) and requires
-normals but does not interpolate input points (the output surface does
-not pass exactly through the input points). The following table lists
-different properties of the input and output to help you choose which
-method is more suited for your work:
+
+Because reconstruction is an ill-posed problem, it must be regularized
+via priori knowledge. Differences in prior leads to different
+algorithms, and choosing one or the other of these methods is
+dependent on these priors. For example, Poisson always generates
+closed shapes (bounding a volume) and requires normals but does not
+interpolate input points (the output surface does not pass exactly
+through the input points). The following table lists different
+properties of the input and output to help the user choose the method
+best suited to each problem:
 
 <center>
 |                                          | Poisson | Advancing front  | Scale space      |
@@ -92,9 +99,9 @@ Because reconstruction algorithms have some specific requirements that
 point clouds do not always meet, some preprocessing might be necessary
 to get the best results.
 
-Note that this _preprocessing_ step is optional: if your input point
-cloud is already well shaped, reconstruction may be directly applied
-to it.
+Note that this _preprocessing_ step is optional: when the input point
+cloud has no imperfections, reconstruction can be applied to it
+without any preprocessing.
 
 \subsection TutorialsReconstruction_preprocessing_outliers Outlier removal
 
@@ -111,9 +118,11 @@ performing reconstruction.
 
 Some laser scanners generate points with widely variable
 sampling. Typically, lines of scan are very densely sampled but the
-gap between two lines of scan is much larger. This type of input point
-cloud might generate badly shaped output for algorithms which, in
-general, only accept small variations of sampling density.
+gap between two lines of scan is much larger, leading to an overly
+massive point cloud with large variations of sampling density. This
+type of input point cloud might generate imperfect output using
+algorithms which, in general, only handle small variations of sampling
+density.
 
 \cgal provides several simplification algorithms. In addition to
 reducing the size of the input and therefore decreasing computation
@@ -174,9 +183,9 @@ whose gradient matches the input normal vector field: this indicator
 function has opposite signs inside and outside of the inferred shape
 (hence the need for closed shapes). This method thus requires normals
 and produces smooth closed surfaces. It is not appropriate if the
-surface is expected to pass exactly through the input points. On the
-contrary, it performs well if the aim is to approximate a noisy point
-cloud with a smooth surface.
+surface is expected to interpolate the input points. On the contrary,
+it performs well if the aim is to approximate a noisy point cloud with
+a smooth surface.
 
 Notice that it does not generate directly a mesh but computes an
 _implicit function_ (which can later be used to generate a mesh):
@@ -192,15 +201,16 @@ To produce a mesh out of this implicit function, the
 
 \subsection TutorialsReconstruction_reconstruction_advancing Advancing Front
 
-Advancing front is a Delaunay-based approach which generates triples of
-point indices which describe the triangular facets of the
-reconstruction: it uses a priority queue to sequentially pick the
-Delaunay facet the most likely to be part of the surface, based on a
-size criterion (to favor the small facets) and an angle criterion (to
-favor smoothness). Its main asset is to generate oriented manifold
-surfaces with boundaries: contrary to Poisson, it does not require
-normals and is not bound to reconstruct closed shapes. However, it
-requires preprocessing if the point cloud is noisy.
+Advancing front is a Delaunay-based approach which interpolates a
+subset of the input points. It generates triples of point indices
+which describe the triangular facets of the reconstruction: it uses a
+priority queue to sequentially pick the Delaunay facet the most likely
+to be part of the surface, based on a size criterion (to favor the
+small facets) and an angle criterion (to favor smoothness). Its main
+asset is to generate oriented manifold surfaces with boundaries:
+contrary to Poisson, it does not require normals and is not bound to
+reconstruct closed shapes. However, it requires preprocessing if the
+point cloud is noisy.
 
 The \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front"
 package provides several ways of constructing the function. Here is
@@ -231,9 +241,10 @@ and _Advancing front_).
 \section TutorialsReconstruction_postprocessing Output and Postprocessing
 
 Each of these methods produce a triangle mesh stored in different
-ways. If this output mesh is not satisfactory enough, \cgal provide
-several algorithms to post-process it (hole filling, remeshing,
-etc.) in the package \ref Chapter_PolygonMeshProcessing "Polygon Mesh Processing".
+ways. If this output mesh is hampered by defects such as holes or
+self-intersections, \cgal provide several algorithms to post-process
+it (hole filling, remeshing, etc.) in the package \ref
+Chapter_PolygonMeshProcessing "Polygon Mesh Processing".
 
 We do not discuss these functions here as there are many
 postprocessing possibilities whose relevance strongly depends on the
