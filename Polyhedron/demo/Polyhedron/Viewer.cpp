@@ -106,20 +106,20 @@ bool Viewer::antiAliasing() const
 void Viewer::setAntiAliasing(bool b)
 {
   d->antialiasing = b;
-  updateGL();
+  update();
 }
 
 void Viewer::setTwoSides(bool b)
 {
   d->twosides = b;
-  updateGL();
+  update();
 }
 
 
 void Viewer::setFastDrawing(bool b)
 {
   d->inFastDrawing = b;
-  updateGL();
+  update();
 }
 
 bool Viewer::inFastDrawing() const
@@ -371,7 +371,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     }
     else if(e->key() == Qt::Key_A) {
           axis_are_displayed = !axis_are_displayed;
-          updateGL();
+          update();
         }
     else if(e->key() == Qt::Key_I) {
           i_is_pressed = true;
@@ -386,7 +386,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
             clearDistancedisplay();
         }
         is_d_pressed = true;
-        updateGL();
+        update();
         return;
     }
   }
@@ -644,7 +644,7 @@ void Viewer::endSelection(const QPoint&)
 {
     glDisable(GL_SCISSOR_TEST);
     //redraw thetrue scene for the glReadPixel in postSelection();
-    updateGL();
+    update();
 }
 
 void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data)
@@ -1303,7 +1303,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
         }
         else
             camera()->setZNearCoefficient(camera()->zNearCoefficient() / 1.01);
-        updateGL();
+        update();
     }
     else
         QGLViewer::wheelEvent(e);
@@ -1326,13 +1326,14 @@ void Viewer::paintGL()
   if (!d->painter->isActive())
     d->painter->begin(this);
   d->painter->beginNativePainting();
-  glClearColor(1.0, 1.0, 1.0, 1.0);
-  d->painter->endNativePainting();
+  glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
   preDraw();
   draw();
   postDraw();
+  d->painter->endNativePainting();
   d->painter->end();
 }
+
 void Viewer::postDraw()
 {
 
