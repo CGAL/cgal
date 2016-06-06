@@ -824,11 +824,16 @@ namespace internal {
     {
       //todo : move border vertices along 1-dimensional features
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Tangential relaxation...";
-      std::cout.flush();
+      std::cout << "Tangential relaxation (" << nb_iterations << " iter.)...";
+      std::cout << std::endl;
 #endif
       for (unsigned int nit = 0; nit < nb_iterations; ++nit)
       {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "\r\t(iteration " << (nit + 1) << " / ";
+        std::cout << nb_iterations << ") ";
+        std::cout.flush();
+#endif
       //todo : use boost::vector_property_map to improve computing time
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
       VNormalsMap vnormals;
