@@ -44,8 +44,6 @@ macro(_eigen3_get_version)
   set(EIGEN3_VERSION ${EIGEN3_WORLD_VERSION}.${EIGEN3_MAJOR_VERSION}.${EIGEN3_MINOR_VERSION})
 endmacro(_eigen3_get_version)
 
-set(EIGEN3_USE_FILE "UseEigen3")
-
 if (EIGEN3_INCLUDE_DIR)
 
   if (EXISTS ${EIGEN3_INCLUDE_DIR}/signature_of_eigen3_matrix_library)
