@@ -38,7 +38,7 @@ namespace Polygon_mesh_processing {
 * \ingroup PMP_meshing_grp
 * @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
-* edge flips, Laplacian smoothing and projection to the initial surface
+* edge flips, tangential relaxation and projection to the initial surface
 * to generate a smooth mesh with a prescribed edge length.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph` that 
@@ -90,12 +90,18 @@ namespace Polygon_mesh_processing {
 *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
      faces of `faces`. Instance of a class model of `ReadWritePropertyMap`. It gets
      updated during the remeshing process while new faces are created.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_relaxation_steps} the number of iterations of tangential
+*    relaxation that are performed at each iteration of the remeshing process
+*  \cgalParamEnd
+*  \cgalParamBegin{relax_constraints} If `true`, the end vertices of the edges set as
+*    constrained in `edge_is_constrained_map` and boundary edges move along the
+*    constrained polylines they belong to.
+*  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @sa `split_long_edges()`
 *
-*@todo document `1d_smoothing`
-*@todo document `number_of_relaxation_steps`
 *@todo add possibility to provide a functor that projects to a prescribed surface
 */
 template<typename PolygonMesh
