@@ -1582,7 +1582,8 @@ protected:
 
    SVertex_iterator sv;
    CGAL_forall_svertices(sv, snc()) {
-     sv->out_sedge() = sv->out_sedge()->twin();
+     if (!sv->is_isolated())
+      sv->out_sedge() = sv->out_sedge()->twin();
    }
 
    SHalfedge_iterator se;
