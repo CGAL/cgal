@@ -61,13 +61,13 @@ namespace Polygon_mesh_processing {
 * not be longer than 4/3*`target_edge_length`
 *
 * \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`
+*  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of atomic operations performed (listed in the above description)
-*  \cgalParamEnd
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`
 *  \cgalParamEnd
 *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
 *    constrained-or-not status of each edge of `pmesh`. A constrained edge can be splitted
