@@ -81,6 +81,7 @@ create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")
 #create_single_source_cgal_program( "remove_degeneracies_example.cpp")
 create_single_source_cgal_program( "isotropic_remeshing_example.cpp")
+create_single_source_cgal_program( "surface_mesh_intersection.cpp")
 
 if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
 create_single_source_cgal_program( "hole_filling_example.cpp" )
