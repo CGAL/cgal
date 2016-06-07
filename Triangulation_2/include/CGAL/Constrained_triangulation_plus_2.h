@@ -222,7 +222,7 @@ public:
   }
 
 
-  Constrained_triangulation_plus_2(std::list<std::pair<Point,Point> > constraints,
+  Constrained_triangulation_plus_2(const std::list<std::pair<Point,Point> > &constraints,
 				   const Geom_traits& gt=Geom_traits() )
     : Triangulation(gt)
      , hierarchy(Vh_less_xy(this))
