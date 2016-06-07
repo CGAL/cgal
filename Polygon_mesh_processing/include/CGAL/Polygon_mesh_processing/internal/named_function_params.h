@@ -34,13 +34,13 @@ namespace CGAL{
   enum sparse_linear_solver_t       { sparse_linear_solver };
   enum geom_traits_t                { geom_traits };
   enum number_of_iterations_t       { number_of_iterations };
-  enum number_of_laplacian_iterations_t { number_of_laplacian_iterations };
+  enum number_of_relaxation_steps_t { number_of_relaxation_steps };
   enum protect_constraints_t        { protect_constraints };
+  enum relax_constraints_t          { relax_constraints };
   enum vertex_is_constrained_t      { vertex_is_constrained };
   enum face_patch_t                 { face_patch };
 
   //to be documented
-  enum smooth_along_features_t      { smooth_along_features };
   enum face_normal_t                { face_normal };
 
   //internal
@@ -138,10 +138,10 @@ namespace CGAL{
     }
 
     template<typename NT>
-    pmp_bgl_named_params<NT, number_of_laplacian_iterations_t, self>
-    number_of_laplacian_iterations(const NT& n) const
+    pmp_bgl_named_params<NT, number_of_relaxation_steps_t, self>
+    number_of_relaxation_steps(const NT& n) const
     {
-      typedef pmp_bgl_named_params<NT, number_of_laplacian_iterations_t, self> Params;
+      typedef pmp_bgl_named_params<NT, number_of_relaxation_steps_t, self> Params;
       return Params(n, *this);
     }
 
@@ -154,10 +154,10 @@ namespace CGAL{
     }
 
     template<typename Boolean>
-    pmp_bgl_named_params<Boolean, smooth_along_features_t, self>
-      smooth_along_features(const Boolean b) const
+    pmp_bgl_named_params<Boolean, relax_constraints_t, self>
+    relax_constraints(const Boolean b) const
     {
-      typedef pmp_bgl_named_params<Boolean, smooth_along_features_t, self> Params;
+      typedef pmp_bgl_named_params<Boolean, relax_constraints_t, self> Params;
       return Params(b, *this);
     }
 
@@ -300,10 +300,10 @@ namespace parameters{
   }
 
   template<typename NT>
-  pmp_bgl_named_params<NT, number_of_laplacian_iterations_t>
-  number_of_laplacian_iterations(const NT& n)
+  pmp_bgl_named_params<NT, number_of_relaxation_steps_t>
+  number_of_relaxation_steps(const NT& n)
   {
-    typedef pmp_bgl_named_params<NT, number_of_laplacian_iterations_t> Params;
+    typedef pmp_bgl_named_params<NT, number_of_relaxation_steps_t> Params;
     return Params(n);
   }
 
@@ -316,10 +316,10 @@ namespace parameters{
   }
 
   template<typename Boolean>
-  pmp_bgl_named_params<Boolean, smooth_along_features_t>
-  smooth_along_features(const Boolean b)
+  pmp_bgl_named_params<Boolean, relax_constraints_t>
+  relax_constraints(const Boolean b)
   {
-    typedef pmp_bgl_named_params<Boolean, smooth_along_features_t> Params;
+    typedef pmp_bgl_named_params<Boolean, relax_constraints_t> Params;
     return Params(b);
   }
 

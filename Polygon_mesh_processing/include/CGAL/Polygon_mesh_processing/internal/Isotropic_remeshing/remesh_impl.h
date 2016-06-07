@@ -819,7 +819,7 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    void tangential_relaxation(const bool smooth_along_features/*1d smoothing*/
+    void tangential_relaxation(const bool relax_constraints/*1d smoothing*/
                              , const unsigned int nb_iterations)
     {
       //todo : move border vertices along 1-dimensional features
@@ -863,7 +863,7 @@ namespace internal {
 
           barycenters[v] = get(vpmap_, v) + move;
         }
-        else if (smooth_along_features
+        else if (relax_constraints
               && !protect_constraints_
               && is_on_patch_border(v)
               && !is_corner(v)

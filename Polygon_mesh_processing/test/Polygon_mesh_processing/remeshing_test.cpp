@@ -221,6 +221,8 @@ int main(int argc, char* argv[])
     PMP::parameters::number_of_iterations(nb_iter)
     .protect_constraints(true) //only borders. they have been refined by previous remeshing
     .edge_is_constrained_map(ecmap)
+    .relax_constraints(true)
+    .number_of_relaxation_steps(3)
     );
   t.stop();
   std::cout << "Remeshing all took " << t.time() << std::endl;
