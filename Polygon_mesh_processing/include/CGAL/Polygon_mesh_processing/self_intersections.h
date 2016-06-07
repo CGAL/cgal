@@ -15,7 +15,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Pierre Alliez, Laurent Rineau, Ilker O. Yaz
 
@@ -53,7 +53,7 @@ template <class TM,//TriangleMesh
 struct Intersect_facets
 {
   // wrapper to check whether anything is inserted to output iterator
-  struct Output_iterator_with_bool 
+  struct Output_iterator_with_bool
   {
     Output_iterator_with_bool(OutputIterator* out, bool* intersected)
       : m_iterator(out), m_intersected(intersected) { }
@@ -61,7 +61,7 @@ struct Intersect_facets
     template<class T>
     void operator()(const T& t) {
       *m_intersected = true;
-      *(*m_iterator)++ = t; 
+      *(*m_iterator)++ = t;
     }
 
     OutputIterator* m_iterator;
@@ -84,9 +84,9 @@ struct Intersect_facets
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
-  
+
   Intersect_facets(const TM& tmesh, OutputIterator it, VertexPointMap vpmap, const Kernel& kernel)
-    : 
+    :
     m_tmesh(tmesh),
     m_vpmap(vpmap),
     m_iterator(it),
@@ -139,7 +139,7 @@ struct Intersect_facets
     }
 
     if(v != halfedge_descriptor()){
-      // found shared vertex: 
+      // found shared vertex:
       CGAL_assertion(target(h,m_tmesh) == target(v,m_tmesh));
       // geometric check if the opposite segments intersect the triangles
       Triangle t1 = triangle_functor( get(m_vpmap,target(h,m_tmesh)),
@@ -148,12 +148,12 @@ struct Intersect_facets
       Triangle t2 = triangle_functor( get(m_vpmap, target(v,m_tmesh)),
                                       get(m_vpmap, target(next(v,m_tmesh),m_tmesh)),
                                       get(m_vpmap, target(next(next(v,m_tmesh),m_tmesh),m_tmesh)));
-      
+
       Segment s1 = segment_functor( get(m_vpmap, target(next(h,m_tmesh),m_tmesh)),
                                     get(m_vpmap, target(next(next(h,m_tmesh),m_tmesh),m_tmesh)));
       Segment s2 = segment_functor( get(m_vpmap, target(next(v,m_tmesh),m_tmesh)),
                                     get(m_vpmap, target(next(next(v,m_tmesh),m_tmesh),m_tmesh)));
-      
+
       if(do_intersect_3_functor(t1,s2)){
         *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
       } else if(do_intersect_3_functor(t2,s1)){
@@ -161,7 +161,7 @@ struct Intersect_facets
       }
       return;
     }
-    
+
     // check for geometric intersection
     Triangle t1 = triangle_functor( get(m_vpmap, target(h,m_tmesh)),
                                     get(m_vpmap, target(next(h,m_tmesh),m_tmesh)),
@@ -202,7 +202,7 @@ self_intersections( const FaceRange& face_range,
                     const NamedParameters& np);
 #endif
 
-/** 
+/**
  * \ingroup PMP_intersection_grp
  * detects and records self-intersections of a triangulated surface mesh.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
@@ -210,7 +210,7 @@ self_intersections( const FaceRange& face_range,
  *
  * @tparam TriangleMesh a model of `FaceListGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`
- * @tparam OutputIterator a model of `OutputIterator` holding objects of type 
+ * @tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
@@ -382,7 +382,29 @@ bool does_self_intersect(const TriangleMesh& tmesh
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
     self_intersections(tmesh, OutputIterator(), np);
   }
-  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& ) 
+  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+  { return true; }
+
+  return false;
+}
+
+/// \todo document me
+template <class FaceRange,
+          class TriangleMesh,
+          class NamedParameters
+          >
+bool does_self_intersect(const FaceRange& face_range,
+                         const TriangleMesh& tmesh,
+                         const NamedParameters& np)
+{
+  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+
+  try
+  {
+    typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
+    self_intersections(face_range, tmesh, OutputIterator(), np);
+  }
+  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
   { return true; }
 
   return false;
