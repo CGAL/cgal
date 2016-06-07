@@ -636,7 +636,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
     if (!get(roi_faces_pmap, f))
       continue;
     BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, g), g))
-      insert_roi_vertex(target(h, g));
+      item->insert_roi_vertex(target(h, g));
 
     put(roi_faces_pmap, f, false); //reset ids
   }

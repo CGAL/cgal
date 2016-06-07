@@ -111,11 +111,12 @@ public:
     ~Scene_polygon_soup_item();
 
     Scene_polygon_soup_item* clone() const;
+    template <class Point, class Polygon>
+    void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
+
     bool load(std::istream& in);
     void load(Scene_polyhedron_item*);
     bool isDataColored();
-    template <class Point, class Polygon>
-    void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
 
     bool save(std::ostream& out) const;
     std::vector<CGAL::Color> getVColors() const;

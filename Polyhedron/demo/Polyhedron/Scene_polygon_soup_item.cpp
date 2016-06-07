@@ -26,6 +26,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include "triangulate_primitive.h"
+#include <CGAL/array.h>
 struct Scene_polygon_soup_item_priv{
 
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
@@ -835,7 +836,7 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
   new_polygon[2] = k;
   d->soup->polygons.push_back(new_polygon);
 }
-                               
+
 template <class Point, class Polygon>
 void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
 {
@@ -860,7 +861,10 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 
     invalidateOpenGLBuffers();
 }
-
+// Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
+// because the d-pointer forbid the definition in the .h for this function.
+template void Scene_polygon_soup_item::load<CGAL::cpp11::array<double, 3>, CGAL::cpp11::array<int, 3> >
+(const std::vector<CGAL::cpp11::array<double, 3> >& points, const std::vector<CGAL::cpp11::array<int, 3> >& polygons);
 // Local Variables:
 // c-basic-offset: 4
 // End:
