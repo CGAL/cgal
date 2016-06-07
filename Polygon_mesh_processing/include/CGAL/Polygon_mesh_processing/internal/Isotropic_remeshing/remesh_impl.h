@@ -514,7 +514,6 @@ namespace internal {
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
-      CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       debug_status_map();
       debug_self_intersections();
 #endif
@@ -679,8 +678,6 @@ namespace internal {
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-          CGAL_assertion_code(std::size_t nbb = nb_valid_halfedges());
-          CGAL_assertion(nbb == halfedge_status_map_.size());
           debug_status_map();
           CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
 #endif
@@ -706,7 +703,6 @@ namespace internal {
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-      CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_self_intersections();
@@ -759,7 +755,6 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s2o = status(opposite(he, mesh_)));
         CGAL_assertion(s1 == s2   && s1 == PATCH);
         CGAL_assertion(s1o == s2o && s1o == PATCH);
-        CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
         CGAL_assertion(!is_border(he, mesh_));
 
         CGAL_assertion(
@@ -802,7 +797,6 @@ namespace internal {
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-      CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       debug_status_map();
       CGAL_assertion(0 == PMP::remove_degenerate_faces(mesh_
                             , PMP::parameters::vertex_point_map(vpmap_)
@@ -1319,9 +1313,7 @@ private:
       {
         //being part of the border of the mesh is predominant
         if (is_border(h, mesh_))
-          halfedge_status_map_[h] = MESH_BORDER; //erase previous value if exists
-        else
-          halfedge_status_map_[h] = MESH;
+          set_status(h, MESH_BORDER); //erase previous value if exists
       }
 
       //tag PATCH,       //h and hopp belong to the patch to be remeshed
@@ -1330,7 +1322,7 @@ private:
         BOOST_FOREACH(halfedge_descriptor h,
                       halfedges_around_face(halfedge(f, mesh_), mesh_))
         {
-          halfedge_status_map_[h] = PATCH;
+          set_status(h, PATCH);
         }
       }
 
@@ -1346,16 +1338,14 @@ private:
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
-          if (halfedge_status_map_[h] == PATCH)
-            halfedge_status_map_[h] = PATCH_BORDER;
+          if (status(h) == PATCH)
+            set_status(h, PATCH_BORDER);
 
           halfedge_descriptor hopp = opposite(h, mesh_);
-          if (halfedge_status_map_[hopp] == PATCH)
-            halfedge_status_map_[hopp] = PATCH_BORDER;
+          if (status(hopp) == PATCH)
+            set_status(hopp, PATCH_BORDER);
         }
       }
-
-      CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
     }
 
     Halfedge_status status(const halfedge_descriptor& h) const
@@ -1364,17 +1354,23 @@ private:
         halfedge_descriptor, Halfedge_status >::const_iterator
           it = halfedge_status_map_.find(h);
       if (it == halfedge_status_map_.end())
-        std::cout << "Something goes wrong with status function" << std::endl;
-      CGAL_assertion(it != halfedge_status_map_.end());
+        return MESH;
       return it->second;
+    }
+
+    void set_status(const halfedge_descriptor& h,
+                    const Halfedge_status& s)
+    {
+      if (s == MESH)
+        halfedge_status_map_.erase(h);
+      else
+        halfedge_status_map_[h] = s;
     }
 
     void merge_status(const halfedge_descriptor& en,
                       const Halfedge_status& s_epo,
                       const Halfedge_status& s_ep)
     {
-      CGAL_assertion(halfedge_status_map_.find(en) != halfedge_status_map_.end());
-
       //get missing data
       halfedge_descriptor eno = opposite(en, mesh_);
       Halfedge_status s_eno = status(eno);
@@ -1387,8 +1383,8 @@ private:
         || s_epo == PATCH_BORDER
         || s_ep == PATCH_BORDER)
       {
-        halfedge_status_map_[en]  = s_epo;
-        halfedge_status_map_[eno] = s_ep;
+        set_status(en, s_epo);
+        set_status(eno, s_ep);
       }
       // else keep current status for en and eno
     }
@@ -1445,13 +1441,13 @@ private:
             CGAL_assertion_code(++nb_done);
 
             //update halfedge_status_map_
-            halfedge_status_map_[h_ab] = merge_status(h_ab, hf, hfo);
-            halfedge_status_map_[h_ca] = merge_status(h_ca, hf, hfo);
-            halfedge_status_map_[hf] =
-              (is_on_patch(h_ca) || is_on_patch_border(h_ca))
-              ? PATCH
-              : MESH;
-            halfedge_status_map_[hfo] = status(hf);
+            set_status(h_ab, merge_status(h_ab, hf, hfo));
+            set_status(h_ca, merge_status(h_ca, hf, hfo));
+            if (is_on_patch(h_ca) || is_on_patch_border(h_ca))
+            {
+              set_status(hf, PATCH);
+              set_status(hfo, PATCH);
+            }
 #ifdef CGAL_PMP_REMESHING_DEBUG
             debug_status_map();
 #endif
