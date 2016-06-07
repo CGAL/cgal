@@ -123,23 +123,38 @@ public:
                qglviewer::ManipulatedFrame* frame, Qt::Orientation ori, QWidget* widget)
     : QSlider(ori, widget), v(v), id(id), scene(scene), frame(frame) {
     this->setTracking(true);
-    connect(frame,  SIGNAL(manipulated()), this, SLOT(updateValue()));
+    connect(frame,  SIGNAL(manipulated()), this, SLOT(updateCutPlane()));
   }
 
 public:
   void sliderChange(SliderChange c) {
     QSlider::sliderChange(c);
     if(c == SliderValueChange) {
-      qglviewer::Vec v2 = v * (this->value() / scale);
-      frame->setTranslationWithConstraint(v2);
-      scene->itemChanged(id);
+      updateFramePosition();
     }
 
-    Q_EMIT realChange(this->value() / scale);
   }
 
 public Q_SLOTS:
+  void updateCutPlane()
+  {
+     ready_to_cut = true;
+     QTimer::singleShot(0,this,SLOT(updateValue()));
+  }
+
+  void setFramePosition()
+  {
+    if(!ready_to_move)
+      return;
+    qglviewer::Vec v2 = v * (this->value() / scale);
+    frame->setTranslationWithConstraint(v2);
+    scene->itemChanged(id);
+    Q_EMIT realChange(this->value() / scale);
+    ready_to_move = false;
+  }
   void updateValue() {
+    if(!ready_to_cut)
+      return;
 #if QGLVIEWER_VERSION >= 0x020600
     typedef qreal qglviewer_real;
 #else // QGLViewer < 2.6.0
@@ -151,6 +166,7 @@ public Q_SLOTS:
     float sum2 = float(v.x + v.y + v.z);
     sum1 /= sum2;
     setValue(sum1 * scale);
+    ready_to_cut = false;
   }
 
 Q_SIGNALS:
@@ -158,11 +174,17 @@ Q_SIGNALS:
 
 private:
   static const unsigned int scale;
-
+  bool ready_to_cut;
+  bool ready_to_move;
   qglviewer::Vec v;
   int id;
   Scene_interface* scene;
   qglviewer::ManipulatedFrame* frame;
+  void updateFramePosition()
+  {
+    ready_to_move = true;
+    QTimer::singleShot(0,this,SLOT(setFramePosition()));
+  }
 };
 
 const unsigned int Plane_slider::scale = 100;
