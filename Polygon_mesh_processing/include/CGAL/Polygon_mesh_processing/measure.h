@@ -169,6 +169,7 @@ namespace Polygon_mesh_processing {
                   halfedges_around_face(h, pmesh))
     {
       result += edge_length(haf, pmesh, np);
+      exact(result);
     }
     return result;
   }
@@ -306,6 +307,7 @@ namespace Polygon_mesh_processing {
     BOOST_FOREACH(face_descriptor f, face_range)
     {
       result += face_area(f, tmesh, np);
+      exact(result);
     }
     return result;
   }
@@ -429,6 +431,7 @@ namespace Polygon_mesh_processing {
         get(vpm, target(halfedge(f, tmesh), tmesh)),
         get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
         get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
+      exact(volume);
     }
     return volume;
   }
