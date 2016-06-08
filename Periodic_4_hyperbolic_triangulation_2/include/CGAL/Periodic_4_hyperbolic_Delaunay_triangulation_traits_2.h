@@ -45,7 +45,7 @@ class Hyperbolic_traits_with_offsets_2_adaptor
   typedef Predicate_ Predicate;
 
   typedef typename Kernel::Point_2                  Point;
-  typedef Hyperbolic_word_4<unsigned short int>     Offset;
+  typedef Hyperbolic_word_4<unsigned short int, K>  Offset;
 
   // Use the construct_point_2 predicate from the kernel to convert the periodic points to Euclidean points
   typedef typename Kernel::Construct_point_2        Construct_point_2;

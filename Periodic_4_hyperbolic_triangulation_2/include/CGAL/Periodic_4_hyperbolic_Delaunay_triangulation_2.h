@@ -35,8 +35,8 @@ namespace CGAL {
 
 template <  class GT,
             class TDS = Triangulation_data_structure_2<
-              Triangulation_vertex_base_with_info_2<Hyperbolic_translation_info<std::string>, GT, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT> >,
-              Triangulation_face_base_with_info_2<Periodic_4_hyperbolic_face_info_2, GT, Periodic_4_hyperbolic_triangulation_ds_face_base_2<> >
+              Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT>,
+              Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT> 
             >
           >
 class Periodic_4_hyperbolic_Delaunay_triangulation_2 :

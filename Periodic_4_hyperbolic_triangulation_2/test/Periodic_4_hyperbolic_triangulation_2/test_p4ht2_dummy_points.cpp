@@ -25,7 +25,7 @@ typedef Triangulation::Locate_type 													Locate_type;
 
 typedef std::pair<Vertex_handle, Vertex_handle>                                     Edge;
 typedef unsigned short int                                                          Int;
-typedef CGAL::Hyperbolic_word_4<Int>                                                Offset;
+typedef CGAL::Hyperbolic_word_4<Int, Traits>                                        Offset;
 typedef std::pair<Edge, bool>                                                       OEdge;
 typedef std::set<OEdge>                                                             OEdgeSet;
 typedef OEdgeSet::iterator                                                          OEI;

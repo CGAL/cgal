@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-template <class Int>
+template <class Int, class GT>
 class Hyperbolic_word_4 {
 private:
 	Int   w0 : 3;
@@ -236,37 +236,13 @@ public:
 		return s;
 	}
 
-	Hyperbolic_octagon_translation_matrix get_matrix() const {
-		std::vector<Hyperbolic_octagon_translation_matrix> Ints;
-		get_generators(Ints);
-		Hyperbolic_octagon_translation_matrix m;
-		if (b0) {
-			m = Ints[w0];
-			if (b1) {
-				m = m * Ints[w1];
-				if (b2) {
-					m = m * Ints[w2];
-					if (b3) {
-						m = m * Ints[w3];
-					}
-				}
-			}
-		}
+	typedef typename GT::Point_2 						Point;
+  	typedef Hyperbolic_octagon_translation_matrix<GT> 	Octagon_translation_matrix;
+  	typedef Hyperbolic_word_4<Int, GT> 					Self;
 
-		return m;
-	}
-
-
-	template<class Point>
-	Point apply(Point pt) const {
-		Hyperbolic_octagon_translation_matrix m = get_matrix();
-		Point res = m.apply(pt);
-		return res;
-	}
-
-	Hyperbolic_word_4<Int> operator*(const Hyperbolic_word_4<Int>& rh) const {
+	Self operator*(const Self& rh) const {
   		assert(this->size() + rh->size() < 5);
-  		Hyperbolic_word_4<Int> w;
+  		Self w;
   		for (Int i = 0; i < this->size(); i++) {
   			w.append(this->operator()(i));
   		}
@@ -276,13 +252,31 @@ public:
     	return w;
   	}
 
+  	
+  	Octagon_translation_matrix get_matrix() const {
+  		vector<Octagon_translation_matrix> gens;
+  		get_generators(gens);
+  		Octagon_translation_matrix m;
+  		for (int i = 0; i < 4; i++) {
+  			if (b(i)) {
+  				m = m * gens[operator()(i)];
+  			}
+  		}
+  		return m;
+  	}
+
+  	Point apply(Point p) const {
+  		Octagon_translation_matrix m = get_matrix();
+  		return m.apply(p);
+  	}
+
 };
 
 
 
 
-template <class Int>
-ostream& operator<<(ostream& s, const Hyperbolic_word_4<Int>& o) {
+template <class Int, class GT>
+ostream& operator<<(ostream& s, const Hyperbolic_word_4<Int, GT>& o) {
 	for (Int i = 0; i < 4; i++) {
 		if (o.b(i)) {
 			s << o(i);
@@ -293,9 +287,9 @@ ostream& operator<<(ostream& s, const Hyperbolic_word_4<Int>& o) {
 
 
 // just to give an order(ing)
-template<class Int>
-bool operator < (const Hyperbolic_word_4<Int>& lh,
-  				 const Hyperbolic_word_4<Int>& rh)
+template<class Int, class GT>
+bool operator < (const Hyperbolic_word_4<Int, GT>& lh,
+  				 const Hyperbolic_word_4<Int, GT>& rh)
 {
   std::string vl = lh.get_string();
   std::string vr = rh.get_string();

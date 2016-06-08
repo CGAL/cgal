@@ -24,6 +24,7 @@ typedef K::Segment_2                                                            
 typedef K::Arc_2                                                                Arc_2;
 typedef K::Line_segment_2                                                       Line_segment_2;
 typedef K::Circle_2                                                             Circle;
+typedef Hyperbolic_octagon_translation_matrix<K>                                Octagon_translation_matrix;
 //typedef std::vector<int>                                                        Index_sequence;
 //typedef std::pair<Hyperbolic_octagon_translation_matrix, Index_sequence>        Word; 
 
@@ -40,12 +41,15 @@ const string names[] = { "a",
                          "\\bar{c}", 
                          "d" };
 
-void recurr(vector<Hyperbolic_octagon_translation_matrix>& v, vector<string>& w, vector<Hyperbolic_octagon_translation_matrix> g, int depth = 1) {
+
+
+void recurr(vector<Octagon_translation_matrix>& v, vector<string>& w, 
+            vector<Octagon_translation_matrix> g, int depth = 1) {
     if (depth > 1) {
         
         recurr(v, w, g, depth-1);
 
-        vector<Hyperbolic_octagon_translation_matrix> tmp;
+        vector< Octagon_translation_matrix > tmp;
         vector<string> tmpw;
         for (int i = 0; i < v.size(); i++) {
             tmp.push_back(v[i]);
@@ -95,6 +99,7 @@ void recurr(vector<Index_sequence>& idx, int depth = 1) {
 
 */
 
+/*
 void export_words_tex(vector<string> w, vector<Hyperbolic_octagon_translation_matrix> v, string filename) {
 
     ofstream fcout;
@@ -187,7 +192,7 @@ void export_words_tex(map<string,Hyperbolic_octagon_translation_matrix> m, strin
 
     fcout.close();
 }
-
+*/
 
 
 double edist2(double x, double y) {
@@ -221,6 +226,7 @@ double hdisthcos(pair<double, double> p1, pair<double, double> p2) {
 }
 
 
+/*
 Hyperbolic_octagon_translation_matrix offset_word_4(int index, vector<Hyperbolic_octagon_translation_matrix> gens) {
     Hyperbolic_octagon_translation_matrix r;
     for (int i = 0; i < 4; i++) {
@@ -229,12 +235,11 @@ Hyperbolic_octagon_translation_matrix offset_word_4(int index, vector<Hyperbolic
     }
     return r;
 }
-
+*/
 
 int main(int argc, char** argv) {
 
-
-    vector<Hyperbolic_octagon_translation_matrix> g;
+    vector<Octagon_translation_matrix> g;
     get_generators(g);
 
     Point v0 (sqrt(sqrt(2.) + 1.) / 2. , -sqrt(sqrt(2.) - 1.) / 2.);       //  v_0

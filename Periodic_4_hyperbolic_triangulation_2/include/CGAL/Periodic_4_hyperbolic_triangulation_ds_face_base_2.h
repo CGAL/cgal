@@ -26,10 +26,11 @@
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Hyperbolic_word_4.h>
+#include <CGAL/Triangulation_data_structure_2.h>
 
 namespace CGAL {
 
-template  <typename TDS = void >
+template< typename GT, typename TDS = Triangulation_data_structure_2<> >
 class Periodic_4_hyperbolic_triangulation_ds_face_base_2 {
 public:
 	typedef TDS 							Triangulation_data_structure;
@@ -38,11 +39,11 @@ public:
 	typedef typename TDS::Vertex 			Vertex;
 	typedef typename TDS::Face 				Face;
 	typedef unsigned short int 				Int;
-	typedef Hyperbolic_word_4<Int>			Offset;
+	typedef Hyperbolic_word_4<Int, GT>		Offset;
 
-	template<typename TDS2>
+	template< typename TDS2 >
 	struct Rebind_TDS {
-		typedef Periodic_4_hyperbolic_triangulation_ds_face_base_2<TDS2> Other;
+		typedef Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT, TDS2> Other;
 	};
 
 private:
@@ -275,8 +276,8 @@ operator<<(std::ostream &os,
 }
 
 // Specialization for void.
-template <>
-class Periodic_4_hyperbolic_triangulation_ds_face_base_2<void>
+template<typename GT>
+class Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT, void>
 {
 public:
   typedef Dummy_tds_2                  					Triangulation_data_structure;
@@ -284,7 +285,7 @@ public:
   typedef Triangulation_data_structure::Face_handle     Face_handle;
   template <typename TDS2>
   struct Rebind_TDS {
-    typedef Periodic_4_hyperbolic_triangulation_ds_face_base_2<TDS2> Other;
+    typedef Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT, TDS2> Other;
   };
 };
 
