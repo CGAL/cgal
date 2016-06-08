@@ -187,6 +187,7 @@ public Q_SLOTS:
   void setSelectedItemIndex(int i)
   {
     selected_item = i;
+    Q_EMIT itemIndexSelected(i);
   }
   //! Clears the current selection then sets the selected item to the target index.
   void setSelectedItem(int i )
@@ -246,6 +247,7 @@ Q_SIGNALS:
   void itemAboutToBeDestroyed(CGAL::Three::Scene_item*);
   void selectionRay(double, double, double, double, double, double);
   void selectionChanged(int i);
+  void itemIndexSelected(int i);
   void restoreCollapsedState();
   void drawFinished();
 private Q_SLOTS:

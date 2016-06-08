@@ -222,7 +222,7 @@ public:
       connect(planeSwitch, SIGNAL(triggered()),
               this, SLOT(selectPlanes()));
       Scene* true_scene = dynamic_cast<Scene*>(scene);
-      connect(true_scene,SIGNAL(selectionChanged(int)),
+      connect(true_scene,SIGNAL(itemIndexSelected(int)),
               this, SLOT(connect_controls(int)));
     }
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
@@ -348,6 +348,7 @@ public Q_SLOTS:
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
+      x_control->setVisible(true);
       break;
     case 'y':
       delete y_slider;
@@ -360,6 +361,7 @@ public Q_SLOTS:
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
+      y_control->setVisible(true);
       break;
     case 'z':
       delete z_slider;
@@ -372,6 +374,7 @@ public Q_SLOTS:
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
+      z_control->setVisible(true);
       break;
     default:
       break;
@@ -472,7 +475,7 @@ private:
       QWidget* content = new QWidget(controlDockWidget);
       layout = new QVBoxLayout(content);
       layout->setObjectName("vpSliderLayout");
-      controlDockWidget->setWindowTitle("Control Widget");
+      controlDockWidget->setWindowTitle("Volume Planes Control");
       mw->addDockWidget(Qt::LeftDockWidgetArea, controlDockWidget);
 
       QWidget* vlabels = new QWidget(content);
@@ -687,15 +690,13 @@ private Q_SLOTS:
     //try to re-connect to another group
     if(!group_map.isEmpty())
     {
-      CGAL::Three::Scene_item *new_group = group_map.first().group;
-      int id = scene->item_id(new_group);
+      int id = scene->item_id(group_map.keys().first());
       connect_controls(id);
     }
   }
   void connect_controls(int id)
   {
     CGAL::Three::Scene_item* sel_itm = scene->item(id);
-
     if(!sel_itm || !group_map.contains(sel_itm)) //the planes are not yet created or the selected item is not a segmented_image
     {
       return;
@@ -767,19 +768,19 @@ private Q_SLOTS:
   {
     current_control->xitem = NULL; 
     if(group_map.isEmpty())
-      x_slider->hide();
+      x_control->hide();
   }
   void destroy_y_item()
   {
     current_control->yitem = NULL;
     if(group_map.isEmpty())
-      y_slider->hide();
+      y_control->hide();
   }
   void destroy_z_item()
   {
     current_control->zitem = NULL;
     if(group_map.isEmpty())
-      z_slider->hide();
+      z_control->hide();
   }
 
 };
@@ -891,6 +892,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   {
     //Create planes
     image_item = new Scene_image_item(image,125, true);
+    image_item->setName(fileinfo.baseName());
     msgBox.setText("Planes created : 0/3");
     msgBox.setStandardButtons(QMessageBox::NoButton);
     msgBox.show();
