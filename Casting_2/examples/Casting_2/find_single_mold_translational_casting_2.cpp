@@ -20,11 +20,27 @@ typedef std::pair<size_t, Direction_range>                Top_edge;
 int main()
 {
   Polygon_2 pgn;
-  pgn.push_back(Point_2(0, 0));
-  pgn.push_back(Point_2(1, 0));
-  pgn.push_back(Point_2(1, 1));
-  pgn.push_back(Point_2(0, 1));
+//  pgn.push_back(Point_2(0, 0));
+//  pgn.push_back(Point_2(1, 0));
+//  pgn.push_back(Point_2(1, 1));
+//  pgn.push_back(Point_2(0, 1));
 
+
+//  pgn.push_back(Point_2(0, 7));
+//    pgn.push_back(Point_2(1, 0));
+//    pgn.push_back(Point_2(1, 1));
+//    pgn.push_back(Point_2(0, 1));
+ typename Kernel::Segment_2 s1(Point_2(0, 1),Point_2(1, 0));
+ typename Kernel::Segment_2 s2(Point_2(0, 1),Point_2(1, 12));
+Direction_2 d1(s1);
+Direction_2 d2(s2);
+
+std::cout<<!d1.counterclockwise_in_between(d2,d2);
+return 0;
+    pgn.push_back(Point_2(0, 1));
+    pgn.push_back(Point_2(1, 1));
+    pgn.push_back(Point_2(1, 0));
+    pgn.push_back(Point_2(0, 0));
   std::list<Top_edge> top_edges;
   find_single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
 
