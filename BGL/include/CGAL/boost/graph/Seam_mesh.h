@@ -35,8 +35,8 @@ which look like boundary edges, when exploring the seam mesh with the generic BG
 functions, and `boost::graph_traits<Seam_mesh<TM> >`. 
 
 \tparam TM must be a model of `FaceGraph`
-\tparam SEM must be a property map with key type `boost::graph_traits<TM>::edge_descriptor and value type `bool`.
-\tparam SVM must be a property map with key type `boost::graph_traits<TM>::vertex_descriptor and value type `bool`.
+\tparam SEM must be a property map with key type `boost::graph_traits<TM>::edge_descriptor` and value type `bool`.
+\tparam SVM must be a property map with key type `boost::graph_traits<TM>::vertex_descriptor` and value type `bool`.
 */
 
 template <class TM, class SEM, class SVM>
@@ -300,8 +300,9 @@ public:
   /// Constructs a seam mesh for a triangle mesh and an edge and vertex property map
   /// \param tm the adapted mesh
   /// \param sem the edge property map with value `true` for seam edges
-  /// \param sem the vertex property map with value `true` for seam vertices
+  /// \param svm the vertex property map with value `true` for seam vertices
 
+  /// @note the vertices must be exactly the vertices on the seam edges. Maybe a bad design.
   Seam_mesh(const TM& tm, const SEM& sem, const SVM& svm) 
     : tm(tm), sem(sem), svm(svm), index(0)
   {}

@@ -483,7 +483,7 @@ In <em>(a)</em> the seam forms a tree which makes that we pass at a vertex as of
 it has incident seam edges.
 In <em>(b)</em> the seam has a vertex on the border of the adapted mesh. Walking along the seam we switch
 to the real border, and switch back on the "other side" of the seam.
-in<em>(c)</em> the seam forms a closed polyline. While the first two define a single border, a cycle defines two borders
+in <em>(c)</em> the seam forms a closed polyline. While the first two define a single border, a cycle defines two borders
 and splits the set of faces in two connected components. Something similar happens when the seam touches the same border
 more than once. A seam can also connect different borders what changes the genus of the mesh.
 Finally, a seam may have more than one connected components.
