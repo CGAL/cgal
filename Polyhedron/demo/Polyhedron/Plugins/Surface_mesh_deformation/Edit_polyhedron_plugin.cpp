@@ -352,7 +352,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
   {
     ui_widget.ShowAsSphereCheckBox->setChecked(false);
     Scene_polyhedron_selection_item* selection_item = NULL;
-    for(std::size_t i =0; i<scene->numberOfEntries(); i++)
+    for(int i = 0; i<scene->numberOfEntries(); i++)
     {
       selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
       if (selection_item)
@@ -537,7 +537,7 @@ selection_item->setVisible(false);
 
 void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_polyhedron_item* target)
 {
-  for(std::size_t i = 0; i<scene->numberOfEntries(); i++)
+  for(int i = 0; i<scene->numberOfEntries(); i++)
   {
     Scene_polyhedron_selection_item* sel_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
     if(sel_item

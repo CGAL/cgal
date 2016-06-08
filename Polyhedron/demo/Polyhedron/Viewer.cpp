@@ -319,13 +319,15 @@ void Viewer::mousePressEvent(QMouseEvent* event)
     requestContextMenu(event->globalPos());
     event->accept();
   }
-  else if(event->button() == Qt::LeftButton &&
-          i_is_pressed)
+  else if(!event->modifiers()
+          && event->button() == Qt::LeftButton
+          && i_is_pressed)
   {
       d->scene->printPrimitiveId(event->pos(), this);
   }
-  else if(event->button() == Qt::LeftButton &&
-          is_d_pressed)
+  else if(!event->modifiers()
+          && event->button() == Qt::LeftButton
+          && is_d_pressed)
   {
       showDistance(event->pos());
       event->accept();
@@ -411,7 +413,6 @@ void Viewer::keyReleaseEvent(QKeyEvent *e)
       return;
     }
     is_d_pressed = false;
-    return;
   }
   QGLViewer::keyReleaseEvent(e);
 }
