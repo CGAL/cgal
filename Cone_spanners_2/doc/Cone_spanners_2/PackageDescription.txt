@@ -1,0 +1,44 @@
+// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgConeBasedSpanners Cone-Based Spanners Reference
+
+/*!
+\addtogroup PkgConeBasedSpanners
+
+\cgalPkgDescriptionBegin{Cone-Based Spanners,PkgConeBasedSpannersSummary}
+\cgalPkgPicture{Logo-ConeSpanners.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Weisheng Si and Quincy Tse}
+\cgalPkgDesc{This package provides functors for constructing two kinds of cone-based spanners:
+Yao graph and Theta graph, given a set of vertices on the plane and the directions of cone boundaries.
+Both exact and inexact constructions are supported.
+In exact construction, the cone boundaries are calculated using the roots of polynomials,
+thus avoiding the use of \f$ \pi \f$, which cannot be represented exactly.
+In inexact construction, the cone boundaries are calculated using the approximate \f$ \pi \f$
+value defined in \cgal, which is still accurate enough for most applications.
+Moreover, for visualization purpose, this package provides a global function to
+generate the data and script files used by Gnuplot to plot the constructed graphs. }
+\cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeBasedSpanners}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.9}
+\cgalPkgBib{cgal:st-cbs}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+
+## Functors ##
+- `CGAL::Compute_cone_boundaries_2`
+- `CGAL::Construct_yao_graph_2`
+- `CGAL::Construct_theta_graph_2`
+
+## Functions ##
+- `CGAL::gnuplot_output_2()`
+
+*/
