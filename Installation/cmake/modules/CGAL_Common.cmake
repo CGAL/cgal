@@ -54,5 +54,8 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
 
   # set minimal version of some optional libraries:
   set( Eigen3_FIND_VERSION "3.1.0")
-  
+  # set use-file for Eigen3 (needed to have default solvers)
+  set(EIGEN3_USE_FILE "UseEigen3")
+
+
 endif()
