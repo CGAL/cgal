@@ -8,7 +8,7 @@
 #include "Polyhedron_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Polyhedron_kernel.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Dualizer.h>
@@ -68,7 +68,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
   {
     Polyhedron* pMesh = item->polyhedron();
 
-    typedef CGAL::internal::Exact_field_selector<double>::Type ET;
+    typedef CGAL::Exact_rational ET;
     typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
 
     // get triangles from polyhedron
