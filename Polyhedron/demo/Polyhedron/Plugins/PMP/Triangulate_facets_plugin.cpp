@@ -118,7 +118,8 @@ public Q_SLOTS:
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh);
+      if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
+        messages->warning(tr("Some facets could not be triangulated."));
 
       CGAL_assertion_code(pMesh->normalize_border());
       CGAL_assertion(pMesh->is_valid(false, 3));
