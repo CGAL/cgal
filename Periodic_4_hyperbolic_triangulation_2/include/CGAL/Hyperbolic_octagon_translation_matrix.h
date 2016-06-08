@@ -42,26 +42,31 @@ std::ostream& operator<<(std::ostream& s, const std::vector<Word_idx_type>& o) {
 } 
 
 
-template<class Square_root_2_field>
-class Hyperbolic_octagon_translation_matrix_base
+template<class GT>
+class Hyperbolic_octagon_translation_matrix
 {
 
-public:
-  static Square_root_2_field factor;    // The multiplicative factor present in the general formula: sqrt(2) - 1
+  typedef typename GT::FT                                   FT;
 
-  typedef Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>   Self;  
-  typedef std::complex<Square_root_2_field>                                      Matrix_element;
+public:
+  
+
+  typedef Square_root_2_field<int>                          Field_number;
+  typedef Hyperbolic_octagon_translation_matrix<GT>         Self;  
+  typedef std::complex<Field_number>                        Matrix_element;
+
+  Field_number factor;    // The multiplicative factor present in the general formula: sqrt(2) - 1
 
   Matrix_element  A;
   Matrix_element  B;
   std::string     label;  
 
-  Hyperbolic_octagon_translation_matrix_base(const Matrix_element& A_, const Matrix_element& B_, 
+  Hyperbolic_octagon_translation_matrix(const Matrix_element& A_, const Matrix_element& B_, 
     const std::string& label_ = std::string("") ) :
-  A( A_ ), B( B_ ), label( label_ ) {}
+  A( A_ ), B( B_ ), label( label_ ), factor(-1, 1) {}
 
-  Hyperbolic_octagon_translation_matrix_base() :
-  A( Matrix_element(1,0) ), B( Matrix_element(0,0) ), label( std::string("") ) {}
+  Hyperbolic_octagon_translation_matrix() :
+  A( Matrix_element(1,0) ), B( Matrix_element(0,0) ), label( std::string("") ), factor(-1, 1) {}
 
   std::string merge_labels(const Self& rh) const
   {
@@ -103,16 +108,16 @@ public:
   }
 
   // rotation \pi/4
-  Hyperbolic_octagon_translation_matrix_base rotate() const
+  Hyperbolic_octagon_translation_matrix rotate() const
   {
-    Square_root_2_field B1 = real(B);
-    Square_root_2_field B2 = imag(B);
+    Field_number B1 = real(B);
+    Field_number B2 = imag(B);
     
     // sqrt(2)
-    Square_root_2_field k = Square_root_2_field(0, 1);
+    Field_number k = Field_number(0, 1);
     
-    Square_root_2_field BB1 = (B1 - B2)*k;
-    Square_root_2_field BB2 = (B1 + B2)*k;
+    Field_number BB1 = (B1 - B2)*k;
+    Field_number BB2 = (B1 + B2)*k;
 
     assert(BB2.l % 2 == 0 && BB2.r % 2 == 0);
 
@@ -121,12 +126,12 @@ public:
     BB2.l = BB2.l/2;
     BB2.r = BB2.r/2;
 
-    return Hyperbolic_octagon_translation_matrix_base(A, Matrix_element(BB1, BB2)); 
+    return Hyperbolic_octagon_translation_matrix(A, Matrix_element(BB1, BB2)); 
   }
 
-  Square_root_2_field trace() const 
+  Field_number trace() const 
   {
-    return Square_root_2_field(2, 0)*real(A);
+    return Field_number(2, 0)*real(A);
   }
 
   double length() const
@@ -151,8 +156,8 @@ public:
   
   static std::complex<double> toComplexDouble(Matrix_element M) //const
   {
-    Square_root_2_field rl  = real(M);
-    Square_root_2_field img = imag(M);
+    Field_number rl  = real(M);
+    Field_number img = imag(M);
     
     return std::complex<double>(rl.l + sqrt(2.)*rl.r, img.l + sqrt(2.)*img.r);
   }
@@ -163,7 +168,7 @@ public:
     Cmpl Aa = toComplexDouble(A);
     Cmpl Bb = toComplexDouble(B);
 
-    double ax = sqrt(factor.l + sqrt(2.)*factor.r);
+    double ax = sqrt(factor.l + sqrt(2.)*factor.r) ;
     
     Cmpl z(x, y);
     Cmpl res = (Aa*z + ax*Bb)/(ax*(conj(Bb)*z) + conj(Aa));
@@ -182,13 +187,14 @@ public:
 
 
 
-template<class Square_root_2_field>
-Square_root_2_field Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>::factor = Square_root_2_field(-1, 1); 
+//template< class GT, template <class> class Hyperbolic_octagon_translation_matrix>
+//typename Hyperbolic_octagon_translation_matrix<GT>::Field_number Hyperbolic_octagon_translation_matrix<GT>::factor = Hyperbolic_octagon_translation_matrix<GT>:: Field_number(-1, 1); 
+
 
 // just to give an order(ing)
-template<typename Int>
-bool operator < (const std::complex<Square_root_2_field<Int> >& lh,
-  const std::complex<Square_root_2_field<Int> >& rh)
+template< class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+bool operator < (const std::complex< typename Hyperbolic_octagon_translation_matrix<GT>:: template Field_number<GT::FT> >& lh,
+  const std::complex< typename Hyperbolic_octagon_translation_matrix<GT>:: template Field_number<GT::FT> >& rh)
 {
   if (real(lh) < real(rh)) {
     return true;
@@ -204,9 +210,9 @@ bool operator < (const std::complex<Square_root_2_field<Int> >& lh,
 }
 
 // just to order octagon_matrices 
-template<class Square_root_2_field>
-bool operator < (const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& lh, 
-  const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& rh)
+template<class Field_number>
+bool operator < (const Hyperbolic_octagon_translation_matrix<Field_number>& lh, 
+  const Hyperbolic_octagon_translation_matrix<Field_number>& rh)
 {
   if (lh.A < rh.A) {
     return true;
@@ -221,24 +227,19 @@ bool operator < (const Hyperbolic_octagon_translation_matrix_base<Square_root_2_
   return false;
 }
 
-template<class Square_root_2_field>
-bool operator == (const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& lh, 
-  const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& rh)
+template<class Field_number>
+bool operator == (const Hyperbolic_octagon_translation_matrix<Field_number>& lh, 
+  const Hyperbolic_octagon_translation_matrix<Field_number>& rh)
 {
   return (lh.A == rh.A && lh.B == rh.B);
 }
 
-template<class Square_root_2_field>
-std::ostream& operator<<(std::ostream& os, const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& m)
+template<class Field_number>
+std::ostream& operator<<(std::ostream& os, const Hyperbolic_octagon_translation_matrix<Field_number>& m)
 {
   os << m.A << " " << m.B;
   return os;
 }
-
-typedef long long                                                     ll;
-typedef Square_root_2_field<ll>                                       Sqrt_field;
-typedef Hyperbolic_octagon_translation_matrix_base<Sqrt_field>        Hyperbolic_octagon_translation_matrix;
-typedef Hyperbolic_octagon_translation_matrix::Matrix_element         Matrix_element;
 
 
 enum Direction {
@@ -254,29 +255,32 @@ enum Direction {
 
 
 
-
-void get_generators(std::vector<Hyperbolic_octagon_translation_matrix>& gens)
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void get_generators(std::vector< Hyperbolic_octagon_translation_matrix<GT> >& gens)
 {
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
   // This is a in the matrix, equal to sqrt(2) + 1
-  Matrix_element A = Matrix_element(Sqrt_field(1, 1), Sqrt_field(0, 0));
+  Matrix_element A = Matrix_element(Field_number(1, 1), Field_number(0, 0));
 
   // This vector holds all other Matrix_elements, results of the exponentials for various k
-  std::vector<Matrix_element> B(8, Matrix_element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
+  std::vector<Matrix_element> B(8, Matrix_element(Field_number(0, 0), Field_number(0, 0)));
 
   // Corrected ordering (initial ordering is present in backup file)
-  B[DIRECTION_A]     = A * Matrix_element(Sqrt_field( 0,  1), Sqrt_field( 0,  0));
-  B[DIRECTION_B]     = A * Matrix_element(Sqrt_field(-1,  0), Sqrt_field(-1,  0));
-  B[DIRECTION_C]     = A * Matrix_element(Sqrt_field( 0,  0), Sqrt_field( 0,  1));
-  B[DIRECTION_D]     = A * Matrix_element(Sqrt_field( 1,  0), Sqrt_field(-1,  0));
-  B[DIRECTION_A_BAR] = A * Matrix_element(Sqrt_field( 0, -1), Sqrt_field( 0,  0));
-  B[DIRECTION_B_BAR] = A * Matrix_element(Sqrt_field( 1,  0), Sqrt_field( 1,  0));
-  B[DIRECTION_C_BAR] = A * Matrix_element(Sqrt_field( 0,  0), Sqrt_field( 0, -1));
-  B[DIRECTION_D_BAR] = A * Matrix_element(Sqrt_field(-1,  0), Sqrt_field( 1,  0));
+  B[DIRECTION_A]     = A * Matrix_element(Field_number( 0,  1), Field_number( 0,  0));
+  B[DIRECTION_B]     = A * Matrix_element(Field_number(-1,  0), Field_number(-1,  0));
+  B[DIRECTION_C]     = A * Matrix_element(Field_number( 0,  0), Field_number( 0,  1));
+  B[DIRECTION_D]     = A * Matrix_element(Field_number( 1,  0), Field_number(-1,  0));
+  B[DIRECTION_A_BAR] = A * Matrix_element(Field_number( 0, -1), Field_number( 0,  0));
+  B[DIRECTION_B_BAR] = A * Matrix_element(Field_number( 1,  0), Field_number( 1,  0));
+  B[DIRECTION_C_BAR] = A * Matrix_element(Field_number( 0,  0), Field_number( 0, -1));
+  B[DIRECTION_D_BAR] = A * Matrix_element(Field_number(-1,  0), Field_number( 1,  0));
   
   std::string labels[8] = {string("a"), string("\\bar{b}"), string("c"), string("\\bar{d}"),
   string("\\bar{a}"), string("b"), string("\\bar{c}"), string("d")};
   for(int i = 0; i < 8; i++) {
-    gens.push_back(Hyperbolic_octagon_translation_matrix(A, B[i], labels[i]));
+    gens.push_back(Matrix(A, B[i], labels[i]));
   }
 }
 
@@ -564,13 +568,11 @@ void get_generators(std::vector<Hyperbolic_octagon_translation_matrix>& gens)
 /**************************************************************/
 
 
-
-// a, \bar{b}, c, \bar{d}, \bar{a}, b, \bar{c}, d
-vector<Hyperbolic_octagon_translation_matrix> gens;
-
-bool IsCanonical(const Hyperbolic_octagon_translation_matrix& m);
-
-void generate_words( set<Hyperbolic_octagon_translation_matrix>& words, vector<Hyperbolic_octagon_translation_matrix>& prev, int depth, double threshold  )
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void generate_words(const vector< Hyperbolic_octagon_translation_matrix<GT> > gens,
+                          set<    Hyperbolic_octagon_translation_matrix<GT> >& words, 
+                          vector< Hyperbolic_octagon_translation_matrix<GT> >& prev, 
+                          int depth, double threshold  )
 {
   if (depth == 1) {
     for(int i = 0; i < 8; i++) {
@@ -580,13 +582,17 @@ void generate_words( set<Hyperbolic_octagon_translation_matrix>& words, vector<H
     return;
   }
 
-  vector<Hyperbolic_octagon_translation_matrix> els;
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
+  vector<Matrix> els;
   generate_words( words, els, depth - 1, threshold);
   
-  Hyperbolic_octagon_translation_matrix temp = Hyperbolic_octagon_translation_matrix(Matrix_element(), Matrix_element());
-  ll size = els.size();
+  Matrix temp = Matrix(Matrix_element(), Matrix_element());
+  int size = els.size();
   bool is_new = false;
-  for(ll k = 0; k < size; k++) {
+  for(int k = 0; k < size; k++) {
     for(int i = 0; i < 8; i++) {
       temp = els[k]*gens[i];
 
@@ -602,14 +608,23 @@ void generate_words( set<Hyperbolic_octagon_translation_matrix>& words, vector<H
 }
 }
 
+
+
+
 // does the axis of a given matrix go through the fundamental octagon 
-bool IsCanonical(const Hyperbolic_octagon_translation_matrix& m)
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+bool IsCanonical(const Hyperbolic_octagon_translation_matrix<GT> & m)
 {
-  Hyperbolic_octagon_translation_matrix temp = m;
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
+  Matrix temp = m;
   
   // rotate while |B1| < |B2|
-  Sqrt_field B1, B2;
-  Sqrt_field C = Sqrt_field(-1, -1);
+  Field_number B1, B2;
+  Field_number C = Field_number(-1, -1);
   for(int i = 0; i < 8 && C != C.abs(); i++) {
     B1 = real(temp.B).abs();
     B2 = imag(temp.B).abs();
@@ -620,22 +635,31 @@ bool IsCanonical(const Hyperbolic_octagon_translation_matrix& m)
   assert(C == C.abs());
 
   // (2 - sqrt(2))(|B1| + (sqrt(2) -  1)|B2|)
-  Sqrt_field right = Sqrt_field(2, -1)*(B1 + Sqrt_field(-1, 1)*B2);
+  Field_number right = Field_number(2, -1)*(B1 + Field_number(-1, 1)*B2);
   
   // |A2|
-  Sqrt_field left = imag(temp.A).abs();
+  Field_number left = imag(temp.A).abs();
 
   // left <= right -> true
   C = right - left;
   return C == C.abs();
 }
 
-void dfs(const Hyperbolic_octagon_translation_matrix& m, set<Hyperbolic_octagon_translation_matrix>& visited)
+
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void dfs( const vector< Hyperbolic_octagon_translation_matrix<GT> > gens,
+          const Hyperbolic_octagon_translation_matrix<GT>  & m, 
+          set< Hyperbolic_octagon_translation_matrix<GT> >& visited)
 {
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
   assert(IsCanonical(m));
   visited.insert(m);
 
-  Hyperbolic_octagon_translation_matrix candidate = m;
+  Matrix candidate = m;
   for(int i = 0; i < 8; i++) {
     candidate = gens[i]*m*gens[(i + 4) % 8];
     if(IsCanonical(candidate) == true && visited.find(candidate) == visited.end()) {
@@ -645,39 +669,59 @@ void dfs(const Hyperbolic_octagon_translation_matrix& m, set<Hyperbolic_octagon_
 }
 
 // map<Hyperbolic_octagon_translation_matrix m, Hyperbolic_octagon_translation_matrix Aux>, m = Aux * origin * Aux^{-1} 
-void dfs_with_info(const pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>& new_pair, 
- map <Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>& visited)
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void dfs_with_info(const vector< Hyperbolic_octagon_translation_matrix<GT> > gens,
+                   const pair<Hyperbolic_octagon_translation_matrix<GT>, Hyperbolic_octagon_translation_matrix<GT> >& new_pair, 
+                         map <Hyperbolic_octagon_translation_matrix<GT>, Hyperbolic_octagon_translation_matrix<GT> >& visited)
 {
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
   assert(IsCanonical(new_pair.first));  
   visited.insert(new_pair);
   
-  const Hyperbolic_octagon_translation_matrix& current = new_pair.first;
-  const Hyperbolic_octagon_translation_matrix& current_factor = new_pair.second;
-  Hyperbolic_octagon_translation_matrix candidate = current, candidate_factor = current_factor;
+  const Matrix& current = new_pair.first;
+  const Matrix& current_factor = new_pair.second;
+  Matrix candidate = current, candidate_factor = current_factor;
   for(int i = 0; i < 8; i++) {
     candidate = gens[i]*current*gens[(i + 4) % 8];
     if(IsCanonical(candidate) == true && visited.find(candidate) == visited.end()) {
       candidate_factor = gens[i]*current_factor;
-      dfs_with_info(pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>(candidate, candidate_factor), visited);
+      dfs_with_info(pair<Matrix, Matrix>(candidate, candidate_factor), visited);
     } 
   }
 }
 
 
-void dfs_with_info(const               Hyperbolic_octagon_translation_matrix& origin,
- map<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>& visited)
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void dfs_with_info(const vector< Hyperbolic_octagon_translation_matrix<GT> > gens,
+                   const         Hyperbolic_octagon_translation_matrix<GT>& origin,
+                            map< Hyperbolic_octagon_translation_matrix<GT>, Hyperbolic_octagon_translation_matrix<GT> >& visited)
 {
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
   assert(IsCanonical(origin));
-  Hyperbolic_octagon_translation_matrix id = Hyperbolic_octagon_translation_matrix(Matrix_element(Sqrt_field(1, 0), Sqrt_field(0, 0)), 
-   Matrix_element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
-  pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> new_pair(origin, id);
+  Matrix id = Matrix(Matrix_element(Field_number(1, 0), Field_number(0, 0)), 
+                     Matrix_element(Field_number(0, 0), Field_number(0, 0)));
+  pair<Matrix, Matrix> new_pair(origin, id);
   
   dfs_with_info(new_pair, visited);
 }
 
 
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
 class IntersectionNumber
 {
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
 public:
 
   struct Point
@@ -687,21 +731,21 @@ public:
     double x, y;
   };
   
-  Hyperbolic_octagon_translation_matrix m;
+  Matrix m;
 
-  IntersectionNumber(const Hyperbolic_octagon_translation_matrix& m_) : m(m_)
+  IntersectionNumber(const Matrix& m_) : m(m_)
   {}
   
   long operator() () const
   {
-    set<Hyperbolic_octagon_translation_matrix> visited;
-    set<Hyperbolic_octagon_translation_matrix>::iterator it, it2;
+    set<Matrix> visited;
+    typename set<Matrix>::iterator it, it2;
     map<long, long> nb_map;
     map<long, long>::iterator mit;
 
     dfs(m, visited);
 
-    set<pair< Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> > common;
+    set<pair< Matrix, Matrix> > common;
     for(it = visited.begin(); it != visited.end(); ++it) {
       for(it2 = it; it2 != visited.end(); ++it2) {
         if(*it == *it2) {
@@ -730,12 +774,11 @@ public:
   }
   
   
-  void count_nb(const Hyperbolic_octagon_translation_matrix& m1, const Hyperbolic_octagon_translation_matrix& m2, set<pair< Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> >& visited) const
+  void count_nb(const vector<Matrix> gens, const Matrix& m1, const Matrix& m2, set< pair< Matrix, Matrix> >& visited) const
   {
-    typedef pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> matrix_pair;
+    typedef pair<Matrix, Matrix> matrix_pair;
     visited.insert(matrix_pair(m1, m2));
-
-    Hyperbolic_octagon_translation_matrix c1 = m1, c2 = m2;
+    Matrix c1 = m1, c2 = m2;
     for(int i = 0; i < 8; i++) {
       c1 = gens[i]*m1*gens[(i + 4) % 8];
       c2 = gens[i]*m2*gens[(i + 4) % 8];
@@ -748,7 +791,7 @@ public:
 //private:
 
 // check whether two axis have intersection
-  bool haveIntersection(const Hyperbolic_octagon_translation_matrix& m1, const Hyperbolic_octagon_translation_matrix& m2) const
+  bool haveIntersection(const Matrix& m1, const Matrix& m2) const
   {
     Point p1, p2;
     intersectWithInfinity(m1, p1, p2);
@@ -764,12 +807,12 @@ public:
     return (sign1 * sign2 < 0);
   }
   
-  void intersectWithInfinity(const Hyperbolic_octagon_translation_matrix& m, Point& p1, Point& p2) const
+  void intersectWithInfinity(const Matrix& m, Point& p1, Point& p2) const
   {
     Matrix_element a = m.A, b = m.B, factor = m.factor;
 
-    Matrix_element four = Matrix_element(Sqrt_field(4, 0), Sqrt_field(0, 0));
-    Matrix_element two = Matrix_element(Sqrt_field(2, 0), Sqrt_field(0, 0));
+    Matrix_element four = Matrix_element(Field_number(4, 0), Field_number(0, 0));
+    Matrix_element two = Matrix_element(Field_number(2, 0), Field_number(0, 0));
 
     Matrix_element D = (a - conj(a))*(a - conj(a));
     D += four*b*conj(b)*factor;
@@ -794,17 +837,25 @@ public:
   
 };
 
-void Delete(const set<Hyperbolic_octagon_translation_matrix>& canonical_set, vector<Hyperbolic_octagon_translation_matrix>& output)
-{
-  set<Hyperbolic_octagon_translation_matrix> redundant;
 
-  set<Hyperbolic_octagon_translation_matrix>::iterator it;
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void Delete(const set< Hyperbolic_octagon_translation_matrix<GT> >& canonical_set, 
+               vector< Hyperbolic_octagon_translation_matrix<GT> >& output)
+{
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
+  set<Matrix> redundant;
+
+  typename set<Matrix>::iterator it;
   for(it = canonical_set.begin(); it != canonical_set.end(); ++it) {
     if(redundant.find(*it) != redundant.end()) { 
       continue;
     }
 
-    set<Hyperbolic_octagon_translation_matrix> visited;
+    set<Matrix> visited;
     dfs(*it, visited);
     visited.erase(*it);
     
@@ -813,16 +864,25 @@ void Delete(const set<Hyperbolic_octagon_translation_matrix>& canonical_set, vec
   }
 }
 
-void generate_unique_words(vector<Hyperbolic_octagon_translation_matrix>& output, double threshold = 10, int word_length = 13)
+
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void generate_unique_words( const vector< Hyperbolic_octagon_translation_matrix<GT> >  gens,
+                                  vector< Hyperbolic_octagon_translation_matrix<GT> >& output, 
+                                  double threshold = 10, int word_length = 13)
 {
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
   get_generators(gens);
   
-  set<Hyperbolic_octagon_translation_matrix> unique_words;
-  vector<Hyperbolic_octagon_translation_matrix> temp;
+  set<Matrix> unique_words;
+  vector<Matrix> temp;
   generate_words(unique_words, temp, word_length, threshold);
   
   double l = 0;
-  set<Hyperbolic_octagon_translation_matrix>::iterator uit;
+  typename set<Matrix>::iterator uit;
   for(uit = unique_words.begin(); uit != unique_words.end(); ++uit) {
     l = uit->length();
     if(0. < l && l < threshold) {
@@ -834,14 +894,21 @@ void generate_unique_words(vector<Hyperbolic_octagon_translation_matrix>& output
 }
 
 // words that correspond to union of 1-cycles
-void generate_words_union_1_cycles(vector<Hyperbolic_octagon_translation_matrix>& out)
+template < class GT, template <class> class Hyperbolic_octagon_translation_matrix >
+void generate_words_union_1_cycles( const vector< Hyperbolic_octagon_translation_matrix<GT> >  gens,
+                                          vector< Hyperbolic_octagon_translation_matrix<GT> >& out)
 {
+
+  typedef Hyperbolic_octagon_translation_matrix<GT>           Matrix;
+  typedef typename Matrix::Matrix_element                     Matrix_element;
+  typedef typename Matrix::Field_number                       Field_number;
+
   if(gens.size() == 0) {
     get_generators(gens);
   }
-  Hyperbolic_octagon_translation_matrix f[4] = {gens[0], gens[5], gens[2], gens[7]};
+  Matrix f[4] = {gens[0], gens[5], gens[2], gens[7]};
   
-  Hyperbolic_octagon_translation_matrix F[8] = {
+  Matrix F[8] = {
     f[0]*f[0].inverse(),
     f[0],
     f[0]*f[1],
@@ -868,7 +935,7 @@ void generate_words_union_1_cycles(vector<Hyperbolic_octagon_translation_matrix>
         }
         counter++;
         
-        Hyperbolic_octagon_translation_matrix Tr = F[i]*F[k].inverse()*F[j];
+        Matrix Tr = F[i]*F[k].inverse()*F[j];
         // check that Tr != Id
         if(Tr.length() > 2.) {
           out.push_back(Tr);

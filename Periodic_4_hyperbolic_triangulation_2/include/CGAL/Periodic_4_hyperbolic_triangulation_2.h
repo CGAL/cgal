@@ -155,8 +155,8 @@ private:
 
 template < 	class GT,
 			class TDS = Triangulation_data_structure_2<
-				Triangulation_vertex_base_with_info_2<Hyperbolic_translation_info<std::string>, GT, Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT> >,
-				Triangulation_face_base_with_info_2<Periodic_4_hyperbolic_face_info_2, GT, Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT> >
+				Periodic_4_hyperbolic_triangulation_ds_vertex_base_2<GT>,
+				Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT>
 			>
 		>
 class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_cw_ccw_2 {
@@ -168,37 +168,37 @@ class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_cw_ccw_2 {
   typedef Triangulation_cw_ccw_2 Base;
 
 public:
-	typedef GT 										Geometric_traits;
-	typedef TDS 									Triangulation_data_structure;
+	typedef GT 										        Geometric_traits;
+	typedef TDS 									        Triangulation_data_structure;
 	typedef unsigned short int 						Int;
-	typedef Hyperbolic_word_4<Int>					Offset;
-	typedef typename GT::Circle_2 					Circle_2;
-	typedef Circle_2 								Circle;
-	typedef typename GT::Point_2 			      	Point_2;
-	typedef Point_2 								Point;
-	typedef typename GT::Segment_2 					Segment_2;
-	typedef Segment_2 								Segment;
-	typedef typename GT::Triangle_2 				Triangle_2;
-	typedef Triangle_2 								Triangle;
+	typedef Hyperbolic_word_4<Int, GT>		Offset;
+	typedef typename GT::Circle_2 				Circle_2;
+	typedef Circle_2 								      Circle;
+	typedef typename GT::Point_2 			    Point_2;
+	typedef Point_2 								      Point;
+	typedef typename GT::Segment_2 				Segment_2;
+	typedef Segment_2 								    Segment;
+	typedef typename GT::Triangle_2 			Triangle_2;
+	typedef Triangle_2 								    Triangle;
 
-	typedef std::pair<Point, Offset> 				Periodic_point;
+	typedef std::pair<Point, Offset> 				      Periodic_point;
 	typedef array< std::pair<Point, Offset>, 2 >	Periodic_segment;
 	typedef array< std::pair<Point, Offset>, 3 > 	Periodic_triangle;	
 
-	typedef typename TDS::Vertex 					Vertex;
-	typedef typename TDS::Edge 						Edge;
-	typedef typename TDS::Face 						Face;
+	typedef typename TDS::Vertex 					            Vertex;
+	typedef typename TDS::Edge 						            Edge;
+	typedef typename TDS::Face 						            Face;
 
-	typedef typename TDS::Vertex_handle 			Vertex_handle;
-	typedef typename TDS::Face_handle 				Face_handle;
+	typedef typename TDS::Vertex_handle 			        Vertex_handle;
+	typedef typename TDS::Face_handle 				        Face_handle;
 
-	typedef typename TDS::size_type             	size_type;
-  	typedef typename TDS::difference_type        	difference_type;
+	typedef typename TDS::size_type             	    size_type;
+  	typedef typename TDS::difference_type        	  difference_type;
 
-  	typedef typename TDS::Face_iterator         	Face_iterator;
-  	typedef typename TDS::Edge_iterator          	Edge_iterator;
-  	typedef typename TDS::Vertex_iterator        	Vertex_iterator;
-  	typedef typename TDS::Face_circulator       	Face_circulator;
+  	typedef typename TDS::Face_iterator         	  Face_iterator;
+  	typedef typename TDS::Edge_iterator          	  Edge_iterator;
+  	typedef typename TDS::Vertex_iterator        	  Vertex_iterator;
+  	typedef typename TDS::Face_circulator       	  Face_circulator;
     typedef typename TDS::Edge_circulator         	Edge_circulator;
     typedef typename TDS::Vertex_circulator       	Vertex_circulator;
     //typedef typename TDS::Face_base               Face_base;
@@ -240,7 +240,7 @@ public:
   	typedef Point                                	value_type;
   	typedef const value_type&                    	const_reference;
 
-  	typedef Tag_false 								Weighted_tag;
+  	typedef Tag_false 								            Weighted_tag;
 
 public:
   	enum Iterator_type {

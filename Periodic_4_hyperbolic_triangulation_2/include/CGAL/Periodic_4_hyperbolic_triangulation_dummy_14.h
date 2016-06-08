@@ -90,7 +90,6 @@ namespace CGAL {
 
         pts.push_back(Point( FT(0), FT(0) ));
 
-        
         int tri[32][3] = { 
                 {  0,   1,   9},    //  0
                 {  1,  10,   9},    //  1
