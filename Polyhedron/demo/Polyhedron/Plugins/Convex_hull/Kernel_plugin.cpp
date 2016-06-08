@@ -11,7 +11,6 @@
 
 #include <CGAL/Polyhedron_kernel.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Dualizer.h>
 #include <CGAL/translate.h>
 
@@ -69,7 +68,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
   {
     Polyhedron* pMesh = item->polyhedron();
 
-    typedef typename CGAL::Gmpq ET;
+    typedef CGAL::internal::Exact_field_selector<double>::Type ET;
     typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
 
     // get triangles from polyhedron
