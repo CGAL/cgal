@@ -22,7 +22,7 @@ typedef CGAL::Distance_adapter <Point_with_info,Ppmap,Neighbor_search::Distance>
 typedef CGAL::Orthogonal_k_neighbor_search<Traits_with_info,Distance_adapter>                         Neighbor_search_with_info;
 
 template <class K_search>
-void search(bool nearest)
+bool search(bool nearest)
 {
   const unsigned int N = 1000;
   const double cube_side_length = 1.0;
@@ -71,6 +71,7 @@ void search(bool nearest)
       }
     }
   }
+  bool res=true;
   // the other points must be further/closer than min_dist
   {
     for(std::vector<Point>::iterator it = diff.begin();
@@ -80,22 +81,26 @@ void search(bool nearest)
       if(nearest){
 	if(dist < sep_dist){
 	  std::cout << "Error: Point " << *it << " at distance " << dist << "  <  " << sep_dist << std::endl;
+          res=false;
 	}
       } else {
 	if(dist > sep_dist){
 	  std::cout << "Error: Point " << *it << " at distance " << dist << "  >  " << sep_dist  << std::endl;
+          res=false;
 	}
       }
     }
   }
+  return res;
 }
 
 int main()
 {
-  search<Neighbor_search>(true);
-  search<Neighbor_search>(false);
-  search<Neighbor_search_with_info>(true);
-  search<Neighbor_search_with_info>(false);
+  bool res=true;
+  res&=search<Neighbor_search>(true);
+  res&=search<Neighbor_search>(false);
+  res&=search<Neighbor_search_with_info>(true);
+  res&=search<Neighbor_search_with_info>(false);
   std::cout << "done" << std::endl;
-  return 0;
+  return res ? 0 : 1;
 }
