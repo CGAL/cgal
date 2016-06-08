@@ -49,6 +49,7 @@ struct Mesh_parameters
   
   double tet_shape;
   double tet_sizing;
+  double edge_sizing;
   bool protect_features;
   int manifold;
   
@@ -170,7 +171,7 @@ launch()
 #endif
 
   // Create mesh criteria
-  Mesh_criteria criteria(Edge_criteria(p_.facet_sizing),
+  Mesh_criteria criteria(Edge_criteria(p_.edge_sizing),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
                                         p_.facet_approx,
