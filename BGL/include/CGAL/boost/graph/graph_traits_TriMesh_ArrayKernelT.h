@@ -35,6 +35,8 @@
 
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
+#include <CGAL/hash_openmesh.h>
+
 // http://openmesh.org/Documentation/OpenMesh-Doc-Latest/classOpenMesh_1_1Concepts_1_1KernelT.html
 
 #if defined(BOOST_MSVC)
