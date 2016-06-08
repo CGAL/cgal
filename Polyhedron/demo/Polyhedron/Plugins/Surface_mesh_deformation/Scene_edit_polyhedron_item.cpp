@@ -1365,8 +1365,6 @@ boost::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_compone
   return visitor.minimum_visitor.minimum;
 }
 
-bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group(Ctrl_vertices_group_data_list::iterator& hgb, Ctrl_vertices_group_data_list::iterator& hge);
-
 bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group()
 {
   Ctrl_vertices_group_data_list::iterator hgb, hge;
