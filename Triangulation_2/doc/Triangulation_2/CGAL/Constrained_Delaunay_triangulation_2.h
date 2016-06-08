@@ -108,9 +108,9 @@ Constrained_Delaunay_triangulation_2(const
 Constrained_Delaunay_triangulation_2& cdt1); 
 
 /*!
-A templated constructor which introduces and builds 
-a constrained triangulation with constraints in the range 
-`[first,last)`. 
+Builds a constrained triangulation with constraints
+in the range `[first,last)` by calling
+`insert_constraints(first, last)`.
 \tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`. 
 */ 
 template<class ConstraintIterator> Constrained_Delaunay_triangulation_2( 

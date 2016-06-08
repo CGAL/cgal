@@ -120,14 +120,11 @@ public:
   Constrained_Delaunay_triangulation_2(const CDt& cdt)
     : Ctr(cdt) {}
 
-  Constrained_Delaunay_triangulation_2(List_constraints& lc, 
+  Constrained_Delaunay_triangulation_2(const List_constraints& lc,
 				       const Geom_traits& gt=Geom_traits())
     : Ctr(gt) 
-    {   
-      typename List_constraints::iterator itc = lc.begin();
-      for( ; itc != lc.end(); ++itc) {
-	insert((*itc).first, (*itc).second);
-      }
+    {
+      insert_constraints(lc.begin(), lc.end());
       CGAL_triangulation_postcondition( is_valid() );
     }
 
@@ -137,9 +134,7 @@ public:
 				       const Geom_traits& gt=Geom_traits() )
     : Ctr(gt) 
     {
-      for ( ; it != last; it++) {
-      	insert((*it).first, (*it).second);
-      }
+      insert_constraints(it, last);
       CGAL_triangulation_postcondition( is_valid() );
     }
 
