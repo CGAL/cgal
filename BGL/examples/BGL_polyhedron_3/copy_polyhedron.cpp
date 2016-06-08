@@ -16,11 +16,10 @@
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 
-#include <boost/unordered_map.hpp>
-
 #include <iostream>
 #include <fstream>
 #include <iterator>
+#include <boost/unordered_map.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 

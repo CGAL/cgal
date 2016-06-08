@@ -20,11 +20,12 @@
 #ifndef CGAL_HASH_OPENMESH_H
 #define CGAL_HASH_OPENMESH_H
 
+#include <OpenMesh/Core/Mesh/Handles.hh>
 
-#ifndef CGAL_DISABLE_HASH_OPENMESH
+#ifndef OM_HAS_HASH
 
 #include <functional>
-#include <OpenMesh/Core/Mesh/Handles.hh>
+
 namespace OpenMesh {
 
 inline std::size_t hash_value(const BaseHandle& h) { return h.idx(); }
@@ -40,16 +41,61 @@ namespace std {
 
 #ifndef CGAL_CFG_NO_STD_HASH
 
-  template <>
-  struct hash<OpenMesh::BaseHandle >
-    : public std::unary_function<OpenMesh::BaseHandle, std::size_t> 
-  {
+template <>
+struct hash<OpenMesh::BaseHandle >
+  : public std::unary_function<OpenMesh::BaseHandle, std::size_t>
+{
 
-    std::size_t operator()(const OpenMesh::BaseHandle& h) const
-    {
-      return h.idx();
-    }
-  };
+  std::size_t operator()(const OpenMesh::BaseHandle& h) const
+  {
+    return h.idx();
+  }
+};
+
+template <>
+struct hash<OpenMesh::VertexHandle >
+  : public std::unary_function<OpenMesh::VertexHandle, std::size_t>
+{
+
+  std::size_t operator()(const OpenMesh::VertexHandle& h) const
+  {
+    return h.idx();
+  }
+};
+
+template <>
+struct hash<OpenMesh::HalfedgeHandle >
+  : public std::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
+{
+
+  std::size_t operator()(const OpenMesh::HalfedgeHandle& h) const
+  {
+    return h.idx();
+  }
+};
+
+template <>
+struct hash<OpenMesh::EdgeHandle >
+  : public std::unary_function<OpenMesh::EdgeHandle, std::size_t>
+{
+
+  std::size_t operator()(const OpenMesh::EdgeHandle& h) const
+  {
+    return h.idx();
+  }
+};
+
+template <>
+struct hash<OpenMesh::FaceHandle >
+  : public std::unary_function<OpenMesh::FaceHandle, std::size_t>
+{
+
+  std::size_t operator()(const OpenMesh::FaceHandle& h) const
+  {
+    return h.idx();
+  }
+};
+
 #endif // CGAL_CFG_NO_STD_HASH
 
 #if defined(BOOST_MSVC)
@@ -58,7 +104,7 @@ namespace std {
 
 } // namespace std
 
-#endif // CGAL_DISABLE_HASH_OPENMESH
 
+#endif  // OM_HAS_HASH
 
 #endif // CGAL_HASH_OPENMESH_H
