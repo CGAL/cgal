@@ -1,12 +1,12 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Viewer_interface.h>
 #include "Scene_polyhedron_item.h"
 #include "Scene_edit_polyhedron_item.h"
+#include "Scene_polyhedron_selection_item.h"
 
 #include <QAction>
 #include <QMainWindow>
 #include <QFileDialog>
-
-#include <QGLViewer/qglviewer.h>
 #include <QMessageBox>
 
 #include "ui_Deform_mesh.h"
@@ -61,17 +61,20 @@ public Q_SLOTS:
   void on_BrushSpinBoxRoi_changed(int);
   void on_ROIRadioButton_toggled(bool);
   void new_item_created(int item_id);
-
+  void on_importSelectionPushButton_clicked();
+  void importSelection(Scene_polyhedron_selection_item*, Scene_edit_polyhedron_item*);
 private:
   typedef CGAL::Three::Scene_interface::Item_id Item_id;
 
   Scene_edit_polyhedron_item* convert_to_edit_polyhedron(Item_id, Scene_polyhedron_item*);
   Scene_polyhedron_item* convert_to_plain_polyhedron(Item_id, Scene_edit_polyhedron_item*);
+  void updateSelectionItems(Scene_polyhedron_item* target);
 
   Ui::DeformMesh ui_widget;
   QDockWidget* dock_widget;
 
   QAction* actionDeformation;
+  RenderingMode last_RM;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
 
 QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {
@@ -137,6 +140,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   connect(ui_widget.BrushSpinBoxRoi, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBoxRoi_changed(int)));
   connect(ui_widget.BrushSpinBoxCtrlVert, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBoxCtrlVert_changed(int)));
   connect(ui_widget.ROIRadioButton, SIGNAL(toggled(bool)), this, SLOT(on_ROIRadioButton_toggled(bool)));
+  connect(ui_widget.importSelectionPushButton, SIGNAL(clicked()), this, SLOT(on_importSelectionPushButton_clicked()));
   ///////////////////////////////////////////////////////////////////
 }
 
@@ -338,21 +342,36 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
 
       if(edit_item) {
         edit_item->ShowAsSphere(false);
-        convert_to_plain_polyhedron(i, edit_item);
+        Scene_polyhedron_item* item = convert_to_plain_polyhedron(i, edit_item);
+        item->setRenderingMode(last_RM);
+        updateSelectionItems(item);
       }
     }
   }
   else
   {
     ui_widget.ShowAsSphereCheckBox->setChecked(false);
+    Scene_polyhedron_selection_item* selection_item = NULL;
+    for(std::size_t i =0; i<scene->numberOfEntries(); i++)
+    {
+      selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
+      if (selection_item)
+        break;
+      else
+        selection_item = NULL;
+    }
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id i , scene->selectionIndices())
     {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(i));
       if (poly_item &&
           poly_item->polyhedron()->is_pure_triangle())
       {
+        last_RM = poly_item->renderingMode();
         poly_item->update_halfedge_indices();
-        convert_to_edit_polyhedron(i, poly_item);
+        if(!selection_item)
+          convert_to_edit_polyhedron(i, poly_item);
+        else
+          importSelection(selection_item, convert_to_edit_polyhedron(i, poly_item));
       }
       else if(poly_item &&
               !(poly_item->polyhedron()->is_pure_triangle()) )
@@ -441,4 +460,96 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_polyhedron(Item_id i,
   return poly_item;
 }
 
+
+
+void Polyhedron_demo_edit_polyhedron_plugin::on_importSelectionPushButton_clicked()
+{
+Scene_polyhedron_selection_item* selection_item = NULL;
+Scene_edit_polyhedron_item* edit_item = NULL;
+bool need_sel(true), need_edit(true);
+
+// find selection_item and edit_item in selection
+  Q_FOREACH(Item_id id, scene->selectionIndices())
+  {
+    if(need_sel)
+    {
+      Scene_polyhedron_selection_item* selection_test =
+          qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
+      if(selection_test)
+      {
+        selection_item = selection_test;
+        need_sel = false;
+      }
+    }
+    if(need_edit)
+    {
+      Scene_edit_polyhedron_item* edit_test =
+          qobject_cast<Scene_edit_polyhedron_item*>(scene->item(id));
+      if(edit_test)
+      {
+        edit_item = edit_test;
+        need_edit = false;
+      }
+    }
+
+    if(!need_sel && !need_edit)
+      break;
+  }
+  if(!selection_item || !edit_item)
+    return;
+  importSelection(selection_item, edit_item);
+}
+
+void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_selection_item *selection_item, Scene_edit_polyhedron_item *edit_item)
+{
+//converts the selection in selected points
+QVector<Scene_polyhedron_selection_item::Vertex_handle> sel_to_import;
+Q_FOREACH(Scene_polyhedron_selection_item::Vertex_handle vh, selection_item->selected_vertices)
+  sel_to_import.push_back(vh);
+Q_FOREACH(Scene_polyhedron_selection_item::edge_descriptor ed, selection_item->selected_edges)
+{
+  Scene_polyhedron_selection_item::Vertex_handle vh = source(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
+  if(!sel_to_import.contains(vh))
+    sel_to_import.push_back(vh);
+
+  vh = target(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
+  if(!sel_to_import.contains(vh))
+    sel_to_import.push_back(vh);
+}
+Q_FOREACH(Scene_polyhedron_selection_item::Facet_handle fh, selection_item->selected_facets)
+{
+  Polyhedron::Halfedge_around_facet_circulator hafc = fh->facet_begin();
+  Polyhedron::Halfedge_around_facet_circulator end = hafc;
+  CGAL_For_all(hafc, end)
+  {
+     if(!sel_to_import.contains(hafc->vertex()))
+       sel_to_import.push_back(hafc->vertex());
+  }
+}
+
+//makes the selected points ROI
+Q_FOREACH(Scene_polyhedron_selection_item::Vertex_handle vh, sel_to_import)
+  edit_item->insert_roi_vertex(vh);
+edit_item->invalidateOpenGLBuffers();
+selection_item->setVisible(false);
+(*QGLViewer::QGLViewerPool().begin())->update();
+}
+
+void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_polyhedron_item* target)
+{
+  for(std::size_t i = 0; i<scene->numberOfEntries(); i++)
+  {
+    Scene_polyhedron_selection_item* sel_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
+    if(sel_item
+       && sel_item->polyhedron() == target->polyhedron())
+    {
+      sel_item->invalidateOpenGLBuffers();
+      if(!ui_widget.RemeshingCheckBox->isChecked())
+        sel_item->setVisible(true);
+      else
+        scene->erase(scene->item_id(sel_item));
+    }
+
+  }
+}
 #include "Edit_polyhedron_plugin.moc"
