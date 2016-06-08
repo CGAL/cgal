@@ -209,7 +209,7 @@ QList<Kernel::Triangle_3> Scene_polyhedron_item_priv::triangulate_primitive(Poly
   FT triangulation(fit,normal,poly,diagonal);
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
-  for(typename FT::CDT::Finite_faces_iterator
+  for( FT::CDT::Finite_faces_iterator
       ffit = triangulation.cdt->finite_faces_begin(),
       end = triangulation.cdt->finite_faces_end();
       ffit != end; ++ffit)
