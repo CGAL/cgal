@@ -24,6 +24,7 @@ typedef Triangulation::Point_2	                                   					Point;
 typedef Triangulation::Face_handle													Face_handle;
 typedef Triangulation::Vertex_handle												Vertex_handle;
 typedef Triangulation::Locate_type 													Locate_type;
+typedef Triangulation::Edge                                                         Edge;
 typedef Traits::FT                                                                  FT;
 typedef std::set<Face_handle>::iterator                                             face_iterator;
 
@@ -42,7 +43,7 @@ int main(void) {
 
     // This is the barycenter of face 10
     Point query = Point(FT(-0.59841), FT(-0.15901));
-    Face_handle fh = tr.locate( query, lt, li );
+    Face_handle fh = tr.euclidean_visibility_locate( query, lt, li );
     cout << "Point " << query << " is located in face " << fh->get_number();
     cout << (lt == Triangulation::EDGE ? " [EDGE]" : (lt == Triangulation::VERTEX ? " [VERTEX]" : " [FACE]")) << endl;
 
@@ -54,6 +55,13 @@ int main(void) {
     }
     cout << endl;
 
+    cout << "Number of faces before: " << tr.number_of_faces() << endl;
+
+    tr.insert(query, fh);
+
+    cout << "Number of faces after:  " << tr.number_of_faces() << endl;
+
+/*
     cout << endl;
     faces_in_conflict.clear();
 
@@ -98,6 +106,8 @@ int main(void) {
         cout << (*it)->get_number() << ", ";
     }
     cout << endl;    
+
+*/
 
     cout << endl << "Triangulation is valid: " << (tr.is_valid() ? "TRUE" : "FALSE") << endl;
 

@@ -320,6 +320,31 @@ public:
 
 
 
+  template<class EdgeIt>
+  Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end)
+  {
+    std::list<Face_handle> empty_list;
+    return star_hole(p, edge_begin,         edge_end, 
+                        empty_list.begin(), empty_list.end());
+  }
+
+
+  template<class EdgeIt, class FaceIt>
+  Vertex_handle star_hole(const Point& p, EdgeIt edge_begin, EdgeIt edge_end,
+                                          FaceIt face_begin, FaceIt face_end)
+  {
+    Vertex_handle v = _tds.star_hole(edge_begin, edge_end, face_begin, face_end);
+    v->set_point(p);
+    return v;
+  }
+
+
+  Vertex_handle insert_in_face(const Point& p, Face_handle fh) {
+    Vertex_handle vh = _tds.insert_in_face(fh);
+    vh->set_point(p);
+    return vh;
+  }
+
 
   bool is_infinite(Vertex_handle v) const
   {
@@ -854,7 +879,7 @@ public:
 public:
   	std::vector<Vertex_handle> insert_dummy_points();
 
-    Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle f = Face_handle()) const;
+    Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handle f = Face_handle()) const;
 
 protected:
   	// COMMON INSERTION for DELAUNAY and REGULAR TRIANGULATION
@@ -1436,10 +1461,18 @@ is_valid(bool verbose, int level) const {
     	}
     	if (orientation( *p[0],  *p[1],  *p[2], 
                    		off[0], off[1], off[2] ) != POSITIVE) {
-      		if (verbose) {
-            std::cerr << "Orientation problem in face " << cit->get_number() << endl;
-      		}
-      		error = true;
+      	if (verbose) {
+          cit->restore_orientation();
+          for (int i=0; i<3; i++) {
+            p[i] = &cit->vertex(i)->point();
+            off[i] = cit->offset(i);
+          }
+          if (orientation( *p[0],  *p[1],  *p[2], 
+                          off[0], off[1], off[2] ) != POSITIVE) {
+            std::cerr << "Orientation problem in face " << cit->get_number() << ", adjustment attempt failed!" << endl;  
+            error = true;
+          }   
+      	}
     	}
   	}
 
@@ -1515,7 +1548,7 @@ find_in_conflict(     const Point& p,
 
 template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-locate(const Point& p, Locate_type& lt, int& li, Face_handle f) const
+euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handle f) const
 {
 
 	// Random generator (used to introduce a small perturbation to the choice of the starting vertex each time)
