@@ -2433,8 +2433,9 @@ also model the `ArrangementLandmarkTraits_2` concept.
 Top portion of the refinement hierarchy of the geometry-traits
 concepts. There are four copies of the concepts at the bottom---one
 for each side; see also Figure
-\cgalFigureRef{aos_fig-unbounded_concept_hierarchy} and
-\cgalFigureRef{aos_fig-spherical_concept_hierarchy}.  \cgalFigureEnd
+\cgalFigureRef{aos_fig-open_concept_hierarchy} and
+\cgalFigureRef{aos_fig-spherical_concept_hierarchy}.
+\cgalFigureEnd
 
 We descend to the bottom level of the hierarchy. The refinements
 describe in this section provide the requirements imposed on traits
@@ -2473,7 +2474,7 @@ reaches the boundary of the parameter space in this case is bounded
 and open.}  A suitable geometry-traits component for unbounded curves
 in the plane is a model of the combined concept
 `ArrangementOpenBoundaryTraits_2` shown in Figure
-\cgalFigureRef{aos_fig-unbounded_concept_hierarchy}.
+\cgalFigureRef{aos_fig-open_concept_hierarchy}.
 
 A suitable geometry-traits component for arrangements embedded on
 surfaces homeomorphic to a sphere is a model of the combined
@@ -2489,7 +2490,7 @@ refinements, and the other two provide operations that handle points,
 curve-ends, and curves that are contained in the boundary of the
 domain.
 
-\cgalFigureBegin{aos_fig-unbounded_concept_hierarchy,unbounded_concept_hierarchy.png}
+\cgalFigureBegin{aos_fig-open_concept_hierarchy,open_concept_hierarchy.png}
 Bottom portion of the refinement hierarchy of the geometry-traits
 concept for curves embedded on an open surface, for instance, the
 entire plane.
