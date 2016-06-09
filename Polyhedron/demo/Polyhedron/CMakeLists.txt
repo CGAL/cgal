@@ -141,13 +141,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
 
-  unset(CGAL_THREE_HEADERS_PATH CACHE)
   find_path(CGAL_THREE_HEADERS_PATH
     NAME CGAL/Three/Scene_item.h
     HINTS ${CGAL_INCLUDE_DIRS}
     NO_DEFAULT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
-  mark_as_advanced(CGAL_THREE_HEADERS_PATH)
+  unset(CGAL_THREE_HEADERS_PATH CACHE)
 
   if(CGAL_THREE_HEADERS_PATH)
     qt5_generate_moc( "${CGAL_THREE_VIEWER_INTERFACE_H_PATH}/CGAL/Three/Viewer_interface.h"
