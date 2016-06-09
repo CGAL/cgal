@@ -5,6 +5,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_writer_wavefront.h>
 #include <CGAL/IO/generic_copy_OFF.h>
+#include <CGAL/IO/OBJ_reader.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -846,32 +847,8 @@ Scene_polyhedron_item::load_obj(std::istream& in)
   typedef Polyhedron::Vertex::Point Point;
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > faces;
-  
-  Point p;
-  std::string line;
-  std::size_t i, j, k;
-  bool failed = false;
-  while(getline(in, line)){
-    if(line[0] == 'v' && line[1] == ' '){
-      std::istringstream iss(line.substr(1));
-      iss >> p;
-      if(! iss) failed = true;
-      points.push_back(p);
-    } else if(line[0] == 'f'){
-      std::istringstream iss(line.substr(1));
-      iss >> i;
-      iss.ignore(256, ' ');
-      iss>> j;
-      iss.ignore(256, ' ');
-      iss>> k;
-      if(! iss) failed = true;
-      std::vector<std::size_t> face;
-      face.push_back(i-1);
-      face.push_back(j-1);
-      face.push_back(k-1);
-      faces.push_back(face);
-    }
-  }
+  bool failed = !CGAL::read_OBJ(in,points,faces);
+
   if(CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces)){
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh( points,faces,*poly);
   }else{
