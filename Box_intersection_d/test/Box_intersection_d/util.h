@@ -42,9 +42,9 @@ struct Util {
             NT lo[DIM], max[DIM];
             for( int d = 0; d < DIM; ++d ) {
                 lo[d] =
-                    (NT)(CGAL::default_random.get_double() * (n - maxEdgeLength));
+                    (NT)(CGAL::get_default_random().get_double() * (n - maxEdgeLength));
                 max[d] =
-            (NT)(lo[d] + 1 + (CGAL::default_random.get_double() * maxEdgeLength));
+            (NT)(lo[d] + 1 + (CGAL::get_default_random().get_double() * maxEdgeLength));
             }
             boxes.push_back( Box( &lo[0], &max[0]) );
         }

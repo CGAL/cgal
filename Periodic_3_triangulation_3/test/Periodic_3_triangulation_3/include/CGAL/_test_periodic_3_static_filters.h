@@ -304,7 +304,7 @@ void compute_epsilons()
 int _test_periodic_3_static_filters()
 {
   int loops = 2000;
-  int seed  = CGAL::default_random.get_int(0, 1<<30);
+  int seed  = CGAL::get_default_random().get_int(0, 1<<30);
 
   std::cout << "Initializing random generator with seed = " << seed
             << std::endl

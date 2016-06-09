@@ -28,13 +28,13 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   qt5_wrap_ui( DT_UI_FILES Spatial_searching_2.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources ( DT_RESOURCE_FILES ./Spatial_searching_2.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Spatial_searching_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   qt5_generate_moc( Spatial_searching_2.cpp Spatial_searching_2.moc )
 
   # The executable itself.
-  add_executable  ( Spatial_searching_2 Spatial_searching_2.cpp Spatial_searching_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+  add_executable  ( Spatial_searching_2 Spatial_searching_2.cpp Spatial_searching_2.moc ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} )
 
   qt5_use_modules(Spatial_searching_2 Xml Script OpenGL Svg)
 

@@ -10,6 +10,8 @@ set(CGAL_CONFIG_LOADED TRUE)
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
+set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
+
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 set(CGAL_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@")
 
@@ -79,8 +81,9 @@ macro(check_cgal_component COMPONENT)
       # include config file (defining WITH_${CGAL_LIB})
       include(${CGAL_CONFIG_DIR}/${CGAL_LIB}LibConfig.cmake)
     endif()
+
     if ( WITH_${CGAL_LIB} )
-      if(TARGET CGAL::${CGAL_LIB})
+      if(TARGET CGAL::${CGAL_LIB} OR CGAL_HEADER_ONLY )
         set( ${CGAL_LIB}_FOUND TRUE )
       else()
         set( ${CGAL_LIB}_FOUND FALSE )

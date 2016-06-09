@@ -284,11 +284,31 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       if (${component} STREQUAL "ImageIO")
         find_package( OpenGL QUIET )
         find_package( ZLIB QUIET )
+
+        if (OPENGL_FOUND)
+          add_definitions("${OPENGL_DEFINITIONS}")
+          include_directories( SYSTEM "${OPENGL_INCLUDE_DIR}" )
+        endif(OPENGL_FOUND)
+        
+        if(ZLIB_FOUND)
+          cache_set(CGAL_ImageIO_USE_ZLIB "ON")
+          add_definitions("-DCGAL_USE_ZLIB")
+          include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
+        endif(ZLIB_FOUND)
+
+        if(WITH_VTK)
+          if( VTK_FOUND )
+            add_definitions("-DCGAL_USE_VTK")
+            include_directories( SYSTEM ${VTK_INCLUDE_DIRS} )
+            link_directories(${vtkImagingCore_RUNTIME_LIBRARY_DIRS} ${vtkImagingCore_LIBRARY_DIRS} ${vtkIOImage_RUNTIME_LIBRARY_DIRS} ${vtkIOImage_LIBRARY_DIRS} ${vtkFiltersImaging_RUNTIME_LIBRARY_DIRS} ${vtkFiltersImaging_LIBRARY_DIRS})
+          endif()
+        endif()
+        
       endif()
 
       if (${component} STREQUAL "Qt5")
-        find_package( OpenGL QUIET )
-        find_package( Qt5 QUIET COMPONENTS OpenGL Svg )
+        find_package(OpenGL QUIET)
+        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
       endif()
 
     else(WITH_CGAL_${component})
@@ -312,14 +332,34 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
           ####message( STATUS "External library ${component} has not been preconfigured")
           if (${component} STREQUAL "ImageIO")
-            find_package( OpenGL )
-            find_package( ZLIB )
+            find_package( OpenGL QUIET )
+            find_package( ZLIB QUIET )
+
+            if (OPENGL_FOUND)
+              add_definitions("${OPENGL_DEFINITIONS}")
+              include_directories( SYSTEM "${OPENGL_INCLUDE_DIR}" )
+            endif(OPENGL_FOUND)
+        
+            if(ZLIB_FOUND)
+              cache_set(CGAL_ImageIO_USE_ZLIB "ON")
+              add_definitions("-DCGAL_USE_ZLIB")
+              include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
+            endif(ZLIB_FOUND)
+
+            if(WITH_VTK)
+              if( VTK_FOUND )
+                add_definitions("-DCGAL_USE_VTK")
+                include_directories( SYSTEM ${VTK_INCLUDE_DIRS} )
+                link_directories(${vtkImagingCore_RUNTIME_LIBRARY_DIRS} ${vtkImagingCore_LIBRARY_DIRS} ${vtkIOImage_RUNTIME_LIBRARY_DIRS} ${vtkIOImage_LIBRARY_DIRS} ${vtkFiltersImaging_RUNTIME_LIBRARY_DIRS} ${vtkFiltersImaging_LIBRARY_DIRS})
+              endif()
+            endif()
+
           endif()
 
           if (${component} STREQUAL "Qt5")
             set(CGAL_${component}_FOUND TRUE)
-            find_package( OpenGL )
-            find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
+            find_package(OpenGL QUIET)
+            find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
           endif()
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND)
@@ -449,7 +489,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
-
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
 
