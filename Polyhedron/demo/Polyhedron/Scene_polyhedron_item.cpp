@@ -192,7 +192,7 @@ const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
 QList<Kernel::Triangle_3> Scene_polyhedron_item_priv::triangulate_primitive(Polyhedron::Facet_iterator fit,
                                                 Traits::Vector_3 normal)
 {
-  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, typename boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
+  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
   //The output list
   QList<Kernel::Triangle_3> res;
   //check if normal contains NaN values
@@ -437,7 +437,7 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
                                          const VertexNormalPmap& vnmap,
                                          const bool colors_only) const
 {
-  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, typename boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
+  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
   double diagonal;
   if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->diagonalBbox();
@@ -455,7 +455,7 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
   //and the normals to the appropriate vectors
   const int this_patch_id = fit->patch_id();
 
-  for(typename FT::CDT::Finite_faces_iterator
+  for(FT::CDT::Finite_faces_iterator
       ffit = triangulation.cdt->finite_faces_begin(),
       end = triangulation.cdt->finite_faces_end();
       ffit != end; ++ffit)
@@ -486,7 +486,7 @@ Scene_polyhedron_item_priv::triangulate_facet(Scene_polyhedron_item::Facet_itera
     push_back_xyz(normal, normals_flat);
     push_back_xyz(normal, normals_flat);
 
-    typename Traits::Vector_3 ng = get(vnmap, triangulation.v2v[ffit->vertex(0)]);
+    Traits::Vector_3 ng = get(vnmap, triangulation.v2v[ffit->vertex(0)]);
     push_back_xyz(ng, normals_gouraud);
 
     ng = get(vnmap, triangulation.v2v[ffit->vertex(1)]);

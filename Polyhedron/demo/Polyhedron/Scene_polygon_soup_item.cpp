@@ -320,7 +320,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
 */
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
-    for(typename FT::CDT::Finite_faces_iterator
+    for(FT::CDT::Finite_faces_iterator
         ffit = triangulation.cdt->finite_faces_begin(),
         end = triangulation.cdt->finite_faces_end();
         ffit != end; ++ffit)
@@ -858,13 +858,13 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     /// fill non-manifold edges container
     //soup->fill_edges();
     d->oriented = false;
-
     invalidateOpenGLBuffers();
 }
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
-template void Scene_polygon_soup_item::load<CGAL::cpp11::array<double, 3>, CGAL::cpp11::array<int, 3> >
+template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::cpp11::array<double, 3>, CGAL::cpp11::array<int, 3> >
 (const std::vector<CGAL::cpp11::array<double, 3> >& points, const std::vector<CGAL::cpp11::array<int, 3> >& polygons);
+
 // Local Variables:
 // c-basic-offset: 4
 // End:

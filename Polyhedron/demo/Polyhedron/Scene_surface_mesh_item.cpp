@@ -338,7 +338,7 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   program = item->getShaderProgram(Scene_surface_mesh_item::PROGRAM_WITH_LIGHT, viewer);
   program->bind();
 
-  item->vaos[Scene_surface_mesh_item_priv::Scene_surface_mesh_item_priv::Flat_facets]->bind();
+  item->vaos[Scene_surface_mesh_item_priv::Flat_facets]->bind();
   item->buffers[Scene_surface_mesh_item_priv::Flat_vertices].bind();
   item->buffers[Scene_surface_mesh_item_priv::Flat_vertices].allocate(flat_vertices.data(),
                              static_cast<int>(flat_vertices.size()*sizeof(cgal_gl_data)));
@@ -544,7 +544,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     return;
   }
 
-  typedef FacetTriangulator<SMesh, Kernel, typename boost::graph_traits<SMesh>::vertex_descriptor> FT;
+  typedef FacetTriangulator<SMesh, Kernel, boost::graph_traits<SMesh>::vertex_descriptor> FT;
   double diagonal;
   if(item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->diagonalBbox();
@@ -552,7 +552,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     diagonal = 0.0;
   FT triangulation(fd,normal,smesh_,diagonal);
   //iterates on the internal faces
-  for( typename FT::CDT::Finite_faces_iterator
+  for(FT::CDT::Finite_faces_iterator
        ffit = triangulation.cdt->finite_faces_begin(),
        end = triangulation.cdt->finite_faces_end();
        ffit != end; ++ffit)

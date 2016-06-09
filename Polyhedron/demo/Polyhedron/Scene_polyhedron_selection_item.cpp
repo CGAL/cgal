@@ -307,7 +307,7 @@ void
 Scene_polyhedron_selection_item_priv::triangulate_facet(Facet_handle fit,const Vector normal,
                                                    std::vector<float> &p_facets,std::vector<float> &p_normals ) const
 {
-  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, typename boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
+  typedef FacetTriangulator<Polyhedron, Polyhedron::Traits, boost::graph_traits<Polyhedron>::vertex_descriptor> FT;
   double diagonal;
   if(item->poly_item->diagonalBbox() != std::numeric_limits<double>::infinity())
     diagonal = item->poly_item->diagonalBbox();
@@ -316,7 +316,7 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(Facet_handle fit,const V
   FT triangulation(fit,normal,poly,diagonal);
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
-    for(typename FT::CDT::Finite_faces_iterator
+    for(FT::CDT::Finite_faces_iterator
         ffit = triangulation.cdt->finite_faces_begin(),
         end = triangulation.cdt->finite_faces_end();
         ffit != end; ++ffit)

@@ -111,6 +111,7 @@ public:
     ~Scene_polygon_soup_item();
 
     Scene_polygon_soup_item* clone() const;
+
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
 
