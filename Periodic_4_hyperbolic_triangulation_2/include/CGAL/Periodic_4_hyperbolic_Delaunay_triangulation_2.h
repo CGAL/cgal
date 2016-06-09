@@ -164,7 +164,6 @@ public:
                         InputIterator last, 
                         bool is_large_point_set = true);
 
-
 };  // class Periodic_4_hyperbolic_Delaunay_triangulation_2
 
     
@@ -174,8 +173,18 @@ typename Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
 insert(const Point  &p,  Face_handle start)
 {
-  std::cout << "Inseritng now! Yeah!" << std::endl;
-  return Vertex_handle();
+
+  typedef typename Gt::Side_of_fundamental_octagon Side_of_fundamental_octagon;
+
+  Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+  CGAL::Bounded_side side = check(p);
+  
+  if (side != CGAL::ON_UNBOUNDED_SIDE) {
+    return this->insert_in_face(p, start);
+  } else {
+    return Vertex_handle();
+  }
+
 }
 
 

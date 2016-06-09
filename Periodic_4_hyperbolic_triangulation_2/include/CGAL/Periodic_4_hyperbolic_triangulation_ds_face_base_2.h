@@ -217,6 +217,10 @@ public:
 		V[0] = V[1] = V[2] = Vertex_handle();
 	}
 
+	void set_vertex(int k, Vertex_handle& vh) {
+		V[k] = vh;
+	}
+
 	void set_vertices(
 		const Vertex_handle& v0, const Vertex_handle v1, 
 		const Vertex_handle& v2)
@@ -239,6 +243,10 @@ public:
 		N[2] = n2;
 	}
 
+	void set_neighbor(int k, Face_handle& nfh) {
+		N[k] = nfh;
+	}
+
 	  // CHECKING
 
   	// the following trivial is_valid allows
@@ -248,6 +256,38 @@ public:
   	bool is_valid(bool, int) const { 
   		return true; 
   	}
+
+  	int dimension() {
+  		int d = 2;
+  		for (int i = 0; i < 3; i++)
+  			if (V[0] == Vertex_handle())
+  				d--;
+
+  		if (d < 0)
+  			d = 0;
+
+  		return d;
+  	} 
+
+
+  	void restore_orientation() {
+  		// N(eighbors), V(ertices), o(ffsets), no (neighbor offsets)
+
+  		swap(N[1], N[2]);
+  		swap(V[1], V[2]);
+  		swap(o[1], o[2]);
+  		swap(no[1], no[2]);
+
+  	}
+
+  	template <class T>
+  	void swap(T& a, T& b) {
+  		T tmp;
+  		tmp = a;
+  		a = b;
+  		b = tmp;
+  	}
+
 
   	// For use by Compact_container.
   	void * for_compact_container() const { return N[0].for_compact_container(); }

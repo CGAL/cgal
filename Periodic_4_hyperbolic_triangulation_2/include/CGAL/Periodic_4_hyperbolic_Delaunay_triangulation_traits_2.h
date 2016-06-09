@@ -294,41 +294,69 @@ public:
 
       CGAL::Bounded_side operator()(Point_2 p) {
 
+        // Rotation by pi/4
         CGAL::Aff_transformation_2<Kernel> rotate(CGAL::ROTATION, std::sqrt(0.5), std::sqrt(0.5));
+        
+        // The center of the Euclidean circle corresponding to the side s_1 (east)
         Point_2  CenterA ( FT( sqrt((sqrt(2.) + 1.) / 2.) ), FT(0.) );
+
+        // The squared radius of the Eucliden circle corresponding to the side s_1
         FT       Radius2 ( (sqrt(2.) - 1.) / 2. );
 
-        Circle_2 Poincare( Point(0, 0),       1*1 );
-        Circle_2 DomainA ( CenterA,           Radius2 );
-        Circle_2 DomainBb( rotate(CenterA),   Radius2 );
+        // Poincare disk (i.e., unit Euclidean disk)
+        Circle_2 Poincare    ( Point(0, 0),       1*1 );
 
+        // Euclidean circle corresponding to s_1
+        Circle_2 EuclidCircA ( CenterA,           Radius2 );
+
+        // Euclidean circle corresponding to s_2 (just rotate the center, radius is the same)
+        Circle_2 EuclidCircBb( rotate(CenterA),   Radius2 );
+
+        // This transformation brings the point in the first quadrant (positive x, positive y)
         FT x(FT(p.x()) > FT(0) ? p.x() : -p.x());
         FT y(FT(p.y()) > FT(0) ? p.y() : -p.y());
 
+        // This brings the point in the first octant (positive x and y < x)
         if (y > x) {
           FT tmp = x;
           x = y;
           y = tmp;
         }
 
+        // This tells us whether the point is in the side of the open boundary
+        bool on_open_side = ( ( p.y() + (CGAL_PI / 8.) * p.x() ) < 0.0 );
+
         Point t(x, y);
 
-        CGAL::Bounded_side bs1 = Poincare.bounded_side(t);
-        CGAL::Bounded_side bs2 = DomainA.bounded_side(t);
-        CGAL::Bounded_side bs3 = DomainBb.bounded_side(t);
+        CGAL::Bounded_side PoincareSide = Poincare.bounded_side(t);
+        CGAL::Bounded_side CircASide    = EuclidCircA.bounded_side(t);
+        CGAL::Bounded_side CircBbSide   = EuclidCircBb.bounded_side(t);
 
-        if (  (bs1 != CGAL::ON_UNBOUNDED_SIDE) &&
-              (bs2 != CGAL::ON_BOUNDED_SIDE)   &&
-              (bs3 != CGAL::ON_BOUNDED_SIDE)      ) {
-          return CGAL::ON_BOUNDED_SIDE;
-        } 
-        else if ( (bs1 == CGAL::ON_UNBOUNDED_SIDE) ||
-                  (bs2 == CGAL::ON_BOUNDED_SIDE)   ||
-                  (bs3 == CGAL::ON_BOUNDED_SIDE)      ) {
+        // First off, the point needs to be inside the Poincare disk. if not, there's no hope.
+        if ( PoincareSide == CGAL::ON_BOUNDED_SIDE ) {
+          
+          // Inside the Poincare disk, but still outside the fundamental domain
+          if ( CircASide  == CGAL::ON_BOUNDED_SIDE || 
+               CircBbSide == CGAL::ON_BOUNDED_SIDE   ) {
+            return CGAL::ON_UNBOUNDED_SIDE;
+          }
+
+          // Inside the Poincare disk and inside the fundamental domain
+          if ( CircASide  == CGAL::ON_UNBOUNDED_SIDE && 
+               CircBbSide == CGAL::ON_UNBOUNDED_SIDE ) {
+            return CGAL::ON_BOUNDED_SIDE;
+          } 
+
+          // This is boundary, but we only consider the upper half. The lower half means outside.
+          if (on_open_side) {
+            return CGAL::ON_UNBOUNDED_SIDE;
+          } else {
+            return CGAL::ON_BOUNDARY;
+          }
+
+        } else {
           return CGAL::ON_UNBOUNDED_SIDE;
         }
-       
-        return CGAL::ON_BOUNDARY;
 
       }
 
