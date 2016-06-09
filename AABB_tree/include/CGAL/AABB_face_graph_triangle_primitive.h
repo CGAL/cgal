@@ -118,7 +118,7 @@ public:
     \tparam Iterator an input iterator with `Id` as value type.
     Constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
-    is available with `vppm` set to `boost::get(vertex_point, graph)`.
+    is available with `vppm` set to `get(vertex_point, graph)`.
   */
   template <class Iterator>
   AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap_ vppm)
@@ -130,7 +130,7 @@ public:
   /*!
     Constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
-    is available with `vppm` set to `boost::get(vertex_point, graph)`.
+    is available with `vppm` set to `get(vertex_point, graph)`.
   */
   AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(id),
