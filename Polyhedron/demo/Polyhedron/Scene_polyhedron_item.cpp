@@ -852,14 +852,18 @@ Scene_polyhedron_item::load_obj(std::istream& in)
   std::size_t i, j, k;
   bool failed = false;
   while(getline(in, line)){
-    if(line[0] == 'v'){
+    if(line[0] == 'v' && line[1] == ' '){
       std::istringstream iss(line.substr(1));
       iss >> p;
       if(! iss) failed = true;
       points.push_back(p);
     } else if(line[0] == 'f'){
       std::istringstream iss(line.substr(1));
-      iss >> i >> j >> k;
+      iss >> i;
+      iss.ignore(256, ' ');
+      iss>> j;
+      iss.ignore(256, ' ');
+      iss>> k;
       if(! iss) failed = true;
       std::vector<std::size_t> face;
       face.push_back(i-1);
