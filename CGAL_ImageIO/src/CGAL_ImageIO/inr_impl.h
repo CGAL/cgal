@@ -75,7 +75,7 @@ static void concatStringElement(const stringListHead *strhead,
 /* Writes the given inrimage header in an already opened file.*/
 CGAL_INLINE_FUNCTION
 int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
-  unsigned int pos, i;
+  std::size_t pos, i;
   char type[30], endianness[5], buf[257], scale[20];
   std::ostringstream oss;
 
@@ -195,8 +195,7 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
 /* Writes the given image body in an already opened file.*/
 CGAL_INLINE_FUNCTION
 int _writeInrimageData(const _image *im) {
-  unsigned long size, nbv, nwrt, i;
-  unsigned int v;
+  std::size_t size, nbv, nwrt, i, v;
   unsigned char **vp;
   
   if(im->openMode != OM_CLOSE) {

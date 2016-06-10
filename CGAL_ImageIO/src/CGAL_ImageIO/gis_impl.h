@@ -48,8 +48,8 @@ PTRIMAGE_FORMAT createGisFormat() {
 CGAL_INLINE_FUNCTION
 int writeGis( char *name, _image* im) {
   char *outputName;
-  int length, extLength=0, res;
-
+  int res;
+  std::size_t length, extLength = 0;
 
   length=strlen(name);
   outputName= (char *)ImageIO_alloc(length+8);
@@ -110,7 +110,7 @@ int writeGis( char *name, _image* im) {
   }
 
   if ( im->dataMode == DM_ASCII ) {
-    int i, j, n, size;
+    std::size_t i, j, n, size;
     char *str = (char*)ImageIO_alloc( _LGTH_STRING_+1 );
     size = im->xdim * im->ydim * im->zdim * im->vdim;
     n = ( im->xdim < 16 ) ? im->xdim : 16;
@@ -143,7 +143,7 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
+	      res = static_cast<int>(ImageIO_write( im, str, strlen( str )));
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
@@ -162,7 +162,7 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
+	      res = static_cast<int>(ImageIO_write( im, str, strlen( str )));
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
@@ -189,7 +189,7 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
+        res = static_cast<int>(ImageIO_write(im, str, strlen(str)));
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
@@ -208,7 +208,7 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
+        res = static_cast<int>(ImageIO_write(im, str, strlen(str)));
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
@@ -249,7 +249,7 @@ CGAL_INLINE_FUNCTION
 int readGisHeader( const char* name,_image* im)
 {
   char *s, *str = NULL;
-  int status;
+  std::size_t status;
   int n=0, nusermax = 20;
 
   str = (char*)ImageIO_alloc( _LGTH_STRING_+1 );
@@ -468,7 +468,7 @@ int readGisHeader( const char* name,_image* im)
   /* header is read. close header file and open data file. */
   if( name != NULL ) {
     
-    int length = strlen(name) ;
+    std::size_t length = strlen(name) ;
     char* data_filename = (char *) ImageIO_alloc(length+4) ;
     
     if( strcmp( name+length-4, ".dim" ) ) {
@@ -510,7 +510,7 @@ int readGisHeader( const char* name,_image* im)
        only U8 and S8
      */
     if ( im->dataMode == DM_ASCII ) {
-      int size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
+      std::size_t size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
       unsigned int n;
       char *tmp;
       int ret, iv=0;
