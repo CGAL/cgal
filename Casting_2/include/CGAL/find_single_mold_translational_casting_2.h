@@ -26,7 +26,6 @@
 
 #include <iostream>
 #include<list>
-template <typename Kernel>
 
 template <typename Kernel>
 class CircleArrangment
@@ -295,7 +294,10 @@ public :
 		}
 	}
 	bool allIsCoveredTwice(){return edges.size()==1;}
+
 };
+template <typename Kernel>
+
 inline std::pair<typename Kernel::Direction_2,typename Kernel::Direction_2> getSegmentOuterCircle(typename Kernel::Segment_2 seg,	CGAL::Orientation orientation)
 {
 	typename Kernel::Direction_2 forward( seg);
