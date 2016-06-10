@@ -1182,7 +1182,7 @@ namespace CGAL {
 
       Dart_handle nd = this->mmap->null_handle;
 
-      for ( unsigned int k=0; k<i-1; ++k )
+      for ( int k=0; k<i-1; ++k )
       {
         if ( !this->mmap->is_free(*this, k) &&
              !this->mmap->is_marked(this->mmap->alpha(*this, k),
