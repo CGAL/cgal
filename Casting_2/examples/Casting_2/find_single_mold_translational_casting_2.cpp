@@ -30,14 +30,10 @@ int main()
 //    pgn.push_back(Point_2(1, 0));
 //    pgn.push_back(Point_2(1, 1));
 //    pgn.push_back(Point_2(0, 1));
- typename Kernel::Segment_2 s1(Point_2(0, 1),Point_2(1, 0));
- typename Kernel::Segment_2 s2(Point_2(0, 1),Point_2(1, 12));
-Direction_2 d1(s1);
-Direction_2 d2(s2);
+    pgn.push_back(Point_2(-1, 7));
+        pgn.push_back(Point_2(0, 6));
 
-std::cout<<!d1.counterclockwise_in_between(d2,d2);
-return 0;
-    pgn.push_back(Point_2(0, 1));
+    pgn.push_back(Point_2(3, 8));
     pgn.push_back(Point_2(1, 1));
     pgn.push_back(Point_2(1, 0));
     pgn.push_back(Point_2(0, 0));
@@ -49,7 +45,7 @@ return 0;
   else {
     std::cout << "There are " << top_edges.size() << " top edges:" << std::endl;
     for (const auto& top_edge : top_edges) {
-      std::cout << top_edge.first << ", ("
+      std::cout <<pgn.edge(top_edge.first) <<" X "<< top_edge.first << ", ("
                 << top_edge.second.first << "," << top_edge.second.second
                 << ")" << std::endl;
     }
