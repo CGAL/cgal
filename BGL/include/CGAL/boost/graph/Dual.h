@@ -48,6 +48,11 @@ faces and vertices only the `face_index` and `vertex_index` properties
 are forwarded. Accessing other properties will lead to a compilation
 error.
 \cgalAdvancedEnd
+
+\tParam Primal_ must be a model of `FaceGraph`
+
+\cgalModels `FaceGraph`
+
 */
 template <typename Primal_>
 class Dual

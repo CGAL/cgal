@@ -71,9 +71,20 @@ private:
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_3      Vector_3;
 
+  vertex_descriptor vxmin, vxmax;
+  bool vertices_given;
+
 // Public operations
 public:
     // Default constructor, copy constructor and operator =() are fine.
+
+  Two_vertices_parameterizer_3()
+    : vertices_given(false)
+  {}
+
+  Two_vertices_parameterizer_3(vertex_descriptor v1, vertex_descriptor v2)
+    : vxmin(v1), vxmax(v2), vertices_given(true)
+  {}
 
     /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
 template <typename VertexUVmap, typename VertexParameterizedMap>
@@ -83,6 +94,13 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
                       VertexUVmap uvmap,
                       VertexParameterizedMap vpmap)
 {
+  if(vertices_given){
+    put(uvmap, vxmin, Point_2(0,0.5));
+    put(uvmap, vxmax, Point_2(1,0.5));
+    put(vpmap, vxmin, true);
+    put(vpmap, vxmax, true);
+    return Parameterizer_traits_3<TriangleMesh>::OK;
+  }
     typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
     PPmap ppmap = get(vertex_point, mesh);
   
@@ -183,10 +201,9 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
 
     // Project onto longest bounding box axes,
     // Set extrema vertices' (u,v) in unit square and mark them as "parameterized"
-    vertex_descriptor vxmin;
     double umin  =  (std::numeric_limits<double>::max)() ;
     double vmin =  (std::numeric_limits<double>::max)(), vmax=  (std::numeric_limits<double>::min)();
-    vertex_descriptor vxmax;
+
     double  umax  =  (std::numeric_limits<double>::min)() ;
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
     {
