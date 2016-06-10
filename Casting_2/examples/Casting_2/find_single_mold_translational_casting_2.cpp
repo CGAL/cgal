@@ -30,13 +30,14 @@ int main()
 //    pgn.push_back(Point_2(1, 0));
 //    pgn.push_back(Point_2(1, 1));
 //    pgn.push_back(Point_2(0, 1));
-    pgn.push_back(Point_2(-1, 7));
-        pgn.push_back(Point_2(0, 6));
 
     pgn.push_back(Point_2(3, 8));
     pgn.push_back(Point_2(1, 1));
     pgn.push_back(Point_2(1, 0));
     pgn.push_back(Point_2(0, 0));
+    pgn.push_back(Point_2(0, 1));
+    pgn.push_back(Point_2(-3, 8));
+
   std::list<Top_edge> top_edges;
   find_single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
 
