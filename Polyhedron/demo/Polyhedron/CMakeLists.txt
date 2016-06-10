@@ -146,8 +146,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     HINTS ${CGAL_INCLUDE_DIRS}
     NO_DEFAULT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
-  unset(CGAL_THREE_HEADERS_PATH CACHE)
-
+  
   if(CGAL_THREE_HEADERS_PATH)
     qt5_generate_moc( "${CGAL_THREE_VIEWER_INTERFACE_H_PATH}/CGAL/Three/Viewer_interface.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
@@ -161,7 +160,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
   endif()
 
-  # AUXILIARY LIBRARIES
+  unset(CGAL_THREE_HEADERS_PATH CACHE)
+
+# AUXILIARY LIBRARIES
 
   # put s (which are shared libraries) at the same location as
   # executable files
