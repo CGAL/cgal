@@ -54,37 +54,37 @@ class Circle_arrangment {
    *   point and the second point. (each of its sides might be open or closed)
    */
 
-  /*! \fn bool is_open_direction_contained_in_arc(point p, bool is_counterclockwise, Arc a)
+  /*! \fn bool is_open_direction_contained_in_arc(point p, bool is_counterclockwise, Arc A)
    * Checks whether an open epsilon area clockwise/counterclockwise from a point
    * p is contained in an arc s.
-   * \param p a point .
-   * \param is_counterclockwise true: we care about the counterclockwise epsilon
+   * \param[in] p a point .
+   * \param[in] is_counterclockwise true: we care about the counterclockwise epsilon
    *        area of p. false: same with clockwise
-   * \param a an arc that should contain the epsilon area
+   * \param[in] A an Arc that should contain the epsilon area
    */
-  static bool is_open_direction_contained_in_arc(Point p,
-                                                 bool is_counterclockwise,
-                                                 Arc a)
+  static bool is_open_direction_contained_in_arc(const Point p,
+                                                 const bool is_counterclockwise,
+                                                 const Arc A)
   {
-    if ((is_counterclockwise && p == a.second) ||
-        (!is_counterclockwise && p == a.first))
+    if ((is_counterclockwise && (p == A.second)) ||
+        (!is_counterclockwise && (p == A.first)))
       return false;
-    return !p.counterclockwise_in_between(a.first,a.second);
+    return !p.counterclockwise_in_between(A.first,A.second);
   }
   /*! \fn bool is_a_contained_in_b(bool is_a_start_closed,bool is_a_end_closed, arc A, arc B)
    * \brief checks whether an arc A is contained in an arc B
-   * \param is_a_start_closed - do A contains its start point (clockwise)
-   * \param is_a_end_closed - do A contains its end point (clockwise)
-   * \param A - an arc
-   * \param B - an *open* arc
+   * \param[in] is_a_start_closed - do A contains its start point (clockwise)
+   * \param[in] is_a_end_closed - do A contains its end point (clockwise)
+   * \param[in] A - an arc
+   * \param[in] B - an *open* arc
    */
-  static bool is_a_contained_in_b(bool is_a_start_closed,
-                                  bool is_a_end_closed,
-                                  Arc A, Arc B)
+  static bool is_a_contained_in_b(const bool is_a_start_closed,
+                                  const bool is_a_end_closed,
+                                  const Arc A,const Arc B)
   {
     //A is closed, B is open and they share an vertex -> A not contained in B
-    if ((is_a_start_closed &&A.first == B.first) ||
-        (is_a_end_closed && A.second == B.second))
+    if ((is_a_start_closed &&(A.first == B.first)) ||
+        (is_a_end_closed && (A.second == B.second)))
       return false;
     if (((A.first == B.second) || (B.first == A.second)) &&
         (A.first != A.second))
@@ -106,74 +106,77 @@ class Circle_arrangment {
    */
   class Circle_arrangment_edge {
   public:
-    bool start_is_closed;
-    Point edge_start_angle; // the end is the start of the next edge
-    char count;             // no. of outer circles that cover the edge (0/1/2+)
-    size_t edge_index;      // the index of the polygon edge the open
+    bool m_start_is_closed;
+
+    Point m_edge_start_angle; // the end is the start of the next edge
+
+    uint8_t m_count;             // no. of outer circles that cover the edge (0/1/2+)
+
+    size_t m_edge_index;      // the index of the polygon edge the open
                             // half-circle of which covers this cell.
-                            // only relevant if count ==1
+                            // only relevant if m_count ==1
 
     /*! \ctor Circle_arrangment_edge(point edge_start_angle, size_t edge_index, bool start_is_closed,bool set_count_to_one=true)
      * Creates a new edge (Arc), this edge count must be 0 or 1
-     * \param edge_start_angle - the first point of the arc (clockwise)
-     * \param edge_index - the index of the polygon edge who's open half-circle
-     *        covers this cell - only relevant if count == 1
-     * \param start_is_closed - is the point edge_start_angle contained in this
+     * \param[in] edge_start_angle - the first point of the arc (clockwise)
+     * \param[in] edge_index - the index of the polygon edge who's open half-circle
+     *        covers this cell - only relevant if m_count == 1
+     * \param[in] start_is_closed - is the point edge_start_angle contained in this
      *        cell
-     * \param set_count_to_one - to set the count to one (or zero if this var is
+     * \param[in] set_count_to_one - to set the m_count to one (or zero if this var is
      *        false)
      */
-    Circle_arrangment_edge(Point edge_start_angle, size_t edge_index,
-                           bool start_is_closed, bool set_count_to_one = true)
+    Circle_arrangment_edge(const Point edge_start_angle,const size_t edge_index,
+    					const bool start_is_closed,const bool set_count_to_one = true)
     {
-      this->start_is_closed = start_is_closed;
-      this->edge_start_angle = edge_start_angle;
-      this->count = (int) set_count_to_one;
-      this->edge_index = edge_index;
+      this->m_start_is_closed = start_is_closed;
+      this->m_edge_start_angle = edge_start_angle;
+      this->m_count = (int) set_count_to_one;
+      this->m_edge_index = edge_index;
     }
 
     /*! \fn void plusplus(size_t edge_index)
      * Adds new polygon edge who's open half-circle covers this cell
-     * \param edge_index - the index of this edge
-     * increase the edge count by one (if it is 2+, it will stay 2+)
-     * set this new edge to be the one covers the cell if the count was zero
-     * before. (only relevant if now count == 1)
+     * \param[in] edge_index - the index of this edge
+     * increase the edge m_count by one (if it is 2+, it will stay 2+)
+     * set this new edge to be the one covers the cell if the m_count was zero
+     * before. (only relevant if now m_count == 1)
      */
-    void plusplus(size_t edge_index) {
-      if (this->count ==0) {
-        this->edge_index = edge_index;
-        this->count = 1;
+    void plusplus(const size_t edge_index) {
+      if (this->m_count ==0) {
+        this->m_edge_index = edge_index;
+        this->m_count = 1;
       }
-      else if(this->count ==1) this->count = 2;
+      else if(this->m_count ==1) this->m_count = 2;
     }
-    bool is_covered() { return count == 2; }
+    bool is_covered() { return m_count == 2; }
   };
 
   typedef typename std::list<struct Circle_arrangment_edge> Circle_edges;
 
-  Circle_edges edges;
+  Circle_edges m_edges;
 
   /*! \fn void insert_if_legal(const Circle_edge_iterator cur_it,const Circle_edge_iterator next_it,const struct Circle_arrangment_edge &edge)
    * Adds new edge to the arrangement if it won't create some empty edges
-   * \param cur_it iterator to the edge before where the new edge should be
+   * \param[in] cur_it iterator to the edge before where the new edge should be
    *        inserted
-   * \param next_it - iterator to the edge after where the new edge should be
+   * \param[in] next_it - iterator to the edge after where the new edge should be
    *        inserted
-   * \param edge - the new edge that should be inserted
+   * \param[in] edge - the new edge that should be inserted
    *
    * Notice that next_it is redundant since it can be deduced from cur_it.
    * But it was easier for me to just send it as well.
    */
   template <typename InputIterator>
   void insert_if_legal(const InputIterator cur_it,
-                       const InputIterator next_it,
+                       InputIterator next_it,
                        const struct Circle_arrangment_edge& edge)
   {
-    if ((edge.start_is_closed && !next_it->start_is_closed) ||
-       edge.edge_start_angle != next_it->edge_start_angle)
-      if ((cur_it->start_is_closed && !edge.start_is_closed) ||
-         edge.edge_start_angle != cur_it->edge_start_angle)
-        edges.insert(next_it, edge);
+    if ((edge.m_start_is_closed && !next_it->m_start_is_closed) ||
+       (edge.m_edge_start_angle != next_it->m_edge_start_angle))
+      if ((cur_it->m_start_is_closed && !edge.m_start_is_closed) ||
+         (edge.m_edge_start_angle != cur_it->m_edge_start_angle))
+        m_edges.insert(next_it, edge);
   }
 
   /*! \fn void merge_adjacent_2_edges_and_remove_empty()
@@ -183,10 +186,10 @@ class Circle_arrangment {
   void merge_adjacent_2_edges_and_remove_empty()
   {
     bool in_two_edge(false);
-    for (auto it = edges.begin(); it != edges.end();) {
+    for (auto it = m_edges.begin(); it != m_edges.end();) {
       if (it->is_covered()) {
         if (in_two_edge) {
-          it = edges.erase(it);
+          it = m_edges.erase(it);
           continue;
         }
         in_two_edge = true;
@@ -202,55 +205,55 @@ public:
   /*! \ctor Circle_arrangment(arc first_segment_outer_circle)
    * Creates an arrangement on circle with two edges the one covered by
    * first_segment_outer_circle and the other one
-   * \param first_segment_outer_circle - the outer circle of the first segment
+   * \param[in] first_segment_outer_circle - the outer circle of the first segment
    *        of the polygon.
    * Notice that you might consider implementing the ctor as an full circle of
    * depth 0, but it was much easier for me to ignore the case where the all
    * circle is a single arc, so I choose this implementation.
    */
-  Circle_arrangment(Arc first_segment_outer_circle)
+  Circle_arrangment(const Arc first_segment_outer_circle)
   {
-    edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.first, 0,
+    m_edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.first, 0,
                                            false));
-    edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.second, 0,
+    m_edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.second, 0,
                                            true,false));
   }
 
   /*! \fn add_segment_outer_circle(arc segment_outer_circle, size_t edge_index)
    * Updates the arrangement in respect to a new segment outer open circle
-   * \param segment_outer_circle - the outer circle of the current segment of
+   * \param[in] segment_outer_circle - the outer circle of the current segment of
    *        the polygon.
-   * \param edge_index - this segment id
+   * \param[in] edge_index - this segment id
    * This is the main funtion of this code. It separates the cells in which the
-   * endpoints of the new arc is contained to two parts and increase count
+   * endpoints of the new arc is contained to two parts and increase m_count
    * for all the cells that the new arc covers. In the end the function
    * merge_adjacent_2_edges_and_remove_empty is called to remove redundant cells
    */
-  void add_segment_outer_circle(Arc segment_outer_circle, size_t edge_index)
+  void add_segment_outer_circle(const Arc segment_outer_circle,const size_t edge_index)
   {
     Arc edge;
-    bool is_start_closed_segment = edges.begin()->start_is_closed;
-    bool is_end_closed_segment = edges.begin()->start_is_closed;
-    edge.first = edges.begin()->edge_start_angle;
-    edge.second = edges.begin()->edge_start_angle;
-    auto next_it = edges.begin();
-    auto it = edges.begin();
+    bool is_start_closed_segment = m_edges.begin()->m_start_is_closed;
+    bool is_end_closed_segment = m_edges.begin()->m_start_is_closed;
+    edge.first = m_edges.begin()->m_edge_start_angle;
+    edge.second = m_edges.begin()->m_edge_start_angle;
+    auto next_it = m_edges.begin();
+    auto it = m_edges.begin();
     bool done = false;
     while (!done) {
       it = next_it;
       next_it = it;
-      next_it++;
-      if (next_it == edges.end()) {
+      ++next_it;
+      if (next_it == m_edges.end()) {
         done = true;
-        next_it = edges.begin();
+        next_it = m_edges.begin();
       }
 
       is_start_closed_segment = !is_end_closed_segment;
-      is_end_closed_segment = !next_it->start_is_closed;
+      is_end_closed_segment = !next_it->m_start_is_closed;
       edge.first = edge.second;
-      edge.second =next_it->edge_start_angle;
+      edge.second =next_it->m_edge_start_angle;
 
-      if (it->count == 2) continue;
+      if (it->m_count == 2) continue;
       if (is_a_contained_in_b(is_start_closed_segment, is_end_closed_segment,
                               edge, segment_outer_circle))
       {
@@ -277,13 +280,13 @@ public:
             //                 o~-~-~-~-~-~-o
             //                                          c-----?
             struct Circle_arrangment_edge edge2 = *it;
-            edge2.start_is_closed = false;
-            edge2.edge_start_angle = segment_outer_circle.first;
+            edge2.m_start_is_closed = false;
+            edge2.m_edge_start_angle = segment_outer_circle.first;
             edge2.plusplus(edge_index);
             this->insert_if_legal(it, next_it, edge2);
             struct Circle_arrangment_edge edge3 = *it;
-            edge3.start_is_closed = true;
-            edge3.edge_start_angle = segment_outer_circle.second;
+            edge3.m_start_is_closed = true;
+            edge3.m_edge_start_angle = segment_outer_circle.second;
             this->insert_if_legal(it,next_it,edge3);
           }
           else {
@@ -294,12 +297,12 @@ public:
             //                           c----c
             //                                 o-~-?
             struct Circle_arrangment_edge edge2 = *it;
-            edge2.start_is_closed = true;
-            edge2.edge_start_angle = segment_outer_circle.second;
+            edge2.m_start_is_closed = true;
+            edge2.m_edge_start_angle = segment_outer_circle.second;
             this->insert_if_legal(it, next_it, edge2);
             struct Circle_arrangment_edge edge3 = *it;
-            edge3.start_is_closed = false;
-            edge3.edge_start_angle = segment_outer_circle.first;
+            edge3.m_start_is_closed = false;
+            edge3.m_edge_start_angle = segment_outer_circle.first;
             edge3.plusplus(edge_index);
             this->insert_if_legal(it, next_it, edge3);
             it->plusplus(edge_index);
@@ -312,8 +315,8 @@ public:
           // ?----c
           //                 o-~-~-~?
           struct Circle_arrangment_edge edge2 = *it;
-          edge2.start_is_closed = false;
-          edge2.edge_start_angle = segment_outer_circle.first;
+          edge2.m_start_is_closed = false;
+          edge2.m_edge_start_angle = segment_outer_circle.first;
           edge2.plusplus(edge_index);
           this->insert_if_legal(it, next_it, edge2);
         }
@@ -326,8 +329,8 @@ public:
           //                 ?-~-~-~-o
           //                                 c----?
           struct Circle_arrangment_edge edge2 = *it;
-          edge2.start_is_closed = true;
-          edge2.edge_start_angle = segment_outer_circle.second;
+          edge2.m_start_is_closed = true;
+          edge2.m_edge_start_angle = segment_outer_circle.second;
           it->plusplus(edge_index);
           this->insert_if_legal(it, next_it, edge2);
         }
@@ -341,11 +344,11 @@ public:
   // debug function
   void printArrangement()
   {
-    for (auto it = edges.begin(); it != edges.end(); ++it) {
-      if (it->start_is_closed) std::cout<<")[";
+    for (auto it = m_edges.begin(); it != m_edges.end(); ++it) {
+      if (it->m_start_is_closed) std::cout<<")[";
       else std::cout << "](";
-      std::cout << it->edge_start_angle;
-      std::cout << ","<<(int)it->count;
+      std::cout << it->m_edge_start_angle;
+      std::cout << ","<<(int)it->m_count;
     }
     std::cout << "\n\n";
   }
@@ -355,7 +358,7 @@ public:
   /*! \fn void get_all_1_edges(OutputIterator oi)
    * Insert to oi all the cells in depth 1 i.e. the cells that represent legal
    * pullout directions
-   * \param oithe output iterator to put the cells in
+   * \param[in, out] oi the output iterator to put the cells in
    * Puts in oi var of type pair<size_t, std::pair<Kernel::Direction_2,
    * Kernel::Direction_2 > > foreach valid top edge.
    * Should only be called after all of the polygon edges where inserted.
@@ -363,19 +366,19 @@ public:
   template <typename OutputIterator>
   OutputIterator get_all_1_edges(OutputIterator oi)
   {
-    for (auto it = edges.begin(); it != edges.end();) {
-      if ((*it).count == 1) {
+    for (auto it = m_edges.begin(); it != m_edges.end();) {
+      if ((*it).m_count == 1) {
         std::pair<size_t, Arc> edge;
-        edge.first = (*it).edge_index;
-        edge.second.first = (*it).edge_start_angle;
-        it++;
+        edge.first = (*it).m_edge_index;
+        edge.second.first = (*it).m_edge_start_angle;
+        ++it;
         edge.second.second =
-          (*((it == edges.end()) ? edges.begin() : (it))).edge_start_angle;
+          (*((it == m_edges.end()) ? m_edges.begin() : (it))).m_edge_start_angle;
         *oi++ = edge;
       }
       else
       {
-        it++;
+        ++it;
       }
     }
     return oi;
@@ -391,7 +394,7 @@ public:
    * depth as well.
    * \return if all of the arrangement is in depth 2+
    */
-  bool all_is_covered_twice() { return edges.size() == 1; }
+  bool all_is_covered_twice() { return m_edges.size() == 1; }
 };
 
 /*! \fn std::pair<typename Kernel::Direction_2,typename Kernel::Direction_2> get_segment_outer_circle(typename Kernel::Segment_2 seg, CGAL::Orientation orientation)
@@ -402,8 +405,8 @@ public:
  */
 template <typename Kernel>
 inline std::pair<typename Kernel::Direction_2, typename Kernel::Direction_2>
-get_segment_outer_circle(typename Kernel::Segment_2 seg,
-                         CGAL::Orientation orientation)
+get_segment_outer_circle(const typename Kernel::Segment_2 seg,
+                         const CGAL::Orientation orientation)
 {
   typename Kernel::Direction_2 forward( seg);
   typename Kernel::Direction_2 backward(-forward);
@@ -413,7 +416,7 @@ get_segment_outer_circle(typename Kernel::Segment_2 seg,
 
 /*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
  * \param[in] pgn the input polygon that we want to check if is castable or not.
- * \param[in] oi the output iterator to put the top edges in
+ * \param[in,out] oi the output iterator to put the top edges in
  * \return all the possible top edges of the polygon and there pullout direction
  *   (with no rotation)
  */
@@ -431,12 +434,12 @@ find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
    */
   auto e_it = pgn.edges_begin();
   size_t edge_index = 0;
-  auto poly_orientation = pgn.orientation();
+  CGAL::Orientation poly_orientation = pgn.orientation();
   auto segment_outer_circle =
     get_segment_outer_circle<Kernel>(*e_it++, poly_orientation);
   Circle_arrangment<Kernel> circle_arrangment(segment_outer_circle);
-  edge_index++;
-  for (; e_it!= pgn.edges_end(); e_it++,edge_index++) {
+  ++edge_index;
+  for (; e_it!= pgn.edges_end(); ++e_it,++edge_index) {
     segment_outer_circle =
       get_segment_outer_circle<Kernel>(*e_it, poly_orientation);
     circle_arrangment.add_segment_outer_circle(segment_outer_circle, edge_index);
