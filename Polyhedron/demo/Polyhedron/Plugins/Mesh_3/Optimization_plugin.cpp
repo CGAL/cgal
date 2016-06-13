@@ -87,8 +87,16 @@ public:
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;
   
-  bool applicable(QAction*) const {
-    return qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
+  bool applicable(QAction* a) const {
+    Scene_c3t3_item* item
+      = qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
+    if (NULL == item)
+      return false;
+
+    if (a == actionOdt || a == actionLloyd)
+      return true;
+    else //actionPerturb or actionExude
+      return item->c3t3().number_of_cells() > 0;
   }
 
 public Q_SLOTS:
