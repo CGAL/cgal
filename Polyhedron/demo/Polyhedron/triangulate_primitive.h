@@ -64,7 +64,6 @@ public:
       idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly));
       idPoint.id = source(he_circ, *poly);
       idPoints.push_back(idPoint);
-
     }
     triangulate(idPoints, normal, item_diag);
   }
@@ -73,7 +72,7 @@ public:
                   const Vector& normal,
                   const double item_diag)
   {
-   triangulate(idPoints, normal, item_diag);
+    triangulate(idPoints, normal, item_diag);
   }
 
 private:
@@ -92,22 +91,41 @@ private:
     // Iterate the points of the facet and decide if they must be inserted in the CDT
     BOOST_FOREACH(PointAndId idPoint, idPoints)
     {
-     typename CDT::Vertex_handle vh = cdt->insert(idPoint.point);
-     v2v[vh] = idPoint.id;
-     if(first == 0) {
-      first = vh;
-     }
-     if(previous != 0 && previous != vh) {
-      cdt->insert_constraint(previous, vh);
-      last_inserted = previous;
-     }
+     typename CDT::Vertex_handle vh;
+     //Always insert the first point, then only insert
+     // if the distance with the precedent is reasonable.
+     if(first == 0 || CGAL::squared_distance(idPoint.point, previous->point()) > min_sq_dist)
+     {
+       vh = cdt->insert(idPoint.point);
+       v2v[vh] = idPoint.id;
+       if(first == 0) {
+         first = vh;
+       }
+       if(previous != 0 && previous != vh) {
+         double sq_dist = CGAL::squared_distance(previous->point(), vh->point());
+         if(sq_dist > min_sq_dist)
+         {
+           cdt->insert_constraint(previous, vh);
+           sq_dist = CGAL::squared_distance(previous->point(), first->point());
+           if(sq_dist > min_sq_dist)
+           {
+             last_inserted = previous;
+           }
+         }
+       }
      previous = vh;
+     }
     }
     double sq_dist = CGAL::squared_distance(previous->point(), first->point());
+
     if(sq_dist > min_sq_dist)
-     cdt->insert_constraint(previous, first);
+    {
+      cdt->insert_constraint(previous, first);
+    }
     else
-     cdt->insert_constraint(last_inserted, first);
+    {
+      cdt->insert_constraint(last_inserted, first);
+    }
     // sets mark is_external
     for(typename CDT::All_faces_iterator
         fit2 = cdt->all_faces_begin(),
@@ -119,17 +137,19 @@ private:
     //check if the facet is external or internal
     std::queue<typename CDT::Face_handle> face_queue;
     face_queue.push(cdt->infinite_vertex()->face());
-    while(! face_queue.empty() ) {
-     typename CDT::Face_handle fh = face_queue.front();
-     face_queue.pop();
-     if(fh->info().is_external) continue;
-     fh->info().is_external = true;
-     for(int i = 0; i <3; ++i) {
-      if(!cdt->is_constrained(std::make_pair(fh, i)))
+    while(! face_queue.empty() )
+    {
+      typename CDT::Face_handle fh = face_queue.front();
+      face_queue.pop();
+      if(fh->info().is_external) continue;
+      fh->info().is_external = true;
+      for(int i = 0; i <3; ++i)
       {
-       face_queue.push(fh->neighbor(i));
+        if(!cdt->is_constrained(std::make_pair(fh, i)))
+        {
+          face_queue.push(fh->neighbor(i));
+        }
       }
-     }
     }
   }
 };
