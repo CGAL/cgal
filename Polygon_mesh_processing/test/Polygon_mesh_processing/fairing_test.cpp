@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 
 template <typename K>
-void test(const char* filename, const K&)
+void test_polyhedron(const char* filename, const K&)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
 
-  test(filename, Epic());
-  test(filename, Epec());
+  test_polyhedron(filename, Epic());
+  test_polyhedron(filename, Epec());
 
   std::cerr << "All done." << std::endl;
 

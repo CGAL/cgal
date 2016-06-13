@@ -29,13 +29,13 @@ int test_surface_mesh(const char* filename)
   std::vector<Point> points;
   std::vector<bool> on_boundary;
   generate_near_boundary(mesh, points, on_boundary);
-  test(mesh, points, on_boundary);
+  inside_test(mesh, points, on_boundary);
 
   points.clear();
   const int nb_query = (int)1.e4;
   points.reserve(nb_query);
   random_points<Point>(mesh, nb_query, back_inserter(points));
-  test(mesh, points);
+  inside_test(mesh, points);
 
   //test compilation of constructor from AABB_tree  
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> FGTP;
@@ -43,9 +43,9 @@ int test_surface_mesh(const char* filename)
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
   AABB_tree tree(faces(mesh).first, faces(mesh).second, mesh);
-  CGAL::Side_of_triangle_mesh<Mesh, K> inside_test(tree);
+  CGAL::Side_of_triangle_mesh<Mesh, K> inside_tester(tree);
 
-  CGAL::Bounded_side bs = inside_test(CGAL::ORIGIN);
+  CGAL::Bounded_side bs = inside_tester(CGAL::ORIGIN);
   std::cout << "Origin is " << bs << std::endl;
   return 0;
 }

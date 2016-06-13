@@ -28,7 +28,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template<typename Mesh, typename K>
-void test(const Mesh& pmesh)
+void test_pmesh(const Mesh& pmesh)
 {
   typedef typename K::FT FT;
 
@@ -115,7 +115,7 @@ void test_polyhedron(const char* filename)
     return;
   }
 
-  test<Polyhedron,K>(poly);
+  test_pmesh<Polyhedron, K>(poly);
 }
 
 template <typename Surface_mesh, typename K>
@@ -132,7 +132,7 @@ void test_closed_surface_mesh(const char* filename)
     return;
   }
 
-  test<Surface_mesh,K>(sm);
+  test_pmesh<Surface_mesh, K>(sm);
 
   typename K::FT vol = PMP::volume(sm);
   std::cout << "volume = " << vol << std::endl;
