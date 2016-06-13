@@ -19,6 +19,7 @@ class Volume_plane_intersection
 Q_OBJECT
 public:
   Volume_plane_intersection(float x, float y, float z);
+  ~Volume_plane_intersection();
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }

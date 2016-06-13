@@ -38,6 +38,10 @@ struct Volume_plane_intersection_priv
 };
 
 
+Volume_plane_intersection::~Volume_plane_intersection()
+{
+  delete d;
+}
 
 void Volume_plane_intersection_priv::computeElements()
 {
