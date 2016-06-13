@@ -228,6 +228,7 @@ QList<Kernel::Triangle_3> Scene_polyhedron_item_priv::triangulate_primitive(Poly
 }
 
 
+
 void* Scene_polyhedron_item_priv::get_aabb_tree()
 {
   QVariant aabb_tree_property = item->property(aabb_property_name);

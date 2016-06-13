@@ -64,6 +64,7 @@ public:
       idPoint.point = get(boost::vertex_point,*poly,source(he_circ, *poly));
       idPoint.id = source(he_circ, *poly);
       idPoints.push_back(idPoint);
+
     }
     triangulate(idPoints, normal, item_diag);
   }
@@ -132,19 +133,17 @@ private:
         end = cdt->all_faces_end();
         fit2 != end; ++fit2)
     {
-     fit2->info().is_external = false;
+      fit2->info().is_external = false;
     }
     //check if the facet is external or internal
     std::queue<typename CDT::Face_handle> face_queue;
     face_queue.push(cdt->infinite_vertex()->face());
-    while(! face_queue.empty() )
-    {
+    while(! face_queue.empty() ) {
       typename CDT::Face_handle fh = face_queue.front();
       face_queue.pop();
       if(fh->info().is_external) continue;
       fh->info().is_external = true;
-      for(int i = 0; i <3; ++i)
-      {
+      for(int i = 0; i <3; ++i) {
         if(!cdt->is_constrained(std::make_pair(fh, i)))
         {
           face_queue.push(fh->neighbor(i));

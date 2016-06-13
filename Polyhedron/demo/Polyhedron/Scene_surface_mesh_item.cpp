@@ -110,6 +110,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& 
   : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
 {
   d = new Scene_surface_mesh_item_priv(other, this);
+  d->are_buffers_filled = false;
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
@@ -117,6 +118,9 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
   d->floated = false;
+
+  d->has_vcolors = false;
+  d->has_fcolors = false;
   d->checkFloat();
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     d->smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
@@ -175,9 +179,8 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
     d->idx_edge_data_.push_back(im[target(ed, *d->smesh_)]);
   }
 
-  d->has_vcolors = false;
-  d->has_fcolors = false;
   d->compute_elements();
+  d->are_buffers_filled = false;
 }
 
 Scene_surface_mesh_item*
@@ -241,6 +244,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
         flat_vertices.push_back((cgal_gl_data)p.x());
         flat_vertices.push_back((cgal_gl_data)p.y());
         flat_vertices.push_back((cgal_gl_data)p.z());
+
         Kernel::Vector_3 n = fnormals[fd];
         flat_normals.push_back((cgal_gl_data)n.x());
         flat_normals.push_back((cgal_gl_data)n.y());
@@ -488,15 +492,9 @@ Scene_surface_mesh_item::supportsRenderingMode(RenderingMode m) const
 
 CGAL::Three::Scene_item::Bbox Scene_surface_mesh_item::bbox() const
 {
-  SMesh::Property_map<vertex_descriptor, Point> pprop = d->smesh_->points();
-  CGAL::Bbox_3 bbox;
-
-  BOOST_FOREACH(vertex_descriptor vd,vertices(*d->smesh_))
-  {
-    bbox = bbox + pprop[vd].bbox();
-  }
-  return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-              bbox.xmax(),bbox.ymax(),bbox.zmax());
+ if(!is_bbox_computed)
+   compute_bbox();
+ return _bbox;
 }
 
 bool
@@ -597,3 +595,18 @@ Scene_surface_mesh_item::~Scene_surface_mesh_item()
 }
 Scene_surface_mesh_item::SMesh* Scene_surface_mesh_item::polyhedron() { return d->smesh_; }
 const Scene_surface_mesh_item::SMesh* Scene_surface_mesh_item::polyhedron() const { return d->smesh_; }
+
+void Scene_surface_mesh_item::compute_bbox()const
+{
+  SMesh::Property_map<vertex_descriptor, Point> pprop = d->smesh_->points();
+  CGAL::Bbox_3 bbox;
+
+  BOOST_FOREACH(vertex_descriptor vd,vertices(*d->smesh_))
+  {
+    bbox = bbox + pprop[vd].bbox();
+  }
+  _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+               bbox.xmax(),bbox.ymax(),bbox.zmax());
+
+}
+
