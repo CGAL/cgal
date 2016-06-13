@@ -175,12 +175,76 @@ insert(const Point  &p,  Face_handle start)
 {
 
   typedef typename Gt::Side_of_fundamental_octagon Side_of_fundamental_octagon;
-
+  
   Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
   CGAL::Bounded_side side = check(p);
   
   if (side != CGAL::ON_UNBOUNDED_SIDE) {
-    return this->insert_in_face(p, start);
+
+    cout << "Point inserted in face " << start->get_number() << ", vertices: ";
+    for (int i = 0; i < 3; i++) 
+      cout << start->vertex(i)->idx() << " with offset " << start->offset(i) << ", ";
+    cout << endl;
+    cout << "Neighbor offsets: " << start->neighbor_offset(0) << ", " << start->neighbor_offset(1) << ", " << start->neighbor_offset(2) << endl;
+
+    int next_number = this->number_of_faces();
+    Vertex_handle ov[] = {  start->vertex(0),
+                            start->vertex(1),
+                            start->vertex(2) };
+    Offset        oo[] = {  start->offset(0),
+                            start->offset(1),
+                            start->offset(2) };
+    Offset       ono[] = {  start->neighbor_offset(0),
+                            start->neighbor_offset(1),
+                            start->neighbor_offset(2) };
+
+    Vertex_handle new_vertex = this->insert_in_face(p, start);
+    new_vertex->set_point( p );
+    new_vertex->set_idx( this->number_of_vertices() );
+    cout << "New vertex has id " << new_vertex->idx() << endl;
+
+    // Assign offsets
+    Face_circulator iface = _tds.incident_faces(new_vertex), end(iface);
+    if (iface != 0) {
+      do {
+        
+        // Null all offsets
+        iface->set_offsets();
+
+        if (iface->get_number() == -1) {
+          iface->set_number(next_number++);
+        }
+        for (int i = 0; i < 3; i++) {
+          for (int j = 0; j < 3; j++) {
+            if (iface->vertex(i) == ov[j]) {
+              iface->set_offset(i, oo[j]);
+              if (iface->vertex(Triangulation_cw_ccw_2::cw(i)) == ov[Triangulation_cw_ccw_2::cw(j)]) {
+                iface->set_neighbor_face_offset(Triangulation_cw_ccw_2::ccw(i), ono[Triangulation_cw_ccw_2::ccw(j)]);
+              } 
+              else if (iface->vertex(Triangulation_cw_ccw_2::ccw(i)) == ov[Triangulation_cw_ccw_2::ccw(j)]) {
+                iface->set_neighbor_face_offset(Triangulation_cw_ccw_2::cw(i), ono[Triangulation_cw_ccw_2::cw(j)]);
+              }
+            }
+          }
+        }
+
+      } while (++iface != end);
+    
+      cout << "New faces created: " << endl << "------------------------" << endl;
+      do {
+        cout << "Face " << iface->get_number() << ", vertices: ";
+        for (int i = 0; i < 3; i++) {
+          cout << iface->vertex(i)->idx() << " with offset " << iface->offset(i) << ", ";
+        }
+        cout << endl;
+        cout << "Neighbor offsets: " << iface->neighbor_offset(0) << ", " << iface->neighbor_offset(1) << ", " << iface->neighbor_offset(2) << endl;
+      } while (++iface != end);
+      cout << "--------- end ----------" << endl << endl;
+    }
+
+
+
+    return new_vertex;
   } else {
     return Vertex_handle();
   }

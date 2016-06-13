@@ -26,7 +26,7 @@ typedef Triangulation::Vertex_handle												Vertex_handle;
 typedef Triangulation::Locate_type 													Locate_type;
 typedef Triangulation::Edge                                                         Edge;
 typedef Traits::FT                                                                  FT;
-typedef std::set<Face_handle>::iterator                                             face_iterator;
+typedef Triangulation::Face_iterator                                                Face_iterator;
 
 
 using namespace CGAL;
@@ -47,19 +47,12 @@ int main(void) {
     cout << "Point " << query << " is located in face " << fh->get_number();
     cout << (lt == Triangulation::EDGE ? " [EDGE]" : (lt == Triangulation::VERTEX ? " [VERTEX]" : " [FACE]")) << endl;
 
-    std::set<Face_handle> faces_in_conflict;
-    tr.find_in_conflict(query, fh, faces_in_conflict);
-    cout << "Faces in conflict: ";
-    for (face_iterator it = faces_in_conflict.begin(); it != faces_in_conflict.end(); it++) {
-        cout << (*it)->get_number() << ", ";
-    }
-    cout << endl;
-
     cout << "Number of faces before: " << tr.number_of_faces() << endl;
 
     tr.insert(query, fh);
 
     cout << "Number of faces after:  " << tr.number_of_faces() << endl;
+
 
 /*
     cout << endl;
