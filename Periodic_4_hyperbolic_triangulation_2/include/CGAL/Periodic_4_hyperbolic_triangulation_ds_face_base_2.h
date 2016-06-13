@@ -57,11 +57,12 @@ public:
 
 	Periodic_4_hyperbolic_triangulation_ds_face_base_2() 
 #ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-	: o{Offset(), Offset(), Offset()}, no{Offset(), Offset(), Offset()}
+	: o{Offset(), Offset(), Offset()}, no{Offset(), Offset(), Offset()}, face_number(-1)
 	{}
 #else
 	{
 		set_offsets();
+		face_number = -1;
 	}
 #endif
 
@@ -70,7 +71,7 @@ public:
 		const Vertex_handle& v2) 
 #ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
 	: V{v0, v1, v2},
-	  o{Offset(), Offset(), Offset()}, no{Offset(), Offset(), Offset()}
+	  o{Offset(), Offset(), Offset()}, no{Offset(), Offset(), Offset()}, face_number(-1)
 	{
 		set_neighbors();
 	}
@@ -79,6 +80,7 @@ public:
 		set_offsets();
 		set_vertices(v0, v1, v2);
 		set_neighbors();
+		face_number = -1;
 	}
 #endif
 
@@ -91,7 +93,7 @@ public:
 #ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
 	: V{v0, v1, v2},
 	  N{n0, n1, n2},
-	  o{Offset(), Offset(), Offset()}, no{Offset(), Offset(), Offset()}
+	  o{Offset(), Offset(), Offset()}, no{Offset(), Offset(), Offset()}, face_number(-1)
 	{
 		set_neighbors();
 	}
@@ -100,6 +102,7 @@ public:
 		set_offsets();
 		set_vertices(v0, v1, v2);
 		set_neighbors(n0, n1, n2);
+		face_number = -1;
 	}
 #endif
 
@@ -200,6 +203,10 @@ public:
 		no[2] = no2;
 	}
 
+	void set_neighbor_face_offset(int k, Offset new_o) {
+		no[k] = new_o;
+	}
+
 	void set_offsets(
 		const Offset& o0,  const Offset& o1, 
 		const Offset& o2,  const Offset& no0,
@@ -211,6 +218,10 @@ public:
 		no[0] = no0;
 		no[1] = no1;
 		no[2] = no2;
+	}
+
+	void set_offset(int k, Offset new_o) {
+		o[k] = new_o;
 	}
 
 	void set_vertices() {

@@ -277,6 +277,12 @@ public:
 
 template <class Int, class GT>
 ostream& operator<<(ostream& s, const Hyperbolic_word_4<Int, GT>& o) {
+	
+	if (o.is_identity()) {
+		s << "_";
+		return s;
+	} 
+
 	for (Int i = 0; i < 4; i++) {
 		if (o.b(i)) {
 			s << o(i);
