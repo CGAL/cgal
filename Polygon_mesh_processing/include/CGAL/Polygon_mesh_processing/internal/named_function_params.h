@@ -51,7 +51,7 @@ namespace CGAL{
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct pmp_bgl_named_params
     : CGAL::cgal_bgl_named_params<T, Tag, Base>
-    , named_params_base
+    , CGAL::named_params_base
   {
     typedef CGAL::cgal_bgl_named_params<T, Tag, Base> base;
     typedef pmp_bgl_named_params self;
