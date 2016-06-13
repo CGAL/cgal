@@ -166,15 +166,17 @@ private :
       Target_vertices.at(tv->id()) = tv ;
     }  
       
-    for ( Source_halfedge_const_iterator hit = aSource.halfedges_begin(); hit != aSource.halfedges_end(); ++ hit )
+    for ( Source_halfedge_const_iterator hit = aSource.halfedges_begin(); hit != aSource.halfedges_end(); ++++ hit )
     {
+      // In this loop, `hit` is incremented twice, to iterate on edges. We
+      // could have used `edges_begin()` and `edges_end()` instead.
+
       Target_halfedge_handle    th = rCopy->SlsBase::edges_push_back( cvt(hit), cvt(hit->opposite()) ) ; 
       Target_halfedge_handle oppth = th->opposite();
       
       Target_halfedges.at(   th->id()) = th ;
       Target_halfedges.at(oppth->id()) = oppth ;
       
-      ++ hit ;
     } 
     
     for ( Source_face_const_iterator fit = aSource.faces_begin(); fit != aSource.faces_end(); ++ fit )
