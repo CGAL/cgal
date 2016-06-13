@@ -25,7 +25,7 @@ public:
   }
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
-  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am)"; }
+  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
   QString loadNameFilters() const { return "binary files (*.cgal)" ; }
   QList<QAction*> actions() const
   {
@@ -143,6 +143,12 @@ save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
     {
       std::ofstream avizo_file (qPrintable(path));
       CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
+      return true;
+    }
+    else if (fileinfo.suffix() == "off")
+    {
+      std::ofstream off_file(qPrintable(path));
+      c3t3_item->c3t3().output_facets_in_complex_to_off(off_file);
       return true;
     }
     else
