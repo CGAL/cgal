@@ -8,11 +8,9 @@
 #include "Polyhedron_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Polyhedron_kernel.h>
-#include <CGAL/Exact_integer.h>
 #include <CGAL/convex_hull_3.h>
-
 #include <CGAL/Dualizer.h>
 #include <CGAL/translate.h>
 
@@ -70,7 +68,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
   {
     Polyhedron* pMesh = item->polyhedron();
 
-    typedef CGAL::Exact_integer ET; // choose exact integral type
+    typedef CGAL::Exact_rational ET;
     typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
 
     // get triangles from polyhedron
@@ -136,9 +134,9 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
     new_item->setName(tr("%1 (kernel)").arg(item->name()));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
-    scene->addItem(new_item);
-
     item->setRenderingMode(Wireframe);
+
+    scene->addItem(new_item);
     scene->itemChanged(item);
 
     QApplication::restoreOverrideCursor();

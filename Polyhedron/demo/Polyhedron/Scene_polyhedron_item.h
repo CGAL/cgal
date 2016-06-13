@@ -17,6 +17,7 @@
 #include <QColor>
 
 class QMenu;
+struct Scene_polyhedron_item_priv;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
@@ -85,15 +86,18 @@ public:
     bool isFinite() const { return true; }
     bool isEmpty() const;
     void compute_bbox() const;
-    std::vector<QColor>& color_vector() {return colors_;}
-    void set_color_vector_read_only(bool on_off) {
-      plugin_has_set_color_vector_m=on_off;
-      if (on_off) m_min_patch_id=0;
-    }
-    int getNumberOfNullLengthEdges(){return number_of_null_length_edges;}
-    int getNumberOfDegeneratedFaces(){return number_of_degenerated_faces;}
-    bool triangulated(){return poly->is_pure_triangle();}
-    bool self_intersected(){return !self_intersect;}
+    std::vector<QColor>& color_vector();
+    void set_color_vector_read_only(bool on_off);
+    int getNumberOfNullLengthEdges();
+    int getNumberOfDegeneratedFaces();
+    bool triangulated();
+    bool self_intersected();
+    //! If b is true, the item will use buffers to render the color.
+    //! If b is false, it will use a uniform value. For example, when
+    //! using the mesh segmentation plugin, the item must be multicolor.
+    void setItemIsMulticolor(bool b);
+    //! @returns `true` if the item has multiple colors at the same time.
+    bool isItemMulticolor();
 
     void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
     void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
@@ -126,75 +130,13 @@ Q_SIGNALS:
     void selected_edge(void*);
     void selected_halfedge(void*);
     void item_is_about_to_be_changed(); // emitted in invalidateOpenGLBuffers()
-
-private:
-    // Initialization
-    void init();
-    void invalidate_stats();
-
-private:
-    Polyhedron* poly;
-
-private:
+public:
     typedef Scene_item Base;
-    typedef std::vector<QColor> Color_vector;
     typedef Polyhedron::Facet_iterator Facet_iterator;
+protected:
+    friend struct Scene_polyhedron_item_priv;
+    Scene_polyhedron_item_priv* d;
 
-
-    Color_vector colors_;
-    bool show_only_feature_edges_m;
-    bool show_feature_edges_m;
-    bool facet_picking_m;
-    bool erase_next_picked_facet_m;
-    //the following variable is used to indicate if the color vector must not be automatically updated.
-    bool plugin_has_set_color_vector_m;
-
-    enum VAOs {
-        Facets=0,
-        Edges,
-        Feature_edges,
-        Gouraud_Facets,
-        NbOfVaos
-    };
-    enum VBOs {
-        Facets_vertices = 0,
-        Facets_normals_flat,
-        Facets_color,
-        Edges_vertices,
-        Feature_edges_vertices,
-        Edges_color,
-        Facets_normals_gouraud,
-        NbOfVbos
-    };
-
-    mutable bool all_ids_displayed;
-    mutable std::vector<float> positions_lines;
-    mutable std::vector<float> positions_feature_lines;
-    mutable std::vector<float> positions_facets;
-    mutable std::vector<float> normals_flat;
-    mutable std::vector<float> normals_gouraud;
-    mutable std::vector<float> color_lines;
-    mutable std::vector<float> color_facets;
-    mutable std::size_t nb_facets;
-    mutable std::size_t nb_lines;
-    mutable std::size_t nb_f_lines;
-    mutable QOpenGLShaderProgram *program;
-    mutable unsigned int number_of_null_length_edges;
-    mutable unsigned int number_of_degenerated_faces;
-    mutable bool self_intersect;
-
-    using CGAL::Three::Scene_item::initializeBuffers;
-    void initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const;
-    void compute_normals_and_vertices(const bool colors_only = false) const;
-    template<typename VertexNormalPmap>
-    void triangulate_facet(Facet_iterator,
-      const Polyhedron::Traits::Vector_3&, const VertexNormalPmap&,
-      const bool colors_only) const;
-    void* get_aabb_tree();
-    double volume, area;
-    mutable QList<double> text_ids;
-    mutable TextItem* targeted_id;
-  int m_min_patch_id; // the min value of the patch ids initialized in init()
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

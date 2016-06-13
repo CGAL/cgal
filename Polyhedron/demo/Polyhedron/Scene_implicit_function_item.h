@@ -12,7 +12,7 @@
 #define SCENE_IMPLICIT_GRID_SIZE 120
 
 class Viewer_interface;
-
+struct Scene_implicit_function_item_priv;
 class Texture{
 private:
      int Width;
@@ -48,7 +48,7 @@ public:
   Scene_implicit_function_item(Implicit_function_interface*);
   virtual ~Scene_implicit_function_item();
   
-  Implicit_function_interface* function() const { return function_; }
+  Implicit_function_interface* function() const ;
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }
@@ -59,7 +59,7 @@ public:
   // rendering mode
   virtual bool supportsRenderingMode(RenderingMode m) const;
   virtual bool manipulatable() const { return true; }
-  virtual ManipulatedFrame* manipulatedFrame() { return frame_; }
+  virtual ManipulatedFrame* manipulatedFrame();
   
 
 
@@ -71,60 +71,13 @@ public:
   virtual QString toolTip() const;
   virtual void invalidateOpenGLBuffers();
 public Q_SLOTS:
-  void plane_was_moved() { need_update_ = true; QTimer::singleShot(0, this, SLOT(updateCutPlane())); }
+  void plane_was_moved();
   void compute_function_grid() const;
   void updateCutPlane();
 
-private:
-  typedef qglviewer::Vec                  Point;
-  typedef std::pair <Point,double>        Point_value;
-  void compute_min_max();
-  
-private:
-  Implicit_function_interface* function_;
-  ManipulatedFrame* frame_;
-  
-  mutable bool need_update_;
-  int grid_size_;
-  double max_value_;
-  double min_value_;
-  mutable Point_value implicit_grid_[SCENE_IMPLICIT_GRID_SIZE][SCENE_IMPLICIT_GRID_SIZE];
-  
-  Color_ramp blue_color_ramp_;
-  Color_ramp red_color_ramp_;
-
-  enum VAOs {
-      Plane = 0,
-      BBox,
-      Grid,
-      NbOfVaos = Grid +1
-  };
-  enum VBOs {
-      Quad_vertices = 0,
-      TexMap,
-      Cube_vertices,
-      Grid_vertices,
-      NbOfVbos = Grid_vertices +1
-  };
-
-  std::vector<float> positions_cube;
-  std::vector<float> positions_grid;
-  std::vector<float> positions_tex_quad;
-  std::vector<float> texture_map;
-  Texture *texture;
-
-
-  mutable QOpenGLShaderProgram *program;
-  mutable GLuint textureId;
-
-
-
-  GLuint vao;
-  GLuint buffer[4];
-  using CGAL::Three::Scene_item::initializeBuffers;
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-  void compute_vertices_and_texmap(void);
-  void compute_texture(int, int);
+protected:
+  friend struct Scene_implicit_function_item_priv;
+  Scene_implicit_function_item_priv* d;
 };
 
 #endif // SCENE_IMPLICIT_FUNCTION_ITEM

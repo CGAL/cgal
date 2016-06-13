@@ -397,37 +397,81 @@ vertex_index(std::size_t i, std::size_t j, std::size_t k) const
 
 } // namespace internal
 
+struct Scene_image_item_priv
+{
 
+  Scene_image_item_priv(int display_scale, bool hidden, Scene_image_item* parent)
+    : m_initialized(false)
+    , m_voxel_scale(display_scale)
+  {
+    item = parent;
+    v_box = new std::vector<float>();
+    is_hidden = hidden;
+    compile_shaders();
+    initializeBuffers();
+  }
+
+  ~Scene_image_item_priv()
+  {
+    for(int i=0; i<vboSize; i++)
+        m_vbo[i].destroy();
+    for(int i=0; i<vaoSize; i++)
+        vao[i].destroy();
+  }
+  void draw_gl(CGAL::Three::Viewer_interface* viewer) const;
+
+  void initializeBuffers();
+  GLint ibo_size() const;
+  void draw_bbox();
+  void attribBuffers(CGAL::Three::Viewer_interface*) const;
+  void compile_shaders();
+  void draw_Bbox(Scene_item::Bbox bbox, std::vector<float> *vertices);
+
+  bool m_initialized;
+//#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  int m_voxel_scale;
+  std::vector<float> *v_box;
+  std::vector<float> color;
+  static const int vaoSize = 2;
+  static const int vboSize = 6;
+
+  mutable int poly_vertexLocation[1];
+  mutable int normalsLocation[1];
+  mutable int mvpLocation[1];
+  mutable int mvLocation[1];
+  mutable int colorLocation[1];
+  mutable int lightLocation[5];
+  mutable int twosideLocation;
+  mutable QOpenGLBuffer m_vbo[vboSize];
+  mutable QOpenGLBuffer *m_ibo;
+  mutable QOpenGLVertexArrayObject vao[vaoSize];
+  mutable QOpenGLShaderProgram rendering_program;
+  bool is_hidden;
+  Scene_image_item* item;
+
+//#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+};
 // -----------------------------------
 // Scene_image_item
 // -----------------------------------
 Scene_image_item::Scene_image_item(Image* im, int display_scale, bool hidden = false)
   : m_image(im)
-  , m_initialized(false)
-  , m_voxel_scale(display_scale)
-
 {
   CGAL_USE(display_scale);
-  is_hidden = hidden;
-  v_box = new std::vector<float>();
-  compile_shaders();
-  initialize_buffers();
+  d = new Scene_image_item_priv(display_scale, hidden, this);
   setRenderingMode(Flat);
 }
 
 
 Scene_image_item::~Scene_image_item()
 {
-    for(int i=0; i<vboSize; i++)
-        m_vbo[i].destroy();
-    for(int i=0; i<vaoSize; i++)
-        vao[i].destroy();
+   delete d;
 }
 
 /**************************************************
 ****************SHADER FUNCTIONS******************/
 
-void Scene_image_item::compile_shaders()
+void Scene_image_item_priv::compile_shaders()
 {
 
     for(int i=0; i< vboSize; i++)
@@ -522,7 +566,7 @@ void Scene_image_item::compile_shaders()
     }
 }
 
-void Scene_image_item::attrib_buffers(Viewer_interface* viewer) const
+void Scene_image_item_priv::attribBuffers(Viewer_interface* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -606,9 +650,7 @@ Scene_image_item::draw(Viewer_interface* viewer) const
 {
   if(m_image)
   {
-
-    //m_image->gl_draw_bbox(3.0f,0,0,0);
-    draw_gl(viewer);
+    d->draw_gl(viewer);
   }
 }
 
@@ -651,15 +693,15 @@ Scene_image_item::supportsRenderingMode(RenderingMode m) const
 }
 
 void
-Scene_image_item::initialize_buffers() 
+Scene_image_item_priv::initializeBuffers()
 {
-  internal::Image_accessor image_data_accessor (*m_image,
+  internal::Image_accessor image_data_accessor (*item->m_image,
                                                 m_voxel_scale,
                                                 m_voxel_scale,
                                                 m_voxel_scale);
   internal::Vertex_buffer_helper helper (image_data_accessor);
   helper.fill_buffer_data();
-  draw_Bbox(bbox(), v_box);
+  draw_Bbox(item->bbox(), v_box);
   std::vector<float> nul_vec(0);
   for(std::size_t i=0; i<v_box->size(); i++)
       nul_vec.push_back(0.0);
@@ -723,9 +765,9 @@ Scene_image_item::initialize_buffers()
 
 
 void
-Scene_image_item::draw_gl(Viewer_interface* viewer) const
+Scene_image_item_priv::draw_gl(Viewer_interface* viewer) const
 {
-  attrib_buffers(viewer);
+  attribBuffers(viewer);
   rendering_program.bind();
   if(!is_hidden)
   {
@@ -741,7 +783,7 @@ Scene_image_item::draw_gl(Viewer_interface* viewer) const
 }
 
 GLint
-Scene_image_item::ibo_size() const
+Scene_image_item_priv::ibo_size() const
 {
       m_ibo->bind();
     GLint nb_elts = m_ibo->size();
@@ -754,10 +796,10 @@ Scene_image_item::ibo_size() const
 
 void Scene_image_item::changed()
 {
-    initialize_buffers();
+    d->initializeBuffers();
 }
 
-void Scene_image_item::draw_Bbox(Bbox bbox, std::vector<float> *vertices)
+void Scene_image_item_priv::draw_Bbox(Scene_item::Bbox bbox, std::vector<float> *vertices)
 {
     vertices->push_back(bbox.xmin());
     vertices->push_back(bbox.ymin());
@@ -857,3 +899,7 @@ void Scene_image_item::draw_Bbox(Bbox bbox, std::vector<float> *vertices)
 
 }
 
+void Scene_image_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
+{ d->draw_gl(viewer); }
+
+bool Scene_image_item::isGray() { return d->is_hidden;}

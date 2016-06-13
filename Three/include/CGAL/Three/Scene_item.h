@@ -166,6 +166,13 @@ public:
       is_bbox_computed = true;
       return _bbox;
   }
+  virtual double diagonalBbox() const {
+   if(!is_diag_bbox_computed)
+       compute_diag_bbox();
+   is_diag_bbox_computed = true;
+   return _diag_bbox;
+  }
+
   //!Finds the spot the closest to point and prints the id of the corresponding Primitive (vertex, edg or Facet).
   virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
   virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const;
@@ -254,9 +261,9 @@ public Q_SLOTS:
   //! important to call this function whenever the internal data is changed,
   //! or the displayed item will not be updated.
   virtual void invalidateOpenGLBuffers();
-  //!Sets the color of the item. If the item is multi color, calls invalidateOpenGLBuffers() so the new color is applied.
-  virtual void setColor(QColor c) { color_ = c; if(!is_monochrome) invalidateOpenGLBuffers(); }
-  //!Sets the RGB color of the item. Calls setColor(QColor).
+  //!Setter for the color of the item.
+  virtual void setColor(QColor c) { color_ = c;}
+  //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   //!Sets the name of the item.
@@ -303,13 +310,6 @@ public Q_SLOTS:
   void setSplattingMode(){
     setRenderingMode(Splatting);
   }
-
-  //! If b is true, the item will use buffers to render the color.
-  //! If b is false, it will use a uniform value. For example, when
-  //! using the mesh segmentation plugin, the item must be multicolor.
-  void setItemIsMulticolor(bool b){
-    is_monochrome = !b;
-  }
   
   //!Emits an aboutToBeDestroyed() signal.
   virtual void itemAboutToBeDestroyed(Scene_item*);
@@ -333,8 +333,11 @@ Q_SIGNALS:
 protected:
   //!Holds the BBox of the item
   mutable Bbox _bbox;
+  mutable double _diag_bbox;
   mutable bool is_bbox_computed;
+  mutable bool is_diag_bbox_computed;
   virtual void compute_bbox()const{}
+  virtual void compute_diag_bbox()const;
   // The four basic properties
   //!The name of the item.
   QString name_;
@@ -346,9 +349,6 @@ protected:
   Scene_group_item* parent_group;
   //!Specifies if the item is currently selected.
   bool is_selected;
-  //! Specifies if the item is monochrome and uses uniform attribute for its color
-  //! or is multicolor and uses buffers.
-  bool is_monochrome;
   //! Holds the number of vertices that are not linked to the polyhedron from the OFF
   //! file.
   std::size_t nb_isolated_vertices;

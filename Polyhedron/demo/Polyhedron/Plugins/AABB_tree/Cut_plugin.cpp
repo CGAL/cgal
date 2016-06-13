@@ -40,6 +40,7 @@ public:
   Scene_aabb_item(const AABB_tree& tree_) : CGAL::Three::Scene_item(1,1), tree(tree_)
   {
       positions_lines.resize(0);
+      invalidateOpenGLBuffers();
   }
 
     ~Scene_aabb_item()
