@@ -28,6 +28,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene);
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
