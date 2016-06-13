@@ -196,8 +196,7 @@ namespace CGAL {
 
         SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
-
-        SM_Edge_index(SM_Halfedge_index he) : halfedge_(he) { }
+        explicit SM_Edge_index(SM_Halfedge_index he) : halfedge_(he) { }
 
         // returns the internal halfedge.
         SM_Halfedge_index halfedge() const { return halfedge_; }
