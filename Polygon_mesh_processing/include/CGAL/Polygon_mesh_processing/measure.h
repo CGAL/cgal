@@ -315,7 +315,7 @@ namespace Polygon_mesh_processing {
   template<typename FaceRange, typename TriangleMesh>
   typename CGAL::Kernel_traits<
     typename boost::mpl::eval_if<
-      boost::is_base_of<CGAL::dummy_named_params, TriangleMesh>,
+      boost::is_base_of<CGAL::named_params_base, TriangleMesh>,
       boost::mpl::identity<TriangleMesh>,
       property_map_value<TriangleMesh, CGAL::vertex_point_t>
     >::type
