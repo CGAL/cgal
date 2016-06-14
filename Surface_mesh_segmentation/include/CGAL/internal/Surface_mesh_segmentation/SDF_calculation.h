@@ -153,11 +153,11 @@ public:
     for(it = faces(mesh).begin(), end = faces(mesh).end(); it!=end; it++)
     {
         halfedge_handle h = halfedge(*it, mesh);
-        Point_ref a(vertex_point_map[target(h, mesh)]);
+        Point_ref a(get(vertex_point_map, target(h, mesh)));
         h = next(h, mesh);
-        Point_ref b(vertex_point_map[target(h, mesh)]);
+        Point_ref b(get(vertex_point_map,target(h, mesh)));
         h = next(h, mesh);
-        Point_ref c(vertex_point_map[target(h, mesh)]);
+        Point_ref c(get(vertex_point_map, target(h, mesh)));
         bool test = collinear(a,b,c);
         if(!test)
           tree.insert(Primitive(it, mesh, vertex_point_map));
