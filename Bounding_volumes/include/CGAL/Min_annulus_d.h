@@ -21,6 +21,10 @@
 #ifndef CGAL_MIN_ANNULUS_D_H
 #define CGAL_MIN_ANNULUS_D_H
 
+#ifdef _MSC_VER
+# pragma warning(disable: 4244) // conversion warning in Boost iterator_adaptor
+#endif
+
 // includes
 // --------
 #include <CGAL/Optimisation/basic.h>

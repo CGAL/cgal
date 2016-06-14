@@ -26,10 +26,10 @@
 
 // includes and typedefs
 // ---------------------
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/Homogeneous_d.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Optimisation_d_traits_d.h>
+#include <CGAL/Cartesian_d.h>
+#include <CGAL/Homogeneous_d.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpq.h>
