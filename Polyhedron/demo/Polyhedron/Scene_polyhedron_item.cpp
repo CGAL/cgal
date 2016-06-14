@@ -914,6 +914,8 @@ init()
                       std::back_inserter(colors_));
     m_min_patch_id=min;
   }
+  else
+    m_min_patch_id=0;
   invalidate_stats();
 }
 
