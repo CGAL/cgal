@@ -183,13 +183,15 @@ public Q_SLOTS:
   void addGroup(Scene_group_item* group);
   //!Re-organizes the sceneView.
   void redraw_model();
-  //! Sets the selected item to the target index.
+  //! Sets the selected item to the target index. Emits a signal to notify
+  //! that a new item is now selected.
   void setSelectedItemIndex(int i)
   {
     selected_item = i;
     Q_EMIT itemIndexSelected(i);
   }
   //! Clears the current selection then sets the selected item to the target index.
+  //! Used to update the selection in the QTreeView.
   void setSelectedItem(int i )
   {
     selected_item = i;
@@ -246,7 +248,9 @@ Q_SIGNALS:
   void updated();
   void itemAboutToBeDestroyed(CGAL::Three::Scene_item*);
   void selectionRay(double, double, double, double, double, double);
+  //! Used to update the selected item in the QTreeView.
   void selectionChanged(int i);
+  //! Used when you don't want to update the sleectedItem in the QTreeView.
   void itemIndexSelected(int i);
   void restoreCollapsedState();
   void drawFinished();
