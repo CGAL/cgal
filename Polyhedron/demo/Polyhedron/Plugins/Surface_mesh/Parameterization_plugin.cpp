@@ -7,6 +7,7 @@
 #include "Scene_textured_polyhedron_item.h"
 #include "Textured_polyhedron_type.h"
 #include "Polyhedron_type.h"
+#include "Messages_interface.h"
 
 #include <QTime>
 
@@ -41,10 +42,11 @@ public:
 
   void init(QMainWindow* mainWindow,
             Scene_interface* scene_interface,
-            Messages_interface*)
+            Messages_interface* m_i)
   {
       mw = mainWindow;
       scene = scene_interface;
+      message = m_i;
       QAction* actionMVC = new QAction("Mean Value Coordinates", mw);
       QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
       QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
@@ -77,6 +79,7 @@ protected:
   void parameterize(Parameterization_method method);
 private:
   QList<QAction*> _actions;
+  Messages_interface* message;
 }; // end Polyhedron_demo_parameterization_plugin
 
 
@@ -89,7 +92,9 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(!poly_item)
     return;
-
+  poly_item->polyhedron()->normalize_border();
+  if(poly_item->polyhedron()->size_of_border_halfedges()==0)
+    message->warning("The polyhedorn has no border, therefore the Parameterization cannot apply.");
   Polyhedron* pMesh = poly_item->polyhedron();
   if(!pMesh)
     return;
