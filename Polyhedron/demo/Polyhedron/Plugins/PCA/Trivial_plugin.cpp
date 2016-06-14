@@ -152,8 +152,9 @@ public:
     }
 
     bool applicable(QAction*) const {
+      if(scene->numberOfEntries() > 0)
         return true;
-    }
+    return false;}
 public Q_SLOTS:
 
     void bbox();
