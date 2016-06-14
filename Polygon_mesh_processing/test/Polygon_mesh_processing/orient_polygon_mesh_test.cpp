@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 template <typename K>
-void test(const char* file_name)
+void test_orient(const char* file_name)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   
@@ -63,8 +63,8 @@ void test(const char* file_name)
 int main()
 {
 
-  test<Epic>("data/elephant.off");
-  test<Epec>("data/elephant.off");
+  test_orient<Epic>("data/elephant.off");
+  test_orient<Epec>("data/elephant.off");
 
   std::cerr << "All done." << std::endl;
   return EXIT_SUCCESS;

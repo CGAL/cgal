@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 template <typename K>
 int
-test()
+test_triangulate_faces()
 {
   typedef typename K::Point_3                    Point;
   typedef CGAL::Surface_mesh<Point>          Surface_mesh;
@@ -48,9 +48,9 @@ test()
 
 int main()
 {
-  int r = test<Epic>();
+  int r = test_triangulate_faces<Epic>();
   assert(r==0);
-  r = test<Epec>();
+  r = test_triangulate_faces<Epec>();
   assert(r==0);
   return 0;
 }

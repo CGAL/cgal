@@ -96,7 +96,7 @@ void shuffle_off(const char* fname_in, const char* fname_out)
 }
 
 template <typename K>
-int test() {
+int test_orient() {
   typedef typename K::Point_3 Point_3;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
@@ -133,7 +133,7 @@ int test() {
 
 int main()
 {
-  assert(test<Epic>()==0);
-  assert(test<Epec>()==0);
+  assert(test_orient<Epic>() == 0);
+  assert(test_orient<Epec>() == 0);
   return 0;
 }

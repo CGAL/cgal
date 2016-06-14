@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template <typename K>
-void test(std::string fname, bool expected)
+void test_polygon_soup(std::string fname, bool expected)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   std::vector<typename K::Point_3> points;
@@ -65,23 +65,23 @@ void test(std::string fname, bool expected)
 
 int main()
 {
-  test<SC>("data_polygon_soup/bad_cube.off", false);
-  test<Epec>("data_polygon_soup/bad_cube.off", false);
-  test<SC>("data_polygon_soup/isolated_singular_vertex_one_cc.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/bad_cube.off", false);
+  test_polygon_soup<Epec>("data_polygon_soup/bad_cube.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/isolated_singular_vertex_one_cc.off", false);
 
-  test<SC>("data_polygon_soup/isolated_vertices.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/isolated_vertices.off", false);
 
-  test<SC>("data_polygon_soup/nm_vertex_and_edge.off", false);
-  test<SC>("data_polygon_soup/one_duplicated_edge.off", false);
-  test<SC>("data_polygon_soup/one_duplicated_edge_sharing_vertex.off", false);
-  test<SC>("data_polygon_soup/partial_overlap.off", false);
-  test<SC>("data_polygon_soup/incompatible_orientation.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/nm_vertex_and_edge.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/one_duplicated_edge.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/one_duplicated_edge_sharing_vertex.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/partial_overlap.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/incompatible_orientation.off", false);
 
-  test<SC>("data/blobby_3cc.off", true);
-  test<SC>("data/elephant.off", true);
-  test<SC>("data/joint_refined.off", true);
-  test<SC>("data/mech-holes-shark.off", true);
-  test<SC>("data/non_manifold_vertex.off", false);
-  test<SC>("data/two_tris_collinear.off", true);
-  test<SC>("data/U.off", true);
+  test_polygon_soup<SC>("data/blobby_3cc.off", true);
+  test_polygon_soup<SC>("data/elephant.off", true);
+  test_polygon_soup<SC>("data/joint_refined.off", true);
+  test_polygon_soup<SC>("data/mech-holes-shark.off", true);
+  test_polygon_soup<SC>("data/non_manifold_vertex.off", false);
+  test_polygon_soup<SC>("data/two_tris_collinear.off", true);
+  test_polygon_soup<SC>("data/U.off", true);
 }

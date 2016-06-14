@@ -17,7 +17,7 @@ void check_same_type(T)
 }
 
 template<class NamedParameters>
-void test(const NamedParameters& np)
+void test_np(const NamedParameters& np)
 {
 // test values
   assert(   get_param(np,boost::vertex_index).v == 0 );
@@ -66,7 +66,7 @@ void test(const NamedParameters& np)
 
 int main()
 {
-  test(
+  test_np(
   // start with inherited named params
     CGAL::Polygon_mesh_processing::parameters::
                       vertex_index_map(A<0>(0)).

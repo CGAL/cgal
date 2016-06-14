@@ -24,7 +24,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epec;
 
 template <typename K>
-int test()
+int test_slicer()
 {
 #ifdef USE_SURFACE_MESH
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
@@ -105,10 +105,8 @@ typedef std::list< Polyline_type > Polylines;
 
 int main()
 {
-  int r = test<Epic>();
-  assert(r==0);
-  r = test<Epec>();
-  assert(r==0);
+  assert(test_slicer<Epic>() == 0);
+  assert(test_slicer<Epec>() == 0);
 
   return 0;
 }

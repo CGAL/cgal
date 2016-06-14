@@ -383,7 +383,7 @@ void generate_elephant_with_hole()
 }
 
 template <class Kernel>
-void test() {
+void test_hole_filling() {
 #ifdef POLY
 typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
 #else
@@ -415,8 +415,7 @@ typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
 }
 int main() 
 {
-
-  test<Epic>();
-  test<Epec>();
+  test_hole_filling<Epic>();
+  test_hole_filling<Epec>();
   std::cout << "All Done!" << std::endl;
 }

@@ -16,7 +16,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 template <typename K>
 int
-test(const char* filename)
+test_self_intersections(const char* filename)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
@@ -60,7 +60,7 @@ test(const char* filename)
 int main(int argc, char** argv)
 {
   const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
-  int r = test<Epic>(filename);
-  r += test<Epec>(filename);
+  int r = test_self_intersections<Epic>(filename);
+  r += test_self_intersections<Epec>(filename);
   return r;
 }
