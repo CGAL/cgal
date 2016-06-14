@@ -820,7 +820,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         }
         else
         {
-          if (!item->isItemMulticolor())
+          if (item->isItemMulticolor())
           {
             color_lines.push_back(item->color().lighter(50).redF());
             color_lines.push_back(item->color().lighter(50).greenF());
