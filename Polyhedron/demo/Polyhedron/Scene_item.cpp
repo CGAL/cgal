@@ -229,7 +229,7 @@ bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three:
 
 void CGAL::Three::Scene_item::compute_diag_bbox()const
 {
-  Bbox b_box = bbox();
+ const Bbox& b_box = bbox();
   _diag_bbox = CGAL::sqrt(
         CGAL::square(b_box.xmax() - b_box.xmin())
         + CGAL::square(b_box.ymax() - b_box.ymin())
