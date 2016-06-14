@@ -34,6 +34,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << facet_angle << std::endl
+            << "  edge size bound: " << edge_size << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << facet_approx << std::endl
             << "  tetrahedra size bound: " << tet_sizing << std::endl;
