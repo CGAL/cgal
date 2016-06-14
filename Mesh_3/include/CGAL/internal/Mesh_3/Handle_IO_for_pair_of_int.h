@@ -43,7 +43,7 @@ inline std::istream& operator>>(std::istream& in, std::pair<int, int>& id) {
 }
 
 template <>
-class Output_rep<std::pair<int, int> > {
+class Output_rep<std::pair<int, int> > : public IO_rep_is_specialized {
   typedef std::pair<int, int> T;
   const T& t;
 public:
@@ -62,7 +62,7 @@ public:
 };
 
 template <>
-class Input_rep<std::pair<int, int> > {
+class Input_rep<std::pair<int, int> > : public IO_rep_is_specialized {
   typedef std::pair<int, int> T;
   T& t;
 public:

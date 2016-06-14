@@ -209,7 +209,7 @@ public:
 };
 
 template <class F>
-class Output_rep< leda_rational, F> {
+class Output_rep< leda_rational, F> : public IO_rep_is_specialized {
     const leda_rational& t;
 public:
     //! initialize with a const reference to \a t.
@@ -246,7 +246,9 @@ struct Needs_parens_as_product< leda_rational >{
 };
 
 template <>
-class Output_rep< leda_rational, Parens_as_product_tag > {
+class Output_rep< leda_rational, Parens_as_product_tag >
+  : public IO_rep_is_specialized
+{
     const leda_rational& t;
 public:
     // Constructor

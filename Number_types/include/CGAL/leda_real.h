@@ -212,7 +212,7 @@ template <> class Real_embeddable_traits< leda_real >
 
 
 template <>
-class Output_rep< ::leda::real > {
+class Output_rep< ::leda::real > : public IO_rep_is_specialized {
     const ::leda::real& t;
 public:
     //! initialize with a const reference to \a t.
@@ -226,7 +226,9 @@ public:
 };
 
 template <>
-class Output_rep< ::leda::real, CGAL::Parens_as_product_tag > {
+class Output_rep< ::leda::real, CGAL::Parens_as_product_tag >
+  : public IO_rep_is_specialized
+{
     const ::leda::real& t;
 public:
     //! initialize with a const reference to \a t.

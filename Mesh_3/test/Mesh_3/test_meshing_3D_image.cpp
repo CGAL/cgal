@@ -71,6 +71,9 @@ public:
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
     this->verify(c3t3,domain,criteria, Bissection_tag());
+
+    typedef typename Mesh_domain::Surface_patch_index Patch_id;
+    CGAL_static_assertion(CGAL::Output_rep<Patch_id>::is_specialized);
   }
 
 };
