@@ -1059,10 +1059,13 @@ void Scene_c3t3_item::export_facets_in_complex()
   namespace PMP = CGAL::Polygon_mesh_processing;
   Polyhedron outmesh;
 
-  if (PMP::orient_polygon_soup(points, polygons))
+  if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
   {
-    PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
+    CGAL_assertion_code(bool orientable = )
+    PMP::orient_polygon_soup(points, polygons);
+    CGAL_assertion(orientable);
 
+    PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
     Scene_polyhedron_item* item = new Scene_polyhedron_item(outmesh);
     item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
     scene->addItem(item);
