@@ -84,12 +84,15 @@ Dual<Primal> dual(const Primal& primal)
 } // namespace CGAL
 
 namespace boost {
-  
+  /*!
+\ingroup PkgBGLTraits
+
+  */
 template <typename Primal>
 class graph_traits<CGAL::Dual<Primal> >
 {
-  typedef boost::graph_traits<Primal> GTP;
 public:
+  typedef boost::graph_traits<Primal> GTP;
   typedef typename GTP::face_descriptor     vertex_descriptor;
   typedef typename GTP::vertex_descriptor   face_descriptor;
   typedef typename GTP::halfedge_descriptor halfedge_descriptor;
