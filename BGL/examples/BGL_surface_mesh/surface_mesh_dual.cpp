@@ -33,7 +33,7 @@ struct noborder {
 typedef boost::filtered_graph<Dual, noborder<Mesh> >   FiniteDual;
 typedef boost::graph_traits<Mesh>::vertex_descriptor   vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor     face_descriptor;
-typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
 
 int main(int argc, char* argv[])
 {
@@ -55,10 +55,10 @@ int main(int argc, char* argv[])
     std::cout << dvd << std::endl;
   }
 
-  std::cout << "The halfedges in primal and dual with source and target" << std::endl;
-  BOOST_FOREACH(halfedge_descriptor h , halfedges(dual)) {
-   std::cout << h << " in primal:  " << source(h,primal)      << " -- " << target(h,primal)       << "   "
-             <<      " in dual  :  " << source(h,finite_dual) << " -- " << target(h,finite_dual)  << std::endl;
+  std::cout << "The edges in primal and dual with source and target" << std::endl;
+  BOOST_FOREACH(edge_descriptor e , edges(dual)) {
+   std::cout << e << " in primal:  " << source(e,primal)      << " -- " << target(e,primal)       << "   "
+             <<      " in dual  :  " << source(e,finite_dual) << " -- " << target(e,finite_dual)  << std::endl;
   }
 
 
