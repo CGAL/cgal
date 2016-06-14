@@ -92,15 +92,16 @@ public:
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
     using Base_traits::Construct_cartesian_const_iterator_d::operator();
+    typedef typename Base_traits::Construct_cartesian_const_iterator_d Base;
     
     Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
       :Base_traits::Construct_cartesian_const_iterator_d(base), ppmap(ppmap_){}
     
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p) const
-    { return this->operator() (get(ppmap,p)); }
+    { return Base::operator() (get(ppmap,p)); }
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
-    { return this->operator() (get(ppmap,p),0); }
+    { return Base::operator() (get(ppmap,p),0); }
   };
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
@@ -148,7 +149,7 @@ public:
 
   FT transformed_distance(const Query_item& p1, const Point_with_info& p2) const
   {
-    return this->transformed_distance(p1,get(ppmap,p2));
+    return static_cast<const Base_distance*>(this)->transformed_distance(p1,get(ppmap,p2));
   }
 
   template <class FT,class Dimension>
