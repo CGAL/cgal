@@ -121,6 +121,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
        c_mat.data()[i] = (float)mat[i];
     }
     d->program->setUniformValue("f_matrix", b_mat*c_mat);
+    d->program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, 2);
     d->program->release();
     vaos[Volume_plane_intersection_priv::AArray]->release();
@@ -142,6 +143,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
          c_mat.data()[i] = (float)mat[i];
       }
       d->program->setUniformValue("f_matrix", a_mat*c_mat);
+      d->program->setAttributeValue("colors", this->color());
       viewer->glDrawArrays(GL_LINES, 0, 2);
       d->program->release();
       vaos[Volume_plane_intersection_priv::BArray]->release();
@@ -163,6 +165,7 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
          b_mat.data()[i] = (float)mat[i];
       }
       d->program->setUniformValue("f_matrix", a_mat*b_mat);
+      d->program->setAttributeValue("colors", this->color());
       viewer->glDrawArrays(GL_LINES, 0, 2);
       d->program->release();
       vaos[Volume_plane_intersection_priv::CArray]->release();
