@@ -41,7 +41,7 @@ public:
     : graph(NULL), descriptor()
   {}
 
-  Gwdwg_descriptor(Descriptor descripto)
+  Gwdwg_descriptor(Descriptor descriptor)
     : graph(NULL), descriptor(descriptor)
   {}
 
@@ -55,7 +55,8 @@ template<typename Graph,typename Descriptor>
 bool operator==(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  return ( lhs.graph == rhs.graph ) && ( lhs.descriptor == rhs.descriptor );
+  assert( lhs.graph == rhs.graph );
+  return lhs.descriptor == rhs.descriptor;
 }
 
 template<typename Graph,typename Descriptor>
@@ -63,6 +64,38 @@ bool operator!=(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
   return ! (lhs == rhs);
+}
+
+template<typename Graph,typename Descriptor>
+bool operator<(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
+                const Gwdwg_descriptor<Graph,Descriptor>& rhs)
+{
+  assert( lhs.graph == rhs.graph );
+  return lhs.descriptor < rhs.descriptor;
+}
+
+template<typename Graph,typename Descriptor>
+bool operator>(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
+                const Gwdwg_descriptor<Graph,Descriptor>& rhs)
+{
+  assert( lhs.graph == rhs.graph );
+  return lhs.descriptor > rhs.descriptor;
+}
+
+template<typename Graph,typename Descriptor>
+bool operator<=(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
+                const Gwdwg_descriptor<Graph,Descriptor>& rhs)
+{
+  assert( lhs.graph == rhs.graph );
+  return lhs.descriptor <= rhs.descriptor;
+}
+
+template<typename Graph,typename Descriptor>
+bool operator>=(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
+                const Gwdwg_descriptor<Graph,Descriptor>& rhs)
+{
+  assert( lhs.graph == rhs.graph );
+  return lhs.descriptor >= rhs.descriptor;
 }
 
 
@@ -157,9 +190,14 @@ struct graph_traits< CGAL::Gwdwg<Graph> >
 
   static face_descriptor null_face()
   {
-    return face_descriptor(BGTG::null_face())xs;
+    return face_descriptor(BGTG::null_face());
   }
 };
+
+template<typename Graph>
+struct graph_traits< const CGAL::Gwdwg<Graph> >
+  : public graph_traits< CGAL::Gwdwg<Graph> >
+{};
 
 
 } // namespace boost
@@ -175,14 +213,14 @@ bool in_same_graph(const T1& t1, const T2& t2)
 
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertices_size_type
-num_vertices(Gwdwg<Graph>& w)
+num_vertices(const Gwdwg<Graph>& w)
 {
   return num_vertices(*w.graph);
 }
 
 template<typename Graph>
 typename boost::graph_traits<Graph>::edges_size_type
-num_edges(Gwdwg<Graph>& w)
+num_edges(const Gwdwg<Graph>& w)
 {
   return num_edges(*w.graph);
 }
@@ -270,8 +308,8 @@ edges(const Gwdwg<Graph> & w)
 {
   typename boost::graph_traits<Graph>::edge_iterator b,e;
   boost::tie(b,e) = edges(*w.graph);
-  return std::make_pair(boost::make_transform_iterator(b,boost::graph_traits<Gwdwg<Graph> >::E2E(*w.graph)),
-                        boost::make_transform_iterator(e,boost::graph_traits<Gwdwg<Graph> >::E2E(*w.graph)));
+  return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Gwdwg<Graph> >::E2E(*w.graph)),
+                        boost::make_transform_iterator(e,typename boost::graph_traits<Gwdwg<Graph> >::E2E(*w.graph)));
 }
 
 
@@ -580,8 +618,8 @@ faces(const Gwdwg<Graph> & w)
 {
   typename boost::graph_traits<Graph>::face_iterator b,e;
   boost::tie(b,e) = faces(*w.graph);
-  return std::make_pair(boost::make_transform_iterator(b,boost::graph_traits<Gwdwg<Graph> >::F2F(*w.graph)),
-                        boost::make_transform_iterator(e,boost::graph_traits<Gwdwg<Graph> >::F2F(*w.graph)));
+  return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Gwdwg<Graph> >::F2F(*w.graph)),
+                        boost::make_transform_iterator(e,typename boost::graph_traits<Gwdwg<Graph> >::F2F(*w.graph)));
 }
 
 
@@ -607,7 +645,7 @@ struct Gwdwg_property_map {
   typedef typename boost::property_traits<PM>::category category;
   typedef typename boost::property_traits<PM>::value_type value_type;
   typedef typename boost::property_traits<PM>::reference reference;
-  
+  typedef Gwdwg_descriptor<Graph, typename boost::property_traits<PM>::key_type > key_type;
 
   Graph* graph;
   PM* pm;
@@ -621,8 +659,8 @@ struct Gwdwg_property_map {
   {}
 
   template <typename Descriptor>
-  friend 
-  typename boost::property_traits<PM>::value_type
+  friend
+  reference
   get(Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d)
   {
     assert(d.graph == gpm.graph);
@@ -632,7 +670,7 @@ struct Gwdwg_property_map {
   template <typename Descriptor>
   friend 
   void
-  put(Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d,   const typename boost::property_traits<PM>::value_type& v)
+  put(Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d,   const value_type& v)
   {
     assert(d.graph == gpm.graph);
     put(*gpm.pm, d.descriptor, v);
@@ -650,13 +688,19 @@ get(PropertyTag ptag, const Gwdwg<Graph>& w)
   return GPM(*w.graph, get(ptag,*w.graph));
 }
 
+template <class G, class D>
+std::size_t hash_value(CGAL::Gwdwg_descriptor<G,D> d)
+{
+  return hash_value(d.descriptor);
+}
 
 }//end namespace CGAL
 
 namespace boost {
   template <typename Graph, typename PropertyTag>
-  struct boost::property_map<CGAL::Gwdwg<Graph>,PropertyTag> {
+  struct property_map<CGAL::Gwdwg<Graph>,PropertyTag> {
     typedef CGAL::Gwdwg_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type, PropertyTag> type;
+    typedef CGAL::Gwdwg_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::const_type, PropertyTag> const_type;
   };
 }// namespace boost
 
