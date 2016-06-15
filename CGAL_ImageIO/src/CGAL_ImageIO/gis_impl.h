@@ -80,15 +80,14 @@ int writeGis( char *name, _image* im) {
     return ImageIO_OPENING;
   }
 
-  res = writeGisHeader(im);
-  if (res < 0 ) {
+  if ( !writeGisHeader(im) ) {
     fprintf(stderr, "writeGis: error: unable to write header of \'%s\'\n",
 	    outputName);
     if ( outputName != NULL ) ImageIO_free( outputName );
     ImageIO_close( im );
     im->fd = NULL;
     im->openMode = OM_CLOSE;
-    return( res );
+    return -1;
   }
 
   ImageIO_close(im);
@@ -635,14 +634,14 @@ int readGisHeader( const char* name,_image* im)
 
 
 CGAL_INLINE_FUNCTION
-int writeGisHeader( const _image* inr )
+bool writeGisHeader( const _image* inr )
 {
   const char *proc = "writeGisHeader";
   std::ostringstream oss;
 
   if ( inr->vectMode == VM_NON_INTERLACED ) {
     fprintf( stderr, "%s: can not write non interlaced data\n", proc );
-    return -1;
+    return false;
   }
 
   /* dimensions
@@ -670,7 +669,7 @@ int writeGisHeader( const _image* inr )
       break;
     default :
       fprintf( stderr, "%s: unknown wordSign\n", proc );
-      return -1;    
+      return false;    
     }
     break;
   case WK_FLOAT :
@@ -682,12 +681,12 @@ int writeGisHeader( const _image* inr )
     }
     else {
       fprintf( stderr, "%s: unknown WK_FLOAT word dim\n", proc );
-      return -1;    
+      return false;    
     }
     break;
   default :
     fprintf( stderr, "%s: unknown wordKind for image\n", proc );
-    return -1;  
+    return false;  
   }
   oss << "\n";
   
@@ -716,9 +715,9 @@ int writeGisHeader( const _image* inr )
     oss << "-om ascii\n";
   }
   if( ImageIO_write( inr, oss.str().data(), oss.str().length()) == 0) {
-    return -1;
+    return false;
   }
-  return 1;
+  return true;
 }
 
 
