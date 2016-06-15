@@ -9,6 +9,8 @@
 
 #include <Scene_c3t3_item.h>
 
+#include <vector>
+
 #include "Mesh_function.h"
 #include "Facet_extra_criterion.h"
 
@@ -27,6 +29,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
+                                 const bool surface_only,
                                  CGAL::Three::Scene_interface* scene)
 {
   if(!pMesh) return 0;
@@ -34,15 +37,27 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << facet_angle << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
-            << "  approximation bound: " << facet_approx << std::endl
-            << "  tetrahedra size bound: " << tet_sizing << std::endl;
+            << "  approximation bound: " << facet_approx << std::endl;
+  if (pMesh->is_closed())
+    std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
+
   std::cerr << "Build AABB tree...";
   CGAL::Timer timer;
   timer.start();
+
   // Create domain
-  Polyhedral_mesh_domain* p_domain = new Polyhedral_mesh_domain(*pMesh);
+  Polyhedral_mesh_domain* p_domain = NULL;
+  if (!surface_only && pMesh->is_closed())
+    p_domain = new Polyhedral_mesh_domain(*pMesh);
+  else
+  {
+    std::vector<const Polyhedron*> poly_ptrs_vector(1, pMesh);
+    p_domain = new Polyhedral_mesh_domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
+  }
+  
+  // Features
   if(polylines.empty() && protect_features) {
-      p_domain->detect_features();
+      p_domain->detect_features();//includes detection of borders in the surface case
   }
   if(! polylines.empty()){
     p_domain->add_features(polylines.begin(), polylines.end());

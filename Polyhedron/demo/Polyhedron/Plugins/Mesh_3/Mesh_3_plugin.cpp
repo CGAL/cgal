@@ -52,21 +52,30 @@ public:
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
+
     actionMesh_3 = new QAction("Create a Tetrahedral Mesh", mw);
     if(actionMesh_3) {
       actionMesh_3->setProperty("subMenuName", "Tetrahedral Mesh Generation");
       connect(actionMesh_3, SIGNAL(triggered()),
-              this, SLOT(mesh_3()));
+              this, SLOT(mesh_3_volume()));
     }
+
+    actionMesh_3_remesh = new QAction("Remesh a polyhedral surface", mw);
+    if (actionMesh_3_remesh){
+      actionMesh_3_remesh->setProperty("subMenuName", "Tetrahedral Mesh Generation");
+      connect(actionMesh_3_remesh, SIGNAL(triggered()),
+              this, SLOT(mesh_3_surface()));
+    }
+
     this->msg = msg_interface;
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionMesh_3;
+    return QList<QAction*>() << actionMesh_3 << actionMesh_3_remesh;
   }
 
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction* a) const {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
       return true;
@@ -78,23 +87,30 @@ public:
     }
 #endif  
     Q_FOREACH(int ind, scene->selectionIndices()){
-      if( qobject_cast<Scene_polyhedron_item*>(scene->item(ind)))
-        return true;
+      Scene_polyhedron_item* poly_item
+        = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+      if (NULL == poly_item)
+        continue;
+      if (a == actionMesh_3) return poly_item->polyhedron()->is_closed();
+      else                   return true;
     }
     return false;
   }
 
 public Q_SLOTS:
-  void mesh_3();
+  void mesh_3_volume();
+  void mesh_3_surface();
   void meshing_done(Meshing_thread* t);
   void status_report(QString str);
 
 private:
+  void mesh_3(const bool surface_only);
   void launch_thread(Meshing_thread* mesh_thread);
   void treat_result(Scene_item& source_item, Scene_c3t3_item& result_item) const;
 
 private:
   QAction* actionMesh_3;
+  QAction* actionMesh_3_remesh;
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
@@ -116,7 +132,16 @@ get_approximate(double d, int precision, int& decimals)
     return std::floor(d)*std::pow(10.,decimals);
 }
 
-void Mesh_3_plugin::mesh_3()
+void Mesh_3_plugin::mesh_3_surface()
+{
+  mesh_3(true);
+}
+void Mesh_3_plugin::mesh_3_volume()
+{
+  mesh_3(false);
+}
+
+void Mesh_3_plugin::mesh_3(const bool surface_only)
 {
   Scene_polyhedron_item* poly_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
@@ -146,12 +171,6 @@ void Mesh_3_plugin::mesh_3()
   bool features_protection_available = false;
   if(NULL != poly_item)
   {
-    if (!poly_item->polyhedron()->is_closed())
-    {
-      QMessageBox::warning(mw, tr(""),
-                           tr("Selected Scene_polyhedron_item is not closed."));
-      return;
-    }
     if (!poly_item->polyhedron()->is_pure_triangle())
     {
       QMessageBox::warning(mw, tr(""),
@@ -266,6 +285,8 @@ void Mesh_3_plugin::mesh_3()
   ui.protect->setChecked(features_protection_available);
 
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
+  ui.volumeGroup->setVisible(!surface_only && poly_item != NULL
+                             && poly_item->polyhedron()->is_closed());
 
   // -----------------------------------
   // Get values
@@ -312,6 +333,7 @@ void Mesh_3_plugin::mesh_3()
                                  radius_edge,
                                  protect_features,
                                  manifold,
+                                 surface_only,
                                  scene);
   }
   // Image

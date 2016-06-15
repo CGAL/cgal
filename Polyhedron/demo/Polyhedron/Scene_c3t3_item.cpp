@@ -25,6 +25,9 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_C3T3_triangle_primitive.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+
 
 typedef CGAL::AABB_C3T3_triangle_primitive<Kernel,C3t3> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
@@ -1020,30 +1023,59 @@ double Scene_c3t3_item_priv::complex_diag() const {
 
 void Scene_c3t3_item::export_facets_in_complex()
 {
-  std::stringstream off_sstream;
-  c3t3().output_facets_in_complex_to_off(off_sstream);
-  std::string backup = off_sstream.str();
-  // Try to read .off in a polyhedron
-  Scene_polyhedron_item* item = new Scene_polyhedron_item;
-  if (!item->load(off_sstream))
+  std::set<C3t3::Vertex_handle> vertex_set;
+  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
+       fit != c3t3().facets_in_complex_end();
+       ++fit)
   {
-    delete item;
-    off_sstream.str(backup);
-
-    // Try to read .off in a polygon soup
-    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-
-    if (!soup_item->load(off_sstream)) {
-      delete soup_item;
-      return;
-    }
-
-    soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    scene->addItem(soup_item);
+    vertex_set.insert(fit->first->vertex((fit->second + 1) % 4));
+    vertex_set.insert(fit->first->vertex((fit->second + 2) % 4));
+    vertex_set.insert(fit->first->vertex((fit->second + 3) % 4));
   }
-  else{
+
+  std::map<C3t3::Vertex_handle, std::size_t> indices;
+  std::vector<Kernel::Point_3> points(vertex_set.size());
+  std::vector<std::vector<std::size_t> > polygons(c3t3().number_of_facets_in_complex());
+
+  std::size_t index = 0;
+  BOOST_FOREACH(C3t3::Vertex_handle v, vertex_set)
+  {
+    points[index] = v->point();
+    indices.insert(std::make_pair(v, index));
+    index++;
+  }
+  index = 0;
+  for (C3t3::Facets_in_complex_iterator fit = c3t3().facets_in_complex_begin();
+       fit != c3t3().facets_in_complex_end();
+       ++fit, ++index)
+  {
+    std::vector<std::size_t> facet(3);
+    facet[0] = indices.at(fit->first->vertex((fit->second + 1) % 4));
+    facet[1] = indices.at(fit->first->vertex((fit->second + 2) % 4));
+    facet[2] = indices.at(fit->first->vertex((fit->second + 3) % 4));
+    polygons[index] = facet;
+  }
+
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  Polyhedron outmesh;
+
+  if (PMP::is_polygon_soup_a_polygon_mesh(polygons))
+  {
+    CGAL_assertion_code(bool orientable = )
+    PMP::orient_polygon_soup(points, polygons);
+    CGAL_assertion(orientable);
+
+    PMP::polygon_soup_to_polygon_mesh(points, polygons, outmesh);
+    Scene_polyhedron_item* item = new Scene_polyhedron_item(outmesh);
     item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
     scene->addItem(item);
+  }
+  else
+  {
+    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+    soup_item->load(points, polygons);
+    soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
+    scene->addItem(soup_item);
   }
 }
 
