@@ -369,15 +369,15 @@ typename boost::graph_traits< Gwdwg<Graph> >::face_descriptor
 add_face(InputIterator begin, InputIterator end,
          Gwdwg<Graph> & w)
 {
-  typedef boost::graph_traits<Graph>::vertex_descriptor G_vertex_descriptor;
-  typedef boost::graph_traits<Graph>::face_descriptor G_face_descriptor;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor G_vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor G_face_descriptor;
   std::vector<G_vertex_descriptor> vertices;
   for(; begin != end; ++begin){
     typename boost::graph_traits<Gwdwg<Graph> >::vertex_descriptor vd = *begin;
     assert(in_same_graph(vd,w));
     vertices.push_back(vd.descriptor);
   }
-  face_descriptor fd = add_face(vertices.begin(), vertices.end(), *w.graph);
+  G_face_descriptor fd = add_face(vertices.begin(), vertices.end(), *w.graph);
   return typename boost::graph_traits<Gwdwg<Graph> >::face_descriptor(fd,*w.graph);
 }
 
@@ -598,7 +598,7 @@ is_valid(const Gwdwg<Graph> & w, bool verbose = false)
 
 template <class Graph, class PropertyTag>
 typename boost::property_map< Graph, PropertyTag >::type
- get(PropertyTag ptag, const Gwdwg<Graph>& w)
+get(PropertyTag ptag, const Gwdwg<Graph>& w)
 {
   get(ptag,*w.graph);
 }
