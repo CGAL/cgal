@@ -158,8 +158,10 @@ struct Output_rep< Some_type, F > {
 You can also specialize for a formatting tag `F`. 
 
 The constant `is_specialized` can be tested by meta-programming tools to
-verify that a given type can be used with `oformat()`. The class template
-`Output_rep` defines `is_specialized` to the default value `false`.
+verify that a given type can be used with `oformat()`. Its value has to be
+`true` in a specialization of `Output_rep`. When there is no specialization
+for a type, the class template `Output_rep` defines `is_specialized` to the
+default value `false`.
 
 */
 template< typename T, typename F >
