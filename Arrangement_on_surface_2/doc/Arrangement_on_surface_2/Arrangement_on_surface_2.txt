@@ -2540,35 +2540,69 @@ Figure \cgalFigureRef{aos_fig-side_clusters}.
 
 \paragraph aos_par-geom_traits-concepts_spcial Curves with Boundary Conditions
 
-The abstract concept `ArrangementHorizontalSide_2` requires the
+The abstract concept `ArrangementVerticalSide_2` requires the
 following predicate:
 <DL>
 
 <DT><B>`Parameter_space_in_u_2`:</B>
 
-<DD>Given a curve \f$C\f$ and an enumerator that specify either the
-minimum end or the maximum end of the curve, and thus map to a
-parameter value \f$d \in \{0,1\}\f$, determine the location of the
-\f$d\f$-end of \f$C\f$ with respect to the \f$u\f$-axis. More
-precisely, determine whether \f$\lim_{t \rightarrow d} u(\gamma(t))\f$
-is equal to \f$u_{\rm min}\f$, equal to \f$u_{\rm max}\f$, or falls in
-between.
+<DD>This predicate is overloaded with two versions. We distinguish
+between identified and non-identified sides as explained below.
+
+(i) Given a curve \f$C = (u(t), v(t))\f$ and an enumerator that
+specify either the minimum end or the maximum end of the curve, and
+thus map to a parameter value \f$d \in \{0,1\}\f$, determine the
+location of the \f$d\f$-end of \f$C\f$ with respect to the
+\f$u\f$-axis. More precisely, if \f$C\f$ is open at its \f$d\f$-end
+end, determine whether \f$\lim_{t \rightarrow d} u(t)\f$ is equal to
+\f$u_{\rm min}\f$, equal to \f$u_{\rm max}\f$, or falls in between. If
+\f$C\f$ is not open at its \f$d\f$-end end, determine whether
+\f$u(d)\f$ is equal to \f$u_{\rm min}\f$, equal to \f$u_{\rm max}\f$,
+or falls in between.
+
+(ii) Given a point \f$p\f$, determine the location of the point with
+respect to the \f$u\f$-axis. More precisely, determine whether
+\f$u_p\f$ is equal to \f$u_{\rm min}\f$, equal to \f$u_{\rm max}\f$,
+or falls in between.  If \f$p\f$ is on a vertical boundary; that is,
+\f$u_p \in \{u_{\rm min},u_{\rm max}\}\f$, then the boundary side
+containing \f$p\f$ cannot be open and must not be identified. In other
+words, this overloaded version is required only for the concepts
+`ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
+`ArrangementContractedLeftTraits_2` and
+`ArrangementContractedRightTraits_2` concepts.
 
 </DL>
 
-The abstract concept `ArrangementVerticalSide_2` requires the
+The abstract concept `ArrangementHorizontalSide_2` requires the
 following predicate:
 <DL>
 
 <DT><B>`Parameter_space_in_v_2`:</B>
 
-<DD>Given a curve \f$C\f$ and an enumerator that specify either the
+<DD>This predicate is overloaded with two versions. We distinguish
+between identified and non-identified sides as explained below.
+
+(i) Given a curve \f$C\f$ and an enumerator that specify either the
 minimum end or the maximum end of the curve, and thus map to a
 parameter value \f$d \in \{0,1\}\f$, determine the location of the
 \f$d\f$-end of \f$C\f$ with respect to the \f$v\f$-axis. More
-precisely, determine whether \f$\lim_{t \rightarrow d} v(\gamma(t))\f$
-is equal to \f$v_{\rm min}\f$, equal to \f$v_{\rm max}\f$, or falls in
+precisely, if \f$C\f$ is open at its \f$d\f$-end end, determine
+whether \f$\lim_{t \rightarrow d} v(t)\f$ is equal to \f$v_{\rm
+min}\f$, equal to \f$v_{\rm max}\f$, or falls in between. If \f$C\f$
+is not open at its \f$d\f$-end end, determine whether \f$v(d)\f$ is
+equal to \f$v_{\rm min}\f$, equal to \f$v_{\rm max}\f$, or falls in
 between.
+
+(ii) Given a point \f$p\f$, determine the location of the point with
+respect to the \f$v\f$-axis. More precisely, determine whether
+\f$v_p\f$ is equal to \f$v_{\rm min}\f$, equal to \f$v_{\rm max}\f$,
+or falls in between.  If \f$p\f$ is on a horizontal boundary; that is,
+\f$v_p \in \{v_{\rm min},v_{\rm max}\}\f$, then the boundary side
+containing \f$p\f$ cannot be open and must not be identified. In other
+words, this overloaded version is required only for the concepts
+`ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
+`ArrangementContractedBottomTraits_2` and
+`ArrangementContractedTopTraits_2` concepts.
 
 </DL>
 
@@ -2600,7 +2634,7 @@ end or the maximum end of the curve, and thus maps to a parameter
 value \f$d \in \{0,1\}\f$, compare the \f$u\f$-coordinate of \f$p\f$
 and the \f$u\f$-coordinate of \f$C\f$ at its respective limit or end
 depending on whether it is open or non-open. More precisely, if
-\f$C\f$ is open at its respective end, compare the values \f$u_p\f$
+\f$C\f$ is open at its \f$d\f$-end end, compare the values \f$u_p\f$
 and \f$\lim_{t \rightarrow d} u(t)\f$. A precondition assures that
 \f$C\f$ has a vertical asymptote at its \f$d\f$-end; that is
 \f$\lim_{t \rightarrow d} u(t)\f$ is a real value. If \f$C\f$ is not
@@ -2636,9 +2670,10 @@ other words, this overloaded version is required only for the concepts
 
 <DT><B>`Compare_u_near_boundary_2`:</B>
 
-<DD>Given two \f$x\f$-monotone curves \f$C_1\f$ and \f$C_2\f$ and an
+<DD>Given two \f$u\f$-monotone curves \f$C_1\f$ and \f$C_2\f$ and an
 enumerator \f$i\f$ that specifies either the minimum ends or the
-maximum ends of the two curves, respectively, compare the
+maximum ends of the two curves, and thus map to parameter values
+\f$d_1, d_2 \in \{0,1\}\f$, respectively, compare the
 \f$u\f$-coordinate of the curves near their respective limits or
 ends. That is, compare the \f$u\f$-coordinates of the horizontal
 projection of a point \f$p\f$ onto \f$C_1\f$ and onto \f$C_2\f$. A
@@ -2661,24 +2696,25 @@ additional predicates:
 <DL>
 <DT><B>`Compare_v_on_boundary_2`:</B>
 
-Given two points \f$p_1\f$ and \f$p_2\f$, such that at least one of
-them lies on a vertical boundary side, compare the \f$v\f$-coordinates
-of the points. That is, compare \f$v_{p_1}\f$ and \f$v_{p_2}\f$. If
-\f$p_1\f$ (resp. \f$p_2\f$) is on the boundary; that is, \f$u_{p_1}
-\in \{u_{\rm min},u_{\rm max}\}\f$ (resp. \f$u_{p_2} \in \{u_{\rm
-min},u_{\rm max}\}\f$), then the vertical boundary side containing
-\f$p_1\f$ (resp. \f$p_2\f$) must be either closed or identified. In
-other words, this overloaded version is required only for the concepts
-`ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
-`ArrangementIdentifiedLeftTraits_2` and
-`ArrangementIdentifiedRightTraits_2` concepts.
+<DD>Given two points \f$p_1\f$ and \f$p_2\f$, such that at least one
+of them lies on a vertical boundary side, compare the
+\f$v\f$-coordinates of the points. That is, compare \f$v_{p_1}\f$ and
+\f$v_{p_2}\f$. If \f$p_1\f$ (resp. \f$p_2\f$) is on the boundary; that
+is, \f$u_{p_1} \in \{u_{\rm min},u_{\rm max}\}\f$ (resp. \f$u_{p_2}
+\in \{u_{\rm min},u_{\rm max}\}\f$), then the vertical boundary side
+containing \f$p_1\f$ (resp. \f$p_2\f$) must be either closed or
+identified. In other words, this overloaded version is required only
+for the concepts `ArrangementClosedLeftTraits_2`,
+`ArrangementClosedRightTraits_2`, `ArrangementIdentifiedLeftTraits_2`
+and `ArrangementIdentifiedRightTraits_2` concepts.
 
 <DT><B>`Compare_v_near_boundary_2`:</B>
 
-<DD> Given two \f$x\f$-monotone curves \f$C_1\f$ and \f$C_2\f$, and an
+<DD> Given two \f$u\f$-monotone curves \f$C_1\f$ and \f$C_2\f$, and an
 enumerator \f$i\f$ that specifies either the minimum ends or the
-maximum ends of the two curves, compare the \f$v\f$-coordinates of the
-curves near their respective ends. More precisely, compares the
+maximum ends of the two curves, and thus maps to parameter values \f$d
+\in \{0,1\}\f$, compare the \f$v\f$-coordinates of the curves near
+their respective ends. More precisely, compares the
 \f$v\f$-coordinates of the vertical projection of a point \f$p\f$ onto
 \f$C_1\f$ and onto \f$C_2\f$. If the enumerator \f$i\f$ specifies the
 minimum ends, the curves must approach the left boundary-side. In this
@@ -2686,39 +2722,40 @@ case \f$p\f$ is located far to the left, such that the result is
 invariant under a translation of \f$p\f$ farther to the left. If
 \f$i\f$ specifies the maximum ends, the curves must approach the right
 boundary-side. In that case \f$p\f$ is located far to the right in a
-similar manner.
-</DL>
+similar manner.  </DL>
 
-xxx
-
-
-We are almost done. For a contracted boundary side no additional
-operation (beyond those required by the concept `PointOnSideTraits`)
-are needed. For a closed side, we have to handle curves whose
-pre-image is fully contained in the boundary of the parameter
-space. Therefore, the concept `ArrangementClosedSideTraits` requires
-yet another pair of predicates:
-
+The concepts `ArrangementIdentifiedLeftTraits_2` and
+`ArrangementIdentifiedRightTraits_2` introduces the following requirement:
 <DL>
-<DT><B>Locate curve in \f$u\f$ (resp. \f$v\f$):</B>
+<DT><B>`Is_on_v_identification_2:</B>
 
-<DD>Locate a curve \f$C\f$ along the \f$u\f$-dimension. More
-precisely, determine whether \f$u(\gamma(t))\f$ is equal to \f$u_{\rm
-min}\f$, equal to \f$u_{\rm max}\f$, or falls in between for all \f$t
-\in (0,1)\f$.
-</DL>
+<DD>
 
-In contrast, handling identified boundary sides demand a slightly
-different predicate. Thus, the concept `ArrangementIdentifiedSideTraits`
-introduces the following requirement:
-<DL>
-<DT><B>Is on \f$u\f$-identification (resp. \f$v\f$):</B>
-<DD> Given a point \f$p\f$ (respectively a curve \f$C\f$), determine
-whether \f$p\f$ (respectively \f$C\f$) lies in the image of the
-vertical and identified sides of the boundary. More precisely,
+(i) Given a point \f$p\f$, determine whether \f$p\f$ lies in the image
+of the vertical and identified sides of the boundary. More precisely,
 determine whether \f$u_p \in \{u_{\rm min},u_{\rm max}\}\f$ for all
-pre-images of \f$p\f$. Similar for all points of \f$C\f$,
-respectively.
+pre-images of \f$p\f$.
+
+(ii)Given a curve \f$C\f$, determine whether the entire curve \f$C\f$
+lies in the image of the vertical and identified sides of the
+boundary.
+
+Similarly, the concepts `ArrangementIdentifiedBottomTraits_2` and
+`ArrangementIdentifiedTopTraits_2` introduces the following requirement:
+<DL>
+<DT><B>`Is_on_u_identification_2:</B>
+
+<DD>
+
+(i) Given a point \f$p\f$, determine whether \f$p\f$ lies in the image
+of the horizontal and identified sides of the boundary. More precisely,
+determine whether \f$v_p \in \{v_{\rm min},v_{\rm max}\}\f$ for all
+pre-images of \f$p\f$.
+
+(ii)Given a curve \f$C\f$, determine whether the entire curve \f$C\f$
+lies in the image of the horizontal and identified sides of the
+boundary.
+
 </DL>
 
 \subsection aos_ssec-geom_traits-models Models of the Geometry Traits Concepts
