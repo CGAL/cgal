@@ -51,6 +51,8 @@
 #include <boost/foreach.hpp>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
+#include <boost/dynamic_bitset.hpp>
+
 #ifdef CGAL_COREFINEMENT_DEBUG
 #warning look at CGAL/Mesh_3/Robust_intersection_traits.h and the statically filtered decision tree
 #endif
@@ -1691,23 +1693,23 @@ class Intersection_of_Polyhedra_3{
 
 
   struct Graph_node{
-    std::set<int> neighbors;
-    unsigned size;
+    std::set<std::size_t> neighbors;
+    unsigned degree;
     
-    Graph_node():size(0){}
+    Graph_node():degree(0){}
     
-    void insert(int i){
-      ++size;
+    void insert(std::size_t i){
+      ++degree;
       CGAL_assertion(neighbors.find(i)==neighbors.end());
       neighbors.insert(i);
     }
     
-    void erase(int i){
+    void erase(std::size_t i){
       CGAL_assertion(neighbors.find(i)!=neighbors.end());
       neighbors.erase(i);
     }
-    void make_terminal() {size=45;}
-    bool is_terminal()const {return size!=2;}
+    void make_terminal() {degree=45;}
+    bool is_terminal()const {return degree!=2;}
     bool empty() const {return neighbors.empty();}
     int top() const {return *neighbors.begin();}
     void pop() {
@@ -1719,12 +1721,9 @@ class Intersection_of_Polyhedra_3{
 
   template <class Output_iterator>
   void construct_polylines(Nodes_vector& nodes,Output_iterator out){
-    typedef std::map<int,Graph_node> Graph;
-    Graph graph;
-    
-    //counts the number of time each node has been seen
     std::size_t nb_nodes=nodes.size();
-    std::vector<int> node_mult(nb_nodes,0);
+    std::vector<Graph_node> graph(nb_nodes);
+    //counts the number of time each node has been seen
     bool isolated_point_seen=false;
     for (typename Facets_to_nodes_map::iterator it=f_to_node.begin();it!=f_to_node.end();++it){
       const std::set<int>& segment=it->second;
@@ -1732,94 +1731,99 @@ class Intersection_of_Polyhedra_3{
       if (segment.size()==2){
         int i=*segment.begin();
         int j=*boost::next(segment.begin());
-        typename Graph::iterator ins_res=graph.insert(std::make_pair(i,Graph_node())).first;
-        ins_res->second.insert(j);
-        ins_res=graph.insert(std::make_pair(j,Graph_node())).first;
-        ins_res->second.insert(i);
-        ++(node_mult[i]);
-        ++(node_mult[j]);
+        graph[i].insert(j);
+        graph[j].insert(i);
       }
       else{
         CGAL_assertion(segment.size()==1);
         isolated_point_seen=true;
       }
     }
-    
-    //add isolated points
-    if (isolated_point_seen){
-      for (unsigned index=0;index<nb_nodes;++index)
-        if (node_mult[index]==0){
-          *out++=std::vector<typename Kernel::Point_3>(1,nodes[index]);
-          visitor->start_new_polyline(index,index);
-        }
-    }
-    
+
     //visitor call
     visitor->annotate_graph(graph.begin(),graph.end());
-    
-    bool only_cycle=false;
-    while (!graph.empty()){
-      typename Graph::iterator it=graph.begin();
-      for (;!only_cycle && it!=graph.end();++it){
-        if (it->second.is_terminal()) break;
-      }
-      
-      std::vector<typename Kernel::Point_3> polyline;
-      
-      if(!only_cycle && it!=graph.end()){
-        //this is a polyline
-        int i=it->first;
-        int j=it->second.top();
-        visitor->start_new_polyline(i,j);
-        CGAL_assertion(i!=j);
-        it->second.pop();
-        if (it->second.empty())
-          graph.erase(it);
-        polyline.push_back(nodes[i]);
-        visitor->add_node_to_polyline(i);
-        while(true){
-          it=graph.find(j);
-          CGAL_assertion(it!=graph.end());
-          it->second.erase(i);
-          i=j;
-          polyline.push_back(nodes[i]);
-          visitor->add_node_to_polyline(i);
-          if (it->second.empty()){
-            graph.erase(it);
-            break;
-          }
-          if (it->second.is_terminal()) break;
-          j=it->second.top();
-          it->second.pop();
-          if (it->second.empty())
-            graph.erase(it);
+
+    //collect terminal and interior nodes
+    boost::dynamic_bitset<> terminal_nodes(nb_nodes), interior_nodes(nb_nodes);
+    for (std::size_t i=0;i<nb_nodes;++i)
+      if (graph[i].is_terminal())
+        terminal_nodes.set(i);
+      else
+        interior_nodes.set(i);
+
+    //handle isolated points
+    if (isolated_point_seen){
+      for (std::size_t i=0;i<nb_nodes;++i)
+        if (graph[i].degree==0){
+          *out++=std::vector<typename Kernel::Point_3>(1,nodes[i]);
+          visitor->start_new_polyline(i,i);
+          terminal_nodes.reset(i);
         }
-        *out++=polyline;
-      }
-      else{
-        //it remains only cycles
-        only_cycle=true;
-        it=graph.begin();
-        int i=it->first;
-        int j=it->second.top();
-        visitor->start_new_polyline(i,j);
-        graph.erase(it);
+    }
+
+    //handle polylines
+    while(terminal_nodes.any())
+    {
+      std::size_t i=terminal_nodes.find_first();
+      Graph_node& node_i = graph[i];
+      std::vector<typename Kernel::Point_3> polyline;
+
+      std::size_t j=node_i.top();
+      visitor->start_new_polyline(i,j);
+      CGAL_assertion(i!=j);
+      node_i.pop();
+      if (node_i.empty())
+        terminal_nodes.reset(i);
+      polyline.push_back(nodes[i]);
+      visitor->add_node_to_polyline(i);
+      while(true){
+        Graph_node& node_j=graph[j];
+        CGAL_assertion(!node_j.empty());
+        node_j.erase(i);
+        i=j;
         polyline.push_back(nodes[i]);
         visitor->add_node_to_polyline(i);
-        int first=i;
-        do{
-          it=graph.find(j);
-          it->second.erase(i);
-          i=j;
-          polyline.push_back(nodes[i]);
-          visitor->add_node_to_polyline(i);
-          j=it->second.top();
-          graph.erase(it);
-        }while(j!=first);
-        polyline.push_back(nodes[j]);// we duplicate first point for cycles
-        visitor->add_node_to_polyline(j);
-        *out++=polyline;      
+        if (node_j.is_terminal())
+        {
+          if (node_j.empty())
+            terminal_nodes.reset(j);
+          break;
+        }
+        else{
+          j=node_j.top();
+          node_j.pop();
+          CGAL_assertion(node_j.empty());
+          interior_nodes.reset(i);
+        }
       }
+      *out++=polyline;
+    }
+
+    //handle cycles
+    while(interior_nodes.any())
+    {
+      std::size_t i=interior_nodes.find_first();
+      Graph_node& node_i=graph[i];
+      std::vector<typename Kernel::Point_3> polyline;
+
+      int j=node_i.top();
+      visitor->start_new_polyline(i,j);
+      interior_nodes.reset(i);
+      polyline.push_back(nodes[i]);
+      visitor->add_node_to_polyline(i);
+      int first=i;
+      do{
+        Graph_node& node_j=graph[j];
+        interior_nodes.reset(j);
+        node_j.erase(i);
+        i=j;
+        polyline.push_back(nodes[i]);
+        visitor->add_node_to_polyline(i);
+        j=node_j.top();
+      }while(j!=first);
+      polyline.push_back(nodes[j]);// we duplicate first point for cycles
+      visitor->add_node_to_polyline(j);
+      *out++=polyline;
     }
   }
   
