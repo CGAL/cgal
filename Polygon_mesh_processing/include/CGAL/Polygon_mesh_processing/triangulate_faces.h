@@ -94,8 +94,7 @@ public:
 
   bool triangulate_face(face_descriptor f, PM& pmesh)
   {
-
-
+    typedef typename Traits::FT FT;
     typename Traits::Vector_3 normal =
       Polygon_mesh_processing::compute_face_normal(f, pmesh);
     if(normal == typename Traits::Vector_3(0,0,0))
@@ -122,10 +121,8 @@ public:
        * In particular, if the two triangles are oriented in different directions,
        * the scalar product will be negative.
        */
-      double p1p3= CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
-      double p0p2= CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
-
-
+      FT p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
+      FT p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
       if(p0p2>p1p3)
       {
         CGAL::Euler::split_face(v0, v2, pmesh);
@@ -134,8 +131,6 @@ public:
       {
         CGAL::Euler::split_face(v1, v3, pmesh);
       }
-
-
     }
     else
     {

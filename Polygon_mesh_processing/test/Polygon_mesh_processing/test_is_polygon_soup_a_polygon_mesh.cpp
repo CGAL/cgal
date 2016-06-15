@@ -1,6 +1,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
@@ -10,12 +11,15 @@
 #include <fstream>
 #include <iostream>
 
-typedef CGAL::Simple_cartesian<double> K;
-typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef CGAL::Simple_cartesian<double> SC;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
-void test(std::string fname, bool expected)
+
+template <typename K>
+void test_polygon_soup(std::string fname, bool expected)
 {
-  std::vector<K::Point_3> points;
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  std::vector<typename K::Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
   std::ifstream input(fname.c_str());
 
@@ -61,22 +65,23 @@ void test(std::string fname, bool expected)
 
 int main()
 {
-  test("data_polygon_soup/bad_cube.off", false);
-  test("data_polygon_soup/isolated_singular_vertex_one_cc.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/bad_cube.off", false);
+  test_polygon_soup<Epec>("data_polygon_soup/bad_cube.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/isolated_singular_vertex_one_cc.off", false);
 
-  test("data_polygon_soup/isolated_vertices.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/isolated_vertices.off", false);
 
-  test("data_polygon_soup/nm_vertex_and_edge.off", false);
-  test("data_polygon_soup/one_duplicated_edge.off", false);
-  test("data_polygon_soup/one_duplicated_edge_sharing_vertex.off", false);
-  test("data_polygon_soup/partial_overlap.off", false);
-  test("data_polygon_soup/incompatible_orientation.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/nm_vertex_and_edge.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/one_duplicated_edge.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/one_duplicated_edge_sharing_vertex.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/partial_overlap.off", false);
+  test_polygon_soup<SC>("data_polygon_soup/incompatible_orientation.off", false);
 
-  test("data/blobby_3cc.off", true);
-  test("data/elephant.off", true);
-  test("data/joint_refined.off", true);
-  test("data/mech-holes-shark.off", true);
-  test("data/non_manifold_vertex.off", false);
-  test("data/two_tris_collinear.off", true);
-  test("data/U.off", true);
+  test_polygon_soup<SC>("data/blobby_3cc.off", true);
+  test_polygon_soup<SC>("data/elephant.off", true);
+  test_polygon_soup<SC>("data/joint_refined.off", true);
+  test_polygon_soup<SC>("data/mech-holes-shark.off", true);
+  test_polygon_soup<SC>("data/non_manifold_vertex.off", false);
+  test_polygon_soup<SC>("data/two_tris_collinear.off", true);
+  test_polygon_soup<SC>("data/U.off", true);
 }

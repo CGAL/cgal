@@ -247,20 +247,20 @@ private:
       // check whether the edge is border
       if( (v0 + 1 == v1 || (v0 == n-1 && v1 == 0) ) && !Q.empty() ) {
         angle = 180 - CGAL::abs( 
-          CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0]) );
+           to_double(CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0])) );
       }
       else {
         if(e == 2) { continue; }
         if(lambda.get(v0, v1) != -1){
           const Point_3& p01 = P[lambda.get(v0, v1)];
           angle = 180 - CGAL::abs( 
-            CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01) );
+            to_double(CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01)) );
         }
       }
       ang_max = (std::max)(ang_max, angle);
     }
    
-    w = std::make_pair(ang_max, CGAL::sqrt(CGAL::squared_area(P[i],P[j],P[k])));
+    w = std::make_pair(ang_max, to_double(CGAL::approximate_sqrt(CGAL::squared_area(P[i],P[j],P[k]))));
   }
 
 public:

@@ -6,6 +6,7 @@
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
@@ -21,15 +22,23 @@
 #include <vector>
 #include <cstdlib>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3> Mesh;
-
-typedef boost::graph_traits<Mesh>::halfedge_descriptor  halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
-
 namespace PMP = CGAL::Polygon_mesh_processing;
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epec;
+
+template <class K>
+struct Main {
+
+
+typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
+
+typedef typename boost::graph_traits<Mesh>::halfedge_descriptor  halfedge_descriptor;
+typedef typename boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
+typedef typename boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
+typedef typename boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
+
+
 
 void collect_patch(const char* file,
                    const Mesh& m,
@@ -53,7 +62,7 @@ void collect_patch(const char* file,
   std::istringstream facet_line(line);
   while (facet_line >> id) {
     if (id >= m.number_of_faces()) { return; }
-    patch.insert(Mesh::Face_index(Mesh::size_type(id)));
+    patch.insert(typename Mesh::Face_index(typename Mesh::size_type(id)));
   }
 
   if (!std::getline(in, line)) { return ; }
@@ -141,7 +150,9 @@ public:
   }
 };
 
-int main(int argc, char* argv[])
+
+
+Main(int argc, char* argv[])
 {
 #ifdef CGAL_PMP_REMESHING_DEBUG
   std::cout.precision(17);
@@ -154,7 +165,7 @@ int main(int argc, char* argv[])
   Mesh m;
   if (!input || !(input >> m)){
     std::cerr << "Error: can not read file.\n";
-    return 1;
+    return;
   }
 
   double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.079;
@@ -173,7 +184,7 @@ int main(int argc, char* argv[])
   if(!facets.empty())
   {
     std::cout << "Input is self intersecting. STOP" << std::endl;
-    return 0;
+    return;
   }
   else
     std::cout << "OK." << std::endl;
@@ -232,6 +243,13 @@ int main(int argc, char* argv[])
   //this test should make the precondition fail
   test_precondition("data/joint_refined.off",
     "data/joint-patch-toolargeconstraints.selection.txt");
+}
+};
+
+int main(int argc, char* argv[])
+{
+  Main<Epic> m(argc,argv);
+  Main<Epec> m2(argc,argv);
 
   return 0;
 }

@@ -25,6 +25,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/number_utils.h>
 
 #include <CGAL/boost/graph/properties.h>
 
@@ -52,8 +53,8 @@ public:
 
   value_type operator[](const key_type& e) const
   {
-    return CGAL::sqrt(CGAL::squared_distance(pm_[source(e, sm_)],
-                                             pm_[target(e, sm_)]));
+    return approximate_sqrt(CGAL::squared_distance(pm_[source(e, sm_)],
+                                                   pm_[target(e, sm_)]));
   }
 
 private:

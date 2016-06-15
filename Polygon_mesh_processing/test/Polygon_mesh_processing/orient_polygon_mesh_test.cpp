@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
@@ -11,14 +12,17 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
-typedef K::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> Surface_mesh;
-
-void test(const char* file_name)
+template <typename K>
+void test_orient(const char* file_name)
 {
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  
+  typedef typename K::Point_3 Point;
+  typedef CGAL::Surface_mesh<Point> Surface_mesh;
+  
   //run test for a Polyhedron
   std::ifstream input(file_name);
   Polyhedron poly; // file should contain oriented polyhedron
@@ -58,7 +62,10 @@ void test(const char* file_name)
 
 int main()
 {
-  test("data/elephant.off");
+
+  test_orient<Epic>("data/elephant.off");
+  test_orient<Epec>("data/elephant.off");
 
   std::cerr << "All done." << std::endl;
+  return EXIT_SUCCESS;
 }

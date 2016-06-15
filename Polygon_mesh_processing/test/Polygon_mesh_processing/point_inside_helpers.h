@@ -94,7 +94,7 @@ void random_points(const PolygonMesh& mesh,
 }
 
 template<typename PolygonMesh, typename Point>
-void test(
+void inside_test(
   const PolygonMesh& mesh,
   const std::vector<Point>& points,
   const std::vector<bool>& on_boundary = std::vector<bool>())
