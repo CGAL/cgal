@@ -194,7 +194,7 @@ int _writeInrimageHeader(const _image *im, ENDIANNESS end) {
 
 /* Writes the given image body in an already opened file.*/
 CGAL_INLINE_FUNCTION
-int _writeInrimageData(const _image *im) {
+bool _writeInrimageData(const _image *im) {
   std::size_t size, nbv, nwrt, i, v;
   unsigned char **vp;
   
@@ -204,8 +204,8 @@ int _writeInrimageData(const _image *im) {
     if(im->vectMode != VM_NON_INTERLACED) {
       size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
       nwrt = ImageIO_write(im, im->data, size);
-      if(nwrt != size) return -1;
-      else return 1;
+      if(nwrt != size) return false;
+      else return true;
     }
 
     /* non interlaced vectors: interlace for saving */
@@ -218,14 +218,14 @@ int _writeInrimageData(const _image *im) {
       for(i = 0; i < nbv; i++)
 	for(v = 0; v < im->vdim; v++) {
 	  if(ImageIO_write(im, (const void *) vp[v], im->wdim) != im->wdim)
-	    return -1;
+	    return false;
 	  vp[v] += im->wdim;
 	}
       ImageIO_free(vp);
-      return 1;
+      return true;
     }
   }
-  else return -1;
+  else return false;
 }
 
 
@@ -486,14 +486,13 @@ int writeInrimage(char *name,_image *im) {
     return( res );
   }
   
-  res = _writeInrimageData( im );
-  if (res < 0) {
+  if (!_writeInrimageData(im)) {
     fprintf(stderr, "writeInrimage: error: unable to write data of \'%s\'\n",
 	    name);
     ImageIO_close( im );
     im->fd = NULL;
     im->openMode = OM_CLOSE;
-    return( res );
+    return -1;
   }
 
   ImageIO_close( im );

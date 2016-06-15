@@ -48,7 +48,7 @@ PTRIMAGE_FORMAT createGisFormat() {
 CGAL_INLINE_FUNCTION
 int writeGis( char *name, _image* im) {
   char *outputName;
-  int res;
+  std::size_t res;
   std::size_t length, extLength = 0;
 
   length=strlen(name);
@@ -142,8 +142,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = static_cast<int>(ImageIO_write( im, str, strlen( str )));
-	      if ( res  <= 0 ) {
+	      res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -161,8 +161,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = static_cast<int>(ImageIO_write( im, str, strlen( str )));
-	      if ( res  <= 0 ) {
+	      res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -188,8 +188,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-        res = static_cast<int>(ImageIO_write(im, str, strlen(str)));
-	      if ( res  <= 0 ) {
+              res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -207,8 +207,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-        res = static_cast<int>(ImageIO_write(im, str, strlen(str)));
-	      if ( res  <= 0 ) {
+              res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -222,13 +222,14 @@ int writeGis( char *name, _image* im) {
     } /* end of switch( im->wordKind ) */
 
     ImageIO_free( str ); 
+    if (outputName != NULL) ImageIO_free(outputName);
+    return static_cast<int>(res);
   }
   else {
-    res = _writeInrimageData(im);
+    bool ret = _writeInrimageData(im);
+    if (outputName != NULL) ImageIO_free(outputName);
+    return (ret ? 1 : -1);
   }
-  if ( outputName != NULL ) ImageIO_free( outputName );
-  return res;
-  
 }
 
 CGAL_INLINE_FUNCTION
