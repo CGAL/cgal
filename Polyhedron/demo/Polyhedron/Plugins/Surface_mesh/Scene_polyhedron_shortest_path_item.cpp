@@ -459,6 +459,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         polylines->setColor(Qt::red);
         this->m_sceneInterface->setSelectedItem(-1);
         this->m_sceneInterface->addItem(polylines);
+        this->m_sceneInterface->changeGroup(polylines, item->parentGroup());
       }
       else
       {
