@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Image Drawing Precision</string>
+   <string>Load a 3D image</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
    <item row="12" column="0" colspan="2">
@@ -46,7 +46,7 @@
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>GroupBox</string>
+      <string>Drawing settings for a segment image</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
