@@ -287,7 +287,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         if (OPENGL_FOUND)
           add_definitions("${OPENGL_DEFINITIONS}")
-          if ( NOT "${OPENGL_INCLUDE_DIR}" STREQUAL "" )
+          if (OPENGL_INCLUDE_DIR)
             include_directories( SYSTEM "${OPENGL_INCLUDE_DIR}" )
           endif ()
         endif(OPENGL_FOUND)
