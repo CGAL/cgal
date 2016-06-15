@@ -2727,32 +2727,33 @@ similar manner.  </DL>
 The concepts `ArrangementIdentifiedLeftTraits_2` and
 `ArrangementIdentifiedRightTraits_2` introduces the following requirement:
 <DL>
-<DT><B>`Is_on_v_identification_2:</B>
+<DT><B>`Is_on_v_identification_2`:</B>
 
-<DD>
+<DD>This predicate is overloaded with two versions.
 
 (i) Given a point \f$p\f$, determine whether \f$p\f$ lies in the image
 of the vertical and identified sides of the boundary. More precisely,
 determine whether \f$u_p \in \{u_{\rm min},u_{\rm max}\}\f$ for all
 pre-images of \f$p\f$.
 
-(ii)Given a curve \f$C\f$, determine whether the entire curve \f$C\f$
+(ii) Given a curve \f$C\f$, determine whether the entire curve \f$C\f$
 lies in the image of the vertical and identified sides of the
 boundary.
+</DL>
 
 Similarly, the concepts `ArrangementIdentifiedBottomTraits_2` and
 `ArrangementIdentifiedTopTraits_2` introduces the following requirement:
 <DL>
-<DT><B>`Is_on_u_identification_2:</B>
+<DT><B>`Is_on_u_identification_2`:</B>
 
-<DD>
+<DD>This predicate is overloaded with two versions.
 
 (i) Given a point \f$p\f$, determine whether \f$p\f$ lies in the image
 of the horizontal and identified sides of the boundary. More precisely,
 determine whether \f$v_p \in \{v_{\rm min},v_{\rm max}\}\f$ for all
 pre-images of \f$p\f$.
 
-(ii)Given a curve \f$C\f$, determine whether the entire curve \f$C\f$
+(ii) Given a curve \f$C\f$, determine whether the entire curve \f$C\f$
 lies in the image of the horizontal and identified sides of the
 boundary.
 
