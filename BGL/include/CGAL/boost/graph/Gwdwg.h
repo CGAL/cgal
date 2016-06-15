@@ -36,6 +36,10 @@ public:
   Graph* graph;
   Descriptor descriptor;
 
+  Gwdwg_descriptor()
+    : graph(NULL), descriptor()
+  {}
+
   Gwdwg_descriptor(Descriptor descriptor, Graph& graph)
     : graph(&graph), descriptor(descriptor)
   {}
@@ -136,6 +140,20 @@ struct graph_traits< CGAL::Gwdwg<Graph> >
   typedef typename BGTG::faces_size_type faces_size_type;
   typedef typename BGTG::degree_size_type degree_size_type;
 
+  static vertex_descriptor null_vertex() const
+  {
+    return vertex_descriptor();
+  }
+
+  static halfedge_descriptor null_halfedge() const
+  {
+    return halfedge_descriptor();
+  }
+
+  static face_descriptor null_face() const
+  {
+    return face_descriptor();
+  }
 };
 
   template<typename V, typename Graph>
