@@ -26,6 +26,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double facet_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
@@ -36,6 +37,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << facet_angle << std::endl
+            << "  edge size bound: " << edge_size << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << facet_approx << std::endl;
   if (pMesh->is_closed())
@@ -75,6 +77,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
   param.tet_shape = tet_shape;
+  param.edge_sizing =  edge_size;
   param.manifold = manifold;
   param.protect_features = protect_features;
 
@@ -91,6 +94,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double edge_size,
                                  const double tet_shape,
                                  const int manifold,
                                  CGAL::Three::Scene_interface* scene)
@@ -117,6 +121,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
   param.tet_shape = tet_shape;
+  param.edge_sizing = edge_size;
   param.manifold = manifold;
 
   typedef ::Mesh_function<Function_mesh_domain> Mesh_function;
@@ -140,6 +145,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const double facet_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
                                  const int manifold,
@@ -159,6 +165,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.edge_sizing = edge_size;
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   CGAL::Timer timer;

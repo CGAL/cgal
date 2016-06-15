@@ -49,6 +49,7 @@ struct Mesh_parameters
   
   double tet_shape;
   double tet_sizing;
+  double edge_sizing;
   bool protect_features;
   int manifold;
   
@@ -114,6 +115,7 @@ Mesh_parameters::
 log() const
 {
   return QStringList()
+  << QString("edge max size: %1").arg(edge_sizing)
   << QString("facet min angle: %1").arg(facet_angle)
   << QString("facet max size: %1").arg(facet_sizing)
   << QString("facet approx error: %1").arg(facet_approx)
@@ -170,7 +172,7 @@ launch()
 #endif
 
   // Create mesh criteria
-  Mesh_criteria criteria(Edge_criteria(p_.facet_sizing),
+  Mesh_criteria criteria(Edge_criteria(p_.edge_sizing),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
                                         p_.facet_approx,

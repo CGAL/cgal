@@ -251,6 +251,18 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   connect(ui.noTetShape, SIGNAL(toggled(bool)),
           ui.tetShape,   SLOT(setEnabled(bool)));
 
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.noEdgeSizing,   SLOT(setEnabled(bool)));
+
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.noEdgeSizing,   SLOT(setChecked(bool)));
+
+  connect(ui.noEdgeSizing, SIGNAL(toggled(bool)),
+          ui.edgeLabel,   SLOT(setEnabled(bool)));
+
+  connect(ui.noEdgeSizing, SIGNAL(toggled(bool)),
+          ui.edgeSizing,   SLOT(setEnabled(bool)));
+
   // Set default parameters
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
@@ -267,6 +279,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(sizing_default); // default value
+  ui.edgeSizing->setValue(sizing_default);
 
   ui.tetSizing->setDecimals(-decimals+2);
   ui.tetSizing->setSingleStep(std::pow(10.,decimals));
@@ -287,6 +300,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
   ui.volumeGroup->setVisible(!surface_only && poly_item != NULL
                              && poly_item->polyhedron()->is_closed());
+  ui.noEdgeSizing->setChecked(ui.protect->isChecked());
+  ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
+  ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
 
   // -----------------------------------
   // Get values
@@ -300,6 +316,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   const double facet_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
+  const double edge_size = !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   const bool protect_features = ui.protect->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
   const float iso_value = ui.iso_value_spinBox->value();
@@ -330,6 +347,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
                                  facet_sizing,
                                  approx,
                                  tet_sizing,
+                                 edge_size,
                                  radius_edge,
                                  protect_features,
                                  manifold,
@@ -352,6 +370,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
                                  facet_sizing,
                                  approx,
                                  tet_sizing,
+                                 edge_size,
                                  radius_edge,
                                  manifold,
                                  scene);
@@ -375,6 +394,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
                                  facet_sizing,
                                  approx,
                                  tet_sizing,
+                                 edge_size,
                                  radius_edge,
                                  protect_features,
                                  manifold,
