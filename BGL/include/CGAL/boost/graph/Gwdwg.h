@@ -648,14 +648,14 @@ struct Gwdwg_property_map {
   typedef Gwdwg_descriptor<Graph, typename boost::property_traits<PM>::key_type > key_type;
 
   Graph* graph;
-  PM* pm;
+  PM pm;
 
   Gwdwg_property_map()
-    : graph(NULL), pm(NULL)
+    : graph(NULL)
   {}
 
   Gwdwg_property_map(const Graph& graph, const PM& pm)
-    : graph(const_cast<Graph*>(&graph)), pm(const_cast<PM*>(&pm))
+    : graph(const_cast<Graph*>(&graph)), pm(pm)
   {}
 
   template <typename Descriptor>
@@ -663,8 +663,9 @@ struct Gwdwg_property_map {
   reference
   get(const Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d)
   {
+    assert(gpm.graph!=NULL);
     assert(d.graph == gpm.graph);
-    return get(*gpm.pm, d.descriptor);
+    return get(gpm.pm, d.descriptor);
   }
 
   template <typename Descriptor>
@@ -672,8 +673,9 @@ struct Gwdwg_property_map {
   void
   put(const Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d,   const value_type& v)
   {
+    assert(gpm.graph!=NULL);
     assert(d.graph == gpm.graph);
-    put(*gpm.pm, d.descriptor, v);
+    put(gpm.pm, d.descriptor, v);
   }
 }; // class Gwdwg_property_map
 
