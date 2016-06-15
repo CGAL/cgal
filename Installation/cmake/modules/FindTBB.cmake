@@ -107,11 +107,7 @@ if (WIN32)
     endif(MSVC12)
     #note there was no MSVC13
     if(MSVC14)
-	if(RUNNING_CGAL_AUTO_TEST)
-	    set (TBB_FOUND "NO")
-	    return()#binaries for TBB not publicly available when CGAL-4.7 is published
-	endif(RUNNING_CGAL_AUTO_TEST)
-	message(STATUS "[Warning] FindTBB.cmake: TBB 4.4 (latest available when CGAL-4.7 is published) does not provide support for MSVC 2015.")
+	set(_TBB_COMPILER "vc14")
     endif(MSVC14)
     # Todo: add other Windows compilers such as ICL.
     set(_TBB_ARCHITECTURE ${TBB_ARCHITECTURE})
