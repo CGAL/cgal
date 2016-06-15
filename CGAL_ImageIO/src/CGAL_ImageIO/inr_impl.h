@@ -204,8 +204,7 @@ bool _writeInrimageData(const _image *im) {
     if(im->vectMode != VM_NON_INTERLACED) {
       size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
       nwrt = ImageIO_write(im, im->data, size);
-      if(nwrt != size) return false;
-      else return true;
+      return nwrt == size;
     }
 
     /* non interlaced vectors: interlace for saving */
