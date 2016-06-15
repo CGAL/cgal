@@ -847,7 +847,6 @@ namespace std {
   struct hash<CGAL::detail::Edge<T,EdgeBase> > {
     std::size_t operator()(const CGAL::detail::Edge<T,EdgeBase>& e) const
     {
-      std::cerr << "Triangulation_2::Edge HashFct" << std::endl;
       return hash_value(e);
     }
   }; 
@@ -856,7 +855,6 @@ namespace std {
   struct hash<CGAL::detail::T2_halfedge_descriptor<Tr> > {
     std::size_t operator()(const CGAL::detail::T2_halfedge_descriptor<Tr>& e) const
     {
-      std::cerr << "Triangulation_2::halfedge_descriptor HashFct" << std::endl;
       return hash_value(e);
     }
   };
