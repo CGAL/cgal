@@ -22,6 +22,7 @@
 #define CGAL_POLYTOPE_DISTANCE_D_H
 
 #ifdef _MSC_VER
+# pragma warning(push)
 # pragma warning(disable: 4244) // conversion warning in Boost iterator_adaptor
 #endif
 
@@ -931,6 +932,10 @@ operator << ( std::ostream& os,
 
 
 } //namespace CGAL
+
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif
 
 #endif // CGAL_POLYTOPE_DISTANCE_D_H
 
