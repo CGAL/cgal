@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
+    <width>493</width>
     <height>282</height>
    </rect>
   </property>
@@ -36,7 +36,10 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Please choose the image type</string>
+      <string>Please choose the image &amp;type</string>
+     </property>
+     <property name="buddy">
+      <cstring>imageType</cstring>
      </property>
     </widget>
    </item>
@@ -77,10 +80,13 @@
            <number>1</number>
           </property>
           <property name="text">
-           <string>Please choose the image drawing precision</string>
+           <string>Please choose the image drawing &amp;precision</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
+          </property>
+          <property name="buddy">
+           <cstring>precisionList</cstring>
           </property>
          </widget>
         </item>
