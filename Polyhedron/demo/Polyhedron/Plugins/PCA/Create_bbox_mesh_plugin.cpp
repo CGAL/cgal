@@ -135,10 +135,10 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
     const double delta_z = ( bbox.zmax() - bbox.zmin() ) / 20.;
 bbox = Scene_interface::Bbox(
     bbox.xmin() - delta_x,
-    bbox.xmax() + delta_x,
     bbox.ymin() - delta_y,
-    bbox.ymax() + delta_y,
     bbox.zmin() - delta_z,
+    bbox.xmax() + delta_x,
+    bbox.ymax() + delta_y,
     bbox.zmax() + delta_z);
   }
 

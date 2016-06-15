@@ -16,9 +16,8 @@ public:
         :  Scene_item(1,1), scene(scene_interface)
 
     {
-
         positions_lines.resize(0);
-        //Generates an integer which will be used as ID for each buffer
+        are_buffers_filled = false;
     }
     ~Scene_bbox_item()
     {
@@ -50,7 +49,10 @@ public:
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
+        {
+            computeElements();
             initializeBuffers(viewer);
+        }
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
@@ -64,9 +66,8 @@ public:
 
     void invalidateOpenGLBuffers()
     {
-        computeElements();
-        are_buffers_filled = false;
         compute_bbox();
+        are_buffers_filled = false;
     }
 
 private:
@@ -151,8 +152,9 @@ public:
     }
 
     bool applicable(QAction*) const {
+      if(scene->numberOfEntries() > 0)
         return true;
-    }
+    return false;}
 public Q_SLOTS:
 
     void bbox();
@@ -169,7 +171,6 @@ void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, CGAL::Three::
 {
     scene = scene_interface;
     actionBbox = new QAction(tr("Create Bbox"), mainWindow);
-    //actionBbox->setProperty("subMenuName", "Object creation");
     connect(actionBbox, SIGNAL(triggered()),
             this, SLOT(bbox()));
 }
