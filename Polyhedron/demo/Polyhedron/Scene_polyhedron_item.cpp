@@ -820,7 +820,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
         }
         else
         {
-          if (!item->isItemMulticolor())
+          if (item->isItemMulticolor())
           {
             color_lines.push_back(item->color().lighter(50).redF());
             color_lines.push_back(item->color().lighter(50).greenF());
@@ -914,6 +914,8 @@ init()
                       std::back_inserter(colors_));
     m_min_patch_id=min;
   }
+  else
+    m_min_patch_id=0;
   invalidate_stats();
 }
 
