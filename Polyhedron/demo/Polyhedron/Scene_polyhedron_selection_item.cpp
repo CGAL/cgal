@@ -826,7 +826,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Join vertex
   case 0:
-    Q_EMIT updateInstructions("Select the edge with extremities you want to join. (1/2)");
+    Q_EMIT updateInstructions("Select the edge with extremities you want to join.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
@@ -944,38 +944,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         }
       }
       return false;
-      break;
-    }
-      //Join vertex
-    case 0:
-    {
-      bool belong = false;
-      Halfedge_handle target = halfedge(d->to_join_ed, *polyhedron());
-      if(halfedge(d->to_join_ed, *polyhedron())->vertex() == vh)
-        belong = true;
-      if(halfedge(d->to_join_ed, *polyhedron())->opposite()->vertex() == vh)
-      {
-        belong = true;
-        target = halfedge(d->to_join_ed, *polyhedron())->opposite();
-      }
-      if(!belong)
-      {
-        d->tempInstructions("Vertices not joined : the vertex must belong to the selected edge.",
-                         "Select the vertex that will remain. (2/2)");
-      }
-      else
-      {
-
-        polyhedron()->join_vertex(target);
-
-        temp_selected_edges.clear();
-        //set to select edge
-        set_active_handle_type(static_cast<Active_handle::Type>(2));
-        d->tempInstructions("Vertices joined.",
-                         "Select the edge with extremities you want to join. (1/2)");
-        invalidateOpenGLBuffers();
-        polyhedron_item()->invalidateOpenGLBuffers();
-      }
       break;
     }
       //Split vertex
@@ -1179,16 +1147,19 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
            facet_degree(halfedge(ed, *polyhedron())->opposite())< 4)
         {
           d->tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
-                           "Select the edge with extremities you want to join.(1/2)");
+                           "Select the edge with extremities you want to join.");
         }
         else
         {
-          d->to_join_ed = ed;
-          temp_selected_edges.insert(d->to_join_ed);
+          Halfedge_handle targt = halfedge(ed, *polyhedron());
+          Point R,S,T;
+          S = source(targt, *polyhedron())->point();
+          T = target(targt, *polyhedron())->point();
+          polyhedron()->join_vertex(targt)->vertex()->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+R.y()), 0.5*(S.z()+T.z()));
+          d->tempInstructions("Vertices joined.",
+                           "Select the edge with extremities you want to join.");
           invalidateOpenGLBuffers();
-          //set to select vertex
-          set_active_handle_type(static_cast<Active_handle::Type>(0));
-          Q_EMIT updateInstructions("Select the vertex that will remain.");
+          polyhedron_item()->invalidateOpenGLBuffers();
         }
       break;
       //Split edge
@@ -1231,8 +1202,14 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         }
         else
         {
-          CGAL::Euler::collapse_edge(ed, *polyhedron());
+          Halfedge_handle targt = halfedge(ed, *polyhedron());
+          Point R,S,T;
+          S = source(targt, *polyhedron())->point();
+          T = target(targt, *polyhedron())->point();
+
+          CGAL::Euler::collapse_edge(ed, *polyhedron())->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+R.y()), 0.5*(S.z()+T.z()));
           polyhedron_item()->invalidateOpenGLBuffers();
+
           d->tempInstructions("Edge collapsed.",
                            "Select the edge you want to collapse.");
         }
