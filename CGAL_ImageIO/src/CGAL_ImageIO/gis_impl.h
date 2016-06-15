@@ -249,7 +249,7 @@ CGAL_INLINE_FUNCTION
 int readGisHeader( const char* name,_image* im)
 {
   char *s, *str = NULL;
-  std::size_t status;
+  int status;
   int n=0, nusermax = 20;
 
   str = (char*)ImageIO_alloc( _LGTH_STRING_+1 );
@@ -261,8 +261,7 @@ int readGisHeader( const char* name,_image* im)
   iss.str(str);
   iss >> im->xdim >> im->ydim >> im->zdim >> im->vdim;
 
-  status = iss.str().length();
-  switch ( status ) {
+  switch (iss.str().length()) {
   case 2 :    im->zdim = 1;
   case 3 :    im->vdim = 1;
   case 4 :    break;
