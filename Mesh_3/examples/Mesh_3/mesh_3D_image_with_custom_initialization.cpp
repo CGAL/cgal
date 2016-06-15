@@ -36,7 +36,9 @@ using namespace CGAL::parameters;
 
 int main()
 {
+  /// [Create the image]
   CGAL::Image_3 image = random_labeled_image();
+  /// [Create the image]
 
   // Domain
   Mesh_domain domain(image);
@@ -45,15 +47,15 @@ int main()
   Mesh_criteria criteria(facet_angle=30, facet_size=3, facet_distance=1,
                          cell_radius_edge_ratio=3, cell_size=3);
 
-  // Meshing
+  /// [Meshing]
   C3t3 c3t3;
   initialize_triangulation_from_labeled_image(c3t3,
                                               domain,
                                               image,
                                               criteria,
                                               (unsigned char)0);
-
   CGAL::refine_mesh_3<C3t3>(c3t3, domain, criteria);
+  /// [Meshing]
 
   // Output
   CGAL::dump_c3t3(c3t3, "out");
