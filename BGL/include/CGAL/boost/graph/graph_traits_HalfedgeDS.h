@@ -137,7 +137,8 @@ struct HDS_edge {
 
   friend  std::size_t hash_value(const HDS_edge&  i)
   {
-    return hash_value(i.halfedge());
+    return hash_value(i.halfedge()<i.halfedge()->opposite()?
+                      i.halfedge():i.halfedge()->opposite());
   }
 
 private:
@@ -240,7 +241,8 @@ namespace std {
     std::size_t operator()(const CGAL::internal::HDS_edge<H>& e) const
     {
       std::hash<H> fct;
-      return fct(e.halfedge());
+      return fct(e.halfedge()<e.halfedge()->opposite()?
+                 e.halfedge():e.halfedge()->opposite());
     }
   };
 

@@ -74,7 +74,8 @@ public:
 
   friend std::size_t hash_value(const Edge& e)
   {
-    return hash_value(e.first);
+    return hash_value(e.first<e.first->neighbor(e.second)?
+                      e.first:e.first->neighbor(e.second));
   }
 
   bool operator==(const Edge& other) const
