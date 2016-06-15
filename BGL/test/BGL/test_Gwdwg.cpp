@@ -5,7 +5,8 @@
 #include <fstream>
 
 typedef CGAL::Simple_cartesian<double> K;
-typedef CGAL::Surface_mesh<K::Point_3> SM;
+typedef K::Point_3 Point_3;
+typedef CGAL::Surface_mesh<Point_3> SM;
 typedef CGAL::Gwdwg<SM> Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
@@ -42,14 +43,15 @@ int main()
   }
 
   
-  // CGAL::Euler::split_edge(*(halfedges(mesh).first), mesh);	
-  //CGAL::Euler::remove_center_vertex(*(halfedges(mesh).first), mesh);	
+  CGAL::Euler::split_edge(*(halfedges(mesh).first), mesh);	
+  CGAL::Euler::remove_center_vertex(*(halfedges(mesh).first), mesh);	
 
   std::cerr << "before properties" << std::endl;
 
   boost::property_map<Mesh,CGAL::vertex_point_t>::type ppm;
   ppm = get(CGAL::vertex_point,mesh);
 
+  put(ppm, * vertices(mesh).first, Point_3(1,2,3));
   BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
     std::cout << get(ppm,vd) << std::endl;
   }

@@ -41,6 +41,10 @@ public:
     : graph(NULL), descriptor()
   {}
 
+  Gwdwg_descriptor(Descriptor descripto)
+    : graph(NULL), descriptor(descriptor)
+  {}
+
   Gwdwg_descriptor(Descriptor descriptor, Graph& graph)
     : graph(&graph), descriptor(descriptor)
   {}
@@ -143,17 +147,17 @@ struct graph_traits< CGAL::Gwdwg<Graph> >
 
   static vertex_descriptor null_vertex()
   {
-    return vertex_descriptor();
+    return vertex_descriptor(BGTG::null_vertex());
   }
 
   static halfedge_descriptor null_halfedge()
   {
-    return halfedge_descriptor();
+    return halfedge_descriptor(BGTG::null_halfedge());
   }
 
   static face_descriptor null_face()
   {
-    return face_descriptor();
+    return face_descriptor(BGTG::null_face())xs;
   }
 };
 
@@ -599,6 +603,12 @@ is_valid(const Gwdwg<Graph> & w, bool verbose = false)
 
 template <typename Graph, typename PM, typename T>
 struct Gwdwg_property_map {
+
+  typedef typename boost::property_traits<PM>::category category;
+  typedef typename boost::property_traits<PM>::value_type value_type;
+  typedef typename boost::property_traits<PM>::reference reference;
+  
+
   Graph* graph;
   PM* pm;
 
@@ -619,6 +629,14 @@ struct Gwdwg_property_map {
     return get(*gpm.pm, d.descriptor);
   }
 
+  template <typename Descriptor>
+  friend 
+  void
+  put(Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d,   const typename boost::property_traits<PM>::value_type& v)
+  {
+    assert(d.graph == gpm.graph);
+    put(*gpm.pm, d.descriptor, v);
+  }
 }; // class Gwdwg_property_map
 
 
