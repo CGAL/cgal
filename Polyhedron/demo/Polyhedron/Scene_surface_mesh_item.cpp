@@ -102,7 +102,6 @@ struct Scene_surface_mesh_item_priv{
   mutable std::vector<cgal_gl_data> f_colors;
   mutable std::vector<cgal_gl_data> v_colors;
   mutable QOpenGLShaderProgram *program;
-  mutable bool are_buffers_filled;
   Scene_surface_mesh_item *item;
 
 };
@@ -411,13 +410,13 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   program->setAttributeBuffer("vertex",CGAL_GL_DATA,0,3);
   item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].release();
   program->release();
-  are_buffers_filled = true;
+  item->are_buffers_filled = true;
 }
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
   glShadeModel(GL_SMOOTH);
-  if(!d->are_buffers_filled)
+  if(!are_buffers_filled)
     d->initializeBuffers(viewer);
   attribBuffers(viewer, PROGRAM_WITH_LIGHT);
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
@@ -455,7 +454,7 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 
 void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) const
 {
- if(!d->are_buffers_filled)
+ if(!are_buffers_filled)
    d->initializeBuffers(viewer);
  attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
  d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);

@@ -30,7 +30,6 @@ struct Scene_polylines_item_private {
     mutable Scene_spheres_item *spheres;
     mutable std::vector<float> positions_lines;
     mutable std::size_t nb_lines;
-    mutable bool are_buffers_filled;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
     void computeSpheres();
@@ -65,7 +64,7 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
         positions_lines.clear();
         positions_lines.swap(positions_lines);
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 void
 Scene_polylines_item_private::computeElements() const
@@ -385,7 +384,7 @@ QMenu* Scene_polylines_item::contextMenu()
 
 void Scene_polylines_item::invalidateOpenGLBuffers()
 {
-    d->are_buffers_filled = false;
+    are_buffers_filled = false;
     compute_bbox();
 
 

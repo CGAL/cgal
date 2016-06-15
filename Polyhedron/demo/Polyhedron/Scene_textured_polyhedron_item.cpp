@@ -69,7 +69,6 @@ struct Scene_textured_polyhedron_item_priv
 
   mutable GLuint textureId;
   mutable QOpenGLShaderProgram* program;
-  mutable bool are_buffers_filled;
   bool smooth_shading;
 
   Scene_textured_polyhedron_item* item;
@@ -164,7 +163,7 @@ void Scene_textured_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_
     textures_map_lines.resize(0);
     std::vector<float>(textures_map_lines).swap(textures_map_lines);
 
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 
 void
@@ -349,7 +348,7 @@ Scene_textured_polyhedron_item::toolTip() const
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_textured_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
     {
         d->compute_normals_and_vertices();
         d->initializeBuffers(viewer);
@@ -367,7 +366,7 @@ void Scene_textured_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer)
     vaos[Scene_textured_polyhedron_item_priv::Facets]->release();
 }
 void Scene_textured_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
         d->initializeBuffers(viewer);
 
     vaos[Scene_textured_polyhedron_item_priv::Edges]->bind();
@@ -408,7 +407,7 @@ Scene_textured_polyhedron_item::compute_bbox() const {
 void
 Scene_textured_polyhedron_item::invalidateOpenGLBuffers()
 {
-    d->are_buffers_filled = false;
+    are_buffers_filled = false;
     compute_bbox();
 }
 void

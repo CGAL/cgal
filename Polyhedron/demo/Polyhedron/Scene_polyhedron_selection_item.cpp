@@ -101,7 +101,6 @@ struct Scene_polyhedron_selection_item_priv{
 
   mutable QOpenGLShaderProgram *program;
   Scene_polyhedron_selection_item* item;
-  mutable bool are_buffers_filled;
 };
 
 
@@ -183,7 +182,7 @@ void Scene_polyhedron_selection_item_priv::initializeBuffers(CGAL::Three::Viewer
   nb_points = positions_points.size();
   positions_points.resize(0);
   std::vector<float>(positions_points).swap(positions_points);
-  are_buffers_filled = true;
+  item->are_buffers_filled = true;
 }
 
 void Scene_polyhedron_selection_item_priv::initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer)const
@@ -514,7 +513,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::TempFacets]->release();
   glPolygonOffset(offset_factor, offset_units);
-  if(!d->are_buffers_filled)
+  if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
@@ -557,7 +556,7 @@ void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* v
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::TempEdges]->release();
   viewer->glLineWidth(3.0f);
-  if(!d->are_buffers_filled)
+  if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
@@ -597,7 +596,7 @@ void Scene_polyhedron_selection_item::drawPoints(CGAL::Three::Viewer_interface* 
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_fixed_points/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::FixedPoints]->release();
-  if(!d->are_buffers_filled)
+  if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
@@ -1730,7 +1729,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
   d->first_selected = false;
   d->is_treated = false;
   d->poly_need_update = false;
-  d->are_buffers_filled = false;
+  are_buffers_filled = false;
   d->are_temp_buffers_filled = false;
   d->poly = NULL;
 }
@@ -1795,7 +1794,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
 
   // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
     //  poly_item->invalidateOpenGLBuffers();
-      d->are_buffers_filled = false;
+      are_buffers_filled = false;
       d->are_temp_buffers_filled = false;
       d->poly = polyhedron();
       compute_bbox();

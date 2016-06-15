@@ -76,7 +76,6 @@ struct Scene_implicit_function_item_priv
   GLuint buffer[4];
   mutable QOpenGLShaderProgram *program;
   mutable GLuint textureId;
-  mutable bool are_buffers_filled;
   Scene_implicit_function_item* item;
 };
 
@@ -163,7 +162,7 @@ void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_i
        viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
        viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
 
-       are_buffers_filled = true;
+       item->are_buffers_filled = true;
 }
 
 void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
@@ -626,7 +625,7 @@ Scene_implicit_function_item::invalidateOpenGLBuffers()
     Scene_item::invalidateOpenGLBuffers();
     compute_bbox();
     d->compute_vertices_and_texmap();
-    d->are_buffers_filled = false;
+    are_buffers_filled = false;
 }
 
 

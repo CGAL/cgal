@@ -78,7 +78,6 @@ struct Scene_polygon_soup_item_priv{
   mutable std::size_t nb_nm_edges;
   mutable std::size_t nb_polys;
   mutable std::size_t nb_lines;
-  mutable bool are_buffers_filled;
   Scene_polygon_soup_item* item;
 
 };
@@ -232,7 +231,7 @@ Scene_polygon_soup_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* v
         positions_nm_lines.resize(0);
         std::vector<float> (positions_nm_lines).swap(positions_nm_lines);
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 
 typedef Polyhedron::Traits Traits;
@@ -699,7 +698,7 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
     {
      d->compute_normals_and_vertices();
      d->initializeBuffers(viewer);
@@ -734,7 +733,7 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
 void
 Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
     {
       d->compute_normals_and_vertices();
       d->initializeBuffers(viewer);
@@ -755,7 +754,7 @@ Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 
 void
 Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
   {
      d->compute_normals_and_vertices();
      d->initializeBuffers(viewer);
@@ -796,7 +795,7 @@ Scene_polygon_soup_item::isEmpty() const {
 void
 Scene_polygon_soup_item::invalidateOpenGLBuffers()
 {
-    d->are_buffers_filled = false;
+    are_buffers_filled = false;
     compute_bbox();
 }
 
