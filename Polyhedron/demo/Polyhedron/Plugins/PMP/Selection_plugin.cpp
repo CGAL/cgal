@@ -529,6 +529,13 @@ public Q_SLOTS:
     }
 
     selection_item_map.insert(std::make_pair(poly_item, selection_item));
+    connect(this, SIGNAL(save_handleType()),selection_item, SLOT(save_handleType()));
+    connect(selection_item, SIGNAL(updateInstructions(QString)), this, SLOT(setInstructions(QString)));
+    connect(this, SIGNAL(set_operation_mode(int)),selection_item, SLOT(set_operation_mode(int)));
+    QObject* scene_ptr = dynamic_cast<QObject*>(scene);
+    if (scene_ptr)
+      connect(selection_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+    connect(selection_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
   }
   void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
     // if polyhedron item
