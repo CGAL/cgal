@@ -1386,22 +1386,23 @@ structure are more frequent than point-location queries).
 
 On the other hand, the landmarks and the trapezoid RIC strategies
 require auxiliary data structures on top of the arrangement, which
-they need to construct once they are attached to an arrangement
-object and need to keep up-to-date as this arrangement changes.
-The data structure needed by the landmarks strategy can be constructed
-in \f$ O(N \log N) \f$ time, where \f$ N \f$ is the overall number of edges in
-the arrangement, but the constant hidden in the \f$ O() \f$ notation for the
-trapezoidal map RIC strategy is much larger. Thus, construction needed
-by the landmark algorithm is in practice significantly faster than the
-construction needed by the trapezoidal map RIC strategy. In addition,
-although both resulting data structures are asymptotically linear in
-size, using a <span class="textsc">Kd</span>-tree as the nearest-neighbor search-structure that
-the landmark algorithm stores significantly reduces memory consumption.
-The trapezoidal map RIC algorithm has expected logarithmic query time,
-while the query time for the landmark strategy may be as large as
-linear. In practice however, the query times of both strategies are
-competitive. For a detailed experimental comparison
-see \cgalCite{cgal:hh-eplca-05}.
+they need to construct once they are attached to an arrangement object
+and need to keep up-to-date as this arrangement changes.  The data
+structure needed by the landmarks strategy can be constructed in \f$
+O(N \log N) \f$ time, where \f$ N \f$ is the overall number of edges
+in the arrangement, but the constant hidden in the \f$ O() \f$
+notation for the trapezoidal map RIC strategy is much larger. Thus,
+construction needed by the landmark algorithm is in practice
+significantly faster than the construction needed by the trapezoidal
+map RIC strategy. In addition, although both resulting data structures
+are asymptotically linear in size, using a <span
+class="textsc">Kd</span>-tree as the nearest-neighbor search-structure
+that the landmark algorithm stores significantly reduces memory
+consumption.  The trapezoidal map RIC algorithm has expected
+logarithmic query time, while the query time for the landmark strategy
+may be as large as linear. In practice however, the query times of
+both strategies are competitive. For a detailed experimental
+comparison see \cgalCite{cgal:hh-eplca-05}.
 
 Updating the auxiliary data structures of the trapezoidal map RIC
 algorithm is done very efficiently. On the other hand, updating the
@@ -2179,7 +2180,7 @@ instances. Observe that that there are different levels of
 requirements from the traits class; namely, the traits class can model
 different concept refinement-levels.
 
-This section is made of three parts. The first part desribes the
+This section is divided into three parts. The first part desribes the
 refinement hierarchy of the arrangement-traits conepts. The seond part
 reviews various models of these conepts. These are traits classes,
 which handle different curve families, such as line segments,
@@ -2195,25 +2196,31 @@ The geometric entities defined by the geometry trais (e.g., points and
 curves) must lie on the parametric surface the arrangement is embedded
 on. Their pre-image is contained in the rectangular two-dimenstional
 parameter space \f$\phi_S = U \times V\f$. For concepts that apply to
-both, arrangements in the plane and arrangements on curved surfaces,
-we use the standard \f$x\f$ and \f$y\f$ coordinate notations. As the
-(unbounded) plane is modeled with \f$\phi_S \f$ being the identity
+arrangements of bounded curves in the plane, arrangement of unbounded
+curves in the plane, and arrangements on curved surfaces, we use the
+standard \f$x\f$ and \f$y\f$ coordinate notations. For concepts that
+apply only to arrangements of unbounded curves in the plane and
+arrangements on curved surfaces we use the \f$u\f$ and \f$v\f$
+coordinate notations, where \f$u\f$ and \f$v\f$ map \f$\phi_S\f$.  As
+the (unbounded) plane is modeled with \f$\phi_S \f$ being the identity
 mapping, the \f$u\f$ and \f$v\f$ coordinate notations and the \f$x\f$
-and \f$y\f$ coordinate notations can be exchanged.  For concepts that
-apply only to curved surfaces we use the \f$u\f$ and \f$v\f$
-coordinate notations, where \f$u\f$ and \f$v\f$ map \f$\phi_S\f$.
+and \f$y\f$ coordinate notations can be exchanged when used in context
+of arrangements in the plane.
+
+\subsubsection aos_sssec-geom_traits-concepts_main The Main Concepts
 
 A rather large direted acyclic graph is required to capture the entire
 hierarchy of the geometry traits-class conepts. In the following
-sections we review individual clusters and desribe the relations
-between them. Figure
-\cgalFigureRef{aos_fig-central_concept_cluster} depicts the
-central cluster.
+sections we review individual clusters of the graph and desribe the
+relations between them. Figure
+\cgalFigureRef{aos_fig-central_concept_cluster} depicts the central
+cluster.
 
 \cgalFigureBegin{aos_fig-central_concept_cluster,central_concept_cluster.png}
+The hierarchy of the main geometry traits concepts.
 \cgalFigureEnd
 
-\subsubsection arr_sssectr_basic_concept The Basic Concept
+\paragraph aos_par-geom_traits-concepts_basic The Basic Concept
 
 A model of the basic concept, `ArrangementBasicTraits_2`, needs to
 define the types `%Point_2` and `%X_monotone_curve_2`, where objects
@@ -2288,7 +2295,7 @@ four additional nested types, namely `Left_side_category`,
 type `Arr_oblivious_side_tag` for the class to be a model of the
 concept `ArrangementBasicTraits_2`.
 
-\subsubsection aos_sssec-tr_xmon_concept Supporting Intersecting x-Monotone Curves
+\paragraph aos_par-geom_traits-concepts_intersecting Intersecting x-Monotone Curves}
 
 Constructing an arrangement induced by \f$x\f$-monotone curves that
 may intersect in their interior requires operations that are not
@@ -2355,7 +2362,7 @@ Otherwise, it is not possible to merge \f$x\f$-monotone curve and
 redundant vertices may be left in the arrangement due to the removal of
 edges.
 
-\subsubsection arr_sssectr_full_concept Supporting Arbitrary Curves
+\paragraph aos_par-geom_traits-concepts_arbitrary Arbitrary Curves
 
 The concept `ArrangementTraits_2` refines the
 `ArrangementXMonotoneTraits_2` concept. A model of the refined concept
@@ -2391,10 +2398,10 @@ point-location strategy.
 
 The type of an arrangement associated with the landmark point-location
 strategy (see Section \ref arr_ssecpl) must be an instance of the
-`Arrangement_on_surface_2<GeomTraits,TopolTraits>` class template,
-where the `GeomTraits` parameter is substituted with a model of the concept
-`ArrangementLandmarkTraits_2`. (Naturally, it can also model either
-the `ArrangementXMonotoneTraits_2` concept or the
+`Arrangement_on_surface_2<GeomTraits, TopolTraits>` class template,
+where the `GeomTraits` parameter is substituted with a model of the
+concept `ArrangementLandmarkTraits_2`. (Naturally, it can also model
+either the `ArrangementXMonotoneTraits_2` concept or the
 `ArrangementTraits_2` concept.) The `ArrangementLandmarkTraits_2`
 concept refines the two concepts `ArrangementApproximateTraits_2` and
 `ArrangementConstructXMonotoneCurveTraits_2`. Each of these two
@@ -2427,92 +2434,146 @@ an \f$x\f$-monotone curve connecting \f$p_1\f$ and \f$ p_2\f$.
 Most traits classes model the `ArrangementTraits_2` concept, and some
 also model the `ArrangementLandmarkTraits_2` concept.
 
-\subsubsection aos_ssec-traits-curved Curved Surface Concepts
-
-\cgalFigureBegin{aos_fig-curved_concept_cluster,curved_concept_cluster.png}
-Top portion of the refinement hierarchy of the geometry-traits
-concepts. There are four copies of the concepts at the bottom---one
-for each side; see also Figure
-\cgalFigureRef{aos_fig-open_concept_hierarchy} and
-\cgalFigureRef{aos_fig-spherical_concept_hierarchy}.
-\cgalFigureEnd
+\subsubsection aos_ssec-traits-curved Unbounded or Curved Surface Concepts
 
 We descend to the bottom level of the hierarchy. The refinements
-describe in this section provide the requirements imposed on traits
+described in this section provide the requirements imposed on traits
 classes used with arrangements that support unbounded curves and
 arrangements embedded on curved surfaces. In particular, these
-requirements are additional operations that handle boundary conditions
-of curves that either reach the boundary of the parameters space
-(their pre-image of their endpoints lie on the boundary) or approach
-it (their pre-image approach the boundary). For each side of the
-parameter space there are four available concepts:
-`ArrangementOpenSideTraits_2`, `ArrangementContractedSideTraits_2`,
-`ArrangementClosedSideTraits_2`, and
-`ArrangementIdentifiedSideTraits_2`.\cgalFootnote{Note that we
-explicitly distinguish closed-only, contracted, and identified sides,
-although the latter two are closed in \f$\Phi\f$ as well.}
-Theoretically, this makes for a total of \f$4^4 = 256\f$
-combinations. However, only a subset of them is meaningful. If a side
-is identified, the opposite side must also be identified. This implies
-that there are exactly 10 possible combinations of left and right
-sides, and similarly for the bottom of top sides, which makes a total
-of 100 combinations.
+requirements list additional operations that handle boundary
+conditions of curves that either reach the boundary of the parameter
+space (the pre-image of their endpoints lie on the boundary) or
+approach it (the pre-image of their endpoints approach the
+boundary). For each side of the parameter space there are four
+available concepts, models of which can be used to handle open,
+closed, contracted, and identified side,
+respectively. \cgalFootnote{Note that we explicitly distinguish
+closed-only, contracted, and identified sides, although the latter two
+are closed in \f$\Phi\f$ as well.}  Theoretically, this makes for a
+total of \f$4^4 = 256\f$ combinations. However, only a subset of them
+is meaningful. If a side is identified, the opposite side must also be
+identified. In addition, a contracted side must be adjacent to two
+identified sides. This narrows down the number of valid combinations
+to 27.
 
-Recall that an arrangement that supports unbounded \f$x\f$-monotone
-curves maintains an implicit bounding rectangle in the \sc{Dcel}
-structure; see Section \ref arr_ssecunb_rep.
-The arrangement instance instantiated with a traits class that models
-the concept `ArrangementOpenBoundaryTraits_2`can handle curves that
-are unbounded in any direction. If some curves inserted into an
-arrangement object are expected to be unbounded; namely, there exists
-\f$d \in \{0,1\}\f$ such that \f$\lim_{t \rightarrow d}u(t) =
-\pm\infty\f$ or \f$\lim_{t \rightarrow d}v(t) = \pm\infty\f$ holds for
-at least one input curve \f$C(t) = (u(t),v(t))\f$, the arrangement
-template must be instantiated with a model of the
-`ArrangementOpenBoundaryTraits_2` concept.\cgalFootnote{A curve that
-reaches the boundary of the parameter space in this case is bounded
-and open.}  A suitable geometry-traits component for unbounded curves
-in the plane is a model of the combined concept
-`ArrangementOpenBoundaryTraits_2` shown in Figure
-\cgalFigureRef{aos_fig-open_concept_hierarchy}.
-
-A suitable geometry-traits component for arrangements embedded on
-surfaces homeomorphic to a sphere is a model of the combined
-concept `ArrangementSphericalTraits` shown in Figure
-\cgalFigureRef{aos_fig-spherical_concept_hierarchy}.
-
-The shared requirements for the four options of a side are collected
-in abstract layers called `HasSpecialSideTraits_2,
-`PointOnSideTraits_2`, and `ComparePointOnSideTraits_2` shown in grey
-in Figure \cgalFigureRef{aos_fig-curved_concept_cluster}. The first
-concept collects the operations required by all side-specific
-refinements, and the other two provide operations that handle points,
-curve-ends, and curves that are contained in the boundary of the
-domain.
+The types `Left_side_category`, `Right_side_category`,
+`Bottom_side_category`, and `Top_side_category` nested in every model
+of the `ArrangementBasicTraits_2` concept indicate whether the
+corresponding boundary side is open, closed, contracted, or
+identified, respectively, or whether the type of the boundary side is
+irrelevant, as curves inserted into the arrangement are never expected
+to reach the boundary side. In particular, these types nested in
+models of the concepts `ArrangementOpenLeftTraits_2`,
+`ArrangementOpenRightTraits_2`, `ArrangementOpenBottomTraits_2`, and
+`ArrangementOpenTopTraits_2`, respectively, must be convertible to
+`Arr_open_side_tag`. Similarly, these types must be convertible to
+`Arr_closed_side_tag`, `Arr_constracter_side_tag`, or
+`Arr_identified_side_tag` when nested in models of the corresponding
+concepts. For example, the `Arr_rational_function_traits_2`
+traits-model supports unbounded curves; see Section \ref
+arr_ssectr_ratfunc. Thus, all four nested types are defined as
+`Arr_open_side_tag`.  Adversely, all four types nested in the
+`Arr_segment_traits_2` traits-model (see Section \ref arr_ssectr_segs)
+are defined as `Arr_oblivious_side_tag`, as segments are always
+bounded.
 
 \cgalFigureBegin{aos_fig-open_concept_hierarchy,open_concept_hierarchy.png}
 Bottom portion of the refinement hierarchy of the geometry-traits
-concept for curves embedded on an open surface, for instance, the
+concepts for curves embedded on an open surface, for instance, the
 entire plane.
 \cgalFigureEnd
 
+Several predicates are required to handle \f$u\f$-monotone curves that
+approach the boundary of the parameter space. These predicates are
+sufficient to handle not only curves embedded in an unbounded
+parameter space, but also curves embedded in a bounded parameter space
+with open boundaries. The arrangement type instantiated with a traits
+class that models the combined concept
+`ArrangementOpenBoundaryTraits_2` shown in Figure
+\cgalFigureRef{aos_fig-open_concept_hierarchy} can handle curves that
+are open in any direction. Recall that an arrangement that supports
+unbounded \f$u\f$-monotone curves maintains an implicit bounding
+rectangle in the \sc{Dcel} structure; see Section \ref
+arr_ssecunb_rep. If some curves inserted into an arrangement object
+are expected to be unbounded; namely, there exists \f$d \in \{0,1\}\f$
+such that \f$\lim_{t \rightarrow d}u(t) = \pm\infty\f$ or \f$\lim_{t
+\rightarrow d}v(t) = \pm\infty\f$ holds for at least one input curve
+\f$C(t) = (u(t),v(t))\f$, the arrangement template must be
+instantiated with a model of the `ArrangementOpenBoundaryTraits_2`
+concept.\cgalFootnote{A curve that reaches the boundary of the
+parameter space in this case is open and unbounded.}
+
 \cgalFigureBegin{aos_fig-spherical_concept_hierarchy,spherical_concept_hierarchy.png}
 Bottom portion of the refinement hierarchy of the geometry-traits
-concept for curves embedded on a spherical-like parameterized surface
+concepts for curves embedded on a spherical-like parameterized surface
 \cgalFigureEnd
 
-The concept `HasSpecialSideTraits_2` requires the following predicates:
+A suitable geometry-traits component for arrangements embedded on
+surfaces homeomorphic to a sphere is a model of the combined
+concept `ArrangementSphericalTraits_2` shown in Figure
+\cgalFigureRef{aos_fig-spherical_concept_hierarchy}.
+
+\cgalFigureBegin{aos_fig-left_side_cluster,left_side_cluster.png}
+Top portion of the refinement hierarchy of the geometry-traits
+concepts for curves that either reach the left side of the boundary
+of the parameter space or approach it. A similar hierarchy also
+exists for the left, bottom, and top sides.
+\cgalFigureEnd
+
+The shared requirements for the four options of a side are collected
+in abstract layers called `ArrangementLeftSide_2`,
+`ArrangementRightSide_2`, `ArrangementBottomSide_2`, and
+`ArrangementTopSide_2`; see, e.g., Figure
+\cgalFigureRef{aos_fig-left_side_cluster}.
+
+\cgalFigureBegin{aos_fig-side_clusters,side_clusters.png}
+Top portion of the refinement hierarchy of the geometry-traits
+concepts for curves that either reach the vertical sides of the
+boundary of the parameter space or approach it, and similarly for
+curves that either reach or approach horizontal sides.
+\cgalFigureEnd
+
+The shared requirements for the options of opposite sides are
+collected in two additional abstract layers called
+`ArrangementVerticalSide_2` and `ArrangementHorizontalSide_2`; see
+Figure \cgalFigureRef{aos_fig-side_clusters}.
+
+\paragraph aos_par-geom_traits-concepts_spcial Curves with Boundary Conditions
+
+The abstract concept `ArrangementHorizontalSide_2` requires the
+following predicate:
 <DL>
 
-<DT><B>`Parameter_space_in_u_2` (resp. `Parameter_space_in_v_2`):</B>
-<DD>Given a curve \f$C\f$ and an index \f$d \in \{0,1\}\f$, determine
-the location of the \f$d\f$-end of \f$C\f$ with respect to the
-\f$u\f$-axis (resp. \f$v\f$-axis). More precisely, determine whether
-\f$\lim_{t \rightarrow d} u(\gamma(t))\f$ is equal to \f$u_{\rm
-min}\f$, equal to \f$u_{\rm max}\f$, or falls in between (resp.
-\f$v_{\rm min}\f$ and \f$v_{\rm max}\f$). These predicates determine
-the location of a curve-end in parameter space.  </DL>
+<DT><B>`Parameter_space_in_u_2`:</B>
 
+<DD>Given a curve \f$C\f$ and an enumerator that specify either the
+minimum end or the maximum end of the curve, and thus map to a
+parameter value \f$d \in \{0,1\}\f$, determine the location of the
+\f$d\f$-end of \f$C\f$ with respect to the \f$u\f$-axis. More
+precisely, determine whether \f$\lim_{t \rightarrow d} u(\gamma(t))\f$
+is equal to \f$u_{\rm min}\f$, equal to \f$u_{\rm max}\f$, or falls in
+between.
+
+</DL>
+
+The abstract concept `ArrangementVerticalSide_2` requires the
+following predicate:
+<DL>
+
+<DT><B>`Parameter_space_in_v_2`:</B>
+
+<DD>Given a curve \f$C\f$ and an enumerator that specify either the
+minimum end or the maximum end of the curve, and thus map to a
+parameter value \f$d \in \{0,1\}\f$, determine the location of the
+\f$d\f$-end of \f$C\f$ with respect to the \f$v\f$-axis. More
+precisely, determine whether \f$\lim_{t \rightarrow d} v(\gamma(t))\f$
+is equal to \f$v_{\rm min}\f$, equal to \f$v_{\rm max}\f$, or falls in
+between.
+
+</DL>
+
+The two symmetric predicates above determine the location of a
+curve-end in the parameter space. However, in general,
 \f$u\f$-coordinates and \f$v\f$-coordinates are differently
 handled. This asymmetry is brought on by the various algorithms
 applied to arrangements, the input and output arguments of which are
@@ -2521,53 +2582,65 @@ arrangement are continuous weakly \f$u\f$-monotone curves. A non
 \f$u\f$-monotone curve is divided into \f$u\f$-monotone sub curves
 (and perhaps points) before it is inserted into an arrangement. This
 asymmetry is also reflected in the predicates listed below. They help
-determining the order of curve-ends lying on the boundary with respect
-to regular points and among each other.
+determining the order of curve-ends lying on the boundary of the
+parameter space with respect to regular points and among each other.
 
-Several predicates are required to handle \f$u\f$-monotone curves that
-approach infinity and thus approach the boundary of the parameter
-space. These predicates are sufficient to handle not only curves
-embedded in an unbounded parameter space, but also curves embedded in
-a bounded parameter space with open boundaries.
-
-We continue with the `ArrangementOpenSideTraits_2` concept.
-
-The concept `ArrangementOpenSideTraits_2` requires three additional
+The concept `ArrangementHorizontalSideTraits_2` requires two additional
 predicates:
 
 <DL>
 <DT><B>`Compare_u_on_boundary_2`:</B>
 
-<DD>There are different predicates for \f$u\f$ and \f$v\f$, due to the
-asymmetry mentioned in Section \ref aos_ssec-curved_surfaces-parameteric.
-This predicate is overloaded with two versions as follows:
+<DD>This predicate is overloaded with three versions.
+We distinguish between open and non-open sides as explained below.
 
 (i) Given a regular point \f$p\f$, an \f$x\f$-monotone curve \f$C =
-(u(t),v(t))\f\f$, and an enumerator that specifies either the minimum
+(u(t),v(t))\f$, and an enumerator that specifies either the minimum
 end or the maximum end of the curve, and thus maps to a parameter
-value \f$d \in \{0,1\}\f$, compare \f$u\f$-coordinate of \f$p\f$ and
-\f$\lim_{t \rightarrow d} u(t)\f$.  A precondition assures that
+value \f$d \in \{0,1\}\f$, compare the \f$u\f$-coordinate of \f$p\f$
+and the \f$u\f$-coordinate of \f$C\f$ at its respective limit or end
+depending on whether it is open or non-open. More precisely, if
+\f$C\f$ is open at its respective end, compare the values \f$u_p\f$
+and \f$\lim_{t \rightarrow d} u(t)\f$. A precondition assures that
 \f$C\f$ has a vertical asymptote at its \f$d\f$-end; that is
-\f$\lim_{t \rightarrow d} u(t)\f$ is a real value.
+\f$\lim_{t \rightarrow d} u(t)\f$ is a real value. If \f$C\f$ is not
+open, compare the values \f$u_p\f$ and \f$u(d)\f$.
 
 (ii) Given two curves \f$C_1 = (u_1(t),v_1(t))\f$ and \f$C_2 =
 (u_2(t),v_2(t))\f$ and enumerators that specify either the minimum end
 or the maximum end of each curve, and thus map to parameter values
 \f$d_1, d_2 \in \{0,1\}\f$, compare the \f$u\f$-coordinates of the
-curves at their respective limits. More precisely, compare the values
-\f$\lim_{t \rightarrow d_1} u_1(t)\f$ and \f$\lim_{t \rightarrow d_2}
-u_2((t)\f$. A precondition assures that \f$C_1\f$ and \f$C_2\f$ have
-vertical asymptotes at their respective \f$d\f$-ends; that is
-\f$\lim_{t \rightarrow d_1} u_1(t)\f$ and \f$\lim_{t
-\rightarrow d_2} u_2(t)\f$ are real values.
+curves at their respective limits or ends. More precisely, if
+\f$C_1\f$ (resp. \f$C_2\f$) is open at its \f$d_1\f$-end
+(resp. \f$d_2\f$-end), use the value \f$\lim_{t \rightarrow d_1}
+u_1(t)\f$ (resp. \f$\lim_{t \rightarrow d_2} u_2(t)\f$) for the
+comparison.  A precondition assures that \f$C_1\f$ (resp. \f$C_2\f$)
+has a vertical asymptote at its \f$d_1\f$-end (resp. \f$d_2\f$-end);
+that is \f$\lim_{t \rightarrow d_1} u_1(t)\f$ is (resp. \f$\lim_{t
+\rightarrow d_2} u_2(t)\f$) a real value. If \f$C_1\f$
+(resp. \f$C_2\f$) is not open at its \f$d_1\f$-end
+(resp. \f$d_2\f$-end), use the value \f$u_1(d_1)\f$
+(resp. \f$u_2(d_2)\f$) for the comparison.
+
+(iii) Given two points \f$p_1\f$ and \f$p_2\f$, such that at least one
+of them lies on a horizontal boundary side, compare the
+\f$u\f$-coordinates of the points. That is, compare \f$u_{p_1}\f$ and
+\f$u_{p_2}\f$. If \f$p_1\f$ (resp. \f$p_2\f$) is on the boundary; that
+is, \f$v_{p_1} \in \{v_{\rm min},v_{\rm max}\}\f$ (resp. \f$v_{p_2}
+\in \{v_{\rm min},v_{\rm max}\}\f$), then the boundary side containing
+\f$p_1\f$ (resp. \f$p_2\f$) must be either closed or identified. In
+other words, this overloaded version is required only for the concepts
+`ArrangementClosedBottomTraits_2`, `ArrangementClosedTopTraits_2`,
+`ArrangementIdentifiedBottomTraits_2` and
+`ArrangementIdentifiedTopTraits_2` concepts.
 
 <DT><B>`Compare_u_near_boundary_2`:</B>
 
 <DD>Given two \f$x\f$-monotone curves \f$C_1\f$ and \f$C_2\f$ and an
 enumerator \f$i\f$ that specifies either the minimum ends or the
 maximum ends of the two curves, respectively, compare the
-\f$u\f$-coordinate of the curves near their respective ends. That is,
-the predicate compares the \f$x\f$-coordinates of the horizontal
+\f$u\f$-coordinate of the curves near their respective limits or
+ends. That is, compare the \f$u\f$-coordinates of the horizontal
 projection of a point \f$p\f$ onto \f$C_1\f$ and onto \f$C_2\f$. A
 precondition assures that \f$C_1\f$ and \f$C_2\f$ have vertical
 asymptotes at their respective ends. Furthermore, both curves approach
@@ -2580,6 +2653,25 @@ the top in a similar manner. Another precondition assures that the
 \f$u\f$-coordinates of the limits of the curves at their respective
 ends are equal. That is, the predicate `Compare_u_on_boundary_2`
 applied to \f$C_1\f$, \f$C_2\f$, and \f$i\f$ evaluates to `EQUAL`.
+</DL>
+
+The concept `ArrangementVerticalSideTraits_2` requires two
+additional predicates:
+
+<DL>
+<DT><B>`Compare_v_on_boundary_2`:</B>
+
+Given two points \f$p_1\f$ and \f$p_2\f$, such that at least one of
+them lies on a vertical boundary side, compare the \f$v\f$-coordinates
+of the points. That is, compare \f$v_{p_1}\f$ and \f$v_{p_2}\f$. If
+\f$p_1\f$ (resp. \f$p_2\f$) is on the boundary; that is, \f$u_{p_1}
+\in \{u_{\rm min},u_{\rm max}\}\f$ (resp. \f$u_{p_2} \in \{u_{\rm
+min},u_{\rm max}\}\f$), then the vertical boundary side containing
+\f$p_1\f$ (resp. \f$p_2\f$) must be either closed or identified. In
+other words, this overloaded version is required only for the concepts
+`ArrangementClosedLeftTraits_2`, `ArrangementClosedRightTraits_2`,
+`ArrangementIdentifiedLeftTraits_2` and
+`ArrangementIdentifiedRightTraits_2` concepts.
 
 <DT><B>`Compare_v_near_boundary_2`:</B>
 
@@ -2597,59 +2689,8 @@ boundary-side. In that case \f$p\f$ is located far to the right in a
 similar manner.
 </DL>
 
-All the four types `Left_side_category`, `Right_side_category`,
-`Bottom_side_category`, and `Top_side_category` nested in a model of
-the concept `ArrangementOpenBoundaryTraits` must be convertible to
-`Arr_open_side_tag`. For example, the `Arr_rational_function_traits_2`
-traits-model supports unbounded curves; see Section \ref
-arr_ssectr_ratfunc. Thus, all four nested types are defined as
-`Arr_open_side_tag`.  Adversely, all four types nested in the
-`Arr_segment_traits_2` traits-model (see Section \ref arr_ssectr_segs)
-are defined as `Arr_oblivious_side_tag`, as segments are always
-bounded.
+xxx
 
-A closed or contracted side may contain points. The concept
-`PointOnSideTraits` requires two additional predicate:
-<DL>
-<DT><B>Locate point in \f$u\f$ (resp. \f$v\f$):</B>
-
-<DD> This predicate is similar to <B>Locate curve-end in \f$u\f$</B>.
-Given a point \f$p\f$ determine the location of its pre-image in the
-domain \f$\Phi\f$ along the \f$u\f$-dimension. More precisely, check
-whether \f$u_p\f$ is equal to \f$u_{\rm min}\f$ or equal to
-\f$u_{\rm max}\f$, or falls in between. This function is only applied
-if one of the opposite vertical sides is contracted or closed. The
-pre-image of a contracted point is the entire side, and hence the
-outcome is independent of the choice of a particular pre-image, while
-the pre-image of a point in a closed side is unique.
-</DL>
-
-A model of the concept `ComparePointOnSideTraits` must be able to
-order points that lie on the image of a closed or identified
-boundary-side; it is not needed for contracted sides, as they map to a
-single point on the surface. The concept requires the following
-additional pair of predicates:
-<DL>
-<DT><B>Compare \f$u\f$ on boundary (resp. \f$v\f$):</B>
-<DD>Given two points \f$p_1\f$ and \f$p_2\f$, such that \f$v_{p_1} \in
-\{v_{\rm min},v_{\rm max}\}\f$ or \f$v_{p_2} \in \{v_{\rm min},v_{\rm
-max}\}\f$ (resp. \f$u_{p_1} \in \{u_{\rm min},u_{\rm max}\}\f$ and
-\f$u_{p_2} \in \{u_{\rm min},u_{\rm max}\}\f$), compare \f$u_{p_1}\f$
-and \f$u_{p_2}\f$. A point on the identification curve has two
-pre-images, one for \f$v_{\rm min}\f$ and one for \f$v_{\rm
-max}\f$. The \f$u\f$-coordinates of both pre-images are the same and
-so the operation is well-defined.
-
-<DT><B>`Compare_u_near_boundary_2`:</B>
-
-<DD>Given two curves \f$C_1\f$ and \f$C_2\f$ and an enumerator \f$i\f$
-that specifies either the minimum ends or the maximum ends of the two
-curves, respectively, compare the \f$u\f$-coordinate of the curves
-near their respective ends. A precondition assures that the
-\f$u\f$-coordinates of the curves at their ends are equal. That is,
-the predicate <B>`Compare_u_on_boundary_2`</B> applied to \f$C_1\f$,
-\f$C_2\f$, and \f$i\f$ evaluates to `EQUAL`.
-</DL>
 
 We are almost done. For a contracted boundary side no additional
 operation (beyond those required by the concept `PointOnSideTraits`)
