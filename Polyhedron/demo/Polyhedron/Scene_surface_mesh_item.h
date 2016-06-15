@@ -51,6 +51,7 @@ public:
 
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
+  void compute_bbox()const;
 public Q_SLOTS:
   virtual void selection_changed(bool);
 protected:

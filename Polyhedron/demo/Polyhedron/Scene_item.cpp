@@ -19,6 +19,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
     vaos(vaos_size)
 {
   is_bbox_computed = false;
+  is_diag_bbox_computed = false;
   for(int i=0; i<vaosSize; i++)
   {
     addVaos(i);
@@ -228,12 +229,11 @@ bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three:
 
 void CGAL::Three::Scene_item::compute_diag_bbox()const
 {
-  if(!is_bbox_computed)
-    compute_bbox();
+ const Bbox& b_box = bbox();
   _diag_bbox = CGAL::sqrt(
-        CGAL::square(_bbox.xmax() - _bbox.xmin())
-        + CGAL::square(_bbox.ymax() - _bbox.ymin())
-        + CGAL::square(_bbox.zmax() - _bbox.zmin())
+        CGAL::square(b_box.xmax() - b_box.xmin())
+        + CGAL::square(b_box.ymax() - b_box.ymin())
+        + CGAL::square(b_box.zmax() - b_box.zmin())
         );
 
 }
