@@ -44,7 +44,9 @@ public:
   QList<QAction*> actions() const
   {
     return QList<QAction*>() << actionRemoveIsolatedVertices
-      << actionRemoveDegenerateFaces;
+                                //removed until the function is fully working;
+      //<< actionRemoveDegenerateFaces
+         ;
   }
 
   bool applicable(QAction*) const
