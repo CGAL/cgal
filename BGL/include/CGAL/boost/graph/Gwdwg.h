@@ -661,7 +661,7 @@ struct Gwdwg_property_map {
   template <typename Descriptor>
   friend
   reference
-  get(Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d)
+  get(const Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d)
   {
     assert(d.graph == gpm.graph);
     return get(*gpm.pm, d.descriptor);
@@ -670,7 +670,7 @@ struct Gwdwg_property_map {
   template <typename Descriptor>
   friend 
   void
-  put(Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d,   const value_type& v)
+  put(const Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d,   const value_type& v)
   {
     assert(d.graph == gpm.graph);
     put(*gpm.pm, d.descriptor, v);
