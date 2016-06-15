@@ -272,12 +272,12 @@ void Scene_surface_mesh_item_priv::compute_elements()
         c = 0;
       addFlatData(p,n,c);
 
-      hd = halfedge(next(halfedge(fd, *smesh_),*smesh_), *smesh_);
+      hd = next(halfedge(fd, *smesh_),*smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
           ,c);
 
-      hd = halfedge(next(next(halfedge(fd, *smesh_),*smesh_), *smesh_), *smesh_);
+      hd = next(next(halfedge(fd, *smesh_),*smesh_), *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
           ,c);
@@ -287,12 +287,12 @@ void Scene_surface_mesh_item_priv::compute_elements()
           ,fnormals[fd]
           ,c);
 
-      hd = halfedge(next(next(halfedge(fd, *smesh_),*smesh_), *smesh_), *smesh_);
+      hd = next(next(halfedge(fd, *smesh_),*smesh_), *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
           ,c);
 
-      hd = halfedge(prev(halfedge(fd, *smesh_), *smesh_), *smesh_);
+      hd = prev(halfedge(fd, *smesh_), *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
           , c);
