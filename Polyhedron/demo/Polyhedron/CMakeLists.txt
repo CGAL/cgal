@@ -141,62 +141,28 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
 
-  find_path(CGAL_THREE_VIEWER_INTERFACE_H_PATH
-    NAME CGAL/Three/Viewer_interface.h
-    PATHS ${CGAL_INCLUDE_DIRS}
-    NO_DEFAULT_PATH
-    DOC "Path to CGAL/Three/Viewer_interface.h")
-  hide_variable(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
-  if(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
-    qt5_generate_moc( "${CGAL_THREE_VIEWER_INTERFACE_H_PATH}/CGAL/Three/Viewer_interface.h"
-      "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
-  else()
-    message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
-  endif()
-
-  find_path(CGAL_THREE_SCENE_ITEM_H_PATH
+  find_path(CGAL_THREE_HEADERS_PATH
     NAME CGAL/Three/Scene_item.h
-    PATHS ${CGAL_INCLUDE_DIRS}
+    HINTS ${CGAL_INCLUDE_DIRS}
     NO_DEFAULT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
-  hide_variable(CGAL_THREE_SCENE_ITEM_H_PATH)
-
-  find_path(CGAL_THREE_TEXTRENDERER_H_PATH
-    NAME CGAL/Three/TextRenderer.h
-    PATHS ${CGAL_INCLUDE_DIRS}
-    NO_DEFAULT_PATH
-    DOC "Path to CGAL/Three/TextRenderer.h")
-  hide_variable(CGAL_THREE_TEXTRENDERER_H_PATH)
-
-  find_path(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH
-    NAME CGAL/Three/Scene_group_item.h
-    PATHS ${CGAL_INCLUDE_DIRS}
-    NO_DEFAULT_PATH
-    DOC "Path to CGAL/Three/Scene_group_item.h")
-  hide_variable(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH)
-
-
-  if(CGAL_THREE_SCENE_ITEM_H_PATH)
-    qt5_generate_moc( "${CGAL_THREE_SCENE_ITEM_H_PATH}/CGAL/Three/Scene_item.h"
+  
+  if(CGAL_THREE_HEADERS_PATH)
+    qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Viewer_interface.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+    qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Scene_item.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_moc.cpp" )
+    qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Scene_group_item.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/Scene_group_item_moc.cpp" )
+    qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/TextRenderer.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/TextRenderer_moc.cpp" )
   else()
     message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
   endif()
 
-  if(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH)
-    qt5_generate_moc( "${CGAL_THREE_SCENE_GROUP_ITEM_H_PATH}/CGAL/Three/Scene_group_item.h"
-      "${CMAKE_CURRENT_BINARY_DIR}/Scene_group_item_moc.cpp" )
-  else()
-    message(FATAL_ERROR "Cannot find <CGAL/Three/Scene_group_item.h>")
-  endif()
+  unset(CGAL_THREE_HEADERS_PATH CACHE)
 
-  if(CGAL_THREE_TEXTRENDERER_H_PATH)
-    qt5_generate_moc( "${CGAL_THREE_TEXTRENDERER_H_PATH}/CGAL/Three/TextRenderer.h"
-      "${CMAKE_CURRENT_BINARY_DIR}/TextRenderer_moc.cpp" )
-  else()
-    message(FATAL_ERROR "Cannot find <CGAL/Three/TextRenderer.h>")
-  endif()
-  # AUXILIARY LIBRARIES
+# AUXILIARY LIBRARIES
 
   # put s (which are shared libraries) at the same location as
   # executable files
