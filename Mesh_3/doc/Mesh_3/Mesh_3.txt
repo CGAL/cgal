@@ -841,6 +841,31 @@ components) is constructed using a call to the functor `construct_intersection
 and eventually `%index` is constructed at the component 1 of `%intersect`.
 \skipline get<1>(intersect)
 
+The result of the custom initialization can be seen in
+\cgalFigureRef{mesh3custominitimage3D}. The generated 3D image contains a
+big sphere at the center, and 50 smaller spheres, generated
+randomly. Without the custom initialization, only the biggest component
+(the sphere at the center) was initialized and meshed. With the custom
+initialization, the initial `%c3t3` object contains points on all connected
+components, and all spheres are meshed.
+
+\cgalFigureAnchor{mesh3custominitimage3D}
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="./no-custom-init.png"></td>
+  <td><img border="0" src="./with-custom-init.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3custominitimage3D}
+Left: the mesh without the custom initialization, only the big sphere at
+the center is meshed
+
+Right: the mesh generated after the initialization of all connected components
+\cgalFigureCaptionEnd
+
+
 Note that the example \ref
 Mesh_3/mesh_3D_image_with_custom_initialization.cpp also shows how to
 create an 3D image using the undocumente API of CGAL_ImageIO.
