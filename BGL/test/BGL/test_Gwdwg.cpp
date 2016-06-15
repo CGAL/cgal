@@ -42,9 +42,18 @@ int main()
   }
 
   
-  CGAL::Euler::split_edge(*(halfedges(mesh).first), mesh);	
-  CGAL::Euler::remove_center_vertex(*(halfedges(mesh).first), mesh);	
+  // CGAL::Euler::split_edge(*(halfedges(mesh).first), mesh);	
+  //CGAL::Euler::remove_center_vertex(*(halfedges(mesh).first), mesh);	
 
-  std::cerr << "done" << std::endl;
+  std::cerr << "before properties" << std::endl;
+
+  boost::property_map<Mesh,CGAL::vertex_point_t>::type ppm;
+  ppm = get(CGAL::vertex_point,mesh);
+
+  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    std::cout << get(ppm,vd) << std::endl;
+  }
+    std::cerr << "done" << std::endl;
   return 0;
 }
+

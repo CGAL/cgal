@@ -20,6 +20,7 @@
 #ifndef CGAL_BOOST_GRAPH_GWDWG_H
 #define CGAL_BOOST_GRAPH_GWDWG_H
 
+#include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -140,41 +141,22 @@ struct graph_traits< CGAL::Gwdwg<Graph> >
   typedef typename BGTG::faces_size_type faces_size_type;
   typedef typename BGTG::degree_size_type degree_size_type;
 
-  static vertex_descriptor null_vertex() const
+  static vertex_descriptor null_vertex()
   {
     return vertex_descriptor();
   }
 
-  static halfedge_descriptor null_halfedge() const
+  static halfedge_descriptor null_halfedge()
   {
     return halfedge_descriptor();
   }
 
-  static face_descriptor null_face() const
+  static face_descriptor null_face()
   {
     return face_descriptor();
   }
 };
 
-  template<typename V, typename Graph>
-  struct graph_traits<
-    boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> > const >
-    : boost::graph_traits< Graph >
-  {};
-
-  template<typename V, typename Graph, class PropertyTag>
-  struct property_map<
-      boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> >,
-      PropertyTag>
-      : public property_map<Graph, PropertyTag>
-  {};
-
-  template<typename V, typename Graph, class PropertyTag>
-  struct property_map<
-    const boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> >,
-    PropertyTag>
-    : public property_map<Graph, PropertyTag>
-  {};
 
 } // namespace boost
 
@@ -614,15 +596,50 @@ is_valid(const Gwdwg<Graph> & w, bool verbose = false)
   return is_valid(*w.graph,verbose);
 }
 
+
+template <typename Graph, typename PM, typename T>
+struct Gwdwg_property_map {
+  Graph* graph;
+  PM* pm;
+
+  Gwdwg_property_map()
+    : graph(NULL), pm(NULL)
+  {}
+
+  Gwdwg_property_map(const Graph& graph, const PM& pm)
+    : graph(const_cast<Graph*>(&graph)), pm(const_cast<PM*>(&pm))
+  {}
+
+  template <typename Descriptor>
+  friend 
+  typename boost::property_traits<PM>::value_type
+  get(Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d)
+  {
+    assert(d.graph == gpm.graph);
+    return get(*gpm.pm, d.descriptor);
+  }
+
+}; // class Gwdwg_property_map
+
+
+
 template <class Graph, class PropertyTag>
-typename boost::property_map< Graph, PropertyTag >::type
+Gwdwg_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type, PropertyTag>
 get(PropertyTag ptag, const Gwdwg<Graph>& w)
 {
-  get(ptag,*w.graph);
+  typedef typename boost::property_map<Graph,PropertyTag>::type PM;
+  typedef Gwdwg_property_map<Graph, PM, PropertyTag> GPM;
+  return GPM(*w.graph, get(ptag,*w.graph));
 }
 
 
-
 }//end namespace CGAL
+
+namespace boost {
+  template <typename Graph, typename PropertyTag>
+  struct boost::property_map<CGAL::Gwdwg<Graph>,PropertyTag> {
+    typedef CGAL::Gwdwg_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type, PropertyTag> type;
+  };
+}// namespace boost
 
 #endif //CGAL_BOOST_GRAPH_GWDWG_H
