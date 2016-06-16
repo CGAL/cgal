@@ -74,6 +74,7 @@ public:
 
   friend std::size_t hash_value(const Edge& e)
   {
+    if (e.first==Face_handle()) return 0;
     return hash_value(e.first<e.first->neighbor(e.second)?
                       e.first:e.first->neighbor(e.second));
   }

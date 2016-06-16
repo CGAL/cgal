@@ -137,6 +137,7 @@ struct HDS_edge {
 
   friend  std::size_t hash_value(const HDS_edge&  i)
   {
+    if (i.halfedge()==Halfedge_handle()) return 0;
     return hash_value(i.halfedge()<i.halfedge()->opposite()?
                       i.halfedge():i.halfedge()->opposite());
   }
@@ -154,6 +155,7 @@ namespace handle{
     operator()(const HDS_edge<Halfedge_handle>& edge)
     {
       Halfedge_handle he = edge.halfedge();
+      if (he==Halfedge_handle()) return 0;
       if ( he < he->opposite() )
         return Hash_functor<Halfedge_handle>()(he);
       return Hash_functor<Halfedge_handle>()(he->opposite());
@@ -241,6 +243,7 @@ namespace std {
     std::size_t operator()(const CGAL::internal::HDS_edge<H>& e) const
     {
       std::hash<H> fct;
+      if (e.halfedge()==H()) return 0;
       return fct(e.halfedge()<e.halfedge()->opposite()?
                  e.halfedge():e.halfedge()->opposite());
     }
