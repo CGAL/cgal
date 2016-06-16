@@ -60,7 +60,7 @@ public:
               this, SLOT(mesh_3_volume()));
     }
 
-    actionMesh_3_remesh = new QAction("Remesh a polyhedral surface", mw);
+    actionMesh_3_remesh = new QAction("Create a Surface Triangle Mesh", mw);
     if (actionMesh_3_remesh){
       actionMesh_3_remesh->setProperty("subMenuName", "Tetrahedral Mesh Generation");
       connect(actionMesh_3_remesh, SIGNAL(triggered()),
