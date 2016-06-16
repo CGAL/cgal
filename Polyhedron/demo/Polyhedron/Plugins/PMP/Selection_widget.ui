@@ -103,7 +103,7 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,1">
+               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,1,1">
                 <item>
                  <spacer name="horizontalSpacer_3">
                   <property name="orientation">
@@ -116,6 +116,13 @@
                    </size>
                   </property>
                  </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="Select_all_NTButton">
+                  <property name="text">
+                   <string>Select All Non Triangle</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="Add_to_selection_button">

@@ -380,6 +380,7 @@ public:
       break;
     }
   }
+  void select_all_NT();
   // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, edge_descriptor as template argument)
   template<class HandleType>
   void select_all() {
