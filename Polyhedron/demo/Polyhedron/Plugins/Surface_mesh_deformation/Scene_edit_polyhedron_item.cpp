@@ -548,8 +548,12 @@ void Scene_edit_polyhedron_item_priv::remesh()
     deform_mesh->roi_vertices().begin(),deform_mesh->roi_vertices().end());
 
   ROI_faces_pmap roi_faces_pmap;
+  QVector<Point> controls_to_save;
   BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
+    if(deform_mesh->is_control_vertex(v))
+      controls_to_save.push_back(v->point());
+
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
       bool add_face=true;
@@ -563,7 +567,6 @@ void Scene_edit_polyhedron_item_priv::remesh()
       }
     }
   }
-
   // set face_index map needed for border_halfedges and isotropic_remeshing
   boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
     = get(CGAL::face_index, *item->polyhedron());
@@ -630,12 +633,19 @@ void Scene_edit_polyhedron_item_priv::remesh()
                                 Deform_mesh::Hedge_index_map(),
                                 vpmap);
 
+  item->create_ctrl_vertices_group();
   BOOST_FOREACH(face_descriptor f, faces(g))
   {
     if (!get(roi_faces_pmap, f))
       continue;
     BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, g), g))
-      item->insert_roi_vertex(target(h, g));
+    {
+      vertex_descriptor v = target(h, g);
+      if(controls_to_save.contains(v->point()))
+        item->insert_control_vertex(v);
+      else
+        item->insert_roi_vertex(v);
+    }
 
     put(roi_faces_pmap, f, false); //reset ids
   }
@@ -644,7 +654,6 @@ void Scene_edit_polyhedron_item_priv::remesh()
   compute_normals_and_vertices();
 
   poly_item->invalidate_aabb_tree(); // invalidate the AABB tree
-  item->create_ctrl_vertices_group();
 
   Q_EMIT item->itemChanged();
 }
@@ -1103,7 +1112,7 @@ void Scene_edit_polyhedron_item::selected(const std::set<Polyhedron::Vertex_hand
 bool Scene_edit_polyhedron_item::insert_control_vertex(vertex_descriptor v)
 {
   if(!is_there_any_ctrl_vertices_group()) {
-    print_message("There is no group of control vertices, create one!");
+    std::cerr<<"There is no group of control vertices, create one!\n";
     return false;
   } // no group of control vertices to insert
 
