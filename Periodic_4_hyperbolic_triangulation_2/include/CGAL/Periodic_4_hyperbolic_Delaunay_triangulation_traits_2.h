@@ -214,7 +214,7 @@ public:
 
   	Construct_segment_2
   	construct_segment_2_object() const {
-  		return Construct_segment_2(_domain);
+  		return Construct_segment_2(&_domain);
   	}
 
   	Construct_midpoint_2
@@ -269,7 +269,7 @@ public:
   
   	Construct_triangle_2  
   	construct_triangle_2_object() const {
-  		return Construct_triangle_2();
+  		return Construct_triangle_2(&_domain);
   	}
   
   	Construct_direction_2  

@@ -192,9 +192,9 @@ public:
 
 
 // just to give an order(ing)
-template< class GT, template <class> class Hyperbolic_octagon_translation_matrix >
-bool operator < (const std::complex< typename Hyperbolic_octagon_translation_matrix<GT>:: template Field_number<GT::FT> >& lh,
-  const std::complex< typename Hyperbolic_octagon_translation_matrix<GT>:: template Field_number<GT::FT> >& rh)
+template< class GT >
+bool operator<( const std::complex<GT>& lh,
+                const std::complex<GT>& rh)
 {
   if (real(lh) < real(rh)) {
     return true;
@@ -210,10 +210,11 @@ bool operator < (const std::complex< typename Hyperbolic_octagon_translation_mat
 }
 
 // just to order octagon_matrices 
-template<class Field_number>
-bool operator < (const Hyperbolic_octagon_translation_matrix<Field_number>& lh, 
-  const Hyperbolic_octagon_translation_matrix<Field_number>& rh)
+template<class GT>
+bool operator<( const Hyperbolic_octagon_translation_matrix<GT>& lh, 
+                const Hyperbolic_octagon_translation_matrix<GT>& rh)
 {
+
   if (lh.A < rh.A) {
     return true;
   }
@@ -227,15 +228,15 @@ bool operator < (const Hyperbolic_octagon_translation_matrix<Field_number>& lh,
   return false;
 }
 
-template<class Field_number>
-bool operator == (const Hyperbolic_octagon_translation_matrix<Field_number>& lh, 
-  const Hyperbolic_octagon_translation_matrix<Field_number>& rh)
+template<class GT >
+bool operator == (const Hyperbolic_octagon_translation_matrix<GT>& lh, 
+                  const Hyperbolic_octagon_translation_matrix<GT>& rh)
 {
   return (lh.A == rh.A && lh.B == rh.B);
 }
 
-template<class Field_number>
-std::ostream& operator<<(std::ostream& os, const Hyperbolic_octagon_translation_matrix<Field_number>& m)
+template<class GT>
+std::ostream& operator<<(std::ostream& os, const Hyperbolic_octagon_translation_matrix<GT>& m)
 {
   os << m.A << " " << m.B;
   return os;

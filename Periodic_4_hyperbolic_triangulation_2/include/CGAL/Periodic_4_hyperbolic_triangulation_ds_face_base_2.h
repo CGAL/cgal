@@ -166,6 +166,15 @@ public:
 	}
 
 
+	bool has_zero_offsets() {
+		bool b = true;
+		for (int i = 0; i < 3 && b; i++) {
+			b = (b && o[i].is_identity());
+		}
+		return b;
+	}
+
+
 	// SETTING
 
 	void set_number(int n) {
@@ -228,7 +237,7 @@ public:
 		V[0] = V[1] = V[2] = Vertex_handle();
 	}
 
-	void set_vertex(int k, Vertex_handle& vh) {
+	void set_vertex(int k, const Vertex_handle& vh) {
 		V[k] = vh;
 	}
 
@@ -254,7 +263,7 @@ public:
 		N[2] = n2;
 	}
 
-	void set_neighbor(int k, Face_handle& nfh) {
+	void set_neighbor(int k, const Face_handle& nfh) {
 		N[k] = nfh;
 	}
 
@@ -281,13 +290,15 @@ public:
   	} 
 
 
-  	void restore_orientation() {
+  	void reorient() {
   		// N(eighbors), V(ertices), o(ffsets), no (neighbor offsets)
 
-  		swap(N[1], N[2]);
-  		swap(V[1], V[2]);
-  		swap(o[1], o[2]);
-  		swap(no[1], no[2]);
+  		int idx0 = 0, idx1 = 1; // the indices to swap
+
+  		swap( N[idx0],  N[idx1]);
+  		swap( V[idx0],  V[idx1]);
+  		swap( o[idx0],  o[idx1]);
+  		swap(no[idx0], no[idx1]);
 
   	}
 

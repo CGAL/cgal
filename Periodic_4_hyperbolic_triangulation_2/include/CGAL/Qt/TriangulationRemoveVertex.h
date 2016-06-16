@@ -44,6 +44,8 @@ TriangulationRemoveVertex<T>::TriangulationRemoveVertex(T * dt_,
 template <typename T>
 void 
 TriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{}
+/*
 {  
   if((event->modifiers()  & ::Qt::ShiftModifier)
      && (! (event->modifiers() & ::Qt::ControlModifier))){
@@ -57,7 +59,7 @@ TriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
     emit (modelChanged());
   }
 }
-
+*/
 
 
 template <typename T>

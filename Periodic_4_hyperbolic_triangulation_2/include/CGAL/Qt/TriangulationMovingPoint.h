@@ -81,6 +81,8 @@ TriangulationMovingPoint<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 template <typename T>
 void 
 TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{}
+/*
 {
 
   if(! movePointToInsert) return;
@@ -95,11 +97,13 @@ TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   vh = next_hint;
   localize_and_insert_point(event->scenePos());
 }
-
+*/
 
 template <typename T>
 void 
 TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{}
+/*
 {
   if(! movePointToInsert ||
      event->button() != ::Qt::LeftButton) {
@@ -115,7 +119,7 @@ TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
  
   movePointToInsert = false;
 }
-
+ */
 
 
 template <typename T>

@@ -147,7 +147,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
     for (int i=0; i<3; i++) {
       if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
         m_painter->setPen(this->edgesPen());
-        painterostream << t->segment(fh,i);
+        painterostream << t->segment(fh, i);
       }
     }
   }
@@ -207,7 +207,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
         it != t->finite_vertices_end();
         it++){
       
-
+      /*
       switch (it->info().getColor()) {
         case 0:
           painter->setPen(QPen(::Qt::red, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
@@ -251,7 +251,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
         default:
           painter->setPen(QPen(::Qt::gray, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
           break;
-      }
+      } */
       
       //
       
@@ -335,18 +335,17 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
   painter->setPen(this->edgesPen());
 //   painter->drawRect(boundingRect());
   if ( t->dimension()<2 || option->exposedRect.contains(boundingRect()) ) {
-  	std::cout << "Drawing all!" << std::endl;
     drawAll(painter);
   } else {
-  	std::cout << "Else-ing!" << std::endl;
     m_painter = painter;
     painterostream = PainterOstream<Geom_traits>(painter);
+    /*
     CGAL::apply_to_range (*t, 
                           typename T::Point(option->exposedRect.left(),
                                             option->exposedRect.bottom()), 
                           typename T::Point(option->exposedRect.right(),
                                             option->exposedRect.top()), 
-                          *this);
+                          *this); */
   }
 }
 
@@ -357,33 +356,31 @@ void
 TriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
-  if(t->number_of_vertices() == 0){
-    bb = Bbox_2(0,0,0,0);
-    bb_initialized = false;
-    return;
-  } else if(! bb_initialized){
-    bb = t->finite_vertices_begin()->point().bbox();
-    bb_initialized = true;
-  }
+ //  if(t->number_of_vertices() == 0){
+ //    bb = Bbox_2(0,0,0,0);
+ //    bb_initialized = false;
+ //    return;
+ //  } else if(! bb_initialized){
+ //    bb = t->finite_vertices_begin()->point().bbox();
+ //    bb_initialized = true;
+ //  }
   
-  if(t->dimension() <2){
-    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-	it != t->finite_vertices_end();
-	++it){
-      bb = bb + it->point().bbox();
-    }
-  } else {
-    typename T::Vertex_handle inf = t->infinite_vertex();
-    typename T::Vertex_circulator vc = t->incident_vertices(inf), done(vc);
-    do {
-      bb = bb + vc->point().bbox();
-      ++vc;
-    } while(vc != done);
-  }
-  bounding_rect = QRectF(bb.xmin(),
-                         bb.ymin(),
-                         bb.xmax()-bb.xmin(),
-                         bb.ymax()-bb.ymin());
+ //  if(t->dimension() <2){
+ //    for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
+	// it != t->finite_vertices_end();
+	// ++it){
+ //      bb = bb + it->point().bbox();
+ //    }
+ //  } else {
+ //    typename T::Vertex_handle inf = t->infinite_vertex();
+ //    typedef typename T::Vertex_circulator Circ;
+ //    Circ vc = t->incident_vertices(inf), done(vc);
+ //    do {
+ //      bb = bb + vc->point().bbox();
+ //      ++vc;
+ //    } while(vc != done);
+ //  }
+  bounding_rect = QRectF(-1., -1., 2., 2.);
 }
 
 
