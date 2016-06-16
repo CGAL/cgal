@@ -257,7 +257,15 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
                   bool with_features,
                   const int nb_initial_points = -1)
   {
-    if ( with_features ) { init_c3t3_with_features(c3t3,domain,criteria); }
+    if ( with_features ) {
+      init_c3t3_with_features(c3t3,domain,criteria);
+
+      // If c3t3 initialization is not sufficient (may happen if there is only
+      // a planar curve as feature for example), add some surface points
+      if ( c3t3.triangulation().dimension() != 3 ) {
+        init_c3t3(c3t3, domain, criteria, nb_initial_points);
+      }
+    }
     else { init_c3t3(c3t3,domain,criteria,nb_initial_points); }
   }
 };
@@ -430,15 +438,8 @@ void make_mesh_3_impl(C3T3& c3t3,
             with_features,
             mesh_options.number_of_initial_points);
 
-  // If c3t3 initialization is not sufficient (may happen if there is only
-  // a planar curve as feature for example), add some surface points
-  if ( c3t3.triangulation().dimension() != 3 )
-  {
-    internal::Mesh_3::init_c3t3(c3t3, domain, criteria,
-              mesh_options.number_of_initial_points);
-  }
   CGAL_assertion( c3t3.triangulation().dimension() == 3 );
-  
+
   // Build mesher and launch refinement process
   // Don't reset c3t3 as we just created it
   refine_mesh_3(c3t3, domain, criteria,
