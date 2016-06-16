@@ -26,7 +26,7 @@ struct Distance {
 
   template <class TreeTraits>
   double min_distance_to_rectangle(const Point& p,
-				   const CGAL::Kd_tree_rectangle<TreeTraits>& b,std::vector<double>& dists){   
+				   const CGAL::Kd_tree_rectangle<TreeTraits>& b,std::vector<double>& dists) const {
     double distance(0.0), h = p.x();
     if (h < b.min_coord(0)){
       dists[0] = (b.min_coord(0)-h);
@@ -76,7 +76,7 @@ struct Distance {
 
    template <class TreeTraits>
   double max_distance_to_rectangle(const Point& p,
-				   const CGAL::Kd_tree_rectangle<TreeTraits>& b,std::vector<double>& dists){   
+				   const CGAL::Kd_tree_rectangle<TreeTraits>& b,std::vector<double>& dists) const {
     double h = p.x();
 
     dists[0] = (h >= (b.min_coord(0)+b.max_coord(0))/2.0) ?
@@ -98,6 +98,6 @@ struct Distance {
   
   double transformed_distance(double d) const { return d*d; }
   
-  double inverse_of_transformed_distance(double d) { return std::sqrt(d); }
+  double inverse_of_transformed_distance(double d) const { return std::sqrt(d); }
   
 }; // end of struct Distance
