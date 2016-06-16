@@ -166,7 +166,7 @@ public:
 	  std::pair<std::pair<double, double>, long> d =
 	    q.denominator().to_interval_exp();
 
-	  CGAL_assertion_msg(CGAL::abs((double)(n.second - d.second)) < (1<<30)*2.0,
+	  CGAL_assertion_msg(CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
                      "Exponent overflow in Quotient<MP_Float> to_interval");
 	  return ldexp(Interval_nt<>(n.first) / Interval_nt<>(d.first),
                        static_cast<int>(n.second - d.second)).pair();
