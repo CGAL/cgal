@@ -109,7 +109,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& 
   : CGAL::Three::Scene_item(Scene_surface_mesh_item_priv::NbOfVbos,Scene_surface_mesh_item_priv::NbOfVaos)
 {
   d = new Scene_surface_mesh_item_priv(other, this);
-  d->are_buffers_filled = false;
+  are_buffers_filled = false;
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
@@ -179,7 +179,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
   }
 
   d->compute_elements();
-  d->are_buffers_filled = false;
+  are_buffers_filled = false;
 }
 
 Scene_surface_mesh_item*
