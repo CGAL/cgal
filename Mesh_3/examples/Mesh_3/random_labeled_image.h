@@ -25,9 +25,9 @@ CGAL::Image_3 random_labeled_image()
                                 dim-2 - max_radius_of_spheres);
       k = rand.uniform_smallint(1 + max_radius_of_spheres,
                                 dim-2 - max_radius_of_spheres);
-    } while ( ( CGAL::square(double(center) - i) +
-                CGAL::square(double(center) - j) +
-                CGAL::square(double(center) - k) )
+    } while ( ( CGAL::square(double(center) - double(i)) +
+                CGAL::square(double(center) - double(j)) +
+                CGAL::square(double(center) - double(k)) )
               <
               CGAL::square(double(radius_of_big_sphere) + 4 * max_radius_of_spheres) );
     std::ptrdiff_t radius = max_radius_of_spheres;

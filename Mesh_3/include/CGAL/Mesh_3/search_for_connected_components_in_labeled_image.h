@@ -189,7 +189,7 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
                   const int m_n = (visited[offset_n] ? 1 : 0) +
                     (second_pass[offset_n] ? 2 : 0);
                   if(m_n < pass) {
-                    Indices indices(uint(i_n), uint(j_n), uint(k_n), depth+1);
+                    Indices indices(uint(i_n), uint(j_n), uint(k_n), uint(depth+1));
                     queue.push(indices);
                   }
                 }

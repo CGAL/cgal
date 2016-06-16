@@ -46,7 +46,7 @@ struct Get_point
                    const std::size_t j,
                    const std::size_t k) const
   {
-    return Point(i * vx, j * vy, k * vz);
+    return Point(double(i) * vx, double(j) * vy, double(k) * vz);
   }
 };
 template<class C3T3, class MeshDomain, class MeshCriteria>
@@ -119,7 +119,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   for(typename Seeds::const_iterator it = seeds.begin(), end = seeds.end();
       it != end; ++it)
   {
-    const double radius = (it->second + 1)* max_v;
+    const double radius = double(it->second + 1)* max_v;
     CGAL::Random_points_on_sphere_3<Point> points_on_sphere_3(radius);
     typename Mesh_domain::Construct_intersection construct_intersection =
       domain.construct_intersection_object();
