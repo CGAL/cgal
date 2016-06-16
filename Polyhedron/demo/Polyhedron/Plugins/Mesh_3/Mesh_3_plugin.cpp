@@ -77,7 +77,8 @@ public:
 
   bool applicable(QAction* a) const {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
+    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())) != NULL
+      && a == actionMesh_3)
       return true;
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
