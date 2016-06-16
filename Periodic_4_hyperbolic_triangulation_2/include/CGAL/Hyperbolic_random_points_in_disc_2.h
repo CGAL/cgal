@@ -43,7 +43,7 @@ void Hyperbolic_random_points_in_disc_2(std::vector<typename Gt::Point_2>& outpu
     rand = CGAL::Random(seed);
   }
   /* CGAL::Random_points_in_disc_2<Point_2, Creator> in_Euclidean_disk(rh, rand); */
-  CGAL::Random_points_in_disc_2<Point_2, Creator> in_Euclidean_disk(rh, rand);
+  CGAL::Random_points_in_disc_2<Creator> in_Euclidean_disk(rh, rand);
 
   std::vector<Point_2> pts;
   pts.reserve(nb);

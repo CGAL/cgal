@@ -46,6 +46,13 @@ public Periodic_4_hyperbolic_triangulation_2<GT, TDS> {
   typedef Periodic_4_hyperbolic_triangulation_2<GT, TDS>            Base;
 
 public:
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
+  using Base::cw;
+  using Base::ccw;
+  using Base::geom_traits;
+#endif
+
   typedef typename Base::Locate_type                         Locate_type;
   typedef typename Base::Geometric_traits                    Geometric_traits;
   typedef typename Base::Triangulation_data_structure        Triangulation_data_structure;
@@ -80,6 +87,7 @@ public:
   typedef typename Base::Face_circulator                     Face_circulator;
   typedef typename Base::Edge_circulator                     Edge_circulator;
   typedef typename Base::Vertex_circulator                   Vertex_circulator;
+  typedef typename Base::Line_face_circulator                Line_face_circulator;
 
   typedef Face_iterator                                      All_faces_iterator;
   typedef Edge_iterator                                      All_edges_iterator;
@@ -164,9 +172,200 @@ public:
                         InputIterator last, 
                         bool is_large_point_set = true);
 
+  bool locally_Delaunay(const Face_handle&, int);
+  void propagating_flip(Face_handle&, int);
+  void restore_Delaunay(Vertex_handle);
+  void flip_single_edge(Face_handle, int);
+  bool flippable(Face_handle, int);
+
 };  // class Periodic_4_hyperbolic_Delaunay_triangulation_2
 
+
+
+
+template<class Gt, class Tds>
+bool Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::flippable(Face_handle f, int i)
+{
+  Face_handle nb = f->neighbor(i);
+  int j = nb->index(f);
+
+  const Point *p[4];
+
+  p[0] = &f->vertex(i)->point();      // i
+  p[1] = &nb->vertex(j)->point();     // opposite
+  p[2] = &f->vertex(ccw(i))->point(); // ccw
+  p[3] = &f->vertex(cw(i))->point();  // cw
+
+  if (f->has_zero_offsets() && nb->has_zero_offsets()) {
+      if (orientation(*p[0], *p[1], *p[2]) == LEFT_TURN)
+        return false;
+      if (orientation(*p[0], *p[1], *p[3]) == RIGHT_TURN)
+        return false;
+  } else {
+      Offset off[4];
+      off[0] = f->offset(i);
+      off[1] = f->neighbor_offset(j).append(nb->offset(j)); 
+      off[2] = f->offset(ccw(i));
+      off[3] = f->offset(cw(i));
+
+      if (orientation(*p[0], *p[1], *p[2], off[0], off[1], off[2]) == LEFT_TURN)
+        return false;
+      if (orientation(*p[0], *p[1], *p[3], off[0], off[1], off[3]) == RIGHT_TURN)
+        return false;
+  }
+
+  return true;
+}
+
+
+
+template<class Gt, class Tds>
+void Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::flip_single_edge(Face_handle f, int i)
+{
+  CGAL_triangulation_precondition(f != Face_handle());
+  CGAL_triangulation_precondition(i == 0 || i == 1 || i == 2);
+  CGAL_triangulation_precondition(dimension() == 2);
+
+  CGAL_triangulation_precondition(flippable(f, i));
+
+  if (f->has_zero_offsets() && f->neighbor(i)->has_zero_offsets()) {
+    _tds.flip(f, i);
+    return;
+  } else {
+      Face_handle nb = f->neighbor(i);
+      int nb_idx = nb->index(f);
+      
+      Vertex_handle vh[] = { f->vertex(i),
+                             f->vertex(ccw(i)),
+                            nb->vertex(nb_idx),
+                             f->vertex(cw(i))    };
+      Offset o[]         = { f->offset(i),
+                             f->offset(ccw(i)),
+                            nb->offset(nb_idx),
+                             f->offset(cw(i))    };
+      Offset no[]        = { f->neighbor_offset(cw(i)),
+                            nb->neighbor_offset(ccw(nb_idx)),
+                            nb->neighbor_offset(cw(nb_idx)),
+                             f->neighbor_offset(ccw(i))  };
+
+      _tds.flip(f, i);
+      
+      nb = f->neighbor(ccw(i));
+      nb_idx = nb->index(f);
+
+      f->set_offsets();
+      nb->set_offsets();
+
+      f->set_offset(i, o[0]);
+      f->set_neighbor_face_offset(i, no[1]);
+      f->set_offset(ccw(i), o[1]);
+      f->set_neighbor_face_offset(ccw(i), Offset());
+      f->set_offset(cw(i), o[2]); 
+      f->set_neighbor_face_offset(cw(i), no[0]);
+
+      nb->set_offset(nb_idx, o[3]);
+      nb->set_neighbor_face_offset(nb_idx, Offset());
+      nb->set_offset(ccw(nb_idx), o[0]);
+      nb->set_neighbor_face_offset(ccw(nb_idx), no[2]);
+      nb->set_offset(cw(nb_idx), o[2]);
+      nb->set_neighbor_face_offset(cw(nb_idx), no[3]);
+  }
+
+
+}
+
+
     
+
+
+template < class Gt, class Tds >
+void
+Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
+restore_Delaunay(Vertex_handle v)
+{
+  Face_handle f = v->face();
+  Face_handle next;
+  int i;
+  Face_handle start(f);
+  do
+    {
+      i = f->index(v);
+      next = f->neighbor(ccw(i));  // turn ccw around v
+      propagating_flip(f, i);
+      f = next;
+    }
+  while(next != start);
+}
+
+
+template < class Gt, class Tds >
+void
+Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
+propagating_flip(Face_handle& f, int i)
+{
+  Face_handle nb = f->neighbor(i);
+
+  if (locally_Delaunay(f, i))
+    return;
+
+  this->flip_single_edge(f, i);
+  propagating_flip(f, i);
+  i = nb->index(f->vertex(i));
+  propagating_flip(nb, i);
+}
+
+
+
+template < class Gt, class Tds >
+bool
+Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
+locally_Delaunay(const Face_handle &f, int nbi)
+{
+  CGAL_BRANCH_PROFILER("locally_Delaunay(), simplicity check failures", tmp);
+
+  Face_handle nb = f->neighbor(nbi);
+
+  bool simplicity_criterion = f->has_zero_offsets() && nb->has_zero_offsets();
+
+  const Point *p[4];
+  for (int index = 0; index < 3; ++index)
+    {
+      p[index]   = &nb->vertex(index)->point();
+    }
+  p[3]   = &f->vertex(nbi)->point();
+
+  Oriented_side os;
+  if (simplicity_criterion)
+    {
+      // No periodic offsets
+      os = side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3]);
+    }
+  else
+    {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+
+      Offset off[4];
+
+      for (int index = 0; index < 3; ++index)
+        {
+          off[index] = nb->offset(index);
+        }
+      off[3] = f->neighbor_offset(nbi);
+
+      os = side_of_oriented_circle( off[0].apply(*p[0]), 
+                                    off[1].apply(*p[1]), 
+                                    off[2].apply(*p[2]), 
+                                    off[3].apply(*p[3]) );
+    }
+
+  return (ON_POSITIVE_SIDE != os);
+}
+
+
+
+
+
+
 template < class Gt, class Tds >
 inline
 typename Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
@@ -174,16 +373,23 @@ Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
 insert(const Point  &p,  Face_handle start)
 {
 
+
   typedef typename Gt::Side_of_fundamental_octagon Side_of_fundamental_octagon;
   
   Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
   CGAL::Bounded_side side = check(p);
-  
+
   if (side != CGAL::ON_UNBOUNDED_SIDE) {
 
-    cout << "Point inserted in face " << start->get_number() << ", vertices: ";
+    if ( start == Face_handle() ) {
+      Locate_type lt;
+      int li;
+      start = this->euclidean_visibility_locate(p, lt, li);
+    }
+
+    cout << "Point inserted in face " << start->get_number() << ", vertices: " << endl;
     for (int i = 0; i < 3; i++) 
-      cout << start->vertex(i)->idx() << " with offset " << start->offset(i) << ", ";
+      cout << start->vertex(i)->idx() << " with offset " << start->offset(i) << ", " << endl;
     cout << endl;
     cout << "Neighbor offsets: " << start->neighbor_offset(0) << ", " << start->neighbor_offset(1) << ", " << start->neighbor_offset(2) << endl;
 
@@ -242,7 +448,7 @@ insert(const Point  &p,  Face_handle start)
       cout << "--------- end ----------" << endl << endl;
     }
 
-
+    restore_Delaunay(new_vertex);
 
     return new_vertex;
   } else {

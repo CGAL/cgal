@@ -50,32 +50,33 @@ TriangulationPointInputAndConflictZone<T>::TriangulationPointInputAndConflictZon
 
 
 
+// TODO: Do this! 
+
 template <typename T>
 void 
 TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   p = convert(event->scenePos());
-  if(dt->dimension() < 2 ||
-     event->modifiers() != 0 ||
-     event->button() != ::Qt::LeftButton) {
-    return;
-  }
+  // if(dt->dimension() < 2 ||
+  //    event->modifiers() != 0 ||
+  //    event->button() != ::Qt::LeftButton) {
+  //   return;
+  // }
   
 
-  dt->get_conflicts(p, std::back_inserter(faces));
-  for(typename std::list<Face_handle>::iterator it = faces.begin();
-      it != faces.end();
-      ++it){
-    if(! dt->is_infinite(*it)){
-      QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->triangle(*it)));
-      QColor color(::Qt::blue);
-      color.setAlpha(150);
-      item->setBrush(color);
-      scene_->addItem(item);
-      qfaces.push_back(item);
-    }
-  }
+  // dt->get_conflicts(p, std::back_inserter(faces));
+  // for(typename std::list<Face_handle>::iterator it = faces.begin(); it != faces.end(); it++) {
+  //   if( !dt->is_infinite(*it) ){
+  //     QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->triangle(*it)));
+  //     QColor color(::Qt::blue);
+  //     color.setAlpha(150);
+  //     item->setBrush(color);
+  //     scene_->addItem(item);
+  //     qfaces.push_back(item);
+  //   }
+  // }
 }
+
 
 
 template <typename T>

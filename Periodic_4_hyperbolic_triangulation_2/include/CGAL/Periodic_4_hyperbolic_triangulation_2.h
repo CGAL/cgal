@@ -34,33 +34,25 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-
+#include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/utility.h>
 #include <CGAL/use.h>
-
-#include <CGAL/Triangulation_utils_2.h>
-
-//#include <CGAL/Triangulation_data_structure_2.h>
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_face_base_2.h>
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_vertex_base_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
-
 #include <CGAL/Periodic_4_hyperbolic_triangulation_iterators_2.h>
-
 #include <CGAL/Unique_hash_map.h>
-
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
-
 #include <CGAL/Triangulation_structural_filtering_traits.h>
-
 #include <CGAL/Hyperbolic_word_4.h>
-
 #include <CGAl/Hyperbolic_translation_info.h>
+
+
 
 namespace CGAL {
 
@@ -159,15 +151,22 @@ template < 	class GT,
 				Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT>
 			>
 		>
-class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_cw_ccw_2 {
+class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_2<GT, TDS> {
 
 //	friend std::istream& operator>> <>
 //	(std::istream& is, Periodic_4_hyperbolic_triangulation_2<GT, TDS> &tr);
 
 	typedef Periodic_4_hyperbolic_triangulation_2<GT, TDS> 		Self;
-  typedef Triangulation_cw_ccw_2 Base;
+  typedef Triangulation_2<GT, TDS>                          Base;
 
 public:
+
+#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2  
+  using Base::cw;
+  using Base::ccw;
+  using Base::geom_traits;
+#endif
+
 	typedef GT 										        Geometric_traits;
 	typedef TDS 									        Triangulation_data_structure;
 	typedef unsigned short int 						Int;
@@ -203,6 +202,8 @@ public:
     typedef typename TDS::Vertex_circulator       	Vertex_circulator;
     //typedef typename TDS::Face_base               Face_base;
 
+
+    typedef typename Base::Line_face_circulator     Line_face_circulator;
 
   	typedef Face_iterator                       	All_faces_iterator;
   	typedef Edge_iterator                        	All_edges_iterator;
@@ -348,87 +349,69 @@ public:
 
   bool is_infinite(Vertex_handle v) const
   {
-    return is_infinite(v);
+    return false;
   }
   
   bool is_infinite(Face_handle f) const
   {
-    return has_infinite_vertex(f) || is_finite_invisible(f);
+    return false;
   }
   
   bool is_infinite(Face_handle f, int i) const 
   {
-    return has_infinite_vertex(f, i) || is_finite_invisible(f, i);
+    return false;
   }
   
   bool is_infinite(const Edge& e) const 
   {
-    return is_infinite(e.first, e.second);
+    return false;
   }
   
   bool is_infinite(const Edge_circulator& ec) const 
   {
-    return is_infinite(*ec);
+    return false;
   }
   
   bool is_infinite(const All_edges_iterator& ei) const 
   {
-    return is_infinite(*ei);
+    return false;
   }
   
 private:
   
   bool has_infinite_vertex(Face_handle f) const
   {
-    return is_infinite(f);
+    return false;
   }
   
   bool has_infinite_vertex(Face_handle f, int i) const
   {
-    return is_infinite(f, i);
+    return false;
   }
   
   bool has_infinite_vertex(const Edge& e) const
   {
-    return is_infinite(e);
+    return false;
   }
   
   int get_finite_invisible_edge(Face_handle f) const
-  {
-    assert(is_finite_invisible(f));
-    
-    return f->info().get_invisible_edge(); 
+  { 
+    return false;
   }
   
   bool is_finite_invisible(Face_handle f) const
   {
-    return f->info().is_finite_invisible();
+    return false;
   }
   
   bool is_finite_invisible(Face_handle f, int i) const
-  {
-    if(this->dimension() <= 1) {
-      return false;
-    }
-    
-    if(is_finite_invisible(f) && get_finite_invisible_edge(f) == i) {
-      return true;
-    }
-    
-    // another incident face and corresponding index
-    Face_handle f2 = f->neighbor(i);
-    int i2 =  f2->index(f);
-    
-    if(is_finite_invisible(f2) && get_finite_invisible_edge(f2) == i2) {
-      return true;
-    }
-    
+  { 
     return false;
   }
   
   bool is_finite_invisible(const Edge& e) const
   {
-    return is_finite_invisible(e.first, e.second);
+    return false;
   }
 
 
@@ -553,37 +536,37 @@ public:
 
 
   	Periodic_triangle construct_periodic_3_triangle(const Point &p1, const Point &p2, const Point &p3) const {
-    	return make_array(	std::make_pair(p1,Offset()),
-							std::make_pair(p2,Offset()), 
-							std::make_pair(p3,Offset()) );
+    	return make_array(	 std::make_pair(p1,Offset()),
+							             std::make_pair(p2,Offset()), 
+							             std::make_pair(p3,Offset()) );
   	}
 
   	Periodic_triangle construct_periodic_3_triangle(const Point  &p1, const Point  &p2, const Point  &p3,
       												const Offset &o1, const Offset &o2, const Offset &o3) const {
-    	return make_array(	std::make_pair(p1,o1), 
-    						std::make_pair(p2,o2),
-							std::make_pair(p3,o3) );
+    	return make_array(	 std::make_pair(p1,o1), 
+    						           std::make_pair(p2,o2),
+							             std::make_pair(p3,o3) );
   	}
 
   	Periodic_segment construct_periodic_3_segment(const Point &p1, const Point &p2) const {
     	return make_array(	std::make_pair(p1,Offset()), 
-    						std::make_pair(p2,Offset()) );
+    						          std::make_pair(p2,Offset()) );
   	}
 
   	Periodic_segment construct_periodic_3_segment(	const Point  &p1, const Point  &p2,
       												const Offset &o1, const Offset &o2) const {
     	return make_array(	std::make_pair(p1,o1), 
-    						std::make_pair(p2,o2) );
+    						          std::make_pair(p2,o2) );
   	}
 
 
   	Triangle construct_triangle(const Point &p1, const Point &p2, const Point &p3) const {
-    	return geom_traits().construct_triangle_3_object()(p1,p2,p3);
+    	return geom_traits().construct_triangle_2_object()(p1,p2,p3);
   	}
 
   	Triangle construct_triangle(const Point  &p1, const Point  &p2, const Point  &p3,
       							const Offset &o1, const Offset &o2, const Offset &o3) const {
-    	return geom_traits().construct_triangle_3_object()(p1,p2,p3,o1,o2,o3);
+    	return geom_traits().construct_triangle_2_object()(p1,p2,p3,o1,o2,o3);
   	}
 
   	Triangle construct_triangle(const Periodic_triangle& tri) {
@@ -592,12 +575,12 @@ public:
   	}
 
   	Segment construct_segment(const Point &p1, const Point &p2) const {
-    	return geom_traits().construct_segment_3_object()(p1, p2);
+    	return geom_traits().construct_segment_2_object()(p1, p2);
   	}
 
   	Segment construct_segment(	const Point &p1, const Point &p2,
     							const Offset &o1, const Offset &o2) const {
-    	return geom_traits().construct_segment_3_object()(p1,p2,o1,o2);
+    	return geom_traits().construct_segment_2_object()(p1,p2,o1,o2);
   	}
 
   	Segment construct_segment(const Periodic_segment& seg) const {
@@ -606,7 +589,7 @@ public:
   	}
 
   	Point construct_point(const Point& p, const Offset &o) const {
-    	return geom_traits().construct_point_3_object()(p,o);
+    	return geom_traits().construct_point_2_object()(p,o);
   	}
 
   	Point construct_point(const Periodic_point& pp) const {
@@ -619,7 +602,7 @@ public:
     	if (it == virtual_vertices.end()) {
       		// if v is not contained in virtual_vertices, then it is in the
       		// original domain.
-      		return std::make_pair(v->point(), Offset(0,0,0));
+      		return std::make_pair(v->point(), Offset());
     	} else {
       		// otherwise it has to be looked up as well as its offset.
       		return std::make_pair(it->second.first->point(), it->second.second);
@@ -662,14 +645,32 @@ public:
     							pp.second);
   	}
 
+
+    Segment segment(const Face_handle & fh, int idx) const {
+      return construct_segment( fh->vertex(idx)->point(),  fh->vertex(ccw(idx))->point(),
+                                fh->offset(idx),           fh->offset(ccw(idx)) );
+    }
+
+    Segment segment(const pair<Face_handle, int> & edge) {
+      return segment(edge.first, ccw(edge.second));
+    }
+
+
   	Segment segment(const Periodic_segment & ps) const {
     	return construct_segment(	ps[0].first,  ps[1].first,
-    								ps[0].second, ps[1].second );
+    								            ps[0].second, ps[1].second );
   	}
+
+
+    Triangle triangle(const Face_handle & fh) const {
+      return construct_triangle( fh->vertex(0)->point(), fh->vertex(1)->point(), fh->vertex(2)->point(),
+                                 fh->offset(0),          fh->offset(1),          fh->offset(2)        );
+    }
+
 
   	Triangle triangle(const Periodic_triangle & pt) const {
     	return construct_triangle(	pt[0].first, pt[1].first, pt[2].first,
-			      					pt[0].second,pt[1].second,pt[2].second );
+			      					            pt[0].second,pt[1].second,pt[2].second );
   	}
 
 
@@ -849,7 +850,7 @@ public:
 
   Face_handle locate(	const Point & p, Locate_type & lt, int & li, int & lj,
       					Face_handle start = Face_handle()) const {
-   	return periodic_locate(p, Offset(), lt, li, lj, start);
+   	return  euclidean_visibility_locate(p, lt, li, start); //periodic_locate(p, Offset(), lt, li, lj, start);
   }
 
 
@@ -880,6 +881,11 @@ public:
   	std::vector<Vertex_handle> insert_dummy_points();
 
     Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handle f = Face_handle()) const;
+
+    Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle f = Face_handle()) const {
+      return euclidean_visibility_locate(p, lt, li, f);
+    }
+
 
 protected:
   	// COMMON INSERTION for DELAUNAY and REGULAR TRIANGULATION
@@ -1072,6 +1078,18 @@ public:
   	OutputIterator incident_vertices(Vertex_handle v, OutputIterator vertices) const {
     	return _tds.adjacent_vertices(v, vertices);
   	}
+
+    
+    template <class OutputIterator>
+    OutputIterator incident_vertices(Vertex_handle v) const {
+      return _tds.adjacent_vertices(v);
+    }
+
+
+    Vertex_circulator incident_vertices(Vertex_handle v) const {
+      return _tds.adjacent_vertices(v);
+    }
+
 
   	size_type degree(Vertex_handle v) const {
     	return _tds.degree(v);
@@ -1462,7 +1480,7 @@ is_valid(bool verbose, int level) const {
     	if (orientation( *p[0],  *p[1],  *p[2], 
                    		off[0], off[1], off[2] ) != POSITIVE) {
       	if (verbose) {
-          cit->restore_orientation();
+          cit->reorient();
           for (int i=0; i<3; i++) {
             p[i] = &cit->vertex(i)->point();
             off[i] = cit->offset(i);
@@ -1551,6 +1569,14 @@ typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
 euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handle f) const
 {
 
+  typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
+  
+  Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+  CGAL::Bounded_side side = check(p);
+  if (side != ON_BOUNDED_SIDE) {
+    return Face_handle();
+  }
+
 	// Random generator (used to introduce a small perturbation to the choice of the starting vertex each time)
   boost::rand48 rng;
   boost::uniform_smallint<> three(0, 2);
@@ -1571,8 +1597,9 @@ euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handl
 	while (true) {
     Orientation o = orientation(f->vertex(curr)->point(), f->vertex(succ)->point(), p,
                                 f->offset(curr),          f->offset(succ),          Offset());
-	
+	  
     if (o == NEGATIVE) {
+     
       pair< typename std::set<Face_handle>::iterator, bool> r = visited_faces.insert(f->neighbor(cw(curr)));
       if (r.second) {
         f = f->neighbor(cw(curr));
