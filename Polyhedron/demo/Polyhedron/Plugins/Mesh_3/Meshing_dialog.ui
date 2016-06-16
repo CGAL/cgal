@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>473</width>
-    <height>637</height>
+    <height>662</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -45,6 +45,38 @@
      <property name="text">
       <string>No size</string>
      </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="initializationGroup">
+     <property name="title">
+      <string>Mesh initialization</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5" columnstretch="2,0,0">
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="detectComponents">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="detectComponentsLabel">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>&amp;Detect all connected components</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>detectComponents</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -88,9 +120,6 @@
       </item>
       <item row="0" column="2">
        <widget class="QCheckBox" name="protect">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
         <property name="text">
          <string/>
         </property>
@@ -102,7 +131,10 @@
       <item row="0" column="1">
        <widget class="QLabel" name="protectLabel">
         <property name="text">
-         <string>Protect sharp edges</string>
+         <string>&amp;Protect sharp edges</string>
+        </property>
+        <property name="buddy">
+         <cstring>protect</cstring>
         </property>
        </widget>
       </item>
@@ -507,8 +539,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>397</x>
-     <y>544</y>
+     <x>403</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -523,8 +555,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>397</x>
-     <y>544</y>
+     <x>403</x>
+     <y>655</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -539,12 +571,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>69</x>
-     <y>283</y>
+     <x>83</x>
+     <y>339</y>
     </hint>
     <hint type="destinationlabel">
-     <x>72</x>
-     <y>297</y>
+     <x>78</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>

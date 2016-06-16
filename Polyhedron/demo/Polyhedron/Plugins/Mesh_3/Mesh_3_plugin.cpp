@@ -187,7 +187,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   else if (NULL != image_item)
   {
     item = image_item;
-    features_protection_available = (polylines_item != NULL);
+    features_protection_available = (polylines_item != NULL) || !image_item->isGray();
 
     bool fit_wrdtp = true;
     std::size_t img_wdim = image_item->image()->image()->wdim;
@@ -297,6 +297,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
 
+  ui.initializationGroup->setVisible(image_item != NULL && !image_item->isGray());
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
   ui.volumeGroup->setVisible(!surface_only && poly_item != NULL
                              && poly_item->polyhedron()->is_closed());
@@ -318,6 +319,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const double edge_size = !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   const bool protect_features = ui.protect->isChecked();
+  const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
   const float iso_value = ui.iso_value_spinBox->value();
   const float value_outside = ui.value_outside_spinBox->value();
@@ -399,6 +401,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
                                  protect_features,
                                  manifold,
                                  scene,
+                                 detect_connected_components,
                                  image_item->isGray(),
                                  iso_value,
                                  value_outside,
