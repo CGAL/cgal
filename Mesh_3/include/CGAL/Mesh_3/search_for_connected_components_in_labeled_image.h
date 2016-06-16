@@ -73,9 +73,9 @@ search_for_connected_components_in_labeled_image(const CGAL::Image_3& image,
   int number_of_connected_components = 0;
 #endif // CGAL_MESH_3_SEARCH_FOR_CONNECTED_COMPONENTS_IN_LABELED_IMAGE_VERBOSE
   std::size_t voxel_index = 0;
-  for(std::size_t k=0; k<nz; k++)
-    for(std::size_t j=0; j<ny; j++)
-      for(std::size_t i=0; i<nx; i++)
+  for(uint k=0; k<nz; k++)
+    for(uint j=0; j<ny; j++)
+      for(uint i=0; i<nx; i++)
       {
         using CGAL::IMAGEIO::static_evaluate;
 
