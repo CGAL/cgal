@@ -503,6 +503,7 @@ private:
   }
 
   void createPlanes(Scene_image_item* seg_img) {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
     if(x_control == NULL)
@@ -664,6 +665,7 @@ private Q_SLOTS:
     {
       msgBox.hide();
       nbPlanes = 0;
+      QApplication::restoreOverrideCursor();
     }
   }
   // Avoids the segfault after the deletion of an item
