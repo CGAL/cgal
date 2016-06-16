@@ -893,7 +893,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   if(type == "Gray-level image")
   {
     //Create planes
-    image_item = new Scene_image_item(image,125, true);
+    image_item = new Scene_image_item(image,0, true);
     image_item->setName(fileinfo.baseName());
     msgBox.setText("Planes created : 0/3");
     msgBox.setStandardButtons(QMessageBox::NoButton);
