@@ -298,8 +298,10 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   ui.protect->setChecked(features_protection_available);
 
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
-  ui.volumeGroup->setVisible(!surface_only && poly_item != NULL
-                             && poly_item->polyhedron()->is_closed());
+  if (poly_item != NULL)
+    ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
+  else
+    ui.volumeGroup->setVisible(!surface_only);
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
