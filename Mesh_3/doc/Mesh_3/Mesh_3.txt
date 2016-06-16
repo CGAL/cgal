@@ -678,7 +678,7 @@ replaced by a new implementation. In this case, the initialization detects
 all connected components in the 3D segmented image, and inserts points in
 the triangulation for each connected component.
 
-For the meshing, the example \ref Mesh_3/mesh_3D_image.cpp calls `make_mesh_3()` as follows.
+For the meshing, in the previous example (\ref Mesh_3/mesh_3D_image.cpp), we called `make_mesh_3()` as follows.
 
 \snippet Mesh_3/mesh_3D_image.cpp Meshing
 
@@ -714,10 +714,10 @@ constructed using the API of the mesh domain, as follows. First the functor
 \skip Construct_intersection construct_intersection =
 \until construct_intersection_object
 then the `%Mesh_domain::Intersection` object (a `%tuple` with three
-components) is constructed using a call to the functor `construct_intersection`
+elements) is constructed using a call to the functor `construct_intersection`
 \skip Intersection intersect =
 \until construct_intersection
-and eventually `%index` is constructed at the component 1 of `%intersect`.
+and eventually `%index` is the element \#1 of `%intersect`.
 \skipline get<1>(intersect)
 
 The result of the custom initialization can be seen in
