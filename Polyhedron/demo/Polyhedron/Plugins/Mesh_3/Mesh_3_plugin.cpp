@@ -60,10 +60,10 @@ public:
               this, SLOT(mesh_3_volume()));
     }
 
-    actionMesh_3_remesh = new QAction("Create a Surface Triangle Mesh", mw);
-    if (actionMesh_3_remesh){
-      actionMesh_3_remesh->setProperty("subMenuName", "Tetrahedral Mesh Generation");
-      connect(actionMesh_3_remesh, SIGNAL(triggered()),
+    actionMesh_3_surface = new QAction("Create a Surface Triangle Mesh", mw);
+    if (actionMesh_3_surface){
+      actionMesh_3_surface->setProperty("subMenuName", "Tetrahedral Mesh Generation");
+      connect(actionMesh_3_surface, SIGNAL(triggered()),
               this, SLOT(mesh_3_surface()));
     }
 
@@ -71,7 +71,7 @@ public:
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionMesh_3 << actionMesh_3_remesh;
+    return QList<QAction*>() << actionMesh_3 << actionMesh_3_surface;
   }
 
 
@@ -110,7 +110,7 @@ private:
 
 private:
   QAction* actionMesh_3;
-  QAction* actionMesh_3_remesh;
+  QAction* actionMesh_3_surface;
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
