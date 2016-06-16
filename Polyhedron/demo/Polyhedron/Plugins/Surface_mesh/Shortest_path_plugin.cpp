@@ -1,5 +1,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Scene_group_item.h>
 
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
@@ -230,7 +231,12 @@ void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered(
       dock_widget->show();
       dock_widget->raise();
       // The other parts of initialization will be handled by the 'new_item' callback
-      scene->addItem(new Scene_polyhedron_shortest_path_item(polyhedronItem, this->scene, this->m_messages, this->mw));
+      Scene_group_item* group = new Scene_group_item(QString("%1 Shortest Path").arg(polyhedronItem->name()));
+      Scene_polyhedron_shortest_path_item* sp_item =new Scene_polyhedron_shortest_path_item(polyhedronItem, this->scene, this->m_messages, this->mw);
+      sp_item->setName(tr("Source Points for %1").arg(polyhedronItem->name()));
+      scene->addItem(sp_item);
+      scene->addItem(group);
+      scene->changeGroup(sp_item, group);
     }
     else
     {

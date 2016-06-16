@@ -135,7 +135,7 @@ void Scene_polyhedron_shortest_path_item_priv::initialize_buffers(CGAL::Three::V
 {
     //vao containing the data for the selected lines
     {
-        program = item->getShaderProgram(Scene_polyhedron_shortest_path_item::PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_polyhedron_shortest_path_item::PROGRAM_NO_SELECTION, viewer);
         item->vaos[Selected_Edges]->bind();
         program->bind();
         item->buffers[Vertices].bind();
@@ -184,8 +184,8 @@ void Scene_polyhedron_shortest_path_item::drawPoints(CGAL::Three::Viewer_interfa
         d->initialize_buffers(viewer);
     }
    glPointSize(4.0f);
-   d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-   attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+   d->program = getShaderProgram(PROGRAM_NO_SELECTION);
+   attribBuffers(viewer, PROGRAM_NO_SELECTION);
    vaos[Scene_polyhedron_shortest_path_item_priv::Selected_Edges]->bind();
    d->program->bind();
    d->program->setAttributeValue("colors", QColor(Qt::green));
@@ -459,6 +459,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
         polylines->setColor(Qt::red);
         this->m_sceneInterface->setSelectedItem(-1);
         this->m_sceneInterface->addItem(polylines);
+        this->m_sceneInterface->changeGroup(polylines, item->parentGroup());
       }
       else
       {
