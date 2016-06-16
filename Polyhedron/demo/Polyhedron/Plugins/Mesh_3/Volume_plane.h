@@ -58,6 +58,30 @@ template<typename Tag>
 class Volume_plane : public Volume_plane_interface, public Tag {
 public:
  Volume_plane();
+
+ void compute_bbox()const
+ {
+   compute_bbox(*this);
+ }
+
+ void compute_bbox(x_tag)const
+ {
+   _bbox = Bbox(0,0,0,
+               0, (adim_ - 1) * yscale_, (bdim_ - 1) * zscale_);
+ }
+
+ void compute_bbox(y_tag)const
+ {
+   _bbox = Bbox(0,0,0,
+               (adim_ - 1) * xscale_, 0, (bdim_ - 1) * zscale_);
+ }
+
+ void compute_bbox(z_tag)const
+ {
+   _bbox = Bbox(0,0,0,
+               (adim_ - 1) * xscale_, (bdim_ - 1) * yscale_, 0);
+ }
+
  void setData(unsigned int adim, unsigned int bdim, unsigned int cdim,
                  float xscale, float yscale, float zscale, std::vector<float>& colors);
 
