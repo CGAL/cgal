@@ -654,15 +654,33 @@ Scene_image_item::draw(Viewer_interface* viewer) const
   }
 }
 
+template <typename T> const char* whatType(T) { return "unknown"; }    // default
+template <> const char* whatType(float) { return "float"; }    // default
+template <> const char* whatType(double) { return "double"; }    // default
+template <> const char* whatType(char) { return "char"; }    // default
+template <> const char* whatType(boost::uint8_t) { return "uint8 "; }    // default
+template <> const char* whatType(boost::int16_t) { return "uint16"; }    // default
+template <> const char* whatType(boost::uint16_t type) { return "uint16_t"; }    // default
+template <> const char* whatType(boost::int32_t) { return "int32_t"; }    // default
+template <> const char* whatType(boost::uint32_t) { return "uint32_t"; }    // default
+
+template<typename Word>
+QString explicitWordType()
+{
+  return QString(whatType(Word(0)));
+}
+
 QString
 Scene_image_item::toolTip() const
 {
+  QString w_type;
+  CGAL_IMAGE_IO_CASE(image()->image(), w_type = explicitWordType<Word>())
   return tr("<p>Image <b>%1</b></p>"
             "<p>Word type: %2</p>"
             "<p>Dimensions: %3 x %4 x %5</p>"
             "<p>Spacings: ( %6 , %7 , %8 )</p>")
     .arg(this->name())
-    .arg("...")
+    .arg(w_type)
     .arg(m_image->xdim()) 
     .arg(m_image->ydim())
     .arg(m_image->zdim())
