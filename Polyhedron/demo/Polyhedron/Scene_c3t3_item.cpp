@@ -1076,6 +1076,7 @@ void Scene_c3t3_item::export_facets_in_complex()
     soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
     scene->addItem(soup_item);
   }
+  this->setVisible(false);
 }
 
 QMenu* Scene_c3t3_item::contextMenu()
