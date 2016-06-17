@@ -539,8 +539,38 @@ void Scene_edit_polyhedron_item::remesh()
 {
   d->remesh();
 }
+
+struct Is_constrained_map
+{
+  boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>* m_set_ptr;
+
+  typedef vertex_descriptor                  key_type;
+  typedef bool                               value_type;
+  typedef bool                               reference;
+  typedef boost::read_write_property_map_tag category;
+
+  Is_constrained_map()
+    : m_set_ptr(NULL)
+  {}
+  Is_constrained_map( boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>* set_)
+    : m_set_ptr(set_)
+  {}
+  friend bool get(const Is_constrained_map& map, const key_type& k)
+  {
+    CGAL_assertion(map.m_set_ptr != NULL);
+    return map.m_set_ptr->count(k);
+  }
+  friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
+  {
+    CGAL_assertion(map.m_set_ptr != NULL);
+    if (b)  map.m_set_ptr->insert(k);
+    else    map.m_set_ptr->erase(k);
+  }
+};
+
 void Scene_edit_polyhedron_item_priv::remesh()
 {
+  boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function> constrained_set;
   const Polyhedron& g = deform_mesh->halfedge_graph();
   Array_based_vertex_point_map vpmap(&positions);
 
@@ -553,7 +583,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
   BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
     if(deform_mesh->is_control_vertex(v))
-      controls_to_save.push_back(v->point());
+      constrained_set.insert(v);
 
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
@@ -616,6 +646,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
     .vertex_point_map(vpmap)
     .edge_is_constrained_map(border_pmap)
     .face_patch_map(roi_faces_pmap)
+    .vertex_is_constrained_map(Is_constrained_map(&constrained_set))
     );
   std::cout << "done." << std::endl;
 
@@ -635,6 +666,9 @@ void Scene_edit_polyhedron_item_priv::remesh()
                                 vpmap);
 
   item->create_ctrl_vertices_group();
+  BOOST_FOREACH(vertex_descriptor v, constrained_set)
+      item->insert_control_vertex(v);
+
   BOOST_FOREACH(face_descriptor f, faces(g))
   {
     if (!get(roi_faces_pmap, f))
@@ -642,12 +676,8 @@ void Scene_edit_polyhedron_item_priv::remesh()
     BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, g), g))
     {
       vertex_descriptor v = target(h, g);
-      if(controls_to_save.contains(v->point()))
-        item->insert_control_vertex(v);
-      else
-        item->insert_roi_vertex(v);
+      item->insert_roi_vertex(v);
     }
-
     put(roi_faces_pmap, f, false); //reset ids
   }
 
