@@ -33,6 +33,7 @@ struct Scene_edit_polyhedron_item_priv
       delete poly_item;
   }
   void remesh();
+  void expand_or_reduce(int);
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
   void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);
@@ -680,6 +681,67 @@ void Scene_edit_polyhedron_item::change()
   d->need_change = true;
   QTimer::singleShot(0, this, SLOT(updateDeform()));
 }
+struct Is_selected_property_map{
+  std::vector<bool>* is_selected_ptr;
+  Is_selected_property_map()
+    : is_selected_ptr(NULL) {}
+  Is_selected_property_map(std::vector<bool>& is_selected)
+    : is_selected_ptr( &is_selected) {}
+
+  std::size_t id(vertex_descriptor v){ return v->id(); }
+
+  friend bool get(Is_selected_property_map map, vertex_descriptor v)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    return (*map.is_selected_ptr)[map.id(v)];
+  }
+
+  friend void put(Is_selected_property_map map, vertex_descriptor v, bool b)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    (*map.is_selected_ptr)[map.id(v)]=b;
+  }
+};
+
+void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
+{
+  std::vector<bool> mark(poly_item->polyhedron()->size_of_vertices(),false);
+  std::size_t original_size = deform_mesh->roi_vertices().size();
+  QVector<Point> controls_to_save;
+  BOOST_FOREACH(vertex_descriptor v,deform_mesh->roi_vertices())
+  {
+      mark[v->id()]=true;
+      if(deform_mesh->is_control_vertex(v))
+        controls_to_save.push_back(v->point());
+  }
+
+  if(steps > 0)
+    expand_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+  else
+    reduce_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), -steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+
+  item->clear_roi();
+
+  if(!controls_to_save.empty())
+    item->create_ctrl_vertices_group();
+  for(typename Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
+  {
+    if(mark[it->id()]) {
+      if(ui_widget->CtrlVertRadioButton->isChecked())
+        item->insert_control_vertex(it);
+      else{
+        if(controls_to_save.contains(it->point()))
+          item->insert_control_vertex(it);
+        else
+          item->insert_roi_vertex(it);
+      }
+    }
+  }
+  if(deform_mesh->roi_vertices().size() != original_size)
+  { item->invalidateOpenGLBuffers(); Q_EMIT item->itemChanged(); }
+}
 
 bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 {
@@ -696,8 +758,15 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     d->state.shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
   }
   // mouse events
+  if(event->type() == QEvent::Wheel
+     &&d->state.shift_pressing)
+  {
+    QWheelEvent *w_event = static_cast<QWheelEvent*>(event);
+    int steps = w_event->delta() / 120;
+    d->expand_or_reduce(steps);
+  }
   if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)
-	{
+  {
     QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
     if(mouse_event->button() == Qt::LeftButton) {
       d->state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
@@ -734,7 +803,10 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        d->initializeBuffers(viewer);
+    {
+      d->compute_normals_and_vertices();
+      d->initializeBuffers(viewer);
+    }
     vaos[Scene_edit_polyhedron_item_priv::Edges]->bind();
     d->program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer,PROGRAM_NO_SELECTION);
@@ -761,7 +833,10 @@ void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer
 }
 void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        d->initializeBuffers(viewer);
+    {
+      d->compute_normals_and_vertices();
+      d->initializeBuffers(viewer);
+    }
     vaos[Scene_edit_polyhedron_item_priv::Facets]->bind();
     d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
     attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -942,7 +1017,6 @@ void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
 {
     if(d->spheres)
       d->spheres->clear_spheres();
-    d->compute_normals_and_vertices();
     update_normals();
     compute_bbox();
     are_buffers_filled = false;
