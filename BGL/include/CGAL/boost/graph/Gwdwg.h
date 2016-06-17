@@ -119,11 +119,12 @@ struct Gwdwg
   Gwdwg(Graph& graph)
     : graph(&graph)
   {}
-
+private:
+  Gwdwg(const Gwdwg&){} // disable copy-constructor to avoid non-wanted copies
 };
 
 
-  template <typename Graph, typename Graph_descriptor, typename Descriptor>
+template <typename Graph, typename Graph_descriptor, typename Descriptor>
 struct Descriptor2Descriptor: public std::unary_function<Graph_descriptor,Descriptor>
 {
 
