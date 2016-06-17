@@ -215,10 +215,11 @@ a volume, the functions `CGAL::Polygon_mesh_processing::join()`,
 `CGAL::Polygon_mesh_processing::intersection()` and
 `CGAL::Polygon_mesh_processing::difference()` respectively compute the union,
 the intersection and the difference of the two volumes.
-Note that there is no restriction on the topology of the input volumes
-as long as the input meshes bounding them do not self-intersect.
+Note that there is no restriction on the topology of the input volumes.
+
 However, there are some requirements on the input to guarantee that
-the operation is possible. Basically the operation is possible only if the output
+the operation is possible. First, the input meshes must not self-intersect.
+Second, the operation is possible only if the output
 can be bounded by a manifold triangulated surface mesh.
 In particular this means that the output volume has no part with zero thickness.
 Mathematically speaking, the intersection with an infinitesimally small ball
@@ -261,9 +262,9 @@ the limited precision of floating point numbers.
 
 This example is similar to the previous one, but here we
 substract a volume and update the first input triangulated surface mesh
-(in-place operation). The edges that were on the intersection of the input
-meshes were marked and the region around them is remeshed isotropically
-but preserving the intersection polyline.
+(in-place operation). The edges that are on the intersection of the input
+meshes are marked and the region around them is remeshed isotropically
+while preserving the intersection polyline.
 \cgalExample{Polygon_mesh_processing/corefinement_difference_remeshed.cpp}
 
 

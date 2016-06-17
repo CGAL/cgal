@@ -37,7 +37,7 @@ namespace Polygon_mesh_processing {
  * indicates if `tm` bounds a volume.
  * See \ref coref_def_subsec for details.
  *
- * @tparam TriangleMesh a model of `FaceGraph`
+ * @tparam TriangleMesh a model of `FaceListGraph` and `HalfedgeListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm a triangulated surface mesh
@@ -53,138 +53,139 @@ namespace Polygon_mesh_processing {
  * \todo in the implementation degenerated faces should be skipt
  */
 template <class TriangleMesh, class NamedParameters>
-bool does_bound_a_volume(TriangleMesh& tm, const NamedParameters& np);
+bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
 
 /**
   * \ingroup PMP_corefinement_grp
-  * puts in `O` a triangulated surface mesh \link coref_def_subsec bounding \endlink the union of the volumes
-  * bounded by `P` and `Q`.
-  * If `O` is one of the input surface meshes, it will be updated to
+  * puts in `tm_out` a triangulated surface mesh \link coref_def_subsec bounding \endlink the union of the volumes
+  * bounded by `tm1` and `tm2`.
+  * If `tm_out` is one of the input surface meshes, it will be updated to
   * contain the output (in-place operation), otherwise the result will
-  * be inserted into `O` without clearing it first.
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(P)` \endlink
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersec(Q)` \endlink
-  * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(P)` \endlink
-  * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(Q)` \endlink
+  * be inserted into `tm_out` without clearing it first.
+  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersec(tm2)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
-  * @tparam TriangleMesh a model of `FaceGraph`
-  * @tparam NamedParametersP a sequence of \ref namedparameters
-  * @tparam NamedParametersQ a sequence of \ref namedparameters
-  * @tparam NamedParametersO a sequence of \ref namedparameters
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam NamedParameters1 a sequence of \ref namedparameters
+  * @tparam NamedParameters2 a sequence of \ref namedparameters
+  * @tparam NamedParametersOut a sequence of \ref namedparameters
   *
-  * @param P first input triangulated surface mesh
-  * @param Q second input triangulated surface mesh
-  * @param O output surface mesh
-  * @param np_for_P optional sequence of \ref namedparameters among the ones listed below
-  * @param np_for_Q optional sequence of \ref namedparameters among the ones listed below
-  *
-  * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `P` (`Q`) \cgalParamEnd
-  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
-  *     constrained-or-not status of each edge of `P` (`Q`).
-  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `P` (`Q`) \cgalParamEnd
-  * \cgalNamedParamsEnd
-  *
-  * @param np_for_O optional sequence of \ref namedparameters among the ones listed below
+  * @param tm1 first input triangulated surface mesh
+  * @param tm2 second input triangulated surface mesh
+  * @param tm_out output surface mesh
+  * @param np1 optional sequence of \ref namedparameters among the ones listed below
+  * @param np2 optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `O` \cgalParamEnd
+  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm1` (`tm2`) \cgalParamEnd
   *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
-  *     constrained-or-not status of each edge of `O`. An edge of `O` is constrained
-  *     if it is on the intersection of `P` and `Q`, or if the edge corresponds to a
-  *     constrained edge in `P` or `Q`.
+  *     constrained-or-not status of each edge of `tm1` (`tm2`).
+  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`) \cgalParamEnd
   * \cgalNamedParamsEnd
   *
-  * @return `true` if the output surface mesh is manifold and was put into `O`.
-  *         If `false` is returned and `O` was one of the input surface meshes,
-  *         then `O` will bound the same volume as the input was but the surface
+  * @param np_out optional sequence of \ref namedparameters among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm_out` \cgalParamEnd
+  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
+  *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained
+  *     if it is on the intersection of `tm1` and `tm2`, or if the edge corresponds to a
+  *     constrained edge in `tm1` or `tm2`.
+  * \cgalNamedParamsEnd
+  *
+  * @return `true` if the output surface mesh is manifold and was put into `tm_out`.
+  *         If `false` is returned and if `tm_out` was one of the input surface meshes,
+  *         then `tm_out` will bound the same volume as the input but the surface
   *         mesh will be nonetheless \link coref_def_subsec corefined\endlink.
   */
 template <class TriangleMesh,
-          class NamedParametersP,
-          class NamedParametersQ,
-          class NamedParametersO,
+          class NamedParameters1,
+          class NamedParameters2,
+          class NamedParametersOut,
           >
 bool
-join(const TriangleMesh& P,
-     const TriangleMesh& Q,
-           TriangleMesh& O,
-     const NamedParametersP& np_for_P,
-     const NamedParametersQ& np_for_Q,
-     const NamedParametersO& np_for_O);
+join(const TriangleMesh& tm1,
+     const TriangleMesh& tm2,
+           TriangleMesh& tm_out,
+     const NamedParameters1& np1,
+     const NamedParameters2& np2,
+     const NamedParametersOut& np_out);
 
 /**
   * \ingroup PMP_corefinement_grp
-  * puts in `O` a triangulated surface mesh \link coref_def_subsec bounding \endlink
-  * the intersection of the volumes bounded by `P` and `Q`. Refer to the documentation
-  * of \link CGAL::Polygon_mesh_processing::join() `join()` \endlink for
-  * details on the parameter.
+  * puts in `tm_out` a triangulated surface mesh \link coref_def_subsec bounding \endlink
+  * the intersection of the volumes bounded by `tm1` and `tm2`.
+  * \copydetails CGAL::Polygon_mesh_processing::join()
   */
 template <class TriangleMesh,
-          class NamedParametersP,
-          class NamedParametersQ,
-          class NamedParametersO,
+          class NamedParameters1,
+          class NamedParameters2,
+          class NamedParametersOut,
           >
 bool
-intersection(const TriangleMesh& P,
-             const TriangleMesh& Q,
-                   TriangleMesh& O,
-             const NamedParametersP& np_for_P,
-             const NamedParametersQ& np_for_Q,
-             const NamedParametersO& np_for_O);
+intersection(const TriangleMesh& tm1,
+             const TriangleMesh& tm2,
+                   TriangleMesh& tm_out,
+             const NamedParameters1& np1,
+             const NamedParameters2& np2,
+             const NamedParametersOut& np_out);
 /**
   * \ingroup PMP_corefinement_grp
-  * puts in `O` a triangulated surface mesh \link coref_def_subsec bounding \endlink
-  * the volume bounded by `P` minus the volume bounded by `Q`.
-  * Refer to the documentation
-  * of \link CGAL::Polygon_mesh_processing::join() `join()` \endlink for
-  * details on the parameter.
+  * puts in `tm_out` a triangulated surface mesh \link coref_def_subsec bounding \endlink
+  * the volume bounded by `tm1` minus the volume bounded by `tm2`.
+  * \copydetails CGAL::Polygon_mesh_processing::join()
   */
 template <class TriangleMesh,
-          class NamedParametersP,
-          class NamedParametersQ,
-          class NamedParametersO,
+          class NamedParameters1,
+          class NamedParameters2,
+          class NamedParametersOut,
           >
 bool
-difference(const TriangleMesh& P,
-           const TriangleMesh& Q,
-                 TriangleMesh& O,
-           const NamedParametersP& np_for_P,
-           const NamedParametersQ& np_for_Q,
-           const NamedParametersO& np_for_O);
+difference(const TriangleMesh& tm1,
+           const TriangleMesh& tm2,
+                 TriangleMesh& tm_out,
+           const NamedParameters1& np1,
+           const NamedParameters2& np2,
+           const NamedParametersOut& np_out);
 
 /**
  * \ingroup PMP_corefinement_grp
- * \link coref_def_subsec corefines \endlink `P` and `Q`. For each input
+ * \link coref_def_subsec corefines \endlink `tm1` and `tm2`. For each input
  * triangulated surface mesh, if a constrained edge is provided, intersection
  * edges will be marked as constrained. If an edge that was marked as
  * constrained is split, its sub-edges will be marked as constrained as well.
  *
- * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(P)` \endlink
- * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(Q)` \endlink
+ * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
+ * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
- * @tparam TriangleMesh a model of `FaceGraph`
- * @tparam NamedParametersP a sequence of \ref namedparameters
- * @tparam NamedParametersQ a sequence of \ref namedparameters
+ * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam NamedParameters1 a sequence of \ref namedparameters
+ * @tparam NamedParameters2 a sequence of \ref namedparameters
  *
- * @param P first input triangulated surface mesh
- * @param Q second input triangulated surface mesh
- * @param np_for_P optional sequence of \ref namedparameters among the ones listed below
- * @param np_for_Q optional sequence of \ref namedparameters among the ones listed below
+ * @param tm1 first input triangulated surface mesh
+ * @param tm2 second input triangulated surface mesh
+ * @param np1 optional sequence of \ref namedparameters among the ones listed below
+ * @param np2 optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `P` (resp. `Q`) \cgalParamEnd
+ *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm1` (resp. `tm2`) \cgalParamEnd
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
- *     constrained-or-not status of each edge of `P` (resp. `Q`)\cgalParamEnd
- *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `P` (resp. `Q`) \cgalParamEnd
+ *     constrained-or-not status of each edge of `tm1` (resp. `tm2`)\cgalParamEnd
+ *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (resp. `tm2`) \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
+ template <class TriangleMesh,
+           class NamedParameters1,
+           class NamedParameters2
+           >
  void
- corefine(const TriangleMesh& P,
-          const TriangleMesh& Q,
-          const NamedParametersP& np_for_P,
-          const NamedParametersQ& np_for_Q);
+ corefine(TriangleMesh& tm1,
+          TriangleMesh& tm2,
+          const NamedParameters1& np1,
+          const NamedParameters2& np2);
 
 } }  // end of namespace CGAL::Polygon_mesh_processing
 

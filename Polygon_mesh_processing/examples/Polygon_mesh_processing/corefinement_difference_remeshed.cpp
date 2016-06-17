@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/boost/graph/selection.h>
 
 #include <fstream>
@@ -44,8 +45,8 @@ int main(int argc, char* argv[])
   bool valid_difference = PMP::difference(mesh1,
                                           mesh2,
                                           mesh1,
-                                          params::all_default(), // defaut parameters for mesh1
-                                          params::all_default(), // defaut parameters for mesh2
+                                          params::all_default(), // default parameters for mesh1
+                                          params::all_default(), // default parameters for mesh2
                                           params::edge_is_constrained_map(is_constrained_map));
 
   if (valid_difference)
