@@ -253,7 +253,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
 
   add_item(scene_image_item Scene_image_item.cpp)
- 
+  if( WITH_CGAL_ImageIO AND CGAL_ImageIO_USE_ZLIB )
+    target_link_libraries( scene_image_item ${ZLIB_LIBRARY})
+  endif()
+
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
@@ -338,7 +341,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY})
-
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
