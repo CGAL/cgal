@@ -167,7 +167,8 @@ public Q_SLOTS:
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     scene->setSelectedItem(item_id);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
-    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+    if(last_mode == 0)
+      on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   // Select all
   void on_Select_all_button_clicked() {
@@ -276,8 +277,9 @@ public Q_SLOTS:
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     scene->setSelectedItem(item_id);
     ui_widget.modeBox->setCurrentIndex(last_mode);
-    on_ModeBox_changed(ui_widget.modeBox->currentIndex());
-    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+    on_ModeBox_changed(last_mode);
+    if(last_mode == 0)
+      on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
