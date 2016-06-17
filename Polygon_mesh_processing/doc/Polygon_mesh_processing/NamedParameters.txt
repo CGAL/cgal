@@ -17,6 +17,8 @@ That is, you give each parameter a name by wrapping it into a function whose nam
 When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
 
 The sequence of named parameters should start with `CGAL::Polygon_mesh_processing::parameters::`.
+`#CGAL::Polygon_mesh_processing::parameters::all_default()` can be used to indicate
+that default values of optional named parameters must be used.
 
 
 \cgalHeading{Example}
