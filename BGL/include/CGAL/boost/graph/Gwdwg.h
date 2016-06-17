@@ -55,7 +55,7 @@ template<typename Graph,typename Descriptor>
 bool operator==(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph );
+  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor == rhs.descriptor;
 }
 
@@ -70,7 +70,7 @@ template<typename Graph,typename Descriptor>
 bool operator<(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph );
+  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor < rhs.descriptor;
 }
 
@@ -78,7 +78,7 @@ template<typename Graph,typename Descriptor>
 bool operator>(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph );
+  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor > rhs.descriptor;
 }
 
@@ -86,7 +86,7 @@ template<typename Graph,typename Descriptor>
 bool operator<=(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph );
+  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor <= rhs.descriptor;
 }
 
@@ -94,7 +94,7 @@ template<typename Graph,typename Descriptor>
 bool operator>=(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph );
+  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor >= rhs.descriptor;
 }
 
