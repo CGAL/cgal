@@ -763,7 +763,7 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
 
   item->clear_roi();
   item->create_ctrl_vertices_group();
-  for(typename Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
+  for(Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
   {
     if(mark[it->id()]) {
       if(ctrl_active)
