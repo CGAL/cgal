@@ -39,8 +39,17 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  std::vector< std::vector<Point> > polylines;
+  PMP::surface_intersection(mesh1, mesh2, std::back_inserter(polylines));
 
-  PMP::surface_intersection(mesh1, mesh2, CGAL::Emptyset_iterator());
+  //dump polylines
+  std::ofstream output("intersection_polylines.cgal");
+  BOOST_FOREACH(const std::vector<Point>& polyline, polylines)
+  {
+    output << polyline.size() << " ";
+    std::copy(polyline.begin(), polyline.end(),std::ostream_iterator<Point>(output," "));
+    output << "\n";
+  }
 
   return 0;
 }
