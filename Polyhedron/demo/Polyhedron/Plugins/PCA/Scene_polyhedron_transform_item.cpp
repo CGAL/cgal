@@ -42,7 +42,6 @@ struct Scene_polyhedron_transform_item_priv
   mutable QOpenGLShaderProgram *program;
   mutable std::vector<float> positions_lines;
   mutable std::size_t nb_lines;
-  mutable bool are_buffers_filled;
 };
 
 Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const CGAL::Three::Scene_interface*):
@@ -75,7 +74,7 @@ void Scene_polyhedron_transform_item_priv::initialize_buffers(CGAL::Three::Viewe
     positions_lines.resize(0);
     std::vector<float>(positions_lines).swap(positions_lines);
 
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 
 
@@ -105,7 +104,7 @@ void Scene_polyhedron_transform_item_priv::compute_elements() const
 
 void Scene_polyhedron_transform_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
         d->initialize_buffers(viewer);
     vaos[Scene_polyhedron_transform_item_priv::Edges]->bind();
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);

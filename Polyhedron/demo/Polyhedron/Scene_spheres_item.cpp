@@ -51,7 +51,6 @@ struct Scene_spheres_item_priv
   mutable std::vector<float> radius;
   mutable QOpenGLShaderProgram *program;
   mutable int nb_centers;
-  mutable bool are_buffers_filled;
   Scene_spheres_item* item;
 
 };
@@ -196,12 +195,12 @@ void Scene_spheres_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *v
   edges_colors.clear();
   edges_colors.swap(edges_colors);
 
-  are_buffers_filled = true;
+  item->are_buffers_filled = true;
 }
 
 void Scene_spheres_item::draw(Viewer_interface *viewer) const
 {
-  if (!d->are_buffers_filled)
+  if (!are_buffers_filled)
   {
     computeElements();
     d->initializeBuffers(viewer);
@@ -230,7 +229,7 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
 }
 void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 {
-  if (!d->are_buffers_filled)
+  if (!are_buffers_filled)
   {
     computeElements();
     d->initializeBuffers(viewer);
@@ -278,4 +277,4 @@ void Scene_spheres_item::clear_spheres()
 }
 void Scene_spheres_item::setPrecision(int prec) { d->precision = prec; }
 void Scene_spheres_item::setPlane(Kernel::Plane_3 p_plane) { d->plane = p_plane; }
-void Scene_spheres_item::invalidateOpenGLBuffers(){d->are_buffers_filled = false;}
+void Scene_spheres_item::invalidateOpenGLBuffers(){are_buffers_filled = false;}

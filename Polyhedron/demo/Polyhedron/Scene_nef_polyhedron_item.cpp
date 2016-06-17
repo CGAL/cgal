@@ -114,7 +114,6 @@ struct Scene_nef_polyhedron_item_priv
   mutable std::size_t nb_points;
   mutable std::size_t nb_lines;
   mutable std::size_t nb_facets;
-  mutable bool are_buffers_filled;
   mutable QOpenGLShaderProgram *program;
   Scene_nef_polyhedron_item *item;
 
@@ -220,7 +219,7 @@ void Scene_nef_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inter
         std::vector<double>(positions_points).swap(positions_points);
         program->release();
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
 {
@@ -729,7 +728,7 @@ invalidateOpenGLBuffers()
 {
     compute_bbox();
     CGAL::Three::Scene_item::invalidateOpenGLBuffers();
-    d->are_buffers_filled = false;
+    are_buffers_filled = false;
 }
 
 void

@@ -1734,10 +1734,8 @@ private:
           std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
 
           FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
-
           oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
           oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
-
           std::pair<Node_distance_pair,Barycentric_coordinate> mainFace = nearest_on_face(f, location);
           Barycentric_coordinate oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
           std::pair<Node_distance_pair,Barycentric_coordinate> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);

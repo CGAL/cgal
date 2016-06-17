@@ -380,7 +380,6 @@ struct Scene_c3t3_item_priv {
   QVector<QColor> colors;
   bool show_tetrahedra;
   bool is_aabb_tree_built;
-  mutable bool are_buffers_filled;
   bool cnc_are_shown;
 };
 
@@ -756,7 +755,7 @@ QString Scene_c3t3_item::toolTip() const {
 void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
 
-  if (!d->are_buffers_filled)
+  if (!are_buffers_filled)
   {
     ncthis->d->computeElements();
     ncthis->d->initializeBuffers(viewer);
@@ -815,7 +814,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(renderMode == GL_SELECT) return;
   }
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
-  if (!d->are_buffers_filled)
+  if (!are_buffers_filled)
   {
     ncthis->d->computeElements();
     ncthis->d->initializeBuffers(viewer);
@@ -881,7 +880,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
 void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
 {
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
-  if (!d->are_buffers_filled)
+  if (!are_buffers_filled)
   {
     ncthis->d->computeElements();
     ncthis->d->initializeBuffers(viewer);
@@ -1225,7 +1224,7 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
   }
 
     program->release();
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 
 

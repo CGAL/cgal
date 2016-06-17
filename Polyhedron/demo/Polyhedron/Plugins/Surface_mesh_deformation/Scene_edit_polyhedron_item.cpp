@@ -85,7 +85,6 @@ struct Scene_edit_polyhedron_item_priv
   mutable std::size_t nb_axis;
   mutable std::size_t nb_bbox;
   mutable Scene_spheres_item* spheres;
-  mutable bool are_buffers_filled;
   mutable QOpenGLBuffer *in_bu;
 
   Deform_mesh* deform_mesh;
@@ -328,7 +327,7 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
         item->vaos[Frame_plane]->release();
         program->release();
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 
 void Scene_edit_polyhedron_item_priv::reset_drawing_data()
@@ -725,7 +724,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
         d->initializeBuffers(viewer);
     vaos[Scene_edit_polyhedron_item_priv::Edges]->bind();
     d->program = getShaderProgram(PROGRAM_NO_SELECTION);
@@ -752,7 +751,7 @@ void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer
   }
 }
 void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-    if(!d->are_buffers_filled)
+    if(!are_buffers_filled)
         d->initializeBuffers(viewer);
     vaos[Scene_edit_polyhedron_item_priv::Facets]->bind();
     d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
@@ -937,7 +936,7 @@ void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
     d->compute_normals_and_vertices();
     update_normals();
     compute_bbox();
-    d->are_buffers_filled = false;
+    are_buffers_filled = false;
     if(d->spheres)
       d->spheres->invalidateOpenGLBuffers();
 }

@@ -91,7 +91,6 @@ struct Scene_points_with_normal_item_priv
   mutable std::size_t nb_selected_points;
   mutable std::size_t nb_lines;
   mutable QOpenGLShaderProgram *program;
-  mutable bool are_buffers_filled;
 
   Scene_points_with_normal_item* item;
 };
@@ -203,7 +202,7 @@ void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_i
         std::vector<double>(positions_selected_points).swap(positions_selected_points);
         program->release();
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 
 void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
@@ -642,7 +641,7 @@ void Scene_points_with_normal_item::set_has_normals(bool b) {
 
 void Scene_points_with_normal_item::invalidateOpenGLBuffers()
 {
-    d->are_buffers_filled = false;
+    are_buffers_filled = false;
     compute_bbox();
 }
 

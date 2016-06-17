@@ -9,7 +9,7 @@ struct Volume_plane_intersection_priv
   Volume_plane_intersection_priv(float x, float y, float z, Volume_plane_intersection* parent)
     : a(NULL), b(NULL), c(NULL), x(x), y(y), z(z) , item(parent)
   {
-    are_buffers_filled = false;
+    item->are_buffers_filled = false;
   }
   Volume_plane_interface *a, *b, *c;
   float x, y, z;
@@ -30,7 +30,6 @@ struct Volume_plane_intersection_priv
   std::vector<float> b_vertex;
   std::vector<float> c_vertex;
   mutable QOpenGLShaderProgram *program;
-  mutable bool are_buffers_filled;
   void computeElements();
   void initializeBuffers(Viewer_interface*)const;
   void attribBuffers(Viewer_interface*) const;
@@ -91,13 +90,13 @@ void Volume_plane_intersection_priv::initializeBuffers(Viewer_interface* viewer)
   item->vaos[CArray]->release();
 
   program->release();
-  are_buffers_filled = true;
+  item->are_buffers_filled = true;
 
 }
 
 void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
   viewer->glLineWidth(4.0f);
-  if(!d->are_buffers_filled)
+  if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
