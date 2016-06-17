@@ -658,11 +658,11 @@ template <typename T> const char* whatType(T) { return "unknown"; }    // defaul
 template <> const char* whatType(float) { return "float"; }
 template <> const char* whatType(double) { return "double"; }
 template <> const char* whatType(char) { return "int8_t (char)"; }
-template <> const char* whatType(boost::uint8_t) { return "uint8_t"; }
-template <> const char* whatType(boost::int16_t) { return "uint16_t"; }
-template <> const char* whatType(boost::uint16_t type) { return "uint16_t"; }
-template <> const char* whatType(boost::int32_t) { return "int32_t"; }
-template <> const char* whatType(boost::uint32_t) { return "uint32_t"; }
+template <> const char* whatType(boost::uint8_t) { return "uint8_t (unsigned char)"; }
+template <> const char* whatType(boost::int16_t) { return "int16_t (short)"; }
+template <> const char* whatType(boost::uint16_t) { return "uint16_t (unsigned short)"; }
+template <> const char* whatType(boost::int32_t) { return "int32_t (int)"; }
+template <> const char* whatType(boost::uint32_t) { return "uint32_t (unsigned int)"; }
 
 template<typename Word>
 QString explicitWordType()
