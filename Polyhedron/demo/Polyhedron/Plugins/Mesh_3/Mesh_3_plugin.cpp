@@ -60,10 +60,10 @@ public:
               this, SLOT(mesh_3_volume()));
     }
 
-    actionMesh_3_remesh = new QAction("Remesh a polyhedral surface", mw);
-    if (actionMesh_3_remesh){
-      actionMesh_3_remesh->setProperty("subMenuName", "Tetrahedral Mesh Generation");
-      connect(actionMesh_3_remesh, SIGNAL(triggered()),
+    actionMesh_3_surface = new QAction("Create a Surface Triangle Mesh", mw);
+    if (actionMesh_3_surface){
+      actionMesh_3_surface->setProperty("subMenuName", "Tetrahedral Mesh Generation");
+      connect(actionMesh_3_surface, SIGNAL(triggered()),
               this, SLOT(mesh_3_surface()));
     }
 
@@ -71,13 +71,14 @@ public:
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionMesh_3 << actionMesh_3_remesh;
+    return QList<QAction*>() << actionMesh_3 << actionMesh_3_surface;
   }
 
 
   bool applicable(QAction* a) const {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
+    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())) != NULL
+      && a == actionMesh_3)
       return true;
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
@@ -110,7 +111,7 @@ private:
 
 private:
   QAction* actionMesh_3;
-  QAction* actionMesh_3_remesh;
+  QAction* actionMesh_3_surface;
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
@@ -298,8 +299,10 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   ui.protect->setChecked(features_protection_available);
 
   ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
-  ui.volumeGroup->setVisible(!surface_only && poly_item != NULL
-                             && poly_item->polyhedron()->is_closed());
+  if (poly_item != NULL)
+    ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
+  else
+    ui.volumeGroup->setVisible(!surface_only);
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
