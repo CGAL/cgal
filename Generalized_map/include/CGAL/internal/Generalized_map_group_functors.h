@@ -279,7 +279,7 @@ struct GMap_degroup_attribute_functor_run<CMap, i, i, T>
 // We mark (with mark) all the darts of the i-cell containing adart to
 // process them exactly once.
 template<typename CMap, unsigned int i>
-void test_split_attribute_functor_one_dart
+void GMap_test_split_attribute_functor_one_dart
 ( CMap* amap, typename CMap::Dart_handle adart,
   CGAL::Unique_hash_map<typename CMap::template Attribute_handle<i>::type,
                         unsigned int, typename CMap::Hash_function> &
@@ -362,7 +362,7 @@ struct GMap_test_split_attribute_functor_run
         it=modified_darts.begin();
     for ( ; it!=modified_darts.end(); ++it )
     {
-      CGAL::internal::test_split_attribute_functor_one_dart<CMap,i>
+      CGAL::internal::GMap_test_split_attribute_functor_one_dart<CMap,i>
           (amap, *it, found_attributes, mark);
     }
 
@@ -406,14 +406,14 @@ struct GMap_test_split_attribute_functor_run
         it=modified_darts.begin();
     for ( ; it!=modified_darts.end(); ++it )
     {
-      CGAL::internal::test_split_attribute_functor_one_dart<CMap,i>
+      CGAL::internal::GMap_test_split_attribute_functor_one_dart<CMap,i>
           (amap, *it, found_attributes, mark);
     }
     typename std::deque<typename CMap::Dart_handle>::const_iterator
         it2=modified_darts2.begin();
     for ( ; it2!=modified_darts2.end(); ++it2 )
     {
-      CGAL::internal::test_split_attribute_functor_one_dart<CMap,i>
+      CGAL::internal::GMap_test_split_attribute_functor_one_dart<CMap,i>
           (amap, *it2, found_attributes, mark);
     }
 

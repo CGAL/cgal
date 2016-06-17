@@ -774,6 +774,32 @@ namespace CGAL {
     { return beta<B2, B3, B4, B5, B6, B7, B8, B9>(beta<B1>(ADart)); }
 #endif
 
+    // Generic function to iterate on CMap or GMap in a generic way
+    bool exist_previous_dart_in_face(Dart_const_handle ADart) const
+    { return !is_free<0>(ADart); }
+    bool exist_next_dart_in_face(Dart_const_handle ADart) const
+    { return !is_free<1>(ADart); }
+    template<unsigned int dim>
+    bool exist_opposite_dart(Dart_const_handle ADart) const
+    { return !is_free<dim>(ADart); }
+
+    Dart_handle get_previous_dart_in_face(Dart_handle ADart)
+    { return beta<0>(ADart); }
+    Dart_const_handle get_previous_dart_in_face(Dart_const_handle ADart) const
+    { return beta<0>(ADart); }
+
+    Dart_handle get_next_dart_in_face(Dart_handle ADart)
+    { return beta<1>(ADart); }
+    Dart_const_handle get_next_dart_in_face(Dart_const_handle ADart) const
+    { return beta<1>(ADart); }
+
+    template<unsigned int dim>
+    Dart_handle get_opposite_dart(Dart_handle ADart)
+    { return beta<dim>(ADart); }
+    template<unsigned int dim>
+    Dart_const_handle get_opposite_dart(Dart_const_handle ADart) const
+    { return beta<dim>(ADart); }
+
     /** Count the number of used marks.
      * @return the number of used marks.
      */
@@ -786,7 +812,6 @@ namespace CGAL {
     bool is_reserved(size_type amark) const
     {
       CGAL_assertion(amark<NB_MARKS);
-
       return (mnb_times_reserved_marks[amark]!=0);
     }
 
@@ -797,7 +822,6 @@ namespace CGAL {
     size_type number_of_marked_darts(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-
       return mnb_marked_darts[amark];
     }
 
@@ -859,7 +883,6 @@ namespace CGAL {
     void share_a_mark(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-
       ++mnb_times_reserved_marks[amark];
     }
 
@@ -869,7 +892,6 @@ namespace CGAL {
     size_type get_number_of_times_mark_reserved(size_type amark) const
     {
       CGAL_assertion( amark<NB_MARKS );
-
       return mnb_times_reserved_marks[amark];
     }
 
@@ -4341,7 +4363,7 @@ namespace CGAL {
               (beta(it1, dim, CGAL_BETAINV(s1), 2), d2, dim);
           }
         }
-        if (are_attributes_automatically_managed() && update_attributes)
+        if (are_attributes_automatically_managed() && update_attributes && ah!=NULL)
         {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::run(this, d1, ah);
         }

@@ -27,6 +27,9 @@
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/Linear_cell_complex_storages.h>
 
+#include <CGAL/Generalized_map.h>
+#include <CGAL/GMap_linear_cell_complex_storages.h>
+
 namespace CGAL {
 
   /** @file Linear_cell_complex.h
@@ -110,8 +113,6 @@ namespace CGAL {
 
     /// To use previous definition of create_dart methods.
     using Base::create_dart;
-    using Base::beta;
-    using Base::is_free;
     using Base::attribute;
     using Base::null_handle;
     using Base::point_of_vertex_attribute;
@@ -457,8 +458,9 @@ namespace CGAL {
           typename std::vector<Dart_handle>::iterator it2=it1;
           for ( ++it2; it2!= it1end; ++it2 )
           {
-            if ( *it1!=*it2 && is_free(*it1, 3) &&
-                 is_free(*it2, 3) &&
+            if ( *it1!=*it2 &&
+                 !this->template exist_opposite_dart<3>(*it1) &&
+                 !this->template exist_opposite_dart<3>(*it2) &&
                  are_facets_same_geometry(*it1,beta(*it2, 0)) )
             {
               ++res;
@@ -494,7 +496,7 @@ namespace CGAL {
     {
       Dart_handle d1 = this->make_edge();
       set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(beta(d1, 2),h1);
+      set_vertex_attribute_of_dart(this->other_extremity(d1),h1);
 
       return d1;
     }
@@ -523,8 +525,8 @@ namespace CGAL {
       Dart_handle d1 = this->make_combinatorial_polygon(3);
 
       set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(beta(d1, 1),h1);
-      set_vertex_attribute_of_dart(beta(d1, 0),h2);
+      set_vertex_attribute_of_dart(this->get_next_dart_in_face(d1),h1);
+      set_vertex_attribute_of_dart(this->get_previous_dart_in_face(d1),h2);
 
       return d1;
     }
@@ -559,9 +561,10 @@ namespace CGAL {
       Dart_handle d1 = this->make_combinatorial_polygon(4);
 
       set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(beta(d1, 1),h1);
-      set_vertex_attribute_of_dart(beta(d1, 1, 1),h2);
-      set_vertex_attribute_of_dart(beta(d1, 0),h3);
+      set_vertex_attribute_of_dart(this->get_next_dart_in_face(d1),h1);
+      set_vertex_attribute_of_dart(this->get_next_dart_in_face
+                                   (this->get_next_dart_in_face(d1)), h2);
+      set_vertex_attribute_of_dart(this->get_previous_dart_in_face(d1),h3);
 
       return d1;
     }
@@ -838,7 +841,7 @@ namespace CGAL {
 
   // Linear_cell_complex using compact container with handle.
   // No difference with class Linear_cell_complex_base except the default
-  // template parameters for Refs class.
+  // template parameters for Refs class which is a combinatorial map.
   template < unsigned int d_, unsigned int ambient_dim = d_,
              class Traits_ = Linear_cell_complex_traits<ambient_dim>,
              class Items_ = Linear_cell_complex_min_items<d_>,
@@ -918,6 +921,93 @@ namespace CGAL {
       template < class LCC2, typename Converters, typename Pointconverter >
       Linear_cell_complex(const LCC2& alcc, Converters& converters,
                           const Pointconverter& pointconverter) : Base()
+      { Base::template copy<LCC2, Converters, Pointconverter>
+            (alcc, converters, pointconverter);}
+
+    };
+
+  // GMap_linear_cell_complex using compact container with handle.
+  // No difference with class Linear_cell_complex_base except the default
+  // template parameters for Refs class which is a generalized map.
+  template < unsigned int d_, unsigned int ambient_dim = d_,
+             class Traits_ = Linear_cell_complex_traits<ambient_dim>,
+             class Items_ = GMap_linear_cell_complex_min_items<d_>,
+             class Alloc_ = CGAL_ALLOCATOR(int),
+             template<unsigned int,class,class,class,class>
+             class CMap = Generalized_map_base,
+             class Storage_ = GMap_linear_cell_complex_storage_1<d_, ambient_dim,
+                                                                 Traits_, Items_,
+                                                                 Alloc_> >
+    class GMap_linear_cell_complex: public Linear_cell_complex_base<d_,
+        ambient_dim, Traits_, Items_, Alloc_, CMap,
+        GMap_linear_cell_complex<d_, ambient_dim,
+               Traits_, Items_, Alloc_, CMap, Storage_>,
+        Storage_>
+    {
+    public:
+      typedef GMap_linear_cell_complex<d_, ambient_dim,
+                          Traits_, Items_, Alloc_, CMap, Storage_>  Self;
+
+      typedef Linear_cell_complex_base<d_, ambient_dim,
+                          Traits_, Items_, Alloc_, CMap, Self, Storage_> Base;
+
+      typedef Traits_ Traits;
+      typedef Items_  Items;
+      typedef Alloc_  Alloc;
+
+      static const unsigned int ambient_dimension = Base::ambient_dimension;
+      static const unsigned int dimension = Base::dimension;
+
+      typedef typename Base::Dart_handle       Dart_handle;
+      typedef typename Base::Dart_const_handle Dart_const_handle;
+      typedef typename Base::Helper            Helper;
+
+      typedef typename Base::Point  Point;
+      typedef typename Base::Vector Vector;
+      typedef typename Base::FT     FT;
+
+      typedef typename Base::Dart_range Dart_range;
+
+      typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
+      typedef typename Base::template Attribute_handle<0>::type
+      Vertex_attribute_handle;
+      typedef typename Base::template Attribute_const_handle<0>::type
+      Vertex_attribute_const_handle;
+
+      typedef typename Base::template Attribute_range<0>::type
+      Vertex_attribute_range;
+      typedef typename Base::template Attribute_const_range<0>::type
+      Vertex_attribute_const_range;
+
+      typedef typename Base::size_type size_type;
+
+      typedef typename Base::Use_index Use_index;
+      typedef typename Base::Storage Storage;
+      typedef typename Base::Exception_no_more_available_mark
+      Exception_no_more_available_mark;
+
+      GMap_linear_cell_complex() : Base()
+      {}
+
+      /** Copy the given linear cell complex into *this.
+       *  Note that both LCC can have different dimensions and/or non void attributes.
+       *  @param alcc the linear cell complex to copy.
+       *  @post *this is valid.
+       */
+      GMap_linear_cell_complex(const Self & alcc) : Base()
+      { Base::template copy<Self>(alcc); }
+
+      template < class LCC2 >
+      GMap_linear_cell_complex(const LCC2& alcc)
+      { Base::template copy<LCC2>(alcc);}
+
+      template < class LCC2, typename Converters >
+      GMap_linear_cell_complex(const LCC2& alcc, Converters& converters)
+      { Base::template copy<LCC2, Converters>(alcc, converters);}
+
+      template < class LCC2, typename Converters, typename Pointconverter >
+      GMap_linear_cell_complex(const LCC2& alcc, Converters& converters,
+                               const Pointconverter& pointconverter)
       { Base::template copy<LCC2, Converters, Pointconverter>
             (alcc, converters, pointconverter);}
 

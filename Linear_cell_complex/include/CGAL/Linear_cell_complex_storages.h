@@ -38,7 +38,7 @@ namespace CGAL {
   // Copy of Combinatorial_map_storage_1 and add new types related
   // to geometry (not possible to inherith because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
-  // the correct type.)
+  // the correct type).
   template<unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_ >
   class Linear_cell_complex_storage_1

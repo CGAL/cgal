@@ -994,6 +994,16 @@ namespace CGAL {
       Base(amap, amap.darts().begin())
     {}
 
+    /// Constructor with a dart in parameter (for end iterator).
+    GMap_dart_iterator_basic_of_all(Map& amap, Dart_handle adart):
+      Base(amap, adart)
+    {}
+    /// Constructor with a dart in parameter (for end iterator).
+    GMap_dart_iterator_basic_of_all(Map& amap, Dart_handle adart,
+                                    size_type /*amark*/):
+      Base(amap, adart)
+    {}
+
     /// Prefix ++ operator.
     Self& operator++()
     {

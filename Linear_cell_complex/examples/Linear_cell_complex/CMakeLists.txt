@@ -50,6 +50,8 @@ if ( CGAL_FOUND )
                                   ${MAP_VIEWER_LIBRARIES})
   # qt5_use_modules(voronoi_3 ${MAP_VIEWER_MODULES})
 
+  create_single_source_cgal_program( "gmap_linear_cell_complex_3.cpp" )
+
 else()
 
   message(STATUS "This program requires the CGAL library, "

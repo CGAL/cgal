@@ -21,6 +21,7 @@
 #define CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H 1
 
 #include <CGAL/Dart.h>
+#include <CGAL/GMap_dart.h>
 #include <CGAL/Cell_attribute_with_point.h>
 
 namespace CGAL {
@@ -32,7 +33,7 @@ namespace CGAL {
   /** Minimal items for linear cell complexes.
    * Linear_cell_complex_min_items defines what is the item class
    * for a linear cell complex. It provides definitions for attributes
-   * associated to vertices (containing points), and darts. 
+   * associated to vertices (containing points), and darts.
    */
   template <unsigned int d>
   struct Linear_cell_complex_min_items
@@ -43,7 +44,26 @@ namespace CGAL {
     {
       typedef CGAL::Dart<d, LCC> Dart;
 
-      typedef Cell_attribute_with_point<LCC> Vertex_attrib;    
+      typedef Cell_attribute_with_point<LCC> Vertex_attrib;
+      typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+    };
+  };
+
+  /** Minimal items for linear cell complexes for GMaps.
+   * Linear_cell_complex_min_items defines what is the item class
+   * for a linear cell complex. It provides definitions for attributes
+   * associated to vertices (containing points), and darts.
+   */
+  template <unsigned int d>
+  struct GMap_linear_cell_complex_min_items
+  {
+    /// Dart_wrapper defines the type of darts used.
+    template <class LCC>
+    struct Dart_wrapper
+    {
+      typedef CGAL::GMap_dart<d, LCC> Dart;
+
+      typedef Cell_attribute_with_point<LCC> Vertex_attrib;
       typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
     };
   };

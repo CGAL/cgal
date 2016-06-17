@@ -42,6 +42,11 @@
 
 #include <CGAL/config.h>
 
+#if defined( __INTEL_COMPILER )
+// Workarounf for warning in function basic_link_beta_0
+#pragma warning disable 1017
+#endif
+
 namespace CGAL {
 
   /** @file Generalized_map.h
@@ -719,6 +724,32 @@ namespace CGAL {
     Dart_const_handle alpha(Dart_const_handle ADart) const
     { return alpha<B2, B3, B4, B5, B6, B7, B8, B9>(alpha<B1>(ADart)); }
 #endif
+
+    // Generic function to iterate on CMap or GMap in a generic way
+    bool exist_previous_dart_in_face(Dart_const_handle ADart) const
+    { return !is_free<0>(ADart) && !is_free<1>(alpha<0>(ADart)); }
+    bool exist_next_dart_in_face(Dart_const_handle ADart) const
+    { return !is_free<1>(ADart) && !is_free<0>(alpha<1>(ADart)); }
+    template<unsigned int dim>
+    bool exist_opposite_dart(Dart_const_handle ADart) const
+    { return !is_free<dim>(ADart) && !is_free<0>(alpha<dim>(ADart)); }
+
+    Dart_handle get_previous_dart_in_face(Dart_handle ADart)
+    { return alpha<1, 0>(ADart); }
+    Dart_const_handle get_previous_dart_in_face(Dart_const_handle ADart) const
+    { return alpha<1, 0>(ADart); }
+
+    Dart_handle get_next_dart_in_face(Dart_handle ADart)
+    { return alpha<0, 1>(ADart); }
+    Dart_const_handle get_next_dart_in_face(Dart_const_handle ADart) const
+    { return alpha<0, 1>(ADart); }
+
+    template<unsigned int dim>
+    Dart_handle get_opposite_dart(Dart_handle ADart)
+    { return alpha<0, dim>(ADart); }
+    template<unsigned int dim>
+    Dart_const_handle get_opposite_dart(Dart_const_handle ADart) const
+    { return alpha<0, dim>(ADart); }
 
     /** Count the number of used marks.
      * @return the number of used marks.
@@ -2895,7 +2926,7 @@ namespace CGAL {
     {
       Dart_handle d1 = create_dart();
       Dart_handle d2 = create_dart();
-      basic_link_alpha(d1, d2, 0);
+      basic_link_alpha<0>(d1, d2);
       return d1;
     }
 
@@ -3368,7 +3399,9 @@ namespace CGAL {
   insert_cell_1_in_cell_2(GMap& amap,
                           typename GMap::Dart_handle adart1,
                           typename GMap::Dart_handle adart2,
-                          bool update_attributes=true)
+                          bool update_attributes=true,
+                          typename Attribute_handle<0>::type
+                          ah=null_handle)
   {
     if ( adart2!=amap.null_handle)
     {
@@ -3417,6 +3450,11 @@ namespace CGAL {
         amap.template link_alpha<1>(it2, d2);
         ++it2;
       }
+
+      if (are_attributes_automatically_managed() && update_attributes && ah!=NULL)
+      {
+        internal::Set_i_attribute_of_dart_functor<Self, 0>::run(this, d1, ah);
+      }
     }
 
     if (amap.are_attributes_automatically_managed() && update_attributes)
@@ -3455,9 +3493,20 @@ namespace CGAL {
     CGAL_assertion( amap.is_valid() );
 #endif
 
-    return amap.template alpha<1>(adart1);
+    return amap.template alpha<1,0>(adart1);
   }
 
+    /** Insert a dangling edge in a 2-cell between given by a dart.
+     * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+     * @param update_attributes a boolean to update the enabled attributes
+     * @return a dart of the new edge, not incident to the vertex of adart1.
+     */
+    Dart_handle insert_dangling_cell_1_in_cell_2( Dart_handle adart1,
+                                                  typename Attribute_handle<0>::type
+                                                  ah=null_handle,
+                                                  bool update_attributes=true )
+    { return insert_cell_1_in_cell_2(adart1, NULL, update_attributes, ah); }
+    
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    * a path of edges.
    * @param amap the used generalized map.

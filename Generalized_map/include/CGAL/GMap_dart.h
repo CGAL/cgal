@@ -57,6 +57,9 @@ struct GMap_dart
   template < unsigned int, class, class >
   friend class Generalized_map_storage_2;
 
+  template < unsigned int, unsigned int, class, class, class >
+  friend class GMap_linear_cell_complex_storage_1;
+
   template <class, class, class, class>
   friend class Compact_container;
 
