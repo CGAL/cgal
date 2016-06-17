@@ -593,7 +593,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 
   viewer->glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-  glPolygonOffset(-0.1f, 0.2f);
+  glPolygonOffset(0.5f, 0.9f);
   vaos[Scene_polyhedron_selection_item_priv::HLFacets]->bind();
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -616,18 +616,12 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_temp_facets/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::TempFacets]->release();
-
   if(!are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
   }
 
-  drawPoints(viewer);
-  viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-  viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-
-  glPolygonOffset(-1.f, 1.f);
   vaos[Scene_polyhedron_selection_item_priv::TempFacets]->bind();
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -637,17 +631,11 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_temp_facets/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::TempFacets]->release();
-  glPolygonOffset(offset_factor, offset_units);
   if(!d->are_buffers_filled)
   {
     d->computeElements();
     d->initializeBuffers(viewer);
   }
-  drawPoints(viewer);
-  viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-  viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-  glPolygonOffset(-1.f, 1.f);
-
   vaos[Scene_polyhedron_selection_item_priv::Facets]->bind();
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -656,9 +644,16 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
   d->program->release();
   vaos[Scene_polyhedron_selection_item_priv::Facets]->release();
-  glPolygonOffset(offset_factor, offset_units);
-  drawEdges(viewer);
 
+  glEnable(GL_POLYGON_OFFSET_LINE);
+  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+  glPolygonOffset(0.0f, 1.5f);
+  drawEdges(viewer);
+  glDisable(GL_POLYGON_OFFSET_LINE);
+  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+  glPolygonOffset(offset_factor, offset_units);
+  drawPoints(viewer);
+  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
 void Scene_polyhedron_selection_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
