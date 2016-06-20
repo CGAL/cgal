@@ -1038,6 +1038,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           d->first_selected = false;
           temp_selected_vertices.clear();
           temp_selected_facets.clear();
+          compute_normal_maps();
           invalidateOpenGLBuffers();
           //reset selection type to Facet
           set_active_handle_type(static_cast<Active_handle::Type>(1));
@@ -1065,6 +1066,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       if(!has_hole)
       {
         CGAL::Euler::remove_center_vertex(vh->halfedge(),*polyhedron());
+        compute_normal_maps();
         polyhedron_item()->invalidateOpenGLBuffers();
       }
       else
@@ -1155,9 +1157,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           polyhedron()->join_vertex(targt)->vertex()->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+R.y()), 0.5*(S.z()+T.z()));
           d->tempInstructions("Vertices joined.",
                            "Select the edge with extremities you want to join.");
+          compute_normal_maps();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
-          compute_normal_maps();
         }
       break;
       //Split edge
@@ -1184,8 +1186,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         else
         {
           polyhedron()->join_facet(halfedge(ed, *polyhedron()));
-          poly_item->invalidateOpenGLBuffers();
           compute_normal_maps();
+          poly_item->invalidateOpenGLBuffers();
         }
       break;
       //Collapse edge
@@ -1208,8 +1210,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           T = target(targt, *polyhedron())->point();
 
           CGAL::Euler::collapse_edge(ed, *polyhedron())->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+R.y()), 0.5*(S.z()+T.z()));
-          polyhedron_item()->invalidateOpenGLBuffers();
           compute_normal_maps();
+          polyhedron_item()->invalidateOpenGLBuffers();
 
           d->tempInstructions("Edge collapsed.",
                            "Select the edge you want to collapse.");
@@ -1274,9 +1276,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
 
           temp_selected_edges.clear();
           temp_selected_vertices.clear();
+          compute_normal_maps();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
-          compute_normal_maps();
           d->tempInstructions("Face and vertex added.",
                            "Select a border edge. (1/2)");
         }
@@ -1324,9 +1326,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           d->first_selected = false;
           temp_selected_vertices.clear();
           temp_selected_edges.clear();
+          compute_normal_maps();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
-          compute_normal_maps();
           d->tempInstructions("Face added.",
                            "Select a border edge. (1/2)");
         }
@@ -1422,11 +1424,11 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             hhandle->opposite()->vertex()->point() = Polyhedron::Point_3(x,y,z);;
             d->first_selected = false;
             temp_selected_vertices.clear();
+            compute_normal_maps();
             invalidateOpenGLBuffers();
             //reset selection mode
             set_active_handle_type(static_cast<Active_handle::Type>(0));
             poly_item->invalidateOpenGLBuffers();
-            compute_normal_maps();
             d->tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
           }
           else if(h1 == h2)
@@ -1451,6 +1453,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       {
         d->to_split_fh = fh;
         temp_selected_facets.insert(d->to_split_fh);
+        compute_normal_maps();
         invalidateOpenGLBuffers();
         //set to select vertex
         set_active_handle_type(static_cast<Active_handle::Type>(0));
@@ -1479,8 +1482,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           Polyhedron::Halfedge_handle hhandle = CGAL::Euler::add_center_vertex(fh->facet_begin(), *polyhedron());
           if(total !=0)
             hhandle->vertex()->point() = Polyhedron::Point_3(x/(double)total, y/(double)total, z/(double)total);
-          poly_item->invalidateOpenGLBuffers();
           compute_normal_maps();
+          poly_item->invalidateOpenGLBuffers();
 
         }
       break;
