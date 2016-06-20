@@ -737,12 +737,21 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
 {
   std::vector<bool> mark(poly_item->polyhedron()->size_of_vertices(),false);
   std::size_t original_size = deform_mesh->roi_vertices().size();
-  QVector<Point> controls_to_save;
+  QVector<Point> points_to_save;
+  bool ctrl_active = ui_widget->CtrlVertRadioButton->isChecked();
   BOOST_FOREACH(vertex_descriptor v,deform_mesh->roi_vertices())
   {
       mark[v->id()]=true;
-      if(deform_mesh->is_control_vertex(v))
-        controls_to_save.push_back(v->point());
+      if(ctrl_active)
+      {
+        if(!deform_mesh->is_control_vertex(v))
+          points_to_save.push_back(v->point());
+      }
+      else
+      {
+        if(deform_mesh->is_control_vertex(v))
+          points_to_save.push_back(v->point());
+      }
   }
 
   if(steps > 0)
@@ -753,16 +762,19 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
                             CGAL::Emptyset_iterator());
 
   item->clear_roi();
-
-  if(!controls_to_save.empty())
-    item->create_ctrl_vertices_group();
+  item->create_ctrl_vertices_group();
   for(typename Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
   {
     if(mark[it->id()]) {
-      if(ui_widget->CtrlVertRadioButton->isChecked())
-        item->insert_control_vertex(it);
+      if(ctrl_active)
+      {
+        if(points_to_save.contains(it->point()))
+          item->insert_roi_vertex(it);
+        else
+          item->insert_control_vertex(it);
+      }
       else{
-        if(controls_to_save.contains(it->point()))
+        if(points_to_save.contains(it->point()))
           item->insert_control_vertex(it);
         else
           item->insert_roi_vertex(it);
