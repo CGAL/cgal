@@ -581,7 +581,6 @@ void Scene_edit_polyhedron_item_priv::remesh()
     deform_mesh->roi_vertices().begin(),deform_mesh->roi_vertices().end());
 
   ROI_faces_pmap roi_faces_pmap;
-  QVector<Point> controls_to_save;
   BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
     if(deform_mesh->is_control_vertex(v))
@@ -653,7 +652,9 @@ void Scene_edit_polyhedron_item_priv::remesh()
     .vertex_is_constrained_map(Is_constrained_map(&constrained_set))
     );
   std::cout << "done." << std::endl;
-
+  poly_item->update_vertex_indices();
+  poly_item->update_facet_indices();
+  poly_item->update_halfedge_indices();
   //reset ROI from its outside border roi_border
   item->clear_roi();
   do{
@@ -671,7 +672,9 @@ void Scene_edit_polyhedron_item_priv::remesh()
 
   item->create_ctrl_vertices_group();
   BOOST_FOREACH(vertex_descriptor v, constrained_set)
+  {
       item->insert_control_vertex(v);
+  }
 
   BOOST_FOREACH(face_descriptor f, faces(g))
   {
@@ -741,7 +744,7 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
 {
   std::vector<bool> mark(poly_item->polyhedron()->size_of_vertices(),false);
   std::size_t original_size = deform_mesh->roi_vertices().size();
-  QVector<Point> points_to_save;
+  QVector<vertex_descriptor> points_to_save;
   bool ctrl_active = ui_widget->CtrlVertRadioButton->isChecked();
   BOOST_FOREACH(vertex_descriptor v,deform_mesh->roi_vertices())
   {
@@ -749,12 +752,12 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
       if(ctrl_active)
       {
         if(!deform_mesh->is_control_vertex(v))
-          points_to_save.push_back(v->point());
+          points_to_save.push_back(v);
       }
       else
       {
         if(deform_mesh->is_control_vertex(v))
-          points_to_save.push_back(v->point());
+          points_to_save.push_back(v);
       }
   }
 
@@ -772,13 +775,13 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
     if(mark[it->id()]) {
       if(ctrl_active)
       {
-        if(points_to_save.contains(it->point()))
+        if(points_to_save.contains(it))
           item->insert_roi_vertex(it);
         else
           item->insert_control_vertex(it);
       }
       else{
-        if(points_to_save.contains(it->point()))
+        if(points_to_save.contains(it))
           item->insert_control_vertex(it);
         else
           item->insert_roi_vertex(it);
