@@ -1564,15 +1564,16 @@ private:
         case Cone_tree_node::EDGE_SOURCE:
         {
           Segment_2 entrySegment = current->entry_segment();
-          Ray_2 rayToLocation(construct_ray_2(current->source_image(), currentLocation));
+          Point_2 currentSourceImage = current->source_image();
+          Ray_2 rayToLocation(construct_ray_2(currentSourceImage, currentLocation));
 
           LineLineIntersectResult cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
 
           CGAL_assertion(bool(cgalIntersection));
 
-          Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+          const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
 
-          CGAL_assertion(result && "Error, did not get point intersection on path walk to source");
+          if (!result) result = &currentSourceImage;
 
           FT t0 = parametric_distance_along_segment_2(construct_source_2(entrySegment), construct_target_2(entrySegment), *result);
 
