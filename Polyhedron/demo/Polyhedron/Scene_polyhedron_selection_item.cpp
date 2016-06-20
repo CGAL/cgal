@@ -1097,6 +1097,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
   }
   d->is_treated = true;
+  //Keeps the item from trying to draw primitive that has just been deleted.
+  clearHL();
   return false;
 }
 
@@ -1334,6 +1336,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     }
   }
   d->is_treated = true;
+  //Keeps the item from trying to draw primitive that has just been deleted.
+  clearHL();
   return false;
 }
 
@@ -1483,6 +1487,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
   }
   d->is_treated = true;
+  //Keeps the item from trying to draw primitive that has just been deleted.
+  clearHL();
   return false;
 }
 
