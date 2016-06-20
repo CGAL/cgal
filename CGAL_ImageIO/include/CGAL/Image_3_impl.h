@@ -24,7 +24,6 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
-#include <CGAL/gl.h>
 #include <CGAL/basic.h>
 
 namespace CGAL {
@@ -48,112 +47,6 @@ bool Image_3::private_read(_image* im)
   return im != 0;
 }
 
-CGAL_INLINE_FUNCTION
-void Image_3::gl_draw(const float point_size,
-                      const unsigned char r,
-                      const unsigned char g,
-                      const unsigned char b)
-{
-  if(image_ptr.get() == NULL)
-    return;
-
-  glPointSize(point_size);
-  glColor3ub(r,g,b);
-  glBegin(GL_POINTS);
-  unsigned char *pData = (unsigned char*)image_ptr->data;
-  unsigned int xy = image_ptr->xdim * image_ptr->ydim;
-  for(unsigned int i=0;i<image_ptr->xdim;i+=5)
-    for(unsigned int j=0;j<image_ptr->ydim;j+=5)
-      for(unsigned int k=0;k<image_ptr->zdim;k+=5)
-      {
-        unsigned char value = pData[xy*k + j*image_ptr->xdim + i];
-        if(value > 0)
-        {
-          double x = image_ptr->vx * i;
-          double y = image_ptr->vy * j;
-          double z = image_ptr->vz * k;
-          glVertex3d(x,y,z);
-        }
-      }
-  glEnd();
-} // end Image_3::gl_draw
-
-
-CGAL_INLINE_FUNCTION
-void Image_3::gl_draw_bbox(const float line_width,
-                           const unsigned char red,
-                           const unsigned char green,
-                           const unsigned char blue)
-{
-  if(!image_ptr)
-    return;
-
-  glLineWidth(line_width);
-  glColor3ub(red,green,blue);
-  glBegin(GL_LINES);
-
-  struct Point {
-    double x_;
-    double y_;
-    double z_;
-    Point(double x, double y, double z) : x_(x), y_(y), z_(z) {};
-
-    double x() const { return x_; }
-    double y() const { return y_; }
-    double z() const { return z_; }
-  };
-
-  const double xmax = (image_ptr->xdim - 1.0)*(image_ptr->vx);
-  const double ymax = (image_ptr->ydim - 1.0)*(image_ptr->vy);
-  const double zmax = (image_ptr->zdim - 1.0)*(image_ptr->vz);
-
-  Point a(0.0, 0.0,    0.0);
-  Point b(0.0, ymax, 0.0);
-  Point c(0.0, ymax, zmax);
-  Point d(0.0, 0.0,    zmax);
-  Point e(xmax, 0.0,    0.0);
-  Point f(xmax, ymax, 0.0);
-  Point g(xmax, ymax, zmax);
-  Point h(xmax, 0.0,    zmax);
-
-  glVertex3d(a.x(),a.y(),a.z());
-  glVertex3d(b.x(),b.y(),b.z());
-
-  glVertex3d(b.x(),b.y(),b.z());
-  glVertex3d(c.x(),c.y(),c.z());
-
-  glVertex3d(c.x(),c.y(),c.z());
-  glVertex3d(d.x(),d.y(),d.z());
-
-  glVertex3d(d.x(),d.y(),d.z());
-  glVertex3d(a.x(),a.y(),a.z());
-
-  glVertex3d(e.x(),e.y(),e.z());
-  glVertex3d(f.x(),f.y(),f.z());
-
-  glVertex3d(f.x(),f.y(),f.z());
-  glVertex3d(g.x(),g.y(),g.z());
-
-  glVertex3d(g.x(),g.y(),g.z());
-  glVertex3d(h.x(),h.y(),h.z());
-
-  glVertex3d(h.x(),h.y(),h.z());
-  glVertex3d(e.x(),e.y(),e.z());
-
-  glVertex3d(a.x(),a.y(),a.z());
-  glVertex3d(e.x(),e.y(),e.z());
-
-  glVertex3d(d.x(),d.y(),d.z());
-  glVertex3d(h.x(),h.y(),h.z());
-
-  glVertex3d(c.x(),c.y(),c.z());
-  glVertex3d(g.x(),g.y(),g.z());
-
-  glVertex3d(b.x(),b.y(),b.z());
-  glVertex3d(f.x(),f.y(),f.z());
-
-  glEnd();
-} // end Image_3::gl_draw_bbox
 
 } // end namespace CGAL
 
