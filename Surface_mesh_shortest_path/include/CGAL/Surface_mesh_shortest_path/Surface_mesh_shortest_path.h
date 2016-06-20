@@ -773,7 +773,7 @@ private:
 
     Point_2 sourcePoints[2];
     sourcePoints[0] = cb2(cv2(layoutFaces[0], 0), t0, cv2(layoutFaces[0], 1), t1);
-    sourcePoints[1] = cb2(cv2(layoutFaces[1], 0), t0, cv2(layoutFaces[1], 1), t1);
+    sourcePoints[1] = cb2(cv2(layoutFaces[1], 0), t1, cv2(layoutFaces[1], 1), t0);
 
     Cone_tree_node* edgeRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size());
     node_created();
