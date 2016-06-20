@@ -388,7 +388,7 @@ public Q_SLOTS:
     threads.erase(it);
 
     update_msgBox();
-    Volume_plane_intersection* intersection = dynamic_cast<Volume_plane_intersection*>(scene->item(intersectionId));
+    Volume_plane_intersection* intersection = dynamic_cast<Volume_plane_intersection*>(scene->item(intersection_id));
     if(!intersection) {
       // the intersection is gone before it was initialized
       return;
@@ -451,18 +451,18 @@ private:
 
   CGAL::Three::Scene_group_item* group;
   std::vector<Volume_plane_thread*> threads;
-  struct controls{
+  struct Controls{
     CGAL::Three::Scene_item* group;
-    CGAL::Three::Scene_item* xitem;
-    CGAL::Three::Scene_item* yitem;
-    CGAL::Three::Scene_item* zitem;
-    int xvalue;
-    int yvalue;
-    int zvalue;
+    CGAL::Three::Scene_item* x_item;
+    CGAL::Three::Scene_item* y_item;
+    CGAL::Three::Scene_item* z_item;
+    int x_value;
+    int y_value;
+    int z_value;
   };
-  controls *current_control;
-  QMap<CGAL::Three::Scene_item*, controls> group_map;
-  unsigned int intersectionId;
+  Controls *current_control;
+  QMap<CGAL::Three::Scene_item*, Controls> group_map;
+  unsigned int intersection_id;
   bool loadDCM(QString filename);
   Image* createDCMImage(QString dirname);
   QLayout* createOrGetDockLayout() {
@@ -503,6 +503,7 @@ private:
   }
 
   void createPlanes(Scene_image_item* seg_img) {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
     if(x_control == NULL)
@@ -579,7 +580,7 @@ private:
           = new Volume_plane_intersection(img->xdim() * img->vx(),
                                           img->ydim() * img->vy(),
                                           img->zdim() * img->vz());
-      this->intersectionId = scene->addItem(i);
+      this->intersection_id = scene->addItem(i);
       scene->changeGroup(i, group);
       group->lockChild(i);
     } else {
@@ -601,37 +602,37 @@ private:
 
     switchReaderConverter< Word >(minmax);
 
-    Volume_plane<x_tag> *xitem = new Volume_plane<x_tag>();
-    Volume_plane<y_tag> *yitem = new Volume_plane<y_tag>();
-    Volume_plane<z_tag> *zitem = new Volume_plane<z_tag>();
+    Volume_plane<x_tag> *x_item = new Volume_plane<x_tag>();
+    Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>();
+    Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>();
     scene->setSelectedItem(-1);
     group = new Scene_group_item(QString("Planes for %1").arg(seg_img->name()));
     connect(group, SIGNAL(aboutToBeDestroyed()),
             this, SLOT(erase_group()));
     scene->addItem(group);
-    controls c;
+    Controls c;
     c.group = group;
-    c.xitem = xitem;
-    c.yitem = yitem;
-    c.zitem = zitem;
-    c.xvalue = 0;
-    c.yvalue = 0;
-    c.zvalue = 0;
+    c.x_item = x_item;
+    c.y_item = y_item;
+    c.z_item = z_item;
+    c.x_value = 0;
+    c.y_value = 0;
+    c.z_value = 0;
     group_map[seg_img] = c;
     current_control = &group_map[seg_img];
     connect(seg_img, SIGNAL(aboutToBeDestroyed()),
             this, SLOT(erase_group()));
 
-    threads.push_back(new X_plane_thread<Word>(xitem, img, clamper, name));
+    threads.push_back(new X_plane_thread<Word>(x_item, img, clamper, name));
 
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
 
-    threads.push_back(new Y_plane_thread<Word>(yitem,img, clamper, name));
+    threads.push_back(new Y_plane_thread<Word>(y_item,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
 
-    threads.push_back(new Z_plane_thread<Word>(zitem,img, clamper, name));
+    threads.push_back(new Z_plane_thread<Word>(z_item,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
 
@@ -664,6 +665,7 @@ private Q_SLOTS:
     {
       msgBox.hide();
       nbPlanes = 0;
+      QApplication::restoreOverrideCursor();
     }
   }
   // Avoids the segfault after the deletion of an item
@@ -678,9 +680,9 @@ private Q_SLOTS:
       {
         if(group_map[key].group == group_item)
         {
-          group_map[key].xitem = NULL;
-          group_map[key].yitem = NULL;
-          group_map[key].zitem = NULL;
+          group_map[key].x_item = NULL;
+          group_map[key].y_item = NULL;
+          group_map[key].z_item = NULL;
           group_map.remove(key);
           break;
         }
@@ -701,12 +703,12 @@ private Q_SLOTS:
     {
       return;
     }
-    controls c = group_map[sel_itm];
+    Controls c = group_map[sel_itm];
     current_control = &group_map[sel_itm];
     // x line
-    if(c.xitem != NULL)
+    if(c.x_item != NULL)
     {
-      Volume_plane_interface* x_plane = qobject_cast<Volume_plane_interface*>(c.xitem);
+      Volume_plane_interface* x_plane = qobject_cast<Volume_plane_interface*>(c.x_item);
       if(x_slider)
         delete x_slider;
       x_slider = new Plane_slider(x_plane->translationVector(), scene->item_id(x_plane), scene, x_plane->manipulatedFrame(),
@@ -716,15 +718,15 @@ private Q_SLOTS:
       connect(x_plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
       connect(x_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
       connect(x_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
-      x_slider->setValue(c.xvalue);
+      x_slider->setValue(c.x_value);
 
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
     }
     //y line
-    if(c.yitem != NULL)
+    if(c.y_item != NULL)
     {
-      Volume_plane_interface* y_plane = qobject_cast<Volume_plane_interface*>(c.yitem);
+      Volume_plane_interface* y_plane = qobject_cast<Volume_plane_interface*>(c.y_item);
       if(y_slider)
         delete y_slider;
       y_slider = new Plane_slider(y_plane->translationVector(), scene->item_id(y_plane), scene, y_plane->manipulatedFrame(),
@@ -734,14 +736,14 @@ private Q_SLOTS:
       connect(y_plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
       connect(y_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
       connect(y_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
-      y_slider->setValue(c.yvalue);
+      y_slider->setValue(c.y_value);
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
     }
     // z line
-    if(c.zitem != NULL)
+    if(c.z_item != NULL)
     {
-      Volume_plane_interface* z_plane = qobject_cast<Volume_plane_interface*>(c.zitem);
+      Volume_plane_interface* z_plane = qobject_cast<Volume_plane_interface*>(c.z_item);
       if(z_slider)
         delete z_slider;
       z_slider = new Plane_slider(z_plane->translationVector(), scene->item_id(z_plane), scene, z_plane->manipulatedFrame(),
@@ -751,7 +753,7 @@ private Q_SLOTS:
       connect(z_plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(z_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
       connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
-      z_slider->setValue(c.zvalue);
+      z_slider->setValue(c.z_value);
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
     }
@@ -759,26 +761,26 @@ private Q_SLOTS:
 //Keeps the position of the planes for the next time
   void set_value()
   {
-    current_control->xvalue = x_slider->value();
-    current_control->yvalue = y_slider->value();
-    current_control->zvalue = z_slider->value();
+    current_control->x_value = x_slider->value();
+    current_control->y_value = y_slider->value();
+    current_control->z_value = z_slider->value();
   }
 
   void destroy_x_item()
   {
-    current_control->xitem = NULL; 
+    current_control->x_item = NULL;
     if(group_map.isEmpty())
       x_control->hide();
   }
   void destroy_y_item()
   {
-    current_control->yitem = NULL;
+    current_control->y_item = NULL;
     if(group_map.isEmpty())
       y_control->hide();
   }
   void destroy_z_item()
   {
-    current_control->zitem = NULL;
+    current_control->z_item = NULL;
     if(group_map.isEmpty())
       z_control->hide();
   }
@@ -891,7 +893,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   if(type == "Gray-level image")
   {
     //Create planes
-    image_item = new Scene_image_item(image,125, true);
+    image_item = new Scene_image_item(image,0, true);
     image_item->setName(fileinfo.baseName());
     msgBox.setText("Planes created : 0/3");
     msgBox.setStandardButtons(QMessageBox::NoButton);
