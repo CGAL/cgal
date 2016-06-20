@@ -92,7 +92,6 @@ if ( CGAL_FOUND )
         create_single_source_cgal_program( "mesh_3D_image.cpp" )
         target_link_libraries(mesh_3D_image ${ZLIB_LIBRARY})
         
-        create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
         target_link_libraries(mesh_3D_gray_image ${ZLIB_LIBRARY})
         
         create_single_source_cgal_program( "mesh_3D_image_variable_size.cpp" )
