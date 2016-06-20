@@ -63,7 +63,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
   * contain the output (in-place operation), otherwise the result will
   * be inserted into `tm_out` without clearing it first.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersec(tm2)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
@@ -95,11 +95,10 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
   *     constrained edge in `tm1` or `tm2`.
   * \cgalNamedParamsEnd
   *
-  * @return `true` if the output surface mesh is manifold and was put into `tm_out`.
-  *         If `false` is returned and if `tm_out` was one of the input surface meshes,
-  *         then `tm_out` will bound the same volume as the input but the surface
-  *         mesh will be nonetheless \link coref_def_subsec corefined\endlink.
-  */
+  * @return `true` if the output surface mesh is manifold and is put into `tm_out`.
+  *         If `false` is returned and if `tm_out` is one of the input surface meshes,
+  *         then `tm_out` is nonetheless \link coref_def_subsec corefined\endlink
+  *         while its bounded volume stays the same as the input one.  */
 template <class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2,
