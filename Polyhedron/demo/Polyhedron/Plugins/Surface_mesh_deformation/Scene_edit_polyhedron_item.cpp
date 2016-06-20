@@ -589,6 +589,8 @@ void Scene_edit_polyhedron_item_priv::remesh()
 
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
+      if(fv == boost::graph_traits<Polyhedron>::null_face())
+        continue;
       bool add_face=true;
       BOOST_FOREACH(vertex_descriptor vfd, CGAL::vertices_around_face(halfedge(fv,g),g))
         if (roi_vertices.count(vfd)==0)
