@@ -570,6 +570,8 @@ struct Is_constrained_map
 
 void Scene_edit_polyhedron_item_priv::remesh()
 {
+  if(deform_mesh->roi_vertices().empty())
+    return;
   boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function> constrained_set;
   const Polyhedron& g = deform_mesh->halfedge_graph();
   Array_based_vertex_point_map vpmap(&positions);
