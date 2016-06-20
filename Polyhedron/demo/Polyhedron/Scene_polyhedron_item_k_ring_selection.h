@@ -318,7 +318,8 @@ protected:
       is_ready_to_paint_select = true;
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       paint_pos = mouse_event->pos();
-      QTimer::singleShot(0,this,SLOT(paint_selection()));
+      if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
+        QTimer::singleShot(0,this,SLOT(paint_selection()));
     }
     //if in edit_mode and the mouse is moving without left button pressed :
     // highlight the primitive under cursor
