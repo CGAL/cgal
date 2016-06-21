@@ -84,7 +84,14 @@ endif(CGAL_HEADER_ONLY)
 collect_cgal_library( CGAL_Qt5 "${additional_files}")
 
 if(CGAL_HEADER_ONLY)
-   set(CGAL_QT5_QTMOCCMAKE_FILES ${QTMOCCMAKE_FILES} CACHE INTERNAL "CGAL qt5 qtmoc cmake files")
+  FILE(GLOB files "../../include/CGAL/Qt/*")
+  install(FILES ${files} DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/include/CGAL/Qt/")
+  
+  FILE(GLOB files "../../demo/resources/*")
+  install(FILES ${files} DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources")
+  
+  FILE(GLOB files "../../demo/icons/*")
+  install(FILES ${files} DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons")
 else()
    qt5_use_modules(CGAL_Qt5 OpenGL Svg)
 

@@ -80,6 +80,9 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     install(EXPORT ${LIBRARY_NAME}Exports
       DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
       NAMESPACE CGAL::)
+  else()
+    # Create an empty file (install mode) in order to be able to load it later
+    file(WRITE "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}Exports.cmake" "")
   endif()
 
   # We have to call configure_file twice to force double expansion of variables.
@@ -200,9 +203,11 @@ CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
 
-#if (NOT CGAL_HEADER_ONLY) # TODO Check on windows these exports
+if (NOT CGAL_HEADER_ONLY)
   export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
-#endif()
+else()
+  install(FILES "${CMAKE_BINARY_DIR}/CGALExports.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+endif()
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 
