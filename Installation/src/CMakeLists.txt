@@ -80,9 +80,6 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     install(EXPORT ${LIBRARY_NAME}Exports
       DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
       NAMESPACE CGAL::)
-  else()
-    # Create an empty file (install mode) in order to be able to load it later
-    file(WRITE "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}Exports.cmake" "")
   endif()
 
   # We have to call configure_file twice to force double expansion of variables.
