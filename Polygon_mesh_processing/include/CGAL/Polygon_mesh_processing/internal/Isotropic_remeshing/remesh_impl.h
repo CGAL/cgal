@@ -669,11 +669,24 @@ namespace internal {
           halfedge_and_opp_removed(he);
           halfedge_and_opp_removed(prev(he, mesh_));
 
+          //constrained case
+          bool constrained_case = is_constrained(va) || is_constrained(vb);
+          if (constrained_case)
+          {
+            CGAL_assertion(is_constrained(va) ^ is_constrained(vb));//XOR
+            set_constrained(va, false);
+            set_constrained(vb, false);
+          }
+
           //perform collapse
           Point target_point = get(vpmap_, vb);
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
+
+          //fix constrained case
+          if (constrained_case)//we have made sure that collapse goes to constrained vertex
+            set_constrained(vkept, true);
 
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
@@ -1271,6 +1284,10 @@ private:
     bool is_constrained(const vertex_descriptor& v) const
     {
       return get(vcmap_, v);
+    }
+    void set_constrained(const vertex_descriptor& v, const bool b)
+    {
+      put(vcmap_, v, b);
     }
 
     bool is_corner(const vertex_descriptor& v) const
