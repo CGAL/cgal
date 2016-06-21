@@ -562,9 +562,9 @@ public:
   template <class Handle>
   struct Index_map
   {
-    typedef Handle  key_type;
-    typedef std::size_t     value_type;
-    typedef value_type&    reference;
+    typedef Handle                             key_type;
+    typedef std::size_t                        value_type;
+    typedef value_type&                        reference;
     typedef boost::read_write_property_map_tag category;
 
     friend value_type get(Index_map, Handle h)
@@ -767,9 +767,9 @@ public Q_SLOTS:
   { has_been_selected(m); }
   void selected(const std::set<edge_descriptor>& m)
   { has_been_selected(m); }
-  void selectedHL(const std::set<Polyhedron::Vertex_handle>& m);
-  void selectedHL(const std::set<Polyhedron::Facet_handle>& m);
-  void selectedHL(const std::set<edge_descriptor>& m);
+  void selected_HL(const std::set<Polyhedron::Vertex_handle>& m);
+  void selected_HL(const std::set<Polyhedron::Facet_handle>& m);
+  void selected_HL(const std::set<edge_descriptor>& m);
   void poly_item_changed() {
     remove_erased_handles<Vertex_handle>();
     remove_erased_handles<edge_descriptor>();

@@ -514,10 +514,8 @@ public Q_SLOTS:
     //Collapse edge
     case 5:
     {
-      QMatrix mat;
-      mat.scale(0.6,0.6);
       QPixmap pm(":/cgal/Polyhedron_3/resources/general_collapse.png");
-      ui_widget.docImage_Label->setPixmap(pm.transformed(mat));
+      ui_widget.docImage_Label->setPixmap(pm);
       break;
     }
     //Add center vertex

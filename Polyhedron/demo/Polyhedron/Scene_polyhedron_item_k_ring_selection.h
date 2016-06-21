@@ -161,9 +161,9 @@ Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
-  void selectedHL(const std::set<Polyhedron::Vertex_handle>&);
-  void selectedHL(const std::set<Polyhedron::Facet_handle>&);
-  void selectedHL(const std::set<edge_descriptor>&);
+  void selected_HL(const std::set<Polyhedron::Vertex_handle>&);
+  void selected_HL(const std::set<Polyhedron::Facet_handle>&);
+  void selected_HL(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
   void resetIsTreated(); 
@@ -187,7 +187,7 @@ protected:
     const std::set<HandleType>& selection = extract_k_ring(clicked, k_ring);
     if(is_highlighting)
     {
-      Q_EMIT selectedHL(selection);
+      Q_EMIT selected_HL(selection);
     }
     else
       Q_EMIT selected(selection);

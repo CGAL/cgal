@@ -1151,10 +1151,10 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         else
         {
           Halfedge_handle targt = halfedge(ed, *polyhedron());
-          Point R,S,T;
+          Point S,T;
           S = source(targt, *polyhedron())->point();
           T = target(targt, *polyhedron())->point();
-          polyhedron()->join_vertex(targt)->vertex()->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+R.y()), 0.5*(S.z()+T.z()));
+          polyhedron()->join_vertex(targt)->vertex()->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+T.y()), 0.5*(S.z()+T.z()));
           d->tempInstructions("Vertices joined.",
                            "Select the edge with extremities you want to join.");
           compute_normal_maps();
@@ -1205,11 +1205,11 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         else
         {
           Halfedge_handle targt = halfedge(ed, *polyhedron());
-          Point R,S,T;
+          Point S,T;
           S = source(targt, *polyhedron())->point();
           T = target(targt, *polyhedron())->point();
 
-          CGAL::Euler::collapse_edge(ed, *polyhedron())->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+R.y()), 0.5*(S.z()+T.z()));
+          CGAL::Euler::collapse_edge(ed, *polyhedron())->point() = Point(0.5*(S.x()+T.x()), 0.5*(S.y()+T.y()), 0.5*(S.z()+T.z()));
           compute_normal_maps();
           polyhedron_item()->invalidateOpenGLBuffers();
 
@@ -2044,7 +2044,7 @@ void Scene_polyhedron_selection_item::clearHL()
   d->are_HL_buffers_filled = false;
   Q_EMIT itemChanged();
 }
-void Scene_polyhedron_selection_item::selectedHL(const std::set<Polyhedron::Vertex_handle>& m)
+void Scene_polyhedron_selection_item::selected_HL(const std::set<Polyhedron::Vertex_handle>& m)
 {
   HL_selected_edges.clear();
   HL_selected_facets.clear();
@@ -2055,7 +2055,7 @@ void Scene_polyhedron_selection_item::selectedHL(const std::set<Polyhedron::Vert
   Q_EMIT itemChanged();
 }
 
-void Scene_polyhedron_selection_item::selectedHL(const std::set<Polyhedron::Facet_handle>& m)
+void Scene_polyhedron_selection_item::selected_HL(const std::set<Polyhedron::Facet_handle>& m)
 {
   HL_selected_edges.clear();
   HL_selected_facets.clear();
@@ -2065,7 +2065,7 @@ void Scene_polyhedron_selection_item::selectedHL(const std::set<Polyhedron::Face
   Q_EMIT itemChanged();
 }
 
-void Scene_polyhedron_selection_item::selectedHL(const std::set<edge_descriptor>& m)
+void Scene_polyhedron_selection_item::selected_HL(const std::set<edge_descriptor>& m)
 {
   HL_selected_edges.clear();
   HL_selected_facets.clear();
@@ -2085,12 +2085,12 @@ void Scene_polyhedron_selection_item::init(Scene_polyhedron_item* poly_item, QMa
     SLOT(selected(const std::set<Polyhedron::Facet_handle>&)));
   connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
     SLOT(selected(const std::set<edge_descriptor>&)));
-  connect(&k_ring_selector, SIGNAL(selectedHL(const std::set<Polyhedron::Vertex_handle>&)), this,
-          SLOT(selectedHL(const std::set<Polyhedron::Vertex_handle>&)));
-  connect(&k_ring_selector, SIGNAL(selectedHL(const std::set<Polyhedron::Facet_handle>&)), this,
-          SLOT(selectedHL(const std::set<Polyhedron::Facet_handle>&)));
-  connect(&k_ring_selector, SIGNAL(selectedHL(const std::set<edge_descriptor>&)), this,
-          SLOT(selectedHL(const std::set<edge_descriptor>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<Polyhedron::Vertex_handle>&)), this,
+          SLOT(selected_HL(const std::set<Polyhedron::Vertex_handle>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<Polyhedron::Facet_handle>&)), this,
+          SLOT(selected_HL(const std::set<Polyhedron::Facet_handle>&)));
+  connect(&k_ring_selector, SIGNAL(selected_HL(const std::set<edge_descriptor>&)), this,
+          SLOT(selected_HL(const std::set<edge_descriptor>&)));
   connect(&k_ring_selector, SIGNAL(clearHL()), this,
           SLOT(clearHL()));
 
