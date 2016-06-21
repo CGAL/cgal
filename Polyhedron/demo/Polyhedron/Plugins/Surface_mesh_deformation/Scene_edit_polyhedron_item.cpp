@@ -603,6 +603,13 @@ void Scene_edit_polyhedron_item_priv::remesh()
       }
     }
   }
+
+  if (roi_facets.empty())
+  {
+    std::cout << "Remeshing canceled (there is no facet with "
+              << "its 3 vertices in the ROI)." << std::endl;
+    return;
+  }
   // set face_index map needed for border_halfedges and isotropic_remeshing
   boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
     = get(CGAL::face_index, *item->polyhedron());
