@@ -23,10 +23,13 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/property_map/vector_property_map.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+
+#include <QGLViewer/manipulatedFrame.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -177,6 +180,7 @@ public:
   typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
   typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
   typedef Polyhedron::Vertex_iterator Vertex_iterator;
   typedef Polyhedron::Facet_iterator  Facet_iterator;
@@ -185,38 +189,11 @@ public:
   Scene_polyhedron_selection_item() ;
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw);
   ~Scene_polyhedron_selection_item();
-
   void inverse_selection();
-
   void setPathSelection(bool b);
 
 protected: 
-  void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
-  {
-    this->poly_item = poly_item;
-    connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed())); 
-    connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
-      SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
-    connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Facet_handle>&)), this,
-      SLOT(selected(const std::set<Polyhedron::Facet_handle>&)));
-    connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
-      SLOT(selected(const std::set<edge_descriptor>&)));
-    connect(poly_item, SIGNAL(selection_done()), this, SLOT(update_poly()));
-
-    connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
-    connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
-    connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
-    k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
-    connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
-
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    viewer->installEventFilter(this);
-    mw->installEventFilter(this);
-
-    facet_color = QColor(87,87,87);
-    edge_color = QColor(173,35,35);
-    vertex_color = QColor(255,205,243);
-  }
+  void init(Scene_polyhedron_item* poly_item, QMainWindow* mw);
 
   Active_handle::Type get_active_handle_type() 
   { return k_ring_selector.active_handle_type; }
@@ -403,6 +380,7 @@ public:
       break;
     }
   }
+  void select_all_NT();
   // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, edge_descriptor as template argument)
   template<class HandleType>
   void select_all() {
@@ -696,18 +674,10 @@ public:
     Selection_traits<Polyhedron::Vertex_handle, Scene_polyhedron_selection_item> trv(this);
     trv.update_indices();
 
-    //Selection_traits<edge_descriptor, Scene_polyhedron_selection_item> tre(this);
-    //tre.update_indices();
-    //std::vector<bool> mark(polyhedron()->size_of_halfedges() / 2, false);
-    //BOOST_FOREACH(edge_descriptor e, selected_edges)
-    //  mark[tre.id(e)] = true;
-
     PMP::keep_connected_components(*polyhedron()
       , trf.container()
       , PMP::parameters::face_index_map(Index_map<Polyhedron::Face_handle>())
       .vertex_index_map(Index_map<Polyhedron::Vertex_handle>()));
-//      .edge_is_constrained_map(Is_selected_property_map<edge_descriptor>(mark)));
-
     changed_with_poly_item();
   }
 
@@ -778,14 +748,18 @@ Q_SIGNALS:
   void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
 
 public Q_SLOTS:
+
   void update_poly();
   void on_Ctrlz_pressed();
   void emitTempInstruct();
   void resetIsTreated();
   void save_handleType();
   void set_operation_mode(int mode);
-
   void invalidateOpenGLBuffers();
+  void validateMoveVertex();
+  void compute_normal_maps();
+  void clearHL();
+
   // slots are called by signals of polyhedron_k_ring_selector
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   { has_been_selected(m); }
@@ -793,6 +767,9 @@ public Q_SLOTS:
   { has_been_selected(m); }
   void selected(const std::set<edge_descriptor>& m)
   { has_been_selected(m); }
+  void selectedHL(const std::set<Polyhedron::Vertex_handle>& m);
+  void selectedHL(const std::set<Polyhedron::Facet_handle>& m);
+  void selectedHL(const std::set<edge_descriptor>& m);
   void poly_item_changed() {
     remove_erased_handles<Vertex_handle>();
     remove_erased_handles<edge_descriptor>();
@@ -806,6 +783,8 @@ public Q_SLOTS:
    is_insert = b;
   }
 
+  void updateTick();
+  void moveVertex();
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event)
   {
@@ -845,6 +824,11 @@ protected:
       tr.container().insert(*it);
     }
   }
+  void join_vertex(Scene_polyhedron_selection_item::edge_descriptor ed)
+  {
+    polyhedron()->join_vertex(halfedge(ed, *polyhedron()));
+  }
+
 
   void selectPath(Vertex_handle vh);
 
@@ -863,7 +847,6 @@ template<typename HandleRange>
   bool treat_selection(const std::set<edge_descriptor>& selection);
   bool treat_selection(const std::set<Polyhedron::Facet_handle>& selection);
   bool treat_selection(const std::vector<Polyhedron::Facet_handle>& selection);
-
 
   Facet_handle face(Facet_handle fh)
   { return fh; }
@@ -946,6 +929,9 @@ public:
   Selection_set_vertex temp_selected_vertices;
   Selection_set_facet  temp_selected_facets;
   Selection_set_edge   temp_selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
+  Selection_set_vertex HL_selected_vertices;
+  Selection_set_facet  HL_selected_facets;
+  Selection_set_edge   HL_selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
   QColor vertex_color, facet_color, edge_color;
 
 protected :

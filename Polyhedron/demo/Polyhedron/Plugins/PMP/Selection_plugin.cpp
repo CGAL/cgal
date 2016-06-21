@@ -87,6 +87,7 @@ public:
       connect(true_scene, SIGNAL(selectionChanged(int)), this, SLOT(selectionChanged(int)));
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
+    connect(ui_widget.Select_all_NTButton,  SIGNAL(clicked()), this, SLOT(on_Select_all_NTButton_clicked()));
     connect(ui_widget.Add_to_selection_button,  SIGNAL(clicked()), this, SLOT(on_Add_to_selection_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
@@ -105,6 +106,7 @@ public:
     connect(ui_widget.editionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_editionBox_changed(int)));
 
     ui_widget.Add_to_selection_button->hide();
+    ui_widget.Select_all_NTButton->hide();
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
       connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
@@ -165,7 +167,8 @@ public Q_SLOTS:
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     scene->setSelectedItem(item_id);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
-    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+    if(last_mode == 0)
+      on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   // Select all
   void on_Select_all_button_clicked() {
@@ -176,6 +179,17 @@ public Q_SLOTS:
     }
 
     selection_item->select_all();
+  }
+
+  void on_Select_all_NTButton_clicked()
+  {
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+
+    selection_item->select_all_NT();
   }
 
   void on_Add_to_selection_button_clicked()
@@ -263,23 +277,32 @@ public Q_SLOTS:
     connect(new_item,SIGNAL(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)), this, SLOT(isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*)));
     scene->setSelectedItem(item_id);
     ui_widget.modeBox->setCurrentIndex(last_mode);
-    on_ModeBox_changed(ui_widget.modeBox->currentIndex());
-    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+    on_ModeBox_changed(last_mode);
+    if(last_mode == 0)
+      on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
       Q_EMIT save_handleType();
-      if(index == 4)
+      if(index == 1)
+      {
+        ui_widget.Select_all_NTButton->show();
+        ui_widget.Add_to_selection_button->hide();
+        Q_EMIT set_operation_mode(-1);
+      }
+      else if(index == 4)
       {
         it->second->setPathSelection(true);
         ui_widget.Add_to_selection_button->show();
+        ui_widget.Select_all_NTButton->hide();
         Q_EMIT set_operation_mode(-2);
       }
       else
       {
         ui_widget.Add_to_selection_button->hide();
+        ui_widget.Select_all_NTButton->hide();
         it->second->setPathSelection(false);
         Q_EMIT set_operation_mode(-1);
       }
@@ -450,7 +473,7 @@ public Q_SLOTS:
       ui_widget.selection_groupBox->setVisible(false);
       ui_widget.edition_groupBox->setVisible(true);
       Q_EMIT save_handleType();
-      Q_EMIT set_operation_mode(ui_widget.editionBox->currentIndex());
+      on_editionBox_changed(ui_widget.editionBox->currentIndex());
       break;
     }
   }
@@ -468,7 +491,62 @@ public Q_SLOTS:
     {
       Q_EMIT set_operation_mode(mode);
     }
-
+    switch(mode)
+    {
+    //Join vertex
+    case 0:
+    //Split vertex
+    case 1:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/euler_vertex.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //Join face
+    case 3:
+    //Split face
+    case 4:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/euler_facet.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //Collapse edge
+    case 5:
+    {
+      QMatrix mat;
+      mat.scale(0.6,0.6);
+      QPixmap pm(":/cgal/Polyhedron_3/resources/general_collapse.png");
+      ui_widget.docImage_Label->setPixmap(pm.transformed(mat));
+      break;
+    }
+    //Add center vertex
+    case 7:
+    //Remove center vertex
+    case 8:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/euler_center.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //Add vertex and face to border
+    case 9:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/add_facet1.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    //add facet to border
+    case 10:
+    {
+      QPixmap pm(":/cgal/Polyhedron_3/resources/add_facet2.png");
+      ui_widget.docImage_Label->setPixmap(pm);
+      break;
+    }
+    default:
+      ui_widget.docImage_Label->clear();
+      break;
+    }
   }
   void on_Select_sharp_edges_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();

@@ -40,6 +40,7 @@ public:
   Scene_polyhedron_item* poly_item;
   bool is_active;
   bool is_current_selection;
+  bool is_highlighting;
 
   Scene_polyhedron_item_k_ring_selection() {}
 
@@ -50,13 +51,22 @@ public:
     init(poly_item, mw, aht, k_ring);
   }
 
-  void setEditMode(bool b) { is_edit_mode = b; }
+  void setEditMode(bool b)
+  {
+    is_edit_mode = b;
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    //for highlighting
+    viewer->setMouseTracking(b);
+  }
 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
     mainwindow = mw;
+    is_highlighting = false;
+    is_ready_to_highlight = true;
+    is_ready_to_paint_select = true;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -101,15 +111,64 @@ public Q_SLOTS:
     updateIsTreated();
   }
 
+  void paint_selection()
+  {
+    if(is_ready_to_paint_select)
+    {
+      // paint with mouse move event
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qglviewer::Camera* camera = viewer->camera();
+
+      bool found = false;
+      const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found);
+      if(found)
+      {
+        const qglviewer::Vec& orig = camera->position();
+        const qglviewer::Vec& dir = point - orig;
+        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+      }
+      is_ready_to_paint_select = false;
+    }
+  }
+
+  void highlight()
+  {
+    if(is_ready_to_highlight)
+    {
+      // highlight with mouse move event
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qglviewer::Camera* camera = viewer->camera();
+
+      bool found = false;
+      const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found);
+      if(found)
+      {
+        const qglviewer::Vec& orig = camera->position();
+        const qglviewer::Vec& dir = point - orig;
+        is_highlighting = true;
+        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+        is_highlighting = false;
+      }
+      else
+      {
+        Q_EMIT clearHL();
+      }
+      is_ready_to_highlight = false;
+    }
+  }
 
 Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
+  void selectedHL(const std::set<Polyhedron::Vertex_handle>&);
+  void selectedHL(const std::set<Polyhedron::Facet_handle>&);
+  void selectedHL(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
   void resetIsTreated(); 
   void isCurrentlySelected(Scene_polyhedron_item_k_ring_selection*);
+  void clearHL();
 
 protected:
 
@@ -126,7 +185,12 @@ protected:
   template<class HandleType>
   void process_selection(HandleType clicked) {
     const std::set<HandleType>& selection = extract_k_ring(clicked, k_ring);
-    Q_EMIT selected(selection);
+    if(is_highlighting)
+    {
+      Q_EMIT selectedHL(selection);
+    }
+    else
+      Q_EMIT selected(selection);
   }
 
   template <class Handle>
@@ -218,15 +282,11 @@ protected:
     }
     // mouse events
     if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease) {
-      if(!state.shift_pressing && target == mainwindow)
-      {
-        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-        viewer->setFocus();
-        return false;
-      }
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       if(mouse_event->button() == Qt::LeftButton) {
         state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
+        if(is_edit_mode)
+          Q_EMIT clearHL();
         if (!state.left_button_pressing)
           if (is_active)
           {
@@ -240,11 +300,11 @@ protected:
         state.shift_pressing = false;
       }
     }
-
-    // if not in edit mode, use mouse move event for paint-like selection
-    if( (!is_edit_mode && event->type() == QEvent::MouseMove && state.shift_pressing && state.left_button_pressing)
-         ||
-         (event->type() == QEvent::MouseButtonPress && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton && state.shift_pressing ))
+    // use mouse move event for paint-like selection
+    if( (event->type() == QEvent::MouseMove
+         || (event->type() == QEvent::MouseButtonPress
+             && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton))
+        && (state.shift_pressing && state.left_button_pressing) )
     {
       Q_EMIT isCurrentlySelected(this);
       if(!is_current_selection)
@@ -255,24 +315,36 @@ protected:
         viewer->setFocus();
         return false;
       }
-      // paint with mouse move event
+      is_ready_to_paint_select = true;
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      qglviewer::Camera* camera = viewer->camera();
-
-      bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
-      if(found)
+      paint_pos = mouse_event->pos();
+      if(!is_edit_mode || event->type() == QEvent::MouseButtonPress)
+        QTimer::singleShot(0,this,SLOT(paint_selection()));
+    }
+    //if in edit_mode and the mouse is moving without left button pressed :
+    // highlight the primitive under cursor
+    else if(is_edit_mode && event->type() == QEvent::MouseMove && !state.left_button_pressing)
+    {
+      if(target == mainwindow)
       {
-        const qglviewer::Vec& orig = camera->position();
-        const qglviewer::Vec& dir = point - orig;
-        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+        viewer->setFocus();
+        return false;
       }
+
+      is_ready_to_highlight = true;
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+      hl_pos = mouse_event->pos();
+      QTimer::singleShot(0, this, SLOT(highlight()));
     }//end MouseMove
     return false;
   }
-
   bool is_edit_mode;
+  bool is_ready_to_highlight;
+  bool is_ready_to_paint_select;
+  QPoint hl_pos;
+  QPoint paint_pos;
+
 };
 
 #endif
