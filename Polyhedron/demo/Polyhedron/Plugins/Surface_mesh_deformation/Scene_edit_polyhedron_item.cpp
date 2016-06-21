@@ -9,6 +9,8 @@
 #include <QTime>
 
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 struct Scene_edit_polyhedron_item_priv
 {
   Scene_edit_polyhedron_item_priv(Scene_polyhedron_item* poly_item,  Ui::DeformMesh* ui_widget, QMainWindow* mw, Scene_edit_polyhedron_item* parent)
