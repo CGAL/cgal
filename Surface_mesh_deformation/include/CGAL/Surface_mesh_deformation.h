@@ -51,23 +51,94 @@ namespace CGAL {
 ///@brief Deformation algorithm type
 enum Deformation_algorithm_tag
 {
-  ORIGINAL_ARAP,  /**< use original as-rigid-as possible algorithm */
-  SPOKES_AND_RIMS /**< use spokes and rims version of as-rigid-as possible algorithm */
+  ORIGINAL_ARAP,   /**< use original as-rigid-as possible algorithm */
+  SPOKES_AND_RIMS, /**< use spokes and rims version of as-rigid-as possible algorithm */
+  SRE_ARAP         /**< use smooth rotation enhanced As-rigid-as-possible */
 };
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
 template<class TriangleMesh, Deformation_algorithm_tag deformation_algorithm_tag>
-struct Weight_calculator_selector;
+struct Types_selectors;
 
 template<class TriangleMesh>
-struct Weight_calculator_selector<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
-  typedef Single_cotangent_weight_impl<TriangleMesh> weight_calculator;
+struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
+  typedef internal::Single_cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  struct ARAP_visitor{
+    template <class VertexPointMap>
+    void init(TriangleMesh, VertexPointMap){}
+
+    void rotation_matrix_pre(
+      typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
+      TriangleMesh&){}
+
+    template <class Square_matrix_3>
+    void update_covariance_matrix(
+      Square_matrix_3&,
+      const Square_matrix_3&){}
+
+    void set_sre_arap_alpha(double){}
+  };
 };
 
 template<class TriangleMesh>
-struct Weight_calculator_selector<TriangleMesh, CGAL::ORIGINAL_ARAP> {
-  typedef Cotangent_weight_impl<TriangleMesh> weight_calculator;
+struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
+  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  typedef typename Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS>
+    ::ARAP_visitor ARAP_visitor;
+};
+
+template<class TriangleMesh>
+struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
+  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  class ARAP_visitor{
+    double m_nb_edges_incident;
+    double m_area;
+    double m_alpha;
+
+  public:
+    ARAP_visitor(): m_alpha(0.02) {}
+
+    template<class VertexPointMap>
+    void init(TriangleMesh triangle_mesh, const VertexPointMap& vpmap)
+    {
+      // calculate area
+      m_area = 0;
+      typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+      BOOST_FOREACH(face_descriptor f, faces(triangle_mesh))
+      {
+        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+          h = halfedge(f, triangle_mesh);
+        m_area += std::sqrt(CGAL::squared_area(
+                        get(vpmap, source(h, triangle_mesh) ),
+                        get(vpmap, target(h, triangle_mesh) ),
+                        get(vpmap, target(next(h, triangle_mesh), triangle_mesh) ) ));
+      }
+    }
+
+    void rotation_matrix_pre(
+      typename boost::graph_traits<TriangleMesh>::vertex_descriptor vi,
+      TriangleMesh& hg)
+    {
+      typename boost::graph_traits<TriangleMesh>::in_edge_iterator e, e_end;
+      cpp11::tie(e,e_end) = in_edges(vi, hg);
+      m_nb_edges_incident=std::distance(e,e_end);
+    }
+
+    template <class Square_matrix_3>
+    void update_covariance_matrix(
+      Square_matrix_3& cov,
+      const Square_matrix_3& rot_mtr)
+    {
+      // add neighbor rotation
+      cov += m_alpha * m_area * rot_mtr.transpose() / m_nb_edges_incident;
+    }
+
+    void set_sre_arap_alpha(double a){ m_alpha=a; }
+  };
 };
 
 // property map that create a Simple_cartesian<double>::Point_3
@@ -164,7 +235,7 @@ public:
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
     WC,
-    typename internal::Weight_calculator_selector<TM, TAG>::weight_calculator
+    typename internal::Types_selectors<TM, TAG>::Weight_calculator
   >::type Weight_calculator;
 #else
   ///
@@ -269,12 +340,10 @@ private:
 
   Vertex_point_map vertex_point_map;
 
-#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
 public:
-// SR-ARAP [Zohar13]
-  double m_sr_arap_alpha;
+  typename internal::Types_selectors<TM, TAG>::ARAP_visitor arap_visitor;
 private:
-#endif
+
 #ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
   std::vector<double> scales;
 #endif
@@ -401,9 +470,7 @@ private:
       hedge_weight.push_back(
         this->weight_calculator(*eb, m_triangle_mesh, Wrapper(vertex_point_map)));
     }
-#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
-    m_sr_arap_alpha=2;
-#endif
+    arap_visitor.init(m_triangle_mesh, vertex_point_map);
   }
 
 public:
@@ -884,8 +951,19 @@ public:
    */
   const Triangle_mesh& triangle_mesh() const
   { return m_triangle_mesh; }
+
   const Triangle_mesh& halfedge_graph() const
   { return m_triangle_mesh; }
+
+  /**
+   * Sets the alpha coefficient that determines the weight of the bending term (rotation smoothness) for the SRE-ARAP deformation technique.
+   * The range of values can be from 0 to infinity. When alpha=0, the method reverts to ARAP. When alpha is increased, neighboring rotations become similar to each other, where alpha=infinity results in a global rigid transformation of the ROI. The value of alpha depends on the surface area and shape. Since alpha is not too sensitive, it can be tweaked in most cases by multiplying it by powers of 10.
+   * The default value for alpha is 0.02.
+   */
+  void set_sre_arap_alpha(double a)
+  {
+    arap_visitor.set_sre_arap_alpha(a);
+  }
 
 /// @} Utilities
 
@@ -1162,10 +1240,8 @@ private:
 
       in_edge_iterator e, e_end;
 
-#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
-      cpp11::tie(e,e_end) = in_edges(vi, m_triangle_mesh);
-      double ne_i=std::distance(e,e_end);
-#endif
+      arap_visitor.rotation_matrix_pre(vi, m_triangle_mesh);
+
       for (cpp11::tie(e,e_end) = in_edges(vi, m_triangle_mesh); e != e_end; e++)
       {
         halfedge_descriptor he=halfedge(*e, m_triangle_mesh);
@@ -1177,11 +1253,9 @@ private:
         double wij = hedge_weight[id(he)];
 
         cr_traits.add_scalar_t_vector_t_vector_transpose(cov, wij, pij, qij); // cov += wij * (pij * qij)
-#ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
-        // add neighbor rotation
-        cov += m_sr_arap_alpha * rot_mtr[vj_id].transpose() / ne_i;
-#endif
 
+        if ( vj_id < rot_mtr.size() )
+          arap_visitor.update_covariance_matrix(cov, rot_mtr[vj_id]);
       }
 
       cr_traits.compute_close_rotation(cov, rot_mtr[vi_id]);
