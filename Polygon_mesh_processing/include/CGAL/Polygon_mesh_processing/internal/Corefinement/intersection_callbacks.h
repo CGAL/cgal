@@ -33,13 +33,12 @@ namespace CGAL {
 namespace Corefinement {
 
 /// TODO document me
-template<class TriangleMesh, class EdgeToFaces, class Node_visitor>
+template<class TriangleMesh, class EdgeToFaces>
 class Collect_face_bbox_per_edge_bbox {
 protected:
   const TriangleMesh& tm_faces;
   const TriangleMesh& tm_edges;
   EdgeToFaces& edge_to_faces;
-  Node_visitor& visitor;
 
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::face_descriptor face_descriptor;
@@ -50,12 +49,10 @@ public:
   Collect_face_bbox_per_edge_bbox(
     const TriangleMesh& tm_faces,
     const TriangleMesh& tm_edges,
-    EdgeToFaces& edge_to_faces,
-    Node_visitor& visitor)
+    EdgeToFaces& edge_to_faces)
   : tm_faces(tm_faces)
   , tm_edges(tm_edges)
   , edge_to_faces(edge_to_faces)
-  , visitor(visitor)
   {}
 
   void operator()( const Box& face_box, const Box& edge_box) const
@@ -64,7 +61,6 @@ public:
     halfedge_descriptor eh = edge_box.info();
 
     edge_to_faces[eh].insert(face(fh, tm_faces));
-    visitor.add_filtered_intersection(eh,fh,tm_edges,tm_faces);
   }
 
   void operator()( const Box* face_box_ptr, const Box* edge_box_ptr) const
@@ -77,8 +73,7 @@ public:
 template<class TriangleMesh,
          class VertexPointMap,
          class EdgeToFaces,
-         class CoplanarFaceSet,
-         class Node_visitor>
+         class CoplanarFaceSet>
 class Collect_face_bbox_per_edge_bbox_with_coplanar_handling {
 protected:
   const TriangleMesh& tm_faces;
@@ -87,7 +82,6 @@ protected:
   const VertexPointMap& vpmap_tme;
   EdgeToFaces& edge_to_faces;
   CoplanarFaceSet& coplanar_faces;
-  Node_visitor& visitor;
 
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::face_descriptor face_descriptor;
@@ -102,15 +96,13 @@ public:
     const VertexPointMap& vpmap_tmf,
     const VertexPointMap& vpmap_tme,
     EdgeToFaces& edge_to_faces,
-    CoplanarFaceSet& coplanar_faces,
-    Node_visitor& visitor)
+    CoplanarFaceSet& coplanar_faces)
   : tm_faces(tm_faces)
   , tm_edges(tm_edges)
   , vpmap_tmf(vpmap_tmf)
   , vpmap_tme(vpmap_tme)
   , edge_to_faces(edge_to_faces)
   , coplanar_faces(coplanar_faces)
-  , visitor(visitor)
   {}
 
   void operator()( const Box& face_box, const Box& edge_box) const {
@@ -148,13 +140,11 @@ public:
             : std::make_pair(face(fh, tm_faces), face(opposite(eh, tm_edges), tm_edges))
           );
       }
-      visitor.add_filtered_intersection(eh,fh,tm_edges,tm_faces);
       //in case only the edge is coplanar, the intersection points will be detected using an incident facet
       return;
     }
     // non-coplanar case
     edge_to_faces[edge(eh,tm_edges)].insert(face(fh, tm_faces));
-    visitor.add_filtered_intersection(eh,fh,tm_edges,tm_faces);
   }
 
   void operator()(const Box* face_box_ptr, const Box* edge_box_ptr) const

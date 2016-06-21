@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_COREFINEMENT_H
 #define CGAL_POLYGON_MESH_PROCESSING_COREFINEMENT_H
 
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/Visitor.h>
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -102,8 +105,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
 template <class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2,
-          class NamedParametersOut,
-          >
+          class NamedParametersOut>
 bool
 join(const TriangleMesh& tm1,
      const TriangleMesh& tm2,
@@ -121,8 +123,7 @@ join(const TriangleMesh& tm1,
 template <class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2,
-          class NamedParametersOut,
-          >
+          class NamedParametersOut>
 bool
 intersection(const TriangleMesh& tm1,
              const TriangleMesh& tm2,
@@ -139,8 +140,7 @@ intersection(const TriangleMesh& tm1,
 template <class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2,
-          class NamedParametersOut,
-          >
+          class NamedParametersOut>
 bool
 difference(const TriangleMesh& tm1,
            const TriangleMesh& tm2,
@@ -178,14 +178,37 @@ difference(const TriangleMesh& tm1,
  */
  template <class TriangleMesh,
            class NamedParameters1,
-           class NamedParameters2
-           >
+           class NamedParameters2>
  void
  corefine(TriangleMesh& tm1,
           TriangleMesh& tm2,
           const NamedParameters1& np1,
-          const NamedParameters2& np2);
+          const NamedParameters2& np2)
+{
+  typedef typename GetVertexPointMap< TriangleMesh, NamedParameters1>::type Vpm;
+  Vpm vpm1 = choose_param(get_param(np1, vertex_point), get(vertex_point, tm1));
+  Vpm vpm2 = choose_param(get_param(np2, vertex_point), get(vertex_point, tm2));
+
+  typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
+  typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
+  typedef Corefinement::Visitor<TriangleMesh,Vpm> Visitor;
+  Dnv dnv;
+  Dfv dfv;
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
+    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv));
+  const bool throw_on_self_intersection = false; // TODO parameter???
+  functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
+}
+
+ template <class TriangleMesh>
+ void
+ corefine(TriangleMesh& tm1,
+          TriangleMesh& tm2)
+{
+  using namespace CGAL::Polygon_mesh_processing::parameters;
+  corefine(tm1, tm2, all_default(), all_default());
+}
 
 } }  // end of namespace CGAL::Polygon_mesh_processing
 
-#endif CGAL_POLYGON_MESH_PROCESSING_COREFINEMENT_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_COREFINEMENT_H

@@ -26,6 +26,9 @@
 namespace CGAL {
 namespace Polygon_mesh_processing{
 
+///\todo use a functor similar to the one in split_graph_into_polylines
+///      instead of the OutputIterator (+explicit construction from vector
+///      that is document a default one)
 template <class OutputIterator,
           class TriangleMesh
         //   class NamedParametersP,
