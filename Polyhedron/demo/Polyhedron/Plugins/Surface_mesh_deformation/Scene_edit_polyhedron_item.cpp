@@ -639,7 +639,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
 
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
-  std::cout << "Remeshing...";
+  std::cout << "Remeshing (target edge length = " << target_length <<")...";
 
   ROI_border_pmap border_pmap(&roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
