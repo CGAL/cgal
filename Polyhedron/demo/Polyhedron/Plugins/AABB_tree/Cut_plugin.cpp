@@ -3,16 +3,20 @@
 #include <QtCore/qglobal.h>
 #include <CGAL/AABB_intersections.h>
 
+#include "../../AABB_tree/demo/AABB_tree/Color_ramp.h"
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/gl.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -25,19 +29,57 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
-#include  <CGAL/Three/Scene_item.h>
-//typedef CGAL::Simple_cartesian<double> Epic_kernel;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
+#include <CGAL/Three/Scene_item.h>
+#include <QMouseEvent>
+const int slow_distance_grid_size = 100;
+const int fast_distance_grid_size = 20;
+class Texture{
+private:
+     int Width;
+     int Height;
+     int size;
+    GLubyte *data;
+public:
+    Texture(int w, int h)
+    {
+        Width = w;
+        Height = h;
+        size = 3*Height*Width;
+        data = new GLubyte[Height*Width*3];
+    }
+    int getWidth() const {return Width;}
+    int getHeight() const {return Height;}
+    int getSize() const {return size;}
+    void setData(int i, int j, int r, int g, int b){
+        data[3*(Width*j+i) + 0] = r;
+        data[3*(Width*j+i) + 1] = g;
+        data[3*(Width*j+i) + 2] = b;
+    }
 
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>     AABB_primitive;
-typedef CGAL::AABB_traits<Epic_kernel,AABB_primitive>           AABB_traits;
-typedef CGAL::AABB_tree<AABB_traits>                            AABB_tree;
+    GLubyte* getData(){return data; }
+
+};
+//typedef CGAL::Simple_cartesian<double> Epic_kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel         Epic_kernel;
+
+typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>        Facet_primitive;
+typedef CGAL::AABB_traits<Kernel, Facet_primitive>                  Facet_traits;
+typedef CGAL::AABB_tree<Facet_traits>                               Facet_tree;
+
+typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron>     Edge_primitive;
+typedef CGAL::AABB_traits<Kernel, Edge_primitive>                   Edge_traits;
+typedef CGAL::AABB_tree<Edge_traits>                                Edge_tree;
+
+
+typedef QMap<QObject*, Facet_tree*>                   Facet_trees;
+typedef QMap<QObject*, Edge_tree*>                    Edge_trees;
+
 
 class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const AABB_tree& tree_) : CGAL::Three::Scene_item(1,1), tree(tree_)
+  Scene_aabb_item(const Facet_tree& tree_) : CGAL::Three::Scene_item(1,1), tree(tree_)
   {
       positions_lines.resize(0);
       invalidateOpenGLBuffers();
@@ -90,7 +132,7 @@ public:
       compute_bbox();
   }
 public:
-  const AABB_tree& tree;
+  const Facet_tree& tree;
 private:
    mutable  std::vector<float> positions_lines;
 
@@ -119,7 +161,7 @@ private:
     {
        positions_lines.clear();
 
-       CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
+       CGAL::AABB_drawing_traits<Facet_primitive, CGAL::AABB_node<Facet_traits> > traits;
        traits.v_edges = &positions_lines;
 
        tree.traversal(0, traits);
@@ -262,6 +304,402 @@ private:
 
 }; // end class Scene_edges_item
 
+class Q_DECL_EXPORT Scene_aabb_plane_item : public Scene_plane_item
+{
+public:
+
+  typedef Kernel::FT                                                  FT;
+  enum Cut_planes_types {
+    UNSIGNED_FACETS = 0, SIGNED_FACETS, UNSIGNED_EDGES, CUT_SEGMENTS
+  };
+  Scene_aabb_plane_item(const CGAL::Three::Scene_interface* scene_interface)
+    :Scene_plane_item(scene_interface)
+  {
+    for(int i=0; i<NbVaos; i++)
+    {
+      QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
+      vaos.push_back(n_vao);
+      n_vao->create();
+    }
+    for(int i=0; i<NbVbos; i++)
+    {
+      QOpenGLBuffer n_buf;
+      buffers.push_back(n_buf);
+      buffers[i].create();
+    }
+    m_grid_size = slow_distance_grid_size;
+    m_red_ramp.build_red();
+    m_blue_ramp.build_blue();
+
+
+    texture = new Texture(m_grid_size,m_grid_size);
+    //UV Mapping
+    tex_map.push_back(0.0f);
+    tex_map.push_back(0.0f);
+
+    tex_map.push_back(0.0f);
+    tex_map.push_back(1.0f);
+
+    tex_map.push_back(1.0f);
+    tex_map.push_back(0.0f);
+
+    tex_map.push_back(1.0f);
+    tex_map.push_back(0.0f);
+
+    tex_map.push_back(0.0f);
+    tex_map.push_back(1.0f);
+
+    tex_map.push_back(1.0f);
+    tex_map.push_back(1.0f);
+  }
+
+  ~Scene_aabb_plane_item()
+  {
+
+    Q_FOREACH(Facet_tree *tree, facet_trees.values())
+    {
+      delete tree;
+    }
+    Q_FOREACH(Edge_tree *tree, edge_trees.values())
+    {
+      delete tree;
+    }
+    delete texture;
+  }
+
+  void update_grid_size()const
+  {
+      m_grid_size = m_fast_distance ? fast_distance_grid_size
+                                    : slow_distance_grid_size;
+      delete texture;
+      texture = new Texture(m_grid_size,m_grid_size);
+  }
+
+  void set_facet_trees(Facet_trees facet_trees)
+  {
+    this->facet_trees = facet_trees;
+  }
+
+  void set_edge_trees(Edge_trees edge_trees)
+  {
+    this->edge_trees = edge_trees;
+  }
+  void draw(CGAL::Three::Viewer_interface* viewer) const
+  {
+    if(!are_buffers_filled)
+    {
+      computeElements();
+      initializeBuffers(viewer);
+    }
+    QMatrix4x4 fMatrix;
+    fMatrix.setToIdentity();
+    for(int i=0; i< 16 ; i++)
+      fMatrix.data()[i] =  frame->matrix()[i];
+
+    switch( m_cut_plane )
+    {
+    case UNSIGNED_EDGES:
+    case UNSIGNED_FACETS:
+    case SIGNED_FACETS:
+
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, textureId);
+
+      vaos[TexturedCutplane]->bind();
+      program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
+      attribBuffers(viewer,PROGRAM_WITH_TEXTURE);
+      program->bind();
+      program->setUniformValue("f_matrix", fMatrix);
+      program->setAttributeValue("color_facets", QColor(Qt::white));
+      program->setAttributeValue("normal", QVector3D(0.0,0.0,0.0));
+
+      glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
+      program->release();
+      vaos[TexturedCutplane]->release();
+      break;
+
+    case CUT_SEGMENTS:
+      vaos[Facets]->bind();
+      program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+      attribBuffers(viewer, PROGRAM_NO_SELECTION);
+      program->bind();
+      program->setUniformValue("f_matrix", fMatrix);
+      program->setAttributeValue("colors", this->color());
+      glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
+
+      program->release();
+      vaos[Facets]->release();
+      break;
+    }
+  }
+  void drawEdges(CGAL::Three::Viewer_interface *viewer) const
+  {
+    QMatrix4x4 fMatrix;
+    fMatrix.setToIdentity();
+    for(int i=0; i< 16 ; i++)
+      fMatrix.data()[i] =  frame->matrix()[i];
+    vaos[Edges]->bind();
+    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+    program->bind();
+    program->setUniformValue("f_matrix", fMatrix);
+    program->setAttributeValue("colors", QColor(Qt::black));
+    glDrawArrays(GL_LINES, 0,static_cast<GLsizei>(positions_lines.size()/3));
+    program->release();
+    vaos[Edges]->release();
+  }
+
+  void invalidateOpenGLBuffers()
+  {
+    are_buffers_filled = false;
+  }
+
+  void set_fast_distance(bool b)const  { m_fast_distance = b; update_grid_size(); }
+  void setCutPlaneType(Cut_planes_types type){ m_cut_plane = type;}
+  Cut_planes_types cutPlaneType()const {return m_cut_plane;}
+private:
+  Edge_trees edge_trees;
+  Facet_trees facet_trees;
+  enum VAOs{
+    Facets = 0,
+    Edges,
+    TexturedCutplane,
+    NbVaos
+  };
+  enum VBOs{
+    Facets_vertices = 0,
+    Edges_vertices,
+    UVCoords,
+    NbVbos
+  };
+  typedef std::pair<Kernel::Point_3,Kernel::FT> Point_distance;
+  std::vector<QOpenGLVertexArrayObject*> vaos;
+  mutable int m_grid_size;
+  mutable bool m_fast_distance;
+  mutable Point_distance m_distance_function[100][100];
+  mutable GLuint textureId;
+  mutable Texture *texture;
+  // An aabb_tree indexing polyhedron facets/segments
+  mutable Color_ramp m_red_ramp;
+  mutable Color_ramp m_blue_ramp;
+  mutable Color_ramp m_thermal_ramp;
+  mutable Kernel::FT m_max_distance_function;
+  mutable std::vector<float> tex_map;
+  mutable Cut_planes_types m_cut_plane;
+  mutable std::vector<QOpenGLBuffer> buffers;
+
+  FT random_in(const double a,
+                      const double b)const
+  {
+      double r = rand() / (double)RAND_MAX;
+      return (FT)(a + (b - a) * r);
+  }
+
+  Kernel::Vector_3 random_vector() const
+  {
+      FT x = random_in(0.0,1.0);
+      FT y = random_in(0.0,1.0);
+      FT z = random_in(0.0,1.0);
+      return Kernel::Vector_3(x,y,z);
+  }
+
+  template <typename Tree>
+  void compute_distance_function(const QMap<QObject*, Tree*>& trees, bool is_signed = false)const
+  {
+    // Get transformation
+    const GLdouble* m = frame->matrix();
+
+    // OpenGL matrices are row-major matrices
+    Kernel::Aff_transformation_3 t = Kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
+        m[1], m[5], m[9], m[13],
+        m[2], m[6], m[10], m[14]);
+
+    m_max_distance_function = FT(0);
+    FT diag = scene_diag();
+    const FT dx = 2*diag;
+    const FT dy = 2*diag;
+    const FT z (0);
+    const FT fd =  FT(1);
+    Tree *min_tree = NULL;
+    for(int i=0 ; i<m_grid_size ; ++i)
+    {
+      FT x = -diag/fd + FT(i)/FT(m_grid_size) * dx;
+
+      for(int j=0 ; j<m_grid_size ; ++j)
+      {
+        FT y = -diag/fd + FT(j)/FT(m_grid_size) * dy;
+
+        Kernel::Point_3 query = t( Kernel::Point_3(x,y,z) );
+        FT min = DBL_MAX;
+
+        Q_FOREACH(Tree *tree, trees.values())
+        {
+          FT dist = CGAL::sqrt( tree->squared_distance(query) );
+          if(dist < min)
+          {
+            min = dist;
+            if(is_signed)
+              min_tree = tree;
+          }
+        }
+
+        m_distance_function[i][j] = Point_distance(query,min);
+        m_max_distance_function = (std::max)(min, m_max_distance_function);
+
+        if(is_signed)
+        {
+          typedef typename Tree::size_type size_type;
+          Kernel::Vector_3 random_vec = random_vector();
+
+          const Kernel::Point_3& p = m_distance_function[i][j].first;
+          const FT unsigned_distance = m_distance_function[i][j].second;
+
+          // get sign through ray casting (random vector)
+          Kernel::Ray_3  ray(p, random_vec);
+          size_type nbi = min_tree->number_of_intersected_primitives(ray);
+
+          FT sign ( (nbi&1) == 0 ? 1 : -1);
+          m_distance_function[i][j].second = sign * unsigned_distance;
+        }
+      }
+    }
+  }
+
+  void compute_texture(int i, int j,Color_ramp pos_ramp ,Color_ramp neg_ramp)const
+  {
+
+
+      const FT& d00 = m_distance_function[i][j].second;
+      // determines grey level
+      unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
+
+      if(d00 > 0.0)
+          texture->setData(i,j,pos_ramp.r(i00),pos_ramp.g(i00),pos_ramp.b(i00));
+      else
+          texture->setData(i,j,neg_ramp.r(i00),neg_ramp.g(i00),neg_ramp.b(i00));
+
+
+  }
+  void computeElements()const
+  {
+    Scene_plane_item::compute_normals_and_vertices();
+
+
+    switch(m_cut_plane)
+    {
+    case UNSIGNED_FACETS:
+      if ( facet_trees.empty() ) { return; }
+      compute_distance_function(facet_trees);
+      break;
+    case SIGNED_FACETS:
+      if ( facet_trees.empty() ) { return; }
+      compute_distance_function(facet_trees, true);
+
+      break;
+    case UNSIGNED_EDGES:
+      if ( edge_trees.empty() ) { return; }
+      compute_distance_function(edge_trees);
+      break;
+    default:
+      break;
+    }
+    //The texture
+    switch(m_cut_plane)
+    {
+    case SIGNED_FACETS:
+        for( int i=0 ; i < texture->getWidth(); i++ )
+        {
+            for( int j=0 ; j < texture->getHeight() ; j++)
+            {
+                compute_texture(i,j,m_red_ramp,m_blue_ramp);
+            }
+        }
+        break;
+    case UNSIGNED_FACETS:
+    case UNSIGNED_EDGES:
+        for( int i=0 ; i < texture->getWidth(); i++ )
+        {
+            for( int j=0 ; j < texture->getHeight() ; j++)
+            {
+                compute_texture(i,j,m_thermal_ramp,m_thermal_ramp);
+            }
+        }
+        break;
+    default:
+      break;
+    }
+  }
+
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
+  {
+    if(GLuint(-1) == textureId) {
+        glGenTextures(1, &textureId);
+    }
+
+    //vaos for the basic cutting plane
+    {
+      program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+      program->bind();
+      vaos[Facets]->bind();
+
+      buffers[Facets_vertices].bind();
+      buffers[Facets_vertices].allocate(positions_quad.data(),
+                          static_cast<int>(positions_quad.size()*sizeof(float)));
+      program->enableAttributeArray("vertex");
+      program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+      buffers[Facets_vertices].release();
+      vaos[Facets]->release();
+
+
+      vaos[Edges]->bind();
+      buffers[Edges_vertices].bind();
+      buffers[Edges_vertices].allocate(positions_lines.data(),
+                          static_cast<int>(positions_lines.size()*sizeof(float)));
+      program->enableAttributeArray("vertex");
+      program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+      buffers[Edges_vertices].release();
+      vaos[Edges]->release();
+
+
+      program->release();
+    }
+    //vao for the textured cutting planes
+    {
+      program = getShaderProgram(PROGRAM_WITH_TEXTURE);
+      program->bind();
+      vaos[TexturedCutplane]->bind();
+      buffers[Facets_vertices].bind();
+      program->enableAttributeArray("vertex");
+      program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+      buffers[Facets_vertices].release();
+
+      buffers[UVCoords].bind();
+      buffers[UVCoords].allocate(tex_map.data(), static_cast<int>(tex_map.size()*sizeof(float)));
+      program->attributeLocation("v_texCoord");
+      program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
+      program->enableAttributeArray("v_texCoord");
+      buffers[UVCoords].release();
+      program->release();
+
+      glBindTexture(GL_TEXTURE_2D, textureId);
+      glTexImage2D(GL_TEXTURE_2D,
+                   0,
+                   GL_RGB,
+                   texture->getWidth(),
+                   texture->getHeight(),
+                   0,
+                   GL_RGB,
+                   GL_UNSIGNED_BYTE,
+                   texture->getData());
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+    }
+    are_buffers_filled = true;
+  }
+
+};
 using namespace CGAL::Three;
 class Polyhedron_demo_cut_plugin :
   public QObject,
@@ -337,6 +775,31 @@ public:
             Messages_interface* m);
   QList<QAction*> actions() const;
 
+  bool eventFilter(QObject *, QEvent *event)
+  {
+    if(event->type() == QEvent::MouseButtonPress)
+    {
+      QMouseEvent * mevent = static_cast<QMouseEvent*>(event);
+      if ( mevent->modifiers() == Qt::ControlModifier )
+      {
+        plane_item->set_fast_distance(true);
+        plane_item->invalidateOpenGLBuffers();
+        plane_item->itemChanged();
+      }
+    }
+    else if(event->type() == QEvent::MouseButtonRelease)
+    {
+      QMouseEvent * mevent = static_cast<QMouseEvent*>(event);
+      if ( mevent->modifiers() == Qt::ControlModifier )
+      {
+        plane_item->set_fast_distance(false);
+        plane_item->invalidateOpenGLBuffers();
+        plane_item->itemChanged();
+      }
+    }
+    return false;
+  }
+
 public Q_SLOTS:
 
   void updateCutPlane()
@@ -344,33 +807,49 @@ public Q_SLOTS:
      ready_to_cut = true;
      QTimer::singleShot(0,this,SLOT(cut()));
   }
-  void createCutPlane();
   void enableAction();
   void cut();
+  void computeIntersection();
   void reset_edges() {
     edges_item = 0;
   }
+  void Intersection();
+  void SignedFacets();
+  void UnsignedFacets();
+  void UnsignedEdges();
+  void resetPlane()
+  {
+    plane_item = NULL;
+  }
 
 private:
+  void createCutPlane();
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
-  Scene_plane_item* plane_item;
+  Scene_aabb_plane_item* plane_item;
   Scene_edges_item* edges_item;
-  QAction* actionCreateCutPlane;
-  bool ready_to_cut;
+  QAction* actionIntersection;
+  QAction* actionSignedFacets;
+  QAction* actionUnsignedFacets;
+  QAction* actionUnsignedEdges;
 
-  typedef std::map<QObject*,  AABB_tree*> Trees;
-  Trees trees;
+  bool ready_to_cut;
+  Facet_trees facet_trees;
+  Edge_trees edge_trees;
 }; // end Polyhedron_demo_cut_plugin
 
 
 Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
 {
-  for ( Trees::iterator it = trees.begin(), end = trees.end() ;
-       it != end ; ++it)
+  Q_FOREACH(Facet_tree *tree, facet_trees.values())
   {
-    delete it->second;
+    delete tree;
   }
+    Q_FOREACH(Edge_tree *tree, edge_trees.values())
+    {
+      delete tree;
+    }
+
 }
 
 
@@ -380,19 +859,40 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
 {
   scene = scene_interface;
   messages = m;
-  actionCreateCutPlane = new QAction(tr("Create Cutting Plane"), mainWindow);
-  actionCreateCutPlane->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
+  actionIntersection = new QAction(tr("Create Cutting Plane"), mainWindow);
+  actionSignedFacets = new QAction(tr("Signed Distance Function to Facets"), mainWindow);
+  actionUnsignedFacets= new QAction(tr("Unsigned Distance Function to Facets"), mainWindow);
+  actionUnsignedEdges = new QAction(tr("Unsigned Distance Function to Edges"), mainWindow);
+
+  actionIntersection->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
+  actionSignedFacets->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
+  actionUnsignedFacets->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
+  actionUnsignedEdges->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
   ready_to_cut = true;
-  connect(actionCreateCutPlane, SIGNAL(triggered()),
-          this, SLOT(createCutPlane()));
+  connect(actionIntersection, SIGNAL(triggered()),
+          this, SLOT(Intersection()));
+  connect(actionSignedFacets, SIGNAL(triggered()),
+          this, SLOT(SignedFacets()));
+  connect(actionUnsignedFacets, SIGNAL(triggered()),
+          this, SLOT(UnsignedFacets()));
+  connect(actionUnsignedEdges, SIGNAL(triggered()),
+          this, SLOT(UnsignedEdges()));
+  plane_item = NULL;
+
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  viewer->installEventFilter(this);
+
 }
 
 QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
-  return QList<QAction*>() << actionCreateCutPlane;
+  return QList<QAction*>() << actionIntersection
+                           << actionSignedFacets
+                           << actionUnsignedFacets
+                           << actionUnsignedEdges;
 }
 
 void Polyhedron_demo_cut_plugin::createCutPlane() {
-  plane_item = new Scene_plane_item(scene);
+  plane_item = new Scene_aabb_plane_item(scene);
   const CGAL::Three::Scene_interface::Bbox& bbox = scene->bbox();
   plane_item->setPosition((bbox.xmin()+bbox.xmax())/2.f,
                           (bbox.ymin()+bbox.ymax())/2.f,
@@ -406,8 +906,10 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   plane_item->setName(tr("Cutting plane"));
   connect(plane_item->manipulatedFrame(), SIGNAL(modified()),
           this, SLOT(updateCutPlane()));
+  connect(plane_item, SIGNAL(aboutToBeDestroyed()),
+          this, SLOT(resetPlane()));
   scene->addItem(plane_item);
-  actionCreateCutPlane->setEnabled(false);
+  actionIntersection->setEnabled(false);
 
   // Hide polyhedrons and call cut() (avoid that nothing shows up until user
   // decides to move the plane item)
@@ -417,11 +919,58 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     if ( NULL != poly_item )
       poly_item->setVisible(false);
   }
-  cut();
+
+  //fills the tree maps
+  for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+    CGAL::Three::Scene_item* item = scene->item(i);
+    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
+    if(!poly_item) continue;
+
+    if(facet_trees.find(poly_item) == facet_trees.end()) {
+      facet_trees[poly_item] = new Facet_tree(faces(*(poly_item->polyhedron())).first,
+                                               faces(*(poly_item->polyhedron())).second,
+                                               *poly_item->polyhedron() );
+    }
+    if(edge_trees.find(poly_item) == edge_trees.end()) {
+      edge_trees[poly_item] = new Edge_tree(edges(*poly_item->polyhedron()).first,
+                                            edges(*poly_item->polyhedron()).second,
+                                            *poly_item->polyhedron());
+    }
+  }
+  plane_item->set_facet_trees(facet_trees);
+  plane_item->set_edge_trees(edge_trees);
 }
 
+void Polyhedron_demo_cut_plugin::Intersection()
+{
+  if(!plane_item)
+    createCutPlane();
+  plane_item->setCutPlaneType(Scene_aabb_plane_item::CUT_SEGMENTS);
+  computeIntersection();
+  plane_item->invalidateOpenGLBuffers();
+}
 
-void Polyhedron_demo_cut_plugin::cut() {
+void Polyhedron_demo_cut_plugin::SignedFacets() {
+  if(!plane_item)
+    createCutPlane();
+  plane_item->setCutPlaneType(Scene_aabb_plane_item::SIGNED_FACETS);
+  plane_item->invalidateOpenGLBuffers();
+}
+void Polyhedron_demo_cut_plugin::UnsignedFacets() {
+  if(!plane_item)
+    createCutPlane();
+  plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_FACETS);
+  plane_item->invalidateOpenGLBuffers();
+}
+void Polyhedron_demo_cut_plugin::UnsignedEdges() {
+  if(!plane_item)
+    createCutPlane();
+  plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_EDGES);
+  plane_item->invalidateOpenGLBuffers();
+}
+
+void Polyhedron_demo_cut_plugin::computeIntersection()
+{
   QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!edges_item) {
     edges_item = new Scene_edges_item;
@@ -433,61 +982,78 @@ void Polyhedron_demo_cut_plugin::cut() {
   }
   if(ready_to_cut)
   {
-  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
-  const qglviewer::Vec& n =
-    plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
-  Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
-  //std::cerr << plane << std::endl;
-  edges_item->edges.clear();
-  QTime time;
-  time.start();
-  for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-    CGAL::Three::Scene_item* item = scene->item(i);
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if(!poly_item) continue;
-    Trees::iterator it = trees.find(poly_item);
-    if(it == trees.end()) {
-      it = trees.insert(trees.begin(),
-                        std::make_pair(poly_item,
-                                       new AABB_tree(faces(*(poly_item->polyhedron())).first,
-                                                     faces(*(poly_item->polyhedron())).second,
-                                                     *poly_item->polyhedron() )));
-      Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
-      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
-      aabb_item->setRenderingMode(Wireframe);
-      aabb_item->setColor(Qt::black);
-      aabb_item->setVisible(false);
-      scene->addItem(aabb_item);
-      //std::cerr << "size: " << it->second->size() << std::endl;
-    }
-    
-    if(!CGAL::do_intersect(plane, it->second->bbox()))
-      continue;
-    
-    std::vector<AABB_tree::Object_and_primitive_id> intersections;
-    it->second->all_intersections(plane, std::back_inserter(intersections));
-    
-    for ( std::vector<AABB_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
-         end = intersections.end() ; it != end ; ++it )
-    {
-      const Epic_kernel::Segment_3* inter_seg =
-        CGAL::object_cast<Epic_kernel::Segment_3>(&(it->first));
-      
-      if ( NULL != inter_seg )
-        edges_item->edges.push_back(*inter_seg);
-    }
-    ready_to_cut = false;
-  }
+    const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
+    const qglviewer::Vec& n =
+        plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+    Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
+    //std::cerr << plane << std::endl;
+    edges_item->edges.clear();
+    QTime time;
+    time.start();
+    for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+      CGAL::Three::Scene_item* item = scene->item(i);
+      Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
+      if(!poly_item) continue;
+      Facet_trees::iterator it = facet_trees.find(poly_item);
+      if(it == facet_trees.end()) {
+        it = facet_trees.insert(facet_trees.begin(),
+                                poly_item,
+                                new Facet_tree(faces(*(poly_item->polyhedron())).first,
+                                               faces(*(poly_item->polyhedron())).second,
+                                               *poly_item->polyhedron() ));
+        Scene_aabb_item* aabb_item = new Scene_aabb_item(*it.value());
+        aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
+        aabb_item->setRenderingMode(Wireframe);
+        aabb_item->setColor(Qt::black);
+        aabb_item->setVisible(false);
+        scene->addItem(aabb_item);
+        //std::cerr << "size: " << it->second->size() << std::endl;
+      }
 
-  messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
-  edges_item->invalidateOpenGLBuffers();
-  scene->itemChanged(edges_item);
+      if(!CGAL::do_intersect(plane, it.value()->bbox()))
+        continue;
+
+      std::vector<Facet_tree::Object_and_primitive_id> intersections;
+      it.value()->all_intersections(plane, std::back_inserter(intersections));
+
+      for ( std::vector<Facet_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
+            end = intersections.end() ; it != end ; ++it )
+      {
+        const Epic_kernel::Segment_3* inter_seg =
+            CGAL::object_cast<Epic_kernel::Segment_3>(&(it->first));
+
+        if ( NULL != inter_seg )
+          edges_item->edges.push_back(*inter_seg);
+      }
+    }
+
+    messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+    edges_item->invalidateOpenGLBuffers();
+    scene->itemChanged(edges_item);
+    ready_to_cut = false;
   }
   QApplication::restoreOverrideCursor();
 }
 
+void Polyhedron_demo_cut_plugin::cut()
+{
+  plane_item->set_fast_distance(true);
+  switch(plane_item->cutPlaneType())
+  {
+  case Scene_aabb_plane_item::CUT_SEGMENTS:
+    computeIntersection();
+    break;
+  default:
+    if(ready_to_cut)
+    {
+      plane_item->invalidateOpenGLBuffers();
+      ready_to_cut = false;
+    }
+  }
+}
+
 void Polyhedron_demo_cut_plugin::enableAction() {
-  actionCreateCutPlane->setEnabled(true);
+  actionIntersection->setEnabled(true);
 }
 
 #include "Cut_plugin.moc"
