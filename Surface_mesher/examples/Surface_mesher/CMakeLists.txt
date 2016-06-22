@@ -19,6 +19,11 @@ if ( CGAL_FOUND AND CGAL_ImageIO_FOUND )
   create_single_source_cgal_program( "mesh_a_3d_gray_image.cpp" )
   create_single_source_cgal_program( "mesh_an_implicit_function.cpp" )
 
+  if(CGAL_ImageIO_USE_ZLIB)
+    target_link_libraries(mesh_a_3d_gray_image ${ZLIB_LIBRARY})
+    target_link_libraries(mesh_an_implicit_function ${ZLIB_LIBRARY})
+  endif()
+
 else()
   if(RUNNING_CGAL_AUTO_TEST)
     # Just to avoid a warning from CMake if that variable is set on the command line...

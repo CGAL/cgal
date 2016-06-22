@@ -32,7 +32,7 @@
 CGAL_INLINE_FUNCTION
 char *fgetns(char *str, int n,  _image *im ) {
   char *ret;
-  int l;
+  std::size_t l;
 
   memset( str, 0, n );
   ret = ImageIO_gets( im, str, n );

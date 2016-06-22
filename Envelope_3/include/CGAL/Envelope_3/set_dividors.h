@@ -104,7 +104,7 @@ public:
     while (begin != end)
     {
       
-      if (CGAL::default_random.get_bool())
+      if (CGAL::get_default_random().get_bool())
         *set1++ = *begin++;
       else
         *set2++ = *begin++;

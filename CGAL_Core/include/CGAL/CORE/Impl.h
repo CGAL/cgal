@@ -40,6 +40,12 @@
   #define CORE_INLINE
 #endif
 
+#ifdef CGAL_HEADER_ONLY
+#define CGAL_INLINE_FUNCTION inline
+#else
+#define CGAL_INLINE_FUNCTION
+#endif
+
 // Macros for memory pool
 #ifdef CORE_DISABLE_MEMORY_POOL
   #define CORE_NEW(T)
@@ -51,9 +57,9 @@
   #define CORE_DELETE(T)  void operator delete( void *p, size_t );
 
   #define CORE_MEMORY_IMPL(T)                                            \
-    void *T::operator new( size_t size)                                  \
+    CGAL_INLINE_FUNCTION void *T::operator new( size_t size)             \
     { return MemoryPool<T>::global_allocator().allocate(size); }         \
-    void T::operator delete( void *p, size_t )                           \
+    CGAL_INLINE_FUNCTION void T::operator delete( void *p, size_t )      \
     { MemoryPool<T>::global_allocator().free(p); }
 #endif
 

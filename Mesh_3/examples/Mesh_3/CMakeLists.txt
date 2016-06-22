@@ -84,9 +84,18 @@ if ( CGAL_FOUND )
       create_single_source_cgal_program( "mesh_3D_image_with_features.cpp" )
       if( CGAL_ImageIO_USE_ZLIB )
         create_single_source_cgal_program( "mesh_optimization_example.cpp" )
+        target_link_libraries(mesh_optimization_example ${ZLIB_LIBRARY})
+        
         create_single_source_cgal_program( "mesh_optimization_lloyd_example.cpp" )
+        target_link_libraries(mesh_optimization_lloyd_example ${ZLIB_LIBRARY})
+        
         create_single_source_cgal_program( "mesh_3D_image.cpp" )
+        target_link_libraries(mesh_3D_image ${ZLIB_LIBRARY})
+        
+        target_link_libraries(mesh_3D_gray_image ${ZLIB_LIBRARY})
+        
         create_single_source_cgal_program( "mesh_3D_image_variable_size.cpp" )
+        target_link_libraries(mesh_3D_image_variable_size ${ZLIB_LIBRARY})        
       else()
         message( STATUS "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled." )
       endif()

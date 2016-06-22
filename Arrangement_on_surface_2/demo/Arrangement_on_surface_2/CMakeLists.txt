@@ -23,7 +23,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
     OverlayDialog.ui
     ArrangementDemoPropertiesDialog.ui
   )
-  qt5_wrap_cpp( arrangement_2_mocs
+  qt5_wrap_cpp( CGAL_Qt5_MOC_FILES
     ArrangementDemoWindow.h
     ArrangementDemoTab.h
     Callback.h
@@ -35,7 +35,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
     PropertyValueDelegate.h
     #PropertyValueDelegate.cpp
   )
-  qt5_add_resources( arrangement_2_resources
+  qt5_add_resources( CGAL_Qt5_RESOURCE_FILES
     ArrangementDemoWindow.qrc
   )
   add_executable( arrangement_2
@@ -61,9 +61,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
     DeleteCurveModeItemEditor.cpp
     PointsGraphicsItem.cpp
     VerticalRayGraphicsItem.cpp
-   ${arrangement_2_mocs}
+   ${CGAL_Qt5_MOC_FILES}
    ${arrangement_2_uis}
-   ${arrangement_2_resources}
+   ${CGAL_Qt5_RESOURCE_FILES}
   )
   qt5_use_modules(arrangement_2 Widgets Script)
   target_link_libraries( arrangement_2

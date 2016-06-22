@@ -62,7 +62,7 @@ namespace CORE {
 const double relEps = (1.0 + std::ldexp(1.0, -52));
 
 /// CORE_DIAGFILE is used for all warning and error messages
-extern const char* CORE_DIAGFILE;
+const char* const CORE_DIAGFILE = "Core_Diagnostics";  // global file name
 
 /// template function returns the maximum value of two
 template <class T>

@@ -43,7 +43,11 @@ double init_min_double()
 #ifndef CGAL_HEADER_ONLY
 
 namespace internal {
-double minimin = init_min_double();
+  double minimin = init_min_double();
+  double& get_static_minimin()
+  {
+    return minimin;
+  }
 }
 
 #else // CGAL_HEADER_ONLY

@@ -48,8 +48,8 @@ PTRIMAGE_FORMAT createGisFormat() {
 CGAL_INLINE_FUNCTION
 int writeGis( char *name, _image* im) {
   char *outputName;
-  int length, extLength=0, res;
-
+  std::size_t res;
+  std::size_t length, extLength = 0;
 
   length=strlen(name);
   outputName= (char *)ImageIO_alloc(length+8);
@@ -80,15 +80,14 @@ int writeGis( char *name, _image* im) {
     return ImageIO_OPENING;
   }
 
-  res = writeGisHeader(im);
-  if (res < 0 ) {
+  if ( !writeGisHeader(im) ) {
     fprintf(stderr, "writeGis: error: unable to write header of \'%s\'\n",
 	    outputName);
     if ( outputName != NULL ) ImageIO_free( outputName );
     ImageIO_close( im );
     im->fd = NULL;
     im->openMode = OM_CLOSE;
-    return( res );
+    return -1;
   }
 
   ImageIO_close(im);
@@ -110,7 +109,7 @@ int writeGis( char *name, _image* im) {
   }
 
   if ( im->dataMode == DM_ASCII ) {
-    int i, j, n, size;
+    std::size_t i, j, n, size;
     char *str = (char*)ImageIO_alloc( _LGTH_STRING_+1 );
     size = im->xdim * im->ydim * im->zdim * im->vdim;
     n = ( im->xdim < 16 ) ? im->xdim : 16;
@@ -143,8 +142,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
-	      if ( res  <= 0 ) {
+	      res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -162,8 +161,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
-	      if ( res  <= 0 ) {
+	      res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -189,8 +188,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
-	      if ( res  <= 0 ) {
+              res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -208,8 +207,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-	      res = ImageIO_write( im, str, strlen( str )  );
-	      if ( res  <= 0 ) {
+              res = ImageIO_write( im, str, strlen( str ));
+	      if ( res < strlen(str) ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
 		return( -3 );
@@ -223,13 +222,14 @@ int writeGis( char *name, _image* im) {
     } /* end of switch( im->wordKind ) */
 
     ImageIO_free( str ); 
+    if (outputName != NULL) ImageIO_free(outputName);
+    return static_cast<int>(res);
   }
   else {
-    res = _writeInrimageData(im);
+    bool ret = _writeInrimageData(im);
+    if (outputName != NULL) ImageIO_free(outputName);
+    return (ret ? 1 : -1);
   }
-  if ( outputName != NULL ) ImageIO_free( outputName );
-  return res;
-  
 }
 
 CGAL_INLINE_FUNCTION
@@ -261,8 +261,7 @@ int readGisHeader( const char* name,_image* im)
   iss.str(str);
   iss >> im->xdim >> im->ydim >> im->zdim >> im->vdim;
 
-  status = iss.str().length();
-  switch ( status ) {
+  switch (iss.str().length()) {
   case 2 :    im->zdim = 1;
   case 3 :    im->vdim = 1;
   case 4 :    break;
@@ -468,7 +467,7 @@ int readGisHeader( const char* name,_image* im)
   /* header is read. close header file and open data file. */
   if( name != NULL ) {
     
-    int length = strlen(name) ;
+    std::size_t length = strlen(name) ;
     char* data_filename = (char *) ImageIO_alloc(length+4) ;
     
     if( strcmp( name+length-4, ".dim" ) ) {
@@ -510,7 +509,7 @@ int readGisHeader( const char* name,_image* im)
        only U8 and S8
      */
     if ( im->dataMode == DM_ASCII ) {
-      int size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
+      std::size_t size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
       unsigned int n;
       char *tmp;
       int ret, iv=0;
@@ -636,14 +635,14 @@ int readGisHeader( const char* name,_image* im)
 
 
 CGAL_INLINE_FUNCTION
-int writeGisHeader( const _image* inr )
+bool writeGisHeader( const _image* inr )
 {
   const char *proc = "writeGisHeader";
   std::ostringstream oss;
 
   if ( inr->vectMode == VM_NON_INTERLACED ) {
     fprintf( stderr, "%s: can not write non interlaced data\n", proc );
-    return -1;
+    return false;
   }
 
   /* dimensions
@@ -671,7 +670,7 @@ int writeGisHeader( const _image* inr )
       break;
     default :
       fprintf( stderr, "%s: unknown wordSign\n", proc );
-      return -1;    
+      return false;    
     }
     break;
   case WK_FLOAT :
@@ -683,12 +682,12 @@ int writeGisHeader( const _image* inr )
     }
     else {
       fprintf( stderr, "%s: unknown WK_FLOAT word dim\n", proc );
-      return -1;    
+      return false;    
     }
     break;
   default :
     fprintf( stderr, "%s: unknown wordKind for image\n", proc );
-    return -1;  
+    return false;  
   }
   oss << "\n";
   
@@ -717,9 +716,9 @@ int writeGisHeader( const _image* inr )
     oss << "-om ascii\n";
   }
   if( ImageIO_write( inr, oss.str().data(), oss.str().length()) == 0) {
-    return -1;
+    return false;
   }
-  return 1;
+  return true;
 }
 
 

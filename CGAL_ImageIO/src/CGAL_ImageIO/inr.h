@@ -36,7 +36,7 @@ int _writeInrimageHeader(const _image *im,
 
 /** Writes the given image body in an already opened file.
     @param im image descriptor */
-int _writeInrimageData(const _image *im);
+bool _writeInrimageData(const _image *im);
 
 /** read header from an opened inrimage file
     @param im opened inrmage descriptor */

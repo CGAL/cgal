@@ -299,7 +299,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         if (s) {
           subsetSize >>= 1;
           for (std::size_t i = 0;i<subsetSize;i++) {
-            std::size_t index = default_random(2);
+            std::size_t index = get_default_random()(2);
             index = index + (i<<1);
             index = (index >= remainingPoints) ? remainingPoints - 1 : index;
             indices[i] = index;
@@ -494,7 +494,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             bool done = false;
             do {
               do 
-              first_sample = default_random(m_num_available_points);
+              first_sample = get_default_random()(m_num_available_points);
               while (m_shape_index[first_sample] != -1);
 
               done = m_global_octree->drawSamplesFromCellContainingPoint(
@@ -780,7 +780,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
   private:
     int select_random_octree_level() {
-      return (int) default_random(m_global_octree->maxLevel() + 1);
+      return (int) get_default_random()(m_global_octree->maxLevel() + 1);
     }
 
     Shape* get_best_candidate(std::vector<Shape* >& candidates,
