@@ -46,8 +46,6 @@ public:
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
 
-    CGAL_USE_TYPE(typename Mesh_domain::Surface_patch_index);
-
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
@@ -74,6 +72,7 @@ public:
 
     typedef typename Mesh_domain::Surface_patch_index Patch_id;
     CGAL_static_assertion(CGAL::Output_rep<Patch_id>::is_specialized);
+    CGAL_USE_TYPE(Patch_id);
   }
 
 };
