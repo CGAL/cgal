@@ -1,6 +1,6 @@
 message("Configuring libCGAL_ImageIO")
 
-if(NOT CGAL_HEADER_ONLY)
+#if(NOT CGAL_HEADER_ONLY)
   find_package( OpenGL )
   find_package( ZLIB )
 
@@ -42,36 +42,40 @@ if(NOT CGAL_HEADER_ONLY)
 
     use_essential_libs()
 
-    include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} .)
-
-    link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
   endif(OPENGL_FOUND)
 
-else (NOT CGAL_HEADER_ONLY)
-  cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
+if (CGAL_HEADER_ONLY)
+  cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-if(CGAL_HEADER_ONLY OR OPENGL_FOUND)
+if(OPENGL_FOUND)
   collect_cgal_library( CGAL_ImageIO "")
 endif()
 
-if(NOT CGAL_HEADER_ONLY AND OPENGL_FOUND)
+if(OPENGL_FOUND)
   add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
 
   add_dependencies( CGAL_ImageIO CGAL )
 
-  # CGAL_ImageIO only depends on CGAL in DEBUG, but we still link it
-  # in both build types.
-  target_link_libraries( CGAL_ImageIO CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
+  if (NOT CGAL_HEADER_ONLY)
+    # CGAL_ImageIO only depends on CGAL in DEBUG, but we still link it
+    # in both build types.
+    target_link_libraries( CGAL_ImageIO CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
+    include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} .)
+    link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+  else()
+    target_link_libraries( CGAL_ImageIO INTERFACE ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
+    target_include_directories( CGAL_ImageIO INTERFACE ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
+  endif()
 endif()
 
-if(NOT CGAL_HEADER_ONLY AND NOT OPENGL_FOUND)
+if(NOT OPENGL_FOUND)
   message( STATUS "libCGAL_ImageIO needs OpenGL, cannot be configured.")
 endif()
   
 message("libCGAL_ImageIO is configured")
 
-if(NOT CGAL_HEADER_ONLY AND NOT ZLIB_FOUND)
+if(NOT ZLIB_FOUND)
   message( STATUS "NOTICE: libCGAL_ImageIO needs ZLib to read compressed files. That feature will not be activated.")
 endif()
 

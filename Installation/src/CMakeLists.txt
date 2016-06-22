@@ -1,4 +1,6 @@
 function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
+
+  if (NOT CGAL_HEADER_ONLY)
   # IMPORTANT: First delete all_files.cpp
   if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
     file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp)
@@ -24,6 +26,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp "\#include \"${source}\"\n")
     endif()
   endforeach()
+  endif()
 
   if(CGAL_BUILD_SHARED_LIBS)
     set(CGAL_LIB_PREFIX "")
@@ -47,13 +50,14 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
        ${rc_file}
        ${ADDITIONAL_FILES})
    #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-     if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-       set_target_properties(${LIBRARY_NAME} PROPERTIES
-         VERSION "${CGAL_SOVERSION}"
-         SOVERSION "${CGAL_SONAME_VERSION}")
-     endif()
-
+   if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+     set_target_properties(${LIBRARY_NAME} PROPERTIES
+       VERSION "${CGAL_SOVERSION}"
+       SOVERSION "${CGAL_SONAME_VERSION}")
    endif()
+  else()
+      add_library(${LIBRARY_NAME} INTERFACE)
+  endif()
 
   if(CGAL_AUTO_LINK_ENABLED)
     if (NOT CGAL_HEADER_ONLY)
@@ -72,7 +76,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     endif()
   endif()
 
-  if (NOT CGAL_HEADER_ONLY)
+  # if (NOT CGAL_HEADER_ONLY)
     install(TARGETS ${LIBRARY_NAME} EXPORT ${LIBRARY_NAME}Exports
       RUNTIME DESTINATION "${CGAL_INSTALL_BIN_DIR}"
       LIBRARY DESTINATION "${CGAL_INSTALL_LIB_DIR}"
@@ -80,7 +84,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     install(EXPORT ${LIBRARY_NAME}Exports
       DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
       NAMESPACE CGAL::)
-  endif()
+  # endif()
 
   # We have to call configure_file twice to force double expansion of variables.
   configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
@@ -200,11 +204,9 @@ CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
 
-if (NOT CGAL_HEADER_ONLY)
+# if (NOT CGAL_HEADER_ONLY)
   export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
-else()
-  install(FILES "${CMAKE_BINARY_DIR}/CGALExports.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
-endif()
+# endif()
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 

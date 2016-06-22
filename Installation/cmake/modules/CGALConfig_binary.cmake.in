@@ -28,7 +28,7 @@ if(NOT POLICY CMP0024 OR NOT CGAL_BUILDING_LIBS)
     endif()
   endmacro()
 
-  if(NOT MSVC)
+  if(NOT MSVC AND NOT CGAL_HEADER_ONLY)
     CGAL_get_property_optional(CGAL_LIBRARY CGAL::CGAL LOCATION)
     CGAL_get_property_optional(CGAL_Core_LIBRARY CGAL::CGAL_Core LOCATION)
     CGAL_get_property_optional(CGAL_ImageIO_LIBRARY CGAL::CGAL_ImageIO LOCATION)
