@@ -25,7 +25,6 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Surface_mesh_deformation.h>
-#include <CGAL/Polygon_mesh_processing/remesh.h>
 
 #include <boost/function_output_iterator.hpp>
 #include <QGLBuffer>

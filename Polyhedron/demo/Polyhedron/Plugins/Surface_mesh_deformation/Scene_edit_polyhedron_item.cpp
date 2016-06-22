@@ -9,6 +9,8 @@
 #include <QTime>
 
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 struct Scene_edit_polyhedron_item_priv
 {
   Scene_edit_polyhedron_item_priv(Scene_polyhedron_item* poly_item,  Ui::DeformMesh* ui_widget, QMainWindow* mw, Scene_edit_polyhedron_item* parent)
@@ -33,6 +35,7 @@ struct Scene_edit_polyhedron_item_priv
       delete poly_item;
   }
   void remesh();
+  void expand_or_reduce(int);
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
   void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);
@@ -538,8 +541,40 @@ void Scene_edit_polyhedron_item::remesh()
 {
   d->remesh();
 }
+
+struct Is_constrained_map
+{
+  boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>* m_set_ptr;
+
+  typedef vertex_descriptor                  key_type;
+  typedef bool                               value_type;
+  typedef bool                               reference;
+  typedef boost::read_write_property_map_tag category;
+
+  Is_constrained_map()
+    : m_set_ptr(NULL)
+  {}
+  Is_constrained_map( boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function>* set_)
+    : m_set_ptr(set_)
+  {}
+  friend bool get(const Is_constrained_map& map, const key_type& k)
+  {
+    CGAL_assertion(map.m_set_ptr != NULL);
+    return map.m_set_ptr->count(k);
+  }
+  friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
+  {
+    CGAL_assertion(map.m_set_ptr != NULL);
+    if (b)  map.m_set_ptr->insert(k);
+    else    map.m_set_ptr->erase(k);
+  }
+};
+
 void Scene_edit_polyhedron_item_priv::remesh()
 {
+  if(deform_mesh->roi_vertices().empty())
+    return;
+  boost::unordered_set<vertex_descriptor, CGAL::Handle_hash_function> constrained_set;
   const Polyhedron& g = deform_mesh->halfedge_graph();
   Array_based_vertex_point_map vpmap(&positions);
 
@@ -550,8 +585,13 @@ void Scene_edit_polyhedron_item_priv::remesh()
   ROI_faces_pmap roi_faces_pmap;
   BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
+    if(deform_mesh->is_control_vertex(v))
+      constrained_set.insert(v);
+
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
+      if(fv == boost::graph_traits<Polyhedron>::null_face())
+        continue;
       bool add_face=true;
       BOOST_FOREACH(vertex_descriptor vfd, CGAL::vertices_around_face(halfedge(fv,g),g))
         if (roi_vertices.count(vfd)==0)
@@ -564,6 +604,12 @@ void Scene_edit_polyhedron_item_priv::remesh()
     }
   }
 
+  if (roi_facets.empty())
+  {
+    std::cout << "Remeshing canceled (there is no facet with "
+              << "its 3 vertices in the ROI)." << std::endl;
+    return;
+  }
   // set face_index map needed for border_halfedges and isotropic_remeshing
   boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
     = get(CGAL::face_index, *item->polyhedron());
@@ -600,7 +646,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
 
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
-  std::cout << "Remeshing...";
+  std::cout << "Remeshing (target edge length = " << target_length <<")...";
 
   ROI_border_pmap border_pmap(&roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
@@ -612,9 +658,12 @@ void Scene_edit_polyhedron_item_priv::remesh()
     .vertex_point_map(vpmap)
     .edge_is_constrained_map(border_pmap)
     .face_patch_map(roi_faces_pmap)
+    .vertex_is_constrained_map(Is_constrained_map(&constrained_set))
     );
   std::cout << "done." << std::endl;
-
+  poly_item->update_vertex_indices();
+  poly_item->update_facet_indices();
+  poly_item->update_halfedge_indices();
   //reset ROI from its outside border roi_border
   item->clear_roi();
   do{
@@ -630,13 +679,21 @@ void Scene_edit_polyhedron_item_priv::remesh()
                                 Deform_mesh::Hedge_index_map(),
                                 vpmap);
 
+  item->create_ctrl_vertices_group();
+  BOOST_FOREACH(vertex_descriptor v, constrained_set)
+  {
+      item->insert_control_vertex(v);
+  }
+
   BOOST_FOREACH(face_descriptor f, faces(g))
   {
     if (!get(roi_faces_pmap, f))
       continue;
     BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, g), g))
-      item->insert_roi_vertex(target(h, g));
-
+    {
+      vertex_descriptor v = target(h, g);
+      item->insert_roi_vertex(v);
+    }
     put(roi_faces_pmap, f, false); //reset ids
   }
 
@@ -644,7 +701,6 @@ void Scene_edit_polyhedron_item_priv::remesh()
   compute_normals_and_vertices();
 
   poly_item->invalidate_aabb_tree(); // invalidate the AABB tree
-  item->create_ctrl_vertices_group();
 
   Q_EMIT item->itemChanged();
 }
@@ -671,6 +727,79 @@ void Scene_edit_polyhedron_item::change()
   d->need_change = true;
   QTimer::singleShot(0, this, SLOT(updateDeform()));
 }
+struct Is_selected_property_map{
+  std::vector<bool>* is_selected_ptr;
+  Is_selected_property_map()
+    : is_selected_ptr(NULL) {}
+  Is_selected_property_map(std::vector<bool>& is_selected)
+    : is_selected_ptr( &is_selected) {}
+
+  std::size_t id(vertex_descriptor v){ return v->id(); }
+
+  friend bool get(Is_selected_property_map map, vertex_descriptor v)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    return (*map.is_selected_ptr)[map.id(v)];
+  }
+
+  friend void put(Is_selected_property_map map, vertex_descriptor v, bool b)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    (*map.is_selected_ptr)[map.id(v)]=b;
+  }
+};
+
+void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
+{
+  std::vector<bool> mark(poly_item->polyhedron()->size_of_vertices(),false);
+  std::size_t original_size = deform_mesh->roi_vertices().size();
+  QVector<vertex_descriptor> points_to_save;
+  bool ctrl_active = ui_widget->CtrlVertRadioButton->isChecked();
+  BOOST_FOREACH(vertex_descriptor v,deform_mesh->roi_vertices())
+  {
+      mark[v->id()]=true;
+      if(ctrl_active)
+      {
+        if(!deform_mesh->is_control_vertex(v))
+          points_to_save.push_back(v);
+      }
+      else
+      {
+        if(deform_mesh->is_control_vertex(v))
+          points_to_save.push_back(v);
+      }
+  }
+
+  if(steps > 0)
+    expand_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+  else
+    reduce_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), -steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+
+  item->clear_roi();
+  item->create_ctrl_vertices_group();
+  for(Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
+  {
+    if(mark[it->id()]) {
+      if(ctrl_active)
+      {
+        if(points_to_save.contains(it))
+          item->insert_roi_vertex(it);
+        else
+          item->insert_control_vertex(it);
+      }
+      else{
+        if(points_to_save.contains(it))
+          item->insert_control_vertex(it);
+        else
+          item->insert_roi_vertex(it);
+      }
+    }
+  }
+  if(deform_mesh->roi_vertices().size() != original_size)
+  { item->invalidateOpenGLBuffers(); Q_EMIT item->itemChanged(); }
+}
 
 bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 {
@@ -687,8 +816,15 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     d->state.shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
   }
   // mouse events
+  if(event->type() == QEvent::Wheel
+     &&d->state.shift_pressing)
+  {
+    QWheelEvent *w_event = static_cast<QWheelEvent*>(event);
+    int steps = w_event->delta() / 120;
+    d->expand_or_reduce(steps);
+  }
   if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)
-	{
+  {
     QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
     if(mouse_event->button() == Qt::LeftButton) {
       d->state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
@@ -725,7 +861,10 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 #include "opengl_tools.h"
 void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        d->initializeBuffers(viewer);
+    {
+      d->compute_normals_and_vertices();
+      d->initializeBuffers(viewer);
+    }
     vaos[Scene_edit_polyhedron_item_priv::Edges]->bind();
     d->program = getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer,PROGRAM_NO_SELECTION);
@@ -752,7 +891,10 @@ void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer
 }
 void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        d->initializeBuffers(viewer);
+    {
+      d->compute_normals_and_vertices();
+      d->initializeBuffers(viewer);
+    }
     vaos[Scene_edit_polyhedron_item_priv::Facets]->bind();
     d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
     attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -933,7 +1075,6 @@ void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
 {
     if(d->spheres)
       d->spheres->clear_spheres();
-    d->compute_normals_and_vertices();
     update_normals();
     compute_bbox();
     are_buffers_filled = false;
@@ -1103,7 +1244,7 @@ void Scene_edit_polyhedron_item::selected(const std::set<Polyhedron::Vertex_hand
 bool Scene_edit_polyhedron_item::insert_control_vertex(vertex_descriptor v)
 {
   if(!is_there_any_ctrl_vertices_group()) {
-    print_message("There is no group of control vertices, create one!");
+    std::cerr<<"There is no group of control vertices, create one!\n";
     return false;
   } // no group of control vertices to insert
 
