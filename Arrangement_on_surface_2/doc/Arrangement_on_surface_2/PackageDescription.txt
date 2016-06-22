@@ -118,6 +118,26 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementWithHistoryOutputFormatter`
 - `ArrangementPointLocation_2`
 - `ArrangementVerticalRayShoot_2`
+- `ArrangementOpenLeftTraits_2`
+- `ArrangementOpenRightTraits_2`
+- `ArrangementOpenBottomTraits_2`
+- `ArrangementOpenTopTraits_2`
+- `ArrangementClosedLeftTraits_2`
+- `ArrangementClosedRightTraits_2`
+- `ArrangementClosedBottomTraits_2`
+- `ArrangementClosedTopTraits_2`
+- `ArrangementContractedLeftTraits_2`
+- `ArrangementContractedRightTraits_2`
+- `ArrangementContractedBottomTraits_2`
+- `ArrangementContractedTopTraits_2`
+- `ArrangementIdentifiedLeftTraits_2`
+- `ArrangementIdentifiedRightTraits_2`
+- `ArrangementIdentifiedBottomTraits_2`
+- `ArrangementIdentifiedTopTraits_2`
+- `ArrangementLeftSideTraits_2`
+- `ArrangementRightSideTraits_2`
+- `ArrangementBottomSideTraits_2`
+- `ArrangementTopSideTraits_2`
 
 ## Geometric Object Concepts ##
 

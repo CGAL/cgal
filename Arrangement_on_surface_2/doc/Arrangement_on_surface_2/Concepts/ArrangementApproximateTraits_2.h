@@ -17,8 +17,8 @@ point.
 \cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits_2>`
 \cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
 
-\sa ArrangementConstructXMonotoneCurveTraits_2`,
-    ArrangementXMonotoneTraits_2`, and
+\sa `ArrangementConstructXMonotoneCurveTraits_2`,
+    `ArrangementXMonotoneTraits_2`, and
     `ArrangementTraits_2`
 */
 class ArrangementApproximateTraits_2 {

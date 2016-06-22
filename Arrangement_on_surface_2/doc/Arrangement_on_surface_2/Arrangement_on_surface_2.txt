@@ -2553,10 +2553,9 @@ collected in two additional abstract layers called
 `ArrangementVerticalSide_2` and `ArrangementHorizontalSide_2`; see
 Figure \cgalFigureRef{aos_fig-side_clusters}.
 
-\paragraph aos_par-geom_traits-concepts_spcial Curves with Boundary Conditions
-
-The abstract concept `ArrangementVerticalSide_2` requires the
+The abstract concept `ArrangementHorizontalSide_2` requires the
 following predicate:
+
 <DL>
 
 <DT><B>`Parameter_space_in_x_2`:</B>
@@ -2588,8 +2587,9 @@ words, this overloaded version is required only for the concepts
 
 </DL>
 
-The abstract concept `ArrangementHorizontalSide_2` requires the
+The abstract concept `ArrangementVerticalSide_2` requires the
 following predicate:
+
 <DL>
 
 <DT><B>`Parameter_space_in_y_2`:</B>
@@ -2741,6 +2741,7 @@ similar manner.  </DL>
 
 The concepts `ArrangementIdentifiedLeftTraits_2` and
 `ArrangementIdentifiedRightTraits_2` introduces the following requirement:
+
 <DL>
 <DT><B>`Is_on_y_identification_2`:</B>
 
@@ -2759,7 +2760,7 @@ boundary.
 Similarly, the concepts `ArrangementIdentifiedBottomTraits_2` and
 `ArrangementIdentifiedTopTraits_2` introduces the following requirement:
 <DL>
-<DT><B>`Is_on_u_identification_2`:</B>
+<DT><B>`Is_on_x_identification_2`:</B>
 
 <DD>This predicate is overloaded with two versions.
 
@@ -3743,6 +3744,14 @@ instantiate the curve-data traits:
 \cgalExample{Arrangement_on_surface_2/dual_with_data.cpp}
 
 \section aos_sec-topol_traits The Topology Traits
+
+At this point we do not expose the topology traits concept. The
+package contains one topology traits, namely,
+`Arr_spherical_topology_traits_2`. It can be served as a topology
+traits for an arrangement embeded on a sphere. More precisely, for an
+arrangement embeded on a sphere defined over a parameter space the
+left and right boundary sides of which are identified and the top and
+bottom boundary sides are contracted.
 
 \section arr_secnotif The Notification Mechanism
 
