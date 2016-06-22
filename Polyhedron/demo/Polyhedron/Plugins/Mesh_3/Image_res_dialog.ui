@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>282</height>
+    <width>493</width>
+    <height>241</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Image Drawing Precision</string>
+   <string>Load a 3D image</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
    <item row="12" column="0" colspan="2">
@@ -36,14 +36,17 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Please choose the image type</string>
+      <string>Please choose the image &amp;type</string>
+     </property>
+     <property name="buddy">
+      <cstring>imageType</cstring>
      </property>
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>GroupBox</string>
+      <string>Drawing settings for a segment image</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
@@ -77,10 +80,13 @@
            <number>1</number>
           </property>
           <property name="text">
-           <string>Please choose the image drawing precision</string>
+           <string>Please choose the image drawing &amp;precision</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
+          </property>
+          <property name="buddy">
+           <cstring>precisionList</cstring>
           </property>
          </widget>
         </item>
@@ -97,7 +103,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>

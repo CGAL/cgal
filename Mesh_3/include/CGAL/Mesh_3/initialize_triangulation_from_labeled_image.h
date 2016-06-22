@@ -1,0 +1,237 @@
+// Copyright (c) 2015,2016 GeometryFactory
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Laurent Rineau
+
+#ifndef CGAL_MESH_3_INITIALIZE_TRIANGULATION_FROM_LABELED_IMAGE_H
+#define CGAL_MESH_3_INITIALIZE_TRIANGULATION_FROM_LABELED_IMAGE_H
+
+#include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
+
+#include <iostream>
+#include <queue>
+#include <CGAL/Mesh_3/squared_distance_Point_3_Triangle_3.h>
+#include <CGAL/iterator.h>
+#include <CGAL/point_generators_3.h>
+#include <CGAL/Image_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <boost/foreach.hpp>
+
+template <typename Point>
+struct Get_point
+{
+  const double vx, vy, vz;
+  Get_point(const CGAL::Image_3* image)
+    : vx(image->vx())
+    , vy(image->vy())
+    , vz(image->vz())
+  {}
+
+  Point operator()(const std::size_t i,
+                   const std::size_t j,
+                   const std::size_t k) const
+  {
+    return Point(double(i) * vx, double(j) * vy, double(k) * vz);
+  }
+};
+template<class C3T3, class MeshDomain, class MeshCriteria>
+void init_tr_from_labeled_image_call_init_features(C3T3&,
+                                                   const MeshDomain&,
+                                                   const MeshCriteria&,
+                                                   CGAL::Tag_false)
+{
+}
+template<class C3T3, class MeshDomain, class MeshCriteria>
+void init_tr_from_labeled_image_call_init_features(C3T3& c3t3,
+                                                   const MeshDomain& domain,
+                                                   const MeshCriteria& criteria,
+                                                   CGAL::Tag_true)
+{
+  CGAL::internal::Mesh_3::init_c3t3_with_features(c3t3,
+                                                  domain,
+                                                  criteria);
+  std::cout << c3t3.triangulation().number_of_vertices()
+            << " initial points on 1D-features" << std::endl;
+}
+
+
+template<class C3T3, class MeshDomain, class MeshCriteria,
+         typename Image_word_type>
+void initialize_triangulation_from_labeled_image(C3T3& c3t3,
+                                                 const MeshDomain&   domain,
+                                                 const CGAL::Image_3& image,
+                                                 const MeshCriteria& criteria,
+                                                 Image_word_type,
+                                                 bool protect_features = false
+                                                 )
+{
+  typedef typename C3T3::Triangulation       Tr;
+  typedef typename Tr::Point                 Weighted_point;
+  typedef typename Weighted_point::Point     Point_3;
+  typedef typename Tr::Segment               Segment_3;
+  typedef typename Tr::Geom_traits::Vector_3 Vector_3;
+  typedef typename Tr::Vertex_handle         Vertex_handle;
+  typedef typename Tr::Cell_handle           Cell_handle;
+
+  typedef Point_3 Point;
+  typedef MeshDomain Mesh_domain;
+
+  Tr& tr = c3t3.triangulation();
+
+  if(protect_features) {
+    init_tr_from_labeled_image_call_init_features
+      (c3t3, domain, criteria,
+       CGAL::internal::Mesh_3::Has_features<Mesh_domain>());
+  }
+
+  const double max_v = (std::max)((std::max)(image.vx(),
+                                             image.vy()),
+                                  image.vz());
+
+  typedef std::vector<std::pair<Point_3, std::size_t> > Seeds;
+  Seeds seeds;
+  Get_point<Point_3> get_point(&image);
+  std::cout << "Searching for connected components..." << std::endl;
+  CGAL::Identity<Image_word_type> no_transformation;
+  search_for_connected_components_in_labeled_image(image,
+                                                   std::back_inserter(seeds),
+                                                   CGAL::Emptyset_iterator(),
+                                                   no_transformation,
+                                                   get_point,
+                                                   Image_word_type());
+  std::cout << "  " << seeds.size() << " components were found." << std::endl;
+  std::cout << "Construct initial points..." << std::endl;
+  for(typename Seeds::const_iterator it = seeds.begin(), end = seeds.end();
+      it != end; ++it)
+  {
+    const double radius = double(it->second + 1)* max_v;
+    CGAL::Random_points_on_sphere_3<Point> points_on_sphere_3(radius);
+    typename Mesh_domain::Construct_intersection construct_intersection =
+      domain.construct_intersection_object();
+
+    std::vector<Vector_3> directions;
+    if(it->second < 2) {
+      // shoot in six directions
+      directions.push_back(Vector_3(-radius, 0, 0));
+      directions.push_back(Vector_3(+radius, 0, 0));
+      directions.push_back(Vector_3(0, -radius, 0));
+      directions.push_back(Vector_3(0, +radius, 0));
+      directions.push_back(Vector_3(0, 0, -radius));
+      directions.push_back(Vector_3(0, 0, +radius));
+    } else {
+      for(int i = 0; i < 20; ++i)
+      {
+        // shoot 20 random directions
+        directions.push_back(*points_on_sphere_3++ - CGAL::ORIGIN);
+      }
+    }
+
+    BOOST_FOREACH(const Vector_3& v, directions)
+    {
+      const Point test = it->first + v;
+      const typename Mesh_domain::Intersection intersect =
+        construct_intersection(Segment_3(it->first, test));
+      if (CGAL::cpp11::get<2>(intersect) != 0)
+      {
+        Point_3 pi = CGAL::cpp11::get<0>(intersect);
+
+        // This would cause trouble to optimizers
+        // check pi will not be hidden
+        typename Tr::Locate_type lt;
+        Cell_handle c;
+        int li, lj;
+        Cell_handle pi_cell = tr.locate(pi, lt, li, lj);
+        if(lt != Tr::OUTSIDE_AFFINE_HULL) {
+          switch (tr.dimension())
+          { //skip dimension 0
+          case 1:
+            if (tr.side_of_power_segment(pi_cell, pi, true) != CGAL::ON_BOUNDED_SIDE)
+              continue;
+            break;
+          case 2:
+            if (tr.side_of_power_circle(pi_cell, 3, pi, true) != CGAL::ON_BOUNDED_SIDE)
+              continue;
+            break;
+          case 3:
+            if (tr.side_of_power_sphere(pi_cell, pi, true) != CGAL::ON_BOUNDED_SIDE)
+              continue;
+          }
+        }
+
+        //check pi is not inside a protecting ball
+        std::vector<Vertex_handle> conflict_vertices;
+        if (tr.dimension() == 3)
+        {
+          tr.vertices_on_conflict_zone_boundary(pi, pi_cell
+            , std::back_inserter(conflict_vertices));
+        }
+        else
+        {
+          for (typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
+               vit != tr.finite_vertices_end(); ++vit)
+          {
+            if (vit->point().weight() > 0.)
+              conflict_vertices.push_back(vit);
+          }
+        }
+        bool pi_inside_protecting_sphere = false;
+        BOOST_FOREACH(Vertex_handle cv, conflict_vertices)
+        {
+          if (cv->point().weight() == 0.)
+            continue;
+          if (CGAL::compare_squared_distance(pi, cv->point(), cv->point().weight())
+              != CGAL::LARGER)
+          {
+            pi_inside_protecting_sphere = true;
+            break;
+          }
+        }
+        if (pi_inside_protecting_sphere)
+          continue;
+        const typename Mesh_domain::Index index = CGAL::cpp11::get<1>(intersect);
+
+        /// The following lines show how to insert initial points in the
+        /// `c3t3` object. [insert initial points]
+        Vertex_handle v = tr.insert(pi);
+
+        // `v` could be null if `pi` is hidden by other vertices of `tr`.
+        CGAL_assertion(v != Vertex_handle());
+
+        c3t3.set_dimension(v, 2); // by construction, points are on surface
+        c3t3.set_index(v, index);
+        /// [insert initial points]
+      }
+      // else
+      // {
+      //   std::cerr <<
+      //     boost::format("Error. Segment (%1%, %2%) does not intersect the surface!\n")
+      //     % it->first % test;
+      // }
+    }
+  }
+  std::cout << "  " << tr.number_of_vertices() << " initial points." << std::endl;
+  if ( c3t3.triangulation().dimension() != 3 )
+  {
+    std::cout << "  not enough points: triangulation.dimension() == "
+              << c3t3.triangulation().dimension() << std::endl;
+    CGAL::internal::Mesh_3::init_c3t3(c3t3, domain, criteria, 20);
+    std::cout << "  -> " << tr.number_of_vertices() << " initial points." << std::endl;
+  }
+}
+
+#endif // CGAL_MESH_3_INITIALIZE_TRIANGULATION_FROM_LABELED_IMAGE_H

@@ -39,6 +39,10 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
+#include <CGAL/Default.h>
+
+#include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
+
 namespace CGAL {
 
 struct Null_subdomain_index {

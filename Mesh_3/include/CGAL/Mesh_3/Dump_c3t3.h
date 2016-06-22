@@ -32,9 +32,13 @@ namespace CGAL {
 template <typename C3t3, 
           bool is_streamable = 
             is_streamable<typename C3t3::Triangulation::Vertex>::value &&
-            is_streamable<typename C3t3::Triangulation::Cell>::value &&
-            is_streamable<typename C3t3::Surface_patch_index>::value &&
-            is_streamable<typename C3t3::Subdomain_index>::value 
+            is_streamable<typename C3t3::Triangulation::Cell>::value
+            &&
+            (is_streamable<typename C3t3::Surface_patch_index>::value ||
+             Output_rep<typename C3t3::Surface_patch_index>::is_specialized)
+            &&
+            (is_streamable<typename C3t3::Subdomain_index>::value ||
+             Output_rep<typename C3t3::Subdomain_index>::is_specialized)
           >
 struct Dump_c3t3 {
   void dump_c3t3(const C3t3& c3t3, std::string prefix) const {
@@ -75,13 +79,17 @@ struct Dump_c3t3<C3t3, false> {
                 << "\n";
     }
 
-    if(!is_streamable<typename C3t3::Surface_patch_index>::value) {
+    if(!is_streamable<typename C3t3::Surface_patch_index>::value &&
+       !CGAL::Output_rep<typename C3t3::Surface_patch_index>::is_specialized)
+    {
       std::cerr << "     - C3t3::Surface_patch_index is not streamable\n";
       std::cerr << "       "
                 << typeid(typename C3t3::Surface_patch_index).name()
                 << "\n";
     }
-    if(!is_streamable<typename C3t3::Subdomain_index>::value) {
+    if(!is_streamable<typename C3t3::Subdomain_index>::value &&
+       !CGAL::Output_rep<typename C3t3::Subdomain_index>::is_specialized)
+    {
       std::cerr << "     - C3t3::Subdomain_index is not streamable\n";      
       std::cerr << "       "
                 << typeid(typename C3t3::Subdomain_index).name()

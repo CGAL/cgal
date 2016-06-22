@@ -155,7 +155,7 @@ public:
 };
 
 template <class F>
-class Output_rep< ::CORE::BigRat, F> {
+class Output_rep< ::CORE::BigRat, F> : public IO_rep_is_specialized {
     const ::CORE::BigRat& t;
 public:
     //! initialize with a const reference to \a t.
@@ -192,7 +192,9 @@ struct Needs_parens_as_product< ::CORE::BigRat >{
 };
 
 template <>
-class Output_rep< ::CORE::BigRat, Parens_as_product_tag > {
+class Output_rep< ::CORE::BigRat, Parens_as_product_tag >
+  : public IO_rep_is_specialized
+{
     const ::CORE::BigRat& t;
 public:
     // Constructor

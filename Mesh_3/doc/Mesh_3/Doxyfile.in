@@ -6,4 +6,8 @@ HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg 
                               ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_5.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/no-protection.png \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/protection-box.png \
-                              ${CGAL_PACKAGE_DOC_DIR}/fig/protection-all.png
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/protection-all.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/no-custom-init.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/with-custom-init.png
+
+EXAMPLE_PATH += ${CGAL_PACKAGE_INCLUDE_DIR}

@@ -29,6 +29,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Mesh_3/Has_features.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 namespace internal {
@@ -87,13 +88,13 @@ struct Write_mesh_domain_index {
     switch(dimension) {
     case 0: {
       const Ci& ci = get_index<Ci>(index);
-      if(is_ascii(os)) os << ci;
+      if(is_ascii(os)) os << oformat(ci);
       else CGAL::write(os, ci);
     }
       break;
     case 1: {
       const Si& si = get_index<Si>(index);
-      if(is_ascii(os)) os << si;
+      if(is_ascii(os)) os << oformat(si);
       else CGAL::write(os, si);
     }
       break;
@@ -122,7 +123,7 @@ struct Read_mesh_domain_index<Mesh_domain, false> {
       break;
     default: {// 3
       typename MT::Subdomain_index di;
-      if(is_ascii(is)) is >> di;
+      if(is_ascii(is)) is >> iformat(di);
       else CGAL::read(is, di);
       return  di;
     }
@@ -146,13 +147,13 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
     switch(dimension) {
     case 2: {
       const Spi& spi = get_index<Spi>(index);
-      if(is_ascii(os)) os << spi;
+      if(is_ascii(os)) os << oformat(spi);
       else CGAL::write(os, spi);
     }
       break;
     default: {// 3
       const Di& di = get_index<Di>(index);
-      if(is_ascii(os)) os << di;
+      if(is_ascii(os)) os << oformat(di);
       else CGAL::write(os, di);
     }
       break;
