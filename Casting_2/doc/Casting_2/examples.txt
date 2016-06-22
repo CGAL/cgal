@@ -1,0 +1,3 @@
+/*!
+\example Casting_2/single_mold_translational_casting.cpp
+*/

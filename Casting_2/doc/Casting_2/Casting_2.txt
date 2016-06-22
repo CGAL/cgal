@@ -1,0 +1,17 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Casting_of_polygons
+
+\anchor chapterEnvelope2
+
+\cgalAutoToc
+\authors Shahar Shamai and Efif Fogel
+
+\section casting_sec_intro Introduction
+
+\cgalExample{Casting_2/single_mold_translational_casting.cpp}
+
+*/
+} /* namespace CGAL */

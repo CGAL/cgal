@@ -1,0 +1,33 @@
+/// \defgroup PkgCasting2 2D Castings Reference
+/// \defgroup PkgCasting2Concepts Concepts
+/// \ingroup PkgCasting2
+/*!
+\addtogroup PkgCasting2
+\todo check generated documentation
+\cgalPkgDescriptionBegin{2D Castings,PkgCasting2Summary}
+\cgalPkgPicture{Casting_2/fig/Casting_2.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Shahar Shamai, Efi Fogel}
+\cgalPkgDesc{This package consists of the implementations of various predicates and operations related to castings of polygonal objects. In particular, it can be used to determine whether a mold for a polygonal object does exist. If a mold exists, the package can also used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.}
+\cgalPkgManuals{Chapter_Castings_of_polygons,PkgCasting2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.10}
+\cgalPkgDependsOn{\ref PkgCasting2Summary}
+\cgalPkgBib{cgal:sf-casting2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+This package consists of the implementations of various predicates and operations related to castings of polygonal objects. In particular, it can be used to determine whether a mold for a polygonal object does exist. If a mold exists, the package can also used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.
+
+\cgalClassifedRefPages
+
+## Functions ##
+- `CGAL::single_mold_translational_casting_2`
+
+## Concepts ##
+
+## Classes ##
+
+*/
