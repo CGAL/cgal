@@ -180,12 +180,19 @@ and <code>src/</code> directories).
   <ul>
     <li>Add the function <code>CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()</code>
     to check whether a polygon soup is a polygon mesh.</li>
+    <li> Add some new features to <code>CGAL::isotropic_remeshing()</code>:
+      <ul>
+        <li>
+          It is now possible to select fixed vertices that survive the remeshing process,
+          and to keep face attributes such as colors valid after remeshing.
+        </li>
+        <li>
+          The user can choose the number of relaxation steps happening at each loop,
+          and to run 1-dimensional relaxation along constrained polylines.
+        </li> 
+      </ul>
+    </li>
     <li>
-      Add some new features to <code>CGAL::isotropic_remeshing()</code>.
-      It is now possible to select fixed vertices that survive the remeshing process,
-      and to keep face attributes such as colors valid after remeshing.
-    </li> 
-     <li>
       The functions <code>CGAL::Polygon_mesh_processing::triangulate_face()</code>
       and <code>CGAL::Polygon_mesh_processing::triangulate_faces()</code>
       now indicate whether some faces have not been triangulated.

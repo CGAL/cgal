@@ -38,7 +38,7 @@ namespace Polygon_mesh_processing {
 * \ingroup PMP_meshing_grp
 * @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
-* edge flips, Laplacian smoothing and projection to the initial surface
+* edge flips, tangential relaxation and projection to the initial surface
 * to generate a smooth mesh with a prescribed edge length.
 *
 * @tparam PolygonMesh model of `MutableFaceGraph` that 
@@ -61,13 +61,13 @@ namespace Polygon_mesh_processing {
 * not be longer than 4/3*`target_edge_length`
 *
 * \cgalNamedParamsBegin
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`
+*  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of atomic operations performed (listed in the above description)
-*  \cgalParamEnd
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`
 *  \cgalParamEnd
 *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
 *    constrained-or-not status of each edge of `pmesh`. A constrained edge can be splitted
@@ -90,11 +90,18 @@ namespace Polygon_mesh_processing {
 *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
      faces of `faces`. Instance of a class model of `ReadWritePropertyMap`. It gets
      updated during the remeshing process while new faces are created.
+*  \cgalParamEnd
+*  \cgalParamBegin{number_of_relaxation_steps} the number of iterations of tangential
+*    relaxation that are performed at each iteration of the remeshing process
+*  \cgalParamEnd
+*  \cgalParamBegin{relax_constraints} If `true`, the end vertices of the edges set as
+*    constrained in `edge_is_constrained_map` and boundary edges move along the
+*    constrained polylines they belong to.
+*  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @sa `split_long_edges()`
 *
-*@todo document `1d_smoothing`
 *@todo add possibility to provide a functor that projects to a prescribed surface
 */
 template<typename PolygonMesh
@@ -189,7 +196,8 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
-  bool smoothing_1d = choose_param(get_param(np, smooth_along_features), false);
+  bool smoothing_1d = choose_param(get_param(np, relax_constraints), false);
+  unsigned int nb_laplacian = choose_param(get_param(np, number_of_relaxation_steps), 1);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -207,7 +215,7 @@ void isotropic_remeshing(const FaceRange& faces
     remesher.split_long_edges(high);
     remesher.collapse_short_edges(low, high);
     remesher.equalize_valences();
-    remesher.tangential_relaxation(smoothing_1d);
+    remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     remesher.project_to_surface();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
