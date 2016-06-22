@@ -131,7 +131,7 @@ Returns a bi-directional circulator pointing to one of the defining contour half
 
 There will always be as many incident defining contour halfedges as the degree of the vertex. 
 
-Each halfedge pointed to by this circulator is the one having its left side facing inwards (which happens to be the contour halfedge for which `is\_border()` is `false`). 
+Each halfedge pointed to by this circulator is the one having its left side facing inwards (which happens to be the contour halfedge for which `is_border()` is `false`). 
 */ 
 Defining_contour_halfedge_const_circulator defining_contour_halfedges_begin() const; 
 

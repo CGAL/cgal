@@ -48,7 +48,7 @@ StraightSkeletonHalfedge_2( int id );
 Halfedge_handle defining_contour_edge(); 
 
 /*!
-If this is a bisector halfedge, returns a handle to the inward-facing (non-border) contour halfedge corresponding to the defining contour edge which is to its left; if this is a contour halfedge, returns a handle to itself if `is\_border()` is `false`, or to its opposite if it is `true`. 
+If this is a bisector halfedge, returns a handle to the inward-facing (non-border) contour halfedge corresponding to the defining contour edge which is to its left; if this is a contour halfedge, returns a handle to itself if `is_border()` is `false`, or to its opposite if it is `true`. 
 */ 
 Halfedge_const_handle defining_contour_edge() const; 
 
