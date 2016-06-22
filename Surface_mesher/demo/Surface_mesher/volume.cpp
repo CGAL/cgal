@@ -1099,6 +1099,62 @@ void Volume::display_surface_mesher_result()
   save_image_settings(fileinfo.absoluteFilePath());
 }
 
+void Volume::gl_draw_image_bbox(const float line_width,
+                               const unsigned char red,
+                               const unsigned char green,
+                               const unsigned char blue)
+{
+  const _image* image_ptr = m_image.image();
+  if(image_ptr == NULL)
+    return;
+
+  glLineWidth(line_width);
+  glColor3ub(red,green,blue);
+  glBegin(GL_LINES);
+
+  const double xmax = (image_ptr->xdim - 1.0)*(image_ptr->vx);
+  const double ymax = (image_ptr->ydim - 1.0)*(image_ptr->vy);
+  const double zmax = (image_ptr->zdim - 1.0)*(image_ptr->vz);
+
+  glVertex3d(0.0,0.0,0.0);
+  glVertex3d(0.0,ymax,0.0);
+
+  glVertex3d(0.0,ymax,0.0);
+  glVertex3d(0.0,ymax,zmax);
+
+  glVertex3d(0.0,ymax,zmax);
+  glVertex3d(0.0,0.0,zmax);
+
+  glVertex3d(0.0,0.0,zmax);
+  glVertex3d(0.0,0.0,0.0);
+
+  glVertex3d(xmax,0.0,0.0);
+  glVertex3d(xmax,ymax,0.0);
+
+  glVertex3d(xmax,ymax,0.0);
+  glVertex3d(xmax,ymax,zmax);
+
+  glVertex3d(xmax,ymax,zmax);
+  glVertex3d(xmax,0.0,zmax);
+
+  glVertex3d(xmax,0.0,zmax);
+  glVertex3d(xmax,0.0,0.0);
+
+  glVertex3d(0.0,0.0,0.0);
+  glVertex3d(xmax,0.0,0.0);
+
+  glVertex3d(0.0,0.0,zmax);
+  glVertex3d(xmax,0.0,zmax);
+
+  glVertex3d(0.0,ymax,zmax);
+  glVertex3d(xmax,ymax,zmax);
+
+  glVertex3d(0.0,ymax,0.0);
+  glVertex3d(xmax,ymax,0.0);
+
+  glEnd();
+}
+
 void Volume::draw()
 {
   float	ambient[]  =   { 0.25f,
@@ -1181,7 +1237,7 @@ void Volume::draw()
 
   if(show_bbox) {
     ::glDisable(GL_LIGHTING);
-    m_image.gl_draw_bbox(3.0f,0,0,0);
+    gl_draw_image_bbox(3.0f,0,0,0);
   }
 
   if(!m_view_mc && m_draw_triangulation)

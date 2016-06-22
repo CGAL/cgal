@@ -165,6 +165,10 @@ void display_marchin_cube();
 private:
   template <typename Iterator>
   void gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem* = 0);
+  void gl_draw_image_bbox(const float line_width,
+                          const unsigned char red,
+                          const unsigned char green,
+                          const unsigned char blue);
 
   template <typename PointsOutputIterator,
 	    typename DomainsOutputIterator,

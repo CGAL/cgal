@@ -171,18 +171,6 @@ public:
                                          vx,vy,vz,offset));
   }
 
-  // implementation in src/CGAL_ImageIO/Image_3.cpp
-  void gl_draw(const float point_size,
-               const unsigned char r,
-               const unsigned char g,
-               const unsigned char b);
-
-  // implementation in src/CGAL_ImageIO/Image_3.cpp
-  void gl_draw_bbox(const float line_width,
-                    const unsigned char red,
-                    const unsigned char green,
-                    const unsigned char blue);
-
 public:
   template <typename Image_word_type,
 	    typename Target_type,
