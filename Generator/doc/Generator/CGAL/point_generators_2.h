@@ -36,7 +36,7 @@ are needed from `rnd` for each point.
 */
   template <class ForwardIterator, class Creator>
 void perturb_points_2( ForwardIterator first, ForwardIterator last,
-double xeps, double yeps = xeps, Random& rnd = default_random,
+double xeps, double yeps = xeps, Random& rnd = get_default_random(),
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
 
@@ -132,7 +132,7 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
   template <class RandomAccessIterator, class OutputIterator, class Creator>
 OutputIterator random_collinear_points_2( RandomAccessIterator first,
 RandomAccessIterator last,
-std::size_t n, OutputIterator first2, Random& rnd = default_random,
+std::size_t n, OutputIterator first2, Random& rnd = get_default_random(),
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
 /// @}
@@ -199,7 +199,7 @@ i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from
 
 */
 Random_points_in_disc_2( double r, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 
@@ -268,7 +268,7 @@ Two random numbers are needed from `rnd` for each point.
 
 */
 Random_points_in_square_2( double a, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 
@@ -337,7 +337,7 @@ Two random numbers are needed from `rnd` for each point.
 
 */
 Random_points_in_triangle_2(Point_2& p, Point_2& q, Point_2& r, Random& rnd =
-default_random);
+get_default_random());
 
 /*!
 Creates  an input iterator `g` generating points of type `Point_2` uniformly
@@ -347,7 +347,7 @@ Two random numbers are needed from `rnd` for each point.
 
 */
 Random_points_in_triangle_2(Triangle_2& t, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 
@@ -418,7 +418,7 @@ i.e.\ \f$ |*g| == r\f$. A single random number is needed from
 
 */
 Random_points_on_circle_2( double r, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 
@@ -488,7 +488,7 @@ A single random number is needed from `rnd` for each point.
 The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$.
 */
 Random_points_on_segment_2( const Point_2& p, const Point_2& q,
-Random& rnd = default_random);
+Random& rnd = get_default_random());
 
 /// @}
 
@@ -560,7 +560,7 @@ A single random number is needed from `rnd` for each point.
 
 */
 Random_points_on_square_2( double a, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 

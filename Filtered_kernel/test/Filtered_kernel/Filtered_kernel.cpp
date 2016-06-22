@@ -43,7 +43,7 @@ int my_rand()
 {
   int res;
   do {
-    res = int(CGAL::default_random.get_double()*(1<<31));
+    res = int(CGAL::get_default_random().get_double()*(1<<31));
   } while(res == 0);
 
   return res;

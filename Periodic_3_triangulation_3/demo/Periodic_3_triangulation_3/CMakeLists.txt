@@ -33,7 +33,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_F
   qt5_wrap_ui ( UI_FILES MainWindow.ui )
 
   # qrc files (resource files)
-  qt5_add_resources( RESOURCE_FILES ./Periodic_3_triangulation_3.qrc )
+  qt5_add_resources( CGAL_Qt5_RESOURCE_FILES ./Periodic_3_triangulation_3.qrc )
 
   # use the Qt MOC preprocessor on classes that derive from QObject
   qt5_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Scene.cpp" )
@@ -64,14 +64,14 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_F
                     Viewer.cpp moc_Viewer.cpp
                     periodic_3_triangulation_3_demo.cpp
                     MainWindow.ui moc_MainWindow.cpp
-                    ${UI_FILES} ${RESOURCE_FILES} Periodic_3_triangulation_3.qhc)
+                    ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} Periodic_3_triangulation_3.qhc)
 
   qt5_use_modules(periodic_3_triangulation_3_demo Xml Help OpenGL)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   # Link the executable to CGAL and third-party libraries
-  target_link_libraries(periodic_3_triangulation_3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY})
+  target_link_libraries(periodic_3_triangulation_3_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
 else ()
 

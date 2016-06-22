@@ -1,7 +1,7 @@
-#include <iostream>
-#include <CGAL/Cartesian_d.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Polytope_distance_d_traits_d.h>
+#include <CGAL/Cartesian_d.h>
+#include <iostream>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf                            ExactFPType;

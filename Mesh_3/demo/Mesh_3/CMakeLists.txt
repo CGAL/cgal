@@ -146,7 +146,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )
   qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h )
 
-  qt5_add_resources ( RESOURCE_FILES Mesh_3.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES Mesh_3.qrc )
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
@@ -220,7 +220,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
       Scene_moc.cpp)
     #ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_SOURCE_FILES)
-    LIST(APPEND MESH_3_SOURCE_FILES ${UI_FILES} ${RESOURCE_FILES})
+    LIST(APPEND MESH_3_SOURCE_FILES ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
     add_executable( Mesh_3 ${MESH_3_SOURCE_FILES} )
     qt5_use_modules(Mesh_3 Xml Script OpenGL Svg)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Mesh_3 )

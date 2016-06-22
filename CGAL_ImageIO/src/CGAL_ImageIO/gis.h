@@ -121,10 +121,10 @@ PTRIMAGE_FORMAT createGisFormat();
 int writeGis( char *basename, _image* im ) ;
 /* 
    return:
-   -1: error
-    1: success
+   false: error
+   true: success
  */
-int writeGisHeader( const _image* im ) ;
+bool writeGisHeader( const _image* im ) ;
 
 
 /* 
