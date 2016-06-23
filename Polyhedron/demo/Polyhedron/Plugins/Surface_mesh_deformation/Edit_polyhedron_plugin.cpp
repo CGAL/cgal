@@ -421,7 +421,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxRoi_changed(int valu
 
 void Polyhedron_demo_edit_polyhedron_plugin::new_item_created(int item_id)
 {
-  if(dock_widget->isVisible()) {
+  Scene_polyhedron_selection_item* selection_item = NULL;
+  for(int i = 0; i<scene->numberOfEntries(); i++)
+  {
+    selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
+    if (selection_item)
+      break;
+    else
+      selection_item = NULL;
+  }
+  if(selection_item
+     && dock_widget->isVisible()) {
     Scene_polyhedron_item* poly_item = 
       qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
     if(poly_item) {
