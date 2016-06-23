@@ -753,53 +753,71 @@ struct Is_selected_property_map{
 
 void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
 {
+
   std::vector<bool> mark(poly_item->polyhedron()->size_of_vertices(),false);
-  std::size_t original_size = deform_mesh->roi_vertices().size();
-  QVector<vertex_descriptor> points_to_save;
+
+
+
   bool ctrl_active = ui_widget->CtrlVertRadioButton->isChecked();
+  if (ctrl_active && active_group == ctrl_vertex_frame_map.end() ) return;
+  std::size_t original_size;
+  if(ctrl_active)
+    original_size = active_group->ctrl_vertices_group.size();
+  else
+    original_size = deform_mesh->roi_vertices().size();
   BOOST_FOREACH(vertex_descriptor v,deform_mesh->roi_vertices())
   {
-      mark[v->id()]=true;
-      if(ctrl_active)
-      {
-        if(!deform_mesh->is_control_vertex(v))
-          points_to_save.push_back(v);
-      }
-      else
-      {
-        if(deform_mesh->is_control_vertex(v))
-          points_to_save.push_back(v);
-      }
-  }
-
-  if(steps > 0)
-    expand_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), steps, Is_selected_property_map(mark),
-                            CGAL::Emptyset_iterator());
-  else
-    reduce_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), -steps, Is_selected_property_map(mark),
-                            CGAL::Emptyset_iterator());
-
-  item->clear_roi();
-  item->create_ctrl_vertices_group();
-  for(Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
-  {
-    if(mark[it->id()]) {
-      if(ctrl_active)
-      {
-        if(points_to_save.contains(it))
-          item->insert_roi_vertex(it);
-        else
-          item->insert_control_vertex(it);
-      }
-      else{
-        if(points_to_save.contains(it))
-          item->insert_control_vertex(it);
-        else
-          item->insert_roi_vertex(it);
-      }
+    if(ctrl_active)
+    {
+      if(deform_mesh->is_control_vertex(v))
+        mark[v->id()]=true;
+    }
+    else
+    {
+      if(!deform_mesh->is_control_vertex(v))
+        mark[v->id()]=true;
     }
   }
-  if(deform_mesh->roi_vertices().size() != original_size)
+  std::vector<bool> patron = mark;
+  if(steps > 0)
+  {
+    if(ctrl_active)
+      expand_vertex_selection(active_group->ctrl_vertices_group, *poly_item->polyhedron(), steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+    else
+      expand_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+  }
+  else
+  { if(ctrl_active)
+      reduce_vertex_selection(active_group->ctrl_vertices_group, *poly_item->polyhedron(), -steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+    else
+      reduce_vertex_selection(deform_mesh->roi_vertices(), *poly_item->polyhedron(), -steps, Is_selected_property_map(mark),
+                            CGAL::Emptyset_iterator());
+  }
+
+  for(Polyhedron::Vertex_iterator it = poly_item->polyhedron()->vertices_begin() ; it != poly_item->polyhedron()->vertices_end(); ++it)
+  {
+    if(ctrl_active)
+    {
+      if(mark[it->id()] && !patron[it->id()])
+        item->insert_control_vertex(it);
+      else if(!mark[it->id()] && patron[it->id()])
+        item->erase_control_vertex(it);
+    }
+    else
+    {
+      if(mark[it->id()] && !patron[it->id()])
+        item->insert_roi_vertex(it);
+      else if(!mark[it->id()] && patron[it->id()])
+        item->erase_roi_vertex(it);
+    }
+  }
+  if(
+     (!ctrl_active && deform_mesh->roi_vertices().size() != original_size)
+     || (ctrl_active && active_group->ctrl_vertices_group.size() != original_size)
+     )
   { item->invalidateOpenGLBuffers(); Q_EMIT item->itemChanged(); }
 }
 
