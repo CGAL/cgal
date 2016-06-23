@@ -68,6 +68,7 @@ namespace CGAL {
 
           using CGAL::cpp11::array;
           using CGAL::cpp11::tuple;
+          using CGAL::cpp11::get;
 
           typedef array<int, 3> Pixel;
 
