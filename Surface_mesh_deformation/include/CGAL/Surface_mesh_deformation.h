@@ -125,7 +125,7 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
     {
       typename boost::graph_traits<TriangleMesh>::in_edge_iterator e, e_end;
       cpp11::tie(e,e_end) = in_edges(vi, hg);
-      m_nb_edges_incident=std::distance(e,e_end);
+      m_nb_edges_incident=(double) std::distance(e,e_end);
     }
 
     template <class Square_matrix_3>
