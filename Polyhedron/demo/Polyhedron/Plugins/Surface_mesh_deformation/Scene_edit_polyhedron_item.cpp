@@ -26,6 +26,7 @@ struct Scene_edit_polyhedron_item_priv
     nb_axis = 0;
     nb_bbox = 0;
     spheres = NULL;
+    spheres_ctrl = NULL;
     need_change = false;
   }
   ~Scene_edit_polyhedron_item_priv()
@@ -88,6 +89,7 @@ struct Scene_edit_polyhedron_item_priv
   mutable std::size_t nb_axis;
   mutable std::size_t nb_bbox;
   mutable Scene_spheres_item* spheres;
+  mutable Scene_spheres_item* spheres_ctrl;
   mutable QOpenGLBuffer *in_bu;
 
   Deform_mesh* deform_mesh;
@@ -430,11 +432,11 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
             control_color.push_back(0);
             control_color.push_back(b);
 
-            if(spheres)
+            if(spheres_ctrl)
             {
               CGAL::Color c(255,0,0);
               Kernel::Sphere_3 *sphere = new Kernel::Sphere_3((*hb)->point(), length_of_axis/15.0);
-              spheres->add_sphere(sphere, c);
+              spheres_ctrl->add_sphere(sphere, c);
             }
         }
     }
@@ -954,8 +956,17 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
             d->program->release();
             vaos[Scene_edit_polyhedron_item_priv::Roi_points]->release();
         }
-        else{
+        else
+        {
+          d->spheres->setVisible(true);
           Scene_group_item::draw(viewer);
+        }
+  }
+  else
+  {
+    if(d->ui_widget->ShowAsSphereCheckBox->isChecked() && viewer->extension_is_found) {
+      d->spheres->setVisible(false);
+      Scene_group_item::draw(viewer);
     }
   }
 
@@ -1075,11 +1086,15 @@ void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
 {
     if(d->spheres)
       d->spheres->clear_spheres();
+    if(d->spheres_ctrl)
+      d->spheres_ctrl->clear_spheres();
     update_normals();
     compute_bbox();
     are_buffers_filled = false;
     if(d->spheres)
       d->spheres->invalidateOpenGLBuffers();
+    if(d->spheres_ctrl)
+      d->spheres_ctrl->invalidateOpenGLBuffers();
 }
 
 Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
@@ -1189,23 +1204,47 @@ void Scene_edit_polyhedron_item::update_frame_plane()
 
 void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
 {
-  if(b && !d->spheres)
+  if(b)
   {
-    d->spheres = new Scene_spheres_item(this, false);
-    d->spheres->setName("ROI & Control spheres");
-    d->spheres->setRenderingMode(Gouraud);
-    connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-    scene->setSelectedItem(scene->item_id(this));
-    scene->addItem(d->spheres);
-    scene->changeGroup(d->spheres, this);
-    lockChild(d->spheres);
-    invalidateOpenGLBuffers();
+    if(!d->spheres)
+    {
+      d->spheres = new Scene_spheres_item(this, false);
+      d->spheres->setName("ROI spheres");
+      d->spheres->setRenderingMode(Gouraud);
+      connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
+      scene->setSelectedItem(scene->item_id(this));
+      scene->addItem(d->spheres);
+      scene->changeGroup(d->spheres, this);
+      lockChild(d->spheres);
+      invalidateOpenGLBuffers();
+    }
+    if(!d->spheres_ctrl)
+    {
+      d->spheres_ctrl = new Scene_spheres_item(this, false);
+      d->spheres_ctrl->setName("Control spheres");
+      d->spheres_ctrl->setRenderingMode(Gouraud);
+      connect(d->spheres_ctrl, SIGNAL(destroyed()), this, SLOT(reset_spheres_ctrl()));
+      scene->setSelectedItem(scene->item_id(this));
+      scene->addItem(d->spheres_ctrl);
+      scene->changeGroup(d->spheres_ctrl, this);
+      lockChild(d->spheres_ctrl);
+      invalidateOpenGLBuffers();
+    }
   }
-  else if(!b && d->spheres!=0)
+  else if(!b )
   {
-    unlockChild(d->spheres);
-    removeChild(d->spheres);
-    scene->erase(scene->item_id(d->spheres));
+    if(d->spheres!=0)
+    {
+      unlockChild(d->spheres);
+      removeChild(d->spheres);
+      scene->erase(scene->item_id(d->spheres));
+    }
+    if(d->spheres_ctrl!=0)
+    {
+      unlockChild(d->spheres_ctrl);
+      removeChild(d->spheres_ctrl);
+      scene->erase(scene->item_id(d->spheres_ctrl));
+    }
   }
 }
 bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group(Ctrl_vertices_group_data_list::iterator& hgb, Ctrl_vertices_group_data_list::iterator& hge)
@@ -1219,6 +1258,10 @@ void Scene_edit_polyhedron_item::set_k_ring(int v) { d->k_ring_selector.k_ring =
 void Scene_edit_polyhedron_item::reset_spheres()
 {
   d->spheres = NULL;
+}
+void Scene_edit_polyhedron_item::reset_spheres_ctrl()
+{
+  d->spheres_ctrl = NULL;
 }
 
 void Scene_edit_polyhedron_item::selected(const std::set<Polyhedron::Vertex_handle>& m)
