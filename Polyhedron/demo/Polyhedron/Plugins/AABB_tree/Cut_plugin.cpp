@@ -3,6 +3,7 @@
 #include <QtCore/qglobal.h>
 #include <CGAL/AABB_intersections.h>
 
+#include "Scene.h"
 #include "../../AABB_tree/demo/AABB_tree/Color_ramp.h"
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
@@ -356,14 +357,14 @@ public:
   ~Scene_aabb_plane_item()
   {
 
-    Q_FOREACH(Facet_tree *tree, facet_trees.values())
+  /*  Q_FOREACH(Facet_tree *tree, facet_trees.values())
     {
       delete tree;
     }
     Q_FOREACH(Edge_tree *tree, edge_trees.values())
     {
       delete tree;
-    }
+    }*/
     delete texture;
   }
 
@@ -375,12 +376,12 @@ public:
       texture = new Texture(m_grid_size,m_grid_size);
   }
 
-  void set_facet_trees(Facet_trees facet_trees)
+  void set_facet_trees(Facet_trees *facet_trees)
   {
     this->facet_trees = facet_trees;
   }
 
-  void set_edge_trees(Edge_trees edge_trees)
+  void set_edge_trees(Edge_trees *edge_trees)
   {
     this->edge_trees = edge_trees;
   }
@@ -458,8 +459,8 @@ public:
   void setCutPlaneType(Cut_planes_types type){ m_cut_plane = type;}
   Cut_planes_types cutPlaneType()const {return m_cut_plane;}
 private:
-  Edge_trees edge_trees;
-  Facet_trees facet_trees;
+  Edge_trees* edge_trees;
+  Facet_trees* facet_trees;
   enum VAOs{
     Facets = 0,
     Edges,
@@ -504,7 +505,7 @@ private:
   }
 
   template <typename Tree>
-  void compute_distance_function(const QMap<QObject*, Tree*>& trees, bool is_signed = false)const
+  void compute_distance_function(QMap<QObject*, Tree*> *trees, bool is_signed = false)const
   {
     // Get transformation
     const GLdouble* m = frame->matrix();
@@ -532,7 +533,7 @@ private:
         Kernel::Point_3 query = t( Kernel::Point_3(x,y,z) );
         FT min = DBL_MAX;
 
-        Q_FOREACH(Tree *tree, trees.values())
+        Q_FOREACH(Tree *tree, trees->values())
         {
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
@@ -588,16 +589,16 @@ private:
     switch(m_cut_plane)
     {
     case UNSIGNED_FACETS:
-      if ( facet_trees.empty() ) { return; }
+      if ( facet_trees->empty() ) { return; }
       compute_distance_function(facet_trees);
       break;
     case SIGNED_FACETS:
-      if ( facet_trees.empty() ) { return; }
+      if ( facet_trees->empty() ) { return; }
       compute_distance_function(facet_trees, true);
 
       break;
     case UNSIGNED_EDGES:
-      if ( edge_trees.empty() ) { return; }
+      if ( edge_trees->empty() ) { return; }
       compute_distance_function(edge_trees);
       break;
     default:
@@ -821,7 +822,14 @@ public Q_SLOTS:
   {
     plane_item = NULL;
   }
-
+  void deleteTrees(CGAL::Three::Scene_item* sender)
+  {
+    Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sender);
+    delete facet_trees[item];
+    facet_trees.remove(item);
+    delete edge_trees[item];
+    edge_trees.remove(item);
+  }
 private:
   void createCutPlane();
   CGAL::Three::Scene_interface* scene;
@@ -849,7 +857,6 @@ Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
     {
       delete tree;
     }
-
 }
 
 
@@ -898,8 +905,6 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
                           (bbox.ymin()+bbox.ymax())/2.f,
                           (bbox.zmin()+bbox.zmax())/2.f);
   plane_item->setNormal(0., 0., 1.);
-  connect(plane_item, SIGNAL(destroyed()),
-          this, SLOT(enableAction()));
   plane_item->setManipulatable(true);
   plane_item->setClonable(false);
   plane_item->setColor(Qt::green);
@@ -908,8 +913,10 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
           this, SLOT(updateCutPlane()));
   connect(plane_item, SIGNAL(aboutToBeDestroyed()),
           this, SLOT(resetPlane()));
+Scene* real_scene = static_cast<Scene*>(scene);
+  connect(real_scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+          this, SLOT(deleteTrees(CGAL::Three::Scene_item*)));
   scene->addItem(plane_item);
-  actionIntersection->setEnabled(false);
 
   // Hide polyhedrons and call cut() (avoid that nothing shows up until user
   // decides to move the plane item)
@@ -937,8 +944,8 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
                                             *poly_item->polyhedron());
     }
   }
-  plane_item->set_facet_trees(facet_trees);
-  plane_item->set_edge_trees(edge_trees);
+  plane_item->set_facet_trees(&facet_trees);
+  plane_item->set_edge_trees(&edge_trees);
 }
 
 void Polyhedron_demo_cut_plugin::Intersection()

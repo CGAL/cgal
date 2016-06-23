@@ -62,7 +62,7 @@ public:
     bool load_obj(std::istream& in);
     bool save(std::ostream& out) const;
     bool save_obj(std::ostream& out) const;
-
+    void* get_aabb_tree();
     // Function for displaying meta-data of the item
     virtual QString toolTip() const;
 
