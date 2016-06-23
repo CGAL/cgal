@@ -830,6 +830,7 @@ public Q_SLOTS:
     delete edge_trees[item];
     edge_trees.remove(item);
   }
+  void updateTrees(int id);
 private:
   void createCutPlane();
   CGAL::Three::Scene_interface* scene;
@@ -866,7 +867,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
 {
   scene = scene_interface;
   messages = m;
-  actionIntersection = new QAction(tr("Create Cutting Plane"), mainWindow);
+  actionIntersection = new QAction(tr("Cut Segments"), mainWindow);
   actionSignedFacets = new QAction(tr("Signed Distance Function to Facets"), mainWindow);
   actionUnsignedFacets= new QAction(tr("Unsigned Distance Function to Facets"), mainWindow);
   actionUnsignedEdges = new QAction(tr("Unsigned Distance Function to Edges"), mainWindow);
@@ -885,6 +886,11 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   connect(actionUnsignedEdges, SIGNAL(triggered()),
           this, SLOT(UnsignedEdges()));
   plane_item = NULL;
+  Scene* real_scene = static_cast<Scene*>(scene);
+    connect(real_scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+            this, SLOT(deleteTrees(CGAL::Three::Scene_item*)));
+    connect(real_scene, SIGNAL(newItem(int)),
+            this, SLOT(updateTrees(int)));
 
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
@@ -898,7 +904,25 @@ QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
                            << actionUnsignedEdges;
 }
 
+void Polyhedron_demo_cut_plugin::updateTrees(int id)
+{
+if(plane_item &&
+   qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+  createCutPlane();
+}
+
 void Polyhedron_demo_cut_plugin::createCutPlane() {
+  bool updating = false;
+  Scene_aabb_plane_item::Cut_planes_types type;
+  int plane_id = -1;
+  if(plane_item)
+      updating = true;
+  if(updating)
+  {
+    type = plane_item->cutPlaneType();
+    plane_id = scene->item_id(plane_item);
+  }
+
   plane_item = new Scene_aabb_plane_item(scene);
   const CGAL::Three::Scene_interface::Bbox& bbox = scene->bbox();
   plane_item->setPosition((bbox.xmin()+bbox.xmax())/2.f,
@@ -913,11 +937,13 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
           this, SLOT(updateCutPlane()));
   connect(plane_item, SIGNAL(aboutToBeDestroyed()),
           this, SLOT(resetPlane()));
-Scene* real_scene = static_cast<Scene*>(scene);
-  connect(real_scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
-          this, SLOT(deleteTrees(CGAL::Three::Scene_item*)));
-  scene->addItem(plane_item);
-
+  if(updating)
+  {
+    scene->replaceItem(plane_id, plane_item)->deleteLater();
+    plane_item->setCutPlaneType(type);
+  }
+  else
+    scene->addItem(plane_item);
   // Hide polyhedrons and call cut() (avoid that nothing shows up until user
   // decides to move the plane item)
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
@@ -926,7 +952,6 @@ Scene* real_scene = static_cast<Scene*>(scene);
     if ( NULL != poly_item )
       poly_item->setVisible(false);
   }
-
   //fills the tree maps
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     CGAL::Three::Scene_item* item = scene->item(i);
@@ -1059,8 +1084,5 @@ void Polyhedron_demo_cut_plugin::cut()
   }
 }
 
-void Polyhedron_demo_cut_plugin::enableAction() {
-  actionIntersection->setEnabled(true);
-}
 
 #include "Cut_plugin.moc"

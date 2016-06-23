@@ -1757,7 +1757,3 @@ bool Scene_polyhedron_item::self_intersected(){return !(d->self_intersect);}
 void Scene_polyhedron_item::setItemIsMulticolor(bool b){ d->is_multicolor = b;}
 bool Scene_polyhedron_item::isItemMulticolor(){ return d->is_multicolor;}
 
-void* Scene_polyhedron_item::get_aabb_tree()
-{
-  return d->get_aabb_tree();
-}
