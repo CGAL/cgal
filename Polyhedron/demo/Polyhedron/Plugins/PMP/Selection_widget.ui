@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
-    <height>641</height>
+    <width>479</width>
+    <height>713</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,7 +103,7 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,1">
+               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,1,1">
                 <item>
                  <spacer name="horizontalSpacer_3">
                   <property name="orientation">
@@ -116,6 +116,13 @@
                    </size>
                   </property>
                  </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="Select_all_NTButton">
+                  <property name="text">
+                   <string>Select All Non Triangle</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="Add_to_selection_button">
@@ -459,7 +466,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,0">
+        <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,0,0">
          <item>
           <widget class="QComboBox" name="editionBox">
            <item>
@@ -517,6 +524,27 @@
              <string>Add face to border (Advanced)</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Move point</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="instructionsLabel">
+           <property name="text">
+            <string>Instructions 
+
+</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="docImage_Label">
+           <property name="text">
+            <string/>
+           </property>
           </widget>
          </item>
          <item>
@@ -529,30 +557,6 @@
         </layout>
        </item>
       </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="instructionsLabel">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
-      </property>
-      <property name="lineWidth">
-       <number>1</number>
-      </property>
-      <property name="midLineWidth">
-       <number>0</number>
-      </property>
-      <property name="text">
-       <string>Instructions 
-
-</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
      </widget>
     </item>
    </layout>
