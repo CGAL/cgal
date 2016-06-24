@@ -814,6 +814,9 @@ void Scene_edit_polyhedron_item_priv::expand_or_reduce(int steps)
         item->erase_roi_vertex(it);
     }
   }
+  if(active_group->ctrl_vertices_group.empty() && ctrl_vertex_frame_map.size()>1)
+    item->delete_ctrl_vertices_group(false);
+
   if(
      (!ctrl_active && deform_mesh->roi_vertices().size() != original_size)
      || (ctrl_active && active_group->ctrl_vertices_group.size() != original_size)
