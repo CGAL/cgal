@@ -21,6 +21,11 @@
 #ifndef CGAL_MIN_ANNULUS_D_H
 #define CGAL_MIN_ANNULUS_D_H
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable: 4244) // conversion warning in Boost iterator_adaptor
+#endif
+
 // includes
 // --------
 #include <CGAL/Optimisation/basic.h>
@@ -868,6 +873,10 @@ operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
 }
 
 } //namespace CGAL
+
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif
 
 #endif // CGAL_MIN_ANNULUS_D_H
 

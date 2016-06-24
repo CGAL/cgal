@@ -2,11 +2,11 @@
 // as input type and some internal EXACT floating point type;
 // the fast type double is also safely used for many of the
 // internal computations
-#include <iostream>
-#include <cassert>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Polytope_distance_d_traits_3.h>
+#include <CGAL/Homogeneous.h>
+#include <iostream>
+#include <cassert>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>

@@ -229,7 +229,7 @@ CGAL_INLINE_FUNCTION
 int readIrisImage( const char *, _image *im ) {
   byte   *rawdata, *rptr;
   byte   *pic824,  *bptr, *iptr;
-  std::size_t     i, j, size;
+  std::size_t i, j, size;
   unsigned short imagic, type;
   unsigned int xsize, ysize, zsize;
 

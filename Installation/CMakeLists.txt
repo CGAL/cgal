@@ -32,6 +32,23 @@ include(GNUInstallDirs)
 
 #--------------------------------------------------------------------------------------------------
 #
+#                                    -= HEADER ONLY =-
+#
+#--------------------------------------------------------------------------------------------------
+if(POLICY CMP0043)
+  # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0
+  # Thus this option is only enabled for cmake >= 3.0, which is tested by POLICY CMP0043
+  option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" ON )
+
+  if (CGAL_HEADER_ONLY)
+    set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
+    add_definitions(-DCGAL_HEADER_ONLY)
+  endif (CGAL_HEADER_ONLY)
+
+endif()
+
+#--------------------------------------------------------------------------------------------------
+#
 #                                    -= PACKAGE SETUP =-
 #
 #--------------------------------------------------------------------------------------------------
@@ -77,6 +94,7 @@ if ( CGAL_BRANCH_BUILD )
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE INTERNAL "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE INTERNAL "Directory containing the Maintenance package")
   set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE INTERNAL "Directory containing the Core package")
+  set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/GraphicsView" CACHE INTERNAL "Directory containing the GraphicsView package")
 
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
@@ -99,6 +117,7 @@ else ( CGAL_BRANCH_BUILD )
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Maintenance package")
   set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Core package")
+  set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the GraphicsView package")
 
 endif (CGAL_BRANCH_BUILD )
 

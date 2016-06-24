@@ -29,13 +29,13 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   qt5_wrap_ui( DT_UI_FILES Circular_kernel_2.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources ( DT_RESOURCE_FILES ./Circular_kernel_2.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Circular_kernel_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
   qt5_generate_moc( "Circular_kernel_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Circular_kernel_2.moc" )
 
   # The executable itself.
-  add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+  add_executable  ( Circular_kernel_2 Circular_kernel_2.cpp Circular_kernel_2.moc ${DT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
   qt5_use_modules(Circular_kernel_2 Xml Script OpenGL Svg)
 

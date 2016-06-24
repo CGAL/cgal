@@ -31,6 +31,7 @@
    if any */
 CGAL_INLINE_FUNCTION
 char *fgetns(char *str, int n,  _image *im ) {
+
   memset( str, 0, n );
   char* ret = ImageIO_gets( im, str, n );
 
