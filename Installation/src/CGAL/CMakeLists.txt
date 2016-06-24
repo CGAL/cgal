@@ -10,8 +10,10 @@ link_directories(${CGAL_3RD_PARTY_LIBRARIES_DIRS})
 
 collect_cgal_library(CGAL "")
 
-if(NOT CGAL_HEADER_ONLY)
-  target_link_libraries(CGAL ${CGAL_3RD_PARTY_LIBRARIES})
+if(CGAL_HEADER_ONLY)
+  target_link_libraries(CGAL INTERFACE ${CGAL_3RD_PARTY_LIBRARIES})
+else()
+  target_link_libraries(CGAL PUBLIC ${CGAL_3RD_PARTY_LIBRARIES})
 endif()
 
 message("libCGAL is configured")
