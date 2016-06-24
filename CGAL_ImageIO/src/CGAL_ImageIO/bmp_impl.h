@@ -341,8 +341,8 @@ void *_readBmpImage( const char *name,
 	myBuf[i+2] = argbs[0][row * widths[0] + col].blue;
       }
       
-      *dimx = widths[0];
-      *dimy = heights[0];
+      *dimx = int(widths[0]);
+      *dimy = int(heights[0]);
       *dimz = 3;
 
     } else {

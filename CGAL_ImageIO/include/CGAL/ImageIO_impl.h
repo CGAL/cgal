@@ -111,6 +111,11 @@ void ImageIO_free(void *m) {
 
 
 
+unsigned int ImageIO_limit_len(size_t to_be_read)
+{
+  return (unsigned int)(std::min)(to_be_read, size_t(1u<<30));
+}
+
 /* mimics fwrite() function.
    According to _openWriteImage(), openMode will has one 
    of the following value:
@@ -120,6 +125,9 @@ void ImageIO_free(void *m) {
 */
 CGAL_INLINE_FUNCTION
 size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
+  size_t to_be_written = len;
+  int l = -1;
+  char *b = (char*)buf;
 
   switch(im->openMode) {
   default :
@@ -127,23 +135,40 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
     return 0;
   case OM_STD :
 #ifdef CGAL_USE_ZLIB
-    return gzwrite(im->fd, (void *) buf, len);
+    while ( (to_be_written > 0) && ((l = gzwrite(im->fd, (void *) b, ImageIO_limit_len(to_be_written))) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
 #else 
-    return fwrite(buf, 1, len, im->fd);
+    while ( (to_be_written > 0) && ((l = fwrite( b, 1, ImageIO_limit_len(to_be_written), im->fd )) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
 #endif
+    return ( len - to_be_written );
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
-    return gzwrite(im->fd, (void *) buf, len);
+    while ( (to_be_written > 0) && ((l = gzwrite(im->fd, (void *) b, ImageIO_limit_len(to_be_written))) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
+    if(l<0)
+    {
+      int errnum;
+      fprintf(stderr, "zlib error: %s\n", gzerror(im->fd, &errnum));
+    }
+    return ( len - to_be_written );
+#else
+  case OM_FILE :
+    while ( (to_be_written > 0) && ((l = fwrite( b, 1, ImageIO_limit_len(to_be_written), im->fd )) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
+    return ( len - to_be_written );
 #endif
-  case OM_FILE:
-    return fwrite(buf, 1, len, (FILE*)im->fd);
   }
-  //return 0;
-}
 
-size_t ImageIO_limit_read(size_t to_be_read)
-{
-  return (std::min)(to_be_read, size_t(1u<<30));
+  //return 0;
 }
 
 /* mimics fread() function.
@@ -165,12 +190,12 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return 0;
   case OM_STD :
 #ifdef CGAL_USE_ZLIB
-    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_read(to_be_read))) > 0) ) {
+    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_len(to_be_read))) > 0) ) {
       to_be_read -= l;
       b += l;
     }
 #else 
-    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_read(to_be_read), im->fd )) > 0) ) {
+    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_len(to_be_read), im->fd )) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -178,7 +203,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return ( len - to_be_read );
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
-    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_read(to_be_read))) > 0) ) {
+    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_len(to_be_read))) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -190,7 +215,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return ( len - to_be_read );
 #else
   case OM_FILE :
-    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_read(to_be_read), im->fd )) > 0) ) {
+    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_len(to_be_read), im->fd )) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -240,7 +265,7 @@ char *ImageIO_gets( const _image *im, char *str, int size )
 
 
 CGAL_INLINE_FUNCTION
-int ImageIO_seek( const _image *im, long offset, int whence ) {
+long ImageIO_seek( const _image *im, long offset, int whence ) {
   switch(im->openMode) {
   case OM_CLOSE :
   default :
@@ -583,9 +608,9 @@ void _get_image_bounding_box(_image* im,
   *x_min = im->tx;
   *y_min = im->ty;
   *z_min = im->tz;
-  *x_max = (im->xdim - 1.0f)*(im->vx) + *x_min ;
-  *y_max = (im->ydim - 1.0f)*(im->vy) + *y_min ;
-  *z_max = (im->zdim - 1.0f)*(im->vz) + *z_min ;
+  *x_max = (double(im->xdim) - 1.0)*(im->vx) + *x_min ;
+  *y_max = (double(im->ydim) - 1.0)*(im->vy) + *y_min ;
+  *z_max = (double(im->zdim) - 1.0)*(im->vz) + *z_min ;
 }
 
 /* Free an image descriptor */
@@ -790,7 +815,7 @@ CGAL_INLINE_FUNCTION
 int _writeImage(_image *im, const char *name_to_be_written ) {
 
   int r = ImageIO_NO_ERROR;
-  int length = 0;
+  std::size_t length = 0;
   char *name = NULL;
   char *baseName = NULL;
 
@@ -814,7 +839,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
   if ( name == NULL ) {
     im->imageFormat = InrimageFormat;
   } else {
-    int i,extLength;
+    std::size_t i,extLength;
     PTRIMAGE_FORMAT f;
     char ext[IMAGE_FORMAT_NAME_LENGTH];
     char *ptr;
@@ -1054,11 +1079,11 @@ static void _swapImageData( _image *im )
   unsigned char *ptr1, *ptr2, b[8];
   unsigned short int si, *ptr3, *ptr4;
   unsigned int        i, *ptr5, *ptr6;
-  int size, length;
+  std::size_t size, length;
   
   if( _getEndianness() != im->endianness) {
 
-    size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
+    size = std::size_t(im->xdim) * im->ydim * im->zdim * im->vdim * im->wdim;
     if ( size <= 0 ) return;
 
     length = size / im->wdim;
@@ -1077,7 +1102,7 @@ static void _swapImageData( _image *im )
       ptr3 = ptr4 = (unsigned short int *) im->data;
       while( length-- ) {
 	si = *ptr3++;
-	*ptr4++ = ((si >> 8) & 0xff) | (si << 8);
+	*ptr4++ = (unsigned short int)(((si >> 8) & 0xff) | (si << 8));
       }
     }
     
@@ -1545,10 +1570,10 @@ float triLinInterp(const _image* image,
                    float posz,
                    float value_outside /*= 0.f */)
 {
-  const int dimx = image->xdim;
-  const int dimy = image->ydim;
-  const int dimz = image->zdim;
-  const int dimxy = dimx*dimy;
+  const std::size_t dimx = image->xdim;
+  const std::size_t dimy = image->ydim;
+  const std::size_t dimz = image->zdim;
+  const std::size_t dimxy = dimx*dimy;
   
   if(posx < 0.f || posy < 0.f || posz < 0.f )
     return value_outside;
@@ -1569,10 +1594,10 @@ float triLinInterp(const _image* image,
   const int j2 = j1 + 1;
   const int k2 = k1 + 1;
 
-  const float KI2 = i2-posz;
-  const float KI1 = posz-i1;
-  const float KJ2 = j2-posy;
-  const float KJ1 = posy-j1;
+  const float KI2 = float(i2)-posz;
+  const float KI1 = posz-float(i1);
+  const float KJ2 = float(j2)-posy;
+  const float KJ1 = posy-float(j1);
 
   CGAL_IMAGE_IO_CASE
     (image,
@@ -1580,11 +1605,11 @@ float triLinInterp(const _image* image,
      return (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
               (float)array[i2 * dimxy + j1 * dimx + k1] * KI1) * KJ2 +
              ((float)array[i1 * dimxy + j2 * dimx + k1] * KI2 +
-              (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (k2-posx)+
+              (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (float(k2)-posx)+
      (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
        (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
       ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
-       (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
+       (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-float(k1));
      );
   return 0.f;
 }
@@ -1610,9 +1635,9 @@ void convertImageTypeToFloat(_image* image){
   if(image->wordKind == WK_FLOAT && image->wdim == 4)
     return;
 
-  const unsigned int dimx = image->xdim;
-  const unsigned int dimy = image->ydim;
-  const unsigned int dimz = image->zdim;
+  const std::size_t dimx = image->xdim;
+  const std::size_t dimy = image->ydim;
+  const std::size_t dimz = image->zdim;
   
   float * array = (float*)ImageIO_alloc (dimx * dimy * dimz *sizeof(float));
   if (array == NULL ) {

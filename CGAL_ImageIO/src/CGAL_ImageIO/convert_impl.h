@@ -55,7 +55,7 @@ void ConvertBuffer( void *bufferIn,
 		    int bufferLength )
 {
   const char *proc = "ConvertBuffer";
-  int i, min, max;
+  int i;
   u8 *u8buf;
   s8 *s8buf;
   u16 *u16buf;
@@ -79,9 +79,9 @@ void ConvertBuffer( void *bufferIn,
   }
   
   switch ( typeOut ) {
-  case CGAL_SCHAR :
+  case CGAL_SCHAR : {
     s8buf = (s8*)bufferOut;
-    min = -128; max = 127;
+    s8 min = -128, max = 127;
     switch( typeIn ) {
     case CGAL_SCHAR :
       if ( bufferOut == bufferIn ) return;
@@ -91,8 +91,8 @@ void ConvertBuffer( void *bufferIn,
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, s8buf++, r32buf++ ) {
 	if ( *r32buf < min ) *s8buf = min;
-	else if ( *r32buf < 0.0 ) *s8buf = (int)(*r32buf - 0.5);
-	else if ( *r32buf < max ) *s8buf = (int)(*r32buf + 0.5);
+	else if ( *r32buf < 0.0 ) *s8buf = (s8)(*r32buf - 0.5);
+	else if ( *r32buf < max ) *s8buf = (s8)(*r32buf + 0.5);
 	else *s8buf = max;
       }
       break;
@@ -100,8 +100,8 @@ void ConvertBuffer( void *bufferIn,
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, s8buf++, r64buf++ ) {
 	if ( *r64buf < min ) *s8buf = min;
-	else if ( *r64buf < 0.0 ) *s8buf = (int)(*r64buf - 0.5);
-	else if ( *r64buf < max ) *s8buf = (int)(*r64buf + 0.5);
+	else if ( *r64buf < 0.0 ) *s8buf = (s8)(*r64buf - 0.5);
+	else if ( *r64buf < max ) *s8buf = (s8)(*r64buf + 0.5);
 	else *s8buf = max;
       }
       break;
@@ -111,14 +111,14 @@ void ConvertBuffer( void *bufferIn,
       return;
     }
     break; /* end case typeOut = CGAL_SCHAR */
-
+  }
 
 
 
     
-  case CGAL_UCHAR :
+  case CGAL_UCHAR : {
     u8buf = (u8*)bufferOut;
-    min = 0; max = 255;
+    u8 min = 0, max = 255;
     switch( typeIn ) {
     case CGAL_UCHAR :
       if ( bufferOut == bufferIn ) return;
@@ -135,7 +135,7 @@ void ConvertBuffer( void *bufferIn,
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, u8buf++, r32buf++ ) {
 	if ( *r32buf < min ) *u8buf = min;
-	else if ( *r32buf < max ) *u8buf = (int)(*r32buf + 0.5);
+	else if ( *r32buf < max ) *u8buf = (u8)(*r32buf + 0.5);
 	else *u8buf = max;
       }
       break;
@@ -143,7 +143,7 @@ void ConvertBuffer( void *bufferIn,
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, u8buf++, r64buf++ ) {
 	if ( *r64buf < min ) *u8buf = min;
-	else if ( *r64buf < max ) *u8buf = (int)(*r64buf + 0.5);
+	else if ( *r64buf < max ) *u8buf = (u8)(*r64buf + 0.5);
 	else *u8buf = max;
       }
       break;
@@ -153,15 +153,15 @@ void ConvertBuffer( void *bufferIn,
       return;
     }
     break; /* end case typeOut = CGAL_UCHAR */
-
+  }
 
 
 
 
     
-  case CGAL_SSHORT :
+  case CGAL_SSHORT : {
     s16buf = (s16*)bufferOut;
-    min = -32768; max = 32767;
+    s16 min = -32768, max = 32767;
     switch( typeIn ) {
     case CGAL_SSHORT :
       if ( bufferOut == bufferIn ) return;
@@ -178,8 +178,8 @@ void ConvertBuffer( void *bufferIn,
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, s16buf++, r32buf++ ) {
 	if ( *r32buf < min ) *s16buf = min;
-	else if ( *r32buf < 0.0 ) *s16buf = (int)(*r32buf - 0.5);
-	else if ( *r32buf < max ) *s16buf = (int)(*r32buf + 0.5);
+	else if ( *r32buf < 0.0 ) *s16buf = (s16)(*r32buf - 0.5);
+	else if ( *r32buf < max ) *s16buf = (s16)(*r32buf + 0.5);
 	else *s16buf = max;
       }
       break;
@@ -187,8 +187,8 @@ void ConvertBuffer( void *bufferIn,
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, s16buf++, r64buf++ ) {
 	if ( *r64buf < min ) *s16buf = min;
-	else if ( *r64buf < 0.0 ) *s16buf = (int)(*r64buf - 0.5);
-	else if ( *r64buf < max ) *s16buf = (int)(*r64buf + 0.5);
+	else if ( *r64buf < 0.0 ) *s16buf = (s16)(*r64buf - 0.5);
+	else if ( *r64buf < max ) *s16buf = (s16)(*r64buf + 0.5);
 	else *s16buf = max;
       }
       break;
@@ -198,14 +198,14 @@ void ConvertBuffer( void *bufferIn,
       return;
     }
     break; /* end case typeOut = CGAL_SSHORT */
-
+  }
 
 
 
     
-  case CGAL_USHORT :
+  case CGAL_USHORT : {
     u16buf = (u16*)bufferOut;
-    min = 0; max = 65535;
+    u16 min = 0, max = 65535;
     switch( typeIn ) {
     case CGAL_USHORT :
       if ( bufferOut == bufferIn ) return;
@@ -215,8 +215,8 @@ void ConvertBuffer( void *bufferIn,
       r32buf = (r32*)bufferIn;
       for (i=bufferLength; i>0; i--, u16buf++, r32buf++ ) {
 	if ( *r32buf < min ) *u16buf = min;
-	else if ( *r32buf < 0.0 ) *u16buf = (int)(*r32buf - 0.5);
-	else if ( *r32buf < max ) *u16buf = (int)(*r32buf + 0.5);
+	else if ( *r32buf < 0.0 ) *u16buf = (u16)(*r32buf - 0.5);
+	else if ( *r32buf < max ) *u16buf = (u16)(*r32buf + 0.5);
 	else *u16buf = max;
       }
       break;
@@ -224,8 +224,8 @@ void ConvertBuffer( void *bufferIn,
       r64buf = (r64*)bufferIn;
       for (i=bufferLength; i>0; i--, u16buf++, r64buf++ ) {
 	if ( *r64buf < min ) *u16buf = min;
-	else if ( *r64buf < 0.0 ) *u16buf = (int)(*r64buf - 0.5);
-	else if ( *r64buf < max ) *u16buf = (int)(*r64buf + 0.5);
+	else if ( *r64buf < 0.0 ) *u16buf = (u16)(*r64buf - 0.5);
+	else if ( *r64buf < max ) *u16buf = (u16)(*r64buf + 0.5);
 	else *u16buf = max;
       }
       break;
@@ -235,7 +235,7 @@ void ConvertBuffer( void *bufferIn,
       return;
     }
     break; /* end case typeOut = CGAL_USHORT */
-
+  }
 
 
 
@@ -403,9 +403,9 @@ void Convert_r32_to_s8( r32 *theBuf,
     if ( *tb < -128.0 ) {
       *rb = -128;
     } else if ( *tb < 0.0 ) {
-      *rb = (int)(*tb - 0.5);
+      *rb = (s8)(*tb - 0.5);
     } else if ( *tb < 127.0 ) {
-      *rb = (int)(*tb + 0.5);
+      *rb = (s8)(*tb + 0.5);
     } else {
       *rb = 127;
     }
@@ -429,7 +429,7 @@ void Convert_r32_to_u8( r32 *theBuf,
     if ( *tb < 0.0 ) {
       *rb = 0;
     } else if ( *tb < 255.0 ) {
-      *rb = (int)(*tb + 0.5);
+      *rb = (u8)(*tb + 0.5);
     } else {
       *rb = 255;
     }
@@ -453,9 +453,9 @@ void Convert_r32_to_s16( r32 *theBuf,
     if ( *tb < -32768.0 ) {
       *rb = -32768;
     } else if ( *tb < 0.0 ) {
-      *rb = (int)(*tb - 0.5);
+      *rb = (s16)(*tb - 0.5);
     } else if ( *tb < 32767.0 ) {
-      *rb = (int)(*tb + 0.5);
+      *rb = (s16)(*tb + 0.5);
     } else {
       *rb = 32767;
     }
@@ -479,7 +479,7 @@ void Convert_r32_to_u16( r32 *theBuf,
     if ( *tb < 0.0 ) {
       *rb = 0;
     } else if ( *tb < 65535.0 ) {
-      *rb = (int)(*tb + 0.5);
+      *rb = (u16)(*tb + 0.5);
     } else {
       *rb = 65535;
     }

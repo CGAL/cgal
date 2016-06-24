@@ -139,7 +139,7 @@ static void expandrow(byte *optr, byte *iptr, int z)
 	optr[7*4] = iptr[7];
 	optr += 8*4;
 	iptr += 8;
-	count -= 8;
+	count = byte(count - 8);
       }
       while(count--) {
 	*optr = *iptr++;
@@ -158,7 +158,7 @@ static void expandrow(byte *optr, byte *iptr, int z)
 	optr[6*4] = pixel;
 	optr[7*4] = pixel;
 	optr += 8*4;
-	count -= 8;
+	count = byte(count - 8);
       }
       while(count--) {
 	*optr = pixel;
@@ -194,16 +194,16 @@ static void addimgtag(byte *dptr, int xsize, int ysize)
   dptr[0] = 0x69;  dptr[1] = 0x43;  dptr[2] = 0x42;  dptr[3] = 0x22;
   dptr += 4;
 
-  dptr[0] = (xsize>>24)&0xff;
-  dptr[1] = (xsize>>16)&0xff;
-  dptr[2] = (xsize>> 8)&0xff;
-  dptr[3] = (xsize    )&0xff;
+  dptr[0] = byte((xsize>>24)&0xff);
+  dptr[1] = byte((xsize>>16)&0xff);
+  dptr[2] = byte((xsize>> 8)&0xff);
+  dptr[3] = byte((xsize    )&0xff);
   dptr += 4;
 
-  dptr[0] = (ysize>>24)&0xff;
-  dptr[1] = (ysize>>16)&0xff;
-  dptr[2] = (ysize>> 8)&0xff;
-  dptr[3] = (ysize    )&0xff;
+  dptr[0] = byte((ysize>>24)&0xff);
+  dptr[1] = byte((ysize>>16)&0xff);
+  dptr[2] = byte((ysize>> 8)&0xff);
+  dptr[3] = byte((ysize    )&0xff);
 }
 
 /* byte order independent read/write of shorts and longs. */
@@ -212,7 +212,7 @@ static unsigned short getshort( const _image *im)
 {
   byte buf[2];
   ImageIO_read( im, buf, (size_t) 2);
-  return (buf[0]<<8)+(buf[1]<<0);
+  return (unsigned short)((buf[0]<<8)+(buf[1]<<0));
 }
 
 /*****************************************************/
@@ -229,9 +229,9 @@ CGAL_INLINE_FUNCTION
 int readIrisImage( const char *, _image *im ) {
   byte   *rawdata, *rptr;
   byte   *pic824,  *bptr, *iptr;
-  int     i, j, size;
+  std::size_t     i, j, size;
   unsigned short imagic, type;
-  int xsize, ysize, zsize;
+  unsigned int xsize, ysize, zsize;
 
 
   /* read header information from file */
@@ -277,10 +277,10 @@ int readIrisImage( const char *, _image *im ) {
       if (!pic824) exit(-1);
       
       /* copy plane 3 from rawdata into pic824, inverting pic vertically */
-      for (i = 0, bptr = pic824; i < (int) ysize; i++) 
+      for (i = 0, bptr = pic824; i < ysize; i++)
 	{
 	  rptr = rawdata + 3 + ((ysize - 1) - i) * (xsize * 4);
-	  for (j = 0; j < (int) xsize; j++, bptr++, rptr += 4)
+	  for (j = 0; j < xsize; j++, bptr++, rptr += 4)
 	    *bptr = *rptr;
 	}
       
@@ -311,11 +311,11 @@ int readIrisImage( const char *, _image *im ) {
       exit(1);
     
     /* copy plane 3 from rawdata into pic824, inverting pic vertically */
-    for (i = 0, bptr = pic824; i<(int) ysize; i++) 
+    for (i = 0, bptr = pic824; i< ysize; i++)
       {
 	rptr = rawdata + ((ysize - 1) - i) * (xsize * 4);
 
-	for (j=0; j<(int) xsize; j++, rptr += 4) {
+	for (j=0; j< xsize; j++, rptr += 4) {
 	  *bptr++ = rptr[3];
 	  *bptr++ = rptr[2];
 	  *bptr++ = rptr[1];

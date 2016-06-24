@@ -134,7 +134,7 @@ int   gif89 = 0;
   byte ch, ch1;
   byte *ptr, *ptr1;
   int i, block;
-  int npixels, maxpixels, aspect, filesize;
+  int npixels, maxpixels, aspect;
   float normaspect;
   int OutCount = 0,		/* Decompressor output 'stack count' */
     RWidth, RHeight,		/* screen dimensions */
@@ -186,7 +186,7 @@ int   gif89 = 0;
   }
   /* find the size of the file */
   fseek(fp, 0L, 2);
-  filesize = ftell(fp);
+  long filesize = ftell(fp);
   fseek(fp, 0L, 0);
 
  /* the +256's are so we can read truncated GIF files without fear of 
@@ -255,9 +255,9 @@ int   gif89 = 0;
     get_static_b() = (byte *) ImageIO_alloc(256 * sizeof(byte));
    
     for (i = 0; i < 256; i++) {
-      get_static_r()[i] = EGApalette[i&15][0];
-      get_static_g()[i] = EGApalette[i&15][1];
-      get_static_b()[i] = EGApalette[i&15][2];
+      get_static_r()[i] = byte(EGApalette[i&15][0]);
+      get_static_g()[i] = byte(EGApalette[i&15][1]);
+      get_static_b()[i] = byte(EGApalette[i&15][2]);
     }
   }
 

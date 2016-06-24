@@ -57,7 +57,7 @@ int readINT8little(FILE *f, CGAL_INT8 *i)
     if (rc == EOF)
 	return rc;
     
-    *i = (rc & 0xff);
+    *i = CGAL_INT8(rc & 0xff);
     return 0;
 }
 
@@ -70,7 +70,7 @@ int readUINT8little(FILE *f, CGAL_UINT8 *i)
     if (rc == EOF)
 	return rc;
     
-    *i = (rc & 0xff);
+    *i = CGAL_UINT8(rc & 0xff);
     return 0;
 }
 
@@ -92,7 +92,7 @@ int readINT16little(FILE *f, CGAL_INT16 *i)
     if (rc == EOF)
 	return rc;
     
-    temp |= ((rc & 0xff) << 8);
+    temp = temp | CGAL_INT16((rc & 0xff) << 8);
     *i = temp;
     return 0;
 }
@@ -109,7 +109,7 @@ int readUINT16little(FILE *f, CGAL_UINT16 *i)
     if (rc == EOF)
 	return rc;
     
-    temp |= ((rc & 0xff) << 8);
+    temp = CGAL_INT16(temp | ((rc & 0xff) << 8));
     *i = temp;
     return 0;
 }
@@ -126,14 +126,14 @@ int readINT32little(FILE *f, CGAL_INT32 *i)
     CGAL_INT32 temp = 0;
     
     temp = ((long)fgetc(f) & 0xff);
-    temp |= (((long)fgetc(f) & 0xff) << 8);
-    temp |= (((long)fgetc(f) & 0xff) << 16);
+    temp = CGAL_INT32(temp | (((long)fgetc(f) & 0xff) << 8));
+    temp = CGAL_INT32(temp | (((long)fgetc(f) & 0xff) << 16));
     
     rc = fgetc(f);
     if (rc == EOF)
 	return rc;
     
-    temp |= (((long)rc & 0xff) << 24);
+    temp = CGAL_INT32(temp | (((long)rc & 0xff) << 24));
     *i = temp;
     return 0;
 }
@@ -145,14 +145,14 @@ int readUINT32little(FILE *f, CGAL_UINT32 *i)
     CGAL_UINT32 temp = 0;
     
     temp = ((long)fgetc(f) & 0xff);
-    temp |= (((long)fgetc(f) & 0xff) << 8);
-    temp |= (((long)fgetc(f) & 0xff) << 16);
+    temp = CGAL_UINT32(temp | (((long)fgetc(f) & 0xff) << 8));
+    temp = CGAL_UINT32(temp | (((long)fgetc(f) & 0xff) << 16));
     
     rc = fgetc(f);
     if (rc == EOF)
 	return rc;
     
-    temp |= (((long)rc & 0xff) << 24);
+    temp = CGAL_UINT32(temp | (((long)rc & 0xff) << 24));
     *i = temp;
     return 0;
 }
