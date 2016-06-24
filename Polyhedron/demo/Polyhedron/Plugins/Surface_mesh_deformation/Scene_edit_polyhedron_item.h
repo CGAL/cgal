@@ -255,7 +255,6 @@ public:
 
 public Q_SLOTS:
   void reset_spheres();
-  void reset_spheres_ctrl();
   void updateDeform();
   void change();
 

@@ -60,7 +60,6 @@ public Q_SLOTS:
   void on_BrushSpinBoxCtrlVert_changed(int);
   void on_BrushSpinBoxRoi_changed(int);
   void on_ROIRadioButton_toggled(bool);
-  void new_item_created(int item_id);
   void on_importSelectionPushButton_clicked();
   void importSelection(Scene_polyhedron_selection_item*, Scene_edit_polyhedron_item*);
 private:
@@ -102,13 +101,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
 
   // Connect Scene::newItem so that, if dock_widget is visible, convert
   // automatically polyhedron items to "edit polyhedron" items.
-  QObject* scene = dynamic_cast<QObject*>(scene_interface);
-  if(scene) {
-    connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int)));
-  } else {
-    std::cerr << "ERROR " << __FILE__ << ":" << __LINE__ << " :"
-              << " cannot convert scene_interface to scene!\n"; 
-  }
+
   ////////////////// Construct widget /////////////////////////////
   // First time, construct docking window
   dock_widget = new QDockWidget("Mesh Deformation", mw);
@@ -419,26 +412,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxRoi_changed(int valu
   }
 }
 
-void Polyhedron_demo_edit_polyhedron_plugin::new_item_created(int item_id)
-{
-  Scene_polyhedron_selection_item* selection_item = NULL;
-  for(int i = 0; i<scene->numberOfEntries(); i++)
-  {
-    selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
-    if (selection_item)
-      break;
-    else
-      selection_item = NULL;
-  }
-  if(selection_item
-     && dock_widget->isVisible()) {
-    Scene_polyhedron_item* poly_item = 
-      qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
-    if(poly_item) {
-      convert_to_edit_polyhedron(item_id, poly_item);
-    }
-  }
-}
 
 Scene_edit_polyhedron_item* 
 Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
