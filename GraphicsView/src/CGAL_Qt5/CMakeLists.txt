@@ -7,7 +7,7 @@ endif()
 if(CGAL_HEADER_ONLY)
   cache_set(CGAL_Qt5_3RD_PARTY_LIBRARIES Qt5::OpenGL Qt5::Svg )
 else(CGAL_HEADER_ONLY)
-  find_package(Qt5 QUIET COMPONENTS OpenGL Svg QUIET)
+  find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
   find_package(OpenGL QUIET)
 
   set(CGAL_Qt5_MISSING_DEPS "")
