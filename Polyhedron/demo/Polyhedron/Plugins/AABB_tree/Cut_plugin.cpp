@@ -808,7 +808,6 @@ public Q_SLOTS:
      ready_to_cut = true;
      QTimer::singleShot(0,this,SLOT(cut()));
   }
-  void enableAction();
   void cut();
   void computeIntersection();
   void reset_edges() {
@@ -987,18 +986,34 @@ void Polyhedron_demo_cut_plugin::SignedFacets() {
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::SIGNED_FACETS);
   plane_item->invalidateOpenGLBuffers();
+  if(edges_item)
+  {
+    scene->erase(scene->item_id(edges_item));
+    edges_item = NULL;
+  }
+
 }
 void Polyhedron_demo_cut_plugin::UnsignedFacets() {
   if(!plane_item)
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_FACETS);
   plane_item->invalidateOpenGLBuffers();
+  if(edges_item)
+  {
+    scene->erase(scene->item_id(edges_item));
+    edges_item = NULL;
+  }
 }
 void Polyhedron_demo_cut_plugin::UnsignedEdges() {
   if(!plane_item)
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_EDGES);
   plane_item->invalidateOpenGLBuffers();
+  if(edges_item)
+  {
+    scene->erase(scene->item_id(edges_item));
+    edges_item = NULL;
+  }
 }
 
 void Polyhedron_demo_cut_plugin::computeIntersection()
@@ -1012,51 +1027,49 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
             this, SLOT(reset_edges()));
     scene->addItem(edges_item);
   }
-  if(ready_to_cut)
-  {
-    const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
-    const qglviewer::Vec& n =
-        plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
-    Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
-    //std::cerr << plane << std::endl;
-    edges_item->edges.clear();
-    QTime time;
-    time.start();
-    for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-      CGAL::Three::Scene_item* item = scene->item(i);
-      Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-      if(!poly_item) continue;
-      Facet_trees::iterator it = facet_trees.find(poly_item);
-      if(it == facet_trees.end()) {
-        it = facet_trees.insert(facet_trees.begin(),
-                                poly_item,
-                                new Facet_tree(faces(*(poly_item->polyhedron())).first,
-                                               faces(*(poly_item->polyhedron())).second,
-                                               *poly_item->polyhedron() ));
-        Scene_aabb_item* aabb_item = new Scene_aabb_item(*it.value());
-        aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
-        aabb_item->setRenderingMode(Wireframe);
-        aabb_item->setColor(Qt::black);
-        aabb_item->setVisible(false);
-        scene->addItem(aabb_item);
-        //std::cerr << "size: " << it->second->size() << std::endl;
-      }
 
-      if(!CGAL::do_intersect(plane, it.value()->bbox()))
-        continue;
+  const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
+  const qglviewer::Vec& n =
+      plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
+  Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
+  //std::cerr << plane << std::endl;
+  edges_item->edges.clear();
+  QTime time;
+  time.start();
+  for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
+    CGAL::Three::Scene_item* item = scene->item(i);
+    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
+    if(!poly_item) continue;
+    Facet_trees::iterator it = facet_trees.find(poly_item);
+    if(it == facet_trees.end()) {
+      it = facet_trees.insert(facet_trees.begin(),
+                              poly_item,
+                              new Facet_tree(faces(*(poly_item->polyhedron())).first,
+                                             faces(*(poly_item->polyhedron())).second,
+                                             *poly_item->polyhedron() ));
+      Scene_aabb_item* aabb_item = new Scene_aabb_item(*it.value());
+      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
+      aabb_item->setRenderingMode(Wireframe);
+      aabb_item->setColor(Qt::black);
+      aabb_item->setVisible(false);
+      scene->addItem(aabb_item);
+    }
+    //std::cerr << "size: " << it->second->size() << std::endl;
 
-      std::vector<Facet_tree::Object_and_primitive_id> intersections;
-      it.value()->all_intersections(plane, std::back_inserter(intersections));
+    if(!CGAL::do_intersect(plane, it.value()->bbox()))
+      continue;
 
-      for ( std::vector<Facet_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
-            end = intersections.end() ; it != end ; ++it )
-      {
-        const Epic_kernel::Segment_3* inter_seg =
-            CGAL::object_cast<Epic_kernel::Segment_3>(&(it->first));
+    std::vector<Facet_tree::Object_and_primitive_id> intersections;
+    it.value()->all_intersections(plane, std::back_inserter(intersections));
 
-        if ( NULL != inter_seg )
-          edges_item->edges.push_back(*inter_seg);
-      }
+    for ( std::vector<Facet_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
+          end = intersections.end() ; it != end ; ++it )
+    {
+      const Epic_kernel::Segment_3* inter_seg =
+          CGAL::object_cast<Epic_kernel::Segment_3>(&(it->first));
+
+      if ( NULL != inter_seg )
+        edges_item->edges.push_back(*inter_seg);
     }
 
     messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
@@ -1073,7 +1086,11 @@ void Polyhedron_demo_cut_plugin::cut()
   switch(plane_item->cutPlaneType())
   {
   case Scene_aabb_plane_item::CUT_SEGMENTS:
-    computeIntersection();
+    if(ready_to_cut)
+    {
+      computeIntersection();
+      ready_to_cut = false;
+    }
     break;
   default:
     if(ready_to_cut)
