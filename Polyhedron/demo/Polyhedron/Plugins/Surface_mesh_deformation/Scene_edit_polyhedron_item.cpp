@@ -874,6 +874,22 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     {
       remesh();
     }
+    if(need_repaint)
+    {
+      d->compute_bbox(d->active_group->bbox);
+      d->bbox_program.bind();
+      vaos[Scene_edit_polyhedron_item_priv::BBox]->bind();
+      buffers[Scene_edit_polyhedron_item_priv::Bbox_vertices].bind();
+      buffers[Scene_edit_polyhedron_item_priv::Bbox_vertices].allocate(d->pos_bbox.data(),
+                           static_cast<int>(d->pos_bbox.size()*sizeof(double)));
+      d->bbox_program.enableAttributeArray("vertex");
+      d->bbox_program.setAttributeBuffer("vertex",GL_DOUBLE,0,3);
+      buffers[Scene_edit_polyhedron_item_priv::Bbox_vertices].release();
+
+      vaos[Scene_edit_polyhedron_item_priv::BBox]->release();
+      d->bbox_program.release();
+
+    }
     need_repaint |= d->state.left_button_pressing || d->state.right_button_pressing;
     if(need_repaint) { Q_EMIT itemChanged(); }
   }
@@ -1027,41 +1043,41 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
               // draw bbox
               if(!d->ui_widget->ActivatePivotingCheckBox->isChecked())
               {
-                        GLfloat f_matrix[16];
-                        GLfloat trans[3];
-                        GLfloat trans2[3];
+                   GLfloat f_matrix[16];
+                   GLfloat trans[3];
+                   GLfloat trans2[3];
 
-                        trans[0] = hgb_data->frame->position().x;
-                        trans[1] = hgb_data->frame->position().y;
-                        trans[2] = hgb_data->frame->position().z;
+                   trans[0] = hgb_data->frame->position().x;
+                   trans[1] = hgb_data->frame->position().y;
+                   trans[2] = hgb_data->frame->position().z;
 
-                        trans2[0] = -hgb_data->frame_initial_center.x;
-                        trans2[1] = -hgb_data->frame_initial_center.y;
-                        trans2[2] = -hgb_data->frame_initial_center.z;
+                   trans2[0] = -hgb_data->frame_initial_center.x;
+                   trans2[1] = -hgb_data->frame_initial_center.y;
+                   trans2[2] = -hgb_data->frame_initial_center.z;
 
-                        for(int i =0; i<16; i++)
-                            f_matrix[i] = hgb_data->frame->orientation().matrix()[i];
-                        QMatrix4x4 f_mat;
-                        QMatrix4x4 mvp_mat;
+                   for(int i =0; i<16; i++)
+                       f_matrix[i] = hgb_data->frame->orientation().matrix()[i];
+                   QMatrix4x4 f_mat;
+                   QMatrix4x4 mvp_mat;
 
-                        QVector3D vec(trans[0], trans[1], trans[2]);
-                        QVector3D vec2(trans2[0], trans2[1], trans2[2]);
-                            for(int i=0; i<16; i++)
-                                f_mat.data()[i] = (float)f_matrix[i];
-                            GLdouble temp_mat[16];
-                            viewer->camera()->getModelViewProjectionMatrix(temp_mat);
-                            for(int i=0; i<16; i++)
-                                mvp_mat.data()[i] = (float)temp_mat[i];
-                        vaos[Scene_edit_polyhedron_item_priv::BBox]->bind();
-                        d->bbox_program.bind();
-                        d->bbox_program.setUniformValue("rotations", f_mat);
-                        d->bbox_program.setUniformValue("translation", vec);
-                        d->bbox_program.setUniformValue("translation_2", vec2);
-                        d->bbox_program.setUniformValue("mvp_matrix", mvp_mat);
-                        d->program->setAttributeValue("colors", QColor(255,0,0));
-                        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_bbox/3));
-                        d->bbox_program.release();
-                        vaos[Scene_edit_polyhedron_item_priv::BBox]->release();
+                   QVector3D vec(trans[0], trans[1], trans[2]);
+                   QVector3D vec2(trans2[0], trans2[1], trans2[2]);
+                   for(int i=0; i<16; i++)
+                       f_mat.data()[i] = (float)f_matrix[i];
+                   GLdouble temp_mat[16];
+                   viewer->camera()->getModelViewProjectionMatrix(temp_mat);
+                   for(int i=0; i<16; i++)
+                       mvp_mat.data()[i] = (float)temp_mat[i];
+                   vaos[Scene_edit_polyhedron_item_priv::BBox]->bind();
+                   d->bbox_program.bind();
+                   d->bbox_program.setUniformValue("rotations", f_mat);
+                   d->bbox_program.setUniformValue("translation", vec);
+                   d->bbox_program.setUniformValue("translation_2", vec2);
+                   d->bbox_program.setUniformValue("mvp_matrix", mvp_mat);
+                   d->program->setAttributeValue("colors", QColor(255,0,0));
+                   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_bbox/3));
+                   d->bbox_program.release();
+                   vaos[Scene_edit_polyhedron_item_priv::BBox]->release();
               }
          }
     }
@@ -1653,7 +1669,7 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
   if(viewer->manipulatedFrame() == min_it->frame)
   { return false; }
   viewer->setManipulatedFrame(min_it->frame);
-
+  d->active_group = min_it;
   return true;
 }
 
