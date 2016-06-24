@@ -874,7 +874,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     {
       remesh();
     }
-
+    need_repaint |= d->state.left_button_pressing || d->state.right_button_pressing;
     if(need_repaint) { Q_EMIT itemChanged(); }
   }
 
@@ -964,6 +964,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
 
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
 
+  //Draw the points
   if(d->ui_widget->ShowROICheckBox->isChecked()) {
 
         if(!d->ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
@@ -1001,7 +1002,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
         d->program->release();
         vaos[Scene_edit_polyhedron_item_priv::Control_points]->release();
     }
-
+    // Draw the axis
     QGLViewer* viewerB = *QGLViewer::QGLViewerPool().begin();
     for(Scene_edit_polyhedron_item_priv::Ctrl_vertices_group_data_list::const_iterator hgb_data = d->ctrl_vertex_frame_map.begin(); hgb_data != d->ctrl_vertex_frame_map.end(); ++hgb_data)
     {
