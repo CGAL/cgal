@@ -35,13 +35,18 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" ON )
+if(POLICY CMP0043)
+  # In header only mode, we use INTERFACE libraries, which was introduced in cmake 3.0
+  # Thus this option is only enabled for cmake >= 3.0, which is tested by POLICY CMP0043
+  option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" ON )
 
-if (CGAL_HEADER_ONLY)
-  set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
-  add_definitions(-DCGAL_HEADER_ONLY)
-endif (CGAL_HEADER_ONLY)
- 
+  if (CGAL_HEADER_ONLY)
+    set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
+    add_definitions(-DCGAL_HEADER_ONLY)
+  endif (CGAL_HEADER_ONLY)
+
+endif()
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= PACKAGE SETUP =-
