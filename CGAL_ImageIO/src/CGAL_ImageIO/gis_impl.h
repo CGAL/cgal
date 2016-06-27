@@ -211,11 +211,8 @@ int writeGis( char *name, _image* im) {
 		if ( j<n && i<size ) sprintf( str+strlen(str), " " );
 	      }
 	      sprintf( str+strlen(str), "\n" );
-              res = ImageIO_write( im, str, strlen( str ));
-	      if ( res < strlen(str) ) {
-	        done = ImageIO_write( im, str, strlen( str )  );
-                res = (done == strlen( str )) ? int(done) : -1;
-              }
+	      done = ImageIO_write( im, str, strlen( str )  );
+              res = (done == strlen( str )) ? int(done) : -1;
 	      if ( res  <= 0 ) {
 		fprintf(stderr, "writeGis: error when writing data in \'%s\'\n", outputName);
 		if ( outputName != NULL ) ImageIO_free( outputName );
