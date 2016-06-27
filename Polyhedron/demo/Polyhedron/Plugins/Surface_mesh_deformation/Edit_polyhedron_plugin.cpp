@@ -65,7 +65,7 @@ public Q_SLOTS:
   void importSelection(Scene_polyhedron_selection_item*, Scene_edit_polyhedron_item*);
 private:
   typedef CGAL::Three::Scene_interface::Item_id Item_id;
-
+  std::vector<QColor> saved_color;
   Scene_edit_polyhedron_item* convert_to_edit_polyhedron(Item_id, Scene_polyhedron_item*);
   Scene_polyhedron_item* convert_to_plain_polyhedron(Item_id, Scene_edit_polyhedron_item*);
   void updateSelectionItems(Scene_polyhedron_item* target);
@@ -436,6 +436,8 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
 {
   QString poly_item_name = poly_item->name();
   Scene_edit_polyhedron_item* edit_poly = new Scene_edit_polyhedron_item(poly_item, &ui_widget, mw);
+  if(poly_item->isItemMulticolor())
+    saved_color = poly_item->color_vector();
   edit_poly->setColor(poly_item->color());
   edit_poly->setName(QString("%1 (edit)").arg(poly_item->name()));
   edit_poly->setRenderingMode(Gouraud);
@@ -457,6 +459,13 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_polyhedron(Item_id i,
   Scene_polyhedron_item* poly_item = edit_item->to_polyhedron_item();
   scene->replaceItem(i, poly_item);
   delete edit_item;
+  if(saved_color.size() >0)
+  {
+    poly_item->setItemIsMulticolor(true);
+    poly_item->invalidateOpenGLBuffers();
+    poly_item->color_vector() = saved_color;
+    saved_color.clear();
+  }
   return poly_item;
 }
 
