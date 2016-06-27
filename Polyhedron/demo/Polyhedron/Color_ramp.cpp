@@ -114,6 +114,21 @@ Color_ramp::build_blue()
 }
 
 void
+Color_ramp::build_thermal()
+{
+  r_.rebuild(1,0.5);
+  g_.rebuild(1,0);
+  b_.rebuild(1,0);
+
+  r_.add(0.3,1);
+  r_.add(0.05,1);
+  g_.add(0.05,0.8);
+  g_.add(0.3,0.5);
+  b_.add(0.05,0.6);
+  b_.add(0.05,0.3);
+}
+
+void
 Color_ramp::
 print() const
 {

@@ -4,7 +4,7 @@
 #include <CGAL/AABB_intersections.h>
 
 #include "Scene.h"
-#include "../../AABB_tree/demo/AABB_tree/Color_ramp.h"
+#include "Color_ramp.h"
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
@@ -331,6 +331,7 @@ public:
     m_grid_size = slow_distance_grid_size;
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
+    m_thermal_ramp.build_thermal();
 
 
     texture = new Texture(m_grid_size,m_grid_size);
@@ -356,15 +357,6 @@ public:
 
   ~Scene_aabb_plane_item()
   {
-
-  /*  Q_FOREACH(Facet_tree *tree, facet_trees.values())
-    {
-      delete tree;
-    }
-    Q_FOREACH(Edge_tree *tree, edge_trees.values())
-    {
-      delete tree;
-    }*/
     delete texture;
   }
 
@@ -572,12 +564,12 @@ private:
 
       const FT& d00 = m_distance_function[i][j].second;
       // determines grey level
-      unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
+      FT i00 = (double)std::fabs(d00) / m_max_distance_function;
 
       if(d00 > 0.0)
-          texture->setData(i,j,pos_ramp.r(i00),pos_ramp.g(i00),pos_ramp.b(i00));
+          texture->setData(i,j,255*pos_ramp.r(i00),255*pos_ramp.g(i00),255*pos_ramp.b(i00));
       else
-          texture->setData(i,j,neg_ramp.r(i00),neg_ramp.g(i00),neg_ramp.b(i00));
+          texture->setData(i,j,255*neg_ramp.r(i00),255*neg_ramp.g(i00),255*neg_ramp.b(i00));
 
 
   }

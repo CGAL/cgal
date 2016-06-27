@@ -1,4 +1,4 @@
 include( polyhedron_demo_macros )
 
-polyhedron_demo_plugin(cut_plugin Cut_plugin)
-target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
+polyhedron_demo_plugin(cut_plugin Cut_plugin )
+target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects scene_color_ramp)
