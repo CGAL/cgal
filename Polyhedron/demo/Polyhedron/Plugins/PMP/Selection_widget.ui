@@ -90,7 +90,7 @@
                   </item>
                   <item>
                    <property name="text">
-                    <string>Selected Components (facet)</string>
+                    <string>Connected Component (Facet)</string>
                    </property>
                   </item>
                   <item>
