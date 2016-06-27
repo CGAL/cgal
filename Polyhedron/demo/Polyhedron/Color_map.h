@@ -9,7 +9,6 @@ compute_color_map(QColor base_color,
                   unsigned nb_of_colors,
                   Output_color_iterator out)
 {
- std::cerr<<"plouf \n";
   qreal hue = base_color.hueF();
   const qreal step = ((qreal)1) / nb_of_colors;
 
