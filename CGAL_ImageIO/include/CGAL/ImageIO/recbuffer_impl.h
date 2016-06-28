@@ -58,7 +58,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "convert.h"
+#include <CGAL/ImageIO/convert.h>
 
 #ifdef CGAL_HEADER_ONLY
 

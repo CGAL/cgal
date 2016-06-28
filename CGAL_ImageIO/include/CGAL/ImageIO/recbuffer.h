@@ -49,8 +49,8 @@
 #define _recbuffer_h_
 
 
-#include "typedefs.h"
-#include "recline.h"
+#include <CGAL/ImageIO/typedefs.h>
+#include <CGAL/ImageIO/recline.h>
 
 
 
@@ -196,7 +196,7 @@ extern void Recbuffer_noverbose ( );
 
 
 #ifdef CGAL_HEADER_ONLY
-#include "recbuffer_impl.h"
+#include <CGAL/ImageIO/recbuffer_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 

@@ -71,7 +71,7 @@ int writeMincFile( const _image* im, const char *name, const char *sourceName,
 #endif
 
 #ifdef CGAL_HEADER_ONLY
-#include "mincio_impl.h"
+#include <CGAL/ImageIO/mincio_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

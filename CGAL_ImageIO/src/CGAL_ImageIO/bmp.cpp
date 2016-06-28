@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "bmp.h"
-#include "bmp_impl.h"
+#include <CGAL/ImageIO/bmp.h>
+#include <CGAL/ImageIO/bmp_impl.h>
 
 #endif // CGAL_HEADER_ONLY

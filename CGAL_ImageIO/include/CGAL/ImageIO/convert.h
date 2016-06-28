@@ -48,7 +48,7 @@
 
 #include <stdio.h> /* memcpy */
 #include <string.h> /* memcpy */
-#include "typedefs.h"
+#include <CGAL/ImageIO/typedefs.h>
 
 
 
@@ -102,7 +102,7 @@ extern void Convert_r32_to_u16( r32 *theBuf,
 
 
 #ifdef CGAL_HEADER_ONLY
-#include "convert_impl.h"
+#include <CGAL/ImageIO/convert_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

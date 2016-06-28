@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "mincio.h"
-#include "mincio_impl.h"
+#include <CGAL/ImageIO/mincio.h>
+#include <CGAL/ImageIO/mincio_impl.h>
 
 #endif // CGAL_HEADER_ONLY

@@ -68,7 +68,7 @@ int writeAnalyzeHeader( const _image* im ) ;
 int writeAnalyzeData( const _image* im ) ;
 
 #ifdef CGAL_HEADER_ONLY
-#include "analyze_impl.h"
+#include <CGAL/ImageIO/analyze_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

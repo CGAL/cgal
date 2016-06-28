@@ -27,9 +27,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "bmptypes.h"
-#include "bmpendian.h"
-#include "bmpread.h"
+#include <CGAL/ImageIO/bmptypes.h>
+#include <CGAL/ImageIO/bmpendian.h>
+#include <CGAL/ImageIO/bmpread.h>
 
 
 

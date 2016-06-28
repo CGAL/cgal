@@ -32,7 +32,7 @@
 #include <string.h>
 #include <sstream>
 
-#include "fgetns.h"
+#include <CGAL/ImageIO/fgetns.h>
 
 
 

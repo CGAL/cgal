@@ -58,7 +58,7 @@ int writeInrimage(char *basename,_image *im);
 PTRIMAGE_FORMAT createInrimageFormat();
 
 #ifdef CGAL_HEADER_ONLY
-#include "inr_impl.h"
+#include <CGAL/ImageIO/inr_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 

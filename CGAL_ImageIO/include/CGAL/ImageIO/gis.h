@@ -135,7 +135,7 @@ bool writeGisHeader( const _image* im ) ;
 int writeGisData( const _image* im ) ;
 
 #ifdef CGAL_HEADER_ONLY
-#include "gis_impl.h"
+#include <CGAL/ImageIO/gis_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

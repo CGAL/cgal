@@ -29,8 +29,8 @@
 #include <sstream>
 #include <cstring>
 
-#include "inr.h"
-#include "fgetns.h"
+#include <CGAL/ImageIO/inr.h>
+#include <CGAL/ImageIO/fgetns.h>
 
 #define _LGTH_STRING_ 1024
 

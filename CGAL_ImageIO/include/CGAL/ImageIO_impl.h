@@ -51,15 +51,15 @@
    GIF        |  .gif            |     X     |     
    BMP        |  .gif            |     X     |     
 */
-#include "inr.h"
-#include "gif.h"
-#include "gis.h"
-#include "pnm.h"
-#include "bmp.h"
-#include "iris.h"
-#include "analyze.h"
+#include <CGAL/ImageIO/inr.h>
+#include <CGAL/ImageIO/gif.h>
+#include <CGAL/ImageIO/gis.h>
+#include <CGAL/ImageIO/pnm.h>
+#include <CGAL/ImageIO/bmp.h>
+#include <CGAL/ImageIO/iris.h>
+#include <CGAL/ImageIO/analyze.h>
 #ifdef MINC_FILES
-#include "mincio.h"
+#include <CGAL/ImageIO/mincio.h>
 #endif
 
 struct Remove_supported_file_format {

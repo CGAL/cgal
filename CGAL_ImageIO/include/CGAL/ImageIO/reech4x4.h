@@ -281,7 +281,7 @@ extern void Reech4x4_verbose ( );
 extern void Reech4x4_noverbose ( );
 
 #ifdef CGAL_HEADER_ONLY
-#include "reech4x4_impl.h"
+#include <CGAL/ImageIO/reech4x4_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 
