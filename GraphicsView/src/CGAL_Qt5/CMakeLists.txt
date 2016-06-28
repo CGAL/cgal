@@ -84,15 +84,16 @@ endif(CGAL_HEADER_ONLY)
 collect_cgal_library( CGAL_Qt5 "${additional_files}")
 
 if (NOT CGAL_HEADER_ONLY)
-  add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} )
+
+  qt5_use_modules(CGAL_Qt5 OpenGL Svg)
+
+  add_dependencies( CGAL_Qt5 CGAL )
 
    # CGAL_Qt5 only depends on CGAL in DEBUG, but we still link it in
    # both build types.
    target_link_libraries( CGAL_Qt5 CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt5_3RD_PARTY_LIBRARIES} )
 
-   qt5_use_modules(CGAL_Qt5 OpenGL Svg)
-
-   add_dependencies( CGAL_Qt5 CGAL )
+   add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} )
 
 else()
 

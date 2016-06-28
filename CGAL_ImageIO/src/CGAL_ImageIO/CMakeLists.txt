@@ -21,15 +21,18 @@ use_essential_libs()
 
 if (CGAL_HEADER_ONLY)
   cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+  include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} .)
+  link_directories   ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )  
 endif()
 
 collect_cgal_library( CGAL_ImageIO "")
 
 if (NOT CGAL_HEADER_ONLY)
-  add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
-  include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} .)
-  link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+
   add_dependencies( CGAL_ImageIO CGAL )
+
+  add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
 
   # CGAL_ImageIO only depends on CGAL in DEBUG, but we still link it
   # in both build types.
