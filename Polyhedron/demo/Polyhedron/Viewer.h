@@ -69,6 +69,7 @@ public:
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
   QPainter* getPainter();
+  void saveSnapshot(bool , bool overwrite = false);
 
 Q_SIGNALS:
   void sendMessage(QString);
