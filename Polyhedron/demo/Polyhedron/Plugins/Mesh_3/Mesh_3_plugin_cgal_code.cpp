@@ -71,18 +71,21 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->setScene(scene);
 
-  QString tooltip = QString(
-        "Angle: %1 \n"
-        "Edge size bound: %2 \n"
-        "Facets size bound: %3 \n"
-        "Approximation bound: %4 \n" )
-      .arg(facet_angle)
-      .arg(edge_size)
-      .arg(facet_sizing)
-      .arg(facet_approx);
+  QString tooltip = QString("<div>From \"") + filename +
+    QString("\" with the following mesh parameters"
+            "<ul>"
+            "<li>Angle: %1</li>"
+            "<li>Edge size bound: %2</li>"
+            "<li>Facets size bound: %3</li>"
+            "<li>Approximation bound: %4</li>")
+    .arg(facet_angle)
+    .arg(edge_size)
+    .arg(facet_sizing)
+    .arg(facet_approx);
   if (pMesh->is_closed())
-    tooltip += QString("Tetrahedra size bound: %1 \n" )
+    tooltip += QString("<li>Tetrahedra size bound: %1</li>" )
         .arg(tet_sizing);
+  tooltip += "</ul></div>";
 
   p_new_item->setProperty("toolTip",tooltip);
   Mesh_parameters param;
