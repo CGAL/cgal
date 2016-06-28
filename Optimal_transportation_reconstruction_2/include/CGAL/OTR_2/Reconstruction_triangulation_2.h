@@ -214,7 +214,7 @@ public:
 
   FT get_length(const Edge& edge) const {
     Segment segment = get_segment(edge);
-    return CGAL::sqrt(segment.squared_length());
+    return CGAL::approximate_sqrt(segment.squared_length());
   }
 
   Segment get_segment(const Edge& edge) const {
@@ -756,13 +756,13 @@ public:
     if (pt == pb)
       return FT(0);
     if (pa == pb)
-      return CGAL::sqrt(geom_traits().compute_squared_distance_2_object()(pa, pt));
+      return CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(pa, pt));
 
     Vector vab = geom_traits().construct_vector_2_object()(pa, pb);
     // Normalize vab
     vab = geom_traits().construct_scaled_vector_2_object()(
       vab,
-      FT(1) / CGAL::sqrt(geom_traits().compute_squared_length_2_object()(vab)));
+      FT(1) / CGAL::approximate_sqrt(geom_traits().compute_squared_length_2_object()(vab)));
     Vector vab90 = geom_traits().construct_vector_2_object()(-vab.y(), vab.x());
     Vector vat = geom_traits().construct_vector_2_object()(pa, pt);
     return geom_traits().compute_scalar_product_2_object()(vat, vab90);
