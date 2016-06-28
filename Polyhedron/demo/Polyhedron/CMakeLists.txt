@@ -200,6 +200,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_use_modules(scene_basic_objects OpenGL Gui Xml Script Widgets)
 
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
+  qt5_use_modules(scene_color_ramp Core)
 
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
   qt5_use_modules(point_dialog OpenGL Gui Xml Script Widgets)

@@ -770,6 +770,8 @@ public:
 
   bool eventFilter(QObject *, QEvent *event)
   {
+    if(!plane_item)
+      return false;
     if(event->type() == QEvent::MouseButtonPress)
     {
       QMouseEvent * mevent = static_cast<QMouseEvent*>(event);
@@ -1028,6 +1030,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
   edges_item->edges.clear();
   QTime time;
   time.start();
+  bool does_intersect = false;
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
     CGAL::Three::Scene_item* item = scene->item(i);
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
@@ -1050,7 +1053,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
 
     if(!CGAL::do_intersect(plane, it.value()->bbox()))
       continue;
-
+    does_intersect = true;
     std::vector<Facet_tree::Object_and_primitive_id> intersections;
     it.value()->all_intersections(plane, std::back_inserter(intersections));
 
@@ -1063,12 +1066,12 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
       if ( NULL != inter_seg )
         edges_item->edges.push_back(*inter_seg);
     }
-
-    messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
-    edges_item->invalidateOpenGLBuffers();
-    scene->itemChanged(edges_item);
-    ready_to_cut = false;
   }
+  if(does_intersect)
+    messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+  edges_item->invalidateOpenGLBuffers();
+  scene->itemChanged(edges_item);
+  ready_to_cut = false;
   QApplication::restoreOverrideCursor();
 }
 
