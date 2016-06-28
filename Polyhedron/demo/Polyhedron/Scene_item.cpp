@@ -36,6 +36,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
   nb_isolated_vertices = 0;
   has_group = 0;
   parent_group = 0;
+  is_selected = false;
 }
 
 CGAL::Three::Scene_item::~Scene_item() {
