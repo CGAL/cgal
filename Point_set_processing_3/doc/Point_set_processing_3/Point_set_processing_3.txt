@@ -385,7 +385,7 @@ Upsampling for different sharpness_angle parameter values. The input containing 
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3upsample_neighborhood_size Parameter: neighbor_radius
-Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller that zero.
+Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller than zero.
 
 \cgalFigureBegin{Point_set_processing_3figupsample_neighborhood_size, upsample_neighborhood_size.jpg}
 Comparison between different sizes of neighbor radius. 
