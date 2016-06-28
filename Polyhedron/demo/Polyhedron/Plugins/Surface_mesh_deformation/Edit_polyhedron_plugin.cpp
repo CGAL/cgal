@@ -66,6 +66,7 @@ public Q_SLOTS:
 private:
   typedef CGAL::Three::Scene_interface::Item_id Item_id;
   std::vector<QColor> saved_color;
+  bool is_color_vector_read_only;
   Scene_edit_polyhedron_item* convert_to_edit_polyhedron(Item_id, Scene_polyhedron_item*);
   Scene_polyhedron_item* convert_to_plain_polyhedron(Item_id, Scene_edit_polyhedron_item*);
   void updateSelectionItems(Scene_polyhedron_item* target);
@@ -438,6 +439,7 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   Scene_edit_polyhedron_item* edit_poly = new Scene_edit_polyhedron_item(poly_item, &ui_widget, mw);
   if(poly_item->isItemMulticolor())
     saved_color = poly_item->color_vector();
+  is_color_vector_read_only = poly_item->is_color_vector_read_only();
   edit_poly->setColor(poly_item->color());
   edit_poly->setName(QString("%1 (edit)").arg(poly_item->name()));
   edit_poly->setRenderingMode(Gouraud);
@@ -459,6 +461,7 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_polyhedron(Item_id i,
   Scene_polyhedron_item* poly_item = edit_item->to_polyhedron_item();
   scene->replaceItem(i, poly_item);
   delete edit_item;
+  poly_item->set_color_vector_read_only(is_color_vector_read_only);
   if(saved_color.size() >0)
   {
     poly_item->setItemIsMulticolor(true);
