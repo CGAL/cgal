@@ -1,4 +1,5 @@
-#define CGAL_MESH_3_VERBOSE 1
+// #define CGAL_MESH_3_PROTECTION_DEBUG 1
+// #define CGAL_MESH_3_VERBOSE 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -7,6 +8,7 @@
 
 #include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
 // IO
@@ -27,21 +29,22 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Polyhedron_domain;
 
 class Hybrid_domain {
-  Implicit_domain& implicit_domain;
-  Polyhedron_domain& polyhedron_domain;
+  const Implicit_domain& implicit_domain;
+  const Polyhedron_domain& polyhedron_domain;
 
 public:
-  Hybrid_domain(Implicit_domain& implicit_domain,
-                Polyhedron_domain& polyhedron_domain)
+  Hybrid_domain(const Implicit_domain& implicit_domain,
+                const Polyhedron_domain& polyhedron_domain)
     : implicit_domain(implicit_domain)
     , polyhedron_domain(polyhedron_domain)
   {}
 
-  // types
+  // types required by the `MeshDomain_3` concept
   typedef int Surface_patch_index;
   typedef int Subdomain_index;
   typedef int Index;
 
+  typedef K R;
   typedef K::Point_3 Point_3;
   typedef CGAL::cpp11::tuple<Point_3, Index, int> Intersection;
 
@@ -150,12 +153,15 @@ public:
   { return index; }
 }; // end class Hybrid_domain
 
+typedef CGAL::Mesh_domain_with_polyline_features_3<Hybrid_domain> Domain;
+
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Hybrid_domain, K>::type Tr;
+typedef CGAL::Mesh_triangulation_3<Domain, K>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+typedef Mesh_criteria::Edge_criteria Edge_criteria;
 typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
@@ -195,12 +201,60 @@ int main()
   Implicit_domain sphere_domain(sphere_centered_at_111,
                                 K::Sphere_3(K::Point_3(1, 1, 1), 2.));
 
-  Hybrid_domain domain(sphere_domain, polyhedron_domain);
+  Domain domain(sphere_domain, polyhedron_domain);
+
+  std::vector<std::vector<Point> > featured_curves;
+  featured_curves.resize(15);
+  featured_curves[ 0].push_back(Point(-1, -1, -1));
+  featured_curves[ 0].push_back(Point( 1, -1, -1));
+  featured_curves[ 1].push_back(Point(-1, -1, -1));
+  featured_curves[ 1].push_back(Point(-1,  1, -1));
+  featured_curves[ 2].push_back(Point(-1, -1, -1));
+  featured_curves[ 2].push_back(Point(-1, -1,  1));
+
+  featured_curves[ 3].push_back(Point( 1, -1, -1));
+  featured_curves[ 3].push_back(Point( 1,  1, -1));
+  featured_curves[ 4].push_back(Point( 1, -1, -1));
+  featured_curves[ 4].push_back(Point( 1, -1,  1));
+
+  featured_curves[ 5].push_back(Point(-1,  1, -1));
+  featured_curves[ 5].push_back(Point( 1,  1, -1));
+  featured_curves[ 6].push_back(Point(-1,  1, -1));
+  featured_curves[ 6].push_back(Point(-1,  1,  1));
+
+  featured_curves[ 7].push_back(Point(-1, -1,  1));
+  featured_curves[ 7].push_back(Point( 1, -1,  1));
+  featured_curves[ 8].push_back(Point(-1, -1,  1));
+  featured_curves[ 8].push_back(Point(-1,  1,  1));
+
+  featured_curves[ 9].push_back(Point( 1,  1, -1));
+  featured_curves[ 9].push_back(Point( 1,  1,  0));
+  featured_curves[10].push_back(Point(-1,  1,  1));
+  featured_curves[10].push_back(Point( 0,  1,  1));
+  featured_curves[11].push_back(Point( 1, -1,  1));
+  featured_curves[11].push_back(Point( 1,  0,  1));
+
+  featured_curves[12].push_back(Point(0, 1, 1));
+  featured_curves[13].push_back(Point(1, 1, 0));
+  featured_curves[14].push_back(Point(0, 1, 1));
+  for(double x = 0.05; x < 0.98; x+=0.05) {
+    const double y = 1 - CGAL::sqrt(1 - CGAL::square(x - 1));
+    featured_curves[12].push_back(Point(x, y, 1));
+    featured_curves[13].push_back(Point(1, y, x));
+    featured_curves[14].push_back(Point(x, 1, y));
+  }
+  featured_curves[12].push_back(Point(1, 0, 1));
+  featured_curves[13].push_back(Point(1, 0, 1));
+  featured_curves[14].push_back(Point(1, 1, 0));
+
+  domain.add_features(featured_curves.begin(), featured_curves.end());
 
   // Criteria
+
+  Edge_criteria edge_criteria(0.08);
   Facet_criteria facet_criteria(30, 0.08, 0.025); // angle, size, approximation
   Cell_criteria cell_criteria(2, 0.1); // radius-edge ratio, size
-  Mesh_criteria criteria(facet_criteria, cell_criteria);
+  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
   
   // Mesh generation (without optimization)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
