@@ -79,6 +79,8 @@ else(CGAL_HEADER_ONLY)
   include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS} )
 
   link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+
+  add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} )
 endif(CGAL_HEADER_ONLY)
 
 collect_cgal_library( CGAL_Qt5 "${additional_files}")
@@ -89,11 +91,9 @@ if (NOT CGAL_HEADER_ONLY)
 
   add_dependencies( CGAL_Qt5 CGAL )
 
-   # CGAL_Qt5 only depends on CGAL in DEBUG, but we still link it in
-   # both build types.
-   target_link_libraries( CGAL_Qt5 CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt5_3RD_PARTY_LIBRARIES} )
-
-   add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} )
+  # CGAL_Qt5 only depends on CGAL in DEBUG, but we still link it in
+  # both build types.
+  target_link_libraries( CGAL_Qt5 CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt5_3RD_PARTY_LIBRARIES} )
 
 else()
 
