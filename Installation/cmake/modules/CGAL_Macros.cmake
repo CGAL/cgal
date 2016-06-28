@@ -282,30 +282,14 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       # Nothing to add for Core
 
       if (${component} STREQUAL "ImageIO")
-        find_package( OpenGL QUIET )
         find_package( ZLIB QUIET )
-
-        if (OPENGL_FOUND)
-          add_definitions("${OPENGL_DEFINITIONS}")
-          if (OPENGL_INCLUDE_DIR)
-            include_directories( SYSTEM "${OPENGL_INCLUDE_DIR}" )
-          endif ()
-        endif(OPENGL_FOUND)
-        
+      
         if(ZLIB_FOUND)
           cache_set(CGAL_ImageIO_USE_ZLIB "ON")
           add_definitions("-DCGAL_USE_ZLIB")
           include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
         endif(ZLIB_FOUND)
 
-        if(WITH_VTK)
-          if( VTK_FOUND )
-            add_definitions("-DCGAL_USE_VTK")
-            include_directories( SYSTEM ${VTK_INCLUDE_DIRS} )
-            link_directories(${vtkImagingCore_RUNTIME_LIBRARY_DIRS} ${vtkImagingCore_LIBRARY_DIRS} ${vtkIOImage_RUNTIME_LIBRARY_DIRS} ${vtkIOImage_LIBRARY_DIRS} ${vtkFiltersImaging_RUNTIME_LIBRARY_DIRS} ${vtkFiltersImaging_LIBRARY_DIRS})
-          endif()
-        endif()
-        
       endif()
 
       if (${component} STREQUAL "Qt5")
@@ -334,27 +318,13 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
           ####message( STATUS "External library ${component} has not been preconfigured")
           if (${component} STREQUAL "ImageIO")
-            find_package( OpenGL QUIET )
             find_package( ZLIB QUIET )
 
-            if (OPENGL_FOUND)
-              add_definitions("${OPENGL_DEFINITIONS}")
-              include_directories( SYSTEM "${OPENGL_INCLUDE_DIR}" )
-            endif(OPENGL_FOUND)
-        
             if(ZLIB_FOUND)
               cache_set(CGAL_ImageIO_USE_ZLIB "ON")
               add_definitions("-DCGAL_USE_ZLIB")
               include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
             endif(ZLIB_FOUND)
-
-            if(WITH_VTK)
-              if( VTK_FOUND )
-                add_definitions("-DCGAL_USE_VTK")
-                include_directories( SYSTEM ${VTK_INCLUDE_DIRS} )
-                link_directories(${vtkImagingCore_RUNTIME_LIBRARY_DIRS} ${vtkImagingCore_LIBRARY_DIRS} ${vtkIOImage_RUNTIME_LIBRARY_DIRS} ${vtkIOImage_LIBRARY_DIRS} ${vtkFiltersImaging_RUNTIME_LIBRARY_DIRS} ${vtkFiltersImaging_LIBRARY_DIRS})
-              endif()
-            endif()
 
           endif()
 
