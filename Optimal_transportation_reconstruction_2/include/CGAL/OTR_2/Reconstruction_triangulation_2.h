@@ -49,7 +49,7 @@
 #include <iostream>
 #include <limits>
 
-#define EPS   1e-15
+#define CGAL_EPS   1e-15
 
 namespace CGAL {
 namespace OTR_2 {
@@ -1034,7 +1034,7 @@ public:
         return false;
       }
 
-      if ((std::max)(Dac, Dbd) + EPS < Dbc)
+      if ((std::max)(Dac, Dbd) + CGAL_EPS < Dbc)
       {
 			/*
         std::cerr.precision(10);
@@ -1078,5 +1078,7 @@ public:
 };
 
 } } //namespace CGAL
+
+#undef CGAL_EPS
 
 #endif // CGAL_RECONSTRUCTION_TRIANGULATION_2_H
