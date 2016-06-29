@@ -310,7 +310,7 @@
           <item row="0" column="0">
            <widget class="QCheckBox" name="ShowROICheckBox">
             <property name="text">
-             <string>Show ROI</string>
+             <string>Show Non Control Vertices</string>
             </property>
             <property name="checked">
              <bool>true</bool>
