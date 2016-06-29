@@ -326,7 +326,7 @@ section) selected whenever the choice is available.
 
 \subsection subsection_headeronly Header-only option
 
-Since \cgal 4.X, \cgal can be used in headers only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demo. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADERS_ONLY` to `ON`.
+Since \cgal 4.9, \cgal can be used in headers only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demo. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADERS_ONLY` to `ON`. CMake version 3.0.0 or higher is required to use this option.
 
 One advantage of using \cgal in header-only mode is that you do not need to compile and install \cgal libraries before compiling a given example or demo. Note that even in header-only mode we still need to run cmake on \cgal in order to generate different configuration files. So, setting up \cgal becomes now:
 
