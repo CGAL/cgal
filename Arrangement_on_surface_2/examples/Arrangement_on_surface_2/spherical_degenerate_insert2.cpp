@@ -25,28 +25,32 @@ typedef Arrangement_2::Vertex_handle                       Vertex_handle;
 
 int main()
 {
-  Arrangement_2 arr;
-  Point_2 sp(0, 0, -1);
-  Point_2 np(0, 0, 1);
+  Geom_traits_2 traits;
+  Geom_traits_2::Construct_point_2 ctr_p = traits.construct_point_2_object();
+  Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
+    traits.construct_x_monotone_curve_2_object();
+  Arrangement_2 arr(&traits);
+  Point_2 sp = ctr_p(0, 0, -1);
+  Point_2 np = ctr_p(0, 0, 1);
 
-  Point_2 p1(-1,  0, -1);
-  Point_2 p2(-1,  0,  1);
-  X_monotone_curve_2 xcv_sp_p2(sp, p2);
-  X_monotone_curve_2 xcv_np_p1(np, p1);
+  Point_2 p1 = ctr_p(-1,  0, -1);
+  Point_2 p2 = ctr_p(-1,  0,  1);
+  X_monotone_curve_2 xcv_sp_p2 = ctr_xcv(sp, p2);
+  X_monotone_curve_2 xcv_np_p1 = ctr_xcv(np, p1);
   // std::cout << "Inserting " << xcv_sp_p2 << std::endl;
   insert(arr, xcv_sp_p2);
   // std::cout << "Inserting " << xcv_np_p1 << std::endl;
   insert(arr, xcv_np_p1);
 
-  Point_2 q1(-1,  -1, -1);
-  Point_2 q2(-1,  -1,  1);
-  X_monotone_curve_2 xcv_sp_q2(sp, q2);
-  X_monotone_curve_2 xcv_np_q1(np, q1);
+  Point_2 q1 = ctr_p(-1,  -1, -1);
+  Point_2 q2 = ctr_p(-1,  -1,  1);
+  X_monotone_curve_2 xcv_sp_q2 = ctr_xcv(sp, q2);
+  X_monotone_curve_2 xcv_np_q1 = ctr_xcv(np, q1);
   insert(arr, xcv_sp_q2);
   insert(arr, xcv_np_q1);
 
-  X_monotone_curve_2 xcv_p1_q1(p1, q1);
-  X_monotone_curve_2 xcv_p2_q2(p2, q2);
+  X_monotone_curve_2 xcv_p1_q1 = ctr_xcv(p1, q1);
+  X_monotone_curve_2 xcv_p2_q2 = ctr_xcv(p2, q2);
   insert(arr, xcv_p1_q1);
   insert(arr, xcv_p2_q2);
 

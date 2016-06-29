@@ -26,26 +26,31 @@ typedef Arrangement_2::Vertex_handle                       Vertex_handle;
 
 int main()
 {
+  Geom_traits_2 traits;
+  Geom_traits_2::Construct_point_2 ctr_p = traits.construct_point_2_object();
+  Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
+    traits.construct_x_monotone_curve_2_object();
+
   std::vector< Point_2 > points;
   std::vector< X_monotone_curve_2 > xcvs;
 
   CGAL::set_pretty_mode(std::cout);
 
-  Point_2 sp(0, 0, -1);
-  Point_2 np(0, 0, 1);
+  Point_2 sp = ctr_p(0, 0, -1);
+  Point_2 np = ctr_p(0, 0, 1);
   points.push_back(sp);
   points.push_back(np);
 
-  Point_2 p1(-1,  0, 0);
-  Point_2 p2( 0, -1, 0);
-  Point_2 p3( 1,  0, 0);
+  Point_2 p1 = ctr_p(-1,  0, 0);
+  Point_2 p2 = ctr_p( 0, -1, 0);
+  Point_2 p3 = ctr_p( 1,  0, 0);
   points.push_back(p1);
   points.push_back(p2);
   points.push_back(p3);
 
-  X_monotone_curve_2 xcv_sp1(sp, p1);
-  X_monotone_curve_2 xcv_sp2(sp, p2);
-  X_monotone_curve_2 xcv_sp3(sp, p3);
+  X_monotone_curve_2 xcv_sp1 = ctr_xcv(sp, p1);
+  X_monotone_curve_2 xcv_sp2 = ctr_xcv(sp, p2);
+  X_monotone_curve_2 xcv_sp3 = ctr_xcv(sp, p3);
   CGAL_assertion(xcv_sp1.is_vertical());
   CGAL_assertion(xcv_sp2.is_vertical());
   CGAL_assertion(xcv_sp3.is_vertical());
@@ -53,16 +58,16 @@ int main()
   xcvs.push_back(xcv_sp2);
   xcvs.push_back(xcv_sp3);
 
-  X_monotone_curve_2 xcv_12(p1, p2);
-  X_monotone_curve_2 xcv_23(p2, p3);
+  X_monotone_curve_2 xcv_12 = ctr_xcv(p1, p2);
+  X_monotone_curve_2 xcv_23 = ctr_xcv(p2, p3);
   CGAL_assertion(!xcv_12.is_vertical());
   CGAL_assertion(!xcv_23.is_vertical());
   xcvs.push_back(xcv_12);
   xcvs.push_back(xcv_23);
 
-  X_monotone_curve_2 xcv_np1(np, p1);
-  X_monotone_curve_2 xcv_np2(np, p2);
-  X_monotone_curve_2 xcv_np3(np, p3);
+  X_monotone_curve_2 xcv_np1 = ctr_xcv(np, p1);
+  X_monotone_curve_2 xcv_np2 = ctr_xcv(np, p2);
+  X_monotone_curve_2 xcv_np3 = ctr_xcv(np, p3);
   CGAL_assertion(xcv_np1.is_vertical());
   CGAL_assertion(xcv_np2.is_vertical());
   CGAL_assertion(xcv_np3.is_vertical());
