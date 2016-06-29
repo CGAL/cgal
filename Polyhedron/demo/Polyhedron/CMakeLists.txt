@@ -253,7 +253,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
                scene_basic_objects)
   endif()
 
-  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp  Color_ramp.cpp )
+  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp )
+  target_link_libraries(scene_implicit_function_item scene_color_ramp)
 
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
@@ -332,6 +333,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     demo_framework
     scene_polyhedron_item
     scene_points_with_normal_item
+    scene_color_ramp
     scene_implicit_function_item
     scene_polylines_item
     scene_basic_objects

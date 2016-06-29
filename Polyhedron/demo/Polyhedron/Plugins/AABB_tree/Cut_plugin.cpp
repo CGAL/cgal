@@ -395,8 +395,8 @@ public:
     case UNSIGNED_FACETS:
     case SIGNED_FACETS:
 
-      glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, textureId);
+      viewer->glActiveTexture(GL_TEXTURE0);
+      viewer->glBindTexture(GL_TEXTURE_2D, textureId);
 
       vaos[TexturedCutplane]->bind();
       program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
@@ -406,7 +406,7 @@ public:
       program->setAttributeValue("color_facets", QColor(Qt::white));
       program->setAttributeValue("normal", QVector3D(0.0,0.0,0.0));
 
-      glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
+      viewer->glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
       program->release();
       vaos[TexturedCutplane]->release();
       break;
@@ -418,7 +418,7 @@ public:
       program->bind();
       program->setUniformValue("f_matrix", fMatrix);
       program->setAttributeValue("colors", this->color());
-      glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
+      viewer->glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
 
       program->release();
       vaos[Facets]->release();
@@ -437,7 +437,7 @@ public:
     program->bind();
     program->setUniformValue("f_matrix", fMatrix);
     program->setAttributeValue("colors", QColor(Qt::black));
-    glDrawArrays(GL_LINES, 0,static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>(positions_lines.size()/3));
     program->release();
     vaos[Edges]->release();
   }
@@ -626,7 +626,7 @@ private:
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
   {
     if(GLuint(-1) == textureId) {
-        glGenTextures(1, &textureId);
+        viewer->glGenTextures(1, &textureId);
     }
 
     //vaos for the basic cutting plane
@@ -674,8 +674,8 @@ private:
       buffers[UVCoords].release();
       program->release();
 
-      glBindTexture(GL_TEXTURE_2D, textureId);
-      glTexImage2D(GL_TEXTURE_2D,
+      viewer->glBindTexture(GL_TEXTURE_2D, textureId);
+      viewer->glTexImage2D(GL_TEXTURE_2D,
                    0,
                    GL_RGB,
                    texture->getWidth(),
@@ -684,10 +684,10 @@ private:
                    GL_RGB,
                    GL_UNSIGNED_BYTE,
                    texture->getData());
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+      viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
     }
     are_buffers_filled = true;
   }
