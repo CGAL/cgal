@@ -139,6 +139,8 @@ struct Scene_polyhedron_item_priv{
   bool facet_picking_m;
   bool erase_next_picked_facet_m;
   //the following variable is used to indicate if the color vector must not be automatically updated.
+  // If this boolean is true, the item's color will be independant of the color's wheel, if it is false
+  // changing the color in the wheel will change the color of the item, even if it is multicolor.
   bool plugin_has_set_color_vector_m;
   bool is_multicolor;
 
@@ -1747,6 +1749,7 @@ bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Th
 
 std::vector<QColor>& Scene_polyhedron_item::color_vector() {return d->colors_;}
 void Scene_polyhedron_item::set_color_vector_read_only(bool on_off) {d->plugin_has_set_color_vector_m=on_off;}
+bool Scene_polyhedron_item::is_color_vector_read_only() { return d->plugin_has_set_color_vector_m;}
 int Scene_polyhedron_item::getNumberOfNullLengthEdges(){return d->number_of_null_length_edges;}
 int Scene_polyhedron_item::getNumberOfDegeneratedFaces(){return d->number_of_degenerated_faces;}
 bool Scene_polyhedron_item::triangulated(){return d->poly->is_pure_triangle();}

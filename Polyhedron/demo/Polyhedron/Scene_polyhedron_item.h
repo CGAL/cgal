@@ -88,6 +88,7 @@ public:
     void compute_bbox() const;
     std::vector<QColor>& color_vector();
     void set_color_vector_read_only(bool on_off);
+    bool is_color_vector_read_only();
     int getNumberOfNullLengthEdges();
     int getNumberOfDegeneratedFaces();
     bool triangulated();
