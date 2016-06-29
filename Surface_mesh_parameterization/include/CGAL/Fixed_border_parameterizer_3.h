@@ -35,10 +35,14 @@
 #include <iostream>
 #include <boost/unordered_set.hpp>
 
+
+
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <boost/function_output_iterator.hpp>
+
 /// \file Fixed_border_parameterizer_3.h
 
 namespace CGAL {
-
 
 // ------------------------------------------------------------------------------------
 // Declaration

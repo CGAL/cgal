@@ -135,7 +135,7 @@ struct property_map<CGAL::Seam_mesh<TM,SEM,SVM>, CGAL::vertex_point_t >
 template<class TM, class SEM, class SVM>
 typename property_map<CGAL::Seam_mesh<TM,SEM,SVM>, CGAL::vertex_point_t >::const_type
 get(CGAL::vertex_point_t, const CGAL::Seam_mesh<TM,SEM,SVM>& sm) {
-  return CGAL::Seam_mesh_point_map<TM,SEM,SVM>(sm, get(CGAL::vertex_point_t(), const_cast<TM&>(sm.mesh())));
+  return CGAL::Seam_mesh_point_map<TM,SEM,SVM>(sm, get(CGAL::vertex_point, const_cast<TM&>(sm.mesh())));
 }
 
 

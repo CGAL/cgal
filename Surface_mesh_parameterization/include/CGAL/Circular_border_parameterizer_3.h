@@ -173,6 +173,9 @@ public:
  
       // Public operations
     public:
+       typedef typename Circular_border_parameterizer_3<TriangleMesh_>::vertex_descriptor vertex_descriptor;
+       typedef typename Circular_border_parameterizer_3<TriangleMesh_>::halfedge_descriptor halfedge_descriptor;
+   // Private types
       // Default constructor, copy constructor and operator =() are fine
 
       // Protected operations

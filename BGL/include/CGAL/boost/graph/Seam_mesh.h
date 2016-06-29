@@ -321,7 +321,7 @@ public:
    
     index = 0;
     std::vector<face_descriptor> faces;
-    boost::graph_traits<Seam_mesh>::halfedge_descriptor shd(opposite(bhd,*this));
+    typename boost::graph_traits<Seam_mesh>::halfedge_descriptor shd(opposite(bhd,*this));
     CGAL::Polygon_mesh_processing::connected_component(face(shd,*this),
                                                        *this,
                                                        std::back_inserter(faces));
@@ -430,4 +430,4 @@ public:
 
 } // namespace
 
-#endif CGAL_SEAM_MESH_H
+#endif //CGAL_SEAM_MESH_H

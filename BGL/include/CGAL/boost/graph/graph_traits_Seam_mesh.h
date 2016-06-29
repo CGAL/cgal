@@ -294,7 +294,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::vertex_descriptor v,
          const CGAL::Seam_mesh<TM,SEM,SVM>& sm)
 {
-  return halfedge_descriptor(boost::graph_traits<TM>::halfedge_descriptor(v));
+  return typename boost::graph_traits<TM>::halfedge_descriptor(v);
 }
 
 
