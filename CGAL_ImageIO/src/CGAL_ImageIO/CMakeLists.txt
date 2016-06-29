@@ -23,7 +23,7 @@ if (CGAL_HEADER_ONLY)
   cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 else()
   include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} )
-  link_directories   ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )  
+  link_directories   ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
   add_definitions    ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
 endif()
 
@@ -40,11 +40,11 @@ if (NOT CGAL_HEADER_ONLY)
 else()
 
   target_link_libraries( CGAL_ImageIO INTERFACE ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
-  target_include_directories( CGAL_ImageIO INTERFACE ${CGAL_3RD_PARTY_LIBRARIES_DIRS}) 
+  target_include_directories( CGAL_ImageIO INTERFACE ${CGAL_3RD_PARTY_LIBRARIES_DIRS})
 
 endif()
 
-message("libCGAL_ImageIO is configured")    
+message("libCGAL_ImageIO is configured")
 
 if(NOT ZLIB_FOUND)
   message( STATUS "NOTICE: libCGAL_ImageIO needs ZLib to read compressed files. That feature will not be activated.")

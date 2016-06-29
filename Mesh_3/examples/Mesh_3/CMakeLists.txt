@@ -84,9 +84,9 @@ if ( CGAL_FOUND )
       create_single_source_cgal_program( "mesh_3D_image_with_features.cpp" )
       if( CGAL_ImageIO_USE_ZLIB )
         create_single_source_cgal_program( "mesh_optimization_example.cpp" )
-        
+
         create_single_source_cgal_program( "mesh_optimization_lloyd_example.cpp" )
-        
+
         create_single_source_cgal_program( "mesh_3D_image.cpp" )
         create_single_source_cgal_program( "mesh_3D_image_with_custom_initialization.cpp" )
 

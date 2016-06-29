@@ -89,7 +89,7 @@ else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER
 
   if(NOT QGLVIEWER_FOUND)
     set(AABB_MISSING_DEPS "QGLViewer, ${AABB_MISSING_DEPS}")
-  endif()  
+  endif()
 
   message(STATUS "NOTICE: This demo requires ${AABB_MISSING_DEPS}and will not be compiled.")
 

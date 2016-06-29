@@ -4,6 +4,10 @@ if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
+if($ENV{CGAL_FAKE_PUBLIC_RELEASE})
+  add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
+endif()
+
 if(CGAL_HEADER_ONLY)
   cache_set(CGAL_Qt5_3RD_PARTY_LIBRARIES Qt5::OpenGL Qt5::Svg )
 else(CGAL_HEADER_ONLY)
@@ -59,8 +63,8 @@ else(CGAL_HEADER_ONLY)
     list(SORT PACKAGE_QTMOC_FILES)
     foreach(package_qtmoc_file ${PACKAGE_QTMOC_FILES})
       # includes 'moccing' for sources/headers in package + collects lists of moc-files for dependency (to properly build the lib)
-      include(${package_qtmoc_file}) 
-      #        message(STATUS QTMOC------------FILE: ${package_qtmoc_file})      
+      include(${package_qtmoc_file})
+      #        message(STATUS QTMOC------------FILE: ${package_qtmoc_file})
 
     endforeach()
   endforeach()
@@ -101,10 +105,6 @@ else()
   install(DIRECTORY "../../demo/resources/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/resources")
   install(DIRECTORY "../../demo/icons/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/icons")
 
-endif()
-
-if($ENV{CGAL_FAKE_PUBLIC_RELEASE})
-  add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
 endif()
 
 message("libCGAL_Qt5 is configured")

@@ -43,7 +43,7 @@ SOURCE_GROUP("QT" FILES ${QT_headers})
 add_executable  ( Periodic_2_Delaunay_triangulation_2 
   Periodic_2_Delaunay_triangulation_2.cpp
   Periodic_2_triangulation_2.moc 
-  ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES} 
+  ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
   ${headers} ${QT_headers} ${P2T2_headers})
 
 qt5_use_modules( Periodic_2_Delaunay_triangulation_2 Xml Script OpenGL Svg)
