@@ -283,7 +283,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       if (${component} STREQUAL "ImageIO")
         find_package( ZLIB QUIET )
-      
+
         if(ZLIB_FOUND)
           cache_set(CGAL_ImageIO_USE_ZLIB "ON")
           add_definitions("-DCGAL_USE_ZLIB")
