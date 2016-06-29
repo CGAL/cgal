@@ -61,8 +61,9 @@ get_static_check_fpu_rounding_mode_is_restored()
 }
 
 namespace {
-  const Check_FPU_rounding_mode_is_restored & check_fpu_rounding_mode_is_restored =
-    get_static_check_fpu_rounding_mode_is_restored();
+  CGAL_UNUSED const Check_FPU_rounding_mode_is_restored &
+    check_fpu_rounding_mode_is_restored 
+    = get_static_check_fpu_rounding_mode_is_restored();
 }
 
 #else
