@@ -140,7 +140,7 @@ public:
   >
   > MultiIndex;
 
-  double m_factor; // ghost vs solid
+  FT m_factor; // ghost vs solid
 
 
 public:
@@ -152,11 +152,11 @@ public:
   ~Reconstruction_triangulation_2() {
   }
 
-  double& ghost_factor() {
+  FT& ghost_factor() {
     return m_factor;
   }
 
-  double ghost_factor() const {
+  FT ghost_factor() const {
     return m_factor;
   }
 
