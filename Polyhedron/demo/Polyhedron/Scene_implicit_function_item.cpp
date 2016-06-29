@@ -174,51 +174,51 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
 
     const CGAL::Three::Scene_item::Bbox& b = item->bbox();
     float x,y,z;
-    z = 0;
-    x = (b.xmax()-b.xmin())/10.0;
-    y = (b.ymax()-b.ymin())/10.0;
+    z = (b.zmax()+b.zmin())/2.0;
+    x = (b.xmax()+b.xmin())/2.0;
+    y = (b.ymax()+b.ymin())/2.0;
     // The Quad
     {
 
 
         //A
-        positions_tex_quad.push_back(b.xmin());
-        positions_tex_quad.push_back(b.ymin());
-        positions_tex_quad.push_back(z);
+        positions_tex_quad.push_back(b.xmin()-x);
+        positions_tex_quad.push_back(b.ymin()-z);
+        positions_tex_quad.push_back(0);
 
 
         //B
-        positions_tex_quad.push_back(b.xmin());
-        positions_tex_quad.push_back(b.ymax());
-        positions_tex_quad.push_back(z);
+        positions_tex_quad.push_back(b.xmin()-x);
+        positions_tex_quad.push_back(b.ymax()-y);
+        positions_tex_quad.push_back(0);
 
 
         //C
-        positions_tex_quad.push_back(b.xmax());
-        positions_tex_quad.push_back(b.ymax());
-        positions_tex_quad.push_back(z);
+        positions_tex_quad.push_back(b.xmax()-x);
+        positions_tex_quad.push_back(b.ymax()-y);
+        positions_tex_quad.push_back(0);
 
 
 
         //A
-        positions_tex_quad.push_back(b.xmin());
-        positions_tex_quad.push_back(b.ymin());
-        positions_tex_quad.push_back(z);
+        positions_tex_quad.push_back(b.xmin()-x);
+        positions_tex_quad.push_back(b.ymin()-y);
+        positions_tex_quad.push_back(0);
 
 
         //C
-        positions_tex_quad.push_back(b.xmax());
-        positions_tex_quad.push_back(b.ymax());
-        positions_tex_quad.push_back(z);
+        positions_tex_quad.push_back(b.xmax()-x);
+        positions_tex_quad.push_back(b.ymax()-y);
+        positions_tex_quad.push_back(0);
 
 
         //D
-        positions_tex_quad.push_back(b.xmax());
-        positions_tex_quad.push_back(b.ymin());
-        positions_tex_quad.push_back(z);
+        positions_tex_quad.push_back(b.xmax()-x);
+        positions_tex_quad.push_back(b.ymin()-y);
+        positions_tex_quad.push_back(0);
 
 
-        //UV Mapping x2 but I don't know why.
+
         texture_map.push_back(0.0);
         texture_map.push_back(0.0);
 
@@ -242,28 +242,28 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
     }
     //The grid
     {
-
+      double dx((b.xmax()-b.xmin())/10.0), dy((b.ymax()-b.ymin())/10.0);
         for(int u = 0; u < 11; u++)
         {
 
-            positions_grid.push_back(b.xmin() + x* u);
-            positions_grid.push_back(b.ymin());
-            positions_grid.push_back(z);
+            positions_grid.push_back(b.xmin()-x + dx* u);
+            positions_grid.push_back(b.ymin()-y);
+            positions_grid.push_back(0);
 
-            positions_grid.push_back(b.xmin() + x* u);
-            positions_grid.push_back(b.ymax());
-            positions_grid.push_back(z);
+            positions_grid.push_back(b.xmin()-x + dx* u);
+            positions_grid.push_back(b.ymax()-y);
+            positions_grid.push_back(0);
         }
         for(int v=0; v<11; v++)
         {
 
-            positions_grid.push_back(b.xmin());
-            positions_grid.push_back(b.ymin() + v * y);
-            positions_grid.push_back(z);
+            positions_grid.push_back(b.xmin()-x);
+            positions_grid.push_back(b.ymin()-y + v * dy);
+            positions_grid.push_back(0);
 
-            positions_grid.push_back(b.xmax());
-            positions_grid.push_back(b.ymin() + v * y);
-            positions_grid.push_back(z);
+            positions_grid.push_back(b.xmax()-x);
+            positions_grid.push_back(b.ymin()-y + v * dy);
+            positions_grid.push_back(0);
         }
 
     }
@@ -414,6 +414,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
   d->frame_->setPosition(offset_x, offset_y, offset_z);
   d->frame_->setOrientation(1., 0, 0, 0);
   connect(d->frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
+  plane_was_moved();
   invalidateOpenGLBuffers();
 }
 
