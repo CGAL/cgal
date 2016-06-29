@@ -1274,7 +1274,7 @@ void MainWindow::updateInfo() {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
     if(item->bbox()!=CGAL::Bbox_3())
-      item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
+      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
           .arg(item->bbox().xmin())
           .arg(item->bbox().ymin())
           .arg(item->bbox().zmin())
@@ -1282,7 +1282,7 @@ void MainWindow::updateInfo() {
           .arg(item->bbox().ymax())
           .arg(item->bbox().zmax());
     if(!item_filename.isEmpty()) {
-      item_text += QString("<br />File:<i> %1").arg(item_filename);
+      item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }
     ui->infoLabel->setText(item_text);
   }
