@@ -38,6 +38,7 @@ class Polyhedron_demo_point_set_bilateral_smoothing_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
+    mw = mainWindow;
     actionBilateralSmoothing = new QAction(tr("Point Set Bilateral Smoothing"), mainWindow);
     actionBilateralSmoothing->setObjectName("actionBilateralSmoothing");
     autoConnectActions();
@@ -79,6 +80,14 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
 
   if(item)
   {
+    if(!item->has_normals())
+    {
+      QMessageBox::warning(mw,
+                           tr("Cannot smooth"),
+                           tr("%1 does not have normals.")
+                           .arg(item->name()));
+      return;
+    }
     // Gets point set
     Point_set* points = item->point_set();
     if(points == NULL)
