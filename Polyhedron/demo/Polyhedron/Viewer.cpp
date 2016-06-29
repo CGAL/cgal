@@ -6,6 +6,7 @@
 #include <QGLViewer/manipulatedCameraFrame.h>
 #include <QDebug>
 #include <QOpenGLShader>
+#include <QFileDialog>
 #include <QOpenGLShaderProgram>
 #include <cmath>
 #include <QApplication>
@@ -1450,3 +1451,12 @@ void Viewer::clearDistancedisplay()
   }
   distance_text.clear();
 }
+
+void Viewer::saveSnapshot(bool, bool)
+{
+  QString fileName = QFileDialog::getSaveFileName(this,
+                                                  tr("Save Snapshot"), "", tr("Image Files (*.png *.jpg *.bmp)"));
+  if(!fileName.isEmpty())
+    grabFrameBuffer(false).save(QString(fileName));
+}
+
