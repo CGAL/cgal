@@ -60,6 +60,11 @@ get_static_check_fpu_rounding_mode_is_restored()
   return check_fpu_rounding_mode_is_restored;
 }
 
+namespace {
+  const Check_FPU_rounding_mode_is_restored & check_fpu_rounding_mode_is_restored =
+    get_static_check_fpu_rounding_mode_is_restored();
+}
+
 #else
 
 // A global object that emits a warning if the rounding mode at the
