@@ -135,6 +135,10 @@ const double infinity = HUGE_VAL;
 struct Check_FPU_rounding_mode_is_restored;
 inline const Check_FPU_rounding_mode_is_restored&
 get_static_check_fpu_rounding_mode_is_restored();
+namespace {
+  CGAL_DEPRECATED_UNUSED const Check_FPU_rounding_mode_is_restored &
+  check_fpu_rounding_mode_is_restored =  get_static_check_fpu_rounding_mode_is_restored();
+}
 #endif
 
 // Inline function to stop compiler optimizations that shouldn't happen with
@@ -422,17 +426,6 @@ inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
-#ifndef CGAL_NDEBUG
-#ifdef CGAL_HEADER_ONLY
-  // Call the get_static_check_fpu_rounding_mode_is_restored()
-  // function called so that the test located in the destructor
-  // of Check_FPU_rounding_mode_is_restored is run
-  const Check_FPU_rounding_mode_is_restored & tmp = 
-    get_static_check_fpu_rounding_mode_is_restored();
-  CGAL_USE(tmp);
-#endif
-#endif
-
   CGAL_IA_SETFPCW(cw);
 }
 
