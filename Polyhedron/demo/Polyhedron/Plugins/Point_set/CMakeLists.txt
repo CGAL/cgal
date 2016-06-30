@@ -59,3 +59,5 @@ endif()
   polyhedron_demo_plugin(merge_point_sets_plugin Merge_point_sets_plugin)
   target_link_libraries(merge_point_sets_plugin scene_points_with_normal_item)
 
+  polyhedron_demo_plugin(point_set_interference_plugin Point_set_interference_plugin)
+  target_link_libraries(point_set_interference_plugin scene_points_with_normal_item)
