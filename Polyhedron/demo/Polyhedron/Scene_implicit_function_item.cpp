@@ -1,5 +1,6 @@
 #include "Scene_implicit_function_item.h"
 #include <QColor>
+#include <QApplication>
 #include <map>
 #include <CGAL/gl.h>
 #include <CGAL/Simple_cartesian.h>
@@ -167,6 +168,7 @@ void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_i
 
 void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_tex_quad.resize(0);
     positions_cube.resize(0);
     positions_grid.resize(0);
@@ -398,6 +400,7 @@ void Scene_implicit_function_item_priv::compute_vertices_and_texmap(void)
             compute_texture(i,j);
         }
     }
+    QApplication::restoreOverrideCursor();
 }
 
 Scene_implicit_function_item::

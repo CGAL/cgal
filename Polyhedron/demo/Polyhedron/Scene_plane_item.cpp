@@ -1,4 +1,5 @@
 #include "Scene_plane_item.h"
+#include <QApplication>
 using namespace CGAL::Three;
 
 
@@ -77,6 +78,7 @@ void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
 
 void Scene_plane_item::compute_normals_and_vertices(void)
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_quad.resize(0);
     positions_lines.resize(0);
 
@@ -133,6 +135,7 @@ void Scene_plane_item::compute_normals_and_vertices(void)
         }
 
     }
+    QApplication::restoreOverrideCursor();
 }
 
 void Scene_plane_item::draw(Viewer_interface* viewer)const

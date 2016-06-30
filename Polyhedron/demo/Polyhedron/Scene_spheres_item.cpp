@@ -1,4 +1,6 @@
 #include "Scene_spheres_item.h"
+#include <QApplication>
+
 struct Scene_spheres_item_priv
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -68,7 +70,7 @@ Scene_spheres_item::~Scene_spheres_item()
 }
 void Scene_spheres_item::computeElements() const
 {
-
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   d->colors.clear();
   d->edges_colors.clear();
   d->centers.clear();
@@ -90,6 +92,7 @@ void Scene_spheres_item::computeElements() const
     d->radius.push_back(sp.first->squared_radius());
 
   }
+  QApplication::restoreOverrideCursor();
 }
 
 void Scene_spheres_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const

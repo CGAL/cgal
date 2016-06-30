@@ -1,3 +1,4 @@
+#include <QApplication>
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
@@ -535,11 +536,14 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
 }
 void Scene_polyhedron_selection_item_priv::computeElements()const
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   compute_any_elements(positions_facets, positions_lines, positions_points, normals,
                        item->selected_vertices, item->selected_facets, item->selected_edges);
+  QApplication::restoreOverrideCursor();
 }
 void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   compute_any_elements(positions_temp_facets, positions_temp_lines, positions_temp_points, temp_normals,
                        item->temp_selected_vertices, item->temp_selected_facets, item->temp_selected_edges);
   //The fixed points
@@ -572,12 +576,15 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
       i++;
     }
   }
+  QApplication::restoreOverrideCursor();
 }
 
 void Scene_polyhedron_selection_item_priv::compute_HL_elements()const
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   compute_any_elements(positions_HL_facets, positions_HL_lines, positions_HL_points, HL_normals,
                        item->HL_selected_vertices, item->HL_selected_facets, item->HL_selected_edges);
+  QApplication::restoreOverrideCursor();
 }
 
 void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer) const

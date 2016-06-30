@@ -28,6 +28,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QDialog>
+#include <QApplication>
 
 #include <boost/foreach.hpp>
 #include <boost/container/flat_map.hpp>
@@ -239,6 +240,7 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
     return static_cast<Input_facets_AABB_tree*>(ptr);
   }
   else {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Polyhedron* poly = item->polyhedron();
     if(poly) {
 
@@ -271,6 +273,7 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
       }
       item->setProperty(aabb_property_name,
                         QVariant::fromValue<void*>(tree));
+      QApplication::restoreOverrideCursor();
       return tree;
     }
     else return 0;
@@ -653,6 +656,7 @@ Scene_polyhedron_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* vi
 void
 Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only) const
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_facets.resize(0);
     positions_lines.resize(0);
     positions_feature_lines.resize(0);
@@ -842,6 +846,7 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
           positions_lines.push_back(1.0);
         }
     }
+    QApplication::restoreOverrideCursor();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item()

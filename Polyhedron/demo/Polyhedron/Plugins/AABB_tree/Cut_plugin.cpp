@@ -117,12 +117,14 @@ private:
 
     void computeElements() const
     {
+       QApplication::setOverrideCursor(Qt::WaitCursor);
        positions_lines.clear();
 
        CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
        traits.v_edges = &positions_lines;
 
        tree.traversal(0, traits);
+       QApplication::restoreOverrideCursor();
     }
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
@@ -234,6 +236,7 @@ private:
     }
     void computeElements() const
     {
+       QApplication::setOverrideCursor(Qt::WaitCursor);
        positions_lines.clear();
 
        for(size_t i = 0, end = edges.size();
@@ -244,6 +247,7 @@ private:
          positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
+       QApplication::restoreOverrideCursor();
     }
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {

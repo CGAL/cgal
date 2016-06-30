@@ -5,6 +5,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
+#include <QApplication>
 #include <boost/container/flat_map.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
@@ -207,6 +208,7 @@ void Scene_surface_mesh_item_priv::addFlatData(Point p, Kernel::Vector_3 n, CGAL
 
 void Scene_surface_mesh_item_priv::compute_elements()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
@@ -329,6 +331,7 @@ void Scene_surface_mesh_item_priv::compute_elements()
 
     }
   }
+  QApplication::restoreOverrideCursor();
 }
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {

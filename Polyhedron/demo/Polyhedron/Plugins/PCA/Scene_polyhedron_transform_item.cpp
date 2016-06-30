@@ -1,3 +1,4 @@
+#include <QApplication>
 #include "Scene_polyhedron_transform_item.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
@@ -80,6 +81,7 @@ void Scene_polyhedron_transform_item_priv::initialize_buffers(CGAL::Three::Viewe
 
 void Scene_polyhedron_transform_item_priv::compute_elements() const
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     typedef Kernel::Point_3		        Point;
     typedef Polyhedron::Edge_const_iterator	Edge_iterator;
@@ -100,6 +102,7 @@ void Scene_polyhedron_transform_item_priv::compute_elements() const
         positions_lines.push_back(b.z()-center_.z);
 
     }
+    QApplication::restoreOverrideCursor();
 }
 
 void Scene_polyhedron_transform_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const

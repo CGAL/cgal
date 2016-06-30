@@ -3,6 +3,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <QApplication>
 
 #include <QObject>
 
@@ -169,6 +170,7 @@ void Scene_textured_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_
 void
 Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_facets.resize(0);
     positions_lines.resize(0);
     textures_map_facets.resize(0);
@@ -269,7 +271,7 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
         textures_map_lines.push_back(ov);
 
     }
-
+    QApplication::restoreOverrideCursor();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
