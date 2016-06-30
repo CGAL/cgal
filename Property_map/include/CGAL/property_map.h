@@ -392,6 +392,26 @@ Nth_of_tuple_property_map<N, Tuple>
 }
 #endif
 
+/// \ingroup PkgProperty_map
+/// Struct that turns a property map into a unary functor with
+/// `operator()(key k)` calling the get function with `k`
+template <class PropertyMap>
+struct Property_map_to_unary_function{
+  typedef typename boost::property_traits<PropertyMap>::key_type argument_type;
+  typedef typename boost::property_traits<PropertyMap>::reference result_type;
+
+  PropertyMap map;
+  Property_map_to_unary_function(PropertyMap m=PropertyMap())
+    : map(m)
+  {}
+
+  result_type
+  operator()(const argument_type& a) const
+  {
+    return get(map,a);
+  }
+};
+
 } // namespace CGAL
 
 #endif // CGAL_POINT_SET_PROPERTY_MAP_H
