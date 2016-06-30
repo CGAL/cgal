@@ -139,7 +139,7 @@ load_function() const
   QDialog dialog(mw);
   Ui::FunctionDialog ui;
   ui.setupUi(&dialog);
-  
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
   
