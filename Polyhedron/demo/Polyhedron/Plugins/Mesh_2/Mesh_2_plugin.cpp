@@ -246,6 +246,7 @@ private:
     QDialog dialog(mw);
     Ui::mesh_2_dialog ui =
       create_dialog(&dialog, diagonal_length, seeds.empty());
+    dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
 
     // Get values
     int i = dialog.exec();
