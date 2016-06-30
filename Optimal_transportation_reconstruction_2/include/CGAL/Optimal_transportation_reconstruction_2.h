@@ -38,7 +38,7 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
-#include <boost/property_map/property_map.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -173,11 +173,6 @@ protected:
   FT m_ghost; // ghost vs solid
   unsigned int m_relocation; // # relocations
 
-  // bbox
-  FT m_bbox_x;
-  FT m_bbox_y;
-  FT m_bbox_size;
-
   PointPMap point_pmap;
   MassPMap  mass_pmap;
 
@@ -230,9 +225,6 @@ public:
     m_alpha(0.5),
     m_ghost(1.0),
     m_relocation(relocation),
-    m_bbox_x(0.0),
-    m_bbox_y(0.0),
-    m_bbox_size(1.0),
     point_pmap(point_map),
     mass_pmap(mass_map)
   {
@@ -326,30 +318,8 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
-  Optimal_transportation_reconstruction_2()
-  : m_traits(m_dt.geom_traits())
-  {
-    initialize_parameters();
-  }
-
-
   ~Optimal_transportation_reconstruction_2() {
     clear();
-  }
-
-  void initialize_parameters() {
-    m_verbose = 0;
-    m_mchoice = 0;
-    m_use_flip = true;
-    m_alpha = FT(0.5);
-    m_ghost = FT(1);
-    m_relocation = 0;
-
-    m_bbox_x = FT(0);
-    m_bbox_y = FT(0);
-    m_bbox_size = FT(1);
-
-    m_ignore = 0;
   }
 
   //Function if one wants to create a Optimal_transportation_reconstruction_2
@@ -368,11 +338,18 @@ public:
   }
 
 
+
   template <class InputIterator>
   void initialize(InputIterator start, InputIterator beyond) {
 
     clear();
-    insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
+    Property_map_to_unary_function<PointPMap> get_point(point_pmap);
+
+    Bbox_2 bbox = bbox_2(
+      boost::make_transform_iterator(start,get_point),
+      boost::make_transform_iterator(beyond,get_point));
+
+    insert_loose_bbox(bbox);
     init(start, beyond);
 
     std::vector<Sample_*> m_samples;
@@ -408,23 +385,25 @@ public:
     {
       delete *s_it;
     }
-
-    m_dt.clear();
-    m_mindex.clear();
   }
 
 
   // INIT //
-  void insert_loose_bbox(const FT x, const FT y, const FT size) {
+  void insert_loose_bbox(const Bbox_2& bbox) {
     CGAL::Real_timer timer;
     std::cerr << "insert loose bbox" << "...";
 
+    double xl = (bbox.xmax()-bbox.xmin()/2);
+    double yl = (bbox.ymax()-bbox.ymin()/2);
+
     timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
-    insert_point(m_traits.construct_point_2_object()(x - size, y - size), true, nb++);
-    insert_point(m_traits.construct_point_2_object()(x - size, y + size), true, nb++);
-    insert_point(m_traits.construct_point_2_object()(x + size, y + size), true, nb++);
-    insert_point(m_traits.construct_point_2_object()(x + size, y - size), true, nb++);
+    typename Traits::Construct_point_2 point_2
+      = m_traits.construct_point_2_object();
+    insert_point(point_2(bbox.xmin()-xl, bbox.ymin()-yl), true, nb++);
+    insert_point(point_2(bbox.xmin()-xl, bbox.ymax()+yl), true, nb++);
+    insert_point(point_2(bbox.xmax()+xl, bbox.ymax()+yl), true, nb++);
+    insert_point(point_2(bbox.xmax()+xl, bbox.ymin()-yl), true, nb++);
 
     std::cerr << "done" << " (" << nb << " vertices, "
       << timer.time() << " s)" << std::endl;
@@ -881,6 +860,8 @@ public:
     Vertex_handle_map cvmap;
 
     Vertex_handle s = m_dt.source_vertex(edge);
+    CGAL_assertion(s != m_dt.infinite_vertex() );
+
     Vertex_handle cs = copy.tds().create_vertex();
     cvmap[s] = copy_vertex(s, cs);
 
@@ -889,6 +870,7 @@ public:
     CGAL_For_all(vcirc, vend)
     {
       Vertex_handle v = vcirc;
+      CGAL_assertion(v!=m_dt.infinite_vertex());
       if (cvmap.find(v) == cvmap.end()) {
         Vertex_handle cv = copy.tds().create_vertex();
         cvmap[v] = copy_vertex(v, cv);
