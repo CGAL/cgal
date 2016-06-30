@@ -506,6 +506,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
     {
       //generate the dialog box to set the options
       Polyhedron_demo_surface_reconstruction_plugin_dialog dialog;
+      dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
       if(!dialog.exec())
 	return;
 
