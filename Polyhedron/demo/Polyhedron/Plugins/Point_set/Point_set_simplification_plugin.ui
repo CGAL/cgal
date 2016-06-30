@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Simplification</string>
   </property>
-  <layout class="QGridLayout" columnminimumwidth="0,1">
+  <layout class="QGridLayout" columnstretch="0,1" columnminimumwidth="0,1">
    <item row="7" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
