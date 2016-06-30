@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Remeshing_dialog</class>
  <widget class="QDialog" name="Remeshing_dialog">
@@ -5,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>389</width>
-    <height>173</height>
+    <width>344</width>
+    <height>168</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -14,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
      <item row="0" column="0">
       <widget class="QLabel" name="angleLabel">
        <property name="text">
