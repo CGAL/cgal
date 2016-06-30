@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>241</height>
+    <width>421</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,23 @@
   <property name="windowTitle">
    <string>Load a 3D image</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,1">
+   <item row="11" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="imageType"/>
+   </item>
    <item row="12" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
@@ -29,9 +45,6 @@
       <set>QDialogButtonBox::Ok</set>
      </property>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="imageType"/>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label_3">
@@ -50,7 +63,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout_3">
+       <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1">
         <item row="2" column="1">
          <widget class="QComboBox" name="precisionList">
           <property name="editable">
@@ -94,19 +107,6 @@
       </item>
      </layout>
     </widget>
-   </item>
-   <item row="11" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
