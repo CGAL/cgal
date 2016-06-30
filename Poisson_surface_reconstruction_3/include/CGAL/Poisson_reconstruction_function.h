@@ -339,12 +339,8 @@ public:
   , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(first, beyond, 6))
   {
     forward_constructor(first, beyond, 
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      make_dereference_property_map(first),
-#else
       make_identity_property_map(
       typename std::iterator_traits<InputIterator>::value_type()),
-#endif
       normal_pmap, Poisson_visitor());
     CGAL::Timer task_timer; task_timer.start();
   }

@@ -433,13 +433,8 @@ bilateral_smooth_point_set(
   Pwns pwns;
   for(ForwardIterator it = first; it != beyond; ++it)
   {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    const Point& p = get(point_pmap, it);
-    const Vector& n = get(normal_pmap, it);
-#else
     const Point& p = get(point_pmap, *it);
     const Vector& n = get(normal_pmap, *it);
-#endif
     CGAL_point_set_processing_precondition(n.squared_length() > 1e-10);
     
     pwns.push_back(Pwn(p, n));
@@ -569,19 +564,10 @@ bilateral_smooth_point_set(
    ForwardIterator it = first;
    for(unsigned int i = 0 ; it != beyond; ++it, ++i)
    {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-     const Point& p = get(point_pmap, it);
-#else
      const Point& p = get(point_pmap, *it);
-#endif
      sum_move_error += CGAL::squared_distance(p, update_pwns[i].position());
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-     put (point_pmap, it, update_pwns[i].position());
-     put (normal_pmap, it, update_pwns[i].normal());
-#else
      put (point_pmap, *it, update_pwns[i].position());
      put (normal_pmap, *it, update_pwns[i].normal());
-#endif
    }
      
    return sum_move_error / nb_points;
@@ -631,12 +617,8 @@ bilateral_smooth_point_set(
 {
   return bilateral_smooth_point_set<Concurrency_tag>(
     first, beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(first),
-#else
     make_identity_property_map(
     typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
     normal_pmap, 
     k,
     sharpness_angle);

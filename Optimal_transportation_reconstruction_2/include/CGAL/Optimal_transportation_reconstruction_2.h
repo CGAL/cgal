@@ -377,13 +377,8 @@ public:
 
     std::vector<Sample_*> m_samples;
     for (InputIterator it = start; it != beyond; it++) {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-      FT    mass  = get( mass_pmap, it);
-#else
       Point point = get(point_pmap, *it);
       FT    mass  = get( mass_pmap, *it);
-#endif
       Sample_* s = new Sample_(point, mass);
       m_samples.push_back(s);
     }
@@ -439,11 +434,7 @@ public:
     int nb = static_cast<int>(m_dt.number_of_vertices());
     m_dt.infinite_vertex()->pinned() = true;
     for (Iterator it = begin; it != beyond; it++) {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-#else
       Point point = get(point_pmap, *it);
-#endif
       insert_point(point, false, nb++);
     }
 

@@ -147,6 +147,12 @@ and <code>src/</code> directories).
 <!-- Geometry Kernels -->
 <!-- Convex Hull Algorithms -->
 <!-- Polygons -->
+<h3>2D Minkowski Sums</h3>
+<ul>
+  <li>Introduce a convex decomposition strategy, namely Polygon_nop_decomposition_2, that merely passed the input polygon to the list of output polygons.</li>
+  <li>Introduce overloads of the function minkowski_sum_2(), which accepts 2 decomposition strategies.</li>
+  <li>Introduce an overloaded function called minkowski_sum_by_decomposition_2(P, Q, decom_no_holes, decomp_with_holes), which computes the 2D Minkowski sum using optimal choices of decomposition strategies.</li>
+</ul>
 <!-- Cell Complexes and Polyhedra -->
 <h3>Combinatorial Maps</h3>
   <ul>
@@ -189,7 +195,7 @@ and <code>src/</code> directories).
         <li>
           The user can choose the number of relaxation steps happening at each loop,
           and to run 1-dimensional relaxation along constrained polylines.
-        </li> 
+        </li>
       </ul>
     </li>
     <li>
@@ -221,12 +227,15 @@ and <code>src/</code> directories).
       of a <code>FaceGraph</code> and a creation function <code>CGAL::dual(primal)</code>.
     </li>
   </ul>
-  <h3>2D Minkowski Sums</h3>
+  <h4>CGAL and Boost Property Maps</h4>
   <ul>
-    <li>Introduce a convex decomposition strategy, namely Polygon_nop_decomposition_2, that merely passed the input polygon to the list of output polygons.</li>
-    <li>Introduce overloads of the function minkowski_sum_2(), which accepts 2 decomposition strategies.</li>
-    <li>Introduce an overloaded function called minkowski_sum_by_decomposition_2(P, Q, decom_no_holes, decomp_with_holes), which computes the 2D Minkowski sum using optimal choices of decomposition strategies.</li>
+    <li>It is not longer possible to use the old API of the property maps
+        provided by CGAL, switched on by defining the macro
+        <code>CGAL_USE_PROPERTY_MAPS_API_V1</code>. This API was deprecated
+        since CGAL 4.3
+    </li>
   </ul>
+
 <!-- Visualization -->
 
 <!-- end of the div for 4.9 -->

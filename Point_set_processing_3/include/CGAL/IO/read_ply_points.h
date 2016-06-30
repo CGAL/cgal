@@ -472,13 +472,8 @@ public:
     Vector normal (nx, ny, nz);
     Enriched_point pwn;
       
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    put(m_point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-    put(m_normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-#else
     put(m_point_pmap,  pwn, point);  // point_pmap[&pwn] = point
     put(m_normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
-#endif
     *m_output++ = pwn;
   }
 
@@ -636,11 +631,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
   return read_ply_points_and_normals
     <OutputIteratorValueType>(stream,
                               output,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                              make_dereference_property_map(output),
-#else
                               make_identity_property_map(OutputIteratorValueType()),
-#endif
                               normal_pmap);
 }
 
@@ -759,11 +750,7 @@ bool read_ply_points(std::istream& stream, ///< input stream.
   return read_ply_points
     <OutputIteratorValueType>(stream,
                               output,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                              make_dereference_property_map(output)
-#else
                               make_identity_property_map(OutputIteratorValueType())
-#endif
                               );
 }
 
