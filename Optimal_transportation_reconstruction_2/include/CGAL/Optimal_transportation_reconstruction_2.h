@@ -391,7 +391,8 @@ public:
   // INIT //
   void insert_loose_bbox(const Bbox_2& bbox) {
     CGAL::Real_timer timer;
-    std::cerr << "insert loose bbox" << "...";
+    if (m_verbose > 0)
+      std::cerr << "insert loose bbox...";
 
     double xl = (bbox.xmax()-bbox.xmin()/2);
     double yl = (bbox.ymax()-bbox.ymin()/2);
@@ -405,14 +406,16 @@ public:
     insert_point(point_2(bbox.xmax()+xl, bbox.ymax()+yl), true, nb++);
     insert_point(point_2(bbox.xmax()+xl, bbox.ymin()-yl), true, nb++);
 
-    std::cerr << "done" << " (" << nb << " vertices, "
-      << timer.time() << " s)" << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done (" << nb << " vertices, "
+                << timer.time() << " s)" << std::endl;
   }
 
   template<class Iterator>  // value_type = Point*
   void init(Iterator begin, Iterator beyond) {
     CGAL::Real_timer timer;
-    std::cerr << "init" << "...";
+    if (m_verbose > 0)
+      std::cerr << "init...";
 
     timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
@@ -426,9 +429,10 @@ public:
       insert_point(point, false, nb++);
     }
 
-    std::cerr << "done" << " (" << nb << " vertices, "
-      << timer.time() << " s)"
-      << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done (" << nb << " vertices, "
+                << timer.time() << " s)"
+                << std::endl;
   }
 
   Vertex_handle insert_point(
@@ -449,13 +453,15 @@ public:
   template<class Iterator>  // value_type = Sample_*
   void assign_samples(Iterator begin, Iterator end) {
     CGAL::Real_timer timer;
-    std::cerr << "assign samples" << "...";
+    if (m_verbose > 0)
+      std::cerr << "assign samples...";
 
     timer.start();
     m_dt.assign_samples(begin, end);
     m_dt.reset_all_costs();
 
-    std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done (" << timer.time() << " s)" << std::endl;
   }
 
   void reassign_samples() {
@@ -482,7 +488,7 @@ public:
     Vertex_handle t = m_dt.target_vertex(edge);
 
     if (m_verbose > 0) {
-      std::cerr << std::endl << "do collapse " << "("
+      std::cerr << std::endl << "do collapse ("
           << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
@@ -532,7 +538,7 @@ public:
     Vertex_handle t = m_dt.target_vertex(edge);
 
     if (m_verbose > 1) {
-      std::cerr << "simulate collapse " << "("
+      std::cerr << "simulate collapse ("
         << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
@@ -1381,7 +1387,8 @@ public:
    */
   void run_until(std::size_t np) {
     CGAL::Real_timer timer;
-    std::cerr << "reconstruct until " << np << " V";
+    if (m_verbose > 0)
+      std::cerr << "reconstruct until " << np << " V";
 
     timer.start();
     std::size_t N = np + 4;
@@ -1393,10 +1400,11 @@ public:
       performed++;
     }
 
-    std::cerr << " done" << " (" << performed
-        << " iters, " << m_dt.number_of_vertices() - 4 << " V "
-        << timer.time() << " s)"
-        << std::endl;
+    if (m_verbose)
+      std::cerr << " done" << " (" << performed
+                << " iters, " << m_dt.number_of_vertices() - 4 << " V "
+                << timer.time() << " s)"
+                << std::endl;
   }
 
   /*!
@@ -1406,7 +1414,8 @@ public:
    */
   void run(const unsigned steps) {
     CGAL::Real_timer timer;
-    std::cerr << "reconstruct " << steps;
+    if (m_verbose > 0)
+      std::cerr << "reconstruct " << steps;
 
     timer.start();
     unsigned performed = 0;
@@ -1417,10 +1426,11 @@ public:
       performed++;
     }
 
-    std::cerr << " done" << " (" << performed << "/"
-        << steps << " iters, " << m_dt.number_of_vertices() - 4
-        << " V, " << timer.time() << " s)"
-        << std::endl;
+    if (m_verbose > 0)
+      std::cerr << " done" << " (" << performed << "/"
+                << steps << " iters, " << m_dt.number_of_vertices() - 4
+                << " V, " << timer.time() << " s)"
+                << std::endl;
   }
 
 
@@ -1429,7 +1439,8 @@ public:
    */
   void relocate_all_points() {
     CGAL::Real_timer timer;
-    std::cerr << "relocate all points" << "...";
+    if (m_verbose > 0)
+      std::cerr << "relocate all points" << "...";
 
     timer.start();
     m_mindex.clear(); // pqueue must be recomputed
@@ -1465,7 +1476,8 @@ public:
       }
     }
 
-    std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
   }
 
   /// @}

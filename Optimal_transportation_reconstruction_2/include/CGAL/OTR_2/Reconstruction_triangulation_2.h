@@ -1030,7 +1030,8 @@ public:
       if (Dac ==  -(std::numeric_limits<FT>::max)() && Dbd ==
           -(std::numeric_limits<FT>::max)())
       {
-        std::cerr << "--- No flips available ---"  << std::endl;
+        if (verbose > 0)
+          std::cerr << "--- No flips available ---"  << std::endl;
         return false;
       }
 
