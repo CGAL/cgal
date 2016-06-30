@@ -231,6 +231,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   QDialog dialog(mw);
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
