@@ -353,6 +353,58 @@ public:
 
     tex_map.push_back(1.0f);
     tex_map.push_back(1.0f);
+
+    //Vertex source code
+    const char tex_vertex_source[] =
+    {
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec2 tex_coord; \n"
+        "uniform highp mat4 mvp_matrix;\n"
+        "uniform highp mat4 f_matrix;\n"
+        "varying highp vec2 texc;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
+        "    texc = tex_coord;\n"
+        "}"
+    };
+    //Vertex source code
+    const char tex_fragment_source[] =
+    {
+        "#version 120 \n"
+        "uniform sampler2D texture;\n"
+        "varying highp vec2 texc;\n"
+        "void main(void) { \n"
+        "gl_FragColor = texture2D(texture, texc.st);\n"
+        "} \n"
+        "\n"
+    };
+    QOpenGLShader *tex_vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!tex_vertex_shader->compileSourceCode(tex_vertex_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+    QOpenGLShader *tex_fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    if(!tex_fragment_shader->compileSourceCode(tex_fragment_source))
+    {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+
+    tex_rendering_program = new QOpenGLShaderProgram();
+    if(!tex_rendering_program->addShader(tex_vertex_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!tex_rendering_program->addShader(tex_fragment_shader))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!tex_rendering_program->link())
+    {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+    }
   }
 
   ~Scene_aabb_plane_item()
@@ -399,15 +451,13 @@ public:
       viewer->glBindTexture(GL_TEXTURE_2D, textureId);
 
       vaos[TexturedCutplane]->bind();
-      program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
-      attribBuffers(viewer,PROGRAM_WITH_TEXTURE);
-      program->bind();
-      program->setUniformValue("f_matrix", fMatrix);
-      program->setAttributeValue("color_facets", QColor(Qt::white));
-      program->setAttributeValue("normal", QVector3D(0.0,0.0,0.0));
 
+      attribTexBuffers(viewer);
+
+      tex_rendering_program->bind();
+      tex_rendering_program->setUniformValue("f_matrix", fMatrix);
       viewer->glDrawArrays(GL_TRIANGLES, 0,static_cast<GLsizei>(positions_quad.size()/3));
-      program->release();
+      tex_rendering_program->release();
       vaos[TexturedCutplane]->release();
       break;
 
@@ -469,6 +519,7 @@ private:
   std::vector<QOpenGLVertexArrayObject*> vaos;
   mutable int m_grid_size;
   mutable bool m_fast_distance;
+  mutable QOpenGLShaderProgram* tex_rendering_program;
   mutable Point_distance m_distance_function[100][100];
   mutable GLuint textureId;
   mutable Texture *texture;
@@ -658,21 +709,19 @@ private:
     }
     //vao for the textured cutting planes
     {
-      program = getShaderProgram(PROGRAM_WITH_TEXTURE);
-      program->bind();
+      tex_rendering_program->bind();
       vaos[TexturedCutplane]->bind();
       buffers[Facets_vertices].bind();
-      program->enableAttributeArray("vertex");
-      program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+      tex_rendering_program->enableAttributeArray("vertex");
+      tex_rendering_program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
       buffers[Facets_vertices].release();
 
       buffers[UVCoords].bind();
       buffers[UVCoords].allocate(tex_map.data(), static_cast<int>(tex_map.size()*sizeof(float)));
-      program->attributeLocation("v_texCoord");
-      program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
-      program->enableAttributeArray("v_texCoord");
+      tex_rendering_program->attributeLocation("tex_coord");
+      tex_rendering_program->setAttributeBuffer("tex_coord",GL_FLOAT,0,2);
+      tex_rendering_program->enableAttributeArray("tex_coord");
       buffers[UVCoords].release();
-      program->release();
 
       viewer->glBindTexture(GL_TEXTURE_2D, textureId);
       viewer->glTexImage2D(GL_TEXTURE_2D,
@@ -688,10 +737,24 @@ private:
       viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
       viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
       viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+      tex_rendering_program->release();
     }
     are_buffers_filled = true;
   }
 
+  void attribTexBuffers(CGAL::Three::Viewer_interface* viewer)const
+  {
+    QMatrix4x4 mvpMatrix;
+    double mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(mat);
+    for(int i=0; i < 16; i++)
+    {
+        mvpMatrix.data()[i] = (float)mat[i];
+    }
+    tex_rendering_program->bind();
+    tex_rendering_program->setUniformValue("mvp_matrix", mvpMatrix);
+    tex_rendering_program->release();
+  }
 };
 using namespace CGAL::Three;
 class Polyhedron_demo_cut_plugin :
