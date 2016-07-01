@@ -415,10 +415,17 @@ using std::max;
   #define __has_warning(x) 0  // Compatibility with non-clang compilers.
 #endif
 
+// Macro to specify a 'unused' attribute.
+#if defined(__GNUG__) || __has_attribute(__unused__)
+#  define CGAL_UNUSED  __attribute__ ((__unused__))
+#else
+#  define CGAL_UNUSED
+#endif
+
 // Macro to trigger deprecation warnings
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
 #  define CGAL_DEPRECATED
-#  define CGAL_DEPRECATED_UNUSED
+#  define CGAL_DEPRECATED_UNUSED CGAL_UNUSED
 #elif defined(__GNUC__) || __has_attribute(__deprecated__)
 #  define CGAL_DEPRECATED __attribute__((__deprecated__))
 #if __has_attribute(__unused__)
@@ -440,13 +447,6 @@ using std::max;
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #else
 #  define CGAL_NORETURN
-#endif
-
-// Macro to specify a 'unused' attribute.
-#if defined(__GNUG__) || __has_attribute(__unused__)
-#  define CGAL_UNUSED  __attribute__ ((__unused__))
-#else
-#  define CGAL_UNUSED
 #endif
 
 // Macro CGAL_ASSUME
