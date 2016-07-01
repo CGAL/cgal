@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_quality.cpp" )
   create_single_source_cgal_program( "test_reconstruction_until.cpp" )
   create_single_source_cgal_program( "test_vertex_edge.cpp" )
+  create_single_source_cgal_program( "otr2_epeck.cpp" )
 
 else()
   
