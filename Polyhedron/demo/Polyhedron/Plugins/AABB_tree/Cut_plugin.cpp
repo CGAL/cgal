@@ -896,10 +896,22 @@ public Q_SLOTS:
   void deleteTrees(CGAL::Three::Scene_item* sender)
   {
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sender);
+    if(!item)
+      return;
     delete facet_trees[item];
     facet_trees.remove(item);
     delete edge_trees[item];
     edge_trees.remove(item);
+    if(facet_trees.empty())
+    {
+      scene->erase(scene->item_id(plane_item));
+      scene->erase(scene->item_id(edges_item));
+    }
+    else
+    {
+      ready_to_cut = true;
+      cut();
+    }
   }
   void updateTrees(int id);
 private:
@@ -1036,6 +1048,12 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
                                      faces(*(poly_item->polyhedron())).second,
                                      *poly_item->polyhedron(),
                                      pmap );
+      Scene_aabb_item* aabb_item = new Scene_aabb_item(*facet_trees[poly_item]);
+      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
+      aabb_item->setRenderingMode(Wireframe);
+      aabb_item->setColor(Qt::black);
+      aabb_item->setVisible(false);
+      scene->addItem(aabb_item);
     }
     if(edge_trees.find(poly_item) == edge_trees.end()) {
       edge_trees[poly_item] = new Edge_tree();
@@ -1048,6 +1066,8 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   }
   plane_item->set_facet_trees(&facet_trees);
   plane_item->set_edge_trees(&edge_trees);
+  ready_to_cut = true;
+  cut();
 }
 
 void Polyhedron_demo_cut_plugin::Intersection()
@@ -1115,28 +1135,8 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
   QTime time;
   time.start();
   bool does_intersect = false;
-  for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-    CGAL::Three::Scene_item* item = scene->item(i);
-    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if(!poly_item) continue;
-    Facet_trees::iterator it = facet_trees.find(poly_item);
-    if(it == facet_trees.end()) {
-      PPMAP pmap;
-      it = facet_trees.insert(facet_trees.begin(),
-                              poly_item,
-                              new Facet_tree(faces(*(poly_item->polyhedron())).first,
-                                             faces(*(poly_item->polyhedron())).second,
-                                             *poly_item->polyhedron(),
-                                             pmap ));
-      Scene_aabb_item* aabb_item = new Scene_aabb_item(*it.value());
-      aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
-      aabb_item->setRenderingMode(Wireframe);
-      aabb_item->setColor(Qt::black);
-      aabb_item->setVisible(false);
-      scene->addItem(aabb_item);
-    }
-    //std::cerr << "size: " << it->second->size() << std::endl;
-
+  for(Facet_trees::iterator it = facet_trees.begin(); it != facet_trees.end(); ++it)
+  {
     if(!CGAL::do_intersect(plane, it.value()->bbox()))
       continue;
     does_intersect = true;
@@ -1156,7 +1156,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
   if(does_intersect)
     messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   edges_item->invalidateOpenGLBuffers();
-  scene->itemChanged(edges_item);
+  edges_item->itemChanged();
   ready_to_cut = false;
   QApplication::restoreOverrideCursor();
 }
@@ -1168,7 +1168,6 @@ void Polyhedron_demo_cut_plugin::cut()
   case Scene_aabb_plane_item::CUT_SEGMENTS:
     if(ready_to_cut)
     {
-      ready_to_cut = false;
       computeIntersection();
     }
     break;
