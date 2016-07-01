@@ -39,6 +39,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/type_traits/is_float.hpp>
 
 namespace CGAL {
 
@@ -1108,6 +1109,24 @@ public:
     return grad;
   }
 
+  // If the underlying number type used is not a floating point base
+  // number type (like a multiprecision), the coordinates of the points
+  // will increase a lot due to the relocation step. These functions
+  // simply turn a relocated point to a rounded to double version.
+  void relocate_on_the_double_grid(Point&, boost::true_type) const
+  {}
+  void relocate_on_the_double_grid(Point& p, boost::false_type) const
+  {
+    double x=to_double(m_traits.compute_x_2_object()(p));
+    double y=to_double(m_traits.compute_y_2_object()(p));
+    p=m_traits.construct_point_2_object()(FT(x),FT(y));
+  }
+  void relocate_on_the_double_grid(Point& p) const
+  {
+    relocate_on_the_double_grid(p,
+      typename boost::is_float<typename Traits::FT>::type());
+  }
+
   Point compute_relocation(Vertex_handle vertex) const {
     FT coef = FT(0);
     Vector rhs = m_traits.construct_vector_2_object()(FT(0), FT(0));
@@ -1130,9 +1149,11 @@ public:
     if (coef == FT(0))
       return vertex->point();
 
-    return m_traits.construct_translated_point_2_object()(
+    Point res = m_traits.construct_translated_point_2_object()(
       CGAL::ORIGIN,
       m_traits.construct_scaled_vector_2_object()(rhs, FT(1) / coef));
+    relocate_on_the_double_grid(res);
+    return res;
   }
 
   void compute_relocation_for_vertex(
