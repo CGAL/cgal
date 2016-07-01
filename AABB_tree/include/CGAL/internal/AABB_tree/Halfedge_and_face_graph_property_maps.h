@@ -192,9 +192,7 @@ struct Source_point_from_edge_descriptor{
   get(Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap> pmap,
       key_type h)
   {
-    return  get(vertex_point,
-                       *pmap.m_graph,
-                       source(h, *pmap.m_graph) );
+    return get(pmap.m_vppm,  source(h, *pmap.m_graph) );
   }
 };
 
