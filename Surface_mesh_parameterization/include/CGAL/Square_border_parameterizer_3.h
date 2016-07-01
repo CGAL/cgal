@@ -65,6 +65,7 @@ class Square_border_parameterizer_3
 public:
   typedef TriangleMesh_ TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef Halfedge_around_face_iterator<TriangleMesh> halfedge_around_face_iterator;
 
 // Private types

@@ -85,13 +85,16 @@ namespace CGAL {
     
       void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
       {
+
         BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
+        
           typename Map::iterator it;
           bool new_element;
-          boost::tie(it,new_element) = map->find(vd);
+          boost::tie(it,new_element) = map->insert(std::make_pair(vd,1));
           if(new_element){
             it->second = index++;
           }
+        
         }
       }
 
@@ -152,16 +155,22 @@ parameterize(TriangleMesh& mesh,
              HD bhd,
              VertexUVmap uvm)
 {
+
+
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef boost::unordered_map<vertex_descriptor,int> Indices;
   Indices indices;
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
+
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(Parameterization::Vertices<TriangleMesh,Indices>(mesh,indices)));
+  
   Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
   return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
+  
+  return Parameterizer_traits_3<TriangleMesh>::OK;
 }
 
 
