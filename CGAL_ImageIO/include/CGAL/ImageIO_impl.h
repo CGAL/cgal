@@ -89,7 +89,7 @@ inline Remove_supported_file_format & get_static_rsff()
   return rsff;
 }
 // Dummy call to get_static_rsff(), otherwise it would not get instanced
-static Remove_supported_file_format &rsff_dummy_ref = get_static_rsff();
+CGAL_UNUSED static Remove_supported_file_format &rsff_dummy_ref = get_static_rsff();
 
 
 #else // not header-only

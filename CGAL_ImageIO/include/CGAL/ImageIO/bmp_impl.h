@@ -109,16 +109,16 @@ void *_readBmpImage( const char *name,
 {
   const char *proc="_readBmpImage";
   void *buf = (void*)NULL;
-  unsigned char *myBuf;
+  unsigned char *myBuf = NULL;
 
-  FILE *fp;
-  RGB **argbs;
-  char **xorMasks, **andMasks;
-  CGAL_UINT32 *heights, *widths, row, col;
-  CGAL_UINT16 fileType;
-  long filePos;
-  int numImages, i;
-  int rc;
+  FILE *fp = NULL;
+  RGB **argbs = NULL;
+  char **xorMasks = NULL, **andMasks = NULL;
+  CGAL_UINT32 *heights = NULL, *widths = NULL, row = 0, col = 0;
+  CGAL_UINT16 fileType = 0;
+  long filePos = 0;
+  int numImages = 0, i = 0;
+  int rc = 0;
     
     fp = fopen(name, "rb");
     if (fp == NULL) {
