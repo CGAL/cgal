@@ -19,7 +19,8 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/bounding_box.h>
 
@@ -60,15 +61,27 @@ public:
     GLubyte* getData(){return data; }
 
 };
-//typedef CGAL::Simple_cartesian<double> Epic_kernel;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel         Epic_kernel;
+typedef CGAL::Simple_cartesian<double> Simple_kernel;
 
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>        Facet_primitive;
-typedef CGAL::AABB_traits<Kernel, Facet_primitive>                  Facet_traits;
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel         Simple_kernel;
+struct PPMAP
+{
+  typedef boost::readable_property_map_tag category;
+  typedef Simple_kernel::Point_3 value_type;
+  typedef const Simple_kernel::Point_3& reference;
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
+  friend reference get(const PPMAP& pm, key_type v)
+  {
+    return reinterpret_cast<const Simple_kernel::Point_3&>(v->point());
+  }
+};
+
+typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, PPMAP> Facet_primitive;
+typedef CGAL::AABB_traits<Simple_kernel, Facet_primitive>           Facet_traits;
 typedef CGAL::AABB_tree<Facet_traits>                               Facet_tree;
 
-typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron>     Edge_primitive;
-typedef CGAL::AABB_traits<Kernel, Edge_primitive>                   Edge_traits;
+typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron, PPMAP> Edge_primitive;
+typedef CGAL::AABB_traits<Simple_kernel, Edge_primitive>              Edge_traits;
 typedef CGAL::AABB_tree<Edge_traits>                                Edge_tree;
 
 
@@ -251,7 +264,7 @@ public:
   }
 
 public:
-  std::vector<Epic_kernel::Segment_3> edges;
+  std::vector<Simple_kernel::Segment_3> edges;
 private:
     mutable std::vector<float> positions_lines;
 
@@ -282,8 +295,8 @@ private:
        for(size_t i = 0, end = edges.size();
            i < end; ++i)
        {
-         const Epic_kernel::Point_3& a = edges[i].source();
-         const Epic_kernel::Point_3& b = edges[i].target();
+         const Simple_kernel::Point_3& a = edges[i].source();
+         const Simple_kernel::Point_3& b = edges[i].target();
          positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
@@ -307,9 +320,11 @@ private:
 
 class Q_DECL_EXPORT Scene_aabb_plane_item : public Scene_plane_item
 {
+  Q_OBJECT
+
 public:
 
-  typedef Kernel::FT                                                  FT;
+  typedef Simple_kernel::FT                                                  FT;
   enum Cut_planes_types {
     UNSIGNED_FACETS = 0, SIGNED_FACETS, UNSIGNED_EDGES, CUT_SEGMENTS
   };
@@ -405,6 +420,7 @@ public:
     {
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
+    Scene_plane_item::compute_normals_and_vertices();
   }
 
   ~Scene_aabb_plane_item()
@@ -432,10 +448,7 @@ public:
   void draw(CGAL::Three::Viewer_interface* viewer) const
   {
     if(!are_buffers_filled)
-    {
-      computeElements();
       initializeBuffers(viewer);
-    }
     QMatrix4x4 fMatrix;
     fMatrix.setToIdentity();
     for(int i=0; i< 16 ; i++)
@@ -477,6 +490,8 @@ public:
   }
   void drawEdges(CGAL::Three::Viewer_interface *viewer) const
   {
+    if(m_cut_plane != CUT_SEGMENTS)
+      return;
     QMatrix4x4 fMatrix;
     fMatrix.setToIdentity();
     for(int i=0; i< 16 ; i++)
@@ -494,6 +509,7 @@ public:
 
   void invalidateOpenGLBuffers()
   {
+    computeElements();
     are_buffers_filled = false;
   }
 
@@ -515,7 +531,7 @@ private:
     UVCoords,
     NbVbos
   };
-  typedef std::pair<Kernel::Point_3,Kernel::FT> Point_distance;
+  typedef std::pair<Simple_kernel::Point_3,Simple_kernel::FT> Point_distance;
   std::vector<QOpenGLVertexArrayObject*> vaos;
   mutable int m_grid_size;
   mutable bool m_fast_distance;
@@ -527,7 +543,7 @@ private:
   mutable Color_ramp m_red_ramp;
   mutable Color_ramp m_blue_ramp;
   mutable Color_ramp m_thermal_ramp;
-  mutable Kernel::FT m_max_distance_function;
+  mutable Simple_kernel::FT m_max_distance_function;
   mutable std::vector<float> tex_map;
   mutable Cut_planes_types m_cut_plane;
   mutable std::vector<QOpenGLBuffer> buffers;
@@ -539,12 +555,12 @@ private:
       return (FT)(a + (b - a) * r);
   }
 
-  Kernel::Vector_3 random_vector() const
+  Simple_kernel::Vector_3 random_vector() const
   {
       FT x = random_in(0.0,1.0);
       FT y = random_in(0.0,1.0);
       FT z = random_in(0.0,1.0);
-      return Kernel::Vector_3(x,y,z);
+      return Simple_kernel::Vector_3(x,y,z);
   }
 
   template <typename Tree>
@@ -554,10 +570,9 @@ private:
     const GLdouble* m = frame->matrix();
 
     // OpenGL matrices are row-major matrices
-    Kernel::Aff_transformation_3 t = Kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
+    Simple_kernel::Aff_transformation_3 t = Simple_kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
         m[1], m[5], m[9], m[13],
         m[2], m[6], m[10], m[14]);
-
     m_max_distance_function = FT(0);
     FT diag = scene_diag();
     const FT dx = 2*diag;
@@ -568,12 +583,11 @@ private:
     for(int i=0 ; i<m_grid_size ; ++i)
     {
       FT x = -diag/fd + FT(i)/FT(m_grid_size) * dx;
-
       for(int j=0 ; j<m_grid_size ; ++j)
       {
         FT y = -diag/fd + FT(j)/FT(m_grid_size) * dy;
 
-        Kernel::Point_3 query = t( Kernel::Point_3(x,y,z) );
+        Simple_kernel::Point_3 query = t( Simple_kernel::Point_3(x,y,z) );
         FT min = DBL_MAX;
 
         Q_FOREACH(Tree *tree, trees->values())
@@ -586,33 +600,33 @@ private:
               min_tree = tree;
           }
         }
-
         m_distance_function[i][j] = Point_distance(query,min);
         m_max_distance_function = (std::max)(min, m_max_distance_function);
-
-        if(is_signed)
+      }
+    }
+    if(is_signed)
+    {
+      for(int i=0 ; i<m_grid_size ; ++i)
+        for(int j=0 ; j<m_grid_size ; ++j)
         {
           typedef typename Tree::size_type size_type;
-          Kernel::Vector_3 random_vec = random_vector();
+          Simple_kernel::Vector_3 random_vec = random_vector();
 
-          const Kernel::Point_3& p = m_distance_function[i][j].first;
+          const Simple_kernel::Point_3& p = m_distance_function[i][j].first;
           const FT unsigned_distance = m_distance_function[i][j].second;
 
           // get sign through ray casting (random vector)
-          Kernel::Ray_3  ray(p, random_vec);
+          Simple_kernel::Ray_3  ray(p, random_vec);
           size_type nbi = min_tree->number_of_intersected_primitives(ray);
 
           FT sign ( (nbi&1) == 0 ? 1 : -1);
           m_distance_function[i][j].second = sign * unsigned_distance;
         }
-      }
     }
   }
 
   void compute_texture(int i, int j,Color_ramp pos_ramp ,Color_ramp neg_ramp)const
   {
-
-
       const FT& d00 = m_distance_function[i][j].second;
       // determines grey level
       FT i00 = (double)std::fabs(d00) / m_max_distance_function;
@@ -626,8 +640,6 @@ private:
   }
   void computeElements()const
   {
-    Scene_plane_item::compute_normals_and_vertices();
-
 
     switch(m_cut_plane)
     {
@@ -651,6 +663,7 @@ private:
     switch(m_cut_plane)
     {
     case SIGNED_FACETS:
+
         for( int i=0 ; i < texture->getWidth(); i++ )
         {
             for( int j=0 ; j < texture->getHeight() ; j++)
@@ -862,6 +875,8 @@ public Q_SLOTS:
 
   void updateCutPlane()
   {
+    if(plane_item->manipulatedFrame()->isSpinning())
+      plane_item->set_fast_distance(true);
      ready_to_cut = true;
      QTimer::singleShot(0,this,SLOT(cut()));
   }
@@ -1015,14 +1030,20 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     if(!poly_item) continue;
 
     if(facet_trees.find(poly_item) == facet_trees.end()) {
-      facet_trees[poly_item] = new Facet_tree(faces(*(poly_item->polyhedron())).first,
-                                               faces(*(poly_item->polyhedron())).second,
-                                               *poly_item->polyhedron() );
+      facet_trees[poly_item] = new Facet_tree();
+      PPMAP pmap;
+      facet_trees[poly_item]->insert(faces(*(poly_item->polyhedron())).first,
+                                     faces(*(poly_item->polyhedron())).second,
+                                     *poly_item->polyhedron(),
+                                     pmap );
     }
     if(edge_trees.find(poly_item) == edge_trees.end()) {
-      edge_trees[poly_item] = new Edge_tree(edges(*poly_item->polyhedron()).first,
-                                            edges(*poly_item->polyhedron()).second,
-                                            *poly_item->polyhedron());
+      edge_trees[poly_item] = new Edge_tree();
+      PPMAP pmap;
+      edge_trees[poly_item]->insert(edges(*poly_item->polyhedron()).first,
+                                    edges(*poly_item->polyhedron()).second,
+                                    *poly_item->polyhedron(),
+                                    pmap);
     }
   }
   plane_item->set_facet_trees(&facet_trees);
@@ -1088,7 +1109,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
   const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
   const qglviewer::Vec& n =
       plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
-  Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
+  Simple_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
   //std::cerr << plane << std::endl;
   edges_item->edges.clear();
   QTime time;
@@ -1100,11 +1121,13 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     if(!poly_item) continue;
     Facet_trees::iterator it = facet_trees.find(poly_item);
     if(it == facet_trees.end()) {
+      PPMAP pmap;
       it = facet_trees.insert(facet_trees.begin(),
                               poly_item,
                               new Facet_tree(faces(*(poly_item->polyhedron())).first,
                                              faces(*(poly_item->polyhedron())).second,
-                                             *poly_item->polyhedron() ));
+                                             *poly_item->polyhedron(),
+                                             pmap ));
       Scene_aabb_item* aabb_item = new Scene_aabb_item(*it.value());
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
       aabb_item->setRenderingMode(Wireframe);
@@ -1123,8 +1146,8 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
     for ( std::vector<Facet_tree::Object_and_primitive_id>::iterator it = intersections.begin(),
           end = intersections.end() ; it != end ; ++it )
     {
-      const Epic_kernel::Segment_3* inter_seg =
-          CGAL::object_cast<Epic_kernel::Segment_3>(&(it->first));
+      const Simple_kernel::Segment_3* inter_seg =
+          CGAL::object_cast<Simple_kernel::Segment_3>(&(it->first));
 
       if ( NULL != inter_seg )
         edges_item->edges.push_back(*inter_seg);
@@ -1140,21 +1163,20 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
 
 void Polyhedron_demo_cut_plugin::cut()
 {
-  plane_item->set_fast_distance(true);
   switch(plane_item->cutPlaneType())
   {
   case Scene_aabb_plane_item::CUT_SEGMENTS:
     if(ready_to_cut)
     {
-      computeIntersection();
       ready_to_cut = false;
+      computeIntersection();
     }
     break;
   default:
     if(ready_to_cut)
     {
-      plane_item->invalidateOpenGLBuffers();
       ready_to_cut = false;
+      plane_item->invalidateOpenGLBuffers();
     }
   }
 }
