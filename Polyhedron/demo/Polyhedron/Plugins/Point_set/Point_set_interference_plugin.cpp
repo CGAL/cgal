@@ -1,7 +1,7 @@
 //local includes
 #include "Scene_points_with_normal_item.h"
-
 //CGAL includes
+#include <CGAL/compute_average_spacing.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/function_objects.h>
@@ -16,6 +16,11 @@
 #include <QMainWindow>
 
 using namespace CGAL::Three;
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
 
 class  Point_set_interference_plugin:
     public QObject,
@@ -42,16 +47,17 @@ public:
     scene = si;
     mw = mainWindow;
 
-    QAction *actionInterference = new QAction(QString("Point Set Interference"), mw);
-    if(actionInterference)
+    QAction *actionAddNoise = new QAction(QString("Add Noise"), mw);
+    if(actionAddNoise)
     {
-      connect(actionInterference, SIGNAL(triggered()),
-              this, SLOT(on_actionInterference_triggered()));
-      actions_ << actionInterference;
+      actionAddNoise->setProperty("subMenuName", "Point Set Processing");
+      connect(actionAddNoise, SIGNAL(triggered()),
+              this, SLOT(on_actionAddNoise_triggered()));
+      actions_ << actionAddNoise;
     }
   }
 private Q_SLOTS:
-  void on_actionInterference_triggered()
+  void on_actionAddNoise_triggered()
   {
     Scene_points_with_normal_item* item = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
     if(!item)
@@ -61,13 +67,17 @@ private Q_SLOTS:
     flags |= Qt::CustomizeWindowHint;
     flags |= Qt::WindowCloseButtonHint;
 
+    double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
+                                    item->point_set()->begin(), item->point_set()->end(),
+                                    6 /* knn = 1 ring */);
+
     const double max_dist =
         QInputDialog::getDouble((QWidget*)mw,
-                                tr("Point Set Interference"),
-                                tr("Please choose the maximum radius in which the points will be created."),
-                                item->diagonalBbox()/10.0,
+                                tr("Add Noise"),
+                                tr("Please choose the maximum radius in which the points will be moved. (default = average spacing)"),
+                                average_spacing,
                                 0,
-                                100*item->diagonalBbox(),
+                                100*average_spacing,
                                 4,
                                 &ok,
                                 flags);
