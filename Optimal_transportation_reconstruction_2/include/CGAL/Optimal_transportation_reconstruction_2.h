@@ -299,7 +299,7 @@ public:
   As the cost is defined by mass time squared distance the
   relevance is unitless.
 
-  The default value is 0, so that all edges receiving some mass
+  The default value is 1, so that all edges receiving some mass
   are considered relevant.
   Setting a large relevance value is used to get robustness to a
   large amount of outliers.

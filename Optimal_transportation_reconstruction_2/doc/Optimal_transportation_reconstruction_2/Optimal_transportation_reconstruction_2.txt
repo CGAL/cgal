@@ -118,7 +118,7 @@ Edge flipping. Left: the blue edge creates fold-overs because of blocking edges 
 \subsection Optimal_transportation_reconstruction_2Relevance Edge Relevance
 
 An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or a large amount of mass when points have mass attributes), and (3) has a small approximation error. More specifically, the notion of relevance is defined as \f$ m(e) * |e|^2 / cost(e) \f$, where \f$ m(e) \f$ denotes the mass of the points approximated by the edge, \f$ |e| \f$ denotes the edge length and \f$ cost(e) \f$ its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
-The default value is 0, so that all edges approximating some input points are considered relevant. A larger relevance value provides us with a means to increase resilience to outliers.
+The default value is 1, so that all edges approximating some input points are considered relevant. A larger relevance value provides us with a means to increase resilience to outliers.
 
 
 \subsection Optimal_transportation_reconstruction_2Random Random Sample Size
