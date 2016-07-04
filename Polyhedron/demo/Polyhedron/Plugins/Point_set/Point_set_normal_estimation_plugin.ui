@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Normal Estimation</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -46,7 +46,7 @@
       <item row="0" column="1">
        <widget class="QSpinBox" name="m_pca_neighbors">
         <property name="suffix">
-         <string>Nearest Neighbors</string>
+         <string> Nearest Neighbors</string>
         </property>
         <property name="minimum">
          <number>3</number>
@@ -94,7 +94,7 @@
       <item row="0" column="1">
        <widget class="QSpinBox" name="m_jet_neighbors">
         <property name="suffix">
-         <string>Nearest Neighbors</string>
+         <string> Nearest Neighbors</string>
         </property>
         <property name="minimum">
          <number>3</number>
@@ -253,7 +253,7 @@
       <item row="0" column="1">
        <widget class="QSpinBox" name="m_orient_neighbors">
         <property name="suffix">
-         <string>Nearest Neighbors</string>
+         <string> Nearest Neighbors</string>
         </property>
         <property name="minimum">
          <number>6</number>
