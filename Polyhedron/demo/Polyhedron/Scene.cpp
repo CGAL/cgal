@@ -126,6 +126,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     itemChanged(index);
     Q_EMIT restoreCollapsedState();
     redraw_model();
+    Q_EMIT selectionChanged(index);
     return item;
 }
 
