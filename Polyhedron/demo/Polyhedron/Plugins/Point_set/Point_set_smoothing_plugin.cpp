@@ -34,7 +34,8 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     mw = mainWindow;
-    actionJetSmoothing = new QAction(tr("Point Set Jet Smoothing"), mainWindow);
+    actionJetSmoothing = new QAction(tr("Jet Smoothing"), mainWindow);
+    actionJetSmoothing->setProperty("subMenuName","Point Set Processing");
     actionJetSmoothing->setObjectName("actionJetSmoothing");
     autoConnectActions();
   }

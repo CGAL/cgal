@@ -26,6 +26,7 @@ public:
   {
     scene = scene_interface;
     actionDetectFeatures= new QAction(tr("VCM Features Estimation"), mainWindow);
+    actionDetectFeatures->setProperty("subMenuName","Point Set Processing");
     actionDetectFeatures->setObjectName("actionDetectFeatures");
     autoConnectActions();
   }
