@@ -901,7 +901,7 @@ remove_2D(Vertex_handle v)
   }
   else {
     std::list<Edge> hole;
-    make_hole(v, hole);
+    this->make_hole(v, hole);
     fill_hole_regular(hole);
     }
   return;   
