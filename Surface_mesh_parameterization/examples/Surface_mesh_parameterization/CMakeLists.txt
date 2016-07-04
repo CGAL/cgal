@@ -24,6 +24,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "lscm.cpp" )
   create_single_source_cgal_program( "seam.cpp" )
+  create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
   create_single_source_cgal_program( "discrete_authalic.cpp" )
   create_single_source_cgal_program( "Simple_parameterization.cpp" )
 

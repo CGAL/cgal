@@ -381,7 +381,7 @@ parameterize(TriangleMesh& mesh,
       if( main_border.find(v) == main_border.end() )
         {
           int index = get(vimap,v);
-          put(uvmap,v,Point_2(Xu[index],Xv[index]));
+          //AF put(uvmap,v,Point_2(Xu[index],Xv[index]));
           put(vpm,v,true);
         }
     }
