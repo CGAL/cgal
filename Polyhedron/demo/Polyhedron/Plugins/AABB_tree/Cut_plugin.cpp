@@ -173,7 +173,7 @@ struct PPMAP
   typedef Simple_kernel::Point_3 value_type;
   typedef const Simple_kernel::Point_3& reference;
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
-  friend reference get(const PPMAP& pm, key_type v)
+  friend reference get(const PPMAP&, key_type v)
   {
     return reinterpret_cast<const Simple_kernel::Point_3&>(v->point());
   }
