@@ -191,11 +191,13 @@ difference(const TriangleMesh& tm1,
 
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
   typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
+  typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
   typedef Corefinement::Visitor<TriangleMesh,Vpm> Visitor;
   Dnv dnv;
   Dfv dfv;
+  Ob ob;
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
-    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv));
+    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv,ob));
   const bool throw_on_self_intersection = false; // TODO parameter???
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 }

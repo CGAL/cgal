@@ -76,10 +76,26 @@ struct No_mark
   {}
 };
 
+template<class G>
+struct No_extra_output_from_corefinement
+{
+  template <class Border_halfedges_map,
+            class Node_vector,
+            class An_edge_per_polyline_map,
+            class Mesh_to_map_node>
+  void operator()(
+    const std::map<G*,Border_halfedges_map>& /*mesh_to_border_halfedges*/,
+    const Node_vector& /*nodes*/,
+    const An_edge_per_polyline_map& /*an_edge_per_polyline*/,
+    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
+  {}
+};
+
 // A visitor for Intersection_of_triangle_meshes that can be used to corefine
 // two meshes
 template< class TriangleMesh,
           class VertexPointMap,
+          class OutputBuilder_ = Default,
           class EdgeMarkPropertyMap_ = Default,
           class NewNodeVisitor_ = Default,
           class NewFaceVisitor_ = Default >
@@ -87,10 +103,12 @@ class Visitor{
 //default template parameters
   typedef typename Default::Get<EdgeMarkPropertyMap_,
     No_mark<TriangleMesh> >::type                           EdgeMarkPropertyMap;
+  typedef typename Default::Get<OutputBuilder_,
+    No_extra_output_from_corefinement<TriangleMesh> >::type       OutputBuilder;
   typedef typename Default::Get<
     NewNodeVisitor_, Default_node_visitor<TriangleMesh> >::type  NewNodeVisitor;
   typedef typename Default::Get<
-    NewFaceVisitor_, Default_face_visitor<TriangleMesh> >::type NewFaceVisitor;
+    NewFaceVisitor_, Default_face_visitor<TriangleMesh> >::type  NewFaceVisitor;
 
 // config flags
 public:
@@ -153,11 +171,13 @@ private:
 //data members that require initialization in the constructor
   NewNodeVisitor& new_node_visitor;
   NewFaceVisitor& new_face_visitor;
+  OutputBuilder& output_builder;
 // visitor public functions
 public:
-  Visitor(NewNodeVisitor& v, NewFaceVisitor& f)
+  Visitor(NewNodeVisitor& v, NewFaceVisitor& f, OutputBuilder& o)
     : new_node_visitor(v)
     , new_face_visitor(f)
+    , output_builder(o)
   {}
 
   template<class Graph_node>
@@ -902,6 +922,12 @@ void new_node_added(std::size_t node_id,
         }
       }
     }
+
+    // additional operations
+    output_builder(mesh_to_border_halfedges,
+                   nodes,
+                   an_edge_per_polyline,
+                   mesh_to_node_id_to_vertex);
   }
 };
 
