@@ -145,11 +145,7 @@ int main(int argc, char * argv[])
           !CGAL::read_xyz_points_and_normals(
                                 stream,
                                 std::back_inserter(points),
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))
-#else
                                 CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())
-#endif
                                 ))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
@@ -206,11 +202,7 @@ int main(int argc, char * argv[])
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                              CGAL::make_normal_of_point_with_normal_pmap(points.begin())
-#else
                               CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())
-#endif
                               );
 
     // Computes the Poisson indicator function f()
@@ -307,4 +299,3 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
-

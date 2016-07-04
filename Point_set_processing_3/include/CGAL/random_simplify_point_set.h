@@ -107,12 +107,8 @@ random_simplify_point_set(
 {
   return random_simplify_point_set(
     first,beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(first),
-#else
     make_identity_property_map(
     typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
     removed_percentage);
 }
 /// @endcond
