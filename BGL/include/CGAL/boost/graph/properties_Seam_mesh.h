@@ -33,36 +33,31 @@ class Seam_mesh;
 
 template<class TM,class SEM, class SVM>
 class Seam_mesh_point_map
-  : public boost::put_get_helper<typename boost::property_traits<typename boost::property_map<TM,vertex_point_t>::const_type>::value_type, Seam_mesh_point_map<TM,SEM,SVM> >
 {
+  typedef typename boost::property_map<TM,vertex_point_t>::const_type Graph_pmap;
 public:
   typedef boost::readable_property_map_tag category;
-  typedef typename boost::property_traits<typename boost::property_map<TM,vertex_point_t>::const_type>::value_type value_type;
-  typedef value_type                    reference;
+  typedef typename boost::property_traits<Graph_pmap>::value_type value_type;
+  typedef typename boost::property_traits<Graph_pmap>::reference reference;
   typedef typename boost::graph_traits<Seam_mesh<TM,SEM,SVM> >::vertex_descriptor key_type;
 
-private:
-  typedef typename boost::property_map<TM,vertex_point_t>::const_type Map;
+
 
 public:
 
-  Seam_mesh_point_map(const Seam_mesh<TM,SEM,SVM>& mesh, Map map)
+  Seam_mesh_point_map(const Seam_mesh<TM,SEM,SVM>& mesh, Graph_pmap map)
     : mesh(mesh), map(map) 
   {}
 
-  Seam_mesh_point_map(const Seam_mesh_point_map<TM,SEM,SVM>& other)
-    : mesh(other.mesh), map(other.map) 
-  {}
-
-  reference operator[](const key_type& vd) const
+  friend reference get(const Seam_mesh_point_map& pmap, key_type vd)
   {
     typename boost::graph_traits<TM>::halfedge_descriptor hd = vd;
-    return map[target(hd,mesh.mesh())]; 
+    return get(pmap.map, target(hd,pmap.mesh.mesh()));
   }
 
 private:
   const Seam_mesh<TM,SEM,SVM>& mesh;
-  Map map;
+  Graph_pmap map;
 };
 
 
