@@ -10,6 +10,7 @@
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/compute_average_spacing.h>
 
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -246,7 +247,18 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     {
         // Stock normals
         Kernel::Sphere_3 region_of_interest = points.region_of_interest();
-        float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
+
+#ifdef LINK_WITH_TBB
+       typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+        typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+        double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
+              points.begin(), points.end(),
+              6);
+
+        double normal_length = (std::min)(average_spacing, std::sqrt(region_of_interest.squared_radius() / 1000.));
 
 	for (Point_set_3<Kernel>::const_iterator it = points.begin(); it != points.end(); it++)
 	  {
