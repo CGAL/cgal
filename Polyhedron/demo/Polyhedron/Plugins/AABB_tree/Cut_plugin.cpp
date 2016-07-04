@@ -33,6 +33,109 @@
 #include <QApplication>
 #include <CGAL/Three/Scene_item.h>
 #include <QMouseEvent>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>
+#endif // CGAL_LINKED_WITH_TBB
+
+typedef CGAL::Simple_cartesian<double> Simple_kernel;
+typedef Simple_kernel::FT FT;
+typedef Simple_kernel::Point_3 Point;
+typedef std::pair<Point,FT> Point_distance;
+
+
+FT random_in(const double a,
+                    const double b)
+{
+    double r = rand() / (double)RAND_MAX;
+    return (FT)(a + (b - a) * r);
+}
+
+Simple_kernel::Vector_3 random_vector()
+{
+    FT x = random_in(0.0,1.0);
+    FT y = random_in(0.0,1.0);
+    FT z = random_in(0.0,1.0);
+    return Simple_kernel::Vector_3(x,y,z);
+}
+
+#ifdef CGAL_LINKED_WITH_TBB
+//functor for tbb parallelization
+template <typename Tree>
+class fill_grid_size {
+  std::size_t grid_size;
+  Point_distance (&distance_function)[100][100];
+  FT diag;
+  FT& max_distance_function;
+  QMap<QObject*, Tree*> *trees;
+  bool is_signed;
+  qglviewer::ManipulatedFrame* frame;
+public:
+  fill_grid_size(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
+  FT& max_distance_function,QMap<QObject*, Tree*>* trees,
+  bool is_signed, qglviewer::ManipulatedFrame* frame)
+  : grid_size(grid_size), distance_function (distance_function), diag(diag),
+    max_distance_function(max_distance_function),
+    trees(trees), is_signed(is_signed), frame(frame)
+  {
+  }
+  void operator()(const tbb::blocked_range<std::size_t>& r) const
+  {
+    const GLdouble* m = frame->matrix();
+    Simple_kernel::Aff_transformation_3 transfo = Simple_kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
+        m[1], m[5], m[9], m[13],
+        m[2], m[6], m[10], m[14]);
+    const FT dx = 2*diag;
+    const FT dy = 2*diag;
+    const FT z (0);
+    const FT fd =  FT(1);
+    Tree *min_tree = NULL ;
+    for( std::size_t t = r.begin(); t != r.end(); ++t)
+    {
+      int i(t%grid_size), j(t/grid_size);
+      FT x = -diag/fd + FT(i)/FT(grid_size) * dx;
+      {
+        FT y = -diag/fd + FT(j)/FT(grid_size) * dy;
+
+        Point query = transfo( Point(x,y,z) );
+        FT min = DBL_MAX;
+
+        Q_FOREACH(Tree *tree, trees->values())
+        {
+          FT dist = CGAL::sqrt( tree->squared_distance(query) );
+          if(dist < min)
+          {
+            min = dist;
+            if(is_signed)
+              min_tree = tree;
+          }
+        }
+        distance_function[i][j] = Point_distance(query,min);
+        max_distance_function = (std::max)(min, max_distance_function);
+
+        if(is_signed)
+        {
+          typedef typename Tree::size_type size_type;
+          Simple_kernel::Vector_3 random_vec = random_vector();
+
+          const Simple_kernel::Point_3& p = distance_function[i][j].first;
+          const FT unsigned_distance = distance_function[i][j].second;
+
+          // get sign through ray casting (random vector)
+          Simple_kernel::Ray_3  ray(p, random_vec);
+          size_type nbi = min_tree->number_of_intersected_primitives(ray);
+
+          FT sign ( (nbi&1) == 0 ? 1 : -1);
+          distance_function[i][j].second = sign * unsigned_distance;
+        }
+      }
+    }
+  }
+};
+#endif
+
 const int slow_distance_grid_size = 100;
 const int fast_distance_grid_size = 20;
 class Texture{
@@ -548,33 +651,17 @@ private:
   mutable Cut_planes_types m_cut_plane;
   mutable std::vector<QOpenGLBuffer> buffers;
 
-  FT random_in(const double a,
-                      const double b)const
-  {
-      double r = rand() / (double)RAND_MAX;
-      return (FT)(a + (b - a) * r);
-  }
-
-  Simple_kernel::Vector_3 random_vector() const
-  {
-      FT x = random_in(0.0,1.0);
-      FT y = random_in(0.0,1.0);
-      FT z = random_in(0.0,1.0);
-      return Simple_kernel::Vector_3(x,y,z);
-  }
-
   template <typename Tree>
   void compute_distance_function(QMap<QObject*, Tree*> *trees, bool is_signed = false)const
   {
-    // Get transformation
-    const GLdouble* m = frame->matrix();
 
-    // OpenGL matrices are row-major matrices
+    m_max_distance_function = FT(0);
+    FT diag = scene_diag();
+#ifndef CGAL_LINKED_WITH_TBB
+    const GLdouble* m = frame->matrix();
     Simple_kernel::Aff_transformation_3 t = Simple_kernel::Aff_transformation_3 (m[0], m[4], m[8], m[12],
         m[1], m[5], m[9], m[13],
         m[2], m[6], m[10], m[14]);
-    m_max_distance_function = FT(0);
-    FT diag = scene_diag();
     const FT dx = 2*diag;
     const FT dy = 2*diag;
     const FT z (0);
@@ -623,24 +710,54 @@ private:
           m_distance_function[i][j].second = sign * unsigned_distance;
         }
     }
+#else
+    fill_grid_size<Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, trees, is_signed, frame);
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
+#endif
   }
 
   void compute_texture(int i, int j,Color_ramp pos_ramp ,Color_ramp neg_ramp)const
   {
-      const FT& d00 = m_distance_function[i][j].second;
-      // determines grey level
-      FT i00 = (double)std::fabs(d00) / m_max_distance_function;
+    const FT& d00 = m_distance_function[i][j].second;
+    // determines grey level
+    FT i00 = (double)std::fabs(d00) / m_max_distance_function;
 
-      if(d00 > 0.0)
-          texture->setData(i,j,255*pos_ramp.r(i00),255*pos_ramp.g(i00),255*pos_ramp.b(i00));
-      else
-          texture->setData(i,j,255*neg_ramp.r(i00),255*neg_ramp.g(i00),255*neg_ramp.b(i00));
+    if(d00 > 0.0)
+      texture->setData(i,j,255*pos_ramp.r(i00),255*pos_ramp.g(i00),255*pos_ramp.b(i00));
+    else
+      texture->setData(i,j,255*neg_ramp.r(i00),255*neg_ramp.g(i00),255*neg_ramp.b(i00));
 
 
   }
-  void computeElements()const
-  {
 
+#ifdef CGAL_LINKED_WITH_TBB
+  class fill_texture
+  {
+    std::size_t grid_size;
+    Color_ramp pos_ramp;
+    Color_ramp neg_ramp;
+    Scene_aabb_plane_item* item;
+  public :
+    fill_texture(std::size_t grid_size,
+                 Color_ramp pos_ramp,
+                 Color_ramp neg_ramp,
+                 Scene_aabb_plane_item* item
+                 )
+      :grid_size(grid_size), pos_ramp(pos_ramp), neg_ramp(neg_ramp), item(item) {}
+
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for(std::size_t t = r.begin(); t!= r.end(); ++t)
+      {
+        int i(t%grid_size), j(t/grid_size);
+        item->compute_texture(i,j, pos_ramp, neg_ramp);
+      }
+    }
+  };
+#endif
+
+  void computeElements()
+  {
     switch(m_cut_plane)
     {
     case UNSIGNED_FACETS:
@@ -663,7 +780,8 @@ private:
     switch(m_cut_plane)
     {
     case SIGNED_FACETS:
-
+    {
+#ifndef CGAL_LINKED_WITH_TBB
         for( int i=0 ; i < texture->getWidth(); i++ )
         {
             for( int j=0 ; j < texture->getHeight() ; j++)
@@ -671,9 +789,16 @@ private:
                 compute_texture(i,j,m_red_ramp,m_blue_ramp);
             }
         }
+#else
+      fill_texture f(m_grid_size, m_red_ramp, m_blue_ramp, this);
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size * m_grid_size), f);
+#endif
         break;
+    }
     case UNSIGNED_FACETS:
     case UNSIGNED_EDGES:
+    {
+      #ifndef CGAL_LINKED_WITH_TBB
         for( int i=0 ; i < texture->getWidth(); i++ )
         {
             for( int j=0 ; j < texture->getHeight() ; j++)
@@ -681,7 +806,12 @@ private:
                 compute_texture(i,j,m_thermal_ramp,m_thermal_ramp);
             }
         }
+#else
+      fill_texture f(m_grid_size, m_thermal_ramp, m_thermal_ramp, this);
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size * m_grid_size), f);
+#endif
         break;
+    }
     default:
       break;
     }
