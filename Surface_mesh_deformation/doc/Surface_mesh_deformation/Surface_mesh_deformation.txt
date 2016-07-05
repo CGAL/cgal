@@ -35,9 +35,10 @@ The ROI features the green vertices (the unconstrained vertices) and the red ver
 the coordinates of the unconstrained vertices being updated by the deformation algorithm.
 \cgalFigureEnd
 
-In this package, two algorithms are implemented:
-- The <em>As-Rigid-As-Possible</em> (<em>ARAP</em>) method described in \cgalCite{Sorkine2007AsRigidAs};
-- The <em>Spokes and Rims</em> method \cgalCite{Chao2010SimpleGeomModel}.
+In this package, three algorithms are implemented:
+- The <em>As-Rigid-As-Possible</em> (<em>ARAP</em>) method \cgalCite{Sorkine2007AsRigidAs};
+- The <em>Spokes and Rims</em> method \cgalCite{Chao2010SimpleGeomModel};
+- The <em>Smoothed %Rotation Enhanced As-Rigid-As-Possible</em> method \cgalCite{levismooth}
 
 Given an edge weighting scheme, both methods iteratively minimize an energy function and produce a different surface mesh at each step until convergence is reached.
 
@@ -46,16 +47,21 @@ convergence while the <em>ARAP</em> method requires the edge weights to be posit
 the results obtained using the <em>Spokes and Rims</em> method are more dependent on the discretization
 of the deformed surface (See \cgalFigureRef{Arap_spokes_comparison}).
 
+The <em>Smoothed %Rotation Enhanced As-Rigid-As-Possible</em> method adds a bending term to the ARAP energy that penalizes rotation difference between neighboring elements. In the current implementation a 1-ring type element is used while in general it is possible to use a triangle type element.
+
 More details on these algorithms are provided in section \ref SMD_Overview.
 
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
-Comparison between the As-Rigid-As-Possible and the Spokes and Rims deformation methods.
+A comparison between the As-Rigid-As-Possible and the Spokes and Rims deformation methods.
 On the surface mesh of a square with spikes depicted on the left, the ROI consists of the green vertices. The control vertices are the red ones.
 We translate the control vertices along the normal to the plane and observe the result produced by
 the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from the same view point. The
 latter method provides unconditional convergence does not produce a symmetric result.
 \cgalFigureEnd
 
+\cgalFigureBegin{Arap_spokes_comparison, sr_arap_comparison.png}
+A comparison on a 5261 vertices cactus model (left) between the As-Rigid-As-Possible (middle) and the Smoothed %Rotation Enhanced As-Rigid-As-Possible (right).
+\cgalFigureEnd
 
 \section SMD_API User Interface Description
 
@@ -132,10 +138,10 @@ which will also require a new preprocessing step).
 This behavior is illustrated in \ref SModelingVideo_1 "Video 1".
 
 \subsection Surface_mesh_deformation_arap_or_spokes_and_rims As-Rigid-As-Possible and Spokes-and-Rims Deformation Techniques
-Two deformation techniques are provided by this package. This section summarizes from the user point of view what is
+Three deformation techniques are provided by this package. This section summarizes from the user point of view what is
 explained in details in the section \ref SMD_Overview.
 
-The As-Rigid-As-Possible deformation technique requires the use of a positive weighting scheme to guarantee
+The As-Rigid-As-Possible deformation techniques require the use of a positive weighting scheme to guarantee
 the correct minimization of the energy. When using the default cotangent weighting scheme, this means that
 the input surface mesh must be <em>clean</em>. That is, that for all edges in the surface mesh
 the sum of the angles opposite to the edge in the incident triangles is less that \f$ \pi \f$.
@@ -197,6 +203,11 @@ In this example, the weight of each edge is pre-computed and an internal map is 
 Another example is given in the manual page of the concept `::SurfaceMeshDeformationWeights`.
 
 \cgalExample{Surface_mesh_deformation/custom_weight_for_edges_example.cpp}
+
+\subsubsection SModelingExample_5 Using the Smoothed Rotation Enhanced As-Rigid-As-Possible
+In this example, a survey \cgalCite{Botsch2008OnLinearVariational} model is loaded, alpha that determines the influence of the bending term is set, and the deformation method is set to `SRE_ARAP`.
+
+\cgalExample{Surface_mesh_deformation/deform_mesh_for_botsch08_format_sre_arap.cpp}
 
 \section SMD_Demo How to Use the Demo
 
@@ -490,9 +501,28 @@ However, this method is more dependent on the discretization of the deformed sur
 
 The implementation in this package uses the cotangent weights by default (negative values included) as proposed in \cgalCite{Chao2010SimpleGeomModel}.
 
+\subsection SMD_Overview_SRE_ARAP Smoothed Rotation Enhanced As-Rigid-As Possible (SR_ARAP) Deformation
+Using 1-ring elements, SR-ARAP adds a bending element to Eq. \f$\eqref{eq:arap_energy}\f$:
+
+\f[
+\begin{equation}
+\sum_{\mathbf{v}_i \in M}
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}
+\left\| (\mathbf{v}'_i - \mathbf{v}'_j) - \mathbf{R}_i(\mathbf{v}_i - \mathbf{v}_j) \right\|^2 + \alpha A \left\| \mathbf{R}_i - \mathbf{R}_j \right\|^2_F
+  \label{eq:sre_arap_energy}
+\end{equation}
+\f]
+
+where 
+- \f$\alpha=0.02\f$ is a weighting coefficient.
+- \f$A\f$ is the surface area for scaling invariance. 
+
+Only the local step is influenced by the added term, and the optimal rotation now takes into account the rotation of neighbors.
+
 \section SMD_History Design and Implementation History
 An initial version of this package has been implemented during the 2011 Google Summer of Code by Yin Xu under the guidance of Olga Sorkine and Andreas Fabri.
 Ilker O. Yaz took over the finalization of the package with the help of Sébastien Loriot for the documentation and the API.
+In 2016, Zohar Levi and Sébastien Loriot extended the package to support Smoothed Rotation Enhanced ARAP.
 The authors are grateful to Gaël Guennebaud for his great help on using the Eigen library and for providing the code to compute
 the closest rotation.
 */
