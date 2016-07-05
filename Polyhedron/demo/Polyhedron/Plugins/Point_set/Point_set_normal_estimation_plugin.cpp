@@ -49,11 +49,13 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
 
     scene = scene_interface;
-    actionNormalEstimation = new QAction(tr("Point Set Normal Estimation"), mainWindow);
+    actionNormalEstimation = new QAction(tr("Normal Estimation"), mainWindow);
     actionNormalEstimation->setObjectName("actionNormalEstimation");
+    actionNormalEstimation->setProperty("subMenuName","Point Set Processing");
 
-    actionNormalInversion = new QAction(tr("Point Set Inverse Normal Orientations"), mainWindow);
+    actionNormalInversion = new QAction(tr("Inverse Normal Orientations"), mainWindow);
     actionNormalInversion->setObjectName("actionNormalInversion");
+    actionNormalInversion->setProperty("subMenuName","Point Set Processing");
     autoConnectActions();
   }
 
