@@ -483,7 +483,7 @@ public:
   typedef typename Traits::Plane_3 Plane_3;///< plane type for conversion operator.
 
 public:
-  My_plane() : Shape_base<Traits>() {}
+  My_plane() : CGAL::Shape_detection_3::Shape_base<Traits>() {}
 
   /*!
     Conversion operator to `Plane_3` type.
