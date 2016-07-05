@@ -61,6 +61,8 @@ namespace CGAL {
     ///
     typedef typename Gt::Line_3 Line_3;
     ///
+    typedef typename Gt::Line_2 Line_2;
+    ///
     typedef typename Gt::Circle_2 Circle_2;
     ///
     typedef typename Gt::Plane_3 Plane_3;
