@@ -44,19 +44,20 @@ struct Seam_mesh_halfedge_descriptor;
 
 } // namespace CGAL
 
-/*
+
+// We specialize std::iterator_traits, as VC++ tries to instantiate std::next(T, std::iterator_traits<T>)
 namespace std {
 template <class HD>
 struct iterator_traits<CGAL::Seam_mesh_halfedge_descriptor<HD> >
 {
-  typedef std::ptrdiff_t difference_type;
-  typedef  int value_type;
-  typedef int* pointer;
-  typedef int& reference;
-  typedef std::random_access_iterator_tag iterator_category;
+  struct difference_type{};
+  struct value_type{};
+  struct pointer{};
+  struct reference{};
+  struct iterator_category{};
 };
 } // namespace std
-*/
+
 
 namespace boost {
 
