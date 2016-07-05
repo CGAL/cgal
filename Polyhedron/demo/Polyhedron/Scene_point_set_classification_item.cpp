@@ -96,7 +96,7 @@ Scene_point_set_classification_item::~Scene_point_set_classification_item()
     delete m_colo;
 }
 
-void Scene_point_set_classification_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_point_set_classification_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
   compute_normals_and_vertices();
   //vao for the edges
@@ -521,10 +521,10 @@ void Scene_point_set_classification_item::draw_splats(CGAL::Three::Viewer_interf
 void Scene_point_set_classification_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
   if(!are_buffers_filled)
-    initialize_buffers(viewer);
+    initializeBuffers(viewer);
   vaos[Edges]->bind();
   program=getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  attribBuffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors", this->color());
   viewer->glDrawArrays(GL_LINES, 0,
@@ -536,7 +536,7 @@ void Scene_point_set_classification_item::draw_edges(CGAL::Three::Viewer_interfa
 void Scene_point_set_classification_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
   if(!are_buffers_filled)
-    initialize_buffers(viewer);
+    initializeBuffers(viewer);
   GLfloat point_size;
   viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
   if (m_index_color == 9)
@@ -546,7 +546,7 @@ void Scene_point_set_classification_item::draw_points(CGAL::Three::Viewer_interf
 
   vaos[ThePoints]->bind();
   program=getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  attribBuffers(viewer,PROGRAM_NO_SELECTION);
   program->bind();
   if (colors_points.empty())
     program->setAttributeValue("colors", this->color());
@@ -961,14 +961,14 @@ void Scene_point_set_classification_item::extract_building_map (double,
 
 
   std::vector<Kernel::Segment_3> borders;
-  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin, _bbox.ymin, z_median),
-                                        Kernel::Point_3 (_bbox.xmin, _bbox.ymax, z_median)));
-  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin, _bbox.ymax, z_median),
-                                        Kernel::Point_3 (_bbox.xmax, _bbox.ymax, z_median)));
-  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax, _bbox.ymax, z_median),
-                                        Kernel::Point_3 (_bbox.xmax, _bbox.ymin, z_median)));
-  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax, _bbox.ymin, z_median),
-                                        Kernel::Point_3 (_bbox.xmin, _bbox.ymin, z_median)));
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin(), _bbox.ymin(), z_median),
+                                        Kernel::Point_3 (_bbox.xmin(), _bbox.ymax(), z_median)));
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin(), _bbox.ymax(), z_median),
+                                        Kernel::Point_3 (_bbox.xmax(), _bbox.ymax(), z_median)));
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax(), _bbox.ymax(), z_median),
+                                        Kernel::Point_3 (_bbox.xmax(), _bbox.ymin(), z_median)));
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax(), _bbox.ymin(), z_median),
+                                        Kernel::Point_3 (_bbox.xmin(), _bbox.ymin(), z_median)));
 
   std::vector<Kernel::Segment_3> lines;
   for (std::size_t i = 0; i < is_plane_facade.size(); ++ i)
@@ -977,7 +977,7 @@ void Scene_point_set_classification_item::extract_building_map (double,
         Kernel::Plane_3 plane = m_psc->groups[i];
         Kernel::Vector_3 normal = plane.orthogonal_vector();
         normal = normal / std::sqrt (normal * normal);
-        double horiz = normal * Kernel::Vector_3 (0., 0., 1.);
+        // double horiz = normal * Kernel::Vector_3 (0., 0., 1.);
         // if (horiz > 0.17 || horiz < -0.17)
         //   continue;
 
@@ -1066,10 +1066,10 @@ void Scene_point_set_classification_item::extract_building_map (double,
   typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag> CDT;
 
   CDT cdt;
-  cdt.insert (Kernel::Point_2 (_bbox.xmin, _bbox.ymin));
-  cdt.insert (Kernel::Point_2 (_bbox.xmin, _bbox.ymax));
-  cdt.insert (Kernel::Point_2 (_bbox.xmax, _bbox.ymin));
-  cdt.insert (Kernel::Point_2 (_bbox.xmax, _bbox.ymax));
+  cdt.insert (Kernel::Point_2 (_bbox.xmin(), _bbox.ymin()));
+  cdt.insert (Kernel::Point_2 (_bbox.xmin(), _bbox.ymax()));
+  cdt.insert (Kernel::Point_2 (_bbox.xmax(), _bbox.ymin()));
+  cdt.insert (Kernel::Point_2 (_bbox.xmax(), _bbox.ymax()));
   for (std::size_t i = 0; i < lines.size(); ++ i)
     cdt.insert_constraint (Kernel::Point_2 (lines[i].source().x(), lines[i].source().y()),
                            Kernel::Point_2 (lines[i].target().x(), lines[i].target().y()));

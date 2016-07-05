@@ -361,8 +361,8 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
 
   void compute_normals_and_vertices() const;
 

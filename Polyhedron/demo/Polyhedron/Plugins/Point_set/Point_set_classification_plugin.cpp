@@ -56,7 +56,7 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     add_class_rows();
 
@@ -188,7 +188,7 @@ public Q_SLOTS:
 
   void on_create_from_item_button_clicked()
   {
-    Scene_points_with_normal_item* points_item = get_selected_item<Scene_points_with_normal_item>();
+    Scene_points_with_normal_item* points_item = getSelectedItem<Scene_points_with_normal_item>();
     if(!points_item)
       {
         print_message("Error: there is no selected point set item!");
@@ -206,7 +206,7 @@ public Q_SLOTS:
   void on_estimate_parameters_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -247,7 +247,7 @@ public Q_SLOTS:
   void on_compute_features_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -271,7 +271,7 @@ public Q_SLOTS:
   void on_compute_ransac_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -397,7 +397,7 @@ public Q_SLOTS:
     ui_widget.colorSlider->setValue (rand() % ui_widget.colorSlider->maximum());
 
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -412,7 +412,7 @@ public Q_SLOTS:
   void on_display_button_clicked(int index)
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       return; 
 
@@ -423,7 +423,7 @@ public Q_SLOTS:
   void on_run_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -438,7 +438,7 @@ public Q_SLOTS:
   void on_run_with_smoothing_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -457,7 +457,7 @@ public Q_SLOTS:
   void on_run_with_ransac_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -476,7 +476,7 @@ public Q_SLOTS:
   void on_compute_clusters_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -495,7 +495,7 @@ public Q_SLOTS:
  void on_save_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -519,7 +519,7 @@ public Q_SLOTS:
   void on_generate_point_set_items_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -587,7 +587,7 @@ public Q_SLOTS:
   void on_extract_2d_outline_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
@@ -638,7 +638,7 @@ public Q_SLOTS:
   void on_extract_facades_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
-      = get_selected_item<Scene_point_set_classification_item>();
+      = getSelectedItem<Scene_point_set_classification_item>();
     if(!classification_item)
       {
         print_message("Error: there is no point set classification item!");
