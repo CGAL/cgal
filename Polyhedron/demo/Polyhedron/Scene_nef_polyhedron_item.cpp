@@ -398,7 +398,7 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
         }
 
     } //end points
-    QApplication::restoreOverrideCursor;
+    QApplication::restoreOverrideCursor();
 }
 Scene_nef_polyhedron_item* 
 Scene_nef_polyhedron_item::clone() const {
