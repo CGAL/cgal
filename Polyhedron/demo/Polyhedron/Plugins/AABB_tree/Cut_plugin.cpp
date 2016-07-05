@@ -1028,14 +1028,22 @@ public Q_SLOTS:
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sender);
     if(!item)
       return;
-    delete facet_trees[item];
-    facet_trees.remove(item);
-    delete edge_trees[item];
-    edge_trees.remove(item);
+    if(facet_trees.keys().contains(item))
+    {
+      delete facet_trees[item];
+      facet_trees.remove(item);
+    }
+    if(edge_trees.keys().contains(item))
+    {
+      delete edge_trees[item];
+      edge_trees.remove(item);
+    }
     if(facet_trees.empty())
     {
-      scene->erase(scene->item_id(plane_item));
-      scene->erase(scene->item_id(edges_item));
+      if(plane_item)
+        scene->erase(scene->item_id(plane_item));
+      if(edges_item)
+        scene->erase(scene->item_id(edges_item));
     }
     else
     {
@@ -1293,6 +1301,8 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
 
 void Polyhedron_demo_cut_plugin::cut()
 {
+  if(!plane_item)
+    return;
   switch(plane_item->cutPlaneType())
   {
   case Scene_aabb_plane_item::CUT_SEGMENTS:
