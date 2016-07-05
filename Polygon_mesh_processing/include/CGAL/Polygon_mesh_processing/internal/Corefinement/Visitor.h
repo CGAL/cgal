@@ -303,91 +303,91 @@ public:
 //     }
 // }
 
-//keep track of the fact that a polyhedron original vertex is a node
-void all_incident_faces_got_a_node_as_vertex(
-    halfedge_descriptor h,
-    Node_id node_id,
-    TriangleMesh& tm)
-{
-  mesh_to_vertex_to_node_id[&tm].insert(std::make_pair(target(h,tm),node_id));
-}
-
-
-void new_node_added(std::size_t node_id,
-                    Intersection_type type,
-                    halfedge_descriptor h_1,
-                    halfedge_descriptor h_2,
-                    const TriangleMesh& tm1,
-                    const TriangleMesh& tm2,
-                    bool is_target_coplanar,
-                    bool is_source_coplanar)
-{
-  // non_manifold_nodes.resize(node_id+1);
-
-  TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
-  TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
-
-  //forward to the visitor
-  new_node_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar);
-  switch(type)
+  //keep track of the fact that a polyhedron original vertex is a node
+  void all_incident_faces_got_a_node_as_vertex(
+      halfedge_descriptor h,
+      Node_id node_id,
+      TriangleMesh& tm)
   {
-    case ON_FACE: //Facet intersected by an edge
-      on_face[tm2_ptr][face(h_2,tm2)].push_back(node_id);
-    break;
-    case ON_EDGE: //Edge intersected by an edge
+    mesh_to_vertex_to_node_id[&tm].insert(std::make_pair(target(h,tm),node_id));
+  }
+
+
+  void new_node_added(std::size_t node_id,
+                      Intersection_type type,
+                      halfedge_descriptor h_1,
+                      halfedge_descriptor h_2,
+                      const TriangleMesh& tm1,
+                      const TriangleMesh& tm2,
+                      bool is_target_coplanar,
+                      bool is_source_coplanar)
+  {
+    // non_manifold_nodes.resize(node_id+1);
+
+    TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
+    TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
+
+    //forward to the visitor
+    new_node_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar);
+    switch(type)
     {
-      on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
-    //   check_node_on_non_manifold_edge(node_id,h_2,tm2);
+      case ON_FACE: //Facet intersected by an edge
+        on_face[tm2_ptr][face(h_2,tm2)].push_back(node_id);
+      break;
+      case ON_EDGE: //Edge intersected by an edge
+      {
+        on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
+      //   check_node_on_non_manifold_edge(node_id,h_2,tm2);
+      }
+      break;
+      case ON_VERTEX:
+      {
+        //grab original vertex that is on commom intersection
+        mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
+        Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
+        if (node_id_to_vertex.size()<=node_id)
+          node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
+        node_id_to_vertex[node_id]=target(h_2,tm2);
+        all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
+      //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
+      }
+      break;
+      default:
+      return;
     }
-    break;
-    case ON_VERTEX:
+
+    CGAL_assertion(!is_target_coplanar || !is_source_coplanar); //coplanar edge are not forwarded
+
+    if ( is_target_coplanar )
     {
       //grab original vertex that is on commom intersection
-      mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
-      Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
+      mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1));
+      Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
       if (node_id_to_vertex.size()<=node_id)
         node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-      node_id_to_vertex[node_id]=target(h_2,tm2);
-      all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
-    //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
-    }
-    break;
-    default:
-    return;
-  }
-
-  CGAL_assertion(!is_target_coplanar || !is_source_coplanar); //coplanar edge are not forwarded
-
-  if ( is_target_coplanar )
-  {
-    //grab original vertex that is on commom intersection
-    mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1));
-    Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
-    if (node_id_to_vertex.size()<=node_id)
-      node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-    node_id_to_vertex[node_id]=target(h_1,tm1);
-    all_incident_faces_got_a_node_as_vertex(h_1,node_id, *tm1_ptr);
-    // check_node_on_non_manifold_vertex(node_id,h_1,tm1);
-  }
-  else{
-    if ( is_source_coplanar ){
-      //grab original vertex that is on commom intersection
-      halfedge_descriptor h_1_opp=opposite(h_1,tm1);
-      mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1_opp));
-      Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
-      if(node_id_to_vertex.size()<=node_id)
-        node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-      node_id_to_vertex[node_id]=source(h_1,tm1);
-      all_incident_faces_got_a_node_as_vertex(h_1_opp,node_id, *tm1_ptr);
-    //   check_node_on_non_manifold_vertex(node_id,h_1_opp,tm1);
+      node_id_to_vertex[node_id]=target(h_1,tm1);
+      all_incident_faces_got_a_node_as_vertex(h_1,node_id, *tm1_ptr);
+      // check_node_on_non_manifold_vertex(node_id,h_1,tm1);
     }
     else{
-      //handle intersection on principal edge
-      on_edge[tm1_ptr][edge(h_1,tm1)].push_back(node_id);
-    //   check_node_on_non_manifold_edge(node_id,h_1,tm1);
+      if ( is_source_coplanar ){
+        //grab original vertex that is on commom intersection
+        halfedge_descriptor h_1_opp=opposite(h_1,tm1);
+        mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1_opp));
+        Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
+        if(node_id_to_vertex.size()<=node_id)
+          node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
+        node_id_to_vertex[node_id]=source(h_1,tm1);
+        all_incident_faces_got_a_node_as_vertex(h_1_opp,node_id, *tm1_ptr);
+      //   check_node_on_non_manifold_vertex(node_id,h_1_opp,tm1);
+      }
+      else{
+        //handle intersection on principal edge
+        on_edge[tm1_ptr][edge(h_1,tm1)].push_back(node_id);
+      //   check_node_on_non_manifold_edge(node_id,h_1,tm1);
+      }
     }
   }
-}
 
   //sort node ids so that we can split the hedge
   //consecutively
