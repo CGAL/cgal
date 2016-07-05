@@ -1000,7 +1000,7 @@ public:
 
   std::pair<bool,boost::optional<FT> > m_infinity() const
   {
-    return std::pair<bool,boost::optional<FT> >(0,boost::optional<FT>());
+    return std::pair<bool,boost::optional<FT> >(false,boost::optional<FT>());
   }
 
   template <class Iterator> // value_type = Edge
