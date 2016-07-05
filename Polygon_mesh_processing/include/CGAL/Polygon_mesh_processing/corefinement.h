@@ -28,13 +28,6 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-// TODO:
-//  * parler open/close et si pas closed une seule CC
-//  * orientation differente composnate connexes
-//  * intersection edge is always on the border of a patch
-//  * orientation des polyhedrons
-//  * document all_default
-
 /** \ingroup PMP_corefinement_grp
  *
  * indicates if `tm` bounds a volume.
