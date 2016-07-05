@@ -165,7 +165,6 @@ difference(const TriangleMesh& tm1,
  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm1` (resp. `tm2`) \cgalParamEnd
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
  *     constrained-or-not status of each edge of `tm1` (resp. `tm2`)\cgalParamEnd
- *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (resp. `tm2`) \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
