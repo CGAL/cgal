@@ -39,7 +39,8 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     mw = mainWindow;
-    actionBilateralSmoothing = new QAction(tr("Point Set Bilateral Smoothing"), mainWindow);
+    actionBilateralSmoothing = new QAction(tr("Bilateral Smoothing"), mainWindow);
+    actionBilateralSmoothing->setProperty("subMenuName","Point Set Processing");
     actionBilateralSmoothing->setObjectName("actionBilateralSmoothing");
     autoConnectActions();
   }

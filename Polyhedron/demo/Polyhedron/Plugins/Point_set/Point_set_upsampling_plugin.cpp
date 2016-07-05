@@ -37,7 +37,8 @@ class Polyhedron_demo_point_set_upsampling_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
-    actionEdgeAwareUpsampling = new QAction(tr("Point Set Edge Aware Upsampling"), mainWindow);
+    actionEdgeAwareUpsampling = new QAction(tr("Edge Aware Upsampling"), mainWindow);
+    actionEdgeAwareUpsampling->setProperty("subMenuName","Point Set Processing");
     actionEdgeAwareUpsampling->setObjectName("actionEdgeAwareUpsampling");
     autoConnectActions();
   }

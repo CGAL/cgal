@@ -41,7 +41,9 @@ class Polyhedron_demo_point_set_simplification_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,Messages_interface*) {
     scene = scene_interface;
-    actionSimplify = new QAction(tr("Point Set Simplification Selection"), mainWindow);
+    actionSimplify = new QAction(tr("Simplification Selection"), mainWindow);
+    actionSimplify->setProperty("subMenuName","Point Set Processing");
+
     actionSimplify->setObjectName("actionSimplify");
     autoConnectActions();
   }

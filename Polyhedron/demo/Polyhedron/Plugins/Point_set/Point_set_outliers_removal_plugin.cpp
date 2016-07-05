@@ -31,7 +31,8 @@ private:
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
-    actionOutlierRemoval = new QAction(tr("Point Set Outliers Selection"), mainWindow);
+    actionOutlierRemoval = new QAction(tr("Outliers Selection"), mainWindow);
+    actionOutlierRemoval->setProperty("subMenuName","Point Set Processing");
     actionOutlierRemoval->setObjectName("actionOutlierRemoval");
     autoConnectActions();
   }

@@ -37,7 +37,8 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
     mw = mainWindow;
-    actionAverageSpacing = new QAction(tr("Point Set Average Spacing"), mainWindow);
+    actionAverageSpacing = new QAction(tr("Average Spacing"), mainWindow);
+    actionAverageSpacing->setProperty("subMenuName","Point Set Processing");
     actionAverageSpacing->setObjectName("actionAverageSpacing");
     autoConnectActions();
   }
