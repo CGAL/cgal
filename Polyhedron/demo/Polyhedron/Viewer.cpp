@@ -8,6 +8,8 @@
 #include <QOpenGLShader>
 #include <QFileDialog>
 #include <QOpenGLShaderProgram>
+#include <QOpenGLFramebufferObject>
+#include <QInputDialog>
 #include <cmath>
 #include <QApplication>
 
@@ -1456,7 +1458,54 @@ void Viewer::saveSnapshot(bool, bool)
 {
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Save Snapshot"), "", tr("Image Files (*.png *.jpg *.bmp)"));
-  if(!fileName.isEmpty())
-    grabFrameBuffer(false).save(QString(fileName));
+  if(fileName.isEmpty())
+    return;
+
+  QSize size=QSize(width(), height());
+  int max_res = (std::min)(CGAL::sqrt(5e7/(width()*height())), 5.0);
+  bool ok;
+  int factor = QInputDialog::getInt(this,"Resolution","scale factor (xViewer's resolution): ",1,1,max_res, 1 , &ok);
+  if(!ok)
+    return;
+  double oldNear = camera()->zNear();
+  camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
+  camera()->setZNearCoefficient(1);
+  qglviewer::Vec originalPosition = camera()->position();
+  qglviewer::Quaternion originalOrientation = camera()->orientation();
+  QSize subSize=QSize(width()/factor, height()/factor);
+  QOpenGLFramebufferObject* snap_fbo = new QOpenGLFramebufferObject(factor*width(), factor*height(), QOpenGLFramebufferObject::Depth);
+  QOpenGLFramebufferObject* tile_fbo = new QOpenGLFramebufferObject(width(), height(), QOpenGLFramebufferObject::Depth);
+
+  for(int i=0; i<factor; i++)
+    for(int j=0; j<factor; j++)
+    {
+
+      //compute new point of view
+      QRect zoomArea(QPoint(i*subSize.width(),j*subSize.height()), QPoint((i+1)*subSize.width(),(j+1)*subSize.height()));
+      camera()->fitScreenRegion(zoomArea);
+      //clean the scene
+      tile_fbo->bind();
+      glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+      preDraw();
+      //draws the scene
+      draw();
+      postDraw();
+      tile_fbo->release();
+      //copy the tile to the snapshot fbo
+      QOpenGLFramebufferObject::blitFramebuffer(snap_fbo,
+                                                QRect(QPoint(i*size.width(),(factor-j-1)*size.height()),tile_fbo->size()),
+                                                tile_fbo,
+                                                QRect(QPoint(0,0), tile_fbo->size())
+                                                );
+      //restore original camera
+      camera()->setPosition(originalPosition);
+      camera()->setOrientation(originalOrientation);
+    }
+  //restore Perspective type
+  camera()->setType(qglviewer::Camera::PERSPECTIVE);
+  camera()->setZNearCoefficient(0.005);
+  //save image
+  snap_fbo->toImage().save(fileName);
+  delete snap_fbo;
 }
 
