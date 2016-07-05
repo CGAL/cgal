@@ -716,14 +716,15 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
 
 
   shape_detection.set_input(indices, hps_pmap, &(normals[0]));
-  shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+  //  shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+  shape_detection.add_shape_factory<My_plane<Traits> >();
   Shape_detection::Parameters op;
   op.probability = 0.05;
   op.min_points = std::max ((std::size_t)10, m_psc->HPS.size() / 250000);
   
   op.epsilon = radius_neighbors;
   op.cluster_epsilon = radius_neighbors;
-  op.normal_threshold = 0.8;
+  op.normal_threshold = 0.9;
 
   std::cerr << "Computing RANSAC..." << std::endl;
   shape_detection.detect(op);
@@ -973,13 +974,17 @@ void Scene_point_set_classification_item::extract_building_map (double,
   for (std::size_t i = 0; i < is_plane_facade.size(); ++ i)
     if (is_plane_facade[i])
       {
-        const Kernel::Plane_3& plane = m_psc->groups[i];
+        Kernel::Plane_3 plane = m_psc->groups[i];
         Kernel::Vector_3 normal = plane.orthogonal_vector();
         normal = normal / std::sqrt (normal * normal);
         double horiz = normal * Kernel::Vector_3 (0., 0., 1.);
-        if (horiz > 0.17 || horiz < -0.17)
-          continue;
-          
+        // if (horiz > 0.17 || horiz < -0.17)
+        //   continue;
+
+        Kernel::Point_3 c = CGAL::centroid (facade_pts[i].begin(), facade_pts[i].end());
+        normal = Kernel::Vector_3 (normal.x(), normal.y(), 0.);
+        plane = Kernel::Plane_3 (c, normal);
+        
         //#define INFINITE_LINES
 #if defined(INFINITE_LINES)
 
@@ -1009,8 +1014,8 @@ void Scene_point_set_classification_item::extract_building_map (double,
         CGAL::Object obj = CGAL::intersection (ground, plane);
         Kernel::Line_3 line;
 
-        if (facade_pts[i].size() < 100)
-          continue;
+        // if (facade_pts[i].size() < 100)
+        //   continue;
         
         if (CGAL::assign (line, obj))
           {
@@ -1204,7 +1209,11 @@ void Scene_point_set_classification_item::extract_facades (double radius,
 
   for (std::size_t i = 0; i < facade_pts.size(); ++ i)
     {
-      const Kernel::Plane_3& plane = m_psc->groups[i];
+      Kernel::Plane_3 plane = m_psc->groups[i];
+      Kernel::Vector_3 normal = plane.orthogonal_vector();
+      Kernel::Point_3 c = CGAL::centroid (facade_pts[i].begin(), facade_pts[i].end());
+      normal = Kernel::Vector_3 (normal.x(), normal.y(), 0.);
+      plane = Kernel::Plane_3 (c, normal);
 
       std::vector<Kernel::Point_2> projections;
       projections.reserve (facade_pts[i].size ());
