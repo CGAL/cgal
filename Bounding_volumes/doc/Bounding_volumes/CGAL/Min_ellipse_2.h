@@ -119,7 +119,7 @@ template < class InputIterator >
 Min_Ellipse_2( InputIterator first, 
 InputIterator last, 
 bool randomize, 
-Random& random = default_random, 
+Random& random = get_default_random(),
 const Traits& traits = Traits() ); 
 
 /*!

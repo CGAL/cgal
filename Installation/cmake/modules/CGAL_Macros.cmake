@@ -282,13 +282,19 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       # Nothing to add for Core
 
       if (${component} STREQUAL "ImageIO")
-        find_package( OpenGL QUIET )
         find_package( ZLIB QUIET )
+
+        if(ZLIB_FOUND)
+          cache_set(CGAL_ImageIO_USE_ZLIB "ON")
+          add_definitions("-DCGAL_USE_ZLIB")
+          include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
+        endif(ZLIB_FOUND)
+
       endif()
 
       if (${component} STREQUAL "Qt5")
-        find_package( OpenGL QUIET )
-        find_package( Qt5 QUIET COMPONENTS OpenGL Svg )
+        find_package(OpenGL QUIET)
+        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
       endif()
 
     else(WITH_CGAL_${component})
@@ -312,14 +318,20 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
           ####message( STATUS "External library ${component} has not been preconfigured")
           if (${component} STREQUAL "ImageIO")
-            find_package( OpenGL )
-            find_package( ZLIB )
+            find_package( ZLIB QUIET )
+
+            if(ZLIB_FOUND)
+              cache_set(CGAL_ImageIO_USE_ZLIB "ON")
+              add_definitions("-DCGAL_USE_ZLIB")
+              include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
+            endif(ZLIB_FOUND)
+
           endif()
 
           if (${component} STREQUAL "Qt5")
             set(CGAL_${component}_FOUND TRUE)
-            find_package( OpenGL )
-            find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
+            find_package(OpenGL QUIET)
+            find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
           endif()
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND)
@@ -449,7 +461,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
-
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
 

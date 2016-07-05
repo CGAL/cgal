@@ -19,19 +19,17 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#ifndef IRIS_H
-#define IRIS_H
+#ifndef FGETNS_H
+#define FGETNS_H
 
 #include <CGAL/ImageIO.h>
 
-
-
-PTRIMAGE_FORMAT createIrisFormat();
-int readIrisImage( const char *name, _image *im );
-int testIrisHeader(char *magic,const char *name);
+/* get a string from a file and discard the ending newline character
+   if any */
+char *fgetns(char *str, int n,  _image *im );
 
 #ifdef CGAL_HEADER_ONLY
-#include <CGAL/iris_impl.h>
+#include <CGAL/ImageIO/fgetns_impl.h>
 #endif // CGAL_HEADER_ONLY
 
-#endif
+#endif // FGETNS_H

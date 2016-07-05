@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "pnm.h"
-#include "pnm_impl.h"
+#include <CGAL/ImageIO/pnm.h>
+#include <CGAL/ImageIO/pnm_impl.h>
 
 #endif // CGAL_HEADER_ONLY

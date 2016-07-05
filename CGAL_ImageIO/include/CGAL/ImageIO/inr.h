@@ -36,7 +36,7 @@ int _writeInrimageHeader(const _image *im,
 
 /** Writes the given image body in an already opened file.
     @param im image descriptor */
-int _writeInrimageData(const _image *im);
+bool _writeInrimageData(const _image *im);
 
 /** read header from an opened inrimage file
     @param im opened inrmage descriptor */
@@ -58,7 +58,7 @@ int writeInrimage(char *basename,_image *im);
 PTRIMAGE_FORMAT createInrimageFormat();
 
 #ifdef CGAL_HEADER_ONLY
-#include "inr_impl.h"
+#include <CGAL/ImageIO/inr_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 

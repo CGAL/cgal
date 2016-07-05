@@ -130,7 +130,7 @@ template < class InputIterator >
 Min_circle_2( InputIterator first, 
 InputIterator last, 
 bool randomize, 
-Random& random = CGAL::default_random, 
+Random& random = CGAL::get_default_random(),
 const Traits& traits = Traits() ); 
 
 /*!

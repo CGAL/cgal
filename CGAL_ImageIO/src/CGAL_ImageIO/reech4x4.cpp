@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "reech4x4.h"
-#include "reech4x4_impl.h"
+#include <CGAL/ImageIO/reech4x4.h>
+#include <CGAL/ImageIO/reech4x4_impl.h>
 
 #endif // CGAL_HEADER_ONLY

@@ -135,11 +135,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
 
-  qt5_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES Polyhedron_3.qrc )
   qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
   add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
+  target_link_libraries(gl_splat ${OPENGL_gl_LIBRARY})
 
   find_path(CGAL_THREE_HEADERS_PATH
     NAME CGAL/Three/Scene_item.h
@@ -185,6 +186,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    gl_splat
     )
 
   add_library(scene_basic_objects SHARED
@@ -196,6 +199,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    gl_splat
     )
   qt5_use_modules(scene_basic_objects OpenGL Gui Xml Script Widgets)
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
@@ -212,9 +217,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
-
   add_item(scene_image_item Scene_image_item.cpp)
- 
+
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
@@ -278,7 +282,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     MainWindow.cpp
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
-    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} ${statisticsUI_FILES})
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${statisticsUI_FILES} ${CGAL_Qt5_MOC_FILES})
   target_link_libraries(polyhedron_demo demo_framework point_dialog)
   qt5_use_modules(polyhedron_demo Gui OpenGL Xml Widgets Script Svg )
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
@@ -299,7 +303,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY})
-
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 

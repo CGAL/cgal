@@ -32,7 +32,7 @@ int testGifHeader(char *magic,const char *name);
 PTRIMAGE_FORMAT createGifFormat();
 
 #ifdef CGAL_HEADER_ONLY
-#include "gif_impl.h"
+#include <CGAL/ImageIO/gif_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

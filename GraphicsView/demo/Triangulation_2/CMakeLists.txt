@@ -40,7 +40,7 @@ qt5_add_resources ( CDT_RESOURCE_FILES ./Constrained_Delaunay_triangulation_2.qr
 qt5_generate_moc( "Constrained_Delaunay_triangulation_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Constrained_Delaunay_triangulation_2.moc" )
 
 # The executable itself.
-add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
+add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
 qt5_use_modules(Constrained_Delaunay_triangulation_2 Xml Script OpenGL Svg)
 
@@ -64,7 +64,7 @@ qt5_add_resources ( DT_RESOURCE_FILES ./Delaunay_triangulation_2.qrc )
 qt5_generate_moc( "Delaunay_triangulation_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Delaunay_triangulation_2.moc" )
 
 # The executable itself.
-add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
 qt5_use_modules(Delaunay_triangulation_2 Xml Script OpenGL Svg)
 
@@ -88,7 +88,7 @@ qt5_add_resources ( DT_RESOURCE_FILES ./Regular_triangulation_2.qrc )
 qt5_generate_moc( "Regular_triangulation_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Regular_triangulation_2.moc" )
 
 # The executable itself.
-add_executable  ( Regular_triangulation_2 Regular_triangulation_2.cpp Regular_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+add_executable  ( Regular_triangulation_2 Regular_triangulation_2.cpp Regular_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
 qt5_use_modules(Regular_triangulation_2 Xml Script OpenGL Svg)
 

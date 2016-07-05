@@ -19,28 +19,19 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#ifndef PNM_H
-#define PNM_H
-
-#include <stdio.h>
+#ifndef IRIS_H
+#define IRIS_H
 
 #include <CGAL/ImageIO.h>
 
 
-int readPpmImage(const char *name,_image *im);
-int writePpmImage(char *name, _image *im);
-int readPgmAsciiImage(const char *name,_image *im);
-int readPgmImage(const char *name,_image *im);
-int writePgmImage(char *name,  _image *im);
-int testPgmAsciiHeader(char *magic,const char *name);
-int testPgmHeader(char *magic,const char *name);
-int testPpmHeader(char *magic,const char *name);
-PTRIMAGE_FORMAT createPgmFormat();
-PTRIMAGE_FORMAT createPgmAscIIFormat();
-PTRIMAGE_FORMAT createPpmFormat();
+
+PTRIMAGE_FORMAT createIrisFormat();
+int readIrisImage( const char *name, _image *im );
+int testIrisHeader(char *magic,const char *name);
 
 #ifdef CGAL_HEADER_ONLY
-#include "pnm_impl.h"
+#include <CGAL/ImageIO/iris_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

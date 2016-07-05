@@ -4,11 +4,13 @@
 # This file is loaded by cmake via the command "find_package(CGAL)"
 #
 # This file correspond to a CGAL installation with "make install", thus the actual location
-# must be given by the cmake variable or enviroment variable CGAL_DIR. 
+# must be given by the cmake variable or enviroment variable CGAL_DIR.
 
 set(CGAL_CONFIG_LOADED TRUE)
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 string(REPLACE "@CGAL_INSTALL_CMAKE_DIR@" "" CGAL_INSTALL_PREFIX "${CGAL_CONFIG_DIR}")
@@ -43,6 +45,7 @@ set(CGAL_ImageIO_USE_ZLIB                 "@CGAL_ImageIO_USE_ZLIB@" )
 set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
 
 set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
+set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CGAL_INCLUDE_DIRS}/CGAL/" CACHE INTERNAL "Directory containing the GraphicsView package")
 
 if ( CGAL_FIND_REQUIRED )
   set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE        )
@@ -53,7 +56,7 @@ else()
     set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE      )
     set( CHECK_CGAL_COMPONENT_ERROR_TYPE   STATUS    )
     set( CHECK_CGAL_COMPONENT_ERROR_TITLE "NOTICE:" )
-  else()  
+  else()
     set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR FALSE )
   endif()
 endif()
@@ -72,30 +75,61 @@ macro(check_cgal_component COMPONENT)
     # include config file
     include(${CGAL_CONFIG_DIR}/CGALLibConfig.cmake)
     set( CHECK_CGAL_ERROR_TAIL "" )
-  else() 
-    if (EXISTS ${CGAL_CONFIG_DIR}/${CGAL_LIB}LibConfig.cmake)
+  else()
+    if (EXISTS ${CGAL_CONFIG_DIR}/${CGAL_LIB}Exports.cmake)
       # include export files for requested component
       include(${CGAL_CONFIG_DIR}/${CGAL_LIB}Exports.cmake)
       # include config file (defining WITH_${CGAL_LIB})
       include(${CGAL_CONFIG_DIR}/${CGAL_LIB}LibConfig.cmake)
     endif()
+
     if ( WITH_${CGAL_LIB} )
-      if(TARGET CGAL::${CGAL_LIB})
-        set( ${CGAL_LIB}_FOUND TRUE )
-      else()
+      if(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+        if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+          find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+          find_package(OpenGL QUIET)
+
+          set(CGAL_Qt5_MISSING_DEPS "")
+          if(NOT Qt5OpenGL_FOUND)
+            set(CGAL_Qt5_MISSING_DEPS "Qt5OpenGL")
+          endif()
+          if(NOT Qt5Svg_FOUND)
+            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5Svg")
+          endif()
+          if(NOT Qt5_FOUND)
+            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
+          endif()
+          if(NOT OPENGL_FOUND)
+            set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
+          endif()
+
+          if(CGAL_Qt5_MISSING_DEPS)
+            set( ${CGAL_LIB}_FOUND FALSE )
+            message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
+          else()
+            set( ${CGAL_LIB}_FOUND TRUE )
+            if (CGAL_HEADER_ONLY)
+              include("${CGAL_MODULES_DIR}/Use_CGAL_Qt5_headers.cmake")
+            endif()
+          endif()
+        else("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+          # Librairies that have no dependencies
+          set( ${CGAL_LIB}_FOUND TRUE )
+        endif("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+      else(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
         set( ${CGAL_LIB}_FOUND FALSE )
         set( CHECK_${CGAL_LIB}_ERROR_TAIL " CGAL was configured with WITH_${CGAL_LIB}=ON, but one of the dependencies of ${CGAL_LIB} was not configured properly." )
-      endif()
-    else()
+      endif(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+    else( WITH_${CGAL_LIB} )
       set( ${CGAL_LIB}_FOUND FALSE )
       set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
-    endif()
-  endif()  
+    endif( WITH_${CGAL_LIB} )
+  endif()
 
   if ( NOT ${CGAL_LIB}_FOUND AND CHECK_CGAL_COMPONENT_MSG_ON_ERROR )
     message( ${CHECK_CGAL_COMPONENT_ERROR_TYPE} "${CHECK_CGAL_COMPONENT_ERROR_TITLE} The ${CGAL_LIB} library was not configured.${CHECK_${CGAL_LIB}_ERROR_TAIL}" )
   endif()
-  
+
 endmacro()
 
 check_cgal_component("CGAL")

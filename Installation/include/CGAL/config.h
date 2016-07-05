@@ -28,6 +28,10 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+#ifdef CGAL_HEADER_ONLY
+#  define CGAL_NO_AUTOLINK 1
+#endif
+
 // Workaround for a bug in Boost, that checks WIN64 instead of _WIN64
 //   https://svn.boost.org/trac/boost/ticket/5519
 #if defined(_WIN64) && ! defined(WIN64)
@@ -411,15 +415,30 @@ using std::max;
   #define __has_warning(x) 0  // Compatibility with non-clang compilers.
 #endif
 
+// Macro to specify a 'unused' attribute.
+#if defined(__GNUG__) || __has_attribute(__unused__)
+#  define CGAL_UNUSED  __attribute__ ((__unused__))
+#else
+#  define CGAL_UNUSED
+#endif
+
 // Macro to trigger deprecation warnings
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
 #  define CGAL_DEPRECATED
+#  define CGAL_DEPRECATED_UNUSED CGAL_UNUSED
 #elif defined(__GNUC__) || __has_attribute(__deprecated__)
 #  define CGAL_DEPRECATED __attribute__((__deprecated__))
+#if __has_attribute(__unused__)
+#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__, __unused__))
+#else
+#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__))
+#endif
 #elif defined (_MSC_VER) && (_MSC_VER > 1300)
 #  define CGAL_DEPRECATED __declspec(deprecated)
+#  define CGAL_DEPRECATED_UNUSED __declspec(deprecated)
 #else
 #  define CGAL_DEPRECATED
+#  define CGAL_DEPRECATED_UNUSED
 #endif
 
 
@@ -428,13 +447,6 @@ using std::max;
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #else
 #  define CGAL_NORETURN
-#endif
-
-// Macro to specify a 'unused' attribute.
-#if defined(__GNUG__) || __has_attribute(__unused__)
-#  define CGAL_UNUSED  __attribute__ ((__unused__))
-#else
-#  define CGAL_UNUSED
 #endif
 
 // Macro CGAL_ASSUME

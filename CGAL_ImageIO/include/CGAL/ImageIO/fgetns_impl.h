@@ -19,56 +19,25 @@
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
-#ifndef ANALYZE_H
-#define ANALYZE_H
-
-#ifdef _MSC_VER
-#pragma warning ( disable : 4068 4786 4081 4267 )
-#endif
-
-
-
-#include <CGAL/ImageIO.h>
-
-/* read analyse format header
-
-   return:
-   -1: error
-   0: success
- */
-int readAnalyzeHeader(const char* name,_image *im);
-
-int testAnalyzeHeader(char *magic,const char *name);
-
-/** creates an return the file format structure associated with the Analyze file format */
-PTRIMAGE_FORMAT createAnalyzeFormat();
-
-/* 
-   return:
-   -1: error
-    1: success
- */
-int writeAnalyze( char *basename, _image* im ) ;
-
-
-/* 
-   return:
-   -1: error
-    1: success
- */
-int writeAnalyzeHeader( const _image* im ) ;
-
-
-
-/* 
-   return:
-   -1: error
-    1: success
- */
-int writeAnalyzeData( const _image* im ) ;
-
 #ifdef CGAL_HEADER_ONLY
-#include "analyze_impl.h"
-#endif // CGAL_HEADER_ONLY
-
+#define CGAL_INLINE_FUNCTION inline
+#else
+#define CGAL_INLINE_FUNCTION
 #endif
+
+#include <string.h>
+
+/* get a string from a file and discard the ending newline character
+   if any */
+CGAL_INLINE_FUNCTION
+char *fgetns(char *str, int n,  _image *im ) {
+
+  memset( str, 0, n );
+  char* ret = ImageIO_gets( im, str, n );
+
+  if(!ret) return NULL;
+
+  std::size_t l = strlen(str);
+  if(l > 0 && str[l-1] == '\n') str[l-1] = '\0';
+  return ret;
+}

@@ -27,7 +27,7 @@ add_definitions(-DQT_NO_KEYWORDS)
 qt5_wrap_ui( DT_UI_FILES Periodic_2_triangulation_2.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( DT_RESOURCE_FILES ./Periodic_2_triangulation_2.qrc )
+qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Periodic_2_triangulation_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 qt5_generate_moc( Periodic_2_Delaunay_triangulation_2.cpp Periodic_2_triangulation_2.moc )
@@ -43,7 +43,7 @@ SOURCE_GROUP("QT" FILES ${QT_headers})
 add_executable  ( Periodic_2_Delaunay_triangulation_2 
   Periodic_2_Delaunay_triangulation_2.cpp
   Periodic_2_triangulation_2.moc 
-  ${DT_UI_FILES} ${DT_RESOURCE_FILES} 
+  ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
   ${headers} ${QT_headers} ${P2T2_headers})
 
 qt5_use_modules( Periodic_2_Delaunay_triangulation_2 Xml Script OpenGL Svg)

@@ -158,7 +158,7 @@ Mesh_function<D_>::
 launch()
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
-  CGAL::default_random = CGAL::Random(0);
+  CGAL::get_default_random() = CGAL::Random(0);
 #endif
 
   // Create mesh criteria

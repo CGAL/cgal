@@ -44,10 +44,10 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   find_package(Qt5 QUIET COMPONENTS OpenGL Xml Svg)
   find_package(QGLViewer )
   find_package(OpenGL    )
-  
+
   if ( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
 
-        
+
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
     add_definitions(${QGLVIEWER_DEFINITIONS})
 
@@ -57,7 +57,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
       option(SURFACE_MESH_DEMO_USE_MARCHING_CUBE "Embed a marching cube implementation in the Surface Mesh demo." ON)
       mark_as_advanced(SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
     endif()
-    
+
     if(EXISTS ${PACKAGE_ROOT}/include/CGAL/Polyhedral_surface_3.h)
       option(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE "Compile the support for polyhedral surfaces." OFF)
       mark_as_advanced(SURFACE_MESH_DEMO_WITH_POLYHEDRAL_SURFACE)
@@ -80,22 +80,22 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
       set(sources ${sources} ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
       add_definitions(-DCGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
     endif()
-    
+
 
     qt5_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
 
     set( sources ${sources} moc_surface.cpp)
-    
-    qt5_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
-    
-    qt5_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  )
 
-    add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
+    qt5_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
+
+    qt5_add_resources( CGAL_Qt5_RESOURCE_FILES values_list.qrc surface_mesher.qrc  )
+
+    add_executable  ( ${prj}  ${sources} ${uis} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
     qt5_use_modules(${prj} OpenGL Xml Svg)
-    
+
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
-    
+
     set(VTK_LIBS "")
     find_package(VTK QUIET COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
     if(VTK_FOUND)
@@ -113,9 +113,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     # Link the executable to CGAL and third-party libraries
     target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-    
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${VTK_LIBS})
-    
+
+    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${VTK_LIBS})
+
   else( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
   endif( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )

@@ -35,8 +35,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bmptypes.h"
-#include "bmpendian.h"
+#include <CGAL/ImageIO/bmptypes.h>
+#include <CGAL/ImageIO/bmpendian.h>
 
 /*
  * Mid-level functions
@@ -67,7 +67,7 @@ int readMultipleImage(FILE *fp, RGB ***argbs, char ***xorMasks,
 		      int *imageCount);
 
 #ifdef CGAL_HEADER_ONLY
-#include "bmpread_impl.h"
+#include <CGAL/ImageIO/bmpread_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif

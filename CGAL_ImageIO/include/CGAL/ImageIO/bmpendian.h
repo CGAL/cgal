@@ -33,7 +33,7 @@
 #define __ENDIAN_H_INCLUDED__
 
 #include <cstdio>
-#include "bmptypes.h"
+#include <CGAL/ImageIO/bmptypes.h>
 #include <cstdio>
 
 /*
@@ -59,7 +59,7 @@ int writeUINT16little(FILE *f, CGAL_UINT16 i);
 int writeUINT32little(FILE *f, CGAL_UINT32 i);
 
 #ifdef CGAL_HEADER_ONLY
-#include "bmpendian_impl.h"
+#include <CGAL/ImageIO/bmpendian_impl.h>
 #endif // CGAL_HEADER_ONLY
 
 #endif  /* __ENDIAN_H_INCLUDED__ */
