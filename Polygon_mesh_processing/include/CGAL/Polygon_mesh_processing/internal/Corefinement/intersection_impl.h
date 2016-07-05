@@ -38,7 +38,7 @@
 namespace CGAL{
 namespace Corefinement {
 
-struct Corefinement_self_intersection_exception{};
+struct Self_intersection_exception{};
 
 /// TODO Read and update the following comments
 //This functor computes the pairwise intersection of polyhedral surfaces.
@@ -200,7 +200,7 @@ class Intersection_of_triangle_meshes
                                   edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
                                   callback_si, cutoff );
         if (callback_si.self_intersections_found())
-         throw Corefinement_self_intersection_exception();
+         throw Self_intersection_exception();
     }
     else
         CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),

@@ -44,8 +44,12 @@ namespace Polygon_mesh_processing{
  *
  * @param tm1 first input triangulated surface mesh
  * @param tm2 second input triangulated surface mesh
- * @param output output iterator of polylines. Each polyline will be given as a
- *               a vector of points
+ * @param polyline_output output iterator of polylines. Each polyline will be
+ *        given as a vector of points
+ * @param throw_on_self_intersection if `true`, for each input triangle mesh,
+ *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`
+ *        will be thrown if at least one is found.
  * @param np1 optional sequence of \ref namedparameters among the ones listed below
  * @param np2 optional sequence of \ref namedparameters among the ones listed below
  *
@@ -56,9 +60,6 @@ namespace Polygon_mesh_processing{
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \todo use a functor similar to the one in split_graph_into_polylines
- *       instead of the OutputIterator (+explicit construction from vector
- *       that is document a default one)
  */
 template <class OutputIterator,
           class TriangleMesh,
