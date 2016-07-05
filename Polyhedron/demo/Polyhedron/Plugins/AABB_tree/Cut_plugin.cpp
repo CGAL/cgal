@@ -64,7 +64,7 @@ Simple_kernel::Vector_3 random_vector()
 #ifdef CGAL_LINKED_WITH_TBB
 //functor for tbb parallelization
 template <typename Tree>
-class fill_grid_size {
+class FillGridSize {
   std::size_t grid_size;
   Point_distance (&distance_function)[100][100];
   FT diag;
@@ -73,7 +73,7 @@ class fill_grid_size {
   bool is_signed;
   qglviewer::ManipulatedFrame* frame;
 public:
-  fill_grid_size(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
+  FillGridSize(std::size_t grid_size, FT diag, Point_distance (&distance_function)[100][100],
   FT& max_distance_function,QMap<QObject*, Tree*>* trees,
   bool is_signed, qglviewer::ManipulatedFrame* frame)
   : grid_size(grid_size), distance_function (distance_function), diag(diag),
@@ -711,7 +711,7 @@ private:
         }
     }
 #else
-    fill_grid_size<Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, trees, is_signed, frame);
+    FillGridSize<Tree> f(m_grid_size, diag, m_distance_function, m_max_distance_function, trees, is_signed, frame);
     tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size*m_grid_size), f);
 #endif
   }
@@ -731,14 +731,14 @@ private:
   }
 
 #ifdef CGAL_LINKED_WITH_TBB
-  class fill_texture
+  class FillTexture
   {
     std::size_t grid_size;
     Color_ramp pos_ramp;
     Color_ramp neg_ramp;
     Scene_aabb_plane_item* item;
   public :
-    fill_texture(std::size_t grid_size,
+    FillTexture(std::size_t grid_size,
                  Color_ramp pos_ramp,
                  Color_ramp neg_ramp,
                  Scene_aabb_plane_item* item
@@ -790,7 +790,7 @@ private:
             }
         }
 #else
-      fill_texture f(m_grid_size, m_red_ramp, m_blue_ramp, this);
+      FillTexture f(m_grid_size, m_red_ramp, m_blue_ramp, this);
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size * m_grid_size), f);
 #endif
         break;
@@ -807,7 +807,7 @@ private:
             }
         }
 #else
-      fill_texture f(m_grid_size, m_thermal_ramp, m_thermal_ramp, this);
+      FillTexture f(m_grid_size, m_thermal_ramp, m_thermal_ramp, this);
       tbb::parallel_for(tbb::blocked_range<size_t>(0, m_grid_size * m_grid_size), f);
 #endif
         break;
