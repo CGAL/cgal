@@ -2,9 +2,10 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
-#include <CGAL/parameterize.h>
+//#include <CGAL/parameterize.h>
 
 #include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
 #include <iostream>
 #include <fstream>
 
@@ -18,9 +19,9 @@ typedef boost::graph_traits<SurfaceMesh>::edge_descriptor SM_edge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::halfedge_descriptor SM_halfedge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor SM_vertex_descriptor;
 
-typedef CGAL::Unique_hash_map<SM_halfedge_descriptor,Point_2> UV_uhm;
-typedef CGAL::Unique_hash_map<SM_edge_descriptor,bool> Seam_edge_uhm;
-typedef CGAL::Unique_hash_map<SM_vertex_descriptor,bool> Seam_vertex_uhm;
+typedef boost::unordered_map<SM_halfedge_descriptor,Point_2> UV_uhm;
+typedef boost::unordered_map<SM_edge_descriptor,bool> Seam_edge_uhm;
+typedef boost::unordered_map<SM_vertex_descriptor,bool> Seam_vertex_uhm;
 
 typedef boost::associative_property_map<UV_uhm> UV_pmap;
 typedef boost::associative_property_map<Seam_edge_uhm> Seam_edge_pmap;
@@ -32,6 +33,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
+#if 0
 /// A helper class that writes a face as a polyline in the xy-plane
 struct Face2Polyline {
   const Mesh& mesh;
@@ -55,9 +57,15 @@ struct Face2Polyline {
     std::cout << std::endl;
   }  
 };
+#endif
 
 int main(int argc, char * argv[])
 {
+
+  CGAL::Seam_mesh_halfedge_descriptor<halfedge_descriptor> hd;
+  // hd = next(hd);
+
+#if 0
   SurfaceMesh sm;
   std::vector<SM_edge_descriptor> seam; 
 
@@ -100,19 +108,27 @@ int main(int argc, char * argv[])
 
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
-
+  
   halfedge_descriptor bhd(smhd);
   bhd = opposite(bhd,mesh); // a halfedge on the virtual border
 
-  //  CGAL::parameterize(mesh, bhd, uv_pm);
-  get(CGAL::vertex_point, mesh);
+  std::cerr <<"A"<< std::endl;
+
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,mesh)){
+    std::cerr << ".";
+  }
+  std::cerr <<"B"<< std::endl;
+  CGAL::parameterize(mesh, bhd, uv_pm);
+  std::cerr <<"C"<< std::endl;
+
   Face2Polyline f2p(mesh,uv_pm);
   // As the seam may define a patch we write
-  /*
+  
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(f2p));
-  */
+  
+#endif
   return 0;
 }
 

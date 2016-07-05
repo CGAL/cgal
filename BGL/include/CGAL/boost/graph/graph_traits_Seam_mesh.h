@@ -31,11 +31,32 @@
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/assertions.h>
 
+#include <iterator>
+
 namespace CGAL {
 
 template <class TM, class SEM, class SVM>
 class Seam_mesh;
-}
+
+
+template <class HD>
+struct Seam_mesh_halfedge_descriptor;
+
+} // namespace CGAL
+
+/*
+namespace std {
+template <class HD>
+struct iterator_traits<CGAL::Seam_mesh_halfedge_descriptor<HD> >
+{
+  typedef std::ptrdiff_t difference_type;
+  typedef  int value_type;
+  typedef int* pointer;
+  typedef int& reference;
+  typedef std::random_access_iterator_tag iterator_category;
+};
+} // namespace std
+*/
 
 namespace boost {
 
@@ -244,18 +265,20 @@ edge(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::vertex_descript
 //
 // HalfedgeGraph
 //
-template <class TM, class SEM, class SVM>
-typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_descriptor
-next(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_descriptor h,
+
+
+  template <class TM, class SEM, class SVM, class HD>
+CGAL::Seam_mesh_halfedge_descriptor<HD>
+next(const CGAL::Seam_mesh_halfedge_descriptor<HD>& h,
      const CGAL::Seam_mesh<TM,SEM,SVM>& sm)
 {
   return sm.m_next(h);
 }
 
 
-template <class TM, class SEM, class SVM>
-typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_descriptor
-prev(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_descriptor h,
+template <class TM, class SEM, class SVM, class HD>
+CGAL::Seam_mesh_halfedge_descriptor<HD>
+prev(const CGAL::Seam_mesh_halfedge_descriptor<HD>& h,
      const CGAL::Seam_mesh<TM,SEM,SVM>& sm)
 {
   return sm.m_prev(h);

@@ -313,7 +313,7 @@ parameterize(TriangleMesh& mesh,
                                                      mesh,
                                                      boost::make_function_output_iterator(Parameterization::Vertices_set<TriangleMesh,Vertex_set>(mesh,vertices)));
     // Count vertices
-    int nbVertices= num_vertices(mesh);
+    int nbVertices = static_cast<int>(num_vertices(mesh));
     // Compute (u,v) for border vertices
     // and mark them as "parameterized"
     status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);
@@ -381,7 +381,7 @@ parameterize(TriangleMesh& mesh,
       if( main_border.find(v) == main_border.end() )
         {
           int index = get(vimap,v);
-          //AF put(uvmap,v,Point_2(Xu[index],Xv[index]));
+          put(uvmap,v,Point_2(Xu[index],Xv[index]));
           put(vpm,v,true);
         }
     }

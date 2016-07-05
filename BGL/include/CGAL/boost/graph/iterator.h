@@ -444,7 +444,7 @@ public:
   Self& operator++() 
   {
     CGAL_assertion(g != NULL);
-    pos = next(pos,*g);  // AF: added CGAL:: it compiles
+    pos = CGAL::next(pos,*g);
     if ( pos == anchor)
       ++winding;
     return *this;

@@ -92,10 +92,12 @@ int main(int argc, char * argv[])
 
   Face2Polyline f2p(mesh,uv_pm);
   // As the seam may define a patch we write
+  
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(f2p));
   
   return 0;
 }
+
 

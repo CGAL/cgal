@@ -27,6 +27,63 @@
 
 namespace CGAL {
 
+
+  template <typename HD>
+  struct Seam_mesh_halfedge_descriptor {
+
+    typedef HD TM_halfedge_descriptor;
+
+    TM_halfedge_descriptor tmhd;
+    bool seam;
+
+    Seam_mesh_halfedge_descriptor()
+      : tmhd(), seam(false)
+    {}
+
+    Seam_mesh_halfedge_descriptor(const Seam_mesh_halfedge_descriptor& other)
+      : tmhd(other.tmhd), seam(other.seam)
+    {}
+
+
+    Seam_mesh_halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam=false)
+      : tmhd(tmhd),seam(seam)
+    {}
+
+
+    bool operator ==(const Seam_mesh_halfedge_descriptor& other) const
+    {
+      return (tmhd == other.tmhd) && (seam == other.seam); 
+    }
+
+
+    bool operator !=(const Seam_mesh_halfedge_descriptor& other) const
+    {
+      return (tmhd != other.tmhd) || (seam != other.seam); 
+    }
+
+
+    bool operator<(const Seam_mesh_halfedge_descriptor& other) const
+    {
+      return tmhd < other.tmhd;
+    }
+
+
+    operator TM_halfedge_descriptor() const
+    {
+      return tmhd;
+    }
+    
+
+    friend
+    std::ostream& operator<<(std::ostream& os, const Seam_mesh_halfedge_descriptor& hd)
+  {
+    os << hd.tmhd  << ((hd.seam)?" on seam":"");
+    return os;
+  }
+  };
+
+
+
 /*!
 \ingroup PkgBGLHelper
 
@@ -60,7 +117,7 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
     return tm;
   }
 
-  struct halfedge_descriptor;
+  typedef Seam_mesh_halfedge_descriptor<TM_halfedge_descriptor> halfedge_descriptor;
 
   /**  A vertex 
    *
@@ -230,56 +287,6 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   return make_range(beg,end);
   }
 
-
-  struct halfedge_descriptor {
-    TM_halfedge_descriptor tmhd;
-    bool seam;
-
-    halfedge_descriptor()
-      : tmhd(), seam(false)
-    {}
-
-    halfedge_descriptor(const halfedge_descriptor& other)
-      : tmhd(other.tmhd), seam(other.seam)
-    {}
-
-
-    halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam=false)
-      : tmhd(tmhd),seam(seam)
-    {}
-
-
-    bool operator ==(const halfedge_descriptor& other) const
-    {
-      return (tmhd == other.tmhd) && (seam == other.seam); 
-    }
-
-
-    bool operator !=(const halfedge_descriptor& other) const
-    {
-      return (tmhd != other.tmhd) || (seam != other.seam); 
-    }
-
-
-    bool operator<(const halfedge_descriptor& other) const
-    {
-      return tmhd < other.tmhd;
-    }
-
-
-    operator TM_halfedge_descriptor() const
-    {
-      return tmhd;
-    }
-
-    friend
-    std::ostream& operator<<(std::ostream& os, const halfedge_descriptor& hd)
-  {
-    os << hd.tmhd  << ((hd.seam)?" on seam":"");
-    return os;
-  }
-  };
-
   
   struct edge_descriptor {
     halfedge_descriptor hd;
@@ -428,6 +435,8 @@ public:
 
 
 
-} // namespace
+} // namespace CGAL
+
+
 
 #endif //CGAL_SEAM_MESH_H
