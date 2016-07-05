@@ -76,6 +76,51 @@ struct No_mark
   {}
 };
 
+//binds two edge constrained pmaps
+template <class G, class Ecm1, class Ecm2=Ecm1>
+struct Ecm_bind{
+  G& g1;
+  const Ecm1& ecm1;
+  G& g2;
+  const Ecm2& ecm2;
+
+  Ecm_bind(G& g1, G& g2, const Ecm1& ecm1, const Ecm2& ecm2)
+  : g1(g1), ecm1(ecm1), g2(g2), ecm2(ecm2)
+  {}
+
+  typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+
+  void put(G& g, edge_descriptor e, bool b) const
+  {
+    if ( &g==&g1 )
+      put(ecm1,e,b);
+    else
+    {
+      CGAL_assertion( &g==&g2 );
+      put(ecm2,e,b);
+    }
+  }
+
+  bool get(G& g, edge_descriptor e) const
+  {
+    if ( &g==&g1 )
+      return get(ecm1,e);
+    CGAL_assertion( &g==&g2 );
+    return get(ecm2,e);
+  }
+};
+
+template <class G>
+struct Ecm_bind<G, No_mark<G>, No_mark<G> >
+{
+  Ecm_bind(G&, G&, const No_mark<G>&, const No_mark<G>&){}
+  typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
+  void put(G&, edge_descriptor, bool) const {}
+  bool get(G& g, edge_descriptor e) const {
+    return false;
+  }
+};
+
 template<class G>
 struct No_extra_output_from_corefinement
 {
@@ -96,13 +141,13 @@ struct No_extra_output_from_corefinement
 template< class TriangleMesh,
           class VertexPointMap,
           class OutputBuilder_ = Default,
-          class EdgeMarkPropertyMap_ = Default,
+          class EdgeMarkMap_ = Default,
           class NewNodeVisitor_ = Default,
           class NewFaceVisitor_ = Default >
 class Visitor{
 //default template parameters
-  typedef typename Default::Get<EdgeMarkPropertyMap_,
-    No_mark<TriangleMesh> >::type                           EdgeMarkPropertyMap;
+  typedef typename Default::Get<EdgeMarkMap_,
+    Ecm_bind<TriangleMesh, No_mark<TriangleMesh> > >::type          EdgeMarkMap;
   typedef typename Default::Get<OutputBuilder_,
     No_extra_output_from_corefinement<TriangleMesh> >::type       OutputBuilder;
   typedef typename Default::Get<
@@ -172,12 +217,14 @@ private:
   NewNodeVisitor& new_node_visitor;
   NewFaceVisitor& new_face_visitor;
   OutputBuilder& output_builder;
+  const EdgeMarkMap& m_edge_mark_map;
 // visitor public functions
 public:
-  Visitor(NewNodeVisitor& v, NewFaceVisitor& f, OutputBuilder& o)
+  Visitor(NewNodeVisitor& v, NewFaceVisitor& f, OutputBuilder& o, const EdgeMarkMap& emm)
     : new_node_visitor(v)
     , new_face_visitor(f)
     , output_builder(o)
+    , m_edge_mark_map(emm)
   {}
 
   template<class Graph_node>
@@ -515,9 +562,6 @@ void new_node_added(std::size_t node_id,
                  const VertexPointMap& vpm1,
                  const VertexPointMap& vpm2)
   {
-    //TODO TMP
-    EdgeMarkPropertyMap m_edge_mark_pmap; // there should be one per mesh
-
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
 
@@ -590,7 +634,7 @@ void new_node_added(std::size_t node_id,
               }
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
               if ( border_halfedges.insert( std::make_pair(hedge,edge_pair) ).second)
-                put(m_edge_mark_pmap,edge(hedge,tm),true);
+                m_edge_mark_map.put(tm,edge(hedge,tm),true);
               set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
@@ -658,7 +702,7 @@ void new_node_added(std::size_t node_id,
         //We need an edge incident to the source vertex of hedge. This is the first opposite edge created.
         bool first=true;
         halfedge_descriptor hedge_incident_to_src=Graph_traits::null_halfedge();
-        bool hedge_is_marked = get(m_edge_mark_pmap,edge(hedge,tm));
+        bool hedge_is_marked = m_edge_mark_map.get(tm,edge(hedge,tm));
         //do split the edges
         CGAL_assertion_code(vertex_descriptor expected_src=source(hedge,tm));
         BOOST_FOREACH(std::size_t node_id, node_ids)
@@ -677,7 +721,7 @@ void new_node_added(std::size_t node_id,
 
           //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
           if ( hedge_is_marked )
-            put(m_edge_mark_pmap,edge(hnew,tm),true);
+            m_edge_mark_map.put(tm,edge(hnew,tm),true);
 
           CGAL_assertion_code(expected_src=vnew);
         }
@@ -904,7 +948,7 @@ void new_node_added(std::size_t node_id,
           if( it_poly_hedge!=edge_to_hedge.end() ){
             if ( border_halfedges.insert(
                     std::make_pair(it_poly_hedge->second,node_id_pair) ).second)
-              put(m_edge_mark_pmap,edge(it_poly_hedge->second,tm),true);
+              m_edge_mark_map.put(tm,edge(it_poly_hedge->second,tm),true);
             set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
           }
           else{
@@ -916,7 +960,7 @@ void new_node_added(std::size_t node_id,
 
             if ( border_halfedges.insert(
                 std::make_pair(it_poly_hedge->second,opposite_pair) ).second )
-              put(m_edge_mark_pmap,edge(it_poly_hedge->second,tm),true);
+              m_edge_mark_map.put(tm,edge(it_poly_hedge->second,tm),true);
             set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
           }
         }

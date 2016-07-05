@@ -160,7 +160,10 @@ difference(const TriangleMesh& tm1,
  * @param tm2 second input triangulated surface mesh
  * @param np1 optional sequence of \ref namedparameters among the ones listed below
  * @param np2 optional sequence of \ref namedparameters among the ones listed below
- *
+ * @param throw_on_self_intersection if `true`, for each input triangle mesh,
+ *        the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`
+ *        will be thrown if at least one is found.
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm1` (resp. `tm2`) \cgalParamEnd
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
@@ -175,32 +178,77 @@ difference(const TriangleMesh& tm1,
  corefine(TriangleMesh& tm1,
           TriangleMesh& tm2,
           const NamedParameters1& np1,
-          const NamedParameters2& np2)
+          const NamedParameters2& np2,
+          const bool throw_on_self_intersection = false)
 {
-  typedef typename GetVertexPointMap< TriangleMesh, NamedParameters1>::type Vpm;
-  Vpm vpm1 = choose_param(get_param(np1, vertex_point), get(vertex_point, tm1));
-  Vpm vpm2 = choose_param(get_param(np2, vertex_point), get(vertex_point, tm2));
+// Vertex point maps
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters1>::const_type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters2>::const_type Vpm2;
+  CGAL_assertion_code(static const bool same_vpm = )
+    boost::is_same<Vpm,Vpm2>::value;
+  CGAL_static_assertion(same_vpm);
 
+  Vpm vpm1 = choose_pmap(get_param(np1, boost::vertex_point),
+                         tm1,
+                         vertex_point);
+  Vpm vpm2 = choose_pmap(get_param(np2, boost::vertex_point),
+                         tm2,
+                         vertex_point);
+// Edge is-constrained maps
+  typedef typename boost::lookup_named_param_def <
+    CGAL::edge_is_constrained_t,
+    NamedParameters1,
+    Corefinement::No_mark<TriangleMesh>//default
+  > ::type Ecm1;
+
+  typedef typename boost::lookup_named_param_def <
+    CGAL::edge_is_constrained_t,
+    NamedParameters1,
+    Corefinement::No_mark<TriangleMesh>//default
+  > ::type Ecm2;
+
+  Ecm1 ecm1 = choose_param( get_param(np1, edge_is_constrained),
+                            Corefinement::No_mark<TriangleMesh>() );
+  Ecm2 ecm2 = choose_param( get_param(np2, edge_is_constrained),
+                            Corefinement::No_mark<TriangleMesh>() );
+
+  typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;
+
+// surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
   typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
-  typedef Corefinement::Visitor<TriangleMesh,Vpm> Visitor;
+  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm> Visitor;
   Dnv dnv;
   Dfv dfv;
   Ob ob;
+  Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
-    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv,ob));
-  const bool throw_on_self_intersection = false; // TODO parameter???
+    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv,ob,ecm));
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
+}
+
+ template <class TriangleMesh, class NamedParameters1>
+ void
+ corefine(TriangleMesh& tm1,
+          TriangleMesh& tm2,
+          const NamedParameters1& np1,
+          const bool throw_on_self_intersection = false)
+{
+  using namespace CGAL::Polygon_mesh_processing::parameters;
+  corefine(tm1, tm2, np1, all_default(), throw_on_self_intersection);
 }
 
  template <class TriangleMesh>
  void
  corefine(TriangleMesh& tm1,
-          TriangleMesh& tm2)
+          TriangleMesh& tm2,
+          const bool throw_on_self_intersection = false)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  corefine(tm1, tm2, all_default(), all_default());
+  corefine(tm1, tm2, all_default(), all_default(), throw_on_self_intersection);
 }
 
 } }  // end of namespace CGAL::Polygon_mesh_processing
