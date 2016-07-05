@@ -40,40 +40,38 @@ namespace Corefinement {
 
 struct Self_intersection_exception{};
 
-/// TODO Read and update the following comments
-//This functor computes the pairwise intersection of polyhedral surfaces.
-//Intersection are given as a set of polylines
-//The algorithm works as follow:
-//From each polyhedral surface we can get it as a set of segments or as a set of triangles.
-//We first use Box_intersection_d to filter intersection between all polyhedral
-//surface segments and polyhedral triangles.
-//From this filtered set, for each pair (segment,triangle), we look at the
-//intersection type. If not empty, we can have three different cases
-//  1)the segment intersect the interior of the triangle:
-//        We compute the intersection point and for each triangle incident
-//        to the segment, we write the fact that the point belong to the intersection
-//        of these two triangles.
-//  2)the segment intersect the triangle on an edge
+// This functor computes the pairwise intersection of triangle meshes.
+// Intersection are given as a set of polylines
+// The algorithm works as follow:
+// From each triangle mesh, we extract a set of segments from the edges and a
+// set of triangles from the faces.
+// We use Box_intersection_d to filter intersection between the segments from
+// one mesh with the triangles from the other one.
+// From this filtered set, for each pair (segment,triangle), we look at the
+// intersection type. If not empty, we can have three different cases
+//   1)the segment intersect the interior of the triangle:
+//        We compute the intersection point and for each face incident to the
+//        edge of the segment, we save the fact that the intersection points
+//        is common to that face and the face of the intersected triangle
+//   2)the segment intersect the triangle on an edge
 //        We do the same thing as described above but
-//        for all triangle incident to the edge intersected
-//  3)the segment intersect the triangle at a vertex
+//        for all faces incident to the edge intersected
+//   3)the segment intersect the triangle at a vertex
 //        for each edge incident to the vertex, we do
 //        the same operations as in 2)
 //
-//In case the segment intersect the triangle at one of the segment endpoint,
-//we repeat the same procedure for each segment incident to this
-//endpoint.
+// In case a segment belong to the triangle, we repeat the same procedure
+// for each segment incident to this endpoint.
 //
-//Note that given a pair (segment,triangle)=(S,T), if S belongs
-//to the plane of T, we have nothing to do in the following cases:
-//  -- no triangle T' contains S such that T and T' are coplanar
-//  -- at least one triangle contains S
+// Note that given a pair (segment,triangle)=(S,T), if S belongs
+// to the plane of T, we have nothing to do in the following cases:
+//   -- no triangle T' contains S such that T and T' are coplanar
+//   -- at least one triangle contains S
 // Indeed, the intersection points of S and T will be found using segments
 // of T or segments adjacent to S.
 //
-// -- Sebastien Loriot, 2010/04/07
-
-
+// Coplanar triangles are filtered out and handled separately.
+//
 template<class TriangleMesh>
 struct Default_surface_intersection_visitor{
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
@@ -100,10 +98,6 @@ struct Default_surface_intersection_visitor{
 template< class TriangleMesh,
           class VertexPointMap,
           class Node_visitor=Default_surface_intersection_visitor<TriangleMesh>
-// ,
-//           class Kernel_=Default,
-//           class Node_visitor_=Default,
-//           class Node_storage_type_=Default
          >
 class Intersection_of_triangle_meshes
 {
@@ -318,7 +312,8 @@ class Intersection_of_triangle_meshes
     get_incident_faces(e_1,tm1,std::back_inserter(incident_faces));
     BOOST_FOREACH(face_descriptor f_1, incident_faces)
     {
-//      add_intersection_point_to_face_and_all_edge_incident_faces(f_1,edge_intersected,tm1,tm2,node_id); //this call is not needed, already done in the first loop
+      //the following call is not needed, it is already done in the first loop
+      //add_intersection_point_to_face_and_all_edge_incident_faces(f_1,edge_intersected,tm1,tm2,node_id);
       fset_bis.erase(f_1);
     }
   }
