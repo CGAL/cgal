@@ -203,9 +203,9 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
 
-  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-  virtual void draw_points(CGAL::Three::Viewer_interface*) const;
-  virtual void draw_splats(CGAL::Three::Viewer_interface*) const;
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+  virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+  virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
   
 
   // Gets dimensions

@@ -514,11 +514,11 @@ bool Scene_point_set_classification_item::supportsRenderingMode(RenderingMode m)
 
 }
 
-void Scene_point_set_classification_item::draw_splats(CGAL::Three::Viewer_interface*) const
+void Scene_point_set_classification_item::drawSplats(CGAL::Three::Viewer_interface*) const
 {
 }
 
-void Scene_point_set_classification_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_point_set_classification_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
   if(!are_buffers_filled)
     initializeBuffers(viewer);
@@ -533,7 +533,7 @@ void Scene_point_set_classification_item::draw_edges(CGAL::Three::Viewer_interfa
   program->release();
 }
 
-void Scene_point_set_classification_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+void Scene_point_set_classification_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
   if(!are_buffers_filled)
     initializeBuffers(viewer);
