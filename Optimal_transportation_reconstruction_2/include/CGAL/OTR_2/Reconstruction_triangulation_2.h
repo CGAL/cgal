@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, ClÃ©ment Jamin
 
 #ifndef CGAL_RECONSTRUCTION_TRIANGULATION_2_H
 #define CGAL_RECONSTRUCTION_TRIANGULATION_2_H
@@ -39,6 +39,8 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
+#include <boost/container/deque.hpp>
+#include <boost/optional.hpp>
 
 // STL
 #include <map>
@@ -46,9 +48,8 @@
 #include <vector>
 #include <queue>
 #include <iostream>
-#include <limits>
 
-#define EPS   1e-15
+#define CGAL_EPS   1e-15
 
 namespace CGAL {
 namespace OTR_2 {
@@ -118,7 +119,7 @@ public:
   typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
   typedef OTR_2::Sample_with_priority<Sample_> PSample;
-  typedef std::priority_queue<PSample, std::vector<PSample>,
+  typedef std::priority_queue<PSample, boost::container::deque<PSample>,
       OTR_2::greater_priority<PSample> > SQueue;
 
   typedef Reconstruction_edge_2<FT, Edge, 
@@ -139,7 +140,7 @@ public:
   >
   > MultiIndex;
 
-  double m_factor; // ghost vs solid
+  FT m_factor; // ghost vs solid
 
 
 public:
@@ -151,11 +152,11 @@ public:
   ~Reconstruction_triangulation_2() {
   }
 
-  double& ghost_factor() {
+  FT& ghost_factor() {
     return m_factor;
   }
 
-  double ghost_factor() const {
+  FT ghost_factor() const {
     return m_factor;
   }
 
@@ -213,7 +214,7 @@ public:
 
   FT get_length(const Edge& edge) const {
     Segment segment = get_segment(edge);
-    return CGAL::sqrt(segment.squared_length());
+    return CGAL::approximate_sqrt(segment.squared_length());
   }
 
   Segment get_segment(const Edge& edge) const {
@@ -678,9 +679,9 @@ public:
   }
 
   Edge find_nearest_edge(const Point& point, Face_handle face) const {
-    FT min_dist2 = (std::numeric_limits<FT>::max)();
-    Edge nearest(Face_handle(), 0);
-    for (int i = 0; i < 3; ++i) {
+    Edge nearest(face, 0);
+    FT min_dist2 = compute_distance2(point, get_segment(nearest));
+    for (int i = 1; i < 3; ++i) {
       Edge edge(face, i);
       Segment segment = get_segment(edge);
       FT dist2 = compute_distance2(point, segment);
@@ -690,9 +691,6 @@ public:
       }
     }
 
-    if (nearest.first == Face_handle()) {
-      std::cout << "nearest edge not found" << std::endl;
-    }
     return nearest;
   }
 
@@ -716,12 +714,12 @@ public:
   }
 
   FT compute_distance2(const Point& query, const Segment& segment) const {
-    Line line = geom_traits().construct_line_2_object()(segment);
-    if (geom_traits().has_on_2_object()(line, query))
+
+    if (geom_traits().orientation_2_object()(segment.source(), segment.target(), query) == COLLINEAR)
       return FT(0);
 
-    Point proj = geom_traits().construct_projected_point_2_object()(line, query);
-    return geom_traits().compute_squared_distance_2_object()(query, proj);
+    Line line = geom_traits().construct_line_2_object()(segment);
+    return geom_traits().compute_squared_distance_2_object()(query, line);
   }
 
   FT compute_coordinate(const Point& q, const Segment& segment) const {
@@ -755,20 +753,22 @@ public:
     if (pt == pb)
       return FT(0);
     if (pa == pb)
-      return CGAL::sqrt(geom_traits().compute_squared_distance_2_object()(pa, pt));
+      return CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(pa, pt));
 
     Vector vab = geom_traits().construct_vector_2_object()(pa, pb);
     // Normalize vab
     vab = geom_traits().construct_scaled_vector_2_object()(
       vab,
-      FT(1) / CGAL::sqrt(geom_traits().compute_squared_length_2_object()(vab)));
+      FT(1) / CGAL::approximate_sqrt(geom_traits().compute_squared_length_2_object()(vab)));
     Vector vab90 = geom_traits().construct_vector_2_object()(-vab.y(), vab.x());
     Vector vat = geom_traits().construct_vector_2_object()(pa, pt);
     return geom_traits().compute_scalar_product_2_object()(vat, vab90);
   }
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
-  FT signed_distance_from_intersection(Vertex_handle a, Vertex_handle b,
+  // the pair::first is false if sign==-1 and true otherwise
+  std::pair<bool,boost::optional<FT> >
+  signed_distance_from_intersection(Vertex_handle a, Vertex_handle b,
       Vertex_handle t, Vertex_handle s) const {
     const Point& pa = a->point();
     const Point& pb = b->point();
@@ -778,27 +778,30 @@ public:
   }
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
-  FT compute_signed_distance_from_intersection(
+  // the pair::first is false if sign==-1 and true otherwise
+  std::pair<bool,boost::optional<FT> >
+  compute_signed_distance_from_intersection(
     const Point& pa, const Point& pb, const Point& pt, const Point& ps) const
   {
     FT Dabt = compute_signed_distance(pa, pb, pt);
     if (Dabt == FT(0))
-      return FT(0);
+      return std::make_pair(true,boost::make_optional(FT(0)));
 
     Line lab = geom_traits().construct_line_2_object()(
       pa, geom_traits().construct_vector_2_object()(pa, pb));
     Line lts = geom_traits().construct_line_2_object()(
       pt, geom_traits().construct_vector_2_object()(pt, ps));
 
-    FT Dqt = (std::numeric_limits<FT>::max)();
-    CGAL::Object result = CGAL::intersection(lab, lts);
-    const Point* iq = CGAL::object_cast<Point>(&result);
-    if (iq)
-      Dqt = CGAL::sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
+    boost::optional<FT> Dqt;
+    typename CGAL::cpp11::result_of<typename Traits_::Intersect_2(Line, Line)>::type
+      result = intersection(lab, lts);
+    if (result!=boost::none)
+    {
+      const Point* iq = boost::get<Point>(&(*result));
+      Dqt = CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
+    }
 
-    if (Dabt < FT(0))
-      Dqt = -Dqt;
-    return Dqt;
+    return std::make_pair( (Dabt < FT(0) ? false : true) ,Dqt );
   }
 
   bool is_triangle_ccw(Vertex_handle a, Vertex_handle b, Vertex_handle c) const
@@ -812,8 +815,7 @@ public:
   bool compute_triangle_ccw(
     const Point& pa, const Point& pb, const Point& pc) const
   {
-    FT dist = compute_signed_distance(pa, pb, pc);
-    return (dist > -EPS);
+    return geom_traits().orientation_2_object()(pa,pb,pc) != RIGHT_TURN;
   }
 
   // COMBINATORIAL TESTS //
@@ -898,6 +900,7 @@ public:
     Vertex_handle t = target_vertex(edge);
 
     Edge_vector hull;
+    hull.reserve(16);
     get_edges_from_star_minus_link(s, hull);
     return is_in_kernel(t->point(), hull.begin(), hull.end());
   }
@@ -980,6 +983,26 @@ public:
     std::cout <<"( " << (edge).priority()  <<  ") ( " << a << " , " << b << " )" << std::endl;
   }
 
+  bool is_p_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  {
+    return p.first && p.second==boost::none;
+  }
+
+  bool is_m_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  {
+    return !p.first && p.second==boost::none;
+  }
+
+  bool is_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  {
+    return p.second==boost::none;
+  }
+
+  std::pair<bool,boost::optional<FT> > m_infinity() const
+  {
+    return std::pair<bool,boost::optional<FT> >(false,boost::optional<FT>());
+  }
+
   template <class Iterator> // value_type = Edge
   bool make_collapsible(Edge& edge, Iterator begin, Iterator end, int verbose = 0)
   {
@@ -992,9 +1015,10 @@ public:
       Edge ab = twin_edge(*it);
       Vertex_handle a = source_vertex(ab);
       Vertex_handle b = target_vertex(ab);
-      FT D = signed_distance_from_intersection(a, b, target, source);
-      if (D < FT(0)) {
-        multi_ind.insert(Rec_edge_2(ab, D));
+      std::pair<bool,boost::optional<FT> > D = signed_distance_from_intersection(a, b, target, source);
+      if (!D.first ) {
+        CGAL_assertion(D.second!=boost::none);
+        multi_ind.insert(Rec_edge_2(ab, *D.second));
       }
     }
 
@@ -1016,22 +1040,37 @@ public:
       Vertex_handle c = target_vertex(bc);
       Vertex_handle d = target_vertex(cd);
 
-      FT Dac =  -(std::numeric_limits<FT>::max)();
+      std::pair<bool,boost::optional<FT> > Dac=m_infinity();
       if (a != c && is_triangle_ccw(a, b, c))
         Dac = signed_distance_from_intersection(a, c, target, source);
 
-      FT Dbd =  -(std::numeric_limits<FT>::max)();
+      std::pair<bool,boost::optional<FT> > Dbd=m_infinity();
       if (b != d && is_triangle_ccw(b, c, d))
         Dbd = signed_distance_from_intersection(b, d, target, source);
 
-      if (Dac ==  -(std::numeric_limits<FT>::max)() && Dbd ==
-          -(std::numeric_limits<FT>::max)())
+      if ( is_m_infinity(Dac) && is_m_infinity(Dbd) )
       {
-        std::cerr << "--- No flips available ---"  << std::endl;
+        if (verbose > 0)
+          std::cerr << "--- No flips available ---"  << std::endl;
         return false;
       }
 
-      if ((std::max)(Dac, Dbd) + EPS < Dbc)
+      FT value = Dbc <= 0 ? 1 : 2*Dbc; // value used if Dbd or Dac are +infinity
+      if ( !is_infinity(Dac) )
+      {
+        if ( !is_infinity(Dbd))
+          value = (std::max)(*Dac.second * (Dac.first?1:-1),
+                             *Dbd.second * (Dbd.first?1:-1) );
+        else
+          if ( !is_p_infinity(Dbd) )
+            value = *Dac.second * (Dac.first?1:-1);
+      }
+      else
+        if ( !is_infinity(Dbd) && !is_p_infinity(Dac))
+          value = *Dbd.second * (Dbd.first?1:-1);
+
+      // if ( max(Dac,Dbd)+CGAL_EPS < Dbc )
+      if (value + CGAL_EPS < Dbc)
       {
 			/*
         std::cerr.precision(10);
@@ -1047,21 +1086,24 @@ public:
         return false;
       }
 
-      if (Dac > Dbd)
+      // if (Dac > Dbd)
+      if (is_p_infinity(Dac) || is_m_infinity(Dbd) ||
+          (!is_p_infinity(Dbd) && !is_m_infinity(Dac)
+           && *Dac.second * (Dac.first?1:-1) > *Dbd.second * (Dbd.first?1:-1)))
       {
         (multi_ind.template get<0>()).erase(Rec_edge_2(ab));
 
         Edge ac = flip(sb, edge, verbose);
-        if (Dac < FT(0)) {
-          multi_ind.insert(Rec_edge_2(ac, Dac));
+        if (!Dac.first) {
+          multi_ind.insert(Rec_edge_2(ac, - *Dac.second));
         }
       }
       else
       {
         (multi_ind.template get<0>()).erase(Rec_edge_2(cd));
         Edge bd = flip(sc, edge, verbose);
-        if (Dbd < FT(0)) {
-          multi_ind.insert(Rec_edge_2(bd, Dbd));
+        if (!Dbd.first) {
+          multi_ind.insert(Rec_edge_2(bd, - *Dbd.second));
         }
       }
       nb_flips++;
@@ -1075,5 +1117,7 @@ public:
 };
 
 } } //namespace CGAL
+
+#undef CGAL_EPS
 
 #endif // CGAL_RECONSTRUCTION_TRIANGULATION_2_H

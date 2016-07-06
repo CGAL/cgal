@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, ClÃ©ment Jamin
 
 #ifndef CGAL_OTR2_COST_H_
 #define CGAL_OTR2_COST_H_
