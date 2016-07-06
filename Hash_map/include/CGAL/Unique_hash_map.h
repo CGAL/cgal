@@ -136,13 +136,25 @@ namespace boost {
   public:
     typedef KeyType key_type;
     typedef ValueType value_type;
-    typedef value_type& reference;
+    typedef const value_type& reference;
     typedef lvalue_property_map_tag category;
     associative_property_map() : m_c(0) { }
     associative_property_map(C& c) : m_c(&c) { }
-    reference operator[](const key_type& k) const {
+    value_type& operator[](const key_type& k) const {
       return (*m_c)[k];
     }
+
+  friend const ValueType&  get(const associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key)
+  {
+    return uhm[key];
+  }
+
+  friend
+  void put(associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key, const ValueType& val)
+  {
+    uhm[key] = val;
+  }
+
   private:
     C* m_c;
   };
@@ -153,19 +165,6 @@ namespace boost {
   make_assoc_property_map(CGAL::Unique_hash_map<KeyType,ValueType> & c)
   {
     return associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >(c);
-  }
-  
-  
-  template <typename KeyType, typename ValueType>
-  ValueType&  get(const associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key)
-  {
-    return uhm[key];
-  }
-  
-  template <typename KeyType, typename ValueType>
-  void put(associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key, const ValueType& val)
-  {
-    uhm[key] = val;
   }
 
 
