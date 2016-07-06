@@ -298,7 +298,7 @@ opposite(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_de
 template <class TM, class SEM, class SVM>
 typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::edge_descriptor
 edge(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_descriptor h,
-     const CGAL::Seam_mesh<TM,SEM,SVM>& sm)
+     const CGAL::Seam_mesh<TM,SEM,SVM>& /* sm */)
 {
   return h;
 }
@@ -316,7 +316,7 @@ halfedge(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::edge_descri
 template <class TM, class SEM, class SVM>
 typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL::Seam_mesh<TM,SEM,SVM> >::vertex_descriptor v,
-         const CGAL::Seam_mesh<TM,SEM,SVM>& sm)
+         const CGAL::Seam_mesh<TM,SEM,SVM>& /* sm */)
 {
   return typename boost::graph_traits<TM>::halfedge_descriptor(v);
 }
