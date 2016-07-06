@@ -9,6 +9,8 @@
 #include <QFileDialog>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLFramebufferObject>
+#include <QMessageBox>
+
 #include <QInputDialog>
 #include <cmath>
 #include <QApplication>
@@ -571,14 +573,11 @@ void Viewer::attribBuffers(int program_name) const {
     f_mat.setToIdentity();
     //fills the MVP and MV matrices.
     GLdouble d_mat[16];
-    this->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrices in GLfloats
-    for (int i=0; i<16; ++i){
-        mvp_mat.data()[i] = GLfloat(d_mat[i]);
-    }
+
     this->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
+    mvp_mat = projectionMatrix*mv_mat;
 
     const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
                                              &is_both_sides);
@@ -1331,6 +1330,14 @@ void Viewer::paintGL()
     d->painter->begin(this);
   d->painter->beginNativePainting();
   glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+
+  //set the default frustum
+  GLdouble d_mat[16];
+  this->camera()->getProjectionMatrix(d_mat);
+  //Convert the GLdoubles matrices in GLfloats
+  for (int i=0; i<16; ++i)
+      projectionMatrix.data()[i] = GLfloat(d_mat[i]);
+
   preDraw();
   draw();
   postDraw();
@@ -1454,58 +1461,145 @@ void Viewer::clearDistancedisplay()
   distance_text.clear();
 }
 
+void Viewer::setFrustum(double l, double r, double t, double b, double n, double f)
+{
+  double A = 2*n/(r-l);
+  double B = (r+l)/(r-l);
+  double C = 2*n/(t-b);
+  double D = (t+b)/(t-b);
+  float E = -(f+n)/(f-n);
+  float F = -2*(f*n)/(f-n);
+  projectionMatrix.setRow(0, QVector4D(A,0,B,0));
+  projectionMatrix.setRow(1, QVector4D(0,C,D,0));
+  projectionMatrix.setRow(2, QVector4D(0,0,E,F));
+  projectionMatrix.setRow(3, QVector4D(0,0,-1,0));
+
+}
+
+#include "ui_ImageInterface.h"
+class ImageInterface: public QDialog, public Ui::ImageInterface
+{
+public: ImageInterface(QWidget *parent) : QDialog(parent) { setupUi(this); }
+};
+
 void Viewer::saveSnapshot(bool, bool)
 {
+  static ImageInterface* imageInterface = NULL;
+
+  if (!imageInterface)
+    imageInterface = new ImageInterface(this);
+
+  imageInterface->imgWidth->setValue(width());
+  imageInterface->imgHeight->setValue(height());
+
+  imageInterface->imgQuality->setValue(snapshotQuality());
+
+  if (imageInterface->exec() == QDialog::Rejected)
+    return;
+
+  setSnapshotQuality(imageInterface->imgQuality->value());
+
+  QColor previousBGColor = backgroundColor();
+  if (imageInterface->whiteBackground->isChecked())
+    setBackgroundColor(Qt::white);
+
+  QSize finalSize(imageInterface->imgWidth->value(), imageInterface->imgHeight->value());
+
+  qreal oversampling = imageInterface->oversampling->value();
+  QSize subSize(int(this->width()/oversampling), int(this->height()/oversampling));
+
+
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Save Snapshot"), "", tr("Image Files (*.png *.jpg *.bmp)"));
   if(fileName.isEmpty())
     return;
 
   QSize size=QSize(width(), height());
-  int max_res = (std::min)(CGAL::sqrt(5e7/(width()*height())), 5.0);
-  bool ok;
-  int factor = QInputDialog::getInt(this,"Resolution","scale factor (xViewer's resolution): ",1,1,max_res, 1 , &ok);
-  if(!ok)
+
+
+  qreal aspectRatio = width() / static_cast<qreal>(height());
+  qreal newAspectRatio = finalSize.width() / static_cast<qreal>(finalSize.height());
+
+  qreal zNear = camera()->zNear();
+  qreal zFar = camera()->zFar();
+
+  qreal xMin, yMin;
+  bool expand = imageInterface->expandFrustum->isChecked();
+
+  if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
+  {
+    yMin = zNear * tan(camera()->fieldOfView() / 2.0);
+    xMin = newAspectRatio * yMin;
+  }
+  else
+  {
+    xMin = zNear * tan(camera()->fieldOfView() / 2.0) * aspectRatio;
+    yMin = xMin / newAspectRatio;
+  }
+
+  QImage image(finalSize.width(), finalSize.height(), QImage::Format_ARGB32);
+
+  if (image.isNull())
+  {
+    QMessageBox::warning(this, "Image saving error",
+                         "Unable to create resulting image",
+                         QMessageBox::Ok, QMessageBox::NoButton);
     return;
-  double oldNear = camera()->zNear();
-  camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
-  camera()->setZNearCoefficient(1);
-  qglviewer::Vec originalPosition = camera()->position();
-  qglviewer::Quaternion originalOrientation = camera()->orientation();
-  QSize subSize=QSize(width()/factor, height()/factor);
-  QOpenGLFramebufferObject* snap_fbo = new QOpenGLFramebufferObject(factor*width(), factor*height(), QOpenGLFramebufferObject::Depth);
-  QOpenGLFramebufferObject* tile_fbo = new QOpenGLFramebufferObject(width(), height(), QOpenGLFramebufferObject::Depth);
+  }
 
-  for(int i=0; i<factor; i++)
-    for(int j=0; j<factor; j++)
+  // ProgressDialog disabled since it interfers with the screen grabing mecanism on some platforms. Too bad.
+  // ProgressDialog::showProgressDialog(this);
+
+  qreal scaleX = subSize.width() / static_cast<qreal>(finalSize.width());
+  qreal scaleY = subSize.height() / static_cast<qreal>(finalSize.height());
+
+  qreal deltaX = 2.0 * xMin * scaleX;
+  qreal deltaY = 2.0 * yMin * scaleY;
+
+  int nbX = finalSize.width() / subSize.width();
+  int nbY = finalSize.height() / subSize.height();
+
+  // Extra subimage on the right/bottom border(s) if needed
+  if (nbX * subSize.width() < finalSize.width())
+    nbX++;
+  if (nbY * subSize.height() < finalSize.height())
+    nbY++;
+  QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(size, QOpenGLFramebufferObject::Depth);
+  makeCurrent();
+  int count=0;
+  for (int i=0; i<nbX; i++)
+    for (int j=0; j<nbY; j++)
     {
-
-      //compute new point of view
-      QRect zoomArea(QPoint(i*subSize.width(),j*subSize.height()), QPoint((i+1)*subSize.width(),(j+1)*subSize.height()));
-      camera()->fitScreenRegion(zoomArea);
-      //clean the scene
-      tile_fbo->bind();
+      setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
+      fbo->bind();
       glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
       preDraw();
-      //draws the scene
       draw();
       postDraw();
-      tile_fbo->release();
-      //copy the tile to the snapshot fbo
-      QOpenGLFramebufferObject::blitFramebuffer(snap_fbo,
-                                                QRect(QPoint(i*size.width(),(factor-j-1)*size.height()),tile_fbo->size()),
-                                                tile_fbo,
-                                                QRect(QPoint(0,0), tile_fbo->size())
-                                                );
-      //restore original camera
-      camera()->setPosition(originalPosition);
-      camera()->setOrientation(originalOrientation);
+      fbo->release();
+
+      QImage snapshot = fbo->toImage();
+      QImage subImage = snapshot.scaled(subSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+      // Copy subImage in image
+      for (int ii=0; ii<subSize.width(); ii++)
+      {
+        int fi = i*subSize.width() + ii;
+        if (fi == image.width())
+          break;
+        for (int jj=0; jj<subSize.height(); jj++)
+        {
+          int fj = j*subSize.height() + jj;
+          if (fj == image.height())
+            break;
+          image.setPixel(fi, fj, subImage.pixel(ii,jj));
+        }
+      }
+      count++;
     }
-  //restore Perspective type
-  camera()->setType(qglviewer::Camera::PERSPECTIVE);
-  camera()->setZNearCoefficient(0.005);
-  //save image
-  snap_fbo->toImage().save(fileName);
-  delete snap_fbo;
+
+  image.save(fileName);
+  if (imageInterface->whiteBackground->isChecked())
+    setBackgroundColor(previousBGColor);
+
 }
 
