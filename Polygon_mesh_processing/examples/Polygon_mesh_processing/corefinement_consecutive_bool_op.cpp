@@ -8,7 +8,7 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef Mesh::Property_map<vertex_descriptor,EK::Point_3> Exact_point_map;
@@ -31,13 +31,13 @@ struct Coref_point_map
   Mesh& mesh;
 
   // Converters
-  CGAL::Cartesian_converter<EK, K> to_exact;
-  CGAL::Cartesian_converter<K, EK> to_input;
+  CGAL::Cartesian_converter<K, EK> to_exact;
+  CGAL::Cartesian_converter<EK, K> to_input;
 
-  Coref_point_map(Exact_point_computed& epc,
-                  Exact_point_map& ep,
+  Coref_point_map(Exact_point_map& ep,
+                  Exact_point_computed& epc,
                   Mesh& m)
-    :exact_point_computed(epc), exact_point(ep), m(mesh)
+    :exact_point_computed(epc), exact_point(ep), mesh(m)
   {}
 
   friend
@@ -45,7 +45,7 @@ struct Coref_point_map
   {
     // create exact point if it does not exist
     if (!map.exact_point_computed[k]){
-      map.exact_point[k]=to_exact(k);
+      map.exact_point[k]=map.to_exact(map.mesh.point(k));
       map.exact_point_computed[k]=true;
     }
     return map.exact_point[k];
@@ -57,7 +57,7 @@ struct Coref_point_map
     map.exact_point_computed[k]=true;
     map.exact_point[k]=p;
     // create the input point from the exact one
-    map.mesh.point(k)=to_input(p);
+    map.mesh.point(k)=map.to_input(p);
   }
 };
 
@@ -83,14 +83,14 @@ int main(int argc, char* argv[])
   }
 
   Exact_point_map mesh1_exact_points =
-    mesh1.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point");
+    mesh1.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
   Exact_point_computed mesh1_exact_points_computed =
-    mesh1.add_property_map<vertex_descriptor,bool>("e:exact_points_computed");
+    mesh1.add_property_map<vertex_descriptor,bool>("e:exact_points_computed").first;
 
   Exact_point_map mesh2_exact_points =
-    mesh2.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point");
-  Exact_point_computed mesh1_exact_points_computed =
-    mesh2.add_property_map<vertex_descriptor,bool>("e:exact_points_computed");
+    mesh2.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
+  Exact_point_computed mesh2_exact_points_computed =
+    mesh2.add_property_map<vertex_descriptor,bool>("e:exact_points_computed").first;
 
   Coref_point_map mesh1_maps(mesh1_exact_points, mesh1_exact_points_computed, mesh1);
   Coref_point_map mesh2_maps(mesh2_exact_points, mesh2_exact_points_computed, mesh2);

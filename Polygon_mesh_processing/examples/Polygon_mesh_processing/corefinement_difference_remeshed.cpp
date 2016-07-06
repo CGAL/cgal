@@ -16,6 +16,20 @@ typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = PMP::parameters;
 
+
+struct Vector_pmap_wrapper{
+  std::vector<bool>& vect;
+  Vector_pmap_wrapper(std::vector<bool>& v) : vect(v) {}
+  friend bool get(const Vector_pmap_wrapper& m, face_descriptor f)
+  {
+    return m.vect[f];
+  }
+  friend void put(const Vector_pmap_wrapper& m, face_descriptor f, bool b)
+  {
+    m.vect[f]=b;
+  }
+};
+
 int main(int argc, char* argv[])
 {
   const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
@@ -37,8 +51,8 @@ int main(int argc, char* argv[])
   }
 
   //create a property on edges to indicate whether they are constrained
-  Mesh::Property_map<edge_descriptor,std::string> is_constrained_map =
-    mesh1.add_property_map<edge_descriptor,bool>("e:is_constrained", false);
+  Mesh::Property_map<edge_descriptor,bool> is_constrained_map =
+    mesh1.add_property_map<edge_descriptor,bool>("e:is_constrained", false).first;
 
   // update mesh1 to contain the mesh bounding the difference
   // of the two input volumes.
@@ -63,7 +77,7 @@ int main(int argc, char* argv[])
   // collect faces incident to a constrained edge
   std::vector<face_descriptor> selected_faces;
   std::vector<bool> is_selected(num_faces(mesh1), false);
-  BOOST_FOREACH(edge e, edges(mesh1))
+  BOOST_FOREACH(edge_descriptor e, edges(mesh1))
     if (is_constrained_map[e])
     {
       // insert all faces incident to the target vertex
@@ -83,7 +97,8 @@ int main(int argc, char* argv[])
     }
 
   // increase the face selection
-  CGAL::expand_face_selection(faces, P, 2, is_selected, std::back_inserter(faces));
+  CGAL::expand_face_selection(selected_faces, mesh1, 2,
+    Vector_pmap_wrapper(is_selected), std::back_inserter(selected_faces));
 
   // remesh the region around the intersection polylines
   PMP::isotropic_remeshing(
