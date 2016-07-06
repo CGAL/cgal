@@ -246,7 +246,6 @@ public:
   {
       computeElements();
       are_buffers_filled = false;
-      compute_bbox();
   }
 public:
   const Facet_tree& tree;
@@ -1023,6 +1022,15 @@ public Q_SLOTS:
   {
     plane_item = NULL;
   }
+  void uncheckActions()
+  {
+   Q_FOREACH(QAction* action, _actions)
+    if(action->isChecked())
+    {
+      action->setChecked(false);
+      return;
+    }
+  }
   void deleteTrees(CGAL::Three::Scene_item* sender)
   {
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sender);
@@ -1053,6 +1061,7 @@ public Q_SLOTS:
   }
   void updateTrees(int id);
 private:
+  QList<QAction*>_actions;
   void createCutPlane();
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
@@ -1097,6 +1106,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   actionSignedFacets->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
   actionUnsignedFacets->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
   actionUnsignedEdges->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
+
   ready_to_cut = true;
   connect(actionIntersection, SIGNAL(triggered()),
           this, SLOT(Intersection()));
@@ -1116,13 +1126,23 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
 
+  _actions << actionIntersection
+           << actionSignedFacets
+           << actionUnsignedFacets
+           << actionUnsignedEdges;
+  QActionGroup *group = new QActionGroup(mainWindow);
+  group->setExclusive(true);
+
+  Q_FOREACH(QAction *action, _actions)
+  {
+    action->setActionGroup(group);
+    action->setCheckable(true);
+  }
+
 }
 
 QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
-  return QList<QAction*>() << actionIntersection
-                           << actionSignedFacets
-                           << actionUnsignedFacets
-                           << actionUnsignedEdges;
+  return _actions;
 }
 
 void Polyhedron_demo_cut_plugin::updateTrees(int id)
@@ -1158,6 +1178,8 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
           this, SLOT(updateCutPlane()));
   connect(plane_item, SIGNAL(aboutToBeDestroyed()),
           this, SLOT(resetPlane()));
+  connect(plane_item, SIGNAL(aboutToBeDestroyed()),
+          this, SLOT(uncheckActions()));
   if(updating)
   {
     scene->replaceItem(plane_id, plane_item)->deleteLater();
