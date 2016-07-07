@@ -566,20 +566,20 @@ CGAL_Kernel_pred(Less_z_3,
 		 less_z_3_object)
 CGAL_Kernel_pred_RT(Orientation_2,
 		    orientation_2_object)
-CGAL_Kernel_pred_RT(Power_side_of_power_circle_2,
-		    power_side_of_power_circle_2_object)
+CGAL_Kernel_pred_RT(Power_side_of_oriented_power_circle_2,
+		    power_side_of_oriented_power_circle_2_object)
 CGAL_Kernel_pred_RT(Orientation_3,
 		    orientation_3_object)
-CGAL_Kernel_pred_RT(Power_side_of_power_sphere_3,
-		    power_side_of_power_sphere_3_object)
+CGAL_Kernel_pred_RT(Power_side_of_oriented_power_sphere_3,
+		    power_side_of_oriented_power_sphere_3_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_2,
 		    compare_power_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
 		    compare_power_distance_3_object)
 CGAL_Kernel_pred(Compare_weighted_squared_radius_3,
                  compare_weighted_squared_radius_3_object)
-CGAL_Kernel_pred(In_smallest_orthogonal_sphere_3,
-                 in_smallest_orthogonal_sphere_3_object)
+CGAL_Kernel_pred(Power_side_of_bounded_power_sphere_3,
+                 power_side_of_bounded_power_sphere_3_object)
 CGAL_Kernel_pred(Side_of_bounded_orthogonal_sphere_3,
                  side_of_bounded_orthogonal_sphere_3_object)
 CGAL_Kernel_pred(Oriented_side_2,

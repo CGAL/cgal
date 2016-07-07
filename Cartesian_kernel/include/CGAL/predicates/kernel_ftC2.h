@@ -651,10 +651,10 @@ compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
 
 template <class FT>
 Oriented_side
-power_side_of_power_sphereC2( const FT &px, const FT &py, const FT &pwt,
-              const FT &qx, const FT &qy, const FT &qwt,
-              const FT &rx, const FT &ry, const FT &rwt,
-              const FT &tx, const FT &ty, const FT &twt)
+power_side_of_oriented_power_circleC2( const FT &px, const FT &py, const FT &pwt,
+                                       const FT &qx, const FT &qy, const FT &qwt,
+                                       const FT &rx, const FT &ry, const FT &rwt,
+                                       const FT &tx, const FT &ty, const FT &twt)
 {
     // Note: maybe this can be further optimized like the usual in_circle() ?
 
@@ -677,9 +677,9 @@ power_side_of_power_sphereC2( const FT &px, const FT &py, const FT &pwt,
 
 template <class FT>
 Oriented_side
-power_side_of_power_sphereC2( const FT &px, const FT &py, const FT &pwt,
-	      const FT &qx, const FT &qy, const FT &qwt,
-	      const FT &tx, const FT &ty, const FT &twt)
+power_side_of_oriented_power_circleC2( const FT &px, const FT &py, const FT &pwt,
+                                       const FT &qx, const FT &qy, const FT &qwt,
+                                       const FT &tx, const FT &ty, const FT &twt)
 {
     // Same translation as above.
     FT dpx = px - tx;

@@ -88,7 +88,7 @@ Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
 \pre `p, q, r, s` are not coplanar. 
 Note that with this definition, if all the points have a weight equal 
 to 0, then 
-`power_side_of_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
+`power_side_of_oriented_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
 
 <HR WIDTH=50%>
 
@@ -99,7 +99,7 @@ definition analogous to the previous method, for coplanar points,
 with the power circle \f$ {z(p,q,r)}^{(w)}\f$. 
 \pre `p, q, r` are not collinear and `p, q, r, t` are coplanar. 
 If all the points have a weight equal to 0, then 
-`power_side_of_power_sphere_3(p,q,r,t)` = `side_of_oriented_circle(p,q,r,t)`. 
+`power_side_of_oriented_power_sphere_3(p,q,r,t)` = `side_of_oriented_circle(p,q,r,t)`. 
 
 <HR WIDTH=50%>
 
@@ -109,7 +109,7 @@ which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the
 power segment of `p` and `q`. 
 \pre `p` and `q` have different bare points, and `p, q, t` are collinear. 
 If all points have a weight equal to 0, then 
-`power_side_of_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
+`power_side_of_oriented_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
 `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
 segment with endpoints `p` and `q`. 
 
@@ -122,7 +122,7 @@ which is the same for equal bare points, then it returns the comparison of the w
 \pre `p` and `q` have equal bare points.
 
 */ 
-typedef unspecified_type Power_side_of_power_sphere_3; 
+typedef unspecified_type Power_side_of_oriented_power_sphere_3; 
 
 
 /*!

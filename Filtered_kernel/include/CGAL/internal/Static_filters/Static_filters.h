@@ -143,7 +143,7 @@ public:
   typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
 
   typedef Static_filters_predicates::Compare_weighted_squared_radius_3<K_base>     Compare_weighted_squared_radius_3;
-  typedef Static_filters_predicates::Power_side_of_power_sphere_3<K_base>                          Power_side_of_power_sphere_3;
+  typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base>                          Power_side_of_oriented_power_sphere_3;
 
   Orientation_2
   orientation_2_object() const
@@ -203,8 +203,8 @@ Compare_y_2
   compare_squared_radius_3_object() const
   { return Compare_squared_radius_3(); }
 
- Power_side_of_power_sphere_3 power_side_of_power_sphere_3_object() const
-  { return Power_side_of_power_sphere_3();}
+  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
+  { return Power_side_of_oriented_power_sphere_3();}
 
   Compare_weighted_squared_radius_3
   compare_weighted_squared_radius_3_object() const

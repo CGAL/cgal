@@ -943,7 +943,7 @@ namespace CGAL {
       power_test(const Weighted_point &p, const Weighted_point &q) const
     {
       CGAL_triangulation_precondition(this->equal(p, q));
-      return geom_traits().power_side_of_power_sphere_3_object()(p, q);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q);
     }
 
     Oriented_side
@@ -951,7 +951,7 @@ namespace CGAL {
       const Weighted_point &r) const
     {
       CGAL_triangulation_precondition(this->collinear(p, q, r));
-      return geom_traits().power_side_of_power_sphere_3_object()(p, q, r);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r);
     }
 
     Oriented_side
@@ -959,7 +959,7 @@ namespace CGAL {
       const Weighted_point &r, const Weighted_point &s) const
     {
       CGAL_triangulation_precondition(this->coplanar(p, q, r, s));
-      return geom_traits().power_side_of_power_sphere_3_object()(p, q, r, s);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s);
     }
 
     Oriented_side
@@ -967,7 +967,7 @@ namespace CGAL {
       const Weighted_point &r, const Weighted_point &s,
       const Weighted_point &t) const
     {
-      return geom_traits().power_side_of_power_sphere_3_object()(p, q, r, s, t);
+      return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s, t);
     }
 
     bool in_conflict_3(const Weighted_point &p, const Cell_handle c) const

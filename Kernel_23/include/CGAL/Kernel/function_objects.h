@@ -377,7 +377,7 @@ public:
 // return the sign of the power test of  last weighted point
 // with respect to the smallest sphere orthogonal to the others
 template< typename K >
-class In_smallest_orthogonal_sphere_3
+class Power_side_of_bounded_power_sphere_3
 {
 public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
@@ -393,7 +393,7 @@ public:
   {
     K traits;
     typename K::Orientation_3  orientation = traits.orientation_3_object();
-    typename K::Power_side_of_power_sphere_3 power_test = traits.power_side_of_power_sphere_3_object();
+    typename K::Power_side_of_oriented_power_sphere_3 power_test = traits.power_side_of_oriented_power_sphere_3_object();
     typename K::Orientation o = orientation(p,q,r,s);
     typename K::Oriented_side os = power_test(p,q,r,s,t);
     CGAL_assertion( o != COPLANAR);
@@ -440,7 +440,7 @@ class Side_of_bounded_orthogonal_sphere_3
 {
 public :
   typedef typename K::Weighted_point_3                 Weighted_point_3;
-  typedef typename K::In_smallest_orthogonal_sphere_3  In_sphere;
+  typedef typename K::Power_side_of_bounded_power_sphere_3  In_sphere;
   typedef typename K::Bounded_side                     Bounded_side;
 
   typedef Bounded_side     result_type;

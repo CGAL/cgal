@@ -47,13 +47,13 @@ public:
   // Before this type was Point
   typedef Point_3 Point;
 
-  typedef typename K::Power_side_of_power_sphere_3                 Power_side_of_power_sphere_3;
+  typedef typename K::Power_side_of_oriented_power_sphere_3                 Power_side_of_oriented_power_sphere_3;
   typedef typename K::Compare_power_distance_3     Compare_power_distance_3;
   typedef typename K::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
 
 
-  typedef typename K::In_smallest_orthogonal_sphere_3 
-                                In_smallest_orthogonal_sphere_3;
+  typedef typename K::Power_side_of_bounded_power_sphere_3
+                                Power_side_of_bounded_power_sphere_3;
   typedef typename K::Side_of_bounded_orthogonal_sphere_3 
                                 Side_of_bounded_orthogonal_sphere_3;
   typedef typename K::Compute_squared_radius_smallest_orthogonal_sphere_3 
@@ -65,8 +65,8 @@ public:
                                        Compare_weighted_squared_radius_3;
 
 
-  Power_side_of_power_sphere_3   power_side_of_power_sphere_3_object() const
-  { return K().power_side_of_power_sphere_3_object(); }
+  Power_side_of_oriented_power_sphere_3   power_side_of_oriented_power_sphere_3_object() const
+  { return K().power_side_of_oriented_power_sphere_3_object(); }
 
   Compare_power_distance_3 compare_power_distance_3_object() const
   { return K().compare_power_distance_3_object(); }
@@ -76,8 +76,8 @@ public:
   { return K().construct_weighted_circumcenter_3_object(); }
 
 
-  In_smallest_orthogonal_sphere_3
-  in_smallest_orthogonal_sphere_3_object() const
+  Power_side_of_bounded_power_sphere_3
+  power_side_of_bounded_power_sphere_3_object() const
   { return K().in_smallest_orthogonal_sphere_3_object(); }
 
   Side_of_bounded_orthogonal_sphere_3

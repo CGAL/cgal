@@ -172,7 +172,7 @@ public:
    
     // We use power_side_of_power_sphere_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
-    typename Rt::Power_side_of_power_sphere_3 power_side_of_power_sphere = Rt().power_side_of_power_sphere_3_object();
+    typename Rt::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere = Rt().power_side_of_oriented_power_sphere_3_object();
 
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
@@ -202,7 +202,7 @@ public:
           return res;
       } else {
       // Fast output
-      if ( power_side_of_power_sphere(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
+      if ( power_side_of_oriented_power_sphere(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
         return res;
     }
     }

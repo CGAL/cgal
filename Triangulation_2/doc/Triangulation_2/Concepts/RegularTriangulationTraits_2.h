@@ -62,7 +62,7 @@ which is the degenerated power test for weighted points
 \pre the bare points corresponding to `p` and `q` are identical. 
 
 */ 
-typedef unspecified_type Power_side_of_power_circle_2; 
+typedef unspecified_type Power_side_of_oriented_power_circle_2; 
 
 /// @}
 

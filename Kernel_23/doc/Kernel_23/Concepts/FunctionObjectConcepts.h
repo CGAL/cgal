@@ -7958,7 +7958,7 @@ public:
   \sa `CGAL::Weighted_point_3<Kernel>`
   \sa `ComputePowerProduct_3` for the definition of orthogonal.
 */
-class InSmallestOrthogonalSphere_3 {
+class PowerSideOfBoundedPowerSphere_3 {
 public:
   
   /// \name Operations
@@ -8701,7 +8701,7 @@ public:
   \sa `ComputePowerProduct_3` for the definition of power distance.
   
 */
-  class PowerSideOfPowerCircle_2 {
+  class PowerSideOfOrientedPowerCircle_2 {
   public:
 
   /// \name Operations
@@ -8745,7 +8745,7 @@ Oriented_side operator() ( Wconst Kernel::eighted_point_2& p,
   \sa `ComputePowerProduct_3` for the definition of power distance.
 
 */
-  class PowerSideOfPowerSphere_3 {
+  class PowerSideOfOrientedPowerSphere_3 {
   public:
   /// \name Operations
   /// A model of this concept must provide:
@@ -8767,7 +8767,7 @@ Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
 \pre `p, q, r, s` are not coplanar.
  
 If all the points have a weight equal to 0, then 
-`power_side_of_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
+`power_side_of_oriented_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
  
       */ 
     Oriented_side operator()( const Kernel::Weighted_point_3& p,
@@ -8796,7 +8796,7 @@ If all the points have a weight equal to 0, then
     \pre `p` and `q` have different bare points.
  
     If all points have a weight equal to 0, then 
-    `power_side_of_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
+    `power_side_of_oriented_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
     `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
     segment with endpoints `p` and `q`.
   */

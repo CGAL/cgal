@@ -4079,7 +4079,7 @@ namespace CartesianKernelFunctors {
   };
 
 template < typename K >
-class Power_side_of_power_sphere_3
+class Power_side_of_oriented_power_sphere_3
 {
 public:
   typedef typename K::Weighted_point_3                  Weighted_point_3;
@@ -4128,7 +4128,7 @@ public:
 
 
 template < typename K >
-class Power_side_of_power_circle_2
+class Power_side_of_oriented_power_circle_2
 {
 public:
   typedef typename K::Weighted_point_2         Weighted_point_2;
@@ -4142,7 +4142,7 @@ public:
 			     const Weighted_point_2 & t) const
     {
       //CGAL_kernel_precondition( ! collinear(p, q, r) );
-      return power_side_of_power_circleC2(p.x(), p.y(), p.weight(),
+      return power_side_of_oriented_power_circleC2(p.x(), p.y(), p.weight(),
                           q.x(), q.y(), q.weight(),
                           r.x(), r.y(), r.weight(),
                           t.x(), t.y(), t.weight());
@@ -4154,7 +4154,7 @@ public:
     {
       //CGAL_kernel_precondition( collinear(p, q, r) );
       //CGAL_kernel_precondition( p.point() != q.point() );
-      return power_side_of_power_circleC2(p.point().x(), p.y(), p.weight(),
+      return power_side_of_oriented_power_circleC2(p.point().x(), p.y(), p.weight(),
                           q.x(), q.y(), q.weight(),
                           t.x(), t.y(), t.weight());
     }  

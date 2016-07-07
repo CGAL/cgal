@@ -4378,7 +4378,7 @@ namespace HomogeneousKernelFunctors {
 
 
 template < typename K >
-class Power_side_of_power_sphere_3
+class Power_side_of_oriented_power_sphere_3
 {
 public:
   typedef typename K::RT                                RT;
@@ -4429,7 +4429,7 @@ public:
 
 
 template < typename K >
-class Power_side_of_power_circle_2
+class Power_side_of_oriented_power_circle_2
 {
 public:
   typedef typename K::Weighted_point_2         Weighted_point_2;

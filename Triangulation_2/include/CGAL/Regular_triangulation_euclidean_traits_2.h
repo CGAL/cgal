@@ -49,7 +49,7 @@ public:
 
   typedef Regular_triangulation_euclidean_traits_2<R, W>   Self;
 
-  typedef typename R::Power_side_of_power_circle_2 Power_side_of_power_circle_2;
+  typedef typename R::Power_side_of_oriented_power_circle_2 Power_side_of_oriented_power_circle_2;
   typedef typename R::Compare_power_distance_2  Compare_power_distance_2;
 
   // construction objects
@@ -57,9 +57,9 @@ public:
                                             Construct_weighted_circumcenter_2;
   typedef typename R::Construct_radical_axis_2 Construct_radical_axis_2;
   
-  Power_side_of_power_circle_2 
-  power_side_of_power_circle_2_object() const
-    {  return Power_side_of_power_circle_2();}
+  Power_side_of_oriented_power_circle_2 
+  power_side_of_power_oriented_circle_2_object() const
+    {  return Power_side_of_oriented_power_circle_2();}
 
   Compare_power_distance_2
   compare_power_distance_2_object() const {
