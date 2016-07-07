@@ -1479,15 +1479,52 @@ void Viewer::setFrustum(double l, double r, double t, double b, double n, double
 #include "ui_ImageInterface.h"
 class ImageInterface: public QDialog, public Ui::ImageInterface
 {
-public: ImageInterface(QWidget *parent) : QDialog(parent) { setupUi(this); }
+  Q_OBJECT
+  qreal ratio;
+  QWidget *currentlyFocused;
+public:
+  ImageInterface(QWidget *parent, qreal ratio)
+    : QDialog(parent), ratio(ratio)
+  {
+    QWidget *currentlyFocused = NULL;
+    setupUi(this);
+    connect(imgHeight, SIGNAL(valueChanged(int)),
+            this, SLOT(imgHeightValueChanged(int)));
+
+    connect(imgWidth, SIGNAL(valueChanged(int)),
+            this, SLOT(imgWidthValueChanged(int)));
+
+    connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)),
+            this, SLOT(onFocusChanged(QWidget*, QWidget*)));
+  }
+private Q_SLOTS:
+  void imgHeightValueChanged(int i)
+  {
+    if(currentlyFocused == imgHeight
+       && ratioCheckBox->isChecked())
+    {imgWidth->setValue(i*ratio);}
+  }
+
+  void imgWidthValueChanged(int i)
+  {
+    if(currentlyFocused == imgWidth
+       && ratioCheckBox->isChecked())
+    {imgHeight->setValue(i/ratio);}
+  }
+
+  void onFocusChanged(QWidget*, QWidget* now)
+  {
+    currentlyFocused = now;
+  }
 };
 
 void Viewer::saveSnapshot(bool, bool)
 {
+  qreal aspectRatio = width() / static_cast<qreal>(height());
   static ImageInterface* imageInterface = NULL;
 
   if (!imageInterface)
-    imageInterface = new ImageInterface(this);
+    imageInterface = new ImageInterface(this, aspectRatio);
 
   imageInterface->imgWidth->setValue(width());
   imageInterface->imgHeight->setValue(height());
@@ -1517,7 +1554,6 @@ void Viewer::saveSnapshot(bool, bool)
   QSize size=QSize(width(), height());
 
 
-  qreal aspectRatio = width() / static_cast<qreal>(height());
   qreal newAspectRatio = finalSize.width() / static_cast<qreal>(finalSize.height());
 
   qreal zNear = camera()->zNear();
@@ -1602,4 +1638,4 @@ void Viewer::saveSnapshot(bool, bool)
     setBackgroundColor(previousBGColor);
 
 }
-
+ #include "Viewer.moc"
