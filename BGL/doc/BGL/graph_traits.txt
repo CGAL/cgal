@@ -72,8 +72,8 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 | `in_edge_iterator`       | `CGAL::Out_edge_iterator<Polyhedron_3<T> >` | Iterate through the in-edges of a vertex. |
 | `vertex_iterator`        | `unspecified_type`     | Iterate through the vertices of a polyhedron.|
 | `edge_iterator`          | `unspecified_type`     | Iterate through the edges of a polyhedron.|
-| `halfedge_iterator`      | `Polyhedron_3::Halfedge_iterator`     | Iterate through the halfedges of a polyhedron.|
-| `face_iterator`          | `Polyhedron_3::Face_iterator`         | Iterate through the faces of a polyhedron.|
+| `halfedge_iterator`      | `unspecified_type`     | Iterate through the halfedges of a polyhedron.|
+| `face_iterator`          | `unspecified_type`         | Iterate through the faces of a polyhedron.|
 | `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
 | `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
