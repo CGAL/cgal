@@ -14,7 +14,7 @@ for the approximation error criterion.
 `Triangulation` of the instance used as model of 
 `MeshComplex_3InTriangulation_3`. 
 
-\cgalModels `MeshFacetCriteria_3`` 
+\cgalModels `MeshFacetCriteria_3`
 
 \sa `CGAL::Mesh_facet_topology` 
 \sa `MeshCriteria_3` 
