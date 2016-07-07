@@ -77,7 +77,7 @@ typedef Kernel::Construct_center_2 Construct_center_d;
 Functor with operator to compute 
 the squared radius of a an object of type \link Search_traits_2::Sphere_d `Sphere_d`\endlink. 
 */ 
-typedef Kernel::Compute_squared_radius_2 Construct_squared_radius_d; 
+typedef Kernel::Compute_squared_radius_2 Compute_squared_radius_d;
 
 /*!
 Functor with operator to construct 
