@@ -2243,6 +2243,7 @@ public:
   \cgalConcept
 
   \sa `CGAL::Vector_2<Kernel>` 
+  \sa scalar_product_grp
 
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
@@ -2270,7 +2271,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::Vector_3<Kernel>` 
+  \sa `CGAL::Vector_3<Kernel>`
+  \sa scalar_product_grp 
 
 */
 class ComputeScalarProduct_3 {
