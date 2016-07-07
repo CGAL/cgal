@@ -203,6 +203,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     gl_splat
     )
   qt5_use_modules(scene_basic_objects OpenGL Gui Xml Script Widgets)
+
+  add_library(scene_color_ramp SHARED Color_ramp.cpp)
+  qt5_use_modules(scene_color_ramp Core)
+
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
   qt5_use_modules(point_dialog OpenGL Gui Xml Script Widgets)
 
@@ -253,7 +257,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
                scene_basic_objects)
   endif()
 
-  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp  Color_ramp.cpp )
+  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp )
+  target_link_libraries(scene_implicit_function_item scene_color_ramp)
 
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
@@ -271,6 +276,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   foreach( lib 
       demo_framework
       scene_basic_objects
+      scene_color_ramp
       scene_polyhedron_item
       scene_polygon_soup_item
       scene_nef_polyhedron_item)
@@ -330,6 +336,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     demo_framework
     scene_polyhedron_item
     scene_points_with_normal_item
+    scene_color_ramp
     scene_implicit_function_item
     scene_polylines_item
     scene_basic_objects

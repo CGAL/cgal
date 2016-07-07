@@ -17,7 +17,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_epic;
 typedef Kernel_epic::Plane_3 Plane_3;
 
-struct Scene_plane_item_priv;
 class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
   : public CGAL::Three::Scene_item
 {
@@ -28,6 +27,16 @@ public:
   Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface);
   ~Scene_plane_item();
 
+  double scene_diag() const {
+    const Scene_item::Bbox& bbox = scene->bbox();
+    const double& xdelta = bbox.xmax()-bbox.xmin();
+    const double& ydelta = bbox.ymax()-bbox.ymin();
+    const double& zdelta = bbox.zmax()-bbox.zmin();
+    const double diag = std::sqrt(xdelta*xdelta +
+                            ydelta*ydelta +
+                            zdelta*zdelta);
+    return diag * 0.7;
+  }
   bool isFinite() const { return false; }
   bool isEmpty() const { return false; }
   void compute_bbox() const { _bbox = Bbox(); }
@@ -61,9 +70,6 @@ public Q_SLOTS:
 
   void setManipulatable(bool b = true);
 protected:
-  friend struct Scene_plane_item_priv;
-  Scene_plane_item_priv* d;
-
 
   const CGAL::Three::Scene_interface* scene;
   bool manipulable;
@@ -88,7 +94,7 @@ protected:
   mutable QOpenGLShaderProgram *program;
 
   void initializeBuffers(CGAL::Three::Viewer_interface*)const;
-  void compute_normals_and_vertices(void);
+  void compute_normals_and_vertices(void) const;
   mutable bool are_buffers_filled;
 
 };

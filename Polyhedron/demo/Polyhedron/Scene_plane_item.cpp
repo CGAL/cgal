@@ -2,32 +2,6 @@
 using namespace CGAL::Three;
 
 
-struct Scene_plane_item_priv
-{
-  Scene_plane_item_priv(Scene_plane_item* parent)
-  {
-    item = parent;
-  }
-
-  ~Scene_plane_item_priv() {
-  }
-
-  double scene_diag() const {
-    const Scene_item::Bbox& bbox = item->scene->bbox();
-    const double& xdelta = bbox.xmax()-bbox.xmin();
-    const double& ydelta = bbox.ymax()-bbox.ymin();
-    const double& zdelta = bbox.zmax()-bbox.zmin();
-    const double diag = std::sqrt(xdelta*xdelta +
-                            ydelta*ydelta +
-                            zdelta*zdelta);
-    return diag * 0.7;
-  }
-
-
-  Scene_plane_item* item;
-
-};
-
 
 Scene_plane_item::Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface)
       :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos),
@@ -37,13 +11,11 @@ Scene_plane_item::Scene_plane_item(const CGAL::Three::Scene_interface* scene_int
       frame(new ManipulatedFrame())
   {
     setNormal(0., 0., 1.);
-    d = new Scene_plane_item_priv(this);
     //Generates an integer which will be used as ID for each buffer
     invalidateOpenGLBuffers();
   }
 Scene_plane_item::~Scene_plane_item() {
   delete frame;
-  delete d;
 }
 
 void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
@@ -75,12 +47,12 @@ void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
 
 }
 
-void Scene_plane_item::compute_normals_and_vertices(void)
+void Scene_plane_item::compute_normals_and_vertices(void) const
 {
     positions_quad.resize(0);
     positions_lines.resize(0);
 
-    const double diag = d->scene_diag();
+    const double diag = scene_diag();
     //The quad
     {
 
@@ -94,11 +66,11 @@ void Scene_plane_item::compute_normals_and_vertices(void)
     positions_quad.push_back(-diag);
     positions_quad.push_back(0.0);
 
-    positions_quad.push_back(-diag);
     positions_quad.push_back(diag);
+    positions_quad.push_back(-diag);
     positions_quad.push_back(0.0);
-    positions_quad.push_back(diag);
     positions_quad.push_back(-diag);
+    positions_quad.push_back(diag);
     positions_quad.push_back(0.0);
     positions_quad.push_back(diag);
     positions_quad.push_back(diag);

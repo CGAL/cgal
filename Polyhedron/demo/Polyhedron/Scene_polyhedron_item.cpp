@@ -1272,7 +1272,7 @@ Scene_polyhedron_item::select(double orig_x,
         typedef Input_facets_AABB_tree Tree;
         typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
-        Tree* aabb_tree = static_cast<Input_facets_AABB_tree*>(d->get_aabb_tree());
+        Tree* aabb_tree = static_cast<Tree*>(d->get_aabb_tree());
         if(aabb_tree)
         {
             const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
@@ -1756,3 +1756,4 @@ bool Scene_polyhedron_item::triangulated(){return d->poly->is_pure_triangle();}
 bool Scene_polyhedron_item::self_intersected(){return !(d->self_intersect);}
 void Scene_polyhedron_item::setItemIsMulticolor(bool b){ d->is_multicolor = b;}
 bool Scene_polyhedron_item::isItemMulticolor(){ return d->is_multicolor;}
+
