@@ -42,9 +42,9 @@ main( )
   Generator generator(&poly);
   Generator_SM sm_generator(&sm);
   R::Compute_area_3 weight_computer;
-  //Generic_random_generator_on_object<face_iterator_sm, Generator_SM, Creator, Point>
+  //Generic_random_point_generator<face_iterator_sm, Generator_SM, Creator, Point>
   //    g(faces(sm), sm_generator, weight_computer);
-  Generic_random_generator_on_object<face_iterator_sm, Generator_SM, Creator, Point>
+  Generic_random_point_generator<face_iterator_sm, Generator_SM, Creator, Point>
       g(faces(sm), sm_generator, weight_computer);
   CGAL::cpp11::copy_n( g, 3000, std::back_inserter(points));
   for (std::size_t i = 0; i<points.size(); ++i)

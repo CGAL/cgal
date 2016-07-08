@@ -1,10 +1,10 @@
-// Copyright (c) 2012 GeometryFactory (France).
+// Copyright (c) 2016 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -18,48 +18,58 @@
 //
 // Author(s)     : Maxime Gimeno
 //
-#ifndef GENERIC_RANDOM_POINT_GENERATOR_H
-#define GENERIC_RANDOM_POINT_GENERATOR_H
+#ifndef CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H
+#define CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H
 
 #include <CGAL/generators.h>
 #include <CGAL/Random.h>
+#include <CGAL/property_map.h>
 #include <vector>
 #include <boost/foreach.hpp>
 
-namespace CGAL{
-template <typename T, class ConstructObject, class GeneratorOnObject, class P>
-class Generic_random_generator_on_object: public Random_generator_base<P>
+namespace CGAL {
+
+template <typename Id, class ObjectFromIdMap, class GeneratorOnObject, class P>
+class Generic_random_point_generator : public Random_generator_base<P>
 {
-  typedef Generic_random_generator_on_object<T, ConstructObject, GeneratorOnObject, P> This;
-  typedef typename ConstructObject::reference Geometric_object;
-  typedef typename GeneratorOnObject::result_type result_type;
-  std::vector<T> faces;
-  ConstructObject constructObject;
-  //vector of weights
+  typedef Generic_random_point_generator<Id, ObjectFromIdMap, GeneratorOnObject, P> This;
+  typedef typename boost::property_traits<ObjectFromIdMap>::reference Geometric_object_ref;
+  typedef typename cpp11::result_of<GeneratorOnObject(Id)>::type result_type;
+
+  std::vector<Id> ids;
   std::vector<double> weights;
+  ObjectFromIdMap object_from_id_map;
   Random& random;
+
   void generate_point();
+
 public:
-  template<class InputRange, class ComputeObjectWeight>
-  Generic_random_generator_on_object(InputRange input, ConstructObject constructObject,
-                                     ComputeObjectWeight computeObjectWeight, Random& rnd = get_default_random())
-   : Random_generator_base<P>(),
-     constructObject(constructObject),
-     random(rnd)
+
+  template<class InputRange, class ComputeWeight>
+  Generic_random_point_generator( const InputRange& input,
+                                  const ObjectFromIdMap& object_from_id_map,
+                                  const ComputeWeight& compute_weight,
+                                  Random& rnd = get_default_random() )
+    : Random_generator_base<P>()
+    , object_from_id_map(object_from_id_map)
+    , random(rnd)
   {
+    std::size_t input_size = input.size();
+    ids.reserve(input_size);
+    weights.reserve(input_size);
+
     // fill the weights
-    double last_weight = 0;
-    BOOST_FOREACH(T fit, input)
+    double total_weight = 0;
+    BOOST_FOREACH(Id id, input)
     {
-      //create a face
-      Geometric_object face = get(constructObject, fit);
-      faces.push_back(fit);
+      //create a geometric object
+      Geometric_object_ref object = get(object_from_id_map, id);
+      ids.push_back(id);
       //compute the weight of a face
-      double weight = computeObjectWeight(face);
-      last_weight+=weight;
-      weights.push_back(last_weight);
+      total_weight += to_double( compute_weight(object) );
+      weights.push_back(total_weight);
     }
-    //generate the points
+    //generate the first point
     generate_point();
   }
   This& operator++()
@@ -75,24 +85,24 @@ public:
   }
 };
 
-template < typename T, class ConstructObject, class GeneratorOnObject, class P >
-void Generic_random_generator_on_object<T, ConstructObject,  GeneratorOnObject, P>::generate_point()
+template < typename T, class ObjectFromIdMap, class GeneratorOnObject, class P >
+void Generic_random_point_generator<T, ObjectFromIdMap,  GeneratorOnObject, P>::generate_point()
 {
   //shoot a random value in weights
-  int target = std::distance(
-     weights.begin(),
-     std::upper_bound(
+  std::size_t target = std::distance(
+    weights.begin(),
+    std::upper_bound(
       weights.begin(),
       weights.end(),
       random.get_double(0, weights.back())
-      )
-     );
+    )
+  );
 
   // generate the points
-  GeneratorOnObject pointCreator(get(constructObject,faces[target]));
+  GeneratorOnObject pointCreator(get(object_from_id_map,ids[target]));
   this->d_item = *pointCreator;
 }
+
 }//namesape CGAL
-#endif // GENERIC_RANDOM_POINT_GENERATOR_H
 
-
+#endif // CGAL_INTERNAL_GENERIC_RANDOM_POINT_GENERATOR_H
