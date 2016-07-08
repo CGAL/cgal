@@ -307,13 +307,8 @@ public:
   typedef typename Neighbor_search::Tree KTree;
   typedef typename Neighbor_search::Distance Distance;
 
-  /// \endcond
-  
-  std::vector<Classification_type*> segmentation_classes; ///< Classification types used to segment the point set
-  
-  std::vector<Segmentation_attribute*> segmentation_attributes; ///< Attributes used to estimate the classification type of a point
-
-  /// \cond SKIP_IN_MANUAL
+  std::vector<Classification_type*> segmentation_classes; 
+  std::vector<Segmentation_attribute*> segmentation_attributes; 
 
   typedef Classification_type::Attribute_side Attribute_side;
   std::vector<std::vector<Attribute_side> > effect_table;
@@ -344,10 +339,17 @@ public:
   bool m_multiplicative;
   /// \endcond
 
+  /// \name Main methods
+  /// @{
+  
   /*! 
     \brief Constructs a classification object based on the input range.
 
     \tparam InputIterator Iterator on the input point. Value type must be `Point_3<Kernel>`.
+
+    \param begin Iterator to the first input point
+
+    \param end Past-the-end iterator
 
     \param grid_resolution Resolution of the 2D map of the ground. If
     the default value is used, it is computed as the average spacing
@@ -395,7 +397,6 @@ public:
     is_echo_given = false;
     m_multiplicative = false;
   }
-
 
   /// \cond SKIP_IN_MANUAL
   void change_hue (RGB_Color& color, const RGB_Color& hue)
@@ -1176,6 +1177,9 @@ public:
     return true;
   }
 
+  /// @}
+
+  
   /// \cond SKIP_IN_MANUAL
   void build_effect_table ()
   {
@@ -1190,8 +1194,54 @@ public:
   }
   /// \endcond
 
-protected: 
 
+
+#ifdef DOXYGEN_RUNNING
+
+  /// \name Types and attributes
+  /// @{
+  
+  /*!
+    \brief Add a classification type
+    \param type Pointer to the classification type object
+   */
+  void add_classification_type (Classification_type* type);
+
+  void clear_classification_types ();
+
+  /*!
+    \brief Add a segmentation attribute
+    \param attribute Pointer to the attribute object
+   */
+  void add_segmentation_attribute (Segmentation_attribute* attribute);
+
+  void clear_segmentation_attributes ();
+  
+  /// @}
+
+  /// \name Groups
+  /// @{
+
+  /*!
+    \brief Add a point to a group
+
+    Grouping points can be used for regularization (for example, to
+    apply the same classification type to all inliers of a detected
+    RANSAC primitive).
+
+    \param point_index Index of the point in the input range
+    \param group_index Index of the group
+   */
+  void add_to_group (std::size_t point_index, std::size_t group_index);
+
+  /*!
+    \brief Reset all groups attributes of points
+   */
+  void clear_groups();
+
+  /// @}
+  
+#endif
 
 
 };
