@@ -1174,7 +1174,6 @@ public:
 
     CGAL_CLASSIFICATION_CERR<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
 
-    return true;
   }
 
   /// @}
