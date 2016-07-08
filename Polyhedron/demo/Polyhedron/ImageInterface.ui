@@ -105,7 +105,7 @@
      <item row="1" column="4">
       <widget class="QCheckBox" name="ratioCheckBox">
        <property name="text">
-        <string>Keep ratio</string>
+        <string>Keep Ratio</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -134,7 +134,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Image quality</string>
+        <string>Image Quality</string>
        </property>
       </widget>
      </item>
@@ -236,7 +236,7 @@
       <string>Use white as background color</string>
      </property>
      <property name="text">
-      <string>Use white background</string>
+      <string>Use White Background</string>
      </property>
     </widget>
    </item>
@@ -246,7 +246,7 @@
       <string>When image aspect ratio differs from viewer's one, expand frustum as needed. Fits inside current frustum otherwise.</string>
      </property>
      <property name="text">
-      <string>Expand frustum if needed</string>
+      <string>Expand Frustum if Needed</string>
      </property>
     </widget>
    </item>
