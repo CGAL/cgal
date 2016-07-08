@@ -23,7 +23,7 @@
 #define CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/internal/AABB_tree/Halfedge_and_face_graph_property_maps.h>
+#include <CGAL/boost/graph/Halfedge_and_face_graph_property_maps.h>
 
 #include <iterator>
 #include <boost/mpl/and.hpp>

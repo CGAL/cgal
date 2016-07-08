@@ -1,6 +1,6 @@
 #include <CGAL/internal/Generic_random_point_generator.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/internal/AABB_tree/Halfedge_and_face_graph_property_maps.h>
+#include <CGAL/boost/graph/Halfedge_and_face_graph_property_maps.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
