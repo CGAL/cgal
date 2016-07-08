@@ -16,6 +16,11 @@ This component implements an algorithm that classifies a point cloud into a user
 
 \section Data_classification_custom Defining custom attributes and types
 
+\section Data_classification_example Example
+
+The following example reads an input file (LIDAR point set in PLY format); computes 4 attributes (scatter, elevation, horizontality and non-planarity) from this input; defines 3 classification types (vegetation, ground and roof) along with the effects of attributes on them; classifies the point set; recovers the segmented input in 3 separated arrays.
+
+\cgalExample{Data_classification/example_point_set_classification.cpp}
 
 */
 } /* namespace CGAL */
