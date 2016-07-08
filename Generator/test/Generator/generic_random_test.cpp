@@ -21,9 +21,9 @@ main( )
       vertex_point_t>::type                                  Vertex_point_pmap;
   typedef boost::property_map<Surface_mesh,
       vertex_point_t>::type                                  Vertex_point_pmap_sm;
-  typedef Triangle_from_face_descriptor_property_map<
+  typedef Triangle_from_face_descriptor_map<
       Polyhedron,Vertex_point_pmap>                          Generator;
-  typedef Triangle_from_face_descriptor_property_map<
+  typedef Triangle_from_face_descriptor_map<
       Surface_mesh,Vertex_point_pmap_sm>                     Generator_SM;
   typedef Random_points_in_triangle_3<Point>                 Creator;
   typedef boost::graph_traits<Polyhedron>::face_descriptor   face_iterator;
