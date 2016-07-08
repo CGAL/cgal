@@ -26,6 +26,7 @@
 #include <CGAL/property_map.h>
 #include <vector>
 #include <boost/foreach.hpp>
+#include <CGAL/Iterator_range.h>
 
 namespace CGAL {
 
@@ -41,6 +42,7 @@ class Generic_random_point_generator : public Random_generator_base<P>
   ObjectFromIdMap object_from_id_map;
   Random& random;
 
+protected:
   void generate_point();
 
 public:
@@ -85,8 +87,8 @@ public:
   }
 };
 
-template < typename T, class ObjectFromIdMap, class GeneratorOnObject, class P >
-void Generic_random_point_generator<T, ObjectFromIdMap,  GeneratorOnObject, P>::generate_point()
+template < typename Id, class ObjectFromIdMap, class GeneratorOnObject, class P >
+void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>::generate_point()
 {
   //shoot a random value in weights
   std::size_t target = std::distance(

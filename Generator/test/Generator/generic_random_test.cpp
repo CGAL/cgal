@@ -1,6 +1,6 @@
 #include <CGAL/internal/Generic_random_point_generator.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/boost/graph/Halfedge_and_face_graph_property_maps.h>
+#include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
@@ -39,13 +39,9 @@ main( )
   CGAL_assertion(in && !sm.is_empty());
 
   poly.make_tetrahedron(Point(0.0,0.2,0.0), Point(-0.2,0.0,0.0), Point(0.2,0.0,0.0), Point(0.0,0.0,0.2));
-  Generator generator(&poly);
-  Generator_SM sm_generator(&sm);
-  R::Compute_area_3 weight_computer;
-  //Generic_random_point_generator<face_iterator_sm, Generator_SM, Creator, Point>
-  //    g(faces(sm), sm_generator, weight_computer);
-  Generic_random_point_generator<face_iterator_sm, Generator_SM, Creator, Point>
-      g(faces(sm), sm_generator, weight_computer);
+
+  Random_points_on_triangle_mesh_3<Point, Surface_mesh>
+      g(sm);
   CGAL::cpp11::copy_n( g, 3000, std::back_inserter(points));
   for (std::size_t i = 0; i<points.size(); ++i)
     std::cerr<<points[i]<<std::endl;

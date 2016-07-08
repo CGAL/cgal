@@ -29,6 +29,8 @@
 #include <CGAL/generators.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/internal/Generic_random_point_generator.h>
+#include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {
 
@@ -301,6 +303,47 @@ void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
 	this->d_item = creator(ret[0],ret[1],ret[2]);
 }
 
+
+
+
+
+template <class P, class Mesh>
+class Random_points_on_triangle_mesh_3 : public Generic_random_point_generator<
+   typename boost::graph_traits <Mesh>::face_descriptor ,
+   CGAL::Triangle_from_face_descriptor_map<Mesh,typename boost::property_map<Mesh, CGAL::vertex_point_t>::type >,
+   Random_points_in_triangle_3<P> , P> {
+public:
+ typedef Generic_random_point_generator<
+ typename boost::graph_traits <Mesh>::face_descriptor ,
+ CGAL::Triangle_from_face_descriptor_map<Mesh,typename boost::property_map<Mesh, CGAL::vertex_point_t>::type >,
+ Random_points_in_triangle_3<P> , P>                                 Base;
+ typedef typename boost::property_map<Mesh,
+     CGAL::vertex_point_t>::type                                     Vertex_point_map;
+ typedef typename CGAL::Triangle_from_face_descriptor_map<
+     Mesh,Vertex_point_map>                                          Object_from_id_map;
+ typedef Random_points_in_triangle_3<P>                              Generator_on_object;
+ typedef typename boost::graph_traits<Mesh>::face_descriptor         Id;
+ typedef P result_type;
+ typedef Random_points_on_triangle_mesh_3<P, Mesh>                   This;
+
+
+ Random_points_on_triangle_mesh_3(  Mesh& mesh,Random& rnd = default_random)
+  : Base( faces(mesh),
+          Object_from_id_map(&mesh),
+          typename Kernel_traits<P>::Kernel::Compute_area_3(),
+          rnd )
+ {
+ }
+ This& operator++() {
+  Base::generate_point();
+  return *this;
+ }
+ This operator++(int) {
+  This tmp = *this;
+  ++(*this);
+  return tmp;
+ }
+};
 
 
 } //namespace CGAL
