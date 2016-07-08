@@ -53,6 +53,29 @@ template <class TriangleMesh, class NamedParameters>
 bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
 
 /// \cond SKIP_IN_MANUAL
+#define CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(i) \
+  if (desired_output[i]!=boost::none) \
+  { \
+    vpm_out.push_back(  \
+      choose_pmap(get_param(get<i>(nps_out), boost::vertex_point), \
+                                   *(*desired_output[i]), \
+                                   vertex_point) ); \
+    output_vpms[i]=&vpm_out.back(); \
+  } \
+  else \
+    output_vpms[i]=&vpm_out.back();
+
+#define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
+  typedef typename boost::lookup_named_param_def < \
+    CGAL::edge_is_constrained_t, \
+    NamedParametersOut##I, \
+    Corefinement::No_mark<TriangleMesh> \
+  > ::type Ecm_out_##I; \
+    Ecm_out_##I ecm_out_##I = \
+      choose_param( get_param(get<I>(nps_out), edge_is_constrained),  \
+                              Corefinement::No_mark<TriangleMesh>() );
+
+
 /**
     \todo document me
  */
@@ -64,18 +87,120 @@ template <class TriangleMesh,
           class NamedParametersOut2,
           class NamedParametersOut3>
 cpp11::array<bool,4>
-boolean_operation(const TriangleMesh& tm1,
-                  const TriangleMesh& tm2,
+boolean_operation(const TriangleMesh& const_tm1,
+                  const TriangleMesh& const_tm2,
                   const cpp11::array< boost::optional<TriangleMesh*>,4>& desired_output,
                   const NamedParameters1& np1,
                   const NamedParameters2& np2,
                   const cpp11::tuple<NamedParametersOut0,
                                      NamedParametersOut1,
                                      NamedParametersOut2,
-                                     NamedParametersOut3>& nps_out)
+                                     NamedParametersOut3>& nps_out,
+                  const bool throw_on_self_intersection = false )
 {
+  // TODO handle the constness problem! Copy the mesh if it is not part of
+  // the output and see how to do with property maps
+  TriangleMesh& tm1 = const_cast<TriangleMesh&>(const_tm1);
+  TriangleMesh& tm2 = const_cast<TriangleMesh&>(const_tm2);
 
+// Vertex point maps
+  //for input meshes
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters1>::const_type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh,
+                                     NamedParameters2>::const_type Vpm2;
+  CGAL_assertion_code(static const bool same_vpm = )
+  boost::is_same<Vpm,Vpm2>::value;
+  CGAL_static_assertion(same_vpm);
+
+  Vpm vpm1 = choose_pmap(get_param(np1, boost::vertex_point),
+                         tm1,
+                         vertex_point);
+  Vpm vpm2 = choose_pmap(get_param(np2, boost::vertex_point),
+                         tm2,
+                         vertex_point);
+  //for output meshes
+  cpp11::array<Vpm*, 4> output_vpms;
+  std::vector<Vpm> vpm_out;
+  vpm_out.reserve(4);
+  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(0)
+  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(1)
+  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(2)
+  CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(3)
+
+// Edge is-constrained maps
+  //for input meshes
+  typedef typename boost::lookup_named_param_def <
+    CGAL::edge_is_constrained_t,
+    NamedParameters1,
+    Corefinement::No_mark<TriangleMesh>//default
+  > ::type Ecm1;
+
+  typedef typename boost::lookup_named_param_def <
+    CGAL::edge_is_constrained_t,
+    NamedParameters1,
+    Corefinement::No_mark<TriangleMesh>//default
+  > ::type Ecm2;
+
+  Ecm1 ecm1 = choose_param( get_param(np1, edge_is_constrained),
+                            Corefinement::No_mark<TriangleMesh>() );
+  Ecm2 ecm2 = choose_param( get_param(np2, edge_is_constrained),
+                            Corefinement::No_mark<TriangleMesh>() );
+
+  typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
+
+  //for output meshes
+  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(0)
+  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(1)
+  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(2)
+  CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(3)
+
+  typedef cpp11::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
+                                                            Edge_mark_map_tuple;
+
+// Face index point maps
+  typedef typename GetFaceIndexMap<TriangleMesh,
+                                   NamedParameters1>::type Fid_map;
+  typedef typename GetFaceIndexMap<TriangleMesh,
+                                   NamedParameters2>::type Fid_map2;
+  CGAL_assertion_code(static const bool same_fidmap = )
+  boost::is_same<Fid_map,Fid_map2>::value;
+  CGAL_static_assertion(same_fidmap);
+
+  Fid_map fid_map1 = choose_pmap(get_param(np1, face_index),
+                                 tm1,
+                                 face_index);
+  Fid_map fid_map2 = choose_pmap(get_param(np2, face_index),
+                                 tm2,
+                                 face_index);
+
+  // surface intersection algorithm call
+  typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
+  typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
+  typedef Corefinement::Face_graph_output_builder<TriangleMesh,
+                                                  Vpm,
+                                                  Fid_map,
+                                                  Default,
+                                                  Default > Ob;
+
+  typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm_in> Visitor;
+  Dnv dnv;
+  Dfv dfv;
+  Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
+  Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
+  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in,
+        output_vpms, ecms_out, desired_output);
+
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm,Visitor >
+    functor(tm1, tm2, vpm1, vpm2, Visitor(dnv,dfv,ob,ecm_in));
+  functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
+
+
+  return CGAL::make_array(true,true,true,true);
 }
+
+#undef CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP
+#undef CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP
 /// \endcond
 
 /**
@@ -116,6 +241,7 @@ boolean_operation(const TriangleMesh& tm1,
   *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained
   *     if it is on the intersection of `tm1` and `tm2`, or if the edge corresponds to a
   *     constrained edge in `tm1` or `tm2`.
+  * \todo in the code only edges on the intersection are marked!
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold and is put into `tm_out`.
@@ -240,8 +366,8 @@ difference(const TriangleMesh& tm1,
            class NamedParameters1,
            class NamedParameters2>
  void
- corefine(TriangleMesh& tm1,
-          TriangleMesh& tm2,
+ corefine(      TriangleMesh& tm1,
+                TriangleMesh& tm2,
           const NamedParameters1& np1,
           const NamedParameters2& np2,
           const bool throw_on_self_intersection = false)
@@ -339,10 +465,10 @@ template <class TriangleMesh,
           class NamedParameters2>
 bool
 intersection(const TriangleMesh& tm1,
-     const TriangleMesh& tm2,
-           TriangleMesh& tm_out,
-     const NamedParameters1& np1,
-     const NamedParameters2& np2)
+             const TriangleMesh& tm2,
+                   TriangleMesh& tm_out,
+             const NamedParameters1& np1,
+             const NamedParameters2& np2)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return intersection(tm1, tm2, tm_out, np1, np2, all_default());
@@ -352,9 +478,9 @@ template <class TriangleMesh,
           class NamedParameters1>
 bool
 intersection(const TriangleMesh& tm1,
-     const TriangleMesh& tm2,
-           TriangleMesh& tm_out,
-     const NamedParameters1& np1)
+             const TriangleMesh& tm2,
+                   TriangleMesh& tm_out,
+             const NamedParameters1& np1)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return intersection(tm1, tm2, tm_out, np1, all_default(), all_default());
@@ -363,8 +489,8 @@ intersection(const TriangleMesh& tm1,
 template <class TriangleMesh>
 bool
 intersection(const TriangleMesh& tm1,
-     const TriangleMesh& tm2,
-           TriangleMesh& tm_out)
+             const TriangleMesh& tm2,
+                   TriangleMesh& tm_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return intersection(tm1, tm2, tm_out, all_default(), all_default(), all_default());
@@ -376,10 +502,10 @@ template <class TriangleMesh,
           class NamedParameters2>
 bool
 difference(const TriangleMesh& tm1,
-     const TriangleMesh& tm2,
-           TriangleMesh& tm_out,
-     const NamedParameters1& np1,
-     const NamedParameters2& np2)
+           const TriangleMesh& tm2,
+                 TriangleMesh& tm_out,
+           const NamedParameters1& np1,
+           const NamedParameters2& np2)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return difference(tm1, tm2, tm_out, np1, np2, all_default());
@@ -389,9 +515,9 @@ template <class TriangleMesh,
           class NamedParameters1>
 bool
 difference(const TriangleMesh& tm1,
-     const TriangleMesh& tm2,
-           TriangleMesh& tm_out,
-     const NamedParameters1& np1)
+           const TriangleMesh& tm2,
+                 TriangleMesh& tm_out,
+           const NamedParameters1& np1)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return difference(tm1, tm2, tm_out, np1, all_default(), all_default());
@@ -400,8 +526,8 @@ difference(const TriangleMesh& tm1,
 template <class TriangleMesh>
 bool
 difference(const TriangleMesh& tm1,
-     const TriangleMesh& tm2,
-           TriangleMesh& tm_out)
+           const TriangleMesh& tm2,
+                 TriangleMesh& tm_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return difference(tm1, tm2, tm_out, all_default(), all_default(), all_default());
@@ -410,8 +536,8 @@ difference(const TriangleMesh& tm1,
 ///// corefine /////
 template <class TriangleMesh, class NamedParameters1>
 void
-corefine(TriangleMesh& tm1,
-         TriangleMesh& tm2,
+corefine(      TriangleMesh& tm1,
+               TriangleMesh& tm2,
          const NamedParameters1& np1,
          const bool throw_on_self_intersection = false)
 {
@@ -421,8 +547,8 @@ corefine(TriangleMesh& tm1,
 
 template <class TriangleMesh>
 void
-corefine(TriangleMesh& tm1,
-         TriangleMesh& tm2,
+corefine(           TriangleMesh& tm1,
+                    TriangleMesh& tm2,
          const bool throw_on_self_intersection = false)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
