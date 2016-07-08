@@ -1241,6 +1241,19 @@ public:
 
   /// @}
   
+
+  /// \name Output
+  /// @{
+
+  /*!
+    \brief Get the classification type of indexed point.
+    \param index Index of the input point
+    \return Pointer to the classification type 
+  */
+  Classification_type* classification_type_of (std::size_t index) const;
+
+  /// @}
+
 #endif
 
 
