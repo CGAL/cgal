@@ -284,7 +284,7 @@ public:
 
   m_psc->m_multiplicative = multiply;
   
-  m_psc->point_cloud_classification(method);
+  m_psc->classify(method);
 
   // if (method != 0)
   //   save_2d_image();
