@@ -1,41 +1,46 @@
-// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
-
-/// \defgroup PkgPACKAGE PRETTY PACKAGE NAME Reference
-/// \defgroup PkgPACKAGEConcepts Concepts
-/// \ingroup PkgPACKAGE
-
-/// \defgroup PkgPACKAGEAlgorithmClasses Algorithm Classes
-/// \ingroup PkgPACKAGE
-
-/// \defgroup PkgPACKAGETraitsClasses Traits Classes
-/// \ingroup PkgPACKAGE
-
-/// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
-/// \ingroup PkgPACKAGE
-
 /*!
-\addtogroup PkgPACKAGE
-\todo check generated documentation
+\defgroup PkgDataClassification Point Set Shape Detection Reference
 
-\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGESummary}
-\cgalPkgPicture{pkg-small.png}
+\defgroup PkgDataClassificationConcepts Concepts
+\ingroup PkgDataClassification
+
+\defgroup PkgDataClassificationShapes Shapes
+\ingroup PkgDataClassification
+
+\addtogroup PkgDataClassification
+
+\cgalPkgDescriptionBegin{Data Classification, PkgDataClassificationSummary}
+\cgalPkgPicture{data_classif.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{PACKAGE AUTHOR}
-\cgalPkgDesc{PACKAGE DESCRIPTION.
-The package provides ... }
-\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGE}
+\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgDesc{This component implements an algorithm that classifies a point cloud into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can compute its own local attributes on the point cloud and define its own classes based on these attributes.}
+\cgalPkgManuals{Chapter_Data_Classification, PkgDataClassification}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{X.X}
+\cgalPkgSince{4.9}
+\cgalPkgBib{cgal:ovja-pssd}
 \cgalPkgDependsOn{\ref PkgDEPENDENCY}
-\cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
-\cgalPkgDemo{DEMO 2,demo2.zip}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Main Classes ##
+- `CGAL::Point_set_classification<Kernel>`
+- `CGAL::Classification_type`
+
+## Segmentation attributes ##
+- `CGAL::Segmentation_attribute`
+- `CGAL::Segmentation_attribute_color<Kernel>`
+- `CGAL::Segmentation_attribute_elevation<Kernel>`
+- `CGAL::Segmentation_attribute_horizontality<Kernel>`
+- `CGAL::Segmentation_attribute_nonplanarity<Kernel>`
+- `CGAL::Segmentation_attribute_scatter<Kernel>`
+
 
 */

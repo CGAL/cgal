@@ -2,22 +2,20 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_PACKAGE_NAME
-\anchor chaptermine
+\anchor Chapter_Data_Classification
 \cgalAutoToc
-\author AUTHOR1, AUTHOR2
+\author Simon Giraudot
 
-This chapter describes the ...
+This component implements an algorithm that classifies a point cloud into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can compute its own local attributes on the point cloud and define its own classes based on these attributes.
 
-\section secmydefinitions Definitions
+\section Data_classification_attributes Attributes
 
-Section on definitions here ...
+\section Data_classification_types Classification types
 
-\section secmyexamples Examples
+\section Data_classification_psc Point set classification
 
-\subsection myFirstExample First Example
+\section Data_classification_custom Defining custom attributes and types
 
-The following example shows ...
 
 */
 } /* namespace CGAL */
