@@ -949,6 +949,14 @@ right_turn(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
   return internal::right_turn(p, q, r, K());
 }
 
+template < class K >
+inline
+typename K::FT
+scalar_product(const Vector_2<K> &v, const Vector_2<K> &w)
+{
+  return K().compute_scalar_product_2_object()(v, w);
+}
+
 template <class K>
 inline
 typename K::Bounded_side

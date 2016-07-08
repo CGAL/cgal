@@ -2357,6 +2357,26 @@ const CGAL::Point_2<Kernel> &r);
 /// @}
 
 
+
+/// \defgroup scalar_product_grp CGAL::scalar_product()
+/// \ingroup kernel_global_function
+/// @{
+
+/*!
+returns the scalar product of `u` and `v`.
+*/
+template <typename Kernel>
+Kernel::FT scalar_product( const CGAL::Vector_2<Kernel>& u,
+                           const CGAL::Vector_2<Kernel>& v );
+
+/*!
+returns the scalar product of `u` and `v`.
+*/
+template <typename Kernel>
+Kernel::FT scalar_product( const CGAL::Vector_3<Kernel>& u,
+                           const CGAL::Vector_3<Kernel>& v );
+/// @}
+
 /// \defgroup side_of_bounded_circle_grp CGAL::side_of_bounded_circle()
 /// \ingroup kernel_global_function
 /// \sa `coplanar_side_of_bounded_circle_grp`

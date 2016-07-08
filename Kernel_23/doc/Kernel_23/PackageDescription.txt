@@ -204,6 +204,7 @@
 - \link radical_line_grp `CGAL::radical_line()` \endlink
 - \link rational_rotation_approximation_grp `CGAL::rational_rotation_approximation()` \endlink
 - \link right_turn_grp `CGAL::right_turn()` \endlink
+- \link scalar_product_grp `CGAL::scalar_product()` \endlink
 - \link side_of_bounded_circle_grp `CGAL::side_of_bounded_circle()` \endlink
 - \link side_of_bounded_sphere_grp `CGAL::side_of_bounded_sphere()` \endlink
 - \link side_of_oriented_circle_grp `CGAL::side_of_oriented_circle()` \endlink

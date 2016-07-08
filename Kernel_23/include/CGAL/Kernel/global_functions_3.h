@@ -994,6 +994,14 @@ radical_plane(const Sphere_3<K> &s1,
   return K().construct_radical_plane_3_object()(s1,s2);
 }
 
+template < class K >
+inline
+typename K::FT
+scalar_product(const Vector_3<K> &v, const Vector_3<K> &w)
+{
+  return K().compute_scalar_product_3_object()(v, w);
+}
+
 template <class K >
 inline
 typename K::Bounded_side
