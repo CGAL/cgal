@@ -7,7 +7,7 @@ namespace CGAL {
 
 
 /*!
-  \ingroupd PkgDataClassification
+  \ingroup PkgDataClassification
 
   \brief Abstract class describing a segmentation attribute.
 
