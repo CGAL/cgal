@@ -28,6 +28,8 @@ public:
   void draw_aux(bool with_names, Viewer*);
   //! Contains all the programs for the item rendering.
   mutable std::vector<QOpenGLShaderProgram*> shader_programs;
+  QMatrix4x4 projectionMatrix;
+  void setFrustum(double l, double r, double t, double b, double n, double f);
 };
 Viewer::Viewer(QWidget* parent, bool antialiasing)
   : CGAL::Three::Viewer_interface(parent)
@@ -577,7 +579,7 @@ void Viewer::attribBuffers(int program_name) const {
     this->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
-    mvp_mat = projectionMatrix*mv_mat;
+    mvp_mat = d->projectionMatrix*mv_mat;
 
     const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
                                              &is_both_sides);
@@ -1336,7 +1338,7 @@ void Viewer::paintGL()
   this->camera()->getProjectionMatrix(d_mat);
   //Convert the GLdoubles matrices in GLfloats
   for (int i=0; i<16; ++i)
-      projectionMatrix.data()[i] = GLfloat(d_mat[i]);
+      d->projectionMatrix.data()[i] = GLfloat(d_mat[i]);
 
   preDraw();
   draw();
@@ -1461,7 +1463,7 @@ void Viewer::clearDistancedisplay()
   distance_text.clear();
 }
 
-void Viewer::setFrustum(double l, double r, double t, double b, double n, double f)
+void Viewer_impl::setFrustum(double l, double r, double t, double b, double n, double f)
 {
   double A = 2*n/(r-l);
   double B = (r+l)/(r-l);
@@ -1486,7 +1488,7 @@ public:
   ImageInterface(QWidget *parent, qreal ratio)
     : QDialog(parent), ratio(ratio)
   {
-    QWidget *currentlyFocused = NULL;
+    currentlyFocused = NULL;
     setupUi(this);
     connect(imgHeight, SIGNAL(valueChanged(int)),
             this, SLOT(imgHeightValueChanged(int)));
@@ -1606,7 +1608,7 @@ void Viewer::saveSnapshot(bool, bool)
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
     {
-      setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
+      d->setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
       fbo->bind();
       glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
       preDraw();

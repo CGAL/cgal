@@ -99,7 +99,6 @@ protected:
   void postDraw();
   void paintEvent(QPaintEvent *);
   void paintGL();
-  void setFrustum(double l, double r, double t, double b, double n, double f);
   //! Holds useful data to draw the axis system
   struct AxisData
   {
@@ -175,7 +174,6 @@ private:
   QString message;
   bool _displayMessage;
   QTimer messageTimer;
-  QMatrix4x4 projectionMatrix;
 }; // end class Viewer
 
 
