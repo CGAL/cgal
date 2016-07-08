@@ -268,11 +268,11 @@ public:
       
       m_psc->segmentation_classes.push_back (new CGAL::Classification_type
                                              (classes[i].label->text().toLower().toStdString().c_str()));
-      m_psc->segmentation_classes.back()->change_attribute_effect (m_scat, (CGAL::Classification_type::Attribute_side)(classes[i].combo[0]->currentIndex()));
-      m_psc->segmentation_classes.back()->change_attribute_effect (m_plan, (CGAL::Classification_type::Attribute_side)(classes[i].combo[1]->currentIndex()));
-      m_psc->segmentation_classes.back()->change_attribute_effect (m_hori, (CGAL::Classification_type::Attribute_side)(classes[i].combo[2]->currentIndex()));
-      m_psc->segmentation_classes.back()->change_attribute_effect (m_elev, (CGAL::Classification_type::Attribute_side)(classes[i].combo[3]->currentIndex()));
-      m_psc->segmentation_classes.back()->change_attribute_effect (m_colo, (CGAL::Classification_type::Attribute_side)(classes[i].combo[4]->currentIndex()));
+      m_psc->segmentation_classes.back()->set_attribute_effect (m_scat, (CGAL::Classification_type::Attribute_side)(classes[i].combo[0]->currentIndex()));
+      m_psc->segmentation_classes.back()->set_attribute_effect (m_plan, (CGAL::Classification_type::Attribute_side)(classes[i].combo[1]->currentIndex()));
+      m_psc->segmentation_classes.back()->set_attribute_effect (m_hori, (CGAL::Classification_type::Attribute_side)(classes[i].combo[2]->currentIndex()));
+      m_psc->segmentation_classes.back()->set_attribute_effect (m_elev, (CGAL::Classification_type::Attribute_side)(classes[i].combo[3]->currentIndex()));
+      m_psc->segmentation_classes.back()->set_attribute_effect (m_colo, (CGAL::Classification_type::Attribute_side)(classes[i].combo[4]->currentIndex()));
 
       std::cerr << " * ";
       m_psc->segmentation_classes.back()->info();

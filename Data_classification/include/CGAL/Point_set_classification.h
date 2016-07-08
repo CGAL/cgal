@@ -92,14 +92,14 @@ public:
   Classification_type (std::string id) : m_id (id) { }
 
   /*! 
-    \brief Change how an attribute affects the classification type.
+    \brief Sets how an attribute affects the classification type.
 
-    \param att Attribute whose effect on the classification type will be changed
+    \param att Attribute whose effect on the classification type will be set
 
     \param effect The effect the attribute will have on the classification type
 
   */ 
-  void change_attribute_effect (Segmentation_attribute* att, Attribute_side effect)
+  void set_attribute_effect (Segmentation_attribute* att, Attribute_side effect)
   {
     m_attribute_effects[att->id()] = effect;
   }

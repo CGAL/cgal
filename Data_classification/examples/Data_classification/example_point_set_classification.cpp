@@ -50,22 +50,22 @@ int main (int argc, char** argv)
 
   // Create classification type and define how attributes affect them
   CGAL::Classification_type ground ("ground");
-  ground.change_attribute_effect (&scat, CGAL::Classification_type::PENALIZED_ATT);
-  ground.change_attribute_effect (&elev, CGAL::Classification_type::PENALIZED_ATT);
-  ground.change_attribute_effect (&horiz, CGAL::Classification_type::PENALIZED_ATT);
-  ground.change_attribute_effect (&plan, CGAL::Classification_type::PENALIZED_ATT);
+  ground.set_attribute_effect (&scat, CGAL::Classification_type::PENALIZED_ATT);
+  ground.set_attribute_effect (&elev, CGAL::Classification_type::PENALIZED_ATT);
+  ground.set_attribute_effect (&horiz, CGAL::Classification_type::PENALIZED_ATT);
+  ground.set_attribute_effect (&plan, CGAL::Classification_type::PENALIZED_ATT);
 
   CGAL::Classification_type vege ("vegetation");
-  vege.change_attribute_effect (&scat, CGAL::Classification_type::FAVORED_ATT);
-  vege.change_attribute_effect (&elev, CGAL::Classification_type::NEUTRAL_ATT);
-  vege.change_attribute_effect (&horiz, CGAL::Classification_type::NEUTRAL_ATT);
-  vege.change_attribute_effect (&plan, CGAL::Classification_type::PENALIZED_ATT);
+  vege.set_attribute_effect (&scat, CGAL::Classification_type::FAVORED_ATT);
+  vege.set_attribute_effect (&elev, CGAL::Classification_type::NEUTRAL_ATT);
+  vege.set_attribute_effect (&horiz, CGAL::Classification_type::NEUTRAL_ATT);
+  vege.set_attribute_effect (&plan, CGAL::Classification_type::PENALIZED_ATT);
   
   CGAL::Classification_type roof ("roof");
-  roof.change_attribute_effect (&scat, CGAL::Classification_type::NEUTRAL_ATT);
-  roof.change_attribute_effect (&elev, CGAL::Classification_type::FAVORED_ATT);
-  roof.change_attribute_effect (&horiz, CGAL::Classification_type::NEUTRAL_ATT);
-  roof.change_attribute_effect (&plan, CGAL::Classification_type::NEUTRAL_ATT);
+  roof.set_attribute_effect (&scat, CGAL::Classification_type::NEUTRAL_ATT);
+  roof.set_attribute_effect (&elev, CGAL::Classification_type::FAVORED_ATT);
+  roof.set_attribute_effect (&horiz, CGAL::Classification_type::NEUTRAL_ATT);
+  roof.set_attribute_effect (&plan, CGAL::Classification_type::NEUTRAL_ATT);
 
   // Add types to PSC
   psc.add_classification_type (&vege);
