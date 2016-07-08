@@ -23,6 +23,8 @@
 namespace CGAL {
 namespace Data_classification {
 
+  /// \cond SKIP_IN_MANUAL
+  
 template <typename Type>
 class Image
 {
@@ -98,7 +100,7 @@ public:
 
 };
 
-
+  /// \endcond
 
 } // namespace Data_classification
 } // namespace CGAL

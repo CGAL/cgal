@@ -25,7 +25,8 @@
 namespace CGAL {
 namespace Data_classification {
 
-
+  /// \cond SKIP_IN_MANUAL
+  
 typedef CGAL::cpp11::array<unsigned char, 3> RGB_Color;
 typedef CGAL::cpp11::array<double, 3> HSV_Color;
 
@@ -111,6 +112,7 @@ inline RGB_Color hsv_to_rgb (const HSV_Color& c)
   return out;
 }
 
+  /// \endcond
 
 } // namespace Data_classification
 } // namespace CGAL
