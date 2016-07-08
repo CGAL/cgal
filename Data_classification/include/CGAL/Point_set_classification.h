@@ -228,12 +228,27 @@ public:
 
 
 
+/*!
+\ingroup PkgDataClassification
+
+\brief Classifies a point set based on a set of attribute and a set of classification types.
+
+This class implement the core of the algorithm. It uses a point set as
+input. Based on a set of segmentation attributes and a set of
+classification types, it segments the point set into the different
+types given. The output can be regularized with different smoothing
+methods.
+
+\tparam Kernel The geometric kernel used
+
+*/
 template <typename Kernel>
 class Point_set_classification
 {
 
   
 public:
+  /// \cond SKIP_IN_MANUAL
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Segment_3 Segment;
   typedef typename Kernel::FT FT;
@@ -291,9 +306,14 @@ public:
   typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree KTree;
   typedef typename Neighbor_search::Distance Distance;
+
+  /// \endcond
   
-  std::vector<Classification_type*> segmentation_classes;
-  std::vector<Segmentation_attribute*> segmentation_attributes;
+  std::vector<Classification_type*> segmentation_classes; ///< Classification types used to segment the point set
+  
+  std::vector<Segmentation_attribute*> segmentation_attributes; ///< Attributes used to estimate the classification type of a point
+
+  /// \cond SKIP_IN_MANUAL
 
   typedef Classification_type::Attribute_side Attribute_side;
   std::vector<std::vector<Attribute_side> > effect_table;
@@ -322,7 +342,25 @@ public:
   double m_radius_neighbors; 
   double m_radius_dtm;
   bool m_multiplicative;
+  /// \endcond
 
+  /*! 
+    \brief Constructs a classification object based on the input range.
+
+    \tparam InputIterator Iterator on the input point. Value type must be `Point_3<Kernel>`.
+
+    \param grid_resolution Resolution of the 2D map of the ground. If
+    the default value is used, it is computed as the average spacing
+    of the point set.
+
+    \param radius_neighbors Size used for neighborhood computation. If
+    the default value is used, it is computed as 5 times
+    `grid_resolution`.
+
+    \param radius_dtm Size used to estimate the ground (should be
+    higher than the thickest non-ground object of the scene). If the
+    default value is used, it is computed as 5 times `radius_neighbors`.
+  */ 
   template <typename InputIterator>
   Point_set_classification (InputIterator begin, InputIterator end,
                             double grid_resolution = -1.,
@@ -359,7 +397,7 @@ public:
   }
 
 
-
+  /// \cond SKIP_IN_MANUAL
   void change_hue (RGB_Color& color, const RGB_Color& hue)
   {
     HSV_Color hcolor = Data_classification::rgb_to_hsv (color);
@@ -368,16 +406,30 @@ public:
     //    hcolor[1] = hhue[1];
     color = Data_classification::hsv_to_rgb (hcolor);
   }
+  /// \endcond
 
+  /*!
+    \brief Change the parameters of the classification algorithm.
 
+    \param grid_resolution Resolution of the 2D map of the ground. 
+
+    \param radius_neighbors Size used for neighborhood computation. 
+
+    \param radius_dtm Size used to estimate the ground (should be
+    higher than the thickest non-ground object of the scene). 
+  */
+  
   void set_parameters (double grid_resolution, double radius_neighbors, double radius_dtm)
   {
     m_grid_resolution = grid_resolution;
     m_radius_neighbors = radius_neighbors;
     m_radius_dtm = radius_dtm;
   }
-  
-  bool initialization(int phase = 0) // for training
+
+  /*!
+    Computes all the interlate structures needed by the algorithm.
+   */
+  void initialization()
   {
     clock_t t;
     t = clock();
@@ -418,9 +470,6 @@ public:
     }
 
     CGAL_CLASSIFICATION_CERR<<"ok";
-
-    if (phase == 1)
-      return true;
 
     //2-creation of the bounding box
     CGAL_CLASSIFICATION_CERR<<", bounding box..";
@@ -513,13 +562,10 @@ public:
     //    if(!is_normal_given){CGAL_CLASSIFICATION_CERR<<", normals.."; compute_normal(); CGAL_CLASSIFICATION_CERR<<"ok";}
 
     CGAL_CLASSIFICATION_CERR<<std::endl<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
-
-    return true;
   }
 
 
-
-
+  /// \cond SKIP_IN_MANUAL
   void compute_principal_curvature(const Point& point, std::vector<Point>& neighborhood)
   {
     if (neighborhood.size() == 0)
@@ -805,7 +851,7 @@ public:
       
     return true;
   }
-
+  
   void reset_groups()
   {
     groups.clear();
@@ -969,6 +1015,7 @@ public:
 
   }
 
+  /// \cond SKIP_IN_MANUAL
   bool regularized_labeling_PC()
   {
     std::vector<std::vector<std::size_t> > groups;
@@ -1087,8 +1134,21 @@ public:
 	
     return true;
   }
+  /// \endcond
 
-  bool point_cloud_classification(int method)
+  /*!
+    Performs classification using the user-chosen regularization method.
+
+    \param method Regularization method. 0 = no regularization; 1 =
+    global regularization through graphcut; 2 = local regularization
+    based on pre-computed groups.
+
+    \note Classification without regularization (method = 0) is very
+    quick: almost instantaneous or up to a few seconds for very large
+    point clouds. Regularization improves the quality of the output at
+    the cost of longer computation time.
+  */
+  void classify (int method)
   {
 
     clock_t t;
@@ -1116,7 +1176,7 @@ public:
     return true;
   }
 
-
+  /// \cond SKIP_IN_MANUAL
   void build_effect_table ()
   {
     effect_table = std::vector<std::vector<Attribute_side> >
@@ -1128,6 +1188,7 @@ public:
         effect_table[i][j] = segmentation_classes[i]->attribute_effect (segmentation_attributes[j]);
 
   }
+  /// \endcond
 
 protected: 
 
