@@ -54,34 +54,80 @@ namespace CGAL {
 
 
 
+/*!
+\ingroup PkgDataClassification
+
+\brief Definition of a classification type based on an ID and a set of
+relationship with attributes.
+
+A classification type is used to segment the input data set. Usual
+classification types are ground, vegetation and buildings (but other
+can be defined).
+
+*/
 class Classification_type
 {
 public:
-  enum Attribute_side { FAVORED_ATT = 0,
-                        PENALIZED_ATT = 2,
-                        NEUTRAL_ATT = 1};
+  
+  enum Attribute_side /// Defines the effect of the values of an attribute on the classification type.
+    {
+      FAVORED_ATT = 0, ///< High values of the attribute favor this type
+      NEUTRAL_ATT = 1, ///< The attribute has no effect on this type
+      PENALIZED_ATT = 2 ///< Low values of the attribute favor this type
+    };
 
 private:
   std::string m_id;
   std::map<std::string, Attribute_side> m_attribute_effects;
 
 public:
+
+  /// \name Main methods 
+  /// @{
+  /*! 
+    \param id The name of the classification type
+    (e.g. vegetation). Two different classification types must have
+    different IDs.
+  */ 
   Classification_type (std::string id) : m_id (id) { }
 
+  /*! 
+    \brief Change how an attribute affects the classification type.
+
+    \param att Attribute whose effect on the classification type will be changed
+
+    \param effect The effect the attribute will have on the classification type
+
+  */ 
   void change_attribute_effect (Segmentation_attribute* att, Attribute_side effect)
   {
     m_attribute_effects[att->id()] = effect;
   }
 
+  /*!
+    \brief Get the effects of an attribute on the classification type.
+
+    \param att Attribute
+
+    \return The effect of the attribute on the classification type.
+   */
   Attribute_side attribute_effect (Segmentation_attribute* att) 
   {
     std::map<std::string, Attribute_side>::iterator
       search = m_attribute_effects.find (att->id());
     return (search == m_attribute_effects.end () ? NEUTRAL_ATT : search->second);
   }
-  
+
+  /*!
+    \brief Get the ID of the classification type.
+
+    \return The ID of the classification type.
+  */
   const std::string& id() const { return m_id; }
 
+  /// @}
+  
+  /// \cond SKIP_IN_MANUAL
   void info()
   {
     std::cerr << "Attribute " << m_id << ": ";
@@ -97,8 +143,15 @@ public:
       }
     std::cerr << std::endl;
   }
+  /// \endcond
 
-  // Convenience functions
+
+  /// \name Specific setups
+  /// @{
+  
+  /*!
+    \brief Convenience method that sets up a vegetation type.
+  */
   void make_vegetation ()
   {
     m_attribute_effects.clear();
@@ -107,6 +160,10 @@ public:
     m_attribute_effects["elevation"] = FAVORED_ATT;
     m_id = "vegetation";
   }
+
+  /*!
+    \brief Convenience method that sets up a ground type.
+  */
   void make_ground ()
   {
     m_attribute_effects.clear();
@@ -116,6 +173,10 @@ public:
     m_attribute_effects["elevation"] = PENALIZED_ATT;
     m_id = "ground";
   }
+
+  /*!
+    \brief Convenience method that sets up a road type.
+  */
   void make_road ()
   {
     m_attribute_effects.clear();
@@ -126,6 +187,10 @@ public:
     m_attribute_effects["color"] = FAVORED_ATT;
     m_id = "road";
   }
+
+  /*!
+    \brief Convenience method that sets up a roof type.
+  */
   void make_roof ()
   {
     m_attribute_effects.clear();
@@ -134,6 +199,10 @@ public:
     m_attribute_effects["elevation"] = FAVORED_ATT;
     m_id = "roof";
   }
+
+  /*!
+    \brief Convenience method that sets up a facade type.
+  */
   void make_facade ()
   {
     m_attribute_effects.clear();
@@ -142,6 +211,10 @@ public:
     m_attribute_effects["elevation"] = FAVORED_ATT;
     m_id = "facade";
   }
+
+  /*!
+    \brief Convenience method that sets up a building (roof + facade) type.
+  */
   void make_building ()
   {
     m_attribute_effects.clear();
@@ -149,6 +222,8 @@ public:
     m_attribute_effects["elevation"] = FAVORED_ATT;
     m_id = "building";
   }
+
+  /// @}
 };
 
 
