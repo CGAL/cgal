@@ -9,7 +9,21 @@
 
 namespace CGAL {
 
+  /*!
+    \ingroup PkgDataClassification
 
+    \brief Segmentation attribute based on local vertical dispersion of points.
+
+    Urban scenes can usually be described as a set of 2D regions with
+    different heights. While these heights are usually piecewise
+    constant or piecewise linear, on some specific parts of the scene
+    such as vegetation, they can become extremely unstable. This
+    attribute quantifies the vertical dispersion of the points on a local
+    Z-cylinder around the points.
+
+    \tparam Kernel The geometric kernel used.
+
+  */
 template <typename Kernel>
 class Segmentation_attribute_scatter : public Segmentation_attribute
 {
@@ -19,11 +33,20 @@ class Segmentation_attribute_scatter : public Segmentation_attribute
   std::vector<double> vegetation_attribute;
   
 public:
+  /// \cond SKIP_IN_MANUAL
   double weight;
   double mean;
   double max;
+  /// \endcond
 
-  Segmentation_attribute_scatter (PSC& M, double weight, bool on_groups = false) : weight (weight)
+  /*!
+    \brief Constructs the attribute.
+
+    \param M The point set classification object
+    \param weight The relative weight of this attribute
+    \param on_groups Select if the attribute is computed point-wise of group-wise
+  */
+  Segmentation_attribute_scatter (Point_set_classification<Kernel>& M, double weight, bool on_groups = false) : weight (weight)
   {
     if (on_groups)
       scatter_on_groups(M);
@@ -37,6 +60,7 @@ public:
     //    max *= 2;
   }
 
+  // \cond SKIP_IN_MANUAL
   typename Kernel::Point_2 to_2d (typename Kernel::Point_3 point,
                                   typename Kernel::Plane_3 plane) const
   {
@@ -229,7 +253,8 @@ public:
       vegetation_attribute.push_back((double)Vegetation(I,J));
     }
   }
-
+  /// \endcond
+  
   virtual double value (std::size_t pt_index)
   {
     return std::max (0., std::min (1., vegetation_attribute[pt_index] / weight));

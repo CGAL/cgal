@@ -7,6 +7,18 @@
 
 namespace CGAL {
 
+  /*!
+    \ingroup PkgDataClassification
+
+    \brief Segmentation attribute based on local horizontality.
+
+    The orientation of the best fitting plane of a local neighborhood
+    of the considered point can be useful to disciminate facades from
+    the ground.
+
+    \tparam Kernel The geometric kernel used.
+
+  */
 template <typename Kernel>
 class Segmentation_attribute_horizontality : public Segmentation_attribute
 {
@@ -15,11 +27,20 @@ class Segmentation_attribute_horizontality : public Segmentation_attribute
   std::vector<double> horizontality_attribute;
   
 public:
+  /// \cond SKIP_IN_MANUAL
   double weight;
   double mean;
   double max;
+  /// \endcond
   
-  Segmentation_attribute_horizontality (PSC& M, double weight,
+  /*!
+    \brief Constructs the attribute.
+
+    \param M The point set classification object
+    \param weight The relative weight of this attribute
+    \param on_groups Select if the attribute is computed point-wise of group-wise
+  */
+  Segmentation_attribute_horizontality (Point_set_classification<Kernel>& M, double weight,
                                         bool on_groups = false) : weight (weight)
   {
     typename Kernel::Vector_3 vertical (0., 0., 1.);
@@ -54,7 +75,6 @@ public:
     this->compute_mean_max (horizontality_attribute, mean, max);
     //    max *= 2;
   }
-
   virtual double value (std::size_t pt_index)
   {
     return std::max (0., std::min (1., horizontality_attribute[pt_index] / weight));

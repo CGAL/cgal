@@ -7,6 +7,18 @@
 
 namespace CGAL {
 
+  /*!
+    \ingroup PkgDataClassification
+
+    \brief Segmentation attribute based on local elevation.
+
+    The local position of the ground can be computed for urban
+    scenes. This attribute computes the distance to the local
+    estimation of the ground.
+
+    \tparam Kernel The geometric kernel used.
+
+  */
 template <typename Kernel>
 class Segmentation_attribute_elevation : public Segmentation_attribute
 {
@@ -16,11 +28,22 @@ class Segmentation_attribute_elevation : public Segmentation_attribute
   std::vector<double> elevation_attribute;
   
 public:
+  /// \cond SKIP_IN_MANUAL
   double weight;
   double mean;
   double max;
-  
-  Segmentation_attribute_elevation (PSC& M, double weight, bool on_groups = false) : weight (weight)
+  /// \endcond
+
+  /*!
+    \brief Constructs the attribute.
+
+    \param M The point set classification object
+    \param weight The relative weight of this attribute
+    \param on_groups Select if the attribute is computed point-wise of group-wise
+  */
+  Segmentation_attribute_elevation (Point_set_classification<Kernel>& M,
+                                    double weight,
+                                    bool on_groups = false) : weight (weight)
   {
     if (on_groups)
       {
@@ -378,7 +401,7 @@ public:
   }
   
   virtual std::string id() { return "elevation"; }
-
+  
 };
   
 

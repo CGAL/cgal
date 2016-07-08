@@ -7,6 +7,18 @@
 
 namespace CGAL {
 
+  /*!
+    \ingroup PkgDataClassification
+
+    \brief Segmentation attribute based on local non-planarity.
+
+    Characterizing a level of non-planarity can help identify noisy
+    parts of the input such as vegetation. This attribute computes the
+    distance of a point to a locally fitted plane.
+    
+    \tparam Kernel The geometric kernel used.
+
+  */
 template <typename Kernel>
 class Segmentation_attribute_nonplanarity : public Segmentation_attribute
 {
@@ -15,11 +27,21 @@ class Segmentation_attribute_nonplanarity : public Segmentation_attribute
   std::vector<double> distance_to_plane_attribute;
   
 public:
+  /// \cond SKIP_IN_MANUAL
   double weight;
   double mean;
   double max;
+  /// \endcond
   
-  Segmentation_attribute_nonplanarity (PSC& M, double weight, bool on_groups = false) : weight (weight)
+  
+  /*!
+    \brief Constructs the attribute.
+
+    \param M The point set classification object
+    \param weight The relative weight of this attribute
+    \param on_groups Select if the attribute is computed point-wise of group-wise
+  */
+  Segmentation_attribute_nonplanarity (Point_set_classification<Kernel>& M, double weight, bool on_groups = false) : weight (weight)
   {
     if (on_groups)
       {
