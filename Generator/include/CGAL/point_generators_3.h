@@ -370,6 +370,121 @@ public:
  }
 };
 
+namespace internal
+{
+
+template<class T>
+class Triangle_from_face_C3t3
+{
+  typedef typename T::Triangle                           Triangle;
+  typedef typename T::Point                              Point;
+  typedef std::pair<typename T::Cell_handle, int> Face;
+public:
+ typedef Triangle reference;
+
+  Triangle_from_face_C3t3()
+  {}
+  Triangle operator()(Face face)const
+  {
+   typename T::Cell_handle cell = face.first;
+   int index = face.second;
+   const Point& pa = cell->vertex((index+1)&3)->point();
+   const Point& pb = cell->vertex((index+2)&3)->point();
+   const Point& pc = cell->vertex((index+3)&3)->point();
+    return Triangle(pa, pb, pc);
+  }
+};
+
+template<class T>
+class Tetrahedron_from_cell_C3t3
+{
+  typedef typename T::Cell_handle                              Cell;
+  typedef typename T::Point                                    Point;
+  typedef typename Kernel_traits<Point>::Kernel::Tetrahedron_3 Tetrahedron;
+public:
+ typedef Tetrahedron reference;
+
+  Tetrahedron_from_cell_C3t3()
+  {}
+  Tetrahedron operator()(Cell cell)const
+  {
+   Point p0 = cell->vertex(0)->point();
+   Point p1 = cell->vertex(1)->point();
+   Point p2 = cell->vertex(2)->point();
+   Point p3 = cell->vertex(3)->point();
+    return Tetrahedron(p0,p1,p2,p3);
+  }
+};
+}//end namespace internal
+
+template <class C3t3>
+class Random_points_on_tetrahedral_mesh_3 : public Generic_random_point_generator<
+   std::pair<typename C3t3::Triangulation::Cell_handle, int>,
+   internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>,
+   Random_points_in_triangle_3<typename C3t3::Point> , typename C3t3::Point> {
+public:
+ typedef Generic_random_point_generator<
+ std::pair<typename C3t3::Triangulation::Cell_handle, int>,
+ internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>,
+ Random_points_in_triangle_3<typename C3t3::Point> , typename C3t3::Point> Base;
+ typedef std::pair<typename C3t3::Triangulation::Cell_handle, int>  Id;
+ typedef typename C3t3::Point                                       result_type;
+ typedef Random_points_on_tetrahedral_mesh_3<C3t3>                  This;
+
+
+ Random_points_on_tetrahedral_mesh_3(  C3t3& c3t3,Random& rnd = default_random)
+  : Base( make_range( c3t3.facets_in_complex_begin(),
+                      c3t3.facets_in_complex_end()),
+          internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>(),
+          typename Kernel_traits<typename C3t3::Point>::Kernel::Compute_area_3(),
+          rnd )
+ {
+ }
+ This& operator++() {
+  Base::generate_point();
+  return *this;
+ }
+ This operator++(int) {
+  This tmp = *this;
+  ++(*this);
+  return tmp;
+ }
+};
+
+template <class C3t3>
+class Random_points_in_tetrahedral_mesh_3 : public Generic_random_point_generator<
+   typename C3t3::Triangulation::Cell_handle,
+   internal::Tetrahedron_from_cell_C3t3<typename C3t3::Triangulation>,
+   Random_points_in_tetrahedron_3<typename C3t3::Point> , typename C3t3::Point> {
+public:
+ typedef Generic_random_point_generator<
+ typename C3t3::Triangulation::Cell_handle,
+ internal::Tetrahedron_from_cell_C3t3<typename C3t3::Triangulation>,
+ Random_points_in_tetrahedron_3<typename C3t3::Point> , typename C3t3::Point> Base;
+ typedef typename C3t3::Triangulation::Cell_handle                            Id;
+ typedef typename C3t3::Point                                                 result_type;
+ typedef Random_points_in_tetrahedral_mesh_3<C3t3>                            This;
+
+
+ Random_points_in_tetrahedral_mesh_3(  C3t3& c3t3,Random& rnd = default_random)
+  : Base( make_range( internal::Prevent_deref<typename C3t3::Cells_in_complex_iterator>(c3t3.cells_in_complex_begin()),
+                      internal::Prevent_deref<typename C3t3::Cells_in_complex_iterator>(c3t3.cells_in_complex_end())),
+          internal::Tetrahedron_from_cell_C3t3<typename C3t3::Triangulation>(),
+          typename Kernel_traits<typename C3t3::Point>::Kernel::Compute_volume_3(),
+          rnd )
+ {
+ }
+ This& operator++() {
+  Base::generate_point();
+  return *this;
+ }
+ This operator++(int) {
+  This tmp = *this;
+  ++(*this);
+  return tmp;
+ }
+};
+
 } //namespace CGAL
 
 #endif // CGAL_POINT_GENERATORS_3_H //
