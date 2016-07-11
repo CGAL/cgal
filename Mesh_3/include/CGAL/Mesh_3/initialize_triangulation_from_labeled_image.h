@@ -194,7 +194,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
         {
           if (cv->point().weight() == 0.)
             continue;
-          if (CGAL::compare_squared_distance(pi, cv->point(), cv->point().weight())
+          if (CGAL::compare_squared_distance(pi, cv->point().point(), cv->point().weight())
               != CGAL::LARGER)
           {
             pi_inside_protecting_sphere = true;
