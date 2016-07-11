@@ -52,7 +52,9 @@ struct Dump_c3t3 {
     bin_filename += ".binary.cgal";
     std::ofstream bin_file(bin_filename.c_str(),
                            std::ios_base::binary | std::ios_base::out);
-    bin_file << "binary CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
+    std::string signature = CGAL::Get_io_signature<C3t3>()();
+    CGAL_assertion(signature != std::string());
+    bin_file << "binary CGAL c3t3 " << signature << "\n";
     CGAL::set_binary_mode(bin_file);
     bin_file << c3t3;
   }
