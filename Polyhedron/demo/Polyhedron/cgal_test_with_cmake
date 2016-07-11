@@ -1,5 +1,8 @@
 #! /bin/sh
 
+LD_BIND_NOW=1
+export LD_BIND_NOW
+
 # This is a script for the CGAL test suite. Such a script must obey
 # the following rules:
 #
@@ -98,7 +101,6 @@ else
   echo "Run all tests."
 
   for target in  \
-      Polyhedron_3 \
       camera_positions_plugin \
       convex_hull_plugin \
       corefinement_plugin \
@@ -177,9 +179,11 @@ else
       p_tanglecube_function_plugin \
       shortest_path_plugin \
       advancing_front_plugin \
-      all
+      all \
+      Polyhedron_3
   do
-      if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 
+      if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then
+          [ "$target" = Polyhedron_3 ] && DO_RUN=1
           compile_and_run "$target"
           NEED_CLEAN=y
       fi

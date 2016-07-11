@@ -1,0 +1,1 @@
+-platform minimal 'qtscript:main_window.quit()'
