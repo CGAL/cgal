@@ -299,12 +299,12 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     }
 
     if (dialog.generate_subset())
-      scene->addGroup(subsets_item);
+      scene->addItem(subsets_item);
     else
       delete subsets_item;
     
     if (dialog.generate_alpha())
-      scene->addGroup(planes_item);
+      scene->addItem(planes_item);
     else
       delete planes_item;
 
