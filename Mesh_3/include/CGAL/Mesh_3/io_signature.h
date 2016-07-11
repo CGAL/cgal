@@ -177,11 +177,11 @@ struct Get_io_signature<Weighted_point<Point, FT> >
 };
 
 #ifdef CGAL_TRIANGULATION_3_H
-template <class Gt, class Vb, class Cb>
+template <class Gt, class Vb, class Cb, class C_tag>
 struct
-Get_io_signature<Triangulation_3<Gt, Triangulation_data_structure_3<Vb, Cb> > >
+Get_io_signature<Triangulation_3<Gt, Triangulation_data_structure_3<Vb, Cb, C_tag> > >
 {
-  typedef Triangulation_data_structure_3<Vb, Cb> Tds;
+  typedef Triangulation_data_structure_3<Vb, Cb, C_tag> Tds;
 
   std::string operator()() {
     return std::string("Triangulation_3(") +
