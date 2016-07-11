@@ -34,7 +34,7 @@ template <typename Id, class ObjectFromIdMap, class GeneratorOnObject, class P>
 class Generic_random_point_generator : public Random_generator_base<P>
 {
   typedef Generic_random_point_generator<Id, ObjectFromIdMap, GeneratorOnObject, P> This;
-  typedef typename boost::property_traits<ObjectFromIdMap>::reference Geometric_object_ref;
+  typedef typename ObjectFromIdMap::reference Geometric_object_ref;
   typedef typename cpp11::result_of<GeneratorOnObject(Id)>::type result_type;
 
   std::vector<Id> ids;
@@ -65,7 +65,7 @@ public:
     BOOST_FOREACH(Id id, input)
     {
       //create a geometric object
-      Geometric_object_ref object = get(object_from_id_map, id);
+      Geometric_object_ref object = object_from_id_map(id);
       ids.push_back(id);
       //compute the weight of a face
       total_weight += to_double( compute_weight(object) );
@@ -101,7 +101,7 @@ void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>:
   );
 
   // generate the points
-  GeneratorOnObject pointCreator(get(object_from_id_map,ids[target]));
+  GeneratorOnObject pointCreator(object_from_id_map(ids[target]));
   this->d_item = *pointCreator;
 }
 

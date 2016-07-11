@@ -23,12 +23,16 @@
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Pedro Machado Manhaes de Castro  <pmmc@cin.ufpe.br>
 //                 Alexandru Tifrea
+//                 Maxime Gimeno
+
 
 #ifndef CGAL_POINT_GENERATORS_2_H
 #define CGAL_POINT_GENERATORS_2_H 1
 #include <CGAL/generators.h>
 #include <iterator>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/internal/Generic_random_point_generator.h>
+#include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
 
 namespace CGAL {
 
@@ -541,6 +545,55 @@ void Random_points_in_triangle_2<P, Creator>::generate_point() {
 	this->d_item = creator(T(to_double(_p.x())*b1+to_double(_q.x())*b2+to_double(_r.x())*b3),
 							T(to_double(_p.y())*b1+to_double(_q.y())*b2+to_double(_r.y())*b3));
 }
+
+namespace internal{
+//Functor returning Triangle_2 from Triangulation_2 Faces
+template <class T>
+class Triangle_from_face_2
+{
+  typedef typename T::Triangle Triangle;
+public:
+ typedef Triangle reference;
+  Triangle_from_face_2(){}
+
+  Triangle operator()(typename T::Face_handle face)const {
+    return Triangle(face->vertex(0)->point(), face->vertex(1)->point(), face->vertex(2)->point());
+  }
+};
+}//end namespace internal
+template <class P, class T>
+class Random_points_on_triangle_mesh_2 : public Generic_random_point_generator<
+   typename T::Face_handle ,
+   internal::Triangle_from_face_2<T>,
+   Random_points_in_triangle_2<P> , P> {
+public:
+ typedef Generic_random_point_generator<
+ typename T::Face_handle,
+ internal::Triangle_from_face_2<T>,
+ Random_points_in_triangle_2<P> , P>                                 Base;
+ typedef typename T::Face_handle                                     Id;
+ typedef P result_type;
+ typedef Random_points_on_triangle_mesh_2<P, T>                      This;
+
+
+ Random_points_on_triangle_mesh_2(  T& triangulation,Random& rnd = default_random)
+  : Base(  make_range( internal::Prevent_deref<typename T::Finite_faces_iterator>(triangulation.finite_faces_begin()),
+                       internal::Prevent_deref<typename T::Finite_faces_iterator>(triangulation.finite_faces_end())),
+          internal::Triangle_from_face_2<T>(),
+          typename Kernel_traits<P>::Kernel::Compute_area_2(),
+          rnd )
+ {
+ }
+ This& operator++() {
+  Base::generate_point();
+  return *this;
+ }
+ This operator++(int) {
+  This tmp = *this;
+  ++(*this);
+  return tmp;
+ }
+};
 
 } //namespace CGAL
 #endif // CGAL_POINT_GENERATORS_2_H //

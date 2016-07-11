@@ -23,6 +23,7 @@
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Pedro Machado Manhaes de Castro  <pmmc@cin.ufpe.br>
 //                 Alexandru Tifrea
+//                 Maxime Gimeno
 
 #ifndef CGAL_POINT_GENERATORS_3_H
 #define CGAL_POINT_GENERATORS_3_H 1
@@ -303,19 +304,43 @@ void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
 	this->d_item = creator(ret[0],ret[1],ret[2]);
 }
 
+namespace internal
+{
+//Functor that wrapps a property map to get Triangle_3 from a vertex_point_map
+template<class Mesh, typename Id>
+class Triangle_from_face_3
+{
+ typedef typename boost::property_map<Mesh,
+     CGAL::vertex_point_t>::type                               Vertex_point_map;
+ typedef typename CGAL::Triangle_from_face_descriptor_map<
+ Mesh,Vertex_point_map>                                        PMAP;
+ typedef typename boost::property_traits<PMAP>::reference      Triangle;
 
+private: PMAP map;
+public:
+ typedef Triangle                                              reference;
 
-
+ Triangle_from_face_3(PMAP map)
+  :map(map)
+ {}
+ Triangle operator()(Id id)const
+ {
+  return get(map, id);
+ }
+};
+}//end namespace internal
 
 template <class P, class Mesh>
 class Random_points_on_triangle_mesh_3 : public Generic_random_point_generator<
    typename boost::graph_traits <Mesh>::face_descriptor ,
-   CGAL::Triangle_from_face_descriptor_map<Mesh,typename boost::property_map<Mesh, CGAL::vertex_point_t>::type >,
+   internal::Triangle_from_face_3<Mesh,
+        typename boost::graph_traits<Mesh>::face_descriptor>,
    Random_points_in_triangle_3<P> , P> {
 public:
  typedef Generic_random_point_generator<
  typename boost::graph_traits <Mesh>::face_descriptor ,
- CGAL::Triangle_from_face_descriptor_map<Mesh,typename boost::property_map<Mesh, CGAL::vertex_point_t>::type >,
+ internal::Triangle_from_face_3<Mesh,
+      typename boost::graph_traits<Mesh>::face_descriptor>,
  Random_points_in_triangle_3<P> , P>                                 Base;
  typedef typename boost::property_map<Mesh,
      CGAL::vertex_point_t>::type                                     Vertex_point_map;
@@ -329,7 +354,7 @@ public:
 
  Random_points_on_triangle_mesh_3(  Mesh& mesh,Random& rnd = default_random)
   : Base( faces(mesh),
-          Object_from_id_map(&mesh),
+          internal::Triangle_from_face_3<Mesh, Id>(Object_from_id_map(&mesh)),
           typename Kernel_traits<P>::Kernel::Compute_area_3(),
           rnd )
  {
@@ -344,7 +369,6 @@ public:
   return tmp;
  }
 };
-
 
 } //namespace CGAL
 
