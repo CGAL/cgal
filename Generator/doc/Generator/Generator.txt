@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_Geometric_Object_Generators
 \anchor chapterGenerators
 \cgalAutoToc
-\authors Pedro M. M. de Castro, Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, Sven Sch&ouml;nherr, and Alexandru Tifrea
+\authors Pedro M. M. de Castro, Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, Sven Sch&ouml;nherr, Alexandru Tifrea, and Maxime Gimeno
 
 \section GeneratorIntroduction Introduction
 
