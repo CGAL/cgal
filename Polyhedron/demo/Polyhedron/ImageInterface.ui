@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>303</width>
+    <width>305</width>
     <height>234</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Image settings</string>
+   <string>Image Settings</string>
   </property>
   <layout class="QVBoxLayout">
    <property name="spacing">
