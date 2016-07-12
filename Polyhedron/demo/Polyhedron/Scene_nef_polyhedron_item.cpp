@@ -10,6 +10,7 @@
 #include <CGAL/Inverse_index.h>
 
 #include <QObject>
+#include <QApplication>
 
 #include <CGAL/minkowski_sum_3.h>
 #include <CGAL/convex_decomposition_3.h>
@@ -223,6 +224,7 @@ void Scene_nef_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inter
 }
 void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     int count = 0;
     positions_facets.resize(0);
     positions_points.resize(0);
@@ -396,6 +398,7 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
         }
 
     } //end points
+    QApplication::restoreOverrideCursor();
 }
 Scene_nef_polyhedron_item* 
 Scene_nef_polyhedron_item::clone() const {

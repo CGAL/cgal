@@ -3,6 +3,7 @@
 #include "Volume_plane_intersection.h"
 #include "Volume_plane_interface.h"
 
+#include <QApplication>
 #include <CGAL/gl.h>
 struct Volume_plane_intersection_priv
 {
@@ -44,6 +45,7 @@ Volume_plane_intersection::~Volume_plane_intersection()
 
 void Volume_plane_intersection_priv::computeElements()
 {
+   QApplication::setOverrideCursor(Qt::WaitCursor);
    a_vertex.resize(0);
    b_vertex.resize(0);
    c_vertex.resize(0);
@@ -59,6 +61,7 @@ void Volume_plane_intersection_priv::computeElements()
 
    item->_bbox =  Scene_item::Bbox( 0, 0, 0,
                   x, y, z);
+   QApplication::restoreOverrideCursor();
 }
 
 void Volume_plane_intersection_priv::initializeBuffers(Viewer_interface* viewer)const

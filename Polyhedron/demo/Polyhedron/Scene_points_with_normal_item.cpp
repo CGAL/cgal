@@ -17,6 +17,7 @@
 #include <CGAL/Search_traits_3.h>
 
 #include <QObject>
+#include <QApplication>
 #include <QMenu>
 #include <QGLViewer/manipulatedCameraFrame.h>
 
@@ -208,6 +209,7 @@ void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_i
 
 void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_points.resize(0);
     positions_lines.resize(0);
     positions_selected_points.resize(0);
@@ -274,6 +276,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 	    positions_lines.push_back(q.z());
 	  }
     }
+    QApplication::restoreOverrideCursor();
 }
 
 // Duplicates scene item

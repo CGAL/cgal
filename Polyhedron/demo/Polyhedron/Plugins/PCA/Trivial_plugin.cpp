@@ -7,6 +7,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <QAction>
 #include <QMainWindow>
+#include <QApplication>
 
 class Q_DECL_EXPORT Scene_bbox_item : public CGAL::Three::Scene_item
 {
@@ -100,6 +101,7 @@ private:
 
     void computeElements() const
     {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
         positions_lines.clear();
         const Bbox& bb = scene->bbox();
         positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
@@ -130,6 +132,7 @@ private:
         positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
         positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
         positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        QApplication::restoreOverrideCursor();
     }
 
     const CGAL::Three::Scene_interface* scene;

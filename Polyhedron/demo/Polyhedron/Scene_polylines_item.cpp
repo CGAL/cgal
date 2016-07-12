@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QInputDialog>
+#include <QApplication>
 
 struct Scene_polylines_item_private {
     typedef Scene_polylines_item::K K;
@@ -69,6 +70,7 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
 void
 Scene_polylines_item_private::computeElements() const
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     //Fills the VBO with the lines
     for(std::list<std::vector<Point_3> >::const_iterator it = item->polylines.begin();
@@ -92,11 +94,13 @@ Scene_polylines_item_private::computeElements() const
         }
 
     }
+    QApplication::restoreOverrideCursor();
 }
 
 void
 Scene_polylines_item_private::computeSpheres()
 {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       // FIRST, count the number of incident cycles and polylines
       // for all extremities.
       typedef std::map<Point_3, int> Point_to_int_map;
@@ -189,6 +193,7 @@ Scene_polylines_item_private::computeSpheres()
           K::Sphere_3 *sphere = new K::Sphere_3(center, spheres_drawn_radius);
           spheres->add_sphere(sphere, c);
       }
+      QApplication::restoreOverrideCursor();
 }
 
 Scene_polylines_item::Scene_polylines_item() 

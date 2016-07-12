@@ -395,6 +395,8 @@ public Q_SLOTS:
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
               .face_patch_map(Patch_id_pmap<face_descriptor>()));
         }
+        selection_item->polyhedron_item()->setColor(
+              selection_item->polyhedron_item()->color());
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
         selection_item->changed_with_poly_item();

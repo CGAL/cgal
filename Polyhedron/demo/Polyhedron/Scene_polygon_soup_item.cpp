@@ -8,6 +8,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include <QObject>
+#include <QApplication>
 #include <QtDebug>
 
 #include <set>
@@ -376,6 +377,8 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
 }
 void
 Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     //get the vertices and normals
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.resize(0);
@@ -462,7 +465,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
     //Non manifold edges
     BOOST_FOREACH(const Polygon_soup::Edge& edge,
                     soup->non_manifold_edges)
-      {
+    {
 
         const Point_3& a = soup->points[edge[0]];
         const Point_3& b = soup->points[edge[1]];
@@ -475,8 +478,8 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
         positions_nm_lines.push_back(b.y());
         positions_nm_lines.push_back(b.z());
         positions_nm_lines.push_back(1.0);
-      }
-
+    }
+    QApplication::restoreOverrideCursor();
 }
 
 

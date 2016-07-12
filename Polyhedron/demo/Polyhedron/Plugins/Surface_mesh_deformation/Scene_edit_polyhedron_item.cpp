@@ -391,6 +391,7 @@ void Scene_edit_polyhedron_item_priv::reset_drawing_data()
 
 void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     ROI_points.resize(0);
     control_points.resize(0);
     control_color.resize(0);
@@ -473,7 +474,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
 
     if(ui_widget->ActivateFixedPlaneCheckBox->isChecked())
       item->draw_frame_plane(viewer);
-
+    QApplication::restoreOverrideCursor();
 }
 
 /////////////////////////////////////////////////////////

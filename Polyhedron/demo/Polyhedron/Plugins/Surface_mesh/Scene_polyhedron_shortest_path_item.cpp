@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <Qt>
+#include <QApplication>
 #include <QKeySequence>
 #include <fstream>
 
@@ -118,7 +119,7 @@ Scene_polyhedron_shortest_path_item::~Scene_polyhedron_shortest_path_item()
 
 void Scene_polyhedron_shortest_path_item_priv::compute_elements() const
 {
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     vertices.resize(0);
 
     for(Scene_polyhedron_shortest_path_item::Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
@@ -128,7 +129,7 @@ void Scene_polyhedron_shortest_path_item_priv::compute_elements() const
       vertices.push_back(p.y());
       vertices.push_back(p.z());
     }
-
+    QApplication::restoreOverrideCursor();
 }
 
 void Scene_polyhedron_shortest_path_item_priv::initialize_buffers(CGAL::Three::Viewer_interface* viewer)const

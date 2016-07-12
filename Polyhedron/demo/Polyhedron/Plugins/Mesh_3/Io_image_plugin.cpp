@@ -860,7 +860,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
   connect(ui.imageType, SIGNAL(currentIndexChanged(int)),
           this, SLOT(on_imageType_changed(int)));
-
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   
   // Add precision values to the dialog
   for ( int i=1 ; i<9 ; ++i )

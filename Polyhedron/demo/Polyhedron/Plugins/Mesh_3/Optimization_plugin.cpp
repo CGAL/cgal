@@ -226,8 +226,9 @@ Mesh_3_optimization_plugin::odt()
   QDialog dialog(mw);
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Odt-smoothing parameters"));
-  
+
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
@@ -293,6 +294,7 @@ Mesh_3_optimization_plugin::lloyd()
   QDialog dialog(mw);
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Lloyd-smoothing parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -359,6 +361,7 @@ Mesh_3_optimization_plugin::perturb()
   QDialog dialog(mw);
   Ui::LocalOptim_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Sliver perturbation parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -423,6 +426,7 @@ Mesh_3_optimization_plugin::exude()
   QDialog dialog(mw);
   Ui::LocalOptim_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Sliver exudation parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),

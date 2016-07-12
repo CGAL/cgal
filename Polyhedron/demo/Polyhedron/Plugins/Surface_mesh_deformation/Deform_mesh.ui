@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>380</height>
+    <width>547</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,7 +59,7 @@
           <item>
            <layout class="QVBoxLayout" name="RingLayout">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_5">
                 <item>
@@ -138,7 +138,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1,0">
             <item>
              <widget class="QLabel" name="label_3">
               <property name="text">
@@ -199,7 +199,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
               <item>
                <widget class="QCheckBox" name="remeshingEdgeLengthInput_checkBox">
                 <property name="toolTip">
@@ -219,7 +219,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
               <item>
                <widget class="QLabel" name="label_4">
                 <property name="layoutDirection">
@@ -418,6 +418,19 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>

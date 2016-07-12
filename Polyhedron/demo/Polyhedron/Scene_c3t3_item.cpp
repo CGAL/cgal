@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QColor>
 #include <QPixmap>
+#include <QApplication>
 #include <QPainter>
 #include <QtCore/qglobal.h>
 #include <QGuiApplication>
@@ -1331,6 +1332,7 @@ void Scene_c3t3_item_priv::computeSpheres()
 
 void Scene_c3t3_item_priv::computeElements()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   positions_poly.clear();
   normals.clear();
   f_colors.clear();
@@ -1428,6 +1430,7 @@ void Scene_c3t3_item_priv::computeElements()
     }
 
   }
+  QApplication::restoreOverrideCursor();
 }
 
 bool Scene_c3t3_item::load_binary(std::istream& is)

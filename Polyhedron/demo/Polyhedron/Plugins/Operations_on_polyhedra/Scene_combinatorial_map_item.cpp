@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QtDebug>
+#include <QApplication>
 #include <QDebug>
 #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
@@ -276,6 +277,7 @@ bool Scene_combinatorial_map_item::keyPressEvent(QKeyEvent* e){
 }
 
 void Scene_combinatorial_map_item_priv::compute_elements(void) const{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     positions_facets.resize(0);
     normals.resize(0);
@@ -385,7 +387,7 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
         }
 
     }
-
+    QApplication::restoreOverrideCursor();
 }
 
 
