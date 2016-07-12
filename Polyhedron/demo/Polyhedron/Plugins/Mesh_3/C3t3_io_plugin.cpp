@@ -291,69 +291,6 @@ typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
 
 typedef Fake_mesh_domain::Surface_patch_index Fake_patch_id;
 
-#include <CGAL/Mesh_3/io_signature.h>
-
-#ifdef CGAL_MESH_3_IO_SIGNATURE_H
-namespace CGAL {
-template <>
-struct Get_io_signature<Fake_patch_id> {
-  std::string operator()() const
-  {
-    return std::string("std::pair<i,i>");
-  }
-}; // end Get_io_signature<Fake_patch_id>
-} // end namespace CGAL
-#endif
-
-namespace std {
-  inline std::ostream& operator<<(std::ostream& out, const Fake_patch_id& id) {
-    return out << id.first << " " << id.second;
-  }
-  inline std::istream& operator>>(std::istream& in, Fake_patch_id& id) {
-    return in >> id.first >> id.second;
-  }
-} // end namespace std
-
-namespace CGAL {
-template <>
-class Output_rep<Fake_patch_id> {
-  typedef Fake_patch_id T;
-  const T& t;
-public:
-  //! initialize with a const reference to \a t.
-  Output_rep( const T& tt) : t(tt) {}
-  //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& out) const {
-    if(is_ascii(out)) {
-      out << t.first << " " << t.second;
-    } else {
-      CGAL::write(out, t.first);
-      CGAL::write(out, t.second);
-    }
-    return out;
-  }
-};
-
-template <>
-class Input_rep<Fake_patch_id> {
-  typedef Fake_patch_id T;
-  T& t;
-public:
-  //! initialize with a const reference to \a t.
-  Input_rep( T& tt) : t(tt) {}
-  //! perform the output, calls \c operator\<\< by default.
-  std::istream& operator()( std::istream& in) const {
-    if(is_ascii(in)) {
-      in >> t.first >> t.second;
-    } else {
-      CGAL::read(in, t.first);
-      CGAL::read(in, t.second);
-    }
-    return in;
-  }
-};
-} // end namespace CGAL
-
 struct Update_vertex {
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
   template <typename V1, typename V2>
