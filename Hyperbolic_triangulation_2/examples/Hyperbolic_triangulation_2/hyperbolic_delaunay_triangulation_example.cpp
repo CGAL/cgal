@@ -29,7 +29,7 @@ int main()
   CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc(r);
   
   int n = 10000;
-  std::vector<Point_2> pts;
+  std::vector<Point_2> pts(n);
   std::vector<Point_2>::iterator ip;
   
   // Generating n random points
@@ -37,7 +37,7 @@ int main()
     pts.at(i) = *in_disc;
     in_disc++;
   }
-  
+
   timer.start();
   
   Dt dt = Dt(Gt(r));
