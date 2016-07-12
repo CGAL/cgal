@@ -7,7 +7,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/find_single_mold_translational_casting_2.h>
+#include <CGAL/single_mold_translational_casting_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;

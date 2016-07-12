@@ -15,13 +15,16 @@
 // Author(s): Shahar    <shasha94@gmail.com>
 //            Efi Fogel <efif@gmail.com>
 
-#ifndef CGAL_FIND_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
-#define CGAL_FIND_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+#ifndef CGAL_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+#define CGAL_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/enum.h>
 
 #include <iostream>
-#include<list>
+#include <list>
+
+namespace CGAL {
 
 /* Legend:
  * point = Represented as Direction_2. It is the intersection between the
@@ -422,8 +425,8 @@ get_segment_outer_circle(const typename Kernel::Segment_2 seg,
  */
 template <typename Kernel, typename OutputIterator>
 OutputIterator
-find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
-                                         OutputIterator oi)
+single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
+                                    OutputIterator oi)
 {
   /* Legend
    * point = Represented as  Direction_2. It is the intersection between the
@@ -448,4 +451,7 @@ find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
   circle_arrangment.get_all_1_edges(oi);
   return oi;
 }
+
+}
+
 #endif

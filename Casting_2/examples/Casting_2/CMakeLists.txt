@@ -16,7 +16,7 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-  create_single_source_cgal_program( "find_single_mold_translational_casting_2.cpp" )
+  create_single_source_cgal_program( "single_mold_translational_casting.cpp" )
   if (CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++11)
   endif()
