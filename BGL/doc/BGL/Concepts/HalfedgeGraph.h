@@ -16,7 +16,7 @@ the same vertex. We refer to \ref PkgBGLIterators for a description of
 iterators and circulators for these halfedge cycles.
 
 
-\cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/Graph.html">`Graph`</A>
+\cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/IncidenceGraph.html">`IncidenceGraph`</A>
 \cgalRefines <A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">`PropertyGraph`</A>
 
 A model of `HalfedgeGraph` must have the interior property `vertex_point` attached to its vertices.
@@ -55,5 +55,11 @@ Expression                              | Returns                               
 `next(h, g)`                            | `halfedge_descriptor`                                                        | The next halfedge around its face.
 `prev(h, g)`                            | `halfedge_descriptor`                                                        | The previous halfedge around its face.
 `boost::graph_traits<G>::%null_halfedge()` | `halfedge_descriptor`                                                     | Returns a special halfedge that is not equal to any other halfedge.
+
+\cgalHeading{Invariants}
+
+`halfedge(edge(h,g))==h`
+
+
 */
 class HalfedgeGraph {};
