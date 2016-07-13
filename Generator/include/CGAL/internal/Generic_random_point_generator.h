@@ -35,7 +35,6 @@ class Generic_random_point_generator : public Random_generator_base<P>
 {
   typedef Generic_random_point_generator<Id, ObjectFromIdMap, GeneratorOnObject, P> This;
   typedef typename cpp11::result_of<ObjectFromIdMap(Id)>::type                      Geometric_object;
-  typedef Geometric_object                                                          result_type;
 
   std::vector<Id> ids;
   std::vector<double> weights;
