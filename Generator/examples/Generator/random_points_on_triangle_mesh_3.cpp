@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 using namespace CGAL;
-
 typedef Simple_cartesian<double>                           K;
 typedef K::Point_3                                         Point;
 typedef K::FT                                              FT;
@@ -18,7 +17,7 @@ int main()
   std::vector<Point> points;
   //Construct a Surface_mesh from an OFF file
   ::Surface_mesh sm;
-  std::ifstream in("./data/star.off");
+  std::ifstream in("../data/star.off");
   in >> sm;
   CGAL_assertion(in && !sm.is_empty());
 
