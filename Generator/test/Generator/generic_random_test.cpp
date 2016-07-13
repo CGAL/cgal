@@ -75,7 +75,7 @@ CDT cdt;
 cdt.insert_constraint(polygon1.vertices_begin(), polygon1.vertices_end(), true);
 cdt.insert_constraint(polygon2.vertices_begin(), polygon2.vertices_end(), true);
 
-Random_points_on_triangle_mesh_2<Point, CDT>
+Random_points_in_triangle_mesh_2<Point, CDT>
     g(cdt);
 CGAL::cpp11::copy_n( g, 300, std::back_inserter(points));
 for (std::size_t i = 0; i<points.size(); ++i)

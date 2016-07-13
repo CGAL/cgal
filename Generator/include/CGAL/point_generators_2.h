@@ -562,7 +562,7 @@ public:
 };
 }//end namespace internal
 template <class P, class T>
-class Random_points_on_triangle_mesh_2 : public Generic_random_point_generator<
+class Random_points_in_triangle_mesh_2 : public Generic_random_point_generator<
    typename T::Face_handle ,
    internal::Triangle_from_face_2<T>,
    Random_points_in_triangle_2<P> , P> {
@@ -573,10 +573,10 @@ public:
  Random_points_in_triangle_2<P> , P>                                 Base;
  typedef typename T::Face_handle                                     Id;
  typedef P result_type;
- typedef Random_points_on_triangle_mesh_2<P, T>                      This;
+ typedef Random_points_in_triangle_mesh_2<P, T>                      This;
 
 
- Random_points_on_triangle_mesh_2(  T& triangulation,Random& rnd = default_random)
+ Random_points_in_triangle_mesh_2(  T& triangulation,Random& rnd = default_random)
   : Base(  make_range( internal::Prevent_deref<typename T::Finite_faces_iterator>(triangulation.finite_faces_begin()),
                        internal::Prevent_deref<typename T::Finite_faces_iterator>(triangulation.finite_faces_end())),
           internal::Triangle_from_face_2<T>(),

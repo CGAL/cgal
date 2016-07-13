@@ -39,7 +39,7 @@ int main()
   cdt.insert_constraint(polygon2.vertices_begin(), polygon2.vertices_end(), true);
 
   // Create the generator, input is the Triangulation_2 cdt
-  Random_points_on_triangle_mesh_2<Point, CDT>
+  Random_points_in_triangle_mesh_2<Point, CDT>
     g(cdt);
 
   // Get 100 random points in cdt

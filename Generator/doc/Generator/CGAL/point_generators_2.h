@@ -352,8 +352,8 @@ typedef const Point_2& reference;
 
  /*!
 
- The class `Random_points_on_triangle_mesh_2` is an input iterator creating points uniformly
- distributed inside a Triangulation_2. The Triangulation_2 must have a face model refining `DelaunayMeshFaceBase_2`.
+ The class `Random_points_in_triangle_mesh_2` is an input iterator creating points uniformly
+ distributed inside inside a 2D domain represented by a 2D triangulation. Triangulation must be a \cgal triangulation with a face model of `DelaunayMeshFaceBase_2`.
  The sampled model is the union of the faces for which `DelaunayMeshFaceBase_2::is_in_domain()` returns `true`.
 
 
@@ -370,13 +370,13 @@ typedef const Point_2& reference;
  \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
  \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
 \sa`CGAL::Random_points_on_triangle_mesh_3<Point_3, Mesh>`
-\sa`CGAL::Random_points_on_tetrahedral_mesh_3<C3t3>`
+\sa`CGAL::Random_points_on_tetrahedral_mesh_boundary<C3t3>`
 \sa`CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
  \sa `std::random_shuffle`
 
  */
  template< typename Point_2, typename Triangulation >
- class Random_points_on_triangle_mesh_2 {
+ class Random_points_in_triangle_mesh_2 {
  public:
 
  /// \name Types
@@ -412,12 +412,12 @@ Creates  an input iterator `g` generating points of type `Point_2` uniformly
 distributed between the triangles of the triangulation. Each triangle has a propability to be chosen to hold the point depending on its area.
 
 */
-Random_points_on_triangle_mesh_2(Triangulation triangulation, Random& rnd =
+Random_points_in_triangle_mesh_2(Triangulation triangulation, Random& rnd =
 default_random);
 
 /// @}
 
-}; /* end Random_points_on_triangle_mesh_2 */
+}; /* end Random_points_in_triangle_mesh_2 */
 
 /*!
 

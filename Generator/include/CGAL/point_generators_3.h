@@ -304,43 +304,18 @@ void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
 	this->d_item = creator(ret[0],ret[1],ret[2]);
 }
 
-namespace internal
-{
-//Functor that wrapps a property map to get Triangle_3 from a vertex_point_map
-template<class Mesh, typename Id>
-class Triangle_from_face_3
-{
- typedef typename boost::property_map<Mesh,
-     CGAL::vertex_point_t>::type                               Vertex_point_map;
- typedef typename CGAL::Triangle_from_face_descriptor_map<
- Mesh,Vertex_point_map>                                        PMAP;
- typedef typename boost::property_traits<PMAP>::reference      Triangle;
-
-private: PMAP map;
-public:
- typedef Triangle                                              result_type;
-
- Triangle_from_face_3(PMAP map)
-  :map(map)
- {}
- Triangle operator()(Id id)const
- {
-  return get(map, id);
- }
-};
-}//end namespace internal
 
 template <class P, class Mesh>
 class Random_points_on_triangle_mesh_3 : public Generic_random_point_generator<
    typename boost::graph_traits <Mesh>::face_descriptor ,
-   internal::Triangle_from_face_3<Mesh,
-        typename boost::graph_traits<Mesh>::face_descriptor>,
+   CGAL::Property_map_to_unary_function<boost::property_map<Mesh,
+  CGAL::vertex_point_t> >,
    Random_points_in_triangle_3<P> , P> {
 public:
  typedef Generic_random_point_generator<
  typename boost::graph_traits <Mesh>::face_descriptor ,
- internal::Triangle_from_face_3<Mesh,
-      typename boost::graph_traits<Mesh>::face_descriptor>,
+ CGAL::Property_map_to_unary_function<boost::property_map<Mesh,
+CGAL::vertex_point_t> >,
  Random_points_in_triangle_3<P> , P>                                 Base;
  typedef typename boost::property_map<Mesh,
      CGAL::vertex_point_t>::type                                     Vertex_point_map;
@@ -354,7 +329,8 @@ public:
 
  Random_points_on_triangle_mesh_3(  Mesh& mesh,Random& rnd = default_random)
   : Base( faces(mesh),
-          internal::Triangle_from_face_3<Mesh, Id>(Object_from_id_map(&mesh)),
+          CGAL::Property_map_to_unary_function<boost::property_map<Mesh,
+            CGAL::vertex_point_t> >(),
           typename Kernel_traits<P>::Kernel::Compute_area_3(),
           rnd )
  {
@@ -418,7 +394,7 @@ public:
 }//end namespace internal
 
 template <class C3t3>
-class Random_points_on_tetrahedral_mesh_3 : public Generic_random_point_generator<
+class Random_points_on_tetrahedral_mesh_boundary : public Generic_random_point_generator<
    std::pair<typename C3t3::Triangulation::Cell_handle, int>,
    internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>,
    Random_points_in_triangle_3<typename C3t3::Point> , typename C3t3::Point> {
@@ -429,10 +405,10 @@ public:
  Random_points_in_triangle_3<typename C3t3::Point> , typename C3t3::Point> Base;
  typedef std::pair<typename C3t3::Triangulation::Cell_handle, int>  Id;
  typedef typename C3t3::Point                                       result_type;
- typedef Random_points_on_tetrahedral_mesh_3<C3t3>                  This;
+ typedef Random_points_on_tetrahedral_mesh_boundary<C3t3>           This;
 
 
- Random_points_on_tetrahedral_mesh_3(  C3t3& c3t3,Random& rnd = default_random)
+ Random_points_on_tetrahedral_mesh_boundary(  C3t3& c3t3,Random& rnd = default_random)
   : Base( make_range( c3t3.facets_in_complex_begin(),
                       c3t3.facets_in_complex_end()),
           internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>(),
