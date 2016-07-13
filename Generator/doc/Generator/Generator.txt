@@ -116,7 +116,12 @@ Output of example program for point generators working
 \section GeneratorExample_mesh Example Generating Random Point Sets On Mesh
 The following example demonstrates the use of the random point generator
 on a triangle mesh. We want to generate 100 points uniformly chosen on a Surface_mesh.
+See \cgalFigureRef{figureMeshPointGenerator}
 \cgalExample{Generator/random_points_on_triangle_mesh_3.cpp}
+
+\cgalFigureBegin{figureMeshPointGenerator,generator_mesh_3.png}
+Output of example program for point generators on mesh3 working
+\cgalFigureEnd
 
 \section secsegment_example Examples Generating Segments
 
