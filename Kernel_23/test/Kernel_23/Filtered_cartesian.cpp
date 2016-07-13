@@ -31,6 +31,7 @@
 
 #include "CGAL/Precise_numbers.h"
 
+#define TEST_FILENAME "Test-Filtered_cartesian-IO.out"
 #include "CGAL/_test_io.h"
 
 #include "CGAL/_test_2.h"
