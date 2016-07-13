@@ -22,9 +22,11 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
 
+  if (CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-std=c++11)
+  endif()
 else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+
+endif()
