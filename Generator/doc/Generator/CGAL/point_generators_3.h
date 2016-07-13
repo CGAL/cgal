@@ -347,9 +347,9 @@ distributed inside the triangles of a triangulated `FaceListGraph`.
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
-\sa`CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
-\sa`CGAL::Random_points_on_tetrahedral_mesh_boundary<C3t3>`
-\sa`CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
+\sa `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
+\sa `CGAL::Random_points_on_tetrahedral_mesh_boundary<C3t3>`
+\sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
 \sa `std::random_shuffle`
 
 */
@@ -416,9 +416,9 @@ distributed inside the triangles of a `Mesh_complex_3_in_triangulation_3`.
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
-\sa`CGAL::Random_points_on_triangle_mesh_3<Point_3, Mesh>`
-\sa`CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
-\sa`CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
+\sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, Mesh>`
+\sa `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
+\sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
 \sa `std::random_shuffle`
 
 */
