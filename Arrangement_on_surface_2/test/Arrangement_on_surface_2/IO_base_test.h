@@ -1671,7 +1671,7 @@ bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p)
 {
   Basic_number_type x, y, z;
   is >> x >> y >> z;
-  p = Point_2(x, y, z);
+  p = m_geom_traits.construct_point_2_object()(x, y, z);
   return true;
 }
 
@@ -1691,10 +1691,10 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   if (flag == 1) {
     X_monotone_curve_2::Direction_3 normal;
     is >> normal;
-    xcv = X_monotone_curve_2(p1, p2, normal);
+    xcv = m_geom_traits.construct_x_monotone_curve_2_object()(p1, p2, normal);
   }
   else
-    xcv = X_monotone_curve_2(p1, p2);
+    xcv = m_geom_traits.construct_x_monotone_curve_2_object()(p1, p2);
   return true;
 }
 
@@ -1712,10 +1712,10 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   if (flag == 1) {
     X_monotone_curve_2::Direction_3 normal;
     is >> normal;
-    cv = Curve_2(p1, p2, normal);
+    cv = m_geom_traits.construct_curve_2_object()(p1, p2, normal);
   }
   else
-    cv = Curve_2(p1, p2);
+    cv = m_geom_traits.construct_curve_2_object()(p1, p2);
   return true;
 }
 
