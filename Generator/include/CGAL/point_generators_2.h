@@ -32,7 +32,7 @@
 #include <iterator>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/internal/Generic_random_point_generator.h>
-#include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 
@@ -553,7 +553,7 @@ class Triangle_from_face_2
 {
   typedef typename T::Triangle Triangle;
 public:
- typedef Triangle reference;
+ typedef Triangle result_type;
   Triangle_from_face_2(){}
 
   Triangle operator()(typename T::Face_handle face)const {

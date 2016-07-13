@@ -318,7 +318,7 @@ class Triangle_from_face_3
 
 private: PMAP map;
 public:
- typedef Triangle                                              reference;
+ typedef Triangle                                              result_type;
 
  Triangle_from_face_3(PMAP map)
   :map(map)
@@ -380,7 +380,7 @@ class Triangle_from_face_C3t3
   typedef typename T::Point                              Point;
   typedef std::pair<typename T::Cell_handle, int> Face;
 public:
- typedef Triangle reference;
+ typedef Triangle result_type;
 
   Triangle_from_face_C3t3()
   {}
@@ -402,7 +402,7 @@ class Tetrahedron_from_cell_C3t3
   typedef typename T::Point                                    Point;
   typedef typename Kernel_traits<Point>::Kernel::Tetrahedron_3 Tetrahedron;
 public:
- typedef Tetrahedron reference;
+ typedef Tetrahedron result_type;
 
   Tetrahedron_from_cell_C3t3()
   {}

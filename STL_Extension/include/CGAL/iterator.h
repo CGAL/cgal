@@ -49,6 +49,33 @@
 #endif
 namespace CGAL {
 
+namespace internal{
+
+template<typename I>
+class Prevent_deref
+  : public boost::iterator_adaptor<
+  Prevent_deref<I>
+  , I // base
+  , I // value
+  >
+{
+public:
+  typedef boost::iterator_adaptor<
+  Prevent_deref<I>
+  , I // base
+  , I // value
+  > Base;
+  //  typedef typename Prevent_deref::iterator_adaptor_::reference reference;
+  typedef typename Base::reference reference;
+  Prevent_deref() : Base() {}
+  Prevent_deref(const I& i) : Base(i) {}
+private:
+  friend class boost::iterator_core_access;
+  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
+};
+
+}//end of namespace internal
+
 // +----------------------------------------------------------------+
 // | Emptyset_iterator
 // +----------------------------------------------------------------+
