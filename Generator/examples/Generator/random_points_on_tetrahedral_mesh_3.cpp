@@ -55,7 +55,7 @@ int main()
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
   // Create the generator, input is the C3t3 c3t3
-  Random_points_on_tetrahedral_mesh_3<C3t3>
+  Random_points_on_tetrahedral_mesh_boundary<C3t3>
       g(c3t3);
   // Get 100 random points in cdt
   CGAL::cpp11::copy_n( g, 100, std::back_inserter(points));
