@@ -31,7 +31,6 @@
 #include <QApplication>
 
 #include <boost/foreach.hpp>
-#include <boost/container/flat_map.hpp>
 #include "triangulate_primitive.h"
 
 namespace PMP = CGAL::Polygon_mesh_processing;

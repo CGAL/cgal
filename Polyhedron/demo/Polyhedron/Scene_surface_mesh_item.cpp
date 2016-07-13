@@ -6,7 +6,6 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 #include <QApplication>
-#include <boost/container/flat_map.hpp>
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
@@ -49,13 +48,6 @@ struct Scene_surface_mesh_item_priv{
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   void addFlatData(Point, Kernel::Vector_3, CGAL::Color *) const;
 
-  //! \param fd a face_descriptor of the facet that needs to be triangulated.
-  //! \param fnormals a property_map containing the normals of the mesh.
-  //! \param p_cdt a reference to an empty CDT that will be filled by this function.
-  //! \param v2v a reference to an empty flat_map that will be filled by this function.
-  //!
-
-  //!
   //! \brief triangulate_facet Triangulates a facet.
   //! \param fd a face_descriptor of the facet that needs to be triangulated.
   //! \param fnormals a property_map containing the normals of the mesh.
