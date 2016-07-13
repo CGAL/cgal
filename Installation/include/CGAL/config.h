@@ -424,7 +424,7 @@ using std::max;
 
 // Macro to trigger deprecation warnings with a custom message
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
-#  define CGAL_DEPRECATED_MSG
+#  define CGAL_DEPRECATED_MSG(msg)
 #elif defined(__GNUC__) || __has_attribute(__deprecated__)
 #  if BOOST_GCC >= 40500 || __has_attribute(__deprecated__)
 #    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
