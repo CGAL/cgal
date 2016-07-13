@@ -431,7 +431,7 @@ typedef std::input_iterator_tag iterator_category;
 /*!
 
 */
-typedef Point_3 value_type;
+typedef Weighted_point_3 value_type;
 
 /*!
 
@@ -441,7 +441,7 @@ typedef std::ptrdiff_t difference_type;
 /*!
 
 */
-typedef const Point_3* pointer;
+typedef const Weighted_point_3* pointer;
 
 /*!
 
@@ -451,7 +451,7 @@ typedef const Point_3& reference;
 
 
 /*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
+Creates  an input iterator `g` generating points of type `Weighted_point_3` uniformly
 distributed on the mesh. Each triangle has a propability to be chosen to hold the point depending on its area.
 
 */
@@ -497,7 +497,7 @@ typedef std::input_iterator_tag iterator_category;
 /*!
 
 */
-typedef Point_3 value_type;
+typedef Weighted_point_3 value_type;
 
 /*!
 
@@ -507,7 +507,7 @@ typedef std::ptrdiff_t difference_type;
 /*!
 
 */
-typedef const Point_3* pointer;
+typedef const Weighted_point_3* pointer;
 
 /*!
 
@@ -517,7 +517,7 @@ typedef const Point_3& reference;
 
 
 /*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
+Creates  an input iterator `g` generating points of type `Weighted_point_3` uniformly
 distributed inside the tetrahedra of the mesh. Each `Tetrahedron_3` has a probability to be chosen to hold the point depending on its volume.
 
 */

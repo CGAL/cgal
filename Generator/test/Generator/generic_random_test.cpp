@@ -14,9 +14,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Mesh_triangulation_3.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
@@ -103,6 +100,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 typedef C3t3::Point                                   Point;
+
 void test_on_c3t3()
 {
 
