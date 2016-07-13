@@ -2,7 +2,6 @@
 #include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-#include <boost/container/flat_map.hpp>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <CGAL/property_map.h>
 #include <functional>
@@ -89,11 +88,11 @@ struct Scene_polyhedron_selection_item_priv{
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Polyhedron* poly;
-  boost::container::flat_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3>  face_normals_map;
-  boost::container::flat_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3>  vertex_normals_map;
-  boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3> >
+  CGAL::Unique_hash_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3>  face_normals_map;
+  CGAL::Unique_hash_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3>  vertex_normals_map;
+  boost::associative_property_map< CGAL::Unique_hash_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3> >
     nf_pmap;
-  boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3> >
+  boost::associative_property_map< CGAL::Unique_hash_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3> >
     nv_pmap;
   Scene_polyhedron_item::ManipulatedFrame *manipulated_frame;
   bool ready_to_move;
@@ -1896,8 +1895,8 @@ void Scene_polyhedron_selection_item::compute_normal_maps()
 
   d->face_normals_map.clear();
   d->vertex_normals_map.clear();
-  d->nf_pmap = boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3> >(d->face_normals_map);
-  d->nv_pmap = boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3> >(d->vertex_normals_map);
+  d->nf_pmap = boost::associative_property_map< CGAL::Unique_hash_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3> >(d->face_normals_map);
+  d->nv_pmap = boost::associative_property_map< CGAL::Unique_hash_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3> >(d->vertex_normals_map);
   PMP::compute_normals(*d->poly, d->nv_pmap, d->nf_pmap);
 }
 

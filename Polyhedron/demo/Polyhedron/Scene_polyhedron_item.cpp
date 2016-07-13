@@ -31,7 +31,6 @@
 #include <QApplication>
 
 #include <boost/foreach.hpp>
-#include <boost/container/flat_map.hpp>
 #include "triangulate_primitive.h"
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -674,11 +673,11 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
     typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
     typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-    boost::container::flat_map<face_descriptor, Vector> face_normals_map;
-    boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >
+    CGAL::Unique_hash_map<face_descriptor, Vector> face_normals_map;
+    boost::associative_property_map<CGAL::Unique_hash_map<face_descriptor, Vector> >
       nf_pmap(face_normals_map);
-    boost::container::flat_map<vertex_descriptor, Vector> vertex_normals_map;
-    boost::associative_property_map< boost::container::flat_map<vertex_descriptor, Vector> >
+    CGAL::Unique_hash_map<vertex_descriptor, Vector> vertex_normals_map;
+    boost::associative_property_map< CGAL::Unique_hash_map<vertex_descriptor, Vector> >
       nv_pmap(vertex_normals_map);
 
     PMP::compute_normals(*poly, nv_pmap, nf_pmap);

@@ -23,7 +23,6 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/property_map/vector_property_map.hpp>
-#include <boost/container/flat_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>

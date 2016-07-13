@@ -10,7 +10,6 @@
 
 
 #include <QColor>
-#include <boost/container/flat_map.hpp>
 
 //Make sure all the facets are triangles
 template<class Mesh, typename Kernel, typename Index_type>
@@ -49,7 +48,7 @@ public:
                                                      TDS,
                                                      Itag>             CDT;
   CDT *cdt;
-  boost::container::flat_map<typename CDT::Vertex_handle, Index_type> v2v;
+  CGAL::Unique_hash_map<typename CDT::Vertex_handle, Index_type> v2v;
 
   //Constructor
   FacetTriangulator(typename boost::graph_traits<Mesh>::face_descriptor fd,
