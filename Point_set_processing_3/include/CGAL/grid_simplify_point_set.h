@@ -63,10 +63,11 @@ public:
     bool operator() (const Point_3& a, const Point_3& b) const
     {
         typedef typename boost::property_traits<PointPMap>::value_type Point;
+        typedef typename boost::property_traits<PointPMap>::reference Point_ref;
         
         // Round points to multiples of m_epsilon, then compare.
-        Point a_n = get(point_pmap,a);
-        Point b_n = get(point_pmap,b);
+        Point_ref a_n = get(point_pmap,a);
+        Point_ref b_n = get(point_pmap,b);
         
         Point rounded_a(round_epsilon(a_n.x(), m_epsilon),
                         round_epsilon(a_n.y(), m_epsilon),

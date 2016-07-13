@@ -89,9 +89,8 @@ write_ply_points_and_normals(
   // Write positions + normals
   for(ForwardIterator it = first; it != beyond; it++)
   {
-    Point p = get(point_pmap, *it);
-    Vector n = get(normal_pmap, *it);
-    stream << p << " " << n << std::endl;
+    stream << get(point_pmap, *it) << " "
+           << get(normal_pmap, *it) << std::endl;
   }
 
   return ! stream.fail();

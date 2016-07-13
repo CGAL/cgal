@@ -512,11 +512,7 @@ wlop_simplify_and_regularize_point_set(
   // Initiate a KD-tree search for original points
   std::vector<Kd_tree_element> original_treeElements;
   for (it = first_original_iter, i=0 ; it != beyond ; ++it, ++i)
-  {
-      const Point& p0 = get(point_pmap, *it);
-    
-    original_treeElements.push_back(Kd_tree_element(p0, i));
-  }
+    original_treeElements.push_back( Kd_tree_element(get(point_pmap, *it), i) );
   Kd_Tree original_kd_tree(original_treeElements.begin(), 
                            original_treeElements.end());
 
