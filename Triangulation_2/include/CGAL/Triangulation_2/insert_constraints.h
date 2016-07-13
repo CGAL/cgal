@@ -22,6 +22,7 @@
 #define CGAL_INTERNAL_TRIANGULATION_2_IMSERT_CONSTRAINTS_H
 
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
+#include <CGAL/property_map.h>
 #include <boost/iterator/counting_iterator.hpp>
 #include <vector>
 #include <iterator>
@@ -41,7 +42,7 @@ namespace CGAL {
     typedef typename T::Face_handle Face_handle;
     typedef typename T::Geom_traits Geom_traits;
     typedef typename T::Point Point;
-    typedef std::vector<std::ptrdiff_t> Vertex_indices;
+    typedef std::vector<std::size_t> Vertex_indices;
     typedef std::vector<Vertex_handle> Vertices;
     
     Vertex_indices vertex_indices;
@@ -52,7 +53,10 @@ namespace CGAL {
               std::back_inserter(vertex_indices));
 
     typename T::size_type n = t.number_of_vertices();
-    CGAL::Spatial_sort_traits_adapter_2<Geom_traits, const Point*> sort_traits(&(points[0]),t.geom_traits());
+    CGAL::Spatial_sort_traits_adapter_2<
+      Geom_traits,
+      typename Pointer_property_map<Point>::const_type >
+        sort_traits(make_property_map(points),t.geom_traits());
 
     spatial_sort(vertex_indices.begin(), vertex_indices.end(), sort_traits);
 
