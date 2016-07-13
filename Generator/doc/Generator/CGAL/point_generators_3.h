@@ -335,6 +335,204 @@ namespace CGAL {
 
 /*!
 
+The class `Random_points_on_triangle_mesh_3` is an input iterator creating points uniformly
+distributed inside the triangles of a triangulated `FaceListGraph`.
+
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
+
+\sa `CGAL::cpp11::copy_n()`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+\sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
+\sa `std::random_shuffle`
+
+*/
+template <class Point_3, class Mesh>
+class Random_points_on_triangle_mesh_3 {
+public:
+
+/// \name Types
+/// @{
+
+/*!
+
+*/
+typedef std::input_iterator_tag iterator_category;
+
+/*!
+
+*/
+typedef Point_3 value_type;
+
+/*!
+
+*/
+typedef std::ptrdiff_t difference_type;
+
+/*!
+
+*/
+typedef const Point_3* pointer;
+
+/*!
+
+*/
+typedef const Point_3& reference;
+
+
+
+/*!
+Creates  an input iterator `g` generating points of type `Point_3` uniformly
+distributed on the mesh. Each triangle has a propability to be chosen to hold the point depending on its area.
+
+*/
+Random_points_on_triangle_mesh_3(  Mesh& mesh, Random& rnd = default_random);
+
+/// @}
+
+}; /* end Random_points_on_triangle_mesh_3 */
+
+} /* end namespace CGAL */
+
+namespace CGAL {
+
+/*!
+
+The class `Random_points_on_tetrahedral_mesh_3` is an input iterator creating points uniformly
+distributed inside the triangles of a `Mesh_complex_3_in_triangulation_3`.
+
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
+
+\sa `CGAL::cpp11::copy_n()`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+\sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
+\sa `std::random_shuffle`
+
+*/
+template <class C3t3>
+class Random_points_on_tetrahedral_mesh_3 {
+public:
+
+/// \name Types
+/// @{
+
+/*!
+
+*/
+typedef std::input_iterator_tag iterator_category;
+
+/*!
+
+*/
+typedef Point_3 value_type;
+
+/*!
+
+*/
+typedef std::ptrdiff_t difference_type;
+
+/*!
+
+*/
+typedef const Point_3* pointer;
+
+/*!
+
+*/
+typedef const Point_3& reference;
+
+
+
+/*!
+Creates  an input iterator `g` generating points of type `Point_3` uniformly
+distributed on the mesh. Each triangle has a propability to be chosen to hold the point depending on its area.
+
+*/
+Random_points_on_tetrahedral_mesh_3(  C3t3& c3t3,Random& rnd = default_random);
+
+/// @}
+
+}; /* end Random_points_on_tetrahedral_mesh_3 */
+
+} /* end namespace CGAL */
+
+namespace CGAL {
+
+/*!
+
+The class `Random_points_in_tetrahedral_mesh_3` is an input iterator creating points uniformly
+distributed inside a `Mesh_complex_3_in_triangulation_3`.
+
+\cgalModels `InputIterator`
+\cgalModels `PointGenerator`
+
+\sa `CGAL::cpp11::copy_n()`
+\sa `CGAL::Counting_iterator`
+\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+\sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+\sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
+\sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
+\sa `std::random_shuffle`
+
+*/
+template <class C3t3>
+class Random_points_in_tetrahedral_mesh_3 {
+public:
+
+/// \name Types
+/// @{
+
+/*!
+
+*/
+typedef std::input_iterator_tag iterator_category;
+
+/*!
+
+*/
+typedef Point_3 value_type;
+
+/*!
+
+*/
+typedef std::ptrdiff_t difference_type;
+
+/*!
+
+*/
+typedef const Point_3* pointer;
+
+/*!
+
+*/
+typedef const Point_3& reference;
+
+
+
+/*!
+Creates  an input iterator `g` generating points of type `Point_3` uniformly
+distributed inside the tetrahedra of the mesh. Each `Tetrahedron_3` has a probability to be chosen to hold the point depending on its volume.
+
+*/
+Random_points_in_tetrahedral_mesh_3(  C3t3& c3t3,Random& rnd = default_random);
+
+/// @}
+
+}; /* end Random_points_in_tetrahedral_mesh_3 */
+
+} /* end namespace CGAL */
+
+namespace CGAL {
+
+/*!
+
 The class `Random_points_on_sphere_3` is an input iterator creating points uniformly
 distributed on a sphere. The default `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
