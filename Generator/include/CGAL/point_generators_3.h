@@ -347,6 +347,10 @@ public:
   ++(*this);
   return tmp;
  }
+  double mesh_area() const
+  {
+    this->sum_of_weights();
+  }
 };
 
 namespace internal

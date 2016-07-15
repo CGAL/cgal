@@ -84,6 +84,12 @@ public:
     ++(*this);
     return tmp;
   }
+  double sum_of_weights() const
+  {
+    if (weights.empty())
+      return 0;
+    return weights.back();
+  }
 };
 
 template < typename Id, class ObjectFromIdMap, class GeneratorOnObject, class P >
