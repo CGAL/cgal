@@ -577,8 +577,8 @@ public:
 
 
  Random_points_in_triangle_mesh_2(  T& triangulation,Random& rnd = default_random)
-  : Base(  make_range( internal::Prevent_deref<typename T::Finite_faces_iterator>(triangulation.finite_faces_begin()),
-                       internal::Prevent_deref<typename T::Finite_faces_iterator>(triangulation.finite_faces_end())),
+  : Base( CGAL::make_prevent_deref_range(triangulation.finite_faces_begin(),
+                                         triangulation.finite_faces_end()),
           internal::Triangle_from_face_2<T>(),
           typename Kernel_traits<P>::Kernel::Compute_area_2(),
           rnd )

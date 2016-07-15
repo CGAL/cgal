@@ -450,8 +450,8 @@ public:
 
 
  Random_points_in_tetrahedral_mesh_3(  C3t3& c3t3,Random& rnd = default_random)
-  : Base( make_range( internal::Prevent_deref<typename C3t3::Cells_in_complex_iterator>(c3t3.cells_in_complex_begin()),
-                      internal::Prevent_deref<typename C3t3::Cells_in_complex_iterator>(c3t3.cells_in_complex_end())),
+  : Base( CGAL::make_prevent_deref_range(c3t3.cells_in_complex_begin(),
+                      c3t3.cells_in_complex_end()),
           internal::Tetrahedron_from_cell_C3t3<typename C3t3::Triangulation>(),
           typename Kernel_traits<typename C3t3::Point>::Kernel::Compute_volume_3(),
           rnd )

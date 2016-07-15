@@ -35,8 +35,9 @@
 #include <CGAL/tuple.h>
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
-
 #include <boost/config.hpp>
+
+#include <CGAL/Iterator_range.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -48,8 +49,6 @@
 
 #endif
 namespace CGAL {
-
-namespace internal{
 
 template<typename I>
 class Prevent_deref
@@ -65,8 +64,9 @@ public:
   , I // base
   , I // value
   > Base;
-  //  typedef typename Prevent_deref::iterator_adaptor_::reference reference;
   typedef typename Base::reference reference;
+  typedef typename std::pair<I, I> range;
+
   Prevent_deref() : Base() {}
   Prevent_deref(const I& i) : Base(i) {}
 private:
@@ -74,7 +74,23 @@ private:
   reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
 };
 
-}//end of namespace internal
+template<typename I>
+Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const Iterator_range<I>& range)
+{
+  return Iterator_range<Prevent_deref<I> >(make_prevent_deref(range.first), make_prevent_deref(range.second));
+}
+
+template<typename I>
+Prevent_deref<I> make_prevent_deref(const I& i)
+{
+  return Prevent_deref<I>(i);
+}
+
+template<typename I>
+Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const I& end)
+{
+  return Iterator_range<Prevent_deref<I> >(make_prevent_deref(begin), make_prevent_deref(end));
+}
 
 // +----------------------------------------------------------------+
 // | Emptyset_iterator

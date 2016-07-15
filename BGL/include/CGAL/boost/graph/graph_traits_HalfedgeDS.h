@@ -172,10 +172,10 @@ public:
   typedef typename HDS::Face_handle                                  face_descriptor;
   typedef typename HDS::Halfedge_handle                              halfedge_descriptor;
 
-  typedef internal::Prevent_deref<typename HDS::Vertex_iterator>     vertex_iterator;
-  typedef internal::Prevent_deref<typename HDS::Face_iterator>       face_iterator;
-  typedef internal::Prevent_deref<typename HDS::Edge_iterator>       edge_iterator_i;
-  typedef internal::Prevent_deref<typename HDS::Halfedge_iterator>   halfedge_iterator;
+  typedef CGAL::Prevent_deref<typename HDS::Vertex_iterator>     vertex_iterator;
+  typedef CGAL::Prevent_deref<typename HDS::Face_iterator>       face_iterator;
+  typedef CGAL::Prevent_deref<typename HDS::Edge_iterator>       edge_iterator_i;
+  typedef CGAL::Prevent_deref<typename HDS::Halfedge_iterator>   halfedge_iterator;
 
 
 
