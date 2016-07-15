@@ -11,7 +11,6 @@
 #include <CGAL/point_generators_3.h>
 
 #include <iostream>
-#include <fstream>
 using namespace CGAL;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
@@ -42,9 +41,7 @@ int main()
   std::vector<Point> points;
   // Create input polyhedron
   Polyhedron polyhedron;
-  std::ifstream input("./data/star.off");
-  input >> polyhedron;
-  input.close();
+  polyhedron.make_tetrahedron(Point(-1,0,0), Point(0,1,0), Point(1,0,0), Point(0,0,-1));
   // Create domain
   Mesh_domain domain(polyhedron);
    using namespace CGAL::parameters;

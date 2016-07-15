@@ -25,6 +25,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 namespace CGAL {
 
