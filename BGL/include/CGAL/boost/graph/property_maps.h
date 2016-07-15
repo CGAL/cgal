@@ -28,7 +28,7 @@ namespace CGAL{
 
 //property map
 template < class TriangleMesh,
-           class VertexPointMap >
+           class VertexPointMap = typename boost::property_map<TriangleMesh,vertex_point_t>::type >
 struct Triangle_from_face_descriptor_map{
   typename boost::remove_const<TriangleMesh>::type* m_tm;
   VertexPointMap m_vpm;
@@ -73,7 +73,7 @@ struct Triangle_from_face_descriptor_map{
 };
 
 template < class PolygonMesh,
-           class VertexPointMap >
+           class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
 struct Segment_from_edge_descriptor_map{
 
   Segment_from_edge_descriptor_map()
@@ -115,7 +115,7 @@ struct Segment_from_edge_descriptor_map{
 
 //property map to access a point from a face_descriptor
 template <class PolygonMesh,
-          class VertexPointMap>
+          class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
 struct One_point_from_face_descriptor_map{
   One_point_from_face_descriptor_map()
     : m_pm(NULL)
@@ -152,7 +152,7 @@ struct One_point_from_face_descriptor_map{
 
 //property map to access a point from an edge
 template < class PolygonMesh,
-           class VertexPointMap >
+           class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
 struct Source_point_from_edge_descriptor_map{
   Source_point_from_edge_descriptor_map()  : m_pm(NULL)
   {}
