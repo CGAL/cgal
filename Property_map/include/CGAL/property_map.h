@@ -281,8 +281,9 @@ struct Property_map_to_unary_function{
     : map(m)
   {}
 
+  template <class KeyType>
   result_type
-  operator()(const argument_type& a) const
+  operator()(KeyType a) const
   {
     return get(map,a);
   }
