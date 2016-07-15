@@ -319,8 +319,26 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
+  Optimal_transportation_reconstruction_2()
+  : m_traits(m_dt.geom_traits())
+  {
+    initialize_parameters();
+  }
+
+
   ~Optimal_transportation_reconstruction_2() {
     clear();
+  }
+
+  void initialize_parameters() {
+    m_verbose = 0;
+    m_mchoice = 0;
+    m_use_flip = true;
+    m_alpha = FT(0.5);
+    m_ghost = FT(1);
+    m_relocation = 0;
+
+    m_ignore = 0;
   }
 
   //Function if one wants to create a Optimal_transportation_reconstruction_2
@@ -337,7 +355,6 @@ public:
 
     initialize(start_itr, beyond_itr);
   }
-
 
 
   template <class InputIterator>
@@ -427,6 +444,7 @@ public:
                 << std::endl;
   }
 
+private:
   Vertex_handle insert_point(
     const Point& point, const bool pinned, const int id) 
   {
@@ -435,6 +453,7 @@ public:
     v->id() = id;
     return v;
   }
+public:
 
   // ASSIGNMENT //
 
