@@ -1355,6 +1355,7 @@ public:
 
     std::cerr << "STATS" << std::endl;
     std::cerr << "# vertices : " << m_dt.number_of_vertices()-4 << std::endl;
+    std::cerr << "# isolated vertices : " << number_of_isolated_vertices() << std::endl;
     std::cerr << "# triangles: " << m_dt.number_of_faces() << std::endl;
     std::cerr << "# edges: " << m_dt.tds().number_of_edges() << std::endl;
     std::cerr << "# solid: " << nb_solid << std::endl;
@@ -1368,6 +1369,32 @@ public:
   std::size_t number_of_vertices() const {
     return m_dt.number_of_vertices() - 4;
 
+  }
+
+  /*!
+    Returns the number of isolated vertices present in the reconstructed triangulation.
+  */
+  int number_of_isolated_vertices () const
+  {
+    int nb_isolated = 0;
+    for (Vertex_iterator vi = m_dt.vertices_begin();
+         vi != m_dt.vertices_end(); ++vi)
+      {
+        if (!((*vi).has_sample_assigned()))
+          continue;
+
+        typename Triangulation::Edge_circulator start = m_dt.incident_edges(vi);
+        typename Triangulation::Edge_circulator cur   = start;
+
+        do {
+          if (!m_dt.is_ghost(*cur)) {
+            ++nb_isolated;
+            break;
+          }
+          ++cur;
+        } while (cur != start);
+      }
+    return nb_isolated;
   }
 
   /*!
@@ -1415,8 +1442,11 @@ public:
     Computes a shape consisting of `np` points, reconstructing the input
     points.
     \param np The number of points which will be present in the output.
+    \return `true` if the number of points `np` was reached, `false`
+    if the algorithm was prematurely ended because no more edge
+    collapse was possible.
    */
-  void run_until(std::size_t np) {
+  bool run_until(std::size_t np) {
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct until " << np << " V";
@@ -1436,14 +1466,19 @@ public:
                 << " iters, " << m_dt.number_of_vertices() - 4 << " V "
                 << timer.time() << " s)"
                 << std::endl;
+    
+    return (m_dt.number_of_vertices() <= N);
   }
 
   /*!
     Computes a shape, reconstructing the input, by performing `steps`
     edge collapse operators on the output simplex.
     \param steps The number of edge collapse operators to be performed.
+    \return `true` if the required number of steps was performed,
+    `false` if the algorithm was prematurely ended because no more
+    edge collapse was possible.
    */
-  void run(const unsigned steps) {
+  bool run(const unsigned steps) {
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct " << steps;
@@ -1462,6 +1497,7 @@ public:
                 << steps << " iters, " << m_dt.number_of_vertices() - 4
                 << " V, " << timer.time() << " s)"
                 << std::endl;
+    return (performed == steps);
   }
 
 
