@@ -61,10 +61,6 @@ write_off_points_and_normals(
   NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3. 
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-
   CGAL_point_set_processing_precondition(first != beyond);
 
   if(!stream)
@@ -161,9 +157,6 @@ write_off_points(
   PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
   const Kernel& ) ///< geometric traits.
 {
-  // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-
   CGAL_point_set_processing_precondition(first != beyond);
 
   if(!stream)
