@@ -283,7 +283,7 @@ struct Property_map_to_unary_function{
 
   template <class KeyType>
   result_type
-  operator()(KeyType a) const
+  operator()(const KeyType& a) const
   {
     return get(map,a);
   }
