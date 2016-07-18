@@ -228,7 +228,7 @@ namespace CommonKernelFunctors {
 
       if(sc_prod_1 >= 0 ) {
         if(cosine >= 0) {
-          // the two cosine are >= 0, cosine is decreasing on [0,1]
+          // the two cosine are >= 0, square(cosine) is decreasing on [0,pi/2]
           return CGAL::compare(CGAL::square(cosine)*
                                abac1.squared_length()*abad1.squared_length(),
                                CGAL::square(sc_prod_1));
@@ -239,7 +239,7 @@ namespace CommonKernelFunctors {
       }
       else {
         if(cosine < 0) {
-          // the two cosine are < 0, cosine is increasing on [-1,0]
+          // the two cosine are < 0, square(cosine) is increasing on [pi/2,pi]
           return CGAL::compare(CGAL::square(sc_prod_1),
                                CGAL::square(cosine)*
                                abac1.squared_length()*abad1.squared_length());
