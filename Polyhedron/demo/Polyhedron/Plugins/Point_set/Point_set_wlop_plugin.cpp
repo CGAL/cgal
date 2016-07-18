@@ -98,7 +98,9 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
 	      << dialog.neighborhoodRadius() <<" * average spacing)...\n";
 
     // Computes average spacing
-    double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points->begin(), points->end(),
+    Point_set::iterator points_begin = (points->nb_selected_points() == 0
+                                        ? points->begin() : points->first_selected());
+    double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points_begin, points->end(),
 							   6 /* knn = 1 ring */);
 
     Scene_points_with_normal_item* new_item
@@ -106,9 +108,9 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
     new_item->setName (tr("%1 (WLOP processed)").arg(item->name()));
     new_item->setVisible(true);
     scene->addItem(new_item);
-      
+    
     CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
-      (points->begin(),
+      (points_begin,
        points->end(),
        std::back_inserter(*(new_item->point_set ())),
        dialog.retainedPercentage (),

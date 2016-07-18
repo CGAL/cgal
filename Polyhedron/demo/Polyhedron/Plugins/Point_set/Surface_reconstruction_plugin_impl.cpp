@@ -71,7 +71,10 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
       return NULL;
     }
 
-    bool points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+    Point_set::const_iterator points_begin = (points.nb_selected_points() == 0
+                                              ? points.begin() : points.first_selected());
+
+    bool points_have_normals = (points_begin->normal() != CGAL::NULL_VECTOR);
     if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
@@ -94,7 +97,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
-                              points.begin(), points.end(),
+                              points_begin, points.end(),
                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()));
 
     bool ok = false;    
@@ -132,7 +135,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin(), points.end(),
+    Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points_begin, points.end(),
                                                        6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface
@@ -208,7 +211,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
     std::set<Polyhedron::Face_handle> faces_to_keep;
     
-    for (Point_set::const_iterator p=points.begin(); p!=points.end(); p++)
+    for (Point_set::const_iterator p=points_begin; p!=points.end(); p++)
     {
       AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (*p);
       double distance = std::sqrt(CGAL::squared_distance (pap.first, *p));

@@ -91,9 +91,12 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
     CGAL::Timer task_timer; task_timer.start();
     std::cerr << "Average spacing (k=" << nb_neighbors <<")...\n";
 
+    Point_set::iterator points_begin = (points->nb_selected_points() == 0
+                                        ? points->begin() : points->first_selected());
+
     // Computes average spacing
     double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-                                      points->begin(), points->end(),
+                                      points_begin, points->end(),
                                       nb_neighbors);
 
     // Print result

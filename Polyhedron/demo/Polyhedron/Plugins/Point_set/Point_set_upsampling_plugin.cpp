@@ -114,9 +114,13 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                                       points->begin(), points->end(),
                                       6 /* knn = 1 ring */);
-
+      
+      Point_set::iterator points_begin = (points->nb_selected_points() == 0
+                                          ? points->begin() : points->first_selected());
+      std::size_t nb_selected = points->nb_selected_points();
+      
       std::vector<std::pair<Point_set::Point, Point_set::Vector> > new_points;
-      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->begin(), 
+      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points_begin, 
 					  points->end(), 
 					  std::back_inserter(new_points),
 					  CGAL::make_identity_property_map(Point_set::value_type()),
@@ -125,10 +129,15 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
 					  dialog.edge_sensitivity(),
 					  dialog.neighborhood_radius() * average_spacing,
 					  output_size);
-
+      nb_selected += new_points.size();
+      
       for (unsigned int i = 0; i < new_points.size (); ++ i)
-	points->push_back (Point_set::Point_with_normal (new_points[i].first,
-							 new_points[i].second));
+        {
+          points->push_back (Point_set::Point_with_normal (new_points[i].first,
+                                                           new_points[i].second));
+        }
+      if (nb_selected != new_points.size())
+        points->set_first_selected (points->end() - nb_selected);
       
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << task_timer.time() << " seconds, "
