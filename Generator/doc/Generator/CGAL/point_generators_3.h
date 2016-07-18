@@ -353,7 +353,7 @@ distributed inside the triangles of a triangulated `FaceListGraph`.
 \sa `std::random_shuffle`
 
 */
-template <class Point_3, class Mesh>
+template <class Point_3, class TriangleMesh>
 class Random_points_on_triangle_mesh_3 {
 public:
 
@@ -392,7 +392,7 @@ Creates  an input iterator `g` generating points of type `Point_3` uniformly
 distributed on the mesh. Each triangle has a propability to be chosen to hold the point depending on its area.
 
 */
-Random_points_on_triangle_mesh_3(  Mesh& mesh, Random& rnd = default_random);
+Random_points_on_triangle_mesh_3(  TriangleMesh& mesh, Random& rnd = default_random);
 
 /// @}
 
@@ -416,7 +416,7 @@ distributed inside the triangles of a `Mesh_complex_3_in_triangulation_3`.
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
-\sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, Mesh>`
+\sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
 \sa `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
 \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
 \sa `std::random_shuffle`
@@ -485,7 +485,7 @@ distributed inside a `Mesh_complex_3_in_triangulation_3`.
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
-\sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, Mesh>`
+\sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
 \sa `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
 \sa `CGAL::Random_points_on_tetrahedral_mesh_boundary<C3t3>`
 \sa `std::random_shuffle`

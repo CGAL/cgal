@@ -305,31 +305,31 @@ void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
 }
 
 
-template <class P, class Mesh, class Vertex_point_map = typename boost::property_map<Mesh,
+template <class P, class TriangleMesh, class Vertex_point_map = typename boost::property_map<TriangleMesh,
                                                                                      CGAL::vertex_point_t>::type>
 class Random_points_on_triangle_mesh_3 : public Generic_random_point_generator<
-   typename boost::graph_traits <Mesh>::face_descriptor ,
+   typename boost::graph_traits <TriangleMesh>::face_descriptor ,
    CGAL::Property_map_to_unary_function<CGAL::Triangle_from_face_descriptor_map<
-                                        Mesh, Vertex_point_map > >,
+                                        TriangleMesh, Vertex_point_map > >,
    Random_points_in_triangle_3<P> , P> {
 public:
  typedef Generic_random_point_generator<
- typename boost::graph_traits <Mesh>::face_descriptor ,
+ typename boost::graph_traits <TriangleMesh>::face_descriptor ,
  CGAL::Property_map_to_unary_function<typename CGAL::Triangle_from_face_descriptor_map<
-  Mesh,typename boost::property_map<Mesh,
+  TriangleMesh,typename boost::property_map<TriangleMesh,
   CGAL::vertex_point_t>::type> >,
  Random_points_in_triangle_3<P> , P>                                 Base;
  typedef typename CGAL::Triangle_from_face_descriptor_map<
- Mesh,Vertex_point_map>                                              Pmap;
+ TriangleMesh,Vertex_point_map>                                              Pmap;
  typedef typename CGAL::Triangle_from_face_descriptor_map<
-     Mesh,Vertex_point_map>                                          Object_from_id_map;
+     TriangleMesh,Vertex_point_map>                                          Object_from_id_map;
  typedef Random_points_in_triangle_3<P>                              Generator_on_object;
- typedef typename boost::graph_traits<Mesh>::face_descriptor         Id;
+ typedef typename boost::graph_traits<TriangleMesh>::face_descriptor         Id;
  typedef P result_type;
- typedef Random_points_on_triangle_mesh_3<P, Mesh>                   This;
+ typedef Random_points_on_triangle_mesh_3<P, TriangleMesh>                   This;
 
 
- Random_points_on_triangle_mesh_3(  Mesh& mesh,Random& rnd = default_random)
+ Random_points_on_triangle_mesh_3(  TriangleMesh& mesh,Random& rnd = default_random)
   : Base( faces(mesh),
           CGAL::Property_map_to_unary_function<Pmap>(&mesh),
           typename Kernel_traits<P>::Kernel::Compute_area_3(),
