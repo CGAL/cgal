@@ -40,6 +40,12 @@
 /// Functions to orient polygon soups  and to stitch geometrically identical boundaries.
 /// \ingroup PkgPolygonMeshProcessing
 
+/// \defgroup PMP_distance_grp Combinatorial Repairing
+/// Functions to compute the distance between meshes.
+/// \ingroup PkgPolygonMeshProcessing
+
+
+
 /*!
 \addtogroup PkgPolygonMeshProcessing
  
@@ -125,6 +131,10 @@ and provides a list of the parameters that are used in this package.
 - \link measure_grp `CGAL::Polygon_mesh_processing::volume()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
+
+## Distance Functions ##
+- `CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::approximated_symmetric_Hausdorff_distance()`
 
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`

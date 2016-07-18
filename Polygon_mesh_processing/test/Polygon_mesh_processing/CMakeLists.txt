@@ -51,6 +51,14 @@ include_directories( BEFORE ../../include )
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 
+find_package( TBB )
+if( TBB_FOUND )
+  include( ${TBB_USE_FILE} )
+  list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
+else()
+  message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
+endif()
+
 if (EIGEN3_FOUND)
   # Executables that require Eigen 3.1
   include( ${EIGEN3_USE_FILE} )
@@ -77,6 +85,7 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("measures_test.cpp")
   create_single_source_cgal_program("triangulate_faces_test.cpp")
   create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
+  create_single_source_cgal_program("test_pmp_distance.cpp")
 
 if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
   create_single_source_cgal_program("fairing_test.cpp")
