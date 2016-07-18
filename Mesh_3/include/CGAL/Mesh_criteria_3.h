@@ -74,6 +74,8 @@ public:
   typedef EdgeCriteria      Edge_criteria;
   typedef FacetCriteria     Facet_criteria;
   typedef CellCriteria      Cell_criteria;
+  typedef typename Facet_criteria::Abstract_criterion Abstract_facet_criterion;
+  typedef typename Cell_criteria::Abstract_criterion Abstract_cell_criterion;
   
   // Constructor
   Mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
@@ -122,7 +124,15 @@ public:
   const Edge_criteria& edge_criteria_object() const { return edge_criteria_; }
   const Facet_criteria& facet_criteria_object() const { return facet_criteria_; }
   const Cell_criteria& cell_criteria_object() const { return cell_criteria_; }
-  
+
+  void add_facet_criterion(Abstract_facet_criterion* criterion) {
+    facet_criteria_.add(criterion);
+  }
+
+  void add_cell_criterion(Abstract_cell_criterion* criterion) {
+    cell_criteria_.add(criterion);
+  }
+
 private:
   Edge_criteria edge_criteria_;
   Facet_criteria facet_criteria_;

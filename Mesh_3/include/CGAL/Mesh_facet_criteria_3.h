@@ -40,9 +40,9 @@ public:
   typedef typename Visitor::Facet_quality Facet_quality;
   typedef typename Visitor::Facet_badness Facet_badness;
   
+  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
-  typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 
   typedef typename Tr::Facet Facet;
   typedef typename Tr::Geom_traits::FT FT;
