@@ -336,7 +336,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_on_triangle_mesh_3` is an input iterator creating points uniformly
-distributed inside the triangles of a triangulated `FaceListGraph`.
+distributed inside the faces of a triangle mesh model of `FaceListGraph`.
 
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
@@ -389,10 +389,10 @@ typedef const Point_3& reference;
 
 /*!
 Creates  an input iterator `g` generating points of type `Point_3` uniformly
-distributed on the mesh. Each triangle has a propability to be chosen to hold the point depending on its area.
+distributed in the mesh faces. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
-Random_points_on_triangle_mesh_3(  TriangleMesh& mesh, Random& rnd = default_random);
+Random_points_on_triangle_mesh_3(TriangleMesh& mesh, Random& rnd = default_random);
 
 /// @}
 
@@ -405,7 +405,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_on_tetrahedral_mesh_boundary` is an input iterator creating points uniformly
-distributed inside the triangles of a `Mesh_complex_3_in_triangulation_3`.
+distributed on the boundary of a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
 
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
@@ -458,7 +458,7 @@ typedef const Weighted_point_3& reference;
 
 /*!
 Creates  an input iterator `g` generating points of type `Weighted_point_3` uniformly
-distributed on the mesh. Each triangle has a propability to be chosen to hold the point depending on its area.
+distributed on the mesh. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
 Random_points_on_tetrahedral_mesh_boundary(  C3t3& c3t3,Random& rnd = default_random);
@@ -474,7 +474,7 @@ namespace CGAL {
 /*!
 
 The class `Random_points_in_tetrahedral_mesh_3` is an input iterator creating points uniformly
-distributed inside a `Mesh_complex_3_in_triangulation_3`.
+distributed inside a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
 
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
@@ -527,7 +527,7 @@ typedef const Weighted_point_3& reference;
 
 /*!
 Creates  an input iterator `g` generating points of type `Weighted_point_3` uniformly
-distributed inside the tetrahedra of the mesh. Each `Tetrahedron_3` has a probability to be chosen to hold the point depending on its volume.
+distributed inside the tetrahedra of the mesh. Each tetrahedron has a probability to be chosen to hold the point depending on its volume.
 
 */
 Random_points_in_tetrahedral_mesh_3(  C3t3& c3t3,Random& rnd = default_random);
