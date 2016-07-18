@@ -20,11 +20,11 @@ int main()
   polyhedron.make_tetrahedron(Point(-1,0,0), Point(0,1,0), Point(1,0,0), Point(0,0,-1));
 
   // Create the generator, input is the Polyhedron polyhedron
-  Random_points_on_triangle_mesh_3<Point, Polyhedron>
+  Random_points_on_triangle_mesh_3<Polyhedron>
       g(polyhedron);
 
   // Get 100 random points in cdt
-  CGAL::cpp11::copy_n( g, 100, std::back_inserter(points));
+  CGAL::cpp11::copy_n(g, 100, std::back_inserter(points));
 
   // Check that we have really created 100 points.
   assert( points.size() == 100);

@@ -353,7 +353,8 @@ distributed inside the faces of a triangle mesh model of `FaceListGraph`.
 \sa `std::random_shuffle`
 
 */
-template <class Point_3, class TriangleMesh>
+template < class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
+                                                                                   CGAL::vertex_point_t>::type> >
 class Random_points_on_triangle_mesh_3 {
 public:
 
@@ -364,6 +365,7 @@ public:
 
 */
 typedef std::input_iterator_tag iterator_category;
+typedef typename boost::property_traits<VertexPointMap>::value_type  Point_3;
 
 /*!
 

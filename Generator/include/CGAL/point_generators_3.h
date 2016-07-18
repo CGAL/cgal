@@ -305,28 +305,31 @@ void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
 }
 
 
-template <class P, class TriangleMesh, class Vertex_point_map = typename boost::property_map<TriangleMesh,
-                                                                                     CGAL::vertex_point_t>::type>
+
+template <class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
+                                                                                  CGAL::vertex_point_t>::type>
 class Random_points_on_triangle_mesh_3 : public Generic_random_point_generator<
    typename boost::graph_traits <TriangleMesh>::face_descriptor ,
    CGAL::Property_map_to_unary_function<CGAL::Triangle_from_face_descriptor_map<
-                                        TriangleMesh, Vertex_point_map > >,
-   Random_points_in_triangle_3<P> , P> {
+                                        TriangleMesh, VertexPointMap > >,
+   Random_points_in_triangle_3<typename boost::property_traits<VertexPointMap>::value_type> ,
+  typename boost::property_traits<VertexPointMap>::value_type> {
 public:
+ typedef typename boost::property_traits<VertexPointMap>::value_type  P;
  typedef Generic_random_point_generator<
  typename boost::graph_traits <TriangleMesh>::face_descriptor ,
  CGAL::Property_map_to_unary_function<typename CGAL::Triangle_from_face_descriptor_map<
   TriangleMesh,typename boost::property_map<TriangleMesh,
   CGAL::vertex_point_t>::type> >,
- Random_points_in_triangle_3<P> , P>                                 Base;
+ Random_points_in_triangle_3<P> , P>                                  Base;
  typedef typename CGAL::Triangle_from_face_descriptor_map<
- TriangleMesh,Vertex_point_map>                                              Pmap;
+ TriangleMesh,VertexPointMap>                                         Pmap;
  typedef typename CGAL::Triangle_from_face_descriptor_map<
-     TriangleMesh,Vertex_point_map>                                          Object_from_id_map;
- typedef Random_points_in_triangle_3<P>                              Generator_on_object;
- typedef typename boost::graph_traits<TriangleMesh>::face_descriptor         Id;
+     TriangleMesh,VertexPointMap>                                     Object_from_id_map;
+ typedef Random_points_in_triangle_3<P>                               Generator_on_object;
+ typedef typename boost::graph_traits<TriangleMesh>::face_descriptor  Id;
  typedef P result_type;
- typedef Random_points_on_triangle_mesh_3<P, TriangleMesh>                   This;
+ typedef Random_points_on_triangle_mesh_3< TriangleMesh>              This;
 
 
  Random_points_on_triangle_mesh_3(  TriangleMesh& mesh,Random& rnd = default_random)
