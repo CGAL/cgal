@@ -19,6 +19,8 @@
 #include <QObject>
 #include <QApplication>
 #include <QMenu>
+#include <QSlider>
+#include <QWidgetAction>
 #include <QGLViewer/manipulatedCameraFrame.h>
 
 #include <set>
@@ -36,12 +38,16 @@ struct Scene_points_with_normal_item_priv
     nb_points = 0;
     nb_selected_points = 0;
     nb_lines = 0;
+    normal_Slider = new QSlider(Qt::Horizontal);
+    normal_Slider->setValue(20);
   }
   Scene_points_with_normal_item_priv(const Scene_points_with_normal_item& toCopy, Scene_points_with_normal_item* parent)
     : m_points(new Point_set(*toCopy.d->m_points)),
       m_has_normals(toCopy.d->m_has_normals)
   {
     item = parent;
+    normal_Slider = new QSlider(Qt::Horizontal);
+    normal_Slider->setValue(20);
   }
   Scene_points_with_normal_item_priv(const Polyhedron& input_mesh, Scene_points_with_normal_item* parent)
     : m_points(new Point_set),
@@ -60,11 +66,14 @@ struct Scene_points_with_normal_item_priv
         CGAL::Polygon_mesh_processing::compute_vertex_normal(v, input_mesh);
       m_points->push_back(UI_point(p,n));
     }
+    normal_Slider = new QSlider(Qt::Horizontal);
+    normal_Slider->setValue(20);
   }
   ~Scene_points_with_normal_item_priv()
   {
     Q_ASSERT(m_points != NULL);
     delete m_points; m_points = NULL;
+    delete normal_Slider;
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices() const;
@@ -85,6 +94,7 @@ struct Scene_points_with_normal_item_priv
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
+  QSlider* normal_Slider;
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;
   mutable std::vector<double> positions_selected_points;
@@ -261,12 +271,12 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
               6);
 
         double normal_length = (std::min)(average_spacing, std::sqrt(region_of_interest.squared_radius() / 1000.));
-
+        double length_factor = 5.0/100*normal_Slider->value();
 	for (Point_set_3<Kernel>::const_iterator it = points.begin(); it != points.end(); it++)
 	  {
 	    const UI_point& p = *it;
 	    const Point_set_3<Kernel>::Vector& n = p.normal();
-	    Point_set_3<Kernel>::Point q = p + normal_length * n;
+            Point_set_3<Kernel>::Point q = p + normal_length * length_factor* n;
 	    positions_lines.push_back(p.x());
 	    positions_lines.push_back(p.y());
 	    positions_lines.push_back(p.z());
@@ -600,11 +610,24 @@ QMenu* Scene_points_with_normal_item::contextMenu()
 
     QMenu* menu = Scene_item::contextMenu();
 
+    //add a slider to modify the normals length
     // Use dynamic properties:
     // http://doc.qt.io/qt-5/qobject.html#property
     bool menuChanged = menu->property(prop_name).toBool();
 
     if(!menuChanged) {
+      if(has_normals())
+      {
+        QMenu *container = new QMenu(tr("Normals Length"));
+        QWidgetAction *sliderAction = new QWidgetAction(0);
+        connect(d->normal_Slider, &QSlider::sliderMoved, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
+        connect(d->normal_Slider, &QSlider::sliderMoved, this, &Scene_points_with_normal_item::itemChanged);
+
+        sliderAction->setDefaultWidget(d->normal_Slider);
+
+        container->addAction(sliderAction);
+        menu->addMenu(container);
+      }
         d->actionDeleteSelection = menu->addAction(tr("Delete Selection"));
         d->actionDeleteSelection->setObjectName("actionDeleteSelection");
         connect(d->actionDeleteSelection, SIGNAL(triggered()),this, SLOT(deleteSelection()));
