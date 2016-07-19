@@ -472,20 +472,17 @@ public:
 namespace internal
 {
 template<class T>
-class DummyFunctor
+class Deref
 {
 public:
  typedef typename std::iterator_traits<T>::value_type result_type;
-
-  DummyFunctor()
-  {}
   typename std::iterator_traits<T>::value_type operator()(T triangle)const
   {
     return *triangle;
   }
 };
 template<class A>
-struct Get_ref{
+struct Address_of{
   typedef const A* result_type;
   const A* operator()(const A& a) const
   {
@@ -497,13 +494,13 @@ struct Get_ref{
 template <class Point_3>
 class Random_points_on_triangles_3 : public Generic_random_point_generator<
    const typename Kernel_traits<Point_3>::Kernel::Triangle_3*,
-   internal::DummyFunctor<const typename Kernel_traits<Point_3>::Kernel::Triangle_3*>,
+   internal::Deref<const typename Kernel_traits<Point_3>::Kernel::Triangle_3*>,
    Random_points_in_triangle_3<Point_3> ,Point_3> {
 public:
  typedef typename Kernel_traits<Point_3>::Kernel::Triangle_3       Triangle_3;
  typedef Generic_random_point_generator<
  const typename Kernel_traits<Point_3>::Kernel::Triangle_3*,
- internal::DummyFunctor<const Triangle_3*>,
+ internal::Deref<const Triangle_3*>,
  Random_points_in_triangle_3<Point_3> ,Point_3>                    Base;
  typedef const Triangle_3*                                         Id;
  typedef Point_3                                                   result_type;
@@ -511,9 +508,9 @@ public:
 
  template<typename TriangleRange>
  Random_points_on_triangles_3( TriangleRange triangles, Random& rnd = default_random)
-  : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Get_ref<Triangle_3>()),
-                     boost::make_transform_iterator(triangles.end(), internal::Get_ref<Triangle_3>()) ),
-         internal::DummyFunctor<const Triangle_3*>(),
+  : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_3>()),
+                     boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_3>()) ),
+         internal::Deref<const Triangle_3*>(),
          typename Kernel_traits<Point_3>::Kernel::Compute_area_3()
          ,rnd )
  {
