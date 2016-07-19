@@ -472,6 +472,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   scene->item(InputMeshItemIndex)->setVisible(false);
   Scene_polyhedron_item* item_segmentation = new Scene_polyhedron_item(segmented_polyhedron);
   item_segmentation->setItemIsMulticolor(true);
+  item_segmentation->invalidateOpenGLBuffers();
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation"));
 
