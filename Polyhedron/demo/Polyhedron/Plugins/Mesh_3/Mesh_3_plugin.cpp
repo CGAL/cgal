@@ -357,9 +357,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   const bool protect_features = ui.protect->isChecked();
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
-  const float iso_value = ui.iso_value_spinBox->value();
-  const float value_outside = ui.value_outside_spinBox->value();
-  const float inside_is_less =  ui.inside_is_less_checkBox->isChecked();
+  const float iso_value = float(ui.iso_value_spinBox->value());
+  const float value_outside = float(ui.value_outside_spinBox->value());
+  const float inside_is_less =  float(ui.inside_is_less_checkBox->isChecked());
 
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -555,9 +555,9 @@ treat_result(Scene_item& source_item,
   result_item.c3t3_changed();
 
   const Scene_item::Bbox& bbox = result_item.bbox();
-  result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
-                          (bbox.ymin() + bbox.ymax())/2.f,
-                          (bbox.zmin() + bbox.zmax())/2.f);
+  result_item.setPosition(float((bbox.xmin() + bbox.xmax())/2.f),
+                          float((bbox.ymin() + bbox.ymax())/2.f),
+                          float((bbox.zmin() + bbox.zmax())/2.f));
 
   result_item.setColor(default_mesh_color);
   result_item.setRenderingMode(source_item.renderingMode());
