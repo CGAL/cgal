@@ -30,6 +30,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double edge_size,
                                  const double tet_shape,
                                  bool protect_features,
+                                 const double sharp_edges_angle,
                                  const int manifold,
                                  const bool surface_only,
                                  CGAL::Three::Scene_interface* scene)
@@ -60,7 +61,8 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   
   // Features
   if(polylines.empty() && protect_features) {
-      p_domain->detect_features();//includes detection of borders in the surface case
+      //includes detection of borders in the surface case
+      p_domain->detect_features(sharp_edges_angle);
   }
   if(! polylines.empty()){
     p_domain->add_features(polylines.begin(), polylines.end());

@@ -334,6 +334,10 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
     ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
   else
     ui.volumeGroup->setVisible(!surface_only);
+  if (poly_item == NULL || polylines_item != NULL) {
+    ui.sharpEdgesAngleLabel->setVisible(false);
+    ui.sharpEdgesAngle->setVisible(false);
+  }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
@@ -355,6 +359,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const double edge_size = !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   const bool protect_features = ui.protect->isChecked();
+  const double sharp_edges_angle = ui.sharpEdgesAngle->value();
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
   const float iso_value = float(ui.iso_value_spinBox->value());
@@ -388,6 +393,7 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
                                  edge_size,
                                  radius_edge,
                                  protect_features,
+                                 sharp_edges_angle,
                                  manifold,
                                  surface_only,
                                  scene);
