@@ -1204,7 +1204,11 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     CGAL::Three::Scene_item* item = scene->item(i);
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     if(!poly_item) continue;
-
+    if(!poly_item->polyhedron()->is_pure_triangle())
+    {
+      messages->warning(QString("%1 ignored (not pure triangle)").arg(poly_item->name()));
+      continue;
+    }
     if(facet_trees.find(poly_item) == facet_trees.end()) {
       facet_trees[poly_item] = new Facet_tree();
       PPMAP pmap;
