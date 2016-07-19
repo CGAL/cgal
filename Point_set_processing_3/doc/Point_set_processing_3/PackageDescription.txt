@@ -50,6 +50,7 @@
 - `CGAL::compute_vcm()`
 - `CGAL::vcm_estimate_normals()`
 - `CGAL::vcm_is_on_feature_edge()`
+- `CGAL::structure_point_set()`
 - `CGAL::write_off_points()`
 - `CGAL::write_ply_points()`
 - `CGAL::write_xyz_points()`

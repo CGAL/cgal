@@ -138,6 +138,16 @@ namespace CGAL {
       m_normal = this->cross_pdct(
         this->constr_vec(p2, p1), this->constr_vec(p3, p1));
 
+      // Check if normal orientation is consistent
+      std::size_t nb_correct = 0,
+        nb_total = (indices.size () > 100) ? 100 : indices.size ();
+      for (std::size_t i = 0; i < nb_total; ++ i)
+        if (this->normal (indices[i]) * m_normal > 0)
+          ++ nb_correct;
+      if (nb_correct < nb_total / 2)
+        m_normal = -m_normal;
+        
+
       FT length = CGAL::sqrt(this->sqlen(m_normal));
 
       // Are the points almost singular?

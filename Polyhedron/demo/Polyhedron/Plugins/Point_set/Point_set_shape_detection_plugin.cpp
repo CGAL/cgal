@@ -2,8 +2,10 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Scene_group_item.h>
 
 #include <CGAL/Random.h>
 
@@ -11,6 +13,8 @@
 #include <CGAL/regularize_planes.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
+
+#include <CGAL/structure_point_set.h>
 
 #include <QObject>
 #include <QAction>
@@ -20,8 +24,24 @@
 #include <QMessageBox>
 
 #include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
 
 #include "ui_Point_set_shape_detection_plugin.h"
+
+
+struct build_from_pair
+{
+  Point_set& m_pts;
+
+  build_from_pair (Point_set& pts) : m_pts (pts) { }
+
+  void operator() (const std::pair<Point_set::Point, Point_set::Vector>& pair)
+  {
+    m_pts.push_back (Point_set::Point_with_normal (pair.first, pair.second));
+  }
+
+
+};
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 typedef Epic_kernel::Point_3 Point;
@@ -101,6 +121,7 @@ public:
   bool generate_alpha() const { return m_generate_alpha->isChecked(); }
   bool generate_subset() const { return !(m_do_not_generate_subset->isChecked()); }
   bool regularize() const { return m_regularize->isChecked(); }
+  bool generate_structured() const { return m_generate_structured->isChecked(); }
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
@@ -128,7 +149,13 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     Point_set_demo_point_set_shape_detection_dialog dialog;
     if(!dialog.exec())
       return;
-
+    
+    scene->setSelectedItem(-1);
+    Scene_group_item *subsets_item = new Scene_group_item(QString("%1 (RANSAC subsets)").arg(item->name()));
+    subsets_item->setExpanded(false);
+    Scene_group_item *planes_item = new Scene_group_item(QString("%1 (RANSAC planes)").arg(item->name()));
+    planes_item->setExpanded(false);
+    
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     
@@ -241,7 +268,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
               poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                  .arg (QString::number (shape->indices_of_assigned_points().size())));
               poly_item->setRenderingMode (Flat);
+
               scene->addItem(poly_item);
+              scene->changeGroup(poly_item, planes_item);
             }
         }
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
@@ -259,12 +288,49 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       point_item->set_has_normals(true);
       point_item->setRenderingMode(item->renderingMode());
       if (dialog.generate_subset())
-        scene->addItem(point_item);
+        {
+          scene->addItem(point_item);
+          scene->changeGroup(point_item, subsets_item);
+        }
       else
         delete point_item;
 
       ++index;
     }
+
+    if (dialog.generate_subset())
+      scene->addItem(subsets_item);
+    else
+      delete subsets_item;
+    
+    if (dialog.generate_alpha())
+      scene->addItem(planes_item);
+    else
+      delete planes_item;
+
+    if (dialog.generate_structured ())
+      {
+        std::cout << "Structuring point set... ";
+        
+        Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
+        CGAL::structure_point_set (points->begin (), points->end (),
+                                   boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
+                                   shape_detection,
+                                   op.cluster_epsilon);
+        if (pts_full->point_set ()->empty ())
+          delete pts_full;
+        else
+          {
+            pts_full->point_set ()->unselect_all();
+            pts_full->setName(tr("%1 (structured)").arg(item->name()));
+            pts_full->set_has_normals(true);
+            pts_full->setRenderingMode(PointsPlusNormals);
+            pts_full->setColor(Qt::blue);
+            scene->addItem (pts_full);
+          }
+        std::cerr << "done" << std::endl;
+      }
+    
 
     // Updates scene
     scene->itemChanged(index);
