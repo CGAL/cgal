@@ -1,0 +1,46 @@
+/*!
+\defgroup PkgDataClassification Point Set Shape Detection Reference
+
+\defgroup PkgDataClassificationConcepts Concepts
+\ingroup PkgDataClassification
+
+\defgroup PkgDataClassificationShapes Shapes
+\ingroup PkgDataClassification
+
+\addtogroup PkgDataClassification
+
+\cgalPkgDescriptionBegin{Data Classification, PkgDataClassificationSummary}
+\cgalPkgPicture{data_classif.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgDesc{This component implements an algorithm that classifies a point cloud into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can compute its own local attributes on the point cloud and define its own classes based on these attributes.}
+\cgalPkgManuals{Chapter_Data_Classification, PkgDataClassification}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.9}
+\cgalPkgBib{cgal:ovja-pssd}
+\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Main Classes ##
+- `CGAL::Point_set_classification<Kernel>`
+- `CGAL::Classification_type`
+
+## Segmentation attributes ##
+- `CGAL::Segmentation_attribute`
+- `CGAL::Segmentation_attribute_color<Kernel>`
+- `CGAL::Segmentation_attribute_elevation<Kernel>`
+- `CGAL::Segmentation_attribute_horizontality<Kernel>`
+- `CGAL::Segmentation_attribute_nonplanarity<Kernel>`
+- `CGAL::Segmentation_attribute_scatter<Kernel>`
+
+
+*/

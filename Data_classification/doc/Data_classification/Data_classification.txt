@@ -1,0 +1,26 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Data_Classification
+\cgalAutoToc
+\author Simon Giraudot
+
+This component implements an algorithm that classifies a point cloud into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can compute its own local attributes on the point cloud and define its own classes based on these attributes.
+
+\section Data_classification_attributes Attributes
+
+\section Data_classification_types Classification types
+
+\section Data_classification_psc Point set classification
+
+\section Data_classification_custom Defining custom attributes and types
+
+\section Data_classification_example Example
+
+The following example reads an input file (LIDAR point set in PLY format); computes 4 attributes (scatter, elevation, horizontality and non-planarity) from this input; defines 3 classification types (vegetation, ground and roof) along with the effects of attributes on them; classifies the point set; recovers the segmented input in 3 separated arrays.
+
+\cgalExample{Data_classification/example_point_set_classification.cpp}
+
+*/
+} /* namespace CGAL */
