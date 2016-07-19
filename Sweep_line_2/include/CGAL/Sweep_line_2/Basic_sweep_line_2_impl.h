@@ -64,6 +64,10 @@ Basic_sweep_line_2(const Traits_2* traits, Visitor* visitor) :
   m_status_line_insert_hint(m_statusLine.begin()),
   m_num_of_subCurves(0),
   m_visitor(visitor)
+#ifdef CGAL_SL_VERBOSE
+  , m_indent_size(0)
+  , m_need_indent(false)
+#endif
 { m_visitor->attach(this); }
 
 //-----------------------------------------------------------------------------
