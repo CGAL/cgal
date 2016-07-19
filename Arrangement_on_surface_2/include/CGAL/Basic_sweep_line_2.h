@@ -74,6 +74,7 @@
 #define CGAL_SL_PRINT_INSERT(a) {           \
     this->print_text("+++ inserting ");     \
     (a)->Print();                           \
+    this->print_eol();                      \
     this->print_text(" currentPos = ");     \
     this->PrintEvent(this->m_currentEvent); \
     this->print_eol();                      \
@@ -81,6 +82,7 @@
 #define CGAL_SL_PRINT_ERASE(a) {      \
     this->print_text("--- erasing "); \
     (a)->Print();                     \
+    this->print_eol();                \
   }
 #define CGAL_SL_PRINT_NEW_EVENT(p, e) {                  \
     this->print_text("%%% a new event was created at "); \

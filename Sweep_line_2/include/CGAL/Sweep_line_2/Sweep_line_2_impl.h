@@ -46,7 +46,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 {
-  CGAL_SL_PRINT_START_EOL("Completing the sweep");
+  CGAL_SL_PRINT_START_EOL("completing the sweep");
 
   // Complete the sweep process using base sweep-line class.
   Base::_complete_sweep();
@@ -65,7 +65,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 
   m_overlap_subCurves.clear();
 
-  CGAL_SL_PRINT_END_EOL("Completing the sweep done");
+  CGAL_SL_PRINT_END_EOL("completing the sweep");
 }
 
 //-----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 {
-  CGAL_SL_PRINT_START("Handling left curves at (");
+  CGAL_SL_PRINT_START("handling left curves at (");
   CGAL_SL_DEBUG(this->PrintEvent(this->m_currentEvent));
   CGAL_SL_PRINT_TEXT(")");
   CGAL_SL_PRINT_EOL();
@@ -134,15 +134,16 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
         // Handle overlaps.
         this->m_visitor->before_handle_event(this->m_currentEvent);
         this->m_visitor->add_subcurve(sub_cv1, sc);
+        CGAL_SL_PRINT_ERASE(*sl_pos);
         this->m_statusLine.erase(sl_pos);
-        CGAL_SL_PRINT_END_EOL("Handling left curves done");
+        CGAL_SL_PRINT_END_EOL("handling left curves");
         return;
       }
     }
     else {
       // The event is not located on any subcurve.
       this->m_visitor->before_handle_event(this->m_currentEvent);
-      CGAL_SL_PRINT_END_EOL("Handling left curves done");
+      CGAL_SL_PRINT_END_EOL("handling left curves");
       return;
     }
   }
@@ -197,7 +198,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
     _remove_curve_from_status_line(leftCurve, remove_for_good);
   }
 
-  CGAL_SL_PRINT_END_EOL("Handling left curves done");
+  CGAL_SL_PRINT_END_EOL("handling left curves");
 }
 
 //-----------------------------------------------------------------------------
@@ -207,13 +208,13 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 {
-  CGAL_SL_PRINT_START("Handling right curves at (");
+  CGAL_SL_PRINT_START("handling right curves at (");
   CGAL_SL_DEBUG(this->PrintEvent(this->m_currentEvent));
   CGAL_SL_PRINT_TEXT(")");
   CGAL_SL_PRINT_EOL();
 
   if (! this->m_currentEvent->has_right_curves()) {
-    CGAL_SL_PRINT_END_EOL("Handling right curves done");
+    CGAL_SL_PRINT_END_EOL("handling right curves");
     return;
   }
 
@@ -231,7 +232,6 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
     this->m_currentEvent->right_curves_end();
 
   CGAL_SL_PRINT_INSERT(*currentOne);
-
   Status_line_iterator slIter =
     this->m_statusLine.insert_before(this->m_status_line_insert_hint,
                                      *currentOne);
@@ -274,7 +274,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
     _intersect(static_cast<Subcurve*>(*prevOne),
                static_cast<Subcurve*>(*slIter));
 
-  CGAL_SL_PRINT_END_EOL("Handling right curves done");
+  CGAL_SL_PRINT_END_EOL("handling right curves");
 }
 
 //-----------------------------------------------------------------------------
@@ -285,7 +285,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 bool Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
 {
-  CGAL_SL_PRINT_START("Adding a Curve to the right of (");
+  CGAL_SL_PRINT_START("adding a Curve to the right of (");
   CGAL_SL_DEBUG(this->PrintEvent(event));
   CGAL_SL_PRINT_TEXT(") ");
   CGAL_SL_PRINT_CURVE(curve);
@@ -296,13 +296,13 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
        ++iter)
   {
     if ((curve == *iter) || (*iter)->is_inner_node(curve)) {
-      CGAL_SL_PRINT_END_EOL("Addiing a Curve to the right (curve exists)");
+      CGAL_SL_PRINT_END_EOL("adding a Curve to the right (curve exists)");
       return false;
     }
 
     if ((curve)->is_inner_node(*iter)) {
       *iter = curve;
-      CGAL_SL_PRINT_END_EOL("Addiing a Curve to the right (curve overlaps)");
+      CGAL_SL_PRINT_END_EOL("adding a Curve to the right (curve overlaps)");
       return false;
     }
 
@@ -314,7 +314,7 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
       for (sc_iter = list_of_sc.begin(); sc_iter != list_of_sc.end(); ++sc_iter)
         _add_curve_to_right(event, static_cast<Subcurve*>(*sc_iter));
 
-      CGAL_SL_PRINT_END_EOL("Addiing a Curve to the right");
+      CGAL_SL_PRINT_END_EOL("adding a Curve to the right");
       return true;
     }
   }
@@ -324,14 +324,14 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
 
   if (! pair_res.first) {
     // No overlap occurs.
-    CGAL_SL_PRINT_END_EOL("Addiing a Curve to the right");
+    CGAL_SL_PRINT_END_EOL("adding a Curve to the right");
     return false;
   }
 
   _handle_overlap(event, curve, pair_res.second, overlap_exist);
 
   // Inidicate that an overlap has occured:
-  CGAL_SL_PRINT_END_EOL("Addiing a Curve to the right");
+  CGAL_SL_PRINT_END_EOL("adding a Curve to the right");
   return true;
 }
 
@@ -343,7 +343,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
 {
-  CGAL_SL_PRINT_START("Removing a curve from the status line, ");
+  CGAL_SL_PRINT_START("removing a curve from the status line, ");
   CGAL_SL_PRINT_CURVE(leftCurve);
   CGAL_SL_PRINT_EOL();
   CGAL_SL_PRINT_STATUS_LINE();
@@ -354,7 +354,8 @@ _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
 
   if (! remove_for_good) {
     // the subcurve is not removed for good, so we dont need to intersect
-    // his neighbours after its removal.
+    // its neighbours after its removal.
+    CGAL_SL_PRINT_ERASE(*sliter);
     this->m_statusLine.erase(sliter);
     CGAL_SL_PRINT_END_EOL("Removing a curve from the status line");
     return;
@@ -376,9 +377,10 @@ _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
     _intersect(static_cast<Subcurve*>(*prev),
                static_cast<Subcurve*>(*next));
   }
+  CGAL_SL_PRINT_ERASE(*sliter);
   this->m_statusLine.erase(sliter);
 
-  CGAL_SL_PRINT_END_EOL("Removing a curve from the status line");
+  CGAL_SL_PRINT_END_EOL("removing a curve from the status line");
 }
 
 //-----------------------------------------------------------------------------
@@ -389,7 +391,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
                                                            Subcurve* c2)
 {
-  CGAL_SL_PRINT_START("Computing intersection of ");
+  CGAL_SL_PRINT_START("computing intersection of ");
   CGAL_SL_PRINT_CURVE(c1);
   CGAL_SL_PRINT_TEXT(" and ");
   CGAL_SL_PRINT_CURVE(c2);
@@ -549,7 +551,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
     }
   }
 
-  CGAL_SL_PRINT_END_EOL("Computing intersection done");
+  CGAL_SL_PRINT_END_EOL("computing intersection");
 }
 
 //-----------------------------------------------------------------------------
@@ -563,7 +565,7 @@ _create_intersection_point(const Point_2& xp,
                            Subcurve*& c1, Subcurve*& c2,
                            bool is_overlap)
 {
-  CGAL_SL_PRINT_START_EOL("Createing an intersection point netween");
+  CGAL_SL_PRINT_START_EOL("createing an intersection point netween");
   CGAL_SL_PRINT_CURVE(c1);
   CGAL_SL_PRINT_EOL();
   CGAL_SL_PRINT_CURVE(c2);
@@ -665,7 +667,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
 {
-  CGAL_SL_PRINT_START_EOL("Fixing overlap subcurves");
+  CGAL_SL_PRINT_START_EOL("fixing overlap subcurves");
 
   CGAL_assertion(this->m_currentEvent->has_left_curves());
 
@@ -711,7 +713,7 @@ _handle_overlap(Event* event,
                 bool overlap_exist)
 {
   // An overlap occurs:
-  CGAL_SL_PRINT_START_EOL("Handling overlap at right insertion");
+  CGAL_SL_PRINT_START_EOL("handling overlap at right insertion");
 
   X_monotone_curve_2 overlap_cv;
   if (overlap_exist) overlap_cv = sub_cv1;
@@ -724,7 +726,7 @@ _handle_overlap(Event* event,
                                          vit);
 
     if (obj_vec.empty()) {
-      CGAL_SL_PRINT_END_EOL("Handling overlap done");
+      CGAL_SL_PRINT_END_EOL("handling overlap");
       return;
     }
 
@@ -846,7 +848,7 @@ _handle_overlap(Event* event,
   // Replace current sub-curve (*iter) with the new sub-curve
   (*iter) = overlap_sc;
 
-  CGAL_SL_PRINT_END_EOL("Handling overlap done");
+  CGAL_SL_PRINT_END_EOL("handling overlap");
 }
 
 //-----------------------------------------------------------------------------
@@ -859,7 +861,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _fix_finished_overlap_subcurve(Subcurve* sc)
 {
-  CGAL_SL_PRINT_START_EOL("Fixing finished overlap subcurve");
+  CGAL_SL_PRINT_START_EOL("fixing finished overlap subcurve");
 
   CGAL_assertion(sc != NULL);
 
@@ -879,7 +881,7 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
 
   if (!sc->originating_subcurve1()) {
     // sc does not store an overlap, we are done
-    CGAL_SL_PRINT_END_EOL("Fixing finished overlap subcurve");
+    CGAL_SL_PRINT_END_EOL("fixing finished overlap subcurve");
     return;
   }
 
@@ -891,7 +893,7 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
   _fix_finished_overlap_subcurve(orig_sc_1);
   _fix_finished_overlap_subcurve(orig_sc_2);
 
-  CGAL_SL_PRINT_END_EOL("Fixing finished overlap subcurve");
+  CGAL_SL_PRINT_END_EOL("fixing finished overlap subcurve");
 }
 
 } //namespace CGAL

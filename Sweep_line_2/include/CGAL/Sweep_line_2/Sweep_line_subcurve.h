@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>,
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
@@ -70,12 +66,12 @@ public:
 protected:
   // Data members:
   X_monotone_curve_2 m_lastCurve;   // The portion of the curve that lies to
-                                    // the right of the last event point 
+                                    // the right of the last event point
                                     // that occured on the curve.
 
   Event* m_left_event;              // The event associated with the left end.
   Event* m_right_event;             // The event associated with the right end
-  
+
   Status_line_iterator m_hint;      // The location of the subcurve in the
                                     // status line (the Y-structure).
 
@@ -112,11 +108,11 @@ public:
   /*! Set the last intersecing curve so far. */
   void set_last_curve(const X_monotone_curve_2& cv) { m_lastCurve = cv; }
 
-  /*! Check if the given event is the matches the right-end event. */  
+  /*! Check if the given event is the matches the right-end event. */
   template <typename SweepEvent>
   bool is_end_point(const SweepEvent* event) const
   { return (m_right_event == (Event*)event); }
- 
+
   /*! Get the event that corresponds to the left end of the subcurve. */
   Event* left_event() const { return m_left_event; }
 
@@ -186,7 +182,7 @@ public:
   {
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
-    
+
     this->all_leaves (std::back_inserter(my_leaves));
     s->all_leaves (std::back_inserter(other_leaves));
 
@@ -211,7 +207,7 @@ public:
   {
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
-    
+
     this->all_leaves(std::back_inserter(my_leaves));
     s->all_leaves(std::back_inserter(other_leaves));
 
@@ -265,7 +261,7 @@ public:
     if (depth1 > depth2) return (depth1 + 1);
     else return (depth2 + 1);
   }
- 
+
 #ifdef CGAL_SL_VERBOSE
   void Print() const;
 #endif
@@ -275,11 +271,10 @@ public:
   template<class Traits>
   void Sweep_line_subcurve<Traits>::Print() const
   {
-    std::cout << "Curve " << this 
-              << "  (" << m_lastCurve << ") " 
+    std::cout << "Curve " << this
+              << "  (" << m_lastCurve << ") "
               << " [sc1: " << m_orig_subcurve1
-              << ", sc2: " << m_orig_subcurve2 << "]"
-              << std::endl;
+              << ", sc2: " << m_orig_subcurve2 << "]";
   }
 #endif
 

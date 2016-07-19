@@ -110,7 +110,7 @@ template <typename Tr, typename Visit, typename Crv, typename Evnt,
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintSubCurves()
 {
   CGAL_SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)
-  for (unsigned int i = 0 ; i < m_num_of_subCurves ; ++i)
+  for (size_t i = 0 ; i < m_num_of_subCurves ; ++i)
     m_subCurves[i].Print();
 }
 
@@ -118,25 +118,30 @@ template <typename Tr, typename Visit, typename Crv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintStatusLine()
 {
-  if ( m_statusLine.size() == 0) {
-    std::cout << std::endl << "Status line: empty" << std::endl;
+  if (m_statusLine.size() == 0) {
+    print_text("Status line: empty");
+    print_eol();
     return;
   }
-  std::cout << std::endl << "Status line: (" ;
-  if(m_currentEvent->is_closed())
-    std::cout << m_currentEvent->point() << ")" << std::endl;
+  print_text("Status line: ");
+  if (m_currentEvent->is_closed())
+    std::cout << "(" << m_currentEvent->point() << ")";
   else {
-    Arr_parameter_space x = m_currentEvent->parameter_space_in_x(),
-                  y = m_currentEvent->parameter_space_in_y();
-
+    Arr_parameter_space x = m_currentEvent->parameter_space_in_x();
+    Arr_parameter_space y = m_currentEvent->parameter_space_in_y();
     PrintOpenBoundaryType(x, y);
   }
+  print_eol();
+  increase_indent();
   Status_line_iterator iter = m_statusLine.begin();
-  while ( iter != m_statusLine.end()) {
-    (*iter)->Print();
+  while (iter != m_statusLine.end()) {
+    print_curve(*iter);
+    print_eol();
     ++iter;
   }
-  std::cout << "Status line - end" << std::endl;
+  decrease_indent();
+  print_text("Status line end");
+  print_eol();
 }
 
 template <typename Tr, typename Visit, typename Crv, typename Evnt,

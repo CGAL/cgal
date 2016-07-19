@@ -320,7 +320,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 {
-  CGAL_SL_PRINT_START_EOL("Handling left curves at (");
+  CGAL_SL_PRINT_START_EOL("handling left curves at (");
   CGAL_SL_DEBUG(PrintEvent(m_currentEvent));
   CGAL_SL_PRINT_EOL();
 
@@ -460,6 +460,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   // we encounter a subcurve that is not associated with the current event.
   Subcurve* curve = *(m_currentEvent->left_curves_begin());
   Status_line_iterator sl_iter = curve->hint();
+
   CGAL_assertion(*sl_iter == curve);
   // Look for the first curve in the vertical ordering that is also in the
   // left curve of the event
@@ -585,6 +586,7 @@ _remove_curve_from_status_line(Subcurve* sc)
   ++m_status_line_insert_hint;
 
   // Erase the subcurve from the status line.
+  CGAL_SL_PRINT_ERASE(*sl_iter);
   m_statusLine.erase(sl_iter);
   CGAL_SL_PRINT_END_EOL("Removing a curve from the status line");
 }

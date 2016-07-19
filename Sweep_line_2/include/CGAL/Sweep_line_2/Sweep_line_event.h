@@ -153,7 +153,7 @@ public:
 
       // Replace the existing curve in case of overlap.
       // EBEB 2011-10-27: Fixed to detect overlaps correctly
-      if (curve != *iter && curve->has_common_leaf(*iter)) {
+      if ((curve != *iter) && (curve->has_common_leaf(*iter))) {
         //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
         *iter = curve;
         return;
@@ -392,13 +392,12 @@ public:
 
   /*! Replace the set of left subcurves. */
   template <typename InputIterator>
-  void replace_left_curves (InputIterator begin, InputIterator end)
+  void replace_left_curves(InputIterator begin, InputIterator end)
   {
     Subcurve_iterator left_iter = m_leftCurves.begin();
-    InputIterator     iter;
-    for (iter = begin; iter != end; ++iter, ++left_iter)
+    for (InputIterator iter = begin; iter != end; ++iter, ++left_iter)
       *left_iter = static_cast<Subcurve*>(*iter);
-    m_leftCurves.erase (left_iter, m_leftCurves.end());
+    m_leftCurves.erase(left_iter, m_leftCurves.end());
   }
 
   bool is_right_curve_bigger(Subcurve* c1, Subcurve* c2)
