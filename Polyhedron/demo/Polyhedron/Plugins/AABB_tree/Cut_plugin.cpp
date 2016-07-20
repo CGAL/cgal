@@ -1206,30 +1206,25 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     if(!poly_item) continue;
     if(!poly_item->polyhedron()->is_pure_triangle())
     {
-      messages->warning(QString("%1 ignored (not pure triangle)").arg(poly_item->name()));
+      messages->warning(QString("%1 ignored (not a triangulated mesh)").arg(poly_item->name()));
       continue;
     }
     if(facet_trees.find(poly_item) == facet_trees.end()) {
       facet_trees[poly_item] = new Facet_tree();
       PPMAP pmap;
       //filter facets to ignore degenerated ones
-      for(Polyhedron::Facet_iterator fit = poly_item->polyhedron()->facets_begin(), end = poly_item->polyhedron()->facets_end(); fit!=end; ++fit)
+      for(Polyhedron::Facet_iterator
+          fit = poly_item->polyhedron()->facets_begin(),
+          end = poly_item->polyhedron()->facets_end();
+          fit!=end; ++fit)
       {
         Polyhedron::Point a(fit->halfedge()->vertex()->point()),
             b(fit->halfedge()->next()->vertex()->point()),
             c(fit->halfedge()->prev()->vertex()->point());
 
-        Polyhedron::Traits::Collinear_3  collinear = poly_item->polyhedron()->traits().collinear_3_object();
-        bool test = collinear(a,b,c);
-        if(!test)
+        if(!CGAL::collinear(a,b,c))
           facet_trees[poly_item]->insert(Facet_primitive(fit, *poly_item->polyhedron(), pmap));
       }
-
-
-    /*  insert(faces(*(poly_item->polyhedron())).first,
-                                     faces(*(poly_item->polyhedron())).second,
-                                     *poly_item->polyhedron(),
-                                     pmap );*/
 
       Scene_aabb_item* aabb_item = new Scene_aabb_item(*facet_trees[poly_item]);
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
