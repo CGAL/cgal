@@ -1195,6 +1195,7 @@ Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     d->program->bind();
     //draw the points
+    d->program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_lines/4));
     // Clean-up
     d->program->release();
