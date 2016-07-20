@@ -369,7 +369,7 @@ typedef const Point_2& reference;
  \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
  \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
  \sa`CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
- \sa`CGAL::Random_points_on_tetrahedral_mesh_boundary<C3T3>`
+ \sa`CGAL::Random_points_on_tetrahedral_mesh_boundary_3<C3T3>`
  \sa`CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
  \sa `CGAL::Random_points_in_triangles_3<Point_3>`
  \sa `CGAL::Random_points_in_triangles_2<Point_2>`
@@ -438,7 +438,7 @@ default_random);
  \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
  \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
  \sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
- \sa `CGAL::Random_points_on_tetrahedral_mesh_boundary<C3T3>`
+ \sa `CGAL::Random_points_on_tetrahedral_mesh_boundary_3<C3T3>`
  \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
  \sa `CGAL::Random_points_in_triangles_3<Point_3>`
  \sa `std::random_shuffle`

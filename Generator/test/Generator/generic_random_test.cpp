@@ -207,7 +207,7 @@ int test_on_c3t3(const Polyhedron& polyhedron)
                          cell_radius_edge_ratio=3);
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
-  Random_points_on_tetrahedral_mesh_boundary<C3t3>
+  Random_points_on_tetrahedral_mesh_boundary_3<C3t3>
       g(c3t3);
   CGAL::cpp11::copy_n( g, 300, std::back_inserter(points));
   for (std::size_t i = 0; i<points.size(); ++i)

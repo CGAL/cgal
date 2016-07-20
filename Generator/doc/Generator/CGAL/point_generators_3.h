@@ -351,7 +351,7 @@ The class `Random_points_in_triangles_3` is an input iterator creating points un
 \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
 \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
 \sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
-\sa `CGAL::Random_points_on_tetrahedral_mesh_boundary<C3T3>`
+\sa `CGAL::Random_points_on_tetrahedral_mesh_boundary_3<C3T3>`
 \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
 \sa `CGAL::Random_points_in_triangles_2<Point_2>`
 \sa `std::random_shuffle`
@@ -420,7 +420,7 @@ distributed inside the faces of a triangle mesh model of `FaceListGraph`.
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
-\sa `CGAL::Random_points_on_tetrahedral_mesh_boundary<C3T3>`
+\sa `CGAL::Random_points_on_tetrahedral_mesh_boundary_3<C3T3>`
 \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
 \sa `CGAL::Random_points_in_triangles_2<Point_2>`
 \sa `CGAL::Random_points_in_triangles_3<Point_3>`
@@ -480,7 +480,7 @@ namespace CGAL {
 
 /*!
 
-The class `Random_points_on_tetrahedral_mesh_boundary` is an input iterator creating points uniformly
+The class `Random_points_on_tetrahedral_mesh_boundary_3` is an input iterator creating points uniformly
 distributed on the boundary of a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
 
 C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
@@ -502,7 +502,7 @@ C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
 
 */
 template <class C3T3>
-class Random_points_on_tetrahedral_mesh_boundary {
+class Random_points_on_tetrahedral_mesh_boundary_3 {
 public:
 
 /// \name Types
@@ -540,11 +540,11 @@ Creates  an input iterator `g` generating points of type `Weighted_point_3` unif
 distributed on the mesh. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
-Random_points_on_tetrahedral_mesh_boundary(  C3T3& c3t3,Random& rnd = default_random);
+Random_points_on_tetrahedral_mesh_boundary_3(  C3T3& c3t3,Random& rnd = default_random);
 
 /// @}
 
-}; /* end Random_points_on_tetrahedral_mesh_boundary */
+}; /* end Random_points_on_tetrahedral_mesh_boundary_3 */
 
 } /* end namespace CGAL */
 
@@ -568,7 +568,7 @@ C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
 \sa `CGAL::Random_points_on_sphere_3<Point_3, Creator>`
 \sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
 \sa `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
-\sa `CGAL::Random_points_on_tetrahedral_mesh_boundary<C3T3>`
+\sa `CGAL::Random_points_on_tetrahedral_mesh_boundary_3<C3T3>`
 \sa `CGAL::Random_points_in_triangles_2<Point_2>`
 \sa `CGAL::Random_points_in_triangles_3<Point_3>`
 \sa `std::random_shuffle`
