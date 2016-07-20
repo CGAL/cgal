@@ -33,7 +33,10 @@ int main(int argc, char*argv[])
   // simplification by clustering using erase-remove idiom
   double cell_size = 0.05;
   std::vector<std::size_t>::iterator end;
-  end = CGAL::grid_simplify_point_set(indices.begin(), indices.end(), &(points[0]),cell_size);
+  end = CGAL::grid_simplify_point_set(indices.begin(),
+                                      indices.end(),
+                                      CGAL::make_property_map(points),
+                                      cell_size);
 
   std::size_t k = end - indices.begin();
 

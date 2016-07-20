@@ -177,10 +177,7 @@ compute_average_spacing(
   // Note: We have to convert each input iterator to Point_3.
   std::vector<Point> kd_tree_points; 
   for(InputIterator it = first; it != beyond; it++)
-  {
-      Point point = get(point_pmap, *it);
-      kd_tree_points.push_back(point);
-  }
+    kd_tree_points.push_back(get(point_pmap, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
   // iterate over input points, compute and output normal

@@ -582,18 +582,20 @@ public:
                                IndicesIterator indices_first,
                                IndicesIterator indices_beyond )
   {
-    typedef std::vector<std::ptrdiff_t> Vertex_indices;
+    typedef std::vector<std::size_t> Vertex_indices;
     typedef std::vector<Vertex_handle> Vertices;
 
     Vertex_indices vertex_indices;
     vertex_indices.resize(points.size());
 
-    std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
-              boost::counting_iterator<std::ptrdiff_t>(points.size()),
+    std::copy(boost::counting_iterator<std::size_t>(0),
+              boost::counting_iterator<std::size_t>(points.size()),
               std::back_inserter(vertex_indices));
 
     size_type n = this->number_of_vertices();
-    Spatial_sort_traits_adapter_2<Gt,const Point_2*> sort_traits(&(points[0]));
+    Spatial_sort_traits_adapter_2<Gt,
+                                  typename Pointer_property_map<Point_2>::const_type >
+      sort_traits(make_property_map(points));
 
     spatial_sort(vertex_indices.begin(), vertex_indices.end(), sort_traits);
 

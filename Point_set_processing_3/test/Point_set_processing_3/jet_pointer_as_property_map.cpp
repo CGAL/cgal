@@ -37,8 +37,8 @@ int main()
 
 
   CGAL::jet_estimate_normals<CGAL::Sequential_tag>(indices.begin(), indices.end(),
-                                                   &(points[0]),
-                                                   &(normals[0]),
+                                                   CGAL::make_property_map(points),
+                                                   CGAL::make_property_map(normals),
                                                    12);
   
   

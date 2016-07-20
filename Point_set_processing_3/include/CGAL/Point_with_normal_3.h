@@ -138,17 +138,16 @@ struct Normal_of_point_with_normal_pmap
 
   typedef Point_with_normal key_type;
   typedef Vector value_type;
-  typedef value_type& reference;
+  typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
   /// Access a property map element
-  reference operator[](key_type& pwn) const { return pwn.normal(); }
+  value_type& operator[](key_type& pwn) const { return pwn.normal(); }
 
   typedef Normal_of_point_with_normal_pmap<Gt> Self;
   /// \name Put/get free functions
   /// @{
-  friend const value_type& get(const Self&,const key_type& k) {return k.normal();}
-  friend         reference get(const Self&,      key_type& k) {return k.normal();}
+  friend reference get(const Self&,const key_type& k) {return k.normal();}
   friend void put(const Self&,key_type& k, const value_type& v) {k.normal()=v;}
   /// @};}
 };

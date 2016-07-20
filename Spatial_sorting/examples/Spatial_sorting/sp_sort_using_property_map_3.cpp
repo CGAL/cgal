@@ -6,9 +6,8 @@
 
 typedef CGAL::Simple_cartesian<double>                  Kernel;
 typedef Kernel::Point_3                                 Point_3;
-//using a pointer as a special property map type
-typedef 
-  CGAL::Spatial_sort_traits_adapter_3<Kernel,Point_3*>  Search_traits_3;
+typedef CGAL::Spatial_sort_traits_adapter_3<Kernel,
+          CGAL::Pointer_property_map<Point_3>::type > Search_traits_3;
 
 int main()
 {
@@ -20,16 +19,18 @@ int main()
   points.push_back(Point_3(744,4154,43));
   points.push_back(Point_3(74,44,1));
   
-  std::vector<std::ptrdiff_t> indices;
+  std::vector<std::size_t> indices;
   indices.reserve(points.size());
   
-  std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
-            boost::counting_iterator<std::ptrdiff_t>(points.size()),
+  std::copy(boost::counting_iterator<std::size_t>(0),
+            boost::counting_iterator<std::size_t>(points.size()),
             std::back_inserter(indices));
   
-  CGAL::spatial_sort( indices.begin(),indices.end(),Search_traits_3(&(points[0])) );
+  CGAL::spatial_sort( indices.begin(),
+                      indices.end(),
+                      Search_traits_3(CGAL::make_property_map(points)) );
 
-  for (std::vector<std::ptrdiff_t>::iterator it=indices.begin();it!=indices.end();++it)
+  for (std::vector<std::size_t>::iterator it=indices.begin();it!=indices.end();++it)
     std::cout << points[*it] << "\n";
 
   std::cout << "done" << std::endl;

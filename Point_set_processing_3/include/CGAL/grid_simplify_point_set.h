@@ -51,7 +51,7 @@ private:
 
     double m_epsilon;
     PointPMap point_pmap;
-    
+    typedef typename boost::property_traits<PointPMap>::value_type Point;
 public:
 
     Less_epsilon_points_3 (double epsilon, PointPMap p_pmap) 
@@ -62,20 +62,9 @@ public:
 
     bool operator() (const Point_3& a, const Point_3& b) const
     {
-        typedef typename boost::property_traits<PointPMap>::value_type Point;
-        
         // Round points to multiples of m_epsilon, then compare.
-        Point a_n = get(point_pmap,a);
-        Point b_n = get(point_pmap,b);
-        
-        Point rounded_a(round_epsilon(a_n.x(), m_epsilon),
-                        round_epsilon(a_n.y(), m_epsilon),
-                        round_epsilon(a_n.z(), m_epsilon));
-        Point rounded_b(round_epsilon(b_n.x(), m_epsilon),
-                        round_epsilon(b_n.y(), m_epsilon),
-                        round_epsilon(b_n.z(), m_epsilon));
-                        
-        return (rounded_a < rounded_b);
+        return round_epsilon( get(point_pmap,a), m_epsilon ) <
+               round_epsilon( get(point_pmap,b), m_epsilon );
     }
 
 private:
@@ -84,6 +73,13 @@ private:
     static inline double round_epsilon(double value, double epsilon)
     {
         return std::floor(value/epsilon) * epsilon;
+    }
+
+    static inline Point round_epsilon(const Point& p, double epsilon)
+    {
+        return Point( round_epsilon(p.x(), epsilon),
+                      round_epsilon(p.y(), epsilon),
+                      round_epsilon(p.z(), epsilon) );
     }
 };
 

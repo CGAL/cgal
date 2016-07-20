@@ -336,10 +336,10 @@ private:
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
     size_type n = this->number_of_vertices();
-    std::vector<std::ptrdiff_t> indices;
+    std::vector<std::size_t> indices;
     std::vector<Point> points;
     std::vector<typename Tds::Vertex::Info> infos;
-    std::ptrdiff_t index=0;
+    std::size_t index=0;
     for (InputIterator it=first;it!=last;++it){
       Tuple_or_pair value=*it;
       points.push_back( top_get_first(value)  );
@@ -347,13 +347,16 @@ private:
       indices.push_back(index++);
     }
 
-    typedef Spatial_sort_traits_adapter_2<Geom_traits,Point*> Search_traits;
+    typedef typename Pointer_property_map<Point>::type Pmap;
+    typedef Spatial_sort_traits_adapter_2<Geom_traits,Pmap> Search_traits;
     
-    spatial_sort(indices.begin(),indices.end(),Search_traits(&(points[0]),geom_traits()));
+    spatial_sort(indices.begin(),
+                 indices.end(),
+                 Search_traits(make_property_map(points),geom_traits()));
 
     Vertex_handle v_hint;
     Face_handle hint;
-    for (typename std::vector<std::ptrdiff_t>::const_iterator
+    for (typename std::vector<std::size_t>::const_iterator
       it = indices.begin(), end = indices.end();
       it != end; ++it){
       v_hint = insert(points[*it], hint);

@@ -413,10 +413,8 @@ bilateral_smooth_point_set(
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
   typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
-  typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
   CGAL_point_set_processing_precondition(first != beyond);
@@ -433,8 +431,8 @@ bilateral_smooth_point_set(
   Pwns pwns;
   for(ForwardIterator it = first; it != beyond; ++it)
   {
-    const Point& p = get(point_pmap, *it);
-    const Vector& n = get(normal_pmap, *it);
+    typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
+    typename boost::property_traits<NormalPMap>::reference n = get(normal_pmap, *it);
     CGAL_point_set_processing_precondition(n.squared_length() > 1e-10);
     
     pwns.push_back(Pwn(p, n));
@@ -564,7 +562,7 @@ bilateral_smooth_point_set(
    ForwardIterator it = first;
    for(unsigned int i = 0 ; it != beyond; ++it, ++i)
    {
-     const Point& p = get(point_pmap, *it);
+     typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
      sum_move_error += CGAL::squared_distance(p, update_pwns[i].position());
      put (point_pmap, *it, update_pwns[i].position());
      put (normal_pmap, *it, update_pwns[i].normal());

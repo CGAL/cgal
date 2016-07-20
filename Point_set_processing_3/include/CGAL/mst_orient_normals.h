@@ -149,16 +149,16 @@ struct Propagate_normal_orientation
     template <class Edge>
     void operator()(Edge& edge, const MST_graph& mst_graph)
     {
-        typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+        typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
         typedef typename MST_graph::vertex_descriptor vertex_descriptor;
 
         // Gets source normal
         vertex_descriptor source_vertex = source(edge, mst_graph);
-        const Vector source_normal = get(mst_graph.m_normal_pmap, *(mst_graph[source_vertex].input_point) );
+        Vector_ref source_normal = get(mst_graph.m_normal_pmap, *(mst_graph[source_vertex].input_point) );
         const bool source_normal_is_oriented = mst_graph[source_vertex].is_oriented;
         // Gets target normal
         vertex_descriptor target_vertex = target(edge, mst_graph);
-        const Vector& target_normal = get( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point) );
+        Vector_ref target_normal = get( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point) );
         bool& target_normal_is_oriented = ((MST_graph&)mst_graph)[target_vertex].is_oriented;
         if ( ! target_normal_is_oriented )
         {
@@ -208,6 +208,7 @@ mst_find_source(
 
     // Input points types
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
 
     // Precondition: at least one element in the container
     CGAL_point_set_processing_precondition(first != beyond);
@@ -225,7 +226,7 @@ mst_find_source(
     }
 
     // Orients its normal towards +Z axis
-    const Vector& normal = get(normal_pmap,*top_point);
+    Vector_ref normal = get(normal_pmap,*top_point);
     const Vector Z(0, 0, 1);
     if (Z * normal < 0) {
       CGAL_TRACE("  Flip top point normal\n");
@@ -268,8 +269,8 @@ create_riemannian_graph(
     const Kernel& /*kernel*/) ///< geometric traits.
 {
     // Input points types
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename boost::property_traits<PointPMap>::reference Point_ref;
+    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
 
     // Types for K nearest neighbors search structure
     typedef Point_vertex_handle_3<ForwardIterator> Point_vertex_handle_3;
@@ -302,7 +303,7 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         
-        Point point = get(point_pmap, *it);
+        Point_ref point = get(point_pmap, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         kd_tree_points.push_back(point_wrapper);
     }
@@ -334,14 +335,14 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         std::size_t it_index = get(index_pmap,it);
-        Vector it_normal_vector = get(normal_pmap,*it);
+        Vector_ref it_normal_vector = get(normal_pmap,*it);
         
         // Gather set of (k+1) neighboring points.
         // Perform k+1 queries (as in point set, the query point is
         // output first). Search may be aborted if k is greater
         // than number of input points.
         
-        Point point = get(point_pmap, *it);
+        Point_ref point = get(point_pmap, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         Neighbor_search search(*tree, point_wrapper, k+1);
         Search_iterator search_iterator = search.begin();
@@ -366,7 +367,7 @@ create_riemannian_graph(
                 // Computes edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
                 
-                Vector neighbor_normal_vector = get(normal_pmap,*neighbor);
+                Vector_ref neighbor_normal_vector = get(normal_pmap,*neighbor);
                 double weight = 1.0 - std::abs(it_normal_vector * neighbor_normal_vector);
                 if (weight < 0)
                     weight = 0; // safety check

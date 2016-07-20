@@ -56,7 +56,8 @@ namespace CGAL {
       unsigned int nb_pts = 0;
       while(begin != end) 
 	{
-	  const Point& point = get(point_pmap, *begin);
+	  typename boost::property_traits<PointPMap>::reference point =
+            get(point_pmap, *begin);
 	  x += point.x ();  y += point.y ();  z += point.z ();
 	  ++ nb_pts;
 	  ++ begin;
@@ -77,15 +78,13 @@ namespace CGAL {
     {
       typedef typename std::list<Input_type>::iterator Iterator;
       typedef typename K::FT FT;
-      typedef typename K::Point_3 Point;
 
       FT dist_min = (std::numeric_limits<FT>::max)();
 
       typename std::list<Input_type>::iterator point_min;
       for (Iterator it = cluster.begin (); it != cluster.end (); ++ it)
 	{
-	  const Point& point = get(point_pmap, *it);
-	  FT dist = CGAL::squared_distance (point, centroid);
+	  FT dist = CGAL::squared_distance (get(point_pmap, *it), centroid);
 	  if (dist < dist_min)
 	    {
 	      dist_min = dist;

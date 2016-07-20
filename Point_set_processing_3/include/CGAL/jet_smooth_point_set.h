@@ -205,10 +205,7 @@ jet_smooth_point_set(
   // Note: We have to convert each input iterator to Point_3.
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
-  {
-    Point point = get(point_pmap, *it);
-    kd_tree_points.push_back(point);
-  }
+    kd_tree_points.push_back(get(point_pmap, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
   // Iterates over input points and mutates them.
@@ -237,7 +234,7 @@ jet_smooth_point_set(
      {
        for(it = first; it != beyond; it++)
 	 {
-	   const Point& p = get(point_pmap, *it);
+	   typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
 	   put(point_pmap, *it ,
 	       internal::jet_smooth_point<Kernel, SvdTraits>(
 							     p,tree,k,degree_fitting,degree_monge) );

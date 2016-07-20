@@ -36,12 +36,6 @@
 
 namespace CGAL {
 
-// VC++ does not consider put and get for plain pointers
-// when identifying the best match for overloads
-
-using ::put;
-using ::get;
-
 /// \cond SKIP_DOXYGEN
 
 
@@ -287,12 +281,72 @@ struct Property_map_to_unary_function{
     : map(m)
   {}
 
+  template <class KeyType>
   result_type
-  operator()(const argument_type& a) const
+  operator()(const KeyType& a) const
   {
     return get(map,a);
   }
 };
+
+/// \ingroup PkgProperty_map
+/// Utility class providing shortcuts to property maps based on raw pointers
+template <class T>
+struct Pointer_property_map{
+  typedef boost::iterator_property_map< T*,
+                              boost::typed_identity_property_map<std::size_t>,
+                              T,
+                              T&> type; ///< mutable `LvaluePropertyMap`
+  typedef boost::iterator_property_map< const T*,
+                              boost::typed_identity_property_map<std::size_t>,
+                              T,
+                              const T&> const_type; ///< non-mutable `LvaluePropertyMap`
+};
+
+/// \ingroup PkgProperty_map
+/// Starting from boost 1.55, the use of raw pointers as property maps has been deprecated.
+/// This function is a shortcut to the recommanded replacement:
+/// `boost::make_iterator_property_map(<pointer>, boost::typed_identity_property_map<std::size_t>())`
+/// Note that the property map is a mutable `LvaluePropertyMap` with `std::size_t` as key.
+template <class T>
+inline
+typename Pointer_property_map<T>::type
+make_property_map(T* pointer)
+{
+  return typename Pointer_property_map<T>::type(pointer);
+}
+
+/// \ingroup PkgProperty_map
+/// equivalent to `make_property_map(&v[0])`
+/// Note that `v` must not be modified while using the property map created
+template <class T>
+inline
+typename Pointer_property_map<T>::type
+make_property_map(std::vector<T>& v)
+{
+  return make_property_map(&v[0]);
+}
+
+/// \ingroup PkgProperty_map
+/// Non-mutable version
+template <class T>
+inline
+typename Pointer_property_map<T>::const_type
+make_property_map(const T* pointer)
+{
+  return typename Pointer_property_map<T>::const_type(pointer);
+}
+
+/// \ingroup PkgProperty_map
+/// equivalent to `make_property_map(&v[0])`
+/// Note that `v` must not be modified while using the property map created
+template <class T>
+inline
+typename Pointer_property_map<T>::const_type
+make_property_map(const std::vector<T>& v)
+{
+  return make_property_map(&v[0]);
+}
 
 } // namespace CGAL
 
