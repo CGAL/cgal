@@ -393,10 +393,10 @@ public:
   {}
   Tetrahedron operator()(Cell cell)const
   {
-    Point p0 = cell->vertex(0)->point();
-    Point p1 = cell->vertex(1)->point();
-    Point p2 = cell->vertex(2)->point();
-    Point p3 = cell->vertex(3)->point();
+    const Point&  p0 = cell->vertex(0)->point();
+    const Point&  p1 = cell->vertex(1)->point();
+    const Point&  p2 = cell->vertex(2)->point();
+    const Point&  p3 = cell->vertex(3)->point();
     return Tetrahedron(p0,p1,p2,p3);
   }
 };
