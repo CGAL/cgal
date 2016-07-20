@@ -104,11 +104,12 @@ public:
   }
 
   ~Scene() {
-    clear();
+    delete m_pwsrec;
   }
 
   void clear() {
-    m_pwsrec->clear();
+    delete m_pwsrec;
+    m_pwsrec = new Optimal_transportation_reconstruction_kerneled_2();
     m_samples.clear();
   }
 
