@@ -4,8 +4,8 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
+#include <CGAL/Hyperbolic_triangulation_traits_2.h>
 
 // to be deleted
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
@@ -57,7 +57,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel InR;
 typedef CGAL::Exact_predicates_exact_constructions_kernel R;
-typedef CGAL::Triangulation_hyperbolic_traits_2<R> K;
+typedef CGAL::Hyperbolic_triangulation_traits_2<R> K;
 
 typedef K::Point_2 Point_2;
 typedef Point_2 Point;
@@ -69,11 +69,11 @@ typedef TranslationInfo<std::string> Vb_info;
 typedef CGAL::Triangulation_vertex_base_with_info_2< Vb_info, K > Vb;
 typedef CGAL::Triangulation_face_base_with_info_2 <CGAL::Hyperbolic_face_info_2, K > Fb;
 
-typedef CGAL::Delaunay_hyperbolic_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > Delaunay;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > Delaunay;
 
 typedef Delaunay::Vertex_handle Vertex_handle;
  
-//typedef CGAL::Delaunay_hyperbolic_triangulation_2<K> Delaunay;
+//typedef CGAL::Hyperbolic_Delaunay_triangulation_2<K> Delaunay;
 
 struct PointsComparator {
   static double eps; 

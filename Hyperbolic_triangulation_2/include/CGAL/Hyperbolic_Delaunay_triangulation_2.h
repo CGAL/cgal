@@ -1,4 +1,4 @@
-// Copyright (c) 2010  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010-2016  INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,14 +11,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/candidate-packages/Triangulation_2/include/CGAL/Delaunay_triangulation_2.h $
-// $Id: Delaunay_triangulation_2.h 57509 2010-07-15 09:14:09Z sloriot $
+// $URL: 
+// $Id: 
 // 
 //
 // Author(s)     : Mikhail Bogdanov
+//                 Monique Teillaud <Monique.Teillaud@inria.fr>
 
-#ifndef CGAL_DELAUNAY_HYPERBOLIC_TRIANGULATION_2_H
-#define CGAL_DELAUNAY_HYPERBOLIC_TRIANGULATION_2_H
+#ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H
+#define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H
 
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -80,10 +81,10 @@ template < class Gt,
            class Tds = Triangulation_data_structure_2 <
                            Triangulation_vertex_base_2<Gt>, 
                            Triangulation_face_base_with_info_2<Hyperbolic_face_info_2, Gt> > >
-class Delaunay_hyperbolic_triangulation_2 : public Delaunay_triangulation_2<Gt,Tds>
+class Hyperbolic_Delaunay_triangulation_2 : public Delaunay_triangulation_2<Gt,Tds>
 {
 public:
-  typedef Delaunay_hyperbolic_triangulation_2<Gt, Tds> Self;
+  typedef Hyperbolic_Delaunay_triangulation_2<Gt, Tds> Self;
   typedef Delaunay_triangulation_2<Gt,Tds> Base;
   
   typedef Triangulation_face_base_with_info_2<Hyperbolic_face_info_2, Gt> Face_base;
@@ -126,11 +127,11 @@ public:
 #endif
 */
   
-  Delaunay_hyperbolic_triangulation_2(const Gt& gt = Gt())
+  Hyperbolic_Delaunay_triangulation_2(const Gt& gt = Gt())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
   
-  Delaunay_hyperbolic_triangulation_2(
-	     const Delaunay_hyperbolic_triangulation_2<Gt,Tds> &tr)
+  Hyperbolic_Delaunay_triangulation_2(
+	     const Hyperbolic_Delaunay_triangulation_2<Gt,Tds> &tr)
        : Delaunay_triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition( this->is_valid() );}
 
@@ -617,4 +618,4 @@ public:
   
 } //namespace CGAL
 
-#endif // CGAL_DELAUNAY_HYPERBOLIC_TRIANGULATION_2_H
+#endif // CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H

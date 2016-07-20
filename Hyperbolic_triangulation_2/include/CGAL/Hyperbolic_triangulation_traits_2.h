@@ -1,4 +1,4 @@
-// Copyright (c) 2010   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010-2016   INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,14 +11,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Triangulation_2/include/CGAL/Triangulation_hyperbolic_traits_2.h $
-// $Id: Triangulation_hyperbolic_traits_2.h 57323 2010-07-05 10:07:39Z sloriot $
+// $URL: 
+// $Id: 
 // 
 //
 // Author(s)     : Mikhail Bogdanov
+//                 Monique Teillaud <Monique.Teillaud@inria.fr>
 
-#ifndef CGAL_TRIANGULATION_HYPERBOLIC_TRAITS_2_H
-#define CGAL_TRIANGULATION_HYPERBOLIC_TRAITS_2_H
+#ifndef CGAL_HYPERBOLIC_TRIANGULATION_TRAITS_2_H
+#define CGAL_HYPERBOLIC_TRIANGULATION_TRAITS_2_H
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
@@ -36,9 +37,9 @@
 namespace CGAL {
 
 template < class R >
-class Triangulation_hyperbolic_traits_2 {
+class Hyperbolic_triangulation_traits_2 {
 public:
-  typedef Triangulation_hyperbolic_traits_2<R> Self;
+  typedef Hyperbolic_triangulation_traits_2<R> Self;
   
   typedef R Kernel;
   
@@ -207,20 +208,20 @@ public:
   typedef Ray_2        Ray;
   //typedef Line_2       Line;
   
-  Triangulation_hyperbolic_traits_2() : 
+  Hyperbolic_triangulation_traits_2() : 
   _unit_circle(Point_2(0, 0), 1*1)
   {}
   
-  Triangulation_hyperbolic_traits_2(FT r) : 
+  Hyperbolic_triangulation_traits_2(FT r) : 
   _unit_circle(Point_2(0, 0), r*r)
   {}    
   
-  Triangulation_hyperbolic_traits_2(const Triangulation_hyperbolic_traits_2 & other) : 
+  Hyperbolic_triangulation_traits_2(const Hyperbolic_triangulation_traits_2 & other) : 
   _unit_circle(other._unit_circle)
   {}
   
-  Triangulation_hyperbolic_traits_2 &operator=
-  (const Triangulation_hyperbolic_traits_2 &)
+  Hyperbolic_triangulation_traits_2 &operator=
+  (const Hyperbolic_triangulation_traits_2 &)
   {
     return *this;
   }
@@ -502,18 +503,18 @@ public:
 
 #ifdef CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 template  <>
-struct Triangulation_structural_filtering_traits< Triangulation_hyperbolic_traits_2<Epeck> > {
+struct Triangulation_structural_filtering_traits< Hyperbolic_triangulation_traits_2<Epeck> > {
   typedef Tag_true Use_structural_filtering_tag;
 };
 #endif // CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 
 #ifdef CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 template <>
-struct Triangulation_structural_filtering_traits< Triangulation_hyperbolic_traits_2<Epick> > {
+struct Triangulation_structural_filtering_traits< Hyperbolic_triangulation_traits_2<Epick> > {
   typedef Tag_true Use_structural_filtering_tag;
 };
 #endif // CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 
 } //namespace CGAL 
 
-#endif // CGAL_TRIANGULATION_HYPERBOLIC_TRAITS_2_H
+#endif // CGAL_HYPERBOLIC_TRIANGULATION_TRAITS_2_H

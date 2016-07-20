@@ -1,4 +1,4 @@
-// Copyright (c) 2010  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010-2016  INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/candidate-packages/Triangulation_2/include/CGAL/Delaunay_triangulation_2.h $
-// $Id: Delaunay_triangulation_2.h 57509 2010-07-15 09:14:09Z sloriot $
+// $URL: 
+// $Id: 
 // 
 //
 // Author(s)     : Mikhail Bogdanov

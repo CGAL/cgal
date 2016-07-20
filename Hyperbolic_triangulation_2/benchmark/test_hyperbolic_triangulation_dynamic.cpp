@@ -4,12 +4,12 @@
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
+#include <CGAL/Hyperbolic_triangulation_traits_2.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_hyperbolic_traits_2<K> Gt;
+typedef CGAL::Hyperbolic_triangulation_traits_2<K> Gt;
 
 typedef K::Point_2 Point_2;
 typedef K::FT FT;
@@ -17,7 +17,7 @@ typedef K::FT FT;
 // to delete - useless
 typedef CGAL::Delaunay_triangulation_2</*K*/Gt> Dt;
 
-typedef CGAL::Delaunay_hyperbolic_triangulation_2<Gt> HDt;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt> HDt;
 typedef HDt::Vertex_handle Vertex_handle;
 typedef HDt::Face_handle Face_handle;
 
