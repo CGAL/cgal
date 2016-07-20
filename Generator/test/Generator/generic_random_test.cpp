@@ -28,42 +28,48 @@ typedef CGAL::Triangulation_data_structure_2<Vb, Fb>              Tds;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, Tds>        CDT;
 typedef CGAL::Polygon_2<K>                                        Polygon_2;
 using namespace CGAL;
+
+
 int test_triangles_3()
 {
-#include <iostream>
-#include <fstream>
-using namespace CGAL;
-typedef Simple_cartesian<double>                           K;
-typedef K::Point_3                                         Point;
+  typedef K::Point_3                                         Point;
 
-
-int main()
-{
- // Generated points are in that vector
+  // Generated points are in that vector
   std::vector<Point> points;
   // Create input triangles
   std::vector<K::Triangle_3> triangles;
-  for(int i=0; i< 5; ++i)
-  {
-    triangles.push_back(K::Triangle_3(Point(i,0,0.5*i), Point(i+1,0,0.5*i), Point(i+0.5,1,0.5*i)));
-  }
+    triangles.push_back(K::Triangle_3(Point(0,0,0), Point(0.5,0,0), Point(0,0.5,0)));
+    triangles.push_back(K::Triangle_3(Point(0,0.5,0), Point(0.5,0,0), Point(0.5,0.5,0)));
+    triangles.push_back(K::Triangle_3(Point(0.5,0,0), Point(0.5,0,0.5), Point(0.5,0.5,0)));
+    triangles.push_back(K::Triangle_3(Point(0.5,0.5,0), Point(0.5,0.5,0.5), Point(0.5,0.,0.5)));
 
   // Create the generator, input is the vector of Triangle_3
   Random_points_on_triangles_3<Point> g(triangles);
   // Get 100 random points in cdt
-  CGAL::cpp11::copy_n(g, 1000, std::back_inserter(points));
+  CGAL::cpp11::copy_n(g, 100, std::back_inserter(points));
 
   // Check that we have really created 100 points.
-  assert( points.size() == 1000);
+  assert( points.size() == 100);
 
-  // print the first point that was generated
-  std::cout << points[0] << std::endl;
+  BOOST_FOREACH(Point p, points)
+  {
+    bool on_front = p.z() < 0.01 && p.z()> -0.01
+        && p.x() > -0.01 && p.x() < 0.51
+        && p.y() > -0.01 && p.y() < 0.51;
 
-  return 0;
-}
+    bool on_right = p.x() < 0.51 && p.x()> 0.49
+        && p.z() > -0.01 && p.z() < 0.51
+        && p.y() > -0.01 && p.y() < 0.51;
 
+    if(!on_front && !on_right)
+    {
+      std::cerr<<p<<std::endl;
+      std::cerr<<"ERROR : Generated point is not on the triangle range."<<std::endl;
+      return 0;
+    }
+  }
 
-
+  return 1;
 }
 
 int test_T2()
@@ -120,7 +126,7 @@ int  test_volume_mesh(Polyhedron& polyhedron)
 
 
   std::vector<Point> points;
-  Random_points_on_triangle_mesh_3<Point, Polyhedron>
+  Random_points_on_triangle_mesh_3<Polyhedron>
       g(polyhedron);
   CGAL::cpp11::copy_n( g, 300, std::back_inserter(points));
   for (std::size_t i = 0; i<points.size(); ++i)
@@ -229,7 +235,9 @@ main( )
     CGAL::Euler::split_face(facets[i],next(next(facets[i], polyhedron), polyhedron), polyhedron);
 
 
-  int validity = test_volume_mesh(polyhedron)
+  int validity =
+      test_triangles_3()
+       *test_volume_mesh(polyhedron)
       *test_T2()
       *test_on_c3t3(polyhedron)
       *test_in_c3t3(polyhedron)
