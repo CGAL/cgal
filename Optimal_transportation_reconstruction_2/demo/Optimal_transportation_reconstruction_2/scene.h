@@ -227,9 +227,14 @@ public:
 
   void load(const QString& filename, QWidget* qw) {
 
-    if (filename.contains(".xy", Qt::CaseInsensitive)) {
+    if (filename.contains(".xyz", Qt::CaseInsensitive)) {
+      load_xyz_file(filename);
+      //      normalize_points();
+      return;
+    }
+    else if (filename.contains(".xy", Qt::CaseInsensitive)) {
       load_xy_file(filename);
-      normalize_points();
+      //      normalize_points();
       return;
     }
 
@@ -273,6 +278,25 @@ public:
     unsigned int nb = 0;
     while (ifs >> point) {
       add_sample(point, 1.0);
+      nb++;
+    }
+    std::cerr << "done (" << nb << " points)" << std::endl;
+    ifs.close();
+  }
+
+  void load_xyz_file(const QString& fileName) {
+
+    std::cout << "filename: " << fileName.toUtf8().constData() << std::endl;
+    std::ifstream ifs(qPrintable(fileName));
+    std::cerr << "reading xyz...";
+    unsigned int nb = 0;
+    std::string str;
+    while (getline (ifs, str)) {
+      std::istringstream iss (str);
+      double x = 0., y = 0.;
+      iss >> x >> y;
+      str.clear();
+      add_sample(Point (x, y), 1.0);
       nb++;
     }
     std::cerr << "done (" << nb << " points)" << std::endl;
@@ -484,6 +508,13 @@ public:
     if (!m_init_done)
       init_reconstruction(m_percentage);
     m_pwsrec->run_until(nv);
+  }
+
+  void reconstruct_wasserstein_tolerance (const double tolerance) {
+    std::cout << "reconstruct_wasserstein_tolerance" << std::endl;
+    if (!m_init_done)
+      init_reconstruction(m_percentage);
+    m_pwsrec->run_under_wasserstein_tolerance (tolerance);
   }
 
   void reconstruct(const unsigned int steps) {

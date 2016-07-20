@@ -42,7 +42,7 @@
      <x>0</x>
      <y>0</y>
      <width>680</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -97,6 +97,7 @@
     <addaction name="actionReconstruction_100_steps"/>
     <addaction name="actionReconstruction_1000_steps"/>
     <addaction name="actionReconstruction_until"/>
+    <addaction name="actionReconstruction_Wasserstein_tolerance"/>
     <addaction name="separator"/>
     <addaction name="actionRelocate_vertices"/>
     <addaction name="actionReconstruction_reinit"/>
@@ -594,6 +595,14 @@
   <action name="actionOutput_console">
    <property name="text">
     <string>Output to console</string>
+   </property>
+  </action>
+  <action name="actionReconstruction_Wasserstein_tolerance">
+   <property name="text">
+    <string>Run under Wasserstein tolerance...</string>
+   </property>
+   <property name="shortcut">
+    <string>W</string>
    </property>
   </action>
  </widget>

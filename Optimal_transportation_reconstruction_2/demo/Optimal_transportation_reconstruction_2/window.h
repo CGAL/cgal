@@ -95,6 +95,7 @@ public:
   void on_actionReconstruction_100_steps_triggered();
   void on_actionReconstruction_1000_steps_triggered();
   void on_actionReconstruction_until_triggered();
+  void on_actionReconstruction_Wasserstein_tolerance_triggered();
   void on_actionRelocate_vertices_triggered();
   void on_actionReconstruction_reinit_triggered();
   void on_actionOutput_console_triggered();

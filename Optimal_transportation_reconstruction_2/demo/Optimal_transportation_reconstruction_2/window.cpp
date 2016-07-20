@@ -527,6 +527,22 @@ void MainWindow::on_actionReconstruction_until_triggered()
   update();
 }
 
+void MainWindow::on_actionReconstruction_Wasserstein_tolerance_triggered()
+{
+  bool ok;
+  double tolerance = QInputDialog::getDouble(
+      this, tr("Wasserstein tolerance"), tr("Tolerance:"), 0.1, 0., 1000000., 2, &ok);
+  if (!ok) return;
+
+  set_scene_options();
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_scene->reconstruct_wasserstein_tolerance (tolerance);
+  QApplication::restoreOverrideCursor();
+
+  update();
+}
+
 void MainWindow::on_actionRelocate_vertices_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
