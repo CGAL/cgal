@@ -95,7 +95,7 @@ public:
     srand(0); // for sake of repeatability
     m_ignore = 0;
     m_init_done = false;
-    m_percentage = 100.;
+    m_percentage = 1.;
     m_bbox_x = 0.0;
     m_bbox_y = 0.0;
     m_bbox_size = 1.0;
@@ -395,17 +395,18 @@ public:
 
   void set_options(const int verbose, const int mchoice,
     const bool use_flip, const unsigned int relocation,
-    const double ghost) {
+    const double ghost, const double percentage) {
 
     m_pwsrec->set_verbose(verbose);
     m_pwsrec->set_random_sample_size(mchoice);
     m_pwsrec->set_use_flip(use_flip);
     m_pwsrec->set_relocation(relocation);
     m_pwsrec->set_relevance(ghost);
+    m_percentage = percentage;
   }
 
   bool init_reconstruction(const double percentage) {
-    std::cout << " init_reconstruction " << std::endl;
+    std::cout << " init_reconstruction with " << (unsigned int)(100.*percentage) << "% of points" << std::endl;
 
     if (m_samples.empty()) {
       std::cerr << "initialization failed (empty point set)" << std::endl;
