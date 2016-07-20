@@ -507,7 +507,7 @@ public:
  typedef Random_points_on_triangles_3<Point_3>                     This;
 
  template<typename TriangleRange>
- Random_points_on_triangles_3( TriangleRange triangles, Random& rnd = default_random)
+ Random_points_on_triangles_3( const TriangleRange& triangles, Random& rnd = default_random)
   : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_3>()),
                      boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_3>()) ),
          internal::Deref<const Triangle_3*>(),
