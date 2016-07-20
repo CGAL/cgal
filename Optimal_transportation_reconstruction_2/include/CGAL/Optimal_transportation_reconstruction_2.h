@@ -45,6 +45,8 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/is_float.hpp>
 
+#define OTR_NO_TOLERANCE (FT)(-1.)
+
 namespace CGAL {
 
 
@@ -177,6 +179,7 @@ protected:
   FT m_alpha; // [0, 1]
   FT m_ghost; // ghost vs solid
   unsigned int m_relocation; // # relocations
+  FT m_tolerance;
 
   PointPMap point_pmap;
   MassPMap  mass_pmap;
@@ -230,6 +233,7 @@ public:
     m_alpha(0.5),
     m_ghost(1.0),
     m_relocation(relocation),
+    m_tolerance (OTR_NO_TOLERANCE),
     point_pmap(point_map),
     mass_pmap(mass_map)
   {
@@ -622,6 +626,7 @@ public:
     copy.assign_samples_brute_force(samples.begin(), samples.end());
     copy.reset_all_costs();
     cost = copy.compute_total_cost();
+    cost.set_number_of_samples (samples.size());
     restore_samples(samples.begin(), samples.end());
 
     if (m_verbose > 1) {
@@ -662,6 +667,14 @@ public:
     return true;
   }
 
+  bool is_above_tolerance (const Rec_edge_2& pedge)
+  {
+    if (m_tolerance == OTR_NO_TOLERANCE)
+      return false;
+    double cost = std::sqrt (pedge.after());
+    return cost > m_tolerance;
+  }
+
   bool create_pedge(const Edge& edge, Rec_edge_2& pedge) {
     Cost_ after_cost;
     bool ok = simulate_collapse(edge, after_cost);
@@ -673,7 +686,11 @@ public:
 
     FT before = before_cost.finalize(m_alpha);
     FT after = after_cost.finalize(m_alpha);
-    pedge = Rec_edge_2(edge, before, after);
+    pedge = Rec_edge_2(edge, before, after, after_cost.number_of_samples());
+
+    if (is_above_tolerance (pedge))
+      return false;
+    
     return true;
   }
 
@@ -1484,7 +1501,8 @@ public:
     if the algorithm was prematurely ended because no more edge
     collapse was possible.
    */
-  bool run_until(std::size_t np) {
+  void run_until(std::size_t np) {
+    m_tolerance = OTR_NO_TOLERANCE;
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct until " << np << " V";
@@ -1516,7 +1534,8 @@ public:
     `false` if the algorithm was prematurely ended because no more
     edge collapse was possible.
    */
-  bool run(const unsigned steps) {
+  void run(const unsigned steps) {
+    m_tolerance = OTR_NO_TOLERANCE;
     CGAL::Real_timer timer;
     if (m_verbose > 0)
       std::cerr << "reconstruct " << steps;
@@ -1536,6 +1555,32 @@ public:
                 << " V, " << timer.time() << " s)"
                 << std::endl;
     return (performed == steps);
+  }
+
+
+  /*!
+    Computes a shape, reconstructing the input, by performing edge
+    collapse operators on the output simplex until the user-defined
+    tolerance is reached.
+
+    \param tolerance Tolerance on the Wasserstein distance.
+   */
+  void run_under_wasserstein_tolerance (const FT tolerance) {
+    m_tolerance = tolerance;
+    CGAL::Real_timer timer;
+    if (m_verbose > 0)
+      std::cerr << "reconstruct under tolerance " << tolerance;
+
+    timer.start();
+    unsigned performed = 0;
+    while (decimate ())
+      performed++;
+
+    if (m_verbose > 0)
+      std::cerr << " done" << " (" << performed 
+                << " iters, " << m_dt.number_of_vertices() - 4
+                << " V, " << timer.time() << " s)"
+                << std::endl;
   }
 
 
@@ -1769,5 +1814,7 @@ public:
 
 };
 } // namespace
+
+#undef OTR_NO_TOLERANCE
 
 #endif // CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
