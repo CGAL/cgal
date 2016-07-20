@@ -471,7 +471,7 @@ public:
 
 
 template <class Point_3>
-class Random_points_on_triangles_3 : public Generic_random_point_generator<
+class Random_points_in_triangles_3 : public Generic_random_point_generator<
    const typename Kernel_traits<Point_3>::Kernel::Triangle_3*,
    internal::Deref<const typename Kernel_traits<Point_3>::Kernel::Triangle_3*>,
    Random_points_in_triangle_3<Point_3> ,Point_3> {
@@ -483,10 +483,10 @@ public:
  Random_points_in_triangle_3<Point_3> ,Point_3>                    Base;
  typedef const Triangle_3*                                         Id;
  typedef Point_3                                                   result_type;
- typedef Random_points_on_triangles_3<Point_3>                     This;
+ typedef Random_points_in_triangles_3<Point_3>                     This;
 
  template<typename TriangleRange>
- Random_points_on_triangles_3( const TriangleRange& triangles, Random& rnd = default_random)
+ Random_points_in_triangles_3( const TriangleRange& triangles, Random& rnd = default_random)
   : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_3>()),
                      boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_3>()) ),
          internal::Deref<const Triangle_3*>(),

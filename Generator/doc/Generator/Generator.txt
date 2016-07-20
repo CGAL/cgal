@@ -32,6 +32,7 @@ on a circle (`Random_points_on_circle_2`),
 on a segment (`Random_points_on_segment`),
 in a square (`Random_points_on_square_2`),
 in a triangle (`Random_points_in_triangle_2`),
+in a range of triangles (`Random_points_in_triangles_2`),
 and in a triangle mesh (`Random_points_in_triangle_mesh_2`).
 For generating grid points we provide three functions,
 `points_on_segment_2()`,
@@ -40,6 +41,7 @@ an input iterator `Points_on_segment_2`.
 
 For 3D points, input iterators are provided for random points uniformly 
 distributed in a sphere (`Random_points_in_sphere_3`), in a triangle (`Random_points_in_triangle_3`),
+in a range of triangles (`Random_points_in_triangles_3`),
 in a tetrahedron (`Random_points_in_tetrahedron_3`), in a cube (`Random_points_in_cube_3`), on the boundary of a sphere
 (`Random_points_on_sphere_3`), in a triangle mesh (`Random_points_on_triangle_mesh_3`),
 in a tetrahedron mesh (`Random_points_in_tetrahedral_mesh_3`), and on the boundary

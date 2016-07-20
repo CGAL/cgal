@@ -371,6 +371,8 @@ typedef const Point_2& reference;
  \sa`CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
  \sa`CGAL::Random_points_on_tetrahedral_mesh_boundary<C3T3>`
  \sa`CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
+ \sa `CGAL::Random_points_in_triangles_3<Point_3>`
+ \sa `CGAL::Random_points_in_triangles_2<Point_2>`
  \sa `std::random_shuffle`
 
  */
@@ -417,6 +419,75 @@ default_random);
 /// @}
 
 }; /* end Random_points_in_triangle_mesh_2 */
+
+ /*!
+
+ The class `Random_points_in_triangles_2` is an input iterator creating points uniformly distributed inside a range of `Triangle_2`. The range must remain valid.
+
+
+ \cgalModels `InputIterator`
+ \cgalModels `PointGenerator`
+
+ \sa `CGAL::cpp11::copy_n()`
+ \sa `CGAL::Counting_iterator`
+ \sa `CGAL::Points_on_segment_2<Point_2>`
+ \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+ \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
+ \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
+ \sa `CGAL::Random_points_on_triangle_mesh_3<Point_3, TriangleMesh>`
+ \sa `CGAL::Random_points_on_tetrahedral_mesh_boundary<C3T3>`
+ \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
+ \sa `CGAL::Random_points_in_triangles_3<Point_3>`
+ \sa `std::random_shuffle`
+
+ */
+ template< typename Point_2 >
+ class Random_points_in_triangles_2 {
+ public:
+
+ /// \name Types
+ /// @{
+
+ /*!
+
+ */
+ typedef std::input_iterator_tag iterator_category;
+
+ /*!
+
+ */
+ typedef Point_2 value_type;
+
+ /*!
+
+ */
+ typedef std::ptrdiff_t difference_type;
+
+ /*!
+
+ */
+ typedef const Point_2* pointer;
+
+ /*!
+
+ */
+ typedef const Point_2& reference;
+
+/*!
+Creates  an input iterator `g` generating points of type `Point_2` uniformly
+distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
+
+*/
+template<typename TriangleRange>
+Random_points_in_triangles_2(TriangleRange triangles, Random& rnd =
+default_random);
+
+/// @}
+
+}; /* end Random_points_in_triangles_2 */
 
 /*!
 

@@ -78,7 +78,7 @@ int test_triangles_3()
     triangles.push_back(K::Triangle_3(Point(0.5,0.5,0), Point(0.5,0.5,0.5), Point(0.5,0.,0.5)));
 
   // Create the generator, input is the vector of Triangle_3
-  Random_points_on_triangles_3<Point> g(triangles);
+  Random_points_in_triangles_3<Point> g(triangles);
   // Get 100 random points in triangle range
   CGAL::cpp11::copy_n(g, 100, std::back_inserter(points));
 

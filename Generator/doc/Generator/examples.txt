@@ -19,4 +19,7 @@
 \example Generator/random_points_on_triangle_mesh_3.cpp
 \example Generator/random_points_on_tetrahedral_mesh_3.cpp
 \example Generator/random_points_in_tetrahedral_mesh_3.cpp
+\example Generator/random_points_in_triangles_2.cpp
+\example Generator/random_points_in_triangles_3.cpp
+
 */

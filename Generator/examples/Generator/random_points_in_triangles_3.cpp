@@ -20,7 +20,7 @@ int main()
   }
 
   // Create the generator, input is the vector of Triangle_3
-  Random_points_on_triangles_3<Point> g(triangles);
+  Random_points_in_triangles_3<Point> g(triangles);
   // Get 100 random points in cdt
   CGAL::cpp11::copy_n(g, 1000, std::back_inserter(points));
 
