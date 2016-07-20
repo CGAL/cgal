@@ -18,7 +18,7 @@ struct Scene_combinatorial_map_item_priv
   :last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(ad_A)
   {
     item = parent;
-    are_buffers_filled = false;
+    item->are_buffers_filled = false;
     nb_points = 0;
     nb_lines =0;
     nb_facets =0;
@@ -52,7 +52,6 @@ struct Scene_combinatorial_map_item_priv
   void* address_of_A;
 
   mutable QOpenGLShaderProgram *program;
-  mutable bool are_buffers_filled;
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;
   mutable std::vector<double> positions_facets;
@@ -456,7 +455,7 @@ void Scene_combinatorial_map_item_priv::initialize_buffers(CGAL::Three::Viewer_i
         item->vaos[Scene_combinatorial_map_item_priv::Facets]->release();
         program->release();
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 
 
 }

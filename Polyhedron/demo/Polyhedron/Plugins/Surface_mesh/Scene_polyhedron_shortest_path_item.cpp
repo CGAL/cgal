@@ -97,7 +97,6 @@ struct Scene_polyhedron_shortest_path_item_priv
 
   mutable std::vector<float> vertices;
   mutable QOpenGLShaderProgram *program;
-  mutable bool are_buffers_filled;
 };
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item()
    :Scene_polyhedron_item_decorator(NULL, false)
@@ -146,7 +145,7 @@ void Scene_polyhedron_shortest_path_item_priv::initialize_buffers(CGAL::Three::V
         item->buffers[Vertices].release();
         item->vaos[Selected_Edges]->release();
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
 bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m) const
 {
