@@ -469,27 +469,6 @@ public:
  }
 };
 
-namespace internal
-{
-template<class T>
-class Deref
-{
-public:
- typedef typename std::iterator_traits<T>::value_type result_type;
-  typename std::iterator_traits<T>::value_type operator()(T triangle)const
-  {
-    return *triangle;
-  }
-};
-template<class A>
-struct Address_of{
-  typedef const A* result_type;
-  const A* operator()(const A& a) const
-  {
-    return &a;
-  }
-};
-}//namesapce internal
 
 template <class Point_3>
 class Random_points_on_triangles_3 : public Generic_random_point_generator<

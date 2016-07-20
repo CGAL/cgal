@@ -1,4 +1,4 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -582,6 +582,66 @@ public:
           internal::Triangle_from_face_2<T>(),
           typename Kernel_traits<P>::Kernel::Compute_area_2(),
           rnd )
+ {
+ }
+ This& operator++() {
+  Base::generate_point();
+  return *this;
+ }
+ This operator++(int) {
+  This tmp = *this;
+  ++(*this);
+  return tmp;
+ }
+};
+
+namespace internal
+{
+template<class T>
+class Deref
+{
+public:
+ typedef typename std::iterator_traits<T>::value_type result_type;
+  typename std::iterator_traits<T>::value_type operator()(T triangle)const
+  {
+    return *triangle;
+  }
+};
+
+template<class A>
+struct Address_of{
+  typedef const A* result_type;
+  const A* operator()(const A& a) const
+  {
+    return &a;
+  }
+};
+
+}//namesapce internal
+
+template <class Point_2>
+class Random_points_in_triangles_2 : public Generic_random_point_generator<
+   const typename Kernel_traits<Point_2>::Kernel::Triangle_2*,
+   internal::Deref<const typename Kernel_traits<Point_2>::Kernel::Triangle_2*>,
+   Random_points_in_triangle_2<Point_2> ,
+   Point_2> {
+public:
+ typedef typename Kernel_traits<Point_2>::Kernel::Triangle_2       Triangle_2;
+ typedef Generic_random_point_generator<
+ const typename Kernel_traits<Point_2>::Kernel::Triangle_2*,
+ internal::Deref<const Triangle_2*>,
+ Random_points_in_triangle_2<Point_2> ,Point_2>                    Base;
+ typedef const Triangle_2*                                         Id;
+ typedef Point_2                                                   result_type;
+ typedef Random_points_in_triangles_2<Point_2>                     This;
+
+ template<typename TriangleRange>
+ Random_points_in_triangles_2( const TriangleRange& triangles, Random& rnd = default_random)
+  : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_2>()),
+                     boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_2>()) ),
+         internal::Deref<const Triangle_2*>(),
+         typename Kernel_traits<Point_2>::Kernel::Compute_area_2()
+         ,rnd )
  {
  }
  This& operator++() {

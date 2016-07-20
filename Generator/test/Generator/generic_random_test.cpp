@@ -30,6 +30,40 @@ typedef CGAL::Polygon_2<K>                                        Polygon_2;
 using namespace CGAL;
 
 
+int test_triangles_2()
+{
+  typedef K::Point_2                                         Point;
+
+  // Generated points are in that vector
+  std::vector<Point> points;
+  // Create input triangles
+  std::vector<K::Triangle_2> triangles;
+    triangles.push_back(K::Triangle_2(Point(0,0), Point(0.5,0), Point(0,0.5)));
+    triangles.push_back(K::Triangle_2(Point(0,0.5), Point(0.5,0), Point(0.5,0.5)));
+
+  // Create the generator, input is the vector of Triangle_2
+  Random_points_in_triangles_2<Point> g(triangles);
+  // Get 100 random points in triangle range
+  CGAL::cpp11::copy_n(g, 100, std::back_inserter(points));
+
+  // Check that we have really created 100 points.
+  assert( points.size() == 100);
+
+  BOOST_FOREACH(Point p, points)
+  {
+    bool on_quad = p.x() > -0.01 && p.x() < 0.51
+        && p.y() > -0.01 && p.y() < 0.51;
+    if(!on_quad)
+    {
+      std::cerr<<p<<std::endl;
+      std::cerr<<"ERROR : Generated point is not on the triangle range."<<std::endl;
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
 int test_triangles_3()
 {
   typedef K::Point_3                                         Point;
@@ -45,7 +79,7 @@ int test_triangles_3()
 
   // Create the generator, input is the vector of Triangle_3
   Random_points_on_triangles_3<Point> g(triangles);
-  // Get 100 random points in cdt
+  // Get 100 random points in triangle range
   CGAL::cpp11::copy_n(g, 100, std::back_inserter(points));
 
   // Check that we have really created 100 points.
@@ -236,8 +270,9 @@ main( )
 
 
   int validity =
-      test_triangles_3()
-       *test_volume_mesh(polyhedron)
+      test_triangles_2()
+      *test_triangles_3()
+      *test_volume_mesh(polyhedron)
       *test_T2()
       *test_on_c3t3(polyhedron)
       *test_in_c3t3(polyhedron)
