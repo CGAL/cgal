@@ -8,7 +8,7 @@
 #include <CGAL/Timer.h>
 
 // to compare with hyperbolic traits
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+// #include <CGAL/Hyperbolic_triangulation_traits_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
@@ -16,7 +16,7 @@ typedef K::FT FT;
 
 typedef CGAL::Delaunay_triangulation_2<K> Dt;
 
-//typedef CGAL::Triangulation_hyperbolic_traits_2<K> Gt;
+//typedef CGAL::Hyperbolic_triangulation_traits_2<K> Gt;
 //typedef CGAL::Delaunay_triangulation_2<Gt> Dt2;
 
 int main(int argc, char *argv[])

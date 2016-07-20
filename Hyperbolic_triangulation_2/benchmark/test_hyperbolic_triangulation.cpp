@@ -4,17 +4,17 @@
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
+#include <CGAL/Hyperbolic_triangulation_traits_2.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_hyperbolic_traits_2<K> Gt;
+typedef CGAL::Hyperbolic_triangulation_traits_2<K> Gt;
 
 typedef K::Point_2 Point_2;
 typedef K::FT FT;
 
-typedef CGAL::Delaunay_hyperbolic_triangulation_2<Gt> HDt;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt> HDt;
 
 int main(int argc, char *argv[])
 {  

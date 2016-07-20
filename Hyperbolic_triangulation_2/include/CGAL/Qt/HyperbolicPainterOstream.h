@@ -1,4 +1,4 @@
-// Copyright (c) 2011   INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011-2016   INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mbogdanov@scm.gforge.inria.fr/svn/cgal/trunk/Triangulation_2/include/CGAL/Triangulation_hyperbolic_traits_2.h $
-// $Id: Triangulation_hyperbolic_traits_2.h 57323 2010-07-05 10:07:39Z sloriot $
+// $URL: 
+// $Id: 
 // 
 //
 // Author(s)     : Mikhail Bogdanov
@@ -22,19 +22,19 @@
 
 #include <CGAL/Qt/PainterOstream.h>
 
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include <CGAL/Hyperbolic_triangulation_traits_2.h>
 
 namespace CGAL{
 
 namespace Qt {
   
   template <typename K>
-  class PainterOstream<Triangulation_hyperbolic_traits_2<K> > : public PainterOstream<K> {
+  class PainterOstream<Hyperbolic_triangulation_traits_2<K> > : public PainterOstream<K> {
   public:
     typedef PainterOstream<K> Base;
-    typedef PainterOstream<Triangulation_hyperbolic_traits_2<K> > Self;
+    typedef PainterOstream<Hyperbolic_triangulation_traits_2<K> > Self;
     
-    typedef Triangulation_hyperbolic_traits_2<K> Gt;
+    typedef Hyperbolic_triangulation_traits_2<K> Gt;
     
   private:
     typedef typename Gt::Segment_2      Segment_2;
