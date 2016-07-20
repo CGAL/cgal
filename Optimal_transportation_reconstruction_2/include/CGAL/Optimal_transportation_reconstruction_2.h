@@ -390,7 +390,13 @@ public:
     point_pmap = point_map;
     mass_pmap  = mass_map;
     clear();
-    insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
+    Property_map_to_unary_function<PointPMap> get_point(point_pmap);
+
+    Bbox_2 bbox = bbox_2(
+      boost::make_transform_iterator(samples_start,get_point),
+      boost::make_transform_iterator(samples_beyond,get_point));
+
+    insert_loose_bbox(bbox);
     init(vertices_start, vertices_beyond);
 
     std::vector<Sample_*> m_samples;
