@@ -15,7 +15,7 @@
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/parameterize.h>
 #include <CGAL/Discrete_conformal_map_parameterizer_3.h>
-//#include <CGAL/LSCM_parameterizer_3.h>
+#include <CGAL/LSCM_parameterizer_3.h>
 
 #include <CGAL/Textured_polyhedron_builder.h>
 
@@ -28,7 +28,7 @@
 typedef Kernel::FT FT;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 using namespace CGAL::Three;
-class Polyhedron_demo_parameterization_plugin : 
+class Polyhedron_demo_parameterization_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -67,7 +67,7 @@ public:
 
   }
 
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -88,25 +88,28 @@ private:
 
 void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterization_method method)
 {
-  typedef boost::unordered_map<boost::graph_traits<Polyhedron>::
-      edge_descriptor, bool> Edge_on_seam_map;
-  typedef boost::associative_property_map<Edge_on_seam_map> Seam_edge_pmap;
-
-  typedef boost::unordered_map<Polyhedron::Vertex_handle, bool> Vertex_on_seam_map;
-  typedef boost::associative_property_map<Vertex_on_seam_map> Seam_vertex_pmap;
-
-  typedef boost::unordered_map<Polyhedron::Halfedge_handle, Kernel::Point_2> UV_map;
-  typedef boost::associative_property_map<UV_map> UV_pmap;
 
 
 
+  typedef Kernel::Point_2                                               Point_2;
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor              edge_descriptor;
+  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor          halfedge_descriptor;
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor            vertex_descriptor;
+
+  typedef CGAL::Unique_hash_map<halfedge_descriptor,Point_2>            UV_uhm;
+  typedef CGAL::Unique_hash_map<edge_descriptor,bool>                   Seam_edge_uhm;
+  typedef CGAL::Unique_hash_map<vertex_descriptor,bool>                 Seam_vertex_uhm;
+
+  typedef boost::associative_property_map<UV_uhm>                       UV_pmap;
+  typedef boost::associative_property_map<Seam_edge_uhm>                Seam_edge_pmap;
+  typedef boost::associative_property_map<Seam_vertex_uhm>              Seam_vertex_pmap;
 
 
   typedef CGAL::Seam_mesh<Polyhedron, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
 
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* poly_item = 
+  Scene_polyhedron_item* poly_item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(!poly_item)
     return;
@@ -117,15 +120,13 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   if(!pMesh)
     return;
 
-  Edge_on_seam_map seam_edges;
-  Vertex_on_seam_map seam_vertices;
-  UV_map uv_map;
-  Seam_vertex_pmap svp(seam_vertices);
-  Seam_edge_pmap sep(seam_edges);
-  UV_pmap uv_pmap(uv_map);
-  Seam_mesh *sMesh = new Seam_mesh(*pMesh, sep, svp);
+  std::vector<edge_descriptor> seam;
+  // Two property maps to store the seam edges and vertices
+  Seam_edge_uhm seam_edge_uhm(false);
+  Seam_edge_pmap seam_edge_pm(seam_edge_uhm);
 
-
+  Seam_vertex_uhm seam_vertex_uhm(false);
+  Seam_vertex_pmap seam_vertex_pm(seam_vertex_uhm);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   ///////////////////////////////////
@@ -134,58 +135,60 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   QTime time;
   time.start();
   //fill pmaps
-  Polyhedron::Halfedge_handle bhh = boost::graph_traits<Polyhedron>::null_halfedge();
+  halfedge_descriptor smhd;
 
   for(Polyhedron::Halfedge_iterator hit = pMesh->halfedges_begin(); hit != pMesh->halfedges_end(); ++hit)
   {
-    Polyhedron::Vertex_handle svh(source(hit, *pMesh)), tvh(target(hit, *pMesh));
-    if(is_border(edge(hit, *pMesh), *pMesh))
-    {
-      put(sep, edge(hit, *pMesh), true);
-      put(svp, svh, true);
-      put(svp, tvh, true);
-      if( hit == boost::graph_traits<Polyhedron>::null_halfedge())
-        bhh = hit->opposite();
-    }
-    //utile ?
-    else
-    {
-      put(sep, edge(hit, *pMesh), false);
-      put(svp, svh, false);
-      put(svp, tvh, false);
-    }
-  }
-  typedef CGAL::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
-  Parameterizer::Error_code err = CGAL::parameterize(*sMesh,bhh, uv_pmap);
 
-  /*
+    vertex_descriptor svd(source(hit, *pMesh)), tvd(target(hit, *pMesh));
+    edge_descriptor ed = edge(svd, tvd,*pMesh).first;
+    if(is_border(ed,*pMesh)){
+       // put(seam_edge_pm, ed, true);
+       // put(seam_vertex_pm, svd, true);
+       // put(seam_vertex_pm, tvd, true);
+        if(smhd == boost::graph_traits<Polyhedron>::null_halfedge()){
+          smhd = halfedge(edge(svd,tvd,*pMesh).first,*pMesh);
+          if (smhd == boost::graph_traits<Polyhedron>::null_halfedge())
+            smhd = opposite(smhd, *pMesh);
+        }
+        break;
+      }
+  }
+  Seam_mesh *sMesh = new Seam_mesh(*pMesh, seam_edge_pm, seam_vertex_pm);
+  UV_uhm uv_uhm;
+  UV_pmap uv_pm(uv_uhm);
+
+  halfedge_descriptor bhd(smhd);
+  bhd = opposite(bhd,*sMesh); // a halfedge on the virtual border
   bool success = false;
+
   switch(method)
   {
   case PARAM_MVC:
     {
       std::cout << "Parameterize (MVC)...";
       typedef CGAL::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhh, uv_pmap);
+      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
       success = err == Parameterizer::OK;
       break;
-    }}
+    }
   case PARAM_DCP:
     {
       std::cout << "Parameterize (DCP)...";
       typedef CGAL::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh,bhh, uv_pmap);
+      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
       success = err == Parameterizer::OK;
-    }  
+      break;
+    }
   case PARAM_LSC:
     {
       std::cout << "Parameterize (LSC)...";
-      //typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
-      //Parameterizer::Error_code err = CGAL::parameterize(*sMesh,bhh,uv_pmap);
-      //success = err == Parameterizer::OK;
+      typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      success = err == Parameterizer::OK;
+      break;
     }
   }
-
   if(success)
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
   else
@@ -203,15 +206,15 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   Polyhedron::Vertex_iterator it1;
   Textured_polyhedron::Vertex_iterator it2;
-  for(it1 = pMesh->vertices_begin(), 
+  for(it1 = pMesh->vertices_begin(),
     it2 = pTex_polyhedron->vertices_begin();
     it1 != pMesh->vertices_end() &&
     it2 != pTex_polyhedron->vertices_end();
   it1++, it2++)
   {
     // (u,v) pair is stored per halfedge
-    FT u = adaptor.info(it1->halfedge())->uv().x();
-    FT v = adaptor.info(it1->halfedge())->uv().y();
+    FT u = uv_pm[it1->halfedge()].x();
+    FT v = uv_pm[it1->halfedge()].y();
     it2->u() = u;
     it2->v() = v;
   }
@@ -225,7 +228,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   poly_item->setVisible(false);
   scene->itemChanged(index);
   scene->addItem(new_item);
-*/
+
   QApplication::restoreOverrideCursor();
 
 }
