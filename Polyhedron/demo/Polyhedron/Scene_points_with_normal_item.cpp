@@ -620,8 +620,8 @@ QMenu* Scene_points_with_normal_item::contextMenu()
       {
         QMenu *container = new QMenu(tr("Normals Length"));
         QWidgetAction *sliderAction = new QWidgetAction(0);
-        connect(d->normal_Slider, &QSlider::sliderMoved, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
-        connect(d->normal_Slider, &QSlider::sliderMoved, this, &Scene_points_with_normal_item::itemChanged);
+        connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
+        connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
 
         sliderAction->setDefaultWidget(d->normal_Slider);
 
