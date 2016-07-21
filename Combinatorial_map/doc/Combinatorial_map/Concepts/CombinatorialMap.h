@@ -66,20 +66,10 @@ The number of available Boolean marks of the combinatorial map.
 */
 static size_type NB_MARKS;
 
-/*
-\deprecated null dart handle is no longer static since \cgal 4.4.
-The null dart handle constant.
-A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
-Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
-
-static Dart_handle null_dart_handle;
-*/
-
 /*!
 The null dart handle constant.
 A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
 Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
-\deprecated null dart handle is no longer static since \cgal 4.4. You can define the `CGAL_CMAP_DEPRECATED` macro to keep the old behavior.
 */
 Dart_handle null_dart_handle;
 
