@@ -56,6 +56,7 @@ void init(QMainWindow* mw,
       action->setProperty("subMenuName",
                           "Boolean Operations");
     _actions<< actionConvexDecomposition;
+    connect(actionConvexDecomposition, SIGNAL(triggered()), this, SLOT(on_actionConvexDecomposition_triggered()));
 
 }
 
