@@ -584,6 +584,7 @@ Scene_polygon_soup_item::orient()
 
   if(isEmpty() || d->oriented)
     return true; // nothing to do
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   d->oriented=true;
 
   //first skip degenerate polygons
@@ -602,11 +603,16 @@ Scene_polygon_soup_item::orient()
     }
     if (!to_remove) valid_polygons.push_back(polygon);
   }
+  QApplication::restoreOverrideCursor();
   if (valid_polygons.size()!=d->soup->polygons.size())
     d->soup->polygons.swap(valid_polygons);
 
-  return CGAL::Polygon_mesh_processing::
+  bool res;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  res =  CGAL::Polygon_mesh_processing::
     orient_polygon_soup(d->soup->points, d->soup->polygons);
+  QApplication::restoreOverrideCursor();
+  return res;
 }
 
 

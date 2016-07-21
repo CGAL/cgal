@@ -35,7 +35,6 @@
 #include <QMainWindow>
 #include <QPluginLoader>
 #include <QDir>
-#include <QApplication>
 #include <QMenu>
 #include <QList>
 #include <QLibrary>
@@ -136,7 +135,6 @@ void
 Io_implicit_function_plugin::
 load_function() const
 {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
   QDialog dialog(mw);
   Ui::FunctionDialog ui;
   ui.setupUi(&dialog);
@@ -171,7 +169,6 @@ load_function() const
     
   CGAL::Three::Scene_interface::Item_id new_item_id = scene->addItem(item);
   scene->setSelectedItem(new_item_id);
-  QApplication::restoreOverrideCursor();
 }
 
 void

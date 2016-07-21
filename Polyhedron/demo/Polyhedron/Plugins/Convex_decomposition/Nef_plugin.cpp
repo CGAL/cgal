@@ -44,7 +44,6 @@ void init(QMainWindow* mw,
     connect(actionIntersection, SIGNAL(triggered()), this, SLOT(on_actionIntersection_triggered()));
     connect(actionDifference  , SIGNAL(triggered()), this, SLOT(on_actionDifference_triggered()));
     connect(actionMinkowskiSum, SIGNAL(triggered()), this, SLOT(on_actionMinkowskiSum_triggered()));
-    connect(actionConvexDecomposition, SIGNAL(triggered()), this, SLOT(on_actionConvexDecomposition_triggered()));
 
 
     _actions<< actionToNef

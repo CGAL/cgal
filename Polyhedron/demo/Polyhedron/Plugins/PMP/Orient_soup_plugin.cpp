@@ -130,8 +130,6 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
 
     if(item)
     {
-      //     qDebug()  << tr("I have the item %1\n").arg(item->name());
-      QApplication::setOverrideCursor(Qt::WaitCursor);
       if(!item->orient()) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -156,7 +154,6 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
           item->invalidateOpenGLBuffers();
           scene->itemChanged(item);
         }
-      QApplication::restoreOverrideCursor();
     }
     else{
       messages->warning(tr("This function is only applicable on polygon soups."));
@@ -174,7 +171,6 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
     if(item)
     {
       //     qDebug()  << tr("I have the item %1\n").arg(item->name());
-      QApplication::setOverrideCursor(Qt::WaitCursor);
       if(!item->orient()) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -182,6 +178,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
                                          " have been created.")
                                       .arg(item->name()));
       }
+      QApplication::setOverrideCursor(Qt::WaitCursor);
         Scene_surface_mesh_item::SMesh* smesh = new Scene_surface_mesh_item::SMesh();
         if(item->exportAsSurfaceMesh(smesh)) {
           if(!item->getVColors().empty())
