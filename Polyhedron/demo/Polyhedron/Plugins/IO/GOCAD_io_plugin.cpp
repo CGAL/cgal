@@ -30,7 +30,7 @@ public:
 };
 
 QString Polyhedron_demo_gocad_plugin::nameFilters() const {
-  return "GOCAD files (*.ts *.xyz)";
+  return "GOCAD files (*.ts)";
 }
 
 bool Polyhedron_demo_gocad_plugin::canLoad() const {
