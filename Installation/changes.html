@@ -172,6 +172,9 @@ and <code>src/</code> directories).
     <code>insert_cell_2_in_cell_3()</code>, <code>insert_dangling_cell_1_in_cell_2()</code>, <code>is_insertable_cell_1_in_cell_2()</code>,
     <code>is_insertable_cell_2_in_cell_3()</code>, <code>is_removable()</code>, <code>remove_cell()</code>)
     which are now member functions in the <code>CombinatorialMap</code> concept.</li>
+    <li>It is not longer possible to use the old API switched on by defining the macro
+    <code>CGAL_CMAP_DEPRECATED</code>. This API was deprecated since CGAL 4.4.
+    </li>
   </ul>
 <!-- Arrangements -->
 <!-- Triangulations and Delaunay Triangulations -->
@@ -247,7 +250,7 @@ and <code>src/</code> directories).
     <li>It is not longer possible to use the old API of the property maps
         provided by CGAL, switched on by defining the macro
         <code>CGAL_USE_PROPERTY_MAPS_API_V1</code>. This API was deprecated
-        since CGAL 4.3
+        since CGAL 4.3.
     </li>
   </ul>
 
