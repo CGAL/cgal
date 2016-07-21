@@ -28,6 +28,8 @@ function(create_single_source_cgal_program firstfile )
       add_test(NAME ${exe_name}
         COMMAND ${exe_name} ${ARGS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+      set_property(TEST "${exe_name}"
+        APPEND PROPERTY LABELS "${PROJECT_NAME}")
     endif(BUILD_TESTING)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
