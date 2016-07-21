@@ -1,5 +1,6 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
+#include "Messages_interface.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
@@ -33,9 +34,10 @@ class Polyhedron_demo_point_set_upsampling_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   
   QAction* actionEdgeAwareUpsampling;
-
+  Messages_interface* message_interface;
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* mi) {
+    message_interface = mi;
     scene = scene_interface;
     actionEdgeAwareUpsampling = new QAction(tr("Edge Aware Upsampling"), mainWindow);
     actionEdgeAwareUpsampling->setProperty("subMenuName","Point Set Processing");
@@ -84,7 +86,7 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
     {
       if (!(item->has_normals ()))
 	{
-	  std::cerr << "Error: upsampling algorithm requires point set with normals." << std::endl;
+          message_interface->error("Error: upsampling algorithm requires point set with normals.");
 	  return;
 	}
       
