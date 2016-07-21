@@ -115,12 +115,10 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
                                       points->begin(), points->end(),
                                       6 /* knn = 1 ring */);
       
-      Point_set::iterator points_begin = (points->nb_selected_points() == 0
-                                          ? points->begin() : points->first_selected());
       std::size_t nb_selected = points->nb_selected_points();
       
       std::vector<std::pair<Point_set::Point, Point_set::Vector> > new_points;
-      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points_begin, 
+      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->begin_or_selection_begin(),
 					  points->end(), 
 					  std::back_inserter(new_points),
 					  CGAL::make_identity_property_map(Point_set::value_type()),

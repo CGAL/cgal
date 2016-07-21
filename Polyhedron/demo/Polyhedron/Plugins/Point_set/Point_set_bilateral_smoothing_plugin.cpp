@@ -109,12 +109,9 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
 
     for (unsigned int i = 0; i < dialog.iterations (); ++i)
       {
-        Point_set::iterator points_begin = (points->nb_selected_points() == 0
-                                            ? points->begin() : points->first_selected());
-
 	/* double error = */
 	CGAL::bilateral_smooth_point_set<Concurrency_tag>
-	  (points_begin,
+	  (points->begin_or_selection_begin(),
 	   points->end(),
 	   CGAL::make_identity_property_map(Point_set::value_type()),
 	   CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),

@@ -130,10 +130,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversio
     if(points == NULL)
         return;
 
-    Point_set::iterator points_begin = (points->nb_selected_points() == 0
-                                        ? points->begin() : points->first_selected());
-
-    for(Point_set::iterator it = points_begin; it != points->end(); ++it){
+    for(Point_set::iterator it = points->begin_or_selection_begin(); it != points->end(); ++it){
       it->normal() = -1 * it->normal();
     }
     item->invalidateOpenGLBuffers();
@@ -169,16 +166,13 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     //***************************************
     // normal estimation
     //***************************************
-    Point_set::iterator points_begin = (points->nb_selected_points() == 0
-                                        ? points->begin() : points->first_selected());
-
     if (dialog.method() == 0) // PCA
     {
       CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Estimates normal direction by PCA (k=" << dialog.pca_neighbors() <<")...\n";
       
       // Estimates normals direction.
-      CGAL::pca_estimate_normals<Concurrency_tag>(points_begin, points->end(),
+      CGAL::pca_estimate_normals<Concurrency_tag>(points->begin_or_selection_begin(), points->end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                 dialog.pca_neighbors());
 
@@ -193,7 +187,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
       std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.jet_neighbors() <<")...\n";
 
       // Estimates normals direction.
-      CGAL::jet_estimate_normals<Concurrency_tag>(points_begin, points->end(),
+      CGAL::jet_estimate_normals<Concurrency_tag>(points->begin_or_selection_begin(), points->end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                 dialog.jet_neighbors());
 
@@ -211,7 +205,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
           std::cerr << "Estimates Normals Direction using VCM (R="
                     << dialog.offset_radius() << " and r=" << dialog.convolution_radius() << ")...\n";
 
-          CGAL::vcm_estimate_normals(points_begin, points->end(),
+          CGAL::vcm_estimate_normals(points->begin_or_selection_begin(), points->end(),
                                      CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                      dialog.offset_radius(), dialog.convolution_radius());
         }
@@ -220,7 +214,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
           std::cerr << "Estimates Normals Direction using VCM (R="
                     << dialog.offset_radius() << " and k=" << dialog.convolution_neighbors() << ")...\n";
 
-          CGAL::vcm_estimate_normals(points->begin(), points->end(),
+          CGAL::vcm_estimate_normals(points->begin_or_selection_begin(), points->end(),
                                      CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                      dialog.offset_radius(), dialog.convolution_neighbors());
         }
@@ -245,12 +239,12 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
 
         // Tries to orient normals
         first_unoriented_point =
-          CGAL::mst_orient_normals(points_begin, points->end(),
+          CGAL::mst_orient_normals(points->begin_or_selection_begin(), points->end(),
                                    CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                    dialog.orient_neighbors());
 
         //indicates that the point set has normals
-        if (first_unoriented_point!=points_begin){
+        if (first_unoriented_point != points->begin_or_selection_begin()){
           item->set_has_normals(true);
           item->setRenderingMode(PointsPlusNormals);
         }
