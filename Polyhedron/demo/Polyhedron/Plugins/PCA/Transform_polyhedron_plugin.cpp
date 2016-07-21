@@ -63,8 +63,7 @@ void Polyhedron_demo_transform_polyhedron_plugin::go(){
   if (!started){
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if(!poly_item) return;    
-    
+    if(!poly_item) return;
     started=true;
     actionTransformPolyhedron->setText("Apply affine transformation");
     start(poly_item);

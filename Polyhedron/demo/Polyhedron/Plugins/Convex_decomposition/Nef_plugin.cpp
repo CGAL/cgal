@@ -44,6 +44,7 @@ void init(QMainWindow* mw,
     connect(actionIntersection, SIGNAL(triggered()), this, SLOT(on_actionIntersection_triggered()));
     connect(actionDifference  , SIGNAL(triggered()), this, SLOT(on_actionDifference_triggered()));
     connect(actionMinkowskiSum, SIGNAL(triggered()), this, SLOT(on_actionMinkowskiSum_triggered()));
+    connect(actionConvexDecomposition, SIGNAL(triggered()), this, SLOT(on_actionConvexDecomposition_triggered()));
 
 
     _actions<< actionToNef
@@ -102,8 +103,8 @@ void
 Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(item)
@@ -113,7 +114,7 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
     time.start();
     std::cerr << "Convert polyhedron to nef polyhedron...";
 
-    Scene_nef_polyhedron_item* new_nef_item = 
+    Scene_nef_polyhedron_item* new_nef_item =
       Scene_nef_polyhedron_item::from_polyhedron(item);
 
     new_nef_item->setName(tr("%1 (to nef)").arg(item->name()));
@@ -131,15 +132,16 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
 void
 Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* pitem = 
+
+  Scene_polyhedron_item* pitem =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  Scene_nef_polyhedron_item* item =   
+  Scene_nef_polyhedron_item* item =
     (pitem)? Scene_nef_polyhedron_item::from_polyhedron(pitem)
            : qobject_cast<Scene_nef_polyhedron_item*>(scene->item(index));
-  
+  QApplication::restoreOverrideCursor();
   if(item) {
     QTime time;
     time.start();
@@ -182,6 +184,7 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
 
   if(item)
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
     std::cerr << "Convert nef polyhedron to polyhedron...";
@@ -211,23 +214,31 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
 
 void Polyhedron_demo_nef_plugin::on_actionUnion_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(BOOLEAN_UNION);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_nef_plugin::on_actionIntersection_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(BOOLEAN_INTERSECTION);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_nef_plugin::on_actionDifference_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(BOOLEAN_DIFFERENCE);
+  QApplication::restoreOverrideCursor();
 }
 
 void
 Polyhedron_demo_nef_plugin::on_actionMinkowskiSum_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(MINKOWSKI_SUM);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation operation)

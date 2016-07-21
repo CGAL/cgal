@@ -68,6 +68,7 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
 
   if(item)
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Polyhedron* pMesh = item->polyhedron();
 
     // compute self-intersections
@@ -106,11 +107,12 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       scene->itemChanged(item);
       scene->itemChanged(selection_item);
     }
-    else 
+    else
       QMessageBox::information(mw, tr("No self intersection"),
                                tr("The polyhedron \"%1\" does not self-intersect.").
                                arg(item->name()));
   }
+  QApplication::restoreOverrideCursor();
 }
 
 #include "Self_intersection_plugin.moc"

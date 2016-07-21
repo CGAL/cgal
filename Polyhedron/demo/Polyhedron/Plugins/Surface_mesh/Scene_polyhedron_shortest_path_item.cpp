@@ -389,6 +389,7 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_vertex_point(Scene_polyhed
 
 bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray)
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   ensure_aabb_object();
   
   Face_location faceLocation = m_shortestPaths->locate(ray, m_aabbTree);
@@ -396,6 +397,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
   if (faceLocation.first == GraphTraits::null_face())
   {
     m_messages->information(QObject::tr("Shortest Paths: No face under cursor."));
+    QApplication::restoreOverrideCursor();
     return false;
   }
   else
@@ -468,6 +470,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
       break;
     }
     item->invalidateOpenGLBuffers();
+    QApplication::restoreOverrideCursor();
     return true;
   }
 }

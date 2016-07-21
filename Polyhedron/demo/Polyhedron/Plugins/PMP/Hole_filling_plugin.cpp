@@ -469,10 +469,11 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     print_message("Error: selected polyhedron item already has an associated hole visualizer!");
     return;
   }
-
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   Scene_hole_visualizer* hole_visualizer = new Scene_hole_visualizer(poly_item, mw);
   visualizers[poly_item] = hole_visualizer;
   connect(hole_visualizer, SIGNAL(itemChanged()), this, SLOT(hole_visualizer_changed()));
+  QApplication::restoreOverrideCursor();
 
   if(hole_visualizer->polyline_data_list.empty()) {
     print_message("There is no hole in selected polyhedron item!");
@@ -481,7 +482,6 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     return;
   }
   else {
-    // poly_item->setFlatMode(); // for better visualization
     int item_id = scene->addItem(hole_visualizer);
     scene->setSelectedItem(item_id);
     hole_visualizer->setName(tr("%1-hole visualizer").arg(poly_item->name()));

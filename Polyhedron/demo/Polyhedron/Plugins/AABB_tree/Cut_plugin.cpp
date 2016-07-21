@@ -1250,14 +1250,17 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
 
 void Polyhedron_demo_cut_plugin::Intersection()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!plane_item)
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::CUT_SEGMENTS);
   computeIntersection();
   plane_item->invalidateOpenGLBuffers();
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_cut_plugin::SignedFacets() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!plane_item)
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::SIGNED_FACETS);
@@ -1267,9 +1270,11 @@ void Polyhedron_demo_cut_plugin::SignedFacets() {
     scene->erase(scene->item_id(edges_item));
     edges_item = NULL;
   }
+  QApplication::restoreOverrideCursor();
 
 }
 void Polyhedron_demo_cut_plugin::UnsignedFacets() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!plane_item)
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_FACETS);
@@ -1279,8 +1284,10 @@ void Polyhedron_demo_cut_plugin::UnsignedFacets() {
     scene->erase(scene->item_id(edges_item));
     edges_item = NULL;
   }
+  QApplication::restoreOverrideCursor();
 }
 void Polyhedron_demo_cut_plugin::UnsignedEdges() {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!plane_item)
     createCutPlane();
   plane_item->setCutPlaneType(Scene_aabb_plane_item::UNSIGNED_EDGES);
@@ -1290,6 +1297,7 @@ void Polyhedron_demo_cut_plugin::UnsignedEdges() {
     scene->erase(scene->item_id(edges_item));
     edges_item = NULL;
   }
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_cut_plugin::computeIntersection()

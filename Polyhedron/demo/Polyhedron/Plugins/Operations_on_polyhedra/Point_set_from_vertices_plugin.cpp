@@ -60,6 +60,7 @@ QList<QAction*> Polyhedron_demo_point_set_from_vertices_plugin::actions() const 
 
 void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* poly_item =
@@ -98,6 +99,7 @@ void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
       scene->addItem (points);
     }
 
+  QApplication::restoreOverrideCursor();
 }
 
 
