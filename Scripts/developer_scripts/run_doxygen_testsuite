@@ -77,7 +77,10 @@ cmake \
 
 make doc 2>&1 || error "exit code $? returned by the command 'make doc'"
 make doc_and_publish_testsuite 2>&1 || error "exit code $? returned by the command 'make doc_and_publish_testsuite'"
-
+case "$CGAL_RELEASE_ID" in
+    *-I-*) ln -snf "../Manual_doxygen_test/$CGAL_RELEASE_ID/output" /srv/CGAL/www/doc/master
+           ;;
+esac
 rm -rf "${CGAL_DOC_BUILD}"
 # Then gzip the log file, to save space
 exec

@@ -48,4 +48,6 @@ See the file [LICENSE.md](LICENSE.md).
 More information
 ================
 * [The CGAL web site](http://www.cgal.org/)
-* [Lastest CGAL release documentation pages](http://doc.cgal.org/)
+* [Latest CGAL release documentation pages](http://doc.cgal.org/)
+* [Latest CGAL master documentation pages, updated once a week](https://cgal.geometryfactory.com/CGAL/doc/master/)
+* [CGAL daily testsuite results](https://cgal.geometryfactory.com/CGAL/testsuite/)
