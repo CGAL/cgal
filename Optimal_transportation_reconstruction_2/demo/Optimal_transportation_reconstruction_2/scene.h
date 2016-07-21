@@ -95,7 +95,7 @@ public:
     srand(0); // for sake of repeatability
     m_ignore = 0;
     m_init_done = false;
-    m_percentage = 100.;
+    m_percentage = 1.;
     m_bbox_x = 0.0;
     m_bbox_y = 0.0;
     m_bbox_size = 1.0;
@@ -104,11 +104,12 @@ public:
   }
 
   ~Scene() {
-    clear();
+    delete m_pwsrec;
   }
 
   void clear() {
-    m_pwsrec->clear();
+    delete m_pwsrec;
+    m_pwsrec = new Optimal_transportation_reconstruction_kerneled_2();
     m_samples.clear();
   }
 
@@ -395,17 +396,18 @@ public:
 
   void set_options(const int verbose, const int mchoice,
     const bool use_flip, const unsigned int relocation,
-    const double ghost) {
+    const double ghost, const double percentage) {
 
     m_pwsrec->set_verbose(verbose);
     m_pwsrec->set_random_sample_size(mchoice);
     m_pwsrec->set_use_flip(use_flip);
     m_pwsrec->set_relocation(relocation);
     m_pwsrec->set_relevance(ghost);
+    m_percentage = percentage;
   }
 
   bool init_reconstruction(const double percentage) {
-    std::cout << " init_reconstruction " << std::endl;
+    std::cout << " init_reconstruction with " << (unsigned int)(100.*percentage) << "% of points" << std::endl;
 
     if (m_samples.empty()) {
       std::cerr << "initialization failed (empty point set)" << std::endl;
@@ -415,10 +417,15 @@ public:
     Sample_vector vertices, samples;
     select_samples(percentage, vertices, samples);
 
-    PointMassList point_mass_list;
+    PointMassList vertices_mass_list;
     Sample_vector_const_iterator it;
     for (it = vertices.begin(); it != vertices.end(); it++) {
-      point_mass_list.push_back(
+      vertices_mass_list.push_back(
+        std::make_pair((*it)->point(), (*it)->mass()));
+    }
+    PointMassList samples_mass_list;
+    for (it = samples.begin(); it != samples.end(); it++) {
+      samples_mass_list.push_back(
         std::make_pair((*it)->point(), (*it)->mass()));
     }
 
@@ -426,8 +433,10 @@ public:
     Mass_property_map mass_pmap;
     MassPoint mp;
 
-    m_pwsrec->initialize(point_mass_list.begin(), point_mass_list.end(),
-      point_pmap, mass_pmap);
+    m_pwsrec->initialize_with_custom_vertices
+      (samples_mass_list.begin(), samples_mass_list.end(),
+       vertices_mass_list.begin(), vertices_mass_list.end(),
+       point_pmap, mass_pmap);
 
     m_init_done = true;
 

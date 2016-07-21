@@ -380,6 +380,40 @@ public:
     assign_samples(m_samples.begin(), m_samples.end());
   }
 
+  template <class InputIterator>
+  void initialize_with_custom_vertices(InputIterator samples_start,
+                                       InputIterator samples_beyond,
+                                       InputIterator vertices_start,
+                                       InputIterator vertices_beyond,
+                                       PointPMap point_map,
+                                       MassPMap  mass_map) {
+    point_pmap = point_map;
+    mass_pmap  = mass_map;
+    clear();
+    Property_map_to_unary_function<PointPMap> get_point(point_pmap);
+
+    Bbox_2 bbox = bbox_2(
+      boost::make_transform_iterator(samples_start,get_point),
+      boost::make_transform_iterator(samples_beyond,get_point));
+
+    insert_loose_bbox(bbox);
+    init(vertices_start, vertices_beyond);
+
+    std::vector<Sample_*> m_samples;
+    for (InputIterator it = samples_start; it != samples_beyond; it++) {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      Point point = get(point_pmap, it);
+      FT    mass  = get( mass_pmap, it);
+#else
+      Point point = get(point_pmap, *it);
+      FT    mass  = get( mass_pmap, *it);
+#endif
+      Sample_* s = new Sample_(point, mass);
+      m_samples.push_back(s);
+    }
+    assign_samples(m_samples.begin(), m_samples.end());
+  }
+
 
   template <class Vector>
   Vector random_vec(const FT scale) const
