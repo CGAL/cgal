@@ -95,8 +95,6 @@ protected:
 
   void initializeBuffers(CGAL::Three::Viewer_interface*)const;
   void compute_normals_and_vertices(void) const;
-  mutable bool are_buffers_filled;
-
 };
 
 #endif // SCENE_PLANE_ITEM_H
