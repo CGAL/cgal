@@ -49,10 +49,10 @@ public:
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
-    actionPointSetClassification = new QAction(tr("Point set classification"), mw);
+    actionPointSetClassification = new QAction(tr("Point Set Classification"), mw);
     connect(actionPointSetClassification, SIGNAL(triggered()), this, SLOT(point_set_classification_action()));
 
-    dock_widget = new QDockWidget("Point set classification", mw);
+    dock_widget = new QDockWidget("Point Set Classification", mw);
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
