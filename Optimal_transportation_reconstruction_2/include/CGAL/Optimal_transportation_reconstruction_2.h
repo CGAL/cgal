@@ -323,6 +323,8 @@ public:
     return m_ghost;
   }
 
+  FT tolerance() const { return m_tolerance; }
+
   /// @}
 
   /// \cond SKIP_IN_MANUAL
@@ -671,7 +673,7 @@ public:
   {
     if (m_tolerance == OTR_NO_TOLERANCE)
       return false;
-    double cost = std::sqrt (pedge.after());
+    double cost = std::sqrt (pedge.after() / pedge.number_of_samples());
     return cost > m_tolerance;
   }
 
