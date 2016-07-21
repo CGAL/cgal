@@ -2196,7 +2196,6 @@ class Reconstruction_from_parallel_slices_3{
   //vertex_index is just used for the key
   template <class Map>
   int get_vertex_index_in_facet(Cell_handle_3& cell,int facet_index,int vertex_index,int i1, int i2,Map& new_vertex_in_facet){
-    typedef typename Map::iterator Iterator;
     std::pair<typename Map::iterator,bool> ires=
       new_vertex_in_facet.insert(
         std::make_pair( std::make_pair(facet_index,vertex_index),slice_writer_ptr->last_point_index()+1 )
@@ -2688,7 +2687,7 @@ class Reconstruction_from_parallel_slices_3{
               if ( neighbor->info().nm_edge(i1,i2) ) continue;
             }
             
-            int i1,i2;
+            int i1=-1,i2=-1;
             //display a quad
             const int vi=(i0+i+1)%4;
             for (int k=0;k<3;++k)
