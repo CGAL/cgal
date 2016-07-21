@@ -37,20 +37,23 @@ private:
   FT m_tang;
   FT m_max_norm;
   FT m_max_tang;
+  std::size_t m_nb_samples;
 
 public:
   Cost()
   : m_norm(0),
     m_tang(0),
     m_max_norm(0),
-    m_max_tang(0)
+    m_max_tang(0),
+    m_nb_samples(0)
   {}
 
   Cost(const FT norm, const FT tang)
   : m_norm(norm),
     m_tang(tang),
     m_max_norm(norm),
-    m_max_tang(tang)
+    m_max_tang(tang),
+    m_nb_samples(0)
   {}
 
   ~Cost() {}
@@ -71,6 +74,9 @@ public:
   const FT max_norm() const { return m_max_norm; }
 
   const FT max_tang() const { return m_max_tang; }
+
+  std::size_t number_of_samples() const { return m_nb_samples; }
+  void set_number_of_samples(const std::size_t nb_samples) { m_nb_samples = nb_samples; }
 
   FT finalize(const FT alpha = FT(0.5)) const
   {
