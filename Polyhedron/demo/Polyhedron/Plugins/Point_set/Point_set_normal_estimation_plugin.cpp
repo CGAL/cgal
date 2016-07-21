@@ -170,7 +170,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     {
       CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Estimates normal direction by PCA (k=" << dialog.pca_neighbors() <<")...\n";
-      
+
       // Estimates normals direction.
       CGAL::pca_estimate_normals<Concurrency_tag>(points->begin_or_selection_begin(), points->end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
