@@ -102,6 +102,7 @@ public:
 
   // view
   void on_actionView_points_toggled();
+  void on_actionView_tolerance_toggled();
   void on_actionView_vertices_toggled();
   void on_actionView_edges_toggled();
   void on_actionView_ghost_toggled();

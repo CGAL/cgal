@@ -571,6 +571,12 @@ void MainWindow::on_actionView_points_toggled()
   update();
 }
 
+void MainWindow::on_actionView_tolerance_toggled()
+{
+  viewer->toggle_view_tolerance();
+  update();
+}
+
 void MainWindow::on_actionView_vertices_toggled()
 {
   viewer->toggle_view_vertices();

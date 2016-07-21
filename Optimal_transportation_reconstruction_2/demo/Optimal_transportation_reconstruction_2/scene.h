@@ -562,7 +562,8 @@ public:
 
   // RENDER //
 
-  void render(const bool view_points, const bool view_vertices,
+  void render(const bool view_points, const bool view_tolerance,
+    const bool view_vertices,
     const bool view_edges, const bool view_ghost_edges,
     const bool view_edge_cost, const bool view_edge_priority,
     const bool view_bins, const bool view_foot_points,
@@ -578,6 +579,10 @@ public:
       m_pwsrec->setViewer(viewer);
       is_viewer_set = true;
     }
+
+    if (view_tolerance)
+      draw_tolerance();
+    
     if (view_edges)
       m_pwsrec->draw_edges(0.5f * line_thickness, 0.9f, 0.9f, 0.9f);
 
@@ -607,6 +612,27 @@ public:
   }
 
   void draw_samples(const float point_size, GlViewer* viewer);
+
+  void draw_tolerance()
+  {
+    double tol = m_pwsrec->tolerance();
+    
+    const std::size_t resolution = 16;
+    ::glColor3f (0.6, 1.0, 0.8);
+    std::vector<Sample_>::const_iterator it;
+    for (it = m_samples.begin(); it != m_samples.end(); it++)
+      {
+        ::glBegin (GL_TRIANGLE_FAN);
+        const Point& center = it->point();
+        for (std::size_t i = 0; i < resolution; ++ i)
+          {
+            Point p = center + Vector (tol * std::cos (2. * M_PI * (i / (double)resolution)),
+                                       tol * std::sin (2. * M_PI * (i / (double)resolution)));
+            ::glVertex2d(p.x(), p.y());
+          }
+        ::glEnd();
+      }
+  }
 
 
   // PREDEFINED EXAMPLES //
