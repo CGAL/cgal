@@ -241,7 +241,7 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   
         bool equal(const vertex_iterator& other) const
         {
-          return (this->hd == other.hd) && (this->mesh_ == other.mesh_);
+          return (this->mesh_ == other.mesh_) && (this->hd == other.hd);
         }
 
         vertex_descriptor dereference() const { return vertex_descriptor(*hd); }
