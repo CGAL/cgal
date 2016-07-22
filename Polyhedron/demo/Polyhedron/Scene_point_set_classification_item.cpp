@@ -704,18 +704,18 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
   HPS_property_map<PSC::HPoint> hps_pmap (&(m_psc->HPS));
   CGAL::jet_estimate_normals<CGAL::Sequential_tag>(indices.begin(), indices.end(),
                                                    hps_pmap,
-                                                   &normals[0],
+                                                   CGAL::make_property_map(normals),
                                                    12);
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Kernel, std::vector<std::size_t>,
                                                            HPS_property_map<PSC::HPoint>,
-                                                           const Kernel::Vector_3* > Traits;
+                                                           typename CGAL::Pointer_property_map<Kernel::Vector_3>::type > Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
   Shape_detection shape_detection;
 
 
-  shape_detection.set_input(indices, hps_pmap, &(normals[0]));
+  shape_detection.set_input(indices, hps_pmap, CGAL::make_property_map(normals));
   //  shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
   shape_detection.add_shape_factory<My_plane<Traits> >();
   Shape_detection::Parameters op;
