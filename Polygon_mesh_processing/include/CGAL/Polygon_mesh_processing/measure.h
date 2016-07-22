@@ -27,6 +27,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
+#include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -215,7 +216,7 @@ namespace Polygon_mesh_processing {
                                                                      CGAL::vertex_point_t>::type>::Kernel::FT  FT;
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-    std::unordered_set<halfedge_descriptor> visited;
+    boost::unordered_set<halfedge_descriptor> visited;
     halfedge_descriptor result_halfedge = boost::graph_traits<PolygonMesh>::null_halfedge();
     FT result_len = 0;
     BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
