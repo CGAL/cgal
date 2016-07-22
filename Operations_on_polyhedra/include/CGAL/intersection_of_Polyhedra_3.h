@@ -1693,7 +1693,7 @@ class Intersection_of_Polyhedra_3{
 
 
   struct Graph_node{
-    std::set<std::size_t> neighbors;
+    std::set<int> neighbors;
     unsigned degree;
     
     Graph_node():degree(0){}

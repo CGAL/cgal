@@ -616,11 +616,11 @@ public:
   void annotate_graph(Iterator begin,Iterator end)
   {
 //    std::cout << "Annotation graph..." << std::endl;
-    for (Iterator it=begin;it!=end;++it)
+    int node_id = 0;
+    for (Iterator it=begin;it!=end;++it, ++node_id)
     {
-      int node_id=it->first;
-      if (non_manifold_nodes.find(node_id)!=non_manifold_nodes.end()) it->second.make_terminal();
-      const std::set<int>& neighbors = it->second.neighbors;
+      if (non_manifold_nodes.count(node_id)) it->make_terminal();
+      const std::set<int>& neighbors = it->neighbors;
       graph_of_constraints.insert(std::make_pair(node_id,neighbors));
     }
   }
