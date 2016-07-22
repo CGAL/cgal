@@ -189,7 +189,7 @@ Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
 {
   poly_.resize(1);
   poly_[0] = p;
-  this->add_primitives(p);
+  this->add_primitives(poly_[0]);
   this->set_random_generator(p_rng);
 }
 
