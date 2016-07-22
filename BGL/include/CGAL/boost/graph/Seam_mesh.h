@@ -178,12 +178,14 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
     class vertex_iterator
       : public boost::iterator_facade< vertex_iterator,
                                        vertex_descriptor,
-                                       std::forward_iterator_tag
+                                       std::forward_iterator_tag,
+                                       vertex_descriptor
                                        >
     {
         typedef boost::iterator_facade< vertex_iterator,
                                         vertex_descriptor,
-                                        std::forward_iterator_tag
+                                        std::forward_iterator_tag,
+                                        vertex_descriptor
                                         > Facade;
 
     public:
