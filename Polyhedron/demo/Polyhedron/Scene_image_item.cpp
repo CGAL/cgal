@@ -323,10 +323,24 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
-  
-  vertices_.push_back( (i - 0.5) * data_.vx());
-  vertices_.push_back( (j - 0.5) * data_.vy());
-  vertices_.push_back( (k - 0.5) * data_.vz());
+  //resize the "border vertices"
+  double di(i),dj(j),dk(k);
+  if (di == 0)
+    di = 0.5;
+  if (dj == 0)
+    dj = 0.5;
+  if (dk == 0)
+    dk = 0.5;
+  if (di == data_.xdim())
+    di = data_.xdim()-0.5;
+  if (dj == data_.xdim())
+    dj = data_.ydim()-0.5;
+  if (dk == data_.zdim())
+    dk = data_.zdim()-0.5;
+
+  vertices_.push_back( (di - 0.5) * data_.vx());
+  vertices_.push_back( (dj - 0.5) * data_.vy());
+  vertices_.push_back( (dk - 0.5) * data_.vz());
 }
 
 void
@@ -334,7 +348,7 @@ Vertex_buffer_helper::push_quads(std::size_t i, std::size_t j, std::size_t k)
 {
   int pos1 = vertex_index(i-dx(), j     , k);
   int pos2 = vertex_index(i-dx(), j-dy(), k);
-  int pos3 = vertex_index(i     , j-dy(), k);
+  int pos3 = vertex_index(i     , j-dy(), k) ;
   int pos4 = vertex_index(i     ,j      , k);
   push_quad(pos1, pos2, pos3, pos4);
   
@@ -637,12 +651,12 @@ Scene_image_item::compute_bbox() const
   if(!m_image)
     _bbox = Bbox();
   else
-   _bbox = Bbox(-0.5*m_image->vx(),
-                -0.5*m_image->vy(),
-                -0.5*m_image->vz(),
-              (m_image->xdim()- 0.5) * m_image->vx(),
-              (m_image->ydim()- 0.5) * m_image->vy(),
-              (m_image->zdim()- 0.5) * m_image->vz());
+   _bbox = Bbox(0,
+                0,
+                0,
+              (m_image->xdim()-1) * m_image->vx(),
+              (m_image->ydim()-1) * m_image->vy(),
+              (m_image->zdim()-1) * m_image->vz());
 }
 
 void
