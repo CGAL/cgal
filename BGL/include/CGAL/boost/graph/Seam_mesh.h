@@ -211,10 +211,6 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
         : hd(hd), end(hd), mesh_(m) {
         }
 
-      vertex_iterator(const vertex_iterator& other)
-        : hd(other.hd), end(other.end), mesh_(other.mesh_)
-      {}
-
     private:
         friend class boost::iterator_core_access;
 
