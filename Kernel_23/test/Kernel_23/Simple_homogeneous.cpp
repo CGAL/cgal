@@ -27,6 +27,7 @@
 #include <CGAL/intersection_3.h>
 
 #include "CGAL/Precise_numbers.h"
+#define TEST_FILENAME "Test-Simple_homogeneous-IO.out"
 #include "CGAL/_test_io.h"
 #include "CGAL/_test_2.h"
 #include "CGAL/_test_3.h"

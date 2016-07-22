@@ -741,6 +741,11 @@ message("== Write compiler_config.h (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
+
+# Enable testing with BUILD_TESTING
+option(BUILD_TESTING "Build the testing tree." OFF)
+include(CTest)
+
 message("== Generating build files ==")
 
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
