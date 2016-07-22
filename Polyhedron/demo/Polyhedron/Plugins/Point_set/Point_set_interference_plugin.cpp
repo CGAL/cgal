@@ -67,8 +67,12 @@ private Q_SLOTS:
     flags |= Qt::CustomizeWindowHint;
     flags |= Qt::WindowCloseButtonHint;
 
+    Point_set* points = item->point_set();
+    if(points == NULL)
+      return;
+
     double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
-                                    item->point_set()->begin(), item->point_set()->end(),
+                                    points->begin_or_selection_begin(), points->end(),
                                     6 /* knn = 1 ring */);
 
     const double max_dist =
@@ -86,7 +90,7 @@ private Q_SLOTS:
 
     CGAL::Random_points_in_sphere_3<Kernel::Point_3> generator(max_dist);
 
-    for(Point_set::iterator psit = item->point_set()->begin(); psit != item->point_set()->end(); ++psit)
+    for(Point_set::iterator psit = points->begin_or_selection_begin(); psit != points->end(); ++psit)
     {
       *psit = *psit+(*generator - CGAL::ORIGIN);
       ++generator;

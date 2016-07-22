@@ -126,6 +126,15 @@ public:
     m_nb_selected = static_cast<std::size_t>(std::distance (it, end()));
   }
 
+  const_iterator begin_or_selection_begin() const
+  {
+    return (m_nb_selected == 0 ? begin() : first_selected());
+  }
+  iterator begin_or_selection_begin()
+  {
+    return (m_nb_selected == 0 ? begin() : first_selected());
+  }
+
   // Test if point is selected
   bool is_selected(const_iterator it) const
   {

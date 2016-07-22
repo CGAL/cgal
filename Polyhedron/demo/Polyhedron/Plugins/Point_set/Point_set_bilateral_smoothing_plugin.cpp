@@ -111,7 +111,7 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
       {
 	/* double error = */
 	CGAL::bilateral_smooth_point_set<Concurrency_tag>
-	  (points->begin(), 
+	  (points->begin_or_selection_begin(),
 	   points->end(),
 	   CGAL::make_identity_property_map(Point_set::value_type()),
 	   CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
