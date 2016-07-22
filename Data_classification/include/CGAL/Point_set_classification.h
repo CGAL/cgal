@@ -78,7 +78,7 @@ public:
 
 private:
   std::string m_id;
-  std::map<std::string, Attribute_side> m_attribute_effects;
+  std::map<Segmentation_attribute*, Attribute_side> m_attribute_effects;
 
 public:
 
@@ -101,7 +101,7 @@ public:
   */ 
   void set_attribute_effect (Segmentation_attribute* att, Attribute_side effect)
   {
-    m_attribute_effects[att->id()] = effect;
+    m_attribute_effects[att] = effect;
   }
 
   /*!
@@ -113,8 +113,8 @@ public:
    */
   Attribute_side attribute_effect (Segmentation_attribute* att) 
   {
-    std::map<std::string, Attribute_side>::iterator
-      search = m_attribute_effects.find (att->id());
+    std::map<Segmentation_attribute*, Attribute_side>::iterator
+      search = m_attribute_effects.find (att);
     return (search == m_attribute_effects.end () ? NEUTRAL_ATT : search->second);
   }
 
@@ -131,7 +131,7 @@ public:
   void info()
   {
     std::cerr << "Attribute " << m_id << ": ";
-    for (std::map<std::string, Attribute_side>::iterator it = m_attribute_effects.begin();
+    for (std::map<Segmentation_attribute*, Attribute_side>::iterator it = m_attribute_effects.begin();
          it != m_attribute_effects.end(); ++ it)
       {
         if (it->second == NEUTRAL_ATT)
@@ -145,85 +145,6 @@ public:
   }
   /// \endcond
 
-
-  /// \name Specific setups
-  /// @{
-  
-  /*!
-    \brief Convenience method that sets up a vegetation type.
-  */
-  void make_vegetation ()
-  {
-    m_attribute_effects.clear();
-    m_attribute_effects["scatter"] = FAVORED_ATT;
-    m_attribute_effects["nonplanarity"] = FAVORED_ATT;
-    m_attribute_effects["elevation"] = FAVORED_ATT;
-    m_id = "vegetation";
-  }
-
-  /*!
-    \brief Convenience method that sets up a ground type.
-  */
-  void make_ground ()
-  {
-    m_attribute_effects.clear();
-    m_attribute_effects["scatter"] = PENALIZED_ATT;
-    m_attribute_effects["nonplanarity"] = PENALIZED_ATT;
-    m_attribute_effects["horizontality"] = PENALIZED_ATT;
-    m_attribute_effects["elevation"] = PENALIZED_ATT;
-    m_id = "ground";
-  }
-
-  /*!
-    \brief Convenience method that sets up a road type.
-  */
-  void make_road ()
-  {
-    m_attribute_effects.clear();
-    m_attribute_effects["scatter"] = PENALIZED_ATT;
-    m_attribute_effects["nonplanarity"] = PENALIZED_ATT;
-    m_attribute_effects["horizontality"] = PENALIZED_ATT;
-    m_attribute_effects["elevation"] = PENALIZED_ATT;
-    m_attribute_effects["color"] = FAVORED_ATT;
-    m_id = "road";
-  }
-
-  /*!
-    \brief Convenience method that sets up a roof type.
-  */
-  void make_roof ()
-  {
-    m_attribute_effects.clear();
-    m_attribute_effects["scatter"] = PENALIZED_ATT;
-    m_attribute_effects["horizontality"] = PENALIZED_ATT;
-    m_attribute_effects["elevation"] = FAVORED_ATT;
-    m_id = "roof";
-  }
-
-  /*!
-    \brief Convenience method that sets up a facade type.
-  */
-  void make_facade ()
-  {
-    m_attribute_effects.clear();
-    m_attribute_effects["nonplanarity"] = PENALIZED_ATT;
-    m_attribute_effects["horizontality"] = FAVORED_ATT;
-    m_attribute_effects["elevation"] = FAVORED_ATT;
-    m_id = "facade";
-  }
-
-  /*!
-    \brief Convenience method that sets up a building (roof + facade) type.
-  */
-  void make_building ()
-  {
-    m_attribute_effects.clear();
-    m_attribute_effects["scatter"] = PENALIZED_ATT;
-    m_attribute_effects["elevation"] = FAVORED_ATT;
-    m_id = "building";
-  }
-
-  /// @}
 };
 
 
@@ -321,11 +242,8 @@ public:
   Image_indices grid_HPS;
 
   //Hpoints attributes
-  std::vector<Vector> normal;
   std::vector<Eigenvalues> eigenvalues;
   std::vector<Plane> planes;
-  std::vector<std::vector<int> > spherical_neighborhood;
-  std::vector<std::vector<int> > cylindrical_neighborhood;
 
   std::vector<Plane> groups;
   std::vector<Cluster> clusters;
@@ -439,7 +357,6 @@ public:
 
     //1-Neighborhood computation and reset the attributes of the structure points
     CGAL_CLASSIFICATION_CERR<<"spherical neighborhood..";
-    spherical_neighborhood.clear();
     eigenvalues.clear();
     planes.clear();
     
@@ -555,12 +472,6 @@ public:
           else
             Mask(i,j) = true;
         }
-
-
-
-
-    //5-normal computation
-    //    if(!is_normal_given){CGAL_CLASSIFICATION_CERR<<", normals.."; compute_normal(); CGAL_CLASSIFICATION_CERR<<"ok";}
 
     CGAL_CLASSIFICATION_CERR<<std::endl<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
   }
