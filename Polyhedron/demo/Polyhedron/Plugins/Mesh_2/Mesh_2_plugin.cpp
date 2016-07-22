@@ -388,6 +388,7 @@ public Q_SLOTS:
 
   void run()
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     //collect input polylines
     std::vector<Scene_polylines_item*> polylines_items;
     std::vector<Scene_points_with_normal_item*> points_items;
@@ -414,6 +415,7 @@ public Q_SLOTS:
           +(bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
           +(bbox.zmax()-bbox.zmax()) *(bbox.zmax()-bbox.zmax())
           );
+    QApplication::restoreOverrideCursor();
     switch( detect_constant_coordinate(polylines_items, points_items) )
     {
       using namespace CGAL;

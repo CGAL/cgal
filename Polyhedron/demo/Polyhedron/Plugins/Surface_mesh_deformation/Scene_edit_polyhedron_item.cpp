@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <QTime>
 
+#include <QApplication>
+
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 
@@ -593,7 +595,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
   std::set<face_descriptor> roi_facets;
   std::set<vertex_descriptor> roi_vertices(
     deform_mesh->roi_vertices().begin(),deform_mesh->roi_vertices().end());
-
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
   {
     std::vector<vertex_descriptor> group;
@@ -628,6 +630,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
   {
     std::cout << "Remeshing canceled (there is no facet with "
               << "its 3 vertices in the ROI)." << std::endl;
+    QApplication::restoreOverrideCursor();
     return;
   }
   // set face_index map needed for border_halfedges and isotropic_remeshing
@@ -723,7 +726,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
   compute_normals_and_vertices();
 
   poly_item->invalidate_aabb_tree(); // invalidate the AABB tree
-
+  QApplication::restoreOverrideCursor();
   Q_EMIT item->itemChanged();
 }
 

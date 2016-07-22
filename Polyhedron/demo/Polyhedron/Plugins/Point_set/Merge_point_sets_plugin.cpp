@@ -55,6 +55,7 @@ private :
 
 void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Three::Scene_interface::Item_id mainSelectionIndex
     = scene->mainSelectionIndex();
   Scene_points_with_normal_item* mainSelectionItem
@@ -86,6 +87,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
   {
     scene->erase(index);
   }
+  QApplication::restoreOverrideCursor();
 }
 
 

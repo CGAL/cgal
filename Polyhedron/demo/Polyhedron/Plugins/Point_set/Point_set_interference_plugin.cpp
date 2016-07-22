@@ -82,6 +82,7 @@ private Q_SLOTS:
                                 &ok,
                                 flags);
     if(!ok) return;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     CGAL::Random_points_in_sphere_3<Kernel::Point_3> generator(max_dist);
 
@@ -92,6 +93,7 @@ private Q_SLOTS:
     }
     item->invalidateOpenGLBuffers();
     item->itemChanged();
+    QApplication::restoreOverrideCursor();
   }
 private:
   Scene_interface *scene;

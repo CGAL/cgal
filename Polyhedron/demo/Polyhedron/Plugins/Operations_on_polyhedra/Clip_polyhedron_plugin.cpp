@@ -170,6 +170,7 @@ public Q_SLOTS:
       return;
     else
     {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       QList<Scene_polyhedron_item*> polyhedra;
 
@@ -283,6 +284,7 @@ public Q_SLOTS:
         }
       }
     }
+    QApplication::restoreOverrideCursor();
   }
 private:
   QAction* actionClipPolyhedra;

@@ -66,6 +66,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
 
   if(item)
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Polyhedron* pMesh = item->polyhedron();
 
     typedef CGAL::Exact_rational ET;

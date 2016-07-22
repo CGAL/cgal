@@ -186,6 +186,7 @@ void Polyhedron_demo_trivial_plugin::bbox()
         if(qobject_cast<Scene_bbox_item*>(scene->item(i)))
             return;
     }
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_item* item = new Scene_bbox_item(scene);
     connect(item, SIGNAL(destroyed()),
             this, SLOT(enableAction()));
@@ -194,6 +195,7 @@ void Polyhedron_demo_trivial_plugin::bbox()
     item->setRenderingMode(Wireframe);
     scene->addItem(item);
     actionBbox->setEnabled(false);
+    QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_trivial_plugin::enableAction() {

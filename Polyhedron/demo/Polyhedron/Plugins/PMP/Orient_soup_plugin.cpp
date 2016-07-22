@@ -130,8 +130,6 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
 
     if(item)
     {
-      //     qDebug()  << tr("I have the item %1\n").arg(item->name());
-      QApplication::setOverrideCursor(Qt::WaitCursor);
       if(!item->orient()) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -156,7 +154,6 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
           item->invalidateOpenGLBuffers();
           scene->itemChanged(item);
         }
-      QApplication::restoreOverrideCursor();
     }
     else{
       messages->warning(tr("This function is only applicable on polygon soups."));
@@ -174,7 +171,6 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
     if(item)
     {
       //     qDebug()  << tr("I have the item %1\n").arg(item->name());
-      QApplication::setOverrideCursor(Qt::WaitCursor);
       if(!item->orient()) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -182,6 +178,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
                                          " have been created.")
                                       .arg(item->name()));
       }
+      QApplication::setOverrideCursor(Qt::WaitCursor);
         Scene_surface_mesh_item::SMesh* smesh = new Scene_surface_mesh_item::SMesh();
         if(item->exportAsSurfaceMesh(smesh)) {
           if(!item->getVColors().empty())
@@ -216,13 +213,15 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if(item) {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     item->shuffle_orientations();
-    //scene->itemChanged(item);
+    QApplication::restoreOverrideCursor();
   }
   else {
     Scene_polyhedron_item* poly_item = 
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(poly_item) {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       item = new Scene_polygon_soup_item();
       item->setName(poly_item->name());
       item->setRenderingMode(poly_item->renderingMode());
@@ -233,6 +232,7 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
       item->setColor(poly_item->color());
       scene->replaceItem(index, item);
       delete poly_item;
+      QApplication::restoreOverrideCursor();
     }
   }
 }
@@ -246,8 +246,10 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 
   if(item)
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     item->setDisplayNonManifoldEdges(!item->displayNonManifoldEdges());
     scene->itemChanged(item);
+    QApplication::restoreOverrideCursor();
   }
 }
 

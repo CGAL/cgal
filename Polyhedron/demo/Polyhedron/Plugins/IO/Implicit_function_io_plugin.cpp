@@ -35,7 +35,6 @@
 #include <QMainWindow>
 #include <QPluginLoader>
 #include <QDir>
-#include <QApplication>
 #include <QMenu>
 #include <QList>
 #include <QLibrary>

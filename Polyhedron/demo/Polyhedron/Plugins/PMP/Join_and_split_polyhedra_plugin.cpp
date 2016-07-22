@@ -126,6 +126,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(item)
     {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       std::list<Polyhedron*> new_polyhedra;
       CGAL::internal::corefinement::extract_connected_components(
         *item->polyhedron(),
@@ -148,6 +149,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
         scene->addItem(new_item);
       }
       item->setVisible(false);
+      QApplication::restoreOverrideCursor();
     }
   }
 }

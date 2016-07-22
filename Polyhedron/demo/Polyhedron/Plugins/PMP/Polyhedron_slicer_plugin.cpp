@@ -219,7 +219,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   }
 
   if(!on_Update_plane_button_clicked()) { return; }
-
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   // get plane position and normal
   qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
   const qglviewer::Vec& pos = mf->position();
@@ -240,6 +240,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   double distance_with_planes = ui_widget.Distance_with_planes->text().toDouble(&to_double_ok);
   if(!to_double_ok) { 
     print_message("Error: Set Distance_with_planes text box!");
+    QApplication::restoreOverrideCursor();
     return; 
   }
 
@@ -313,6 +314,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
       new_polylines_item->invalidateOpenGLBuffers();
     }
   }
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_polyhedron_slicer_plugin::item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {

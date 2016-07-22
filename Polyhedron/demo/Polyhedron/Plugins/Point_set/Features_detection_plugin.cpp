@@ -74,6 +74,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     if(!dialog.exec())
       return;
 
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     typedef CGAL::cpp11::array<double,6> Covariance;
     std::vector<Covariance> cov;
 
@@ -110,6 +111,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     }
     else
       delete new_item;
+    QApplication::restoreOverrideCursor();
   }
 
 }

@@ -410,8 +410,9 @@ public Q_SLOTS:
 	print_message("Error: no point set selected!");
 	return; 
       }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     point_set_item->selectAll();
+    QApplication::restoreOverrideCursor();
   }
   
   // Clear selection
@@ -422,8 +423,9 @@ public Q_SLOTS:
       print_message("Error: no point set selected!");
       return; 
     }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     point_set_item->resetSelection();
+    QApplication::restoreOverrideCursor();
   }
 
   void on_Erase_selected_points_button_clicked() {
@@ -433,8 +435,9 @@ public Q_SLOTS:
       print_message("Error: no point set selected!");
       return; 
     }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     point_set_item->deleteSelection();
+    QApplication::restoreOverrideCursor();
   }
 
   void on_Invert_selection_button_clicked() {
@@ -444,8 +447,9 @@ public Q_SLOTS:
       print_message("Error: no point set selected!");
       return; 
     }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     point_set_item->invertSelection();
+    QApplication::restoreOverrideCursor();
   }
 
   void on_Create_point_set_item_button_clicked() {
@@ -459,7 +463,7 @@ public Q_SLOTS:
       print_message("Error: there is no selected point in point set item!");
       return;
     }
-    
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
     new_item->setName(QString("%1 (selected points)").arg(point_set_item->name()));
     new_item->set_has_normals (point_set_item->has_normals());
@@ -477,6 +481,7 @@ public Q_SLOTS:
     new_item->invalidateOpenGLBuffers();
 
     scene->addItem(new_item);
+    QApplication::restoreOverrideCursor();
  }
 
   void on_Selection_tool_combo_box_changed (int index)

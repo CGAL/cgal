@@ -106,7 +106,7 @@ public Q_SLOTS:
       print_message("Error: please check at least one parameter check box.");
       return;
     }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     // place all selected polyhedron and point items to vectors below
     std::vector<const Polyhedron*> polys;
     typedef CGAL::Side_of_triangle_mesh<Polyhedron, Kernel> Point_inside;
@@ -132,7 +132,7 @@ public Q_SLOTS:
     else
       print_message("Error: there is no selected point set item(s).");
     }
-    if(inside_testers.empty() || point_sets.empty()) { return; }
+    if(inside_testers.empty() || point_sets.empty()) { QApplication::restoreOverrideCursor(); return; }
 
     // deselect all points
     for(std::vector<Point_set*>::iterator point_set_it = point_sets.begin(); 
@@ -193,6 +193,7 @@ public Q_SLOTS:
       generated_points.last()->invalidateOpenGLBuffers();
       scene->itemChanged(generated_points.last());
     }
+    QApplication::restoreOverrideCursor();
   }
 
   void on_Sample_random_points_from_bbox() {
@@ -235,7 +236,7 @@ public Q_SLOTS:
       &ok);
 
     if(!ok) { return; }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     // sample random points and constuct item
     Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
     point_item->setName(QString("sample-%1").arg(nb_points));
@@ -258,6 +259,7 @@ public Q_SLOTS:
     generated_points.append(point_item);
     connect(point_item, SIGNAL(destroyed(QObject*)),
             this, SLOT(resetGeneratedPoints(QObject*)));
+    QApplication::restoreOverrideCursor();
   }
 private Q_SLOTS:
   void resetGeneratedPoints(QObject* o)

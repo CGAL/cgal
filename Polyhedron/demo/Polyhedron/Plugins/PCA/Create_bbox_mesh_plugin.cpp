@@ -7,6 +7,7 @@
 
 #include <QAction>
 #include <QMainWindow>
+#include <QApplication>
 
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
@@ -81,8 +82,16 @@ protected:
   void bbox(bool extended = false);
 
 public Q_SLOTS:
-  void createBbox() { bbox(); }
-  void createExtendedBbox() { bbox(true); }
+  void createBbox() {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    bbox();
+    QApplication::restoreOverrideCursor();
+  }
+  void createExtendedBbox() {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    bbox(true);
+    QApplication::restoreOverrideCursor();
+  }
 
 private:
   Scene_interface* scene;
