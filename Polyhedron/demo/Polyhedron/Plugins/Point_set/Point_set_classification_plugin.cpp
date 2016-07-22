@@ -149,6 +149,10 @@ public Q_SLOTS:
                                                     tr("Open PLY point set"),
                                                     ".",
                                                     "PLY point set (*.ply);;All Files (*)");
+
+    if (filename == QString())
+      return;
+    
     QFileInfo fi(filename);
     QString name = fi.fileName();
     name.chop(4);
@@ -293,6 +297,8 @@ public Q_SLOTS:
                                                     tr("Save classification configuration"),
                                                     QString("default.conf"),
                                                     "Config file (*.conf);;");
+    if (filename == QString())
+      return;
 
     std::ofstream out(filename.toUtf8());
     
@@ -326,6 +332,9 @@ public Q_SLOTS:
                                                     tr("Open classification configuration"),
                                                     ".",
                                                     "Config file (*.conf);;All Files (*)");
+
+    if (filename == QString())
+      return;
 
     std::ifstream in(filename.toUtf8());
     
@@ -506,6 +515,9 @@ public Q_SLOTS:
                                                     tr("Save PLY classified point set"),
                                                     QString("%1.ply").arg(classification_item->name()),
                                                     "PLY point set (*.ply);;");
+
+    if (filename == QString())
+      return;
 
     std::ofstream out(filename.toUtf8());
     
