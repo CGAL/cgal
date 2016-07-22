@@ -672,7 +672,7 @@ void Scene_points_with_normal_item::set_has_normals(bool b) {
   if (b!=d->m_has_normals){
     d->m_has_normals=b;
     //reset the context menu
-    delete this->defaultContextMenu;
+    defaultContextMenu->deleteLater();
     this->defaultContextMenu = 0;
   }
 }
