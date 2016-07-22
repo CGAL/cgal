@@ -154,6 +154,11 @@ private:
 template <typename Tr, typename Visitor_>
 class Curvature_size_criterion :
   public Mesh_3::Abstract_criterion<Tr, Visitor_>
+{};
+
+template <typename Tr, typename Visitor_>
+class Uniform_curvature_size_criterion :
+  public Curvature_size_criterion<Tr, Visitor_>
 {
 private:
   typedef typename Tr::Facet Facet;
@@ -163,12 +168,12 @@ private:
   typedef typename Base::Quality Quality;
   typedef typename Base::Badness Badness;
 
-  typedef Curvature_size_criterion<Tr,Visitor_> Self;
+  typedef Uniform_curvature_size_criterion<Tr,Visitor_> Self;
 
 public:
   // Nb: the default bound of the criterion is such that the criterion
   // is always fulfilled
-  Curvature_size_criterion(const FT b = 0) : B_(b * b) {}
+  Uniform_curvature_size_criterion(const FT b = 0) : B_(b * b) {}
 
 protected:
   virtual void do_accept(Visitor_& v) const
@@ -218,8 +223,84 @@ protected:
 private:
   FT B_;
 
-};  // end Curvature_size_criterion
+};  // end Uniform_curvature_size_criterion
 
+// Variable size Criterion class
+template <typename Tr, typename Visitor_, typename SizingField>
+class Variable_curvature_size_criterion :
+  public Curvature_size_criterion<Tr, Visitor_>
+{
+private:
+  typedef typename Tr::Facet            Facet;
+  typedef typename Tr::Geom_traits::FT  FT;
+  typedef typename Tr::Vertex::Index    Index;
+
+  typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
+  typedef typename Base::Quality Quality;
+  typedef typename Base::Badness Badness;
+
+  typedef Variable_curvature_size_criterion<Tr,Visitor_,SizingField> Self;
+  typedef SizingField Sizing_field;
+
+public:
+  // Nb: the default bound of the criterion is such that the criterion
+  // is always fulfilled
+  Variable_curvature_size_criterion(const Sizing_field& s) : size_(s) {}
+
+protected:
+  virtual void do_accept(Visitor_& v) const
+  {
+    v.visit(*this);
+  }
+
+  virtual Self* do_clone() const
+  {
+    // Call copy ctor on this
+    return new Self(*this);
+  }
+
+  virtual Badness do_is_bad (const Facet& f) const
+  {
+    CGAL_assertion (f.first->is_facet_on_surface(f.second));
+
+    typedef typename Tr::Geom_traits Gt;
+    typedef typename Tr::Point Point_3;
+
+    typename Gt::Compute_squared_distance_3 distance =
+        Gt().compute_squared_distance_3_object();
+    typename Gt::Construct_weighted_circumcenter_3 circumcenter =
+        Gt().construct_weighted_circumcenter_3_object();
+
+    const Point_3& p1 = f.first->vertex((f.second+1)&3)->point();
+    const Point_3& p2 = f.first->vertex((f.second+2)&3)->point();
+    const Point_3& p3 = f.first->vertex((f.second+3)&3)->point();
+
+    const Point_3 c = circumcenter(p1,p2,p3);
+    const Point_3& ball_center = f.first->get_facet_surface_center(f.second);
+
+    const FT sq_dist = distance(c, ball_center);
+
+    const Index& index = f.first->get_facet_surface_center_index(f.second);
+
+    const FT sq_bound = CGAL::square(size_(ball_center, 2, index));
+    CGAL_assertion(sq_bound > FT(0));
+
+    if ( sq_dist > sq_bound )
+    {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "Bad facet (curvature size): sq_dist[" << sq_dist
+      << "] bound[" << sq_bound << "]\n";
+#endif
+      return Badness(Quality(sq_bound/sq_dist));
+    }
+    else
+      return Badness();
+  }
+
+private:
+  Sizing_field size_;
+
+};  // end Variable_curvature_size_criterion
 
 // Size Criterion base class
 template < typename Tr, typename Visitor_ >

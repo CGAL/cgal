@@ -223,6 +223,7 @@ Kernel_23/test/Kernel_23/Makefile
 Kernel_23/test/Kernel_23/Simple_cartesian
 Kernel_23/test/Kernel_23/Simple_homogeneous
 Kernel_23/test/Kernel_23/Test_IO.out
+/Kernel_23/test/Kernel_23/Test-*IO.out
 Kernel_23/test/Kernel_23/cgal_test_with_cmake
 Kernel_23/test/Kernel_23/test_kernel__
 Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_2

@@ -26,6 +26,7 @@
 #include <cassert>
 
 #include "CGAL/Precise_numbers.h"
+#define TEST_FILENAME "Test-Lazy_kernel-IO.out"
 #include "CGAL/_test_io.h"
 #include "CGAL/_test_2.h"
 #include "CGAL/_test_3.h"
