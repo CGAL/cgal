@@ -308,7 +308,7 @@ void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
 
 template <class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
                                                                                   CGAL::vertex_point_t>::type>
-struct Random_points_on_triangle_mesh_3
+struct Random_points_in_triangle_mesh_3
   : public Generic_random_point_generator<
              typename boost::graph_traits <TriangleMesh>::face_descriptor ,
              CGAL::Property_map_to_unary_function<CGAL::Triangle_from_face_descriptor_map<
@@ -330,10 +330,10 @@ struct Random_points_on_triangle_mesh_3
   typedef Random_points_in_triangle_3<P>                               Generator_on_object;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor  Id;
   typedef P result_type;
-  typedef Random_points_on_triangle_mesh_3< TriangleMesh>              This;
+  typedef Random_points_in_triangle_mesh_3< TriangleMesh>              This;
 
 
-  Random_points_on_triangle_mesh_3(  TriangleMesh& mesh,Random& rnd = default_random)
+  Random_points_in_triangle_mesh_3(  TriangleMesh& mesh,Random& rnd = default_random)
     : Base( faces(mesh),
             CGAL::Property_map_to_unary_function<Pmap>(&mesh),
             typename Kernel_traits<P>::Kernel::Compute_area_3(),

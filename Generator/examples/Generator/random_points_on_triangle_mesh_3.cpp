@@ -20,7 +20,7 @@ int main()
   polyhedron.make_tetrahedron(Point(-1,0,0), Point(0,1,0), Point(1,0,0), Point(0,0,-1));
 
   // Create the generator, input is the Polyhedron polyhedron
-  Random_points_on_triangle_mesh_3<Polyhedron>
+  Random_points_in_triangle_mesh_3<Polyhedron>
       g(polyhedron);
 
   // Get 100 random points in cdt

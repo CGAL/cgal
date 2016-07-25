@@ -160,7 +160,7 @@ int  test_volume_mesh(Polyhedron& polyhedron)
 
 
   std::vector<Point> points;
-  Random_points_on_triangle_mesh_3<Polyhedron>
+  Random_points_in_triangle_mesh_3<Polyhedron>
       g(polyhedron);
   CGAL::cpp11::copy_n( g, 300, std::back_inserter(points));
   for (std::size_t i = 0; i<points.size(); ++i)
