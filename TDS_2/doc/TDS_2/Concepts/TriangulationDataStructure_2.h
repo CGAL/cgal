@@ -551,6 +551,31 @@ void dim_down(Face_handle f, int i);
 
 
 /*!
+\cgalModifBegin
+creates a new vertex `v` and uses it to star the hole 
+described by the sequence of edges `[edge_begin, edge_end]`.
+The pre-existing faces in the hole are destroyed.
+Returns a handle to the vertex `v`.
+
+\pre The sequence of edges `[edge_begin, edge_end]` is oriented counter-clockwise.
+\cgalModifEnd
+*/
+template< class EdgeIt >
+Vertex_handle insert_in_hole(EdgeIt edge_begin, EdgeIt edge_end);
+
+/*!
+\cgalModifBegin
+uses the vertex `v` to star the hole described by the sequence
+of edges `[edge_begin, edge_end]`. The pre-existing faces in the hole are destroyed. 
+
+\pre The sequence of edges `[edge_begin, edge_end]` is oriented counter-clockwise.
+\cgalModifEnd
+*/
+template< class EdgeIt >
+void insert_in_hole(Vertex_handle v, EdgeIt edge_begin, EdgeIt edge_end); 
+
+
+/*!
 creates a new vertex `v` and use it to star the hole 
 whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a handle to the vertex. 
 */ 

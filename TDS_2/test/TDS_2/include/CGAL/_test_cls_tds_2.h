@@ -128,7 +128,6 @@ _test_cls_tds_2( const Tds &)
   assert(tds3.dimension()== 1);
   assert(tds3.number_of_vertices() == 4);
   assert(tds3.is_valid() );
-
  
   Vertex_handle w4 = tds4.insert_first();
   Vertex_handle v4_1 = tds4.insert_second();
@@ -186,6 +185,41 @@ _test_cls_tds_2( const Tds &)
   tds4.make_hole(u4, hole);
   u4 = tds4.star_hole(hole);
   tds4.remove_degree_3(u4);
+
+
+  // insert_in_hole
+  // Count also the faces with the vertex at infinity! 
+  //
+  //  1 |------| 3     1 |------| 3
+  //    |\     |         |\    /|
+  //    | \    |         | \ 4/ |
+  //    |  \   |   -->   |  \/  |
+  //    |   \  |         |  /\  |
+  //    |    \ |         | /  \ |
+  //    |     \|         |/    \|
+  //  2 |------| 0     2 |------| 0
+  // 
+  // 
+   
+  std::cout << "    insert_in_hole" << std::endl;
+  Tds td45;
+  Vertex_handle v045 = td45.insert_first();
+  Vertex_handle v145 = td45.insert_second();
+  Vertex_handle v245 = td45.insert_dim_up(v045, true);
+  Vertex_handle v345 = td45.insert_dim_up(v045, true);
+
+  assert(td45.is_valid() && td45.number_of_vertices() == 4 && td45.number_of_faces() == 4);
+
+  Face_iterator fi = td45.faces_begin();
+  std::vector<Edge> vhole;
+  vhole.push_back( Edge(  fi, 2) );
+  vhole.push_back( Edge(  fi, 0) );
+  vhole.push_back( Edge(++fi, 1) );
+  vhole.push_back( Edge(  fi, 2) );
+
+  Vertex_handle nv45 = td45.insert_in_hole(vhole.begin(), vhole.end());
+
+  assert(td45.is_valid() && td45.number_of_vertices() == 5 && td45.number_of_faces() == 6);
 
   // dim_down
   std::cout << "    dim_down" << std::endl;

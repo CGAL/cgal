@@ -428,6 +428,97 @@ public:
 
   // template members definition
 public:
+
+  /************* START OF MODIFICATIONS (iiordanov) ***************/
+
+
+  /* 
+   * Creates a new vertex new_v and uses it to star the hole described
+   * by the sequence of edges [edge_begin, edge_end]. The pre-existing
+   * faces in the hole are destroyed.
+   *
+   * Prerequisite: the sequence [edge_begin, edge_end] is oriented
+   * counter-clockwise.
+   */
+
+  template< class EdgeIt >
+  Vertex_handle insert_in_hole(EdgeIt edge_begin, EdgeIt edge_end) 
+  {
+    Vertex_handle new_v = create_vertex();
+    insert_in_hole(new_v, edge_begin, edge_end);
+    return new_v;
+  }
+
+
+  /* 
+   * Uses the vertex v to star the hole described by the sequence 
+   * of edges [edge_begin, edge_end]. The pre-existing faces in 
+   * the hole are destroyed.
+   *
+   * Prerequisite: the sequence [edge_begin, edge_end] is oriented
+   * counter-clockwise.
+   */
+  template< class EdgeIt >
+  void insert_in_hole(Vertex_handle v, EdgeIt edge_begin, EdgeIt edge_end) 
+  {
+
+    // Keep new faces in a vector
+    std::vector<Face_handle> new_faces;
+
+    // Exploit std::set functionality to keep unique old faces
+    std::set<Face_handle> old;
+
+    for (EdgeIt it = edge_begin; it != edge_end; it++) {
+      Face_handle fh = (*it).first;
+      int i = (*it).second;
+
+      old.insert(fh);
+
+      //          v
+      //          .
+      //         / \
+      //        /   \
+      //       /     \
+      //      / new_f \
+      //  v1 /_________\ v2
+      //     \         /
+      //      \  nf   /
+      //       \     /
+      //        \   /
+      //         \ /
+      //          *
+      //     nf->vertex(j)     
+  
+      Vertex_handle v1 = fh->vertex(ccw(i));
+      Vertex_handle v2 = fh->vertex(cw(i));
+
+      Face_handle nf = fh->neighbor(i);
+      int j = mirror_index(fh, i);
+
+      Face_handle new_f = create_face(v, v1, v2);
+      set_adjacency(new_f, 0, nf, j);
+      new_faces.push_back(new_f);
+    }
+
+    // Set adjacency for the new faces
+    for (int i = 0; i < new_faces.size() - 1; i++) {
+      set_adjacency(new_faces[i], 1, new_faces[i+1], 2);
+    }
+    // The last one has to be treated separately
+    set_adjacency(new_faces[0], 2, new_faces[new_faces.size()-1], 1);
+
+    // Delete the old faces
+    for (typename std::set<Face_handle>::iterator it = old.begin(); it != old.end(); it++) {
+      delete_face(*it);
+    }
+
+    // Set the new vertex to point at the first new face (arbitrarily)
+    v->set_face(new_faces[0]);
+  }
+
+  /************* END OF MODIFICATIONS (iiordanov) ***************/
+
+
   template< class EdgeIt>
   Vertex_handle star_hole(EdgeIt edge_begin, EdgeIt edge_end)
   // creates a new vertex 
