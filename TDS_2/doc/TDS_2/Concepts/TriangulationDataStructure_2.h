@@ -552,12 +552,16 @@ void dim_down(Face_handle f, int i);
 
 /*!
 \cgalModifBegin
-creates a new vertex `v` and uses it to star the hole 
-described by the sequence of edges `[edge_begin, edge_end]`.
-The pre-existing faces in the hole are destroyed.
-Returns a handle to the vertex `v`.
+creates a new vertex `v` and uses it to star a hole.
 
-\pre The sequence of edges `[edge_begin, edge_end]` is oriented counter-clockwise.
+It takes an iterator range `[edge_begin, edge_end[` of `Edges`, given as pairs `(Face_handle, int)`. 
+The `Face_handles` specify a set of connected faces describing a hole that is a topological disc. Each `Edge` in the iterator range 
+is an edge of the boundary of the hole, i.e., if `e = (fh, i)` \f$\in\f$ `[edge_begin, edge_end[`, then `fh`
+belongs to the set of faces describing the hole, while `fh->neighbor(i)` does not. The function deletes
+the faces describing the hole, creates a new vertex `v` and for each edge on the boundary of the hole 
+creates a new face with `v` as an apex. A handle to the vertex `v` is returned.
+
+\pre The set of faces is connected, the set of edges is connected, and the sequence `[edge_begin, edge_end[` is oriented counter-clockwise.
 \cgalModifEnd
 */
 template< class EdgeIt >
@@ -565,10 +569,8 @@ Vertex_handle insert_in_hole(EdgeIt edge_begin, EdgeIt edge_end);
 
 /*!
 \cgalModifBegin
-uses the vertex `v` to star the hole described by the sequence
-of edges `[edge_begin, edge_end]`. The pre-existing faces in the hole are destroyed. 
-
-\pre The sequence of edges `[edge_begin, edge_end]` is oriented counter-clockwise.
+same as above, except that `v` will be used as the new vertex, which must have been allocated previously with e.g. 
+`create_vertex`.
 \cgalModifEnd
 */
 template< class EdgeIt >
