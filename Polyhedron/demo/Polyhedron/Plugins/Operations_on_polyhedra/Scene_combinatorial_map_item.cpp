@@ -360,7 +360,7 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
         typedef Combinatorial_map_3::One_dart_per_cell_range<1,3> Edge_darts;
         Edge_darts darts=item->combinatorial_map().one_dart_per_cell<1>();
         for (Edge_darts::const_iterator dit=darts.begin();dit!=darts.end();++dit){
-            CGAL_assertion(!dit->is_free(1));
+            CGAL_assertion(!item->combinatorial_map().is_free(dit,1));
             const Kernel::Point_3& a = dit->attribute<0>()->point();
             const Kernel::Point_3& b = dit->beta(1)->attribute<0>()->point();
             positions_lines.push_back(a.x());

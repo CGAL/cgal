@@ -21,8 +21,6 @@
 #ifndef CGAL_INTERSECTION_OF_POLYHEDRA_3_H
 #define CGAL_INTERSECTION_OF_POLYHEDRA_3_H
 
-#define CGAL_CMAP_DEPRECATED 1
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/box_intersection_d.h>
