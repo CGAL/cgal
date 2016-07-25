@@ -403,7 +403,7 @@ public:
 }//end namespace internal
 
 template <class C3t3>
-struct Random_points_on_tetrahedral_mesh_boundary_3
+struct Random_points_in_tetrahedral_mesh_boundary_3
   : public Generic_random_point_generator<
              std::pair<typename C3t3::Triangulation::Cell_handle, int>,
              internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>,
@@ -417,10 +417,10 @@ struct Random_points_on_tetrahedral_mesh_boundary_3
             typename C3t3::Point>                                    Base;
   typedef std::pair<typename C3t3::Triangulation::Cell_handle, int>  Id;
   typedef typename C3t3::Point                                       result_type;
-  typedef Random_points_on_tetrahedral_mesh_boundary_3<C3t3>         This;
+  typedef Random_points_in_tetrahedral_mesh_boundary_3<C3t3>         This;
 
 
-  Random_points_on_tetrahedral_mesh_boundary_3(  C3t3& c3t3,Random& rnd = default_random)
+  Random_points_in_tetrahedral_mesh_boundary_3(  C3t3& c3t3,Random& rnd = default_random)
     : Base( make_range( c3t3.facets_in_complex_begin(),
                         c3t3.facets_in_complex_end()),
             internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>(),
