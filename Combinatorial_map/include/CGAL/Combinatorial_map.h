@@ -339,10 +339,8 @@ namespace CGAL {
         std::swap_ranges(mnb_marked_darts,mnb_marked_darts+NB_MARKS,
                          amap.mnb_marked_darts);
         mattribute_containers.swap(amap.mattribute_containers);
-#ifndef CGAL_CMAP_DEPRECATED
         std::swap(null_dart_handle, amap.null_dart_handle);
         this->mnull_dart_container.swap(amap.mnull_dart_container);
-#endif // CGAL_CMAP_DEPRECATED
       }
     }
 
@@ -949,11 +947,7 @@ namespace CGAL {
     void mark_null_dart(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-
-#ifdef CGAL_CMAP_DEPRECATED
-      if ( null_dart_handle!=NULL ) // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
-        set_dart_mark(null_dart_handle, amark, !mmask_marks[amark]);
+      set_dart_mark(null_dart_handle, amark, !mmask_marks[amark]);
     }
 
     /** Unmark null_dart.
@@ -962,11 +956,7 @@ namespace CGAL {
     void unmark_null_dart(size_type amark) const
     {
       CGAL_assertion( is_reserved(amark) );
-
-#ifdef CGAL_CMAP_DEPRECATED
-      if ( null_dart_handle!=NULL ) // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
-        set_dart_mark(null_dart_handle, amark, mmask_marks[amark]);
+      set_dart_mark(null_dart_handle, amark, mmask_marks[amark]);
     }
 
     /** Unmark all the darts of the map for a given mark.
