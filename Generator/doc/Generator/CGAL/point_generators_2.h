@@ -354,6 +354,7 @@ typedef const Point_2& reference;
 
  The class `Random_points_in_triangle_mesh_2` is an input iterator creating points uniformly distributed inside a 2D domain represented by a 2D triangulation. Triangulation must be a \cgal triangulation with a face model of `DelaunayMeshFaceBase_2`.
  The sampled model is the union of the faces for which `DelaunayMeshFaceBase_2::is_in_domain()` returns `true`.
+ The triangulation must be valid and unchanged while the iterator is used.
 
 
  \cgalModels `InputIterator`
@@ -420,9 +421,10 @@ default_random);
 
 }; /* end Random_points_in_triangle_mesh_2 */
 
- /*!
+/*!
 
- The class `Random_points_in_triangles_2` is an input iterator creating points uniformly distributed inside a range of `Triangle_2`. The range must remain valid.
+ The class `Random_points_in_triangles_2` is an input iterator creating points uniformly distributed inside a range of `Triangle_2`.
+ The triangle range must be valid and unchanged while the iterator is used.
 
 
  \cgalModels `InputIterator`

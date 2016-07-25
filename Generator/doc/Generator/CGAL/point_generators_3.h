@@ -335,7 +335,8 @@ namespace CGAL {
 
 /*!
 
-The class `Random_points_in_triangles_3` is an input iterator creating points uniformly distributed inside a range of `Triangle_3`. The range must remain valid.
+The class `Random_points_in_triangles_3` is an input iterator creating points uniformly distributed inside a range of `Triangle_3`.
+The triangle range must be valid and unchanged while the iterator is used.
 
 
 \cgalModels `InputIterator`
@@ -409,6 +410,7 @@ namespace CGAL {
 
 The class `Random_points_on_triangle_mesh_3` is an input iterator creating points uniformly
 distributed inside the faces of a triangle mesh model of `FaceListGraph`.
+The triangle mesh must be valid and unchanged while the iterator is used.
 
 \cgalModels `InputIterator`
 \cgalModels `PointGenerator`
@@ -482,6 +484,7 @@ namespace CGAL {
 
 The class `Random_points_on_tetrahedral_mesh_boundary_3` is an input iterator creating points uniformly
 distributed on the boundary of a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
+The tetrahedral mesh must be valid and unchanged while the iterator is used.
 
 C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
 \cgalModels `InputIterator`
@@ -554,7 +557,7 @@ namespace CGAL {
 
 The class `Random_points_in_tetrahedral_mesh_3` is an input iterator creating points uniformly
 distributed inside a tetrahedral mesh of type `Mesh_complex_3_in_triangulation_3`.
-
+The tetrahedral mesh must be valid and unchanged while the iterator is used.
 
 C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
 \cgalModels `InputIterator`

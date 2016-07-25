@@ -158,11 +158,14 @@ and <code>src/</code> directories).
 <h3>Random Point Generators</h3>
 <ul>
   <li>
-    There is now convenience classes to uniformly generate random points on a <code>FaceListGraph</code> and a <code>Triangulation_2</code>,
-    and there is also classes to do so in and on a <code> Mesh_complex_3_in_triangulation_3</code>, along with classes for a range of
-    <code>Triangle_3</code> and a range of <code>Triangle_2</code>: respectively <code>CGAL::Random_points_on_triangle_mesh_3()</code>, <code>CGAL::Random_points_in_triangle_mesh_2()</code>,
-    <code>CGAL::Random_points_in_tetrahedral_mesh_3()</code>, <code>CGAL::Random_points_on_tetrahedral_mesh_boundary()</code>,
-    <code>CGAL::Random_points_in_triangles_3</code> and <code>Random_points_in_triangles_2</code>.
+    Add point random generators
+    <ul>
+    <li>on a triangle mesh model of the concept <code>FaceListGraph</code> (<code>CGAL::Random_points_on_triangle_mesh_3</code>),</li>
+    <li>on the boundary of a tetrahedral mesh (<code>CGAL::Random_points_on_tetrahedral_mesh_boundary</code>),</li> 
+    <li>in a tetrahedral mesh (<code>CGAL::Random_points_in_tetrahedral_mesh_3</code>),</li>
+    <li>in a 2D triangulated domain (<code>CGAL::Random_points_in_triangle_mesh_2</code>),</li>
+    <li>in a range of 2D or 3D triangles (<code>CGAL::Random_points_in_triangles_3</code> and <code>CGAL::Random_points_in_triangles_2</code>).</li>
+    </ul>
   </li>
 </ul>
 <!-- Spatial Searching and Sorting -->
@@ -983,15 +986,15 @@ and <code>src/</code> directories).
           longer supported since CGAL-4.5.</li>
       </ul>
     </li>
-    <li>Since CGAL version 4.0, Eigen was the recommended third-party
+    <li>Since CGAL version 4.0, Eigen was the recommended third-party
       library to use with <i>Planar Parameterization of Triangulated
       Surface Meshes</i>, <i>Surface Reconstruction from Point
       Sets</i>, <i>Approximation of Ridges and Umbilics on Triangulated
       Surface Meshes</i>, and <i>Estimation of Local Differential
       Properties of Point-Sampled Surfaces</i> packages. From CGAL
-      version 4.5, Taucs, Blas and Lapack are no longer supported.
+      version 4.5, Taucs, Blas and Lapack are no longer supported.
     </li>
-    <li>CGAL is now compatible with the new CMake version 3.0.</li>
+    <li>CGAL is now compatible with the new CMake version 3.0.</li>
   </ul>
 
 <!-- New packages -->
@@ -1184,7 +1187,7 @@ and <code>src/</code> directories).
     <li>Additional supported platforms:
       <ul>
         <li>The Apple Clang compiler version 5.0 is now supported on
-          OS X Mavericks.</li>
+          OS X Mavericks.</li>
         <li>The Microsoft Windows Visual C++ compiler 2013 (VC12) is now
           supported.</li>
       </ul>
@@ -1358,7 +1361,7 @@ and <code>src/</code> directories).
           constructor added to <code>CGAL::Object</code>. However, it is
           recommended to upgrade your code.  The previous behavior can be
           restored by defining the
-          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
+          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
         </li>
       </ul>
       <h4>2D Arrangements</h4>
@@ -1682,7 +1685,7 @@ and <code>src/</code> directories).
     <li>Additional supported platforms:
       <ul>
         <li>The Apple Clang compiler versions 3.1 and 3.2 are now supported on
-          Mac OS X.</li>
+          Mac OS X.</li>
       </ul>
     </li>
     <li>Improved configuration for essential and optional external third party software</li>
