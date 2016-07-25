@@ -207,8 +207,8 @@ protected:
   // virtual 
   template <typename VertexIndexMap>
   Error_code setup_inner_vertex_relations(Matrix& A,
-                                          Vector& Bu,
-                                          Vector& Bv,
+                                          Vector&,
+                                          Vector&,
                                           const TriangleMesh& mesh,
                                           vertex_descriptor vertex,
                                           VertexIndexMap vimap)

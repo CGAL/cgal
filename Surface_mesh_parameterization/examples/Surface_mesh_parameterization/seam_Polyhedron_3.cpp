@@ -60,7 +60,6 @@ struct Face2Polyline {
 int main(int argc, char * argv[])
 {
   SurfaceMesh sm;
-  std::vector<SM_edge_descriptor> seam; 
 
   std::ifstream in_mesh((argc>1)?argv[1]:"data/lion.off");
   in_mesh >> sm;

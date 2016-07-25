@@ -90,7 +90,7 @@ public:
 template <typename VertexUVmap, typename VertexParameterizedMap>
   typename Parameterizer_traits_3<TriangleMesh>::Error_code
   parameterize_border(TriangleMesh& mesh,
-                      halfedge_descriptor bhd,
+                      halfedge_descriptor,
                       VertexUVmap uvmap,
                       VertexParameterizedMap vpmap)
 {

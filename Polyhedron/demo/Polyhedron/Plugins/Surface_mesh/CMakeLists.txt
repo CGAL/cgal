@@ -2,7 +2,7 @@ include( polyhedron_demo_macros )
 if(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin)
-  target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
+  target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Parameterization plugin will not be available.")

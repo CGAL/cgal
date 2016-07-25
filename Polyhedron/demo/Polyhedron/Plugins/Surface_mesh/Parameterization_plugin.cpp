@@ -5,6 +5,7 @@
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_textured_polyhedron_item.h"
+#include "Scene_polyhedron_selection_item.h"
 #include "Textured_polyhedron_type.h"
 #include "Polyhedron_type.h"
 #include "Messages_interface.h"
@@ -88,16 +89,14 @@ private:
 
 void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterization_method method)
 {
-
-
-
   typedef Kernel::Point_2                                               Point_2;
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor              edge_descriptor;
-  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor          halfedge_descriptor;
-  typedef boost::graph_traits<Polyhedron>::vertex_descriptor            vertex_descriptor;
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor              P_edge_descriptor;
+  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor          P_halfedge_descriptor;
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor            P_vertex_descriptor;
 
-  typedef CGAL::Unique_hash_map<halfedge_descriptor,Point_2>            UV_uhm;
-  typedef CGAL::Unique_hash_map<edge_descriptor,bool>                   Seam_edge_uhm;
+
+  typedef CGAL::Unique_hash_map<P_halfedge_descriptor,Point_2>          UV_uhm;
+  typedef CGAL::Unique_hash_map<P_edge_descriptor,bool>                 Seam_edge_uhm;
   typedef CGAL::Unique_hash_map<vertex_descriptor,bool>                 Seam_vertex_uhm;
 
   typedef boost::associative_property_map<UV_uhm>                       UV_pmap;
@@ -106,6 +105,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
 
   typedef CGAL::Seam_mesh<Polyhedron, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
+  typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor           halfedge_descriptor;
 
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -119,8 +119,19 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   Polyhedron* pMesh = poly_item->polyhedron();
   if(!pMesh)
     return;
-
-  std::vector<edge_descriptor> seam;
+  Scene_polyhedron_selection_item* sel_item = NULL;
+  bool is_seamed = false;
+  Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
+  {
+    sel_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
+    if(!sel_item)
+      continue;
+    if(sel_item->selected_edges.empty()
+       || !sel_item->selected_facets.empty()
+       || !sel_item->selected_vertices.empty())
+      continue;
+    is_seamed = true;
+  }
   // Two property maps to store the seam edges and vertices
   Seam_edge_uhm seam_edge_uhm(false);
   Seam_edge_pmap seam_edge_pm(seam_edge_uhm);
@@ -135,17 +146,15 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   QTime time;
   time.start();
   //fill pmaps
+
   halfedge_descriptor smhd;
-
-  for(Polyhedron::Halfedge_iterator hit = pMesh->halfedges_begin(); hit != pMesh->halfedges_end(); ++hit)
+  if(!is_seamed)
   {
-
-    vertex_descriptor svd(source(hit, *pMesh)), tvd(target(hit, *pMesh));
-    edge_descriptor ed = edge(svd, tvd,*pMesh).first;
-    if(is_border(ed,*pMesh)){
-       // put(seam_edge_pm, ed, true);
-       // put(seam_vertex_pm, svd, true);
-       // put(seam_vertex_pm, tvd, true);
+    for(Polyhedron::Halfedge_iterator hit = pMesh->halfedges_begin(); hit != pMesh->halfedges_end(); ++hit)
+    {
+      P_vertex_descriptor svd(source(hit, *pMesh)), tvd(target(hit, *pMesh));
+      P_edge_descriptor ed = edge(svd, tvd,*pMesh).first;
+      if(is_border(ed,*pMesh)){
         if(smhd == boost::graph_traits<Polyhedron>::null_halfedge()){
           smhd = halfedge(edge(svd,tvd,*pMesh).first,*pMesh);
           if (smhd == boost::graph_traits<Polyhedron>::null_halfedge())
@@ -153,6 +162,23 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         }
         break;
       }
+    }
+  }
+  if(is_seamed)
+  {
+    BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
+    {
+      P_halfedge_descriptor hd = halfedge(ed, *pMesh);
+      P_vertex_descriptor svd(source(hd, *pMesh)), tvd(target(hd, *pMesh));
+      if(! is_border(ed,*pMesh)){
+        put(seam_edge_pm, ed, true);
+        put(seam_vertex_pm, svd, true);
+        put(seam_vertex_pm, tvd, true);
+        if(smhd == boost::graph_traits<Polyhedron>::null_halfedge()){
+          smhd = hd;
+        }
+      }
+    }
   }
   Seam_mesh *sMesh = new Seam_mesh(*pMesh, seam_edge_pm, seam_vertex_pm);
   UV_uhm uv_uhm;
