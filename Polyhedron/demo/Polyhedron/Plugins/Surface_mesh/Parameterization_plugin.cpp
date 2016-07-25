@@ -235,6 +235,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
 void Polyhedron_demo_parameterization_plugin::on_actionMVC_triggered()
 {
+  std::cerr << "MVC...";
   parameterize(PARAM_MVC);
 }
 
