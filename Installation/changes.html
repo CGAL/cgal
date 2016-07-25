@@ -130,58 +130,58 @@ and <code>src/</code> directories).
 <h2 id="release4.9">Release 4.9 </h2>
 <div>
   <p>Release date: Sept 2016 </p>
-<!-- Installation (and general changes) -->
-
   <h3>Header-only mode</h3>
   <ul>
     <li>
-      CGAL can now be used in headers only mode, i.e. without compiling the CGAL libraries and linking
-      with these libraries when compiling examples, tests and demos. Note that running CMake on CGAL is
-	  still required in order to generate some configuration files.
+      CGAL can now be used in headers only mode, i.e. without compiling the
+      CGAL libraries and linking with these libraries when compiling
+      examples, tests and demos. Note that running CMake on CGAL is still
+      required in order to generate some configuration files.
     </li>
   </ul>
-
-<!-- New packages -->
-
   <h3>Cone Based Spanners (new package)</h3>
   <ul>
     <li>
-      This package provides algorithms for constructing two kinds of cone-based spanners:
-      Yao graph and Theta graph, given a set of vertices on the plane and the directions of cone boundaries.
+      This package provides algorithms for constructing two kinds of
+      cone-based spanners: Yao graph and Theta graph, given a set of
+      vertices on the plane and the directions of cone boundaries.
     </li>
   </ul>
-
-<!-- Major and breaking changes -->
-<!-- Arithmetic and Algebra -->
-<!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels -->
-<!-- Convex Hull Algorithms -->
-<!-- Polygons -->
 <h3>2D Minkowski Sums</h3>
 <ul>
-  <li>Introduce a convex decomposition strategy, namely Polygon_nop_decomposition_2, that merely passed the input polygon to the list of output polygons.</li>
-  <li>Introduce overloads of the function minkowski_sum_2(), which accepts 2 decomposition strategies.</li>
-  <li>Introduce an overloaded function called minkowski_sum_by_decomposition_2(P, Q, decom_no_holes, decomp_with_holes), which computes the 2D Minkowski sum using optimal choices of decomposition strategies.</li>
+  <li>Introduce a convex decomposition strategy,
+    namely <code>Polygon_nop_decomposition_2</code>, that merely passed the
+    input polygon to the list of output polygons.</li>
+  <li>Introduce overloads of the function <code>minkowski_sum_2()</code>,
+    which accepts 2 decomposition strategies.</li>
+  <li>Introduce an overloaded function
+    called <code>minkowski_sum_by_decomposition_2(P, Q, decom_no_holes,
+    decomp_with_holes)</code>, which computes the 2D Minkowski sum using
+    optimal choices of decomposition strategies.</li>
 </ul>
-<!-- Cell Complexes and Polyhedra -->
 <h3>Combinatorial Maps</h3>
   <ul>
     <li>
-    Deprecate global functions (<code>make_combinatorial_hexahedron()</code>, <code>make_combinatorial_polygon()</code>, <code>make_combinatorial_tetrahedron()</code>,
-    <code>make_edge, insert_cell_0_in_cell_1()</code>, <code>insert_cell_0_in_cell_2()</code>, <code>insert_cell_1_in_cell_2()</code>,
-    <code>insert_cell_2_in_cell_3()</code>, <code>insert_dangling_cell_1_in_cell_2()</code>, <code>is_insertable_cell_1_in_cell_2()</code>,
-    <code>is_insertable_cell_2_in_cell_3()</code>, <code>is_removable()</code>, <code>remove_cell()</code>)
-    which are now member functions in the <code>CombinatorialMap</code> concept.</li>
-    <li>It is not longer possible to use the old API switched on by defining the macro
-    <code>CGAL_CMAP_DEPRECATED</code>. This API was deprecated since CGAL 4.4.
+      Deprecate global functions
+      (<code>make_combinatorial_hexahedron()</code>,
+      <code>make_combinatorial_polygon()</code>,
+      <code>make_combinatorial_tetrahedron()</code>,
+      <code>make_edge()</code>,
+      <code>insert_cell_0_in_cell_1()</code>,
+      <code>insert_cell_0_in_cell_2()</code>,
+      <code>insert_cell_1_in_cell_2()</code>,
+      <code>insert_cell_2_in_cell_3()</code>,
+      <code>insert_dangling_cell_1_in_cell_2()</code>,
+      <code>is_insertable_cell_1_in_cell_2()</code>,
+      <code>is_insertable_cell_2_in_cell_3()</code>,
+      <code>is_removable()</code>,
+      <code>remove_cell()</code>) which are now member functions in
+      the <code>CombinatorialMap</code> concept.</li>
+    <li>It is not longer possible to use the old API switched on by
+      defining the macro <code>CGAL_CMAP_DEPRECATED</code>.
+      This API was deprecated since CGAL 4.4.
     </li>
   </ul>
-<!-- Arrangements -->
-<!-- Triangulations and Delaunay Triangulations -->
-<!-- Voronoi Diagrams -->
-<!-- Mesh Generation -->
-<!-- Surface Reconstruction -->
-<!-- Geometry Processing -->
   <h3>Point Set Processing</h3>
   <ul>
     <li>New function <code>CGAL::read_ply_custom_points()</code> that
@@ -191,48 +191,47 @@ and <code>src/</code> directories).
   <h3>Point Set Shape Detection</h3>
   <ul>
     <li>New post-processing
-      algorithm: <code>CGAL::regularize_planes()</code>. This allows the user
-      to favor parallelism, orthogonality, coplanarity and/or axial
+      algorithm: <code>CGAL::regularize_planes()</code>. This allows the
+      user to favor parallelism, orthogonality, coplanarity and/or axial
       symmetry between detected planes.</li>
   </ul>
   <h3>Polygon Mesh Processing</h3>
   <ul>
-    <li>Add the function <code>CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()</code>
-    to check whether a polygon soup is a polygon mesh.</li>
+    <li>Add the function
+  <code>CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()</code>
+      to check whether a polygon soup is a polygon mesh.</li>
     <li> Add some new features to <code>CGAL::isotropic_remeshing()</code>:
       <ul>
         <li>
-          It is now possible to select fixed vertices that survive the remeshing process,
-          and to keep face attributes such as colors valid after remeshing.
+          It is now possible to select fixed vertices that survive the
+          remeshing process, and to keep face attributes such as colors
+          valid after remeshing.
         </li>
         <li>
-          The user can choose the number of relaxation steps happening at each loop,
-          and to run 1-dimensional relaxation along constrained polylines.
+          The user can choose the number of relaxation steps happening at
+          each loop, and to run 1-dimensional relaxation along constrained
+          polylines.
         </li>
       </ul>
     </li>
     <li>
-      The functions <code>CGAL::Polygon_mesh_processing::triangulate_face()</code>
+      The functions
+      <code>CGAL::Polygon_mesh_processing::triangulate_face()</code>
       and <code>CGAL::Polygon_mesh_processing::triangulate_faces()</code>
       now indicate whether some faces have not been triangulated.
     </li>
   </ul>
   <h3>Surface Mesh Deformation</h3>
   <ul>
-    <li>Add a new tag <code>SRE_ARAP</code> to use the Smoothed Rotation Enhanced As-Rigid-As-Possible
-    deformation algorithm.</li>
+    <li>Add a new tag <code>SRE_ARAP</code> to use the Smoothed Rotation
+      Enhanced As-Rigid-As-Possible deformation algorithm.</li>
   </ul>
-<!-- Spatial Searching and Sorting -->
  <h3>3D Fast Intersection and Distance Computation</h3>
   <ul>
     <li>Add the functions <code>AABB_tree::first_intersection()</code>
      and <code>AABB_tree::first_intersected_primitive()</code> that compute
      the intersection which is closest to the source of a ray</li>
   </ul>
-<!-- Geometric Optimization -->
-<!-- Interpolation -->
-<!-- Kinetic Data Structures -->
-<!-- Support Library -->
   <h3>CGAL and the Boost Graph Library (BGL)</h3>
   <ul>
     <li>
@@ -241,8 +240,9 @@ and <code>src/</code> directories).
       different type.
     </li>
     <li>
-      Add a class <code>CGAL::Dual</code> that creates the dual view
-      of a <code>FaceGraph</code> and a creation function <code>CGAL::dual(primal)</code>.
+      Add a class <code>CGAL::Dual</code> that creates the dual view of
+      a <code>FaceGraph</code> and a creation
+      function <code>CGAL::dual(primal)</code>.
     </li>
   </ul>
   <h4>CGAL and Boost Property Maps</h4>
@@ -253,10 +253,6 @@ and <code>src/</code> directories).
         since CGAL 4.3.
     </li>
   </ul>
-
-<!-- Visualization -->
-
-<!-- end of the div for 4.9 -->
 </div>
 
 <h2 id="release4.8">Release 4.8 </h2>
@@ -435,25 +431,25 @@ and <code>src/</code> directories).
   </ul>
   <h3>CGAL and the Boost Graph Library (BGL)</h3>
   <ul>
-    <li>Add function <code>CGAL::split_graph_into_polylines()</code> that allows
-        to extract from a soup of segments given as a graph, polylines with nodes
-        of degree at most 2. In addition a functor can be passed to the function
-        to specify additional polyline endpoints.</li>
+    <li>Add function <code>CGAL::split_graph_into_polylines()</code> that
+      allows to extract from a soup of segments given as a graph, polylines
+      with nodes of degree at most 2. In addition a functor can be passed
+      to the function to specify additional polyline endpoints.</li>
     <li>
       New functions to manipulate selection of faces, edges and vertices in
       a halfedge graph are added:
-      <code>CGAL::expand_face_selection()</code>, <code>CGAL::reduce_face_selection()</code>,
-      <code>CGAL::expand_edge_selection()</code>, <code>CGAL::reduce_edge_selection()</code>
-      <code>CGAL::expand_vertex_selection()</code>, <code>CGAL::reduce_vertex_selection()</code>
+      <code>CGAL::expand_face_selection()</code>,
+      <code>CGAL::reduce_face_selection()</code>,
+      <code>CGAL::expand_edge_selection()</code>,
+      <code>CGAL::reduce_edge_selection()</code>
+      <code>CGAL::expand_vertex_selection()</code>,
+      <code>CGAL::reduce_vertex_selection()</code>
       and <code>CGAL::select_incident_faces()</code>.
     <li>
       Add a helper function <code>CGAL::clear</code> which clears a
       MutableFaceGraph efficiently and generically.
     </li>
   </ul>
-<!-- Visualization -->
-
-<!-- end of the div for 4.8 -->
 </div>
 
 <h2 id="release4.7">Release 4.7 </h2>
