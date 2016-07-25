@@ -69,6 +69,8 @@ create_single_source_cgal_program( "graph_concept_Dual.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Surface_mesh.cpp" )
+
 create_single_source_cgal_program( "test_clear.cpp" )
 
 create_single_source_cgal_program( "test_graph_geometry.cpp" )
