@@ -104,6 +104,8 @@ public:
 
         Q_FOREACH(Tree *tree, trees->values())
         {
+          if(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed())
+            continue;
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
           {
@@ -115,8 +117,15 @@ public:
         distance_function[i][j] = Point_distance(query,min);
         max_distance_function = (std::max)(min, max_distance_function);
 
+
         if(is_signed)
         {
+          if(!min_tree)
+          {
+            distance_function[i][j] = Point_distance(query,DBL_MAX);
+            max_distance_function = DBL_MAX;//(std::max)(min, max_distance_function);
+            continue;
+          }
           typedef typename Tree::size_type size_type;
           Simple_kernel::Vector_3 random_vec = random_vector();
 
@@ -682,6 +691,8 @@ private:
 
         Q_FOREACH(Tree *tree, trees->values())
         {
+          if(is_signed && !qobject_cast<Scene_polyhedron_item*>(trees->key(tree))->polyhedron()->is_closed())
+            continue;
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
           {
@@ -690,6 +701,8 @@ private:
               min_tree = tree;
           }
         }
+        if(min == DBL_MAX)
+          return;
         m_distance_function[i][j] = Point_distance(query,min);
         m_max_distance_function = (std::max)(min, m_max_distance_function);
       }
@@ -1208,6 +1221,10 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     {
       messages->warning(QString("%1 ignored (not a triangulated mesh)").arg(poly_item->name()));
       continue;
+    }
+    if(!poly_item->polyhedron()->is_closed())
+    {
+      messages->warning(QString("%1 is not closed. Signed function will not be displayed.").arg(poly_item->name()));
     }
     if(facet_trees.find(poly_item) == facet_trees.end()) {
       facet_trees[poly_item] = new Facet_tree();
