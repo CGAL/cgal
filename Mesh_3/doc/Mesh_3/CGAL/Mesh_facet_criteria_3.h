@@ -51,7 +51,7 @@ for the radius of the surface Delaunay balls.
 of the surface mesh facets.
 \param topology is the set of topological constraints 
 which have to be verified by each surface facet. See 
-section \ref introsecparam for further details. 
+section \ref Mesh_3DelaunayRefinement for further details. 
 Note that if one parameter is set to 0, then its corresponding criteria is ignored. 
 */ 
 Mesh_facet_criteria_3( 
