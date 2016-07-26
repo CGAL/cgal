@@ -510,6 +510,11 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #define CGAL_NOEXCEPT(x)
 #endif
 
+// https://svn.boost.org/trac/boost/ticket/2839
+#if defined(BOOST_MSVC) && BOOST_VERSION < 105600
+#define CGAL_CFG_BOOST_VARIANT_SWAP_BUG 1
+#endif
+
 #ifndef CGAL_NO_ASSERTIONS
 #  define CGAL_NO_ASSERTIONS_BOOL false
 #else
