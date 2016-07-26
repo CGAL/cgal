@@ -32,6 +32,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/is_streamable.h>
+#include <CGAL/Real_timer.h>
 
 #include <vector>
 #include <set>
@@ -648,7 +649,9 @@ public:
   }
 
   void build_curves_aabb_tree() const {
-    std::cerr << "Building curves AABB tree...\n";
+    std::cerr << "Building curves AABB tree...";
+    CGAL::Real_timer timer;
+    timer.start();
     curves_aabb_tree_.clear();
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),
@@ -666,6 +669,9 @@ public:
     }
     curves_aabb_tree_.build();
     curves_aabb_tree_is_built = true;
+    timer.stop();
+    std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
+
   } // end build_curves_aabb_tree()
 
 private:

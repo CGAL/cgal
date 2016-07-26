@@ -14,7 +14,7 @@
 #include "Mesh_function.h"
 #include "Facet_extra_criterion.h"
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 using namespace CGAL::Three;
 
 typedef Tr::Point Point_3;
@@ -46,7 +46,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
     std::cerr << "  tetrahedra size bound: " << tet_sizing << std::endl;
 
   std::cerr << "Build AABB tree...";
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
 
   // Create domain
@@ -69,7 +69,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
     protect_features = true; // so that it will be passed in make_mesh_3
   }
 
-  std::cerr << "done (" << timer.time() << " ms)" << std::endl;
+  std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->setScene(scene);
@@ -209,7 +209,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
-  CGAL::Timer timer;
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->setScene(scene);
   if(!is_gray)
@@ -227,7 +226,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       // Insert edge in domain
       p_domain->add_features(polylines.begin(), polylines.end());
     }
-    timer.start();
     typedef ::Mesh_function<Image_mesh_domain,
                             Mesh_fnt::Labeled_image_domain_tag> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
@@ -255,7 +253,6 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       // Insert edge in domain
       p_domain->add_features(polylines.begin(), polylines.end());
     }
-    timer.start();
     typedef ::Mesh_function<Gray_Image_mesh_domain,
                             Mesh_fnt::Gray_image_domain_tag> Mesh_function;
     Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
