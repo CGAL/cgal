@@ -128,17 +128,22 @@ template <typename Graph, typename Graph_descriptor, typename Descriptor>
 struct Descriptor2Descriptor: public std::unary_function<Graph_descriptor,Descriptor>
 {
 
+  Descriptor2Descriptor()
+    : graph(NULL)
+  {}
+
   Descriptor2Descriptor(Graph& graph)
-    : graph(graph)
+    : graph(&graph)
   {}
 
   Descriptor
   operator()(Graph_descriptor gd) const
   {
-    return Descriptor(gd,graph);
+    CGAL_assertion(graph!=NULL);
+    return Descriptor(gd,*graph);
   }
 
-  Graph& graph;
+  Graph* graph;
 };
 
 
@@ -261,17 +266,17 @@ source(typename boost::graph_traits<Gwdwg<Graph> >::edge_descriptor e,
 {
   typedef typename boost::graph_traits<Gwdwg<Graph> >::vertex_descriptor vertex_descriptor;
   assert(in_same_graph(e,w));
-  return vertex_descriptor(source(e.descriptor, *w.graph), w);
+  return vertex_descriptor(source(e.descriptor, *w.graph), *w.graph);
 }
 
 template <class Graph>
-typename boost::graph_traits<Graph>::vertex_descriptor
+typename boost::graph_traits<Gwdwg<Graph> >::vertex_descriptor
 target(typename boost::graph_traits<Gwdwg<Graph> >::edge_descriptor e,
        const Gwdwg<Graph> & w)
 {
   typedef typename boost::graph_traits<Gwdwg<Graph> >::vertex_descriptor vertex_descriptor;
   assert(in_same_graph(e,w));
-  return vertex_descriptor(target(e.descriptor, *w.graph),w);
+  return vertex_descriptor(target(e.descriptor, *w.graph), *w.graph);
 }
 
 template <class Graph>
@@ -298,8 +303,8 @@ vertices(const Gwdwg<Graph> & w)
 {
   typename boost::graph_traits<Graph>::vertex_iterator b,e;
   boost::tie(b,e) = vertices(*w.graph);
-  return std::make_pair(boost::make_transform_iterator(b,boost::graph_traits<Gwdwg<Graph> >::V2V(*w.graph)),
-                        boost::make_transform_iterator(e,boost::graph_traits<Gwdwg<Graph> >::V2V(*w.graph)));
+  return std::make_pair(boost::make_transform_iterator(b,typename boost::graph_traits<Gwdwg<Graph> >::V2V(*w.graph)),
+                        boost::make_transform_iterator(e,typename boost::graph_traits<Gwdwg<Graph> >::V2V(*w.graph)));
 }
 
 template <class Graph>
@@ -578,8 +583,8 @@ halfedges(const Gwdwg<Graph> & w)
 {
   typename boost::graph_traits<Graph>::halfedge_iterator b,e;
   boost::tie(b,e) = halfedges(*w.graph);
-  return std::make_pair(boost::make_transform_iterator(b,boost::graph_traits<Gwdwg<Graph> >::H2H(*w.graph)),
-                        boost::make_transform_iterator(e,boost::graph_traits<Gwdwg<Graph> >::H2H(*w.graph)));
+  return std::make_pair(boost::make_transform_iterator(b, typename boost::graph_traits<Gwdwg<Graph> >::H2H(*w.graph)),
+                        boost::make_transform_iterator(e, typename boost::graph_traits<Gwdwg<Graph> >::H2H(*w.graph)));
 }
 
 
