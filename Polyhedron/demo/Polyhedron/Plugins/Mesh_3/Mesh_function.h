@@ -367,23 +367,32 @@ status(double time_period) const
   // been called or that initial points have not been founded
   if ( NULL == mesher_ ) /// @TODO: there is a race-condition, here.
   {
-    return QString("Initialization in progress...");
+    typename Mesher::Mesher_status s(c3t3_.triangulation().number_of_vertices(),
+                                     0,
+                                     0);
+    result = QString("Initialization in progress...\n\n"
+                     "Vertices: %1 \n"
+                     "Vertices inserted last %2s: %3 \n")
+      .arg(s.vertices)
+      .arg(time_period)
+      .arg(s.vertices - last_report_.vertices);
+    last_report_ = s;
+  } else {
+    // Get status and return a string corresponding to it
+    typename Mesher::Mesher_status s = mesher_->status();
+  
+    result = QString("Vertices: %1 \n"
+                     "Vertices inserted last %2s: %3 \n\n"
+                     "Bad facets: %4 \n"
+                     "Bad cells: %5")
+      .arg(s.vertices)
+      .arg(time_period)
+      .arg(s.vertices - last_report_.vertices)
+      .arg(s.facet_queue)
+      .arg(s.cells_queue);
+    last_report_ = s;
   }
   
-  // Get status and return a string corresponding to it
-  typename Mesher::Mesher_status s = mesher_->status();
-  
-  result = QString("Vertices: %1 \n"
-                           "Vertices inserted last %2s: %3 \n\n"
-                           "Bad facets: %4 \n"
-                           "Bad cells: %5")
-    .arg(s.vertices)
-    .arg(time_period)
-    .arg(s.vertices - last_report_.vertices)
-    .arg(s.facet_queue)
-    .arg(s.cells_queue);
-  
-  last_report_ = s;
 #endif
   return result;
 }
