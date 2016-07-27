@@ -28,7 +28,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Qt/PointsGraphicsItem.h>
 #include <CGAL/Qt/PolylinesGraphicsItem.h>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
@@ -152,11 +151,12 @@ public:
       dock_widget->setObjectName("PLOUF");
       graphics_scene = new QGraphicsScene(dock_widget);
       ui_widget.graphicsView->setScene(graphics_scene);
+      ui_widget.graphicsView->setRenderHints(QPainter::Antialiasing);
       navigation = new Navigation();
       ui_widget.graphicsView->installEventFilter(navigation);
       ui_widget.graphicsView->viewport()->installEventFilter(navigation);
       addDockWidget(dock_widget);
-      points = new std::vector<Kernel::Point_2>(0);
+      polylines = new std::vector<std::vector<Kernel::Point_2> >(0);
       dock_widget->setVisible(false);
 
   }
@@ -183,7 +183,7 @@ private:
   Ui::Parameterization ui_widget;
   QGraphicsScene *graphics_scene;
   Navigation* navigation;
-  std::vector<Kernel::Point_2> *points;
+  std::vector<std::vector<Kernel::Point_2> >* polylines;
 }; // end Polyhedron_demo_parameterization_plugin
 
 
@@ -330,30 +330,48 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   builder.run(*pMesh,*pTex_polyhedron);
   pTex_polyhedron->compute_normals();
 
-  Polyhedron::Vertex_iterator it1;
-  Textured_polyhedron::Vertex_iterator it2;
+  Polyhedron::Face_iterator it1;
+  Textured_polyhedron::Face_iterator it2;
 
-  points->clear();
+  polylines->clear();
   int w(ui_widget.graphicsView->width()), h(ui_widget.graphicsView->height());
-  for(it1 = pMesh->vertices_begin(),
-    it2 = pTex_polyhedron->vertices_begin();
-    it1 != pMesh->vertices_end() &&
-    it2 != pTex_polyhedron->vertices_end();
+  for(it1 = pMesh->facets_begin(),
+    it2 = pTex_polyhedron->facets_begin();
+    it1 != pMesh->facets_end() &&
+    it2 != pTex_polyhedron->facets_end();
   it1++, it2++)
   {
-    // (u,v) pair is stored per halfedge
-    FT u = uv_pm[it1->halfedge()].x();
-    FT v = uv_pm[it1->halfedge()].y();
-    it2->u() = u;
-    it2->v() = v;
-    points->push_back(Kernel::Point_2(u*w,v*h));
+    std::vector<Kernel::Point_2> polyline;
+    Polyhedron::Halfedge_handle hit1 = it1->halfedge();
+    Textured_polyhedron::Halfedge_handle hit2 = it2->halfedge();
+    do
+    {
+      FT u,v;
+      BOOST_FOREACH(Polyhedron::Halfedge_handle hit, halfedges_around_target(hit1, *pMesh))
+      {
+        if(hit != hit1->vertex()->halfedge())
+          continue;
+        u = uv_pm[hit].x();
+        v = uv_pm[hit].y();
+        break;
+      }
+
+      hit2->vertex()->u() = u;
+      hit2->vertex()->v() = v;
+      polyline.push_back(Kernel::Point_2(u*w, v*h));
+      hit1 = hit1->next();
+      hit2 = hit2->next();
+    }
+    while(hit1 != it1->halfedge() &&
+        hit2 != it2->halfedge());
+    polylines->push_back(polyline);
   }
-  CGAL::Qt::PointsGraphicsItem<std::vector<Kernel::Point_2> > *projection
-      = new CGAL::Qt::PointsGraphicsItem<std::vector<Kernel::Point_2> >(points);
+  CGAL::Qt::PolylinesGraphicsItem<std::vector<std::vector<Kernel::Point_2> > > *projection
+      = new CGAL::Qt::PolylinesGraphicsItem<std::vector<std::vector<Kernel::Point_2> > >(polylines);
   QPen pen;
   pen.setColor(Qt::black);
-  pen.setWidth(2);
-  projection->setVerticesPen(pen);
+  pen.setWidthF(0.3);
+  projection->setEdgesPen(pen);
   graphics_scene->addItem(projection);
   dock_widget->update();
 
