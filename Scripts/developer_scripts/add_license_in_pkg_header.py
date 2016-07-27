@@ -14,7 +14,7 @@ import re
 def add_license_include_in_file(package_name, fname):
   # first, see if the include directive is already there
   with codecs.open(fname, encoding='utf-8') as f:
-    if any(re.search("CGAL/license/"+package_name+".h", line) for line in f):
+    if any(re.search("#include\s*<CGAL/license/", line) for line in f):
       return # include directive already there
 
   # include directive not already there
