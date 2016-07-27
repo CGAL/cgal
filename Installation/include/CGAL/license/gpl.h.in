@@ -32,15 +32,14 @@
 
 #    if defined(CGAL_LICENSE_WARNING)
 
-#      ifdef BOOST_MSVC
-#        pragma CGAL_WARNING(Your commercial license for CGAL does not cover this release of the @PACKAGE_PRETTY_NAME@ package)
-#      else
-#        pragma message( "WARNING: Your commercial license for CGAL does not cover this release of the @PACKAGE_PRETTY_NAME@ package") 
-#      endif
+       CGAL_pragma_warning("Your commercial license for CGAL does not cover "
+                           "this release of the @PACKAGE_PRETTY_NAME@ package.")
 #    endif
 
 #    ifdef CGAL_LICENSE_ERROR
-#      error Your commercial license for CGAL does not cover this release of the @PACKAGE_PRETTY_NAME@ package. You get this error, as you defined CGAL_LICENSE_ERROR.
+#      error "Your commercial license for CGAL does not cover this release \
+of the @PACKAGE_PRETTY_NAME@ package. \
+You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
 #  endif // CGAL_@PACKAGE_CODE_NAME@_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
@@ -48,17 +47,14 @@
 #else // no CGAL_@PACKAGE_CODE_NAME@_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-#    ifdef BOOST_MSVC
-#      pragma CGAL_WARNING(You use the CGAL @PACKAGE_PRETTY_NAME@ package under the terms of the GPLv3+)
-#    else
-#      pragma message("WARNING: You use the CGAL @PACKAGE_PRETTY_NAME@ package under the terms of the GPLv3+ ")
-#    endif
+     CGAL_pragma_warning("You use the CGAL @PACKAGE_PRETTY_NAME@ package under "
+                         "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error ERROR: You use the CGAL @PACKAGE_PRETTY_NAME@ package under the terms of the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR
+#    error "You use the CGAL @PACKAGE_PRETTY_NAME@ package under the terms of \
+the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
-
 
 #endif // no CGAL_@PACKAGE_CODE_NAME@_COMMERCIAL_LICENSE
 

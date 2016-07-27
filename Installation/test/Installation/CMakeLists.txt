@@ -38,6 +38,9 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "deprecation_warning.cpp" )
 
+  create_single_source_cgal_program( "license_check.cpp" )
+  create_single_source_cgal_program( "license_check_gpl.cpp" )
+
   create_single_source_cgal_program( "test_use_h.cpp" )
 
   create_single_source_cgal_program( will_fail.cpp will_fail_aux.cpp )
