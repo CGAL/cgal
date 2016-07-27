@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2011  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2016  GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,11 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s) : Andreas Fabri
+//
+// Warning: this file is generated, see include/CGAL/licence/README.md
 
 #ifndef CGAL_LICENSE_@PACKAGE_CODE_NAME@_H
 #define CGAL_LICENSE_@PACKAGE_CODE_NAME@_H
