@@ -11,6 +11,9 @@
 #include "Messages_interface.h"
 
 #include <QTime>
+#include <QGraphicsScene>
+#include <QPen>
+#include <QDockWidget>
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
@@ -25,6 +28,86 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Qt/PointsGraphicsItem.h>
+#include <CGAL/Qt/PolylinesGraphicsItem.h>
+#include <CGAL/Qt/GraphicsViewNavigation.h>
+
+#include "ui_Parameterization_widget.h"
+
+
+class Navigation : public CGAL::Qt::GraphicsViewNavigation
+{
+public:
+  Navigation()
+    :CGAL::Qt::GraphicsViewNavigation(),
+      prev_pos(QPoint(0,0))
+  {
+  }
+protected:
+  bool eventFilter(QObject *obj, QEvent *ev)
+  {
+    QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
+    if(v == NULL) {
+      QWidget* viewport = qobject_cast<QWidget*>(obj);
+      if(viewport == NULL) {
+        return false;
+      }
+      v = qobject_cast<QGraphicsView*>(viewport->parent());
+      if(v == NULL) {
+        return false;
+      }
+    }
+    switch(ev->type())
+    {
+    case QEvent::MouseMove: {
+      QMouseEvent* me = static_cast<QMouseEvent*>(ev);
+      if(is_dragging)
+      {
+        int dir[2] = {me->pos().x() - prev_pos.x(),
+                        me->pos().y() - prev_pos.y()};
+
+        v->translate(dir[0],dir[1]);
+        v->update();
+      }
+      prev_pos = me->pos();
+      break;
+    }
+
+    case QEvent::MouseButtonPress: {
+      is_dragging = true;
+      break;
+    }
+    case QEvent::MouseButtonRelease: {
+      is_dragging = false;
+      break;
+    }
+    case QEvent::Wheel: {
+      QWheelEvent* event = static_cast<QWheelEvent*>(ev);
+      QPointF old_pos = v->mapToScene(event->pos());
+      if(event->delta() <0)
+        v->scale(1.2, 1.2);
+      else
+        v->scale(0.8, 0.8);
+      QPointF new_pos = v->mapToScene(event->pos());
+      QPointF delta = new_pos - old_pos;
+      v->translate(delta.x(), delta.y());
+      v->update();
+      break;
+    }
+
+    case QEvent::MouseButtonDblClick: {
+      v->fitInView(v->scene()->itemsBoundingRect());
+      break;
+    }
+    default:
+      CGAL::Qt::GraphicsViewNavigation::eventFilter(obj, ev);
+    }
+    return false;
+  }
+private:
+  bool is_dragging;
+  QPoint prev_pos;
+};
 
 typedef Kernel::FT FT;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
@@ -64,7 +147,17 @@ public:
       Q_FOREACH(QAction *action, _actions)
         action->setProperty("subMenuName",
                             "Triangulated Surface Mesh Parameterization");
-
+      dock_widget = new QDockWidget("UVMapping", mw);
+      ui_widget.setupUi(dock_widget);
+      dock_widget->setObjectName("PLOUF");
+      graphics_scene = new QGraphicsScene(dock_widget);
+      ui_widget.graphicsView->setScene(graphics_scene);
+      navigation = new Navigation();
+      ui_widget.graphicsView->installEventFilter(navigation);
+      ui_widget.graphicsView->viewport()->installEventFilter(navigation);
+      addDockWidget(dock_widget);
+      points = new std::vector<Kernel::Point_2>(0);
+      dock_widget->setVisible(false);
 
   }
 
@@ -72,6 +165,10 @@ public:
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
+  void closure()
+  {
+    dock_widget->hide();
+  }
 public Q_SLOTS:
   void on_actionMVC_triggered();
   void on_actionDCP_triggered();
@@ -82,7 +179,11 @@ protected:
   void parameterize(Parameterization_method method);
 private:
   QList<QAction*> _actions;
-  Messages_interface* message;
+  QDockWidget* dock_widget;
+  Ui::Parameterization ui_widget;
+  QGraphicsScene *graphics_scene;
+  Navigation* navigation;
+  std::vector<Kernel::Point_2> *points;
 }; // end Polyhedron_demo_parameterization_plugin
 
 
@@ -106,7 +207,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   typedef CGAL::Seam_mesh<Polyhedron, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
   typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor           halfedge_descriptor;
-
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_polyhedron_item* poly_item =
@@ -232,6 +332,9 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   Polyhedron::Vertex_iterator it1;
   Textured_polyhedron::Vertex_iterator it2;
+
+  points->clear();
+  int w(ui_widget.graphicsView->width()), h(ui_widget.graphicsView->height());
   for(it1 = pMesh->vertices_begin(),
     it2 = pTex_polyhedron->vertices_begin();
     it1 != pMesh->vertices_end() &&
@@ -243,7 +346,16 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     FT v = uv_pm[it1->halfedge()].y();
     it2->u() = u;
     it2->v() = v;
+    points->push_back(Kernel::Point_2(u*w,v*h));
   }
+  CGAL::Qt::PointsGraphicsItem<std::vector<Kernel::Point_2> > *projection
+      = new CGAL::Qt::PointsGraphicsItem<std::vector<Kernel::Point_2> >(points);
+  QPen pen;
+  pen.setColor(Qt::black);
+  pen.setWidth(2);
+  projection->setVerticesPen(pen);
+  graphics_scene->addItem(projection);
+  dock_widget->update();
 
   Scene_item* new_item = new Scene_textured_polyhedron_item(pTex_polyhedron);
 
@@ -251,10 +363,11 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   new_item->setColor(Qt::white);
   new_item->setRenderingMode(poly_item->renderingMode());
 
+  dock_widget->setVisible(true);
+  ui_widget.graphicsView->fitInView(projection->boundingRect());
   poly_item->setVisible(false);
   scene->itemChanged(index);
   scene->addItem(new_item);
-
   QApplication::restoreOverrideCursor();
 
 }

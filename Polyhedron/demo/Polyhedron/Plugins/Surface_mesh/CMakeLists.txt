@@ -1,7 +1,7 @@
 include( polyhedron_demo_macros )
 if(EIGEN3_FOUND)
-
-  polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin)
+  qt5_wrap_ui( parameterizationUI_FILES Parameterization_widget.ui)
+  polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
   target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item scene_polyhedron_selection_item)
 
 else(EIGEN3_FOUND)
