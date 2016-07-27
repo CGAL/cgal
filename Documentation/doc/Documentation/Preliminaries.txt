@@ -57,7 +57,7 @@ it is distributed.
 
 \subsection licensesCommercial Commercial Licenses
 
-Users who cannot comply to the Open Source license terms can buy individual
+Users who cannot comply with the Open Source license terms can buy individual
 data structures under various commercial licenses from GeometryFactory:
 http://www.geometryfactory.com/.  License fees paid by commercial
 customers are reinvested in R\&D performed by the \cgal project partners,
@@ -65,12 +65,12 @@ as well as in evolutive maintenance.
 
 \subsection licenseCheck License Checking 
 
-User who have a commercial license for specific packages can check that 
+Users who have a commercial license for specific packages can check that 
 they do not accidentally use packages for which they do not have a commercial
 license. The same holds for users who want to be sure that they only
 use packages of \cgal released under the \sc{Lgpl}.
 
-To enable checking users have to define one of the following macros:
+To enable checking, users have to define one of the following macros:
 
 | Macro Name                   | Effect |
 | :---------                   | :------ |
@@ -78,8 +78,8 @@ To enable checking users have to define one of the following macros:
 | `CGAL_LICENSE_ERROR`         | get an error during the compilation  |
 
 
-The license checking is not a means to control users, and no information
-is transmitted or collected to others.
+The license checking is not a mean to control users as no information
+is collected or transmitted.
 
 
 
