@@ -27,6 +27,17 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+if(POLICY CMP0056)
+  # http://www.cmake.org/cmake/help/v3.2/policy/CMP0056.html
+  #
+  # Fix a bug: `try_compile` should use `CMAKE_EXE_LINKER_FLAGS`.
+  # That variable can contain important flags like
+  #
+  #     -static-libstdc++ -static-libgcc
+  #
+  cmake_policy(SET CMP0056 NEW)
+endif()
+
 # Use GNUInstallDirst to get canonical paths
 include(GNUInstallDirs)
 
