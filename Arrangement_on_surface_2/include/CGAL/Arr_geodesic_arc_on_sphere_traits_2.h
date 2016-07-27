@@ -535,9 +535,9 @@ public:
      * The arc is vertical, iff
      * 1. one of its endpoint direction pierces a pole, or
      * 2. the projections onto the xy-plane coincide.
-     * \param source the source point.
-     * \param target the target point.
-     * \pre the source and target cannot be equal.
+     * \param[in] source the source point.
+     * \param[in] target the target point.
+     * \pre the source and target must not coincide.
      * \pre the source and target cannot be antipodal.
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target)
@@ -564,7 +564,7 @@ public:
      * \param plane the containing plane.
      * \pre the plane is not vertical
      */
-    X_monotone_curve_2 operator()(const Direction_3& normal)
+    X_monotone_curve_2 operator()(const Direction_3& normal) const
     {
       X_monotone_curve_2 xcv;
 
@@ -596,8 +596,7 @@ public:
                                   const Direction_3& normal)
     { return X_monotone_curve_2(source, target, normal); }
 
-    // private:
-  public:
+  private:
     /*! Initialize a spherical_arc given that the two endpoint directions
      * have been set. It is assumed that the arc is the one with the smaller
      * angle among the two.
@@ -2819,11 +2818,11 @@ public:
       return (*this);
     }
 
-    /*! Set the discontinuity type of the point.
+    /*! Set the location of the point.
      */
     void set_location(Location_type location) { m_location = location; }
 
-    /*! Obtain the discontinuity type of the point.
+    /*! Obtain the location of the point.
      */
     Location_type location() const { return m_location; }
 
@@ -2911,6 +2910,7 @@ public:
      * \param is_directed_right is the arc directed from left to right?
      * \param is_full is the arc a full circle?
      * \param is_degenerate is the arc degenerate (single point)?
+     * \pre Both endpoint lie on the given plane.
      */
     Arr_x_monotone_geodesic_arc_on_sphere_3
     (const Arr_extended_direction_3& src,

@@ -593,7 +593,13 @@ void print_face (Arrangement_2::Face_const_handle f)
 
 The function listed below prints the current setting of a given
 arrangement. This concludes the preview of the various traversal
-methods.\cgalFootnote{The file `arr_print.h`, which can be found under the examples folder, includes this function and the rest of the functions listed in this section. Over there they are written in a more generic fashion, where the arrangement type serves as a template parameter for these functions, so different instantiations of the `Arrangement_2<Traits,Dcel>` template can be provided to the same function templates.}
+methods.\cgalFootnote{The file `arr_print.h`, which can be found under
+the examples folder, includes this function and the rest of the
+functions listed in this section. Over there they are written in a
+more generic fashion, where the arrangement type serves as a template
+parameter for these functions, so different instantiations of the
+`Arrangement_2<Traits,Dcel>` template can be provided to the same
+function templates.}
 
 \code
 void print_arrangement (const Arrangement_2& arr)
@@ -2536,9 +2542,9 @@ exists for the left, bottom, and top sides.
 \cgalFigureEnd
 
 The shared requirements for the four options of a side are collected
-in abstract layers called `ArrangementLeftSide_2`,
-`ArrangementRightSide_2`, `ArrangementBottomSide_2`, and
-`ArrangementTopSide_2`; see, e.g., Figure
+in abstract layers called `ArrangementLeftSideTraits_2`,
+`ArrangementRightSideTraits_2`, `ArrangementBottomSideTraits_2`, and
+`ArrangementTopSideTraits_2`; see, e.g., Figure
 \cgalFigureRef{aos_fig-left_side_cluster}.
 
 \cgalFigureBegin{aos_fig-side_clusters,side_clusters.png}
@@ -2550,10 +2556,10 @@ curves that either reach or approach horizontal sides.
 
 The shared requirements for the options of opposite sides are
 collected in two additional abstract layers called
-`ArrangementVerticalSide_2` and `ArrangementHorizontalSide_2`; see
+`ArrangementVerticalSideTraits_2` and `ArrangementHorizontalSideTraits_2`; see
 Figure \cgalFigureRef{aos_fig-side_clusters}.
 
-The abstract concept `ArrangementHorizontalSide_2` requires the
+The abstract concept `ArrangementHorizontalSideTraits_2` requires the
 following predicate:
 
 <DL>
@@ -2587,7 +2593,7 @@ words, this overloaded version is required only for the concepts
 
 </DL>
 
-The abstract concept `ArrangementVerticalSide_2` requires the
+The abstract concept `ArrangementVerticalSideTraits_2` requires the
 following predicate:
 
 <DL>

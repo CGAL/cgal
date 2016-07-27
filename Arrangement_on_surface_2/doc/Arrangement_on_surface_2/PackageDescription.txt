@@ -111,7 +111,10 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementLandmarkTraits_2`
 - `ArrangementXMonotoneTraits_2`
 - `ArrangementTraits_2`
+- `ArrangementHorizontalSideTraits_2`
+- `ArrangementVerticalSideTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
+- `ArrangementSphericalBoundaryTraits_2`
 - `ArrangementInputFormatter`
 - `ArrangementOutputFormatter`
 - `ArrangementWithHistoryInputFormatter`
