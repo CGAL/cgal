@@ -514,13 +514,11 @@ Face & f, Vertex_handle hint) const;
 /// @{
 
 /*!
-\cgalAdvancedBegin
 Contracts the `Face f` to a single vertex at
 position `p`. Returns a handle to that vertex. 
 
 \pre The boundary of the union of full cells incident to `f` must be a triangulation of a
 sphere of dimension `tr`.`current_dimension()`).
-\cgalAdvancedEnd
 */
 Vertex_handle collapse_face(const Point & p, const Face & f);
 
