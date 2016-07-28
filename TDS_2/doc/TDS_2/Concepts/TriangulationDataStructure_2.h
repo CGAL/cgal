@@ -553,28 +553,33 @@ void dim_down(Face_handle f, int i);
 /*!
 \cgalModifBegin
 creates a new vertex `v` and uses it to star a hole.
-
-It takes an iterator range `[edge_begin, edge_end[` of `Edges`, given as pairs `(Face_handle, int)`. 
-The `Face_handles` specify a set of connected faces describing a hole that is a topological disc. Each `Edge` in the iterator range 
-is an edge of the boundary of the hole, i.e., if `e = (fh, i)` \f$\in\f$ `[edge_begin, edge_end[`, then `fh`
-belongs to the set of faces describing the hole, while `fh->neighbor(i)` does not. The function deletes
-the faces describing the hole, creates a new vertex `v` and for each edge on the boundary of the hole 
-creates a new face with `v` as an apex. A handle to the vertex `v` is returned.
-
-\pre The set of faces is connected, the set of edges is connected, and the sequence `[edge_begin, edge_end[` is oriented counter-clockwise.
+ 
+It takes an iterator range `[face_begin, face_end[` over a set of faces `F`. The faces 
+in the set `F` describe a simply connected hole, i.e., a topological disc. 
+Starting from `face_begin`, a heuristic walk through the faces is performed until a
+face `fh` is encountered with one edge on the boundary of the hole, i.e., 
+`fh` \f$ \in \f$ `F` and `fh->neighbor(`\f$i\f$`)` \f$ \not\in \f$ `F` for some \f$ i \in \{0, 1, 2\}\f$.
+The edge (`fh`, \f$i\f$) is then stored, and a walk through the faces on the boundary
+is performed to identify all boundary edges in such an order that, for two consecutive
+edges \f$ e_k\f$ `= (f_k, `\f$i_k\f$`)`, \f$e_{k+1}\f$ `= (f_k, `\f$i_{k+1}\f$`)` in the sequence it is true that
+\f$ f_k\f$`->vertex(ccw(`\f$i_k\f$`))` = \f$f_{k+1}\f$`->vertex(cw(`\f$i_{k+1}\f$`))`.
+As a next step, new faces are created by using the edges of the boundary and the vertex `v`.
+Lastly, all faces in the set `F` are deleted and a handle to the vertex `v` is returned. 
+ 
+\pre The set of faces `F` has the topology of a disk.
 \cgalModifEnd
 */
-template< class EdgeIt >
-Vertex_handle insert_in_hole(EdgeIt edge_begin, EdgeIt edge_end);
+template< class FaceIt >
+Vertex_handle insert_in_hole(FaceIt face_begin, FaceIt face_end); 
 
 /*!
 \cgalModifBegin
-same as above, except that `v` will be used as the new vertex, which must have been allocated previously with e.g. 
+same as above, except that `new_v` will be used as the new vertex, which must have been allocated previously with e.g. 
 `create_vertex`.
 \cgalModifEnd
 */
-template< class EdgeIt >
-void insert_in_hole(Vertex_handle v, EdgeIt edge_begin, EdgeIt edge_end); 
+template< class FaceIt >
+void insert_in_hole(Vertex_handle new_v, FaceIt face_begin, FaceIt face_end);  
 
 
 /*!

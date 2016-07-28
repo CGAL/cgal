@@ -429,94 +429,100 @@ public:
   // template members definition
 public:
 
-  /************* START OF MODIFICATIONS (iiordanov) ***************/
+  /************* START OF MODIFICATIONS ***************/
 
-
-  /* 
-   * Creates a new vertex new_v and uses it to star the hole described
-   * by the sequence of edges [edge_begin, edge_end]. The pre-existing
-   * faces in the hole are destroyed.
-   *
-   * Prerequisite: the sequence [edge_begin, edge_end] is oriented
-   * counter-clockwise.
-   */
-
-  template< class EdgeIt >
-  Vertex_handle insert_in_hole(EdgeIt edge_begin, EdgeIt edge_end) 
+  template< class FaceIt >
+  Vertex_handle insert_in_hole(FaceIt face_begin, FaceIt face_end) 
   {
-    Vertex_handle new_v = create_vertex();
-    insert_in_hole(new_v, edge_begin, edge_end);
-    return new_v;
+    Vertex_handle newv = create_vertex();
+    insert_in_hole(newv, face_begin, face_end);
+    return newv;
   }
 
 
-  /* 
-   * Uses the vertex v to star the hole described by the sequence 
-   * of edges [edge_begin, edge_end]. The pre-existing faces in 
-   * the hole are destroyed.
-   *
-   * Prerequisite: the sequence [edge_begin, edge_end] is oriented
-   * counter-clockwise.
-   */
-  template< class EdgeIt >
-  void insert_in_hole(Vertex_handle v, EdgeIt edge_begin, EdgeIt edge_end) 
+  template< class FaceIt >
+  void insert_in_hole(Vertex_handle v, FaceIt face_begin, FaceIt face_end) 
   {
 
-    // Keep new faces in a vector
-    std::vector<Face_handle> new_faces;
+    std::vector<Face_handle>  new_faces;
+    std::vector<Edge>         bdry_edges;
 
-    // Exploit std::set functionality to keep unique old faces
-    std::set<Face_handle> old;
+    Face_handle fh = *face_begin;
+    int ii = 0;
+    bool found_boundary = false;
+    do {
+      if (std::find(face_begin, face_end, fh->neighbor(ii)) == face_end) {
+        bdry_edges.push_back(Edge(fh, ii));
+        found_boundary = true;
+      } else {
+        int newi = fh->neighbor(ii)->index(fh->vertex(ccw(ii)));
+        fh = fh->neighbor(ii);
+        ii = newi;
+      }
+    } while(!found_boundary);
+    // Now we have found ONE edge on the boundary. 
+    // From that one edge we must walk on the boundary 
+    // of the hole until we've covered the whole thing.
 
-    for (EdgeIt it = edge_begin; it != edge_end; it++) {
-      Face_handle fh = (*it).first;
-      int i = (*it).second;
+    bool complete_walk = false;
+    do {
+      Face_handle nh = fh->neighbor(ccw(ii));
+      if (std::find(face_begin, face_end, nh) == face_end) {
+        ii = ccw(ii);
+        Edge new_edge(fh, ii);
+        if (std::find(bdry_edges.begin(), bdry_edges.end(), new_edge) == bdry_edges.end()) {
+          bdry_edges.push_back(Edge(fh, ii));
+        } else {
+          complete_walk = true;
+        }
+      } else {
+        int newi = cw(nh->index(fh->vertex(ii)));
+        fh = nh;
+        ii = newi;
+      }
+    } while (!complete_walk);
+    // At this point, bdry_edges contains the edges that define
+    // the boundary of the hole with a specific ordering: for any
+    // two consecutive edges in the vector e1 = (f1, i1), 
+    // e2 = (f2, i2) it holds that 
+    //      f1->vertex(cw(i1)) == f2->vertex(ccw(i2))
 
-      old.insert(fh);
+    for (int jj = 0; jj < bdry_edges.size(); jj++) {
+      Face_handle fh = bdry_edges[jj].first;
+      int idx = bdry_edges[jj].second;
+      
+      Vertex_handle v1 = fh->vertex(ccw(idx));
+      Vertex_handle v2 = fh->vertex(cw(idx));
 
-      //          v
-      //          .
-      //         / \
-      //        /   \
-      //       /     \
-      //      / new_f \
-      //  v1 /_________\ v2
-      //     \         /
-      //      \  nf   /
-      //       \     /
-      //        \   /
-      //         \ /
-      //          *
-      //     nf->vertex(j)     
-  
-      Vertex_handle v1 = fh->vertex(ccw(i));
-      Vertex_handle v2 = fh->vertex(cw(i));
-
-      Face_handle nf = fh->neighbor(i);
-      int j = mirror_index(fh, i);
+      Face_handle nf = fh->neighbor(idx);
+      int jdx = mirror_index(fh, idx);
 
       Face_handle new_f = create_face(v, v1, v2);
-      set_adjacency(new_f, 0, nf, j);
+      set_adjacency(new_f, 0, nf, jdx);
       new_faces.push_back(new_f);
     }
+    // At this point we have created all the new faces of the triangulation,
+    // and we have set adjacency relationships with the faces on the border
+    // of the hole.
 
-    // Set adjacency for the new faces
     for (int i = 0; i < new_faces.size() - 1; i++) {
       set_adjacency(new_faces[i], 1, new_faces[i+1], 2);
     }
-    // The last one has to be treated separately
     set_adjacency(new_faces[0], 2, new_faces[new_faces.size()-1], 1);
+    // Now we have also set adjacency relationships between the new faces.
 
-    // Delete the old faces
-    for (typename std::set<Face_handle>::iterator it = old.begin(); it != old.end(); it++) {
+    for (FaceIt it = face_begin; it != face_end; it++) {
       delete_face(*it);
     }
+    // The old faces that were in conflict are now deleted.
 
-    // Set the new vertex to point at the first new face (arbitrarily)
     v->set_face(new_faces[0]);
+    // Set the pointer of the new vertex to one of the new faces.
   }
 
-  /************* END OF MODIFICATIONS (iiordanov) ***************/
+
+
+  /************* END OF MODIFICATIONS ***************/
 
 
   template< class EdgeIt>
