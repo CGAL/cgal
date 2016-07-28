@@ -342,6 +342,12 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
 
+#if CGAL_CONCURRENT_MESH_3
+  ui.manifoldCheckBox->setEnabled(false);
+  ui.manifoldCheckBox->setToolTip(tr("<b>Notice:</b> The manifold option cannot"
+                                     " be used with the parallel version of "
+                                     "Mesh_3."));
+#endif
   // -----------------------------------
   // Get values
   // -----------------------------------
