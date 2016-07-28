@@ -45,18 +45,18 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   endif()
 
   if (NOT CGAL_HEADER_ONLY)
-     add_library (${LIBRARY_NAME}
-       ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp
-       ${rc_file}
-       ${ADDITIONAL_FILES})
-   #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
-   if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-     set_target_properties(${LIBRARY_NAME} PROPERTIES
-       VERSION "${CGAL_SOVERSION}"
-       SOVERSION "${CGAL_SONAME_VERSION}")
-   endif()
+    add_library (${LIBRARY_NAME}
+      ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp
+      ${rc_file}
+      ${ADDITIONAL_FILES})
+    #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
+    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+      set_target_properties(${LIBRARY_NAME} PROPERTIES
+        VERSION "${CGAL_SOVERSION}"
+        SOVERSION "${CGAL_SONAME_VERSION}")
+    endif()
   else()
-      add_library(${LIBRARY_NAME} INTERFACE)
+    add_library(${LIBRARY_NAME} INTERFACE)
   endif()
 
   if(CGAL_AUTO_LINK_ENABLED)
