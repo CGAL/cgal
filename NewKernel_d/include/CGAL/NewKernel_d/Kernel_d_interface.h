@@ -163,6 +163,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Side_of_bounded_circumsphere_tag>::type Side_of_bounded_sphere_d;
 
 	typedef typename Get_functor<Base, Center_of_sphere_tag>::type Center_of_sphere_d;
+	typedef Center_of_sphere_d Construct_center_d; // RangeSearchTraits
 	typedef typename Get_functor<Base, Construct_circumcenter_tag>::type Construct_circumcenter_d;
 	typedef typename Get_functor<Base, Value_at_tag>::type Value_at_d;
 	typedef typename Get_functor<Base, Point_of_sphere_tag>::type Point_of_sphere_d;
