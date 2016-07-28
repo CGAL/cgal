@@ -56,6 +56,11 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
         SOVERSION "${CGAL_SONAME_VERSION}")
     endif()
   else()
+    if(${LIBRARY_NAME}_LIB_DEPENDS)
+      # Fix a bug when CGAL is configured first without `CGAL_HEADER_ONLY`
+      # and then `CGAL_HEADER_ONLY` is set without cleaning the cache.
+      unset(${LIBRARY_NAME}_LIB_DEPENDS CACHE)
+    endif()
     add_library(${LIBRARY_NAME} INTERFACE)
   endif()
 
