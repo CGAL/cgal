@@ -420,6 +420,10 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
+        initializeBuffers();
+    //to be replaced by a functor in the d-pointer when the merging is done
+        if(p_is_selected)
+          Q_EMIT selectionChanged();
     }
     else
         is_selected = p_is_selected;
