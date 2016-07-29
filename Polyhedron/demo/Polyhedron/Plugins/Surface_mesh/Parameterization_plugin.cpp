@@ -126,22 +126,16 @@ typedef boost::associative_property_map<Seam_vertex_uhm>              Seam_verte
 
 typedef CGAL::Seam_mesh<Polyhedron, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
 typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor           halfedge_descriptor;
-typedef std::pair<Point_2,Point_2>                                    Edge;
-typedef std::vector<Edge>                                             Edges;
 
 class UVItem : public QGraphicsItem
 {
 public :
-  UVItem(Edges *e, QRectF brect)
+  UVItem(Textured_polyhedron* t_m, QRectF brect)
     :QGraphicsItem(),
-       edges(e), bounding_rect(brect)
+       texMesh(t_m), bounding_rect(brect)
   {
   }
 
-  ~UVItem()
-  {
-    delete edges;
-  }
   QRectF boundingRect() const
   {
     return bounding_rect;
@@ -153,15 +147,18 @@ public :
     pen.setColor(Qt::black);
     pen.setWidth(0);
     painter->setPen(pen);
-    for(std::size_t i = 0; i < edges->size(); ++i)
+    for( Textured_polyhedron::Edge_iterator
+         ei = texMesh->edges_begin();
+         ei != texMesh->edges_end();
+         ++ei)
     {
-      Edge e = edges->at(i);
-      painter->drawLine(QPointF(e.first.x(), e.first.y()), QPointF(e.second.x(), e.second.y()));
+      QPointF source(ei->vertex()->u(), ei->vertex()->v()), target(ei->opposite()->vertex()->u(), ei->opposite()->vertex()->v());
+      painter->drawLine(source, target);
     }
   }
 
 private:
-  Edges *edges;
+  Textured_polyhedron* texMesh;
   QRectF bounding_rect;
 
 };
@@ -405,27 +402,21 @@ QString new_item_name;
   Polyhedron::Edge_iterator it1;
   Textured_polyhedron::Edge_iterator it2;
   QPointF min(FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX);
-  Edges *edges = new Edges(0);
-  edges->reserve(pMesh->size_of_halfedges()/2);
   for(it1 = pMesh->edges_begin(),
       it2 = pTex_polyhedron->edges_begin();
       it1 != pMesh->edges_end()&&
       it2 != pTex_polyhedron->edges_end();
       it1++, it2++)
   {
-    Edge e;
     FT u1 = uv_pm[halfedge(source(it1, *sMesh), *sMesh)].x();
     FT v1 = uv_pm[halfedge(source(it1, *sMesh), *sMesh)].y();
     source(it2, *pTex_polyhedron)->u() = u1;
     source(it2, *pTex_polyhedron)->v() = v1;
-    e.first = Point_2(u1,v1);
     FT u2 = uv_pm[halfedge(target(it1, *sMesh), *sMesh)].x();
     FT v2 = uv_pm[halfedge(target(it1, *sMesh), *sMesh)].y();
     target(it2, *pTex_polyhedron)->u() = u2;
     target(it2, *pTex_polyhedron)->v() = v2;
-    e.second = Point_2(u2,v2);
 
-    edges->push_back(e);
     if(u1<min.x())
       min.setX(u1);
     if(u1>max.x())
@@ -445,7 +436,7 @@ QString new_item_name;
       max.setY(v2);
   }
   UVItem *projection
-      = new UVItem(edges,QRectF(min, max));
+      = new UVItem(pTex_polyhedron,QRectF(min, max));
   Scene_textured_polyhedron_item* new_item = new Scene_textured_polyhedron_item(pTex_polyhedron);
 
   new_item->setName(new_item_name);
