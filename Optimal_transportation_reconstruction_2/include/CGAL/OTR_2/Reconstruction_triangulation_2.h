@@ -795,10 +795,11 @@ public:
     boost::optional<FT> Dqt;
     typename CGAL::cpp11::result_of<typename Traits_::Intersect_2(Line, Line)>::type
       result = intersection(lab, lts);
-    if (result!=boost::none)
+    if (result)
     {
       const Point* iq = boost::get<Point>(&(*result));
-      Dqt = CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
+      if (iq)
+        Dqt = CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
     }
 
     return std::make_pair( (Dabt < FT(0) ? false : true) ,Dqt );
