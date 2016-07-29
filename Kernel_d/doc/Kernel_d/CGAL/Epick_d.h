@@ -39,6 +39,7 @@ icc 15 work.
 \cgalModels `DelaunayTriangulationTraits`
 \cgalModels `RegularTriangulationTraits`
 \cgalModels `SearchTraits`
+\cgalModels `RangeSearchTraits`
 
 \sa `CGAL::Cartesian_d<FieldNumberType>`
 \sa `CGAL::Homogeneous_d<RingNumberType>`
