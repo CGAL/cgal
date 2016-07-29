@@ -444,6 +444,8 @@ public:
   void insert_in_hole(Vertex_handle v, FaceIt face_begin, FaceIt face_end) 
   {
 
+    CGAL_triangulation_precondition(dimension() == 2);
+
     std::vector<Face_handle>  new_faces;
     std::vector<Edge>         bdry_edges;
 

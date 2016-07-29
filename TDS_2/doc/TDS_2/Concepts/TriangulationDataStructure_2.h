@@ -554,19 +554,13 @@ void dim_down(Face_handle f, int i);
 \cgalModifBegin
 creates a new vertex `v` and uses it to star a hole.
  
-It takes an iterator range `[face_begin, face_end[` over a set of faces `F`. The faces 
-in the set `F` describe a simply connected hole, i.e., a topological disc. 
-Starting from `face_begin`, a heuristic walk through the faces is performed until a
-face `fh` is encountered with one edge on the boundary of the hole, i.e., 
-`fh` \f$ \in \f$ `F` and `fh->neighbor(`\f$i\f$`)` \f$ \not\in \f$ `F` for some \f$ i \in \{0, 1, 2\}\f$.
-The edge (`fh`, \f$i\f$) is then stored, and a walk through the faces on the boundary
-is performed to identify all boundary edges in such an order that, for two consecutive
-edges \f$ e_k\f$ `= (f_k, `\f$i_k\f$`)`, \f$e_{k+1}\f$ `= (f_k, `\f$i_{k+1}\f$`)` in the sequence it is true that
-\f$ f_k\f$`->vertex(ccw(`\f$i_k\f$`))` = \f$f_{k+1}\f$`->vertex(cw(`\f$i_{k+1}\f$`))`.
-As a next step, new faces are created by using the edges of the boundary and the vertex `v`.
-Lastly, all faces in the set `F` are deleted and a handle to the vertex `v` is returned. 
+It takes an iterator range `[face_begin, face_end[` of `Face_handle`s that specifies 
+a set of connected faces describing a simply connected hole, i.e., a topological disc. 
+The function deletes all the faces describing the hole, creates a new vertex `v` and
+for each edge on the boundary of the hole creates a new face with `v` as a vertex.
+In the end, `v` is returned. 
  
-\pre The set of faces `F` has the topology of a disk.
+\pre `tds.dimension() = 2` and the set of faces has the topology of a disk.
 \cgalModifEnd
 */
 template< class FaceIt >
@@ -574,8 +568,8 @@ Vertex_handle insert_in_hole(FaceIt face_begin, FaceIt face_end);
 
 /*!
 \cgalModifBegin
-same as above, except that `new_v` will be used as the new vertex, which must have been allocated previously with e.g. 
-`create_vertex`.
+same as above, except that `new_v` will be used as the new vertex, which must have been 
+allocated previously with e.g. `create_vertex`.
 \cgalModifEnd
 */
 template< class FaceIt >
