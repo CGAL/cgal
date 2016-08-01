@@ -312,6 +312,9 @@ void Mesh_3_plugin::mesh_3(const bool surface_only)
   // -----------------------------------
   // Get values
   // -----------------------------------
+
+  //reset cursor from the code for the scripts
+  QApplication::restoreOverrideCursor();
   int i = dialog.exec();
   if( i == QDialog::Rejected ) { return; }
 
