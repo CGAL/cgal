@@ -628,7 +628,7 @@ public:
     copy.assign_samples_brute_force(samples.begin(), samples.end());
     copy.reset_all_costs();
     cost = copy.compute_total_cost();
-    cost.set_number_of_samples (samples.size());
+    cost.set_total_weight (samples);
     restore_samples(samples.begin(), samples.end());
 
     if (m_verbose > 1) {
@@ -673,7 +673,7 @@ public:
   {
     if (m_tolerance == OTR_NO_TOLERANCE)
       return false;
-    double cost = std::sqrt (pedge.after() / pedge.number_of_samples());
+    double cost = std::sqrt (pedge.after() / pedge.total_weight());
     return cost > m_tolerance;
   }
 
@@ -688,7 +688,7 @@ public:
 
     FT before = before_cost.finalize(m_alpha);
     FT after = after_cost.finalize(m_alpha);
-    pedge = Rec_edge_2(edge, before, after, after_cost.number_of_samples());
+    pedge = Rec_edge_2(edge, before, after, after_cost.total_weight());
 
     if (is_above_tolerance (pedge))
       return false;
