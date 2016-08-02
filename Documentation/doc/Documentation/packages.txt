@@ -23,6 +23,7 @@ h1 {
 
 \package_listing{Matrix_search}
 \package_listing{QP_solver}
+\package_listing{Casting_2}
 
 \section PartKernels Geometry Kernels
 

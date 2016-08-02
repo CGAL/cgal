@@ -4,6 +4,7 @@
 #include <fstream>
 #include <algorithm>
 #include <utility>
+#include <cctype>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
@@ -103,7 +104,7 @@ int main(int argc, char* argv[])
     while (itr != str.begin()) {
       auto tmp = itr;
       --tmp;
-      if (*itr == 't') break;
+      if (!isspace(*itr)) break;
       str.erase(itr);
       itr = tmp;
     }

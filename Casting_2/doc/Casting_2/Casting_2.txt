@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_Casting_of_polygons
+\anchor Chapter_Castings_of_polygons
 
 \anchor chapterEnvelope2
 
@@ -10,6 +10,10 @@ namespace CGAL {
 \authors Shahar Shamai and Efif Fogel
 
 \section casting_sec_intro Introduction
+
+Casting is a manufacturing process where liquid material is poured
+into a mold having the shape of a desired product. After the material
+solidifies, the product is pulled out of the mold.
 
 \cgalExample{Casting_2/single_mold_translational_casting.cpp}
 
