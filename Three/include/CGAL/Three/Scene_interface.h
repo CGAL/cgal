@@ -45,13 +45,13 @@ class Scene_group_item;
  */
 enum RenderingMode { Points = 0,
                      PointsPlusNormals,
+                     ShadedPoints,
                      Splatting,
                      Wireframe, 
                      Flat,
                      FlatPlusEdges,
                      Gouraud,
-                     LastRenderingMode = Gouraud,
-                     NumberOfRenderingMode = LastRenderingMode+1 };
+                     NumberOfRenderingMode};
 
 
 namespace CGAL {

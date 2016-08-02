@@ -538,7 +538,7 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
 {
     return m==Points ||
             ( has_normals() &&
-              ( m==PointsPlusNormals || m==Splatting ) );
+              ( m==PointsPlusNormals || m==ShadedPoints || m==Splatting ) );
 }
 
 void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const
@@ -592,7 +592,7 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
       ratio_displayed = 3 * 300000. / (double)(d->nb_points + d->nb_selected_points);
 
     vaos[Scene_points_with_normal_item_priv::ThePoints]->bind();
-    if(has_normals())
+    if(has_normals() && renderingMode() == ShadedPoints)
     {
       d->program=getShaderProgram(PROGRAM_WITH_LIGHT);
       attribBuffers(viewer,PROGRAM_WITH_LIGHT);
@@ -604,13 +604,16 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
     }
     d->program->bind();
     d->program->setAttributeValue("colors", this->color());
+    if(renderingMode() != ShadedPoints)
+      d->program->setAttributeValue("normals", QVector3D(0,0,0));
+
     viewer->glDrawArrays(GL_POINTS, 0,
                          static_cast<GLsizei>(((std::size_t)(ratio_displayed * d->nb_points)/3)));
     vaos[Scene_points_with_normal_item_priv::ThePoints]->release();
     d->program->release();
 
     vaos[Scene_points_with_normal_item_priv::Selected_points]->bind();
-    if(has_normals())
+    if(has_normals() && renderingMode() == ShadedPoints)
     {
       d->program=getShaderProgram(PROGRAM_WITH_LIGHT);
       attribBuffers(viewer,PROGRAM_WITH_LIGHT);

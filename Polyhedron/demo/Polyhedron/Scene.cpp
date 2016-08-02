@@ -482,7 +482,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             }
             if(item.renderingMode() == Points  ||
-                    (!with_names && item.renderingMode() == PointsPlusNormals))
+                    (!with_names && item.renderingMode() == PointsPlusNormals)  ||
+                 (!with_names && item.renderingMode() == ShadedPoints))
             {
                 viewer->glDisable(GL_LIGHTING);
                 viewer->glPointSize(2.0f);
