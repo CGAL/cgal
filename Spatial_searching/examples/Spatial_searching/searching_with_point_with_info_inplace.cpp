@@ -9,8 +9,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
 
-typedef std::size_t Point;
-
 //definition of a non-mutable lvalue property map,
 //with the get function as a friend function to give it
 //access to the private member
@@ -19,7 +17,7 @@ class My_point_property_map{
 public:
   typedef Point_3 value_type;
   typedef const value_type& reference;
-  typedef Point key_type;
+  typedef std::size_t key_type;
   typedef boost::lvalue_property_map_tag category;  
 
   My_point_property_map(const std::vector<Point_3>& pts):points(pts){}
@@ -33,7 +31,7 @@ public:
 
 typedef CGAL::Random_points_in_cube_3<Point_3>                               Random_points_iterator;
 typedef CGAL::Search_traits_3<Kernel>                                        Traits_base;
-typedef CGAL::Search_traits_adapter<Point,My_point_property_map,Traits_base> Traits;
+typedef CGAL::Search_traits_adapter<std::size_t,My_point_property_map,Traits_base> Traits;
 
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits>                      K_neighbor_search;
