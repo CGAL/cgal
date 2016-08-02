@@ -531,7 +531,7 @@ void MainWindow::on_actionReconstruction_Wasserstein_tolerance_triggered()
 {
   bool ok;
   double tolerance = QInputDialog::getDouble(
-      this, tr("Wasserstein tolerance"), tr("Tolerance:"), 0.1, 0., 1000000., 2, &ok);
+      this, tr("Wasserstein tolerance"), tr("Tolerance:"), 0.01, 0., 1000000., 5, &ok);
   if (!ok) return;
 
   set_scene_options();
