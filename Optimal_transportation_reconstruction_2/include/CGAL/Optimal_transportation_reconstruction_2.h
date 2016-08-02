@@ -1503,7 +1503,7 @@ public:
     if the algorithm was prematurely ended because no more edge
     collapse was possible.
    */
-  void run_until(std::size_t np) {
+  bool run_until(std::size_t np) {
     m_tolerance = OTR_NO_TOLERANCE;
     CGAL::Real_timer timer;
     if (m_verbose > 0)
@@ -1536,7 +1536,7 @@ public:
     `false` if the algorithm was prematurely ended because no more
     edge collapse was possible.
    */
-  void run(const unsigned steps) {
+  bool run(const unsigned steps) {
     m_tolerance = OTR_NO_TOLERANCE;
     CGAL::Real_timer timer;
     if (m_verbose > 0)
