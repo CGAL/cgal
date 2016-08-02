@@ -10,6 +10,7 @@ GlViewer::GlViewer(QWidget *pParent)
   m_scene = NULL;
 
   m_view_points         = true;
+  m_view_tolerance      = false;
   m_view_vertices       = true;
   m_view_edges          = false;
   m_view_ghost_edges    = false;
