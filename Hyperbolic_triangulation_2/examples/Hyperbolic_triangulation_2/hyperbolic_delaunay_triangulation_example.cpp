@@ -29,6 +29,8 @@ int main()
   CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc(r);
   
   int n = 10000;
+  std::cout << "Number of points: " << n << std::endl;
+
   std::vector<Point_2> pts(n);
   std::vector<Point_2>::iterator ip;
   
@@ -38,20 +40,42 @@ int main()
     in_disc++;
   }
 
+  std::cout << "check for hyperbolic faces during insertion" << std::endl;
+
   timer.start();
   
-  Dt dt = Dt(Gt(r));
+  Dt dt_during = Dt(Gt(r));
   
   for(ip = pts.begin(); ip != pts.end(); ++ip) {
-    dt.insert(*ip);
+    dt_during.insert(*ip);
   }
   
   timer.stop();
   
-  std::cout << "Number of points: " << n << std::endl;
+  assert(dt_during.is_valid());
+
+  std::cout << "Number of vertices: " << dt_during.number_of_vertices() << std::endl;
   std::cout << "Time: " << timer.time() << std::endl;
   
   timer.reset();
+
+  timer.start();
+  
+  std::cout << "check for hyperbolic faces only at the end" << std::endl;
+
+  Dt dt_end = Dt(Gt(r));
+  
+  dt_end.insert(pts.begin(),pts.end());
+  
+  timer.stop();
+  
+  assert(dt_end.is_valid());
+
+  std::cout << "Number of vertices: " << dt_end.number_of_vertices() << std::endl;
+  std::cout << "Time: " << timer.time() << std::endl;
+  
+  timer.reset();
+  
                                                       
   return 0;
 }
