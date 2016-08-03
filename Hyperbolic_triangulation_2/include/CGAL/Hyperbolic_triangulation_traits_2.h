@@ -89,7 +89,7 @@ public:
       return _unit_circle;
     }
   
-  class Construct_segment_2
+  class Construct_hyperbolic_segment_2
   {
     typedef typename CGAL::Regular_triangulation_filtered_traits_2<R> Regular_geometric_traits_2;
     typedef typename Regular_geometric_traits_2::Construct_weighted_circumcenter_2 Construct_weighted_circumcenter_2;
@@ -97,7 +97,7 @@ public:
     typedef typename Regular_geometric_traits_2::Bare_point Bare_point;
     
   public:
-        Construct_segment_2(const Circle_2& c) : _unit_circle(c)
+        Construct_hyperbolic_segment_2(const Circle_2& c) : _unit_circle(c)
         {
         }
     
@@ -129,10 +129,18 @@ public:
     const Circle_2& _unit_circle;
   };
   
-  Construct_segment_2
-  construct_segment_2_object() const
+  Construct_hyperbolic_segment_2
+  construct_hyperbolic_segment_2_object() const
   {
-    return Construct_segment_2(_unit_circle);
+    return Construct_hyperbolic_segment_2(_unit_circle);
+  }
+
+  // wrong names kept for demo
+  typedef Construct_hyperbolic_segment_2 Construct_segment_2;
+  Construct_segment_2
+    construct_segment_2_object() const
+  {
+    return Construct_hyperbolic_segment_2(_unit_circle);
   }
   
   class Construct_circumcenter_2
