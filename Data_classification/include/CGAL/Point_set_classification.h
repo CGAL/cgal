@@ -37,6 +37,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
+#include <CGAL/Data_classification/Planimetric_grid.h>
 #include <CGAL/Data_classification/Image.h>
 #include <CGAL/Data_classification/Color.h>
 #include <CGAL/Data_classification/Segmentation_attribute.h>
@@ -163,7 +164,9 @@ methods.
 \tparam Kernel The geometric kernel used
 
 */
-template <typename Kernel>
+template <typename Kernel,
+          typename RandomAccessIterator,
+          typename PointPMap>
 class Point_set_classification
 {
 
@@ -181,23 +184,69 @@ public:
   
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
-  typedef Data_classification::Image<std::vector<int> > Image_indices;
-  typedef Data_classification::Image<bool> Image_bool;
+  typedef Data_classification::Planimetric_grid<Kernel,
+                                                RandomAccessIterator,
+                                                PointPMap> Grid;
   typedef Data_classification::Image<float> Image_float;
   typedef Data_classification::RGB_Color RGB_Color;
   typedef Data_classification::HSV_Color HSV_Color;
-  
-  struct HPoint {
-    Point position;
-    unsigned char echo; 
-    int ind_x;
-    int ind_y;
-    std::size_t group; 
-    unsigned char AE_label;
-    unsigned char neighbor;
-    double confidence;
-    RGB_Color color;
+
+  class Point_range
+  {
+    std::size_t m_size;
+    RandomAccessIterator m_begin;
+    PointPMap m_point_pmap;
+    
+  public:
+
+    Point_range (RandomAccessIterator begin, RandomAccessIterator end,
+                 PointPMap point_pmap)
+      : m_size (end - begin), m_begin (begin), m_point_pmap (point_pmap)
+    { }
+
+    std::size_t size() const { return m_size; }
+    
+    const Point& operator[] (std::size_t index) const { return get (m_point_pmap, *(m_begin + index)); }
+
+    RandomAccessIterator begin() { return m_begin; }
+    RandomAccessIterator end() { return m_begin + m_size; }
+
+    friend RandomAccessIterator operator+ (Point_range& range, std::size_t index)
+    {
+      return range.begin() + index;
+    }
   };
+  
+  class My_point_property_map{
+    Point_range& range;
+    
+  public:
+    typedef Point value_type;
+    typedef const value_type& reference;
+    typedef std::size_t key_type;
+    typedef boost::lvalue_property_map_tag category;  
+    My_point_property_map (Point_range& range) : range (range) { }
+    reference operator[] (key_type k) const { return range[k]; }
+    friend inline reference get (const My_point_property_map& ppmap, key_type i) 
+    { return ppmap[i]; }
+  };
+
+  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
+  typedef Search_traits_adapter <std::size_t, My_point_property_map, SearchTraits_3> Search_traits;
+  typedef CGAL::Kd_tree<Search_traits> Tree;
+  typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
+  typedef typename Neighbor_search::Tree KTree;
+  typedef typename Neighbor_search::Distance Distance;
+
+  Point_range m_input;
+  
+  std::vector<unsigned char> echo;
+  std::vector<std::size_t> m_group;
+  std::vector<unsigned char> m_assigned_type;
+  std::vector<unsigned char> m_neighbor;
+  std::vector<double> m_confidence;
+  std::vector<RGB_Color> color;
 
   struct Cluster
   {
@@ -207,39 +256,13 @@ public:
   };
 
   
-  class My_point_property_map{
-    const std::vector<HPoint>& points;
-  public:
-    typedef Point value_type;
-    typedef const value_type& reference;
-    typedef std::size_t key_type;
-    typedef boost::lvalue_property_map_tag category;  
-    My_point_property_map (const std::vector<HPoint>& pts) : points (pts) {}
-    reference operator[] (key_type k) const { return points[k].position; }
-    friend inline reference get (const My_point_property_map& ppmap, key_type i) 
-    { return ppmap[i]; }
-  };
-  
-  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
-  typedef Search_traits_adapter <std::size_t, My_point_property_map, SearchTraits_3> Search_traits;
-  typedef CGAL::Kd_tree<Search_traits> Tree;
-  typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
-  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree KTree;
-  typedef typename Neighbor_search::Distance Distance;
-
   std::vector<Classification_type*> segmentation_classes; 
   std::vector<Segmentation_attribute*> segmentation_attributes; 
 
   typedef Classification_type::Attribute_side Attribute_side;
   std::vector<std::vector<Attribute_side> > effect_table;
 
-  bool has_colors;
-  bool is_echo_given;
-  Iso_cuboid_3 BBox_scan;
-
-  std::vector<HPoint> HPS;
-  Image_indices grid_HPS;
+  Grid grid;
 
   //Hpoints attributes
   std::vector<Eigenvalues> eigenvalues;
@@ -248,7 +271,6 @@ public:
   std::vector<Plane> groups;
   std::vector<Cluster> clusters;
   
-  Image_bool Mask;                     //imagg
   Image_float DTM; //a enregistrer ?   //imagg           
 
   double m_grid_resolution;
@@ -262,8 +284,6 @@ public:
   
   /*! 
     \brief Constructs a classification object based on the input range.
-
-    \tparam InputIterator Iterator on the input point. Value type must be `Point_3<Kernel>`.
 
     \param begin Iterator to the first input point
 
@@ -281,12 +301,14 @@ public:
     higher than the thickest non-ground object of the scene). If the
     default value is used, it is computed as 5 times `radius_neighbors`.
   */ 
-  template <typename InputIterator>
-  Point_set_classification (InputIterator begin, InputIterator end,
+  Point_set_classification (RandomAccessIterator begin,
+                            RandomAccessIterator end,
+                            PointPMap point_pmap,
                             double grid_resolution = -1.,
                             double radius_neighbors = -1.,
                             double radius_dtm = -1.)
-    : m_grid_resolution (grid_resolution),
+    : m_input (begin, end, point_pmap),
+      m_grid_resolution (grid_resolution),
       m_radius_neighbors (radius_neighbors),
       m_radius_dtm (radius_dtm)
   {
@@ -297,22 +319,6 @@ public:
     if (m_radius_dtm < 0.)
       m_radius_dtm = 5 * m_grid_resolution;
 
-    for (InputIterator it = begin; it != end; ++ it)
-      {
-        HPS.push_back (HPoint());
-        HPS.back().position = *it;
-        HPS.back().echo = -1;
-        HPS.back().ind_x = -1;
-        HPS.back().ind_y = -1;
-        HPS.back().group = (std::size_t)(-1);
-        HPS.back().AE_label = (unsigned char)(-1);
-        HPS.back().neighbor = (unsigned char)(-1);
-        HPS.back().confidence = 0;
-        RGB_Color c = {{ 0, 0, 0 }};
-        HPS.back().color = c;
-      }
-    has_colors = false;
-    is_echo_given = false;
     m_multiplicative = false;
   }
 
@@ -350,9 +356,6 @@ public:
    */
   void initialization()
   {
-    clock_t t;
-    t = clock();
-
     CGAL_CLASSIFICATION_CERR << std::endl << "Initialization: ";
 
     //1-Neighborhood computation and reset the attributes of the structure points
@@ -360,120 +363,31 @@ public:
     eigenvalues.clear();
     planes.clear();
     
-    std::vector<Point> list_points;
-    for(int i=0;i<(int)HPS.size();i++){
-      Point pt=HPS[i].position;
-      list_points.push_back(pt);
-    }
-    
-    My_point_property_map pmap (HPS);
+    My_point_property_map pmap (m_input);
     Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (HPS.size()),
+               boost::counting_iterator<std::size_t> (m_input.size()),
                typename Tree::Splitter(),
                Search_traits (pmap));
 
     std::size_t nb_neigh = 0;
-    for(int i=0;i<(int)HPS.size();i++){
-      const Point& query=HPS[i].position;
-      std::vector<std::size_t> neighbors;
+    for (std::size_t i = 0; i < m_input.size(); i++)
+      {
+        const Point& query = m_input[i];
+
+        std::vector<std::size_t> neighbors;
       
-      Fuzzy_sphere fs(i, m_radius_neighbors, 0, tree.traits());
-      tree.search(std::back_inserter(neighbors), fs);
-      nb_neigh += neighbors.size();
-      std::vector<Point> neighborhood;
-      for (std::size_t j = 0; j < neighbors.size(); ++ j)
-        neighborhood.push_back (HPS[neighbors[j]].position);
+        Fuzzy_sphere fs (i, m_radius_neighbors, 0, tree.traits());
+        tree.search (std::back_inserter(neighbors), fs);
+        nb_neigh += neighbors.size();
         
-      compute_principal_curvature (query, neighborhood);
-    }
-
-    CGAL_CLASSIFICATION_CERR<<"ok";
-
-    //2-creation of the bounding box
-    CGAL_CLASSIFICATION_CERR<<", bounding box..";
-    BBox_scan = CGAL::bounding_box(list_points.begin(), list_points.end());
-    CGAL_CLASSIFICATION_CERR<<"ok";
-
-    //3-creation grille_points
-    CGAL_CLASSIFICATION_CERR<<", planimetric grid of HPS..";
-    Image_indices tess((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/m_grid_resolution)+1,
-                       (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/m_grid_resolution)+1);
-    grid_HPS=tess;
-
-    for(int i=0;i<(int)HPS.size();i++){
-
-      //for each 3D point, its coordinates in the grid are inserted in its Hpoint structure
-      HPS[i].ind_x=(int)((HPS[i].position.x()-BBox_scan.xmin())/m_grid_resolution);
-      HPS[i].ind_y=(int)((HPS[i].position.y()-BBox_scan.ymin())/m_grid_resolution);
-
-      //index of points are collected in grid_HPS
-      std::vector < int > temp;
-      temp=grid_HPS(HPS[i].ind_x,HPS[i].ind_y);
-      temp.push_back(i);
-      grid_HPS(HPS[i].ind_x,HPS[i].ind_y)=temp;
-    }
-    CGAL_CLASSIFICATION_CERR<<"ok";
-
-
-    //4-Mask creation
-    CGAL_CLASSIFICATION_CERR<<", planimetric mask..";
-    Image_bool masktp((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/m_grid_resolution)+1,
-                      (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/m_grid_resolution)+1);
-    Mask=masktp;
-
-    CGAL_CLASSIFICATION_CERR << "(" << Mask.height() << "x" << Mask.width() << ")" << std::endl;
-    int square=(int)16*(m_radius_neighbors/m_grid_resolution)+1;
-    int nb_true = 0;
-    for (int j=0;j<(int)Mask.height();j++){	
-      for (int i=0;i<(int)Mask.width();i++){	
-        //Mask(i,j)=false;
-        if(grid_HPS(i,j).size()>0) { Mask(i,j)=true; nb_true ++; }
-        else{Mask(i,j)=false;}
+        std::vector<Point> neighborhood;
+        for (std::size_t j = 0; j < neighbors.size(); ++ j)
+          neighborhood.push_back (m_input[j]);
+        
+        compute_principal_curvature (query, neighborhood);
       }
-    }
 
-    Image_bool Mask_tmp ((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/m_grid_resolution)+1,
-                         (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/m_grid_resolution)+1);
-
-    for (std::size_t i = 0; i < Mask.width(); ++ i)
-      for (std::size_t j = 0; j < Mask.height(); ++ j)
-        {
-          if(!Mask(i,j))
-            {
-              int squareYmin=std::max(0,(int)j-square);
-              int squareYmax=std::min((int)(Mask.height())-1,(int)j+square);
-
-              for (int k = squareYmin; k <= squareYmax; ++ k)
-                if (Mask(i,k))
-                  {
-                    Mask_tmp(i,j) = true;
-                    break;
-                  }
-            }
-          else
-            Mask_tmp(i,j) = true;
-        }
-
-    for (std::size_t i = 0; i < Mask.width(); ++ i)
-      for (std::size_t j = 0; j < Mask.height(); ++ j)
-        {
-          if(!Mask_tmp(i,j))
-            {
-              int squareXmin=std::max(0,(int)i-square);
-              int squareXmax=std::min((int)(Mask.width())-1,(int)i+square);
-
-              for (int k = squareXmin; k <= squareXmax; ++ k)
-                if (Mask_tmp(k,j))
-                  {
-                    Mask(i,j) = true;
-                    break;
-                  }
-            }
-          else
-            Mask(i,j) = true;
-        }
-
-    CGAL_CLASSIFICATION_CERR<<std::endl<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
+    CGAL_CLASSIFICATION_CERR<<"ok";
   }
 
 
@@ -554,43 +468,43 @@ public:
     // data term initialisation
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
-
     int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
-    for(int s=0;s<(int)HPS.size();s++){
+    for (std::size_t s = 0; s < m_input.size(); s++)
+      {
 			
-      int nb_class_best=0; 
+        int nb_class_best=0; 
 
-      double val_class_best = std::numeric_limits<double>::max();
-      std::vector<double> values;
+        double val_class_best = std::numeric_limits<double>::max();
+        std::vector<double> values;
       
-      for(std::size_t k = 0; k < effect_table.size(); ++ k)
-        {
-          double value = classification_value (k, s);
-          values.push_back (value);
+        for(std::size_t k = 0; k < effect_table.size(); ++ k)
+          {
+            double value = classification_value (k, s);
+            values.push_back (value);
           
-          if(val_class_best > value)
-            {
-              val_class_best = value;
-              nb_class_best=k;
-            }
-        }
+            if(val_class_best > value)
+              {
+                val_class_best = value;
+                nb_class_best=k;
+              }
+          }
 
-      HPS[s].AE_label = nb_class_best;
+        m_assigned_type[s] = nb_class_best;
 
-      std::sort (values.begin(), values.end());
-      if (m_multiplicative)
-        HPS[s].confidence = (values[1] - values[0]) / values[1];
-      else
-        HPS[s].confidence = values[1] - values[0];
+        std::sort (values.begin(), values.end());
+        if (m_multiplicative)
+          m_confidence[s] = (values[1] - values[0]) / values[1];
+        else
+          m_confidence[s] = values[1] - values[0];
 
-      if(nb_class_best==0) count1++;
-      else if(nb_class_best==1) count2++;
-      else if(nb_class_best==2) count3++;
-      else count4++;
+        if(nb_class_best==0) count1++;
+        else if(nb_class_best==1) count2++;
+        else if(nb_class_best==2) count3++;
+        else count4++;
 
-    }
+      }
     
-    CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
+    CGAL_CLASSIFICATION_CERR<<"ok"<<std::endl;
 	
     return true;
   }
@@ -604,16 +518,16 @@ public:
 
     std::vector<std::vector<double> > values
       (segmentation_classes.size(),
-       std::vector<double> (HPS.size(), -1.));
+       std::vector<double> (m_input.size(), -1.));
 
-    My_point_property_map pmap (HPS);
+    My_point_property_map pmap (m_input);
 
     Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (HPS.size()),
+               boost::counting_iterator<std::size_t> (m_input.size()),
                typename Tree::Splitter(),
                Search_traits (pmap));
 
-    for (std::size_t s=0; s < HPS.size(); ++ s)
+    for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
       
@@ -646,10 +560,10 @@ public:
               }
           }
 
-        HPS[s].AE_label = nb_class_best;
+        m_assigned_type[s] = nb_class_best;
 
         std::sort (mean.begin(), mean.end());
-        HPS[s].confidence = mean[1] - mean[0];      
+        m_confidence[s] = mean[1] - mean[0];      
 
       }
 
@@ -700,27 +614,27 @@ public:
 
     std::vector<std::vector<double> > values
       (segmentation_classes.size(),
-       std::vector<double> (HPS.size(), -1.));
+       std::vector<double> (m_input.size(), -1.));
 
-    My_point_property_map pmap (HPS);
+    My_point_property_map pmap (m_input);
 
     KTree tree (boost::counting_iterator<std::size_t> (0),
-                boost::counting_iterator<std::size_t> (HPS.size()),
+                boost::counting_iterator<std::size_t> (m_input.size()),
                 typename KTree::Splitter(),
                 Search_traits (pmap));
 
     GCoptimizationGeneralGraph<float, float> *gc= new GCoptimizationGeneralGraph<float, float>
-      ((int)HPS.size(),(int)(segmentation_classes.size()));
+      ((int)(m_input.size()),(int)(segmentation_classes.size()));
 
     gc->specializeDataCostFunctor(Facet_score(*this));
     gc->specializeSmoothCostFunctor(Edge_score(*this));
 
     Distance tr_dist(pmap);
-    for (std::size_t s=0; s < HPS.size(); ++ s)
+    for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
 
-        Neighbor_search search (tree, HPS[s].position, 12, 0, true, tr_dist);
+        Neighbor_search search (tree, m_input[s], 12, 0, true, tr_dist);
         for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++ it)
           gc->setNeighbors (s, it->first);
         
@@ -748,7 +662,7 @@ public:
 				
             // Compute vector of active sites
             std::vector<int> sites;
-            for (std::size_t s = 0; s < HPS.size(); ++ s)
+            for (std::size_t s = 0; s < m_input.size(); ++ s)
               sites.push_back ((int)s);
             
             // Compute alpha expansion for this label on these sites
@@ -756,8 +670,8 @@ public:
           }
       }
     
-    for (std::size_t s=0; s < HPS.size(); ++ s)
-      HPS[s].AE_label = gc->whatLabel (s);
+    for (std::size_t s=0; s < m_input.size(); ++ s)
+      m_assigned_type[s] = gc->whatLabel (s);
 
     delete gc;
       
@@ -767,162 +681,77 @@ public:
   void reset_groups()
   {
     groups.clear();
-    for (std::size_t i = 0; i < HPS.size(); ++ i)
-      HPS[i].group = (std::size_t)(-1);
+    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_group);
   }
 
   void cluster_points (const double& tolerance)
   {
-    if (clusters.empty())
-      {
-        My_point_property_map pmap (HPS);
-
-        Tree tree (boost::counting_iterator<std::size_t> (0),
-                   boost::counting_iterator<std::size_t> (HPS.size()),
-                   typename Tree::Splitter(),
-                   Search_traits (pmap));
-
-        std::vector<std::size_t> done (HPS.size(), (std::size_t)(-1));
-
-        for (std::size_t s=0; s < HPS.size(); ++ s)
-          HPS[s].neighbor = (unsigned char)(-1);
+    std::vector<unsigned char>(m_input.size(), (unsigned char)(-1)).swap (m_neighbor);
     
-        for (std::size_t s=0; s < HPS.size(); ++ s)
-          {
-            if (done[s] != (std::size_t)(-1))
-              continue;
-            unsigned char label = HPS[s].AE_label;
+    My_point_property_map pmap (m_input);
+
+    Tree tree (boost::counting_iterator<std::size_t> (0),
+               boost::counting_iterator<std::size_t> (m_input.size()),
+               typename Tree::Splitter(),
+               Search_traits (pmap));
+
+    std::vector<std::size_t> done (m_input.size(), (std::size_t)(-1));
+    
+    for (std::size_t s=0; s < m_input.size(); ++ s)
+      {
+        if (done[s] != (std::size_t)(-1))
+          continue;
+        unsigned char label = m_assigned_type[s];
         
-            clusters.push_back (Cluster());
+        clusters.push_back (Cluster());
 
-            std::queue<std::size_t> todo;
-            todo.push (s);
-            done[s] = clusters.size()-1;
+        std::queue<std::size_t> todo;
+        todo.push (s);
+        done[s] = clusters.size()-1;
 
-            while (!(todo.empty()))
+        while (!(todo.empty()))
+          {
+            std::size_t current = todo.front();
+            todo.pop();
+            clusters.back().indices.push_back (current);
+            
+            std::vector<std::size_t> neighbors;
+            Fuzzy_sphere fs(current, tolerance, 0, tree.traits());
+            tree.search(std::back_inserter(neighbors), fs);
+            
+            for (std::size_t n = 0; n < neighbors.size(); ++ n)
               {
-                std::size_t current = todo.front();
-                todo.pop();
-                clusters.back().indices.push_back (current);
-            
-                std::vector<std::size_t> neighbors;
-                Fuzzy_sphere fs(current, tolerance, 0, tree.traits());
-                tree.search(std::back_inserter(neighbors), fs);
-            
-                for (std::size_t n = 0; n < neighbors.size(); ++ n)
+                if (done[neighbors[n]] == (std::size_t)(-1))
                   {
-                    if (done[neighbors[n]] == (std::size_t)(-1))
+                    if (m_assigned_type[neighbors[n]] == label)
                       {
-                        if (HPS[neighbors[n]].AE_label == label)
-                          {
-                            todo.push (neighbors[n]);
-                            done[neighbors[n]] = clusters.size()-1;
-                          }
-                        else
-                          {
-                            HPS[current].neighbor = HPS[neighbors[n]].AE_label;
-                            HPS[neighbors[n]].neighbor = HPS[current].AE_label;
-                            continue;
-                          }
+                        todo.push (neighbors[n]);
+                        done[neighbors[n]] = clusters.size()-1;
                       }
-                    else if (done[neighbors[n]] != clusters.size()-1)
+                    else
                       {
-                        clusters.back().neighbors.insert (done[neighbors[n]]);
-                        clusters[done[neighbors[n]]].neighbors.insert (clusters.size()-1);
+                        m_neighbor[current] = m_assigned_type[neighbors[n]];
+                        m_neighbor[neighbors[n]] = m_assigned_type[current];
+                        continue;
                       }
+                  }
+                else if (done[neighbors[n]] != clusters.size()-1)
+                  {
+                    clusters.back().neighbors.insert (done[neighbors[n]]);
+                    clusters[done[neighbors[n]]].neighbors.insert (clusters.size()-1);
                   }
               }
           }
-        std::cerr << "Found " << clusters.size() << " cluster(s)" << std::endl;
-
-        for (std::size_t i = 0; i < clusters.size(); ++ i)
-          {
-            std::vector<Point> pts;
-            for (std::size_t j = 0; j < clusters[i].indices.size(); ++ j)
-              pts.push_back (HPS[clusters[i].indices[j]].position);
-            clusters[i].centroid = CGAL::centroid (pts.begin(), pts.end());
-        
-          }
       }
-    else
+    std::cerr << "Found " << clusters.size() << " cluster(s)" << std::endl;
+
+    for (std::size_t i = 0; i < clusters.size(); ++ i)
       {
-        std::size_t index_ground = 0;
-        std::size_t index_roof = 0;
-        std::size_t index_facade = 0;
-        std::size_t index_vege = 0;
-  
-        for (std::size_t i = 0; i < segmentation_classes.size(); ++ i)
-          if (segmentation_classes[i]->id() == "ground")
-            index_ground = i;
-          else if (segmentation_classes[i]->id() == "roof")
-            index_roof = i;
-          else if (segmentation_classes[i]->id() == "facade")
-            index_facade = i;
-          else if (segmentation_classes[i]->id() == "vegetation")
-            index_vege = i;
-
-        std::size_t min_ind = 0;
-        double min = 1.;
+        std::vector<Point> pts;
+        for (std::size_t j = 0; j < clusters[i].indices.size(); ++ j)
+          pts.push_back (m_input[clusters[i].indices[j]]);
+        clusters[i].centroid = CGAL::centroid (pts.begin(), pts.end());
         
-        for (std::size_t i = 0; i < clusters.size(); ++ i)
-          {
-            std::size_t nb_border = 0;
-            std::size_t nb_good = 0;
-
-            for (std::size_t n = 0; n < clusters[i].indices.size(); ++ n)
-              {
-                if (HPS[clusters[i].indices[n]].neighbor == (unsigned char)(-1))
-                  continue;
-
-                std::size_t c0 = HPS[clusters[i].indices[n]].AE_label;
-                std::size_t c1 = HPS[clusters[i].indices[n]].neighbor;
-                nb_border ++;
-                if ((c0 == index_ground && c1 == index_facade) || (c0 == index_facade && c1 == index_ground) ||
-                    (c0 == index_ground && c1 == index_vege) || (c0 == index_vege && c1 == index_ground) ||
-                    (c0 == index_facade && c1 == index_roof) || (c0 == index_roof && c1 == index_facade))
-                  nb_good ++;
-              }
-
-            if (nb_border == 0)
-              continue;
-
-            double ratio = nb_good / (double)nb_border;
-            if (ratio < min)
-              {
-                min = ratio;
-                min_ind = i;
-              }
-          }
-
-        std::cerr << "Found cluster " << min_ind << " with only " << (int)(100. * min) << "% of correct border." << std::endl;
-
-        std::vector<double> values (segmentation_classes.size(), 0.);
-        
-        for (std::size_t n = 0; n < clusters[min_ind].indices.size(); ++ n)
-          {
-            for (std::size_t i = 0; i < values.size(); ++ i)
-              values[i] += classification_value (i, clusters[min_ind].indices[n]);
-          }
-
-        std::size_t nb_class_best = 0;
-        double val_class_best = std::numeric_limits<double>::max();
-        
-        for (std::size_t i = 0; i < values.size(); ++ i)
-          {
-            if (i == HPS[clusters[min_ind].indices[0]].AE_label)
-              continue;
-
-            if (values[i] < val_class_best)
-              {
-                nb_class_best = i;
-                val_class_best = values[i];
-              }
-          }
-
-        for (std::size_t n = 0; n < clusters[min_ind].indices.size(); ++ n)
-          HPS[clusters[min_ind].indices[n]].AE_label = nb_class_best;
-        
-        clusters.clear();        
       }
 
   }
@@ -931,9 +760,9 @@ public:
   bool regularized_labeling_PC()
   {
     std::vector<std::vector<std::size_t> > groups;
-    for (std::size_t i = 0; i < HPS.size(); ++ i)
+    for (std::size_t i = 0; i < m_input.size(); ++ i)
       {
-        std::size_t index = HPS[i].group;
+        std::size_t index = m_group[i];
         if (index == (std::size_t)(-1))
           continue;
 
@@ -953,9 +782,9 @@ public:
     values.resize (segmentation_classes.size());
     
     std::map<Point, std::size_t> map_p2i;
-    for(int s=0;s<(int)HPS.size();s++)
+    for (std::size_t s = 0; s < m_input.size(); s++)
       {
-        map_p2i[HPS[s].position] = s;
+        map_p2i[m_input[s]] = s;
 
         int nb_class_best=0; 
         double val_class_best = std::numeric_limits<double>::max();
@@ -970,7 +799,7 @@ public:
                 val_class_best = v;
               }
           }
-        HPS[s].AE_label = nb_class_best;
+        m_assigned_type[s] = nb_class_best;
       }
 
     for(std::size_t i = 0; i < groups.size(); ++ i)
@@ -996,22 +825,22 @@ public:
 
         for (std::size_t n = 0; n < groups[i].size(); ++ n)
           {
-            HPS[groups[i][n]].AE_label = nb_class_best;
+            m_assigned_type[groups[i][n]] = nb_class_best;
             for (std::size_t j = 0; j < mean.size(); ++ j)
               values[j][groups[i][n]] = mean[j] / groups[i].size();
           }
       }
 
-    My_point_property_map pmap (HPS);
+    My_point_property_map pmap (m_input);
 
     Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (HPS.size()),
+               boost::counting_iterator<std::size_t> (m_input.size()),
                typename Tree::Splitter(),
                Search_traits (pmap));
 
-    for (std::size_t s=0; s < HPS.size(); ++ s)
+    for (std::size_t s=0; s < m_input.size(); ++ s)
       {
-        if (HPS[s].group != (std::size_t)(-1))
+        if (m_group[s] != (std::size_t)(-1))
           continue;
         
         std::vector<std::size_t> neighbors;
@@ -1036,10 +865,10 @@ public:
               }
           }
 
-        HPS[s].AE_label = nb_class_best;
+        m_assigned_type[s] = nb_class_best;
 
         std::sort (mean.begin(), mean.end());
-        HPS[s].confidence = mean[1] - mean[0];      
+        m_confidence[s] = mean[1] - mean[0];      
 
       }
     
@@ -1069,11 +898,14 @@ public:
     build_effect_table ();
 	
     CGAL_CLASSIFICATION_CERR<<std::endl<<"Classification of the point cloud: ";
+
+    // Reset data structure
+    std::vector<unsigned char>(m_input.size()).swap (m_assigned_type);
+    std::vector<double>(m_input.size()).swap (m_confidence);
     
     if (method == 0)
       quick_labeling_PC();
     else if (method == 1)
-      //      smoothed_labeling_PC();
       graphcut_labeling_PC();
     else if (method == 2)
       regularized_labeling_PC();
@@ -1105,9 +937,6 @@ public:
   /// \endcond
 
 
-
-#ifdef DOXYGEN_RUNNING
-
   /// \name Types and attributes
   /// @{
   
@@ -1115,17 +944,29 @@ public:
     \brief Add a classification type
     \param type Pointer to the classification type object
    */
-  void add_classification_type (Classification_type* type);
+  void add_classification_type (Classification_type* type)
+  {
+    segmentation_classes.push_back (type);
+  }
 
-  void clear_classification_types ();
+  void clear_classification_types ()
+  {
+    segmentation_classes.clear();
+  }
 
   /*!
     \brief Add a segmentation attribute
     \param attribute Pointer to the attribute object
    */
-  void add_segmentation_attribute (Segmentation_attribute* attribute);
+  void add_segmentation_attribute (Segmentation_attribute* attribute)
+  {
+    segmentation_attributes.push_back (attribute);
+  }
 
-  void clear_segmentation_attributes ();
+  void clear_segmentation_attributes ()
+  {
+    segmentation_attributes.clear();
+  }
   
   /// @}
 
@@ -1142,12 +983,19 @@ public:
     \param point_index Index of the point in the input range
     \param group_index Index of the group
    */
-  void add_to_group (std::size_t point_index, std::size_t group_index);
+  void add_to_group (std::size_t point_index, std::size_t group_index)
+  {
+    m_group[point_index] = group_index;
+  }
 
   /*!
     \brief Reset all groups attributes of points
    */
-  void clear_groups();
+  void clear_groups()
+  {
+    m_group.clear();
+    groups.clear();
+  }
 
   /// @}
   
@@ -1160,11 +1008,13 @@ public:
     \param index Index of the input point
     \return Pointer to the classification type 
   */
-  Classification_type* classification_type_of (std::size_t index) const;
+  Classification_type* classification_type_of (std::size_t index) const
+  {
+    return segmentation_attributes[m_assigned_type[index]];
+  }
 
   /// @}
 
-#endif
 
 
 };
