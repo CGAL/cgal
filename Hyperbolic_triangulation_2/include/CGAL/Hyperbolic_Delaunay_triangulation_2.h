@@ -78,10 +78,11 @@ private:
 };
     
 template < class Gt, 
-           class Tds = Triangulation_data_structure_2 <
+  class Tds = Triangulation_data_structure_2 <
                            Triangulation_vertex_base_2<Gt>, 
                            Triangulation_face_base_with_info_2<Hyperbolic_face_info_2, Gt> > >
-class Hyperbolic_Delaunay_triangulation_2 : public Delaunay_triangulation_2<Gt,Tds>
+  class Hyperbolic_Delaunay_triangulation_2 
+  : public Delaunay_triangulation_2<Gt,Tds>
 {
 public:
   typedef Hyperbolic_Delaunay_triangulation_2<Gt, Tds> Self;
@@ -113,7 +114,7 @@ public:
   typedef Gt Geom_traits;
   typedef typename Geom_traits::FT            FT;
   typedef typename Geom_traits::Point_2       Point;
-  typedef typename Geom_traits::Segment_2     Segment;
+  typedef typename Geom_traits::Hyperbolic_segment_2     Segment;
   
   /*
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
