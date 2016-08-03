@@ -493,6 +493,41 @@ case_4:
   split_graph_into_polylines(graph, visitor);
 }
 
+template <typename P,
+          typename PolylineInputIterator>
+void
+polylines_to_protect(std::vector<std::vector<P> >& polylines,
+                     PolylineInputIterator existing_polylines_begin,
+                     PolylineInputIterator existing_polylines_end)
+{
+  typedef P Point_3;
+  typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, Point_3> Graph;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
+
+  Graph graph;
+  internal::Mesh_3::Graph_manipulations<Graph, Point_3> g_manip(graph);
+
+  for (PolylineInputIterator poly_it = existing_polylines_begin;
+       poly_it != existing_polylines_end; ++poly_it)
+  {
+    Polyline polyline = *poly_it;
+    if (polyline.size() < 2)
+      continue;
+
+    typename Polyline::iterator pit = polyline.begin();
+    while (boost::next(pit) != polyline.end())
+    {
+      vertex_descriptor v = g_manip.get_vertex(*pit);
+      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit));
+      g_manip.try_add_edge(v, w);
+      ++pit;
+    }
+  }
+
+  Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
+  split_graph_into_polylines(graph, visitor);
+}
 
 template <typename P, typename Image_word_type, typename Null_subdomain_index>
 void
