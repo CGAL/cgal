@@ -6,9 +6,29 @@ using Triangulation_face_base_with_info_2<Hyperbolic_face_info_2>
 in order to allow users to use
 Triangulation_face_base_with_info_2 to add info in their faces 
 
-operator == for triangulations
+add operator == for triangulations
 
 radius should be 1 !!!
+
+
+** clean approximations
+
+the construction of the (hyperbolic) segment should not be approximated in the traits
+the approximation should be done for the demo only
+
+similar: clean find_intersection
+(using the circular kernel will do)
+
+fix construct_circumcenter. no approx allowed
+(again, CK will do)
+
+CK, or at least Cartesian with sqrt (?)
+
+** demo
+create an adapted Graphicsitem that does not require finite_* stuff. Replace by hyperbolic_*
+       => understand apply_to_range
+the graphicsitem should also not require Segment_2 or Line_segment_2 (does it?)
+
 
 ========== code
 
@@ -27,6 +47,7 @@ because Do_intersect is in the Circular_kernel
 
 Done. CGAL::do_intersect is a solution. 
 No need for the Circular_kernel.
+--> (MT) wrong for constrcutions. Approximations are used in several places. 
 
 --- iterators
 - Finite_faces_iterator should return only faces marked HYPERBOLIC
