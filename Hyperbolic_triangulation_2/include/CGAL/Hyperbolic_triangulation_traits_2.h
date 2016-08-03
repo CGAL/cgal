@@ -81,13 +81,13 @@ public:
     
 private:
   // Poincaré disk
-  const Circle_2 _unit_circle;
+    const Circle_2 _unit_circle;
   
 public:
-  const Circle_2& unit_circle() const
-  {
-    return _unit_circle;
-  }
+    const Circle_2& unit_circle() const
+    {
+      return _unit_circle;
+    }
   
   class Construct_segment_2
   {
@@ -97,19 +97,20 @@ public:
     typedef typename Regular_geometric_traits_2::Bare_point Bare_point;
     
   public:
-    Construct_segment_2(const Circle_2& c) : _unit_circle(c)
-    {
-    }
+        Construct_segment_2(const Circle_2& c) : _unit_circle(c)
+        {
+        }
     
     Hyperbolic_segment_2 operator()(const Point_2& p, const Point_2& q) const
     {
-      if(Euclidean_collinear_2()(p, q, _unit_circle.center())){
+      Origin o;
+      if(Euclidean_collinear_2()(p, q, Point_2(o))){
         return Euclidean_segment_2(p, q);
       }
       
       Weighted_point_2 wp(p);
       Weighted_point_2 wq(q);
-      Weighted_point_2 wo(_unit_circle.center(), _unit_circle.squared_radius());
+      Weighted_point_2 wo(Point_2(o), FT(1)); // Poincaré circle 
       
       Bare_point center = Construct_weighted_circumcenter_2()(wp, wo, wq);
       FT radius = Compute_squared_Euclidean_distance_2()(p, center);
@@ -151,16 +152,16 @@ public:
       // circle must be inside the unit one
       assert(CGAL::do_intersect(_unit_circle, circle) == false);
       
-      if(circle.center() <= _unit_circle.center() && circle.center() >= _unit_circle.center()){
-        return _unit_circle.center();
-      }
-      
+      Origin o; 
+      Point_2 po = Point_2(o);
+      if (circle.center() == po)
+	{ return po; }
+
       FT x0 = circle.center().x(), y0 = circle.center().y();
       // a*alphaˆ2 + b*alpha + c = 0;
       FT a = x0*x0 + y0*y0;
-      FT b = a - circle.squared_radius() + _unit_circle.squared_radius();
-      FT c = _unit_circle.squared_radius();
-      FT D = b*b - 4*a*c;
+      FT b = a - circle.squared_radius() + FT(1); // Poincare disc has radius 1
+      FT D = b*b - 4*a*FT(1);
       
       FT alpha = (b - CGAL::sqrt(to_double(D)))/(2*a);
       
@@ -234,8 +235,9 @@ public:
       // At present time, in this case the bisector is supported by the line.
       
       Compute_squared_Euclidean_distance_2 dist = Compute_squared_Euclidean_distance_2();
-      Point_2 origin = _unit_circle.center();
-      FT dif = dist(origin, p) - dist(origin, q);
+      Origin o; 
+      Point_2 po = Point_2(o);
+      FT dif = dist(po, p) - dist(po, q);
       FT eps = 0.0000000001;
       
       // Bisector is straight in euclidean sense
@@ -275,11 +277,11 @@ public:
       // xˆ2 + yˆ2 - rˆ2 = Rˆ2, where R - is a radius of the given unit circle
       FT op = p.x()*p.x() + p.y()*p.y();
       FT oq = q.x()*q.x() + q.y()*q.y();
-      FT alpha = (_unit_circle.squared_radius() - oq) / (op - oq);
+      FT alpha = (FT(1) - oq) / (op - oq); // Poincare disc has radius 1
       
       FT x = alpha*p.x() + (1-alpha)*q.x();
       FT y = alpha*p.y() + (1-alpha)*q.y();
-      FT radius = x*x + y*y - _unit_circle.squared_radius();
+      FT radius = x*x + y*y - FT(1);
       
       //improve
       Euclidean_line_2 l = Construct_Euclidean_bisector_2()(p, q);
@@ -292,7 +294,7 @@ public:
       return Circle_2(Point_2(x, y), radius, COUNTERCLOCKWISE);
     }
     
-    // Find intersection of an input circle orthogonal to the Poincaré disk
+    // Find intersection of an input circle orthogonal to the Poincare disk
     // and the circle representing this disk
     
     // TODO: sqrt(to_double()?)
@@ -302,20 +304,22 @@ public:
       
       // axˆ2 + 2bˆx + c = 0;
       FT a = x*x + y*y;
-      FT b = -_unit_circle.squared_radius() * x;
-      FT c = _unit_circle.squared_radius()*_unit_circle.squared_radius() - _unit_circle.squared_radius()*y*y;
+      /* FT b = -_unit_circle.squared_radius() * x; */
+      /* FT c = _unit_circle.squared_radius()*_unit_circle.squared_radius() - _unit_circle.squared_radius()*y*y; */
+      FT b = -x;
+      FT c = 1-y*y;
       assert(b*b - a*c > 0);
       FT D = CGAL::sqrt(to_double(b*b - a*c));
       
       FT x1 = (-b - D)/a;
       FT x2 = (-b + D)/a;
-      FT y1 = (_unit_circle.squared_radius() - x1*x)/y;
-      FT y2 = (_unit_circle.squared_radius() - x2*x)/y;
+      FT y1 = (FT(1) - x1*x)/y;
+      FT y2 = (FT(1) - x2*x)/y;
       
       return std::make_pair(Point_2(x1, y1), Point_2(x2, y2));
     }
     
-    // Find intersection of an input line orthogonal to the Poincaré disk
+    // Find intersection of an input line orthogonal to the Poincare disk
     // and the circle representing this disk
     
     // TODO: sqrt(to_double()?)
@@ -325,7 +329,7 @@ public:
       Vector_2 v = l.to_vector();
       
       // normalize the vector
-      FT squared_coeff = _unit_circle.squared_radius()/v.squared_length();
+      FT squared_coeff = FT(1)/v.squared_length();
       FT coeff = CGAL::sqrt(to_double(squared_coeff));
       
       Point_2 p1(coeff*v.x(), coeff*v.y());
