@@ -15,6 +15,16 @@ Casting is a manufacturing process where liquid material is poured
 into a mold having the shape of a desired product. After the material
 solidifies, the product is pulled out of the mold.
 
+This package provides a function that ....
+The input polygon must satisfy two conditions as follows. First, it
+has to be simple. Essentially, a simple polygon is topologically
+equivalent to a disk; see Chapter \ref
+Chapter_2D_Regularized_Boolean_Set-Operations "2D Regularized Boolean
+Set-Operations" for the precise definition of simple
+polygons. Secondly, not consecuitive three vertices can be linear. If
+you suspect that the input polygon may not satisfy the latter
+condition, pre-process the polygon to elliminate this ill-condition.
+
 \cgalExample{Casting_2/single_mold_translational_casting.cpp}
 
 */
