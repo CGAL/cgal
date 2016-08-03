@@ -32,49 +32,49 @@ namespace CGAL {
 class Hyperbolic_face_info_2
 {
 public:
-  Hyperbolic_face_info_2() : _is_finite_invisible(false), _invisible_edge(UCHAR_MAX)
+  Hyperbolic_face_info_2() : _is_finite_non_hyperbolic(false), _non_hyperbolic_edge(UCHAR_MAX)
   {
   }
   
-  bool is_finite_invisible() const
+  bool is_finite_non_hyperbolic() const
   {
-    return _is_finite_invisible;
+    return _is_finite_non_hyperbolic;
   }
   
-  void set_finite_invisible(bool is_finite_invisible)
+  void set_finite_non_hyperbolic(bool is_finite_non_hyperbolic)
   {
-    _is_finite_invisible = is_finite_invisible;
+    _is_finite_non_hyperbolic = is_finite_non_hyperbolic;
   }
   
-  // Supposed to be called before "get_invisible_edge"
-  bool has_invisible_edge() const
+  // Supposed to be called before "get_non_hyperbolic_edge"
+  bool has_non_hyperbolic_edge() const
   {
-    return _invisible_edge <= 2;
+    return _non_hyperbolic_edge <= 2;
   }
   
-  // Higly recommended to call "has_invisible_edge" before 
-  unsigned char get_invisible_edge() const
+  // Higly recommended to call "has_non_hyperbolic_edge" before 
+  unsigned char get_non_hyperbolic_edge() const
   {
-    assert(_is_finite_invisible);
-    assert(_invisible_edge <= 2);
+    assert(_is_finite_non_hyperbolic);
+    assert(_non_hyperbolic_edge <= 2);
     
-    return _invisible_edge;
+    return _non_hyperbolic_edge;
   }
   
-  void set_invisible_edge(unsigned char invisible_edge)
+  void set_non_hyperbolic_edge(unsigned char non_hyperbolic_edge)
   {
-    assert(_is_finite_invisible);
-    assert(invisible_edge <= 2); 
+    assert(_is_finite_non_hyperbolic);
+    assert(non_hyperbolic_edge <= 2); 
     
-    _invisible_edge = invisible_edge;
+    _non_hyperbolic_edge = non_hyperbolic_edge;
   }
   
 private:
-  // a face is invisible if its circumscribing circle intersects the circle at infinity
-  bool _is_finite_invisible;
+  // a finite face is non_hyperbolic if its circumscribing circle intersects the circle at infinity
+  bool _is_finite_non_hyperbolic;
   
-  // defined only if the face is finite and invisible
-  unsigned char _invisible_edge;
+  // defined only if the face is finite and non_hyperbolic
+  unsigned char _non_hyperbolic_edge;
 };
     
 template < class Gt, 
@@ -181,7 +181,7 @@ public:
   {
     size_type n = Base::insert(first, last);
     
-    mark_faces();
+    mark_finite_non_hyperbolic_faces();
     
     return n;
   }
@@ -220,32 +220,41 @@ public:
   {
     return Base::is_infinite(v);
   }
-  
-  bool is_infinite(Face_handle f) const
+
+  bool is_non_hyperbolic(Face_handle f) const
   {
-    return has_infinite_vertex(f) || is_finite_invisible(f);
+    return has_infinite_vertex(f) || is_finite_non_hyperbolic(f);
   }
   
-  bool is_infinite(Face_handle f, int i) const 
+  bool is_non_hyperbolic(Face_handle f, int i) const 
   {
-    return has_infinite_vertex(f, i) || is_finite_invisible(f, i);
+    return has_infinite_vertex(f, i) || is_finite_non_hyperbolic(f, i);
   }
   
-  bool is_infinite(const Edge& e) const 
+  bool is_non_hyperbolic(const Edge& e) const 
   {
-    return is_infinite(e.first, e.second);
+    return is_non_hyperbolic(e.first, e.second);
   }
   
-  bool is_infinite(const Edge_circulator& ec) const 
+  bool is_non_hyperbolic(const Edge_circulator& ec) const 
   {
-    return is_infinite(*ec);
+    return is_non_hyperbolic(*ec);
   }
   
-  bool is_infinite(const All_edges_iterator& ei) const 
+  bool is_non_hyperbolic(const All_edges_iterator& ei) const 
   {
-    return is_infinite(*ei);
+    return is_non_hyperbolic(*ei);
   }
   
+  // is_infinite functions are kept in order to reuse Triangulation_2 demo :
+  //              apply_to_range is called by Qt/TriangulationGraphicsItem.h  
+  // TODO: document that is_infinite functions are not inherited from Triangulation_2
+  bool is_infinite(Face_handle f) const { return is_non_hyperbolic(f); }
+  bool is_infinite(Face_handle f, int i) const { return is_non_hyperbolic(f,i); }
+  bool is_infinite(const Edge e) const { return is_non_hyperbolic(e); }
+  bool is_infinite(const Edge_circulator& ec) const { return is_non_hyperbolic(ec); }
+  bool is_infinite(const All_edges_iterator& ei) const { return is_non_hyperbolic(ei); }
+
 private:
   
   bool has_infinite_vertex(Face_handle f) const
@@ -263,25 +272,25 @@ private:
     return Base::is_infinite(e);
   }
   
-  int get_finite_invisible_edge(Face_handle f) const
+  int get_finite_non_hyperbolic_edge(Face_handle f) const
   {
-    assert(is_finite_invisible(f));
+    assert(is_finite_non_hyperbolic(f));
     
-    return f->info().get_invisible_edge(); 
+    return f->info().get_non_hyperbolic_edge(); 
   }
   
-  bool is_finite_invisible(Face_handle f) const
+  bool is_finite_non_hyperbolic(Face_handle f) const
   {
-    return f->info().is_finite_invisible();
+    return f->info().is_finite_non_hyperbolic();
   }
   
-  bool is_finite_invisible(Face_handle f, int i) const
+  bool is_finite_non_hyperbolic(Face_handle f, int i) const
   {
     if(this->dimension() <= 1) {
       return false;
     }
     
-    if(is_finite_invisible(f) && get_finite_invisible_edge(f) == i) {
+    if(is_finite_non_hyperbolic(f) && get_finite_non_hyperbolic_edge(f) == i) {
       return true;
     }
     
@@ -289,20 +298,20 @@ private:
     Face_handle f2 = f->neighbor(i);
     int i2 =  f2->index(f);
     
-    if(is_finite_invisible(f2) && get_finite_invisible_edge(f2) == i2) {
+    if(is_finite_non_hyperbolic(f2) && get_finite_non_hyperbolic_edge(f2) == i2) {
       return true;
     }
     
     return false;
   }
   
-  bool is_finite_invisible(const Edge& e) const
+  bool is_finite_non_hyperbolic(const Edge& e) const
   {
-    return is_finite_invisible(e.first, e.second);
+    return is_finite_non_hyperbolic(e.first, e.second);
   }
   
-  // Depth-first search (dfs) and marking the finite invisible faces.
-  void mark_faces() const
+  // Depth-first search (dfs) and marking the finite non_hyperbolic faces.
+  void mark_finite_non_hyperbolic_faces() const
   {
     if(this->dimension() <= 1) return;
       
@@ -321,7 +330,7 @@ private:
     // put the element whose neighbors we are going to explore.
     backtrack.push(current);
     
-    // test whether a face is finite invisible or not
+    // test whether a face is finite non_hyperbolic or not
     Mark_face test(*this);
     
     Face_handle next;
@@ -344,8 +353,8 @@ private:
         visited_faces.insert(next);
         mark_face(next, test);
         
-        // go deeper if the neighbor is infinite
-        if(is_infinite(next)) {
+        // go deeper if the neighbor is non_hyperbolic
+        if(is_non_hyperbolic(next)) {
           backtrack.push(next);
           break;
         }
@@ -379,7 +388,7 @@ private:
       next = f->neighbor(ccw(i));  // turn ccw around v
       
       opposite_face = f->neighbor(i);
-      if(this->is_infinite(opposite_face)) {
+      if(this->is_non_hyperbolic(opposite_face)) {
         return false;
       }
       
@@ -437,7 +446,7 @@ private:
       
       Face_info info;
       if(_tr.has_infinite_vertex(f)) {
-        return info;
+        return info; // info is set to false by default constructor
       }
       
       Point p0 = f->vertex(0)->point();
@@ -448,12 +457,13 @@ private:
       Is_hyperbolic is_hyperbolic = _tr.geom_traits().Is_hyperbolic_object();
       if(is_hyperbolic(p0, p1, p2, ind) == false) {
         
-        info.set_finite_invisible(true);
-        info.set_invisible_edge(ind);
+        info.set_finite_non_hyperbolic(true);
+        info.set_non_hyperbolic_edge(ind);
         
         return info;
       }
       
+      // the face is finite and hyperbolic
       return info;
     }
     
@@ -467,87 +477,101 @@ private:
   
 public:
   // This class is used to generate the Finite_*_iterators.
-  class Infinite_hyperbolic_tester
+  class Non_hyperbolic_tester
   {
     const Self *t;
   public:
-    Infinite_hyperbolic_tester() {}
-    Infinite_hyperbolic_tester(const Self *tr)	  : t(tr) {}
+    Non_hyperbolic_tester() {}
+    Non_hyperbolic_tester(const Self *tr)	  : t(tr) {}
     
     bool operator()(const All_vertices_iterator & vit) const  {
       return t->is_infinite(vit);
     }
     bool operator()(const All_faces_iterator & fit) const {
-      return t->is_infinite(fit);
+      return t->is_non_hyperbolic(fit);
     }
     bool operator()(const All_edges_iterator & eit ) const {
-      return t->is_infinite(eit);
+      return t->is_non_hyperbolic(eit);
     }
   };
   
-  Infinite_hyperbolic_tester
-  infinite_hyperbolic_tester() const
+  Non_hyperbolic_tester
+  non_hyperbolic_tester() const
   {
-    return Infinite_hyperbolic_tester(this);
+    return Non_hyperbolic_tester(this);
   }
   
-  //Finite faces iterator
-  
-  class Finite_faces_iterator
-  : public Filter_iterator<All_faces_iterator, Infinite_hyperbolic_tester> 
+  class Hyperbolic_faces_iterator
+  : public Filter_iterator<All_faces_iterator, Non_hyperbolic_tester> 
   {
-    typedef Filter_iterator<All_faces_iterator, Infinite_hyperbolic_tester> Base;
-    typedef Finite_faces_iterator                           Self;
+    typedef Filter_iterator<All_faces_iterator, Non_hyperbolic_tester> Base;
+    typedef Hyperbolic_faces_iterator                           Self;
   public:
-    Finite_faces_iterator() : Base() {}
-    Finite_faces_iterator(const Base &b) : Base(b) {}
+    Hyperbolic_faces_iterator() : Base() {}
+    Hyperbolic_faces_iterator(const Base &b) : Base(b) {}
     Self & operator++() { Base::operator++(); return *this; }
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
     operator const Face_handle() const { return Base::base(); }
   };
-  
-  Finite_faces_iterator
-  finite_faces_begin() const
+
+  Hyperbolic_faces_iterator
+  hyperbolic_faces_begin() const
   {
     if ( this->dimension() < 2 )
-      return finite_faces_end();
+      return hyperbolic_faces_end();
     return CGAL::filter_iterator(this->all_faces_end(),
-                                 Infinite_hyperbolic_tester(this),
+                                 Non_hyperbolic_tester(this),
                                  this->all_faces_begin() );
   } 
-  
-  Finite_faces_iterator
-  finite_faces_end() const
+
+  Hyperbolic_faces_iterator
+  hyperbolic_faces_end() const
   {
     return CGAL::filter_iterator(this->all_faces_end(),
-                                 Infinite_hyperbolic_tester(this)   );
+                                 Non_hyperbolic_tester(this)   );
   }
+
+  typedef Filter_iterator<All_edges_iterator, Non_hyperbolic_tester> Hyperbolic_edges_iterator;
   
-  //Finite edges iterator
-  
-  typedef Filter_iterator<All_edges_iterator, 
-  Infinite_hyperbolic_tester>
-  Finite_edges_iterator;
-  
-  Finite_edges_iterator
-  finite_edges_begin() const
+  Hyperbolic_edges_iterator
+  hyperbolic_edges_begin() const
   {
     if ( this->dimension() < 1 )
-      return finite_edges_end();
+      return hyperbolic_edges_end();
     return CGAL::filter_iterator(this->all_edges_end(),
-                                 infinite_hyperbolic_tester(),
+                                 Non_hyperbolic_tester(this),
                                  this->all_edges_begin());
   }
   
-  Finite_edges_iterator
-  finite_edges_end() const
+  Hyperbolic_edges_iterator
+  hyperbolic_edges_end() const
   {
     return CGAL::filter_iterator(this->all_edges_end(),
-                                 infinite_hyperbolic_tester() );
+                                 Non_hyperbolic_tester(this) );
   }
+
+  size_type number_of_hyperbolic_faces() const
+  {
+    return std::distance(hyperbolic_faces_begin(), hyperbolic_faces_end());
+  }
+
+  size_type number_of_hyperbolic_edges() const
+  {
+    return std::distance(hyperbolic_edges_begin(), hyperbolic_edges_end());
+  }
+
+  // Finite faces/edges iterators kept for the demo in order to reuse Triangulation_2 demo (see above)
+  // TODO: document that they are not inherited from Triangulation_2
+  typedef Hyperbolic_faces_iterator Finite_faces_iterator;
+  Finite_faces_iterator finite_faces_begin() const { return hyperbolic_faces_begin(); }
+  Finite_faces_iterator finite_faces_end() const { return hyperbolic_faces_end(); }
+  typedef Hyperbolic_edges_iterator Finite_edges_iterator;
+  Finite_edges_iterator finite_edges_begin() const { return hyperbolic_edges_begin(); }
+  Finite_edges_iterator finite_edges_end() const { return hyperbolic_edges_end(); }
   
+
   using Base::dual;
   
   Object
@@ -559,7 +583,7 @@ public:
   Object
   dual(const Edge &e) const
   {
-    CGAL_triangulation_precondition (!this->is_infinite(e));
+    CGAL_triangulation_precondition (!this->is_non_hyperbolic(e));
     
     if(this->dimension() == 1) {
       const Point& p = (e.first)->vertex(cw(e.second))->point();
@@ -577,8 +601,8 @@ public:
     Face_handle f2 = f1->neighbor(i1);
     int i2 = f2->index(f1);
     
-    // boths faces are infinite, but the incident edge is finite
-    if(is_infinite(f1) && is_infinite(f2)){
+    // boths faces are non_hyperbolic, but the incident edge is hyperbolic
+    if(is_non_hyperbolic(f1) && is_non_hyperbolic(f2)){
       const Point& p = (f1)->vertex(cw(i1))->point();
       const Point& q = (f1)->vertex(ccw(i1))->point();
       
@@ -588,7 +612,7 @@ public:
     }
     
     // both faces are finite
-    if(!is_infinite(f1) && !is_infinite(f2)) {
+    if(!is_non_hyperbolic(f1) && !is_non_hyperbolic(f2)) {
       
       Segment s = this->geom_traits().construct_segment_2_object()
       (dual(f1),dual(f2));
@@ -596,11 +620,11 @@ public:
       return make_object(s);
     }
     
-    // one of the incident faces is infinite
+    // one of the incident faces is non_hyperbolic
     Face_handle finite_face = f1;
     int i = i1;
     
-    if(is_infinite(f1)) {
+    if(is_non_hyperbolic(f1)) {
       finite_face = f2;
       i = i2;
     }

@@ -1,6 +1,8 @@
 #include <fstream>
 
 // CGAL headers
+#include <CGAL/IO/io.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
@@ -23,22 +25,34 @@ typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt> Dt;
 int main()
 {
   CGAL::Timer timer;
-  typedef CGAL::Creator_uniform_2<FT, Point_2> Creator;
+  // typedef CGAL::Creator_uniform_2<FT, Point_2> Creator;
   
-  FT r = 100;
-  CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc(r);
+  // FT r = 100;
+  // CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc(r);
   
-  int n = 10000;
-  std::cout << "Number of points: " << n << std::endl;
+  // int n = 10;
+  // std::cout << "Number of points: " << n << std::endl;
 
-  std::vector<Point_2> pts(n);
-  std::vector<Point_2>::iterator ip;
+  // std::vector<Point_2> pts(n);
+  // std::vector<Point_2>::iterator ip;
   
-  // Generating n random points
-  for (int i=0 ; i < n ; i++) {
-    pts.at(i) = *in_disc;
-    in_disc++;
+  // // Generating n random points
+  // for (int i=0 ; i < n ; i++) {
+  //   pts.at(i) = *in_disc;
+  //   in_disc++;
+  // }
+
+  FT r = 1;
+
+  std::vector<Point_2> pts;
+  std::vector<Point_2>::iterator ip;
+  Point_2 p;
+
+  std::ifstream ifs("input-file");
+  while(ifs >> p) {
+    pts.push_back(p);
   }
+  std::cout << "number of points " << std::distance(pts.begin(),pts.end()) << std::endl << std::endl;
 
   std::cout << "check for hyperbolic faces during insertion" << std::endl;
 
@@ -54,8 +68,11 @@ int main()
   
   assert(dt_during.is_valid());
 
-  std::cout << "Number of vertices: " << dt_during.number_of_vertices() << std::endl;
-  std::cout << "Time: " << timer.time() << std::endl;
+  std::cout << "Number of (finite) vertices: " << dt_during.number_of_vertices() << std::endl;
+  std::cout << "number of (finite) Euclidean faces: " << dt_during.number_of_faces() << std::endl;
+  std::cout << "number of hyperbolic faces: " << dt_during.number_of_hyperbolic_faces() << std::endl;
+  std::cout << "number of hyperbolic edges: " << dt_during.number_of_hyperbolic_edges() << std::endl;
+  std::cout << "Time: " << timer.time() << std::endl << std::endl;
   
   timer.reset();
 
@@ -71,7 +88,10 @@ int main()
   
   assert(dt_end.is_valid());
 
-  std::cout << "Number of vertices: " << dt_end.number_of_vertices() << std::endl;
+  std::cout << "Number of (finite) vertices: " << dt_end.number_of_vertices() << std::endl;
+  std::cout << "number of (finite) Euclidean faces: " << dt_end.number_of_faces() << std::endl;
+  std::cout << "number of hyperbolic faces: " << dt_end.number_of_hyperbolic_faces() << std::endl;
+  std::cout << "number of hyperbolic edges: " << dt_end.number_of_hyperbolic_edges() << std::endl;
   std::cout << "Time: " << timer.time() << std::endl;
   
   timer.reset();

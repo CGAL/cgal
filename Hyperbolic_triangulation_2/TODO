@@ -6,6 +6,10 @@ using Triangulation_face_base_with_info_2<Hyperbolic_face_info_2>
 in order to allow users to use
 Triangulation_face_base_with_info_2 to add info in their faces 
 
+operator == for triangulations
+
+radius should be 1 !!!
+
 ========== code
 
 --- sqrt
