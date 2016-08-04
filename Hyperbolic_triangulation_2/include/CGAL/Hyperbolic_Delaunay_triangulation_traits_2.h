@@ -130,7 +130,7 @@ public:
     construct_segment_2_object() const
   { return Construct_hyperbolic_segment_2(); }
   
-  class Construct_circumcenter_2
+  class Construct_hyperbolic_circumcenter_2
   {
   public:
     
@@ -167,10 +167,6 @@ public:
     
   };
   
-  Construct_circumcenter_2
-    construct_circumcenter_2_object()
-  { return Construct_circumcenter_2(); }
-  
   Hyperbolic_Delaunay_triangulation_traits_2() 
   {}
   
@@ -199,9 +195,9 @@ public:
     side_of_oriented_circle_2_object() const
   { return Side_of_oriented_circle_2(); }
   
-  Construct_circumcenter_2
-    construct_circumcenter_2_object() const
-  { return Construct_circumcenter_2(); }
+  Construct_hyperbolic_circumcenter_2
+    construct_hyperbolic_circumcenter_2_object() const
+  { return Construct_hyperbolic_circumcenter_2(); }
   
   class Construct_hyperbolic_bisector_2
   {    
