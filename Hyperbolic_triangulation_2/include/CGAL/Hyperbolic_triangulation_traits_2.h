@@ -78,17 +78,9 @@ public:
   //  typedef typename R::Compare_distance_2         Compare_distance_2;
   //  typedef typename R::Construct_triangle_2       Construct_triangle_2;
   //  typedef typename R::Construct_direction_2      Construct_direction_2;
-    
-private:
-  // Poincaré disk
-    const Circle_2 _unit_circle;
-  
+      
 public:
-    const Circle_2& unit_circle() const
-    {
-      return _unit_circle;
-    }
-  
+
   class Construct_hyperbolic_segment_2
   {
     typedef typename CGAL::Regular_triangulation_filtered_traits_2<R> Regular_geometric_traits_2;
@@ -97,7 +89,7 @@ public:
     typedef typename Regular_geometric_traits_2::Bare_point Bare_point;
     
   public:
-        Construct_hyperbolic_segment_2(const Circle_2& c) : _unit_circle(c)
+        Construct_hyperbolic_segment_2() 
         {
         }
     
@@ -125,40 +117,33 @@ public:
       return Arc_2(circle, q, p);
     }
     
-  private:
-    const Circle_2& _unit_circle;
   };
   
   Construct_hyperbolic_segment_2
-  construct_hyperbolic_segment_2_object() const
-  {
-    return Construct_hyperbolic_segment_2(_unit_circle);
-  }
+    construct_hyperbolic_segment_2_object() const
+  { return Construct_hyperbolic_segment_2(); }
 
   // wrong names kept for demo
   typedef Construct_hyperbolic_segment_2 Construct_segment_2;
   Construct_segment_2
     construct_segment_2_object() const
-  {
-    return Construct_hyperbolic_segment_2(_unit_circle);
-  }
+  { return Construct_hyperbolic_segment_2(); }
   
   class Construct_circumcenter_2
   {
   public:
-    Construct_circumcenter_2(const Circle_2& c) : _unit_circle(c)
-    {}
     
     // TODO: improve this function
     Point_2	operator()(Point_2 p, Point_2 q, Point_2 r)
     {        
-      assert(_unit_circle.bounded_side(p) == ON_BOUNDED_SIDE);
-      assert(_unit_circle.bounded_side(q) == ON_BOUNDED_SIDE);
-      assert(_unit_circle.bounded_side(r) == ON_BOUNDED_SIDE);
+      CGAL_triangulation_assertion_code(Origin oo; Point_2 poo(oo); Circle_2 co(poo,FT(1)));
+      CGAL_triangulation_assertion(co.bounded_side(p) == ON_BOUNDED_SIDE);
+      CGAL_triangulation_assertion(co.bounded_side(q) == ON_BOUNDED_SIDE);
+      CGAL_triangulation_assertion(co.bounded_side(r) == ON_BOUNDED_SIDE);
       
       Circle_2 circle(p, q, r);
       // circle must be inside the unit one
-      assert(CGAL::do_intersect(_unit_circle, circle) == false);
+      CGAL_triangulation_assertion(do_intersect(co, circle) == false);
       
       Origin o; 
       Point_2 po = Point_2(o);
@@ -169,7 +154,7 @@ public:
       // a*alphaˆ2 + b*alpha + c = 0;
       FT a = x0*x0 + y0*y0;
       FT b = a - circle.squared_radius() + FT(1); // Poincare disc has radius 1
-      FT D = b*b - 4*a*FT(1);
+      FT D = b*b - 4*a;
       
       FT alpha = (b - CGAL::sqrt(to_double(D)))/(2*a);
       
@@ -179,26 +164,16 @@ public:
       return center;
     }
     
-  private:
-    const Circle_2 _unit_circle;
   };
   
   Construct_circumcenter_2
-  construct_circumcenter_2_object()
-  {
-    Construct_circumcenter_2(_unit_circle);
-  }
+    construct_circumcenter_2_object()
+  { return Construct_circumcenter_2(); }
   
-  Hyperbolic_triangulation_traits_2() : 
-  _unit_circle(Point_2(0, 0), 1*1)
+  Hyperbolic_triangulation_traits_2() 
   {}
   
-  Hyperbolic_triangulation_traits_2(FT r) : 
-  _unit_circle(Point_2(0, 0), r*r)
-  {}    
-  
-  Hyperbolic_triangulation_traits_2(const Hyperbolic_triangulation_traits_2 & other) : 
-  _unit_circle(other._unit_circle)
+  Hyperbolic_triangulation_traits_2(const Hyperbolic_triangulation_traits_2 & other)
   {}
   
   Hyperbolic_triangulation_traits_2 &operator=
@@ -221,19 +196,17 @@ public:
   
   Side_of_oriented_circle_2
     side_of_oriented_circle_2_object() const
-  {return Side_of_oriented_circle_2();}
+  { return Side_of_oriented_circle_2(); }
   
   Construct_circumcenter_2
-  construct_circumcenter_2_object() const
-  {
-    return Construct_circumcenter_2(_unit_circle);
-  }
+    construct_circumcenter_2_object() const
+  { return Construct_circumcenter_2(); }
   
   class Construct_hyperbolic_bisector_2
   {    
   public:      
-    Construct_hyperbolic_bisector_2(const Circle_2& unit_circle) :
-    _unit_circle(unit_circle) {}
+  Construct_hyperbolic_bisector_2() 
+    {}
     
     Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q) const
     {
@@ -252,7 +225,7 @@ public:
       if(dif > -eps && dif < eps){
         
         // ideally
-        //if(Compare_distance_2()(_unit_circle.center(), p, q) == EQUAL){
+        //if(Compare_distance_2()(origin, p, q) == EQUAL){
         
         // TODO: calling R::Construct_bisector
         Euclidean_line_2 l = Construct_Euclidean_bisector_2()(p, q);
@@ -345,23 +318,21 @@ public:
       return std::make_pair(p1, p2);
     }
     
-  private:
-    const Circle_2 _unit_circle;
   };
   
   Construct_hyperbolic_bisector_2
   construct_hyperbolic_bisector_2_object() const
-  { return Construct_hyperbolic_bisector_2(_unit_circle);}
+  { return Construct_hyperbolic_bisector_2(); }
   
   Construct_Euclidean_bisector_2
   construct_Euclidean_bisector_2_object() const
-  {return Construct_Euclidean_bisector_2();}
+  { return Construct_Euclidean_bisector_2(); }
     
   class Construct_ray_2
   {
   public:
-    Construct_ray_2(Circle_2 c) :
-    _unit_circle(c) {}
+    Construct_ray_2()
+      {}
     
     Hyperbolic_segment_2 operator()(Point_2 p, Hyperbolic_segment_2 l) const
     {
@@ -385,13 +356,11 @@ public:
       return Euclidean_segment_2(p, s.target());
     }
     
-  private:
-    
-    const Circle_2 _unit_circle;
   };
   
-  Construct_ray_2  construct_ray_2_object() const
-    {return Construct_ray_2(_unit_circle);}
+  Construct_ray_2  
+    construct_ray_2_object() const
+  { return Construct_ray_2(); }
   
   // For details see the JoCG paper (5:56-85, 2014)
   class Is_hyperbolic
@@ -461,7 +430,8 @@ public:
     }
   };
   
-  Is_hyperbolic Is_hyperbolic_object() const
+  Is_hyperbolic 
+    Is_hyperbolic_object() const
   { return Is_hyperbolic(); }
 };
 
