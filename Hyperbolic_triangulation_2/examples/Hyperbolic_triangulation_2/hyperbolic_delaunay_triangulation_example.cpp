@@ -7,14 +7,14 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
-#include <CGAL/Hyperbolic_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Hyperbolic_triangulation_traits_2<K> Gt;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
 
 typedef Gt::Point_2 Point_2;
 typedef Gt::Circle_2 Circle_2;

@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
-#include <CGAL/Hyperbolic_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 // to be deleted
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
@@ -38,7 +38,7 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel R;
-typedef CGAL::Hyperbolic_triangulation_traits_2<R> K;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<R> K;
 
 typedef K::Point_2 Point_2;
 typedef K::Iso_rectangle_2 Iso_rectangle_2;

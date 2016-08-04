@@ -19,8 +19,8 @@
 // Author(s)     : Mikhail Bogdanov
 //                 Monique Teillaud <Monique.Teillaud@inria.fr>
 
-#ifndef CGAL_HYPERBOLIC_TRIANGULATION_TRAITS_2_H
-#define CGAL_HYPERBOLIC_TRIANGULATION_TRAITS_2_H
+#ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
+#define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
 
 #include <CGAL/Regular_triangulation_filtered_traits_2.h>
 #include "boost/tuple/tuple.hpp"
@@ -29,7 +29,7 @@
 namespace CGAL {
 
 template < class R >
-class Hyperbolic_triangulation_traits_2
+class Hyperbolic_Delaunay_triangulation_traits_2
   : public R
   {
 public:
@@ -64,7 +64,7 @@ public:
   typedef typename R::Point_3     Point_3;
 
   // MT useless?
-  //  typedef Hyperbolic_triangulation_traits_2<R> Self;
+  //  typedef Hyperbolic_Delaunay_triangulation_traits_2<R> Self;
   //  typedef typename R::RT          RT;
   //  typedef R Kernel;
   //  typedef R Rep;
@@ -171,14 +171,14 @@ public:
     construct_circumcenter_2_object()
   { return Construct_circumcenter_2(); }
   
-  Hyperbolic_triangulation_traits_2() 
+  Hyperbolic_Delaunay_triangulation_traits_2() 
   {}
   
-  Hyperbolic_triangulation_traits_2(const Hyperbolic_triangulation_traits_2 & other)
+  Hyperbolic_Delaunay_triangulation_traits_2(const Hyperbolic_Delaunay_triangulation_traits_2 & other)
   {}
   
-  Hyperbolic_triangulation_traits_2 &operator=
-  (const Hyperbolic_triangulation_traits_2 &)
+  Hyperbolic_Delaunay_triangulation_traits_2 &operator=
+  (const Hyperbolic_Delaunay_triangulation_traits_2 &)
   {
     return *this;
   }
@@ -240,7 +240,7 @@ public:
         return Euclidean_segment_2(points.second, points.first);
       }
       
-      Circle_2 c =  construct_supporting_circle(p, q);
+      Circle_2 c =  construct_supporting_circle_of_bisector(p, q);
       // compute the ending points
       std::pair<Point_2, Point_2> points = find_intersection(c);
       
@@ -252,7 +252,7 @@ public:
     
   private:
     // The cirle belongs to the pencil with limit points p and q
-    Circle_2 construct_supporting_circle(Point_2 p, Point_2 q) const
+    Circle_2 construct_supporting_circle_of_bisector(Point_2 p, Point_2 q) const
     {
       // p, q are zero-circles
       // (x, y, xˆ2 + yˆ2 - rˆ2) = alpha*(xp, yp, xpˆ2 + ypˆ2) + (1-alpha)*(xq, yq, xqˆ2 + yqˆ2)
@@ -440,18 +440,18 @@ public:
 
 #ifdef CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 template  <>
-struct Triangulation_structural_filtering_traits< Hyperbolic_triangulation_traits_2<Epeck> > {
+struct Triangulation_structural_filtering_traits< Hyperbolic_Delaunay_triangulation_traits_2<Epeck> > {
   typedef Tag_true Use_structural_filtering_tag;
 };
 #endif // CGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL_H
 
 #ifdef CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 template <>
-struct Triangulation_structural_filtering_traits< Hyperbolic_triangulation_traits_2<Epick> > {
+struct Triangulation_structural_filtering_traits< Hyperbolic_Delaunay_triangulation_traits_2<Epick> > {
   typedef Tag_true Use_structural_filtering_tag;
 };
 #endif // CGAL_EXACT_PREDICATES_INEXACT_CONSTRUCTIONS_KERNEL_H
 
 } //namespace CGAL 
 
-#endif // CGAL_HYPERBOLIC_TRIANGULATION_TRAITS_2_H
+#endif // CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_TRAITS_2_H
