@@ -270,6 +270,23 @@ void put(PropertyTag p, CGAL_LCC_TYPE& g, const Key& key, const Value& value)
   put(pmap, key, value);
 }
 
+// graph has internal property map
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, edge_weight_t>
+  : CGAL::Tag_true{};
+
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, edge_index_t>
+  : CGAL::Tag_true{};
+
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, vertex_index_t>
+  : CGAL::Tag_true{};
+
+template<CGAL_LCC_ARGS>
+struct graph_has_property<CGAL_LCC_TYPE, vertex_point_t>
+  : CGAL::Tag_true{};
+
 } // namespace boost
 
 #undef CGAL_LCC_ARGS

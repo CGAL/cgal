@@ -266,7 +266,6 @@ namespace internal {
      const TYPE& x)                                                \
  { return get(get(p, sm), x); }                                        \
 
-
 CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t,
 SM_Vertex_index)
 CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::edge_index_t,
@@ -294,6 +293,26 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<Point>& g,
 }
 
 } // CGAL
+
+namespace boost
+{
+  template<typename Point>
+  struct graph_has_property<CGAL::Surface_mesh<Point>, vertex_index_t>
+    : CGAL::Tag_true {};
+  template<typename Point>
+  struct graph_has_property<CGAL::Surface_mesh<Point>, edge_index_t>
+    : CGAL::Tag_true {};
+  template<typename Point>
+  struct graph_has_property<CGAL::Surface_mesh<Point>, halfedge_index_t>
+    : CGAL::Tag_true {};
+  template<typename Point>
+  struct graph_has_property<CGAL::Surface_mesh<Point>, face_index_t>
+    : CGAL::Tag_true {};
+  template<typename Point>
+  struct graph_has_property<CGAL::Surface_mesh<Point>, CGAL::vertex_point_t>
+    : CGAL::Tag_true {};
+
+} //boost
 
 #if 0
 //

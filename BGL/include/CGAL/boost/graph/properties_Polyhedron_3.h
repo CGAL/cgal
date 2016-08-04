@@ -26,6 +26,7 @@
 #include <CGAL/squared_distance_2_1.h>
 #include <CGAL/number_utils.h>
 #include <boost/shared_ptr.hpp>
+#include <CGAL/boost/graph/internal/Has_member_id.h>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
@@ -435,6 +436,29 @@ struct vertex_property_type<const CGAL::Polyhedron_3<Gt,I,HDS,A> >
 {
   typedef CGAL::vertex_point_t type;
 };
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, vertex_point_t>
+  : CGAL::Tag_true {};
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, edge_weight_t>
+  : CGAL::Tag_true {};
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, edge_index_t>
+  : CGAL::Tag_true {};
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, face_index_t>
+  : CGAL::Boolean_tag<
+      CGAL::internal::Has_member_id<
+        typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Facet
+      >::value
+    >
+{};
+
+
 } // namespace boost
 
 
