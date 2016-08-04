@@ -1,4 +1,4 @@
-==== MT ====
+==== new ====
 
 add Hyperbolic_triangulation_face_base_wth_info_2
 
@@ -17,54 +17,18 @@ fix construct_circumcenter. no approx allowed
 
 CK, or at least Cartesian with sqrt (?)
 
-** demo
-create an adapted Graphicsitem that does not require finite_* stuff. Replace by hyperbolic_*
+** doc
+
+** tests
+
+** only keep relevant files for the submission
+
+========== demo
+
+--- create an adapted Graphicsitem that does not require finite_* stuff. Replace by hyperbolic_*
        => understand apply_to_range
 the graphicsitem should also not require Segment_2 or Line_segment_2 (does it?)
 
-
-========== code
-
---- sqrt
-check whether and when an exact type is needed for sqrt. 
-- sqrt can be kept eg for demos
-- when needed, replace the inexact CGAL::sqrt by the new type
-replacing CGAL::Root_of_2, see 
-CGAL::https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/Unique_sqrt_extension 
-
-Done. std::sqrt is replaced by CGAL::sqrt everywhere, 
-because it's used only for computation of the Voronoi diagram. 
-
---- use the Circular_kernel?
-because Do_intersect is in the Circular_kernel
-
-Done. CGAL::do_intersect is a solution. 
-No need for the Circular_kernel.
---> (MT) wrong for constrcutions. Approximations are used in several places. 
-
---- iterators
-- Finite_faces_iterator should return only faces marked HYPERBOLIC
-- for edges, rename adjacent_face to incident_face
-
-Done.
-
---- interface
-provide a complete interface, like for the Euclidean package (adapted
-to the hyperbolic case of course) 
-
-In progress.
-
---- make Constrained_delaunay_... work with Hyperbolic_triangulation_2
---- make Mesh_2 work with Hyperbolic_triangulation_2
-O.Faugeras and his student are waiting for it. 
-
-========== documentation
-to be written, so that the package can be submitted to the EB
-
-========== test-suite
-to be written
-
-========== demo
 --- fix bugs:
 - conflict regions (when inserting or in mode 'show conflict zone)
 show Euclidean triangles instead of hyperbolic triangles  
@@ -86,4 +50,27 @@ It allows me to have a local file with partial specialization of
 the class PainterOstream.
 I have to discuss with Laurent.
 
+========== OLD STUFF code
 
+--- sqrt
+check whether and when an exact type is needed for sqrt. 
+- sqrt can be kept eg for demos
+- when needed, replace the inexact CGAL::sqrt by the new type
+replacing CGAL::Root_of_2, see 
+CGAL::https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/Unique_sqrt_extension 
+
+Done. std::sqrt is replaced by CGAL::sqrt everywhere, 
+because it's used only for computation of the Voronoi diagram. 
+
+--- use the Circular_kernel?
+because Do_intersect is in the Circular_kernel
+
+Done. CGAL::do_intersect is a solution. 
+No need for the Circular_kernel.
+--> (MT) wrong for constrcutions. Approximations are used in several places. 
+
+========== future
+
+--- make Constrained_delaunay_... work with Hyperbolic_triangulation_2
+--- make Mesh_2 work with Hyperbolic_triangulation_2
+O.Faugeras and his student are waiting for it. 
