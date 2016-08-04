@@ -5,11 +5,11 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
-#include <CGAL/Hyperbolic_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Hyperbolic_triangulation_traits_2<K> Gt;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
 
 typedef K::Point_2 Point_2;
 typedef K::FT FT;
@@ -18,7 +18,6 @@ typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt> HDt;
 
 int main(int argc, char *argv[])
 {  
-  FT r = 1;
   FT eps = 0;
   for(int k = 0; k < 2; k++) {
     if(k == 0) {
@@ -50,7 +49,7 @@ int main(int argc, char *argv[])
       double average_nb_of_edges = 0;
       for(int trials = 0; trials < trials_nb; trials++) {
         
-        HDt hdt = HDt(Gt(r));
+        HDt hdt;
         
         CGAL::Timer timer;
         timer.start();
@@ -65,15 +64,13 @@ int main(int argc, char *argv[])
         average_nb += hdt.number_of_vertices();
         
         average_nb_of_edges = 0;
-        for(HDt::Finite_edges_iterator eit = hdt.finite_edges_begin(); eit != hdt.finite_edges_end(); ++eit) {
-          average_nb_of_edges++;
-        }
-      }
+        for(HDt::Hyperbolic_edges_iterator eit = hdt.hyperbolic_edges_begin(); 
+	    eit != hdt.hyperbolic_edges_end(); ++eit) 
+          { average_nb_of_edges++; }
+	}
       average_time = average_time/trials_nb;
       average_nb = average_nb/trials_nb;
       
-      std::cout << "H^2" << std::endl;
-      std::cout << "Radius: " << r << std::endl;
       std::cout << "Eps: " << eps << std::endl;
       std::cout << "Number of points: " << average_nb << std::endl;
       std::cout << "Time: " << average_time << std::endl;
