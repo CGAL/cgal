@@ -41,7 +41,7 @@ public:
   typedef Hyperbolic_Delaunay_triangulation_2<Gt, Tds> Self;
   typedef Delaunay_triangulation_2<Gt,Tds> Base;
   
-  typedef Hyperbolic_triangulation_face_base_2<Gt> Face_base;
+//  typedef Hyperbolic_triangulation_face_base_2<Gt> Face_base;
   
   typedef typename Base::size_type             size_type;
   
@@ -479,62 +479,64 @@ public:
   Finite_edges_iterator finite_edges_begin() const { return hyperbolic_edges_begin(); }
   Finite_edges_iterator finite_edges_end() const { return hyperbolic_edges_end(); }
   
-
-  using Base::dual;
-  
-  Object
-  dual(const Finite_edges_iterator& ei) const
+  Point
+  dual(Face_handle f) const
   {
-    return this->dual(*ei);
+    CGAL_triangulation_precondition (!this->is_non_hyperbolic(f));
+    
+    return this->geom_traits().construct_hyperbolic_circumcenter_2_object()
+         ( f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point());
   }
-  
+
+  Object 
+  dual(const Edge& e) const
+  { 
+    return dual(e.first, e.second);
+  }
+
   Object
-  dual(const Edge &e) const
+  dual(Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition (!this->is_non_hyperbolic(e));
+    CGAL_triangulation_precondition (!this->is_non_hyperbolic(f,i));
     
     if(this->dimension() == 1) {
-      const Point& p = (e.first)->vertex(cw(e.second))->point();
-      const Point& q = (e.first)->vertex(ccw(e.second))->point();
+      const Point& p = f->vertex(cw(i))->point();
+      const Point& q = f->vertex(ccw(i))->point();
       
       // hyperbolic line
       Segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
       return make_object(line);
     }
     
-    // incident faces
-    Face_handle f1 = e.first;
-    int i1 = e.second;
-    
-    Face_handle f2 = f1->neighbor(i1);
-    int i2 = f2->index(f1);
+    Face_handle n = f->neighbor(i);
+    int in = n->index(f);
     
     // boths faces are non_hyperbolic, but the incident edge is hyperbolic
-    if(is_non_hyperbolic(f1) && is_non_hyperbolic(f2)){
-      const Point& p = (f1)->vertex(cw(i1))->point();
-      const Point& q = (f1)->vertex(ccw(i1))->point();
+    if(is_non_hyperbolic(f) && is_non_hyperbolic(n)){
+      const Point& p = f->vertex(cw(i))->point();
+      const Point& q = f->vertex(ccw(i))->point();
       
       // hyperbolic line
-      Segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
+      Segment line = 
+          this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
       return make_object(line);
     }
     
     // both faces are finite
-    if(!is_non_hyperbolic(f1) && !is_non_hyperbolic(f2)) {
+    if(!is_non_hyperbolic(f) && !is_non_hyperbolic(n)) {
       
-      Segment s = this->geom_traits().construct_segment_2_object()
-      (dual(f1),dual(f2));
+      Segment s = 
+          this->geom_traits().construct_segment_2_object()(dual(f),dual(n));
       
       return make_object(s);
     }
     
     // one of the incident faces is non_hyperbolic
-    Face_handle finite_face = f1;
-    int i = i1;
+    Face_handle finite_face = f;
     
-    if(is_non_hyperbolic(f1)) {
-      finite_face = f2;
-      i = i2;
+    if(is_non_hyperbolic(f)) {
+      finite_face = n;
+      i = in;
     }
     
     const Point& p = finite_face->vertex(cw(i))->point();

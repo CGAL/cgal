@@ -109,7 +109,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   for(typename DT::Finite_edges_iterator eit = dt->finite_edges_begin();
       eit != dt->finite_edges_end();
       eit++){
-    CGAL::Object o = dt->dual(eit);
+    CGAL::Object o = dt->dual(*eit);
     typename DT::Segment s;
     typename DT::Geom_traits::Ray_2 r;
     typename DT::Geom_traits::Line_2 l;
