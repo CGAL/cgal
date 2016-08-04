@@ -29,10 +29,15 @@ int main (int argc, char** argv)
     }
 
   // estimate global scale
-  std::size_t scale = CGAL::estimate_global_k_neighbor_scale (points.begin(), points.end(),
-                                                              CGAL::Identity_property_map<Point>(),
-                                                              Kernel());
-  std::cout << "Global K scale: " << scale << std::endl;
+  std::size_t k_scale = CGAL::estimate_global_k_neighbor_scale (points.begin(), points.end(),
+                                                                CGAL::Identity_property_map<Point>(),
+                                                                Kernel());
+  std::cout << "Global K scale: " << k_scale << std::endl;
+
+  FT range_scale = CGAL::estimate_global_range_scale (points.begin(), points.end(),
+                                                      CGAL::Identity_property_map<Point>(),
+                                                      Kernel());
+  std::cout << "Global range scale: " << range_scale << std::endl;
 
   return EXIT_SUCCESS;
 }

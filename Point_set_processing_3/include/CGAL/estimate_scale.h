@@ -85,9 +85,29 @@ public:
   }
 
   template <typename InputIterator, typename PointPMap>
-  std::size_t compute_scale (InputIterator query, PointPMap point_pmap)
+  std::size_t compute_k_scale (InputIterator query, PointPMap point_pmap)
   {
-    std::size_t out = 0;
+    std::size_t out;
+    FT dummy;
+    compute_scale (query, point_pmap, out, dummy);
+    return out;
+  }
+
+  template <typename InputIterator, typename PointPMap>
+  FT compute_range_scale (InputIterator query, PointPMap point_pmap)
+  {
+    std::size_t dummy;
+    FT out;
+    compute_scale (query, point_pmap, dummy, out);
+    return out;
+  }
+
+  template <typename InputIterator, typename PointPMap>
+  void compute_scale (InputIterator query, PointPMap point_pmap,
+                      std::size_t& k, FT& d)
+  {
+    k = 0;
+    d = 0.;
 
     std::size_t weight = 1;
     FT dist_min = std::numeric_limits<FT>::max();
@@ -116,12 +136,12 @@ public:
             if (dist < dist_min)
               {
                 dist_min = dist;
-                out = nb;
+                k = nb;
+                d = it->second;
               }
           }
         weight *= m_cluster_size;
       }
-    return out;
   }
 
 };
@@ -158,7 +178,7 @@ estimate_local_k_neighbor_scales(
 
   // Compute local scales everywhere
   for (QueriesInputIterator it = first_query; it != beyond_query; ++ it)
-    *(output ++) = kdtree.compute_scale (it, queries_pmap);
+    *(output ++) = kdtree.compute_k_scale (it, queries_pmap);
 
 }
 
@@ -182,6 +202,34 @@ estimate_global_k_neighbor_scale(
   return scales[scales.size() / 2];
 }
 
+  
+template <typename SamplesInputIterator,
+          typename SamplesPointPMap,
+          typename QueriesInputIterator,
+          typename QueriesPointPMap,
+          typename OutputIterator,
+          typename Kernel
+>
+void
+estimate_local_range_scales(
+  SamplesInputIterator first,
+  SamplesInputIterator beyond,
+  SamplesPointPMap samples_pmap,
+  QueriesInputIterator first_query,
+  QueriesInputIterator beyond_query,
+  QueriesPointPMap queries_pmap,
+  OutputIterator output,
+  const Kernel& /*kernel*/) ///< geometric traits.
+{
+  // Build multi-scale KD-tree
+  internal::Quick_multiscale_approximate_knn_distance<Kernel> kdtree (first, beyond, samples_pmap);
+
+  // Compute local scales everywhere
+  for (QueriesInputIterator it = first_query; it != beyond_query; ++ it)
+    *(output ++) = kdtree.compute_range_scale (it, queries_pmap);
+
+}
+
 template <typename InputIterator,
           typename PointPMap,
           typename Kernel
@@ -191,10 +239,15 @@ estimate_global_range_scale(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
-  const Kernel& /*kernel*/) ///< geometric traits.
+  const Kernel& kernel) ///< geometric traits.
 {
-
-  return 0.;
+  std::vector<typename Kernel::FT> scales;
+  estimate_local_range_scales (first, beyond, point_pmap,
+                               first, beyond, point_pmap,
+                               std::back_inserter (scales),
+                               kernel);
+  std::sort (scales.begin(), scales.end());
+  return std::sqrt (scales[scales.size() / 2]);
 }
 
 
