@@ -40,12 +40,12 @@ public:
   /*!
     \brief Constructs the attribute.
   */
-  Segmentation_attribute_vertical_dispersion (const RandomAccessIterator& begin,
-                                              const RandomAccessIterator& end,
+  Segmentation_attribute_vertical_dispersion (RandomAccessIterator begin,
+                                              RandomAccessIterator end,
                                               PointPMap point_pmap,
                                               Grid& grid,
                                               const double grid_resolution,
-                                              double radius_neighbors = 1.,
+                                              double radius_neighbors = -1.,
                                               double weight = 1.) : weight (weight)
   {
     if (radius_neighbors < 0.)

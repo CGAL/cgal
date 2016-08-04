@@ -19,12 +19,14 @@ namespace CGAL {
     \tparam Kernel The geometric kernel used.
 
   */
-template <typename Kernel>
+template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
 class Segmentation_attribute_elevation : public Segmentation_attribute
 {
-  typedef Point_set_classification<Kernel> PSC;
-  typedef typename PSC::Image_float Image_float;
-  
+  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
+
+  typedef Data_classification::Image<float> Image_float;
+  typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
+   
   std::vector<double> elevation_attribute;
   
 public:
@@ -41,50 +43,32 @@ public:
     \param weight The relative weight of this attribute
     \param on_groups Select if the attribute is computed point-wise of group-wise
   */
-  Segmentation_attribute_elevation (Point_set_classification<Kernel>& M,
-                                    double weight,
-                                    bool on_groups = false) : weight (weight)
+  Segmentation_attribute_elevation (RandomAccessIterator begin,
+                                    RandomAccessIterator end,
+                                    PointPMap point_pmap,
+                                    const Iso_cuboid_3& bbox,
+                                    Grid& grid,
+                                    const double grid_resolution,
+                                    double radius_neighbors = -1.,
+                                    double radius_dtm = -1.,
+                                    double weight = 1.) : weight (weight)
   {
-    if (on_groups)
-      {
-        std::vector<std::vector<typename Kernel::Point_3> > pts (M.groups.size());
+    if (radius_neighbors < 0.)
+      radius_neighbors = 5. * grid_resolution;
+    if (radius_dtm < 0.)
+      radius_dtm = 5. * radius_neighbors;
 
-        for (std::size_t i = 0; i < M.HPS.size(); ++ i)
-          {
-            std::size_t g = M.HPS[i].group;
-            if (g == (std::size_t)(-1))
-              continue;
-            pts[g].push_back (M.HPS[i].position);
-          }
-        
-        std::vector<typename Kernel::Point_3> centroids;
-        for (std::size_t i = 0; i < pts.size(); ++ i)
-          centroids.push_back (CGAL::centroid (pts[i].begin(), pts[i].end()));
-
-        for (std::size_t i = 0; i < M.HPS.size(); ++ i)
-          {
-            std::size_t g = M.HPS[i].group;
-            if (g == (std::size_t)(-1))
-              elevation_attribute.push_back (0.);
-            else
-              elevation_attribute.push_back (centroids[g].z());
-          }
-        
-        this->compute_mean_max (elevation_attribute, mean, max);
-        return;
-      }
-    
     //DEM
-    Image_float DEM(M.grid_HPS.width(),M.grid_HPS.height());
-    Image_float DEMtemp(M.grid_HPS.width(),M.grid_HPS.height());
+    Image_float dem(grid.width(),grid.height());
+    Image_float demtemp(grid.width(),grid.height());
 
-    for (int j=0;j<(int)DEM.height();j++){	
-      for (int i=0;i<(int)DEM.width();i++){
+    for (int j=0;j<(int)dem.height();j++){	
+      for (int i=0;i<(int)dem.width();i++){
 		
         double mean_height=0;
         std::vector < double > list_Z;
 		
-        for(std::size_t k=0;k<M.grid_HPS(i,j).size();k++) list_Z.push_back(M.HPS[M.grid_HPS(i,j)[k]].position.z());
+        for(std::size_t k=0;k<grid.indices(i,j).size();k++) list_Z.push_back(get(point_pmap, begin[grid.indices(i,j)[k]]).z());
 			
         if(list_Z.size()>0){
 			
@@ -93,100 +77,102 @@ public:
           mean_height=list_Z[ind_k];
         }
 
-        DEM(i,j)=(float)mean_height;
-        DEMtemp(i,j)=DEM(i,j);
+        dem(i,j)=(float)mean_height;
+        demtemp(i,j)=dem(i,j);
       }
     }
 
-    std::size_t square = (std::size_t)(M.m_radius_neighbors / M.m_grid_resolution) + 1;
+    std::size_t square = (std::size_t)(radius_neighbors / grid_resolution) + 1;
 
-    for (std::size_t j = 0; j < DEM.height(); j++){	
-      for (std::size_t i = 0; i < DEM.width(); i++){
+    for (std::size_t j = 0; j < dem.height(); j++){	
+      for (std::size_t i = 0; i < dem.width(); i++){
 		
-        if((M.Mask(i,j))&&(DEM(i,j)==0)){
+        if((grid.mask(i,j))&&(dem(i,j)==0)){
 				
           double distance_tot=0;	
           double val=0;
           std::size_t squareXmin = (i < square ? 0 : i - square);
-          std::size_t squareXmax = std::min(DEM.width() - 1, i + square);
+          std::size_t squareXmax = std::min(dem.width() - 1, i + square);
           std::size_t squareYmin = (j < square ? 0 : j - square);
-          std::size_t squareYmax = std::min(DEM.height() - 1, j + square);
+          std::size_t squareYmax = std::min(dem.height() - 1, j + square);
 			
           for(std::size_t k = squareXmin; k <= squareXmax; k++){
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
 					
-              double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
+              double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
 					
-              if((distance<=M.m_radius_neighbors)&&(DEM(k,l)>0)&&(distance!=0)){
+              if((distance<=radius_neighbors)&&(dem(k,l)>0)&&(distance!=0)){
                 double dista=distance*distance;
-                val=val+DEM(k,l)/dista;
+                val=val+dem(k,l)/dista;
                 distance_tot=distance_tot+1/dista;
               }
             }
           }
 			
           val=val/distance_tot;
-          DEMtemp(i,j)=(float)val;			
+          demtemp(i,j)=(float)val;			
         }
       }
     }
 
-    float scale_byte_min_dem = M.BBox_scan.zmax();
-    float scale_byte_max_dem = M.BBox_scan.zmin();
+    float scale_byte_min_dem = bbox.zmax();
+    float scale_byte_max_dem = bbox.zmin();
 
-    for (std::size_t j = 0; j < DEM.height(); j++){	
-      for (std::size_t i = 0; i < DEM.width(); i++){
+    for (std::size_t j = 0; j < dem.height(); j++){	
+      for (std::size_t i = 0; i < dem.width(); i++){
 		
-        DEM(i,j)=DEMtemp(i,j);
+        dem(i,j)=demtemp(i,j);
 
-        if(M.Mask(i,j)){
-          if(DEM(i,j)>scale_byte_max_dem) scale_byte_max_dem=DEM(i,j);
-          if(DEM(i,j)<scale_byte_min_dem) scale_byte_min_dem=DEM(i,j);
+        if(grid.mask(i,j)){
+          if(dem(i,j)>scale_byte_max_dem) scale_byte_max_dem=dem(i,j);
+          if(dem(i,j)<scale_byte_min_dem) scale_byte_min_dem=dem(i,j);
         }
       }
     }
 
-    //TODO: smooth the DEM
-    for (std::size_t j = 1; j < DEM.height()-1; j++){	
-      for (std::size_t i = 1; i < DEM.width()-1; i++){
-        if(M.Mask(i,j)){
-          //DEM(i,j)=
+    //TODO: smooth the dem
+    for (std::size_t j = 1; j < dem.height()-1; j++){	
+      for (std::size_t i = 1; i < dem.width()-1; i++){
+        if(grid.mask(i,j)){
+          //dem(i,j)=
         }
       }
     }
 
     //DTM computation
     std::size_t step=15;
-    square = (std::size_t)(M.m_radius_dtm/M.m_grid_resolution)+1;
-    Image_float toto(M.grid_HPS.width(),M.grid_HPS.height());
-    Image_float im_Zfront(M.grid_HPS.width(),M.grid_HPS.height());
-    M.DTM=toto;
+    square = (std::size_t)(radius_dtm/grid_resolution)+1;
+    
+    Image_float dtm (grid.width(), grid.height());
+    Image_float im_Zfront(grid.width(),grid.height());
+
 
     //round 1
-    for (std::size_t j = 0; j < M.DTM.height(); j++){	
-      for (std::size_t i = 0; i < M.DTM.width(); i++){
-        M.DTM(i,j)=0;
+    for (std::size_t j = 0; j < dtm.height(); j++){	
+      for (std::size_t i = 0; i < dtm.width(); i++){
+        dtm(i,j)=0;
         im_Zfront(i,j)=0;
       }
     }
 
 
-    for (std::size_t j = step/2+1; j < M.DTM.height(); j = j+step){	
-      for (std::size_t i = step+1/2; i < M.DTM.width(); i = i+step){
+    for (std::size_t j = step/2+1; j < dtm.height(); j = j+step){	
+      for (std::size_t i = step+1/2; i < dtm.width(); i = i+step){
 		
         //storage of the points in the disk
         std::vector<float> list_pointsZ;
         std::size_t squareXmin = (i < square ? 0 : i - square);
-        std::size_t squareXmax = std::min(M.DTM.width() - 1, i + square);
+        std::size_t squareXmax = std::min(dtm.width() - 1, i + square);
         std::size_t squareYmin = (j < square ? 0 : j - square);
-        std::size_t squareYmax = std::min(M.DTM.height() - 1, j + square);
+        std::size_t squareYmax = std::min(dtm.height() - 1, j + square);
 
         for(std::size_t k = squareXmin; k <= squareXmax; k++){
           for(std::size_t l = squareYmin; l <= squareYmax; l++){
 			
-            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
-            if(distance<=M.m_radius_dtm){
-              for(int nb=0;nb<(int)M.grid_HPS(k,l).size();nb++) list_pointsZ.push_back(M.HPS[M.grid_HPS(k,l)[nb]].position.z());
+            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
+            if(distance<=radius_dtm){
+              for(int nb=0;nb<(int)grid.indices(k,l).size();nb++)
+                list_pointsZ.push_back(get(point_pmap, begin[grid.indices(k,l)[nb]]).z());
             }
           }
         }
@@ -224,24 +210,24 @@ public:
 
         }
 
-        M.DTM(i,j)=G1;
+        dtm(i,j)=G1;
         im_Zfront(i,j)=Gfront;
 
         //extension by duplication
         std::size_t IsquareXmin = (i < step/2 ? 0 : i-step/2);
-        std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+step/2);
+        std::size_t IsquareXmax = std::min(dtm.width()-1,i+step/2);
         std::size_t JsquareYmin = (j < step/2 ? 0 : j-step/2);
-        std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+step/2);
+        std::size_t JsquareYmax = std::min(dtm.height()-1,j+step/2);
 		
-        if(M.DTM.width()-1-IsquareXmax<step) IsquareXmax=M.DTM.width()-1;
-        if(M.DTM.height()-1-JsquareYmax<step) JsquareYmax=M.DTM.height()-1;
+        if(dtm.width()-1-IsquareXmax<step) IsquareXmax=dtm.width()-1;
+        if(dtm.height()-1-JsquareYmax<step) JsquareYmax=dtm.height()-1;
         if(IsquareXmin<step) IsquareXmin=0;
         if(JsquareYmin<step) JsquareYmin=0;
 
         for(std::size_t k = IsquareXmin; k <= IsquareXmax; k++){
           for(std::size_t l = JsquareYmin; l <= JsquareYmax; l++){
-            if(M.Mask(k,l)){
-              M.DTM(k,l)=G1;
+            if(grid.mask(k,l)){
+              dtm(k,l)=G1;
               im_Zfront(k,l)=Gfront;
             }
           }
@@ -251,18 +237,18 @@ public:
 
     //Gaussian smoothness
     for(std::size_t ik = 0; ik < 10; ik++) {
-      for(std::size_t j = 0; j < M.DTM.height(); j++){ 
-        for (std::size_t i = 0; i < M.DTM.width(); i++) {
+      for(std::size_t j = 0; j < dtm.height(); j++){ 
+        for (std::size_t i = 0; i < dtm.width(); i++) {
 		
           std::size_t IsquareXmin = (i < 1 ? 0 : i-1);
-          std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+1); 
+          std::size_t IsquareXmax = std::min(dtm.width()-1,i+1); 
           std::size_t JsquareYmin = (j < 1 ? 0 : j-1);
-          std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+1); 
+          std::size_t JsquareYmax = std::min(dtm.height()-1,j+1); 
           int count=0; 
 
           for(std::size_t k = IsquareXmin; k <= IsquareXmax; k++){ 
             for(std::size_t l = JsquareYmin; l <= JsquareYmax; l++){ 
-              if(M.Mask(k,l)) count++;
+              if(grid.mask(k,l)) count++;
             }
           }	
 			
@@ -273,40 +259,41 @@ public:
 
     //round 2 
     std::vector < bool > test_ground;
-    for(int i=0;i<(int)M.HPS.size();i++){
-      int I=M.HPS[i].ind_x;
-      int J=M.HPS[i].ind_y;
+    for (std::size_t i = 0; i< (std::size_t)(end - begin); i++){
+      int I = grid.x(i);
+      int J = grid.y(i);
       bool test=false;
-      if(M.HPS[i].position.z()-im_Zfront(I,J)<=0) {test=true; test_ground.push_back(test);}
+      if(get(point_pmap, begin[i]).z()-im_Zfront(I,J)<=0) {test=true; test_ground.push_back(test);}
       else{test_ground.push_back(test);}
     }
 
-    for (int j=0;j<(int)M.DTM.height();j++){	
-      for (int i=0;i<(int)M.DTM.width();i++){
-        M.DTM(i,j)=0;
+    for (int j=0;j<(int)dtm.height();j++){	
+      for (int i=0;i<(int)dtm.width();i++){
+        dtm(i,j)=0;
         im_Zfront(i,j)=0;
       }
     }
 
-    for (std::size_t j = step/2+1; j < M.DTM.height(); j = j+step){	
-      for (std::size_t i = step/2+1; i < M.DTM.width(); i = i+step){
+    for (std::size_t j = step/2+1; j < dtm.height(); j = j+step){	
+      for (std::size_t i = step/2+1; i < dtm.width(); i = i+step){
 		
         //stockage des nouveaux points
         std::vector < float > list_pointsZ;
         std::size_t squareXmin = (i < square ? 0 : i-square);
-        std::size_t squareXmax = std::min(M.DTM.width()-1,i+square);
+        std::size_t squareXmax = std::min(dtm.width()-1,i+square);
         std::size_t squareYmin = (j < square ? 0 : j-square);
-        std::size_t squareYmax = std::min(M.DTM.height()-1,j+square);
+        std::size_t squareYmax = std::min(dtm.height()-1,j+square);
 
         for(std::size_t k = squareXmin; k <= squareXmax; k++){
           for(std::size_t l = squareYmin; l <= squareYmax; l++){
 				
-            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
+            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
 				
-            if(distance<=M.m_radius_dtm){
+            if(distance<=radius_dtm){
 					
-              for(int nb=0;nb<(int)M.grid_HPS(k,l).size();nb++){
-                if(test_ground[M.grid_HPS(k,l)[nb]]) list_pointsZ.push_back(M.HPS[M.grid_HPS(k,l)[nb]].position.z());
+              for(int nb=0;nb<(int)grid.indices(k,l).size();nb++){
+                if(test_ground[grid.indices(k,l)[nb]])
+                  list_pointsZ.push_back(get(point_pmap, begin[grid.indices(k,l)[nb]]).z());
               }
             }
           }
@@ -338,24 +325,24 @@ public:
           if(count1<(int)list_pointsZ.size()) G2=(float)G2_temp/(list_pointsZ.size()-count1);
           Gfront=(G1+G2)/2;
         }
-        M.DTM(i,j)=G1;
+        dtm(i,j)=G1;
         im_Zfront(i,j)=Gfront;
 
         //extension by duplication
         std::size_t IsquareXmin = (i < step/2 ? 0 : i-step/2);
-        std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+step/2);
+        std::size_t IsquareXmax = std::min(dtm.width()-1,i+step/2);
         std::size_t JsquareYmin = (j < step/2 ? 0 : j-step/2);
-        std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+step/2);
+        std::size_t JsquareYmax = std::min(dtm.height()-1,j+step/2);
 		
-        if(M.DTM.width()-1-IsquareXmax<step) IsquareXmax=M.DTM.width()-1;
-        if(M.DTM.height()-1-JsquareYmax<step) JsquareYmax=M.DTM.height()-1;
+        if(dtm.width()-1-IsquareXmax<step) IsquareXmax=dtm.width()-1;
+        if(dtm.height()-1-JsquareYmax<step) JsquareYmax=dtm.height()-1;
         if(IsquareXmin<step) IsquareXmin=0;
         if(JsquareYmin<step) JsquareYmin=0;
 
         for(std::size_t k = IsquareXmin; k <= IsquareXmax; k++){
           for(std::size_t l = JsquareYmin; l <= JsquareYmax; l++){
-            if(M.Mask(k,l)){
-              M.DTM(k,l)=G1; 
+            if(grid.mask(k,l)){
+              dtm(k,l)=G1; 
               im_Zfront(k,l)=Gfront;
             }
           }
@@ -365,30 +352,30 @@ public:
 
     //Gaussian smoothness
     for(std::size_t ik = 0; ik < 10; ik++) {
-      for(std::size_t j = 0; j < M.DTM.height(); j++){ 
-        for (std::size_t i = 0; i < M.DTM.width(); i++) {
+      for(std::size_t j = 0; j < dtm.height(); j++){ 
+        for (std::size_t i = 0; i < dtm.width(); i++) {
 		
           std::size_t IsquareXmin = (i < 1 ? 0 : i - 1);
-          std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+1); 
+          std::size_t IsquareXmax = std::min(dtm.width()-1,i+1); 
           std::size_t JsquareYmin = (j < 1 ? 0 : j - 1);
-          std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+1); 
+          std::size_t JsquareYmax = std::min(dtm.height()-1,j+1); 
           int count=0; 
 
           for(std::size_t k=IsquareXmin; k<=IsquareXmax; k++){ 
             for(std::size_t l=JsquareYmin; l<=JsquareYmax; l++){ 
-              if(M.Mask(k,l)) count++;
+              if(grid.mask(k,l)) count++;
             }
           }	
-          if(count==9) M.DTM(i,j)=(M.DTM(i-1,j-1)+2*M.DTM(i,j-1)+M.DTM(i+1,j-1)+2*M.DTM(i-1,j)+4*M.DTM(i,j)+2*M.DTM(i+1,j)+M.DTM(i-1,j+1)+2*M.DTM(i,j+1)+M.DTM(i+1,j+1))/16;
+          if(count==9) dtm(i,j)=(dtm(i-1,j-1)+2*dtm(i,j-1)+dtm(i+1,j-1)+2*dtm(i-1,j)+4*dtm(i,j)+2*dtm(i+1,j)+dtm(i-1,j+1)+2*dtm(i,j+1)+dtm(i+1,j+1))/16;
         }
       }
     }
 
     //ranger les valeurs dans scans lidars
-    for(int i=0;i<(int)M.HPS.size();i++){
-      int I=M.HPS[i].ind_x;
-      int J=M.HPS[i].ind_y;
-      elevation_attribute.push_back ((double)(M.HPS[i].position.z()-M.DTM(I,J)));
+    for (std::size_t i = 0; i < (std::size_t)(end - begin); i++){
+      int I = grid.x(i);
+      int J = grid.y(i);
+      elevation_attribute.push_back ((double)(get(point_pmap, begin[i]).z()-dtm(I,J)));
     }
 
     this->compute_mean_max (elevation_attribute, mean, max);

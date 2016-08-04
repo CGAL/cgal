@@ -29,20 +29,16 @@
 #include <queue>
 
 #include <CGAL/bounding_box.h>
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/Fuzzy_sphere.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <CGAL/Data_classification/Planimetric_grid.h>
+#include <CGAL/Data_classification/Neighborhood.h>
 #include <CGAL/Data_classification/Image.h>
 #include <CGAL/Data_classification/Color.h>
 #include <CGAL/Data_classification/Segmentation_attribute.h>
 #include <CGAL/gco/GCoptimization.h>
-#include <boost/iterator/counting_iterator.hpp>
 
 #define CGAL_CLASSIFICATION_VERBOSE
 #if defined(CGAL_CLASSIFICATION_VERBOSE)
@@ -180,13 +176,12 @@ public:
   typedef typename Kernel::Plane_3 Plane;
   typedef typename Kernel::Vector_3 Vector;
 
-  typedef CGAL::cpp11::array<double, 3> Eigenvalues;
-  
-  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
-
   typedef Data_classification::Planimetric_grid<Kernel,
                                                 RandomAccessIterator,
                                                 PointPMap> Grid;
+  typedef Data_classification::Neighborhood<Kernel,
+                                            RandomAccessIterator,
+                                            PointPMap> Neighborhood;
   typedef Data_classification::Image<float> Image_float;
   typedef Data_classification::RGB_Color RGB_Color;
   typedef Data_classification::HSV_Color HSV_Color;
@@ -217,27 +212,6 @@ public:
     }
   };
   
-  class My_point_property_map{
-    Point_range& range;
-    
-  public:
-    typedef Point value_type;
-    typedef const value_type& reference;
-    typedef std::size_t key_type;
-    typedef boost::lvalue_property_map_tag category;  
-    My_point_property_map (Point_range& range) : range (range) { }
-    reference operator[] (key_type k) const { return range[k]; }
-    friend inline reference get (const My_point_property_map& ppmap, key_type i) 
-    { return ppmap[i]; }
-  };
-
-  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
-  typedef Search_traits_adapter <std::size_t, My_point_property_map, SearchTraits_3> Search_traits;
-  typedef CGAL::Kd_tree<Search_traits> Tree;
-  typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
-  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree KTree;
-  typedef typename Neighbor_search::Distance Distance;
 
   Point_range m_input;
   
@@ -265,17 +239,11 @@ public:
   Grid grid;
 
   //Hpoints attributes
-  std::vector<Eigenvalues> eigenvalues;
-  std::vector<Plane> planes;
-
   std::vector<Plane> groups;
   std::vector<Cluster> clusters;
   
-  Image_float DTM; //a enregistrer ?   //imagg           
-
   double m_grid_resolution;
   double m_radius_neighbors; 
-  double m_radius_dtm;
   bool m_multiplicative;
   /// \endcond
 
@@ -297,27 +265,20 @@ public:
     the default value is used, it is computed as 5 times
     `grid_resolution`.
 
-    \param radius_dtm Size used to estimate the ground (should be
-    higher than the thickest non-ground object of the scene). If the
-    default value is used, it is computed as 5 times `radius_neighbors`.
   */ 
   Point_set_classification (RandomAccessIterator begin,
                             RandomAccessIterator end,
                             PointPMap point_pmap,
                             double grid_resolution = -1.,
-                            double radius_neighbors = -1.,
-                            double radius_dtm = -1.)
+                            double radius_neighbors = -1.)
     : m_input (begin, end, point_pmap),
       m_grid_resolution (grid_resolution),
-      m_radius_neighbors (radius_neighbors),
-      m_radius_dtm (radius_dtm)
+      m_radius_neighbors (radius_neighbors)
   {
     if (m_grid_resolution < 0.)
       m_grid_resolution = CGAL::compute_average_spacing<CGAL::Sequential_tag> (begin, end, 6);
     if (m_radius_neighbors < 0.)
       m_radius_neighbors = 5. * m_grid_resolution;
-    if (m_radius_dtm < 0.)
-      m_radius_dtm = 5 * m_grid_resolution;
 
     m_multiplicative = false;
   }
@@ -340,95 +301,15 @@ public:
 
     \param radius_neighbors Size used for neighborhood computation. 
 
-    \param radius_dtm Size used to estimate the ground (should be
-    higher than the thickest non-ground object of the scene). 
   */
   
-  void set_parameters (double grid_resolution, double radius_neighbors, double radius_dtm)
+  void set_parameters (double grid_resolution, double radius_neighbors)
   {
     m_grid_resolution = grid_resolution;
     m_radius_neighbors = radius_neighbors;
-    m_radius_dtm = radius_dtm;
   }
-
-  /*!
-    Computes all the interlate structures needed by the algorithm.
-   */
-  void initialization()
-  {
-    CGAL_CLASSIFICATION_CERR << std::endl << "Initialization: ";
-
-    //1-Neighborhood computation and reset the attributes of the structure points
-    CGAL_CLASSIFICATION_CERR<<"spherical neighborhood..";
-    eigenvalues.clear();
-    planes.clear();
-    
-    My_point_property_map pmap (m_input);
-    Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (m_input.size()),
-               typename Tree::Splitter(),
-               Search_traits (pmap));
-
-    std::size_t nb_neigh = 0;
-    for (std::size_t i = 0; i < m_input.size(); i++)
-      {
-        const Point& query = m_input[i];
-
-        std::vector<std::size_t> neighbors;
-      
-        Fuzzy_sphere fs (i, m_radius_neighbors, 0, tree.traits());
-        tree.search (std::back_inserter(neighbors), fs);
-        nb_neigh += neighbors.size();
-        
-        std::vector<Point> neighborhood;
-        for (std::size_t j = 0; j < neighbors.size(); ++ j)
-          neighborhood.push_back (m_input[j]);
-        
-        compute_principal_curvature (query, neighborhood);
-      }
-
-    CGAL_CLASSIFICATION_CERR<<"ok";
-  }
-
 
   /// \cond SKIP_IN_MANUAL
-  void compute_principal_curvature(const Point& point, std::vector<Point>& neighborhood)
-  {
-    if (neighborhood.size() == 0)
-      {
-        Eigenvalues v = {{ 0., 0., 0. }};
-        eigenvalues.push_back (v);
-        planes.push_back (Plane (point, Vector (0., 0., 1.)));
-        return;
-      }
-    Point centroid = CGAL::centroid (neighborhood.begin(), neighborhood.end());
-
-    CGAL::cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
-      
-    for (std::size_t i = 0; i < neighborhood.size(); ++ i)
-      {
-        Vector d = neighborhood[i] - centroid;
-        covariance[0] += d.x () * d.x ();
-        covariance[1] += d.x () * d.y ();
-        covariance[2] += d.x () * d.z ();
-        covariance[3] += d.y () * d.y ();
-        covariance[4] += d.y () * d.z ();
-        covariance[5] += d.z () * d.z ();
-      }
-
-    Eigenvalues evalues = {{ 0., 0., 0. }};
-    CGAL::cpp11::array<double, 9> eigenvectors = {{ 0., 0., 0.,
-                                                    0., 0., 0.,
-                                                    0., 0., 0. }};
-
-    CGAL::Default_diagonalize_traits<double,3>::diagonalize_selfadjoint_covariance_matrix
-      (covariance, evalues, eigenvectors);
-    eigenvalues.push_back (evalues);
-
-    Plane plane;
-    CGAL::linear_least_squares_fitting_3 (neighborhood.begin(),neighborhood.end(),plane, CGAL::Dimension_tag<0>());
-    planes.push_back (plane);
-  }
 
   double classification_value (std::size_t segmentation_class, int pt_index) const
   {
@@ -510,7 +391,7 @@ public:
   }
 
 
-  bool smoothed_labeling_PC()
+  bool smoothed_labeling_PC (const Neighborhood& neighborhood)
   {
 
     // data term initialisation
@@ -520,19 +401,10 @@ public:
       (segmentation_classes.size(),
        std::vector<double> (m_input.size(), -1.));
 
-    My_point_property_map pmap (m_input);
-
-    Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (m_input.size()),
-               typename Tree::Splitter(),
-               Search_traits (pmap));
-
     for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
-      
-        Fuzzy_sphere fs(s, m_radius_neighbors, 0, tree.traits());
-        tree.search(std::back_inserter(neighbors), fs);
+        neighborhood.get (s, neighbors);
 
         std::vector<double> mean (values.size(), 0.);
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
@@ -604,7 +476,7 @@ public:
     }
   };
   
-  bool graphcut_labeling_PC()
+  bool graphcut_labeling_PC(const Neighborhood& neighborhood)
   {
 
     std::size_t nb_alpha_exp = 2;
@@ -616,27 +488,20 @@ public:
       (segmentation_classes.size(),
        std::vector<double> (m_input.size(), -1.));
 
-    My_point_property_map pmap (m_input);
-
-    KTree tree (boost::counting_iterator<std::size_t> (0),
-                boost::counting_iterator<std::size_t> (m_input.size()),
-                typename KTree::Splitter(),
-                Search_traits (pmap));
-
     GCoptimizationGeneralGraph<float, float> *gc= new GCoptimizationGeneralGraph<float, float>
       ((int)(m_input.size()),(int)(segmentation_classes.size()));
 
     gc->specializeDataCostFunctor(Facet_score(*this));
     gc->specializeSmoothCostFunctor(Edge_score(*this));
 
-    Distance tr_dist(pmap);
     for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
 
-        Neighbor_search search (tree, m_input[s], 12, 0, true, tr_dist);
-        for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++ it)
-          gc->setNeighbors (s, it->first);
+        neighborhood.k_neighbors (s, 12, std::back_inserter (neighbors));
+
+        for (std::size_t i = 0; i < neighbors.size(); ++ i)
+          gc->setNeighbors (s, neighbors[i]);
         
         int nb_class_best=0; 
         double val_class_best = std::numeric_limits<double>::max();
@@ -684,17 +549,10 @@ public:
     std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_group);
   }
 
-  void cluster_points (const double& tolerance)
+  void cluster_points (const Neighborhood& neighborhood, const double& tolerance)
   {
     std::vector<unsigned char>(m_input.size(), (unsigned char)(-1)).swap (m_neighbor);
     
-    My_point_property_map pmap (m_input);
-
-    Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (m_input.size()),
-               typename Tree::Splitter(),
-               Search_traits (pmap));
-
     std::vector<std::size_t> done (m_input.size(), (std::size_t)(-1));
     
     for (std::size_t s=0; s < m_input.size(); ++ s)
@@ -716,9 +574,9 @@ public:
             clusters.back().indices.push_back (current);
             
             std::vector<std::size_t> neighbors;
-            Fuzzy_sphere fs(current, tolerance, 0, tree.traits());
-            tree.search(std::back_inserter(neighbors), fs);
-            
+            neighborhood.range_neighbors (current, tolerance,
+                                          std::back_inserter (neighbors));
+
             for (std::size_t n = 0; n < neighbors.size(); ++ n)
               {
                 if (done[neighbors[n]] == (std::size_t)(-1))
@@ -757,7 +615,8 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  bool regularized_labeling_PC()
+  bool regularized_labeling_PC(const Neighborhood& neighborhood,
+                               const FT radius_neighbors)
   {
     std::vector<std::vector<std::size_t> > groups;
     for (std::size_t i = 0; i < m_input.size(); ++ i)
@@ -831,22 +690,14 @@ public:
           }
       }
 
-    My_point_property_map pmap (m_input);
-
-    Tree tree (boost::counting_iterator<std::size_t> (0),
-               boost::counting_iterator<std::size_t> (m_input.size()),
-               typename Tree::Splitter(),
-               Search_traits (pmap));
-
     for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         if (m_group[s] != (std::size_t)(-1))
           continue;
         
         std::vector<std::size_t> neighbors;
-      
-        Fuzzy_sphere fs(s, m_radius_neighbors, 0, tree.traits());
-        tree.search(std::back_inserter(neighbors), fs);
+        neighborhood.range_neighbors (s, radius_neighbors,
+                                      std::back_inserter (neighbors));
 
         std::vector<double> mean (values.size(), 0.);
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
@@ -889,7 +740,8 @@ public:
     point clouds. Regularization improves the quality of the output at
     the cost of longer computation time.
   */
-  void classify (int method)
+  void classify (int method, const Neighborhood& neighborhood = Neighborhood(),
+                 const FT radius_neighbors = 0.1)
   {
 
     clock_t t;
@@ -906,9 +758,9 @@ public:
     if (method == 0)
       quick_labeling_PC();
     else if (method == 1)
-      graphcut_labeling_PC();
+      graphcut_labeling_PC(neighborhood);
     else if (method == 2)
-      regularized_labeling_PC();
+      regularized_labeling_PC(neighborhood, radius_neighbors);
     else
       {
         std::cerr << "Unknown method number." << std::endl;
@@ -1010,7 +862,7 @@ public:
   */
   Classification_type* classification_type_of (std::size_t index) const
   {
-    return segmentation_attributes[m_assigned_type[index]];
+    return segmentation_classes[m_assigned_type[index]];
   }
 
   /// @}
