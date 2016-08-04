@@ -41,8 +41,6 @@ public:
   typedef Hyperbolic_Delaunay_triangulation_2<Gt, Tds> Self;
   typedef Delaunay_triangulation_2<Gt,Tds> Base;
   
-//  typedef Hyperbolic_triangulation_face_base_2<Gt> Face_base;
-  
   typedef typename Base::size_type             size_type;
   
   typedef typename Base::Vertex_handle Vertex_handle;
