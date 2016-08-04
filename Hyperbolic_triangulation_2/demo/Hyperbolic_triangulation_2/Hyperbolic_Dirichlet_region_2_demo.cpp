@@ -217,7 +217,7 @@ signals:
 
 
 MainWindow::MainWindow()
-  : DemosMainWindow(), dt(K(1))
+  : DemosMainWindow()
 {
   setupUi(this);
 
@@ -265,7 +265,7 @@ MainWindow::MainWindow()
     cout << origin_orbit[i] << endl;
   }
   
-  Delaunay* dtO = new Delaunay(K(1));
+  Delaunay* dtO = new Delaunay();
   dtO->insert(origin_orbit.begin(), origin_orbit.end());
   
   origin_vgi = new CGAL::Qt::VoronoiGraphicsItem<Delaunay>(dtO);

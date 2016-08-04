@@ -101,7 +101,7 @@ signals:
 
 
 MainWindow::MainWindow()
-  : DemosMainWindow(), dt(K(1))
+  : DemosMainWindow()
 {
   setupUi(this);
 

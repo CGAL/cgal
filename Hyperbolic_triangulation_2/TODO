@@ -8,9 +8,6 @@ Triangulation_face_base_with_info_2 to add info in their faces
 
 add operator == for triangulations
 
-radius should be 1 !!!
-
-
 ** clean approximations
 
 the construction of the (hyperbolic) segment should not be approximated in the traits
