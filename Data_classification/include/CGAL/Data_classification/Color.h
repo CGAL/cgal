@@ -112,6 +112,15 @@ inline RGB_Color hsv_to_rgb (const HSV_Color& c)
   return out;
 }
 
+inline void change_hue (RGB_Color& color, const RGB_Color& hue)
+{
+  HSV_Color hcolor = rgb_to_hsv (color);
+  HSV_Color hhue = rgb_to_hsv (hue);
+  hcolor[0] = hhue[0];
+  //    hcolor[1] = hhue[1];
+  color = hsv_to_rgb (hcolor);
+}
+  
   /// \endcond
 
 } // namespace Data_classification

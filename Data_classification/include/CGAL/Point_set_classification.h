@@ -35,8 +35,6 @@
 
 #include <CGAL/Data_classification/Planimetric_grid.h>
 #include <CGAL/Data_classification/Neighborhood.h>
-#include <CGAL/Data_classification/Image.h>
-#include <CGAL/Data_classification/Color.h>
 #include <CGAL/Data_classification/Segmentation_attribute.h>
 #include <CGAL/gco/GCoptimization.h>
 
@@ -182,9 +180,6 @@ public:
   typedef Data_classification::Neighborhood<Kernel,
                                             RandomAccessIterator,
                                             PointPMap> Neighborhood;
-  typedef Data_classification::Image<float> Image_float;
-  typedef Data_classification::RGB_Color RGB_Color;
-  typedef Data_classification::HSV_Color HSV_Color;
 
   class Point_range
   {
@@ -214,13 +209,11 @@ public:
   
 
   Point_range m_input;
-  
-  std::vector<unsigned char> echo;
+
   std::vector<std::size_t> m_group;
   std::vector<unsigned char> m_assigned_type;
   std::vector<unsigned char> m_neighbor;
   std::vector<double> m_confidence;
-  std::vector<RGB_Color> color;
 
   struct Cluster
   {
@@ -282,17 +275,6 @@ public:
 
     m_multiplicative = false;
   }
-
-  /// \cond SKIP_IN_MANUAL
-  void change_hue (RGB_Color& color, const RGB_Color& hue)
-  {
-    HSV_Color hcolor = Data_classification::rgb_to_hsv (color);
-    HSV_Color hhue = Data_classification::rgb_to_hsv (hue);
-    hcolor[0] = hhue[0];
-    //    hcolor[1] = hhue[1];
-    color = Data_classification::hsv_to_rgb (hcolor);
-  }
-  /// \endcond
 
   /*!
     \brief Change the parameters of the classification algorithm.

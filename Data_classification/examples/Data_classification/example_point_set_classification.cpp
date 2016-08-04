@@ -87,7 +87,7 @@ int main (int argc, char** argv)
   psc.add_classification_type (&ground);
   psc.add_classification_type (&roof);
 
-  psc.classify (1); // Run with method=1 (global regularization with graphcut)
+  psc.classify (1, neighborhood); // Run with method=1 (global regularization with graphcut)
 
   // Recover output
   std::vector<Point> pts_ground, pts_vege, pts_roof;
