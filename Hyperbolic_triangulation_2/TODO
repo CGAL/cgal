@@ -1,5 +1,8 @@
 ==== new ====
 
+add missing dual for faces!
+use hyperbolic circumcenter, not Euclidean!!
+
 add Hyperbolic_triangulation_face_base_wth_info_2
 
 add operator == for triangulations
@@ -24,6 +27,8 @@ CK, or at least Cartesian with sqrt (?)
 ** only keep relevant files for the submission
 
 ========== demo
+
+
 
 --- create an adapted Graphicsitem that does not require finite_* stuff. Replace by hyperbolic_*
        => understand apply_to_range
