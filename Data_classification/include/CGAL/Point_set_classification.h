@@ -207,7 +207,6 @@ public:
     }
   };
   
-
   Point_range m_input;
 
   std::vector<std::size_t> m_group;
@@ -235,8 +234,6 @@ public:
   std::vector<Plane> groups;
   std::vector<Cluster> clusters;
   
-  double m_grid_resolution;
-  double m_radius_neighbors; 
   bool m_multiplicative;
   /// \endcond
 
@@ -261,34 +258,10 @@ public:
   */ 
   Point_set_classification (RandomAccessIterator begin,
                             RandomAccessIterator end,
-                            PointPMap point_pmap,
-                            double grid_resolution = -1.,
-                            double radius_neighbors = -1.)
-    : m_input (begin, end, point_pmap),
-      m_grid_resolution (grid_resolution),
-      m_radius_neighbors (radius_neighbors)
+                            PointPMap point_pmap)
+    : m_input (begin, end, point_pmap)
   {
-    if (m_grid_resolution < 0.)
-      m_grid_resolution = CGAL::compute_average_spacing<CGAL::Sequential_tag> (begin, end, 6);
-    if (m_radius_neighbors < 0.)
-      m_radius_neighbors = 5. * m_grid_resolution;
-
     m_multiplicative = false;
-  }
-
-  /*!
-    \brief Change the parameters of the classification algorithm.
-
-    \param grid_resolution Resolution of the 2D map of the ground. 
-
-    \param radius_neighbors Size used for neighborhood computation. 
-
-  */
-  
-  void set_parameters (double grid_resolution, double radius_neighbors)
-  {
-    m_grid_resolution = grid_resolution;
-    m_radius_neighbors = radius_neighbors;
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -325,9 +298,10 @@ public:
   }
 
 
-  bool quick_labeling_PC()
+  void run_quick()
   {
-
+    prepare_classification ();
+    
     // data term initialisation
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
@@ -368,14 +342,13 @@ public:
       }
     
     CGAL_CLASSIFICATION_CERR<<"ok"<<std::endl;
-	
-    return true;
   }
 
 
-  bool smoothed_labeling_PC (const Neighborhood& neighborhood)
+  void run_with_local_smoothing (const Neighborhood& neighborhood)
   {
-
+    prepare_classification ();
+    
     // data term initialisation
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
@@ -421,26 +394,23 @@ public:
 
       }
 
-	
-    return true;
   }
 
 
   class Edge_score
   {
-    const Point_set_classification& M;
+    const double smoothing;
 
   public:
-    Edge_score(const Point_set_classification& _M) : M(_M) {}
+    Edge_score(const double smoothing) : smoothing(smoothing) {}
 
     float compute(int, int, int l1, int l2)
     {
       double res=0;
-      double smooth_seg= M.m_grid_resolution;
 
       if(l1!=l2) res=1; 
 
-      return smooth_seg*res;
+      return smoothing * res;
     }
   };
 
@@ -458,9 +428,11 @@ public:
     }
   };
   
-  bool graphcut_labeling_PC(const Neighborhood& neighborhood)
+  void run_with_graphcut (const Neighborhood& neighborhood,
+                          const double smoothing)
   {
-
+    prepare_classification ();
+    
     std::size_t nb_alpha_exp = 2;
     
     // data term initialisation
@@ -474,7 +446,7 @@ public:
       ((int)(m_input.size()),(int)(segmentation_classes.size()));
 
     gc->specializeDataCostFunctor(Facet_score(*this));
-    gc->specializeSmoothCostFunctor(Edge_score(*this));
+    gc->specializeSmoothCostFunctor(Edge_score(smoothing));
 
     for (std::size_t s=0; s < m_input.size(); ++ s)
       {
@@ -522,7 +494,6 @@ public:
 
     delete gc;
       
-    return true;
   }
   
   void reset_groups()
@@ -597,9 +568,11 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  bool regularized_labeling_PC(const Neighborhood& neighborhood,
-                               const FT radius_neighbors)
+  bool run_with_groups (const Neighborhood& neighborhood,
+                        const FT radius_neighbors)
   {
+    prepare_classification ();
+    
     std::vector<std::vector<std::size_t> > groups;
     for (std::size_t i = 0; i < m_input.size(); ++ i)
       {
@@ -710,55 +683,18 @@ public:
   }
   /// \endcond
 
-  /*!
-    Performs classification using the user-chosen regularization method.
-
-    \param method Regularization method. 0 = no regularization; 1 =
-    global regularization through graphcut; 2 = local regularization
-    based on pre-computed groups.
-
-    \note Classification without regularization (method = 0) is very
-    quick: almost instantaneous or up to a few seconds for very large
-    point clouds. Regularization improves the quality of the output at
-    the cost of longer computation time.
-  */
-  void classify (int method, const Neighborhood& neighborhood = Neighborhood(),
-                 const FT radius_neighbors = 0.1)
-  {
-
-    clock_t t;
-    t = clock();
-
-    build_effect_table ();
-	
-    CGAL_CLASSIFICATION_CERR<<std::endl<<"Classification of the point cloud: ";
-
-    // Reset data structure
-    std::vector<unsigned char>(m_input.size()).swap (m_assigned_type);
-    std::vector<double>(m_input.size()).swap (m_confidence);
-    
-    if (method == 0)
-      quick_labeling_PC();
-    else if (method == 1)
-      graphcut_labeling_PC(neighborhood);
-    else if (method == 2)
-      regularized_labeling_PC(neighborhood, radius_neighbors);
-    else
-      {
-        std::cerr << "Unknown method number." << std::endl;
-        abort();
-      }
-
-    CGAL_CLASSIFICATION_CERR<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
-
-  }
 
   /// @}
 
   
   /// \cond SKIP_IN_MANUAL
-  void build_effect_table ()
+  void prepare_classification ()
   {
+    // Reset data structure
+    std::vector<unsigned char>(m_input.size()).swap (m_assigned_type);
+    std::vector<double>(m_input.size()).swap (m_confidence);
+    
+
     effect_table = std::vector<std::vector<Attribute_side> >
       (segmentation_classes.size(), std::vector<Attribute_side> (segmentation_attributes.size(),
                                                                  Classification_type::NEUTRAL_ATT));

@@ -55,7 +55,7 @@ int main (int argc, char** argv)
   Verticality verti (pts.begin(), pts.end(), eigen, 0.13);
   Distance_to_plane d2p (pts.begin(), pts.end(), Pmap(), eigen, 0.72);
 
-  Classification psc (pts.begin (), pts.end(), Pmap(), 0.8);
+  Classification psc (pts.begin (), pts.end(), Pmap());
   
   // // Add attributes to PSC
   psc.add_segmentation_attribute (&disp);
@@ -87,7 +87,7 @@ int main (int argc, char** argv)
   psc.add_classification_type (&ground);
   psc.add_classification_type (&roof);
 
-  psc.classify (1, neighborhood); // Run with method=1 (global regularization with graphcut)
+  psc.run_with_graphcut (neighborhood, 0.5);
 
   // Recover output
   std::vector<Point> pts_ground, pts_vege, pts_roof;
