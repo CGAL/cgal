@@ -18,6 +18,7 @@
 //
 // Author(s)     : Monique Teillaud
 
+// (based on Triangulation_face_base_with_info_2.h)
 
 #ifndef CGAL_HYPERBOLIC_TRIANGULATION_FACE_BASE_WITH_INFO_2_H
 #define CGAL_HYPERBOLIC_TRIANGULATION_FACE_BASE_WITH_INFO_2_H
