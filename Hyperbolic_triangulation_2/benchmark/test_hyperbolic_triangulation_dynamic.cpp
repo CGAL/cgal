@@ -5,17 +5,14 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
-#include <CGAL/Hyperbolic_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Hyperbolic_triangulation_traits_2<K> Gt;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
 
 typedef K::Point_2 Point_2;
 typedef K::FT FT;
-
-// to delete - useless
-typedef CGAL::Delaunay_triangulation_2</*K*/Gt> Dt;
 
 typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt> HDt;
 typedef HDt::Vertex_handle Vertex_handle;
@@ -23,7 +20,6 @@ typedef HDt::Face_handle Face_handle;
 
 int main(int argc, char *argv[])
 {   
-  FT r = 1;
   FT eps = 0;
   for(int k = 0; k < 2; k++) {
     if(k == 0) {
@@ -53,9 +49,7 @@ int main(int argc, char *argv[])
       double average_nb = 0;
       for(int trials = 0; trials < trials_nb; trials++) {
         
-        HDt hdt = HDt(Gt(r));
-        
-        //Dt dt = Dt();
+        HDt hdt;
         
         CGAL::Timer timer;
         
@@ -102,8 +96,6 @@ int main(int argc, char *argv[])
       average_time = average_time/trials_nb;
       average_nb = average_nb/trials_nb;
     
-      std::cout << "H^2" << std::endl;
-      std::cout << "Radius: " << r << std::endl;
       std::cout << "Eps: " << eps << std::endl;
       std::cout << "Number of points: " << average_nb << std::endl;
       std::cout << "Time: " << average_time << std::endl;
