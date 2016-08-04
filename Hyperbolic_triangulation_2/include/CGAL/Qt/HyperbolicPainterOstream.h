@@ -1,9 +1,10 @@
 // Copyright (c) 2011-2016   INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -22,19 +23,19 @@
 
 #include <CGAL/Qt/PainterOstream.h>
 
-#include <CGAL/Hyperbolic_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 namespace CGAL{
 
 namespace Qt {
   
   template <typename K>
-  class PainterOstream<Hyperbolic_triangulation_traits_2<K> > : public PainterOstream<K> {
+  class PainterOstream<Hyperbolic_Delaunay_triangulation_traits_2<K> > : public PainterOstream<K> {
   public:
     typedef PainterOstream<K> Base;
-    typedef PainterOstream<Hyperbolic_triangulation_traits_2<K> > Self;
+    typedef PainterOstream<Hyperbolic_Delaunay_triangulation_traits_2<K> > Self;
     
-    typedef Hyperbolic_triangulation_traits_2<K> Gt;
+    typedef Hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
     
   private:
     typedef typename Gt::Segment_2      Segment_2;
