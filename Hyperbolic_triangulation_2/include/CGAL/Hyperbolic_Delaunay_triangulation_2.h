@@ -1,9 +1,10 @@
 // Copyright (c) 2010-2016  INRIA Sophia Antipolis, INRIA Nancy (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -21,66 +22,18 @@
 #ifndef CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H
 
-#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Hyperbolic_triangulation_face_base_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <stack>
 #include <set>
 
 namespace CGAL {
-    
-class Hyperbolic_face_info_2
-{
-public:
-  Hyperbolic_face_info_2() : _is_finite_non_hyperbolic(false), _non_hyperbolic_edge(UCHAR_MAX)
-  {
-  }
-  
-  bool is_finite_non_hyperbolic() const
-  {
-    return _is_finite_non_hyperbolic;
-  }
-  
-  void set_finite_non_hyperbolic(bool is_finite_non_hyperbolic)
-  {
-    _is_finite_non_hyperbolic = is_finite_non_hyperbolic;
-  }
-  
-  // Supposed to be called before "get_non_hyperbolic_edge"
-  bool has_non_hyperbolic_edge() const
-  {
-    return _non_hyperbolic_edge <= 2;
-  }
-  
-  // Higly recommended to call "has_non_hyperbolic_edge" before 
-  unsigned char get_non_hyperbolic_edge() const
-  {
-    assert(_is_finite_non_hyperbolic);
-    assert(_non_hyperbolic_edge <= 2);
-    
-    return _non_hyperbolic_edge;
-  }
-  
-  void set_non_hyperbolic_edge(unsigned char non_hyperbolic_edge)
-  {
-    assert(_is_finite_non_hyperbolic);
-    assert(non_hyperbolic_edge <= 2); 
-    
-    _non_hyperbolic_edge = non_hyperbolic_edge;
-  }
-  
-private:
-  // a finite face is non_hyperbolic if its circumscribing circle intersects the circle at infinity
-  bool _is_finite_non_hyperbolic;
-  
-  // defined only if the face is finite and non_hyperbolic
-  unsigned char _non_hyperbolic_edge;
-};
-    
+ 
 template < class Gt, 
   class Tds = Triangulation_data_structure_2 <
                            Triangulation_vertex_base_2<Gt>, 
-                           Triangulation_face_base_with_info_2<Hyperbolic_face_info_2, Gt> > >
+                           Hyperbolic_triangulation_face_base_2<Gt> > >
   class Hyperbolic_Delaunay_triangulation_2 
   : public Delaunay_triangulation_2<Gt,Tds>
 {
@@ -88,8 +41,7 @@ public:
   typedef Hyperbolic_Delaunay_triangulation_2<Gt, Tds> Self;
   typedef Delaunay_triangulation_2<Gt,Tds> Base;
   
-  typedef Triangulation_face_base_with_info_2<Hyperbolic_face_info_2, Gt> Face_base;
-  typedef typename Face_base::Info Face_info;
+  typedef Hyperbolic_triangulation_face_base_2<Gt> Face_base;
   
   typedef typename Base::size_type             size_type;
   
@@ -115,18 +67,7 @@ public:
   typedef typename Geom_traits::FT            FT;
   typedef typename Geom_traits::Point_2       Point;
   typedef typename Geom_traits::Hyperbolic_segment_2     Segment;
-  
-  /*
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
-  using Triangulation::side_of_oriented_circle;
-  using Triangulation::circumcenter;
-  using Triangulation::collinear_between;
-  using Triangulation::test_dim_down;
-  using Triangulation::make_hole;
-  using Triangulation::fill_hole_delaunay;
-  using Triangulation::delete_vertex;
-#endif
-*/
+
   
   Hyperbolic_Delaunay_triangulation_2(const Gt& gt = Gt())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
@@ -185,36 +126,6 @@ public:
     mark_finite_non_hyperbolic_faces();
     
     return n;
-  }
-  
-  //test version of insert function
-  
-#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-  template < class InputIterator >
-  std::ptrdiff_t
-  insert2( InputIterator first, InputIterator last,
-         typename boost::enable_if<
-         boost::is_base_of<
-         Point,
-         typename std::iterator_traits<InputIterator>::value_type
-         >
-         >::type* = NULL
-         )
-#else
-  template < class InputIterator >
-  std::ptrdiff_t
-  insert_2(InputIterator first, InputIterator last)
-#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO 
-  {
-    size_type n = this->number_of_vertices();
-    
-    spatial_sort(first, last, geom_traits());
-    Face_handle f;
-    while(first != last) {
-      f = insert (*first++, f)->face();
-    }
-  
-    return this->number_of_vertices() - n;
   }
   
   bool is_infinite(Vertex_handle v) const
@@ -277,12 +188,12 @@ private:
   {
     assert(is_finite_non_hyperbolic(f));
     
-    return f->info().get_non_hyperbolic_edge(); 
+    return f->get_non_hyperbolic_edge(); 
   }
   
   bool is_finite_non_hyperbolic(Face_handle f) const
   {
-    return f->info().is_finite_non_hyperbolic();
+    return f->is_finite_non_hyperbolic();
   }
   
   bool is_finite_non_hyperbolic(Face_handle f, int i) const
@@ -335,7 +246,6 @@ private:
     Mark_face test(*this);
     
     Face_handle next;
-    Face_info face_info;
     
     while(!backtrack.empty()) {
       // take a face
@@ -425,7 +335,7 @@ private:
   template<class Mark_face_test>
   void mark_face(const Face_handle& f, const Mark_face_test& test) const
   {
-    f->info() = test(f);
+    f->set_finite_non_hyperbolic(test(f));
   }
   
   void mark_face(const Face_handle& f) const
@@ -441,13 +351,12 @@ private:
       _tr(tr)
     {}
     
-    Face_info operator ()(const Face_handle& f) const
+    bool operator ()(const Face_handle& f) const
     {
       typedef typename Gt::Is_hyperbolic Is_hyperbolic;
       
-      Face_info info;
       if(_tr.has_infinite_vertex(f)) {
-        return info; // info is set to false by default constructor
+	return false; 
       }
       
       Point p0 = f->vertex(0)->point();
@@ -457,15 +366,13 @@ private:
       
       Is_hyperbolic is_hyperbolic = _tr.geom_traits().Is_hyperbolic_object();
       if(is_hyperbolic(p0, p1, p2, ind) == false) {
-        
-        info.set_finite_non_hyperbolic(true);
-        info.set_non_hyperbolic_edge(ind);
-        
-        return info;
+	f->set_finite_non_hyperbolic(true); // MT should not be necessary, return true should be enough (?)
+	f->set_non_hyperbolic_edge(ind);
+	return true; 
       }
       
       // the face is finite and hyperbolic
-      return info;
+      return false; 
     }
     
   private:
