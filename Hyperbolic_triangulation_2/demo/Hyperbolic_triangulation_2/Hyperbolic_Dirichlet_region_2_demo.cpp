@@ -67,7 +67,7 @@ typedef K::Iso_rectangle_2 Iso_rectangle_2;
 typedef TranslationInfo<std::string> Vb_info;
 
 typedef CGAL::Triangulation_vertex_base_with_info_2< Vb_info, K > Vb;
-typedef CGAL::Triangulation_face_base_with_info_2 <CGAL::Hyperbolic_face_info_2, K > Fb;
+typedef CGAL::Hyperbolic_triangulation_face_base_2<K> Fb;
 
 typedef CGAL::Hyperbolic_Delaunay_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > Delaunay;
 

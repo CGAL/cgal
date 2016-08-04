@@ -1,10 +1,6 @@
 ==== MT ====
 
-create Hyperbolic_triangulation_face_base_2 (deriving
-from Triangulation_face_base_2? check rebind) instead of
-using Triangulation_face_base_with_info_2<Hyperbolic_face_info_2>  
-in order to allow users to use
-Triangulation_face_base_with_info_2 to add info in their faces 
+add Hyperbolic_triangulation_face_base_wth_info_2
 
 add operator == for triangulations
 
