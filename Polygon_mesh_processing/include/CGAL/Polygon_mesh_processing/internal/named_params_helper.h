@@ -25,6 +25,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/properties.h>
+#include <boost/mpl/if.hpp>
 
 // shortcut for accessing the value type of the property map
 template <class Graph, class Property>
@@ -56,6 +58,40 @@ public:
   > ::type  type;
 };
 
+template<typename PolygonMesh, typename PropertyTag>
+class property_map_selector
+{
+public:
+  typedef typename boost::graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
+  typedef typename boost::mpl::if_c< Has_internal_pmap::value
+                          , typename boost::property_map<PolygonMesh, PropertyTag>::type
+                          , typename boost::cgal_no_property::type
+  >::type type;
+
+  type get_pmap(const PropertyTag& p, const PolygonMesh& pmesh)
+  {
+    return get_impl(p, pmesh, Has_internal_pmap());
+  }
+
+private:
+  type get_impl(const PropertyTag& p, const PolygonMesh& pmesh, CGAL::Tag_false)
+  {
+    return type(); //boost::cgal_no_property::type
+  }
+  type get_impl(const PropertyTag& p, const PolygonMesh& pmesh, CGAL::Tag_true)
+  {
+    return get(p, pmesh);
+  }
+};
+
+template<typename PolygonMesh, typename PropertyTag>
+typename property_map_selector<PolygonMesh, PropertyTag>::type
+get_property_map(const PropertyTag& p, const PolygonMesh& pmesh)
+{
+  property_map_selector<PolygonMesh, PropertyTag> pms;
+  return pms.get_pmap(p, pmesh);
+}
+
 template<typename PolygonMesh, typename NamedParameters>
 class GetVertexPointMap
 {
@@ -79,7 +115,7 @@ public:
 template<typename PolygonMesh, typename NamedParameters>
 class GetFaceIndexMap
 {
-  typedef typename boost::property_map < PolygonMesh, boost::face_index_t>::type DefaultMap;
+  typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::type DefaultMap;
 public:
   typedef typename boost::lookup_named_param_def <
     boost::face_index_t,
