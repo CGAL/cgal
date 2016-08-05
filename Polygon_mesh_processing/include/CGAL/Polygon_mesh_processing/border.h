@@ -79,6 +79,17 @@ namespace Polygon_mesh_processing {
 
     template<typename PM
            , typename FaceRange
+           , typename HalfedgeOutputIterator>
+    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
+                                               , typename boost::cgal_no_property::type
+                                               , HalfedgeOutputIterator out
+                                               , const PM& pmesh)
+    {
+      return border_halfedges_impl(faces, out, pmesh);
+    }
+
+    template<typename PM
+           , typename FaceRange
            , typename FaceIndexMap
            , typename HalfedgeOutputIterator>
     HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
@@ -167,7 +178,7 @@ namespace Polygon_mesh_processing {
 
     //face index map given as a named parameter, or as an internal property map
     FIMap fim = choose_param(get_param(np, face_index),
-                             get(CGAL::face_index, pmesh));
+                             get_property_map(face_index, pmesh));
 
     //make a minimal check that it's properly initialized :
     //if the 2 first faces have the same id, we know the property map is not initialized

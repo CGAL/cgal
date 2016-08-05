@@ -142,17 +142,21 @@ void isotropic_remeshing(const FaceRange& faces
                             pmesh,
                             boost::vertex_point);
 
+  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
+  FIMap fimap = choose_param(get_param(np, face_index),
+                           get_property_map(face_index, pmesh));
+
   typedef typename boost::lookup_named_param_def <
       CGAL::edge_is_constrained_t,
       NamedParameters,
-      internal::Border_constraint_pmap<PM, FaceRange>//default
+      internal::Border_constraint_pmap<PM, FaceRange, FIMap>//default
     > ::type ECMap;
-  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FaceRange> >::value)
+  ECMap ecmap = (boost::is_same<ECMap, internal::Border_constraint_pmap<PM, FaceRange, FIMap> >::value)
      //avoid constructing the Border_constraint_pmap if it's not used
     ? choose_param(get_param(np, edge_is_constrained)
-                 , internal::Border_constraint_pmap<PM, FaceRange>(pmesh, faces))
+                 , internal::Border_constraint_pmap<PM, FaceRange, FIMap>(pmesh, faces, fimap))
     : choose_param(get_param(np, edge_is_constrained)
-                 , internal::Border_constraint_pmap<PM, FaceRange>());
+                 , internal::Border_constraint_pmap<PM, FaceRange, FIMap>());
 
   typedef typename boost::lookup_named_param_def <
       CGAL::vertex_is_constrained_t,
@@ -195,8 +199,8 @@ void isotropic_remeshing(const FaceRange& faces
   t.reset(); t.start();
 #endif
 
-  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap>
-    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap);
+  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap, FIMap>
+    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap, fimap);
   remesher.init_remeshing(faces);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -308,6 +312,10 @@ void split_long_edges(const EdgeRange& edges
                             pmesh,
                             boost::vertex_point);
 
+  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
+  FIMap fimap = choose_param(get_param(np, face_index),
+    get_property_map(face_index, pmesh));
+
   typedef typename boost::lookup_named_param_def <
         CGAL::edge_is_constrained_t,
         NamedParameters,
@@ -324,6 +332,7 @@ void split_long_edges(const EdgeRange& edges
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
            , internal::Connected_components_pmap<PM, ECMap>()
+           , fimap
            , false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length);
