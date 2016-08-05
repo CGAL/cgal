@@ -153,12 +153,15 @@ namespace internal {
   };
 
   template <typename PM,
-            typename EdgeIsConstrainedMap>
+            typename EdgeIsConstrainedMap,
+            typename FaceIndexMap>
   struct Connected_components_pmap
   {
     typedef typename boost::graph_traits<PM>::face_descriptor   face_descriptor;
     typedef std::size_t                                         Patch_id;
-    typedef Connected_components_pmap<PM, EdgeIsConstrainedMap> CCMap;
+    typedef FaceIndexMap                                        FIMap;
+    typedef EdgeIsConstrainedMap                                ECMap;
+    typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
     boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
 
@@ -171,12 +174,15 @@ namespace internal {
     Connected_components_pmap()
       : patch_ids_map()
     {}
-    Connected_components_pmap(const PM& pmesh, EdgeIsConstrainedMap ecmap)
+    Connected_components_pmap(const PM& pmesh
+                            , EdgeIsConstrainedMap ecmap
+                            , FIMap fimap)
       : patch_ids_map()
     {
       PMP::connected_components(pmesh,
         boost::make_assoc_property_map(patch_ids_map),
-        PMP::parameters::edge_is_constrained_map(ecmap));
+        PMP::parameters::edge_is_constrained_map(ecmap)
+        .face_index_map(fimap));
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
@@ -224,14 +230,10 @@ namespace internal {
   template<typename PolygonMesh
          , typename VertexPointMap
          , typename GeomTraits
-         , typename EdgeIsConstrainedMap = No_constraint_pmap<
-              typename boost::graph_traits<PolygonMesh>::edge_descriptor>
-         , typename VertexIsConstrainedMap = No_constraint_pmap<
-              typename boost::graph_traits<PolygonMesh>::vertex_descriptor>
-         , typename FacePatchMap = Connected_components_pmap<
-              PolygonMesh, EdgeIsConstrainedMap>
-         , typename FaceIndexMap =
-              property_map_selector<PolygonMesh, CGAL::face_index_t>::type
+         , typename EdgeIsConstrainedMap
+         , typename VertexIsConstrainedMap
+         , typename FacePatchMap
+         , typename FaceIndexMap
   >
   class Incremental_remesher
   {
@@ -1227,8 +1229,8 @@ private:
       }
       while (end != nxt);
 
-      CGAL_assertion(is_on_patch_border(end));
       CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
+      CGAL_assertion(is_on_patch_border(end));
       return end;
     }
 

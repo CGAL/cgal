@@ -177,8 +177,8 @@ namespace Polygon_mesh_processing {
     }
 
     //face index map given as a named parameter, or as an internal property map
-    FIMap fim = choose_param(get_param(np, face_index),
-                             get_property_map(face_index, pmesh));
+    FIMap fim = choose_param(get_param(np, CGAL::face_index),
+                             get_property_map(CGAL::face_index, pmesh));
 
     //make a minimal check that it's properly initialized :
     //if the 2 first faces have the same id, we know the property map is not initialized
