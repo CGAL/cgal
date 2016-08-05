@@ -8,6 +8,8 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
 #include <CGAL/hierarchy_simplify_point_set.h>
+#include <CGAL/random_simplify_point_set.h>
+#include <CGAL/Point_set_2.h>
 
 #include <iterator>
 #include <list>
@@ -27,8 +29,15 @@ namespace CGAL {
 /// \cond SKIP_IN_MANUAL
 namespace internal {
 
-template <class Kernel>
+template <class Kernel, class PointType>
 class Quick_multiscale_approximate_knn_distance
+{
+
+};
+
+  
+template <class Kernel>
+class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_3>
 {
   typedef typename Kernel::FT FT;
   typedef Search_traits_3<Kernel> Tree_traits;
@@ -131,13 +140,163 @@ public:
               continue;
 
             FT dist = std::sqrt (sum_sq_distances / nb)
-              / std::pow (nb, 0.375); // nb^(5/12)
+              / std::pow (nb, 0.41666); // nb^(5/12)
 
             if (dist < dist_min)
               {
                 dist_min = dist;
                 k = nb;
                 d = it->second;
+              }
+          }
+        weight *= m_cluster_size;
+      }
+  }
+
+};
+
+  
+template <class Kernel>
+class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2>
+{
+  typedef typename Kernel::FT FT;
+  typedef CGAL::Point_set_2<Kernel> Point_set;
+  typedef typename Point_set::Vertex_handle Vertex_handle;
+
+  template <typename ValueType, typename PointPMap>
+  struct Pmap_unary_function : public std::unary_function<ValueType, typename Kernel::Point_2>
+  {
+    PointPMap point_pmap;
+    Pmap_unary_function (PointPMap point_pmap) : point_pmap (point_pmap) { }
+    const typename Kernel::Point_2& operator() (const ValueType& v) const { return get(point_pmap, v); }
+  };
+
+  template <typename PointPMap>
+  struct Pmap_to_3d
+  {
+    PointPMap point_pmap;
+    typedef typename Kernel::Point_3 value_type;
+    typedef const value_type& reference;
+    typedef typename boost::property_traits<PointPMap>::key_type key_type;
+    typedef boost::lvalue_property_map_tag category;
+    Pmap_to_3d () { }
+    Pmap_to_3d (PointPMap point_pmap)
+      : point_pmap (point_pmap) { }
+    friend inline value_type get (const Pmap_to_3d& ppmap, key_type i) 
+    {
+      typename Kernel::Point_2 p2 = get(ppmap.point_pmap, i);
+      return value_type (p2.x(), p2.y(), 0.);
+    }
+
+  };
+
+
+  std::size_t m_cluster_size;
+  std::vector<Point_set*> m_point_sets;
+  
+public:
+
+  template <typename InputIterator, typename PointPMap>
+  Quick_multiscale_approximate_knn_distance (InputIterator first,
+                                             InputIterator beyond,
+                                             PointPMap point_pmap,
+                                             std::size_t cluster_size = 10)
+    : m_cluster_size (cluster_size)
+  {
+    typedef Pmap_unary_function<typename std::iterator_traits<InputIterator>::value_type,
+                                PointPMap> Unary_f;
+
+    m_point_sets.push_back (new Point_set (boost::make_transform_iterator (first, Unary_f(point_pmap)),
+                                           boost::make_transform_iterator (beyond, Unary_f(point_pmap))));
+
+    std::size_t nb_pts = m_point_sets[0]->number_of_vertices();
+    std::size_t nb_trees = 0;
+    while (nb_pts > m_cluster_size)
+      {
+        nb_trees ++;
+        nb_pts /= m_cluster_size;
+      }
+
+    m_point_sets.reserve (nb_trees);
+
+    InputIterator first_unused = beyond;
+    nb_pts = m_point_sets[0]->number_of_vertices();
+
+    for (std::size_t i = 1; i < nb_trees; ++ i)
+      {
+        first_unused
+          = CGAL::hierarchy_simplify_point_set (first, beyond, Pmap_to_3d<PointPMap> (point_pmap),
+                                                m_cluster_size, 1./3.);
+
+        m_point_sets.push_back (new Point_set (boost::make_transform_iterator (first, Unary_f(point_pmap)),
+                                               boost::make_transform_iterator (first_unused, Unary_f(point_pmap))));
+
+        m_cluster_size *= cluster_size;
+      }
+    
+    m_cluster_size = cluster_size;
+  }
+
+  ~Quick_multiscale_approximate_knn_distance()
+  {
+    for (std::size_t i = 0; i < m_point_sets.size(); ++ i)
+      delete m_point_sets[i];
+  }
+
+  template <typename InputIterator, typename PointPMap>
+  std::size_t compute_k_scale (InputIterator query, PointPMap point_pmap)
+  {
+    std::size_t out;
+    FT dummy;
+    compute_scale (query, point_pmap, out, dummy);
+    return out;
+  }
+
+  template <typename InputIterator, typename PointPMap>
+  FT compute_range_scale (InputIterator query, PointPMap point_pmap)
+  {
+    std::size_t dummy;
+    FT out;
+    compute_scale (query, point_pmap, dummy, out);
+    return out;
+  }
+
+  template <typename InputIterator, typename PointPMap>
+  void compute_scale (InputIterator query, PointPMap point_pmap,
+                      std::size_t& k, FT& d)
+  {
+    k = 0;
+    d = 0.;
+
+    std::size_t weight = 1;
+    FT dist_min = std::numeric_limits<FT>::max();
+    FT sum_sq_distances = 0.;
+    std::size_t nb = 0;
+
+    const typename Kernel::Point_2& pquery = get(point_pmap, *query);
+    for (std::size_t t = 0; t < m_point_sets.size(); ++ t)
+      {
+        std::vector<Vertex_handle> neighbors;
+        m_point_sets[t]->nearest_neighbors (pquery, m_cluster_size,
+                                            std::back_inserter (neighbors));
+
+        for (std::size_t n = 1; n < neighbors.size(); ++ n)
+          {
+            FT sq_dist = CGAL::squared_distance (pquery, neighbors[n]->point());
+            sum_sq_distances += weight * sq_dist;
+            nb += weight;
+            
+            if (nb < 6) // do not consider values under 6
+              continue;
+
+            FT dist = std::sqrt (sum_sq_distances / nb)
+              / std::pow (nb, 0.75); // nb^(3/4)
+
+            if (dist < dist_min)
+              {
+                dist_min = dist;
+                k = nb;
+                d = sq_dist;
               }
           }
         weight *= m_cluster_size;
@@ -173,13 +332,14 @@ estimate_local_k_neighbor_scales(
   OutputIterator output,
   const Kernel& /*kernel*/) ///< geometric traits.
 {
+  typedef typename boost::property_traits<SamplesPointPMap>::value_type Point_d;
+
   // Build multi-scale KD-tree
-  internal::Quick_multiscale_approximate_knn_distance<Kernel> kdtree (first, beyond, samples_pmap);
+  internal::Quick_multiscale_approximate_knn_distance<Kernel, Point_d> kdtree (first, beyond, samples_pmap);
 
   // Compute local scales everywhere
   for (QueriesInputIterator it = first_query; it != beyond_query; ++ it)
     *(output ++) = kdtree.compute_k_scale (it, queries_pmap);
-
 }
 
 template <typename InputIterator,
@@ -221,8 +381,10 @@ estimate_local_range_scales(
   OutputIterator output,
   const Kernel& /*kernel*/) ///< geometric traits.
 {
+  typedef typename boost::property_traits<SamplesPointPMap>::value_type Point_d;
+
   // Build multi-scale KD-tree
-  internal::Quick_multiscale_approximate_knn_distance<Kernel> kdtree (first, beyond, samples_pmap);
+  internal::Quick_multiscale_approximate_knn_distance<Kernel, Point_d> kdtree (first, beyond, samples_pmap);
 
   // Compute local scales everywhere
   for (QueriesInputIterator it = first_query; it != beyond_query; ++ it)
