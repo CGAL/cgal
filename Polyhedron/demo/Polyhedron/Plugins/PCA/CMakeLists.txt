@@ -2,7 +2,8 @@ include( polyhedron_demo_macros )
 polyhedron_demo_plugin(pca_plugin Pca_plugin)
 target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
-polyhedron_demo_plugin(affine_transform_plugin Affine_transform_plugin)
+qt5_wrap_ui( transformUI_FILES Transformation_widget.ui )
+polyhedron_demo_plugin(affine_transform_plugin Affine_transform_plugin ${transformUI_FILES})
 target_link_libraries(affine_transform_plugin  scene_polyhedron_item scene_polyhedron_transform_item scene_points_with_normal_item)
 
 polyhedron_demo_plugin(trivial_plugin Trivial_plugin)

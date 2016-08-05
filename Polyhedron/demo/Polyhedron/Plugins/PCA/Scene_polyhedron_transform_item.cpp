@@ -38,7 +38,7 @@ struct Scene_polyhedron_transform_item_priv
   const Polyhedron* poly;
   qglviewer::Vec center_;
   Scene_polyhedron_transform_item *item;
-
+  QMatrix4x4 f_matrix;
 
   mutable QOpenGLShaderProgram *program;
   mutable std::vector<float> positions_lines;
@@ -113,13 +113,9 @@ void Scene_polyhedron_transform_item::drawEdges(CGAL::Three::Viewer_interface* v
     d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
     d->program->bind();
-    QMatrix4x4 f_matrix;
-    for (int i=0; i<16; ++i){
-        f_matrix.data()[i] = (float)d->frame->matrix()[i];
-    }
     QColor color = this->color();
     d->program->setAttributeValue("colors",color);
-    d->program->setUniformValue("f_matrix", f_matrix);
+    d->program->setUniformValue("f_matrix", d->f_matrix);
     d->program->setUniformValue("is_selected", false);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
     vaos[Scene_polyhedron_transform_item_priv::Edges]->release();
@@ -168,3 +164,9 @@ void Scene_polyhedron_transform_item::setManipulatable(bool b = true) { d->manip
 const Scene_polyhedron_item* Scene_polyhedron_transform_item::getBase() const{ return d->poly_item;  };
 const qglviewer::Vec& Scene_polyhedron_transform_item::center() const { return d->center_; }
 Scene_polyhedron_transform_item::~Scene_polyhedron_transform_item() { delete d; Q_EMIT killed(); }
+void Scene_polyhedron_transform_item::setFMatrix(double matrix[16])
+{
+  for (int i=0; i<16; ++i)
+    d->f_matrix.data()[i] = (float)matrix[i];
+}
+
