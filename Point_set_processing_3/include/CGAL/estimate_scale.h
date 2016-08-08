@@ -42,9 +42,18 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_3
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Iterator;
 
+  template <typename ValueType, typename PointPMap>
+  struct Pmap_unary_function : public std::unary_function<ValueType, typename Kernel::Point_3>
+  {
+    PointPMap point_pmap;
+    Pmap_unary_function (PointPMap point_pmap) : point_pmap (point_pmap) { }
+    const typename Kernel::Point_3& operator() (const ValueType& v) const { return get(point_pmap, v); }
+  };
+  
   std::size_t m_cluster_size;
   std::vector<Tree*> m_trees;
   std::vector<FT> m_weights;
+  std::vector<FT> m_precomputed_factor;
 
 public:
 
@@ -55,14 +64,13 @@ public:
                                              std::size_t cluster_size = 10)
     : m_cluster_size (cluster_size)
   {
-    m_trees.push_back (new Tree ());
+    typedef Pmap_unary_function<typename std::iterator_traits<InputIterator>::value_type,
+                                PointPMap> Unary_f;
+
+    m_trees.push_back (new Tree (boost::make_transform_iterator (first, Unary_f(point_pmap)),
+                                 boost::make_transform_iterator (beyond, Unary_f(point_pmap))));
     m_weights.push_back (1.);
-    std::size_t nb_pts = 0;
-    for (InputIterator it = first; it != beyond; ++ it)
-      {
-        m_trees[0]->insert (get(point_pmap, *it));
-        ++ nb_pts;
-      }
+    std::size_t nb_pts = m_trees[0]->size();
     
     std::size_t nb_trees = 0;
     while (nb_pts > m_cluster_size)
@@ -75,17 +83,16 @@ public:
     m_weights.reserve (nb_trees);
 
     InputIterator first_unused = beyond;
-    std::cerr << nb_trees << std::endl;
+
     nb_pts = m_trees[0]->size();
     for (std::size_t i = 1; i < nb_trees; ++ i)
       {
-        m_trees.push_back (new Tree());
         first_unused
           = CGAL::hierarchy_simplify_point_set (first, first_unused, point_pmap,
                                                 m_cluster_size, 1./3.);
 
-        for (InputIterator it = first; it != first_unused; ++ it)
-          m_trees.back()->insert (get(point_pmap, *it));
+        m_trees.push_back (new Tree(boost::make_transform_iterator (first, Unary_f(point_pmap)),
+                                    boost::make_transform_iterator (first_unused, Unary_f(point_pmap))));
 
         m_weights.push_back (m_trees[0]->size() / (FT)(m_trees.back()->size()));
       }
@@ -115,10 +122,17 @@ public:
     return out;
   }
 
+  FT precomputed_factor (std::size_t index, FT nb)
+  {
+    if (m_precomputed_factor.size() == index)
+      m_precomputed_factor.push_back (0.91666666 * std::log (nb));
+    return m_precomputed_factor[index];
+  }
+  
+  
   template <typename InputIterator, typename PointPMap>
   void compute_scale (InputIterator query, PointPMap point_pmap,
-                      std::size_t& k, FT& d,
-                      std::ostream& log)
+                      std::size_t& k, FT& d)
   {
     k = 0;
     d = 0.;
@@ -126,7 +140,7 @@ public:
     FT dist_min = std::numeric_limits<FT>::max();
     FT sum_sq_distances = 0.;
     FT nb = 0.;
-    
+    std::size_t index = 0;
     for (std::size_t t = 0; t < m_trees.size(); ++ t)
       {
         Neighbor_search search (*(m_trees[t]), get(point_pmap, *query),
@@ -146,10 +160,14 @@ public:
             if (nb < 6.) // do not consider values under 6
               continue;
 
+            // FT dist = std::sqrt (sum_sq_distances / nb)
+            //   / std::pow (nb, 0.41666); // nb^(5/12)
             
-            FT dist = std::sqrt (sum_sq_distances / nb)
-              / std::pow (nb, 0.41666); // nb^(5/12)
-            log << nb << " " << dist << std::endl;
+            // sqrt(sum_sq_distances / nb) / nb^(5/12)
+            // Computed in log space for time optimization
+            FT dist = 0.5 * std::log (sum_sq_distances) - precomputed_factor (index, nb);
+            ++ index;
+            
             if (dist < dist_min)
               {
                 dist_min = dist;
@@ -242,7 +260,7 @@ public:
 
     InputIterator first_unused = beyond;
     nb_pts = m_point_sets[0]->number_of_vertices();
-    std::cerr << nb_trees << std::endl;
+
     for (std::size_t i = 1; i < nb_trees; ++ i)
       {
         first_unused
@@ -254,7 +272,7 @@ public:
 
         m_weights.push_back (nb_pts / (FT)(m_point_sets.back()->number_of_vertices()));
       }
-    std::cerr << std::endl;
+
     m_cluster_size = cluster_size;
   }
 
