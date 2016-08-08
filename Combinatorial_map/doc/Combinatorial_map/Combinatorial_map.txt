@@ -12,7 +12,7 @@ namespace CGAL {
 
 A <I>d</I>-dimensional combinatorial map is a data structure representing an orientable subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships. This package is a generalization of the \ref chapterHalfedgeDS "halfedge data structure" to higher dimension. Indeed, a 2D combinatorial map is equivalent to a halfedge data structure: there is a one-to-one mapping between elements of both data structures, halfedges corresponding to darts.
 
-\tred{Note that you can use the \ref ChapterGeneralizedMap Generalized_map package if you need to represent non-orientable objects.}
+\tred{Note that you can use the} \ref ChapterGeneralizedMap "Generalized Map package" \tred{if you need to represent non-orientable objects.}
 
 We denote <I>i</I>-cell for an <I>i</I>-dimensional cell (for example in 3D, 0-cells are <I>vertices</I>, 1-cells are <I>edges</I>, 2-cells are <I>facets</I>, and 3-cells are <I>volumes</I>). A <I>boundary relation</I> is defined on these cells, giving for each <I>i</I>-cell <I>c</I> the set of <I>(i-1)</I>-cells contained in the boundary of <I>c</I>. Two cells <I>c1</I> and <I>c2</I> are <I>incident</I> if there is a path of cells, starting from the cell of biggest dimension to the other cell, such that each cell of the path (except the first one) belongs to the boundary of the previous cell in the path. Two <I>i</I>-cells <I>c3</I> and <I>c4</I> are <I>adjacent</I> if there is an <I>(i-1)</I>-cell incident to both <I>c3</I> and <I>c4</I>. You can see an example of a 2D object and a 3D object in \cgalFigureRef{fig_cmap_example_subdivisions} showing some cells of the subdivision and some adjacency and incidence relations.
 
@@ -159,7 +159,7 @@ We say that a combinatorial map is <I>valid</I> if it satisfies all the conditio
 
 \subsection ssec-comparison-cmaps-with-gmaps Comparison with generalized maps
 
-Combinatorial maps and generalilzed maps are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects.
+Combinatorial maps and \ref ChapterGeneralizedMap "generalized maps" are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects.
 
 However they have two main differences. Firstly, generalized maps allow to represent non-orientable and orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all applications are involutions, while combinatorial maps are not homogeneous since one application is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
 
@@ -417,7 +417,7 @@ for (CMap_3::Dart_of_orbit_range<1,2>::const_iterator
 
 \anchor ssecexempleoperations
 
-This example shows some uses of high level operations. First we create a combinatorial hexahedron, the combinatorial map obtained is shown in \cgalFigureRef{fig_cmap_example-insertions} (Left). Then we insert two 1-cells along two opposite 2-cells of the hexahedron. The combinatorial map obtained is shown in \cgalFigureRef{fig_cmap_example-insertions} (Middle). Finally, we insert a 2-cell in the diagonal of the hexahedron in order to split it into two parts. We obtain the combinatorial map shown in \cgalFigureRef{fig_cmap_example-insertions} (Right). We display the characteristics of the combinatorial map and check its validity.
+This example shows some uses of high level operations. First we create a combinatorial hexahedron, the combinatorial map obtained is shown in \cgalFigureRef{fig_cmap_example_insertions} (Left). Then we insert two 1-cells along two opposite 2-cells of the hexahedron. The combinatorial map obtained is shown in \cgalFigureRef{fig_cmap_example_insertions} (Middle). Finally, we insert a 2-cell in the diagonal of the hexahedron in order to split it into two parts. We obtain the combinatorial map shown in \cgalFigureRef{fig_cmap_example_insertions} (Right). We display the characteristics of the combinatorial map and check its validity.
 
 The second part of this example removes the inserted elements. First we remove the inserted 2-cell, then the two inserted 1-cells. We get back the initial combinatorial hexahedron, which is verified by displaying once again the characteristics of the combinatorial map.
 
@@ -429,11 +429,11 @@ The output is:
 #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
 \endverbatim
 
-The first line gives the characteristics of the combinatorial map after all the insertions (the combinatorial map drawn in \cgalFigureRef{fig_cmap_example-insertions} (Right)). There are two 3-cells (since the combinatorial hexahedron was split in two by the 2-cell insertion), nine 2-cells (since two 2-cells of the original hexahedron were split in two by the two 1-cell insertions, and a new 2-cell was created during the 2-cell insertion), fourteen 1-cells (since there are two new 1-cells created by the 1-cell insertion) while the number of 0-cells remains unchanged.
+The first line gives the characteristics of the combinatorial map after all the insertions (the combinatorial map drawn in \cgalFigureRef{fig_cmap_example_insertions} (Right)). There are two 3-cells (since the combinatorial hexahedron was split in two by the 2-cell insertion), nine 2-cells (since two 2-cells of the original hexahedron were split in two by the two 1-cell insertions, and a new 2-cell was created during the 2-cell insertion), fourteen 1-cells (since there are two new 1-cells created by the 1-cell insertion) while the number of 0-cells remains unchanged.
 
 The second line is the result after the removal operations. We retrieve the original combinatorial hexahedron since we have removed all the inserted elements.
 
-\cgalFigureBegin{fig_cmap_example-insertions,cmap_example-insertions.svg}
+\cgalFigureBegin{fig_cmap_example_insertions,cmap_example_insertions.svg}
 Example of high level operations. Left: Initial 3D combinatorial map after the creation of the combinatorial hexahedron. Middle: Combinatorial map obtained after the two 1-cell insertions. The two 2-cells were split in two. Right: Combinatorial map obtained after the 2-cell insertion. The 3-cell was split in two.
 \cgalFigureEnd
 
@@ -486,7 +486,7 @@ Lastly we remove the dynamic onmerge functor (step 8). This is done by initializ
 
 \section sec_definition Mathematical Definitions
 
-The initial definition of combinatorial map in any dimension is given in \cgalCite{cgal:l-tmbrc-91}, \cgalCite{l-ndgcm-94}. But it allows only to represent objects without boundaries. This definition was extended \cgalCite{cgal:pabl-cco-07}, \cgalCite{cgal:d-ccccg-10} in order to allow to represent  objects with boundaries, based on the notions of partial permutations  and partial involutions. See also the book \cgalCite{dl-14} which regroups many definitions, operations and algorithms about combinatorial and generalized maps.
+The initial definition of combinatorial map in any dimension is given in \cgalCite{cgal:l-tmbrc-91}, \cgalCite{l-ndgcm-94}. But it allows only to represent objects without boundaries. This definition was extended \cgalCite{cgal:pabl-cco-07}, \cgalCite{cgal:d-ccccg-10} in order to allow to represent  objects with boundaries, based on the notions of partial permutations  and partial involutions. See also the book \cgalCite{cgal:dl-cmeds-14} which regroups many definitions, operations and algorithms about combinatorial and generalized maps.
 
 Intuitively, a <I>partial permutation</I> on a finite set <I>E</I> is a mapping from <I>E</I>\f$ \cup\{\varnothing\}\f$ to <I>E</I>\f$ \cup\{\varnothing\}\f$ which is injective on the subset of the domain that does not map to \f$\varnothing\f$. More precisely, a mapping <I>p</I>: <I>E</I>\f$ \cup\{\varnothing\} \rightarrow\f$ <I>E</I>\f$ \cup\{\varnothing\}\f$ is a <I>partial permutation</I> defined on <I>E</I> if:
 <OL>
