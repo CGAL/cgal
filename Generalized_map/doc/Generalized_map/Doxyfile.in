@@ -1,5 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Generalized Maps"
-ALIASES += tred{1}="\htmlonly <b><font color='red'>\1</font></b> \endhtmlonly"
+ALIASES += tred{1}="\htmlonly <b><font color='red'>\endhtmlonly \1 \htmlonly </font></b> \endhtmlonly "
 
