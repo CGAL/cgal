@@ -81,7 +81,8 @@ public:
       {
         m_trees.push_back (new Tree());
         first_unused
-          = CGAL::hierarchy_simplify_point_set (first, first_unused, point_pmap, cluster_size, 1./3.);
+          = CGAL::hierarchy_simplify_point_set (first, first_unused, point_pmap,
+                                                m_cluster_size, 1./3.);
 
         for (InputIterator it = first; it != first_unused; ++ it)
           m_trees.back()->insert (get(point_pmap, *it));
@@ -124,7 +125,7 @@ public:
 
     FT dist_min = std::numeric_limits<FT>::max();
     FT sum_sq_distances = 0.;
-    std::size_t nb = 0;
+    FT nb = 0.;
     
     for (std::size_t t = 0; t < m_trees.size(); ++ t)
       {
@@ -142,7 +143,7 @@ public:
             sum_sq_distances += m_weights[t] * it->second;
             nb += m_weights[t];
 
-            if (nb < 6) // do not consider values under 6
+            if (nb < 6.) // do not consider values under 6
               continue;
 
             
@@ -290,7 +291,7 @@ public:
 
     FT dist_min = std::numeric_limits<FT>::max();
     FT sum_sq_distances = 0.;
-    FT nb = 0;
+    FT nb = 0.;
 
     const typename Kernel::Point_2& pquery = get(point_pmap, *query);
     for (std::size_t t = 0; t < m_point_sets.size(); ++ t)
