@@ -306,11 +306,7 @@ Inserts a point in the barycenter of the <I>i</I>-cell containing `dh`.
 Returns a handle on one dart of this cell.
 \pre <I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension"\f$ \leq\f$ 2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
-If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`,
-if <I>i</I>-attributes are non void,
-\ref CellAttribute::On_split "Attribute_type<i>::type::On_split"(<I>a</I>,<I>a'</I>) is called,
-with <I>a</I> the original <I>i</I>-attribute associated
-with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation.
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if <I>i</I>-attributes are non void, \ref CellAttribute::On_split "Attribute_type<i>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original <I>i</I>-attribute associated with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation.
 
 \cgalAdvancedBegin
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are
@@ -328,8 +324,7 @@ The second vertex is associated with a new 0-attribute containing a copy of
 \pre 2\f$ \leq\f$\ref CombinatorialMap::dimension "dimension" and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
 \cgalAdvancedBegin
-If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are
-not updated; thus the combinatorial map can be no more valid after this operation.
+If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.
 \cgalAdvancedEnd
 
 */
@@ -341,59 +336,52 @@ Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh, Point p);
 /// @{
 
 /*!
-Creates an isolated segment in this linear cell complex (two darts linked by \f$ \beta_2\f$)
-having `p0`, `p1` as points.
+Creates an isolated segment in this linear cell complex (two darts linked by \f$ \beta_2\f$) having `p0`, `p1` as points.
 Returns a handle on the dart associated with `p0`.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 2.
 
-\image html make_segment.png "Example of r=lcc.make_segment(p0,p1)."
-\image latex make_segment.png "Example of r=lcc.make_segment(p0,p1)."
+\image html lcc_make_segment.png "Example of r=lcc.make_segment(p0,p1), left for combinatorial map as combinatorial data-structure, right for generalized maps."
+\image latex lcc_make_segment.png "Example of r=lcc.make_segment(p0,p1), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
 Dart_handle make_segment(const Point& p0, const Point& p1);
 
 /*!
 Creates an isolated triangle in this linear cell complex having `p0`, `p1`, `p2` as points.
-Returns a handle on the dart associated with `p0`.
+Returns a handle on the dart associated with `p0` and with edge [`p0`,`p1`].
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 1.
 
-\image html make_triangle.png "Example of r=lcc.make_triangle(p0,p1,p2)."
-\image latex make_triangle.png "Example of r=lcc.make_triangle(p0,p1,p2)."
+\image html lcc_make_triangle.png "Example of r=lcc.make_triangle(p0,p1,p2), left for combinatorial map as combinatorial data-structure, right for generalized maps."
+\image latex lcc_make_triangle.png "Example of r=lcc.make_triangle(p0,p1,p2), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
 Dart_handle make_triangle(const Point& p0, const Point& p1, const Point& p2);
 
 /*!
-Creates an isolated quadrangle in this linear cell complex having `p0`, `p1`,
-`p2`, `p3` as points.
-Returns a handle on the dart associated with `p0`.
+Creates an isolated quadrangle in this linear cell complex having `p0`, `p1`, `p2`, `p3` as points.
+Returns a handle on the dart associated with `p0` and with edge [`p0`,`p1`].
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 1.
 
-\image html make_quadrilateral.png "Example of r=lcc.make_quadrangle(p0,p1,p2,p3)."
-\image latex make_quadrilateral.png "Example of r=lcc.make_quadrangle(p0,p1,p2,p3)."
+\image html lcc_make_quadrilateral.png "Example of r=lcc.make_quadrangle(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
+\image latex lcc_make_quadrilateral.png "Example of r=lcc.make_quadrangle(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
 Dart_handle make_quadrangle(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
 
 /*!
-Creates an isolated tetrahedron in this linear cell complex having `p0`,
-`p1`,`p2`,`p3` as points. Returns a handle on the dart
-associated with `p0` and belonging to the 2-cell having
-`p0`, `p1`, `p2` as points.
+Creates an isolated tetrahedron in this linear cell complex having `p0`, `p1`,`p2`,`p3` as points.
+Returns a handle on the dart associated with `p0`, with edge [`p0`,`p1`] and belonging to the 2-cell having `p0`, `p1`, `p2` as points.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 2.
 
-\image html make_tetrahedron.png "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3)."
-\image latex make_tetrahedron.png "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3)."
+\image html lcc_make_tetrahedron.png "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
+\image latex lcc_make_tetrahedron.png "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
 Dart_handle make_tetrahedron(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
 
 /*!
-Creates an isolated hexahedron in this linear cell complex having `p0`, `p1`,
-`p2`, `p3`, `p4`, `p5`, `p6`, `p7` as points.
-Returns a handle on the dart associated with `p0` and
-belonging to the 2-cell having `p0`, `p5`, `p6`, `p1`
-as points.
+Creates an isolated hexahedron in this linear cell complex having `p0`, `p1`, `p2`, `p3`, `p4`, `p5`, `p6`, `p7` as points.
+Returns a handle on the dart associated with `p0`, with edge [`p0`,`p5`] and belonging to the 2-cell having `p0`, `p5`, `p6`, `p1` as points.
 \pre \ref CombinatorialMap::dimension "dimension" \f$ \geq \f$ 2.
 
-\image html make_hexahedron.png "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7)."
-\image latex make_hexahedron.png "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7)."
+\image html lcc_make_hexahedron.png "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7), left for combinatorial map as combinatorial data-structure, right for generalized maps."
+\image latex lcc_make_hexahedron.png "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7), left for combinatorial map as combinatorial data-structure, right for generalized maps."
 */
 Dart_handle make_hexahedron(const Point& p0,const Point& p1,const Point& p2,
                             const Point& p3,const Point& p4,const Point& p5,

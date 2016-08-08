@@ -26,7 +26,7 @@ the linear geometrical embedding, a point (a model of
 \ref Kernel::Point_2 "Point_2" or \ref Kernel::Point_3 "Point_3" or \ref Kernel_d::Point_d "Point_d") is
 associated to each vertex of the combinatorial map.
 
-\cgalFigureBegin{figexempleintroductif,objects2d-3d.svg}
+\cgalFigureBegin{fig_lcc_example_subdivisions,lcc_example_subdivisions.svg}
 Examples of objects with linear geometry. <B>Left</B>: A 2D object
 composed of three 2-cells, nine 1-cells and seven points associated to
 the seven 0-cells . <B>Right</B>: A 3D object composed of three
@@ -35,14 +35,14 @@ to the eight 0-cells.
 \cgalFigureEnd
 
 If we reconsider the example introduced in the combinatorial map
-package, recalled in \cgalFigureRef{figexempleintroductif} (Right), the
+package, recalled in \cgalFigureRef{fig_lcc_example_subdivisions} (Right), the
 combinatorial part of the 3D object is described by a 3D combinatorial
-map. As illustrated in \cgalFigureRef{figexempleintroductiflcc}, the
+map. As illustrated in \cgalFigureRef{fig_lcc_examples_zoom}, the
 geometrical part of the object is described by associating a point to
 each vertex of the map.
 
-\cgalFigureBegin{figexempleintroductiflcc,first-example-lcc.svg}
-Example of 3D linear cell complex describing the object given in \cgalFigureRef{figexempleintroductif} (Right). <B>Left</B>: The 3D linear cell complex which contains 54 darts (18 for each 3-cell) where each vertex is associated with a point, here a `Point_3`. Blue segments represent \f$ \beta_3\f$ relations. <B>Middle</B>: Zoom around the central edge which details the six darts belonging to the edge and the associations between darts and points. <B>Right</B>: Zoom around the facet between light gray and white 3-cells, which details the eight darts belonging to the facet and the associations between darts and points (given by red segments).
+\cgalFigureBegin{fig_lcc_examples_zoom,lcc_examples_zoom.svg}
+Example of 3D linear cell complex describing the object given in \cgalFigureRef{fig_lcc_example_subdivisions} (Right). <B>Left</B>: The 3D linear cell complex which contains 54 darts (18 for each 3-cell) where each vertex is associated with a point, here a `Point_3`. Blue segments represent \f$ \beta_3\f$ relations. <B>Middle</B>: Zoom around the central edge which details the six darts belonging to the edge and the associations between darts and points. <B>Right</B>: Zoom around the facet between light gray and white 3-cells, which details the eight darts belonging to the facet and the associations between darts and points (given by red segments).
 \cgalFigureEnd
 
 Note that the dimension of the combinatorial map <I>d</I> is not
@@ -57,7 +57,7 @@ on.
 
 \section Linear_cell_complexSoftware Software Design
 
-The diagram in \cgalFigureRef{figdiagram_class_lcc} shows the main
+The diagram in \cgalFigureRef{fig_lcc_diagramme_class} shows the main
 classes of the package. `Linear_cell_complex` is the main
 class (see Section \ref sseclinearcellcomplex), which inherits from
 the `Combinatorial_map` class. Attributes can be associated
@@ -74,7 +74,7 @@ and can be represented by instances of class
 `Cell_attribute_with_point` (see
 Section \ref ssecattributewp "Cell Attributes").
 
-\cgalFigureBegin{figdiagram_class_lcc,Diagramme_class.svg}
+\cgalFigureBegin{fig_lcc_diagramme_class,lcc_diagramme_class.svg}
 UML diagram of the main classes of the package. Gray elements come from the \ref ChapterCombinatorialMap "Combinatorial maps package".
 \cgalFigureEnd
 
@@ -103,9 +103,9 @@ where each dart is associated with an attribute containing a point
 concept). Note that there are no validity constraints on the geometry
 (test on self intersection, planarity of 2-cells...).
 We can see two examples of `Linear_cell_complex` in
-\cgalFigureRef{figcombi_map_with_point}.
+\cgalFigureRef{fig_lcc_instantiations}.
 
-\cgalFigureBegin{figcombi_map_with_point,lcc-examples-2d-3d.svg}
+\cgalFigureBegin{fig_lcc_instantiations,lcc_instantiations.svg}
 Examples of `Linear_cell_complex`. Gray disks show the attributes associated to vertices. Associations between darts and attributes are drawn by small lines between darts and disks. <B>Left:</B> Example of `Linear_cell_complex<2,2>`. <B>Right:</B> Example of `Linear_cell_complex<3,3>`.
 \cgalFigureEnd
 
@@ -192,7 +192,7 @@ attributes, they are automatically updated during the \ref CombinatorialMap::sew
 method. Thus the sewing of two <I>i</I>-cells could deform the
 geometry of the concerned objects.
 
-For example, in \cgalFigureRef{figlccexemplesew}, we want to 3-sew the
+For example, in \cgalFigureRef{fig_lcc_example_3d_sew}, we want to 3-sew the
 two initial 3-cells. \ref CombinatorialMap::sew "sew<3>(1,5)" links by \f$ \beta_3\f$ the pairs
 of darts (1,5), (2,8), (3,7) and (4,6). The eight vertex attributes
 around the facet between the two 3-cells before the sew are merged by
@@ -205,7 +205,7 @@ explained in the package combinatorial map, Section \ref sseclinkdarts "Sewing O
 Intuitively, the
 geometry of the second 2-cell is deformed to fit to the first 2-cell.
 
-\cgalFigureBegin{figlccexemplesew,exemple-lcc3d-sew.svg}
+\cgalFigureBegin{fig_lcc_example_3d_sew,lcc_example_3d_sew.svg}
 Example of \ref CombinatorialMap::sew "3-sew" operation for linear cell complex. <B>Left</B>: A 3D linear cell complex containing two 3-cells that are not connected. Vertex attributes are drawn with circles containing point coordinates. Associations between darts and attributes are drawn with small lines between darts and disks. <B>Right</B>: The 3D linear cell complex obtained as result of `sew<3>(1,5)` (or `sew<3>(2,8)`, or `sew<3>(3,7)`, or `sew<3>(4,6)`). The eight 0-attributes around the facet between the two 3-cells before the sew operation, are merged into four 0-attributes after. The geometry of the pyramid is deformed since its base is fitted on the 2-cell of the cube.
 \cgalFigureEnd
 
@@ -215,9 +215,9 @@ of all the darts in
 and updates
 non void attributes which are no more associated to a same cell due to
 the unlinks. If we take the linear cell complex given in
-\cgalFigureRef{figlccexemplesew} (Right), and we call
+\cgalFigureRef{fig_lcc_example_3d_sew} (Right), and we call
 \ref CombinatorialMap::unsew "unsew<3>(2)", we obtain the linear cell complex in
-\cgalFigureRef{figlccexemplesew} (Left) except for the coordinates of
+\cgalFigureRef{fig_lcc_example_3d_sew} (Left) except for the coordinates of
 the new four vertices, which by default are copies of original
 vertices (this behavior can be modified thanks to the functor
 \ref CellAttribute::On_split "On_split" in the attribute class).
@@ -268,16 +268,16 @@ the following, we denote by `dh0`, `dh1`, `dh2` the dart
 handles for the darts `d0`, `d1`, `d2`, respectively. That
 is `d0 == *dh0`.
 
-\cgalFigureBegin{figlccinsertvertex,insert-vertex.svg}
-Example of \ref Linear_cell_complex::insert_barycenter_in_cell "insert_barycenter_in_cell<1>" and `::remove_cell<0>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a point in the barycenter of the 1-cell containing dart <I>d1</I>. Now if we remove the 0-cell containing dart <I>d2</I>, we obtain a linear cell complex isomorphic to the initial one.
+\cgalFigureBegin{fig_lcc_insert_vertex,lcc_insert_vertex.svg}
+Example of \ref Linear_cell_complex::insert_barycenter_in_cell "insert_barycenter_in_cell<1>" and `remove_cell<0>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a point in the barycenter of the 1-cell containing dart <I>d1</I>. Now if we remove the 0-cell containing dart <I>d2</I>, we obtain a linear cell complex isomorphic to the initial one.
 \cgalFigureEnd
 
 
 \ref Linear_cell_complex::insert_barycenter_in_cell "lcc.insert_barycenter_in_cell<unsigned int i>(dh0)" adds the
 barycenter of the <I>i</I>-cell containing dart `d0`. This
 operation is possible if `d0`\f$ \in\f$\ref CombinatorialMap::darts "lcc.darts()" (see examples
-on \cgalFigureRef{figlccinsertvertex} and
-\cgalFigureRef{figlcctriangulate}).
+on \cgalFigureRef{fig_lcc_insert_vertex} and
+\cgalFigureRef{fig_lcc_triangulation}).
 
 \ref Linear_cell_complex::insert_point_in_cell "lcc.insert_point_in_cell<unsigned int i>(dh0,p)" is an operation
 similar to the previous operation, the only difference being that the
@@ -286,7 +286,7 @@ computed as the barycenter of the <I>i</I>-cell. Currently, these two
 operations are only defined for `i=1` to insert a point in an
 edge, or `i=2` to insert a point in a facet.
 
-\cgalFigureBegin{figlcctriangulate,triangulation.svg}
+\cgalFigureBegin{fig_lcc_triangulation,lcc_triangulation.svg}
 Examples of \ref Linear_cell_complex::insert_barycenter_in_cell "insert_barycenter_in_cell<2>" operation.
 \cgalFigureEnd
 
@@ -297,9 +297,9 @@ one of its vertex to the 0-cell containing dart `d0`. The second
 vertex of the new edge is associated with a new 0-attribute containing
 a copy of `p` as point. This operation is possible if
 `d0`\f$ \in\f$\ref CombinatorialMap::darts "lcc.darts()" (see example on
-\cgalFigureRef{figlccinsertdanglingedge}).
+\cgalFigureRef{fig_lcc_insert_edge}).
 
-\cgalFigureBegin{figlccinsertdanglingedge,insert-edge.svg}
+\cgalFigureBegin{fig_lcc_insert_edge,lcc_insert_edge.svg}
 Example of \ref Linear_cell_complex::insert_dangling_cell_1_in_cell_2 "insert_dangling_cell_1_in_cell_2", `::insert_cell_1_in_cell_2` and `::remove_cell<1>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a dangling 1-cell in the 2-cell containing dart <I>d1</I>, and of a 1-cell in the 2-cell containing dart <I>d2</I>. Now if we remove the 1-cells containing dart <I>d4</I> and <I>d5</I>, we obtain a linear cell complex isomorphic to the initial one.
 \cgalFigureEnd
 
@@ -396,7 +396,7 @@ example, we create two cubes, and set the color of the vertices of the
 first cube to 1 and of the second cube to 19 (by iterating through two
 \ref CombinatorialMap::One_dart_per_incident_cell_range "One_dart_per_incident_cell_range<0, 3>" ranges). Then we
 \ref CombinatorialMap::sew "3-sew" the two cubes along one facet. This operation merges some
-vertices (as in the example of \cgalFigureRef{figlccexemplesew}). We
+vertices (as in the example of \cgalFigureRef{fig_lcc_example_3d_sew}). We
 insert a vertex in the common 2-cell between the two cubes, and set
 the information of the new 0-attribute to 5. In the last loop, we
 display the point and the information of each vertex of the linear
