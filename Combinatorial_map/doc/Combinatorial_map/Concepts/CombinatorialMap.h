@@ -999,7 +999,7 @@ Inserts a 0-cell in the 1-cell containing `dh`. Returns a handle on one dart bel
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 1 and
    `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
-See example in \cgalFigureRef{figinsertvertex}.
+See example in \cgalFigureRef{fig_cmap_insert_vertex}.
 
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 1-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<1>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 1-attribute associated with <I>dh</I> and <I>a'</I> the new 1-attribute created during the operation. If set, the dynamic onsplit function of 1-attributes is also called on <I>a</I> and <I>a'</I>.
 
@@ -1019,7 +1019,7 @@ Dart_handle insert_cell_0_in_cell_1(Dart_handle dh);
 Inserts a 0-cell in the 2-cell containing `dh`. The 2-cell is split in triangles, one for each initial edge of the facet. Returns a handle on one dart belonging to the new 0-cell.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
-See example in \cgalFigureRef{figtriangulate}.
+See example in \cgalFigureRef{fig_cmap_triangulation}.
 
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<2>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `dh` and <I>a'</I> each new 2-attribute created during the operation. If set, the dynamic onsplit function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
 
@@ -1039,7 +1039,7 @@ Dart_handle insert_cell_0_in_cell_2(Dart_handle dh);
 Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns \f$ \beta_0\f$(`dh1`), a handle on one dart belonging to the new 1-cell.
 \pre `is_insertable_cell_1_in_cell_2(dh1,dh2)`.
 
-See example in \cgalFigureRef{figinsertedge}.
+See example in \cgalFigureRef{fig_cmap_insert_edge}.
 
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<2>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `dh` and <I>a'</I> the new 2-attribute created during the operation. If set, the dynamic onsplit function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
 
@@ -1060,7 +1060,7 @@ Dart_handle insert_cell_1_in_cell_2(Dart_handle dh1, Dart_handle dh2);
 Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns a handle on one dart belonging to the new 2-cell.
 \pre `is_insertable_cell_2_in_cell_3(afirst,alast)`.
 
-See example in \cgalFigureRef{figinsertface}.
+See example in \cgalFigureRef{fig_cmap_insert_facet}.
 
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 3-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<3>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 3-attribute associated with `dh` and <I>a'</I> the new 3-attribute created during the operation. If set, the dynamic onsplit function of 3-attributes is also called on <I>a</I> and <I>a'</I>.
 
@@ -1082,7 +1082,7 @@ Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns a handle on the dart belonging to the new 1-cell and to the new 0-cell.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
-See example in \cgalFigureRef{figinsertedge}.
+See example in \cgalFigureRef{fig_cmap_insert_edge}.
 
 \cgalAdvancedBegin
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.
@@ -1135,7 +1135,7 @@ bool is_removable(Dart_const_handle dh);
 Removes the <I>i</I>-cell containing `dh`. Returns the number of darts removed from the combinatorial map.
 \pre `is_removable<i>(dh)`.
 
-See examples in \cgalFigureRef{figinsertvertex}, \cgalFigureRef{figinsertedge} and \cgalFigureRef{figinsertface}.
+See examples in \cgalFigureRef{fig_cmap_insert_vertex}, \cgalFigureRef{fig_cmap_insert_edge} and \cgalFigureRef{fig_cmap_insert_facet}.
 
 If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if `i`\f$ <\f$\ref CombinatorialMap::dimension "dimension", and <I>i+1</I>-attributes are non `void`, and if there are two distinct (<I>i+1</I>)-cells around dart `dh`, \ref CellAttribute::On_merge "Attribute_type<i+1>::type::On_merge"(<I>a1</I>,<I>a2</I>) is called, with <I>a1</I> the (<I>i+1</I>)-attribute associated to `dh`, and <I>a2</I> the (<I>i+1</I>)-attribute associated to \f$ \beta_{i+1}\f$(<I>dh</I>). If set, the dynamic onmerge function of <I>i+1</I>-attributes is also called on <I>a1</I> and <I>a2</I>.
 
