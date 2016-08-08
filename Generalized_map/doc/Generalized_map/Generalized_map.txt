@@ -12,7 +12,7 @@ namespace CGAL {
 
 A <I>d</I>-dimensional generalized map is a data structure representing an \tred{orientable or non orientable} subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships. 
 
-\tred{This package is an extension of the \ref ChapterCombinatorialMap combinatorial maps data structure which allows to describe only orientable objects.}
+\tred{This package is an extension of the} \ref ChapterCombinatorialMap "combinatorial maps" \tred{data structure which allows to describe only orientable objects.}
 
 We denote <I>i</I>-cell for an <I>i</I>-dimensional cell (for example in 3D, 0-cells are <I>vertices</I>, 1-cells are <I>edges</I>, 2-cells are <I>facets</I>, and 3-cells are <I>volumes</I>). A <I>boundary relation</I> is defined on these cells, giving for each <I>i</I>-cell <I>c</I> the set of <I>(i-1)</I>-cells contained in the boundary of <I>c</I>. Two cells <I>c1</I> and <I>c2</I> are <I>incident</I> if there is a path of cells, starting from the cell of biggest dimension to the other cell, such that each cell of the path (except the first one) belongs to the boundary of the previous cell in the path. Two <I>i</I>-cells <I>c3</I> and <I>c4</I> are <I>adjacent</I> if there is an <I>(i-1)</I>-cell incident to both <I>c3</I> and <I>c4</I>. You can see an example of a 2D object and a 3D object in \cgalFigureRef{fig_gmap_example_subdivisions} showing some cells of the subdivision and some adjacency and incidence relations.
 
@@ -159,7 +159,7 @@ We say that a generalized map is <I>valid</I> if it satisfies all the conditions
 
 \subsection ssec-comparison-gmaps-with-cmaps Comparison with combinatorial maps
 
-Generalized maps and combinatorial maps are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects.
+Generalized maps and \ref ChapterCombinatorialMap "combinatorial maps" are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects.
 
 However they have two main differences. Firstly, generalized maps allow to represent non-orientable and orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all applications are involutions, while combinatorial maps are not homogeneous since one application is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
 
@@ -399,12 +399,12 @@ In this example, a 3-dimensional generalized map is constructed. Two combinatori
 
 The output is:
 \verbatim
-#Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, valid=1
-Number of darts of the first tetrahedron: 12
-Number of darts of the facet containing dh2: 3
+#Darts=48, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, valid=1
+Number of darts of the first tetrahedron: 24
+Number of darts of the face incident to d1: 6
 \endverbatim
 
-which gives the number of darts of the generalized map, the numbers of different cells, the number of connected components, and finally a Boolean showing the validity of the generalized map (a tetrahedron is made up of 12 darts because there are 3 darts per facet and there are 4 facets).
+which gives the number of darts of the generalized map, the numbers of different cells, the number of connected components, and finally a Boolean showing the validity of the generalized map (a tetrahedron is made up of 24 darts because there are 6 darts per facet and there are 4 facets).
 
 Note the creation in the for loops of the two instances of \ref GeneralizedMap::Dart_of_orbit_range "Dart_of_orbit_range"::`const_iterator`: `it` is the current iterator, and `itend` an iterator to the end of the range. Having `itend` avoids calling \ref GeneralizedMap::darts_of_orbit "gm.darts_of_orbit<1,2>(dh1)"`.end()` again and again as in the following example (which is a bad solution):
 
@@ -421,7 +421,7 @@ for (GMap_3::Dart_of_orbit_range<1,2>::const_iterator
 
 \anchor ssecexempleoperationsgmap
 
-This example shows some uses of high level operations. First we create a combinatorial hexahedron, the generalized map obtained is shown in \cgalFigureRef{fig_gmap_example-insertions} (Left). Then we insert two 1-cells along two opposite 2-cells of the hexahedron. The generalized map obtained is shown in \cgalFigureRef{fig_gmap_example-insertions} (Middle). Finally, we insert a 2-cell in the diagonal of the hexahedron in order to split it into two parts. We obtain the generalized map shown in \cgalFigureRef{fig_gmap_example-insertions} (Right). We display the characteristics of the generalized map and check its validity.
+This example shows some uses of high level operations. First we create a combinatorial hexahedron, the generalized map obtained is shown in \cgalFigureRef{fig_gmap_example_insertions} (Left). Then we insert two 1-cells along two opposite 2-cells of the hexahedron. The generalized map obtained is shown in \cgalFigureRef{fig_gmap_example_insertions} (Middle). Finally, we insert a 2-cell in the diagonal of the hexahedron in order to split it into two parts. We obtain the generalized map shown in \cgalFigureRef{fig_gmap_example_insertions} (Right). We display the characteristics of the generalized map and check its validity.
 
 The second part of this example removes the inserted elements. First we remove the inserted 2-cell, then the two inserted 1-cells. We get back the initial combinatorial hexahedron, which is verified by displaying once again the characteristics of the generalized map.
 
@@ -429,17 +429,15 @@ The second part of this example removes the inserted elements. First we remove t
 
 The output is:
 \verbatim
-#Darts=36, #0-cells=8, #1-cells=14, #2-cells=9, #3-cells=2, #ccs=1, valid=1
-#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+TODO (after the operation will be developed) #Darts=36, #0-cells=8, #1-cells=14, #2-cells=9, #3-cells=2, #ccs=1, valid=1
+TODO (after the operation will be developed) #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1 
 \endverbatim
 
-The first line gives the characteristics of the generalized map after all the insertions (the generalized map drawn in \cgalFigureRef{fig_gmap_example-insertions} (Right)). There are two 3-cells (since the combinatorial hexahedron was split in two by the 2-cell insertion), nine 2-cells (since two 2-cells of the original hexahedron were split in two by the two 1-cell insertions, and a new 2-cell was created during the 2-cell insertion), fourteen 1-cells (since there are two new 1-cells created by the 1-cell insertion) while the number of 0-cells remains unchanged.
+The first line gives the characteristics of the generalized map after all the insertions (the generalized map drawn in \cgalFigureRef{fig_gmap_example_insertions} (Right)). There are two 3-cells (since the combinatorial hexahedron was split in two by the 2-cell insertion), nine 2-cells (since two 2-cells of the original hexahedron were split in two by the two 1-cell insertions, and a new 2-cell was created during the 2-cell insertion), fourteen 1-cells (since there are two new 1-cells created by the 1-cell insertion) while the number of 0-cells remains unchanged.
 
-The second line is the result after the removal operations. We
-retrieve the original combinatorial hexahedron since we have removed
-all the inserted elements.
+The second line is the result after the removal operations. We retrieve the original combinatorial hexahedron since we have removed all the inserted elements.
 
-\cgalFigureBeginn{fig_gmap_example-insertions,gmap_example-insertions.svg}
+\cgalFigureBegin{fig_gmap_example_insertions,gmap_example_insertions.svg}
 Example of high level operations. Left: Initial 3D generalized map after the creation of the generalized hexahedron. Middle: Generalized map obtained after the two 1-cell insertions. The two 2-cells were split in two. Right: Generalized map obtained after the 2-cell insertion. The 3-cell was split in two.
 \cgalFigureEnd
 
@@ -455,7 +453,7 @@ In this example, we also illustrate how to use the basic methods to build "by ha
 
 The output is:
 \verbatim
-#Darts=24, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, valid=1
+#Darts=48, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, valid=1
 \endverbatim
 
 \subsection ssecgenmapwithcolor Generalized Map With Attributes
@@ -468,9 +466,9 @@ Functors `Sum_functor` and `Divide_by_two_functor` define a custom behavior: whe
 
 The output is:
 \verbatim
-20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13;
-2; 7; 7; 7; 7; 7; 2; 13; 13; 13; 13; 13; 5; 10;
-#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+TODO (when operations will be developed) 20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13;
+TODO 2; 7; 7; 7; 7; 7; 2; 13; 13; 13; 13; 13; 5; 10;
+TODO #Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
 \endverbatim
 
 Before the  \ref GeneralizedMap::sew "gm.sew<3>", each 2-cell of the first cube is associated with an attribute having 7 as value, and each 2-cell of the second cube with an attribute having 13 as value. During the  \ref GeneralizedMap::sew "gm.sew<3>", two 2-cells are merged, thus the functor `Sum_functor` is called on the two associated 2-attributes, and the value of the new 2-cell is the sum of the two previous one: 20.
@@ -494,7 +492,7 @@ Lastly we remove the dynamic onmerge functor (step 8). This is done by initializ
 
 \cgalModifBegin
 
-The definition of generalized map in any dimension is given in \cgalCite{cgal:l-tmbrc-91}, \cgalCite{l-ndgcm-94}. See also the book \cgalCite{dl-14} which regroups many definitions, operations and algorithms about combinatorial and generalized maps.
+The definition of generalized map in any dimension is given in \cgalCite{cgal:l-tmbrc-91}, \cgalCite{l-ndgcm-94}. See also the book \cgalCite{cgal:dl-cmeds-14} which regroups many definitions, operations and algorithms about combinatorial and generalized maps.
 
 An <I>involution</I> on a finite set <I>E</I> is a mapping <I>f</I> from <I>E</I> to <I>E</I> which is bijective and equal to its inverse. Thus \f$ \forall\f$<I>e</I>\f$ \in\f$<I>E</I>, we have <I>f</I>(<I>e</I>) = \f$ f^{-1}\f$(<I>e</I>) and <I>f</I>(<I>f</I>(<I>e</I>))=<I>e</I>.
 
@@ -502,7 +500,7 @@ Let <I>d</I>\f$ \geq\f$ 0. A <I>d</I>-dimensional generalized map (or <I>d</I>-G
 <OL>
 <LI><I>D</I> is a finite set of darts;
 <LI>\f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>, \f$ \alpha_i\f$ is an involution on <I>D</I>;
-<LI>\anchor condcomposition \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>-2, \f$ \forall\f$<I>j</I>: 2\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>d</I>, <I>i</I>+2\f$ \leq\f$<I>j</I>, \f$ \alpha_i\f$\f$ \circ\f$\f$ \alpha_j\f$ is an involution.
+<LI>\anchor gmapcondcomposition \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>-2, \f$ \forall\f$<I>j</I>: 2\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>d</I>, <I>i</I>+2\f$ \leq\f$<I>j</I>, \f$ \alpha_i\f$\f$ \circ\f$\f$ \alpha_j\f$ is an involution.
 </OL>
 
 A <I>d</I>-dimensional generalized map represents a subdivision of an orientable or non orientable <I>d</I>-dimensional quasi-manifold. A dart is an abstract element which is only required to define involutions. The last line of the definition fixes constraints which guarantee the topological validity of the represented object, i.e., the fact that it is a quasi-manifold. This definition allows us to verify the validity of a given generalized map by checking if each item of the definition is satisfied.
