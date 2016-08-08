@@ -516,7 +516,7 @@ namespace CGAL {
      * @param h0 the first vertex handle.
      * @param h1 the second vertex handle.
      * @param h2 the third vertex handle.
-     * @return the dart of the new triangle incident to h0.
+     * @return the dart of the new triangle incident to h0 and to edge h0h1.
      */
     Dart_handle make_triangle(Vertex_attribute_handle h0,
                               Vertex_attribute_handle h1,
@@ -535,7 +535,7 @@ namespace CGAL {
      * @param p0 the first point.
      * @param p1 the second point.
      * @param p2 the third point.
-     * @return the dart of the new triangle incident to p0.
+     * @return the dart of the new triangle incident to p0 and edge p0p1.
      */
     Dart_handle make_triangle(const Point& p0,
                               const Point& p1,
@@ -551,7 +551,7 @@ namespace CGAL {
      * @param h1 the second vertex handle.
      * @param h2 the third vertex handle.
      * @param h3 the fourth vertex handle.
-     * @return the dart of the new quadrilateral incident to h0.
+     * @return the dart of the new quadrilateral incident to h0 and to edge h0h1.
      */
     Dart_handle make_quadrangle(Vertex_attribute_handle h0,
                                 Vertex_attribute_handle h1,
@@ -574,7 +574,7 @@ namespace CGAL {
      * @param p1 the second point.
      * @param p2 the third point.
      * @param p3 the fourth point.
-     * @return the dart of the new quadrangle incident to p0.
+     * @return the dart of the new quadrangle incident to p0 and edge p0p1.
      */
     Dart_handle make_quadrangle(const Point& p0,
                                 const Point& p1,
@@ -593,8 +593,8 @@ namespace CGAL {
      * @param h1 the second vertex handle.
      * @param h2 the third vertex handle.
      * @param h3 the fourth vertex handle.
-     * @return the dart of the new tetrahedron incident to h0 and to
-     *         facet h0,h1,h2.
+     * @return the dart of the new tetrahedron incident to h0, to edge
+     *         h0,h1 and to facet h0,h1,h2.
      */
     Dart_handle make_tetrahedron(Vertex_attribute_handle h0,
                                  Vertex_attribute_handle h1,
@@ -614,8 +614,8 @@ namespace CGAL {
      * @param p1 the second point.
      * @param p2 the third point.
      * @param p3 the fourth point.
-     * @return the dart of the new tetrahedron incident to p0 and to
-     *         facet p0,p1,p2.
+     * @return the dart of the new tetrahedron incident to p0, to edge
+     *         p0,p1 and to facet p0,p1,p2.
      */
     Dart_handle make_tetrahedron(const Point& p0,
                                  const Point& p1,
@@ -646,8 +646,8 @@ namespace CGAL {
      * @param h5 the sixth vertex handle.
      * @param h6 the seventh vertex handle.
      * @param h7 the height vertex handle.
-     * @return the dart of the new hexahedron incident to h0 and to
-     *         the facet (h0,h5,h6,h1).
+     * @return the dart of the new hexahedron incident to h0, to edge
+     *         h0,h5 and to the facet (h0,h5,h6,h1).
      */
     Dart_handle make_hexahedron(Vertex_attribute_handle h0,
                                 Vertex_attribute_handle h1,
@@ -685,8 +685,8 @@ namespace CGAL {
      * @param p5 the sixth point.
      * @param p6 the seventh point.
      * @param p7 the height point.
-     * @return the dart of the new hexahedron incident to p0
-     *         and to the facet (p0,p5,p6,p1).
+     * @return the dart of the new hexahedron incident to p0, to edge
+     *         p0,p5 and to the facet (p0,p5,p6,p1).
      */
     Dart_handle make_hexahedron(const Point& p0,
                                 const Point& p1,

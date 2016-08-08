@@ -2979,19 +2979,19 @@ namespace CGAL {
      * @param d2 a dart onto a second triangle.
      * @param d3 a dart onto a third triangle.
      * @param d4 a dart onto a fourth triangle.
-     * @return a new dart.
+     * @return d1.
      */
     Dart_handle make_combinatorial_tetrahedron(Dart_handle d1,
                                                Dart_handle d2,
                                                Dart_handle d3,
                                                Dart_handle d4)
     {
-      topo_sew<2>(d1, d2);
-      topo_sew<2>(d3, alpha(d2, 1));
-      topo_sew<2>(alpha(d1, 1), alpha(d3, 1));
-      topo_sew<2>(d4, alpha(d2, 0, 1));
-      topo_sew<2>(alpha(d4, 0, 1), alpha(d3, 0, 1));
-      topo_sew<2>(alpha(d4, 1), alpha(d1, 0, 1));
+      topo_sew<2>(d1, alpha(d2, 0));
+      topo_sew<2>(d3, alpha(d2, 1, 0));
+      topo_sew<2>(alpha(d1, 0, 1), alpha(d3, 1));
+      topo_sew<2>(alpha(d4, 0), alpha(d2, 0, 1));
+      topo_sew<2>(alpha(d4, 1), alpha(d3, 0, 1));
+      topo_sew<2>(alpha(d4, 0, 1), alpha(d1, 1));
 
       return d1;
     }
@@ -3046,7 +3046,7 @@ namespace CGAL {
      * @param d4 a dart onto a fourth quadrilateral.
      * @param d5 a dart onto a fifth quadrilateral.
      * @param d6 a dart onto a sixth quadrilateral.
-     * @return a dart of the new cuboidal_cell.
+     * @return d1.
      */
     Dart_handle make_combinatorial_hexahedron(Dart_handle d1,
                                               Dart_handle d2,

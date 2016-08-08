@@ -3828,7 +3828,7 @@ namespace CGAL {
      * @param d2 a dart onto a second triangle.
      * @param d3 a dart onto a third triangle.
      * @param d4 a dart onto a fourth triangle.
-     * @return a new dart.
+     * @return d1.
      */
     Dart_handle make_combinatorial_tetrahedron(Dart_handle d1,
                                                Dart_handle d2,
@@ -3898,7 +3898,7 @@ namespace CGAL {
      * @param d4 a dart onto a fourth quadrilateral.
      * @param d5 a dart onto a fifth quadrilateral.
      * @param d6 a dart onto a sixth quadrilateral.
-     * @return a dart of the new cuboidal_cell.
+     * @return d1.
      */
     Dart_handle make_combinatorial_hexahedron(Dart_handle d1,
                                               Dart_handle d2,
