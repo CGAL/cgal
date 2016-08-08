@@ -351,16 +351,16 @@ If one wants to modify a generalized map <I>manually</I>, it is  possible to swi
 
 The following high level operations are defined. All these methods ensure that given a valid generalized map and a possible operation, the modified generalized map is also valid.
 
-The first one is `gm.remove_cell<i>(dh0)` which modifies the generalized map to remove the <I>i</I>-cell containing dart `d0`, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>. This operation is possible  if <I>i</I>=<I>d</I> or if the given <I>i</I>-cell is incident to at most two <I>(i+1)</I>-cells which can be tested thanks to `gm.is_removable<i>(dh0)`. If the removed <I>i</I>-cell was incident to two different <I>(i+1)</I>-cells, these two cells are merged into one <I>(i+1)</I>-cell. In this case, the \ref CellAttribute::On_merge "On_merge" functor is called if two <I>(i+1)</I>-attributes are associated to the two <I>(i+1)</I>-cells. If the <I>i</I>-cell is associated with a non void attribute, it is removed from the generalized map (see three examples on \cgalFigureRef{figinsertvertex}, \cgalFigureRef{figinsertedge} and \cgalFigureRef{figinsertface}).
+The first one is `gm.remove_cell<i>(dh0)` which modifies the generalized map to remove the <I>i</I>-cell containing dart `d0`, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>. This operation is possible  if <I>i</I>=<I>d</I> or if the given <I>i</I>-cell is incident to at most two <I>(i+1)</I>-cells which can be tested thanks to `gm.is_removable<i>(dh0)`. If the removed <I>i</I>-cell was incident to two different <I>(i+1)</I>-cells, these two cells are merged into one <I>(i+1)</I>-cell. In this case, the \ref CellAttribute::On_merge "On_merge" functor is called if two <I>(i+1)</I>-attributes are associated to the two <I>(i+1)</I>-cells. If the <I>i</I>-cell is associated with a non void attribute, it is removed from the generalized map (see three examples on \cgalFigureRef{figinsertvertexgmap}, \cgalFigureRef{figinsertedgegmap} and \cgalFigureRef{figinsertfacegmap}).
 
 
-\cgalFigureBegin{figinsertvertex,insert-vertex.svg}
+\cgalFigureBegin{figinsertvertexgmap,insert-vertex.svg}
 Example of `insert_cell_0_in_cell_1` and `remove_cell<0>` operations. Left: Initial generalized map. Right: After the insertion of a 0-cell in the 1-cell containing dart `d1`. Now if we remove the 0-cell containing dart `d2`, we obtain the initial generalized map.
 \cgalFigureEnd
 
 The inverse operation of the removal is the insertion operation. Several versions exist, sharing a common principle. They consist in adding a new <I>i</I>-cell "inside" an existing <I>j</I>-cell, <I>i</I>\f$ <\f$<I>j</I>, by splitting the <I>j</I>-cell into several <I>j</I>-cells. Contrary to `remove_cell<i>`, is it not possible to define a unique `insert_cell_i_in_cell_j<i,j>` function because parameters are different depending on `i` and `j`.
 
-`gm.insert_cell_0_in_cell_1(dh0)` adds a 0-cell in the 1-cell containing dart `d0`. The 1-cell is split in two. This operation is possible if `d0`\f$ \in\f$\ref GeneralizedMap::darts "gm.darts()" (see example on \cgalFigureRef{figinsertvertex}).
+`gm.insert_cell_0_in_cell_1(dh0)` adds a 0-cell in the 1-cell containing dart `d0`. The 1-cell is split in two. This operation is possible if `d0`\f$ \in\f$\ref GeneralizedMap::darts "gm.darts()" (see example on \cgalFigureRef{figinsertvertexgmap}).
 
 `gm.insert_cell_0_in_cell_2(dh0)` adds a 0-cell in the 2-cell containing dart `d0`. The 2-cell is split in triangles, one for each initial edge of the facet. This operation is possible if `d0`\f$ \in\f$\ref GeneralizedMap::darts "gm.darts()" (see example on \cgalFigureRef{figtriangulate}).
 
@@ -368,18 +368,18 @@ The inverse operation of the removal is the insertion operation. Several version
 Example of `insert_cell_0_in_cell_2` operation.
 \cgalFigureEnd
 
-`gm.insert_cell_1_in_cell_2(dh1,dh2)` adds a 1-cell in the 2-cell containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cell is split in two. This operation is possible if <I>d1</I>\f$ \in\f$\f$ \langle{}\f$\f$ \alpha_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `gm.is_insertable_cell_1_in_cell_2(dh1,dh2)`. In the example on \cgalFigureRef{figinsertedge}, it is possible to insert an edge between darts <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge between <I>d1</I> and <I>d3</I>.
+`gm.insert_cell_1_in_cell_2(dh1,dh2)` adds a 1-cell in the 2-cell containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cell is split in two. This operation is possible if <I>d1</I>\f$ \in\f$\f$ \langle{}\f$\f$ \alpha_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `gm.is_insertable_cell_1_in_cell_2(dh1,dh2)`. In the example on \cgalFigureRef{figinsertedgegmap}, it is possible to insert an edge between darts <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge between <I>d1</I> and <I>d3</I>.
 
-\cgalFigureBegin{figinsertedge,insert-edge.svg}
+\cgalFigureBegin{figinsertedgegmap,insert-edge.svg}
 Example of `insert_cell_1_in_cell_2` and `remove_cell<1>` operations. Left: Initial generalized map. Right: After the insertion of two 1-cells: a first one between the two 0-cells containing darts `d2` and `d3`, and a second one incident to the 0-cell containing dart `d1`. Now if we remove the two 1-cells containing darts `d4` and `d5`, we obtain the initial generalized map.
 \cgalFigureEnd
 
 
 `gm.insert_dangling_cell_1_in_cell_2(dh0)` adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`.  This operation is possible if `d0`\f$ \in\f$\ref GeneralizedMap::darts "gm.darts()".
 
-`gm.insert_cell_2_in_cell_3(itbegin,itend)` adds a 2-cell in the 3-cell containing all the darts between `itbegin` and `itend`, along the path of 1-cells containing darts in [`itbegin`,`itend`). The 3-cell is split in two. This operation is possible if all the  darts in [`itbegin`,`itend`) form a closed path inside a same 3-cell  which can be tested thanks to `gm.is_insertable_cell_2_in_cell_3(itbegin,itend)` (see example on \cgalFigureRef{figinsertface}).
+`gm.insert_cell_2_in_cell_3(itbegin,itend)` adds a 2-cell in the 3-cell containing all the darts between `itbegin` and `itend`, along the path of 1-cells containing darts in [`itbegin`,`itend`). The 3-cell is split in two. This operation is possible if all the  darts in [`itbegin`,`itend`) form a closed path inside a same 3-cell  which can be tested thanks to `gm.is_insertable_cell_2_in_cell_3(itbegin,itend)` (see example on \cgalFigureRef{figinsertfacegmap}).
 
-\cgalFigureBegin{figinsertface,insert-facet.svg}
+\cgalFigureBegin{figinsertfacegmap,insert-facet.svg}
 Example of `insert_cell_2_in_cell_3` and `remove_cell` operations.  Left: Initial generalized map. Right: After the insertion of a 2-cell along the path of 1-cells containing respectively `d1,d2,d3,d4`. Now if we remove the 2-cell containing dart `d5`, we obtain the initial generalized map.
 \cgalFigureEnd
 
