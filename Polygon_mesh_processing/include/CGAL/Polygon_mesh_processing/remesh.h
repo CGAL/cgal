@@ -47,7 +47,8 @@ namespace Polygon_mesh_processing {
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
 *         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         then it should be initialized
+*         and no `face_index_map` is given
+*         as a named parameter, then the internal one should be initialized
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `InputIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
@@ -66,6 +67,8 @@ namespace Polygon_mesh_processing {
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*  \cgalParamEnd
+*  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh`
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of atomic operations performed (listed in the above description)

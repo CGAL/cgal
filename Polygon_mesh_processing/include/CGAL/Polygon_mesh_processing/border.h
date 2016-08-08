@@ -131,9 +131,10 @@ namespace Polygon_mesh_processing {
   * i.e. the collected halfedges are
   * the ones that belong to the input faces.
   *
-  * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh
-  *  `has an internal property map
-  *  for `CGAL::face_index_t`, then it should be initialized
+  * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh`
+  *  has an internal property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one should be initialized
   * @tparam FaceRange range of
        `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
         Its iterator type is `InputIterator`.
