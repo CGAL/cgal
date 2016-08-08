@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgGeneralizedMapsClasses
 
-The class `Generalized_map_min_items` is a model of the `GeneralizedMapItems` concept. It defines the type of darts which is a `GDart<d,GMap>`. The `Generalized_map_min_items` has a template argument for the dimension of the generalized map. In this class, no attribute is enabled.
+The class `Generalized_map_min_items` is a model of the `GeneralizedMapItems` concept. It defines the type of darts which is a `GMap_dart<d,GMap>`. The `Generalized_map_min_items` has a template argument for the dimension of the generalized map. In this class, no attribute is enabled.
 
 \cgalModels `GeneralizedMapItems`
 
@@ -19,14 +19,14 @@ struct Generalized_map_min_items
   template <class GMap>
   struct Dart_wrapper
   {
-    typedef CGAL::GDart<d, GMap> Dart;
-    typedef CGAL::cpp11::tuple<> Attributes;
+    typedef CGAL::GMap_dart<d, GMap> Dart;
+    typedef CGAL::cpp11::tuple<>     Attributes;
   };
 };
 \endcode
 
 \sa `Generalized_map<d,Items,Alloc>`
-\sa `GDart<d,GMap>`
+\sa `GMap_dart<d,GMap>`
 
 */
 template< typename d >

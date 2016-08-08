@@ -26,12 +26,12 @@
 
 ## Concepts ##
 - `GeneralizedMap`
-- `GDart`
+- `GMapDart`
 - `GeneralizedMapItems`
 
 ## Classes ##
 - `CGAL::Generalized_map<d,Items,Alloc>`
-- `CGAL::GDart<d,GMap>`
+- `CGAL::GMap_dart<d,GMap>`
 - `CGAL::Generalized_map_min_items<d>`
 
 */

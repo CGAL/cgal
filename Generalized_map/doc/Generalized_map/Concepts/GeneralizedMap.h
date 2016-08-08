@@ -31,7 +31,7 @@ GeneralizedMap(const GMap& gmap);
 /// @{
 
 /*!
-%Dart type, a model of the `GDart` concept.
+%Dart type, a model of the `GMapDart` concept.
 */
 typedef unspecified_type Dart;
 

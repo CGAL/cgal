@@ -12,7 +12,7 @@ namespace CGAL {
 
 A <I>d</I>-dimensional generalized map is a data structure representing an \tred{orientable or non orientable} subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships. 
 
-\tred{This package is an extension of the} \ref ChapterCombinatorialMap "combinatorial maps" \tred{data structure which allows to describe only orientable objects.}
+\tred{This package is an extension of the \ref ChapterCombinatorialMap "combinatorial maps" data structure which allows to describe only orientable objects.}
 
 We denote <I>i</I>-cell for an <I>i</I>-dimensional cell (for example in 3D, 0-cells are <I>vertices</I>, 1-cells are <I>edges</I>, 2-cells are <I>facets</I>, and 3-cells are <I>volumes</I>). A <I>boundary relation</I> is defined on these cells, giving for each <I>i</I>-cell <I>c</I> the set of <I>(i-1)</I>-cells contained in the boundary of <I>c</I>. Two cells <I>c1</I> and <I>c2</I> are <I>incident</I> if there is a path of cells, starting from the cell of biggest dimension to the other cell, such that each cell of the path (except the first one) belongs to the boundary of the previous cell in the path. Two <I>i</I>-cells <I>c3</I> and <I>c4</I> are <I>adjacent</I> if there is an <I>(i-1)</I>-cell incident to both <I>c3</I> and <I>c4</I>. You can see an example of a 2D object and a 3D object in \cgalFigureRef{fig_gmap_example_subdivisions} showing some cells of the subdivision and some adjacency and incidence relations.
 
@@ -189,21 +189,21 @@ All information associated to darts (\f$ \alpha\f$ links and attributes) can be 
 
 \subsection ssecitemgmap Generalized Map Items
 
-The \tred{`GeneralizedMapItems`} concept defines dart and attribute types of a generalized map. It contains one inner class named \link GeneralizedMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `GMap`, a model of \tred{`GeneralizedMap`} concept. The \link GeneralizedMapItems::Dart_wrapper `Dart_wrapper<GMap>`\endlink class provides two local types: `%Dart` which must be a model of the \tred{`::GDart`} concept, and `%Attributes` which defines the attributes and their types.
+The \tred{`GeneralizedMapItems`} concept defines dart and attribute types of a generalized map. It contains one inner class named \link GeneralizedMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `GMap`, a model of \tred{`GeneralizedMap`} concept. The \link GeneralizedMapItems::Dart_wrapper `Dart_wrapper<GMap>`\endlink class provides two local types: `%Dart` which must be a model of the \tred{`::GMapDart`} concept, and `%Attributes` which defines the attributes and their types.
 
 The `%Attributes` tuple must contain at most <I>d</I>+1 types (one for each possible cell dimension of the generalized map). Each type of the tuple must be either a model of the `CellAttribute` concept or `void`. The first type corresponds to 0-attributes, the second to 1-attributes and so on. If the <i>i <sup>th</sup></i> type in the tuple is  `void`, <I>(i-1)</I>-attributes are disabled: we say that <I>(i-1)</I>-attributes are <I>void</I>. Otherwise, <I>(i-1)</I>-attributes are enabled and have the given type: we say <I>(i-1)</I>-attributes are <I>non void</I>. If the size of the tuple is <I>k</I>, with <I>k</I>\f$ <\f$<I>dimension+1</I>, \f$ \forall\f$<I>i</I>: <I>k</I>\f$ \leq\f$<I>i</I>\f$ \leq\f$dimension, <I>i</I>-attributes are void.
 
-The class `Generalized_map_min_items<d>` is a model of the `GeneralizedMapItems` concept which can be used for default behaviors.  It defines \tred{`GDart<d,GMap>`} as type of dart, and `Attributes` as empty tuple.
+The class `Generalized_map_min_items<d>` is a model of the `GeneralizedMapItems` concept which can be used for default behaviors.  It defines \tred{`GMap_dart<d,GMap>`} as type of dart, and `Attributes` as empty tuple.
 
 \subsection ssecdartsgmap Darts
 
-The class \tred{`GDart<d,GMap>`}, a model of the \tred{`::GDart`} concept, defines a <I>d</I>D dart for generalized maps. It has two template parameters standing for the dimension of the generalized map, and a model of the `GeneralizedMap` concept, which provides the two types \link GeneralizedMap::Dart_handle `Dart_handle`\endlink and \link GeneralizedMap::Dart_const_handle `Dart_const_handle`\endlink.
+The class \tred{`GMap_dart<d,GMap>`}, a model of the \tred{`::GMapDart`} concept, defines a <I>d</I>D dart for generalized maps. It has two template parameters standing for the dimension of the generalized map, and a model of the `GeneralizedMap` concept, which provides the two types \link GeneralizedMap::Dart_handle `Dart_handle`\endlink and \link GeneralizedMap::Dart_const_handle `Dart_const_handle`\endlink.
 
-Each instance `d0` of `GDart<d,GMap>` stores the \f$ \alpha_i\f$ pointers in an array of <I>d</I>+1 `Dart_handle`. It also stores the attributes associated to this dart in a tuple of \link GeneralizedMap::Attribute_handle `GMap::Attribute_handle<i>::type` \endlink, one for each non void <I>i</I>-attribute.
+Each instance `d0` of `GMap_dart<d,GMap>` stores the \f$ \alpha_i\f$ pointers in an array of <I>d</I>+1 `Dart_handle`. It also stores the attributes associated to this dart in a tuple of \link GeneralizedMap::Attribute_handle `GMap::Attribute_handle<i>::type` \endlink, one for each non void <I>i</I>-attribute.
 
 Methods are defined allowing to retrieve each \f$ \alpha_i\f$ and each associated <I>i</I>-attribute of `d0`.
 
-Note that the use of the `GDart` class is not hard wired in the generalized map class. Users can provide their own model of the `::GDart` concept, and pass it to the generalized map with the help of a custom item class.
+Note that the use of the `GMap_dart` class is not hard wired in the generalized map class. Users can provide their own model of the `::GMapDart` concept, and pass it to the generalized map with the help of a custom item class.
 
 \subsection ssecattributesgmap Cell Attributes
 
@@ -219,7 +219,7 @@ What we said for the dart also holds for the cell attribute. The generalized map
 
 \subsection ssecexampledefgmap Example of Generalized Map Definition
 
-Here comes an example of two generalized map definitions. The first case `Example_gmap4` defines a 4D generalized map which uses all the default values (`GDart` and `Generalized_map_min_items`). The second example `Example_custom_gmap3` uses its own model of the `GeneralizedMapItems` concept. In this model, the type of dart is `GDart<3,GMap>`, thus a dart is in 3D, and an attribute containing an integer is associated to edges.
+Here comes an example of two generalized map definitions. The first case `Example_gmap4` defines a 4D generalized map which uses all the default values (`GMap_dart` and `Generalized_map_min_items`). The second example `Example_custom_gmap3` uses its own model of the `GeneralizedMapItems` concept. In this model, the type of dart is `GMap_dart<3,GMap>`, thus a dart is in 3D, and an attribute containing an integer is associated to edges.
 
 \code{.cpp}
 
@@ -230,7 +230,7 @@ struct Example_items_3
   template <class GMap>
   struct Dart_wrapper
   {
-    typedef CGAL::GDart<3, GMap> Dart;
+    typedef CGAL::GMap_dart<3, GMap> Dart;
     typedef CGAL::Cell_attribute<GMap, int> Edge_attrib;
     typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
   };
