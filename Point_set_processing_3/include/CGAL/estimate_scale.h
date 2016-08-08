@@ -122,11 +122,22 @@ public:
     return out;
   }
 
-  FT precomputed_factor (std::size_t index, FT nb)
+  void precompute_factors ()
   {
-    if (m_precomputed_factor.size() == index)
-      m_precomputed_factor.push_back (0.91666666 * std::log (nb));
-    return m_precomputed_factor[index];
+    FT nb = 0.;
+    for (std::size_t t = 0; t < m_trees.size(); ++ t)
+      {
+        std::size_t size = (t == (m_trees.size() - 1)
+                            ? m_trees[t]->size()
+                            : m_weights[t+1] / m_weights[t]);
+        for (std::size_t i = (t == 0 ? 0 : 1); i < size; ++ i)
+          {
+            nb += m_weights[t];
+            if (nb < 6.) // do not consider values under 6
+              continue;
+            m_precomputed_factor.push_back (0.91666666 * std::log (nb));
+          }
+      }
   }
   
   
@@ -134,6 +145,9 @@ public:
   void compute_scale (InputIterator query, PointPMap point_pmap,
                       std::size_t& k, FT& d)
   {
+    if (m_precomputed_factor.empty())
+      precompute_factors();
+    
     k = 0;
     d = 0.;
 
@@ -159,19 +173,15 @@ public:
 
             if (nb < 6.) // do not consider values under 6
               continue;
-
-            // FT dist = std::sqrt (sum_sq_distances / nb)
-            //   / std::pow (nb, 0.41666); // nb^(5/12)
             
             // sqrt(sum_sq_distances / nb) / nb^(5/12)
-            // Computed in log space for time optimization
-            FT dist = 0.5 * std::log (sum_sq_distances) - precomputed_factor (index, nb);
-            ++ index;
+            // Computed in log space with precomputed factor for time optimization
+            FT dist = 0.5 * std::log (sum_sq_distances) - m_precomputed_factor[index ++];
             
             if (dist < dist_min)
               {
                 dist_min = dist;
-                k = nb;
+                k = (std::size_t)nb;
                 d = it->second;
               }
           }
@@ -230,6 +240,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
   std::size_t m_cluster_size;
   std::vector<Point_set*> m_point_sets;
   std::vector<FT> m_weights;
+  std::vector<FT> m_precomputed_factor;
   
 public:
 
@@ -300,27 +311,48 @@ public:
     return out;
   }
 
+  void precompute_factors ()
+  {
+    FT nb = 0.;
+    for (std::size_t t = 0; t < m_point_sets.size(); ++ t)
+      {
+        std::size_t size = (t == m_point_sets.size() - 1
+                            ? m_point_sets[t]->number_of_vertices()
+                            : m_weights[t+1] / m_weights[t]);
+        for (std::size_t i = (t == 0 ? 0 : 1); i < size; ++ i)
+          {
+            nb += m_weights[t];
+            if (nb < 6.) // do not consider values under 6
+              continue;
+            m_precomputed_factor.push_back (1.25 * std::log (nb));
+          }
+      }
+  }
+  
   template <typename InputIterator, typename PointPMap>
   void compute_scale (InputIterator query, PointPMap point_pmap,
                       std::size_t& k, FT& d)
   {
+    if (m_precomputed_factor.empty())
+      precompute_factors();
+
     k = 0;
     d = 0.;
 
     FT dist_min = std::numeric_limits<FT>::max();
     FT sum_sq_distances = 0.;
     FT nb = 0.;
-
+    std::size_t index = 0;
+    
     const typename Kernel::Point_2& pquery = get(point_pmap, *query);
     for (std::size_t t = 0; t < m_point_sets.size(); ++ t)
       {
+        std::size_t size = ((t == m_point_sets.size() - 1)
+                            ? m_point_sets[t]->number_of_vertices()
+                            : m_weights[t+1] / m_weights[t]);
         std::vector<Vertex_handle> neighbors;
-        if (t == m_point_sets.size() - 1)
-          m_point_sets[t]->nearest_neighbors (pquery, m_point_sets[t]->number_of_vertices(),
-                                              std::back_inserter (neighbors));
-        else
-          m_point_sets[t]->nearest_neighbors (pquery, m_weights[t+1] / m_weights[t],
-                                              std::back_inserter (neighbors));
+        neighbors.reserve (size);
+        m_point_sets[t]->nearest_neighbors (pquery, size, std::back_inserter (neighbors));
 
         std::sort (neighbors.begin(), neighbors.end(),
                    Sort_by_distance_to_point (pquery));
@@ -334,9 +366,10 @@ public:
             if (nb < 6.) // do not consider values under 6
               continue;
 
-            FT dist = std::sqrt (sum_sq_distances / nb)
-              / std::pow (nb, 0.75); // nb^(3/4)
-
+            // sqrt(sum_sq_distances / nb) / nb^(3/4)
+            // Computed in log space with precomputed factor for time optimization
+            FT dist = 0.5 * std::log (sum_sq_distances) - m_precomputed_factor[index ++];
+            
             if (dist < dist_min)
               {
                 dist_min = dist;
