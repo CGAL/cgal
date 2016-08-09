@@ -3413,6 +3413,9 @@ namespace CGAL {
         Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 1>::
           run(this,*it,d1);
+        Helper::template Foreach_enabled_attributes_except
+          <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 1>::
+          run(this,*it,d2);
         // We initialise the 0-atttrib to ah
         CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
           run(this, d2, ah);
