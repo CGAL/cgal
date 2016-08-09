@@ -386,14 +386,14 @@ Example of `insert_cell_2_in_cell_3` and `remove_cell` operations.  Left: Initia
 Some examples of use of these operations are given in Section \ref ssecexempleoperationsgmap "High Level Operations".
 
 \cgalAdvancedBegin
-If \link GeneralizedMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link GeneralizedMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagementGMap "Automatic attributes management".
+If \link GeneralizedMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link GeneralizedMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
 \cgalAdvancedEnd
 
 \section Generalized_mapExamples Examples
 
 \subsection ssecexample3DGM A 3D Generalized Map
 
-In this example, a 3-dimensional generalized map is constructed. Two combinatorial tetrahedra are created, then the numbers of cells of the generalized map are displayed, and the validity of the generalized map is checked. Then, we illustrate the use of ranges to iterate over specific darts. The first loop enumerates all the darts of the first tetrahedron by using the range \ref GeneralizedMap::Dart_of_orbit_range "Dart_of_orbit_range<1,2>", and the second loop enumerates all the darts of the facet containing dart `dh2` by using the range \ref GeneralizedMap::Dart_of_orbit_range "Dart_of_orbit_range<1>".
+In this example, a 3-dimensional generalized map is constructed. Two combinatorial tetrahedra are created, then the numbers of cells of the generalized map are displayed, and the validity of the generalized map is checked. Then, we illustrate the use of ranges to iterate over specific darts. The first loop enumerates all the darts of the first tetrahedron by using the range \ref GeneralizedMap::Dart_of_orbit_range "Dart_of_orbit_range<0,1,2>", and the second loop enumerates all the darts of the facet containing dart `dh2` by using the range \ref GeneralizedMap::Dart_of_orbit_range "Dart_of_orbit_range<0,1>".
 
 \cgalExample{Generalized_map/gmap_3_simple_example.cpp}
 
@@ -406,13 +406,13 @@ Number of darts of the face incident to d1: 6
 
 which gives the number of darts of the generalized map, the numbers of different cells, the number of connected components, and finally a Boolean showing the validity of the generalized map (a tetrahedron is made up of 24 darts because there are 6 darts per facet and there are 4 facets).
 
-Note the creation in the for loops of the two instances of \ref GeneralizedMap::Dart_of_orbit_range "Dart_of_orbit_range"::`const_iterator`: `it` is the current iterator, and `itend` an iterator to the end of the range. Having `itend` avoids calling \ref GeneralizedMap::darts_of_orbit "gm.darts_of_orbit<1,2>(dh1)"`.end()` again and again as in the following example (which is a bad solution):
+Note the creation in the for loops of the two instances of \ref GeneralizedMap::Dart_of_orbit_range "Dart_of_orbit_range"::`const_iterator`: `it` is the current iterator, and `itend` an iterator to the end of the range. Having `itend` avoids calling \ref GeneralizedMap::darts_of_orbit "gm.darts_of_orbit<0,1,2>(dh1)"`.end()` again and again as in the following example (which is a bad solution):
 
 \code{.cpp}
 
-for (GMap_3::Dart_of_orbit_range<1,2>::const_iterator
-     it(gm.darts_of_orbit<1,2>(dh1).begin());
-     it!=gm.darts_of_orbit<1,2>(dh1).end()); ++it)
+for (GMap_3::Dart_of_orbit_range<0,1,2>::const_iterator
+     it(gm.darts_of_orbit<0,1,2>(dh1).begin());
+     it!=gm.darts_of_orbit<0,1,2>(dh1).end()); ++it)
 {...}
 
 \endcode
