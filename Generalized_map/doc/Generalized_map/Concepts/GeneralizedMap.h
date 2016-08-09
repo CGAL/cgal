@@ -745,7 +745,7 @@ Dart_handle make_edge();
 /// @{
 
 /*!
-Inserts a 0-cell in the 1-cell containing `dh`. Returns a handle on one dart belonging to the new 0-cell.
+Inserts a 0-cell in the 1-cell containing `dh`. Returns \f$ \alpha_0\f$(`dh`), a handle on one dart belonging to the new 0-cell.
 \pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 1 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 See example in \cgalFigureRef{fig_gmap_insert_vertex}.
@@ -787,7 +787,7 @@ If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_au
 Dart_handle insert_cell_0_in_cell_2(Dart_handle dh);
 
 /*!
-Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns \f$ \beta_0\f$(`dh1`), a handle on one dart belonging to the new 1-cell.
+Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns \f$ \alpha_0(\alpha_1\f$(`dh1`)), a handle on one dart belonging to the new 1-cell and not to the same vertex than `dh1`.
 \pre `is_insertable_cell_1_in_cell_2(dh1,dh2)`.
 
 See example in \cgalFigureRef{fig_gmap_insert_edge}.
@@ -809,7 +809,7 @@ If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_au
 Dart_handle insert_cell_1_in_cell_2(Dart_handle dh1, Dart_handle dh2);
 
 /*!
-Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns a handle on one dart belonging to the new 2-cell.
+Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns \f$ \alpha_2\f$(*afirst), a handle on one dart belonging to the new 2-cell.
 \pre `is_insertable_cell_2_in_cell_3(afirst,alast)`.
 
 See example in \cgalFigureRef{fig_gmap_insert_facet}.
@@ -832,7 +832,7 @@ template <class InputIterator>
 Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 
 /*!
-Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns a handle on the dart belonging to the new 1-cell and to the new 0-cell. 
+Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns \f$ \alpha_0(\alpha_1\f$(`dh1`)), a handle on one dart belonging to the new 1-cell and to the new 0-cell.
 \pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 See example in \cgalFigureRef{fig_gmap_insert_edge}.
@@ -853,7 +853,7 @@ Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh);
 /*!
 Returns true iff it is possible to insert a 1-cell in the generalized map between `dh1` and `dh2`.
 
-This is possible if `dh1`\f$ \neq\f$`dh2` and `dh1`\f$ \in\f$\f$ \langle{}\f$\f$ \beta_1\f$\f$ \rangle{}\f$(`dh2`).
+This is possible if `dh1`\f$ \neq\f$`dh2` and `dh1`\f$ \in\f$\f$ \langle{}\f$\f$ \alpha_0 \circ \alpha_1\f$\f$ \rangle{}\f$(`dh2`).
 \pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2, `*dh1`\f$ \in\f$\ref GeneralizedMap::darts "darts()", and `*dh2`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
 
 \sa `insert_cell_1_in_cell_2`

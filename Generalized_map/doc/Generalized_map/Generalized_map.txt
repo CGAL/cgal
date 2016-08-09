@@ -368,12 +368,11 @@ The inverse operation of the removal is the insertion operation. Several version
 Example of `insert_cell_0_in_cell_2` operation.
 \cgalFigureEnd
 
-`gm.insert_cell_1_in_cell_2(dh1,dh2)` adds a 1-cell in the 2-cell containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cell is split in two. This operation is possible if <I>d1</I>\f$ \in\f$\f$ \langle{}\f$\f$ \alpha_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `gm.is_insertable_cell_1_in_cell_2(dh1,dh2)`. In the example on \cgalFigureRef{fig_gmap_insert_edge}, it is possible to insert an edge between darts <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge between <I>d1</I> and <I>d3</I>.
+`gm.insert_cell_1_in_cell_2(dh1,dh2)` adds a 1-cell in the 2-cell containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cell is split in two. This operation is possible \tred{if <I>d1</I>\f$ \in\f$\f$ \langle{}\f$\f$ \alpha_0, \alpha_1\f$\f$ \rangle{}\f$(<I>d2</I>)} which can be tested thanks to `gm.is_insertable_cell_1_in_cell_2(dh1,dh2)`. In the example on \cgalFigureRef{fig_gmap_insert_edge}, it is possible to insert an edge between darts <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge between <I>d1</I> and <I>d3</I>.
 
 \cgalFigureBegin{fig_gmap_insert_edge,gmap_insert_edge.svg}
 Example of `insert_cell_1_in_cell_2` and `remove_cell<1>` operations. Left: Initial generalized map. Right: After the insertion of two 1-cells: a first one between the two 0-cells containing darts `d2` and `d3`, and a second one incident to the 0-cell containing dart `d1`. Now if we remove the two 1-cells containing darts `d4` and `d5`, we obtain the initial generalized map.
 \cgalFigureEnd
-
 
 `gm.insert_dangling_cell_1_in_cell_2(dh0)` adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`.  This operation is possible if `d0`\f$ \in\f$\ref GeneralizedMap::darts "gm.darts()".
 
