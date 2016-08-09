@@ -3453,18 +3453,15 @@ namespace CGAL {
   }
 
   /** Test if an edge can be inserted onto a 2-cell between two given darts.
-   * @param amap the used generalized map.
    * @param adart1 a first dart.
    * @param adart2 a second dart.
    * @return true iff an edge can be inserted between adart1 and adart2.
    */
-  template < class GMap >
-  bool is_insertable_cell_1_in_cell_2(const GMap& amap,
-                                      typename GMap::Dart_const_handle adart1,
-                                      typename GMap::Dart_const_handle adart2)
+  bool is_insertable_cell_1_in_cell_2(Dart_const_handle adart1,
+                                      Dart_const_handle adart2)
   {
-    if ( adart1==adart2 || adart1==amap.template alpha<0>(adart2) ) return false;
-    for ( CGAL::GMap_dart_const_iterator_of_orbit<GMap,0,1> it(amap,adart1);
+    if ( adart1==adart2 || adart1==this->template alpha<0>(adart2) ) return false;
+    for ( CGAL::GMap_dart_const_iterator_of_orbit<Self,0,1> it(*this,adart1);
           it.cont(); ++it )
     {
       if ( it==adart2 )  return true;
@@ -3473,66 +3470,63 @@ namespace CGAL {
   }
 
   /** Insert an edge in a 2-cell between two given darts.
-   * @param amap the used generalized map.
    * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
    * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
    * @return a dart of the new edge, and not incident to the
    *         same vertex than adart1.
    */
-  template<class GMap>
-  typename GMap::Dart_handle
-  insert_cell_1_in_cell_2(GMap& amap,
-                          typename GMap::Dart_handle adart1,
-                          typename GMap::Dart_handle adart2,
+  Dart_handle
+  insert_cell_1_in_cell_2(Dart_handle adart1,
+                          Dart_handle adart2,
                           bool update_attributes=true,
                           typename Attribute_handle<0>::type
                           ah=null_handle)
   {
-    if ( adart2!=amap.null_handle)
+    if ( adart2!=null_handle)
     {
-      CGAL_assertion(is_insertable_cell_1_in_cell_2<GMap>(amap, adart1, adart2));
+      CGAL_assertion(is_insertable_cell_1_in_cell_2(adart1, adart2));
     }
 
-    typename GMap::size_type m1=amap.get_new_mark();
-    CGAL::GMap_dart_iterator_basic_of_involution<GMap,0,1> it1(amap, adart1, m1);
+    size_type m1=get_new_mark();
+    CGAL::GMap_dart_iterator_basic_of_involution<Self,0,1> it1(*this, adart1, m1);
 
-    typename GMap::size_type m2=amap.get_new_mark();
-    CGAL::GMap_dart_iterator_basic_of_involution<GMap,0,1> it2(amap, adart2, m2);
+    size_type m2=get_new_mark();
+    CGAL::GMap_dart_iterator_basic_of_involution<Self,0,1> it2(*this, adart2, m2);
 
-    typename GMap::Dart_handle d1=amap.null_handle;
-    typename GMap::Dart_handle d2=amap.null_handle;
+    Dart_handle d1=null_handle;
+    Dart_handle d2=null_handle;
 
-    typename GMap::size_type treated=amap.get_new_mark();
+    size_type treated=get_new_mark();
 
     for ( ; it1.cont(); ++it1)
     {
       CGAL_assertion (it2.cont() );
-      d1 = amap.create_dart();
-      d2 = amap.create_dart();
-      amap.template basic_link_alpha<0>(d1, d2);
-      amap.mark(it1,treated);
+      d1 = create_dart();
+      d2 = create_dart();
+      this->template basic_link_alpha<0>(d1, d2);
+      mark(it1,treated);
 
-      if ( !amap.template is_free<1>(it1) &&
-           amap.is_marked(amap.template alpha<1>(it1), treated) )
+      if ( !this->template is_free<1>(it1) &&
+           is_marked(this->template alpha<1>(it1), treated) )
       {
-        amap.template basic_link_alpha<2>(amap.template alpha<1,1>(it1), d1);
-        amap.template basic_link_alpha<2>(amap.template alpha<2,0>(d1), d2);
+        this->template basic_link_alpha<2>(this->template alpha<1,1>(it1), d1);
+        this->template basic_link_alpha<2>(this->template alpha<2,0>(d1), d2);
       }
 
-      for ( unsigned int dim=3; dim<=GMap::dimension; ++dim)
+      for ( unsigned int dim=3; dim<=dimension; ++dim)
       {
-        if ( !amap.is_free(it1, dim) &&
-             amap.is_marked(amap.alpha(it1, dim), treated) )
+        if ( !is_free(it1, dim) &&
+             is_marked(alpha(it1, dim), treated) )
         {
-          amap.basic_link_alpha(amap.alpha(it1, dim, 1), d1, dim);
-          amap.basic_link_alpha(amap.alpha(d1, dim, 0), d2, dim);
+          basic_link_alpha(alpha(it1, dim, 1), d1, dim);
+          basic_link_alpha(alpha(d1, dim, 0), d2, dim);
         }
       }
 
-      amap.template link_alpha<1>(it1, d1);
-      if ( adart2!=amap.null_handle )
+      this->template link_alpha<1>(it1, d1);
+      if ( adart2!=null_handle )
       {
-        amap.template link_alpha<1>(it2, d2);
+        this->template link_alpha<1>(it2, d2);
         ++it2;
       }
 
@@ -3542,43 +3536,43 @@ namespace CGAL {
       }
     }
 
-    if (amap.are_attributes_automatically_managed() && update_attributes)
+    if (are_attributes_automatically_managed() && update_attributes)
     {
-      if ( !amap.template is_free<2>(d1) && d2!=amap.null_handle )
-        CGAL::internal::GMap_degroup_attribute_functor_run<GMap, 2>::
-          run(&amap, d1, amap.template alpha<2>(d1));
+      if ( !this->template is_free<2>(d1) && d2!=null_handle )
+        CGAL::internal::GMap_degroup_attribute_functor_run<Self, 2>::
+          run(this, d1, this->template alpha<2>(d1));
     }
 
-    amap.negate_mark(m1);
+    negate_mark(m1);
     it1.rewind();
 
-    if ( adart2!=amap.null_handle )
-    { it2.rewind(); amap.negate_mark(m2); }
+    if ( adart2!=null_handle )
+    { it2.rewind(); negate_mark(m2); }
 
     for ( ; it1.cont(); ++it1, ++it2)
     {
-      amap.mark(it1,m1);
-      amap.unmark(it1,treated);
-      if ( adart2!=amap.null_handle ) amap.mark(it2,m2);
+      mark(it1,m1);
+      unmark(it1,treated);
+      if ( adart2!=null_handle ) mark(it2,m2);
     }
-    amap.negate_mark(m1);
-    CGAL_assertion( amap.is_whole_map_unmarked(m1) );
-    CGAL_assertion( amap.is_whole_map_unmarked(treated) );
-    amap.free_mark(m1);
-    amap.free_mark(treated);
+    negate_mark(m1);
+    CGAL_assertion( is_whole_map_unmarked(m1) );
+    CGAL_assertion( is_whole_map_unmarked(treated) );
+    free_mark(m1);
+    free_mark(treated);
 
-    if ( adart2!=amap.null_handle )
+    if ( adart2!=null_handle )
     {
-      amap.negate_mark(m2);
-      CGAL_assertion( amap.is_whole_map_unmarked(m2) );
+      negate_mark(m2);
+      CGAL_assertion( is_whole_map_unmarked(m2) );
     }
-    amap.free_mark(m2);
+    free_mark(m2);
 
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
-    CGAL_assertion( amap.is_valid() );
+    CGAL_assertion( is_valid() );
 #endif
 
-    return amap.template alpha<1,0>(adart1);
+    return this->template alpha<1,0>(adart1);
   }
 
     /** Insert a dangling edge in a 2-cell between given by a dart.
