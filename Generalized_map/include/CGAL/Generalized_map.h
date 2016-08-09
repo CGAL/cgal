@@ -3351,6 +3351,7 @@ namespace CGAL {
       // Mark used to mark darts already treated.
       size_type treated = get_new_mark();
       size_type m = get_new_mark();
+      size_type edge_pushed = get_new_mark();
 
       // Stack of darts of the face
       std::deque<Dart_handle> vect;
@@ -3367,8 +3368,12 @@ namespace CGAL {
         for ( typename Dart_of_cell_basic_range<2,2>::iterator
               it=darts_of_cell_basic<2,2>(adart).begin();
               it!=darts_of_cell_basic<2,2>(adart).end(); ++it )
-          if ( it!=adart && it!=alpha<0>(adart) )
+          if ( it!=adart && it!=alpha<0>(adart) && !is_marked(it, edge_pushed))
+          {
             todegroup.push_back(it);
+            mark(it, edge_pushed);
+            mark(this->template alpha<0>(it), edge_pushed);
+          }
       }
 
     // 2) For each dart of the cell, we modify link of neighbors.
@@ -3380,11 +3385,18 @@ namespace CGAL {
       basic_link_alpha<0>(d1, d2);
       mark(*it, treated);
 
-      basic_link_alpha<1>(*it, d1);
+      if (!(this->template is_free<0>(*it)) &&
+          is_marked(this->template alpha<0>(*it), treated))
+        basic_link_alpha<1>(d2, this->template alpha<0,1,0>(*it));
 
-      if (!(is_free<0>(*it)) &&
-          is_marked(alpha<0>(*it), treated))
-        basic_link_alpha<1>(d2, alpha<0,1,0>(*it));
+      if (!(this->template is_free<1>(*it)) &&
+          is_marked(this->template alpha<1>(*it), treated))
+      {
+        basic_link_alpha<2>(d1, this->template alpha<1,1>(*it));
+        basic_link_alpha<2>(d2, this->template alpha<1,1,0>(*it));
+      }
+
+      basic_link_alpha<1>(*it, d1);
 
       for ( unsigned int dim=3; dim<=dimension; ++dim )
       {
@@ -3411,12 +3423,15 @@ namespace CGAL {
     {
       unmark(*it, m);
       unmark(*it, treated);
+      unmark(*it, edge_pushed);
     }
 
     CGAL_assertion(is_whole_map_unmarked(m));
     CGAL_assertion(is_whole_map_unmarked(treated));
+    CGAL_assertion(is_whole_map_unmarked(edge_pushed));
     free_mark(m);
     free_mark(treated);
+    free_mark(edge_pushed);
 
     if (are_attributes_automatically_managed() && update_attributes)
     {
