@@ -500,6 +500,7 @@ public:
       int jdx = mirror_index(fh, idx);
 
       Face_handle new_f = create_face(v, v1, v2);
+      v1->set_face(new_f);
       set_adjacency(new_f, 0, nf, jdx);
       new_faces.push_back(new_f);
     }
