@@ -2930,6 +2930,23 @@ namespace CGAL {
       return d1;
     }
 
+    /** Create an edge given 2 Attribute_handle<0>.
+     * @param h0 the first vertex handle.
+     * @param h1 the second vertex handle.
+     * Note that this function can be used only if 0-attributes are non void
+     * @return the dart of the new edge incident to h0.
+     */
+    Dart_handle make_segment(typename Attribute_handle<0>::type h0,
+                             typename Attribute_handle<0>::type h1)
+    {
+      Dart_handle d1 = this->make_edge();
+
+      set_dart_attribute<0>(d1,h0);
+      set_dart_attribute<0>(this->alpha<0>(d1),h1);
+
+      return d1;
+    }
+
     /** Create a combinatorial polygon of length alg
      * (a cycle of alg edges alpha1 links together).
      * @return a new dart.
@@ -2974,6 +2991,56 @@ namespace CGAL {
       return (nb==alg);
     }
 
+    /** Create a triangle given 3 Attribute_handle<0>.
+     * @param h0 the first handle.
+     * @param h1 the second handle.
+     * @param h2 the third handle.
+     * Note that this function can be used only if 0-attributes are non void
+     * @return the dart of the new triangle incident to h0 and to edge h0h1.
+     */
+    Dart_handle make_triangle(typename Attribute_handle<0>::type h0,
+                              typename Attribute_handle<0>::type h1,
+                              typename Attribute_handle<0>::type h2)
+    {
+      Dart_handle d1 = this->make_combinatorial_polygon(3);
+
+      set_dart_attribute<0>(d1,h0);
+      set_dart_attribute<0>(this->alpha<1>(d1),h0);
+      set_dart_attribute<0>(this->alpha<0>(d1),h1);
+      set_dart_attribute<0>(this->alpha<0,1>(d1),h1);
+      set_dart_attribute<0>(this->alpha<1,0>(d1),h2);
+      set_dart_attribute<0>(this->alpha<1,0,1>(d1),h2);
+
+      return d1;
+    }
+
+    /** Create a quadrangle given 4 Vertex_attribute_handle.
+     * @param h0 the first vertex handle.
+     * @param h1 the second vertex handle.
+     * @param h2 the third vertex handle.
+     * @param h3 the fourth vertex handle.
+     * Note that this function can be used only if 0-attributes are non void
+     * @return the dart of the new quadrilateral incident to h0 and to edge h0h1.
+     */
+    Dart_handle make_quadrangle(typename Attribute_handle<0>::type h0,
+                                typename Attribute_handle<0>::type h1,
+                                typename Attribute_handle<0>::type h2,
+                                typename Attribute_handle<0>::type h3)
+    {
+      Dart_handle d1 = this->make_combinatorial_polygon(4);
+
+      set_dart_attribute<0>(d1,h0);
+      set_dart_attribute<0>(this->alpha<1>(d1),h0);
+      set_dart_attribute<0>(this->alpha<0>(d1),h1);
+      set_dart_attribute<0>(this->alpha<0,1>(d1),h1);
+      set_dart_attribute<0>(this->alpha<0,1,0>(d1),h2);
+      set_dart_attribute<0>(this->alpha<0,1,0,1>(d1),h2);
+      set_dart_attribute<0>(this->alpha<1,0>(d1),h3);
+      set_dart_attribute<0>(this->alpha<1,0,1>(d1),h3);
+
+      return d1;
+    }
+
     /** Create a combinatorial tetrahedron from 4 triangles.
      * @param d1 a dart onto a first triangle.
      * @param d2 a dart onto a second triangle.
@@ -2987,7 +3054,7 @@ namespace CGAL {
                                                Dart_handle d4)
     {
       topo_sew<2>(d1, alpha(d2, 0));
-      topo_sew<2>(d3, alpha(d2, 1, 0));
+      topo_sew<2>(d3, alpha(d2, 1));
       topo_sew<2>(alpha(d1, 0, 1), alpha(d3, 1));
       topo_sew<2>(alpha(d4, 0), alpha(d2, 0, 1));
       topo_sew<2>(alpha(d4, 1), alpha(d3, 0, 1));
@@ -3002,9 +3069,9 @@ namespace CGAL {
      */
     bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1)
     {
-      Dart_const_handle d2 = alpha(d1, 2);
+      Dart_const_handle d2 = alpha(d1, 0, 2);
       Dart_const_handle d3 = alpha(d2, 1, 2);
-      Dart_const_handle d4 = alpha(d2, 0, 1, 2);
+      Dart_const_handle d4 = alpha(d2, 0, 1, 0, 2);
 
       if ( !is_face_combinatorial_polygon(d1, 3) ||
            !is_face_combinatorial_polygon(d2, 3) ||
@@ -3019,9 +3086,9 @@ namespace CGAL {
            belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
            belong_to_same_cell<Self,2,1>(*this, d3, d4) ) return false;
 
-      if ( alpha(d1,1,2)!=alpha(d3,1) ||
-           alpha(d4,0,1,2)!=alpha(d3,0,1) ||
-           alpha(d4,1,2)!=alpha(d1,0,1) ) return false;
+      if ( alpha(d1, 0,1,2)!=alpha(d3,1) ||
+           alpha(d4, 1,2)!=alpha(d3,0,1) ||
+           alpha(d4, 0,1,2)!=alpha(d1,1) ) return false;
 
       return true;
     }
@@ -3055,20 +3122,20 @@ namespace CGAL {
                                               Dart_handle d5,
                                               Dart_handle d6)
     {
-      topo_sew<2>(d1, alpha(d4,1,0,1,0));
+      topo_sew<2>(d1, alpha(d4,1,0,1));
       topo_sew<2>(alpha(d1,0,1), alpha(d6,1));
       topo_sew<2>(alpha(d1,1,0,1), d2);
       topo_sew<2>(alpha(d1,1), d5);
 
       topo_sew<2>(d3, alpha(d2,1,0,1));
       topo_sew<2>(alpha(d3,0,1,0), alpha(d6,0,1));
-      topo_sew<2>(alpha(d3,1,0,1,0), d4);
-      topo_sew<2>(alpha(d3,1), alpha(d5,0,1,0,1));
+      topo_sew<2>(alpha(d3,1,0,1), d4);
+      topo_sew<2>(alpha(d3,1,0), alpha(d5,1,0,1));
 
-      topo_sew<2>(d6, alpha(d4,1,0));
+      topo_sew<2>(d6, alpha(d4,0,1,0));
       topo_sew<2>(alpha(d6,1,0,1), alpha(d2,0,1));
 
-      topo_sew<2>(alpha(d5,1,0), alpha(d4,0,1));
+      topo_sew<2>(alpha(d5,1,0), alpha(d4,1));
       topo_sew<2>(alpha(d5,0,1), alpha(d2,1));
       return d1;
     }
@@ -3081,9 +3148,9 @@ namespace CGAL {
     {
       Dart_const_handle d2 = alpha(d1,1,0,1,2);
       Dart_const_handle d3 = alpha(d2,1,0,1,2);
-      Dart_const_handle d4 = alpha(d3,1,0,1,0,2);
+      Dart_const_handle d4 = alpha(d3,1,0,1,2);
       Dart_const_handle d5 = alpha(d1,1,2);
-      Dart_const_handle d6 = alpha(d4,1,0,2);
+      Dart_const_handle d6 = alpha(d4,0,1,0,2);
 
       if (!is_face_combinatorial_polygon(d1, 4) ||
           !is_face_combinatorial_polygon(d2, 4) ||
@@ -3110,12 +3177,12 @@ namespace CGAL {
            belong_to_same_cell<Self,2,1>(*this, d5, d6) )
         return false;
 
-      if ( alpha(d1,2)      !=alpha(d4,0,1,0,1) ||
-           alpha(d1,0,1,2)  !=alpha(d6,1)       ||
-           alpha(d3,0,1,2)  !=alpha(d6,0,1,0)   ||
-           alpha(d3,1,2)    !=alpha(d5,0,1,0,1) ||
-           alpha(d6,1,0,1,2)!=alpha(d2,0,1)     ||
-           alpha(d5,1,2)    !=alpha(d4,0,1,0)   ||
+      if ( alpha(d1,2)      !=alpha(d4,1,0,1) ||
+           alpha(d1,0,1,2)  !=alpha(d6,1)     ||
+           alpha(d3,0,1,0,2)!=alpha(d6,0,1)   ||
+           alpha(d3,1,0,2)  !=alpha(d5,1,0,1) ||
+           alpha(d6,1,0,1,2)!=alpha(d2,0,1)   ||
+           alpha(d5,1,0,2)  !=alpha(d4,1)     ||
            alpha(d5,0,1,2)  !=alpha(d2,1) ) return false;
 
       return true;
@@ -3506,7 +3573,7 @@ namespace CGAL {
                                                   ah=null_handle,
                                                   bool update_attributes=true )
     { return insert_cell_1_in_cell_2(adart1, NULL, update_attributes, ah); }
-    
+
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    * a path of edges.
    * @param amap the used generalized map.

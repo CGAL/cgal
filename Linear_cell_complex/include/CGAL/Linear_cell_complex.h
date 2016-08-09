@@ -123,6 +123,10 @@ namespace CGAL {
     using Base::free_mark;
     using Base::get_new_mark;
 
+    using Base::make_segment;
+    using Base::make_triangle;
+    using Base::make_quadrangle;
+
     using Base::insert_cell_0_in_cell_1;
     using Base::insert_cell_0_in_cell_2;
     using Base::insert_dangling_cell_1_in_cell_2;
@@ -486,21 +490,6 @@ namespace CGAL {
       return res;
     }
 
-    /** Create an edge given 2 Vertex_attribute_handle.
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @return the dart of the new edge incident to h0.
-     */
-    Dart_handle make_segment(Vertex_attribute_handle h0,
-                             Vertex_attribute_handle h1)
-    {
-      Dart_handle d1 = this->make_edge();
-      set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(this->other_extremity(d1),h1);
-
-      return d1;
-    }
-
     /** Create a segment given 2 points.
      * @param p0 the first point.
      * @param p1 the second point.
@@ -510,25 +499,6 @@ namespace CGAL {
     {
       return make_segment(create_vertex_attribute(p0),
                           create_vertex_attribute(p1));
-    }
-
-    /** Create a triangle given 3 Vertex_attribute_handle.
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @param h2 the third vertex handle.
-     * @return the dart of the new triangle incident to h0 and to edge h0h1.
-     */
-    Dart_handle make_triangle(Vertex_attribute_handle h0,
-                              Vertex_attribute_handle h1,
-                              Vertex_attribute_handle h2)
-    {
-      Dart_handle d1 = this->make_combinatorial_polygon(3);
-
-      set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(this->get_next_dart_in_face(d1),h1);
-      set_vertex_attribute_of_dart(this->get_previous_dart_in_face(d1),h2);
-
-      return d1;
     }
 
     /** Create a triangle given 3 points.
@@ -544,29 +514,6 @@ namespace CGAL {
       return make_triangle(create_vertex_attribute(p0),
                            create_vertex_attribute(p1),
                            create_vertex_attribute(p2));
-    }
-
-    /** Create a quadrangle given 4 Vertex_attribute_handle.
-     * @param h0 the first vertex handle.
-     * @param h1 the second vertex handle.
-     * @param h2 the third vertex handle.
-     * @param h3 the fourth vertex handle.
-     * @return the dart of the new quadrilateral incident to h0 and to edge h0h1.
-     */
-    Dart_handle make_quadrangle(Vertex_attribute_handle h0,
-                                Vertex_attribute_handle h1,
-                                Vertex_attribute_handle h2,
-                                Vertex_attribute_handle h3)
-    {
-      Dart_handle d1 = this->make_combinatorial_polygon(4);
-
-      set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(this->get_next_dart_in_face(d1),h1);
-      set_vertex_attribute_of_dart(this->get_next_dart_in_face
-                                   (this->get_next_dart_in_face(d1)), h2);
-      set_vertex_attribute_of_dart(this->get_previous_dart_in_face(d1),h3);
-
-      return d1;
     }
 
     /** Create a quadrangle given 4 points.

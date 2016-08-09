@@ -3780,6 +3780,23 @@ namespace CGAL {
       return d1;
     }
 
+    /** Create an edge given 2 Attribute_handle<0>.
+     * @param h0 the first vertex handle.
+     * @param h1 the second vertex handle.
+     * Note that this function can be used only if 0-attributes are non void
+     * @return the dart of the new edge incident to h0.
+     */
+    Dart_handle make_segment(typename Attribute_handle<0>::type h0,
+                             typename Attribute_handle<0>::type h1)
+    {
+      Dart_handle d1 = this->make_edge();
+
+      set_dart_attribute<0>(d1,h0);
+      set_dart_attribute<0>(this->beta<2>(d1),h1);
+
+      return d1;
+    }
+
     /** Create a combinatorial polygon of length alg
      * (a cycle of alg darts beta1 links together).
      * @return a new dart.
@@ -3821,6 +3838,49 @@ namespace CGAL {
       }
       while( cur!=adart );
       return (nb==alg);
+    }
+
+    /** Create a triangle given 3 Attribute_handle<0>.
+     * @param h0 the first handle.
+     * @param h1 the second handle.
+     * @param h2 the third handle.
+     * Note that this function can be used only if 0-attributes are non void
+     * @return the dart of the new triangle incident to h0 and to edge h0h1.
+     */
+    Dart_handle make_triangle(typename Attribute_handle<0>::type h0,
+                              typename Attribute_handle<0>::type h1,
+                              typename Attribute_handle<0>::type h2)
+    {
+      Dart_handle d1 = this->make_combinatorial_polygon(3);
+
+      set_dart_attribute<0>(d1,h0);
+      set_dart_attribute<0>(this->beta<1>(d1),h1);
+      set_dart_attribute<0>(this->beta<0>(d1),h2);
+
+      return d1;
+    }
+
+    /** Create a quadrangle given 4 Vertex_attribute_handle.
+     * @param h0 the first vertex handle.
+     * @param h1 the second vertex handle.
+     * @param h2 the third vertex handle.
+     * @param h3 the fourth vertex handle.
+     * Note that this function can be used only if 0-attributes are non void
+     * @return the dart of the new quadrilateral incident to h0 and to edge h0h1.
+     */
+    Dart_handle make_quadrangle(typename Attribute_handle<0>::type h0,
+                                typename Attribute_handle<0>::type h1,
+                                typename Attribute_handle<0>::type h2,
+                                typename Attribute_handle<0>::type h3)
+    {
+      Dart_handle d1 = this->make_combinatorial_polygon(4);
+
+      set_dart_attribute<0>(d1,h0);
+      set_dart_attribute<0>(this->beta<1>(d1),h1);
+      set_dart_attribute<0>(this->beta<1,1>(d1), h2);
+      set_dart_attribute<0>(this->beta<0>(d1),h3);
+
+      return d1;
     }
 
     /** Create a combinatorial tetrahedron from 4 triangles.
