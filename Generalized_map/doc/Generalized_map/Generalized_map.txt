@@ -477,13 +477,13 @@ Then we call `insert_cell_0_in_cell_2` on a dart which belong to this 2-cell. Th
 
 \subsection ssecgenmapdynamicattibute Use of Dynamic Onmerge and Onsplit Functors
 
-In the following example, we show an example of use of dynamic onmerge and onsplit functor. We define our 3D generalized map with 2-attributes. Then we create two hexahedra and create all the 2-attributes. We initialize the info of the faces of the first hexahedron to 7 and the info of the faces of the second hexahedron to 13.
+In the following example, we show an example of use of dynamic onmerge and onsplit functor. We define our 3D generalized map with 2-attributes. Then we create two hexahedra and create all the 2-attributes, having their info initialized to 1.
 
-Step 3 defines the onsplit and onmerge dynamic functors. We can see here that with this mechanism, functors can store data member. This is the case in the example for Split_functor which stores a reference to the generalized map.
+Step 2 defines the onsplit and onmerge dynamic functors. We can see here that with this mechanism, functors can store data member. This is the case in the example for Split_functor which stores a reference to the generalized map.
 
-The next operations will call these functors when 2-cells are split or merged. The sew<3> operation calls 1 onmerge as two faces are identified; the insert_cell_0_in_cell_2 operation calls 4 onsplit as one face is split in 4.
+The next operations will call these functors when 2-cells are split or merged. The sew<3> operation calls 1 onmerge as two faces are identified; the insert_cell_0_in_cell_2 operation calls 3 onsplit as one face is split in 4.
 
-Lastly we remove the dynamic onmerge functor (step 8). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
+Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
 
 \cgalExample{Generalized_map/gmap_3_dynamic_onmerge.cpp}
 

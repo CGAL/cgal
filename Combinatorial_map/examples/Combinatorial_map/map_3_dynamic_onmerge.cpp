@@ -61,9 +61,7 @@ void display_map_and_2attributes(CMap_3& cm)
   for (CMap_3::Attribute_range<2>::type::iterator
        it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end();
        it!=itend; ++it)
-  {
-    std::cout<<cm.info_of_attribute<2>(it)<<"; ";
-  }
+  { std::cout<<cm.info_of_attribute<2>(it)<<"; "; }
   std::cout<<std::endl;
   cm.display_characteristics(std::cout);
   std::cout<<", valid="<<cm.is_valid()<<std::endl;

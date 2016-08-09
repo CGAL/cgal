@@ -61,9 +61,7 @@ void display_map_and_2attributes(GMap_3& gm)
   for (GMap_3::Attribute_range<2>::type::iterator
        it=gm.attributes<2>().begin(), itend=gm.attributes<2>().end();
        it!=itend; ++it)
-  {
-    std::cout<<gm.info_of_attribute<2>(it)<<"; ";
-  }
+  { std::cout<<gm.info_of_attribute<2>(it)<<"; "; }
   std::cout<<std::endl;
   gm.display_characteristics(std::cout);
   std::cout<<", valid="<<gm.is_valid()<<std::endl;
