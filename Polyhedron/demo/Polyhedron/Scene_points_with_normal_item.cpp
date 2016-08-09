@@ -40,6 +40,10 @@ struct Scene_points_with_normal_item_priv
     nb_lines = 0;
     normal_Slider = new QSlider(Qt::Horizontal);
     normal_Slider->setValue(20);
+    point_Slider = new QSlider(Qt::Horizontal);
+    point_Slider->setValue(5);
+    point_Slider->setMinimum(1);
+    point_Slider->setMaximum(25);
   }
   Scene_points_with_normal_item_priv(const Scene_points_with_normal_item& toCopy, Scene_points_with_normal_item* parent)
     : m_points(new Point_set(*toCopy.d->m_points)),
@@ -48,6 +52,10 @@ struct Scene_points_with_normal_item_priv
     item = parent;
     normal_Slider = new QSlider(Qt::Horizontal);
     normal_Slider->setValue(20);
+    point_Slider = new QSlider(Qt::Horizontal);
+    point_Slider->setValue(5);
+    point_Slider->setMinimum(1);
+    point_Slider->setMaximum(25);
   }
   Scene_points_with_normal_item_priv(const Polyhedron& input_mesh, Scene_points_with_normal_item* parent)
     : m_points(new Point_set),
@@ -68,12 +76,17 @@ struct Scene_points_with_normal_item_priv
     }
     normal_Slider = new QSlider(Qt::Horizontal);
     normal_Slider->setValue(20);
+    point_Slider = new QSlider(Qt::Horizontal);
+    point_Slider->setValue(5);
+    point_Slider->setMinimum(1);
+    point_Slider->setMaximum(25);
   }
   ~Scene_points_with_normal_item_priv()
   {
     Q_ASSERT(m_points != NULL);
     delete m_points; m_points = NULL;
     delete normal_Slider;
+    delete point_Slider;
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices() const;
@@ -97,6 +110,7 @@ struct Scene_points_with_normal_item_priv
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
   QSlider* normal_Slider;
+  QSlider* point_Slider;
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;
   mutable std::vector<double> positions_selected_points;
@@ -555,8 +569,6 @@ void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* vi
    }
    viewer->glEnd();
 
-
-
 }
 
 void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
@@ -585,7 +597,7 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
 
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(4.f);
+    viewer->glPointSize(d->point_Slider->value());
     double ratio_displayed = 1.0;
     if (viewer->inFastDrawing () &&
         ((d->nb_points + d->nb_selected_points)/3 > 300000)) // arbitrary large value
@@ -707,6 +719,16 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         container->addAction(sliderAction);
         menu->addMenu(container);
       }
+        QMenu *container = new QMenu(tr("Points Size"));
+        QWidgetAction *sliderAction = new QWidgetAction(0);
+        connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
+        connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
+
+        sliderAction->setDefaultWidget(d->point_Slider);
+
+        container->addAction(sliderAction);
+        menu->addMenu(container);
+
         d->actionDeleteSelection = menu->addAction(tr("Delete Selection"));
         d->actionDeleteSelection->setObjectName("actionDeleteSelection");
         connect(d->actionDeleteSelection, SIGNAL(triggered()),this, SLOT(deleteSelection()));
