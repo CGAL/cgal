@@ -1,8 +1,5 @@
 /// \defgroup PkgCasting2 2D Castings Reference
 
-/// \defgroup PkgCasting2Concepts Concepts
-/// \ingroup PkgCasting2
-
 /// \defgroup PkgCasting2Funcs Free Functions
 /// \ingroup PkgCasting2
 
@@ -30,9 +27,5 @@ This package consists of the implementations of various predicates and operation
 
 ## Functions ##
 - `CGAL::single_mold_translational_casting_2()`
-
-## Concepts ##
-
-## Classes ##
 
 */

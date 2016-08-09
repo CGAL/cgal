@@ -1,15 +1,28 @@
 namespace CGAL {
 
-/*!
- * \ingroup PkgCasting2Funcs
- * This function computes all top edges of a simple polygon.
- * \param pgn[in] the input polygon.
- * \param oi[out] the output iterator. Its value type is a pair.
- *        a closed range of pull-out directions represented as a pair of the
- *        extreme directions in the
+/*! \ingroup PkgCasting2Funcs
+ *
+ * Given a simple polygon, this function determines whether a cavity (of a mold
+ * in the plane) that has the shape of the polygon can be used so that the
+ * polygon could be casted in the mold and then pulled out of the mold without
+ * colliding into the mold (but possibly sliding along the mold surface). If the
+ * polygon is <em>castable</em>, the function computes the set of top edges of
+ * such cavities and the corresponding closed ranges of pull directions.
+ * Assuming the top edge normal is parallel to the \f$y\f$-axis, every direction
+ * in a range must have a positive component in the positive
+ * \f$y\f$-direction. Each top edge and corresponding range is added to a
+ * container referred to by a given output iterator.
+ *
+ * \param[in] pgn the input polygon.
+ * \param[out] oi the output iterator. Its value type is a pair, where
+ *             (i) the first element in the pair identifies a valid top edge and
+ *                 represented as a type convertible to `size_t`, and
+ *             (ii) the second element is a closed range of pull-out directions
+ *                  represented as a pair of the extreme directions in the
+ *                  range of type `Kernel::Direction_2`.
  * \return the past-the-end iterator of the output container.
- * \pre the polygon must be non-degenerate (has at least 3 vertices), simple,
- *      and does not have three consecutive collinear vertices.
+ * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
+ * does not have three consecutive collinear vertices.
  */
 template <typename Kernel, typename OutputIterator>
 OutputIterator
