@@ -995,7 +995,7 @@ Dart_handle make_edge();
 /// @{
 
 /*!
-Inserts a 0-cell in the 1-cell containing `dh`. Returns a handle on one dart belonging to the new 0-cell.
+Inserts a 0-cell in the 1-cell containing `dh`. Returns \f$ \beta_1\f$(`dh`), a handle on one dart belonging to the new 0-cell.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 1 and
    `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
@@ -1057,7 +1057,7 @@ If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_
 Dart_handle insert_cell_1_in_cell_2(Dart_handle dh1, Dart_handle dh2);
 
 /*!
-Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns a handle on one dart belonging to the new 2-cell.
+Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns \f$ \beta_2\f$(`*afirst`), a handle on one dart belonging to the new 2-cell.
 \pre `is_insertable_cell_2_in_cell_3(afirst,alast)`.
 
 See example in \cgalFigureRef{fig_cmap_insert_facet}.
@@ -1079,7 +1079,7 @@ template <class InputIterator>
 Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);  
 
 /*!
-Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns a handle on the dart belonging to the new 1-cell and to the new 0-cell.
+Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns \f$ \beta_0\f$(`dh`), a handle on the dart belonging to the new 1-cell and to the new 0-cell.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
 See example in \cgalFigureRef{fig_cmap_insert_edge}.
