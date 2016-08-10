@@ -604,7 +604,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
                                     get_property_map(boost::face_index, pmesh));
 
   //vector_property_map
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fimap);
   std::size_t num = connected_components(pmesh, face_cc, np);
 
   // Even even we do not want to keep anything we need to first
