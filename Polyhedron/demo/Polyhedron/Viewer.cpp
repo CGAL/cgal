@@ -30,6 +30,8 @@ public:
   mutable std::vector<QOpenGLShaderProgram*> shader_programs;
   QMatrix4x4 projectionMatrix;
   void setFrustum(double l, double r, double t, double b, double n, double f);
+  QImage* takeSnapshot(Viewer* viewer, int quality, int background_color, QSize size, double oversampling, bool expand);
+  void sendSnapshotToClibboard(Viewer*);
 };
 Viewer::Viewer(QWidget* parent, bool antialiasing)
   : CGAL::Three::Viewer_interface(parent)
@@ -402,7 +404,19 @@ void Viewer::keyPressEvent(QKeyEvent* e)
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
     d->scene->printPrimitiveIds(this);
     update();
+    return;
       }
+
+  else if(e->key() == Qt::Key_C && e->modifiers() & Qt::ControlModifier){
+    d->sendSnapshotToClibboard(this);
+    return;
+  }
+
+  else if(e->key() == Qt::Key_S && e->modifiers() & Qt::ControlModifier){
+    saveSnapshot(true);
+    return;
+  }
+
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
     QGLViewer::keyPressEvent(e);
@@ -1522,7 +1536,6 @@ private Q_SLOTS:
 
 void Viewer::saveSnapshot(bool, bool)
 {
-  GLfloat alpha = 1.0;
   qreal aspectRatio = width() / static_cast<qreal>(height());
   static ImageInterface* imageInterface = NULL;
 
@@ -1531,83 +1544,86 @@ void Viewer::saveSnapshot(bool, bool)
 
   imageInterface->imgWidth->setValue(width());
   imageInterface->imgHeight->setValue(height());
-
   imageInterface->imgQuality->setValue(snapshotQuality());
 
   if (imageInterface->exec() == QDialog::Rejected)
     return;
-
-  setSnapshotQuality(imageInterface->imgQuality->value());
-
-  QColor previousBGColor = backgroundColor();
- switch(imageInterface->color_comboBox->currentIndex())
- {
- case 0:
-   break;
- case 1:
-   this->setBackgroundColor(QColor(Qt::transparent));
-   alpha = 0.0;
-   break;
- case 2:
-   QColor c =  QColorDialog::getColor();
-   if(c.isValid()) {
-     setBackgroundColor(c);
-     this->setBackgroundColor(c);
-   }
-   else return;
-   break;
-
- }
   QSize finalSize(imageInterface->imgWidth->value(), imageInterface->imgHeight->value());
-
-  qreal oversampling = imageInterface->oversampling->value();
-  QSize subSize(int(this->width()/oversampling), int(this->height()/oversampling));
-
-
+  bool expand = imageInterface->expandFrustum->isChecked();
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Save Snapshot"), "", tr("Image Files (*.png *.jpg *.bmp)"));
   if(fileName.isEmpty())
   {
-    setBackgroundColor(previousBGColor);
     return;
   }
+  QImage* image= d->takeSnapshot(this, imageInterface->imgQuality->value(), imageInterface->color_comboBox->currentIndex(),
+        finalSize, imageInterface->oversampling->value(), expand);
+  if(image)
+  {
+    image->save(fileName);
+    delete image;
+  }
 
-  QSize size=QSize(width(), height());
+}
+//copy a snapshot with transparent background with arbitrary quality values.
+QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_color, QSize finalSize, double oversampling, bool expand)
+{
+  qreal aspectRatio = viewer->width() / static_cast<qreal>(viewer->height());
+  viewer->setSnapshotQuality(quality);
+  GLfloat alpha = 1.0f;
+  QColor previousBGColor = viewer->backgroundColor();
+  switch(background_color)
+  {
+  case 0:
+    break;
+  case 1:
+    viewer->setBackgroundColor(QColor(Qt::transparent));
+    alpha = 0.0f;
+    break;
+  case 2:
+    QColor c =  QColorDialog::getColor();
+    if(c.isValid()) {
+      viewer->setBackgroundColor(c);
+    }
+    else
+      return NULL;
+    break;
+  }
+
+
+  QSize subSize(int(viewer->width()/oversampling), int(viewer->height()/oversampling));
+  QSize size=QSize(viewer->width(), viewer->height());
 
 
   qreal newAspectRatio = finalSize.width() / static_cast<qreal>(finalSize.height());
 
-  qreal zNear = camera()->zNear();
-  qreal zFar = camera()->zFar();
+  qreal zNear = viewer->camera()->zNear();
+  qreal zFar = viewer->camera()->zFar();
 
   qreal xMin, yMin;
-  bool expand = imageInterface->expandFrustum->isChecked();
 
   if ((expand && (newAspectRatio>aspectRatio)) || (!expand && (newAspectRatio<aspectRatio)))
   {
-    yMin = zNear * tan(camera()->fieldOfView() / 2.0);
+    yMin = zNear * tan(viewer->camera()->fieldOfView() / 2.0);
     xMin = newAspectRatio * yMin;
   }
   else
   {
-    xMin = zNear * tan(camera()->fieldOfView() / 2.0) * aspectRatio;
+    xMin = zNear * tan(viewer->camera()->fieldOfView() / 2.0) * aspectRatio;
     yMin = xMin / newAspectRatio;
   }
 
-  QImage image(finalSize.width(), finalSize.height(), QImage::Format_ARGB32);
+  QImage *image = new QImage(finalSize.width(), finalSize.height(), QImage::Format_ARGB32);
 
-  if (image.isNull())
+  if (image->isNull())
   {
-    QMessageBox::warning(this, "Image saving error",
+    QMessageBox::warning(viewer, "Image saving error",
                          "Unable to create resulting image",
                          QMessageBox::Ok, QMessageBox::NoButton);
-    setBackgroundColor(previousBGColor);
-    return;
+    viewer->setBackgroundColor(previousBGColor);
+    return NULL;
   }
 
-  // ProgressDialog disabled since it interfers with the screen grabing mecanism on some platforms. Too bad.
-  // ProgressDialog::showProgressDialog(this);
-  image.fill(qRgba(0,0,0,0));
   qreal scaleX = subSize.width() / static_cast<qreal>(finalSize.width());
   qreal scaleY = subSize.height() / static_cast<qreal>(finalSize.height());
 
@@ -1622,18 +1638,19 @@ void Viewer::saveSnapshot(bool, bool)
     nbX++;
   if (nbY * subSize.height() < finalSize.height())
     nbY++;
+
   QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(size, QOpenGLFramebufferObject::CombinedDepthStencil);
-  makeCurrent();
+  viewer->makeCurrent();
   int count=0;
   for (int i=0; i<nbX; i++)
     for (int j=0; j<nbY; j++)
     {
-      d->setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
+      setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
       fbo->bind();
-      glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), alpha);
-      preDraw();
-      draw();
-      postDraw();
+      viewer->glClearColor(viewer->backgroundColor().redF(), viewer->backgroundColor().greenF(), viewer->backgroundColor().blueF(), alpha);
+      viewer->preDraw();
+      viewer->draw();
+      viewer->postDraw();
       fbo->release();
 
       QImage snapshot = fbo->toImage();
@@ -1642,21 +1659,30 @@ void Viewer::saveSnapshot(bool, bool)
       for (int ii=0; ii<subSize.width(); ii++)
       {
         int fi = i*subSize.width() + ii;
-        if (fi == image.width())
+        if (fi == image->width())
           break;
         for (int jj=0; jj<subSize.height(); jj++)
         {
           int fj = j*subSize.height() + jj;
-          if (fj == image.height())
+          if (fj == image->height())
             break;
-          image.setPixel(fi, fj, subImage.pixel(ii,jj));
+          image->setPixel(fi, fj, subImage.pixel(ii,jj));
         }
       }
       count++;
     }
-
-  image.save(fileName);
-  setBackgroundColor(previousBGColor);
+  if(background_color !=0)
+    viewer->setBackgroundColor(previousBGColor);
+  return image;
+}
+void Viewer_impl::sendSnapshotToClibboard(Viewer *viewer)
+{
+  QImage * snap = takeSnapshot(viewer, 95, 1, 2*viewer->size(), 1, true);
+  if(snap)
+  {
+    QApplication::clipboard()->setImage(*snap);
+    delete snap;
+  }
 
 }
  #include "Viewer.moc"
