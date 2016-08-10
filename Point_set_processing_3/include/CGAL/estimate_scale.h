@@ -448,7 +448,7 @@ estimate_local_k_neighbor_scales(
   
 /// \ingroup PkgPointSetProcessing
 
-/// Estimates the gloabl scale in a K nearest neighbors sense. The
+/// Estimates the global scale in a K nearest neighbors sense. The
 /// computed scale corresponds to the smallest scale such that the K
 /// subsets of points have the appearance of a surface in 3D or the
 /// appearance of a curve in 2D.
@@ -463,7 +463,8 @@ estimate_local_k_neighbor_scales(
 ///        deduced automatically from the value type of `PointPMap`.
 ///
 /// @note This function accepts both 2D and 3D points.
-
+///
+/// @return The estimated scale in the K nearest neighbors sense.
 // This variant requires all parameters.
 template <typename InputIterator,
           typename PointPMap,
@@ -545,7 +546,7 @@ estimate_local_range_scales(
   
 /// \ingroup PkgPointSetProcessing
 
-/// Estimates the gloabl scale in a range sense. The computed scale
+/// Estimates the global scale in a range sense. The computed scale
 /// corresponds to the smallest scale such that the subsets of points
 /// inside the sphere range have the appearance of a surface in 3D or
 /// the appearance of a curve in 2D.
@@ -560,7 +561,8 @@ estimate_local_range_scales(
 ///        deduced automatically from the value type of `PointPMap`.
 ///
 /// @note This function accepts both 2D and 3D points.
-
+///
+/// @return The estimated scale in the range sense.
 // This variant requires all parameters.
 template <typename InputIterator,
           typename PointPMap,
