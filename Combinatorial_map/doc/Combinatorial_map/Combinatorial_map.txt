@@ -202,8 +202,6 @@ The class `Dart<d,CMap>`, a model of the `::Dart` concept, defines a <I>d</I>D d
 
 Each instance `d0` of `Dart<d,CMap>` stores the \f$ \beta_i\f$ pointers in an array of <I>d</I>+1 `Dart_handle` (because we describe also the \f$ \beta_0\f$ pointer). It also stores the attributes associated to this dart in a tuple of \link CombinatorialMap::Attribute_handle `CMap::Attribute_handle<i>::type` \endlink, one for each non void <I>i</I>-attribute.
 
-Methods are defined allowing to retrieve each \f$ \beta_i\f$ and each associated <I>i</I>-attribute of `d0`.
-
 Note that the use of the `Dart` class is not hard wired in the combinatorial map class. Users can provide their own model of the `::Dart` concept, and pass it to the combinatorial map with the help of a custom item class.
 
 \subsection ssecattributes Cell Attributes

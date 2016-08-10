@@ -185,7 +185,7 @@ The main role of the class `Generalized_map` is the storage and the management o
 
 The second role of the class `Generalized_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells.  A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the generalized map. Finally, `Generalized_map` defines several types allowing to manage the attributes. We can use \link GeneralizedMap::Attribute_handle `Generalized_map::Attribute_handle<i>::type`\endlink for a handle to the <I>i</I>-attributes (and the const version \link GeneralizedMap::Attribute_const_handle `Generalized_map::Attribute_const_handle<i>::type` \endlink) and \link GeneralizedMap::Attribute_type  `Generalized_map::Attribute_type<i>::type` \endlink for the type of the <I>i</I>-attributes.
 
-All information associated to darts (\f$ \alpha\f$ links and attributes) can be accessed through member functions in `GeneralizedMap`.
+All information associated to darts \tred{(\f$ \alpha\f$ links and attributes)} can be accessed through member functions in `GeneralizedMap`.
 
 \subsection ssecitemgmap Generalized Map Items
 
@@ -200,8 +200,6 @@ The class `Generalized_map_min_items<d>` is a model of the `GeneralizedMapItems`
 The class \tred{`GMap_dart<d,GMap>`}, a model of the \tred{`::GMapDart`} concept, defines a <I>d</I>D dart for generalized maps. It has two template parameters standing for the dimension of the generalized map, and a model of the `GeneralizedMap` concept, which provides the two types \link GeneralizedMap::Dart_handle `Dart_handle`\endlink and \link GeneralizedMap::Dart_const_handle `Dart_const_handle`\endlink.
 
 Each instance `d0` of `GMap_dart<d,GMap>` stores the \f$ \alpha_i\f$ pointers in an array of <I>d</I>+1 `Dart_handle`. It also stores the attributes associated to this dart in a tuple of \link GeneralizedMap::Attribute_handle `GMap::Attribute_handle<i>::type` \endlink, one for each non void <I>i</I>-attribute.
-
-Methods are defined allowing to retrieve each \f$ \alpha_i\f$ and each associated <I>i</I>-attribute of `d0`.
 
 Note that the use of the `GMap_dart` class is not hard wired in the generalized map class. Users can provide their own model of the `::GMapDart` concept, and pass it to the generalized map with the help of a custom item class.
 
