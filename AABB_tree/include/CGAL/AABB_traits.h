@@ -402,8 +402,8 @@ public:
   };
   Closest_point closest_point_object() const { return Closest_point(*this); }
 
-  typedef Closest_point Compute_closest_point_3;
-  Compute_closest_point_3 compute_closest_point_3_object() const { return closest_point_object(); }
+  typedef Closest_point Construct_closest_point_3;
+  Construct_closest_point_3 construct_closest_point_3_object() const { return closest_point_object(); }
 
   // This should go down to the GeomTraits, i.e. the kernel
   // and the internal implementation should change its name from
