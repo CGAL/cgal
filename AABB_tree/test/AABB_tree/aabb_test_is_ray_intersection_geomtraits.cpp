@@ -33,7 +33,7 @@ int main()
     "CGAL::Epeck should be a RayIntersectionGeomTraits");
   CGAL_static_assertion_msg(
     (Is_ray_intersection_geomtraits< CGAL::Simple_cartesian<double> >::value),
-    "CGAL::Epeck should be a RayIntersectionGeomTraits");
+    "CGAL::Simple_cartesian should be a RayIntersectionGeomTraits");
   CGAL_static_assertion_msg(
     (!Is_ray_intersection_geomtraits<AABBGeomTraits>::value),
     "Pure AABBGeomTraits shouldn't be a RayIntersectionGeomTraits");
