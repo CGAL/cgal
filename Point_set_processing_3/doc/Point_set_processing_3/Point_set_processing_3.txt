@@ -153,7 +153,8 @@ Point sets are often used to sample objects with a higher dimension,
 typically a curve in 2D or a surface in 3D. In such cases, finding the
 scale of the objet is crucial, that is to say finding the minimal
 number of points (or the minimal local range) such that the subset of
-points has the appearance of a curve in 2D or a surface in 3D.
+points has the appearance of a curve in 2D or a surface in 3D
+\cgalCite{cgal:gcsa-nasr-13}.
 
 \cgal provides 2 functions that automatically estimate the scale of a
 2D point set sampling a curve or a 3D point set sampling a surface:
