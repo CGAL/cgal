@@ -26,6 +26,7 @@ public:
       center_(pos),
       frame(new CGAL::Three::Scene_item::ManipulatedFrame())
   {
+    frame->setPosition(pos);
     Point_set* ps= item->point_set();
     std::vector<float> points;
     points.reserve(3*ps->size());
