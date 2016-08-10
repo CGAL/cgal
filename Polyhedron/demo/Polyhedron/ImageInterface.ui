@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>305</width>
-    <height>234</height>
+    <width>484</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -231,13 +231,22 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="whiteBackground">
-     <property name="toolTip">
-      <string>Use white as background color</string>
-     </property>
-     <property name="text">
-      <string>Use White Background</string>
-     </property>
+    <widget class="QComboBox" name="color_comboBox">
+     <item>
+      <property name="text">
+       <string>Use current background color</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Use transparent background</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Choose background color</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item>

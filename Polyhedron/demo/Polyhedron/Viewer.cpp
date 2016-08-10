@@ -10,7 +10,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLFramebufferObject>
 #include <QMessageBox>
-
+#include <QColorDialog>
 #include <QInputDialog>
 #include <cmath>
 #include <QApplication>
@@ -1539,9 +1539,23 @@ void Viewer::saveSnapshot(bool, bool)
   setSnapshotQuality(imageInterface->imgQuality->value());
 
   QColor previousBGColor = backgroundColor();
-  if (imageInterface->whiteBackground->isChecked())
-    setBackgroundColor(Qt::white);
+ switch(imageInterface->color_comboBox->currentIndex())
+ {
+ case 0:
+   break;
+ case 1:
+   this->setBackgroundColor(QColor(Qt::transparent));
+   break;
+ case 2:
+   QColor c =  QColorDialog::getColor();
+   if(c.isValid()) {
+     setBackgroundColor(c);
+     this->setBackgroundColor(c);
+   }
+   else return;
+   break;
 
+ }
   QSize finalSize(imageInterface->imgWidth->value(), imageInterface->imgHeight->value());
 
   qreal oversampling = imageInterface->oversampling->value();
@@ -1636,8 +1650,7 @@ void Viewer::saveSnapshot(bool, bool)
     }
 
   image.save(fileName);
-  if (imageInterface->whiteBackground->isChecked())
-    setBackgroundColor(previousBGColor);
+  setBackgroundColor(previousBGColor);
 
 }
  #include "Viewer.moc"
