@@ -1,4 +1,3 @@
-#include <iostream>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
 
@@ -30,11 +29,8 @@ int main()
   CGAL_static_assertion(!Has_member_id<Polyhedron::Face>::value);
   CGAL_static_assertion(Has_member_id<Polyhedron_with_ids::Facet>::value);
   CGAL_static_assertion(Has_member_id<Polyhedron_with_ids::FBase>::value);
-
-  const bool actual_type_has_id =
-    Has_member_id<Polyhedron_with_ids::Items::Face_wrapper<Polyhedron_with_ids::HDS, K>::Face>::value;
-  CGAL_static_assertion(actual_type_has_id);
-  std::cout << "Actual type has id : " << actual_type_has_id << std::endl;
+  CGAL_static_assertion(
+    (Has_member_id<Polyhedron_with_ids::Items::Face_wrapper<Polyhedron_with_ids::HDS, K>::Face>::value));
 
   return 0;
 }
