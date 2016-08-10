@@ -6,8 +6,8 @@ namespace CGAL {
 Imports an embedded plane graph read from `ais` into `lcc`. 
 Objects are added in `lcc`, existing darts are not modified.
 Returns a dart created during the import.
-\pre \ref CombinatorialMap::dimension "LCC::dimension"\f$ \geq\f$ 2
-   and \ref Linear_cell_complex::ambient_dimension "LCC::ambient_dimension"==2.
+\pre \link CombinatorialMap::dimension `LCC::dimension`\endlink \f$ \geq\f$ 2
+   and \link Linear_cell_complex::ambient_dimension `LCC::ambient_dimension`\endlink==2.
 
 \cgalHeading{File format}
 

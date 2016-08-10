@@ -23,7 +23,7 @@ The combinatorial part of a linear cell complex is described by a
 read the \ref ChapterCombinatorialMap "Combinatorial maps user manual"
 for definitions). To add
 the linear geometrical embedding, a point (a model of
-\ref Kernel::Point_2 "Point_2" or \ref Kernel::Point_3 "Point_3" or \ref Kernel_d::Point_d "Point_d") is
+\link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink) is
 associated to each vertex of the combinatorial map.
 
 \cgalFigureBegin{fig_lcc_example_subdivisions,lcc_example_subdivisions.svg}
@@ -69,7 +69,7 @@ dimensions of cells, and they may also be void. In the class
 specific attributes are associated to all vertices of the
 combinatorial map. These attributes must contain a point (a model of
  (a model of
-\ref Kernel::Point_2 "Point_2" or \ref Kernel::Point_3 "Point_3" or \ref Kernel_d::Point_d "Point_d"),
+\link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink),
 and can be represented by instances of class
 `Cell_attribute_with_point` (see
 Section \ref ssecattributewp "Cell Attributes").
@@ -81,7 +81,7 @@ UML diagram of the main classes of the package. Gray elements come from the \ref
 
 \section sseclinearcellcomplex Linear Cell Complex
 
-The \ref CGAL::Linear_cell_complex "Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>" class
+The \link CGAL::Linear_cell_complex `Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`\endlink class
 is a model of the `CombinatorialMap` concept. It guarantees that
 each vertex of the combinatorial map is associated with an attribute
 containing a point. This class can be used in geometric algorithms (it
@@ -118,18 +118,18 @@ class is a model of the `CellAttributeWithPoint` concept, which is
 a refinement of the `CellAttribute` concept. It represents an
 attribute associated with a cell, which can contain an information
 (depending on whether `Info_==void` or not), but which always
-contains a point, an instance of \ref Linear_cell_complex::Point "LCC::Point".
+contains a point, an instance of \link Linear_cell_complex::Point `LCC::Point`\endlink.
 
 \subsection Linear_cell_complexLinearCellComplexTraits Linear Cell Complex Traits
 \anchor sseclcctraits
 
 The `LinearCellComplexTraits` geometric traits concept defines the
 required types and functors used in the `Linear_cell_complex`
-class. For example it defines \ref LinearCellComplexTraits::Point "Point", the type of points used,
-and \ref LinearCellComplexTraits::Vector "Vector", the corresponding vector type. It also defines all
+class. For example it defines \link LinearCellComplexTraits::Point `Point`\endlink, the type of points used,
+and \link LinearCellComplexTraits::Vector `Vector`\endlink, the corresponding vector type. It also defines all
 the required functors used for constructions and operations, as for
-example \ref LinearCellComplexTraits::Construct_translated_point "Construct_translated_point" or
-\ref LinearCellComplexTraits::Construct_sum_of_vectors "Construct_sum_of_vectors".
+example \link LinearCellComplexTraits::Construct_translated_point `Construct_translated_point`\endlink or
+\link LinearCellComplexTraits::Construct_sum_of_vectors `Construct_sum_of_vectors`\endlink.
 
 The class `Linear_cell_complex_traits<d,K>` is a model of
 `LinearCellComplexTraits`. It defines the different types which
@@ -153,28 +153,9 @@ attributes are `void`.
 
 \section Linear_cell_complexOperations Operations
 
-Several operations defined in the combinatorial maps package can be
-used on a linear cell complex. This is the case for all the iteration
-operations that do not modify the model (see example in
-Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for
-all the operations that do not create new 0-cells: \ref CombinatorialMap::sew "sew",
-\ref CombinatorialMap::unsew "unsew", `::remove_cell`, `::insert_cell_1_in_cell_2`,
-`::insert_cell_2_in_cell_3`. Indeed, all these operations update
-non `void` attributes, and thus update vertex attributes of a linear
-cell complex. Note that some existing 0-attributes can be duplicated
-by the \ref CombinatorialMap::unsew "unsew" method, but these 0-attributes are not new but
-copies of existing old 0-attributes.
+Several operations defined in the combinatorial maps package can be used on a linear cell complex. This is the case for all the iteration operations that do not modify the model (see example in Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for all the operations that do not create new 0-cells: \link CombinatorialMap::sew `sew`\endlink, \link CombinatorialMap::unsew `unsew`\endlink, \link CombinatorialMap::remove_cell `remove_cell`\endlink, \link CombinatorialMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink, \link CombinatorialMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink. Indeed, all these operations update non `void` attributes, and thus update vertex attributes of a linear cell complex. Note that some existing 0-attributes can be duplicated by the \link CombinatorialMap::unsew `unsew`\endlink method, but these 0-attributes are not new but copies of existing old 0-attributes.
 
-However, operations that create a new 0-cell can not be directly used
-since the new 0-cell would not be associated with a vertex
-attribute. Indeed, it is not possible for these operations to
-automatically decide which point to create. These operations are:
-`::insert_cell_0_in_cell_1`, `::insert_cell_0_in_cell_2`,
-`::insert_dangling_cell_1_in_cell_2`, plus all the creation
-operations. For these operations, new versions are proposed taking
-some points as additional parameters. Lastly, some new operations are
-defined, which use the geometry (see sections \ref ssecconstructionsop
-"Construction Operations" and \ref ssecmodifop "Modification Operations").
+However, operations that create a new 0-cell can not be directly used since the new 0-cell would not be associated with a vertex attribute. Indeed, it is not possible for these operations to automatically decide which point to create. These operations are: \link CombinatorialMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\endlink, \link CombinatorialMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink, \link CombinatorialMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, plus all the creation operations. For these operations, new versions are proposed taking some points as additional parameters. Lastly, some new operations are defined, which use the geometry (see sections \ref ssecconstructionsop "Construction Operations" and \ref ssecmodifop "Modification Operations").
 
 All the operations given in this section guarantee that given a valid
 linear cell complex and a possible operation, the result is a valid
@@ -186,17 +167,17 @@ restore the validity conditions.
 
 As explained in the combinatorial map user manual,
 Section \ref sseclinkdarts "Sewing Orbits and Linking Darts", it is possible to glue two <I>i</I>-cells
-along an (<I>i</I>-1)-cell by using the \ref CombinatorialMap::sew "sew<i>" method. Since
+along an (<I>i</I>-1)-cell by using the \link CombinatorialMap::sew `sew<i>`\endlink method. Since
 this method updates non void attributes, and since points are specific
-attributes, they are automatically updated during the \ref CombinatorialMap::sew "sew<i>"
+attributes, they are automatically updated during the \link CombinatorialMap::sew `sew<i>`\endlink
 method. Thus the sewing of two <I>i</I>-cells could deform the
 geometry of the concerned objects.
 
 For example, in \cgalFigureRef{fig_lcc_example_3d_sew}, we want to 3-sew the
-two initial 3-cells. \ref CombinatorialMap::sew "sew<3>(1,5)" links by \f$ \beta_3\f$ the pairs
+two initial 3-cells. \link CombinatorialMap::sew `sew<3>(1,5)`\endlink links by \f$ \beta_3\f$ the pairs
 of darts (1,5), (2,8), (3,7) and (4,6). The eight vertex attributes
 around the facet between the two 3-cells before the sew are merged by
-pair during the sew operation (and the \ref CellAttribute::On_merge "On_merge" functor is
+pair during the sew operation (and the \link CellAttribute::On_merge `On_merge`\endlink functor is
 called four times). Thus, after the sew, there are only four
 0-attributes around the facet. By default, the attributes associated
 with the first dart of the sew operation are kept (but this can be
@@ -206,22 +187,22 @@ Intuitively, the
 geometry of the second 2-cell is deformed to fit to the first 2-cell.
 
 \cgalFigureBegin{fig_lcc_example_3d_sew,lcc_example_3d_sew.svg}
-Example of \ref CombinatorialMap::sew "3-sew" operation for linear cell complex. <B>Left</B>: A 3D linear cell complex containing two 3-cells that are not connected. Vertex attributes are drawn with circles containing point coordinates. Associations between darts and attributes are drawn with small lines between darts and disks. <B>Right</B>: The 3D linear cell complex obtained as result of `sew<3>(1,5)` (or `sew<3>(2,8)`, or `sew<3>(3,7)`, or `sew<3>(4,6)`). The eight 0-attributes around the facet between the two 3-cells before the sew operation, are merged into four 0-attributes after. The geometry of the pyramid is deformed since its base is fitted on the 2-cell of the cube.
+Example of 3-sew operation for linear cell complex. <B>Left</B>: A 3D linear cell complex containing two 3-cells that are not connected. Vertex attributes are drawn with circles containing point coordinates. Associations between darts and attributes are drawn with small lines between darts and disks. <B>Right</B>: The 3D linear cell complex obtained as result of \link CombinatorialMap::sew `sew<3>(1,5)`\endlink (or \link CombinatorialMap::sew `sew<3>(2,8)`\endlink, or \link CombinatorialMap::sew `sew<3>(3,7)`\endlink, or \link CombinatorialMap::sew `sew<3>(4,6)`\endlink). The eight 0-attributes around the facet between the two 3-cells before the sew operation, are merged into four 0-attributes after. The geometry of the pyramid is deformed since its base is fitted on the 2-cell of the cube.
 \cgalFigureEnd
 
-This is similar for the \ref CombinatorialMap::unsew "unsew" operation, which removes \f$ \beta_i\f$ links
+This is similar for link \link CombinatorialMap::unsew `unsew`\endlink operation, which removes \f$ \beta_i\f$ links
 of all the darts in
 \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>d0</I>),
 and updates
 non void attributes which are no more associated to a same cell due to
 the unlinks. If we take the linear cell complex given in
 \cgalFigureRef{fig_lcc_example_3d_sew} (Right), and we call
-\ref CombinatorialMap::unsew "unsew<3>(2)", we obtain the linear cell complex in
+\link CombinatorialMap::unsew `unsew<3>(2)`\endlink, we obtain the linear cell complex in
 \cgalFigureRef{fig_lcc_example_3d_sew} (Left) except for the coordinates of
 the new four vertices, which by default are copies of original
 vertices (this behavior can be modified thanks to the functor
-\ref CellAttribute::On_split "On_split" in the attribute class).
-The \ref CombinatorialMap::unsew "unsew<3>" operation
+\link CellAttribute::On_split `On_split`\endlink in the attribute class).
+The \link CombinatorialMap::unsew `unsew<3>`\endlink operation
 has removed the four \f$ \beta_3\f$ links, and has duplicated the 0-attributes
 since vertices are split in two after the unsew operation.
 
@@ -240,23 +221,23 @@ that the dimension of the linear cell complex must be large enough:
 darts must contain all the \f$ \beta\f$ used by the operation. All these
 methods add new darts in the current linear cell complex, existing
 darts are not modified. These functions
-are \ref Linear_cell_complex::make_segment "make_segment",
-\ref Linear_cell_complex::make_triangle "make_triangle",
-\ref Linear_cell_complex::make_tetrahedron "make_tetrahedron" and
-\ref Linear_cell_complex::make_hexahedron "make_hexahedron".
+are \link Linear_cell_complex::make_segment `make_segment`\endlink,
+\link Linear_cell_complex::make_triangle `make_triangle`\endlink,
+\link Linear_cell_complex::make_tetrahedron `make_tetrahedron`\endlink and
+\link Linear_cell_complex::make_hexahedron `make_hexahedron`\endlink.
 
 There are two functions allowing to build a linear cell complex
 from two other \cgal data types:
 <UL>
-<LI>\ref ::import_from_triangulation_3 "import_from_triangulation_3(lcc,atr)": adds in `lcc` all
-the tetrahedra present in `atr`, a \ref CGAL::Triangulation_3 "Triangulation_3";
-<LI>\ref ::import_from_polyhedron_3 "import_from_polyhedron_3(lcc,ap)": adds in `lcc` all
+<LI>\link ::import_from_triangulation_3 `import_from_triangulation_3(lcc,atr)`\endlink: adds in `lcc` all
+the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
+<LI>\link ::import_from_polyhedron_3 `import_from_polyhedron_3(lcc,ap)`\endlink: adds in `lcc` all
 the cells present in `ap`, a `Polyhedron_3`.
 </UL>
 
-Lastly, the function \ref ::import_from_plane_graph "import_from_plane_graph(lcc,ais)" adds in
+Lastly, the function \link ::import_from_plane_graph `import_from_plane_graph(lcc,ais)`\endlink adds in
 `lcc` all the cells reconstructed from the planar graph read in
-`ais`, a `std::istream` (see the  \ref ::import_from_plane_graph "reference manual" for the file
+`ais`, a `std::istream` (see the  \link ::import_from_plane_graph `reference manual`\endlink for the file
 format).
 
 \subsection Linear_cell_complexModificationOperations Modification Operations
@@ -269,17 +250,17 @@ handles for the darts `d0`, `d1`, `d2`, respectively. That
 is `d0 == *dh0`.
 
 \cgalFigureBegin{fig_lcc_insert_vertex,lcc_insert_vertex.svg}
-Example of \ref Linear_cell_complex::insert_barycenter_in_cell "insert_barycenter_in_cell<1>" and `remove_cell<0>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a point in the barycenter of the 1-cell containing dart <I>d1</I>. Now if we remove the 0-cell containing dart <I>d2</I>, we obtain a linear cell complex isomorphic to the initial one.
+Example of \link Linear_cell_complex::insert_barycenter_in_cell `insert_barycenter_in_cell<1>`\endlink and \link CombinatorialMap::remove_cell `remove_cell<0>`\endlink operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a point in the barycenter of the 1-cell containing dart <I>d1</I>. Now if we remove the 0-cell containing dart <I>d2</I>, we obtain a linear cell complex isomorphic to the initial one.
 \cgalFigureEnd
 
 
-\ref Linear_cell_complex::insert_barycenter_in_cell "lcc.insert_barycenter_in_cell<unsigned int i>(dh0)" adds the
+\link Linear_cell_complex::insert_barycenter_in_cell `lcc.insert_barycenter_in_cell<unsigned int i>(dh0)`\endlink adds the
 barycenter of the <I>i</I>-cell containing dart `d0`. This
-operation is possible if `d0`\f$ \in\f$\ref CombinatorialMap::darts "lcc.darts()" (see examples
+operation is possible if `d0`\f$ \in\f$\link CombinatorialMap::darts `lcc.darts()`\endlink (see examples
 on \cgalFigureRef{fig_lcc_insert_vertex} and
 \cgalFigureRef{fig_lcc_triangulation}).
 
-\ref Linear_cell_complex::insert_point_in_cell "lcc.insert_point_in_cell<unsigned int i>(dh0,p)" is an operation
+\link Linear_cell_complex::insert_point_in_cell `lcc.insert_point_in_cell<unsigned int i>(dh0,p)`\endlink is an operation
 similar to the previous operation, the only difference being that the
 coordinates of the new point are here given by `p` instead of being
 computed as the barycenter of the <I>i</I>-cell. Currently, these two
@@ -287,20 +268,20 @@ operations are only defined for `i=1` to insert a point in an
 edge, or `i=2` to insert a point in a facet.
 
 \cgalFigureBegin{fig_lcc_triangulation,lcc_triangulation.svg}
-Examples of \ref Linear_cell_complex::insert_barycenter_in_cell "insert_barycenter_in_cell<2>" operation.
+Examples of \link Linear_cell_complex::insert_barycenter_in_cell `insert_barycenter_in_cell<2>`\endlink operation.
 \cgalFigureEnd
 
 
-\ref Linear_cell_complex::insert_dangling_cell_1_in_cell_2 "lcc.insert_dangling_cell_1_in_cell_2(dh0,p)" adds a 1-cell in
+\link Linear_cell_complex::insert_dangling_cell_1_in_cell_2 `lcc.insert_dangling_cell_1_in_cell_2(dh0,p)`\endlink adds a 1-cell in
 the 2-cell containing dart `d0`, the 1-cell being attached by only
 one of its vertex to the 0-cell containing dart `d0`. The second
 vertex of the new edge is associated with a new 0-attribute containing
 a copy of `p` as point. This operation is possible if
-`d0`\f$ \in\f$\ref CombinatorialMap::darts "lcc.darts()" (see example on
+`d0`\f$ \in\f$\link CombinatorialMap::darts `lcc.darts()`\endlink (see example on
 \cgalFigureRef{fig_lcc_insert_edge}).
 
 \cgalFigureBegin{fig_lcc_insert_edge,lcc_insert_edge.svg}
-Example of \ref Linear_cell_complex::insert_dangling_cell_1_in_cell_2 "insert_dangling_cell_1_in_cell_2", `::insert_cell_1_in_cell_2` and `::remove_cell<1>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a dangling 1-cell in the 2-cell containing dart <I>d1</I>, and of a 1-cell in the 2-cell containing dart <I>d2</I>. Now if we remove the 1-cells containing dart <I>d4</I> and <I>d5</I>, we obtain a linear cell complex isomorphic to the initial one.
+Example of \link Linear_cell_complex::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, `::insert_cell_1_in_cell_2` and `::remove_cell<1>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a dangling 1-cell in the 2-cell containing dart <I>d1</I>, and of a 1-cell in the 2-cell containing dart <I>d2</I>. Now if we remove the 1-cells containing dart <I>d4</I> and <I>d5</I>, we obtain a linear cell complex isomorphic to the initial one.
 \cgalFigureEnd
 
 Some examples of use of these operations are given in
@@ -317,8 +298,8 @@ If \link CombinatorialMap::set_automatic_attributes_management `set_automatic_at
 
 This example uses a 3-dimensional linear cell complex. It creates two
 tetrahedra and displays all the points of the linear cell complex
-thanks to a \ref Linear_cell_complex::Vertex_attribute_const_range "Vertex_attribute_const_range". Then, the two
-tetrahedra are \ref CombinatorialMap::sew "3-sewn" and we translate all the points of the second
+thanks to a \link Linear_cell_complex::Vertex_attribute_const_range `Vertex_attribute_const_range`\endlink. Then, the two
+tetrahedra are \link CombinatorialMap::sew `3-sewn`\endlink and we translate all the points of the second
 tetrahedron along vector `v(3,1,1)`. Since the two tetrahedra
 are 3-sewn, this translation moves also the 2-cell of the first
 tetrahedron shared with the second one. This is illustrated by
@@ -340,7 +321,7 @@ LCC characteristics: #Darts=24, #0-cells=5, #1-cells=9, #2-cells=7, #3-cells=2, 
 \endverbatim
 
 The first line gives the points of the linear cell complex before the
-\ref CombinatorialMap::sew "sew<3>". There are eight points, four for each tetrahedron.
+\link CombinatorialMap::sew `sew<3>`\endlink. There are eight points, four for each tetrahedron.
 After the sew, six vertices are merged two by two, thus there are five
 vertices. We can see the points of each 3-cell (lines Volume 1 and
 Volume 2) before the sew, after the sew and after the translation of
@@ -394,8 +375,8 @@ Now we can use `LCC_3` in which each vertex is associated with an
 attribute containing both a point and an information. In the following
 example, we create two cubes, and set the color of the vertices of the
 first cube to 1 and of the second cube to 19 (by iterating through two
-\ref CombinatorialMap::One_dart_per_incident_cell_range "One_dart_per_incident_cell_range<0, 3>" ranges). Then we
-\ref CombinatorialMap::sew "3-sew" the two cubes along one facet. This operation merges some
+\link CombinatorialMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<0, 3>`\endlink ranges). Then we
+\link CombinatorialMap::sew `3-sew`\endlink the two cubes along one facet. This operation merges some
 vertices (as in the example of \cgalFigureRef{fig_lcc_example_3d_sew}). We
 insert a vertex in the common 2-cell between the two cubes, and set
 the information of the new 0-attribute to 5. In the last loop, we
@@ -430,7 +411,7 @@ of the common 2-cell between the two cubes. The coordinates of this
 vertex are initialized with the barycenter of the 2-cell
 (-1,0.5,0.5), and its color is not initialized by the method, thus we
 set its color manually by using the result of
-\ref Linear_cell_complex::insert_barycenter_in_cell "insert_barycenter_in_cell<2>" which is a dart incident to the
+\link Linear_cell_complex::insert_barycenter_in_cell `insert_barycenter_in_cell<2>`\endlink which is a dart incident to the
 new vertex.
 
 \subsection Linear_cell_complexAutomaticAttributesManagement Automatic attributes management
