@@ -103,6 +103,8 @@ classes that are described in the reference pages.
 - `GeneralDistance`
 - `OrthogonalDistance`
 - `SearchTraits`
+- `SearchGeomTraits_3`
+- `SearchGeomTraits_2`
 - `RangeSearchTraits`
 - `SpatialSeparator`
 - `SpatialTree`
