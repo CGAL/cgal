@@ -27,10 +27,13 @@ public:
       frame(new CGAL::Three::Scene_item::ManipulatedFrame())
   {
     frame->setPosition(pos);
-    Point_set* ps= item->point_set();
+    Point_set ps= *item->point_set();
+    std::random_shuffle (ps.begin(), ps.end());
+
+
     std::vector<float> points;
-    points.reserve(3*ps->size());
-    for (Point_set::const_iterator it = ps->begin(); it != ps->first_selected(); it++)
+    points.reserve(3*ps.size());
+    for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
     {
       const UI_point& p = *it;
       points.push_back(p.x()-center_.x);
