@@ -6,9 +6,9 @@ namespace CGAL {
 
 The class `Dart` represents a <I>d</I>D dart in a combinatorial map.
 
-\f$ \beta_i\f$ pointers are coded in a array of <I>d+1</I> \ref Dart::Dart_handle "Dart_handle"
+\f$ \beta_i\f$ pointers are coded in a array of <I>d+1</I> \link Dart::Dart_handle `Dart_handle`\endlink
 (because we describe also the \f$ \beta_0\f$ link). Attributes are
-associated to each dart by \ref Attribute_handle "Attribute_handle<i>", one for each
+associated to each dart by \link Attribute_handle `Attribute_handle<i>`\endlink, one for each
 non void <I>i</I>-attribute.
 
 \cgalModels `::Dart`

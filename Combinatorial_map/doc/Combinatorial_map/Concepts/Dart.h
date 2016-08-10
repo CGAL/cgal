@@ -12,11 +12,11 @@ non void attribute associated with itself.
 
 A dart `d0` is never constructed directly, but always created
 within a combinatorial map `cm` by using the method
-\ref CombinatorialMap::create_dart "cm.create_dart()". A new dart is initialized to be <I>i</I>-free,
+\link CombinatorialMap::create_dart `cm.create_dart()`\endlink. A new dart is initialized to be <I>i</I>-free,
 \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all
 its attribute handles initialized to `NULL`, for each non `void` attribute.
 
-\cgalHasModel \ref CGAL::Dart "CGAL::Dart<d,CMap>"
+\cgalHasModel \link CGAL::Dart `CGAL::Dart<d,CMap>`\endlink
 
 */
 
@@ -66,42 +66,42 @@ using Attribute_const_handle = unspecified_type;
 /// @{
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::beta "cmap.beta(dh,i)" instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,i)`\endlink instead.
 Returns \f$ \beta_i\f$(`*this`).
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
 Dart_handle beta(unsigned int i);
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::beta "cmap.beta(dh,i)" instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,i)`\endlink instead.
 Returns \f$ \beta_i\f$(`*this`) when the dart is const.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
 Dart_const_handle beta(unsigned int i) const;
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::beta "cmap.beta(dh,CGAL_BETAINV(i))" instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,CGAL_BETAINV(i))`\endlink instead.
 Returns \f$ \beta_i^{-1}\f$(`*this`).
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
 Dart_handle beta_inv(unsigned int i);
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::beta "cmap.beta(dh,CGAL_BETAINV(i))" instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,CGAL_BETAINV(i))`\endlink instead.
 Returns \f$ \beta_i^{-1}\f$(`*this`) when the dart is const.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
 */
 Dart_const_handle beta_inv(unsigned int i) const;
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::attribute "cmap.attribute(dh)" instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::attribute `cm.attribute(dh)`\endlink instead.
 Returns a handle to the <I>i</I>-attribute associated to the dart.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non `void`.
 */
 template <unsigned int i> Attribute_handle<i>::type attribute();
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \ref CombinatorialMap::attribute "cmap.attribute(dh)" instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::attribute `cm.attribute(dh)`\endlink instead.
 Returns a const handle to the <I>i</I>-attribute associated to the dart,
 when the dart is const.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non `void`.

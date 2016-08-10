@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `GMap_dart` represents a <I>d</I>D dart in a generalized map.
 
-\f$ \alpha_i\f$ pointers are coded in a array of <I>d+1</I> \ref GMap_dart::Dart_handle "Dart_handle". Attributes are associated to each dart by \ref Attribute_handle "Attribute_handle<i>", one for each non void <I>i</I>-attribute.
+\f$ \alpha_i\f$ pointers are coded in a array of <I>d+1</I> \link GMap_dart::Dart_handle `Dart_handle`\endlink. Attributes are associated to each dart by \link Attribute_handle `Attribute_handle<i>`\endlink, one for each non void <I>i</I>-attribute.
 
 \cgalModels `::GMapDart`
 

@@ -4,7 +4,7 @@
 
 The concept `GeneralizedMap` defines a <I>d</I>-dimensional generalized map.
 
-\cgalHasModel \ref  CGAL::Generalized_map "CGAL::Generalized_map<d,Items,Alloc>"
+\cgalHasModel \link CGAL::Generalized_map `CGAL::Generalized_map<d,Items,Alloc>`\endlink
 
 */
  //@{
@@ -71,24 +71,24 @@ static size_type NB_MARKS;
 /// @{
 
 /*!
-The tuple of cell attributes. It contains at most \ref GeneralizedMap::dimension "dimension"`+1` types (one for each possible cell of the generalized map). Each type of the tuple must be either a model of the `CellAttribute` concept or `void`.  The first type corresponds to 0-attributes, the second to 1-attributes and so on.  If the <i>i <sup>th</sup></i> type in the tuple is `void`, <I>(i-1)</I>-attributes are disabled. Otherwise, <I>(i-1)</I>-attributes are enabled and have the given type. If the size of the tuple is <I>k</I>, with <I>k</I>\f$ <\f$\ref GeneralizedMap::dimension "dimension"`+1`, \f$ \forall\f$<I>i</I>: <I>k</I>\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", <I>i</I>-attributes are disabled.
+The tuple of cell attributes. It contains at most \link GeneralizedMap::dimension `dimension`\endlink`+1` types (one for each possible cell of the generalized map). Each type of the tuple must be either a model of the `CellAttribute` concept or `void`.  The first type corresponds to 0-attributes, the second to 1-attributes and so on.  If the <i>i <sup>th</sup></i> type in the tuple is `void`, <I>(i-1)</I>-attributes are disabled. Otherwise, <I>(i-1)</I>-attributes are enabled and have the given type. If the size of the tuple is <I>k</I>, with <I>k</I>\f$ <\f$\link GeneralizedMap::dimension `dimension`\endlink`+1`, \f$ \forall\f$<I>i</I>: <I>k</I>\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, <I>i</I>-attributes are disabled.
 */
 typedef unspecified_type Attributes;
 
   /*!
-    `Attribute_type<i>::%type` is the type of <I>i</I>-attributes, a model of `CellAttribute` concept. \ref CellAttribute::Dart_handle "Attribute_type<i>::type::Dart_handle" is equal to \ref GeneralizedMap::Dart_handle "Dart_handle", and \ref CellAttribute::Dart_const_handle "Attribute_type<i>::type::Dart_const_handle" is equal to \ref GeneralizedMap::Dart_const_handle "Dart_const_handle". \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and <I>i</I>-attributes are non `void`. \note It can be implemented using a nested template class.
+    `Attribute_type<i>::%type` is the type of <I>i</I>-attributes, a model of `CellAttribute` concept. \link CellAttribute::Dart_handle `Attribute_type<i>::type::Dart_handle`\endlink is equal to \link GeneralizedMap::Dart_handle `Dart_handle`\endlink, and \link CellAttribute::Dart_const_handle `Attribute_type<i>::type::Dart_const_handle`\endlink is equal to \link GeneralizedMap::Dart_const_handle `Dart_const_handle`\endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and <I>i</I>-attributes are non `void`. \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
   using Attribute_type = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
+  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
   using Attribute_handle = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
+  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
   */
   template <unsigned int i>
   using Attribute_const_handle = unspecified_type;
@@ -99,72 +99,72 @@ typedef unspecified_type Attributes;
 /// @{
 
 /*!
-%Range of all the darts of the generalized map. This type is a model of `Range` concept, its iterator type is bidirectional and its value type is \ref GeneralizedMap::Dart "Dart".
+%Range of all the darts of the generalized map. This type is a model of `Range` concept, its iterator type is bidirectional and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 typedef unspecified_type Dart_range;
 
 /*!
-Const range of all the darts of the generalized map. This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is \ref GeneralizedMap::Dart "Dart".
+Const range of all the darts of the generalized map. This type is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 typedef unspecified_type Dart_const_range;
 
 
 /*!
-`Attribute_range<i>::%type` is the range of all the <I>i</I>-attributes. `Attribute_range<i>::%type` is a model of `Range` concept, its iterator type is bidirectional and its value type is \link GeneralizedMap::Attribute_type `Attribute_type<i>::type` \endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
+`Attribute_range<i>::%type` is the range of all the <I>i</I>-attributes. `Attribute_range<i>::%type` is a model of `Range` concept, its iterator type is bidirectional and its value type is \link GeneralizedMap::Attribute_type `Attribute_type<i>::type` \endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
 */
   template <unsigned int i>
   using Attribute_range = unspecified_type;
 
 
-/*! `Attribute_const_range<i>::%type` is the const range of all the <I>i</I>-attributes. `Attribute_const_range<i>::%type` is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is \link GeneralizedMap::Attribute_type `Attribute_type<i>::type`\endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
+/*! `Attribute_const_range<i>::%type` is the const range of all the <I>i</I>-attributes. `Attribute_const_range<i>::%type` is a model of `ConstRange` concept, its iterator type is bidirectional and its value type is \link GeneralizedMap::Attribute_type `Attribute_type<i>::type`\endlink. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and <I>i</I>-attributes are non void. \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
 using Attribute_const_range = unspecified_type;
 
 /*!
-%Range of all the darts of the `<Alpha...>` orbit. This type is a model of `Range` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart".
+%Range of all the darts of the `<Alpha...>` orbit. This type is a model of `Range` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 template<unsigned int... Alpha>
 using Dart_of_orbit_range = unspecified_type;
 
 /*!
-Const range of all the darts of the `<Alpha...>` orbit. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart".
+Const range of all the darts of the `<Alpha...>` orbit. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 template<unsigned int ... Alpha>
 using Dart_of_orbit_const_range = unspecified_type;
 
 /*!
-%Range of all the darts of an <I>i</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension". If <I>i==dim+1</I>, range of all the darts of a connected component. This type is a model of `Range` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart".
+%Range of all the darts of an <I>i</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink. If <I>i==dim+1</I>, range of all the darts of a connected component. This type is a model of `Range` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 template<unsigned int i,unsigned int dim=dimension>
 using Dart_of_cell_range = unspecified_type;
 
 /*!
-Const range of all the darts of the <I>i</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension". If <I>i==dim+1</I>, range of all the darts of a connected component. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart".
+Const range of all the darts of the <I>i</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink. If <I>i==dim+1</I>, range of all the darts of a connected component. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 template<unsigned int i,unsigned int dim=dimension>
 using Dart_of_cell_const_range = unspecified_type;
 
 /*!
-%Range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension". If <I>i</I>==<I>dim+1</I>, consider each connected component instead of each <I>i</I>-cell. If <I>j</I>==<I>dim+1</I>, consider one connected component instead of one <I>j</I>-cell. This type is a model of `Range` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart".
+%Range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink. If <I>i</I>==<I>dim+1</I>, consider each connected component instead of each <I>i</I>-cell. If <I>j</I>==<I>dim+1</I>, consider one connected component instead of one <I>j</I>-cell. This type is a model of `Range` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 template<unsigned int i,unsigned int j,unsigned int dim=dimension>
 using One_dart_per_incident_cell_range = unspecified_type;
 
 /*!
-Const range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension". If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>, consider one connected component instead of one <I>j</I>-cell. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart"
+Const range of one dart of each <I>i</I>-cell incident to one <I>j</I>-cell. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink. If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>, consider one connected component instead of one <I>j</I>-cell. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink
 */
 template<unsigned int i,unsigned int j,unsigned int dim=dimension>
 using One_dart_per_incident_cell_const_range = unspecified_type;
 
 /*!
-%Range of one dart of each <I>i</I>-cell of the generalized map. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension". If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. This type is a model of `Range` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart".
+%Range of one dart of each <I>i</I>-cell of the generalized map. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink. If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. This type is a model of `Range` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 template<unsigned int i,unsigned int dim=dimension>
 using One_dart_per_cell_range = unspecified_type;
 
 /*!
-Const range of one dart of each <I>i</I>-cell of the generalized map. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension". If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \ref GeneralizedMap::Dart "Dart".
+Const range of one dart of each <I>i</I>-cell of the generalized map. Cells are considered in <I>dim</I> dimension, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink. If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. This type is a model of `ConstRange` concept, its iterator type is forward and its value type is \link GeneralizedMap::Dart `Dart`\endlink.
 */
 template<unsigned int i,unsigned int dim=dimension>
 using One_dart_per_cell_const_range = unspecified_type;
@@ -184,9 +184,9 @@ Returns true iff the generalized map is valid.
 
 A generalized map is valid (see Sections \ref sseccombimapanddarts and \ref sseccombimapvalidity) if for all its darts `d` \f$\in\f$`darts()`:
 
-- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension": \f$ \alpha_i(\alpha_i(d))=d\f$;
-- \f$ \forall\f$<I>i</I>, <I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" such that <I>j</I>\f$ \geq\f$ 3: \f$ \alpha_j(\alpha_i(\alpha_j(\alpha_i(d))))=d\f$;
-- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" such that <I>i</I>-attributes are non void:
+- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink: \f$ \alpha_i(\alpha_i(d))=d\f$;
+- \f$ \forall\f$<I>i</I>, <I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink such that <I>j</I>\f$ \geq\f$ 3: \f$ \alpha_j(\alpha_i(\alpha_j(\alpha_i(d))))=d\f$;
+- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink such that <I>i</I>-attributes are non void:
   + \f$ \forall\f$<I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;
   + \f$ \forall\f$<I>d2</I>  in a different <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have different <I>i</I>-attributes.
 */
@@ -196,7 +196,7 @@ bool is_valid() const;
 Returns true iff the generalized map is without <I>i</I>-boundary.
 
 The map is without <I>i</I>-boundary if there is no `i`-free dart.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension".
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink.
 */
 bool is_without_boundary(unsigned int i) const;
 
@@ -212,7 +212,7 @@ size_type number_of_darts() const;
 
 /*!
 Returns the number of <I>i</I>-attributes in the generalized map.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and <I>i</I>-attributes are non void.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non void.
 */
 template <unsigned int i>
 size_type number_of_attributes() const;
@@ -227,13 +227,13 @@ Overloads of this member function are defined that take from one to nine integer
 
 For example `alpha(dh,1)`=\f$ \alpha_1\f$(`*dh`),
 and `alpha(dh,1,2,3,0)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and `*dh`\f$ \in\f$`darts()`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
 */
 Dart_handle alpha(Dart_handle dh, int i, int j);
 
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as arguments.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and `*dh`\f$ \in\f$`darts()`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
 
 */
 Dart_const_handle alpha(Dart_const_handle dh, int i, int j) const;
@@ -241,14 +241,14 @@ Dart_const_handle alpha(Dart_const_handle dh, int i, int j) const;
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as template arguments. For each function, alphas are applied in the same order as their indices are given as template arguments.
 
-For example `alpha<1>(dh)`=\f$ \alpha_1\f$(`*dh`), and `alpha<1,2,3,0>(dh)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))). \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and `*dh`\f$ \in\f$`darts()`.
+For example `alpha<1>(dh)`=\f$ \alpha_1\f$(`*dh`), and `alpha<1,2,3,0>(dh)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))). \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
 */
 template<int i, int j>
 Dart_handle alpha(Dart_handle dh);
 
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as template arguments.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and `*dh`\f$ \in\f$`darts()`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
 
 */
 template<int i, int j>
@@ -256,13 +256,13 @@ Dart_const_handle alpha(Dart_const_handle dh) const;
 
 /*!
 Returns true iff dart `*dh` is <I>i</I>-free.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension".
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink.
 */
 bool is_free(Dart_const_handle dh, unsigned int i) const;
 
 /*!
 Returns true iff dart `*dh` is <I>i</I>-free.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension".
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink.
 */
 template<unsigned int i>
 bool is_free(Dart_const_handle dh) const;
@@ -283,7 +283,7 @@ Returns \f$ \alpha_0(dh)\f$ i.e. a const handle to a dart belonging to the same 
 Dart_const_handle  other_extremity(Dart_const_handle dh) const;
 
 /*!
-Displays on `os` the number of elements of the generalized map. Its number of darts, its number of <I>i</I>-cells, for each <I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and its number of connected components.
+Displays on `os` the number of elements of the generalized map. Its number of darts, its number of <I>i</I>-cells, for each <I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and its number of connected components.
 
 Example of output for a 3D generalized map containing two disjoint generalized tetrahedra:
 
@@ -298,48 +298,48 @@ std::ostream& display_characteristics(std::ostream & os) const;
 ///
 /*!
 Returns a handle to the <I>i</I>-attribute associated to dart `*dh`.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and <I>i</I>-attributes are non `void`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.
 */
 template <unsigned int i> Attribute_handle<i>::type attribute(Dart_handle dh);
 
 /*!
 Returns a const handle to the <I>i</I>-attribute associated to dart `*dh`, when the dart is const.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and <I>i</I>-attributes are non `void`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.
 */
 template <unsigned int i>
 Attribute_const_handle<i>::type attribute(Dart_const_handle dh) const;
 
 /*!
-Returns one dart of the cell associated to the <I>i</I>-attribute `*ah`. `NULL` if \ref CellAttribute::Supports_cell_dart "Supports_cell_dart" of <I>i</I>-attributes  is equal to \ref CGAL::Tag_false "Tag_false".
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+Returns one dart of the cell associated to the <I>i</I>-attribute `*ah`. `NULL` if \link CellAttribute::Supports_cell_dart `Supports_cell_dart`\endlink of <I>i</I>-attributes  is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=NULL.
 */
 template<unsigned int i>
 Dart_handle dart_of_attribute(typename Attribute_handle<i>::type ah);
 
 /*!
-Returns one dart of the cell associated to the const <I>i</I>-attribute `*ah`. `NULL` if \ref CellAttribute::Supports_cell_dart "Supports_cell_dart" of <I>i</I>-attributes is equal to \ref CGAL::Tag_false "Tag_false".
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+Returns one dart of the cell associated to the const <I>i</I>-attribute `*ah`. `NULL` if \link CellAttribute::Supports_cell_dart `Supports_cell_dart`\endlink of <I>i</I>-attributes is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=NULL.
 */
 template<unsigned int i>
 Dart_const_handle dart_of_attribute(typename Attribute_const_handle<i>::type ah) const;
 
 /*!
-Returns the information of the <I>i</I>-attribute `*ah`. Defined only if \ref CellAttribute::Info "Info" of <I>i</I>-attributes is not `void`.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+Returns the information of the <I>i</I>-attribute `*ah`. Defined only if \link CellAttribute::Info `Info`\endlink of <I>i</I>-attributes is not `void`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=NULL.
 */
 template <unsigned int i>
 Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_handle<i>::type ah);
 
 /*!
-Returns the information of the const <I>i</I>-attribute `*ah`. Defined only if \ref CellAttribute::Info "Info" of <I>i</I>-attributes is not `void`.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", <I>i</I>-attributes are non `void` and `ah`!=NULL.
+Returns the information of the const <I>i</I>-attribute `*ah`. Defined only if \link CellAttribute::Info `Info`\endlink of <I>i</I>-attributes is not `void`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, <I>i</I>-attributes are non `void` and `ah`!=NULL.
 */
 template <unsigned int i>
 const Attribute_type<i>::type::Info& info_of_attribute(typename Attribute_const_handle<i>::type ah) const;
 
 /*!
 A shorcut for \link GeneralizedMap::info_of_attribute `info_of_attribute<i>`\endlink`(`\link GeneralizedMap::attribute `attribute<i>`\endlink`(adart))`.
-\pre \ref GeneralizedMap::attribute "attribute<i>"`(adart)!=NULL`.
+\pre \link GeneralizedMap::attribute `attribute<i>`\endlink`(adart)!=NULL`.
 */
 template<unsigned int i>
 typename Attribute_type<i>::type::Info & info(Dart_handle adart);
@@ -366,7 +366,7 @@ template<unsigned int i>
 Dart_const_handle dart(Dart_const_handle adart) const;
 
 /*! Returns true if ah points to a used i-attribute (i.e.\ valid).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and <I>i</I>-attributes are non `void`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.
  */
 template<unsigned int i>
 bool is_attribute_used(typename Attribute_const_handle<i>::type ah) const;
@@ -405,19 +405,19 @@ Dart_const_range& darts() const;
 
 /*!
 Returns a range of all the <I>i</I>-attributes in the generalized map.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and <I>i</I>-attributes are non void.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non void.
 */
 template<unsigned int i> Attribute_range<i>::type & attributes();
 
 /*!
 Returns a const range of all the <I>i</I>-attributes in the generalized map.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and <I>i</I>-attributes are non void.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non void.
 */
 template<unsigned int i> Attribute_const_range<i>::type & attributes() const;
 
 /*!
 Returns a range of all the darts of the orbit `<Alpha...>(*dh)`. The first element in the range points onto `*dh`.
-\pre `*dh`\f$ \in\f$`darts()` and `Alpha...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$, such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and (\f$ i_1\f$\f$ \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$ 1).
+\pre `*dh`\f$ \in\f$`darts()` and `Alpha...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$, such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and (\f$ i_1\f$\f$ \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$ 1).
 */
 template<unsigned int ... Alpha> Dart_of_orbit_range darts_of_orbit(Dart_handle dh);
 
@@ -429,7 +429,7 @@ template<unsigned int ... Alpha> Dart_of_orbit_const_range darts_of_orbit(Dart_c
 
 /*!
 Returns a range of all the darts of the <I>i</I>-cell containing `*dh`. The first element in the range points onto `*dh`. <I>i</I>-cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, range of all the darts of the connected component containing `dh`.
-\pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension".
+\pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink.
 */
 template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_range darts_of_cell(Dart_handle dh);
 
@@ -441,7 +441,7 @@ template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range dar
 
 /*!
 Returns a range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `*dh`. The first element in the range points onto `*dh`. Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>, consider the connected component containing `*dh` instead of the <I>j</I>-cell.
-\pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension".
+\pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I>, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink.
 */
 template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_range one_dart_per_incident_cell(Dart_handle dh);
 
@@ -453,7 +453,7 @@ template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_
 
 /*!
 Returns a range of one dart of each <I>i</I>-cell in the generalized map. Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>, range of one dart of each connected component in the generalized map. 
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension".
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and 0\f$ \leq\f$<I>dim</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink.
 */
 template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_range one_dart_per_cell();
 
@@ -469,7 +469,7 @@ template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_const_rang
 /// @{
 
 /*!
-Creates a new dart in the generalized map, and returns the corresponding handle. Calls the constructor of dart having `T1` as parameter. A new dart is initialized to be <I>i</I>-free, \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and to have no associated attribute for each non void attribute. Overloads of this member function are defined that take from zero to nine arguments. With zero argument, `%create_dart()` creates a new dart by using the default constructor.
+Creates a new dart in the generalized map, and returns the corresponding handle. Calls the constructor of dart having `T1` as parameter. A new dart is initialized to be <I>i</I>-free, \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and to have no associated attribute for each non void attribute. Overloads of this member function are defined that take from zero to nine arguments. With zero argument, `%create_dart()` creates a new dart by using the default constructor.
 
 */
 template<typename T1>
@@ -484,19 +484,19 @@ void erase_dart(Dart_handle dh);
 
 /*!
 Creates a new <I>i</I>-attribute in the generalized map, and returns the corresponding handle. Calls the constructor of <I>i</I>-attribute having `T1` as parameter. Overloads of this member function are defined that take from zero to nine arguments. With zero argument, `create_attribute<i>()` creates a new <I>i</I>-attribute by using the default constructor.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", and <I>i</I>-attributes are non void.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non void.
 */
 template<unsigned int i,typename T1> Attribute_handle<i>::type create_attribute(T1 t1);
 
 /*!
 Removes the <I>i</I>-attribute `*ah` from the generalized map.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", <I>i</I>-attributes are non void, and `*ah`\f$ \in\f$\ref GeneralizedMap::attributes() "attributes<i>()".
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, <I>i</I>-attributes are non void, and `*ah`\f$ \in\f$\link GeneralizedMap::attributes() `attributes<i>()`\endlink.
 */
 template <unsigned int i> void erase_attribute(Attribute_handle<i>::type ah);
 
 /*!
 Associates the <I>i</I>-attribute of all the darts of the <I>i</I>-cell containing `*dh` to `*ah`.
-\pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", <I>i</I>-attributes are non void, and `*ah`\f$ \in\f$\ref GeneralizedMap::attributes() "attributes<i>()".
+\pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, <I>i</I>-attributes are non void, and `*ah`\f$ \in\f$\link GeneralizedMap::attributes() `attributes<i>()`\endlink.
 */
 template <unsigned int i> void set_attribute(Dart_handle dh, Attribute_handle<i>::type ah);
 
@@ -538,7 +538,7 @@ void set_automatic_attributes_management(bool update_attributes);
 /*!
 Correct the invalid attributes of the generalized map. We can have invalid attribute either if we have called \link GeneralizedMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to use some modification operations or if we have modified the generalized map by using low level operations.
 
-\f$ \forall i \f$, 0 \f$ \leq \f$ i \f$ \leq \f$ \ref GeneralizedMap::dimension "dimension" such that the i-attributes are non void, \f$ \forall \f$ d \f$ \in\f$`darts()`:
+\f$ \forall i \f$, 0 \f$ \leq \f$ i \f$ \leq \f$ \link GeneralizedMap::dimension `dimension`\endlink such that the i-attributes are non void, \f$ \forall \f$ d \f$ \in\f$`darts()`:
  - if there exists a dart `d2` in the same i-cell than `d` with a different i-attribute, then the i-attribute of `d2` is set to the i-attribute of `d`;
  - if there exists a dart `d2` in a different i-cell than `d` with the same i-attribute, then the i-attribute of all the darts in i-cell(`d`) is set to a new i-attribute (copy of the original attribute);
  - ensures that \link GeneralizedMap::dart_of_attribute `dart_of_attribute(d)`\endlink \f$ \in \f$ i-cell(`d`).
@@ -553,7 +553,7 @@ void correct_invalid_attributes();
 /*!
 Returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the generalized map valid. This is true if there is a bijection <I>f</I> between all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>*dh1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>*dh2</I>) satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>},
 <I>f</I>(\f$ \alpha_j\f$(<I>e</I>))=\f$ \alpha_j\f$(<I>f</I>(<I>e</I>)).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", `*dh1`\f$ \in\f$`darts()`, and `*dh2`\f$ \in\f$`darts()`.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, `*dh1`\f$ \in\f$`darts()`, and `*dh2`\f$ \in\f$`darts()`.
 */
 template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;
 
@@ -562,8 +562,8 @@ template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_hand
 
 <I>f</I> is the bijection between <I>D1</I> and <I>D2</I> satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>}, <I>f</I>(\f$ \alpha_j\f$(<I>e</I>))=\f$ \alpha_j^{-1}\f$(<I>f</I>(<I>e</I>)).
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generalized map: for each <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are considered. If one attribute is NULL and the other not, the non NULL attribute is associated to all the darts of the resulting cell. When the two attributes are non NULL, functor \ref CellAttribute::On_merge "Attribute_type<i>::type::On_merge" is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. Then, the attribute <I>attr1</I> is associated to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the generalized map.
-\pre \ref GeneralizedMap::is_sewable "is_sewable<i>(dh1,dh2)".
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generalized map: for each <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are considered. If one attribute is NULL and the other not, the non NULL attribute is associated to all the darts of the resulting cell. When the two attributes are non NULL, functor \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. Then, the attribute <I>attr1</I> is associated to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the generalized map.
+\pre \link GeneralizedMap::is_sewable `is_sewable<i>(dh1,dh2)`\endlink.
 
 \cgalAdvancedBegin
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generalized map can be no more valid after this operation.
@@ -573,7 +573,7 @@ If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_au
 template <unsigned int i> void sew(Dart_handle dh1,Dart_handle dh2);
 
 /*!
-  <I>i</I>-unsew darts `*dh` and \f$ \alpha_i\f$`(*dh)`, by keeping the generalized map valid. Unlinks by \f$ \alpha_i\f$ all the darts in the orbit \f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(`*dh`). If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generalized map: for each <I>j</I>-cell <I>c</I> split in two <I>j</I>-cells <I>c1</I> and <I>c2</I> by the operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then this attribute is duplicated into <I>attr2</I>, and all the darts belonging to <I>c2</I> are associated with this new attribute. Finally, the functor \ref CellAttribute::On_split "Attribute_type<i>::type::On_split" is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onsplit function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", `*dh`\f$ \in\f$`darts()` and `*dh` is not <I>i</I>-free.
+  <I>i</I>-unsew darts `*dh` and \f$ \alpha_i\f$`(*dh)`, by keeping the generalized map valid. Unlinks by \f$ \alpha_i\f$ all the darts in the orbit \f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(`*dh`). If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generalized map: for each <I>j</I>-cell <I>c</I> split in two <I>j</I>-cells <I>c1</I> and <I>c2</I> by the operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then this attribute is duplicated into <I>attr2</I>, and all the darts belonging to <I>c2</I> are associated with this new attribute. Finally, the functor \link CellAttribute::On_split `Attribute_type<i>::type::On_split`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onsplit function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, `*dh`\f$ \in\f$`darts()` and `*dh` is not <I>i</I>-free.
 
 \cgalAdvancedBegin
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated thus the generalized map can be no more valid after this operation.
@@ -583,13 +583,13 @@ template <unsigned int i> void unsew(Dart_handle dh);
 
 /*!
 Links `*dh1` and `*dh2` by \f$ \alpha_i\f$. The generalized map can be no more valid after this operation. If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, non void attributes of `*dh1` and `*dh2` are updated: if one dart has an attribute and the second dart not, the non null attribute is associated to the dart having a null attribute. If both darts have an attribute, the attribute of `*dh1` is associated to `*dh2`.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", `*dh1`\f$ \in\f$`darts()`, `*dh2`\f$ \in\f$`darts()` and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, `*dh1`\f$ \in\f$`darts()`, `*dh2`\f$ \in\f$`darts()` and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
 */
 template <unsigned int i> void link_alpha(Dart_handle dh1, Dart_handle dh2);
 
 /*!
 Unlinks `*dh` and \f$ \alpha_i\f$(`*dh`) by \f$ \alpha_i\f$. The generalized map can be no more valid after this operation. Attributes of `*dh` and \f$ \alpha_i\f$(`*dh`) are not modified.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension", `*dh`\f$ \in\f$`darts()`, and `*dh` is not <I>i</I>-free.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink, `*dh`\f$ \in\f$`darts()`, and `*dh` is not <I>i</I>-free.
 */
 template <unsigned int i> void unlink_alpha(Dart_handle dh);
 
@@ -641,55 +641,55 @@ Reserves a new mark. Returns its index. If there is no more available free mark,
 size_type get_new_mark() const;
 
 /*!
-Returns true iff `m` is a reserved mark of the generalized map. \pre 0\f$ \leq\f$<I>m</I>\f$ <\f$\ref  GeneralizedMap::NB_MARKS "NB_MARKS".
+Returns true iff `m` is a reserved mark of the generalized map. \pre 0\f$ \leq\f$<I>m</I>\f$ <\f$\link GeneralizedMap::NB_MARKS `NB_MARKS`\endlink.
 */
 bool is_reserved(size_type m) const;
 
 /*!
 Returns true iff `*dh` is marked for `m`.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)" and `*dh`\f$ \in\f$`darts()`.
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink and `*dh`\f$ \in\f$`darts()`.
 */
 bool is_marked(Dart_const_handle dh, size_type m) const;
 
 /*!
 Marks `*dh` for `m`.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)" and `*dh`\f$ \in\f$`darts()`.
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink and `*dh`\f$ \in\f$`darts()`.
 */
 void mark(Dart_const_handle dh, size_type m) const;
 
 /*!
 Unmarks `*dh` for the mark `m`.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)" and `*dh`\f$ \in\f$`darts()`.
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink and `*dh`\f$ \in\f$`darts()`.
 */
 void unmark(Dart_const_handle dh, size_type m) const;
 
 /*!
 Inverse the mark `m` for all the darts of the generalized map. All the marked darts become unmarked and all the unmarked darts become marked.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)".
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink.
 */
 void negate_mark(size_type m) const;
 
 /*!
 Unmarks all the darts of the generalized map for `m`.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)".
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink.
 */
 void unmark_all(size_type m) const;
 
 /*!
 Returns the number of marked darts for `m`.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)".
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink.
 */
 size_type number_of_marked_darts(size_type m) const;
 
 /*!
 Return the number of unmarked darts for `m`.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)".
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink.
 */
 size_type number_of_unmarked_darts(size_type m) const;
 
 /*!
 Frees mark `m`.
-\pre \ref GeneralizedMap::is_reserved "is_reserved(m)".
+\pre \link GeneralizedMap::is_reserved `is_reserved(m)`\endlink.
 */
 void free_mark(size_type m) const;
 
@@ -700,7 +700,7 @@ void free_mark(size_type m) const;
   
 /*!
 Creates a combinatorial hexahedron (six combinatorial quadrangles linked together by \f$ \alpha_2\f$), and adds it in the generalized map. Returns a handle on one dart of this combinatorial hexahedron.
-\pre \ref GeneralizedMap::dimension "dimension" \f$\geq\f$ 2.
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$\geq\f$ 2.
 
 \sa `make_edge`
 \sa `make_combinatorial_polygon`
@@ -711,7 +711,7 @@ Dart_handle make_combinatorial_hexahedron();
 
 /*!
 Creates a combinatorial polygon of length `lg` (`lg` edges linked by \f$ \alpha_1\f$), and adds it in the generalized map. Returns a handle on one dart of this combinatorial polygon.
-\pre \ref GeneralizedMap::dimension "dimension" \f$\geq\f$ 1.
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$\geq\f$ 1.
 
 \sa `make_edge`
 \sa `make_combinatorial_tetrahedron`
@@ -721,7 +721,7 @@ Dart_handle make_combinatorial_polygon(unsigned int lg);
 
 /*!
 Creates a combinatorial tetrahedron (four combinatorial triangles linked together by \f$ \alpha_2\f$), and adds it in the generalized map. Returns a handle on one dart of this combinatorial tetrahedron.
-\pre \ref GeneralizedMap::dimension "dimension" \f$\geq\f$ 2.
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$\geq\f$ 2.
 
 \sa `make_edge`
 \sa `make_combinatorial_polygon`
@@ -731,7 +731,7 @@ Dart_handle make_combinatorial_tetrahedron();
 
 /*!
 Creates an isolated edge (two darts linked by \f$ \alpha_0\f$) and adds it in the generalized map. Returns a handle on one dart of this edge.
-\pre \ref GeneralizedMap::dimension "dimension" \f$\geq\f$ 0.
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$\geq\f$ 0.
 
 \sa `make_combinatorial_polygon`
 \sa `make_combinatorial_tetrahedron`
@@ -746,11 +746,11 @@ Dart_handle make_edge();
 
 /*!
 Inserts a 0-cell in the 1-cell containing `dh`. Returns \f$ \alpha_0\f$(`dh`), a handle on one dart belonging to the new 0-cell.
-\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 1 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$ \geq\f$ 1 and `*dh`\f$ \in\f$\link GeneralizedMap::darts `darts()`\endlink.
 
 See example in \cgalFigureRef{fig_gmap_insert_vertex}.
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 1-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<1>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 1-attribute associated with <I>dh</I> and <I>a'</I> the new 1-attribute created during the operation. If set, the dynamic onsplit function of 1-attributes is also called on <I>a</I> and <I>a'</I>.
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 1-attributes are non `void`, \link CellAttribute::On_split `Attribute_type<1>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 1-attribute associated with <I>dh</I> and <I>a'</I> the new 1-attribute created during the operation. If set, the dynamic onsplit function of 1-attributes is also called on <I>a</I> and <I>a'</I>.
 
 \cgalAdvancedBegin
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.
@@ -767,11 +767,11 @@ Dart_handle insert_cell_0_in_cell_1(Dart_handle dh);
 
 /*!
 Inserts a 0-cell in the 2-cell containing `dh`. The 2-cell is split in triangles, one for each initial edge of the facet. Returns a handle on one dart belonging to the new 0-cell.
-\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$ \geq\f$ 2 and `*dh`\f$ \in\f$\link GeneralizedMap::darts `darts()`\endlink.
 
 See example in \cgalFigureRef{fig_gmap_triangulation}.
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<2>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `dh` and <I>a'</I> each new 2-attribute created during the operation. If set, the dynamic onsplit function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \link CellAttribute::On_split `Attribute_type<2>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `dh` and <I>a'</I> each new 2-attribute created during the operation. If set, the dynamic onsplit function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
 
 \cgalAdvancedBegin
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.
@@ -792,7 +792,7 @@ Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns \f$ \alpha_0(
 
 See example in \cgalFigureRef{fig_gmap_insert_edge}.
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<2>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `dh` and <I>a'</I> the new 2-attribute created during the operation. If set, the dynamic onsplit function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 2-attributes are non `void`, \link CellAttribute::On_split `Attribute_type<2>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 2-attribute associated with `dh` and <I>a'</I> the new 2-attribute created during the operation. If set, the dynamic onsplit function of 2-attributes is also called on <I>a</I> and <I>a'</I>.
 
 \cgalAdvancedBegin
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.
@@ -814,7 +814,7 @@ Inserts a 2-cell along the path of 1-cells containing darts given by the range `
 
 See example in \cgalFigureRef{fig_gmap_insert_facet}.
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 3-attributes are non `void`, \ref CellAttribute::On_split "Attribute_type<3>::type::On_split"(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 3-attribute associated with `dh` and <I>a'</I> the new 3-attribute created during the operation. If set, the dynamic onsplit function of 3-attributes is also called on <I>a</I> and <I>a'</I>.
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if 3-attributes are non `void`, \link CellAttribute::On_split `Attribute_type<3>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original 3-attribute associated with `dh` and <I>a'</I> the new 3-attribute created during the operation. If set, the dynamic onsplit function of 3-attributes is also called on <I>a</I> and <I>a'</I>.
 
 \cgalAdvancedBegin
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.
@@ -833,7 +833,7 @@ Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 
 /*!
 Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns \f$ \alpha_0(\alpha_1\f$(`dh1`)), a handle on one dart belonging to the new 1-cell and to the new 0-cell.
-\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2 and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$ \geq\f$ 2 and `*dh`\f$ \in\f$\link GeneralizedMap::darts `darts()`\endlink.
 
 See example in \cgalFigureRef{fig_gmap_insert_edge}.
 
@@ -854,7 +854,7 @@ Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh);
 Returns true iff it is possible to insert a 1-cell in the generalized map between `dh1` and `dh2`.
 
 This is possible if `dh1`\f$ \neq\f$`dh2` and `dh1`\f$ \in\f$\f$ \langle{}\f$\f$ \alpha_0 \circ \alpha_1\f$\f$ \rangle{}\f$(`dh2`).
-\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 2, `*dh1`\f$ \in\f$\ref GeneralizedMap::darts "darts()", and `*dh2`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$ \geq\f$ 2, `*dh1`\f$ \in\f$\link GeneralizedMap::darts `darts()`\endlink, and `*dh2`\f$ \in\f$\link GeneralizedMap::darts `darts()`\endlink.
 
 \sa `insert_cell_1_in_cell_2`
 \sa `is_insertable_cell_2_in_cell_3<InputIterator>`
@@ -864,7 +864,7 @@ bool is_insertable_cell_1_in_cell_2(Dart_const_handle dh1, Dart_const_handle dh2
 
 /*!
 Returns true iff it is possible to insert a 2-cell in the generalized map along the path of darts given by the range `[afirst,alast)`. The 2-cell can be inserted iff each couple of consecutive darts of the path <I>a1</I> and <I>a2</I> belong to the same vertex and the same volume, and if the path is closed.
-\pre \ref GeneralizedMap::dimension "dimension"\f$ \geq\f$ 3.
+\pre \link GeneralizedMap::dimension `dimension`\endlink \f$ \geq\f$ 3.
 
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `is_insertable_cell_1_in_cell_2`
@@ -876,8 +876,8 @@ bool is_insertable_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 /*!
 Returns true iff the <I>i</I>-cell containing `dh` can be removed.
 
-An <I>i</I>-cell can be removed if `i`==\ref GeneralizedMap::dimension "dimension" or if `i`==\ref GeneralizedMap::dimension "dimension"-1 or if `i`\f$ <\f$\ref GeneralizedMap::dimension "dimension"-1 and the <I>i</I>-cell containing `dh` is incident to at most two (<I>i+1</I>)-cells.
-\pre 0\f$ \leq\f$`i`\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" and `*dh`\f$ \in\f$\ref GeneralizedMap::darts "darts()".
+An <I>i</I>-cell can be removed if `i`==\link GeneralizedMap::dimension `dimension`\endlink or if `i`==\link GeneralizedMap::dimension `dimension`\endlink-1 or if `i`\f$ <\f$\link GeneralizedMap::dimension `dimension`\endlink-1 and the <I>i</I>-cell containing `dh` is incident to at most two (<I>i+1</I>)-cells.
+\pre 0\f$ \leq\f$`i`\f$ \leq\f$\link GeneralizedMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$\link GeneralizedMap::darts `darts()`\endlink.
 
 \sa `remove_cell<i>`
 
@@ -891,9 +891,9 @@ Removes the <I>i</I>-cell containing `dh`. Returns the number of darts removed f
 
 See examples in \cgalFigureRef{fig_gmap_insert_vertex}, \cgalFigureRef{fig_gmap_insert_edge} and \cgalFigureRef{fig_gmap_insert_facet}.
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if `i`\f$ <\f$\ref GeneralizedMap::dimension "dimension", and <I>i+1</I>-attributes are non `void`, and if there are two distinct (<I>i+1</I>)-cells around dart `dh`, \ref CellAttribute::On_merge "Attribute_type<i+1>::type::On_merge"(<I>a1</I>,<I>a2</I>) is called, with <I>a1</I> the (<I>i+1</I>)-attribute associated to `dh`, and <I>a2</I> the (<I>i+1</I>)-attribute associated to \f$ \beta_{i+1}\f$(<I>dh</I>). If set, the dynamic onmerge function of <I>i+1</I>-attributes is also called on <I>a1</I> and <I>a2</I>.
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if `i`\f$ <\f$\link GeneralizedMap::dimension `dimension`\endlink, and <I>i+1</I>-attributes are non `void`, and if there are two distinct (<I>i+1</I>)-cells around dart `dh`, \link CellAttribute::On_merge `Attribute_type<i+1>::type::On_merge`\endlink(<I>a1</I>,<I>a2</I>) is called, with <I>a1</I> the (<I>i+1</I>)-attribute associated to `dh`, and <I>a2</I> the (<I>i+1</I>)-attribute associated to \f$ \beta_{i+1}\f$(<I>dh</I>). If set, the dynamic onmerge function of <I>i+1</I>-attributes is also called on <I>a1</I> and <I>a2</I>.
 
-If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if a <I>j</I>-cell is disconnected in two <I>j</I>-cells during the operation, and if <I>j</I>-attributes are non void, \ref CellAttribute::On_split "Attribute_type<j>::type::On_split"(<I>a</I>,<I>a'</I>) is called with <I>a</I> the original <I>j</I>-attribute and <I>a'</I> the new <I>j</I>-attribute created due to the disconnection. If set, the dynamic onsplit function of <i>j</i>-attributes is also called on <I>a</I> and <I>a'</I>.
+If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if a <I>j</I>-cell is disconnected in two <I>j</I>-cells during the operation, and if <I>j</I>-attributes are non void, \link CellAttribute::On_split `Attribute_type<j>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called with <I>a</I> the original <I>j</I>-attribute and <I>a'</I> the new <I>j</I>-attribute created due to the disconnection. If set, the dynamic onsplit function of <i>j</i>-attributes is also called on <I>a</I> and <I>a'</I>.
 
 \cgalAdvancedBegin
 If \link GeneralizedMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.

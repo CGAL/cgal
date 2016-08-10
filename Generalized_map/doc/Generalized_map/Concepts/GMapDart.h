@@ -7,9 +7,9 @@ The concept `GMapDart` defines a <I>d</I>-dimensional dart for generalized maps.
 
 \cgalHeading{Creation}
 
-A dart `d0` is never constructed directly, but always created within a generalized map `gm` by using the method \ref GeneralizedMap::create_dart "gm.create_dart()". A new dart is initialized to be <I>i</I>-free, \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all its attribute handles initialized to `NULL`, for each non `void` attribute.
+A dart `d0` is never constructed directly, but always created within a generalized map `gm` by using the method \link GeneralizedMap::create_dart `gm.create_dart()`\endlink. A new dart is initialized to be <I>i</I>-free, \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all its attribute handles initialized to `NULL`, for each non `void` attribute.
 
-\cgalHasModel \ref CGAL::GMap_dart "CGAL::GMap_dart<d,GMap>"
+\cgalHasModel \link CGAL::GMap_dart `CGAL::GMap_dart<d,GMap>`\endlink
 */
 
 class GMapDart {
