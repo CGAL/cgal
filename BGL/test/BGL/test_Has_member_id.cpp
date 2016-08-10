@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
@@ -16,13 +15,13 @@ struct StructWithId
   std::size_t m_id;
   StructWithId() : m_id(12) {}
   //with overload
-  const std::size_t id() const { return m_id; }
+  std::size_t id() const { return m_id; }
   std::size_t& id() { return m_id; }
 };
 struct StructNoId
 {};
 
-int main(int argc, char* argv[])
+int main()
 {
   using namespace CGAL::internal;
 
@@ -32,8 +31,10 @@ int main(int argc, char* argv[])
   CGAL_static_assertion(Has_member_id<Polyhedron_with_ids::Facet>::value);
   CGAL_static_assertion(Has_member_id<Polyhedron_with_ids::FBase>::value);
 
-  typedef Polyhedron_with_ids::Items::Face_wrapper<Polyhedron_with_ids::HDS, K> FW;
-  CGAL_static_assertion(Has_member_id<FW::Face>::value);
+  const bool actual_type_has_id =
+    Has_member_id<Polyhedron_with_ids::Items::Face_wrapper<Polyhedron_with_ids::HDS, K>::Face>::value;
+  CGAL_static_assertion(actual_type_has_id);
+  std::cout << "Actual type has id : " << actual_type_has_id << std::endl;
 
   return 0;
 }
