@@ -10,7 +10,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLFramebufferObject>
 #include <QMessageBox>
-
+#include <QColorDialog>
 #include <QInputDialog>
 #include <cmath>
 #include <QApplication>
@@ -1522,6 +1522,7 @@ private Q_SLOTS:
 
 void Viewer::saveSnapshot(bool, bool)
 {
+  GLfloat alpha = 1.0;
   qreal aspectRatio = width() / static_cast<qreal>(height());
   static ImageInterface* imageInterface = NULL;
 
@@ -1539,9 +1540,24 @@ void Viewer::saveSnapshot(bool, bool)
   setSnapshotQuality(imageInterface->imgQuality->value());
 
   QColor previousBGColor = backgroundColor();
-  if (imageInterface->whiteBackground->isChecked())
-    setBackgroundColor(Qt::white);
+ switch(imageInterface->color_comboBox->currentIndex())
+ {
+ case 0:
+   break;
+ case 1:
+   this->setBackgroundColor(QColor(Qt::transparent));
+   alpha = 0.0;
+   break;
+ case 2:
+   QColor c =  QColorDialog::getColor();
+   if(c.isValid()) {
+     setBackgroundColor(c);
+     this->setBackgroundColor(c);
+   }
+   else return;
+   break;
 
+ }
   QSize finalSize(imageInterface->imgWidth->value(), imageInterface->imgHeight->value());
 
   qreal oversampling = imageInterface->oversampling->value();
@@ -1551,7 +1567,10 @@ void Viewer::saveSnapshot(bool, bool)
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Save Snapshot"), "", tr("Image Files (*.png *.jpg *.bmp)"));
   if(fileName.isEmpty())
+  {
+    setBackgroundColor(previousBGColor);
     return;
+  }
 
   QSize size=QSize(width(), height());
 
@@ -1582,12 +1601,13 @@ void Viewer::saveSnapshot(bool, bool)
     QMessageBox::warning(this, "Image saving error",
                          "Unable to create resulting image",
                          QMessageBox::Ok, QMessageBox::NoButton);
+    setBackgroundColor(previousBGColor);
     return;
   }
 
   // ProgressDialog disabled since it interfers with the screen grabing mecanism on some platforms. Too bad.
   // ProgressDialog::showProgressDialog(this);
-
+  image.fill(qRgba(0,0,0,0));
   qreal scaleX = subSize.width() / static_cast<qreal>(finalSize.width());
   qreal scaleY = subSize.height() / static_cast<qreal>(finalSize.height());
 
@@ -1602,7 +1622,7 @@ void Viewer::saveSnapshot(bool, bool)
     nbX++;
   if (nbY * subSize.height() < finalSize.height())
     nbY++;
-  QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(size, QOpenGLFramebufferObject::Depth);
+  QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(size, QOpenGLFramebufferObject::CombinedDepthStencil);
   makeCurrent();
   int count=0;
   for (int i=0; i<nbX; i++)
@@ -1610,7 +1630,7 @@ void Viewer::saveSnapshot(bool, bool)
     {
       d->setFrustum(-xMin + i*deltaX, -xMin + (i+1)*deltaX, yMin - j*deltaY, yMin - (j+1)*deltaY, zNear, zFar);
       fbo->bind();
-      glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), 1.0);
+      glClearColor(backgroundColor().redF(), backgroundColor().greenF(), backgroundColor().blueF(), alpha);
       preDraw();
       draw();
       postDraw();
@@ -1636,8 +1656,7 @@ void Viewer::saveSnapshot(bool, bool)
     }
 
   image.save(fileName);
-  if (imageInterface->whiteBackground->isChecked())
-    setBackgroundColor(previousBGColor);
+  setBackgroundColor(previousBGColor);
 
 }
  #include "Viewer.moc"
