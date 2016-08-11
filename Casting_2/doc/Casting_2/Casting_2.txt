@@ -18,7 +18,7 @@ the mold. Typically a mold is used to manufacture numerous copies of a
 product, in which case we need to make sure that the solidified
 product can be separated from its mold without breaking it.  The
 challenge of designing a proper mold belongs to a larger topic termed
-\emph{Movable Separability of Sets}; see \cgalCite{t-mss-85}
+<em>Movable Separability of Sets</em>; see \cgalCite{t-mss-85}
 These problems become progressively more challenging as the allowable
 separation motions becomes more complex (have more degrees of
 freedom), the number of objects involved grows, or the shape of the
@@ -50,6 +50,13 @@ Set-Operations" for the precise definition of simple
 polygons. Secondly, not consecuitive three vertices can be linear. If
 you suspect that the input polygon may not satisfy the latter
 condition, pre-process the polygon to elliminate this ill-condition.
+
+The implementation is based on an algorithm developed by Shamai and
+Halperin; see \cgalCite{cgal:ss-spfis-16} for the generalization of
+the algorithm to 3D. The time and space complexities are in \f$O(n)\f$
+and \f$O(1)\f$, respectively. In order to ensure robustness and
+correctness you are adviced to use a kernel that guarantees exact
+constructions as well as exact predicates.
 
 \cgalExample{Casting_2/single_mold_translational_casting.cpp}
 
