@@ -161,10 +161,10 @@ struct Distance_computation{
 };
 #endif
 
-/// \todo update me to work with a triangulated surface mesh
 template <class Concurrency_tag, class Kernel>
 double approximated_Hausdorff_distance(
-  Surface_mesh<typename Kernel::Point_3> m,
+  std::vector<typename Kernel::Point_3>& sample_points,
+  Surface_mesh<typename Kernel::Point_3>& m,
   std::size_t nb_sample_points)
 {
  typedef Surface_mesh<typename Kernel::Point_3> Mesh;
@@ -172,7 +172,6 @@ double approximated_Hausdorff_distance(
  bool is_triangle = is_triangle_mesh(m);
   CGAL_assertion_msg (is_triangle,
         "Mesh is not triangulated. Distance computing impossible.");
-  std::vector<Point_3> sample_points;
   Random_points_in_triangle_mesh_3<Mesh>
       g(m);
   CGAL::cpp11::copy_n(g, nb_sample_points, std::back_inserter(sample_points));
@@ -183,6 +182,7 @@ double approximated_Hausdorff_distance(
 
   /// \todo shall we use Simple_cartesian for the distance computation?
   ///       check if this can be problematic to have non-exact predicates.
+
   typedef typename Mesh::face_iterator Triangle_iterator;
   typedef AABB_face_graph_triangle_primitive<Mesh> Primitive;
   typedef AABB_traits<Kernel, Primitive> Traits;
@@ -218,37 +218,32 @@ double approximated_Hausdorff_distance(
   }
 }
 
-
-/*/// \todo remove me (except if you find an easy way avoid the ambiguity with TriangleMesh overload
-template <class Concurrency_tag, class Kernel, class TriangleRange1, class TriangleRange2>
+template <class Concurrency_tag, class Kernel>
 double approximated_Hausdorff_distance(
-  const TriangleRange1& triangles_1,
-  const TriangleRange2& triangles_2,
-  double targeted_precision
+   Surface_mesh<typename Kernel::Point_3>& m1,
+   Surface_mesh<typename Kernel::Point_3>& m2,
+  int  nb_points
 )
 {
   std::vector<typename Kernel::Point_3> sample_points;
-
-  sample_triangles<Kernel>( triangles_1,
-                            targeted_precision,
-                            std::back_inserter(sample_points) );
-  return approximated_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, triangles_2);
+  Random_points_in_triangle_mesh_3<Surface_mesh<typename Kernel::Point_3> >
+      g(m1);
+  CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sample_points));
+  return approximated_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2,4000);
 }
 
-/// \todo remove me (except if you find an easy way avoid the ambiguity with TriangleMesh overload
-template <class Concurrency_tag, class Kernel, class TriangleRange1, class TriangleRange2>
+template <class Concurrency_tag, class Kernel>
 double approximated_symmetric_Hausdorff_distance(
-  const TriangleRange1& triangles_1,
-  const TriangleRange2& triangles_2,
-  double targeted_precision
+  Surface_mesh<typename Kernel::Point_3>& m1,
+  Surface_mesh<typename Kernel::Point_3>& m2,
+ int  nb_points
 )
 {
   return (std::max)(
-    approximated_Hausdorff_distance<Concurrency_tag, Kernel>(triangles_1, triangles_2, targeted_precision),
-    approximated_Hausdorff_distance<Concurrency_tag, Kernel>(triangles_2, triangles_1, targeted_precision)
+    approximated_Hausdorff_distance<Concurrency_tag, Kernel>(m1, m2, nb_points),
+    approximated_Hausdorff_distance<Concurrency_tag, Kernel>(m2, m1, nb_points)
   );
 }
-*/
 
 /// \todo add a function `sample_triangle_mesh()` (or better name) that provide different sampling methods:
 /// - random uniform ( points/area unit)
