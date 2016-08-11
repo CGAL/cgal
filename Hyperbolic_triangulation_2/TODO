@@ -1,27 +1,54 @@
 ==== new ====
 
-add operator == for triangulations
+add operator == for triangulations (?)
 
-** clean approximations  ---> use CK
+** traits bisectors
 
-the construction of the (hyperbolic) segment should not be approximated in the traits
-the approximation should be done for the demo only
+class Construct_hyperbolic_bisector_2
+Hyperbolic_segment_2 operator()(Point_2 p, Point_2 q, Point_2 r)
+at the end
+the following lines are giving the wrong arc (wrong orientation), aren't they?
+      CGAL_triangulation_assertion(assign(pair,inters[1]));
+      if ( Orientation_2()(approx_c,approx_a,approx_pinf) == POSITIVE )
+	return Circular_arc_2( *c_pq, pair.first, a);
+      return Circular_arc_2( *c_pq, a, pair.first);
+but this is what works on the demo...
+understand why
 
-similar: clean find_intersection
-(using the circular kernel will do)
+remove variant for supporting circle or line of bisector
+call it only when we know that it is a circle
+it will simplyfy the code of Construct_hyperbolic_bisector_2 at least in some cases
 
-fix construct_circumcenter. no approx allowed
-(again, CK will do)
+test bisectors dual functions in special cases of euclidean line segments
 
-CK, or at least Cartesian with sqrt (?)
+** Hyperbolic_random_points_in_disc
+
+repair
+number types have changed (using CK) 
+
+** benchmarks
+
+idem, repair number types
 
 ** doc
 
-** tests
+** test suite
 
 ** only keep relevant files for the submission
 
 ========== demo
+
+--- input from file does not do anything...
+
+--- clean files
+do we need demo/Hyperbolic_triangulation_2/include/* for the basic demo?
+todo diff with similar .h in Graphics view (after updating the branch)
+
+--- clean buttons 
+remove translations, add circumcircle, etc
+and put appropriate window title
+
+--- fix aretes delaunay presque rectilineaires pas au bon endroit 
 
 --- create an adapted Graphicsitem that does not require finite_* stuff. Replace by hyperbolic_*
        => understand apply_to_range
@@ -59,13 +86,6 @@ CGAL::https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/Unique_sqrt_ex
 
 Done. std::sqrt is replaced by CGAL::sqrt everywhere, 
 because it's used only for computation of the Voronoi diagram. 
-
---- use the Circular_kernel?
-because Do_intersect is in the Circular_kernel
-
-Done. CGAL::do_intersect is a solution. 
-No need for the Circular_kernel.
---> (MT) wrong for constrcutions. Approximations are used in several places. 
 
 ========== future
 

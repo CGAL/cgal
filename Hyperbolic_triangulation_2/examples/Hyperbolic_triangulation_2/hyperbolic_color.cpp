@@ -3,7 +3,7 @@
 // CGAL headers
 #include <CGAL/IO/io.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_circular_kernel_2.h>
 
 #include <CGAL/Hyperbolic_triangulation_face_base_with_info_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
@@ -11,7 +11,7 @@
 
 #include <CGAL/IO/Color.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_circular_kernel_2 K;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2< K > Gt;
 
 typedef Gt::Point_2 Point_2;
