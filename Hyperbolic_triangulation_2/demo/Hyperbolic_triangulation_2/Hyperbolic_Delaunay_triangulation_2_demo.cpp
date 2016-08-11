@@ -1,14 +1,12 @@
 #include <fstream>
 
 // CGAL headers
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
-// to be deleted
+#include <CGAL/Exact_circular_kernel_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
+
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
-//
 
 #include <CGAL/point_generators_2.h>
 
@@ -22,13 +20,13 @@
 
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
-
 #include "TriangulationMovingPoint.h"
 #include "TriangulationConflictZone.h"
 #include "TriangulationRemoveVertex.h"
 #include "TriangulationPointInputAndConflictZone.h"
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
-#include <CGAL/Qt/VoronoiGraphicsItem.h>
+
+#include <CGAL/Qt/HyperbolicVoronoiGraphicsItem.h>
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -37,7 +35,8 @@
 #include "ui_Hyperbolic_translations_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel R;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel R;
+typedef CGAL::Exact_circular_kernel_2             R;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<R> K;
 
 typedef K::Point_2 Point_2;

@@ -64,8 +64,8 @@ public:
   typedef Gt Geom_traits;
   typedef typename Geom_traits::FT            FT;
   typedef typename Geom_traits::Point_2       Point;
-  typedef typename Geom_traits::Hyperbolic_segment_2     Segment;
-
+  typedef typename Geom_traits::Circular_arc_point_2       Circular_arc_point;
+  typedef typename Geom_traits::Hyperbolic_segment_2       Hyperbolic_segment;
   
   Hyperbolic_Delaunay_triangulation_2(const Gt& gt = Gt())
   : Delaunay_triangulation_2<Gt,Tds>(gt) {}
@@ -477,7 +477,7 @@ public:
   Finite_edges_iterator finite_edges_begin() const { return hyperbolic_edges_begin(); }
   Finite_edges_iterator finite_edges_end() const { return hyperbolic_edges_end(); }
   
-  Point
+  Circular_arc_point
   dual(Face_handle f) const
   {
     CGAL_triangulation_precondition (!this->is_non_hyperbolic(f));
@@ -486,65 +486,70 @@ public:
          ( f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point());
   }
 
-  Object 
+  Hyperbolic_segment
   dual(const Edge& e) const
   { 
     return dual(e.first, e.second);
   }
 
-  Object
+  Hyperbolic_segment
   dual(Face_handle f, int i) const
   {
     CGAL_triangulation_precondition (!this->is_non_hyperbolic(f,i));
     
     if(this->dimension() == 1) {
-      const Point& p = f->vertex(cw(i))->point();
-      const Point& q = f->vertex(ccw(i))->point();
+      Point p = f->vertex(cw(i))->point();
+      Point q = f->vertex(ccw(i))->point();
       
       // hyperbolic line
-      Segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
-      return make_object(line);
+      Hyperbolic_segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
+      return line;
     }
     
     Face_handle n = f->neighbor(i);
     int in = n->index(f);
-    
+    //TODO MT store values of bools to avoid recomputing is-hyperbolic several times
+
     // boths faces are non_hyperbolic, but the incident edge is hyperbolic
-    if(is_non_hyperbolic(f) && is_non_hyperbolic(n)){
-      const Point& p = f->vertex(cw(i))->point();
-      const Point& q = f->vertex(ccw(i))->point();
+    if( is_non_hyperbolic(f) && is_non_hyperbolic(n) ){
+      const Point& p = f->vertex(ccw(i))->point();
+      const Point& q = f->vertex(cw(i))->point();
       
       // hyperbolic line
-      Segment line = 
+      Hyperbolic_segment line = 
           this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
-      return make_object(line);
+      return line;
     }
     
-    // both faces are finite
-    if(!is_non_hyperbolic(f) && !is_non_hyperbolic(n)) {
-      
-      Segment s = 
-          this->geom_traits().construct_segment_2_object()(dual(f),dual(n));
-      
-      return make_object(s);
+    // both faces are hyperbolic
+    if( !is_non_hyperbolic(f) && !is_non_hyperbolic(n) ) {
+      const Point& p = f->vertex(ccw(i))->point();
+      const Point& q = f->vertex(cw(i))->point();
+   
+      Hyperbolic_segment s = 
+      this->geom_traits().construct_hyperbolic_bisector_2_object()
+      (p,q,f->vertex(i)->point(),n->vertex(in)->point());
+      //TODO MT cut edge at dual points !!!!
+      return s;
     }
     
     // one of the incident faces is non_hyperbolic
-    Face_handle finite_face = f;
+    Face_handle hyp_face = f;
     
     if(is_non_hyperbolic(f)) {
-      finite_face = n;
+      hyp_face = n;
       i = in;
     }
     
-    const Point& p = finite_face->vertex(cw(i))->point();
-    const Point& q = finite_face->vertex(ccw(i))->point();
+    const Point& p = hyp_face->vertex(ccw(i))->point();
+    const Point& q = hyp_face->vertex(cw(i))->point();
     
     // ToDo: Line or Segment?
     // hyperbolic line and ray
-    Segment line = this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q);
-    Segment ray = this->geom_traits().construct_ray_2_object()(dual(finite_face), line);
-    return make_object(ray);
+    Hyperbolic_segment ray = this->geom_traits().construct_hyperbolic_bisector_2_object()(p,q,hyp_face->vertex(i)->point());
+    // TODO MT cut edge at dual point !!!
+    //    Segment ray = this->geom_traits().construct_ray_2_object()(dual(finite_face), line);
+    return ray;
   }
 };
   

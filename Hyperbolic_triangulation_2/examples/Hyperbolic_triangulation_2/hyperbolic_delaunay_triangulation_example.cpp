@@ -3,8 +3,7 @@
 // CGAL headers
 #include <CGAL/IO/io.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_circular_kernel_2.h>
 
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
@@ -13,7 +12,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_circular_kernel_2             K;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
 
 typedef Gt::Point_2 Point_2;
@@ -25,31 +24,31 @@ typedef CGAL::Hyperbolic_Delaunay_triangulation_2<Gt> Dt;
 int main()
 {
   CGAL::Timer timer;
-  // typedef CGAL::Creator_uniform_2<FT, Point_2> Creator;
+  typedef CGAL::Creator_uniform_2<FT, Point_2> Creator;
   
-  // CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc(FT(1));
+  CGAL::Random_points_in_disc_2<Point_2, Creator> in_disc(FT(1));
   
-  // int n = 10;
-  // std::cout << "Number of points: " << n << std::endl;
+  int n = 100;
+  std::cout << "Number of points: " << n << std::endl;
 
-  // std::vector<Point_2> pts(n);
-  // std::vector<Point_2>::iterator ip;
-  
-  // // Generating n random points
-  // for (int i=0 ; i < n ; i++) {
-  //   pts.at(i) = *in_disc;
-  //   in_disc++;
-  // }
-
-  std::vector<Point_2> pts;
+  std::vector<Point_2> pts(n);
   std::vector<Point_2>::iterator ip;
-  Point_2 p;
-
-  std::ifstream ifs("input-file");
-  while(ifs >> p) {
-    pts.push_back(p);
+  
+  // Generating n random points
+  for (int i=0 ; i < n ; i++) {
+    pts.at(i) = *in_disc;
+    in_disc++;
   }
-  std::cout << "number of points " << std::distance(pts.begin(),pts.end()) << std::endl << std::endl;
+
+  // std::vector<Point_2> pts;
+  // std::vector<Point_2>::iterator ip;
+  // Point_2 p;
+
+  // std::ifstream ifs("input-file");
+  // while(ifs >> p) {
+  //   pts.push_back(p);
+  // }
+  // std::cout << "number of points " << std::distance(pts.begin(),pts.end()) << std::endl << std::endl;
 
   std::cout << "check for hyperbolic faces during insertion" << std::endl;
 

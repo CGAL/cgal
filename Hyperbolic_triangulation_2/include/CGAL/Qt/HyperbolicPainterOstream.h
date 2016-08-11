@@ -16,79 +16,65 @@
 // $Id: 
 // 
 //
-// Author(s)     : Mikhail Bogdanov
+// Author(s)     :  Monique Teillaud <Monique.Teillaud@inria.fr>
+//                  Mikhail Bogdanov
 
 #ifndef CGAL_HYPERBOLIC_PAINTER_OSTREAM_H
 #define CGAL_HYPERBOLIC_PAINTER_OSTREAM_H
 
 #include <CGAL/Qt/PainterOstream.h>
 
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
-
 namespace CGAL{
 
 namespace Qt {
   
   template <typename K>
-  class PainterOstream<Hyperbolic_Delaunay_triangulation_traits_2<K> > : public PainterOstream<K> {
+  class PainterOstream<Hyperbolic_Delaunay_triangulation_traits_2<K> > 
+    : public PainterOstream<K> 
+  {
   public:
     typedef PainterOstream<K> Base;
-    typedef PainterOstream<Hyperbolic_Delaunay_triangulation_traits_2<K> > Self;
     
     typedef Hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
+    typedef PainterOstream<Gt> Self;
+        
+    typedef typename Gt::Hyperbolic_segment_2      Hyperbolic_segment_2;
+
+    typedef typename Gt::Point_2    Point_2;
+    typedef Line_arc_2<K>           Line_arc_2;
+    typedef Circular_arc_2<K>       Circular_arc_2;
+    typedef Circular_arc_point_2<K> Circular_arc_point_2;
     
-  private:
-    typedef typename Gt::Segment_2      Segment_2;
-    typedef typename Gt::Line_segment_2 Line_segment_2;
-    typedef typename Gt::Arc_2          Arc_2;
-    //typedef typename Gt::Line_2         Line_2;
-    
-    typedef typename K::Point_2    Point_2;
-    typedef typename K::Circle_2   Circle_2;
-    
-  public:
     PainterOstream(QPainter* p, QRectF rect = QRectF())
-    : Base(p, rect), qp(p), convert(rect) {}
+      : Base(p, rect), qp(p), convert(rect) 
+    {}
     
     using Base::operator <<;
     
-    PainterOstream& operator << (const Segment_2& s)
-    {
-      if(const Line_segment_2* line_segment = boost::get<Line_segment_2>(&s)){
-        operator << (*line_segment);
-        return *this;
+    PainterOstream& operator << (Hyperbolic_segment_2 s)
+      {
+	if (const Line_arc_2* seg = boost::get<Line_arc_2>(&s)) {
+	  operator << (*seg);
+	  return *this;
+	}
+      
+	Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+
+	if (arc->squared_radius() > 10 )
+	  // due to rounding, the arc drawn does not look like it 
+	  // passes through the endpoints
+	  // so we replace the arc by a line segment
+	  {
+	    Point_2 source(to_double(arc->source().x()),to_double(arc->source().y()));
+	    Point_2 target(to_double(arc->target().x()),to_double(arc->target().y()));	    
+	    const Line_arc_2 seg(source,target);
+	    operator << (seg);
+	    return *this;
+	  }
+      
+	operator << (*arc);
+	return *this;
       }
-      if(const Arc_2* arc = boost::get<Arc_2>(&s)){
-        
-        const Circle_2& circle = get<0>(*arc);
-        const Point_2& center = circle.center();
-        const Point_2& source = get<1>(*arc);
-        const Point_2& target = get<2>(*arc);
-        
-        if (circle.squared_radius() > 10) {
-          const Line_segment_2 seg(source,target);
-          operator << (seg);
-          return *this;
-        }
-        
-        double asource = std::atan2( -to_double(source.y() - center.y()),
-                                    to_double(source.x() - center.x())); 
-        double atarget = std::atan2( -to_double(target.y() - center.y()),
-                                    to_double(target.x() - center.x()));
-        
-        std::swap(asource, atarget);
-        double aspan = atarget - asource;
-        
-        if(aspan < 0.)
-          aspan += 2 * CGAL_PI;
-        
-        const double coeff = 180*16/CGAL_PI;
-        this->qp->drawArc(this->convert(circle.bbox()), 
-                          (int)(asource * coeff), 
-                          (int)(aspan * coeff));
-      }
-      return *this;
-    }
     
   private:
     // ToDo: These objects must be deleted
