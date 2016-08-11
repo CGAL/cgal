@@ -26,11 +26,14 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <boost/foreach.hpp>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-
+#include <CGAL/point_generators_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/spatial_sort.h>
 
@@ -159,11 +162,20 @@ struct Distance_computation{
 #endif
 
 /// \todo update me to work with a triangulated surface mesh
-template <class Concurrency_tag, class Kernel, class TriangleRange>
+template <class Concurrency_tag, class Kernel>
 double approximated_Hausdorff_distance(
-  std::vector<typename Kernel::Point_3>& sample_points,
-  const TriangleRange& triangles)
+  Surface_mesh<typename Kernel::Point_3> m,
+  std::size_t nb_sample_points)
 {
+ typedef Surface_mesh<typename Kernel::Point_3> Mesh;
+ typedef Point_3<Kernel> Point_3;
+ bool is_triangle = is_triangle_mesh(m);
+  CGAL_assertion_msg (is_triangle,
+        "Mesh is not triangulated. Distance computing impossible.");
+  std::vector<Point_3> sample_points;
+  Random_points_in_triangle_mesh_3<Mesh>
+      g(m);
+  CGAL::cpp11::copy_n(g, nb_sample_points, std::back_inserter(sample_points));
   #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "Nb sample points " << sample_points.size() << "\n";
   #endif
@@ -171,12 +183,12 @@ double approximated_Hausdorff_distance(
 
   /// \todo shall we use Simple_cartesian for the distance computation?
   ///       check if this can be problematic to have non-exact predicates.
-  typedef typename TriangleRange::const_iterator Triangle_iterator;
-  typedef AABB_triangle_primitive<Kernel, Triangle_iterator> Primitive;
+  typedef typename Mesh::face_iterator Triangle_iterator;
+  typedef AABB_face_graph_triangle_primitive<Mesh> Primitive;
   typedef AABB_traits<Kernel, Primitive> Traits;
   typedef AABB_tree< Traits > Tree;
 
-  Tree tree(triangles.begin(), triangles.end());
+  Tree tree( faces(m).first, faces(m).second, m);
   tree.accelerate_distance_queries();
   tree.build();
 
@@ -206,7 +218,8 @@ double approximated_Hausdorff_distance(
   }
 }
 
-/// \todo remove me (except if you find an easy way avoid the ambiguity with TriangleMesh overload
+
+/*/// \todo remove me (except if you find an easy way avoid the ambiguity with TriangleMesh overload
 template <class Concurrency_tag, class Kernel, class TriangleRange1, class TriangleRange2>
 double approximated_Hausdorff_distance(
   const TriangleRange1& triangles_1,
@@ -235,7 +248,7 @@ double approximated_symmetric_Hausdorff_distance(
     approximated_Hausdorff_distance<Concurrency_tag, Kernel>(triangles_2, triangles_1, targeted_precision)
   );
 }
-
+*/
 
 /// \todo add a function `sample_triangle_mesh()` (or better name) that provide different sampling methods:
 /// - random uniform ( points/area unit)
