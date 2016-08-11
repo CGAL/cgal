@@ -18,6 +18,8 @@ typedef Kernel::Point_2                                   Point_2;
 typedef std::pair<Direction_2, Direction_2>               Direction_range;
 typedef std::pair<size_t, Direction_range>                Top_edge;
 
+namespace CC = CGAL::Casting_2;
+
 struct Top_edge_comparer {
   bool operator()(const Top_edge& a,  const Top_edge& b)
   {
@@ -43,7 +45,7 @@ bool test_one_file(std::ifstream& inp)
   // std::cout << pgn << std::endl;
 
   std::vector<Top_edge> top_edges;
-  CGAL::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
+  CC::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
 
   size_t exp_num_top_edges;
   inp >> exp_num_top_edges;

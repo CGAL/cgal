@@ -1,9 +1,6 @@
-/*! \file find_single_mold_translational_casting_2.cpp
- * .
- */
-
 #include <list>
 #include <fstream>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/single_mold_translational_casting_2.h>
@@ -15,6 +12,8 @@ typedef Kernel::Point_2                                   Point_2;
 
 typedef std::pair<Direction_2, Direction_2>               Direction_range;
 typedef std::pair<size_t, Direction_range>                Top_edge;
+
+namespace CC = CGAL::Casting_2;
 
 // The main program:
 int main(int  argc, char* argv[])
@@ -34,7 +33,7 @@ int main(int  argc, char* argv[])
   auto poly_orientation = pgn.orientation();
   ++edge_index;
   std::list<Top_edge> top_edges;
-  CGAL::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
+  CC::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
 
   if (top_edges.empty())
     std::cout << "The polygon is not castable!" << std::endl;
