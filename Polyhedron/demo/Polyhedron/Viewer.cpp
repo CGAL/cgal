@@ -405,7 +405,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     d->scene->printPrimitiveIds(this);
     update();
     return;
-      }
+  }
 
   else if(e->key() == Qt::Key_C && e->modifiers() & Qt::ControlModifier){
     d->sendSnapshotToClibboard(this);
@@ -413,7 +413,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
   }
 
   else if(e->key() == Qt::Key_S && e->modifiers() & Qt::ControlModifier){
-    saveSnapshot(true);
+    this->saveSnapshot(true,true);
     return;
   }
 
