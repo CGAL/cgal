@@ -1,4 +1,5 @@
 namespace CGAL {
+namespace Casting_2 {
 
 /*! \ingroup PkgCasting2Funcs
  *
@@ -15,8 +16,9 @@ namespace CGAL {
  *
  * \param[in] pgn the input polygon.
  * \param[out] oi the output iterator. Its value type is a pair, where
- *             (i) the first element in the pair identifies a valid top edge and
- *                 represented as a type convertible to `size_t`, and
+ *             (i) the first element in the pair identifies a valid top edge
+ *                 represented by its index the type of which is convertible to
+                   `size_t`, and
  *             (ii) the second element is a closed range of pull-out directions
  *                  represented as a pair of the extreme directions in the
  *                  range of type `Kernel::Direction_2`.
@@ -29,4 +31,5 @@ OutputIterator
 single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
                                     OutputIterator oi);
 
+} /* end namesapce Casting_2 */
 } /* end namesapce CGAL */
