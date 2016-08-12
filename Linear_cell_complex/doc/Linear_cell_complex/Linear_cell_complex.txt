@@ -18,64 +18,35 @@ edge, the geometry of each 2-cell is obtained from all the segments
 associated to the edges describing the boundary of the 2-cell and so
 on.
 
-The combinatorial part of a linear cell complex is described by a
-<I>d</I>D combinatorial map (it is strongly recommended to first
-read the \ref ChapterCombinatorialMap "Combinatorial maps user manual"
-for definitions). To add
-the linear geometrical embedding, a point (a model of
-\link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink) is
-associated to each vertex of the combinatorial map.
+The combinatorial part of a linear cell complex is described \tred{either by a <I>d</I>D \ref CombinatorialMap "combinatorial map" or by a <I>d</I>D \ref GeneralizedMap "generalized map" (it is strongly recommended to first read the \ref ChapterCombinatorialMap "Combinatorial maps user manual" or \ref ChapterGeneralizedMap "Generalized maps user manual" for definitions)}. To add the linear geometrical embedding, a point (a model of \link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink) is associated to each vertex of the \tred{combinatorial data-structure}.
 
 \cgalFigureBegin{fig_lcc_example_subdivisions,lcc_example_subdivisions.svg}
-Examples of objects with linear geometry. <B>Left</B>: A 2D object
-composed of three 2-cells, nine 1-cells and seven points associated to
-the seven 0-cells . <B>Right</B>: A 3D object composed of three
-3-cells, twelve 2-cells, sixteen 1-cells and eight points associated
-to the eight 0-cells.
+Examples of objects with linear geometry. <B>Left</B>: A 2D object composed of three 2-cells, nine 1-cells and seven points associated to the seven 0-cells . <B>Right</B>: A 3D object composed of three 3-cells, twelve 2-cells, sixteen 1-cells and eight points associated to the eight 0-cells.
 \cgalFigureEnd
 
-If we reconsider the example introduced in the combinatorial map
-package, recalled in \cgalFigureRef{fig_lcc_example_subdivisions} (Right), the
-combinatorial part of the 3D object is described by a 3D combinatorial
-map. As illustrated in \cgalFigureRef{fig_lcc_examples_zoom}, the
-geometrical part of the object is described by associating a point to
-each vertex of the map.
+If we reconsider the example introduced in the combinatorial map package, recalled in \cgalFigureRef{fig_lcc_example_subdivisions} (Right), the combinatorial part of the 3D object is described by a 3D combinatorial map. As illustrated in \cgalFigureRef{fig_lcc_examples_zoom}, the geometrical part of the object is described by associating a point to each vertex of the map.
 
 \cgalFigureBegin{fig_lcc_examples_zoom,lcc_examples_zoom.svg}
 Example of 3D linear cell complex describing the object given in \cgalFigureRef{fig_lcc_example_subdivisions} (Right). <B>Left</B>: The 3D linear cell complex which contains 54 darts (18 for each 3-cell) where each vertex is associated with a point, here a `Point_3`. Blue segments represent \f$ \beta_3\f$ relations. <B>Middle</B>: Zoom around the central edge which details the six darts belonging to the edge and the associations between darts and points. <B>Right</B>: Zoom around the facet between light gray and white 3-cells, which details the eight darts belonging to the facet and the associations between darts and points (given by red segments).
 \cgalFigureEnd
 
-Note that the dimension of the combinatorial map <I>d</I> is not
-necessarily equal to the dimension of the ambient space
-<I>d2</I>. Indeed, we can use for example a 2D combinatorial map in a
-2D ambient space to describe a planar graph
-(<I>d</I>=<I>d2</I>=<I>2</I>), or a 2D combinatorial map in a 3D
-ambient space to describe a surface in 3D space (<I>d</I>=2,
-<I>d2</I>=3) (case of the `Polyhedron_3` package), or a 3D
-combinatorial map in a 3D ambient space (<I>d</I>=<I>d2</I>=3) and so
-on.
+\cgalModifBegin
+Things are similar for generalized map, as illustrated in \cgalFigureRef{fig_lcc_example_gmap}. In this example, a 2D generalized map is used as underlying data-structure to describe the object given in \cgalFigureRef{fig_lcc_example_subdivisions} (Left). The 2D linear cell complex shown in \cgalFigureRef{fig_lcc_example_gmap} (Left) is obtained from this 2D generalized map by associating a point to each vertex of the map. We can compare in \cgalFigureRef{fig_lcc_example_subdivisions} (Right) this 2D linear cell complex with the 2D linear cell complex describing the same 2D object but using 2D combinatorial maps (instead of generalized map). The only difference comes from the original definitions of combinatorial and generalized maps. Combinatorial maps have twice less darts than generalized maps, and thus the corresponding 2D linear cell complex has twice less association between darts and points.
+
+\cgalFigureBegin{fig_lcc_example_gmap,lcc_example_gmap.svg}
+Example of 2D linear cell complexes describing the object given in \cgalFigureRef{fig_lcc_example_subdivisions} (Left). (Left) Based on a 2D generalized map. (Right) Based on a 2D combinatorial map. In both cases, each vertex of the combinatorial data-structure is associated with a point, here a `Point_2`. Associations between darts and points is drawn by red segments.
+\cgalFigureEnd
+
+\cgalModifEnd
+
+Note that the dimension of the combinatorial \tred{or the generalized} map <I>d</I> is not necessarily equal to the dimension of the ambient space <I>d2</I>. Indeed, we can use for example a 2D combinatorial map in a 2D ambient space to describe a planar graph (<I>d</I>=<I>d2</I>=<I>2</I>), or a 2D combinatorial map in a 3D ambient space to describe a surface in 3D space (<I>d</I>=2, <I>d2</I>=3) (case of the `Polyhedron_3` package), or a 3D \tred{generalized} map in a 3D ambient space (<I>d</I>=<I>d2</I>=3) and so on.
 
 \section Linear_cell_complexSoftware Software Design
 
-The diagram in \cgalFigureRef{fig_lcc_diagramme_class} shows the main
-classes of the package. `Linear_cell_complex` is the main
-class (see Section \ref sseclinearcellcomplex), which inherits from
-the `Combinatorial_map` class. Attributes can be associated
-to some cells of the linear cell complex thanks to an items class (see
-Section \ref sseclccitem "Linear Cell Complex Items"), which defines the dart type and the
-attributes types. These types may be different for different
-dimensions of cells, and they may also be void. In the class
-`Linear_cell_complex`, it is required that
-specific attributes are associated to all vertices of the
-combinatorial map. These attributes must contain a point (a model of
- (a model of
-\link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink),
-and can be represented by instances of class
-`Cell_attribute_with_point` (see
-Section \ref ssecattributewp "Cell Attributes").
+The diagram in \cgalFigureRef{fig_lcc_diagramme_class} shows the main classes of the package. `Linear_cell_complex` is the main class (see Section \ref sseclinearcellcomplex), which inherits from the `Combinatorial_map` \tred{or the `Generalized_map`} class. Attributes can be associated to some cells of the linear cell complex thanks to an items class (see Section \ref sseclccitem "Linear Cell Complex Items"), which defines the dart type and the attributes types. These types may be different for different dimensions of cells, and they may also be void. In the class `Linear_cell_complex`, it is required that specific attributes are associated to all vertices of the \tred{combinatorial or generalized} map. These attributes must contain a point (a model of (a model of \link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink), and can be represented by instances of class `Cell_attribute_with_point` (see Section \ref ssecattributewp "Cell Attributes").
 
 \cgalFigureBegin{fig_lcc_diagramme_class,lcc_diagramme_class.svg}
-UML diagram of the main classes of the package. Gray elements come from the \ref ChapterCombinatorialMap "Combinatorial maps package".
+UML diagram of the main classes of the package. Gray elements come from the \ref ChapterCombinatorialMap "Combinatorial maps" \tred{and \ref ChapterGeneralizedlMap "Generalized maps"} packages.
 \cgalFigureEnd
 
 
