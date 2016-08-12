@@ -74,7 +74,7 @@ public:
   }
 
 private:
-  type get_impl(const PropertyTag& p, const PolygonMesh& pmesh, CGAL::Tag_false)
+  type get_impl(const PropertyTag&, const PolygonMesh&, CGAL::Tag_false)
   {
     return type(); //boost::cgal_no_property::type
   }
