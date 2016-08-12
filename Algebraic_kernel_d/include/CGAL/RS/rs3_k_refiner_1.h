@@ -22,6 +22,7 @@
 #define CGAL_RS_RS3_K_REFINER_1_H
 
 #include <CGAL/Polynomial_traits_d.h>
+#include "polynomial_converter_1.h"
 #include "rs2_calls.h"
 #include <rs3_fncts.h>
 #include "Gmpfr_make_unique.h"
