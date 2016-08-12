@@ -10,9 +10,9 @@ namespace CGAL {
 
 \section Generalized_mapIntroduction Introduction
 
-A <I>d</I>-dimensional generalized map is a data structure representing an \tred{orientable or non orientable} subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships. 
+A <I>d</I>-dimensional generalized map is a data structure representing an \tred{orientable or non-orientable} subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships. 
 
-\tred{This package is an extension of the \ref ChapterCombinatorialMap "combinatorial maps" data structure which allows to describe only orientable objects such as a Möbius strip (\cgalFigureRef{fig_gmap_non_orientable_objects} Left) or a Klein bottle (\cgalFigureRef{fig_gmap_non_orientable_objects} Right).}
+\tred{This package is an extension of the \ref ChapterCombinatorialMap "combinatorial maps" data structure (which allows to describe only orientable objects) in order to be able to describe also non-orientable objects such as a Möbius strip (\cgalFigureRef{fig_gmap_non_orientable_objects} Left) or a Klein bottle (\cgalFigureRef{fig_gmap_non_orientable_objects} Right).}
 
 \cgalFigureBegin{fig_gmap_non_orientable_objects,gmap_non_orientable_objects.png}
 Example of two non-orientable objects. Left: A Möbius strip. Right: A Klein bottle.
@@ -165,7 +165,7 @@ We say that a generalized map is <I>valid</I> if it satisfies all the conditions
 
 Generalized maps and \ref ChapterCombinatorialMap "combinatorial maps" are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects.
 
-However they have two main differences. Firstly, generalized maps allow to represent non-orientable and orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all applications are involutions, while combinatorial maps are not homogeneous since one application is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
+However they have two main differences. Firstly, generalized maps allow to represent orientable and non-orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all applications are involutions, while combinatorial maps are not homogeneous since one application is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
 
 Considering these different advantages and drawbacks, you can choose to use generalized maps or combinatorial maps depending on the needs of your application.
 
@@ -353,7 +353,7 @@ If one wants to modify a generalized map <I>manually</I>, it is  possible to swi
 Sewing operations can be used in order to build a non-orientable generalized map. Let us consider the 2D generalized map representing a square given in \cgalFigureRef{fig_gmap_sew_non_orientable} (Left). Two opposite edges of the square can be identified by using the \link GeneralizedMap::sew `sew<2>`\endlink operation. But there are two possibilities to make this identification. The first one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Middle), creates an annulus which is thus orientable. The second one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Right), creates a Möbius strip which is thus non-orientable. The choice of the two darts for the sew operation is thus crucial.
 
 \cgalFigureBegin{fig_gmap_sew_non_orientable,gmap_sew_non_orientable.svg}
-Illustration of the use of the 2-sew operation to construct a non-orientable generalized map. Left: A 2D generalized map <I>M</I> representing a square. Middle: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,3)`\endlink. This map is orientable and corresponds to an annulus. Right: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,4)`\endlink. This map is non-orientable and corresponds to a Möbius strip.
+Illustration of the use of the 2-sew operation to construct a non-orientable generalized map. Left: A 2D generalized map <I>M</I> representing a square (one side colored in orange, the other side in green). Middle: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,3)`\endlink. This map is orientable and corresponds to an annulus. Right: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,4)`\endlink. This map is non-orientable and corresponds to a Möbius strip.
 \cgalFigureEnd
 
 \cgalModifEnd
@@ -513,7 +513,7 @@ Let <I>d</I>\f$ \geq\f$ 0. A <I>d</I>-dimensional generalized map (or <I>d</I>-G
 <LI>\anchor gmapcondcomposition \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>-2, \f$ \forall\f$<I>j</I>: 2\f$ \leq\f$<I>j</I>\f$ \leq\f$<I>d</I>, <I>i</I>+2\f$ \leq\f$<I>j</I>, \f$ \alpha_i\f$\f$ \circ\f$\f$ \alpha_j\f$ is an involution.
 </OL>
 
-A <I>d</I>-dimensional generalized map represents a subdivision of an orientable or non orientable <I>d</I>-dimensional quasi-manifold. A dart is an abstract element which is only required to define involutions. The last line of the definition fixes constraints which guarantee the topological validity of the represented object, i.e., the fact that it is a quasi-manifold. This definition allows us to verify the validity of a given generalized map by checking if each item of the definition is satisfied.
+A <I>d</I>-dimensional generalized map represents a subdivision of an orientable or non-orientable <I>d</I>-dimensional quasi-manifold. A dart is an abstract element which is only required to define involutions. The last line of the definition fixes constraints which guarantee the topological validity of the represented object, i.e., the fact that it is a quasi-manifold. This definition allows us to verify the validity of a given generalized map by checking if each item of the definition is satisfied.
 
 \cgalModifEnd
 
