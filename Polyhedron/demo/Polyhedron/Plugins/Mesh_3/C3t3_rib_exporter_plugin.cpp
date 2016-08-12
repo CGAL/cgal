@@ -187,6 +187,7 @@ init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interfa
   actionCreateRib = new QAction("Export C3t3 to RIB", mw);
   if( NULL != actionCreateRib )
   {
+    actionCreateRib->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionCreateRib, SIGNAL(triggered()), this, SLOT(create_rib()));
   }
   
