@@ -120,6 +120,7 @@ struct RS2_calls{
                         // Construct Gmpfr's with pointers to endpoints.
                         Gmpfr left(&(root_pointer->left),root_prec);
                         Gmpfr right(&(root_pointer->right),root_prec);
+                        CGAL_assertion(left<=right);
                         // Copy them, to have the data out of RS memory.
                         *x++=Gmpfi(left,right,root_prec+1);
                         ident_node=rs_export_list_vect_ibfr_nextnode
