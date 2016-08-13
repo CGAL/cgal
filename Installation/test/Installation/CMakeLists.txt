@@ -40,6 +40,11 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "test_use_h.cpp" )
 
+  create_single_source_cgal_program( will_fail.cpp will_fail_aux.cpp )
+  if(BUILD_TESTING)
+    set_property(TEST will_fail PROPERTY WILL_FAIL TRUE)
+  endif()
+
   find_package( TBB QUIET )
   if( TBB_FOUND )
     include(${TBB_USE_FILE})
