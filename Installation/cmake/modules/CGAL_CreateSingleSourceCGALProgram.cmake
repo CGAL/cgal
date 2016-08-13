@@ -20,16 +20,22 @@ function(create_single_source_cgal_program firstfile )
 
     if(BUILD_TESTING)
       if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-        set(ARGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-      elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
-        file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd" ARGS LIMIT_COUNT 1)
-        # TODO: handle multi-lines .cmd files
-        # see https://github.com/CGAL/cgal/pull/1295/files/c65d3abe17bb3e677b8077996cdaf8672f9c4c6f#r71705451
+	add_test(NAME ${exe_name}
+          COMMAND ${CMAKE_COMMAND}
+	    -DCMD:STRING=$<TARGET_FILE:${exe_name}>
+	    -DCIN:STRING=${exe_name}.cin
+	    -P ${CGAL_MODULES_DIR}/run_test_with_cin.cmake
+          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+	message(STATUS "add test: ${exe_name} < ${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
+      else()
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
+          file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd" ARGS)
+	endif()
+	message(STATUS "add test: ${exe_name} ${ARGS}")
+	add_test(NAME ${exe_name}
+          COMMAND ${exe_name} ${ARGS}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
       endif()
-      message(STATUS "add test for ${exe_name}")
-      add_test(NAME ${exe_name}
-        COMMAND ${exe_name} ${ARGS}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
       set_property(TEST "${exe_name}"
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
     endif(BUILD_TESTING)
