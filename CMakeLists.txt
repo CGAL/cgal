@@ -16,6 +16,11 @@ include(${CMAKE_SOURCE_DIR}/Installation/cmake/modules/CGAL_SCM.cmake)
 option( CGAL_REPORT_DUPLICATE_FILES "Switch on to start (naive) detection of duplicate source- and headerfiles in packages" OFF)
 
 message( "== CMake setup (DONE) ==\n" )
+
+# Enable testing with BUILD_TESTING
+option(BUILD_TESTING "Build the testing tree." OFF)
+include(CTest)
+
 # and finally start actual build
 add_subdirectory( Installation )
 add_subdirectory( Documentation/doc)

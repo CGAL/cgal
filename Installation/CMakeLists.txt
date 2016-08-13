@@ -130,6 +130,10 @@ else ( CGAL_BRANCH_BUILD )
   set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Core package")
   set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the GraphicsView package")
 
+  # Enable testing with BUILD_TESTING
+  option(BUILD_TESTING "Build the testing tree." OFF)
+  include(CTest)
+
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
@@ -775,10 +779,6 @@ message("== Write compiler_config.h (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
-
-# Enable testing with BUILD_TESTING
-option(BUILD_TESTING "Build the testing tree." OFF)
-include(CTest)
 
 message("== Generating build files ==")
 
