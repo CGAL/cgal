@@ -73,83 +73,10 @@ namespace CGAL {
             return true;
         }
 
-        /**
-        * @brief Computes the closest_point from query between bound and
-        * any point of segment.
-        * @param query the query point
-        * @param segment the segment
-        * @param bound the farthest point
-        * @param k the kernel
-        * @return nearest point: bound or a point inside segment
-        */
-        template <class K>
-        typename K::Point_3
-            nearest_point_3(const typename K::Point_3& query,
-            const typename K::Segment_3& segment,
-            const typename K::Point_3& bound,
-            const K& k)
-        {
-            typedef typename K::Point_3 Point_3;
-            typedef typename K::FT FT;
-
-            typename K::Compute_squared_distance_3 sq_distance =
-                k.compute_squared_distance_3_object();
-            typename K::Compare_squared_distance_3 compare_sq_distance =
-                k.compare_squared_distance_3_object();
-            typename K::Construct_projected_point_3 projection =
-                k.construct_projected_point_3_object();
-            typename K::Is_degenerate_3 is_degenerate = 
-                k.is_degenerate_3_object();
-            typename K::Construct_vertex_3 vertex = 
-                k.construct_vertex_3_object();
-
-            // Square distance from query to bound
-            const FT bound_sq_dist = sq_distance(query, bound);
-
-            if(is_degenerate(segment)) {
-                const Point_3& p_on_seg = vertex(segment, 0);
-                if(compare_sq_distance(query, 
-                                       p_on_seg,
-                                       bound_sq_dist) == CGAL::LARGER) {
-                    return bound; 
-                } else {
-                    return p_on_seg;
-                }
-            }
-            // Project query on segment supporting line
-            const Point_3 proj = projection(segment.supporting_line(), query);
-
-            // If point is projected outside, return bound
-            if ( compare_sq_distance(query, proj, bound_sq_dist) == CGAL::LARGER )
-                return bound;
-
-            Point_3 closest_point_on_segment;
-            bool inside = is_inside_segment_3(proj,segment,closest_point_on_segment,k);
-
-            // If proj is inside segment, returns it
-            if ( inside )
-                return proj;
-
-            // Else returns the constructed point (nearest segment' point from proj),
-            // if it is closest to query than bound
-            if ( compare_sq_distance(query, closest_point_on_segment, bound_sq_dist) == CGAL::LARGER )
-                return bound;
-
-            return closest_point_on_segment;
-        }
+       
 
     }  // end namespace internal
 
-
-    template <class K>
-    inline
-        Point_3<K>
-        nearest_point_3(const Point_3<K>& origin,
-        const Segment_3<K>& segment,
-        const Point_3<K>& bound)
-    {
-        return internal::nearest_point_3(origin, segment, bound, K());
-    }
 
 }  // end namespace CGAL
 

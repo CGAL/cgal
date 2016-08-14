@@ -1032,6 +1032,11 @@ public:
   typedef unspecified_type Construct_circumcenter_3; 
 
   /*!
+    a model of `Kernel::ConstructClostestPoint_3` 
+  */ 
+  typedef unspecified_type Construct_clostest_point_3; 
+
+  /*!
     a model of `Kernel::ConstructBisector_3` 
   */ 
   typedef unspecified_type Construct_bisector_3; 
