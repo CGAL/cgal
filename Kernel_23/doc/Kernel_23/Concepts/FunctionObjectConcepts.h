@@ -3894,10 +3894,10 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with four arguments) 
 
-  \sa `clostest_point_grp`
+  \sa `closest_point_grp`
 
 */
-class ConstructClostestPoint_3 {
+class ConstructClosestPoint_3 {
 public:
 
   /// \name Operations
@@ -3932,7 +3932,7 @@ public:
 
   /// @}
 
-}; /* end Kernel::ConstructClostestPoint_3 */
+}; /* end Kernel::ConstructClosestPoint_3 */
 
 
 /*!
