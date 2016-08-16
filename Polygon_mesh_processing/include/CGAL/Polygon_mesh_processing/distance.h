@@ -249,53 +249,88 @@ double approximated_symmetric_Hausdorff_distance(
   );
 }
 
-/// \todo add a function `sample_triangle_mesh()` (or better name) that provide different sampling methods:
-/// - random uniform ( points/area unit)
-/// - grid (warning mininum 1 pt / triangle) (parameter = distance between points?)
-/// - monte carlo? (random points in each triangle proportional to the face area with 1 pt mini per triangle)
-/// The goal is to test different strategies and put the better one in `approximated_Hausdorff_distance()`
+/// \todo test different strategies and put the better one in `approximated_Hausdorff_distance()`
 /// for particular cases one can still use a specific sampling method together with `max_distance_to_triangle_mesh()`
 
 enum Sampling_method{
- RANDOM_UNIFORM =0,
- GRID,
- MONTE_CARLO };
-
+ RANDOM_UNIFORM =0, /**< points are generated in a random and uniform way, depending on the area of each triangle.*/
+ GRID,/**< points are generated in a grid, with a minimum of one point per triangle.*/
+ MONTE_CARLO /**< points are generated randomly in each triangle, proportionally to the face area with a minimum
+               * of 1 pt per triangle.*/
+};
+/** fills `sampled_points` with points taken on the mesh in a manner depending on `method`.
+ * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
+ *         for `CGAL::vertex_point_t`
+ * @param m the triangle mesh that will be sampled
+ * @param precision depends on the value of `method` :
+ * case RANDOM_UNIFORM : the number of points per squared area unit
+ * case GRID : the distance between the points
+ * case MONTE_CARLO : the number of points per squared area unit
+ * @tparam method a Sampling_method.
+ * @tparam Sampling_method defines the method of sampling.
+ *                         Possible values are `RANDOM_UNIFORM`,
+ *                         and `GRID` and `MONTE_CARLO.
+ */
 template<class Kernel, class TriangleMesh>
-void sample_triangle_mesh(TriangleMesh& m,
+void sample_triangle_mesh(const TriangleMesh& m,
                           double precision,
                           std::vector<typename Kernel::Point_3>& sampled_points,
                           Sampling_method method = RANDOM_UNIFORM)
 {
  switch(method)
  {
- std::size_t nb_points =  std::ceil(precision * PMP::area(m,
-                                                          PMP::parameters::geom_traits(Kernel())));
  case RANDOM_UNIFORM:
-  Random_points_in_triangle_mesh_3<TriangleMesh>
+ {
+  std::size_t nb_points =  std::ceil(precision * PMP::area(m,
+                                                           PMP::parameters::geom_traits(Kernel())));
+   Random_points_in_triangle_mesh_3<TriangleMesh>
       g(m);
-  CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
-  return;
+   CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+   return;
+ }
  case GRID:
  {
-  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
-  CGAL::Property_map_to_unary_function<Pmap> pmap(&m);
-  BOOST_FOREACH(typename TriangleMesh::face_iterator f, faces(m))
-  {
-   typename Kernel::Point_3 points[3];
-   typename TriangleMesh::Halfedge_around_face_circulator hc = halfedge(f,m);
-   for(int i=0; i<3; ++i)
+   typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
+  Pmap pmap = get(vertex_point, m);
+   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
    {
-    points[i] = get(pmap, target(hc, m));
-     ++hc;
-   }
-   internal::triangle_grid_sampling(points[0], points[1], points[2],100.0/nb_points, std::back_inserter(sampled_points));
+     typename Kernel::Point_3 points[3];
+     typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
+     for(int i=0; i<3; ++i)
+     {
+       points[i] = get(pmap, target(*hc, m));
+       ++hc;
+    }
+    internal::triangle_grid_sampling<Kernel>(points[0], points[1], points[2],precision, std::back_inserter(sampled_points));
   }
   return;
  }
  case MONTE_CARLO:
-
-  break;
+  std::size_t nb_points =  std::ceil(precision * PMP::area(m,
+                                                           PMP::parameters::geom_traits(Kernel())));
+  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
+ Pmap pmap = get(vertex_point, m);
+  std::vector<typename Kernel::Triangle_3> triangles;
+  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
+  {
+  //create the triangles and store them
+    typename Kernel::Point_3 points[3];
+    typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
+    for(int i=0; i<3; ++i)
+    {
+      points[i] = get(pmap, target(*hc, m));
+      ++hc;
+    }
+    triangles.push_back(typename Kernel::Triangle_3(points[0], points[1], points[2]));
+    //sample a single point in all triangles(to have at least 1 pt/triangle)
+    Random_points_in_triangle_3<typename Kernel::Point_3> g(points[0], points[1], points[2]);
+    CGAL::cpp11::copy_n(g, 1, std::back_inserter(sampled_points));
+  }
+  //sample the triangle range uniformly
+  Random_points_in_triangles_3<typename Kernel::Point_3 >
+    g(triangles);
+ CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+  return;
  }
 }
 /// \todo add a plugin in the demo to display the distance between 2 meshes as a texture (if not complicated)
