@@ -3926,9 +3926,9 @@ public:
      * @param k the kernel
      * @return nearest point: bound or a point inside triangle
      */
-  Kernel::Point_3 operarator()(const Kernel::Point_3& query,
-                               const Kernel::Triangle_3& triangle,
-                               const Kernel::Point_3& bound);
+  Kernel::Point_3 operator()(const Kernel::Point_3& query,
+                             const Kernel::Triangle_3& triangle,
+                             const Kernel::Point_3& bound);
 
   /// @}
 

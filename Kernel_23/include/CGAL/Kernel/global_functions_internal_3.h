@@ -260,7 +260,18 @@ closest_point_3(const typename Point_3<K>& origin,
                 const typename Point_3<K>& bound,
                 const K& k)
 {
-  return k.construct_closest_point_3(origin, segment, bound);
+  return k.construct_closest_point_3_object()(origin, segment, bound);
+}
+
+template < class K >
+inline
+typename K::Point_3
+closest_point_3(const typename Point_3<K>& origin,
+                const typename Triangle_3<K>& triangle,
+                const typename Point_3<K>& bound,
+                const K& k)
+{
+  return k.construct_closest_point_3_object()(origin, triangle, bound);
 }
 
 template < class K >

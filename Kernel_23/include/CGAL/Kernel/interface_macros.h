@@ -282,8 +282,8 @@ CGAL_Kernel_cons(Construct_circumcenter_2,
 		 construct_circumcenter_2_object)
 CGAL_Kernel_cons(Construct_circumcenter_3,
 		 construct_circumcenter_3_object)
-CGAL_Kernel_cons(Construct_clostest_point_3,
-		 construct_clostest_point_3_object)
+CGAL_Kernel_cons(Construct_closest_point_3,
+		 construct_closest_point_3_object)
 CGAL_Kernel_cons(Construct_cross_product_vector_3,
 		 construct_cross_product_vector_3_object)
 CGAL_Kernel_cons(Construct_direction_2,

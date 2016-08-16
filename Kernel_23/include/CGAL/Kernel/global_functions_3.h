@@ -267,7 +267,7 @@ closest_point_3(const Point_3<K>& origin,
                 const Triangle_3<K>& triangle,
                 const Point_3<K>& bound)
 {
-  return internal::closest_point_3(origin, riangle, bound, K());
+  return internal::closest_point_3(origin, triangle, bound, K());
 }
 
 template < class K >

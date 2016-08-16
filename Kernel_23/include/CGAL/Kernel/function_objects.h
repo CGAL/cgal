@@ -1021,15 +1021,15 @@ namespace CommonKernelFunctors {
                        const typename K::Point_3& bound) const
     {
       typename K::Compute_squared_distance_3 sq_distance =
-        k.compute_squared_distance_3_object();
+        K().compute_squared_distance_3_object();
       typename K::Compare_squared_distance_3 compare_sq_distance =
-        k.compare_squared_distance_3_object();
+        K().compare_squared_distance_3_object();
       typename K::Construct_projected_point_3 projection =
-        k.construct_projected_point_3_object();
+        K().construct_projected_point_3_object();
       typename K::Is_degenerate_3 is_degenerate = 
-        k.is_degenerate_3_object();
+        K().is_degenerate_3_object();
       typename K::Construct_vertex_3 vertex = 
-        k.construct_vertex_3_object();
+        K().construct_vertex_3_object();
 
       // Square distance from query to bound
       const FT bound_sq_dist = sq_distance(query, bound);
@@ -1052,7 +1052,7 @@ namespace CommonKernelFunctors {
         return bound;
 
       Point_3 closest_point_on_segment;
-      bool inside = is_inside_segment_3(proj,segment,closest_point_on_segment,k);
+      bool inside = internal::is_inside_segment_3(proj,segment,closest_point_on_segment,K());
 
       // If proj is inside segment, returns it
       if ( inside )
@@ -1067,18 +1067,18 @@ namespace CommonKernelFunctors {
     }
 
    
-    Point_3 operarator()(const typename K::Point_3& origin,
+    Point_3 operator()(const typename K::Point_3& origin,
                          const typename K::Triangle_3& triangle,
                          const typename K::Point_3& bound) const
     {
       typename K::Compute_squared_distance_3 sq_distance =
-        k.compute_squared_distance_3_object();
+        K().compute_squared_distance_3_object();
       typename K::Compare_squared_distance_3 compare_sq_distance =
-        k.compare_squared_distance_3_object();
+        K().compare_squared_distance_3_object();
       typename K::Construct_supporting_plane_3 supporting_plane =
-        k.construct_supporting_plane_3_object();
+        K().construct_supporting_plane_3_object();
       typename K::Construct_projected_point_3 projection =
-        k.construct_projected_point_3_object();
+        K().construct_projected_point_3_object();
 
       // Distance from origin to bound
       const FT bound_sq_dist = sq_distance(origin, bound);
@@ -1093,7 +1093,7 @@ namespace CommonKernelFunctors {
         }
 
       Point_3 moved_point;
-      bool inside = is_inside_triangle_3(proj,triangle,moved_point,k);
+      bool inside = internal::is_inside_triangle_3(proj,triangle,moved_point,K());
 
       // If proj is inside triangle, return it
       if ( inside )

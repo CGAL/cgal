@@ -394,10 +394,9 @@ public:
     Closest_point(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
       : m_traits(traits) {}
 
-
     Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
     {
-        return CGAL::nearest_point_3(p, internal::Primitive_helper<AT>::get_datum(pr,m_traits), bound);
+      return CGAL::closest_point_3(p, internal::Primitive_helper<AT>::get_datum(pr,m_traits), bound);
     }
   };
   Closest_point closest_point_object() const { return Closest_point(*this); }

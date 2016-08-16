@@ -95,7 +95,7 @@ nearest_point_3(const typename K::Point_3& origin,
                 const typename K::Point_3& p3,
                 const K& k)
 {
-
+  typedef typename K::FT FT;
   typename K::Compute_squared_distance_3 sq_distance =
     k.compute_squared_distance_3_object();
 

@@ -146,7 +146,7 @@
 - \link bisector_grp `CGAL::bisector()` \endlink
 - \link centroid_grp `CGAL::centroid()` \endlink
 - \link circumcenter_grp `CGAL::circumcenter()` \endlink
-- \link clostest_point_grp `CGAL::closest_point()` \endlink
+- \link closest_point_grp `CGAL::closest_point()` \endlink
 - \link collinear_grp `CGAL::collinear()` \endlink
 - \link collinear_are_ordered_along_line_grp `CGAL::collinear_are_ordered_along_line()` \endlink
 - \link collinear_are_strictly_ordered_along_line_grp `CGAL::collinear_are_strictly_ordered_along_line()` \endlink
