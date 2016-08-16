@@ -2309,23 +2309,20 @@ operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds> &tr)
   return os ;
 }
 
-
-
-
-
-template <class Gt, class Tds>
-inline Orientation Triangulation_3<Gt,Tds>::
-orientation( const Facet& f, const Point& p ) const {
-    return Gt().orientation_3_object()( f.first->vertex( vertex_triple_index(f.second, 0) )->point(),
-                                        f.first->vertex( vertex_triple_index(f.second, 1) )->point(),
-                                        f.first->vertex( vertex_triple_index(f.second, 2) )->point(),
-                                        p );
+template < class GT, class Tds, class Lds >
+Orientation
+Triangulation_3<GT,Tds,Lds>::
+orientation(const Facet& f, const Point& p) const
+{
+  return orientation( f.first->vertex( vertex_triple_index(f.second, 0) )->point(),
+                      f.first->vertex( vertex_triple_index(f.second, 1) )->point(),
+                      f.first->vertex( vertex_triple_index(f.second, 2) )->point(),
+                      p );
 }
 
-
-template < class GT, class Tds >
-typename Triangulation_3<GT,Tds>::size_type
-Triangulation_3<GT,Tds>::
+template < class GT, class Tds, class Lds >
+typename Triangulation_3<GT, Tds, Lds>::size_type
+Triangulation_3<GT,Tds, Lds>::
 number_of_finite_cells() const
 {
   if ( dimension() < 3 ) return 0;
@@ -3418,11 +3415,10 @@ side_of_edge(const Point & p,
   }
 }
 
-
-template <class Gt, class Tds>
+template < class Gt, class Tds, class Lds >
 inline
-typename Triangulation_3<Gt,Tds>::Edge
-Triangulation_3<Gt,Tds>::
+typename Triangulation_3<Gt,Tds,Lds>::Edge
+Triangulation_3<Gt,Tds,Lds>::
 opposite_edge( Cell_handle c, int li, int lj ) const {
     CGAL_triangulation_precondition( li >= 0 && li < 4 );
     CGAL_triangulation_precondition( lj >= 0 && lj < 4 );
@@ -3441,7 +3437,7 @@ opposite_edge( Cell_handle c, int li, int lj ) const {
 }
 
 
-template < class GT, class Tds >
+template < class GT, class Tds, class Lds >
 bool
 Triangulation_3<GT,Tds,Lds>::
 flip( Cell_handle c, int i )
