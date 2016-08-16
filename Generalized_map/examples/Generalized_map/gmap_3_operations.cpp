@@ -25,11 +25,15 @@ int main()
   // Insert a facet along these two new edges plus two initial edges of the cube.
   std::vector<Dart_handle> path;
   path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<0,2,1>(d1)->alpha(0)->alpha(2)->alpha(1));
-  path.push_back(gm.alpha<0>(d2)->alpha(0));
-  path.push_back(gm.alpha<2,1>(d2)->alpha(2)->alpha(1));
+  path.push_back(gm.alpha<1>(d1));
+  path.push_back(gm.alpha<1>(d1));
+  path.push_back(gm.alpha<1>(d1));
+  path.push_back(gm.alpha<1>(d1));
+  path.push_back(gm.alpha<1>(d1));
+  path.push_back(gm.alpha<1>(d1));
+  path.push_back(gm.alpha<1>(d1));
 
-  // TODO Dart_handle d3=gm.insert_cell_2_in_cell_3(path.begin(),path.end());
+  Dart_handle d3=gm.insert_cell_2_in_cell_3(path.begin(),path.end());
   CGAL_assertion( gm.is_valid() );
 
   // Display the m characteristics.
@@ -37,14 +41,15 @@ int main()
     gm.is_valid() << std::endl;
 
   // We use the removal operations to get back to the initial cube.
-  //  gm.remove_cell<2>(d3);
+  gm.remove_cell<2>(d3);
   CGAL_assertion( gm.is_valid() );
 
-  //  gm.remove_cell<1>(d1->alpha(1));
+  gm.remove_cell<1>(gm.alpha<1>(d1));
   CGAL_assertion( gm.is_valid() );
 
-  //  gm.remove_cell<1>(d2->alpha(0));
+  gm.remove_cell<1>(gm.alpha<1>(d2));
   CGAL_assertion( gm.is_valid() );
+  CGAL_assertion( gm.is_volume_combinatorial_hexahedron(d1) );
 
   // Display the m characteristics.
   gm.display_characteristics(std::cout) << ", valid="
