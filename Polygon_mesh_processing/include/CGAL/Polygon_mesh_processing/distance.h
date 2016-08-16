@@ -182,10 +182,11 @@ enum Sampling_method{
  *                         Possible values are `RANDOM_UNIFORM`,
  *                         and `GRID` and `MONTE_CARLO.
  */
-template<class Kernel, class TriangleMesh>
+template<class Kernel, class TriangleMesh, class PMap>
 void sample_triangle_mesh(const TriangleMesh& m,
                           double parameter,
                           std::vector<typename Kernel::Point_3>& sampled_points,
+                          PMap pmap,
                           Sampling_method method = RANDOM_UNIFORM)
 {
  switch(method)
@@ -195,14 +196,12 @@ void sample_triangle_mesh(const TriangleMesh& m,
    std::size_t nb_points = std::ceil(
       parameter * PMP::area(m, PMP::parameters::geom_traits(Kernel())));
     Random_points_in_triangle_mesh_3<TriangleMesh>
-       g(m);
+       g(m, pmap);
     CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
     return;
  }
  case GRID:
  {
-   typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type Pmap;
-   Pmap pmap = get(vertex_point, m);
    std::vector<typename Kernel::Triangle_3> triangles;
    BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
    {
@@ -223,8 +222,6 @@ void sample_triangle_mesh(const TriangleMesh& m,
  }
  case MONTE_CARLO://pas du tout ca : genere K points par triangle, k dependant de l'aire
  {
-   typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type Pmap;
-   Pmap pmap = get(CGAL::vertex_point, m);
    std::vector<typename Kernel::Triangle_3> triangles;
    BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
    {
@@ -248,11 +245,11 @@ void sample_triangle_mesh(const TriangleMesh& m,
  }
  }
 }
-template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
-                                                                                                                       CGAL::vertex_point_t>::type>
+template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap>
 double approximated_Hausdorff_distance(
   std::vector<typename Kernel::Point_3>& sample_points,
-  const TriangleMesh& m
+  const TriangleMesh& m,
+  VertexPointMap vpm
   )
 {
  bool is_triangle = is_triangle_mesh(m);
@@ -286,7 +283,7 @@ double approximated_Hausdorff_distance(
 #endif
   {
     double hdist = 0;
-    typename Kernel::Point_3 hint = sample_points.back();
+    typename Kernel::Point_3 hint = get(vpm, *vertices(m).first);
 
     BOOST_FOREACH(const typename Kernel::Point_3& pt, sample_points)
     {
@@ -300,20 +297,20 @@ double approximated_Hausdorff_distance(
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh,
-          class VertexPointMap1 = typename boost::property_map<TriangleMesh,
-                                                               CGAL::vertex_point_t>::type,
-          class VertexPointMap2 = typename boost::property_map<TriangleMesh,
-                                                               CGAL::vertex_point_t>::type>
+          class VertexPointMap1 ,
+          class VertexPointMap2 >
 double approximated_Hausdorff_distance(
    const TriangleMesh& m1,
    const TriangleMesh& m2,
-   double precision,
+  double precision,
+   VertexPointMap1 vpm1,
+   VertexPointMap2 vpm2,
    Sampling_method method = RANDOM_UNIFORM
 )
 {
   std::vector<typename Kernel::Point_3> sample_points;
-  sample_triangle_mesh<Kernel>(m1, precision ,sample_points, method );
-  return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2>(sample_points, m2);
+  sample_triangle_mesh<Kernel>(m1, precision ,sample_points, vpm1, method );
+  return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2>(sample_points, m2, vpm2);
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap1 = typename boost::property_map<TriangleMesh,
@@ -332,22 +329,6 @@ double approximated_symmetric_Hausdorff_distance(
   );
 }
 
-
-/// \todo add a plugin in the demo to display the distance between 2 meshes as a texture (if not complicated)
-
-template< class Concurrency_tag,
-          class Kernel,
-          class TriangleMesh,
-          class PMap1,
-          class PMap2>
-double approximated_Hausdorff_distance( const TriangleMesh& tm1,
-                                        const TriangleMesh& tm2,
-                                        double precision,
-                                        const PMap1&,
-                                        const PMap2&)
-{
- return approximated_Hausdorff_distance<Concurrency_tag,Kernel,TriangleMesh, PMap1, PMap2>(tm1, tm2, precision);
-}
 // documented functions
 /**
  * \ingroup PMP_distance_grp

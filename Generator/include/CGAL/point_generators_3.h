@@ -346,9 +346,9 @@ struct Random_points_in_triangle_mesh_3
             rnd )
   {
   }
-  Random_points_in_triangle_mesh_3( const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = default_random)
+  Random_points_on_triangle_mesh_3( const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = default_random)
     : Base( faces(mesh),
-            CGAL::Property_map_to_unary_function<Pmap>(Pmap(&mesh, vpm)),
+            CGAL::Property_map_to_unary_function<Object_from_id_map>(Object_from_id_map(&mesh, vpm)),
             internal::Apply_approx_sqrt<typename Kernel_traits<P>::Kernel::Compute_squared_area_3>(),
             rnd )
   {
