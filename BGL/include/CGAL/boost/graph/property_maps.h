@@ -37,12 +37,12 @@ struct Triangle_from_face_descriptor_map{
     : m_tm(NULL)
   {}
 
-  Triangle_from_face_descriptor_map(TriangleMesh* tm)
+  Triangle_from_face_descriptor_map(TriangleMesh const* tm)
     : m_tm( const_cast<typename boost::remove_const<TriangleMesh>::type*>(tm) )
     , m_vpm( get(vertex_point, *m_tm) )
   {}
 
-  Triangle_from_face_descriptor_map(TriangleMesh* tm,
+  Triangle_from_face_descriptor_map(TriangleMesh const* tm,
                                     VertexPointMap vpm )
     : m_tm(const_cast<typename boost::remove_const<TriangleMesh>::type*>(tm))
     , m_vpm(vpm)
@@ -80,12 +80,12 @@ struct Segment_from_edge_descriptor_map{
     : m_pm(NULL)
   {}
 
-  Segment_from_edge_descriptor_map(PolygonMesh* pm)
+  Segment_from_edge_descriptor_map(PolygonMesh const * pm)
     : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(pm) )
     , m_vpm( get(vertex_point, *m_pm) )
   {}
 
-  Segment_from_edge_descriptor_map(PolygonMesh* pm,
+  Segment_from_edge_descriptor_map(PolygonMesh const * pm,
                                    VertexPointMap vpm )
     : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(pm) )
     , m_vpm(vpm)
@@ -121,12 +121,12 @@ struct One_point_from_face_descriptor_map{
     : m_pm(NULL)
   {}
 
-  One_point_from_face_descriptor_map(PolygonMesh* g)
+  One_point_from_face_descriptor_map(PolygonMesh const * g)
     : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
     , m_vpm( get(vertex_point, *m_pm) )
   {}
 
-  One_point_from_face_descriptor_map(PolygonMesh* g, VertexPointMap vpm )
+  One_point_from_face_descriptor_map(PolygonMesh const * g, VertexPointMap vpm )
     : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
     , m_vpm(vpm)
   {}
@@ -157,12 +157,12 @@ struct Source_point_from_edge_descriptor_map{
   Source_point_from_edge_descriptor_map()  : m_pm(NULL)
   {}
 
-  Source_point_from_edge_descriptor_map(PolygonMesh* g)
+  Source_point_from_edge_descriptor_map(PolygonMesh const * g)
     : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
     , m_vpm( get(vertex_point, *m_pm) )
   {}
 
-  Source_point_from_edge_descriptor_map(PolygonMesh* g, VertexPointMap vpm )
+  Source_point_from_edge_descriptor_map(PolygonMesh const * g, VertexPointMap vpm )
     : m_pm( const_cast<typename boost::remove_const<PolygonMesh>::type*>(g) )
     , m_vpm(vpm)
   {}
