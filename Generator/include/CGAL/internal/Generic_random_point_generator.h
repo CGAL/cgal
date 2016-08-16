@@ -67,7 +67,11 @@ public:
       Geometric_object object = object_from_id_map(id);
       ids.push_back(id);
       //compute the weight of a face
+<<<<<<< HEAD
       total_weight += to_double(CGAL::approximate_sqrt(compute_weight(object)));
+=======
+      total_weight += to_double( CGAL::approximate_sqrt(compute_weight(object)) );
+>>>>>>> 8a7ccb8... Use Compute_squared_area_3 instead of Compute_area_3 in case the Kernel does not have a sqrt() implementation.
       weights.push_back(total_weight);
     }
     //generate the first point
