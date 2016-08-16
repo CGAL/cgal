@@ -336,7 +336,7 @@ struct Random_points_in_triangle_mesh_3
   Random_points_in_triangle_mesh_3(  TriangleMesh& mesh,Random& rnd = default_random)
     : Base( faces(mesh),
             CGAL::Property_map_to_unary_function<Pmap>(&mesh),
-            typename Kernel_traits<P>::Kernel::Compute_area_3(),
+            typename Kernel_traits<P>::Kernel::Compute_squared_area_3(),
             rnd )
   {
   }
@@ -424,7 +424,7 @@ struct Random_points_in_tetrahedral_mesh_boundary_3
     : Base( make_range( c3t3.facets_in_complex_begin(),
                         c3t3.facets_in_complex_end()),
             internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>(),
-            typename Kernel_traits<typename C3t3::Point>::Kernel::Compute_area_3(),
+            typename Kernel_traits<typename C3t3::Point>::Kernel::Compute_squared_area_3(),
             rnd )
   {
   }
@@ -498,7 +498,7 @@ struct Random_points_in_triangles_3
     : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_3>()),
                        boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_3>()) ),
            internal::Deref<Triangle_3>(),
-           typename Kernel_traits<Point_3>::Kernel::Compute_area_3()
+           typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3()
            ,rnd )
   {
   }
