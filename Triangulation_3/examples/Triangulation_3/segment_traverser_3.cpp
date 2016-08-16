@@ -17,24 +17,24 @@ typedef DT::Cell_handle                                         Cell_handle;
 typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Traverser;
 
 void main() {
-	std::vector< Point_3 > points;
-	points.reserve( 6 );
-	points.push_back( Point_3(-.9063, .4226, 1.0 ) );
-	points.push_back( Point_3( .8192, .5736, 1.0 ) );
-	points.push_back( Point_3( .0872,-.9992, 1.0 ) );
-	points.push_back( Point_3(-.8192, .5736,-1.0 ) );
-	points.push_back( Point_3( .9063, .4226,-1.0 ) );
-	points.push_back( Point_3( .0872,-.9962,-1.0 ) );
+    std::vector< Point_3 > points;
+    points.reserve( 6 );
+    points.push_back( Point_3(-.9063, .4226, 1.0 ) );
+    points.push_back( Point_3( .8192, .5736, 1.0 ) );
+    points.push_back( Point_3( .0872,-.9992, 1.0 ) );
+    points.push_back( Point_3(-.8192, .5736,-1.0 ) );
+    points.push_back( Point_3( .9063, .4226,-1.0 ) );
+    points.push_back( Point_3( .0872,-.9962,-1.0 ) );
     
-	// Construct the Delaunay triangulation.
-	DT dt( points.begin(), points.end() );
+    // Construct the Delaunay triangulation.
+    DT dt( points.begin(), points.end() );
     assert( dt.is_valid() );
 
     // Construct a traverser.
     Traverser st( dt, Point_3(-3,0,0), Point_3(3,0,0) );
 
     // Count the number of finite cells traversed.
-	unsigned int inf = 0, fin = 0;
+    unsigned int inf = 0, fin = 0;
     for( ; st != st.end(); ++st ) {
         if( dt.is_infinite(st) )
             ++inf;

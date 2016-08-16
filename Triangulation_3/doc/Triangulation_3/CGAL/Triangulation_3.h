@@ -1144,9 +1144,9 @@ Point_iterator points_end() const;
 /*!\name Walk Iterator
 \cgalModifBegin
 
-The triangulation defines an iterator that visits the cells intersected by a line segment. It is a non-mutable and forward iterator. It is invalidated by any modification of one of the cells traversed.  
+The triangulation defines an iterator that visits the cells intersected by a line segment. It is a non-mutable and forward iterator. It is invalidated by any modification of one of the cells traversed.
 
-The cells visited comprise a connected region containing both source and target point of the line segment `s`. Each cell falls within one or more of the following categories:
+The cells visited comprise a connected region containing both source and target points of the line segment `s`. Each cell falls within one or more of the following categories:
 1. a finite cell whose interior intersects `s`.
 2. a finite cell with a facet `f` whose interior intersects `s` in a line segment. If such a cell is visited, its neighbor incident to `f` is not visited.
 3. a finite cell with an edge `e` whose interior intersects `s` in a line segment. If such a cell is visited, none of the other cells incident to `e` are visited.
@@ -1172,7 +1172,7 @@ The starting point of the iterator is an arbitrary cell incident to `s`.
 The iterator remains valid until the first cell incident to `t` is passed.
 
 \pre `s` and `t` must be different vertices and neither can be the infinite vertex.
-\pre The triangulation must mave dimension at least 2.
+\pre `t.dimension() >= 2`
 */
 Segment_cell_iterator segment_walk_begin(Vertex_handle s, Vertex_handle t) const;
 
@@ -1183,7 +1183,7 @@ This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterat
 passed the target.
 
 \pre `s` and `t` must be different vertices and neither can be the infinite vertex.
-\pre The triangulation must mave dimension at least 2.
+\pre `t.dimension() >= 2`
 */
 Segment_cell_iterator segment_walk_end(Vertex_handle s, Vertex_handle t) const;
 
@@ -1199,7 +1199,7 @@ The iterator remains valid until the first cell containing `t` is passed.
 The optional argument `hint` can reduce the time to construct the iterator if it is close to `s`.
 
 \pre `s` and `t` must be different points.
-\pre The triangulation must mave dimension at least 2. If the dimension is 2, both `s` and `t` must lie in the affine hull.
+\pre  `t.dimension() >= 2`. If the dimension is 2, both `s` and `t` must lie in the affine hull.
 */
 Segment_cell_iterator segment_walk_begin(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 
@@ -1211,8 +1211,8 @@ passed the target.
 
 The optional argument `hint` can reduce the time to construct the iterator if it is close to `s`.
 
-\pre `s` and `t` must be different points and neither can be the infinite vertex.
-\pre The triangulation must mave dimension at least 2.
+\pre `s` and `t` must be different and finite points
+\pre `t.dimension() >= 2`
 */
 Segment_cell_iterator segment_walk_end(const Point& s, const Point& t, Cell_handle hint = Cell_handle()) const;
 /// @}
