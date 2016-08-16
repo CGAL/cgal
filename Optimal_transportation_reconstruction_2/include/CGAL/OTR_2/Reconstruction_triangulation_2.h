@@ -949,7 +949,7 @@ public:
   // (a,b,c) + (c,b,a) + (a,c,i) + (c,a,j) ->
   // (a,c,i) + (c,a,j)
   void collapse_cyclic_edge(const Edge& bc, int verbose = 0) {
-    if (verbose > 0)
+    if (verbose > 1)
       std::cout << "collapse_cyclic_edge ... ";
 
     Edge cb = twin_edge(bc);
@@ -972,7 +972,7 @@ public:
     this->delete_face(cba);
     this->delete_vertex(b);
 
-    if (verbose > 0)
+    if (verbose > 1)
       std::cout << "done" << std::endl;
   }
 
@@ -1050,7 +1050,7 @@ public:
 
       if ( is_m_infinity(Dac) && is_m_infinity(Dbd) )
       {
-        if (verbose > 0)
+        if (verbose > 1)
           std::cerr << "--- No flips available ---"  << std::endl;
         return false;
       }
@@ -1109,7 +1109,7 @@ public:
       nb_flips++;
     }
 
-    if (verbose > 0)
+    if (verbose > 1)
       std::cerr  << "Nb flips: "  << nb_flips << std::endl;
 
     return true;
