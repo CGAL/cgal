@@ -776,29 +776,29 @@ namespace CGAL {
 
     // Generic function to iterate on CMap or GMap in a generic way
     bool exist_previous_dart_in_face(Dart_const_handle ADart) const
-    { return !is_free<0>(ADart); }
+    { return !this->template is_free<0>(ADart); }
     bool exist_next_dart_in_face(Dart_const_handle ADart) const
-    { return !is_free<1>(ADart); }
+    { return !this->template is_free<1>(ADart); }
     template<unsigned int dim>
     bool exist_opposite_dart(Dart_const_handle ADart) const
-    { return !is_free<dim>(ADart); }
+    { return !this->template is_free<dim>(ADart); }
 
     Dart_handle get_previous_dart_in_face(Dart_handle ADart)
-    { return beta<0>(ADart); }
+    { return this->template beta<0>(ADart); }
     Dart_const_handle get_previous_dart_in_face(Dart_const_handle ADart) const
-    { return beta<0>(ADart); }
+    { return this->template beta<0>(ADart); }
 
     Dart_handle get_next_dart_in_face(Dart_handle ADart)
-    { return beta<1>(ADart); }
+    { return this->template beta<1>(ADart); }
     Dart_const_handle get_next_dart_in_face(Dart_const_handle ADart) const
-    { return beta<1>(ADart); }
+    { return this->template beta<1>(ADart); }
 
     template<unsigned int dim>
     Dart_handle get_opposite_dart(Dart_handle ADart)
-    { return beta<dim>(ADart); }
+    { return this->template beta<dim>(ADart); }
     template<unsigned int dim>
     Dart_const_handle get_opposite_dart(Dart_const_handle ADart) const
-    { return beta<dim>(ADart); }
+    { return this->template beta<dim>(ADart); }
 
     /** Count the number of used marks.
      * @return the number of used marks.

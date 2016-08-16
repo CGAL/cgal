@@ -727,29 +727,32 @@ namespace CGAL {
 
     // Generic function to iterate on CMap or GMap in a generic way
     bool exist_previous_dart_in_face(Dart_const_handle ADart) const
-    { return !is_free<0>(ADart) && !is_free<1>(alpha<0>(ADart)); }
+    { return !this->template is_free<0>(ADart) &&
+        !this->template is_free<1>(alpha<0>(ADart)); }
     bool exist_next_dart_in_face(Dart_const_handle ADart) const
-    { return !is_free<1>(ADart) && !is_free<0>(alpha<1>(ADart)); }
+    { return !this->template is_free<1>(ADart) &&
+        !this->template is_free<0>(this->template alpha<1>(ADart)); }
     template<unsigned int dim>
     bool exist_opposite_dart(Dart_const_handle ADart) const
-    { return !is_free<dim>(ADart) && !is_free<0>(alpha<dim>(ADart)); }
+    { return !this->template is_free<dim>(ADart) &&
+        !this->template is_free<0>(this->template alpha<dim>(ADart)); }
 
     Dart_handle get_previous_dart_in_face(Dart_handle ADart)
-    { return alpha<1, 0>(ADart); }
+    { return this->template alpha<1, 0>(ADart); }
     Dart_const_handle get_previous_dart_in_face(Dart_const_handle ADart) const
-    { return alpha<1, 0>(ADart); }
+    { return this->template alpha<1, 0>(ADart); }
 
     Dart_handle get_next_dart_in_face(Dart_handle ADart)
-    { return alpha<0, 1>(ADart); }
+    { return this->template alpha<0, 1>(ADart); }
     Dart_const_handle get_next_dart_in_face(Dart_const_handle ADart) const
-    { return alpha<0, 1>(ADart); }
+    { return this->template alpha<0, 1>(ADart); }
 
     template<unsigned int dim>
     Dart_handle get_opposite_dart(Dart_handle ADart)
-    { return alpha<0, dim>(ADart); }
+    { return this->template alpha<0, dim>(ADart); }
     template<unsigned int dim>
     Dart_const_handle get_opposite_dart(Dart_const_handle ADart) const
-    { return alpha<0, dim>(ADart); }
+    { return this->template alpha<0, dim>(ADart); }
 
     /** Count the number of used marks.
      * @return the number of used marks.
@@ -3588,48 +3591,46 @@ namespace CGAL {
 
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    * a path of edges.
-   * @param amap the used generalized map.
    * @param afirst iterator on the begining of the path.
    * @param alast  iterator on the end of the path.
    * @return true iff a 2-cell can be inserted along the path.
-   * the path is a sequence of dartd, one per edge
-   * where the face will be inserted.
+   *         the path is a sequence of dartd, one per edge
+   *         where the face will be inserted.
    */
-  template <class GMap, class InputIterator>
-  bool is_insertable_cell_2_in_cell_3(const GMap& amap,
-                                      InputIterator afirst,
+  template <class InputIterator>
+  bool is_insertable_cell_2_in_cell_3(InputIterator afirst,
                                       InputIterator alast)
   {
-    CGAL_assertion( GMap::dimension>= 3 );
+    CGAL_assertion( dimension>= 3 );
 
     // The path must have at least one dart.
     if (afirst==alast) return false;
-    typename GMap::Dart_const_handle prec = amap.null_handle;
-    typename GMap::Dart_const_handle od = amap.null_handle;
+    Dart_const_handle prec = null_handle;
+    Dart_const_handle od = null_handle;
 
     for (InputIterator it(afirst); it!=alast; ++it)
     {
       // The path must contain only non empty darts.
-      if (*it == amap.null_handle) return false;
+      if (*it == null_handle) return false;
 
       // Two consecutive darts of the path must belong to two edges
       // incident to the same vertex of the same volume.
-      if (prec != amap.null_handle)
+      if (prec != null_handle)
       {
-        if ( amap.template is_free<0>(prec) ) return false;
+        if ( this->template is_free<0>(prec) ) return false;
 
         // alpha0(prec) and *it must belong to the same vertex of the same volume
-        if ( !CGAL::belong_to_same_cell<GMap, 0, 2>
-             (amap,  amap.template alpha<0>(prec), *it) )
+        if ( !CGAL::belong_to_same_cell<Self, 0, 2>
+             (*this,  this->template alpha<0>(prec), *it) )
           return false;
       }
       prec = *it;
     }
 
     // The path must be closed.
-    if ( amap.template is_free<0>(prec) ) return false;
-    if (!CGAL::belong_to_same_cell<GMap, 0, 2>
-        (amap, amap.template alpha<0>(prec), *afirst))
+    if ( this->template is_free<0>(prec) ) return false;
+    if (!CGAL::belong_to_same_cell<Self, 0, 2>
+        (*this, this->template alpha<0>(prec), *afirst))
       return false;
 
     return true;
@@ -3643,63 +3644,63 @@ namespace CGAL {
    * where the face will be inserted.
    * @return a dart of the new 2-cell.
    */
-  template<class GMap, class InputIterator>
-  typename GMap::Dart_handle
-  insert_cell_2_in_cell_3(GMap& amap, InputIterator afirst, InputIterator alast,
+  template<class InputIterator>
+  Dart_handle
+  insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast,
                           bool update_attributes=true)
   {
-    CGAL_assertion(is_insertable_cell_2_in_cell_3(amap,afirst,alast));
+    CGAL_assertion(is_insertable_cell_2_in_cell_3(afirst,alast));
 
-    typename GMap::Dart_handle prec = amap.null_handle, d = amap.null_handle,
-      dd = amap.null_handle, first = amap.null_handle;
+    Dart_handle prec = null_handle, d = null_handle,
+      dd = null_handle, first = null_handle;
     bool withAlpha3 = false;
 
-    typename GMap::size_type treated = amap.get_new_mark();
+    size_type treated = get_new_mark();
 
     {
       for (InputIterator it(afirst); !withAlpha3 && it!=alast; ++it)
       {
-        if (!amap.template is_free<2>(*it)) withAlpha3 = true;
+        if (!this->template is_free<3>(*it)) withAlpha3 = true;
       }
     }
 
     {
       for (InputIterator it(afirst); it!=alast; ++it)
       {
-        d = amap.create_dart();
-        amap.template basic_link_alpha<0>(d, amap.create_dart());
+        d = create_dart();
+        this->template basic_link_alpha<0>(d, create_dart());
 
         if ( withAlpha3 )
         {
-          dd = amap.create_dart();
-          amap.template basic_link_alpha<0>(dd, amap.create_dart());
+          dd = create_dart();
+          this->template basic_link_alpha<0>(dd, create_dart());
         }
 
-        if ( prec!=amap.null_handle )
+        if ( prec!=null_handle )
         {
-          amap.template basic_link_alpha<1>(prec, d);
+          this->template basic_link_alpha<1>(prec, d);
           if (withAlpha3)
-            amap.template basic_link_alpha<1>(amap.template alpha<3>(prec), dd);
+            this->template basic_link_alpha<1>(this->template alpha<3>(prec), dd);
         }
-        else first = amap.template alpha<0>(d);
+        else first = this->template alpha<0>(d);
 
-        if ( !amap.template is_free<2>(*it) )
+        if ( !this->template is_free<2>(*it) )
         {
-          amap.template link_alpha<2>(amap.template alpha<2>(*it), dd);
+          this->template link_alpha<2>(this->template alpha<2>(*it), dd);
         }
 
-        amap.template link_alpha<2>(*it, d);
-        if (withAlpha3) amap.template basic_link_alpha<3>(d, dd);
+        this->template link_alpha<2>(*it, d);
+        if (withAlpha3) this->template basic_link_alpha<3>(d, dd);
 
-        prec = amap.template alpha<0>(d);
+        prec = this->template alpha<0>(d);
       }
     }
 
-    amap.template basic_link_alpha<1>(prec, first);
+    this->template basic_link_alpha<1>(prec, first);
     if ( withAlpha3 )
     {
-      amap.template basic_link_alpha<1>(amap.template alpha<3>(prec),
-                                        amap.template alpha<3>(first));
+      this->template basic_link_alpha<1>(this->template alpha<3>(prec),
+                                         this->template alpha<3>(first));
     }
 
     // Make copies of the new facet for dimension >=4
@@ -3729,65 +3730,61 @@ namespace CGAL {
         }*/
 
     // Make copies of the new facet for dimension >=4
-    for ( unsigned int dim=4; dim<=GMap::dimension; ++dim )
+    for ( unsigned int dim=4; dim<=dimension; ++dim )
     {
-      if ( !amap.is_free(first, dim) )
+      if ( !is_free(first, dim) )
       {
-        typename GMap::Dart_handle first2 = amap.null_handle;
-        prec = amap.null_handle;
-        for ( GMap_dart_iterator_basic_of_orbit<GMap,0,1> it(amap, first);
+        Dart_handle first2 = null_handle;
+        prec = null_handle;
+        for ( GMap_dart_iterator_basic_of_orbit<Self,0,1> it(*this, first);
               it.cont(); ++it )
         {
-          d = amap.create_dart();
-          amap.basic_link_alpha(amap.template alpha<2>(it), d, dim);
+          d = create_dart();
+          basic_link_alpha(this->template alpha<2>(it), d, dim);
           if ( withAlpha3 )
           {
-            dd = amap.create_dart();
-            amap.basic_link_alpha_for_involution
-              (amap.template alpha<2,3>(it), dd, dim);
-            amap.template basic_link_alpha_for_involution<3>(d, dd);
+            dd = create_dart();
+            basic_link_alpha(this->template alpha<2,3>(it), dd, dim);
+            this->template basic_link_alpha<3>(d, dd);
           }
-          if ( prec!=amap.null_handle )
+          if ( prec!=null_handle )
           {
-            amap.link_alpha_0(prec, d);
+            link_alpha<0>(prec, d);
             if ( withAlpha3 )
             {
-              amap.basic_link_alpha_1(amap.template alpha<3>(prec), dd);
+              basic_link_alpha<1>(this->template alpha<3>(prec), dd);
             }
           }
           else first2 = prec;
 
           // We consider dim2=2 out of the loop to use link_alpha instead of
           // basic _link_alpha (to modify non void attributes only once).
-          if ( !amap.template is_free<2>(it) &&
-               amap.is_free(amap.template alpha<2>(it), dim) )
-            amap.template link_alpha_for_involution<2>
-              (amap.alpha(it,2,dim), d);
+          if ( !this->template is_free<2>(it) &&
+               is_free(this->template alpha<2>(it), dim) )
+            this->template link_alpha<2>(alpha(it,2,dim), d);
           if ( withAlpha3 &&
-               !amap.template is_free<2>(amap.template alpha<3>(it)) &&
-               amap.is_free(amap.template alpha<3,2>(it), dim) )
-            amap.template link_alpha_for_involution<2>(amap.alpha(it,3,2,dim), dd);
+               !this->template is_free<2>(this->template alpha<3>(it)) &&
+               is_free(this->template alpha<3,2>(it), dim) )
+            link_alpha<2>(alpha(it,3,2,dim), dd);
 
-          for ( unsigned int dim2=3; dim2<=GMap::dimension; ++dim2 )
+          for ( unsigned int dim2=3; dim2<=dimension; ++dim2 )
           {
             if ( dim2+1!=dim && dim2!=dim && dim2!=dim+1 )
             {
-              if ( !amap.is_free(it, dim2) && amap.is_free(amap.alpha(it, dim2), dim) )
-                amap.basic_link_alpha_for_involution(amap.alpha(it, dim2, dim),
-                                                     d, dim2);
-              if ( withAlpha3 && !amap.is_free(amap.template alpha<3>(it), dim2) &&
-                   amap.is_free(amap.alpha(it, 3, dim2), dim) )
-                amap.basic_link_alpha_for_involution
-                  (amap.alpha(it, 3, dim2, dim), dd, dim2);
+              if ( !is_free(it, dim2) && is_free(alpha(it, dim2), dim) )
+                basic_link_alpha(alpha(it, dim2, dim), d, dim2);
+              if ( withAlpha3 && !is_free(this->template alpha<3>(it), dim2) &&
+                   is_free(alpha(it, 3, dim2), dim) )
+                basic_link_alpha(alpha(it, 3, dim2, dim), dd, dim2);
             }
           }
           prec = d;
         }
-        amap.basic_link_alpha_0( prec, first2 );
+        basic_link_alpha<0>( prec, first2 );
         if ( withAlpha3 )
         {
-          amap.basic_link_alpha_1( amap.template alpha<3>(prec),
-                                   amap.template alpha<3>(first2) );
+          basic_link_alpha<1>( this->template alpha<3>(prec),
+                               this->template alpha<3>(first2) );
         }
       }
     }
@@ -3796,12 +3793,12 @@ namespace CGAL {
     if ( withAlpha3 )
     { // Here we cannot use Degroup_attribute_functor_run as new darts do not
       // have their 3-attribute
-      CGAL::internal::GMap_degroup_attribute_functor_run<GMap, 3>::
-        run(&amap, first, amap.template alpha<3>(first));
+      CGAL::internal::GMap_degroup_attribute_functor_run<Self, 3>::
+        run(this, first, this->template alpha<3>(first));
     }
 
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
-    CGAL_assertion( amap.is_valid() );
+    CGAL_assertion( is_valid() );
 #endif
 
     return first;
