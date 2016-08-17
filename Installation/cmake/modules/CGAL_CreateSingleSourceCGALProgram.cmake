@@ -19,25 +19,36 @@ function(create_single_source_cgal_program firstfile )
     add_executable(${exe_name} ${all})
 
     if(BUILD_TESTING)
-      if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
+      set(cin_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
+      if(EXISTS ${cin_file})
 	add_test(NAME ${exe_name}
           COMMAND ${CMAKE_COMMAND}
 	    -DCMD:STRING=$<TARGET_FILE:${exe_name}>
-	    -DCIN:STRING=${exe_name}.cin
-	    -P ${CGAL_MODULES_DIR}/run_test_with_cin.cmake
-          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-	message(STATUS "add test: ${exe_name} < ${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
+	    -DCIN:STRING=${cin_file}
+	    -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
+#	message(STATUS "add test: ${exe_name} < ${cin_file}")
       else()
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
-          file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd" ARGS)
+	# TODO: deal with shell globbing; if the `cmd` file contains
+	# a `*`, then interprete the command using bash.
+	set(cmd_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
+	if(EXISTS ${cmd_file})
+          file(STRINGS "${cmd_file}" CMD_LINES)
+	  set(ARGS)
+#	  message(STATUS "DEBUG test ${exe_name}")
+	  foreach(CMD_LINE ${CMD_LINES})
+#	    message(STATUS "  command line: ${CMD_LINE}")
+	    separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
+	    #	    message(STATUS "  args: ${CMD_LINE_ARGS}")
+	    list(APPEND ARGS ${CMD_LINE_ARGS})
+	  endforeach()
 	endif()
-	message(STATUS "add test: ${exe_name} ${ARGS}")
-	add_test(NAME ${exe_name}
-          COMMAND ${exe_name} ${ARGS}
-          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+#	message(STATUS "add test: ${exe_name} ${ARGS}")
+	add_test(NAME ${exe_name} COMMAND ${exe_name} ${ARGS})
       endif()
       set_property(TEST "${exe_name}"
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
+      set_property(TEST "${exe_name}"
+        PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif(BUILD_TESTING)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
