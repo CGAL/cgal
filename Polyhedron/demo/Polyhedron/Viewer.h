@@ -161,6 +161,7 @@ protected:
   bool is_d_pressed;
 
 protected:
+  friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
 
