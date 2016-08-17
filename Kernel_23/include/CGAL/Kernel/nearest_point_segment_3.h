@@ -1,10 +1,10 @@
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -23,8 +23,8 @@
 //
 //******************************************************************************
 
-#ifndef NEAREST_POINT_SEGMENT_3_H_
-#define NEAREST_POINT_SEGMENT_3_H_
+#ifndef CGAL_NEAREST_POINT_SEGMENT_3_H_
+#define CGAL_NEAREST_POINT_SEGMENT_3_H_
 
 #include <CGAL/kernel_basic.h>
 #include <CGAL/enum.h>
@@ -81,7 +81,7 @@ namespace CGAL {
 }  // end namespace CGAL
 
 
-#endif // NEAREST_POINT_SEGMENT_3_H_
+#endif // CGAL_NEAREST_POINT_SEGMENT_3_H_
 
 // This file uses an indentation width of 4, instead of 2.
 // Sets that preference for GNU/Emacs, in a file-local variable.

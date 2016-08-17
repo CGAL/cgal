@@ -34,8 +34,8 @@
 #include <CGAL/intersection_3.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
-#include <CGAL/internal/AABB_tree/nearest_point_segment_3.h>
-#include <CGAL/internal/AABB_tree/nearest_point_triangle_3.h>
+#include <CGAL/Kernel/nearest_point_segment_3.h>
+#include <CGAL/Krnel/nearest_point_triangle_3.h>
 
 namespace CGAL {
 
