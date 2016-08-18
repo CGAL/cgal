@@ -93,7 +93,7 @@ sample_triangles(const TriangleRange& triangles, double distance, OutputIterator
 
   std::set< std::pair<Point_3, Point_3> > sampled_edges;
 
-  // sample edges but skip endpoints
+  // sample edges but      skip endpoints
   BOOST_FOREACH(const Triangle_3& t, triangles)
   {
     for (int i=0;i<3; ++i)
@@ -113,7 +113,6 @@ sample_triangles(const TriangleRange& triangles, double distance, OutputIterator
       }
     }
   }
-
   // sample triangles
   BOOST_FOREACH(const Triangle_3& t, triangles)
     out=internal::triangle_grid_sampling<Kernel>(t, distance, out);
@@ -159,21 +158,117 @@ struct Distance_computation{
   }
 };
 #endif
+/// \todo test different strategies and put the better one in `approximated_Hausdorff_distance()`
+/// for particular cases one can still use a specific sampling method together with `max_distance_to_triangle_mesh()`
 
+enum Sampling_method{
+ RANDOM_UNIFORM =0, /**< points are generated in a random and uniform way, depending on the area of each triangle.*/
+ GRID,/**< points are generated in a grid, with a minimum of one point per vertex.*/
+ MONTE_CARLO /**< points are generated randomly in each triangle, proportionally to the face area with a minimum
+               * of 1 pt per triangle.*/
+};
+/** fills `sampled_points` with points taken on the mesh in a manner depending on `method`.
+ * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
+ *         for `CGAL::vertex_point_t`
+ * @param m the triangle mesh that will be sampled
+ * @param precision the number of points per squared area unit. Must be greater than 1.
+ *
+ * @param method defines the method of sampling.
+ *
+ * @tparam Sampling_method defines the method of sampling.
+ *                         Possible values are `RANDOM_UNIFORM`,
+ *                         and `GRID` and `MONTE_CARLO.
+ */
+template<class Kernel, class TriangleMesh>
+void sample_triangle_mesh(const TriangleMesh& m,
+                          double precision,
+                          std::vector<typename Kernel::Point_3>& sampled_points,
+                          Sampling_method method = RANDOM_UNIFORM)
+{
+ switch(method)
+ {
+ case RANDOM_UNIFORM:
+ {
+  std::size_t nb_points = std::ceil(
+     precision * PMP::area(m, PMP::parameters::geom_traits(Kernel())));
+   Random_points_in_triangle_mesh_3<TriangleMesh>
+      g(m);
+   CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+   return;
+ }
+ case GRID:
+ {
+  //we take a unit square and grid sample it to approximate the distance between points
+  //knowing the points density.
+   CGAL_assertion_msg (precision >1,
+         "Precision must be greater than 1.");
+  double distance = 1.0/(sqrt(precision)-1);
+
+   typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
+  Pmap pmap = get(vertex_point, m);
+  std::vector<typename Kernel::Triangle_3> triangles;
+  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
+  {
+  //create the triangles and store them
+    typename Kernel::Point_3 points[3];
+    typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
+    for(int i=0; i<3; ++i)
+    {
+      points[i] = get(pmap, target(*hc, m));
+      ++hc;
+    }
+    triangles.push_back(typename Kernel::Triangle_3(points[0], points[1], points[2]));
+    //sample a single point in all triangles(to have at least 1 pt/triangle)
+  }
+  sample_triangles<Kernel>(triangles, distance, std::back_inserter(sampled_points));
+  return;
+ }
+ case MONTE_CARLO:
+  std::size_t nb_points =  std::ceil(precision * PMP::area(m,
+                                                           PMP::parameters::geom_traits(Kernel())));
+  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
+  Pmap pmap = get(vertex_point, m);
+  std::vector<typename Kernel::Triangle_3> triangles;
+  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
+  {
+  //create the triangles and store them
+    typename Kernel::Point_3 points[3];
+    typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
+    for(int i=0; i<3; ++i)
+    {
+      points[i] = get(pmap, target(*hc, m));
+      ++hc;
+    }
+    triangles.push_back(typename Kernel::Triangle_3(points[0], points[1], points[2]));
+    //sample a single point in all triangles(to have at least 1 pt/triangle)
+    Random_points_in_triangle_3<typename Kernel::Point_3> g(points[0], points[1], points[2]);
+    CGAL::cpp11::copy_n(g, 1, std::back_inserter(sampled_points));
+  }
+  //sample the triangle range uniformly
+  Random_points_in_triangles_3<typename Kernel::Point_3 >
+    g(triangles);
+ CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+  return;
+ }
+}
 template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
                                                                                                                        CGAL::vertex_point_t>::type>
 double approximated_Hausdorff_distance(
   std::vector<typename Kernel::Point_3>& sample_points,
-  TriangleMesh& m,
-  std::size_t nb_sample_points)
+  const TriangleMesh& m,
+  double precision,
+  Sampling_method method = RANDOM_UNIFORM
+  )
 {
  typedef Point_3<Kernel> Point_3;
  bool is_triangle = is_triangle_mesh(m);
   CGAL_assertion_msg (is_triangle,
         "Mesh is not triangulated. Distance computing impossible.");
+  /*
   Random_points_in_triangle_mesh_3<TriangleMesh, VertexPointMap>
       g(m);
-  CGAL::cpp11::copy_n(g, nb_sample_points, std::back_inserter(sample_points));
+  CGAL::cpp11::copy_n(g, nb_sample_points, std::back_inserter(sample_points));*/
+  sample_triangle_mesh<Kernel>(m, precision ,sample_points, method);
   #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "Nb sample points " << sample_points.size() << "\n";
   #endif
@@ -221,16 +316,15 @@ template <class Concurrency_tag, class Kernel, class TriangleMesh,
           class VertexPointMap2 = typename boost::property_map<TriangleMesh,
                                                                CGAL::vertex_point_t>::type>
 double approximated_Hausdorff_distance(
-   TriangleMesh& m1,
-   TriangleMesh& m2,
-  int  nb_points
+   const TriangleMesh& m1,
+   const TriangleMesh& m2,
+   double precision,
+   Sampling_method method = RANDOM_UNIFORM
 )
 {
   std::vector<typename Kernel::Point_3> sample_points;
-  Random_points_in_triangle_mesh_3<TriangleMesh, VertexPointMap1>
-      g(m1);
-  CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sample_points));
-  return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2>(sample_points, m2,4000);
+  sample_triangle_mesh<Kernel>(m1, precision ,sample_points, method );
+  return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2>(sample_points, m2, precision, method );
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap1 = typename boost::property_map<TriangleMesh,
@@ -238,101 +332,18 @@ template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexP
           class VertexPointMap2 = typename boost::property_map<TriangleMesh,
                                                                                             CGAL::vertex_point_t>::type>
 double approximated_symmetric_Hausdorff_distance(
-  TriangleMesh& m1,
-  TriangleMesh& m2,
- int  nb_points
+  const TriangleMesh& m1,
+  const TriangleMesh& m2,
+  double precision
 )
 {
   return (std::max)(
-    approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap1, VertexPointMap2>(m1, m2, nb_points),
-    approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2, VertexPointMap1>(m2, m1, nb_points)
+    approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap1, VertexPointMap2>(m1, m2, precision),
+    approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2, VertexPointMap1>(m2, m1, precision)
   );
 }
 
-/// \todo test different strategies and put the better one in `approximated_Hausdorff_distance()`
-/// for particular cases one can still use a specific sampling method together with `max_distance_to_triangle_mesh()`
 
-enum Sampling_method{
- RANDOM_UNIFORM =0, /**< points are generated in a random and uniform way, depending on the area of each triangle.*/
- GRID,/**< points are generated in a grid, with a minimum of one point per triangle.*/
- MONTE_CARLO /**< points are generated randomly in each triangle, proportionally to the face area with a minimum
-               * of 1 pt per triangle.*/
-};
-/** fills `sampled_points` with points taken on the mesh in a manner depending on `method`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
- *         for `CGAL::vertex_point_t`
- * @param m the triangle mesh that will be sampled
- * @param precision depends on the value of `method` :
- * case RANDOM_UNIFORM : the number of points per squared area unit
- * case GRID : the distance between the points
- * case MONTE_CARLO : the number of points per squared area unit
- * @tparam method a Sampling_method.
- * @tparam Sampling_method defines the method of sampling.
- *                         Possible values are `RANDOM_UNIFORM`,
- *                         and `GRID` and `MONTE_CARLO.
- */
-template<class Kernel, class TriangleMesh>
-void sample_triangle_mesh(const TriangleMesh& m,
-                          double precision,
-                          std::vector<typename Kernel::Point_3>& sampled_points,
-                          Sampling_method method = RANDOM_UNIFORM)
-{
- switch(method)
- {
- case RANDOM_UNIFORM:
- {
-  std::size_t nb_points =  std::ceil(precision * PMP::area(m,
-                                                           PMP::parameters::geom_traits(Kernel())));
-   Random_points_in_triangle_mesh_3<TriangleMesh>
-      g(m);
-   CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
-   return;
- }
- case GRID:
- {
-   typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
-  Pmap pmap = get(vertex_point, m);
-   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
-   {
-     typename Kernel::Point_3 points[3];
-     typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
-     for(int i=0; i<3; ++i)
-     {
-       points[i] = get(pmap, target(*hc, m));
-       ++hc;
-    }
-    internal::triangle_grid_sampling<Kernel>(points[0], points[1], points[2],precision, std::back_inserter(sampled_points));
-  }
-  return;
- }
- case MONTE_CARLO:
-  std::size_t nb_points =  std::ceil(precision * PMP::area(m,
-                                                           PMP::parameters::geom_traits(Kernel())));
-  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
- Pmap pmap = get(vertex_point, m);
-  std::vector<typename Kernel::Triangle_3> triangles;
-  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
-  {
-  //create the triangles and store them
-    typename Kernel::Point_3 points[3];
-    typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
-    for(int i=0; i<3; ++i)
-    {
-      points[i] = get(pmap, target(*hc, m));
-      ++hc;
-    }
-    triangles.push_back(typename Kernel::Triangle_3(points[0], points[1], points[2]));
-    //sample a single point in all triangles(to have at least 1 pt/triangle)
-    Random_points_in_triangle_3<typename Kernel::Point_3> g(points[0], points[1], points[2]);
-    CGAL::cpp11::copy_n(g, 1, std::back_inserter(sampled_points));
-  }
-  //sample the triangle range uniformly
-  Random_points_in_triangles_3<typename Kernel::Point_3 >
-    g(triangles);
- CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
-  return;
- }
-}
 /// \todo add a plugin in the demo to display the distance between 2 meshes as a texture (if not complicated)
 
 template< class Concurrency_tag,
@@ -340,17 +351,13 @@ template< class Concurrency_tag,
           class TriangleMesh,
           class PMap1,
           class PMap2>
-double approximated_Hausdorff_distance( TriangleMesh& tm1,
-                                        TriangleMesh& tm2,
+double approximated_Hausdorff_distance( const TriangleMesh& tm1,
+                                        const TriangleMesh& tm2,
                                         double precision,
                                         const PMap1&,
                                         const PMap2&)
 {
- std::size_t nb_points =  std::max(std::ceil(to_double(precision * PMP::area(tm1,
-                                                                 PMP::parameters::geom_traits(Kernel())))),
-                                   std::ceil(to_double(precision * PMP::area(tm2,
-                                                                 PMP::parameters::geom_traits(Kernel())))));
- return approximated_Hausdorff_distance<Concurrency_tag,Kernel,TriangleMesh, PMap1, PMap2>(tm1, tm2, nb_points);
+ return approximated_Hausdorff_distance<Concurrency_tag,Kernel,TriangleMesh, PMap1, PMap2>(tm1, tm2, precision);
 }
 // documented functions
 /**
@@ -389,8 +396,8 @@ template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2>
-double approximated_Hausdorff_distance( TriangleMesh& tm1,
-                                        TriangleMesh& tm2,
+double approximated_Hausdorff_distance( const TriangleMesh& tm1,
+                                        const TriangleMesh& tm2,
                                         double precision,
                                         const NamedParameters1& np1,
                                         const NamedParameters2& np2)
@@ -424,8 +431,8 @@ template< class Concurrency_tag,
           class NamedParameters1,
           class NamedParameters2>
 double approximated_symmetric_Hausdorff_distance(
-  TriangleMesh& tm1,
-  TriangleMesh& tm2,
+  const TriangleMesh& tm1,
+  const TriangleMesh& tm2,
   double precision,
   const NamedParameters1& np1,
   const NamedParameters2& np2)
@@ -436,8 +443,6 @@ double approximated_symmetric_Hausdorff_distance(
   );
 }
 
-/// \todo document and implement me
-/// \todo find a way to define precision through named parameters
 /**
  * \ingroup PMP_distance_grp
  * computes the approximated Hausdorff distance between `points` and `tm`.
@@ -448,7 +453,7 @@ template< class Concurrency_tag,
           class PointRange,
           class NamedParameters>
 double max_distance_to_triangle_mesh(const PointRange& points,
-                                     TriangleMesh& tm,
+                                     const TriangleMesh& tm,
                                      double precision,
                                      const NamedParameters& np)
 {
@@ -458,13 +463,11 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  BOOST_FOREACH(typename PointRange::value_type point, points)
    sample_points.push_back(point);
 
- std::size_t nb_points =  std::ceil(to_double(precision * PMP::area(tm,
-                                                          PMP::parameters::geom_traits(Geom_traits()))));
   return approximated_Hausdorff_distance<Concurrency_tag, Geom_traits, TriangleMesh/*,
      choose_const_pmap(get_param(np, boost::vertex_point),
                        tm,
-                       vertex_point)*/>
-     (sample_points,tm, nb_points);
+                       vertex_point)>
+     (sample_points,tm, precision);
 }
 
 /// \todo document and implement me
@@ -476,7 +479,7 @@ template< class Concurrency_tag,
           class TriangleMesh,
           class PointRange,
           class NamedParameters>
-double max_distance_to_point_set(TriangleMesh& tm,
+double max_distance_to_point_set(const TriangleMesh& tm,
                                  const PointRange& points,
                                  const NamedParameters& np)
 {
@@ -488,8 +491,8 @@ double max_distance_to_point_set(TriangleMesh& tm,
 template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1>
-double approximated_Hausdorff_distance( TriangleMesh& tm1,
-                                        TriangleMesh& tm2,
+double approximated_Hausdorff_distance( const TriangleMesh& tm1,
+                                        const TriangleMesh& tm2,
                                         double precision,
                                         const NamedParameters1& np1)
 {
@@ -499,8 +502,8 @@ double approximated_Hausdorff_distance( TriangleMesh& tm1,
 
 template< class Concurrency_tag,
           class TriangleMesh>
-double approximated_Hausdorff_distance( TriangleMesh& tm1,
-                                        TriangleMesh& tm2,
+double approximated_Hausdorff_distance( const TriangleMesh& tm1,
+                                        const TriangleMesh& tm2,
                                         double precision)
 {
   return approximated_Hausdorff_distance<Concurrency_tag>(
@@ -513,8 +516,8 @@ double approximated_Hausdorff_distance( TriangleMesh& tm1,
 template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1>
-double approximated_symmetric_Hausdorff_distance(TriangleMesh& tm1,
-                                                 TriangleMesh& tm2,
+double approximated_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
+                                                 const TriangleMesh& tm2,
                                                  double precision,
                                                  const NamedParameters1& np1)
 {
@@ -525,8 +528,8 @@ double approximated_symmetric_Hausdorff_distance(TriangleMesh& tm1,
 template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1>
-double approximated_symmetric_Hausdorff_distance(TriangleMesh& tm1,
-                                                 TriangleMesh& tm2,
+double approximated_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
+                                                 const TriangleMesh& tm2,
                                                  double precision)
 {
   return approximated_symmetric_Hausdorff_distance<Concurrency_tag>(
