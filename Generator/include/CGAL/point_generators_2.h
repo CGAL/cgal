@@ -576,7 +576,7 @@ public:
   typedef Random_points_in_triangle_mesh_2<P, T>                      This;
 
 
-  Random_points_in_triangle_mesh_2(  T& triangulation,Random& rnd = default_random)
+  Random_points_in_triangle_mesh_2( const T& triangulation, Random& rnd = default_random)
     : Base( CGAL::make_prevent_deref_range(triangulation.finite_faces_begin(),
                                            triangulation.finite_faces_end()),
             internal::Triangle_from_face_2<T>(),

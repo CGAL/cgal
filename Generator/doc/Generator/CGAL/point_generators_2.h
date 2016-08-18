@@ -414,7 +414,7 @@ Creates  an input iterator `g` generating points of type `Point_2` uniformly
 distributed between the triangles of the triangulation. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
-Random_points_in_triangle_mesh_2(Triangulation triangulation, Random& rnd =
+Random_points_in_triangle_mesh_2(const Triangulation& triangulation, Random& rnd =
 default_random);
 
 /// @}
@@ -484,7 +484,7 @@ distributed between the triangles of the range. Each triangle has a probability 
 
 */
 template<typename TriangleRange>
-Random_points_in_triangles_2(TriangleRange triangles, Random& rnd =
+Random_points_in_triangles_2(const TriangleRange& triangles, Random& rnd =
 default_random);
 
 /// @}
