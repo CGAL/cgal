@@ -54,6 +54,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" )
   create_single_source_cgal_program( "remove_outliers_example.cpp" )
   create_single_source_cgal_program( "scale_estimation_example.cpp" )
+  create_single_source_cgal_program( "scale_estimation_2d_example.cpp" )
   create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
   
