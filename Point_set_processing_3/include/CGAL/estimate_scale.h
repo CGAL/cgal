@@ -613,9 +613,7 @@ estimate_local_k_neighbor_scales(
 }
 
 template <typename SamplesInputIterator,
-          typename SamplesPointPMap,
           typename QueriesInputIterator,
-          typename QueriesPointPMap,
           typename OutputIterator
 >
 void
