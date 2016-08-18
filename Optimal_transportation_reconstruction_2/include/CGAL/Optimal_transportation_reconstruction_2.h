@@ -441,17 +441,17 @@ public:
     if (m_verbose > 0)
       std::cerr << "insert loose bbox...";
 
-    double xl = (bbox.xmax()-bbox.xmin()/2);
-    double yl = (bbox.ymax()-bbox.ymin()/2);
+    double dl = (std::max)((bbox.xmax()-bbox.xmin()) / 2.,
+                           (bbox.ymax()-bbox.ymin()) / 2.);
 
     timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
     typename Traits::Construct_point_2 point_2
       = m_traits.construct_point_2_object();
-    insert_point(point_2(bbox.xmin()-xl, bbox.ymin()-yl), true, nb++);
-    insert_point(point_2(bbox.xmin()-xl, bbox.ymax()+yl), true, nb++);
-    insert_point(point_2(bbox.xmax()+xl, bbox.ymax()+yl), true, nb++);
-    insert_point(point_2(bbox.xmax()+xl, bbox.ymin()-yl), true, nb++);
+    insert_point(point_2(bbox.xmin()-dl, bbox.ymin()-dl), true, nb++);
+    insert_point(point_2(bbox.xmin()-dl, bbox.ymax()+dl), true, nb++);
+    insert_point(point_2(bbox.xmax()+dl, bbox.ymax()+dl), true, nb++);
+    insert_point(point_2(bbox.xmax()+dl, bbox.ymin()-dl), true, nb++);
 
     if (m_verbose > 0)
       std::cerr << "done (" << nb << " vertices, "
