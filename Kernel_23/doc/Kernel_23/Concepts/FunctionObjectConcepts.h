@@ -3911,7 +3911,7 @@ public:
      * @param segment the segment
      * @param bound the farthest point
      * @param k the kernel
-     * @return nearest point: `bound` or a point inside segment
+     * @return nearest point: `bound` or a point inside `segment`
      */
   Kernel::Point_3 operator()(const Kernel::Point_3& query,
                              const Kernel::Segment_3& segment,
@@ -3924,7 +3924,7 @@ public:
      * @param triangle the triangle
      * @param bound the farthest point
      * @param k the kernel
-     * @return nearest point: `bound` or a point inside triangle
+     * @return nearest point: `bound` or a point inside `triangle`
      */
   Kernel::Point_3 operator()(const Kernel::Point_3& query,
                              const Kernel::Triangle_3& triangle,
