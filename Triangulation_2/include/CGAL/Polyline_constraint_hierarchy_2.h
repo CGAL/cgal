@@ -612,13 +612,14 @@ void Polyline_constraint_hierarchy_2<T,Compare,Data>::simplify(Vertex_it uc,
   typename Sc_to_c_map::iterator uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
   CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
   Context_list*  uv_hcl = uv_sc_iter->second;
-  CGAL_assertion_msg(uv_hcl->size() == 1, "more than one constraint passing through the subconstraint" );
+  CGAL_assertion_msg((u == w) || (uv_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
+
   if(*(uv_hcl->front().current()) != u) {
     std::swap(u,w);
     uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
     CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
     uv_hcl = (*uv_sc_iter).second;
-    CGAL_assertion_msg(uv_hcl->size() == 1, "more than one constraint passing through the subconstraint" );
+    CGAL_assertion_msg((u == w) || (uv_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
   }
   // now u,v, and w are ordered along the polyline constraint
   if(vc.input()){
@@ -628,18 +629,24 @@ void Polyline_constraint_hierarchy_2<T,Compare,Data>::simplify(Vertex_it uc,
   typename Sc_to_c_map::iterator vw_sc_iter = sc_to_c_map.find(make_edge(v, w));
   CGAL_assertion_msg( vw_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
   Context_list*  vw_hcl = vw_sc_iter->second;
-  CGAL_assertion_msg(vw_hcl->size() == 1, "more than one constraint passing through the subconstraint" );
+    CGAL_assertion_msg((u == w) || (vw_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
+ 
   Vertex_list* vertex_list = uv_hcl->front().id().vl_ptr();
   CGAL_assertion_msg(vertex_list  == vw_hcl->front().id().vl_ptr(), "subconstraints from different polyline constraints" );
   // Remove the list item which points to v
   vertex_list->skip(vc.base());
   
-  // Remove the entries for [u,v] and [v,w]
-  sc_to_c_map.erase(uv_sc_iter);
-  sc_to_c_map.erase(vw_sc_iter);
-  delete vw_hcl;
-  // reuse other context list
-  sc_to_c_map[make_edge(u,w)] = uv_hcl;
+  if(u != w){
+    // Remove the entries for [u,v] and [v,w]
+    sc_to_c_map.erase(uv_sc_iter);
+    sc_to_c_map.erase(vw_sc_iter);
+    delete vw_hcl;
+    // reuse other context list
+    sc_to_c_map[make_edge(u,w)] = uv_hcl;
+  }else{
+    sc_to_c_map.erase(uv_sc_iter);
+    delete vw_hcl;
+  }
 }
 
 

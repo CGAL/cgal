@@ -51,4 +51,6 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "simplify_polygon_test.cpp" )
 
+create_single_source_cgal_program( "simplify_polyline_with_duplicate_points.cpp" )
+
 
