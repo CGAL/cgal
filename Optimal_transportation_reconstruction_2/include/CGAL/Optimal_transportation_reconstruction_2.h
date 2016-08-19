@@ -532,7 +532,7 @@ public:
     Vertex_handle s = m_dt.source_vertex(edge);
     Vertex_handle t = m_dt.target_vertex(edge);
 
-    if (m_verbose > 0) {
+    if (m_verbose > 1) {
       std::cerr << std::endl << "do collapse ("
           << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
@@ -552,7 +552,8 @@ public:
     // debug test
     bool ok = m_dt.check_kernel_test(edge);
     if (!ok) {
-      std::cerr << "do_collapse: kernel test failed: " << std::endl;
+      if (m_verbose > 1)
+        std::cerr << "do_collapse: kernel test failed: " << std::endl;
       return false;
     }
     //
@@ -570,7 +571,7 @@ public:
       relocate_one_ring(hull.begin(), hull.end());
     }
 
-    if (m_verbose > 0) {
+    if (m_verbose > 1) {
       std::cerr << "done" << std::endl;
     }
 
