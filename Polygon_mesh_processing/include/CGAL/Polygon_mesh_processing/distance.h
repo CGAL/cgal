@@ -204,18 +204,19 @@ void sample_triangle_mesh(const TriangleMesh& m,
          "Precision must be greater than 1.");
   double distance = 1.0/(sqrt(precision)-1);
 
-   typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
+  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type Pmap;
   Pmap pmap = get(vertex_point, m);
   std::vector<typename Kernel::Triangle_3> triangles;
   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
   {
   //create the triangles and store them
     typename Kernel::Point_3 points[3];
-    typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
+    //typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
+    typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd(halfedge(f,m));
     for(int i=0; i<3; ++i)
     {
-      points[i] = get(pmap, target(*hc, m));
-      ++hc;
+     points[i] = get(pmap, target(hd, m));
+     hd = next(hd, m);
     }
     triangles.push_back(typename Kernel::Triangle_3(points[0], points[1], points[2]));
     //sample a single point in all triangles(to have at least 1 pt/triangle)
@@ -224,20 +225,21 @@ void sample_triangle_mesh(const TriangleMesh& m,
   return;
  }
  case MONTE_CARLO:
+ {
   std::size_t nb_points =  std::ceil(precision * PMP::area(m,
                                                            PMP::parameters::geom_traits(Kernel())));
-  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type Pmap;
-  Pmap pmap = get(vertex_point, m);
+  typedef typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type Pmap;
+  Pmap pmap = get(CGAL::vertex_point, m);
   std::vector<typename Kernel::Triangle_3> triangles;
   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
   {
   //create the triangles and store them
     typename Kernel::Point_3 points[3];
-    typename TriangleMesh::Halfedge_around_face_circulator hc(halfedge(f,m), m);
+    typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd(halfedge(f,m));
     for(int i=0; i<3; ++i)
     {
-      points[i] = get(pmap, target(*hc, m));
-      ++hc;
+      points[i] = get(pmap, target(hd, m));
+      hd = next(hd, m);
     }
     triangles.push_back(typename Kernel::Triangle_3(points[0], points[1], points[2]));
     //sample a single point in all triangles(to have at least 1 pt/triangle)
@@ -250,6 +252,7 @@ void sample_triangle_mesh(const TriangleMesh& m,
  CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
   return;
  }
+ }
 }
 template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
                                                                                                                        CGAL::vertex_point_t>::type>
@@ -260,21 +263,15 @@ double approximated_Hausdorff_distance(
   Sampling_method method = RANDOM_UNIFORM
   )
 {
- typedef Point_3<Kernel> Point_3;
  bool is_triangle = is_triangle_mesh(m);
   CGAL_assertion_msg (is_triangle,
         "Mesh is not triangulated. Distance computing impossible.");
-  /*
-  Random_points_in_triangle_mesh_3<TriangleMesh, VertexPointMap>
-      g(m);
-  CGAL::cpp11::copy_n(g, nb_sample_points, std::back_inserter(sample_points));*/
   sample_triangle_mesh<Kernel>(m, precision ,sample_points, method);
   #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "Nb sample points " << sample_points.size() << "\n";
   #endif
   spatial_sort(sample_points.begin(), sample_points.end());
 
-  typedef typename TriangleMesh::face_iterator Triangle_iterator;
   typedef AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
   typedef AABB_traits<Kernel, Primitive> Traits;
   typedef AABB_tree< Traits > Tree;
@@ -466,7 +463,7 @@ double max_distance_to_triangle_mesh(const PointRange& points,
   return approximated_Hausdorff_distance<Concurrency_tag, Geom_traits, TriangleMesh/*,
      choose_const_pmap(get_param(np, boost::vertex_point),
                        tm,
-                       vertex_point)>
+                       vertex_point)*/>
      (sample_points,tm, precision);
 }
 
