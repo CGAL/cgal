@@ -4,6 +4,7 @@
 
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <boost/graph/filtered_graph.hpp>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point;
@@ -44,17 +45,18 @@ typedef boost::associative_property_map<VertexIndexMap> VertexIdPropertyMap;
 VertexIdPropertyMap vertex_index_pmap(vertex_id_map);
 
 int
-main(int,char*[])
+main(int argc,char* argv[])
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/points.xy";
+  std::ifstream input(filename);
   Triangulation t;
   Filter is_finite(t);
   Finite_triangulation ft(t, is_finite, is_finite);
 
-  t.insert(Point(0,0));
-  t.insert(Point(1,0));
-  t.insert(Point(0.2,0.2));
-  t.insert(Point(0,1));
-  t.insert(Point(0,2));
+  Point p ;
+  while(input >> p){
+    t.insert(p);
+  }
 
   vertex_iterator vit, ve;
   // Associate indices to the vertices

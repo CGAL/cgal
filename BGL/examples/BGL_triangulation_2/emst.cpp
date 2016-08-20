@@ -4,6 +4,7 @@
 
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point;
@@ -48,14 +49,16 @@ typedef boost::associative_property_map<VertexIndexMap> VertexIdPropertyMap;
 VertexIdPropertyMap vertex_index_pmap(vertex_id_map);
 
 int
-main(int,char*[])
+main(int argc,char* argv[])
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/points.xy";
+  std::ifstream input(filename);
   Triangulation t;
   Filter is_finite(t);
   Finite_triangulation ft(t, is_finite, is_finite);
 
   Point p ;
-  while(std::cin >> p){
+  while(input >> p){
     t.insert(p);
   }
 
