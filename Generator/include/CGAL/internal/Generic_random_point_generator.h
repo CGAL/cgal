@@ -67,7 +67,7 @@ public:
       Geometric_object object = object_from_id_map(id);
       ids.push_back(id);
       //compute the weight of a face
-      total_weight += to_double( CGAL::approximate_sqrt(compute_weight(object)) );
+      total_weight += to_double( compute_weight(object) );
       weights.push_back(total_weight);
     }
     //generate the first point
@@ -109,6 +109,18 @@ void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>:
   GeneratorOnObject pointCreator(object_from_id_map(ids[target]));
   this->d_item = *pointCreator;
 }
+
+namespace internal{
+template< class Functor >
+struct Apply_approx_sqrt: public Functor
+{
+  template <class T>
+  double operator()(const T& t) const
+  {
+    return approximate_sqrt( static_cast<const Functor&>(*this)(t) );
+  }
+};
+} //namespace internal
 
 }//namesape CGAL
 
