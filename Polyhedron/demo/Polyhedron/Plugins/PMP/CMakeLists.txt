@@ -75,3 +75,6 @@ target_link_libraries(repair_polyhedron_plugin scene_polyhedron_item)
 qt5_wrap_ui( isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
 polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin  ${isotropicRemeshingUI_FILES})
 target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_polyhedron_selection_item)
+
+polyhedron_demo_plugin(distance_plugin Distance_plugin)
+target_link_libraries(distance_plugin scene_polyhedron_item scene_color_ramp)
