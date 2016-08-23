@@ -1,7 +1,7 @@
 function(create_single_source_cgal_program firstfile )
 
   if(NOT IS_ABSOLUTE "${firstfile}")
-    set(firstfile "${CMAKE_CURRENT_SOURCE_DIR}/${firstfile}")
+    set(firstfile "${CGAL_CURRENT_SOURCE_DIR}/${firstfile}")
   endif()
 
   get_filename_component(exe_name ${firstfile} NAME_WE)
@@ -12,14 +12,14 @@ function(create_single_source_cgal_program firstfile )
 
     # remaining files
     foreach( i ${ARGN} )
-      set( all ${all} ${CMAKE_CURRENT_SOURCE_DIR}/${i} )
+      set( all ${all} ${CGAL_CURRENT_SOURCE_DIR}/${i} )
     endforeach()
 
 
     add_executable(${exe_name} ${all})
 
     if(BUILD_TESTING)
-      set(cin_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
+      set(cin_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cin")
       if(EXISTS ${cin_file})
 	add_test(NAME ${exe_name}
           COMMAND ${CMAKE_COMMAND}
@@ -30,7 +30,7 @@ function(create_single_source_cgal_program firstfile )
       else()
 	# TODO: deal with shell globbing; if the `cmd` file contains
 	# a `*`, then interprete the command using bash.
-	set(cmd_file "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
+	set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
 	if(EXISTS ${cmd_file})
           file(STRINGS "${cmd_file}" CMD_LINES)
 	  set(ARGS)
@@ -38,7 +38,7 @@ function(create_single_source_cgal_program firstfile )
 	  foreach(CMD_LINE ${CMD_LINES})
 #	    message(STATUS "  command line: ${CMD_LINE}")
 	    separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
-	    #	    message(STATUS "  args: ${CMD_LINE_ARGS}")
+#	    message(STATUS "  args: ${CMD_LINE_ARGS}")
 	    list(APPEND ARGS ${CMD_LINE_ARGS})
 	  endforeach()
 	endif()
@@ -47,8 +47,9 @@ function(create_single_source_cgal_program firstfile )
       endif()
       set_property(TEST "${exe_name}"
         APPEND PROPERTY LABELS "${PROJECT_NAME}")
+#      message(STATUS "  workding dir: ${CGAL_CURRENT_SOURCE_DIR}")
       set_property(TEST "${exe_name}"
-        PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+        PROPERTY WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
     endif(BUILD_TESTING)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
