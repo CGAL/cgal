@@ -195,7 +195,7 @@ void sample_triangle_mesh(const TriangleMesh& m,
  {
    std::size_t nb_points = std::ceil(
       parameter * PMP::area(m, PMP::parameters::geom_traits(Kernel())));
-    Random_points_in_triangle_mesh_3<TriangleMesh>
+    Random_points_in_triangle_mesh_3<TriangleMesh, PMap>
        g(m, pmap);
     CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
     return;

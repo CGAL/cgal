@@ -108,7 +108,7 @@ private:
   double compute_distances(const Polyhedron& m, std::vector<Kernel::Point_3> sample_points,double precision, PMP::Sampling_method method,
                            QMap<Kernel::Point_3, double>& out)const
   {
-    PMP::sample_triangle_mesh<Kernel>(m, precision ,sample_points, method);
+    PMP::sample_triangle_mesh<Kernel>(m, precision ,sample_points, get(CGAL::vertex_point, m), method);
     spatial_sort(sample_points.begin(), sample_points.end());
 
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
@@ -176,7 +176,7 @@ private:
         std::vector<Kernel::Point_3> sampled_points;
         PMP::internal::triangle_grid_sampling<Kernel>(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
                                                       f->halfedge()->next()->next()->vertex()->point(),
-                                                      1.0/(std::sqrt(40)-1.0), std::back_inserter(sampled_points));
+                                                      0.05, std::back_inserter(sampled_points));
 
         //triangle facets with sample points for color display
         FT triangulation(f,sampled_points,nf,poly,diagonal);
@@ -213,7 +213,7 @@ private:
       }
       //compute the distances
       QMap<Kernel::Point_3, double> distances;
-      double hausdorff = compute_distances(*poly_B,total_points,40,PMP::GRID, distances);
+      double hausdorff = compute_distances(*poly_B,total_points,0.05,PMP::GRID, distances);
       //compute the colors
       for(std::size_t i=0; i<total_points.size(); ++i)
       {
