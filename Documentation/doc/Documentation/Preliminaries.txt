@@ -167,15 +167,13 @@ of Chapter \ref Chapter_STL_Extensions_for_CGAL.
 
 \section seccgal_version Identifying the Version of CGAL
 
-`CGAL/config.h`
+`<CGAL/config.h>`
 
 Every release of \cgal defines the following preprocessor macros:
 
 <DL>
-<DT>`CGAL_VERSION`</DT>
-<DD> a textual description of the current release (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15)</DD>
 <DT>`CGAL_VERSION_STR`</DT>
-<DD>same as `CGAL_VERSION` but as a string constant token</DD>
+<DD>a textual description of the current release (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15) as a string literal</DD>
 <DT>`CGAL_VERSION_NR`</DT>
 <DD>a numerical description of the current release such that more recent
 releases have higher number.
@@ -198,6 +196,8 @@ dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
 </DD>
 </DL>
 
+The macro `CGAL_VERSION` is deprecated. It is the same as
+`CGAL_VERSION_STR`, but not as a string literal.
 
 \section Preliminaries_flags Compile-time Flags to Control Inlining
 
