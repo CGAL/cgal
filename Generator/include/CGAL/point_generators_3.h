@@ -333,14 +333,14 @@ struct Random_points_in_triangle_mesh_3
   typedef Random_points_in_triangle_mesh_3< TriangleMesh>              This;
 
 
-  Random_points_in_triangle_mesh_3( const TriangleMesh& mesh,Random& rnd = default_random)
+  Random_points_in_triangle_mesh_3( const TriangleMesh& mesh,Random& rnd = get_default_random())
     : Base( faces(mesh),
             CGAL::Property_map_to_unary_function<Pmap>(&mesh),
             internal::Apply_approx_sqrt<typename Kernel_traits<P>::Kernel::Compute_squared_area_3>(),
             rnd )
   {
   }
-  Random_points_in_triangle_mesh_3( const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = default_random)
+  Random_points_in_triangle_mesh_3( const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = get_default_random())
     : Base( faces(mesh),
             CGAL::Property_map_to_unary_function<Pmap>(Pmap(&mesh, vpm)),
             internal::Apply_approx_sqrt<typename Kernel_traits<P>::Kernel::Compute_squared_area_3>(),
@@ -427,7 +427,7 @@ struct Random_points_in_tetrahedral_mesh_boundary_3
   typedef Random_points_in_tetrahedral_mesh_boundary_3<C3t3>         This;
 
 
-  Random_points_in_tetrahedral_mesh_boundary_3( const C3t3& c3t3,Random& rnd = default_random)
+  Random_points_in_tetrahedral_mesh_boundary_3( const C3t3& c3t3,Random& rnd = get_default_random())
     : Base( make_range( c3t3.facets_in_complex_begin(),
                         c3t3.facets_in_complex_end()),
             internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>(),
@@ -464,7 +464,7 @@ struct Random_points_in_tetrahedral_mesh_3
   typedef Random_points_in_tetrahedral_mesh_3<C3t3>                            This;
 
 
-  Random_points_in_tetrahedral_mesh_3( const C3t3& c3t3,Random& rnd = default_random)
+  Random_points_in_tetrahedral_mesh_3( const C3t3& c3t3,Random& rnd = get_default_random())
     : Base( CGAL::make_prevent_deref_range(c3t3.cells_in_complex_begin(),
                                            c3t3.cells_in_complex_end()),
             internal::Tetrahedron_from_cell_C3t3<typename C3t3::Triangulation>(),
@@ -501,7 +501,7 @@ struct Random_points_in_triangles_3
   typedef Random_points_in_triangles_3<Point_3>                     This;
 
   template<typename TriangleRange>
-  Random_points_in_triangles_3( const TriangleRange& triangles, Random& rnd = default_random)
+  Random_points_in_triangles_3( const TriangleRange& triangles, Random& rnd = get_default_random())
     : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_3>()),
                        boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_3>()) ),
            internal::Deref<Triangle_3>(),

@@ -576,7 +576,7 @@ public:
   typedef Random_points_in_triangle_mesh_2<P, T>                      This;
 
 
-  Random_points_in_triangle_mesh_2( const T& triangulation, Random& rnd = default_random)
+  Random_points_in_triangle_mesh_2( const T& triangulation, Random& rnd = get_default_random())
     : Base( CGAL::make_prevent_deref_range(triangulation.finite_faces_begin(),
                                            triangulation.finite_faces_end()),
             internal::Triangle_from_face_2<T>(),
@@ -637,7 +637,7 @@ struct Random_points_in_triangles_2
   typedef Random_points_in_triangles_2<Point_2>                     This;
 
   template<typename TriangleRange>
-  Random_points_in_triangles_2( const TriangleRange& triangles, Random& rnd = default_random)
+  Random_points_in_triangles_2( const TriangleRange& triangles, Random& rnd = get_default_random())
     : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_2>()),
                        boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_2>()) ),
            internal::Deref<Triangle_2>(),

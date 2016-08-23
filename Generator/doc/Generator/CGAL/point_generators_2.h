@@ -334,7 +334,7 @@ typedef const Point_2& reference;
 
  */
  Random_points_in_triangle_2(Point_2& p, Point_2& q, Point_2& r, Random& rnd =
- default_random);
+ get_default_random() );
 
  /*!
  Creates  an input iterator `g` generating points of type `Point_2` uniformly
@@ -344,7 +344,7 @@ typedef const Point_2& reference;
 
  */
  Random_points_in_triangle_2(Triangle_2& t, Random& rnd =
- default_random);
+ get_default_random() );
 
  /// @}
 
@@ -415,7 +415,7 @@ distributed between the triangles of the triangulation. Each triangle has a prob
 
 */
 Random_points_in_triangle_mesh_2(const Triangulation& triangulation, Random& rnd =
-default_random);
+get_default_random() );
 
 /// @}
 
@@ -485,7 +485,7 @@ distributed between the triangles of the range. Each triangle has a probability 
 */
 template<typename TriangleRange>
 Random_points_in_triangles_2(const TriangleRange& triangles, Random& rnd =
-default_random);
+get_default_random() );
 
 /// @}
 

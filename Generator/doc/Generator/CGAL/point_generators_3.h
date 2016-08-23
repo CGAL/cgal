@@ -397,7 +397,7 @@ distributed between the triangles of the range. Each triangle has a probability 
 */
 template<typename TriangleRange>
 Random_points_in_triangles_3(TriangleRange triangulation, Random& rnd =
-default_random);
+get_default_random() );
 
 /// @}
 
@@ -470,13 +470,13 @@ Creates  an input iterator `g` generating points of type `Point_3` uniformly
 distributed in the mesh faces. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
-Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, Random& rnd = default_random);
+Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, Random& rnd = get_default_random() );
 
 /*!
 Creates  an input iterator `g` generating points of type `Point_3` uniformly
 distributed in the mesh faces based on `vpm`. Each triangle has a probability to be chosen to hold the point depending on its area.
 */
-Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = default_random);
+Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = get_default_random() );
 
 /// @}
 
@@ -549,7 +549,7 @@ Creates  an input iterator `g` generating points of type `Weighted_point_3` unif
 distributed on the mesh. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
-Random_points_in_tetrahedral_mesh_boundary_3( const C3T3& c3t3,Random& rnd = default_random);
+Random_points_in_tetrahedral_mesh_boundary_3( const C3T3& c3t3,Random& rnd = get_default_random() );
 
 /// @}
 
@@ -622,7 +622,7 @@ Creates  an input iterator `g` generating points of type `Weighted_point_3` unif
 distributed inside the tetrahedra of the mesh. Each tetrahedron has a probability to be chosen to hold the point depending on its volume.
 
 */
-Random_points_in_tetrahedral_mesh_3( const C3T3& c3t3,Random& rnd = default_random);
+Random_points_in_tetrahedral_mesh_3( const C3T3& c3t3,Random& rnd = get_default_random() );
 
 /// @}
 
