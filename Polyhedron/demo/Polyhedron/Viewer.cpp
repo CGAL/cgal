@@ -31,7 +31,7 @@ public:
   QMatrix4x4 projectionMatrix;
   void setFrustum(double l, double r, double t, double b, double n, double f);
   QImage* takeSnapshot(Viewer* viewer, int quality, int background_color, QSize size, double oversampling, bool expand);
-  void sendSnapshotToClibboard(Viewer*);
+  void sendSnapshotToClipboard(Viewer*);
 };
 Viewer::Viewer(QWidget* parent, bool antialiasing)
   : CGAL::Three::Viewer_interface(parent)
@@ -408,7 +408,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
   }
 
   else if(e->key() == Qt::Key_C && e->modifiers() & Qt::ControlModifier){
-    d->sendSnapshotToClibboard(this);
+    d->sendSnapshotToClipboard(this);
     return;
   }
 
@@ -1675,7 +1675,7 @@ QImage* Viewer_impl::takeSnapshot(Viewer *viewer, int quality, int background_co
     viewer->setBackgroundColor(previousBGColor);
   return image;
 }
-void Viewer_impl::sendSnapshotToClibboard(Viewer *viewer)
+void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
 {
   QImage * snap = takeSnapshot(viewer, 95, 1, 2*viewer->size(), 1, true);
   if(snap)
