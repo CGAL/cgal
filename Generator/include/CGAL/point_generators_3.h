@@ -320,17 +320,16 @@ struct Random_points_in_triangle_mesh_3
   typedef Generic_random_point_generator<
             typename boost::graph_traits <TriangleMesh>::face_descriptor ,
             CGAL::Property_map_to_unary_function<typename CGAL::Triangle_from_face_descriptor_map<
-            TriangleMesh,typename boost::property_map<TriangleMesh,
-            CGAL::vertex_point_t>::type> >,
-            Random_points_in_triangle_3<P> , P>                        Base;
+            TriangleMesh,VertexPointMap> >,
+            Random_points_in_triangle_3<P> , P>                            Base;
   typedef typename CGAL::Triangle_from_face_descriptor_map<
-                     TriangleMesh,VertexPointMap>                      Pmap;
+                     TriangleMesh,VertexPointMap>                          Pmap;
   typedef typename CGAL::Triangle_from_face_descriptor_map<
-                     TriangleMesh,VertexPointMap>                      Object_from_id_map;
-  typedef Random_points_in_triangle_3<P>                               Generator_on_object;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor  Id;
+                     TriangleMesh,VertexPointMap>                          Object_from_id_map;
+  typedef Random_points_in_triangle_3<P>                                   Generator_on_object;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      Id;
   typedef P result_type;
-  typedef Random_points_in_triangle_mesh_3< TriangleMesh>              This;
+  typedef Random_points_in_triangle_mesh_3< TriangleMesh, VertexPointMap>  This;
 
 
   Random_points_in_triangle_mesh_3( const TriangleMesh& mesh,Random& rnd = get_default_random())
