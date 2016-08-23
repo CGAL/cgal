@@ -447,7 +447,12 @@ struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, edge_weight_t>
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, edge_index_t>
-  : CGAL::Tag_true {};
+  : CGAL::Boolean_tag<
+      CGAL::internal::Has_member_id<
+        typename graph_traits<CGAL::Polyhedron_3<Gt, I, HDS, A> >::edge_descriptor
+      >::value
+    >
+{};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, face_index_t>
@@ -458,6 +463,23 @@ struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, face_index_t>
     >
 {};
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, halfedge_index_t>
+  : CGAL::Boolean_tag<
+      CGAL::internal::Has_member_id<
+        typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Halfedge
+      >::value
+    >
+{};
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct graph_has_property<CGAL::Polyhedron_3<Gt, I, HDS, A>, vertex_index_t>
+  : CGAL::Boolean_tag<
+      CGAL::internal::Has_member_id<
+        typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Vertex
+      >::value
+    >
+{};
 
 } // namespace boost
 
