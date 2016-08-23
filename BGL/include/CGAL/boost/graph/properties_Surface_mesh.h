@@ -311,6 +311,9 @@ namespace boost
   template<typename Point>
   struct graph_has_property<CGAL::Surface_mesh<Point>, CGAL::vertex_point_t>
     : CGAL::Tag_true {};
+  template<typename Point>
+  struct graph_has_property<CGAL::Surface_mesh<Point>, edge_weight_t>
+    : CGAL::Tag_true {};
 
 } //boost
 
