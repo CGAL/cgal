@@ -472,6 +472,12 @@ distributed in the mesh faces. Each triangle has a probability to be chosen to h
 */
 Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, Random& rnd = default_random);
 
+/*!
+Creates  an input iterator `g` generating points of type `Point_3` uniformly
+distributed in the mesh faces based on `vpm`. Each triangle has a probability to be chosen to hold the point depending on its area.
+*/
+Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = default_random);
+
 /// @}
 
 }; /* end Random_points_in_triangle_mesh_3 */
