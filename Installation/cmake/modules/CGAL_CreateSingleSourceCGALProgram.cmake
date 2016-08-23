@@ -1,3 +1,24 @@
+
+# Process a list, and replace items contains a file pattern (like
+# `*.off`) by the sublist that corresponds to the globbing of the
+# pattern in the directory `${CGAL_CURRENT_SOURCE_DIR}`.
+#
+#
+# For example: the `file
+# test/Poisson_surface_reconstruction_3/poisson_reconstruction_test.cmd`
+# contains:
+#
+#     data/*.off data/*.xyz data/*.pwn
+#
+# For that file, the list `ARGS` computed in the function
+# `create_single_source_cgal_program` (see below) is the list:
+#
+#     data/*.off;data/*.xyz;data/*.pwn
+#
+# A call to `expand_list_with_globbing(ARGS)` replaces the list by:
+#
+#     data/ChineseDragon-10kv.off;data/robocat_deci.off;data/sphere_20k.xyz;data/oni.pwn"
+#
 function(expand_list_with_globbing list_name)
   set(input_list ${${list_name}})
 #  message(STATUS "expand_list_with_globbing(${list_name}), ${list_name} is: ${input_list}")
