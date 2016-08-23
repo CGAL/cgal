@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>423</width>
-    <height>602</height>
+    <height>436</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,9 +20,6 @@
       <string>Materials parameters</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QTreeView" name="materialTree"/>
-      </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="1">
