@@ -175,9 +175,21 @@ public:
     return R().construct_difference_of_vectors_2_object()(*this,v);
   }
 
+  Vector_2& operator-=(const Vector_2& v)
+  {
+    *this = R().construct_difference_of_vectors_2_object()(*this,v);
+    return *this;
+  }
+
   Vector_2 operator+(const Vector_2& v) const
   {
     return R().construct_sum_of_vectors_2_object()(*this,v);
+  }
+
+  Vector_2& operator+=(const Vector_2& v)
+  {
+    *this = R().construct_sum_of_vectors_2_object()(*this,v);
+    return *this;
   }
 
   Vector_2 operator/(const RT& c) const
@@ -185,9 +197,33 @@ public:
    return R().construct_divided_vector_2_object()(*this,c);
   }
 
+  Vector_2& operator/=(const RT& c)
+  {
+    *this = R().construct_divided_vector_2_object()(*this,c);
+    return *this;
+  }
+
   Vector_2 operator/(const typename First_if_different<FT,RT>::Type & c) const
   {
    return R().construct_divided_vector_2_object()(*this,c);
+  }
+
+  Vector_2& operator/=(const typename First_if_different<FT,RT>::Type & c)
+  {
+    *this = R().construct_divided_vector_2_object()(*this,c);
+    return *this;
+  }
+
+  Vector_2& operator*=(const RT& c)
+  {
+    *this = R().construct_scaled_vector_2_object()(*this,c);
+    return *this;
+  }
+
+  Vector_2& operator*=(const typename First_if_different<FT,RT>::Type & c)
+  {
+    *this = R().construct_scaled_vector_2_object()(*this,c);
+    return *this;
   }
 
   FT squared_length() const

@@ -156,6 +156,23 @@ _test_cls_vector_3(const R& )
   it2++;
   assert(it == it2);
 
+  // test arithmetic operators
+  CGAL::Vector_3<R> v_1(2, 4, 6);
+  const CGAL::Vector_3<R> v_1_const=v_1;
+  CGAL::Vector_3<R> v_2(1, 2, 3);
+
+  v_1*=FT(2);
+  assert(v_1==v_1_const * FT(2));
+  v_1=v_1_const;
+  v_1/=FT(2);
+  assert(v_1==v_1_const / FT(2));
+  v_1=v_1_const;
+  v_1+=v_2;
+  assert(v_1==v_1_const + v_2);
+  v_1=v_1_const;
+  v_1-=v_2;
+  assert(v_1==v_1_const - v_2);
+
  std::cout << "done" << std::endl;
  return true;
 }
