@@ -468,7 +468,7 @@ public:
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       if (this->m_poly_traits.subcurve_traits_2()->compare_xy_2_object()(p,q) ==
           LARGER)
-        seg = m_poly_traits.subcurve_traits_2()->
+        seg = this->m_poly_traits.subcurve_traits_2()->
           construct_opposite_2_object()(seg);
 #endif
 
@@ -571,11 +571,11 @@ public:
       }
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-      if (m_poly_traits.subcurve_traits_2()->
+      if (this->m_poly_traits.subcurve_traits_2()->
           compare_endpoints_xy_2_object()(*segs.begin()) == LARGER)
       {
         X_monotone_curve_2 xcv(segs.begin(), segs.end());
-        return m_poly_traits.construct_opposite_2_object()(xcv);
+        return this->m_poly_traits.construct_opposite_2_object()(xcv);
       }
 #endif
 
