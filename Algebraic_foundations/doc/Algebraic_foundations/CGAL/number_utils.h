@@ -459,7 +459,13 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `to_double()` returns an double approximation of a number. 
+The template function `to_double()` returns a double approximation of a number.
+Note that in general, the value returned is not guaranteed to be the same
+when called several times on the same number. For example, if `NT` is a lazy
+number type (such as an instance of `CGAL::Lazy_exact_nt`), the double approximation
+returned might be affected by an exact computation internally triggered
+(that might have improved the double approximation).
+
 The function is defined if the argument type 
 is a model of the `RealEmbeddable` concept. 
 
