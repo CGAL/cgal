@@ -96,9 +96,8 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-  VPMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
-                                  pmesh,
-                                  boost::vertex_point);
+  VPMap vpmap = choose_param(get_param(np, vertex_point),
+                             get_const_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 

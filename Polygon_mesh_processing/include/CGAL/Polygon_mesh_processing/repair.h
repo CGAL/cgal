@@ -163,9 +163,8 @@ std::size_t remove_null_edges(
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                                     tmesh,
-                                     boost::vertex_point);
+  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+                                      get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, geom_traits), Traits());
 
@@ -485,9 +484,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                                     tmesh,
-                                     boost::vertex_point);
+  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+                                      get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, geom_traits), Traits());
 

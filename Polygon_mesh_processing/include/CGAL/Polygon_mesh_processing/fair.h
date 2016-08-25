@@ -80,7 +80,7 @@ namespace internal {
   fairing does not fail, but the mesh gets shrinked to `CGAL::ORIGIN`.
 
   @tparam TriangleMesh a model of `FaceGraph` and `MutableFaceGraph`
-          that has an internal property map for `CGAL::vertex_point_t`
+  that has an internal property map for `CGAL::vertex_point_t`
   @tparam VertexRange a range of vertex descriptors of `TriangleMesh`, model of `Range`.
           Its iterator type is `InputIterator`.
   @tparam NamedParameters a sequence of \ref namedparameters
@@ -143,7 +143,8 @@ namespace internal {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
-    VPMap vpmap_ = choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, tmesh));
+    VPMap vpmap_ = choose_param(get_param(np, vertex_point),
+                                get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
       choose_param(get_param(np, sparse_linear_solver), Default_solver()),

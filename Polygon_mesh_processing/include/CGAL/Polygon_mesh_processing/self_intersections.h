@@ -306,9 +306,8 @@ self_intersections( const FaceRange& face_range,
   );
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
-                                           tmesh,
-                                           boost::vertex_point);
+  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+                                      get_const_property_map(vertex_point, tmesh));
 
   BOOST_FOREACH(face_descriptor f, face_range)
   {

@@ -141,9 +141,8 @@ void isotropic_remeshing(const FaceRange& faces
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                            pmesh,
-                            boost::vertex_point);
+  VPMap vpmap = choose_param(get_param(np, vertex_point),
+                             get_property_map(vertex_point, pmesh));
 
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
   FIMap fimap = choose_param(get_param(np, face_index),
@@ -311,13 +310,12 @@ void split_long_edges(const EdgeRange& edges
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                            pmesh,
-                            boost::vertex_point);
+  VPMap vpmap = choose_param(get_param(np, vertex_point),
+                             get_property_map(vertex_point, pmesh));
 
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
   FIMap fimap = choose_param(get_param(np, face_index),
-    get_property_map(face_index, pmesh));
+                             get_property_map(face_index, pmesh));
 
   typedef typename boost::lookup_named_param_def <
         CGAL::edge_is_constrained_t,

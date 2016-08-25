@@ -139,7 +139,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 
   Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   sum_normals<Point>(pmesh, f
-    , choose_const_pmap(get_param(np, CGAL::vertex_point), pmesh, CGAL::vertex_point)
+    , choose_param(get_param(np, vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))
     , normal
     , traits);
 

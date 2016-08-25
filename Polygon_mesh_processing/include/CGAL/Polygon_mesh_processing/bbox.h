@@ -58,9 +58,8 @@ namespace CGAL {
       using boost::choose_const_pmap;
       using boost::get_param;
       typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
-        vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
-                                pmesh,
-                                CGAL::vertex_point);
+        vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 

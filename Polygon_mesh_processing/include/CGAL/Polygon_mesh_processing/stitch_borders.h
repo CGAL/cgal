@@ -304,9 +304,8 @@ void stitch_borders(PolygonMesh& pmesh,
   using boost::get_param;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-  VPMap vpm = choose_const_pmap(get_param(np, boost::vertex_point),
-                                pmesh,
-                                boost::vertex_point);
+  VPMap vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(vertex_point, pmesh));
 
   internal::Naive_border_stitching_modifier<PolygonMesh, VPMap, HalfedgePairsRange>
     modifier(hedge_pairs_to_stitch, vpm);
@@ -356,9 +355,8 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
   std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
 
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
-  VPMap vpm = choose_const_pmap(get_param(np, boost::vertex_point),
-                                pmesh,
-                                boost::vertex_point);
+  VPMap vpm = choose_param(get_param(np, vertex_point),
+                           get_const_property_map(vertex_point, pmesh));
 
   internal::detect_duplicated_boundary_edges(pmesh,
     std::back_inserter(hedge_pairs_to_stitch),
