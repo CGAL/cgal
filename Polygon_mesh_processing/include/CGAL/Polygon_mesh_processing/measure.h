@@ -81,7 +81,7 @@ namespace Polygon_mesh_processing {
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
   {
-    using boost::choose_const_pmap;
+    using boost::choose_param;
     using boost::get_param;
 
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
@@ -224,7 +224,7 @@ namespace Polygon_mesh_processing {
             , const TriangleMesh& tmesh
             , const CGAL_PMP_NP_CLASS& np)
   {
-    using boost::choose_const_pmap;
+    using boost::choose_param;
     using boost::get_param;
 
     CGAL_precondition(boost::graph_traits<TriangleMesh>::null_face() != f);
@@ -410,7 +410,7 @@ namespace Polygon_mesh_processing {
     CGAL_assertion(is_triangle_mesh(tmesh));
     CGAL_assertion(is_closed(tmesh));
 
-    using boost::choose_const_pmap;
+    using boost::choose_param;
     using boost::get_param;
 
     typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type

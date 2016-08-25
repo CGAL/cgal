@@ -91,7 +91,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid(pmesh));
 
-  using boost::choose_const_pmap;
+  using boost::choose_param;
   using boost::get_param;
 
   //VertexPointMap

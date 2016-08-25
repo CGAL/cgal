@@ -55,7 +55,7 @@ namespace CGAL {
     CGAL::Bbox_3 bbox_3(const PolygonMesh& pmesh,
                         const NamedParameters& np)
     {
-      using boost::choose_const_pmap;
+      using boost::choose_param;
       using boost::get_param;
       typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
         vpm = choose_param(get_param(np, vertex_point),

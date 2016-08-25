@@ -324,7 +324,7 @@ bool  triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descripto
                       PolygonMesh& pmesh,
                       const NamedParameters& np)
 {
-  using boost::choose_const_pmap;
+  using boost::choose_param;
   using boost::get_param;
 
   //VertexPointMap
@@ -373,7 +373,7 @@ bool triangulate_faces(FaceRange face_range,
                        PolygonMesh& pmesh,
                        const NamedParameters& np)
 {
-  using boost::choose_const_pmap;
+  using boost::choose_param;
   using boost::get_param;
 
   //VertexPointMap
