@@ -167,7 +167,7 @@ namespace Polygon_mesh_processing {
                                   , const NamedParameters& np)
   {
     typedef PolygonMesh PM;
-    typedef typename GetFaceIndexMap<PM, NamedParameters>::type           FIMap;
+    typedef typename GetFaceIndexMap<PM, NamedParameters>::const_type     FIMap;
     typedef typename boost::property_map<typename internal::Dummy_PM,
                                               CGAL::face_index_t>::type   Unset_FIMap;
 
@@ -179,7 +179,7 @@ namespace Polygon_mesh_processing {
 
     //face index map given as a named parameter, or as an internal property map
     FIMap fim = choose_param(get_param(np, CGAL::face_index),
-                             get_property_map(CGAL::face_index, pmesh));
+                             get_const_property_map(CGAL::face_index, pmesh));
 
     //make a minimal check that it's properly initialized :
     //if the 2 first faces have the same id, we know the property map is not initialized

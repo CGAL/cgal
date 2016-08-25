@@ -72,7 +72,7 @@ public:
                           , typename boost::cgal_no_property::const_type
   >::type const_type;
 
-  type get_pmap(const PropertyTag& p, const PolygonMesh& pmesh)
+  type get_pmap(const PropertyTag& p, PolygonMesh& pmesh)
   {
     return get_impl(p, pmesh, Has_internal_pmap());
   }
@@ -83,11 +83,11 @@ public:
   }
 
 private:
-  type get_impl(const PropertyTag&, const PolygonMesh&, CGAL::Tag_false)
+  type get_impl(const PropertyTag&, PolygonMesh&, CGAL::Tag_false)
   {
     return type(); //boost::cgal_no_property::type
   }
-  type get_impl(const PropertyTag& p, const PolygonMesh& pmesh, CGAL::Tag_true)
+  type get_impl(const PropertyTag& p, PolygonMesh& pmesh, CGAL::Tag_true)
   {
     return get(p, pmesh);
   }
@@ -106,7 +106,7 @@ private:
 
 template<typename PolygonMesh, typename PropertyTag>
 typename property_map_selector<PolygonMesh, PropertyTag>::type
-get_property_map(const PropertyTag& p, const PolygonMesh& pmesh)
+get_property_map(const PropertyTag& p, PolygonMesh& pmesh)
 {
   property_map_selector<PolygonMesh, PropertyTag> pms;
   return pms.get_pmap(p, pmesh);
@@ -144,13 +144,20 @@ template<typename PolygonMesh, typename NamedParameters>
 class GetFaceIndexMap
 {
   typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::type DefaultMap;
+  typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::const_type DefaultMap_const;
 public:
   typedef typename boost::lookup_named_param_def <
     boost::face_index_t,
     NamedParameters,
     DefaultMap
   > ::type  type;
+  typedef typename boost::lookup_named_param_def <
+    boost::face_index_t,
+    NamedParameters,
+    DefaultMap_const
+  > ::type  const_type;
   typedef typename boost::is_same<type, DefaultMap>::type Is_internal_map;
+  typedef typename boost::is_same<const_type, DefaultMap_const>::type Is_internal_map_const;
 };
 
 template<typename PolygonMesh, typename NamedParameters>

@@ -531,9 +531,9 @@ connected_components(const PolygonMesh& pmesh,
   FiniteDual finite_dual(dual,
     internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
 
-  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type
+  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
     fimap = choose_param(get_param(np, face_index),
-                         get_property_map(face_index, pmesh));
+                         get_const_property_map(face_index, pmesh));
 
   return boost::connected_components(finite_dual,
     fcm,
