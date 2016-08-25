@@ -8,8 +8,8 @@ before_script:
 script:
   - make
   - make -k examples
-  - make -k tests
-  - make -k demos
+#  - make -k tests
+#  - make -k demos
 compiler:
   - clang
   - gcc
