@@ -67,8 +67,7 @@ namespace internal{
  *      In other words, the answer to this predicate would be the same for each
  *      isolated connected component.
  *
- * @tparam PolygonMesh a model of `FaceListGraph` that has an internal property map
- *         for `boost::vertex_point_t`
+ * @tparam PolygonMesh a model of `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param pmesh the closed polygon mesh to be tested

@@ -443,14 +443,16 @@ std::size_t remove_null_edges(
 /// @pre `CGAL::is_triangle_mesh(tmesh)`
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-///        that has an internal property map for `boost::vertex_point_t`
 /// @tparam NamedParameters a sequence of \ref namedparameters
 ///
 /// @param tmesh the  triangulated surface mesh to be repaired
 /// @param np optional \ref namedparameters described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap` \cgalParamEnd
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`. 
+/// If this parameter is omitted, an internal property map for
+/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
+/// \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
 ///       The traits class must provide the nested type `Point_3`,
 ///       and the nested functors :

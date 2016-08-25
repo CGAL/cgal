@@ -35,7 +35,6 @@ namespace Polygon_mesh_processing {
   @brief refines a region of a triangle mesh
 
   @tparam TriangleMesh model of `MutableFaceGraph`
-          that has an internal property map for `CGAL::vertex_point_t`
   @tparam FaceRange range of face descriptors, model of `Range`.
           Its iterator type is `InputIterator`.
   @tparam FaceOutputIterator model of `OutputIterator`
@@ -52,7 +51,10 @@ namespace Polygon_mesh_processing {
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`
-      Instance of a class model of `ReadWritePropertyMap` \cgalParamEnd
+      Instance of a class model of `ReadWritePropertyMap`.
+      If this parameter is omitted, an internal property map for
+     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+     \cgalParamEnd
     \cgalParamBegin{density_control_factor} factor to control density of the output mesh,
       where larger values lead to denser refinements.
       The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.` \cgalParamEnd

@@ -39,14 +39,15 @@ namespace CGAL {
     *  computes a bounding box of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeListGraph`
-    *   that has an internal property map for `CGAL::vertex_point_t`
     * @tparam NamedParameters a sequence of \ref namedparameters
     *
     * @param pmesh a polygon mesh
     * @param np optional sequence of \ref namedparameters among the ones listed below
     *
     * \cgalNamedParamsBegin
-    *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+    *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+    *   If this parameter is omitted, an internal property map for
+    *   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
     * \cgalNamedParamsEnd
     *
     * @return a bounding box of `pmesh`

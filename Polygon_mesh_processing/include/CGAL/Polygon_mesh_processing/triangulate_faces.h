@@ -304,7 +304,6 @@ public:
 * \ingroup PMP_meshing_grp
 * triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-*         that has an internal property map for `boost::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param f face to be triangulated
@@ -313,7 +312,9 @@ public:
 *
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+*   If this parameter is omitted, an internal property map for
+*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -353,7 +354,6 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
           model of `Range`.
           Its iterator type is `InputIterator`.
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-*         that has an internal property map for `boost::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param face_range the range of faces to be triangulated
@@ -361,7 +361,9 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+*   If this parameter is omitted, an internal property map for
+*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -397,14 +399,15 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 * \ingroup PMP_meshing_grp
 * triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-*         that has an internal property map for `boost::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh the polygon mesh to be triangulated
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+*   If this parameter is omitted, an internal property map for
+*   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
 *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
 * \cgalNamedParamsEnd
 *
