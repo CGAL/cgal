@@ -747,9 +747,8 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 
   //VertexIndexMap
   typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
-  VertexIndexMap vim = choose_const_pmap(get_param(np, boost::vertex_index),
-                                         pmesh,
-                                         boost::vertex_index);
+  VertexIndexMap vim = choose_param(get_param(np, boost::vertex_index),
+                                    get_const_property_map(boost::vertex_index, pmesh));
 
   std::set<std::size_t> cc_to_keep;
   BOOST_FOREACH(std::size_t i, components_to_keep)
