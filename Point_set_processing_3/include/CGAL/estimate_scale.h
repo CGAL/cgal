@@ -410,6 +410,8 @@ public:
 ///        with value type `Point_3<Kernel>` or `Point_2<Kernel>`.  It
 ///        can be omitted if the value type of `QueriesInputIterator` is
 ///        convertible to `Point_3<Kernel>` or to `Point_2<Kernel>`.
+/// @tparam OutputIterator is used to store the computed scales. Its
+///        value type is `std::size_t`.
 /// @tparam Kernel Geometric traits class.  It can be omitted and
 ///        deduced automatically from the value type of `SamplesPointPMap`.
 ///
@@ -509,6 +511,8 @@ estimate_global_k_neighbor_scale(
 ///        with value type `Point_3<Kernel>` or `Point_2<Kernel>`.  It
 ///        can be omitted if the value type of `QueriesInputIterator` is
 ///        convertible to `Point_3<Kernel>` or to `Point_2<Kernel>`.
+/// @tparam OutputIterator is used to store the computed scales. Its
+///        value type is `Kernel::FT`.
 /// @tparam Kernel Geometric traits class.  It can be omitted and
 ///        deduced automatically from the value type of `SamplesPointPMap`.
 ///
