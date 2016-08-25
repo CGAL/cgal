@@ -126,7 +126,7 @@ void MemoryPool< T, nObjects >::free(void* t) {
    if(blocks.empty()){
      std::cerr << typeid(T).name() << std::endl;
    }
-   assert (! blocks.empty());
+   CGAL_assertion (! blocks.empty());
 
    // recycle the object memory, by putting it back into the chain
    reinterpret_cast<Thunk*>(t)->next = head;

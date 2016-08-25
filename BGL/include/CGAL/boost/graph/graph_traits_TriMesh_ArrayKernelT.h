@@ -572,13 +572,13 @@ typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::face_descripto
 add_face(InputIterator begin, InputIterator end, OpenMesh::TriMesh_ArrayKernelT<K>& sm)
 {
   typedef typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::vertex_descriptor vertex_descriptor;
-  assert(begin!= end);
+  CGAL_assertion(begin!= end);
   vertex_descriptor u = *begin; 
   ++begin;  
-  assert(begin!= end);
+  CGAL_assertion(begin!= end);
     vertex_descriptor v = *begin; 
   ++begin;  
-  assert(begin!= end);
+  CGAL_assertion(begin!= end);
     vertex_descriptor w = *begin; 
 
   return sm.add_face(u,v,w);

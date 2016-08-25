@@ -65,7 +65,7 @@ BigInt floor(const Real& r, Real &sub) {
     ++sub, --f;
   if (sub>=1)
     --sub, ++f;
-  assert(sub >=0 && sub<1);
+  CGAL_assertion(sub >=0 && sub<1);
   return f;
 }
 
@@ -145,7 +145,7 @@ void Real::constructFromString(const char *str, const extLong& prec )
   else {
     e = str + std::strlen(str);
 #ifdef CORE_DEBUG
-    assert(*e == '\0');
+    CGAL_assertion(*e == '\0');
 #endif
   }
 
@@ -246,7 +246,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
       size *= 2;
     }
 #ifdef CORE_DEBUG
-    assert((p-str) < size);
+    CGAL_assertion((p-str) < size);
 #endif
 
     *p++ = c;
@@ -276,7 +276,7 @@ std::istream& operator >>(std::istream& i, Real& x) {
   }
 
 #ifdef CORE_DEBUG
-  assert(p - str < size);
+  CGAL_assertion(p - str < size);
 #endif
 
   *p = '\0';

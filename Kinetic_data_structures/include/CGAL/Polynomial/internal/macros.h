@@ -57,11 +57,11 @@
 
 #include <cassert>
 
-#define CGAL_Polynomial_assertion(x) assert(x)
+#define CGAL_Polynomial_assertion(x) CGAL_assertion(x)
 // This does not work
 #define CGAL_Polynomial_assertion_code(x) x
-#define CGAL_Polynomial_precondition(x) assert(x)
-#define CGAL_Polynomial_postcondition(x) assert(x)
+#define CGAL_Polynomial_precondition(x) CGAL_assertion(x)
+#define CGAL_Polynomial_postcondition(x) CGAL_assertion(x)
 #define CGAL_Polynomial_expensive_precondition(x)
 #define CGAL_Polynomial_expensive_assertion(x)
 #define CGAL_Polynomial_expensive_postcondition(x)
