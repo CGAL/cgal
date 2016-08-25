@@ -23,9 +23,9 @@ LC_CTYPE=en_US.UTF-8
 # The script also updates the manual tools.
 
 # "master" alone
-0 21  *  *  Sun,Wed                      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/master.git --public --do-it
+0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/master.git --public --do-it
 # "integration"
-0 21  *  *  Mon,Tue,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it
+0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it
 # from branch 4.8
 0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.8-branch && $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.8-branch.git --public --do-it
 # from branch 4.7
