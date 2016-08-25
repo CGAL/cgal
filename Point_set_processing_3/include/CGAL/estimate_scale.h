@@ -424,7 +424,7 @@ template <typename SamplesInputIterator,
           typename OutputIterator,
           typename Kernel
 >
-void
+OutputIterator
 estimate_local_k_neighbor_scales(
   SamplesInputIterator first, ///< iterator over the first input sample.
   SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
@@ -443,6 +443,8 @@ estimate_local_k_neighbor_scales(
   // Compute local scales everywhere
   for (QueriesInputIterator it = first_query; it != beyond_query; ++ it)
     *(output ++) = kdtree.compute_k_scale (it, queries_pmap);
+
+  return output;
 }
 
   
@@ -521,7 +523,7 @@ template <typename SamplesInputIterator,
           typename OutputIterator,
           typename Kernel
 >
-void
+OutputIterator
 estimate_local_range_scales(
   SamplesInputIterator first, ///< iterator over the first input sample.
   SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
@@ -541,6 +543,7 @@ estimate_local_range_scales(
   for (QueriesInputIterator it = first_query; it != beyond_query; ++ it)
     *(output ++) = kdtree.compute_range_scale (it, queries_pmap);
 
+  return output;
 }
 
   
@@ -596,7 +599,7 @@ template <typename SamplesInputIterator,
           typename QueriesPointPMap,
           typename OutputIterator
 >
-void
+OutputIterator
 estimate_local_k_neighbor_scales(
   SamplesInputIterator first, ///< iterator over the first input sample.
   SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
@@ -608,15 +611,15 @@ estimate_local_k_neighbor_scales(
 {
   typedef typename boost::property_traits<SamplesPointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  estimate_local_k_neighbor_scales (first, beyond, samples_pmap, first_query, beyond_query, queries_pmap,
-                                    output, Kernel());
+  return estimate_local_k_neighbor_scales (first, beyond, samples_pmap, first_query, beyond_query,
+                                           queries_pmap, output, Kernel());
 }
 
 template <typename SamplesInputIterator,
           typename QueriesInputIterator,
           typename OutputIterator
 >
-void
+OutputIterator
 estimate_local_k_neighbor_scales(
   SamplesInputIterator first, ///< iterator over the first input sample.
   SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
@@ -624,7 +627,7 @@ estimate_local_k_neighbor_scales(
   QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
   OutputIterator output) ///< output iterator to store the computed scales
 {
-  estimate_local_k_neighbor_scales
+  return estimate_local_k_neighbor_scales
     (first, beyond,
      make_identity_property_map (typename std::iterator_traits<SamplesInputIterator>::value_type()),
      first_query, beyond_query,
@@ -665,7 +668,7 @@ template <typename SamplesInputIterator,
           typename QueriesPointPMap,
           typename OutputIterator
 >
-void
+OutputIterator
 estimate_local_range_scales(
   SamplesInputIterator first, ///< iterator over the first input sample.
   SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
@@ -677,8 +680,8 @@ estimate_local_range_scales(
 {
   typedef typename boost::property_traits<SamplesPointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  estimate_local_range_scales(first, beyond, samples_pmap, first_query, beyond_query, queries_pmap,
-                              output, Kernel());
+  return estimate_local_range_scales(first, beyond, samples_pmap, first_query, beyond_query,
+                                     queries_pmap, output, Kernel());
 }
 
 
@@ -686,7 +689,7 @@ template <typename SamplesInputIterator,
           typename QueriesInputIterator,
           typename OutputIterator
 >
-void
+OutputIterator
 estimate_local_range_scales(
   SamplesInputIterator first, ///< iterator over the first input sample.
   SamplesInputIterator beyond, ///< past-the-end iterator over the input samples.
@@ -694,7 +697,7 @@ estimate_local_range_scales(
   QueriesInputIterator beyond_query, ///< past-the-end iterator over the points where scale must be estimated
   OutputIterator output) ///< output iterator to store the computed scales
 {
-  estimate_local_range_scales
+  return estimate_local_range_scales
     (first, beyond,
      make_identity_property_map (typename std::iterator_traits<SamplesInputIterator>::value_type()),
      first_query, beyond_query,
