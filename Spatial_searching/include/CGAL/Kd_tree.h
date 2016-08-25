@@ -348,31 +348,45 @@ public:
     // This does not actually remove points, and further insertions
     // would make the points reappear, so we disallow it.
     removed_ = true;
-    // Locate the point
-    Internal_node_handle grandparent = 0;
-    Internal_node_handle parent = 0;
-    bool islower = false, islower2;
-    Node_handle node = root(); // Calls build() if needed.
-    while (!node->is_leaf()) {
-      grandparent = parent; islower2 = islower;
-      parent = static_cast<Internal_node_handle>(node);
-      islower = traits().construct_cartesian_const_iterator_d_object()(p)[parent->cutting_dimension()] < parent->cutting_value();
-      if (islower) {
-	node = parent->lower();
-      } else {
-	node = parent->upper();
+
+    CGAL_assertion_code(bool success = )
+    remove_(p, 0, false, 0, false, root());
+    CGAL_assertion(success);
+  }
+private:
+  bool remove_(const Point_d& p,
+      Internal_node_handle grandparent, bool islower,
+      Internal_node_handle parent, bool islower2,
+      Node_handle node) {
+    // Recurse to locate the point
+    if (!node->is_leaf()) {
+      Internal_node_handle newparent = static_cast<Internal_node_handle>(node);
+      // FIXME: This should be if(x<y) remove low; else remove up;
+      if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] <= newparent->cutting_value()) {
+	if (remove_(p, parent, islower2, newparent, true, newparent->lower()))
+	  return true;
       }
+      //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
+	return remove_(p, parent, islower2, newparent, false, newparent->upper());
+
+      CGAL_assertion(false); // Point was not found
     }
+
+    // Actual removal
     Leaf_node_handle lnode = static_cast<Leaf_node_handle>(node);
     if (lnode->size() > 1) {
       iterator pi = std::find(lnode->begin(), lnode->end(), p);
-      CGAL_assertion (pi != lnode->end());
+      // FIXME: we should ensure this never happens
+      if (pi == lnode->end()) return false;
       iterator lasti = lnode->end() - 1;
       if (pi != lasti) {
 	// Hack to get a non-const iterator
 	std::iter_swap(pts.begin()+(pi-pts.begin()), pts.begin()+(lasti-pts.begin()));
       }
       lnode->drop_last_point();
+    } else if (*lnode->begin() != p) {
+      // FIXME: we should ensure this never happens
+      return false;
     } else if (grandparent) {
       Node_handle brother = islower ? parent->upper() : parent->lower();
       if (islower2)
@@ -384,8 +398,10 @@ public:
     } else {
       clear();
     }
+    return true;
   }
 
+public:
   //For efficiency; reserve the size of the points vectors in advance (if the number of points is already known).
   void reserve(size_t size)
   {
