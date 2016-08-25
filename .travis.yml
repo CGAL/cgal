@@ -1,0 +1,40 @@
+language: cpp
+dist: trusty
+install:
+before_script:
+  - mkdir build
+  - cd build
+  - cmake -DWITH_examples=ON -DWITH_tests=ON ..
+script:
+  - make
+  - make -k examples
+  - make -k tests
+compiler:
+  - clang
+  - gcc
+addons:
+  apt:
+    packages:
+      - cmake
+      - libboost-dev
+      - libboost-system-dev
+      - libboost-program-options-dev
+      - libboost-thread-dev
+      - libgmp-dev
+      - libmpfr-dev
+      - zlib1g-dev
+      - libeigen3-dev # too old
+      # Not allowed (yet)
+      # - geomview
+      # - libglew1.5-dev
+      # - libipe-dev
+      # - libmpfi-dev
+      # Not found
+      # - libqglviewer-dev
+      # - qtbase5-dev
+      # - qtscript5-dev
+      # - libqt5svg5-dev
+      # - qttools5-dev
+      # - qttools5-dev-tools
+    sources:
+      - kalakris-cmake
