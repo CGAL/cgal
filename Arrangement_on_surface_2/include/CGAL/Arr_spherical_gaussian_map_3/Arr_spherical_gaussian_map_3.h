@@ -42,11 +42,7 @@
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 
 #if defined(CGAL_USE_LEDA)
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/rational.h>
-#else
 #include <LEDA/numbers/rational.h>
-#endif
 #endif
 
 namespace CGAL {

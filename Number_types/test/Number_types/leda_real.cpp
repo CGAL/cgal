@@ -9,11 +9,7 @@
 int main() {
     typedef leda_real NT;
 
-#if CGAL_LEDA_VERSION >= 500 
     typedef CGAL::Field_with_root_of_tag Tag;
-#else
-    typedef CGAL::Field_with_kth_root_tag Tag;
-#endif
     typedef CGAL::Tag_true Is_exact;
 
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>();

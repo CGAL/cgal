@@ -35,25 +35,15 @@
 #include <utility>
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/real.h>
-#include <LEDA/interval.h>
-#else
 #include <LEDA/numbers/real.h>
-#endif
 
 
 namespace CGAL {
 
 template <> class Algebraic_structure_traits< leda_real >
 
-#if CGAL_LEDA_VERSION >= 500
   : public Algebraic_structure_traits_base< leda_real,
                                             Field_with_root_of_tag >  {
-#else
-  : public Algebraic_structure_traits_base< leda_real,
-                                            Field_with_kth_root_tag >  {
-#endif
 
   public:
     typedef Tag_true           Is_exact;
@@ -78,7 +68,6 @@ template <> class Algebraic_structure_traits< leda_real >
     };
 
 // Root_of is only available for LEDA versions >= 5.0
-#if CGAL_LEDA_VERSION >= 500
     class Root_of {
       public:
         typedef Type result_type;
@@ -112,7 +101,6 @@ template <> class Algebraic_structure_traits< leda_real >
         };*/
     };
 
-#endif
 
 
 };
@@ -166,7 +154,6 @@ template <> class Real_embeddable_traits< leda_real >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
-#if CGAL_LEDA_VERSION >= 501
             leda_bigfloat bnum = x.to_bigfloat();
             leda_bigfloat berr = x.get_bigfloat_error();
 
@@ -180,23 +167,6 @@ template <> class Real_embeddable_traits< leda_real >
             CGAL_postcondition(Type(result.first)<=x);
             CGAL_postcondition(Type(result.second)>=x);
             return result;
-#else
-            CGAL_LEDA_SCOPE::interval temp(x); //bug in leda
-            std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
-            CGAL_postcondition_msg(Type(result.first)<=x,
-                                                    "Known bug in LEDA <=5.0");
-            CGAL_postcondition_msg(Type(result.first)>=x,
-                                                    "Known bug in LEDA <=5.0");
-            return result;
-            // If x is very small and we look closer at x
-            // (i.e. comparison or to_double() or to_bigfloat())
-            // then x gets 0, which is really bad.
-            // Therefore we do not touch x.
-            // The LEDA interval above returns (-inf, inf) for
-            // very small x, which is also bad and leads to
-            // problems lateron. The postcondition fails in this
-            // situation.
-#endif
               // Original CGAL to_interval:
             //  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
             //  double approx = z.to_double();

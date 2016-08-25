@@ -26,11 +26,7 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/bigfloat.h>
-#else
 #include <LEDA/numbers/bigfloat.h>
-#endif
 
 #include <boost/numeric/interval.hpp>
 
