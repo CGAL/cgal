@@ -100,6 +100,16 @@ Test for inequality. The point can be compared with `ORIGIN`.
 */ 
 bool operator!=(const Point_2<Kernel> &q) const; 
 
+/*!
+translates the point by the vector `v`.
+*/
+Point_2<Kernel>& operator+=(const Vector_2<Kernel> &v);
+
+/*!
+translates the point by the vector -`v`.
+*/
+Point_2<Kernel>& operator-=(const Vector_2<Kernel> &v);
+
 /// @}
 
 /// \name Coordinate Access

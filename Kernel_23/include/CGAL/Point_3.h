@@ -175,6 +175,21 @@ public:
     return t.transform(*this);
   }
 
+  Point_3<R_>&
+  operator+=(const Vector_3 &v)
+  {
+    *this = R().construct_translated_point_3_object()(*this, v);
+    return *this;
+  }
+
+  Point_3<R_>&
+  operator-=(const Vector_3 &v)
+  {
+    *this = R().construct_translated_point_3_object()(*this,
+                  R().construct_opposite_vector_3_object()(v));
+    return *this;
+  }
+
 };
 
 template <class R>
