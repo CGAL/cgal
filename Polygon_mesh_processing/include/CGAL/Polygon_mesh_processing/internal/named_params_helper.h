@@ -49,7 +49,15 @@ public:
 template<typename PolygonMesh, typename NamedParameters>
 class GetGeomTraits
 {
-  typedef typename GetK<PolygonMesh>::Kernel DefaultKernel;
+  typedef typename boost::graph_has_property<PolygonMesh, boost::vertex_point_t>::type
+    Has_internal_pmap;
+  struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
+
+  typedef typename boost::mpl::if_c< Has_internal_pmap::value
+                                   , typename GetK<PolygonMesh>::Kernel
+                                   , Fake_GT
+  >::type DefaultKernel;
+
 public:
   typedef typename boost::lookup_named_param_def <
     CGAL::geom_traits_t,
