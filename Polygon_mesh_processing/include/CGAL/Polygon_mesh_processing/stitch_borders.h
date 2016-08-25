@@ -347,7 +347,6 @@ template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
 {
   using boost::choose_param;
-  using boost::choose_const_pmap;
   using boost::get_param;
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor

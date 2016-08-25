@@ -430,7 +430,6 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                     , const NamedParameters& np)
 {
   using boost::choose_param;
-  using boost::choose_const_pmap;
   using boost::get_param;
 
   typedef typename boost::lookup_named_param_def <
@@ -511,7 +510,6 @@ connected_components(const PolygonMesh& pmesh,
                      const NamedParameters& np)
 {
   using boost::choose_param;
-  using boost::choose_const_pmap;
   using boost::get_param;
 
   typedef typename boost::lookup_named_param_def <
@@ -596,7 +594,6 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
 
   using boost::choose_param;
   using boost::get_param;
-  using boost::choose_const_pmap;
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
@@ -680,7 +677,6 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh
 
   using boost::choose_param;
   using boost::get_param;
-  using boost::choose_const_pmap;
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
@@ -735,7 +731,6 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   typedef PolygonMesh PM;
   using boost::choose_param;
   using boost::get_param;
-  using boost::choose_const_pmap;
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
@@ -986,7 +981,6 @@ void remove_connected_components(PolygonMesh& pmesh
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
   using boost::choose_param;
   using boost::get_param;
-  using boost::choose_const_pmap;
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
@@ -1045,7 +1039,6 @@ void keep_connected_components(PolygonMesh& pmesh
 
   using boost::choose_param;
   using boost::get_param;
-  using boost::choose_const_pmap;
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;

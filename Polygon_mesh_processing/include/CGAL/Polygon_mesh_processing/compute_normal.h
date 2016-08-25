@@ -133,7 +133,6 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 
   using boost::choose_param;
   using boost::get_param;
-  using boost::choose_const_pmap;
 
   GT traits = choose_param(get_param(np, CGAL::geom_traits), GT());
 

@@ -151,7 +151,6 @@ std::size_t remove_null_edges(
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
-  using boost::choose_const_pmap;
   using boost::get_param;
   using boost::choose_param;
 
@@ -472,7 +471,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
-  using boost::choose_const_pmap;
   using boost::get_param;
   using boost::choose_param;
 

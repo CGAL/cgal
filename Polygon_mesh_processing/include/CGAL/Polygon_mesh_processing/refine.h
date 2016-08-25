@@ -77,7 +77,6 @@ namespace Polygon_mesh_processing {
            VertexOutputIterator vertices_out,
            const NamedParameters& np)
   {
-    using boost::choose_pmap;
     using boost::choose_param;
     using boost::get_param;
 
