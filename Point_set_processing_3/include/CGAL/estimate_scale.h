@@ -396,7 +396,8 @@ public:
 /// Estimates the local scale in a K nearest neighbors sense on a set
 /// of user-defined query points. The computed scales correspond to
 /// the smallest scales such that the K subsets of points have the
-/// appearance of a surface in 3D or the appearance of a curve in 2D.
+/// appearance of a surface in 3D or the appearance of a curve in 2D
+/// (see \ref Point_set_processing_3Scale).
 ///
 ///
 /// @tparam SamplesInputIterator iterator over input sample points.
@@ -455,7 +456,7 @@ estimate_local_k_neighbor_scales(
 /// Estimates the global scale in a K nearest neighbors sense. The
 /// computed scale corresponds to the smallest scale such that the K
 /// subsets of points have the appearance of a surface in 3D or the
-/// appearance of a curve in 2D.
+/// appearance of a curve in 2D (see \ref Point_set_processing_3Scale).
 ///
 ///
 /// @tparam InputIterator iterator over input points.
@@ -497,7 +498,7 @@ estimate_global_k_neighbor_scale(
 /// user-defined query points. The computed scales correspond to the
 /// smallest scales such that the subsets of points included in the
 /// sphere range have the appearance of a surface in 3D or the
-/// appearance of a curve in 2D.
+/// appearance of a curve in 2D (see \ref Point_set_processing_3Scale).
 ///
 ///
 /// @tparam SamplesInputIterator iterator over input sample points.
@@ -556,7 +557,7 @@ estimate_local_range_scales(
 /// Estimates the global scale in a range sense. The computed scale
 /// corresponds to the smallest scale such that the subsets of points
 /// inside the sphere range have the appearance of a surface in 3D or
-/// the appearance of a curve in 2D.
+/// the appearance of a curve in 2D (see \ref Point_set_processing_3Scale).
 ///
 ///
 /// @tparam InputIterator iterator over input points.
