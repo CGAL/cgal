@@ -394,8 +394,8 @@ public:
 /// \ingroup PkgPointSetProcessing
 
 /// Estimates the local scale in a K nearest neighbors sense on a set
-/// of user-defined locations. The computed scales correspond to the
-/// smallest scales such that the K subsets of points have the
+/// of user-defined query points. The computed scales correspond to
+/// the smallest scales such that the K subsets of points have the
 /// appearance of a surface in 3D or the appearance of a curve in 2D.
 ///
 ///
@@ -492,7 +492,7 @@ estimate_global_k_neighbor_scale(
 /// \ingroup PkgPointSetProcessing
 
 /// Estimates the local scale in a range sense on a set of
-/// user-defined locations. The computed scales correspond to the
+/// user-defined query points. The computed scales correspond to the
 /// smallest scales such that the subsets of points included in the
 /// sphere range have the appearance of a surface in 3D or the
 /// appearance of a curve in 2D.

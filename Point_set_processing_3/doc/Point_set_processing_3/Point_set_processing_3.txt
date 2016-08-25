@@ -171,7 +171,7 @@ accepts both.
 In some specific cases, the scale of a point set might not be
 homogeneous (for example if the point set contains variable
 noise). \cgal also provides 2 functions that automatically estimate
-the scales of a point set at a set of user-defined locations:
+the scales of a point set at a set of user-defined query points:
 
 - `estimate_local_k_neighbor_scales()`
 - `estimate_local_range_scales()`
@@ -192,8 +192,8 @@ The following example reads a 3D point set in the `xyz` format and:
 \cgalExample{Point_set_processing_3/scale_estimation_example.cpp}
 
 This second example generates a 2D point set sampling a circle with
-variable noise. It then estimates the scale at 3 different locations
-of the domain.
+variable noise. It then estimates the scale at 3 different query
+points in the domain.
 
 \cgalExample{Point_set_processing_3/scale_estimation_2d_example.cpp}
 
