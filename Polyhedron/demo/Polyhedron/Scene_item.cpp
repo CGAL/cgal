@@ -40,7 +40,8 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
 }
 
 CGAL::Three::Scene_item::~Scene_item() {
-  defaultContextMenu->deleteLater();
+  if(defaultContextMenu)
+    defaultContextMenu->deleteLater();
   for(int i=0; i<buffersSize; i++)
   {
     buffers[i].destroy();
