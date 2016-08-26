@@ -20,7 +20,11 @@
 #ifndef CGAL_DIAGONALIZE_TRAITS_H
 #define CGAL_DIAGONALIZE_TRAITS_H
 
+#include <cmath>
 #include <CGAL/array.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/double.h>
 
 namespace CGAL {
 
