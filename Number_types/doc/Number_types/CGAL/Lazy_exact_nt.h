@@ -10,7 +10,15 @@ The idea is that `Lazy_exact_nt<NT>` works exactly like `NT`, except
 that it is expected to be faster because it tries to only compute an 
 approximation of the value, and only refers to `NT` when needed. 
 The goal is to speed up exact computations done by any exact but slow 
-number type `NT`. 
+number type `NT`.
+
+The function `to_double()` can be used to get a double approximation
+of the represented number. Note that two subsequent calls to this
+function on the same number of type `Lazy_exact_nt<NT>` might not return
+the same value as the exact representation might have been computed
+between the two calls, thus refining the double approximation. If you
+want to avoid this behavior, you need to first call `exact()`
+(loosing the benefit of the lazyness if done systematically).
 
 \tparam NT must be a model of concept `RealEmbeddable`, and at 
 least model of concept `IntegralDomainWithoutDivision`. 
