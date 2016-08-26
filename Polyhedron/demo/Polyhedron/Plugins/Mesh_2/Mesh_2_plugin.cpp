@@ -219,19 +219,8 @@ private:
       ui.radioSeedsOut->setDisabled(true);
       ui.radioNesting->setChecked(true);
     }
-    else{
+    else
       ui.radioSeedsOut->setChecked(true);
-      connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-              ui.radioSeedsOut, SLOT(setEnabled(bool)));
-      connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-              ui.radioSeedsIn, SLOT(setEnabled(bool)));
-    }
-    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-            ui.radioNesting, SLOT(setEnabled(bool)));
-    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-            ui.radioAll, SLOT(setEnabled(bool)));
-    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-            ui.runLloyd_checkbox, SLOT(setEnabled(bool)));
     return ui;
   }
 
@@ -276,6 +265,7 @@ private:
     typedef CGAL::No_intersection_tag                                   Tag;
     typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>    CDT;
     typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>               Criteria;
+    typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                   Mesher;
 
     QTime time; // global timer
     time.start();
@@ -306,29 +296,32 @@ private:
       return;
     }
 
-    if (runMesh2){
-      ltime.restart();
-      std::cout << " Running refine_Delaunay_mesh_2 ..." << std::flush;
-      Criteria criteria(0.125, target_length);
-      bool use_seeds=ui.radioSeedsOut->isChecked() ||
-                     ui.radioSeedsIn->isChecked();
-      if (!use_seeds){
-        bool use_nesting = ui.radioNesting->isChecked();
-        if (use_nesting){
-          mark_nested_domains(cdt);
-          for(typename CDT::All_faces_iterator fit=cdt.all_faces_begin(),
-                                               fit_end=cdt.all_faces_end();
-                                               fit!=fit_end;++fit)
-          {
-            fit->set_in_domain(fit->info().in_domain());
-          }
+    // start by marking the domain to mesh
+    Criteria criteria(0.125, target_length);
+    Mesher mesher(cdt, criteria);
+    bool use_seeds=ui.radioSeedsOut->isChecked() ||
+                   ui.radioSeedsIn->isChecked();
+    bool use_nesting = ui.radioNesting->isChecked();
+
+    if (!use_seeds){
+      if (use_nesting){
+        mark_nested_domains(cdt);
+        for(typename CDT::All_faces_iterator fit=cdt.all_faces_begin(),
+                                             fit_end=cdt.all_faces_end();
+                                             fit!=fit_end;++fit)
+        {
+          fit->set_in_domain(fit->info().in_domain());
         }
-        CGAL::refine_Delaunay_mesh_2(cdt, criteria, use_nesting);
       }
-      else
-        CGAL::refine_Delaunay_mesh_2(cdt,
-                                     seeds.begin(), seeds.end(),
-                                     criteria, ui.radioSeedsIn->isChecked());
+      mesher.init(use_nesting);
+    }
+    else
+      mesher.set_seeds(seeds.begin(), seeds.end(), ui.radioSeedsIn->isChecked(), true);
+
+    if (runMesh2){
+      time.restart();
+      std::cout << " Running refine_Delaunay_mesh_2 ..." << std::flush;
+      mesher.refine_mesh();
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 
