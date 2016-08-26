@@ -109,7 +109,7 @@ mark_nested_domains(CDT& cdt)
 }
 
 template <class CDT, class TriangleMesh>
-void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm)
+void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinate_index, double constant_coordinate)
 {
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
@@ -127,8 +127,12 @@ void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm)
       bool insert_ok;
       boost::tie(it,insert_ok) =
         descriptors.insert(std::make_pair(fit->vertex(i),vertex_descriptor()));
-      if (insert_ok)
-        it->second = add_vertex(fit->vertex(i)->point(),tm);
+      if (insert_ok){
+        const Kernel::Point_3& pt=fit->vertex(i)->point();
+        double coords[3] = {pt[0], pt[1], pt[2]};
+        coords[constant_coordinate_index]=constant_coordinate;
+        it->second = add_vertex(Kernel::Point_3(coords[0],coords[1],coords[2]), tm);
+      }
       vds[i]=it->second;
     }
 
@@ -234,7 +238,8 @@ private:
   template <class ProjectionTraits>
   void mesh(const std::vector<Scene_polylines_item*>& polylines_items,
             const std::vector<Scene_points_with_normal_item*>& points_items,
-            double diagonal_length)
+            double diagonal_length,
+            int constant_coordinate_index)
   {
     // extract seeds
     std::vector<Kernel::Point_3> seeds;
@@ -281,6 +286,8 @@ private:
 
     QTime ltime; //local timer
     ltime.start();
+    double constant_coordinate =
+      polylines_items.back()->polylines.back().back()[constant_coordinate_index];
     try{
       Q_FOREACH(Scene_polylines_item* polylines_item, polylines_items)
         Q_FOREACH(const std::vector<Kernel::Point_3>& points,
@@ -342,7 +349,10 @@ private:
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
     Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
     poly_item->setName(iname);
-    cdt2_to_face_graph(cdt,*poly_item->polyhedron());
+    cdt2_to_face_graph(cdt,
+                       *poly_item->polyhedron(),
+                       constant_coordinate_index,
+                       constant_coordinate);
     scene->addItem(poly_item);
     poly_item->invalidateOpenGLBuffers();
 
@@ -421,13 +431,13 @@ public Q_SLOTS:
       using namespace CGAL;
       typedef Kernel K;
       case 0:
-        mesh<Projection_traits_yz_3<K> >(polylines_items, points_items, diag);
+        mesh<Projection_traits_yz_3<K> >(polylines_items, points_items, diag, 0);
       break;
       case 1:
-        mesh<Projection_traits_xz_3<K> >(polylines_items, points_items, diag);
+        mesh<Projection_traits_xz_3<K> >(polylines_items, points_items, diag, 1);
       break;
       case 2:
-        mesh<Projection_traits_xy_3<K> >(polylines_items, points_items, diag);
+        mesh<Projection_traits_xy_3<K> >(polylines_items, points_items, diag, 2);
       break;
       default:
         QMessageBox::critical(mw,
