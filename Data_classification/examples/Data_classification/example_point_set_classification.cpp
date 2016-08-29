@@ -19,13 +19,14 @@ typedef std::vector<Point>::iterator Iterator;
 typedef CGAL::Identity_property_map<Point> Pmap;
 
 typedef CGAL::Point_set_classification<Kernel, Iterator, Pmap> Classification;
-typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Pmap> Planimetric_grid;
-typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Pmap> Neighborhood;
-typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Pmap> Local_eigen_analysis;
+
+typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Pmap>      Planimetric_grid;
+typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Pmap>          Neighborhood;
+typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Pmap>  Local_eigen_analysis;
 typedef CGAL::Segmentation_attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
-typedef CGAL::Segmentation_attribute_elevation<Kernel, Iterator, Pmap> Elevation;
-typedef CGAL::Segmentation_attribute_verticality<Kernel, Iterator, Pmap> Verticality;
-typedef CGAL::Segmentation_attribute_distance_to_plane<Kernel, Iterator, Pmap> Distance_to_plane;
+typedef CGAL::Segmentation_attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
+typedef CGAL::Segmentation_attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
+typedef CGAL::Segmentation_attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
 
 
 int main (int argc, char** argv)
