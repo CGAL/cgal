@@ -745,11 +745,22 @@ public:
         return geom_traits->compare_y_at_x_2_object()(p, xcv[i]);
       }
       // The curve is vertical
+      #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      const Comparison_result SMLLR = SMALLER;
+      const Comparison_result LRGR = LARGER;
+      #else
+      const bool is_left_to_right = m_poly_traits.subcurve_traits_2()->
+                                      compare_endpoints_xy_2_object()(xcv[0])
+                                        == SMALLER;
+      const Comparison_result SMLLR = is_left_to_right?SMALLER:LARGER;
+      const Comparison_result LRGR = is_left_to_right?LARGER:SMALLER;
+      #endif
+
       Comparison_result rc = geom_traits->compare_y_at_x_2_object()(p, xcv[0]);
-      if (rc == SMALLER) return SMALLER;
+      if (rc == SMLLR) return SMLLR;
       std::size_t n = xcv.number_of_subcurves();
       rc = geom_traits->compare_y_at_x_2_object()(p, xcv[n-1]);
-      if (rc == LARGER) return LARGER;
+      if (rc == LRGR) return LRGR;
       return EQUAL;
     }
 
