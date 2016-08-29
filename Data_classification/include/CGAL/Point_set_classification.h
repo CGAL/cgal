@@ -181,6 +181,8 @@ public:
                                             RandomAccessIterator,
                                             PointPMap> Neighborhood;
 
+private:
+  
   class Point_range
   {
     std::size_t m_size;
@@ -206,7 +208,7 @@ public:
       return range.begin() + index;
     }
   };
-  
+
   Point_range m_input;
 
   std::vector<std::size_t> m_group;
@@ -237,6 +239,9 @@ public:
   bool m_multiplicative;
   /// \endcond
 
+public:
+
+
   /// \name Main methods
   /// @{
   
@@ -255,7 +260,8 @@ public:
     the default value is used, it is computed as 5 times
     `grid_resolution`.
 
-  */ 
+  */
+
   Point_set_classification (RandomAccessIterator begin,
                             RandomAccessIterator end,
                             PointPMap point_pmap)
