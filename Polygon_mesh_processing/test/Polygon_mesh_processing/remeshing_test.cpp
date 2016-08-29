@@ -25,7 +25,7 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epec;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 template <class K>
 struct Main {
