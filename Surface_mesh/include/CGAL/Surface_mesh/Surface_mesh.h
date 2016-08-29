@@ -2534,7 +2534,7 @@ private: //------------------------------------------------------- private data
     std::string off;
     is >> sm_skip_comments;
     is >> off;
-    assert( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
+    CGAL_assertion( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
 
     is >> n >> f >> e;
 

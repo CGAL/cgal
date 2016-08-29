@@ -130,7 +130,7 @@ BigInt floor(const Expr& e, Expr &sub) {
     ++sub, --f;
   if (sub>=1)
     --sub, ++f;
-  assert(sub >=0 && sub<1); // got an assertion error? (Chee 3/24/04)
+  CGAL_assertion(sub >=0 && sub<1); // got an assertion error? (Chee 3/24/04)
   return f;
 }
 
@@ -241,7 +241,7 @@ extLong ExprRep::computeBound() {
     std::cerr << " ourBd is the winner " << std::endl;
   }
 
-  assert(number_of_winners >= 1);
+  CGAL_assertion(number_of_winners >= 1);
 
   if (number_of_winners == 1) {
     if (bd == bfmsskBd) {

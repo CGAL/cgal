@@ -351,7 +351,7 @@ public:
         {
           internal::Ply_read_typed_number<Type>*
             reader = dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]);
-          assert (reader != NULL);
+          CGAL_assertion (reader != NULL);
           t = reader->buffer();
           return;
         }
@@ -389,7 +389,7 @@ public:
             {
               internal::Ply_read_typed_number<float>*
                 reader_float = dynamic_cast<internal::Ply_read_typed_number<float>*>(m_readers[i]);
-              assert (reader_float != NULL);
+              CGAL_assertion (reader_float != NULL);
               t = reader_float->buffer();
             }
           else
