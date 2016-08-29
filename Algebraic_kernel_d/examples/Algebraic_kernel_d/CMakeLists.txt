@@ -18,20 +18,17 @@ endif()
 include( ${CGAL_USE_FILE} )
 
 
-find_package( Boost REQUIRED )
+# Boost and its components
+find_package( Boost QUIET )
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
+  return()
 endif()
 
-
-find_package( MPFI REQUIRED )
-if ( NOT MPFI_FOUND )
-  message(STATUS "This project requires the MPFI library, and will not be compiled.")
-  return()  
+find_package( MPFI QUIET )
+if( MPFI_FOUND )
+  include( ${MPFI_USE_FILE} )
 endif()
-include( ${MPFI_USE_FILE} )
-
 
 include_directories( BEFORE ../../include )
 
