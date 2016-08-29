@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8.11)
 
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS Core RS3)
+find_package( CGAL QUIET COMPONENTS Core GMP MPFR )
 
 if ( NOT CGAL_FOUND )
 
@@ -30,6 +30,16 @@ if ( NOT Boost_FOUND )
 
   return()  
 
+endif()
+
+find_package( MPFI )
+if( MPFI_FOUND )
+  include( ${MPFI_USE_FILE} )
+endif()
+
+find_package( LEDA )
+if( LEDA_FOUND )
+  include( ${LEDA_USE_FILE} )
 endif()
 
 # include for local directory
@@ -61,7 +71,14 @@ create_single_source_cgal_program( "Curve_analysis_2.cpp" )
 create_single_source_cgal_program( "Curve_pair_analysis_2.cpp" )
 create_single_source_cgal_program( "Descartes.cpp" )
 create_single_source_cgal_program( "Real_embeddable_traits_extension.cpp" )
+
+find_package( RS )
 if(RS_FOUND)
+  include( ${RS_USE_FILE} )
+  find_package( RS3 )
+  if(RS3_FOUND)
+    include( ${RS3_USE_FILE} )
+  endif()
   create_single_source_cgal_program( "Algebraic_kernel_rs_gmpq_d_1.cpp" )
   create_single_source_cgal_program( "Algebraic_kernel_rs_gmpz_d_1.cpp" )
 else()
