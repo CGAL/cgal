@@ -34,11 +34,7 @@
 #include <cstddef>
 
 #ifdef CGAL_USE_LEDA
-#  if CGAL_LEDA_VERSION < 500
-#    include <LEDA/memory.h>
-#  else
-#    include <LEDA/system/memory.h>
-#  endif
+#  include <LEDA/system/memory.h>
 #endif
 
 

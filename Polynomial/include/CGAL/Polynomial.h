@@ -48,11 +48,7 @@
 #include <CGAL/assertions.h>
 
 #ifdef CGAL_USE_LEDA
-#if CGAL_LEDA_VERSION >= 500
-#include <LEDA/core/array.h>
-#else
-#include <LEDA/array.h>
-#endif
+#  include <LEDA/core/array.h>
 #endif // CGAL_USE_LEDA
 
 #include <CGAL/Polynomial/fwd.h>

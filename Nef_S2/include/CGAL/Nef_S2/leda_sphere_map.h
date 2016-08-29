@@ -24,13 +24,8 @@
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/graph.h>
-#include <LEDA/graph_misc.h>
-#else
 #include <LEDA/graph/graph.h>
 #include <LEDA/graph/graph_misc.h>
-#endif
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 211

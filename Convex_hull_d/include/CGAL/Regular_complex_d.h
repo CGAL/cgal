@@ -42,11 +42,7 @@
 #include <CGAL/Kernel_d/debug.h>
 
 #ifdef CGAL_USE_LEDA
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/memory.h>
-#else
 #include <LEDA/system/memory.h>
-#endif
 #endif
 
 namespace CGAL {
