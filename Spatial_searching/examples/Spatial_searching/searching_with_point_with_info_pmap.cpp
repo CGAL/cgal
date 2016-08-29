@@ -9,13 +9,11 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
 
-typedef std::size_t Point;
-
-typedef boost::const_associative_property_map<std::map<Point,Point_3> >                 My_point_property_map;
+typedef boost::const_associative_property_map<std::map<std::size_t,Point_3> >           My_point_property_map;
   
 typedef CGAL::Random_points_in_cube_3<Point_3>                                          Random_points_iterator;
 typedef CGAL::Search_traits_3<Kernel>                                                   Traits_base;
-typedef CGAL::Search_traits_adapter<Point,My_point_property_map,Traits_base>            Traits;
+typedef CGAL::Search_traits_adapter<std::size_t,My_point_property_map,Traits_base>      Traits;
 
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits>                      K_neighbor_search;
@@ -27,7 +25,7 @@ int main() {
   const unsigned int K = 5;
   // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
   Random_points_iterator rpit( 1.0);
-  std::map<Point,Point_3> points;
+  std::map<std::size_t,Point_3> points;
   
   points[0]=Point_3(*rpit++);
   points[1]=Point_3(*rpit++);
