@@ -37,13 +37,8 @@
 #include <CGAL/Data_classification/Neighborhood.h>
 #include <CGAL/Data_classification/Segmentation_attribute.h>
 
-//#define CGAL_USE_GCO
-#ifdef CGAL_USE_GCO
-#include <CGAL/gco/GCoptimization.h>
-#else
 #define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
-#endif
 
 #define CGAL_CLASSIFICATION_VERBOSE
 #if defined(CGAL_CLASSIFICATION_VERBOSE)
@@ -410,106 +405,13 @@ public:
   }
 
 
-  class Edge_score
-  {
-    const double smoothing;
-
-  public:
-    Edge_score(const double smoothing) : smoothing(smoothing) {}
-
-    float compute(int, int, int l1, int l2)
-    {
-      double res=0;
-
-      if(l1!=l2) res=1; 
-
-      return smoothing * res;
-    }
-  };
-
-
-  class Facet_score
-  {
-    const Point_set_classification& M;
-
-  public:
-    Facet_score(const Point_set_classification& _M) : M(_M) {}
-
-    double compute(int s, int l)
-    {
-      return M.classification_value (l, s);
-    }
-  };
-
-
   void run_with_graphcut (const Neighborhood& neighborhood,
                           const double smoothing)
   {
     prepare_classification ();
     
-    std::size_t nb_alpha_exp = 2;
-    
     // data term initialisation
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
-
-#ifdef CGAL_USE_GCO
-    std::vector<std::vector<double> > values
-      (segmentation_classes.size(),
-       std::vector<double> (m_input.size(), -1.));
-
-    GCoptimizationGeneralGraph<float, float> *gc= new GCoptimizationGeneralGraph<float, float>
-      ((int)(m_input.size()),(int)(segmentation_classes.size()));
-
-    gc->specializeDataCostFunctor(Facet_score(*this));
-    gc->specializeSmoothCostFunctor(Edge_score(smoothing));
-
-    for (std::size_t s=0; s < m_input.size(); ++ s)
-      {
-        std::vector<std::size_t> neighbors;
-
-        neighborhood.k_neighbors (s, 12, std::back_inserter (neighbors));
-
-        for (std::size_t i = 0; i < neighbors.size(); ++ i)
-          gc->setNeighbors (s, neighbors[i]);
-        
-        int nb_class_best=0; 
-        double val_class_best = std::numeric_limits<double>::max();
-        for(std::size_t k = 0; k < effect_table.size(); ++ k)
-          {
-            double value = classification_value (k, s);
-
-            if(val_class_best > value)
-              {
-                val_class_best = value;
-                nb_class_best=k;
-              }
-          }
-        gc->setLabel (s, nb_class_best);
-
-      }
-
-    CGAL_CLASSIFICATION_CERR << "Graph cut... ";
-    for (std::size_t iter = 0; iter < nb_alpha_exp; ++ iter)
-      {
-        for (std::size_t i = 0; i< segmentation_classes.size(); ++ i)
-          {
-				
-            // Compute vector of active sites
-            std::vector<int> sites;
-            for (std::size_t s = 0; s < m_input.size(); ++ s)
-              sites.push_back ((int)s);
-            
-            // Compute alpha expansion for this label on these sites
-            gc->alpha_expansion((int)i, &(sites[0]), sites.size());
-          }
-      }
-    
-    for (std::size_t s=0; s < m_input.size(); ++ s)
-      m_assigned_type[s] = gc->whatLabel (s);
-
-    delete gc;
-    
-#else // Do not use GCO
 
     std::vector<std::pair<std::size_t, std::size_t> > edges;
     std::vector<double> edge_weights;
@@ -551,10 +453,6 @@ public:
     
     internal::Alpha_expansion_graph_cut_boost graphcut;
     graphcut(edges, edge_weights, probability_matrix, m_assigned_type);
-
-
-#endif
-      
   }
   
   void reset_groups()
