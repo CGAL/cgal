@@ -22,7 +22,7 @@
 
 #include <OpenMesh/Core/Mesh/Handles.hh>
 
-#if OMVERSION < 0x60200
+#if OM_VERSION < 0x60200
 
 namespace OpenMesh {
 
