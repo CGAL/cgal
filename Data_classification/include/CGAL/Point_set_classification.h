@@ -36,7 +36,14 @@
 #include <CGAL/Data_classification/Planimetric_grid.h>
 #include <CGAL/Data_classification/Neighborhood.h>
 #include <CGAL/Data_classification/Segmentation_attribute.h>
+
+//#define CGAL_USE_GCO
+#ifdef CGAL_USE_GCO
 #include <CGAL/gco/GCoptimization.h>
+#else
+#define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
+#endif
 
 #define CGAL_CLASSIFICATION_VERBOSE
 #if defined(CGAL_CLASSIFICATION_VERBOSE)
@@ -212,7 +219,7 @@ private:
   Point_range m_input;
 
   std::vector<std::size_t> m_group;
-  std::vector<unsigned char> m_assigned_type;
+  std::vector<std::size_t> m_assigned_type;
   std::vector<unsigned char> m_neighbor;
   std::vector<double> m_confidence;
 
@@ -433,7 +440,8 @@ public:
       return M.classification_value (l, s);
     }
   };
-  
+
+
   void run_with_graphcut (const Neighborhood& neighborhood,
                           const double smoothing)
   {
@@ -444,6 +452,7 @@ public:
     // data term initialisation
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
+#ifdef CGAL_USE_GCO
     std::vector<std::vector<double> > values
       (segmentation_classes.size(),
        std::vector<double> (m_input.size(), -1.));
@@ -499,6 +508,52 @@ public:
       m_assigned_type[s] = gc->whatLabel (s);
 
     delete gc;
+    
+#else // Do not use GCO
+
+    std::vector<std::pair<std::size_t, std::size_t> > edges;
+    std::vector<double> edge_weights;
+    std::vector<std::vector<double> > probability_matrix
+      (effect_table.size(), std::vector<double>(m_input.size(), 0.));
+    std::vector<std::size_t>(m_input.size()).swap(m_assigned_type);
+
+    for (std::size_t s = 0; s < m_input.size(); ++ s)
+      {
+        std::vector<std::size_t> neighbors;
+
+        neighborhood.k_neighbors (s, 12, std::back_inserter (neighbors));
+
+        for (std::size_t i = 0; i < neighbors.size(); ++ i)
+          {
+            edges.push_back (std::make_pair (s, neighbors[i]));
+            if (s != neighbors[i])
+              edge_weights.push_back (smoothing);
+            else
+              edge_weights.push_back (0.);
+          }
+        
+        std::size_t nb_class_best = 0;
+        double val_class_best = std::numeric_limits<double>::max();
+        for(std::size_t k = 0; k < effect_table.size(); ++ k)
+          {
+            double value = classification_value (k, s);
+            probability_matrix[k][s] = value;
+            
+            if(val_class_best > value)
+              {
+                val_class_best = value;
+                nb_class_best = k;
+              }
+          }
+        m_assigned_type.push_back (nb_class_best);
+      }
+
+    
+    internal::Alpha_expansion_graph_cut_boost graphcut;
+    graphcut(edges, edge_weights, probability_matrix, m_assigned_type);
+
+
+#endif
       
   }
   
@@ -697,7 +752,7 @@ public:
   void prepare_classification ()
   {
     // Reset data structure
-    std::vector<unsigned char>(m_input.size()).swap (m_assigned_type);
+    std::vector<std::size_t>(m_input.size()).swap (m_assigned_type);
     std::vector<double>(m_input.size()).swap (m_confidence);
     
 
