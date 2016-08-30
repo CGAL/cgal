@@ -337,7 +337,7 @@
 - `Kernel::ConstructCircle_3`
 - `Kernel::ConstructCircumcenter_2`
 - `Kernel::ConstructCircumcenter_3`
-- `Kernel::ConstructClostestPoint_3`
+- `Kernel::ConstructClosestPoint_3`
 - `Kernel::ConstructCrossProductVector_3`
 - `Kernel::ConstructDifferenceOfVectors_2`
 - `Kernel::ConstructDifferenceOfVectors_3`
