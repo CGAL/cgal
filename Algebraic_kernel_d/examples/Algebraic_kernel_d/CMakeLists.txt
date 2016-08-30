@@ -19,7 +19,7 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-find_package( Boost QUIET )
+find_package( Boost REQUIRED )
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
   return()
