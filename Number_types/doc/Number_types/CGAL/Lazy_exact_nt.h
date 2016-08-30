@@ -85,13 +85,13 @@ NT exact();
 returns an interval containing the 
 exact value. 
 */ 
-Interval_nt<true> approx(); 
+Interval_nt<false> approx();
 
 /*!
 returns an interval containing the 
 exact value. 
 */ 
-Interval_nt<false> interval(); 
+Interval_nt<true> interval();
 
 /*!
 specifies the relative precision that `to_double()` has to fulfill. 
