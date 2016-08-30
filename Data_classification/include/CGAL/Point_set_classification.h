@@ -176,9 +176,6 @@ public:
   typedef typename Kernel::Plane_3 Plane;
   typedef typename Kernel::Vector_3 Vector;
 
-  typedef Data_classification::Planimetric_grid<Kernel,
-                                                RandomAccessIterator,
-                                                PointPMap> Grid;
   typedef Data_classification::Neighborhood<Kernel,
                                             RandomAccessIterator,
                                             PointPMap> Neighborhood;
@@ -226,17 +223,15 @@ private:
   };
 
   
-  std::vector<Classification_type*> segmentation_classes; 
-  std::vector<Segmentation_attribute*> segmentation_attributes; 
+  std::vector<Classification_type*> m_segmentation_classes; 
+  std::vector<Segmentation_attribute*> m_segmentation_attributes; 
 
   typedef Classification_type::Attribute_side Attribute_side;
-  std::vector<std::vector<Attribute_side> > effect_table;
-
-  Grid grid;
+  std::vector<std::vector<Attribute_side> > m_effect_table;
 
   //Hpoints attributes
-  std::vector<Plane> groups;
-  std::vector<Cluster> clusters;
+  std::vector<Plane> m_planes;
+  std::vector<Cluster> m_clusters;
   
   bool m_multiplicative;
   /// \endcond
@@ -280,31 +275,35 @@ public:
     if (m_multiplicative)
       {
         out = 1.;
-        for (std::size_t i = 0; i < effect_table[segmentation_class].size(); ++ i)
+        for (std::size_t i = 0; i < m_effect_table[segmentation_class].size(); ++ i)
           {
-            if (effect_table[segmentation_class][i] == Classification_type::FAVORED_ATT)
-              out *= segmentation_attributes[i]->favored (pt_index);
-            else if (effect_table[segmentation_class][i] == Classification_type::PENALIZED_ATT)
-              out *= segmentation_attributes[i]->penalized (pt_index);
-            else if (effect_table[segmentation_class][i] == Classification_type::NEUTRAL_ATT)
-              out *= segmentation_attributes[i]->ignored (pt_index);
+            if (m_effect_table[segmentation_class][i] == Classification_type::FAVORED_ATT)
+              out *= m_segmentation_attributes[i]->favored (pt_index);
+            else if (m_effect_table[segmentation_class][i] == Classification_type::PENALIZED_ATT)
+              out *= m_segmentation_attributes[i]->penalized (pt_index);
+            else if (m_effect_table[segmentation_class][i] == Classification_type::NEUTRAL_ATT)
+              out *= m_segmentation_attributes[i]->ignored (pt_index);
           }
       }
     else
       {
-        for (std::size_t i = 0; i < effect_table[segmentation_class].size(); ++ i)
+        for (std::size_t i = 0; i < m_effect_table[segmentation_class].size(); ++ i)
           {
-            if (effect_table[segmentation_class][i] == Classification_type::FAVORED_ATT)
-              out += segmentation_attributes[i]->favored (pt_index);
-            else if (effect_table[segmentation_class][i] == Classification_type::PENALIZED_ATT)
-              out += segmentation_attributes[i]->penalized (pt_index);
-            else if (effect_table[segmentation_class][i] == Classification_type::NEUTRAL_ATT)
-              out += segmentation_attributes[i]->ignored (pt_index);
+            if (m_effect_table[segmentation_class][i] == Classification_type::FAVORED_ATT)
+              out += m_segmentation_attributes[i]->favored (pt_index);
+            else if (m_effect_table[segmentation_class][i] == Classification_type::PENALIZED_ATT)
+              out += m_segmentation_attributes[i]->penalized (pt_index);
+            else if (m_effect_table[segmentation_class][i] == Classification_type::NEUTRAL_ATT)
+              out += m_segmentation_attributes[i]->ignored (pt_index);
           }
       }
     return out;
   }
 
+  void set_multiplicative (bool mult)
+  {
+    m_multiplicative = mult;
+  }
 
   void run_quick()
   {
@@ -322,7 +321,7 @@ public:
         double val_class_best = std::numeric_limits<double>::max();
         std::vector<double> values;
       
-        for(std::size_t k = 0; k < effect_table.size(); ++ k)
+        for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
           {
             double value = classification_value (k, s);
             values.push_back (value);
@@ -361,7 +360,7 @@ public:
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
     std::vector<std::vector<double> > values
-      (segmentation_classes.size(),
+      (m_segmentation_classes.size(),
        std::vector<double> (m_input.size(), -1.));
 
     for (std::size_t s=0; s < m_input.size(); ++ s)
@@ -373,7 +372,7 @@ public:
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
           {
             if (values[0][neighbors[n]] < 0.)
-              for(std::size_t k = 0; k < effect_table.size(); ++ k)
+              for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
                 {
                   values[k][neighbors[n]] = classification_value (k, neighbors[n]);
                   mean[k] += values[k][neighbors[n]];
@@ -416,7 +415,7 @@ public:
     std::vector<std::pair<std::size_t, std::size_t> > edges;
     std::vector<double> edge_weights;
     std::vector<std::vector<double> > probability_matrix
-      (effect_table.size(), std::vector<double>(m_input.size(), 0.));
+      (m_effect_table.size(), std::vector<double>(m_input.size(), 0.));
     std::vector<std::size_t>(m_input.size()).swap(m_assigned_type);
 
     for (std::size_t s = 0; s < m_input.size(); ++ s)
@@ -436,7 +435,7 @@ public:
         
         std::size_t nb_class_best = 0;
         double val_class_best = std::numeric_limits<double>::max();
-        for(std::size_t k = 0; k < effect_table.size(); ++ k)
+        for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
           {
             double value = classification_value (k, s);
             probability_matrix[k][s] = value;
@@ -457,7 +456,7 @@ public:
   
   void reset_groups()
   {
-    groups.clear();
+    m_planes.clear();
     std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_group);
   }
 
@@ -473,17 +472,17 @@ public:
           continue;
         unsigned char label = m_assigned_type[s];
         
-        clusters.push_back (Cluster());
+        m_clusters.push_back (Cluster());
 
         std::queue<std::size_t> todo;
         todo.push (s);
-        done[s] = clusters.size()-1;
+        done[s] = m_clusters.size()-1;
 
         while (!(todo.empty()))
           {
             std::size_t current = todo.front();
             todo.pop();
-            clusters.back().indices.push_back (current);
+            m_clusters.back().indices.push_back (current);
             
             std::vector<std::size_t> neighbors;
             neighborhood.range_neighbors (current, tolerance,
@@ -496,7 +495,7 @@ public:
                     if (m_assigned_type[neighbors[n]] == label)
                       {
                         todo.push (neighbors[n]);
-                        done[neighbors[n]] = clusters.size()-1;
+                        done[neighbors[n]] = m_clusters.size()-1;
                       }
                     else
                       {
@@ -505,22 +504,22 @@ public:
                         continue;
                       }
                   }
-                else if (done[neighbors[n]] != clusters.size()-1)
+                else if (done[neighbors[n]] != m_clusters.size()-1)
                   {
-                    clusters.back().neighbors.insert (done[neighbors[n]]);
-                    clusters[done[neighbors[n]]].neighbors.insert (clusters.size()-1);
+                    m_clusters.back().neighbors.insert (done[neighbors[n]]);
+                    m_clusters[done[neighbors[n]]].neighbors.insert (m_clusters.size()-1);
                   }
               }
           }
       }
-    std::cerr << "Found " << clusters.size() << " cluster(s)" << std::endl;
+    std::cerr << "Found " << m_clusters.size() << " cluster(s)" << std::endl;
 
-    for (std::size_t i = 0; i < clusters.size(); ++ i)
+    for (std::size_t i = 0; i < m_clusters.size(); ++ i)
       {
         std::vector<Point> pts;
-        for (std::size_t j = 0; j < clusters[i].indices.size(); ++ j)
-          pts.push_back (m_input[clusters[i].indices[j]]);
-        clusters[i].centroid = CGAL::centroid (pts.begin(), pts.end());
+        for (std::size_t j = 0; j < m_clusters[i].indices.size(); ++ j)
+          pts.push_back (m_input[m_clusters[i].indices[j]]);
+        m_clusters[i].centroid = CGAL::centroid (pts.begin(), pts.end());
         
       }
 
@@ -552,7 +551,7 @@ public:
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
     std::vector<std::vector<double> > values;
-    values.resize (segmentation_classes.size());
+    values.resize (m_segmentation_classes.size());
     
     std::map<Point, std::size_t> map_p2i;
     for (std::size_t s = 0; s < m_input.size(); s++)
@@ -561,7 +560,7 @@ public:
 
         int nb_class_best=0; 
         double val_class_best = std::numeric_limits<double>::max();
-        for(std::size_t k = 0; k < effect_table.size(); ++ k)
+        for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
           {
             double v = classification_value (k, s);
 
@@ -654,13 +653,13 @@ public:
     std::vector<double>(m_input.size()).swap (m_confidence);
     
 
-    effect_table = std::vector<std::vector<Attribute_side> >
-      (segmentation_classes.size(), std::vector<Attribute_side> (segmentation_attributes.size(),
+    m_effect_table = std::vector<std::vector<Attribute_side> >
+      (m_segmentation_classes.size(), std::vector<Attribute_side> (m_segmentation_attributes.size(),
                                                                  Classification_type::NEUTRAL_ATT));
     
-    for (std::size_t i = 0; i < effect_table.size (); ++ i)
-      for (std::size_t j = 0; j < effect_table[i].size (); ++ j)
-        effect_table[i][j] = segmentation_classes[i]->attribute_effect (segmentation_attributes[j]);
+    for (std::size_t i = 0; i < m_effect_table.size (); ++ i)
+      for (std::size_t j = 0; j < m_effect_table[i].size (); ++ j)
+        m_effect_table[i][j] = m_segmentation_classes[i]->attribute_effect (m_segmentation_attributes[j]);
 
   }
   /// \endcond
@@ -675,12 +674,19 @@ public:
    */
   void add_classification_type (Classification_type* type)
   {
-    segmentation_classes.push_back (type);
+    m_segmentation_classes.push_back (type);
   }
 
   void clear_classification_types ()
   {
-    segmentation_classes.clear();
+    m_segmentation_classes.clear();
+  }
+
+  void clear_and_delete_classification_types ()
+  {
+    for (std::size_t i = 0; i < m_segmentation_classes.size(); ++ i)
+      delete m_segmentation_classes[i];
+    m_segmentation_classes.clear();
   }
 
   /*!
@@ -689,12 +695,12 @@ public:
    */
   void add_segmentation_attribute (Segmentation_attribute* attribute)
   {
-    segmentation_attributes.push_back (attribute);
+    m_segmentation_attributes.push_back (attribute);
   }
 
-  void clear_segmentation_attributes ()
+  void clear_m_segmentation_attributes ()
   {
-    segmentation_attributes.clear();
+    m_segmentation_attributes.clear();
   }
   
   /// @}
@@ -723,7 +729,7 @@ public:
   void clear_groups()
   {
     m_group.clear();
-    groups.clear();
+    m_planes.clear();
   }
 
   /// @}
@@ -739,7 +745,7 @@ public:
   */
   Classification_type* classification_type_of (std::size_t index) const
   {
-    return segmentation_classes[m_assigned_type[index]];
+    return m_segmentation_classes[m_assigned_type[index]];
   }
 
   /// @}
