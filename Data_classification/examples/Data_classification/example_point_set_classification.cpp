@@ -90,19 +90,36 @@ int main (int argc, char** argv)
 
   psc.run_with_graphcut (neighborhood, 0.5);
 
-  // Recover output
-  std::vector<Point> pts_ground, pts_vege, pts_roof;
+  // Save the output in a colored PLY format
+
+  std::ofstream f ("classification.ply");
+  f << "ply" << std::endl
+    << "format ascii 1.0" << std::endl
+    << "element vertex " << pts.size() << std::endl
+    << "property float x" << std::endl
+    << "property float y" << std::endl
+    << "property float z" << std::endl
+    << "property uchar red" << std::endl
+    << "property uchar green" << std::endl
+    << "property uchar blue" << std::endl
+    << "end_header" << std::endl;
+  
   for (std::size_t i = 0; i < pts.size(); ++ i)
     {
+      f << pts[i] << " ";
+      
       CGAL::Classification_type* type = psc.classification_type_of (i);
       if (type == &ground)
-        pts_ground.push_back (pts[i]);
+        f << "245 180 0" << std::endl;
       else if (type == &vege)
-        pts_vege.push_back (pts[i]);
+        f << "0 255 27" << std::endl;
       else if (type == &roof)
-        pts_roof.push_back (pts[i]);
+        f << "255 0 170" << std::endl;
       else
-        std::cerr << "Error: unknown classification type" << std::endl;
+        {
+          f << "0 0 0" << std::endl;
+          std::cerr << "Error: unknown classification type" << std::endl;
+        }
     }
   
   std::cerr << "All done" << std::endl;
