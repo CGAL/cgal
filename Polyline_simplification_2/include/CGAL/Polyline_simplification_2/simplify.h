@@ -268,12 +268,16 @@ operator()()
       boost::optional<FT> dist = cost(pct, u);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(u) )
+        if( mpq->contains(u) ){
           mpq->erase(u);
+        }
       } else {
         (*u)->set_cost(*dist);
-        if((*mpq).contains(u)){
-        (*mpq).update(u, true);
+        if(mpq->contains(u)){
+          mpq->update(u, true);
+        }
+        else{
+          mpq->push(u);
         }
       }
     }
@@ -282,12 +286,16 @@ operator()()
       boost::optional<FT> dist = cost(pct, w);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(w) )
+        if( mpq->contains(w) ){
           mpq->erase(w);
+        }
       } else {
         (*w)->set_cost(*dist);
-        if((*mpq).contains(w)){
-        (*mpq).update(w, true);
+        if(mpq->contains(w)){
+          mpq->update(w, true);
+        }
+        else{
+          mpq->push(w);
         }
 
       }
