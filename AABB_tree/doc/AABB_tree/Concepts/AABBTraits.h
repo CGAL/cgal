@@ -199,7 +199,7 @@ Compare_distance compare_distance_object();
 /*!
 Returns the closest point constructor. 
 */ 
-Construct_closest_point_3 construct_closest_point_object();
+Construct_closest_point_3 construct_closest_point_3_object();
 
 /*!
 Returns the squared distance functor.
