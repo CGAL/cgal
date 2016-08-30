@@ -554,11 +554,11 @@ void dim_down(Face_handle f, int i);
 \cgalModifBegin
 creates a new vertex `v` and uses it to star a hole.
  
-It takes an iterator range `[face_begin, face_end[` of `Face_handle`s that specifies 
-a set of connected faces describing a simply connected hole, i.e., a topological disc. 
-The function deletes all the faces describing the hole, creates a new vertex `v` and
-for each edge on the boundary of the hole creates a new face with `v` as a vertex.
-In the end, `v` is returned. 
+Given a set of faces 'F' describing a simply connected hole (i.e., a topological disk), 
+the function deletes all the faces in `F`, creates a new vertex `v` and for each edge on
+the boundary of the hole creates a new face with `v` as a vertex. The input is an iterator 
+range `[face_begin, face_end[` of `Face_handle`s over the connected faces in `F`. The handle
+to the new vertex `v` is returned.
  
 \pre `tds.dimension() = 2` and the set of faces has the topology of a disk.
 \cgalModifEnd
