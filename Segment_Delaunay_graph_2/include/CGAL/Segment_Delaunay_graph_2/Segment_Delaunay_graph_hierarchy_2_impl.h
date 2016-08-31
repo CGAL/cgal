@@ -352,7 +352,7 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   Vertex_handle vertex;
 
   if ( hierarchy[0]->number_of_vertices() == 2 ) {
-    static Segments_in_hierarchy_tag stag;
+    static const Segments_in_hierarchy_tag stag;
 
     vertex = hierarchy[0]->insert_third(ss, vertices0[0], vertices1[0]);
     insert_segment_in_upper_levels(t, vertex->storage_site(),
@@ -382,8 +382,8 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // arrangement_type
 
   // the tags
-  static Intersections_tag          itag;
-  static Segments_in_hierarchy_tag  stag;
+  static const Intersections_tag          itag;
+  static const Segments_in_hierarchy_tag  stag;
 
   // find the first conflict
 

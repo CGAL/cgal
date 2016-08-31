@@ -128,7 +128,7 @@ protected:
   static int sentinel_index() { return -1; }
 
   static const Edge& sentinel_edge() {
-    static Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
+    static const Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
     return SENTINEL_EDGE;
   }
 

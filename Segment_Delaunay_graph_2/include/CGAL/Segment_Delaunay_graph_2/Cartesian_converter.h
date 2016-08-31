@@ -48,7 +48,7 @@ private:
 private:
   static const Intersections_tag&  intersections_tag()
   {
-    static Intersections_tag itag;
+    static const Intersections_tag itag;
     return itag;
   }
 

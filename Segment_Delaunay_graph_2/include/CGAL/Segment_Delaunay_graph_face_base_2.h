@@ -64,7 +64,7 @@ private:
     // method to initialize the in-place edge list
     void initialize_in_place_edge_list()
     {
-      static Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
+      static const Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
 
       for (int i = 0; i < 3; ++i) {
 	selected[i] = false;

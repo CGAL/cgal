@@ -50,6 +50,8 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
+#include <CGAL/tss.h>
+
 #include <boost/iterator/counting_iterator.hpp>
 
 /*
@@ -1427,7 +1429,7 @@ protected:
 
   void print_error_message(const Tag_false&) const
   {
-    static int i = 0;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, i, 0);
 
     if ( i == 0 ) {
       i++;
