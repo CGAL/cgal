@@ -95,7 +95,7 @@ public:
   void range_neighbors (std::size_t index, const FT radius_neighbors, OutputIterator output) const
   {
     CGAL_assertion (m_tree != NULL);
-    Sphere fs (index, radius_neighbors, 0, m_tree->traits());
+    Sphere fs (get(m_point_pmap, m_begin[index]), radius_neighbors, 0, m_tree->traits());
     m_tree->search (output, fs);
   }
 
