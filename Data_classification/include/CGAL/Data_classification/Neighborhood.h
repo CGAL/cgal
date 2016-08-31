@@ -103,7 +103,7 @@ public:
   void k_neighbors (std::size_t index, const std::size_t k, OutputIterator output) const
   {
     CGAL_assertion (m_tree != NULL);
-    Knn search (*m_tree, m_begin[index], k, 0, true, m_distance);
+    Knn search (*m_tree, get(m_point_pmap, m_begin[index]), k, 0, true, m_distance);
     for (typename Knn::iterator it = search.begin(); it != search.end(); ++ it)
       *(output ++) = it->first;
   }
