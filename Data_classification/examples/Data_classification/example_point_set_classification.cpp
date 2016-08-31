@@ -52,7 +52,7 @@ int main (int argc, char** argv)
   
   std::cerr << "Computing attributes" << std::endl;
   Dispersion disp (pts.begin(), pts.end(), Pmap(), grid, 0.8, 2.4, 0.26);
-  Elevation elev (pts.begin(), pts.end(), Pmap(), bbox, grid, 0.8, 2.4, 0.08);
+  Elevation elev (pts.begin(), pts.end(), Pmap(), bbox, grid, 0.8, 2.4, 12., 0.08);
   Verticality verti (pts.begin(), pts.end(), eigen, 0.13);
   Distance_to_plane d2p (pts.begin(), pts.end(), Pmap(), eigen, 0.72);
 
