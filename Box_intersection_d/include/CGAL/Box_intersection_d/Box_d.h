@@ -26,6 +26,8 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
+#include <CGAL/tss.h>
+
 #include <algorithm>
 
 namespace CGAL {
@@ -36,14 +38,16 @@ namespace Box_intersection_d {
 template <class Dummy>
 struct Unique_numbers {
     typedef std::size_t ID;
-    Unique_numbers() : i(n++) {}
+    Unique_numbers() {
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::size_t, n, 0);
+      i = n++;
+    }
     std::size_t id() const { return i; }
 private:
-    static std::size_t n;
+
     std::size_t i;
 };
-template <class Dummy>
-std::size_t Unique_numbers<Dummy>::n = 0;
+
 
 
 // Policies for id-number of boxes
