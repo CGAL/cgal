@@ -67,7 +67,7 @@ public:
 
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       {
-        const typename Kernel::Vector_3& normal = get(normal_pmap, begin[i]);
+        typename Kernel::Vector_3 normal = get(normal_pmap, begin[i]);
         normal = normal / std::sqrt (normal * normal);
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }
