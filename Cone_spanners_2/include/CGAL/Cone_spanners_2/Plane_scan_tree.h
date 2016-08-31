@@ -182,14 +182,14 @@ public:
 
     /* End Iterator */
     inline iterator end() {
-        static iterator res;
+        static const iterator res;
 
         return res;
     }
 
     /* Constant End Iterator */
     inline const_iterator end() const {
-        static const_iterator res;
+        static const const_iterator res;
 
         return res;
     }
