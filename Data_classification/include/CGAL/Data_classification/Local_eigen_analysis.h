@@ -67,7 +67,7 @@ public:
 
         std::vector<Point> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
-          neighbor_points.push_back (get(point_pmap, begin[j]));
+          neighbor_points.push_back (get(point_pmap, begin[neighbors[j]]));
         
         compute (get(point_pmap, begin[i]), neighbor_points);
       }
@@ -85,6 +85,7 @@ public:
         largest_eigenvectors.push_back (Vector (1., 0., 0.));
         return;
       }
+
     Point centroid = CGAL::centroid (neighbor_points.begin(), neighbor_points.end());
     centroids.push_back (centroid);
     
