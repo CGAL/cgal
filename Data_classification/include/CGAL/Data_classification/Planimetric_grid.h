@@ -84,7 +84,7 @@ public:
   bool mask(std::size_t x, std::size_t y) { return m_mask(x,y); }
 
   std::size_t x(std::size_t index) const { return m_x[index]; }
-  std::size_t y(std::size_t index) const { return m_x[index]; }
+  std::size_t y(std::size_t index) const { return m_y[index]; }
 };
   
 
