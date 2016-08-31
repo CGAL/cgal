@@ -212,7 +212,7 @@ private:
 
   std::vector<std::size_t> m_group;
   std::vector<std::size_t> m_assigned_type;
-  std::vector<unsigned char> m_neighbor;
+  std::vector<std::size_t> m_neighbor;
   std::vector<double> m_confidence;
 
   struct Cluster
@@ -460,9 +460,18 @@ public:
     std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_group);
   }
 
+  void add_plane (const Plane& p) { m_planes.push_back (p); }
+  
+  std::size_t group_of (std::size_t idx) const { return m_group[idx]; }
+  void set_group_of (std::size_t idx, std::size_t idx_group) { m_group[idx] = idx_group; }
+
+  const std::vector<Cluster>& clusters() const { return m_clusters; }
+
+  std::size_t neighbor_of (std::size_t idx) const { return m_neighbor[idx]; }
+  
   void cluster_points (const Neighborhood& neighborhood, const double& tolerance)
   {
-    std::vector<unsigned char>(m_input.size(), (unsigned char)(-1)).swap (m_neighbor);
+    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_neighbor);
     
     std::vector<std::size_t> done (m_input.size(), (std::size_t)(-1));
     
@@ -470,7 +479,7 @@ public:
       {
         if (done[s] != (std::size_t)(-1))
           continue;
-        unsigned char label = m_assigned_type[s];
+        std::size_t label = m_assigned_type[s];
         
         m_clusters.push_back (Cluster());
 
@@ -677,6 +686,16 @@ public:
     m_segmentation_classes.push_back (type);
   }
 
+  void number_of_classification_types () const
+  {
+    return m_segmentation_classes.size();
+  }
+
+  Classification_type* get_classification_type (std::size_t idx)
+  {
+    return m_segmentation_classes[idx];
+  }
+
   void clear_classification_types ()
   {
     m_segmentation_classes.clear();
@@ -698,7 +717,7 @@ public:
     m_segmentation_attributes.push_back (attribute);
   }
 
-  void clear_m_segmentation_attributes ()
+  void clear_segmentation_attributes ()
   {
     m_segmentation_attributes.clear();
   }
@@ -745,7 +764,16 @@ public:
   */
   Classification_type* classification_type_of (std::size_t index) const
   {
+    if (m_assigned_type.size() < index)
+      return NULL;
     return m_segmentation_classes[m_assigned_type[index]];
+  }
+
+  double confidence_of (std::size_t index) const
+  {
+    if (m_confidence.size() < index)
+      return 0.;
+    return m_confidence[index];
   }
 
   /// @}
