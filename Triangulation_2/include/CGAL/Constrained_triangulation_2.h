@@ -32,12 +32,24 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 
+#include <boost/mpl/if.hpp>
+
 namespace CGAL {
 
 struct No_intersection_tag{};
 struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
+namespace internal {
+
+template <typename K>
+struct Itag {
+  typedef typename boost::mpl::if_<typename Algebraic_structure_traits<typename K::FT>::Is_exact,
+                                   Exact_intersections_tag,
+                                   Exact_predicates_tag>::type type;
+};
+
+} // namespace internal
 
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
