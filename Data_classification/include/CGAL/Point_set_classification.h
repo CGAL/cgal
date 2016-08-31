@@ -764,14 +764,14 @@ public:
   */
   Classification_type* classification_type_of (std::size_t index) const
   {
-    if (m_assigned_type.size() < index)
+    if (m_assigned_type.size() <= index)
       return NULL;
     return m_segmentation_classes[m_assigned_type[index]];
   }
 
   double confidence_of (std::size_t index) const
   {
-    if (m_confidence.size() < index)
+    if (m_confidence.size() <= index)
       return 0.;
     return m_confidence[index];
   }
