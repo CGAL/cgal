@@ -220,7 +220,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
   // Colors
   static Color_ramp ramp;
   ramp.build_red();
-    
+
   if (index_color == 0) // real colors
     {
       for (std::size_t i = 0; i < m_points.size(); ++ i)
@@ -740,6 +740,7 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
                           CGAL::make_property_map(m_points),
                           _bbox,
                           *m_grid,
+                          grid_resolution,
                           radius_neighbors,
                           radius_dtm,
                           1.);
