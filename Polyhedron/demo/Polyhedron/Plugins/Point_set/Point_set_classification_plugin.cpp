@@ -161,7 +161,7 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_point_set_classification_item* new_item
       = new Scene_point_set_classification_item ();
-    new_item->read_ply_point_set (in, ui_widget.gridResolutionDoubleSpinBox->value());
+    new_item->read_ply_point_set (in);
 
     std::vector<Scene_point_set_classification_item*> items;
     if (new_item->segment_point_set (ui_widget.max_nb_points->value(), std::back_inserter (items)))
@@ -200,7 +200,7 @@ public Q_SLOTS:
       }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_point_set_classification_item* new_item
-      = new Scene_point_set_classification_item (points_item, ui_widget.gridResolutionDoubleSpinBox->value());
+      = new Scene_point_set_classification_item (points_item);
     int item_id = scene->addItem(new_item);
     new_item->setName(QString("%1 (classification)").arg(points_item->name()));
     scene->setSelectedItem(item_id);
@@ -245,7 +245,8 @@ public Q_SLOTS:
                               ui_widget.multiply_weights->isChecked (),
                               class_rows,
                               method,
-                              ui_widget.smoothingDoubleSpinBox->value());
+                              ui_widget.smoothingDoubleSpinBox->value(),
+                              ui_widget.radiusNeighborsDoubleSpinBox->value());
   }
 
   void on_compute_features_button_clicked()

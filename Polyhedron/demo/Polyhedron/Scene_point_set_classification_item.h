@@ -4,10 +4,10 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/IO/read_ply_points.h>
 #include <CGAL/Point_set_classification.h>
-#include <CGAL/Data_classification/Segmentation_attribute_scatter.h>
+#include <CGAL/Data_classification/Segmentation_attribute_vertical_dispersion.h>
 #include <CGAL/Data_classification/Segmentation_attribute_elevation.h>
-#include <CGAL/Data_classification/Segmentation_attribute_horizontality.h>
-#include <CGAL/Data_classification/Segmentation_attribute_nonplanarity.h>
+#include <CGAL/Data_classification/Segmentation_attribute_verticality.h>
+#include <CGAL/Data_classification/Segmentation_attribute_distance_to_plane.h>
 #include <CGAL/Data_classification/Segmentation_attribute_color.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
 
@@ -19,15 +19,20 @@
 
 #include <iostream>
 
-typedef CGAL::Point_set_classification<Kernel> PSC;
 
-typedef CGAL::Segmentation_attribute_scatter<Kernel> Scatter;
-typedef CGAL::Segmentation_attribute_elevation<Kernel> Elevation;
-typedef CGAL::Segmentation_attribute_horizontality<Kernel> Horizontality;
-typedef CGAL::Segmentation_attribute_nonplanarity<Kernel> NonPlanarity;
-typedef CGAL::Segmentation_attribute_color<Kernel> ColorSeg;
+template <typename Kernel, typename Iterator, typename Color_pmap>
+class Segmentation_attribute_empty_color : public CGAL::Segmentation_attribute_color<Kernel, Iterator, Color_pmap>
+{
+  typedef CGAL::Segmentation_attribute_color<Kernel, Iterator, Color_pmap> Base;
+public:
+  Segmentation_attribute_empty_color ()
+    : Base (boost::counting_iterator<std::size_t>(0),
+            boost::counting_iterator<std::size_t>(0),
+            Color_pmap(), 1.)
+  { }
+  virtual double value (std::size_t) { return 1.; }
+};
 
-typedef CGAL::Data_classification::RGB_Color Color;
 
 class QMenu;
 class QAction;
@@ -38,11 +43,31 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 {
   Q_OBJECT
 
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Vector_3 Vector_3;
+  typedef CGAL::Data_classification::RGB_Color Color;
+  
+  typedef boost::counting_iterator<std::size_t> Iterator;
+  typedef CGAL::Pointer_property_map<Point_3>::type Point_pmap;
+  typedef CGAL::Pointer_property_map<Vector_3>::type Vector_pmap;
+  typedef CGAL::Pointer_property_map<Color>::type Color_pmap;
+
+  typedef CGAL::Point_set_classification<Kernel, Iterator, Point_pmap>                   PSC;
+  typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Point_pmap>      Planimetric_grid;
+  typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Point_pmap>          Neighborhood;
+  typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Point_pmap>  Local_eigen_analysis;
+  typedef CGAL::Segmentation_attribute_vertical_dispersion<Kernel, Iterator, Point_pmap> Dispersion;
+  typedef CGAL::Segmentation_attribute_elevation<Kernel, Iterator, Point_pmap>           Elevation;
+  typedef CGAL::Segmentation_attribute_verticality<Kernel, Iterator, Point_pmap>         Verticality;
+  typedef CGAL::Segmentation_attribute_distance_to_plane<Kernel, Iterator, Point_pmap>   Distance_to_plane;
+  typedef CGAL::Segmentation_attribute_color<Kernel, Iterator, Color_pmap>               Color_att;
+  typedef Segmentation_attribute_empty_color<Kernel, Iterator, Color_pmap>               Empty_color;
+
+
 public:
   
   Scene_point_set_classification_item(PSC* psc = NULL);
-  Scene_point_set_classification_item(const Scene_points_with_normal_item* points,
-                                      double grid_resolution);
+  Scene_point_set_classification_item(const Scene_points_with_normal_item* points);
   Scene_point_set_classification_item(const Scene_point_set_classification_item& toCopy);
   ~Scene_point_set_classification_item();
   
@@ -62,37 +87,37 @@ public:
   template <bool use_y>
   struct Sort_by_coordinate
   {
-    std::vector<PSC::HPoint>& m_hps;
-    Sort_by_coordinate (std::vector<PSC::HPoint>& hps) : m_hps (hps) { }
+    std::vector<Point_3>& m_hps;
+    Sort_by_coordinate (std::vector<Point_3>& hps) : m_hps (hps) { }
     bool operator() (const std::size_t& a, const std::size_t& b)
     {
       if (use_y)
-        return m_hps[a].position.y() < m_hps[b].position.y();
+        return m_hps[a].y() < m_hps[b].y();
       else
-        return m_hps[a].position.x() < m_hps[b].position.x();
+        return m_hps[a].x() < m_hps[b].x();
     }
   };
   
   template <typename OutputIterator>
   bool segment_point_set (std::size_t nb_max_pt, OutputIterator output)
   {
-    if (m_psc->HPS.size() < nb_max_pt)
+    if (m_points.size() < nb_max_pt)
       return false;
 
     std::list<Region> queue;
     queue.push_front (Region());
     
-    for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+    for (std::size_t i = 0; i < m_points.size(); ++ i)
       {
         queue.front().indices.push_back (i);
-        if (m_psc->HPS[i].position.x() < queue.front().x_min)
-          queue.front().x_min = m_psc->HPS[i].position.x();
-        if (m_psc->HPS[i].position.x() > queue.front().x_max)
-          queue.front().x_max = m_psc->HPS[i].position.x();
-        if (m_psc->HPS[i].position.y() < queue.front().y_min)
-          queue.front().y_min = m_psc->HPS[i].position.y();
-        if (m_psc->HPS[i].position.y() > queue.front().y_max)
-          queue.front().y_max = m_psc->HPS[i].position.y();
+        if (m_points[i].x() < queue.front().x_min)
+          queue.front().x_min = m_points[i].x();
+        if (m_points[i].x() > queue.front().x_max)
+          queue.front().x_max = m_points[i].x();
+        if (m_points[i].y() < queue.front().y_min)
+          queue.front().y_min = m_points[i].y();
+        if (m_points[i].y() > queue.front().y_max)
+          queue.front().y_max = m_points[i].y();
       }
 
     while (!(queue.empty()))
@@ -103,28 +128,24 @@ public:
           {
             std::vector<Kernel::Point_3> dummy;
 
-            PSC* psc = new PSC (dummy.begin(), dummy.end(), m_psc->m_grid_resolution);
+            Scene_point_set_classification_item* new_item
+              = new Scene_point_set_classification_item ();
+            
             for (std::size_t i = 0; i < current.indices.size(); ++ i)
               {
-                psc->HPS.push_back (PSC::HPoint());
-                psc->HPS.back().position = m_psc->HPS[current.indices[i]].position;
-                psc->HPS.back().echo = m_psc->HPS[current.indices[i]].echo;
-                psc->HPS.back().ind_x = m_psc->HPS[current.indices[i]].ind_x;
-                psc->HPS.back().ind_y = m_psc->HPS[current.indices[i]].ind_y;
-                psc->HPS.back().group = m_psc->HPS[current.indices[i]].group;
-                psc->HPS.back().AE_label = m_psc->HPS[current.indices[i]].AE_label;
-                psc->HPS.back().neighbor = m_psc->HPS[current.indices[i]].neighbor;
-                psc->HPS.back().confidence = m_psc->HPS[current.indices[i]].confidence;
-                psc->HPS.back().color = m_psc->HPS[current.indices[i]].color;
+                new_item->m_points.push_back(m_points[current.indices[i]]);
+                new_item->m_normals.push_back(m_normals[current.indices[i]]);
+                new_item->m_colors.push_back(m_colors[current.indices[i]]);
               }
-            *(output ++) = new Scene_point_set_classification_item (psc);
+
+            *(output ++) = new_item;
           }
         else
           {
             if (current.x_max - current.x_min > current.y_max - current.y_min)
               {
                 std::sort (current.indices.begin(), current.indices.end(),
-                           Sort_by_coordinate<false>(m_psc->HPS));
+                           Sort_by_coordinate<false>(m_points));
                 
                 queue.push_back(Region());
                 queue.push_back(Region());
@@ -143,8 +164,8 @@ public:
                 
                 for (; i < current.indices.size() / 2; ++ i)
                   negative.indices.push_back (current.indices[i]);
-                double med_x = 0.5 * (m_psc->HPS[current.indices[i]].position.x()
-                                      + m_psc->HPS[current.indices[i+1]].position.x());
+                double med_x = 0.5 * (m_points[current.indices[i]].x()
+                                      + m_points[current.indices[i+1]].x());
                 negative.x_max = med_x;
                 positive.x_min = med_x;
                 
@@ -154,7 +175,7 @@ public:
             else
               {
                 std::sort (current.indices.begin(), current.indices.end(),
-                           Sort_by_coordinate<true>(m_psc->HPS));
+                           Sort_by_coordinate<true>(m_points));
 
                 queue.push_back(Region());
                 queue.push_back(Region());
@@ -173,8 +194,8 @@ public:
                 
                 for (; i < current.indices.size() / 2; ++ i)
                   negative.indices.push_back (current.indices[i]);
-                double med_y = 0.5 * (m_psc->HPS[current.indices[i]].position.y()
-                                      + m_psc->HPS[current.indices[i+1]].position.y());
+                double med_y = 0.5 * (m_points[current.indices[i]].y()
+                                      + m_points[current.indices[i+1]].y());
                 negative.y_max = med_y;
                 positive.y_min = med_y;
                 
@@ -193,7 +214,7 @@ public:
   QMenu* contextMenu();
 
   // IO
-  bool read_ply_point_set(std::istream& in, double grid_resolution);
+  bool read_ply_point_set(std::istream& in);
   bool write_ply_point_set(std::ostream& out) const;
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
@@ -228,66 +249,60 @@ public:
   void compute_ransac (const double& radius_neighbors);
   void compute_clusters (const double& radius_neighbors);
 
-  void save_2d_image ();
-  
   template <typename Classes>
   bool run (double weight_scat, double weight_plan,
             double weight_hori, double weight_elev, double weight_colo,
-            bool multiply, Classes& classes, int method, double weight)
+            bool multiply, Classes& classes, int method, double weight,
+            double radius_neighbors)
   {
-  if (m_scat == NULL || m_plan == NULL || m_hori == NULL || m_elev == NULL || m_colo == NULL)
+  if (m_disp == NULL || m_d2p == NULL || m_verti == NULL || m_elev == NULL || m_col_att == NULL)
     return false;
 
-  m_psc->m_grid_resolution = weight;
-
-  m_scat->weight = std::tan ((1. - weight_scat) * (CGAL_PI/2));
-  m_plan->weight = std::tan ((1. - weight_plan) * (CGAL_PI/2));
-  m_hori->weight = std::tan ((1. - weight_hori) * (CGAL_PI/2));
+  m_disp->weight = std::tan ((1. - weight_scat) * (CGAL_PI/2));
+  m_d2p->weight = std::tan ((1. - weight_plan) * (CGAL_PI/2));
+  m_verti->weight = std::tan ((1. - weight_hori) * (CGAL_PI/2));
   m_elev->weight = std::tan ((1. - weight_elev) * (CGAL_PI/2));
-  m_colo->weight = std::tan ((1. - weight_colo) * (CGAL_PI/2));
-  
-  // m_scat->weight = 2 * (1. - weight_scat) * m_scat->max;
-  // m_plan->weight = 2 * (1. - weight_plan) * m_plan->max;
-  // m_hori->weight = 2 * (1. - weight_hori) * m_hori->max;
-  // m_elev->weight = 2 * (1. - weight_elev) * m_elev->mean;
-  // m_colo->weight = 2 * (1. - weight_colo) * m_colo->max;
+  m_col_att->weight = std::tan ((1. - weight_colo) * (CGAL_PI/2));
 
-  
-  if (!(m_psc->segmentation_classes.empty()))
-    {
-      for (std::size_t i = 0; i < m_psc->segmentation_classes.size(); ++ i)
-        delete m_psc->segmentation_classes[i];
-      m_psc->segmentation_classes.clear();
-    }
+  m_psc->clear_and_delete_classification_types();
 
   std::cerr << "Running with:" << std::endl;
   for (std::size_t i = 0; i < classes.size(); ++ i)
     {
       if (!(classes[i].checkbox->isChecked()))
         continue;
-      
-      m_psc->segmentation_classes.push_back (new CGAL::Classification_type
-                                             (classes[i].label->text().toLower().toStdString().c_str()));
-      m_psc->segmentation_classes.back()->set_attribute_effect (m_scat, (CGAL::Classification_type::Attribute_side)(classes[i].combo[0]->currentIndex()));
-      m_psc->segmentation_classes.back()->set_attribute_effect (m_plan, (CGAL::Classification_type::Attribute_side)(classes[i].combo[1]->currentIndex()));
-      m_psc->segmentation_classes.back()->set_attribute_effect (m_hori, (CGAL::Classification_type::Attribute_side)(classes[i].combo[2]->currentIndex()));
-      m_psc->segmentation_classes.back()->set_attribute_effect (m_elev, (CGAL::Classification_type::Attribute_side)(classes[i].combo[3]->currentIndex()));
-      m_psc->segmentation_classes.back()->set_attribute_effect (m_colo, (CGAL::Classification_type::Attribute_side)(classes[i].combo[4]->currentIndex()));
+
+      CGAL::Classification_type* ct = new CGAL::Classification_type
+        (classes[i].label->text().toLower().toStdString().c_str());
+      ct->set_attribute_effect
+        (m_disp, (CGAL::Classification_type::Attribute_side)(classes[i].combo[0]->currentIndex()));
+      ct->set_attribute_effect
+        (m_d2p, (CGAL::Classification_type::Attribute_side)(classes[i].combo[1]->currentIndex()));
+      ct->set_attribute_effect
+        (m_verti, (CGAL::Classification_type::Attribute_side)(classes[i].combo[2]->currentIndex()));
+      ct->set_attribute_effect
+        (m_elev, (CGAL::Classification_type::Attribute_side)(classes[i].combo[3]->currentIndex()));
+      ct->set_attribute_effect
+        (m_col_att, (CGAL::Classification_type::Attribute_side)(classes[i].combo[4]->currentIndex()));
 
       std::cerr << " * ";
-      m_psc->segmentation_classes.back()->info();
+      ct->info();
+
+      m_psc->add_classification_type (ct);
     }
   
 
-  std::cerr << "Weights: " << m_scat->weight << " " << m_plan->weight << " " << m_hori->weight
-            << " " << m_elev->weight << " " << m_colo->weight << std::endl;
+  std::cerr << "Weights: " << m_disp->weight << " " << m_d2p->weight << " " << m_verti->weight
+            << " " << m_elev->weight << " " << m_col_att->weight << std::endl;
 
-  m_psc->m_multiplicative = multiply;
+  m_psc->set_multiplicative(multiply);
   
-  m_psc->classify(method);
-
-  // if (method != 0)
-  //   save_2d_image();
+  if (method == 0)
+    m_psc->run_quick();
+  else if (method == 1)
+    m_psc->run_with_graphcut (*m_neighborhood, weight);
+  else if (method == 2)
+    m_psc->run_with_groups (*m_neighborhood, radius_neighbors);
   
   invalidateOpenGLBuffers();
   return false;
@@ -296,26 +311,25 @@ public:
   template <typename ItemContainer>
   void generate_point_sets (ItemContainer& items)
   {
-    for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+    for (std::size_t i = 0; i < m_points.size(); ++ i)
       {
-        int c = m_psc->HPS[i].AE_label;
-        if (c == -1)
+        CGAL::Classification_type* c = m_psc->classification_type_of (i);
+        if (c == NULL)
           continue;
         
-        if (m_psc->segmentation_classes[c]->id() == "vegetation")
-          items[0]->point_set()->push_back (m_psc->HPS[i].position);
-        else if (m_psc->segmentation_classes[c]->id() == "ground")
-          items[1]->point_set()->push_back (m_psc->HPS[i].position);
-        else if (m_psc->segmentation_classes[c]->id() == "road")
-          items[2]->point_set()->push_back (m_psc->HPS[i].position);
-        else if (m_psc->segmentation_classes[c]->id() == "roof")
-          items[3]->point_set()->push_back (m_psc->HPS[i].position);
-        else if (m_psc->segmentation_classes[c]->id() == "facade")
-          items[4]->point_set()->push_back (m_psc->HPS[i].position);
-        else if (m_psc->segmentation_classes[c]->id() == "building")
-          items[5]->point_set()->push_back (m_psc->HPS[i].position);
+        if (c->id() == "vegetation")
+          items[0]->point_set()->push_back (m_points[i]);
+        else if (c->id() == "ground")
+          items[1]->point_set()->push_back (m_points[i]);
+        else if (c->id() == "road")
+          items[2]->point_set()->push_back (m_points[i]);
+        else if (c->id() == "roof")
+          items[3]->point_set()->push_back (m_points[i]);
+        else if (c->id() == "facade")
+          items[4]->point_set()->push_back (m_points[i]);
+        else if (c->id() == "building")
+          items[5]->point_set()->push_back (m_points[i]);
       }
-
   }
 
   void extract_2d_outline (double radius,
@@ -330,13 +344,23 @@ public Q_SLOTS:
 
 // Data
 private:
+  
+  std::vector<Point_3> m_points;
+  std::vector<Vector_3> m_normals;
+  std::vector<Color> m_colors;
+
   PSC* m_psc;
-  Scatter* m_scat;
+
+  Planimetric_grid* m_grid;
+  Neighborhood* m_neighborhood;
+  Local_eigen_analysis* m_eigen;
+  
+  Dispersion* m_disp;
   Elevation* m_elev;
-  Horizontality* m_hori;
-  NonPlanarity* m_plan;
-  ColorSeg* m_colo;
-  std::vector<Color> m_real_colors;
+  Verticality* m_verti;
+  Distance_to_plane* m_d2p;
+  Color_att* m_col_att;
+
 
   int m_index_color;
   
@@ -373,6 +397,7 @@ private:
 template <typename Floating>
 class My_ply_interpreter
 {
+  typedef CGAL::Data_classification::RGB_Color Color;
   std::vector<Kernel::Point_3>& points;
   std::vector<Color>& colors;
   std::vector<unsigned char>& echo;
@@ -424,46 +449,6 @@ public:
   }
 
 };
-
-template <typename HPS>
-struct HPS_property_map{
-  const std::vector<HPS>* points;
-
-  typedef Kernel::Point_3 value_type;
-  typedef const value_type& reference;
-  typedef std::size_t key_type;
-  typedef boost::lvalue_property_map_tag category;
-  
-  HPS_property_map () : points(NULL)
-  {
-  }
-  HPS_property_map (std::vector<HPS>* pts) : points(pts)
-  {
-  }
-  ~HPS_property_map()
-  {
-  }
-
-  HPS_property_map (const HPS_property_map& pmap) : points(pmap.points)
-  {
-  }
-  
-  HPS_property_map& operator= (const HPS_property_map& pmap)
-  {
-    this->points = pmap.points;
-    return *this;
-  }
-  
-  reference operator[](key_type k) const
-  {
-    return (*points)[k].position;
-  }
-  
-  friend reference get(const HPS_property_map& ppmap,key_type i)
-  {return ppmap[i];}
-};
-
-
 
 
 
