@@ -55,6 +55,7 @@ public:
                                 double weight,
                                 double mean_h = 156., double mean_s = 5., double mean_v = 76.,
                                 double sd_h = 70., double sd_s = 12., double sd_v = 8.4)
+    : weight(weight)
   {
     for(std::size_t i = 0; i < (std::size_t)(end - begin);i++)
       {
