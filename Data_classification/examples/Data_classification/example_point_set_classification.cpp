@@ -43,18 +43,30 @@ int main (int argc, char** argv)
       return EXIT_FAILURE;
     }
 
+  double grid_resolution = 0.5;
+  double radius_neighbors = 1.5;
+  double radius_dtm = 12.5;
 
   std::cerr << "Computing useful structures" << std::endl;
   Iso_cuboid_3 bbox = CGAL::bounding_box (pts.begin(), pts.end());
-  Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, 2.4);
+  Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
-  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, 2.4);
+  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, radius_neighbors);
   
   std::cerr << "Computing attributes" << std::endl;
-  Dispersion disp (pts.begin(), pts.end(), Pmap(), grid, 0.8, 2.4, 0.26);
-  Elevation elev (pts.begin(), pts.end(), Pmap(), bbox, grid, 0.8, 2.4, 12., 0.08);
-  Verticality verti (pts.begin(), pts.end(), eigen, 0.13);
-  Distance_to_plane d2p (pts.begin(), pts.end(), Pmap(), eigen, 0.72);
+  Dispersion disp (pts.begin(), pts.end(), Pmap(), grid,
+                   grid_resolution,
+                   radius_neighbors,
+                   1.78); // Weight
+  Elevation elev (pts.begin(), pts.end(), Pmap(), bbox, grid,
+                  grid_resolution,
+                  radius_neighbors,
+                  radius_dtm,
+                  2.86); // Weight
+  Verticality verti (pts.begin(), pts.end(), eigen,
+                     3.70); // Weight
+  Distance_to_plane d2p (pts.begin(), pts.end(), Pmap(), eigen,
+                         0.0016);
 
   Classification psc (pts.begin (), pts.end(), Pmap());
   
@@ -73,12 +85,12 @@ int main (int argc, char** argv)
 
   CGAL::Classification_type vege ("vegetation");
   vege.set_attribute_effect (&disp, CGAL::Classification_type::FAVORED_ATT);
-  vege.set_attribute_effect (&elev, CGAL::Classification_type::NEUTRAL_ATT);
+  vege.set_attribute_effect (&elev, CGAL::Classification_type::FAVORED_ATT);
   vege.set_attribute_effect (&verti, CGAL::Classification_type::NEUTRAL_ATT);
-  vege.set_attribute_effect (&d2p, CGAL::Classification_type::PENALIZED_ATT);
+  vege.set_attribute_effect (&d2p, CGAL::Classification_type::FAVORED_ATT);
   
   CGAL::Classification_type roof ("roof");
-  roof.set_attribute_effect (&disp, CGAL::Classification_type::NEUTRAL_ATT);
+  roof.set_attribute_effect (&disp, CGAL::Classification_type::PENALIZED_ATT);
   roof.set_attribute_effect (&elev, CGAL::Classification_type::FAVORED_ATT);
   roof.set_attribute_effect (&verti, CGAL::Classification_type::NEUTRAL_ATT);
   roof.set_attribute_effect (&d2p, CGAL::Classification_type::NEUTRAL_ATT);
