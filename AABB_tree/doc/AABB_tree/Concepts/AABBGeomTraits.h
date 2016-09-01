@@ -59,9 +59,16 @@ typedef unspecified_type Construct_sphere_3;
 
 /*!
 A functor object to compute the point on a geometric primitive which is closest from a query. Provides the operator: 
-`Point_3 operator()(const Point_3& p, const Type_2& type_2);` where `Type_2` is any type among `Segment_3` and `Triangle_3`. The operator returns the point on `type_2` which is closest to `p`. 
+`Point_3 operator()(const Type_2& type_2, const Point_3& p);` where `Type_2` is any type among `Segment_3` and `Triangle_3`. The operator returns the point on `type_2` which is closest to `p`. 
 */ 
-typedef unspecified_type Compute_closest_point_3; 
+typedef unspecified_type Construct_projected_point_3;
+
+/*!
+A functor object to compare the distance of two points wrt a third one.
+Provides the operator:
+`CGAL::Comparision_result operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3)`. The operator compare the distance between `p1 and `p2`, and between `p2` and `p3`.
+*/
+typedef unspecified_type Compare_distance_3
 
 /*!
 A functor object to detect if a point lies inside a sphere or not. 
@@ -106,7 +113,12 @@ Construct_sphere_3 construct_sphere_3_object();
 /*!
 Returns the closest point constructor. 
 */ 
-Compute_closest_point_3 compute_closest_point_3_object(); 
+Construct_projected_point_3 construct_projected_point_3_object();
+
+/*!
+Returns the compare distance constructor.
+*/
+Compare_distance_3 compare_distance_3_object();
 
 /*!
 Returns the closest point constructor. 
