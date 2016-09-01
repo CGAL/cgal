@@ -89,7 +89,7 @@ private:
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
 
-  static SEG_DIR& direction()
+  static SEG_Direction& direction()
   {
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(SEG_Direction, seg_dir,SEG_UP);
     return seg_dir;
