@@ -59,7 +59,7 @@ protected:
 #else
   static const FT& STEP()
   {
-    static FT step_(2);
+    static const FT step_(2);
     return step_;
   }
 #endif

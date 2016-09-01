@@ -47,7 +47,7 @@ private:
     inline
     Uncertain<bool> is_less (const Site_2 &p0, const Site_2 &p1) const
     {
-      static Uncertain<bool> uncertain_bool =
+      static const Uncertain<bool> uncertain_bool =
 	Uncertain<bool>::indeterminate();
 
       Uncertain<Comparison_result> cr;
