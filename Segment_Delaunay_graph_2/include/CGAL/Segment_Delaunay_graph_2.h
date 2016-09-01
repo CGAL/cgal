@@ -44,7 +44,6 @@
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
-#include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
 
 #include <CGAL/spatial_sort.h>
@@ -53,6 +52,7 @@
 #include <CGAL/tss.h>
 
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 /*
   Conventions:
@@ -101,12 +101,11 @@ namespace Internal {
     typedef Node                   argument_type;
     typedef typename Node::Site_2  Site;
     typedef Site                   result_type;
-    Site& operator()(const Node& x) const { 
-      static Site s;
-      s = x.site();
-      return s;
+
+    Site operator()(const Node& x) const {
+      return x.site();
     }
-    //    const Site& operator()(const Node& x) const { return x.site(); }
+
   };
 
   template < class Node, class Site_t >
@@ -114,18 +113,15 @@ namespace Internal {
     typedef Node                   argument_type;
     typedef Site_t                 Site;
     typedef Site                   result_type;
-    Site& operator()(const Node& x) const {
-      static Site s;
+
+    Site operator()(const Node& x) const {
       if ( boost::tuples::get<2>(x) /*x.third*/ ) { // it is a point
-	//	s = Site::construct_site_2(*x.first);
-	s = Site::construct_site_2( *boost::tuples::get<0>(x) );
-      } else {
-	//	s = Site::construct_site_2(*x.first, *x.second);
-	s = Site::construct_site_2
-	  (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
+	return Site::construct_site_2( *boost::tuples::get<0>(x) );
       }
-      return s;
+      return Site::construct_site_2
+        (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
     }
+
   };
 
   template<typename T, typename U>
@@ -269,11 +265,11 @@ protected:
   Handle_map;
 
 public:
-  typedef Iterator_project<All_inputs_iterator, Proj_input_to_site>
+  typedef boost::transform_iterator<Proj_input_to_site, All_inputs_iterator>
   Input_sites_iterator;
-
-  typedef Iterator_project<Finite_vertices_iterator, 
-                           Proj_site>            Output_sites_iterator;
+  
+  typedef boost::transform_iterator<Proj_site, Finite_vertices_iterator>
+  Output_sites_iterator;
 protected:
   // LOCAL VARIABLE(S)
   //------------------
