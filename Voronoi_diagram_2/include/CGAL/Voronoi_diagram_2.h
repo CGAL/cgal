@@ -27,6 +27,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
+#include <CGAL/assertions.h>
 
 #include <iostream>
 #include <iterator>
@@ -625,14 +626,7 @@ public:
   //---------------
  private:
   Locate_result locate(const Point_2& , const Tag_false&) const {
-    static unsigned int i = 0;
-    if ( i == 0 ) {
-      i++;
-      std::cerr << "Point location is not supported..." << std::endl;
-    }
-
-    // to avoid warnings/errors...
-    //    Face_handle f;
+    CGAL_assertion_msg(false, "Point location is not supported");
     return Locate_result();
   }
 
