@@ -480,6 +480,14 @@ public:
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
+
+  template <typename T1, typename T2, typename T3, typename T4>
+  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
+                                       const T3& o3, const T4& o4)
+    : Base(o1, o2, o3, o4)
+    , current_corner_index_(1)
+    , current_curve_index_(1)
+    , curves_aabb_tree_is_built(false) {}
 #endif
 
   /// Destructor
