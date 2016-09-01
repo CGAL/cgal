@@ -47,19 +47,26 @@ bool
 is_inside_segment_3(const typename K::Point_3& query,
                     const typename K::Segment_3 & s,
                     typename K::Point_3& closest_point_on_segment,
-                    const K&)
+                    const K& k)
 {
+  typename K::Construct_vector_3 vector =
+    k.construct_vector_3_object();
+  typename K::Construct_vertex_3 vertex_on =
+    k.construct_vertex_3_object();
+  typename K::Compute_scalar_product_3 scalar_product =
+    k.compute_scalar_product_3_object();
+
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point;
 
-  const Point& a = s.source();
-  const Point& b = s.target();
-  if((b-a)*(query-a) < FT(0))
+  const Point& a = vertex_on(s, 0);
+  const Point& b = vertex_on(s, 1);
+  if( scalar_product(vector(a,b), vector(a, query)) < FT(0) )
   {
     closest_point_on_segment = a;
     return false;
   }
-  if((a-b)*(query-b) < FT(0))
+  if( scalar_product(vector(b,a), vector(b, query)) < FT(0) )
   {
     closest_point_on_segment = b;
     return false;
