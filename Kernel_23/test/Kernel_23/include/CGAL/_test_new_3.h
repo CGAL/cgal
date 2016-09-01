@@ -228,6 +228,8 @@ test_new_3(const R& rep)
         = rep.construct_projected_point_3_object();
           tmp1 = construct_projected_point(l2, p4);
           tmp1 = construct_projected_point(h7, p3);
+          tmp1 = construct_projected_point(s2, p3);
+          tmp1 = construct_projected_point(t2, p3);
 
   typename R::Construct_lifted_point_3 construct_lifted_point
         = rep.construct_lifted_point_3_object();
