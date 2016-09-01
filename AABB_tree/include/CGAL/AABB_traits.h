@@ -23,7 +23,7 @@
 #define CGAL_AABB_TRAITS_H_
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/intersections.h>
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>

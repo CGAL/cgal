@@ -1,4 +1,4 @@
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/intersections.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

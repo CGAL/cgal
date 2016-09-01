@@ -1,5 +1,5 @@
 #include <QtCore/qglobal.h>
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/intersections.h>
 
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"

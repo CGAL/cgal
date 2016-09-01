@@ -1,7 +1,7 @@
 
 #include <fstream>
 #include <QtCore/qglobal.h>
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/intersections.h>
 
 #include "Scene.h"
 #include "Color_ramp.h"

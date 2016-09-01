@@ -7,7 +7,7 @@
  */
 
 //#include <debug.h>
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/intersections.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
