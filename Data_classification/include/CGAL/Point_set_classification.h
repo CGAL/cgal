@@ -462,7 +462,12 @@ public:
 
   void add_plane (const Plane& p) { m_planes.push_back (p); }
   
-  std::size_t group_of (std::size_t idx) const { return m_group[idx]; }
+  std::size_t group_of (std::size_t idx) const
+  {
+    if (m_group.size() <= idx)
+      return (std::size_t)(-1);
+    return m_group[idx];
+  }
   void set_group_of (std::size_t idx, std::size_t idx_group) { m_group[idx] = idx_group; }
 
   const std::vector<Cluster>& clusters() const { return m_clusters; }
