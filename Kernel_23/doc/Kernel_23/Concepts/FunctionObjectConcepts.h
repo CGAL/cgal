@@ -7966,7 +7966,7 @@ public:
   /// @{
 
   /*!
-    return the sign of the power test of the last weighted point
+    returns the sign of the power test of the last weighted point
     with respect to the smallest sphere orthogonal to the others.
   */ 
   CGAL::Bounded_side
@@ -7976,6 +7976,29 @@ public:
              const Kernel::Weighted_point_3 & s,
              const Kernel::Weighted_point_3 & t); 
 
+  /*!
+    returns.
+  */ 
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & r,
+             const Kernel::Weighted_point_3 & s); 
+
+  /*!
+    returns.
+  */ 
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q,
+             const Kernel::Weighted_point_3 & r);
+
+  /*!
+    returns.
+  */ 
+  CGAL::Bounded_side
+  operator()(const Kernel::Weighted_point_3 & p,
+             const Kernel::Weighted_point_3 & q); 
   /// @}
 
 }; /* end Kernel::Intersect_2 */
