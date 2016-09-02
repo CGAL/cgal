@@ -209,7 +209,7 @@ typedef unspecified_type Construct_ray_3;
 /*!
 
 */ 
-Power_side_of_power_sphere_3 power_side_of_power_sphere_3_object(); 
+Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object(); 
 
 /*!
 

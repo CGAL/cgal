@@ -790,7 +790,7 @@ A type representing weighted points in two dimensions.
 
 \sa `ComparePowerDistance_2`
 \sa `ConstructWeightedCircumcenter_2`
-\sa `PowerSideOfPowerCircle_2`
+\sa `PowerSideOfOrientedPowerCircle_2`
 
 */
 class WeightedPoint_2 {
@@ -816,8 +816,8 @@ A type representing weighted points in three dimensions.
 \sa `ComputePowerDistanceToPowerSphere_3`
 \sa `ComputePowerProduct_3`
 \sa `ConstructWeightedCircumcenter_3`
-\sa `InSmallestOrthogonalSphere_3`
-\sa `PowerSideOfPowerSphere_3`
+\sa `PowerSideOfBoundedPowerSphere_3`
+\sa `PowerSideOfOrientedPowerSphere_3`
 
 */
 class WeightedPoint_3 {
