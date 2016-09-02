@@ -1754,9 +1754,9 @@ public:
       if (!second_hedge->is_border_edge())
       {
         std::size_t patch_id_1 =
-              P_patch_ids[ get( Q_facet_id_pmap, second_hedge->facet() ) ];
+              Q_patch_ids[ get( Q_facet_id_pmap, second_hedge->facet() ) ];
         std::size_t patch_id_2 =
-              P_patch_ids[ get( Q_facet_id_pmap, second_hedge->opposite()->facet() ) ];
+              Q_patch_ids[ get( Q_facet_id_pmap, second_hedge->opposite()->facet() ) ];
         if (patch_id_1 == patch_id_2){
           impossible_operation.set();
           return;
@@ -1772,7 +1772,7 @@ public:
           {
             //Union allowed everything else is non_manifold
             impossible_operation.set();
-            impossible_operation.reset(0);
+            impossible_operation.reset(P_UNION_Q);
 
             std::size_t patch_id_P =
               P_patch_ids[ get( P_facet_id_pmap, first_hedge->is_border()

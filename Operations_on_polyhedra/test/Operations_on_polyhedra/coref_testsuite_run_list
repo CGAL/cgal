@@ -27,6 +27,8 @@ data-coref/elephant_split_1.off data-coref/elephant_split_2.off
 data-coref/F1.off data-coref/F2.off
 data-coref/F1.off data-coref/F1.off
 data-coref/F2.off data-coref/F2.off
+data-coref/c1.off data-coref/c2.off
+data-coref/c1.off data-coref/c2_bis.off
 data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr1-1.off data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr1-2.off
 data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr2-1.off data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr2-2.off
 data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr3-1.off data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr3-2.off
