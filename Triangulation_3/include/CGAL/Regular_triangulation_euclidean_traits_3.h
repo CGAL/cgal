@@ -78,7 +78,7 @@ public:
 
   Power_side_of_bounded_power_sphere_3
   power_side_of_bounded_power_sphere_3_object() const
-  { return K().in_smallest_orthogonal_sphere_3_object(); }
+  { return K().power_side_of_bounded_power_sphere_3_object(); }
 
   Side_of_bounded_orthogonal_sphere_3
   side_of_bounded_orthogonal_sphere_3_object() const

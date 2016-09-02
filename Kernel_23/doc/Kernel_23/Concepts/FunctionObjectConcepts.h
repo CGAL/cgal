@@ -7969,7 +7969,7 @@ public:
     return the sign of the power test of the last weighted point
     with respect to the smallest sphere orthogonal to the others.
   */ 
-  CGAL::Sign
+  CGAL::Bounded_side
   operator()(const Kernel::Weighted_point_3 & p,
              const Kernel::Weighted_point_3 & q,
              const Kernel::Weighted_point_3 & r,
