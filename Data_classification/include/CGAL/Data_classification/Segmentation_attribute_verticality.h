@@ -28,12 +28,6 @@ class Segmentation_attribute_verticality : public Segmentation_attribute
   std::vector<double> verticality_attribute;
   
 public:
-  /// \cond SKIP_IN_MANUAL
-  double weight;
-  double mean;
-  double max;
-  /// \endcond
-  
   /*!
     \brief Constructs the attribute.
 
@@ -41,8 +35,9 @@ public:
   Segmentation_attribute_verticality (RandomAccessIterator begin,
                                       RandomAccessIterator end,
                                       const Local_eigen_analysis& eigen,
-                                      double weight = 1.) : weight (weight)
+                                      double weight = 1.)
   {
+    this->weight = weight;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
@@ -52,7 +47,7 @@ public:
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }
     
-    this->compute_mean_max (verticality_attribute, mean, max);
+    this->compute_mean_max (verticality_attribute, this->mean, this->max);
     //    max *= 2;
   }
 
@@ -61,8 +56,9 @@ public:
   Segmentation_attribute_verticality (const RandomAccessIterator& begin,
                                       const RandomAccessIterator& end,
                                       NormalPMap normal_pmap,
-                                      double weight = 1.) : weight (weight)
+                                      double weight = 1.)
   {
+    this->weight = weight;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
@@ -72,14 +68,14 @@ public:
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }
     
-    this->compute_mean_max (verticality_attribute, mean, max);
+    this->compute_mean_max (verticality_attribute, this->mean, this->max);
     //    max *= 2;
   }
 
   
   virtual double value (std::size_t pt_index)
   {
-    return std::max (0., std::min (1., verticality_attribute[pt_index] / weight));
+    return verticality_attribute[pt_index];
   }
 
   virtual std::string id() { return "verticality"; }

@@ -29,13 +29,6 @@ class Segmentation_attribute_distance_to_plane : public Segmentation_attribute
   std::vector<double> distance_to_plane_attribute;
   
 public:
-  /// \cond SKIP_IN_MANUAL
-  double weight;
-  double mean;
-  double max;
-  /// \endcond
-  
-  
   /*!
     \brief Constructs the attribute.
 
@@ -45,19 +38,20 @@ public:
                                             RandomAccessIterator end,
                                             PointPMap point_pmap,
                                             const Local_eigen_analysis& eigen,
-                                            double weight = 1.) : weight (weight)
+                                            double weight = 1.)
   {
+    this->weight = weight;
     for(std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       distance_to_plane_attribute.push_back
         (std::sqrt (CGAL::squared_distance (get(point_pmap, begin[i]), eigen.plane(i))));
     
-    this->compute_mean_max (distance_to_plane_attribute, mean, max);
+    this->compute_mean_max (distance_to_plane_attribute, this->mean, this->max);
     //    max *= 2;
   }
 
   virtual double value (std::size_t pt_index)
   {
-    return std::max (0., std::min (1., distance_to_plane_attribute[pt_index] / weight));
+    return distance_to_plane_attribute[pt_index];
   }
 
   virtual std::string id() { return "distance_to_plane"; }

@@ -31,12 +31,6 @@ class Segmentation_attribute_vertical_dispersion : public Segmentation_attribute
   std::vector<double> vertical_dispersion;
   
 public:
-  /// \cond SKIP_IN_MANUAL
-  double weight;
-  double mean;
-  double max;
-  /// \endcond
-
   /*!
     \brief Constructs the attribute.
   */
@@ -46,8 +40,9 @@ public:
                                               Grid& grid,
                                               const double grid_resolution,
                                               double radius_neighbors = -1.,
-                                              double weight = 1.) : weight (weight)
+                                              double weight = 1.)
   {
+    this->weight = weight;
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
     
@@ -117,12 +112,12 @@ public:
         vertical_dispersion.push_back((double)Dispersion(I,J));
       }
 
-    this->compute_mean_max (vertical_dispersion, mean, max);
+    this->compute_mean_max (vertical_dispersion, this->mean, this->max);
   }
 
   virtual double value (std::size_t pt_index)
   {
-    return std::max (0., std::min (1., vertical_dispersion[pt_index] / weight));
+    return vertical_dispersion[pt_index];
   }
 
   virtual std::string id() { return "vertical_dispersion"; }

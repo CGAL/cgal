@@ -24,12 +24,6 @@ class Segmentation_attribute_echo_scatter : public Segmentation_attribute
   std::vector<double> echo_scatter;
   
 public:
-  /// \cond SKIP_IN_MANUAL
-  double weight;
-  double mean;
-  double max;
-  /// \endcond
-
   /*!
     \brief Constructs the attribute.
   */
@@ -39,8 +33,9 @@ public:
                                        Grid& grid,
                                        const double grid_resolution,
                                        double radius_neighbors = 1.,
-                                       double weight = 1.) : weight (weight)
+                                       double weight = 1.)
   {
+    this->weight = weight;
     Image_float Scatter(grid.width(), grid.height());
     for (std::size_t j = 0; j < grid.height(); j++)
       for (std::size_t i = 0; i < grid.width(); i++)
@@ -97,12 +92,12 @@ public:
       int J= grid.y(i);
       echo_scatter.push_back((double)Scatter(I,J));
     }
-    this->compute_mean_max (echo_scatter, mean, max);
+    this->compute_mean_max (echo_scatter, this->mean, this->max);
   }
   
   virtual double value (std::size_t pt_index)
   {
-    return std::max (0., std::min (1., echo_scatter[pt_index] / weight));
+    return echo_scatter[pt_index];
   }
 
   virtual std::string id() { return "echo_scatter"; }

@@ -30,12 +30,6 @@ class Segmentation_attribute_color : public Segmentation_attribute
   std::vector<double> color_attribute;
   
 public:
-  /// \cond SKIP_IN_MANUAL
-  double weight;
-  double mean;
-  double max;
-  /// \endcond
-
   /*!
     \brief Constructs an attribute based on the given color.
 
@@ -55,8 +49,8 @@ public:
                                 double weight,
                                 double mean_h = 156., double mean_s = 5., double mean_v = 76.,
                                 double sd_h = 70., double sd_s = 12., double sd_v = 8.4)
-    : weight(weight)
   {
+    this->weight = weight;
     for(std::size_t i = 0; i < (std::size_t)(end - begin);i++)
       {
         HSV_Color c = Data_classification::rgb_to_hsv (get(color_pmap, begin[i]));
@@ -64,13 +58,13 @@ public:
                                    * std::exp (-(c[1] - mean_s) * (c[1] - mean_s) / (2. * sd_s * sd_s))
                                    * std::exp (-(c[2] - mean_v) * (c[2] - mean_v) / (2. * sd_v * sd_v)));
       }
-    this->compute_mean_max (color_attribute, mean, max);
+    this->compute_mean_max (color_attribute, this->mean, this->max);
   }
 
 
   virtual double value (std::size_t pt_index)
   {
-    return std::max (0., std::min (1., color_attribute[pt_index] / weight));
+    return color_attribute[pt_index];
   }
 
   virtual std::string id() { return "color"; }

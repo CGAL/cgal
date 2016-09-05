@@ -30,12 +30,6 @@ class Segmentation_attribute_elevation : public Segmentation_attribute
   std::vector<double> elevation_attribute;
   
 public:
-  /// \cond SKIP_IN_MANUAL
-  double weight;
-  double mean;
-  double max;
-  /// \endcond
-
   /*!
     \brief Constructs the attribute.
 
@@ -51,8 +45,9 @@ public:
                                     const double grid_resolution,
                                     double radius_neighbors = -1.,
                                     double radius_dtm = -1.,
-                                    double weight = 1.) : weight (weight)
+                                    double weight = 1.)
   {
+    this->weight = weight;
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
     if (radius_dtm < 0.)
@@ -378,13 +373,13 @@ public:
       elevation_attribute.push_back ((double)(get(point_pmap, begin[i]).z()-dtm(I,J)));
     }
 
-    this->compute_mean_max (elevation_attribute, mean, max);
+    this->compute_mean_max (elevation_attribute, this->mean, this->max);
     //    max *= 5;
   }
 
   virtual double value (std::size_t pt_index)
   {
-    return std::max (0., std::min (1., elevation_attribute[pt_index] / weight));
+    return elevation_attribute[pt_index];
   }
   
   virtual std::string id() { return "elevation"; }
