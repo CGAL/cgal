@@ -27,6 +27,7 @@ template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Local_eigen_analysis
 {
+public:
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
@@ -35,7 +36,8 @@ class Local_eigen_analysis
   typedef CGAL::cpp11::array<double, 3> Eigenvalues;
 
   typedef Data_classification::Neighborhood<Kernel, RandomAccessIterator, PointPMap> Neighborhood;
-  
+
+private:
   std::vector<Eigenvalues> eigenvalues;
   std::vector<Point> centroids;
   std::vector<Vector> smallest_eigenvectors;
@@ -119,6 +121,7 @@ public:
   const Vector& normal_vector (std::size_t index) const { return smallest_eigenvectors[index]; }
   Plane plane (std::size_t index) const { return Plane (centroids[index], smallest_eigenvectors[index]); }
 
+  const Eigenvalues& eigenvalue (std::size_t index) const { return eigenvalues[index]; }
 };
   
 
