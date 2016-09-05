@@ -2808,6 +2808,52 @@ public:
 
 }; /* end Kernel::ComputeVolume_3 */
 
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` 
+
+*/
+class ComputeWeight_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the weight of the weighted point.
+  */
+  Kernel::FT operator()(const Kernel::WeightedPoint_2& p) const; 
+
+}; /* end Kernel::ComputeWeight_2
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` 
+
+*/
+class ComputeWeight_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the weight of the weighted point.
+  */
+  Kernel::FT operator()(const Kernel::WeightedPoint_3& p) const; 
+
+}; /* end Kernel::ComputeWeight_3
+
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept

@@ -316,6 +316,8 @@
 - `Kernel::ComputeSquaredRadius_2`
 - `Kernel::ComputeSquaredRadius_3`
 - `Kernel::ComputeVolume_3`
+- `Kernel::ComputeWeight_2`
+- `Kernel::ComputeWeight_3`
 - `Kernel::ComputeX_2`
 - `Kernel::ComputeX_3`
 - `Kernel::ComputeY_2`

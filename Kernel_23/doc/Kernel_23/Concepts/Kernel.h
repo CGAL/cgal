@@ -423,6 +423,11 @@ public:
   typedef unspecified_type Assign_2; 
 
   /*!
+    a model of `Kernel::ComputeWeight_2`
+  */
+  typedef unspecified_type Compute_weight_2;
+
+  /*!
     a model of `Kernel::ComputeX_2`
   */
   typedef unspecified_type Compute_x_2;
@@ -1122,6 +1127,11 @@ public:
     a model of `Kernel::Assign_3` 
   */ 
   typedef unspecified_type Assign_3; 
+
+  /*!
+    a model of `Kernel::ComputeWeight_3`
+  */
+  typedef unspecified_type Compute_weight_3;
 
   /*!
     a model of `Kernel::ComputeX_3`
