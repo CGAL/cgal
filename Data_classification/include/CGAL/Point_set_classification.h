@@ -76,6 +76,7 @@ public:
 private:
   std::string m_id;
   std::map<Segmentation_attribute*, Attribute_side> m_attribute_effects;
+  std::vector<std::size_t> m_training_set;
 
 public:
 
@@ -125,6 +126,8 @@ public:
   /// @}
   
   /// \cond SKIP_IN_MANUAL
+  std::vector<std::size_t>& training_set() { return m_training_set; }
+
   void info()
   {
     std::cerr << "Attribute " << m_id << ": ";
@@ -310,9 +313,7 @@ public:
     prepare_classification ();
     
     // data term initialisation
-    CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
-    int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
     for (std::size_t s = 0; s < m_input.size(); s++)
       {
 			
@@ -340,15 +341,7 @@ public:
           m_confidence[s] = (values[1] - values[0]) / values[1];
         else
           m_confidence[s] = values[1] - values[0];
-
-        if(nb_class_best==0) count1++;
-        else if(nb_class_best==1) count2++;
-        else if(nb_class_best==2) count3++;
-        else count4++;
-
       }
-    
-    CGAL_CLASSIFICATION_CERR<<"ok"<<std::endl;
   }
 
 
@@ -665,7 +658,6 @@ public:
     // Reset data structure
     std::vector<std::size_t>(m_input.size()).swap (m_assigned_type);
     std::vector<double>(m_input.size()).swap (m_confidence);
-    
 
     m_effect_table = std::vector<std::vector<Attribute_side> >
       (m_segmentation_classes.size(), std::vector<Attribute_side> (m_segmentation_attributes.size(),
@@ -782,6 +774,247 @@ public:
   }
 
   /// @}
+
+
+  void training (Neighborhood& neighborhood)
+  {
+    train_parameters();
+    //    train_graphcut(neighborhood);
+  }
+
+  void train_parameters()
+  {
+    std::size_t nb_tests = 3000;
+    std::vector<double> best_weights (m_segmentation_attributes.size(), 1.);
+    
+    double best_score = -1.;
+    double best_confidence = -1.;
+    
+    std::cerr << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
+
+    std::size_t current_att_changed = 0;
+    std::ofstream f("score.plot");
+    for (std::size_t i = 0; i < nb_tests; ++ i)
+      {
+        if (!(i % 10))
+          {
+            for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+              {
+                Segmentation_attribute* att = m_segmentation_attributes[j];
+                //                att->weight = std::tan ((rand() / (double)RAND_MAX) * (CGAL_PI/2));
+                att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
+              }
+          }
+        else
+          {
+            for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+              {
+                Segmentation_attribute* att = m_segmentation_attributes[j];
+                att->weight = best_weights[j];
+              }
+            Segmentation_attribute* att = m_segmentation_attributes[current_att_changed];
+            //            att->weight = std::tan ((rand() / (double)RAND_MAX) * (CGAL_PI/2));
+            att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
+          }
+        
+        estimate_attribute_effects();
+        prepare_classification();
+        double worst_confidence = training_compute_worst_confidence();
+
+        double worst_score = training_compute_worst_score();
+
+        //        if (worst_score > best_score)
+        if (worst_confidence > best_confidence)
+          {
+            best_score = worst_score;
+            best_confidence = worst_confidence;
+            std::cerr << 100. * best_score << "% (found at iteration "
+                      << i+1 << "/" << nb_tests << ")" << std::endl;
+            for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+              {
+                Segmentation_attribute* att = m_segmentation_attributes[j];
+                best_weights[j] = att->weight;
+                f << best_weights[j] << " ";
+              }
+            f << std::endl;
+          }
+
+        if (!(i % 10))
+          {
+            ++ current_att_changed;
+            if (current_att_changed == m_segmentation_attributes.size())
+              current_att_changed = 0;
+          }
+      }
+
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      {
+        Segmentation_attribute* att = m_segmentation_attributes[i];
+        att->weight = best_weights[i];
+      }
+
+
+    std::cerr << std::endl << "Best score found is at least " << 100. * best_score
+              << "% of correct classification" << std::endl;
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      {
+        Segmentation_attribute* att = m_segmentation_attributes[i];
+        std::cerr << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
+        att->weight = best_weights[i];
+        for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+          {
+            Classification_type* ctype = m_segmentation_classes[j];
+            if (ctype->attribute_effect(att) == Classification_type::FAVORED_ATT)
+              CGAL_CLASSIFICATION_CERR << " * Favored for ";
+            else if (ctype->attribute_effect(att) == Classification_type::PENALIZED_ATT)
+              CGAL_CLASSIFICATION_CERR << " * Penalized for ";
+            else
+              CGAL_CLASSIFICATION_CERR << " * Neutral for ";
+            CGAL_CLASSIFICATION_CERR << ctype->id() << std::endl;
+          }
+      }
+  }
+
+  void estimate_attribute_effects()
+  {
+    for (std::size_t i = 0; i < m_segmentation_attributes.size(); ++ i)
+      {
+        Segmentation_attribute* att = m_segmentation_attributes[i];
+
+        std::vector<double> mean (m_segmentation_classes.size(), 0.);
+                                  
+        for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+          {
+            Classification_type* ctype = m_segmentation_classes[j];
+            
+            for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+              {
+                double val = att->normalized(ctype->training_set()[k]);
+                mean[j] += val;
+              }
+            mean[j] /= ctype->training_set().size();
+          }
+
+        std::vector<double> sd (m_segmentation_classes.size(), 0.);
+        
+        for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+          {
+            Classification_type* ctype = m_segmentation_classes[j];
+            
+            for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+              {
+                double val = att->normalized(ctype->training_set()[k]);
+                sd[j] += (val - mean[j]) * (val - mean[j]);
+              }
+            sd[j] = std::sqrt (sd[j] / ctype->training_set().size());
+            if (mean[j] - sd[j] > 0.5)
+              ctype->set_attribute_effect (att, Classification_type::FAVORED_ATT);
+            else if (mean[j] + sd[j] < 0.5)
+              ctype->set_attribute_effect (att, Classification_type::PENALIZED_ATT);
+            else
+              ctype->set_attribute_effect (att, Classification_type::NEUTRAL_ATT);
+          }
+      }
+  }
+
+  void train_graphcut(Neighborhood& neighborhood)
+  {
+    std::size_t nb_tests = 10;
+    double best_score = -1.;
+    
+    for (std::size_t i = 0; i < nb_tests; ++ i)
+      {
+        double smoothing = 3. * (rand() / (double)RAND_MAX);
+        run_with_graphcut (neighborhood, smoothing);
+
+        double worst_score = training_compute_worst_score();
+
+        if (worst_score > best_score)
+          {
+            best_score = worst_score;
+            std::cerr << "Smoothing by " << smoothing
+                      << ": " << 100. * best_score << "% (found at iteration "
+                      << i+1 << "/" << nb_tests << ")" << std::endl;
+          }
+
+      }
+
+  }
+  
+  double training_compute_worst_score()
+  {
+    double worst_score = 1.;
+    for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+      {
+        Classification_type* ctype = m_segmentation_classes[j];
+        std::size_t nb_okay = 0;
+        for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+          {
+            std::size_t nb_class_best=0; 
+            double val_class_best = std::numeric_limits<double>::max();
+      
+            for(std::size_t l = 0; l < m_effect_table.size(); ++ l)
+              {
+                double value = classification_value (l, ctype->training_set()[k]);
+          
+                if(val_class_best > value)
+                  {
+                    val_class_best = value;
+                    nb_class_best = l;
+                  }
+              }
+                
+            if (nb_class_best == j)
+              nb_okay ++;
+
+          }
+
+        double score = nb_okay / (double)(ctype->training_set().size());
+        if (score < worst_score)
+          worst_score = score;
+      }
+    return worst_score;
+  }
+
+  double training_compute_worst_confidence()
+  {
+    double worst_confidence = std::numeric_limits<double>::max();
+    for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+      {
+        Classification_type* ctype = m_segmentation_classes[j];
+        
+        double confidence = 0.;
+        
+        for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+          {
+            std::vector<std::pair<double, std::size_t> > values;
+      
+            for(std::size_t l = 0; l < m_effect_table.size(); ++ l)
+              values.push_back (std::make_pair (classification_value (l, ctype->training_set()[k]),
+                                                l));
+            std::sort (values.begin(), values.end());
+
+            if (values[0].second == j)
+              confidence += values[1].first - values[0].first;
+            else
+              {
+                // for(std::size_t l = 0; l < values.size(); ++ l)
+                //   if (values[l].second == j)
+                //     {
+                //       confidence += values[0].first - values[l].first;
+                //       break;
+                //     }
+              }
+            
+          }
+
+        confidence /= (double)(ctype->training_set().size() * m_segmentation_attributes.size());
+        std::cerr << confidence << " ";
+        if (confidence < worst_confidence)
+          worst_confidence = confidence;
+      }
+    return worst_confidence;
+  }
 
 
 
