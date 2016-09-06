@@ -16,7 +16,7 @@ typedef T::Weighted_point                               Weighted_point;
 
 int main()
 {
-  // Instanciate a random point generator
+  // Instantiate a random point generator
   CGAL::Random rng(0);
   typedef CGAL::Random_points_in_cube_d<Bare_point> Random_points_iterator;
   Random_points_iterator rand_it(D, 1.0, rng);

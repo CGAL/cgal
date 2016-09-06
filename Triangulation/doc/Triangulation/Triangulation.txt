@@ -447,8 +447,7 @@ The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, Triangulatio
 `CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`
 and represents regular triangulations.
 
-Regular triangulations are similar to Delaunay triangulations, but 
-with weighted points.
+Regular triangulations are also known as weighted Delaunay triangulations.
 
 Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^D\f$. Let
 \f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^D, w_p\in\mathbb{R}\f$ and
@@ -478,7 +477,7 @@ Note that as a result, some points can be hidden and do not result in vertices
 in the triangulation. Those points are discarded and cannot be retrieved.
 
 A weighted point `p` is said to be in conflict 
-with a cell `c` if it has a negative power distance to the power sphere of `c`.
+with a simplex `s` if it has a negative power distance to the power sphere of `s`.
 
 Regular triangulations support insertion of weighted points, 
 and location of a query point inside the triangulation.
@@ -516,7 +515,7 @@ set of points. In the worst case, the expected complexity is
 run on \f$ n \f$ random points, the cost of inserting one point is 
 \f$ O(n^{1/d}) \f$.
 
-We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks100}, 
+We provide below (\cgalFigureRef{Triangulationfigbenchmarks100}, 
 \cgalFigureRef{Triangulationfigbenchmarks1000} and 
 \cgalFigureRef{triangulationfigbenchmarkchart}) the
 performance of the Delaunay triangulation on randomly distributed points. 
