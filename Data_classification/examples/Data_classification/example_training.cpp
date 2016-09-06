@@ -262,42 +262,45 @@ int main (int argc, char** argv)
       return EXIT_FAILURE;
     }
 
-  double grid_resolution = 1.544;
-  double radius_neighbors = 7.781;
-  double radius_dtm = 60;
-
-  std::cerr << "Computing useful structures" << std::endl;
-  Iso_cuboid_3 bbox = CGAL::bounding_box (pts.begin(), pts.end());
-  Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
-  Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
-  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, radius_neighbors);
-  
-  std::cerr << "Computing attributes" << std::endl;
-  Dispersion disp (pts.begin(), pts.end(), Pmap(), grid,
-                   grid_resolution,
-                   radius_neighbors);
-  Elevation elev (pts.begin(), pts.end(), Pmap(), bbox, grid,
-                  grid_resolution,
-                  radius_neighbors,
-                  radius_dtm);
-  Verticality verti (pts.begin(), pts.end(), eigen);
-  Distance_to_plane d2p (pts.begin(), pts.end(), Pmap(), eigen);
+  double grid_resolution = 1.;
+  double radius_neighbors = 5.;
+  double radius_dtm = 30;
 
   Classification psc (pts.begin (), pts.end(), Pmap());
   
-  psc.add_segmentation_attribute (&disp);
-  psc.add_segmentation_attribute (&elev);
-  psc.add_segmentation_attribute (&verti);
-  psc.add_segmentation_attribute (&d2p);
-  psc.add_segmentation_attribute (new Linearity (pts.begin(), pts.end(), eigen));
-  psc.add_segmentation_attribute (new Planarity (pts.begin(), pts.end(), eigen));
-  psc.add_segmentation_attribute (new Sphericity (pts.begin(), pts.end(), eigen));
-  psc.add_segmentation_attribute (new Omnivariance (pts.begin(), pts.end(), eigen));
-  psc.add_segmentation_attribute (new Anisotropy (pts.begin(), pts.end(), eigen));
-  psc.add_segmentation_attribute (new Eigentropy (pts.begin(), pts.end(), eigen));
-  psc.add_segmentation_attribute (new SumEigen (pts.begin(), pts.end(), eigen));
-  psc.add_segmentation_attribute (new SurfaceVariation (pts.begin(), pts.end(), eigen));
+  std::cerr << "Computing useful structures" << std::endl;
+  Iso_cuboid_3 bbox = CGAL::bounding_box (pts.begin(), pts.end());
+  Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());  
+  std::cerr << "Computing attributes" << std::endl;
 
+  for (std::size_t i = 0; i < 4; ++ i)
+    {
+      Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
+
+      Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, radius_neighbors);
+      
+      psc.add_segmentation_attribute (new Dispersion (pts.begin(), pts.end(), Pmap(), grid,
+                                                      grid_resolution,
+                                                      radius_neighbors));
+      psc.add_segmentation_attribute (new Elevation (pts.begin(), pts.end(), Pmap(), bbox, grid,
+                                                     grid_resolution,
+                                                     radius_neighbors,
+                                                     radius_dtm));
+      psc.add_segmentation_attribute (new Verticality (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen));
+      psc.add_segmentation_attribute (new Linearity (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Planarity (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Sphericity (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Omnivariance (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Anisotropy (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Eigentropy (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new SumEigen (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new SurfaceVariation (pts.begin(), pts.end(), eigen));
+      grid_resolution *= 2;
+      radius_neighbors *= 2;
+      radius_dtm *= 2;
+    }
+  
   // Add types to PSC
   CGAL::Classification_type ground ("ground");
   CGAL::Classification_type vege ("vegetation");
@@ -329,9 +332,10 @@ int main (int argc, char** argv)
   psc.add_classification_type (&ground);
   psc.add_classification_type (&roof);
   psc.add_classification_type (&facade);
-  
+
+  //  psc.set_multiplicative(true);
   std::cerr << "Training" << std::endl;
-  psc.training(neighborhood);
+  psc.training();
 
   psc.run_with_graphcut (neighborhood, 0.5);
   //psc.run_quick();
