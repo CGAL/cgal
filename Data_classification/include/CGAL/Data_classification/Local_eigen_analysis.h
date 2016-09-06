@@ -75,6 +75,32 @@ public:
       }
   }
 
+  Local_eigen_analysis (RandomAccessIterator begin,
+                        RandomAccessIterator end,
+                        PointPMap point_pmap,
+                        Neighborhood& neighborhood,
+                        std::size_t knn)
+  {
+    std::size_t size = end - begin;
+    eigenvalues.reserve (size);
+    centroids.reserve (size);
+    smallest_eigenvectors.reserve (size);
+    middle_eigenvectors.reserve (size);
+    largest_eigenvectors.reserve (size);
+    
+    for (std::size_t i = 0; i < size; i++)
+      {
+        std::vector<std::size_t> neighbors;
+        neighborhood.k_neighbors (i, knn, std::back_inserter (neighbors));
+
+        std::vector<Point> neighbor_points;
+        for (std::size_t j = 0; j < neighbors.size(); ++ j)
+          neighbor_points.push_back (get(point_pmap, begin[neighbors[j]]));
+        
+        compute (get(point_pmap, begin[i]), neighbor_points);
+      }
+  }
+
   void compute (const Point& query, std::vector<Point>& neighbor_points)
   {
     if (neighbor_points.size() == 0)
