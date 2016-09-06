@@ -39,7 +39,7 @@ template <class Dummy>
 struct Unique_numbers {
     typedef std::size_t ID;
     Unique_numbers() {
-      CGAL::cpp11::atomic<std::size_t>(n); // initialized to 0
+      static CGAL::cpp11::atomic<std::size_t>(n); // initialized to 0
       i = n++;
     }
     std::size_t id() const { return i; }
