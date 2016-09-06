@@ -26,7 +26,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
-#include <CGAL/tss.h>
+#include <CGAL/atomic.h>
 
 #include <algorithm>
 
@@ -39,7 +39,7 @@ template <class Dummy>
 struct Unique_numbers {
     typedef std::size_t ID;
     Unique_numbers() {
-      CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::size_t, n, 0);
+      CGAL::cpp11::atomic<std::size_t>(n); // initialized to 0
       i = n++;
     }
     std::size_t id() const { return i; }
