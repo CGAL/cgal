@@ -246,6 +246,8 @@
 - `Kernel::Triangle_3`
 - `Kernel::Vector_2`
 - `Kernel::Vector_3`
+- `Kernel::WeightedPoint_2`
+- `Kernel::WeightedPoint_3`
 
 ## %Kernel Function Object Concepts ##
 
