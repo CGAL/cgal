@@ -572,7 +572,7 @@ This package is heavily inspired by the works of
 Monique Teillaud and Sylvain Pion (`Triangulation_3`)
 and Mariette Yvinec (`Triangulation_2`).
 The first version was written by Samuel Hornus. The final version is a joint 
-work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2015, Clément
+work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2017, Clément
 Jamin added the regular triangulations.
 
 Clément Jamin's work was supported by the

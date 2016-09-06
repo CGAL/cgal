@@ -13,9 +13,6 @@ section in the user manual for what reasonable means.
 
 \warning The removal of points is not supported yet.
 
-A comprehensive definition of regular triangulations is available in the
-User Manual.
-
 \tparam RegularTriangulationTraits_ is the geometric traits class that provides the
 geometric types and predicates needed by regular triangulations. 
 `RegularTriangulationTraits_` must be a model of the concept 
@@ -32,7 +29,7 @@ instantiated as follows:
 <LI>`Triangulation_full_cell<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits_> >`.</LI>
 </UL>
 
-\tparam Regular_triangulation can
+`Regular_triangulation` can
 be defined by specifying only the first parameter, or by using the
 tag `CGAL::Default` as the second parameter. 
 
@@ -136,7 +133,11 @@ must lie outside the affine hull of the regular triangulation. This implies that
 Vertex_handle insert_outside_affine_hull(const Weighted_point & p);
 
 /*!
-Inserts the point `p` in the regular triangulation.
+Inserts the point `p` in the regular triangulation. `p` must be
+in conflict with the second parameter `c`, which is used as a
+starting point for `compute_conflict_zone`.
+The function is faster than the standard `insert` function since
+it does not need to call `locate`.
 
 If this insertion creates a vertex, this vertex is returned.
 
