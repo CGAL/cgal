@@ -49,7 +49,7 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
-#include <CGAL/tss.h>
+#include <CGAL/assertions.h>
 
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -1425,13 +1425,7 @@ protected:
 
   void print_error_message(const Tag_false&) const
   {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, i, 0);
-
-    if ( i == 0 ) {
-      i++;
-      std::cerr << "SDG::Insert aborted: intersecting segments found"
-		<< std::endl;
-    }
+    CGAL_assertion_msg(false, "SDG::Insert aborted: intersecting segments found");
   }
 
   void print_error_message(const Tag_true&) const {}

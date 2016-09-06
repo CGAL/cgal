@@ -125,18 +125,18 @@ protected:
   Edge prev_edge_in_list[3];
 
 protected:
+
   static int sentinel_index() { return -1; }
 
-  static const Edge& sentinel_edge() {
-    static const Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
-    return SENTINEL_EDGE;
+  static Edge sentinel_edge() {
+    return Edge(Face_handle(), sentinel_index());
   }
 
   // initialization of in-place list pointers
   void init() {
     for (int i = 0; i < 3; i++) {
-      next_edge_in_list[i] = sentinel_edge();
-      prev_edge_in_list[i] = sentinel_edge();
+      next_edge_in_list[i] = Edge(Face_handle(),-1);
+      prev_edge_in_list[i] = Edge(Face_handle(),-1);
     }
   }
 

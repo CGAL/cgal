@@ -901,17 +901,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
 				     const Site_2& /* t */, Vertex_handle /* v */,
 				     Tag_false)
 {
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
-  // hack to avoid nasty warning for G++ 3.4 on Darwin
-  static int i;
-#else
-  static int i = 0;
-#endif
-  if ( i == 0 ) {
-    i = 1;
-    print_error_message();
-  }
+  CGAL_assertion_msg(false, "segment segment intersection in the input");
   return Vertex_handle();
 }
 
