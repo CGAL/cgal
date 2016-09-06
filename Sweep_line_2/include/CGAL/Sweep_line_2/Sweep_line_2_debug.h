@@ -12,11 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel       <efifogel@gmail.com>
 
 #ifndef CGAL_SWEEP_LINE_2_DEBUG_H
 #define CGAL_SWEEP_LINE_2_DEBUG_H
@@ -95,12 +92,11 @@ template <typename Tr, typename Visit, typename Crv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintEventQueue()
 {
-  CGAL_SL_DEBUG(std::cout << std::endl << "Event queue: " << std::endl;)
+  print_text("Event queue: ", true);
   Event_queue_iterator iter = m_queue->begin();
   while (iter != m_queue->end()) {
-    Event *e = *iter;
-     e->Print();
-    ++iter;
+    Event* e = *iter++;
+    e->Print();
   }
   CGAL_SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
 }
@@ -109,9 +105,9 @@ template <typename Tr, typename Visit, typename Crv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintSubCurves()
 {
-  CGAL_SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)
-  for (size_t i = 0 ; i < m_num_of_subCurves ; ++i)
-    m_subCurves[i].Print();
+  print_text("Sub curves: ", true);
+  for (size_t i = 0; i < m_num_of_subCurves; ++i) m_subCurves[i].Print();
+  print_eol();
 }
 
 template <typename Tr, typename Visit, typename Crv, typename Evnt,
@@ -119,8 +115,7 @@ template <typename Tr, typename Visit, typename Crv, typename Evnt,
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintStatusLine()
 {
   if (m_statusLine.size() == 0) {
-    print_text("Status line: empty");
-    print_eol();
+    print_text("Status line: empty", true);
     return;
   }
   print_text("Status line: ");

@@ -105,10 +105,10 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::stop_sweep()
   Event_queue_iterator qiter= this->m_queue->begin();
 
   for (++qiter; qiter != this->m_queue->end(); ++qiter)
-    this ->deallocate_event(*qiter);
+    this->deallocate_event(*qiter);
 
   // Clear the status line.
-  this -> m_statusLine.clear();
+  this-> m_statusLine.clear();
   m_status_line_insert_hint = this->m_statusLine.begin();
 
   // Empty the event queue, and leave only the first event there.
@@ -136,7 +136,7 @@ deallocate_event(Event* event)
 
   // Perfrom the actual deallocation.
   m_eventAlloc.destroy(event);
-  m_eventAlloc.deallocate(event,1);
+  m_eventAlloc.deallocate(event, 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -351,16 +351,15 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
       m_visitor->before_handle_event(m_currentEvent);
 
     // Nothing else to do (no left curves).
+    CGAL_SL_PRINT_END_EOL("handling left curves");
     return;
   }
 
   CGAL_SL_PRINT_TEXT("left curves before sorting:");
   CGAL_SL_PRINT_EOL();
   CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() !=
-                    m_currentEvent->left_curves_end() )
-                {
-                  print_event_info(m_currentEvent);
-                });
+                    m_currentEvent->left_curves_end())
+                { print_event_info(m_currentEvent); });
 
   // Use the status-line to sort all left subcurves incident to the current
   // event (no geometric comparisons are neede at all).
@@ -374,9 +373,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
   CGAL_SL_PRINT_EOL();
   CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() !=
                     m_currentEvent->left_curves_end() )
-                {
-                  print_event_info(m_currentEvent);
-                });
+                { print_event_info(m_currentEvent); });
 
   // Remove all left subcurves from the status line, and inform the visitor
   // that we are done handling these subcurves.
@@ -390,7 +387,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 
     _remove_curve_from_status_line(left_sc);
   }
-  CGAL_SL_PRINT_END_EOL("Handling left curves");
+  CGAL_SL_PRINT_END_EOL("handling left curves");
 }
 
 //-----------------------------------------------------------------------------
@@ -479,7 +476,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
     // associate this range with the event, so the curves are now sorted
     // according to their vertical positions immediately to the left of the
     // event.
-    m_currentEvent->replace_left_curves(sl_iter,end);
+    m_currentEvent->replace_left_curves(sl_iter, end);
     return;
   }
 
@@ -542,7 +539,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
   }
 
   CGAL_SL_PRINT_STATUS_LINE();
-  CGAL_SL_PRINT_END_EOL("Handling right curves done");
+  CGAL_SL_PRINT_END_EOL("handling right curves done");
 }
 
 //-----------------------------------------------------------------------------
@@ -572,7 +569,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _remove_curve_from_status_line(Subcurve* sc)
 {
-  CGAL_SL_PRINT_START("Removing a curve from the status line, ");
+  CGAL_SL_PRINT_START("removing a curve from the status line, ");
   CGAL_SL_PRINT_CURVE(sc);
   CGAL_SL_PRINT_EOL();
   CGAL_SL_PRINT_STATUS_LINE();
@@ -588,7 +585,7 @@ _remove_curve_from_status_line(Subcurve* sc)
   // Erase the subcurve from the status line.
   CGAL_SL_PRINT_ERASE(*sl_iter);
   m_statusLine.erase(sl_iter);
-  CGAL_SL_PRINT_END_EOL("Removing a curve from the status line");
+  CGAL_SL_PRINT_END_EOL("removing a curve from the status line");
 }
 
 //-----------------------------------------------------------------------------

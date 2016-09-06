@@ -12,8 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 (based on old version by Tali Zvi)
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel       <efifogel@gmail.com>
+//               (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_H
 #define CGAL_BASIC_SWEEP_LINE_2_H
@@ -21,7 +22,7 @@
 /*! \file
  * Definition of the Basic_sweep_line_2 class.
  */
-#include <cstdint>
+// #include <cstdint>
 #include <boost/mpl/assert.hpp>
 
 #include <CGAL/assertions.h>
@@ -249,10 +250,10 @@ public:
   {
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
-    //m_visitor ->after_init();
+    //m_visitor->after_init();
     _sweep();
     _complete_sweep();
-    m_visitor ->after_sweep();
+    m_visitor->after_sweep();
   }
 
   /*! Run the sweep-line algorithm on a range of x-monotone curves and a range
@@ -276,10 +277,10 @@ public:
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
-    //m_visitor ->after_init();
+    //m_visitor->after_init();
     _sweep();
     _complete_sweep();
-    m_visitor ->after_sweep();
+    m_visitor->after_sweep();
   }
 
   /*! Run the sweep-line alogrithm on a range of x-monotone curves, a range
@@ -308,7 +309,7 @@ public:
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
     _init_points(query_points_begin, query_points_end, Base_event::QUERY);
-    //m_visitor ->after_init();
+    //m_visitor->after_init();
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();

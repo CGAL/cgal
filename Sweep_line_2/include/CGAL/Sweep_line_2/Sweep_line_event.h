@@ -12,10 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Author(s)     : Tali Zvi        <talizvi@post.tau.ac.il>,
-//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
-//                 Efi Fogel       <efif@post.tau.ac.il>
+// Author(s) : Tali Zvi        <talizvi@post.tau.ac.il>,
+//             Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ron Wein        <wein@post.tau.ac.il>
+//             Efi Fogel       <efif@gmail.com>
 
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
@@ -25,6 +25,7 @@
  */
 
 #include <list>
+
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
 namespace CGAL {
@@ -104,7 +105,7 @@ protected:
 public:
   /*! Default constructor. */
   Sweep_line_event() :
-    m_type (0),
+    m_type(0),
     m_ps_x(static_cast<char>(ARR_INTERIOR)),
     m_ps_y(static_cast<char>(ARR_INTERIOR)),
     m_closed(1)
@@ -229,7 +230,7 @@ public:
   {
     Subcurve_iterator iter;
     for (iter = m_leftCurves.begin(); iter!= m_leftCurves.end(); ++iter) {
-      if (curve->has_common_leaf (*iter)) {
+      if (curve->has_common_leaf(*iter)) {
         m_leftCurves.erase(iter);
         return;
       }
@@ -316,8 +317,8 @@ public:
    */
   Point_2& point()
   {
-    CGAL_precondition (is_closed());
-    return (m_point);
+    CGAL_precondition(is_closed());
+    return m_point;
   }
 
   /*!
