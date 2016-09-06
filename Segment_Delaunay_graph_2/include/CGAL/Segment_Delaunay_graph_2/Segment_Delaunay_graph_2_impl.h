@@ -901,7 +901,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
 				     const Site_2& /* t */, Vertex_handle /* v */,
 				     Tag_false)
 {
-  CGAL_assertion_msg(false, "segment segment intersection in the input");
+  CGAL_error_msg("SDG::Insert aborted: intersecting segments found");
   return Vertex_handle();
 }
 

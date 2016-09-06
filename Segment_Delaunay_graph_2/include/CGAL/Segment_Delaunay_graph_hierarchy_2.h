@@ -364,7 +364,7 @@ protected:
 				       const Site_2& ,
 				       Vertex_handle ,
 				       int , Tag_false /* itag */, Tag) {
-    CGAL_assertion_msg(false, "SDG::Insert aborted: intersecting segments found");
+    CGAL_error_msg("SDG::Insert aborted: intersecting segments found");
     return Vertex_handle();
   }
 

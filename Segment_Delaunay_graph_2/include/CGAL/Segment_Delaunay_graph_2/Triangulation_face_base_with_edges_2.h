@@ -135,8 +135,8 @@ protected:
   // initialization of in-place list pointers
   void init() {
     for (int i = 0; i < 3; i++) {
-      next_edge_in_list[i] = Edge(Face_handle(),-1);
-      prev_edge_in_list[i] = Edge(Face_handle(),-1);
+      next_edge_in_list[i] = sentinel_edge();
+      prev_edge_in_list[i] = sentinel_edge();
     }
   }
 
