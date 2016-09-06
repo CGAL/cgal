@@ -598,7 +598,7 @@ Regular_triangulation<Traits, TDS>
       {
         int v_idx = (*it)->index(v);
         tds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
-        }
+      }
       // Make the handles to infinite full cells searchable
       infinite_simps.make_searchable();
       // Then, modify the neighboring relation
@@ -815,7 +815,7 @@ Regular_triangulation<Traits, TDS>
         geom_traits().point_weight_d_object();
       
       if (pw(p) == pw(v->point()))
-      return v;
+        return v;
       // If dim == 0 and the new point has a bigger weight, 
       // we just replace the point, and the former point gets hidden
       else if (current_dimension() == 0)
@@ -823,11 +823,11 @@ Regular_triangulation<Traits, TDS>
         if (pw(p) > pw(v->point()))
         {
           m_hidden_points.push_back(v->point());
-        v->set_point(p);
-        return v;
-      }
+          v->set_point(p);
+          return v;
+        }
         // Otherwise, the new point is hidden
-      else
+        else
         {
           m_hidden_points.push_back(p);
           return Vertex_handle();
@@ -838,7 +838,7 @@ Regular_triangulation<Traits, TDS>
       // !NO break here!
     }
     default:
-        return insert_in_conflicting_cell(p, s);
+      return insert_in_conflicting_cell(p, s);
   }
 }
 
@@ -874,7 +874,7 @@ Regular_triangulation<Traits, TDS>
         && inf_v_index == 0)
       {
         inf_v_cell->swap_vertices(current_dimension() - 1, current_dimension());
-  }
+      }
       else
       {
         inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
@@ -910,16 +910,16 @@ Regular_triangulation<Traits, TDS>
       typename RTTraits::Point_weight_d pw =
         geom_traits().point_weight_d_object();
       if (pw(p) == pw(v->point()))
-      return v;
+        return v;
       // If dim == 0 and the new point has a bigger weight, 
       // we replace the point
       else if (current_dimension() == 0)
-    {
+      {
         if (pw(p) > pw(v->point()))
           v->set_point(p);
         else
           return v;
-        }
+      }
       // Otherwise, we apply the "normal" algorithm
 
       // !NO break here!
@@ -997,7 +997,7 @@ Regular_triangulation<Traits, TDS>
     points[i] = &(s->vertex(i)->point());
   points[i] = &p;
   std::sort(points.begin(), points.end(),
-      internal::Triangulation::Compare_points_for_perturbation<Self>(*this));
+    internal::Triangulation::Compare_points_for_perturbation<Self>(*this));
   typename Points::const_reverse_iterator cut_pt = points.rbegin();
   Points test_points;
   while( cut_pt != points.rend() )
