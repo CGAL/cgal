@@ -23,7 +23,7 @@ public:
 /// @{
   
 /*!
-introduces a weighted point with %Cartesian coordinates `(0,0,0)` and  weight `0`. 
+introduces a weighted point with %Cartesian coordinates `(0,0)` and  weight `0`. 
 */ 
 Weighted_point_2(const Origin &ORIGIN); 
 
