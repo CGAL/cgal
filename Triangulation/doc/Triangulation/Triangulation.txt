@@ -72,7 +72,7 @@ and additional requirements:
 simplices (the empty set counts).
 </UL>
 
-## What's in this Package? ##
+## What is Provided in this Package? ##
 
 This \cgal package provides four main classes
 for creating and manipulating triangulations.
