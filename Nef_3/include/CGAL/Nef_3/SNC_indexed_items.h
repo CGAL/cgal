@@ -22,6 +22,7 @@
 #define CGAL_NEF_SNC_INDEXED_ITEMS_H
 
 #include <CGAL/tss.h>
+#include <CGAL/atomic.h>
 
 #include <CGAL/Nef_3/Vertex.h>
 #include <CGAL/Nef_3/Halfedge.h>
@@ -42,7 +43,9 @@ class Index_generator {
  public:
   static int get_unique_index()
   {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, unique, 0);
+    // initialized with 0
+    // http://en.cppreference.com/w/cpp/language/zero_initialization
+    static CGAL::cpp11::atomic<int> unique;
     return unique++;
   }
 };
