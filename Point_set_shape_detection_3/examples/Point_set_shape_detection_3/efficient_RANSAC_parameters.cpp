@@ -97,9 +97,30 @@ int main()
   Efficient_ransac::Shape_range::iterator it = shapes.begin();
 
   while (it != shapes.end()) {
-    // Prints the parameters of the detected shape.
-    std::cout << (*it)->info() << std::endl;
-
+    
+    // Get specific parameters depending on detected shape.
+    if (dynamic_cast<Plane*>(it->get()))
+      {
+        Kernel::Vector_3 normal = dynamic_cast<Plane*>(it->get())->plane_normal();
+        std::cout << "Plane with normal " << normal
+                << std::endl;
+      }
+    else if (dynamic_cast<Cylinder*>(it->get()))
+      {
+        Cylinder* cyl = dynamic_cast<Cylinder*>(it->get());
+        Kernel::Line_3 axis = cyl->axis();
+        FT radius = cyl->radius();
+        std::cout << "Cylinder with axis " << axis
+                  << " and radius " << radius
+                  << std::endl;
+      }
+    else
+      {
+        // Prints the parameters of the detected shape.
+        // This function is available for any type of shape.
+        std::cout << (*it)->info() << std::endl;
+      }
+    
     // Proceeds with next detected shape.
     it++;
   }
