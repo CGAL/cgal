@@ -23,7 +23,6 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Iterator_project.h>
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
@@ -48,6 +47,7 @@
 #include <CGAL/Identity_policy_2.h>
 
 #include <boost/variant.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
 
@@ -253,18 +253,16 @@ class Voronoi_diagram_2
     typedef Face                                argument_type;
     typedef Site_2                              result_type;
 
-    Site_2& operator()(const Face& f) const {
-      static Site_2 s;
+    Site_2 operator()(const Face& f) const {
       // here we construct an adaptation traits; ideally we should get
       // the adaptation traits from the outer class
-      s = Adaptation_traits().access_site_2_object()(f.dual());
-      return s;
+      return Adaptation_traits().access_site_2_object()(f.dual());
     }
   };
 
  public:
-  typedef Iterator_project<Face_iterator,Project_site_2>
-  Site_iterator;
+
+  typedef boost::transform_iterator<Project_site_2, Face_iterator> Site_iterator;
 
   // ACCESSOR
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Accessor<Self>  Accessor;

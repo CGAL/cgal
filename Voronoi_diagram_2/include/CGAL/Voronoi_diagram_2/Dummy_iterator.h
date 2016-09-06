@@ -35,13 +35,14 @@ class Dummy_iterator : public Emptyset_iterator
   typedef Dummy_iterator<Value_t>  Self;
 
  public:
-  typedef Value_t            value_type;
-  typedef value_type&        reference;
-  typedef value_type*        pointer;
-  typedef const value_type&  const_reference;
-  typedef const value_type*  const_pointer;
-  typedef std::size_t        size_type;
-  typedef std::ptrdiff_t     difference_type;
+  typedef Value_t                         value_type;
+  typedef value_type&                     reference;
+  typedef value_type*                     pointer;
+  typedef const value_type&               const_reference;
+  typedef const value_type*               const_pointer;
+  typedef std::size_t                     size_type;
+  typedef std::ptrdiff_t                  difference_type;
+  typedef std::bidirectional_iterator_tag iterator_category;
 
   Dummy_iterator() {}
   Dummy_iterator(const Dummy_iterator&) {}
