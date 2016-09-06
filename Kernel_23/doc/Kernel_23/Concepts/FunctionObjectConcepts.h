@@ -7993,91 +7993,6 @@ public:
 
 }; /* end Kernel::HasOn_3 */
 
-
-
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines `AdaptableFunctor` (with five arguments) 
-
-  \sa `CGAL::Weighted_point_3<Kernel>`
-  \sa `ComputePowerProduct_3` for the definition of orthogonal.
-*/
-class PowerSideOfBoundedPowerSphere_3 {
-public:
-  
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    returns the sign of the power test of the last weighted point
-    with respect to the smallest sphere orthogonal to the others.
-
-    Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
-    \f$ (p,q,r,s)\f$. Returns
-    - `ON_BOUNDARY` if `t` is orthogonal to
-    \f$ {z(p,q,r,s)}^{(w)}\f$,
-    - `ON_UNBOUNDED_SIDE` if `t` lies outside the bounded sphere of
-    center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$
-    (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)),
-    - `ON_BOUNDED_SIDE` if `t` lies inside this oriented sphere.
-
-    \pre `p, q, r, s` are not coplanar.
-
-    If all the points have a weight equal to 0, then
-    `power_side_of_bounded_power_sphere_3(p,q,r,s,t)` == `side_of_bounded_sphere(p,q,r,s,t)`.
-    */
-  CGAL::Bounded_side
-  operator()(const Kernel::Weighted_point_3 & p,
-             const Kernel::Weighted_point_3 & q,
-             const Kernel::Weighted_point_3 & r,
-             const Kernel::Weighted_point_3 & s,
-             const Kernel::Weighted_point_3 & t); 
-
-  /*!
-  Analogous to the previous method, for coplanar points,
-  with the power circle \f$ {z(p,q,r)}^{(w)}\f$.
-  \pre `p, q, r` are not collinear.
-
-  If all the points have a weight equal to 0, then
-  `power_side_of_bounded_power_sphere_3(p,q,r,t)` == `side_of_bounded_sphere(p,q,r,t)`.
-  */
-  CGAL::Bounded_side
-  operator()(const Kernel::Weighted_point_3 & p,
-             const Kernel::Weighted_point_3 & q,
-             const Kernel::Weighted_point_3 & r,
-             const Kernel::Weighted_point_3 & t); 
-
-  /*!
-  which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the
-  power segment of `p` and `q`.
-  \pre `p` and `q` have different bare points.
-
-  If all points have a weight equal to 0, then
-  `power_side_of_bounded_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate
-  `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the
-  segment with endpoints `p` and `q`.
-  */
-  CGAL::Bounded_side
-  operator()(const Kernel::Weighted_point_3 & p,
-             const Kernel::Weighted_point_3 & q,
-             const Kernel::Weighted_point_3 & t);
-
-  /*!
-  which is the same for equal points, that is when `p` and `q`
-  have equal coordinates, then it returns the comparison of the weights
-  (`ON_BOUNDED_SIDE` when `q` is heavier than `p`).
-  \pre `p` and `q` have equal bare points.
-  */
-  CGAL::Bounded_side
-  operator()(const Kernel::Weighted_point_3 & p,
-             const Kernel::Weighted_point_3 & q); 
-  /// @}
-
-}; /* end Kernel::Intersect_2 */
-
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -8789,6 +8704,89 @@ public:
   /// @}
 
 }; /* end Kernel::LessZ_3 */
+
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
+
+\cgalRefines `AdaptableFunctor` (with five arguments)
+
+\sa `CGAL::Weighted_point_3<Kernel>`
+\sa `ComputePowerProduct_3` for the definition of orthogonal.
+*/
+class PowerSideOfBoundedPowerSphere_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+  returns the sign of the power test of the last weighted point
+  with respect to the smallest sphere orthogonal to the others.
+
+  Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
+  \f$ (p,q,r,s)\f$. Returns
+  - `ON_BOUNDARY` if `t` is orthogonal to
+  \f$ {z(p,q,r,s)}^{(w)}\f$,
+  - `ON_UNBOUNDED_SIDE` if `t` lies outside the bounded sphere of
+  center \f$ z(p,q,r,s)\f$ and radius \f$ \sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }\f$
+  (which is equivalent to \f$ \Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0\f$)),
+  - `ON_BOUNDED_SIDE` if `t` lies inside this oriented sphere.
+
+  \pre `p, q, r, s` are not coplanar.
+
+  If all the points have a weight equal to 0, then
+  `power_side_of_bounded_power_sphere_3(p,q,r,s,t)` == `side_of_bounded_sphere(p,q,r,s,t)`.
+  */
+  CGAL::Bounded_side
+    operator()(const Kernel::Weighted_point_3 & p,
+    const Kernel::Weighted_point_3 & q,
+    const Kernel::Weighted_point_3 & r,
+    const Kernel::Weighted_point_3 & s,
+    const Kernel::Weighted_point_3 & t);
+
+  /*!
+  Analogous to the previous method, for coplanar points,
+  with the power circle \f$ {z(p,q,r)}^{(w)}\f$.
+  \pre `p, q, r` are not collinear.
+
+  If all the points have a weight equal to 0, then
+  `power_side_of_bounded_power_sphere_3(p,q,r,t)` == `side_of_bounded_sphere(p,q,r,t)`.
+  */
+  CGAL::Bounded_side
+    operator()(const Kernel::Weighted_point_3 & p,
+    const Kernel::Weighted_point_3 & q,
+    const Kernel::Weighted_point_3 & r,
+    const Kernel::Weighted_point_3 & t);
+
+  /*!
+  which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the
+  power segment of `p` and `q`.
+  \pre `p` and `q` have different bare points.
+
+  If all points have a weight equal to 0, then
+  `power_side_of_bounded_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate
+  `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the
+  segment with endpoints `p` and `q`.
+  */
+  CGAL::Bounded_side
+    operator()(const Kernel::Weighted_point_3 & p,
+    const Kernel::Weighted_point_3 & q,
+    const Kernel::Weighted_point_3 & t);
+
+  /*!
+  which is the same for equal points, that is when `p` and `q`
+  have equal coordinates, then it returns the comparison of the weights
+  (`ON_BOUNDED_SIDE` when `q` is heavier than `p`).
+  \pre `p` and `q` have equal bare points.
+  */
+  CGAL::Bounded_side
+    operator()(const Kernel::Weighted_point_3 & p,
+    const Kernel::Weighted_point_3 & q);
+  /// @}
+
+}; /* end Kernel::PowerSideOfBoundedPowerSphere_3 */
 
 
 /*!
