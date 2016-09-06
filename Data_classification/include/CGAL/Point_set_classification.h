@@ -281,11 +281,11 @@ public:
         for (std::size_t i = 0; i < m_effect_table[segmentation_class].size(); ++ i)
           {
             if (m_effect_table[segmentation_class][i] == Classification_type::FAVORED_ATT)
-              out *= m_segmentation_attributes[i]->favored (pt_index);
+              out *= 1. + m_segmentation_attributes[i]->favored (pt_index);
             else if (m_effect_table[segmentation_class][i] == Classification_type::PENALIZED_ATT)
-              out *= m_segmentation_attributes[i]->penalized (pt_index);
+              out *= 1. + m_segmentation_attributes[i]->penalized (pt_index);
             else if (m_effect_table[segmentation_class][i] == Classification_type::NEUTRAL_ATT)
-              out *= m_segmentation_attributes[i]->ignored (pt_index);
+              out *= 1. + m_segmentation_attributes[i]->ignored (pt_index);
           }
       }
     else
@@ -776,10 +776,9 @@ public:
   /// @}
 
 
-  void training (Neighborhood& neighborhood)
+  void training ()
   {
     train_parameters();
-    //    train_graphcut(neighborhood);
   }
 
   void train_parameters()
@@ -801,7 +800,6 @@ public:
             for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
               {
                 Segmentation_attribute* att = m_segmentation_attributes[j];
-                //                att->weight = std::tan ((rand() / (double)RAND_MAX) * (CGAL_PI/2));
                 att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
               }
           }
@@ -813,23 +811,40 @@ public:
                 att->weight = best_weights[j];
               }
             Segmentation_attribute* att = m_segmentation_attributes[current_att_changed];
-            //            att->weight = std::tan ((rand() / (double)RAND_MAX) * (CGAL_PI/2));
             att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
           }
         
         estimate_attribute_effects();
+        std::vector<Segmentation_attribute*> used_attributes;
+        for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+          {
+            Segmentation_attribute* att = m_segmentation_attributes[j];
+            Classification_type::Attribute_side side = m_segmentation_classes[0]->attribute_effect(att);
+
+            for (std::size_t k = 1; k < m_segmentation_classes.size(); ++ k)
+              if (m_segmentation_classes[k]->attribute_effect(att) != side)
+                {
+                  used_attributes.push_back (att);
+                  break;
+                }
+          }
+
+        used_attributes.swap (m_segmentation_attributes);
+        
         prepare_classification();
         double worst_confidence = training_compute_worst_confidence();
 
         double worst_score = training_compute_worst_score();
-
-        //        if (worst_score > best_score)
+        used_attributes.swap (m_segmentation_attributes);
+        
+        //if (worst_score > best_score)
         if (worst_confidence > best_confidence)
           {
             best_score = worst_score;
             best_confidence = worst_confidence;
             std::cerr << 100. * best_score << "% (found at iteration "
-                      << i+1 << "/" << nb_tests << ")" << std::endl;
+                      << i+1 << "/" << nb_tests << ") "
+                      << used_attributes.size() << std::endl;
             for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
               {
                 Segmentation_attribute* att = m_segmentation_attributes[j];
@@ -853,14 +868,20 @@ public:
         att->weight = best_weights[i];
       }
 
-
+    estimate_attribute_effects();
+    
     std::cerr << std::endl << "Best score found is at least " << 100. * best_score
               << "% of correct classification" << std::endl;
+    std::vector<Segmentation_attribute*> to_keep;
+    
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
         Segmentation_attribute* att = m_segmentation_attributes[i];
         std::cerr << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
         att->weight = best_weights[i];
+
+        Classification_type::Attribute_side side = m_segmentation_classes[0]->attribute_effect(att);
+        bool to_remove = true;
         for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
           {
             Classification_type* ctype = m_segmentation_classes[j];
@@ -870,9 +891,21 @@ public:
               CGAL_CLASSIFICATION_CERR << " * Penalized for ";
             else
               CGAL_CLASSIFICATION_CERR << " * Neutral for ";
+            if (ctype->attribute_effect(att) != side)
+              to_remove = false;
             CGAL_CLASSIFICATION_CERR << ctype->id() << std::endl;
           }
+        if (to_remove)
+          {
+            std::cerr << "   -> Useless! Should be removed" << std::endl;
+            delete att;
+          }
+        else
+          to_keep.push_back (att);
       }
+    std::cerr << "Removing " << (m_segmentation_attributes.size() - to_keep.size())
+              << " attribute(s) out of " << m_segmentation_attributes.size() << std::endl;
+    m_segmentation_attributes.swap (to_keep);
   }
 
   void estimate_attribute_effects()
@@ -917,29 +950,6 @@ public:
       }
   }
 
-  void train_graphcut(Neighborhood& neighborhood)
-  {
-    std::size_t nb_tests = 10;
-    double best_score = -1.;
-    
-    for (std::size_t i = 0; i < nb_tests; ++ i)
-      {
-        double smoothing = 3. * (rand() / (double)RAND_MAX);
-        run_with_graphcut (neighborhood, smoothing);
-
-        double worst_score = training_compute_worst_score();
-
-        if (worst_score > best_score)
-          {
-            best_score = worst_score;
-            std::cerr << "Smoothing by " << smoothing
-                      << ": " << 100. * best_score << "% (found at iteration "
-                      << i+1 << "/" << nb_tests << ")" << std::endl;
-          }
-
-      }
-
-  }
   
   double training_compute_worst_score()
   {
@@ -1009,7 +1019,7 @@ public:
           }
 
         confidence /= (double)(ctype->training_set().size() * m_segmentation_attributes.size());
-        std::cerr << confidence << " ";
+
         if (confidence < worst_confidence)
           worst_confidence = confidence;
       }
