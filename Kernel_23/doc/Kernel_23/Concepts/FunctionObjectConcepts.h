@@ -8794,7 +8794,7 @@ public:
   \cgalConcept
 
   \sa `CGAL::Weighted_point_2<Kernel>`
-  \sa `ComputePowerProduct_3` for the definition of power distance.
+  \sa `ComputePowerProduct_2` for the definition of power distance.
   
 */
   class PowerSideOfOrientedPowerCircle_2 {
@@ -8826,7 +8826,7 @@ degenerated power test for weighted points
 `p` and `q` whose corresponding bare points are identical. 
 \pre `p` and `q` have equal bare points. 
 */
-Oriented_side operator() ( Wconst Kernel::eighted_point_2& p,
+Oriented_side operator() ( const Kernel::Weighted_point_2& p,
                            const Kernel::Weighted_point_2& q); 
 
   /// @}
