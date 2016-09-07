@@ -1425,7 +1425,7 @@ protected:
 
   void print_error_message(const Tag_false&) const
   {
-    CGAL_assertion_msg(false, "SDG::Insert aborted: intersecting segments found");
+    CGAL_error_msg("SDG::Insert aborted: intersecting segments found");
   }
 
   void print_error_message(const Tag_true&) const {}
