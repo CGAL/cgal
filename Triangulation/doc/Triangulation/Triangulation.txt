@@ -9,7 +9,7 @@ namespace CGAL {
 \authors Olivier Devillers, Samuel Hornus, and Clément Jamin.
 
 This package proposes data structures and algorithms to compute
-triangulations of points in any dimensions.
+triangulations of points in any dimensions \cgalCite{boissonnat2009Delaunay}.
 The `Triangulation_data_structure` handles the
 combinatorial aspect of triangulations while the geometric classes
 `Triangulation`, `Delaunay_triangulation` and `Regular_triangulation` allow to
