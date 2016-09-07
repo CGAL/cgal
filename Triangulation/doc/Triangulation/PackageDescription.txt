@@ -112,7 +112,7 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 
 ## Traits Classes ##
 
--  `CGAL::Regular_triangulation_euclidean_traits<K>`
+-  `CGAL::Regular_triangulation_traits_adapter<K>`
 
 ## Enums ##
 

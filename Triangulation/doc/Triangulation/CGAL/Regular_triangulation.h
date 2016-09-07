@@ -25,8 +25,8 @@ defaults to `Triangulation_data_structure` whose template parameters are
 instantiated as follows:
 <UL>
 <LI>`RegularTriangulationTraits_::Dimension`</LI>
-<LI>`Triangulation_vertex<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits_> >`</LI>
-<LI>`Triangulation_full_cell<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits_> >`.</LI>
+<LI>`Triangulation_vertex<CGAL::Regular_triangulation_traits_adapter<RegularTriangulationTraits_> >`</LI>
+<LI>`Triangulation_full_cell<CGAL::Regular_triangulation_traits_adapter<RegularTriangulationTraits_> >`.</LI>
 </UL>
 
 `Regular_triangulation` can
@@ -35,12 +35,12 @@ tag `CGAL::Default` as the second parameter.
 
 \sa `Delaunay_triangulation`
 \sa `Triangulation_data_structure`
-\sa `Regular_triangulation_euclidean_traits`
+\sa `Regular_triangulation_traits_adapter`
 
 */
 template< typename RegularTriangulationTraits_, typename TriangulationDataStructure_ >
 class Regular_triangulation
-  : public Triangulation<Regular_triangulation_euclidean_traits<RegularTriangulationTraits_>, TriangulationDataStructure_>
+  : public Triangulation<Regular_triangulation_traits_adapter<RegularTriangulationTraits_>, TriangulationDataStructure_>
 {
 public:
 

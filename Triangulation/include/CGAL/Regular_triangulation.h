@@ -24,7 +24,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/spatial_sort.h>
-#include <CGAL/Regular_triangulation_euclidean_traits.h>
+#include <CGAL/Regular_triangulation_traits_adapter.h>
 
 #include <boost/property_map/function_property_map.hpp>
 
@@ -33,17 +33,17 @@ namespace CGAL {
 template< typename Traits_, typename TDS_ = Default >
 class Regular_triangulation
 : public Triangulation<
-    Regular_triangulation_euclidean_traits<Traits_>,
+    Regular_triangulation_traits_adapter<Traits_>,
     typename Default::Get<
       TDS_, 
       Triangulation_data_structure<
-        typename Regular_triangulation_euclidean_traits<Traits_>::Dimension,
-        Triangulation_vertex<Regular_triangulation_euclidean_traits<Traits_> >,
-        Triangulation_full_cell<Regular_triangulation_euclidean_traits<Traits_> >
+        typename Regular_triangulation_traits_adapter<Traits_>::Dimension,
+        Triangulation_vertex<Regular_triangulation_traits_adapter<Traits_> >,
+        Triangulation_full_cell<Regular_triangulation_traits_adapter<Traits_> >
       >
     >::type>
 {
-  typedef Regular_triangulation_euclidean_traits<Traits_>  RTTraits;
+  typedef Regular_triangulation_traits_adapter<Traits_>  RTTraits;
   typedef typename RTTraits::Dimension            Maximal_dimension_;
   typedef typename Default::Get<
     TDS_,

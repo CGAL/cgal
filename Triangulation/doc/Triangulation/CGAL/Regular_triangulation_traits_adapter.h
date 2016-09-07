@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulationsTraitsClasses
 
-The class `Regular_triangulation_euclidean_traits` is used internally by the
+The class `Regular_triangulation_traits_adapter` is used internally by the
 class `Regular_triangulation` to wrap its first template parameter
 (`RegularTriangulationTraits_`)
 so that the base class `Triangulation` manipulates weighted points instead 
@@ -29,7 +29,7 @@ ignoring the weights.
 */
 
 template <typename K>
-class Regular_triangulation_euclidean_traits : public K {
+class Regular_triangulation_traits_adapter : public K {
 public:
 
   /// \name Types
@@ -53,7 +53,7 @@ public:
   /*!
   The default constructor.
   */
-  Regular_triangulation_euclidean_traits();
+  Regular_triangulation_traits_adapter();
 
   /// @}
 

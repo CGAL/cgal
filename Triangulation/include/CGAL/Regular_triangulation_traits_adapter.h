@@ -17,8 +17,8 @@
 //
 // Author(s)     : Clement Jamin
 
-#ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_H
-#define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_H
+#ifndef CGAL_REGULAR_TRIANGULATION_TRAITS_ADAPTER_H
+#define CGAL_REGULAR_TRIANGULATION_TRAITS_ADAPTER_H
 
 #include <CGAL/basic.h>
 
@@ -35,7 +35,7 @@ namespace CGAL {
 // This way, `Triangulation` works perfectly well with weighted points.
 
 template <class K>
-class Regular_triangulation_euclidean_traits
+class Regular_triangulation_traits_adapter
   : public K
 {
 public:
@@ -285,4 +285,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_H
+#endif // CGAL_REGULAR_TRIANGULATION_TRAITS_ADAPTER_H
