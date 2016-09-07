@@ -17,6 +17,8 @@ namespace CGAL {
     estimation of the ground.
 
     \tparam Kernel The geometric kernel used.
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the input points.
 
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
@@ -33,9 +35,16 @@ public:
   /*!
     \brief Constructs the attribute.
 
-    \param M The point set classification object
-    \param weight The relative weight of this attribute
-    \param on_groups Select if the attribute is computed point-wise of group-wise
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+    \param bbox Bounding box of the input range
+    \param grid Precomputed `Planimetric_grid`
+    \param grid_resolution Resolution of the planimetric grid
+    \param radius_neighbors Radius of local neighborhoods
+    \param radius_dtm Radius for digital terrain modeling (must be bigger than the size of a building)
+    \param weight Weight of the attribute
+
   */
   Segmentation_attribute_elevation (RandomAccessIterator begin,
                                     RandomAccessIterator end,
@@ -377,13 +386,14 @@ public:
     //    max *= 5;
   }
 
+  /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
     return elevation_attribute[pt_index];
   }
   
   virtual std::string id() { return "elevation"; }
-  
+  /// \endcond
 };
   
 

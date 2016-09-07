@@ -11,19 +11,19 @@ namespace CGAL {
 
   \brief Abstract class describing a segmentation attribute.
 
-  A segmentation attribute must have a unique ID and associate a
-  scalar value to each point index of the classification input.
+  A segmentation attribute associates a scalar value to each point
+  index of the classification input.
 */
 
 
 class Segmentation_attribute
 {
 public:
+  /// \cond SKIP_IN_MANUAL
   double weight;
   double mean;
   double max;
 
-  /// \cond SKIP_IN_MANUAL
   virtual ~Segmentation_attribute() { }
   /// \endcond
 

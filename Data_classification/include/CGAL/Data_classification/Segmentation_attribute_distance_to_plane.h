@@ -10,14 +10,16 @@ namespace CGAL {
   /*!
     \ingroup PkgDataClassification
 
-    \brief Segmentation attribute based on local non-planarity.
+    \brief Segmentation attribute based on local distance to a fitted plane.
 
     Characterizing a level of non-planarity can help identify noisy
     parts of the input such as vegetation. This attribute computes the
     distance of a point to a locally fitted plane.
     
-    \tparam Kernel The geometric kernel used.
-
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
@@ -32,7 +34,11 @@ public:
   /*!
     \brief Constructs the attribute.
 
-    \param on_groups Select if the attribute is computed point-wise of group-wise
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param weight Weight of the attribute
   */
   Segmentation_attribute_distance_to_plane (RandomAccessIterator begin,
                                             RandomAccessIterator end,
@@ -49,12 +55,14 @@ public:
     //    max *= 2;
   }
 
+  /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
     return distance_to_plane_attribute[pt_index];
   }
 
   virtual std::string id() { return "distance_to_plane"; }
+  /// \endcond
 };
 
 

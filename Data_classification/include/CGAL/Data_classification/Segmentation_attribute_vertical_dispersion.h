@@ -21,7 +21,8 @@ namespace CGAL {
     Z-cylinder around the points.
 
     \tparam Kernel The geometric kernel used.
-
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the input points.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
 class Segmentation_attribute_vertical_dispersion : public Segmentation_attribute
@@ -33,6 +34,14 @@ class Segmentation_attribute_vertical_dispersion : public Segmentation_attribute
 public:
   /*!
     \brief Constructs the attribute.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+    \param grid Precomputed `Planimetric_grid`
+    \param grid_resolution Resolution of the planimetric grid
+    \param radius_neighbors Radius of local neighborhoods
+    \param weight Weight of the attribute
   */
   Segmentation_attribute_vertical_dispersion (RandomAccessIterator begin,
                                               RandomAccessIterator end,
@@ -114,13 +123,14 @@ public:
 
     this->compute_mean_max (vertical_dispersion, this->mean, this->max);
   }
-
+  /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
     return vertical_dispersion[pt_index];
   }
 
   virtual std::string id() { return "vertical_dispersion"; }
+  /// \endcond
 };
 
 }

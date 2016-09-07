@@ -20,10 +20,12 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief 
+    \brief Class that precomputes spatial searching structures and
+    gives access to local neighborhoods of points.
 
     \tparam Kernel The geometric kernel used.
-
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the input points.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
 class Neighborhood
@@ -66,9 +68,16 @@ class Neighborhood
   std::vector<std::vector<std::size_t> > m_precomputed_neighbors;
   
 public:
-
-  Neighborhood () : m_tree (NULL) { }
   
+  Neighborhood () : m_tree (NULL) { }
+
+  /*!
+    \brief Constructs a neighborhood object based on the input range.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+  */
   Neighborhood (const RandomAccessIterator& begin,
                 const RandomAccessIterator& end,
                 PointPMap point_pmap)
@@ -85,12 +94,21 @@ public:
     m_distance = Distance (pmap);
   }
 
+  /// \cond SKIP_IN_MANUAL
   ~Neighborhood ()
   {
     if (m_tree != NULL)
       delete m_tree;
   }
+  /// \endcond
 
+  /*!
+    \brief Gets the nearest neighbors computed in a local sphere of user defined radius.
+
+    \tparam OutputIterator Where the indices of found neighbor points are stored.
+    \param index Index of the query point.
+    \param radius_neighbors Radius of the query sphere.
+  */
   template <typename OutputIterator>
   void range_neighbors (std::size_t index, const FT radius_neighbors, OutputIterator output) const
   {
@@ -99,6 +117,13 @@ public:
     m_tree->search (output, fs);
   }
 
+  /*!
+    \brief Gets the K nearest neighbors.
+
+    \tparam OutputIterator Where the indices of found neighbor points are stored.
+    \param index Index of the query point.
+    \param k Number of nearest neighbors.
+  */
   template <typename OutputIterator>
   void k_neighbors (std::size_t index, const std::size_t k, OutputIterator output) const
   {

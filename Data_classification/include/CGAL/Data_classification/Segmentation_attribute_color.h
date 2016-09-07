@@ -19,7 +19,8 @@ namespace CGAL {
     distribution with user-defined mean and standard deviation values.
 
     \tparam Kernel The geometric kernel used.
-
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the colors of the input points.
   */
 template <typename Kernel, typename RandomAccessIterator, typename ColorPMap>
 class Segmentation_attribute_color : public Segmentation_attribute
@@ -33,6 +34,10 @@ public:
   /*!
     \brief Constructs an attribute based on the given color.
 
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the colors of the input points
+    \param weight Weight of the attribute
     \param mean_h Mean hue of the selected color
     \param mean_s Mean saturation of the selected color
     \param mean_v Mean value of the selected color
@@ -61,14 +66,14 @@ public:
     this->compute_mean_max (color_attribute, this->mean, this->max);
   }
 
-
+  /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
     return color_attribute[pt_index];
   }
 
   virtual std::string id() { return "color"; }
-
+  /// \endcond
 };
 
 

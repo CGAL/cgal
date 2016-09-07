@@ -17,7 +17,9 @@ namespace CGAL {
     the ground.
 
     \tparam Kernel The geometric kernel used.
-
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the input points.
+    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
@@ -29,8 +31,12 @@ class Segmentation_attribute_verticality : public Segmentation_attribute
   
 public:
   /*!
-    \brief Constructs the attribute.
+    \brief Constructs the attribute using local eigen analysis.
 
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param eigen Class with precompute eigenvectors and eigenvalues
+    \param weight Weight of the attribute
   */
   Segmentation_attribute_verticality (RandomAccessIterator begin,
                                       RandomAccessIterator end,
@@ -51,7 +57,14 @@ public:
     //    max *= 2;
   }
 
+  /*!
+    \brief Constructs the attribute using provided normals of points.
 
+    \tparam NormalPMap Property map to access the normal vectors of the input points.
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param weight Weight of the attribute
+  */
   template <typename NormalPMap>
   Segmentation_attribute_verticality (const RandomAccessIterator& begin,
                                       const RandomAccessIterator& end,
@@ -72,13 +85,15 @@ public:
     //    max *= 2;
   }
 
-  
+
+  /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
     return verticality_attribute[pt_index];
   }
 
   virtual std::string id() { return "verticality"; }
+  /// \endcond
 };
 
 

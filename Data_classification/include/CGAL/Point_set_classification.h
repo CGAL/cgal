@@ -54,11 +54,11 @@ namespace CGAL {
 /*!
 \ingroup PkgDataClassification
 
-\brief Definition of a classification type based on an ID and a set of
+\brief Definition of a classification type based on a set of
 relationship with attributes.
 
 A classification type is used to segment the input data set. Usual
-classification types are ground, vegetation and buildings (but other
+classification types are ground, vegetation and buildings (but others
 can be defined).
 
 */
@@ -66,7 +66,7 @@ class Classification_type
 {
 public:
   
-  enum Attribute_side /// Defines the effect of the values of an attribute on the classification type.
+  enum Attribute_effect /// Defines the effect of the values of an attribute on the classification type.
     {
       FAVORED_ATT = 0, ///< High values of the attribute favor this type
       NEUTRAL_ATT = 1, ///< The attribute has no effect on this type
@@ -75,17 +75,14 @@ public:
 
 private:
   std::string m_id;
-  std::map<Segmentation_attribute*, Attribute_side> m_attribute_effects;
+  std::map<Segmentation_attribute*, Attribute_effect> m_attribute_effects;
   std::vector<std::size_t> m_training_set;
 
 public:
 
-  /// \name Main methods 
-  /// @{
   /*! 
     \param id The name of the classification type
-    (e.g. vegetation). Two different classification types must have
-    different IDs.
+    (e.g. vegetation).
   */ 
   Classification_type (std::string id) : m_id (id) { }
 
@@ -97,41 +94,45 @@ public:
     \param effect The effect the attribute will have on the classification type
 
   */ 
-  void set_attribute_effect (Segmentation_attribute* att, Attribute_side effect)
+  void set_attribute_effect (Segmentation_attribute* att, Attribute_effect effect)
   {
     m_attribute_effects[att] = effect;
   }
 
   /*!
-    \brief Get the effects of an attribute on the classification type.
+    \brief Gets the effects of an attribute on the classification type.
 
     \param att Attribute
 
     \return The effect of the attribute on the classification type.
    */
-  Attribute_side attribute_effect (Segmentation_attribute* att) 
+  Attribute_effect attribute_effect (Segmentation_attribute* att) 
   {
-    std::map<Segmentation_attribute*, Attribute_side>::iterator
+    std::map<Segmentation_attribute*, Attribute_effect>::iterator
       search = m_attribute_effects.find (att);
     return (search == m_attribute_effects.end () ? NEUTRAL_ATT : search->second);
   }
 
   /*!
-    \brief Get the ID of the classification type.
+    \brief Gets the ID of the classification type.
 
     \return The ID of the classification type.
   */
   const std::string& id() const { return m_id; }
-
-  /// @}
   
-  /// \cond SKIP_IN_MANUAL
+  /*!
+    \brief Set of input point indices used as inlier of this
+    classification type for training.
+
+    \return The training set.
+  */
   std::vector<std::size_t>& training_set() { return m_training_set; }
 
+  /// \cond SKIP_IN_MANUAL
   void info()
   {
     std::cerr << "Attribute " << m_id << ": ";
-    for (std::map<Segmentation_attribute*, Attribute_side>::iterator it = m_attribute_effects.begin();
+    for (std::map<Segmentation_attribute*, Attribute_effect>::iterator it = m_attribute_effects.begin();
          it != m_attribute_effects.end(); ++ it)
       {
         if (it->second == NEUTRAL_ATT)
@@ -161,6 +162,8 @@ types given. The output can be regularized with different smoothing
 methods.
 
 \tparam Kernel The geometric kernel used
+\tparam RandomAccessIterator Iterator over the input
+\tparam PointPMap Property map to access the input points
 
 */
 template <typename Kernel,
@@ -229,8 +232,8 @@ private:
   std::vector<Classification_type*> m_segmentation_classes; 
   std::vector<Segmentation_attribute*> m_segmentation_attributes; 
 
-  typedef Classification_type::Attribute_side Attribute_side;
-  std::vector<std::vector<Attribute_side> > m_effect_table;
+  typedef Classification_type::Attribute_effect Attribute_effect;
+  std::vector<std::vector<Attribute_effect> > m_effect_table;
 
   //Hpoints attributes
   std::vector<Plane> m_planes;
@@ -248,17 +251,11 @@ public:
   /*! 
     \brief Constructs a classification object based on the input range.
 
-    \param begin Iterator to the first input point
+    \param begin Iterator to the first input object
 
     \param end Past-the-end iterator
 
-    \param grid_resolution Resolution of the 2D map of the ground. If
-    the default value is used, it is computed as the average spacing
-    of the point set.
-
-    \param radius_neighbors Size used for neighborhood computation. If
-    the default value is used, it is computed as 5 times
-    `grid_resolution`.
+    \param point_pmap Property map to access the input points
 
   */
 
@@ -307,8 +304,17 @@ public:
   {
     m_multiplicative = mult;
   }
+  /// \endcond
 
-  void run_quick()
+  
+  /*! 
+    \brief Runs the classification algorithm without any regularization.
+
+    There is no relationship between points, the classification energy
+    is only minimized pointwise. This method is quick but produce
+    suboptimal results.
+  */
+  void run()
   {
     prepare_classification ();
     
@@ -345,6 +351,15 @@ public:
   }
 
 
+  /*! 
+    \brief Runs the classification algorithm without local smoothing.
+
+    The computed classification energy is smoothed on a user defined
+    local neighborhood of points. This method is a compromise between
+    efficiency and reliability.
+
+    \param neighborhood Object used to access neighborhoods of points
+  */
   void run_with_local_smoothing (const Neighborhood& neighborhood)
   {
     prepare_classification ();
@@ -397,8 +412,23 @@ public:
   }
 
 
+  /*! 
+
+    \brief Runs the classification algorithm without a global
+    regularizarion based on a graphcut.
+
+    The computed classification energy is globally regularized through
+    and alpha-expansion algorithm. This method is slow but provides
+    the user with good quality results.
+
+    \param neighborhood Object used to access neighborhoods of points
+
+    \param weight Weight of the regularization with respect to the
+    classification energy. Higher values produce more regularized
+    output but may result in a loss of details.
+  */
   void run_with_graphcut (const Neighborhood& neighborhood,
-                          const double smoothing)
+                          const double weight = 0.5)
   {
     prepare_classification ();
     
@@ -447,6 +477,8 @@ public:
     graphcut(edges, edge_weights, probability_matrix, m_assigned_type);
   }
   
+
+  /// \cond SKIP_IN_MANUAL
   void reset_groups()
   {
     m_planes.clear();
@@ -532,7 +564,6 @@ public:
 
   }
 
-  /// \cond SKIP_IN_MANUAL
   bool run_with_groups (const Neighborhood& neighborhood,
                         const FT radius_neighbors)
   {
@@ -659,8 +690,8 @@ public:
     std::vector<std::size_t>(m_input.size()).swap (m_assigned_type);
     std::vector<double>(m_input.size()).swap (m_confidence);
 
-    m_effect_table = std::vector<std::vector<Attribute_side> >
-      (m_segmentation_classes.size(), std::vector<Attribute_side> (m_segmentation_attributes.size(),
+    m_effect_table = std::vector<std::vector<Attribute_effect> >
+      (m_segmentation_classes.size(), std::vector<Attribute_effect> (m_segmentation_attributes.size(),
                                                                  Classification_type::NEUTRAL_ATT));
     
     for (std::size_t i = 0; i < m_effect_table.size (); ++ i)
@@ -675,7 +706,7 @@ public:
   /// @{
   
   /*!
-    \brief Add a classification type
+    \brief Adds a classification type
     \param type Pointer to the classification type object
    */
   void add_classification_type (Classification_type* type)
@@ -683,7 +714,8 @@ public:
     m_segmentation_classes.push_back (type);
   }
 
-  void number_of_classification_types () const
+  /// \cond SKIP_IN_MANUAL
+  std::size_t number_of_classification_types () const
   {
     return m_segmentation_classes.size();
   }
@@ -692,21 +724,27 @@ public:
   {
     return m_segmentation_classes[idx];
   }
+  /// \endcond
 
+  /*!
+    \brief Removes all classification types
+   */
   void clear_classification_types ()
   {
     m_segmentation_classes.clear();
   }
 
+  /// \cond SKIP_IN_MANUAL
   void clear_and_delete_classification_types ()
   {
     for (std::size_t i = 0; i < m_segmentation_classes.size(); ++ i)
       delete m_segmentation_classes[i];
     m_segmentation_classes.clear();
   }
+  /// \endcond
 
   /*!
-    \brief Add a segmentation attribute
+    \brief Adds a segmentation attribute
     \param attribute Pointer to the attribute object
    */
   void add_segmentation_attribute (Segmentation_attribute* attribute)
@@ -714,6 +752,9 @@ public:
     m_segmentation_attributes.push_back (attribute);
   }
 
+  /*!
+    \brief Removes all segmentation attributes
+   */
   void clear_segmentation_attributes ()
   {
     m_segmentation_attributes.clear();
@@ -721,8 +762,7 @@ public:
   
   /// @}
 
-  /// \name Groups
-  /// @{
+  /// \cond SKIP_IN_MANUAL
 
   /*!
     \brief Add a point to a group
@@ -748,14 +788,14 @@ public:
     m_planes.clear();
   }
 
-  /// @}
+  /// \endcond
   
 
   /// \name Output
   /// @{
 
   /*!
-    \brief Get the classification type of indexed point.
+    \brief Gets the classification type of an indexed point.
     \param index Index of the input point
     \return Pointer to the classification type 
   */
@@ -766,6 +806,11 @@ public:
     return m_segmentation_classes[m_assigned_type[index]];
   }
 
+  /*!
+    \brief Gets the confidence of the classification type of an indexed point.
+    \param index Index of the input point
+    \return Confidence ranging from 0 (not confident at all) to 1 (very confident).
+  */
   double confidence_of (std::size_t index) const
   {
     if (m_confidence.size() <= index)
@@ -776,11 +821,26 @@ public:
   /// @}
 
 
+  /// \name Training
+  /// @{
+
+  /*!
+    \brief Runs the training algorithm.
+
+    The object must have been filled with the `Classification_type`
+    and `Segmentation_attribute` objects before running this
+    function. Each classification type must be given a small set of
+    user-defined inliers to provide the training algorithm with a
+    ground truth.
+  */
   void training ()
   {
     train_parameters();
   }
+  /// @}
 
+  
+  /// \cond SKIP_IN_MANUAL
   void train_parameters()
   {
     std::size_t nb_tests = 3000;
@@ -819,7 +879,7 @@ public:
         for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
           {
             Segmentation_attribute* att = m_segmentation_attributes[j];
-            Classification_type::Attribute_side side = m_segmentation_classes[0]->attribute_effect(att);
+            Classification_type::Attribute_effect side = m_segmentation_classes[0]->attribute_effect(att);
 
             for (std::size_t k = 1; k < m_segmentation_classes.size(); ++ k)
               if (m_segmentation_classes[k]->attribute_effect(att) != side)
@@ -880,7 +940,7 @@ public:
         std::cerr << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
         att->weight = best_weights[i];
 
-        Classification_type::Attribute_side side = m_segmentation_classes[0]->attribute_effect(att);
+        Classification_type::Attribute_effect side = m_segmentation_classes[0]->attribute_effect(att);
         bool to_remove = true;
         for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
           {
@@ -1025,7 +1085,7 @@ public:
       }
     return worst_confidence;
   }
-
+  /// \endcond
 
 
 };

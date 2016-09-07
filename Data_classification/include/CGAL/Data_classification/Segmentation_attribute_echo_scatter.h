@@ -9,11 +9,15 @@ namespace CGAL {
   /*!
     \ingroup PkgDataClassification
 
-    \brief Segmentation attribute based on echo scatter
+    \brief Segmentation attribute based on echo scatter.
 
+    The number of returns (echo number) is a useful information
+    provided by most LIDAR sensor. It can help identifying trees.
 
     \tparam Kernel The geometric kernel used.
-
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the input points.
+    \tparam EchoPMap Property map to access the echo values of input points.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap, typename EchoPMap>
 class Segmentation_attribute_echo_scatter : public Segmentation_attribute
@@ -26,6 +30,14 @@ class Segmentation_attribute_echo_scatter : public Segmentation_attribute
 public:
   /*!
     \brief Constructs the attribute.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param echo_pmap Property map to access the echo values of the input points
+    \param grid Precomputed `Planimetric_grid`
+    \param grid_resolution Resolution of the planimetric grid
+    \param radius_neighbors Radius of local neighborhoods
+    \param weight Weight of the attribute
   */
   Segmentation_attribute_echo_scatter (RandomAccessIterator begin,
                                        RandomAccessIterator end,
@@ -94,13 +106,15 @@ public:
     }
     this->compute_mean_max (echo_scatter, this->mean, this->max);
   }
-  
+
+  /// \cond SKIP_IN_MANUAL
   virtual double value (std::size_t pt_index)
   {
     return echo_scatter[pt_index];
   }
 
   virtual std::string id() { return "echo_scatter"; }
+  /// \endcond
 };
 
 }

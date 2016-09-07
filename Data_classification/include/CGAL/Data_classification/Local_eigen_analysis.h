@@ -18,24 +18,30 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief 
+    \brief Class that precomputes and stored the eigenvectors and
+    eigenvalues of the covariance matrices of all points of a point
+    set, using a local neighborhood.
 
     \tparam Kernel The geometric kernel used.
-
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the input points.
+    \tparam DiagonalizeTraits Solver used for matrix diagonalization.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Local_eigen_analysis
 {
 public:
+  /// \cond SKIP_IN_MANUAL
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::Plane_3 Plane;
-
-  typedef CGAL::cpp11::array<double, 3> Eigenvalues;
-
   typedef Data_classification::Neighborhood<Kernel, RandomAccessIterator, PointPMap> Neighborhood;
+  /// \endcond
+  
+  typedef CGAL::cpp11::array<double, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
+
 
 private:
   std::vector<Eigenvalues> eigenvalues;
@@ -48,7 +54,17 @@ private:
 public:
 
   Local_eigen_analysis () { }
-  
+
+  /*! 
+    \brief Computes the local eigen analysis of an input range based
+    on a fixed number of local neighbors.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+    \param neighborhood Object used to access neighborhoods of points
+    \param radius_neighbors Radius of the local neighborhood
+  */
   Local_eigen_analysis (RandomAccessIterator begin,
                         RandomAccessIterator end,
                         PointPMap point_pmap,
@@ -75,6 +91,17 @@ public:
       }
   }
 
+  /*! 
+
+    \brief Computes the local eigen analysis of an input range based
+    on a fixed radius local neighborhood.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+    \param neighborhood Object used to access neighborhoods of points
+    \param knn Number of nearest neighbors used
+  */
   Local_eigen_analysis (RandomAccessIterator begin,
                         RandomAccessIterator end,
                         PointPMap point_pmap,
@@ -101,6 +128,7 @@ public:
       }
   }
 
+  /// \cond SKIP_IN_MANUAL
   void compute (const Point& query, std::vector<Point>& neighbor_points)
   {
     if (neighbor_points.size() == 0)
@@ -143,10 +171,21 @@ public:
     middle_eigenvectors.push_back (Vector (evectors[3], evectors[4], evectors[5]));
     largest_eigenvectors.push_back (Vector (evectors[6], evectors[7], evectors[8]));
   }
+  /// \endcond
 
+  /*!
+    \brief Returns the estimated normal vector of the indexed point.
+  */
   const Vector& normal_vector (std::size_t index) const { return smallest_eigenvectors[index]; }
+
+  /*!
+    \brief Returns the estimated local tangent plane of the index point.
+  */
   Plane plane (std::size_t index) const { return Plane (centroids[index], smallest_eigenvectors[index]); }
 
+  /*!
+    \brief Returns the eigenvalues of the index point.
+  */
   const Eigenvalues& eigenvalue (std::size_t index) const { return eigenvalues[index]; }
 };
   

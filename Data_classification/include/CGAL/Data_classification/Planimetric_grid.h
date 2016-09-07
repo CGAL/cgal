@@ -12,11 +12,14 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief 
+    \brief Class that precomputes a 2D planimetric grid used for
+    digital terrain modeling.
 
     \tparam Kernel The geometric kernel used.
-
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointPMap Property map to access the input points.
   */
+
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
 class Planimetric_grid
 {
@@ -35,7 +38,16 @@ class Planimetric_grid
 public:
 
   Planimetric_grid () { }
-  
+
+  /*
+    \brief Constructs a planimetric grid based on the input range.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+    \param bbox The bounding box of the input range
+    \param grid_resolution Resolution of the planimetric grid
+  */
   Planimetric_grid (const RandomAccessIterator& begin,
                     const RandomAccessIterator& end,
                     PointPMap point_pmap,
@@ -80,10 +92,22 @@ public:
   std::size_t width() const { return m_grid.width(); }
   std::size_t height() const { return m_grid.height(); }
 
+  /*!
+    \brief Returns the indices of points lying in the given indexed cell.
+  */
   std::vector<int>& indices(std::size_t x, std::size_t y) { return m_grid(x,y); }
+  /*!
+    \brief Returns `true` if the indexed cell is to be used for classification.
+  */
   bool mask(std::size_t x, std::size_t y) { return m_mask(x,y); }
 
+  /*!
+    \breif Returns the `x` coordinate of the indexed point in the grid.
+  */
   std::size_t x(std::size_t index) const { return m_x[index]; }
+  /*!
+    \breif Returns the `y` coordinate of the indexed point in the grid.
+  */
   std::size_t y(std::size_t index) const { return m_y[index]; }
 };
   
