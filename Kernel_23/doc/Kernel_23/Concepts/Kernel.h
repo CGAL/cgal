@@ -673,9 +673,9 @@ public:
   typedef unspecified_type Side_of_bounded_circle_2; 
 
   /*!
-    a model of `Kernel::PowerSideOfPowerCircle_2` 
+    a model of `Kernel::PowerSideOfOrientedPowerCircle_2` 
   */ 
-  typedef unspecified_type Power_side_of_power_circle_2; 
+  typedef unspecified_type Power_side_of_oriented_power_circle_2; 
 
   /*!
     a model of `Kernel::IsHorizontal_2` 
@@ -1459,9 +1459,14 @@ public:
   typedef unspecified_type Side_of_bounded_sphere_3; 
 
   /*!
-    a model of `Kernel::PowerSideOfPowerSphere_3` 
+    a model of `Kernel::PowerSideOfOrientedPowerSphere_3` 
   */ 
-  typedef unspecified_type Power_side_of_power_sphere_3; 
+  typedef unspecified_type Power_side_of_oriented_power_sphere_3; 
+
+  /*!
+    a model of `Kernel::PowerSideOfBoundedPowerSphere_3` 
+  */ 
+  typedef unspecified_type Power_side_of_bounded_power_sphere_3; 
 
   /*!
     a model of `Kernel::IsDegenerate_3` 

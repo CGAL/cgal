@@ -8705,6 +8705,189 @@ public:
 
 }; /* end Kernel::LessZ_3 */
 
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with three arguments) 
+
+  \sa `orientation_grp`
+
+*/
+class Orientation_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns \ref CGAL::LEFT_TURN, if `r` lies to the left of the oriented 
+    line `l` defined by `p` and `q`, returns \ref CGAL::RIGHT_TURN if `r` 
+    lies to the right of `l`, and returns \ref CGAL::COLLINEAR if `r` lies 
+    on `l`. 
+  */ 
+  Orientation operator()(const Kernel::Point_2&p, 
+                         const Kernel::Point_2&q, 
+                         const Kernel::Point_2&r); 
+
+  /*!
+    returns \ref CGAL::LEFT_TURN if `u` and `v` form a left turn, 
+    returns \ref CGAL::RIGHT_TURN if `u` and `v` form a right turn, 
+    and returns \ref CGAL::COLLINEAR if `u` and `v` are collinear. 
+    */ 
+  Orientation operator()(const Kernel::Vector_2&u, 
+                         const Kernel::Vector_2&v); 
+
+
+  /// @}
+
+}; /* end Kernel::Orientation_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with four arguments) 
+
+  \sa `orientation_grp`
+
+*/
+class Orientation_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns \ref CGAL::POSITIVE, if `s` lies on the positive side of the oriented 
+    plane `h` defined by `p`, `q`, and `r`, returns \ref CGAL::NEGATIVE if `s` 
+    lies on the negative side of `h`, and returns \ref CGAL::COPLANAR if `s` lies 
+    on `h`. 
+  */ 
+  Orientation operator()(const Kernel::Point_3&p, 
+                         const Kernel::Point_3&q, 
+                         const Kernel::Point_3&r, 
+                         const Kernel::Point_3&s); 
+
+  /*!
+    returns \ref CGAL::POSITIVE if `u`, `v` and `w` are positively oriented, 
+    returns \ref CGAL::NEGATIVE if `u`, `v` and `w` are negatively oriented, 
+    and returns \ref CGAL::COPLANAR if `u`, `v` and `w` are coplanar. 
+  */ 
+  Orientation operator()(const Kernel::Vector_3&u, 
+                         const Kernel::Vector_3&v, 
+                         const Kernel::Vector_3&w); 
+
+  /*!
+    returns the orientation of the sphere `s`. 
+  */ 
+  Orientation operator()(const Kernel::Sphere_3&s); 
+
+
+  /// @}
+
+}; /* end Kernel::Orientation_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with two arguments) 
+
+  \sa `CGAL::Circle_2<Kernel>` 
+  \sa `CGAL::Line_2<Kernel>` 
+  \sa `CGAL::Triangle_2<Kernel>` 
+
+*/
+class OrientedSide_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
+    depending on the position of `p` relative to the oriented circle `c`. 
+  */ 
+  Oriented_side operator()(const Kernel::Circle_2&c, 
+                           const Kernel::Point_2&p); 
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
+    depending on the position of `p` relative to the oriented line `l`. 
+  */ 
+  Oriented_side operator()(const Kernel::Line_2&l, 
+                           const Kernel::Point_2&p); 
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
+    depending on the position of `p` relative to the oriented triangle `t`. 
+  */ 
+  Oriented_side operator()(const Kernel::Triangle_2&t, 
+                           const Kernel::Point_2&p); 
+
+  /// @}
+
+}; /* end Kernel::OrientedSide_2 */
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with two arguments) 
+
+  \sa `CGAL::Plane_3<Kernel>` 
+  \sa `CGAL::Sphere_3<Kernel>` 
+  \sa `CGAL::Tetrahedron_3<Kernel>` 
+
+*/
+class OrientedSide_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
+    depending on the position of `p` relative to the oriented plane `h`. 
+  */ 
+  Oriented_side operator()(const Kernel::Plane_3&h, 
+                           const Kernel::Point_3&p); 
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
+    depending on the position of `p` relative to the oriented tetrahedron `t`. 
+  */ 
+  Oriented_side operator()(const Kernel::Tetrahedron_3&t, 
+                           const Kernel::Point_3&p); 
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
+    \ref CGAL::ON_NEGATIVE_SIDE, or the \ref CGAL::ON_POSITIVE_SIDE, 
+    depending on the position of `p` relative to the oriented sphere `s`. 
+  */ 
+  Oriented_side operator()(const Kernel::Sphere_3& s, 
+                           const Kernel::Point_3& p); 
+
+
+  /// @}
+
+}; /* end Kernel::OrientedSide_3 */
+
+
+
+
 /*!
 \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
@@ -8916,184 +9099,6 @@ If all the points have a weight equal to 0, then
   };
 
 
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines `AdaptableFunctor` (with three arguments) 
-
-  \sa `orientation_grp`
-
-*/
-class Orientation_2 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    returns \ref CGAL::LEFT_TURN, if `r` lies to the left of the oriented 
-    line `l` defined by `p` and `q`, returns \ref CGAL::RIGHT_TURN if `r` 
-    lies to the right of `l`, and returns \ref CGAL::COLLINEAR if `r` lies 
-    on `l`. 
-  */ 
-  Orientation operator()(const Kernel::Point_2&p, 
-                         const Kernel::Point_2&q, 
-                         const Kernel::Point_2&r); 
-
-  /*!
-    returns \ref CGAL::LEFT_TURN if `u` and `v` form a left turn, 
-    returns \ref CGAL::RIGHT_TURN if `u` and `v` form a right turn, 
-    and returns \ref CGAL::COLLINEAR if `u` and `v` are collinear. 
-    */ 
-  Orientation operator()(const Kernel::Vector_2&u, 
-                         const Kernel::Vector_2&v); 
-
-
-  /// @}
-
-}; /* end Kernel::Orientation_2 */
-
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines `AdaptableFunctor` (with four arguments) 
-
-  \sa `orientation_grp`
-
-*/
-class Orientation_3 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    returns \ref CGAL::POSITIVE, if `s` lies on the positive side of the oriented 
-    plane `h` defined by `p`, `q`, and `r`, returns \ref CGAL::NEGATIVE if `s` 
-    lies on the negative side of `h`, and returns \ref CGAL::COPLANAR if `s` lies 
-    on `h`. 
-  */ 
-  Orientation operator()(const Kernel::Point_3&p, 
-                         const Kernel::Point_3&q, 
-                         const Kernel::Point_3&r, 
-                         const Kernel::Point_3&s); 
-
-  /*!
-    returns \ref CGAL::POSITIVE if `u`, `v` and `w` are positively oriented, 
-    returns \ref CGAL::NEGATIVE if `u`, `v` and `w` are negatively oriented, 
-    and returns \ref CGAL::COPLANAR if `u`, `v` and `w` are coplanar. 
-  */ 
-  Orientation operator()(const Kernel::Vector_3&u, 
-                         const Kernel::Vector_3&v, 
-                         const Kernel::Vector_3&w); 
-
-  /*!
-    returns the orientation of the sphere `s`. 
-  */ 
-  Orientation operator()(const Kernel::Sphere_3&s); 
-
-
-  /// @}
-
-}; /* end Kernel::Orientation_3 */
-
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines `AdaptableFunctor` (with two arguments) 
-
-  \sa `CGAL::Circle_2<Kernel>` 
-  \sa `CGAL::Line_2<Kernel>` 
-  \sa `CGAL::Triangle_2<Kernel>` 
-
-*/
-class OrientedSide_2 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-
-  /*!
-    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
-    depending on the position of `p` relative to the oriented circle `c`. 
-  */ 
-  Oriented_side operator()(const Kernel::Circle_2&c, 
-                           const Kernel::Point_2&p); 
-
-  /*!
-    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
-    depending on the position of `p` relative to the oriented line `l`. 
-  */ 
-  Oriented_side operator()(const Kernel::Line_2&l, 
-                           const Kernel::Point_2&p); 
-
-  /*!
-    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
-    depending on the position of `p` relative to the oriented triangle `t`. 
-  */ 
-  Oriented_side operator()(const Kernel::Triangle_2&t, 
-                           const Kernel::Point_2&p); 
-
-  /// @}
-
-}; /* end Kernel::OrientedSide_2 */
-
-/*!
-  \ingroup PkgKernel23ConceptsFunctionObjects
-  \cgalConcept
-
-  \cgalRefines `AdaptableFunctor` (with two arguments) 
-
-  \sa `CGAL::Plane_3<Kernel>` 
-  \sa `CGAL::Sphere_3<Kernel>` 
-  \sa `CGAL::Tetrahedron_3<Kernel>` 
-
-*/
-class OrientedSide_3 {
-public:
-
-  /// \name Operations
-  /// A model of this concept must provide:
-  /// @{
-
-  /*!
-    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
-    depending on the position of `p` relative to the oriented plane `h`. 
-  */ 
-  Oriented_side operator()(const Kernel::Plane_3&h, 
-                           const Kernel::Point_3&p); 
-
-  /*!
-    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
-    depending on the position of `p` relative to the oriented tetrahedron `t`. 
-  */ 
-  Oriented_side operator()(const Kernel::Tetrahedron_3&t, 
-                           const Kernel::Point_3&p); 
-
-  /*!
-    returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
-    \ref CGAL::ON_NEGATIVE_SIDE, or the \ref CGAL::ON_POSITIVE_SIDE, 
-    depending on the position of `p` relative to the oriented sphere `s`. 
-  */ 
-  Oriented_side operator()(const Kernel::Sphere_3& s, 
-                           const Kernel::Point_3& p); 
-
-
-  /// @}
-
-}; /* end Kernel::OrientedSide_3 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
