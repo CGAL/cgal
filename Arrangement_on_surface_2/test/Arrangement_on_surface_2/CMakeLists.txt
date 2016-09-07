@@ -4,6 +4,8 @@
 
 project( Arrangement_on_surface_2_ )
 
+enable_testing()
+
 cmake_minimum_required(VERSION 2.8.10)
 
 find_package(CGAL QUIET COMPONENTS Core)
@@ -16,11 +18,12 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
+  include( ${CMAKE_CURRENT_SOURCE_DIR}/cgal_test.cmake )
   # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" )
-  endforeach()
+#  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+#  foreach(cppfile ${cppfiles})
+#    create_single_source_cgal_program( "${cppfile}" )
+#  endforeach()
 
 else()
   
