@@ -31,16 +31,24 @@
 \cgalClassifedRefPages
 
 ## Main Classes ##
-- `CGAL::Point_set_classification<Kernel>`
+- `CGAL::Point_set_classification<Kernel, RandomAccessIterator, PointPMap>`
 - `CGAL::Classification_type`
+
+## Useful structures ##
+
+- `CGAL::Data_classification::Neighborhood<Kernel, RandomAccessIterator, PointPMap>`
+- `CGAL::Data_classification::Local_eigen_analysis<Kernel, RandomAccessIterator, PointPMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap>`
+
 
 ## Segmentation attributes ##
 - `CGAL::Segmentation_attribute`
-- `CGAL::Segmentation_attribute_color<Kernel>`
-- `CGAL::Segmentation_attribute_elevation<Kernel>`
-- `CGAL::Segmentation_attribute_horizontality<Kernel>`
-- `CGAL::Segmentation_attribute_nonplanarity<Kernel>`
-- `CGAL::Segmentation_attribute_scatter<Kernel>`
+- `CGAL::Segmentation_attribute_color<Kernel, RandomAccessIterator, ColorPMap>`
+- `CGAL::Segmentation_attribute_distance_to_plane<Kernel, RandomAccessIterator, PointPMap, DiagonalizeTraits>`
+- `CGAL::Segmentation_attribute_echo_scatter<Kernel, RandomAccessIterator, PointPMap, EchoPMap>`
+- `CGAL::Segmentation_attribute_elevation<Kernel, RandomAccessIterator, PointPMap>`
+- `CGAL::Segmentation_attribute_vertical_dispersion<Kernel, RandomAccessIterator, PointPMap>>`
+- `CGAL::Segmentation_attribute_verticality<Kernel, RandomAccessIterator, PointPMap, DiagonalizeTraits>`
 
 
 */
