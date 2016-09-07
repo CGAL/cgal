@@ -1,3 +1,8 @@
+if(CGAL_CreateSingleSourceCGALProgram_included)
+  return()
+endif(CGAL_CreateSingleSourceCGALProgram_included)
+set(CGAL_CreateSingleSourceCGALProgram_included TRUE)
+
 include(CGAL_add_test)
 include(CMakeParseArguments)
 
