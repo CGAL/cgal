@@ -99,15 +99,17 @@ int main()
   while (it != shapes.end()) {
     
     // Get specific parameters depending on detected shape.
-    if (dynamic_cast<Plane*>(it->get()))
+    if (Plane* plane = dynamic_cast<Plane*>(it->get()))
       {
-        Kernel::Vector_3 normal = dynamic_cast<Plane*>(it->get())->plane_normal();
+        Kernel::Vector_3 normal = plane->plane_normal();
         std::cout << "Plane with normal " << normal
                 << std::endl;
+        
+        // Plane shape can also be converted to Kernel::Plane_3
+        std::cout << "Kernel::Plane_3: " << static_cast<Kernel::Plane_3>(*plane) << std::endl;
       }
-    else if (dynamic_cast<Cylinder*>(it->get()))
+    else if (Cylinder* cyl = dynamic_cast<Cylinder*>(it->get()))
       {
-        Cylinder* cyl = dynamic_cast<Cylinder*>(it->get());
         Kernel::Line_3 axis = cyl->axis();
         FT radius = cyl->radius();
         std::cout << "Cylinder with axis " << axis
