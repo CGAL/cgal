@@ -788,6 +788,7 @@ A type representing weighted points in two dimensions.
 
 \sa `CGAL::Weighted_point_2<Kernel>`
 
+\sa `ConstructPoint_2`
 \sa `ComparePowerDistance_2`
 \sa `ConstructWeightedCircumcenter_2`
 \sa `PowerSideOfOrientedPowerCircle_2`
@@ -812,6 +813,7 @@ A type representing weighted points in three dimensions.
 
 \sa `CGAL::Weighted_point_3<Kernel>` 
 
+\sa `ConstructPoint_3`
 \sa `ComparePowerDistance_3`
 \sa `ComputePowerDistanceToPowerSphere_3`
 \sa `ComputePowerProduct_3`
