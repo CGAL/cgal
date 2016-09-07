@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Union_find_ )
+project( Union_find_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

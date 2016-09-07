@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-project( Poisson_surface_reconstruction_3_test )
+project( Poisson_surface_reconstruction_3_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 

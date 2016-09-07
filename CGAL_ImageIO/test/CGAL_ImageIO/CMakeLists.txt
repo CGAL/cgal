@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( CGALImageIO_test )
+project( CGAL_ImageIO_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 

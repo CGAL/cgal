@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Sweep_line_2_ )
+project( Sweep_line_2_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

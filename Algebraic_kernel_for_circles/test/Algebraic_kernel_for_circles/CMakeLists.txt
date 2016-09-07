@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Algebraic_kernel_for_circles_ )
+project( Algebraic_kernel_for_circles_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

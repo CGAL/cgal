@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Stream_support_ )
+project( Stream_support_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

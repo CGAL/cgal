@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Random_numbers_ )
+project( Random_numbers_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

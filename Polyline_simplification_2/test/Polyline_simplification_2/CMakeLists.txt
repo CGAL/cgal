@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Polyline_simplification_2 )
+project( Polyline_simplification_2_Tests )
 
 
 cmake_minimum_required(VERSION 2.8.11)

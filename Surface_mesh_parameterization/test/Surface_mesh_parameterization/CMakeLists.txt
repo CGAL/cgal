@@ -1,7 +1,7 @@
 # This is the CMake script for compiling this folder.
 
 
-project( Surface_mesh_parameterization_test )
+project( Surface_mesh_parameterization_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 

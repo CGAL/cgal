@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Principal_component_analysis_ )
+project( Principal_component_analysis_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

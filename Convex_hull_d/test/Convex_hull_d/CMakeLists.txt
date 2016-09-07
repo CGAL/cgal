@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Convex_hull_d_ )
+project( Convex_hull_d_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 
