@@ -1,7 +1,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Surface_mesher_example )
+project( Surface_mesher_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 

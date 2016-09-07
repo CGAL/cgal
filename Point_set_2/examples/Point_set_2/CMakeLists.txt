@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Point_set_2_ )
+project( Point_set_2_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

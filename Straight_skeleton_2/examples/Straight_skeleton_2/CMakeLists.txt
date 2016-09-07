@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Straight_skeleton_2_ )
+project( Straight_skeleton_2_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

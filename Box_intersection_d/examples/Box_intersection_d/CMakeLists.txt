@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Box_intersection_d_ )
+project( Box_intersection_d_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

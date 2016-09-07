@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Polytope_distance_d_ )
+project( Polytope_distance_d_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

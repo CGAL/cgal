@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( CGAL_ipelets_ )
+project( CGAL_ipelets_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

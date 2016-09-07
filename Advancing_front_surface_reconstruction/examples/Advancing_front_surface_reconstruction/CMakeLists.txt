@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Advancing_front_surface_reconstruction_ )
+project( Advancing_front_surface_reconstruction_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

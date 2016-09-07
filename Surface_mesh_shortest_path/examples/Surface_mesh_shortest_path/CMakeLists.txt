@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Surface_mesh_shortest_path_ )
+project( Surface_mesh_shortest_path_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 

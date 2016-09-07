@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( QP_solver_ )
+project( QP_solver_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

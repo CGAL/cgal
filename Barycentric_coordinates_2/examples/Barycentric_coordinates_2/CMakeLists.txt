@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Barycentric_coordinates_2_ )
+project( Barycentric_coordinates_2_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 
