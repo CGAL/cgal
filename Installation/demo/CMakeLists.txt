@@ -32,7 +32,7 @@ foreach( entry ${list} )
 
     # If there is no .cpp files, ignore the sub-directory
     if(files)
-     process_CGAL_subdirectory("${entry}" demo demo)
+      process_CGAL_subdirectory("${entry}" demo demo)
       # Note: process_CGAL_subdirectory is defined in cmake/modules/CGAL_Macros.cmake
    endif()
 

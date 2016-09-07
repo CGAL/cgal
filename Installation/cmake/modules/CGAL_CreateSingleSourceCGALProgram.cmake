@@ -20,6 +20,12 @@ function(create_single_source_cgal_program firstfile )
 
     add_executable(${exe_name} ${all})
 
+    get_directory_property(folder_NO_TESTING CGAL_NO_TESTING)
+
+    if(folder_NO_TESTING OR NOT BUILD_TESTING)
+      set(NO_TESTING TRUE)
+    endif()
+
     if(NOT NO_TESTING)
       cgal_add_test(${exe_name})
     endif(NOT NO_TESTING)
