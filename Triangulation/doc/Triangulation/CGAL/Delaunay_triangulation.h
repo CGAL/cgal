@@ -124,13 +124,11 @@ value of `lt`:
 <DL>
 <DT><B>`OUTSIDE_AFFINE_HULL`</B><DD> Point
 `p` is inserted so as to increase the current dimension of the Delaunay
-triangulation. The method `dt`.`insert_outside_affine_hull()` is called.
+triangulation.
 <DT><B>`ON_VERTEX`</B><DD> The position of the vertex `v` described by `f`
 is set to `p`. `v` is returned. <DT><B>Anything else</B><DD> The point `p`
 is inserted. the full cell `c` <I>is assumed</I> to be in conflict
 with `p`.
-(Roughly speaking, the method `dt`.`insert_in_conflicting_cell()`
-is called.)
 </DL>
 The parameters `lt`, `f`, `ft`
 and `c` must be consistent with the localization of point `p` in the
@@ -139,23 +137,6 @@ Delaunay triangulation e.g. by a call to
 */
 Vertex_handle insert(const Point & p, const Locate_type lt,
 const Face & f, const Facet & ft, const Full_cell_handle c);
-
-/*!
-Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
-(possibly newly created) vertex at that position. 
-\pre The point `p`
-must lie outside the affine hull of the Delaunay triangulation. This implies that
-`dt`.`current_dimension()` must be less than `dt`.`maximal_dimension()`.
-*/
-Vertex_handle insert_outside_affine_hull(const Point & p);
-
-/*!
-Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
-(possibly newly created) vertex at that position.
-\pre The point `p` must be in conflict with the full cell `c`.
-*/
-Vertex_handle insert_in_conflicting_cell(const Point & p, const
-Full_cell_handle c);
 
 /// @}
 

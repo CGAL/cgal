@@ -842,6 +842,13 @@ Regular_triangulation<Traits, TDS>
   }
 }
 
+/*
+Inserts the point `p` in the regular triangulation. Returns a handle to the
+newly created vertex at that position.
+\pre The point `p`
+must lie outside the affine hull of the regular triangulation. This implies that
+`rt`.`current_dimension()` must be smaller than `rt`.`maximal_dimension()`.
+*/
 template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
@@ -930,6 +937,32 @@ Regular_triangulation<Traits, TDS>
 
   return Vertex_handle();
 }
+
+/*
+[Undocumented function]
+
+Inserts the point `p` in the regular triangulation. `p` must be
+in conflict with the second parameter `c`, which is used as a
+starting point for `compute_conflict_zone`.
+The function is faster than the standard `insert` function since
+it does not need to call `locate`.
+
+If this insertion creates a vertex, this vertex is returned.
+
+If `p` coincides with an existing vertex and has a greater weight,
+then the existing weighted point becomes hidden and `p` replaces it as vertex
+of the triangulation.
+
+If `p` coincides with an already existing vertex (both point and
+weights being equal), then this vertex is returned and the triangulation
+remains unchanged.
+
+Otherwise if `p` does not appear as a vertex of the triangulation,
+then it is stored as a hidden point and this method returns the default
+constructed handle.
+
+\pre The point `p` must be in conflict with the full cell `c`.
+*/
 
 template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle

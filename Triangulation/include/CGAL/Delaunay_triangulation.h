@@ -697,6 +697,15 @@ Delaunay_triangulation<DCTraits, TDS>
     }
 }
 
+/*
+[Undocumented function]
+
+Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
+(possibly newly created) vertex at that position.
+\pre The point `p`
+must lie outside the affine hull of the Delaunay triangulation. This implies that
+`dt`.`current_dimension()` must be less than `dt`.`maximal_dimension()`.
+*/
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
 Delaunay_triangulation<DCTraits, TDS>
@@ -731,7 +740,7 @@ Delaunay_triangulation<DCTraits, TDS>
             {
                 inf_v_cell->swap_vertices(
                     current_dimension() - 1, current_dimension());
-    }
+            }
             // Otherwise, let's find the right infinite cell
             else
             {
@@ -751,11 +760,20 @@ Delaunay_triangulation<DCTraits, TDS>
     return v;
 }
 
+/*!
+[Undocumented function]
+
+Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
+(possibly newly created) vertex at that position.
+\pre The point `p` must be in conflict with the full cell `c`.
+*/
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
 Delaunay_triangulation<DCTraits, TDS>
 ::insert_in_conflicting_cell(const Point & p, const Full_cell_handle s)
 {
+    CGAL_precondition(is_in_conflict(p, s));
+
     // for storing conflicting full_cells.
     typedef std::vector<Full_cell_handle> Full_cell_h_vector;
     CGAL_STATIC_THREAD_LOCAL_VARIABLE(Full_cell_h_vector,cs,0);
