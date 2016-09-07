@@ -18,6 +18,7 @@ def get_anchor(s):
   s = s.replace(">","")
   s = s.replace("+","")
   s = s.replace("=","")
+  s = s.replace("?","")
   s = s.lstrip(" ")
   s = s.rstrip("\n")
   s = s.rstrip(" ")
