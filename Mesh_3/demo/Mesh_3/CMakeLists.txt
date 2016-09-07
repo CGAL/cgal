@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the CGAL Mesh_3 demo.
 
-project( Mesh_3_demo )
+project( Mesh_3_Demo )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

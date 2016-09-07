@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the Optimal_transportation_reconstruction_2 demo.
 
-project(Otr2_demo)
+project(Optimal_transportation_reconstruction_2_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

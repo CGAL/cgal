@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-project (GraphicsView)
+project (GraphicsView_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

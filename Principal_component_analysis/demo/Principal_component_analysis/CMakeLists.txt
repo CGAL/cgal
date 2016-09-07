@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the PCA demo.
 
-project( PCA_demo )
+project( Principal_component_analysis_Demo )
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

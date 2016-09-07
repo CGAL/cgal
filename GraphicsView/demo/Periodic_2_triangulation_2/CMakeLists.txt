@@ -1,4 +1,4 @@
-project (Periodic_2_Triangulation_2_demo)
+project (Periodic_2_triangulation_2_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
