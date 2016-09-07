@@ -48,6 +48,7 @@ int main (int argc, char** argv)
   double radius_dtm = 12.5;
 
   std::cerr << "Computing useful structures" << std::endl;
+
   Iso_cuboid_3 bbox = CGAL::bounding_box (pts.begin(), pts.end());
   Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
@@ -58,13 +59,16 @@ int main (int argc, char** argv)
                    grid_resolution,
                    radius_neighbors,
                    1.78); // Weight
+  
   Elevation elev (pts.begin(), pts.end(), Pmap(), bbox, grid,
                   grid_resolution,
                   radius_neighbors,
                   radius_dtm,
                   2.86); // Weight
+  
   Verticality verti (pts.begin(), pts.end(), eigen,
                      3.70); // Weight
+  
   Distance_to_plane d2p (pts.begin(), pts.end(), Pmap(), eigen,
                          0.0016);
 
@@ -100,6 +104,7 @@ int main (int argc, char** argv)
   psc.add_classification_type (&ground);
   psc.add_classification_type (&roof);
 
+  // Run classification
   psc.run_with_graphcut (neighborhood, 0.5);
 
   // Save the output in a colored PLY format
