@@ -229,8 +229,8 @@ public:
         }
         return number_of_vertices() - n;
     }
-    Vertex_handle insert(const Point &, const Locate_type, const Face &, const Facet &, const Full_cell_handle);
-    Vertex_handle insert(const Point & p, const Full_cell_handle start = Full_cell_handle())
+    Vertex_handle insert(const Point &, Locate_type, const Face &, const Facet &, Full_cell_handle);
+    Vertex_handle insert(const Point & p, Full_cell_handle start = Full_cell_handle())
     {
         Locate_type lt;
         Face f(maximal_dimension());
@@ -238,13 +238,13 @@ public:
         Full_cell_handle s = locate(p, lt, f, ft, start);
         return insert(p, lt, f, ft, s);
     }
-    Vertex_handle insert(const Point & p, const Vertex_handle hint)
+    Vertex_handle insert(const Point & p, Vertex_handle hint)
     {
         CGAL_assertion( Vertex_handle() != hint );
         return insert(p, hint->full_cell());
     }
     Vertex_handle insert_outside_affine_hull(const Point &);
-    Vertex_handle insert_in_conflicting_cell(const Point &, const Full_cell_handle);
+    Vertex_handle insert_in_conflicting_cell(const Point &, Full_cell_handle);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
 
@@ -254,7 +254,7 @@ public:
             Full_cell_const_handle, const OrientationPredicate &) const;
 
     template< typename OutputIterator >
-    Facet compute_conflict_zone(const Point &, const Full_cell_handle, OutputIterator) const;
+    Facet compute_conflict_zone(const Point &, Full_cell_handle, OutputIterator) const;
 
     template < typename OrientationPredicate, typename SideOfOrientedSpherePredicate >
     class Conflict_predicate
@@ -666,7 +666,7 @@ Delaunay_triangulation<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
 Delaunay_triangulation<DCTraits, TDS>
-::insert(const Point & p, const Locate_type lt, const Face & f, const Facet &, const Full_cell_handle s)
+::insert(const Point & p, Locate_type lt, const Face & f, const Facet &, Full_cell_handle s)
 {
     switch( lt )
     {
@@ -770,7 +770,7 @@ Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
 Delaunay_triangulation<DCTraits, TDS>
-::insert_in_conflicting_cell(const Point & p, const Full_cell_handle s)
+::insert_in_conflicting_cell(const Point & p, Full_cell_handle s)
 {
     CGAL_precondition(is_in_conflict(p, s));
 
@@ -867,7 +867,7 @@ template< typename DCTraits, typename TDS >
 template< typename OutputIterator >
 typename Delaunay_triangulation<DCTraits, TDS>::Facet
 Delaunay_triangulation<DCTraits, TDS>
-::compute_conflict_zone(const Point & p, const Full_cell_handle s, OutputIterator out) const
+::compute_conflict_zone(const Point & p, Full_cell_handle s, OutputIterator out) const
 {
     CGAL_precondition( 2 <= current_dimension() );
     if( current_dimension() < maximal_dimension() )

@@ -247,13 +247,13 @@ public:
   }
 
   Vertex_handle insert(const Weighted_point &,
-                       const Locate_type,
+                       Locate_type,
                        const Face &,
                        const Facet &,
-                       const Full_cell_handle);
+                       Full_cell_handle);
 
   Vertex_handle insert(const Weighted_point & p,
-                       const Full_cell_handle start = Full_cell_handle())
+                       Full_cell_handle start = Full_cell_handle())
   {
     Locate_type lt;
     Face f(maximal_dimension());
@@ -262,7 +262,7 @@ public:
     return insert(p, lt, f, ft, s);
   }
 
-  Vertex_handle insert(const Weighted_point & p, const Vertex_handle hint)
+  Vertex_handle insert(const Weighted_point & p, Vertex_handle hint)
   {
     CGAL_assertion( Vertex_handle() != hint );
     return insert(p, hint->full_cell());
@@ -270,19 +270,19 @@ public:
 
   Vertex_handle insert_outside_affine_hull(const Weighted_point &);
   Vertex_handle insert_in_conflicting_cell(
-    const Weighted_point &, const Full_cell_handle,
-    const Vertex_handle only_if_this_vertex_is_in_the_cz = Vertex_handle());
+    const Weighted_point &, Full_cell_handle,
+    Vertex_handle only_if_this_vertex_is_in_the_cz = Vertex_handle());
 
   Vertex_handle insert_if_in_star(const Weighted_point &,
-                                  const Vertex_handle,
-                                  const Locate_type,
+                                  Vertex_handle,
+                                  Locate_type,
                                   const Face &,
                                   const Facet &,
-                                  const Full_cell_handle);
+                                  Full_cell_handle);
 
   Vertex_handle insert_if_in_star(
-    const Weighted_point & p, const Vertex_handle star_center,
-    const Full_cell_handle start = Full_cell_handle())
+    const Weighted_point & p, Vertex_handle star_center,
+    Full_cell_handle start = Full_cell_handle())
   {
     Locate_type lt;
     Face f(maximal_dimension());
@@ -292,8 +292,8 @@ public:
   }
 
   Vertex_handle insert_if_in_star(
-    const Weighted_point & p, const Vertex_handle star_center,
-    const Vertex_handle hint)
+    const Weighted_point & p, Vertex_handle star_center,
+    Vertex_handle hint)
   {
     CGAL_assertion( Vertex_handle() != hint );
     return insert_if_in_star(p, star_center, hint->full_cell());
@@ -308,7 +308,7 @@ public:
       Full_cell_const_handle, const OrientationPredicate &) const;
 
   template< typename OutputIterator >
-  Facet compute_conflict_zone(const Weighted_point &, const Full_cell_handle, OutputIterator) const;
+  Facet compute_conflict_zone(const Weighted_point &, Full_cell_handle, OutputIterator) const;
 
   template < typename OrientationPredicate, typename PowerTestPredicate >
   class Conflict_predicate
@@ -801,7 +801,7 @@ Regular_triangulation<Traits, TDS>
 template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
-::insert(const Weighted_point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
+::insert(const Weighted_point & p, Locate_type lt, const Face & f, const Facet & ft, Full_cell_handle s)
 {
   switch( lt )
   {
@@ -902,9 +902,11 @@ template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
 ::insert_if_in_star(const Weighted_point & p,
-                    const Vertex_handle star_center,
-                    const Locate_type lt, const Face & f, const Facet & ft,
-                    const Full_cell_handle s)
+                    Vertex_handle star_center,
+                    Locate_type lt, 
+                    const Face & f,
+                    const Facet & ft,
+                    Full_cell_handle s)
 {
   switch( lt )
   {
@@ -968,8 +970,8 @@ template< typename Traits, typename TDS >
 typename Regular_triangulation<Traits, TDS>::Vertex_handle
 Regular_triangulation<Traits, TDS>
 ::insert_in_conflicting_cell(const Weighted_point & p,
-                             const Full_cell_handle s,
-                             const Vertex_handle only_if_this_vertex_is_in_the_cz)
+                             Full_cell_handle s,
+                             Vertex_handle only_if_this_vertex_is_in_the_cz)
 {
   typedef std::vector<Full_cell_handle> Full_cell_h_vector;
 
@@ -1099,7 +1101,7 @@ template< typename Traits, typename TDS >
 template< typename OutputIterator >
 typename Regular_triangulation<Traits, TDS>::Facet
 Regular_triangulation<Traits, TDS>
-::compute_conflict_zone(const Weighted_point & p, const Full_cell_handle s, OutputIterator out) const
+::compute_conflict_zone(const Weighted_point & p, Full_cell_handle s, OutputIterator out) const
 {
   CGAL_precondition( 1 <= current_dimension() );
   if( current_dimension() < maximal_dimension() )

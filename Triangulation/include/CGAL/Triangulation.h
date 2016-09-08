@@ -258,7 +258,7 @@ public:
     
     // - - - - - - - - - - - - - - - - - - - - - - - - CREATION / CONSTRUCTORS
 
-    Triangulation(int dim, const Geom_traits k = Geom_traits())
+    Triangulation(int dim, const Geom_traits &k = Geom_traits())
         : tds_(dim)
         , kernel_(k)
         , infinity_()
@@ -529,7 +529,7 @@ public:
     bool is_infinite(const Facet & ft) const
     {
         Full_cell_const_handle s = full_cell(ft);
-        CGAL_precondition(s != Full_cell_handle());
+        CGAL_precondition(s != Full_cell_const_handle());
         if( is_infinite(s) )
             return (s->vertex(index_of_covertex(ft)) != infinite_vertex());
         return false;
@@ -538,7 +538,7 @@ public:
     bool is_infinite(const Face & f) const
     {
         Full_cell_const_handle s = f.full_cell();
-        CGAL_precondition(s != Full_cell_handle());
+        CGAL_precondition(s != Full_cell_const_handle());
         if( is_infinite(s) )
         {
             Vertex_handle v;
@@ -654,13 +654,13 @@ public:
 
 protected:
     template< typename OrientationPredicate >
-    Full_cell_handle do_locate(   const Point &, Locate_type &, Face &, Facet &,
-                                Full_cell_handle start,
-                                const OrientationPredicate & o) const;
+    Full_cell_handle do_locate(const Point &, Locate_type &, Face &, Facet &,
+                               Full_cell_handle start,
+                               const OrientationPredicate & o) const;
 public:
-    Full_cell_handle locate(  const Point &, Locate_type &, Face &, Facet &,
+    Full_cell_handle locate(const Point &, Locate_type &, Face &, Facet &,
                             Full_cell_handle start = Full_cell_handle()) const;
-    Full_cell_handle locate(  const Point &, Locate_type &, Face &, Facet &,
+    Full_cell_handle locate(const Point &, Locate_type &, Face &, Facet &,
                             Vertex_handle) const;
     Full_cell_handle locate(const Point & p, Full_cell_handle s = Full_cell_handle()) const;
     Full_cell_handle locate(const Point & p, Vertex_handle v) const;
@@ -685,7 +685,7 @@ public:
         }
         return number_of_vertices() - n;
     }
-    Vertex_handle insert(const Point &, const Locate_type, const Face &, const Facet &, const Full_cell_handle);
+    Vertex_handle insert(const Point &, Locate_type, const Face &, const Facet &, Full_cell_handle);
     Vertex_handle insert(const Point &, Full_cell_handle start = Full_cell_handle());
     Vertex_handle insert(const Point &, Vertex_handle);
     template< typename ForwardIterator >
@@ -823,7 +823,7 @@ Triangulation<TT, TDS>
 template < class TT, class TDS >
 typename Triangulation<TT, TDS>::Vertex_handle
 Triangulation<TT, TDS>
-::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
+::insert(const Point & p, Locate_type lt, const Face & f, const Facet & ft, Full_cell_handle s)
 {
     switch( lt )
     {
@@ -1019,12 +1019,12 @@ template < class TT, class TDS >
 template< typename OrientationPredicate >
 typename Triangulation<TT, TDS>::Full_cell_handle
 Triangulation<TT, TDS>
-::do_locate(   const Point & p, // query point
+::do_locate(const Point & p, // query point
             Locate_type & loc_type,// type of result (full_cell, face, vertex)
             Face & face,// the face containing the query in its interior (when appropriate)
             Facet & facet,// the facet containing the query in its interior (when appropriate)
-            const Full_cell_handle start// starting full_cell for the walk
-            , OrientationPredicate const& orientation_pred
+            Full_cell_handle start, // starting full_cell for the walk
+            OrientationPredicate const& orientation_pred
         ) const
 {
     const int cur_dim = current_dimension();
