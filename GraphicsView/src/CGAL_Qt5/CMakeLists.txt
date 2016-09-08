@@ -22,10 +22,9 @@ endif()
 CGAL_setup_CGAL_Qt5_dependencies( CGAL_Qt5 ${keyword})
 
 if (CGAL_HEADER_ONLY)
-  install(DIRECTORY "../../include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/include/CGAL/Qt")
-  install(DIRECTORY "../../demo/resources/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/resources")
-  install(DIRECTORY "../../demo/icons/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/icons")
-
+  install(DIRECTORY "../../include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/include/CGAL/Qt" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "../../demo/resources/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/resources" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "../../demo/icons/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/icons" COMPONENT CGAL_Qt5)
 endif()
 
 message("libCGAL_Qt5 is configured")
