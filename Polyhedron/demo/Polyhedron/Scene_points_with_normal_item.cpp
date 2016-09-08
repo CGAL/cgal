@@ -15,6 +15,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Search_traits_adapter.h>
 
 #include <QObject>
 #include <QApplication>
@@ -278,34 +279,33 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 
     positions_points.reserve(m_points->size() * 3);
     positions_lines.reserve(m_points->size() * 3 * 2);
+
     if(item->has_normals())
     {
       positions_normals.reserve((m_points->size() - m_points->nb_selected_points()) * 3);
       positions_selected_normals.reserve(m_points->nb_selected_points() * 3);
     }
     //Shuffle container to allow quick display random points
-    Point_set_3<Kernel> points = *m_points;
-    std::random_shuffle (points.begin(), points.end() - m_points->nb_selected_points());
-    std::random_shuffle (points.end() - m_points->nb_selected_points(), points.end());
+    std::random_shuffle (m_points->begin(), m_points->first_selected());
+    std::random_shuffle (m_points->first_selected(), m_points->end());
     
     //The points
     {
         // The *non-selected* points
-      for (Point_set_3<Kernel>::const_iterator it = points.begin(); it != points.first_selected(); it++)
+      std::size_t i = 0;
+      for (; i < m_points->size () - m_points->nb_selected_points(); ++ i)
 	{
-	  const UI_point& p = *it;
-	  positions_points.push_back(p.x());
-	  positions_points.push_back(p.y());
-	  positions_points.push_back(p.z());
+	  positions_points.push_back(m_points->point(i).x());
+	  positions_points.push_back(m_points->point(i).y());
+	  positions_points.push_back(m_points->point(i).z());
 	}
 
         // Draw *selected* points
-      for (Point_set_3<Kernel>::const_iterator it = points.first_selected(); it != points.end(); it++)
+      for (; i < m_points->size (); ++ i)
 	{
-	  const UI_point& p = *it;
-	  positions_selected_points.push_back(p.x());
-	  positions_selected_points.push_back(p.y());
-	  positions_selected_points.push_back(p.z());
+	  positions_selected_points.push_back(m_points->point(i).x());
+	  positions_selected_points.push_back(m_points->point(i).y());
+	  positions_selected_points.push_back(m_points->point(i).z());
 	}
     }
 
@@ -423,9 +423,9 @@ void Scene_points_with_normal_item::resetSelection()
 void Scene_points_with_normal_item::selectDuplicates()
 {
   std::set<Kernel::Point_3> unique_points;
-  for (Point_set::iterator ptit=d->m_points->begin(); ptit!=d->m_points->end();++ptit )
-    if ( !unique_points.insert(*ptit).second )
-      d->m_points->select(ptit);
+  for (Point_set::iterator ptit=m_points->begin(); ptit!=m_points->end();++ptit )
+    if ( !unique_points.insert((*m_points)[*ptit]).second )
+      m_points->select(ptit);
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
@@ -435,24 +435,29 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 {
   Q_ASSERT(d->m_points != NULL);
 
-  d->m_points->clear();
+  m_points->clear();
+  m_points->add_normal_property();
   bool ok = stream &&
             CGAL::read_ply_points_and_normals(stream,
-                                              std::back_inserter(*d->m_points),
-                                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
+                                              m_points->index_back_inserter(),
+                                              m_points->point_pmap(),
+                                              m_points->normal_pmap(),
+                                              Kernel()) &&
             !isEmpty();
   if (ok)
     {
       for (Point_set::iterator it=d->m_points->begin(),
              end=d->m_points->end();it!=end; ++it)
         {
-          if (it->normal() != CGAL::NULL_VECTOR)
+          if (m_points->normal(*it) != CGAL::NULL_VECTOR)
             {
               d->m_has_normals=true;
               setRenderingMode(PointsPlusNormals);
               break;
             }
         }
+      if (!m_has_normals)
+        m_points->remove_normal_property();
     }
   invalidateOpenGLBuffers();
   return ok;
@@ -463,10 +468,18 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) co
 {
   Q_ASSERT(d->m_points != NULL);
 
+  if (m_points->has_normals())
+    return stream &&
+      CGAL::write_ply_points_and_normals(stream,
+                                         m_points->begin(), m_points->end(),
+                                         m_points->point_pmap(), m_points->normal_pmap(),
+                                         Kernel());
+
   return stream &&
-         CGAL::write_ply_points_and_normals(stream,
-                                            d->m_points->begin(), d->m_points->end(),
-                                            CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()));
+    CGAL::write_ply_points(stream,
+                           m_points->begin(), m_points->end(),
+                           m_points->point_pmap(),
+                           Kernel());
 }
 
 // Loads point set from .OFF file
@@ -477,8 +490,10 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   d->m_points->clear();
   bool ok = stream &&
             CGAL::read_off_points_and_normals(stream,
-                                              std::back_inserter(*d->m_points),
-                                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
+                                              m_points->index_back_inserter(),
+                                              m_points->point_pmap(),
+                                              m_points->normal_pmap(),
+                                              Kernel()) &&
             !isEmpty();
   invalidateOpenGLBuffers();
   return ok;
@@ -489,10 +504,17 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 {
   Q_ASSERT(d->m_points != NULL);
 
+  if (m_points->has_normals())
+    return stream &&
+      CGAL::write_off_points_and_normals(stream,
+                                         m_points->begin(), m_points->end(),
+                                         m_points->point_pmap(), m_points->normal_pmap(),
+                                         Kernel());
   return stream &&
-         CGAL::write_off_points_and_normals(stream,
-                                            d->m_points->begin(), d->m_points->end(),
-                                            CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()));
+    CGAL::write_off_points (stream,
+                            m_points->begin(), m_points->end(),
+                            m_points->point_pmap(),
+                            Kernel());
 }
 
 // Loads point set from .XYZ file
@@ -500,25 +522,30 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 {
   Q_ASSERT(d->m_points != NULL);
 
-  d->m_points->clear();
+  m_points->clear();
+  m_points->add_normal_property();
   bool ok = stream &&
             CGAL::read_xyz_points_and_normals(stream,
-                                              std::back_inserter(*d->m_points),
-                                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
+                                              m_points->index_back_inserter(),
+                                              m_points->point_pmap(),
+                                              m_points->normal_pmap(),
+                                              Kernel()) &&
             !isEmpty();
 
   if (ok)
   {
-    for (Point_set::iterator it=d->m_points->begin(),
-                             end=d->m_points->end();it!=end; ++it)
-    {
-      if (it->normal() != CGAL::NULL_VECTOR)
+    for (Point_set::iterator it=m_points->begin(),
+           end=m_points->end();it!=end; ++it)
       {
-        d->m_has_normals=true;
-        setRenderingMode(PointsPlusNormals);
-        break;
+        if (m_points->normal(*it) != CGAL::NULL_VECTOR)
+          {
+            m_has_normals=true;
+            setRenderingMode(PointsPlusNormals);
+            break;
+          }
       }
-    }
+    if (!m_has_normals)
+      m_points->remove_normal_property();
   }
   invalidateOpenGLBuffers();
   return ok;
@@ -529,10 +556,18 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
 {
   Q_ASSERT(d->m_points != NULL);
 
+  if (m_points->has_normals())
+    return stream &&
+      CGAL::write_xyz_points_and_normals(stream,
+                                         m_points->begin(), m_points->end(),
+                                         m_points->point_pmap(),
+                                         m_points->normal_pmap(),
+                                         Kernel());
   return stream &&
-         CGAL::write_xyz_points_and_normals(stream,
-                                            d->m_points->begin(), d->m_points->end(),
-                                            CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()));
+    CGAL::write_xyz_points (stream,
+                            m_points->begin(), m_points->end(),
+                            m_points->point_pmap(),
+                            Kernel());
 }
 
 QString
@@ -561,9 +596,10 @@ void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* vi
    viewer->glBegin(GL_POINTS);
    for ( Point_set_3<Kernel>::const_iterator it = d->m_points->begin(); it != d->m_points->end(); it++)
    {
-     const UI_point& p = *it;
-     viewer->glNormal3dv(&p.normal().x());
-     viewer->glMultiTexCoord1d(GL_TEXTURE2, p.radius());
+     const Point_set::Point& p = m_points->point (it);
+     const Point_set::Vector& n = m_points->normal (it);
+     viewer->glNormal3dv(&n.x());
+     viewer->glMultiTexCoord1d(GL_TEXTURE2, m_points->property<double> ("radius", *it));
      viewer->glVertex3dv(&p.x());
 
    }
@@ -672,23 +708,34 @@ Scene_points_with_normal_item::compute_bbox() const
 void Scene_points_with_normal_item::computes_local_spacing(int k)
 {
   typedef Kernel Geom_traits;
-  typedef CGAL::Search_traits_3<Geom_traits> TreeTraits;
-  typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+
+  typedef CGAL::Search_traits_3<Geom_traits> SearchTraits_3;
+  typedef CGAL::Search_traits_adapter <std::size_t, Point_set::Point_pmap, SearchTraits_3> Search_traits;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;
+  typedef Neighbor_search::Distance Distance;
 
   Point_set::iterator end(d->m_points->end());
 
   // build kdtree
-  Tree tree(d->m_points->begin(), end);
+  Tree tree(m_points->begin(),
+            m_points->end(),
+            typename Tree::Splitter(),
+            Search_traits (m_points->point_pmap())
+            );
+  Distance tr_dist(m_points->point_pmap());
 
+  if (!(m_points->has_property<double> ("radius")))
+    m_points->add_property<double> ("radius");
+  
   // Compute the radius of each point = (distance max to k nearest neighbors)/2.
   {
     int i=0;
     for (Point_set::iterator it=d->m_points->begin(); it!=end; ++it, ++i)
     {
-      Neighbor_search search(tree, *it, k+1);
+      Neighbor_search search(tree, m_points->point(it), k+1, 0, true, tr_dist);
       double maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
-      it->radius() = sqrt(maxdist2)/2.;
+      m_points->property<double> ("radius", *it) = sqrt(maxdist2)/2.;
     }
   }
 

@@ -318,20 +318,23 @@ protected:
 	return; 
       }
 
+    Point_set* points = point_set_item->point_set();
+
     if (selection_mode == 0) // New selection
-      point_set_item->point_set()->unselect_all();
+      points->unselect_all();
     
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
 
-    std::vector<UI_point_3<Kernel> > unselected, selected;
+    std::vector<std::size_t> unselected, selected;
     
-    for(Point_set::iterator it = point_set_item->point_set()->begin ();
-	it != point_set_item->point_set()->end(); ++ it)
+    for(Point_set::iterator it = points->begin ();
+	it != points->end(); ++ it)
       {
-	bool already_selected = point_set_item->point_set()->is_selected (it);
-	    
-	qglviewer::Vec vp (it->x (), it->y (), it->z ());
+	bool already_selected = points->is_selected (it);
+
+        const Kernel::Point_3 p = points->point (it);
+	qglviewer::Vec vp (p.x (), p.y (), p.z ());
 	qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
 	    
 	bool now_selected = visualizer->is_selected (vsp);
@@ -373,22 +376,19 @@ protected:
 
       }
 
-    point_set_item->point_set()->clear();
-    
-    std::copy (unselected.begin (), unselected.end (),
-	       std::back_inserter (*(point_set_item->point_set())));
-    std::size_t size = unselected.size();
+    for (std::size_t i = 0; i < unselected.size(); ++ i)
+      *(points->begin() + i) = unselected[i];
+    for (std::size_t i = 0; i < selected.size(); ++ i)
+      *(points->begin() + (unselected.size() + i)) = selected[i];
 
     if (selected.empty ())
       {
-	point_set_item->point_set()->unselect_all();
+	points->unselect_all();
       }
     else
       {
-	std::copy (selected.begin (), selected.end (),
-		   std::back_inserter (*(point_set_item->point_set())));
-	point_set_item->point_set()->set_first_selected
-	  (point_set_item->point_set()->begin() + size);
+	points->set_first_selected
+	  (points->begin() + unselected.size());
       } 
     point_set_item->invalidateOpenGLBuffers();
   }
@@ -475,7 +475,7 @@ public Q_SLOTS:
     for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	it != point_set_item->point_set()->end(); ++ it) {
       if (point_set_item->point_set()->is_selected (it))
-	new_item->point_set()->push_back(*it);
+	new_item->point_set()->push_back(point_set_item->point_set()->point(*it));
     }
     new_item->resetSelection();
     new_item->invalidateOpenGLBuffers();

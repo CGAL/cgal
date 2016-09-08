@@ -41,7 +41,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
-Polyhedron* poisson_reconstruct(const Point_set& points,
+Polyhedron* poisson_reconstruct(Point_set& points,
                                 Kernel::FT sm_angle, // Min triangle angle (degrees). 
                                 Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
@@ -256,16 +256,27 @@ namespace SurfaceReconstruction
 
   void simplify_point_set (Point_set& points, double size)
   {
-    points.erase (CGAL::grid_simplify_point_set (points.begin (), points.end (), size),
-		  points.end ());
+    points.set_first_selected (CGAL::grid_simplify_point_set (points.begin (), points.end (), points.point_pmap(), size));
+    points.delete_selection();
   }
 
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
-    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(),
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(), points.point_pmap(),
                                                 scale);
   }
 
+  struct Point_set_make_point
+    : public std::unary_function<const std::size_t&, const Kernel::Point_3&>
+  {
+    const Point_set& point_set;
+    Point_set_make_point (const Point_set& point_set) : point_set (point_set) { }
+    const Kernel::Point_3& operator() (const std::size_t& i) const
+    {
+      return point_set.point (i);
+    }
+  };
+  
   template <typename ItemsInserter>
   void scale_space (const Point_set& points, ItemsInserter items,
 		    unsigned int scale, bool generate_smooth = false,
@@ -273,7 +284,9 @@ namespace SurfaceReconstruction
                     unsigned int samples = 300, unsigned int iterations = 4)
   {
     ScaleSpace reconstruct (scale, samples);
-    reconstruct.reconstruct_surface(points.begin_or_selection_begin(), points.end (), iterations,
+    reconstruct.reconstruct_surface(boost::make_transform_iterator(points.begin_or_selection_begin(), Point_set_make_point(points)),
+                                    boost::make_transform_iterator(points.end(), Point_set_make_point(points)),
+                                    iterations,
                                     separate_shells, force_manifold);
 
     for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh )
@@ -386,22 +399,56 @@ namespace SurfaceReconstruction
 
       }
   }
+
+  struct Point_set_make_pair_point_index
+    : public std::unary_function<const std::size_t&, std::pair<Kernel::Point_3, std::size_t> >
+  {
+    const Point_set& point_set;
+    Point_set_make_pair_point_index (const Point_set& point_set) : point_set (point_set) { }
+    std::pair<Kernel::Point_3, std::size_t> operator() (const std::size_t& i) const
+    {
+      return std::make_pair (point_set.point (i), i);
+    }
+  };
   
   void advancing_front (const Point_set& points, Scene_polyhedron_item* new_item, double size,
                         double radius_ratio_bound = 5., double beta = 0.52)
   {
+
+    // TODO: build DT with indices
+    
     Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
     Radius filter (size);
-    CGAL::advancing_front_surface_reconstruction (points.begin_or_selection_begin(), points.end (), P, filter,
-                                                  radius_ratio_bound, beta);
+
+    typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
+    typedef CGAL::Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
+
+    typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
+    typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
+
+    typedef CGAL::Advancing_front_surface_reconstruction<Triangulation_3, Radius> Reconstruction;
+
+    Triangulation_3 dt( boost::make_transform_iterator(points.begin_or_selection_begin(), Point_set_make_pair_point_index(points)),
+                        boost::make_transform_iterator(points.end(), Point_set_make_pair_point_index(points)) );
+
+    Reconstruction R(dt, filter);
+    R.run(radius_ratio_bound, beta);
+    CGAL::AFSR::construct_polyhedron(P, R);
 						  
   }
 
   void compute_normals (Point_set& points, unsigned int neighbors)
   {
     CGAL::jet_estimate_normals<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
-                                                CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                                points.point_pmap(),
+                                                points.normal_pmap(),
                                                 2 * neighbors);
+    
+    points.set_first_selected (CGAL::mst_orient_normals (points.begin(), points.end(),
+                                                         points.point_pmap(),
+                                                         points.normal_pmap(),
+                                                         2 * neighbors));
+    points.delete_selection();
   }
   
 }
@@ -562,8 +609,9 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	  new_item->invalidateOpenGLBuffers();
 
 	  points = new_item->point_set();
-	  std::copy (points->begin_or_selection_begin(), pts_item->point_set()->end(),
-		     std::back_inserter (*points));
+	  std::copy (boost::make_transform_iterator(points->begin_or_selection_begin(), SurfaceReconstruction::Point_set_make_point(*points)),
+                     boost::make_transform_iterator(points->end(), SurfaceReconstruction::Point_set_make_point(*points)),
+                     points->point_back_inserter());
 	}
 
       std::cerr << "Analysing isotropy of point set... ";
