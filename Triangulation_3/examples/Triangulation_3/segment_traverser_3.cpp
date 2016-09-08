@@ -16,7 +16,8 @@ typedef DT::Cell_handle                                         Cell_handle;
 
 typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Traverser;
 
-void main() {
+int main()
+{
     std::vector< Point_3 > points;
     points.reserve( 6 );
     points.push_back( Point_3(-.9063, .4226, 1.0 ) );
@@ -44,4 +45,6 @@ void main() {
 
     std::cout << "While traversing from " << st.source() << " to " << st.target() << std::endl;
     std::cout << inf << " infinite and " << fin << " finite cells were visited." << std::endl;
+
+    return 0;
 }
