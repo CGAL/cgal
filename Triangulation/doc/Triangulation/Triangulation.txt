@@ -508,9 +508,13 @@ This simple example shows how to create a regular triangulation.
 
 \section TriangulationSecPerf Complexity and Performances
 
-The current implementation locates points by walking in the
-triangulation, and sorts the points with spatial sort to insert a
-set of points. In the worst case, the expected complexity is 
+When inserting a set of points into a Delaunay triangulation, 
+the current implementation starts
+by spatially sorting the points. Then, for each point to insert,
+it locates it by walking in the triangulation, using the 
+previously inserted vertex as a "hint". Finally, the point is
+inserted.
+In the worst case, the expected complexity is 
 \f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$. When the algorithm is 
 run on \f$ n \f$ random points, the cost of inserting one point is 
 \f$ O(n^{1/d}) \f$.
