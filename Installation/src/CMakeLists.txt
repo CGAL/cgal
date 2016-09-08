@@ -64,6 +64,11 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     add_library(${LIBRARY_NAME} INTERFACE)
   endif()
 
+  # Add an alias with the prefix `CGAL::`, so that consumer
+  # CMakeLists.txt can be the target like if it was an imported
+  # target.
+  add_library(CGAL::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+
   if(CGAL_AUTO_LINK_ENABLED)
     if (NOT CGAL_HEADER_ONLY)
       set_target_properties( ${LIBRARY_NAME} PROPERTIES
