@@ -136,17 +136,6 @@ function(configure type)
 #  cgal_debug_message(STATUS "       suffix: ${suffix}")
 #  set(suffix ${suffix} PARENT_SCOPE)
   set(suffix ${type} PARENT_SCOPE)
-#  if eval 'cmake "${CMAKE_GENERATOR}" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
-#                                    -DCGAL_DIR="${CGAL_DIR}" \
-#                                    -DCGAL_CXX_FLAGS:STRING="${TESTSUITE_CXXFLAGS} -I../../include" \
-#                                    -DCGAL_EXE_LINKER_FLAGS="${TESTSUITE_LDFLAGS}" \
-#                                    -DCMAKE_BUILD_TYPE=NOTFOUND \
-#                                    .' ; then
-#
-#    echo "   successful configuration" >> ${ERRORFILE}
-#  else
-#    echo "   ERROR:    configuration" >> ${ERRORFILE}
-#  fi
 endfunction()
 
 function(compile_test_with_flags name type flags)
@@ -163,14 +152,6 @@ function(compile_test_with_flags name type flags)
   set(suffix ${suffix} PARENT_SCOPE)
 #  set(suffix ${type})
   cgal_arr_2_add_target(${name} ${name}.cpp)
-#    if eval '${MAKE_CMD} VERBOSE=1 -fMakefile  \
-#      ${name}' ; then
-#      echo "   successful compilation of ${name} ${type}" >> ${ERRORFILE};
-#      set(SUCCESS "y")
-#    else
-#      echo "   ERROR:    compilation of ${name} ${type}" >> ${ERRORFILE};
-#      set(SUCCESS "")
-#    fi
 endfunction()
 
 function(cgal_arr_2_add_target exe_name source_file)
@@ -188,25 +169,6 @@ function(run_test name)
   # ${ARGV0} - executable name
   cgal_debug_message(STATUS "# run_test(${ARGN})")
   cgal_arr_2_add_target(${name} ${ARGN})
-#  basedata=`basename "${5}"`
-#  OUTPUTFILE="ProgramOutput.${ARGV0}"
-#  rm -f ${OUTPUTFILE}
-#  COMMAND="./${ARGV0}"
-#  if [ -f ${ARGV0}.cmd ] ; then
-#    COMMAND="${COMMAND} `cat ${ARGV0}.cmd`"
-#  fi
-#  if [ -f ${ARGV0}.cin ] ; then
-#    COMMAND="cat ${ARGV0}.cin | ${COMMAND}"
-#  fi
-#  OUTPUTFILE="${OUTPUTFILE}.${PLATFORM}"
-#  echo "Executing ${ARGV0} (${ARGV1}) ... "
-#  ulimit -t 3600 2> /dev/null
-#  if eval ${COMMAND} > ${OUTPUTFILE} 2>&1 ; then
-#    echo "   successful execution of ${ARGV0}" >> ${ERRORFILE}
-#  else
-#    echo "   ERROR:    execution of ${ARGV0}" >> ${ERRORFILE}
-#    cat ${OUTPUTFILE} >> ${FULL_ERROR_DESCRIPTION_FILE}
-#  fi
 endfunction()
 
 function(run_test_with_flags)
@@ -214,31 +176,6 @@ function(run_test_with_flags)
   # ${ARGV1} - test substring name
   cgal_debug_message(STATUS "# run_test_with_flags(${ARGN})")
   cgal_add_test(${ARGV0}_${suffix} ${ARGV0} ${ARGV0}.${ARGV1})
-#  basedata=`basename "${5}"`
-#  OUTPUTFILE="ProgramOutput.${ARGV0}"
-#  rm -f ${OUTPUTFILE}
-#  COMMAND="./${ARGV0}"
-#  if [ -f ${ARGV0}.cmd ] ; then
-#    COMMAND="${COMMAND} `cat ${ARGV0}.cmd`"
-#  elif [ -f ${ARGV0}.${ARGV1}.cmd ] ; then
-#    COMMAND="${COMMAND} `cat ${ARGV0}.${ARGV1}.cmd`"
-#    OUTPUTFILE=${OUTPUTFILE}.`echo ${ARGV1} | tr '/' '.'`
-#  fi
-#  if [ -f ${ARGV0}.cin ] ; then
-#    COMMAND="cat ${ARGV0}.cin | ${COMMAND}"
-#  elif [ -f ${ARGV0}.${ARGV1}.cin ] ; then
-#    COMMAND="cat ${ARGV0}.${ARGV1}.cin | ${COMMAND}"
-#    OUTPUTFILE=${OUTPUTFILE}.`echo ${ARGV1} | tr '/' '.'`
-#  fi
-#  OUTPUTFILE="${OUTPUTFILE}.${PLATFORM}"
-#  echo "Executing ${ARGV0} (${ARGV1}) ... "
-#  ulimit -t 3600 2> /dev/null
-#  if eval ${COMMAND} > ${OUTPUTFILE} 2>&1 ; then
-#    echo "   successful execution of ${ARGV0} (${ARGV1})" >> ${ERRORFILE}
-#  else
-#    echo "   ERROR:    execution of ${ARGV0} (${ARGV1})" >> ${ERRORFILE}
-#    cat ${OUTPUTFILE} >> ${FULL_ERROR_DESCRIPTION_FILE}
-#  fi
 endfunction()
 
 function(run_test_alt name datafile)
@@ -255,18 +192,6 @@ function(run_test_alt name datafile)
   set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
   cgal_debug_message(STATUS "add test \"${test_name}\": ${name} ${datafile} ${ARGN}")
-#  OUTPUTFILE=ProgramOutput.${ARGV0}.`echo ${5} | tr '/' '.'`.${6}
-#  #echo ****generating file ${OUTPUTFILE}
-#  #  dirdata=`dirname "${datafile}"`
-#  rm -f ${OUTPUTFILE}
-#  COMMAND="./${ARGV0}"
-#  echo "Executing ${ARGV0} ${5} ${6} ... "
-#  if eval ${COMMAND} ${ARGV1} ${ARGV2} ${4} ${5} ${6} > ${OUTPUTFILE} 2>&1 ; then
-#    echo "   successful execution of ${5} ${6}" >> ${ERRORFILE}
-#  else
-#    echo "   ERROR:    execution of ${5} ${6}" >> ${ERRORFILE}
-#    cat ${OUTPUTFILE} >> ${FULL_ERROR_DESCRIPTION_FILE}
-#  fi
 endfunction()
 
 function(run_trapped_test name datafile)
@@ -280,21 +205,6 @@ function(compile_and_run)
 #  message("   successful compilation of ${name}")
   cgal_arr_2_add_target(${name} ${name}.cpp)
   cgal_add_test(${name})
-#    if eval '${MAKE_CMD} VERBOSE=1 -fMakefile ${ARGV0}' ; then
-#      echo "   successful compilation of ${ARGV0}" >> ${ERRORFILE}
-#      SUCCESS="y"
-#    else
-#      echo "   ERROR:    compilation of ${ARGV0}" >> ${ERRORFILE}
-#      SUCCESS=""
-#    fi
-#
-#    if [ -n "${DO_RUN}" ] ; then
-#      if [ -n "${SUCCESS}" ] ; then
-#        run_test ${ARGV0}
-#      else
-#         echo "   ERROR:    not executed   ${ARGV0}" >> ${ERRORFILE}
-#      fi
-#    fi
 endfunction()
 
 function(execute_commands_old_structure data_dir traits_type_name)
@@ -669,10 +579,6 @@ function(test_segment_traits_adaptor)
   execute_commands_traits_adaptor( segments segments_traits_adaptor 
     COMPARE_Y_POSITION COMPARE_CW_AROUND_POINT COMPARE_Y_AT_X_LEFT 
     ARE_MERGEABLE MERGE IS_IN_X_RANGE IS_BETWEEN_CW)
-#  else
-#    echo "   ERROR:    not executed test_traits_adaptor segment_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -685,14 +591,10 @@ function(test_linear_traits_adaptor)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags( test_traits_adaptor linear "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_traits_adaptor( linear linear_traits_adaptor 
     COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE 
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
-#  else
-#    echo "   ERROR:    not executed test_traits_adaptor linear_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -706,14 +608,10 @@ function(test_spherical_arcs_traits_adaptor)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DTEST_TOPOL_TRAITS=${topol_traits}")
 
   compile_test_with_flags( test_traits_adaptor geodesic_arcs_on_sphere "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_traits_adaptor( spherical_arcs spherical_arcs_traits_adaptor 
     COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE 
     COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT)
-#  else
-#    echo "   ERROR:    not executed test_traits_adaptor spherical_arcs_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -929,7 +827,7 @@ function(test_segment_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits segments "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure( segments segment_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR
     COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
@@ -940,10 +838,6 @@ function(test_segment_traits)
   run_trapped_test( test_traits
     data/segments/vertex.pt data/segments/xcurves
     data/empty.zero data/segments/vertex segment_traits)
-#  else
-#    echo "   ERROR:    not executed   test_traits segment_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -956,7 +850,7 @@ function(test_non_caching_segment_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits non_caching_segments "${flags}")
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(segments non_caching_segment_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR
     COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE ASSERTIONS)
@@ -967,10 +861,6 @@ function(test_non_caching_segment_traits)
   run_trapped_test(test_traits
     data/segments/vertex.pt data/segments/xcurves
     data/empty.zero data/segments/vertex non_caching_segment_traits)
-  #  else
-  #    echo "   ERROR:    not executed   test_traits non_caching_segment_traits" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -984,7 +874,6 @@ function(test_polycurve_conic_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits conic_polycurve "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
 
   # The input arguments for the execute_commands_new_structure,
   # 1. Polycurve_conics is the directory name in "data"
@@ -1010,10 +899,6 @@ function(test_polycurve_conic_traits)
     COMPARE_ENDPOINTS_XY
     TRIM)
 
-#  else
-#    echo "   ERROR:    not executed   test_traits polyline_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1026,7 +911,7 @@ function(test_polycurve_circular_arc_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits circular_arc_polycurve "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_new_structure(Polycurves_circular_arcs polycurve_circular_arc_traits
     COMPARE_Y_AT_X
     EQUAL
@@ -1044,11 +929,6 @@ function(test_polycurve_circular_arc_traits)
     MERGE
     COMPARE_ENDPOINTS_XY
     INTERSECT)
-
-#  else
-#   echo "   ERROR:    not executed   test_traits polyline_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1061,7 +941,7 @@ function(test_polycurve_bezier_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits bezier_polycurve "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_new_structure(Polycurves_bezier test_polycurve_bezier_traits
     MERGE
     EQUAL
@@ -1082,10 +962,6 @@ function(test_polycurve_bezier_traits)
 
     # INTERSECT
     )
-#  else
-#   echo "   ERROR:    not executed   test_traits polyline_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1098,14 +974,10 @@ function(test_polyline_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits test_polylines "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(polylines polyline_traits
     CONSTRUCTOR COMPARE_Y_AT_X_LEFT
     COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
-#  else
-#    echo "   ERROR:    not executed   test_traits polyline_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1118,14 +990,10 @@ function(test_non_caching_polyline_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits non_caching_polylines "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(polylines non_caching_polyline_traits
     CONSTRUCTOR COMPARE_Y_AT_X_LEFT
     COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
-#  else
-#    echo "   ERROR:    not executed   test_traits non_caching_polyline_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1138,7 +1006,7 @@ function(test_linear_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits linear "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(linear/segments linear_traits.segments
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
     COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE)
@@ -1166,10 +1034,6 @@ function(test_linear_traits)
     SPLIT MERGE
     PARAMETER_SPACE_X PARAMETER_SPACE_Y
     COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY)
-#  else
-#    echo "   ERROR:    not executed   test_traits linear_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1182,7 +1046,7 @@ function(test_conic_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits conics "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(conics conic_traits
     INTERSECT SPLIT MERGE COMPARE_Y_AT_X_LEFT
     COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE)
@@ -1193,10 +1057,6 @@ function(test_conic_traits)
   run_trapped_test(test_traits
     data/conics/compare.pt data/empty.zero
     data/empty.zero data/conics/compare conic_traits)
-#  else
-#    echo "   ERROR:    not executed   test_traits conic_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1209,7 +1069,7 @@ function(test_line_arc_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits line_arcs "${flags}")
-#  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(circular_lines line_arc_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
     ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE)
@@ -1224,10 +1084,6 @@ function(test_line_arc_traits)
   run_trapped_test(test_traits
     data/circular_lines/vertex.pt data/circular_lines/xcurves
     data/empty.zero data/circular_lines/vertex line_arc_traits)
-#  else
-#    echo   "   ERROR:    not executed   test_traits" >> ${ERRORFILE}
-#  fi
-#  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1240,17 +1096,13 @@ function(test_circular_arc_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits circular_arcs "${flags}")
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(circular_arcs circular_arc_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
     ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE)
 
   execute_commands_new_structure(circular_arcs circular_arc_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X)
-  #  else
-  #    echo   "   ERROR:    not executed   test_traits" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1263,7 +1115,7 @@ function(test_circular_line_arc_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits circular_line_arcs "${flags}")
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(circular_line_arcs circular_line_arc_traits
     VERTEX IS_VERTICAL CONSTRUCTOR COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
     ASSERTIONS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE)
@@ -1274,10 +1126,6 @@ function(test_circular_line_arc_traits)
   run_trapped_test(test_traits
     data/circular_line_arcs/vertex.pt data/circular_line_arcs/xcurves
     data/empty.zero data/circular_line_arcs/vertex circular_line_arc_traits)
-  #  else
-  #    echo "   ERROR:    not executed   test_traits circular_line_arc_traits" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1290,7 +1138,7 @@ function(test_circle_segments_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits circle_segments "${flags}")
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(circle_segments circle_segments_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
     COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE)
@@ -1313,10 +1161,6 @@ function(test_circle_segments_traits)
   run_trapped_test(test_traits
     data/empty.zero data/circle_segments/constructor.xcv
     data/empty.zero data/circle_segments/constructor circle_segments_traits)
-  #  else
-  #    echo "   ERROR:    not executed   test_traits circle_segments_traits" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1329,14 +1173,10 @@ function(test_bezier_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits Bezier "${flags}")
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(bezier bezier_traits
     COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT
     CONSTRUCTOR ASSERTIONS ARE_MERGEABLE)
-  #  else
-  #    echo   "   ERROR:    not executed   test_traits bezier_traits" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1350,7 +1190,7 @@ function(test_spherical_arc_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DTEST_TOPOL_TRAITS=${topol_traits}")
 
   compile_test_with_flags(test_traits geodesic_arcs_on_sphere "${flags}")
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_old_structure(spherical_arcs spherical_arc_traits
     COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT
     CONSTRUCTOR
@@ -1364,10 +1204,6 @@ function(test_spherical_arc_traits)
   run_trapped_test(test_traits
     data/spherical_arcs/compare.pt data/spherical_arcs/compare.xcv
     data/empty.zero data/spherical_arcs/compare spherical_arc_traits)
-  #  else
-  #    echo "   ERROR:    not executed   test_traits spherical_arc_traits" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1380,7 +1216,7 @@ function(test_rational_arc_traits)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits rational_arcs "${flags}")
-  #  if [ -n "${SUCCESS}" ] ; then
+
   run_trapped_test(test_traits
     data/compare.pt data/empty.zero
     data/empty.zero data/compare rational_arc_traits)
@@ -1388,10 +1224,6 @@ function(test_rational_arc_traits)
   execute_commands_new_structure(rational_arcs rational_arc_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE
     COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY)
-  #  else
-  #    echo "   ERROR:    not executed   test_traits rational_arc_traits" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1406,15 +1238,11 @@ function(test_algebraic_traits_gmp)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits algebraic "${flags}" algebraic_traits_gmp)
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_new_structure(algebraic algebraic_traits_gmp
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
     MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
     PARAMETER_SPACE_X PARAMETER_SPACE_Y)
-  #  else
-  #    echo   "   ERROR:    not executed   test_traits algebraic_traits_gmp" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1429,15 +1257,11 @@ function(test_algebraic_traits_leda)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits algebraic "${flags}" algebraic_traits_leda)
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_new_structure(algebraic algebraic_traits_leda
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
     MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
     PARAMETER_SPACE_X PARAMETER_SPACE_Y)
-  #  else
-  #    echo "   ERROR:    not executed   test_traits algebraic_traits_leda" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 
@@ -1453,15 +1277,11 @@ function(test_algebraic_traits_core)
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
   compile_test_with_flags(test_traits algebraic "${flags}" algebraic_traits_core)
-  #  if [ -n "${SUCCESS}" ] ; then
+
   execute_commands_new_structure(algebraic algebraic_traits_core
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
     MAKE_X_MONOTONE IS_VERTICAL VERTEX SPLIT MERGE INTERSECT
     PARAMETER_SPACE_X PARAMETER_SPACE_Y)
-  #  else
-  #    echo "   ERROR:    not executed   test_traits algebraic_traits_core" >> ${ERRORFILE}
-  #  fi
-  #  clean_tests
 endfunction()
 
 
