@@ -133,7 +133,7 @@ with `p`.
 The parameters `lt`, `f`, `ft`
 and `c` must be consistent with the localization of point `p` in the
 Delaunay triangulation e.g. by a call to
-`Triangulation::locate(const Point &, Locate_type, Face &, Vertex_handle) const`.
+`Triangulation::locate(const Point &, Locate_type &, Face &, Vertex_handle) const`.
 */
 Vertex_handle insert(const Point & p, Locate_type lt,
 const Face & f, const Facet & ft, Full_cell_handle c);

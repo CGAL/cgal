@@ -495,7 +495,7 @@ as in the `locate` method above. If the `query` point lies
 `loc_type` is set to `IN_FULL_CELL` and the unique full cell containing
 the `query` point is returned. </DL>
 */
-Full_cell_handle locate(const Point & query, Locate_type loc_type,
+Full_cell_handle locate(const Point & query, Locate_type & loc_type,
 Face & f, Facet & ft, Full_cell_handle hint = Full_cell_handle()) const;
 
 /*!
@@ -504,8 +504,8 @@ The parameter `hint` is ignored if it is a default constructed
 `Vertex_handle()`.
 */
 Full_cell_handle
-locate(const Point & query, Locate_type loc_type,
-Face & f, Vertex_handle hint) const;
+locate(const Point & query, Locate_type & loc_type,
+  Face & f, Vertex_handle hint) const;
 
 /// @}
 
