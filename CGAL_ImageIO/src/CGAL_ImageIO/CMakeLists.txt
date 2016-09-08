@@ -10,6 +10,11 @@ endif()
 
 CGAL_setup_CGAL_ImageIO_dependencies(CGAL_ImageIO ${keyword})
 
+if(COMMAND add_config_flag)
+  set( CGAL_HAS_IMAGEIO TRUE )
+  add_config_flag( CGAL_HAS_IMAGEIO )
+endif()
+
 if(ZLIB_FOUND)
   get_dependency_version(ZLIB)
 endif()

@@ -21,6 +21,11 @@ endif()
 
 CGAL_setup_CGAL_Qt5_dependencies( CGAL_Qt5 ${keyword})
 
+if(COMMAND add_config_flag)
+  set( CGAL_HAS_QT5 TRUE )
+  add_config_flag( CGAL_HAS_QT5 )
+endif()
+
 if (CGAL_HEADER_ONLY)
   install(DIRECTORY "../../include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/include/CGAL/Qt" COMPONENT CGAL_Qt5)
   install(DIRECTORY "../../demo/resources/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/demo/resources" COMPONENT CGAL_Qt5)

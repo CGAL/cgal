@@ -20,11 +20,6 @@ if(NOT OPENGL_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
 endif()
 
-if(COMMAND add_config_flag)
-  set( CGAL_HAS_QT5 TRUE )
-  add_config_flag( CGAL_HAS_QT5 )
-endif()
-
 get_property(QT_UIC_EXECUTABLE TARGET Qt5::uic PROPERTY LOCATION)
 message( STATUS "OpenGL include:      ${OPENGL_INCLUDE_DIR}" )
 message( STATUS "OpenGL libraries:    ${OPENGL_LIBRARIES}" )

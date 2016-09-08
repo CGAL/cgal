@@ -15,11 +15,6 @@ endif(ZLIB_FOUND)
 
 set( CGAL_ImageIO_BASENAME CGAL_ImageIO)
 
-if(COMMAND add_config_flag)
-  set( CGAL_HAS_IMAGEIO TRUE ) 
-  add_config_flag( CGAL_HAS_IMAGEIO )
-endif()
-
 if(CGAL_HEADER_ONLY)
   set(keyword "INTERFACE")
 endif()
