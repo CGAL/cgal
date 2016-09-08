@@ -21,7 +21,6 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 #define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 
-#include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
