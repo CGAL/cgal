@@ -79,7 +79,9 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    CGAL::jet_smooth_point_set<Concurrency_tag>(points->begin(), points->end(), nb_neighbors);
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points->begin(), points->end(),
+                                                points->point_pmap(),
+                                                nb_neighbors, Kernel());
 
     points->invalidate_bounds();
 

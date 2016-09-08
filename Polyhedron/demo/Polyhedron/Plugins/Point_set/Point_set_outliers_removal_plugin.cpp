@@ -92,7 +92,7 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     // Computes outliers
     Point_set::iterator first_point_to_remove =
       CGAL::remove_outliers(points->begin(), points->end(),
-                            points->points(),
+                            points->point_pmap(),
                             nb_neighbors,
                             removed_percentage, Kernel());
 

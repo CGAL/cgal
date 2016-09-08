@@ -14,6 +14,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Search_traits_adapter.h>
 
 #include <QObject>
 #include <QMenu>
@@ -288,8 +289,8 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   bool ok = stream &&
             CGAL::read_ply_points_and_normals(stream,
                                               m_points->index_back_inserter(),
-                                              m_points->point_push_pmap(),
-                                              m_points->normal_push_pmap(),
+                                              m_points->point_pmap(),
+                                              m_points->normal_pmap(),
                                               Kernel()) &&
             !isEmpty();
   if (ok)
@@ -320,13 +321,13 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) co
     return stream &&
       CGAL::write_ply_points_and_normals(stream,
                                          m_points->begin(), m_points->end(),
-                                         m_points->points(), m_points->normals(),
+                                         m_points->point_pmap(), m_points->normal_pmap(),
                                          Kernel());
 
   return stream &&
     CGAL::write_ply_points(stream,
                            m_points->begin(), m_points->end(),
-                           m_points->points(),
+                           m_points->point_pmap(),
                            Kernel());
 }
 
@@ -339,8 +340,8 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   bool ok = stream &&
             CGAL::read_off_points_and_normals(stream,
                                               m_points->index_back_inserter(),
-                                              m_points->point_push_pmap(),
-                                              m_points->normal_push_pmap(),
+                                              m_points->point_pmap(),
+                                              m_points->normal_pmap(),
                                               Kernel()) &&
             !isEmpty();
   invalidateOpenGLBuffers();
@@ -356,12 +357,12 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
     return stream &&
       CGAL::write_off_points_and_normals(stream,
                                          m_points->begin(), m_points->end(),
-                                         m_points->points(), m_points->normals(),
+                                         m_points->point_pmap(), m_points->normal_pmap(),
                                          Kernel());
   return stream &&
     CGAL::write_off_points (stream,
                             m_points->begin(), m_points->end(),
-                            m_points->points(),
+                            m_points->point_pmap(),
                             Kernel());
 }
 
@@ -375,8 +376,8 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
   bool ok = stream &&
             CGAL::read_xyz_points_and_normals(stream,
                                               m_points->index_back_inserter(),
-                                              m_points->point_push_pmap(),
-                                              m_points->normal_push_pmap(),
+                                              m_points->point_pmap(),
+                                              m_points->normal_pmap(),
                                               Kernel()) &&
             !isEmpty();
 
@@ -408,13 +409,13 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
     return stream &&
       CGAL::write_xyz_points_and_normals(stream,
                                          m_points->begin(), m_points->end(),
-                                         m_points->points(),
-                                         m_points->normals(),
+                                         m_points->point_pmap(),
+                                         m_points->normal_pmap(),
                                          Kernel());
   return stream &&
     CGAL::write_xyz_points (stream,
                             m_points->begin(), m_points->end(),
-                            m_points->points(),
+                            m_points->point_pmap(),
                             Kernel());
 }
 
@@ -444,10 +445,10 @@ void Scene_points_with_normal_item::draw_splats(CGAL::Three::Viewer_interface* v
    viewer->glBegin(GL_POINTS);
    for ( Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
    {
-     const Point_set::Point& p = (*m_points)[*it];
-     const Point_set::Vector& n = m_points->normal(*it);
+     const Point_set::Point& p = m_points->point (it);
+     const Point_set::Vector& n = m_points->normal (it);
      viewer->glNormal3dv(&n.x());
-     //     viewer->glMultiTexCoord1d(GL_TEXTURE2, p.radius());
+     viewer->glMultiTexCoord1d(GL_TEXTURE2, m_points->property<double> ("radius", *it));
      viewer->glVertex3dv(&p.x());
 
    }
@@ -540,24 +541,34 @@ Scene_points_with_normal_item::compute_bbox() const
 void Scene_points_with_normal_item::computes_local_spacing(int k)
 {
   typedef Kernel Geom_traits;
-  typedef CGAL::Search_traits_3<Geom_traits> TreeTraits;
-  typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+
+  typedef CGAL::Search_traits_3<Geom_traits> SearchTraits_3;
+  typedef CGAL::Search_traits_adapter <std::size_t, Point_set::Point_pmap, SearchTraits_3> Search_traits;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;
+  typedef Neighbor_search::Distance Distance;
 
   Point_set::iterator end(m_points->end());
 
   // build kdtree
-  Tree tree(m_points->points().array().begin(),
-            m_points->points().array().end());
+  Tree tree(m_points->begin(),
+            m_points->end(),
+            typename Tree::Splitter(),
+            Search_traits (m_points->point_pmap())
+            );
+  Distance tr_dist(m_points->point_pmap());
 
+  if (!(m_points->has_property<double> ("radius")))
+    m_points->add_property<double> ("radius");
+  
   // Compute the radius of each point = (distance max to k nearest neighbors)/2.
   {
     int i=0;
     for (Point_set::iterator it=m_points->begin(); it!=end; ++it, ++i)
     {
-      Neighbor_search search(tree, (*m_points)[*it], k+1);
+      Neighbor_search search(tree, m_points->point(it), k+1, 0, true, tr_dist);
       double maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
-      //      it->radius() = sqrt(maxdist2)/2.;
+      m_points->property<double> ("radius", *it) = sqrt(maxdist2)/2.;
     }
   }
 

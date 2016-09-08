@@ -129,7 +129,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversio
         return;
   
     for(Point_set::iterator it = points->begin(); it != points->end(); ++it){
-      it->normal() = -1 * it->normal();
+      points->normal(it) = -1 * points->normal(it);
     }
     item->invalidateOpenGLBuffers();
     scene->itemChanged(item);
@@ -176,8 +176,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
 
       // Estimates normals direction.
       CGAL::pca_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
-                                                  points->points(),
-                                                  points->normals(),
+                                                  points->point_pmap(),
+                                                  points->normal_pmap(),
                                                   dialog.pca_neighbors(), k);
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -192,8 +192,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
 
       // Estimates normals direction.
       CGAL::jet_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
-                                                  points->points(),
-                                                  points->normals(),
+                                                  points->point_pmap(),
+                                                  points->normal_pmap(),
                                                   dialog.jet_neighbors(), k);
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -213,8 +213,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
           CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits<double, 3> >
             (points->begin(),
              points->end(),
-             points->points(),
-             points->normals(),
+             points->point_pmap(),
+             points->normal_pmap(),
              dialog.offset_radius(),
              dialog.convolution_radius(),
              k,
@@ -227,8 +227,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
           CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits<double, 3> >
             (points->begin(),
              points->end(),
-             points->points(),
-             points->normals(),
+             points->point_pmap(),
+             points->normal_pmap(),
              dialog.offset_radius(),
              0,
              k,
@@ -256,8 +256,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
         // Tries to orient normals
         first_unoriented_point =
           CGAL::mst_orient_normals(points->begin(), points->end(),
-                                   points->points(),
-                                   points->normals(),
+                                   points->point_pmap(),
+                                   points->normal_pmap(),
                                    dialog.orient_neighbors(), k);
 
         //indicates that the point set has normals

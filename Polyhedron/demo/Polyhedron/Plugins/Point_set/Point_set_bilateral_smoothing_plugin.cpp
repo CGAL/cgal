@@ -103,8 +103,8 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
 	CGAL::bilateral_smooth_point_set<Concurrency_tag>
 	  (points->begin(), 
 	   points->end(),
-           points->points(),
-           points->normals(),
+           points->point_pmap(),
+           points->normal_pmap(),
 	   dialog.neighborhood_size (),
 	   dialog.sharpness_angle (),
            Kernel());

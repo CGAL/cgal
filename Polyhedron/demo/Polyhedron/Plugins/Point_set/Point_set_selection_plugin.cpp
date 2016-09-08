@@ -333,7 +333,7 @@ protected:
       {
 	bool already_selected = points->is_selected (it);
 
-        const Kernel::Point_3 p = points->point (*it);
+        const Kernel::Point_3 p = points->point (it);
 	qglviewer::Vec vp (p.x (), p.y (), p.z ());
 	qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
 	    
@@ -377,9 +377,9 @@ protected:
       }
 
     for (std::size_t i = 0; i < unselected.size(); ++ i)
-      points->item(i) = unselected[i];
+      *(points->begin() + i) = unselected[i];
     for (std::size_t i = 0; i < selected.size(); ++ i)
-      points->item(unselected.size() + i) = selected[i];
+      *(points->begin() + (unselected.size() + i)) = selected[i];
 
     if (selected.empty ())
       {

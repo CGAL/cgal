@@ -51,7 +51,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
-Polyhedron* poisson_reconstruct(const Point_set& points,
+Polyhedron* poisson_reconstruct(Point_set& points,
                                 Kernel::FT sm_angle, // Min triangle angle (degrees).
                                 Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
@@ -71,7 +71,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
       return NULL;
     }
 
-    bool points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+    bool points_have_normals = points.has_normals();
     if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
@@ -92,10 +92,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // Creates implicit function from the point set.
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
-    // The position property map can be omitted here as we use iterators over Point_3 elements.
-    Poisson_reconstruction_function function(
-                              points.begin(), points.end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()));
+    Poisson_reconstruction_function function(points.begin(), points.end(),
+                                             points.point_pmap(), points.normal_pmap());
 
     bool ok = false;    
     #ifdef CGAL_EIGEN3_ENABLED
@@ -133,7 +131,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
 
     // Computes average spacing
     Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin(), points.end(),
-                                                       6 /* knn = 1 ring */);
+                                                                                points.point_pmap(),
+                                                                                6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface
     Kernel::Point_3 inner_point = function.get_inner_point();
@@ -210,8 +209,8 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     
     for (Point_set::const_iterator p=points.begin(); p!=points.end(); p++)
     {
-      AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (*p);
-      double distance = std::sqrt(CGAL::squared_distance (pap.first, *p));
+      AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (points.point (p));
+      double distance = std::sqrt(CGAL::squared_distance (pap.first, points.point(p)));
       
       max_distance = (std::max)(max_distance, distance);
       avg_distance += distance;
