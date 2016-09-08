@@ -71,31 +71,34 @@ public:
 
   typedef typename Index_prop::iterator iterator;
   typedef typename Index_prop::const_iterator const_iterator;
-  
-  struct Index_back_inserter {
 
+  template <typename Property>
+  class Property_back_inserter {
+  public:
     typedef std::output_iterator_tag iterator_category;
-    typedef std::size_t              value_type;
+    typedef typename Property::value_type value_type;
     typedef std::ptrdiff_t           difference_type;
     typedef void                     pointer;
     typedef void                     reference;
 
   private:
 
-    Point_set& ps;
+    Point_set* ps;
+    Property* prop;
     std::size_t ind;
   
   public:
     
-    Index_back_inserter(Point_set& ps, std::size_t ind=0) : ps(ps), ind(ind) {}
-    Index_back_inserter& operator++() { return *this; }
-    Index_back_inserter& operator++(int) { return *this; }
-    Index_back_inserter& operator*() { return *this; }
-    Index_back_inserter& operator= (std::size_t& ind)
+    Property_back_inserter(Point_set* ps, Property* prop, std::size_t ind=0)
+      : ps(ps), prop (prop), ind(ind) {}
+    Property_back_inserter& operator++() { return *this; }
+    Property_back_inserter& operator++(int) { return *this; }
+    Property_back_inserter& operator*() { return *this; }
+    Property_back_inserter& operator= (const value_type& p)
     {
-      if(ps.size() <= (typename Point_set::Item(ind)))
-        ps.add_item();
-      put(ps.indices(), Point_set::Item(ind),ind);
+      if(ps->size() <= (typename Point_set::Item(ind)))
+        ps->add_item();
+      put(*prop, Point_set::Item(ind), p);
       ++ ind;
       return *this;
     }
@@ -103,38 +106,46 @@ public:
   };
 
   template <typename Property>
-  struct Property_pmap
+  class Property_pmap
   {
+  public:
     typedef std::size_t key_type;
     typedef typename Property::value_type value_type;
     typedef value_type& reference;
     typedef boost::lvalue_property_map_tag category;
     
-    Point_set& ps;
-    Property& prop;
-    std::size_t ind;
+    Point_set* ps;
+    Property* prop;
+    mutable std::size_t ind;
 
-    Property_pmap(Point_set& ps, Property& prop, std::size_t ind=0) : ps(ps), prop(prop), ind(ind) {}
+    Property_pmap(Point_set* ps = NULL,
+                  Property* prop = NULL,
+                  std::size_t ind=0)
+      : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(Property_pmap& pm, std::size_t& i, typename Property::value_type& t)
+    friend void put(const Property_pmap& pm, std::size_t& i, const typename Property::value_type& t)
     {
-      if(pm.ps.size() <= (pm.ind))
-        pm.ps.add_item();
-      put(pm.prop, Point_set::Item(pm.ind), t);
+      if(pm.ps->size() <= (pm.ind))
+        pm.ps->add_item();
+      put(*(pm.prop), Point_set::Item(pm.ind), t);
       i = pm.ind;
       ++pm.ind;
     }
 
     friend const value_type& get (const Property_pmap& pm, const std::size_t& i)
     {
-      return get(&(pm.prop[0]), i);
+      return ((*(pm.prop))[i]);
     }
+    // friend reference get (Property_pmap& pm, std::size_t& i)
+    // {
+    //   return ((*(pm.prop))[i]);
+    // }
   };
 
-
+  typedef Property_back_inserter<Index_prop> Index_back_inserter;
+  typedef Property_back_inserter<Point_prop> Point_back_inserter;
   typedef Property_pmap<Point_prop> Point_pmap;
   typedef Property_pmap<Vector_prop> Normal_pmap;
-
 
 protected:
 
@@ -178,11 +189,6 @@ public:
     push_back (p);
     assert (has_normals());
     m_normals[size()-1] = n;
-  }
-
-  Index_prop& indices()
-  {
-    return m_indices;
   }
 
   iterator begin() { return m_indices.begin(); }
@@ -271,15 +277,21 @@ public:
 
   Index_back_inserter index_back_inserter ()
   {
-    return Index_back_inserter (*this, size());
+    return Index_back_inserter (this, &m_indices, size());
   }
+  Point_back_inserter point_back_inserter ()
+  {
+    return Point_back_inserter (this, &m_points, size());
+  }
+  
   Point_pmap point_pmap ()
   {
-    return Point_pmap (*this, m_points, size());
+    return Point_pmap (this, &m_points, size());
   }
+  
   Normal_pmap normal_pmap ()
   {
-    return Normal_pmap (*this, m_normals, size());
+    return Normal_pmap (this, &m_normals, size());
   }
 
     
