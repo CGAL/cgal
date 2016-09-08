@@ -524,7 +524,10 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
     if(a->property("added").toBool())
       hasAction = true;
   if(!hasAction)
+  {
+    ui->menuOperations->removeAction(a);
     menu->addAction(a);
+  }
   a->setProperty("added", true);
   //If the parent menu already exists, don't create a new one.
   if(menu_map.contains(parentName))
@@ -540,7 +543,6 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
     menu_map[parentName] = parentMenu;
   }
   parentMenu->addMenu(menu);
-  ui->menuOperations->removeAction(a);
 }
 
 void MainWindow::load_plugin(QString fileName, bool blacklisted)
