@@ -1591,7 +1591,9 @@ operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Fcb>
     int i = 0;
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
     {
-        os << *it << std::endl; // write the vertex
+        os << *it; // write the vertex
+        if (is_ascii(os))
+            os << std::endl;
         index_of_vertex[it] = i;
     }
     CGAL_assertion( (std::size_t) i == n );
