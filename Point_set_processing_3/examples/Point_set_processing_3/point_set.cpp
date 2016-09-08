@@ -20,10 +20,6 @@ int main (int argc, char** argv)
 {
 
 
-  if (point_set.has_normals())
-    std::cerr << "Point set has normals" << std::endl;
-  else
-    std::cerr << "Point set doesn't have normals" << std::endl;
 
   std::vector<Point_set::Item> indices;
   std::ifstream f (argc > 1 ? argv[1] : "data/data.pwn");
@@ -33,12 +29,12 @@ int main (int argc, char** argv)
   point_set.add_normal_property();
   CGAL::read_xyz_points_and_normals(f,
                                     point_set.index_back_inserter(),
-                                    point_set.point_push_pmap(),
-                                    point_set.normal_push_pmap(),
+                                    point_set.point_pmap(),
+                                    point_set.normal_pmap(),
                                     Kernel());
   
   CGAL::grid_simplify_point_set (point_set.begin (), point_set.end (),
-                                 point_set.point_pmap(),
+                                 //                                 point_set.point_pmap(),
                                  0.1);
 
   typedef CGAL::cpp11::array<unsigned char, 3> Color;
@@ -82,13 +78,13 @@ int main (int argc, char** argv)
               << "  * Point = " << point_set[*it] << std::endl
               << "  * Normal = " << point_set.normal(*it) << std::endl;
 
-  if (!(point_set.are_indices_up_to_date()))
+  if (!(point_set.has_garbage()))
     std::cerr << "Indices not up to date" << std::endl;
   std::cerr << "Size = " << point_set.size() << std::endl;
   std::cerr << "Nb removed = " << std::distance (first_selected, point_set.end()) << std::endl;
-  point_set.erase (first_selected, point_set.end());
+  point_set.remove_from (first_selected);
   std::cerr << "Size = " << point_set.size() << std::endl;
-  if (!(point_set.are_indices_up_to_date()))
+  if (!(point_set.has_garbage()))
     std::cerr << "Indices not up to date" << std::endl;
 
   for (std::size_t i = 0; i < (std::min)(std::size_t(5), point_set.size()); ++ i)
