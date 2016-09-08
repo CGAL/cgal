@@ -64,7 +64,7 @@ at infinity). See the description of the inherited nested type
 the use of the parameter `dim`. The triangulation stores a copy of the
 geometric traits `gt`.
 */
-Regular_triangulation(const int dim, const Geom_traits gt = Geom_traits());
+Regular_triangulation(int dim, const Geom_traits &gt = Geom_traits());
 
 /// @}
 
@@ -106,8 +106,8 @@ Similar to the above `insert()` function, but takes as additional
 parameter the return values of a previous location query. See description of
 `Triangulation::locate()`.
 */
-Vertex_handle insert(const Weighted_point & p, const Locate_type lt,
-  const Face & f, const Facet & ft, const Full_cell_handle c);
+Vertex_handle insert(const Weighted_point & p, Locate_type lt,
+  const Face & f, const Facet & ft, Full_cell_handle c);
 
 /*!
 Inserts the weighted points found in range `[s,e)` in the regular triangulation.
@@ -146,7 +146,7 @@ A facet `(cc,i)` on the boundary of the conflict zone with
 \pre `c` is in conflict with `p` and `rt`.`current_dimension()`\f$ \geq 1\f$.
 */
 template< typename OutputIterator >
-Facet compute_conflict_zone(const Weighted_point & p, const Full_cell_handle c,
+Facet compute_conflict_zone(const Weighted_point & p, Full_cell_handle c,
 OutputIterator out) const;
 
 /// @}

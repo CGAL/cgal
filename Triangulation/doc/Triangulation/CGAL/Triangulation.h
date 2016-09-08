@@ -235,8 +235,7 @@ description of the nested type `Maximal_dimension` above for an
 explanation of the use of the parameter `dim`. The triangulation stores a copy
 of the geometric traits `gt`.
 */
-Triangulation(const int dim, const Geom_traits & gt =
-Geom_traits());
+Triangulation(int dim, const Geom_traits & gt = Geom_traits());
 
 /*!
 The copy constructor.
@@ -323,13 +322,13 @@ size_type number_of_finite_full_cells() const;
 /*!
 Returns `true` if and only if the vertex `v` is the infinite vertex.
 */
-bool is_infinite(const Vertex_handle v) const;
+bool is_infinite(Vertex_handle v) const;
 
 /*!
 Returns `true` if and only if `c` is incident to the infinite vertex.
 
 */
-bool is_infinite(const Full_cell_handle c) const;
+bool is_infinite(Full_cell_handle c) const;
 
 /*!
 Returns `true` if and only if facet `ft` is incident to the infinite
@@ -455,7 +454,7 @@ p_1, p_2, \ldots, p_d, \infty\}\f$ is returned such that the full cell \f$ (p_1,
 on the other side of facet \f$ (p_1, p_2, \ldots, p_d)\f$).
 */
 Full_cell_handle locate(const Point & query,
-Full_cell_handle hint = Full_cell_handle()) const;
+  Full_cell_handle hint = Full_cell_handle()) const;
 
 /*!
 Same as above but `hint` is a vertex and not a full cell.
@@ -496,7 +495,7 @@ as in the `locate` method above. If the `query` point lies
 `loc_type` is set to `IN_FULL_CELL` and the unique full cell containing
 the `query` point is returned. </DL>
 */
-Full_cell_handle locate(const Point & query, Locate_type & loc_type,
+Full_cell_handle locate(const Point & query, Locate_type loc_type,
 Face & f, Facet & ft, Full_cell_handle hint = Full_cell_handle()) const;
 
 /*!
@@ -505,7 +504,7 @@ The parameter `hint` is ignored if it is a default constructed
 `Vertex_handle()`.
 */
 Full_cell_handle
-locate(const Point & query, Locate_type & loc_type,
+locate(const Point & query, Locate_type loc_type,
 Face & f, Vertex_handle hint) const;
 
 /// @}
@@ -543,13 +542,13 @@ Inserts point `p` in the triangulation. Returns a
 Prior to the actual insertion, `p` is located in the triangulation;
 `hint` is used as a starting place for locating `p`.
 */
-Vertex_handle insert(const Point p, Full_cell_handle hint =
+Vertex_handle insert(const Point &p, Full_cell_handle hint =
 Full_cell_handle());
 
 /*!
 Same as above but uses a vertex `hint` as the starting place for the search.
 */
-Vertex_handle insert(const Point p, Vertex_handle hint);
+Vertex_handle insert(const Point &p, Vertex_handle hint);
 
 /*!
 Inserts point `p` into the triangulation and returns a handle to the
@@ -566,7 +565,7 @@ of `loc_type`, using the full cell `c`.
 
 This method is used internally by the other `insert()` methods.
 */
-Vertex_handle insert(const Point p, Locate_type loc_type, Face & f, Facet & ft, Full_cell_handle c);
+Vertex_handle insert(const Point &p, Locate_type loc_type, Face & f, Facet & ft, Full_cell_handle c);
 
 /*!
 Removes the full cells in the range \f$ C=\f$`[s, e)`, inserts a vertex 

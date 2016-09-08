@@ -59,7 +59,7 @@ at infinity). See the description of the inherited nested type
 the use of the parameter `dim`. The complex stores a copy of the geometric
 traits `gt`.
 */
-Delaunay_triangulation(const int dim, const Geom_traits gt = Geom_traits());
+Delaunay_triangulation(int dim, const Geom_traits &gt = Geom_traits());
 
 /// @}
 
@@ -133,10 +133,10 @@ with `p`.
 The parameters `lt`, `f`, `ft`
 and `c` must be consistent with the localization of point `p` in the
 Delaunay triangulation e.g. by a call to
-`Triangulation::locate(const Point &, Locate_type &, Face &, Vertex_handle) const`.
+`Triangulation::locate(const Point &, Locate_type, Face &, Vertex_handle) const`.
 */
-Vertex_handle insert(const Point & p, const Locate_type lt,
-const Face & f, const Facet & ft, const Full_cell_handle c);
+Vertex_handle insert(const Point & p, Locate_type lt,
+const Face & f, const Facet & ft, Full_cell_handle c);
 
 /// @}
 
@@ -148,8 +148,7 @@ Returns `true` if and only if the point `p` is in (Delaunay)
 conflict with full cell `c` (i.e., the circumscribing ball of
 \f$ c\f$ contains \f$ p\f$ in its interior).
 */
-bool is_in_conflict(const Point & p, Full_cell_const_handle c)
-const;
+bool is_in_conflict(const Point & p, Full_cell_const_handle c) const;
 
 /*!
 Outputs handles to the full cells in conflict with
@@ -161,8 +160,8 @@ A facet `(cc,i)` on the boundary of the conflict zone with
 \pre `c` is in conflict with `p` and `dt`.`current_dimension()`\f$ \geq2\f$.
 */
 template< typename OutputIterator >
-Facet compute_conflict_zone(const Point & p, const Full_cell_handle c,
-OutputIterator out) const;
+Facet compute_conflict_zone(const Point & p, Full_cell_handle c,
+  OutputIterator out) const;
 
 /// @}
 
