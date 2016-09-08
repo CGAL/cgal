@@ -126,15 +126,16 @@ set(TRIM 35)
 #                    configure
 #---------------------------------------------------------------------#
 
-function(configure)
+function(configure type)
   cgal_debug_message(STATUS "---> cmake with -DCGAL_CXX_FLAGS:STRING=\"${TESTSUITE_CXXFLAGS}\"")
-  string(REPLACE "-DTEST_" "" suffix "${TESTSUITE_CXXFLAGS}")
-  string(REPLACE "KERNEL" "K" suffix "${suffix}")
-  string(REPLACE "GEOM_TRAITS" "GT" suffix "${suffix}")
-  string(REPLACE "-DCGAL_ARR_POINT_LOCATION" "POINT_LOCATION" suffix "${suffix}")
-  string(MAKE_C_IDENTIFIER "${suffix}" suffix)
-  cgal_debug_message(STATUS "       suffix: ${suffix}")
-  set(suffix ${suffix} PARENT_SCOPE)
+#  string(REPLACE "-DTEST_" "" suffix "${TESTSUITE_CXXFLAGS}")
+#  string(REPLACE "KERNEL" "K" suffix "${suffix}")
+#  string(REPLACE "GEOM_TRAITS" "GT" suffix "${suffix}")
+#  string(REPLACE "-DCGAL_ARR_POINT_LOCATION" "POINT_LOCATION" suffix "${suffix}")
+#  string(MAKE_C_IDENTIFIER "${suffix}" suffix)
+#  cgal_debug_message(STATUS "       suffix: ${suffix}")
+#  set(suffix ${suffix} PARENT_SCOPE)
+  set(suffix ${type} PARENT_SCOPE)
 #  if eval 'cmake "${CMAKE_GENERATOR}" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
 #                                    -DCGAL_DIR="${CGAL_DIR}" \
 #                                    -DCGAL_CXX_FLAGS:STRING="${TESTSUITE_CXXFLAGS} -I../../include" \
@@ -154,7 +155,11 @@ function(compile_test_with_flags name type flags)
   set(TESTSUITE_CXXFLAGS "${flags}" PARENT_SCOPE)
 #  message("   successful configuration")
 #  message("   successful compilation of ${name} ${type}")
-  configure()
+  if(ARGV3)
+    configure(${ARGV3})
+  else()
+    configure(${type})
+  endif()
   set(suffix ${suffix} PARENT_SCOPE)
 #  set(suffix ${type})
   cgal_arr_2_add_target(${name} ${name}.cpp)
@@ -242,19 +247,11 @@ function(run_test_alt name datafile)
   endif()
   cgal_debug_message(STATUS "#     run_test_alt(${ARGN})")
   cgal_debug_message(STATUS "#       -> ./${name} ${datafile} ${ARGN}")
-  if(new_structure)
-    set(infix " (NEW)")
-  elseif(old_structure)
-    set(infix " (OLD)")
-  else()
-    set(infix " ")
-  endif()
   set(command ${name} ${datafile} ${ARGN})
-  string(MAKE_C_IDENTIFIER "${name}${infix} ${ARGV4}  ${ARGV5}" test_name)
-#  string(MAKE_C_IDENTIFIER "${command}" test_name)
+  string(MAKE_C_IDENTIFIER "${name}  ${ARGV4}  ${ARGV5}" test_name)
   add_test(NAME ${test_name} COMMAND ${command}
     WORKING_DIRECTORY ${CGAL_CURRENT_SOURCE_DIR})
-#  message("   successful execution of ${name}${infix} ${ARGV4} ${ARGV5}")
+#  message("   successful execution of ${name}  ${ARGV4} ${ARGV5}")
   set_property(TEST "${test_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
   cgal_debug_message(STATUS "add test \"${test_name}\": ${name} ${datafile} ${ARGN}")
@@ -310,9 +307,6 @@ function(execute_commands_old_structure data_dir traits_type_name)
 
   # the old structure is default, so this function executes all commands
   # except the commands that are given as arguments
-
-  set(new_structure FALSE)
-  set(old_structure TRUE)
 
   set(commands_indicator_COMPARE 1)
   set(commands_indicator_VERTEX 1)
@@ -405,9 +399,6 @@ function(execute_commands_new_structure data_dir traits_type_name)
 
 # the new structure is not default, so this function executes only
 # commands that are given as arguments
-
-  set(new_structure TRUE)
-  set(old_structure FALSE)
 
   set(commands_indicator_COMPARE 0)
   set(commands_indicator_VERTEX 0)
@@ -728,12 +719,8 @@ endfunction()
 #---------------------------------------------------------------------#
 # compile and run test with traits
 #---------------------------------------------------------------------#
-function(compile_and_run_with_flags)
-  set(name ${ARGV0})
-  set(type ${ARGV1})
-  set(flags ${ARGV2})
-
-  compile_test_with_flags( ${name} ${type} "${flags}")
+function(compile_and_run_with_flags name type flags)
+  compile_test_with_flags( ${name} ${type} "${flags}" ${ARGN})
 #  if [ -n "${SUCCESS}" ] ; then
 #    if [ -n "${DO_RUN}" ] ; then
   run_test_with_flags( ${name} ${type})
@@ -810,7 +797,7 @@ function(test_point_location_segments)
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${SEGMENT_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
-  compile_and_run_with_flags(test_point_location segments "${flags}")
+  compile_and_run_with_flags(test_point_location segments "${flags}" segments)
 endfunction()
 
 # For backward compatibility
@@ -819,7 +806,7 @@ function(test_point_location_segments_version)
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${SEGMENT_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DCGAL_ARR_POINT_LOCATION_VERSION=1")
-  compile_and_run_with_flags(test_point_location segments "${flags}")
+  compile_and_run_with_flags(test_point_location segments "${flags}" segments_version)
 endfunction()
 
 # For backward compatibility
@@ -828,7 +815,7 @@ function(test_point_location_segments_conversion)
   set(kernel ${CARTESIAN_KERNEL})
   set(geom_traits ${SEGMENT_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DCGAL_ARR_POINT_LOCATION_CONVERSION")
-  compile_and_run_with_flags(test_point_location segments "${flags}")
+  compile_and_run_with_flags(test_point_location segments "${flags}" segment_conversion)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1418,7 +1405,7 @@ function(test_algebraic_traits_gmp)
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
-  compile_test_with_flags(test_traits algebraic "${flags}")
+  compile_test_with_flags(test_traits algebraic "${flags}" algebraic_traits_gmp)
   #  if [ -n "${SUCCESS}" ] ; then
   execute_commands_new_structure(algebraic algebraic_traits_gmp
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
@@ -1441,7 +1428,7 @@ function(test_algebraic_traits_leda)
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
-  compile_test_with_flags(test_traits algebraic "${flags}")
+  compile_test_with_flags(test_traits algebraic "${flags}" algebraic_traits_leda)
   #  if [ -n "${SUCCESS}" ] ; then
   execute_commands_new_structure(algebraic algebraic_traits_leda
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
@@ -1465,7 +1452,7 @@ function(test_algebraic_traits_core)
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})
   set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
 
-  compile_test_with_flags(test_traits algebraic "${flags}")
+  compile_test_with_flags(test_traits algebraic "${flags}" algebraic_traits_core)
   #  if [ -n "${SUCCESS}" ] ; then
   execute_commands_new_structure(algebraic algebraic_traits_core
     COMPARE COMPARE_Y_AT_X COMPARE_Y_AT_X_RIGHT COMPARE_Y_AT_X_LEFT
@@ -1478,7 +1465,7 @@ function(test_algebraic_traits_core)
 endfunction()
 
 
-configure()
+configure("")
 compile_and_run(construction_test_suite_generator)
 
 test_segment_traits()
