@@ -454,7 +454,7 @@ p_1, p_2, \ldots, p_d, \infty\}\f$ is returned such that the full cell \f$ (p_1,
 on the other side of facet \f$ (p_1, p_2, \ldots, p_d)\f$).
 */
 Full_cell_handle locate(const Point & query,
-  Full_cell_handle hint = Full_cell_handle()) const;
+  Full_cell_const_handle hint = Full_cell_handle()) const;
 
 /*!
 Same as above but `hint` is a vertex and not a full cell.

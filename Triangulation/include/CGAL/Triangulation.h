@@ -139,20 +139,20 @@ public:
     typedef Maximal_dimension_                      Maximal_dimension;
     typedef typename Geom_traits::Point_d           Point;
 
-    typedef typename TDS::Vertex_handle            Vertex_handle;
-    typedef typename TDS::Vertex_iterator          Vertex_iterator;
-    typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
-    typedef typename TDS::Vertex_const_iterator    Vertex_const_iterator;
+    typedef typename TDS::Vertex_handle             Vertex_handle;
+    typedef typename TDS::Vertex_iterator           Vertex_iterator;
+    typedef typename TDS::Vertex_const_handle       Vertex_const_handle;
+    typedef typename TDS::Vertex_const_iterator     Vertex_const_iterator;
 
-    typedef typename TDS::Full_cell_handle           Full_cell_handle;
-    typedef typename TDS::Full_cell_iterator         Full_cell_iterator;
-    typedef typename TDS::Full_cell_const_handle     Full_cell_const_handle;
-    typedef typename TDS::Full_cell_const_iterator   Full_cell_const_iterator;
+    typedef typename TDS::Full_cell_handle          Full_cell_handle;
+    typedef typename TDS::Full_cell_iterator        Full_cell_iterator;
+    typedef typename TDS::Full_cell_const_handle    Full_cell_const_handle;
+    typedef typename TDS::Full_cell_const_iterator  Full_cell_const_iterator;
     
-    typedef typename TDS::Facet_iterator           Facet_iterator;
+    typedef typename TDS::Facet_iterator            Facet_iterator;
 
-    typedef typename TDS::size_type                size_type;
-    typedef typename TDS::difference_type          difference_type;
+    typedef typename TDS::size_type                 size_type;
+    typedef typename TDS::difference_type           difference_type;
 
     /// The type of location a new point is found lying on
     enum  Locate_type
@@ -182,18 +182,18 @@ public:
 
 protected: // DATA MEMBERS
 
-    Triangulation_ds                    tds_;
-    const Geom_traits                   kernel_;
-    Vertex_handle                       infinity_;
-    mutable std::vector<Oriented_side>  orientations_;
+    Triangulation_ds                            tds_;
+    const Geom_traits                           kernel_;
+    Vertex_handle                               infinity_;
+    mutable std::vector<Oriented_side>          orientations_;
     mutable boost::optional<Flat_orientation_d> flat_orientation_;
     // The user can specify a Flat_orientation_d object to be used for 
     // orienting simplices of a specific dimension 
     // (= preset_flat_orientation_.first)
     // preset_flat_orientation_.first = numeric_limits<int>::max() otherwise)
-    std::pair<int, const Flat_orientation_d *> preset_flat_orientation_;
+    std::pair<int, const Flat_orientation_d *>  preset_flat_orientation_;
     // for stochastic walk in the locate() function:
-    mutable Random                      rng_;
+    mutable Random                              rng_;
 #ifdef CGAL_TRIANGULATION_STATISTICS
     mutable unsigned long walk_size_;
 #endif
