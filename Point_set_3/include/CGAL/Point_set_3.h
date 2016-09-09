@@ -132,18 +132,38 @@ public:
       ++pm.ind;
     }
 
-    friend const value_type& get (const Property_pmap& pm, const std::size_t& i)
+    friend const reference get (const Property_pmap& pm, const std::size_t& i)
     {
       return ((*(pm.prop))[i]);
     }
-    // friend reference get (Property_pmap& pm, std::size_t& i)
-    // {
-    //   return ((*(pm.prop))[i]);
-    // }
+  };
+
+
+  template <typename Property>
+  class Const_property_pmap
+  {
+  public:
+    typedef std::size_t key_type;
+    typedef typename Property::value_type value_type;
+    typedef value_type& reference;
+    typedef boost::lvalue_property_map_tag category;
+    
+    const Point_set* ps;
+    const Property* prop;
+
+    Const_property_pmap(const Point_set* ps = NULL,
+                        const Property* prop = NULL)
+      : ps(ps), prop(prop) {}
+
+    friend const reference get (const Const_property_pmap& pm, const std::size_t& i)
+    {
+      return ((*(pm.prop))[i]);
+    }
   };
 
   typedef Property_back_inserter<Index_prop> Index_back_inserter;
   typedef Property_back_inserter<Point_prop> Point_back_inserter;
+  typedef Const_property_pmap<Point_prop> Const_point_pmap;
   typedef Property_pmap<Point_prop> Point_pmap;
   typedef Property_pmap<Vector_prop> Normal_pmap;
 
@@ -288,6 +308,10 @@ public:
   {
     return Point_pmap (this, &m_points, size());
   }
+  Const_point_pmap point_pmap () const
+  {
+    return Const_point_pmap (this, &m_points);
+  }
   
   Normal_pmap normal_pmap ()
   {
@@ -370,7 +394,6 @@ public:
   {
     return property (name, index);
   }
-
 
 private:
 
