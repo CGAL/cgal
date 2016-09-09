@@ -122,11 +122,11 @@ public:
 
   const_iterator begin_or_selection_begin() const
   {
-    return (m_nb_selected == 0 ? begin() : first_selected());
+    return (this->m_nb_removed == 0 ? begin() : first_selected());
   }
   iterator begin_or_selection_begin()
   {
-    return (m_nb_selected == 0 ? begin() : first_selected());
+    return (this->m_nb_removed == 0 ? begin() : first_selected());
   }
 
 
