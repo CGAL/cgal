@@ -204,6 +204,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       }
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
+            
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         point_item->point_set()->push_back((*points)[i]);
       
@@ -274,7 +275,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       //names[i] = ss.str(		
       point_item->setName(QString::fromStdString(ss.str()));
-      point_item->set_has_normals(true);
       point_item->setRenderingMode(item->renderingMode());
 
       if (dialog.generate_subset()){

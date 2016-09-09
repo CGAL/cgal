@@ -243,7 +243,6 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
                                                   << std::endl;
     }
 
-    item->set_has_normals(true);
     item->setRenderingMode(PointsPlusNormals);
 
     //***************************************
@@ -261,12 +260,6 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
                                    points->point_pmap(),
                                    points->normal_pmap(),
                                    dialog.orient_neighbors(), k);
-
-        //indicates that the point set has normals
-        if (first_unoriented_point != points->begin_or_selection_begin()){
-          item->set_has_normals(true);
-          item->setRenderingMode(PointsPlusNormals);
-        }
 
         std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
         std::size_t memory = CGAL::Memory_sizer().virtual_size();

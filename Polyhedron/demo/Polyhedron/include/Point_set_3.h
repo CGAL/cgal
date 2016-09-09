@@ -203,7 +203,6 @@ public:
       this->m_indices[i] = i;
   }
 
-  
     /// Gets the bounding box.
   Iso_cuboid bounding_box() const
   {

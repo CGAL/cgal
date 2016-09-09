@@ -32,8 +32,7 @@
 struct Scene_points_with_normal_item_priv
 {
   Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
-    :m_points(new Point_set),
-      m_has_normals(false)
+    :m_points(new Point_set)
   {
     item = parent;
     nb_points = 0;
@@ -47,8 +46,7 @@ struct Scene_points_with_normal_item_priv
     point_Slider->setMaximum(25);
   }
   Scene_points_with_normal_item_priv(const Scene_points_with_normal_item& toCopy, Scene_points_with_normal_item* parent)
-    : m_points(new Point_set(*toCopy.d->m_points)),
-      m_has_normals(toCopy.d->m_has_normals)
+    : m_points(new Point_set(*toCopy.d->m_points))
   {
     item = parent;
     normal_Slider = new QSlider(Qt::Horizontal);
@@ -59,8 +57,7 @@ struct Scene_points_with_normal_item_priv
     point_Slider->setMaximum(25);
   }
   Scene_points_with_normal_item_priv(const Polyhedron& input_mesh, Scene_points_with_normal_item* parent)
-    : m_points(new Point_set),
-      m_has_normals(true)
+    : m_points(new Point_set)
   {
     item = parent;
     nb_points = 0;
@@ -106,7 +103,6 @@ struct Scene_points_with_normal_item_priv
       NbOfVbos
   };
   Point_set* m_points;
-  bool m_has_normals;
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
@@ -141,7 +137,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 {
 
   d = new Scene_points_with_normal_item_priv(toCopy, this);
-  if (d->m_has_normals)
+  if (has_normals())
     {
         setRenderingMode(PointsPlusNormals);
         is_selected = true;
@@ -286,8 +282,8 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       positions_selected_normals.reserve(m_points->nb_selected_points() * 3);
     }
     //Shuffle container to allow quick display random points
-    std::random_shuffle (m_points->begin(), m_points->first_selected());
-    std::random_shuffle (m_points->first_selected(), m_points->end());
+    // std::random_shuffle (m_points->begin(), m_points->first_selected());
+    // std::random_shuffle (m_points->first_selected(), m_points->end());
     
     //The points
     {
@@ -310,8 +306,9 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     }
 
     //The lines
+    if (item->has_normals())
     {
-        // Stock normals
+        // Store normals
         Kernel::Sphere_3 region_of_interest = m_points->region_of_interest();
 
 #ifdef LINK_WITH_TBB
@@ -816,16 +813,7 @@ void Scene_points_with_normal_item::setRenderingMode(RenderingMode m)
     }
 }
 
-bool Scene_points_with_normal_item::has_normals() const { return d->m_has_normals; }
-
-void Scene_points_with_normal_item::set_has_normals(bool b) {
-  if (b!=d->m_has_normals){
-    d->m_has_normals=b;
-    //reset the context menu
-    defaultContextMenu->deleteLater();
-    this->defaultContextMenu = 0;
-  }
-}
+bool Scene_points_with_normal_item::has_normals() const { return d->m_points->has_normals(); }
 
 void Scene_points_with_normal_item::invalidateOpenGLBuffers()
 {

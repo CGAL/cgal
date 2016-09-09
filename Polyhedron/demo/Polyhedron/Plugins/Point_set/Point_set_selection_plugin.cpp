@@ -466,7 +466,8 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
     new_item->setName(QString("%1 (selected points)").arg(point_set_item->name()));
-    new_item->set_has_normals (point_set_item->has_normals());
+    if (point_set_item->has_normals())
+      new_item->point_set()->add_normal_property();
     new_item->setColor(point_set_item->color());
     new_item->setRenderingMode(point_set_item->renderingMode());
     new_item->setVisible(point_set_item->visible());
@@ -475,7 +476,13 @@ public Q_SLOTS:
     for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	it != point_set_item->point_set()->end(); ++ it) {
       if (point_set_item->point_set()->is_selected (it))
-	new_item->point_set()->push_back(point_set_item->point_set()->point(*it));
+        {
+          if (point_set_item->has_normals())
+            new_item->point_set()->push_back(point_set_item->point_set()->point(*it),
+                                             point_set_item->point_set()->normal(*it));
+          else
+            new_item->point_set()->push_back(point_set_item->point_set()->point(*it));
+        }
     }
     new_item->resetSelection();
     new_item->invalidateOpenGLBuffers();

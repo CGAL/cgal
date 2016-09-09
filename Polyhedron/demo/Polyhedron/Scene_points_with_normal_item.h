@@ -70,7 +70,6 @@ public:
   void computes_local_spacing(int k);
 
   bool has_normals() const;
-  void set_has_normals(bool b);
 
 public Q_SLOTS:
   // Delete selection

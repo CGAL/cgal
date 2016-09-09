@@ -605,19 +605,12 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
       Scene_points_with_normal_item* new_item = NULL;
       if (!(dialog.interpolate()))
 	{
-	  new_item = new Scene_points_with_normal_item();
+	  new_item = new Scene_points_with_normal_item(*pts_item);
 	  new_item->setName(QString("%1 (preprocessed)").arg(pts_item->name()));
-	  new_item->set_has_normals (pts_item->has_normals());
-	  new_item->setColor(pts_item->color());
-	  new_item->setRenderingMode(pts_item->renderingMode());
-	  new_item->setVisible(pts_item->visible());
 	  new_item->resetSelection();
 	  new_item->invalidateOpenGLBuffers();
 
 	  points = new_item->point_set();
-	  std::copy (boost::make_transform_iterator(points->begin_or_selection_begin(), SurfaceReconstruction::Point_set_make_point(*points)),
-                     boost::make_transform_iterator(points->end(), SurfaceReconstruction::Point_set_make_point(*points)),
-                     points->point_back_inserter());
 	}
 
       std::cerr << "Analysing isotropy of point set... ";
@@ -658,7 +651,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	  std::cerr << "Denoising point set... ";
 	  time.restart();
 	  SurfaceReconstruction::smooth_point_set (*points, noise_scale);
-          new_item->set_has_normals (false);
+          new_item->point_set()->remove_normal_property();
 	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	}
 
@@ -725,7 +718,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 
 		  SurfaceReconstruction::compute_normals (*points, noise_scale);
 		  
-		  new_item->set_has_normals (true);
+		  new_item->point_set()->add_normal_property();
 		  new_item->setRenderingMode(PointsPlusNormals);
 		  
 		  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -883,10 +876,10 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
       if (!(point_set_item->has_normals()))
         {
           std::cerr << "Estimation of normal vectors... ";
-
+          points->add_normal_property();
           SurfaceReconstruction::compute_normals (*points, 12);
 		  
-          point_set_item->set_has_normals (true);
+
           point_set_item->setRenderingMode(PointsPlusNormals);
 
         }
