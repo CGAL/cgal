@@ -11,3 +11,5 @@ qt5_add_resources (CGAL_Qt5_RESOURCE_FILES
   ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/File.qrc
   ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/Triangulation_2.qrc)
 
+set(CGAL_Qt5_extras)
+list(APPEND CGAL_Qt5_extras ${CGAL_Qt5_MOC_FILES} ${CGAL_Qt5_RESOURCE_FILES})

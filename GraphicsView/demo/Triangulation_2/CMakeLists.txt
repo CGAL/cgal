@@ -26,7 +26,7 @@ add_definitions(-DQT_NO_KEYWORDS)
 
 # The executable itself.
 add_executable( Constrained_Delaunay_triangulation_2
-  Constrained_Delaunay_triangulation_2.cpp )
+  Constrained_Delaunay_triangulation_2.cpp  ${CGAL_Qt5_extras})
 target_link_libraries( Constrained_Delaunay_triangulation_2
   PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 target_include_directories( Constrained_Delaunay_triangulation_2
@@ -39,7 +39,8 @@ add_to_cached_list(CGAL_EXECUTABLE_TARGETS Constrained_Delaunay_triangulation_2)
 #--------------------------------
 
 # The executable itself.
-add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp )
+add_executable  ( Delaunay_triangulation_2
+  Delaunay_triangulation_2.cpp  ${CGAL_Qt5_extras})
 target_link_libraries( Delaunay_triangulation_2
   PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 
@@ -50,7 +51,8 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS Delaunay_triangulation_2 )
 #--------------------------------
 
 # The executable itself.
-add_executable  ( Regular_triangulation_2 Regular_triangulation_2.cpp )
+add_executable  ( Regular_triangulation_2
+  Regular_triangulation_2.cpp  ${CGAL_Qt5_extras})
 target_link_libraries(Regular_triangulation_2
   PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 
