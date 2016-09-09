@@ -18,9 +18,6 @@ typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 int main (int argc, char** argv)
 {
-
-
-
   std::vector<Point_set::Item> indices;
   std::ifstream f (argc > 1 ? argv[1] : "data/data.pwn");
 

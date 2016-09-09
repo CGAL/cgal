@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2016  INRIA (France).
+// Copyright (c) 2016  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud
+// Author(s)     : Simon Giraudot
 
 #ifndef CGAL_POINT_SET_3_H
 #define CGAL_POINT_SET_3_H
@@ -31,7 +31,7 @@ namespace CGAL {
 
 /*!
 
-  \ingroup PkgPointSetProcessing
+  \ingroup PkgPointSet3
 
   \brief A collection of 3D points.
 
