@@ -892,8 +892,8 @@ endif()
 
 
 install(FILES
+  ${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake
   ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
-  ${CMAKE_BINARY_DIR}/config/CGALConfigVersion.cmake
   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
 if(CGAL_INSTALL_MAN_DIR)

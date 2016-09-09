@@ -421,10 +421,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
-    configure_file(
-      "${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"
-      "${CMAKE_BINARY_DIR}/config/CGALConfigVersion.cmake"
-      COPYONLY)
 
     #write prefix exceptions
     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")
