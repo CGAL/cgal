@@ -411,11 +411,20 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( create_CGALconfig_files )
 
+    include(CMakePackageConfigHelpers)
+
     # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in"  "${CMAKE_BINARY_DIR}/CGALConfig.cmake"        @ONLY)
+    write_basic_package_version_file("${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"
+      VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}"
+      COMPATIBILITY AnyNewerVersion)
 
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
+    configure_file(
+      "${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"
+      "${CMAKE_BINARY_DIR}/config/CGALConfigVersion.cmake"
+      COPYONLY)
 
     #write prefix exceptions
     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")

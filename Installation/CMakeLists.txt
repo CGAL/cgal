@@ -891,7 +891,10 @@ if ( ZLIB_IN_AUXILIARY )
 endif()
 
 
-install(FILES ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(FILES
+  ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
+  ${CMAKE_BINARY_DIR}/config/CGALConfigVersion.cmake
+  DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
 if(CGAL_INSTALL_MAN_DIR)
   install(FILES auxiliary/cgal_create_cmake_script.1 DESTINATION ${CGAL_INSTALL_MAN_DIR} )
