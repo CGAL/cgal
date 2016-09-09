@@ -45,7 +45,9 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" )
 
-  if(TARGET CGAL)
+  if(TARGET CGAL::CGAL)
+    add_to_list( CGAL_LIBRARIES CGAL::CGAL )
+  elseif(TARGET CGAL)
     add_to_list( CGAL_LIBRARIES CGAL )
   else()
     add_to_list( CGAL_LIBRARIES ${CGAL_LIBRARY} )
