@@ -2051,8 +2051,8 @@ private: //------------------------------------------------------- private data
     sm.reserve(n,2*f,e);
     P p;
     Vector_3 v;
-    typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
-    typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
+    typename Properties::template Property_map<Vertex_index,CGAL::Color> vcolor;
+    typename Properties::template Property_map<Vertex_index,Vector_3> vnormal;
     bool vcolored = false, v_has_normals = false;
 
     if((off == "NOFF") || (off == "CNOFF")){
@@ -2094,7 +2094,7 @@ private: //------------------------------------------------------- private data
     std::size_t d;
 
     bool fcolored = false;
-    typename Mesh::template Property_map<Face_index,CGAL::Color> fcolor;
+    typename Properties::template Property_map<Face_index,CGAL::Color> fcolor;
 
     for(int i=0; i < f; i++){
       is >> sm_skip_comments;
