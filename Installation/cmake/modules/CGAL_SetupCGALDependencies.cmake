@@ -28,6 +28,10 @@ function(CGAL_setup_CGAL_dependencies target)
   if(WITH_LEDA)
     use_CGAL_LEDA_support(${target} ${keyword})
   endif()
+  
+  if (CGAL_HEADER_ONLY)
+    target_compile_definitions(${target} ${keyword} CGAL_HEADER_ONLY=1)
+  endif()
 
   use_CGAL_Boost_support(${target} ${keyword})
   foreach(dir ${CGAL_INCLUDE_DIRS})
