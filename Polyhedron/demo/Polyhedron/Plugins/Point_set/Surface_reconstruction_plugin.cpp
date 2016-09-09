@@ -93,9 +93,11 @@ namespace SurfaceReconstruction
   typedef Kernel::Point_3 Point;
   typedef Kernel::Vector_3 Vector;
   // types for K nearest neighbors search
-  typedef CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
+  typedef CGAL::Search_traits_adapter <std::size_t, Point_set::Const_point_pmap, SearchTraits_3> Search_traits;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;
+  typedef Neighbor_search::Distance Distance;
   typedef Neighbor_search::iterator Search_iterator;
 
   typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
@@ -123,7 +125,8 @@ namespace SurfaceReconstruction
   
   unsigned int scale_of_anisotropy (const Point_set& points, double& size)
   {
-    Tree tree(points.begin_or_selection_begin(), points.end());
+    Tree tree(points.begin_or_selection_begin(), points.end(),
+              Tree::Splitter(), Search_traits (points.point_pmap()));
     
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
@@ -137,10 +140,11 @@ namespace SurfaceReconstruction
     generate_scales (std::back_inserter (scales));
 
     std::vector<unsigned int> chosen;
-
+    Distance tr_dist (points.point_pmap());
+    
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i],scales.back());
+    	Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
 	double current = 0.;
     	unsigned int nb = 0;
     	std::size_t index = 0;
@@ -180,7 +184,7 @@ namespace SurfaceReconstruction
     size = 0.;
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i], aniso_scale);
+    	Neighbor_search search(tree, subset[i], aniso_scale, 0, true, tr_dist);
 	size += std::sqrt ((-- search.end())->second);
       }
     size /= subset.size();
@@ -191,7 +195,9 @@ namespace SurfaceReconstruction
   
   unsigned int scale_of_noise (const Point_set& points, double& size)
   {
-    Tree tree(points.begin_or_selection_begin(), points.end());
+    Tree tree(points.begin_or_selection_begin(), points.end(),
+              Tree::Splitter(), Search_traits (points.point_pmap()));
+    Distance tr_dist (points.point_pmap());
     
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
@@ -208,7 +214,7 @@ namespace SurfaceReconstruction
     
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i],scales.back());
+    	Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
 	double current = 0.;
     	unsigned int nb = 0;
     	std::size_t index = 0;
@@ -245,7 +251,7 @@ namespace SurfaceReconstruction
     size = 0.;
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i], noise_scale);
+    	Neighbor_search search(tree, subset[i], noise_scale, 0, true, tr_dist);
 	size += std::sqrt ((-- search.end())->second);
       }
     size /= subset.size();
@@ -317,7 +323,7 @@ namespace SurfaceReconstruction
                 if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
                   {
                     map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = (points.begin_or_selection_begin() + (*it)[ind])->position();
+                    Point p = points.point(points.begin_or_selection_begin() + (*it)[ind]);
                     new_item->new_vertex (p.x (), p.y (), p.z ());
                     
                     if (generate_smooth)
@@ -373,7 +379,7 @@ namespace SurfaceReconstruction
                 if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
                   {
                     map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = (points.begin_or_selection_begin() + (*it)[ind])->position();
+                    Point p = points.point(points.begin_or_selection_begin() + (*it)[ind]);
                     new_item->new_vertex (p.x (), p.y (), p.z ());
                     
                     if (generate_smooth)

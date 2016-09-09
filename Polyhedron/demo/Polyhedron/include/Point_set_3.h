@@ -189,6 +189,21 @@ public:
     invalidate_bounds();
   }
 
+  void merge_with (const Point_set_3& other)
+  {
+    if (!(other.has_normals()) && other.has_normals())
+      this->add_normal_property();
+
+    this->m_base.transfer (other.m_base);
+
+    unselect_all();
+
+    // Reset indices
+    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
+      this->m_indices[i] = i;
+  }
+
+  
     /// Gets the bounding box.
   Iso_cuboid bounding_box() const
   {

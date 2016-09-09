@@ -41,8 +41,8 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
     QAction* actionDetect;
 
-  typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
-  typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
+  typedef Point_set_3<Kernel>::Point_pmap PointPMap;
+  typedef Point_set_3<Kernel>::Normal_pmap NormalPMap;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;

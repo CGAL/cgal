@@ -158,7 +158,7 @@ public Q_SLOTS:
         Point_set::iterator point_it = point_set->begin() + pt;
         for (std::size_t i = 0; i < inside_testers.size(); ++i)
         {
-        CGAL::Bounded_side res = (*inside_testers[i])(point_it->position());
+        CGAL::Bounded_side res = (*inside_testers[i])(point_set->point(point_it));
 
         if( (inside      && res == CGAL::ON_BOUNDED_SIDE) ||
             (on_boundary && res == CGAL::ON_BOUNDARY)     ||
