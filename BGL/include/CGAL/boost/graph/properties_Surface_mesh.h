@@ -290,7 +290,7 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<Point>& g,
   typedef CGAL::Surface_mesh<Point> SM;
   CGAL_assertion(g.is_valid(x));
   typename CGAL::Properties::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor, 
-                    K> prop = get(p, g);
+                    Point> prop = get(p, g);
   prop[x] = point;
 }
 
