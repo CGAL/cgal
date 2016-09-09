@@ -27,6 +27,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   if( NOT "${CGAL_INSTALLED_SCM_BRANCH_NAME}" STREQUAL "" )
     include(CGAL_SCM)
+    CGAL_detect_git(${CMAKE_SOURCE_DIR})
     if ( NOT "${CGAL_SCM_BRANCH_NAME}" STREQUAL "" )
       message ( STATUS "Code taken from Git branch: ${CGAL_SCM_BRANCH_NAME}" )
       if ( NOT "${CGAL_SCM_BRANCH_NAME}" STREQUAL "${CGAL_INSTALLED_SCM_BRANCH_NAME}")
