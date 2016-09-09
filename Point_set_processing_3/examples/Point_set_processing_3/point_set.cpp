@@ -34,7 +34,7 @@ int main (int argc, char** argv)
                                     Kernel());
   
   CGAL::grid_simplify_point_set (point_set.begin (), point_set.end (),
-                                 //                                 point_set.point_pmap(),
+                                 point_set.point_pmap(),
                                  0.1);
 
   typedef CGAL::cpp11::array<unsigned char, 3> Color;
