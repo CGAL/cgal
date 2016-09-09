@@ -30,4 +30,10 @@ function(CGAL_setup_CGAL_dependencies target)
   endif()
 
   use_CGAL_Boost_support(${target} ${keyword})
+  foreach(dir ${CGAL_INCLUDE_DIRS})
+    target_include_directories(${target} ${keyword}
+      $<BUILD_INTERFACE:${dir}>)
+  endforeach()
+  target_include_directories(${target} ${keyword}
+    $<INSTALL_INTERFACE:include/CGAL>)
 endfunction()
