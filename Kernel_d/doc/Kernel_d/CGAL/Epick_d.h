@@ -37,6 +37,9 @@ icc 15 work.
 
 \cgalModels `Kernel_d`
 \cgalModels `DelaunayTriangulationTraits`
+\cgalModels `RegularTriangulationTraits`
+\cgalModels `SearchTraits`
+\cgalModels `RangeSearchTraits`
 
 \sa `CGAL::Cartesian_d<FieldNumberType>`
 \sa `CGAL::Homogeneous_d<RingNumberType>`
@@ -72,6 +75,21 @@ double operator[](int i)const;
 Cartesian_const_iterator_d cartesian_begin()const;
 /*! returns an iterator pointing beyond the last Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_end()const;
+};
+
+/*!
+represents a weighted point in the Euclidean space
+\cgalModels `DefaultConstructible`
+\cgalModels `Assignable`
+*/
+class Weighted_point_d {
+public:
+/*! introduces a weighted point with point p and weight w. */
+Weighted_point_d(const Point_d& p, const double& w);
+/*! extracts the point of a weighted point. */
+Point_d point() const;
+/*! extracts the weight of a weighted point. */
+double weight() const;
 };
 
 /*! \cgalModels `Kernel_d::Center_of_sphere_d`

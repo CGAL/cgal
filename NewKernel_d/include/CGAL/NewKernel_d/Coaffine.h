@@ -89,6 +89,7 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 		std::vector<int>& rest=o.rest; rest.reserve(dim+1);
 		for(int i=0; i<dim+1; ++i) rest.push_back(i);
 		for( ; f != e ; ++col, ++f ) {
+      //std::cerr << "(*f)[0]=" << (*f)[0] << std::endl;
 			Point const&p=*f;
 			// use a coordinate iterator instead?
 			for(int i=0; i<dim; ++i) coord(col, i) = ccc(p, i);
@@ -268,11 +269,61 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 	}
 };
 
+template<class R_> struct In_flat_power_side_of_power_sphere_raw : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(In_flat_power_side_of_power_sphere_raw)
+        typedef R_ R;
+	typedef typename Get_type<R, FT_tag>::type FT;
+        typedef typename Get_type<R, Point_tag>::type Point;
+	typedef typename Get_type<R, Orientation_tag>::type result_type;
+	typedef typename Increment_dimension<typename R::Default_ambient_dimension,2>::type D1;
+	typedef typename Increment_dimension<typename R::Max_ambient_dimension,2>::type D2;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Square_matrix Matrix;
+
+        template<class Iter, class IterW, class Wt>
+        result_type operator()(Flat_orientation const&o, Iter f, Iter e, IterW fw, Point const&x, Wt const&w) const {
+		// TODO: can't work in the projection, but we should at least remove the row of 1s.
+                typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+                typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+                int d=pd(*f);
+                Matrix m(d+2,d+2);
+                int i=0;
+		for(;f!=e;++f,++fw,++i) {
+			Point const& p=*f;
+			m(i,0)=1;
+			m(i,d+1)=-*fw;
+			for(int j=0;j<d;++j){
+				m(i,j+1)=c(p,j);
+				m(i,d+1)+=CGAL_NTS square(m(i,j+1));
+			}
+		}
+		for(std::vector<int>::const_iterator it = o.rest.begin(); it != o.rest.end() /* i<d+1 */; ++i, ++it) {
+			m(i,0)=1;
+			for(int j=0;j<d;++j){
+				m(i,j+1)=0; // unneeded if the matrix is initialized to 0
+			}
+			if(*it != d) m(i,d+1)=m(i,1+*it)=1;
+			else m(i,d+1)=0;
+		}
+		m(d+1,0)=1;
+		m(d+1,d+1)=-w;
+		for(int j=0;j<d;++j){
+			m(d+1,j+1)=c(x,j);
+			m(d+1,d+1)+=CGAL_NTS square(m(d+1,j+1));
+		}
+
+		result_type ret = -LA::sign_of_determinant(CGAL_MOVE(m));
+		if(o.reverse) ret=-ret;
+		return ret;
+	}
+};
+
 
 }
 CGAL_KD_DEFAULT_TYPE(Flat_orientation_tag,(CGAL::CartesianDKernelFunctors::Flat_orientation),(),());
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_orientation_tag,(CartesianDKernelFunctors::In_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 CGAL_KD_DEFAULT_FUNCTOR(In_flat_side_of_oriented_sphere_tag,(CartesianDKernelFunctors::In_flat_side_of_oriented_sphere<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
+CGAL_KD_DEFAULT_FUNCTOR(In_flat_power_side_of_power_sphere_raw_tag,(CartesianDKernelFunctors::In_flat_power_side_of_power_sphere_raw<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Construct_flat_orientation_tag,(CartesianDKernelFunctors::Construct_flat_orientation<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag,In_flat_orientation_tag));
 CGAL_KD_DEFAULT_FUNCTOR(Contained_in_affine_hull_tag,(CartesianDKernelFunctors::Contained_in_affine_hull<K>),(Point_tag),(Compute_point_cartesian_coordinate_tag,Point_dimension_tag));
 }

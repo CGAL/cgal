@@ -22,6 +22,10 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/type_traits/is_empty.hpp>
+#include <boost/type_traits/is_reference.hpp>
+#include <boost/type_traits/is_integral.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
 #include <CGAL/Default.h>
 #include <utility>
 
@@ -54,23 +58,31 @@ template<class T> struct Functor_as_base<T,true> : public T {
 template <typename Derived, typename F, typename Iter, typename Ref, typename Val>
 class transforming_iterator_helper
 {
+	typedef std::iterator_traits<Iter> Iter_traits;
+	typedef typename Iter_traits::reference Iter_ref;
 	typedef typename Default::Get<Ref,
 #ifdef CGAL_CXX11
-		decltype(std::declval<F>()(std::declval<typename std::iterator_traits<Iter>::reference>()))
+		decltype(std::declval<F>()(std::declval<Iter_ref>()))
 #else
-		typename boost::result_of<F(typename std::iterator_traits<Iter>::value_type)>::type
+		typename boost::result_of<F(typename Iter_traits::value_type)>::type
 	// should be reference instead of value_type
 #endif
-			>::type reference;
+			>::type reference_;
 
-	typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference>::type>::type>::type value_type;
+	typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference_>::type>::type>::type value_type;
+
+	// Crappy heuristic. If we have *it that returns a Weighted_point and F that returns a reference to the Point contained in the Weighted_point it takes as argument, we do NOT want the transformed iterator to return a reference to the temporary *it. On the other hand, if *it returns an int n, and F returns a reference to array[n] it is not so good to lose the reference. This probably should be done elsewhere and should at least be made optional...
+	typedef typename boost::mpl::if_<
+	  boost::mpl::or_<boost::is_reference<Iter_ref>,
+			  boost::is_integral<Iter_ref> >,
+	  reference_, value_type>::type reference;
 
 	public:
 	typedef boost::iterator_adaptor<
 		Derived,
 		Iter,
 		value_type,
-		typename std::iterator_traits<Iter>::iterator_category,
+		typename Iter_traits::iterator_category,
 		reference
 			> type;
 };

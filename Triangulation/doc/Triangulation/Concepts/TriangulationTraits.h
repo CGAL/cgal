@@ -5,7 +5,7 @@
 
 This concept describes the geometric types and predicates required to build
 a triangulation. It corresponds to the first template parameter of the class 
-`CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>`.
+`CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`.
 
 \cgalRefines `SpatialSortingTraits_d`
 
@@ -30,8 +30,8 @@ A type representing the dimension of the predicates
 (but not necessarily the one of `Point_d`). If \f$ n \f$ is the number of
 points required by the `Orientation_d` predicate, then 
 `Dimension` \f$ = n - 1\f$.
-It can be static (`Dimension`=`CGAL::``Dimension_tag<int dim>`) or 
-dynamic (`Dimension`=`CGAL::``Dynamic_dimension_tag`).
+It can be static (`Dimension`=`CGAL::Dimension_tag<int dim>`) or 
+dynamic (`Dimension`=`CGAL::Dynamic_dimension_tag`).
 */ 
 typedef unspecified_type Dimension;
 
@@ -48,7 +48,7 @@ templated operator
 The operator returns the orientation of the simplex defined by the points 
 in the range `[start, end)`; the value can be 
 `CGAL::POSITIVE`, `CGAL::NEGATIVE` or `CGAL::COPLANAR`.
-\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, then `std::distance(start,end)=D+1`.
+\pre If `Dimension`=`CGAL::Dimension_tag<D>`, then `std::distance(start,end)=D+1`.
 */ 
 typedef unspecified_type Orientation_d; 
 
@@ -59,7 +59,7 @@ the templated operator
 The operator returns `true` if and only if point `p` is 
 contained in the affine space spanned by the points in the range `[start, end)`. That affine space is also called the <I>affine hull</I> of the points 
 in the range.
-\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
+\pre If `Dimension`=`CGAL::Dimension_tag<D>`, 
 then `std::distance(start,end)=D+1`.
 The points in the range 
 must be affinely independent. Note that in the CGAL kernels, this predicate
@@ -97,7 +97,7 @@ the range `R=[start, end)` can be oriented in two different ways,
 the operator 
 returns an object that allow to orient that flat so that `R=[start, end)` 
 defines a positive simplex.
-\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
+\pre If `Dimension`=`CGAL::Dimension_tag<D>`, 
 then `std::distance(start,end)=D+1`.
 The points in range
 `[start,end)` must be affinely independent.
@@ -131,13 +131,15 @@ the same and `LARGER` otherwise.
 */ 
 typedef unspecified_type Compare_lexicographically_d; 
 
-/// @} 
+/// @}
 
 /// \name Creation 
 /// @{
 
 /*! 
-The default constructor. 
+The default constructor (optional).
+This is not required when an instance of the traits is provided
+to the constructor of `CGAL::Triangulation`.
 */ 
 TriangulationTraits(); 
 
