@@ -15,30 +15,9 @@ set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 # The code for including exported targets is different from
 # CGAL_Config_install.cmake. We do not have separate export files in
 # an installed version and we need to make sure that we are not
-# currently building CGAL. Note that for CMake<=2.8.11 (detected by
-# the absence of CMP0024), the else() condition is never used.
-if(NOT POLICY CMP0024 OR NOT CGAL_BUILDING_LIBS)
+# currently building CGAL.
+if(NOT CGAL_BUILDING_LIBS)
   include("${CGAL_CONFIG_DIR}/CGALExports.cmake")
-
-  macro(CGAL_get_property_optional VAR TARGET PROPERTY)
-    if(TARGET ${TARGET})
-      get_property(${VAR} TARGET ${TARGET} PROPERTY ${PROPERTY})
-    else()
-      set(${VAR} "")
-    endif()
-  endmacro()
-
-  if(NOT MSVC AND NOT CGAL_HEADER_ONLY)
-    CGAL_get_property_optional(CGAL_LIBRARY CGAL::CGAL LOCATION)
-    CGAL_get_property_optional(CGAL_Core_LIBRARY CGAL::CGAL_Core LOCATION)
-    CGAL_get_property_optional(CGAL_ImageIO_LIBRARY CGAL::CGAL_ImageIO LOCATION)
-    CGAL_get_property_optional(CGAL_Qt5_LIBRARY CGAL::CGAL_Qt5 LOCATION)
-  else()
-    set(CGAL_LIBRARY         "")
-    set(CGAL_Core_LIBRARY    "")
-    set(CGAL_ImageIO_LIBRARY "")
-    set(CGAL_Qt5_LIBRARY     "")
-  endif()
 else()
   # We are currently in a CGAL Build and CGALExports.cmake has not
   # necessarily been created yet. Just alias the targets. Also don't
@@ -48,9 +27,6 @@ else()
   macro(CGAL_alias_library lib)
     if(TARGET ${lib} AND NOT TARGET CGAL::${lib})
       add_library(CGAL::${lib} ALIAS ${lib})
-      set(${lib}_LIBRARY CGAL::${lib})
-    else()
-      set(${lib}_LIBRARY "")
     endif()
   endmacro()
 
@@ -59,6 +35,19 @@ else()
   CGAL_alias_library(CGAL_ImageIO)
   CGAL_alias_library(CGAL_Qt5)
 endif()
+
+macro(CGAL_set_LIB_LIBRARY_var lib)
+  if(TARGET CGAL::${lib})
+    set(${lib}_LIBRARY CGAL::${lib})
+  else()
+    set(${lib}_LIBRARY "")
+  endif()
+endmacro()
+
+CGAL_set_LIB_LIBRARY_var(CGAL)
+CGAL_set_LIB_LIBRARY_var(CGAL_Core)
+CGAL_set_LIB_LIBRARY_var(CGAL_ImageIO)
+CGAL_set_LIB_LIBRARY_var(CGAL_Qt5)
 
 # Check for possible config files of our libraries and include them.
 file(GLOB CGAL_CONFIG_FILES LIST_DIRECTORIES false
@@ -156,7 +145,7 @@ macro(check_cgal_component COMPONENT)
       set( ${CGAL_LIB}_FOUND FALSE )
       set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
     endif( WITH_${CGAL_LIB} )
-  endif( "${CGAL_LIB}" STREQUAL "CGAL" )
+  endif()
 
   if ( NOT ${CGAL_LIB}_FOUND AND CHECK_CGAL_COMPONENT_MSG_ON_ERROR )
     message( ${CHECK_CGAL_COMPONENT_ERROR_TYPE} "${CHECK_CGAL_COMPONENT_ERROR_TITLE} The ${CGAL_LIB} library was not configured.${CHECK_${CGAL_LIB}_ERROR_TAIL}" )
