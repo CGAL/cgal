@@ -10,7 +10,7 @@ define_property(TARGET PROPERTY CGAL_TARGET_USES_ZLIB
   FULL_DOCS "Tells if the target uses ZLIB as a dependency")
 
 if(ZLIB_FOUND)
-  cache_set(CGAL_ImageIO_USE_ZLIB "ON")
+  set(CGAL_ImageIO_USE_ZLIB ON CACHE BOOL "CGAL_ImageIO uses ZLIB")
 endif(ZLIB_FOUND)
 
 set( CGAL_ImageIO_BASENAME CGAL_ImageIO)
