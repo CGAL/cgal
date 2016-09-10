@@ -86,9 +86,5 @@ CGAL_setup_CGAL_ImageIO_dependencies(CGAL_ImageIO INTERFACE)
 
 include(Use_CGAL_Qt5_headers)
 
-message("CGAL_FOUND: ${CGAL_FOUND}")
-message("CGAL_Qt5_FOUND: ${CGAL_Qt5_FOUND}")
-message("Qt5_FOUND: ${Qt5_FOUND}")
-
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
