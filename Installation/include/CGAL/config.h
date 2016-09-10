@@ -123,7 +123,11 @@
 //  platform specific workaround flags (CGAL_CFG_...)
 //----------------------------------------------------------------------//
 
-#include <CGAL/compiler_config.h>
+#if CGAL_HEADER_ONLY_STEP_2
+#  include <CGAL/internal/enable_third_party_libraries.h>
+#else
+#  include <CGAL/compiler_config.h>
+#endif
 
 //----------------------------------------------------------------------//
 //  Support for DLL on Windows (CGAL_EXPORT macro)
