@@ -2,9 +2,6 @@
 # This file is the CGALConfig.cmake for a pure header-only CGAL installion
 #
 
-#set(CGAL_Boost_USE_STATIC_LIBS ON)
-set(CGAL_AUTO_LINK_ENABLED)
-
 if(CGALConfig_included)
   return()
 endif()
