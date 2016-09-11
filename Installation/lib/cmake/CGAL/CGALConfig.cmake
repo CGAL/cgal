@@ -2,6 +2,9 @@
 # This file is the CGALConfig.cmake for a pure header-only CGAL installion
 #
 
+#set(CGAL_Boost_USE_STATIC_LIBS ON)
+set(CGAL_AUTO_LINK_ENABLED)
+
 if(CGALConfig_included)
   return()
 endif()
@@ -68,26 +71,29 @@ include( ${CGAL_MODULES_DIR}/CGAL_SetupCGALDependencies.cmake )
 # Define the CGAL targets and theirs CGAL:: aliases
 #
 foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
-  set(${cgal_lib}_FOUND TRUE)
-  add_library(${cgal_lib} INTERFACE)
-  add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
-  if(NOT ${cgal_lib} STREQUAL CGAL_Core)
-    include( ${CGAL_MODULES_DIR}/CGAL_Setup${cgal_lib}Dependencies.cmake )
+  if(${cgal_lib}_FOUND)
+    add_library(${cgal_lib} INTERFACE)
+    add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
+    include(CGAL_Setup${cgal_lib}Dependencies)
   endif()
 endforeach()
+
+# this include has to be after the loop that includes the
+# `CGAL_Setup${cgal_lib}Dependencies` files
+include(CGAL_setup_target_dependencies)
+
+foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
+  if(${cgal_lib}_FOUND)
+    CGAL_setup_target_dependencies(${cgal_lib} INTERFACE)
+  endif()
+endforeach()
+
 target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
 target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY_STEP_2=1)
-target_include_directories(CGAL INTERFACE ${CGAL_INCLUDE_DIRS})
-CGAL_setup_CGAL_dependencies(CGAL INTERFACE)
-CGAL_setup_CGAL_Qt5_dependencies(CGAL_Qt5 INTERFACE)
-target_link_libraries( CGAL_Core INTERFACE CGAL::CGAL )
-CGAL_setup_CGAL_ImageIO_dependencies(CGAL_ImageIO INTERFACE)
 
 #
 #
 #
-
-include(Use_CGAL_Qt5_headers)
 
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
