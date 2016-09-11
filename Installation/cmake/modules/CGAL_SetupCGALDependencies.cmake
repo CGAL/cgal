@@ -13,6 +13,10 @@ endif()
 
 include(CGAL_SetupBoost)
 
+if(Boost_FOUND)
+  set(CGAL_FOUND TRUE)
+endif()
+
 function(CGAL_setup_CGAL_dependencies target)
   if(ARGV1 STREQUAL INTERFACE)
     set(keyword INTERFACE)

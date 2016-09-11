@@ -20,6 +20,10 @@ if(NOT OPENGL_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
 endif()
 
+if(NOT CGAL_Qt5_MISSING_DEPS)
+  set(CGAL_Qt5_FOUND TRUE)
+endif()
+
 get_property(QT_UIC_EXECUTABLE TARGET Qt5::uic PROPERTY LOCATION)
 message( STATUS "OpenGL include:      ${OPENGL_INCLUDE_DIR}" )
 message( STATUS "OpenGL libraries:    ${OPENGL_LIBRARIES}" )
@@ -44,3 +48,5 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   target_link_libraries( ${target} ${keyword} CGAL::CGAL)
   target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg ${OPENGL_LIBRARIES})
 endfunction()
+
+include(Use_CGAL_Qt5_headers)

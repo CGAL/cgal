@@ -1,3 +1,7 @@
+if(NOT CGAL_Qt5_FOUND)
+  return()
+endif()
+
 if(Use_CGAL_Qt5_headers_included)
   return()
 endif()
