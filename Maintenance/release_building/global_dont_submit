@@ -14,4 +14,4 @@ Doxyfile
 .gitignore
 benchmark
 Benchmark
-doc_tex
+fig_src
