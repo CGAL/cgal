@@ -125,6 +125,9 @@
 
 #if CGAL_HEADER_ONLY_STEP_2
 #  include <CGAL/internal/enable_third_party_libraries.h>
+#  if(BOOST_MSVC)
+#    include <CGAL/MSVC_compiler_config.h>
+#  endif
 #else
 #  include <CGAL/compiler_config.h>
 #endif
