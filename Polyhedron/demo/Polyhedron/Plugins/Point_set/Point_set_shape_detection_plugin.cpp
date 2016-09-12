@@ -42,7 +42,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
     QAction* actionDetect;
 
   typedef Point_set_3<Kernel>::Point_pmap PointPMap;
-  typedef Point_set_3<Kernel>::Normal_pmap NormalPMap;
+  typedef Point_set_3<Kernel>::Vector_pmap NormalPMap;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
@@ -135,7 +135,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     typedef Point_set::Point_pmap PointPMap;
-    typedef Point_set::Normal_pmap NormalPMap;
+    typedef Point_set::Vector_pmap NormalPMap;
 
     typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
     typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
