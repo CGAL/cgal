@@ -106,7 +106,7 @@ public:
   };
 
   template <typename Property>
-  class Property_pmap
+  class Push_pmap
   {
   public:
     typedef std::size_t key_type;
@@ -118,18 +118,46 @@ public:
     Property* prop;
     mutable std::size_t ind;
 
-    Property_pmap(Point_set* ps = NULL,
-                  Property* prop = NULL,
-                  std::size_t ind=0)
+    Push_pmap(Point_set* ps = NULL,
+              Property* prop = NULL,
+              std::size_t ind=0)
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Property_pmap& pm, std::size_t& i, const typename Property::value_type& t)
+    friend void put(const Push_pmap& pm, std::size_t& i, const typename Property::value_type& t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->add_item();
       put(*(pm.prop), Point_set::Item(pm.ind), t);
       i = pm.ind;
       ++pm.ind;
+    }
+
+    friend const reference get (const Push_pmap& pm, const std::size_t& i)
+    {
+      return ((*(pm.prop))[i]);
+    }
+  };
+
+
+  template <typename Property>
+  class Property_pmap
+  {
+  public:
+    typedef std::size_t key_type;
+    typedef typename Property::value_type value_type;
+    typedef value_type& reference;
+    typedef boost::lvalue_property_map_tag category;
+    
+    Point_set* ps;
+    Property* prop;
+
+    Property_pmap(Point_set* ps = NULL,
+                  Property* prop = NULL)
+      : ps(ps), prop(prop) {}
+
+    friend void put(const Property_pmap& pm, std::size_t& i, const typename Property::value_type& t)
+    {
+      (*(pm.prop))[i] = t;
     }
 
     friend const reference get (const Property_pmap& pm, const std::size_t& i)
@@ -163,9 +191,14 @@ public:
 
   typedef Property_back_inserter<Index_prop> Index_back_inserter;
   typedef Property_back_inserter<Point_prop> Point_back_inserter;
-  typedef Const_property_pmap<Point_prop> Const_point_pmap;
+
+  typedef Push_pmap<Point_prop> Point_push_pmap;
   typedef Property_pmap<Point_prop> Point_pmap;
-  typedef Property_pmap<Vector_prop> Normal_pmap;
+  typedef Const_property_pmap<Point_prop> Const_point_pmap;
+
+  typedef Push_pmap<Vector_prop> Vector_push_pmap;
+  typedef Property_pmap<Vector_prop> Vector_pmap;
+  typedef Const_property_pmap<Vector_prop> Const_vector_pmap;
 
 protected:
 
@@ -304,18 +337,30 @@ public:
     return Point_back_inserter (this, &m_points, size());
   }
   
+  Point_push_pmap point_push_pmap ()
+  {
+    return Point_push_pmap (this, &m_points, size());
+  }
   Point_pmap point_pmap ()
   {
-    return Point_pmap (this, &m_points, size());
+    return Point_pmap (this, &m_points);
   }
   Const_point_pmap point_pmap () const
   {
     return Const_point_pmap (this, &m_points);
   }
   
-  Normal_pmap normal_pmap ()
+  Vector_pmap normal_pmap ()
   {
-    return Normal_pmap (this, &m_normals, size());
+    return Vector_pmap (this, &m_normals);
+  }
+  Vector_push_pmap normal_push_pmap ()
+  {
+    return Vector_push_pmap (this, &m_normals, size());
+  }
+  Const_vector_pmap normal_pmap () const
+  {
+    return Const_vector_pmap (this, &m_points);
   }
 
     
