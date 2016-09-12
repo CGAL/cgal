@@ -478,10 +478,10 @@ public Q_SLOTS:
       if (point_set_item->point_set()->is_selected (it))
         {
           if (point_set_item->has_normals())
-            new_item->point_set()->push_back(point_set_item->point_set()->point(*it),
-                                             point_set_item->point_set()->normal(*it));
+            new_item->point_set()->push_back(point_set_item->point_set()->point(it),
+                                             point_set_item->point_set()->normal(it));
           else
-            new_item->point_set()->push_back(point_set_item->point_set()->point(*it));
+            new_item->point_set()->push_back(point_set_item->point_set()->point(it));
         }
     }
     new_item->resetSelection();
