@@ -437,8 +437,8 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   bool ok = stream &&
             CGAL::read_ply_points_and_normals(stream,
                                               d->m_points->index_back_inserter(),
-                                              d->m_points->point_pmap(),
-                                              d->m_points->normal_pmap(),
+                                              d->m_points->point_push_pmap(),
+                                              d->m_points->normal_push_pmap(),
                                               Kernel()) &&
             !isEmpty();
   if (ok)
@@ -489,8 +489,8 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   bool ok = stream &&
             CGAL::read_off_points_and_normals(stream,
                                               d->m_points->index_back_inserter(),
-                                              d->m_points->point_pmap(),
-                                              d->m_points->normal_pmap(),
+                                              d->m_points->point_push_pmap(),
+                                              d->m_points->normal_push_pmap(),
                                               Kernel()) &&
             !isEmpty();
   invalidateOpenGLBuffers();
@@ -525,8 +525,8 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
   bool ok = stream &&
             CGAL::read_xyz_points_and_normals(stream,
                                               d->m_points->index_back_inserter(),
-                                              d->m_points->point_pmap(),
-                                              d->m_points->normal_pmap(),
+                                              d->m_points->point_push_pmap(),
+                                              d->m_points->normal_push_pmap(),
                                               Kernel()) &&
             !isEmpty();
 
