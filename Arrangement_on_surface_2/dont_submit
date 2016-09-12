@@ -1,7 +1,0 @@
-include/CGAL/Arr_topology_traits/Sign_of_path.h
-include/CGAL/Arr_great_circular_arc_on_cylinder_traits_2.h
-demo/Arr_algebraic_segment_traits_2
-include/CGAL/Arr_geometry_traits/One_root_number.h
-include/CGAL/Arr_extended_rational_arc_traits_d_1.h
-include/CGAL/Arr_hyperbolic_arc_traits_2.h
-include/CGAL/Arr_rational_arc_traits_2.h
