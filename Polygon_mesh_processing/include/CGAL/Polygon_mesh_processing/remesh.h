@@ -61,7 +61,8 @@ namespace Polygon_mesh_processing {
 * not be longer than 4/3*`target_edge_length`
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
+*    Exact constructions kernels are not supported by this function.
 *  \cgalParamEnd
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
@@ -103,6 +104,14 @@ namespace Polygon_mesh_processing {
 * @sa `split_long_edges()`
 *
 *@todo add possibility to provide a functor that projects to a prescribed surface
+*@todo Deal with exact constructions Kernel. The only thing that makes sense is to
+*      guarantee that the output vertices are exactly on the input surface.
+*      To do so, we can do every construction in `double`, and use an exact process for
+*      projection. For each vertex, the `AABB_tree` would be used in an inexact manner
+*      to find the triangle on which projection has to be done. Then, use
+*      `CGAL::intersection(triangle, line)` in the exact constructions kernel to
+*      get a point which is exactly on the surface.
+*
 */
 template<typename PolygonMesh
        , typename FaceRange
