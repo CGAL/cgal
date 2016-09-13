@@ -373,7 +373,19 @@ public:
   {
     m_base.remove (prop);
   }
-  
+
+  std::string info() const
+  {
+    std::ostringstream oss;
+    oss << "Point_set_3 with " << size() << " point(s) ("
+        << removed_size() << " removed point(s) waiting to be deleted)" << std::endl;
+    std::vector<std::string> prop = m_base.properties();
+    for (std::size_t i = 0; i < prop.size(); ++ i)
+      oss << " * \"" << prop[i] << "\" property of type "
+          << boost::core::demangle(m_base.get_type(prop[i]).name()) << std::endl;
+
+    return oss.str();
+  }
 
 private:
 
