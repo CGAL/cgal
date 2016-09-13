@@ -2,14 +2,14 @@
 #include <CGAL/function_objects.h>
 #include <vector>
 #include <iostream>
-#include <functional>
+#include <boost/functional.hpp>
 
 using std::vector;
 using std::cout;
 using std::endl;
 using std::modulus;
 using std::greater;
-using std::bind2nd;
+using boost::bind2nd;
 using CGAL::compose1_1;
 using CGAL::min_element_if;
 
