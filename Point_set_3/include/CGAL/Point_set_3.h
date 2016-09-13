@@ -58,9 +58,6 @@ public:
   typedef typename Gt::FT FT;
   typedef typename Gt::Point_3 Point;
   typedef typename Gt::Vector_3 Vector;
-  typedef typename Gt::Iso_cuboid_3 Iso_cuboid;
-  typedef typename Gt::Sphere_3 Sphere;
-  
 
   typedef typename std::size_t Item;
 
@@ -81,6 +78,7 @@ public:
 
   template <typename Property>
   class Property_back_inserter {
+    /// \cond SKIP_IN_MANUAL
   public:
     typedef std::output_iterator_tag iterator_category;
     typedef typename Property::value_type value_type;
@@ -109,12 +107,13 @@ public:
       ++ ind;
       return *this;
     }
-                                  
+    /// \endcond      
   };
 
   template <typename Property>
   class Push_pmap
   {
+    /// \cond SKIP_IN_MANUAL
   public:
     typedef std::size_t key_type;
     typedef typename Property::value_type value_type;
@@ -143,8 +142,8 @@ public:
     {
       return ((*(pm.prop))[i]);
     }
+    /// \endcond
   };
-
 
   typedef Property_back_inserter<Index_pmap> Index_back_inserter;
   typedef Property_back_inserter<Point_pmap> Point_back_inserter;
@@ -176,6 +175,9 @@ protected:
   
 public:
 
+  /*!
+    Create an empty point set with no additional property.
+   */
   Point_set_3 () : m_base()
   {
     m_indices = m_base.template add<std::size_t> ("index").first;
@@ -183,12 +185,33 @@ public:
     m_nb_removed = 0;
   }
 
+  /*!
+    Convenience function to add a point.
+
+    \param p Point to add
+
+    \note Properties of the added point are initialized to their
+    default value.
+   */
   void push_back (const Point& p)
   {
     add_item();
     m_indices[size()-1] = size()-1;
     m_points[size()-1] = p;
   }
+
+  /*!
+    Convenience function to add a point with a normal vector.
+
+    \param p Point to add
+    \param n Associated normal vector
+
+    \note Properties of the added point other than its normal vector
+    are initialized to their default value.
+
+    \note A normal property must have been added to the point set
+    before using this method.
+   */
   void push_back (const Point& p, const Vector& n)
   {
     push_back (p);
