@@ -303,7 +303,7 @@ public:
 
     // get the type of property by its name. returns typeid(void) if it does not exist.
     const std::type_info& 
-    get_type(const std::string& name)
+    get_type(const std::string& name) const
     {
         for (unsigned int i=0; i<parrays_.size(); ++i)
             if (parrays_[i]->name() == name)
