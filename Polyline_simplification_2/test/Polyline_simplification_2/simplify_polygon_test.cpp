@@ -18,10 +18,11 @@ typedef CGAL::Constrained_Delaunay_triangulation_2<K,TDS, Itag> CDT;
 typedef CGAL::Constrained_triangulation_plus_2<CDT>     CT;
 typedef CGAL::Polygon_2<K>                   Polygon_2;
 typedef PS::Stop_above_cost_threshold Stop;
-typedef PS::Squared_distance_cost            Cost;
+typedef PS::Squared_distance_cost Cost1;
+typedef PS::Scaled_squared_distance_cost Cost2;
 
 
-
+template <class Cost>
 void test(char* fname)
 {
   CGAL::Timer timer;
@@ -45,7 +46,8 @@ int main(int argc, char* argv[])
 {
 
   for(int i= 1;i < argc; i++){
-    test(argv[i]);
+    test<Cost1>(argv[i]);
+    test<Cost2>(argv[i]);
   }
 
   return 0;
