@@ -360,7 +360,8 @@ public:
         // If the two points are enough close, then we return midpoint
         if ( squared_distance(p1, p2) < r_domain_.squared_error_bound_ )
         {
-          CGAL_assertion(value_at_p1 != value_at_p2);
+          CGAL_assertion(value_at_p1 != value_at_p2 &&
+             ! ( r_domain_.null(value_at_p1) && r_domain_.null(value_at_p2) ) );
           const Surface_patch_index sp_index =
             r_domain_.make_surface_index(value_at_p1, value_at_p2);
           const Index index = r_domain_.index_from_surface_patch_index(sp_index);
@@ -372,7 +373,8 @@ public:
         // change p2 if f(p1)!=f(p2).
         // That allows us to find the first intersection from a of [a,b] with
         // a surface.
-        if ( value_at_p1 != value_at_mid )
+        if ( value_at_p1 != value_at_mid &&
+             ! ( r_domain_.null(value_at_p1) && r_domain_.null(value_at_mid) ) )
         {
           p2 = mid;
           value_at_p2 = value_at_mid;

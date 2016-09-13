@@ -167,9 +167,8 @@ public:
   void clear() {
     number_of_cells_ = 0;
     number_of_facets_ = 0;
+    clear_manifold_info();
     tr_.clear();
-    manifold_info_initialized_ = false;
-    edge_facet_counter_.clear();
   }
 
   /// Assignment operator
@@ -466,6 +465,29 @@ public:
 
   /// Returns bbox
   Bbox_3 bbox() const;
+
+  void clear_cells_and_facets_from_c3t3() {
+    for(typename Tr::Finite_cells_iterator
+          cit = this->triangulation().finite_cells_begin(),
+          end = this->triangulation().finite_cells_end();
+        cit != end; ++cit)
+    {
+      set_subdomain_index(cit, Subdomain_index());
+    }
+    this->number_of_cells_ = 0;
+    for(typename Tr::Finite_facets_iterator
+          fit = this->triangulation().finite_facets_begin(),
+          end = this->triangulation().finite_facets_end();
+        fit != end; ++fit)
+    {
+      Facet facet = *fit;
+      Facet mirror = tr_.mirror_facet(facet);
+      set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
+      set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
+    }
+    this->number_of_facets_ = 0;
+    clear_manifold_info();
+  }
 
   void clear_manifold_info() {
     edge_facet_counter_.clear();
