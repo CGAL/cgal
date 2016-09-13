@@ -1129,7 +1129,9 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(mpz_class,Mpzf)
  */
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CGAL::Mpzf>
+   : GenericNumTraits<CGAL::Mpzf>
   {
     typedef CGAL::Mpzf Real;
     /* Should this be Quotient<Mpzf>? Gmpq?  */

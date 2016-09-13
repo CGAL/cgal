@@ -526,7 +526,9 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
 
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CORE::BigFloat>
+   : GenericNumTraits<CORE::BigFloat>
   {
     typedef CORE::BigFloat Real;
     typedef CORE::BigFloat NonInteger;

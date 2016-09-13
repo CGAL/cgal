@@ -337,7 +337,9 @@ public:
 
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CGAL::Gmpfi>
+   : GenericNumTraits<CGAL::Gmpfi>
   {
     typedef CGAL::Gmpfi Real;
     typedef CGAL::Gmpfi NonInteger;

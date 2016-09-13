@@ -210,7 +210,9 @@ class Modular_traits< Gmpz > {
 
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CGAL::Gmpz>
+   : GenericNumTraits<CGAL::Gmpz>
   {     
     typedef CGAL::Gmpz Real;
     typedef CGAL::Gmpq NonInteger;

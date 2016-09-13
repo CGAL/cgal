@@ -854,7 +854,9 @@ public:
 
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<class NT> struct NumTraits<CGAL::Quotient<NT> >
+   : GenericNumTraits<CGAL::Quotient<NT> >
   {
     typedef CGAL::Quotient<NT> Real;
     typedef CGAL::Quotient<NT> NonInteger;

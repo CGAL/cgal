@@ -236,7 +236,9 @@ public:
 
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CORE::BigRat>
+   : GenericNumTraits<CORE::BigRat>
   {
     typedef CORE::BigRat Real;
     typedef CORE::BigRat NonInteger;

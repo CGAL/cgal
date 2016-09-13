@@ -136,7 +136,9 @@ public:
 
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CGAL::Gmpq>
+   : GenericNumTraits<CGAL::Gmpq>
   {
     typedef CGAL::Gmpq Real;
     typedef CGAL::Gmpq NonInteger;

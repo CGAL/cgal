@@ -883,7 +883,9 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
 
 namespace Eigen {
   template<class> struct NumTraits;
+  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CGAL::MP_Float>
+   : GenericNumTraits<CGAL::MP_Float>
   {
     typedef CGAL::MP_Float Real;
     typedef CGAL::Quotient<CGAL::MP_Float> NonInteger;
