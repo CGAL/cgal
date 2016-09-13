@@ -16,13 +16,16 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_set_3<Kernel> Point_set;
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
+std::size_t nb_test = 0;
+std::size_t nb_success = 0;
 
 void test (bool expr, const char* msg)
 {
-  static std::size_t nb_test = 0;
   ++ nb_test;
   if (!expr)
     std::cerr << "Error on test " << nb_test << ": " << msg << std::endl;
+  else
+    ++ nb_success;
 }
 
 
@@ -38,8 +41,8 @@ int main (int, char**)
   std::ifstream f ("data/oni.pwn");
   CGAL::read_xyz_points_and_normals(f,
                                     point_set.index_back_inserter(),
-                                    point_set.point_pmap(),
-                                    point_set.normal_pmap(),
+                                    point_set.point_push_pmap(),
+                                    point_set.normal_push_pmap(),
                                     Kernel());
   f.close ();
 
@@ -58,25 +61,32 @@ int main (int, char**)
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
   
   test (!(point_set.has_property<Color> ("color")), "point set shouldn't have colors.");
-  point_set.add_property<Color> ("color");
+  typename Point_set::Property_map<Color>::type color_prop;
+  bool garbage;
+  boost::tie (color_prop, garbage) = point_set.add_property ("color", Color());
   test (point_set.has_property<Color> ("color"), "point set should have colors.");
 
-
-  for (std::size_t i = 0; i < point_set.size(); ++ i)
+  for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
     {
       Color c = {{ static_cast<unsigned char>(rand() % 255),
                    static_cast<unsigned char>(rand() % 255),
                    static_cast<unsigned char>(rand() % 255) }};
-      point_set.property<Color> ("color", i) = c;
-      test ((point_set.property<Color> ("color", i) == c), "recovered color is incorrect.");
+      put (color_prop, *it, c);
+      test ((get (color_prop, *it) == c), "recovered color is incorrect.");
     }
+
+  typename Point_set::Property_map<Color>::type color_prop_2;
+  boost::tie (color_prop_2, garbage) = point_set.get_property<Color>("color");
+  test ((color_prop_2 == color_prop), "color property not recovered correctly.");
   
   point_set.remove_normal_property ();
   test (!(point_set.has_normals()), "point set shouldn't have normals.");
   
   test (point_set.has_property<Color> ("color"), "point set should have colors.");
-  point_set.remove_property<Color> ("color");
+  point_set.remove_property (color_prop);
   test (!(point_set.has_property<Color> ("color")), "point set shouldn't have colors.");
- 
-  return 0;
+
+  std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
+  
+  return EXIT_SUCCESS;
 }
