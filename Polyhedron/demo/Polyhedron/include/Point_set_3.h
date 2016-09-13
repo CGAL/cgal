@@ -61,6 +61,7 @@ public:
 
   typedef typename Base::iterator iterator;
   typedef typename Base::const_iterator const_iterator;
+  typedef typename Base::Item Item;
   
   // Classic CGAL geometric types
   typedef Gt  Geom_traits; ///< Geometric traits class.
@@ -69,6 +70,8 @@ public:
   typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
+
+  typedef typename Base::template Property_map<double>::type Double_prop;
   
 private:
   
@@ -81,6 +84,8 @@ private:
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
 
   bool m_radii_are_uptodate;
+
+  Double_prop m_radius;
 
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
@@ -95,6 +100,9 @@ public:
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
+    
+    bool garbage;
+    boost::tie (m_radius, garbage) = this->template add_property<double> ("radius");
   }
 
   // copy constructor 
@@ -105,6 +113,9 @@ public:
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
     m_radii_are_uptodate = p.m_radii_are_uptodate;
+
+    bool garbage;
+    boost::tie (m_radius, garbage) = this->template add_property<double> ("radius");
   }
 
   iterator begin() { return Base::begin(); }
@@ -113,6 +124,12 @@ public:
   const_iterator end() const { return Base::removed_end(); }
   std::size_t size() const { return this->m_base.size(); }
 
+  double& radius (Item index) { return m_radius[this->m_indices[index]]; }
+  const double& radius (Item index) const { return m_radius[this->m_indices[index]]; }
+  double& radius (iterator it) { return m_radius[*it]; }
+  const double& radius (const_iterator it) const { return m_radius[*it]; }
+
+  
   iterator first_selected() { return this->removed_begin(); }
   const_iterator first_selected() const { return this->removed_begin(); }
   void set_first_selected(iterator it)

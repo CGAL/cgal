@@ -41,7 +41,6 @@ int main (int argc, char** argv)
   point_set.collect_garbage();
   
   std::cerr << point_set.removed_size() << " removed point(s) remaining after garbage collection" << std::endl;
-
   
   typename Point_set::Property_map<Color>::type color_prop;
   bool garbage;

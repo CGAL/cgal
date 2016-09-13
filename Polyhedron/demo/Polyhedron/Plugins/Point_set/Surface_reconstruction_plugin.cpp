@@ -94,7 +94,7 @@ namespace SurfaceReconstruction
   typedef Kernel::Vector_3 Vector;
   // types for K nearest neighbors search
   typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
-  typedef CGAL::Search_traits_adapter <std::size_t, Point_set::Const_point_pmap, SearchTraits_3> Search_traits;
+  typedef CGAL::Search_traits_adapter <std::size_t, Point_set::Point_pmap, SearchTraits_3> Search_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;
   typedef Neighbor_search::Distance Distance;

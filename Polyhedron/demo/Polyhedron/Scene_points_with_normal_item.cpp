@@ -598,7 +598,7 @@ void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* vi
      const Point_set::Point& p = d->m_points->point (it);
      const Point_set::Vector& n = d->m_points->normal (it);
      viewer->glNormal3dv(&n.x());
-     viewer->glMultiTexCoord1d(GL_TEXTURE2, d->m_points->property<double> ("radius", *it));
+     viewer->glMultiTexCoord1d(GL_TEXTURE2, d->m_points->radius(*it));
      viewer->glVertex3dv(&p.x());
 
    }
@@ -734,7 +734,7 @@ void Scene_points_with_normal_item::computes_local_spacing(int k)
     {
       Neighbor_search search(tree, d->m_points->point(it), k+1, 0, true, tr_dist);
       double maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
-      d->m_points->property<double> ("radius", *it) = sqrt(maxdist2)/2.;
+      d->m_points->radius(*it) = sqrt(maxdist2)/2.;
     }
   }
 
