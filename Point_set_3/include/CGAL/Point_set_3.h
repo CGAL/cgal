@@ -65,12 +65,19 @@ public:
   typedef typename std::size_t Item;
 
   typedef typename Properties::Property_container<Item> Base;
-  typedef typename Properties::Property_map<Item, std::size_t> Index_prop;
-  typedef typename Properties::Property_map<Item, Point> Point_prop;
-  typedef typename Properties::Property_map<Item, Vector> Vector_prop;
 
-  typedef typename Index_prop::iterator iterator;
-  typedef typename Index_prop::const_iterator const_iterator;
+  template <class Type>
+  struct Property_map
+  {
+    typedef typename Properties::Property_map<Item, Type> type;
+  };
+  
+  typedef typename Property_map<std::size_t>::type Index_pmap;
+  typedef typename Property_map<Point>::type Point_pmap;
+  typedef typename Property_map<Vector>::type Vector_pmap;
+
+  typedef typename Index_pmap::iterator iterator;
+  typedef typename Index_pmap::const_iterator const_iterator;
 
   template <typename Property>
   class Property_back_inserter {
@@ -139,73 +146,18 @@ public:
   };
 
 
-  template <typename Property>
-  class Property_pmap
-  {
-  public:
-    typedef std::size_t key_type;
-    typedef typename Property::value_type value_type;
-    typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
-    
-    Point_set* ps;
-    Property* prop;
+  typedef Property_back_inserter<Index_pmap> Index_back_inserter;
+  typedef Property_back_inserter<Point_pmap> Point_back_inserter;
+  typedef Push_pmap<Point_pmap> Point_push_pmap;
+  typedef Push_pmap<Vector_pmap> Vector_push_pmap;
 
-    Property_pmap(Point_set* ps = NULL,
-                  Property* prop = NULL)
-      : ps(ps), prop(prop) {}
-
-    friend void put(const Property_pmap& pm, std::size_t& i, const typename Property::value_type& t)
-    {
-      (*(pm.prop))[i] = t;
-    }
-
-    friend const reference get (const Property_pmap& pm, const std::size_t& i)
-    {
-      return ((*(pm.prop))[i]);
-    }
-  };
-
-
-  template <typename Property>
-  class Const_property_pmap
-  {
-  public:
-    typedef std::size_t key_type;
-    typedef typename Property::value_type value_type;
-    typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
-    
-    const Point_set* ps;
-    const Property* prop;
-
-    Const_property_pmap(const Point_set* ps = NULL,
-                        const Property* prop = NULL)
-      : ps(ps), prop(prop) {}
-
-    friend const reference get (const Const_property_pmap& pm, const std::size_t& i)
-    {
-      return ((*(pm.prop))[i]);
-    }
-  };
-
-  typedef Property_back_inserter<Index_prop> Index_back_inserter;
-  typedef Property_back_inserter<Point_prop> Point_back_inserter;
-
-  typedef Push_pmap<Point_prop> Point_push_pmap;
-  typedef Property_pmap<Point_prop> Point_pmap;
-  typedef Const_property_pmap<Point_prop> Const_point_pmap;
-
-  typedef Push_pmap<Vector_prop> Vector_push_pmap;
-  typedef Property_pmap<Vector_prop> Vector_pmap;
-  typedef Const_property_pmap<Vector_prop> Const_vector_pmap;
 
 protected:
 
   Base m_base;
-  Index_prop m_indices;
-  Point_prop m_points;
-  Vector_prop m_normals;
+  Index_pmap m_indices;
+  Point_pmap m_points;
+  Vector_pmap m_normals;
   std::size_t m_nb_removed;
 
   // Assignment operator not implemented and declared private to make
@@ -280,16 +232,16 @@ public:
     for (std::size_t i = 0; i < m_base.size(); ++ i)
       m_indices[i] = indices[i];
 
-    for (std::size_t i = 0; i < 10; ++ i)
-      std::cerr << m_indices[i] << " ";
-    std::cerr << std::endl;
+    // for (std::size_t i = 0; i < 10; ++ i)
+    //   std::cerr << m_indices[i] << " ";
+    // std::cerr << std::endl;
 
     // Sorting based on the indices reorders the point set correctly
     quick_sort_on_indices ((std::ptrdiff_t)0, (std::ptrdiff_t)(m_base.size() - 1));
 
-    for (std::size_t i = 0; i < 10; ++ i)
-      std::cerr << m_indices[i] << " ";
-    std::cerr << std::endl;
+    // for (std::size_t i = 0; i < 10; ++ i)
+    //   std::cerr << m_indices[i] << " ";
+    // std::cerr << std::endl;
 
     m_base.resize (size ());
     m_base.shrink_to_fit ();
@@ -341,32 +293,42 @@ public:
   {
     return Point_push_pmap (this, &m_points, size());
   }
-  Point_pmap point_pmap ()
+  // Point_pmap point_pmap ()
+  // {
+  //   return Point_pmap (this, &m_points);
+  // }
+  // Const_point_pmap point_pmap () const
+  // {
+  //   return Const_point_pmap (this, &m_points);
+  // }
+
+  Point_pmap point_pmap()
   {
-    return Point_pmap (this, &m_points);
+    return m_points;
   }
-  Const_point_pmap point_pmap () const
+
+  const Point_pmap point_pmap() const
   {
-    return Const_point_pmap (this, &m_points);
+    return m_points;
   }
-  
+
   Vector_pmap normal_pmap ()
   {
-    return Vector_pmap (this, &m_normals);
+    return m_normals;
   }
   Vector_push_pmap normal_push_pmap ()
   {
     return Vector_push_pmap (this, &m_normals, size());
   }
-  Const_vector_pmap normal_pmap () const
+  const Vector_pmap normal_pmap () const
   {
-    return Const_vector_pmap (this, &m_points);
+    return m_normals;
   }
 
     
   bool has_normals() const
   {
-    std::pair<Vector_prop, bool> pm = m_base.template get<Vector> ("normal");
+    std::pair<Vector_pmap, bool> pm = m_base.template get<Vector> ("normal");
     return pm.second;
   }
   bool add_normal_property()
@@ -391,54 +353,27 @@ public:
       pm = m_base.template get<T> (name);
     return pm.second;
   }
-  template <typename T>
-  bool add_property (const std::string& name)
+  
+  template <class T>
+  std::pair<typename Property_map<T>::type, bool>
+  add_property (const std::string& name, const T t=T())
   {
-    std::pair<typename Properties::template Property_map<Item, T>, bool>
-      pm = m_base.template add<T> (name);
-    return pm.second;
+    return m_base.add<T> (name, t);
   }
   
-  template <typename PMap>
-  void remove_property (PMap& prop)
+  template <class T> 
+  std::pair<Properties::Property_map<Item, T>,bool>
+  get_property (const std::string& name) const
+  {
+    return m_base.template get<T>(name);
+  }
+  
+  template <class T> 
+  void remove_property (Properties::Property_map<Item, T>& prop)
   {
     m_base.remove (prop);
   }
   
-  template <typename T>
-  bool remove_property (const std::string& name)
-  {
-    std::pair<typename Properties::template Property_map<Item, T>, bool>
-      pm = m_base.template get<T> (name);
-    if (!(pm.second))
-      return false;
-    remove_property (pm.first);
-    return true;
-  }
-
-  template <typename T>
-  T& property (typename Properties::template Property_map<Item, T>& pmap, std::size_t index)
-  {
-    return pmap[index];
-  }
-  template <typename T>
-  const T& property (typename Properties::template Property_map<Item, T>& pmap, std::size_t index) const
-  {
-    return property (pmap, index);
-  }
-  
-  template <typename T>
-  T& property (const std::string& name, std::size_t index)
-  {
-    std::pair<typename Properties::template Property_map<Item, T>, bool>
-      pm = m_base.template get<T> (name);
-    return property (pm.first, index);
-  }
-  template <typename T>
-  const T& property (const std::string& name, std::size_t index) const
-  {
-    return property (name, index);
-  }
 
 private:
 
