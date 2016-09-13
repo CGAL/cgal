@@ -267,11 +267,17 @@ operator()()
     if((*u)->is_removable()){
       boost::optional<FT> dist = cost(pct, u);
       if(! dist){
-        std::cerr << "undefined cost not handled yet" << std::endl;
+        // cost is undefined
+        if( mpq->contains(u) ){
+          mpq->erase(u);
+        }
       } else {
         (*u)->set_cost(*dist);
-        if((*mpq).contains(u)){
-        (*mpq).update(u, true);
+        if(mpq->contains(u)){
+          mpq->update(u, true);
+        }
+        else{
+          mpq->push(u);
         }
       }
     }
@@ -279,11 +285,17 @@ operator()()
     if((*w)->is_removable()){
       boost::optional<FT> dist = cost(pct, w);
       if(! dist){
-        std::cerr << "undefined cost not handled yet" << std::endl;
+        // cost is undefined
+        if( mpq->contains(w) ){
+          mpq->erase(w);
+        }
       } else {
         (*w)->set_cost(*dist);
-        if((*mpq).contains(w)){
-        (*mpq).update(w, true);
+        if(mpq->contains(w)){
+          mpq->update(w, true);
+        }
+        else{
+          mpq->push(w);
         }
 
       }
