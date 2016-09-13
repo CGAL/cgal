@@ -22,15 +22,20 @@
 
 #include <OpenMesh/Core/Mesh/Handles.hh>
 
-#ifndef OM_HAS_HASH
-
-#include <functional>
+#if OM_VERSION < 0x60200
 
 namespace OpenMesh {
 
 inline std::size_t hash_value(const BaseHandle& h) { return h.idx(); }
 
 } // namespace OpenMesh
+#endif
+
+
+#ifndef OM_HAS_HASH
+
+#include <functional>
+
 
 namespace std {
 
