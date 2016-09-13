@@ -267,12 +267,15 @@ whole \cgal library:
 - `CGAL_NDEBUG`.
 
 
-Setting the macro `CGAL_NDEBUG` disables all checks.
-Note that the standard flag `NDEBUG` sets `CGAL_NDEBUG`, but it also
-affects the standard `assert` macro.
-This way, adding `-DCGAL_NDEBUG` to your compilation flags removes
-absolutely all checks.  This is the default recommended setup for performing
-timing benchmarks for example.
+Setting the macro `CGAL_NDEBUG` disables all checks. This way, adding
+`-DCGAL_NDEBUG` to your compilation flags removes absolutely all checks.
+This is the default recommended setup for performing timing benchmarks for
+example.
+
+Note that the setting of the standard macro `NDEBUG` sets `CGAL_NDEBUG`,
+unless `CGAL_DEBUG` is also defined. If both `NDEBUG` and `CGAL_DEBUG` are
+defined, then the the standard `assert` macro is disabled, but not the CGAL
+assertions and preconditions.
 
 Not all checks are on by default.
 The first four types of checks can be marked as expensive or exactness checks
