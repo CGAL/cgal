@@ -18,13 +18,12 @@
 //
 // Author(s)     : Simon Giraudot and Maxime Gimeno
 
-#ifndef MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H
-#define MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H\
+#ifndef CGAL_MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H
+#define CGAL_MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H
 
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/convex_hull_incremental_3.h>
 
 template <typename Kernel>
 class CPointH
@@ -360,4 +359,4 @@ public:
 
 };
 }//CGAL
-#endif // MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H
+#endif // CGAL_MESH_TO_POINT_SET_HAUSDORFF_DISTANCE_H

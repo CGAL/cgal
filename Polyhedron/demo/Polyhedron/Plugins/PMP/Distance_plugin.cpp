@@ -13,9 +13,56 @@
 #include "triangulate_primitive.h"
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/Search_traits_3.h>
+#include <CGAL/Spatial_sort_traits_adapter_3.h>
+#include <CGAL/property_map.h>
+#include <boost/container/flat_map.hpp>
+
 //This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
+
+template <class AABB_tree, class Point_3>
+struct Distance_computation{
+  const AABB_tree& tree;
+  const std::vector<Point_3>& sample_points;
+  Point_3 initial_hint;
+  CGAL::cpp11::atomic<double>* distance;
+  std::vector<double>& output;
+
+  Distance_computation(const AABB_tree& tree,
+                       const Point_3 p,
+                       const std::vector<Point_3>& sample_points,
+                       CGAL::cpp11::atomic<double>* d,
+                       std::vector<double>& out )
+    : tree(tree)
+    , sample_points(sample_points)
+    , distance(d)
+    , initial_hint(p)
+    , output(out)
+  {
+  }
+
+  void
+  operator()(const tbb::blocked_range<std::size_t>& range) const
+  {
+    Point_3 hint = initial_hint;
+    double hdist = 0;
+    for( std::size_t i = range.begin(); i != range.end(); ++i)
+    {
+      hint = tree.closest_point(sample_points[i], hint);
+      Kernel::FT dist = squared_distance(hint,sample_points[i]);
+      double d = CGAL::sqrt(dist);
+      output[i] = d;
+      if (d>hdist) hdist=d;
+    }
+
+    if (hdist > distance->load(CGAL::cpp11::memory_order_acquire))
+      distance->store(hdist, CGAL::cpp11::memory_order_release);
+  }
+};
+
 class Scene_distance_polyhedron_item: public Scene_item
 {
   Q_OBJECT
@@ -78,6 +125,7 @@ public:
                  bbox.xmax(),bbox.ymax(),bbox.zmax());
   }
 private:
+
   Polyhedron* poly;
   Polyhedron* poly_B;
   mutable bool are_buffers_filled;
@@ -105,12 +153,10 @@ private:
   mutable QOpenGLShaderProgram *program;
 
   //fills 'out' and returns the hausdorff distance for calibration of the color_ramp.
-  double compute_distances(const Polyhedron& m, std::vector<Kernel::Point_3> sample_points,double precision, PMP::Sampling_method method,
-                           QMap<Kernel::Point_3, double>& out)const
-  {
-    PMP::sample_triangle_mesh<Kernel>(m, precision ,sample_points, get(CGAL::vertex_point, m), method);
-    spatial_sort(sample_points.begin(), sample_points.end());
 
+  double compute_distances(const Polyhedron& m, const std::vector<Kernel::Point_3>& sample_points,double precision, PMP::Sampling_method method,
+                           std::vector<double>& out)const
+  {
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
     typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree< Traits > Tree;
@@ -119,17 +165,25 @@ private:
     tree.accelerate_distance_queries();
     tree.build();
 
+    typename Traits::Point_3 hint = m.vertices_begin()->point();
+
+#ifndef CGAL_LINKED_WITH_TBB
     double hdist = 0;
-    typename Traits::Point_3 hint = sample_points.front();
-    BOOST_FOREACH(const typename Traits::Point_3& pt, sample_points)
+    for(std::size_t i = 0; i<sample_points.size(); ++i)
     {
-      hint = tree.closest_point(pt, hint);
-      typename Kernel::FT dist = squared_distance(hint,pt);
+      hint = tree.closest_point(sample_points[i], hint);
+      typename Kernel::FT dist = squared_distance(hint,sample_points[i]);
       double d = CGAL::sqrt(dist);
-      out[pt]= d;
+      out[i]= d;
       if (d>hdist) hdist=d;
     }
-    return hdist;
+      return hdist;
+#else
+    CGAL::cpp11::atomic<double> distance(0);
+    Distance_computation<Tree, typename Kernel::Point_3> f(tree, hint, sample_points, &distance, out);
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
+    return distance;
+#endif
   }
 
   void computeElements()const
@@ -174,16 +228,28 @@ private:
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
-        PMP::internal::triangle_grid_sampling<Kernel>(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
+
+//============== GRID ================
+        /*PMP::internal::triangle_grid_sampling<Kernel>(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
                                                       f->halfedge()->next()->next()->vertex()->point(),
-                                                      0.05, std::back_inserter(sampled_points));
+                                                      0.05, std::back_inserter(sampled_points));*/
+//============== MONTE_CARLO ================
+        std::size_t nb_points =  (std::max)((int)std::ceil(400 * PMP::face_area(f,*poly,PMP::parameters::geom_traits(Kernel()))),
+                                            1);
+        CGAL::Random_points_in_triangle_3<typename Kernel::Point_3> g(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
+                                                                f->halfedge()->next()->next()->vertex()->point());
+        CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+        sampled_points.push_back(f->halfedge()->vertex()->point());
+        sampled_points.push_back(f->halfedge()->next()->vertex()->point());
+        sampled_points.push_back(f->halfedge()->next()->next()->vertex()->point());
+// FIN MONTE_CARLO
 
         //triangle facets with sample points for color display
         FT triangulation(f,sampled_points,nf,poly,diagonal);
 
         if(triangulation.cdt->dimension() != 2 )
         {
-          qDebug()<<"Warning : cdt not right. Facet not displayed";
+          qDebug()<<"Error : cdt not right (dimension != 2). Facet not displayed";
           return;
         }
 
@@ -212,15 +278,38 @@ private:
         }
       }
       //compute the distances
-      QMap<Kernel::Point_3, double> distances;
-      double hausdorff = compute_distances(*poly_B,total_points,0.05,PMP::GRID, distances);
-      //compute the colors
-      for(std::size_t i=0; i<total_points.size(); ++i)
+      typedef CGAL::Spatial_sort_traits_adapter_3<Kernel,
+                CGAL::Pointer_property_map<Kernel::Point_3>::type > Search_traits_3;
+
+      std::vector<double> distances(total_points.size());
+      std::vector<std::size_t> indices;
+      indices.reserve(total_points.size());
+      std::copy(boost::counting_iterator<std::size_t>(0),
+                boost::counting_iterator<std::size_t>(total_points.size()),
+                std::back_inserter(indices));
+      spatial_sort(indices.begin(),
+                   indices.end(),
+                  Search_traits_3(CGAL::make_property_map(total_points)));
+      std::vector<Kernel::Point_3> sorted_points(total_points.size());
+      for(std::size_t i = 0; i < sorted_points.size(); ++i)
       {
-        double d = distances[total_points[i]]/hausdorff;
-        colors.push_back(thermal_ramp.r(d));
-        colors.push_back(thermal_ramp.g(d));
-        colors.push_back(thermal_ramp.b(d));
+        sorted_points[i] = total_points[indices[i]];
+      }
+
+      double hausdorff = compute_distances(*poly_B,
+                                           sorted_points,
+                                           400, //precision parameter must be the same than for the sampling
+                                           PMP::MONTE_CARLO,
+                                           distances);
+      //compute the colors
+      colors.resize(sorted_points.size()*3);
+      for(std::size_t i=0; i<sorted_points.size(); ++i)
+      {
+        std::size_t k = indices[i];
+        double d = distances[i]/hausdorff;
+        colors[3*k]=thermal_ramp.r(d);
+        colors[3*k+1]=thermal_ramp.g(d);
+        colors[3*k+2]=thermal_ramp.b(d);
       }
     }
 
@@ -346,7 +435,7 @@ public:
       _actions << actionComputeDistance;
     }
   }
-private Q_SLOTS:
+public Q_SLOTS:
   void createDistanceItems()
   {
     //check the initial conditions

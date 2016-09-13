@@ -29,14 +29,14 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <boost/foreach.hpp>
-//#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-//#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
 
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
-#include <CGAL/Polygon_mesh_processing/mesh_to_point_set_hausdorff_distance.h>
+#include <CGAL/Polygon_mesh_processing/internal/mesh_to_point_set_hausdorff_distance.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
@@ -133,19 +133,20 @@ template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
   const std::vector<Point_3>& sample_points;
-  Point_3 hint;
+  Point_3 initial_hint;
   cpp11::atomic<double>* distance;
 
   Distance_computation(const AABB_tree& tree, const Point_3 p, const std::vector<Point_3>& sample_points, cpp11::atomic<double>* d)
     : tree(tree)
     , sample_points(sample_points)
     , distance(d)
-    , hint(p)
+    , initial_hint(p)
   {}
 
   void
   operator()(const tbb::blocked_range<std::size_t>& range) const
   {
+    Point_3 hint = initial_hint;
     double hdist = 0;
     for( std::size_t i = range.begin(); i != range.end(); ++i)
     {
@@ -219,12 +220,11 @@ void sample_triangle_mesh(const TriangleMesh& m,
     sample_triangles<Kernel>(triangles, parameter, std::back_inserter(sampled_points));
     return;
   }
-  case MONTE_CARLO://pas du tout ca : genere K points par triangle, k dependant de l'aire
+  case MONTE_CARLO:
   {
-    std::vector<typename Kernel::Triangle_3> triangles;
     BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
     {
-      std::size_t nb_points =  std::max((int)std::ceil(parameter * PMP::face_area(f,m,PMP::parameters::geom_traits(Kernel()))),
+      std::size_t nb_points =  (std::max)((int)std::ceil(parameter * PMP::face_area(f,m,PMP::parameters::geom_traits(Kernel()))),
                                        1);
       //create the triangles and store them
       typename Kernel::Point_3 points[3];
@@ -234,12 +234,9 @@ void sample_triangle_mesh(const TriangleMesh& m,
         points[i] = get(pmap, target(hd, m));
         hd = next(hd, m);
       }
-      triangles.push_back(typename Kernel::Triangle_3(points[0], points[1], points[2]));
-      //sample a single point in all triangles(to have at least 1 pt/triangle)
       Random_points_in_triangle_3<typename Kernel::Point_3> g(points[0], points[1], points[2]);
       CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
     }
-    //std::cerr<<"M_C points : "<<sampled_points.size();
     return;
   }
   }
@@ -251,7 +248,7 @@ double approximated_Hausdorff_distance(
   VertexPointMap vpm
   )
 {
-  bool is_triangle = is_triangle_mesh(m);
+  CGAL_assertion_code(  bool is_triangle = is_triangle_mesh(m) );
   CGAL_assertion_msg (is_triangle,
         "Mesh is not triangulated. Distance computing impossible.");
   #ifdef CGAL_HAUSDORFF_DEBUG
@@ -310,25 +307,6 @@ double approximated_Hausdorff_distance(
   return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2>(sample_points, m2, vpm2);
 }
 
-/*template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap1 = typename boost::property_map<TriangleMesh,
-                                                                                                                       CGAL::vertex_point_t>::type,
-          class VertexPointMap2 = typename boost::property_map<TriangleMesh,
-                                                                                            CGAL::vertex_point_t>::type>
-double approximated_symmetric_Hausdorff_distance(
-  const TriangleMesh& m1,
-  const TriangleMesh& m2,
-  double precision,
-  VertexPointMap1 vpm1,
-  VertexPointMap2 vpm2,
-  Sampling_method method = RANDOM_UNIFORM
-)
-{
-  return (std::max)(
-    approximated_Hausdorff_distance<Concurrency_tag>(m1, m2, precision, vpm1, vpm2, method),
-    approximated_Hausdorff_distance<Concurrency_tag>(m2, m1, precision, vpm2, vpm1, method)
-  );
-}
-*/
 // documented functions
 /**
  * \ingroup PMP_distance_grp

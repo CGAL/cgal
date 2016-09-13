@@ -70,6 +70,15 @@ find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 
 include( CGAL_CreateSingleSourceCGALProgram )
 
+find_package( TBB )
+if( TBB_FOUND )
+  include( ${TBB_USE_FILE} )
+  list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
+  create_single_source_cgal_program( "hausdorff_distance_example.cpp")
+else()
+  message( STATUS "NOTICE: Intel TBB was not found. hausdorff_distance_example will use sequential code." )
+endif()
+
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
 create_single_source_cgal_program( "compute_normals_example_Polyhedron.cpp"  CXX_FEATURES cxx_range_for )
@@ -82,7 +91,6 @@ create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")
 #create_single_source_cgal_program( "remove_degeneracies_example.cpp")
 create_single_source_cgal_program( "isotropic_remeshing_example.cpp")
-create_single_source_cgal_program( "hausdorff_distance_example.cpp")
 
 if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
 create_single_source_cgal_program( "hole_filling_example.cpp" )
