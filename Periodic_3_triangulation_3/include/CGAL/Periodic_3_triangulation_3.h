@@ -246,7 +246,7 @@ public:
     typedef typename internal::Exact_field_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
     CGAL_USE_TYPE(NTC);
-    CGAL_triangulation_assertion_code( NTC ntc; )
+    CGAL_triangulation_precondition_code( NTC ntc; )
     CGAL_triangulation_precondition(ntc(_domain.xmax())-ntc(_domain.xmin())
 	== ntc(_domain.ymax())-ntc(_domain.ymin()));
     CGAL_triangulation_precondition(ntc(_domain.ymax())-ntc(_domain.ymin())
