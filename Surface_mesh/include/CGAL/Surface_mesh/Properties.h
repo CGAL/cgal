@@ -314,7 +314,7 @@ public:
 
     // delete a property
     template <class T> 
-    void
+    bool
     remove(Property_map<Key, T>& h)
     {
         typename std::vector<Base_property_array*>::iterator it=parrays_.begin(), end=parrays_.end();
@@ -325,9 +325,10 @@ public:
                 delete *it;
                 parrays_.erase(it);
                 h.reset();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
 
