@@ -62,7 +62,12 @@ list(APPEND CMAKE_MODULE_PATH ${CGAL_MODULES_DIR})
 include( ${CGAL_MODULES_DIR}/CGAL_SCM.cmake )
 CGAL_detect_git(${CGAL_CONFIG_DIR}/../../../..)
 
-include( ${CGAL_MODULES_DIR}/CGAL_SetupCGALDependencies.cmake )
+#
+# Search for all dependencies
+#
+foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
+  include(CGAL_Setup${cgal_lib}Dependencies)
+endforeach()
 
 #
 # Define the CGAL targets and theirs CGAL:: aliases
@@ -71,7 +76,6 @@ foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
   if(${cgal_lib}_FOUND)
     add_library(${cgal_lib} INTERFACE)
     add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
-    include(CGAL_Setup${cgal_lib}Dependencies)
   endif()
 endforeach()
 
