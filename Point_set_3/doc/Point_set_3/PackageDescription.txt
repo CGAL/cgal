@@ -1,0 +1,38 @@
+/*!
+\defgroup PkgPointSet3 3D Point Set Reference
+
+\defgroup PkgPointSet3Concepts Concepts
+\ingroup PkgPointSet3
+
+\addtogroup PkgPointSet3
+
+\cgalPkgDescriptionBegin{3D Point Set, PkgPointSet3Summary}
+\cgalPkgPicture{point_set.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgDesc{This component provides the user with a flexible 3D point set data structure. The user can easily define any additional property needed (such a normal vectors, colors, labels, etc.). All data structures needed to apply \cgal algorithms on point sets are provided.}
+\cgalPkgManuals{Chapter_Point_Set_3, PkgPointSet3}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.10}
+\cgalPkgBib{cgal:ovja-pssd}
+\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Classes ##
+- `CGAL::Point_set_3<Gt>`
+
+## Functions ##
+
+- `CGAL::read_ply_point_set_3<Gt>`
+
+
+*/

@@ -1,0 +1,18 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Point_Set_3
+\cgalAutoToc
+\author Simon Giraudot
+
+This chapter describes the ...
+
+\section Point_set_3_Definitions Definitions
+
+Section on definitions here ...
+
+
+
+*/
+} /* namespace CGAL */
