@@ -1135,6 +1135,7 @@ namespace Eigen {
     /* Should this be Quotient<Mpzf>? Gmpq?  */
     typedef CGAL::Mpzf NonInteger;
     typedef CGAL::Mpzf Nested;
+    typedef CGAL::Mpzf Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

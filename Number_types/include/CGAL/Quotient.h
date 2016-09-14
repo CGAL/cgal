@@ -859,6 +859,7 @@ namespace Eigen {
     typedef CGAL::Quotient<NT> Real;
     typedef CGAL::Quotient<NT> NonInteger;
     typedef CGAL::Quotient<NT> Nested;
+    typedef CGAL::Quotient<NT> Literal;
 
     static inline Real epsilon() { return NumTraits<NT>::epsilon(); }
     static inline Real dummy_precision() { return NumTraits<NT>::dummy_precision(); }
