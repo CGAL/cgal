@@ -231,8 +231,8 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
             positions_facets.push_back(p.z() + offset.z);
             positions_facets.push_back(1.0);
 
-            const double u = he->vertex()->u();
-            const double v = he->vertex()->v();
+            const double u = he->u();
+            const double v = he->v();
             textures_map_facets.push_back(u);
             textures_map_facets.push_back(v);
         }
@@ -257,8 +257,8 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
         positions_lines.push_back(a.z() + offset.z);
         positions_lines.push_back(1.0);
 
-        const double u = he->vertex()->u();
-        const double v = he->vertex()->v();
+        const double u = he->u();
+        const double v = he->v();
         textures_map_lines.push_back(u);
         textures_map_lines.push_back(v);
 
@@ -267,13 +267,16 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
         positions_lines.push_back(b.z()+ offset.z);
         positions_lines.push_back(1.0);
 
-        const double ou = he->opposite()->vertex()->u();
-        const double ov = he->opposite()->vertex()->v();
+        const double ou = he->opposite()->u();
+        const double ov = he->opposite()->v();
         textures_map_lines.push_back(ou);
         textures_map_lines.push_back(ov);
 
     }
+<<<<<<< HEAD
     QApplication::restoreOverrideCursor();
+=======
+>>>>>>> Fix display of the seam neighborhood.
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()

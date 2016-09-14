@@ -132,7 +132,7 @@ class UVItem : public QGraphicsItem
 public :
   UVItem(Textured_polyhedron* t_m, QRectF brect)
     :QGraphicsItem(),
-       texMesh(t_m), bounding_rect(brect)
+      texMesh(t_m), bounding_rect(brect)
   {
   }
 
@@ -147,13 +147,18 @@ public :
     pen.setColor(Qt::black);
     pen.setWidth(0);
     painter->setPen(pen);
-    for( Textured_polyhedron::Edge_iterator
-         ei = texMesh->edges_begin();
-         ei != texMesh->edges_end();
-         ++ei)
+    for( Textured_polyhedron::Facet_iterator
+         fi = texMesh->facets_begin();
+         fi != texMesh->facets_end();
+         ++fi)
     {
-      QPointF source(ei->vertex()->u(), ei->vertex()->v()), target(ei->opposite()->vertex()->u(), ei->opposite()->vertex()->v());
-      painter->drawLine(source, target);
+      QPointF pt_A(fi->halfedge()->u(), fi->halfedge()->v()),
+          pt_B(fi->halfedge()->next()->u(), fi->halfedge()->next()->v()),
+          pt_C(fi->halfedge()->next()->next()->u(), fi->halfedge()->next()->next()->v());
+
+      painter->drawLine(pt_A, pt_B);
+      painter->drawLine(pt_B, pt_C);
+      painter->drawLine(pt_C, pt_A);
     }
   }
 
@@ -165,8 +170,8 @@ private:
 
 using namespace CGAL::Three;
 class Polyhedron_demo_parameterization_plugin :
-  public QObject,
-  public Polyhedron_demo_plugin_helper
+    public QObject,
+    public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -182,35 +187,35 @@ public:
             Scene_interface* scene_interface,
             Messages_interface* m_i)
   {
-      mw = mainWindow;
-      scene = scene_interface;
-      Scene* true_scene = static_cast<Scene*>(scene);
-      connect(true_scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
-              this, SLOT(destroyPolyline(CGAL::Three::Scene_item*)));
-      QAction* actionMVC = new QAction("Mean Value Coordinates", mw);
-      QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
-      QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
-      actionMVC->setObjectName("actionMVC");
-      actionDCP->setObjectName("actionDCP");
-      actionLSC->setObjectName("actionLSC");
+    mw = mainWindow;
+    scene = scene_interface;
+    Scene* true_scene = static_cast<Scene*>(scene);
+    connect(true_scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+            this, SLOT(destroyPolyline(CGAL::Three::Scene_item*)));
+    QAction* actionMVC = new QAction("Mean Value Coordinates", mw);
+    QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
+    QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
+    actionMVC->setObjectName("actionMVC");
+    actionDCP->setObjectName("actionDCP");
+    actionLSC->setObjectName("actionLSC");
 
-      _actions << actionMVC
-               << actionDCP
-               << actionLSC;
-      autoConnectActions();
-      Q_FOREACH(QAction *action, _actions)
-        action->setProperty("subMenuName",
-                            "Triangulated Surface Mesh Parameterization");
-      dock_widget = new QDockWidget("UVMapping", mw);
-      ui_widget.setupUi(dock_widget);
-      graphics_scene = new QGraphicsScene(dock_widget);
-      ui_widget.graphicsView->setScene(graphics_scene);
-      ui_widget.graphicsView->setRenderHints(QPainter::Antialiasing);
-      navigation = new Navigation();
-      ui_widget.graphicsView->installEventFilter(navigation);
-      ui_widget.graphicsView->viewport()->installEventFilter(navigation);
-      addDockWidget(dock_widget);
-      dock_widget->setVisible(false);
+    _actions << actionMVC
+             << actionDCP
+             << actionLSC;
+    autoConnectActions();
+    Q_FOREACH(QAction *action, _actions)
+      action->setProperty("subMenuName",
+                          "Triangulated Surface Mesh Parameterization");
+    dock_widget = new QDockWidget("UVMapping", mw);
+    ui_widget.setupUi(dock_widget);
+    graphics_scene = new QGraphicsScene(dock_widget);
+    ui_widget.graphicsView->setScene(graphics_scene);
+    ui_widget.graphicsView->setRenderHints(QPainter::Antialiasing);
+    navigation = new Navigation();
+    ui_widget.graphicsView->installEventFilter(navigation);
+    ui_widget.graphicsView->viewport()->installEventFilter(navigation);
+    addDockWidget(dock_widget);
+    dock_widget->setVisible(false);
 
   }
 
@@ -276,7 +281,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_polyhedron_item* poly_item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(!poly_item)
     return;
   poly_item->polyhedron()->normalize_border();
@@ -353,36 +358,36 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   halfedge_descriptor bhd(smhd);
   bhd = opposite(bhd,*sMesh); // a halfedge on the virtual border
   bool success = false;
-QString new_item_name;
+  QString new_item_name;
   switch(method)
   {
   case PARAM_MVC:
-    {
-      std::cout << "Parameterize (MVC)...";
-      new_item_name = tr("%1 (parameterized (MVC))").arg(poly_item->name());
-      typedef CGAL::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
-      success = err == Parameterizer::OK;
-      break;
-    }
+  {
+    std::cout << "Parameterize (MVC)...";
+    new_item_name = tr("%1 (parameterized (MVC))").arg(poly_item->name());
+    typedef CGAL::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
+    Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+    success = err == Parameterizer::OK;
+    break;
+  }
   case PARAM_DCP:
-    {
-      new_item_name = tr("%1 (parameterized (DCP))").arg(poly_item->name());
-      std::cout << "Parameterize (DCP)...";
-      typedef CGAL::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
-      success = err == Parameterizer::OK;
-      break;
-    }
+  {
+    new_item_name = tr("%1 (parameterized (DCP))").arg(poly_item->name());
+    std::cout << "Parameterize (DCP)...";
+    typedef CGAL::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
+    Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+    success = err == Parameterizer::OK;
+    break;
+  }
   case PARAM_LSC:
-    {
-      new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
-      std::cout << "Parameterize (LSC)...";
-      typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
-      success = err == Parameterizer::OK;
-      break;
-    }
+  {
+    new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
+    std::cout << "Parameterize (LSC)...";
+    typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
+    Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+    success = err == Parameterizer::OK;
+    break;
+  }
   }
   if(success)
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -399,41 +404,29 @@ QString new_item_name;
   builder.run(*pMesh,*pTex_polyhedron);
   pTex_polyhedron->compute_normals();
 
-  Polyhedron::Edge_iterator it1;
-  Textured_polyhedron::Edge_iterator it2;
+  Polyhedron::Halfedge_iterator it1;
+  Textured_polyhedron::Halfedge_iterator it2;
   QPointF min(FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX);
-  for(it1 = pMesh->edges_begin(),
-      it2 = pTex_polyhedron->edges_begin();
-      it1 != pMesh->edges_end()&&
-      it2 != pTex_polyhedron->edges_end();
-      it1++, it2++)
+  for(it1 = pMesh->halfedges_begin(),
+      it2 = pTex_polyhedron->halfedges_begin();
+      it1 != pMesh->halfedges_end()&&
+      it2 != pTex_polyhedron->halfedges_end();
+      ++it1, ++it2)
   {
-    FT u1 = uv_pm[halfedge(source(it1, *sMesh), *sMesh)].x();
-    FT v1 = uv_pm[halfedge(source(it1, *sMesh), *sMesh)].y();
-    source(it2, *pTex_polyhedron)->u() = u1;
-    source(it2, *pTex_polyhedron)->v() = v1;
-    FT u2 = uv_pm[halfedge(target(it1, *sMesh), *sMesh)].x();
-    FT v2 = uv_pm[halfedge(target(it1, *sMesh), *sMesh)].y();
-    target(it2, *pTex_polyhedron)->u() = u2;
-    target(it2, *pTex_polyhedron)->v() = v2;
+    Seam_mesh::halfedge_descriptor hd(it1);
+    FT u = uv_pm[target(hd,*sMesh)].x();
+    FT v = uv_pm[target(hd,*sMesh)].y();
+    it2->u() = u;
+    it2->v() = v;
 
-    if(u1<min.x())
-      min.setX(u1);
-    if(u1>max.x())
-      max.setX(u1);
-    if(v1<min.y())
-      min.setY(v1);
-    if(v1>max.y())
-      max.setY(v1);
-
-    if(u2<min.x())
-      min.setX(u2);
-    if(u2>max.x())
-      max.setX(u2);
-    if(v2<min.y())
-      min.setY(v2);
-    if(v2>max.y())
-      max.setY(v2);
+    if(u<min.x())
+      min.setX(u);
+    if(u>max.x())
+      max.setX(u);
+    if(v<min.y())
+      min.setY(v);
+    if(v>max.y())
+      max.setY(v);
   }
   UVItem *projection
       = new UVItem(pTex_polyhedron,QRectF(min, max));
