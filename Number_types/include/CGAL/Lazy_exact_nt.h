@@ -1422,9 +1422,7 @@ class Modular_traits<Lazy_exact_nt<ET> >
 
 namespace Eigen {
   template<class> struct NumTraits;
-  template<class> struct GenericNumTraits;
   template<typename ET> struct NumTraits<CGAL::Lazy_exact_nt<ET> >
-   : GenericNumTraits<CGAL::Lazy_exact_nt<ET> >
   {
     typedef CGAL::Lazy_exact_nt<ET> Real;
     // typedef CGAL::Lazy_exact_nt<ET> NonInteger;

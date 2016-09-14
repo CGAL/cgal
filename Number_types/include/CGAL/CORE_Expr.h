@@ -191,9 +191,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
 
 namespace Eigen {
   template<class> struct NumTraits;
-  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CORE::Expr>
-   : GenericNumTraits<CORE::Expr>
   {
     typedef CORE::Expr Real;
     typedef CORE::Expr NonInteger;

@@ -1263,9 +1263,7 @@ public:
 
 namespace Eigen {
   template<class> struct NumTraits;
-  template<class> struct GenericNumTraits;
   template<bool b> struct NumTraits<CGAL::Interval_nt<b> >
-    : GenericNumTraits<CGAL::Interval_nt<b> >
   {
     typedef CGAL::Interval_nt<b> Real;
     typedef CGAL::Interval_nt<b> NonInteger;

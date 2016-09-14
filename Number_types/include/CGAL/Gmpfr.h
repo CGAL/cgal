@@ -157,9 +157,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
 
 namespace Eigen {
   template<class> struct NumTraits;
-  template<class> struct GenericNumTraits;
   template<> struct NumTraits<CGAL::Gmpfr>
-   : GenericNumTraits<CGAL::Gmpfr>
   {
     typedef CGAL::Gmpfr Real;
     typedef CGAL::Gmpfr NonInteger;
