@@ -1221,23 +1221,6 @@ CORE_MEMORY_IMPL(SqrtRep)
 CORE_MEMORY_IMPL(MultRep)
 CORE_MEMORY_IMPL(DivRep)
 
-template <typename O>
-void * AddSubRep<O>::operator new( size_t size)
-{ return MemoryPool<AddSubRep<O> >::global_allocator().allocate(size); }
-
-template <typename O>
-void AddSubRep<O>::operator delete( void *p, size_t )
-{ MemoryPool<AddSubRep<O> >::global_allocator().free(p); }
-
-
-
-template <class T>
-void * Realbase_for<T>::operator new( size_t size)
-{ return MemoryPool<Realbase_for<T> >::global_allocator().allocate(size); }
-
-template <class T>
-void Realbase_for<T>::operator delete( void *p, size_t )
-{ MemoryPool<Realbase_for<T> >::global_allocator().free(p); }
 
  template class AddSubRep<Add>;
  template class AddSubRep<Sub>;
