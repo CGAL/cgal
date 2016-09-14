@@ -412,10 +412,8 @@ public:
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PointPMap is a model of `WritablePropertyMap` with  value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `OutputIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// \cgalModels `PlyInterpreter`
 //-----------------------------------------------------------------------------------
