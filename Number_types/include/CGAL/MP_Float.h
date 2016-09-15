@@ -888,6 +888,7 @@ namespace Eigen {
     typedef CGAL::MP_Float Real;
     typedef CGAL::Quotient<CGAL::MP_Float> NonInteger;
     typedef CGAL::MP_Float Nested;
+    typedef CGAL::MP_Float Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

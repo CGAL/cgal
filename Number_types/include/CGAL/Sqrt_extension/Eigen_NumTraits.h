@@ -30,6 +30,7 @@ namespace Eigen {
     typedef CGAL::Sqrt_extension<NT, ROOT, ACDE_TAG, FP_TAG> Real;
     typedef Real NonInteger;
     typedef Real Nested;
+    typedef Real Literal;
 
     static inline Real epsilon() { return NumTraits<NT>::epsilon(); }
 
