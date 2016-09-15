@@ -1,10 +1,6 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
-
 project( Mesh_2_Examples )
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.12)
 
 find_package(CGAL QUIET)
 
