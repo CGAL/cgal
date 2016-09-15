@@ -6,14 +6,20 @@ if ( NOT CGAL_Boost_Setup )
   if ( DEFINED  MSVC_VERSION AND "${MSVC_VERSION}" GREATER 1800)
     set ( CGAL_requires_Boost_libs FALSE )
   endif()
+
   if ( CMAKE_COMPILER_IS_GNUCXX
       AND(
+        #CMAKE_CXX_STANDARD_DEFAULT is available starting cmake 3.4
+        ( DEFINED CMAKE_CXX_STANDARD_DEFAULT
+          AND ${CMAKE_CXX_STANDARD_DEFAULT} GREATER 03
+          AND ${CMAKE_CXX_STANDARD_DEFAULT} LESS 98 )
         #GCC 4.8+ with c++11 on
-        ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8
+        OR ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8
           AND CMAKE_CXX_FLAGS MATCHES "\\-std=(c|gnu)\\+\\+[01][14yxz]")
         #GCC 6.0+ without c++03 on
         OR ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0
-             AND NOT CMAKE_CXX_FLAGS MATCHES "\\-std=(c|gnu)\\+\\+[90][83]")
+             AND NOT CMAKE_CXX_FLAGS MATCHES "\\-std=(c|gnu)\\+\\+[90][83]"
+             AND NOT CMAKE_CXX_FLAGS MATCHES "\\-ansi")
       ) )
     set ( CGAL_requires_Boost_libs FALSE )
   endif()
