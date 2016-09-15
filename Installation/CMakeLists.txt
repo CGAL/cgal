@@ -53,10 +53,10 @@ if(CMAKE_MAJOR_VERSION GREATER 2)
   # Thus this option is only enabled for cmake >= 3.0.
   option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" OFF )
 
-  if (CGAL_HEADER_ONLY)
+  if (CGAL_HEADER_ONLY OR CGAL_HEADER_ONLY_STEP_2)
     set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
     add_definitions(-DCGAL_HEADER_ONLY)
-  endif (CGAL_HEADER_ONLY)
+  endif()
 
 endif()
 
@@ -678,7 +678,9 @@ option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external l
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
 # and the example/test must be configured with MPFI (just one is not sufficient)
 
-#include(CGAL_SetupDependencies)
+if(NOT CGAL_HEADER_ONLY_STEP_2)
+  include(CGAL_SetupDependencies)
+endif()
 
 message("== Detect external libraries (DONE) ==\n")
 
@@ -688,6 +690,7 @@ message("== Detect external libraries (DONE) ==\n")
 #
 #--------------------------------------------------------------------------------------------------
 
+if(NOT CGAL_HEADER_ONLY_STEP_2)
 # The variables set are the #defines expected by compiler_config.h
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
@@ -745,6 +748,10 @@ if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
   file( APPEND "${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>\n\n" )
 endif()
 
+message("== Write compiler_config.h (DONE) ==\n")
+
+endif(NOT CGAL_HEADER_ONLY_STEP_2)
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Installation Setup =-
@@ -774,8 +781,6 @@ set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${CGAL_VERSION
 set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/man/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
-
-message("== Write compiler_config.h (DONE) ==\n")
 
 #--------------------------------------------------------------------------------------------------
 #

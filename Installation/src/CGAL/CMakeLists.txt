@@ -10,6 +10,10 @@ endif()
 
 CGAL_setup_CGAL_dependencies(CGAL ${keyword})
 
+if(CGAL_HEADER_ONLY_STEP_2)
+  target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY_STEP_2=1)
+endif()
+
 if(NOT CGAL_DISABLE_GMP)
   get_dependency_version(GMP)
   get_dependency_version(MPFR)
