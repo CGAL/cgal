@@ -56,7 +56,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "graph_concept_OpenMesh.cpp" )
-  target_link_libraries( graph_concept_OpenMesh ${OPENMESH_LIBRARIES} )
+  target_link_libraries( graph_concept_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
 create_single_source_cgal_program( "next.cpp" )
@@ -87,26 +87,28 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
-
+if(OpenMesh_FOUND)
+  target_link_libraries( test_graph_geometry PRIVATE ${OPENMESH_LIBRARIES})
+endif()
 
 if(OpenMesh_FOUND)
-  target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})
 endif()
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )
 if(OpenMesh_FOUND)
-  target_link_libraries( test_Euler_operations ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_Euler_operations PRIVATE ${OPENMESH_LIBRARIES})
 endif()
 
 create_single_source_cgal_program( "test_graph_traits.cpp" )
 
 if(OpenMesh_FOUND)
-  target_link_libraries( test_graph_traits ${OPENMESH_LIBRARIES} )
+  target_link_libraries( test_graph_traits PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
 
 create_single_source_cgal_program( "test_Properties.cpp" )
 if(OpenMesh_FOUND)
-  target_link_libraries( test_Properties ${OPENMESH_LIBRARIES})
+  target_link_libraries( test_Properties PRIVATE ${OPENMESH_LIBRARIES})
 endif()
 

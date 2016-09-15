@@ -71,5 +71,5 @@ create_single_source_cgal_program( "edge_collapse_all_short_edges.cpp" )
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
 
-target_link_libraries( edge_collapse_OpenMesh ${OPENMESH_LIBRARIES} )
+target_link_libraries( edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} )
 endif()

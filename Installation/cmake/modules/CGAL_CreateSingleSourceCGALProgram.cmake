@@ -63,7 +63,7 @@ function(create_single_source_cgal_program firstfile )
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
 
-    target_link_libraries(${exe_name} CGAL::CGAL )
+    target_link_libraries(${exe_name} PRIVATE CGAL::CGAL )
   else()
     message(AUTHOR_WARNING "The executable ${exe_name} will not be created because the source file ${firstfile} does not exist.")
   endif()

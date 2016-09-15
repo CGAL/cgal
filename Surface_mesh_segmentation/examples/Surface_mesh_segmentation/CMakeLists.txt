@@ -68,6 +68,6 @@ create_single_source_cgal_program( "segmentation_from_sdf_values_SM_example.cpp"
 
 if(OpenMesh_FOUND)
   create_single_source_cgal_program( "segmentation_from_sdf_values_OpenMesh_example.cpp" )
-  target_link_libraries( segmentation_from_sdf_values_OpenMesh_example ${OPENMESH_LIBRARIES} )
+  target_link_libraries( segmentation_from_sdf_values_OpenMesh_example PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
 
