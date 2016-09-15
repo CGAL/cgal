@@ -6,9 +6,9 @@ namespace CGAL {
 
 The class `Spatial_lock_grid_3` allows to lock 
 points with coordinates (x, y, z) in a 3D grid.
-The point type is called `P3` here. `P3` must provide x(), y() and z() functions,
+The point type is called `P3` here. `P3` must provide x(), y(), and z() functions,
 returning the respective point coordinates as numbers whose type is a 
-model of the concept of `CGAL::RealEmbeddable`.
+model of the concept of `RealEmbeddable`.
 
 It is a model of `SurjectiveLockDataStructure`, with `T` being
 `P3` and `S` being the function that maps a point to 
