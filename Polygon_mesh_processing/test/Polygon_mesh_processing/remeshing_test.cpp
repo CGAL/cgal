@@ -3,10 +3,10 @@
 //#define CGAL_PMP_REMESHING_DEBUG
 //#define CGAL_DUMP_REMESHING_STEPS
 #define CGAL_PMP_REMESHING_VERBOSE
+//#define CGAL_PMP_REMESHING_VERY_VERBOSE
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
@@ -25,7 +25,6 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Epec;
 
 template <class K>
 struct Main {
@@ -251,7 +250,6 @@ Main(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
   Main<Epic> m(argc,argv);
-  Main<Epec> m2(argc,argv);
 
   return 0;
 }

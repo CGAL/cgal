@@ -56,14 +56,17 @@
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_PMP_REMESHING_VERBOSE_PROGRESS
 #endif
 
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
 #define CGAL_PMP_REMESHING_VERBOSE
+#define CGAL_PMP_REMESHING_VERBOSE_PROGRESS
 #endif
 
-
-
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
+#define CGAL_PMP_REMESHING_VERBOSE
+#endif
 
 
 namespace CGAL {
@@ -424,7 +427,7 @@ namespace internal {
         double sqlen = eit->first;
         long_edges.right.erase(eit);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << long_edges.left.size() << " long edges, ";
         std::cout << nb_splits << " splits)";
         std::cout.flush();
@@ -559,7 +562,7 @@ namespace internal {
         halfedge_descriptor he = eit->second;
         short_edges.right.erase(eit);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << short_edges.left.size() << " short edges, ";
         std::cout << nb_collapses << " collapses)";
         std::cout.flush();
@@ -760,7 +763,7 @@ namespace internal {
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << nb_flips << " flips)";
         std::cout.flush();
 #endif
@@ -836,7 +839,7 @@ namespace internal {
 #endif
       for (unsigned int nit = 0; nit < nb_iterations; ++nit)
       {
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(iteration " << (nit + 1) << " / ";
         std::cout << nb_iterations << ") ";
         std::cout.flush();
