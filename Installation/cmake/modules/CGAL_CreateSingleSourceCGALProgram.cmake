@@ -63,7 +63,12 @@ function(create_single_source_cgal_program firstfile )
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
 
-    target_link_libraries(${exe_name} PRIVATE CGAL::CGAL )
+    target_link_libraries(${exe_name} PRIVATE CGAL::CGAL)
+    if(CGAL_3RD_PARTY_LIBRARIES)
+      message(DEPRECATION "Deprecated use of CGAL_3RD_PARTY_LIBRARIES: " ${CGAL_3RD_PARTY_LIBRARIES})
+      target_link_libraries(${exe_name} PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
+    endif()
+
   else()
     message(AUTHOR_WARNING "The executable ${exe_name} will not be created because the source file ${firstfile} does not exist.")
   endif()
