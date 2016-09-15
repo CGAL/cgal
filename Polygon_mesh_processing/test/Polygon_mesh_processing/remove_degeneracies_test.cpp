@@ -6,6 +6,11 @@
 #include <iostream>
 #include <fstream>
 
+//note : when
+//CGAL::get_default_random()::get_seed() = 1473902576
+//the last test (on trihole.off) does not terminate
+//
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
