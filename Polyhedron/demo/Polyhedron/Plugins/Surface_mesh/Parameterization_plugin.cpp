@@ -21,6 +21,7 @@
 #include <CGAL/parameterize.h>
 #include <CGAL/Discrete_conformal_map_parameterizer_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
+#include <CGAL/Two_vertices_parameterizer_3.h>
 
 #include <CGAL/Textured_polyhedron_builder.h>
 
@@ -32,7 +33,30 @@
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
 #include "ui_Parameterization_widget.h"
+typedef boost::unordered_set<Textured_polyhedron::Facet_handle> Component;
+typedef std::vector<Component> Components;
+struct Is_selected_property_map{
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+  std::vector<bool>* is_selected_ptr;
+  Is_selected_property_map()
+    : is_selected_ptr(NULL) {}
+  Is_selected_property_map(std::vector<bool>& is_selected)
+    : is_selected_ptr( &is_selected) {}
 
+  std::size_t id(edge_descriptor ed) { return ed.halfedge()->id()/2; }
+
+  friend bool get(Is_selected_property_map map, edge_descriptor ed)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    return (*map.is_selected_ptr)[map.id(ed)];
+  }
+
+  friend void put(Is_selected_property_map map, edge_descriptor ed, bool b)
+  {
+    CGAL_assertion(map.is_selected_ptr!=NULL);
+    (*map.is_selected_ptr)[map.id(ed)]=b;
+  }
+};
 
 class Navigation : public CGAL::Qt::GraphicsViewNavigation
 {
@@ -130,10 +154,20 @@ typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor           halfedge_d
 class UVItem : public QGraphicsItem
 {
 public :
-  UVItem(Textured_polyhedron* t_m, QRectF brect)
+  UVItem(Textured_polyhedron* t_m,
+         Components* p_components,
+         QRectF brect)
     :QGraphicsItem(),
-      texMesh(t_m), bounding_rect(brect)
+      texMesh(t_m),
+      bounding_rect(brect),
+      components(p_components),
+      m_current_component(0)
   {
+  }
+
+  ~UVItem()
+  {
+    delete components;
   }
 
   QRectF boundingRect() const
@@ -147,25 +181,29 @@ public :
     pen.setColor(Qt::black);
     pen.setWidth(0);
     painter->setPen(pen);
-    for( Textured_polyhedron::Facet_iterator
-         fi = texMesh->facets_begin();
-         fi != texMesh->facets_end();
+    for( Component::iterator
+         fi = components->at(m_current_component).begin();
+         fi != components->at(m_current_component).end();
          ++fi)
     {
-      QPointF pt_A(fi->halfedge()->u(), fi->halfedge()->v()),
-          pt_B(fi->halfedge()->next()->u(), fi->halfedge()->next()->v()),
-          pt_C(fi->halfedge()->next()->next()->u(), fi->halfedge()->next()->next()->v());
+      Textured_polyhedron::Facet_handle f(*fi);
+      QPointF pt_A(f->halfedge()->u(), f->halfedge()->v()),
+          pt_B(f->halfedge()->next()->u(), f->halfedge()->next()->v()),
+          pt_C(f->halfedge()->next()->next()->u(), f->halfedge()->next()->next()->v());
 
       painter->drawLine(pt_A, pt_B);
       painter->drawLine(pt_B, pt_C);
       painter->drawLine(pt_C, pt_A);
     }
   }
-
+  int number_of_components()const{return components->size();}
+  int current_component()const{return m_current_component;}
+  void set_current_component(int n){m_current_component = n;}
 private:
   Textured_polyhedron* texMesh;
   QRectF bounding_rect;
-
+  Components* components;
+  int m_current_component;
 };
 
 using namespace CGAL::Three;
@@ -214,6 +252,9 @@ public:
     navigation = new Navigation();
     ui_widget.graphicsView->installEventFilter(navigation);
     ui_widget.graphicsView->viewport()->installEventFilter(navigation);
+    ui_widget.component_numberLabel->setText("Component : 1");
+    connect(ui_widget.prevButton, &QPushButton::clicked, this, &Polyhedron_demo_parameterization_plugin::on_prevButton_pressed);
+    connect(ui_widget.nextButton, &QPushButton::clicked, this, &Polyhedron_demo_parameterization_plugin::on_nextButton_pressed);
     addDockWidget(dock_widget);
     dock_widget->setVisible(false);
 
@@ -231,6 +272,8 @@ public Q_SLOTS:
   void on_actionMVC_triggered();
   void on_actionDCP_triggered();
   void on_actionLSC_triggered();
+  void on_prevButton_pressed();
+  void on_nextButton_pressed();
   void replacePolyline()
   {
     int id = scene->mainSelectionIndex();
@@ -273,8 +316,45 @@ private:
   QMap<Scene_item*, UVItem*> projections;
 }; // end Polyhedron_demo_parameterization_plugin
 
+void Polyhedron_demo_parameterization_plugin::on_prevButton_pressed()
+{
+  int id = scene->mainSelectionIndex();
+  UVItem* uv_item = NULL;
+  Q_FOREACH(UVItem* pl, projections)
+  {
+    if(pl==NULL
+       || pl != projections[scene->item(id)])
+      continue;
 
+    uv_item = pl;
+    break;
+  }
+  if(uv_item == NULL)
+    return;
+  uv_item->set_current_component((std::max)(0,uv_item->current_component()-1));
+  ui_widget.component_numberLabel->setText(QString("Component : %1").arg(uv_item->current_component()+1));
+  replacePolyline();
+}
 
+void Polyhedron_demo_parameterization_plugin::on_nextButton_pressed()
+{
+  int id = scene->mainSelectionIndex();
+  UVItem* uv_item = NULL;
+  Q_FOREACH(UVItem* pl, projections)
+  {
+    if(pl==NULL
+       || pl != projections[scene->item(id)])
+      continue;
+
+    uv_item = pl;
+    break;
+  }
+  if(uv_item == NULL)
+    return;
+  uv_item->set_current_component((std::min)(uv_item->number_of_components()-1,uv_item->current_component()+1));
+  ui_widget.component_numberLabel->setText(QString("Component : %1").arg(uv_item->current_component()+1));
+  replacePolyline();
+}
 void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterization_method method)
 {
 
@@ -316,8 +396,19 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   // parameterize
   QTime time;
   time.start();
+  std::size_t id=0;
+  for (Polyhedron::Halfedge_iterator hit = pMesh->halfedges_begin(),
+       hit_end = pMesh->halfedges_end(); hit != hit_end; ++hit)
+  {
+      hit->id()=id++;
+  }
+  id=0;
+    for (Polyhedron::Facet_iterator fit = pMesh->facets_begin(),
+         fit_end = pMesh->facets_end(); fit != fit_end; ++fit)
+    {
+        fit->id()=id++;
+    }
   //fill pmaps
-
   halfedge_descriptor smhd;
   if(!is_seamed)
   {
@@ -355,54 +446,109 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 
-  halfedge_descriptor bhd(smhd);
-  bhd = opposite(bhd,*sMesh); // a halfedge on the virtual border
-  bool success = false;
+  //once per patch
+  QVector<P_halfedge_descriptor> copy_sel_item;
+  if(is_seamed)
+  BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
+  {
+    copy_sel_item.push_back(halfedge(ed, *pMesh));
+    copy_sel_item.push_back(opposite(halfedge(ed, *pMesh), *pMesh));
+  }
+
   QString new_item_name;
-  switch(method)
+  int number_of_components = 0;
+  std::vector<bool> mark(pMesh->size_of_halfedges()/2,false);
+  do
   {
-  case PARAM_MVC:
-  {
-    std::cout << "Parameterize (MVC)...";
-    new_item_name = tr("%1 (parameterized (MVC))").arg(poly_item->name());
-    typedef CGAL::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
-    Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
-    success = err == Parameterizer::OK;
-    break;
-  }
-  case PARAM_DCP:
-  {
-    new_item_name = tr("%1 (parameterized (DCP))").arg(poly_item->name());
-    std::cout << "Parameterize (DCP)...";
-    typedef CGAL::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
-    Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
-    success = err == Parameterizer::OK;
-    break;
-  }
-  case PARAM_LSC:
-  {
-    new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
-    std::cout << "Parameterize (LSC)...";
-    typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
-    Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
-    success = err == Parameterizer::OK;
-    break;
-  }
-  }
-  if(success)
-    std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-  else
-  {
-    std::cout << "failure" << std::endl;
-    QApplication::restoreOverrideCursor();
-    return;
-  }
+    halfedge_descriptor bhd(smhd);
+    bhd = opposite(bhd,*sMesh); // a halfedge on the virtual border
+    bool success = false;
+    switch(method)
+    {
+    case PARAM_MVC:
+    {
+      std::cout << "Parameterize (MVC)...";
+      new_item_name = tr("%1 (parameterized (MVC))").arg(poly_item->name());
+      typedef CGAL::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      success = err == Parameterizer::OK;
+      break;
+    }
+    case PARAM_DCP:
+    {
+      new_item_name = tr("%1 (parameterized (DCP))").arg(poly_item->name());
+      std::cout << "Parameterize (DCP)...";
+      typedef CGAL::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      success = err == Parameterizer::OK;
+      break;
+    }
+    case PARAM_LSC:
+    {
+      new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
+      std::cout << "Parameterize (LSC)...";
+      typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
+      CGAL::Two_vertices_parameterizer_3<Seam_mesh> Border_parameterizer;
+      Parameterizer::Error_code err;
+      if(is_seamed)
+        err = CGAL::parameterize(*sMesh, Parameterizer(Border_parameterizer()), bhd, uv_pm);
+      else
+        err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      success = err == Parameterizer::OK;
+      break;
+    }
+    }
+    if(success)
+      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+    else
+    {
+      std::cout << "failure" << std::endl;
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+
+    QVector<Polyhedron::Facet_iterator> c_component;
+    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,*sMesh),*sMesh),
+                                                       *sMesh,
+                                                       std::back_inserter(c_component));
+    Q_FOREACH(Seam_mesh::face_descriptor fd, c_component)
+    {
+      BOOST_FOREACH(P_halfedge_descriptor hd , halfedges_around_face(halfedge(fd,*pMesh),*pMesh))
+      {
+        if(copy_sel_item.contains(hd))
+        {
+          mark[hd->id()/2] = true;
+          copy_sel_item.removeAt(copy_sel_item.lastIndexOf(hd));
+        }
+      }
+    }
+
+    BOOST_FOREACH(P_halfedge_descriptor hd, copy_sel_item)
+    {
+      P_edge_descriptor ed = edge(hd,*pMesh);
+      P_vertex_descriptor svd(source(hd, *pMesh)), tvd(target(hd, *pMesh));
+      if(! is_border(ed,*pMesh)){
+        put(seam_edge_pm, ed, true);
+        put(seam_vertex_pm, svd, true);
+        put(seam_vertex_pm, tvd, true);
+        smhd = hd;
+        break;
+      }
+    }
+    ++number_of_components;
+  }while(!copy_sel_item.empty());
+
+
+
+
+
 
   // add textured polyhedon to the scene
   Textured_polyhedron *pTex_polyhedron = new Textured_polyhedron();
   Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
   builder.run(*pMesh,*pTex_polyhedron);
   pTex_polyhedron->compute_normals();
+
 
   Polyhedron::Halfedge_iterator it1;
   Textured_polyhedron::Halfedge_iterator it2;
@@ -418,7 +564,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     FT v = uv_pm[target(hd,*sMesh)].y();
     it2->u() = u;
     it2->v() = v;
-
     if(u<min.x())
       min.setX(u);
     if(u>max.x())
@@ -428,8 +573,35 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     if(v>max.y())
       max.setY(v);
   }
+
+  boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
+      = get(boost::face_external_index, *pMesh);
+  boost::vector_property_map<int,
+      boost::property_map<Polyhedron, boost::face_external_index_t>::type>
+      fccmap(fim);
+
+  Is_selected_property_map edge_pmap(mark);
+  Components* components = new Components(0);
+  components->resize(number_of_components);
+  CGAL::Polygon_mesh_processing::connected_components(
+        *pMesh,
+        fccmap,
+        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+          edge_pmap));
+
+  Polyhedron::Facet_iterator fit1;
+  Textured_polyhedron::Facet_iterator fit2;
+  for(fit1 = pMesh->facets_begin(),
+      fit2 = pTex_polyhedron->facets_begin();
+      fit1 != pMesh->facets_end()&&
+      fit2 != pTex_polyhedron->facets_end();
+      ++fit1, ++fit2)
+  {
+    components->at(fccmap[fit1]).insert(fit2);
+  }
+
   UVItem *projection
-      = new UVItem(pTex_polyhedron,QRectF(min, max));
+      = new UVItem(pTex_polyhedron, components, QRectF(min, max));
   Scene_textured_polyhedron_item* new_item = new Scene_textured_polyhedron_item(pTex_polyhedron);
 
   new_item->setName(new_item_name);

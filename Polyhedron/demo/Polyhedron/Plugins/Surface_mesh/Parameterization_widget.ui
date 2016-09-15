@@ -40,9 +40,47 @@
       </property>
      </widget>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
+      <item>
+       <widget class="QPushButton" name="prevButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/left_arrow.png</normaloff>:/cgal/icons/resources/left_arrow.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="component_numberLabel">
+        <property name="text">
+         <string>Component </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="nextButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/right_arrow.png</normaloff>:/cgal/icons/resources/right_arrow.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../Polyhedron_3.qrc"/>
+ </resources>
  <connections/>
 </ui>
