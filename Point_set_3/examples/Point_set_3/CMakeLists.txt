@@ -44,6 +44,9 @@ include_directories( BEFORE ../../include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "point_set.cpp" )
+create_single_source_cgal_program( "point_set_property.cpp" )
+create_single_source_cgal_program( "point_set_algo.cpp" )
 create_single_source_cgal_program( "point_set_read_ply.cpp" )
+
 
 
