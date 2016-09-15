@@ -56,7 +56,6 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Properties::Property_container<Item> Base;
   /// \endcond
   
   typedef typename std::size_t Item; ///< Items are indices
@@ -64,6 +63,10 @@ public:
   typedef typename Gt::Point_3 Point; ///< Point type
   typedef typename Gt::Vector_3 Vector; ///< Vector type
 
+  /// \cond SKIP_IN_MANUAL
+  typedef typename Properties::Property_container<Item> Base;
+  /// \endcond
+  
   /*!
     \brief Property map used to associate attributes to the items of the point set.
 
@@ -209,9 +212,7 @@ public:
    */
   Point_set_3 () : m_base()
   {
-    m_indices = m_base.template add<std::size_t> ("index").first;
-    m_points = m_base.template add<Point> ("point").first;
-    m_nb_removed = 0;
+    clear();
   }
 
   /// @}
@@ -229,8 +230,8 @@ public:
   void clear()
   {
     m_base.clear();
-    m_indices = m_base.template add<std::size_t> ("index").first;
-    m_points = m_base.template add<Point> ("point").first;
+    m_indices = m_base.template add<std::size_t> ("index", (std::size_t)(-1)).first;
+    m_points = m_base.template add<Point> ("point", Point (0., 0., 0.)).first;
     m_nb_removed = 0;
   }
 
@@ -266,9 +267,11 @@ public:
   /*!
     \brief Add item (points with properties) with defaults values.
    */
-  void add_item ()
+  iterator add_item ()
   {
     m_base.push_back();
+    m_indices[size()-1] = size()-1;
+    return m_indices.end() - 1;
   }
 
   /*!
@@ -279,11 +282,11 @@ public:
     \note Properties of the added point are initialized to their
     default value.
    */
-  void push_back (const Point& p)
+  iterator push_back (const Point& p)
   {
-    add_item();
-    m_indices[size()-1] = size()-1;
+    iterator out = add_item();
     m_points[size()-1] = p;
+    return out;
   }
 
   /*!
@@ -298,11 +301,12 @@ public:
     \note A normal property must have been added to the point set
     before using this method.
    */
-  void push_back (const Point& p, const Vector& n)
+  iterator push_back (const Point& p, const Vector& n)
   {
-    push_back (p);
+    iterator out = push_back (p);
     assert (has_normals());
     m_normals[size()-1] = n;
+    return out;
   }
 
   iterator begin() { return m_indices.begin(); }
@@ -412,9 +416,8 @@ public:
   */
   void remove (iterator it)
   {
-    iterator first = removed_begin();
     std::swap (*it, *(removed_begin() - 1));
-    -- m_nb_removed;
+    ++ m_nb_removed;
   }
 
   /*!
@@ -570,10 +573,10 @@ public:
     \return `true` if the property was added, `false if it already
     existed.
   */
-  bool add_normal_property()
+  bool add_normal_property(const Vector& default_value = Vector(0., 0., 0.))
   {
     bool out = false;
-    boost::tie (m_normals, out) = m_base.template add<Vector> ("normal");
+    boost::tie (m_normals, out) = m_base.template add<Vector> ("normal", default_value);
     return out;
   }
   /*!
@@ -675,7 +678,8 @@ public:
   std::string info() const
   {
     std::ostringstream oss;
-    oss << "Point_set_3 with " << size() << " point(s) ("
+    oss << "CGAL::Point_set_3<" << boost::core::demangle(typeid(Gt).name())
+        << "> with " << size() << " point(s) ("
         << removed_size() << " removed point(s) waiting to be deleted)" << std::endl;
     std::vector<std::string> prop = m_base.properties();
     for (std::size_t i = 0; i < prop.size(); ++ i)
