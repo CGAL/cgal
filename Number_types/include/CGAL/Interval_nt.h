@@ -1268,6 +1268,7 @@ namespace Eigen {
     typedef CGAL::Interval_nt<b> Real;
     typedef CGAL::Interval_nt<b> NonInteger;
     typedef CGAL::Interval_nt<b> Nested;
+    typedef double Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

@@ -1428,6 +1428,7 @@ namespace Eigen {
     // typedef CGAL::Lazy_exact_nt<ET> NonInteger;
     typedef CGAL::Lazy_exact_nt<typename NumTraits<ET>::NonInteger> NonInteger;
     typedef CGAL::Lazy_exact_nt<ET> Nested;
+    typedef CGAL::Lazy_exact_nt<ET> Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

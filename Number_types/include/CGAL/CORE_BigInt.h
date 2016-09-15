@@ -207,6 +207,7 @@ namespace Eigen {
     typedef CORE::BigInt Real;
     typedef CORE::BigRat NonInteger;
     typedef CORE::BigInt Nested;
+    typedef CORE::BigInt Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

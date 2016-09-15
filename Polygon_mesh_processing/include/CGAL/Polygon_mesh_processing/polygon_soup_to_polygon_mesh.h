@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/algorithm.h>
 #include <set>
 
 #include <boost/range/size.hpp>
