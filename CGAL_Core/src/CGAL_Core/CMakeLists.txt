@@ -11,7 +11,7 @@ if(CGAL_Core_FOUND)
     set(keyword PUBLIC)
   endif()
 
-  target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL )
+  CGAL_setup_CGAL_Core_dependencies(CGAL_Core ${keyword})
 
   message("libCGAL_Core is configured")
 endif()

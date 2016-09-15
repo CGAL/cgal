@@ -45,4 +45,8 @@
 #  endif // CGAL_USE_MPFR and no <mpfr.h>
 #endif // __has_include
 
+#if CGAL_USE_GMP && CGAL_USE_MPFR && ! CGAL_NO_CORE
+#  define CGAL_USE_CORE 1
+#endif
+
 #endif // CGAL_INTERNAL_ENABLE_THIRD_PARTY_LIBRARIES_H
