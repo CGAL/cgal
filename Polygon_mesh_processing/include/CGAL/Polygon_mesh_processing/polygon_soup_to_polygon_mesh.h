@@ -25,6 +25,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
+#include <CGAL/algorithm.h>
 #include <set>
 
 namespace CGAL
