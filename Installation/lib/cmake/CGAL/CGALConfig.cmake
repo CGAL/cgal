@@ -98,3 +98,5 @@ target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY_STEP_2=1)
 
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+
+set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
