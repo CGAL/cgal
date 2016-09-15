@@ -73,9 +73,11 @@ endforeach()
 # Define the CGAL targets and theirs CGAL:: aliases
 #
 foreach(cgal_lib CGAL CGAL_Core CGAL_ImageIO CGAL_Qt5)
-  if(${cgal_lib}_FOUND)
+  if(${cgal_lib}_FOUND AND NOT TARGET ${cgal_lib})
     add_library(${cgal_lib} INTERFACE)
-    add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
+    if(NOT TARGET CGAL::${cgal_lib})
+      add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
+    endif()
   endif()
 endforeach()
 
