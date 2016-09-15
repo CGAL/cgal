@@ -54,29 +54,45 @@ class Point_set_3
 {
 public:
 
-
+  /// \cond SKIP_IN_MANUAL
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Gt::FT FT;
-  typedef typename Gt::Point_3 Point;
-  typedef typename Gt::Vector_3 Vector;
-
-  typedef typename std::size_t Item;
-
   typedef typename Properties::Property_container<Item> Base;
+  /// \endcond
+  
+  typedef typename std::size_t Item; ///< Items are indices
+  typedef typename Gt::FT FT; ///< Floating type
+  typedef typename Gt::Point_3 Point; ///< Point type
+  typedef typename Gt::Vector_3 Vector; ///< Vector type
 
+  /*!
+    \brief Property map used to associate attributes to the items of the point set.
+
+    This class is a model of `LValuePropertyMap`.
+
+    \tparam Type The type of the property.
+  */
   template <class Type>
   struct Property_map
   {
+    /// \cond SKIP_IN_MANUAL
     typedef typename Properties::Property_map<Item, Type> type;
+    /// \endcond
   };
   
-  typedef typename Property_map<std::size_t>::type Index_pmap;
-  typedef typename Property_map<Point>::type Point_pmap;
-  typedef typename Property_map<Vector>::type Vector_pmap;
+  typedef typename Property_map<std::size_t>::type Index_pmap; ///< Property map of indices
+  typedef typename Property_map<Point>::type Point_pmap; ///< Property map of points
+  typedef typename Property_map<Vector>::type Vector_pmap; ///< Property map of vectors
 
-  typedef typename Index_pmap::iterator iterator;
-  typedef typename Index_pmap::const_iterator const_iterator;
+  typedef typename Index_pmap::iterator iterator; ///< Iterator type of the point set
+  typedef typename Index_pmap::const_iterator const_iterator; ///< Constant iterator type of the point set
 
+  /*!
+    \brief Class used to insert elements by defining the value of one of its properties.
+
+    This class is a model of `OutputIterator`.
+
+    \tparam Property The object `Property_map<Type>` that will be filled by the output iteration.
+  */
   template <typename Property>
   class Property_back_inserter {
     /// \cond SKIP_IN_MANUAL
@@ -111,6 +127,13 @@ public:
     /// \endcond      
   };
 
+  /*!
+    \brief Property map that pushes a new item to the point set if needed.
+
+    This class is a model of `WritablePropertyMap`.
+
+    \tparam Property The object `Property_map<Type>` where to push new values.
+  */
   template <typename Property>
   class Push_pmap
   {
@@ -146,10 +169,10 @@ public:
     /// \endcond
   };
 
-  typedef Property_back_inserter<Index_pmap> Index_back_inserter;
-  typedef Property_back_inserter<Point_pmap> Point_back_inserter;
-  typedef Push_pmap<Point_pmap> Point_push_pmap;
-  typedef Push_pmap<Vector_pmap> Vector_push_pmap;
+  typedef Property_back_inserter<Index_pmap> Index_back_inserter; ///< Back inserter on indices
+  typedef Property_back_inserter<Point_pmap> Point_back_inserter; ///< Back inserter on points
+  typedef Push_pmap<Point_pmap> Point_push_pmap; ///< Property map for pushing new points
+  typedef Push_pmap<Vector_pmap> Vector_push_pmap; ///< Property map for pushing new vectors
 
 
 protected:
@@ -569,38 +592,72 @@ public:
 
   /// \name Property Maps and Inserters
   /// @{
-  
+
+  /*!
+    \brief Get the property map of the point attribute.
+  */
   Point_pmap point_pmap()
   {
     return m_points;
   }
 
+  /*!
+    \brief Get the property map of the point attribute (constant version).
+  */
   const Point_pmap point_pmap() const
   {
     return m_points;
   }
 
+  /*!
+    \brief Get the push property map of the point attribute.
+  */
   Point_push_pmap point_push_pmap ()
   {
     return Point_push_pmap (this, &m_points, size());
   }
 
+  /*!
+    \brief Get the property map of the normal attribute.
+
+    \note The normal property must have been added to the point set
+    before calling this method (see `add_normal_property()`).
+  */
   Vector_pmap normal_pmap ()
   {
     return m_normals;
   }
+  /*!
+    \brief Get the property map of the normal attribute (constant version).
+
+    \note The normal property must have been added to the point set
+    before calling this method (see `add_normal_property()`).
+  */
   const Vector_pmap normal_pmap () const
   {
     return m_normals;
   }
+
+  /*!
+    \brief Get the push property map of the normal attribute.
+
+    \note The normal property must have been added to the point set
+    before calling this method (see `add_normal_property()`).
+  */
   Vector_push_pmap normal_push_pmap ()
   {
     return Vector_push_pmap (this, &m_normals, size());
   }
+  /*!
+    \brief Get the back inserter on the index attribute.
+  */
   Index_back_inserter index_back_inserter ()
   {
     return Index_back_inserter (this, &m_indices, size());
   }
+  /*!
+    \brief Get the back inserter on the point attribute.
+  */
   Point_back_inserter point_back_inserter ()
   {
     return Point_back_inserter (this, &m_points, size());
@@ -612,6 +669,9 @@ public:
 
   /// \name Miscellaneous
   /// @{
+  /*!
+    \brief List properties with their types in an `std::string` object.
+  */
   std::string info() const
   {
     std::ostringstream oss;
