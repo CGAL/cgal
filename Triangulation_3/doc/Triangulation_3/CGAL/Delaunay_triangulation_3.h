@@ -43,7 +43,7 @@ manual \ref Triangulation3exfastlocation.
         the triangulation data structure is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a 
         reference to a `SurjectiveLockDataStructure`
-        instance via the constructor or `Triangulation_3::set_lock_data_structure`.
+        instance via the constructor or `Triangulation_3::set_lock_data_structure()`.
 
 If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
 such as insertion/removal of a range of points, are performed in parallel. See 
@@ -123,7 +123,7 @@ Lock_data_structure *lock_ds = NULL);
 /*!
 Copy constructor. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
-concurrency-safe as long as the user has not called `Triangulation_3::set_lock_data_structure`.
+concurrency-safe as long as the user has not called `Triangulation_3::set_lock_data_structure()`.
 */ 
 Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1); 
 
