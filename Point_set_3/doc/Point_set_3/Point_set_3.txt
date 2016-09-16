@@ -35,11 +35,14 @@ type. Convenience methods are provided to handle the property "normal"
 of type `CGAL::Vector_3<Gt>` that is a very common property on point
 sets.
 
-To avoid frequent memory allocation and disallocation, removal of
-points is handled by changing the "index" properties, putting the
-points marked as removed at the back of the indices and keeping track
-of the number of points marked as removed. It is then possible to
-actually free the memory by collecting this garbage.
+Reordering is only done by swapping index values: this guarantees that
+these operations have a constant complexity no matter how many
+properties are defined. To avoid frequent memory allocation and
+disallocation, removal of points is also handled by swapping the index
+values, putting the points marked as removed at the back of the index
+property and keeping track of the number of points marked as
+removed. If the user needs memory to be disallocated, the element
+marked as removed can be actually deleted from memory.
 
 \section Point_set_3_Usage Simple Usage
 

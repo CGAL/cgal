@@ -17,7 +17,7 @@
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.10}
-\cgalPkgBib{cgal:ovja-pssd}
+\cgalPkgBib{cgal:g-ps}
 \cgalPkgDependsOn{\ref PkgSurface_mesh}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
