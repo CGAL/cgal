@@ -16,6 +16,7 @@
 #include <QPen>
 #include <QDockWidget>
 
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/parameterize.h>
@@ -400,45 +401,28 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   for (Polyhedron::Halfedge_iterator hit = pMesh->halfedges_begin(),
        hit_end = pMesh->halfedges_end(); hit != hit_end; ++hit)
   {
-      hit->id()=id++;
+    hit->id()=id++;
   }
   id=0;
-    for (Polyhedron::Facet_iterator fit = pMesh->facets_begin(),
-         fit_end = pMesh->facets_end(); fit != fit_end; ++fit)
-    {
-        fit->id()=id++;
-    }
-  //fill pmaps
-  halfedge_descriptor smhd;
-  if(!is_seamed)
+  for (Polyhedron::Facet_iterator fit = pMesh->facets_begin(),
+       fit_end = pMesh->facets_end(); fit != fit_end; ++fit)
   {
-    for(Polyhedron::Halfedge_iterator hit = pMesh->halfedges_begin(); hit != pMesh->halfedges_end(); ++hit)
-    {
-      P_vertex_descriptor svd(source(hit, *pMesh)), tvd(target(hit, *pMesh));
-      P_edge_descriptor ed = edge(svd, tvd,*pMesh).first;
-      if(is_border(ed,*pMesh)){
-        if(smhd == boost::graph_traits<Polyhedron>::null_halfedge()){
-          smhd = halfedge(edge(svd,tvd,*pMesh).first,*pMesh);
-          if (smhd == boost::graph_traits<Polyhedron>::null_halfedge())
-            smhd = opposite(smhd, *pMesh);
-        }
-        break;
-      }
-    }
+    fit->id()=id++;
   }
+  std::vector<bool> mark(pMesh->size_of_halfedges()/2,false);
   if(is_seamed)
   {
+    //fill pmaps
     BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
     {
       P_halfedge_descriptor hd = halfedge(ed, *pMesh);
       P_vertex_descriptor svd(source(hd, *pMesh)), tvd(target(hd, *pMesh));
-      if(! is_border(ed,*pMesh)){
+      if(!is_border(ed, *pMesh))
+      {
         put(seam_edge_pm, ed, true);
         put(seam_vertex_pm, svd, true);
         put(seam_vertex_pm, tvd, true);
-        if(smhd == boost::graph_traits<Polyhedron>::null_halfedge()){
-          smhd = hd;
-        }
+        mark[hd->id()/2] = true;
       }
     }
   }
@@ -446,21 +430,66 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 
-  //once per patch
-  QVector<P_halfedge_descriptor> copy_sel_item;
-  if(is_seamed)
-  BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
-  {
-    copy_sel_item.push_back(halfedge(ed, *pMesh));
-    copy_sel_item.push_back(opposite(halfedge(ed, *pMesh), *pMesh));
-  }
 
   QString new_item_name;
-  int number_of_components = 0;
-  std::vector<bool> mark(pMesh->size_of_halfedges()/2,false);
-  do
+  //determine the different connected_components
+  boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
+      = get(boost::face_external_index, *pMesh);
+  boost::vector_property_map<int,
+      boost::property_map<Polyhedron, boost::face_external_index_t>::type>
+      fccmap(fim);
+
+  Is_selected_property_map edge_pmap(mark);
+
+  int number_of_components =
+      CGAL::Polygon_mesh_processing::connected_components(
+        *pMesh,
+        fccmap,
+        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+          edge_pmap));
+  std::vector<std::vector<Polyhedron::Facet_handle> > p_components(number_of_components);
+  Polyhedron::Facet_iterator fit;
+  for(fit = pMesh->facets_begin();
+      fit != pMesh->facets_end();
+      ++fit)
   {
-    halfedge_descriptor bhd(smhd);
+    p_components.at(fccmap[fit]).push_back(fit);
+  }
+
+  //once per component
+  for(int current_component=0; current_component<number_of_components; ++current_component)
+  {
+
+    P_halfedge_descriptor smhd1, smhd2;
+    std::vector<P_halfedge_descriptor> border;
+    PMP::border_halfedges(p_components[current_component],
+                          *pMesh,
+                          std::back_inserter(border));
+    BOOST_FOREACH(Polyhedron::Halfedge_iterator hd, border)
+    {
+      if(smhd1 == boost::graph_traits<Polyhedron>::null_halfedge())
+      {
+        if(face(hd, *pMesh) == boost::graph_traits<Polyhedron>::null_face())
+          smhd1 = opposite(hd, *pMesh);
+      }
+      else if(smhd2 == boost::graph_traits<Polyhedron>::null_halfedge())
+      {
+        if(face(hd, *pMesh) == boost::graph_traits<Polyhedron>::null_face())
+          smhd2 = opposite(hd, *pMesh);
+      }
+      else
+        break;
+    }
+    //in case there are no border, take the first halfedge of the seam.
+    if(smhd1 == boost::graph_traits<Polyhedron>::null_halfedge())
+    {
+      smhd1 = halfedge(*sel_item->selected_edges.begin(), *pMesh);
+    }
+    if(smhd2 == boost::graph_traits<Polyhedron>::null_halfedge())
+    {
+      smhd2 = halfedge(*(sel_item->selected_edges.begin()++), *pMesh);
+    }
+    halfedge_descriptor bhd(smhd1);
     bhd = opposite(bhd,*sMesh); // a halfedge on the virtual border
     bool success = false;
     switch(method)
@@ -487,13 +516,24 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
       std::cout << "Parameterize (LSC)...";
+      typedef CGAL::Two_vertices_parameterizer_3<Seam_mesh> Border_parameterizer;
+      typedef CGAL::LSCM_parameterizer_3<Seam_mesh, Border_parameterizer> Parameterizer_with_border;
       typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
-      CGAL::Two_vertices_parameterizer_3<Seam_mesh> Border_parameterizer;
+
+      boost::graph_traits<Seam_mesh>::vertex_descriptor vp1 = target(halfedge_descriptor(smhd1),*sMesh);
+      boost::graph_traits<Seam_mesh>::vertex_descriptor vp2 = target(halfedge_descriptor(smhd2),*sMesh);
       Parameterizer::Error_code err;
-      if(is_seamed)
-        err = CGAL::parameterize(*sMesh, Parameterizer(Border_parameterizer()), bhd, uv_pm);
+      if(!is_seamed)
+        err = CGAL::parameterize(*sMesh,
+                                 Parameterizer(),
+                                 bhd,
+                                 uv_pm);
       else
-        err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+        err = CGAL::parameterize(*sMesh,
+                                 Parameterizer_with_border(Border_parameterizer(vp1, vp2)),
+                                 bhd,
+                                 uv_pm);
+
       success = err == Parameterizer::OK;
       break;
     }
@@ -506,41 +546,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       QApplication::restoreOverrideCursor();
       return;
     }
-
-    QVector<Polyhedron::Facet_iterator> c_component;
-    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,*sMesh),*sMesh),
-                                                       *sMesh,
-                                                       std::back_inserter(c_component));
-    Q_FOREACH(Seam_mesh::face_descriptor fd, c_component)
-    {
-      BOOST_FOREACH(P_halfedge_descriptor hd , halfedges_around_face(halfedge(fd,*pMesh),*pMesh))
-      {
-        if(copy_sel_item.contains(hd))
-        {
-          mark[hd->id()/2] = true;
-          copy_sel_item.removeAt(copy_sel_item.lastIndexOf(hd));
-        }
-      }
-    }
-
-    BOOST_FOREACH(P_halfedge_descriptor hd, copy_sel_item)
-    {
-      P_edge_descriptor ed = edge(hd,*pMesh);
-      P_vertex_descriptor svd(source(hd, *pMesh)), tvd(target(hd, *pMesh));
-      if(! is_border(ed,*pMesh)){
-        put(seam_edge_pm, ed, true);
-        put(seam_vertex_pm, svd, true);
-        put(seam_vertex_pm, tvd, true);
-        smhd = hd;
-        break;
-      }
-    }
-    ++number_of_components;
-  }while(!copy_sel_item.empty());
-
-
-
-
+  } //end for each component
 
 
   // add textured polyhedon to the scene
@@ -548,7 +554,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
   builder.run(*pMesh,*pTex_polyhedron);
   pTex_polyhedron->compute_normals();
-
 
   Polyhedron::Halfedge_iterator it1;
   Textured_polyhedron::Halfedge_iterator it2;
@@ -574,21 +579,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       max.setY(v);
   }
 
-  boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
-      = get(boost::face_external_index, *pMesh);
-  boost::vector_property_map<int,
-      boost::property_map<Polyhedron, boost::face_external_index_t>::type>
-      fccmap(fim);
-
-  Is_selected_property_map edge_pmap(mark);
   Components* components = new Components(0);
   components->resize(number_of_components);
-  CGAL::Polygon_mesh_processing::connected_components(
-        *pMesh,
-        fccmap,
-        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-          edge_pmap));
-
+  //that loop has already been done before, but I
+  //don't know how to avoid re-doing it for now
   Polyhedron::Facet_iterator fit1;
   Textured_polyhedron::Facet_iterator fit2;
   for(fit1 = pMesh->facets_begin(),
@@ -599,7 +593,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   {
     components->at(fccmap[fit1]).insert(fit2);
   }
-
   UVItem *projection
       = new UVItem(pTex_polyhedron, components, QRectF(min, max));
   Scene_textured_polyhedron_item* new_item = new Scene_textured_polyhedron_item(pTex_polyhedron);
