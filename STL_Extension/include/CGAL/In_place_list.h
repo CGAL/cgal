@@ -185,7 +185,7 @@ template <class T, class Alloc>
 template <class T, class Alloc>
   std::size_t hash_value(const In_place_list_const_iterator<T,Alloc>&  i)
   {
-    T* ptr = &*i;
+    const T* ptr = &*i;
     return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
    }
 
