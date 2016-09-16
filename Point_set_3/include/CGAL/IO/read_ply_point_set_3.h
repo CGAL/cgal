@@ -25,9 +25,31 @@
 namespace CGAL
 {
 
+/*!
+
+  \ingroup PkgPointSet3
+
+  \brief PLY interpreter designed to fill a `CGAL::Point_set_3` object.
+
+  This interpreter will instanciate any number of property needed to
+  store all PLY properties read in the header:
+
+  - points and normals are stored in the usual `CGAL::Point_set_3`
+    fashion (property "point" of type `CGAL::Point_3` and property
+    "normal" of type `CGAL::Vector_3`)
+
+  - other PLY properties are stored on point set properties with the
+    name and type given by the PLY header
+
+  \tparam Gt Geometric traits class.
+
+  \cgalModels `PlyInterpreter`
+ */
+
 template <typename Gt>
 class Ply_interpreter_point_set_3
 {
+  /// \cond SKIP_IN_MANUAL
 public:
   typedef Point_set_3<Gt> Point_set;
   typedef Point_3<Gt> Point;
@@ -63,8 +85,9 @@ private:
   Point_set& m_point_set;
   bool m_use_floats;
   std::vector<Abstract_ply_property_to_point_set_property*> m_properties;
-  
+  /// \endcond
 public:
+  
   /*!
     Constructs a PLY interpreter for a `CGAL::Point_set_3` object.
    */
@@ -179,6 +202,7 @@ public:
       m_properties[i]->assign (reader, m_point_set.size() - 1);
   }
 
+  /// \cond SKIP_IN_MANUAL
   template <typename FT>
   void process_line (Ply_reader& reader)
   {
@@ -199,7 +223,7 @@ public:
         m_point_set.normal(m_point_set.size() - 1) = normal;
       }
   }
-
+  /// \endcond
 };
 
 }
