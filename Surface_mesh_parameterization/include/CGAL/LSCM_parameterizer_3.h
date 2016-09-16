@@ -42,7 +42,35 @@
 /// \file LSCM_parameterizer_3.h
 
 namespace CGAL {
+//custom output iterator that fills both faces and vertices containers
+namespace internal {
+template<typename Mesh, typename UV_pmap>
+struct ContainersFiller {
+  typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
+  const Mesh& mesh;
+  const UV_pmap uvpm;
+  std::vector<face_descriptor>& faces;
+  boost::unordered_set<vertex_descriptor>& vertices;
+  FillContainers(const Mesh& mesh, const UV_pmap& uvpm,
+                 std::vector<face_descriptor>& faces,
+                 boost::unordered_set<vertex_descriptor>& vertices)
+    : mesh(mesh), uvpm(uvpm), faces(faces), vertices(vertices)
+  {}
+
+  void operator()(face_descriptor fd)
+  {
+    typename boost::graph_traits<Mesh>::halfedge_descriptor hd = halfedge(fd,mesh);
+    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh))
+    {
+      vertices.insert(vd);
+    }
+    faces.push_back(fd);
+  }
+};
+
+}//end namespace internal
 
 // ------------------------------------------------------------------------------------
 // Declaration
@@ -187,9 +215,11 @@ Error_code  parameterize(TriangleMesh& mesh,
     // Fill the matrix for the other vertices
     solver.begin_system() ;
     std::vector<face_descriptor> ccfaces;
+    boost::unordered_set<vertex_descriptor> ccvertices;
+    internal::ContainersFiller<TriangleMesh,VertexUVmap> fc(mesh, uvmap, ccfaces, ccvertices);
     CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                        mesh,
-                                                       std::back_inserter(ccfaces));
+                                                       boost::make_function_output_iterator(fc));
     BOOST_FOREACH(face_descriptor fd, ccfaces)
     {
         // Create two lines in the linear system per triangle (one for u, one for v)
@@ -210,7 +240,7 @@ Error_code  parameterize(TriangleMesh& mesh,
     // Copy X coordinates into the (u,v) pair of each vertex
     //set_mesh_uv_from_system(mesh, solver, uvmap);
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
+    BOOST_FOREACH(vertex_descriptor vd, ccvertices)
     {
       int index = get(vimap,vd);
       NT u = solver.variable(2*index    ).value() ;

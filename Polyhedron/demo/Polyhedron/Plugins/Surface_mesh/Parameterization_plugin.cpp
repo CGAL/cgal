@@ -460,36 +460,18 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   for(int current_component=0; current_component<number_of_components; ++current_component)
   {
 
-    P_halfedge_descriptor smhd1, smhd2;
+    P_halfedge_descriptor phd;
     std::vector<P_halfedge_descriptor> border;
     PMP::border_halfedges(p_components[current_component],
                           *pMesh,
                           std::back_inserter(border));
-    BOOST_FOREACH(Polyhedron::Halfedge_iterator hd, border)
-    {
-      if(smhd1 == boost::graph_traits<Polyhedron>::null_halfedge())
-      {
-        if(face(hd, *pMesh) == boost::graph_traits<Polyhedron>::null_face())
-          smhd1 = opposite(hd, *pMesh);
-      }
-      else if(smhd2 == boost::graph_traits<Polyhedron>::null_halfedge())
-      {
-        if(face(hd, *pMesh) == boost::graph_traits<Polyhedron>::null_face())
-          smhd2 = opposite(hd, *pMesh);
-      }
-      else
-        break;
-    }
+    phd = opposite(border.front(), *pMesh);
     //in case there are no border, take the first halfedge of the seam.
-    if(smhd1 == boost::graph_traits<Polyhedron>::null_halfedge())
+    if(phd == boost::graph_traits<Polyhedron>::null_halfedge())
     {
-      smhd1 = halfedge(*sel_item->selected_edges.begin(), *pMesh);
+      phd = halfedge(*sel_item->selected_edges.begin(), *pMesh);
     }
-    if(smhd2 == boost::graph_traits<Polyhedron>::null_halfedge())
-    {
-      smhd2 = halfedge(*(sel_item->selected_edges.begin()++), *pMesh);
-    }
-    halfedge_descriptor bhd(smhd1);
+    halfedge_descriptor bhd(phd);
     bhd = opposite(bhd,*sMesh); // a halfedge on the virtual border
     bool success = false;
     switch(method)
@@ -514,14 +496,35 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
     case PARAM_LSC:
     {
+      double max_dist = 0;
+      int indice_max = 0;
+      Kernel::Point_3 a = target(border[0], *pMesh)->point();
+      for(std::size_t i=1; i<border.size(); ++i)
+      {
+        Kernel::Point_3 b = target(border[i], *pMesh)->point();
+        double dist = std::sqrt((b.x()-a.x())*(b.x()-a.x())+
+            (b.y()-a.y())*(b.y()-a.y())+
+            (b.z()-a.z())*(b.z()-a.z()));
+
+        if(dist>max_dist)
+        {
+          max_dist = dist;
+          indice_max = i;
+        }
+      }
+
+      P_halfedge_descriptor phd2 = opposite(border[indice_max], *pMesh);
       new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
       std::cout << "Parameterize (LSC)...";
       typedef CGAL::Two_vertices_parameterizer_3<Seam_mesh> Border_parameterizer;
       typedef CGAL::LSCM_parameterizer_3<Seam_mesh, Border_parameterizer> Parameterizer_with_border;
       typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
 
-      boost::graph_traits<Seam_mesh>::vertex_descriptor vp1 = target(halfedge_descriptor(smhd1),*sMesh);
-      boost::graph_traits<Seam_mesh>::vertex_descriptor vp2 = target(halfedge_descriptor(smhd2),*sMesh);
+      boost::graph_traits<Seam_mesh>::vertex_descriptor vp1 = target(halfedge_descriptor(phd),*sMesh);
+      boost::graph_traits<Seam_mesh>::vertex_descriptor vp2 = target(halfedge_descriptor(phd2),*sMesh);
+      boost::property_map<Seam_mesh,CGAL::vertex_point_t>::type vpm = get(boost::vertex_point, *sMesh);
+      qDebug()<<"vp de "<<current_component;
+      std::cerr<<get(vpm, vp1)<<" "<<get(vpm, vp2)<<std::endl;
       Parameterizer::Error_code err;
       if(!is_seamed)
         err = CGAL::parameterize(*sMesh,

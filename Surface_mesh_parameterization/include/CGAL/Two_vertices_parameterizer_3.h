@@ -220,7 +220,6 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 
-        put(uvmap, vd, Point_2(u,v)) ; // useful only for vxmin and vxmax
 
         if(u < umin || (u==umin && v < vmin) ) {
             vxmin = vd ;
@@ -233,6 +232,8 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
             vmax = v ;
         }
     }
+    put(uvmap, vxmin, Point_2(umin,vmin)) ; // useful only for vxmin and vxmax
+    put(uvmap, vxmax, Point_2(umax,vmax)) ; // useful only for vxmin and vxmax
     put(vpmap, vxmin, true);
     put(vpmap, vxmax, true);
 
