@@ -536,7 +536,25 @@ public:
   {
     return m_base.template get<T>(name);
   }
-  
+
+  /*!
+    \brief Gets the push property map of the given property.
+
+    \tparam T type of the property.
+
+    \param prop The property map.
+
+    \return Returns a pair containing: the wanted property map and a
+    boolean set to `true` or an empty property map and a boolean set
+    to `false` (if the property was not found).
+  */
+  template <class T>
+  Push_pmap<Properties::Property_map<Item, T> >
+  push_pmap (Properties::Property_map<Item, T>& prop)
+  {
+    return Push_pmap<Properties::Property_map<Item, T> > (this, &prop, size());
+  }
+
   /*!
     \brief Removes the wanted property.
 
