@@ -299,8 +299,7 @@ _test_cls_tds_2( const Tds &)
   assert(td45.is_valid() && td45.number_of_vertices() == 10 && td45.number_of_faces() == 16);
 
   Vertex_handle nv45 = td45.insert_in_hole(vhole.begin(), vhole.end());
-
-  assert(td45.is_valid() && td45.number_of_vertices() == 11 && td45.number_of_faces() == 18);
+  assert(nv45 != Vertex_handle() && td45.is_valid() && td45.number_of_vertices() == 11 && td45.number_of_faces() == 18);
 
   // dim_down
   std::cout << "    dim_down" << std::endl;
