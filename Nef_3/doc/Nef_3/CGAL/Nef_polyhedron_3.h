@@ -1501,7 +1501,9 @@ public:
   void transform(const Aff_transformation_3& aff); 
 
 /*!
-  converts `N` into a Polyhedron. \pre `N` is simple. 
+  converts `N` into a triangulated Polyhedron.
+  For conversion to other types, see `convert_nef_polyhedron_to_polygon_mesh()`.
+  \pre `N` is simple.
 */ 
   void convert_to_polyhedron(Polyhedron& P) const; 
 
