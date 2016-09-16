@@ -29,10 +29,7 @@
 
 ## Classes ##
 - `CGAL::Point_set_3<Gt>`
-
-## Functions ##
-
-- `CGAL::read_ply_point_set_3<Gt>`
+- `CGAL::Ply_interpreter_point_set_3<Gt>`
 
 
 */

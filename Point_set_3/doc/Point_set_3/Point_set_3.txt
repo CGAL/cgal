@@ -73,9 +73,6 @@ through iterators and property maps. The `CGAL::Point_set_3<Gt>`
 structure directly provides these iterators and property maps so that
 applying \cgal algorithms to it is straightforward.
 
-
-\cgalExample{Point_set_3/point_set_algo.cpp}
-
 \subsection Point_set_3_PSP Point Set Processing
 
 When adding a new property to the point set, the associated property
@@ -93,6 +90,9 @@ The following example shows how to apply some algorithms from the
 - simplifying the point set with `CGAL::grid_simplify_point_set()`
 
 - detecting the sphere shape with `CGAL::Shape_detection_3::Efficient_RANSAC`
+
+\cgalExample{Point_set_3/point_set_algo.cpp}
+
 
 \subsection Point_set_3_IO Input/Output
 
