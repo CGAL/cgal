@@ -247,7 +247,7 @@ void* Scene_polyhedron_item_priv::get_aabb_tree()
           new Input_facets_AABB_tree();
       typedef Polyhedron::Traits	    Kernel;
       int index =0;
-      Q_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
+      BOOST_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
       {
         if(!f->is_triangle())
         {
@@ -1628,7 +1628,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         Kernel::Point_3 pt_under(point_under.x, point_under.y, point_under.z);
 
         // test the vertices of the closest face
-        Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
+        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
         {
           Kernel::Point_3 test=vh->point();
           double dist = CGAL::squared_distance(test, pt_under);
@@ -1638,7 +1638,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
           }
         }
         // test the midpoint of edges of the closest face
-        Q_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *d->poly))
+        BOOST_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *d->poly))
         {
           Kernel::Point_3 test=CGAL::midpoint(source(e, *d->poly)->point(),target(e, *d->poly)->point());
           double dist = CGAL::squared_distance(test, pt_under);
@@ -1651,7 +1651,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         // test the centroid of the closest face
         double x(0), y(0), z(0);
         int total(0);
-        Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
+        BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *d->poly))
         {
           x+=vh->point().x();
           y+=vh->point().y();
@@ -1692,25 +1692,25 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
     font.setBold(true);
 
     //fills textItems
-    Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*d->poly))
+    BOOST_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*d->poly))
     {
       const Point& p = vh->point();
       textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), true, font, Qt::red));
 
     }
 
-    Q_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*d->poly))
+    BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*d->poly))
     {
       const Point& p1 = source(e, *d->poly)->point();
       const Point& p2 = target(e, *d->poly)->point();
       textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2, (float)(p1.y() + p2.y()) / 2, (float)(p1.z() + p2.z()) / 2, QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
     }
 
-    Q_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
+    BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*d->poly))
     {
       double x(0), y(0), z(0);
       int total(0);
-      Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(fh->halfedge(), *d->poly))
+      BOOST_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(fh->halfedge(), *d->poly))
       {
         x += vh->point().x();
         y += vh->point().y();
