@@ -16,9 +16,11 @@ typedef CGAL::Ply_interpreter_point_set_3<Kernel> Ply_interpreter;
 
 int main (int argc, char** argv)
 {
-  std::ifstream f (argc > 1 ? argv[1] : "data/TODO.ply");
+  std::ifstream f (argc > 1 ? argv[1] : "data/example.ply");
 
   Point_set point_set;
+
+  // Instanciate interpreter with newly created point set
   Ply_interpreter interpreter(point_set);
   
   if (!f ||
@@ -27,7 +29,19 @@ int main (int argc, char** argv)
       std::cerr << "Can't read input file " << std::endl;
     }
 
-  std::cerr << point_set.info();
+  std::cerr << point_set.info(); // Shows which properties were defined
+
+  // Recover "label" property of type int
+  Point_set::Property_map<boost::int32_t>::type label_prop;
+  bool found = false;
+  boost::tie (label_prop, found)  = point_set.get_property<boost::int32_t> ("label");
+  
+  if (found)
+    {
+      std::cerr << "Point set has an integer \"label\" property with values:" << std::endl;
+      for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
+        std::cerr << " * " << label_prop[*it] << std::endl;
+    }
   
   return 0;
 }
