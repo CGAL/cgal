@@ -33,30 +33,30 @@ namespace CGAL {
 
 template <class Handle, class Vector>
 CGAL_MEDIUM_INLINE
-void newell_single_step_3( Handle p, Handle q, Vector& n )
+void newell_single_step_3( const Handle& p, const Handle& q, Vector& n )
 {
   n = Vector(
     n.hx()
-        * p->hw() * p->hw()
-        * q->hw() * q->hw()
+        * p.hw() * p.hw()
+        * q.hw() * q.hw()
       +   n.hw()
-        * ( p->hy() * q->hw() - q->hy() * p->hw())
-        * ( p->hz() * q->hw() + q->hz() * p->hw()),
+        * ( p.hy() * q.hw() - q.hy() * p.hw())
+        * ( p.hz() * q.hw() + q.hz() * p.hw()),
     n.hy()
-        * p->hw() * p->hw()
-        * q->hw() * q->hw()
+        * p.hw() * p.hw()
+        * q.hw() * q.hw()
       +   n.hw()
-        * ( p->hz() * q->hw() - q->hz() * p->hw())
-        * ( p->hx() * q->hw() + q->hx() * p->hw()),
+        * ( p.hz() * q.hw() - q.hz() * p.hw())
+        * ( p.hx() * q.hw() + q.hx() * p.hw()),
     n.hz()
-        * p->hw() * p->hw()
-        * q->hw() * q->hw()
+        * p.hw() * p.hw()
+        * q.hw() * q.hw()
       +   n.hw()
-        * ( p->hx() * q->hw() - q->hx() * p->hw())
-        * ( p->hy() * q->hw() + q->hy() * p->hw()),
+        * ( p.hx() * q.hw() - q.hx() * p.hw())
+        * ( p.hy() * q.hw() + q.hy() * p.hw()),
     n.hw()
-        * p->hw() * p->hw()
-        * q->hw() * q->hw()
+        * p.hw() * p.hw()
+        * q.hw() * q.hw()
     );
 }
 
@@ -82,11 +82,33 @@ void normal_vector_newell_3( IC first, IC last, Vector& n )
     IC prev = first;
     ++first;
     while( first != last) {
-        newell_single_step_3( prev, first, n);
+        newell_single_step_3( *prev, *first, n);
         prev = first;
         ++first;
     }
-    newell_single_step_3( prev, start_point, n);
+    newell_single_step_3( *prev, *start_point, n);
+    CGAL_NEF_TRACEN("newell normal vector "<<n);
+}
+
+template <class IC, class Vector, class VertexPointMap>
+void normal_vector_newell_3( IC first, IC last, VertexPointMap vpm, Vector& n )
+{
+    CGAL_assertion( !CGAL::is_empty_range( first, last));
+    // Compute facet normals via the Newell-method as described in
+    // Filippo Tampieri: Newell's Method for Computing the Plane
+    // Equation of a Polygon. Graphics Gems III, David Kirk,
+    // AP Professional, 1992.
+    // The code works with cartesian and with semi-rational points.
+    n = Vector( 0, 0, 0);        // init current normal to 0
+    IC start_point = first;
+    IC prev = first;
+    ++first;
+    while( first != last) {
+      newell_single_step_3( get(vpm,*prev), get(vpm,*first), n);
+        prev = first;
+        ++first;
+    }
+    newell_single_step_3( get(vpm,*prev), get(vpm,*start_point), n);
     CGAL_NEF_TRACEN("newell normal vector "<<n);
 }
 
