@@ -383,7 +383,11 @@ CGAL_IMAGEIO_EXPORT _image* _readImage_raw(const char *name,
                                            const double vx = 1.,
                                            const double vy = 1.,
                                            const double vz = 1.,
-                                           const unsigned int offset = 0);
+                                           const unsigned int offset = 0,
+                                           const std::size_t wdim = 1,
+                                           WORD_KIND wk = WK_FIXED,
+                                           SIGN sgned = SGN_UNSIGNED
+                                           );
 
 
 /** Writes given image in file 'name'.<br>

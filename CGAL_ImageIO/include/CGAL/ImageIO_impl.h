@@ -717,7 +717,11 @@ _image* _readImage_raw(const char *name,
                        const double vx,
                        const double vy,
                        const double vz,
-		       const unsigned int offset)
+		       const unsigned int offset,
+                       const std::size_t wdim,
+                       WORD_KIND wk,
+                       SIGN sgned
+                       )
 {
   _image *im = NULL;
   im = (_image *) ImageIO_alloc(sizeof(_image));
@@ -753,10 +757,10 @@ _image* _readImage_raw(const char *name,
   im->nuser = 0;
 
   // word type (unsigned byte)
-  im->wdim = 1;
-  im->wordKind = WK_FIXED;
+  im->wdim = wdim;
+  im->wordKind = wk;
   im->vectMode = VM_SCALAR;
-  im->sign = SGN_UNSIGNED;
+  im->sign = sgned;
   im->imageFormat = NULL;
 
   // read file
@@ -774,12 +778,12 @@ _image* _readImage_raw(const char *name,
     ImageIO_free(im->data);
   }
   // allocate memory
-  im->data = ImageIO_alloc(rx*ry*rz);
+  im->data = ImageIO_alloc(rx*ry*rz*wdim);
   if(im->data == NULL)
     return NULL;
 
   // read
-  ImageIO_read(im, im->data, rx*ry*rz);
+  ImageIO_read(im, im->data, rx*ry*rz*wdim);
 
   ImageIO_close(im);
   /*
