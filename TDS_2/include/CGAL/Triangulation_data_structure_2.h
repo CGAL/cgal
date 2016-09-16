@@ -489,7 +489,7 @@ public:
     // e2 = (f2, i2) it holds that 
     //      f1->vertex(cw(i1)) == f2->vertex(ccw(i2))
 
-    for (uint jj = 0; jj < bdry_edges.size(); jj++) {
+    for (unsigned int jj = 0; jj < bdry_edges.size(); jj++) {
       Face_handle fh = bdry_edges[jj].first;
       int idx = bdry_edges[jj].second;
       
@@ -508,7 +508,7 @@ public:
     // and we have set adjacency relationships with the faces on the border
     // of the hole.
 
-    for (uint i = 0; i < new_faces.size() - 1; i++) {
+    for (unsigned int i = 0; i < new_faces.size() - 1; i++) {
       set_adjacency(new_faces[i], 1, new_faces[i+1], 2);
     }
     set_adjacency(new_faces[0], 2, new_faces[new_faces.size()-1], 1);
