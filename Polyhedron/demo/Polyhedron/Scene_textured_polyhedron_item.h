@@ -55,9 +55,6 @@ protected:
   friend struct Scene_textured_polyhedron_item_priv;
   Scene_textured_polyhedron_item_priv* d;
 
-Q_SIGNALS:
-  void selectionChanged();
-
 }; // end class Scene_textured_polyhedron_item
 
 #endif // SCENE_TEXTURED_POLYHEDRON_ITEM_H

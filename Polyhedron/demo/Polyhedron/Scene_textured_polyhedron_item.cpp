@@ -397,7 +397,7 @@ void Scene_textured_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* vi
     d->program->bind();
     viewer->glLineWidth(4.0);
     d->program->setAttributeValue("colors", QColor(Qt::blue));
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_border/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_border/3));
     viewer->glLineWidth(1.0);
     //Clean-up
     d->program->release();
@@ -448,19 +448,22 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
 }
 void Scene_textured_polyhedron_item::add_border_edges(std::vector<float> border_edges)
 {
-  positions_border = border_edges;
-  nb_border = border_edges.size();
-  vaos[Border_edges]->bind();
-  buffers[Edges_border].bind();
-  buffers[Edges_Vertices].allocate(positions_border.data(),
-                      static_cast<int>(positions_border.size()*sizeof(float)));
-  program->enableAttributeArray("vertex");
-  program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  buffers[Edges_Vertices].release();
-  vaos[Border_edges]->release();
+  d->positions_border = border_edges;
+  d->nb_border = border_edges.size();
+  d->program=getShaderProgram(PROGRAM_NO_SELECTION);
+  d->program->bind();
+  vaos[Scene_textured_polyhedron_item_priv::Border_edges]->bind();
+  buffers[Scene_textured_polyhedron_item_priv::Edges_border].bind();
+  buffers[Scene_textured_polyhedron_item_priv::Edges_Vertices].allocate(d->positions_border.data(),
+                      static_cast<int>(d->positions_border.size()*sizeof(float)));
+  d->program->enableAttributeArray("vertex");
+  d->program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  buffers[Scene_textured_polyhedron_item_priv::Edges_Vertices].release();
+  vaos[Scene_textured_polyhedron_item_priv::Border_edges]->release();
 
-  positions_border.resize(0);
-  std::vector<float>(positions_border).swap(positions_border);
+  d->program->release();
+  d->positions_border.resize(0);
+  std::vector<float>(d->positions_border).swap(d->positions_border);
   itemChanged();
 
 }

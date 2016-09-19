@@ -33,6 +33,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include "ui_Parameterization_widget.h"
 typedef boost::unordered_set<Textured_polyhedron::Facet_handle> Component;
@@ -427,7 +428,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   Seam_vertex_uhm seam_vertex_uhm(false);
   Seam_vertex_pmap seam_vertex_pm(seam_vertex_uhm);
   if(!is_seamed
-     && poly_item->polyhedron()->size_of_border_edges() == 0)
+     && pMesh->is_closed())
   {
     messages->error("The selected polyhedron has no border and is not seamed.");
     return;
@@ -438,22 +439,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   ////////// PARAMETERIZE ///////////
   ///////////////////////////////////
 
-
   QTime time;
   time.start();
   //initializes the halfedges and faces ids for the connected_components detection
-  std::size_t id=0;
-  for (Polyhedron::Halfedge_iterator hit = pMesh->halfedges_begin(),
-       hit_end = pMesh->halfedges_end(); hit != hit_end; ++hit)
-  {
-    hit->id()=id++;
-  }
-  id=0;
-  for (Polyhedron::Facet_iterator fit = pMesh->facets_begin(),
-       fit_end = pMesh->facets_end(); fit != fit_end; ++fit)
-  {
-    fit->id()=id++;
-  }
+  CGAL::set_halfedgeds_items_id(*pMesh);
 
   std::vector<bool> mark(pMesh->size_of_halfedges()/2,false);
   if(is_seamed)
@@ -620,6 +609,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
   builder.run(*pMesh,*pTex_polyhedron);
   pTex_polyhedron->compute_normals();
+  pTex_polyhedron->normalize_border();
 
   Polyhedron::Halfedge_iterator it1;
   Textured_polyhedron::Halfedge_iterator it2;
