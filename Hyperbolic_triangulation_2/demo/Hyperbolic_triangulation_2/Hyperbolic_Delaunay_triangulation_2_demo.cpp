@@ -32,8 +32,10 @@
 #include <CGAL/Qt/utility.h>
   
 // the two base classes
-#include "ui_Hyperbolic_translations_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
+
+#include "ui_Hyperbolic_triangulation_2_demo.h"
+
 
 //typedef CGAL::Exact_predicates_exact_constructions_kernel R;
 typedef CGAL::Exact_circular_kernel_2             R;
