@@ -76,7 +76,7 @@ int main (int, char**)
     }
 
   typename Point_set::Property_map<Color>::type color_prop_2;
-  boost::tie (color_prop_2, garbage) = point_set.get_property<Color>("color");
+  boost::tie (color_prop_2, garbage) = point_set.property<Color>("color");
   test ((color_prop_2 == color_prop), "color property not recovered correctly.");
   
   point_set.remove_normal_property ();

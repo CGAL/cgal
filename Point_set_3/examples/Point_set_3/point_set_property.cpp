@@ -17,9 +17,9 @@ typedef Point_set::Property_map<FT>::type Floating_prop;
 void print_point_set (const Point_set& point_set)
 {
   Color_prop color;
-  boost::tie (color, boost::tuples::ignore) = point_set.get_property<Color>("color");
+  boost::tie (color, boost::tuples::ignore) = point_set.property<Color>("color");
   Floating_prop intensity;
-  boost::tie (intensity, boost::tuples::ignore) =  point_set.get_property<FT>("intensity");
+  boost::tie (intensity, boost::tuples::ignore) =  point_set.property<FT>("intensity");
   
   std::cerr << "Content of point set:" << std::endl;
   for (Point_set::const_iterator it = point_set.begin();
