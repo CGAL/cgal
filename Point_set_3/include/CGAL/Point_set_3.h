@@ -531,7 +531,7 @@ public:
     to `false` (if the property was not found).
   */
   template <class T> 
-  std::pair<Properties::Property_map<Item, T>,bool>
+  std::pair<typename Property_map<T>::type,bool>
   get_property (const std::string& name) const
   {
     return m_base.template get<T>(name);
@@ -548,7 +548,7 @@ public:
     the property was not found.
   */
   template <class T> 
-  bool remove_property (Properties::Property_map<Item, T>& prop)
+  bool remove_property (typename Property_map<T>::type& prop)
   {
     return m_base.remove (prop);
   }
@@ -608,8 +608,8 @@ public:
     to `false` (if the property was not found).
   */
   template <class T>
-  Push_pmap<Properties::Property_map<Item, T> >
-  push_pmap (Properties::Property_map<Item, T>& prop)
+  Push_pmap<typename Property_map<T>::type>
+  push_pmap (typename Property_map<T>::type& prop)
   {
     return Push_pmap<Properties::Property_map<Item, T> > (this, &prop, size());
   }
