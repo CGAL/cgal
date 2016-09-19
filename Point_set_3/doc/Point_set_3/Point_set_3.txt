@@ -38,7 +38,7 @@ sets.
 Reordering is only done by swapping index values: this guarantees that
 these operations have a constant complexity no matter how many
 properties are defined. To avoid frequent memory allocation and
-disallocation, removal of points is also handled by swapping the index
+deallocation, removal of points is also handled by swapping the index
 values, putting the points marked as removed at the back of the index
 property and keeping track of the number of points marked as
 removed. If the user needs memory to be disallocated, the element
@@ -122,7 +122,7 @@ result in the OFF format).
 
 \cgalExample{Point_set_3/point_set_read_xyz.cpp}
 
-The PLY number is the usual choice when storing a random number of
+The PLY number is the usual choice when storing an arbitrary number of
 additional properties of points is needed. \cgal provides a function
 `read_ply_custom_points()` that allows the user to recover any PLY
 property he/she wants, provided the adapted PLY interpreter is

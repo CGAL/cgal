@@ -38,7 +38,7 @@ namespace CGAL {
   This class provides the user with a flexible way to store and access
   a point set:
 
-  - it can embed a random number of additional attributes such as
+  - it can embed an arbitrary number of additional attributes such as
     normal vectors, colors, indices, etc.;
 
   - all functions of the package \ref PkgPointSetProcessing are
@@ -508,9 +508,9 @@ public:
 
     \param t Value taken by the property on already created elements.
 
-    \return Returns a pair containing the property map and a boolean
+    \return Returns a pair containing the property map and a Boolean
     that is `true` if the property was added and `false` if it already
-    exists (and was therefor not added but only returned).
+    exists (and was therefore not added but only returned).
   */
   template <class T>
   std::pair<typename Property_map<T>::type, bool>
@@ -527,12 +527,12 @@ public:
     \param name Name of the property.
 
     \return Returns a pair containing: the wanted property map and a
-    boolean set to `true` or an empty property map and a boolean set
+    Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
   */
   template <class T> 
   std::pair<typename Property_map<T>::type,bool>
-  get_property (const std::string& name) const
+  property (const std::string& name) const
   {
     return m_base.template get<T>(name);
   }
@@ -570,7 +570,7 @@ public:
     This method adds a property of type `CGAL::Vector_3<Gt>` and named
     `normal`.
 
-    \return `true` if the property was added, `false if it already
+    \return `true` if the property was added, `false` if it already
     existed.
   */
   bool add_normal_property(const Vector& default_value = Vector(0., 0., 0.))
@@ -604,7 +604,7 @@ public:
     \param prop The property map.
 
     \return Returns a pair containing: the wanted property map and a
-    boolean set to `true` or an empty property map and a boolean set
+    Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
   */
   template <class T>
@@ -691,7 +691,7 @@ public:
   /// \name Miscellaneous
   /// @{
   /*!
-    \brief List properties with their types in an `std::string` object.
+    \brief List properties with their types in a `std::string` object.
   */
   std::string info() const
   {
