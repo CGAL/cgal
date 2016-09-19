@@ -1,10 +1,9 @@
 #include "Scene_textured_polyhedron_item.h"
-#include "Textured_polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <QApplication>
-
+#include "Textured_polyhedron_type.h"
 #include <QObject>
 
 typedef EPIC_kernel::Point_3 Point;
@@ -18,6 +17,8 @@ struct Scene_textured_polyhedron_item_priv
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     nb_facets = 0;
     nb_lines = 0;
+    nb_border = 0;
+    positions_border.resize(0);
   }
   Scene_textured_polyhedron_item_priv(const Textured_polyhedron& p, Scene_textured_polyhedron_item* parent)
     : poly(new Textured_polyhedron(p)),textureId(-1),smooth_shading(true)
@@ -47,6 +48,7 @@ struct Scene_textured_polyhedron_item_priv
   enum VAOs {
       Facets=0,
       Edges,
+      Border_edges,
       NbOfVaos
   };
   enum VBOs {
@@ -55,6 +57,7 @@ struct Scene_textured_polyhedron_item_priv
       Facets_Texmap,
       Edges_Vertices,
       Edges_Texmap,
+      Edges_border,
       NbOfVbos
   };
 
@@ -62,11 +65,13 @@ struct Scene_textured_polyhedron_item_priv
   Texture texture;
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_facets;
+  mutable std::vector<float> positions_border;
   mutable std::vector<float> normals;
   mutable std::vector<float> textures_map_facets;
   mutable std::vector<float> textures_map_lines;
   mutable std::size_t nb_facets;
   mutable std::size_t nb_lines;
+  mutable std::size_t nb_border;
 
   mutable GLuint textureId;
   mutable QOpenGLShaderProgram* program;
@@ -131,6 +136,7 @@ void Scene_textured_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_
         item->vaos[Edges]->release();
         program->release();
     }
+
 
     viewer->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -273,10 +279,7 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
         textures_map_lines.push_back(ov);
 
     }
-<<<<<<< HEAD
     QApplication::restoreOverrideCursor();
-=======
->>>>>>> Fix display of the seam neighborhood.
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
@@ -384,9 +387,21 @@ void Scene_textured_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* vi
     d->program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
     d->program->bind();
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/4));
+
+    vaos[Scene_textured_polyhedron_item_priv::Edges]->release();
+    d->program->release();
+
+    vaos[Scene_textured_polyhedron_item_priv::Border_edges]->bind();
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+    d->program=getShaderProgram(PROGRAM_NO_SELECTION);
+    d->program->bind();
+    viewer->glLineWidth(4.0);
+    d->program->setAttributeValue("colors", QColor(Qt::blue));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_border/3));
+    viewer->glLineWidth(1.0);
     //Clean-up
     d->program->release();
-    vaos[Scene_textured_polyhedron_item_priv::Edges]->release();
+    vaos[Scene_textured_polyhedron_item_priv::Border_edges]->release();
 }
 
 Textured_polyhedron* 
@@ -430,4 +445,22 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
     }
     else
         is_selected = p_is_selected;
+}
+void Scene_textured_polyhedron_item::add_border_edges(std::vector<float> border_edges)
+{
+  positions_border = border_edges;
+  nb_border = border_edges.size();
+  vaos[Border_edges]->bind();
+  buffers[Edges_border].bind();
+  buffers[Edges_Vertices].allocate(positions_border.data(),
+                      static_cast<int>(positions_border.size()*sizeof(float)));
+  program->enableAttributeArray("vertex");
+  program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  buffers[Edges_Vertices].release();
+  vaos[Border_edges]->release();
+
+  positions_border.resize(0);
+  std::vector<float>(positions_border).swap(positions_border);
+  itemChanged();
+
 }

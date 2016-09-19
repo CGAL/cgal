@@ -53,7 +53,7 @@ struct ContainersFiller {
   const UV_pmap uvpm;
   std::vector<face_descriptor>& faces;
   boost::unordered_set<vertex_descriptor>& vertices;
-  FillContainers(const Mesh& mesh, const UV_pmap& uvpm,
+  ContainersFiller(const Mesh& mesh, const UV_pmap& uvpm,
                  std::vector<face_descriptor>& faces,
                  boost::unordered_set<vertex_descriptor>& vertices)
     : mesh(mesh), uvpm(uvpm), faces(faces), vertices(vertices)

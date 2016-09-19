@@ -46,6 +46,10 @@ public:
   void compute_bbox() const;
   virtual void invalidateOpenGLBuffers();
   virtual void selection_changed(bool);
+  void add_border_edges(std::vector<float> border_edges);
+
+Q_SIGNALS:
+  void selectionChanged();
 
 protected:
   friend struct Scene_textured_polyhedron_item_priv;
