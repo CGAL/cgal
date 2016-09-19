@@ -7,48 +7,40 @@ project (Hyperbolic_triangulation_2_demo)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-SET(CMAKE_AUTOUIC ON) 
+set(CMAKE_AUTOMOC ON) 
+set(CMAKE_AUTOUIC ON)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL QUIET COMPONENTS Core Qt5)
 include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
-include_directories (BEFORE ../../include include)
+find_package( Boost REQUIRED )
+include_directories(${Boost_INCLUDE_DIRS})
+
+include_directories (BEFORE ../../include include )
 
 # ui files, created with Qt Designer
-# qt5_wrap_ui( uis Hyperbolic_translations_2.ui )
+qt5_wrap_ui( uis Hyperbolic_triangulation_2_demo.ui )
 
 # qrc files (resources files, that contain icons, at least)
-# qt5_add_resources ( RESOURCE_FILES resources/Hyperbolic_translations_2.qrc )
+qt5_add_resources ( RESOURCE_FILES Hyperbolic_translations_2.qrc ../../../GraphicsView/demo/icons/File.qrc ../../../GraphicsView/demo/icons/Input.qrc ../../../GraphicsView/demo/icons/Triangulation_2.qrc ../../../GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc )
 
 else()
 
 # cpp files
-add_executable ( Hyperbolic_Dirichlet_region_2_demo Hyperbolic_Dirichlet_region_2_demo.cpp )
-add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp )
-# add_executable ( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp )
-# add_executable ( Hyperbolic_translations_2_demo Hyperbolic_translations_2_demo.cpp )
 
-qt5_use_modules( Hyperbolic_Dirichlet_region_2_demo Widgets)
-qt5_use_modules( Hyperbolic_Delaunay_triangulation_2_demo Widgets)
-# qt5_use_modules( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo Widgets)
-# qt5_use_modules( Hyperbolic_translations_2_demo Widgets)
+add_executable ( Hyperbolic_Dirichlet_region_2_demo Hyperbolic_Dirichlet_region_2_demo.cpp ${RESOURCE_FILES} )
+add_executable ( Hyperbolic_Delaunay_triangulation_2_demo Hyperbolic_Delaunay_triangulation_2_demo.cpp ${RESOURCE_FILES} )
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_Dirichlet_region_2_demo )
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_Delaunay_triangulation_2_demo )
-# add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_2_Delaunay_hyperbolic_triangulation_2_demo )
-# add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_translations_2_demo )
+qt5_use_modules( Hyperbolic_Dirichlet_region_2_demo Widgets )
+qt5_use_modules( Hyperbolic_Delaunay_triangulation_2_demo Widgets )
 
-target_link_libraries( Hyperbolic_Dirichlet_region_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
-target_link_libraries( Hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
-# target_link_libraries( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
-# target_link_libraries( Hyperbolic_translations_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
-
+target_link_libraries( Hyperbolic_Dirichlet_region_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
+target_link_libraries( Hyperbolic_Delaunay_triangulation_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
 
