@@ -1,14 +1,14 @@
-Subject: CGAL 4.8.1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.8.2 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.8.1
+The CGAL Open Source Project is pleased to announce the release 4.8.2
 of CGAL, the Computational Geometry Algorithms Library.
 
-Version 4.8.1 is a bug-fix release for version 4.8. The list of fixed bugs
-can be seen on Github:
+Version 4.8.2 is a bug-fix release for version 4.8. The list of fixed bugs
+since version 4.8.1 can be seen on Github:
 
-    https://github.com/CGAL/cgal/issues?q=milestone%3A4.8.1
+    https://github.com/CGAL/cgal/issues?q=milestone%3A4.8.2
 
 
 The CGAL project is a collaborative effort to develop a robust,
