@@ -112,7 +112,7 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
     CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
       (points->begin_or_selection_begin(),
        points->end(),
-       points->point_back_inserter(),
+       new_item->point_set()->point_back_inserter(),
        points->point_pmap(),
        dialog.retainedPercentage (),
        dialog.neighborhoodRadius()*average_spacing,
