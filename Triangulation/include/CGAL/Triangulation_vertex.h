@@ -22,7 +22,6 @@
 
 #include <CGAL/Triangulation_ds_vertex.h>
 #include <CGAL/Default.h>
-#include <CGAL/Random.h>
 
 namespace CGAL {
 

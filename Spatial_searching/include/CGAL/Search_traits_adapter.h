@@ -102,6 +102,17 @@ public:
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
     { return Base::operator() (get(ppmap,p),0); }
+
+    // These 2 additional operators forward the call to Base_traits.
+    // This is needed because of an undocumented requirement of 
+    // Orthogonal_k_neighbor_search and Orthogonal_incremental_neighbor_search: 
+    // Traits::Construct_cartesian_const_iterator should be callable 
+    // on the query point type
+    typename Base_traits::Cartesian_const_iterator_d operator()(const typename Base_traits::Point_d& p) const
+    { return Base::operator() (p); }
+
+    typename Base_traits::Cartesian_const_iterator_d operator()(const typename Base_traits::Point_d& p, int)  const
+    { return Base::operator() (p,0); }
   };
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
