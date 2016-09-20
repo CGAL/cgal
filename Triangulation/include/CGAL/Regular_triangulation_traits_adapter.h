@@ -50,7 +50,7 @@ public:
   // Required by RegularTriangulationTraits
   typedef typename K::Point_d                       Bare_point_d;
   typedef typename K::Weighted_point_d              Weighted_point_d;
-  typedef typename K::Point_drop_weight_d           Point_drop_weight_d;
+  typedef typename K::Compute_weight_d           Compute_weight_d;
   typedef typename K::Point_weight_d                Point_weight_d;
   typedef typename K::Power_side_of_power_sphere_d  Power_side_of_power_sphere_d;
   typedef typename K::In_flat_power_side_of_power_sphere_d 
@@ -74,7 +74,7 @@ public:
     result_type operator()(
       Weighted_point_d const& p, Weighted_point_d const& q, int i) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.less_coordinate_d_object() (pdw(p), pdw(q), i);
     }
   };
@@ -95,7 +95,7 @@ public:
     template <typename ForwardIterator> 
     result_type operator()(ForwardIterator start, ForwardIterator end) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.orientation_d_object() (
         boost::make_transform_iterator(start, pdw),
         boost::make_transform_iterator(end, pdw)
@@ -119,7 +119,7 @@ public:
     template <typename ForwardIterator> 
     result_type operator()(ForwardIterator start, ForwardIterator end) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.construct_flat_orientation_d_object() (
         boost::make_transform_iterator(start, pdw),
         boost::make_transform_iterator(end, pdw)
@@ -145,7 +145,7 @@ public:
     result_type operator()(Flat_orientation_d orient, 
       ForwardIterator start, ForwardIterator end) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.in_flat_orientation_d_object() (
         orient,
         boost::make_transform_iterator(start, pdw),
@@ -171,7 +171,7 @@ public:
     result_type operator()(ForwardIterator start, ForwardIterator end, 
                            const Weighted_point_d & p) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.contained_in_affine_hull_d_object() (
         boost::make_transform_iterator(start, pdw),
         boost::make_transform_iterator(end, pdw),
@@ -196,7 +196,7 @@ public:
     result_type operator()(
       const Weighted_point_d & p, const Weighted_point_d & q) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.compare_lexicographically_d_object()(pdw(p), pdw(q));
     }
   };
@@ -217,7 +217,7 @@ public:
     result_type operator()(
       const Weighted_point_d & p, const int i) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.compute_coordinate_d_object()(pdw(p), i);
     }
   };
@@ -239,7 +239,7 @@ public:
     result_type operator()(
       const Weighted_point_d & p) const
     {
-      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      Compute_weight_d pdw = m_kernel.compute_weight_d_object();
       return m_kernel.point_dimension_d_object()(pdw(p));
     }
   };
