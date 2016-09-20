@@ -136,6 +136,7 @@ public:
   protected:
     friend struct Scene_c3t3_item_priv;
     Scene_c3t3_item_priv* d;
+    bool eventFilter(QObject *, QEvent *);
 
 };
 

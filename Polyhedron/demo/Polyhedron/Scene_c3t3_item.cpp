@@ -28,8 +28,7 @@
 #include <CGAL/AABB_C3T3_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
-
+#include <QKeyEvent>
 typedef CGAL::AABB_C3T3_triangle_primitive<Kernel,C3t3> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
@@ -262,6 +261,10 @@ struct Scene_c3t3_item_priv {
     show_tetrahedra = false;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
+    is_grid_shown = false;
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    viewer->installEventFilter(item);
+
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -338,6 +341,7 @@ struct Scene_c3t3_item_priv {
   };
   Scene_c3t3_item* item;
   C3t3 c3t3;
+  bool is_grid_shown;
   qglviewer::ManipulatedFrame* frame;
   bool need_changed;
   mutable bool are_intersection_buffers_filled;
@@ -762,7 +766,21 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->d->computeElements();
     ncthis->d->initializeBuffers(viewer);
   }
-
+  if(d->is_grid_shown)
+  {
+    vaos[Scene_c3t3_item_priv::Grid]->bind();
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setAttributeValue("colors", QColor(Qt::black));
+    QMatrix4x4 f_mat;
+    for (int i = 0; i<16; i++)
+      f_mat.data()[i] = d->frame->matrix()[i];
+    d->program->setUniformValue("f_matrix", f_mat);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
+    d->program->release();
+    vaos[Scene_c3t3_item_priv::Grid]->release();
+  }
   vaos[Scene_c3t3_item_priv::Facets]->bind();
   d->program = getShaderProgram(PROGRAM_C3T3);
   attribBuffers(viewer, PROGRAM_C3T3);
@@ -823,8 +841,9 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->d->initializeBuffers(viewer);
   }
 
-  if(renderingMode() == Wireframe)
+  if(renderingMode() == Wireframe && d->is_grid_shown)
   {
+
     vaos[Scene_c3t3_item_priv::Grid]->bind();
 
     d->program = getShaderProgram(PROGRAM_NO_SELECTION);
@@ -899,18 +918,21 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
   vaos[Scene_c3t3_item_priv::Edges]->release();
   d->program->release();
 
-  vaos[Scene_c3t3_item_priv::Grid]->bind();
-  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attribBuffers(viewer, PROGRAM_NO_SELECTION);
-  d->program->bind();
-  d->program->setAttributeValue("colors", this->color());
-  QMatrix4x4 f_mat;
-  for (int i = 0; i<16; i++)
-    f_mat.data()[i] = d->frame->matrix()[i];
-  d->program->setUniformValue("f_matrix", f_mat);
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
-  d->program->release();
-  vaos[Scene_c3t3_item_priv::Grid]->release();
+  if(d->is_grid_shown)
+  {
+    vaos[Scene_c3t3_item_priv::Grid]->bind();
+    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+    d->program->bind();
+    d->program->setAttributeValue("colors", this->color());
+    QMatrix4x4 f_mat;
+    for (int i = 0; i<16; i++)
+      f_mat.data()[i] = d->frame->matrix()[i];
+    d->program->setUniformValue("f_matrix", f_mat);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
+    d->program->release();
+    vaos[Scene_c3t3_item_priv::Grid]->release();
+  }
   if(d->spheres_are_shown)
   {
     d->spheres->setPlane(this->plane());
@@ -1542,4 +1564,28 @@ void Scene_c3t3_item::setPosition(float x, float y, float z) {
 void Scene_c3t3_item::setNormal(float x, float y, float z) {
   d->frame->setOrientation(x, y, z, 0.f);
 }
+
+bool Scene_c3t3_item::eventFilter(QObject* /*target*/, QEvent* event)
+{
+  if(event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent *e = static_cast<QKeyEvent*>(event);
+    if(e->key() == Qt::Key_Control)
+    {
+      d->is_grid_shown = true;
+      itemChanged();
+    }
+  }
+  else if(event->type() == QEvent::KeyRelease)
+  {
+    QKeyEvent *e = static_cast<QKeyEvent*>(event);
+    if(e->key() == Qt::Key_Control)
+    {
+      d->is_grid_shown = false;
+      itemChanged();
+    }
+  }
+  return false;
+}
+
 #include "Scene_c3t3_item.moc"
