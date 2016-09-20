@@ -112,7 +112,7 @@ public:
 };
 
 /*! */
-//template<class Traits_> SEG_Direction Hot_pixel<Traits_>::seg_dir;
+
 
 // a function for compare two hot pixels for the set of hot pixels
 template<class Traits_>
