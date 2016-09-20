@@ -39,7 +39,7 @@ A function object that must provide the operator
 `Point_d operator()(const Weighted_point_d & wp)`, returning
 `wp` without its weight.
 */
-typedef unspecified_type Compute_weight_d;
+typedef unspecified_type Point_drop_weight_d;
 
 /*!
 A function object that must provide the operator
@@ -115,7 +115,7 @@ RegularTriangulationTraits();
 /*!
 
 */
-Compute_weight_d compute_weight_d_object() const;
+Point_drop_weight_d point_drop_weight_d_object() const;
 
 /*!
 

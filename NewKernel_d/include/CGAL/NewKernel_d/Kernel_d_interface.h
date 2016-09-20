@@ -173,7 +173,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Construct_max_vertex_tag>::type Construct_max_vertex_d;
 
 	typedef typename Get_functor<Base, Point_weight_tag>::type Point_weight_d;
-	typedef typename Get_functor<Base, Point_drop_weight_tag>::type Compute_weight_d;
+	typedef typename Get_functor<Base, Point_drop_weight_tag>::type Point_drop_weight_d;
 
 	//TODO:
 	//typedef ??? Intersect_d;
@@ -240,7 +240,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_weighted_point_d construct_weighted_point_d_object()const{ return Construct_weighted_point_d(*this); }
 
 	Point_weight_d point_weight_d_object()const{ return Point_weight_d(*this); }
-	Compute_weight_d compute_weight_d_object()const{ return Compute_weight_d(*this); }
+	Point_drop_weight_d point_drop_weight_d_object()const{ return Point_drop_weight_d(*this); }
 
 	// Dummies for those required functors missing a concept.
 	typedef Null_functor Position_on_line_d;

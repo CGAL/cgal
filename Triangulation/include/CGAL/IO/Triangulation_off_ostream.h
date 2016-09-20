@@ -54,8 +54,8 @@ output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
                       bool output_weight = true)
 {
   typedef typename Traits::Compute_coordinate_d Ccd;
-  typename Traits::Compute_weight_d drop_w =
-    traits.compute_weight_d_object();
+  typename Traits::Point_drop_weight_d drop_w = 
+    traits.point_drop_weight_d_object();
   typename Traits::Point_weight_d pt_weight = traits.point_weight_d_object();
   const Ccd ccd = traits.compute_coordinate_d_object();
   const int dim = traits.point_dimension_d_object()(p);
