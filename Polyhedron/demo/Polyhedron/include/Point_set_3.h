@@ -72,6 +72,7 @@ public:
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef typename Base::template Property_map<double>::type Double_prop;
+  typedef typename Base::template Property_map<unsigned char>::type Byte_prop;
   
 private:
   
@@ -86,6 +87,9 @@ private:
   bool m_radii_are_uptodate;
 
   Double_prop m_radius;
+  Byte_prop m_red;
+  Byte_prop m_green;
+  Byte_prop m_blue;
 
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
@@ -100,9 +104,6 @@ public:
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
-    
-    bool garbage;
-    boost::tie (m_radius, garbage) = this->template add_property<double> ("radius");
   }
 
   // copy constructor 
@@ -113,9 +114,6 @@ public:
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
     m_radii_are_uptodate = p.m_radii_are_uptodate;
-
-    bool garbage;
-    boost::tie (m_radius, garbage) = this->template add_property<double> ("radius");
   }
 
   iterator begin() { return Base::begin(); }
@@ -124,11 +122,58 @@ public:
   const_iterator end() const { return Base::removed_end(); }
   std::size_t size() const { return this->m_base.size(); }
 
+  bool add_radius()
+  {
+    bool out = false;
+    boost::tie (m_radius, out) = this->template add_property<double> ("radius");
+    return out;
+  }
   double& radius (Item index) { return m_radius[this->m_indices[index]]; }
   const double& radius (Item index) const { return m_radius[this->m_indices[index]]; }
   double& radius (iterator it) { return m_radius[*it]; }
   const double& radius (const_iterator it) const { return m_radius[*it]; }
 
+  void test () { }
+  
+  bool check_colors()
+  {
+    bool found = false;
+    
+    boost::tie (m_red, found) = this->template property<unsigned char>("red");
+    if (!found)
+      {
+        boost::tie (m_red, found) = this->template property<unsigned char>("r");
+        if (!found)
+          return false;
+      }
+
+    boost::tie (m_green, found) = this->template property<unsigned char>("green");
+    if (!found)
+      {
+        boost::tie (m_green, found) = this->template property<unsigned char>("g");
+        if (!found)
+          return false;
+      }
+
+    boost::tie (m_blue, found) = this->template property<unsigned char>("blue");
+    if (!found)
+      {
+        boost::tie (m_blue, found) = this->template property<unsigned char>("b");
+        if (!found)
+          return false;
+      }
+
+    return true;
+  }
+
+  bool has_colors() const
+  {
+    return m_blue != Byte_prop();
+  }
+    
+  const unsigned char& red (const_iterator it) { return m_red[*it]; }
+  const unsigned char& green (const_iterator it) { return m_green[*it]; }
+  const unsigned char& blue (const_iterator it) { return m_blue[*it]; }
   
   iterator first_selected() { return this->removed_begin(); }
   const_iterator first_selected() const { return this->removed_begin(); }
