@@ -276,7 +276,7 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
 
 #if CGAL_BOX_INTERSECTION_DEBUG
  #define CGAL_BOX_INTERSECTION_DUMP(msg) { \
-   for( unsigned int i = -1; i; --i ) \
+   for( unsigned int i = level; i; --i ) \
      std::cout << "  "; \
     std::cout << msg; \
   }
