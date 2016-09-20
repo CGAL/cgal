@@ -25,12 +25,12 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_C3T3_triangle_primitive.h>
+#include <CGAL/AABB_triangulation_3_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 
-typedef CGAL::AABB_C3T3_triangle_primitive<Kernel,C3t3> Primitive;
+typedef CGAL::AABB_triangulation_3_triangle_primitive<Kernel,C3t3> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;

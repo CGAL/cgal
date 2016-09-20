@@ -19,18 +19,18 @@
 // Author(s)     : Stéphane Tayeb, Pierre Alliez
 //
 
-#ifndef CGAL_AABB_C3T3_TRIANGLE_PRIMITIVE_H_
-#define CGAL_AABB_C3T3_TRIANGLE_PRIMITIVE_H_
+#ifndef AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_
+#define AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_
 
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
     /// \ingroup PkgAABB_tree
-    /// Primitive type that wraps a facet handle of a C3T3,
+    /// Primitive type that wraps a facet handle of a TriangleMesh,
     /// which is used as id, and allows the construction of the datum on
     /// the fly. Since only the facet handle is stored in this primitive,
-    /// the C3T3 from which the AABB tree is built should not be
+    /// the TriangleMesh from which the AABB tree is built should not be
     /// deleted while the AABB tree is in use.
     ///
     /// \cgalModels `AABBPrimitive`
@@ -38,13 +38,12 @@ namespace CGAL {
     /// type, used as \c Point, and a \c %Triangle_3 type, used as \c
     /// Datum and constructible from three arguments of type \c
     /// Point.
-    /// \tparam  C3T3 must be a
-    /// \c CGAL::C3T3_3 whose points have type \c Point.
+    /// \tparam  Tr must be a
+    /// \c CGAL::Triangulation_3 whose points have type \c Point.
     ///
     /// \sa `AABBPrimitive`
-    /// \sa `AABB_C3T3_segment_primitive`
-    template<typename GeomTraits, typename C3T3>
-    class AABB_C3T3_triangle_primitive
+    template<typename GeomTraits, typename Tr>
+    class AABB_triangulation_3_triangle_primitive
     {
     public:
         typedef typename GeomTraits::Point_3 Point;
@@ -52,27 +51,27 @@ namespace CGAL {
         /// @{
 
         /// Id type.
-        typedef typename C3T3::Facet Id;
+        typedef typename Tr::Facet Id;
         /// Geometric data type.
         typedef typename GeomTraits::Triangle_3 Datum;
 
         /// @}
 
         // Self
-        typedef AABB_C3T3_triangle_primitive<GeomTraits, C3T3> Self;
+        typedef AABB_triangulation_3_triangle_primitive<GeomTraits, Tr> Self;
 
         // Constructors
-        AABB_C3T3_triangle_primitive() {}
-        AABB_C3T3_triangle_primitive(const AABB_C3T3_triangle_primitive& primitive)
+        AABB_triangulation_3_triangle_primitive() {}
+        AABB_triangulation_3_triangle_primitive(const AABB_triangulation_3_triangle_primitive& primitive)
         {
             m_facet = primitive.id();
         }
-        AABB_C3T3_triangle_primitive(const Id& handle)
+        AABB_triangulation_3_triangle_primitive(const Id& handle)
             : m_facet(handle)  { };
-        AABB_C3T3_triangle_primitive(const Id* ptr)
+        AABB_triangulation_3_triangle_primitive(const Id* ptr)
             : m_facet(*ptr)  { };
         template <class Iterator>
-        AABB_C3T3_triangle_primitive( Iterator it,
+        AABB_triangulation_3_triangle_primitive( Iterator it,
                                             typename boost::enable_if<
                                                        boost::is_same<Id,typename Iterator::value_type>
                                             >::type* =0
@@ -103,13 +102,13 @@ namespace CGAL {
         Id& id() { return m_facet; }
 
     private:
-        /// The id, here a C3T3 facet handle
+        /// The id, here a Tr facet handle
         Id m_facet;
-    };  // end class AABB_C3T3_triangle_primitive
+    };  // end class AABB_triangulation_3_triangle_primitive
 
 
 
 }  // end namespace CGAL
 
 
-#endif // CGAL_AABB_C3T3_TRIANGLE_PRIMITIVE_H_
+#endif // AABB_TRIANGULATION_3_TRIANGLE_PRIMITIVE_H_
