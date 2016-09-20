@@ -84,6 +84,10 @@ public Q_SLOTS:
   void resetSelection();
   //Select duplicated points
   void selectDuplicates();
+  //Set the status of the slider as `pressed`
+  void pointSliderPressed();
+  //Set the status of the slider as `released`
+  void pointSliderReleased();
 
 // Data
 protected:

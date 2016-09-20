@@ -38,10 +38,11 @@ struct Scene_points_with_normal_item_priv
     nb_points = 0;
     nb_selected_points = 0;
     nb_lines = 0;
+    is_point_slider_moving = false;
     normal_Slider = new QSlider(Qt::Horizontal);
     normal_Slider->setValue(20);
     point_Slider = new QSlider(Qt::Horizontal);
-    point_Slider->setValue(5);
+    point_Slider->setValue(2);
     point_Slider->setMinimum(1);
     point_Slider->setMaximum(25);
   }
@@ -50,10 +51,11 @@ struct Scene_points_with_normal_item_priv
       m_has_normals(toCopy.d->m_has_normals)
   {
     item = parent;
+    is_point_slider_moving = false;
     normal_Slider = new QSlider(Qt::Horizontal);
     normal_Slider->setValue(20);
     point_Slider = new QSlider(Qt::Horizontal);
-    point_Slider->setValue(5);
+    point_Slider->setValue(2);
     point_Slider->setMinimum(1);
     point_Slider->setMaximum(25);
   }
@@ -62,6 +64,7 @@ struct Scene_points_with_normal_item_priv
       m_has_normals(true)
   {
     item = parent;
+    is_point_slider_moving = false;
     nb_points = 0;
     nb_selected_points = 0;
     nb_lines = 0;
@@ -77,7 +80,7 @@ struct Scene_points_with_normal_item_priv
     normal_Slider = new QSlider(Qt::Horizontal);
     normal_Slider->setValue(20);
     point_Slider = new QSlider(Qt::Horizontal);
-    point_Slider->setValue(5);
+    point_Slider->setValue(2);
     point_Slider->setMinimum(1);
     point_Slider->setMaximum(25);
   }
@@ -88,6 +91,7 @@ struct Scene_points_with_normal_item_priv
     delete normal_Slider;
     delete point_Slider;
   }
+  bool isPointSliderMoving() { return is_point_slider_moving; }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices() const;
   enum VAOs {
@@ -111,6 +115,7 @@ struct Scene_points_with_normal_item_priv
   QAction* actionSelectDuplicatedPoints;
   QSlider* normal_Slider;
   QSlider* point_Slider;
+  mutable bool is_point_slider_moving;
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;
   mutable std::vector<double> positions_selected_points;
@@ -287,26 +292,26 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     Point_set_3<Kernel> points = *m_points;
     std::random_shuffle (points.begin(), points.end() - m_points->nb_selected_points());
     std::random_shuffle (points.end() - m_points->nb_selected_points(), points.end());
-    
+
     //The points
     {
-        // The *non-selected* points
+      // The *non-selected* points
       for (Point_set_3<Kernel>::const_iterator it = points.begin(); it != points.first_selected(); it++)
-	{
-	  const UI_point& p = *it;
-	  positions_points.push_back(p.x());
-	  positions_points.push_back(p.y());
-	  positions_points.push_back(p.z());
-	}
+      {
+        const UI_point& p = *it;
+        positions_points.push_back(p.x());
+        positions_points.push_back(p.y());
+        positions_points.push_back(p.z());
+      }
 
-        // Draw *selected* points
+      // Draw *selected* points
       for (Point_set_3<Kernel>::const_iterator it = points.first_selected(); it != points.end(); it++)
-	{
-	  const UI_point& p = *it;
-	  positions_selected_points.push_back(p.x());
-	  positions_selected_points.push_back(p.y());
-	  positions_selected_points.push_back(p.z());
-	}
+      {
+        const UI_point& p = *it;
+        positions_selected_points.push_back(p.x());
+        positions_selected_points.push_back(p.y());
+        positions_selected_points.push_back(p.z());
+      }
     }
 
     //The lines
@@ -599,8 +604,8 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
     viewer->glPointSize(d->point_Slider->value());
     double ratio_displayed = 1.0;
-    if (viewer->inFastDrawing () &&
-        ((d->nb_points + d->nb_selected_points)/3 > 300000)) // arbitrary large value
+    if ((viewer->inFastDrawing () || d->isPointSliderMoving())
+        &&((d->nb_points + d->nb_selected_points)/3 > 300000)) // arbitrary large value
       ratio_displayed = 3 * 300000. / (double)(d->nb_points + d->nb_selected_points);
 
     vaos[Scene_points_with_normal_item_priv::ThePoints]->bind();
@@ -711,9 +716,16 @@ QMenu* Scene_points_with_normal_item::contextMenu()
       {
         QMenu *container = new QMenu(tr("Normals Length"));
         QWidgetAction *sliderAction = new QWidgetAction(0);
-        connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
-        connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
-
+        if((d->nb_points + d->nb_selected_points)/3 <= 300000)
+        {
+          connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
+          connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
+        }
+        else
+        {
+          connect(d->normal_Slider, &QSlider::sliderReleased, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
+          connect(d->normal_Slider, &QSlider::sliderReleased, this, &Scene_points_with_normal_item::itemChanged);
+        }
         sliderAction->setDefaultWidget(d->normal_Slider);
 
         container->addAction(sliderAction);
@@ -721,7 +733,8 @@ QMenu* Scene_points_with_normal_item::contextMenu()
       }
         QMenu *container = new QMenu(tr("Points Size"));
         QWidgetAction *sliderAction = new QWidgetAction(0);
-        connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
+        connect(d->point_Slider, &QSlider::sliderPressed, this, &Scene_points_with_normal_item::pointSliderPressed);
+        connect(d->point_Slider, &QSlider::sliderReleased, this, &Scene_points_with_normal_item::pointSliderReleased);
         connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
 
         sliderAction->setDefaultWidget(d->point_Slider);
@@ -783,5 +796,15 @@ void Scene_points_with_normal_item::invalidateOpenGLBuffers()
 {
     are_buffers_filled = false;
     compute_bbox();
+}
+
+void Scene_points_with_normal_item::pointSliderPressed()
+{
+  d->is_point_slider_moving = true;
+}
+
+void Scene_points_with_normal_item::pointSliderReleased()
+{
+  d->is_point_slider_moving = false;
 }
 
