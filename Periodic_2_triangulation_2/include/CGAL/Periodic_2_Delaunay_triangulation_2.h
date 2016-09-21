@@ -26,6 +26,7 @@
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/internal/info_check.h>
+#include <CGAL/tss.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
@@ -1120,11 +1121,11 @@ bool
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 remove_single_vertex(Vertex_handle v, const Offset &v_o)
 {
-  static int maxd = 30;
-  static std::vector<Face_handle> f(maxd);
-  static std::vector<int> i(maxd);
-  static std::vector<Vertex_handle> w(maxd);
-  static std::vector<Offset> offset_w(maxd);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, maxd,30);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Face_handle> , f, maxd);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<int>, i, maxd);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Vertex_handle>, w, maxd);
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Offset>, offset_w, maxd);
   int d;
   bool simplicity_criterion;
 
