@@ -28,7 +28,8 @@
 #include <CGAL/AABB_C3T3_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <QKeyEvent>
+
+
 typedef CGAL::AABB_C3T3_triangle_primitive<Kernel,C3t3> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
@@ -261,10 +262,7 @@ struct Scene_c3t3_item_priv {
     show_tetrahedra = false;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
-    is_grid_shown = false;
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    viewer->installEventFilter(item);
-
+    is_grid_shown = true;
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -843,7 +841,6 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
 
   if(renderingMode() == Wireframe && d->is_grid_shown)
   {
-
     vaos[Scene_c3t3_item_priv::Grid]->bind();
 
     d->program = getShaderProgram(PROGRAM_NO_SELECTION);
@@ -1141,6 +1138,14 @@ QMenu* Scene_c3t3_item::contextMenu()
     actionShowTets->setCheckable(true);
     actionShowTets->setObjectName("actionShowTets");
     connect(actionShowTets, &QAction::toggled, Set_show_tetrahedra(this->d));
+
+    QAction* actionShowGrid=
+      menu->addAction(tr("Show &grid"));
+    actionShowGrid->setCheckable(true);
+    actionShowGrid->setChecked(true);
+    actionShowGrid->setObjectName("actionShowGrid");
+    connect(actionShowGrid, SIGNAL(toggled(bool)),
+            this, SLOT(show_grid(bool)));
 
     menu->setProperty(prop_name, true);
   }
@@ -1490,6 +1495,12 @@ Scene_c3t3_item::setColor(QColor c)
   invalidateOpenGLBuffers();
   d->are_intersection_buffers_filled = false;
 }
+
+void Scene_c3t3_item::show_grid(bool b)
+{
+  d->is_grid_shown = b;
+  itemChanged();
+}
 void Scene_c3t3_item::show_spheres(bool b)
 {
   d->spheres_are_shown = b;
@@ -1564,28 +1575,4 @@ void Scene_c3t3_item::setPosition(float x, float y, float z) {
 void Scene_c3t3_item::setNormal(float x, float y, float z) {
   d->frame->setOrientation(x, y, z, 0.f);
 }
-
-bool Scene_c3t3_item::eventFilter(QObject* /*target*/, QEvent* event)
-{
-  if(event->type() == QEvent::KeyPress)
-  {
-    QKeyEvent *e = static_cast<QKeyEvent*>(event);
-    if(e->key() == Qt::Key_Control)
-    {
-      d->is_grid_shown = true;
-      itemChanged();
-    }
-  }
-  else if(event->type() == QEvent::KeyRelease)
-  {
-    QKeyEvent *e = static_cast<QKeyEvent*>(event);
-    if(e->key() == Qt::Key_Control)
-    {
-      d->is_grid_shown = false;
-      itemChanged();
-    }
-  }
-  return false;
-}
-
 #include "Scene_c3t3_item.moc"

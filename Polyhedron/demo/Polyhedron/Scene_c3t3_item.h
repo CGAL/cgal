@@ -118,7 +118,7 @@ public:
   void reset_intersection_item();
   void show_spheres(bool b);
   void show_intersection(bool b);
-
+  void show_grid(bool b);
   void show_cnc(bool b);
 
   virtual QPixmap graphicalToolTip() const;
@@ -136,7 +136,6 @@ public:
   protected:
     friend struct Scene_c3t3_item_priv;
     Scene_c3t3_item_priv* d;
-    bool eventFilter(QObject *, QEvent *);
 
 };
 
