@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <set>
+#include <stack>
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
