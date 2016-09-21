@@ -32,7 +32,7 @@ int main (int argc, char** argv)
   std::cerr << point_set.properties(); // Shows which properties were defined
 
   // Recover "label" property of type int
-  Point_set::Property_map<boost::int32_t>::type label_prop;
+  Point_set::Property_map<boost::int32_t> label_prop;
   bool found = false;
   boost::tie (label_prop, found)  = point_set.property<boost::int32_t> ("label");
   

@@ -11,8 +11,8 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef Point_set::Property_map<Color>::type Color_prop;
-typedef Point_set::Property_map<FT>::type Floating_prop;
+typedef Point_set::Property_map<Color> Color_prop;
+typedef Point_set::Property_map<FT> Floating_prop;
 
 void print_point_set (const Point_set& point_set)
 {
@@ -53,7 +53,7 @@ int main (int, char**)
   point_set.reserve (10); // For memory optimization
   for (std::size_t i = 0; i < 10; ++ i)
     {
-      Point_set::iterator it = point_set.push_back (Point (i, i, i));
+      Point_set::iterator it = point_set.insert (Point (i, i, i));
       Color c = {{ (unsigned char)(rand() % 256),
                    (unsigned char)(rand() % 256),
                    (unsigned char)(rand() % 256) }};

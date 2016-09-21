@@ -26,9 +26,9 @@ int main (int, char**)
   Point_set point_set;
 
   // Add points
-  point_set.push_back (Point (0., 0., 0.));
-  point_set.push_back (Point (0., 0., 1.));
-  point_set.push_back (Point (0., 1., 0.));
+  point_set.insert (Point (0., 0., 0.));
+  point_set.insert (Point (0., 0., 1.));
+  point_set.insert (Point (0., 1., 0.));
 
   point_set.add_normal_property();
 
@@ -40,7 +40,7 @@ int main (int, char**)
   point_set.normal(2) = Vector (0., 0., 1.);
 
   // Add point + normal
-  point_set.push_back (Point (1., 2., 3.), Vector (4., 5., 6.));
+  point_set.insert (Point (1., 2., 3.), Vector (4., 5., 6.));
 
   print_point_set(point_set); 
 

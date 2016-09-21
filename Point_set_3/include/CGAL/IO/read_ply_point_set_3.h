@@ -65,7 +65,7 @@ private:
   template <typename Type>
   class Ply_property_to_point_set_property : public Abstract_ply_property_to_point_set_property
   {
-    typedef typename Point_set::template Property_map<Type>::type Pmap;
+    typedef typename Point_set::template Property_map<Type> Pmap;
     Pmap m_pmap;
     std::string m_name;
   public:

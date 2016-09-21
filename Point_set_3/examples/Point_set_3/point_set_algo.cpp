@@ -16,9 +16,9 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_set_3<Point> Point_set;
 
 typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
-<Kernel, Point_set, Point_set::Point_pmap, Point_set::Vector_pmap> Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>       Efficient_ransac;
-typedef CGAL::Shape_detection_3::Sphere<Traits>                 Sphere;
+<Kernel, Point_set, Point_set::Point_map, Point_set::Vector_map> Traits;
+typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>        Efficient_ransac;
+typedef CGAL::Shape_detection_3::Sphere<Traits>                  Sphere;
 
 int main (int, char**)
 {
@@ -35,28 +35,28 @@ int main (int, char**)
       Point p (std::cos (theta) * std::cos (phi),
       	       std::cos (theta) * std::sin (phi),
 	       std::sin (theta));
-      point_set.push_back (p);
+      point_set.insert (p);
     }
 
   // Add normal property and estimate normal values
   point_set.add_normal_property();
   CGAL::jet_estimate_normals<CGAL::Sequential_tag> (point_set.begin(), point_set.end(),
-                                                    point_set.point_pmap(),
-                                                    point_set.normal_pmap(),
+                                                    point_set.point_map(),
+                                                    point_set.normal_map(),
                                                     12); // Number of neighbors
 
 
   // Simplify point set
   point_set.remove_from
     (CGAL::grid_simplify_point_set (point_set.begin(), point_set.end(),
-                                    point_set.point_pmap(), 
+                                    point_set.point_map(), 
                                     0.1)); // Size of grid cell
 
   std::cerr << point_set.properties();
 
   // Detect sphere with RANSAC
   Efficient_ransac ransac;
-  ransac.set_input(point_set, point_set.point_pmap(), point_set.normal_pmap());
+  ransac.set_input(point_set, point_set.point_map(), point_set.normal_map());
   ransac.add_shape_factory<Sphere>();
   Efficient_ransac::Parameters parameters;
   parameters.probability = 0.05;

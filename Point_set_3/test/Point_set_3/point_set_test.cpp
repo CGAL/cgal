@@ -40,15 +40,15 @@ int main (int, char**)
   std::ifstream f ("data/oni.pwn");
   CGAL::read_xyz_points_and_normals(f,
                                     point_set.index_back_inserter(),
-                                    point_set.point_push_pmap(),
-                                    point_set.normal_push_pmap(),
+                                    point_set.point_push_map(),
+                                    point_set.normal_push_map(),
                                     Kernel());
   f.close ();
 
   Point_set::iterator
     first_to_remove = CGAL::grid_simplify_point_set (point_set.begin(),
                                                      point_set.end(),
-                                                     point_set.point_pmap(),
+                                                     point_set.point_map(),
                                                      0.1);
 
   std::size_t size = point_set.size ();
@@ -60,7 +60,7 @@ int main (int, char**)
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
   
   test (!(point_set.has_property<Color> ("color")), "point set shouldn't have colors.");
-  typename Point_set::Property_map<Color>::type color_prop;
+  typename Point_set::Property_map<Color> color_prop;
   bool garbage;
   boost::tie (color_prop, garbage) = point_set.add_property ("color", Color());
   test (point_set.has_property<Color> ("color"), "point set should have colors.");
@@ -74,7 +74,7 @@ int main (int, char**)
       test ((get (color_prop, *it) == c), "recovered color is incorrect.");
     }
 
-  typename Point_set::Property_map<Color>::type color_prop_2;
+  typename Point_set::Property_map<Color> color_prop_2;
   boost::tie (color_prop_2, garbage) = point_set.property<Color>("color");
   test ((color_prop_2 == color_prop), "color property not recovered correctly.");
   

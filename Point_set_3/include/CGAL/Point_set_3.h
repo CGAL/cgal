@@ -75,18 +75,20 @@ public:
   */
   template <class Type>
   struct Property_map
+#ifndef DOXYGEN_RUNNING
+    : public Properties::Property_map<Index, Type>
+#endif
   {
-    /// \cond SKIP_IN_MANUAL
-    typedef typename Properties::Property_map<Index, Type> type;
-    /// \endcond
   };
-  
-  typedef typename Property_map<std::size_t>::type Index_pmap; ///< Property map of indices
-  typedef typename Property_map<Point>::type Point_pmap; ///< Property map of points
-  typedef typename Property_map<Vector>::type Vector_pmap; ///< Property map of vectors
 
-  typedef typename Index_pmap::iterator iterator; ///< Iterator type of the point set
-  typedef typename Index_pmap::const_iterator const_iterator; ///< Constant iterator type of the point set
+  /// \cond SKIP_IN_MANUAL
+  typedef Property_map<std::size_t> Index_map;
+  /// \endcond
+  typedef Property_map<Point> Point_map; ///< Property map of points
+  typedef Property_map<Vector> Vector_map; ///< Property map of vectors
+
+  typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
+  typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
 
   /*!
     \brief Class used to insert elements by defining the value of one of its properties.
@@ -137,7 +139,7 @@ public:
     \tparam Property The object `Property_map<Type>` where to push new values.
   */
   template <typename Property>
-  class Push_pmap
+  class Push_property_map
   {
     /// \cond SKIP_IN_MANUAL
   public:
@@ -150,12 +152,12 @@ public:
     Property* prop;
     mutable std::size_t ind;
 
-    Push_pmap(Point_set* ps = NULL,
+    Push_property_map(Point_set* ps = NULL,
               Property* prop = NULL,
               std::size_t ind=0)
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Push_pmap& pm, std::size_t& i, const typename Property::value_type& t)
+    friend void put(const Push_property_map& pm, std::size_t& i, const typename Property::value_type& t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->add_item();
@@ -164,26 +166,26 @@ public:
       ++pm.ind;
     }
 
-    friend const reference get (const Push_pmap& pm, const std::size_t& i)
+    friend const reference get (const Push_property_map& pm, const std::size_t& i)
     {
       return ((*(pm.prop))[i]);
     }
     /// \endcond
   };
 
-  typedef Property_back_inserter<Index_pmap> Index_back_inserter; ///< Back inserter on indices
-  typedef Property_back_inserter<Point_pmap> Point_back_inserter; ///< Back inserter on points
-  typedef Push_pmap<Point_pmap> Point_push_pmap; ///< Property map for pushing new points
-  typedef Push_pmap<Vector_pmap> Vector_push_pmap; ///< Property map for pushing new vectors
+  typedef Property_back_inserter<Index_map> Index_back_inserter; ///< Back inserter on indices
+  typedef Property_back_inserter<Point_map> Point_back_inserter; ///< Back inserter on points
+  typedef Push_property_map<Point_map> Point_push_map; ///< Property map for pushing new points
+  typedef Push_property_map<Vector_map> Vector_push_map; ///< Property map for pushing new vectors
 
 
 protected:
 
   /// \cond SKIP_IN_MANUAL
   Base m_base;
-  Index_pmap m_indices;
-  Point_pmap m_points;
-  Vector_pmap m_normals;
+  Index_map m_indices;
+  Point_map m_points;
+  Vector_map m_normals;
   std::size_t m_nb_removed;
 
   // Assignment operator not implemented and declared private to make
@@ -229,8 +231,10 @@ public:
   void clear()
   {
     m_base.clear();
-    m_indices = m_base.template add<std::size_t> ("index", (std::size_t)(-1)).first;
-    m_points = m_base.template add<Point> ("point", Point (0., 0., 0.)).first;
+    Properties::Property_map<Index,Index> pm = m_base.template add<std::size_t> ("index", (std::size_t)(-1)).first;
+    m_indices = reinterpret_cast<Index_map&>(pm);
+    Properties::Property_map<Index,Point> pm2 = m_base.template add<Point> ("point", Point (0., 0., 0.)).first;
+    m_points = reinterpret_cast<Point_map&>(pm2);
     m_nb_removed = 0;
   }
 
@@ -263,25 +267,24 @@ public:
       m_nb_removed -= s;
   }
 
-  /*!
-    \brief Add item (points with properties) with defaults values.
-   */
+  /// \cond SKIP_IN_MANUAL
   iterator add_item ()
   {
     m_base.push_back();
     m_indices[size()-1] = size()-1;
     return m_indices.end() - 1;
   }
+  /// \endcond
 
   /*!
     \brief Convenience function to add a point.
 
-    \param p Point to add
+    \param p Point to insert
 
     \note Properties of the added point are initialized to their
     default value.
    */
-  iterator push_back (const Point& p)
+  iterator insert (const Point& p)
   {
     iterator out = add_item();
     m_points[size()-1] = p;
@@ -291,7 +294,7 @@ public:
   /*!
     \brief Convenience function to add a point with a normal vector.
 
-    \param p Point to add
+    \param p Point to insert
     \param n Associated normal vector
 
     \note Properties of the added point other than its normal vector
@@ -300,9 +303,9 @@ public:
     \note A normal property must have been added to the point set
     before using this method.
    */
-  iterator push_back (const Point& p, const Vector& n)
+  iterator insert (const Point& p, const Vector& n)
   {
-    iterator out = push_back (p);
+    iterator out = insert (p);
     assert (has_normals());
     m_normals[size()-1] = n;
     return out;
@@ -536,10 +539,13 @@ public:
     exists (and was therefore not added but only returned).
   */
   template <class T>
-  std::pair<typename Property_map<T>::type, bool>
+  std::pair<Property_map<T>, bool>
   add_property (const std::string& name, const T t=T())
   {
-    return m_base.add<T> (name, t);
+    Properties::Property_map<Index,T> pm;
+    bool added = false;
+    boost::tie (pm, added) = m_base.template add<T> (name, t);
+    return std::make_pair (reinterpret_cast<Property_map<T>&>(pm), added);
   }
   
   /*!
@@ -554,10 +560,13 @@ public:
     to `false` (if the property was not found).
   */
   template <class T> 
-  std::pair<typename Property_map<T>::type,bool>
+  std::pair<Property_map<T>,bool>
   property (const std::string& name) const
   {
-    return m_base.template get<T>(name);
+    Properties::Property_map<Index,T> pm;
+    bool okay = false;
+    boost::tie (pm, okay) = m_base.template get<T>(name);
+    return std::make_pair (reinterpret_cast<Property_map<T>&>(pm), okay);
   }
 
   /*!
@@ -571,9 +580,9 @@ public:
     the property was not found.
   */
   template <class T> 
-  bool remove_property (typename Property_map<T>::type& prop)
+  bool remove_property (Property_map<T>& prop)
   {
-    return m_base.remove (prop);
+    return m_base.remove (reinterpret_cast<Properties::Property_map<Index,T>&>(prop));
   }
 
   /*!
@@ -584,7 +593,7 @@ public:
   */
   bool has_normals() const
   {
-    std::pair<Vector_pmap, bool> pm = m_base.template get<Vector> ("normal");
+    std::pair<Vector_map, bool> pm = this->property<Vector> ("normal");
     return pm.second;
   }
   /*!
@@ -599,7 +608,7 @@ public:
   bool add_normal_property(const Vector& default_value = Vector(0., 0., 0.))
   {
     bool out = false;
-    boost::tie (m_normals, out) = m_base.template add<Vector> ("normal", default_value);
+    boost::tie (m_normals, out) = this->add_property<Vector> ("normal", default_value);
     return out;
   }
   /*!
@@ -631,16 +640,16 @@ public:
     to `false` (if the property was not found).
   */
   template <class T>
-  Push_pmap<typename Property_map<T>::type>
-  push_pmap (typename Property_map<T>::type& prop)
+  Push_property_map<Property_map<T> >
+  push_property_map (Property_map<T>& prop)
   {
-    return Push_pmap<Properties::Property_map<Index, T> > (this, &prop, size());
+    return Push_property_map<Property_map<T> > (this, &prop, size());
   }
 
   /*!
     \brief Get the property map of the point attribute.
   */
-  Point_pmap point_pmap()
+  Point_map point_map()
   {
     return m_points;
   }
@@ -648,7 +657,7 @@ public:
   /*!
     \brief Get the property map of the point attribute (constant version).
   */
-  const Point_pmap point_pmap() const
+  const Point_map point_map() const
   {
     return m_points;
   }
@@ -656,9 +665,9 @@ public:
   /*!
     \brief Get the push property map of the point attribute.
   */
-  Point_push_pmap point_push_pmap ()
+  Point_push_map point_push_map ()
   {
-    return Point_push_pmap (this, &m_points, size());
+    return Point_push_map (this, &m_points, size());
   }
 
   /*!
@@ -667,7 +676,7 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_property()`).
   */
-  Vector_pmap normal_pmap ()
+  Vector_map normal_map ()
   {
     return m_normals;
   }
@@ -677,7 +686,7 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_property()`).
   */
-  const Vector_pmap normal_pmap () const
+  const Vector_map normal_map () const
   {
     return m_normals;
   }
@@ -688,9 +697,9 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_property()`).
   */
-  Vector_push_pmap normal_push_pmap ()
+  Vector_push_map normal_push_map ()
   {
-    return Vector_push_pmap (this, &m_normals, size());
+    return Vector_push_map (this, &m_normals, size());
   }
   /*!
     \brief Get the back inserter on the index attribute.

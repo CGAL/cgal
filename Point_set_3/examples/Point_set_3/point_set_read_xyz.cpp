@@ -25,8 +25,8 @@ int main (int argc, char** argv)
       !CGAL::read_xyz_points_and_normals
       (f,
        point_set.index_back_inserter(),
-       point_set.point_push_pmap(), // Use push property map for creating new items
-       point_set.normal_push_pmap())) // Same
+       point_set.point_push_map(), // Use push property map for creating new items
+       point_set.normal_push_map())) // Same
     {
       std::cerr << "Can't read input file " << std::endl;
       return EXIT_FAILURE;
@@ -45,7 +45,7 @@ int main (int argc, char** argv)
   if (!out ||
       !CGAL::write_off_points_and_normals
       (out, point_set.begin(), point_set.end(),
-       point_set.point_pmap(), point_set.normal_pmap())) // Use regular property map for accessing
+       point_set.point_map(), point_set.normal_map())) // Use regular property map for accessing
     {
       return EXIT_FAILURE;
     }
