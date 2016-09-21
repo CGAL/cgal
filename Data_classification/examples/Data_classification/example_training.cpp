@@ -350,6 +350,9 @@ int main (int argc, char** argv)
     << "property double x" << std::endl
     << "property double y" << std::endl
     << "property double z" << std::endl
+    << "property uchar red" << std::endl
+    << "property uchar green" << std::endl
+    << "property uchar blue" << std::endl
     << "property int label" << std::endl
     << "end_header" << std::endl;
   
@@ -359,16 +362,16 @@ int main (int argc, char** argv)
       
       CGAL::Classification_type* type = psc.classification_type_of (i);
       if (type == &vege)
-        f << "0" << std::endl;
+        f << "0 255 27 0" << std::endl;
       else if (type == &ground)
-        f << "1" << std::endl;
+        f << "245 180 0 1" << std::endl;
       else if (type == &roof)
-        f << "2" << std::endl;
+        f << "255 0 170 2" << std::endl;
       else if (type == &facade)
-        f << "3" << std::endl;
+        f << "100 0 255 3" << std::endl;
       else
         {
-          f << "-1" << std::endl;
+          f << "0 0 0 -1" << std::endl;
           //          std::cerr << "Error: unknown classification type" << std::endl;
         }
     }
