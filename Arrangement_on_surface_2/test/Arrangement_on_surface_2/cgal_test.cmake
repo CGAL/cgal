@@ -163,6 +163,11 @@ function(cgal_arr_2_add_target exe_name source_file)
   separate_arguments(flags UNIX_COMMAND "${TESTSUITE_CXXFLAGS}")
   target_compile_options(${name} PRIVATE ${flags})
   cgal_debug_message(STATUS "#      -> target ${name} with TESTSUITE_CXXFLAGS: ${flags}")
+
+  # Add a compatibility-mode with the shell script `cgal_test_base`
+  if(RUNNING_CGAL_AUTO_TEST AND NOT TARGET ${exe_name})
+    create_single_source_cgal_program( "${source_file}" )
+  endif()
 endfunction()
 
 function(run_test name)
