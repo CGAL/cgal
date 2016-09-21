@@ -26,36 +26,36 @@
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
-    /// \ingroup PkgAABB_tree
-    /// Primitive type that wraps a facet handle of a TriangleMesh,
-    /// which is used as id, and allows the construction of the datum on
-    /// the fly. Since only the facet handle is stored in this primitive,
-    /// the TriangleMesh from which the AABB tree is built should not be
-    /// deleted while the AABB tree is in use.
-    ///
-    /// \cgalModels `AABBPrimitive`
-    /// \tparam GeomTraits must provides a \c %Point_3
-    /// type, used as \c Point, and a \c %Triangle_3 type, used as \c
-    /// Datum and constructible from three arguments of type \c
-    /// Point.
-    /// \tparam  Tr must be a
-    /// \c CGAL::Triangulation_3 whose points have type \c Point.
-    ///
-    /// \sa `AABBPrimitive`
+    // \ingroup PkgAABB_tree
+    // Primitive type that wraps a facet handle of a CGAL::Triangulation_3,
+    // which is used as id, and allows the construction of the datum on
+    // the fly. Since only the facet handle is stored in this primitive,
+    // the TriangleMesh from which the AABB tree is built should not be
+    // deleted while the AABB tree is in use.
+    //
+    // \cgalModels `AABBPrimitive`
+    // \tparam GeomTraits must provides a \c %Point_3
+    // type, used as \c Point, and a \c %Triangle_3 type, used as \c
+    // Datum and constructible from three arguments of type \c
+    // Point.
+    // \tparam  Tr must be a
+    // \c CGAL::Triangulation_3 whose points have type \c Point.
+    //
+    // \sa `AABBPrimitive`
     template<typename GeomTraits, typename Tr>
     class AABB_triangulation_3_triangle_primitive
     {
     public:
         typedef typename GeomTraits::Point_3 Point;
-        /// \name Types
-        /// @{
+        // \name Types
+        // @{
 
-        /// Id type.
+        // Id type.
         typedef typename Tr::Facet Id;
-        /// Geometric data type.
+        // Geometric data type.
         typedef typename GeomTraits::Triangle_3 Datum;
 
-        /// @}
+        // @}
 
         // Self
         typedef AABB_triangulation_3_triangle_primitive<GeomTraits, Tr> Self;
@@ -102,7 +102,7 @@ namespace CGAL {
         Id& id() { return m_facet; }
 
     private:
-        /// The id, here a Tr facet handle
+        // The id, here a Tr::Facet
         Id m_facet;
     };  // end class AABB_triangulation_3_triangle_primitive
 
