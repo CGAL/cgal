@@ -46,7 +46,7 @@ A function object that must provide the operator
 `FT operator()(const Weighted_point_d & wp)`, returning
 the weight of `wp`.
 */
-typedef unspecified_type Point_weight_d;
+typedef unspecified_type Compute_weight_d;
 
 /*!
 A predicate object that must provide the templated operator
@@ -120,7 +120,7 @@ Point_drop_weight_d point_drop_weight_d_object() const;
 /*!
 
 */
-Point_weight_d point_weight_d_object() const;
+Compute_weight_d compute_weight_d_object() const;
 
 /*!
 

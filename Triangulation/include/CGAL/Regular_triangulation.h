@@ -811,8 +811,8 @@ Regular_triangulation<Traits, TDS>
     case Base::ON_VERTEX:
     {
       Vertex_handle v = s->vertex(f.index(0));
-      typename RTTraits::Point_weight_d pw =
-        geom_traits().point_weight_d_object();
+      typename RTTraits::Compute_weight_d pw =
+        geom_traits().compute_weight_d_object();
       
       if (pw(p) == pw(v->point()))
         return v;
@@ -916,8 +916,8 @@ Regular_triangulation<Traits, TDS>
     case Base::ON_VERTEX:
     {
       Vertex_handle v = s->vertex(f.index(0));
-      typename RTTraits::Point_weight_d pw =
-        geom_traits().point_weight_d_object();
+      typename RTTraits::Compute_weight_d pw =
+        geom_traits().compute_weight_d_object();
       if (pw(p) == pw(v->point()))
         return v;
       // If dim == 0 and the new point has a bigger weight, 

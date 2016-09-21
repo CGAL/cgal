@@ -51,7 +51,7 @@ public:
   typedef typename K::Point_d                       Bare_point_d;
   typedef typename K::Weighted_point_d              Weighted_point_d;
   typedef typename K::Point_drop_weight_d           Point_drop_weight_d;
-  typedef typename K::Point_weight_d                Point_weight_d;
+  typedef typename K::Compute_weight_d              Compute_weight_d;
   typedef typename K::Power_side_of_power_sphere_d  Power_side_of_power_sphere_d;
   typedef typename K::In_flat_power_side_of_power_sphere_d 
                                                     In_flat_power_side_of_power_sphere_d;
