@@ -28,6 +28,8 @@
 #include <algorithm>
 #include <boost/array.hpp>
 
+const std::size_t limit_fast_drawing = 300000; //arbitraty large valu
+
 struct Scene_points_with_normal_item_priv
 {
   Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
@@ -580,8 +582,8 @@ void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* vie
 {
     double ratio_displayed = 1.0;
     if (viewer->inFastDrawing () &&
-        (d->nb_lines/6 > 300000)) // arbitrary large value
-      ratio_displayed = 6 * 300000. / (double)(d->nb_lines);
+        (d->nb_lines/6 > limit_fast_drawing)) // arbitrary large value
+      ratio_displayed = 6 * limit_fast_drawing / (double)(d->nb_lines);
 
     if(!are_buffers_filled)
         d->initializeBuffers(viewer);
@@ -605,8 +607,8 @@ void Scene_points_with_normal_item::drawPoints(CGAL::Three::Viewer_interface* vi
     viewer->glPointSize(d->point_Slider->value());
     double ratio_displayed = 1.0;
     if ((viewer->inFastDrawing () || d->isPointSliderMoving())
-        &&((d->nb_points + d->nb_selected_points)/3 > 300000)) // arbitrary large value
-      ratio_displayed = 3 * 300000. / (double)(d->nb_points + d->nb_selected_points);
+        &&((d->nb_points + d->nb_selected_points)/3 > limit_fast_drawing)) // arbitrary large value
+      ratio_displayed = 3 * limit_fast_drawing / (double)(d->nb_points + d->nb_selected_points);
 
     vaos[Scene_points_with_normal_item_priv::ThePoints]->bind();
     if(has_normals())
@@ -716,7 +718,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
       {
         QMenu *container = new QMenu(tr("Normals Length"));
         QWidgetAction *sliderAction = new QWidgetAction(0);
-        if((d->nb_points + d->nb_selected_points)/3 <= 300000)
+        if((d->nb_points + d->nb_selected_points)/3 <= limit_fast_drawing)
         {
           connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
           connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
