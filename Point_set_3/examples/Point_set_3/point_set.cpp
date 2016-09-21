@@ -9,7 +9,7 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
-typedef CGAL::Point_set_3<Kernel> Point_set;
+typedef CGAL::Point_set_3<Point> Point_set;
 
 void print_point_set (const Point_set& point_set)
 {
@@ -54,12 +54,12 @@ int main (int, char**)
   print_point_set(point_set); // New item has default values
   
   // Display information
-  std::cerr << point_set.info();
+  std::cerr << point_set.properties();
 
   point_set.collect_garbage();
   
   // Display information (garbage should be gone)
-  std::cerr << point_set.info();
+  std::cerr << point_set.properties();
 
   return 0;
 }

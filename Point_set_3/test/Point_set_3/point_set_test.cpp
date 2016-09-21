@@ -13,7 +13,7 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
-typedef CGAL::Point_set_3<Kernel> Point_set;
+typedef CGAL::Point_set_3<Point> Point_set;
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 std::size_t nb_test = 0;
@@ -83,7 +83,7 @@ int main (int, char**)
   test (!(point_set.has_normals()), "point set shouldn't have normals.");
   
   test (point_set.has_property<Color> ("color"), "point set should have colors.");
-  point_set.remove_property (color_prop);
+  point_set.remove_property<Color> (color_prop);
   test (!(point_set.has_property<Color> ("color")), "point set shouldn't have colors.");
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;

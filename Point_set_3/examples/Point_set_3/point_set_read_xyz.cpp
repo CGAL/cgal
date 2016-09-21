@@ -11,7 +11,7 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
-typedef CGAL::Point_set_3<Kernel> Point_set;
+typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {

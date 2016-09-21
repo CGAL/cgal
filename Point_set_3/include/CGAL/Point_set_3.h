@@ -33,7 +33,8 @@ namespace CGAL {
 
   \ingroup PkgPointSet3
 
-  \brief A collection of 3D points.
+  \brief A collection of points with dynamically associated
+  properties.
 
   This class provides the user with a flexible way to store and access
   a point set:
@@ -45,23 +46,21 @@ namespace CGAL {
     provided with an overload that take a `Point_set_3` object as an
     argument.
 
-  \tparam Gt Geometric traits class.
-
+  \tparam Point Point type.
+  \tparam Vector Normal vector type.
  */
 
-template <class Gt>
+template <typename Point,
+          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
 class Point_set_3
 {
 public:
 
   /// \cond SKIP_IN_MANUAL
-  typedef Point_set_3<Gt> Point_set;
+  typedef Point_set_3<Point, Vector> Point_set;
   /// \endcond
   
   typedef typename std::size_t Item; ///< Items are indices
-  typedef typename Gt::FT FT; ///< Floating type
-  typedef typename Gt::Point_3 Point; ///< Point type
-  typedef typename Gt::Vector_3 Vector; ///< Vector type
 
   /// \cond SKIP_IN_MANUAL
   typedef typename Properties::Property_container<Item> Base;
@@ -720,7 +719,7 @@ public:
   std::string properties() const
   {
     std::ostringstream oss;
-    oss << "CGAL::Point_set_3<" << boost::core::demangle(typeid(Gt).name())
+    oss << "CGAL::Point_set_3<" << boost::core::demangle(typeid(Point).name())
         << "> with " << size() << " point(s) ("
         << removed_size() << " removed point(s) waiting to be deleted)" << std::endl;
     std::vector<std::string> prop = m_base.properties();

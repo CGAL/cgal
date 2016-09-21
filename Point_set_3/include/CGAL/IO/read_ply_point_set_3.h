@@ -41,19 +41,19 @@ namespace CGAL
   - other PLY properties are stored on point set properties with the
     name and type given by the PLY header
 
-  \tparam Gt Geometric traits class.
+  \tparam Point Point type.
+  \tparam Vector Normal vector type.
 
   \cgalModels `PlyInterpreter`
  */
 
-template <typename Gt>
+template <typename Point,
+          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
 class Ply_interpreter_point_set_3
 {
   /// \cond SKIP_IN_MANUAL
 public:
-  typedef Point_set_3<Gt> Point_set;
-  typedef Point_3<Gt> Point;
-  typedef Vector_3<Gt> Vector;
+  typedef Point_set_3<Point> Point_set;
 
 private:
 

@@ -13,7 +13,7 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
-typedef CGAL::Point_set_3<Kernel> Point_set;
+typedef CGAL::Point_set_3<Point> Point_set;
 
 typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
 <Kernel, Point_set, Point_set::Point_pmap, Point_set::Vector_pmap> Traits;
@@ -52,7 +52,7 @@ int main (int, char**)
                                     point_set.point_pmap(), 
                                     0.1)); // Size of grid cell
 
-  std::cerr << point_set.info();
+  std::cerr << point_set.properties();
 
   // Detect sphere with RANSAC
   Efficient_ransac ransac;

@@ -10,7 +10,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
-typedef CGAL::Point_set_3<Kernel> Point_set;
+typedef CGAL::Point_set_3<Point> Point_set;
 typedef Point_set::Property_map<Color>::type Color_prop;
 typedef Point_set::Property_map<FT>::type Floating_prop;
 
