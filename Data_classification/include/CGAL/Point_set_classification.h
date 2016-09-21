@@ -451,7 +451,7 @@ public:
           {
             edges.push_back (std::make_pair (s, neighbors[i]));
             if (s != neighbors[i])
-              edge_weights.push_back (smoothing);
+              edge_weights.push_back (weight);
             else
               edge_weights.push_back (0.);
           }
