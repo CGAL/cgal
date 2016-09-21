@@ -37,7 +37,6 @@ int main (int, char**)
   point_set.add_normal_property();
   test (point_set.has_normals(), "point set should have normals.");
 
-  std::vector<Point_set::Item> indices;
   std::ifstream f ("data/oni.pwn");
   CGAL::read_xyz_points_and_normals(f,
                                     point_set.index_back_inserter(),

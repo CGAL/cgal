@@ -60,10 +60,10 @@ public:
   typedef Point_set_3<Point, Vector> Point_set;
   /// \endcond
   
-  typedef typename std::size_t Item; ///< Items are indices
+  typedef typename std::size_t Index; ///< Items are indices
 
   /// \cond SKIP_IN_MANUAL
-  typedef typename Properties::Property_container<Item> Base;
+  typedef typename Properties::Property_container<Index> Base;
   /// \endcond
   
   /*!
@@ -77,7 +77,7 @@ public:
   struct Property_map
   {
     /// \cond SKIP_IN_MANUAL
-    typedef typename Properties::Property_map<Item, Type> type;
+    typedef typename Properties::Property_map<Index, Type> type;
     /// \endcond
   };
   
@@ -120,9 +120,9 @@ public:
     Property_back_inserter& operator*() { return *this; }
     Property_back_inserter& operator= (const value_type& p)
     {
-      if(ps->size() <= (typename Point_set::Item(ind)))
+      if(ps->size() <= (typename Point_set::Index(ind)))
         ps->add_item();
-      put(*prop, Point_set::Item(ind), p);
+      put(*prop, Point_set::Index(ind), p);
       ++ ind;
       return *this;
     }
@@ -159,7 +159,7 @@ public:
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->add_item();
-      put(*(pm.prop), Point_set::Item(pm.ind), t);
+      put(*(pm.prop), Point_set::Index(pm.ind), t);
       i = pm.ind;
       ++pm.ind;
     }
@@ -344,13 +344,13 @@ public:
 
     \param index Index of the wanted point.
   */
-  Point& point (Item index) { return m_points[m_indices[index]]; }
+  Point& point (Index index) { return m_points[m_indices[index]]; }
   /*!
     \brief Get a constant reference to the wanted indexed point.
 
     \param index Index of the wanted point.
   */
-  const Point& point (Item index) const { return m_points[m_indices[index]]; }
+  const Point& point (Index index) const { return m_points[m_indices[index]]; }
   /*!
     \brief Get a reference to the wanted indexed point.
 
@@ -368,13 +368,13 @@ public:
 
     \param index Index of the wanted point.
   */
-  Point& operator[] (Item index) { return m_points[m_indices[index]]; }
+  Point& operator[] (Index index) { return m_points[m_indices[index]]; }
   /*!
     \brief Get a const reference the wanted indexed point (convenience method).
 
     \param index Index of the wanted point.
   */
-  const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
+  const Point& operator[] (Index index) const { return m_points[m_indices[index]]; }
   
   /*!
     \brief Get a reference to the wanted indexed normal.
@@ -384,7 +384,7 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_property()`).
   */
-  Vector& normal (Item index) { return m_normals[m_indices[index]]; }
+  Vector& normal (Index index) { return m_normals[m_indices[index]]; }
   /*!
     \brief Get a constant reference to the wanted indexed normal.
 
@@ -393,7 +393,7 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_property()`).
   */
-  const Vector& normal (Item index) const { return m_normals[m_indices[index]]; }
+  const Vector& normal (Index index) const { return m_normals[m_indices[index]]; }
   /*!
     \brief Get a reference to the wanted indexed normal.
 
@@ -517,7 +517,7 @@ public:
   template <typename T>
   bool has_property (const std::string& name) const
   {
-    std::pair<typename Properties::template Property_map<Item, T>, bool>
+    std::pair<typename Properties::template Property_map<Index, T>, bool>
       pm = m_base.template get<T> (name);
     return pm.second;
   }
@@ -634,7 +634,7 @@ public:
   Push_pmap<typename Property_map<T>::type>
   push_pmap (typename Property_map<T>::type& prop)
   {
-    return Push_pmap<Properties::Property_map<Item, T> > (this, &prop, size());
+    return Push_pmap<Properties::Property_map<Index, T> > (this, &prop, size());
   }
 
   /*!
