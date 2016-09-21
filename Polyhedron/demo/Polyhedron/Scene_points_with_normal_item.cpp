@@ -484,7 +484,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
                                           Kernel()) &&
             !isEmpty();
 
-  std::cerr << d->m_points->info();
+  std::cerr << d->m_points->properties();
 
   if (d->m_points->has_normals())
     setRenderingMode(PointsPlusNormals);
@@ -626,7 +626,6 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
 void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const
 {
    // TODO add support for selection
-
    viewer->glBegin(GL_POINTS);
    if (d->m_points->has_colors())
      for ( Point_set_3<Kernel>::const_iterator it = d->m_points->begin(); it != d->m_points->end(); it++)
