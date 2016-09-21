@@ -303,9 +303,6 @@ void benchmark_remove()
     Time_accumulator tt(time);
     tr.remove(&vhs[0], &vhs[NUM_VERTICES_TO_REMOVE - 1]);
     ++iterations;
-				//std::cout<<"\b\b\b\b\b\b"<<i<<std::flush;
-				//tr.is_valid();
-			}
   } while (time < BENCH_MIN_TIME);
 
   cout << NUM_VERTICES_TO_REMOVE << "\t" 
