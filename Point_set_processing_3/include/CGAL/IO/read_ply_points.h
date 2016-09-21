@@ -184,6 +184,8 @@ public:
   /// \cond SKIP_IN_MANUAL
   Ply_reader () : m_nb_points (0) { }
 
+  const std::vector<internal::Ply_read_number*>& readers() const { return m_readers; }
+
   template <typename Stream>
   bool init (Stream& stream)
   {

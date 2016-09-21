@@ -1,0 +1,163 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Point_Set_3
+\cgalAutoToc
+\author Simon Giraudot
+
+\section Point_set_3_Principle General Principle
+
+There exists many sensors that generate 3D point sets: laser scanners,
+LIDAR devices, cameras with photogrammetry post-processing... \cgal
+provides several algorithms to process such point sets (see
+\ref Chapter_Point_Set_Processing "Point Set Processing",
+\ref Chapter_Point_Set_Shape_Detection "Shape Detection",
+\ref Chapter_Advancing_Front_Surface_Reconstruction "Surface Reconstruction", etc.).
+
+While these algorithms do not impose specific data structures to work
+on, \cgal provides a 3D point set structure to make it easier for the
+user to handle additional properties (such as normal vectors, colors,
+labels...) and to call \cgal algorithms on them.
+
+The point set data structure is based on a set of `std::vector`
+objects that each stores one property. When created, a
+`CGAL::Point_set_3<Gt>` object only contains 2 properties:
+
+- The "point" property (with `CGAL::Point_3<Gt>` type)
+
+- The "index" property (with `std::size_t` type) used to easily change
+the order of the points without having to move all the properties.
+
+Any property the user needs can be easily added, modified and
+removed. A property is identified by a unique name and a
+type. Convenience methods are provided to handle the property "normal"
+of type `CGAL::Vector_3<Gt>` that is a very common property on point
+sets.
+
+Reordering is only done by swapping index values: this guarantees that
+these operations have a constant complexity no matter how many
+properties are defined. To avoid frequent memory allocation and
+deallocation, removal of points is also handled by swapping the index
+values, putting the points marked as removed at the back of the index
+property and keeping track of the number of points marked as
+removed. If the user needs memory to be disallocated, the element
+marked as removed can be actually deleted from memory.
+
+\section Point_set_3_Usage Simple Usage
+
+The data structure is designed to be easy to use despite its potential
+complexity when using properties. Several convenience methods are
+provided to handle points and normals without having to handle
+properties directly.
+
+The following example shows how to fill a point set with points, add a
+normal property, set the normal values, add or remove an item, etc.
+
+\cgalExample{Point_set_3/point_set.cpp}
+
+\section Point_set_3_Properties Using Additional Properties
+
+Every information in the point set is a property. A raw point set
+comes with "index" and "point" properties. As we saw in the previous
+section, the user can easily add a "normal" property. But this
+mechanism is generalized to any type of property.
+
+The following example shows how to define a color property and an
+intensity property, and how to modify the point set according to this.
+
+\cgalExample{Point_set_3/point_set_property.cpp}
+
+\section Point_set_3_Algorithms Applying CGAL Algorithms
+
+Most \cgal algorithms let the user free to choose whatever data
+structures he/she needs: the points and attributes are then access
+through iterators and property maps. The `CGAL::Point_set_3<Gt>`
+structure directly provides these iterators and property maps so that
+applying \cgal algorithms to it is straightforward.
+
+\subsection Point_set_3_PSP Point Set Processing
+
+When adding a new property to the point set, the associated property
+map is returned and can then be used as a standard property map. For
+points and normals, the property maps can recovered using the methods
+`point_pmap()` and `normal_pmap()`.
+
+The following example shows how to apply some algorithms from the
+\cgal library using a point set object:
+
+- generating a point set around a sphere
+
+- estimating the normals with `CGAL::jet_estimate_normals()`
+
+- simplifying the point set with `CGAL::grid_simplify_point_set()`
+
+- detecting the sphere shape with `CGAL::Shape_detection_3::Efficient_RANSAC`
+
+\cgalExample{Point_set_3/point_set_algo.cpp}
+
+
+\subsection Point_set_3_IO Input/Output
+
+Using functions of \cgal to read files requires a slightly different
+behavior because, internally, the properties of an item are defined
+_before_ this item is inserted in the point set (which is not possible
+with `CGAL::Point_set_3<Gt>`). We provide specific back inserters and
+property maps:
+
+- `CGAL::Point_set_3::index_back_inserter()` is used as an output iterator that creates
+new item
+
+- `CGAL::Point_set_3::point_push_pmap()` is a property map that is allowed to create a
+new item if it was not yet created by the back inserter
+
+- `CGAL::Point_set_3::normal_push_pmap()` works similarly
+
+Such "push property maps" are also available for other user-defined
+properties (see `CGAL::Point_set_3::push_pmap()`).
+
+The following example shows how to read a point set in the XYZ format
+(it also normalizes and inverses the normal vectors and write the
+result in the OFF format).
+
+\cgalExample{Point_set_3/point_set_read_xyz.cpp}
+
+The PLY number is the usual choice when storing an arbitrary number of
+additional properties of points is needed. \cgal provides a function
+`read_ply_custom_points()` that allows the user to recover any PLY
+property he/she wants, provided the adapted PLY interpreter is
+implemented.
+
+An specific interpreter is provided to fill a `CGAL::Point_set_3`
+object with all readable properties of a PLY input. Each PLY property
+is read and stored on a point set property with the same name and same
+type.
+
+For example, if the following line is found in the PLY header:
+
+> property uchar red
+
+Then a property named "red" and with type `boost::uint8_t` (`boost`
+types are used because of their fixed memory size) will be
+instanciated in the point set and filled with the corresponding
+values.
+
+Only points and normals are recovered as properties with complex class
+types (namely `CGAL::Point_3` and `CGAL::Vector_3`). Other properties
+are stored with simple number types. For example, if a color is given
+with integer red, green and blue values, 3 integer properties "red",
+"green" and "blue" will be instanciated. A user-defined interpreter
+must be implemented if such properties should be stored all together
+(a unique property "color" of type `CGAL::cpp11::array` for example).
+
+The following example shows how to use this interpreter and how to
+recover a specific property afterwards:
+
+\cgalExample{Point_set_3/point_set_read_ply.cpp}
+
+
+
+
+
+*/
+} /* namespace CGAL */
