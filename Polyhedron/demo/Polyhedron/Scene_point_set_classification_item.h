@@ -275,15 +275,15 @@ public:
       CGAL::Classification_type* ct = new CGAL::Classification_type
         (classes[i].label->text().toLower().toStdString().c_str());
       ct->set_attribute_effect
-        (m_disp, (CGAL::Classification_type::Attribute_side)(classes[i].combo[0]->currentIndex()));
+        (m_disp, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[0]->currentIndex()));
       ct->set_attribute_effect
-        (m_d2p, (CGAL::Classification_type::Attribute_side)(classes[i].combo[1]->currentIndex()));
+        (m_d2p, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[1]->currentIndex()));
       ct->set_attribute_effect
-        (m_verti, (CGAL::Classification_type::Attribute_side)(classes[i].combo[2]->currentIndex()));
+        (m_verti, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[2]->currentIndex()));
       ct->set_attribute_effect
-        (m_elev, (CGAL::Classification_type::Attribute_side)(classes[i].combo[3]->currentIndex()));
+        (m_elev, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[3]->currentIndex()));
       ct->set_attribute_effect
-        (m_col_att, (CGAL::Classification_type::Attribute_side)(classes[i].combo[4]->currentIndex()));
+        (m_col_att, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[4]->currentIndex()));
 
       std::cerr << " * ";
       ct->info();
@@ -298,7 +298,7 @@ public:
   m_psc->set_multiplicative(multiply);
   
   if (method == 0)
-    m_psc->run_quick();
+    m_psc->run();
   else if (method == 1)
     m_psc->run_with_graphcut (*m_neighborhood, weight);
   else if (method == 2)
