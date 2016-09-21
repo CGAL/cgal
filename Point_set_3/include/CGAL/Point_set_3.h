@@ -309,11 +309,35 @@ public:
     return out;
   }
 
+  /*!
+    \brief Return the begin iterator.
+  */
   iterator begin() { return m_indices.begin(); }
+  /*!
+    \brief Return the past-the-end iterator.
+    \note The returned value is the same as `removed_begin()`.
+  */
   iterator end() { return m_indices.end() - m_nb_removed; }
+  /*!
+    \brief Return the begin constant iterator.
+  */
   const_iterator begin() const { return m_indices.begin(); }
+  /*!
+    \brief Return the past-the-end constant iterator.
+    \note The returned value is the same as `removed_begin()`.
+  */
   const_iterator end() const { return m_indices.end() - m_nb_removed; }
+  /*!
+    \brief Returns `true` if the number of non-removed element is 0.
+
+    \note This does not count the removed elements.
+  */
   bool empty() const { return (m_base.size() == m_nb_removed); }
+  /*!
+    \brief Returns the number of elements (not counting removed one).
+
+    \note See `removed_size()` for getting the number of removed elements.
+  */
   std::size_t size () const { return m_base.size() - m_nb_removed; }
 
   /*!
@@ -693,7 +717,7 @@ public:
   /*!
     \brief List properties with their types in a `std::string` object.
   */
-  std::string info() const
+  std::string properties() const
   {
     std::ostringstream oss;
     oss << "CGAL::Point_set_3<" << boost::core::demangle(typeid(Gt).name())
