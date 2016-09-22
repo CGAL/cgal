@@ -1094,6 +1094,9 @@ cgal_test_with_cmake.log
 # File created by the Semantic Bovinator (an Emacs package)
 semantic.cache
 
+# Python cache files
+*.pyc
+
 # Files produced by a Qt compilation/execution
 .qglviewer.xml
 *.moc

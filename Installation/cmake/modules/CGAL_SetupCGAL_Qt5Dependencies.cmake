@@ -1,8 +1,31 @@
+#.rst:
+# CGAL_SetupCGAL_Qt5Dependencies
+# ------------------------------
+#
+# The module searchs for the dependencies of the `CGAL_Qt5` library:
+#   - the `Qt5` libraries
+#
+# by calling
+#
+# .. code-block:: cmake
+#
+#    find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+#    find_package(OpenGL QUIET)
+#
+# and defines the variable :variable:`CGAL_Qt5_FOUND` and the function
+# :command:`CGAL_setup_CGAL_Qt5_dependencies`.
+#
+
 if(CGAL_SetupCGAL_Qt5Dependencies_included)
   return()
 endif()
 set(CGAL_SetupCGAL_Qt5Dependencies_included TRUE)
 
+#.rst:
+# Used Modules
+# ^^^^^^^^^^^^
+#   - :module:`Qt5Config`
+#   - :module:`FindOpenGL`
 find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
 find_package(OpenGL QUIET)
 
@@ -20,6 +43,14 @@ if(NOT OPENGL_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
 endif()
 
+#.rst:
+# Result Variables
+# ^^^^^^^^^^^^^^^^
+#
+# .. variable:: CGAL_Qt5_FOUND
+#
+#    Set to `TRUE` if the dependencies of `CGAL_Qt5` were found.
+#
 if(NOT CGAL_Qt5_MISSING_DEPS)
   set(CGAL_Qt5_FOUND TRUE)
 endif()
@@ -34,6 +65,21 @@ endif()
 #message( STATUS "moc executable:      ${QT_MOC_EXECUTABLE}" )
 #message( STATUS "uic executable:      ${QT_UIC_EXECUTABLE}" )
 
+#.rst:
+#
+# Provided Functions
+# ^^^^^^^^^^^^^^^^^^
+#
+# .. command:: CGAL_setup_CGAL_Qt5_dependencies
+#
+#   Link the target with the dependencies of `CGAL_Qt5`::
+#
+#     CGAL_setup_CGAL_Qt5_dependencies( target [INTERFACE] )
+#
+#   If the option ``INTERFACE`` is passed, the dependencies are
+#   added using :command:`target_link_libraries` with the ``INTERFACE``
+#   keyword, or ``PUBLIC`` otherwise.
+#
 function(CGAL_setup_CGAL_Qt5_dependencies target)
   if(ARGV1 STREQUAL INTERFACE)
     set(keyword INTERFACE)

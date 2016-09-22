@@ -1,3 +1,15 @@
+#.rst:
+# CGAL_SetupBoost
+# ---------------
+#
+# The module searchs for the `Boost` headers and library, by calling
+#
+# .. code-block:: cmake
+#
+#    find_package(Boost)
+#
+# and defines the function :command:`use_CGAL_Boost_support`.
+
 if ( CGAL_Boost_Setup )
   return()
 endif()
@@ -39,6 +51,21 @@ message( STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}" )
 message( STATUS "Boost libraries:    ${Boost_LIBRARIES}" )
 
 set ( CGAL_USE_BOOST 1 )
+
+
+#.rst:
+# Provided Functions
+# ^^^^^^^^^^^^^^^^^^
+#
+# .. command:: use_CGAL_Boost_support
+#
+#    Link the target with the `Boost` libraries::
+#
+#      use_CGAL_Boost_support( target [INTERFACE] )
+#
+#    If the option ``INTERFACE`` is passed, the dependencies are
+#    added using :command:`target_link_libraries` with the ``INTERFACE``
+#    keyword, or ``PUBLIC`` otherwise.
 
 function(use_CGAL_Boost_support target)
   if(ARGV1 STREQUAL INTERFACE)
