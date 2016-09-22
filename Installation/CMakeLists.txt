@@ -3,7 +3,9 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-project(CGAL CXX C)
+if(NOT PROJECT_NAME)
+  project(CGAL CXX C)
+endif()
 
 # Minimal version of CMake:
 cmake_minimum_required(VERSION 2.8.11)
@@ -1043,7 +1045,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       list(APPEND include_options "-I${incdir}")
     endforeach()
     foreach (incdir ${CGAL_3RD_PARTY_INCLUDE_DIRS})
-      list(APPEND include_options "-isystem${incdir}")
+      list(APPEND include_options "-I${incdir}")
     endforeach()
     include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
@@ -1051,28 +1053,63 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     set(check_pkg_target_list)
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
-        set(depends "")
+        set(check_pkg_headers_depends "")
         file(GLOB ${package}_HEADERS 
           RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
           "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
         list(SORT ${package}_HEADERS)
+        if(COMPUTE_DEPS)
+          set(compute_deps_extra_args "-H ")
+        endif()
         foreach(header ${${package}_HEADERS})
           string(REPLACE "/" "__" header2 "${header}")
           string(REPLACE "." "_" header2 "${header2}")
+          string(REPLACE ";" " " include_options_str "${include_options}")
+          separate_arguments(CMD
+            UNIX_COMMAND
+"${CMAKE_CXX_COMPILER} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} \
+-I/usr/include/eigen3 ${include_options_str} -x c++ -fsyntax-only \
+${compute_deps_extra_args} \
+${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+)
           add_custom_command(OUTPUT check_${header2}
-            COMMAND ${CMAKE_CXX_COMPILER} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} ${include_options} -x c++ -fsyntax-only "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
-            COMMAND ${CMAKE_COMMAND} -E touch check_${header2}
-            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
+            COMMAND ${CMAKE_COMMAND}
+              -DCERR:STRING=${CMAKE_CURRENT_BINARY_DIR}/check_${header2}
+              "-DCMD:STRING=${CMD}"
+              -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
+            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
+            DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
             VERBATIM
             COMMENT "Check header ${header}"
             )
-          list(APPEND depends check_${header2})
+          list(APPEND check_pkg_headers_depends check_${header2})
+          if(${header2}_deps)
+            list(REMOVE_DUPLICATES ${header2}_deps)
+          endif()
         endforeach() # look on headers
-        add_custom_target(check_pkg_${package}_headers DEPENDS ${depends})
+        add_custom_target(check_pkg_${package}_headers
+          DEPENDS ${check_pkg_headers_depends})
+        add_custom_command(
+          OUTPUT pkg_${package}_included_headers pkg_${package}_deps
+          DEPENDS ${check_pkg_headers_depends}
+          COMMENT "Compute dependencies of ${package}"
+          COMMAND ${CMAKE_COMMAND}
+            -DCGAL_PACKAGES_PREFIX=${CGAL_SOURCE_DIR}
+            -DOUTPUT_HEADERS_LIST=pkg_${package}_included_headers
+            -DOUTPUT_PACKAGES_LIST=pkg_${package}_deps
+            -P "${CGAL_MODULES_DIR}/process_dependencies.cmake"
+            ${check_pkg_headers_depends}
+          )
+        add_custom_target(${package}_deps DEPENDS pkg_${package}_deps)
         list(APPEND check_pkg_target_list check_pkg_${package}_headers)
+        list(APPEND packages_deps ${package}_deps)
       endif() # if the package has an include directory
+      if(${package}_deps)
+        list(REMOVE_DUPLICATES ${package}_deps)
+      endif()
     endforeach() # loop on packages
     add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
+    add_custom_target(packages_dependencies DEPENDS ${packages_deps})
   endif()
 endif( CGAL_BRANCH_BUILD )
 
