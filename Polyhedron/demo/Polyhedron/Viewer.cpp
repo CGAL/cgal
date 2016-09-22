@@ -1695,8 +1695,7 @@ void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
 #else
     QApplication::clipboard()->setImage(*snap);
 #endif
-delete snap;
-
+    delete snap;
   }
 
 }
