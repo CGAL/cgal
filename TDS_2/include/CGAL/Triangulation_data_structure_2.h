@@ -144,6 +144,9 @@ public:
 	       Vertex_handle v3,
 	       Face_handle& fr) const;
 
+  /// REMOVE THIS!!!
+  static int face_number;
+
   // ITERATORS AND CIRCULATORS
 public:
 // The face_iterator_base_begin  gives the possibility to iterate over all
@@ -272,6 +275,7 @@ public:
   Vertex_handle star_hole(List_edges& hole);
   void    star_hole(Vertex_handle v, List_edges& hole);
   void    make_hole(Vertex_handle v, List_edges& hole);
+
 
 //   template< class EdgeIt>
 //   Vertex_handle star_hole(EdgeIt edge_begin,EdgeIt edge_end);
@@ -659,6 +663,11 @@ public:
   Triangulation_data_structure_using_list_2(const Tdsul &tdsul)
     : Tds(tdsul) {}
 };
+
+
+template <class Vb, class Fb>
+int Triangulation_data_structure_2<Vb, Fb> ::
+face_number = 32;
 
  
 template < class Vb, class Fb>

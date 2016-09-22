@@ -25,8 +25,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
-#include <CGAL/Hyperbolic_word_4.h>
-
+#include <CGAL/Hyperbolic_octagon_word_4.h>
 
 namespace CGAL {
 
@@ -37,8 +36,9 @@ public:
 	typedef typename TDS::Vertex_handle     Vertex_handle;
 	typedef typename TDS::Face_handle 		Face_handle;
 	typedef typename GT::Point_2			Point;
-	//typedef unsigned short int 				Int;
-	//typedef Hyperbolic_word_4<Int>			Offset;
+	typedef unsigned short int 				Int;
+	typedef Hyperbolic_octagon_word_4<Int, GT>		Offset;
+
 
 	template <typename TDS2>
   	struct Rebind_TDS {
@@ -47,26 +47,26 @@ public:
 
 private:
 	Face_handle _face;
-	//Offset		_off;   // NO OFFSET HERE!!!!
-	//bool 		_offset_flag;
 	int 		_idx;
 	Point 		_p;
+	Offset 		_o; 	// Used only during insert();
+	bool 		_stored_offset;
 
 public:
 	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2() :
-	_face()
+	_face(), _stored_offset(false), _idx(-1)
 	{}
 
 	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2(const Point & p) : 
-	_face(), _p(p) 
+	_face(), _p(p), _stored_offset(false), _idx(-1) 
 	{}
 
-  	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2(const Point & p, Face_handle fh) : 
-  	_face(fh), _p(p) 
-  	{}
+  Periodic_4_hyperbolic_triangulation_ds_vertex_base_2(const Point & p, Face_handle fh) : 
+  _face(fh), _p(p), _stored_offset(false), _idx(-1) 
+  {}
 
 	Periodic_4_hyperbolic_triangulation_ds_vertex_base_2(const Face_handle& fh) :
-	_face(fh)
+	_face(fh), _stored_offset(false), _idx(-1)
 	{}
 
 	const Face_handle& face() {
@@ -94,25 +94,6 @@ public:
   	// using Lutz projection scheme
   	Point&        point() { return _p; }
 
-	/*
-	const Offset& offset() {
-		return _off;
-	}
-
-	void set_offset(const Offset& off) {
-		_off = off;
-		_offset_flag = true;
-	} 
-
-	void clear_offset() {
-		_offset_flag = false;
-		_off = Offset();
-	}
-
-	bool get_offset_flag() const {
-		return _offset_flag;
-	}
-	*/
 
 	// the following trivial is_valid allows
   	// the user of derived face base classes 
@@ -128,6 +109,29 @@ public:
   	
   	void * & for_compact_container() { 
   		return _face.for_compact_container(); 
+  	}
+
+  	void store_offset(Offset o) {
+  		if (!_stored_offset) {
+  			_o = o;
+        //cout << " -- Stored offset " << _o << " in vertex " << _idx << endl;
+  			_stored_offset = true;
+  		}
+  	}
+
+  	Offset get_offset() {
+        //CGAL_assertion(_stored_offset);
+  		return _o;
+  	}
+
+  	void remove_offset() {
+      //std::cout << " -- Clearing offset " << _o << " from vertex " << _idx << std::endl;
+  		_o = Offset();
+  		_stored_offset = false;
+  	}
+
+  	bool stored_offset() {
+  		return _stored_offset;
   	}
 
 };

@@ -18,11 +18,7 @@ typedef CGAL::Cartesian<NT>                                     					Kernel;
 typedef Kernel::FT                                                                  FT;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<Kernel> 		Traits;
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2<Traits>				Triangulation;
-
-
-int ccw(int i) {
-    return (i+1)%3;
-}
+typedef Triangulation::Face_iterator                                                Face_iterator;
 
 int main(void) {
 
@@ -35,9 +31,11 @@ int main(void) {
     cout << "Number of edges:                     " << tr.number_of_edges() << endl;
     cout << "Expected edges (by Euler relation):  " << tr.number_of_vertices() + tr.number_of_faces() + 2 << endl;
 
-    cout << "Triangulation is valid: " << (tr.is_valid(true) ? "YES" : "NO") << endl;
+    assert(tr.is_valid(true));
 
-    assert(tr.is_valid());
+    for (Face_iterator fi = tr.faces_begin(); fi != tr.faces_end(); fi++) {
+        cout << "Face " << fi->get_number() << " is canonical: " << (fi->is_canonical() ? "TRUE" : "FALSE") << endl;
+    }
 
     return 0;
 }

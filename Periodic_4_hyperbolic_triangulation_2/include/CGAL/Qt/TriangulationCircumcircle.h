@@ -93,26 +93,18 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   }
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
 
-  if (hint == typename T::Vertex_handle())
-    fh = dt->locate(p);
-  else
-    fh = dt->locate(p, hint->face());
+  fh = dt->locate(p);
   if (fh != typename T::Face_handle()) {
     hint = fh->vertex(0);
-    if(!dt->is_infinite(fh)){
-      
-      typename T::Point p0, p1, p2;
-      p0 = fh->offset(0).apply(fh->vertex(0)->point());
-      p1 = fh->offset(1).apply(fh->vertex(1)->point());
-      p2 = fh->offset(2).apply(fh->vertex(2)->point());
+    typename T::Point p0, p1, p2;
+    p0 = fh->offset(0).apply(fh->vertex(0)->point());
+    p1 = fh->offset(1).apply(fh->vertex(1)->point());
+    p2 = fh->offset(2).apply(fh->vertex(2)->point());
 
-      typename T::Geom_traits::Circle_2 c(p0, p1, p2);  
-      CGAL::Bbox_2 bb = c.bbox();
-      circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
-      circle->show();
-    } else {
-      circle->hide();
-    }
+    typename T::Geom_traits::Circle_2 c(p0, p1, p2);  
+    CGAL::Bbox_2 bb = c.bbox();
+    circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
+    circle->show();
   } else {
     circle->hide();
   }
