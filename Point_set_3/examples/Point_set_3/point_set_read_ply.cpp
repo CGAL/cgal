@@ -1,7 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_3.h>
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/read_ply_point_set_3.h>
+#include <CGAL/Point_set_3/Point_set_processing_3.h>
 
 #include <fstream>
 #include <limits>
@@ -12,7 +11,6 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Ply_interpreter_point_set_3<Point> Ply_interpreter;
 
 int main (int argc, char** argv)
 {
@@ -20,11 +18,7 @@ int main (int argc, char** argv)
 
   Point_set point_set;
 
-  // Instanciate interpreter with newly created point set
-  Ply_interpreter interpreter(point_set);
-  
-  if (!f ||
-      !CGAL::read_ply_custom_points (f, interpreter, Kernel()))
+  if (!f || !CGAL::read_ply_point_set (f, point_set))
     {
       std::cerr << "Can't read input file " << std::endl;
     }

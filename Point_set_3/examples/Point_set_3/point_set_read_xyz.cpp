@@ -2,6 +2,7 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_off_points.h>
+#include <CGAL/Point_set_3/Point_set_processing_3.h>
 
 #include <fstream>
 #include <limits>
@@ -18,34 +19,28 @@ int main (int argc, char** argv)
   std::ifstream f (argc > 1 ? argv[1] : "data/oni.xyz");
 
   Point_set point_set;
-  point_set.add_normal_property();
 
   // Reading input in XYZ format
-  if (!f ||
-      !CGAL::read_xyz_points_and_normals
-      (f,
-       point_set.index_back_inserter(),
-       point_set.point_push_map(), // Use push property map for creating new items
-       point_set.normal_push_map())) // Same
+  if (!f || !CGAL::read_xyz_point_set (f, point_set))
     {
       std::cerr << "Can't read input file " << std::endl;
       return EXIT_FAILURE;
     }
 
-  // Normalization + inversion of normal vectors
-  for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
+  if (point_set.has_normals())
     {
-      Vector n = point_set.normal(it);
-      n = - n / std::sqrt (n * n);
-      point_set.normal(it) = n;
+      // Normalization + inversion of normal vectors
+      for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
+        {
+          Vector n = point_set.normal(it);
+          n = - n / std::sqrt (n * n);
+          point_set.normal(it) = n;
+        }
     }
-
+  
   // Writing result in OFF format
   std::ofstream out("normalized_normals.off");
-  if (!out ||
-      !CGAL::write_off_points_and_normals
-      (out, point_set.begin(), point_set.end(),
-       point_set.point_map(), point_set.normal_map())) // Use regular property map for accessing
+  if (!out || !CGAL::write_off_point_set (out, point_set))
     {
       return EXIT_FAILURE;
     }
