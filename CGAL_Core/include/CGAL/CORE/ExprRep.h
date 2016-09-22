@@ -43,6 +43,12 @@
 #include <CGAL/CORE/Filter.h>
 #include <CGAL/CORE/poly/Sturm.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4275)
+#  pragma warning(disable:4251)
+#endif
+
 namespace CORE { 
 
 #if defined(CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
@@ -535,12 +541,13 @@ public:
   /// default constructor
   ConstRealRep() : value(CORE_REAL_ZERO) { }
   /// constructor for all \c Real type
-  CGAL_CORE_EXPORT ConstRealRep(const Real &);
+  ConstRealRep(const Real &);
   /// destructor
   ~ConstRealRep() {}
   //@}
-  CGAL_CORE_EXPORT CORE_NEW(ConstRealRep)
-  CGAL_CORE_EXPORT CORE_DELETE(ConstRealRep)
+
+  CORE_NEW(ConstRealRep)
+  CORE_DELETE(ConstRealRep)
 private:
   Real value; ///< internal representation of node
 protected:
@@ -596,11 +603,11 @@ public:
   ~ConstPolyRep() {}
   //@}
   
-  CGAL_CORE_EXPORT void *operator new( size_t size){
+  void *operator new( size_t size){
     return MemoryPool<ConstPolyRep>::global_allocator().allocate(size);
   }
  
-   CGAL_CORE_EXPORT void operator delete( void *p, size_t ){
+  void operator delete( void *p, size_t ){
     MemoryPool<ConstPolyRep>::global_allocator().free(p);
   }
 
@@ -726,16 +733,19 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
+  void debugList(int level, int depthLimit) const;
+
   /// print debug information in tree mode
-  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   ExprRep* child; ///< pointer to its child node
   /// initialize nodeInfo
-  CGAL_CORE_EXPORT virtual void initNodeInfo();
+  virtual void initNodeInfo();
+
   /// clear visited flag
-  CGAL_CORE_EXPORT void clearFlag();
+  void clearFlag();
+
 #ifdef CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
@@ -756,13 +766,15 @@ public:
   ~NegRep() {}
   //@}
 
-  CGAL_CORE_EXPORT CORE_NEW(NegRep)
-  CGAL_CORE_EXPORT CORE_DELETE(NegRep)
+  CORE_NEW(NegRep)
+  CORE_DELETE(NegRep)
 protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+  void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
+
   /// return operator in string
   const std::string op() const {
     return "Neg";
@@ -770,7 +782,7 @@ protected:
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  CGAL_CORE_EXPORT extLong count();
+  extLong count();
 };
 
 /// \class SqrtRep
@@ -787,13 +799,14 @@ public:
   ~SqrtRep() {}
   //@}
 
-  CGAL_CORE_EXPORT CORE_NEW(SqrtRep)
-  CGAL_CORE_EXPORT CORE_DELETE(SqrtRep)
+  CORE_NEW(SqrtRep)
+  CORE_DELETE(SqrtRep)
 protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+  void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "Sqrt";
@@ -801,7 +814,7 @@ protected:
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  CGAL_CORE_EXPORT extLong count();
+  extLong count();
 };
 
 /// \class BinOpRep
@@ -825,25 +838,25 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
+  void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   ExprRep* first;  ///< first operand
   ExprRep* second; ///< second operand
 
   /// initialize nodeInfo
-  CGAL_CORE_EXPORT virtual void initNodeInfo();
+  virtual void initNodeInfo();
   /// clear visited flags
-  CGAL_CORE_EXPORT void clearFlag();
+  void clearFlag();
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  CGAL_CORE_EXPORT extLong count();
+  extLong count();
 #ifdef CORE_DEBUG
-  CGAL_CORE_EXPORT unsigned long dagSize();
-  CGAL_CORE_EXPORT void fullClearFlag();
+  unsigned long dagSize();
+  void fullClearFlag();
 #endif
 };
 
@@ -1267,13 +1280,14 @@ public:
   ~MultRep() {}
   //@}
   
-  CGAL_CORE_EXPORT CORE_NEW(MultRep)
-  CGAL_CORE_EXPORT CORE_DELETE(MultRep)
+  CORE_NEW(MultRep)
+  CORE_DELETE(MultRep)
   protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+  void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "*";
@@ -1294,13 +1308,14 @@ public:
   ~DivRep() {}
   //@}
 
-  CGAL_CORE_EXPORT CORE_NEW(DivRep)
-  CGAL_CORE_EXPORT CORE_DELETE(DivRep)
+  CORE_NEW(DivRep)
+  CORE_DELETE(DivRep)
 protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+   void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "/";
@@ -1346,4 +1361,9 @@ inline BigFloat ExprRep::BigFloatValue() {
 }
 
 } //namespace CORE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif // _CORE_EXPRREP_H_
