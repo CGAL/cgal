@@ -18,12 +18,19 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-  include( ${CMAKE_CURRENT_SOURCE_DIR}/cgal_test.cmake )
-  # create a target per cppfile
-#  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-#  foreach(cppfile ${cppfiles})
-#    create_single_source_cgal_program( "${cppfile}" )
-#  endforeach()
+  if(COMMAND target_compile_options)
+    # Since CMake-2.8.12: New CMake script, that defines the targets and
+    # the CTest test cases.
+    include( ${CMAKE_CURRENT_SOURCE_DIR}/cgal_test.cmake )
+  else()
+    # If CMake version is <= 2.8.11, use the usual CMake script.
+
+    # create a target per cppfile
+    file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+    foreach(cppfile ${cppfiles})
+      create_single_source_cgal_program( "${cppfile}" )
+    endforeach()
+  endif()
 
 else()
   
