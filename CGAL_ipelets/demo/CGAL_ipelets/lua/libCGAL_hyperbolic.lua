@@ -22,7 +22,17 @@ methods = {
   { label= "Bisector of two points" },
   { label= "Circle by center(prim. sel.) and point" },
   { label= "Circle center" },
-  { label="Help" },
+  { label= "Octagon group translations" },
+  { label= "Translation a" },
+  { label= "Translation inv-b" },
+  { label= "Translation c" },
+  { label= "Translation inv-d" },
+  { label= "Translation inv-a" },
+  { label= "Translation b" },
+  { label= "Translation inv-c" },
+  { label= "Translation d" },
+  { label= "Test" },
+  { label= "Help" },
 }
 
 ----------------------------------------------------------------------

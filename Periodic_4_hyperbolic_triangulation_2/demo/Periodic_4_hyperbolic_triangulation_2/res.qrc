@@ -1,6 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-  <qresource prefix="/icons">
-    <file alias="circumcenter.png">icons/circumcenter.png</file>
-    <file alias="triangulation.png">icons/triangulation.png</file>
-  </qresource>
-</RCC>

@@ -33,7 +33,7 @@
 //#include <CGAL/Qt/TriangulationRemoveVertex.h>
 #include <CGAL/Qt/TriangulationPointInputAndConflictZone.h>
 //#include <CGAL/Qt/VoronoiGraphicsItem.h>
-#include <CGAL/Qt/TriangulationGraphicsItemWithColorInfo.h>     // Visualise color
+#include <CGAL/Qt/TriangulationGraphicsItemWithColorInfoOverlay.h>     // Visualise color
 //#include <CGAL/TranslationInfo.h>                               // Store color
 #include <CGAL/Qt/DemosMainWindow.h>
 
@@ -189,11 +189,7 @@ MainWindow::MainWindow()
   : DemosMainWindow(), dt(Traits())
 {
 
-  cout << "Inserting dummy points!" << endl;
-
   dt.insert_dummy_points();
-
-  cout << "Dummy points inserted!" << endl;
 
   cidx = 0;
   for (int i = 0; i < 14; i++)
@@ -378,11 +374,11 @@ MainWindow::on_actionInsertRandomPoints_triggered()
     QInputDialog::getInt(this, 
                         tr("Number of random points"),
                         tr("Enter number of random points"),
-			     100,
-			     0,
-			     std::numeric_limits<int>::max(),
-			     1,
-			     &ok);
+           100,
+           0,
+           std::numeric_limits<int>::max(),
+           1,
+           &ok);
 
   if(!ok) {
     return;
@@ -432,7 +428,7 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 
-#include "Periodic_4_hyperbolic_Delaunay_triangulation_2_demo.moc"
+#include "Periodic_4_hyperbolic_Delaunay_triangulation_2_overlay_demo.moc"
 
 int main(int argc, char **argv)
 {
@@ -443,7 +439,7 @@ int main(int argc, char **argv)
 
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
-  app.setApplicationName("Periodic_4_hyperbolic_Delaunay_triangulation_2 testing name");
+  app.setApplicationName("Periodic_4_hyperbolic_Delaunay_triangulation_2_overlay demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

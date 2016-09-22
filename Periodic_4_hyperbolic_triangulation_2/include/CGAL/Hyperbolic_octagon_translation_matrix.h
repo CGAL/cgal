@@ -27,7 +27,10 @@
 #include <string>
 #include <fstream>
 
-#include <CGAL/Square_root_2_field.h>
+#ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_SQUARE_ROOT_2_FIELD_H
+  #include <CGAL/Square_root_2_field.h>
+#endif
+
 #include <CGAL/number_utils.h>
 
 typedef unsigned short int                                                  Word_idx_type;
@@ -392,6 +395,13 @@ void get_generators(std::vector< Hyperbolic_octagon_translation_matrix<GT> >& ge
   }
 
 
+  void Dehn_invert_4_word(vector<Word_idx_type>& w, vector<Word_idx_type> const original) {
+    w.clear();
+    for (int i = original.size() - 1; i >= 0; i--) {
+      w.push_back( original[i] );
+    }
+  }
+
 
   // Given a sequence of consecutive indices, return the complementary set of consecutive indices in mod 8.
   // For instance, if start = 5 and end = 1, the output is the sequence 2, 3, 4
@@ -401,7 +411,7 @@ void get_generators(std::vector< Hyperbolic_octagon_translation_matrix<GT> >& ge
       tmp.push_back(i);
     }
 
-    for (Word_idx_type i = tmp.size() - 1; i >= 0; i--) {
+    for (int i = tmp.size() - 1; i >= 0; i--) {
       v.push_back(tmp[i]);
     }
   }
@@ -416,13 +426,20 @@ void get_generators(std::vector< Hyperbolic_octagon_translation_matrix<GT> >& ge
   }
 
 
+  bool Dehn_is_principal(Word_idx_type w) {
+    if (w == 0 || w == 2 || w == 5 || w == 7) {
+      return true;
+    }
+    return false;
+  }
+
   // Given a word, identifies the longest subword consisting of consecutive Matrix_elements and substitutes 
   // it with its equivalent shorter word. The search is executed in both the original word and its
   // inverse, and the substitution is made considering the longest subword from both cases.
   bool Dehn_replace_relation_subword(vector<Word_idx_type>& w, const vector<Word_idx_type> original) {
 
     bool replaced = false;
-
+    
     // Handle empty string case
     if (original.size() == 0) {
       return replaced; // false
@@ -501,27 +518,30 @@ void get_generators(std::vector< Hyperbolic_octagon_translation_matrix<GT> >& ge
       for (Word_idx_type i = 0; i < idx; i++) {
         w.push_back(word[i]);
       }
+
       for (Word_idx_type i = 0; i < cmpl.size(); i++) {
         w.push_back(cmpl[i]);
       }
+
       for (Word_idx_type i = N + idx; i < word.size(); i++) {
         w.push_back(word[i]);
       }
     } else if (N == 4) {
       if (is_inverse) {
         vector<Word_idx_type> tmp;
-        Dehn_invert_word(tmp, word);
+        Dehn_invert_4_word(tmp, word);
         w = tmp;
         replaced = true;
       }
+        
     }
 
     // If we have been working with the inverse of the original, the result has to be inverted.
-    if (is_inverse) {
+    //if (is_inverse) {
       vector<Word_idx_type> tmp;
       Dehn_invert_word(tmp, w);
       w = tmp;
-    }
+    //}
 
     return replaced;
   }

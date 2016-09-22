@@ -49,8 +49,10 @@
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
-#include <CGAL/Hyperbolic_word_4.h>
+#include <CGAL/Hyperbolic_octagon_word_4.h>
+//#include <CGAL/Hyperbolic_octagon_word_8.h>
 #include <CGAl/Hyperbolic_translation_info.h>
+//#include <CGAL/Bit_word_utility_4.h>
 
 
 
@@ -170,7 +172,7 @@ public:
 	typedef GT 										        Geometric_traits;
 	typedef TDS 									        Triangulation_data_structure;
 	typedef unsigned short int 						Int;
-	typedef Hyperbolic_word_4<Int, GT>		Offset;
+	typedef Hyperbolic_octagon_word_4<Int, GT>		Offset;
 	typedef typename GT::Circle_2 				Circle_2;
 	typedef Circle_2 								      Circle;
 	typedef typename GT::Point_2 			    Point_2;
@@ -261,11 +263,12 @@ public:
     	OUTSIDE_AFFINE_HULL 	// unused, for compatibility with Alpha_shape_3
     }; 
 
-private:
-  	Geometric_traits  				_gt;
-  	Triangulation_data_structure 	_tds; 
-  	Circle 							_domain;
+protected:
+  	GT       _gt;
+  	TDS 	   _tds; 
+  	Circle 	 _domain;
   
+private:
   	/// map of offsets for periodic copies of vertices
   	Virtual_vertex_map 				virtual_vertices;
   	Virtual_vertex_reverse_map  	virtual_vertices_reverse;
@@ -319,6 +322,14 @@ public:
 		v_offsets.clear();
 	}
 
+
+  template< class FaceIt >
+  Vertex_handle insert_in_hole(const Point& p, FaceIt face_begin, FaceIt face_end) 
+  {
+    Vertex_handle v = _tds.insert_in_hole(face_begin, face_end);
+    v->set_point(p);
+    return v;
+  }
 
 
   template<class EdgeIt>
@@ -525,13 +536,13 @@ public:
   	}
 
 
-  	Oriented_side side_of_oriented_circle(const Point  &p0, const Point  &p1, const Point  &p2, const Point &q) {
-  		return geom_traits().side_of_oriented_circle(p0, p1, p2, q);
+  	Oriented_side side_of_oriented_circle(const Point  &p0, const Point  &p1, const Point  &p2, const Point &q) const {
+  		return geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, q);
   	}
 
   	Oriented_side side_of_oriented_circle(const Point  &p0, const Point  &p1, const Point  &p2, const Point &q,
-  										  const Offset &o0, const Offset &o1, const Offset &o2, const Offset &oq) {
-  		return geom_traits().side_of_oriented_circle(p0, p1, p2, q, o0, o1, o2, oq);
+  										  const Offset &o0, const Offset &o1, const Offset &o2, const Offset &oq) const {
+  		return geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, q, o0, o1, o2, oq);
   	}
 
 
@@ -580,6 +591,7 @@ public:
 
   	Segment construct_segment(	const Point &p1, const Point &p2,
     							const Offset &o1, const Offset &o2) const {
+      //std::cout << ".....making a segment between a point with offset " << o1 << " and another with offset " << o2 << std::endl; 
     	return geom_traits().construct_segment_2_object()(p1,p2,o1,o2);
   	}
 
@@ -649,6 +661,10 @@ public:
     Segment segment(const Face_handle & fh, int idx) const {
       return construct_segment( fh->vertex(idx)->point(),  fh->vertex(ccw(idx))->point(),
                                 fh->offset(idx),           fh->offset(ccw(idx)) );
+    }
+
+    Segment segment(const Point& src, const Point& tgt) {
+      return construct_segment(src, tgt);
     }
 
     Segment segment(const pair<Face_handle, int> & edge) {
@@ -771,6 +787,7 @@ public:
                  			int max_num_cells = CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 
 protected:
+
  	Face_handle
   	exact_periodic_locate(	const Point& p, const Offset &o_p,
                				Locate_type& lt,
@@ -850,7 +867,8 @@ public:
 
   Face_handle locate(	const Point & p, Locate_type & lt, int & li, int & lj,
       					Face_handle start = Face_handle()) const {
-   	return  euclidean_visibility_locate(p, lt, li, start); //periodic_locate(p, Offset(), lt, li, lj, start);
+    Offset loff;
+   	return  euclidean_visibility_locate(p, lt, li, loff, start); //periodic_locate(p, Offset(), lt, li, lj, start);
   }
 
 
@@ -863,8 +881,19 @@ public:
    	return side_of_face(p,Offset(),c,lt,li);
   }
 
-  void find_in_conflict(const Point& p, const Face_handle fh, std::set<Face_handle>& faces, Offset noff = Offset() );
+protected:
+  template< class Conflict_tester, class OutputEdgeIterator>
+  void find_in_conflict(Face_handle fh, const Offset& noff, const Conflict_tester& tester, OutputEdgeIterator it) const;
 
+  template< class Conflict_tester>
+  void find_in_conflict(Face_handle fh, const Offset& noff, const Conflict_tester& tester, vector<Face_handle>& it) const;
+
+  template<class OutputFaceIterator>
+  void 
+  find_conflicts( Face_handle         d, 
+                  const Point&        pt, 
+                  const Offset&       current_off,
+                  OutputFaceIterator  it ) const;
 
 
 private:
@@ -873,6 +902,32 @@ private:
       							  Face_handle  c,  		const Conflict_tester &tester,
       							  Point_hider  &hider, 	Vertex_handle vh = Vertex_handle());
 
+
+protected:
+    Bounded_side _side_of_circle( const Face_handle &f, const Point &q,
+                                  const Offset &offset ) const {
+      Point p[] = { f->vertex(0)->point(),
+                    f->vertex(1)->point(),
+                    f->vertex(2)->point()};
+      
+      Offset o[]= { offset.append(f->offset(0)),
+                    offset.append(f->offset(1)),
+                    offset.append(f->offset(2))};
+
+      Oriented_side os = this->side_of_oriented_circle( p[0], p[1], p[2], q,
+                                                        o[0], o[1], o[2], Offset());
+
+      if (os == ON_NEGATIVE_SIDE) {
+        return ON_UNBOUNDED_SIDE;
+      }
+      else if (os == ON_POSITIVE_SIDE) {
+        return ON_BOUNDED_SIDE;
+      }
+      else {
+        return ON_BOUNDARY;
+      }
+   }
+
 // Should be 'private'
 public:
   	Vertex_handle create_initial_triangulation(const Point &p);
@@ -880,10 +935,14 @@ public:
 public:
   	std::vector<Vertex_handle> insert_dummy_points();
 
-    Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handle f = Face_handle()) const;
+    template <class Conflict_tester>
+    Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Conflict_tester& tester, Face_handle f = Face_handle()) const;
+
+    Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Offset& o, Face_handle f = Face_handle()) const;
 
     Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle f = Face_handle()) const {
-      return euclidean_visibility_locate(p, lt, li, f);
+      Offset loff;
+      return euclidean_visibility_locate(p, lt, li, loff, f);
     }
 
 
@@ -921,6 +980,11 @@ protected:
   	template < class PointRemover, class CT >
   	void remove(Vertex_handle v, PointRemover &remover, CT &ct);
   
+    template< class OutputEdgeIterator>
+    void extract_boundary(const std::vector<Face_handle> faces, OutputEdgeIterator edges) const;
+
+    template <class Container>
+    void reorder_boundary_edges(Container& v);
 
 public:
   	Vertex_iterator vertices_begin() const {
@@ -1068,26 +1132,21 @@ public:
     	return _tds.incident_edges(v, edges);
   	}
 
-  	template <class OutputIterator>
-  	OutputIterator adjacent_vertices(Vertex_handle v, OutputIterator vertices) const {
-    	return _tds.adjacent_vertices(v, vertices);
-  	}
-
   	//deprecated, don't use anymore
   	template <class OutputIterator>
   	OutputIterator incident_vertices(Vertex_handle v, OutputIterator vertices) const {
-    	return _tds.adjacent_vertices(v, vertices);
+    	return _tds.incident_vertices(v, vertices);
   	}
 
     
     template <class OutputIterator>
     OutputIterator incident_vertices(Vertex_handle v) const {
-      return _tds.adjacent_vertices(v);
+      return _tds.incident_vertices(v, v->face());
     }
 
 
     Vertex_circulator incident_vertices(Vertex_handle v) const {
-      return _tds.adjacent_vertices(v);
+      return _tds.incident_vertices(v, v->face());
     }
 
 
@@ -1117,6 +1176,18 @@ private:
   	}
   
   	bool has_self_edges(Face_handle c) const;
+
+    bool has_cycles_length_2() const {
+      Vertex_iterator it;
+      for (it = all_vertices_begin(); it!= all_vertices_end(); ++it) {
+        if (has_cycles_length_2(it)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    bool has_cycles_length_2(Vertex_handle v) const;
 
 public:
   	bool is_valid(bool verbose = false, int level = 0) const;
@@ -1336,11 +1407,12 @@ side_of_face(const Point &q, const Offset &off, Face_handle f, Locate_type &lt, 
 }
 
 
+/*
 template<class GT, class TDS>
 typename 	  Periodic_4_hyperbolic_triangulation_2 < GT, TDS >::
 Vertex_handle Periodic_4_hyperbolic_triangulation_2 < GT, TDS >::
 create_initial_triangulation(const Point& p) {
-  	CGAL_assertion(empty());
+  	CGAL_assertion(this->empty());
 
   	/// Virtual vertices, one per periodic domain
   	Vertex_handle vir_vertices;
@@ -1364,6 +1436,8 @@ create_initial_triangulation(const Point& p) {
   	return vir_vertices;
 }
 
+
+*/
 
 
 /*! \brief Insert point into triangulation.
@@ -1433,6 +1507,7 @@ insert_in_conflict(const Point & p, Locate_type lt, Face_handle c, int li, int l
 */
 
 /// tests if two vertices of one cell are just periodic copies of each other
+
 template < class GT, class TDS >
 inline bool Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
 has_self_edges(typename TDS::Face_handle c) const {
@@ -1446,6 +1521,20 @@ has_self_edges(typename TDS::Face_handle c) const {
 }
 
 
+template < class GT, class TDS >
+inline bool Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
+has_cycles_length_2(typename TDS::Vertex_handle v) const {
+  typename TDS::Vertex_circulator vc = incident_vertices(v), done(vc);
+  std::set<Vertex_handle> check;
+  do {
+    std::pair<typename std::set<Vertex_handle>::iterator, bool> res = check.insert(vc);
+    if (!res.second) {
+      return true;
+    } 
+  } while (++vc != done);
+  return false;
+}
+    
 /*! \brief Tests if the triangulation is valid.
  *
  * A triangulation is valid if
@@ -1465,45 +1554,33 @@ is_valid(bool verbose, int level) const {
   	for (Face_iterator cit = faces_begin(); cit != faces_end(); ++cit) {
     	for (int i=0; i<3; i++) {
       		CGAL_triangulation_assertion(cit != cit->neighbor(i));
-      		for (int j=i+1; j<3; j++) {
+      		for (int j=i+1; j<3; j++) {            
         		CGAL_triangulation_assertion(cit->neighbor(i) != cit->neighbor(j));
         		CGAL_triangulation_assertion(cit->vertex(i) != cit->vertex(j));
       		}
     	}
 
     	// Check positive orientation:
-    	const Point *p[3]; Offset off[3]; 
-    	for (int i=0; i<3; i++) {
-      		p[i] = &cit->vertex(i)->point();
-      		off[i] = cit->offset(i);
-    	}
-    	if (orientation( *p[0],  *p[1],  *p[2], 
-                   		off[0], off[1], off[2] ) != POSITIVE) {
-      	if (verbose) {
-          cit->reorient();
-          for (int i=0; i<3; i++) {
-            p[i] = &cit->vertex(i)->point();
-            off[i] = cit->offset(i);
+    	if (orientation( cit->vertex(0)->point(), cit->vertex(1)->point(), cit->vertex(2)->point(), 
+                   		 cit->offset(0),          cit->offset(1),          cit->offset(2) ) != POSITIVE) {
+        if (verbose) {
+          std::cerr << "Orientation failed for face " << cit->get_number() << std::endl;
+          for (int j = 0; j < 3; j++) {
+            std::cerr << "   v" << j << " is " << cit->vertex(j)->idx() << " with offset " << cit->offset(j) << std::endl;
           }
-          if (orientation( *p[0],  *p[1],  *p[2], 
-                          off[0], off[1], off[2] ) != POSITIVE) {
-            std::cerr << "Orientation problem in face " << cit->get_number() << ", adjustment attempt failed!" << endl;  
-            error = true;
-          }   
-      	}
+        }
+        error = true;
     	}
   	}
 
-  	if (!has_self_edges()) {
-    	/*
-      if (! _tds.is_valid(verbose, level) ) {
-      		return false;
-    	}
-      */
+  	if (!error) {
+      CGAL_triangulation_assertion(!has_self_edges());
+      CGAL_triangulation_assertion(!has_cycles_length_2());
       CGAL_triangulation_assertion( _tds.number_of_vertices() + _tds.number_of_faces() + 2 == _tds.number_of_edges() );
-  	}
-
-  return !error;
+  	  return true; 
+    } else {
+      return false;
+    }
 }
 
 
@@ -1531,42 +1608,190 @@ is_valid(Face_handle ch, bool verbose, int level) const {
 }
 
 
-template <class GT, class TDS>
+
+template <class K>
+bool is_in(const K f, const std::vector<K> v) {
+  return (find(v.begin(), v.end(), f) != v.end());
+}
+
+
+
+template< class GT, class TDS>
+template< class OutputEdgeIterator>
 void Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-find_in_conflict(     const Point& p, 
-                      const Face_handle fh, 
-                      std::set<Face_handle>& faces, 
-                      Offset noff ) 
+extract_boundary(   const std::vector<Face_handle>  faces, 
+                          OutputEdgeIterator        it  ) const {
+  
+  Face_handle f = faces[0];
+  int i = 0;
+  if ( is_in(f->neighbor(cw(i)), faces) ) {
+    i++;
+    if ( is_in(f->neighbor(cw(i)), faces) ) {
+      i++;
+      if ( is_in(f->neighbor(cw(i)), faces) ) {
+        cout << "Something is wrong!" << endl;
+      }
+    }
+  }
+
+  vector<Edge> present;
+
+  Edge initial(f, cw(i));
+  it++ = initial;
+  present.push_back(initial);
+  Vertex_handle v = f->vertex(ccw(i));
+  Edge new_edge = initial;
+
+  do {
+    cout << "f is now " << f->get_number() << ", i is " << i << endl;
+    if ( is_in(f->neighbor(i), faces) ) {
+      cout << " case 1" << endl;
+      f = f->neighbor(i);
+      i = f->index(v);
+      if (is_in(Edge(f, i), present)) {
+        cout << "  subcase 2" << endl;
+        f = f->neighbor(cw(i));
+        i = f->index(v);
+      }
+    } else {
+      cout << " case 3" << endl;
+      i = ccw(i);
+      v = f->vertex(ccw(i));
+    }
+
+    new_edge = Edge(f, cw(i));
+    if (new_edge != initial) {
+      it++ = new_edge;
+      present.push_back(new_edge);
+    }
+  } while (new_edge != initial);
+
+  cout << "f is now " << f->get_number() << ", i is " << i << endl;
+  
+  for (int i = 0; i < faces.size(); i++) {
+    for (int j = 0; j < 3; j++) {
+      if (!is_in(faces[i]->neighbor(j), faces)) {
+        it++ = Edge(faces[i], j);
+        present.push_back(Edge(faces[i], j));
+      }
+    }
+  }
+
+}
+
+
+template< class GT, class TDS>
+template< class Conflict_tester>
+void Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
+find_in_conflict( Face_handle fh, 
+                  const Offset& off,
+                  const Conflict_tester& tester, 
+                  vector<Face_handle>& faces ) const 
 {
-  Point p0 = fh->offset(0).apply(fh->vertex(0)->point());
-  Point p1 = fh->offset(1).apply(fh->vertex(1)->point());
-  Point p2 = fh->offset(2).apply(fh->vertex(2)->point());
 
-  //cout << "fid = " << fh->get_number() << ", noff = " << noff;
+  if (tester(fh, off)) {
+    cout << "Conflict confirmed! Recurring..." << endl;
+    faces.push_back(fh);
+    if (!is_in(fh->neighbor(0), faces))
+      find_in_conflict(fh->neighbor(0), off.append(fh->neighbor_offset(0)), /*bu_append(off, fh->neighbor_offset(0))*/ tester, faces);
+    
+    if (!is_in(fh->neighbor(1), faces))
+      find_in_conflict(fh->neighbor(1), off.append(fh->neighbor_offset(1)), /*bu_append(off, fh->neighbor_offset(1))*/ tester, faces);
+    
+    if (!is_in(fh->neighbor(2), faces))
+      find_in_conflict(fh->neighbor(2), off.append(fh->neighbor_offset(2)), /*bu_append(off, fh->neighbor_offset(2))*/ tester, faces);
+  }
 
-  Circle_2 c(noff.apply(p0),
-             noff.apply(p1),
-             noff.apply(p2));
-  if (c.has_on_bounded_side(p)) {
-    faces.insert(fh);
-    //cout << " \t| --> YES" << endl;
-    if (faces.find(fh->neighbor(0)) == faces.end())
-      find_in_conflict(p, fh->neighbor(0), faces, fh->neighbor_offset(0)*noff);
+}
+
+
+template< class GT, class TDS>
+template< class Conflict_tester, class OutputEdgeIterator>
+void Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
+find_in_conflict( Face_handle fh, 
+                  const Offset& off,
+                  const Conflict_tester& tester, 
+                  OutputEdgeIterator it ) const
+{
+
+  vector<Face_handle> faces;
+  if (tester(fh, off)) {
+    cout << "Conflict confirmed! Recurring..." << endl;
+    faces.push_back(fh);
+    if (!is_in(fh->neighbor(0), faces))
+      find_in_conflict(fh->neighbor(0), off.append(fh->neighbor_offset(0)), /*bu_append(off, fh->neighbor_offset(0))*/ tester, faces);
     
-    if (faces.find(fh->neighbor(1)) == faces.end())
-      find_in_conflict(p, fh->neighbor(1), faces, fh->neighbor_offset(1)*noff);
+    if (!is_in(fh->neighbor(1), faces))
+      find_in_conflict(fh->neighbor(1), off.append(fh->neighbor_offset(1)), /*bu_append(off, fh->neighbor_offset(1))*/ tester, faces);
     
-    if (faces.find(fh->neighbor(2)) == faces.end())
-      find_in_conflict(p, fh->neighbor(2), faces, fh->neighbor_offset(2)*noff);
-  } //else {
-    //cout << " \t| --> NO" << endl;
-  //}
+    if (!is_in(fh->neighbor(2), faces))
+      find_in_conflict(fh->neighbor(2), off.append(fh->neighbor_offset(2)), /*bu_append(off, fh->neighbor_offset(2))*/ tester, faces);
+  }
+
+  extract_boundary(faces, it);
+
+}
+
+
+/*********************************************************************************/
+
+
+
+template <class GT, class TDS>
+template <class Container>
+void 
+Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
+reorder_boundary_edges(Container& v) {
+  
+  std::sort(v.begin(), v.end());
+  v.erase(std::unique(v.begin(), v.end()), v.end());
+  
+  int N = v.size();
+  for (int i = 1; i < N-1; i++) {
+    typename TDS::Vertex_handle v1 = v[i-1].first->vertex(cw(v[i-1].second));
+    for (int j = i+1; j < N; j++) {
+      typename TDS::Vertex_handle v2 = v[j].first->vertex(ccw(v[j].second));
+      if (v1 == v2) {
+        typename TDS::Edge tmp = v[i];
+        v[i] = v[j];
+        v[j] = tmp;
+        break;
+      }
+    }
+  }
 }
 
 
 template <class GT, class TDS>
+template <class OutputFaceIterator>
+void
+Periodic_4_hyperbolic_triangulation_2<GT,TDS>::
+find_conflicts( Face_handle         d, 
+                const Point&        pt, 
+                const Offset&       current_off,
+                OutputFaceIterator  it ) const {
+  if (d->tds_data().is_clear()) {
+    if (_side_of_circle(d, pt, current_off) == ON_BOUNDED_SIDE) {
+      d->tds_data().mark_in_conflict();
+      d->store_offsets(current_off);
+      it++ = d;
+      for (int jj = 0; jj < 3; jj++) {
+        if (d->neighbor(jj)->tds_data().is_clear()) {
+          find_conflicts(d->neighbor(jj), pt, current_off.append(d->neighbor_offset(jj)), it);
+        }
+      }
+    }
+  }
+}
+
+
+
+/*********************************************************************************/
+
+
+template <class GT, class TDS>
 typename TDS::Face_handle Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handle f) const
+euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Offset& loff, Face_handle f) const
 {
 
   typedef typename GT::Side_of_fundamental_octagon Side_of_fundamental_octagon;
@@ -1591,24 +1816,16 @@ euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handl
   int succ = ccw(curr);
   int counter = 0;
 
-  std::set<Face_handle> visited_faces;
-  visited_faces.insert(f);
-
 	while (true) {
-    Orientation o = orientation(f->vertex(curr)->point(), f->vertex(succ)->point(), p,
-                                f->offset(curr),          f->offset(succ),          Offset());
+    Orientation o = orientation(f->vertex(curr)->point(),       f->vertex(succ)->point(),       p,
+                                loff.append(f->offset(curr)),   loff.append(f->offset(succ)),   Offset());
 	  
     if (o == NEGATIVE) {
-     
-      pair< typename std::set<Face_handle>::iterator, bool> r = visited_faces.insert(f->neighbor(cw(curr)));
-      if (r.second) {
-        f = f->neighbor(cw(curr));
-        curr = random_vertex();
-        succ = ccw(curr);
-        counter = 0;
-      } else {
-        break;
-      }
+      loff = loff.append(f->neighbor_offset(cw(curr))); 
+      f = f->neighbor(cw(curr));
+      curr = random_vertex();
+      succ = ccw(curr);
+      counter = 0;
     } else {
       curr = succ;
       succ = ccw(curr);
@@ -1621,14 +1838,16 @@ euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Face_handl
 
   }
 
+
+
   Orientation o1 = orientation(f->vertex(0)->point(), f->vertex(1)->point(), p,
-                               f->offset(0),          f->offset(1),          Offset());
+                               f->offset(0),          f->offset(1),          Offset()); //bu_encode_offset());
 
   Orientation o2 = orientation(f->vertex(1)->point(), f->vertex(2)->point(), p,
-                               f->offset(1),          f->offset(2),          Offset());
+                               f->offset(1),          f->offset(2),          Offset()); //bu_encode_offset());
 
   Orientation o3 = orientation(f->vertex(2)->point(), f->vertex(0)->point(), p,
-                               f->offset(2),          f->offset(0),          Offset());
+                               f->offset(2),          f->offset(0),          Offset()); //bu_encode_offset());
   
   int sum = (o1 == COLLINEAR) + (o2 == COLLINEAR) + (o3 == COLLINEAR);
   if (sum == 0) {

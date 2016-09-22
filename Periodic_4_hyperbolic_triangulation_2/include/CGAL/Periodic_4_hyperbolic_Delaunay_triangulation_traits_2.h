@@ -31,9 +31,10 @@
 #include <CGAL/distance_predicates_2.h>
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Regular_triangulation_filtered_traits_2.h>
-#include "../../../Hyperbolic_triangulation_2/include/CGAL/Triangulation_hyperbolic_traits_2.h"
+#include <CGAL/Hyperbolic_octagon_word_4.h>
 #include "boost/tuple/tuple.hpp"
 #include "boost/variant.hpp"
+
 
 namespace CGAL {
 
@@ -45,17 +46,16 @@ class Hyperbolic_traits_with_offsets_2_adaptor
   typedef Predicate_ Predicate;
 
   typedef typename Kernel::Point_2                  Point;
-  typedef Hyperbolic_word_4<unsigned short int, K>  Offset;
+  typedef Hyperbolic_octagon_word_4<unsigned short int, K>  Offset;
 
   // Use the construct_point_2 predicate from the kernel to convert the periodic points to Euclidean points
   typedef typename Kernel::Construct_point_2        Construct_point_2;
-public:
-  typedef typename Kernel::Circle_2                 Circle_2;
 
 public:
   typedef typename Predicate::result_type           result_type;
 
-  Hyperbolic_traits_with_offsets_2_adaptor(const Circle_2 * dom) : _domain(dom) { }
+
+  Hyperbolic_traits_with_offsets_2_adaptor() { }
 
   result_type operator()(const Point& p0, const Point& p1,
                          const Offset& o0, const Offset& o1) const
@@ -95,8 +95,7 @@ private:
   {
     return o.apply(p);
   }
-public:
-  const Circle_2* _domain;
+
 };
 
 
@@ -109,19 +108,16 @@ class Periodic_4_hyperbolic_construct_point_2 : public Construct_point_base
 public:
   typedef typename Kernel::Point_2         Point;
   typedef typename Kernel::Offset          Offset;
-  typedef typename Kernel::Circle_2        Circle_2;
 
   typedef Point                            result_type;
 
-  Periodic_4_hyperbolic_construct_point_2(const Circle_2 & dom) : _dom(dom) { }
+  Periodic_4_hyperbolic_construct_point_2() { }
 
   Point operator() ( const Point& p, const Offset& o ) const
   {
     return o.apply(p);
   }
 
-private:
-  Circle_2 _dom;
 };
 
 
@@ -138,27 +134,26 @@ public:
   typedef typename R::Direction_2                         Direction_2;
 
   typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<R>
-                                                          Self;
-	typedef Triangulation_hyperbolic_traits_2<R> 				    Base;	    
+                                                          Self;  
 
 	// Basic types
-	typedef typename Base::RT 									            RT;
-	typedef typename Base::FT 									            FT;
-	typedef typename Base::Point_2     					            Point_2;
-	typedef Point_2 											                  Point; 		// Compatibility issues
-  typedef typename Base::Vector_2    					            Vector_2;
-  typedef typename Base::Triangle_2  					            Triangle_2;
-  typedef typename Base::Line_2      					            Line_2;
-  typedef typename Base::Ray_2       					            Ray_2;  
-  typedef typename Base::Vector_3    					            Vector_3;
-  typedef typename Base::Point_3     					            Point_3;
-  typedef typename Base::Angle_2                          Angle_2;
-  typedef typename Base::Iso_rectangle_2 			            Iso_rectangle_2;
-  typedef typename Base::Circle_2 						            Circle_2;
-  typedef typename Base::Arc_2 								            Arc_2;
-  typedef typename Base::Line_segment_2 			            Line_segment_2;
-  typedef typename Base::Segment_2 						            Segment_2;
-  typedef typename Base::Euclidean_line_2 		            Euclidean_line_2;
+	typedef typename Kernel::RT 									            RT;
+	typedef typename Kernel::FT 									            FT;
+	typedef typename Kernel::Point_2     					            Point_2;
+	typedef Point_2 											                    Point; 		// Compatibility issues
+  typedef typename Kernel::Vector_2    					            Vector_2;
+  typedef typename Kernel::Triangle_2  					            Triangle_2;
+  typedef typename Kernel::Line_2      					            Line_2;
+  typedef typename Kernel::Ray_2       					            Ray_2;  
+  typedef typename Kernel::Vector_3    					            Vector_3;
+  typedef typename Kernel::Point_3     					            Point_3;
+  typedef typename Kernel::Angle_2                          Angle_2;
+  typedef typename Kernel::Iso_rectangle_2 			            Iso_rectangle_2;
+  typedef typename Kernel::Circle_2 						            Circle_2;
+  typedef boost::tuple<Circle_2, Point_2, Point_2>          Arc_2;
+  typedef typename R::Segment_2                             Line_segment_2;
+  typedef boost::variant<Arc_2, Line_segment_2>             Segment_2;
+  typedef typename R::Line_2                                Euclidean_line_2;
           
 
  	// Constructions
@@ -181,25 +176,12 @@ public:
   typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_triangle_2>       Construct_triangle_2;
   typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_direction_2>      Construct_direction_2;
   typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename K::Construct_ray_2>            Construct_ray_2;
-  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, 
-                                              typename Base::Construct_hyperbolic_bisector_2>    Construct_hyperbolic_bisector_2;
-  typedef Hyperbolic_traits_with_offsets_2_adaptor<Self, typename Base::Is_hyperbolic>           Is_hyperbolic;
 
-private:
-	Circle_2 _domain;
 
 public:
-	Periodic_4_hyperbolic_Delaunay_triangulation_traits_2() : 
-  		_domain(Point_2(0, 0), 1*1)
-  	{}
+    Periodic_4_hyperbolic_Delaunay_triangulation_traits_2() {}
   
-  	Periodic_4_hyperbolic_Delaunay_triangulation_traits_2(FT r) : 
-  		_domain(Point_2(0, 0), r*r)
-  	{}    
-  
-  	Periodic_4_hyperbolic_Delaunay_triangulation_traits_2(const Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 & other) : 
-  		_domain(other._domain)
-  	{}
+  	Periodic_4_hyperbolic_Delaunay_triangulation_traits_2(const Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 & other) {}
   
   	Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 &operator=(const Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 &)
   	{
@@ -209,17 +191,17 @@ public:
 
   	Construct_circumcenter_2
   	construct_circumcenter_2_object() const {
-  		return Construct_circumcenter_2(_domain);
+  		return Construct_circumcenter_2();
   	}
 
   	Construct_segment_2
   	construct_segment_2_object() const {
-  		return Construct_segment_2(&_domain);
+  		return Construct_segment_2();
   	}
 
   	Construct_midpoint_2
   	construct_midpoint_2_object() const {
-  		return Construct_midpoint_2(&_domain);
+  		return Construct_midpoint_2();
   	}
 
   	Less_x_2
@@ -244,7 +226,7 @@ public:
   
   	Orientation_2
   	orientation_2_object() const { 
-  		return Orientation_2(&_domain);
+  		return Orientation_2();
   	}
   
   	Side_of_oriented_circle_2
@@ -252,11 +234,6 @@ public:
   		return Side_of_oriented_circle_2();
   	}
 
-  	Construct_hyperbolic_bisector_2
-  	construct_hyperbolic_bisector_2_object() const { 
-  		return Construct_hyperbolic_bisector_2(_domain);
-  	}
-  
   	Construct_bisector_2
   	construct_bisector_2_object() const {
   		return Construct_bisector_2();
@@ -269,7 +246,7 @@ public:
   
   	Construct_triangle_2  
   	construct_triangle_2_object() const {
-  		return Construct_triangle_2(&_domain);
+  		return Construct_triangle_2();
   	}
   
   	Construct_direction_2  
@@ -279,12 +256,7 @@ public:
 
   	Construct_ray_2  
   	construct_ray_2_object() const {
-  		return Construct_ray_2(_domain);
-  	}
-
-  	Is_hyperbolic 
-  	is_hyperbolic_object() const { 
-  		return Is_hyperbolic(); 
+  		return Construct_ray_2();
   	}
 
 
@@ -351,7 +323,7 @@ public:
           if (on_open_side) {
             return CGAL::ON_UNBOUNDED_SIDE;
           } else {
-            return CGAL::ON_BOUNDARY;
+            return CGAL::ON_BOUNDED_SIDE;
           }
 
         } else {
@@ -367,14 +339,6 @@ public:
     side_of_fundamental_octagon_object() const {
       return Side_of_fundamental_octagon();
     }
-
-
-
-
-
-
-
-
 
 
 

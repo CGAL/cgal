@@ -13,7 +13,7 @@
 //#include <CGAL/Periodic_4_hyperbolic_offset_holder.h>
 #include <CGAL/Aff_transformation_2.h>
 
-#include <CGAL/Hyperbolic_word_4.h>
+#include <CGAL/Hyperbolic_octagon_word_4.h>
 
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel                       R;
@@ -25,10 +25,6 @@ typedef K::Arc_2                                                                
 typedef K::Line_segment_2                                                       Line_segment_2;
 typedef K::Circle_2                                                             Circle;
 typedef Hyperbolic_octagon_translation_matrix<K>                                Octagon_translation_matrix;
-//typedef std::vector<int>                                                        Index_sequence;
-//typedef std::pair<Hyperbolic_octagon_translation_matrix, Index_sequence>        Word; 
-
-typedef K::Construct_hyperbolic_bisector_2                                      Construct_hyperbolic_bisector_2;
 
 using namespace std;
 

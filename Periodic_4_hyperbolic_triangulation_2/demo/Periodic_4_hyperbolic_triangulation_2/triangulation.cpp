@@ -13,7 +13,9 @@
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/determinant.h>
+#include <CGAL/Hyperbolic_octagon_translation_matrix.h>
 
+#include <CGAL/Bit_word_utility_4.h>
 
 typedef CORE::Expr                                              					NT;					
 typedef CGAL::Cartesian<NT>                                     					Kernel;
@@ -27,82 +29,242 @@ typedef Triangulation::Locate_type 													Locate_type;
 typedef Triangulation::Edge                                                         Edge;
 typedef Traits::FT                                                                  FT;
 typedef Triangulation::Face_iterator                                                Face_iterator;
+typedef Triangulation::Offset                                                       Offset;
+typedef Traits::Side_of_fundamental_octagon                                         Side_of_fundamental_octagon;
+
+typedef unsigned short int                                                          Int;
+
 
 
 using namespace CGAL;
 
+template<class GT>
+Hyperbolic_octagon_translation_matrix<GT> get_matrix(vector<Int> seq) {
+    Hyperbolic_octagon_translation_matrix<GT> r;
+    vector<Hyperbolic_octagon_translation_matrix<GT> > gens;
+    get_generators(gens);
+    for (int i = 0; i < seq.size(); i++) {
+        r = r * gens[seq[i]];
+    }
+    return r;
+}
+
+void get_offsets(vector<Offset>& v) {
+    for (int i = 0; i < 8; i++) {
+        v.push_back(Offset(i));
+    }
+    for (int i = 1; i < 4; i++) { // word length
+        vector<Offset> old;
+        for (int j = 0; j < v.size(); j++) {
+            old.push_back(v[j]);
+        }
+        for (int j = 0; j < old.size(); j++) {
+            for (int k = 0; k < 8; k++) {
+                v.push_back(old[j].append(Offset(k)));
+            }
+        }
+    }
+}
+
 
 int main(void) {
 
-    Triangulation tr;    
-    tr.insert_dummy_points();
-    std::cout << "Dummy points are locked and loaded!" << std::endl;
-    Locate_type lt;
-    int li;
+    //Offset o, s;
+    //vector<Int> v, r;
 
-
-    // This is the barycenter of face 10
-    Point query = Point(FT(-0.59841), FT(-0.15901));
-    Face_handle fh = tr.euclidean_visibility_locate( query, lt, li );
-    cout << "Point " << query << " is located in face " << fh->get_number();
-    cout << (lt == Triangulation::EDGE ? " [EDGE]" : (lt == Triangulation::VERTEX ? " [VERTEX]" : " [FACE]")) << endl;
-
-    cout << "Number of faces before: " << tr.number_of_faces() << endl;
-
-    tr.insert(query, fh);
-
-    cout << "Number of faces after:  " << tr.number_of_faces() << endl;
-
-
-/*
-    cout << endl;
-    faces_in_conflict.clear();
-
-    // This is the midpoint of edge (0, 1) in face 11
-    Point query2(FT(-0.61599), FT(-0.38844));
-    fh = tr.locate( query2, lt, li );
-    cout << "Point " << query2 << " is located in face " << fh->get_number();
-    cout << (lt == Triangulation::EDGE ? " [EDGE]" : (lt == Triangulation::VERTEX ? " [VERTEX]" : " [FACE]")) << endl;
-    tr.find_in_conflict(query2, fh, faces_in_conflict);
-    cout << "Faces in conflict: ";
-    for (face_iterator it = faces_in_conflict.begin(); it != faces_in_conflict.end(); it++) {
-        cout << (*it)->get_number() << ", ";
+    vector<Offset> ov;
+    
+    ov.push_back( Offset(4, 1, 6, 3) );
+    ov.push_back( Offset(4, 1, 6) );
+    ov.push_back( Offset(4, 1) );
+    ov.push_back( Offset(4) );
+    ov.push_back( Offset(4, 7) );
+    ov.push_back( Offset(4, 7, 2) );
+    ov.push_back( Offset(5, 2, 7, 4) );
+    ov.push_back( Offset(5, 2, 7) );
+    ov.push_back( Offset(5, 2) );
+    ov.push_back( Offset(5) );
+    ov.push_back( Offset(5, 0) );
+    ov.push_back( Offset(5, 0, 3) );
+    ov.push_back( Offset(6, 3, 0, 5) );
+    ov.push_back( Offset(6, 3, 0) );
+    ov.push_back( Offset(6, 3) );
+    ov.push_back( Offset(6) );
+    ov.push_back( Offset(6, 1) );
+    ov.push_back( Offset(6, 1, 4) );
+    ov.push_back( Offset(7, 4, 1, 6) );
+    ov.push_back( Offset(7, 4, 1) );
+    ov.push_back( Offset(7, 4) );
+    ov.push_back( Offset(7) );
+    ov.push_back( Offset(7, 2) );
+    ov.push_back( Offset(7, 2, 5) );
+    ov.push_back( Offset(0, 5, 2, 7) );
+    ov.push_back( Offset(0, 5, 2) );
+    ov.push_back( Offset(0, 5) );
+    ov.push_back( Offset(0) );
+    ov.push_back( Offset(0, 3) );
+    ov.push_back( Offset(0, 3, 6) );
+    ov.push_back( Offset(1, 6, 3, 0) );
+    ov.push_back( Offset(1, 6, 3) );
+    ov.push_back( Offset(1, 6) );
+    ov.push_back( Offset(1) );
+    ov.push_back( Offset(1, 4) );
+    ov.push_back( Offset(1, 4, 7) );
+    ov.push_back( Offset(2, 7, 4, 1) );
+    ov.push_back( Offset(2, 7, 4) );
+    ov.push_back( Offset(2, 7) );
+    ov.push_back( Offset(2) );
+    ov.push_back( Offset(2, 5) );
+    ov.push_back( Offset(2, 5, 0) );
+    ov.push_back( Offset(3, 0, 5, 2) );
+    ov.push_back( Offset(3, 0, 5) );
+    ov.push_back( Offset(3, 0) );
+    ov.push_back( Offset(3) );
+    ov.push_back( Offset(3, 6) );
+    ov.push_back( Offset(3, 6, 1) );
+    ov.push_back( Offset(4, 1, 6, 3) );
+    
+    Offset r = ov[0];
+    for (int i = 1; i < ov.size(); i++) {
+        Offset oo = ov[i];
+        int d = offset_distance(r, oo);
+        
+        cout << "r = " << r << ",\t oo = " << oo << ",\t distance = " << d << endl;
     }
-    cout << endl;
 
-    cout << endl;
-    faces_in_conflict.clear();
 
-    // This is vertex(0) of face 11
-    Point query3(FT(-0.776887), FT(-0.321797));
-    fh = tr.locate( query3, lt, li );
-    cout << "Point " << query3 << " is located in face " << fh->get_number();
-    cout << (lt == Triangulation::EDGE ? " [EDGE]" : (lt == Triangulation::VERTEX ? " [VERTEX]" : " [FACE]")) << endl;
-    tr.find_in_conflict(query3, fh, faces_in_conflict);
-    cout << "Faces in conflict: ";
-    for (face_iterator it = faces_in_conflict.begin(); it != faces_in_conflict.end(); it++) {
-        cout << (*it)->get_number() << ", ";
-    }
-    cout << endl;
+    Offset o;
+    cout << "r = " << r << ",\t oo = " << o << ",\t distance = " << offset_distance(r, o) << endl;
+    cout << "r = " << o << ",\t oo = " << r << ",\t distance = " << offset_distance(o, r) << endl;
+    cout << "r = " << o << ",\t oo = " << o << ",\t distance = " << offset_distance(o, o) << endl;
 
-    cout << endl;
-    faces_in_conflict.clear();
+    /*
+    o = Offset(0, 5, 2, 7);
+    v = o.get_vector(); 
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(7, 2, 5, 0);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
 
-    // This is the origin (duh)
-    Point query4(FT(0), FT(0));
-    fh = tr.locate( query4, lt, li );
-    cout << "Point " << query4 << " is located in face " << fh->get_number();
-    cout << (lt == Triangulation::EDGE ? " [EDGE]" : (lt == Triangulation::VERTEX ? " [VERTEX]" : " [FACE]")) << endl;
-    tr.find_in_conflict(query4, fh, faces_in_conflict);
-    cout << "Faces in conflict: ";
-    for (face_iterator it = faces_in_conflict.begin(); it != faces_in_conflict.end(); it++) {
-        cout << (*it)->get_number() << ", ";
-    }
-    cout << endl;    
+    o = Offset(0, 3, 6, 1);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(1, 6, 3, 0);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
 
-*/
+    o = Offset(1, 4, 7, 2);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(2, 7, 4, 1);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
 
-    cout << endl << "Triangulation is valid: " << (tr.is_valid() ? "TRUE" : "FALSE") << endl;
+
+    o = Offset(2, 5, 0, 3);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(3, 0, 5, 2);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
+
+
+    o = Offset(3, 6, 1, 4);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(4, 1, 6, 3);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
+
+
+    o = Offset(4, 7, 2, 5);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(5, 2, 7, 4);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
+
+
+    o = Offset(5, 0, 3, 6);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(6, 3, 0, 5);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
+
+
+    o = Offset(6, 1, 4, 7);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    
+    o = Offset(7, 4, 1, 6);
+    v = o.get_vector();
+    r.clear();
+    Dehn_reduce_word(r, v);
+    s = Offset(r);
+    cout << o << " = " << s << endl;
+    cout << "--------------" << endl;
+    */
 
     return 0;
 }
+

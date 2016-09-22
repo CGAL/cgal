@@ -144,6 +144,9 @@ public:
 	       Vertex_handle v3,
 	       Face_handle& fr) const;
 
+  /// REMOVE THIS!!!
+  static int face_number;
+
   // ITERATORS AND CIRCULATORS
 public:
 // The face_iterator_base_begin  gives the possibility to iterate over all
@@ -272,6 +275,7 @@ public:
   Vertex_handle star_hole(List_edges& hole);
   void    star_hole(Vertex_handle v, List_edges& hole);
   void    make_hole(Vertex_handle v, List_edges& hole);
+
 
 //   template< class EdgeIt>
 //   Vertex_handle star_hole(EdgeIt edge_begin,EdgeIt edge_end);
@@ -428,6 +432,114 @@ public:
 
   // template members definition
 public:
+
+  /************* START OF MODIFICATIONS ***************/
+
+  template< class FaceIt >
+  Vertex_handle insert_in_hole(FaceIt face_begin, FaceIt face_end) 
+  {
+    //std::cout << "Getting N" << std::endl;
+    int N = number_of_vertices();
+    //std::cout << "N = " << N << std::endl;
+    Vertex_handle newv = create_vertex();
+    newv->set_idx(N);
+    insert_in_hole(newv, face_begin, face_end);
+    return newv;
+  }
+
+
+  template< class FaceIt >
+  void insert_in_hole(Vertex_handle v, FaceIt face_begin, FaceIt face_end) 
+  {
+
+   // std::cout << "New vertex has id " << v->idx() << std::endl << std::endl;
+
+    std::vector<Face_handle>  new_faces;
+    std::vector<Edge>         bdry_edges;
+
+    int oldfn = 0;
+    for (FaceIt f = face_begin; f != face_end; f++, oldfn++);
+
+    Face_handle fh = *face_begin;
+    int ii = 0;
+    bool found_boundary = false;
+    do {
+      if (std::find(face_begin, face_end, fh->neighbor(ii)) == face_end) {
+        bdry_edges.push_back(Edge(fh, ii));
+        found_boundary = true;
+      } else {
+        int newi = fh->neighbor(ii)->index(fh->vertex(ccw(ii)));
+        fh = fh->neighbor(ii);
+        ii = newi;
+      }
+    } while(!found_boundary);
+    // Now we have found ONE edge on the boundary. 
+    // From that one edge we must walk on the boundary 
+    // of the hole until we've covered the whole thing.
+
+    bool complete_walk = false;
+    do {
+      Face_handle nh = fh->neighbor(ccw(ii));
+      if (std::find(face_begin, face_end, nh) == face_end) {
+        ii = ccw(ii);
+        Edge new_edge(fh, ii);
+        if (std::find(bdry_edges.begin(), bdry_edges.end(), new_edge) == bdry_edges.end()) {
+          bdry_edges.push_back(Edge(fh, ii));
+        } else {
+          complete_walk = true;
+        }
+      } else {
+        int newi = cw(nh->index(fh->vertex(ii)));
+        fh = nh;
+        ii = newi;
+      }
+    } while (!complete_walk);
+
+    for (int i = 0; i < bdry_edges.size(); i++) {
+      Edge be = bdry_edges[i];
+      Face_handle f = be.first;
+      int idx = be.second;
+      Vertex_handle v1 = f->vertex(ccw(idx));
+      Vertex_handle v2 = f->vertex(cw(idx));
+    //  std::cout << " -- Boundary edge (" << f->get_number() << "," << idx << ") between vertices " << v1->idx() << " and " << v2->idx() << std::endl;
+    }
+
+    for (int jj = 0; jj < bdry_edges.size(); jj++) {
+      Face_handle fh = bdry_edges[jj].first;
+      int idx = bdry_edges[jj].second;
+      
+      Vertex_handle v1 = fh->vertex(ccw(idx));
+      Vertex_handle v2 = fh->vertex(cw(idx));
+
+      Face_handle nf = fh->neighbor(idx);
+      int jdx = mirror_index(fh, idx);
+
+      //std::cout << "Making a face with vertices " << v->idx() << ", " << v1->idx() << ", " << v2->idx() << std::endl;
+      Face_handle new_f = create_face(v, v1, v2);
+      v1->set_face(new_f);
+      new_f->set_number(face_number++);
+      //std::cout << "New face has id " << new_f->get_number() << " and I'm setting adjacency (" << new_f->get_number() << "," << 0 << ") <-> (" << nf->get_number() << "," << jdx << ")" << std::endl; 
+      set_adjacency(new_f, 0, nf, jdx);
+      new_faces.push_back(new_f);
+    }
+
+    for (int i = 0; i < new_faces.size() - 1; i++) {
+      set_adjacency(new_faces[i], 1, new_faces[i+1], 2);
+    }
+    set_adjacency(new_faces[0], 2, new_faces[new_faces.size()-1], 1);
+
+    for (FaceIt it = face_begin; it != face_end; it++) {
+    //  std::cout << "Deleting face " << (*it)->get_number() << std::endl;
+      delete_face(*it);
+    }
+
+    v->set_face(new_faces[0]);
+  }
+
+
+
+  /************* END OF MODIFICATIONS ***************/
+
   template< class EdgeIt>
   Vertex_handle star_hole(EdgeIt edge_begin, EdgeIt edge_end)
   // creates a new vertex 
@@ -559,6 +671,11 @@ public:
   Triangulation_data_structure_using_list_2(const Tdsul &tdsul)
     : Tds(tdsul) {}
 };
+
+
+template <class Vb, class Fb>
+int Triangulation_data_structure_2<Vb, Fb> ::
+face_number = 32;
 
  
 template < class Vb, class Fb>

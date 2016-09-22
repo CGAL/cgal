@@ -26,6 +26,7 @@ typedef std::vector<Point>                                                      
 typedef Triangulation::Face_handle                                                  Face_handle;
 typedef Triangulation::Vertex_handle                                                Vertex_handle;
 typedef Triangulation::Locate_type                                                  Locate_type;
+typedef Triangulation::Offset                                                       Offset;
 
 int ccw(int i) {
     return (i+1)%3;
@@ -47,7 +48,8 @@ int main(void) {
 
     int bad = 0;
     for (int i = 0; i < N; i++) {
-        Face_handle fh = tr.euclidean_visibility_locate( pts[i], lt, li );
+        Offset loff;
+        Face_handle fh = tr.euclidean_visibility_locate( pts[i], lt, li, loff );
         Vertex_handle vh = tr.insert(pts[i], fh);
         if (vh == Vertex_handle())
             bad++;
