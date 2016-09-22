@@ -57,6 +57,8 @@ class Point_set_3
 public:
 
   /// \cond SKIP_IN_MANUAL
+  typedef Point Point_type;
+  typedef Vector Vector_type;
   typedef Point_set_3<Point, Vector> Point_set;
   /// \endcond
   
@@ -231,10 +233,8 @@ public:
   void clear()
   {
     m_base.clear();
-    Properties::Property_map<Index,Index> pm = m_base.template add<std::size_t> ("index", (std::size_t)(-1)).first;
-    m_indices = reinterpret_cast<Index_map&>(pm);
-    Properties::Property_map<Index,Point> pm2 = m_base.template add<Point> ("point", Point (0., 0., 0.)).first;
-    m_points = reinterpret_cast<Point_map&>(pm2);
+    boost::tie (m_indices, boost::tuples::ignore) = this->add_property<std::size_t>("index", (std::size_t)(-1));
+    boost::tie (m_points, boost::tuples::ignore) = this->add_property<Point>("point", Point (0., 0., 0.));
     m_nb_removed = 0;
   }
 
