@@ -15,6 +15,11 @@
 #include <cmath>
 #include <QApplication>
 
+#if defined(_WIN32)
+#include <QMimeData>
+#include <QByteArray>
+#include <QBuffer>
+#endif
 
 class Viewer_impl {
 public:
