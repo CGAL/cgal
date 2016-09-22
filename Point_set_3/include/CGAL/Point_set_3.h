@@ -125,7 +125,7 @@ public:
     Property_back_inserter& operator= (const value_type& p)
     {
       if(ps->size() <= (typename Point_set::Index(ind)))
-        ps->add_item();
+        ps->insert();
       put(*prop, Point_set::Index(ind), p);
       ++ ind;
       return *this;
@@ -162,7 +162,7 @@ public:
     friend void put(const Push_property_map& pm, std::size_t& i, const typename Property::value_type& t)
     {
       if(pm.ps->size() <= (pm.ind))
-        pm.ps->add_item();
+        pm.ps->insert();
       put(*(pm.prop), Point_set::Index(pm.ind), t);
       i = pm.ind;
       ++pm.ind;
@@ -218,6 +218,23 @@ public:
     clear();
   }
 
+  template <typename TypeProp1>
+  Point_set_3 (const std::string& name_prop1, const TypeProp1& default_value_prop1) : m_base()
+  {
+    clear();
+    this->add_property<TypeProp1>(name_prop1, default_value_prop1);
+  }
+
+  template <typename TypeProp1, typename TypeProp2>
+  Point_set_3 (const std::string& name_prop1, const TypeProp1& default_value_prop1,
+               const std::string& name_prop2, const TypeProp2& default_value_prop2)
+    : m_base()
+  {
+    clear();
+    this->add_property<TypeProp1>(name_prop1, default_value_prop1);
+    this->add_property<TypeProp2>(name_prop2, default_value_prop2);
+  }
+
   /// @}
 
   /// \name Accessors and modifiers
@@ -268,11 +285,19 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  iterator add_item ()
+  iterator insert ()
   {
-    m_base.push_back();
-    m_indices[size()-1] = size()-1;
-    return m_indices.end() - 1;
+    if (m_nb_removed == 0)
+      {
+        m_base.push_back();
+        m_indices[size()-1] = size()-1;
+        return m_indices.end() - 1;
+      }
+    else
+      {
+        -- m_nb_removed;
+        return m_indices.end() - m_nb_removed - 1;
+      }
   }
   /// \endcond
 
@@ -286,7 +311,7 @@ public:
    */
   iterator insert (const Point& p)
   {
-    iterator out = add_item();
+    iterator out = insert();
     m_points[size()-1] = p;
     return out;
   }
