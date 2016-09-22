@@ -30,16 +30,11 @@ The weighted point type.
 typedef unspecified_type Weighted_point_d;
 
 /*!
-The (un-weighted) point type.
-*/
-typedef unspecified_type Bare_point_d;
-
-/*!
 A function object that must provide the operator
 `Point_d operator()(const Weighted_point_d & wp)`, returning
 `wp` without its weight.
 */
-typedef unspecified_type Point_drop_weight_d;
+typedef unspecified_type Construct_point_d;
 
 /*!
 A function object that must provide the operator
@@ -115,7 +110,7 @@ RegularTriangulationTraits();
 /*!
 
 */
-Point_drop_weight_d point_drop_weight_d_object() const;
+Construct_point_d construct_point_d_object() const;
 
 /*!
 
