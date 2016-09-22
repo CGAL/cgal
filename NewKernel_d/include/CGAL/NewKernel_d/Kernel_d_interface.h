@@ -79,7 +79,47 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Scaled_vector_tag>::type Scaled_vector_d;
 	typedef typename Get_functor<Base, Difference_of_vectors_tag>::type Difference_of_vectors_d;
 	typedef typename Get_functor<Base, Difference_of_points_tag>::type Difference_of_points_d;
-	typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_d;
+	//typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_d;
+	struct Construct_point_d : private Store_kernel<Kernel> {
+	  typedef Kernel R_; // for the macro
+	  CGAL_FUNCTOR_INIT_STORE(Construct_point_d)
+	  typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type CP;
+	  typedef Point_d result_type;
+	  Point_d operator()(Weighted_point_d const&wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(wp);
+	  }
+#ifdef CGAL_CXX11
+	  Point_d operator()(Weighted_point_d &wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(wp);
+	  }
+	  Point_d operator()(Weighted_point_d &&wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(std::move(wp));
+	  }
+	  Point_d operator()(Weighted_point_d const&&wp)const{
+	    return typename Get_functor<Base, Point_drop_weight_tag>::type(this->kernel())(std::move(wp));
+	  }
+	  template<class...T>
+# if __cplusplus >= 201402L
+	  decltype(auto)
+# else
+	  Point_d
+# endif
+	  operator()(T&&...t)const{
+	    return CP(this->kernel())(std::forward<T>(t)...);
+	    //return CP(this->kernel())(t...);
+	  }
+#else
+# define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
+	    Point_d operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t))const{ \
+	      return CP(this->kernel())(BOOST_PP_ENUM_PARAMS(N,t)); \
+	    }
+	  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
+# undef CGAL_CODE
+	  Point_d operator()()const{ \
+	    return CP(this->kernel())(); \
+	  }
+#endif
+	};
 	typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
 	typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;
 	typedef typename Get_functor<Base, Construct_ttag<Sphere_tag> >::type Construct_sphere_d;

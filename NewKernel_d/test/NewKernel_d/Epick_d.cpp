@@ -143,7 +143,8 @@ void test2(){
   typedef typename K1::Power_distance_d PoD;
   typedef typename K1::Weighted_point_d WP;
   typedef typename K1::Construct_weighted_point_d CWP;
-  typedef typename K1::Point_drop_weight_d PDW;
+  //typedef typename K1::Point_drop_weight_d PDW;
+  typedef CP PDW;
   typedef typename K1::Compute_weight_d PW;
 
   CGAL_USE_TYPE(AT);
@@ -209,7 +210,8 @@ void test2(){
   TP tp Kinit(translated_point_d_object);
   PC pc Kinit(power_center_d_object);
   CWP cwp Kinit(construct_weighted_point_d_object);
-  PDW pdw Kinit(point_drop_weight_d_object);
+  //PDW pdw Kinit(point_drop_weight_d_object);
+  PDW const& pdw = cp;
   PW pw Kinit(compute_weight_d_object);
   PoD pod Kinit(power_distance_d_object);
 
@@ -629,12 +631,14 @@ void test3(){
 
   typedef typename K1::Weighted_point_d WP;
   typedef typename K1::Construct_weighted_point_d CWP;
-  typedef typename K1::Point_drop_weight_d PDW;
+  //typedef typename K1::Point_drop_weight_d PDW;
+  typedef CP_ PDW;
   typedef typename K1::Compute_weight_d PW;
   typedef typename K1::Power_side_of_power_sphere_d PT;
   typedef typename K1::In_flat_power_side_of_power_sphere_d IFPT;
   CWP cwp Kinit(construct_weighted_point_d_object);
-  PDW pdw Kinit(point_drop_weight_d_object);
+  //PDW pdw Kinit(point_drop_weight_d_object);
+  PDW const& pdw = cp_;
   PW pw Kinit(compute_weight_d_object);
   PT pt Kinit(power_side_of_power_sphere_d_object);
   IFPT ifpt Kinit(in_flat_power_side_of_power_sphere_d_object);
