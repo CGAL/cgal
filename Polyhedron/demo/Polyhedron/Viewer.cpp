@@ -1693,7 +1693,7 @@ void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
     //clipboard, so this is not a memory leak.
     QApplication::clipboard()->setMimeData(mimeData);
 #else
-QApplication::clipboard()->setImage(*snap);
+    QApplication::clipboard()->setImage(*snap);
 #endif
 delete snap;
 
