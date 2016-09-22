@@ -36,8 +36,8 @@ namespace CGAL {
   \brief A collection of points with dynamically associated
   properties.
 
-  This class provides the user with a flexible way to store and access
-  a point set:
+  This class is a range of indices that provides the user with a
+  flexible way to store and access a point set:
 
   - it can embed an arbitrary number of additional attributes such as
     normal vectors, colors, indices, etc.;
@@ -48,6 +48,8 @@ namespace CGAL {
 
   \tparam Point Point type.
   \tparam Vector Normal vector type.
+
+  \cgalModels `Range`
  */
 
 template <typename Point,
@@ -222,7 +224,7 @@ public:
   Point_set_3 (const std::string& name_prop1, const TypeProp1& default_value_prop1) : m_base()
   {
     clear();
-    this->add_property<TypeProp1>(name_prop1, default_value_prop1);
+    this->add_property_map<TypeProp1>(name_prop1, default_value_prop1);
   }
 
   template <typename TypeProp1, typename TypeProp2>
@@ -231,8 +233,8 @@ public:
     : m_base()
   {
     clear();
-    this->add_property<TypeProp1>(name_prop1, default_value_prop1);
-    this->add_property<TypeProp2>(name_prop2, default_value_prop2);
+    this->add_property_map<TypeProp1>(name_prop1, default_value_prop1);
+    this->add_property_map<TypeProp2>(name_prop2, default_value_prop2);
   }
 
   /// @}
@@ -250,8 +252,8 @@ public:
   void clear()
   {
     m_base.clear();
-    boost::tie (m_indices, boost::tuples::ignore) = this->add_property<std::size_t>("index", (std::size_t)(-1));
-    boost::tie (m_points, boost::tuples::ignore) = this->add_property<Point>("point", Point (0., 0., 0.));
+    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<std::size_t>("index", (std::size_t)(-1));
+    boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
     m_nb_removed = 0;
   }
 
@@ -359,13 +361,19 @@ public:
 
     \note This does not count the removed elements.
   */
-  bool empty() const { return (m_base.size() == m_nb_removed); }
+  bool is_empty() const { return (m_base.size() == m_nb_removed); }
+  /// \cond SKIP_IN_MANUAL
+  bool empty() const { return is_empty(); }
+  /// \endcond
   /*!
     \brief Returns the number of elements (not counting removed one).
 
     \note See `removed_size()` for getting the number of removed elements.
   */
-  std::size_t size () const { return m_base.size() - m_nb_removed; }
+  std::size_t number_of_points () const { return m_base.size() - m_nb_removed; }
+  /// \cond SKIP_IN_MANUAL
+  std::size_t size () const { return number_of_points(); }
+  /// \endcond
 
   /*!
     \brief Get a reference to the wanted indexed point.
@@ -447,16 +455,29 @@ public:
   /// @{
 
   /*!
-    \brief Mark all elements between `it` and the last element as removed.
+    \brief Mark all elements between `first` and `last` as removed.
 
     \note The elements are just marked as removed and are not erased
     from the memory. `collect_garbage()` should be called if the
     memory needs to be freed.
   */
-  void remove_from (iterator it)
+  void remove (iterator first, iterator last)
   {
-    m_nb_removed = static_cast<std::size_t>(std::distance (it, removed_end()));
+    if (last == removed_end())
+      m_nb_removed = static_cast<std::size_t>(std::distance (first, removed_end()));
+    else if (std::distance (first, removed_begin()) < 0)
+      return;
+    else
+      {
+        // TODO
+      }
   }
+  /// \cond SKIP_IN_MANUAL
+  void remove_from (iterator first)
+  {
+    remove (first, removed_end());
+  }
+  /// \endcond
   
   /*!
     \brief Mark element as removed.
@@ -565,7 +586,7 @@ public:
   */
   template <class T>
   std::pair<Property_map<T>, bool>
-  add_property (const std::string& name, const T t=T())
+  add_property_map (const std::string& name, const T t=T())
   {
     Properties::Property_map<Index,T> pm;
     bool added = false;
@@ -586,7 +607,7 @@ public:
   */
   template <class T> 
   std::pair<Property_map<T>,bool>
-  property (const std::string& name) const
+  property_map (const std::string& name) const
   {
     Properties::Property_map<Index,T> pm;
     bool okay = false;
@@ -605,7 +626,7 @@ public:
     the property was not found.
   */
   template <class T> 
-  bool remove_property (Property_map<T>& prop)
+  bool remove_property_map (Property_map<T>& prop)
   {
     return m_base.remove (reinterpret_cast<Properties::Property_map<Index,T>&>(prop));
   }
@@ -633,7 +654,7 @@ public:
   bool add_normal_property(const Vector& default_value = Vector(0., 0., 0.))
   {
     bool out = false;
-    boost::tie (m_normals, out) = this->add_property<Vector> ("normal", default_value);
+    boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
     return out;
   }
   /*!
