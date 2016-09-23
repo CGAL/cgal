@@ -26,6 +26,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Kernel/global_functions_2.h>
 #include <boost/unordered_map.hpp> 
 #include <iterator>
 
