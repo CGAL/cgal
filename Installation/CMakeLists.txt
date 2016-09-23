@@ -1044,48 +1044,66 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     foreach (incdir ${CGAL_INCLUDE_DIRS})
       list(APPEND include_options "-I${incdir}")
     endforeach()
-    foreach (incdir ${CGAL_3RD_PARTY_INCLUDE_DIRS})
+    foreach (incdir ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS})
       list(APPEND include_options "-I${incdir}")
     endforeach()
     include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
+    include(${CMAKE_CURRENT_SOURCE_DIR}/list_of_documented_headers.cmake
+      OPTIONAL RESULT_VARIABLE has_list_of_documented_headers)
     ## Loop on package and headers
     set(check_pkg_target_list)
+    if(POLICY CMP0057)
+      cmake_policy(SET CMP0057 NEW)
+    endif()
     foreach (package ${CGAL_CONFIGURED_PACKAGES_NAMES})
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
-        file(GLOB ${package}_HEADERS 
-          RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include" 
-          "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h")
+        if(has_list_of_documented_headers AND POLICY CMP0057)
+          # Then recurse
+          file(GLOB_RECURSE ${package}_HEADERS
+            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+        else() # do not recurse
+          file(GLOB ${package}_HEADERS
+            RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
+            "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
+        endif()
         list(SORT ${package}_HEADERS)
         if(COMPUTE_DEPS)
           set(compute_deps_extra_args "-H ")
         endif()
         foreach(header ${${package}_HEADERS})
-          string(REPLACE "/" "__" header2 "${header}")
-          string(REPLACE "." "_" header2 "${header2}")
-          string(REPLACE ";" " " include_options_str "${include_options}")
-          separate_arguments(CMD
-            UNIX_COMMAND
+          if(NOT POLICY CMP0057
+              OR NOT has_list_of_documented_headers
+              OR header IN_LIST list_of_documented_headers)
+            string(REPLACE "/" "__" header2 "${header}")
+            string(REPLACE "." "_" header2 "${header2}")
+            string(REPLACE ";" " " include_options_str "${include_options}")
+            separate_arguments(CMD
+              UNIX_COMMAND
 "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} \
--I/usr/include/eigen3 ${include_options_str} -x c++ -fsyntax-only \
+${include_options_str} -x c++ -fsyntax-only \
 ${compute_deps_extra_args} \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
-)
-          add_custom_command(OUTPUT check_${header2}
-            COMMAND ${CMAKE_COMMAND}
+              )
+            add_custom_command(OUTPUT check_${header2}
+              COMMAND ${CMAKE_COMMAND}
               -DCERR:STRING=${CMAKE_CURRENT_BINARY_DIR}/check_${header2}
               "-DCMD:STRING=${CMD}"
               -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
-            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
-            DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
-            VERBATIM
-            COMMENT "Check header ${header}"
-            )
-          list(APPEND check_pkg_headers_depends check_${header2})
-          if(${header2}_deps)
-            list(REMOVE_DUPLICATES ${header2}_deps)
-          endif()
+              DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
+              DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
+              VERBATIM
+              COMMENT "Check header ${package}/include/${header}"
+              )
+            list(APPEND check_pkg_headers_depends check_${header2})
+            if(${header2}_deps)
+              list(REMOVE_DUPLICATES ${header2}_deps)
+            endif()
+          else()
+            message(STATUS "Skip non-documented header \"${header}\".")
+          endif() # end the if on list_of_documented_headers
         endforeach() # look on headers
         add_custom_target(check_pkg_${package}_headers
           DEPENDS ${check_pkg_headers_depends})
