@@ -24,6 +24,8 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 
+#include <CGAL/Origin.h>
+
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/mpl/if.hpp>

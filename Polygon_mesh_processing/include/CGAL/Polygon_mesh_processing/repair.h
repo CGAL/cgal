@@ -26,6 +26,7 @@
 #include <boost/algorithm/minmax_element.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/algorithm.h>
 
 // headers for self-intersection removal
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>

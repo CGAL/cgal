@@ -28,6 +28,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/trace.h>
 #include <CGAL/use.h>
+#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <vector>
 #include <stack>
