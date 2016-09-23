@@ -22,8 +22,6 @@
 #ifndef CGAL_STITCH_POLYGON_MESH_H
 #define CGAL_STITCH_POLYGON_MESH_H
 
-#include <CGAL/Modifier_base.h>
-#include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 
@@ -105,7 +103,6 @@ detect_duplicated_boundary_edges
 
 template <class PM, typename VertexPointMap, typename HalfedgePairsRange>
 struct Naive_border_stitching_modifier
-  : CGAL::Modifier_base<PM>
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
