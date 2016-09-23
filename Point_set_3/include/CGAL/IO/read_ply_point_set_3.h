@@ -34,9 +34,9 @@ namespace CGAL
   This interpreter will instanciate any number of property needed to
   store all PLY properties read in the header:
 
-  - points and normals are stored in the usual `CGAL::Point_set_3`
-    fashion (property "point" of type `CGAL::Point_3` and property
-    "normal" of type `CGAL::Vector_3`)
+  - points and normals are stored as usual `CGAL::Point_set_3`
+     properties (property "point" of type `CGAL::Point_3` and property
+     "normal" of type `CGAL::Vector_3`)
 
   - other PLY properties are stored on point set properties with the
     name and type given by the PLY header
@@ -73,7 +73,7 @@ private:
       : m_name (name)
     {
       bool garbage;
-      boost::tie (m_pmap, garbage) = ps.add_property(name, Type());
+      boost::tie (m_pmap, garbage) = ps.add_property_map(name, Type());
     }
     
     virtual void assign (Ply_reader& reader, std::size_t index)
@@ -191,7 +191,7 @@ public:
   
   void process_line (Ply_reader& reader)
   {
-    m_point_set.add_item();
+    m_point_set.insert();
     
     if (m_use_floats)
       process_line<float>(reader);
