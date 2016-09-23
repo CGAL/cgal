@@ -28,8 +28,11 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Modular_traits.h>
+#include <CGAL/Modular_arithmetic/Residue_type.h>
 
 namespace CGAL {
+
+
 
 namespace INTERN_INT {
     template< class Type >
