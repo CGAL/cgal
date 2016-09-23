@@ -5,10 +5,7 @@ project(CGAL CXX C)
 # Minimal version of CMake:
 cmake_minimum_required(VERSION 2.8.11)
 
-# option for branch build
-
-option( CGAL_BRANCH_BUILD "Create CGAL from branch" ON)
-mark_as_advanced( CGAL_BRANCH_BUILD )
+set( CGAL_BRANCH_BUILD ON CACHE INTERNAL "Create CGAL from a Git branch" FORCE)
 
 include(${CMAKE_SOURCE_DIR}/Installation/cmake/modules/CGAL_SCM.cmake)
 
