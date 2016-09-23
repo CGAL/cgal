@@ -21,13 +21,9 @@
 #define CGAL_CELL_ATTRIBUTE_H 1
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 
 namespace CGAL {
-
-  namespace internal {
-    template<typename CMap, unsigned int i, typename T>
-    struct Decrease_attribute_functor_run;
-  }
 
   template < unsigned int, class, class, class, class >
   class Combinatorial_map_base;
