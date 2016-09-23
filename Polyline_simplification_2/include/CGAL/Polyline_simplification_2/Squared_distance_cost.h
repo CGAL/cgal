@@ -21,6 +21,7 @@
 #define CGAL_POLYLINE_SIMPLIFICATION_2_SQUARED_DISTANCE_COST_H
 
 #include <CGAL/algorithm.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 
 namespace CGAL {
 
