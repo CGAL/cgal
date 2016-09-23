@@ -5,7 +5,7 @@ import re
 import os
 import sys
 
-SOURCE_DIR   = "${CMAKE_SOURCE_DIR}/"
+SOURCE_DIR   = "${CGAL_ROOT}/"
 BRANCH_BUILD = "${CGAL_BRANCH_BUILD}"
 
 def make_doc_path(pkg, arg):

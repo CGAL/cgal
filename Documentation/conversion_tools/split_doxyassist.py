@@ -147,11 +147,11 @@ for p in tree.iter(tag='{http://simply-life.net/doxyassist/doxyassist.xsd}projec
         for this_input in package_inputs:
             if ('include' in this_input):
                 new_input = this_input.split('include')[1]            
-                new_input = "${CMAKE_SOURCE_DIR}/"+this_input.split('/')[1]+"/include"+new_input
+                new_input = "${CGAL_ROOT}/"+this_input.split('/')[1]+"/include"+new_input
                 clean_package_inputs.append(new_input)
             else:
                 new_input = this_input.split('doc')[1]            
-                new_input = "${CMAKE_SOURCE_DIR}/"+ this_input.split('/')[1] +"/doc"+new_input
+                new_input = "${CGAL_ROOT}/"+ this_input.split('/')[1] +"/doc"+new_input
                 clean_package_inputs.append(new_input)            
 
         # This will include the default paramters for the configuration.
