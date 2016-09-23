@@ -26,6 +26,7 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/value_type_traits.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <iterator>
 #include <algorithm>
