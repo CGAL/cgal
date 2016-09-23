@@ -37,6 +37,8 @@
 #ifndef __OPENNL_BLAS__
 #define __OPENNL_BLAS__
 
+#include <CGAL/assertions.h>
+
 namespace OpenNL {
 
 
