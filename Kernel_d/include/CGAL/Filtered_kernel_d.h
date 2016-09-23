@@ -23,6 +23,7 @@
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Kernel_d/Cartesian_converter_d.h>
+#include <CGAL/Cartesian_d.h>
 
 namespace CGAL {
 
