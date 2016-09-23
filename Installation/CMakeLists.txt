@@ -1067,7 +1067,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
           string(REPLACE ";" " " include_options_str "${include_options}")
           separate_arguments(CMD
             UNIX_COMMAND
-"${CMAKE_CXX_COMPILER} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} \
+"${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} \
 -I/usr/include/eigen3 ${include_options_str} -x c++ -fsyntax-only \
 ${compute_deps_extra_args} \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
