@@ -17,6 +17,7 @@
 #include <CGAL/read_vtk_image_data.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/functional.hpp>
 
 typedef short Image_word_type;
 
@@ -24,7 +25,7 @@ typedef short Image_word_type;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3,K, 
                                        Image_word_type,
-                                       std::binder1st< std::less<Image_word_type> > > Mesh_domain;
+                                       boost::binder1st< std::less<Image_word_type> > > Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
     return 0;
   }
   // Domain
-  Mesh_domain domain(image, std::bind1st(std::less<Image_word_type>(), iso), 0);
+  Mesh_domain domain(image, boost::bind1st(std::less<Image_word_type>(), iso), 0);
   
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=fs, facet_distance=fd,

@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-#include <functional>
+#include <boost/functional.hpp>
 
 typedef int                                     Value;
 typedef std::vector<Value>                      Vector;
@@ -38,7 +38,7 @@ int main()
   CGAL::sorted_matrix_search(
     &M, &M + 1,
     CGAL::sorted_matrix_search_traits_adaptor(
-      std::bind2nd(std::greater_equal<Value>(), bound), M));
+      boost::bind2nd(std::greater_equal<Value>(), bound), M));
   std::cout << "Upper bound for " << bound << " is "
             << upper_bound << "." << std::endl;
 
