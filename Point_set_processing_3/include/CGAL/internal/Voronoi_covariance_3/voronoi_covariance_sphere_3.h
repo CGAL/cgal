@@ -55,20 +55,20 @@ namespace CGAL {
                             static const FT phi = (FT(1) + std::sqrt(5.0))/FT(2);
                             static const FT s = FT(1) / std::sqrt(phi + FT(2));
 
-                            *out ++ = Plane(0, +s, +s*phi, -_R);
-                            *out ++ = Plane(0, -s, +s*phi, -_R);
-                            *out ++ = Plane(0, +s, -s*phi, -_R);
-                            *out ++ = Plane(0, -s, -s*phi, -_R);
+                            *out ++ = Plane(0, +s, +s*phi, -R);
+                            *out ++ = Plane(0, -s, +s*phi, -R);
+                            *out ++ = Plane(0, +s, -s*phi, -R);
+                            *out ++ = Plane(0, -s, -s*phi, -R);
 
-                            *out ++ = Plane(+s, +s*phi, 0, -_R);
-                            *out ++ = Plane(+s, -s*phi, 0, -_R);
-                            *out ++ = Plane(-s, +s*phi, 0, -_R);
-                            *out ++ = Plane(-s, -s*phi, 0, -_R);
+                            *out ++ = Plane(+s, +s*phi, 0, -R);
+                            *out ++ = Plane(+s, -s*phi, 0, -R);
+                            *out ++ = Plane(-s, +s*phi, 0, -R);
+                            *out ++ = Plane(-s, -s*phi, 0, -R);
 
-                            *out ++ = Plane(+s*phi, 0, +s, -_R);
-                            *out ++ = Plane(-s*phi, 0, +s, -_R);
-                            *out ++ = Plane(+s*phi, 0, -s, -_R);
-                            *out ++ = Plane(-s*phi, 0, -s, -_R);
+                            *out ++ = Plane(+s*phi, 0, +s, -R);
+                            *out ++ = Plane(-s*phi, 0, +s, -R);
+                            *out ++ = Plane(+s*phi, 0, -s, -R);
+                            *out ++ = Plane(-s*phi, 0, -s, -R);
                         }
                         else if (N == 20)
                         {
@@ -76,29 +76,29 @@ namespace CGAL {
                             const FT one_phi = FT(1)/phi;
                             const FT s = FT(1) / std::sqrt(3.0);
 
-                            *out ++ = Plane(+s, +s, +s, -_R);
-                            *out ++ = Plane(-s, +s, +s, -_R);
-                            *out ++ = Plane(+s, -s, +s, -_R);
-                            *out ++ = Plane(-s, -s, +s, -_R);
-                            *out ++ = Plane(+s, +s, -s, -_R);
-                            *out ++ = Plane(-s, +s, -s, -_R);
-                            *out ++ = Plane(+s, -s, -s, -_R);
-                            *out ++ = Plane(-s, -s, -s, -_R);
+                            *out ++ = Plane(+s, +s, +s, -R);
+                            *out ++ = Plane(-s, +s, +s, -R);
+                            *out ++ = Plane(+s, -s, +s, -R);
+                            *out ++ = Plane(-s, -s, +s, -R);
+                            *out ++ = Plane(+s, +s, -s, -R);
+                            *out ++ = Plane(-s, +s, -s, -R);
+                            *out ++ = Plane(+s, -s, -s, -R);
+                            *out ++ = Plane(-s, -s, -s, -R);
 
-                            *out ++ = Plane(0, +s*one_phi, +s*phi, -_R);
-                            *out ++ = Plane(0, -s*one_phi, +s*phi, -_R);
-                            *out ++ = Plane(0, +s*one_phi, -s*phi, -_R);
-                            *out ++ = Plane(0, -s*one_phi, -s*phi, -_R);
+                            *out ++ = Plane(0, +s*one_phi, +s*phi, -R);
+                            *out ++ = Plane(0, -s*one_phi, +s*phi, -R);
+                            *out ++ = Plane(0, +s*one_phi, -s*phi, -R);
+                            *out ++ = Plane(0, -s*one_phi, -s*phi, -R);
 
-                            *out ++ = Plane(+s*one_phi, +s*phi, 0, -_R);
-                            *out ++ = Plane(-s*one_phi, +s*phi, 0, -_R);
-                            *out ++ = Plane(+s*one_phi, -s*phi, 0, -_R);
-                            *out ++ = Plane(-s*one_phi, -s*phi, 0, -_R);
+                            *out ++ = Plane(+s*one_phi, +s*phi, 0, -R);
+                            *out ++ = Plane(-s*one_phi, +s*phi, 0, -R);
+                            *out ++ = Plane(+s*one_phi, -s*phi, 0, -R);
+                            *out ++ = Plane(-s*one_phi, -s*phi, 0, -R);
 
-                            *out ++ = Plane(+s*phi, 0, +s*one_phi, -_R);
-                            *out ++ = Plane(-s*phi, 0, +s*one_phi, -_R);
-                            *out ++ = Plane(+s*phi, 0, -s*one_phi, -_R);
-                            *out ++ = Plane(-s*phi, 0, -s*one_phi, -_R);
+                            *out ++ = Plane(+s*phi, 0, +s*one_phi, -R);
+                            *out ++ = Plane(-s*phi, 0, +s*one_phi, -R);
+                            *out ++ = Plane(+s*phi, 0, -s*one_phi, -R);
+                            *out ++ = Plane(-s*phi, 0, -s*one_phi, -R);
                         }
                     }
             };
