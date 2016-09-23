@@ -91,6 +91,8 @@ private:
   CGAL::Three::Scene_interface* scene;
   bool started;
   double scaling[3];
+
+  //Don't forget to delete the result.
   double* transformMatrix()const
   {
     QMatrix4x4 tMatrix, manipulatedMatrix, scalingMatrix;
@@ -315,6 +317,31 @@ void Polyhedron_demo_transform_polyhedron_plugin::applySingleTransformation()
     scaling[0] = ui.lineEditZ->text().toDouble();
     scaling[1] = ui.lineEditZ->text().toDouble();
     scaling[2] = ui.lineEditZ->text().toDouble();
+    break;
+  }
+    //normalizing
+  case 3:
+  {
+    Polyhedron::Point_3 bil(transform_item->bbox().xmin(),
+                            transform_item->bbox().ymin(),
+                            transform_item->bbox().zmin());
+
+    Polyhedron::Point_3 tsr(transform_item->bbox().xmax(),
+                            transform_item->bbox().ymax(),
+                            transform_item->bbox().zmax());
+
+
+    //Scale the item so that its coordinates are in [0..1]
+    double max = (std::max)(tsr.x() - bil.x(), tsr.y()-bil.y());
+     max = (std::max)(max, tsr.z()-bil.z());
+
+    scaling[0] = 1.0/max;
+    scaling[1] = 1.0/max;
+    scaling[2] = 1.0/max;
+    transform_item->manipulatedFrame()->translate(qglviewer::Vec(
+                                                    -bil.x(),
+                                                    -bil.y(),
+                                                    -bil.z()));
     break;
   }
   default:
