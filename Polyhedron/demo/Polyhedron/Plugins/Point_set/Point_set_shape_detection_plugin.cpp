@@ -282,6 +282,12 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         }
         else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
         {
+          CGAL::Shape_detection_3::Plane<Traits> * plane = dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get());
+
+          //set normals for point_item to the plane's normal
+          for(Point_set::iterator it = point_item->point_set()->begin(); it != point_item->point_set()->end(); ++it)
+            it->normal() = plane->plane_normal();
+
           if(scene->item_id(groups[0]) == -1)
              scene->addItem(groups[0]);
           scene->changeGroup(point_item, groups[0]);
