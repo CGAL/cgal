@@ -30,6 +30,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Random.h>
+#include <CGAL/Origin.h>
 
 /*!
  \file Shape_base.h
