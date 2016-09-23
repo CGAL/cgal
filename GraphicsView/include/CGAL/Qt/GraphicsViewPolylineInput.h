@@ -27,6 +27,7 @@
 
 #include <QPolygonF>
 #include <QPointF>
+#include <QKeyEvent>
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
