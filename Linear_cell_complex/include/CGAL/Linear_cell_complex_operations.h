@@ -20,8 +20,11 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_OPERATIONS_H
 #define CGAL_LINEAR_CELL_COMPLEX_OPERATIONS_H 1
 
+#include <CGAL/Origin.h>
 #include <CGAL/Cell_iterators.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Cell_const_iterators.h>
+
 #include <vector>
 
 namespace CGAL {
