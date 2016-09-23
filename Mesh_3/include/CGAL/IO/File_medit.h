@@ -25,11 +25,13 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <set>
 #include <vector>
 #include <string>
 #include <CGAL/utility.h>
+#include <CGAL/basic.h>
 
 #include <boost/unordered_map.hpp>
 
