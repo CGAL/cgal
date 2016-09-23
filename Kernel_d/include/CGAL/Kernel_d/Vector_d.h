@@ -25,6 +25,7 @@
 #define CGAL_VECTOR_D_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
  
