@@ -551,6 +551,32 @@ void dim_down(Face_handle f, int i);
 
 
 /*!
+\cgalModifBegin
+creates a new vertex `v` and uses it to star a hole.
+ 
+Given a set of faces 'F' describing a simply connected hole (i.e., a topological disk), 
+the function deletes all the faces in `F`, creates a new vertex `v` and for each edge on
+the boundary of the hole creates a new face with `v` as a vertex. The input is an iterator 
+range `[face_begin, face_end[` of `Face_handle`s over the connected faces in `F`. The handle
+to the new vertex `v` is returned.
+ 
+\pre `tds.dimension() = 2` and the set of faces has the topology of a disk.
+\cgalModifEnd
+*/
+template< class FaceIt >
+Vertex_handle insert_in_hole(FaceIt face_begin, FaceIt face_end); 
+
+/*!
+\cgalModifBegin
+same as above, except that `new_v` will be used as the new vertex, which must have been 
+allocated previously with e.g. `create_vertex`.
+\cgalModifEnd
+*/
+template< class FaceIt >
+void insert_in_hole(Vertex_handle new_v, FaceIt face_begin, FaceIt face_end);  
+
+
+/*!
 creates a new vertex `v` and use it to star the hole 
 whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a handle to the vertex. 
 */ 
