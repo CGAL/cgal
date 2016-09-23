@@ -23,6 +23,7 @@
 
 #include <stack>
 
+#include <boost/iterator/counting_iterator.hpp>
 #include <CGAL/Surface_mesh/Properties.h>
 
 namespace CGAL {
@@ -68,6 +69,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   typedef typename Properties::Property_container<Index> Base;
+  typedef Properties::Property_map<Index, Index> Index_map;
   /// \endcond
   
   /*!
@@ -83,17 +85,43 @@ public:
     : public Properties::Property_map<Index, Type>
 #endif
   {
+    /// \cond SKIP_IN_MANUAL
+    typedef Property_map<Type> Self;
+    typedef typename Properties::Property_map<Index, Type> Base;
+    typedef typename Base::reference reference;
+    typedef typename Base::key_type key_type;
+    typedef typename Base::value_type value_type;
+
+    Index_map* m_indices;
+
+    reference operator[](const Index& i)
+    {
+      return dynamic_cast<Base*>(this)->operator[]((*m_indices)[i]);
+    }
+    const reference operator[](const Index& i) const
+    {
+      return dynamic_cast<const Base*>(this)->operator[]((*m_indices)[i]);
+    }
+    
+    friend reference get(const Self& s, const key_type& k)
+    {
+      return (*(s.m_indices))[k];
+    }
+    
+    friend void put(const Self& s,key_type& k, const value_type& v)
+    {
+      (*(s.m_indices))[k] = v;
+    }
+    /// \endcond
   };
 
-  /// \cond SKIP_IN_MANUAL
-  typedef Property_map<std::size_t> Index_map;
-  /// \endcond
   typedef Property_map<Point> Point_map; ///< Property map of points
   typedef Property_map<Vector> Vector_map; ///< Property map of vectors
 
-  typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
-  typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
-
+  // typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
+  // typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
+  typedef typename boost::counting_iterator<Index> iterator;
+  typedef typename boost::counting_iterator<Index> const_iterator;
 
 
 
@@ -117,9 +145,11 @@ public:
   /*!
     \brief Create an empty point set with no additional property.
    */
-  Point_set_3 () : m_base()
+  Point_set_3 (bool with_normals = false) : m_base()
   {
     clear();
+    if (with_normals)
+      add_normal_map();
   }
 
   template <typename TypeProp1>
@@ -162,7 +192,7 @@ public:
   Point_set_3& operator= (const Point_set_3& ps)
   {
     m_base = ps.m_base;
-    m_indices = this->property_map<Index> ("index").first;
+    m_indices = m_base.template add<Index> ("index").first;
     m_points = this->property_map<Point> ("point").first;
     m_normals = this->property_map<Vector> ("normal").first;
     m_nb_removed = ps.m_nb_removed;
@@ -205,7 +235,7 @@ public:
   void clear()
   {
     m_base.clear();
-    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<std::size_t>("index", (std::size_t)(-1));
+    boost::tie (m_indices, boost::tuples::ignore) = m_base.template add<std::size_t>("index", (std::size_t)(-1));
     boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
     m_nb_removed = 0;
   }
@@ -260,12 +290,12 @@ public:
       {
         m_base.push_back();
         m_indices[size()-1] = size()-1;
-        return m_indices.end() - 1;
+        return iterator(size() - 1);
       }
     else
       {
         -- m_nb_removed;
-        return m_indices.end() - m_nb_removed - 1;
+        return iterator(m_base.size() - m_nb_removed - 1);
       }
   }
 
@@ -280,7 +310,7 @@ public:
   iterator insert (const Point& p)
   {
     iterator out = insert();
-    m_points[size()-1] = p;
+    m_points[*out] = p;
     return out;
   }
 
@@ -299,29 +329,29 @@ public:
   iterator insert (const Point& p, const Vector& n)
   {
     iterator out = insert (p);
-    assert (has_normals());
-    m_normals[size()-1] = n;
+    assert (has_normal_map());
+    m_normals[*out] = n;
     return out;
   }
 
   /*!
     \brief Return the begin iterator.
   */
-  iterator begin() { return m_indices.begin(); }
+  iterator begin() { return iterator(0); }
   /*!
     \brief Return the past-the-end iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
-  iterator end() { return m_indices.end() - m_nb_removed; }
+  iterator end() { return iterator(m_base.size() - m_nb_removed); }
   /*!
     \brief Return the begin constant iterator.
   */
-  const_iterator begin() const { return m_indices.begin(); }
+  const_iterator begin() const { return const_iterator(0); }
   /*!
     \brief Return the past-the-end constant iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
-  const_iterator end() const { return m_indices.end() - m_nb_removed; }
+  const_iterator end() const { return const_iterator(m_base.size() - m_nb_removed); }
   /*!
     \brief Returns `true` if the number of non-removed element is 0.
 
@@ -352,74 +382,31 @@ public:
 
     \param index Index of the wanted point.
   */
-  Point& point (Index index) { return m_points[m_indices[index]]; }
+  Point& point (Index index) { return m_points[index]; }
   /*!
     \brief Get a constant reference to the wanted indexed point.
 
     \param index Index of the wanted point.
   */
-  const Point& point (Index index) const { return m_points[m_indices[index]]; }
-  /*!
-    \brief Get a reference to the wanted indexed point.
-
-    \param it Iterator of the wanted item.
-  */
-  Point& point (iterator it) { return m_points[*it]; }
-  /*!
-    \brief Get a constant reference to the wanted indexed point.
-
-    \param it Iterator of the wanted item.
-  */
-  const Point& point (const_iterator it) const { return m_points[*it]; }
-  /*!
-    \brief Get a reference to the wanted indexed point (convenience method).
-
-    \param index Index of the wanted point.
-  */
-  Point& operator[] (Index index) { return m_points[m_indices[index]]; }
-  /*!
-    \brief Get a const reference the wanted indexed point (convenience method).
-
-    \param index Index of the wanted point.
-  */
-  const Point& operator[] (Index index) const { return m_points[m_indices[index]]; }
-  
+  const Point& point (Index index) const { return m_points[index]; }
   /*!
     \brief Get a reference to the wanted indexed normal.
 
     \param index Index of the wanted normal.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
-  Vector& normal (Index index) { return m_normals[m_indices[index]]; }
+  Vector& normal (Index index) { return m_normals[index]; }
   /*!
     \brief Get a constant reference to the wanted indexed normal.
 
     \param index Index of the wanted normal.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
-  const Vector& normal (Index index) const { return m_normals[m_indices[index]]; }
-  /*!
-    \brief Get a reference to the wanted indexed normal.
-
-    \param it Iterator of the wanted item.
-
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
-  */
-  Vector& normal (iterator it) { return m_normals[*it]; }
-  /*!
-    \brief Get a constant reference to the wanted indexed normal.
-
-    \param it Iterator of the wanted item.
-
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
-  */
-  const Vector& normal (const_iterator it) const { return m_normals[*it]; }
+  const Vector& normal (Index index) const { return m_normals[index]; }
 
   /// @}
 
@@ -460,7 +447,7 @@ public:
   */
   void remove (iterator it)
   {
-    std::swap (*it, *(garbage_begin() - 1));
+    std::swap (m_indices[*it], m_indices[*(garbage_begin() - 1)]);
     ++ m_nb_removed;
   }
 
@@ -476,28 +463,21 @@ public:
   }
 
   /*!
-    \brief Iterator to the first removed element (equal to `garbage_end()` if
-    no elements are marked as removed.
-  */
-  iterator garbage_begin () { return m_indices.end() - m_nb_removed; }
-  /*!
-    \brief Past-the-end iterator of the removed elements.
-  */
-  iterator garbage_end () { return m_indices.end(); }
-  /*!
     \brief Constant iterator to the first removed element (equal to `garbage_end()` if
     no elements are marked as removed.
   */
-  const_iterator garbage_begin () const { return m_indices.end() - m_nb_removed; }
+  const_iterator garbage_begin () const { return const_iterator(m_base.size() - m_nb_removed); }
   /*!
     \brief Past-the-end constant iterator of the removed elements.
   */
-  const_iterator garbage_end () const { return m_indices.end(); }
+  const_iterator garbage_end () const { return const_iterator(m_base.size()); }
   /*!
     \brief Number of removed points.
   */
   std::size_t number_of_removed_points () const { return m_nb_removed; }
-
+  /// \cond SKIP_IN_MANUAL
+  std::size_t garbage_size () const { return number_of_removed_points(); }
+  /// \endcond
   /*!
     \brief Returns `true` if there are still removed elements in memory.
   */
@@ -547,7 +527,7 @@ public:
     \param name Name of the property.
   */
   template <typename T>
-  bool has_property (const std::string& name) const
+  bool has_property_map (const std::string& name) const
   {
     std::pair<typename Properties::template Property_map<Index, T>, bool>
       pm = m_base.template get<T> (name);
@@ -571,10 +551,12 @@ public:
   std::pair<Property_map<T>, bool>
   add_property_map (const std::string& name, const T t=T())
   {
-    Properties::Property_map<Index,T> pm;
+    Properties::Property_map<Index,T> ppm;
     bool added = false;
-    boost::tie (pm, added) = m_base.template add<T> (name, t);
-    return std::make_pair (reinterpret_cast<Property_map<T>&>(pm), added);
+    boost::tie (ppm, added) = m_base.template add<T> (name, t);
+    Property_map<T>& pm = reinterpret_cast<Property_map<T>&>(ppm);
+    pm.m_indices = &m_indices;
+    return std::make_pair (pm, added);
   }
   
   /*!
@@ -620,7 +602,7 @@ public:
     This method tests if a property of type `CGAL::Vector_3<Gt>` and
     named `normal` exists.
   */
-  bool has_normals() const
+  bool has_normal_map() const
   {
     std::pair<Vector_map, bool> pm = this->property_map<Vector> ("normal");
     return pm.second;
@@ -634,7 +616,7 @@ public:
     \return `true` if the property was added, `false` if it already
     existed.
   */
-  bool add_normal_property(const Vector& default_value = Vector(0., 0., 0.))
+  bool add_normal_map(const Vector& default_value = Vector(0., 0., 0.))
   {
     bool out = false;
     boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
@@ -644,7 +626,7 @@ public:
     \brief Get the property map of the normal attribute.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
   Vector_map normal_map ()
   {
@@ -654,7 +636,7 @@ public:
     \brief Get the property map of the normal attribute (constant version).
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
   const Vector_map normal_map () const
   {
@@ -666,7 +648,7 @@ public:
     \return Returns `true` if the property was removed and `false` if
     the property was not found.
   */
-  bool remove_normal_property()
+  bool remove_normal_map()
   {
     return m_base.remove (m_normals);
   }
@@ -831,7 +813,7 @@ public:
     \brief Get the push property map of the normal attribute.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
   Vector_push_map normal_push_map ()
   {
