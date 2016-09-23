@@ -1022,6 +1022,23 @@ if ( CGAL_BRANCH_BUILD )
 
   if(CGAL_ENABLE_CHECK_HEADERS)
 
+    message( "== Setting header checking ==" )
+
+    find_package(Eigen3 REQUIRED)
+    find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL REQUIRED)
+    find_package(QGLViewer)
+    find_package(VTK COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
+    set(compile_options "\
+${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED \
+${Qt5Widgets_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} \
+${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
+${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
+${Qt5Xml_EXECUTABLE_COMPILE_FLAGS} \
+${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
+${CGAL_DEFINITIONS}"
+      )
+
+
     if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
       execute_process(COMMAND 
         ${CMAKE_CXX_COMPILER} -x c++ -fsyntax-only ${CMAKE_CURRENT_SOURCE_DIR}/config/support/test_syntaxonly.cpp
@@ -1044,7 +1061,13 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     foreach (incdir ${CGAL_INCLUDE_DIRS})
       list(APPEND include_options "-I${incdir}")
     endforeach()
-    foreach (incdir ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS})
+    foreach (incdir
+        ${VTK_INCLUDE_DIRS}
+        ${EIGEN3_INCLUDE_DIR}
+        ${QGLVIEWER_INCLUDE_DIR} ${Qt5OpenGL_INCLUDE_DIRS}
+        ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}
+        ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS}
+    )
       list(APPEND include_options "-I${incdir}")
     endforeach()
     include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
@@ -1076,17 +1099,22 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
         foreach(header ${${package}_HEADERS})
           if(NOT POLICY CMP0057
               OR NOT has_list_of_documented_headers
-              OR header IN_LIST list_of_documented_headers)
+              OR header IN_LIST list_of_documented_headers
+          )
             string(REPLACE "/" "__" header2 "${header}")
             string(REPLACE "." "_" header2 "${header2}")
             string(REPLACE ";" " " include_options_str "${include_options}")
+            string(REPLACE ";" " " compile_options_str "${compile_options}")
             separate_arguments(CMD
               UNIX_COMMAND
-"${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_DEFINITIONS} \
+"${CMAKE_CXX_COMPILER} ${compile_options_str}
 ${include_options_str} -x c++ -fsyntax-only \
 ${compute_deps_extra_args} \
+-DCGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1=1 \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
-              )
+# The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
+# depends on RS.
+)
             add_custom_command(OUTPUT check_${header2}
               COMMAND ${CMAKE_COMMAND}
               -DCERR:STRING=${CMAKE_CURRENT_BINARY_DIR}/check_${header2}
@@ -1128,6 +1156,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
     endforeach() # loop on packages
     add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})
+    message( "\nYou can now check the headers with the target `check_headers`\n\
+and the package dependencies with the target `packages_dependencies`.\n")
+    message( "== Setting header checking (DONE) ==\n" )
+
   endif()
 endif( CGAL_BRANCH_BUILD )
 
