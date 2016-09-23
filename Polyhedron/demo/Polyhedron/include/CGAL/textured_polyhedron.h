@@ -15,6 +15,8 @@ class Textured_facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 {
     // normal
     Norm m_normal;
+    //id
+    std::size_t m_id;
 
 public:
 
@@ -30,6 +32,9 @@ public:
     typedef Norm Normal_3;
     Normal_3& normal() { return m_normal; }
     const Normal_3& normal() const { return m_normal; }
+    // id
+    std::size_t& id() {	return m_id; }
+    const std::size_t& id() const { return m_id; }
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
@@ -37,6 +42,7 @@ class Textured_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvert
 {
     double m_u;
     double m_v;
+    std::size_t m_id;
 public:
     // life cycle
     Textured_halfedge()
@@ -47,6 +53,11 @@ public:
     const double& u() const { return m_u;	}
     double& v() {	return m_v; }
     const double& v() const { return m_v;	}
+    // id
+    std::size_t& id() {	return m_id; }
+    const std::size_t& id() const { return m_id;	}
+
+
 };
 
 template <class Refs, class T, class P, class Norm>
@@ -56,6 +67,7 @@ class Textured_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
     Norm m_normal;
     double m_u;
     double m_v;
+    std::size_t m_id;
 
 public:
     // life cycle
@@ -77,6 +89,9 @@ public:
     const double& u() const { return m_u;	}
     double& v() {	return m_v; }
     const double& v() const { return m_v;	}
+    // id
+    std::size_t& id() {	return m_id; }
+    const std::size_t& id() const { return m_id;	}
 };
 
 struct Textured_items : public CGAL::Polyhedron_items_3

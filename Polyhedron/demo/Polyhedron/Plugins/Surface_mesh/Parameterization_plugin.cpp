@@ -36,10 +36,10 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include "ui_Parameterization_widget.h"
-typedef boost::unordered_set<Textured_polyhedron::Facet_handle> Component;
+typedef boost::unordered_set<Textured_polyhedron::Base::Facet_handle> Component;
 typedef std::vector<Component> Components;
 struct Is_selected_property_map{
-  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+  typedef boost::graph_traits<Textured_polyhedron::Base>::edge_descriptor edge_descriptor;
   std::vector<bool>* is_selected_ptr;
   Is_selected_property_map()
     : is_selected_ptr(NULL) {}
@@ -139,32 +139,39 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor            vertex_des
 typedef Kernel::Point_2                                               Point_2;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor              P_edge_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor          P_halfedge_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor            P_vertex_descriptor;
 
 
-typedef CGAL::Unique_hash_map<P_halfedge_descriptor,Point_2>          UV_uhm;
-typedef CGAL::Unique_hash_map<P_edge_descriptor,bool>                 Seam_edge_uhm;
-typedef CGAL::Unique_hash_map<vertex_descriptor,bool>                 Seam_vertex_uhm;
+typedef boost::graph_traits<Textured_polyhedron::Base>::
+                                         edge_descriptor              T_edge_descriptor;
+typedef boost::graph_traits<Textured_polyhedron::Base>::
+                                         halfedge_descriptor          T_halfedge_descriptor;
+typedef boost::graph_traits<Textured_polyhedron::Base>::
+                                         vertex_descriptor            T_vertex_descriptor;
+
+
+typedef CGAL::Unique_hash_map<T_halfedge_descriptor,Point_2>          UV_uhm;
+typedef CGAL::Unique_hash_map<T_edge_descriptor,bool>                 Seam_edge_uhm;
+typedef CGAL::Unique_hash_map<T_vertex_descriptor,bool>               Seam_vertex_uhm;
 
 typedef boost::associative_property_map<UV_uhm>                       UV_pmap;
 typedef boost::associative_property_map<Seam_edge_uhm>                Seam_edge_pmap;
 typedef boost::associative_property_map<Seam_vertex_uhm>              Seam_vertex_pmap;
 
 
-typedef CGAL::Seam_mesh<Polyhedron, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
+typedef CGAL::Seam_mesh<Textured_polyhedron::Base, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
 typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor           halfedge_descriptor;
 
 class UVItem : public QGraphicsItem
 {
 public :
   UVItem(Textured_polyhedron* t_m,
-         Components* p_components,
+         Components* components,
          std::vector<std::vector<float> >uv_borders,
          QRectF brect)
     :QGraphicsItem(),
       texMesh(t_m),
       bounding_rect(brect),
-      components(p_components),
+      components(components),
       m_borders(uv_borders),
       m_current_component(0)
   {
@@ -196,9 +203,9 @@ public :
          ++fi)
     {
       Textured_polyhedron::Facet_handle f(*fi);
-      QPointF pt_A(f->halfedge()->u(), f->halfedge()->v()),
-          pt_B(f->halfedge()->next()->u(), f->halfedge()->next()->v()),
-          pt_C(f->halfedge()->next()->next()->u(), f->halfedge()->next()->next()->v());
+      QPointF pt_A(f->halfedge()->u(), f->halfedge()->v());
+      QPointF pt_B(f->halfedge()->next()->u(), f->halfedge()->next()->v());
+      QPointF pt_C(f->halfedge()->next()->next()->u(), f->halfedge()->next()->next()->v());
 
       painter->drawLine(pt_A, pt_B);
       painter->drawLine(pt_B, pt_C);
@@ -441,18 +448,49 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   QTime time;
   time.start();
-  //initializes the halfedges and faces ids for the connected_components detection
-  CGAL::set_halfedgeds_items_id(*pMesh);
+  // add textured polyhedon to the scene
+  Textured_polyhedron *tpMesh = new Textured_polyhedron();
+  Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
+  builder.run(*pMesh,*tpMesh);
+  tpMesh->compute_normals();
+  tpMesh->normalize_border();
+  Textured_polyhedron::Base tMesh = static_cast<Textured_polyhedron::Base&>(*tpMesh);
 
-  std::vector<bool> mark(pMesh->size_of_halfedges()/2,false);
+  CGAL::set_halfedgeds_items_id(tMesh);
+  std::vector<bool> mark(tpMesh->size_of_halfedges()/2,false);
+  std::vector<T_edge_descriptor> seam_edges;
   if(is_seamed)
   {
-    //fill seam mesh pmaps
+    //create a textured_polyhedron edges selection from the ids of the corresponding vertices
     BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
     {
-      P_halfedge_descriptor hd = halfedge(ed, *pMesh);
-      P_vertex_descriptor svd(source(hd, *pMesh)), tvd(target(hd, *pMesh));
-      if(!is_border(ed, *pMesh))
+      Polyhedron::Vertex_handle a(source(ed, *pMesh)), b(target(ed, *pMesh));
+
+      for(Textured_polyhedron::Edge_iterator it =
+          tMesh.edges_begin(); it != tMesh.edges_end();
+          ++it)
+      {
+        Textured_polyhedron::Vertex_handle ta(source(it, tMesh)), tb(target(it, tMesh));
+        if((ta->id() == a->id() && tb->id() == b->id())
+           ||
+           (ta->id() == b->id() && tb->id() == a->id()))
+        {
+          sel_item->selected_vertices.insert(a);
+          sel_item->selected_vertices.insert(b);
+          T_edge_descriptor ted(it);
+          seam_edges.push_back(ted);
+          break;
+        }
+      }
+
+    }
+    qDebug()<<sel_item->selected_edges.size()<<", "<<seam_edges.size();
+    //fill seam mesh pmaps
+    BOOST_FOREACH(T_edge_descriptor ed, seam_edges)
+    {
+      T_halfedge_descriptor hd = halfedge(ed, tMesh);
+      T_vertex_descriptor svd(source(hd, tMesh)), tvd(target(hd, tMesh));
+      if(!is_border(ed, tMesh))
       {
         put(seam_edge_pm, ed, true);
         put(seam_vertex_pm, svd, true);
@@ -461,34 +499,34 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       }
     }
   }
-  Seam_mesh *sMesh = new Seam_mesh(*pMesh, seam_edge_pm, seam_vertex_pm);
+  Seam_mesh *sMesh = new Seam_mesh(tMesh, seam_edge_pm, seam_vertex_pm);
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 
 
   QString new_item_name;
   //determine the different connected_components
-  boost::property_map<Polyhedron, boost::face_external_index_t>::type fim
-      = get(boost::face_external_index, *pMesh);
+  boost::property_map<Textured_polyhedron::Base, boost::face_external_index_t>::type fim
+      = get(boost::face_external_index, tMesh);
   boost::vector_property_map<int,
-      boost::property_map<Polyhedron, boost::face_external_index_t>::type>
+      boost::property_map<Textured_polyhedron::Base, boost::face_external_index_t>::type>
       fccmap(fim);
 
   Is_selected_property_map edge_pmap(mark);
 
   int number_of_components =
       CGAL::Polygon_mesh_processing::connected_components(
-        *pMesh,
+        tMesh,
         fccmap,
         CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
           edge_pmap));
-  std::vector<std::vector<Polyhedron::Facet_handle> > p_components(number_of_components);
-  Polyhedron::Facet_iterator fit;
-  for(fit = pMesh->facets_begin();
-      fit != pMesh->facets_end();
+  Components t_components(number_of_components);
+  Textured_polyhedron::Base::Facet_iterator fit;
+  for(fit = tMesh.facets_begin();
+      fit != tMesh.facets_end();
       ++fit)
   {
-    p_components.at(fccmap[fit]).push_back(fit);
+    t_components.at(fccmap[fit]).insert(fit);
   }
 
   //once per component
@@ -497,29 +535,29 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   for(int current_component=0; current_component<number_of_components; ++current_component)
   {
 
-    P_halfedge_descriptor phd;
-    std::vector<P_halfedge_descriptor> border;
-    PMP::border_halfedges(p_components[current_component],
-                          *pMesh,
+    T_halfedge_descriptor phd;
+    std::vector<T_halfedge_descriptor> border;
+    PMP::border_halfedges(t_components.at(current_component),
+                          tMesh,
                           std::back_inserter(border));
 
-    BOOST_FOREACH(P_halfedge_descriptor hd, border)
+    BOOST_FOREACH(T_halfedge_descriptor hd, border)
     {
-        uv_borders[current_component].push_back(source(hd, *pMesh)->point().x());
-        uv_borders[current_component].push_back(source(hd, *pMesh)->point().y());
-        uv_borders[current_component].push_back(source(hd, *pMesh)->point().z());
+        uv_borders[current_component].push_back(source(hd, tMesh)->point().x());
+        uv_borders[current_component].push_back(source(hd, tMesh)->point().y());
+        uv_borders[current_component].push_back(source(hd, tMesh)->point().z());
 
-        uv_borders[current_component].push_back(target(hd, *pMesh)->point().x());
-        uv_borders[current_component].push_back(target(hd, *pMesh)->point().y());
-        uv_borders[current_component].push_back(target(hd, *pMesh)->point().z());
+        uv_borders[current_component].push_back(target(hd, tMesh)->point().x());
+        uv_borders[current_component].push_back(target(hd, tMesh)->point().y());
+        uv_borders[current_component].push_back(target(hd, tMesh)->point().z());
     }
 
     if(!border.empty())
-      phd = opposite(border.front(), *pMesh);
+      phd = opposite(border.front(), tMesh);
     //in case there are no border, take the first halfedge of the seam.
-    if(phd == boost::graph_traits<Polyhedron>::null_halfedge())
+    if(phd == boost::graph_traits<Textured_polyhedron::Base>::null_halfedge())
     {
-      phd = halfedge(*sel_item->selected_edges.begin(), *pMesh);
+      phd = halfedge(*seam_edges.begin(), tMesh);
     }
 
     halfedge_descriptor bhd(phd);
@@ -556,10 +594,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       {
         double max_dist = 0;
         int indice_max = 0;
-        Kernel::Point_3 a = target(border[0], *pMesh)->point();
+        Kernel::Point_3 a = target(border[0], tMesh)->point();
         for(std::size_t i=1; i<border.size(); ++i)
         {
-          Kernel::Point_3 b = target(border[i], *pMesh)->point();
+          Kernel::Point_3 b = target(border[i], tMesh)->point();
           double dist = std::sqrt((b.x()-a.x())*(b.x()-a.x())+
                                   (b.y()-a.y())*(b.y()-a.y())+
                                   (b.z()-a.z())*(b.z()-a.z()));
@@ -570,7 +608,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
             indice_max = i;
           }
         }
-        P_halfedge_descriptor phd2 = opposite(border[indice_max], *pMesh);
+        T_halfedge_descriptor phd2 = opposite(border[indice_max], tMesh);
 
         boost::graph_traits<Seam_mesh>::vertex_descriptor vp1 = target(halfedge_descriptor(phd),*sMesh);
         boost::graph_traits<Seam_mesh>::vertex_descriptor vp2 = target(halfedge_descriptor(phd2),*sMesh);
@@ -604,22 +642,15 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   } //end for each component
 
 
-  // add textured polyhedon to the scene
-  Textured_polyhedron *pTex_polyhedron = new Textured_polyhedron();
-  Textured_polyhedron_builder<Polyhedron,Textured_polyhedron,Kernel> builder;
-  builder.run(*pMesh,*pTex_polyhedron);
-  pTex_polyhedron->compute_normals();
-  pTex_polyhedron->normalize_border();
-
-  Polyhedron::Halfedge_iterator it1;
+  Textured_polyhedron::Base::Halfedge_iterator it1;
   Textured_polyhedron::Halfedge_iterator it2;
   QPointF min(FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX);
-  for(it1 = pMesh->halfedges_begin(),
-      it2 = pTex_polyhedron->halfedges_begin();
-      it1 != pMesh->halfedges_end()&&
-      it2 != pTex_polyhedron->halfedges_end();
+  for(it1 = tMesh.halfedges_begin(),
+      it2 = tpMesh->halfedges_begin();
+      it1 != tMesh.halfedges_end()&&
+      it2 != tpMesh->halfedges_end();
       ++it1, ++it2)
-  {
+  {      
     Seam_mesh::halfedge_descriptor hd(it1);
     FT u = uv_pm[target(hd,*sMesh)].x();
     FT v = uv_pm[target(hd,*sMesh)].y();
@@ -634,26 +665,22 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     if(v>max.y())
       max.setY(v);
   }
-
   Components* components = new Components(0);
   components->resize(number_of_components);
-  //that loop has already been done before, but I
-  //don't know how to avoid re-doing it for now
-  Polyhedron::Facet_iterator fit1;
-  Textured_polyhedron::Facet_iterator fit2;
-  for(fit1 = pMesh->facets_begin(),
-      fit2 = pTex_polyhedron->facets_begin();
-      fit1 != pMesh->facets_end()&&
-      fit2 != pTex_polyhedron->facets_end();
-      ++fit1, ++fit2)
+  Textured_polyhedron::Base::Facet_iterator bfit;
+  Textured_polyhedron::Facet_iterator tfit;
+  for(bfit = tMesh.facets_begin(),
+      tfit = tpMesh->facets_begin();
+      bfit != tMesh.facets_end()&&
+      tfit != tpMesh->facets_end();
+      ++bfit, ++tfit)
   {
-    components->at(fccmap[fit1]).insert(fit2);
+    components->at(fccmap[bfit]).insert(tfit);
   }
   UVItem *projection
-      = new UVItem(pTex_polyhedron, components, uv_borders, QRectF(min, max));
+      = new UVItem(tpMesh, components, uv_borders, QRectF(min, max));
   projection->set_item_name(new_item_name);
-  Scene_textured_polyhedron_item* new_item = new Scene_textured_polyhedron_item(pTex_polyhedron);
-
+  Scene_textured_polyhedron_item* new_item = new Scene_textured_polyhedron_item(tpMesh);
   new_item->setName(new_item_name);
   new_item->setColor(Qt::white);
   new_item->setRenderingMode(poly_item->renderingMode());
@@ -662,7 +689,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   poly_item->setVisible(false);
   scene->itemChanged(index);
   scene->addItem(new_item);
-
   if(!graphics_scene->items().empty())
     graphics_scene->removeItem(graphics_scene->items().first());
   graphics_scene->addItem(projection);
@@ -676,6 +702,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   dock_widget->setWindowTitle(tr("UVMapping for %1").arg(new_item->name()));
   ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
   ui_widget.graphicsView->fitInView(projection->boundingRect(), Qt::KeepAspectRatio);
+
   QApplication::restoreOverrideCursor();
 
 }
