@@ -23,15 +23,9 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/assertions.h>
 #include <bitset>
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 
 namespace CGAL {
-
-  namespace internal {
-    template <typename M>
-    class Reverse_orientation_of_map_functor;
-    template <typename M>
-    class Reverse_orientation_of_connected_component_functor;
-  }
 
   /** @file Dart.h
    * Definition of nD dart.
