@@ -95,7 +95,10 @@ Interval_nt<true> interval();
 
 /*!
 specifies the relative precision that `to_double()` has to fulfill. 
-The default value is \f$ 10^{-5}\f$. \pre d>0 and d<1. 
+The relative precision is thread local, and the default value is \f$ 10^{-5}\f$.
+
+\pre `d>0` and `d<1`.
+
 */ 
 static void set_relative_precision_of_to_double(double d); 
 
