@@ -24,6 +24,11 @@
 
 namespace CGAL {
 
+  namespace internal {
+    template<typename CMap, unsigned int i, typename T>
+    struct Decrease_attribute_functor_run;
+  }
+
   template < unsigned int, class, class, class, class >
   class Combinatorial_map_base;
 

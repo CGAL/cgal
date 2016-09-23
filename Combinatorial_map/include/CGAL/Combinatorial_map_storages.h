@@ -23,6 +23,7 @@
 #include <CGAL/Handle_hash_function.h>
 
 #include <CGAL/Compact_container.h>
+#include <bitset>
 
 #include <boost/config.hpp>
 #if  (BOOST_GCC >= 40900)
@@ -31,6 +32,11 @@ _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
 
 namespace CGAL {
+
+  namespace internal {
+    template <typename M>
+    class Combinatorial_map_helper;
+  }
 
   /** @file Combinatorial_map_storages.h
    * Definition of storages for dD Combinatorial map.

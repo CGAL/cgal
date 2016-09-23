@@ -26,6 +26,13 @@
 
 namespace CGAL {
 
+  namespace internal {
+    template <typename M>
+    class Reverse_orientation_of_map_functor;
+    template <typename M>
+    class Reverse_orientation_of_connected_component_functor;
+  }
+
   /** @file Dart.h
    * Definition of nD dart.
    */
