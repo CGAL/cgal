@@ -7,7 +7,7 @@ if(NOT CGAL_PACKAGES_PREFIX)
     "The variable `CGAL_PACKAGES_PREFIX` should be defined to the prefix of CGAL packages!")
 endif()
 
-message("regexp: \\. ${CGAL_PACKAGES_PREFIX}/[^/]*/include/CGAL/.*h")
+#message("regexp: \\. ${CGAL_PACKAGES_PREFIX}/[^/]*/include/CGAL/.*h")
 foreach(INPUT_FILE ${INPUT_FILES})
   file(STRINGS ${INPUT_FILE} input)
   #message("input is : ${input}")
