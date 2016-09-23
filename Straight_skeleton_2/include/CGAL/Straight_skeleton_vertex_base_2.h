@@ -21,6 +21,7 @@
 
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/circulator.h>
+#include <CGAL/Origin.h>
 
 #include <boost/iterator/iterator_facade.hpp>
 
