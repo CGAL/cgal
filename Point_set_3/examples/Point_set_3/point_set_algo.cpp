@@ -51,7 +51,9 @@ int main (int, char**)
 
   // Detect sphere with RANSAC
   Efficient_ransac ransac;
-  ransac.set_input(point_set, point_set.point_map(), point_set.normal_map());
+  ransac.set_input(point_set,
+                   point_set.point_map(), // Call built-in property map
+                   point_set.normal_map()); // Call built-in property map
   ransac.add_shape_factory<Sphere>();
   Efficient_ransac::Parameters parameters;
   parameters.probability = 0.05;

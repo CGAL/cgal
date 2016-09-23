@@ -24,7 +24,10 @@ void print_point_set (const Point_set& point_set)
 int main (int, char**)
 {
   Point_set point_set;
+  Point_set point_set2 ("visibility",Vector(0,0,0), "insensity", 1.0);
 
+  std::cerr << point_set2.properties();
+  
   // Add points
   point_set.insert (Point (0., 0., 0.));
   point_set.insert (Point (0., 0., 1.));
@@ -45,7 +48,8 @@ int main (int, char**)
   print_point_set(point_set); 
 
   // Add new item
-  Point_set::iterator new_item = point_set.add_item();
+  Point_set::iterator new_item = point_set.insert(Point (7., 8., 9.));
+  point_set.normal(new_item) = Vector (10., 11., 12.);
 
   print_point_set(point_set); // New item has default values
 
