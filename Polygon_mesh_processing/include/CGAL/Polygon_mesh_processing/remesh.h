@@ -49,7 +49,7 @@ namespace Polygon_mesh_processing {
 *         If `PolygonMesh `has an internal property map for `CGAL::face_index_t`,
 *         then it should be initialized
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
-          model of `Range`. Its iterator type is `InputIterator`.
+          model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
