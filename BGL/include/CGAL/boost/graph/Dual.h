@@ -22,6 +22,7 @@
 
 #include <CGAL/boost/graph/properties.h>
 #include <boost/range/distance.hpp>
+#include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
 
