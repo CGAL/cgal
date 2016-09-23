@@ -58,6 +58,10 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
 EOF
+    if [ -d "${SOURCE_DIR}" ] ; then
+      echo "  set(CGAL_CURRENT_SOURCE_DIR \"${SOURCE_DIR}\")"
+      echo
+    fi
     if [ -d "${SOURCE_DIR}../../include" ] ; then
       echo "  include_directories (BEFORE \"${SOURCE_DIR}../../include\")"
       echo

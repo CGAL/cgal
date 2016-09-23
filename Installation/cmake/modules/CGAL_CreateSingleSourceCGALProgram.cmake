@@ -1,7 +1,9 @@
+include(CGAL_add_test)
+
 function(create_single_source_cgal_program firstfile )
 
   if(NOT IS_ABSOLUTE "${firstfile}")
-    set(firstfile "${CMAKE_CURRENT_SOURCE_DIR}/${firstfile}")
+    set(firstfile "${CGAL_CURRENT_SOURCE_DIR}/${firstfile}")
   endif()
 
   get_filename_component(exe_name ${firstfile} NAME_WE)
@@ -12,27 +14,15 @@ function(create_single_source_cgal_program firstfile )
 
     # remaining files
     foreach( i ${ARGN} )
-      set( all ${all} ${CMAKE_CURRENT_SOURCE_DIR}/${i} )
+      set( all ${all} ${CGAL_CURRENT_SOURCE_DIR}/${i} )
     endforeach()
 
 
     add_executable(${exe_name} ${all})
 
-    if(BUILD_TESTING)
-      if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-        set(ARGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cin")
-      elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
-        file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/${exe_name}.cmd" ARGS LIMIT_COUNT 1)
-        # TODO: handle multi-lines .cmd files
-        # see https://github.com/CGAL/cgal/pull/1295/files/c65d3abe17bb3e677b8077996cdaf8672f9c4c6f#r71705451
-      endif()
-      message(STATUS "add test for ${exe_name}")
-      add_test(NAME ${exe_name}
-        COMMAND ${exe_name} ${ARGS}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-      set_property(TEST "${exe_name}"
-        APPEND PROPERTY LABELS "${PROJECT_NAME}")
-    endif(BUILD_TESTING)
+    if(NOT NO_TESTING)
+      cgal_add_test("${exe_name}")
+    endif(NOT NO_TESTING)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
 
