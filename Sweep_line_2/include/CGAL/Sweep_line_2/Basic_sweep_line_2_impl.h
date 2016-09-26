@@ -259,9 +259,9 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_curve(const X_monotone_curve_2& curve, unsigned int index)
 {
-  // Construct an initialize a subcurve object.
+  // Construct and initialize a subcurve object.
   m_subCurveAlloc.construct(m_subCurves + index, m_masterSubcurve);
-
+  (m_subCurves + index)->set_hint(this->m_statusLine.end());
   (m_subCurves + index)->init(curve);
 
   // Create two events associated with the curve ends.
@@ -450,6 +450,7 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
 {
+  CGAL_SL_PRINT_START_EOL("sorting left curves");
   CGAL_assertion(m_currentEvent->has_left_curves());
 
   // Get the first curve associated with the event and its position on the
@@ -461,15 +462,14 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   CGAL_assertion(*sl_iter == curve);
   // Look for the first curve in the vertical ordering that is also in the
   // left curve of the event
-  for (++sl_iter; sl_iter != m_statusLine.end(); ++sl_iter) {
+  Status_line_iterator end = sl_iter;
+  for (++end; end != m_statusLine.end(); ++end) {
     if (std::find(m_currentEvent->left_curves_begin(),
-                  m_currentEvent->left_curves_end(), *sl_iter) ==
+                  m_currentEvent->left_curves_end(), *end) ==
         m_currentEvent->left_curves_end())
       break;
   }
-  Status_line_iterator end = sl_iter;
 
-  sl_iter = curve->hint();
   if (sl_iter == m_statusLine.begin()) {
     // In case the lowest subcurve in the status line is associated with the
     // current event, we have the range of (sorted) subcurves ready. We
@@ -477,19 +477,20 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
     // according to their vertical positions immediately to the left of the
     // event.
     m_currentEvent->replace_left_curves(sl_iter, end);
+    CGAL_SL_PRINT_END_EOL("sorting left curves");
     return;
   }
 
   // Go down the status line until we encounter a subcurve that is not
   // associated with the current event.
-  --sl_iter;
-  for (;sl_iter != m_statusLine.begin(); --sl_iter) {
+  for (--sl_iter; sl_iter != m_statusLine.begin(); --sl_iter) {
     if (std::find(m_currentEvent->left_curves_begin(),
                   m_currentEvent->left_curves_end(), *sl_iter) ==
         m_currentEvent->left_curves_end())
     {
       // Associate the sorted range of subcurves with the event.
-      m_currentEvent->replace_left_curves(++sl_iter,end);
+      m_currentEvent->replace_left_curves(++sl_iter, end);
+      CGAL_SL_PRINT_END_EOL("sorting left curves");
       return;
     }
   }
@@ -500,9 +501,11 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   if (std::find(m_currentEvent->left_curves_begin(),
                 m_currentEvent->left_curves_end(), *sl_iter) ==
       m_currentEvent->left_curves_end())
-    m_currentEvent->replace_left_curves(++sl_iter,end);
+    m_currentEvent->replace_left_curves(++sl_iter, end);
   else
-    m_currentEvent->replace_left_curves(sl_iter,end);
+    m_currentEvent->replace_left_curves(sl_iter, end);
+
+  CGAL_SL_PRINT_END_EOL("sorting left curves");
 }
 
 //-----------------------------------------------------------------------------
@@ -532,7 +535,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
   while (curr != right_end) {
     CGAL_SL_PRINT_INSERT(*curr);
     sl_iter = m_statusLine.insert_before(m_status_line_insert_hint, *curr);
-    ((Subcurve*)(*curr))->set_hint(sl_iter);
+    Subcurve* sc = *curr;
+    sc->set_hint(sl_iter);
 
     CGAL_SL_DEBUG(PrintStatusLine(););
     ++curr;
