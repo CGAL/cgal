@@ -34,17 +34,13 @@
 #include <CGAL/remove_outliers.h>
 #include <CGAL/vcm_estimate_normals.h>
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/read_ply_point_set_3.h>
-#include <CGAL/IO/write_xyz_points.h>
-#include <CGAL/IO/write_off_points.h>
-#include <CGAL/IO/write_ply_points.h>
 
 
 namespace CGAL {
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+ */
 template <typename Concurrency_tag,
           typename PointSet>
 double
@@ -60,6 +56,9 @@ bilateral_smooth_point_set(
 }
 
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+ */
 template <typename Concurrency_tag,
 	  typename PointSet>
 double
@@ -71,6 +70,9 @@ compute_average_spacing(
     (point_set.begin(), point_set.end(), point_set.point_map(), k);
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+ */
 template <typename Concurrency_tag,
           typename PointSet>
 void
@@ -88,6 +90,12 @@ edge_aware_upsample_point_set(
      sharpness_angle, edge_sensitivity, neighbor_radius, number_of_output_points);
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note No iterator is returned, points simplified are directly
+  removed from the point set.
+ */
 template <typename PointSet>
 void grid_simplify_point_set(
   PointSet& point_set, ///< point set
@@ -98,11 +106,17 @@ void grid_simplify_point_set(
      (point_set.begin(), point_set.end(), point_set.point_map(), epsilon));
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note No iterator is returned, points simplified are directly
+  removed from the point set.
+ */
 template <typename PointSet>
 void hierarchy_simplify_point_set(
   PointSet& point_set, ///< point set
-  const unsigned int size = 10,
-  const double var_max = 0.333)
+  const unsigned int size = 10, ///< maximum cluster size
+  const double var_max = 0.333) ///< maximal surface variation
 {
   point_set.remove_from
     (CGAL::hierarchy_simplify_point_set
@@ -111,6 +125,11 @@ void hierarchy_simplify_point_set(
 }
 
   
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note This function adds a normal map to the point set.
+*/
 template <typename Concurrency_tag,
 	  typename PointSet>
 void
@@ -128,6 +147,9 @@ jet_estimate_normals(
 }
 
   
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+*/
 template <typename Concurrency_tag,
 	  typename PointSet>
 void
@@ -143,6 +165,9 @@ jet_smooth_point_set(
 
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+*/
 template <typename PointSet>
 typename PointSet::iterator
 mst_orient_normals(
@@ -154,6 +179,11 @@ mst_orient_normals(
      point_set.point_map(), point_set.normal_map(), k);
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note This function adds a normal map to the point set.
+*/
 template <typename Concurrency_tag,
 	  typename PointSet>
 void
@@ -169,6 +199,12 @@ pca_estimate_normals(
      k);
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note No iterator is returned, points simplified are directly
+  removed from the point set.
+ */
 template <typename PointSet>
 void random_simplify_point_set(
   PointSet& point_set, ///< point set
@@ -180,6 +216,12 @@ void random_simplify_point_set(
 }
 
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note No iterator is returned, points simplified are directly
+  removed from the point set.
+ */
 template <typename PointSet>
 void remove_outliers(
   PointSet& point_set, ///< point set
@@ -191,12 +233,17 @@ void remove_outliers(
      (point_set.begin(), point_set.end(), point_set.point_map(), k, threshold_percent));
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note This function adds a normal map to the point set.
+*/
 template <typename PointSet>
 void
 vcm_estimate_normals(
   PointSet& point_set, ///< point set
-  double offset_radius,
-  double convolution_radius)
+  double offset_radius, ///< offset radius.
+  double convolution_radius) ///< convolution radius.
 {
   point_set.add_normal_map();
 
@@ -206,12 +253,17 @@ vcm_estimate_normals(
      offset_radius, convolution_radius);
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+
+  \note This function adds a normal map to the point set.
+*/
 template <typename PointSet>
 void
 vcm_estimate_normals(
   PointSet& point_set, ///< point set
-  double offset_radius,
-  unsigned int nb_neighbors_convolve)
+  double offset_radius, ///< offset radius.
+  unsigned int nb_neighbors_convolve) ///< number of neighbors used during the convolution.
 {
   point_set.add_normal_map();
 
@@ -221,6 +273,9 @@ vcm_estimate_normals(
      offset_radius, nb_neighbors_convolve);
 }
 
+/*!
+  \ingroup PkgPointSet3PointSetProcessing3
+*/
 template <typename Concurrency_tag,
           typename PointSet>
 void
@@ -241,128 +296,6 @@ wlop_simplify_and_regularize_point_set(
      neighbor_radius, max_iter_number, require_uniform_sampling);
 }
 
-template <typename PointSet>
-bool
-read_xyz_point_set(
-  std::istream& stream, ///< input stream.
-  PointSet& point_set) ///< point set
-{
-  point_set.add_normal_map();
-
-  bool out = CGAL::read_xyz_points_and_normals
-    (stream,
-     point_set.index_back_inserter(),
-     point_set.point_push_map(),
-     point_set.normal_push_map());
-
-  bool has_normals = false;
-  for (typename PointSet::const_iterator it = point_set.begin();
-       it != point_set.end(); ++ it)
-    if (point_set.normal(*it) != CGAL::NULL_VECTOR)
-      {
-        has_normals = true;
-        break;
-      }
-
-  if (!has_normals)
-    point_set.remove_normal_map();
-  
-  return out;
-}
-
-template <typename PointSet>
-bool
-read_off_point_set(
-  std::istream& stream, ///< input stream.
-  PointSet& point_set) ///< point set
-{
-  point_set.add_normal_map();
-
-  bool out = CGAL::read_off_points_and_normals
-    (stream,
-     point_set.index_back_inserter(),
-     point_set.point_push_map(),
-     point_set.normal_push_map());
-
-  bool has_normals = false;
-  for (typename PointSet::const_iterator it = point_set.begin();
-       it != point_set.end(); ++ it)
-    if (point_set.normal(*it) != CGAL::NULL_VECTOR)
-      {
-        has_normals = true;
-        break;
-      }
-
-  if (!has_normals)
-    point_set.remove_normal_map();
-
-  return out;
-}
-
-template <typename PointSet>
-bool
-read_ply_point_set(
-  std::istream& stream, ///< input stream.
-  PointSet& point_set) ///< point set
-{
-  
-  typedef typename PointSet::Point_type Point;
-  typedef typename PointSet::Vector_type Vector;
-
-  CGAL::Ply_interpreter_point_set_3<Point, Vector> interpreter (point_set);
-
-  return CGAL::read_ply_custom_points
-    (stream, interpreter,
-     typename Kernel_traits<Point>::Kernel());
-}
-
-template <typename PointSet>
-bool
-write_xyz_point_set(
-  std::ostream& stream, ///< output stream.
-  const PointSet& point_set)  ///< point set
-{
-  if (point_set.has_normals())
-    return CGAL::write_xyz_points_and_normals
-      (stream, point_set.begin(), point_set.end(),
-       point_set.point_map(), point_set.normal_map());
-  
-  return CGAL::write_xyz_points
-  (stream, point_set.begin(), point_set.end(),
-   point_set.point_map());
-}
-
-template <typename PointSet>
-bool
-write_off_point_set(
-  std::ostream& stream, ///< output stream.
-  const PointSet& point_set)  ///< point set
-{
-  if (point_set.has_normal_map())
-    return CGAL::write_off_points_and_normals
-      (stream, point_set.begin(), point_set.end(),
-       point_set.point_map(), point_set.normal_map());
-  
-  return CGAL::write_off_points
-  (stream, point_set.begin(), point_set.end(),
-   point_set.point_map());
-}
-
-template <typename PointSet>
-bool
-write_ply_point_set(
-  std::ostream& stream, ///< output stream.
-  const PointSet& point_set)  ///< point set
-{
-  if (point_set.has_normals())
-    return CGAL::write_ply_points_and_normals
-      (stream, point_set.begin(), point_set.end(),
-       point_set.point_map(), point_set.normal_map());
-  
-  return CGAL::write_ply_points
-  (stream, point_set.begin(), point_set.end(),
-   point_set.point_map());
-}
 
 } // namespace CGAL
 
