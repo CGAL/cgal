@@ -64,14 +64,22 @@ public:
   typedef Point_set_3<Point, Vector> Point_set;
   /// \endcond
 
+  /*!
+    \brief This represents a point with associated properties.
+    \cgalModels `Index`
+    \cgalModels `LessThanComparable`
+    \cgalModels `Hashable`
+  */
   class Index
   {
     /// \cond SKIP_IN_MANUAL
     std::size_t value;
+    /// \endcond
   public:
     Index () : value ((std::size_t)(-1)) { }
     Index (const std::size_t& value) : value (value) { }
     Index (const Index& index) : value (index) { }
+    /// \cond SKIP_IN_MANUAL
     Index operator= (const Index& index) { value = index.value; return *this; }
     operator std::size_t() const { return value; }
     bool operator== (const Index& index) const { return value == index.value; }
@@ -88,45 +96,74 @@ public:
   typedef typename Properties::Property_container<Index> Base;
   /// \endcond
   
-  /*!
-    \brief Property map used to associate attributes to the items of the point set.
-
-    This class is a model of `LValuePropertyMap`.
-
-    \tparam Type The type of the property.
-  */
+  /// \cond SKIP_IN_MANUAL
   template <class Type>
   struct Property_map
-#ifndef DOXYGEN_RUNNING
     : public Properties::Property_map<Index, Type>
-#endif
   {
   };
-
-  /// \cond SKIP_IN_MANUAL
   typedef Property_map<Index> Index_map;
   /// \endcond
-  typedef Property_map<Point> Point_map; ///< Property map of points
-  typedef Property_map<Vector> Vector_map; ///< Property map of vectors
+  
 
 #ifdef DOXYGEN_RUNNING
-  typedef undefined_type iterator; ///< Iterator type of the point set
-  typedef undefined_type const_iterator; ///< Constant iterator type of the point set
+  typedef unspecified_type iterator; ///< Iterator type of the point set
+  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set
 #else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
 #endif
 
+  typedef Property_map<Point> Point_map; ///< Property map of points
+  typedef Property_map<Vector> Vector_map; ///< Property map of vectors
+
+  /// \cond SKIP_IN_MANUAL
+  template <class Type>
+  class Property_range
+  {
+  public:
+    typedef CGAL::Property_map_to_unary_function<Property_map<Type> > Unary_function;
+    typedef boost::transform_iterator<Unary_function,
+                                      Point_set::const_iterator> const_iterator;
+  private:
+    const_iterator m_begin;
+    const_iterator m_end;
+    std::size_t m_size;
+    
+  public:
+    Property_range (const Property_map<Type>& pmap, Point_set::const_iterator begin, Point_set::const_iterator end,
+           std::size_t size)
+    {
+      m_begin = boost::make_transform_iterator (begin, Unary_function(pmap));
+      m_end = boost::make_transform_iterator (end, Unary_function(pmap));
+      m_size = size;
+    }
+    
+    const_iterator begin() const { return m_begin; }
+    const_iterator end() const { return m_end; }
+    std::size_t size() const { return m_size; }
+    bool empty() const { return (m_size == 0); }
+  };
+  /// \endcond
+
+  typedef Property_range<Point> Point_range; ///< Constant range of points
+  typedef Property_range<Vector> Vector_range; ///< Constant range of vectors
 
 protected:
 
   /// \cond SKIP_IN_MANUAL
+
+  // Forbid user from using indices that are not Index type
+  Point& point (const std::size_t index) { return m_points[index]; }
+  const Point& point (const std::size_t index) const { return m_points[index]; }
+  Vector& normal (const std::size_t index) { return m_normals[index]; }
+  const Vector& normal (const std::size_t index) const { return m_normals[index]; }
+  
   Base m_base;
   Index_map m_indices;
   Point_map m_points;
   Vector_map m_normals;
   std::size_t m_nb_removed;
-
   /// \endcond
   
 public:
@@ -353,6 +390,11 @@ public:
   /// \endcond
 
   /*!
+    \brief Get a constant reference to the wanted indexed point.
+
+    \param index Index of the wanted point.
+  */
+  /*!
     \brief Get a reference to the wanted indexed point.
 
     \param index Index of the wanted point.
@@ -397,13 +439,22 @@ public:
   */
   void remove (iterator first, iterator last)
   {
+    if (std::distance (last, end()) < 0)
+      last = end();
+
     if (last == end())
       m_nb_removed += static_cast<std::size_t>(std::distance (first, end()));
-    else if (std::distance (first, end()) < 0)
-      return;
-    else
+    if (std::distance (first, end()) > 0)
       {
-        // TODO
+        iterator source = first;
+        iterator dest = end() - 1;
+        m_nb_removed += static_cast<std::size_t>(std::distance (first, last));
+        while (source != last // All elements have been moved
+               && dest != last - 1) // All elements are at the end of the container
+          {
+            std::cerr << "Swapping " << *source << " and " << *dest << std::endl;
+            std::swap (*(source ++), *(dest --));
+          }
       }
   }
   /// \cond SKIP_IN_MANUAL
@@ -491,9 +542,29 @@ public:
   /// @}
 
 
-  /// \name Properties
+  /*! \name Property Handling
+
+    A property `Property_map<Type>` allows to associate properties of
+    type `Type` to an indexed point. Properties can be added, and
+    looked up with a string, and they can be removed at runtime.
+  */
+
   /// @{
 
+#ifdef DOXYGEN_RUNNING
+  /// Model of `LvaluePropertyMap` with `Index` as a key type and `Type`
+  /// as value type.
+  template <class Type>
+  using Property_map = unspecified_type;
+  
+  /// Model of `ConstRange` that handles constant ranges for property
+  /// maps with value type `Type`.
+  template <class Type>
+  using Property_range = unspecified_type;
+
+#endif
+
+  
   /*!
     \brief Test if property `name` of type `T` already exists.
 
@@ -553,6 +624,15 @@ public:
     return std::make_pair (reinterpret_cast<Property_map<T>&>(pm), okay);
   }
 
+  /*!
+    \brief Get a constant range for property `pmap`.
+  */
+  template <class T>
+  Property_range<T> range (const Property_map<T>& pmap) const
+  {
+    return Property_range<T> (pmap, begin(), end(), number_of_points());
+  }
+  
   /*!
     \brief Removes the wanted property.
 
@@ -616,6 +696,13 @@ public:
     return m_normals;
   }
   /*!
+    \brief Get a constant range of normals.
+  */
+  Vector_range normals () const
+  {
+    return this->range<Vector> (m_normals);
+  }
+  /*!
     \brief Convenience method that removes the normal property.
 
     \return Returns `true` if the property was removed and `false` if
@@ -640,6 +727,13 @@ public:
   {
     return m_points;
   }
+  /*!
+    \brief Get a constant range of points.
+  */
+  Point_range points () const
+  {
+    return this->range<Point> (m_points);
+  }
 
   /*!
     \brief List properties with their types in a `std::string` object.
@@ -660,21 +754,31 @@ public:
   /// @}
 
 
-  /// \name Push Property Maps and Inserters (Advanced)
+  /*!
+    \name Push Property Maps and Inserters (Advanced)
+
+    The following method are specifically designed to make
+    `CGAL::Point_set_3` usable with \cgal input/output functions.
+  */
+  
   /// @{
 
-  /*!
-    \cgalAdvancedClass
+#ifdef DOXYGEN_RUNNING
+  /// Model of `OutputIterator` used to insert elements by defining
+  /// the value of the property `Property`.
+  template <class Property>
+  using Property_back_inserter = unspecified_type;
 
-    \brief Class used to insert elements by defining the value of one of its properties.
-
-    This class is a model of `OutputIterator`.
-
-    \tparam Property The object `Property_map<Type>` that will be filled by the output iteration.
-  */
+  /// Model of `WritablePropertyMap` based on `Property` and that
+  /// pushes a new item to the point set if needed.
+  template <class Property>
+  using Push_property_map = unspecified_type;
+#endif
+  
+  /// \cond SKIP_IN_MANUAL  
   template <typename Property>
   class Property_back_inserter {
-    /// \cond SKIP_IN_MANUAL
+
   public:
     typedef std::output_iterator_tag iterator_category;
     typedef typename Property::value_type value_type;
@@ -703,21 +807,13 @@ public:
       ++ ind;
       return *this;
     }
-    /// \endcond      
+
   };
 
-  /*!
-    \cgalAdvancedClass
-    \brief Property map that pushes a new item to the point set if needed.
-
-    This class is a model of `WritablePropertyMap`.
-
-    \tparam Property The object `Property_map<Type>` where to push new values.
-  */
   template <typename Property>
   class Push_property_map
   {
-    /// \cond SKIP_IN_MANUAL
+
   public:
     typedef Index key_type;
     typedef typename Property::value_type value_type;
@@ -746,9 +842,9 @@ public:
     {
       return ((*(pm.prop))[i]);
     }
-    /// \endcond
-  };
 
+  };
+  /// \endcond      
 
   typedef Property_back_inserter<Index_map> Index_back_inserter; ///< Back inserter on indices
   typedef Property_back_inserter<Point_map> Point_back_inserter; ///< Back inserter on points
@@ -865,8 +961,8 @@ private:
 
   \relates Point_set_3
   
-  Shifts the indices of points of `other` by `sm.number_of_points() +
-   sm.number_of_points()`.
+   Shifts the indices of points of `other` by `ps.number_of_points() +
+   other.number_of_points()`.
 
    Copies entries of all property maps which have the same name in `ps` and `other`. 
    Property maps which are only in `other` are ignored.
@@ -874,7 +970,6 @@ private:
    \note Garbage is collected in both point sets when calling this function.
 
 */
-  
 template <typename P>
 Point_set_3<P>& operator+=(Point_set_3<P>& ps, Point_set_3<P>& other)
 {
