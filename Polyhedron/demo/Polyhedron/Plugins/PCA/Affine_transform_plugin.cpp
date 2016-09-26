@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/bounding_box.h>
 #include "Scene_polyhedron_transform_item.h"
+#include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
@@ -17,8 +18,111 @@
 
 #include "ui_Transformation_widget.h"
 
+class Scene_transform_point_set_item : public Scene_item
+{
+  Q_OBJECT
+  typedef Point_set_3<Kernel> Point_set;
+public:
+  Scene_transform_point_set_item(Scene_points_with_normal_item *item, const qglviewer::Vec& pos)
+    :Scene_item(1,1),
+      base(item),
+      center_(pos),
+      frame(new CGAL::Three::Scene_item::ManipulatedFrame())
+  {
+    frame->setPosition(pos);
+    Point_set ps= *item->point_set();
+    std::random_shuffle (ps.begin(), ps.end());
+
+
+    std::vector<float> points;
+    points.reserve(3*ps.size());
+    for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
+    {
+      const UI_point& p = *it;
+      points.push_back(p.x()-center_.x);
+      points.push_back(p.y()-center_.y);
+      points.push_back(p.z()-center_.z);
+    }
+    nb_points = points.size();
+    CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    program = getShaderProgram(Scene_polyhedron_transform_item::PROGRAM_WITHOUT_LIGHT, viewer);
+    program->bind();
+
+    vaos[0]->bind();
+    buffers[0].bind();
+    buffers[0].allocate(points.data(),
+                        static_cast<int>(points.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[0].release();
+    vaos[0]->release();
+
+    program->release();
+  }
+
+  bool manipulatable() const { return true; }
+
+  Scene_item* clone()const{ return NULL; }
+
+  bool supportsRenderingMode(RenderingMode m) const { return m==Points ; }
+
+  QString toolTip() const {
+      return QObject::tr("<p>Affine transformation of <b>%1</b></p>"
+                         "<p>Keep <b>Ctrl</b> pressed and use the arcball to define an affine transformation.<br />"
+                         "Press <b>S</b> to apply the affine transformation to a copy of <b>%1</b>.</p>")
+              .arg(getBase()->name());
+  }
+
+  ~Scene_transform_point_set_item() {delete frame; Q_EMIT killed(); }
+  void drawPoints(Viewer_interface *viewer) const
+  {
+    GLfloat point_size;
+    viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
+    viewer->glPointSize(6.f);
+    double ratio_displayed = 1.0;
+    if (viewer->inFastDrawing () &&
+        (nb_points /3 > 300000)) // arbitrary large value
+      ratio_displayed = 3 * 300000. / (double)nb_points;
+
+    vaos[0]->bind();
+    program=getShaderProgram(PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
+    program->bind();
+    QMatrix4x4 f_matrix;
+    for (int i=0; i<16; ++i){
+      f_matrix.data()[i] = (float)frame->matrix()[i];
+    }
+    program->setAttributeValue("colors", QColor(Qt::green));
+    program->setUniformValue("f_matrix", f_matrix);
+    program->setUniformValue("is_selected", false);
+    viewer->glDrawArrays(GL_POINTS, 0,
+                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * nb_points)/3)));
+    vaos[0]->release();
+    program->release();
+  }
+  bool keyPressEvent(QKeyEvent* e){
+    if (e->key()==Qt::Key_S){
+      Q_EMIT stop();
+      return true;
+    }
+    return false;
+  }
+  const Scene_points_with_normal_item* getBase()const{return base;}
+  const qglviewer::Vec& center() const { return center_; }
+  CGAL::Three::Scene_item::ManipulatedFrame* manipulatedFrame() { return frame; }
+Q_SIGNALS:
+  void stop();
+  void killed();
+private:
+  const Scene_points_with_normal_item* base;
+  qglviewer::Vec center_;
+  CGAL::Three::Scene_item::ManipulatedFrame* frame;
+  mutable QOpenGLShaderProgram *program;
+  std::size_t nb_points;
+
+};
 using namespace CGAL::Three;
-class Polyhedron_demo_transform_polyhedron_plugin :
+class Polyhedron_demo_affine_transform_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -28,7 +132,7 @@ class Polyhedron_demo_transform_polyhedron_plugin :
 
 public:
 
-  Polyhedron_demo_transform_polyhedron_plugin():started(false){}
+  Polyhedron_demo_affine_transform_plugin():started(false){}
 
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionTransformPolyhedron;
@@ -36,20 +140,25 @@ public:
 
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
-           qobject_cast<Scene_polyhedron_transform_item*>(scene->item(scene->mainSelectionIndex()));
+           qobject_cast<Scene_polyhedron_transform_item*>(scene->item(scene->mainSelectionIndex())) ||
+           qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex())) ||
+                   qobject_cast<Scene_transform_point_set_item*>(scene->item(scene->mainSelectionIndex()));
   }
   
   void init(QMainWindow* _mw, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
-    for(int i=0; i<3; ++i)
-    {
-        scaling[i] = 1;
-    }
-    mw = _mw;
+      for(int i=0; i<3; ++i)
+      {
+          scaling[i] = 1;
+      }
+      mw = _mw;
     this->scene = scene_interface;
     actionTransformPolyhedron = new QAction("Affine Transformation", mw);
     if(actionTransformPolyhedron) {
       connect(actionTransformPolyhedron, SIGNAL(triggered()),this, SLOT(go()));
     }
+    transform_item = NULL;
+    transform_points_item = NULL;
+
     dock_widget = new QDockWidget(mw);
     ui.setupUi(dock_widget);
 
@@ -65,16 +174,17 @@ public:
       widget->setSizePolicy(sp_retain);
     }
     connect(ui.applyMatrix_Button, &QPushButton::clicked,
-            this, &Polyhedron_demo_transform_polyhedron_plugin::updateTransformMatrix);
+            this, &Polyhedron_demo_affine_transform_plugin::updateTransformMatrix);
     connect(ui.resetMatrix_Button, &QPushButton::clicked,
-            this, &Polyhedron_demo_transform_polyhedron_plugin::resetTransformMatrix);
+            this, &Polyhedron_demo_affine_transform_plugin::resetTransformMatrix);
     connect(ui.applyTransfo_Button, &QPushButton::clicked,
-            this, &Polyhedron_demo_transform_polyhedron_plugin::applySingleTransformation);
+            this, &Polyhedron_demo_affine_transform_plugin::applySingleTransformation);
     connect(ui.transfo_ComboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(updateSingleTransfoValues(int)));
   }
 
   void start(Scene_polyhedron_item*);
+  void start(Scene_points_with_normal_item*);
   void end();  
   void closure()
   {
@@ -87,6 +197,7 @@ private:
   Ui::TransformationWidget ui;
   QAction*  actionTransformPolyhedron;
   Scene_polyhedron_transform_item* transform_item;
+  Scene_transform_point_set_item* transform_points_item;
   CGAL::Three::Scene_interface::Item_id tr_item_index;
   CGAL::Three::Scene_interface* scene;
   bool started;
@@ -115,6 +226,7 @@ private:
 public Q_SLOTS:
   void go();
   void transformed_killed();
+
   void updateUiMatrix();
   void updateTransformMatrix();
   void resetTransformMatrix()
@@ -123,34 +235,46 @@ public Q_SLOTS:
       return;
     double matrix[16] = {0};
     matrix[0]=1; matrix[5] = 1; matrix[10] = 1; matrix[15] = 1;
+    matrix[12] = transform_item->center().x;
+    matrix[13] = transform_item->center().y;
+    matrix[14] = transform_item->center().z;
     transform_item->manipulatedFrame()->setFromMatrix(matrix);
     transform_item->itemChanged();
   }
   void updateSingleTransfoValues(int);
   void applySingleTransformation();
 
-}; // end class Polyhedron_demo_transform_polyhedron_plugin
+}; // end class Polyhedron_demo_affine_transform_plugin
 
-void Polyhedron_demo_transform_polyhedron_plugin::go(){
+void Polyhedron_demo_affine_transform_plugin::go(){
   if (!started){
     Scene_item* item = scene->item(scene->mainSelectionIndex());
+    Scene_points_with_normal_item* points_item = NULL;
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
-    if(!poly_item) return;
+    if(!poly_item)
+    {
+      points_item = qobject_cast<Scene_points_with_normal_item*>(item);
+      if(!points_item)
+        return;
+    }
     dock_widget->show();
     started=true;
     actionTransformPolyhedron->setText("Apply affine transformation");
-    start(poly_item);
+    if(poly_item)
+      start(poly_item);
+    else if(points_item)
+      start(points_item);
   }
   else
     end();    
 }
 
-void Polyhedron_demo_transform_polyhedron_plugin::transformed_killed(){
+void Polyhedron_demo_affine_transform_plugin::transformed_killed(){
     started=false;
     actionTransformPolyhedron->setText("Affine Transformation");
 }
 
-void Polyhedron_demo_transform_polyhedron_plugin::start(Scene_polyhedron_item* poly_item){
+void Polyhedron_demo_affine_transform_plugin::start(Scene_polyhedron_item* poly_item){
   QApplication::setOverrideCursor(Qt::PointingHandCursor);
   
   Scene_polyhedron_item::Bbox bbox = poly_item->bbox();
@@ -169,8 +293,27 @@ void Polyhedron_demo_transform_polyhedron_plugin::start(Scene_polyhedron_item* p
   connect(transform_item, SIGNAL(stop()),this, SLOT(go()));
   connect(transform_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
   connect(transform_item->manipulatedFrame(), &qglviewer::ManipulatedFrame::modified,
-          this, &Polyhedron_demo_transform_polyhedron_plugin::updateUiMatrix);
+          this, &Polyhedron_demo_affine_transform_plugin::updateUiMatrix);
   tr_item_index=scene->addItem(transform_item);
+  scene->setSelectedItem(tr_item_index);
+  resetTransformMatrix();
+}
+
+void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_item* points_item){
+  QApplication::setOverrideCursor(Qt::PointingHandCursor);
+
+  Scene_points_with_normal_item::Bbox bbox = points_item->bbox();
+  double x=(bbox.xmin()+bbox.xmax())/2;
+  double y=(bbox.ymin()+bbox.ymax())/2;
+  double z=(bbox.zmin()+bbox.zmax())/2;
+
+  transform_points_item = new Scene_transform_point_set_item(points_item,qglviewer::Vec(x,y,z));
+  //transform_points_item->setManipulatable(true);
+  transform_points_item->setRenderingMode(Points);
+  transform_points_item->setName(tr("Affine Transformation"));
+  connect(transform_points_item, SIGNAL(stop()),this, SLOT(go()));
+  connect(transform_points_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
+  tr_item_index=scene->addItem(transform_points_item);
   scene->setSelectedItem(tr_item_index);
 }
 
@@ -203,22 +346,57 @@ struct Modifier_transform_vertices : public CGAL::Modifier_base<Polyhedron::Half
 };
 
 
-void Polyhedron_demo_transform_polyhedron_plugin::end(){
+void Polyhedron_demo_affine_transform_plugin::end(){
   QApplication::restoreOverrideCursor();
-  double * matrix = transformMatrix();
-  Modifier_transform_vertices modifier(matrix,transform_item->center());
-  delete[] matrix;
-  Polyhedron* new_poly=new Polyhedron(*transform_item->getBase()->polyhedron());
-  new_poly->delegate(modifier);
-  
-  Scene_polyhedron_item* new_item=new Scene_polyhedron_item(new_poly);
-  new_item->setName(tr("%1_transformed").arg(transform_item->getBase()->name()));
-  
-  scene->replaceItem(tr_item_index,new_item);
-  delete transform_item;
-  transform_item = NULL;
+  if(transform_item)
+  {
+    const GLdouble* matrix = transformMatrix();
+    Modifier_transform_vertices modifier(matrix,transform_item->center());
+    delete[] matrix;
+    Polyhedron* new_poly=new Polyhedron(*transform_item->getBase()->polyhedron());
+    new_poly->delegate(modifier);
+
+    Scene_polyhedron_item* new_item=new Scene_polyhedron_item(new_poly);
+    new_item->setName(tr("%1_transformed").arg(transform_item->getBase()->name()));
+
+    scene->replaceItem(tr_item_index,new_item);
+
+    delete transform_item;
+    transform_item = NULL;
+  }
+  else if(transform_points_item)
+  {
+    const GLdouble* matrix = transform_points_item->manipulatedFrame()->matrix();
+    QMatrix4x4 transform_matrix;
+    for(int i=0; i<16; ++i)
+      transform_matrix.data()[i] = (float)matrix[i];
+    const Point_set *base_ps = transform_points_item->getBase()->point_set();
+    Point_set* new_ps = new Point_set();
+    new_ps->reserve(base_ps->size());
+    qglviewer::Vec c = transform_points_item->center();
+    for(std::size_t id = 0; id<base_ps->size(); ++id)
+    {
+      QVector3D vec = transform_matrix * QVector3D(base_ps->at(id).x() - c.x,
+                                base_ps->at(id).y() - c.y,
+                                base_ps->at(id).z() - c.z);
+      UI_point p(vec.x(), vec.y(), vec.z());
+      new_ps->push_back(p);
+    }
+
+
+    Scene_points_with_normal_item* new_item=new Scene_points_with_normal_item();
+    for(std::size_t id = 0; id<new_ps->size(); ++id)
+      new_item->point_set()->push_back(new_ps->at(id));
+    new_item->setName(tr("%1_transformed").arg(transform_points_item->getBase()->name()));
+
+    scene->replaceItem(tr_item_index,new_item);
+    delete transform_points_item;
+    transform_points_item = NULL;
+  }
+
 }
-void Polyhedron_demo_transform_polyhedron_plugin::updateUiMatrix()
+
+void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
 {
 
   double * tmatrix = transformMatrix();
@@ -235,7 +413,7 @@ void Polyhedron_demo_transform_polyhedron_plugin::updateUiMatrix()
     ui.matrix_30->setText(QString("%1").arg(matrix(3,0))); ui.matrix_31->setText(QString("%1").arg(matrix(3,1))); ui.matrix_32->setText(QString("%1").arg(matrix(3,2))); ui.matrix_33->setText(QString("%1").arg(matrix(3,3)));
 }
 
-void Polyhedron_demo_transform_polyhedron_plugin::updateTransformMatrix()
+void Polyhedron_demo_affine_transform_plugin::updateTransformMatrix()
 {
   if (!transform_item)
     return;
@@ -244,17 +422,20 @@ void Polyhedron_demo_transform_polyhedron_plugin::updateTransformMatrix()
   matrix[1] = ui.matrix_10->text().toDouble(); matrix[5] = ui.matrix_11->text().toDouble(); matrix[9] = ui.matrix_12->text().toDouble(); matrix[13] = ui.matrix_13->text().toDouble();
   matrix[2] = ui.matrix_20->text().toDouble(); matrix[6] = ui.matrix_21->text().toDouble(); matrix[10] = ui.matrix_22->text().toDouble(); matrix[14] = ui.matrix_23->text().toDouble();
   matrix[3] = ui.matrix_30->text().toDouble(); matrix[7] = ui.matrix_31->text().toDouble(); matrix[11]= ui.matrix_32->text().toDouble(); matrix[15] = ui.matrix_33->text().toDouble();
+  //save the scaling values before the manipulated signal is sent by setFromMatrix()
+  scaling[0]= ui.matrix_00->text().toDouble();
+  scaling[1]= ui.matrix_11->text().toDouble();
+  scaling[2]= ui.matrix_22->text().toDouble();
+  //the scaling data is lost with this function...
   transform_item->manipulatedFrame()->setFromMatrix(matrix);
+  //...but not with this one
   double * tmatrix = transformMatrix();
-  tmatrix[0] = ui.matrix_00->text().toDouble();
-  tmatrix[5] = ui.matrix_11->text().toDouble();
-  tmatrix[10] = ui.matrix_22->text().toDouble();
   transform_item->setFMatrix(tmatrix);
   delete[] tmatrix;
   transform_item->itemChanged();
 }
 
-void Polyhedron_demo_transform_polyhedron_plugin::updateSingleTransfoValues(int index)
+void Polyhedron_demo_affine_transform_plugin::updateSingleTransfoValues(int index)
 {
   ui.lineEditZ->setToolTip("Value along the z-axis.");
   switch(index)
@@ -287,7 +468,7 @@ void Polyhedron_demo_transform_polyhedron_plugin::updateSingleTransfoValues(int 
   }
 }
 
-void Polyhedron_demo_transform_polyhedron_plugin::applySingleTransformation()
+void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
 {
   if(!transform_item)
     return;
@@ -306,9 +487,9 @@ void Polyhedron_demo_transform_polyhedron_plugin::applySingleTransformation()
     //translation
   case 1:
   {
-    transform_item->manipulatedFrame()->translate(qglviewer::Vec(ui.lineEditX->text().toDouble(),
-                                                                 ui.lineEditY->text().toDouble(),
-                                                                 ui.lineEditZ->text().toDouble()));
+    transform_item->manipulatedFrame()->translate(qglviewer::Vec(ui.lineEditX->text().toDouble() ,
+                                                                 ui.lineEditY->text().toDouble() ,
+                                                                 ui.lineEditZ->text().toDouble() ));
     break;
   }
     //scaling
@@ -330,18 +511,24 @@ void Polyhedron_demo_transform_polyhedron_plugin::applySingleTransformation()
                             transform_item->bbox().ymax(),
                             transform_item->bbox().zmax());
 
-
-    //Scale the item so that its coordinates are in [0..1]
-    double max = (std::max)(tsr.x() - bil.x(), tsr.y()-bil.y());
-     max = (std::max)(max, tsr.z()-bil.z());
-
-    scaling[0] = 1.0/max;
-    scaling[1] = 1.0/max;
-    scaling[2] = 1.0/max;
     transform_item->manipulatedFrame()->translate(qglviewer::Vec(
                                                     -bil.x(),
                                                     -bil.y(),
                                                     -bil.z()));
+QMatrix4x4 tMatrix;
+for(int i=0; i<16; ++i)
+{
+  tMatrix.data()[i] = transform_item->manipulatedFrame()->matrix()[i];
+}
+QVector3D transformed_tsr = QVector3D(tsr.x(), tsr.y(), tsr.z())*tMatrix;
+
+    //Scale the item so that its coordinates are in [0..1]
+    double max = (std::max)((double)transformed_tsr.x(), (double)transformed_tsr.y());
+     max = (std::max)(max, (double)transformed_tsr.z());
+
+    scaling[0] = 1.0/max;
+    scaling[1] = 1.0/max;
+    scaling[2] = 1.0/max;
     break;
   }
   default:
@@ -358,4 +545,5 @@ void Polyhedron_demo_transform_polyhedron_plugin::applySingleTransformation()
   delete[] matrix;
   transform_item->itemChanged();
 }
-#include "Transform_polyhedron_plugin.moc"
+
+#include "Affine_transform_plugin.moc"
