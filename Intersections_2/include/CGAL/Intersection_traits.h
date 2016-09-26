@@ -25,6 +25,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/result_of.h>
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/variant.hpp>

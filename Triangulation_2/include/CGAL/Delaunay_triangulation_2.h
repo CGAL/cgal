@@ -27,6 +27,7 @@
 
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Object.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>

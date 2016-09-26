@@ -27,6 +27,7 @@
 #define CGAL_CIRCULAR_KERNEL_INTERNAL_FUNCTIONS_ON_CIRCLE_2_H
 
 #include <CGAL/Circular_kernel_2/Intersection_traits.h>
+#include <vector>
 
 namespace CGAL {
 

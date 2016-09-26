@@ -27,6 +27,7 @@
 #include <CGAL/wmult.h>
 #include <boost/next_prior.hpp>
 #include <CGAL/Intersection_traits_3.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

@@ -24,6 +24,7 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <iostream>
 #include <sstream>

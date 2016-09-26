@@ -25,6 +25,7 @@
 #define CGAL_CHAINED_MAP_H
 
 #include <CGAL/memory.h>
+#include <iostream>
 
 namespace CGAL {
 

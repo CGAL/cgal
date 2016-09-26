@@ -32,7 +32,7 @@
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
-
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

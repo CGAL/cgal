@@ -19,6 +19,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_FACE_BASE_2_H
 #define CGAL_STRAIGHT_SKELETON_FACE_BASE_2_H 1
 
+#include <CGAL/tags.h>
+#include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
 

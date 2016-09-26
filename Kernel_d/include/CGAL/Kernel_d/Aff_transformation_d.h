@@ -27,6 +27,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Kernel_d/Vector_d.h>
 #include <CGAL/Kernel_d/Direction_d.h>
+#include <CGAL/aff_transformation_tags.h>
 
 namespace CGAL {
 

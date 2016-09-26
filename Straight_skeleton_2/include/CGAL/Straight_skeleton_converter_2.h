@@ -20,6 +20,7 @@
 #define CGAL_STRAIGHT_SKELETON_CONVERTER_2_H 1
 
 #include <boost/shared_ptr.hpp>
+#include <CGAL/Cartesian_converter.h>
 
 #include <CGAL/Straight_skeleton_2.h>
 

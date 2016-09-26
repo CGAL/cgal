@@ -26,6 +26,7 @@
 #define CGAL_RANDOM_CONVEX_SET_TRAITS_2_H 1
 
 #include <CGAL/Point_2.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

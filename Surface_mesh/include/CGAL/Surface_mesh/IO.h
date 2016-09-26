@@ -32,6 +32,7 @@
 #include <CGAL/use.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Surface_mesh/Properties.h>
+#include <CGAL/Kernel_traits.h>
 
 //=============================================================================
 

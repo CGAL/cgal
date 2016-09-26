@@ -22,6 +22,7 @@
 #define CGAL_INTERSECTION_TRAITS_3_H
 
 #include <CGAL/Intersection_traits.h>
+#include <vector>
 
 #if !(CGAL_INTERSECTION_VERSION < 2)
 

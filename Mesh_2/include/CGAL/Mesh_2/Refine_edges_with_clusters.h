@@ -23,6 +23,8 @@
 
 #include <CGAL/Mesh_2/Refine_edges.h>
 #include <CGAL/Mesh_2/Clusters.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 
