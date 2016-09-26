@@ -63,8 +63,26 @@ public:
   typedef Vector Vector_type;
   typedef Point_set_3<Point, Vector> Point_set;
   /// \endcond
-  
-  typedef typename std::size_t Index; ///< Items are indices
+
+  class Index
+  {
+    /// \cond SKIP_IN_MANUAL
+    std::size_t value;
+  public:
+    Index () : value ((std::size_t)(-1)) { }
+    Index (const std::size_t& value) : value (value) { }
+    Index (const Index& index) : value (index) { }
+    Index operator= (const Index& index) { value = index.value; return *this; }
+    operator std::size_t() const { return value; }
+    bool operator== (const Index& index) const { return value == index.value; }
+    bool operator!= (const Index& index) const { return value != index.value; }
+    bool operator<  (const Index& index) const { return value < index.value; }
+    Index& operator++ () { ++ value; return *this; }
+    Index& operator-- () { -- value; return *this; }
+    Index operator++ (int) { Index tmp(*this); ++ value; return tmp; }
+    Index operator-- (int) { Index tmp(*this); -- value; return tmp; }
+    /// \endcond
+  };
 
   /// \cond SKIP_IN_MANUAL
   typedef typename Properties::Property_container<Index> Base;
@@ -86,15 +104,18 @@ public:
   };
 
   /// \cond SKIP_IN_MANUAL
-  typedef Property_map<std::size_t> Index_map;
+  typedef Property_map<Index> Index_map;
   /// \endcond
   typedef Property_map<Point> Point_map; ///< Property map of points
   typedef Property_map<Vector> Vector_map; ///< Property map of vectors
 
+#ifdef DOXYGEN_RUNNING
+  typedef undefined_type iterator; ///< Iterator type of the point set
+  typedef undefined_type const_iterator; ///< Constant iterator type of the point set
+#else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
-
-
+#endif
 
 
 protected:
@@ -124,30 +145,12 @@ public:
       add_normal_map();
   }
 
-  template <typename TypeProp1>
-  Point_set_3 (const std::string& name_prop1, const TypeProp1& default_value_prop1) : m_base()
-  {
-    clear();
-    this->add_property_map<TypeProp1>(name_prop1, default_value_prop1);
-    m_normals = this->property_map<Vector> ("normal").first;
-  }
-
-  template <typename TypeProp1, typename TypeProp2>
-  Point_set_3 (const std::string& name_prop1, const TypeProp1& default_value_prop1,
-               const std::string& name_prop2, const TypeProp2& default_value_prop2)
-    : m_base()
-  {
-    clear();
-    this->add_property_map<TypeProp1>(name_prop1, default_value_prop1);
-    this->add_property_map<TypeProp2>(name_prop2, default_value_prop2);
-    m_normals = this->property_map<Vector> ("normal").first;
-  }
-
+  /// \cond SKIP_IN_MANUAL
   Point_set_3 (const Point_set_3& ps)
   {
     *this = ps;
   }
-
+  /// \endcond
 
 
   /// @}
@@ -207,7 +210,7 @@ public:
   void clear()
   {
     m_base.clear();
-    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<std::size_t>("index", (std::size_t)(-1));
+    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<Index>("index", (std::size_t)(-1));
     boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
     m_nb_removed = 0;
   }
@@ -354,13 +357,13 @@ public:
 
     \param index Index of the wanted point.
   */
-  Point& point (Index index) { return m_points[index]; }
+  Point& point (const Index& index) { return m_points[index]; }
   /*!
     \brief Get a constant reference to the wanted indexed point.
 
     \param index Index of the wanted point.
   */
-  const Point& point (Index index) const { return m_points[index]; }
+  const Point& point (const Index& index) const { return m_points[index]; }
   /*!
     \brief Get a reference to the wanted indexed normal.
 
@@ -369,7 +372,7 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
   */
-  Vector& normal (Index index) { return m_normals[index]; }
+  Vector& normal (const Index& index) { return m_normals[index]; }
   /*!
     \brief Get a constant reference to the wanted indexed normal.
 
@@ -378,7 +381,7 @@ public:
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
   */
-  const Vector& normal (Index index) const { return m_normals[index]; }
+  const Vector& normal (const Index& index) const { return m_normals[index]; }
 
   /// @}
 
@@ -394,9 +397,9 @@ public:
   */
   void remove (iterator first, iterator last)
   {
-    if (last == garbage_end())
-      m_nb_removed = static_cast<std::size_t>(std::distance (first, garbage_end()));
-    else if (std::distance (first, garbage_begin()) < 0)
+    if (last == end())
+      m_nb_removed += static_cast<std::size_t>(std::distance (first, end()));
+    else if (std::distance (first, end()) < 0)
       return;
     else
       {
@@ -406,7 +409,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   void remove_from (iterator first)
   {
-    remove (first, garbage_end());
+    remove (first, end());
   }
   /// \endcond
   
@@ -419,7 +422,7 @@ public:
   */
   void remove (iterator it)
   {
-    std::swap (*it, *(garbage_begin() - 1));
+    std::iter_swap (it, (end() - 1));
     ++ m_nb_removed;
   }
 
@@ -683,20 +686,20 @@ public:
 
     Point_set* ps;
     Property* prop;
-    std::size_t ind;
+    Index ind;
   
   public:
     
-    Property_back_inserter(Point_set* ps, Property* prop, std::size_t ind=0)
+    Property_back_inserter(Point_set* ps, Property* prop, Index ind=Index())
       : ps(ps), prop (prop), ind(ind) {}
     Property_back_inserter& operator++() { return *this; }
     Property_back_inserter& operator++(int) { return *this; }
     Property_back_inserter& operator*() { return *this; }
     Property_back_inserter& operator= (const value_type& p)
     {
-      if(ps->size() <= (typename Point_set::Index(ind)))
+      if(ps->size() <= ind)
         ps->insert();
-      put(*prop, Point_set::Index(ind), p);
+      put(*prop, ind, p);
       ++ ind;
       return *this;
     }
@@ -716,30 +719,30 @@ public:
   {
     /// \cond SKIP_IN_MANUAL
   public:
-    typedef std::size_t key_type;
+    typedef Index key_type;
     typedef typename Property::value_type value_type;
     typedef value_type& reference;
     typedef boost::lvalue_property_map_tag category;
     
     Point_set* ps;
     Property* prop;
-    mutable std::size_t ind;
+    mutable Index ind;
 
     Push_property_map(Point_set* ps = NULL,
-              Property* prop = NULL,
-              std::size_t ind=0)
+                      Property* prop = NULL,
+                      Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Push_property_map& pm, std::size_t& i, const typename Property::value_type& t)
+    friend void put(const Push_property_map& pm, Index& i, const typename Property::value_type& t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->insert();
-      put(*(pm.prop), Point_set::Index(pm.ind), t);
+      put(*(pm.prop), pm.ind, t);
       i = pm.ind;
       ++pm.ind;
     }
 
-    friend const reference get (const Push_property_map& pm, const std::size_t& i)
+    friend const reference get (const Push_property_map& pm, const Index& i)
     {
       return ((*(pm.prop))[i]);
     }
