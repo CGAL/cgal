@@ -1114,7 +1114,8 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
           BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_face(h, tm))
           {
             CGAL_assertion_code(bool insert_ok =)
-            visited.insert(hh).second;
+            visited.insert(hh)
+            CGAL_assertion_code(.second);
             CGAL_assertion(insert_ok || h==hh);
           }
         }
