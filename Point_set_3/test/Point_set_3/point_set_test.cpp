@@ -50,11 +50,29 @@ int main (int, char**)
   std::size_t size = point_set.size ();
   point_set.remove_from (first_to_remove);
   test ((point_set.size() + point_set.garbage_size() == size), "sizes before and after removal do not match.");
-  
+ 
+  Point_set::Point_range
+    range = point_set.points();
+
+  {
+    Point_set::const_iterator psit = point_set.begin();
+    bool range_okay = true;
+    for (Point_set::Point_range::const_iterator it = range.begin(); it != range.end(); ++ it)
+      {
+        if (*it != point_set.point (*psit))
+          {
+            range_okay = false;
+            break;
+          }
+        ++ psit;
+      }
+    test (range_okay, "range access does not follow property map based access.");
+  }
+
   test (point_set.has_garbage(), "point set should have garbage.");
   point_set.collect_garbage();
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
-  
+
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
   typename Point_set::Property_map<Color> color_prop;
   bool garbage;
@@ -80,6 +98,8 @@ int main (int, char**)
   test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
   point_set.remove_property_map<Color> (color_prop);
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
+
+  
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
   

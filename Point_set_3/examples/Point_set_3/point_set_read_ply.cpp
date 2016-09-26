@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/Point_set_processing_3.h>
+#include <CGAL/Point_set_3/IO.h>
 
 #include <fstream>
 #include <limits>
