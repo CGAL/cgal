@@ -117,9 +117,11 @@ public:
   /*!
     \brief Create an empty point set with no additional property.
    */
-  Point_set_3 () : m_base()
+  Point_set_3 (bool with_normal_map = false) : m_base()
   {
     clear();
+    if (with_normal_map)
+      add_normal_map();
   }
 
   template <typename TypeProp1>
@@ -352,74 +354,31 @@ public:
 
     \param index Index of the wanted point.
   */
-  Point& point (Index index) { return m_points[m_indices[index]]; }
+  Point& point (Index index) { return m_points[index]; }
   /*!
     \brief Get a constant reference to the wanted indexed point.
 
     \param index Index of the wanted point.
   */
-  const Point& point (Index index) const { return m_points[m_indices[index]]; }
-  /*!
-    \brief Get a reference to the wanted indexed point.
-
-    \param it Iterator of the wanted item.
-  */
-  Point& point (iterator it) { return m_points[*it]; }
-  /*!
-    \brief Get a constant reference to the wanted indexed point.
-
-    \param it Iterator of the wanted item.
-  */
-  const Point& point (const_iterator it) const { return m_points[*it]; }
-  /*!
-    \brief Get a reference to the wanted indexed point (convenience method).
-
-    \param index Index of the wanted point.
-  */
-  Point& operator[] (Index index) { return m_points[m_indices[index]]; }
-  /*!
-    \brief Get a const reference the wanted indexed point (convenience method).
-
-    \param index Index of the wanted point.
-  */
-  const Point& operator[] (Index index) const { return m_points[m_indices[index]]; }
-  
+  const Point& point (Index index) const { return m_points[index]; }
   /*!
     \brief Get a reference to the wanted indexed normal.
 
     \param index Index of the wanted normal.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
-  Vector& normal (Index index) { return m_normals[m_indices[index]]; }
+  Vector& normal (Index index) { return m_normals[index]; }
   /*!
     \brief Get a constant reference to the wanted indexed normal.
 
     \param index Index of the wanted normal.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
-  const Vector& normal (Index index) const { return m_normals[m_indices[index]]; }
-  /*!
-    \brief Get a reference to the wanted indexed normal.
-
-    \param it Iterator of the wanted item.
-
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
-  */
-  Vector& normal (iterator it) { return m_normals[*it]; }
-  /*!
-    \brief Get a constant reference to the wanted indexed normal.
-
-    \param it Iterator of the wanted item.
-
-    \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
-  */
-  const Vector& normal (const_iterator it) const { return m_normals[*it]; }
+  const Vector& normal (Index index) const { return m_normals[index]; }
 
   /// @}
 
@@ -476,15 +435,6 @@ public:
   }
 
   /*!
-    \brief Iterator to the first removed element (equal to `garbage_end()` if
-    no elements are marked as removed.
-  */
-  iterator garbage_begin () { return m_indices.end() - m_nb_removed; }
-  /*!
-    \brief Past-the-end iterator of the removed elements.
-  */
-  iterator garbage_end () { return m_indices.end(); }
-  /*!
     \brief Constant iterator to the first removed element (equal to `garbage_end()` if
     no elements are marked as removed.
   */
@@ -497,7 +447,9 @@ public:
     \brief Number of removed points.
   */
   std::size_t number_of_removed_points () const { return m_nb_removed; }
-
+  /// \cond SKIP_IN_MANUAL
+  std::size_t garbage_size () const { return number_of_removed_points(); }
+  /// \endcond
   /*!
     \brief Returns `true` if there are still removed elements in memory.
   */
@@ -547,7 +499,7 @@ public:
     \param name Name of the property.
   */
   template <typename T>
-  bool has_property (const std::string& name) const
+  bool has_property_map (const std::string& name) const
   {
     std::pair<typename Properties::template Property_map<Index, T>, bool>
       pm = m_base.template get<T> (name);
@@ -620,7 +572,7 @@ public:
     This method tests if a property of type `CGAL::Vector_3<Gt>` and
     named `normal` exists.
   */
-  bool has_normals() const
+  bool has_normal_map() const
   {
     std::pair<Vector_map, bool> pm = this->property_map<Vector> ("normal");
     return pm.second;
@@ -634,7 +586,7 @@ public:
     \return `true` if the property was added, `false` if it already
     existed.
   */
-  bool add_normal_property(const Vector& default_value = Vector(0., 0., 0.))
+  bool add_normal_map (const Vector& default_value = Vector(0., 0., 0.))
   {
     bool out = false;
     boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
@@ -644,7 +596,7 @@ public:
     \brief Get the property map of the normal attribute.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
   Vector_map normal_map ()
   {
@@ -654,7 +606,7 @@ public:
     \brief Get the property map of the normal attribute (constant version).
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
   const Vector_map normal_map () const
   {
@@ -666,7 +618,7 @@ public:
     \return Returns `true` if the property was removed and `false` if
     the property was not found.
   */
-  bool remove_normal_property()
+  bool remove_normal_map()
   {
     return m_base.remove (m_normals);
   }
@@ -831,7 +783,7 @@ public:
     \brief Get the push property map of the normal attribute.
 
     \note The normal property must have been added to the point set
-    before calling this method (see `add_normal_property()`).
+    before calling this method (see `add_normal_map()`).
   */
   Vector_push_map normal_push_map ()
   {
