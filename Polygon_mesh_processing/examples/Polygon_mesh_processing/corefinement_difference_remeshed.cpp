@@ -65,12 +65,12 @@ int main(int argc, char* argv[])
 
   if (valid_difference)
   {
-    std::cout << "Union was successfully computed\n";
+    std::cout << "Difference was successfully computed\n";
     std::ofstream output("difference.off");
     output << mesh1;
   }
   else{
-    std::cout << "Union could not be computed\n";
+    std::cout << "Difference could not be computed\n";
     return 1;
   }
 
