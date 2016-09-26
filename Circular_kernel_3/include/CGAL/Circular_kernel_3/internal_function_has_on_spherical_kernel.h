@@ -27,6 +27,7 @@
 
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/int.h>
 
 namespace CGAL {
   namespace SphericalFunctors {
