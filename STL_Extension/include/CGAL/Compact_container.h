@@ -21,9 +21,10 @@
 #ifndef CGAL_COMPACT_CONTAINER_H
 #define CGAL_COMPACT_CONTAINER_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Default.h>
 
+#include <cmath>
 #include <iterator>
 #include <algorithm>
 #include <vector>

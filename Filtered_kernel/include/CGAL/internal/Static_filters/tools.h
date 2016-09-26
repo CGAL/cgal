@@ -21,7 +21,7 @@
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H
 #define CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/function_objects.h>
 #include <boost/mpl/has_xxx.hpp>
 

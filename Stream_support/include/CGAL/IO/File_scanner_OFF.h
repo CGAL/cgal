@@ -25,7 +25,7 @@
 #ifndef CGAL_IO_FILE_SCANNER_OFF_H
 #define CGAL_IO_FILE_SCANNER_OFF_H 1
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cstddef>
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_header_OFF.h>

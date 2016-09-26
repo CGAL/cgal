@@ -20,7 +20,8 @@
 #ifndef CGAL_MULTISCALE_SORT_H
 #define CGAL_MULTISCALE_SORT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/assertions.h>
 #include <iterator>
 #include <cstddef>
 

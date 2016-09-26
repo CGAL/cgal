@@ -26,7 +26,7 @@
 #ifndef CGAL_UNIQUE_HASH_MAP_H
 #define CGAL_UNIQUE_HASH_MAP_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Tools/chained_map.h>

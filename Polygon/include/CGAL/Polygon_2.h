@@ -30,7 +30,7 @@
 #ifndef CGAL_POLYGON_2_H
 #define CGAL_POLYGON_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <vector>
 #include <list>
 #include <iterator>

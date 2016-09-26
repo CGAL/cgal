@@ -21,7 +21,7 @@
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_2_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <iostream>
 #include <list>
 #include <map>

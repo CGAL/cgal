@@ -21,7 +21,7 @@
 #ifndef CGAL_KERNEL_RETURN_BASE_TAG_H
 #define CGAL_KERNEL_RETURN_BASE_TAG_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 // This is a simple tag which is used as additional (first) argument in
 // some kernel functors, to tell them to return the base (rep) class,

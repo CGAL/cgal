@@ -27,10 +27,12 @@
 #ifndef CGAL_ALGORITHM_H
 #define CGAL_ALGORITHM_H
 
-#include <CGAL/basic.h>
 #include <CGAL/config.h>
+#include <CGAL/utils.h>
+#include <CGAL/enum.h>
 #include <algorithm>
 #include <iosfwd>
+#include <iostream>
 
 #ifdef CGAL_CFG_NO_CPP0X_NEXT_PREV
 #  include <boost/next_prior.hpp>
