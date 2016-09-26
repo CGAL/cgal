@@ -1817,7 +1817,14 @@ private: //--------------------------------------------------- property handling
 
   /// Model of `LvaluePropertyMap` with `I` as key type and `T` as value type, where `I`
   /// is either a vertex, halfedge, edge, or face index type.
+#ifdef DOXYGEN_RUNNING
+  template <class I, class T>
+  using Property_map = unspecified_type;
 
+#else
+
+
+#endif
 
     /// adds a property map named `name` with value type `T` and default `t`
     /// for index type `I`. Returns the property map together with a Boolean 
