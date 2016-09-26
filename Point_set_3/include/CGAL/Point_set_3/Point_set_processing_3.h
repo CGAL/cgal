@@ -119,7 +119,7 @@ jet_estimate_normals(
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2) ///< fitting degree
 {
-  point_set.add_normal_property();
+  point_set.add_normal_map();
 
   CGAL::jet_estimate_normals<Concurrency_tag>
     (point_set.begin(), point_set.end(),
@@ -161,7 +161,7 @@ pca_estimate_normals(
   PointSet& point_set, ///< point set
   unsigned int k) ///< number of neighbors.
 {
-  point_set.add_normal_property();
+  point_set.add_normal_map();
 
   CGAL::pca_estimate_normals<Concurrency_tag>
     (point_set.begin(), point_set.end(),
@@ -198,7 +198,7 @@ vcm_estimate_normals(
   double offset_radius,
   double convolution_radius)
 {
-  point_set.add_normal_property();
+  point_set.add_normal_map();
 
   CGAL::vcm_estimate_normals
     (point_set.begin(), point_set.end(),
@@ -213,7 +213,7 @@ vcm_estimate_normals(
   double offset_radius,
   unsigned int nb_neighbors_convolve)
 {
-  point_set.add_normal_property();
+  point_set.add_normal_map();
 
   CGAL::vcm_estimate_normals
     (point_set.begin(), point_set.end(),
@@ -247,7 +247,7 @@ read_xyz_point_set(
   std::istream& stream, ///< input stream.
   PointSet& point_set) ///< point set
 {
-  point_set.add_normal_property();
+  point_set.add_normal_map();
 
   bool out = CGAL::read_xyz_points_and_normals
     (stream,
@@ -258,14 +258,14 @@ read_xyz_point_set(
   bool has_normals = false;
   for (typename PointSet::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
-    if (point_set.normal(it) != CGAL::NULL_VECTOR)
+    if (point_set.normal(*it) != CGAL::NULL_VECTOR)
       {
         has_normals = true;
         break;
       }
 
   if (!has_normals)
-    point_set.remove_normal_property();
+    point_set.remove_normal_map();
   
   return out;
 }
@@ -276,7 +276,7 @@ read_off_point_set(
   std::istream& stream, ///< input stream.
   PointSet& point_set) ///< point set
 {
-  point_set.add_normal_property();
+  point_set.add_normal_map();
 
   bool out = CGAL::read_off_points_and_normals
     (stream,
@@ -287,14 +287,14 @@ read_off_point_set(
   bool has_normals = false;
   for (typename PointSet::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
-    if (point_set.normal(it) != CGAL::NULL_VECTOR)
+    if (point_set.normal(*it) != CGAL::NULL_VECTOR)
       {
         has_normals = true;
         break;
       }
 
   if (!has_normals)
-    point_set.remove_normal_property();
+    point_set.remove_normal_map();
 
   return out;
 }
@@ -338,7 +338,7 @@ write_off_point_set(
   std::ostream& stream, ///< output stream.
   const PointSet& point_set)  ///< point set
 {
-  if (point_set.has_normals())
+  if (point_set.has_normal_map())
     return CGAL::write_off_points_and_normals
       (stream, point_set.begin(), point_set.end(),
        point_set.point_map(), point_set.normal_map());

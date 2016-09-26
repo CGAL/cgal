@@ -181,7 +181,7 @@ public:
       }
 
     if (has_normal[0] && has_normal[1] && has_normal[2])
-      m_point_set.add_normal_property();
+      m_point_set.add_normal_map();
    
     
     return (reader.does_tag_exist<float> ("x") || reader.does_tag_exist<double> ("x"))
@@ -214,7 +214,7 @@ public:
     Point point (x, y, z);
     m_point_set.point(m_point_set.size() - 1) = point;
 
-    if (m_point_set.has_normals())
+    if (m_point_set.has_normal_map())
       {
         reader.assign (nx, "nx");
         reader.assign (ny, "ny");
