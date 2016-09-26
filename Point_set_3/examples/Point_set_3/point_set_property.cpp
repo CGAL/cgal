@@ -24,7 +24,7 @@ void print_point_set (const Point_set& point_set)
   std::cerr << "Content of point set:" << std::endl;
   for (Point_set::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
-    std::cerr << "* Point " << point_set.point(it) // or point_set[it]
+    std::cerr << "* Point " << point_set.point(*it) // or point_set[it]
               << " with color [" << (int)(color[*it][0])
               << " " << (int)(color[*it][1])
               << " " << (int)(color[*it][2])
@@ -62,10 +62,6 @@ int main (int, char**)
     }
 
   print_point_set (point_set);
-
-  std::random_shuffle (point_set.begin(), point_set.end());
-
-  print_point_set (point_set); // point set is randomized
 
   // Remove points with intensity less than 0.5
   Point_set::iterator it = point_set.begin();

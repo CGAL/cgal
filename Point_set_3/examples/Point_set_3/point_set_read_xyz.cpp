@@ -27,14 +27,14 @@ int main (int argc, char** argv)
       return EXIT_FAILURE;
     }
 
-  if (point_set.has_normals())
+  if (point_set.has_normal_map())
     {
       // Normalization + inversion of normal vectors
       for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
         {
-          Vector n = point_set.normal(it);
+          Vector n = point_set.normal(*it);
           n = - n / std::sqrt (n * n);
-          point_set.normal(it) = n;
+          point_set.normal(*it) = n;
         }
     }
   

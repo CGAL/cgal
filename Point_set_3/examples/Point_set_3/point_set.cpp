@@ -16,24 +16,23 @@ void print_point_set (const Point_set& point_set)
   std::cerr << "Content of point set:" << std::endl;
   for (Point_set::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
-    std::cerr << "* Point " << point_set.point(it) // or point_set[it]
-              << " with normal " << point_set.normal(it)
+    std::cerr << "* Point " << point_set.point(*it) // or point_set[it]
+              << " with normal " << point_set.normal(*it)
               << std::endl;
 }
 
 int main (int, char**)
 {
   Point_set point_set;
-  Point_set point_set2 ("visibility",Vector(0,0,0), "insensity", 1.0);
-
-  std::cerr << point_set2.properties();
+  //  Point_set point_set2 ("visibility",Vector(0,0,0), "insensity", 1.0);
+  //  std::cerr << point_set2.properties();
   
   // Add points
   point_set.insert (Point (0., 0., 0.));
   point_set.insert (Point (0., 0., 1.));
   point_set.insert (Point (0., 1., 0.));
 
-  point_set.add_normal_property();
+  point_set.add_normal_map();
 
   print_point_set(point_set); // Normals have default values
 
@@ -49,7 +48,7 @@ int main (int, char**)
 
   // Add new item
   Point_set::iterator new_item = point_set.insert(Point (7., 8., 9.));
-  point_set.normal(new_item) = Vector (10., 11., 12.);
+  point_set.normal(*new_item) = Vector (10., 11., 12.);
 
   print_point_set(point_set); // New item has default values
 
