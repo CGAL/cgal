@@ -31,20 +31,20 @@ void test (bool expr, const char* msg)
 void print_point_set (const Point_set& ps, const char* msg)
 {
   std::cerr << msg << std::endl;
-  if (ps.has_normals())
+  if (ps.has_normal_map())
     for (Point_set::const_iterator it = ps.begin(); it != ps.end(); ++ it)
-      std::cerr << *it << ": " << ps.point(it) 
-                << ", normal " << ps.normal(it) << std::endl;
+      std::cerr << *it << ": " << ps.point(*it) 
+                << ", normal " << ps.normal(*it) << std::endl;
   else
     for (Point_set::const_iterator it = ps.begin(); it != ps.end(); ++ it)
-      std::cerr << *it << ": " << ps.point(it) << std::endl;
+      std::cerr << *it << ": " << ps.point(*it) << std::endl;
 }
 
 
 int main (int, char**)
 {
   Point_set ps1, ps2;
-  ps1.add_normal_property();
+  ps1.add_normal_map();
 
   for (std::size_t i = 0; i < 5; ++ i)
     ps1.insert (Point (i, i, i), Vector (i, i, i));

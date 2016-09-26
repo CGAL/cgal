@@ -1,8 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Point_set_3.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/Point_set_3/Point_set_processing_3.h>
 #include <CGAL/grid_simplify_point_set.h>
 
 #include <fstream>
@@ -33,16 +32,13 @@ int main (int, char**)
 {
   Point_set point_set;
 
-  test (!(point_set.has_normals()), "point set shouldn't have normals.");
-  point_set.add_normal_property();
-  test (point_set.has_normals(), "point set should have normals.");
+  test (!(point_set.has_normal_map()), "point set shouldn't have normals.");
+  point_set.add_normal_map();
+  test (point_set.has_normal_map(), "point set should have normals.");
 
   std::ifstream f ("data/oni.pwn");
-  CGAL::read_xyz_points_and_normals(f,
-                                    point_set.index_back_inserter(),
-                                    point_set.point_push_map(),
-                                    point_set.normal_push_map(),
-                                    Kernel());
+  CGAL::read_xyz_point_set(f, point_set);
+  
   f.close ();
 
   Point_set::iterator
@@ -53,17 +49,17 @@ int main (int, char**)
 
   std::size_t size = point_set.size ();
   point_set.remove_from (first_to_remove);
-  test ((point_set.size() + point_set.removed_size() == size), "sizes before and after removal do not match.");
+  test ((point_set.size() + point_set.garbage_size() == size), "sizes before and after removal do not match.");
   
   test (point_set.has_garbage(), "point set should have garbage.");
   point_set.collect_garbage();
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
   
-  test (!(point_set.has_property<Color> ("color")), "point set shouldn't have colors.");
+  test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
   typename Point_set::Property_map<Color> color_prop;
   bool garbage;
-  boost::tie (color_prop, garbage) = point_set.add_property ("color", Color());
-  test (point_set.has_property<Color> ("color"), "point set should have colors.");
+  boost::tie (color_prop, garbage) = point_set.add_property_map ("color", Color());
+  test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
 
   for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
     {
@@ -75,15 +71,15 @@ int main (int, char**)
     }
 
   typename Point_set::Property_map<Color> color_prop_2;
-  boost::tie (color_prop_2, garbage) = point_set.property<Color>("color");
+  boost::tie (color_prop_2, garbage) = point_set.property_map<Color>("color");
   test ((color_prop_2 == color_prop), "color property not recovered correctly.");
   
-  point_set.remove_normal_property ();
-  test (!(point_set.has_normals()), "point set shouldn't have normals.");
+  point_set.remove_normal_map ();
+  test (!(point_set.has_normal_map()), "point set shouldn't have normals.");
   
-  test (point_set.has_property<Color> ("color"), "point set should have colors.");
-  point_set.remove_property<Color> (color_prop);
-  test (!(point_set.has_property<Color> ("color")), "point set shouldn't have colors.");
+  test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
+  point_set.remove_property_map<Color> (color_prop);
+  test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
   
