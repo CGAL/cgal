@@ -1028,6 +1028,10 @@ if ( CGAL_BRANCH_BUILD )
     find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL REQUIRED)
     find_package(QGLViewer)
     find_package(VTK COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
+    find_package(IPE)
+    find_package(RS3)
+    find_package(LEDA)
+
     set(compile_options "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED \
 ${Qt5Widgets_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} \
@@ -1038,6 +1042,24 @@ ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
 ${CGAL_DEFINITIONS}"
       )
 
+    if(NOT RS_FOUND AND NOT RS3_FOUND)
+      set(compile_options "${compile_options} \
+-DCGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1=1 \
+-DCGAL_ALGEBRAIC_KERNEL_RS_GMPQ_D_1=1")
+      message(STATUS "Skip RS headers \"CGAL/Algebraic_kernel_rs_gmpq_d_1.h\" \
+and \"CGAL/Algebraic_kernel_rs_gmpz_d_1.h\" because RS_FOUND is false.")
+    endif()
+    if(LEDA_FOUND)
+      set(compile_options "${compile_options} -DCGAL_USE_LEDA")
+    endif()
+    if(NOT IPE_FOUND)
+      set(compile_options "${compile_options} -DCGAL_IPELET_BASE_H=1")
+      message(STATUS "Skip header \"CGAL/CGAL_ipelet_base.h\" \
+because IPE_FOUND is false.")
+    endif()
+    if ("${IPE_VERSION}" EQUAL "7")
+      set(compile_options "${compile_options} -DCGAL_USE_IPE_7")
+    endif()
 
     if(NOT DEFINED CGAL_CHECK_SYNTAX_ONLY)
       execute_process(COMMAND 
@@ -1063,6 +1085,8 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     endforeach()
     foreach (incdir
         ${VTK_INCLUDE_DIRS}
+        ${LEDA_INCLUDE_DIR}
+        ${RS_INCLUDE_DIR}
         ${EIGEN3_INCLUDE_DIR}
         ${QGLVIEWER_INCLUDE_DIR} ${Qt5OpenGL_INCLUDE_DIRS}
         ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS}
@@ -1100,34 +1124,39 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
           if(NOT POLICY CMP0057
               OR NOT has_list_of_documented_headers
               OR header IN_LIST list_of_documented_headers
-          )
-            string(REPLACE "/" "__" header2 "${header}")
-            string(REPLACE "." "_" header2 "${header2}")
-            string(REPLACE ";" " " include_options_str "${include_options}")
-            string(REPLACE ";" " " compile_options_str "${compile_options}")
-            separate_arguments(CMD
-              UNIX_COMMAND
-"${CMAKE_CXX_COMPILER} ${compile_options_str}
+              )
+            string(REGEX MATCH "CGAL/leda_.*" is_a_leda_header ${header})
+            if(LEDA_FOUND OR NOT is_a_leda_header)
+              string(REPLACE "/" "__" header2 "${header}")
+              string(REPLACE "." "_" header2 "${header2}")
+              string(REPLACE ";" " " include_options_str "${include_options}")
+              string(REPLACE ";" " " compile_options_str "${compile_options}")
+              separate_arguments(CMD
+                UNIX_COMMAND
+                "${CMAKE_CXX_COMPILER} ${compile_options_str}
 ${include_options_str} -x c++ -fsyntax-only \
 ${compute_deps_extra_args} \
--DCGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1=1 \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
-# The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
-# depends on RS.
-)
-            add_custom_command(OUTPUT check_${header2}
-              COMMAND ${CMAKE_COMMAND}
-              -DCERR:STRING=${CMAKE_CURRENT_BINARY_DIR}/check_${header2}
-              "-DCMD:STRING=${CMD}"
-              -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
-              DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
-              DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
-              VERBATIM
-              COMMENT "Check header ${package}/include/${header}"
-              )
-            list(APPEND check_pkg_headers_depends check_${header2})
-            if(${header2}_deps)
-              list(REMOVE_DUPLICATES ${header2}_deps)
+                # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
+                # depends on RS.
+                )
+              add_custom_command(OUTPUT check_${header2}
+                COMMAND ${CMAKE_COMMAND}
+                -DCERR:STRING=${CMAKE_CURRENT_BINARY_DIR}/check_${header2}
+                "-DCMD:STRING=${CMD}"
+                -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
+                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
+                DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
+                VERBATIM
+                COMMENT "Check header ${package}/include/${header}"
+                )
+              list(APPEND check_pkg_headers_depends check_${header2})
+              if(${header2}_deps)
+                list(REMOVE_DUPLICATES ${header2}_deps)
+              endif()
+            else()
+              message(STATUS "Skip LEDA header \"${header}\" because \
+LEDA_FOUND is false.")
             endif()
           else()
             message(STATUS "Skip non-documented header \"${header}\".")
