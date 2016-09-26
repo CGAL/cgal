@@ -22,6 +22,7 @@
 
 #include <CGAL/Point_set_3.h>
 
+/// \cond SKIP_IN_MANUAL
 namespace CGAL
 {
 
@@ -51,7 +52,6 @@ template <typename Point,
           typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
 class Ply_interpreter_point_set_3
 {
-  /// \cond SKIP_IN_MANUAL
 public:
   typedef Point_set_3<Point> Point_set;
 
@@ -85,12 +85,9 @@ private:
   Point_set& m_point_set;
   bool m_use_floats;
   std::vector<Abstract_ply_property_to_point_set_property*> m_properties;
-  /// \endcond
+
 public:
   
-  /*!
-    Constructs a PLY interpreter for a `CGAL::Point_set_3` object.
-   */
   Ply_interpreter_point_set_3 (Point_set& point_set)
     : m_point_set (point_set), m_use_floats (false)
   { }
@@ -202,7 +199,6 @@ public:
       m_properties[i]->assign (reader, m_point_set.size() - 1);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template <typename FT>
   void process_line (Ply_reader& reader)
   {
@@ -212,7 +208,7 @@ public:
     reader.assign (y, "y");
     reader.assign (z, "z");
     Point point (x, y, z);
-    m_point_set.point(m_point_set.size() - 1) = point;
+    m_point_set.point(*(m_point_set.end() - 1)) = point;
 
     if (m_point_set.has_normal_map())
       {
@@ -220,12 +216,13 @@ public:
         reader.assign (ny, "ny");
         reader.assign (nz, "nz");
         Vector normal (nx, ny, nz);
-        m_point_set.normal(m_point_set.size() - 1) = normal;
+        m_point_set.normal(*(m_point_set.end() - 1)) = normal;
       }
   }
-  /// \endcond
 };
 
 }
+/// \endcond
+
 
 #endif // CGAL_READ_PLY_POINT_SET_3_H
