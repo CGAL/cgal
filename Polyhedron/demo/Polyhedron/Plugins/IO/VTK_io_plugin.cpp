@@ -18,6 +18,8 @@
 //                 Jane Tournois
 //
 
+#include <CGAL/Mesh_3/io_signature.h>
+#include "Scene_c3t3_item.h"
 #include <QtCore/qglobal.h>
 
 #include "Polyhedron_type.h"
@@ -42,6 +44,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
+#include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
@@ -66,7 +69,7 @@
 #include <vtkCellArray.h>
 #include <vtkType.h>
 #include <vtkCommand.h>
-
+#include <vtkXMLUnstructuredGridWriter.h>
 namespace CGAL{
 
   class ErrorObserverVtk : public vtkCommand
@@ -271,17 +274,18 @@ public:
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
   QString nameFilters() const {
-    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp)"; }
+    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp);; VTK XML UnstructuredGrid (*.vtu)"; }
   QString name() const { return "vtk_plugin"; }
 
   bool canSave(const CGAL::Three::Scene_item* item)
   {
-    return qobject_cast<const Scene_polyhedron_item*>(item);
+    return (qobject_cast<const Scene_polyhedron_item*>(item)
+            || qobject_cast<const Scene_c3t3_item*>(item));
   }
   bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
   {
     std::string extension = fileinfo.suffix().toLower().toStdString();
-    if ( extension != "vtk" && extension != "vtp")
+    if ( extension != "vtk" && extension != "vtp" && extension != "vtu")
       return false;
 
     std::string output_filename = fileinfo.absoluteFilePath().toStdString();
@@ -289,9 +293,7 @@ public:
     const Scene_polyhedron_item* poly_item =
       qobject_cast<const Scene_polyhedron_item*>(item);
 
-    if (!poly_item)
-      return false;
-    else
+    if (poly_item)
     {
       if (extension != "vtp")
         CGAL::polygon_mesh_to_vtkUnstructured<vtkPolyDataWriter>(
@@ -301,6 +303,19 @@ public:
         CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLPolyDataWriter>(
         *poly_item->polyhedron(),
         output_filename.data());
+    }
+    else
+    {
+      const Scene_c3t3_item* c3t3_item =
+          qobject_cast<const Scene_c3t3_item*>(item);
+      if(!c3t3_item || extension != "vtu")
+        return false;
+
+      vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
+          vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+      writer->SetFileName( output_filename.data());
+      writer->SetInputData(CGAL::output_c3t3_to_vtk_unstructured_grid(c3t3_item->c3t3()));
+      writer->Write();
     }
     return true;
   }
