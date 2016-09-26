@@ -117,7 +117,7 @@ protected:
 public:
   typedef typename Base::Cell_handle    Cell_handle;
 
-  virtual double get_default_value() const { return 90.; }
+  virtual double get_default_value() const { return 12.; }
   virtual double get_max_value() const { return 90.; }
   virtual double get_perturbation_unit() const { return 1.; }
 
