@@ -1479,6 +1479,8 @@ void MainWindow::on_actionSaveAs_triggered()
                                  caption,
                                  QString(),
                                  filters.join(";;"));
+  if(filename.isEmpty())
+    return;
   save(filename, item);
 }
 
