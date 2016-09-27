@@ -3,6 +3,7 @@ set(list_of_documented_headers_txt [=[
 CGAL/AABB_C3T3_triangle_primitive.h
 CGAL/AABB_face_graph_triangle_primitive.h
 CGAL/AABB_halfedge_graph_segment_primitive.h
+CGAL/AABB_intersections.h
 CGAL/AABB_polyhedron_segment_primitive.h
 CGAL/AABB_polyhedron_triangle_primitive.h
 CGAL/AABB_primitive.h
@@ -468,6 +469,7 @@ CGAL/lloyd_optimize_mesh_2.h
 CGAL/Location_policy.h
 CGAL/LSCM_parameterizer_3.h
 CGAL/make_mesh_3.h
+CGAL/make_piecewise_smooth_surface_mesh.h
 CGAL/make_skin_surface_mesh_3.h
 CGAL/make_surface_mesh.h
 CGAL/Manhattan_distance_iso_box_point.h
@@ -480,6 +482,7 @@ CGAL/Mesh_3/Dump_c3t3.h
 CGAL/Mesh_3/implicit_to_labeled_function_wrapper.h
 CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h
 CGAL/Mesh_3/Labeled_mesh_domain_3.h
+CGAL/Mesh_3/polyhedral_to_labeled_function_wrapper.h
 CGAL/Mesh_3/polylines_to_protect.h
 CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h
 CGAL/Mesh_3/squared_distance_Point_3_Triangle_3.h
@@ -527,6 +530,7 @@ CGAL/Multiscale_sort.h
 CGAL/Multiset.h
 CGAL/natural_neighbor_coordinates_2.h
 CGAL/natural_neighbor_coordinates_3.h
+CGAL/Nef_3/Polygon_constructor.h
 CGAL/Nef_3/SNC_indexed_items.h
 CGAL/Nef_nary_union_3.h
 CGAL/Nef_polyhedron_2.h
@@ -575,6 +579,7 @@ CGAL/Periodic_3_triangulation_filtered_traits_3.h
 CGAL/Periodic_3_triangulation_hierarchy_3.h
 CGAL/Periodic_3_triangulation_traits_3.h
 CGAL/perturb_mesh_3.h
+CGAL/Piecewise_smooth_surface_mesh_default_edges_criteria_3.h
 CGAL/Plane_3.h
 CGAL/Plane_separator.h
 CGAL/Point_2.h
@@ -600,6 +605,7 @@ CGAL/Polygon_mesh_processing/orient_polygon_soup.h
 CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h
 CGAL/Polygon_mesh_processing/refine.h
 CGAL/Polygon_mesh_processing/remesh.h
+CGAL/Polygon_mesh_processing/repair.h
 CGAL/Polygon_mesh_processing/self_intersections.h
 CGAL/Polygon_mesh_processing/stitch_borders.h
 CGAL/Polygon_mesh_processing/triangulate_faces.h
@@ -614,6 +620,7 @@ CGAL/Polygon_vertical_decomposition_2.h
 CGAL/Polygon_with_holes_2.h
 CGAL/Polyhedral_mesh_domain_3.h
 CGAL/Polyhedral_mesh_domain_with_features_3.h
+CGAL/Polyhedral_surface_3.h
 CGAL/Polyhedron_3.h
 CGAL/polyhedron_cut_plane_3.h
 CGAL/Polyhedron_incremental_builder_3.h

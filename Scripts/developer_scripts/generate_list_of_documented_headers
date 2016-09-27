@@ -6,9 +6,11 @@
 #  `../build-doc/doc_output/` containing the build of the Doxygen
 #  documentation.
 
-printf "# Generated using $0\n" > list_of_documented_headers.cmake
+file=cmake/modules/list_of_documented_headers.cmake
 
-exec >> list_of_documented_headers.cmake
+printf "# Generated using $0\n" > "$file"
+
+exec >> "$file"
 
 printf 'set(list_of_documented_headers_txt [=[\n'
 ack --no-heading --no-filename --output='$2' --cpp --html '# *include *(&lt;|[<"])(CGAL/[^>&]*)([>"]|&gt;)' ../build-doc/doc_output ../*/examples/*/*.cpp | sort | uniq

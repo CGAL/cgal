@@ -1096,7 +1096,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     endforeach()
     include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
-    include(${CMAKE_CURRENT_SOURCE_DIR}/list_of_documented_headers.cmake
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_documented_headers)
     ## Loop on package and headers
     set(check_pkg_target_list)
