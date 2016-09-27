@@ -36,6 +36,9 @@ int main (int argc, char** argv)
       for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
         std::cerr << " * " << label_prop[*it] << std::endl;
     }
+
+  std::ofstream out ("out.ply");
+  CGAL::write_ply_point_set (out, point_set);
   
   return 0;
 }
