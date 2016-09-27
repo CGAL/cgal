@@ -228,7 +228,7 @@ boolean_operation(const TriangleMesh& const_tm1,
   * @param np2 optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm1` (`tm2`) \cgalParamEnd
+  *   \cgalParamBegin{vertex_point_map} a default constructible property map with the points associated to the vertices of `tm1` (`tm2`) \cgalParamEnd
   *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *     constrained-or-not status of each edge of `tm1` (`tm2`).
   *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`) \cgalParamEnd
@@ -237,7 +237,7 @@ boolean_operation(const TriangleMesh& const_tm1,
   * @param np_out optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm_out` \cgalParamEnd
+  *   \cgalParamBegin{vertex_point_map} a default constructible property map with the points associated to the vertices of `tm_out` \cgalParamEnd
   *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained
   *     if it is on the intersection of `tm1` and `tm2`, or if the edge corresponds to a
@@ -268,9 +268,10 @@ join(const TriangleMesh& tm1,
   return
    boolean_operation(tm1, tm2, desired_output, np1, np2,
                      cpp11::make_tuple(np_out,
-                                       all_default(),
-                                       all_default(),
-                                       all_default()))[Corefinement::JOIN];
+                                       no_parameters(np_out),
+                                       no_parameters(np_out),
+                                       no_parameters(np_out)))
+                                                           [Corefinement::JOIN];
 }
 
 /**
@@ -297,10 +298,11 @@ intersection(const TriangleMesh& tm1,
 
   return
     boolean_operation(tm1, tm2, desired_output, np1, np2,
-                      cpp11::make_tuple(all_default(),
+                      cpp11::make_tuple(no_parameters(np_out),
                                         np_out,
-                                        all_default(),
-                                        all_default()))[Corefinement::INTER];
+                                        no_parameters(np_out),
+                                        no_parameters(np_out)))
+                                                          [Corefinement::INTER];
 }
 
 /**
@@ -328,10 +330,10 @@ difference(const TriangleMesh& tm1,
 
   return
     boolean_operation(tm1, tm2, desired_output, np1, np2,
-                      cpp11::make_tuple(all_default(),
-                                        all_default(),
+                      cpp11::make_tuple(no_parameters(np_out),
+                                        no_parameters(np_out),
                                         np_out,
-                                        all_default()))[TM1_MINUS_TM2];
+                                        no_parameters(np_out)))[TM1_MINUS_TM2];
 }
 
 /**
@@ -378,8 +380,8 @@ difference(const TriangleMesh& tm1,
                                      NamedParameters1>::const_type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::const_type Vpm2;
-  CGAL_assertion_code(static const bool same_vpm = )
-    boost::is_same<Vpm,Vpm2>::value;
+  CGAL_assertion_code(
+    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);
 
   Vpm vpm1 = choose_pmap(get_param(np1, boost::vertex_point),

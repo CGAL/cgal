@@ -116,7 +116,7 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
   Ecm_bind(G&, G&, const No_mark<G>&, const No_mark<G>&){}
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   void put(G&, edge_descriptor, bool) const {}
-  bool get(G& g, edge_descriptor e) const {
+  bool get(G&, edge_descriptor) const {
     return false;
   }
 };
@@ -452,7 +452,7 @@ public:
     //used when object was created with hedge but opposite was used to split the original face
     void update_original_halfedge(halfedge_descriptor original,
                                   halfedge_descriptor new_hedge,
-                                  TriangleMesh& tm)
+                                  TriangleMesh& /*tm*/)
     {
       typename std::map<halfedge_descriptor,int>::iterator it_id =
         hedges_ids.find(original);
@@ -602,7 +602,7 @@ public:
     {
       TriangleMesh& tm=*it->first;
       Intersection_edge_map& intersection_edges = mesh_to_intersection_edges[&tm];
-      Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
+    //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
       std::set<std::pair<Node_id,Node_id> > already_done;
       Node_to_target_of_hedge_map& nodes_to_hedge=it->second;

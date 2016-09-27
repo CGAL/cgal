@@ -26,38 +26,64 @@ struct Coref_point_map
   typedef boost::property_traits<Exact_point_map>::key_type key_type;
 
   // exterior references
-  Exact_point_computed& exact_point_computed;
-  Exact_point_map& exact_point;
-  Mesh& mesh;
+  Exact_point_computed* exact_point_computed_ptr;
+  Exact_point_map* exact_point_ptr;
+  Mesh* mesh_ptr;
+
+  Exact_point_computed& exact_point_computed() const
+  {
+    CGAL_assertion(exact_point_computed_ptr!=NULL);
+    return *exact_point_computed_ptr;
+  }
+
+  Exact_point_map& exact_point() const
+  {
+    CGAL_assertion(exact_point_ptr!=NULL);
+    return *exact_point_ptr;
+  }
+
+  Mesh& mesh() const
+  {
+    CGAL_assertion(mesh_ptr!=NULL);
+    return *mesh_ptr;
+  }
 
   // Converters
   CGAL::Cartesian_converter<K, EK> to_exact;
   CGAL::Cartesian_converter<EK, K> to_input;
 
+  Coref_point_map()
+    : exact_point_computed_ptr(NULL)
+    , exact_point_ptr(NULL)
+    , mesh_ptr(NULL)
+  {}
+
   Coref_point_map(Exact_point_map& ep,
                   Exact_point_computed& epc,
                   Mesh& m)
-    :exact_point_computed(epc), exact_point(ep), mesh(m)
+    : exact_point_computed_ptr(&epc)
+    , exact_point_ptr(&ep)
+    , mesh_ptr(&m)
   {}
 
   friend
   reference get(const Coref_point_map& map, key_type k)
   {
     // create exact point if it does not exist
-    if (!map.exact_point_computed[k]){
-      map.exact_point[k]=map.to_exact(map.mesh.point(k));
-      map.exact_point_computed[k]=true;
+    if (!map.exact_point_computed()[k]){
+      map.exact_point()[k]=map.to_exact(map.mesh().point(k));
+      map.exact_point_computed()[k]=true;
     }
-    return map.exact_point[k];
+    return map.exact_point()[k];
   }
 
   friend
   void put(const Coref_point_map& map, key_type k, const EK::Point_3& p)
   {
-    map.exact_point_computed[k]=true;
-    map.exact_point[k]=p;
+    map.exact_point_computed()[k]=true;
+    map.exact_point()[k]=p;
     // create the input point from the exact one
-    map.mesh.point(k)=map.to_input(p);
+    map.mesh().point(k)=map.to_input(p);
   }
 };
 
@@ -99,12 +125,15 @@ int main(int argc, char* argv[])
   if ( PMP::intersection(mesh1,
                          mesh2,
                          mesh1,
+                         params::vertex_point_map(mesh1_maps),
+                         params::vertex_point_map(mesh2_maps),
                          params::vertex_point_map(mesh1_maps) ) )
   {
     if ( PMP::join(mesh1,
                    mesh2,
                    mesh2,
                    params::vertex_point_map(mesh1_maps),
+                   params::vertex_point_map(mesh2_maps),
                    params::vertex_point_map(mesh2_maps) ) )
     {
       std::cout << "Intersection and union were successfully computed\n";
