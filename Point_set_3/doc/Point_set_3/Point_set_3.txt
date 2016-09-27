@@ -6,19 +6,19 @@ namespace CGAL {
 \cgalAutoToc
 \author Simon Giraudot
 
-\section Point_set_3_Principle General Principle
 
-There exists many sensors that generate 3D point sets: laser scanners,
-LIDAR devices, cameras with photogrammetry post-processing... \cgal
-provides several algorithms to process such point sets (see
-\ref Chapter_Point_Set_Processing "Point Set Processing",
-\ref Chapter_Point_Set_Shape_Detection "Shape Detection",
-\ref Chapter_Advancing_Front_Surface_Reconstruction "Surface Reconstruction", etc.).
+\cgal provides several algorithms for processing point sets, from
+\ref Chapter_Point_Set_Shape_Detection "Shape Detection" to
+\ref Chapter_Advancing_Front_Surface_Reconstruction "Surface Reconstruction"
+including standard \ref Chapter_Point_Set_Processing "Point Set Processing" tools.
 
 While these algorithms do not impose specific data structures to work
 on, \cgal provides a 3D point set structure to make it easier for the
-user to handle additional properties (such as normal vectors, colors,
-labels...) and to call \cgal algorithms on them.
+user to handle additional properties such as normal vectors, colors,
+labels, and to call \cgal algorithms on them.
+
+
+\section Point_set_3_Principle General Principle
 
 `CGAL::Point_set_3<Point,Vector>` is a vector based data structure that
 contains, by default, only 2 properties:
@@ -40,7 +40,7 @@ properties are defined. To avoid frequent memory allocation and
 deallocation, removal of points is also handled by swapping the index
 values, putting the points marked as removed at the back of the index
 property and keeping track of the number of points marked as
-removed. If the user needs memory to be disallocated, the element
+removed. If the user needs memory to be deallocated, the element
 marked as removed can be actually deleted from memory.
 
 \section Point_set_3_Usage Simple Usage
@@ -155,7 +155,7 @@ new item if it was not yet created by the back inserter
 - `CGAL::Point_set_3::normal_push_map()` works similarly
 
 Such _push property maps_ are also available for other user-defined
-properties (see `CGAL::Point_set_3::push_map()`).
+properties (see `CGAL::Point_set_3::push_property_map()`).
 
 \section Point_set_3_History History
 

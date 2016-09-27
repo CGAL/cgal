@@ -11,14 +11,14 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef Point_set::Property_map<Color> Color_prop;
-typedef Point_set::Property_map<FT> Floating_prop;
+typedef Point_set::Property_map<Color> Color_map;
+typedef Point_set::Property_map<FT> FT_map;
 
 void print_point_set (const Point_set& point_set)
 {
-  Color_prop color;
+  Color_map color;
   boost::tie (color, boost::tuples::ignore) = point_set.property_map<Color>("color");
-  Floating_prop intensity;
+  FT_map intensity;
   boost::tie (intensity, boost::tuples::ignore) =  point_set.property_map<FT>("intensity");
   
   std::cerr << "Content of point set:" << std::endl;
@@ -41,12 +41,12 @@ int main (int, char**)
 
   Color black = {{ 0, 0, 0 }};
   bool okay = false;
-  Color_prop color;
+  Color_map color;
 
   boost::tie (color, okay) = point_set.add_property_map<Color> ("color", black);
   assert (okay);
 
-  Floating_prop intensity;
+  FT_map intensity;
   boost::tie (intensity, okay) = point_set.add_property_map<FT> ("intensity", 0.);
   assert (okay);
 
