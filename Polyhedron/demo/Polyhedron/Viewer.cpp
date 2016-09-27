@@ -15,6 +15,11 @@
 #include <cmath>
 #include <QApplication>
 
+#if defined(_WIN32)
+#include <QMimeData>
+#include <QByteArray>
+#include <QBuffer>
+#endif
 
 class Viewer_impl {
 public:
@@ -1680,7 +1685,21 @@ void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
   QImage * snap = takeSnapshot(viewer, 95, 1, 2*viewer->size(), 1, true);
   if(snap)
   {
+#if defined(_WIN32)
     QApplication::clipboard()->setImage(*snap);
+    QMimeData *mimeData = new QMimeData();
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    snap->save(&buffer, "PNG"); // writes image into ba in PNG format
+    buffer.close();
+    mimeData->setData("PNG", ba);
+    //According to the doc, the ownership of mime_data is transferred to
+    //clipboard, so this is not a memory leak.
+    QApplication::clipboard()->setMimeData(mimeData);
+#else
+    QApplication::clipboard()->setImage(*snap);
+#endif
     delete snap;
   }
 
