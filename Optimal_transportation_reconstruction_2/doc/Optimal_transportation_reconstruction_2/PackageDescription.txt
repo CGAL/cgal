@@ -21,6 +21,7 @@
 \cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:gavj-rs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{2D Optimal Transportation Curve Reconstruction,otr2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
