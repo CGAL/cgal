@@ -43,6 +43,10 @@ it's way too large. So we will never spoon up ice-cream lying in the
 inside of the convex hull of \f$ S\f$, and hence the \f$ \alpha\f$-shape for
 \f$ \alpha \rightarrow \infty\f$ is the convex hull of \f$ S\f$.
 
+\cgal offers 2D and 3D alpha shapes. The GUDHI library offers a
+<a href="http://gudhi.gforge.inria.fr/doc/latest/group__alpha__complex.html"> dD Alpha complex</a>.
+
+
 \section Alpha_shapes_2Definitions Definitions
 
 We distinguish two versions of alpha shapes. <I>Basic alpha shapes</I>
