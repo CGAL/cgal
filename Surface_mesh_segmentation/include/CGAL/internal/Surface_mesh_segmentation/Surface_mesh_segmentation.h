@@ -21,8 +21,6 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 #include <CGAL/internal/Surface_mesh_segmentation/SDF_calculation.h>
 
-#include <CGAL/Mesh_3/dihedral_angle_3.h>
-
 #include <CGAL/property_map.h>
 
 #include <cmath>
@@ -326,7 +324,7 @@ private:
     // As far as I check: if, say, dihedral angle is 5, this returns 175,
     // if dihedral angle is -5, this returns -175.
     // Another words this function returns angle between planes.
-    double n_angle = to_double( ::CGAL::Mesh_3::dihedral_angle(a, b, c, d) );
+    double n_angle = to_double( ::CGAL::dihedral_angle(a, b, c, d) );
     n_angle /= 180.0;
     bool concave = n_angle > 0;
     double angle = 1 + ((concave ? -1 : +1) * n_angle);

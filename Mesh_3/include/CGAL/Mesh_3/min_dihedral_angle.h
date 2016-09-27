@@ -21,7 +21,6 @@
 #ifndef CGAL_MESH_3_MIN_DIHEDRAL_ANGLE_H
 #define CGAL_MESH_3_MIN_DIHEDRAL_ANGLE_H
 
-#include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <cmath>
 
 namespace CGAL {

@@ -1690,6 +1690,15 @@ const CGAL::Vector_3<Kernel>& v,
 const CGAL::Vector_3<Kernel>& w);
 
 /// @}
+/*!
+returns the dihedral angle of ....   between `-180` and `180` degree.
+*/
+template <typename Kernel>
+Kernel::FT dihedral_angle(const CGAL::Point_3<Kernel>& p,
+                          const CGAL::Point_3<Kernel>& q,
+                          const CGAL::Point_3<Kernel>& r,
+                          const CGAL::Point_3<Kernel>& s);
+
 
 // This is there to keep the global functions in alphabetical order
 // instead of processing order.

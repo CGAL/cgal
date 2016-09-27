@@ -21,7 +21,6 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 
-#include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -249,14 +248,14 @@ private:
       // check whether the edge is border
       if( (v0 + 1 == v1 || (v0 == n-1 && v1 == 0) ) && !Q.empty() ) {
         angle = 180 - CGAL::abs( 
-           to_double(CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0])) );
+           to_double(CGAL::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0])) );
       }
       else {
         if(e == 2) { continue; }
         if(lambda.get(v0, v1) != -1){
           const Point_3& p01 = P[lambda.get(v0, v1)];
           angle = 180 - CGAL::abs( 
-            to_double(CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01)) );
+            to_double(CGAL::dihedral_angle(P[v0],P[v1],P[v_other],p01)) );
         }
       }
       ang_max = (std::max)(ang_max, angle);
