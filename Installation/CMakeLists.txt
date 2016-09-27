@@ -1107,6 +1107,9 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
 
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_documented_headers.cmake
       OPTIONAL RESULT_VARIABLE has_list_of_documented_headers)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/list_of_whitelisted_headers.cmake
+      OPTIONAL RESULT_VARIABLE has_list_of_whitelisted_headers)
+    message("list_of_whitelisted_headers: ${list_of_whitelisted_headers}")
     ## Loop on package and headers
     set(check_pkg_target_list)
     if(POLICY CMP0057)
@@ -1116,7 +1119,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
       if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include)
         set(check_pkg_headers_depends "")
         if(has_list_of_documented_headers AND POLICY CMP0057)
-          # Then recurse
+          # Then recurse2
           file(GLOB_RECURSE ${package}_HEADERS
             RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
@@ -1130,47 +1133,56 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
           set(compute_deps_extra_args "-H ")
         endif()
         foreach(header ${${package}_HEADERS})
-          if(NOT POLICY CMP0057
-              OR NOT has_list_of_documented_headers
-              OR header IN_LIST list_of_documented_headers
+          set(skip_hdr FALSE)
+          if(POLICY CMP0057
+              AND has_list_of_documented_headers
+              AND NOT header IN_LIST list_of_documented_headers
               )
-            string(REGEX MATCH "CGAL/leda_.*" is_a_leda_header ${header})
-            if(LEDA_FOUND OR NOT is_a_leda_header)
-              string(REPLACE "/" "__" header2 "${header}")
-              string(REPLACE "." "_" header2 "${header2}")
-              string(REPLACE ";" " " include_options_str "${include_options}")
-              string(REPLACE ";" " " compile_options_str "${compile_options}")
-              separate_arguments(CMD
-                UNIX_COMMAND
-                "${CMAKE_CXX_COMPILER} ${compile_options_str}
+            message(STATUS "Skip non-documented header \"${header}\".")
+            set(skip_hdr TRUE)
+          endif()
+          string(REGEX MATCH "CGAL/leda_.*" is_a_leda_header ${header})
+          if(NOT LEDA_FOUND AND is_a_leda_header)
+            message(STATUS "Skip LEDA header \"${header}\" because \
+LEDA_FOUND is false.")
+            set(skip_hdr TRUE)
+          endif()
+          if(POLICY CMP0057
+              AND has_list_of_whitelisted_headers
+              AND header IN_LIST list_of_whitelisted_headers)
+            message(STATUS "Skip whitelisted header \"${header}\".")
+            set(skip_hdr TRUE)
+          endif()
+          if(NOT skip_hdr)
+            string(REPLACE "/" "__" header2 "${header}")
+            string(REPLACE "." "_" header2 "${header2}")
+            string(REPLACE ";" " " include_options_str "${include_options}")
+            string(REPLACE ";" " " compile_options_str "${compile_options}")
+            separate_arguments(CMD
+              UNIX_COMMAND
+              "${CMAKE_CXX_COMPILER} ${compile_options_str}
 ${include_options_str} -x c++ -fsyntax-only \
 ${compute_deps_extra_args} \
 ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
-                # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
-                # depends on RS.
-                )
-              set(chk_header_name
-${CGAL_BINARY_DIR}/package_info/${package}/check_headers/check_${header2})
-              add_custom_command(OUTPUT ${chk_header_name}
-                COMMAND ${CMAKE_COMMAND}
-                -DCERR:STRING=${chk_header_name}
-                "-DCMD:STRING=${CMD}"
-                -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
-                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
-                DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
-                VERBATIM
-                COMMENT "Check header ${package}/include/${header}"
-                )
-              list(APPEND check_pkg_headers_depends ${chk_header_name})
-              if(${header2}_deps)
-                list(REMOVE_DUPLICATES ${header2}_deps)
-              endif()
-            else()
-              message(STATUS "Skip LEDA header \"${header}\" because \
-LEDA_FOUND is false.")
+              # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
+              # depends on RS.
+              )
+            set(chk_header_name
+              ${CGAL_BINARY_DIR}/package_info/${package}/check_headers/check_${header2})
+            add_custom_command(OUTPUT ${chk_header_name}
+              COMMAND ${CMAKE_COMMAND}
+              -DCERR:STRING=${chk_header_name}
+              "-DCMD:STRING=${CMD}"
+              -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
+              DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
+              DEPENDS ${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake
+              VERBATIM
+              COMMENT "Check header ${package}/include/${header}"
+              )
+            list(APPEND check_pkg_headers_depends ${chk_header_name})
+            if(${header2}_deps)
+              list(REMOVE_DUPLICATES ${header2}_deps)
             endif()
-          else()
-            message(STATUS "Skip non-documented header \"${header}\".")
           endif() # end the if on list_of_documented_headers
         endforeach() # look on headers
         add_custom_target(check_pkg_${package}_headers

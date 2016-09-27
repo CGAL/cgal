@@ -327,6 +327,8 @@ CGAL/ImageIO.h
 CGAL/Implicit_mesh_domain_3.h
 CGAL/Implicit_surface_3.h
 CGAL/Implicit_to_labeling_function_wrapper.h
+CGAL/import_from_triangulation_2.h
+CGAL/import_from_triangulation_3.h
 CGAL/Incremental_neighbor_search.h
 CGAL/In_place_list.h
 CGAL/internal/Combination_enumerator.h
