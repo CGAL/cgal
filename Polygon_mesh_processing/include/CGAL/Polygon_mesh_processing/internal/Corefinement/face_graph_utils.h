@@ -23,6 +23,8 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
+#include <fstream>
+#include <sstream>
 
 namespace CGAL {
 namespace Corefinement {
@@ -408,7 +410,7 @@ void import_polyline(
   const IntersectionEdgeMap& intersection_edges1,
   const IntersectionEdgeMap& intersection_edges2,
   const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap& /*vpm2*/,
   const VertexPointMap& vpm_out,
   std::vector<typename boost::graph_traits<PolygonMesh>
                 ::edge_descriptor>& output_shared_edges)
@@ -1172,7 +1174,7 @@ template <class TriangleMesh,
           class VertexPointMap>
 void compute_inplace_operation(
         TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh& /*tm2*/,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
   PatchContainer& patches_of_tm1,
