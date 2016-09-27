@@ -1020,7 +1020,12 @@ if ( CGAL_BRANCH_BUILD )
     "Enable the special targets \"check_pkg_headers\", and \"check_pkg_<package>_headers\" for each package"
     FALSE)
 
-  if(CGAL_ENABLE_CHECK_HEADERS)
+  option(CGAL_COMPUTE_DEPENDENCIES
+    "Enable the special targets \"packages_dependencies\", and \"pkg_<package>_deps\" for each package. \
+Note that this option will modify the source directory!"
+    FALSE)
+
+  if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
 
     message( "== Setting header checking ==" )
 
@@ -1048,6 +1053,10 @@ ${CGAL_DEFINITIONS}"
 -DCGAL_ALGEBRAIC_KERNEL_RS_GMPQ_D_1=1")
       message(STATUS "Skip RS headers \"CGAL/Algebraic_kernel_rs_gmpq_d_1.h\" \
 and \"CGAL/Algebraic_kernel_rs_gmpz_d_1.h\" because RS_FOUND is false.")
+    else()
+      set(compile_options "${compile_options} \
+-DCGAL_USE_MPFI=1 \
+-DCGAL_USE_RS=1")
     endif()
     if(LEDA_FOUND)
       set(compile_options "${compile_options} -DCGAL_USE_LEDA")
@@ -1075,7 +1084,7 @@ because IPE_FOUND is false.")
 
     if(NOT CGAL_CHECK_SYNTAX_ONLY)
       message(FATAL_ERROR "Your compiler does not seem to support -fsyntax-only.
-You must disable CGAL_ENABLE_CHECK_HEADERS.")
+You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     endif()
 
     ## Fill the variable include_options with all the -I and -isystem options
@@ -1117,7 +1126,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
             "${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/CGAL/*.h*")
         endif()
         list(SORT ${package}_HEADERS)
-        if(COMPUTE_DEPS)
+        if(CGAL_COMPUTE_DEPENDENCIES OR COMPUTE_DEPS)
           set(compute_deps_extra_args "-H ")
         endif()
         foreach(header ${${package}_HEADERS})
@@ -1140,9 +1149,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
                 # The header Algebraic_kernel_rs_gmpz_d_1.h is skipped on purpose: it
                 # depends on RS.
                 )
-              add_custom_command(OUTPUT check_${header2}
+              set(chk_header_name
+${CGAL_BINARY_DIR}/package_info/${package}/check_headers/check_${header2})
+              add_custom_command(OUTPUT ${chk_header_name}
                 COMMAND ${CMAKE_COMMAND}
-                -DCERR:STRING=${CMAKE_CURRENT_BINARY_DIR}/check_${header2}
+                -DCERR:STRING=${chk_header_name}
                 "-DCMD:STRING=${CMD}"
                 -P "${CGAL_MODULES_DIR}/run_cmd_redirection_cerr.cmake"
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}
@@ -1150,7 +1161,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
                 VERBATIM
                 COMMENT "Check header ${package}/include/${header}"
                 )
-              list(APPEND check_pkg_headers_depends check_${header2})
+              list(APPEND check_pkg_headers_depends ${chk_header_name})
               if(${header2}_deps)
                 list(REMOVE_DUPLICATES ${header2}_deps)
               endif()
@@ -1165,19 +1176,20 @@ LEDA_FOUND is false.")
         add_custom_target(check_pkg_${package}_headers
           DEPENDS ${check_pkg_headers_depends})
         add_custom_command(
-          OUTPUT pkg_${package}_included_headers pkg_${package}_deps
+          OUTPUT ${CGAL_BINARY_DIR}/package_info/${package}/included_headers
+                 ${CGAL_BINARY_DIR}/package_info/${package}/dependencies
           DEPENDS ${check_pkg_headers_depends}
           COMMENT "Compute dependencies of ${package}"
           COMMAND ${CMAKE_COMMAND}
             -DCGAL_PACKAGES_PREFIX=${CGAL_SOURCE_DIR}
-            -DOUTPUT_HEADERS_LIST=pkg_${package}_included_headers
-            -DOUTPUT_PACKAGES_LIST=pkg_${package}_deps
+            -DOUTPUT_HEADERS_LIST=${CGAL_BINARY_DIR}/package_info/${package}/included_headers
+            -DOUTPUT_PACKAGES_LIST=${CGAL_BINARY_DIR}/package_info/${package}/dependencies
             -P "${CGAL_MODULES_DIR}/process_dependencies.cmake"
             ${check_pkg_headers_depends}
           )
-        add_custom_target(${package}_deps DEPENDS pkg_${package}_deps)
+        add_custom_target(${package}_deps DEPENDS ${CGAL_BINARY_DIR}/package_info/${package}/dependencies)
         list(APPEND check_pkg_target_list check_pkg_${package}_headers)
-        list(APPEND packages_deps ${package}_deps)
+        list(APPEND packages_deps ${CGAL_BINARY_DIR}/package_info/${package}/dependencies)
       endif() # if the package has an include directory
       if(${package}_deps)
         list(REMOVE_DUPLICATES ${package}_deps)
@@ -1185,8 +1197,15 @@ LEDA_FOUND is false.")
     endforeach() # loop on packages
     add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
     add_custom_target(packages_dependencies DEPENDS ${packages_deps})
-    message( "\nYou can now check the headers with the target `check_headers`\n\
-and the package dependencies with the target `packages_dependencies`.\n")
+    message( "  \n\
+  You can now check the headers with the target `check_headers`\n\
+  and the package dependencies with the target `packages_dependencies`.\n\
+  Results are in the `package_info/` sub-directory of the build directory:\n\
+  \n\
+    - package_info/<package>/dependencies\n\
+    - package_info/<package>/included_headers\n\
+    - package_info/<package>/check_headers/ (error messages from \
+the headers checks)\n")
     message( "== Setting header checking (DONE) ==\n" )
 
   endif()
