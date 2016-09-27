@@ -27,7 +27,7 @@
 #define CGAL_CONIC_2_H
 
 #include <CGAL/Point_2.h>
-#include <CGAL/Conic_misc.h>
+#include <CGAL/Kernel/Conic_misc.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

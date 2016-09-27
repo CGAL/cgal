@@ -22,7 +22,7 @@
 #define CGAL_MIN_ELLIPSE_2_ADAPTERH2_H
 
 // includes
-#  include <CGAL/ConicHPA2.h>
+#  include <CGAL/Homogeneous/ConicHPA2.h>
 #  include <CGAL/Optimisation/assertions.h>
 
 namespace CGAL {
