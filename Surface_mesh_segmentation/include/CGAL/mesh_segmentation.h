@@ -22,6 +22,7 @@
  */
 #include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
 #include <boost/config.hpp>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL
 {

@@ -21,6 +21,8 @@
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 #include <CGAL/internal/Surface_mesh_segmentation/SDF_calculation.h>
 
+#include <CGAL/Kernel/global_functions_3.h>
+
 #include <CGAL/property_map.h>
 
 #include <cmath>
