@@ -490,7 +490,7 @@ public:
     \note When iterating between `begin()` and `end()`, no element
     marked as removed can be found.
   */
-  bool is_removed (iterator it)
+  bool is_removed (const_iterator it) const
   {
     return (std::distance (it, garbage_begin()) < 0);
   }
