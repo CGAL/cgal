@@ -63,7 +63,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
     output_vpms[i]=&vpm_out.back(); \
   } \
   else \
-    output_vpms[i]=&vpm_out.back();
+    output_vpms[i]=NULL;
 
 #define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
   typedef typename boost::lookup_named_param_def < \
