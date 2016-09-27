@@ -181,7 +181,8 @@ boolean_operation(const TriangleMesh& const_tm1,
                                                   Vpm,
                                                   Fid_map,
                                                   Default,
-                                                  Default > Ob;
+                                                  Ecm_in,
+                                                  Edge_mark_map_tuple > Ob;
 
   typedef Corefinement::Visitor<TriangleMesh,Vpm,Ob,Ecm_in> Visitor;
   Dnv dnv;
