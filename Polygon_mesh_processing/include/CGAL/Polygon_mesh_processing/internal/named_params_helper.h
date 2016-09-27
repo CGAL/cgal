@@ -34,28 +34,6 @@ public:
   typedef typename boost::property_traits<PMap>::value_type type;
 };
 
-template<typename PolygonMesh>
-class GetK
-{
-  typedef typename property_map_value<PolygonMesh,
-    boost::vertex_point_t>::type
-    Point;
-public:
-  typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
-};
-
-template<typename PolygonMesh, typename NamedParameters>
-class GetGeomTraits
-{
-  typedef typename GetK<PolygonMesh>::Kernel DefaultKernel;
-public:
-  typedef typename boost::lookup_named_param_def <
-    CGAL::geom_traits_t,
-    NamedParameters,
-    DefaultKernel
-  > ::type  type;
-};
-
 template<typename PolygonMesh, typename NamedParameters>
 class GetVertexPointMap
 {
@@ -74,6 +52,29 @@ public:
     NamedParameters,
     DefaultVPMap_const
   > ::type  const_type;
+};
+
+template<typename PolygonMesh, typename NamedParameters>
+class GetK
+{
+  typedef typename boost::property_traits<
+    typename GetVertexPointMap<PolygonMesh, NamedParameters>::type
+  >::value_type Point;
+public:
+  typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+};
+
+template<typename PolygonMesh, typename NamedParameters>
+class GetGeomTraits
+{
+  typedef typename GetK<PolygonMesh, NamedParameters>::Kernel DefaultKernel;
+
+public:
+  typedef typename boost::lookup_named_param_def <
+    CGAL::geom_traits_t,
+    NamedParameters,
+    DefaultKernel
+  > ::type  type;
 };
 
 template<typename PolygonMesh, typename NamedParameters>
@@ -138,4 +139,3 @@ public:
 
 
 #endif //CGAL_NAMED_PARAMETERS_HELPERS_H
-
