@@ -367,8 +367,6 @@ public Q_SLOTS:
         }
         else
         {
-          selection_item->setItemIsMulticolor(true);
-
           if (selection_item->selected_facets.empty() &&
             (!selection_item->selected_edges.empty() || !selection_item->selected_vertices.empty()))
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
@@ -395,8 +393,9 @@ public Q_SLOTS:
               .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
               .face_patch_map(Patch_id_pmap<face_descriptor>()));
         }
-        selection_item->polyhedron_item()->setColor(
-              selection_item->polyhedron_item()->color());
+        if(!selection_item->polyhedron_item()->isItemMulticolor())
+          selection_item->polyhedron_item()->setColor(
+                selection_item->polyhedron_item()->color());
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
         selection_item->changed_with_poly_item();
