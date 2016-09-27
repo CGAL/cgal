@@ -59,26 +59,30 @@ private:
 
   struct Abstract_ply_property_to_point_set_property
   {
-    virtual void assign (Ply_reader& reader, std::size_t index) = 0;
+    virtual void assign (Ply_reader& reader, typename Point_set::Index index) = 0;
   };
 
   template <typename Type>
   class Ply_property_to_point_set_property : public Abstract_ply_property_to_point_set_property
   {
-    typedef typename Point_set::template Property_map<Type> Pmap;
+    typedef typename Point_set::template Property_map<Type> Map;
+    typedef typename Point_set::template Push_property_map<Map> Pmap;
+    Map m_map;
     Pmap m_pmap;
     std::string m_name;
   public:
     Ply_property_to_point_set_property (Point_set& ps, const std::string& name)
       : m_name (name)
     {
-      bool garbage;
-      boost::tie (m_pmap, garbage) = ps.add_property_map(name, Type());
+      boost::tie (m_map, boost::tuples::ignore) = ps.add_property_map(name, Type());
+      m_pmap = ps.push_property_map (m_map);
     }
     
-    virtual void assign (Ply_reader& reader, std::size_t index)
+    virtual void assign (Ply_reader& reader, typename Point_set::Index index)
     {
-      reader.assign (m_pmap[index], m_name.c_str());
+      Type t;
+      reader.assign (t, m_name.c_str());
+      put(m_pmap, index, t);
     }
   };
   
@@ -196,7 +200,7 @@ public:
       process_line<double>(reader);
 
     for (std::size_t i = 0; i < m_properties.size(); ++ i)
-      m_properties[i]->assign (reader, m_point_set.size() - 1);
+      m_properties[i]->assign (reader, *(m_point_set.end() - 1));
   }
 
   template <typename FT>

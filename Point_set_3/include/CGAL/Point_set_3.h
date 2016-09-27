@@ -39,7 +39,7 @@ namespace CGAL {
   This class is a range of indices that provides the user with a
   flexible way to store and access a point set:
 
-  - it can embed an arbitrary number of additional attributes such as
+  - it can store an arbitrary number of additional attributes such as
     normal vectors, colors, indices, etc.;
 
   - all functions of the package \ref PkgPointSetProcessing are
@@ -70,27 +70,8 @@ public:
     \cgalModels `LessThanComparable`
     \cgalModels `Hashable`
   */
-  class Index
-  {
-    /// \cond SKIP_IN_MANUAL
-    std::size_t value;
-    /// \endcond
-  public:
-    Index () : value ((std::size_t)(-1)) { }
-    Index (const std::size_t& value) : value (value) { }
-    Index (const Index& index) : value (index) { }
-    /// \cond SKIP_IN_MANUAL
-    Index operator= (const Index& index) { value = index.value; return *this; }
-    operator std::size_t() const { return value; }
-    bool operator== (const Index& index) const { return value == index.value; }
-    bool operator!= (const Index& index) const { return value != index.value; }
-    bool operator<  (const Index& index) const { return value < index.value; }
-    Index& operator++ () { ++ value; return *this; }
-    Index& operator-- () { -- value; return *this; }
-    Index operator++ (int) { Index tmp(*this); ++ value; return tmp; }
-    Index operator-- (int) { Index tmp(*this); -- value; return tmp; }
-    /// \endcond
-  };
+  class Index;
+
 
   /// \cond SKIP_IN_MANUAL
   typedef typename Properties::Property_container<Index> Base;
@@ -103,12 +84,44 @@ public:
   {
   };
   typedef Property_map<Index> Index_map;
+
+  template <typename Property>
+  class Push_property_map;
+
+  class Index
+  {
+    friend class Point_set_3;
+    friend class Properties::Property_container<Index>;
+    template <class> friend class Properties::Property_array;
+    template <class> friend class Property_map;
+    template <class> friend class Push_property_map;
+    friend class std::vector<Index>;
+    std::size_t value;
+    
+    // Only Point_set_3 and other friend classes are allowed to
+    // instanciate an Index with a specific value
+    Index (const std::size_t& value) : value (value) { }
+
+  public:
+    Index (const Index& index) : value (index) { }
+    Index () : value ((std::size_t)(-1)) { }
+    Index operator= (const Index& index) { value = index.value; return *this; }
+    operator std::size_t() const { return value; }
+    bool operator== (const Index& index) const { return value == index.value; }
+    bool operator!= (const Index& index) const { return value != index.value; }
+    bool operator<  (const Index& index) const { return value < index.value; }
+    Index& operator++ () { ++ value; return *this; }
+    Index& operator-- () { -- value; return *this; }
+    Index operator++ (int) { Index tmp(*this); ++ value; return tmp; }
+    Index operator-- (int) { Index tmp(*this); -- value; return tmp; }
+  };
+
   /// \endcond
   
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type iterator; ///< Iterator type of the point set
-  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set
+  typedef unspecified_type iterator; ///< Iterator type of the point set \cgalModels RandomAccessIterator
+  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set \cgalModels RandomAccessIterator
 #else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
@@ -152,13 +165,6 @@ public:
 protected:
 
   /// \cond SKIP_IN_MANUAL
-
-  // Forbid user from using indices that are not Index type
-  Point& point (const std::size_t index) { return m_points[index]; }
-  const Point& point (const std::size_t index) const { return m_points[index]; }
-  Vector& normal (const std::size_t index) { return m_normals[index]; }
-  const Vector& normal (const std::size_t index) const { return m_normals[index]; }
-  
   Base m_base;
   Index_map m_indices;
   Point_map m_points;
@@ -427,7 +433,7 @@ public:
 
   /// @}
 
-  /// \name Garbage management
+  /// \name Garbage Management
   /// @{
 
   /*!
@@ -457,6 +463,7 @@ public:
           }
       }
   }
+
   /// \cond SKIP_IN_MANUAL
   void remove_from (iterator first)
   {
@@ -652,8 +659,8 @@ public:
   /*!
     \brief Convenience method that tests if the point set has normals.
 
-    This method tests if a property of type `CGAL::Vector_3<Gt>` and
-    named `normal` exists.
+    This method tests if a property of type `Vector` and named
+    `normal` exists.
   */
   bool has_normal_map() const
   {
@@ -663,7 +670,7 @@ public:
   /*!
     \brief Convenience method that adds a normal property.
 
-    This method adds a property of type `CGAL::Vector_3<Gt>` and named
+    This method adds a property of type `Vector` and named
     `normal`.
 
     \return `true` if the property was added, `false` if it already
@@ -757,20 +764,27 @@ public:
   /*!
     \name Push Property Maps and Inserters (Advanced)
 
+    \cgalAdvancedBegin
     The following method are specifically designed to make
     `CGAL::Point_set_3` usable with \cgal input/output functions.
+    \cgalAdvancedEnd
   */
-  
+
   /// @{
 
+  
 #ifdef DOXYGEN_RUNNING
+  /// \cgalAdvancedBegin  
   /// Model of `OutputIterator` used to insert elements by defining
   /// the value of the property `Property`.
+  /// \cgalAdvancedEnd  
   template <class Property>
   using Property_back_inserter = unspecified_type;
 
+  /// \cgalAdvancedBegin  
   /// Model of `WritablePropertyMap` based on `Property` and that
   /// pushes a new item to the point set if needed.
+  /// \cgalAdvancedEnd
   template <class Property>
   using Push_property_map = unspecified_type;
 #endif
@@ -829,7 +843,7 @@ public:
                       Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Push_property_map& pm, Index& i, const typename Property::value_type& t)
+    friend void put(const Push_property_map& pm, Index& i, const reference t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->insert();
@@ -846,12 +860,25 @@ public:
   };
   /// \endcond      
 
-  typedef Property_back_inserter<Index_map> Index_back_inserter; ///< Back inserter on indices
-  typedef Property_back_inserter<Point_map> Point_back_inserter; ///< Back inserter on points
-  typedef Push_property_map<Point_map> Point_push_map; ///< Property map for pushing new points
-  typedef Push_property_map<Vector_map> Vector_push_map; ///< Property map for pushing new vectors
+  /// \cgalAdvancedBegin
+  /// Back inserter on indices
+  /// \cgalAdvancedEnd
+  typedef Property_back_inserter<Index_map> Index_back_inserter; 
+  /// \cgalAdvancedBegin
+  /// Back inserter on points
+  /// \cgalAdvancedEnd
+  typedef Property_back_inserter<Point_map> Point_back_inserter;
+  /// \cgalAdvancedBegin
+  /// Property map for pushing new points
+  /// \cgalAdvancedEnd
+  typedef Push_property_map<Point_map> Point_push_map;
+  /// \cgalAdvancedBegin
+  /// Property map for pushing new vectors
+  /// \cgalAdvancedEnd
+  typedef Push_property_map<Vector_map> Vector_push_map;
 
   /*!
+    \cgalAdvancedBegin
     \cgalAdvancedFunction
     \brief Gets the push property map of the given property.
 
@@ -862,6 +889,7 @@ public:
     \return Returns a pair containing: the wanted property map and a
     Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
+    \cgalAdvancedEnd
   */
   template <class T>
   Push_property_map<Property_map<T> >
@@ -870,35 +898,43 @@ public:
     return Push_property_map<Property_map<T> > (this, &prop, size());
   }
   /*!
+    \cgalAdvancedBegin
     \cgalAdvancedFunction
     \brief Get the push property map of the point attribute.
+    \cgalAdvancedEnd
   */
   Point_push_map point_push_map ()
   {
     return Point_push_map (this, &m_points, size());
   }
   /*!
+    \cgalAdvancedBegin
     \cgalAdvancedFunction
     \brief Get the push property map of the normal attribute.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
+    \cgalAdvancedEnd
   */
   Vector_push_map normal_push_map ()
   {
     return Vector_push_map (this, &m_normals, size());
   }
   /*!
+    \cgalAdvancedBegin
     \cgalAdvancedFunction
     \brief Get the back inserter on the index attribute.
+    \cgalAdvancedEnd
   */
   Index_back_inserter index_back_inserter ()
   {
     return Index_back_inserter (this, &m_indices, size());
   }
   /*!
+    \cgalAdvancedBegin
     \cgalAdvancedFunction
     \brief Get the back inserter on the point attribute.
+    \cgalAdvancedEnd
   */
   Point_back_inserter point_back_inserter ()
   {
@@ -906,7 +942,6 @@ public:
   }
 
   /// @}
-  /// \cgalAdvancedEnd
 
 private:
   /// \cond SKIP_IN_MANUAL
