@@ -127,12 +127,12 @@ class Intersection_of_triangle_meshes
 // data members
   Edge_to_faces stm_edge_to_ltm_faces; // map edges from the triangle mesh with the smaller address to faces of the triangle mesh with the larger address
   Edge_to_faces ltm_edge_to_stm_faces; // map edges from the triangle mesh with the larger address to faces of the triangle mesh with the smaller address
-  Node_visitor visitor;
   // here face descriptor are from tmi and tmj such that &tmi<&tmj
   Coplanar_face_set coplanar_faces;
   Intersection_nodes<TriangleMesh,
                      VertexPointMap,
                      Predicates_on_constructions_needed> nodes;
+  Node_visitor visitor;
   Faces_to_nodes_map         f_to_node;      //Associate a pair of triangle to their intersection points
 // member functions
   void filter_intersections(const TriangleMesh& tm_f,
