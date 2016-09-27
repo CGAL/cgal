@@ -109,8 +109,8 @@ boolean_operation(const TriangleMesh& const_tm1,
                                      NamedParameters1>::const_type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::const_type Vpm2;
-  CGAL_assertion_code(static const bool same_vpm = )
-  boost::is_same<Vpm,Vpm2>::value;
+  CGAL_assertion_code(
+    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
   CGAL_static_assertion(same_vpm);
 
   Vpm vpm1 = choose_pmap(get_param(np1, boost::vertex_point),
@@ -163,8 +163,8 @@ boolean_operation(const TriangleMesh& const_tm1,
                                    NamedParameters1>::type Fid_map;
   typedef typename GetFaceIndexMap<TriangleMesh,
                                    NamedParameters2>::type Fid_map2;
-  CGAL_assertion_code(static const bool same_fidmap = )
-  boost::is_same<Fid_map,Fid_map2>::value;
+  CGAL_assertion_code(
+    static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
   CGAL_static_assertion(same_fidmap);
 
   Fid_map fid_map1 = choose_pmap(get_param(np1, face_index),
