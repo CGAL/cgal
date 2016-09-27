@@ -35,11 +35,11 @@ namespace CGAL {
 /*!
   \ingroup PkgPointSet3IO
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 bool
 read_xyz_point_set(
   std::istream& stream, ///< input stream.
-  PointSet& point_set) ///< point set
+  Point_set_3<Point, Vector>& point_set) ///< point set
 {
   point_set.add_normal_map();
 
@@ -50,7 +50,7 @@ read_xyz_point_set(
      point_set.normal_push_map());
 
   bool has_normals = false;
-  for (typename PointSet::const_iterator it = point_set.begin();
+  for (typename Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
     if (point_set.normal(*it) != CGAL::NULL_VECTOR)
       {
@@ -67,11 +67,11 @@ read_xyz_point_set(
 /*!
   \ingroup PkgPointSet3IO
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 bool
 read_off_point_set(
   std::istream& stream, ///< input stream.
-  PointSet& point_set) ///< point set
+  Point_set_3<Point, Vector>& point_set) ///< point set
 {
   point_set.add_normal_map();
 
@@ -82,7 +82,7 @@ read_off_point_set(
      point_set.normal_push_map());
 
   bool has_normals = false;
-  for (typename PointSet::const_iterator it = point_set.begin();
+  for (typename Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
     if (point_set.normal(*it) != CGAL::NULL_VECTOR)
       {
@@ -101,16 +101,12 @@ read_off_point_set(
 /*!
   \ingroup PkgPointSet3IO
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 bool
 read_ply_point_set(
   std::istream& stream, ///< input stream.
-  PointSet& point_set) ///< point set
+  Point_set_3<Point, Vector>& point_set) ///< point set
 {
-  
-  typedef typename PointSet::Point_type Point;
-  typedef typename PointSet::Vector_type Vector;
-
   CGAL::Ply_interpreter_point_set_3<Point, Vector> interpreter (point_set);
 
   return CGAL::read_ply_custom_points
@@ -121,11 +117,11 @@ read_ply_point_set(
 /*!
   \ingroup PkgPointSet3IO
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 bool
 write_xyz_point_set(
   std::ostream& stream, ///< output stream.
-  const PointSet& point_set)  ///< point set
+  const Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normals())
     return CGAL::write_xyz_points_and_normals
@@ -140,11 +136,11 @@ write_xyz_point_set(
 /*!
   \ingroup PkgPointSet3IO
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 bool
 write_off_point_set(
   std::ostream& stream, ///< output stream.
-  const PointSet& point_set)  ///< point set
+  const Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normal_map())
     return CGAL::write_off_points_and_normals
@@ -159,11 +155,11 @@ write_off_point_set(
 /*!
   \ingroup PkgPointSet3IO
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 bool
 write_ply_point_set(
   std::ostream& stream, ///< output stream.
-  const PointSet& point_set)  ///< point set
+  const Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normals())
     return CGAL::write_ply_points_and_normals

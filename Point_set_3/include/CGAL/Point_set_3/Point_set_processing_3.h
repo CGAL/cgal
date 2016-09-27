@@ -42,10 +42,11 @@ namespace CGAL {
   \ingroup PkgPointSet3PointSetProcessing3
  */
 template <typename Concurrency_tag,
-          typename PointSet>
+          typename Point,
+          typename Vector>
 double
 bilateral_smooth_point_set(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   const unsigned int k,     ///< number of neighbors.
   double sharpness_angle)   ///< control sharpness(0-90)
 {
@@ -60,10 +61,10 @@ bilateral_smooth_point_set(
   \ingroup PkgPointSet3PointSetProcessing3
  */
 template <typename Concurrency_tag,
-	  typename PointSet>
+	  typename Point, typename Vector>
 double
 compute_average_spacing(
-  const PointSet& point_set, ///< point set
+  const Point_set_3<Point, Vector>& point_set, ///< point set
   unsigned int k) ///< number of neighbors.
 {
   return CGAL::compute_average_spacing<Concurrency_tag>
@@ -74,10 +75,10 @@ compute_average_spacing(
   \ingroup PkgPointSet3PointSetProcessing3
  */
 template <typename Concurrency_tag,
-          typename PointSet>
+          typename Point, typename Vector>
 void
 edge_aware_upsample_point_set(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   double sharpness_angle = 30,  ///< control sharpness(0-90)
   double edge_sensitivity = 1,  ///< edge sensitivity(0-5)
   double neighbor_radius = -1, ///< initial size of neighbors.
@@ -96,9 +97,9 @@ edge_aware_upsample_point_set(
   \note No iterator is returned, points simplified are directly
   removed from the point set.
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 void grid_simplify_point_set(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   double epsilon) ///< tolerance value when merging 3D points.
 {
   point_set.remove_from
@@ -112,9 +113,9 @@ void grid_simplify_point_set(
   \note No iterator is returned, points simplified are directly
   removed from the point set.
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 void hierarchy_simplify_point_set(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   const unsigned int size = 10, ///< maximum cluster size
   const double var_max = 0.333) ///< maximal surface variation
 {
@@ -131,10 +132,10 @@ void hierarchy_simplify_point_set(
   \note This function adds a normal map to the point set.
 */
 template <typename Concurrency_tag,
-	  typename PointSet>
+	  typename Point, typename Vector>
 void
 jet_estimate_normals(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2) ///< fitting degree
 {
@@ -151,10 +152,10 @@ jet_estimate_normals(
   \ingroup PkgPointSet3PointSetProcessing3
 */
 template <typename Concurrency_tag,
-	  typename PointSet>
+	  typename Point, typename Vector>
 void
 jet_smooth_point_set(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2, ///< fitting degree
   unsigned int degree_monge = 2)  ///< Monge degree
@@ -168,10 +169,10 @@ jet_smooth_point_set(
 /*!
   \ingroup PkgPointSet3PointSetProcessing3
 */
-template <typename PointSet>
-typename PointSet::iterator
+template <typename Point, typename Vector>
+typename Point_set_3<Point, Vector>::iterator
 mst_orient_normals(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   unsigned int k) ///< number of neighbors
 {
   return CGAL::mst_orient_normals
@@ -185,10 +186,10 @@ mst_orient_normals(
   \note This function adds a normal map to the point set.
 */
 template <typename Concurrency_tag,
-	  typename PointSet>
+	  typename Point, typename Vector>
 void
 pca_estimate_normals(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   unsigned int k) ///< number of neighbors.
 {
   point_set.add_normal_map();
@@ -205,9 +206,9 @@ pca_estimate_normals(
   \note No iterator is returned, points simplified are directly
   removed from the point set.
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 void random_simplify_point_set(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   double removed_percentage) ///< percentage of points to remove
 {
   point_set.remove_from
@@ -222,9 +223,9 @@ void random_simplify_point_set(
   \note No iterator is returned, points simplified are directly
   removed from the point set.
  */
-template <typename PointSet>
+template <typename Point, typename Vector>
 void remove_outliers(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   unsigned int k, ///< number of neighbors.
   double threshold_percent) ///< percentage of points to remove
 {
@@ -238,10 +239,10 @@ void remove_outliers(
 
   \note This function adds a normal map to the point set.
 */
-template <typename PointSet>
+template <typename Point, typename Vector>
 void
 vcm_estimate_normals(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   double offset_radius, ///< offset radius.
   double convolution_radius) ///< convolution radius.
 {
@@ -258,10 +259,10 @@ vcm_estimate_normals(
 
   \note This function adds a normal map to the point set.
 */
-template <typename PointSet>
+template <typename Point, typename Vector>
 void
 vcm_estimate_normals(
-  PointSet& point_set, ///< point set
+  Point_set_3<Point, Vector>& point_set, ///< point set
   double offset_radius, ///< offset radius.
   unsigned int nb_neighbors_convolve) ///< number of neighbors used during the convolution.
 {
@@ -277,11 +278,11 @@ vcm_estimate_normals(
   \ingroup PkgPointSet3PointSetProcessing3
 */
 template <typename Concurrency_tag,
-          typename PointSet>
+          typename Point, typename Vector>
 void
 wlop_simplify_and_regularize_point_set(
-  const PointSet& input_point_set, ///< input point set
-  PointSet& output_point_set, ///< output point set
+  const Point_set_3<Point, Vector>& input_point_set, ///< input point set
+  Point_set_3<Point, Vector>& output_point_set, ///< output point set
   const double select_percentage = 5,     ///< percentage of points to retain
   double neighbor_radius = -1,       ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
