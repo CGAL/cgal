@@ -26,12 +26,12 @@ types `Left_side_category`, `Right_side_category`,
 `Bottom_side_category`, and `Top_side_category`. If some curves 
 handled by a model of the concept `ArrangementOpenBoundaryTraits_2` are expected to be open 
 on the left, the nested type `Left_side_category` must be convertible 
-to `Arr_open_side_tag`. Similarly, if some curves handled by the 
+to `CGAL::Arr_open_side_tag`. Similarly, if some curves handled by the 
 concept are expected to be open on the right, open at the bottom, or 
 open at the top, the corresponding nested type must be convertible to 
-`Arr_open_side_tag`. A model of the concept `ArrangementOpenBoundaryTraits_2` must have 
+`CGAL::Arr_open_side_tag`. A model of the concept `ArrangementOpenBoundaryTraits_2` must have 
 all the four categories convertible to 
-`Arr_open_side_tag`.\cgalFootnote{We intend to introduce more concepts that require only a subset of the categories to be convertible to `Arr_open_side_tag`.} In this case the <span class="textsc">Dcel</span> of the arrangement 
+`CGAL::Arr_open_side_tag`.\cgalFootnote{We intend to introduce more concepts that require only a subset of the categories to be convertible to `Arr_open_side_tag`.} In this case the <span class="textsc">Dcel</span> of the arrangement 
 instantiated with the model is initialized with an implicit bounding 
 rectangle. When the parameter space is bounded, it is the exact 
 geometric embedding of the implicit bounding rectangle. 
@@ -58,26 +58,26 @@ public:
 /// @{
 
 /*!
-Must be convertible to either `Arr_oblivious_side_tag` or 
-`Arr_open_side_tag`. 
+Must be convertible to either `CGAL::Arr_oblivious_side_tag` or 
+`CGAL::Arr_open_side_tag`. 
 */ 
 typedef unspecified_type Left_side_category; 
 
 /*!
-Must be convertible to either `Arr_oblivious_side_tag` or 
-`Arr_open_side_tag`. 
+Must be convertible to either `CGAL::Arr_oblivious_side_tag` or 
+`CGAL::Arr_open_side_tag`. 
 */ 
 typedef unspecified_type Bottom_side_category; 
 
 /*!
-Must be convertible to either `Arr_oblivious_side_tag` or 
-`Arr_open_side_tag`. 
+Must be convertible to either `CGAL::Arr_oblivious_side_tag` or 
+`CGAL::Arr_open_side_tag`. 
 */ 
 typedef unspecified_type Top_side_category; 
 
 /*!
-Must be convertible to either `Arr_oblivious_side_tag` or 
-`Arr_open_side_tag`. 
+Must be convertible to either `CGAL::Arr_oblivious_side_tag` or 
+`CGAL::Arr_open_side_tag`. 
 */ 
 typedef unspecified_type Right_side_category; 
 
@@ -91,7 +91,7 @@ models the concept `ArrTraits::ParameterSpaceInX_2`.
 Required only if the traits class supports unbounded curves that 
 approach the left or the right sides (the `Left_side_category` 
 or the `Right_side_category` categories are convertible to 
-`Arr_open_side_tag`). 
+`CGAL::Arr_open_side_tag`). 
 */ 
 typedef unspecified_type Parameter_space_in_x_2; 
 
@@ -100,7 +100,7 @@ models the concept `ArrTraits::CompareYNearBoundary_2`.
 Required only if the traits class supports unbounded curves that 
 approach the left or the right sides (the `Left_side_category` 
 or the `Right_side_category` categories are convertible to 
-`Arr_open_side_tag`). 
+`CGAL::Arr_open_side_tag`). 
 */ 
 typedef unspecified_type Compare_y_near_boundary_2; 
 
@@ -109,7 +109,7 @@ models the concept `ArrTraits::ParameterSpaceInY_2`.
 Required only if the traits class supports unbounded curves that 
 approach the bottom or the top sides (the `Bottom_side_category` 
 or the `Top_side_category` categories are convertible to 
-`Arr_open_side_tag`). 
+`CGAL::Arr_open_side_tag`). 
 */ 
 typedef unspecified_type Parameter_space_in_y_2; 
 
@@ -118,7 +118,7 @@ models the concept `ArrTraits::CompareXAtLimit_2`.
 Required only if the traits class supports unbounded curves that 
 approach the bottom or the top sides (the `Bottom_side_category` 
 or the `Top_side_category` categories are convertible to 
-`Arr_open_side_tag`). 
+`CGAL::Arr_open_side_tag`). 
 */ 
 typedef unspecified_type Compare_x_at_limit_2; 
 
@@ -127,7 +127,7 @@ models the concept `ArrTraits::CompareXNearLimit_2`.
 Required only if the traits class supports unbounded curves that 
 approach the bottom or the top sides (the `Bottom_side_category` 
 or the `Top_side_category` categories are convertible to 
-`Arr_open_side_tag`). 
+`CGAL::Arr_open_side_tag`). 
 */ 
 typedef unspecified_type Compare_x_near_limit_2; 
 
