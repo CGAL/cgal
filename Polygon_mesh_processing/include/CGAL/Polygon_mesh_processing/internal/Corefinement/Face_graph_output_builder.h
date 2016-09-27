@@ -216,16 +216,16 @@ class Face_graph_output_builder
     switch (tuple_id)
     {
     case 0:
-      make_edges(cpp11::get<0>(edge_mark_maps),edges);
+      mark_edges(cpp11::get<0>(edge_mark_maps),edges);
     break;
     case 1:
-      make_edges(cpp11::get<1>(edge_mark_maps),edges);
+      mark_edges(cpp11::get<1>(edge_mark_maps),edges);
     break;
     case 2:
-      make_edges(cpp11::get<2>(edge_mark_maps),edges);
+      mark_edges(cpp11::get<2>(edge_mark_maps),edges);
     break;
     default:
-      make_edges(cpp11::get<3>(edge_mark_maps),edges);
+      mark_edges(cpp11::get<3>(edge_mark_maps),edges);
     }
   }
 
