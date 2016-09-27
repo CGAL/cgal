@@ -26,6 +26,7 @@
 #define CGAL_HANDLE_FOR_H
 
 #include <CGAL/config.h>
+#include <CGAL/assertions.h> // for CGAL_assume
 
 #include <boost/config.hpp>
 #include <CGAL/memory.h>
