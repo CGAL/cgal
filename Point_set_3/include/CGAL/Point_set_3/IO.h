@@ -161,14 +161,17 @@ write_ply_point_set(
   std::ostream& stream, ///< output stream.
   const Point_set_3<Point, Vector>& point_set)  ///< point set
 {
-  if (point_set.has_normal_map())
-    return CGAL::write_ply_points_and_normals
-      (stream, point_set.begin(), point_set.end(),
-       point_set.point_map(), point_set.normal_map());
+
+  stream << point_set;
+  return true;
+  // if (point_set.has_normal_map())
+  //   return CGAL::write_ply_points_and_normals
+  //     (stream, point_set.begin(), point_set.end(),
+  //      point_set.point_map(), point_set.normal_map());
   
-  return CGAL::write_ply_points
-  (stream, point_set.begin(), point_set.end(),
-   point_set.point_map());
+  // return CGAL::write_ply_points
+  // (stream, point_set.begin(), point_set.end(),
+  //  point_set.point_map());
 }
 
 } // namespace CGAL
