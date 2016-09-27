@@ -1161,14 +1161,17 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	template<class V,class W>
 	result_type operator()(V const&a, W const&b)const{
 		CI c(this->kernel());
+
+
 #ifdef CGAL_CXX11
-		auto
+                auto a_begin=c(a,Begin_tag());
+                auto b_begin=c(b,Begin_tag());
+                auto a_end=c(a,End_tag());
 #else
-		typename CI::result_type
+                typename CI::result_type a_begin=c(a,Begin_tag());
+                typename CI::result_type b_begin=c(b,Begin_tag());
+                typename CI::result_type a_end=c(a,End_tag());
 #endif
-		a_begin=c(a,Begin_tag()),
-		b_begin=c(b,Begin_tag()),
-		a_end=c(a,End_tag());
 		result_type res;
 		// can't we do slightly better for Uncertain<*> ?
 		// after res=...; if(is_uncertain(res))return indeterminate<result_type>();
@@ -1230,14 +1233,18 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 	template<class V,class W>
 	result_type operator()(V const&a, W const&b)const{
 		CI c(this->kernel());
+
+
 #ifdef CGAL_CXX11
-		auto
+                auto a_begin=c(a,Begin_tag());
+                auto b_begin=c(b,Begin_tag());
+                auto a_end=c(a,End_tag());
 #else
-		typename CI::result_type
+                typename CI::result_type a_begin=c(a,Begin_tag());
+                typename CI::result_type b_begin=c(b,Begin_tag());
+                typename CI::result_type a_end=c(a,End_tag());
 #endif
-		a_begin=c(a,Begin_tag()),
-		b_begin=c(b,Begin_tag()),
-		a_end=c(a,End_tag());
+
 		result_type res = true;
 		// Is using CGAL::possibly for Uncertain really an optimization?
 		do res = res & (*a_begin++ == *b_begin++);
