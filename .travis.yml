@@ -1,7 +1,5 @@
 language: cpp
 dist: trusty
-before_install:
-  - sudo add-apt-repository ppa:smspillaz/cmake-2.8.12 -y
 install:
 before_script:
   - mkdir build
