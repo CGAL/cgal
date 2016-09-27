@@ -21,6 +21,11 @@
 #ifndef CGAL_NEF_POLYGON_CONSTRUCTOR_H
 #define CGAL_NEF_POLYGON_CONSTRUCTOR_H
 
+#include <CGAL/Modifier_base.h>
+#include <CGAL/Origin.h>
+#include <iterator>
+#include <iostream>
+
 namespace CGAL {
 
 template<class Nef3, typename forward_iterator>
