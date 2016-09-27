@@ -275,7 +275,6 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
 
 
 #if CGAL_BOX_INTERSECTION_DEBUG
- static int level = -1;
  #define CGAL_BOX_INTERSECTION_DUMP(msg) { \
    for( unsigned int i = level; i; --i ) \
      std::cout << "  "; \
@@ -339,6 +338,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     const T sup = box_limits< T >::sup();
 
 #if CGAL_BOX_INTERSECTION_DEBUG
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, level, -1);
     Counter<int> bla( level );
     CGAL_BOX_INTERSECTION_DUMP("range: [" << lo << "," << hi << ") dim " 
                                           << dim << std::endl )
