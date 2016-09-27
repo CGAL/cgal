@@ -59,11 +59,13 @@ rm -rf Surface_mesh_deformation_Demo
 rm -rf Circular_kernel_3_Demo
 
 # CGAL-4.6
-pushd Polyline_simplification_2_Demo;   zip ../polyline_simplification_2.zip *; popd
+pushd Polyline_simplification_2_Demo;   zip ../polyline_simplification_2.zip *;      popd
 
 # CGAL-4.7
+pushd Segment_Delaunay_graph_Linf_2_Demo; zip ../segment_voronoi_diagram_2.zip *;    popd
 
-pushd Segment_Delaunay_graph_Linf_2_Demo; zip ../segment_voronoi_diagram_2.zip *; popd
+# CGAL-4.8
+pushd Optimal_transportation_reconstruction_2_Demo; zip ../otr2.zip *;               popd
 
 # check
 echo CHECK now. The following lines should be empty.
