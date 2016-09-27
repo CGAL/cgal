@@ -71,7 +71,7 @@ Polyhedron* poisson_reconstruct(Point_set& points,
       return NULL;
     }
 
-    bool points_have_normals = points.has_normals();
+    bool points_have_normals = points.has_normal_map();
     if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
@@ -93,7 +93,7 @@ Polyhedron* poisson_reconstruct(Point_set& points,
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
     Poisson_reconstruction_function function(points.begin_or_selection_begin(), points.end(),
-                                             points.point_pmap(), points.normal_pmap());
+                                             points.point_map(), points.normal_map());
 
     bool ok = false;    
     #ifdef CGAL_EIGEN3_ENABLED
@@ -131,7 +131,7 @@ Polyhedron* poisson_reconstruct(Point_set& points,
 
     // Computes average spacing
     Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
-                                                                                points.point_pmap(),
+                                                                                points.point_map(),
                                                                                 6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface
@@ -209,8 +209,8 @@ Polyhedron* poisson_reconstruct(Point_set& points,
     
     for (Point_set::const_iterator p=points.begin_or_selection_begin(); p!=points.end(); p++)
     {
-      AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (points.point (p));
-      double distance = std::sqrt(CGAL::squared_distance (pap.first, points.point(p)));
+      AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (points.point (*p));
+      double distance = std::sqrt(CGAL::squared_distance (pap.first, points.point(*p)));
       
       max_distance = (std::max)(max_distance, distance);
       avg_distance += distance;

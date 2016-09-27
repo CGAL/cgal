@@ -35,7 +35,7 @@ public:
     points.reserve(3*ps.size());
     for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
     {
-      const Kernel::Point_3& p = ps.point(it);
+      const Kernel::Point_3& p = ps.point(*it);
       points.push_back(p.x()-center_.x);
       points.push_back(p.y()-center_.y);
       points.push_back(p.z()-center_.z);
@@ -289,18 +289,18 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     Point_set* new_ps = new Point_set();
     new_ps->reserve(base_ps->size());
     qglviewer::Vec c = transform_points_item->center();
-    for(std::size_t id = 0; id<base_ps->size(); ++id)
+    for(Point_set::const_iterator it = base_ps->begin(); it != base_ps->end(); ++ it)
     {
-      QVector3D vec = transform_matrix * QVector3D(base_ps->point(id).x() - c.x,
-                                base_ps->point(id).y() - c.y,
-                                base_ps->point(id).z() - c.z);
-      new_ps->push_back(Kernel::Point_3 (vec.x(), vec.y(), vec.z()));
+      QVector3D vec = transform_matrix * QVector3D(base_ps->point(*it).x() - c.x,
+                                base_ps->point(*it).y() - c.y,
+                                base_ps->point(*it).z() - c.z);
+      new_ps->insert(Kernel::Point_3 (vec.x(), vec.y(), vec.z()));
     }
 
 
     Scene_points_with_normal_item* new_item=new Scene_points_with_normal_item();
-    for(std::size_t id = 0; id<new_ps->size(); ++id)
-      new_item->point_set()->push_back(new_ps->point(id));
+    for(Point_set::const_iterator it = new_ps->begin(); it != new_ps->end(); ++ it)
+      new_item->point_set()->insert(new_ps->point(*it));
     new_item->setName(tr("%1_transformed").arg(transform_points_item->getBase()->name()));
 
     scene->replaceItem(tr_item_index,new_item);

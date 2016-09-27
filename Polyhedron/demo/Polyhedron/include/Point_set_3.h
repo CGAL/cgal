@@ -50,20 +50,12 @@
 /// @param Gt       Geometric traits class.
 
 template <class Gt>
-class Point_set_3 : public CGAL::Point_set_3<Gt>
+class Point_set_3 : public CGAL::Point_set_3<typename Gt::Point_3,
+                                             typename Gt::Vector_3>
 {
-private:
-
-  // Base class
-  typedef CGAL::Point_set_3<Gt> Base;
   
 public:
 
-  typedef typename Base::iterator iterator;
-  typedef typename Base::const_iterator const_iterator;
-  typedef typename Base::Item Item;
-  
-  // Classic CGAL geometric types
   typedef Gt  Geom_traits; ///< Geometric traits class.
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;  ///< typedef to Geom_traits::Point_3
@@ -71,8 +63,17 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef typename Base::template Property_map<double>::type Double_prop;
-  typedef typename Base::template Property_map<unsigned char>::type Byte_prop;
+  // Base class
+  typedef CGAL::Point_set_3<Point, Vector> Base;
+
+  typedef typename Base::iterator iterator;
+  typedef typename Base::const_iterator const_iterator;
+  typedef typename Base::Index Index;
+  
+  // Classic CGAL geometric types
+
+  typedef typename Base::template Property_map<double> Double_map;
+  typedef typename Base::template Property_map<unsigned char> Byte_map;
   
 private:
   
@@ -86,10 +87,10 @@ private:
 
   bool m_radii_are_uptodate;
 
-  Double_prop m_radius;
-  Byte_prop m_red;
-  Byte_prop m_green;
-  Byte_prop m_blue;
+  Double_map m_radius;
+  Byte_map m_red;
+  Byte_map m_green;
+  Byte_map m_blue;
 
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
@@ -116,22 +117,20 @@ public:
     m_radii_are_uptodate = p.m_radii_are_uptodate;
   }
 
-  iterator begin() { return Base::begin(); }
-  iterator end() { return Base::removed_end(); }
-  const_iterator begin() const { return Base::begin(); }
-  const_iterator end() const { return Base::removed_end(); }
+  iterator begin() { return this->m_indices.begin(); }
+  iterator end() { return this->m_indices.end(); }
+  const_iterator begin() const { return this->m_indices.begin(); }
+  const_iterator end() const { return this->m_indices.end(); }
   std::size_t size() const { return this->m_base.size(); }
 
   bool add_radius()
   {
     bool out = false;
-    boost::tie (m_radius, out) = this->template add_property<double> ("radius");
+    boost::tie (m_radius, out) = this->template add_property_map<double> ("radius", 0.);
     return out;
   }
-  double& radius (Item index) { return m_radius[this->m_indices[index]]; }
-  const double& radius (Item index) const { return m_radius[this->m_indices[index]]; }
-  double& radius (iterator it) { return m_radius[*it]; }
-  const double& radius (const_iterator it) const { return m_radius[*it]; }
+  double& radius (const Index& index) { return m_radius[index]; }
+  const double& radius (const Index& index) const { return m_radius[index]; }
 
   void test () { }
   
@@ -139,26 +138,26 @@ public:
   {
     bool found = false;
     
-    boost::tie (m_red, found) = this->template property<unsigned char>("red");
+    boost::tie (m_red, found) = this->template property_map<unsigned char>("red");
     if (!found)
       {
-        boost::tie (m_red, found) = this->template property<unsigned char>("r");
+        boost::tie (m_red, found) = this->template property_map<unsigned char>("r");
         if (!found)
           return false;
       }
 
-    boost::tie (m_green, found) = this->template property<unsigned char>("green");
+    boost::tie (m_green, found) = this->template property_map<unsigned char>("green");
     if (!found)
       {
-        boost::tie (m_green, found) = this->template property<unsigned char>("g");
+        boost::tie (m_green, found) = this->template property_map<unsigned char>("g");
         if (!found)
           return false;
       }
 
-    boost::tie (m_blue, found) = this->template property<unsigned char>("blue");
+    boost::tie (m_blue, found) = this->template property_map<unsigned char>("blue");
     if (!found)
       {
-        boost::tie (m_blue, found) = this->template property<unsigned char>("b");
+        boost::tie (m_blue, found) = this->template property_map<unsigned char>("b");
         if (!found)
           return false;
       }
@@ -168,15 +167,18 @@ public:
 
   bool has_colors() const
   {
-    return m_blue != Byte_prop();
+    return m_blue != Byte_map();
   }
     
-  const unsigned char& red (const_iterator it) { return m_red[*it]; }
-  const unsigned char& green (const_iterator it) { return m_green[*it]; }
-  const unsigned char& blue (const_iterator it) { return m_blue[*it]; }
+  unsigned char& red (const Index& index) { return m_red[index]; }
+  unsigned char& green (const Index& index) { return m_green[index]; }
+  unsigned char& blue (const Index& index) { return m_blue[index]; }
+  const unsigned char& red (const Index& index) const { return m_red[index]; }
+  const unsigned char& green (const Index& index) const { return m_green[index]; }
+  const unsigned char& blue (const Index& index) const { return m_blue[index]; }
   
-  iterator first_selected() { return this->removed_begin(); }
-  const_iterator first_selected() const { return this->removed_begin(); }
+  iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
+  const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }
   void set_first_selected(iterator it)
   {
     this->remove_from (it);
@@ -195,20 +197,20 @@ public:
   // Test if point is selected
   bool is_selected(const_iterator it) const
   {
-    return static_cast<std::size_t>(std::distance (it, end())) <= this->m_nb_removed;
+    return this->is_removed (it);
   }
 
   /// Gets the number of selected points.
   std::size_t nb_selected_points() const
   {
-    return this->m_nb_removed;
+    return this->number_of_removed_points();
   }
 
   /// Mark a point as selected/not selected.
   void select(iterator it, bool selected = true)
   {
     bool currently = is_selected (it);
-    iterator first = this->removed_begin();
+    iterator first = this->first_selected();
     if (currently && !selected)
       {
         std::swap (*it, *first);
@@ -236,7 +238,7 @@ public:
     iterator sel = end() - 1;
     iterator unsel = begin();
 
-    iterator first = this->removed_begin();
+    iterator first = this->first_selected();
 
     while (sel != first - 1 && unsel != first)
       std::swap (*(sel --), *(unsel ++));
@@ -251,18 +253,33 @@ public:
     invalidate_bounds();
   }
 
-  void merge_with (const Point_set_3& other)
+  void merge_with (Point_set_3& other)
   {
-    if (!(other.has_normals()) && other.has_normals())
-      this->add_normal_property();
+    if (!(this->has_normal_map()) && other.has_normal_map())
+      this->add_normal_map();
+    if (!(this->has_colors()) && other.has_colors())
+      {
+        if (other.template has_property_map<unsigned char>("red"))
+          {
+            boost::tie (m_red, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("red", 0);
+            boost::tie (m_green, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("green", 0);
+            boost::tie (m_blue, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("blue", 0);
+          }
+        else
+          {
+            boost::tie (m_red, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("r", 0);
+            boost::tie (m_green, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("g", 0);
+            boost::tie (m_blue, boost::tuples::ignore)
+              = this->template add_property_map<unsigned char>("b", 0);
+          }
+      }
 
-    this->m_base.transfer (other.m_base);
-
-    unselect_all();
-
-    // Reset indices
-    for (std::size_t i = 0; i < this->m_base.size(); ++ i)
-      this->m_indices[i] = i;
+    this->join (other);
   }
 
     /// Gets the bounding box.

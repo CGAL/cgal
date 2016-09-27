@@ -326,14 +326,14 @@ protected:
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
 
-    std::vector<std::size_t> unselected, selected;
+    std::vector<Point_set::Index> unselected, selected;
     
     for(Point_set::iterator it = points->begin ();
 	it != points->end(); ++ it)
       {
 	bool already_selected = points->is_selected (it);
 
-        const Kernel::Point_3 p = points->point (it);
+        const Kernel::Point_3 p = points->point (*it);
 	qglviewer::Vec vp (p.x (), p.y (), p.z ());
 	qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
 	    
@@ -467,7 +467,15 @@ public Q_SLOTS:
     Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
     new_item->setName(QString("%1 (selected points)").arg(point_set_item->name()));
     if (point_set_item->has_normals())
-      new_item->point_set()->add_normal_property();
+      new_item->point_set()->add_normal_map();
+    if (point_set_item->point_set()->has_colors())
+      {
+        new_item->point_set()->add_property_map<unsigned char>("red", 0);
+        new_item->point_set()->add_property_map<unsigned char>("green", 0);
+        new_item->point_set()->add_property_map<unsigned char>("blue", 0);
+        new_item->point_set()->check_colors(); 
+      }
+    
     new_item->setColor(point_set_item->color());
     new_item->setRenderingMode(point_set_item->renderingMode());
     new_item->setVisible(point_set_item->visible());
@@ -477,11 +485,16 @@ public Q_SLOTS:
 	it != point_set_item->point_set()->end(); ++ it) {
       if (point_set_item->point_set()->is_selected (it))
         {
+          Point_set::iterator new_point =
+            new_item->point_set()->insert(point_set_item->point_set()->point(*it));
           if (point_set_item->has_normals())
-            new_item->point_set()->push_back(point_set_item->point_set()->point(it),
-                                             point_set_item->point_set()->normal(it));
-          else
-            new_item->point_set()->push_back(point_set_item->point_set()->point(it));
+            new_item->point_set()->normal(*new_point) = point_set_item->point_set()->normal(*it);
+          if (point_set_item->point_set()->has_colors())
+            {
+              new_item->point_set()->red(*new_point) = point_set_item->point_set()->red(*it);
+              new_item->point_set()->green(*new_point) = point_set_item->point_set()->green(*it);
+              new_item->point_set()->blue(*new_point) = point_set_item->point_set()->blue(*it);
+            }
         }
     }
     new_item->resetSelection();

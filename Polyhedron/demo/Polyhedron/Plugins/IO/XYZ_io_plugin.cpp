@@ -191,7 +191,7 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
       if(counter == 3)
       {
           const Kernel::Point_3 p(coord[0], coord[1], coord[2]);
-          item->point_set()->push_back(p);
+          item->point_set()->insert(p);
           counter =0;
       }
   }
