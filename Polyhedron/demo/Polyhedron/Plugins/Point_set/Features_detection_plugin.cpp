@@ -83,7 +83,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
 
     CGAL::Timer task_timer; task_timer.start();
     CGAL::compute_vcm(points->begin(), points->end(),
-                      points->point_pmap(),
+                      points->point_map(),
                       cov, dialog.offsetRadius(), dialog.convolveRadius(),
                       Kernel());
     task_timer.stop();
@@ -96,7 +96,7 @@ void Polyhedron_demo_features_detection_plugin::on_actionDetectFeatures_triggere
     for (Point_set::const_iterator it = points->begin(); it != points->end(); ++ it)
     {
       if (CGAL::vcm_is_on_feature_edge(cov[i], dialog.threshold()))
-        new_item->point_set()->push_back(points->point(i));
+        new_item->point_set()->insert(points->point(*it));
       ++i;
     }
     task_timer.stop();

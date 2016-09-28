@@ -47,6 +47,7 @@ create_single_source_cgal_program( "point_set.cpp" )
 create_single_source_cgal_program( "point_set_property.cpp" )
 create_single_source_cgal_program( "point_set_read_xyz.cpp" )
 create_single_source_cgal_program( "point_set_read_ply.cpp" )
+create_single_source_cgal_program( "point_set_advanced.cpp" )
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (NOT EIGEN3_FOUND)

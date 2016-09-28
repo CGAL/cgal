@@ -115,7 +115,7 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       // Computes average spacing
       double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                                       points->begin(), points->end(),
-                                      points->point_pmap(),
+                                      points->point_map(),
                                       6 /* knn = 1 ring */);
       
       std::size_t nb_selected = points->nb_selected_points();
@@ -124,8 +124,8 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->begin_or_selection_begin(),
 					  points->end(), 
 					  std::back_inserter(new_points),
-                                          points->point_pmap(),
-                                          points->normal_pmap(),
+                                          points->point_map(),
+                                          points->normal_map(),
 					  dialog.sharpness_angle(), 
 					  dialog.edge_sensitivity(),
 					  dialog.neighborhood_radius() * average_spacing,
@@ -133,7 +133,7 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       nb_selected += new_points.size();
       
       for (unsigned int i = 0; i < new_points.size (); ++ i)
-	points->push_back (new_points[i].first, new_points[i].second);
+	points->insert (new_points[i].first, new_points[i].second);
 
       if (nb_selected != new_points.size())
         points->set_first_selected (points->end() - nb_selected);

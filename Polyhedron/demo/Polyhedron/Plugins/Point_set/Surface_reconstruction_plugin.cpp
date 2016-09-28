@@ -94,7 +94,7 @@ namespace SurfaceReconstruction
   typedef Kernel::Vector_3 Vector;
   // types for K nearest neighbors search
   typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
-  typedef CGAL::Search_traits_adapter <std::size_t, Point_set::Point_pmap, SearchTraits_3> Search_traits;
+  typedef CGAL::Search_traits_adapter <Point_set::Index, Point_set::Point_map, SearchTraits_3> Search_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;
   typedef Neighbor_search::Distance Distance;
@@ -126,21 +126,21 @@ namespace SurfaceReconstruction
   unsigned int scale_of_anisotropy (const Point_set& points, double& size)
   {
     Tree tree(points.begin_or_selection_begin(), points.end(),
-              Tree::Splitter(), Search_traits (points.point_pmap()));
+              Tree::Splitter(), Search_traits (points.point_map()));
     
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
     
     std::vector<Point> subset;
-    for (std::size_t i = 0; i < points.size (); ++ i)
+    for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
       if (rand() / (double)RAND_MAX < ratio_kept)
-    	subset.push_back (points[i]);
+    	subset.push_back (points.point(*it));
     
     std::vector<unsigned int> scales;
     generate_scales (std::back_inserter (scales));
 
     std::vector<unsigned int> chosen;
-    Distance tr_dist (points.point_pmap());
+    Distance tr_dist (points.point_map());
     
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
@@ -196,16 +196,16 @@ namespace SurfaceReconstruction
   unsigned int scale_of_noise (const Point_set& points, double& size)
   {
     Tree tree(points.begin_or_selection_begin(), points.end(),
-              Tree::Splitter(), Search_traits (points.point_pmap()));
-    Distance tr_dist (points.point_pmap());
+              Tree::Splitter(), Search_traits (points.point_map()));
+    Distance tr_dist (points.point_map());
     
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
     
     std::vector<Point> subset;
-    for (std::size_t i = 0; i < points.size (); ++ i)
+    for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
       if (rand() / (double)RAND_MAX < ratio_kept)
-    	subset.push_back (points[i]);
+    	subset.push_back (points.point(*it));
     
     std::vector<unsigned int> scales;
     generate_scales (std::back_inserter (scales));
@@ -262,27 +262,16 @@ namespace SurfaceReconstruction
 
   void simplify_point_set (Point_set& points, double size)
   {
-    points.set_first_selected (CGAL::grid_simplify_point_set (points.begin (), points.end (), points.point_pmap(), size));
+    points.set_first_selected (CGAL::grid_simplify_point_set (points.begin (), points.end (), points.point_map(), size));
     points.delete_selection();
   }
 
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
-    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(), points.point_pmap(),
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(), points.point_map(),
                                                 scale);
   }
 
-  struct Point_set_make_point
-    : public std::unary_function<const std::size_t&, const Kernel::Point_3&>
-  {
-    const Point_set& point_set;
-    Point_set_make_point (const Point_set& point_set) : point_set (point_set) { }
-    const Kernel::Point_3& operator() (const std::size_t& i) const
-    {
-      return point_set.point (i);
-    }
-  };
-  
   template <typename ItemsInserter>
   void scale_space (const Point_set& points, ItemsInserter items,
 		    unsigned int scale, bool generate_smooth = false,
@@ -290,8 +279,7 @@ namespace SurfaceReconstruction
                     unsigned int samples = 300, unsigned int iterations = 4)
   {
     ScaleSpace reconstruct (scale, samples);
-    reconstruct.reconstruct_surface(boost::make_transform_iterator(points.begin_or_selection_begin(), Point_set_make_point(points)),
-                                    boost::make_transform_iterator(points.end(), Point_set_make_point(points)),
+    reconstruct.reconstruct_surface(points.points().begin(), points.points().end(),
                                     iterations,
                                     separate_shells, force_manifold);
 
@@ -323,7 +311,7 @@ namespace SurfaceReconstruction
                 if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
                   {
                     map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = points.point(points.begin_or_selection_begin() + (*it)[ind]);
+                    Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
                     new_item->new_vertex (p.x (), p.y (), p.z ());
                     
                     if (generate_smooth)
@@ -379,7 +367,7 @@ namespace SurfaceReconstruction
                 if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
                   {
                     map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = points.point(points.begin_or_selection_begin() + (*it)[ind]);
+                    Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
                     new_item->new_vertex (p.x (), p.y (), p.z ());
                     
                     if (generate_smooth)
@@ -407,11 +395,11 @@ namespace SurfaceReconstruction
   }
 
   struct Point_set_make_pair_point_index
-    : public std::unary_function<const std::size_t&, std::pair<Kernel::Point_3, std::size_t> >
+    : public std::unary_function<const Point_set::Index&, std::pair<Kernel::Point_3, std::size_t> >
   {
     const Point_set& point_set;
     Point_set_make_pair_point_index (const Point_set& point_set) : point_set (point_set) { }
-    std::pair<Kernel::Point_3, std::size_t> operator() (const std::size_t& i) const
+    std::pair<Kernel::Point_3, std::size_t> operator() (const Point_set::Index& i) const
     {
       return std::make_pair (point_set.point (i), i);
     }
@@ -446,13 +434,13 @@ namespace SurfaceReconstruction
   void compute_normals (Point_set& points, unsigned int neighbors)
   {
     CGAL::jet_estimate_normals<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
-                                                points.point_pmap(),
-                                                points.normal_pmap(),
+                                                points.point_map(),
+                                                points.normal_map(),
                                                 2 * neighbors);
     
     points.set_first_selected (CGAL::mst_orient_normals (points.begin(), points.end(),
-                                                         points.point_pmap(),
-                                                         points.normal_pmap(),
+                                                         points.point_map(),
+                                                         points.normal_map(),
                                                          2 * neighbors));
     points.delete_selection();
   }
@@ -651,7 +639,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	  std::cerr << "Denoising point set... ";
 	  time.restart();
 	  SurfaceReconstruction::smooth_point_set (*points, noise_scale);
-          new_item->point_set()->remove_normal_property();
+          new_item->point_set()->remove_normal_map();
 	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	}
 
@@ -718,7 +706,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 
 		  SurfaceReconstruction::compute_normals (*points, noise_scale);
 		  
-		  new_item->point_set()->add_normal_property();
+		  new_item->point_set()->add_normal_map();
 		  new_item->setRenderingMode(PointsPlusNormals);
 		  
 		  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -876,7 +864,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
       if (!(point_set_item->has_normals()))
         {
           std::cerr << "Estimation of normal vectors... ";
-          points->add_normal_property();
+          points->add_normal_map();
           SurfaceReconstruction::compute_normals (*points, 12);
 		  
 

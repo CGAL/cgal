@@ -41,8 +41,8 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
     QAction* actionDetect;
 
-  typedef Point_set_3<Kernel>::Point_pmap PointPMap;
-  typedef Point_set_3<Kernel>::Vector_pmap NormalPMap;
+  typedef Point_set_3<Kernel>::Point_map PointPMap;
+  typedef Point_set_3<Kernel>::Vector_map NormalPMap;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
@@ -134,14 +134,14 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    typedef Point_set::Point_pmap PointPMap;
-    typedef Point_set::Vector_pmap NormalPMap;
+    typedef Point_set::Point_map PointPMap;
+    typedef Point_set::Vector_map NormalPMap;
 
     typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
     typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
     Shape_detection shape_detection;
-    shape_detection.set_input(*points, points->point_pmap(), points->normal_pmap());
+    shape_detection.set_input(*points, points->point_map(), points->normal_map());
 
     std::vector<Scene_group_item *> groups;
     groups.resize(5);
@@ -206,7 +206,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
             
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
-        point_item->point_set()->push_back((*points)[i]);
+        point_item->point_set()->insert(points->point(*(points->begin()+i)));
       
       unsigned char r, g, b;
 
@@ -357,8 +357,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
   std::vector<Point_2> projections;
   projections.reserve (points.size ());
 
-  for (std::size_t i = 0; i < points.size (); ++ i)
-    projections.push_back (plane->to_2d (points[i]));
+  for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
+    projections.push_back (plane->to_2d (points.point(*it)));
 
   Alpha_shape_2 ashape (projections.begin (), projections.end (), epsilon);
   

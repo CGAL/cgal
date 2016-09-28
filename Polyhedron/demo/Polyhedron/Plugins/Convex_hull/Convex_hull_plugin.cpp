@@ -97,14 +97,8 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     }
     else{
       if (pts_item)
-        CGAL::convex_hull_3(boost::make_transform_iterator (pts_item->point_set()->begin(),
-                                                            CGAL::Property_map_to_unary_function
-                                                            <Point_set_3<Kernel>::Point_pmap>
-                                                            (pts_item->point_set()->point_pmap())),
-                            boost::make_transform_iterator (pts_item->point_set()->end(),
-                                                            CGAL::Property_map_to_unary_function
-                                                            <Point_set_3<Kernel>::Point_pmap>
-                                                            (pts_item->point_set()->point_pmap())),
+        CGAL::convex_hull_3(pts_item->point_set()->points().begin(),
+                            pts_item->point_set()->points().end(),
                             *pConvex_hull);
       else{
         std::size_t nb_points=0;

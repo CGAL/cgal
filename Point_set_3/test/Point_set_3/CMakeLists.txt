@@ -43,5 +43,6 @@ include_directories( BEFORE ../../include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "point_set_test.cpp" )
+create_single_source_cgal_program( "point_set_test_join.cpp" )
 
 

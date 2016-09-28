@@ -73,7 +73,7 @@ private Q_SLOTS:
 
     double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                                     points->begin_or_selection_begin(), points->end(),
-                                    points->point_pmap(),
+                                    points->point_map(),
                                     6 /* knn = 1 ring */);
 
     const double max_dist =
@@ -93,7 +93,7 @@ private Q_SLOTS:
 
     for(Point_set::iterator psit = points->begin_or_selection_begin(); psit != points->end(); ++psit)
     {
-      points->point(psit) = points->point(psit) + (*generator - CGAL::ORIGIN);
+      points->point(*psit) = points->point(*psit) + (*generator - CGAL::ORIGIN);
       ++generator;
     }
     item->invalidateOpenGLBuffers();

@@ -22,6 +22,7 @@
 
 #include <CGAL/Point_set_3.h>
 
+/// \cond SKIP_IN_MANUAL
 namespace CGAL
 {
 
@@ -34,63 +35,63 @@ namespace CGAL
   This interpreter will instanciate any number of property needed to
   store all PLY properties read in the header:
 
-  - points and normals are stored in the usual `CGAL::Point_set_3`
-    fashion (property "point" of type `CGAL::Point_3` and property
-    "normal" of type `CGAL::Vector_3`)
+  - points and normals are stored as usual `CGAL::Point_set_3`
+     properties (property "point" of type `CGAL::Point_3` and property
+     "normal" of type `CGAL::Vector_3`)
 
   - other PLY properties are stored on point set properties with the
     name and type given by the PLY header
 
-  \tparam Gt Geometric traits class.
+  \tparam Point Point type.
+  \tparam Vector Normal vector type.
 
   \cgalModels `PlyInterpreter`
  */
 
-template <typename Gt>
+template <typename Point,
+          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
 class Ply_interpreter_point_set_3
 {
-  /// \cond SKIP_IN_MANUAL
 public:
-  typedef Point_set_3<Gt> Point_set;
-  typedef Point_3<Gt> Point;
-  typedef Vector_3<Gt> Vector;
+  typedef Point_set_3<Point> Point_set;
 
 private:
 
   struct Abstract_ply_property_to_point_set_property
   {
-    virtual void assign (Ply_reader& reader, std::size_t index) = 0;
+    virtual void assign (Ply_reader& reader, typename Point_set::Index index) = 0;
   };
 
   template <typename Type>
   class Ply_property_to_point_set_property : public Abstract_ply_property_to_point_set_property
   {
-    typedef typename Point_set::template Property_map<Type>::type Pmap;
+    typedef typename Point_set::template Property_map<Type> Map;
+    typedef typename Point_set::template Push_property_map<Map> Pmap;
+    Map m_map;
     Pmap m_pmap;
     std::string m_name;
   public:
     Ply_property_to_point_set_property (Point_set& ps, const std::string& name)
       : m_name (name)
     {
-      bool garbage;
-      boost::tie (m_pmap, garbage) = ps.add_property(name, Type());
+      boost::tie (m_map, boost::tuples::ignore) = ps.add_property_map(name, Type());
+      m_pmap = ps.push_property_map (m_map);
     }
     
-    virtual void assign (Ply_reader& reader, std::size_t index)
+    virtual void assign (Ply_reader& reader, typename Point_set::Index index)
     {
-      reader.assign (m_pmap[index], m_name.c_str());
+      Type t;
+      reader.assign (t, m_name.c_str());
+      put(m_pmap, index, t);
     }
   };
   
   Point_set& m_point_set;
   bool m_use_floats;
   std::vector<Abstract_ply_property_to_point_set_property*> m_properties;
-  /// \endcond
+
 public:
   
-  /*!
-    Constructs a PLY interpreter for a `CGAL::Point_set_3` object.
-   */
   Ply_interpreter_point_set_3 (Point_set& point_set)
     : m_point_set (point_set), m_use_floats (false)
   { }
@@ -181,7 +182,7 @@ public:
       }
 
     if (has_normal[0] && has_normal[1] && has_normal[2])
-      m_point_set.add_normal_property();
+      m_point_set.add_normal_map();
    
     
     return (reader.does_tag_exist<float> ("x") || reader.does_tag_exist<double> ("x"))
@@ -191,7 +192,7 @@ public:
   
   void process_line (Ply_reader& reader)
   {
-    m_point_set.add_item();
+    m_point_set.insert();
     
     if (m_use_floats)
       process_line<float>(reader);
@@ -199,10 +200,9 @@ public:
       process_line<double>(reader);
 
     for (std::size_t i = 0; i < m_properties.size(); ++ i)
-      m_properties[i]->assign (reader, m_point_set.size() - 1);
+      m_properties[i]->assign (reader, *(m_point_set.end() - 1));
   }
 
-  /// \cond SKIP_IN_MANUAL
   template <typename FT>
   void process_line (Ply_reader& reader)
   {
@@ -212,20 +212,21 @@ public:
     reader.assign (y, "y");
     reader.assign (z, "z");
     Point point (x, y, z);
-    m_point_set.point(m_point_set.size() - 1) = point;
+    m_point_set.point(*(m_point_set.end() - 1)) = point;
 
-    if (m_point_set.has_normals())
+    if (m_point_set.has_normal_map())
       {
         reader.assign (nx, "nx");
         reader.assign (ny, "ny");
         reader.assign (nz, "nz");
         Vector normal (nx, ny, nz);
-        m_point_set.normal(m_point_set.size() - 1) = normal;
+        m_point_set.normal(*(m_point_set.end() - 1)) = normal;
       }
   }
-  /// \endcond
 };
 
 }
+/// \endcond
+
 
 #endif // CGAL_READ_PLY_POINT_SET_3_H
