@@ -18,11 +18,13 @@ int main (int argc, char** argv)
 
   Point_set point_set;
 
-  if (!f || !CGAL::read_ply_point_set (f, point_set))
-    {
-      std::cerr << "Can't read input file " << std::endl;
-    }
+  // if (!f || !CGAL::read_ply_point_set (f, point_set))
+  //   {
+  //     std::cerr << "Can't read input file " << std::endl;
+  //   }
 
+  f >> point_set;
+  
   std::cerr << point_set.properties(); // Shows which properties were defined
 
   // Recover "label" property of type int

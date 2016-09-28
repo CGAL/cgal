@@ -3,6 +3,7 @@
 #include <CGAL/Point_set_3/Point_set_processing_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/grid_simplify_point_set.h>
+#include <CGAL/point_generators_3.h>
 
 #include <CGAL/Shape_detection_3.h>
 
@@ -14,6 +15,8 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
+typedef CGAL::Random_points_on_sphere_3<Point> Point_generator;
+
 typedef CGAL::Point_set_3<Point> Point_set;
 
 typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
@@ -21,23 +24,18 @@ typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>        Efficient_ransac;
 typedef CGAL::Shape_detection_3::Sphere<Traits>                  Sphere;
 
+
 int main (int, char**)
 {
   Point_set point_set;
 
   // Generate points on a sphere
+  Point_generator generator(1.);
   std::size_t nb_pts = 10000;
   point_set.reserve (nb_pts);
   for (std::size_t i = 0; i < nb_pts; ++ i)
-    {
-      double sintheta = 2 * rand () / (double)RAND_MAX;
-      double theta = std::asin (sintheta);
-      double phi = 2 * M_PI * (rand () / (double)RAND_MAX) - M_PI;
-      Point p (std::cos (theta) * std::cos (phi),
-      	       std::cos (theta) * std::sin (phi),
-	       std::sin (theta));
-      point_set.insert (p);
-    }
+    point_set.insert (*(generator ++));
+
 
   // Add normal property and estimate normal values
   CGAL::jet_estimate_normals<CGAL::Sequential_tag> (point_set,
