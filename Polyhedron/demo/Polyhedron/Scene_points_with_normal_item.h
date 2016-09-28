@@ -11,7 +11,6 @@
 struct Scene_points_with_normal_item_priv;
 // point set
 typedef Point_set_3<Kernel> Point_set;
-typedef Point_set::UI_point UI_point; // type of points in Point_set_3
 
 class QMenu;
 class QAction;
@@ -71,7 +70,6 @@ public:
   void computes_local_spacing(int k);
 
   bool has_normals() const;
-  void set_has_normals(bool b);
 
 public Q_SLOTS:
   // Delete selection

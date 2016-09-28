@@ -648,8 +648,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
-    UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
-    ps->push_back(point);
+    Kernel::Point_3 point (fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
+    ps->insert(point);
   }
   ps->select_all ();
 
@@ -711,8 +711,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
-    UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
-    ps->push_back(point);
+    Kernel::Point_3 point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
+    ps->insert(point);
   }
   ps->select_all();
   
@@ -885,8 +885,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
-    UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
-    ps->push_back(point);
+    Kernel::Point_3 point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
+    ps->insert(point);
   }
   ps->select_all();
   

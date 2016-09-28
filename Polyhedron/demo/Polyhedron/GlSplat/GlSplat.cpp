@@ -86,7 +86,7 @@ void SplatRenderer::configureShaders()
 "vec4 meshlabLighting(vec4 color, vec3 eyePos, vec3 normal)"
 "{"
 "	normal = normalize(normal);"
-"	vec3 lightVec = normalize(gl_LightSource[0].position.xyz);"
+"	vec3 lightVec = normalize(vec3(0.0, 0.0, 1.0));"
 "	vec3 halfVec = normalize( lightVec - normalize(eyePos) );"
 "	float aux_dot = dot(normal,lightVec);"
 "	float diffuseCoeff = clamp(aux_dot, 0.0, 1.0);"
