@@ -77,10 +77,10 @@
         <number>3</number>
        </property>
        <property name="maximum">
-        <double>1.000000000000000</double>
+        <double>1000000.000000000000000</double>
        </property>
        <property name="singleStep">
-        <double>0.001000000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="value">
         <double>0.002000000000000</double>
@@ -118,7 +118,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Minimum Numbr of Points:</string>
+        <string>Minimum Number of Points:</string>
        </property>
       </widget>
      </item>
@@ -158,10 +158,10 @@
         <number>2</number>
        </property>
        <property name="maximum">
-        <double>1.000000000000000</double>
+        <double>1000000.000000000000000</double>
        </property>
        <property name="singleStep">
-        <double>0.010000000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="value">
         <double>0.020000000000000</double>
@@ -214,7 +214,7 @@
    <item>
     <widget class="QCheckBox" name="m_regularize">
      <property name="text">
-      <string>Regularize planes</string>
+      <string>Regularize Planes</string>
      </property>
      <property name="checked">
       <bool>true</bool>
