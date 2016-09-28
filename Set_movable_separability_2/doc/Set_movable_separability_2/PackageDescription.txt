@@ -1,17 +1,16 @@
-/// \defgroup PkgSetMovableSeparability2 2D Castings Reference
+/// \defgroup PkgSetMovableSeparability2 2D Movable Separability of Sets Reference
 
 /// \defgroup PkgSetMovableSeparability2Funcs Free Functions
 /// \ingroup PkgSetMovableSeparability2
 
 /*!
 \addtogroup PkgSetMovableSeparability2
-\todo check generated documentation
-\cgalPkgDescriptionBegin{2D Castings,PkgSetMovableSeparability2Summary}
+\cgalPkgDescriptionBegin{2D Movable Separability of Sets,PkgSetMovableSeparability2Summary}
 \cgalPkgPicture{Casting_2.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Shahar Shamai, Efi Fogel}
 \cgalPkgDesc{This package consists of the implementations of various predicates and operations related to castings of polygonal objects. In particular, it can be used to determine whether a mold for a polygonal object does exist. If a mold exists, the package can also be used to compute all possible orientations of the feasible molds and the corresponding motions needed to remove the casted object from the mold.}
-\cgalPkgManuals{Chapter_Castings_of_polygons,PkgSetMovableSeparability2}
+\cgalPkgManuals{Chapter_SetMovableSeparability2,PkgSetMovableSeparability2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.10}

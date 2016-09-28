@@ -1,7 +1,7 @@
 namespace CGAL {
 namespace Set_movable_separability_2 {
 
-/*! \ingroup PkgSetMovableSeparability2funcs
+/*! \ingroup PkgSetMovableSeparability2Funcs
  *
  * Given a simple polygon, this function determines whether a cavity (of a mold
  * in the plane) that has the shape of the polygon can be used so that the
