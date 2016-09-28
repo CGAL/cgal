@@ -62,22 +62,11 @@ public:
   typedef Point Point_type;
   typedef Vector Vector_type;
   typedef Point_set_3<Point, Vector> Point_set;
-  /// \endcond
 
-  /*!
-    \brief This represents a point with associated properties.
-    \cgalModels `Index`
-    \cgalModels `LessThanComparable`
-    \cgalModels `Hashable`
-  */
   class Index;
 
-
-  /// \cond SKIP_IN_MANUAL
   typedef typename Properties::Property_container<Index> Base;
-  /// \endcond
-  
-  /// \cond SKIP_IN_MANUAL
+
   template <class Type>
   struct Property_map
     : public Properties::Property_map<Index, Type>
@@ -87,9 +76,17 @@ public:
 
   template <typename Property>
   class Push_property_map;
-
+  /// \endcond
+  
+  /*!
+    \brief This represents a point with associated properties.
+    \cgalModels `Index`
+    \cgalModels `LessThanComparable`
+    \cgalModels `Hashable`
+  */
   class Index
   {
+    /// \cond SKIP_IN_MANUAL
     friend class Point_set_3;
     friend class Properties::Property_container<Index>;
     template <class> friend class Properties::Property_array;
@@ -99,9 +96,9 @@ public:
     std::size_t value;
     
     // Only Point_set_3 and other friend classes are allowed to
-    // instanciate an Index with a specific value
+    // instantiate an Index with a specific value
     Index (const std::size_t& value) : value (value) { }
-
+    /// \endcond
   public:
     Index (const Index& index) : value (index) { }
     Index () : value ((std::size_t)(-1)) { }
@@ -115,8 +112,6 @@ public:
     Index operator++ (int) { Index tmp(*this); ++ value; return tmp; }
     Index operator-- (int) { Index tmp(*this); -- value; return tmp; }
   };
-
-  /// \endcond
   
 
 #ifdef DOXYGEN_RUNNING
@@ -765,8 +760,40 @@ public:
   
     \ingroup PkgPointSet3
 
+    \brief Reads the point set from an input stream that can be either:
+
+    - XYZ
+    - OFF
+    - PLY
+
+    The format is detected from the stream. If the stream contains
+    normal vectors, the normal map is added to the point set. For PLY
+    input, all point properties found in the header are added.
+    \relates Point_set_3
+  */
+  template <typename P>
+  friend std::istream& operator>>(std::istream& is, Point_set_3<P>& ps)
+  {
+    // Check format identifier on first line
+    // std::string line;
+    // if (!getline(stream, line))
+    //   return is;
+    // stream.seekg(0);
+    // if (line == "OFF" || line == "NOFF")
+    //   CGAL::read_off_point_set (is, ps);
+    // else if (line == "ply")
+    //   CGAL::read_ply_point_set (is, ps);
+    // else
+    //   CGAL::read_xyz_point_set (is, ps);
+    
+    return is;
+  }
+  /*!
+  
+    \ingroup PkgPointSet3
+
     \brief Inserts the point set in an output stream in Ascii PLY
-    format. All properties are inserted in their instanciation order.
+    format. All properties are inserted in their instantiation order.
 
     \relates Point_set_3
   */
@@ -791,21 +818,21 @@ public:
           os << "property double nx" << std::endl
              << "property double ny" << std::endl
              << "property double nz" << std::endl;
-        else if (ps.m_base.template get<boost::int8_t>(prop[i]).first)
+        else if (ps.m_base.template get<boost::int8_t>(prop[i]).second)
           os << "property char " << prop[i] << std::endl;
-        else if (ps.m_base.template get<boost::uint8_t>(prop[i]).first)
+        else if (ps.m_base.template get<boost::uint8_t>(prop[i]).second)
           os << "property uchar " << prop[i] << std::endl;
-        else if (ps.m_base.template get<boost::int16_t>(prop[i]).first)
+        else if (ps.m_base.template get<boost::int16_t>(prop[i]).second)
           os << "property short " << prop[i] << std::endl;
-        else if (ps.m_base.template get<boost::uint16_t>(prop[i]).first)
+        else if (ps.m_base.template get<boost::uint16_t>(prop[i]).second)
           os << "property ushort " << prop[i] << std::endl;
-        else if (ps.m_base.template get<boost::int32_t>(prop[i]).first)
+        else if (ps.m_base.template get<boost::int32_t>(prop[i]).second)
           os << "property int " << prop[i] << std::endl;
-        else if (ps.m_base.template get<boost::uint32_t>(prop[i]).first)
+        else if (ps.m_base.template get<boost::uint32_t>(prop[i]).second)
           os << "property uint " << prop[i] << std::endl;
-        else if (ps.m_base.template get<float>(prop[i]).first)
+        else if (ps.m_base.template get<float>(prop[i]).second)
           os << "property float " << prop[i] << std::endl;
-        else if (ps.m_base.template get<double>(prop[i]).first)
+        else if (ps.m_base.template get<double>(prop[i]).second)
           os << "property double " << prop[i] << std::endl;
         else
           os << "property " << boost::core::demangle(ps.m_base.get_type(prop[i]).name())

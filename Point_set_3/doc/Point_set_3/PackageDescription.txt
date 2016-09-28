@@ -6,7 +6,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Simon Giraudot}
-\cgalPkgDesc{This component provides the user with a flexible 3D point set data structure. The user can easily define any additional property needed (such a normal vectors, colors, labels, etc.). All data structures needed to apply \cgal algorithms on point sets are provided.}
+\cgalPkgDesc{This component provides the user with a flexible 3D point set data structure. The user can easily define any additional property needed such a normal vectors, colors or labels. All data structures needed to apply \cgal algorithms on point sets are provided.}
 \cgalPkgManuals{Chapter_Point_Set_3, PkgPointSet3}
 \cgalPkgSummaryEnd
 
@@ -33,8 +33,8 @@
 user to call point set processing algorithms without having to handle
 manually property maps and iterators.
 
-The overloads all follow the same templates based on the original
-point set processing functions:
+The overloads all follow the same pattern based on the original point
+set processing functions:
 
 - Iterators and property maps of the original function are replaced
 with a single parameter `CGAL::Point_set_3<Point,Vector>`

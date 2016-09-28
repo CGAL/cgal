@@ -39,7 +39,7 @@ template <typename Point, typename Vector>
 bool
 read_xyz_point_set(
   std::istream& stream, ///< input stream.
-  Point_set_3<Point, Vector>& point_set) ///< point set
+  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   point_set.add_normal_map();
 
@@ -50,7 +50,7 @@ read_xyz_point_set(
      point_set.normal_push_map());
 
   bool has_normals = false;
-  for (typename Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
+  for (typename CGAL::Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
     if (point_set.normal(*it) != CGAL::NULL_VECTOR)
       {
@@ -71,7 +71,7 @@ template <typename Point, typename Vector>
 bool
 read_off_point_set(
   std::istream& stream, ///< input stream.
-  Point_set_3<Point, Vector>& point_set) ///< point set
+  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   point_set.add_normal_map();
 
@@ -82,7 +82,7 @@ read_off_point_set(
      point_set.normal_push_map());
 
   bool has_normals = false;
-  for (typename Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
+  for (typename CGAL::Point_set_3<Point, Vector>::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)
     if (point_set.normal(*it) != CGAL::NULL_VECTOR)
       {
@@ -105,7 +105,7 @@ template <typename Point, typename Vector>
 bool
 read_ply_point_set(
   std::istream& stream, ///< input stream.
-  Point_set_3<Point, Vector>& point_set) ///< point set
+  CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   CGAL::Ply_interpreter_point_set_3<Point, Vector> interpreter (point_set);
 
@@ -121,7 +121,7 @@ template <typename Point, typename Vector>
 bool
 write_xyz_point_set(
   std::ostream& stream, ///< output stream.
-  const Point_set_3<Point, Vector>& point_set)  ///< point set
+  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normal_map())
     return CGAL::write_xyz_points_and_normals
@@ -140,7 +140,7 @@ template <typename Point, typename Vector>
 bool
 write_off_point_set(
   std::ostream& stream, ///< output stream.
-  const Point_set_3<Point, Vector>& point_set)  ///< point set
+  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
   if (point_set.has_normal_map())
     return CGAL::write_off_points_and_normals
@@ -159,7 +159,7 @@ template <typename Point, typename Vector>
 bool
 write_ply_point_set(
   std::ostream& stream, ///< output stream.
-  const Point_set_3<Point, Vector>& point_set)  ///< point set
+  const CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
 
   stream << point_set;
