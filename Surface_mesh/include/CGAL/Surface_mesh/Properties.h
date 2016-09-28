@@ -255,6 +255,18 @@ public:
         return names;
     }
 
+    template <class T> 
+    std::pair<Property_map<Key, T>,bool>
+    get(const std::string& name, std::size_t i) const
+    {
+      if (parrays_[i]->name() == name)
+        {
+          if (Property_array<T>* array = dynamic_cast<Property_array<T>*>(parrays_[i]))
+            return std::make_pair (Property_map<Key, T>(array), true);
+        }
+      return std::make_pair(Property_map<Key, T>(), false);
+    }
+
     // add a property with name \c name and default value \c t
     template <class T>
     std::pair<Property_map<Key, T>, bool>
@@ -262,10 +274,9 @@ public:
     {
         for (unsigned int i=0; i<parrays_.size(); ++i)
         {
-            if (parrays_[i]->name() == name)
-            {
-              return std::make_pair(Property_map<Key, T>(dynamic_cast<Property_array<T>*>(parrays_[i])), false);
-            }
+            std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
+            if (out.second)
+              return out;
         }
 
         // otherwise add the property
@@ -282,8 +293,11 @@ public:
     get(const std::string& name) const
     {
         for (unsigned int i=0; i<parrays_.size(); ++i)
-            if (parrays_[i]->name() == name)
-              return std::make_pair(Property_map<Key, T>(dynamic_cast<Property_array<T>*>(parrays_[i])), true);
+          {
+            std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
+            if (out.second)
+              return out;
+          }
         return std::make_pair(Property_map<Key, T>(), false);
     }
 
