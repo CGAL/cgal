@@ -207,9 +207,7 @@ export_triangulation_to_off(std::ostream & os,
 {
   typedef Triangulation<GT,TDS>                         Tr;
   typedef typename Tr::Vertex_const_handle              Vertex_handle;
-  typedef typename Tr::Vertex_const_iterator            Vertex_iterator;
   typedef typename Tr::Finite_vertex_const_iterator     Finite_vertex_iterator;
-  typedef typename Tr::Full_cell_const_handle           Full_cell_handle;
   typedef typename Tr::Finite_full_cell_const_iterator  Finite_full_cell_iterator;
   typedef typename Tr::Full_cell_const_iterator         Full_cell_iterator;
   typedef typename Tr::Full_cell                        Full_cell;

@@ -919,7 +919,6 @@ Triangulation<TT, TDS>
     // infinite one...
     CGAL_precondition( is_infinite(s) );
     CGAL_precondition( 1 == current_dimension() );
-    int inf_v_index = s->index(infinite_vertex());
     Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
     return v;
