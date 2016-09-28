@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -104,16 +104,15 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="create_from_file">
-            <property name="text">
-             <string>Create items from PLY</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QPushButton" name="create_from_item">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
-             <string>Create item from point set item</string>
+             <string>Create classification item</string>
             </property>
            </widget>
           </item>

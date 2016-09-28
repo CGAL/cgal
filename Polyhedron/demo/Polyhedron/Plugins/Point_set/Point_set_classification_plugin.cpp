@@ -62,8 +62,6 @@ public:
 
     color_att = QColor (75, 75, 77);
     
-    connect(ui_widget.create_from_file,  SIGNAL(clicked()), this,
-            SLOT(on_create_from_file_button_clicked()));
     connect(ui_widget.create_from_item,  SIGNAL(clicked()), this,
             SLOT(on_create_from_item_button_clicked()));
     connect(ui_widget.estimate_parameters,  SIGNAL(clicked()), this,
@@ -108,7 +106,11 @@ public:
             SLOT(on_extract_facades_button_clicked()));
     connect(ui_widget.extract_2d_outline,  SIGNAL(clicked()), this,
             SLOT(on_extract_2d_outline_button_clicked()));
-
+    
+    QObject* scene = dynamic_cast<QObject*>(scene_interface);
+    if(scene)
+      connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this,
+              SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
   }
   virtual void closure()
   {
@@ -135,60 +137,52 @@ public:
 
 public Q_SLOTS:
   
+  void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
+    // if points item
+    Scene_points_with_normal_item* points_item = qobject_cast<Scene_points_with_normal_item*>(scene_item);
+    if(points_item) {
+      std::pair<Item_map::iterator, Item_map::iterator> res =
+        item_map.equal_range(points_item);
+
+      for(Item_map::iterator begin = res.first; begin != res.second; ) {
+        Scene_point_set_classification_item* classif_item = begin->second;
+        item_map.erase(begin++); // first erase from map, because scene->erase will cause a call to this function
+        scene->erase( scene->item_id(classif_item) );
+      }
+    }
+    // if classification item
+    Scene_point_set_classification_item* classif_item = qobject_cast<Scene_point_set_classification_item*>(scene_item);
+    if(classif_item) {
+      Scene_points_with_normal_item* points_item = classif_item->points_item();
+      std::pair<Item_map::iterator, Item_map::iterator> res =
+        item_map.equal_range(points_item);
+      for(Item_map::iterator begin = res.first; begin != res.second; ++begin) {
+        if(begin->second == classif_item) {
+          item_map.erase(begin); break;
+        }
+      }
+    }
+  }
+
   void point_set_classification_action()
   { 
     dock_widget->show();
     dock_widget->raise();
+    Scene_points_with_normal_item* points_item = getSelectedItem<Scene_points_with_normal_item>();
+    if (!points_item || item_map.find(points_item) != item_map.end())
+      return;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    Scene_point_set_classification_item* new_item
+      = new Scene_point_set_classification_item (points_item);
+    int item_id = scene->addItem(new_item);
+    new_item->setName(QString("%1 (classification)").arg(points_item->name()));
+    scene->setSelectedItem(item_id);
+    points_item->setVisible (false);
+    item_map.insert (std::make_pair (points_item, new_item));
+    QApplication::restoreOverrideCursor();
   }
   
-  void on_create_from_file_button_clicked()
-  {
-    // CGAL::Random rand(time(0));
-    
-    // QString filename = QFileDialog::getOpenFileName(mw,
-    //                                                 tr("Open PLY point set"),
-    //                                                 ".",
-    //                                                 "PLY point set (*.ply);;All Files (*)");
-
-    // if (filename == QString())
-    //   return;
-    
-    // QFileInfo fi(filename);
-    // QString name = fi.fileName();
-    // name.chop(4);
-    // std::ifstream in(filename.toUtf8(), std::ios_base::binary);
-    
-    // QApplication::setOverrideCursor(Qt::WaitCursor);
-    // Scene_point_set_classification_item* new_item
-    //   = new Scene_point_set_classification_item ();
-    // new_item->read_ply_point_set (in);
-
-    // std::vector<Scene_point_set_classification_item*> items;
-    // if (new_item->segment_point_set (ui_widget.max_nb_points->value(), std::back_inserter (items)))
-    //   {
-    //     for (std::size_t i = 0; i < items.size(); ++ i)
-    //       {
-    //         unsigned char r, g, b;
-
-    //         r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-    //         g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-    //         b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-    //         items[i]->setRbgColor (r, g, b);
-    //         items[i]->setName(QString("%1 %2 (classification)").arg(name).arg (i+1));
-    //         int item_id = scene->addItem(items[i]);
-    //         scene->setSelectedItem(item_id);
-    //       }
-    //     delete new_item;
-    //   }
-    // else
-    //   {
-    //     new_item->setName(QString("%1 (classification)").arg(name));
-    //     int item_id = scene->addItem(new_item);
-    //     scene->setSelectedItem(item_id);
-    //   }
-    
-    // QApplication::restoreOverrideCursor();
-  }
 
   void on_create_from_item_button_clicked()
   {
@@ -204,6 +198,8 @@ public Q_SLOTS:
     int item_id = scene->addItem(new_item);
     new_item->setName(QString("%1 (classification)").arg(points_item->name()));
     scene->setSelectedItem(item_id);
+    points_item->setVisible (false);
+    item_map.insert (std::make_pair (points_item, new_item));
     QApplication::restoreOverrideCursor();
   }
 
@@ -728,6 +724,9 @@ private:
   Ui::PointSetClassification ui_widget;
 
   QColor color_att;
+
+  typedef std::multimap<Scene_points_with_normal_item*, Scene_point_set_classification_item*> Item_map;
+  Item_map item_map;
 
 }; // end Polyhedron_demo_point_set_classification_plugin
 

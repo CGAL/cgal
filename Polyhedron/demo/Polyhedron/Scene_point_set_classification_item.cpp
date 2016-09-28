@@ -49,7 +49,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
 
 Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_points_with_normal_item* points)
   : Scene_item(NbOfVbos,NbOfVaos),
-    m_points (points->point_set()),
+    m_points (points),
     m_psc (NULL),
     m_grid (NULL),
     m_neighborhood (NULL),
@@ -63,7 +63,8 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
 
-  m_psc = new PSC(m_points->begin(), m_points->end(), m_points->point_pmap());
+  m_points->point_set()->collect_garbage();
+  m_psc = new PSC(m_points->point_set()->begin(), m_points->point_set()->end(), m_points->point_set()->point_map());
   
   is_selected = true;
   nb_points = 0;
@@ -203,13 +204,13 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     }
   else // Show points
     {
-      positions_points.reserve(m_points->size() * 3);
-      colors_points.reserve(m_points->size() * 3);
+      positions_points.reserve(m_points->point_set()->size() * 3);
+      colors_points.reserve(m_points->point_set()->size() * 3);
 
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
-          const Kernel::Point_3& p = m_points->point(it);
+          const Kernel::Point_3& p = m_points->point_set()->point(*it);
           positions_points.push_back(p.x());
           positions_points.push_back(p.y());
           positions_points.push_back(p.z());
@@ -223,18 +224,18 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
   if (index_color == 0) // real colors
     {
 
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
-          colors_points.push_back ((double)(m_points->red(it)) / 255.);
-          colors_points.push_back ((double)(m_points->green(it)) / 255.);
-          colors_points.push_back ((double)(m_points->blue(it)) / 255.);
+          colors_points.push_back ((double)(m_points->point_set()->red(*it)) / 255.);
+          colors_points.push_back ((double)(m_points->point_set()->green(*it)) / 255.);
+          colors_points.push_back ((double)(m_points->point_set()->blue(*it)) / 255.);
         }
     }
   else if (index_color == 1) // classif
     {
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
           QColor color (0, 0, 0);
           CGAL::Classification_type* c = m_psc->classification_type_of(*it);
@@ -262,8 +263,8 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     }
   else if (index_color == 2) // confidence
     {
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
           QColor color (0, 0, 0);
           CGAL::Classification_type* c = m_psc->classification_type_of(*it);
@@ -294,8 +295,8 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_disp->weight;
       m_disp->weight = m_disp->max;
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
           colors_points.push_back (ramp.r(m_disp->value(*it)));
           colors_points.push_back (ramp.g(m_disp->value(*it)));
@@ -307,8 +308,8 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_d2p->weight;
       m_d2p->weight = m_d2p->max;
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
           colors_points.push_back (ramp.r(m_d2p->value(*it)));
           colors_points.push_back (ramp.g(m_d2p->value(*it)));
@@ -320,8 +321,8 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_verti->weight;
       m_verti->weight = m_verti->max;
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
           colors_points.push_back (ramp.r(m_verti->value(*it)));
           colors_points.push_back (ramp.g(m_verti->value(*it)));
@@ -333,12 +334,13 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_elev->weight;
       m_elev->weight = m_elev->max;
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
-          colors_points.push_back (ramp.r(m_elev->value(*it)));
-          colors_points.push_back (ramp.g(m_elev->value(*it)));
-          colors_points.push_back (ramp.b(m_elev->value(*it)));
+          double v = std::max(0., m_elev->value(*it));
+          colors_points.push_back (ramp.r(v));
+          colors_points.push_back (ramp.g(v));
+          colors_points.push_back (ramp.b(v));
         }
       m_elev->weight = weight;
     }
@@ -346,8 +348,8 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_col_att->weight;
       m_col_att->weight = m_col_att->max;
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
           colors_points.push_back (ramp.r(m_col_att->value(*it)));
           colors_points.push_back (ramp.g(m_col_att->value(*it)));
@@ -359,8 +361,8 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       int seed = time(NULL);
         
-      for (Point_set::const_iterator it = m_points->begin();
-           it != m_points->end(); ++ it)
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->end(); ++ it)
         {
           if (m_psc->group_of(*it) == (std::size_t)(-1))
             {
@@ -429,7 +431,7 @@ bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stre
   
   stream << "ply" << std::endl
          << "format ascii 1.0" << std::endl
-         << "element vertex " << m_points->size() << std::endl
+         << "element vertex " << m_points->point_set()->size() << std::endl
          << "property float x" << std::endl
          << "property float y" << std::endl
          << "property float z" << std::endl
@@ -438,8 +440,8 @@ bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stre
          << "property uchar blue" << std::endl
          << "end_header" << std::endl;
 
-  for (Point_set::const_iterator it = m_points->begin();
-       it != m_points->end(); ++ it)
+  for (Point_set::const_iterator it = m_points->point_set()->begin();
+       it != m_points->point_set()->end(); ++ it)
     {
       QColor color (0, 0, 0);
       CGAL::Classification_type *c = m_psc->classification_type_of(m_psc->clusters()[*it].indices[0]);
@@ -460,7 +462,7 @@ bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stre
                       color = QColor(0, 114, 225);
         }
       
-      stream << m_points->point(it) << " "
+      stream << m_points->point_set()->point(*it) << " "
              << color.red() << " "
              << color.green() << " "
              << color.blue() << std::endl;
@@ -476,7 +478,7 @@ Scene_point_set_classification_item::toolTip() const
                      "<i>Point set classification</i></p>"
                      "<p>Number of points: %2</p>")
     .arg(name())
-    .arg(m_points->size());
+    .arg(m_points->point_set()->size());
 }
 
 bool Scene_point_set_classification_item::supportsRenderingMode(RenderingMode m) const 
@@ -537,7 +539,7 @@ Scene_point_set_classification_item::isEmpty() const
 void
 Scene_point_set_classification_item::compute_bbox() const
 {
-  if (m_points->empty())
+  if (m_points->point_set()->empty())
     return;
   
   double xmin = std::numeric_limits<double>::max();
@@ -547,10 +549,10 @@ Scene_point_set_classification_item::compute_bbox() const
   double ymax = -std::numeric_limits<double>::max();
   double zmax = -std::numeric_limits<double>::max();
 
-  for (Point_set::const_iterator it = m_points->begin();
-       it != m_points->end(); ++ it)
+  for (Point_set::const_iterator it = m_points->point_set()->begin();
+       it != m_points->point_set()->end(); ++ it)
     {
-      const Kernel::Point_3& p = m_points->point(it);
+      const Kernel::Point_3& p = m_points->point_set()->point(*it);
       xmin = (std::min)(xmin, p.x());
       ymin = (std::min)(ymin, p.y());
       zmin = (std::min)(zmin, p.z());
@@ -605,7 +607,7 @@ int Scene_point_set_classification_item::real_index_color() const
   if (out == 7 && m_col_att == NULL)
     out = 0;
 
-  if (out == 0 && !(m_points->has_colors()))
+  if (out == 0 && !(m_points->point_set()->has_colors()))
     out = -1;
   return out;
 }
@@ -614,8 +616,8 @@ void Scene_point_set_classification_item::estimate_parameters (double& grid_reso
                                                                double& radius_neighbors,
                                                                double& radius_dtm)
 {
-  double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (m_points->begin(), m_points->end(),
-                                                                                m_points->point_pmap(), 6);
+  double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (m_points->point_set()->begin(), m_points->point_set()->end(),
+                                                                                m_points->point_set()->point_map(), 6);
 
   grid_resolution = average_spacing;
   radius_neighbors = 5 * grid_resolution;
@@ -627,35 +629,35 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
                                                             const double& radius_dtm,
                                                             const QColor& c)
 {
-  Q_ASSERT (!(m_points->empty()));
+  Q_ASSERT (!(m_points->point_set()->empty()));
   Q_ASSERT (m_psc != NULL);
   m_psc->clear_segmentation_attributes();
 
   compute_bbox();
   
   if (m_grid != NULL) delete m_grid;
-  m_grid = new Planimetric_grid (m_points->begin(),
-                                 m_points->end(),
-                                 m_points->point_pmap(),
+  m_grid = new Planimetric_grid (m_points->point_set()->begin(),
+                                 m_points->point_set()->end(),
+                                 m_points->point_set()->point_map(),
                                  _bbox, grid_resolution);
 
   if (m_neighborhood != NULL) delete m_neighborhood;
-  m_neighborhood = new Neighborhood (m_points->begin(),
-                                     m_points->end(),
-                                     m_points->point_pmap());
+  m_neighborhood = new Neighborhood (m_points->point_set()->begin(),
+                                     m_points->point_set()->end(),
+                                     m_points->point_set()->point_map());
 
   if (m_eigen != NULL) delete m_eigen;
-  m_eigen = new Local_eigen_analysis (m_points->begin(),
-                                      m_points->end(),
-                                      m_points->point_pmap(),
+  m_eigen = new Local_eigen_analysis (m_points->point_set()->begin(),
+                                      m_points->point_set()->end(),
+                                      m_points->point_set()->point_map(),
                                       *m_neighborhood,
                                       radius_neighbors);
   
   
   if (m_disp != NULL) delete m_disp;
-  m_disp = new Dispersion (m_points->begin(),
-                           m_points->end(),
-                           m_points->point_pmap(),
+  m_disp = new Dispersion (m_points->point_set()->begin(),
+                           m_points->point_set()->end(),
+                           m_points->point_set()->point_map(),
                            *m_grid,
                            grid_resolution,
                            radius_neighbors,
@@ -663,31 +665,31 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   m_psc->add_segmentation_attribute (m_disp);
   
   if (m_d2p != NULL) delete m_d2p;
-  m_d2p = new Distance_to_plane (m_points->begin(),
-                                 m_points->end(),
-                                 m_points->point_pmap(),
+  m_d2p = new Distance_to_plane (m_points->point_set()->begin(),
+                                 m_points->point_set()->end(),
+                                 m_points->point_set()->point_map(),
                                  *m_eigen,
                                  1.);
   m_psc->add_segmentation_attribute (m_d2p);
   
   if (m_verti != NULL) delete m_verti;
-  if (m_points->has_normals())
-    m_verti = new Verticality (m_points->begin(),
-                               m_points->end(),
-                               m_points->normal_pmap(),
+  if (m_points->point_set()->has_normal_map())
+    m_verti = new Verticality (m_points->point_set()->begin(),
+                               m_points->point_set()->end(),
+                               m_points->point_set()->normal_map(),
                                1.);
   else
-    m_verti = new Verticality (m_points->begin(),
-                               m_points->end(),
+    m_verti = new Verticality (m_points->point_set()->begin(),
+                               m_points->point_set()->end(),
                                *m_eigen,
                                1.);
 
   m_psc->add_segmentation_attribute (m_verti);
 
   if (m_elev != NULL) delete m_elev;
-  m_elev = new Elevation (m_points->begin(),
-                          m_points->end(),
-                          m_points->point_pmap(),
+  m_elev = new Elevation (m_points->point_set()->begin(),
+                          m_points->point_set()->end(),
+                          m_points->point_set()->point_map(),
                           _bbox,
                           *m_grid,
                           grid_resolution,
@@ -697,10 +699,10 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   m_psc->add_segmentation_attribute (m_elev);
 
   if (m_col_att != NULL) delete m_col_att;
-  if (m_points->has_colors())
-    m_col_att = new Color_att (m_points->begin(),
-                               m_points->end(),
-                               Point_set_color_pmap<Point_set>(m_points),
+  if (m_points->point_set()->has_colors())
+    m_col_att = new Color_att (m_points->point_set()->begin(),
+                               m_points->point_set()->end(),
+                               Point_set_color_map<Point_set>(m_points->point_set()),
                                1.,
                                c.hue(), c.saturation(), c.value());
   else
@@ -715,31 +717,31 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
 {
   Q_ASSERT (m_psc != NULL);
 
-  if (!(m_points->has_normals()))
+  if (!(m_points->point_set()->has_normal_map()))
     {
       std::cerr << "Computing normals..." << std::endl;
-      m_points->add_normal_property();
+      m_points->point_set()->add_normal_map();
 
-      CGAL::jet_estimate_normals<CGAL::Sequential_tag>(m_points->begin(),
-                                                       m_points->end(),
-                                                       m_points->point_pmap(),
-                                                       m_points->normal_pmap(),
+      CGAL::jet_estimate_normals<CGAL::Sequential_tag>(m_points->point_set()->begin(),
+                                                       m_points->point_set()->end(),
+                                                       m_points->point_set()->point_map(),
+                                                       m_points->point_set()->normal_map(),
                                                        12);
     }
   
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Kernel, Point_set,
-                                                           Point_set::Point_pmap,
-                                                           Point_set::Vector_pmap> Traits;
+                                                           Point_set::Point_map,
+                                                           Point_set::Vector_map> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
   Shape_detection shape_detection;
 
-  shape_detection.set_input(*m_points, m_points->point_pmap(), m_points->normal_pmap());
+  shape_detection.set_input(*m_points->point_set(), m_points->point_set()->point_map(), m_points->point_set()->normal_map());
 
   shape_detection.add_shape_factory<My_plane<Traits> >();
   Shape_detection::Parameters op;
   op.probability = 0.05;
-  op.min_points = std::max ((std::size_t)10, m_points->size() / 250000);
+  op.min_points = std::max ((std::size_t)10, m_points->point_set()->size() / 250000);
   
   op.epsilon = radius_neighbors;
   op.cluster_epsilon = radius_neighbors;
@@ -792,16 +794,16 @@ void Scene_point_set_classification_item::extract_2d_outline (double radius,
   std::size_t nb = 0;
   std::vector<Kernel::Point_2> pts;
   
-  for (Point_set::const_iterator it = m_points->begin();
-       it != m_points->end(); ++ it)
+  for (Point_set::const_iterator it = m_points->point_set()->begin();
+       it != m_points->point_set()->end(); ++ it)
     if (m_psc->classification_type_of(*it)->id() == "ground")
       {
-        mean_z += m_points->point(it).z();
+        mean_z += m_points->point_set()->point(*it).z();
         nb ++;
       }
     else if (m_psc->classification_type_of(*it)->id() != "vegetation")
-      pts.push_back (Kernel::Point_2 (m_points->point(it).x(),
-                                      m_points->point(it).y()));
+      pts.push_back (Kernel::Point_2 (m_points->point_set()->point(*it).x(),
+                                      m_points->point_set()->point(*it).y()));
 
   mean_z /= nb;
   
@@ -838,9 +840,9 @@ void Scene_point_set_classification_item::extract_building_map (double,
 //   // Estimate ground Z
 //   std::cerr << "Estimating ground..." << std::endl;
 //   std::vector<double> z_ground;
-//   for (std::size_t i = 0; i < m_points.size(); ++ i)
+//   for (std::size_t i = 0; i < m_points->point_set().size(); ++ i)
 //     if (m_psc->classification_type_of(i)->id() == "ground")
-//       z_ground.push_back (m_points[i].z());
+//       z_ground.push_back (m_points->point_set()[i].z());
 
 //   std::sort (z_ground.begin(), z_ground.end());
 //   double z_median = z_ground[z_ground.size() / 2];
