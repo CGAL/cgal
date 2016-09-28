@@ -305,29 +305,29 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     positions_lines.reserve(m_points->size() * 3 * 2);
 
     //Shuffle container to allow quick display random points
-    Point_set_3<Kernel> points = *m_points;
-    std::random_shuffle (points.begin(), points.end() - m_points->nb_selected_points());
-    std::random_shuffle (points.end() - m_points->nb_selected_points(), points.end());
-
+    std::random_shuffle (m_points->begin(), m_points->first_selected());
+    if (m_points->nb_selected_points() != 0)
+      std::random_shuffle (m_points->first_selected(), m_points->end());
+    
     //The points
     {
-      // The *non-selected* points
-      for (Point_set_3<Kernel>::const_iterator it = points.begin(); it != points.first_selected(); it++)
-      {
-        const UI_point& p = *it;
-        positions_points.push_back(p.x());
-        positions_points.push_back(p.y());
-        positions_points.push_back(p.z());
-      }
+        // The *non-selected* points
+      for (Point_set::const_iterator it = m_points->begin();
+           it != m_points->first_selected(); ++ it)
+	{
+	  positions_points.push_back(m_points->point(*it).x());
+	  positions_points.push_back(m_points->point(*it).y());
+	  positions_points.push_back(m_points->point(*it).z());
+	}
 
-      // Draw *selected* points
-      for (Point_set_3<Kernel>::const_iterator it = points.first_selected(); it != points.end(); it++)
-      {
-        const UI_point& p = *it;
-        positions_selected_points.push_back(p.x());
-        positions_selected_points.push_back(p.y());
-        positions_selected_points.push_back(p.z());
-      }
+        // Draw *selected* points
+      for (Point_set::const_iterator it = m_points->first_selected();
+           it != m_points->end(); ++ it)
+	{
+	  positions_selected_points.push_back(m_points->point(*it).x());
+	  positions_selected_points.push_back(m_points->point(*it).y());
+	  positions_selected_points.push_back(m_points->point(*it).z());
+	}
     }
 
     //The lines
