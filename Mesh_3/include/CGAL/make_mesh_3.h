@@ -262,9 +262,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
 
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points
-      if ( c3t3.triangulation().dimension() != 3 ) {
-        init_c3t3(c3t3, domain, criteria, nb_initial_points);
-      }
+      init_c3t3(c3t3, domain, criteria, nb_initial_points);
     }
     else { init_c3t3(c3t3,domain,criteria,nb_initial_points); }
   }
