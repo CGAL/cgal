@@ -153,6 +153,20 @@ namespace CGAL {
     { Base::template copy<LCC2, Converters, Pointconverter>
           (alcc, converters, pointconverter);}
 
+    /** Affectation operation. Copies one map to the other.
+     * @param amap a lcc.
+     * @return A copy of that lcc.
+     */
+    Self & operator= (const Self & alcc)
+    {
+      if (this!=&alcc)
+      {
+        Self tmp(alcc);
+        this->swap(tmp);
+      }
+      return *this;
+    }
+
     /** Create a vertex attribute.
      * @return an handle on the new attribute.
      */
@@ -478,7 +492,7 @@ namespace CGAL {
                  are_facets_same_geometry(*it1,beta(*it2, 0)) )
             {
               ++res;
-              this->template sew<3>(*it1,beta(*it2, 0));
+              this->template sew<3>(*it1,this->beta(*it2, 0));
             }
           }
         }

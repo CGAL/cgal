@@ -34,6 +34,9 @@
  * internal/Combinatorial_map_group_functors.h. Public functions are defined
  * in Combinatorial_map_functors.h.
  *
+ * internal::Swap_attributes_functor<CMap> to swap the i-attributes between
+ *    two cmaps having same type
+ *
  * internal::Call_split_functor<CMap,i> to call the OnSplit functors on two
  *    given i-attributes.
  *
@@ -84,6 +87,20 @@ struct Is_attribute_has_point;
 // ****************************************************************************
 namespace internal
 {
+// ****************************************************************************
+/// Swap i-attribute between the two maps having same type.
+template<typename CMap>
+struct Swap_attributes_functor
+{
+  template<unsigned int i>
+  static void run( CMap* cmap1,
+                   CMap* cmap2)
+  { CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+        (cmap1->mattribute_containers).swap(
+          CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          (cmap2->mattribute_containers));
+   }
+};
 // ****************************************************************************
 // Functor which call Functor::operator() on the two given cell_attributes
  template<typename CMap, typename Cell_attribute, typename Functor>
