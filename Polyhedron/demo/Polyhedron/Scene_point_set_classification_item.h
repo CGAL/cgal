@@ -2,7 +2,6 @@
 #define POINT_SET_CLASSIFICATION_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/IO/read_ply_points.h>
 #include <CGAL/Point_set_classification.h>
 #include <CGAL/Data_classification/Segmentation_attribute_vertical_dispersion.h>
 #include <CGAL/Data_classification/Segmentation_attribute_elevation.h>
@@ -26,8 +25,7 @@ class Segmentation_attribute_empty_color : public CGAL::Segmentation_attribute_c
   typedef CGAL::Segmentation_attribute_color<Kernel, Iterator, Color_pmap> Base;
 public:
   Segmentation_attribute_empty_color ()
-    : Base (boost::counting_iterator<std::size_t>(0),
-            boost::counting_iterator<std::size_t>(0),
+    : Base (Iterator(), Iterator(),
             Color_pmap(), 1.)
   { }
   virtual double value (std::size_t) { return 1.; }
@@ -43,14 +41,41 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 {
   Q_OBJECT
 
+  
+  template <typename PointSet>
+    class Point_set_color_pmap
+  {
+  public:
+    typedef CGAL::Data_classification::RGB_Color Color;
+    typedef std::size_t key_type;
+    typedef Color value_type;
+    typedef value_type& reference;
+    typedef boost::lvalue_property_map_tag category;
+    
+    PointSet* ps;
+
+    Point_set_color_pmap(PointSet* ps = NULL)
+      : ps(ps) { }
+
+    friend value_type get (const Point_set_color_pmap& pm, const std::size_t& i)
+    {
+      Color out = {{ pm.ps->red(pm.ps->begin()+i),
+                     pm.ps->green(pm.ps->begin()+i),
+                     pm.ps->blue(pm.ps->begin()+i) }};
+                     
+      return out;
+    }
+  };
+
+
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
   typedef CGAL::Data_classification::RGB_Color Color;
   
-  typedef boost::counting_iterator<std::size_t> Iterator;
-  typedef CGAL::Pointer_property_map<Point_3>::type Point_pmap;
-  typedef CGAL::Pointer_property_map<Vector_3>::type Vector_pmap;
-  typedef CGAL::Pointer_property_map<Color>::type Color_pmap;
+  typedef Point_set::iterator Iterator;
+  typedef Point_set::Point_pmap Point_pmap;
+  typedef Point_set::Vector_pmap Vector_pmap;
+  typedef Point_set_color_pmap<Point_set> Color_pmap;
 
   typedef CGAL::Point_set_classification<Kernel, Iterator, Point_pmap>                   PSC;
   typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Point_pmap>      Planimetric_grid;
@@ -67,7 +92,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 public:
   
   Scene_point_set_classification_item(PSC* psc = NULL);
-  Scene_point_set_classification_item(const Scene_points_with_normal_item* points);
+  Scene_point_set_classification_item(Scene_points_with_normal_item* points);
   Scene_point_set_classification_item(const Scene_point_set_classification_item& toCopy);
   ~Scene_point_set_classification_item();
   
@@ -101,120 +126,121 @@ public:
   template <typename OutputIterator>
   bool segment_point_set (std::size_t nb_max_pt, OutputIterator output)
   {
-    if (m_points.size() < nb_max_pt)
-      return false;
+    return false;
+    // if (m_points->size() < nb_max_pt)
+    //   return false;
 
-    std::list<Region> queue;
-    queue.push_front (Region());
+    // std::list<Region> queue;
+    // queue.push_front (Region());
     
-    for (std::size_t i = 0; i < m_points.size(); ++ i)
-      {
-        queue.front().indices.push_back (i);
-        if (m_points[i].x() < queue.front().x_min)
-          queue.front().x_min = m_points[i].x();
-        if (m_points[i].x() > queue.front().x_max)
-          queue.front().x_max = m_points[i].x();
-        if (m_points[i].y() < queue.front().y_min)
-          queue.front().y_min = m_points[i].y();
-        if (m_points[i].y() > queue.front().y_max)
-          queue.front().y_max = m_points[i].y();
-      }
+    // for (Points_set::const_iterator it = m_points->begin();
+    //      it != m_points->end(); ++ it)
+    //   {
+    //     queue.front().indices.push_back (*it);
+    //     if (m_points[i].x() < queue.front().x_min)
+    //       queue.front().x_min = m_points->point(it).x();
+    //     if (m_points->point(it).x() > queue.front().x_max)
+    //       queue.front().x_max = m_points->point(it).x();
+    //     if (m_points->point(it).y() < queue.front().y_min)
+    //       queue.front().y_min = m_points->point(it).y();
+    //     if (m_points->point(it).y() > queue.front().y_max)
+    //       queue.front().y_max = m_points->point(it).y();
+    //   }
 
-    while (!(queue.empty()))
-      {
-        Region& current = queue.front();
+    // while (!(queue.empty()))
+    //   {
+    //     Region& current = queue.front();
 
-        if (current.indices.size() < nb_max_pt)
-          {
-            std::vector<Kernel::Point_3> dummy;
+    //     if (current.indices.size() < nb_max_pt)
+    //       {
+    //         std::vector<Kernel::Point_3> dummy;
 
-            Scene_point_set_classification_item* new_item
-              = new Scene_point_set_classification_item ();
+    //         Scene_point_set_classification_item* new_item
+    //           = new Scene_point_set_classification_item ();
             
-            for (std::size_t i = 0; i < current.indices.size(); ++ i)
-              {
-                new_item->m_points.push_back(m_points[current.indices[i]]);
-                new_item->m_normals.push_back(m_normals[current.indices[i]]);
-                new_item->m_colors.push_back(m_colors[current.indices[i]]);
-              }
+    //         for (std::size_t i = 0; i < current.indices.size(); ++ i)
+    //           {
+    //             new_item->m_points.push_back(m_points[current.indices[i]]);
+    //             new_item->m_normals.push_back(m_normals[current.indices[i]]);
+    //             new_item->m_colors.push_back(m_colors[current.indices[i]]);
+    //           }
 
-            *(output ++) = new_item;
-          }
-        else
-          {
-            if (current.x_max - current.x_min > current.y_max - current.y_min)
-              {
-                std::sort (current.indices.begin(), current.indices.end(),
-                           Sort_by_coordinate<false>(m_points));
+    //         *(output ++) = new_item;
+    //       }
+    //     else
+    //       {
+    //         if (current.x_max - current.x_min > current.y_max - current.y_min)
+    //           {
+    //             std::sort (current.indices.begin(), current.indices.end(),
+    //                        Sort_by_coordinate<false>(m_points));
                 
-                queue.push_back(Region());
-                queue.push_back(Region());
-                std::list<Region>::iterator it = queue.end();
-                Region& positive = *(-- it);
-                Region& negative = *(-- it);
+    //             queue.push_back(Region());
+    //             queue.push_back(Region());
+    //             std::list<Region>::iterator it = queue.end();
+    //             Region& positive = *(-- it);
+    //             Region& negative = *(-- it);
                 
-                negative.y_min = current.y_min;
-                positive.y_min = current.y_min;
-                negative.y_max = current.y_max;
-                positive.y_max = current.y_max;
+    //             negative.y_min = current.y_min;
+    //             positive.y_min = current.y_min;
+    //             negative.y_max = current.y_max;
+    //             positive.y_max = current.y_max;
                 
-                negative.x_min = current.x_min;
-                positive.x_max = current.x_max;
-                std::size_t i = 0;
+    //             negative.x_min = current.x_min;
+    //             positive.x_max = current.x_max;
+    //             std::size_t i = 0;
                 
-                for (; i < current.indices.size() / 2; ++ i)
-                  negative.indices.push_back (current.indices[i]);
-                double med_x = 0.5 * (m_points[current.indices[i]].x()
-                                      + m_points[current.indices[i+1]].x());
-                negative.x_max = med_x;
-                positive.x_min = med_x;
+    //             for (; i < current.indices.size() / 2; ++ i)
+    //               negative.indices.push_back (current.indices[i]);
+    //             double med_x = 0.5 * (m_points[current.indices[i]].x()
+    //                                   + m_points[current.indices[i+1]].x());
+    //             negative.x_max = med_x;
+    //             positive.x_min = med_x;
                 
-                for (; i < current.indices.size(); ++ i)
-                  positive.indices.push_back (current.indices[i]);
-              }
-            else
-              {
-                std::sort (current.indices.begin(), current.indices.end(),
-                           Sort_by_coordinate<true>(m_points));
+    //             for (; i < current.indices.size(); ++ i)
+    //               positive.indices.push_back (current.indices[i]);
+    //           }
+    //         else
+    //           {
+    //             std::sort (current.indices.begin(), current.indices.end(),
+    //                        Sort_by_coordinate<true>(m_points));
 
-                queue.push_back(Region());
-                queue.push_back(Region());
-                std::list<Region>::iterator it = queue.end();
-                Region& positive = *(-- it);
-                Region& negative = *(-- it);
+    //             queue.push_back(Region());
+    //             queue.push_back(Region());
+    //             std::list<Region>::iterator it = queue.end();
+    //             Region& positive = *(-- it);
+    //             Region& negative = *(-- it);
 
-                negative.x_min = current.x_min;
-                positive.x_min = current.x_min;
-                negative.x_max = current.x_max;
-                positive.x_max = current.x_max;
+    //             negative.x_min = current.x_min;
+    //             positive.x_min = current.x_min;
+    //             negative.x_max = current.x_max;
+    //             positive.x_max = current.x_max;
 
-                negative.y_min = current.y_min;
-                positive.y_max = current.y_max;
-                std::size_t i = 0;
+    //             negative.y_min = current.y_min;
+    //             positive.y_max = current.y_max;
+    //             std::size_t i = 0;
                 
-                for (; i < current.indices.size() / 2; ++ i)
-                  negative.indices.push_back (current.indices[i]);
-                double med_y = 0.5 * (m_points[current.indices[i]].y()
-                                      + m_points[current.indices[i+1]].y());
-                negative.y_max = med_y;
-                positive.y_min = med_y;
+    //             for (; i < current.indices.size() / 2; ++ i)
+    //               negative.indices.push_back (current.indices[i]);
+    //             double med_y = 0.5 * (m_points[current.indices[i]].y()
+    //                                   + m_points[current.indices[i+1]].y());
+    //             negative.y_max = med_y;
+    //             positive.y_min = med_y;
                 
-                for (; i < current.indices.size(); ++ i)
-                  positive.indices.push_back (current.indices[i]);
-              }
-          }
+    //             for (; i < current.indices.size(); ++ i)
+    //               positive.indices.push_back (current.indices[i]);
+    //           }
+    //       }
         
-        queue.pop_front ();
-      }
+    //     queue.pop_front ();
+    //   }
     
-    return true;
+    // return true;
   }
   
   // Function to override the context menu
   QMenu* contextMenu();
 
   // IO
-  bool read_ply_point_set(std::istream& in);
   bool write_ply_point_set(std::ostream& out) const;
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
@@ -311,24 +337,25 @@ public:
   template <typename ItemContainer>
   void generate_point_sets (ItemContainer& items)
   {
-    for (std::size_t i = 0; i < m_points.size(); ++ i)
+    for (Point_set::const_iterator it = m_points->begin();
+         it != m_points->end(); ++ it)
       {
-        CGAL::Classification_type* c = m_psc->classification_type_of (i);
+        CGAL::Classification_type* c = m_psc->classification_type_of (*it);
         if (c == NULL)
           continue;
         
         if (c->id() == "vegetation")
-          items[0]->point_set()->push_back (m_points[i]);
+          items[0]->point_set()->push_back (m_points->point(it));
         else if (c->id() == "ground")
-          items[1]->point_set()->push_back (m_points[i]);
+          items[1]->point_set()->push_back (m_points->point(it));
         else if (c->id() == "road")
-          items[2]->point_set()->push_back (m_points[i]);
+          items[2]->point_set()->push_back (m_points->point(it));
         else if (c->id() == "roof")
-          items[3]->point_set()->push_back (m_points[i]);
+          items[3]->point_set()->push_back (m_points->point(it));
         else if (c->id() == "facade")
-          items[4]->point_set()->push_back (m_points[i]);
+          items[4]->point_set()->push_back (m_points->point(it));
         else if (c->id() == "building")
-          items[5]->point_set()->push_back (m_points[i]);
+          items[5]->point_set()->push_back (m_points->point(it));
       }
   }
 
@@ -345,9 +372,7 @@ public Q_SLOTS:
 // Data
 private:
   
-  std::vector<Point_3> m_points;
-  std::vector<Vector_3> m_normals;
-  std::vector<Color> m_colors;
+  Point_set* m_points;
 
   PSC* m_psc;
 
@@ -360,7 +385,6 @@ private:
   Verticality* m_verti;
   Distance_to_plane* m_d2p;
   Color_att* m_col_att;
-
 
   int m_index_color;
   
@@ -392,64 +416,6 @@ private:
 
 
 }; // end class Scene_point_set_classification_item
-
-
-template <typename Floating>
-class My_ply_interpreter
-{
-  typedef CGAL::Data_classification::RGB_Color Color;
-  std::vector<Kernel::Point_3>& points;
-  std::vector<Color>& colors;
-  std::vector<unsigned char>& echo;
-  bool echo_float;
-  
-public:
-  My_ply_interpreter (std::vector<Kernel::Point_3>& points,
-                      std::vector<Color>& colors,
-                      std::vector<unsigned char>& echo)
-    : points (points), colors (colors), echo (echo), echo_float (false)
-  { }
-
-  // Init and test if input file contains the right properties
-  bool is_applicable (CGAL::Ply_reader& reader)
-  {
-    if (reader.does_tag_exist<float> ("scalar_Return_Number"))
-      echo_float = true;
-    
-    return reader.does_tag_exist<Floating> ("x")
-      && reader.does_tag_exist<Floating> ("y")
-      && reader.does_tag_exist<Floating> ("z");
-  }
-
-  // Describes how to process one line (= one point object)
-  void process_line (CGAL::Ply_reader& reader)
-  {
-    Floating x = (Floating)0., y = (Floating)0., z = (Floating)0.;
-    Color c = {{ 0, 0, 0 }};
-    unsigned char e = 0;
-
-    reader.assign (x, "x");
-    reader.assign (y, "y");
-    reader.assign (z, "z");
-    reader.assign (c[0], "red");
-    reader.assign (c[1], "green");
-    reader.assign (c[2], "blue");
-    if (echo_float)
-      {
-        float f = 0.;
-        reader.assign (f, "scalar_Return_Number");
-        e = (unsigned char)f;
-      }
-    else
-      reader.assign (e, "echo");
-
-    points.push_back (Kernel::Point_3 (x, y, z));
-    colors.push_back (c);
-    echo.push_back (e);
-  }
-
-};
-
 
 
 template <class Traits>

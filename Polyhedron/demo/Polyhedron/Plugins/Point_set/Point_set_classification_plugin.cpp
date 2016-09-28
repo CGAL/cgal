@@ -143,51 +143,51 @@ public Q_SLOTS:
   
   void on_create_from_file_button_clicked()
   {
-    CGAL::Random rand(time(0));
+    // CGAL::Random rand(time(0));
     
-    QString filename = QFileDialog::getOpenFileName(mw,
-                                                    tr("Open PLY point set"),
-                                                    ".",
-                                                    "PLY point set (*.ply);;All Files (*)");
+    // QString filename = QFileDialog::getOpenFileName(mw,
+    //                                                 tr("Open PLY point set"),
+    //                                                 ".",
+    //                                                 "PLY point set (*.ply);;All Files (*)");
 
-    if (filename == QString())
-      return;
+    // if (filename == QString())
+    //   return;
     
-    QFileInfo fi(filename);
-    QString name = fi.fileName();
-    name.chop(4);
-    std::ifstream in(filename.toUtf8(), std::ios_base::binary);
+    // QFileInfo fi(filename);
+    // QString name = fi.fileName();
+    // name.chop(4);
+    // std::ifstream in(filename.toUtf8(), std::ios_base::binary);
     
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    Scene_point_set_classification_item* new_item
-      = new Scene_point_set_classification_item ();
-    new_item->read_ply_point_set (in);
+    // QApplication::setOverrideCursor(Qt::WaitCursor);
+    // Scene_point_set_classification_item* new_item
+    //   = new Scene_point_set_classification_item ();
+    // new_item->read_ply_point_set (in);
 
-    std::vector<Scene_point_set_classification_item*> items;
-    if (new_item->segment_point_set (ui_widget.max_nb_points->value(), std::back_inserter (items)))
-      {
-        for (std::size_t i = 0; i < items.size(); ++ i)
-          {
-            unsigned char r, g, b;
+    // std::vector<Scene_point_set_classification_item*> items;
+    // if (new_item->segment_point_set (ui_widget.max_nb_points->value(), std::back_inserter (items)))
+    //   {
+    //     for (std::size_t i = 0; i < items.size(); ++ i)
+    //       {
+    //         unsigned char r, g, b;
 
-            r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-            g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-            b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-            items[i]->setRbgColor (r, g, b);
-            items[i]->setName(QString("%1 %2 (classification)").arg(name).arg (i+1));
-            int item_id = scene->addItem(items[i]);
-            scene->setSelectedItem(item_id);
-          }
-        delete new_item;
-      }
-    else
-      {
-        new_item->setName(QString("%1 (classification)").arg(name));
-        int item_id = scene->addItem(new_item);
-        scene->setSelectedItem(item_id);
-      }
+    //         r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+    //         g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+    //         b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+    //         items[i]->setRbgColor (r, g, b);
+    //         items[i]->setName(QString("%1 %2 (classification)").arg(name).arg (i+1));
+    //         int item_id = scene->addItem(items[i]);
+    //         scene->setSelectedItem(item_id);
+    //       }
+    //     delete new_item;
+    //   }
+    // else
+    //   {
+    //     new_item->setName(QString("%1 (classification)").arg(name));
+    //     int item_id = scene->addItem(new_item);
+    //     scene->setSelectedItem(item_id);
+    //   }
     
-    QApplication::restoreOverrideCursor();
+    // QApplication::restoreOverrideCursor();
   }
 
   void on_create_from_item_button_clicked()
