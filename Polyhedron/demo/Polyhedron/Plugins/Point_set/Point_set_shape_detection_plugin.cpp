@@ -41,8 +41,8 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
     QAction* actionDetect;
 
-  typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
-  typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
+  typedef Point_set_3<Kernel>::Point_pmap PointPMap;
+  typedef Point_set_3<Kernel>::Vector_pmap NormalPMap;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
@@ -134,9 +134,14 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    
+    typedef Point_set::Point_pmap PointPMap;
+    typedef Point_set::Vector_pmap NormalPMap;
+
+    typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
+    typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
+
     Shape_detection shape_detection;
-    shape_detection.set_input(*points);
+    shape_detection.set_input(*points, points->point_pmap(), points->normal_pmap());
 
     std::vector<Scene_group_item *> groups;
     groups.resize(5);
@@ -199,6 +204,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       }
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
+            
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         point_item->point_set()->push_back((*points)[i]);
       
@@ -269,7 +275,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       //names[i] = ss.str(		
       point_item->setName(QString::fromStdString(ss.str()));
-      point_item->set_has_normals(true);
       point_item->setRenderingMode(item->renderingMode());
 
       if (dialog.generate_subset()){

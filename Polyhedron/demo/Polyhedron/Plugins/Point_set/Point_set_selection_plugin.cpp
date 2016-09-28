@@ -318,20 +318,23 @@ protected:
 	return; 
       }
 
+    Point_set* points = point_set_item->point_set();
+
     if (selection_mode == 0) // New selection
-      point_set_item->point_set()->unselect_all();
+      points->unselect_all();
     
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
 
-    std::vector<UI_point_3<Kernel> > unselected, selected;
+    std::vector<std::size_t> unselected, selected;
     
-    for(Point_set::iterator it = point_set_item->point_set()->begin ();
-	it != point_set_item->point_set()->end(); ++ it)
+    for(Point_set::iterator it = points->begin ();
+	it != points->end(); ++ it)
       {
-	bool already_selected = point_set_item->point_set()->is_selected (it);
-	    
-	qglviewer::Vec vp (it->x (), it->y (), it->z ());
+	bool already_selected = points->is_selected (it);
+
+        const Kernel::Point_3 p = points->point (it);
+	qglviewer::Vec vp (p.x (), p.y (), p.z ());
 	qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
 	    
 	bool now_selected = visualizer->is_selected (vsp);
@@ -373,22 +376,19 @@ protected:
 
       }
 
-    point_set_item->point_set()->clear();
-    
-    std::copy (unselected.begin (), unselected.end (),
-	       std::back_inserter (*(point_set_item->point_set())));
-    std::size_t size = unselected.size();
+    for (std::size_t i = 0; i < unselected.size(); ++ i)
+      *(points->begin() + i) = unselected[i];
+    for (std::size_t i = 0; i < selected.size(); ++ i)
+      *(points->begin() + (unselected.size() + i)) = selected[i];
 
     if (selected.empty ())
       {
-	point_set_item->point_set()->unselect_all();
+	points->unselect_all();
       }
     else
       {
-	std::copy (selected.begin (), selected.end (),
-		   std::back_inserter (*(point_set_item->point_set())));
-	point_set_item->point_set()->set_first_selected
-	  (point_set_item->point_set()->begin() + size);
+	points->set_first_selected
+	  (points->begin() + unselected.size());
       } 
     point_set_item->invalidateOpenGLBuffers();
   }
@@ -466,7 +466,8 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item();
     new_item->setName(QString("%1 (selected points)").arg(point_set_item->name()));
-    new_item->set_has_normals (point_set_item->has_normals());
+    if (point_set_item->has_normals())
+      new_item->point_set()->add_normal_property();
     new_item->setColor(point_set_item->color());
     new_item->setRenderingMode(point_set_item->renderingMode());
     new_item->setVisible(point_set_item->visible());
@@ -475,7 +476,13 @@ public Q_SLOTS:
     for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	it != point_set_item->point_set()->end(); ++ it) {
       if (point_set_item->point_set()->is_selected (it))
-	new_item->point_set()->push_back(*it);
+        {
+          if (point_set_item->has_normals())
+            new_item->point_set()->push_back(point_set_item->point_set()->point(it),
+                                             point_set_item->point_set()->normal(it));
+          else
+            new_item->point_set()->push_back(point_set_item->point_set()->point(it));
+        }
     }
     new_item->resetSelection();
     new_item->invalidateOpenGLBuffers();

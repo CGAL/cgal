@@ -41,7 +41,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
-Polyhedron* poisson_reconstruct(const Point_set& points,
+Polyhedron* poisson_reconstruct(Point_set& points,
                                 Kernel::FT sm_angle, // Min triangle angle (degrees). 
                                 Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
@@ -93,9 +93,11 @@ namespace SurfaceReconstruction
   typedef Kernel::Point_3 Point;
   typedef Kernel::Vector_3 Vector;
   // types for K nearest neighbors search
-  typedef CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
+  typedef CGAL::Search_traits_adapter <std::size_t, Point_set::Point_pmap, SearchTraits_3> Search_traits;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
   typedef Neighbor_search::Tree Tree;
+  typedef Neighbor_search::Distance Distance;
   typedef Neighbor_search::iterator Search_iterator;
 
   typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
@@ -123,7 +125,8 @@ namespace SurfaceReconstruction
   
   unsigned int scale_of_anisotropy (const Point_set& points, double& size)
   {
-    Tree tree(points.begin_or_selection_begin(), points.end());
+    Tree tree(points.begin_or_selection_begin(), points.end(),
+              Tree::Splitter(), Search_traits (points.point_pmap()));
     
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
@@ -137,10 +140,11 @@ namespace SurfaceReconstruction
     generate_scales (std::back_inserter (scales));
 
     std::vector<unsigned int> chosen;
-
+    Distance tr_dist (points.point_pmap());
+    
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i],scales.back());
+    	Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
 	double current = 0.;
     	unsigned int nb = 0;
     	std::size_t index = 0;
@@ -180,7 +184,7 @@ namespace SurfaceReconstruction
     size = 0.;
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i], aniso_scale);
+    	Neighbor_search search(tree, subset[i], aniso_scale, 0, true, tr_dist);
 	size += std::sqrt ((-- search.end())->second);
       }
     size /= subset.size();
@@ -191,7 +195,9 @@ namespace SurfaceReconstruction
   
   unsigned int scale_of_noise (const Point_set& points, double& size)
   {
-    Tree tree(points.begin_or_selection_begin(), points.end());
+    Tree tree(points.begin_or_selection_begin(), points.end(),
+              Tree::Splitter(), Search_traits (points.point_pmap()));
+    Distance tr_dist (points.point_pmap());
     
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
@@ -208,7 +214,7 @@ namespace SurfaceReconstruction
     
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i],scales.back());
+    	Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
 	double current = 0.;
     	unsigned int nb = 0;
     	std::size_t index = 0;
@@ -245,7 +251,7 @@ namespace SurfaceReconstruction
     size = 0.;
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i], noise_scale);
+    	Neighbor_search search(tree, subset[i], noise_scale, 0, true, tr_dist);
 	size += std::sqrt ((-- search.end())->second);
       }
     size /= subset.size();
@@ -256,16 +262,27 @@ namespace SurfaceReconstruction
 
   void simplify_point_set (Point_set& points, double size)
   {
-    points.erase (CGAL::grid_simplify_point_set (points.begin (), points.end (), size),
-		  points.end ());
+    points.set_first_selected (CGAL::grid_simplify_point_set (points.begin (), points.end (), points.point_pmap(), size));
+    points.delete_selection();
   }
 
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
-    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(),
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(), points.point_pmap(),
                                                 scale);
   }
 
+  struct Point_set_make_point
+    : public std::unary_function<const std::size_t&, const Kernel::Point_3&>
+  {
+    const Point_set& point_set;
+    Point_set_make_point (const Point_set& point_set) : point_set (point_set) { }
+    const Kernel::Point_3& operator() (const std::size_t& i) const
+    {
+      return point_set.point (i);
+    }
+  };
+  
   template <typename ItemsInserter>
   void scale_space (const Point_set& points, ItemsInserter items,
 		    unsigned int scale, bool generate_smooth = false,
@@ -273,7 +290,9 @@ namespace SurfaceReconstruction
                     unsigned int samples = 300, unsigned int iterations = 4)
   {
     ScaleSpace reconstruct (scale, samples);
-    reconstruct.reconstruct_surface(points.begin_or_selection_begin(), points.end (), iterations,
+    reconstruct.reconstruct_surface(boost::make_transform_iterator(points.begin_or_selection_begin(), Point_set_make_point(points)),
+                                    boost::make_transform_iterator(points.end(), Point_set_make_point(points)),
+                                    iterations,
                                     separate_shells, force_manifold);
 
     for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh )
@@ -304,7 +323,7 @@ namespace SurfaceReconstruction
                 if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
                   {
                     map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = (points.begin_or_selection_begin() + (*it)[ind])->position();
+                    Point p = points.point(points.begin_or_selection_begin() + (*it)[ind]);
                     new_item->new_vertex (p.x (), p.y (), p.z ());
                     
                     if (generate_smooth)
@@ -360,7 +379,7 @@ namespace SurfaceReconstruction
                 if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
                   {
                     map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    Point p = (points.begin_or_selection_begin() + (*it)[ind])->position();
+                    Point p = points.point(points.begin_or_selection_begin() + (*it)[ind]);
                     new_item->new_vertex (p.x (), p.y (), p.z ());
                     
                     if (generate_smooth)
@@ -386,22 +405,56 @@ namespace SurfaceReconstruction
 
       }
   }
+
+  struct Point_set_make_pair_point_index
+    : public std::unary_function<const std::size_t&, std::pair<Kernel::Point_3, std::size_t> >
+  {
+    const Point_set& point_set;
+    Point_set_make_pair_point_index (const Point_set& point_set) : point_set (point_set) { }
+    std::pair<Kernel::Point_3, std::size_t> operator() (const std::size_t& i) const
+    {
+      return std::make_pair (point_set.point (i), i);
+    }
+  };
   
   void advancing_front (const Point_set& points, Scene_polyhedron_item* new_item, double size,
                         double radius_ratio_bound = 5., double beta = 0.52)
   {
+
+    // TODO: build DT with indices
+    
     Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
     Radius filter (size);
-    CGAL::advancing_front_surface_reconstruction (points.begin_or_selection_begin(), points.end (), P, filter,
-                                                  radius_ratio_bound, beta);
+
+    typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
+    typedef CGAL::Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
+
+    typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
+    typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
+
+    typedef CGAL::Advancing_front_surface_reconstruction<Triangulation_3, Radius> Reconstruction;
+
+    Triangulation_3 dt( boost::make_transform_iterator(points.begin_or_selection_begin(), Point_set_make_pair_point_index(points)),
+                        boost::make_transform_iterator(points.end(), Point_set_make_pair_point_index(points)) );
+
+    Reconstruction R(dt, filter);
+    R.run(radius_ratio_bound, beta);
+    CGAL::AFSR::construct_polyhedron(P, R);
 						  
   }
 
   void compute_normals (Point_set& points, unsigned int neighbors)
   {
     CGAL::jet_estimate_normals<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
-                                                CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                                points.point_pmap(),
+                                                points.normal_pmap(),
                                                 2 * neighbors);
+    
+    points.set_first_selected (CGAL::mst_orient_normals (points.begin(), points.end(),
+                                                         points.point_pmap(),
+                                                         points.normal_pmap(),
+                                                         2 * neighbors));
+    points.delete_selection();
   }
   
 }
@@ -552,18 +605,12 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
       Scene_points_with_normal_item* new_item = NULL;
       if (!(dialog.interpolate()))
 	{
-	  new_item = new Scene_points_with_normal_item();
+	  new_item = new Scene_points_with_normal_item(*pts_item);
 	  new_item->setName(QString("%1 (preprocessed)").arg(pts_item->name()));
-	  new_item->set_has_normals (pts_item->has_normals());
-	  new_item->setColor(pts_item->color());
-	  new_item->setRenderingMode(pts_item->renderingMode());
-	  new_item->setVisible(pts_item->visible());
 	  new_item->resetSelection();
 	  new_item->invalidateOpenGLBuffers();
 
 	  points = new_item->point_set();
-	  std::copy (points->begin_or_selection_begin(), pts_item->point_set()->end(),
-		     std::back_inserter (*points));
 	}
 
       std::cerr << "Analysing isotropy of point set... ";
@@ -604,7 +651,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	  std::cerr << "Denoising point set... ";
 	  time.restart();
 	  SurfaceReconstruction::smooth_point_set (*points, noise_scale);
-          new_item->set_has_normals (false);
+          new_item->point_set()->remove_normal_property();
 	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	}
 
@@ -671,7 +718,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 
 		  SurfaceReconstruction::compute_normals (*points, noise_scale);
 		  
-		  new_item->set_has_normals (true);
+		  new_item->point_set()->add_normal_property();
 		  new_item->setRenderingMode(PointsPlusNormals);
 		  
 		  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -829,10 +876,10 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
       if (!(point_set_item->has_normals()))
         {
           std::cerr << "Estimation of normal vectors... ";
-
+          points->add_normal_property();
           SurfaceReconstruction::compute_normals (*points, 12);
 		  
-          point_set_item->set_has_normals (true);
+
           point_set_item->setRenderingMode(PointsPlusNormals);
 
         }
