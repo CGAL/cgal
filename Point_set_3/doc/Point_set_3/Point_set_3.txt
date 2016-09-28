@@ -98,9 +98,9 @@ The following example shows how to apply some algorithms from the
 
 \subsection Point_set_3_IO Input/Output
 
-The following example shows how to read a point set in the XYZ format
-(it also normalizes and inverses the normal vectors and write the
-result in the OFF format).
+The following example reads a point set in the XYZ format, normalizes
+and inverts the normal vectors and write the result in the OFF
+format.
 
 \cgalExample{Point_set_3/point_set_read_xyz.cpp}
 
@@ -120,14 +120,14 @@ For example, if the following line is found in the PLY header:
 
 Then a property named _red_ and with type `boost::uint8_t` (`boost`
 types are used because of their fixed memory size) will be
-instanciated in the point set and filled with the corresponding
+instantiated in the point set and filled with the corresponding
 values.
 
 Only points and normals are recovered as properties with complex class
 types (namely the template types `Point` and `Vector`). Other
 properties are stored with simple number types. For example, if a
 color is given with integer red, green and blue values, 3 integer
-properties _red_, _green_ and _blue_ will be instanciated. A
+properties _red_, _green_ and _blue_ will be instantiated. A
 user-defined interpreter must be implemented if such properties should
 be stored all together (a unique property _color_ of type
 `CGAL::cpp11::array` for example).
@@ -167,11 +167,12 @@ overload provided for `CGAL::Point_set_3`:
 
 This package has been created to fill the need for a practical data
 structure that handles points with a user-defined set of
-properties. This property behavior was already implemented in the
+properties. This property mechanism was already implemented in the
 \ref Chapter_3D_Surface_mesh "Surface Mesh" package: all the classes
 dedicated to the management of properties were extracted so that they
-can be used in this _3D Point Set_ package. `CGAL::Surface_mesh<Point>`
-and `CGAL::Point_set_3<Point,Vector>` follow a similar API for property
+can be used in this _3D Point Set_
+package. `CGAL::Surface_mesh<Point>` and
+`CGAL::Point_set_3<Point,Vector>` follow a similar API for property
 management.
 
 
