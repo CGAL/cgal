@@ -36,8 +36,14 @@ public:
 
     actionRemoveIsolatedVertices = new QAction(tr("Remove Isolated Vertices"), mw);
     actionRemoveDegenerateFaces = new QAction(tr("Remove Degenerate Faces"), mw);
+    actionRemoveSelfIntersections = new QAction(tr("Remove Self-Intersections"), mw);
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
+    actionRemoveSelfIntersections->setObjectName("actionRemoveSelfIntersections");
+    actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing");
+    actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing");
+    actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing");
+
     autoConnectActions();
   }
 
@@ -46,7 +52,7 @@ public:
     return QList<QAction*>() << actionRemoveIsolatedVertices
                                 //removed until the function is fully working;
       //<< actionRemoveDegenerateFaces
-         ;
+                             << actionRemoveSelfIntersections;
   }
 
   bool applicable(QAction*) const
@@ -59,10 +65,12 @@ public:
 public Q_SLOTS:
   void on_actionRemoveIsolatedVertices_triggered();
   void on_actionRemoveDegenerateFaces_triggered();
+  void on_actionRemoveSelfIntersections_triggered();
 
 private:
   QAction* actionRemoveIsolatedVertices;
   QAction* actionRemoveDegenerateFaces;
+  QAction* actionRemoveSelfIntersections;
 
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
@@ -104,5 +112,22 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
   }
 }
 
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_triggered()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_polyhedron_item* poly_item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  if (poly_item)
+  {
+    bool solved =
+      CGAL::Polygon_mesh_processing::remove_self_intersections(
+      *poly_item->polyhedron());
+    if (!solved)
+    messages->information(tr("Some self-intersection could not be fixed"));
+    poly_item->invalidateOpenGLBuffers();
+    Q_EMIT poly_item->itemChanged();
+  }
+}
 
 #include "Repair_polyhedron_plugin.moc"

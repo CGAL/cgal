@@ -27,6 +27,11 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Union_find.h>
 
+// headers for self-intersection removal
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/boost/graph/selection.h>
+
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
@@ -825,7 +830,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   std::vector<vertex_descriptor> to_be_removed;
-  
+
   BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
   {
     if (CGAL::halfedges_around_target(v, pmesh).first
@@ -839,6 +844,312 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
   }
   return nb_removed;
 }
+
+/// \cond SKIP_IN_MANUAL
+namespace internal{
+template <class Descriptor>
+struct Is_selected{
+  std::set<Descriptor>& selection;
+
+  Is_selected(std::set<Descriptor>& sel)
+    :selection(sel)
+  {}
+
+  friend bool get(Is_selected is, Descriptor d){
+    return is.selection.count(d);
+  }
+
+  friend void put(Is_selected is, Descriptor d, bool b){
+    if (b)
+      is.selection.insert(d);
+    else
+      is.selection.erase(d);
+  }
+};
+} // end of namespace internal
+
+template <class TriangleMesh>
+bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool verbose=false)
+{
+  typedef boost::graph_traits<TriangleMesh> graph_traits;
+  typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename graph_traits::face_descriptor face_descriptor;
+  typedef typename graph_traits::vertex_descriptor vertex_descriptor;
+  typedef typename graph_traits::edge_descriptor edge_descriptor;
+
+// Look for self-intersections in the polyhedron and remove them
+  int step=-1;
+  std::vector<halfedge_descriptor> non_filled_hole;
+  bool no_hole_was_filled=false; // indicates if the filling of all previously
+                                 // created holes failed. If true then no new
+                                 // self-intersection have been created and
+                                 // checking for it is useless.
+  while( ++step<max_steps )
+  {
+    if (verbose)
+      std::cout << "DEBUG: is_valid(tm)? " << is_valid(tm) << "\n";
+
+    typedef std::pair<face_descriptor, face_descriptor> Face_pair;
+    std::vector<Face_pair> self_inter;
+    std::vector<halfedge_descriptor> one_halfedge_per_border;
+    if (!no_hole_was_filled)
+      self_intersections(tm, std::back_inserter(self_inter));
+    no_hole_was_filled=true;
+
+    if(!self_inter.empty() || !non_filled_hole.empty()){
+      if (verbose)
+        std::cout << "DEBUG: Iterative self-intersection removal step " << step
+                  << " - non_filled_hole.size() = " << non_filled_hole.size() << std::endl;
+      std::set<face_descriptor> faces_to_remove;
+      BOOST_FOREACH(Face_pair fp, self_inter)
+      {
+        faces_to_remove.insert(fp.first);
+        faces_to_remove.insert(fp.second);
+      }
+
+      // expand the region to be filled
+      internal::Is_selected<face_descriptor> is_selected(faces_to_remove);
+      expand_face_selection(faces_to_remove, tm, step+1, is_selected, Emptyset_iterator());
+      // try to avoid non-manifold vertices (morpho-math)
+      reduce_face_selection(faces_to_remove, tm, 1, is_selected, Emptyset_iterator());
+
+      // now expand holes than were not filled
+      std::vector<halfedge_descriptor> boundary_hedges; // this container will contain the halfedges of
+                                                       // all created holes
+      std::set<halfedge_descriptor> border_created; // track border halfedges that were previously created
+                                                    // to avoid considering them as original mesh border
+                                                    // edges that should be kept
+      BOOST_FOREACH(halfedge_descriptor h, non_filled_hole)
+      {
+        select_incident_faces(halfedges_around_face(h,tm), tm,
+          std::inserter(faces_to_remove, faces_to_remove.begin()) );
+        BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,tm))
+        {
+          CGAL_assertion(is_border(h2, tm));
+          border_created.insert(h2);
+          if ( is_border(opposite(h2, tm), tm) )
+            boundary_hedges.push_back(h2); // mesh border halfedges should be re-added
+
+        }
+      }
+      non_filled_hole.clear();
+
+      /// save the halfedges that will get on the boundary
+      bool border_edges_found=false; // indicates at least one face incident to
+                                     // the mesh border will be removed. In that
+                                     // case, border halfedges should not be removed.
+
+      // extract the set of halfedges that is on the boundary of the holes to be
+      // made. In addition, we make sure no hole to be created contains a vertex
+      // visited more than once along a hole border (pinched surface)
+      //  We save the size of boundary_hedges to make sur halfedges added
+      // from non_filled_hole are not removed.
+      bool non_manifold_vertex_removed; //here non-manifold is for the 1D polyline
+      std::size_t boundary_hedges_initial_size=boundary_hedges.size();
+      do{
+        non_manifold_vertex_removed=false;
+        boundary_hedges.resize(boundary_hedges_initial_size);
+        BOOST_FOREACH(face_descriptor fh, faces_to_remove)
+        {
+          halfedge_descriptor h = fh->halfedge();
+          for (int i=0;i<3; ++i)
+          {
+            if ( is_border( opposite(h, tm), tm) ){
+              if (!border_created.count(opposite(h, tm))){
+                // only border halfedges that were not created by a previous face
+                // removal should be considered as hole boundary
+                boundary_hedges.push_back(h);
+                border_edges_found=true;
+              }
+            }
+            else
+              if ( !faces_to_remove.count( face( opposite(h, tm), tm) ) )
+                boundary_hedges.push_back(h);
+            h=next(h, tm);
+          }
+        }
+
+        // detect vertices visited more than once along
+        // a hole border. We then remove all faces incident
+        // to such a vertex to force the removal of the vertex.
+        // Actually even if two holes are sharing a vertex, this
+        // vertex will be removed. It is not needed but since
+        // we do not yet have one halfedge per hole it is simpler
+        // and does not harm
+        std::set<vertex_descriptor> border_vertices;
+        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+        {
+          if (!border_vertices.insert(h->vertex()).second){
+            BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_target(h,tm)){
+              if (!is_border(hh, tm))
+                faces_to_remove.insert(face(hh, tm));
+            }
+            non_manifold_vertex_removed=true;
+          }
+        }
+      }
+      while(non_manifold_vertex_removed);
+
+    /// remove the selection
+      if (border_edges_found){
+        // When at least one face incident to the mesh border is set
+        // to be removed, we should pay attention not to remove
+        // the border halfedge that is part of the mesh.
+
+        // first collect all vertices and edges incident to the faces to remove
+        std::set<vertex_descriptor> vertices_to_remove;
+        std::set<edge_descriptor>  edges_to_remove;
+        BOOST_FOREACH(face_descriptor fh, faces_to_remove)
+        {
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(fh->halfedge(),tm))
+          {
+            if (halfedge(target(h, tm), tm)==h) // limit the number of insertions
+              vertices_to_remove.insert(target(h, tm));
+            edges_to_remove.insert(edge(h,tm));
+          }
+        }
+
+        // detect cycles of input border halfedges:
+        // if such a cycle is found input border halfedges are removed to
+        // remove small border cycle that are imposing a self-intersection
+        // that could not be fixed if kept. (This also prevent small island
+        // if a small hole is incident to the faces to be removed).
+        if (border_edges_found){
+          std::set<halfedge_descriptor> cycles;
+          std::set<halfedge_descriptor>  boundary_set;
+          BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+          {
+            if ( is_border(opposite(h, tm), tm) )
+              boundary_set.insert(opposite(h, tm));
+          }
+
+          BOOST_FOREACH(halfedge_descriptor hd, boundary_set)
+          {
+            CGAL_assertion(is_border(hd,tm));
+            if(cycles.count(hd)) continue;
+            halfedge_descriptor nhd=next(hd,tm);
+            bool remove_it=true;
+            do{
+              if (!boundary_set.count(nhd))
+              {
+                remove_it=false;
+                break;
+              }
+              nhd=next(nhd,tm);
+            }
+            while(nhd!=hd);
+            if (remove_it){
+              BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(hd,tm))
+                cycles.insert(h);
+            }
+          }
+
+          //remove cycle edges
+          if (!cycles.empty())
+          {
+            std::vector<halfedge_descriptor> tmp;
+            tmp.reserve(boundary_hedges.size()-cycles.size());
+            BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+            {
+              if (!cycles.count(opposite(h, tm)))
+                tmp.push_back(h);
+            }
+            tmp.swap(boundary_hedges);
+          }
+        }
+
+        // do not remove edges on the boundary of the selection of faces,
+        // nor its vertices
+        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+        {
+          vertices_to_remove.erase(target(h, tm));
+          edges_to_remove.erase(edge(h,tm));
+        }
+        // now remove edges,
+        BOOST_FOREACH(edge_descriptor e, edges_to_remove)
+          remove_edge(e, tm);
+        // and vertices,
+        BOOST_FOREACH(vertex_descriptor vh, vertices_to_remove)
+          remove_vertex(vh, tm);
+        // and finally facets
+        BOOST_FOREACH(face_descriptor f, faces_to_remove)
+          remove_face(f, tm);
+        // set new border_vertices to the boundary and update
+        // the halfedge pointer of the border vertices
+        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+        {
+          set_face(h,graph_traits::null_face(), tm);
+          set_halfedge(target(h, tm), h, tm);
+          set_next(h,h,tm); // set himself as next to track edges of the holes
+        }
+        // update next/prev relationships of the hole
+        BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+        {
+          halfedge_descriptor nh=next(opposite(h, tm), tm);
+          while( !is_border(opposite(nh, tm), tm) ||
+                  next(opposite(nh, tm), tm) != opposite(nh, tm)) //this part makes sure we consider halfedges of the hole
+          {
+            nh=next(opposite(nh, tm), tm);
+            CGAL_assertion(nh!=h);
+          }
+          CGAL_assertion(next(opposite(nh, tm), tm)==opposite(nh,tm));
+          set_next(opposite(nh, tm), h, tm);
+        }
+      }
+      else
+        /// \todo check whether this is more expensive than the previous code above
+        BOOST_FOREACH(face_descriptor f, faces_to_remove)
+          Euler::remove_face(halfedge(f, tm), tm);
+
+      if (verbose)
+        std::cout << "  DEBUG: " << faces_to_remove.size() << " triangles removed" << std::endl;
+
+      /// now get one halfedge per hole
+      std::set<halfedge_descriptor> visited;
+      BOOST_FOREACH(halfedge_descriptor h, boundary_hedges)
+      {
+        if (visited.insert(h).second)
+        {
+          one_halfedge_per_border.push_back(h);
+          BOOST_FOREACH(halfedge_descriptor hh, halfedges_around_face(h, tm))
+          {
+            CGAL_assertion_code(bool insert_ok =)
+            visited.insert(hh)
+            CGAL_assertion_code(.second);
+            CGAL_assertion(insert_ok || h==hh);
+          }
+        }
+      }
+    }
+
+    if (!one_halfedge_per_border.empty()){
+      BOOST_FOREACH(halfedge_descriptor h, one_halfedge_per_border)
+      {
+        std::size_t nb_new_triangles = 0;
+        Counting_output_iterator out(&nb_new_triangles);
+        triangulate_hole(tm, h, out);
+        if (!nb_new_triangles)
+        {
+          if (verbose)
+            std::cout << "  DEBUG: Failed to fill a hole!!!" << std::endl;
+          non_filled_hole.push_back(h);
+        }
+        else
+          no_hole_was_filled=false;
+      }
+      if (verbose)
+        std::cout << "  DEBUG: Number of holes " << one_halfedge_per_border.size() << std::endl;
+    }
+    else{
+      if (verbose)
+        std::cout << "INFO: All self-intersections were corrected\n";
+      break;
+    }
+  }
+
+  return step<max_steps;
+}
+///
 
 } } // end of CGAL::Polygon_mesh_processing
 
