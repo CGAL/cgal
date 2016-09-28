@@ -98,7 +98,7 @@ struct Polyhedron_tester : public Tester<K>
     if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
-                   110, 140, 190, 235, 350, 420); 
+                   110, 140, 190, 235, 300, 450); 
     }
     else
 #endif //CGAL_LINKED_WITH_TBB
