@@ -24,11 +24,11 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/enum.h>
 
-#include "Casting_2/Circle_arrangment.h"
+#include "Set_movable_separability_2/Circle_arrangment.h"
 
 namespace CGAL {
 
-namespace Casting_2 {
+namespace Set_movable_separability_2 {
 
 /* Legend:
  * point = Represented as Direction_2. It is the intersection between the
@@ -129,8 +129,7 @@ single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
   return oi;
 }
 
-} // end of namespace Casting_2
-
+} // end of namespace Set_movable_separability_2
 } // end of namespace CGAL
 
 #endif

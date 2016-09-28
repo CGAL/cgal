@@ -1,7 +1,7 @@
 namespace CGAL {
-namespace Casting_2 {
+namespace Set_movable_separability_2 {
 
-/*! \ingroup PkgCasting2Funcs
+/*! \ingroup PkgSetMovableSeparability2funcs
  *
  * Given a simple polygon, this function determines whether a cavity (of a mold
  * in the plane) that has the shape of the polygon can be used so that the
@@ -31,5 +31,5 @@ OutputIterator
 single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
                                     OutputIterator oi);
 
-} /* end namesapce Casting_2 */
+} /* end namesapce Set_movable_separability_2 */
 } /* end namesapce CGAL */

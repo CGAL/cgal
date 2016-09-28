@@ -13,7 +13,7 @@ typedef Kernel::Point_2                                   Point_2;
 typedef std::pair<Direction_2, Direction_2>               Direction_range;
 typedef std::pair<size_t, Direction_range>                Top_edge;
 
-namespace CC = CGAL::Casting_2;
+namespace SMS = CGAL::Set_movable_separability_2;
 
 // The main program:
 int main(int  argc, char* argv[])
@@ -33,7 +33,7 @@ int main(int  argc, char* argv[])
   auto poly_orientation = pgn.orientation();
   ++edge_index;
   std::list<Top_edge> top_edges;
-  CC::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
+  SMS::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
 
   if (top_edges.empty())
     std::cout << "The polygon is not castable!" << std::endl;

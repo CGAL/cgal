@@ -44,7 +44,7 @@
  */
 
 namespace CGAL {
-namespace Casting_2 {
+namespace Set_movable_separability_2 {
 namespace internal {
 
 template <typename Kernel>
@@ -409,7 +409,7 @@ public:
 };
 
 } // end of namespace internal
-} // end of namespace Casting_2
+} // end of namespace Set_movable_separability_2
 } // end of namespace CGAL
 
 #endif

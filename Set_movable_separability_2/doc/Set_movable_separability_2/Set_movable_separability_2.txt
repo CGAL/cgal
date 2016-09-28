@@ -2,14 +2,12 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_Castings_of_polygons
-
-\anchor chapterEnvelope2
+\anchor Chapter_SetMovableSeparability2
 
 \cgalAutoToc
 \authors Shahar Shamai and Efi Fogel
 
-\section casting_sec_intro Introduction
+\section sms_sec_intro Introduction
 
 Casting is a manufacturing process where liquid material is poured
 into a cavity inside a mold, which has the shape of a desired
@@ -30,14 +28,14 @@ polygon \f$P\f$ it determines whether a cavity (of a mold in the
 plane) that has the shape of \f$P\f$ can be used so that the polygon
 \f$P\f$ could be pulled out of the mold without colliding into the
 mold (but possibly sliding along the mold surface); see
-\cgalFigureRef{casting_2_fig_mold} for an illustration. If the polygon
+\cgalFigureRef{sms_2_fig_mold} for an illustration. If the polygon
 is <em>castable</em>, the function computes the set of top edges of
 such cavities and the corresponding closed ranges of pull
 directions. Assuming the top edge normal is parallel to the
 \f$y\f$-axis, every direction in a range must have a positive
 component in the positive \f$y\f$-direction.
 
-\cgalFigureBegin{casting_2_fig_mold,mold.png}
+\cgalFigureBegin{sms_2_fig_mold,mold.png}
 Polygons (light grey) in their molds (darker grey) and valid pull-out
 directions.
 \cgalFigureEnd
@@ -58,7 +56,7 @@ and \f$O(1)\f$, respectively. In order to ensure robustness and
 correctness you are adviced to use a kernel that guarantees exact
 constructions as well as exact predicates.
 
-\cgalExample{Casting_2/single_mold_translational_casting.cpp}
+\cgalExample{Set_movable_separability_2/single_mold_translational_casting.cpp}
 
 */
 } /* namespace CGAL */
