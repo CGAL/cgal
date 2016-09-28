@@ -491,8 +491,12 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) co
 {
   Q_ASSERT(d->m_points != NULL);
 
-  return stream &&
-    CGAL::write_ply_point_set (stream, *(d->m_points));
+  if (!stream)
+    return false;
+
+  stream << d->m_points;
+
+  return true;
 }
 
 // Loads point set from .OFF file
