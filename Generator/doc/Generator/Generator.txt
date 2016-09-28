@@ -143,7 +143,7 @@ objects until they are used.
 Output of example program for the generic segment generator using pre-computed point locations.
 \cgalFigureEnd
 
-\section GeneratorExample_2 Example Generating Point Sets in `d` Dimensions
+\section GeneratorExample_2 Example Generating Point Sets in d Dimensions
 
 The following example generates points inside a cube in dimension 5
 (examples for ball and sphere are available in the example directory) :
