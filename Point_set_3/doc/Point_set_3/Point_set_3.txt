@@ -23,16 +23,17 @@ labels, and to call \cgal algorithms on them.
 `CGAL::Point_set_3<Point,Vector>` is a vector based data structure that
 contains, by default, only 2 properties:
 
-- The _point_ property (with template `Point` type)
+- A property named _index_ with \ref CGAL::Point_set_3::Index "Index"
+type used to easily change the order of the points without
+having to move all the properties.
 
-- The _index_ property (with \ref CGAL::Point_set_3::Index "Index" type) used to easily change
-the order of the points without having to move all the properties.
+- A property named _point_ with template `Point` type
 
 Any property the user needs can be easily added, modified and
 removed. A property is identified by a unique name and a
-type. Convenience methods are provided to handle the property _normal_
-with template type `Vector` that is a very common property on point
-sets.
+type. Convenience methods are provided to handle the property named
+_normal_ with template type `Vector` that is a very common property on
+point sets.
 
 Reordering is only done by swapping index values: this guarantees that
 these operations have a constant complexity no matter how many
@@ -156,6 +157,11 @@ new item if it was not yet created by the back inserter
 
 Such _push property maps_ are also available for other user-defined
 properties (see `CGAL::Point_set_3::push_property_map()`).
+
+The following example shows how to read OFF point without using the
+overload provided for `CGAL::Point_set_3`:
+
+\cgalExample{Point_set_3/point_set_advanced.cpp}
 
 \section Point_set_3_History History
 
