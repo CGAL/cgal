@@ -80,7 +80,6 @@ namespace internal {
   fairing does not fail, but the mesh gets shrinked to `CGAL::ORIGIN`.
 
   @tparam TriangleMesh a model of `FaceGraph` and `MutableFaceGraph`
-          that has an internal property map for `CGAL::vertex_point_t`
   @tparam VertexRange a range of vertex descriptors of `TriangleMesh`, model of `Range`.
           Its iterator type is `InputIterator`.
   @tparam NamedParameters a sequence of \ref namedparameters
@@ -90,7 +89,9 @@ namespace internal {
   @param np optional sequence of \ref namedparameters among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh` \cgalParamEnd
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
+        If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
     \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required \cgalParamEnd
     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
   \cgalNamedParamsEnd
@@ -143,7 +144,8 @@ namespace internal {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
-    VPMap vpmap_ = choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, tmesh));
+    VPMap vpmap_ = choose_param(get_param(np, vertex_point),
+                                get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
       choose_param(get_param(np, sparse_linear_solver), Default_solver()),

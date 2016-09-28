@@ -99,11 +99,12 @@ namespace internal {
     friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
   };
 
-  template <typename PM, typename FaceRange>
+  template <typename PM, typename FaceRange, typename FaceIndexMap>
   struct Border_constraint_pmap
   {
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+    typedef FaceIndexMap FIMap;
 
     boost::shared_ptr< std::set<edge_descriptor> > border_edges_ptr;
     const PM* pmesh_ptr_;
@@ -118,25 +119,28 @@ namespace internal {
       : border_edges_ptr(new std::set<edge_descriptor>() )
       , pmesh_ptr_(NULL)
     {}
-    Border_constraint_pmap(const PM& pmesh, const FaceRange& faces)
+    Border_constraint_pmap(const PM& pmesh
+                         , const FaceRange& faces
+                         , const FIMap& fimap)
       : border_edges_ptr(new std::set<edge_descriptor>() )
       , pmesh_ptr_(&pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border));
+      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border)
+        , PMP::parameters::face_index_map(fimap));
 
       BOOST_FOREACH(halfedge_descriptor h, border)
         border_edges_ptr->insert(edge(h, *pmesh_ptr_));
     }
 
-    friend bool get(const Border_constraint_pmap<PM, FaceRange>& map,
+    friend bool get(const Border_constraint_pmap<PM, FaceRange, FIMap>& map,
                     const edge_descriptor& e)
     {
       CGAL_assertion(map.pmesh_ptr_!=NULL);
       return map.border_edges_ptr->count(e)!=0;
     }
 
-    friend void put(Border_constraint_pmap<PM, FaceRange>& map,
+    friend void put(Border_constraint_pmap<PM, FaceRange, FIMap>& map,
                     const edge_descriptor& e,
                     const bool is)
     {
@@ -149,12 +153,15 @@ namespace internal {
   };
 
   template <typename PM,
-            typename EdgeIsConstrainedMap>
+            typename EdgeIsConstrainedMap,
+            typename FaceIndexMap>
   struct Connected_components_pmap
   {
     typedef typename boost::graph_traits<PM>::face_descriptor   face_descriptor;
     typedef std::size_t                                         Patch_id;
-    typedef Connected_components_pmap<PM, EdgeIsConstrainedMap> CCMap;
+    typedef FaceIndexMap                                        FIMap;
+    typedef EdgeIsConstrainedMap                                ECMap;
+    typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
 
     boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
 
@@ -167,12 +174,15 @@ namespace internal {
     Connected_components_pmap()
       : patch_ids_map()
     {}
-    Connected_components_pmap(const PM& pmesh, EdgeIsConstrainedMap ecmap)
+    Connected_components_pmap(const PM& pmesh
+                            , EdgeIsConstrainedMap ecmap
+                            , FIMap fimap)
       : patch_ids_map()
     {
       PMP::connected_components(pmesh,
         boost::make_assoc_property_map(patch_ids_map),
-        PMP::parameters::edge_is_constrained_map(ecmap));
+        PMP::parameters::edge_is_constrained_map(ecmap)
+        .face_index_map(fimap));
     }
 
     friend value_type get(const CCMap& m, const key_type& f)
@@ -220,12 +230,10 @@ namespace internal {
   template<typename PolygonMesh
          , typename VertexPointMap
          , typename GeomTraits
-         , typename EdgeIsConstrainedMap = No_constraint_pmap<
-              typename boost::graph_traits<PolygonMesh>::edge_descriptor>
-         , typename VertexIsConstrainedMap = No_constraint_pmap<
-              typename boost::graph_traits<PolygonMesh>::vertex_descriptor>
-         , typename FacePatchMap = Connected_components_pmap<
-              PolygonMesh, EdgeIsConstrainedMap>
+         , typename EdgeIsConstrainedMap
+         , typename VertexIsConstrainedMap
+         , typename FacePatchMap
+         , typename FaceIndexMap
   >
   class Incremental_remesher
   {
@@ -245,6 +253,7 @@ namespace internal {
                                , EdgeIsConstrainedMap
                                , VertexIsConstrainedMap
                                , FacePatchMap
+                               , FaceIndexMap
                                > Self;
 
   private:
@@ -264,6 +273,7 @@ namespace internal {
                        , EdgeIsConstrainedMap ecmap
                        , VertexIsConstrainedMap vcmap
                        , FacePatchMap fpmap
+                       , FaceIndexMap fimap
                        , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
@@ -275,6 +285,7 @@ namespace internal {
       , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
       , vcmap_(vcmap)
+      , fimap_(fimap)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -1218,8 +1229,8 @@ private:
       }
       while (end != nxt);
 
-      CGAL_assertion(is_on_patch_border(end));
       CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
+      CGAL_assertion(is_on_patch_border(end));
       return end;
     }
 
@@ -1350,7 +1361,8 @@ private:
         }
       }
 
-      internal::Border_constraint_pmap<PM, FaceRange> border_map(mesh_, face_range);
+      internal::Border_constraint_pmap<PM, FaceRange, FaceIndexMap>
+        border_map(mesh_, face_range, fimap_);
       //override the border of PATCH
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
@@ -1741,6 +1753,7 @@ private:
     FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
+    FaceIndexMap fimap_;
 
   };//end class Incremental_remesher
 }//end namespace internal

@@ -156,7 +156,6 @@ std::size_t remove_null_edges(
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
-  using boost::choose_const_pmap;
   using boost::get_param;
   using boost::choose_param;
 
@@ -168,9 +167,8 @@ std::size_t remove_null_edges(
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                                     tmesh,
-                                     boost::vertex_point);
+  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+                                      get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, geom_traits), Traits());
 
@@ -450,14 +448,16 @@ std::size_t remove_null_edges(
 /// @pre `CGAL::is_triangle_mesh(tmesh)`
 ///
 /// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-///        that has an internal property map for `boost::vertex_point_t`
 /// @tparam NamedParameters a sequence of \ref namedparameters
 ///
 /// @param tmesh the  triangulated surface mesh to be repaired
 /// @param np optional \ref namedparameters described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap` \cgalParamEnd
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap`. 
+/// If this parameter is omitted, an internal property map for
+/// `CGAL::vertex_point_t` should be available in `TriangleMesh`
+/// \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} a geometric traits class instance.
 ///       The traits class must provide the nested type `Point_3`,
 ///       and the nested functors :
@@ -478,7 +478,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
-  using boost::choose_const_pmap;
   using boost::get_param;
   using boost::choose_param;
 
@@ -490,9 +489,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                                     tmesh,
-                                     boost::vertex_point);
+  VertexPointMap vpmap = choose_param(get_param(np, vertex_point),
+                                      get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
   Traits traits = choose_param(get_param(np, geom_traits), Traits());
 
