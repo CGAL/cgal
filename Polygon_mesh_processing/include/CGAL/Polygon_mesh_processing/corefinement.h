@@ -42,9 +42,10 @@ namespace Polygon_mesh_processing {
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
-        a property map with the points associated to the vertices of `tm`. The
-        point type must be a point from a \cgal Kernel.
-     \cgalParamEnd
+ *     the property map with the points associated to the vertices of `tm1` (`tm2`).
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \todo in the implementation degenerated faces should be skipped
@@ -215,7 +216,10 @@ boolean_operation(      TriangleMesh& tm1,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
+  *                      as a named parameter, then it must initialized.
+  *
   * @tparam NamedParameters1 a sequence of \ref namedparameters
   * @tparam NamedParameters2 a sequence of \ref namedparameters
   * @tparam NamedParametersOut a sequence of \ref namedparameters
@@ -227,22 +231,32 @@ boolean_operation(      TriangleMesh& tm1,
   * @param np2 optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map} a default constructible property map with the points associated to the vertices of `tm1` (`tm2`) \cgalParamEnd
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm1` (`tm2`).
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *   \cgalParamEnd
   *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *     constrained-or-not status of each edge of `tm1` (`tm2`).
+  *   \cgalParamEnd
   *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm1` (`tm2`) \cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @param np_out optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *   \cgalParamBegin{vertex_point_map} a default constructible property map with the points associated to the vertices of `tm_out` \cgalParamEnd
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm_out`.
+  *     If this parameter is omitted, an internal property map for
+  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+  *   \cgalParamEnd
   *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *     constrained-or-not status of each edge of `tm_out`. An edge of `tm_out` is constrained
   *     if it is on the intersection of `tm1` and `tm2`, or if the edge corresponds to a
   *     constrained edge in `tm1` or `tm2`.
-  * \todo in the code only edges on the intersection are marked!
+  *   \cgalParamEnd
   * \cgalNamedParamsEnd
+  * \todo in the code only edges on the intersection are marked!
   *
   * @return `true` if the output surface mesh is manifold and is put into `tm_out`.
   *         If `false` is returned and if `tm_out` is one of the input surface meshes,
@@ -359,9 +373,14 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *        checked for self-intersection and `CGAL::Corefinement::Self_intersection_exception`
  *        will be thrown if at least one is found.
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map} a property map with the points associated to the vertices of `tm1` (resp. `tm2`) \cgalParamEnd
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm1` (`tm2`).
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
+ *   \cgalParamEnd
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
- *     constrained-or-not status of each edge of `tm1` (resp. `tm2`)\cgalParamEnd
+ *     constrained-or-not status of each edge of `tm1` (resp. `tm2`)
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  */
