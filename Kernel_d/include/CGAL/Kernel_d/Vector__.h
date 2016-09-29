@@ -95,7 +95,7 @@ protected:
 
   allocator_type& allocator()
   {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(allocator_type, MM,);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(allocator_type, MM);
     return MM;
   }
 
