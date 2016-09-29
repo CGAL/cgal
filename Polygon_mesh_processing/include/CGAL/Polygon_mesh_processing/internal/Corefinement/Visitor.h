@@ -90,7 +90,7 @@ struct Ecm_bind{
 
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
 
-  void put(G& g, edge_descriptor e, bool b) const
+  void call_put(G& g, edge_descriptor e, bool b) const
   {
     if ( &g==&g1 )
       put(ecm1,e,b);
@@ -101,7 +101,7 @@ struct Ecm_bind{
     }
   }
 
-  bool get(G& g, edge_descriptor e) const
+  bool call_get(G& g, edge_descriptor e) const
   {
     if ( &g==&g1 )
       return get(ecm1,e);
@@ -115,8 +115,8 @@ struct Ecm_bind<G, No_mark<G>, No_mark<G> >
 {
   Ecm_bind(G&, G&, const No_mark<G>&, const No_mark<G>&){}
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
-  void put(G&, edge_descriptor, bool) const {}
-  bool get(G&, edge_descriptor) const {
+  void call_put(G&, edge_descriptor, bool) const {}
+  bool call_get(G&, edge_descriptor) const {
     return false;
   }
 };
@@ -636,7 +636,7 @@ public:
               }
               std::pair<Node_id,Node_id> edge_pair(node_id,node_id_of_first);
               if ( intersection_edges.insert( std::make_pair(edge(hedge,tm),edge_pair) ).second)
-                marks_on_edges.put(tm,edge(hedge,tm),true);
+                marks_on_edges.call_put(tm,edge(hedge,tm),true);
               set_edge_per_polyline(tm,edge_pair,hedge);
             }
           }
@@ -704,7 +704,7 @@ public:
         //We need an edge incident to the source vertex of hedge. This is the first opposite edge created.
         bool first=true;
         halfedge_descriptor hedge_incident_to_src=Graph_traits::null_halfedge();
-        bool hedge_is_marked = marks_on_edges.get(tm,edge(hedge,tm));
+        bool hedge_is_marked = marks_on_edges.call_get(tm,edge(hedge,tm));
         //do split the edges
         CGAL_assertion_code(vertex_descriptor expected_src=source(hedge,tm));
         BOOST_FOREACH(std::size_t node_id, node_ids)
@@ -723,7 +723,7 @@ public:
 
           //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
           if ( hedge_is_marked )
-            marks_on_edges.put(tm,edge(hnew,tm),true);
+            marks_on_edges.call_put(tm,edge(hnew,tm),true);
 
           CGAL_assertion_code(expected_src=vnew);
         }
@@ -950,7 +950,7 @@ public:
           if( it_poly_hedge!=edge_to_hedge.end() ){
             if ( intersection_edges.insert(
                     std::make_pair(edge(it_poly_hedge->second,tm),node_id_pair) ).second)
-              marks_on_edges.put(tm,edge(it_poly_hedge->second,tm),true);
+              marks_on_edges.call_put(tm,edge(it_poly_hedge->second,tm),true);
             set_edge_per_polyline(tm,node_id_pair,it_poly_hedge->second);
           }
           else{
@@ -962,7 +962,7 @@ public:
 
             if ( intersection_edges.insert(
                 std::make_pair(edge(it_poly_hedge->second,tm),opposite_pair) ).second )
-              marks_on_edges.put(tm,edge(it_poly_hedge->second,tm),true);
+              marks_on_edges.call_put(tm,edge(it_poly_hedge->second,tm),true);
             set_edge_per_polyline(tm,opposite_pair,it_poly_hedge->second);
           }
         }
