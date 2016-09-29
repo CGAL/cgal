@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   }
 
   Mesh out;
-  bool valid_union = PMP::join(mesh1,mesh2, out);
+  bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out);
 
   if (valid_union)
   {

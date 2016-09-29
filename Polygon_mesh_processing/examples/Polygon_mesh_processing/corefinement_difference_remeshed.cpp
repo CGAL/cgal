@@ -56,12 +56,13 @@ int main(int argc, char* argv[])
 
   // update mesh1 to contain the mesh bounding the difference
   // of the two input volumes.
-  bool valid_difference = PMP::difference(mesh1,
-                                          mesh2,
-                                          mesh1,
-                                          params::all_default(), // default parameters for mesh1
-                                          params::all_default(), // default parameters for mesh2
-                                          params::edge_is_constrained_map(is_constrained_map));
+  bool valid_difference =
+    PMP::corefine_and_compute_difference(mesh1,
+                                         mesh2,
+                                         mesh1,
+                                         params::all_default(), // default parameters for mesh1
+                                         params::all_default(), // default parameters for mesh2
+                                         params::edge_is_constrained_map(is_constrained_map));
 
   if (valid_difference)
   {

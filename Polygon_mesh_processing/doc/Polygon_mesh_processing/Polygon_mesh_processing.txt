@@ -211,9 +211,9 @@ the triangulated surface meshes bounding the union of `C` and `S`,
 The corefinement of two triangulated surface meshes can naturally be used
 for computing Boolean operations on volumes.
 Considering two triangulated surface meshes, each bounding
-a volume, the functions `CGAL::Polygon_mesh_processing::join()`,
-`CGAL::Polygon_mesh_processing::intersection()` and
-`CGAL::Polygon_mesh_processing::difference()` respectively compute the union,
+a volume, the functions `CGAL::Polygon_mesh_processing::corefine_and_compute_union()`,
+`CGAL::Polygon_mesh_processing::corefine_and_compute_intersection()` and
+`CGAL::Polygon_mesh_processing::corefine_and_compute_difference()` respectively compute the union,
 the intersection and the difference of the two volumes.
 Note that there is no restriction on the topology of the input volumes.
 

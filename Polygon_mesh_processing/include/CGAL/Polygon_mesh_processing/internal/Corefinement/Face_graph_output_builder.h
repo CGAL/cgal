@@ -35,7 +35,7 @@
 namespace CGAL {
 namespace Corefinement {
 
-enum Boolean_operation {JOIN = 0, INTER,
+enum Boolean_operation {UNION = 0, INTER,
                         TM1_MINUS_TM2, TM2_MINUS_TM1,
                         NONE };
 
@@ -297,9 +297,9 @@ public:
     , NID(-1)
   {}
 
-  bool join_is_valid() const
+  bool union_is_valid() const
   {
-    return !impossible_operation[JOIN];
+    return !impossible_operation[UNION];
   }
   bool intersection_is_valid() const
   {
@@ -501,7 +501,7 @@ public:
           {
             //Union allowed everything else is non_manifold
             impossible_operation.set();
-            impossible_operation.reset(JOIN);
+            impossible_operation.reset(UNION);
 
             std::size_t patch_id1 =
               tm1_patch_ids[ get( fids1, is_border(h1,tm1)
@@ -776,7 +776,7 @@ public:
                 // poly_second - poly_first             = q1q2
                 // poly_first \cap poly_second          = {0}
                 // opposite( poly_first U poly_second ) = p2q1 U q2p1
-                impossible_operation.set(JOIN); // tm1 U tm2 is non-manifold
+                impossible_operation.set(UNION); // tm1 U tm2 is non-manifold
               }
               else{
                 //case (f4)
@@ -943,19 +943,19 @@ public:
     std::vector< boost::dynamic_bitset<> > patches_of_tm2_used(4);
 
     /// handle the bitset for the union
-    if ( !impossible_operation.test(JOIN) && desired_output[JOIN] )
+    if ( !impossible_operation.test(UNION) && desired_output[UNION] )
     {
       //define patches to import from P
-      patches_of_tm1_used[JOIN] = ~is_patch_inside_tm2 - coplanar_patches_of_tm1;
+      patches_of_tm1_used[UNION] = ~is_patch_inside_tm2 - coplanar_patches_of_tm1;
       //define patches to import from Q
-      patches_of_tm2_used[JOIN] = ~is_patch_inside_tm1 - coplanar_patches_of_tm2;
+      patches_of_tm2_used[UNION] = ~is_patch_inside_tm1 - coplanar_patches_of_tm2;
       //handle coplanar patches
       if (coplanar_patches_of_tm1.any())
       {
-        if (desired_output[JOIN]==&tm2)
-          patches_of_tm2_used[JOIN] |= coplanar_patches_of_tm2_for_union_and_intersection;
+        if (desired_output[UNION]==&tm2)
+          patches_of_tm2_used[UNION] |= coplanar_patches_of_tm2_for_union_and_intersection;
         else
-          patches_of_tm1_used[JOIN] |= coplanar_patches_of_tm1_for_union_and_intersection;
+          patches_of_tm1_used[UNION] |= coplanar_patches_of_tm1_for_union_and_intersection;
       }
     }
 
@@ -1012,8 +1012,8 @@ public:
 
 
     #ifdef CGAL_COREFINEMENT_DEBUG
-    std::cout << "patches_of_tm1_used[JOIN] " << patches_of_tm1_used[JOIN] << "\n";
-    std::cout << "patches_of_tm2_used[JOIN] " << patches_of_tm2_used[JOIN] << "\n";
+    std::cout << "patches_of_tm1_used[UNION] " << patches_of_tm1_used[UNION] << "\n";
+    std::cout << "patches_of_tm2_used[UNION] " << patches_of_tm2_used[UNION] << "\n";
     std::cout << "patches_of_tm1_used[INTER] " << patches_of_tm1_used[INTER] << "\n";
     std::cout << "patches_of_tm2_used[INTER] " << patches_of_tm2_used[INTER] << "\n";
     std::cout << "patches_of_tm1_used[TM1_MINUS_TM2] " << patches_of_tm1_used[TM1_MINUS_TM2] << "\n";
