@@ -51,7 +51,9 @@
 
 ## Classes ##
 - `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
+- `CGAL::GMap_linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
 - `CGAL::Linear_cell_complex_min_items<d>`
+- `CGAL::GMap_linear_cell_complex_min_items<d>`
 - `CGAL::Linear_cell_complex_traits<d,K>`
 - `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
 
