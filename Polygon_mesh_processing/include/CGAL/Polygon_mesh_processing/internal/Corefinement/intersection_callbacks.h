@@ -32,7 +32,6 @@
 namespace CGAL {
 namespace Corefinement {
 
-/// TODO document me
 template<class TriangleMesh, class EdgeToFaces>
 class Collect_face_bbox_per_edge_bbox {
 protected:
@@ -69,7 +68,6 @@ public:
   }
 };
 
-/// TODO document me
 template<class TriangleMesh,
          class VertexPointMap,
          class EdgeToFaces,
