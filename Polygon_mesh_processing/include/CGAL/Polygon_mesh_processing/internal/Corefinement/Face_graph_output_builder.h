@@ -192,8 +192,7 @@ class Face_graph_output_builder
     }
   }
 
-  template<class EdgeMarkMap,
-           class edge_descriptor>
+  template<class EdgeMarkMap>
   void mark_edges(const EdgeMarkMap& edge_mark_map,
                  const std::vector<edge_descriptor>& edges)
   {
@@ -201,13 +200,11 @@ class Face_graph_output_builder
       put(edge_mark_map, ed, true);
   }
 
-  template<class edge_descriptor>
   void mark_edges(const No_mark<TriangleMesh>&,
                  const std::vector<edge_descriptor>&)
   {} //nothing to do
 
-  template<class EdgeMarkMapTuple,
-           class edge_descriptor>
+  template<class EdgeMarkMapTuple>
   void mark_edges(const EdgeMarkMapTuple& edge_mark_maps,
                   const std::vector<edge_descriptor>& edges,
                   int tuple_id)
@@ -229,12 +226,47 @@ class Face_graph_output_builder
     }
   }
 
-  template<class edge_descriptor>
+  template<class EdgeMarkMapTuple>
+  void mark_edges(const EdgeMarkMapTuple& edge_mark_maps,
+                  const Intersection_edge_map& edge_map,
+                  int tuple_id)
+  {
+    std::vector<edge_descriptor> edges;
+    edges.reserve(edge_map.size());
+    typedef std::pair<const edge_descriptor, Node_id_pair> Pair;
+    BOOST_FOREACH(const Pair& p, edge_map)
+      edges.push_back(p.first);
+
+    CGAL_assertion(tuple_id < 4 && tuple_id >= 0);
+    switch (tuple_id)
+    {
+    case 0:
+      mark_edges(cpp11::get<0>(edge_mark_maps),edges);
+    break;
+    case 1:
+      mark_edges(cpp11::get<1>(edge_mark_maps),edges);
+    break;
+    case 2:
+      mark_edges(cpp11::get<2>(edge_mark_maps),edges);
+    break;
+    default:
+      mark_edges(cpp11::get<3>(edge_mark_maps),edges);
+    }
+  }
+
   void mark_edges(const cpp11::tuple<No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh>,
                                      No_mark<TriangleMesh> >&,
                  const std::vector<edge_descriptor>&,
+                 int)
+  {} // nothing to do
+
+  void mark_edges(const cpp11::tuple<No_mark<TriangleMesh>,
+                                     No_mark<TriangleMesh>,
+                                     No_mark<TriangleMesh>,
+                                     No_mark<TriangleMesh> >&,
+                 const Intersection_edge_map&,
                  int)
   {} // nothing to do
 
@@ -1048,10 +1080,20 @@ public:
     /// handle the operations updating tm1 and/or tm2
     if ( inplace_operation_tm1!=NONE )
     {
+      // mark intersection edges in tm1 (using output constrained edge map)
+      mark_edges(out_edge_mark_maps,
+                 mesh_to_intersection_edges[&tm1],
+                 inplace_operation_tm1);
+
       CGAL_assertion( *desired_output[inplace_operation_tm1] == &tm1 );
 
       if ( inplace_operation_tm2!=NONE)
       {
+        // mark intersection edges in tm2 (using output constrained edge map)
+        mark_edges(out_edge_mark_maps,
+                   mesh_to_intersection_edges[&tm2],
+                   inplace_operation_tm2);
+
         // operation in tm1 with removal (and optionally inside-out) delayed
         // First backup the border edges of patches to be used
         Patches tmp_patches_of_tm1(tm1,
@@ -1164,6 +1206,11 @@ public:
     else
       if ( inplace_operation_tm2!=NONE )
       {
+        // mark intersection edges in tm2 (using output constrained edge map)
+        mark_edges(out_edge_mark_maps,
+                   mesh_to_intersection_edges[&tm2],
+                   inplace_operation_tm2);
+
         /// handle the operation updating only tm2
         CGAL_assertion( *desired_output[inplace_operation_tm2] == &tm2 );
         Intersection_polylines polylines(
