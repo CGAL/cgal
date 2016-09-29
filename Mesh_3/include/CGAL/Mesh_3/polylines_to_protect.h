@@ -68,6 +68,40 @@ struct Polyline_visitor
       polylines.resize(polylines.size() - 1);
   }
 };
+
+struct Angle_tester
+{
+  template <typename vertex_descriptor, typename Graph>
+  bool operator()(vertex_descriptor& v, const Graph& g) const
+  {
+    typedef typename boost::graph_traits<Graph>::out_edge_iterator out_edge_iterator;
+    if (out_degree(v, g) != 2)
+      return true;
+    else
+    {
+      out_edge_iterator out_edge_it, out_edges_end;
+      boost::tie(out_edge_it, out_edges_end) = out_edges(v, g);
+
+      vertex_descriptor v1 = target(*out_edge_it++, g);
+      vertex_descriptor v2 = target(*out_edge_it++, g);
+      CGAL_assertion(out_edge_it == out_edges_end);
+
+      const typename Kernel::Point_3& p = g[v];
+      const typename Kernel::Point_3& p1 = g[v1];
+      const typename Kernel::Point_3& p2 = g[v2];
+
+      const typename Kernel::Vector_3 e1 = p1 - p;
+      const typename Kernel::Vector_3 e2 = p2 - p;
+      const typename Kernel::FT sc_prod = e1 * e2;
+      if (sc_prod >= 0 ||   // angle < 135 degrees (3*pi/4)
+        (sc_prod < 0 &&
+          CGAL::square(sc_prod) < (e1 * e1) * (e2 * e2) / 2))
+        return true;
+    }
+    return false;
+  }
+};
+
 }//namespace Mesh_3
 
 // this function is overloaded for when `PolylineInputIterator` is `int`.
@@ -490,7 +524,8 @@ case_4:
                       K());
 
   Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
-  split_graph_into_polylines(graph, visitor);
+  const Graph& const_graph = graph;
+  split_graph_into_polylines(const_graph, visitor, Mesh_3::Angle_tester());
 }
 
 template <typename P,
@@ -526,7 +561,8 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   }
 
   Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
-  split_graph_into_polylines(graph, visitor);
+  const Graph& const_graph = graph;
+  split_graph_into_polylines(const_graph, visitor, Mesh_3::Angle_tester());
 }
 
 template <typename P, typename Image_word_type, typename Null_subdomain_index>
