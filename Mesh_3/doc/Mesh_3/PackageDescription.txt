@@ -45,7 +45,7 @@
 \cgalPkgDependsOn{\ref PkgTriangulation3Summary}
 \cgalPkgBib{cgal:rty-m3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{3D Mesh Generation,mesh_3.zip}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
