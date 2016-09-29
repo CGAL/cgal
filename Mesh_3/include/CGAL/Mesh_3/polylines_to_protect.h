@@ -119,6 +119,18 @@ template <typename K,
 void snap_graph_vertices(Graph&, double, double, double, int, int, K)
 {}
 
+template <typename Graph>
+struct Less_for_Graph_vertex_descriptors
+{
+  const Graph& graph;
+  Less_for_Graph_vertex_descriptors(const Graph& graph) : graph(graph) {}
+
+  template <typename vertex_descriptor>
+  bool operator()(vertex_descriptor v1, vertex_descriptor v2) const {
+    return graph[v1] < graph[v2];
+  }
+}; // end of Less_for_Graph_vertex_descriptors<Graph>
+
 template <typename P,
           typename Image_word_type,
           typename Null_subdomain_index,
@@ -490,7 +502,10 @@ case_4:
                       K());
 
   Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
-  split_graph_into_polylines(graph, visitor);
+  Less_for_Graph_vertex_descriptors<Graph> less(graph);
+  split_graph_into_polylines(graph, visitor,
+                             CGAL::internal::IsTerminalDefault(),
+                             less);
 }
 
 template <typename P,
@@ -526,7 +541,10 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   }
 
   Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
-  split_graph_into_polylines(graph, visitor);
+  Less_for_Graph_vertex_descriptors<Graph> less(graph);
+  split_graph_into_polylines(graph, visitor,
+                             CGAL::internal::IsTerminalDefault(),
+                             less);
 }
 
 template <typename P, typename Image_word_type, typename Null_subdomain_index>
