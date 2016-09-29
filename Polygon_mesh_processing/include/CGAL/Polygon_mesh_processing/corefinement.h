@@ -47,7 +47,7 @@ namespace Polygon_mesh_processing {
      \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \todo in the implementation degenerated faces should be skipt
+ * \todo in the implementation degenerated faces should be skipped
  */
 template <class TriangleMesh, class NamedParameters>
 bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
@@ -138,7 +138,7 @@ boolean_operation(const TriangleMesh& const_tm1,
 
   typedef typename boost::lookup_named_param_def <
     CGAL::edge_is_constrained_t,
-    NamedParameters1,
+    NamedParameters2,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
