@@ -221,11 +221,22 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
   static Color_ramp ramp;
   ramp.build_red();
 
-  if (index_color == 0) // real colors
+  if (index_color == -1) // item color
     {
 
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
+        {
+          colors_points.push_back (color().redF());
+          colors_points.push_back (color().greenF());
+          colors_points.push_back (color().blueF());
+        }
+    }
+  else if (index_color == 0) // real colors
+    {
+
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           colors_points.push_back ((double)(m_points->point_set()->red(*it)) / 255.);
           colors_points.push_back ((double)(m_points->point_set()->green(*it)) / 255.);
@@ -234,37 +245,60 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     }
   else if (index_color == 1) // classif
     {
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+      if (m_predefined_types.empty())
         {
-          QColor color (0, 0, 0);
-          CGAL::Classification_type* c = m_psc->classification_type_of(*it);
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+            {
+              QColor color (0, 0, 0);
+              CGAL::Classification_type* c = m_psc->classification_type_of(*it);
           
-          if (c != NULL)
-            {        
-              if (c->id() == "vegetation")
-                color = QColor(0, 255, 27);
-              else if (c->id() == "ground")
-                color = QColor(245, 180, 0);
-              else if (c->id() == "road")
-                color = QColor(114, 114, 130);
-              else if (c->id() == "roof")
-                color = QColor(255, 0, 170);
-              else if (c->id() == "facade")
-                color = QColor(100, 0, 255);
-              else if (c->id() == "building")
-                color = QColor(0, 114, 225);
-            }
+              if (c != NULL)
+                {        
+                  if (c->id() == "vegetation")
+                    color = QColor(0, 255, 27);
+                  else if (c->id() == "ground")
+                    color = QColor(245, 180, 0);
+                  else if (c->id() == "road")
+                    color = QColor(114, 114, 130);
+                  else if (c->id() == "roof")
+                    color = QColor(255, 0, 170);
+                  else if (c->id() == "facade")
+                    color = QColor(100, 0, 255);
+                  else if (c->id() == "building")
+                    color = QColor(0, 114, 225);
+                }
 
-          colors_points.push_back ((double)(color.red()) / 255.);
-          colors_points.push_back ((double)(color.green()) / 255.);
-          colors_points.push_back ((double)(color.blue()) / 255.);
+              colors_points.push_back ((double)(color.red()) / 255.);
+              colors_points.push_back ((double)(color.green()) / 255.);
+              colors_points.push_back ((double)(color.blue()) / 255.);
+            }
+        }
+      else
+        {
+          std::map<CGAL::Classification_type*, QColor> map_colors;
+          for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
+            map_colors.insert (m_predefined_types[i]);
+          
+          for (Point_set::const_iterator it = m_points->point_set()->begin();
+               it != m_points->point_set()->first_selected(); ++ it)
+            {
+              QColor color (0, 0, 0);
+              CGAL::Classification_type* c = m_psc->classification_type_of(*it);
+          
+              if (c != NULL)
+                color = map_colors[c];
+
+              colors_points.push_back ((double)(color.red()) / 255.);
+              colors_points.push_back ((double)(color.green()) / 255.);
+              colors_points.push_back ((double)(color.blue()) / 255.);
+            }
         }
     }
   else if (index_color == 2) // confidence
     {
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           QColor color (0, 0, 0);
           CGAL::Classification_type* c = m_psc->classification_type_of(*it);
@@ -296,7 +330,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       double weight = m_disp->weight;
       m_disp->weight = m_disp->max;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           colors_points.push_back (ramp.r(m_disp->value(*it)));
           colors_points.push_back (ramp.g(m_disp->value(*it)));
@@ -309,7 +343,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       double weight = m_d2p->weight;
       m_d2p->weight = m_d2p->max;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           colors_points.push_back (ramp.r(m_d2p->value(*it)));
           colors_points.push_back (ramp.g(m_d2p->value(*it)));
@@ -322,7 +356,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       double weight = m_verti->weight;
       m_verti->weight = m_verti->max;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           colors_points.push_back (ramp.r(m_verti->value(*it)));
           colors_points.push_back (ramp.g(m_verti->value(*it)));
@@ -335,7 +369,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       double weight = m_elev->weight;
       m_elev->weight = m_elev->max;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           double v = std::max(0., m_elev->value(*it));
           colors_points.push_back (ramp.r(v));
@@ -349,7 +383,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       double weight = m_col_att->weight;
       m_col_att->weight = m_col_att->max;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           colors_points.push_back (ramp.r(m_col_att->value(*it)));
           colors_points.push_back (ramp.g(m_col_att->value(*it)));
@@ -362,7 +396,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       int seed = time(NULL);
         
       for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->end(); ++ it)
+           it != m_points->point_set()->first_selected(); ++ it)
         {
           if (m_psc->group_of(*it) == (std::size_t)(-1))
             {
@@ -407,6 +441,14 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       //     colors_points.push_back ((double)(color.green()) / 255.);
       //     colors_points.push_back ((double)(color.blue()) / 255.);
       //   }
+    }
+  
+  for (Point_set::const_iterator it = m_points->point_set()->first_selected();
+       it != m_points->point_set()->end(); ++ it)
+    {
+      colors_points.push_back (1.);
+      colors_points.push_back (0.);
+      colors_points.push_back (0.);
     }
 }
 
@@ -593,9 +635,6 @@ int Scene_point_set_classification_item::real_index_color() const
 {
   int out = m_index_color;
   
-  if (out == 1 && m_psc->classification_type_of(0) == NULL)
-    out = 0;
-
   if (out == 3 && m_disp == NULL)
     out = 0;
   if (out == 4 && m_d2p == NULL)
@@ -1065,4 +1104,32 @@ void Scene_point_set_classification_item::extract_facades (double /*radius*/,
   //                                              plane.to_3d (it->vertex(2)->point())));
   //       }
   //   }
+}
+
+void Scene_point_set_classification_item::train(std::vector<std::string>& classes,
+                                                std::vector<QColor>& colors,
+                                                std::size_t nb_trials)
+{
+
+  if (m_grid == NULL)
+    {
+      std::cerr << "Error: features not computed" << std::endl;
+      return;
+    }
+  
+  m_psc->clear_classification_types();
+  std::vector<std::pair<CGAL::Classification_type*, QColor> > predef;
+  for (std::size_t i = 0; i < classes.size(); ++ i)
+    {
+      predef.push_back (std::make_pair (get_or_add_classification_type(classes[i].c_str(), colors[i]),
+                                        colors[i]));
+      m_psc->add_classification_type (predef.back().first);
+    }
+  m_predefined_types.swap (predef);
+
+  m_psc->training(nb_trials);  
+  m_psc->run();
+  
+  invalidateOpenGLBuffers();
+  Q_EMIT itemChanged();
 }

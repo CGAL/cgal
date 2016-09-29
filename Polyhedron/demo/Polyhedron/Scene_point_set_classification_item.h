@@ -278,7 +278,7 @@ public:
   template <typename Classes>
   bool run (double weight_scat, double weight_plan,
             double weight_hori, double weight_elev, double weight_colo,
-            bool multiply, Classes& classes, int method, double weight,
+            Classes& classes, int method, double weight,
             double radius_neighbors)
   {
   if (m_disp == NULL || m_d2p == NULL || m_verti == NULL || m_elev == NULL || m_col_att == NULL)
@@ -320,8 +320,6 @@ public:
 
   std::cerr << "Weights: " << m_disp->weight << " " << m_d2p->weight << " " << m_verti->weight
             << " " << m_elev->weight << " " << m_col_att->weight << std::endl;
-
-  m_psc->set_multiplicative(multiply);
   
   if (method == 0)
     m_psc->run();
@@ -367,6 +365,52 @@ public:
                         std::vector<Kernel::Triangle_3>& faces);
 
   Scene_points_with_normal_item* points_item() { return m_points; }
+
+  CGAL::Classification_type* get_or_add_classification_type
+    (const char* name, const QColor& color)
+  {
+    for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
+      if (m_predefined_types[i].first->id() == name)
+        {
+          m_predefined_types[i].second = color;
+          return m_predefined_types[i].first;
+        }
+    m_predefined_types.push_back
+      (std::make_pair (new CGAL::Classification_type (name), color));
+    m_psc->add_classification_type (m_predefined_types.back().first);
+    return m_predefined_types.back().first;
+  }
+
+  void reset_training_sets()
+  {
+    for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
+      m_predefined_types[i].first->training_set().clear();
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+      m_psc->set_classification_type_of(*it, NULL);
+    invalidateOpenGLBuffers();
+    Q_EMIT itemChanged();
+  }
+
+  void train(std::vector<std::string>& classes,
+             std::vector<QColor>& colors,
+             std::size_t nb_trials);
+  
+  void add_selection_to_training_set (const char* name, const QColor& color)
+  {
+    CGAL::Classification_type* class_type = get_or_add_classification_type (name, color);
+    if (!(m_psc->classification_prepared()))
+      m_psc->prepare_classification();
+    
+    for (Point_set::const_iterator it = m_points->point_set()->first_selected();
+         it != m_points->point_set()->end(); ++ it)
+      {
+        class_type->training_set().push_back (*it);
+        m_psc->set_classification_type_of(*it, class_type);
+      }
+    m_points->resetSelection();
+  }
                                    
 public Q_SLOTS:
 
@@ -376,6 +420,7 @@ private:
   Scene_points_with_normal_item* m_points;
 
   PSC* m_psc;
+  std::vector<std::pair<CGAL::Classification_type*, QColor> > m_predefined_types;
 
   Planimetric_grid* m_grid;
   Neighborhood* m_neighborhood;
