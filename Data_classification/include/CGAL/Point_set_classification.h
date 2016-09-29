@@ -687,7 +687,7 @@ public:
   void prepare_classification ()
   {
     // Reset data structure
-    std::vector<std::size_t>(m_input.size()).swap (m_assigned_type);
+    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_assigned_type);
     std::vector<double>(m_input.size()).swap (m_confidence);
 
     m_effect_table = std::vector<std::vector<Attribute_effect> >
@@ -801,10 +801,28 @@ public:
   */
   Classification_type* classification_type_of (std::size_t index) const
   {
-    if (m_assigned_type.size() <= index)
+    if (m_assigned_type.size() <= index
+        || m_assigned_type[index] == (std::size_t)(-1))
       return NULL;
     return m_segmentation_classes[m_assigned_type[index]];
   }
+
+  /// \cond SKIP_IN_MANUAL
+  bool classification_prepared() const
+  {
+    return !(m_assigned_type.empty());
+  }
+  void set_classification_type_of (std::size_t index, Classification_type* class_type)
+  {
+    for (std::size_t i = 0; i < m_segmentation_classes.size(); ++ i)
+      if (m_segmentation_classes[i] == class_type)
+        {
+          m_assigned_type[index] = i;
+          return;
+        }
+    m_assigned_type[index] = (std::size_t)(-1);
+  }
+  /// \endcond
 
   /*!
     \brief Gets the confidence of the classification type of an indexed point.
@@ -833,17 +851,16 @@ public:
     user-defined inliers to provide the training algorithm with a
     ground truth.
   */
-  void training ()
+  void training (std::size_t nb_tests = 3000)
   {
-    train_parameters();
+    train_parameters(nb_tests);
   }
   /// @}
 
   
   /// \cond SKIP_IN_MANUAL
-  void train_parameters()
+  void train_parameters(std::size_t nb_tests)
   {
-    std::size_t nb_tests = 3000;
     std::vector<double> best_weights (m_segmentation_attributes.size(), 1.);
     
     double best_score = -1.;
@@ -897,8 +914,8 @@ public:
         double worst_score = training_compute_worst_score();
         used_attributes.swap (m_segmentation_attributes);
         
-        //if (worst_score > best_score)
-        if (worst_confidence > best_confidence)
+        if (worst_score > best_score)
+          //if (worst_confidence > best_confidence)
           {
             best_score = worst_score;
             best_confidence = worst_confidence;
@@ -958,7 +975,7 @@ public:
         if (to_remove)
           {
             std::cerr << "   -> Useless! Should be removed" << std::endl;
-            delete att;
+            //            delete att;
           }
         else
           to_keep.push_back (att);
