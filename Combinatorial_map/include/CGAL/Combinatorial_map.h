@@ -497,11 +497,8 @@ namespace CGAL {
       }
 
       // 2) We update the attribute_ref_counting.
-      if ( are_attributes_automatically_managed() )
-      {
-        Helper::template Foreach_enabled_attributes
-            <internal::Decrease_attribute_functor<Self> >::run(this,adart);
-      }
+      Helper::template Foreach_enabled_attributes
+        <internal::Decrease_attribute_functor<Self> >::run(this,adart);
 
       // 3) We erase the dart.
       mdarts.erase(adart);
@@ -596,7 +593,8 @@ namespace CGAL {
       {
         this->template get_attribute<i>(this->template attribute<i>(dh)).
           dec_nb_refs();
-        if ( this->template get_attribute<i>(this->template attribute<i>(dh)).
+        if ( this->are_attributes_automatically_managed() &&
+             this->template get_attribute<i>(this->template attribute<i>(dh)).
              get_nb_refs()==0 )
           this->template erase_attribute<i>(this->template attribute<i>(dh));
       }
@@ -1229,6 +1227,10 @@ namespace CGAL {
           CGAL_assertion( is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
         }
+
+      Helper::template
+        Foreach_enabled_attributes<internal::Cleanup_useless_attributes<Self> >::
+          run(this);
     }
 
     /// @return the number of darts.

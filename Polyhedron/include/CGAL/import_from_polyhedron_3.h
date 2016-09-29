@@ -82,7 +82,7 @@ namespace CGAL {
       do
       {
         d = TC[j]; // Get the dart associated to the Halfedge
-        if (alcc.temp_vertex_attribute(d) == LCC::null_handle)
+        if (alcc.vertex_attribute(d) == LCC::null_handle)
         {
           alcc.set_vertex_attribute
             (d, alcc.create_vertex_attribute(j->opposite()->vertex()->point()));

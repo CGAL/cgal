@@ -123,8 +123,8 @@ namespace CGAL {
             case 2: neighbor = alcc.beta(maptcell_it->second, 2); break;
             case 3: neighbor = maptcell_it->second; break;
             }
-            while (alcc.temp_vertex_attribute(neighbor) !=
-                   alcc.temp_vertex_attribute(alcc.other_extremity(cur)) )
+            while (alcc.vertex_attribute(neighbor) !=
+                   alcc.vertex_attribute(alcc.other_extremity(cur)) )
               neighbor = alcc.beta(neighbor,1);
             alcc.template topo_sew<3>(cur, neighbor);
           }
