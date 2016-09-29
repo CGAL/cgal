@@ -100,6 +100,9 @@ int main(int argc, char* argv[])
   CGAL::expand_face_selection(selected_faces, mesh1, 2,
     Vector_pmap_wrapper(is_selected), std::back_inserter(selected_faces));
 
+  std::cout << selected_faces.size()
+            << " faces were selected for the remeshing step\n";
+
   // remesh the region around the intersection polylines
   PMP::isotropic_remeshing(
     selected_faces,
