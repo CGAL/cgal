@@ -598,7 +598,7 @@ protected:
     perturb_->set_time_limit(p_.time_limit);
     
     // Set sliver bound (0 means no sliver bound)
-    if ( 0 == p_.sliver_bound ) { p_.sliver_bound = Sc::max_value; }
+    if ( 0 == p_.sliver_bound ) { p_.sliver_bound = criterion_.get_max_value(); }
     
     // Launch perturber
     return (*perturb_)(Visitor(&status_));
