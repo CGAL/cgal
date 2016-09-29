@@ -102,15 +102,15 @@ void test_pmesh(const Mesh& pmesh)
 
   CGAL::Bbox_3 bb_v;
   BOOST_FOREACH(vertex_descriptor vd, vertices(pmesh))
-    bb_v+=PMP::bbox_3(vd, pmesh);
+    bb_v+=PMP::vertex_bbox_3(vd, pmesh);
 
   CGAL::Bbox_3 bb_f;
   BOOST_FOREACH(face_descriptor fd, faces(pmesh))
-    bb_f+=PMP::bbox_3(fd, pmesh);
+    bb_f+=PMP::face_bbox_3(fd, pmesh);
 
   CGAL::Bbox_3 bb_e;
   BOOST_FOREACH(edge_descriptor ed, edges(pmesh))
-    bb_e+=PMP::bbox_3(ed, pmesh);
+    bb_e+=PMP::edge_bbox_3(ed, pmesh);
 
   assert(bb==bb_v);
   assert(bb==bb_f);
