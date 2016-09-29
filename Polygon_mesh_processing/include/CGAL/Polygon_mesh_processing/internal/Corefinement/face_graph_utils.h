@@ -272,7 +272,7 @@ void extract_patch_simplices(
   BOOST_FOREACH(halfedge_descriptor h, shared_edges)
   {
     border_vertices.insert( target(h,pm) );
-    // if the model is not closed i.e. patch_border_halfedge is not cycle only
+    // if the model is not closed i.e. patch_border_halfedge is not cycle-only
     border_vertices.insert( source(h,pm) );
   }
 
@@ -649,6 +649,9 @@ void append_patches_to_triangle_mesh(
       edge_descriptor new_edge = add_edge(output);
       halfedge_descriptor new_h = halfedge(new_edge, output);
       tm_to_output_edges[ edge(h,tm) ] = new_edge;
+
+      set_face(new_h, GT::null_face(), output);
+      set_face(opposite(new_h, output), GT::null_face(), output);
 
       CGAL_assertion(is_border(new_h, output));
       CGAL_assertion(is_border(opposite(new_h,output), output));
