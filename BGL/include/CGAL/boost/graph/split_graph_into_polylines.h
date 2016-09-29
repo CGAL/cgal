@@ -51,7 +51,7 @@ struct Dummy_visitor_for_split_graph_into_polylines
 
 namespace internal {
 
-/// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal  returns `true`
+/// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
 /// The vertices are duplicated, and new incident edges created.
 /// OrigGraph must be undirected
 template <typename Graph,
