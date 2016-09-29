@@ -257,9 +257,9 @@ Image_3::trilinear_interpolation(const Coord_type& x,
   if(lx < 0 ||
      ly < 0 ||
      lz < 0 ||
-     lz >= dimz-1 ||
-     ly >= dimy-1 ||
-     lx >= dimx-1)
+     lz >= Coord_type(dimz-1) ||
+     ly >= Coord_type(dimy-1) ||
+     lx >= Coord_type(dimx-1))
   {
     return value_outside;
   }  
@@ -448,9 +448,9 @@ Image_3::labellized_trilinear_interpolation
   if( lx < 0 ||
       ly < 0 ||
       lz < 0 ||
-     lz >= dimz-1 ||
-     ly >= dimy-1 ||
-     lx >= dimx-1)
+     lz >= Coord_type(dimz-1) ||
+     ly >= Coord_type(dimy-1) ||
+     lx >= Coord_type(dimx-1))
   {
     return value_outside;
   }  

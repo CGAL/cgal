@@ -46,49 +46,49 @@ struct VTK_type_generator {
 
 template <>
 struct VTK_type_generator<double> {
-  static const vtkIdType type = VTK_DOUBLE;
+  static const int type = VTK_DOUBLE;
   typedef vtkDoubleArray ArrayType;
 };
 
 template <>
 struct VTK_type_generator<float> {
-  static const vtkIdType type = VTK_FLOAT;
+  static const int type = VTK_FLOAT;
   typedef vtkFloatArray ArrayType;
 };
 
 template <>
 struct VTK_type_generator<char> {
-  static const vtkIdType type = VTK_CHAR;
+  static const int type = VTK_CHAR;
   typedef vtkCharArray ArrayType;
 };
 
 template <>
 struct VTK_type_generator<boost::uint8_t> {
-  static const vtkIdType type = VTK_UNSIGNED_CHAR;
+  static const int type = VTK_UNSIGNED_CHAR;
   typedef vtkUnsignedCharArray ArrayType;
 };
 
 template <>
 struct VTK_type_generator<boost::int16_t> {
-  static const vtkIdType type = VTK_SHORT;
+  static const int type = VTK_SHORT;
   typedef vtkShortArray ArrayType;
 };
 
 template <>
 struct VTK_type_generator<boost::uint16_t> {
-  static const vtkIdType type = VTK_UNSIGNED_SHORT;
+  static const int type = VTK_UNSIGNED_SHORT;
   typedef vtkUnsignedShortArray ArrayType;
 };
 
 template <>
 struct VTK_type_generator<boost::int32_t> {
-  static const vtkIdType type = VTK_INT;
+  static const int type = VTK_INT;
   typedef vtkIntArray ArrayType;
 };
 
 template <>
 struct VTK_type_generator<boost::uint32_t> {
-  static const vtkIdType type = VTK_UNSIGNED_INT;
+  static const int type = VTK_UNSIGNED_INT;
   typedef vtkUnsignedIntArray ArrayType;
 };
 
@@ -96,7 +96,7 @@ struct VTK_type_generator<boost::uint32_t> {
 {
   vtkImageData* vtk_image = vtkImageData::New();
   vtkDataArray* data_array = 0;
-  vtkIdType type = 0;
+  int type = 0;
 
   _image* image_ptr = image.image();
 
