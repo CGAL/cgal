@@ -466,51 +466,6 @@ the propagation of a connected component index to cross it.
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
 
-****************************************
-\section PMPAll Requirements Summary
-
-The table below recapitulates the basic requirements of each function of this package.
-For each requirement, the table answers a question :
-- should the input mesh be a pure triangle mesh?
-- should the input mesh be self-intersection free?
-- should the input mesh be closed (with no boundary)?
-<center>
-Function or Class                     | Pure Triangle  | Self-Intersection Free | Closed
-:------------------------------------ | :------------: | :--------------------: | :-------:
-`fair()`                              |     yes        |        no              |   no
-`refine()`                            |     yes        |        no              |   no
-`triangulate_faces()`                 |     no         |        no              |   no
-`isotropic_remeshing()`               |     no         |        no              |   no
-`split_long_edges()`                  |     no         |        no              |   no
-`triangulate_hole()`                  |     no         |        no              |   no
-`triangulate_and_refine_hole()`       |     no         |        no              |   no
-`triangulate_refine_and_fair_hole()`  |     no         |        no              |   no
-`triangulate_hole_polyline()`         |     no         |        no              |   no
-`does_self_intersect()`               |     yes        |        no              |   no
-`self_intersections()`                |     yes        |        no              |   no
-`Side_of_triangle_mesh`               |     yes        |        yes             |   yes
-`is_outward_oriented()`               |     no         |        no              |   yes
-`reverse_face_orientations()`         |     no         |        no              |   no
-`stitch_borders()`                    |     no         |        no              |   no
-`polygon_soup_to_polygon_mesh()`      |     no         |        no              |   no
-`orient_polygon_soup()`               |     no         |        no              |   no
-`remove_isolated_vertices()`          |     no         |        no              |   no
-`compute_face_normal()`               |     no         |        no              |   no
-`compute_face_normals()`              |     no         |        no              |   no
-`compute_vertex_normal()`             |     no         |        no              |   no
-`compute_vertex_normals()`            |     no         |        no              |   no
-`compute_normals()`                   |     no         |        no              |   no
-`Polygon_mesh_slicer`                 |     yes        |        yes             |   no
-`connected_component()`               |     no         |        no              |   no
-`connected_components()`              |     no         |        no              |   no
-`keep_largest_connected_components()` |     no         |        no              |   no
-`keep_connected_components()`         |     no         |        no              |   no
-`remove_connected_components()`       |     no         |        no              |   no
-</center>
-<!---
-`remove_degenerate_faces()`           |     yes        |        no              |   no
---->
-****************************************
 \section PMPHistory Implementation History
 
 A first version of this package was started by Ilker %O. Yaz and Sébastien Loriot.
