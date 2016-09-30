@@ -1116,7 +1116,7 @@ class Intersection_of_Polyhedra_3{
     #ifdef DO_NOT_HANDLE_COPLANAR_FACETS
     Map_edge_facet_bbox_intersection inter_functor(edge_to_sfacet,P,Q,*visitor);
     #else // not DO_NOT_HANDLE_COPLANAR_FACETS
-    Map_edge_facet_bbox_intersection_extract_coplanar inter_functor(edge_to_sfacet,coplanar_facets,P,Q,*visitor);
+    Map_edge_facet_bbox_intersection_extract_coplanar inter_functor(edge_to_sfacet,coplanar_facets,P,Q,*visitor,ppmap);
     #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
 
     typedef std::pair<const Box*,const Box*> Type_pair;
