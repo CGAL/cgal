@@ -1116,6 +1116,14 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
       std::cerr << "Error: features not computed" << std::endl;
       return;
     }
+
+  m_psc->clear_segmentation_attributes();
+  
+  m_psc->add_segmentation_attribute (m_disp);
+  m_psc->add_segmentation_attribute (m_elev);
+  m_psc->add_segmentation_attribute (m_verti);
+  m_psc->add_segmentation_attribute (m_d2p);
+  m_psc->add_segmentation_attribute (m_col_att);
   
   m_psc->clear_classification_types();
   std::vector<std::pair<CGAL::Classification_type*, QColor> > predef;

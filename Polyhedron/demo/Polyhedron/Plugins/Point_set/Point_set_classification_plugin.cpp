@@ -329,7 +329,7 @@ public Q_SLOTS:
                                            ui_widget.radiusDTMDoubleSpinBox->value(),
                                            color_att);
 
-    run (classification_item, 0);
+    //    run (classification_item, 0);
     std::cerr << "Features computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     scene->itemChanged(classification_item);
