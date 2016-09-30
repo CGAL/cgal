@@ -276,7 +276,10 @@ public:
         {
             std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
             if (out.second)
-              return out;
+              {
+                out.second = false;
+                return out;
+              }
         }
 
         // otherwise add the property
