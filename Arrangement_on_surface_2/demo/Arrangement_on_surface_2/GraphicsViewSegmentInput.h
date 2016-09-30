@@ -133,7 +133,7 @@ GraphicsViewSegmentInput<K_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
       this->scene->removeItem( &(segmentGuide ) );
     }
     Segment_2 res( this->p1, this->p2 );
-    emit generate( CGAL::make_object( res ) );
+    Q_EMIT generate( CGAL::make_object( res ) );
   }
 }
 

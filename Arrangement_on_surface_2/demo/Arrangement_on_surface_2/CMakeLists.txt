@@ -17,6 +17,8 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND CGAL_Core_FOUND)
   # Arrangement package includes
   include_directories( BEFORE ../../include )
 
+  add_definitions(-DQT_NO_KEYWORDS)
+
   qt5_wrap_ui( arrangement_2_uis
     ArrangementDemoWindow.ui
     NewTabDialog.ui

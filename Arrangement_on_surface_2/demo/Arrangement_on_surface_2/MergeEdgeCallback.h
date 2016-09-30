@@ -117,7 +117,7 @@ void MergeEdgeCallback< Arr_ >::reset( )
   this->highlightedCurve->clear( );
   this->highlightedCurve2->clear( );
   this->mergeableHalfedge = Halfedge_handle( );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -141,7 +141,7 @@ void MergeEdgeCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
     this->reset( );
   }
 
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -156,7 +156,7 @@ void MergeEdgeCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
     this->highlightedCurve->clear( );
     this->highlightedCurve->insert( halfedge->curve( ) );
-    emit modelChanged( );
+    Q_EMIT modelChanged( );
   }
   else
   {
@@ -164,7 +164,7 @@ void MergeEdgeCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
       this->getNearestMergeableCurve( this->mergeableHalfedge, event );
     this->highlightedCurve2->clear( );
     this->highlightedCurve2->insert( nextHalfedge->curve( ) );
-    emit modelChanged( );
+    Q_EMIT modelChanged( );
   }
 }
 

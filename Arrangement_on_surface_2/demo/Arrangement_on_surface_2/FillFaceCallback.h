@@ -123,14 +123,14 @@ FillFaceCallback<Arr_>::FillFaceCallback(Arrangement* arr_, QObject* parent_):
 template < class Arr_ >
 void FillFaceCallback< Arr_ >::reset( )
 {
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < class Arr_ >
 void FillFaceCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
   this->fillFace( event );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < class Arr_ >
