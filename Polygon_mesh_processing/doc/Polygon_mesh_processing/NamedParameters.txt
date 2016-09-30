@@ -17,6 +17,8 @@ That is, you give each parameter a name by wrapping it into a function whose nam
 When you use named parameters, the ordering is irrelevant, so `f(name(n).age(a).gender(g))` is equivalent to `f(age(a).gender(g).name(n))`, and you can just omit any named parameter that has a default value.
 
 The sequence of named parameters should start with `CGAL::Polygon_mesh_processing::parameters::`.
+`#CGAL::Polygon_mesh_processing::parameters::all_default()` can be used to indicate
+that default values of optional named parameters must be used.
 
 
 \cgalHeading{Example}
@@ -24,13 +26,12 @@ The sequence of named parameters should start with `CGAL::Polygon_mesh_processin
 See below a sample call of a function that uses the optional BGL named parameters.
 
 \code
-/* pmesh : polygon mesh with patches to be refined
-   faces : the range of faces defining the patches to refine
-   faces_out : output iterator into which descriptors of new faces are put
-   vertices_out : output iterator into which descriptors of new vertices are put
-   vertex_point_map : the property map with the points associated to the vertices of `pmesh`
-   density_control_factor : factor to control density of the output mesh
-*/
+// pmesh : polygon mesh with patches to be refined
+// faces : the range of faces defining the patches to refine
+// faces_out : output iterator into which descriptors of new faces are put
+// vertices_out : output iterator into which descriptors of new vertices are put
+// vertex_point_map : the property map with the points associated to the vertices of `pmesh`
+// density_control_factor : factor to control density of the output mesh
 refine(pmesh
        , faces
        , faces_out

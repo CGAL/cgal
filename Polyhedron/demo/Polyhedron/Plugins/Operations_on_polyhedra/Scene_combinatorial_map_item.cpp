@@ -60,8 +60,8 @@ struct Scene_combinatorial_map_item_priv
   mutable std::size_t nb_points;
   mutable std::size_t nb_facets;
 };
-Scene_combinatorial_map_item::Scene_combinatorial_map_item(CGAL::Three::Scene_interface* scene,void* address){m_combinatorial_map=NULL; d = new Scene_combinatorial_map_item_priv(scene, address, this);}
-Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map; delete d;}
+Scene_combinatorial_map_item::Scene_combinatorial_map_item(CGAL::Three::Scene_interface* scene,void* address){d = new Scene_combinatorial_map_item_priv(scene, address, this);}
+Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){delete d;}
 
 Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return NULL;}
 
