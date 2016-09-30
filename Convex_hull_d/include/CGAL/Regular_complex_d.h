@@ -628,7 +628,7 @@ static const Point_d nil_point;
 
 // init static member:
 template <class R> 
-typename const Regular_complex_d<R>::Point_d Regular_complex_d<R>::nil_point;
+const typename Regular_complex_d<R>::Point_d Regular_complex_d<R>::nil_point;
 
 
 template <class R>
