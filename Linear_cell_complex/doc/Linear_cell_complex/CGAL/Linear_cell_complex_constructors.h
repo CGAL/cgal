@@ -3,8 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexConstructions
 
-Imports an embedded plane graph read from `ais` into `lcc`. Objects are added in `lcc`, existing darts are not modified. Returns a dart created during the import.
-\pre `LCC::dimension` \f$ \geq\f$ 2 and \link Linear_cell_complex::ambient_dimension `LCC::ambient_dimension`\endlink==2.
+Imports an embedded plane graph read from `ais` into `lcc`, a model of the `LinearCellComplex` concept. Objects are added in `lcc`, existing darts are not modified. Returns a dart created during the import.
+\pre \link BasicMap::dimension `LCC::dimension`\endlink \f$ \geq\f$ 2 and \link LinearCellComplex::ambient_dimension `LCC::ambient_dimension`\endlink==2.
 
 \cgalHeading{File format}
 

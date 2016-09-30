@@ -8,7 +8,7 @@ The class `Cell_attribute_with_point` represents an attribute containing a point
 
 \cgalModels `CellAttributeWithPoint`
 
-\tparam LCC must be an instantiation of `Linear_cell_complex` class,
+\tparam LCC must be a model of the `LinearCellComplex` concept,
 \tparam Info_ is the type of the information contained in the attribute, `void` for no information,
 
 \tparam Tag is `::Tag_true` to enable the storage of a \link Cell_attribute_with_point::Dart_handle `Dart_handle`\endlink of the associated cell, `::Tag_false` otherwise,
@@ -17,13 +17,14 @@ The class `Cell_attribute_with_point` represents an attribute containing a point
 
 By default, `OnMerge` and `OnSplit` are equal to `Null_functor`; `Tag` is equal to `::Tag_true`; and `Info_` is equal to `void`.
 
-\sa `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
 \sa `CGAL::Linear_cell_complex_min_items<d>`
 \sa `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
+\sa `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
+\sa `CGAL::GMap_linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
 
 */
 template< typename LCC, typename Info_, typename Tag, typename OnMerge, typename OnSplit >
-class Cell_attribute_with_point : public CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit> {
+class Cell_attribute_with_point : public CGAL::Cell_attribute<LCC,Info_,Tag,OnMerge,OnSplit> {
 public:
 
 /// \name Types

@@ -3,8 +3,7 @@
 \ingroup PkgLinearCellComplexConcepts
 \cgalConcept
 
-The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute`
-concept, to represent a cell attribute containing a point.
+The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute` concept, to represent a cell attribute containing a point.
 
 \cgalRefines `CellAttribute`
 
