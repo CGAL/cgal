@@ -578,6 +578,7 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   Mesh_3::Polyline_visitor<Point_3, Graph> visitor(polylines, graph);
   Less_for_Graph_vertex_descriptors<Graph> less(graph);
   const Graph& const_graph = graph;
+  typedef typename Kernel_traits<P>::Kernel K;
   split_graph_into_polylines(const_graph, visitor,
                              Mesh_3::Angle_tester<K>(), less);
 }
