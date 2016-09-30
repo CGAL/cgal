@@ -58,9 +58,9 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
   if (desired_output[i]!=boost::none) \
   { \
     vpm_out.push_back(  \
-      choose_pmap(get_param(get<i>(nps_out), boost::vertex_point), \
-                                   *(*desired_output[i]), \
-                                   vertex_point) ); \
+        choose_param(get_param(get<i>(nps_out), vertex_point), \
+                               get_property_map(vertex_point, \
+                                 *(*desired_output[i])))); \
     output_vpms[i]=&vpm_out.back(); \
   } \
   else \
@@ -109,12 +109,12 @@ boolean_operation(      TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = choose_pmap(get_param(np1, boost::vertex_point),
-                         tm1,
-                         vertex_point);
-  Vpm vpm2 = choose_pmap(get_param(np2, boost::vertex_point),
-                         tm2,
-                         vertex_point);
+  Vpm vpm1 = choose_param(get_param(np1, vertex_point),
+                          get_property_map(vertex_point, tm1));
+
+  Vpm vpm2 = choose_param(get_param(np2, vertex_point),
+                          get_property_map(vertex_point, tm2));
+
   //for output meshes
   cpp11::array<Vpm*, 4> output_vpms;
   std::vector<Vpm> vpm_out;
@@ -403,12 +403,12 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = choose_pmap(get_param(np1, boost::vertex_point),
-                         tm1,
-                         vertex_point);
-  Vpm vpm2 = choose_pmap(get_param(np2, boost::vertex_point),
-                         tm2,
-                         vertex_point);
+  Vpm vpm1 = choose_param(get_param(np1, vertex_point),
+                          get_property_map(vertex_point, tm1));
+
+  Vpm vpm2 = choose_param(get_param(np2, vertex_point),
+                          get_property_map(vertex_point, tm2));
+
 // Edge is-constrained maps
   typedef typename boost::lookup_named_param_def <
     CGAL::edge_is_constrained_t,
