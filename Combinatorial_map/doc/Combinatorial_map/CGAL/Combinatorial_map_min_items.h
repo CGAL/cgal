@@ -8,6 +8,8 @@ The class `Combinatorial_map_min_items` is a model of the `BasicMapItems` concep
 
 \cgalModels `BasicMapItems`
 
+\tparam d the dimension of the combinatorial map.
+
 \cgalHeading{Example}
 
 The following example shows the implementation of the `Combinatorial_map_min_items` class.

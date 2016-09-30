@@ -8,7 +8,6 @@ The class `Cell_attribute` represents an attribute containing (or not) an inform
 
 \cgalModels `CellAttribute`
 
-
 \tparam Map must be a model of the `BasicMap` concept.
 
 \tparam Info_ is the type of the information contained in the attribute.

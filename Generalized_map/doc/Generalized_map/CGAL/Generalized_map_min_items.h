@@ -8,6 +8,8 @@ The class `Generalized_map_min_items` is a model of the `BasicMapItems` concept.
 
 \cgalModels `GeneralizedMapItems`
 
+\tparam d the dimension of the generalized map.
+
 \cgalHeading{Example}
 
 The following example shows the implementation of the `Generalized_map_min_items` class.
