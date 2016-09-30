@@ -25,13 +25,16 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
+- `BasicDart`
+- `BasicMap`
+- `BasicMapItems`
+- `CellAttribute`
 - `GeneralizedMap`
-- `GMapDart`
-- `GeneralizedMapItems`
 
 ## Classes ##
 - `CGAL::Generalized_map<d,Items,Alloc>`
 - `CGAL::GMap_dart<d,GMap>`
+- `CGAL::Cell_attribute<GMap,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Generalized_map_min_items<d>`
 
 */

@@ -159,7 +159,7 @@ We say that a combinatorial map is <I>valid</I> if it satisfies all the conditio
 
 \subsection ssec-comparison-cmaps-with-gmaps Comparison with generalized maps
 
-Combinatorial maps and \ref ChapterGeneralizedMap "generalized maps" are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects which explains that they share their main concepts.
+Combinatorial maps and \ref ChapterGeneralizedMap "generalized maps" are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects, which explains that they share their main concepts.
 
 However they have two main differences. Firstly, generalized maps allow to represent non-orientable and orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all applications are involutions, while combinatorial maps are not homogeneous since one application is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
 
@@ -190,7 +190,7 @@ All information associated to darts (\f$ \beta\f$ links and attributes) can be a
 
 \subsection ssecitem Combinatorial Map Items
 
-\tred{The `BasicMapItems` concept defines dart and attribute types of a basic map and thus of a combinatorial map. It contains one inner class named \link BasicMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `BMap`, a model of `BasicMap` concept. The \link BasicMapItems::Dart_wrapper `Dart_wrapper<CMap>`\endlink class provides two local types: `%Dart` which must be a model of the `::BasicDart` concept, and `%Attributes` which defines the attributes and their types.}
+\tred{The `BasicMapItems` concept defines dart and attribute types of a combinatorial map. It contains one inner class named \link BasicMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `BMap`, a model of `BasicMap` concept. The \link BasicMapItems::Dart_wrapper `Dart_wrapper<CMap>`\endlink class provides two local types: `%Dart` which must be a model of the `::BasicDart` concept, and `%Attributes` which defines the attributes and their types.}
 
 The `%Attributes` tuple must contain at most <I>d</I>+1 types (one for each possible cell dimension of the combinatorial map). Each type of the tuple must be either a model of the `CellAttribute` concept or `void`. The first type corresponds to 0-attributes, the second to 1-attributes and so on. If the <i>i <sup>th</sup></i> type in the tuple is  `void`, <I>(i-1)</I>-attributes are disabled: we say that <I>(i-1)</I>-attributes are <I>void</I>. Otherwise, <I>(i-1)</I>-attributes are enabled and have the given type: we say <I>(i-1)</I>-attributes are <I>non void</I>. If the size of the tuple is <I>k</I>, with <I>k</I>\f$ <\f$<I>dimension+1</I>, \f$ \forall\f$<I>i</I>: <I>k</I>\f$ \leq\f$<I>i</I>\f$ \leq\f$dimension, <I>i</I>-attributes are void.
 

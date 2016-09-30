@@ -12,7 +12,7 @@ Darts and non void attributes are stored in memory using `Compact_container`, us
 
 \tparam d is an integer for the dimension of the map.
 
-\tparam Items must be a model of the `CombinatorialMapItems` concept.
+\tparam Items must be a model of the `BasicMapItems` concept.
 
 \tparam Alloc has to match the standard allocator requirements. The `rebind` mechanism  `Alloc` will be used to create appropriate allocators internally with value type `Dart`.
 

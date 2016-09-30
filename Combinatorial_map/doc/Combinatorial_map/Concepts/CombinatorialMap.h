@@ -15,7 +15,7 @@ For a combinatorial map, the function \link BasicMap::next `next`\endlink is equ
 \cgalHeading{Validity}
 
 The function \link BasicMap::is_valid `is_valid`\endlink returns true iff the combinatorial map is valid.
-A combinatorial map is valid (see Sections \ref sseccombimapanddarts and \ref sseccombimapvalidity) if for all its darts `d` \f$\in\f$`darts()`:
+A combinatorial map is valid (see Sections \ref sec_definition and \ref sseccombimapvalidity) if for all its darts `d` \f$\in\f$`darts()`:
 
 - `d` is 0-free, or \f$ \beta_1(\beta_0(d))=d\f$;
 - `d` is 1-free, or \f$ \beta_0(\beta_1(d))=d\f$;
@@ -25,7 +25,6 @@ A combinatorial map is valid (see Sections \ref sseccombimapanddarts and \ref ss
   such that <I>i</I>-attributes are non void:
   + \f$ \forall\f$<I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;
   + \f$ \forall\f$<I>d2</I>  in a different <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have different <I>i</I>-attributes.
-
 
 \cgalHeading{Sew and unsew}
 
@@ -54,8 +53,8 @@ For each function, betas are applied in the same order as their indices are give
 
 For example `beta(dh,1)`=\f$ \beta_1\f$(`*dh`),
 and `beta(dh,1,2,3,0)`=\f$ \beta_0\f$(\f$ \beta_3\f$(\f$ \beta_2\f$(\f$ \beta_1\f$(`*dh`)))).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink,
-  0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
+  0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink
   and `*dh`\f$ \in\f$`darts()`.
 */
 Dart_handle beta(Dart_handle dh, int i, int j);
@@ -63,8 +62,8 @@ Dart_handle beta(Dart_handle dh, int i, int j);
 /*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
 Overloads of this member function are defined that take from one to nine integer as arguments.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink,
-     0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
+     0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink
      and `*dh`\f$ \in\f$`darts()`.
 
 */
@@ -77,8 +76,8 @@ For each function, betas are applied in the same order as their indices are give
 
 For example `beta<1>(dh)`=\f$ \beta_1\f$(`*dh`),
 and `beta<1,2,3,0>(dh)`=\f$ \beta_0\f$(\f$ \beta_3\f$(\f$ \beta_2\f$(\f$ \beta_1\f$(`*dh`)))).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink,
-  0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
+  0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink
   and `*dh`\f$ \in\f$`darts()`.
 */
 template<int i, int j>
@@ -87,8 +86,8 @@ Dart_handle beta(Dart_handle dh);
 /*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
 Overloads of this member function are defined that take from one to nine integer as template arguments.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink,
-     0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
+     0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink
      and `*dh`\f$ \in\f$`darts()`.
 
 */
@@ -107,9 +106,9 @@ Dart_const_handle opposite(Dart_const_handle dh) const;
 
 /*!
 Links `*dh1` and `*dh2` by \f$ \beta_i\f$.
-The combinatorial map can be no more valid after this operation. If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, non void attributes of `*dh1` and `*dh2` are updated: if one dart has an attribute and the second dart not, the non null attribute is associated to the dart having a null attribute.
+The combinatorial map can be no more valid after this operation. If \link BasicMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, non void attributes of `*dh1` and `*dh2` are updated: if one dart has an attribute and the second dart not, the non null attribute is associated to the dart having a null attribute.
 If both darts have an attribute, the attribute of `*dh1` is associated to `*dh2`.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink,
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
     `*dh1`\f$ \in\f$`darts()`, `*dh2`\f$ \in\f$`darts()` and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
 */
 template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2);
@@ -118,7 +117,7 @@ template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2);
 Unlinks `*dh` and \f$ \beta_i\f$(`*dh`) by \f$ \beta_i\f$.
 The combinatorial map can be no more valid after this operation.
 Attributes of `*dh` and \f$ \beta_i\f$(`*dh`) are not modified.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink,
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
      `*dh`\f$ \in\f$`darts()`, and `*dh` is not <I>i</I>-free.
 */
 template <unsigned int i> void unlink_beta(Dart_handle dh);

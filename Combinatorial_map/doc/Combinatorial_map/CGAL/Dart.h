@@ -17,8 +17,6 @@ non void <I>i</I>-attribute.
 
 \tparam CMap must be a model of the `CombinatorialMap` concept.
 
-\cgalHeading{Complexity}
-
 \sa `CombinatorialMap`
 
 */
