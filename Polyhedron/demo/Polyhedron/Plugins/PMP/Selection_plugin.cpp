@@ -350,7 +350,7 @@ public Q_SLOTS:
       point_item->setName(QString("%1-points").arg(selection_item->name()));
       for(Scene_polyhedron_selection_item::Selection_set_vertex::iterator begin = selection_item->selected_vertices.begin();
          begin != selection_item->selected_vertices.end(); ++begin) {
-         point_item->point_set()->push_back((*begin)->point());
+         point_item->point_set()->insert((*begin)->point());
       }
       scene->setSelectedItem( scene->addItem(point_item) );
       break;

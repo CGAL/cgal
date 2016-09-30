@@ -94,7 +94,7 @@ void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
         = soup_item->points();
 
       for (std::size_t i = 0; i < pts.size(); ++ i)
-        points->point_set()->push_back (pts[i]);
+        points->point_set()->insert (pts[i]);
       
       scene->addItem (points);
     }

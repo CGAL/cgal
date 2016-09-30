@@ -72,8 +72,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
       if(item)
         {
           indices_to_remove.push_front(index);
-          std::copy (item->point_set()->begin(), item->point_set()->end(),
-                     std::back_inserter (*(mainSelectionItem->point_set())));
+          mainSelectionItem->point_set()->merge_with (*(item->point_set()));
           mainSelectionItem->setName(tr("%1 + %2").arg(mainSelectionItem->name()).arg(item->name()));
         }
     }

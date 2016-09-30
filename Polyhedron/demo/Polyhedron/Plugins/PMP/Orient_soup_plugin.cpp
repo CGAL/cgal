@@ -97,7 +97,7 @@ void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color>
 {
   typedef Scene_surface_mesh_item::SMesh SMesh;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
-  SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+  CGAL::Properties::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
   bool created;
   boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
@@ -111,7 +111,7 @@ void set_fcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color>
 {
   typedef Scene_surface_mesh_item::SMesh SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+  CGAL::Properties::Property_map<face_descriptor, CGAL::Color> fcolors =
     smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
   bool created;
    boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
