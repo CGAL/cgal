@@ -2451,7 +2451,8 @@ public:
 
   static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
-    return point(f, location, tm, CGAL::get(CGAL::vertex_point, tm), traits);
+    using boost::get;
+    return point(f, location, tm, get(CGAL::vertex_point, tm), traits);
   }
 
   static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
@@ -2481,7 +2482,8 @@ public:
 
   static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
-    return point(edge, t, tm, CGAL::get(CGAL::vertex_point, tm), traits);
+    using boost::get;
+    return point(edge, t, tm, get(CGAL::vertex_point, tm), traits);
   }
 
   static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
