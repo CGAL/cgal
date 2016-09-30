@@ -4,11 +4,17 @@
 
 The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map.
 
+\cgalRefines `BasicMap`
+
 \cgalHasModel \link CGAL::Combinatorial_map `CGAL::Combinatorial_map<d,Items,Alloc>`\endlink
+
+\cgalHeading{Basic functions}
+
+For a combinatorial map, the function \link BasicMap::next `next`\endlink is equal to \f$ \beta_1\f$, \link BasicMap::previous `previous`\endlink is equal to \f$ \beta_0\f$  and the function \link BasicMap::opposite `opposite<i>`\endlink is equal to \f$ \beta_i\f$.
 
 \cgalHeading{Validity}
 
-The function \link BasicMap::is_valid `is_valid` return true iff the combinatorial map is valid.
+The function \link BasicMap::is_valid `is_valid`\endlink returns true iff the combinatorial map is valid.
 A combinatorial map is valid (see Sections \ref sseccombimapanddarts and \ref sseccombimapvalidity) if for all its darts `d` \f$\in\f$`darts()`:
 
 - `d` is 0-free, or \f$ \beta_1(\beta_0(d))=d\f$;
@@ -20,18 +26,17 @@ A combinatorial map is valid (see Sections \ref sseccombimapanddarts and \ref ss
   + \f$ \forall\f$<I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;
   + \f$ \forall\f$<I>d2</I>  in a different <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have different <I>i</I>-attributes.
 
+
 \cgalHeading{Sew and unsew}
 
-The function \link BasicMap::is_sewable `is_sewable` returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the basic map valid.
-
+The function \link BasicMap::is_sewable `is_sewable`\endlink returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the combinatorial map valid.
 This is true if there is a bijection <I>f</I> between all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>*dh1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>*dh2</I>) satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>}, <I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)).
 
-The function \link BasicMap::sew `sew` <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the combinatorial map valid.
+The function \link BasicMap::sew `sew`\endlink <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the combinatorial map valid.
 Links by \f$ \beta_i\f$ two by two all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`*dh1`) and <I>D2</I>=\f$ \langle{}\f$\f$ \beta_0\f$,\f$ \beta_2\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`*dh2`) such that <I>d2</I>=<I>f</I>(<I>d1</I>).
-
 <I>f</I> is the bijection between <I>D1</I> and <I>D2</I> satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>}, <I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)).
 
-The function \link BasicMap::unsew `unsew` <I>i</I>-unsew darts `*dh` and \f$ \beta_i\f$`(*dh)`, by keeping the combinatorial map valid.
+The function \link BasicMap::unsew `unsew`\endlink <I>i</I>-unsew darts `*dh` and \f$ \beta_i\f$`(*dh)`, by keeping the combinatorial map valid.
 Unlinks by \f$ \beta_i\f$ all the darts in the orbit \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$(`*dh`).
 
 */

@@ -60,14 +60,14 @@ using Attribute_const_handle = unspecified_type;
 /// @{
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \link BasicMap::attribute `cm.attribute(dh)`\endlink instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link BasicMap::attribute `bm.attribute(dh)`\endlink instead.
 Returns a handle to the <I>i</I>-attribute associated to the dart.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non `void`.
 */
 template <unsigned int i> Attribute_handle<i>::type attribute();
 
 /*!
-To simplify a future implementation, it is recommended to not use this function and to use \link BasicMap::attribute `cm.attribute(dh)`\endlink instead.
+To simplify a future implementation, it is recommended to not use this function and to use \link BasicMap::attribute `bm.attribute(dh)`\endlink instead.
 Returns a const handle to the <I>i</I>-attribute associated to the dart, when the dart is const. 
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and <I>i</I>-attributes are non `void`.
 */

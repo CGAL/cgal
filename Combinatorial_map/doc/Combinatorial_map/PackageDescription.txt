@@ -42,10 +42,11 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `CombinatorialMap`
-- `Dart`
+- `BasicDart`
+- `BasicMap`
+- `BasicMapItems`
 - `CellAttribute`
-- `CombinatorialMapItems`
+- `CombinatorialMap`
 
 ## Classes ##
 - `CGAL::Combinatorial_map<d,Items,Alloc>`

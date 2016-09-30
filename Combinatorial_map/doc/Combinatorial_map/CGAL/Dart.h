@@ -11,7 +11,7 @@ The class `Dart` represents a <I>d</I>D dart in a combinatorial map.
 associated to each dart by \link Attribute_handle `Attribute_handle<i>`\endlink, one for each
 non void <I>i</I>-attribute.
 
-\cgalModels `::Dart`
+\cgalModels `::BasicDart`
 
 \tparam d an integer for the dimension of the dart.
 

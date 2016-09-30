@@ -2,12 +2,15 @@
 \ingroup PkgCombinatorialMapsConcepts
 \cgalConcept
 
-The concept `BasicMap` defines a <I>d</I>-dimensional basic map. This concept is defined only to factorize the common notions between \link CGAL::Combinatorial_map `combinatorial maps`\endlink and \link CGAL::Generalized_map `generalized maps`\endlink classes.
+The concept `BasicMap` defines a <I>d</I>-dimensional basic map. This concept is defined only to factorize the common notions between \link CombinatorialMap `CombinatorialMap`\endlink and \link GeneralizedMap `GeneralizedMap`\endlink concepts.
 
 A basic map has a set of darts <I>D</I>, and applications defined on these darts \f$ f_0\f$,\f$ \ldots\f$,\f$ f_{d}\f$.
 
 \cgalHasModel \link CGAL::Combinatorial_map `CGAL::Combinatorial_map<d,Items,Alloc>`\endlink
 \cgalHasModel \link CGAL::Generalized_map `CGAL::Generalized_map<d,Items,Alloc>`\endlink
+
+\sa `CombinatorialMap`
+\sa `GeneralizedMap`
 
 */
 
@@ -263,7 +266,7 @@ bool is_empty() const;
 
 /*!
 Returns true iff the basic map is valid.
-See the following links for the definition of valid for \link CombinatorialMap `combinatorial maps` and for \link GeneralizedMap `generalized maps`.
+See the following links for the definition of valid for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
 */
 bool is_valid() const;
 
@@ -325,6 +328,40 @@ Returns a const handle to a dart belonging to the other vertex of the edge conta
 */
 Dart_const_handle other_extremity(Dart_const_handle dh) const;
 
+/*!
+Returns a handle to a dart belonging to the next edge after `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink.
+*/
+Dart_handle next(Dart_handle dh);
+
+/*!
+Returns a const handle to a dart belonging to the next edge after `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink.
+*/
+Dart_const_handle next(Dart_const_handle dh) const;
+  
+/*!
+Returns a handle to a dart belonging to the previous edge begore `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink.
+*/
+Dart_handle previous(Dart_handle dh);
+
+/*!
+Returns a const handle to a dart belonging to the previous edge begore `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink.
+*/
+Dart_const_handle previous(Dart_const_handle dh) const;
+  
+/*!
+Returns a handle to a dart belonging to the opposite <I>i</I>-cell than `*dh`. This dart does not belong to the same <I>0</I>-cell than `*dh`, nor to the same <I>i</I>-cell, but belongs to the same <I>i</I>-cell than `*dh`for each <I>j</I>, 2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, <I>j</I>\f$ \neq\f$<I>i</I>.
+\pre 2\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink.
+*/
+template<unsigned int i>
+Dart_handle opposite(Dart_handle dh);
+
+/*!
+Returns a const handle to a dart belonging to the opposite <I>i</I>-cell than `*dh`. This dart does not belong to the same <I>0</I>-cell than `*dh`, nor to the same <I>i</I>-cell, but belongs to the same <I>i</I>-cell than `*dh`for each <I>j</I>, 2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, <I>j</I>\f$ \neq\f$<I>i</I>.
+\pre 2\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink.
+*/
+template<unsigned int i>
+Dart_const_handle opposite(Dart_const_handle dh) const;
+  
 /*!
 Displays on `os` the number of elements of the basic map.
 Its number of darts,
@@ -472,8 +509,7 @@ template<unsigned int i> Attribute_const_range<i>::type & attributes() const;
 Returns a range of all the darts of the orbit `<I...>(*dh)`.
 The first element in the range points onto `*dh`.
 \pre `*dh`\f$ \in\f$`darts()` and `I...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$,
-    such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
-     and (\f$ i_1\f$\f$ \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$ 1).
+    such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink.
 */
 template<unsigned int ... I> Dart_of_orbit_range darts_of_orbit(Dart_handle dh);
 
@@ -646,15 +682,15 @@ void correct_invalid_attributes();
 
 /*!
 Returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the basic map valid. 
-See the following links for the definition of is_sewable for \link CombinatorialMap `combinatorial maps` and for \link GeneralizedMap `generalized maps`.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link CombinatorialMap::dimension `dimension`\endlink,
+See the following links for the definition of is_sewable for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink,
   `*dh1`\f$ \in\f$`darts()`, and `*dh2`\f$ \in\f$`darts()`.
 */
 template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;
 
 /*!
   <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the basic map valid.
-See the following links for the definition of the <I>i</I>-sew for \link CombinatorialMap `combinatorial maps` and for \link GeneralizedMap `generalized maps`.
+See the following links for the definition of the <I>i</I>-sew for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
 
 If \link BasicMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the basic map: for each <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are considered. If one attribute is NULL and the other not, the non NULL attribute is associated to all the darts of the resulting cell. When the two attributes are non NULL, functor \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. Then, the attribute <I>attr1</I> is associated to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the basic map.
 \pre \link BasicMap::is_sewable `is_sewable<i>(dh1,dh2)`\endlink.
@@ -667,8 +703,8 @@ If \link BasicMap::are_attributes_automatically_managed `are_attributes_automati
 template <unsigned int i> void sew(Dart_handle dh1,Dart_handle dh2);
 
 /*!
-  <I>i</I>-unsew darts `*dh` and \f$ \beta_i\f$`(*dh)`, by keeping the basic map valid.
-See the following links for the definition of is_sewable for \link CombinatorialMap `combinatorial maps` and for \link GeneralizedMap `generalized maps`.
+  <I>i</I>-unsew darts `*dh` and `*opposite<i>(*dh)`, by keeping the basic map valid.
+See the following links for the definition of is_sewable for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
 
 If \link BasicMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the basic map: for each <I>j</I>-cell <I>c</I> split in two <I>j</I>-cells <I>c1</I> and <I>c2</I> by the operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then this attribute is duplicated into <I>attr2</I>, and all the darts belonging to <I>c2</I> are associated with this new attribute. Finally, the functor \link CellAttribute::On_split `Attribute_type<i>::type::On_split`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onsplit function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, `*dh`\f$ \in\f$`darts()` and `*dh` is not <I>i</I>-free.
@@ -841,7 +877,7 @@ Dart_handle make_edge();
 /// @{
 
 /*!
-Inserts a 0-cell in the 1-cell containing `dh`. Returns \f$ \beta_1\f$(`dh`), a handle on one dart belonging to the new 0-cell.
+Inserts a 0-cell in the 1-cell containing `dh`. Returns `next(dh)`, a handle on one dart belonging to the new 0-cell.
 \pre \link BasicMap::dimension `dimension`\endlink \f$ \geq\f$ 1 and `*dh`\f$ \in\f$\link BasicMap::darts `darts()`\endlink.
 
 See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_vertex} and for generalized map in \cgalFigureRef{fig_gmap_insert_vertex}.
@@ -881,7 +917,7 @@ If \link BasicMap::are_attributes_automatically_managed `are_attributes_automati
 Dart_handle insert_cell_0_in_cell_2(Dart_handle dh); 
 
 /*!
-Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns \f$ \beta_0\f$(`dh1`), a handle on one dart belonging to the new 1-cell.
+Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns `previous(dh1)`, a handle on one dart belonging to the new 1-cell.
 \pre `is_insertable_cell_1_in_cell_2(dh1,dh2)`.
 
 See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_edge} and for generalized map in \cgalFigureRef{fig_gmap_insert_edge}.
@@ -902,7 +938,7 @@ If \link BasicMap::are_attributes_automatically_managed `are_attributes_automati
 Dart_handle insert_cell_1_in_cell_2(Dart_handle dh1, Dart_handle dh2);
 
 /*!
-Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns \f$ \beta_2\f$(`*afirst`), a handle on one dart belonging to the new 2-cell.
+Inserts a 2-cell along the path of 1-cells containing darts given by the range `[afirst,alast)`. Returns `opposite<2>(*afirst)`, a handle on one dart belonging to the new 2-cell.
 \pre `is_insertable_cell_2_in_cell_3(afirst,alast)`.
 
 See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_facet} and for generalized map in \cgalFigureRef{fig_gmap_insert_facet}.
@@ -924,10 +960,10 @@ template <class InputIterator>
 Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);  
 
 /*!
-Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns \f$ \beta_0\f$(`dh`), a handle on the dart belonging to the new 1-cell and to the new 0-cell.
+Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns `previous(dh)`, a handle on the dart belonging to the new 1-cell and to the new 0-cell.
 \pre \link BasicMap::dimension `dimension`\endlink \f$ \geq\f$ 2 and `*dh`\f$ \in\f$\link BasicMap::darts `darts()`\endlink.
 
-See example in \cgalFigureRef{fig_cmap_insert_edge}.
+See examples for combinatorial map in \cgalFigureRef{fig_cmap_insert_edge} and for generalized map in \cgalFigureRef{fig_gmap_insert_edge}.
 
 \cgalAdvancedBegin
 If \link BasicMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the basic map can be no more valid after this operation.
@@ -945,7 +981,7 @@ Dart_handle insert_dangling_cell_1_in_cell_2(Dart_handle dh);
 /*!
 Returns true iff it is possible to insert a 1-cell in the basic map between `dh1` and `dh2`.
 
-This is possible if `dh1`\f$ \neq\f$`dh2` and `dh1`\f$ \in\f$\f$ \langle{}\f$\f$ \beta_1\f$\f$ \rangle{}\f$(`dh2`).
+This is possible if `dh1`\f$ \neq\f$`dh2` and `dh1` can be reached from `dh2` by using some `previous` and `next` calls.
 \pre \link BasicMap::dimension `dimension`\endlink \f$ \geq\f$ 2, `*dh1`\f$ \in\f$\link BasicMap::darts `darts()`\endlink, and `*dh2`\f$ \in\f$\link BasicMap::darts `darts()`\endlink.
 
 \sa `insert_cell_1_in_cell_2`
@@ -955,7 +991,7 @@ This is possible if `dh1`\f$ \neq\f$`dh2` and `dh1`\f$ \in\f$\f$ \langle{}\f$\f$
 bool is_insertable_cell_1_in_cell_2(Dart_const_handle dh1, Dart_const_handle dh2);
 
 /*!
-Returns true iff it is possible to insert a 2-cell in the basic map along the path of darts given by the range `[afirst,alast)`. The 2-cell can be inserted iff each couple of consecutive darts of the path <I>a1</I> and <I>a2</I> belong to the same vertex and the same volume, and if the path is closed.
+Returns true iff it is possible to insert a 2-cell in the basic map along the path of darts given by the range `[afirst,alast)`. The 2-cell can be inserted iff the ordered list of darts form a closed path of edges inside a same volume.
 \pre \link BasicMap::dimension `dimension`\endlink \f$ \geq\f$ 3.
 
 \sa `insert_cell_2_in_cell_3<InputIterator>`

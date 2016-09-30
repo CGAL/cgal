@@ -31,8 +31,8 @@ The concept `BasicMapItems` allows to customize a <I>d</I>D basic map by choosin
     template < class GMap >
     struct Dart_wrapper
     {
-      typedef CGAL::GMap_dart<3, CMap> Dart;
-      typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
+      typedef CGAL::GMap_dart<3, GMap> Dart;
+      typedef CGAL::Cell_attribute<GMap, int> Edge_attrib;
       typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
     };
   };
