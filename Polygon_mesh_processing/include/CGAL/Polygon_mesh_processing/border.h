@@ -79,6 +79,17 @@ namespace Polygon_mesh_processing {
 
     template<typename PM
            , typename FaceRange
+           , typename HalfedgeOutputIterator>
+    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
+                                               , typename boost::cgal_no_property::type
+                                               , HalfedgeOutputIterator out
+                                               , const PM& pmesh)
+    {
+      return border_halfedges_impl(faces, out, pmesh);
+    }
+
+    template<typename PM
+           , typename FaceRange
            , typename FaceIndexMap
            , typename HalfedgeOutputIterator>
     HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
@@ -120,9 +131,10 @@ namespace Polygon_mesh_processing {
   * i.e. the collected halfedges are
   * the ones that belong to the input faces.
   *
-  * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh
-  *  `has an internal property map
-  *  for `CGAL::face_index_t`, then it should be initialized
+  * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh`
+  *  has an internal property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one should be initialized
   * @tparam FaceRange range of
        `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
         Its iterator type is `InputIterator`.
@@ -155,7 +167,7 @@ namespace Polygon_mesh_processing {
                                   , const NamedParameters& np)
   {
     typedef PolygonMesh PM;
-    typedef typename GetFaceIndexMap<PM, NamedParameters>::type           FIMap;
+    typedef typename GetFaceIndexMap<PM, NamedParameters>::const_type     FIMap;
     typedef typename boost::property_map<typename internal::Dummy_PM,
                                               CGAL::face_index_t>::type   Unset_FIMap;
 
@@ -166,8 +178,8 @@ namespace Polygon_mesh_processing {
     }
 
     //face index map given as a named parameter, or as an internal property map
-    FIMap fim = choose_param(get_param(np, face_index),
-                             get(CGAL::face_index, pmesh));
+    FIMap fim = choose_param(get_param(np, CGAL::face_index),
+                             get_const_property_map(CGAL::face_index, pmesh));
 
     //make a minimal check that it's properly initialized :
     //if the 2 first faces have the same id, we know the property map is not initialized

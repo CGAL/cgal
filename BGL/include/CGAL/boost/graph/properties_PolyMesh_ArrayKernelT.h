@@ -268,6 +268,25 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_point_t >
   typedef type const_type;
 };
 
+template<typename K>
+struct graph_has_property<OpenMesh::PolyMesh_ArrayKernelT<K>, edge_weight_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OpenMesh::PolyMesh_ArrayKernelT<K>, vertex_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OpenMesh::PolyMesh_ArrayKernelT<K>, face_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OpenMesh::PolyMesh_ArrayKernelT<K>, edge_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OpenMesh::PolyMesh_ArrayKernelT<K>, halfedge_index_t>
+  : CGAL::Tag_true{};
+template<typename K>
+struct graph_has_property<OpenMesh::PolyMesh_ArrayKernelT<K>, vertex_point_t>
+  : CGAL::Tag_true{};
+
 } // namespace boost
 
 namespace OpenMesh {

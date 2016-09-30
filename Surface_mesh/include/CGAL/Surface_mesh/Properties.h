@@ -69,11 +69,9 @@ public:
     /// Return the type_info of the property
     virtual const std::type_info& type() = 0;
 
-    /// Get element as a string
-    virtual const std::string to_str(size_t i) const = 0;
-  
     /// Return the name of the property
     const std::string& name() const { return name_; }
+
 
 protected:
 
@@ -149,35 +147,7 @@ public: // virtual interface of Base_property_array
 
     virtual const std::type_info& type() { return typeid(T); }
 
-    virtual const std::string to_str(size_t i) const
-    {
-      std::string out;
-      // Work-around to display char and uchar as integer numbers and not characters
-      get_string (out, data_[i]);
-      return out;
-    }
 
-    template <typename Type>
-    void get_string (std::string& out, const Type& t) const
-    {
-      std::ostringstream oss;
-      oss << t;
-      out = oss.str();
-    }
-
-    void get_string (std::string& out, const char& t) const
-    {
-      std::ostringstream oss;
-      oss << (int)t;
-      out = oss.str();
-    }
-    void get_string (std::string& out, const unsigned char& t) const
-    {
-      std::ostringstream oss;
-      oss << (int)t;
-      out = oss.str();
-    }
-  
 public:
 
     /// Get pointer to array (does not work for T==bool)
@@ -306,7 +276,10 @@ public:
         {
             std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
             if (out.second)
-              return out;
+              {
+                out.second = false;
+                return out;
+              }
         }
 
         // otherwise add the property
@@ -423,15 +396,7 @@ public:
             parrays_[i]->swap(i0, i1);
     }
 
-    std::string to_str (const Key& key) const
-    {
-      std::ostringstream oss;
-      for (std::size_t i = 0; i < parrays_.size(); ++ i)
-        oss << parrays_[i]->to_str((std::size_t)key) << " ";
-      oss << std::endl;
-      return oss.str();
-    }
-    
+
 private:
     std::vector<Base_property_array*>  parrays_;
     size_t  size_;

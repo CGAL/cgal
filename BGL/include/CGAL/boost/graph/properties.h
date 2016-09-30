@@ -60,8 +60,16 @@ enum face_external_index_t   { face_external_index   } ;
     {}
     std::string s;
     T t;
-        
   };
+
+template<typename Graph, typename PropertyTag>
+struct graph_has_property : CGAL::Tag_false {};
+  
+struct cgal_no_property
+{
+  typedef bool type;
+  typedef const bool const_type;
+};
 
 /// @}
 

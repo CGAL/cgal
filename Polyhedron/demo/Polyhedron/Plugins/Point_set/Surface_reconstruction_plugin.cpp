@@ -287,7 +287,7 @@ namespace SurfaceReconstruction
       {
         Scene_polygon_soup_item* new_item
           = new Scene_polygon_soup_item ();
-        new_item->setColor(Qt::magenta);
+        new_item->setColor(Qt::lightGray);
         new_item->setRenderingMode(FlatPlusEdges);
         new_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
 
@@ -295,7 +295,7 @@ namespace SurfaceReconstruction
         if (generate_smooth)
           {
             smooth_item = new Scene_polygon_soup_item ();
-            smooth_item->setColor(Qt::magenta);
+            smooth_item->setColor(Qt::lightGray);
             smooth_item->setRenderingMode(FlatPlusEdges);
             smooth_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
           }
@@ -672,7 +672,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
 	      
 	      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-	      reco_item->setColor(Qt::magenta);
+	      reco_item->setColor(Qt::lightGray);
 	      reco_item->setRenderingMode(FlatPlusEdges);
 	      scene->addItem(reco_item);
 
@@ -691,7 +691,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
 	      
 	      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-	      reco_item->setColor(Qt::magenta);
+	      reco_item->setColor(Qt::lightGray);
 	      reco_item->setRenderingMode(FlatPlusEdges);
 	      scene->addItem(reco_item);
 
@@ -772,7 +772,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
                                               CGAL_PI * dialog.beta_angle () / 180.);
 	      
       reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
-      reco_item->setColor(Qt::magenta);
+      reco_item->setColor(Qt::lightGray);
       reco_item->setRenderingMode(FlatPlusEdges);
       scene->addItem(reco_item);
 

@@ -79,6 +79,8 @@ create_single_source_cgal_program( "test_helpers.cpp" )
 
 create_single_source_cgal_program( "test_Has_member_clear.cpp" )
 
+create_single_source_cgal_program( "test_Has_member_id.cpp" )
+
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
 if(OpenMesh_FOUND)

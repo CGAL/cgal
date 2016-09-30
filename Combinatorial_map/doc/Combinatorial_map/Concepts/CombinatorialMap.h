@@ -7,7 +7,7 @@ The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map.
 \cgalHasModel \ref  CGAL::Combinatorial_map "CGAL::Combinatorial_map<d,Items,Alloc>"
 
 */
- //@{
+
 class CombinatorialMap {
 public:
 
@@ -1154,11 +1154,9 @@ If \link CombinatorialMap::are_attributes_automatically_managed `are_attributes_
 */
 template <unsigned int i>
 size_type remove_cell(Dart_handle dh);
-  
-} /* namespace CGAL */
 
 /// @}
-  
+
 }; /* end CombinatorialMap */
-//@}
+
 

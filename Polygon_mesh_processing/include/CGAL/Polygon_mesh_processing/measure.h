@@ -46,8 +46,7 @@ namespace Polygon_mesh_processing {
   * computes the length of an edge of a given polygon mesh.
   * The edge is given by one of its halfedges, or the edge itself.
   *
-  * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `CGAL::vertex_point_t`
+  * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param h one halfedge of the edge to compute the length
@@ -55,7 +54,9 @@ namespace Polygon_mesh_processing {
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
   *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
@@ -81,13 +82,12 @@ namespace Polygon_mesh_processing {
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
   {
-    using boost::choose_const_pmap;
+    using boost::choose_param;
     using boost::get_param;
 
     typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
-    vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
-                            pmesh,
-                            CGAL::vertex_point);
+    vpm = choose_param(get_param(np, vertex_point),
+                       get_const_property_map(CGAL::vertex_point, pmesh));
 
     return CGAL::approximate_sqrt(CGAL::squared_distance(get(vpm, source(h, pmesh)),
                                                          get(vpm, target(h, pmesh))));
@@ -127,8 +127,7 @@ namespace Polygon_mesh_processing {
   * computes the length of the border polyline
   * that contains a given halfedge.
   *
-  * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `CGAL::vertex_point_t`
+  * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param h a halfedge of the border polyline of which the length is computed
@@ -136,8 +135,10 @@ namespace Polygon_mesh_processing {
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return the length of the sequence of border edges of `face(h, pmesh)`.
@@ -191,8 +192,7 @@ namespace Polygon_mesh_processing {
   * computes the area of a face of a given
   * triangulated surface mesh.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `CGAL::vertex_point_t`
+  * @tparam TriangleMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param f the face of which the area is computed
@@ -200,7 +200,9 @@ namespace Polygon_mesh_processing {
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
   *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
@@ -225,15 +227,14 @@ namespace Polygon_mesh_processing {
             , const TriangleMesh& tmesh
             , const CGAL_PMP_NP_CLASS& np)
   {
-    using boost::choose_const_pmap;
+    using boost::choose_param;
     using boost::get_param;
 
     CGAL_precondition(boost::graph_traits<TriangleMesh>::null_face() != f);
 
     typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
-    vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
-                            tmesh,
-                            CGAL::vertex_point);
+    vpm = choose_param(get_param(np, vertex_point),
+                       get_const_property_map(CGAL::vertex_point, tmesh));
 
     typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
     halfedge_descriptor hd = halfedge(f, tmesh);
@@ -265,8 +266,7 @@ namespace Polygon_mesh_processing {
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`.
           Its iterator type is `InputIterator`.
-  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `CGAL::vertex_point_t`
+  * @tparam TriangleMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param face_range the range of faces of which the area is computed
@@ -274,7 +274,9 @@ namespace Polygon_mesh_processing {
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
   *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
   * \cgalNamedParamsEnd
   *
@@ -330,15 +332,16 @@ namespace Polygon_mesh_processing {
   * \ingroup measure_grp
   * computes the surface area of a triangulated surface mesh.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `CGAL::vertex_point_t`
+  * @tparam TriangleMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param tmesh the triangulated surface mesh
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
   *  \cgalParamBegin{geom_traits}an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
@@ -380,8 +383,7 @@ namespace Polygon_mesh_processing {
   * computes the volume of the domain bounded by
   * a closed triangulated surface mesh.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `CGAL::vertex_point_t`
+  * @tparam TriangleMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param tmesh the closed triangulated surface mesh bounding the volume
@@ -390,8 +392,10 @@ namespace Polygon_mesh_processing {
   * @pre `tmesh` is closed
   *
   * \cgalNamedParamsBegin
-  *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-  *  \cgalParamBegin{geom_traits}an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return the volume bounded by `tmesh`.
@@ -412,13 +416,12 @@ namespace Polygon_mesh_processing {
     CGAL_assertion(is_triangle_mesh(tmesh));
     CGAL_assertion(is_closed(tmesh));
 
-    using boost::choose_const_pmap;
+    using boost::choose_param;
     using boost::get_param;
 
     typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
-      vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
-                              tmesh,
-                              CGAL::vertex_point);
+      vpm = choose_param(get_param(np, vertex_point),
+                         get_const_property_map(CGAL::vertex_point, tmesh));
     typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3
       origin(0, 0, 0);
 
