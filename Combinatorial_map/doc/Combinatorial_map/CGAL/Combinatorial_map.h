@@ -20,7 +20,6 @@ There are two default template arguments: `Combinatorial_map_min_items<d>` for `
 
 \cgalHeading{Complexity}
 
-
 The complexity of `sew` and `unsew` is in <I>O</I>(\f$ |\f$<I>S</I>\f$ |\f$\f$ \times\f$\f$ |\f$<I>c</I>\f$ |\f$), <I>S</I> being the set of darts of the orbit \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$ for the considered dart, and <I>c</I> the biggest <I>j</I>-cell merged or split during the sew such that <I>j</I>-attributes are non void. The complexity of `is_sewable` is in <I>O</I>(\f$ |\f$<I>S</I>\f$ |\f$).
 
 The complexity of `set_attribute` is in <I>O</I>(\f$ |\f$<I>c</I>\f$ |\f$), <I>c</I> being the <I>i</I>-cell containing the considered dart.
@@ -45,6 +44,13 @@ public:
 
 /// \name Types
 /// @{
+
+/*!
+The null dart handle constant.
+A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
+Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
+*/
+Dart_handle null_dart_handle;
 
 /*!
 
