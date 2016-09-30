@@ -291,7 +291,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
           //set normals for point_item to the plane's normal
           for(Point_set::iterator it = point_item->point_set()->begin(); it != point_item->point_set()->end(); ++it)
-            it->normal() = plane->plane_normal();
+            point_item->point_set()->normal(*it) = plane->plane_normal();
 
           if(scene->item_id(groups[0]) == -1)
              scene->addItem(groups[0]);
