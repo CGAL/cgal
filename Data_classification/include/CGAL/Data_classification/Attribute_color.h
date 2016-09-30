@@ -1,11 +1,13 @@
-#ifndef CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_COLOR_H
-#define CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_COLOR_H
+#ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_COLOR_H
+#define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_COLOR_H
 
 #include <vector>
 
 #include <CGAL/Data_classification/Color.h>
 
 namespace CGAL {
+
+namespace Data_classification {
 
   /*!
     \ingroup PkgDataClassification
@@ -23,7 +25,7 @@ namespace CGAL {
     \tparam PointPMap Property map to access the colors of the input points.
   */
 template <typename Kernel, typename RandomAccessIterator, typename ColorPMap>
-class Segmentation_attribute_color : public Segmentation_attribute
+class Attribute_color : public Attribute
 {
   typedef typename Data_classification::RGB_Color RGB_Color;
   typedef typename Data_classification::HSV_Color HSV_Color;
@@ -48,12 +50,12 @@ public:
     \note The default values describe a gray color region
     corresponding to the color of a concrete road.
   */
-  Segmentation_attribute_color (RandomAccessIterator begin,
-                                RandomAccessIterator end,
-                                ColorPMap color_pmap,
-                                double weight,
-                                double mean_h = 156., double mean_s = 5., double mean_v = 76.,
-                                double sd_h = 70., double sd_s = 12., double sd_v = 8.4)
+  Attribute_color (RandomAccessIterator begin,
+                   RandomAccessIterator end,
+                   ColorPMap color_pmap,
+                   double weight,
+                   double mean_h = 156., double mean_s = 5., double mean_v = 76.,
+                   double sd_h = 70., double sd_s = 12., double sd_v = 8.4)
   {
     this->weight = weight;
     for(std::size_t i = 0; i < (std::size_t)(end - begin);i++)
@@ -77,6 +79,8 @@ public:
 };
 
 
-}
+} // namespace Data_classification
 
-#endif // CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_COLOR_H
+} // namespace CGAL
+
+#endif // CGAL_DATA_CLASSIFICATION_ATTRIBUTE_COLOR_H

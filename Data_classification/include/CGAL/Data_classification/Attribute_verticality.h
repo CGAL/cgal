@@ -1,11 +1,13 @@
-#ifndef CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_VERTICALITY_H
-#define CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_VERTICALITY_H
+#ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H
+#define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H
 
 #include <vector>
 
 #include <CGAL/Data_classification/Local_eigen_analysis.h>
 
 namespace CGAL {
+
+namespace Data_classification {
 
   /*!
     \ingroup PkgDataClassification
@@ -23,7 +25,7 @@ namespace CGAL {
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Segmentation_attribute_verticality : public Segmentation_attribute
+class Attribute_verticality : public Attribute
 {
   typedef Data_classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
                                                     PointPMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -38,10 +40,10 @@ public:
     \param eigen Class with precompute eigenvectors and eigenvalues
     \param weight Weight of the attribute
   */
-  Segmentation_attribute_verticality (RandomAccessIterator begin,
-                                      RandomAccessIterator end,
-                                      const Local_eigen_analysis& eigen,
-                                      double weight = 1.)
+  Attribute_verticality (RandomAccessIterator begin,
+                         RandomAccessIterator end,
+                         const Local_eigen_analysis& eigen,
+                         double weight = 1.)
   {
     this->weight = weight;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
@@ -66,10 +68,10 @@ public:
     \param weight Weight of the attribute
   */
   template <typename NormalPMap>
-  Segmentation_attribute_verticality (const RandomAccessIterator& begin,
-                                      const RandomAccessIterator& end,
-                                      NormalPMap normal_pmap,
-                                      double weight = 1.)
+  Attribute_verticality (const RandomAccessIterator& begin,
+                         const RandomAccessIterator& end,
+                         NormalPMap normal_pmap,
+                         double weight = 1.)
   {
     this->weight = weight;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
@@ -96,7 +98,8 @@ public:
   /// \endcond
 };
 
+} // namespace Data_classification
 
-}
+} // namespace CGAL
 
-#endif // CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_VERTICALITY_H
+#endif // CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H

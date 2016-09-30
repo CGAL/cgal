@@ -251,7 +251,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
                it != m_points->point_set()->first_selected(); ++ it)
             {
               QColor color (0, 0, 0);
-              CGAL::Classification_type* c = m_psc->classification_type_of(*it);
+              CGAL::Data_classification::Type* c = m_psc->classification_type_of(*it);
           
               if (c != NULL)
                 {        
@@ -276,7 +276,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
         }
       else
         {
-          std::map<CGAL::Classification_type*, QColor> map_colors;
+          std::map<CGAL::Data_classification::Type*, QColor> map_colors;
           for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
             map_colors.insert (m_predefined_types[i]);
           
@@ -284,7 +284,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
                it != m_points->point_set()->first_selected(); ++ it)
             {
               QColor color (0, 0, 0);
-              CGAL::Classification_type* c = m_psc->classification_type_of(*it);
+              CGAL::Data_classification::Type* c = m_psc->classification_type_of(*it);
           
               if (c != NULL)
                 color = map_colors[c];
@@ -301,7 +301,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
            it != m_points->point_set()->first_selected(); ++ it)
         {
           QColor color (0, 0, 0);
-          CGAL::Classification_type* c = m_psc->classification_type_of(*it);
+          CGAL::Data_classification::Type* c = m_psc->classification_type_of(*it);
           
           if (c != NULL)
             {        
@@ -418,7 +418,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
       // for (std::size_t i = 0; i < m_psc->clusters().size(); ++ i)
       //   {
       //     QColor color (0, 0, 0);
-      //     CGAL::Classification_type *c = m_psc->classification_type_of(m_psc->clusters()[i].indices[0]);
+      //     CGAL::Data_classification::Type *c = m_psc->classification_type_of(m_psc->clusters()[i].indices[0]);
           
       //     if (c != NULL)
       //       {        
@@ -486,7 +486,7 @@ bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stre
        it != m_points->point_set()->end(); ++ it)
     {
       QColor color (0, 0, 0);
-      CGAL::Classification_type *c = m_psc->classification_type_of(m_psc->clusters()[*it].indices[0]);
+      CGAL::Data_classification::Type *c = m_psc->classification_type_of(m_psc->clusters()[*it].indices[0]);
           
       if (c != NULL)
         {        
@@ -1126,7 +1126,7 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
   m_psc->add_segmentation_attribute (m_col_att);
   
   m_psc->clear_classification_types();
-  std::vector<std::pair<CGAL::Classification_type*, QColor> > predef;
+  std::vector<std::pair<CGAL::Data_classification::Type*, QColor> > predef;
   for (std::size_t i = 0; i < classes.size(); ++ i)
     {
       predef.push_back (std::make_pair (get_or_add_classification_type(classes[i].c_str(), colors[i]),

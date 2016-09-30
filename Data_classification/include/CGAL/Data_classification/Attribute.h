@@ -1,11 +1,12 @@
-#ifndef CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_H
-#define CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_H
+#ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_H
+#define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_H
 
 #include <vector>
 
 namespace CGAL {
 
-
+namespace Data_classification {
+  
 /*!
   \ingroup PkgDataClassification
 
@@ -16,7 +17,7 @@ namespace CGAL {
 */
 
 
-class Segmentation_attribute
+class Attribute
 {
 public:
   /// \cond SKIP_IN_MANUAL
@@ -24,7 +25,7 @@ public:
   double mean;
   double max;
 
-  virtual ~Segmentation_attribute() { }
+  virtual ~Attribute() { }
   /// \endcond
 
   /*!
@@ -75,6 +76,8 @@ public:
   /// \endcond
 };
 
-}
+} // namespace Data_classification
 
-#endif // CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_H
+} // namespace CGAL
+
+#endif // CGAL_DATA_CLASSIFICATION_ATTRIBUTE_H

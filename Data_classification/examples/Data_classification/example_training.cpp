@@ -6,10 +6,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_classification.h>
 #include <CGAL/Data_classification/Planimetric_grid.h>
-#include <CGAL/Data_classification/Segmentation_attribute_vertical_dispersion.h>
-#include <CGAL/Data_classification/Segmentation_attribute_elevation.h>
-#include <CGAL/Data_classification/Segmentation_attribute_verticality.h>
-#include <CGAL/Data_classification/Segmentation_attribute_distance_to_plane.h>
+#include <CGAL/Data_classification/Attribute.h>
+#include <CGAL/Data_classification/Attribute_vertical_dispersion.h>
+#include <CGAL/Data_classification/Attribute_elevation.h>
+#include <CGAL/Data_classification/Attribute_verticality.h>
+#include <CGAL/Data_classification/Attribute_distance_to_plane.h>
 #include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -23,11 +24,11 @@ typedef CGAL::Point_set_classification<Kernel, Iterator, Pmap> Classification;
 typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Pmap>      Planimetric_grid;
 typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Pmap>          Neighborhood;
 typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Pmap>  Local_eigen_analysis;
-typedef CGAL::Segmentation_attribute Attribute;
-typedef CGAL::Segmentation_attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
-typedef CGAL::Segmentation_attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
-typedef CGAL::Segmentation_attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
-typedef CGAL::Segmentation_attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
+typedef CGAL::Data_classification::Attribute Attribute;
+typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
+typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
+typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
+typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
 
 
 class My_ply_interpreter
@@ -302,10 +303,10 @@ int main (int argc, char** argv)
     }
   
   // Add types to PSC
-  CGAL::Classification_type ground ("ground");
-  CGAL::Classification_type vege ("vegetation");
-  CGAL::Classification_type roof ("roof");
-  CGAL::Classification_type facade ("facade");
+  CGAL::Data_classification::Type ground ("ground");
+  CGAL::Data_classification::Type vege ("vegetation");
+  CGAL::Data_classification::Type roof ("roof");
+  CGAL::Data_classification::Type facade ("facade");
 
   for (std::size_t i = 0; i < labels.size(); ++ i)
     {
@@ -360,7 +361,7 @@ int main (int argc, char** argv)
     {
       f << pts[i] << " ";
       
-      CGAL::Classification_type* type = psc.classification_type_of (i);
+      CGAL::Data_classification::Type* type = psc.classification_type_of (i);
       if (type == &vege)
         f << "0 255 27 0" << std::endl;
       else if (type == &ground)

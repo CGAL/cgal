@@ -1,11 +1,13 @@
-#ifndef CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_ECHO_SCATTER_H
-#define CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_ECHO_SCATTER_H
+#ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ECHO_SCATTER_H
+#define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ECHO_SCATTER_H
 
 #include <vector>
 
 
 namespace CGAL {
 
+namespace Data_classification {
+  
   /*!
     \ingroup PkgDataClassification
 
@@ -20,7 +22,7 @@ namespace CGAL {
     \tparam EchoPMap Property map to access the echo values of input points.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap, typename EchoPMap>
-class Segmentation_attribute_echo_scatter : public Segmentation_attribute
+class Attribute_echo_scatter : public Attribute
 {
   typedef Data_classification::Image<float> Image_float;
   typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
@@ -39,13 +41,13 @@ public:
     \param radius_neighbors Radius of local neighborhoods
     \param weight Weight of the attribute
   */
-  Segmentation_attribute_echo_scatter (RandomAccessIterator begin,
-                                       RandomAccessIterator end,
-                                       EchoPMap echo_pmap,
-                                       Grid& grid,
-                                       const double grid_resolution,
-                                       double radius_neighbors = 1.,
-                                       double weight = 1.)
+  Attribute_echo_scatter (RandomAccessIterator begin,
+                          RandomAccessIterator end,
+                          EchoPMap echo_pmap,
+                          Grid& grid,
+                          const double grid_resolution,
+                          double radius_neighbors = 1.,
+                          double weight = 1.)
   {
     this->weight = weight;
     Image_float Scatter(grid.width(), grid.height());
@@ -117,6 +119,8 @@ public:
   /// \endcond
 };
 
-}
+} // namespace Data_classification
+  
+} // namespace CGAL
 
-#endif // CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_ECHO_SCATTER_H
+#endif // CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ECHO_SCATTER_H

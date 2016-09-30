@@ -1,11 +1,13 @@
-#ifndef CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
-#define CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
+#ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
+#define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
 
 #include <vector>
 
 #include <CGAL/Point_set_classification.h>
 
 namespace CGAL {
+
+namespace Data_classification {
 
   /*!
     \ingroup PkgDataClassification
@@ -23,7 +25,7 @@ namespace CGAL {
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
-class Segmentation_attribute_distance_to_plane : public Segmentation_attribute
+class Attribute_distance_to_plane : public Attribute
 {
   typedef Data_classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
                                                     PointPMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -40,11 +42,11 @@ public:
     \param eigen Class with precompute eigenvectors and eigenvalues
     \param weight Weight of the attribute
   */
-  Segmentation_attribute_distance_to_plane (RandomAccessIterator begin,
-                                            RandomAccessIterator end,
-                                            PointPMap point_pmap,
-                                            const Local_eigen_analysis& eigen,
-                                            double weight = 1.)
+  Attribute_distance_to_plane (RandomAccessIterator begin,
+                               RandomAccessIterator end,
+                               PointPMap point_pmap,
+                               const Local_eigen_analysis& eigen,
+                               double weight = 1.)
   {
     this->weight = weight;
     for(std::size_t i = 0; i < (std::size_t)(end - begin); i++)
@@ -66,6 +68,8 @@ public:
 };
 
 
-}
+} // namespace Data_classification
+  
+} // namespace CGAL
 
-#endif // CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
+#endif // CGAL_DATA_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H

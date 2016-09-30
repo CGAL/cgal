@@ -1,5 +1,5 @@
-#ifndef CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_VERTICAL_DISPERSION_H
-#define CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_VERTICAL_DISPERSION_H
+#ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H
+#define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H
 
 #include <vector>
 
@@ -8,6 +8,8 @@
 
 namespace CGAL {
 
+namespace Data_classification {
+  
   /*!
     \ingroup PkgDataClassification
 
@@ -25,7 +27,7 @@ namespace CGAL {
     \tparam PointPMap Property map to access the input points.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
-class Segmentation_attribute_vertical_dispersion : public Segmentation_attribute
+class Attribute_vertical_dispersion : public Attribute
 {
   typedef Data_classification::Image<float> Image_float;
   typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
@@ -43,13 +45,13 @@ public:
     \param radius_neighbors Radius of local neighborhoods
     \param weight Weight of the attribute
   */
-  Segmentation_attribute_vertical_dispersion (RandomAccessIterator begin,
-                                              RandomAccessIterator end,
-                                              PointPMap point_pmap,
-                                              Grid& grid,
-                                              const double grid_resolution,
-                                              double radius_neighbors = -1.,
-                                              double weight = 1.)
+  Attribute_vertical_dispersion (RandomAccessIterator begin,
+                                 RandomAccessIterator end,
+                                 PointPMap point_pmap,
+                                 Grid& grid,
+                                 const double grid_resolution,
+                                 double radius_neighbors = -1.,
+                                 double weight = 1.)
   {
     this->weight = weight;
     if (radius_neighbors < 0.)
@@ -135,4 +137,6 @@ public:
 
 }
 
-#endif // CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_VERTICAL_DISPERSION_H
+}
+
+#endif // CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H

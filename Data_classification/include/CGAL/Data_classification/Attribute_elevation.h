@@ -1,11 +1,15 @@
-#ifndef CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_ELEVATION_H
-#define CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_ELEVATION_H
+#ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ELEVATION_H
+#define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ELEVATION_H
 
 #include <vector>
 
-#include <CGAL/Point_set_classification.h>
+#include <CGAL/Data_classification/Attribute.h>
+#include <CGAL/Data_classification/Image.h>
+#include <CGAL/Data_classification/Planimetric_grid.h>
 
 namespace CGAL {
+
+namespace Data_classification {
 
   /*!
     \ingroup PkgDataClassification
@@ -22,12 +26,12 @@ namespace CGAL {
 
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
-class Segmentation_attribute_elevation : public Segmentation_attribute
+class Attribute_elevation : public Attribute
 {
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
-  typedef Data_classification::Image<float> Image_float;
-  typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
+  typedef Image<float> Image_float;
+  typedef Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
    
   std::vector<double> elevation_attribute;
   
@@ -46,15 +50,15 @@ public:
     \param weight Weight of the attribute
 
   */
-  Segmentation_attribute_elevation (RandomAccessIterator begin,
-                                    RandomAccessIterator end,
-                                    PointPMap point_pmap,
-                                    const Iso_cuboid_3& bbox,
-                                    Grid& grid,
-                                    const double grid_resolution,
-                                    double radius_neighbors = -1.,
-                                    double radius_dtm = -1.,
-                                    double weight = 1.)
+  Attribute_elevation (RandomAccessIterator begin,
+                       RandomAccessIterator end,
+                       PointPMap point_pmap,
+                       const Iso_cuboid_3& bbox,
+                       Grid& grid,
+                       const double grid_resolution,
+                       double radius_neighbors = -1.,
+                       double radius_dtm = -1.,
+                       double weight = 1.)
   {
     this->weight = weight;
     if (radius_neighbors < 0.)
@@ -395,9 +399,10 @@ public:
   virtual std::string id() { return "elevation"; }
   /// \endcond
 };
-  
+
+} // namespace Data_classification
 
 
-}
+} // namespace CGAL
 
-#endif // CGAL_DATA_CLASSIFICATION_SEGMENTATION_ATTRIBUTE_ELEVATION_H
+#endif // CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ELEVATION_H

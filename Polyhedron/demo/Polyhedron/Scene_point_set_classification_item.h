@@ -3,11 +3,11 @@
 
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Point_set_classification.h>
-#include <CGAL/Data_classification/Segmentation_attribute_vertical_dispersion.h>
-#include <CGAL/Data_classification/Segmentation_attribute_elevation.h>
-#include <CGAL/Data_classification/Segmentation_attribute_verticality.h>
-#include <CGAL/Data_classification/Segmentation_attribute_distance_to_plane.h>
-#include <CGAL/Data_classification/Segmentation_attribute_color.h>
+#include <CGAL/Data_classification/Attribute_vertical_dispersion.h>
+#include <CGAL/Data_classification/Attribute_elevation.h>
+#include <CGAL/Data_classification/Attribute_verticality.h>
+#include <CGAL/Data_classification/Attribute_distance_to_plane.h>
+#include <CGAL/Data_classification/Attribute_color.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
 
 #include "Scene_point_set_classification_item_config.h"
@@ -20,11 +20,11 @@
 
 
 template <typename Kernel, typename Iterator, typename Color_map>
-class Segmentation_attribute_empty_color : public CGAL::Segmentation_attribute_color<Kernel, Iterator, Color_map>
+class Attribute_empty_color : public CGAL::Data_classification::Attribute_color<Kernel, Iterator, Color_map>
 {
-  typedef CGAL::Segmentation_attribute_color<Kernel, Iterator, Color_map> Base;
+  typedef CGAL::Data_classification::Attribute_color<Kernel, Iterator, Color_map> Base;
 public:
-  Segmentation_attribute_empty_color ()
+  Attribute_empty_color ()
     : Base (Iterator(), Iterator(),
             Color_map(), 1.)
   { }
@@ -81,12 +81,12 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Point_map>      Planimetric_grid;
   typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Point_map>          Neighborhood;
   typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Point_map>  Local_eigen_analysis;
-  typedef CGAL::Segmentation_attribute_vertical_dispersion<Kernel, Iterator, Point_map> Dispersion;
-  typedef CGAL::Segmentation_attribute_elevation<Kernel, Iterator, Point_map>           Elevation;
-  typedef CGAL::Segmentation_attribute_verticality<Kernel, Iterator, Point_map>         Verticality;
-  typedef CGAL::Segmentation_attribute_distance_to_plane<Kernel, Iterator, Point_map>   Distance_to_plane;
-  typedef CGAL::Segmentation_attribute_color<Kernel, Iterator, Color_map>               Color_att;
-  typedef Segmentation_attribute_empty_color<Kernel, Iterator, Color_map>               Empty_color;
+  typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Point_map> Dispersion;
+  typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Point_map>           Elevation;
+  typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Point_map>         Verticality;
+  typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Point_map>   Distance_to_plane;
+  typedef CGAL::Data_classification::Attribute_color<Kernel, Iterator, Color_map>               Color_att;
+  typedef Attribute_empty_color<Kernel, Iterator, Color_map>               Empty_color;
 
 
 public:
@@ -298,18 +298,18 @@ public:
       if (!(classes[i].checkbox->isChecked()))
         continue;
 
-      CGAL::Classification_type* ct = new CGAL::Classification_type
+      CGAL::Data_classification::Type* ct = new CGAL::Data_classification::Type
         (classes[i].label->text().toLower().toStdString().c_str());
       ct->set_attribute_effect
-        (m_disp, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[0]->currentIndex()));
+        (m_disp, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[0]->currentIndex()));
       ct->set_attribute_effect
-        (m_d2p, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[1]->currentIndex()));
+        (m_d2p, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[1]->currentIndex()));
       ct->set_attribute_effect
-        (m_verti, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[2]->currentIndex()));
+        (m_verti, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[2]->currentIndex()));
       ct->set_attribute_effect
-        (m_elev, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[3]->currentIndex()));
+        (m_elev, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[3]->currentIndex()));
       ct->set_attribute_effect
-        (m_col_att, (CGAL::Classification_type::Attribute_effect)(classes[i].combo[4]->currentIndex()));
+        (m_col_att, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[4]->currentIndex()));
 
       std::cerr << " * ";
       ct->info();
@@ -338,7 +338,7 @@ public:
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
       {
-        CGAL::Classification_type* c = m_psc->classification_type_of (*it);
+        CGAL::Data_classification::Type* c = m_psc->classification_type_of (*it);
         if (c == NULL)
           continue;
         
@@ -366,7 +366,7 @@ public:
 
   Scene_points_with_normal_item* points_item() { return m_points; }
 
-  CGAL::Classification_type* get_or_add_classification_type
+  CGAL::Data_classification::Type* get_or_add_classification_type
     (const char* name, const QColor& color)
   {
     for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
@@ -376,7 +376,7 @@ public:
           return m_predefined_types[i].first;
         }
     m_predefined_types.push_back
-      (std::make_pair (new CGAL::Classification_type (name), color));
+      (std::make_pair (new CGAL::Data_classification::Type (name), color));
     m_psc->add_classification_type (m_predefined_types.back().first);
     return m_predefined_types.back().first;
   }
@@ -399,7 +399,7 @@ public:
   
   void add_selection_to_training_set (const char* name, const QColor& color)
   {
-    CGAL::Classification_type* class_type = get_or_add_classification_type (name, color);
+    CGAL::Data_classification::Type* class_type = get_or_add_classification_type (name, color);
     if (!(m_psc->classification_prepared()))
       m_psc->prepare_classification();
     
@@ -420,7 +420,7 @@ private:
   Scene_points_with_normal_item* m_points;
 
   PSC* m_psc;
-  std::vector<std::pair<CGAL::Classification_type*, QColor> > m_predefined_types;
+  std::vector<std::pair<CGAL::Data_classification::Type*, QColor> > m_predefined_types;
 
   Planimetric_grid* m_grid;
   Neighborhood* m_neighborhood;
