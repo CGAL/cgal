@@ -11,6 +11,7 @@
 #include <CGAL/Data_classification/Attribute_elevation.h>
 #include <CGAL/Data_classification/Attribute_verticality.h>
 #include <CGAL/Data_classification/Attribute_distance_to_plane.h>
+#include <CGAL/Data_classification/Attributes_eigen.h>
 #include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -29,6 +30,15 @@ typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterato
 typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
 typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
 typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
+typedef CGAL::Data_classification::Attribute_linearity<Kernel, Iterator, Pmap>           Linearity;
+typedef CGAL::Data_classification::Attribute_planarity<Kernel, Iterator, Pmap>           Planarity;
+typedef CGAL::Data_classification::Attribute_sphericity<Kernel, Iterator, Pmap>          Sphericity;
+typedef CGAL::Data_classification::Attribute_omnivariance<Kernel, Iterator, Pmap>        Omnivariance;
+typedef CGAL::Data_classification::Attribute_anisotropy<Kernel, Iterator, Pmap>          Anisotropy;
+typedef CGAL::Data_classification::Attribute_eigentropy<Kernel, Iterator, Pmap>          Eigentropy;
+typedef CGAL::Data_classification::Attribute_sum_eigenvalues<Kernel, Iterator, Pmap>     Sum_eigen;
+typedef CGAL::Data_classification::Attribute_surface_variation<Kernel, Iterator, Pmap>   Surface_variation;
+
 
 
 class My_ply_interpreter
@@ -68,184 +78,6 @@ public:
 
 };
 
-
-struct Linearity : Attribute
-{
-  std::vector<double> attrib;
-
-  Linearity (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back ((ev[2] - ev[1]) / (ev[2] + 1e-10));
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "linearity"; }
-};
-
-struct Planarity : Attribute
-{
-  std::vector<double> attrib;
-
-  Planarity (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back ((ev[1] - ev[0]) / (ev[2] + 1e-10));
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "planarity"; }
-};
-
-struct Sphericity : Attribute
-{
-  std::vector<double> attrib;
-
-  Sphericity (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (ev[0] / (ev[2] + 1e-10));
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "sphericity"; }
-};
-
-struct Omnivariance : Attribute
-{
-  std::vector<double> attrib;
-
-  Omnivariance (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (std::pow (std::fabs(ev[0] * ev[1] * ev[2]), 0.333333333));
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "omnivariance"; }
-};
-
-struct Anisotropy : Attribute
-{
-  std::vector<double> attrib;
-
-  Anisotropy (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back ((ev[2] - ev[0]) / (ev[2] + 1e-10));
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "anisotropy"; }
-};
-
-struct Eigentropy : Attribute
-{
-  std::vector<double> attrib;
-
-  Eigentropy (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (- ev[0] * std::log(std::fabs(ev[0]) + 1e-10)
-                          - ev[1] * std::log(std::fabs(ev[1]) + 1e-10)
-                          - ev[2] * std::log(std::fabs(ev[2]) + 1e-10));
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "eigentropy"; }
-};
-
-struct SumEigen : Attribute
-{
-  std::vector<double> attrib;
-
-  SumEigen (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (ev[0] + ev[1] + ev[2]);
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "sum_eigen"; }
-};
-
-struct SurfaceVariation : Attribute
-{
-  std::vector<double> attrib;
-
-  SurfaceVariation (Iterator begin, Iterator end, Local_eigen_analysis& eigen)
-  {
-    std::size_t size = (std::size_t)(end - begin);
-    attrib.reserve (size);
-    for (std::size_t i = 0; i < size; ++ i)
-      {
-        const Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (ev[0] / (ev[0] + ev[1] + ev[2] + 1e-10));
-      }
-    this->compute_mean_max (attrib, mean, this->max);
-  }
-  virtual double value (std::size_t pt_index)
-  {
-    return attrib[pt_index];
-  }
-  virtual std::string id() { return "surface_variation"; }
-};
 
 int main (int argc, char** argv)
 {
@@ -295,8 +127,8 @@ int main (int argc, char** argv)
       psc.add_segmentation_attribute (new Omnivariance (pts.begin(), pts.end(), eigen));
       psc.add_segmentation_attribute (new Anisotropy (pts.begin(), pts.end(), eigen));
       psc.add_segmentation_attribute (new Eigentropy (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new SumEigen (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new SurfaceVariation (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Sum_eigen (pts.begin(), pts.end(), eigen));
+      psc.add_segmentation_attribute (new Surface_variation (pts.begin(), pts.end(), eigen));
       grid_resolution *= 2;
       radius_neighbors *= 2;
       radius_dtm *= 2;
