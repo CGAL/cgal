@@ -207,7 +207,7 @@ int main(int argc,char** argv) {
   //~ CGAL::Polygon_mesh_processing::isotropic_remeshing(P, faces,0.1);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
     faces,0.3, union_,
-    PMP::parameters::edge_is_constrained_map(Edge_mark_property_map<Polyhedron>()).number_of_iterations(15).smooth_along_features(true)
+    PMP::parameters::edge_is_constrained_map(Edge_mark_property_map<Polyhedron>()).number_of_iterations(15).relax_constraints(true)
   );
 
   output.open("P_union_Q_remeshed.off");
