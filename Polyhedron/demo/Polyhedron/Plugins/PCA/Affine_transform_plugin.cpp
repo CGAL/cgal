@@ -31,15 +31,15 @@ public:
   {
     frame->setPosition(pos);
     Point_set ps= *item->point_set();
-    const Kernel::Point_3& p = *(ps.begin());
+    const Kernel::Point_3& p = ps.point(*(ps.begin()));
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     std::random_shuffle (ps.begin(), ps.end());
     std::vector<float> points;
     points.reserve(3*ps.size());
     for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
     {
-      bbox = bbox + it->bbox();
-      const UI_point& p = *it;
+      const Kernel::Point_3& p = ps.point(*it);
+      bbox = bbox + p.bbox();
       points.push_back(p.x()-center_.x);
       points.push_back(p.y()-center_.y);
       points.push_back(p.z()-center_.z);
@@ -118,12 +118,12 @@ public:
   void compute_bbox() const
   {
     Point_set ps= *base->point_set();
-    const Kernel::Point_3& p = *(ps.begin());
+    const Kernel::Point_3& p = ps.point(*(ps.begin()));
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
 
     for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
     {
-      bbox = bbox + it->bbox();
+      bbox = bbox + ps.point(*it).bbox();
     }
     qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
     qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
@@ -490,19 +490,18 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     Point_set* new_ps = new Point_set();
     new_ps->reserve(base_ps->size());
     qglviewer::Vec c = transform_points_item->center();
-    for(std::size_t id = 0; id<base_ps->size(); ++id)
+    for(Point_set::const_iterator it = base_ps->begin(); it != base_ps->end(); ++ it)
     {
-      QVector3D vec = transform_matrix * QVector3D(base_ps->at(id).x() - c.x,
-                                                   base_ps->at(id).y() - c.y,
-                                                   base_ps->at(id).z() - c.z);
-      UI_point p(vec.x(), vec.y(), vec.z());
-      new_ps->push_back(p);
+      QVector3D vec = transform_matrix * QVector3D(base_ps->point(*it).x() - c.x,
+                                                   base_ps->point(*it).y() - c.y,
+                                                   base_ps->point(*it).z() - c.z);
+      new_ps->insert(Kernel::Point_3 (vec.x(), vec.y(), vec.z()));
     }
 
 
     Scene_points_with_normal_item* new_item=new Scene_points_with_normal_item();
-    for(std::size_t id = 0; id<new_ps->size(); ++id)
-      new_item->point_set()->push_back(new_ps->at(id));
+    for(Point_set::const_iterator it = new_ps->begin(); it != new_ps->end(); ++ it)
+      new_item->point_set()->insert(new_ps->point(*it));
     new_item->setName(tr("%1_transformed").arg(transform_points_item->getBase()->name()));
 
     scene->replaceItem(tr_item_index,new_item);

@@ -233,8 +233,8 @@ private:
     // extract seeds
     std::vector<Kernel::Point_3> seeds;
     Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
-      Q_FOREACH(UI_point_3<Kernel> pt, *points_item->point_set())
-        seeds.push_back(pt);
+      Q_FOREACH(Point_set_3<Kernel>::Index it, *points_item->point_set())
+        seeds.push_back(points_item->point_set()->point(it));
 
     // Create dialog box
     QDialog dialog(mw);
@@ -381,8 +381,8 @@ private:
         }
     if (res==-1) return res;
     Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
-      Q_FOREACH(UI_point_3<Kernel> pt, *points_item->point_set())
-        if (pt[res]!=ref[res])
+      Q_FOREACH(Point_set_3<Kernel>::Index pt, *points_item->point_set())
+      if (points_item->point_set()->point(pt)[res]!=ref[res])
           return -1;
     return res;
   }
