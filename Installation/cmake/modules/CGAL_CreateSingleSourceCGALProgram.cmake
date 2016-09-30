@@ -21,7 +21,7 @@ function(create_single_source_cgal_program firstfile )
     add_executable(${exe_name} ${all})
 
     if(NOT NO_TESTING)
-      cgal_add_test("${exe_name}")
+      cgal_add_test(${exe_name})
     endif(NOT NO_TESTING)
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
