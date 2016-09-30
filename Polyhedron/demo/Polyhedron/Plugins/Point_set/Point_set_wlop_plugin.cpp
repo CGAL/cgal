@@ -105,6 +105,7 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
     Scene_points_with_normal_item* new_item
       = new Scene_points_with_normal_item();
     new_item->setName (tr("%1 (WLOP processed)").arg(item->name()));
+    new_item->set_has_normals(false);
     new_item->setVisible(true);
     item->setVisible(false);
     scene->addItem(new_item);
