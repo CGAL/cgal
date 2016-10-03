@@ -16,7 +16,7 @@ difference however is that bounding boxes have always double coordinates,
 whereas the coordinate type of an iso-oriented cuboid is chosen by 
 the user. 
 
-\sa `Kernel::IsoCuboid_3` 
+\cgalModels `Kernel::IsoCuboid_3`
 
 */
 template< typename Kernel >

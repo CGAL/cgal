@@ -17,7 +17,7 @@ to `T`, and `Kernel::FT` is equal to
 
 The following operations can be applied on points: 
 
-\sa `Kernel::Point_3` 
+\cgalModels `Kernel::Point_3`
 
 */
 template< typename Kernel >

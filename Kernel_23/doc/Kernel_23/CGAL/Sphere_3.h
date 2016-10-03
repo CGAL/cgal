@@ -11,7 +11,7 @@ positive side is to the left of the boundary. The boundary also
 splits \f$ \E^3\f$ into a bounded and an unbounded side. Note that the 
 sphere can be degenerated, i.e.\ the squared radius may be zero. 
 
-\sa `Kernel::Sphere_3` 
+\cgalModels `Kernel::Sphere_3`
 
 */
 template< typename Kernel >

@@ -14,7 +14,7 @@ to compute the square of the length, because otherwise we had to
 perform a square root operation which is not defined for all 
 number types, which is expensive, and may not be exact. 
 
-\sa `Kernel::Segment_3` 
+\cgalModels `Kernel::Segment_3`
 
 */
 template< typename Kernel >

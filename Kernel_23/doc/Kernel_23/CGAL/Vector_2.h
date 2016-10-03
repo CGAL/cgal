@@ -12,7 +12,7 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument 
 instead of a vector initialized with zeros. 
 
-\sa `Kernel::Vector_2` 
+\cgalModels `Kernel::Vector_2`
 
 */
 template< typename Kernel >
