@@ -607,13 +607,23 @@ public:
   
   /*!
     \brief Adds a classification type
-    \param type Pointer to the classification type object
+
    */
   Data_classification::Type_handle add_classification_type (const char* name)
   {
     Data_classification::Type_handle out (new Data_classification::Type (name));
     m_types.push_back (out);
     return out;
+  }
+
+  
+  /*!
+    \brief Adds a classification type
+
+   */
+  void add_classification_type (Data_classification::Type_handle type)
+  {
+    m_types.push_back (type);
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -635,15 +645,6 @@ public:
   {
     m_types.clear();
   }
-
-  /// \cond SKIP_IN_MANUAL
-  void clear_and_delete_classification_types ()
-  {
-    for (std::size_t i = 0; i < m_types.size(); ++ i)
-      delete m_types[i];
-    m_types.clear();
-  }
-  /// \endcond
 
   /*!
     \brief Adds an attribute
@@ -705,7 +706,7 @@ public:
   {
     if (m_assigned_type.size() <= index
         || m_assigned_type[index] == (std::size_t)(-1))
-      return NULL;
+      return Data_classification::Type_handle();
     return m_types[m_assigned_type[index]];
   }
 

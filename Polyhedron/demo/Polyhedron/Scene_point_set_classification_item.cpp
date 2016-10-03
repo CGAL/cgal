@@ -33,12 +33,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
   m_psc (psc),
   m_grid (NULL),
   m_neighborhood (NULL),
-  m_eigen (NULL),
-  m_disp (NULL),
-  m_elev (NULL),
-  m_verti (NULL),
-  m_d2p (NULL),
-  m_col_att (NULL)
+  m_eigen (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
@@ -53,12 +48,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
     m_psc (NULL),
     m_grid (NULL),
     m_neighborhood (NULL),
-    m_eigen (NULL),
-    m_disp (NULL),
-    m_elev (NULL),
-    m_verti (NULL),
-    m_d2p (NULL),
-    m_col_att (NULL)
+    m_eigen (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
@@ -79,12 +69,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(const S
    m_psc (NULL),
    m_grid (NULL),
    m_neighborhood (NULL),
-   m_eigen (NULL),
-   m_disp (NULL),
-   m_elev (NULL),
-   m_verti (NULL),
-   m_d2p (NULL),
-   m_col_att (NULL)
+   m_eigen (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
@@ -103,16 +88,6 @@ Scene_point_set_classification_item::~Scene_point_set_classification_item()
     delete m_neighborhood;
   if (m_eigen != NULL)
     delete m_eigen;
-  if (m_disp != NULL)
-    delete m_disp;
-  if (m_elev != NULL)
-    delete m_elev;
-  if (m_verti != NULL)
-    delete m_verti;
-  if (m_d2p != NULL)
-    delete m_d2p;
-  if (m_col_att != NULL)
-    delete m_col_att;
 }
 
 void Scene_point_set_classification_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
@@ -251,9 +226,9 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
                it != m_points->point_set()->first_selected(); ++ it)
             {
               QColor color (0, 0, 0);
-              CGAL::Data_classification::Type* c = m_psc->classification_type_of(*it);
+              Type_handle c = m_psc->classification_type_of(*it);
           
-              if (c != NULL)
+              if (c != Type_handle())
                 {        
                   if (c->id() == "vegetation")
                     color = QColor(0, 255, 27);
@@ -276,7 +251,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
         }
       else
         {
-          std::map<CGAL::Data_classification::Type*, QColor> map_colors;
+          std::map<Type_handle, QColor> map_colors;
           for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
             map_colors.insert (m_predefined_types[i]);
           
@@ -284,9 +259,9 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
                it != m_points->point_set()->first_selected(); ++ it)
             {
               QColor color (0, 0, 0);
-              CGAL::Data_classification::Type* c = m_psc->classification_type_of(*it);
+              Type_handle c = m_psc->classification_type_of(*it);
           
-              if (c != NULL)
+              if (c != Type_handle())
                 color = map_colors[c];
 
               colors_points.push_back ((double)(color.red()) / 255.);
@@ -301,9 +276,9 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
            it != m_points->point_set()->first_selected(); ++ it)
         {
           QColor color (0, 0, 0);
-          CGAL::Data_classification::Type* c = m_psc->classification_type_of(*it);
+          Type_handle c = m_psc->classification_type_of(*it);
           
-          if (c != NULL)
+          if (c != Type_handle())
             {        
               if (c->id() == "vegetation")
                 color = QColor(0, 255, 27);
@@ -463,7 +438,7 @@ Scene_point_set_classification_item::clone() const
 // Write point set to .PLY file
 bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stream) const
 {
-  if (m_psc->classification_type_of(0) == NULL)
+  if (m_psc->classification_type_of(0) == Type_handle())
     {
       std::cerr << "Error: classification was not performed." << std::endl;
       return false;
@@ -486,9 +461,9 @@ bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stre
        it != m_points->point_set()->end(); ++ it)
     {
       QColor color (0, 0, 0);
-      CGAL::Data_classification::Type *c = m_psc->classification_type_of(m_psc->clusters()[*it].indices[0]);
+      Type_handle c = m_psc->classification_type_of(m_psc->clusters()[*it].indices[0]);
           
-      if (c != NULL)
+      if (c != Type_handle())
         {        
           if (c->id() == "vegetation")
             color = QColor(0, 255, 27);
@@ -635,15 +610,15 @@ int Scene_point_set_classification_item::real_index_color() const
 {
   int out = m_index_color;
   
-  if (out == 3 && m_disp == NULL)
+  if (out == 3 && m_disp == Attribute_handle())
     out = 0;
-  if (out == 4 && m_d2p == NULL)
+  if (out == 4 && m_d2p == Attribute_handle())
     out = 0;
-  if (out == 5 && m_verti == NULL)
+  if (out == 5 && m_verti == Attribute_handle())
     out = 0;
-  if (out == 6 && m_elev == NULL)
+  if (out == 6 && m_elev == Attribute_handle())
     out = 0;
-  if (out == 7 && m_col_att == NULL)
+  if (out == 7 && m_col_att == Attribute_handle())
     out = 0;
 
   if (out == 0 && !(m_points->point_set()->has_colors()))
@@ -655,7 +630,8 @@ void Scene_point_set_classification_item::estimate_parameters (double& grid_reso
                                                                double& radius_neighbors,
                                                                double& radius_dtm)
 {
-  double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (m_points->point_set()->begin(), m_points->point_set()->end(),
+  double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (m_points->point_set()->begin(),
+                                                                                m_points->point_set()->end(),
                                                                                 m_points->point_set()->point_map(), 6);
 
   grid_resolution = average_spacing;
@@ -670,10 +646,9 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
 {
   Q_ASSERT (!(m_points->point_set()->empty()));
   Q_ASSERT (m_psc != NULL);
-  m_psc->clear_segmentation_attributes();
+  m_psc->clear_attributes();
 
   compute_bbox();
-  
   if (m_grid != NULL) delete m_grid;
   m_grid = new Planimetric_grid (m_points->point_set()->begin(),
                                  m_points->point_set()->end(),
@@ -692,41 +667,36 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
                                       *m_neighborhood,
                                       radius_neighbors);
   
-  
-  if (m_disp != NULL) delete m_disp;
-  m_disp = new Dispersion (m_points->point_set()->begin(),
+  m_disp = Attribute_handle (new Dispersion (m_points->point_set()->begin(),
                            m_points->point_set()->end(),
                            m_points->point_set()->point_map(),
                            *m_grid,
                            grid_resolution,
                            radius_neighbors,
-                           1.);
-  m_psc->add_segmentation_attribute (m_disp);
+                           1.));
+  m_psc->add_attribute (m_disp);
   
-  if (m_d2p != NULL) delete m_d2p;
-  m_d2p = new Distance_to_plane (m_points->point_set()->begin(),
+  m_d2p = Attribute_handle (new Distance_to_plane (m_points->point_set()->begin(),
                                  m_points->point_set()->end(),
                                  m_points->point_set()->point_map(),
                                  *m_eigen,
-                                 1.);
-  m_psc->add_segmentation_attribute (m_d2p);
+                                 1.));
+  m_psc->add_attribute (m_d2p);
   
-  if (m_verti != NULL) delete m_verti;
   if (m_points->point_set()->has_normal_map())
-    m_verti = new Verticality (m_points->point_set()->begin(),
+    m_verti = Attribute_handle (new Verticality (m_points->point_set()->begin(),
                                m_points->point_set()->end(),
                                m_points->point_set()->normal_map(),
-                               1.);
+                               1.));
   else
-    m_verti = new Verticality (m_points->point_set()->begin(),
+    m_verti = Attribute_handle (new Verticality (m_points->point_set()->begin(),
                                m_points->point_set()->end(),
                                *m_eigen,
-                               1.);
+                               1.));
 
-  m_psc->add_segmentation_attribute (m_verti);
+  m_psc->add_attribute (m_verti);
 
-  if (m_elev != NULL) delete m_elev;
-  m_elev = new Elevation (m_points->point_set()->begin(),
+  m_elev = Attribute_handle (new Elevation (m_points->point_set()->begin(),
                           m_points->point_set()->end(),
                           m_points->point_set()->point_map(),
                           _bbox,
@@ -734,20 +704,19 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
                           grid_resolution,
                           radius_neighbors,
                           radius_dtm,
-                          1.);
-  m_psc->add_segmentation_attribute (m_elev);
+                          1.));
+  m_psc->add_attribute (m_elev);
 
-  if (m_col_att != NULL) delete m_col_att;
   if (m_points->point_set()->has_colors())
-    m_col_att = new Color_att (m_points->point_set()->begin(),
+    m_col_att = Attribute_handle (new Color_att (m_points->point_set()->begin(),
                                m_points->point_set()->end(),
                                Point_set_color_map<Point_set>(m_points->point_set()),
                                1.,
-                               c.hue(), c.saturation(), c.value());
+                               c.hue(), c.saturation(), c.value()));
   else
-    m_col_att = new Empty_color ();
+    m_col_att = Attribute_handle (new Empty_color ());
 
-  m_psc->add_segmentation_attribute (m_col_att);
+  m_psc->add_attribute (m_col_att);
 
 }
 
@@ -1117,21 +1086,22 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
       return;
     }
 
-  m_psc->clear_segmentation_attributes();
+  m_psc->clear_attributes();
   
-  m_psc->add_segmentation_attribute (m_disp);
-  m_psc->add_segmentation_attribute (m_elev);
-  m_psc->add_segmentation_attribute (m_verti);
-  m_psc->add_segmentation_attribute (m_d2p);
-  m_psc->add_segmentation_attribute (m_col_att);
+  m_psc->add_attribute (m_disp);
+  m_psc->add_attribute (m_elev);
+  m_psc->add_attribute (m_verti);
+  m_psc->add_attribute (m_d2p);
+  m_psc->add_attribute (m_col_att);
   
   m_psc->clear_classification_types();
-  std::vector<std::pair<CGAL::Data_classification::Type*, QColor> > predef;
+  std::vector<std::pair<Type_handle, QColor> > predef;
   for (std::size_t i = 0; i < classes.size(); ++ i)
     {
       predef.push_back (std::make_pair (get_or_add_classification_type(classes[i].c_str(), colors[i]),
                                         colors[i]));
-      m_psc->add_classification_type (predef.back().first);
+      if (m_psc->number_of_classification_types() != i + 1)
+        m_psc->add_classification_type (predef.back().first);
     }
   m_predefined_types.swap (predef);
 

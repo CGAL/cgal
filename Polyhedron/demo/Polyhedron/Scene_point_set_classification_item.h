@@ -3,11 +3,14 @@
 
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Point_set_classification.h>
+#include <CGAL/Data_classification/Attribute.h>
 #include <CGAL/Data_classification/Attribute_vertical_dispersion.h>
 #include <CGAL/Data_classification/Attribute_elevation.h>
 #include <CGAL/Data_classification/Attribute_verticality.h>
 #include <CGAL/Data_classification/Attribute_distance_to_plane.h>
 #include <CGAL/Data_classification/Attribute_color.h>
+#include <CGAL/Data_classification/Attribute_echo_scatter.h>
+#include <CGAL/Data_classification/Attributes_eigen.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
 
 #include "Scene_point_set_classification_item_config.h"
@@ -81,15 +84,17 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Point_map>      Planimetric_grid;
   typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Point_map>          Neighborhood;
   typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Point_map>  Local_eigen_analysis;
+  typedef CGAL::Data_classification::Type_handle                                                Type_handle;
+  typedef CGAL::Data_classification::Attribute_handle                                           Attribute_handle;
   typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Point_map> Dispersion;
   typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Point_map>           Elevation;
   typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Point_map>         Verticality;
   typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Point_map>   Distance_to_plane;
   typedef CGAL::Data_classification::Attribute_color<Kernel, Iterator, Color_map>               Color_att;
-  typedef Attribute_empty_color<Kernel, Iterator, Color_map>               Empty_color;
+  typedef Attribute_empty_color<Kernel, Iterator, Color_map>                                    Empty_color;
 
 
-public:
+ public:
   
   Scene_point_set_classification_item(PSC* psc = NULL);
   Scene_point_set_classification_item(Scene_points_with_normal_item* points);
@@ -110,7 +115,7 @@ public:
   };
 
   template <bool use_y>
-  struct Sort_by_coordinate
+    struct Sort_by_coordinate
   {
     std::vector<Point_3>& m_hps;
     Sort_by_coordinate (std::vector<Point_3>& hps) : m_hps (hps) { }
@@ -124,7 +129,7 @@ public:
   };
   
   template <typename OutputIterator>
-  bool segment_point_set (std::size_t nb_max_pt, OutputIterator output)
+    bool segment_point_set (std::size_t nb_max_pt, OutputIterator output)
   {
     return false;
     // if (m_points->point_set()->size() < nb_max_pt)
@@ -276,70 +281,67 @@ public:
   void compute_clusters (const double& radius_neighbors);
 
   template <typename Classes>
-  bool run (double weight_scat, double weight_plan,
-            double weight_hori, double weight_elev, double weight_colo,
-            Classes& classes, int method, double weight,
-            double radius_neighbors)
+    bool run (double weight_scat, double weight_plan,
+              double weight_hori, double weight_elev, double weight_colo,
+              Classes& classes, int method, double weight,
+              double radius_neighbors)
   {
-  if (m_disp == NULL || m_d2p == NULL || m_verti == NULL || m_elev == NULL || m_col_att == NULL)
+    if (m_disp == Attribute_handle())
+      return false;
+
+    m_disp->weight = std::tan ((1. - weight_scat) * (CGAL_PI/2));
+    m_d2p->weight = std::tan ((1. - weight_plan) * (CGAL_PI/2));
+    m_verti->weight = std::tan ((1. - weight_hori) * (CGAL_PI/2));
+    m_elev->weight = std::tan ((1. - weight_elev) * (CGAL_PI/2));
+    m_col_att->weight = std::tan ((1. - weight_colo) * (CGAL_PI/2));
+
+    m_psc->clear_classification_types();
+
+    std::cerr << "Running with:" << std::endl;
+    for (std::size_t i = 0; i < classes.size(); ++ i)
+      {
+        if (!(classes[i].checkbox->isChecked()))
+          continue;
+
+        Type_handle ct
+          = m_psc->add_classification_type (classes[i].label->text().toLower().toStdString().c_str());
+        ct->set_attribute_effect
+          (m_disp, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[0]->currentIndex()));
+        ct->set_attribute_effect
+          (m_d2p, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[1]->currentIndex()));
+        ct->set_attribute_effect
+          (m_verti, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[2]->currentIndex()));
+        ct->set_attribute_effect
+          (m_elev, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[3]->currentIndex()));
+        ct->set_attribute_effect
+          (m_col_att, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[4]->currentIndex()));
+
+        std::cerr << " * ";
+        ct->info();
+      }
+  
+    std::cerr << "Weights: " << m_disp->weight << " " << m_d2p->weight << " " << m_verti->weight
+              << " " << m_elev->weight << " " << m_col_att->weight << std::endl;
+  
+    if (method == 0)
+      m_psc->run();
+    else if (method == 1)
+      m_psc->run_with_graphcut (*m_neighborhood, weight);
+    else if (method == 2)
+      m_psc->run_with_groups (*m_neighborhood, radius_neighbors);
+  
+    invalidateOpenGLBuffers();
     return false;
-
-  m_disp->weight = std::tan ((1. - weight_scat) * (CGAL_PI/2));
-  m_d2p->weight = std::tan ((1. - weight_plan) * (CGAL_PI/2));
-  m_verti->weight = std::tan ((1. - weight_hori) * (CGAL_PI/2));
-  m_elev->weight = std::tan ((1. - weight_elev) * (CGAL_PI/2));
-  m_col_att->weight = std::tan ((1. - weight_colo) * (CGAL_PI/2));
-
-  m_psc->clear_and_delete_classification_types();
-
-  std::cerr << "Running with:" << std::endl;
-  for (std::size_t i = 0; i < classes.size(); ++ i)
-    {
-      if (!(classes[i].checkbox->isChecked()))
-        continue;
-
-      CGAL::Data_classification::Type* ct = new CGAL::Data_classification::Type
-        (classes[i].label->text().toLower().toStdString().c_str());
-      ct->set_attribute_effect
-        (m_disp, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[0]->currentIndex()));
-      ct->set_attribute_effect
-        (m_d2p, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[1]->currentIndex()));
-      ct->set_attribute_effect
-        (m_verti, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[2]->currentIndex()));
-      ct->set_attribute_effect
-        (m_elev, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[3]->currentIndex()));
-      ct->set_attribute_effect
-        (m_col_att, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[4]->currentIndex()));
-
-      std::cerr << " * ";
-      ct->info();
-
-      m_psc->add_classification_type (ct);
-    }
-  
-
-  std::cerr << "Weights: " << m_disp->weight << " " << m_d2p->weight << " " << m_verti->weight
-            << " " << m_elev->weight << " " << m_col_att->weight << std::endl;
-  
-  if (method == 0)
-    m_psc->run();
-  else if (method == 1)
-    m_psc->run_with_graphcut (*m_neighborhood, weight);
-  else if (method == 2)
-    m_psc->run_with_groups (*m_neighborhood, radius_neighbors);
-  
-  invalidateOpenGLBuffers();
-  return false;
-}
+  }
 
   template <typename ItemContainer>
-  void generate_point_sets (ItemContainer& items)
+    void generate_point_sets (ItemContainer& items)
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
       {
-        CGAL::Data_classification::Type* c = m_psc->classification_type_of (*it);
-        if (c == NULL)
+        Type_handle c = m_psc->classification_type_of (*it);
+        if (c == Type_handle())
           continue;
         
         if (c->id() == "vegetation")
@@ -366,7 +368,7 @@ public:
 
   Scene_points_with_normal_item* points_item() { return m_points; }
 
-  CGAL::Data_classification::Type* get_or_add_classification_type
+  Type_handle get_or_add_classification_type
     (const char* name, const QColor& color)
   {
     for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
@@ -375,10 +377,11 @@ public:
           m_predefined_types[i].second = color;
           return m_predefined_types[i].first;
         }
+    Type_handle out = m_psc->add_classification_type(name);
+
     m_predefined_types.push_back
-      (std::make_pair (new CGAL::Data_classification::Type (name), color));
-    m_psc->add_classification_type (m_predefined_types.back().first);
-    return m_predefined_types.back().first;
+      (std::make_pair (out, color));
+    return out;
   }
 
   void reset_training_sets()
@@ -388,7 +391,7 @@ public:
 
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
-      m_psc->set_classification_type_of(*it, NULL);
+      m_psc->set_classification_type_of(*it, Type_handle());
     invalidateOpenGLBuffers();
     Q_EMIT itemChanged();
   }
@@ -399,7 +402,7 @@ public:
   
   void add_selection_to_training_set (const char* name, const QColor& color)
   {
-    CGAL::Data_classification::Type* class_type = get_or_add_classification_type (name, color);
+    Type_handle class_type = get_or_add_classification_type (name, color);
     if (!(m_psc->classification_prepared()))
       m_psc->prepare_classification();
     
@@ -412,32 +415,32 @@ public:
     m_points->resetSelection();
   }
                                    
-public Q_SLOTS:
+ public Q_SLOTS:
 
-// Data
-private:
+  // Data
+ private:
   
   Scene_points_with_normal_item* m_points;
 
   PSC* m_psc;
-  std::vector<std::pair<CGAL::Data_classification::Type*, QColor> > m_predefined_types;
+  std::vector<std::pair<Type_handle, QColor> > m_predefined_types;
 
   Planimetric_grid* m_grid;
   Neighborhood* m_neighborhood;
   Local_eigen_analysis* m_eigen;
   
-  Dispersion* m_disp;
-  Elevation* m_elev;
-  Verticality* m_verti;
-  Distance_to_plane* m_d2p;
-  Color_att* m_col_att;
+  Attribute_handle m_disp;
+  Attribute_handle m_elev;
+  Attribute_handle m_verti;
+  Attribute_handle m_d2p;
+  Attribute_handle m_col_att;
 
   int m_index_color;
   
   enum VAOs {
-      Edges=0,
-      ThePoints,
-      NbOfVaos = ThePoints+1
+    Edges=0,
+    ThePoints,
+    NbOfVaos = ThePoints+1
   };
   enum VBOs {
     Edges_vertices = 0,
