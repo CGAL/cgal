@@ -69,7 +69,7 @@ struct Cached_extended_euclidean_algorithm{
     
   CACHE& cache()
   {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE(CACHE, m_cache, CACHE());
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(CACHE, m_cache);
     return m_cache;
   }
 
