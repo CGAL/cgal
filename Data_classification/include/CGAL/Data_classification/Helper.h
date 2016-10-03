@@ -22,9 +22,6 @@ namespace Data_classification {
 template <typename Kernel,
           typename RandomAccessIterator,
           typename PointMap,
-          typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
-          typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
-          typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t>,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Helper
 {
@@ -43,12 +40,8 @@ public:
   typedef CGAL::Data_classification::Attribute_handle         Attribute_handle;
   typedef Attribute_anisotropy
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Anisotropy;
-  typedef Attribute_color
-  <Kernel, RandomAccessIterator, ColorMap>                    Color;
   typedef Attribute_distance_to_plane
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Distance_to_plane;
-  typedef Attribute_echo_scatter
-  <Kernel, RandomAccessIterator, PointMap, EchoMap>           Echo_scatter;
   typedef Attribute_eigentropy
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Eigentropy;
   typedef Attribute_elevation
@@ -100,7 +93,9 @@ public:
     if (m_radius_dtm < 0.)
       m_radius_dtm = 5. * radius_neighbors;
 
-    m_bbox = CGAL::bounding_box (begin, end); // TODO transform iterator
+    m_bbox = CGAL::bounding_box
+      (boost::make_transform_iterator (begin, CGAL::Property_map_to_unary_function<PointMap>(point_map)),
+       boost::make_transform_iterator (end, CGAL::Property_map_to_unary_function<PointMap>(point_map)));
     m_neighborhood = new Neighborhood (begin, end, point_map);
     m_grid = new Planimetric_grid (begin, end, point_map, m_bbox, m_grid_resolution);
     m_eigen = new Local_eigen_analysis (begin, end, point_map, *m_neighborhood, m_radius_neighbors);
@@ -111,8 +106,12 @@ public:
     clear();
   }
 
+  const Iso_cuboid_3& bbox() const { return m_bbox; }
   const Neighborhood& neighborhood() const { return *m_neighborhood; }
+  const Planimetric_grid& grid() const { return *m_grid; }
+  const Local_eigen_analysis& eigen() const { return *m_eigen; }
 
+  
   void clear()
   {
     if (m_grid != NULL)
@@ -123,6 +122,9 @@ public:
       }
   }
 
+  template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
+           typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
+           typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >
   void generate_attributes(Point_set_classification& psc,
                            RandomAccessIterator begin, RandomAccessIterator end,
                            PointMap point_map,
@@ -130,6 +132,12 @@ public:
                            ColorMap color_map = ColorMap(),
                            EchoMap echo_map = EchoMap())
   {
+    typedef Attribute_color
+      <Kernel, RandomAccessIterator, ColorMap>                    Color;
+    typedef Attribute_echo_scatter
+      <Kernel, RandomAccessIterator, PointMap, EchoMap>           Echo_scatter;
+
+
     psc.add_attribute (Attribute_handle (new Anisotropy(begin, end, *m_eigen)));
     psc.add_attribute (Attribute_handle (new Distance_to_plane(begin, end, point_map, *m_eigen)));
     psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *m_eigen)));
