@@ -88,36 +88,36 @@ int main (int argc, char** argv)
     }
   
   // Add types to PSC
-  CGAL::Data_classification::Type ground ("ground");
-  CGAL::Data_classification::Type vege ("vegetation");
-  CGAL::Data_classification::Type roof ("roof");
-  CGAL::Data_classification::Type facade ("facade");
+  CGAL::Data_classification::Type_handle ground
+    = psc.add_classification_type ("ground");
+  CGAL::Data_classification::Type_handle vege
+    = psc.add_classification_type ("vegetation");
+  CGAL::Data_classification::Type_handle roof
+    = psc.add_classification_type ("roof");
+  CGAL::Data_classification::Type_handle facade
+    = psc.add_classification_type ("facade");
 
   for (std::size_t i = 0; i < labels.size(); ++ i)
     {
       switch (labels[i])
         {
         case 0:
-          vege.training_set().push_back (i);
+          vege->training_set().push_back (i);
           break;
         case 1:
-          ground.training_set().push_back (i);
+          ground->training_set().push_back (i);
           break;
         case 2:
-          roof.training_set().push_back (i);
+          roof->training_set().push_back (i);
           break;
         case 3:
-          facade.training_set().push_back (i);
+          facade->training_set().push_back (i);
           break;
         default:
           break;
         }
     }
 
-  psc.add_classification_type (&vege);
-  psc.add_classification_type (&ground);
-  psc.add_classification_type (&roof);
-  psc.add_classification_type (&facade);
 
   //  psc.set_multiplicative(true);
   std::cerr << "Training" << std::endl;
@@ -147,14 +147,14 @@ int main (int argc, char** argv)
     {
       f << pts[i] << " ";
       
-      CGAL::Data_classification::Type* type = psc.classification_type_of (i);
-      if (type == &vege)
+      CGAL::Data_classification::Type_handle type = psc.classification_type_of (i);
+      if (type == vege)
         f << "0 255 27 0" << std::endl;
-      else if (type == &ground)
+      else if (type == ground)
         f << "245 180 0 1" << std::endl;
-      else if (type == &roof)
+      else if (type == roof)
         f << "255 0 170 2" << std::endl;
-      else if (type == &facade)
+      else if (type == facade)
         f << "100 0 255 3" << std::endl;
       else
         {

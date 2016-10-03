@@ -29,7 +29,7 @@ public:
 
 private:
   std::string m_id;
-  std::map<Attribute*, Attribute_effect> m_attribute_effects;
+  std::map<Attribute_handle, Attribute_effect> m_attribute_effects;
   std::vector<std::size_t> m_training_set;
 
 public:
@@ -48,7 +48,7 @@ public:
     \param effect The effect the attribute will have on the classification type
 
   */ 
-  void set_attribute_effect (Attribute* att, Attribute_effect effect)
+  void set_attribute_effect (Attribute_handle att, Attribute_effect effect)
   {
     m_attribute_effects[att] = effect;
   }
@@ -60,9 +60,9 @@ public:
 
     \return The effect of the attribute on the classification type.
    */
-  Attribute_effect attribute_effect (Attribute* att) 
+  Attribute_effect attribute_effect (Attribute_handle att) 
   {
-    std::map<Attribute*, Attribute_effect>::iterator
+    std::map<Attribute_handle, Attribute_effect>::iterator
       search = m_attribute_effects.find (att);
     return (search == m_attribute_effects.end () ? NEUTRAL_ATT : search->second);
   }
@@ -86,7 +86,7 @@ public:
   void info()
   {
     std::cerr << "Attribute " << m_id << ": ";
-    for (std::map<Attribute*, Attribute_effect>::iterator it = m_attribute_effects.begin();
+    for (std::map<Attribute_handle, Attribute_effect>::iterator it = m_attribute_effects.begin();
          it != m_attribute_effects.end(); ++ it)
       {
         if (it->second == NEUTRAL_ATT)

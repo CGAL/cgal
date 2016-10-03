@@ -25,7 +25,8 @@ typedef CGAL::Point_set_classification<Kernel, Iterator, Pmap> Classification;
 typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Pmap>      Planimetric_grid;
 typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Pmap>          Neighborhood;
 typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Pmap>  Local_eigen_analysis;
-typedef CGAL::Data_classification::Attribute Attribute;
+typedef CGAL::Data_classification::Type_handle                                           Type_handle;
+typedef CGAL::Data_classification::Attribute_handle                                      Attribute_handle;
 typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
 typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
 typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
@@ -112,59 +113,54 @@ int main (int argc, char** argv)
 
       Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, radius_neighbors);
       
-      psc.add_segmentation_attribute (new Dispersion (pts.begin(), pts.end(), Pmap(), grid,
+      psc.add_attribute (Attribute_handle (new Dispersion (pts.begin(), pts.end(), Pmap(), grid,
                                                       grid_resolution,
-                                                      radius_neighbors));
-      psc.add_segmentation_attribute (new Elevation (pts.begin(), pts.end(), Pmap(), bbox, grid,
+                                                      radius_neighbors)));
+      psc.add_attribute (Attribute_handle (new Elevation (pts.begin(), pts.end(), Pmap(), bbox, grid,
                                                      grid_resolution,
                                                      radius_neighbors,
-                                                     radius_dtm));
-      psc.add_segmentation_attribute (new Verticality (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen));
-      psc.add_segmentation_attribute (new Linearity (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Planarity (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Sphericity (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Omnivariance (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Anisotropy (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Eigentropy (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Sum_eigen (pts.begin(), pts.end(), eigen));
-      psc.add_segmentation_attribute (new Surface_variation (pts.begin(), pts.end(), eigen));
+                                                     radius_dtm)));
+      psc.add_attribute (Attribute_handle (new Verticality (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen)));
+      psc.add_attribute (Attribute_handle (new Linearity (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Planarity (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Sphericity (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Omnivariance (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Anisotropy (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Eigentropy (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Sum_eigen (pts.begin(), pts.end(), eigen)));
+      psc.add_attribute (Attribute_handle (new Surface_variation (pts.begin(), pts.end(), eigen)));
       grid_resolution *= 2;
       radius_neighbors *= 2;
       radius_dtm *= 2;
     }
   
   // Add types to PSC
-  CGAL::Data_classification::Type ground ("ground");
-  CGAL::Data_classification::Type vege ("vegetation");
-  CGAL::Data_classification::Type roof ("roof");
-  CGAL::Data_classification::Type facade ("facade");
+  Type_handle ground = psc.add_classification_type ("ground");
+  Type_handle vege = psc.add_classification_type ("vegetation");
+  Type_handle roof = psc.add_classification_type ("roof");
+  Type_handle facade = psc.add_classification_type ("facade");
 
   for (std::size_t i = 0; i < labels.size(); ++ i)
     {
       switch (labels[i])
         {
         case 0:
-          vege.training_set().push_back (i);
+          vege->training_set().push_back (i);
           break;
         case 1:
-          ground.training_set().push_back (i);
+          ground->training_set().push_back (i);
           break;
         case 2:
-          roof.training_set().push_back (i);
+          roof->training_set().push_back (i);
           break;
         case 3:
-          facade.training_set().push_back (i);
+          facade->training_set().push_back (i);
           break;
         default:
           break;
         }
     }
-
-  psc.add_classification_type (&vege);
-  psc.add_classification_type (&ground);
-  psc.add_classification_type (&roof);
-  psc.add_classification_type (&facade);
 
   //  psc.set_multiplicative(true);
   std::cerr << "Training" << std::endl;
@@ -193,14 +189,14 @@ int main (int argc, char** argv)
     {
       f << pts[i] << " ";
       
-      CGAL::Data_classification::Type* type = psc.classification_type_of (i);
-      if (type == &vege)
+      Type_handle type = psc.classification_type_of (i);
+      if (type == vege)
         f << "0 255 27 0" << std::endl;
-      else if (type == &ground)
+      else if (type == ground)
         f << "245 180 0 1" << std::endl;
-      else if (type == &roof)
+      else if (type == roof)
         f << "255 0 170 2" << std::endl;
-      else if (type == &facade)
+      else if (type == facade)
         f << "100 0 255 3" << std::endl;
       else
         {

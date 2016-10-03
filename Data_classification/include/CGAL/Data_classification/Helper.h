@@ -40,7 +40,7 @@ public:
   typedef CGAL::Data_classification::Local_eigen_analysis
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Local_eigen_analysis;
   
-  typedef CGAL::Data_classification::Attribute                Attribute;
+  typedef CGAL::Data_classification::Attribute_handle         Attribute_handle;
   typedef Attribute_anisotropy
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Anisotropy;
   typedef Attribute_color
@@ -130,36 +130,36 @@ public:
                            ColorMap color_map = ColorMap(),
                            EchoMap echo_map = EchoMap())
   {
-    psc.add_segmentation_attribute (new Anisotropy(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Distance_to_plane(begin, end, point_map, *m_eigen));
-    psc.add_segmentation_attribute (new Eigentropy(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Elevation(begin, end, point_map,
-                                                  m_bbox, *m_grid, m_grid_resolution,
-                                                  m_radius_neighbors, m_radius_dtm));
-    psc.add_segmentation_attribute (new Linearity(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Omnivariance(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Planarity(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Sphericity(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Sum_eigen(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Surface_variation(begin, end, *m_eigen));
-    psc.add_segmentation_attribute (new Dispersion(begin, end, point_map,
-                                                   *m_grid, m_grid_resolution, m_radius_neighbors));
+    psc.add_attribute (Attribute_handle (new Anisotropy(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Distance_to_plane(begin, end, point_map, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Elevation(begin, end, point_map,
+                                     m_bbox, *m_grid, m_grid_resolution,
+                                     m_radius_neighbors, m_radius_dtm)));
+    psc.add_attribute (Attribute_handle (new Linearity(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Omnivariance(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Planarity(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Sphericity(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Sum_eigen(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Surface_variation(begin, end, *m_eigen)));
+    psc.add_attribute (Attribute_handle (new Dispersion(begin, end, point_map,
+                                      *m_grid, m_grid_resolution, m_radius_neighbors)));
 
     
     if (!(boost::is_convertible
           <VectorMap, CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3> >::value))
-      psc.add_segmentation_attribute (new Verticality(begin, end, *m_eigen));
+      psc.add_attribute (Attribute_handle (new Verticality(begin, end, *m_eigen)));
     else
-      psc.add_segmentation_attribute (new Verticality(begin, end, normal_map));
+      psc.add_attribute (Attribute_handle (new Verticality(begin, end, normal_map)));
     
     if (!(boost::is_convertible
           <ColorMap, CGAL::Empty_property_map<RandomAccessIterator, RGB_Color> >::value))
-      psc.add_segmentation_attribute (new Color(begin, end, color_map));
+      psc.add_attribute (Attribute_handle (new Color(begin, end, color_map)));
     
     if (!(boost::is_convertible
           <EchoMap, CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >::value))
-      psc.add_segmentation_attribute (new Echo_scatter(begin, end, echo_map, *m_grid,
-                                                       m_grid_resolution, m_radius_neighbors));
+      psc.add_attribute (Attribute_handle (new Echo_scatter(begin, end, echo_map, *m_grid,
+                                          m_grid_resolution, m_radius_neighbors)));
   }
 
 

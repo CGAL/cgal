@@ -6,10 +6,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_classification.h>
 #include <CGAL/Data_classification/Planimetric_grid.h>
-#include <CGAL/Data_classification/Segmentation_attribute_vertical_dispersion.h>
-#include <CGAL/Data_classification/Segmentation_attribute_elevation.h>
-#include <CGAL/Data_classification/Segmentation_attribute_verticality.h>
-#include <CGAL/Data_classification/Segmentation_attribute_distance_to_plane.h>
+#include <CGAL/Data_classification/Attribute.h>
+#include <CGAL/Data_classification/Attribute_vertical_dispersion.h>
+#include <CGAL/Data_classification/Attribute_elevation.h>
+#include <CGAL/Data_classification/Attribute_verticality.h>
+#include <CGAL/Data_classification/Attribute_distance_to_plane.h>
 #include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -23,10 +24,12 @@ typedef CGAL::Point_set_classification<Kernel, Iterator, Pmap> Classification;
 typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Pmap>      Planimetric_grid;
 typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Pmap>          Neighborhood;
 typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Pmap>  Local_eigen_analysis;
-typedef CGAL::Segmentation_attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
-typedef CGAL::Segmentation_attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
-typedef CGAL::Segmentation_attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
-typedef CGAL::Segmentation_attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
+typedef CGAL::Data_classification::Type_handle                                           Type_handle;
+typedef CGAL::Data_classification::Attribute_handle                                      Attribute_handle;
+typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
+typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
+typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
+typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
 
 
 int main (int argc, char** argv)
@@ -55,54 +58,49 @@ int main (int argc, char** argv)
   Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, radius_neighbors);
   
   std::cerr << "Computing attributes" << std::endl;
-  Dispersion disp (pts.begin(), pts.end(), Pmap(), grid,
-                   grid_resolution,
-                   radius_neighbors,
-                   1.78); // Weight
+  Attribute_handle disp (new Dispersion (pts.begin(), pts.end(), Pmap(), grid,
+                                         grid_resolution,
+                                         radius_neighbors,
+                                         1.78)); // Weight
   
-  Elevation elev (pts.begin(), pts.end(), Pmap(), bbox, grid,
-                  grid_resolution,
-                  radius_neighbors,
-                  radius_dtm,
-                  2.86); // Weight
+  Attribute_handle elev (new Elevation (pts.begin(), pts.end(), Pmap(), bbox, grid,
+                                        grid_resolution,
+                                        radius_neighbors,
+                                        radius_dtm,
+                                        2.86)); // Weight
   
-  Verticality verti (pts.begin(), pts.end(), eigen,
-                     3.70); // Weight
+  Attribute_handle verti (new Verticality (pts.begin(), pts.end(), eigen,
+                                           3.70)); // Weight
   
-  Distance_to_plane d2p (pts.begin(), pts.end(), Pmap(), eigen,
-                         0.0016);
+  Attribute_handle d2p (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen,
+                                               0.0016));
 
   Classification psc (pts.begin (), pts.end(), Pmap());
   
-  // // Add attributes to PSC
-  psc.add_segmentation_attribute (&disp);
-  psc.add_segmentation_attribute (&elev);
-  psc.add_segmentation_attribute (&verti);
-  psc.add_segmentation_attribute (&d2p);
+  // Add attributes to PSC
+  psc.add_attribute (disp);
+  psc.add_attribute (elev);
+  psc.add_attribute (verti);
+  psc.add_attribute (d2p);
 
-  // // Create classification type and define how attributes affect them
-  CGAL::Classification_type ground ("ground");
-  ground.set_attribute_effect (&disp, CGAL::Classification_type::PENALIZED_ATT);
-  ground.set_attribute_effect (&elev, CGAL::Classification_type::PENALIZED_ATT);
-  ground.set_attribute_effect (&verti, CGAL::Classification_type::PENALIZED_ATT);
-  ground.set_attribute_effect (&d2p, CGAL::Classification_type::PENALIZED_ATT);
+  // Create classification type and define how attributes affect them
+  Type_handle ground = psc.add_classification_type ("ground");
+  ground->set_attribute_effect (disp, CGAL::Data_classification::Type::PENALIZED_ATT);
+  ground->set_attribute_effect (elev, CGAL::Data_classification::Type::PENALIZED_ATT);
+  ground->set_attribute_effect (verti, CGAL::Data_classification::Type::PENALIZED_ATT);
+  ground->set_attribute_effect (d2p, CGAL::Data_classification::Type::PENALIZED_ATT);
 
-  CGAL::Classification_type vege ("vegetation");
-  vege.set_attribute_effect (&disp, CGAL::Classification_type::FAVORED_ATT);
-  vege.set_attribute_effect (&elev, CGAL::Classification_type::FAVORED_ATT);
-  vege.set_attribute_effect (&verti, CGAL::Classification_type::NEUTRAL_ATT);
-  vege.set_attribute_effect (&d2p, CGAL::Classification_type::FAVORED_ATT);
+  Type_handle vege = psc.add_classification_type ("vegetation");
+  vege->set_attribute_effect (disp, CGAL::Data_classification::Type::FAVORED_ATT);
+  vege->set_attribute_effect (elev, CGAL::Data_classification::Type::FAVORED_ATT);
+  vege->set_attribute_effect (verti, CGAL::Data_classification::Type::NEUTRAL_ATT);
+  vege->set_attribute_effect (d2p, CGAL::Data_classification::Type::FAVORED_ATT);
   
-  CGAL::Classification_type roof ("roof");
-  roof.set_attribute_effect (&disp, CGAL::Classification_type::PENALIZED_ATT);
-  roof.set_attribute_effect (&elev, CGAL::Classification_type::FAVORED_ATT);
-  roof.set_attribute_effect (&verti, CGAL::Classification_type::NEUTRAL_ATT);
-  roof.set_attribute_effect (&d2p, CGAL::Classification_type::NEUTRAL_ATT);
-
-  // Add types to PSC
-  psc.add_classification_type (&vege);
-  psc.add_classification_type (&ground);
-  psc.add_classification_type (&roof);
+  Type_handle roof = psc.add_classification_type ("roof");
+  roof->set_attribute_effect (disp, CGAL::Data_classification::Type::PENALIZED_ATT);
+  roof->set_attribute_effect (elev, CGAL::Data_classification::Type::FAVORED_ATT);
+  roof->set_attribute_effect (verti, CGAL::Data_classification::Type::NEUTRAL_ATT);
+  roof->set_attribute_effect (d2p, CGAL::Data_classification::Type::NEUTRAL_ATT);
 
   // Run classification
   psc.run_with_graphcut (neighborhood, 0.5);
@@ -125,12 +123,12 @@ int main (int argc, char** argv)
     {
       f << pts[i] << " ";
       
-      CGAL::Classification_type* type = psc.classification_type_of (i);
-      if (type == &ground)
+      Type_handle type = psc.classification_type_of (i);
+      if (type == ground)
         f << "245 180 0" << std::endl;
-      else if (type == &vege)
+      else if (type == vege)
         f << "0 255 27" << std::endl;
-      else if (type == &roof)
+      else if (type == roof)
         f << "255 0 170" << std::endl;
       else
         {

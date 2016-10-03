@@ -129,8 +129,8 @@ private:
   };
 
   
-  std::vector<Data_classification::Type*> m_segmentation_classes; 
-  std::vector<Data_classification::Attribute*> m_segmentation_attributes; 
+  std::vector<Data_classification::Type_handle> m_types; 
+  std::vector<Data_classification::Attribute_handle> m_attributes; 
 
   typedef Data_classification::Type::Attribute_effect Attribute_effect;
   std::vector<std::vector<Attribute_effect> > m_effect_table;
@@ -169,32 +169,32 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
-  double classification_value (std::size_t segmentation_class, int pt_index) const
+  double classification_value (std::size_t class_type, int pt_index) const
   {
     double out = 0.;
     if (m_multiplicative)
       {
         out = 1.;
-        for (std::size_t i = 0; i < m_effect_table[segmentation_class].size(); ++ i)
+        for (std::size_t i = 0; i < m_effect_table[class_type].size(); ++ i)
           {
-            if (m_effect_table[segmentation_class][i] == Data_classification::Type::FAVORED_ATT)
-              out *= 1. + m_segmentation_attributes[i]->favored (pt_index);
-            else if (m_effect_table[segmentation_class][i] == Data_classification::Type::PENALIZED_ATT)
-              out *= 1. + m_segmentation_attributes[i]->penalized (pt_index);
-            else if (m_effect_table[segmentation_class][i] == Data_classification::Type::NEUTRAL_ATT)
-              out *= 1. + m_segmentation_attributes[i]->ignored (pt_index);
+            if (m_effect_table[class_type][i] == Data_classification::Type::FAVORED_ATT)
+              out *= 1. + m_attributes[i]->favored (pt_index);
+            else if (m_effect_table[class_type][i] == Data_classification::Type::PENALIZED_ATT)
+              out *= 1. + m_attributes[i]->penalized (pt_index);
+            else if (m_effect_table[class_type][i] == Data_classification::Type::NEUTRAL_ATT)
+              out *= 1. + m_attributes[i]->ignored (pt_index);
           }
       }
     else
       {
-        for (std::size_t i = 0; i < m_effect_table[segmentation_class].size(); ++ i)
+        for (std::size_t i = 0; i < m_effect_table[class_type].size(); ++ i)
           {
-            if (m_effect_table[segmentation_class][i] == Data_classification::Type::FAVORED_ATT)
-              out += m_segmentation_attributes[i]->favored (pt_index);
-            else if (m_effect_table[segmentation_class][i] == Data_classification::Type::PENALIZED_ATT)
-              out += m_segmentation_attributes[i]->penalized (pt_index);
-            else if (m_effect_table[segmentation_class][i] == Data_classification::Type::NEUTRAL_ATT)
-              out += m_segmentation_attributes[i]->ignored (pt_index);
+            if (m_effect_table[class_type][i] == Data_classification::Type::FAVORED_ATT)
+              out += m_attributes[i]->favored (pt_index);
+            else if (m_effect_table[class_type][i] == Data_classification::Type::PENALIZED_ATT)
+              out += m_attributes[i]->penalized (pt_index);
+            else if (m_effect_table[class_type][i] == Data_classification::Type::NEUTRAL_ATT)
+              out += m_attributes[i]->ignored (pt_index);
           }
       }
     return out;
@@ -268,7 +268,7 @@ public:
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
     std::vector<std::vector<double> > values
-      (m_segmentation_classes.size(),
+      (m_types.size(),
        std::vector<double> (m_input.size(), -1.));
 
     for (std::size_t s=0; s < m_input.size(); ++ s)
@@ -489,7 +489,7 @@ public:
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
     std::vector<std::vector<double> > values;
-    values.resize (m_segmentation_classes.size());
+    values.resize (m_types.size());
     
     std::map<Point, std::size_t> map_p2i;
     for (std::size_t s = 0; s < m_input.size(); s++)
@@ -591,12 +591,12 @@ public:
     std::vector<double>(m_input.size()).swap (m_confidence);
 
     m_effect_table = std::vector<std::vector<Attribute_effect> >
-      (m_segmentation_classes.size(), std::vector<Attribute_effect> (m_segmentation_attributes.size(),
+      (m_types.size(), std::vector<Attribute_effect> (m_attributes.size(),
                                                                  Data_classification::Type::NEUTRAL_ATT));
     
     for (std::size_t i = 0; i < m_effect_table.size (); ++ i)
       for (std::size_t j = 0; j < m_effect_table[i].size (); ++ j)
-        m_effect_table[i][j] = m_segmentation_classes[i]->attribute_effect (m_segmentation_attributes[j]);
+        m_effect_table[i][j] = m_types[i]->attribute_effect (m_attributes[j]);
 
   }
   /// \endcond
@@ -609,20 +609,22 @@ public:
     \brief Adds a classification type
     \param type Pointer to the classification type object
    */
-  void add_classification_type (Data_classification::Type* type)
+  Data_classification::Type_handle add_classification_type (const char* name)
   {
-    m_segmentation_classes.push_back (type);
+    Data_classification::Type_handle out (new Data_classification::Type (name));
+    m_types.push_back (out);
+    return out;
   }
 
   /// \cond SKIP_IN_MANUAL
   std::size_t number_of_classification_types () const
   {
-    return m_segmentation_classes.size();
+    return m_types.size();
   }
 
-  Data_classification::Type* get_classification_type (std::size_t idx)
+  Data_classification::Type_handle get_classification_type (std::size_t idx)
   {
-    return m_segmentation_classes[idx];
+    return m_types[idx];
   }
   /// \endcond
 
@@ -631,33 +633,33 @@ public:
    */
   void clear_classification_types ()
   {
-    m_segmentation_classes.clear();
+    m_types.clear();
   }
 
   /// \cond SKIP_IN_MANUAL
   void clear_and_delete_classification_types ()
   {
-    for (std::size_t i = 0; i < m_segmentation_classes.size(); ++ i)
-      delete m_segmentation_classes[i];
-    m_segmentation_classes.clear();
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      delete m_types[i];
+    m_types.clear();
   }
   /// \endcond
 
   /*!
-    \brief Adds a segmentation attribute
+    \brief Adds an attribute
     \param attribute Pointer to the attribute object
    */
-  void add_segmentation_attribute (Data_classification::Attribute* attribute)
+  void add_attribute (Data_classification::Attribute_handle attribute)
   {
-    m_segmentation_attributes.push_back (attribute);
+    m_attributes.push_back (attribute);
   }
 
   /*!
-    \brief Removes all segmentation attributes
+    \brief Removes all attributes
    */
-  void clear_segmentation_attributes ()
+  void clear_attributes ()
   {
-    m_segmentation_attributes.clear();
+    m_attributes.clear();
   }
   
   /// @}
@@ -699,12 +701,12 @@ public:
     \param index Index of the input point
     \return Pointer to the classification type 
   */
-  Data_classification::Type* classification_type_of (std::size_t index) const
+  Data_classification::Type_handle classification_type_of (std::size_t index) const
   {
     if (m_assigned_type.size() <= index
         || m_assigned_type[index] == (std::size_t)(-1))
       return NULL;
-    return m_segmentation_classes[m_assigned_type[index]];
+    return m_types[m_assigned_type[index]];
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -712,10 +714,10 @@ public:
   {
     return !(m_assigned_type.empty());
   }
-  void set_classification_type_of (std::size_t index, Data_classification::Type* class_type)
+  void set_classification_type_of (std::size_t index, Data_classification::Type_handle class_type)
   {
-    for (std::size_t i = 0; i < m_segmentation_classes.size(); ++ i)
-      if (m_segmentation_classes[i] == class_type)
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i] == class_type)
         {
           m_assigned_type[index] = i;
           return;
@@ -761,7 +763,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   void train_parameters(std::size_t nb_tests)
   {
-    std::vector<double> best_weights (m_segmentation_attributes.size(), 1.);
+    std::vector<double> best_weights (m_attributes.size(), 1.);
     
     double best_score = -1.;
     double best_confidence = -1.;
@@ -774,45 +776,45 @@ public:
       {
         if (!(i % 10))
           {
-            for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
               {
-                Data_classification::Attribute* att = m_segmentation_attributes[j];
+                Data_classification::Attribute_handle att = m_attributes[j];
                 att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
               }
           }
         else
           {
-            for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
               {
-                Data_classification::Attribute* att = m_segmentation_attributes[j];
+                Data_classification::Attribute_handle att = m_attributes[j];
                 att->weight = best_weights[j];
               }
-            Data_classification::Attribute* att = m_segmentation_attributes[current_att_changed];
+            Data_classification::Attribute_handle att = m_attributes[current_att_changed];
             att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
           }
         
         estimate_attribute_effects();
-        std::vector<Data_classification::Attribute*> used_attributes;
-        for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+        std::vector<Data_classification::Attribute_handle> used_attributes;
+        for (std::size_t j = 0; j < m_attributes.size(); ++ j)
           {
-            Data_classification::Attribute* att = m_segmentation_attributes[j];
-            Data_classification::Type::Attribute_effect side = m_segmentation_classes[0]->attribute_effect(att);
+            Data_classification::Attribute_handle att = m_attributes[j];
+            Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
 
-            for (std::size_t k = 1; k < m_segmentation_classes.size(); ++ k)
-              if (m_segmentation_classes[k]->attribute_effect(att) != side)
+            for (std::size_t k = 1; k < m_types.size(); ++ k)
+              if (m_types[k]->attribute_effect(att) != side)
                 {
                   used_attributes.push_back (att);
                   break;
                 }
           }
 
-        used_attributes.swap (m_segmentation_attributes);
+        used_attributes.swap (m_attributes);
         
         prepare_classification();
         double worst_confidence = training_compute_worst_confidence();
 
         double worst_score = training_compute_worst_score();
-        used_attributes.swap (m_segmentation_attributes);
+        used_attributes.swap (m_attributes);
         
         if (worst_score > best_score
             && worst_confidence > best_confidence)
@@ -822,9 +824,9 @@ public:
             std::cerr << 100. * best_score << "% (found at iteration "
                       << i+1 << "/" << nb_tests << ") "
                       << used_attributes.size() << std::endl;
-            for (std::size_t j = 0; j < m_segmentation_attributes.size(); ++ j)
+            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
               {
-                Data_classification::Attribute* att = m_segmentation_attributes[j];
+                Data_classification::Attribute_handle att = m_attributes[j];
                 best_weights[j] = att->weight;
                 f << best_weights[j] << " ";
               }
@@ -834,14 +836,14 @@ public:
         if (!(i % 10))
           {
             ++ current_att_changed;
-            if (current_att_changed == m_segmentation_attributes.size())
+            if (current_att_changed == m_attributes.size())
               current_att_changed = 0;
           }
       }
 
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
-        Data_classification::Attribute* att = m_segmentation_attributes[i];
+        Data_classification::Attribute_handle att = m_attributes[i];
         att->weight = best_weights[i];
       }
 
@@ -849,19 +851,19 @@ public:
     
     std::cerr << std::endl << "Best score found is at least " << 100. * best_score
               << "% of correct classification" << std::endl;
-    std::vector<Data_classification::Attribute*> to_keep;
+    std::vector<Data_classification::Attribute_handle> to_keep;
     
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
-        Data_classification::Attribute* att = m_segmentation_attributes[i];
+        Data_classification::Attribute_handle att = m_attributes[i];
         std::cerr << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
         att->weight = best_weights[i];
 
-        Data_classification::Type::Attribute_effect side = m_segmentation_classes[0]->attribute_effect(att);
+        Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
         bool to_remove = true;
-        for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+        for (std::size_t j = 0; j < m_types.size(); ++ j)
           {
-            Data_classification::Type* ctype = m_segmentation_classes[j];
+            Data_classification::Type_handle ctype = m_types[j];
             if (ctype->attribute_effect(att) == Data_classification::Type::FAVORED_ATT)
               CGAL_CLASSIFICATION_CERR << " * Favored for ";
             else if (ctype->attribute_effect(att) == Data_classification::Type::PENALIZED_ATT)
@@ -880,22 +882,22 @@ public:
         else
           to_keep.push_back (att);
       }
-    std::cerr << "Removing " << (m_segmentation_attributes.size() - to_keep.size())
-              << " attribute(s) out of " << m_segmentation_attributes.size() << std::endl;
-    m_segmentation_attributes.swap (to_keep);
+    std::cerr << "Removing " << (m_attributes.size() - to_keep.size())
+              << " attribute(s) out of " << m_attributes.size() << std::endl;
+    m_attributes.swap (to_keep);
   }
 
   void estimate_attribute_effects()
   {
-    for (std::size_t i = 0; i < m_segmentation_attributes.size(); ++ i)
+    for (std::size_t i = 0; i < m_attributes.size(); ++ i)
       {
-        Data_classification::Attribute* att = m_segmentation_attributes[i];
+        Data_classification::Attribute_handle att = m_attributes[i];
 
-        std::vector<double> mean (m_segmentation_classes.size(), 0.);
+        std::vector<double> mean (m_types.size(), 0.);
                                   
-        for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+        for (std::size_t j = 0; j < m_types.size(); ++ j)
           {
-            Data_classification::Type* ctype = m_segmentation_classes[j];
+            Data_classification::Type_handle ctype = m_types[j];
             
             for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
               {
@@ -905,11 +907,11 @@ public:
             mean[j] /= ctype->training_set().size();
           }
 
-        std::vector<double> sd (m_segmentation_classes.size(), 0.);
+        std::vector<double> sd (m_types.size(), 0.);
         
-        for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+        for (std::size_t j = 0; j < m_types.size(); ++ j)
           {
-            Data_classification::Type* ctype = m_segmentation_classes[j];
+            Data_classification::Type_handle ctype = m_types[j];
             
             for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
               {
@@ -931,9 +933,9 @@ public:
   double training_compute_worst_score()
   {
     double worst_score = 1.;
-    for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+    for (std::size_t j = 0; j < m_types.size(); ++ j)
       {
-        Data_classification::Type* ctype = m_segmentation_classes[j];
+        Data_classification::Type_handle ctype = m_types[j];
         std::size_t nb_okay = 0;
         for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
           {
@@ -966,9 +968,9 @@ public:
   double training_compute_worst_confidence()
   {
     double worst_confidence = std::numeric_limits<double>::max();
-    for (std::size_t j = 0; j < m_segmentation_classes.size(); ++ j)
+    for (std::size_t j = 0; j < m_types.size(); ++ j)
       {
-        Data_classification::Type* ctype = m_segmentation_classes[j];
+        Data_classification::Type_handle ctype = m_types[j];
         
         double confidence = 0.;
         
@@ -995,7 +997,7 @@ public:
             
           }
 
-        confidence /= (double)(ctype->training_set().size() * m_segmentation_attributes.size());
+        confidence /= (double)(ctype->training_set().size() * m_attributes.size());
 
         if (confidence < worst_confidence)
           worst_confidence = confidence;
