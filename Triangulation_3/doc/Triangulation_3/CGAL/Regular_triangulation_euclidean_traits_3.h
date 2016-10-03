@@ -77,24 +77,23 @@ typedef unspecified_type Compare_weighted_squared_radius_3;
 
 /*!
 A predicate type. The operator() takes weighted points as arguments 
-and returns the sign of the power distance of the last one 
-with respect to the smallest sphere orthogonal to the others. 
+and returns ...... 
 
-`Sign operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r, 		 Weighted_point_3 s, 		 Weighted_point_3 t) ;` 
+`Oriented_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r, 		 Weighted_point_3 s, 		 Weighted_point_3 t) ;` 
 
-`Sign operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r, 		 Weighted_point_3 s) ;` 
+`Oriented_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r, 		 Weighted_point_3 s) ;` 
 
-`Sign operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r) ;` 
+`Oriented_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r) ;` 
 
-`Sign operator()( Weighted_point_3 p, 		 Weighted_point_3 q) ;` 
+`Oriented_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q) ;` 
 
 */ 
-typedef unspecified_type In_smallest_orthogonal_sphere_3; 
+typedef unspecified_type Power_side_of_oriented_power_sphere_3; 
 
 /*!
 A predicate type. The operator() is similar to the operator() of 
-`In_smallest_orthogonal_sphere_3` 
-except that the returned type is not a `Sign` 
+`Power_side_of_oriented_power_sphere_3` 
+except that the returned type is not an `Oriented_side` 
 but belongs to the enum `Bounded_side` 
 (`NEGATIVE`, `ZERO` and `POSITIVE`) 
 corresponding respectively to 
@@ -167,8 +166,8 @@ compare_weighted_squared_radius_3_object();
 /*!
 
 */ 
-In_smallest_orthogonal_sphere_3 
-in_smallest_orthogonal_sphere_3_object(); 
+Power_side_of_oriented_power_sphere_3
+power_side_of_oriented_power_sphere_3_object(); 
 
 /*!
 
