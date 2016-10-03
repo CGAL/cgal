@@ -11,6 +11,7 @@
 #include <CGAL/Data_classification/Attribute_color.h>
 #include <CGAL/Data_classification/Attribute_echo_scatter.h>
 #include <CGAL/Data_classification/Attributes_eigen.h>
+#include <CGAL/Data_classification/Helper.h>
 #include <CGAL/Shape_detection_3/Shape_base.h>
 
 #include "Scene_point_set_classification_item_config.h"
@@ -81,9 +82,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   typedef Point_set_color_map<Point_set> Color_map;
 
   typedef CGAL::Point_set_classification<Kernel, Iterator, Point_map>                   PSC;
-  typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Point_map>      Planimetric_grid;
-  typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Point_map>          Neighborhood;
-  typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Point_map>  Local_eigen_analysis;
+  typedef CGAL::Data_classification::Helper<Kernel, Iterator, Point_map>                Helper;
   typedef CGAL::Data_classification::Type_handle                                                Type_handle;
   typedef CGAL::Data_classification::Attribute_handle                                           Attribute_handle;
   typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Point_map> Dispersion;
@@ -326,9 +325,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     if (method == 0)
       m_psc->run();
     else if (method == 1)
-      m_psc->run_with_graphcut (*m_neighborhood, weight);
+      m_psc->run_with_graphcut (m_helper->neighborhood(), weight);
     else if (method == 2)
-      m_psc->run_with_groups (*m_neighborhood, radius_neighbors);
+      m_psc->run_with_groups (m_helper->neighborhood(), radius_neighbors);
   
     invalidateOpenGLBuffers();
     return false;
@@ -425,9 +424,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   PSC* m_psc;
   std::vector<std::pair<Type_handle, QColor> > m_predefined_types;
 
-  Planimetric_grid* m_grid;
-  Neighborhood* m_neighborhood;
-  Local_eigen_analysis* m_eigen;
+  Helper* m_helper;
   
   Attribute_handle m_disp;
   Attribute_handle m_elev;

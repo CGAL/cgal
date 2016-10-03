@@ -31,9 +31,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
 : Scene_item(NbOfVbos,NbOfVaos),
   m_points (NULL),
   m_psc (psc),
-  m_grid (NULL),
-  m_neighborhood (NULL),
-  m_eigen (NULL)
+  m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
@@ -46,9 +44,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
   : Scene_item(NbOfVbos,NbOfVaos),
     m_points (points),
     m_psc (NULL),
-    m_grid (NULL),
-    m_neighborhood (NULL),
-    m_eigen (NULL)
+    m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
@@ -67,9 +63,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(const S
   :Scene_item(NbOfVbos,NbOfVaos), // do not call superclass' copy constructor
    m_points (NULL),
    m_psc (NULL),
-   m_grid (NULL),
-   m_neighborhood (NULL),
-   m_eigen (NULL)
+   m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
@@ -82,12 +76,8 @@ Scene_point_set_classification_item::~Scene_point_set_classification_item()
 {
   if (m_psc != NULL)
     delete m_psc;
-  if (m_grid != NULL)
-    delete m_grid;
-  if (m_neighborhood != NULL)
-    delete m_neighborhood;
-  if (m_eigen != NULL)
-    delete m_eigen;
+  if (m_helper != NULL)
+    delete m_helper;
 }
 
 void Scene_point_set_classification_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
@@ -649,28 +639,17 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   m_psc->clear_attributes();
 
   compute_bbox();
-  if (m_grid != NULL) delete m_grid;
-  m_grid = new Planimetric_grid (m_points->point_set()->begin(),
-                                 m_points->point_set()->end(),
-                                 m_points->point_set()->point_map(),
-                                 _bbox, grid_resolution);
+  if (m_helper != NULL) delete m_helper;
+  m_helper = new Helper (m_points->point_set()->begin(),
+                         m_points->point_set()->end(),
+                         m_points->point_set()->point_map(),
+                         grid_resolution, radius_neighbors, radius_dtm);
 
-  if (m_neighborhood != NULL) delete m_neighborhood;
-  m_neighborhood = new Neighborhood (m_points->point_set()->begin(),
-                                     m_points->point_set()->end(),
-                                     m_points->point_set()->point_map());
-
-  if (m_eigen != NULL) delete m_eigen;
-  m_eigen = new Local_eigen_analysis (m_points->point_set()->begin(),
-                                      m_points->point_set()->end(),
-                                      m_points->point_set()->point_map(),
-                                      *m_neighborhood,
-                                      radius_neighbors);
   
   m_disp = Attribute_handle (new Dispersion (m_points->point_set()->begin(),
                            m_points->point_set()->end(),
                            m_points->point_set()->point_map(),
-                           *m_grid,
+                           m_helper->grid(),
                            grid_resolution,
                            radius_neighbors,
                            1.));
@@ -679,7 +658,7 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   m_d2p = Attribute_handle (new Distance_to_plane (m_points->point_set()->begin(),
                                  m_points->point_set()->end(),
                                  m_points->point_set()->point_map(),
-                                 *m_eigen,
+                                 m_helper->eigen(),
                                  1.));
   m_psc->add_attribute (m_d2p);
   
@@ -691,7 +670,7 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   else
     m_verti = Attribute_handle (new Verticality (m_points->point_set()->begin(),
                                m_points->point_set()->end(),
-                               *m_eigen,
+                               m_helper->eigen(),
                                1.));
 
   m_psc->add_attribute (m_verti);
@@ -700,7 +679,7 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
                           m_points->point_set()->end(),
                           m_points->point_set()->point_map(),
                           _bbox,
-                          *m_grid,
+                          m_helper->grid(),
                           grid_resolution,
                           radius_neighbors,
                           radius_dtm,
@@ -780,13 +759,13 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
 void Scene_point_set_classification_item::compute_clusters (const double& radius_neighbors)
 {
   Q_ASSERT (m_psc != NULL);
-  if (m_neighborhood == NULL)
+  if (m_helper == NULL)
     {
       std::cerr << "Error: no neighborhood" << std::endl;
       return;
     }
 
-  m_psc->cluster_points (*m_neighborhood, radius_neighbors);
+  m_psc->cluster_points (m_helper->neighborhood(), radius_neighbors);
 
   invalidateOpenGLBuffers();
 }
@@ -1080,19 +1059,17 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
                                                 std::size_t nb_trials)
 {
 
-  if (m_grid == NULL)
+  if (m_helper == NULL)
     {
       std::cerr << "Error: features not computed" << std::endl;
       return;
     }
 
   m_psc->clear_attributes();
-  
-  m_psc->add_attribute (m_disp);
-  m_psc->add_attribute (m_elev);
-  m_psc->add_attribute (m_verti);
-  m_psc->add_attribute (m_d2p);
-  m_psc->add_attribute (m_col_att);
+  m_helper->generate_attributes (*m_psc,
+                                 m_points->point_set()->begin(),
+                                 m_points->point_set()->end(),
+                                 m_points->point_set()->point_map());
   
   m_psc->clear_classification_types();
   std::vector<std::pair<Type_handle, QColor> > predef;
