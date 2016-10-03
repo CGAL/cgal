@@ -138,4 +138,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif CGAL_IMPORT_FROM_TRIANGULATION_3_H
+#endif // CGAL_IMPORT_FROM_TRIANGULATION_3_H
