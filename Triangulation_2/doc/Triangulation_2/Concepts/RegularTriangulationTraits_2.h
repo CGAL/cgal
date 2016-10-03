@@ -43,7 +43,7 @@ and it must be implicitely convertible from and to `Bare_point`.
   typedef unspecified_type Weighted_point_2; 
 
 /*!
-A function object which must provide operators for the power test applied to two, three, and four points. 
+A function object that must provide operators for the power test applied to two, three, and four points. 
 
 Must provide the operators: 
 
@@ -82,7 +82,7 @@ typedef unspecified_type Compare_power_distance_2;
 
 /*!
 A function
-object which constructs the weighted circumcenter of three 
+object that constructs the weighted circumcenter of three 
 weighted points. 
 
 Must provide the operator:
@@ -115,7 +115,7 @@ RegularTriangulationTraits_2();
 Copy constructor. 
 */ 
 RegularTriangulationTraits_2 ( 
-const RegularTriangulatioTraits_2& ); 
+const RegularTriangulationTraits_2& ); 
 
 /*!
 Assignment operator.
@@ -131,7 +131,7 @@ RegularTriangulationTraits_2& operator=
 /*!
 
 */ 
-Power_side_of_power_circle_2 power_side_of_power_circle_2_object(); 
+Power_side_of_oriented_power_circle_2 power_side_of_oriented_power_circle_2_object(); 
 
 /*!
 

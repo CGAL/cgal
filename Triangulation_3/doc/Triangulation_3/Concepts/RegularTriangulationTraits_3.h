@@ -8,6 +8,11 @@ The concept `RegularTriangulationTraits_3` is the first template parameter of th
 segments...) forming the triangulation together with a few geometric
 predicates and constructions on these objects.
 
+We use here the same notation as in Section \ref
+Triangulation3secclassRegulartriangulation. To simplify notation, \f$
+p\f$ will often denote in the sequel either the point \f$ p\in\mathbb{R}^3\f$
+or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
+
 \cgalRefines `TriangulationTraits_3`
 
 In addition to the requirements described for the traits class of
@@ -45,16 +50,6 @@ The ray type.
 typedef unspecified_type Ray_3; 
 
 
-/// @}
-
-/*! \name
-We use here the same notation as in Section \ref
-Triangulation3secclassRegulartriangulation. To simplify notation, \f$
-p\f$ will often denote in the sequel either the point \f$ p\in\mathbb{R}^3\f$
-or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
-*/
-/// @{
-
 /*!
 The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_3`,
 and it must be implicitely convertible from and to `Bare_point`.
@@ -67,7 +62,7 @@ The (un-weighted) point type.
 typedef unspecified_type Bare_point; 
 
 /*!
-A predicate object which must provide the following function operators: 
+A predicate object that must provide the following function operators: 
 
 `Oriented_side operator()( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s, 			 Weighted_point_3 t)`, 
 

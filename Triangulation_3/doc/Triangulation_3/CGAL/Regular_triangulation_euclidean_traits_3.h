@@ -18,7 +18,7 @@ The class is a model of the concept `RegularTriangulationTraits_3`.
 
 It also contains some additional predicates and constructors on weighted points 
 that are not required in the concept `RegularTriangulationTraits_3`,
-and hence documented here. 
+and hence documented here. They are used by mesh generation packages.
 
 Note that filtered predicates are automatically used if the 
 Boolean `Has_filtered_predicates` in the kernel provided as template parameter 
@@ -27,10 +27,7 @@ of that class is set to `true`. This is the case for the predefined kernels
 
 \cgalModels `RegularTriangulationTraits_3`
 
-\cgalHeading{Operations}
-
-The following functions give access to the predicate and constructor 
-functors. 
+ 
 
 */
 template< typename K, typename Weight >
@@ -57,7 +54,8 @@ The type for points.
 
 /// @} 
 
-/// \name Types for Predicate Functors 
+/// \name Types for Predicate Functors
+
 /// @{
 
 
@@ -98,7 +96,7 @@ A predicate type. The operator() is similar to the operator() of
 `In_smallest_orthogonal_sphere_3` 
 except that the returned type is not a `Sign` 
 but belongs to the enum `Bounded_side` 
-(A `NEGATIVE`, `ZERO` and `POSITIVE`) 
+(`NEGATIVE`, `ZERO` and `POSITIVE`) 
 corresponding respectively to 
 `ON_BOUNDED_SIDE`, `ON_BOUNDARY` and `ON_UNBOUNDED_SIDE`)). 
 
@@ -148,9 +146,6 @@ and computes the squared radius
 of the sphere centered in the last point and orthogonal 
 to the other weighted points. The last argument is a weighted point 
 but its weight does not matter. 
-This construction is ad hoc for pumping slivers. 
-For robustness issue, a predicate to compare critical squared radii 
-for a given last point should be needed. 
 
 `FT operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s, 			 Weighted_point_3 t);` 
 
