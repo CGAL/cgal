@@ -1,4 +1,4 @@
-// Copyright (c) 2014 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
