@@ -54,7 +54,7 @@ public:
                        RandomAccessIterator end,
                        PointPMap point_pmap,
                        const Iso_cuboid_3& bbox,
-                       Grid& grid,
+                       const Grid& grid,
                        const double grid_resolution,
                        double radius_neighbors = -1.,
                        double radius_dtm = -1.,

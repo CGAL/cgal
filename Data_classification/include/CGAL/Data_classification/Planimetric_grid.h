@@ -95,11 +95,11 @@ public:
   /*!
     \brief Returns the indices of points lying in the given indexed cell.
   */
-  std::vector<int>& indices(std::size_t x, std::size_t y) { return m_grid(x,y); }
+  const std::vector<int>& indices(std::size_t x, std::size_t y) const { return m_grid(x,y); }
   /*!
     \brief Returns `true` if the indexed cell is to be used for classification.
   */
-  bool mask(std::size_t x, std::size_t y) { return m_mask(x,y); }
+  bool mask(std::size_t x, std::size_t y) const { return m_mask(x,y); }
 
   /*!
     \breif Returns the `x` coordinate of the indexed point in the grid.

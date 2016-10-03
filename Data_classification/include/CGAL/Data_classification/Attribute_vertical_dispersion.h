@@ -48,7 +48,7 @@ public:
   Attribute_vertical_dispersion (RandomAccessIterator begin,
                                  RandomAccessIterator end,
                                  PointPMap point_pmap,
-                                 Grid& grid,
+                                 const Grid& grid,
                                  const double grid_resolution,
                                  double radius_neighbors = -1.,
                                  double weight = 1.)
