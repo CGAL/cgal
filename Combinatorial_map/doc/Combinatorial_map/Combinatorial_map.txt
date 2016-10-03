@@ -198,7 +198,7 @@ The class `Combinatorial_map_min_items<d>` is a model of the `BasicMapItems` con
 
 \subsection ssecdarts Darts
 
-The class `Dart<d,CMap>`, a model of the `BasicDart` concept, defines a <I>d</I>D dart. It has two template parameters standing for the dimension of the combinatorial map, and a model of the `CombinatorialMap` concept, which provides the two types \link BasicMap::Dart_handle `Dart_handle`\endlink and \link BasicMap::Dart_const_handle `Dart_const_handle`\endlink.
+The class `Dart<d,CMap>`, a model of the `BasicDart` concept, defines a <I>d</I>D dart for combinatorial maps. It has two template parameters standing for the dimension of the combinatorial map, and a model of the `CombinatorialMap` concept, which provides the two types \link BasicMap::Dart_handle `Dart_handle`\endlink and \link BasicMap::Dart_const_handle `Dart_const_handle`\endlink.
 
 Each instance `d0` of `Dart<d,CMap>` stores the \f$ \beta_i\f$ pointers in an array of <I>d</I>+1 `Dart_handle` (because we describe also the \f$ \beta_0\f$ pointer). It also stores the attributes associated to this dart in a tuple of \link BasicMap::Attribute_handle `CMap::Attribute_handle<i>::type` \endlink, one for each non void <I>i</I>-attribute.
 

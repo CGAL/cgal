@@ -43,12 +43,12 @@ BasicMap(const BMap& bmap);
 typedef unspecified_type Dart;
 
 /*!
-%Dart handle type, equal to `Dart::Dart_handle`.
+%Dart handle type, equal to `BasicDart::Dart_handle`.
 */
 typedef unspecified_type Dart_handle;
 
 /*!
-%Dart const handle type, equal to `Dart::Dart_const_handle`.
+%Dart const handle type, equal to `BasicDart::Dart_const_handle`.
 */
 typedef unspecified_type Dart_const_handle;
 
@@ -63,7 +63,7 @@ typedef unspecified_type size_type;
 /// @{
 
 /*!
-The dimension <I>d</I> of the basic map, equal to `Dart::dimension`.
+The dimension <I>d</I> of the basic map, equal to `BasicDart::dimension`.
 */
 static unsigned int dimension;
 
@@ -107,7 +107,7 @@ typedef unspecified_type Attributes;
   using Attribute_type = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink.
+  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes, equal to \link BasicDart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink.
   \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.
@@ -116,7 +116,7 @@ typedef unspecified_type Attributes;
   using Attribute_handle = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink.
+  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes, equal to \link BasicDart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink.
   \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.

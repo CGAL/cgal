@@ -34,7 +34,7 @@ The complexity of `clear` is in <I>O</I>(\f$ |\f$<I>D</I>\f$ |\f$\f$ \times\f$<I
 
 Other methods have all a constant time complexity.
 
-\sa `CombinatorialMapItems`
+\sa `BasicMapItems`
 \sa `Dart`
 
 */
@@ -44,13 +44,6 @@ public:
 
 /// \name Types
 /// @{
-
-/*!
-The null dart handle constant.
-A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
-Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
-*/
-Dart_handle null_dart_handle;
 
 /*!
 

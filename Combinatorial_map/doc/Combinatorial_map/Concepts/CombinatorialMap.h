@@ -43,6 +43,13 @@ Unlinks by \f$ \beta_i\f$ all the darts in the orbit \f$ \langle{}\f$\f$ \beta_1
 class CombinatorialMap {
 public:
 
+/*!
+The null dart handle constant.
+A dart `d` is <I>i</I>-free if `beta(d, i)==null_dart_handle`.
+Note that `*null_dart_handle`\f$ \notin\f$`darts()`.
+*/
+Dart_handle null_dart_handle;
+
 /// \name Access Member Functions
 /// @{
 

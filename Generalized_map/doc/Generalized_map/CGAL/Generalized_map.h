@@ -35,7 +35,7 @@ The complexity of `clear` is in <I>O</I>(\f$ |\f$<I>D</I>\f$ |\f$\f$ \times\f$<I
 
 Other methods have all a constant time complexity.
 
-\sa `GeneralizedMapItems`
+\sa `BasicMapItems`
 \sa `Dart`
 
 */
