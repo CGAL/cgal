@@ -1,10 +1,14 @@
-// Copyright (c) 2005  Tel-Aviv University (Israel).
-// All rights reserved.
+// Copyright (c) 2005
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,7 +18,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -27,14 +31,30 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgPolygon2
+
+The class `General_polygon_with_holes_2` models the concept
+`GeneralPolygonWithHoles_2`. It represents a general polygon with
+holes. It is parameterized with a type `Polygon` used to define
+the exposed type `General_polygon_2`. This type represents the
+outer boundary of the general polygon and the outer boundaries of
+each hole.
+
+\cgalModels `GeneralPolygonWithHoles_2`
+
+*/
 template <class Polygon_>
 class General_polygon_with_holes_2
 {
-
 public:
-  typedef General_polygon_with_holes_2<Polygon_> 		Self;
-  typedef Polygon_                                    Polygon_2;
-  typedef typename Self::Polygon_2							General_polygon_2;  
+
+/// \name Definition
+
+/// @{
+  typedef Polygon_							General_polygon_2;
+/// @}
+
   typedef std::list<Polygon_>                         Holes_container;
 
   typedef typename Holes_container::iterator          Hole_iterator;
@@ -46,7 +66,7 @@ public:
   {}
 
 
-  explicit General_polygon_with_holes_2(const General_polygon_2& pgn_boundary) 
+  explicit General_polygon_with_holes_2(const General_polygon_2& pgn_boundary)
   : m_pgn(pgn_boundary)
   {}
 
@@ -136,7 +156,24 @@ protected:
 //-----------------------------------------------------------------------//
 //                          operator<<
 //-----------------------------------------------------------------------//
+/*!
+This operator exports a General_polygon_with_holes_2 to the output stream `out`.
 
+An ASCII and a binary format exist. The format can be selected with
+the \cgal modifiers for streams, `set_ascii_mode(0` and `set_binary_mode()`
+respectively. The modifier `set_pretty_mode()` can be used to allow for (a
+few) structuring comments in the output. Otherwise, the output would
+be free of comments. The default for writing is ASCII without
+comments.
+
+The number of curves of the outer boundary is exported followed by the
+curves themselves in counterclockwise order. Then, the number of holes
+is exported, and for each hole, the number of curves on its outer
+boundary is exported followed by the curves themselves in clockwise
+order.
+
+\relates General_polygon_with_holes_2
+*/
 template <class Polygon_>
 std::ostream
 &operator<<(std::ostream &os, const General_polygon_with_holes_2<Polygon_>& p)
@@ -157,7 +194,7 @@ std::ostream
         os << *hit;
       }
       return os;
-     
+
 
     default:
       os << "General_polygon_with_holes_2( " << std::endl;
@@ -173,6 +210,20 @@ std::ostream
 //                          operator>>
 //-----------------------------------------------------------------------//
 
+/*!
+This operator imports a General_polygon_with_holes_2 from the input stream `in`.
+
+An ASCII and a binary format exist. The stream detects the format
+automatically and can read both.
+
+The format consists of the number of curves of the outer boundary
+followed by the curves themselves in counterclockwise order, followed
+by the number of holes, and for each hole, the number of curves on its
+outer boundary is followed by the curves themselves in clockwise
+order.
+
+\relates General_polygon_with_holes_2
+*/
 template <class Polygon_>
 std::istream &operator>>(std::istream &is, General_polygon_with_holes_2<Polygon_>& p)
 {
@@ -181,16 +232,16 @@ std::istream &operator>>(std::istream &is, General_polygon_with_holes_2<Polygon_
 
   unsigned int n_holes;
   is >> n_holes;
-  if (is) 
+  if (is)
   {
     Polygon_ pgn_hole;
-    for (unsigned int i=0; i<n_holes; i++) 
+    for (unsigned int i=0; i<n_holes; i++)
     {
       is >> pgn_hole;
       p.add_hole(pgn_hole);
     }
   }
- 
+
   return is;
 }
 
