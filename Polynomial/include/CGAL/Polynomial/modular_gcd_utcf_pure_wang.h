@@ -42,6 +42,7 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Cache.h>
 #include <CGAL/Polynomial/Wang_traits.h>
+#include <CGAL/tss.h>
 
 
 namespace CGAL {
@@ -66,20 +67,21 @@ struct Cached_extended_euclidean_algorithm{
     typedef Extended_euclidean_algorithm<UFD> FUNC;
     typedef CGAL::Cache<PAIR,PAIR,FUNC> CACHE;
     
-    static CACHE cache;
-    
+  CACHE& cache()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(CACHE, m_cache, CACHE());
+    return m_cache;
+  }
+
     void operator()(const UFD& p, const UFD& q, UFD& s, UFD& t){
         PAIR pq(p,q);
-        PAIR result = cache(pq);
+        PAIR result = cache()(pq);
         s = result.first;
         t = result.second;
 
     }    
 };
 
-template <class UFD> 
-typename Cached_extended_euclidean_algorithm<UFD>::CACHE 
-Cached_extended_euclidean_algorithm<UFD>::cache;
 
 } // namespace CGALi_pure_wang
 
