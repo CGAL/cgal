@@ -163,9 +163,9 @@ We say that a generalized map is <I>valid</I> if it satisfies all the conditions
 
 \subsection ssec-comparison-gmaps-with-cmaps Comparison with Combinatorial Maps
 
-Generalized maps and \ref ChapterCombinatorialMap "combinatorial maps" are very similar: they are both based on darts and applications and allow to represent quasi-manifold <I>n</I>D objects, which explains that they share their main concepts.
+Generalized maps and \ref ChapterCombinatorialMap "combinatorial maps" are very similar: they are both based on darts and functions and allow to represent quasi-manifold <I>n</I>D objects, which explains that they share their main concepts.
 
-However, they have two main differences. Firstly, generalized maps allow to represent orientable and non-orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all applications are involutions, while combinatorial maps are not homogeneous since one application is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
+However, they have two main differences. Firstly, generalized maps allow to represent orientable and non-orientable objects while combinatorial maps allow only to represent orientable objects. Secondly, generalized maps are homogeneous in each dimension since all functions are involutions, while combinatorial maps are not homogeneous since one function is a permutation while other ones are involutions. This homogeneity simplifies algorithms for generalized maps since it allows to avoid a specific case for the first dimension as for combinatorial maps. Thirdly, a generalized map requires twice the number of darts of a combinatorial map in order to represent an orientable object.
 
 Considering these different advantages and drawbacks, you can choose to use generalized maps or combinatorial maps depending on the needs of your application.
 
