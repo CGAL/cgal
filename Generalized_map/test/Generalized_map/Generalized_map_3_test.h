@@ -1,4 +1,4 @@
-// Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -21,6 +21,7 @@
 #define CGAL_GMAP_3_TEST_H
 
 #include "Generalized_map_2_test.h"
+#include "GMap_test_insertions.h"
 
 #include <iostream>
 #include <fstream>
@@ -155,8 +156,13 @@ bool test_GMAP_3()
     assert(false);
     return false;
   }
+  gmap.clear();
 
+  if (!test_vertex_insertion(gmap))
+    return false;
 
+  if (!test_edge_insertion(gmap))
+    return false;
 
   return true;
 }

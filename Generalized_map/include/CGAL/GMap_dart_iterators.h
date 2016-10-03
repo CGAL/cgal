@@ -1169,7 +1169,7 @@ namespace CGAL {
       Base(amap, adart),
       mmark_number(amark)
     {
-      CGAL_assertion( d>=2 && d<=Map::dimension );
+      CGAL_assertion( d<=Map::dimension );
       CGAL_assertion( i<=Map::dimension );
       if (adart!=this->mmap->null_handle)
         this->mmap->mark(adart, mmark_number);

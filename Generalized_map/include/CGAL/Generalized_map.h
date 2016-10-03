@@ -3260,7 +3260,7 @@ namespace CGAL {
                              bool update_attributes=true )
     {
       Dart_handle d1, d2;
-      size_type  mark=get_new_mark();
+      size_type  amark=get_new_mark();
 
       // 1) We store all the darts of the edge.
       std::deque<Dart_handle> vect;
@@ -3278,17 +3278,18 @@ namespace CGAL {
       {
         d1 = create_dart();
 
-        if (!(is_free<0>(*it)) && is_marked(alpha<0>(*it), mark))
+        if (!(this->template is_free<0>(*it)) &&
+            is_marked(alpha<0>(*it), amark))
           basic_link_alpha<1>(d1, alpha<0,0>(*it));
 
         basic_link_alpha<0>(*it, d1);
-        mark(*it, mark);
+        mark(*it, amark);
 
         for ( unsigned int dim=2; dim<=dimension; ++dim )
         {
-          if (!is_free(*it, dim) && is_marked(alpha(*it, dim), mark))
+          if (!is_free(*it, dim) && is_marked(alpha(*it, dim), amark))
           {
-            basic_link_alpha(beta(*it, dim, 0), d1, dim);
+            basic_link_alpha(alpha(*it, dim, 0), d1, dim);
           }
         }
 
@@ -3304,30 +3305,30 @@ namespace CGAL {
           // We initialise the 0-atttrib to ah
           CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
             run(this, d1, ah);
-          mark(*it, mark);
+          mark(*it, amark);
         }
       }
 
       for (it = vect.begin(); it != vect.end(); ++it)
       {
         unmark(*it, m);
-        unmark(*it, mark);
+        unmark(*it, amark);
       }
 
       CGAL_assertion(is_whole_map_unmarked(m));
-      CGAL_assertion(is_whole_map_unmarked(mark));
+      CGAL_assertion(is_whole_map_unmarked(amark));
 
       free_mark(m);
-      free_mark(mark);
+      free_mark(amark);
 
       if (are_attributes_automatically_managed() && update_attributes)
-    {
-      if ( !(is_free<1>(alpha<0>(adart))) )
       {
-        CGAL::internal::GMap_degroup_attribute_functor_run<Self, 1>::
-          run(this, adart, alpha<0,1>(adart));
+        if ( !(this->template is_free<1>(alpha<0>(adart))) )
+        {
+          CGAL::internal::GMap_degroup_attribute_functor_run<Self, 1>::
+              run(this, adart, alpha<0,1>(adart));
+        }
       }
-    }
 
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
       CGAL_assertion( is_valid() );
@@ -3490,11 +3491,15 @@ namespace CGAL {
       CGAL_assertion(is_insertable_cell_1_in_cell_2(adart1, adart2));
     }
 
+    /* CGAL::GMap_dart_iterator_basic_of_involution<Self,1> will contain all
+     * alpha_i except alpha_0, alpha_1 and alpha_2, i.e. this is
+     * <alpha_3,...,alpha_d>
+     */
     size_type m1=get_new_mark();
-    CGAL::GMap_dart_iterator_basic_of_involution<Self,0,1> it1(*this, adart1, m1);
+    CGAL::GMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, m1);
 
     size_type m2=get_new_mark();
-    CGAL::GMap_dart_iterator_basic_of_involution<Self,0,1> it2(*this, adart2, m2);
+    CGAL::GMap_dart_iterator_basic_of_involution<Self,1> it2(*this, adart2, m2);
 
     Dart_handle d1=null_handle;
     Dart_handle d2=null_handle;
@@ -3506,7 +3511,6 @@ namespace CGAL {
       CGAL_assertion (it2.cont() );
       d1 = create_dart();
       d2 = create_dart();
-      this->template basic_link_alpha<0>(d1, d2);
       mark(it1,treated);
 
       if ( !this->template is_free<1>(it1) &&
@@ -3532,6 +3536,10 @@ namespace CGAL {
         this->template link_alpha<1>(it2, d2);
         ++it2;
       }
+
+      // We do the link_alpha<0> after the link_alpha<1> to update the
+      // possible attributes of d2.
+      this->template link_alpha<0>(d1, d2);
 
       if (are_attributes_automatically_managed() && update_attributes && ah!=NULL)
       {

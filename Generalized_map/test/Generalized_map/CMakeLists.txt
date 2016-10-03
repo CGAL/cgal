@@ -43,7 +43,12 @@ include( ${CGAL_USE_FILE} )
 
 #include( CGAL_CreateSingleSourceCGALProgram )
 include_directories(BEFORE  ../../include)
-add_executable(Generalized_map_test Generalized_map_test.cpp)
+add_executable(Generalized_map_test
+  GMap_test_insertions.h
+  Generalized_map_2_test.h
+  Generalized_map_3_test.h
+  Generalized_map_4_test.h
+  Generalized_map_test.cpp)
 #create_single_source_cgal_program( "Generalized_map_test.cpp" )
 target_link_libraries(Generalized_map_test ${CGAL_LIBRARIES}
                                              ${CGAL_3RD_PARTY_LIBRARIES} )
