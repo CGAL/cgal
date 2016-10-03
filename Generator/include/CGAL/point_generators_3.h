@@ -334,7 +334,7 @@ struct Random_points_in_triangle_mesh_3
 
   Random_points_in_triangle_mesh_3( const TriangleMesh& mesh,Random& rnd = get_default_random())
     : Base( faces(mesh),
-            CGAL::Property_map_to_unary_function<Pmap>(&mesh),
+            CGAL::Property_map_to_unary_function<Pmap>(Pmap(&mesh, get(vertex_point, mesh))),
             internal::Apply_approx_sqrt<typename Kernel_traits<P>::Kernel::Compute_squared_area_3>(),
             rnd )
   {

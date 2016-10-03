@@ -467,16 +467,15 @@ typedef const Point_3& reference;
 
 /*!
 Creates  an input iterator `g` generating points of type `Point_3` uniformly
-distributed in the mesh faces. Each triangle has a probability to be chosen to hold the point depending on its area.
-
-*/
-Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, Random& rnd = get_default_random() );
-
-/*!
-Creates  an input iterator `g` generating points of type `Point_3` uniformly
 distributed in the mesh faces based on `vpm`. Each triangle has a probability to be chosen to hold the point depending on its area.
 */
 Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, VertexPointMap vpm, Random& rnd = get_default_random() );
+
+/*!
+Similar to the previous constructor using `get(vertex_point, mesh)` as vertex point map.
+*/
+Random_points_in_triangle_mesh_3(const TriangleMesh& mesh, Random& rnd = get_default_random() );
+
 
 /// @}
 
