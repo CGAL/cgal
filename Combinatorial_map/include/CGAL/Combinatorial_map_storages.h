@@ -35,7 +35,7 @@ namespace CGAL {
 
   namespace internal {
     template <typename M>
-    class Combinatorial_map_helper;
+    struct Combinatorial_map_helper;
   }
 
   /** @file Combinatorial_map_storages.h
