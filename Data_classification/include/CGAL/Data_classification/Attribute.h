@@ -76,6 +76,9 @@ public:
   /// \endcond
 };
 
+
+typedef boost::shared_ptr<Attribute> Attribute_handle;
+  
 } // namespace Data_classification
 
 } // namespace CGAL

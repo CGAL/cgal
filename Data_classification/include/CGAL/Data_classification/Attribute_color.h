@@ -53,7 +53,7 @@ public:
   Attribute_color (RandomAccessIterator begin,
                    RandomAccessIterator end,
                    ColorPMap color_pmap,
-                   double weight,
+                   double weight = 1.,
                    double mean_h = 156., double mean_s = 5., double mean_v = 76.,
                    double sd_h = 70., double sd_s = 12., double sd_v = 8.4)
   {

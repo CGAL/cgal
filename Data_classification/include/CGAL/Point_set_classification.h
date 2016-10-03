@@ -814,8 +814,8 @@ public:
         double worst_score = training_compute_worst_score();
         used_attributes.swap (m_segmentation_attributes);
         
-        if (worst_score > best_score)
-          //if (worst_confidence > best_confidence)
+        if (worst_score > best_score
+            && worst_confidence > best_confidence)
           {
             best_score = worst_score;
             best_confidence = worst_confidence;

@@ -102,6 +102,8 @@ public:
 
 };
 
+typedef boost::shared_ptr<Type> Type_handle;
+
 } // namespace Data_classification
 
 } // namespace CGAL
