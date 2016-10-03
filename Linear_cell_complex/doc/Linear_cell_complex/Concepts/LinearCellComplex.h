@@ -1,6 +1,4 @@
 
-namespace CGAL {
-
 /*!
 \ingroup PkgLinearCellComplexConcepts
 
@@ -316,5 +314,3 @@ Dart_handle make_hexahedron(const Point& p0,const Point& p1,const Point& p2,
 /// @}
 
 }; /* end LinearCellComplex */
-  
-} /* end namespace CGAL */

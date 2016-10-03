@@ -43,6 +43,16 @@ template< unsigned int d, typename Items, typename Alloc >
 class Generalized_map {
 public:
 
+/// \name Constants
+/// @{
+
+/*!
+The dimension of the generalized map.
+*/
+static const unsigned int dimension = d;
+
+/// @}
+
 /// \name Types
 /// @{
 

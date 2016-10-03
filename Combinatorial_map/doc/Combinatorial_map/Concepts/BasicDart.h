@@ -23,7 +23,7 @@ public:
 /*!
 The dimension of the dart.
 */
-static unsigned int dimension;
+static const unsigned int dimension;
 
 /// @}
 

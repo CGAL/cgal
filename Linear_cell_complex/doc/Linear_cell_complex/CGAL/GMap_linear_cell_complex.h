@@ -22,7 +22,7 @@ Note that there is an additional, and undocumented, template parameter `GMap` fo
 
 \sa `CGAL::Generalized_map<d,Items,Alloc>`
 \sa `CGAL::Linear_cell_complex_traits<d,K>`
-\sa `CGAL::Linear_cell_complex_min_items<d>`
+\sa `CGAL::GMap_linear_cell_complex_min_items<d>`
 
 */
 

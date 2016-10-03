@@ -42,6 +42,16 @@ template< unsigned int d, typename Items, typename Alloc >
 class Combinatorial_map {
 public:
 
+/// \name Constants
+/// @{
+
+/*!
+The dimension of the combinatorial map.
+*/
+static const unsigned int dimension = d;
+
+/// @}
+
 /// \name Types
 /// @{
 

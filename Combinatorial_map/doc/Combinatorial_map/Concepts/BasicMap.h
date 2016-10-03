@@ -65,12 +65,12 @@ typedef unspecified_type size_type;
 /*!
 The dimension <I>d</I> of the basic map, equal to `BasicDart::dimension`.
 */
-static unsigned int dimension;
+static const unsigned int dimension;
 
 /*!
 The number of available Boolean marks of the basic map.
 */
-static size_type NB_MARKS;
+static const size_type NB_MARKS;
 
 /// @}
 
