@@ -8,36 +8,34 @@ The concept `GeneralizedMap` defines a <I>d</I>-dimensional generalized map.
 
 \cgalHasModel \link CGAL::Generalized_map `CGAL::Generalized_map<d,Items,Alloc>`\endlink
 
-\cgalHeading{Basic functions}
+\cgalHeading{Basic Functions}
 
 For a generalized map, the function \link BasicMap::next `next`\endlink is equal to \f$ \alpha_1\circ\alpha_0\f$, \link BasicMap::previous `previous`\endlink is equal to \f$ \alpha_0\circ\alpha_1\f$  and the function \link BasicMap::opposite `opposite<i>`\endlink is equal to \f$ \alpha_i\circ\alpha_0\f$.
 
 \cgalHeading{Validity}
 
 The function \link BasicMap::is_valid `is_valid`\endlink returns true iff the generalized map is valid.
-A generalized map is valid (see Sections \ref sec_definition_gmap and \ref ssecgenmapvalidity) if for all its darts `d` \f$\in\f$`darts()`:
+A generalized map is valid (see Sections \ref sec_definition_gmap and \ref ssecgenmapvalidity) if for all its darts `d` \f$\in\f$ \link BasicMap::darts `darts()`\endlink:
 
-- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink: \f$ \alpha_i(\alpha_i(d))=d\f$;
+- \f$ \forall\f$<I>i</I>, 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink: \f$ \alpha_i(\alpha_i(d))=d\f$;
 - \f$ \forall\f$<I>i</I>, \f$ \forall\f$ <I>j</I> such that
-0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink-2
-and <I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink:
+0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink-2
+and <I>i</I>+2 \f$ \leq\f$ <I>j</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink:
 \f$ \alpha_j(\alpha_i(\alpha_j(\alpha_i(d))))=d\f$;
-- \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink such that <I>i</I>-attributes are non void:
+- \f$ \forall\f$<I>i</I>, 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink such that <I>i</I>-attributes are non void:
   + \f$ \forall\f$<I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;
   + \f$ \forall\f$<I>d2</I>  in a different <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have different <I>i</I>-attributes.
 
-\cgalHeading{Sew and unsew}
+\cgalHeading{Sew and Unsew}
 
-The function \link BasicMap::is_sewable `is_sewable`\endlink returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the generalized map valid.
- This is true if there is a bijection <I>f</I> between all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>*dh1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>*dh2</I>) satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>},
+The function \link BasicMap::is_sewable `is_sewable(dh1,dh2)`\endlink returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the generalized map valid.
+ This is true if there is a bijection <I>f</I> between all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>*dh1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(<I>*dh2</I>) satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$ <I>D1</I>, for all <I>j</I>\f$ \in\f$ {1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>},
 <I>f</I>(\f$ \alpha_j\f$(<I>e</I>))=\f$ \alpha_j\f$(<I>f</I>(<I>e</I>)).
 
-The function \link BasicMap::sew `sew`\endlink <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the generalized map valid.
-Links by \f$ \alpha_i\f$ two by two all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(`*dh1`) and <I>D2</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \alpha_2\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(`*dh2`) such that <I>d2</I>=<I>f</I>(<I>d1</I>).
+The function \link BasicMap::sew `sew(dh1,dh2)`\endlink <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the generalized map valid.
+Links by \f$ \alpha_i\f$ two by two all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(`*dh1`) and <I>D2</I>=\f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \alpha_2\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(`*dh2`) such that <I>d2</I>=<I>f</I>(<I>d1</I>), where <I>f</I> is the bijection between <I>D1</I> and <I>D2</I> satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$ <I>D1</I>, for all <I>j</I>\f$ \in\f$ {1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>}, <I>f</I>(\f$ \alpha_j\f$(<I>e</I>))=\f$ \alpha_j\f$(<I>f</I>(<I>e</I>)).
 
-<I>f</I> is the bijection between <I>D1</I> and <I>D2</I> satisfying: <I>f</I>(<I>*dh1</I>)=<I>*dh2</I>, and for all <I>e</I>\f$ \in\f$<I>D1</I>, for all <I>j</I>\f$ \in\f${1,\f$ \ldots\f$,<I>i</I>-2,<I>i</I>+2,\f$ \ldots\f$,<I>d</I>}, <I>f</I>(\f$ \alpha_j\f$(<I>e</I>))=\f$ \alpha_j\f$(<I>f</I>(<I>e</I>)).
-
-The function \link BasicMap::unsew `unsew`\endlink <I>i</I>-unsew darts `*dh` and \f$ \beta_i\f$`(*dh)`, by keeping the generalized map valid.
+The function \link BasicMap::unsew `unsew(dh)`\endlink <I>i</I>-unsew darts `*dh` and \f$ \beta_i\f$`(*dh)`, by keeping the generalized map valid.
 Unlinks by \f$ \alpha_i\f$ all the darts in the orbit \f$ \langle{}\f$\f$ \alpha_0\f$,\f$ \ldots\f$,\f$ \alpha_{i-2}\f$,\f$ \alpha_{i+2}\f$,\f$ \ldots\f$,\f$ \alpha_d\f$\f$ \rangle{}\f$(`*dh`).
 */
 
@@ -51,13 +49,13 @@ Overloads of this member function are defined that take from one to nine integer
 
 For example `alpha(dh,1)`=\f$ \alpha_1\f$(`*dh`),
 and `alpha(dh,1,2,3,0)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
+\pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink, 0 \f$ \leq\f$ <I>j</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$ \link BasicMap::darts `darts()`\endlink.
 */
 Dart_handle alpha(Dart_handle dh, int i, int j);
 
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as arguments.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
+\pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink, 0 \f$ \leq\f$ <I>j</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$ \link BasicMap::darts `darts()`\endlink.
 
 */
 Dart_const_handle alpha(Dart_const_handle dh, int i, int j) const;
@@ -65,14 +63,14 @@ Dart_const_handle alpha(Dart_const_handle dh, int i, int j) const;
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as template arguments. For each function, alphas are applied in the same order as their indices are given as template arguments.
 
-For example `alpha<1>(dh)`=\f$ \alpha_1\f$(`*dh`), and `alpha<1,2,3,0>(dh)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))). \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
+For example `alpha<1>(dh)`=\f$ \alpha_1\f$(`*dh`), and `alpha<1,2,3,0>(dh)`=\f$ \alpha_0\f$(\f$ \alpha_3\f$(\f$ \alpha_2\f$(\f$ \alpha_1\f$(`*dh`)))). \pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink, 0 \f$ \leq\f$ <I>j</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$ \link BasicMap::darts `darts()`\endlink.
 */
 template<int i, int j>
 Dart_handle alpha(Dart_handle dh);
 
 /*!
 Returns \f$ \alpha_j\f$(\f$ \alpha_i\f$(`*dh`)). Overloads of this member function are defined that take from one to nine integer as template arguments.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, 0\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$`darts()`.
+\pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink, 0 \f$ \leq\f$ <I>j</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$ \link BasicMap::darts `darts()`\endlink.
 
 */
 template<int i, int j>
@@ -87,14 +85,14 @@ bool is_orientable() const;
 /// @{
 
 /*!
-Links `*dh1` and `*dh2` by \f$ \alpha_i\f$. The generalized map can be no more valid after this operation. If \link BasicMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, non void attributes of `*dh1` and `*dh2` are updated: if one dart has an attribute and the second dart not, the non null attribute is associated to the dart having a null attribute. If both darts have an attribute, the attribute of `*dh1` is associated to `*dh2`.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, `*dh1`\f$ \in\f$`darts()`, `*dh2`\f$ \in\f$`darts()` and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
+Links `*dh1` and `*dh2` by \f$ \alpha_i\f$. The generalized map can be no longer valid after this operation. If \link BasicMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, non void attributes of `*dh1` and `*dh2` are updated: if one dart has an attribute and the second dart not, the non null attribute is associated to the dart having a null attribute. If both darts have an attribute, the attribute of `*dh1` is associated to `*dh2`.
+\pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink, `*dh1`\f$ \in\f$ \link BasicMap::darts `darts()`\endlink, `*dh2`\f$ \in\f$ \link BasicMap::darts `darts()`\endlink and (<I>i</I>\f$ <\f$ 2 or `dh1`\f$ \neq\f$`dh2`).
 */
 template <unsigned int i> void link_alpha(Dart_handle dh1, Dart_handle dh2);
 
 /*!
-Unlinks `*dh` and \f$ \alpha_i\f$(`*dh`) by \f$ \alpha_i\f$. The generalized map can be no more valid after this operation. Attributes of `*dh` and \f$ \alpha_i\f$(`*dh`) are not modified.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink, `*dh`\f$ \in\f$`darts()`, and `*dh` is not <I>i</I>-free.
+Unlinks `*dh` and \f$ \alpha_i\f$(`*dh`) by \f$ \alpha_i\f$. The generalized map can be no longer valid after this operation. Attributes of `*dh` and \f$ \alpha_i\f$(`*dh`) are not modified.
+\pre 0 \f$ \leq\f$ <I>i</I> \f$ \leq\f$ \link BasicMap::dimension `dimension`\endlink, `*dh`\f$ \in\f$ \link BasicMap::darts `darts()`\endlink, and `*dh` is not <I>i</I>-free.
 */
 template <unsigned int i> void unlink_alpha(Dart_handle dh);
 

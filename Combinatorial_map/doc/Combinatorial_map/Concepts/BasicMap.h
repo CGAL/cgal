@@ -4,6 +4,8 @@
 
 The concept `BasicMap` defines a <I>d</I>-dimensional basic map. This concept is defined only to factorize the common notions between \link CombinatorialMap `CombinatorialMap`\endlink and \link GeneralizedMap `GeneralizedMap`\endlink concepts.
 
+\cgalRefines DefaultConstructible
+
 A basic map has a set of darts <I>D</I>, and applications defined on these darts \f$ f_0\f$,\f$ \ldots\f$,\f$ f_{d}\f$.
 
 \cgalHasModel \link CGAL::Combinatorial_map `CGAL::Combinatorial_map<d,Items,Alloc>`\endlink
@@ -19,11 +21,6 @@ public:
 
 /// \name Creation
 /// @{
-
-/*!
-%Default constructor creating an empty basic map.
-*/
-BasicMap();
 
 /*!
 Construct a new basic map from another one.
