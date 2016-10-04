@@ -13,9 +13,9 @@ from dulwich.walk import Walker
 
 config = configparser.ConfigParser()
 if load_first_config('CGAL'):
-    config_file = os.path.join(load_first_config('CGAL'), 'test-pygithub_rc')
+    config_file = os.path.join(load_first_config('CGAL'), 'list_pull_requests.ini')
 else:
-    config_file = os.path.join(xdg_config_home, 'test-pygithub_rc')
+    config_file = os.path.join(xdg_config_home, 'list_pull_requests.ini')
 config.read(config_file)
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
