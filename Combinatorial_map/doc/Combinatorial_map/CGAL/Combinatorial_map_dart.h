@@ -14,6 +14,8 @@ The class `Combinatorial_map_dart` represents a <I>d</I>D dart in a combinatoria
 
 \tparam CMap a model of the `CombinatorialMap` concept.
 
+\deprecated This class was named `%Dart` before CGAL 4.9. This old name still exist for backward compatibility.
+
 \sa `CombinatorialMap`
 
 */

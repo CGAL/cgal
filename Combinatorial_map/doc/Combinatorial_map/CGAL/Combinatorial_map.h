@@ -12,7 +12,7 @@ Darts and non void attributes are stored in memory using `Compact_container`, us
 
 \tparam d the dimension of the map.
 
-\tparam Items a model of the `BasicMapItems` concept.
+\tparam Items a model of the `GenericMapItems` concept.
 
 \tparam Alloc has to match the standard allocator requirements. The `rebind` mechanism  `Alloc` will be used to create appropriate allocators internally with value type `Dart`.
 
@@ -34,7 +34,7 @@ The complexity of `clear` is in <I>O</I>(\f$ | \f$ <I>D</I> \f$ | \f$ \f$ \times
 
 Other methods have all a constant time complexity.
 
-\sa `BasicMapItems`
+\sa `GenericMapItems`
 \sa `Dart`
 
 */
