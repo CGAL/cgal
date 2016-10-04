@@ -276,6 +276,8 @@ void Scene_spheres_item::remove_sphere(CGAL::Sphere_3<Kernel> *sphere)
 
 void Scene_spheres_item::clear_spheres()
 {
+  Q_FOREACH(Sphere_pair pair, d->spheres)
+    delete pair.first;
   d->spheres.clear();
 }
 void Scene_spheres_item::setPrecision(int prec) { d->precision = prec; }

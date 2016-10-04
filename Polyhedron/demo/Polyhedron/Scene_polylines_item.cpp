@@ -100,6 +100,7 @@ Scene_polylines_item_private::computeElements() const
 void
 Scene_polylines_item_private::computeSpheres()
 {
+      spheres->clear_spheres();
       QApplication::setOverrideCursor(Qt::WaitCursor);
       // FIRST, count the number of incident cycles and polylines
       // for all extremities.
