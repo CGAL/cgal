@@ -50,7 +50,7 @@ static unsigned int ambient_dimension = d2;
 typedef GMap_linear_cell_complex<d,d2,LCCTraits,Items,Alloc> Self;
 
 /*!
-The type of dart, must satisfy \link BasicDart::dimension `Dart::dimension`\endlink`==d`.
+The type of dart, must satisfy \link Dart::dimension `Dart::dimension`\endlink`==d`.
 */
 typedef Items::Dart_wrapper<Self>::Dart Dart;
   

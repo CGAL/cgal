@@ -14,11 +14,14 @@ For a generalized map, the function \link BasicMap::next `next`\endlink is equal
 
 \cgalHeading{Validity}
 
-The function \link BasicMap::is_valid `is_valid`\endlink returns iff the generalized map is valid.
+The function \link BasicMap::is_valid `is_valid`\endlink returns true iff the generalized map is valid.
 A generalized map is valid (see Sections \ref sec_definition_gmap and \ref ssecgenmapvalidity) if for all its darts `d` \f$\in\f$`darts()`:
 
 - \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink: \f$ \alpha_i(\alpha_i(d))=d\f$;
-- \f$ \forall\f$<I>i</I>, <I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink such that <I>j</I>\f$ \geq\f$ 3: \f$ \alpha_j(\alpha_i(\alpha_j(\alpha_i(d))))=d\f$;
+- \f$ \forall\f$<I>i</I>, \f$ \forall\f$ <I>j</I> such that
+0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink-2
+and <I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink:
+\f$ \alpha_j(\alpha_i(\alpha_j(\alpha_i(d))))=d\f$;
 - \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink such that <I>i</I>-attributes are non void:
   + \f$ \forall\f$<I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;
   + \f$ \forall\f$<I>d2</I>  in a different <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have different <I>i</I>-attributes.

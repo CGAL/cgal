@@ -20,7 +20,11 @@ A combinatorial map is valid (see Sections \ref sec_definition and \ref sseccomb
 - `d` is 0-free, or \f$ \beta_1(\beta_0(d))=d\f$;
 - `d` is 1-free, or \f$ \beta_0(\beta_1(d))=d\f$;
 - \f$ \forall\f$<I>i</I>, 2\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink: `d` is <i>i</i>-free, or \f$ \beta_i(\beta_i(d))=d\f$;
-- \f$ \forall\f$<I>i</I>, <I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink such that <I>j</I>\f$ \geq\f$ 3: \f$ \beta_j(\beta_i(d))=\varnothing\f$ or ; \f$ \beta_j(\beta_i(\beta_j(\beta_i(d))))=d\f$;
+
+- \f$ \forall\f$<I>i</I>, \f$ \forall\f$ <I>j</I>, such that 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink-2
+and <I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink:
+\f$ \beta_j(\beta_i(d))=\varnothing\f$ or ; \f$ \beta_j(\beta_i(\beta_j(\beta_i(d))))=d\f$;
+
 - \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\link BasicMap::dimension `dimension`\endlink
   such that <I>i</I>-attributes are non void:
   + \f$ \forall\f$<I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;

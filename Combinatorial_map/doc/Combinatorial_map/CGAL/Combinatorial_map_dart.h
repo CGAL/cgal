@@ -4,24 +4,21 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsClasses
 
-The class `Dart` represents a <I>d</I>D dart in a combinatorial map.
+The class `Combinatorial_map_dart` represents a <I>d</I>D dart in a combinatorial map.
 
-\f$ \beta_i\f$ pointers are coded in a array of <I>d+1</I> \link Dart::Dart_handle `Dart_handle`\endlink
-(because we describe also the \f$ \beta_0\f$ link). Attributes are
-associated to each dart by \link Attribute_handle `Attribute_handle<i>`\endlink, one for each
-non void <I>i</I>-attribute.
+\f$ \beta_i\f$ pointers are coded in a array of <I>d+1</I> \link Combinatorial_map_dart::Dart_handle `Dart_handle`\endlink (because we describe also the \f$ \beta_0\f$ link). Attributes are associated to each dart by \link Attribute_handle `Attribute_handle<i>`\endlink, one for each non void <I>i</I>-attribute.
 
-\cgalModels `::BasicDart`
+\cgalModels `Dart`
 
-\tparam d an integer for the dimension of the dart.
+\tparam d the dimension of the dart.
 
-\tparam CMap must be a model of the `CombinatorialMap` concept.
+\tparam CMap a model of the `CombinatorialMap` concept.
 
 \sa `CombinatorialMap`
 
 */
 template< typename d, typename CMap >
-class Dart {
+class Combinatorial_map_dart {
 public:
 
 /// \name Types
@@ -82,5 +79,5 @@ Returns \f$ \beta_i^{-1}\f$(`*this`) when the dart is const.
 */
 Dart_const_handle beta_inv(unsigned int i) const;
 
-}; /* end Dart */
+}; /* end Combinatorial_map_dart */
 } /* end namespace CGAL */

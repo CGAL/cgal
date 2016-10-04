@@ -50,7 +50,7 @@ static const unsigned int ambient_dimension = d2;
 typedef Linear_cell_complex<d,d2,LCCTraits,Items,Alloc> Self;
 
 /*!
-The type of dart, must satisfy \link BasicDart::dimension `Dart::dimension`\endlink`==d`.
+The type of dart, must satisfy \link Dart::dimension `Dart::dimension`\endlink`==d`.
 */
 typedef Items::Dart_wrapper<Self>::Dart Dart;
 
