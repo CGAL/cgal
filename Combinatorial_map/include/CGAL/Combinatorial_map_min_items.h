@@ -20,7 +20,7 @@
 #ifndef CGAL_COMBINATORIAL_MAP_MIN_ITEMS_H
 #define CGAL_COMBINATORIAL_MAP_MIN_ITEMS_H 1
 
-#include <CGAL/Dart.h>
+#include <CGAL/Combinatorial_map_dart.h>
 
 namespace CGAL {
 
@@ -39,7 +39,7 @@ namespace CGAL {
     template < class Refs >
     struct Dart_wrapper
     {
-      typedef CGAL::Dart< d, Refs > Dart;
+      typedef CGAL::Combinatorial_map_dart< d, Refs > Dart;
       typedef CGAL::cpp11::tuple<> Attributes;
     };
   };

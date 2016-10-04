@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_DART_H
-#define CGAL_DART_H 1
+#ifndef CGAL_COMBINATORIAL_MAP_DART_H
+#define CGAL_COMBINATORIAL_MAP_DART_H 1
 
 #include <CGAL/Compact_container.h>
 #include <CGAL/assertions.h>
@@ -27,7 +27,7 @@
 
 namespace CGAL {
 
-  /** @file Dart.h
+  /** @file Combinatorial_map_dart.h
    * Definition of nD dart.
    */
 
@@ -42,14 +42,14 @@ namespace CGAL {
 #define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
 
   /** Definition of nD dart.
-   * The Dart class describes an nD dart (basic element of a
+   * The Combinatorial_map_dart class describes an nD dart (basic element of a
    * combinatorial map). A dart is composed with handle towards its neighbors,
    * a bitset containing Boolean marks, and handle towards enabled attributes.
    * n is the dimension of the space (2 for 2D, 3 for 3D...)
    * Refs the ref class
    */
   template <unsigned int d, typename Refs>
-  struct Dart
+  struct Combinatorial_map_dart
   {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
@@ -85,7 +85,7 @@ namespace CGAL {
     friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
-    typedef Dart<d,Refs>                     Self;
+    typedef Combinatorial_map_dart<d,Refs>   Self;
     typedef typename Refs::Dart_handle       Dart_handle;
     typedef typename Refs::size_type         size_type;
     typedef typename Refs::Dart_const_handle Dart_const_handle;
@@ -209,13 +209,13 @@ namespace CGAL {
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial map class.
      */
-    Dart()
+    Combinatorial_map_dart()
     {}
 
     /** Copy constructor:
      * @param adart a dart.
      */
-    Dart(const Dart& adart) : mmarks(adart.mmarks),
+    Combinatorial_map_dart(const Combinatorial_map_dart& adart) : mmarks(adart.mmarks),
     mattribute_handles(adart.mattribute_handles)
     {
       for (unsigned int i = 0; i <= dimension; ++i)
@@ -241,5 +241,5 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif // CGAL_DART_H //
+#endif // CGAL_COMBINATORIAL_MAP_DART_H //
 // EOF //

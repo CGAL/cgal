@@ -17,8 +17,8 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_GMAP_DART_H
-#define CGAL_GMAP_DART_H 1
+#ifndef CGAL_GENERALIZED_MAP_DART_H
+#define CGAL_GENERALIZED_MAP_DART_H 1
 
 #include <CGAL/Compact_container.h>
 #include <CGAL/assertions.h>
@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-/** @file GMap_dart.h
+/** @file Generalized_map_dart.h
  * Definition of nD dart for generalized maps.
  */
 
@@ -39,14 +39,14 @@ namespace CGAL {
   }
 
 /** Definition of nD dart.
- * The GMap_dart class describes an nD dart (basic element of a
+ * The Generalized_map_dart class describes an nD dart (basic element of a
  * generalized map). A dart is composed with handle towards its neighbors,
  * a bitset containing Boolean marks, and handle towards enabled attributes.
  * n is the dimension of the space (2 for 2D, 3 for 3D...)
  * Refs the ref class
  */
 template <unsigned int d, typename Refs>
-struct GMap_dart
+struct Generalized_map_dart
 {
   template < unsigned int, class, class, class, class >
   friend class Generalized_map_base;
@@ -73,7 +73,7 @@ struct GMap_dart
   friend struct internal::link_alpha_functor;
 
 public:
-  typedef GMap_dart<d,Refs>                Self;
+  typedef Generalized_map_dart<d,Refs>     Self;
   typedef typename Refs::Dart_handle       Dart_handle;
   typedef typename Refs::size_type         size_type;
   typedef typename Refs::Dart_const_handle Dart_const_handle;
@@ -180,13 +180,13 @@ protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the generalized map class.
      */
-    GMap_dart()
+    Generalized_map_dart()
     {}
 
     /** Copy constructor:
      * @param adart a dart.
      */
-    GMap_dart(const GMap_dart& adart) :
+    Generalized_map_dart(const Generalized_map_dart& adart) :
       mmarks(adart.mmarks),
       mattribute_handles(adart.mattribute_handles)
     {
@@ -213,5 +213,5 @@ protected:
 
 } // namespace CGAL
 
-#endif // CGAL_GMAP_DART_H //
+#endif // CGAL_GENERALIZED_MAP_DART_H //
 // EOF //
