@@ -43,8 +43,8 @@
 
 ## Concepts ##
 - `Dart`
-- `BasicMap`
-- `BasicMapItems`
+- `GenericMap`
+- `GenericMapItems`
 - `CellAttribute`
 - `CombinatorialMap`
 
