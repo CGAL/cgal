@@ -30,7 +30,6 @@ public:
 private:
   std::string m_id;
   std::map<Attribute_handle, Attribute_effect> m_attribute_effects;
-  std::vector<std::size_t> m_training_set;
 
 public:
 
@@ -74,14 +73,6 @@ public:
   */
   const std::string& id() const { return m_id; }
   
-  /*!
-    \brief Set of input point indices used as inlier of this
-    classification type for training.
-
-    \return The training set.
-  */
-  std::vector<std::size_t>& training_set() { return m_training_set; }
-
   /// \cond SKIP_IN_MANUAL
   void info()
   {

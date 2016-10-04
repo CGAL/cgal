@@ -118,6 +118,7 @@ private:
 
   std::vector<std::size_t> m_group;
   std::vector<std::size_t> m_assigned_type;
+  std::vector<std::size_t> m_training_type;
   std::vector<std::size_t> m_neighbor;
   std::vector<double> m_confidence;
 
@@ -758,12 +759,54 @@ public:
   {
     train_parameters(nb_tests);
   }
+
+  void reset_training_sets()
+  {
+    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_training_type);
+  }
+
+  template <class IndexIterator>
+  bool add_training_set (Data_classification::Type_handle class_type,
+                         IndexIterator first,
+                         IndexIterator beyond)
+  {
+    std::size_t type_idx = (std::size_t)(-1);
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i] == class_type)
+        {
+          type_idx = i;
+          break;
+        }
+    if (type_idx == (std::size_t)(-1))
+      return false;
+
+    if (m_training_type.empty())
+      reset_training_sets();
+    
+    for (IndexIterator it = first; it != beyond; ++ it)
+      m_training_type[*it] = type_idx;
+
+    return false;
+  }
+  
   /// @}
 
   
   /// \cond SKIP_IN_MANUAL
   void train_parameters(std::size_t nb_tests)
   {
+    if (m_training_type.empty())
+      return;
+    
+    std::vector<std::vector<std::size_t> > training_sets (m_types.size());
+    for (std::size_t i = 0; i < m_training_type.size(); ++ i)
+      if (m_training_type[i] != (std::size_t)(-1))
+        training_sets[m_training_type[i]].push_back (i);
+
+    for (std::size_t i = 0; i < training_sets.size(); ++ i)
+      if (training_sets[i].empty())
+        std::cerr << "WARNING: \"" << m_types[i]->id() << "\" doesn't have a training set." << std::endl;
+    
     std::vector<double> best_weights (m_attributes.size(), 1.);
     
     double best_score = -1.;
@@ -794,7 +837,7 @@ public:
             att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
           }
         
-        estimate_attribute_effects();
+        estimate_attribute_effects(training_sets);
         std::vector<Data_classification::Attribute_handle> used_attributes;
         for (std::size_t j = 0; j < m_attributes.size(); ++ j)
           {
@@ -812,9 +855,9 @@ public:
         used_attributes.swap (m_attributes);
         
         prepare_classification();
-        double worst_confidence = training_compute_worst_confidence();
+        double worst_confidence = training_compute_worst_confidence(training_sets);
 
-        double worst_score = training_compute_worst_score();
+        double worst_score = training_compute_worst_score(training_sets);
         used_attributes.swap (m_attributes);
         
         if (worst_score > best_score
@@ -848,7 +891,7 @@ public:
         att->weight = best_weights[i];
       }
 
-    estimate_attribute_effects();
+    estimate_attribute_effects(training_sets);
     
     std::cerr << std::endl << "Best score found is at least " << 100. * best_score
               << "% of correct classification" << std::endl;
@@ -888,7 +931,8 @@ public:
     m_attributes.swap (to_keep);
   }
 
-  void estimate_attribute_effects()
+  void estimate_attribute_effects
+  (const std::vector<std::vector<std::size_t> >& training_sets)
   {
     for (std::size_t i = 0; i < m_attributes.size(); ++ i)
       {
@@ -898,14 +942,12 @@ public:
                                   
         for (std::size_t j = 0; j < m_types.size(); ++ j)
           {
-            Data_classification::Type_handle ctype = m_types[j];
-            
-            for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+            for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
               {
-                double val = att->normalized(ctype->training_set()[k]);
+                double val = att->normalized(training_sets[j][k]);
                 mean[j] += val;
               }
-            mean[j] /= ctype->training_set().size();
+            mean[j] /= training_sets[j].size();
           }
 
         std::vector<double> sd (m_types.size(), 0.);
@@ -914,12 +956,12 @@ public:
           {
             Data_classification::Type_handle ctype = m_types[j];
             
-            for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+            for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
               {
-                double val = att->normalized(ctype->training_set()[k]);
+                double val = att->normalized(training_sets[j][k]);
                 sd[j] += (val - mean[j]) * (val - mean[j]);
               }
-            sd[j] = std::sqrt (sd[j] / ctype->training_set().size());
+            sd[j] = std::sqrt (sd[j] / training_sets[j].size());
             if (mean[j] - sd[j] > 0.5)
               ctype->set_attribute_effect (att, Data_classification::Type::FAVORED_ATT);
             else if (mean[j] + sd[j] < 0.5)
@@ -931,21 +973,21 @@ public:
   }
 
   
-  double training_compute_worst_score()
+  double training_compute_worst_score
+  (const std::vector<std::vector<std::size_t> >& training_sets)
   {
     double worst_score = 1.;
     for (std::size_t j = 0; j < m_types.size(); ++ j)
       {
-        Data_classification::Type_handle ctype = m_types[j];
         std::size_t nb_okay = 0;
-        for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+        for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
           {
             std::size_t nb_class_best=0; 
             double val_class_best = std::numeric_limits<double>::max();
       
             for(std::size_t l = 0; l < m_effect_table.size(); ++ l)
               {
-                double value = classification_value (l, ctype->training_set()[k]);
+                double value = classification_value (l, training_sets[j][k]);
           
                 if(val_class_best > value)
                   {
@@ -959,28 +1001,27 @@ public:
 
           }
 
-        double score = nb_okay / (double)(ctype->training_set().size());
+        double score = nb_okay / (double)(training_sets[j].size());
         if (score < worst_score)
           worst_score = score;
       }
     return worst_score;
   }
 
-  double training_compute_worst_confidence()
+  double training_compute_worst_confidence
+  (const std::vector<std::vector<std::size_t> >& training_sets)
   {
     double worst_confidence = std::numeric_limits<double>::max();
     for (std::size_t j = 0; j < m_types.size(); ++ j)
       {
-        Data_classification::Type_handle ctype = m_types[j];
-        
         double confidence = 0.;
         
-        for (std::size_t k = 0; k < ctype->training_set().size(); ++ k)
+        for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
           {
             std::vector<std::pair<double, std::size_t> > values;
       
             for(std::size_t l = 0; l < m_effect_table.size(); ++ l)
-              values.push_back (std::make_pair (classification_value (l, ctype->training_set()[k]),
+              values.push_back (std::make_pair (classification_value (l, training_sets[j][k]),
                                                 l));
             std::sort (values.begin(), values.end());
 
@@ -998,7 +1039,7 @@ public:
             
           }
 
-        confidence /= (double)(ctype->training_set().size() * m_attributes.size());
+        confidence /= (double)(training_sets[j].size() * m_attributes.size());
 
         if (confidence < worst_confidence)
           worst_confidence = confidence;
