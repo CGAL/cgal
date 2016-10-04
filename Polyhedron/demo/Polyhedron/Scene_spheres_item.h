@@ -30,7 +30,7 @@ public:
   bool isFinite() const { return false; }
   bool isEmpty() const { return false; }
   Scene_item* clone() const {return 0;}
-  QString toolTip() const {return QString();}
+  QString toolTip() const;
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Gouraud || m == Wireframe);
   }
@@ -45,6 +45,7 @@ public:
   void invalidateOpenGLBuffers();
   void computeElements() const;
   void setPlane(Kernel::Plane_3 p_plane);
+  void setToolTip(QString s);
 
 protected:
   friend struct Scene_spheres_item_priv;
