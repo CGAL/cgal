@@ -204,7 +204,7 @@ adding another information to vertices. For that, we need to define
 our own items class. The difference with the
 `Linear_cell_complex_min_items` class is about the definition of
 the vertex attribute where we use a `Cell_attribute_with_point`
-with a non `void` info. In this example, the "vertex color" is just
+with a non `void` info. In this example, the <em>vertex color</em> is just
 given by an `int` (the second template parameter of the
 `Cell_attribute_with_point`). Lastly, we define the
 `Average_functor` class in order to set the color of a vertex
