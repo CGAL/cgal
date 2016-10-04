@@ -33,7 +33,9 @@ Print the URLs or CGAL pull-request with a given label.''',\
 
   '''.format(config_file)))
 parser.add_argument('label', metavar='label', type=str,
-                    help='the label used to select pull requests')
+                    help='the label used to select pull requests.\
+                    If it starts with "4", then "Under testing in CGAL-"\
+                    is added as a prefix.')
 parser.add_argument('--verbose', action='store_const', const=True,
                     help='display verbose outputs to stderr')
 args = parser.parse_args()
@@ -63,11 +65,18 @@ g = Github(login_or_token=u,password=s);
 CGAL = g.get_organization("CGAL")
 cgal = CGAL.get_repo("cgal")
 
-label_name = "Under testing in CGAL-{}".format(args.label)
+if(args.label[0]=='4'):
+    label_name = "Under testing in CGAL-{}".format(args.label)
+else:
+    label_name = args.label
+
 try:
     Ic = cgal.get_label(label_name)
 except github.UnknownObjectException:
-    print('Unknown label "{}"'.format(label_name), file=sys.stderr)
+    print('ERROR: Unknown label "{}"'.format(label_name), file=sys.stderr)
+    print('Know labels are: {}'.format([label.name\
+                                        for label in cgal.get_labels()])\
+          , file=sys.stderr)
     exit()
 
 issues = {}
@@ -85,9 +94,10 @@ for issue in cgal.get_issues(labels=[Ic]):
         print_verbose("  head:   {}".format(bytes(pr.head.sha, 'ascii')))
         print_verbose("  labels: {}".format([label.name for\
                                                    label in issue.labels]))
-    except github.UnknownObjectException:
-        print_verbose("Warning: issue #{} with label {} is not a pull-request"\
-                      .format(issue.number, label.name))
+    except IndexError:
+        print_verbose('Warning: issue #{} with label "{}"\
+                      is not a pull-request'\
+                      .format(issue.number, label_name))
 
 for nb in issues.keys():
     print(issues[nb]["url"])
