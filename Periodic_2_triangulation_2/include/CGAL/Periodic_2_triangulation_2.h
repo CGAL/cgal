@@ -174,7 +174,11 @@ public:
     FACE,
     /// The query point lies outside the affine hull of the triangulation,
     /// which is the case when the triangulation is empty.
-    EMPTY
+    EMPTY,
+    // unused, for compatibility with Alpha_shape_2
+	OUTSIDE_CONVEX_HULL,
+	// unused, for compatibility with Alpha_shape_2
+  	OUTSIDE_AFFINE_HULL
   };
   //\}
 
