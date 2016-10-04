@@ -295,20 +295,25 @@ public Q_SLOTS:
 
   void run (Scene_point_set_classification_item* classification_item, int method)
   {
-    classification_item->run (ui_widget.scatterSlider->value() /
-                              (double)(ui_widget.scatterSlider->maximum()+1),
-                              ui_widget.planaritySlider->value() /
-                              (double)(ui_widget.planaritySlider->maximum()+1),
-                              ui_widget.horizontalitySlider->value() /
-                              (double)(ui_widget.horizontalitySlider->maximum()+1),
-                              ui_widget.elevationSlider->value() /
-                              (double)(ui_widget.elevationSlider->maximum()+1),
-                              ui_widget.colorSlider->value() /
-                              (double)(ui_widget.colorSlider->maximum()+1),
-                              class_rows,
-                              method,
-                              ui_widget.smoothingDoubleSpinBox->value(),
-                              ui_widget.radiusNeighborsDoubleSpinBox->value());
+    if (ui_widget.tabWidget->currentIndex() == 3)
+      classification_item->run_auto(method,
+                                    ui_widget.smoothingDoubleSpinBox->value(),
+                                    ui_widget.radiusNeighborsDoubleSpinBox->value());
+    else
+      classification_item->run (ui_widget.scatterSlider->value() /
+                                (double)(ui_widget.scatterSlider->maximum()+1),
+                                ui_widget.planaritySlider->value() /
+                                (double)(ui_widget.planaritySlider->maximum()+1),
+                                ui_widget.horizontalitySlider->value() /
+                                (double)(ui_widget.horizontalitySlider->maximum()+1),
+                                ui_widget.elevationSlider->value() /
+                                (double)(ui_widget.elevationSlider->maximum()+1),
+                                ui_widget.colorSlider->value() /
+                                (double)(ui_widget.colorSlider->maximum()+1),
+                                class_rows,
+                                method,
+                                ui_widget.smoothingDoubleSpinBox->value(),
+                                ui_widget.radiusNeighborsDoubleSpinBox->value());
   }
 
   void on_compute_features_button_clicked()

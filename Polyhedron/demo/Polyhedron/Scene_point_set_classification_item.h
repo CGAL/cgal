@@ -333,6 +333,10 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     return false;
   }
 
+  bool run_auto (int method, double weight,
+                 double radius_neighbors);
+
+  
   template <typename ItemContainer>
     void generate_point_sets (ItemContainer& items)
   {
@@ -385,12 +389,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
   void reset_training_sets()
   {
-    for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
-      m_predefined_types[i].first->training_set().clear();
+    m_psc->prepare_classification();
+    m_psc->reset_training_sets();
 
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->end(); ++ it)
-      m_psc->set_classification_type_of(*it, Type_handle());
     invalidateOpenGLBuffers();
     Q_EMIT itemChanged();
   }
@@ -404,13 +405,14 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     Type_handle class_type = get_or_add_classification_type (name, color);
     if (!(m_psc->classification_prepared()))
       m_psc->prepare_classification();
-    
+
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
-      {
-        class_type->training_set().push_back (*it);
-        m_psc->set_classification_type_of(*it, class_type);
-      }
+      m_psc->set_classification_type_of(*it, class_type);
+
+    m_psc->add_training_set(class_type,
+                            m_points->point_set()->first_selected(),
+                            m_points->point_set()->end());
     m_points->resetSelection();
   }
                                    

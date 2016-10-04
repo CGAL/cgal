@@ -49,6 +49,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
   setRenderingMode(PointsPlusNormals);
   m_index_color = 1;
 
+  m_points->point_set()->unselect_all();
   m_points->point_set()->collect_garbage();
   m_psc = new PSC(m_points->point_set()->begin(), m_points->point_set()->end(), m_points->point_set()->point_map());
   
@@ -1066,6 +1067,7 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
     }
 
   m_psc->clear_attributes();
+
   m_helper->generate_attributes (*m_psc,
                                  m_points->point_set()->begin(),
                                  m_points->point_set()->end(),
@@ -1079,6 +1081,7 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
                                         colors[i]));
       if (m_psc->number_of_classification_types() != i + 1)
         m_psc->add_classification_type (predef.back().first);
+
     }
   m_predefined_types.swap (predef);
 
@@ -1087,4 +1090,19 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
   
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
+}
+
+bool Scene_point_set_classification_item::run_auto (int method, double weight,
+                                                    double radius_neighbors)
+{
+  std::cerr << "Run auto" << std::endl;
+  m_points->point_set()->collect_garbage();
+  if (method == 0)
+    m_psc->run();
+  else if (method == 1)
+    m_psc->run_with_graphcut (m_helper->neighborhood(), weight);
+  else if (method == 2)
+    m_psc->run_with_groups (m_helper->neighborhood(), radius_neighbors);
+
+  return true;
 }
