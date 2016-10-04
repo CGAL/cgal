@@ -101,145 +101,6 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   ~Scene_point_set_classification_item();
   
   Scene_point_set_classification_item* clone() const;
-
-  struct Region
-  {
-    std::vector<std::size_t> indices;
-    double x_min, x_max, y_min, y_max;
-    Region () : indices(),
-                x_min(std::numeric_limits<double>::max()),
-                x_max(-std::numeric_limits<double>::max()),
-                y_min(std::numeric_limits<double>::max()),
-                y_max(-std::numeric_limits<double>::max()) { }
-  };
-
-  template <bool use_y>
-    struct Sort_by_coordinate
-  {
-    std::vector<Point_3>& m_hps;
-    Sort_by_coordinate (std::vector<Point_3>& hps) : m_hps (hps) { }
-    bool operator() (const std::size_t& a, const std::size_t& b)
-    {
-      if (use_y)
-        return m_hps[a].y() < m_hps[b].y();
-      else
-        return m_hps[a].x() < m_hps[b].x();
-    }
-  };
-  
-  template <typename OutputIterator>
-    bool segment_point_set (std::size_t nb_max_pt, OutputIterator output)
-  {
-    return false;
-    // if (m_points->point_set()->size() < nb_max_pt)
-    //   return false;
-
-    // std::list<Region> queue;
-    // queue.push_front (Region());
-    
-    // for (Points_set::const_iterator it = m_points->point_set()->begin();
-    //      it != m_points->point_set()->end(); ++ it)
-    //   {
-    //     queue.front().indices.push_back (*it);
-    //     if (m_points->point_set()[i].x() < queue.front().x_min)
-    //       queue.front().x_min = m_points->point_set()->point(it).x();
-    //     if (m_points->point_set()->point(it).x() > queue.front().x_max)
-    //       queue.front().x_max = m_points->point_set()->point(it).x();
-    //     if (m_points->point_set()->point(it).y() < queue.front().y_min)
-    //       queue.front().y_min = m_points->point_set()->point(it).y();
-    //     if (m_points->point_set()->point(it).y() > queue.front().y_max)
-    //       queue.front().y_max = m_points->point_set()->point(it).y();
-    //   }
-
-    // while (!(queue.empty()))
-    //   {
-    //     Region& current = queue.front();
-
-    //     if (current.indices.size() < nb_max_pt)
-    //       {
-    //         std::vector<Kernel::Point_3> dummy;
-
-    //         Scene_point_set_classification_item* new_item
-    //           = new Scene_point_set_classification_item ();
-            
-    //         for (std::size_t i = 0; i < current.indices.size(); ++ i)
-    //           {
-    //             new_item->m_points->point_set().push_back(m_points->point_set()[current.indices[i]]);
-    //             new_item->m_normals.push_back(m_normals[current.indices[i]]);
-    //             new_item->m_colors.push_back(m_colors[current.indices[i]]);
-    //           }
-
-    //         *(output ++) = new_item;
-    //       }
-    //     else
-    //       {
-    //         if (current.x_max - current.x_min > current.y_max - current.y_min)
-    //           {
-    //             std::sort (current.indices.begin(), current.indices.end(),
-    //                        Sort_by_coordinate<false>(m_points->point_set()));
-                
-    //             queue.push_back(Region());
-    //             queue.push_back(Region());
-    //             std::list<Region>::iterator it = queue.end();
-    //             Region& positive = *(-- it);
-    //             Region& negative = *(-- it);
-                
-    //             negative.y_min = current.y_min;
-    //             positive.y_min = current.y_min;
-    //             negative.y_max = current.y_max;
-    //             positive.y_max = current.y_max;
-                
-    //             negative.x_min = current.x_min;
-    //             positive.x_max = current.x_max;
-    //             std::size_t i = 0;
-                
-    //             for (; i < current.indices.size() / 2; ++ i)
-    //               negative.indices.push_back (current.indices[i]);
-    //             double med_x = 0.5 * (m_points->point_set()[current.indices[i]].x()
-    //                                   + m_points->point_set()[current.indices[i+1]].x());
-    //             negative.x_max = med_x;
-    //             positive.x_min = med_x;
-                
-    //             for (; i < current.indices.size(); ++ i)
-    //               positive.indices.push_back (current.indices[i]);
-    //           }
-    //         else
-    //           {
-    //             std::sort (current.indices.begin(), current.indices.end(),
-    //                        Sort_by_coordinate<true>(m_points->point_set()));
-
-    //             queue.push_back(Region());
-    //             queue.push_back(Region());
-    //             std::list<Region>::iterator it = queue.end();
-    //             Region& positive = *(-- it);
-    //             Region& negative = *(-- it);
-
-    //             negative.x_min = current.x_min;
-    //             positive.x_min = current.x_min;
-    //             negative.x_max = current.x_max;
-    //             positive.x_max = current.x_max;
-
-    //             negative.y_min = current.y_min;
-    //             positive.y_max = current.y_max;
-    //             std::size_t i = 0;
-                
-    //             for (; i < current.indices.size() / 2; ++ i)
-    //               negative.indices.push_back (current.indices[i]);
-    //             double med_y = 0.5 * (m_points->point_set()[current.indices[i]].y()
-    //                                   + m_points->point_set()[current.indices[i+1]].y());
-    //             negative.y_max = med_y;
-    //             positive.y_min = med_y;
-                
-    //             for (; i < current.indices.size(); ++ i)
-    //               positive.indices.push_back (current.indices[i]);
-    //           }
-    //       }
-        
-    //     queue.pop_front ();
-    //   }
-    
-    // return true;
-  }
   
   // Function to override the context menu
   QMenu* contextMenu();
@@ -269,140 +130,43 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   void change_color (int index);
   int real_index_color() const;
   
-  void estimate_parameters (double& grid_resolution,
-                            double& radius_neighbors,
-                            double& radius_dtm);
-  void compute_features (const double& grid_resolution,
-                         const double& radius_neighbors,
-                         const double& radius_dtm,
-                         const QColor& c);
-  void compute_ransac (const double& radius_neighbors);
-  void compute_clusters (const double& radius_neighbors);
+  void estimate_parameters ();
+  void compute_features ();
+  void compute_ransac ();
+  void compute_clusters ();
+  bool run (int method);
 
-  template <typename Classes>
-    bool run (double weight_scat, double weight_plan,
-              double weight_hori, double weight_elev, double weight_colo,
-              Classes& classes, int method, double weight,
-              double radius_neighbors)
+  template <typename Item>
+  void generate_point_set_items(std::vector<Item>& new_items)
   {
-    if (m_disp == Attribute_handle())
-      return false;
-
-    m_disp->weight = std::tan ((1. - weight_scat) * (CGAL_PI/2));
-    m_d2p->weight = std::tan ((1. - weight_plan) * (CGAL_PI/2));
-    m_verti->weight = std::tan ((1. - weight_hori) * (CGAL_PI/2));
-    m_elev->weight = std::tan ((1. - weight_elev) * (CGAL_PI/2));
-    m_col_att->weight = std::tan ((1. - weight_colo) * (CGAL_PI/2));
-
-    m_psc->clear_classification_types();
-
-    std::cerr << "Running with:" << std::endl;
-    for (std::size_t i = 0; i < classes.size(); ++ i)
-      {
-        if (!(classes[i].checkbox->isChecked()))
-          continue;
-
-        Type_handle ct
-          = m_psc->add_classification_type (classes[i].label->text().toLower().toStdString().c_str());
-        ct->set_attribute_effect
-          (m_disp, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[0]->currentIndex()));
-        ct->set_attribute_effect
-          (m_d2p, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[1]->currentIndex()));
-        ct->set_attribute_effect
-          (m_verti, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[2]->currentIndex()));
-        ct->set_attribute_effect
-          (m_elev, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[3]->currentIndex()));
-        ct->set_attribute_effect
-          (m_col_att, (CGAL::Data_classification::Type::Attribute_effect)(classes[i].combo[4]->currentIndex()));
-
-        std::cerr << " * ";
-        ct->info();
-      }
-  
-    std::cerr << "Weights: " << m_disp->weight << " " << m_d2p->weight << " " << m_verti->weight
-              << " " << m_elev->weight << " " << m_col_att->weight << std::endl;
-  
-    if (method == 0)
-      m_psc->run();
-    else if (method == 1)
-      m_psc->run_with_graphcut (m_helper->neighborhood(), weight);
-    else if (method == 2)
-      m_psc->run_with_groups (m_helper->neighborhood(), radius_neighbors);
-  
-    invalidateOpenGLBuffers();
-    return false;
+    // TODO
   }
-
-  bool run_auto (int method, double weight,
-                 double radius_neighbors);
-
-  
-  template <typename ItemContainer>
-    void generate_point_sets (ItemContainer& items)
-  {
-    for (Point_set::const_iterator it = m_points->point_set()->begin();
-         it != m_points->point_set()->end(); ++ it)
-      {
-        Type_handle c = m_psc->classification_type_of (*it);
-        if (c == Type_handle())
-          continue;
-        
-        if (c->id() == "vegetation")
-          items[0]->point_set()->insert (m_points->point_set()->point(*it));
-        else if (c->id() == "ground")
-          items[1]->point_set()->insert (m_points->point_set()->point(*it));
-        else if (c->id() == "road")
-          items[2]->point_set()->insert (m_points->point_set()->point(*it));
-        else if (c->id() == "roof")
-          items[3]->point_set()->insert (m_points->point_set()->point(*it));
-        else if (c->id() == "facade")
-          items[4]->point_set()->insert (m_points->point_set()->point(*it));
-        else if (c->id() == "building")
-          items[5]->point_set()->insert (m_points->point_set()->point(*it));
-      }
-  }
-
-  void extract_2d_outline (double radius,
-                           std::vector<Kernel::Point_3>& outline);
-  void extract_building_map (double radius,
-                             std::vector<Kernel::Triangle_3>& faces);
-  void extract_facades (double radius,
-                        std::vector<Kernel::Triangle_3>& faces);
 
   Scene_points_with_normal_item* points_item() { return m_points; }
-
-  Type_handle get_or_add_classification_type
-    (const char* name, const QColor& color)
-  {
-    for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
-      if (m_predefined_types[i].first->id() == name)
-        {
-          m_predefined_types[i].second = color;
-          return m_predefined_types[i].first;
-        }
-    Type_handle out = m_psc->add_classification_type(name);
-
-    m_predefined_types.push_back
-      (std::make_pair (out, color));
-    return out;
-  }
 
   void reset_training_sets()
   {
     m_psc->prepare_classification();
     m_psc->reset_training_sets();
-
     invalidateOpenGLBuffers();
     Q_EMIT itemChanged();
   }
 
-  void train(std::vector<std::string>& classes,
-             std::vector<QColor>& colors,
-             std::size_t nb_trials);
-  
-  void add_selection_to_training_set (const char* name, const QColor& color)
+  void train();
+
+
+  Type_handle get_classification_type (const char* name)
   {
-    Type_handle class_type = get_or_add_classification_type (name, color);
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i].first->id() == name)
+        return m_types[i].first;
+    return Type_handle();
+  }
+  
+  void add_selection_to_training_set (const char* name)
+  {
+    Type_handle class_type = get_classification_type (name);
+    
     if (!(m_psc->classification_prepared()))
       m_psc->prepare_classification();
 
@@ -415,25 +179,31 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
                             m_points->point_set()->end());
     m_points->resetSelection();
   }
-                                   
+
+  const double& grid_resolution() const { return m_grid_resolution; }
+  const double& radius_neighbors() const { return m_radius_neighbors; }
+  const double& radius_dtm() const { return m_radius_dtm; }
+  bool features_computed() const { return (m_helper != NULL); }
+
+  const std::vector<std::pair<Type_handle, QColor> >& types() { return m_types; }
+
  public Q_SLOTS:
 
   // Data
  private:
   
   Scene_points_with_normal_item* m_points;
-
   PSC* m_psc;
-  std::vector<std::pair<Type_handle, QColor> > m_predefined_types;
-
   Helper* m_helper;
-  
-  Attribute_handle m_disp;
-  Attribute_handle m_elev;
-  Attribute_handle m_verti;
-  Attribute_handle m_d2p;
-  Attribute_handle m_col_att;
 
+  double m_grid_resolution;
+  double m_radius_neighbors;
+  double m_radius_dtm;
+
+  std::vector<std::pair<Type_handle, QColor> > m_types;
+  double m_nb_trials;
+  double m_smoothing;
+  
   int m_index_color;
   
   enum VAOs {

@@ -34,6 +34,11 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
   m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
+  m_grid_resolution = 0.1;
+  m_radius_neighbors = 0.5;
+  m_radius_dtm = 2.5;
+  m_nb_trials = 2000;
+  m_smoothing = 0.5;
   m_index_color = 1;
   is_selected = true;
   nb_points = 0;
@@ -47,11 +52,25 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
     m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
+  m_grid_resolution = 0.1;
+  m_radius_neighbors = 0.5;
+  m_radius_dtm = 2.5;
   m_index_color = 1;
+  m_nb_trials = 2000;
+  m_smoothing = 0.5;
 
   m_points->point_set()->unselect_all();
   m_points->point_set()->collect_garbage();
   m_psc = new PSC(m_points->point_set()->begin(), m_points->point_set()->end(), m_points->point_set()->point_map());
+
+  Type_handle ground = m_psc->add_classification_type("ground");
+  Type_handle vegetation = m_psc->add_classification_type("vegetation");
+  Type_handle roof = m_psc->add_classification_type("roof");
+  Type_handle facade = m_psc->add_classification_type("facade");
+  m_types.push_back (std::make_pair(ground, QColor(245, 180, 0)));
+  m_types.push_back (std::make_pair(vegetation, QColor(0, 255, 27)));
+  m_types.push_back (std::make_pair(roof, QColor(255, 0, 170)));
+  m_types.push_back (std::make_pair(facade, QColor(100, 0, 255)));
   
   is_selected = true;
   nb_points = 0;
@@ -67,7 +86,12 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(const S
    m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
+  m_grid_resolution = 0.1;
+  m_radius_neighbors = 0.5;
+  m_radius_dtm = 2.5;
   m_index_color = 1;
+  m_nb_trials = 2000;
+  m_smoothing = 0.5;
   
   nb_points = 0;
   invalidateOpenGLBuffers();
@@ -211,58 +235,10 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     }
   else if (index_color == 1) // classif
     {
-      if (m_predefined_types.empty())
-        {
-          for (Point_set::const_iterator it = m_points->point_set()->begin();
-               it != m_points->point_set()->first_selected(); ++ it)
-            {
-              QColor color (0, 0, 0);
-              Type_handle c = m_psc->classification_type_of(*it);
+      std::map<Type_handle, QColor> map_colors;
+      for (std::size_t i = 0; i < m_types.size(); ++ i)
+        map_colors.insert (m_types[i]);
           
-              if (c != Type_handle())
-                {        
-                  if (c->id() == "vegetation")
-                    color = QColor(0, 255, 27);
-                  else if (c->id() == "ground")
-                    color = QColor(245, 180, 0);
-                  else if (c->id() == "road")
-                    color = QColor(114, 114, 130);
-                  else if (c->id() == "roof")
-                    color = QColor(255, 0, 170);
-                  else if (c->id() == "facade")
-                    color = QColor(100, 0, 255);
-                  else if (c->id() == "building")
-                    color = QColor(0, 114, 225);
-                }
-
-              colors_points.push_back ((double)(color.red()) / 255.);
-              colors_points.push_back ((double)(color.green()) / 255.);
-              colors_points.push_back ((double)(color.blue()) / 255.);
-            }
-        }
-      else
-        {
-          std::map<Type_handle, QColor> map_colors;
-          for (std::size_t i = 0; i < m_predefined_types.size(); ++ i)
-            map_colors.insert (m_predefined_types[i]);
-          
-          for (Point_set::const_iterator it = m_points->point_set()->begin();
-               it != m_points->point_set()->first_selected(); ++ it)
-            {
-              QColor color (0, 0, 0);
-              Type_handle c = m_psc->classification_type_of(*it);
-          
-              if (c != Type_handle())
-                color = map_colors[c];
-
-              colors_points.push_back ((double)(color.red()) / 255.);
-              colors_points.push_back ((double)(color.green()) / 255.);
-              colors_points.push_back ((double)(color.blue()) / 255.);
-            }
-        }
-    }
-  else if (index_color == 2) // confidence
-    {
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
         {
@@ -270,20 +246,27 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
           Type_handle c = m_psc->classification_type_of(*it);
           
           if (c != Type_handle())
-            {        
-              if (c->id() == "vegetation")
-                color = QColor(0, 255, 27);
-              else if (c->id() == "ground")
-                color = QColor(245, 180, 0);
-              else if (c->id() == "road")
-                color = QColor(114, 114, 130);
-              else if (c->id() == "roof")
-                color = QColor(255, 0, 170);
-              else if (c->id() == "facade")
-                color = QColor(100, 0, 255);
-              else if (c->id() == "building")
-                color = QColor(0, 114, 225);
-            }
+            color = map_colors[c];
+
+          colors_points.push_back ((double)(color.red()) / 255.);
+          colors_points.push_back ((double)(color.green()) / 255.);
+          colors_points.push_back ((double)(color.blue()) / 255.);
+        }
+    }
+  else if (index_color == 2) // confidence
+    {
+      std::map<Type_handle, QColor> map_colors;
+      for (std::size_t i = 0; i < m_types.size(); ++ i)
+        map_colors.insert (m_types[i]);
+          
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+        {
+          QColor color (0, 0, 0);
+          Type_handle c = m_psc->classification_type_of(*it);
+          
+          if (c != Type_handle())
+            color = map_colors[c];
 
           double confidence = m_psc->confidence_of(*it);
           colors_points.push_back (1. - confidence * (1. - (double)(color.red()) / 255.));
@@ -291,73 +274,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
           colors_points.push_back (1. - confidence * (1. - (double)(color.blue()) / 255.));
         }
     }
-  else if (index_color == 3) // scatter
-    {
-      double weight = m_disp->weight;
-      m_disp->weight = m_disp->max;
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-        {
-          colors_points.push_back (ramp.r(m_disp->value(*it)));
-          colors_points.push_back (ramp.g(m_disp->value(*it)));
-          colors_points.push_back (ramp.b(m_disp->value(*it)));
-        }
-      m_disp->weight = weight;
-    }
-  else if (index_color == 4) // planarity
-    {
-      double weight = m_d2p->weight;
-      m_d2p->weight = m_d2p->max;
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-        {
-          colors_points.push_back (ramp.r(m_d2p->value(*it)));
-          colors_points.push_back (ramp.g(m_d2p->value(*it)));
-          colors_points.push_back (ramp.b(m_d2p->value(*it)));
-        }
-      m_d2p->weight = weight;
-    }
-  else if (index_color == 5) // horizontality
-    {
-      double weight = m_verti->weight;
-      m_verti->weight = m_verti->max;
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-        {
-          colors_points.push_back (ramp.r(m_verti->value(*it)));
-          colors_points.push_back (ramp.g(m_verti->value(*it)));
-          colors_points.push_back (ramp.b(m_verti->value(*it)));
-        }
-      m_verti->weight = weight;
-    }
-  else if (index_color == 6) // elevation
-    {
-      double weight = m_elev->weight;
-      m_elev->weight = m_elev->max;
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-        {
-          double v = std::max(0., m_elev->value(*it));
-          colors_points.push_back (ramp.r(v));
-          colors_points.push_back (ramp.g(v));
-          colors_points.push_back (ramp.b(v));
-        }
-      m_elev->weight = weight;
-    }
-  else if (index_color == 7) // color
-    {
-      double weight = m_col_att->weight;
-      m_col_att->weight = m_col_att->max;
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-        {
-          colors_points.push_back (ramp.r(m_col_att->value(*it)));
-          colors_points.push_back (ramp.g(m_col_att->value(*it)));
-          colors_points.push_back (ramp.b(m_col_att->value(*it)));
-        }
-      m_col_att->weight = weight;
-    }
-  else if (index_color == 8) // RANSAC
+  else if (index_color == 3) // RANSAC
     {
       int seed = time(NULL);
         
@@ -379,36 +296,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
             }
         }
     }
-  else if (index_color == 9) // Clusters
-    {
-      // for (std::size_t i = 0; i < m_psc->clusters().size(); ++ i)
-      //   {
-      //     QColor color (0, 0, 0);
-      //     CGAL::Data_classification::Type *c = m_psc->classification_type_of(m_psc->clusters()[i].indices[0]);
-          
-      //     if (c != NULL)
-      //       {        
-      //         if (c->id() == "vegetation")
-      //           color = QColor(0, 255, 27);
-      //         else if (c->id() == "ground")
-      //           color = QColor(245, 180, 0);
-      //         else if (c->id() == "road")
-      //           color = QColor(114, 114, 130);
-      //         else if (c->id() == "roof")
-      //           color = QColor(255, 0, 170);
-      //         else if (c->id() == "facade")
-      //           color = QColor(100, 0, 255);
-      //         else if (c->id() == "building")
-      //           color = QColor(0, 114, 225);
-      //       }
 
-
-      //     colors_points.push_back ((double)(color.red()) / 255.);
-      //     colors_points.push_back ((double)(color.green()) / 255.);
-      //     colors_points.push_back ((double)(color.blue()) / 255.);
-      //   }
-    }
-  
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
        it != m_points->point_set()->end(); ++ it)
     {
@@ -601,39 +489,22 @@ int Scene_point_set_classification_item::real_index_color() const
 {
   int out = m_index_color;
   
-  if (out == 3 && m_disp == Attribute_handle())
-    out = 0;
-  if (out == 4 && m_d2p == Attribute_handle())
-    out = 0;
-  if (out == 5 && m_verti == Attribute_handle())
-    out = 0;
-  if (out == 6 && m_elev == Attribute_handle())
-    out = 0;
-  if (out == 7 && m_col_att == Attribute_handle())
-    out = 0;
-
   if (out == 0 && !(m_points->point_set()->has_colors()))
     out = -1;
   return out;
 }
 
-void Scene_point_set_classification_item::estimate_parameters (double& grid_resolution,
-                                                               double& radius_neighbors,
-                                                               double& radius_dtm)
+void Scene_point_set_classification_item::estimate_parameters ()
 {
   double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (m_points->point_set()->begin(),
                                                                                 m_points->point_set()->end(),
                                                                                 m_points->point_set()->point_map(), 6);
-
-  grid_resolution = average_spacing;
-  radius_neighbors = 5 * grid_resolution;
-  radius_dtm = 5 * radius_neighbors;
+  m_grid_resolution = average_spacing;
+  m_radius_neighbors = 5 * m_grid_resolution;
+  m_radius_dtm = 5 * m_radius_neighbors;
 }
 
-void Scene_point_set_classification_item::compute_features (const double& grid_resolution,
-                                                            const double& radius_neighbors,
-                                                            const double& radius_dtm,
-                                                            const QColor& c)
+void Scene_point_set_classification_item::compute_features ()
 {
   Q_ASSERT (!(m_points->point_set()->empty()));
   Q_ASSERT (m_psc != NULL);
@@ -644,64 +515,16 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   m_helper = new Helper (m_points->point_set()->begin(),
                          m_points->point_set()->end(),
                          m_points->point_set()->point_map(),
-                         grid_resolution, radius_neighbors, radius_dtm);
+                         m_grid_resolution, m_radius_neighbors, m_radius_dtm);
 
-  
-  m_disp = Attribute_handle (new Dispersion (m_points->point_set()->begin(),
-                           m_points->point_set()->end(),
-                           m_points->point_set()->point_map(),
-                           m_helper->grid(),
-                           grid_resolution,
-                           radius_neighbors,
-                           1.));
-  m_psc->add_attribute (m_disp);
-  
-  m_d2p = Attribute_handle (new Distance_to_plane (m_points->point_set()->begin(),
+  m_helper->generate_attributes (*m_psc,
+                                 m_points->point_set()->begin(),
                                  m_points->point_set()->end(),
-                                 m_points->point_set()->point_map(),
-                                 m_helper->eigen(),
-                                 1.));
-  m_psc->add_attribute (m_d2p);
-  
-  if (m_points->point_set()->has_normal_map())
-    m_verti = Attribute_handle (new Verticality (m_points->point_set()->begin(),
-                               m_points->point_set()->end(),
-                               m_points->point_set()->normal_map(),
-                               1.));
-  else
-    m_verti = Attribute_handle (new Verticality (m_points->point_set()->begin(),
-                               m_points->point_set()->end(),
-                               m_helper->eigen(),
-                               1.));
-
-  m_psc->add_attribute (m_verti);
-
-  m_elev = Attribute_handle (new Elevation (m_points->point_set()->begin(),
-                          m_points->point_set()->end(),
-                          m_points->point_set()->point_map(),
-                          _bbox,
-                          m_helper->grid(),
-                          grid_resolution,
-                          radius_neighbors,
-                          radius_dtm,
-                          1.));
-  m_psc->add_attribute (m_elev);
-
-  if (m_points->point_set()->has_colors())
-    m_col_att = Attribute_handle (new Color_att (m_points->point_set()->begin(),
-                               m_points->point_set()->end(),
-                               Point_set_color_map<Point_set>(m_points->point_set()),
-                               1.,
-                               c.hue(), c.saturation(), c.value()));
-  else
-    m_col_att = Attribute_handle (new Empty_color ());
-
-  m_psc->add_attribute (m_col_att);
-
+                                 m_points->point_set()->point_map());
 }
 
 
-void Scene_point_set_classification_item::compute_ransac (const double& radius_neighbors)
+void Scene_point_set_classification_item::compute_ransac ()
 {
   Q_ASSERT (m_psc != NULL);
 
@@ -731,15 +554,15 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
   op.probability = 0.05;
   op.min_points = std::max ((std::size_t)10, m_points->point_set()->size() / 250000);
   
-  op.epsilon = radius_neighbors;
-  op.cluster_epsilon = radius_neighbors;
+  op.epsilon = m_radius_neighbors;
+  op.cluster_epsilon = m_radius_neighbors;
   op.normal_threshold = 0.9;
 
   std::cerr << "Computing RANSAC..." << std::endl;
   shape_detection.detect(op);
   
   CGAL::regularize_planes (shape_detection, true, true, true, false,
-                           10., radius_neighbors);
+                           10., m_radius_neighbors);
   
   m_psc->reset_groups();
 
@@ -757,7 +580,7 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
 }
 
 
-void Scene_point_set_classification_item::compute_clusters (const double& radius_neighbors)
+void Scene_point_set_classification_item::compute_clusters ()
 {
   Q_ASSERT (m_psc != NULL);
   if (m_helper == NULL)
@@ -766,298 +589,14 @@ void Scene_point_set_classification_item::compute_clusters (const double& radius
       return;
     }
 
-  m_psc->cluster_points (m_helper->neighborhood(), radius_neighbors);
+  m_psc->cluster_points (m_helper->neighborhood(), m_radius_neighbors);
 
   invalidateOpenGLBuffers();
 }
 
 
 
-void Scene_point_set_classification_item::extract_2d_outline (double radius,
-                                                              std::vector<Kernel::Point_3>& outline)
-{
-    
-  // Projection
-  double mean_z = 0.;
-  std::size_t nb = 0;
-  std::vector<Kernel::Point_2> pts;
-  
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->end(); ++ it)
-    if (m_psc->classification_type_of(*it)->id() == "ground")
-      {
-        mean_z += m_points->point_set()->point(*it).z();
-        nb ++;
-      }
-    else if (m_psc->classification_type_of(*it)->id() != "vegetation")
-      pts.push_back (Kernel::Point_2 (m_points->point_set()->point(*it).x(),
-                                      m_points->point_set()->point(*it).y()));
-
-  mean_z /= nb;
-  
-
-  // Alpha shapes
-  typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
-  typedef CGAL::Alpha_shape_face_base_2<Kernel>  Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
-  typedef CGAL::Delaunay_triangulation_2<Kernel,Tds> Triangulation_2;
-  typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
-
-  Alpha_shape_2 ashape (pts.begin (), pts.end (), radius);
-
-  // Output
-  for (Alpha_shape_2::Finite_edges_iterator it = ashape.finite_edges_begin ();
-       it != ashape.finite_edges_end (); ++ it)
-    {
-      if (ashape.classify(*it) != Alpha_shape_2::REGULAR)
-        continue;
-
-      for (std::size_t i = 0; i < 2; ++ i)
-        {
-          const Kernel::Point_2& p = it->first->vertex ((it->second + 1 + i) % 3)->point();
-          outline.push_back (Kernel::Point_3 (p.x(), p.y(), mean_z));
-        }
-
-    }
-
-}
-
-void Scene_point_set_classification_item::extract_building_map (double,
-                                                                std::vector<Kernel::Triangle_3>& /*faces*/)
-{
-//   // Estimate ground Z
-//   std::cerr << "Estimating ground..." << std::endl;
-//   std::vector<double> z_ground;
-//   for (std::size_t i = 0; i < m_points->point_set().size(); ++ i)
-//     if (m_psc->classification_type_of(i)->id() == "ground")
-//       z_ground.push_back (m_points->point_set()[i].z());
-
-//   std::sort (z_ground.begin(), z_ground.end());
-//   double z_median = z_ground[z_ground.size() / 2];
-//   Kernel::Plane_3 ground (Kernel::Point_3 (0., 0., z_median), Kernel::Vector_3 (0., 0., 1.));
-  
-//   // Project facade planes and get lines
-//   std::cerr << "Projecting facade planes..." << std::endl;
-//   std::vector<bool> is_plane_facade (m_psc->groups.size(), false);
-//   std::vector<std::vector<Kernel::Point_3> > facade_pts (m_psc->groups.size());
-  
-//   for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
-//     if (m_psc->HPS[i].AE_label == index_facade && m_psc->HPS[i].group != (std::size_t)(-1))
-//       {
-//         is_plane_facade[m_psc->HPS[i].group] = true;
-//         facade_pts[m_psc->HPS[i].group].push_back (m_psc->HPS[i].position);
-//       }
-
-
-//   std::vector<Kernel::Segment_3> borders;
-//   borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin(), _bbox.ymin(), z_median),
-//                                         Kernel::Point_3 (_bbox.xmin(), _bbox.ymax(), z_median)));
-//   borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin(), _bbox.ymax(), z_median),
-//                                         Kernel::Point_3 (_bbox.xmax(), _bbox.ymax(), z_median)));
-//   borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax(), _bbox.ymax(), z_median),
-//                                         Kernel::Point_3 (_bbox.xmax(), _bbox.ymin(), z_median)));
-//   borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax(), _bbox.ymin(), z_median),
-//                                         Kernel::Point_3 (_bbox.xmin(), _bbox.ymin(), z_median)));
-
-//   std::vector<Kernel::Segment_3> lines;
-//   for (std::size_t i = 0; i < is_plane_facade.size(); ++ i)
-//     if (is_plane_facade[i])
-//       {
-//         Kernel::Plane_3 plane = m_psc->groups[i];
-//         Kernel::Vector_3 normal = plane.orthogonal_vector();
-//         normal = normal / std::sqrt (normal * normal);
-//         // double horiz = normal * Kernel::Vector_3 (0., 0., 1.);
-//         // if (horiz > 0.17 || horiz < -0.17)
-//         //   continue;
-
-//         Kernel::Point_3 c = CGAL::centroid (facade_pts[i].begin(), facade_pts[i].end());
-//         normal = Kernel::Vector_3 (normal.x(), normal.y(), 0.);
-//         plane = Kernel::Plane_3 (c, normal);
-        
-//         //#define INFINITE_LINES
-// #if defined(INFINITE_LINES)
-
-//         Kernel::Point_3 source, target;
-//         bool source_found = false;
-
-//         for (std::size_t j = 0; j < borders.size(); ++ j)
-//           {
-//             CGAL::Object obj = CGAL::intersection (borders[j], plane);
-//             Kernel::Point_3 inter;
-//             if (CGAL::assign (inter, obj))
-//               {
-//                 if (source_found)
-//                   {
-//                     target = inter;
-//                     lines.push_back (Kernel::Segment_3 (source, target));
-//                     break;
-//                   }
-//                 else
-//                   {
-//                     source = inter;
-//                     source_found = true;
-//                   }
-//               }
-//           }
-// #else
-//         CGAL::Object obj = CGAL::intersection (ground, plane);
-//         Kernel::Line_3 line;
-
-//         // if (facade_pts[i].size() < 100)
-//         //   continue;
-        
-//         if (CGAL::assign (line, obj))
-//           {
-//             Kernel::Point_3 origin = line.projection (CGAL::ORIGIN);
-//             Kernel::Vector_3 v (line);
-//             double min = std::numeric_limits<double>::max();
-//             double max = -std::numeric_limits<double>::max();
-//             Kernel::Point_3 source = CGAL::ORIGIN;
-//             Kernel::Point_3 target = CGAL::ORIGIN;
-//             for (std::size_t j = 0; j < facade_pts[i].size(); ++ j)
-//               {
-//                 Kernel::Vector_3 dir (origin, facade_pts[i][j]);
-//                 double prod = v * dir;
-//                 if (prod > max)
-//                   {
-//                     max = prod;
-//                     target = facade_pts[i][j];
-//                   }
-//                 if (prod < min)
-//                   {
-//                     min = prod;
-//                     source = facade_pts[i][j];
-//                   }
-//               }
-//             source = line.projection (source);
-//             target = line.projection (target);
-//             Kernel::Point_3 middle (0.5 * (source.x() + target.x()),
-//                                     0.5 * (source.y() + target.y()),
-//                                     0.5 * (source.z() + target.z()));
-
-//             source = middle + 1.1 * (source - middle);
-//             target = middle + 1.1 * (target - middle);
-//             lines.push_back (Kernel::Segment_3 (source, target));
-//           }
-// #endif
-//       }
-
-//   std::cerr << " -> Found " << lines.size() << " line(s)" << std::endl;
-  
-//   // Build 2D constrained Delaunay triangulation
-//   std::cerr << "Building 2D constrained Delaunay triangulation..." << std::endl;
-    
-//   typedef CGAL::Triangulation_vertex_base_2<Kernel>                Vb;
-//   typedef CGAL::Triangulation_face_base_with_info_2<int,Kernel>    Fbwi;
-//   typedef CGAL::Constrained_triangulation_face_base_2<Kernel,Fbwi> Fb;
-//   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
-//   typedef CGAL::Exact_predicates_tag                               Itag;
-//   typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag> CDT;
-
-//   CDT cdt;
-//   cdt.insert (Kernel::Point_2 (_bbox.xmin(), _bbox.ymin()));
-//   cdt.insert (Kernel::Point_2 (_bbox.xmin(), _bbox.ymax()));
-//   cdt.insert (Kernel::Point_2 (_bbox.xmax(), _bbox.ymin()));
-//   cdt.insert (Kernel::Point_2 (_bbox.xmax(), _bbox.ymax()));
-//   for (std::size_t i = 0; i < lines.size(); ++ i)
-//     cdt.insert_constraint (Kernel::Point_2 (lines[i].source().x(), lines[i].source().y()),
-//                            Kernel::Point_2 (lines[i].target().x(), lines[i].target().y()));
-
-//   std::cerr << " -> " << cdt.number_of_faces () << " face(s) created" << std::endl;
-//   for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
-//     it->info() = -10;
-
-//   // Project ground + roof points on faces
-//   std::cerr << "Projecting ground and roof points on faces..." << std::endl;
-//   for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
-//     {
-//       int iter = 0;
-//       if (m_psc->HPS[i].AE_label == index_roof)
-//         iter = 1;
-//       else if (m_psc->HPS[i].AE_label == index_ground)
-//         iter = -1;
-//       else
-//         continue;
-
-//       CDT::Face_handle f = cdt.locate (Kernel::Point_2 (m_psc->HPS[i].position.x(),
-//                                                         m_psc->HPS[i].position.y()));
-
-//       f->info() += iter;
-//     }
-
-  
-//   // Label and extract faces
-//   for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
-//     if (it->info() > 0)
-//       faces.push_back (Kernel::Triangle_3 (Kernel::Point_3 (it->vertex (0)->point().x(),
-//                                                             it->vertex (0)->point().y(),
-//                                                             z_median),
-//                                            Kernel::Point_3 (it->vertex (1)->point().x(),
-//                                                             it->vertex (1)->point().y(),
-//                                                             z_median),
-//                                            Kernel::Point_3 (it->vertex (2)->point().x(),
-//                                                             it->vertex (2)->point().y(),
-//                                                             z_median)));
-//   std::cerr << " -> Found " << faces.size() << " building face(s)" << std::endl;
-}
-
-
-void Scene_point_set_classification_item::extract_facades (double /*radius*/,
-                                                           std::vector<Kernel::Triangle_3>& /*faces*/)
-{
-  // std::size_t index_facade = 0;
-  // for (std::size_t i = 0; i < m_psc->segmentation_classes.size(); ++ i)
-  //   if (m_psc->get_classification_type(i)->id() == "facade")
-  //     {
-  //       index_facade = i;
-  //       break;
-  //     }
-
-  // typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
-  // typedef CGAL::Alpha_shape_face_base_2<Kernel>  Fb;
-  // typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
-  // typedef CGAL::Delaunay_triangulation_2<Kernel,Tds> Triangulation_2;
-  // typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
-  
-  // std::vector<std::vector<Kernel::Point_3> > facade_pts (m_psc->groups.size());
-    
-  // for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
-  //   if (m_psc->HPS[i].AE_label == index_facade && m_psc->HPS[i].group != (std::size_t)(-1))
-  //     {
-  //       facade_pts[m_psc->HPS[i].group].push_back (m_psc->HPS[i].position);
-  //     }
-
-  // for (std::size_t i = 0; i < facade_pts.size(); ++ i)
-  //   {
-  //     Kernel::Plane_3 plane = m_psc->groups[i];
-  //     Kernel::Vector_3 normal = plane.orthogonal_vector();
-  //     Kernel::Point_3 c = CGAL::centroid (facade_pts[i].begin(), facade_pts[i].end());
-  //     normal = Kernel::Vector_3 (normal.x(), normal.y(), 0.);
-  //     plane = Kernel::Plane_3 (c, normal);
-
-  //     std::vector<Kernel::Point_2> projections;
-  //     projections.reserve (facade_pts[i].size ());
-
-  //     for (std::size_t j = 0; j < facade_pts[i].size (); ++ j)
-  //       projections.push_back (plane.to_2d (facade_pts[i][j]));
-
-  //     Alpha_shape_2 ashape (projections.begin (), projections.end (), radius);
-  
-  //     for (Alpha_shape_2::Finite_faces_iterator it = ashape.finite_faces_begin ();
-  //          it != ashape.finite_faces_end (); ++ it)
-  //       {
-  //         if (ashape.classify (it) != Alpha_shape_2::INTERIOR)
-  //           continue;
-  //         faces.push_back (Kernel::Triangle_3 (plane.to_3d (it->vertex(0)->point()),
-  //                                              plane.to_3d (it->vertex(1)->point()),
-  //                                              plane.to_3d (it->vertex(2)->point())));
-  //       }
-  //   }
-}
-
-void Scene_point_set_classification_item::train(std::vector<std::string>& classes,
-                                                std::vector<QColor>& colors,
-                                                std::size_t nb_trials)
+void Scene_point_set_classification_item::train()
 {
 
   if (m_helper == NULL)
@@ -1066,43 +605,21 @@ void Scene_point_set_classification_item::train(std::vector<std::string>& classe
       return;
     }
 
-  m_psc->clear_attributes();
-
-  m_helper->generate_attributes (*m_psc,
-                                 m_points->point_set()->begin(),
-                                 m_points->point_set()->end(),
-                                 m_points->point_set()->point_map());
-  
-  m_psc->clear_classification_types();
-  std::vector<std::pair<Type_handle, QColor> > predef;
-  for (std::size_t i = 0; i < classes.size(); ++ i)
-    {
-      predef.push_back (std::make_pair (get_or_add_classification_type(classes[i].c_str(), colors[i]),
-                                        colors[i]));
-      if (m_psc->number_of_classification_types() != i + 1)
-        m_psc->add_classification_type (predef.back().first);
-
-    }
-  m_predefined_types.swap (predef);
-
-  m_psc->training(nb_trials);  
+  m_psc->training(m_nb_trials);
   m_psc->run();
   
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
 
-bool Scene_point_set_classification_item::run_auto (int method, double weight,
-                                                    double radius_neighbors)
+bool Scene_point_set_classification_item::run (int method)
 {
-  std::cerr << "Run auto" << std::endl;
-  m_points->point_set()->collect_garbage();
   if (method == 0)
     m_psc->run();
   else if (method == 1)
-    m_psc->run_with_graphcut (m_helper->neighborhood(), weight);
+    m_psc->run_with_graphcut (m_helper->neighborhood(), m_smoothing);
   else if (method == 2)
-    m_psc->run_with_groups (m_helper->neighborhood(), radius_neighbors);
+    m_psc->run_with_groups (m_helper->neighborhood(), m_radius_neighbors);
 
   return true;
 }
