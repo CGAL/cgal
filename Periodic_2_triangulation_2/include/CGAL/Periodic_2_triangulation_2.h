@@ -176,9 +176,9 @@ public:
     /// which is the case when the triangulation is empty.
     EMPTY,
     // unused, for compatibility with Alpha_shape_2
-	OUTSIDE_CONVEX_HULL,
-	// unused, for compatibility with Alpha_shape_2
-  	OUTSIDE_AFFINE_HULL
+    OUTSIDE_CONVEX_HULL,
+    // unused, for compatibility with Alpha_shape_2
+    OUTSIDE_AFFINE_HULL
   };
   //\}
 
