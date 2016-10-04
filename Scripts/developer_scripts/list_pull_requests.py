@@ -31,13 +31,17 @@ Print the URLs or CGAL pull-request with a given label.''',\
       user=lrineau
       token=7f3f81294bd965232ca3c657a23c16729dac663f
 
+  Go to https://github.com/settings/tokens to create a token.
+
   '''.format(config_file)))
 parser.add_argument('label', metavar='label', type=str,
                     help='the label used to select pull requests.\
                     If it starts with "4", then "Under testing in CGAL-"\
                     is added as a prefix.')
-parser.add_argument('--verbose', action='store_const', const=True,
+parser.add_argument('--verbose',  action='store_const', const=True,
                     help='display verbose outputs to stderr')
+parser.add_argument('--unmerged', action='store_const', const=True,
+                    help='show only unmerged pull-requests')
 args = parser.parse_args()
 
 def print_verbose(str, *argv, **kwargs):
@@ -48,6 +52,7 @@ def print_verbose(str, *argv, **kwargs):
 u=config['main']['user']
 s=config['main']['token']
 verbose=args.verbose
+unmerged=args.unmerged
 
 print_verbose("Getting commits in current branch", end='')
 sys.stderr.flush()
@@ -100,7 +105,12 @@ for issue in cgal.get_issues(labels=[Ic]):
                       .format(issue.number, label_name))
 
 for nb in issues.keys():
-    print(issues[nb]["url"])
     if issues[nb]["sha"] not in commits:
-        print_verbose("Warning: {} head {} is not in the current branch".\
-                      format(issues[nb]["url"], issues[nb]["sha"]))
+        if(unmerged):
+            print(issues[nb]["url"])
+        else:
+            print_verbose("Warning: {} head {} is not in the current branch".\
+                          format(issues[nb]["url"], issues[nb]["sha"]))
+    else:
+        if(not unmerged):
+            print(issues[nb]["url"])
