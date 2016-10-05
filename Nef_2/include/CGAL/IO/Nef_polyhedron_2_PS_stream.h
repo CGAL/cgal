@@ -27,7 +27,7 @@
 #include <LEDA/graphics/color.h>
 
 namespace CGAL {
-static int frame_default = 100;
+static const int frame_default = 100;
 
 template <typename CIRC>
 leda_list<leda_point>
