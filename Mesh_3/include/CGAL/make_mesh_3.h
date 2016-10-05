@@ -31,6 +31,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
 #include <CGAL/Mesh_3/Has_features.h>
+#include <CGAL/Mesh_3/C3T3_helpers.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
@@ -262,7 +263,17 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
 
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points
-      if ( c3t3.triangulation().dimension() != 3 ) {
+
+      bool need_more_init = c3t3.triangulation().dimension() != 3;
+      if(!need_more_init) {
+        CGAL::Mesh_3::C3T3_helpers<C3T3, MD> helper(c3t3, domain);
+        helper.update_restricted_facets();
+
+        if (c3t3.number_of_facets() == 0) {
+          need_more_init = true;
+        }
+      }
+      if(need_more_init) {
         init_c3t3(c3t3, domain, criteria, nb_initial_points);
       }
     }
