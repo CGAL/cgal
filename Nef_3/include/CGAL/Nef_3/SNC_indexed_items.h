@@ -21,7 +21,6 @@
 #ifndef CGAL_NEF_SNC_INDEXED_ITEMS_H
 #define CGAL_NEF_SNC_INDEXED_ITEMS_H
 
-#include <CGAL/tss.h>
 #include <CGAL/atomic.h>
 
 #include <CGAL/Nef_3/Vertex.h>
