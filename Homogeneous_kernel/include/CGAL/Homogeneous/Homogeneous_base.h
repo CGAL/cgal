@@ -25,7 +25,7 @@
 #ifndef CGAL_HOMOGENEOUS_BASE_H
 #define CGAL_HOMOGENEOUS_BASE_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/basic_classes.h>
 
 #include <CGAL/Kernel/global_functions.h>

@@ -28,10 +28,13 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/result_of.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 

@@ -21,7 +21,7 @@
 #ifndef CGAL_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_TRIANGULATION_VERTEX_BASE_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 
 namespace CGAL {

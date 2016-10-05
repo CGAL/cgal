@@ -23,6 +23,7 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/assertions.h>
 #include <bitset>
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 
 namespace CGAL {
 

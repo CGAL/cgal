@@ -25,6 +25,7 @@
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
+#include <CGAL/Object.h>
 
 #include <boost/bind.hpp>
 

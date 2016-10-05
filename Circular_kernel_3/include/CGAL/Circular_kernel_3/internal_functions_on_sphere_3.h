@@ -25,6 +25,8 @@
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_ON_SPHERE_3_H
 
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
   namespace SphericalFunctors {

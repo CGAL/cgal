@@ -27,6 +27,7 @@
 #define CGAL_BBOX_INTERSECTION_3_H
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Object.h>
 
 namespace CGAL {
 

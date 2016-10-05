@@ -30,6 +30,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Constrained_voronoi_diagram_2.h>
 
 #include <vector>

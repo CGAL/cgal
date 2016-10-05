@@ -24,7 +24,7 @@
 #ifndef CGAL_BBOX_2_H
 #define CGAL_BBOX_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Dimension.h>

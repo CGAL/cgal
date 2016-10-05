@@ -21,10 +21,13 @@
 //
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/import_from_polyhedron_3.h>
+#include <CGAL/import_from_triangulation_3.h>
 #include <QSettings>
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
 #include "import_moka.h"
+
 
 // Function defined in Linear_cell_complex_3_subivision.cpp
 void subdivide_lcc_3 (LCC & m);

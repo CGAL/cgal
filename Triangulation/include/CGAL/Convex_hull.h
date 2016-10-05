@@ -30,6 +30,8 @@
 #ifndef CGAL_CONVEX_HULL_H
 #define CGAL_CONVEX_HULL_H
 
+#include <CGAL/Default.h>
+
 namespace CGAL {
 
 template <  class CHTraits, class TDS_ = Default >

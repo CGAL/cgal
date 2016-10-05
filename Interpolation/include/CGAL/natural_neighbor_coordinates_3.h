@@ -27,6 +27,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/utility.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/number_utils.h>
 
 #include <iostream> //TO DO : to remove
 

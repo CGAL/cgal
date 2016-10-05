@@ -20,7 +20,7 @@
 #ifndef CGAL_HILBERT_SORT_BASE_H
 #define CGAL_HILBERT_SORT_BASE_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <algorithm>
 #include <CGAL/algorithm.h>
 

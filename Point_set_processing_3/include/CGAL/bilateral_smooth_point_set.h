@@ -25,6 +25,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <iterator>
 #include <set>

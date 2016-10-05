@@ -25,6 +25,8 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/import_from_polyhedron_3.h>
+#include <CGAL/import_from_triangulation_3.h>
 #include "Linear_cell_complex_2_test.h"
 #include <fstream>
 

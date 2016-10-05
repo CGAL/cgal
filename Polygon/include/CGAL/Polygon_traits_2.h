@@ -27,7 +27,7 @@
 
 // For backward compatibility only.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 namespace CGAL {
 

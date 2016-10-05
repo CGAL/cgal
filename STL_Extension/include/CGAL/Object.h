@@ -29,7 +29,8 @@
 #ifndef CGAL_OBJECT_H
 #define CGAL_OBJECT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/assertions.h>
 
 #include <typeinfo>
 

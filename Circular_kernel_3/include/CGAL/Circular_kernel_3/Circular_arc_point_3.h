@@ -33,6 +33,9 @@
 // fixme, devrait
 // appeler fonction de global_functions_on_circular_arcs
 
+#include <vector>
+#include <CGAL/kernel_config.h>
+
 namespace CGAL {
   namespace internal {
 

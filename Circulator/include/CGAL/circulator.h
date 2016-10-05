@@ -25,7 +25,7 @@
 #ifndef CGAL_CIRCULATOR_H
 #define CGAL_CIRCULATOR_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/circulator_bases.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>

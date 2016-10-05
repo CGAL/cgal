@@ -4845,8 +4845,9 @@ operator!=(const Periodic_2_triangulation_2<GT, Tds1> &t1,
   return ! (t1 == t2);
 }
 
+#define CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 #include <CGAL/Periodic_2_triangulation_dummy_12.h>
-
+#undef CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 } //namespace CGAL
 
 

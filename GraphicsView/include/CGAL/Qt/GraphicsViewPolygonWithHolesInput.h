@@ -28,6 +28,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
 
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Qt/GraphicsViewInput.h>

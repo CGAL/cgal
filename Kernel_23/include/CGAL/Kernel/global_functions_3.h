@@ -518,6 +518,17 @@ determinant(const Vector_3<K> &v0, const Vector_3<K> &v1,
 
 template < class K >
 inline
+typename K::FT
+dihedral_angle(const Point_3<K> &p,
+               const Point_3<K> &q,
+               const Point_3<K> &r,
+               const Point_3<K> &s)
+{
+  return internal::dihedral_angle(p, q, r, s, K());
+}
+
+template < class K >
+inline
 typename K::Line_3
 equidistant_line(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {

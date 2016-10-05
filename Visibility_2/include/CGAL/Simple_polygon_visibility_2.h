@@ -27,6 +27,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/assertions.h>
 #include <stack>

@@ -24,8 +24,9 @@
 #ifndef CGAL_AFF_TRANSFORMATION_2_H
 #define CGAL_AFF_TRANSFORMATION_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/aff_transformation_tags.h>
 
 namespace CGAL {
 

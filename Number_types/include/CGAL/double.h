@@ -28,6 +28,7 @@
 #include <CGAL/utils.h>
 #include <CGAL/utils_classes.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Algebraic_structure_traits.h>
 #include <utility>
 #include <cmath>
 #include <math.h> // for nextafter

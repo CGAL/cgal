@@ -22,6 +22,9 @@
 
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Combinatorial_map_insertions.h>
+#include <CGAL/internal/Combinatorial_map_sewable.h>
+#include <CGAL/internal/Combinatorial_map_group_functors.h>
+
 #include <deque>
 #include <stack>
 

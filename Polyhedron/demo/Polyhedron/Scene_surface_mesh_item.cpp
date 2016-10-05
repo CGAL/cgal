@@ -424,8 +424,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       d->program->setAttributeValue("is_selected", true);
     else
       d->program->setAttributeValue("is_selected", false);
-      if(!d->has_vcolors)
-        d->program->setAttributeValue("colors", this->color());
+    if(!d->has_vcolors)
+      d->program->setAttributeValue("colors", this->color());
     glDrawElements(GL_TRIANGLES, static_cast<GLuint>(d->idx_data_.size()),
                    GL_UNSIGNED_INT, d->idx_data_.data());
     vaos[Scene_surface_mesh_item_priv::Smooth_facets]->release();

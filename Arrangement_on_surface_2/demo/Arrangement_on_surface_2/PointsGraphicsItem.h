@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <CGAL/Qt/GraphicsItem.h>
+#include <CGAL/number_utils.h>
 #include <QPen>
 
 class QPainter;

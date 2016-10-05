@@ -24,12 +24,14 @@
 
 #include <vector>
 #include <set>
+#include <stack>
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/property_map.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Random.h>
+#include <CGAL/Origin.h>
 
 /*!
  \file Shape_base.h

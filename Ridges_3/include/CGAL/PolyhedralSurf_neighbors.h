@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <list>
 #include <CGAL/basic.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
 

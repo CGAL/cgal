@@ -46,6 +46,9 @@ class Circle_3;
 template <class SK>
 class Sphere_3;
 
+template <class K>
+class Vector_3;
+
 template <class SK>
 Circular_arc_point_3<SK>
 x_extremal_point(const Circle_3<SK> & c, bool i)

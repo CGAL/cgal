@@ -29,7 +29,7 @@
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>

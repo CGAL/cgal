@@ -29,7 +29,7 @@
 #include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Circular_kernel_2/Circular_arc_2.h>
-
+#include <CGAL/int.h>
 namespace CGAL {
 namespace CircularFunctors {
   

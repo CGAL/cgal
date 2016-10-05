@@ -2424,8 +2424,9 @@ std::vector<Vertex_handle>();
   }
   return vir_vertices[0][0][0];
 }
-
+#define CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 #include <CGAL/Periodic_3_triangulation_dummy_36.h>
+#undef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 /** finds all cells that are in conflict with the currently added point
   * (stored in tester).

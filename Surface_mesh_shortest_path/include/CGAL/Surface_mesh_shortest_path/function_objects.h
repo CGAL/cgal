@@ -26,6 +26,7 @@
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#include <CGAL/Cartesian_converter.h>
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H

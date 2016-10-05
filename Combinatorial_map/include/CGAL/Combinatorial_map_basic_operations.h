@@ -20,6 +20,7 @@
 #ifndef CGAL_COMBINATORIAL_MAP_BASIC_OPERATIONS_H
 #define CGAL_COMBINATORIAL_MAP_BASIC_OPERATIONS_H 1
 
+#include <CGAL/Combinatorial_map_iterators_base.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/tags.h>
 

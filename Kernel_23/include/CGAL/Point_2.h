@@ -32,6 +32,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/result_of.h>
 
 namespace CGAL {
 

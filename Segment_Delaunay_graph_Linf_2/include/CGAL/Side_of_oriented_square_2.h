@@ -26,6 +26,7 @@
 #include <CGAL/Orientation_Linf_2.h>
 #include <CGAL/Side_of_bounded_square_2.h>
 #include <CGAL/enum.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 
 namespace CGAL {
 

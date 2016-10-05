@@ -20,7 +20,7 @@
 #ifndef CGAL_HILBERT_SORT_MIDDLE_2_H
 #define CGAL_HILBERT_SORT_MIDDLE_2_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>

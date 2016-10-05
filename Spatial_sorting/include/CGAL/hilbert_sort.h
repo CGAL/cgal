@@ -21,7 +21,7 @@
 #ifndef CGAL_HILBERT_SORT_H
 #define CGAL_HILBERT_SORT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include <CGAL/Hilbert_policy_tags.h>
 #include <CGAL/Hilbert_sort_2.h>

@@ -32,6 +32,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
+#include <QKeyEvent>
 
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsViewInput.h>

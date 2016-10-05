@@ -25,7 +25,6 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>
-#include <CGAL/boost/graph/Euler_operations.h>
 
 namespace CGAL {
 
@@ -719,5 +718,9 @@ void clear(FaceGraph& g)
 
 
 } // namespace CGAL
+
+// Include "Euler_operations.h" at the end, because its implementation
+// requires this header.
+#include <CGAL/boost/graph/Euler_operations.h>
 
 #endif // CGAL_BOOST_GRAPH_HELPERS_H

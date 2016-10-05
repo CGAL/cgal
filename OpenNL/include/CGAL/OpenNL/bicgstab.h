@@ -45,6 +45,7 @@
 #include <cmath>
 #include <cfloat>
 #include <climits>
+#include <limits>
 
 namespace OpenNL {
 

@@ -229,6 +229,8 @@ bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three:
     return false;
 }
 
+#include <CGAL/double.h>
+
 void CGAL::Three::Scene_item::compute_diag_bbox()const
 {
  const Bbox& b_box = bbox();

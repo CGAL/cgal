@@ -25,7 +25,7 @@
 #include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <iostream>
-
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
