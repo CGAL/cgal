@@ -29,7 +29,6 @@
 #include <iostream>
 
 #include <CGAL/iterator.h>
-#include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
 
 #include <CGAL/triangulation_assertions.h>
@@ -44,6 +43,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
@@ -194,13 +194,8 @@ public:
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
   typedef Project_point<Vertex>                           Proj_point;
-  typedef Iterator_project<Finite_vertices_iterator, 
-                           Proj_point,
-	                   const Point&, 
-                           const Point*,
-                           std::ptrdiff_t,
-                           std::bidirectional_iterator_tag>  Point_iterator;
 
+  typedef boost::transform_iterator<Proj_point,Finite_vertices_iterator> Point_iterator; 
   typedef Point                value_type; // to have a back_inserter
   typedef const value_type&    const_reference; 
   typedef value_type&          reference;

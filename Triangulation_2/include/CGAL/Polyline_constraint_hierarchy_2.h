@@ -27,7 +27,6 @@
 #include <set> 
 #include <list> 
 #include <CGAL/Skiplist.h>
-#include <CGAL/Iterator_project.h>
 #include <CGAL/triangulation_assertions.h>
 
 namespace CGAL {
