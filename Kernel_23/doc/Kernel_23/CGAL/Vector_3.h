@@ -12,7 +12,8 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument 
 instead of a vector initialized with zeros. 
 
-\sa `Kernel::Vector_3` 
+\cgalModels `Kernel::Vector_3`
+
 \sa `cross_product_grp` 
 \sa `determinant_grp` 
 

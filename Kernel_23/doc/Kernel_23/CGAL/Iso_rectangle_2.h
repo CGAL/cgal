@@ -17,7 +17,7 @@ difference however is that bounding boxes have always double coordinates,
 whereas the coordinate type of an iso-oriented rectangle is chosen by 
 the user. 
 
-\sa `Kernel::IsoRectangle_2` 
+\cgalModels `Kernel::IsoRectangle_2`
 
 */
 template< typename Kernel >

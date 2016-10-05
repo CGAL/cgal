@@ -35,7 +35,7 @@ p = q;
 std::cout << p.x() << " " << p.y() << std::endl; 
 \endcode
 
-\sa `Kernel::Point_2` 
+\cgalModels `Kernel::Point_2`
 
 */
 template< typename Kernel >
