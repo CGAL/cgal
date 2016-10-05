@@ -39,7 +39,7 @@ class ArrangementDemoTabBase : public QWidget
 {
   Q_OBJECT
 
-  signals:
+  Q_SIGNALS:
   void modelChanged( );
 
 public:
@@ -198,7 +198,7 @@ public:
     // TODO: Add a connection to update the demo window when the fill color
     //       changes
 
-    emit modelChanged( );
+    Q_EMIT modelChanged( );
   }
 
 protected:

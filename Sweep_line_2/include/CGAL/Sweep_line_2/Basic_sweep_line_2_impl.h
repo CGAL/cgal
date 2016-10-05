@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Baruch Zukerman  <baruchzu@post.tau.ac.il>
 //                 Efi Fogel        <efif@post.tau.ac.il>
 //                 Eric Berberich   <ericb@post.tau.ac.il>
@@ -46,9 +42,11 @@ Basic_sweep_line_2(Visitor* visitor) :
   m_status_line_insert_hint(m_statusLine.begin()),
   m_num_of_subCurves(0),
   m_visitor(visitor)
-{
-  m_visitor->attach(this);
-}
+#ifdef CGAL_SL_VERBOSE
+  , m_indent_size(0)
+  , m_need_indent(false)
+#endif
+{ m_visitor->attach(this); }
 
 //-----------------------------------------------------------------------------
 // Constructor with a given traits-class.
@@ -66,9 +64,11 @@ Basic_sweep_line_2(const Traits_2* traits, Visitor* visitor) :
   m_status_line_insert_hint(m_statusLine.begin()),
   m_num_of_subCurves(0),
   m_visitor(visitor)
-{
-  m_visitor->attach(this);
-}
+#ifdef CGAL_SL_VERBOSE
+  , m_indent_size(0)
+  , m_need_indent(false)
+#endif
+{ m_visitor->attach(this); }
 
 //-----------------------------------------------------------------------------
 // Destrcutor.
@@ -84,11 +84,9 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::~Basic_sweep_line_2()
   delete m_queue;
 
   // Free all the event that have not been de-allocated so far.
-  Allocated_events_iterator iter;
   Event* p_event;
-  for (iter = m_allocated_events.begin();
-       iter != m_allocated_events.end(); ++iter)
-  {
+  Allocated_events_iterator iter = m_allocated_events.begin();
+  for (; iter != m_allocated_events.end(); ++iter) {
     p_event = *iter;
     m_eventAlloc.destroy(p_event);
     m_eventAlloc.deallocate(p_event,1);
@@ -107,12 +105,12 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::stop_sweep()
   Event_queue_iterator qiter= this->m_queue->begin();
 
   for (++qiter; qiter != this->m_queue->end(); ++qiter)
-    this ->deallocate_event(*qiter);
+    this->deallocate_event(*qiter);
 
   // Clear the status line.
-  this -> m_statusLine.clear();
+  this-> m_statusLine.clear();
   m_status_line_insert_hint = this->m_statusLine.begin();
-  
+
   // Empty the event queue, and leave only the first event there.
   CGAL_assertion(!m_queue->empty());
   Event_queue_iterator second = m_queue->begin();
@@ -135,10 +133,10 @@ deallocate_event(Event* event)
 {
   // Remove the event from the set of allocated events.
   m_allocated_events.erase(event);
-  
+
   // Perfrom the actual deallocation.
   m_eventAlloc.destroy(event);
-  m_eventAlloc.deallocate(event,1);
+  m_eventAlloc.deallocate(event, 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -148,43 +146,43 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep()
 {
-  CGAL_SL_DEBUG(
-    {
-      CGAL_PRINT("Ordered sequence of " << m_queue->size() 
-                 <<  " initial events:\n");
-      Event_queue_iterator eventIter1 = m_queue->begin();
-      while (eventIter1 != m_queue->end()) {
-          
-        CGAL_PRINT("* ");
-        CGAL_SL_DEBUG(PrintEvent(*eventIter1););
-        CGAL_PRINT( "\n");
-        eventIter1++;
-      }
-    }
-  )
+  CGAL_SL_PRINT_TEXT("Ordered sequence of ");
+  CGAL_SL_PRINT(m_queue->size());
+  CGAL_SL_PRINT_TEXT(" initial events:");
+  CGAL_SL_PRINT_EOL();
+  CGAL_SL_DEBUG(Event_queue_iterator eventIter1 = m_queue->begin();
+                while (eventIter1 != m_queue->end()) {
+                  print_text("* ");
+                  PrintEvent(*eventIter1);
+                  print_eol();
+                  eventIter1++;
+                })
 
   // Looping over the events in the queue.
   Event_queue_iterator eventIter = m_queue->begin();
-  
+
   while (eventIter != m_queue->end()) {
     // Get the next event from the queue.
     m_currentEvent = *eventIter;
-    
-    CGAL_PRINT("------------- ");
-    CGAL_SL_DEBUG(PrintEvent(m_currentEvent););
-    CGAL_PRINT( " --------------\n");
-    CGAL_SL_DEBUG(PrintStatusLine();
-                  m_currentEvent->Print(););
-      
-    // Handle the subcurves that are to the left of the event point (i.e., 
+
+    CGAL_SL_PRINT_EOL();
+    CGAL_SL_PRINT_TEXT("------------- ");
+    CGAL_SL_DEBUG(PrintEvent(m_currentEvent));
+    CGAL_SL_PRINT_TEXT( " --------------");
+    CGAL_SL_PRINT_EOL();
+    CGAL_SL_PRINT_EOL();
+    CGAL_SL_PRINT_STATUS_LINE();
+    CGAL_SL_PRINT_EVENT_INFO(m_currentEvent);
+
+    // Handle the subcurves that are to the left of the event point (i.e.,
     // subcurves that we are done with).
     _handle_left_curves();
-    
+
     // Handle the subcurves to the right of the event point, reorder them
     // and test for intersections between them and their immediate neighbors
     // on the status line.
     _handle_right_curves();
-    
+
     // Inform the visitor about the event. The visitor also determines whether
     // it is possible to deallocate the event now, or will it be deallocated
     // later (at the visitor's responsibility).
@@ -227,7 +225,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 {
   CGAL_assertion(m_queue->empty());
   CGAL_assertion((m_statusLine.size() == 0));
-  
+
   // Free all subcurve objects.
   for (unsigned int i = 0; i < m_num_of_subCurves; ++i)
     m_subCurveAlloc.destroy(m_subCurves + i);
@@ -252,7 +250,7 @@ _init_point(const Point_2& pt, Attribute type)
   bool is_new = pair_res.second;
   m_visitor->update_event(pair_res.first, pt, is_new);
 }
-  
+
 //-----------------------------------------------------------------------------
 // Initialize the events associated with an x-monotone curve.
 //
@@ -261,11 +259,11 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _init_curve(const X_monotone_curve_2& curve, unsigned int index)
 {
-  // Construct an initialize a subcurve object.
+  // Construct and initialize a subcurve object.
   m_subCurveAlloc.construct(m_subCurves + index, m_masterSubcurve);
-  
+  (m_subCurves + index)->set_hint(this->m_statusLine.end());
   (m_subCurves + index)->init(curve);
-  
+
   // Create two events associated with the curve ends.
   _init_curve_end(curve, ARR_MAX_END, m_subCurves + index);
   _init_curve_end(curve, ARR_MIN_END, m_subCurves + index);
@@ -321,12 +319,14 @@ _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
-{ 
-  CGAL_PRINT("Handling left curve" << std::endl;);
-  
+{
+  CGAL_SL_PRINT_START_EOL("handling left curves at (");
+  CGAL_SL_DEBUG(PrintEvent(m_currentEvent));
+  CGAL_SL_PRINT_EOL();
+
   m_is_event_on_above = false;
-  
-  if (! m_currentEvent->has_left_curves()) { 
+
+  if (! m_currentEvent->has_left_curves()) {
     // The current event does not have any incident left subcurves, so we
     // should find a place for it in the status line (the function we call
     // update the m_status_line_insert_hint and m_is_event_on_above members).
@@ -340,7 +340,7 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
         // this is possible  only if the event is an isolated query point.
         CGAL_assertion(! m_currentEvent->has_right_curves() &&
                         m_currentEvent->is_query());
-        
+
         //m_is_event_on_above = true;
         m_visitor->before_handle_event(m_currentEvent);
       }
@@ -349,17 +349,17 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
     }
     else
       m_visitor->before_handle_event(m_currentEvent);
-    
+
     // Nothing else to do (no left curves).
+    CGAL_SL_PRINT_END_EOL("handling left curves");
     return;
   }
-  
-  CGAL_PRINT("left curves before sorting: "<<"\n";);
-  CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
-                    m_currentEvent->left_curves_end() )
-                {
-                  m_currentEvent->Print();
-                });
+
+  CGAL_SL_PRINT_TEXT("left curves before sorting:");
+  CGAL_SL_PRINT_EOL();
+  CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() !=
+                    m_currentEvent->left_curves_end())
+                { print_event_info(m_currentEvent); });
 
   // Use the status-line to sort all left subcurves incident to the current
   // event (no geometric comparisons are neede at all).
@@ -368,27 +368,26 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
   // Now the event is updated, with its left subcurved properly sorted, and
   // we can inform the visitor that we are about to handle this event.
   m_visitor->before_handle_event(m_currentEvent);
-  
-  CGAL_PRINT("left curves after sorting: " << std::endl);
-  CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() != 
-                    m_currentEvent->left_curves_end())
-                {
-                  m_currentEvent->Print();
-                });
-  
+
+  CGAL_SL_PRINT_TEXT("left curves after sorting:");
+  CGAL_SL_PRINT_EOL();
+  CGAL_SL_DEBUG(if (m_currentEvent->left_curves_begin() !=
+                    m_currentEvent->left_curves_end() )
+                { print_event_info(m_currentEvent); });
+
   // Remove all left subcurves from the status line, and inform the visitor
   // that we are done handling these subcurves.
   Event_subcurve_iterator left_iter = m_currentEvent->left_curves_begin();
-  
+
   while (left_iter != m_currentEvent->left_curves_end()) {
     Subcurve* left_sc = *left_iter;
- 
+
     m_visitor->add_subcurve(left_sc->last_curve(), left_sc);
     ++left_iter;
-    
-    _remove_curve_from_status_line(left_sc);    
+
+    _remove_curve_from_status_line(left_sc);
   }
-  CGAL_PRINT( "Handling left curve END" << std::endl;);
+  CGAL_SL_PRINT_END_EOL("handling left curves");
 }
 
 //-----------------------------------------------------------------------------
@@ -409,13 +408,13 @@ _handle_event_without_left_curves()
     // subcurve in the status line).
     const std::pair<Status_line_iterator, bool>& pair_res =
       m_statusLine.find_lower(m_currentEvent->point(), m_statusLineCurveLess);
-    
+
     m_status_line_insert_hint = pair_res.first;
     m_is_event_on_above = pair_res.second;
-    
+
     return;
   }
-  
+
   // We have a boundary event, so we can easily locate a plave for it in the
   // status line.
 
@@ -451,45 +450,47 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
 {
+  CGAL_SL_PRINT_START_EOL("sorting left curves");
   CGAL_assertion(m_currentEvent->has_left_curves());
-  
+
   // Get the first curve associated with the event and its position on the
   // status line. We proceed from this position up the status line until
   // we encounter a subcurve that is not associated with the current event.
   Subcurve* curve = *(m_currentEvent->left_curves_begin());
   Status_line_iterator sl_iter = curve->hint();
+
   CGAL_assertion(*sl_iter == curve);
   // Look for the first curve in the vertical ordering that is also in the
-  // left curve of the event  
-  for (++sl_iter; sl_iter != m_statusLine.end(); ++sl_iter) {
+  // left curve of the event
+  Status_line_iterator end = sl_iter;
+  for (++end; end != m_statusLine.end(); ++end) {
     if (std::find(m_currentEvent->left_curves_begin(),
-                  m_currentEvent->left_curves_end(), *sl_iter) ==
+                  m_currentEvent->left_curves_end(), *end) ==
         m_currentEvent->left_curves_end())
       break;
   }
-  Status_line_iterator end = sl_iter;
-  
-  sl_iter = curve->hint();
+
   if (sl_iter == m_statusLine.begin()) {
     // In case the lowest subcurve in the status line is associated with the
     // current event, we have the range of (sorted) subcurves ready. We
     // associate this range with the event, so the curves are now sorted
     // according to their vertical positions immediately to the left of the
     // event.
-    m_currentEvent->replace_left_curves(sl_iter,end);
+    m_currentEvent->replace_left_curves(sl_iter, end);
+    CGAL_SL_PRINT_END_EOL("sorting left curves");
     return;
   }
 
   // Go down the status line until we encounter a subcurve that is not
   // associated with the current event.
-  --sl_iter;
-  for (;sl_iter != m_statusLine.begin(); --sl_iter) {
+  for (--sl_iter; sl_iter != m_statusLine.begin(); --sl_iter) {
     if (std::find(m_currentEvent->left_curves_begin(),
                   m_currentEvent->left_curves_end(), *sl_iter) ==
         m_currentEvent->left_curves_end())
     {
       // Associate the sorted range of subcurves with the event.
-      m_currentEvent->replace_left_curves(++sl_iter,end);
+      m_currentEvent->replace_left_curves(++sl_iter, end);
+      CGAL_SL_PRINT_END_EOL("sorting left curves");
       return;
     }
   }
@@ -500,9 +501,11 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sort_left_curves()
   if (std::find(m_currentEvent->left_curves_begin(),
                 m_currentEvent->left_curves_end(), *sl_iter) ==
       m_currentEvent->left_curves_end())
-    m_currentEvent->replace_left_curves(++sl_iter,end);
+    m_currentEvent->replace_left_curves(++sl_iter, end);
   else
-    m_currentEvent->replace_left_curves(sl_iter,end);
+    m_currentEvent->replace_left_curves(sl_iter, end);
+
+  CGAL_SL_PRINT_END_EOL("sorting left curves");
 }
 
 //-----------------------------------------------------------------------------
@@ -512,10 +515,10 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 {
-  CGAL_PRINT("Handling right curves (");
+  CGAL_SL_PRINT_START("Handling right curves at (");
   CGAL_SL_DEBUG(PrintEvent(m_currentEvent));
-  CGAL_PRINT(")\n");
-    
+  CGAL_SL_PRINT_EOL();
+
   // We have nothing to do if the current event does not have any incident
   // right subcurves.
   if (! m_currentEvent->has_right_curves()) return;
@@ -530,15 +533,17 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
   Status_line_iterator sl_iter;
 
   while (curr != right_end) {
-    CGAL_PRINT_INSERT(*curr);
+    CGAL_SL_PRINT_INSERT(*curr);
     sl_iter = m_statusLine.insert_before(m_status_line_insert_hint, *curr);
-    ((Subcurve*)(*curr))->set_hint(sl_iter);
-    
+    Subcurve* sc = *curr;
+    sc->set_hint(sl_iter);
+
     CGAL_SL_DEBUG(PrintStatusLine(););
     ++curr;
-  }        
-      
-  CGAL_SL_DEBUG(PrintStatusLine());
+  }
+
+  CGAL_SL_PRINT_STATUS_LINE();
+  CGAL_SL_PRINT_END_EOL("handling right curves done");
 }
 
 //-----------------------------------------------------------------------------
@@ -552,11 +557,11 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool /* overlap_exist */)
 #if defined(CGAL_NO_ASSERTIONS)
   (void) event->add_curve_to_right(curve, m_traits);
 #else
-  std::pair<bool, Event_subcurve_iterator> pair_res = 
+  std::pair<bool, Event_subcurve_iterator> pair_res =
      event->add_curve_to_right(curve, m_traits);
   CGAL_assertion(!pair_res.first);
 #endif
-  
+
   return false;
 }
 
@@ -568,21 +573,23 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _remove_curve_from_status_line(Subcurve* sc)
 {
-  CGAL_PRINT("remove_curve_from_status_line\n";);
-  CGAL_SL_DEBUG(PrintStatusLine(););
-  CGAL_SL_DEBUG(sc->Print(););
+  CGAL_SL_PRINT_START("removing a curve from the status line, ");
+  CGAL_SL_PRINT_CURVE(sc);
+  CGAL_SL_PRINT_EOL();
+  CGAL_SL_PRINT_STATUS_LINE();
 
   // Get the position of the subcurve on the status line.
-  Status_line_iterator sl_iter = sc->hint(); 
+  Status_line_iterator sl_iter = sc->hint();
   CGAL_assertion(sl_iter != m_statusLine.end());
 
   // The position of the next event can be right after the deleted subcurve.
-  m_status_line_insert_hint = sl_iter; 
-  ++m_status_line_insert_hint; 
+  m_status_line_insert_hint = sl_iter;
+  ++m_status_line_insert_hint;
 
   // Erase the subcurve from the status line.
+  CGAL_SL_PRINT_ERASE(*sl_iter);
   m_statusLine.erase(sl_iter);
-  CGAL_PRINT("remove_curve_from_status_line Done\n";)
+  CGAL_SL_PRINT_END_EOL("removing a curve from the status line");
 }
 
 //-----------------------------------------------------------------------------
@@ -596,7 +603,7 @@ _allocate_event(const Point_2& pt, Attribute type,
                 Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
   // Allocate the event.
-  Event* e =  m_eventAlloc.allocate(1); 
+  Event* e =  m_eventAlloc.allocate(1);
   m_eventAlloc.construct(e, m_masterEvent);
   e->init(pt, type, ps_x, ps_y);
 
@@ -606,7 +613,7 @@ _allocate_event(const Point_2& pt, Attribute type,
 }
 
 //-----------------------------------------------------------------------------
-// Allocate an event at open boundary, 
+// Allocate an event at open boundary,
 // which is not associated with a valid point.
 //
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
@@ -614,10 +621,10 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*
 Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _allocate_event_at_open_boundary(Attribute type,
-                                 Arr_parameter_space ps_x, 
+                                 Arr_parameter_space ps_x,
                                  Arr_parameter_space ps_y)
 {
-  Event* e =  m_eventAlloc.allocate(1); 
+  Event* e =  m_eventAlloc.allocate(1);
   m_eventAlloc.construct(e, m_masterEvent);
   e->init_at_open_boundary(type, ps_x, ps_y);
 
@@ -637,24 +644,24 @@ _push_event(const Point_2& pt, Attribute type,
             Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc)
 {
   // Look for the point in the event queue.
-  Event* e;  
+  Event* e;
   m_queueEventLess.set_parameter_space_in_x(ps_x);
-  m_queueEventLess.set_parameter_space_in_y(ps_y);  
-  
+  m_queueEventLess.set_parameter_space_in_y(ps_y);
+
   const std::pair<Event_queue_iterator, bool>& pair_res =
     m_queue->find_lower(pt, m_queueEventLess);
   const bool exist = pair_res.second;
   if (! exist) {
     // The point is not found in the event queue - create a new event and
     // insert it into the queue.
-    e = _allocate_event(pt, type, ps_x, ps_y);       
+    e = _allocate_event(pt, type, ps_x, ps_y);
   }
   else {
     // The event associated with the given point already exists in the queue,
     // so we just have to update it.
     e = *(pair_res.first);
     CGAL_assertion(e->is_closed());
-    
+
     e->set_attribute(type);
   }
 
@@ -673,17 +680,17 @@ _push_event(const Point_2& pt, Attribute type,
       e->add_curve_to_left(sc);
     }
   }
- 
+
   if (! exist) {
     // Insert the new event into the queue using the hint we got when we
     // looked for it.
     m_queue->insert_before(pair_res.first, e);
-    CGAL_PRINT_NEW_EVENT(pt, e);
+    CGAL_SL_PRINT_NEW_EVENT(pt, e);
   }
   else {
-    CGAL_PRINT_UPDATE_EVENT(pt, e);
+    CGAL_SL_PRINT_UPDATE_EVENT(pt, e);
   }
-  
+
   // Return the resulting event and a flag indicating whether we have created
   // a new event.
   return (std::make_pair(e, !exist));
@@ -702,10 +709,10 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
 {
   //cv has no member named 'base'
   //std::cout << "cv: " << cv.base() << std::endl;
-  
+
   // Look for the curve end in the event queue.
-  Event* e;  
-  
+  Event* e;
+
   m_queueEventLess.set_parameter_space_in_x(ps_x);
   m_queueEventLess.set_parameter_space_in_y(ps_y);
   m_queueEventLess.set_index(ind);
@@ -713,14 +720,14 @@ _push_event(const X_monotone_curve_2& cv, Arr_curve_end ind, Attribute type,
   const std::pair<Event_queue_iterator, bool>& pair_res =
     m_queue->find_lower(cv, m_queueEventLess);
   const bool exist = pair_res.second;
-  
+
   if (! exist) {
     // The curve end is not found in the event queue - create a new event and
     // insert it into the queue.
     if (m_traits->is_closed_2_object()(cv, ind)) {
       // The curve end is closed and so it is associated with a valid
       // point.
-      const Point_2& pt = (ind == ARR_MIN_END) ? 
+      const Point_2& pt = (ind == ARR_MIN_END) ?
         m_traits->construct_min_vertex_2_object()(cv) :
         m_traits->construct_max_vertex_2_object()(cv);
 

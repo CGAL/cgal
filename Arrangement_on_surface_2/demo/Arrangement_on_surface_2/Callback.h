@@ -41,10 +41,10 @@ public:
   Callback( QObject* parent );
   virtual void reset( );
 
-public slots:
+public Q_SLOTS:
   virtual void slotModelChanged( );
 
-signals:
+Q_SIGNALS:
   void modelChanged( );
 
 protected:

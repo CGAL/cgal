@@ -69,5 +69,5 @@ void ColorItemEditor::mousePressEvent(QMouseEvent* /* e */)
     this->setColor( selectedColor );
   }
 
-  emit confirmed();
+  Q_EMIT confirmed();
 }

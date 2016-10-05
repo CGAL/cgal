@@ -12,12 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 (based on old version by Tali Zvi)
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel       <efifogel@gmail.com>
+//               (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_H
 #define CGAL_BASIC_SWEEP_LINE_2_H
@@ -25,8 +22,9 @@
 /*! \file
  * Definition of the Basic_sweep_line_2 class.
  */
-
+// #include <cstdint>
 #include <boost/mpl/assert.hpp>
+
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Sweep_line_2/Sweep_line_functors.h>
@@ -42,32 +40,62 @@
 #ifndef CGAL_SL_VERBOSE
 
 #define CGAL_SL_DEBUG(a)
-#define CGAL_PRINT_INSERT(a)
-#define CGAL_PRINT_ERASE(a)
-#define CGAL_PRINT_NEW_EVENT(p, e)
-#define CGAL_PRINT_UPDATE_EVENT(p, e)
-#define CGAL_PRINT(a)
+#define CGAL_SL_PRINT(a)
+#define CGAL_SL_PRINT_TEXT(text)
+#define CGAL_SL_PRINT_EOL()
+#define CGAL_SL_PRINT_START(name)
+#define CGAL_SL_PRINT_START_EOL(name)
+#define CGAL_SL_PRINT_END(name)
+#define CGAL_SL_PRINT_END_EOL(name)
+#define CGAL_SL_PRINT_CURVE(text)
+#define CGAL_SL_PRINT_EVENT_INFO(event)
+#define CGAL_SL_PRINT_STATUS_LINE()
+
+#define CGAL_SL_PRINT_INSERT(a)
+#define CGAL_SL_PRINT_ERASE(a)
+#define CGAL_SL_PRINT_NEW_EVENT(p, e)
+#define CGAL_SL_PRINT_UPDATE_EVENT(p, e)
 
 #else
 
 #include <iostream>
 
-#define CGAL_SL_DEBUG(a)  {a;}
-#define CGAL_PRINT_INSERT(a) { std::cout << "+++ inserting "; \
-                          (a)->Print(); \
-                          std::cout << "    currentPos = "; \
-                          this->PrintEvent(this->m_currentEvent); \
-                          std::cout << std::endl; \
-                          }
-#define CGAL_PRINT_ERASE(a)  { std::cout << "--- erasing "; \
-                          (a)->Print(); }
-#define CGAL_PRINT_NEW_EVENT(p, e) \
-{ std::cout << "%%% a new event was created at " << (p) << std::endl; \
-  (e)->Print(); }
-#define CGAL_PRINT_UPDATE_EVENT(p, e) \
-{ std::cout << "%%% an event was updated at " << (p) << std::endl; \
-  (e)->Print(); }
-#define CGAL_PRINT(a) { std::cout << a; }
+#define CGAL_SL_DEBUG(a) {a;}
+#define CGAL_SL_PRINT(a) std::cout << a
+#define CGAL_SL_PRINT_TEXT(text) this->print_text(text)
+#define CGAL_SL_PRINT_EOL() this->print_eol()
+#define CGAL_SL_PRINT_START(name) this->print_start(name, false)
+#define CGAL_SL_PRINT_START_EOL(name) this->print_start(name, true)
+#define CGAL_SL_PRINT_END(name) this->print_end(name, false)
+#define CGAL_SL_PRINT_END_EOL(name) this->print_end(name, true)
+#define CGAL_SL_PRINT_CURVE(text) this->print_curve(text)
+#define CGAL_SL_PRINT_EVENT_INFO(event) this->print_event_info(event)
+#define CGAL_SL_PRINT_STATUS_LINE() this->PrintStatusLine()
+
+#define CGAL_SL_PRINT_INSERT(a) {           \
+    this->print_text("+++ inserting ");     \
+    (a)->Print();                           \
+    this->print_eol();                      \
+    this->print_text(" currentPos = ");     \
+    this->PrintEvent(this->m_currentEvent); \
+    this->print_eol();                      \
+  }
+#define CGAL_SL_PRINT_ERASE(a) {      \
+    this->print_text("--- erasing "); \
+    (a)->Print();                     \
+    this->print_eol();                \
+  }
+#define CGAL_SL_PRINT_NEW_EVENT(p, e) {                  \
+    this->print_text("%%% a new event was created at "); \
+    CGAL_SL_PRINT(p);                                    \
+    this->print_eol();                                   \
+  }
+#define CGAL_SL_PRINT_UPDATE_EVENT(p, e) {            \
+    this->print_text("%%% an event was updated at "); \
+    CGAL_SL_PRINT(p);                                 \
+    this->print_eol();                                \
+    this->print_event_info(e);                        \
+  }
 
 #endif
 
@@ -121,6 +149,8 @@ public:
 
   typedef typename Event::Subcurve_iterator
     Event_subcurve_iterator;
+  typedef typename Event::Subcurve_const_iterator
+    Event_subcurve_const_iterator;
 
   typedef Sweep_line_event<Traits_2, Subcurve>          Base_event;
   typedef typename Base_event::Attribute                Attribute;
@@ -143,61 +173,57 @@ protected:
    * An auxiliary functor for comparing event pointers.
    */
   struct CompEventPtr {
-    Comparison_result operator()(Event *e1, Event *e2) const
-    {
-      if (e1 < e2) return (SMALLER);
-      if (e1 > e2) return (LARGER);
-      return (EQUAL);
-    }
+    Comparison_result operator()(Event* e1, Event* e2) const
+    { return (e1 < e2) ? SMALLER : ((e1 > e2) ? LARGER : EQUAL); }
   };
 
   typedef Multiset<Event*, CompEventPtr>           Allocated_events_set;
   typedef typename Allocated_events_set::iterator  Allocated_events_iterator;
 
   // Data members:
-  const Traits_adaptor_2* m_traits;  // A traits-class object.
-  bool m_traitsOwner;                // Whether this object was allocated by
-                                     // this class (and thus should be freed).
+  const Traits_adaptor_2* m_traits; // A traits-class object.
+  bool m_traitsOwner;               // Whether this object was allocated by
+                                    // this class (and thus should be freed).
 
-  Event* m_currentEvent;             // The current event.
+  Event* m_currentEvent;            // The current event.
 
   Compare_curves m_statusLineCurveLess;
-                                     // Comparison functor for the status line.
+                                    // Comparison functor for the status line.
 
-  Compare_events m_queueEventLess;   // Comparison functor for the event queue.
+  Compare_events m_queueEventLess;  // Comparison functor for the event queue.
 
-  Event_queue* m_queue;              // The event queue (the X-structure).
+  Event_queue* m_queue;             // The event queue (the X-structure).
 
-  Subcurve* m_subCurves;             // An array of the subcurves.
-  Status_line m_statusLine;          // The status line (the Y-structure).
+  Subcurve* m_subCurves;            // An array of the subcurves.
+  Status_line m_statusLine;         // The status line (the Y-structure).
 
   Allocated_events_set m_allocated_events;
-                                     // The events that have been allocated
-                                     // (and have not yet been deallocated).
+                                    // The events that have been allocated
+                                    // (and have not yet been deallocated).
 
   Status_line_iterator m_status_line_insert_hint;
-                                     // An iterator of the status line, which
-                                     // is used as a hint for insertions.
+                                    // An iterator of the status line, which
+                                    // is used as a hint for insertions.
 
-  bool m_is_event_on_above;          // Indicates if the current event is on
-                                     // the interior of existing curve. This
-                                     // may happen only with events that are
-                                     // associated with isolated query points.
+  bool m_is_event_on_above;         // Indicates if the current event is on
+                                    // the interior of existing curve. This
+                                    // may happen only with events that are
+                                    // associated with isolated query points.
 
-  Event_alloc m_eventAlloc;          // An allocator for the events objects.
-  Subcurve_alloc m_subCurveAlloc;    // An allocator for the subcurve objects.
+  Event_alloc m_eventAlloc;         // An allocator for the events objects.
+  Subcurve_alloc m_subCurveAlloc;   // An allocator for the subcurve objects.
 
-  Event m_masterEvent;               // A master Event (created once by the
-                                     // constructor) for the allocator's usage.
+  Event m_masterEvent;              // A master Event (created once by the
+                                    // constructor) for the allocator's usage.
 
-  Subcurve m_masterSubcurve;         // A master Subcurve (created once by the
-                                     // constructor) for the allocator's usage.
+  Subcurve m_masterSubcurve;        // A master Subcurve (created once by the
+                                    // constructor) for the allocator's usage.
 
   //! \todo m_num_of_subCurves should be a size_t for "huge" data sets
-  unsigned int m_num_of_subCurves;   // Number of subcurves.
+  unsigned int m_num_of_subCurves;  // Number of subcurves.
 
-  Visitor* m_visitor;                // The sweep-line visitor that will be
-                                     // notified during the sweep.
+  Visitor* m_visitor;               // The sweep-line visitor that will be
+                                    // notified during the sweep.
 
 public:
   /*! Constructor.
@@ -220,15 +246,14 @@ public:
    * \pre The value-type of CurveInputIterator is X_monotone_curve_2.
    */
   template <typename CurveInputIterator>
-  void sweep(CurveInputIterator curves_begin,
-             CurveInputIterator curves_end)
+  void sweep(CurveInputIterator curves_begin, CurveInputIterator curves_end)
   {
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
-    //m_visitor ->after_init();
+    //m_visitor->after_init();
     _sweep();
     _complete_sweep();
-    m_visitor ->after_sweep();
+    m_visitor->after_sweep();
   }
 
   /*! Run the sweep-line algorithm on a range of x-monotone curves and a range
@@ -252,10 +277,10 @@ public:
     m_visitor->before_sweep();
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
-    //m_visitor ->after_init();
+    //m_visitor->after_init();
     _sweep();
     _complete_sweep();
-    m_visitor ->after_sweep();
+    m_visitor->after_sweep();
   }
 
   /*! Run the sweep-line alogrithm on a range of x-monotone curves, a range
@@ -284,43 +309,35 @@ public:
     _init_sweep(curves_begin, curves_end);
     _init_points(action_points_begin, action_points_end, Base_event::ACTION);
     _init_points(query_points_begin, query_points_end, Base_event::QUERY);
-    //m_visitor ->after_init();
+    //m_visitor->after_init();
     _sweep();
     _complete_sweep();
     m_visitor->after_sweep();
   }
 
   /*! Get an iterator for the first subcurve in the status line. */
-  Status_line_iterator status_line_begin()
-  { return (m_statusLine.begin()); }
+  Status_line_iterator status_line_begin() { return m_statusLine.begin(); }
 
   /*! Get a past-the-end iterator for the subcurves in the status line. */
-  Status_line_iterator status_line_end()
-  { return (m_statusLine.end()); }
+  Status_line_iterator status_line_end() { return m_statusLine.end(); }
 
   /*! Get the status line size. */
-  unsigned int status_line_size() const
-  { return (m_statusLine.size()); }
+  unsigned int status_line_size() const { return m_statusLine.size(); }
 
   /*! Check if the status line is empty. */
-  bool is_status_line_empty() const
-  { return (m_statusLine.empty()); }
+  bool is_status_line_empty() const { return m_statusLine.empty(); }
 
   /*! Get an iterator for the first event in event queue. */
-  Event_queue_iterator event_queue_begin()
-  { return (m_queue->begin()); }
+  Event_queue_iterator event_queue_begin() { return m_queue->begin(); }
 
   /*! Get a past-the-end iterator for the events in the in event queue. */
-  Event_queue_iterator event_queue_end()
-  { return (m_queue->end()); }
+  Event_queue_iterator event_queue_end() { return m_queue->end(); }
 
    /*! Get the event queue size. */
-  unsigned int event_queue_size() const
-  { return (m_queue->size()); }
+  unsigned int event_queue_size() const { return m_queue->size(); }
 
   /*! Check if the event queue is empty. */
-  bool is_event_queue_empty() const
-  { return (m_queue->empty()); }
+  bool is_event_queue_empty() const { return m_queue->empty(); }
 
   /*! Stop the sweep by erasing the event queue (except for the current event).
    * This function may called by the visitor during 'arter_handle_event' in
@@ -512,6 +529,19 @@ protected:
   { CGAL_error(); }
 
 #ifdef CGAL_SL_VERBOSE
+
+  uint8_t m_indent_size;
+  bool m_need_indent;
+
+  void print_text(const char* text, bool do_eol = false);
+  void print_eol();
+  void increase_indent();
+  void decrease_indent();
+  void print_start(const char* name, bool do_eol = true);
+  void print_end(const char* name, bool do_eol = true);
+  void print_curve(const Base_subcurve* sc);
+  void print_event_info(const Event* e);
+
   void PrintEventQueue();
   void PrintSubCurves();
   void PrintStatusLine();

@@ -60,7 +60,7 @@ public:
   QColor color( ) const;
   void setColor( QColor c );
 
-signals:
+Q_SIGNALS:
   void confirmed( );
 
 protected:

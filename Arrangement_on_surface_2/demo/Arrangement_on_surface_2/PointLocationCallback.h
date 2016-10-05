@@ -135,7 +135,7 @@ PointLocationCallback< Arr_ >::
 reset( )
 {
   this->highlightedCurves->clear( );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -158,7 +158,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
   typename Traits::Left_side_category category;
   this->highlightPointLocation( event, category );
 
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >

@@ -56,7 +56,7 @@ public:
 
   void reset( );
 
-public slots:
+public Q_SLOTS:
   virtual void modelChanged( );
 
 protected:
