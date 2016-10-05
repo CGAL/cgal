@@ -76,7 +76,7 @@ class ArrangementDemoWindow : public CGAL::Qt::DemosMainWindow
   template < class ArrType >
   void makeOverlayTab( ArrType* arr1, ArrType* arr2 );
 
-public slots:
+public Q_SLOTS:
   void updateMode( QAction* a );
   void updateEnvelope( QAction* a );
   void updateSnapping( QAction* a );
@@ -95,7 +95,7 @@ public slots:
   void on_actionFillColor_triggered( );
 
 
-signals:
+Q_SIGNALS:
   void modelChanged( );
 
 protected:

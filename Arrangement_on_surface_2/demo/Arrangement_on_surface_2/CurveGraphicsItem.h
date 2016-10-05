@@ -116,7 +116,7 @@ public: // methods
     this->updateBoundingBox( );
   }
 
-public slots:
+public Q_SLOTS:
   void modelChanged( )
   {
     if ( this->curves.size( ) == 0 )
@@ -303,7 +303,7 @@ public: // methods
     }
   }
 
-public slots:
+public Q_SLOTS:
   void modelChanged( )
   {
     if ( this->curves.size( ) == 0 )

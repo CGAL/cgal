@@ -39,7 +39,7 @@ public:
                      const QModelIndex& index ) const;
   bool eventFilter( QObject* object, QEvent* event );
 
-public slots:
+public Q_SLOTS:
   void commit( );
 
 };

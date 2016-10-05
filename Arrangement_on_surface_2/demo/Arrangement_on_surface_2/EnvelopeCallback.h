@@ -41,7 +41,7 @@ public:
   virtual void setEnvelopeVertexRadius( int radius ) = 0;
   virtual int getEnvelopeVertexRadius( ) const = 0;
 
-public slots:
+public Q_SLOTS:
   virtual void showLowerEnvelope( bool b ) = 0;
   virtual void showUpperEnvelope( bool b ) = 0;
 

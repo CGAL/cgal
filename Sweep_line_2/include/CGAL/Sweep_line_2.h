@@ -12,12 +12,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 (based on old version by Tali Zvi)
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel <efifogel@gmail.com>
+//               (based on old version by Tali Zvi)
 
 #ifndef CGAL_SWEEP_LINE_2_H
 #define CGAL_SWEEP_LINE_2_H
@@ -39,7 +36,7 @@ namespace CGAL {
  * on the algorithm of Bentley and Ottmann.
  * It extends the algorithm to support not only segments but general x-monotone
  * curves as well and isolated points.
- * The X_monotone_curve_2 type and Point_2 are defined by the traits class that 
+ * The X_monotone_curve_2 type and Point_2 are defined by the traits class that
  * is one of the template arguments.
  *
  * The algorithm is also extended to support the following degenerate cases:
@@ -50,22 +47,22 @@ namespace CGAL {
  *
  * General flow:
  * After the initialization stage, the events are handled from left to right.
- * 
+ *
  * For each event
  *
- *  First pass - handles special cases in which curves start or end 
+ *  First pass - handles special cases in which curves start or end
  *               at the interior of another curve
- *  Handle left curves - iterate over the curves that intersect 
+ *  Handle left curves - iterate over the curves that intersect
  *               at the event point and defined lexicographically to the left
- *               of the event. 
- *  Handle right curves - iterate over the curves that intersect 
+ *               of the event.
+ *  Handle right curves - iterate over the curves that intersect
  *               the event point and defined lexicographically to the right
- *               of the event point. This is where new intersection points 
+ *               of the event point. This is where new intersection points
  *               are calculated.
  * End
  *
  * Convensions through out the code:
- * In order to make the code as readable as possible, some convensions were 
+ * In order to make the code as readable as possible, some convensions were
  * made in regards to variable naming:
  *
  * xp - is the intersection point between two curves
@@ -73,35 +70,27 @@ namespace CGAL {
  *
  */
 
-template < class Traits_,
-           class Visitor_,
-           class Subcurve_ = Sweep_line_subcurve<Traits_>,
-           class Event_ = Sweep_line_event<Traits_, Subcurve_>,
-           typename Allocator_ = CGAL_ALLOCATOR(int) >
-class Sweep_line_2 : public Basic_sweep_line_2<Traits_,
-                                               Visitor_,
-                                               Subcurve_,
-                                               Event_,
-                                               Allocator_>
+template <typename Traits_, typename Visitor_,
+          typename Subcurve_ = Sweep_line_subcurve<Traits_>,
+          typename Event_ = Sweep_line_event<Traits_, Subcurve_>,
+          typename Allocator_ = CGAL_ALLOCATOR(int) >
+class Sweep_line_2 :
+    public Basic_sweep_line_2<Traits_, Visitor_, Subcurve_, Event_, Allocator_>
 {
 public:
-
   typedef Traits_                                        Traits_2;
   typedef Visitor_                                       Visitor;
   typedef Event_                                         Event;
   typedef Subcurve_                                      Subcurve;
   typedef Allocator_                                     Allocator;
 
-  typedef Basic_sweep_line_2<Traits_2,
-                             Visitor,
-                             Subcurve,
-                             Event,
-                             Allocator>                  Base;
+  typedef Basic_sweep_line_2<Traits_2, Visitor, Subcurve, Event, Allocator>
+                                                         Base;
 
   typedef typename Base::Traits_adaptor_2                Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2             Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2  X_monotone_curve_2;
- 
+
   typedef typename Base::Event_queue_iterator         Event_queue_iterator;
   typedef typename Event::Subcurve_iterator           Event_subcurve_iterator;
 
@@ -109,24 +98,22 @@ public:
   typedef typename Base_event::Attribute              Attribute;
 
   typedef typename Base::Base_subcurve                Base_subcurve;
-  
+
   typedef std::list<Subcurve*>                        Subcurve_container;
-  typedef typename Subcurve_container::iterator       Subcurve_iterator; 
+  typedef typename Subcurve_container::iterator       Subcurve_iterator;
 
   typedef typename Base::Status_line_iterator         Status_line_iterator;
-  
-  typedef CGAL::Curve_pair<Subcurve>                       Curve_pair;
-  typedef CGAL::Curve_pair_hasher<Subcurve>                Curve_pair_hasher;
-  typedef CGAL::Equal_curve_pair<Subcurve>                 Equal_curve_pair;
-  typedef Open_hash<Curve_pair,
-                    Curve_pair_hasher,
-                    Equal_curve_pair>                 Curve_pair_set;
+
+  typedef CGAL::Curve_pair<Subcurve>                  Curve_pair;
+  typedef CGAL::Curve_pair_hasher<Subcurve>           Curve_pair_hasher;
+  typedef CGAL::Equal_curve_pair<Subcurve>            Equal_curve_pair;
+  typedef Open_hash<Curve_pair, Curve_pair_hasher, Equal_curve_pair>
+                                                      Curve_pair_set;
 
   typedef random_access_input_iterator<std::vector<Object> >
                                                       vector_inserter;
 
 protected:
-
   // Data members:
   Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
@@ -145,13 +132,10 @@ public:
   /*! Constructor.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Sweep_line_2 (Visitor* visitor) :
-    Base(visitor),
-    m_curves_pair_set(0)
-  {}
+  Sweep_line_2(Visitor* visitor) : Base(visitor), m_curves_pair_set(0) {}
 
   /*!
-   * Constructor.
+   * Construct.
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
@@ -160,7 +144,7 @@ public:
     m_curves_pair_set(0)
   {}
 
-  /*! Destrcutor. */
+  /*! Destrcut. */
   virtual ~Sweep_line_2() {}
 
 protected:
@@ -196,14 +180,14 @@ protected:
    */
   void _handle_overlap(Event* event, Subcurve* curve,
                        Event_subcurve_iterator iter, bool overlap_exist);
-  
+
   /*! Compute intersections between the two given curves.
-   * If the two curves intersect, create a new event (or use the event that 
+   * If the two curves intersect, create a new event (or use the event that
    * already exits in the intersection point) and insert the curves to the
    * event.
    * \param curve1 The first curve.
    * \param curve2 The second curve.
-   */ 
+   */
   void _intersect(Subcurve* c1, Subcurve* c2);
 
   /*! When a curve is removed from the status line for good, its top and
@@ -232,7 +216,6 @@ protected:
    * \param sc The subcurve.
    */
   void _fix_finished_overlap_subcurve(Subcurve* sc);
-
 };
 
 } //namespace CGAL

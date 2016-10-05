@@ -41,7 +41,7 @@ class OverlayDialog : public QDialog
 
   std::vector< CGAL::Object > selectedArrangements( ) const;
 
-public slots:
+public Q_SLOTS:
   void on_pickPushButton_pressed( );
   void on_unpickPushButton_pressed( );
 

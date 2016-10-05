@@ -174,7 +174,7 @@ void SplitEdgeCallback< Arr_ >::reset( )
 {
   this->hasFirstPoint = false;
   this->segmentGuide.setLine( 0, 0, 0, 0 );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -235,7 +235,7 @@ splitEdges( const Point_2& clickedPoint, TTraits traits )
     this->reset( );
   }
 
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -279,7 +279,7 @@ void SplitEdgeCallback<Arr_>::updateGuide(const Point_2& clickedPoint,
     Segment_2 currentSegment( pt1, pt2 );
     QLineF qSegment = this->convert( currentSegment );
     this->segmentGuide.setLine( qSegment );
-    emit modelChanged( );
+    Q_EMIT modelChanged( );
   }
 }
 
@@ -299,7 +299,7 @@ updateGuide(const Point_2& clickedPoint,
     Segment_2 currentSegment( pt1, pt2 );
     QLineF qSegment = this->convert( currentSegment );
     this->segmentGuide.setLine( qSegment );
-    emit modelChanged( );
+    Q_EMIT modelChanged( );
   }
 }
 

@@ -141,8 +141,8 @@ void PropertyValueDelegate::commit( )
   QWidget* editor = qobject_cast< QWidget* >( sender( ) );
   if ( editor )
   {
-    emit( commitData( editor ) );
-    emit( closeEditor( editor ) );
+    Q_EMIT( commitData( editor ) );
+    Q_EMIT( closeEditor( editor ) );
   }
 }
 

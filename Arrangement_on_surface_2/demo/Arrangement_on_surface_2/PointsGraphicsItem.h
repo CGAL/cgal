@@ -57,7 +57,7 @@ public:
   void setPointRadius( double d );
   double getPointRadius( ) const;
 
-public slots:
+public Q_SLOTS:
   virtual void modelChanged( );
 
 protected:

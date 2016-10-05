@@ -108,7 +108,7 @@ void DeleteCurveCallback< Arr_ >::reset( )
 {
   this->highlightedCurve->clear( );
   this->removableHalfedge = Halfedge_handle( );
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 template < typename Arr_ >
@@ -221,7 +221,7 @@ highlightNearestCurve( QGraphicsSceneMouseEvent* event )
     this->highlightedCurve->insert( this->removableHalfedge->curve( ) );
   }
 
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 #endif // DELETE_CURVE_CALLBACK_H

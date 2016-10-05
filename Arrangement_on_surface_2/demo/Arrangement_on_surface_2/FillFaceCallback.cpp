@@ -27,7 +27,7 @@ FillFaceCallbackBase::FillFaceCallbackBase( QObject* parent ) :
 void FillFaceCallbackBase::setColor( QColor c )
 {
   this->fillColor = c;
-  emit modelChanged( );
+  Q_EMIT modelChanged( );
 }
 
 QColor FillFaceCallbackBase::getColor( ) const
