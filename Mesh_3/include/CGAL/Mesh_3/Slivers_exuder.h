@@ -589,7 +589,7 @@ private:
     if ( 0 < limit_value )
       sliver_criteria_.set_sliver_bound(limit_value);
     else
-      sliver_criteria_.set_sliver_bound(SliverCriteria::max_value);
+      sliver_criteria_.set_sliver_bound(sliver_criteria_.get_max_value());
 
     this->cells_queue_clear();
     initialize_cells_priority_queue();
