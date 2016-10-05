@@ -28,7 +28,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <CGAL/Kernel_d/debug.h>
-#include <CGAL/use.h>
+#include <CGAL/tss.h>
 
 #include <cmath>
 #include <memory>
@@ -92,7 +92,12 @@ typedef AL_ allocator_type;
 protected:
   friend class Matrix_<NT_,AL_>;
   NT* v_; int d_;
-  static allocator_type MM;
+
+  allocator_type& allocator()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(allocator_type, MM);
+    return MM;
+  }
 
   inline void allocate_vec_space(NT*& vi, int di)
   {
@@ -100,7 +105,7 @@ protected:
      piece of memory from the allocator and then initialize each cell 
      by an inplace new. */
 
-    vi = MM.allocate(di);
+    vi = allocator().allocate(di);
     NT* p = vi + di - 1;
     while (p >= vi) { new (p) NT(0);  p--; }   
   }
@@ -113,8 +118,8 @@ protected:
      manager. */
 
     NT* p = vi + di - 1;
-    while (p >= vi)  { MM.destroy(p); p--; }  //af:  as proposed by sylvain
-    MM.deallocate(vi, di);
+    while (p >= vi)  { allocator().destroy(p); p--; }  //af:  as proposed by sylvain
+allocator().deallocate(vi, di);
     vi = (NT*)0;
   }
 
@@ -451,8 +456,6 @@ std::istream& operator>>(std::istream& is, Vector_<NT_,AL_>& v)
 }
 
 
-template <class NT_, class AL_>
-typename Vector_<NT_,AL_>::allocator_type Vector_<NT_,AL_>::MM;
 
 /*{\Ximplementation Vectors are implemented by arrays of type
 |NT|. All operations on a vector |v| take time $O(|v.dimension()|)$,
