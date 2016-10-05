@@ -6,8 +6,8 @@ The concept `LinearCellComplex` represents a linear cell complex in dimension `d
 
 \cgalRefines `GenericMap`
 
-\cgalHasModel \link CGAL::Linear_cell_complex `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`\endlink
-\cgalHasModel \link CGAL::GMap_linear_cell_complex `CGAL::GMap_linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`\endlink
+\cgalHasModel \link CGAL::Linear_cell_complex_for_combinatorial_map `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`\endlink
+\cgalHasModel \link CGAL::Linear_cell_complex_for_generalized_map `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`\endlink
 
 \sa `LinearCellComplexItems`
 \sa `LinearCellComplexTraits`
@@ -117,7 +117,7 @@ Vertex_attribute_const_range& vertex_attributes() const;
 /*!
 Returns true iff this linear cell complex is valid.
 
-A linear cell complex `lcc` is valid if it is a valid generic map (cf. `GenericMap::is_valid()`), and if for each dart handle <I>dh</I> such that `*dh`\f$\in\f$\link GenericMap::darts `darts()`\endlink: \link GenericMap::attribute `dh->attribute<0>()`\endlink`!=NULL`.
+A linear cell complex `lcc` is valid if it is a valid generic map (cf. `GenericMap::is_valid()`), and if for each dart handle <I>dh</I> such that `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink: \link GenericMap::attribute `dh->attribute<0>()`\endlink`!=NULL`.
 */
 bool is_valid() const;
 
@@ -164,7 +164,7 @@ const Point& point(Dart_const_handle dh) const;
 
 /*!
 Creates a new dart in this linear cell complex, sets its associated 0-attribute to `vh` and returns the corresponding handle.
-\pre `*vh`\f$ \in\f$`vertex_attributes()`.
+\pre `*vh` \f$ \in \f$ `vertex_attributes()`.
 */
 Dart_handle create_dart(Vertex_attribute_handle vh);
 
@@ -181,14 +181,14 @@ create_vertex_attribute(T1 t1);
 
 /*!
 Removes the 0-attribute pointed to by `vh` from this linear cell complex (a shortcut for \link GenericMap::erase_attribute `erase_attribute<0>(vh)`\endlink).
-\pre `*vh`\f$ \in\f$`vertex_attributes()`.
+\pre `*vh` \f$ \in \f$ `vertex_attributes()`.
 
 */
 void erase_vertex_attribute(Vertex_attribute_handle vh);
 
 /*!
 Associates the 0-attribute of all the darts of the 0-cell containing `dh` to `vh` (a shortcut for \link GenericMap::set_attribute `set_attribute<0>(dh,vh)`\endlink).
-\pre `*dh`\f$ \in\f$\link GenericMap::darts `darts()`\endlink and `*vh`\f$ \in\f$`vertex_attributes()`.
+\pre `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink and `*vh` \f$ \in \f$ `vertex_attributes()`.
 
 */
 void set_vertex_attribute(Dart_handle dh, Vertex_attribute_handle vh);
@@ -211,7 +211,7 @@ void correct_invalid_attributes();
 
 /*!
 Returns the barycenter of the <I>i</I>-cell containing `dh`.
-\pre 1\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GenericMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$\link GenericMap::darts `darts()`\endlink.
+\pre 1 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
 */
 template<unsigned int i> Point barycenter(Dart_const_handle dh) const;
@@ -219,7 +219,7 @@ template<unsigned int i> Point barycenter(Dart_const_handle dh) const;
 /*!
 Inserts a point, copy of `p`, in the <I>i</I>-cell containing `dh`.
 Returns a handle on one dart of this cell.
-\pre <I>i</I>\f$ \leq\f$\link GenericMap::dimension `dimension`\endlink \f$ \leq\f$ 2 and `*dh`\f$ \in\f$\link GenericMap::darts `darts()`\endlink.
+\pre <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink \f$ \leq \f$ 2 and `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if <I>i</I>-attributes are non void, \link CellAttribute::On_split `Attribute_type<i>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original <I>i</I>-attribute associated with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation.
 
@@ -233,7 +233,7 @@ template <unsigned int i> Dart_handle insert_point_in_cell(Dart_handle dh, Point
 /*!
 Inserts a point in the barycenter of the <I>i</I>-cell containing `dh`.
 Returns a handle on one dart of this cell.
-\pre <I>i</I>\f$ \leq\f$\link GenericMap::dimension `dimension`\endlink \f$ \leq\f$ 2 and `*dh`\f$ \in\f$\link GenericMap::darts `darts()`\endlink.
+\pre <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink \f$ \leq \f$ 2 and `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, if <I>i</I>-attributes are non void, \link CellAttribute::On_split `Attribute_type<i>::type::On_split`\endlink(<I>a</I>,<I>a'</I>) is called, with <I>a</I> the original <I>i</I>-attribute associated with <I>dh</I> and <I>a'</I> each new <I>i</I>-attribute created during the operation.
 
@@ -246,7 +246,7 @@ template <unsigned int i> Dart_handle insert_barycenter_in_cell(Dart_handle dh);
 
 /*!
 Inserts a 1-cell in the 2-cell containing `dh`, the 1-cell being attached only by one of its vertex to the 0-cell containing `dh`. The second vertex is associated with a new 0-attribute containing a copy of `p` as point. Returns a handle on one dart belonging to the new 0-cell.
-\pre 2\f$ \leq\f$\link GenericMap::dimension `dimension`\endlink and `*dh`\f$ \in\f$\link GenericMap::darts `darts()`\endlink.
+\pre 2 \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink and `*dh` \f$ \in \f$ \link GenericMap::darts `darts()`\endlink.
 
 \cgalAdvancedBegin
 If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the combinatorial map can be no more valid after this operation.

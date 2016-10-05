@@ -22,7 +22,7 @@ The complexity of \link GenericMap::sew `sew`\endlink and \link GenericMap::unse
 
 The complexity of \link GenericMap::set_attribute `set_attribute`\endlink is in <I>O</I>( \f$ | \f$ <I>c</I> \f$ | \f$ ), <I>c</I> being the <I>i</I>-cell containing the considered dart.
 
-The complexity of \link GenericMap::is_without_boundary(unsigned int i) const `is_without_boundary(unsigned int i)`\endlink is in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ ), <I>D</I> being the set of darts of the combinatorial map, and the complexity of \link GenericMap::is_without_boundary() const `is_without_boundary()`\endlink is in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ \f$ \times\f$ <I>d</I> ).
+The complexity of \link GenericMap::is_without_boundary(unsigned int i) const `is_without_boundary(i)`\endlink is in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ ), <I>D</I> being the set of darts of the combinatorial map, and the complexity of \link GenericMap::is_without_boundary() const `is_without_boundary()`\endlink is in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ \f$ \times\f$ <I>d</I> ).
 
 The complexity of \link GenericMap::unmark_all `unmark_all`\endlink and \link GenericMap::free_mark `free_mark`\endlink is in <I>O</I>( 1 ) if all the darts of the combinatorial map have the same mark, and in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ ) otherwise.
 

@@ -8,19 +8,16 @@ The class `Cell_attribute_with_point` represents an attribute containing a point
 
 \cgalModels `CellAttributeWithPoint`
 
-\tparam LCC a model of the `LinearCellComplex` concept,
-\tparam Info_ the type of the information contained in the attribute, `void` for no information,
+\tparam LCC a model of the `LinearCellComplex` concept.
+\tparam Info_ the type of the information contained in the attribute, `void` for no information. Equal to `void` by default.
+\tparam Tag is `::Tag_true` to enable the storage of a \link Cell_attribute_with_point::Dart_handle `Dart_handle`\endlink of the associated cell, `::Tag_false` otherwise. Equal to `::Tag_true` by default.
+\tparam OnMerge a functor called when two attributes are merged. Equal to `Null_functor` by default.
+\tparam OnSplit a functor called when one attribute is split in two. Equal to `Null_functor` by default.
 
-\tparam Tag is `::Tag_true` to enable the storage of a \link Cell_attribute_with_point::Dart_handle `Dart_handle`\endlink of the associated cell, `::Tag_false` otherwise,
-\tparam OnMerge a functor called when two attributes are merged,
-\tparam OnSplit a functor called when one attribute is split in two.
-
-By default, `OnMerge` and `OnSplit` are equal to `Null_functor`; `Tag` is equal to `::Tag_true`; and `Info_` is equal to `void`.
-
-\sa `CGAL::Linear_cell_complex_min_items<d>`
-\sa `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
-\sa `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
-\sa `CGAL::GMap_linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
+\sa `CGAL::Linear_cell_complex_for_combinatorial_map_min_items<d>`
+\sa `CGAL::Linear_cell_complex_for_generalized_map_min_items<d>`
+\sa `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`
+\sa `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`
 
 */
 template< typename LCC, typename Info_, typename Tag, typename OnMerge, typename OnSplit >

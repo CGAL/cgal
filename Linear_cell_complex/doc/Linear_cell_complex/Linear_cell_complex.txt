@@ -37,7 +37,7 @@ Note that the dimension of the combinatorial \tred{or the generalized} map <I>d<
 
 \section Linear_cell_complexSoftware Software Design
 
-\tred{The diagram in \cgalFigureRef{fig_lcc_diagramme_class} shows the main classes of the package. `Linear_cell_complex` is the main class if you use combinatorial maps as combinatorial data-structure, and `GMap_linear_cell_complex` is the main class if you use generalized maps as combinatorial data-structure (see Section \ref sseclinearcellcomplex). `Linear_cell_complex` inherits from the `Combinatorial_map` class and `GMap_linear_cell_complex` inherits from the `Generalized_map` class.} Attributes can be associated to some cells of the linear cell complex thanks to an items class (see Section \ref sseclccitem "Linear Cell Complex Items"), which defines the dart type and the attributes types. These types may be different for different dimensions of cells, and they may also be void. In the class `Linear_cell_complex`, it is required that specific attributes are associated to all vertices of the \tred{combinatorial or generalized} map. These attributes must contain a point (a model of \link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink), and can be represented by instances of class `Cell_attribute_with_point` (see Section \ref ssecattributewp "Cell Attributes").
+\tred{The diagram in \cgalFigureRef{fig_lcc_diagramme_class} shows the main classes of the package. `Linear_cell_complex_for_combinatorial_map` is the main class if you use combinatorial maps as combinatorial data-structure, and `Linear_cell_complex_for_generalized_map` is the main class if you use generalized maps as combinatorial data-structure (see Section \ref sseclinearcellcomplex). `Linear_cell_complex_for_combinatorial_map` inherits from the `Combinatorial_map` class and `Linear_cell_complex_for_generalized_map` inherits from the `Generalized_map` class.} Attributes can be associated to some cells of the linear cell complex thanks to an items class (see Section \ref sseclccitem "Linear Cell Complex Items"), which defines the dart type and the attributes types. These types may be different for different dimensions of cells, and they may also be void. In the class `Linear_cell_complex_for_combinatorial_map`, it is required that specific attributes are associated to all vertices of the \tred{combinatorial or generalized} map. These attributes must contain a point (a model of \link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink), and can be represented by instances of class `Cell_attribute_with_point` (see Section \ref ssecattributewp "Cell Attributes").
 
 \cgalFigureBegin{fig_lcc_diagramme_class,lcc_diagramme_class.svg}
 UML diagram of the main classes of the package. Gray elements come from the \ref ChapterCombinatorialMap "Combinatorial maps" \tred{and \ref ChapterGeneralizedMap "Generalized maps"} packages.
@@ -46,15 +46,15 @@ UML diagram of the main classes of the package. Gray elements come from the \ref
 
 \section sseclinearcellcomplex Linear Cell Complex
 
-The \link CGAL::Linear_cell_complex `Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`\endlink class is a model of the `LinearCellComplex` concept \tred{that uses a combinatorial map as underlying combinatorial data-structure}. Similarly, the \link CGAL::GMap_linear_cell_complex `GMap_linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`\endlink class is a model of the `LinearCellComplex` concept \tred{that uses a generalized map as underlying combinatorial data-structure. These two classes} guarantee that each vertex is associated with an attribute containing a point. These classes can be used in geometric algorithms (they play the same role as `Polyhedron_3` for \ref chapterHalfedgeDS "Halfedge Data Structures").
+The \link CGAL::Linear_cell_complex_for_combinatorial_map `Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`\endlink class is a model of the `LinearCellComplex` concept \tred{that uses a combinatorial map as underlying combinatorial data-structure}. Similarly, the \link CGAL::Linear_cell_complex_for_generalized_map `Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`\endlink class is a model of the `LinearCellComplex` concept \tred{that uses a generalized map as underlying combinatorial data-structure. These two classes} guarantee that each vertex is associated with an attribute containing a point. These classes can be used in geometric algorithms (they play the same role as `Polyhedron_3` for \ref chapterHalfedgeDS "Halfedge Data Structures").
 
 These classes has five template parameters standing for the dimension of the map, the dimension of the ambient space, a traits class (a model of the `LinearCellComplexTraits` concept, see Section \ref sseclcctraits "Linear Cell Complex Traits"), an items class (a model of the `LinearCellComplexItems` concept, see Section \ref sseclccitem "Linear Cell Complex Items"), and an allocator which must be a model of the allocator concept of \stl. %Default classes are provided for the traits, items, and for the allocator classes, and by default `d2=d`.
 
 A linear cell complex is valid, if it is a valid combinatorial \tred{or generalized} map where each dart is associated with an attribute containing a point (i.e.\ an instance of a model of the `CellAttributeWithPoint`
-concept). Note that there are no validity constraints on the geometry (test on self intersection, planarity of 2-cells...). We can see two examples of `Linear_cell_complex` in \cgalFigureRef{fig_lcc_instantiations}.
+concept). Note that there are no validity constraints on the geometry (test on self intersection, planarity of 2-cells...). We can see two examples of `Linear_cell_complex_for_combinatorial_map` in \cgalFigureRef{fig_lcc_instantiations}.
 
 \cgalFigureBegin{fig_lcc_instantiations,lcc_instantiations.svg}
-Examples of `Linear_cell_complex`. Gray disks show the attributes associated to vertices. Associations between darts and attributes are drawn by small lines between darts and disks. <B>Left:</B> Example of `Linear_cell_complex<2,2>`. <B>Right:</B> Example of `Linear_cell_complex<3,3>`.
+Examples of `Linear_cell_complex_for_combinatorial_map`. Gray disks show the attributes associated to vertices. Associations between darts and attributes are drawn by small lines between darts and disks. <B>Left:</B> Example of `Linear_cell_complex_for_combinatorial_map<2,2>`. <B>Right:</B> Example of `Linear_cell_complex_for_combinatorial_map<3,3>`.
 \cgalFigureEnd
 
 
@@ -66,7 +66,7 @@ The `Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>` class is a model 
 \subsection Linear_cell_complexLinearCellComplexTraits Linear Cell Complex Traits
 \anchor sseclcctraits
 
-The `LinearCellComplexTraits` geometric traits concept defines the required types and functors used in the `Linear_cell_complex` class. For example it defines \link LinearCellComplexTraits::Point `Point`\endlink, the type of points used, and \link LinearCellComplexTraits::Vector `Vector`\endlink, the corresponding vector type. It also defines all the required functors used for constructions and operations, as for example \link LinearCellComplexTraits::Construct_translated_point `Construct_translated_point`\endlink or \link LinearCellComplexTraits::Construct_sum_of_vectors `Construct_sum_of_vectors`\endlink.
+The `LinearCellComplexTraits` geometric traits concept defines the required types and functors used in the `Linear_cell_complex_for_combinatorial_map` class. For example it defines \link LinearCellComplexTraits::Point `Point`\endlink, the type of points used, and \link LinearCellComplexTraits::Vector `Vector`\endlink, the corresponding vector type. It also defines all the required functors used for constructions and operations, as for example \link LinearCellComplexTraits::Construct_translated_point `Construct_translated_point`\endlink or \link LinearCellComplexTraits::Construct_sum_of_vectors `Construct_sum_of_vectors`\endlink.
 
 The class `Linear_cell_complex_traits<d,K>` is a model of `LinearCellComplexTraits`. It defines the different types which are obtained from `K` that, depending on `d`, is a model of the concept `Kernel` if `d==2` or `d==3`, and a model of the concept `Kernel_d` otherwise.
 
@@ -75,9 +75,9 @@ The class `Linear_cell_complex_traits<d,K>` is a model of `LinearCellComplexTrai
 
 The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept.
 
-The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexItems` when using combinatorial maps. It uses `Dart<d>`, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
+The class `Linear_cell_complex_for_combinatorial_map_min_items<d>` is a model of `LinearCellComplexItems` when using combinatorial maps. It uses `Combinatorial_map_dart<d>`, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
 
-\tred{Similarly, the class `GMap_linear_cell_complex_min_items<d>` is a model of `LinearCellComplexItems` when using generalized maps. It uses `GMap_dart<d>`, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.}
+\tred{Similarly, the class `Linear_cell_complex_for_generalized_map_min_items<d>` is a model of `LinearCellComplexItems` when using generalized maps. It uses `Generalized_map_dart<d>`, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.}
 
 
 \section Linear_cell_complexOperations Operations
@@ -120,7 +120,7 @@ Lastly, the function \link ::import_from_plane_graph `import_from_plane_graph(lc
 \subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
 
-Some methods are defined in `Linear_cell_complex` class to modify a linear cell complex and update the vertex attributes. In the following, we denote by `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`, respectively. That is `d0 == *dh0`.
+Some methods are defined in `LinearCellComplex` to modify a linear cell complex and update the vertex attributes. In the following, we denote by `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`, respectively. That is `d0 == *dh0`.
 
 \cgalFigureBegin{fig_lcc_insert_vertex,lcc_insert_vertex.svg}
 Example of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter_in_cell<1>`\endlink and `remove_cell<0>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a point in the barycenter of the 1-cell containing dart <I>d1</I>. Now if we remove the 0-cell containing dart <I>d2</I>, we obtain a linear cell complex isomorphic to the initial one.
@@ -202,7 +202,7 @@ The output is:
 This example illustrates the way to use a 3D linear cell complex by
 adding another information to vertices. For that, we need to define
 our own items class. The difference with the
-`Linear_cell_complex_min_items` class is about the definition of
+`Linear_cell_complex_for_combinatorial_map_min_items` class is about the definition of
 the vertex attribute where we use a `Cell_attribute_with_point`
 with a non `void` info. In this example, the <em>vertex color</em> is just
 given by an `int` (the second template parameter of the
@@ -212,7 +212,7 @@ resulting of the merging of two vertices to the average of the two
 initial values. This functor is associated with the vertex attribute
 by passing it as template parameter. Using this items class instead of
 the default one is done during the instantiation of template
-parameters of the `Linear_cell_complex` class.
+parameters of the `Linear_cell_complex_for_combinatorial_map` class.
 
 Now we can use `LCC_3` in which each vertex is associated with an
 attribute containing both a point and an information. In the following

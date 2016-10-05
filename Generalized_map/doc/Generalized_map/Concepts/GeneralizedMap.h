@@ -25,7 +25,8 @@ and <I>i</I>+2 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ \link GenericMap::dimension `d
 - \f$ \forall \f$ <I>i</I>, 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink such that <I>i</I>-attributes are non void:
   + \f$ \forall \f$ <I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;
   + \f$ \forall \f$ <I>d2</I>  in a different <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have different <I>i</I>-attributes.
-
+.
+  
 \cgalHeading{Sew and Unsew}
 
 The function \link GenericMap::is_sewable `is_sewable(dh1,dh2)`\endlink returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the generalized map valid.

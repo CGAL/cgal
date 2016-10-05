@@ -3,11 +3,12 @@
 \ingroup PkgLinearCellComplexConcepts
 \cgalConcept
 
-Required types and functors for the `LinearCellComplexTraits` concept. This geometric traits concept is used in the \link CGAL::Linear_cell_complex `Linear_cell_complex`\endlink class.
+Required types and functors for the `LinearCellComplexTraits` concept. This geometric traits concept is used in the \link CGAL::Linear_cell_complex_for_combinatorial_map `Linear_cell_complex_for_combinatorial_map`\endlink and \link CGAL::Linear_cell_complex_for_generalized_map `Linear_cell_complex_for_generalized_map`\endlink classes.
 
 \cgalHasModel \link CGAL::Linear_cell_complex_traits `CGAL::Linear_cell_complex_traits<d,K>`\endlink
 
-\sa `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
+\sa `CGAL::Linear_cell_complex_for_combinatorial_map<d,d2,LCCTraits,Items,Alloc>`
+\sa `CGAL::Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc>`
 
 */
 
