@@ -56,28 +56,28 @@ using Attribute_const_handle = CMap::Attribute_const_handle<i>;
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,i)`\endlink instead.
 Returns \f$ \beta_i\f$(`*this`).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
 */
 Dart_handle beta(unsigned int i);
 
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,i)`\endlink instead.
 Returns \f$ \beta_i\f$(`*this`) when the dart is const.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
 */
 Dart_const_handle beta(unsigned int i) const;
 
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,CGAL_BETAINV(i))`\endlink instead.
 Returns \f$ \beta_i^{-1}\f$(`*this`).
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
 */
 Dart_handle beta_inv(unsigned int i);
 
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \link CombinatorialMap::beta `cm.beta(dh,CGAL_BETAINV(i))`\endlink instead.
 Returns \f$ \beta_i^{-1}\f$(`*this`) when the dart is const.
-\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>.
 */
 Dart_const_handle beta_inv(unsigned int i) const;
 
