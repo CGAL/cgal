@@ -58,7 +58,7 @@ public:
   void compute_mean_max (std::vector<double>& vect, double& mean, double& max)
   {
     mean = 0.;
-    max = 0.;
+    max = -std::numeric_limits<double>::max();
     double min = std::numeric_limits<double>::max();
     
     for (std::size_t i = 0; i < vect.size(); ++ i)
@@ -69,7 +69,7 @@ public:
         if (vect[i] < min)
           min = vect[i];
       }
-    std::cerr << "Min/max = " << min << " / " << max << std::endl;
+    std::cerr << id() << " Min/max = " << min << " / " << max << std::endl;
     mean /= vect.size();
 
   }
