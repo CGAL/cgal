@@ -58,8 +58,9 @@
 // https://bugreports.qt-project.org/browse/QTBUG-22829
 #ifdef Q_MOC_RUN
 // When Qt moc runs on CGAL files, do not process
-// <boost/type_traits/has_operator.hpp>
+// <boost/type_traits/detail/has_binary_operator.hpp>
 #  define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+#  define BOOST_TT_HAS_BIT_AND_HPP_INCLUDED
 #  define BOOST_TT_HAS_BIT_AND_ASSIGN_HPP_INCLUDED
 #  define BOOST_TT_HAS_BIT_OR_HPP_INCLUDED
 #  define BOOST_TT_HAS_BIT_OR_ASSIGN_HPP_INCLUDED
@@ -90,6 +91,18 @@
 // do not include <boost/random.hpp> either
 // it includes <boost/type_traits/has_binary_operator.hpp>
 #  define BOOST_RANDOM_HPP
+// <boost/type_traits/detail/has_prefix_operator.hpp> fails as well
+#  define BOOST_TT_HAS_COMPLEMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_DEREFERENCE_HPP_INCLUDED
+#  define BOOST_TT_HAS_LOGICAL_NOT_HPP_INCLUDED
+#  define BOOST_TT_HAS_NEGATE_HPP_INCLUDED
+#  define BOOST_TT_HAS_PRE_DECREMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_PRE_INCREMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_UNARY_MINUS_HPP_INCLUDED
+#  define BOOST_TT_HAS_UNARY_PLUS_HPP_INCLUDED
+// <boost/type_traits/detail/has_postfix_operator.hpp> fails as well
+#  define BOOST_TT_HAS_POST_DECREMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_POST_INCREMENT_HPP_INCLUDED
 #endif
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
