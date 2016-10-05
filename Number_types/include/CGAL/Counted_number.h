@@ -27,6 +27,7 @@
 #define CGAL_COUNTED_NUMBER_H
 
 #include <CGAL/number_type_basic.h>
+#include <CGAL/atomic.h>
 #include <boost/iterator/transform_iterator.hpp> // for Root_of_selector
 #include <iostream>
 
@@ -34,7 +35,12 @@ namespace CGAL {
 
 template <class NT>
 class Counted_number {
-    static unsigned long s_neg_count, s_add_count, s_sub_count,
+#ifdef CGAL_NO_ATOMIC
+    static unsigned long
+#else
+    static CGAL::cpp11::atomic<unsigned long>
+#endif
+                         s_neg_count, s_add_count, s_sub_count,
                          s_mul_count, s_div_count,
                   			 s_eq_count, s_comp_count,
                          s_simplify_count,
@@ -220,6 +226,7 @@ class Counted_number {
     }
 };
 
+#ifdef CGAL_NO_ATOMIC
 template <class NT>
 unsigned long Counted_number<NT>::s_neg_count=0;
 
@@ -279,6 +286,68 @@ unsigned long Counted_number<NT>::s_div_mod_count = 0;
 
 template< class NT >
 unsigned long Counted_number<NT>::s_mod_count = 0;
+#else 
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_neg_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_add_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_sub_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_mul_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_div_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_eq_count;
+
+template <class NT>
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_comp_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_simplify_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_unit_part_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_zero_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_one_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_square_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_integral_division_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_square_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_sqrt_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_kth_root_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_root_of_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_gcd_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_div_mod_count;
+
+template< class NT >
+CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_mod_count;
+#endif
+
 
 //unary +
 template <class NT> Counted_number<NT>
