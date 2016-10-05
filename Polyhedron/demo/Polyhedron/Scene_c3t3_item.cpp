@@ -262,6 +262,7 @@ struct Scene_c3t3_item_priv {
     show_tetrahedra = false;
     is_aabb_tree_built = false;
     are_intersection_buffers_filled = false;
+    is_grid_shown = true;
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -338,6 +339,7 @@ struct Scene_c3t3_item_priv {
   };
   Scene_c3t3_item* item;
   C3t3 c3t3;
+  bool is_grid_shown;
   qglviewer::ManipulatedFrame* frame;
   bool need_changed;
   mutable bool are_intersection_buffers_filled;
@@ -624,7 +626,7 @@ Scene_c3t3_item::build_histogram()
 
   d->histogram_ = QPixmap(width, height + text_height);
   d->histogram_.fill(QColor(192, 192, 192));
-#endif  
+#endif
 
   QPainter painter(&d->histogram_);
   painter.setPen(Qt::black);
@@ -762,7 +764,21 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->d->computeElements();
     ncthis->d->initializeBuffers(viewer);
   }
-
+  if(d->is_grid_shown)
+  {
+    vaos[Scene_c3t3_item_priv::Grid]->bind();
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setAttributeValue("colors", QColor(Qt::black));
+    QMatrix4x4 f_mat;
+    for (int i = 0; i<16; i++)
+      f_mat.data()[i] = d->frame->matrix()[i];
+    d->program->setUniformValue("f_matrix", f_mat);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
+    d->program->release();
+    vaos[Scene_c3t3_item_priv::Grid]->release();
+  }
   vaos[Scene_c3t3_item_priv::Facets]->bind();
   d->program = getShaderProgram(PROGRAM_C3T3);
   attribBuffers(viewer, PROGRAM_C3T3);
@@ -793,18 +809,6 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     d->spheres->setPlane(this->plane());
   }
 
-  vaos[Scene_c3t3_item_priv::Grid]->bind();
-  d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
-  d->program->bind();
-  d->program->setAttributeValue("colors", QColor(Qt::black));
-  QMatrix4x4 f_mat;
-  for (int i = 0; i<16; i++)
-    f_mat.data()[i] = d->frame->matrix()[i];
-  d->program->setUniformValue("f_matrix", f_mat);
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
-  d->program->release();
-  vaos[Scene_c3t3_item_priv::Grid]->release();
 
   Scene_group_item::draw(viewer);
 }
@@ -823,7 +827,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->d->initializeBuffers(viewer);
   }
 
-  if(renderingMode() == Wireframe)
+  if(renderingMode() == Wireframe && d->is_grid_shown)
   {
     vaos[Scene_c3t3_item_priv::Grid]->bind();
 
@@ -899,18 +903,21 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
   vaos[Scene_c3t3_item_priv::Edges]->release();
   d->program->release();
 
-  vaos[Scene_c3t3_item_priv::Grid]->bind();
-  d->program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attribBuffers(viewer, PROGRAM_NO_SELECTION);
-  d->program->bind();
-  d->program->setAttributeValue("colors", this->color());
-  QMatrix4x4 f_mat;
-  for (int i = 0; i<16; i++)
-    f_mat.data()[i] = d->frame->matrix()[i];
-  d->program->setUniformValue("f_matrix", f_mat);
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
-  d->program->release();
-  vaos[Scene_c3t3_item_priv::Grid]->release();
+  if(d->is_grid_shown)
+  {
+    vaos[Scene_c3t3_item_priv::Grid]->bind();
+    d->program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
+    d->program->bind();
+    d->program->setAttributeValue("colors", this->color());
+    QMatrix4x4 f_mat;
+    for (int i = 0; i<16; i++)
+      f_mat.data()[i] = d->frame->matrix()[i];
+    d->program->setUniformValue("f_matrix", f_mat);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_grid.size() / 3));
+    d->program->release();
+    vaos[Scene_c3t3_item_priv::Grid]->release();
+  }
   if(d->spheres_are_shown)
   {
     d->spheres->setPlane(this->plane());
@@ -1120,6 +1127,14 @@ QMenu* Scene_c3t3_item::contextMenu()
     actionShowTets->setObjectName("actionShowTets");
     connect(actionShowTets, &QAction::toggled, Set_show_tetrahedra(this->d));
 
+    QAction* actionShowGrid=
+      menu->addAction(tr("Show &grid"));
+    actionShowGrid->setCheckable(true);
+    actionShowGrid->setChecked(true);
+    actionShowGrid->setObjectName("actionShowGrid");
+    connect(actionShowGrid, SIGNAL(toggled(bool)),
+            this, SLOT(show_grid(bool)));
+
     menu->setProperty(prop_name, true);
   }
   return menu;
@@ -1157,7 +1172,7 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
 
     item->vaos[Facets]->release();
     program->release();
-    
+
     positions_poly_size = positions_poly.size();
     positions_poly.clear();
     positions_poly.swap(positions_poly);
@@ -1186,7 +1201,7 @@ void Scene_c3t3_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *view
     positions_lines_size = positions_lines.size();
     positions_lines.clear();
     positions_lines.swap(positions_lines);
-    
+
   }
 
   // vao containing the data for the cnc
@@ -1377,7 +1392,7 @@ void Scene_c3t3_item_priv::computeElements()
     return;
   }
   //The facets
-  {  
+  {
     for (C3t3::Facet_iterator
       fit = c3t3.facets_begin(),
       end = c3t3.facets_end();
@@ -1467,6 +1482,12 @@ Scene_c3t3_item::setColor(QColor c)
   d->compute_color_map(c);
   invalidateOpenGLBuffers();
   d->are_intersection_buffers_filled = false;
+}
+
+void Scene_c3t3_item::show_grid(bool b)
+{
+  d->is_grid_shown = b;
+  itemChanged();
 }
 void Scene_c3t3_item::show_spheres(bool b)
 {
