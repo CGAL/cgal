@@ -32,6 +32,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/tss.h>
 
 namespace CGAL {
 
@@ -87,7 +88,14 @@ private:
   Segment_2 *left_seg;
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
-  static SEG_Direction seg_dir;
+
+  static SEG_Direction& direction()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(SEG_Direction, seg_dir,SEG_UP);
+    return seg_dir;
+  }
+
+
 
 public:
   Hot_pixel(const Point_2 & inp_point, NT inp_pixel_size);
@@ -99,12 +107,12 @@ public:
   bool intersect_bot(const Segment_2 & seg, SEG_Direction seg_dir) const;
   bool intersect_top(const Segment_2 & seg, SEG_Direction seg_dir) const;
   bool intersect(Segment_data & seg, SEG_Direction seg_dir) const;
-  void set_direction(SEG_Direction inp_seg_dir) { seg_dir = inp_seg_dir; }
-  SEG_Direction get_direction() const { return(seg_dir); }
+  void set_direction(SEG_Direction inp_seg_dir) { direction() = inp_seg_dir; }
+  SEG_Direction get_direction() const { return direction(); }
 };
 
 /*! */
-template<class Traits_> SEG_Direction Hot_pixel<Traits_>::seg_dir;
+
 
 // a function for compare two hot pixels for the set of hot pixels
 template<class Traits_>
