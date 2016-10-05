@@ -124,6 +124,9 @@ void isotropic_remeshing(const FaceRange& faces
                        , PolygonMesh& pmesh
                        , const NamedParameters& np)
 {
+  if (boost::begin(faces)==boost::end(faces))
+    return;
+
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   using boost::get_param;
