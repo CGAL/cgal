@@ -213,13 +213,13 @@ private:
   };
 
 #ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
-  static Test_runtime_rounding_modes tester;
+  static const Test_runtime_rounding_modes tester;
 #endif
 };
 
 #ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
 template <bool Protected>
-typename Interval_nt<Protected>::Test_runtime_rounding_modes
+const typename Interval_nt<Protected>::Test_runtime_rounding_modes
 Interval_nt<Protected>::tester;
 #endif
 
