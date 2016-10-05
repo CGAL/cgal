@@ -154,8 +154,8 @@ public:
                                       *m_grid, m_grid_resolution, m_radius_neighbors)));
 
     
-    if (!(boost::is_convertible
-          <VectorMap, CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3> >::value))
+    if (boost::is_convertible
+          <VectorMap, CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3> >::value)
       psc.add_attribute (Attribute_handle (new Verticality(begin, end, *m_eigen)));
     else
       psc.add_attribute (Attribute_handle (new Verticality(begin, end, normal_map)));
