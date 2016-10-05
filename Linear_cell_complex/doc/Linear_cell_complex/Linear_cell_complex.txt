@@ -73,7 +73,7 @@ The class `Linear_cell_complex_traits<d,K>` is a model of `LinearCellComplexTrai
 \subsection Linear_cell_complexLinearCellComplexItems Linear Cell Complex Items
 \anchor sseclccitem
 
-The `LinearCellComplexItems` concept refines the `BasicMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept.
+The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept.
 
 The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexItems` when using combinatorial maps. It uses `Dart<d>`, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
 
@@ -82,26 +82,26 @@ The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexIte
 
 \section Linear_cell_complexOperations Operations
 
-Several operations defined in the combinatorial maps \tred{or generalized maps} package can be used on a linear cell complex. This is the case for all the iteration operations that do not modify the model (see example in Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for all the operations that do not create new 0-cells: \link BasicMap::sew `sew`\endlink, \link BasicMap::unsew `unsew`\endlink, \link BasicMap::remove_cell `remove_cell`\endlink,  \link BasicMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink or \link BasicMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink. Indeed, all these operations update non `void` attributes, and thus update vertex attributes of a linear cell complex. Note that some existing 0-attributes can be duplicated by the \link BasicMap::unsew `unsew`\endlink method, but these 0-attributes are not new but copies of existing old 0-attributes.
+Several operations defined in the combinatorial maps \tred{or generalized maps} package can be used on a linear cell complex. This is the case for all the iteration operations that do not modify the model (see example in Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for all the operations that do not create new 0-cells: \link GenericMap::sew `sew`\endlink, \link GenericMap::unsew `unsew`\endlink, \link GenericMap::remove_cell `remove_cell`\endlink,  \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink or \link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink. Indeed, all these operations update non `void` attributes, and thus update vertex attributes of a linear cell complex. Note that some existing 0-attributes can be duplicated by the \link GenericMap::unsew `unsew`\endlink method, but these 0-attributes are not new but copies of existing old 0-attributes.
 
-However, operations that create a new 0-cell can not be directly used since the new 0-cell would not be associated with a vertex attribute. Indeed, it is not possible for these operations to automatically decide which point to create. These operations are: \link BasicMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\endlink, \link BasicMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink, \link BasicMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, plus all the creation operations. For these operations, new versions are proposed taking some points as additional parameters. Lastly, some new operations are defined, which use the geometry (see sections \ref ssecconstructionsop "Construction Operations" and \ref ssecmodifop "Modification Operations").
+However, operations that create a new 0-cell can not be directly used since the new 0-cell would not be associated with a vertex attribute. Indeed, it is not possible for these operations to automatically decide which point to create. These operations are: \link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\endlink, \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink, \link GenericMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, plus all the creation operations. For these operations, new versions are proposed taking some points as additional parameters. Lastly, some new operations are defined, which use the geometry (see sections \ref ssecconstructionsop "Construction Operations" and \ref ssecmodifop "Modification Operations").
 
 All the operations given in this section guarantee that given a valid linear cell complex and a possible operation, the result is a valid linear cell complex. As for a combinatorial \tred{or generalized} map, it is also possible to use low level operations but additional operations may be needed to restore the validity conditions.
 
 \subsection sseclcclinkdarts Sewing and Unsewing
 
-As explained in the  \ref sseclinkdarts "combinatorial map" and \tred{and \ref sseclinkdarts_gmap "generalized map" } user manuals, it is possible to glue two <I>i</I>-cells along an (<I>i</I>-1)-cell by using the \link BasicMap::sew `sew<i>`\endlink method. Since this method updates non void attributes, and since points are specific attributes, they are automatically updated during the `sew<i>` method. Thus the sewing of two <I>i</I>-cells could deform the geometry of the concerned objects.
+As explained in the  \ref sseclinkdarts "combinatorial map" and \tred{and \ref sseclinkdarts_gmap "generalized map" } user manuals, it is possible to glue two <I>i</I>-cells along an (<I>i</I>-1)-cell by using the \link GenericMap::sew `sew<i>`\endlink method. Since this method updates non void attributes, and since points are specific attributes, they are automatically updated during the `sew<i>` method. Thus the sewing of two <I>i</I>-cells could deform the geometry of the concerned objects.
 
-For example, in \cgalFigureRef{fig_lcc_example_3d_sew}, we want to 3-sew the two initial 3-cells. \link BasicMap::sew `sew<3>(1,5)`\endlink links by \f$ \beta_3\f$ the pairs of darts (1,5), (2,8), (3,7) and (4,6). The eight vertex attributes around the facet between the two 3-cells before the sew are merged by pair during the sew operation (and the \link CellAttribute::On_merge `On_merge`\endlink functor is called four times). Thus, after the sew, there are only four 0-attributes around the facet. By default, the attributes associated with the first dart of the sew operation are kept (but this can be modified by defining your own functor in the attribute class as explained in the packages combinatorial map \tred{and generalized map}. Intuitively, the geometry of the second 2-cell is deformed to fit to the first 2-cell.
+For example, in \cgalFigureRef{fig_lcc_example_3d_sew}, we want to 3-sew the two initial 3-cells. \link GenericMap::sew `sew<3>(1,5)`\endlink links by \f$ \beta_3\f$ the pairs of darts (1,5), (2,8), (3,7) and (4,6). The eight vertex attributes around the facet between the two 3-cells before the sew are merged by pair during the sew operation (and the \link CellAttribute::On_merge `On_merge`\endlink functor is called four times). Thus, after the sew, there are only four 0-attributes around the facet. By default, the attributes associated with the first dart of the sew operation are kept (but this can be modified by defining your own functor in the attribute class as explained in the packages combinatorial map \tred{and generalized map}. Intuitively, the geometry of the second 2-cell is deformed to fit to the first 2-cell.
 
 \cgalFigureBegin{fig_lcc_example_3d_sew,lcc_example_3d_sew.svg}
-Example of 3-sew operation for linear cell complex. <B>Left</B>: A 3D linear cell complex containing two 3-cells that are not connected. Vertex attributes are drawn with circles containing point coordinates. Associations between darts and attributes are drawn with small lines between darts and disks. <B>Right</B>: The 3D linear cell complex obtained as result of \link BasicMap::sew `sew<3>(1,5)`\endlink (or \link BasicMap::sew `sew<3>(2,8)`\endlink, or \link BasicMap::sew `sew<3>(3,7)`\endlink, or \link BasicMap::sew `sew<3>(4,6)`\endlink). The eight 0-attributes around the facet between the two 3-cells before the sew operation, are merged into four 0-attributes after. The geometry of the pyramid is deformed since its base is fitted on the 2-cell of the cube.
+Example of 3-sew operation for linear cell complex. <B>Left</B>: A 3D linear cell complex containing two 3-cells that are not connected. Vertex attributes are drawn with circles containing point coordinates. Associations between darts and attributes are drawn with small lines between darts and disks. <B>Right</B>: The 3D linear cell complex obtained as result of \link GenericMap::sew `sew<3>(1,5)`\endlink (or \link GenericMap::sew `sew<3>(2,8)`\endlink, or \link GenericMap::sew `sew<3>(3,7)`\endlink, or \link GenericMap::sew `sew<3>(4,6)`\endlink). The eight 0-attributes around the facet between the two 3-cells before the sew operation, are merged into four 0-attributes after. The geometry of the pyramid is deformed since its base is fitted on the 2-cell of the cube.
 \cgalFigureEnd
 
-This is similar for \link BasicMap::unsew `unsew<i>`\endlink operation, which removes <I>i</I>-links of all the darts in a given <I>(i-1)</I>-cell, and updates non void attributes which are no more associated to a same cell due to the unlinks. If we take the linear cell complex given in \cgalFigureRef{fig_lcc_example_3d_sew} (Right), and we call \link BasicMap::unsew `unsew<3>(2)`\endlink, we obtain the linear cell complex in \cgalFigureRef{fig_lcc_example_3d_sew} (Left) except for the coordinates of the new four vertices, which by default are copies of original vertices (this behavior can be modified thanks to the functor \link CellAttribute::On_split `On_split`\endlink in the attribute class). The \link BasicMap::unsew `unsew<3>`\endlink operation has removed the four \f$ \beta_3\f$ links, and has duplicated the 0-attributes since vertices are split in two after the unsew operation.
+This is similar for \link GenericMap::unsew `unsew<i>`\endlink operation, which removes <I>i</I>-links of all the darts in a given <I>(i-1)</I>-cell, and updates non void attributes which are no more associated to a same cell due to the unlinks. If we take the linear cell complex given in \cgalFigureRef{fig_lcc_example_3d_sew} (Right), and we call \link GenericMap::unsew `unsew<3>(2)`\endlink, we obtain the linear cell complex in \cgalFigureRef{fig_lcc_example_3d_sew} (Left) except for the coordinates of the new four vertices, which by default are copies of original vertices (this behavior can be modified thanks to the functor \link CellAttribute::On_split `On_split`\endlink in the attribute class). The \link GenericMap::unsew `unsew<3>`\endlink operation has removed the four \f$ \beta_3\f$ links, and has duplicated the 0-attributes since vertices are split in two after the unsew operation.
 
 \cgalAdvancedBegin
-If \link BasicMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future sew and unsew operations will not update non void attributes. These attributes will be updated latter by the call to \link BasicMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink.
+If \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future sew and unsew operations will not update non void attributes. These attributes will be updated latter by the call to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink.
 \cgalAdvancedEnd
 
 \subsection Linear_cell_complexConstructionOperations Construction Operations
@@ -127,7 +127,7 @@ Example of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter
 \cgalFigureEnd
 
 
-\link LinearCellComplex::insert_barycenter_in_cell `lcc.insert_barycenter_in_cell<unsigned int i>(dh0)`\endlink adds the barycenter of the <I>i</I>-cell containing dart `d0`. This operation is possible if `d0`\f$ \in\f$\link BasicMap::darts `lcc.darts()`\endlink (see examples on \cgalFigureRef{fig_lcc_insert_vertex} and \cgalFigureRef{fig_lcc_triangulation}).
+\link LinearCellComplex::insert_barycenter_in_cell `lcc.insert_barycenter_in_cell<unsigned int i>(dh0)`\endlink adds the barycenter of the <I>i</I>-cell containing dart `d0`. This operation is possible if `d0`\f$ \in\f$\link GenericMap::darts `lcc.darts()`\endlink (see examples on \cgalFigureRef{fig_lcc_insert_vertex} and \cgalFigureRef{fig_lcc_triangulation}).
 
 \link LinearCellComplex::insert_point_in_cell `lcc.insert_point_in_cell<unsigned int i>(dh0,p)`\endlink is an operation similar to the previous operation, the only difference being that the coordinates of the new point are here given by `p` instead of being computed as the barycenter of the <I>i</I>-cell. Currently, these two operations are only defined for `i=1` to insert a point in an edge, or `i=2` to insert a point in a facet.
 
@@ -135,7 +135,7 @@ Example of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter
 Examples of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter_in_cell<2>`\endlink operation.
 \cgalFigureEnd
 
-\link LinearCellComplex::insert_dangling_cell_1_in_cell_2 `lcc.insert_dangling_cell_1_in_cell_2(dh0,p)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`. The second vertex of the new edge is associated with a new 0-attribute containing a copy of `p` as point. This operation is possible if `d0`\f$ \in\f$\link BasicMap::darts `lcc.darts()`\endlink (see example on \cgalFigureRef{fig_lcc_insert_edge}).
+\link LinearCellComplex::insert_dangling_cell_1_in_cell_2 `lcc.insert_dangling_cell_1_in_cell_2(dh0,p)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`. The second vertex of the new edge is associated with a new 0-attribute containing a copy of `p` as point. This operation is possible if `d0`\f$ \in\f$\link GenericMap::darts `lcc.darts()`\endlink (see example on \cgalFigureRef{fig_lcc_insert_edge}).
 
 \cgalFigureBegin{fig_lcc_insert_edge,lcc_insert_edge.svg}
 Example of \link LinearCellComplex::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, `insert_cell_1_in_cell_2` and `remove_cell<1>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a dangling 1-cell in the 2-cell containing dart <I>d1</I>, and of a 1-cell in the 2-cell containing dart <I>d2</I>. Now if we remove the 1-cells containing dart <I>d4</I> and <I>d5</I>, we obtain a linear cell complex isomorphic to the initial one.
@@ -144,7 +144,7 @@ Example of \link LinearCellComplex::insert_dangling_cell_1_in_cell_2 `insert_dan
 Some examples of use of these operations are given in Section \ref ssec5dexample "A 4D Linear Cell Complex".
 
 \cgalAdvancedBegin
-If \link BasicMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link BasicMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
+If \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
 \cgalAdvancedEnd
 
 \section Linear_cell_complexExamples Examples
@@ -152,7 +152,7 @@ If \link BasicMap::set_automatic_attributes_management `set_automatic_attributes
 \subsection Linear_cell_complexA3DLinearCellComplex A 3D Linear Cell Complex
 \anchor ssec3Dlcc
 
-This example uses a 3-dimensional linear cell complex. It creates two tetrahedra and displays all the points of the linear cell complex thanks to a \link LinearCellComplex::Vertex_attribute_const_range `Vertex_attribute_const_range`\endlink. Then, the two tetrahedra are \link BasicMap::sew `3-sewn`\endlink and we translate all the points of the second tetrahedron along vector `v(3,1,1)`. Since the two tetrahedra are 3-sewn, this translation moves also the 2-cell of the first tetrahedron shared with the second one. This is illustrated by displaying all the points of each 3-cell. For that we use a `std::for_each` and the `Display_vol_vertices` functor.
+This example uses a 3-dimensional linear cell complex. It creates two tetrahedra and displays all the points of the linear cell complex thanks to a \link LinearCellComplex::Vertex_attribute_const_range `Vertex_attribute_const_range`\endlink. Then, the two tetrahedra are \link GenericMap::sew `3-sewn`\endlink and we translate all the points of the second tetrahedron along vector `v(3,1,1)`. Since the two tetrahedra are 3-sewn, this translation moves also the 2-cell of the first tetrahedron shared with the second one. This is illustrated by displaying all the points of each 3-cell. For that we use a `std::for_each` and the `Display_vol_vertices` functor.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_3.cpp}
 
@@ -169,7 +169,7 @@ LCC characteristics: #Darts=24, #0-cells=5, #1-cells=9, #2-cells=7, #3-cells=2, 
 \endverbatim
 
 The first line gives the points of the linear cell complex before the
-\link BasicMap::sew `sew<3>`\endlink. There are eight points, four for each tetrahedron.
+\link GenericMap::sew `sew<3>`\endlink. There are eight points, four for each tetrahedron.
 After the sew, six vertices are merged two by two, thus there are five
 vertices. We can see the points of each 3-cell (lines Volume 1 and
 Volume 2) before the sew, after the sew and after the translation of
@@ -218,8 +218,8 @@ Now we can use `LCC_3` in which each vertex is associated with an
 attribute containing both a point and an information. In the following
 example, we create two cubes, and set the color of the vertices of the
 first cube to 1 and of the second cube to 19 (by iterating through two
-\link BasicMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<0, 3>`\endlink ranges). Then we
-\link BasicMap::sew `3-sew`\endlink the two cubes along one facet. This operation merges some
+\link GenericMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<0, 3>`\endlink ranges). Then we
+\link GenericMap::sew `3-sew`\endlink the two cubes along one facet. This operation merges some
 vertices (as in the example of \cgalFigureRef{fig_lcc_example_3d_sew}). We
 insert a vertex in the common 2-cell between the two cubes, and set
 the information of the new 0-attribute to 5. In the last loop, we
@@ -250,7 +250,7 @@ Before applying the sew operation, the eight vertices of the first cube are colo
 \subsection Linear_cell_complexAutomaticAttributesManagement Automatic attributes management
 \anchor ssecAttributesManagement
 
-The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behaviour) and the second time by calling first  \link BasicMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
+The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behaviour) and the second time by calling first  \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
 
 We can observe that the second run is faster than the first one. Indeed, updating attribute for each edge removal give a bigger complexity. Moreover, the gain increases when the percentage of removed edges increases.
 

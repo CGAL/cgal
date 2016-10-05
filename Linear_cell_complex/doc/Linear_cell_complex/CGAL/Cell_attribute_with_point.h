@@ -8,12 +8,12 @@ The class `Cell_attribute_with_point` represents an attribute containing a point
 
 \cgalModels `CellAttributeWithPoint`
 
-\tparam LCC must be a model of the `LinearCellComplex` concept,
-\tparam Info_ is the type of the information contained in the attribute, `void` for no information,
+\tparam LCC a model of the `LinearCellComplex` concept,
+\tparam Info_ the type of the information contained in the attribute, `void` for no information,
 
 \tparam Tag is `::Tag_true` to enable the storage of a \link Cell_attribute_with_point::Dart_handle `Dart_handle`\endlink of the associated cell, `::Tag_false` otherwise,
-\tparam OnMerge is a functor called when two attributes are merged,
-\tparam OnSplit is a functor called when one attribute is split in two.
+\tparam OnMerge a functor called when two attributes are merged,
+\tparam OnSplit a functor called when one attribute is split in two.
 
 By default, `OnMerge` and `OnSplit` are equal to `Null_functor`; `Tag` is equal to `::Tag_true`; and `Info_` is equal to `void`.
 

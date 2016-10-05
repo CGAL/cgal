@@ -8,15 +8,15 @@ The class `Cell_attribute` represents an attribute containing (or not) an inform
 
 \cgalModels `CellAttribute`
 
-\tparam Map must be a model of the `BasicMap` concept.
+\tparam Map a model of the `GenericcMap` concept.
 
-\tparam Info_ is the type of the information contained in the attribute.
+\tparam Info_ the type of the information contained in the attribute.
 
 \tparam Tag is `::Tag_true` to enable the storage of a `Dart_handle` of the associated cell, `::Tag_false` otherwise.
 
-\tparam OnMerge is the type of the functor called before two attributes are merged.
+\tparam OnMerge the type of the functor called before two attributes are merged.
 
-\tparam OnSplit is the type of the functor called after one attribute is split in two.
+\tparam OnSplit the type of the functor called after one attribute is split in two.
 
 By default, `OnMerge` and `OnSplit` are equal to `Null_functor`; `Tag` is equal to `::Tag_true`; and `Info_` is equal to `void`.
 

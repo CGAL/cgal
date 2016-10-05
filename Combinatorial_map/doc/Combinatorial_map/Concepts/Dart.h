@@ -3,11 +3,11 @@
 \ingroup PkgCombinatorialMapsConcepts
 \cgalConcept
 
-The concept `Dart` defines a <I>d</I>-dimensional dart for basic maps. A dart mainly stores handles to the darts linked with itself by \tred{the different functions of the basic map}. Moreover, it stores also handles to each non void attribute associated with itself.
+The concept `Dart` defines a <I>d</I>-dimensional dart for generic maps. A dart mainly stores handles to the darts linked with itself by \tred{the different functions of the generic map}. Moreover, it stores also handles to each non void attribute associated with itself.
 
 \cgalHeading{Creation}
 
-A dart `d0` is never constructed directly, but always created within a basic map `bm` by using the method \link GenericMap::create_dart `bm.create_dart()`\endlink. A new dart is initialized to be <I>i</I>-free, \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all its attribute handles initialized to `NULL`, for each non `void` attribute.
+A dart `d0` is never constructed directly, but always created within a generic map `bm` by using the method \link GenericMap::create_dart `bm.create_dart()`\endlink. A new dart is initialized to be <I>i</I>-free, \f$ \forall\f$<I>i</I>: 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dimension</I>, and having all its attribute handles initialized to `NULL`, for each non `void` attribute.
 
 \cgalHasModel \link CGAL::Combinatorial_map_dart `CGAL::Combinatorial_map_dart<d,CMap>`\endlink
 \cgalHasModel \link CGAL::Generalized_map_dart `CGAL::Generalized_map_dart<d,GMap>`\endlink
