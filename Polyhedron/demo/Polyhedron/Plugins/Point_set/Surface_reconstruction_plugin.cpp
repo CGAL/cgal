@@ -402,6 +402,13 @@ namespace SurfaceReconstruction
     CGAL::jet_estimate_normals<Concurrency_tag>(points.begin_or_selection_begin(), points.end(),
                                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                                 2 * neighbors);
+
+    points.set_first_selected
+      (CGAL::mst_orient_normals(points.begin_or_selection_begin(), points.end(),
+                                CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                2 * neighbors));
+    points.delete_selection(); // remove unoriented points
+
   }
   
 }
