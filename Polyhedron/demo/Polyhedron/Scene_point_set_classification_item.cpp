@@ -510,6 +510,8 @@ void Scene_point_set_classification_item::compute_features ()
   Q_ASSERT (m_psc != NULL);
   m_psc->clear_attributes();
 
+  std::cerr << "Computing features with parameters "
+            << m_grid_resolution << " " << m_radius_neighbors << " and " << m_radius_dtm << std::endl;
   compute_bbox();
   if (m_helper != NULL) delete m_helper;
   m_helper = new Helper (m_points->point_set()->begin(),

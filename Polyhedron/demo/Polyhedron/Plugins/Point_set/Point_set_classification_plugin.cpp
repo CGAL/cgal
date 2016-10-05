@@ -125,6 +125,13 @@ public:
     connect(ui_widget.generate_point_set_items,  SIGNAL(clicked()), this,
             SLOT(on_generate_point_set_items_button_clicked()));
 
+    connect(ui_widget.gridResolutionDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
+            SLOT(on_update_grid_resolution()));
+    connect(ui_widget.radiusNeighborsDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
+            SLOT(on_update_radius_neighbors()));
+    connect(ui_widget.radiusDTMDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
+            SLOT(on_update_radius_dtm()));
+
     connect(ui_widget.add_new_class,  SIGNAL(clicked()), this,
             SLOT(on_add_new_class_clicked()));
     connect(ui_widget.reset_training_sets,  SIGNAL(clicked()), this,
@@ -132,10 +139,15 @@ public:
     connect(ui_widget.train,  SIGNAL(clicked()), this,
             SLOT(on_train_clicked()));
 
-    QObject* scene = dynamic_cast<QObject*>(scene_interface);
-    if(scene)
-      connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this,
-              SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
+    QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
+    if(scene_obj)
+      {
+        connect(scene_obj, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this,
+                SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
+        
+        connect(scene_obj, SIGNAL(itemIndexSelected(int)), this,
+                SLOT(update_plugin(int)));
+      }
   }
   virtual void closure()
   {
@@ -173,10 +185,11 @@ public Q_SLOTS:
 
     if (item_map.find(points_item) == item_map.end())
       on_create_from_item_button_clicked();
+  }
 
-    Scene_point_set_classification_item* item
-      = get_classification_item();
-    update_plugin_from_item (item);
+  void update_plugin(int)
+  {
+    update_plugin_from_item(get_classification_item());
   }
 
   void update_plugin_from_item(Scene_point_set_classification_item* item)
@@ -213,6 +226,32 @@ public Q_SLOTS:
         ui_widget.tab_classif->setEnabled(item->features_computed());
       }
   }
+
+  void on_update_grid_resolution()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      return; 
+    classification_item->grid_resolution() = ui_widget.gridResolutionDoubleSpinBox->value();
+  }
+  void on_update_radius_neighbors()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      return; 
+    classification_item->radius_neighbors() = ui_widget.radiusNeighborsDoubleSpinBox->value();
+  }
+  void on_update_radius_dtm()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      return; 
+    classification_item->radius_dtm() = ui_widget.radiusDTMDoubleSpinBox->value();
+  }
+                           
   
   Scene_point_set_classification_item* get_classification_item()
   {
@@ -252,6 +291,8 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
     connect(points_item, &Scene_points_with_normal_item::itemChanged,
             new_item, &Scene_point_set_classification_item::invalidateOpenGLBuffers);
+
+    update_plugin_from_item(new_item);
   }
 
   void test() { std::cerr << "test" << std::endl; }
@@ -539,6 +580,14 @@ public Q_SLOTS:
 
   void on_add_new_class_clicked()
   {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
     bool ok;
     QString name =
       QInputDialog::getText((QWidget*)mw,
@@ -554,6 +603,10 @@ public Q_SLOTS:
                                       QColor (192 + rand() % 60,
                                               192 + rand() % 60,
                                               192 + rand() % 60)));
+    classification_item->add_new_type (class_rows.back().label->text().toStdString().c_str(),
+                                        class_rows.back().color);
+    
+
   }
 
   void on_reset_training_sets_clicked()
@@ -612,11 +665,21 @@ public Q_SLOTS:
 
   void on_remove_class_clicked()
   {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
     int index = ui_widget.gridLayout_3->indexOf(qobject_cast<QWidget*>(QObject::sender()));
     
     int row_index, column_index, row_span, column_span;
     ui_widget.gridLayout_3->getItemPosition(index, &row_index, &column_index, &row_span, &column_span);
     --row_index;
+
+    classification_item->remove_type (class_rows[row_index].label->text().toStdString().c_str());
     
     ui_widget.gridLayout_3->removeWidget (class_rows[row_index].label);
     delete class_rows[row_index].label;
@@ -639,6 +702,14 @@ public Q_SLOTS:
 
   void on_color_changed_clicked()
   {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
     QPushButton* color_button = qobject_cast<QPushButton*>(QObject::sender());
     int index = ui_widget.gridLayout_3->indexOf(color_button);
     int row_index, column_index, row_span, column_span;
@@ -648,7 +719,10 @@ public Q_SLOTS:
     QColor color = class_rows[row_index].color;
     color = QColorDialog::getColor(color, (QWidget*)mw, "Change of color of classification type");
     class_rows[row_index].change_color (color);
+    classification_item->change_type_color (class_rows[row_index].label->text().toStdString().c_str(),
+                                            color);
 
+    scene->itemChanged(classification_item);
   }
 
   void on_add_selection_to_training_set_clicked()

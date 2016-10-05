@@ -180,12 +180,37 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     m_points->resetSelection();
   }
 
-  const double& grid_resolution() const { return m_grid_resolution; }
-  const double& radius_neighbors() const { return m_radius_neighbors; }
-  const double& radius_dtm() const { return m_radius_dtm; }
+  double& grid_resolution() { return m_grid_resolution; }
+  double& radius_neighbors() { return m_radius_neighbors; }
+  double& radius_dtm() { return m_radius_dtm; }
   bool features_computed() const { return (m_helper != NULL); }
 
   const std::vector<std::pair<Type_handle, QColor> >& types() { return m_types; }
+  void add_new_type (const char* name, const QColor& color)
+  {
+    m_types.push_back (std::make_pair (m_psc->add_classification_type(name),
+                                       color));
+  }
+
+  void remove_type (const char* name)
+  {
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i].first->id() == name)
+        {
+          m_types.erase (m_types.begin() + i);
+          break;
+        }
+  }
+
+  void change_type_color (const char* name, const QColor& color)
+  {
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i].first->id() == name)
+        {
+          m_types[i].second = color;
+          break;
+        }
+  }
 
  public Q_SLOTS:
 
