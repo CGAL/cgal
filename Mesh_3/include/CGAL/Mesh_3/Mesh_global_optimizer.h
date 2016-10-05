@@ -33,7 +33,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/Null_global_optimizer_visitor.h>
-#include <CGAL/Prevent_deref.h>
+#include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
