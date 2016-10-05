@@ -49,3 +49,7 @@ if ( Boost_VERSION GREATER 103400 )
 
   polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin)
   target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
+  
+  qt5_wrap_ui( ribUI_FILES  Rib_dialog.ui)
+  polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin ${ribUI_FILES})
+  target_link_libraries(c3t3_rib_exporter_plugin scene_c3t3_item)
