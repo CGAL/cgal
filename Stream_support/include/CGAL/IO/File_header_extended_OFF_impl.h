@@ -63,7 +63,7 @@ int  File_header_extended_OFF::
 is_CBPn() const {
     if ( is_POL() && triangulated() && non_empty_facets() &&
          normalized_to_sphere() && rounded() &&
-         (radius() <= ( 1l << rounded_bits())))
+         (radius() <= double( 1l << rounded_bits())))
         return rounded_bits();
     else
         return 0;

@@ -1626,7 +1626,7 @@ float triLinInterp(const _image* image,
   posz = static_cast<float>(posz /(image->vz));
 
   //patch suggested by J.Cugnoni to prevent integer overflow
-  if(posz >= dimz-1 || posy >= dimy-1 || posx >= dimx-1)
+  if(posz >= float(dimz-1) || posy >= float(dimy-1) || posx >= float(dimx-1))
     return value_outside;
   
   const int i1 = (int)(posz);
