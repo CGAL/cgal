@@ -137,7 +137,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   bool run (int method);
 
   template <typename Item>
-  void generate_point_set_items(std::vector<Item>& new_items)
+  void generate_point_set_items(std::vector<Item>& )
   {
     // TODO
   }
@@ -183,6 +183,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   double& grid_resolution() { return m_grid_resolution; }
   double& radius_neighbors() { return m_radius_neighbors; }
   double& radius_dtm() { return m_radius_dtm; }
+  std::size_t& number_of_trials() { return m_nb_trials; }
   bool features_computed() const { return (m_helper != NULL); }
 
   const std::vector<std::pair<Type_handle, QColor> >& types() { return m_types; }
@@ -198,6 +199,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
       if (m_types[i].first->id() == name)
         {
           m_types.erase (m_types.begin() + i);
+          m_psc->remove_classification_type (m_types[i].first);
           break;
         }
   }
@@ -210,6 +212,17 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
           m_types[i].second = color;
           break;
         }
+  }
+
+  template <typename ComboBox>
+  void fill_display_combo_box (ComboBox* cb)
+  {
+    for (std::size_t i = 0; i < m_psc->number_of_attributes(); ++ i)
+      {
+        std::ostringstream oss;
+        oss << "Attribute " << m_psc->get_attribute(i)->id();
+        cb->addItem (oss.str().c_str());
+      }
   }
 
  public Q_SLOTS:
@@ -226,7 +239,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   double m_radius_dtm;
 
   std::vector<std::pair<Type_handle, QColor> > m_types;
-  double m_nb_trials;
+  std::size_t m_nb_trials;
   double m_smoothing;
   
   int m_index_color;

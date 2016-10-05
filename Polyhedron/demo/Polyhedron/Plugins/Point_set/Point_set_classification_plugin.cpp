@@ -131,6 +131,8 @@ public:
             SLOT(on_update_radius_neighbors()));
     connect(ui_widget.radiusDTMDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
             SLOT(on_update_radius_dtm()));
+    connect(ui_widget.number_of_trials,  SIGNAL(valueChanged(int)), this,
+            SLOT(on_update_number_of_trials()));
 
     connect(ui_widget.add_new_class,  SIGNAL(clicked()), this,
             SLOT(on_add_new_class_clicked()));
@@ -224,6 +226,14 @@ public Q_SLOTS:
 
         // Enabled classif if features computed
         ui_widget.tab_classif->setEnabled(item->features_computed());
+
+        ui_widget.display->clear();
+        ui_widget.display->addItem("Real colors");
+        ui_widget.display->addItem("Classification");
+        ui_widget.display->addItem("Confidence");
+        ui_widget.display->addItem("RANSAC");
+        item->fill_display_combo_box(ui_widget.display);
+        ui_widget.display->setCurrentIndex(1);
       }
   }
 
@@ -250,6 +260,14 @@ public Q_SLOTS:
     if(!classification_item)
       return; 
     classification_item->radius_dtm() = ui_widget.radiusDTMDoubleSpinBox->value();
+  }
+  void on_update_number_of_trials()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      return; 
+    classification_item->number_of_trials() = ui_widget.number_of_trials->value();
   }
                            
   

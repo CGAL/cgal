@@ -263,7 +263,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
            it != m_points->point_set()->first_selected(); ++ it)
         {
           QColor color (0, 0, 0);
-          Type_handle c = m_psc->classification_type_of(*it);
+          Type_handle c = m_psc->training_type_of(*it);
           
           if (c != Type_handle())
             color = map_colors[c];
@@ -295,6 +295,20 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
               colors_points.push_back (0.25 + 0.6 * (rand() / (double)RAND_MAX));
             }
         }
+    }
+  else
+    {
+      Attribute_handle att = m_psc->get_attribute(index_color - 4);
+      double weight = att->weight;
+      att->weight = att->max;
+      for (Point_set::const_iterator it = m_points->point_set()->begin();
+           it != m_points->point_set()->first_selected(); ++ it)
+        {
+          colors_points.push_back (ramp.r(att->normalized(*it)));
+          colors_points.push_back (ramp.g(att->normalized(*it)));
+          colors_points.push_back (ramp.b(att->normalized(*it)));
+        }
+      att->weight = weight;
     }
 
   for (Point_set::const_iterator it = m_points->point_set()->first_selected();
@@ -514,15 +528,25 @@ void Scene_point_set_classification_item::compute_features ()
             << m_grid_resolution << " " << m_radius_neighbors << " and " << m_radius_dtm << std::endl;
   compute_bbox();
   if (m_helper != NULL) delete m_helper;
+
+
   m_helper = new Helper (m_points->point_set()->begin(),
                          m_points->point_set()->end(),
                          m_points->point_set()->point_map(),
                          m_grid_resolution, m_radius_neighbors, m_radius_dtm);
 
-  m_helper->generate_attributes (*m_psc,
-                                 m_points->point_set()->begin(),
-                                 m_points->point_set()->end(),
-                                 m_points->point_set()->point_map());
+  if (m_points->point_set()->has_normal_map())
+    m_helper->generate_attributes (*m_psc,
+                                   m_points->point_set()->begin(),
+                                   m_points->point_set()->end(),
+                                   m_points->point_set()->point_map(),
+                                   m_points->point_set()->normal_map());
+  else
+    m_helper->generate_attributes (*m_psc,
+                                   m_points->point_set()->begin(),
+                                   m_points->point_set()->end(),
+                                   m_points->point_set()->point_map());
+
 }
 
 
