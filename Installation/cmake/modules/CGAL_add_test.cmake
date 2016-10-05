@@ -57,9 +57,9 @@ function(cgal_add_test exe_name)
   else()
     # TODO: deal with shell globbing; if the `cmd` file contains
     # a `*`, then interprete the command using bash.
-    if(ARGV2)
+    if(ARGC GREATER 2 AND ARGV2)
       set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV2}.cmd")
-    elseif(ARGV1 AND NOT EXISTS ${cmd_file})
+    elseif(ARGC GREATER 1 AND ARGV1 AND NOT EXISTS ${cmd_file})
       set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${ARGV1}.cmd")
     elseif(NOT EXISTS ${cmd_file})
       set(cmd_file "${CGAL_CURRENT_SOURCE_DIR}/${exe_name}.cmd")
