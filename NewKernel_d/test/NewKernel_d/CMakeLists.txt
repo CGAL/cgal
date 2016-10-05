@@ -3,7 +3,7 @@
 # Then modified by hand to add Eigen3.
 
 
-project( NewKernel_d_test )
+project( NewKernel_d_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 

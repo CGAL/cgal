@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the CGAL Polyhedron demo.
 
-project( Polyhedron )
+project( Polyhedron_Demo )
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.

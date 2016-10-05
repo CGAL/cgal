@@ -1,4 +1,4 @@
-project( Optimal_transportation_reconstruction_2_example )
+project( Optimal_transportation_reconstruction_2_Examples )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)

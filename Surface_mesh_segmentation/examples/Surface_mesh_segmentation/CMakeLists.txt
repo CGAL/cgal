@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Surface_mesh_segmentation )
+project( Surface_mesh_segmentation_Examples )
 
 
 cmake_minimum_required(VERSION 2.8.11)

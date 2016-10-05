@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Segment_voronoi_2)
+project (Segment_Delaunay_graph_2_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

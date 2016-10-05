@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Kinetic_framework_ )
+project( Kinetic_framework_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

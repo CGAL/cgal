@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Cone_spanners_2_ )
+project( Cone_spanners_2_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

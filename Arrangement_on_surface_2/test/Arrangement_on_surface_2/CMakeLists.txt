@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Arrangement_on_surface_2_ )
+project( Arrangement_on_surface_2_Tests )
 
 enable_testing()
 

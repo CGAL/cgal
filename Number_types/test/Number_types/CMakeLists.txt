@@ -3,7 +3,7 @@
 # that dependency so as to test all the number types not depending on CORE
 # when it is not installed
 
-project( Number_types_test )
+project( Number_types_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 

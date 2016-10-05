@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-project( Point_set_processing_3_example )
+project( Point_set_processing_3_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 

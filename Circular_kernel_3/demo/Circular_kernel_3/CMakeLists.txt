@@ -1,4 +1,4 @@
-project (Circular_kernel_3)
+project (Circular_kernel_3_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

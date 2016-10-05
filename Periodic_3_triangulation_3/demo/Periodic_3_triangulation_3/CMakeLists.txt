@@ -2,7 +2,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project( Periodic_3_triangulation_3_demo )
+project( Periodic_3_triangulation_3_Demo )
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

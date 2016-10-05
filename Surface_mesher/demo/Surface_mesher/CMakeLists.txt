@@ -1,6 +1,6 @@
 set ( prj Surface_mesher )
 
-project ( ${prj} )
+project ( Surface_mesher_Demo )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

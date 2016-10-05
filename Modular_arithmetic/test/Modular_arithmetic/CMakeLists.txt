@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Modular_arithmetic_ )
+project( Modular_arithmetic_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

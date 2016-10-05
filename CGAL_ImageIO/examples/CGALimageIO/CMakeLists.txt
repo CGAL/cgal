@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project( CGALImageIO_example ) 
+project( CGALimageIO_Examples ) 
 
 cmake_minimum_required(VERSION 2.8.11)
 

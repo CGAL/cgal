@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the AABB tree demo.
 
-project( AABB_demo )
+project( AABB_tree_Demo )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

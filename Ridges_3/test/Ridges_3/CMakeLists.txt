@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Ridges_3_test )
+project( Ridges_3_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 

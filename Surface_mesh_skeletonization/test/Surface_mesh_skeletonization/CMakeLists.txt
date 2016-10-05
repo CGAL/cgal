@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Mean_curvature_skeleton_ )
+project( Surface_mesh_skeletonization_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 

@@ -1,4 +1,4 @@
-project(image_to_vtk_viewer)
+project(CGALimageIO_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

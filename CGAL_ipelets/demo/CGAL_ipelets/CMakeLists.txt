@@ -1,3 +1,5 @@
+project(CGAL_ipelets_Demo)
+
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
