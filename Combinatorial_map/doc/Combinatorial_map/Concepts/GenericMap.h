@@ -262,12 +262,6 @@ Returns true iff the generic map is empty, i.e.\ it contains no dart.
 bool is_empty() const;
 
 /*!
-Returns true iff the generic map is valid.
-See the following links for the definition of valid for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
-*/
-bool is_valid() const;
-
-/*!
 Returns true iff the generic map is without <I>i</I>-boundary.
 
 The map is without <I>i</I>-boundary if there is no `i`-free dart.
@@ -674,45 +668,7 @@ void correct_invalid_attributes();
 
 /// @}
 
-/// \name Operations
-/// @{
-
-/*!
-Returns true iff `*dh1` can be <I>i</I>-sewn with `*dh2` by keeping the generic map valid. 
-See the following links for the definition of is_sewable for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
-\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink,
-  `*dh1`\f$ \in \f$ `darts()`, and `*dh2`\f$ \in \f$ `darts()`.
-*/
-template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;
-
-/*!
-  <I>i</I>-sew darts `*dh1` and `*dh2`, by keeping the generic map valid.
-See the following links for the definition of the <I>i</I>-sew for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
-
-If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generic map: for each <I>j</I>-cells <I>c1</I> and <I>c2</I> which are merged into one <I>j</I>-cell during the sew, the two associated attributes <I>attr1</I> and <I>attr2</I> are considered. If one attribute is NULL and the other not, the non NULL attribute is associated to all the darts of the resulting cell. When the two attributes are non NULL, functor \link CellAttribute::On_merge `Attribute_type<i>::type::On_merge`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onmerge function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>. Then, the attribute <I>attr1</I> is associated to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the generic map.
-\pre \link GenericMap::is_sewable `is_sewable<i>(dh1,dh2)`\endlink.
-
-\cgalAdvancedBegin
-If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated; thus the generic map can be no more valid after this operation.
-\cgalAdvancedEnd
-
-*/
-template <unsigned int i> void sew(Dart_handle dh1,Dart_handle dh2);
-
-/*!
-  <I>i</I>-unsew darts `*dh` and `*opposite<i>(*dh)`, by keeping the generic map valid.
-See the following links for the definition of is_sewable for \link CombinatorialMap `combinatorial maps`\endlink and for \link GeneralizedMap `generalized maps`\endlink.
-
-If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==true`, when necessary, non void attributes are updated to ensure the validity of the generic map: for each <I>j</I>-cell <I>c</I> split in two <I>j</I>-cells <I>c1</I> and <I>c2</I> by the operation, if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then this attribute is duplicated into <I>attr2</I>, and all the darts belonging to <I>c2</I> are associated with this new attribute. Finally, the functor \link CellAttribute::On_split `Attribute_type<i>::type::On_split`\endlink is called on the two attributes <I>attr1</I> and <I>attr2</I>. If set, the dynamic onsplit function of <i>i</i>-attributes is also called on <I>attr1</I> and <I>attr2</I>.
-\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, `*dh`\f$ \in \f$ `darts()` and `*dh` is not <I>i</I>-free.
-
-\cgalAdvancedBegin
-If \link GenericMap::are_attributes_automatically_managed `are_attributes_automatically_managed()`\endlink`==false`, non void attributes are not updated thus the generic map can be no more valid after this operation.
-\cgalAdvancedEnd
-*/
-template <unsigned int i> void unsew(Dart_handle dh);
-
-/// @}
+/// \cond SKIP_IN_MANUAL boost::function \endcond
 
 /// \name Dynamic Onmerge/Onsplit functors
 /// @{

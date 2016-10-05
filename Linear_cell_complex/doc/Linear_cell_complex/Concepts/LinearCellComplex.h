@@ -14,7 +14,7 @@ The concept `LinearCellComplex` represents a linear cell complex in dimension `d
 
 */
 class LinearCellComplex
- {
+{
 public:
 
 /// \name Creation
@@ -39,24 +39,19 @@ static unsigned int ambient_dimension;
 
 /// \name Types
 /// @{
-   
-/*!
 
-*/
-typedef unspecified_type Traits;
+/// Traits class, a model of the `LinearCellComplexTraits` concept.
+typedef unspecified_type Traits;  
 
 /*!
-
 */
 typedef Traits::FT FT;
 
 /*!
-
 */
 typedef Traits::Point Point;
 
 /*!
-
 */
 typedef Traits::Vector Vector;
 

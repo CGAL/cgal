@@ -18,7 +18,7 @@ Darts and non void attributes are stored in memory using `Compact_container`, us
 
 \cgalHeading{Complexity}
 
-The complexity of \link GenericMap::sew `sew`\endlink and \link GenericMap::unsew `unsew`\endlink is in <I>O</I>( \f$ | \f$ <I>S</I> \f$ | \f$ \f$ \times\f$\f$ | \f$ <I>c</I> \f$ | \f$ ), <I>S</I> being the set of darts of the orbit \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$ for the considered dart, and <I>c</I> the biggest <I>j</I>-cell merged or split during the sew such that <I>j</I>-attributes are non void. The complexity of \link GenericMap::is_sewable `is_sewable`\endlink is in <I>O</I>( \f$ | \f$ <I>S</I> \f$ | \f$ ).
+The complexity of \link CombinatorialMap::sew `sew`\endlink and \link CombinatorialMap::unsew `unsew`\endlink is in <I>O</I>( \f$ | \f$ <I>S</I> \f$ | \f$ \f$ \times\f$\f$ | \f$ <I>c</I> \f$ | \f$ ), <I>S</I> being the set of darts of the orbit \f$ \langle{}\f$\f$ \beta_1\f$,\f$ \ldots\f$,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,\f$ \ldots\f$,\f$ \beta_d\f$\f$ \rangle{}\f$ for the considered dart, and <I>c</I> the biggest <I>j</I>-cell merged or split during the sew such that <I>j</I>-attributes are non void. The complexity of \link CombinatorialMap::is_sewable `is_sewable`\endlink is in <I>O</I>( \f$ | \f$ <I>S</I> \f$ | \f$ ).
 
 The complexity of \link GenericMap::set_attribute `set_attribute`\endlink is in <I>O</I>( \f$ | \f$ <I>c</I> \f$ | \f$ ), <I>c</I> being the <I>i</I>-cell containing the considered dart.
 
@@ -26,7 +26,7 @@ The complexity of \link GenericMap::is_without_boundary(unsigned int i) const `i
 
 The complexity of \link GenericMap::unmark_all `unmark_all`\endlink and \link GenericMap::free_mark `free_mark`\endlink is in <I>O</I>( 1 ) if all the darts of the combinatorial map have the same mark, and in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ ) otherwise.
 
-The complexity of \link GenericMap::is_valid `is_valid`\endlink is in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ \f$ \times\f$ <I>d</I>\f$ ^2\f$ ).
+The complexity of \link CombinatorialMap::is_valid `is_valid`\endlink is in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ \f$ \times\f$ <I>d</I>\f$ ^2\f$ ).
 
 The complexity of \link GenericMap::clear `clear`\endlink is in <I>O</I>( \f$ | \f$ <I>D</I> \f$ | \f$ \f$ \times\f$ <I>d</I> ).
 
