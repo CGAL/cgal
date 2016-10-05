@@ -1387,10 +1387,6 @@ void Scene_c3t3_item_priv::computeElements()
     }
   }
 
-
-  if (item->isEmpty()){
-    return;
-  }
   //The facets
   {
     for (C3t3::Facet_iterator
