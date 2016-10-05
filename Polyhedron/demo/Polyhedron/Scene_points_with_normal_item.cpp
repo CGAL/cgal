@@ -536,9 +536,17 @@ Scene_points_with_normal_item::toolTip() const
 
 bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const 
 {
-    return m==Points ||
-            ( has_normals() &&
-              ( m==PointsPlusNormals || m==ShadedPoints || m==Splatting ) );
+  switch ( m )
+  {
+  case Points:
+  case ShadedPoints:
+  case PointsPlusNormals:
+  case Splatting:
+    return true;
+
+  default:
+    return false;
+  }
 }
 
 void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* viewer) const

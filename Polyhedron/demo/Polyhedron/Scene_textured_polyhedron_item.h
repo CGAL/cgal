@@ -29,7 +29,7 @@ public:
   virtual QString toolTip() const;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Splatting && m != PointsPlusNormals && m != Points && m != Gouraud ); }
+  virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Splatting && m != PointsPlusNormals && m != Points && m != Gouraud && m != ShadedPoints); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
    void draw() const {}
   virtual void draw(CGAL::Three::Viewer_interface*) const;

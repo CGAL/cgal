@@ -41,7 +41,7 @@ public:
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
+    virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); } // CHECK THIS!
     //Event handling
     virtual bool keyPressEvent(QKeyEvent*);
     //drawing of the scene
