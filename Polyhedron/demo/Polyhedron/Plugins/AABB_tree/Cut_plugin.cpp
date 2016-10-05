@@ -94,7 +94,7 @@ public:
     Tree *min_tree = NULL ;
     for( std::size_t t = r.begin(); t != r.end(); ++t)
     {
-      int i(t%grid_size), j(t/grid_size);
+      int i = static_cast<int>(t%grid_size), j = static_cast<int>(t/grid_size);
       FT x = -diag/fd + FT(i)/FT(grid_size) * dx;
       {
         FT y = -diag/fd + FT(j)/FT(grid_size) * dy;
@@ -765,7 +765,7 @@ private:
     {
       for(std::size_t t = r.begin(); t!= r.end(); ++t)
       {
-        int i(t%grid_size), j(t/grid_size);
+        int i = static_cast<int>(t%grid_size), j = static_cast<int>(t/grid_size);
         item->compute_texture(i,j, pos_ramp, neg_ramp);
       }
     }
