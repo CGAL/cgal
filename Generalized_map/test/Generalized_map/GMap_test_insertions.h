@@ -220,10 +220,12 @@ bool test_face_insertion(GMAP& gmap)
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
-  v.push_back(d1); v.push_back(gmap.beta(v[0],1));
-  v.push_back(gmap.beta(v[1],1)); v.push_back(gmap.beta(v[2],1));
+  v.push_back(d1);
+  v.push_back(gmap.alpha(v[0],0,1));
+  v.push_back(gmap.alpha(v[1],0,1));
+  v.push_back(gmap.alpha(v[2],0,1));
   gmap.insert_cell_2_in_cell_3(v.begin(),v.end());
-  if ( !check_number_of_cells_3(gmap, 6, 3, 3, 3, 1) )
+  if ( !check_number_of_cells_3(gmap, 4, 4, 2, 1, 1) )
     return false;
   gmap.clear(); v.clear();
 
@@ -231,20 +233,23 @@ bool test_face_insertion(GMAP& gmap)
   d1 = gmap.make_combinatorial_polygon(3);
   d2 = gmap.make_combinatorial_polygon(3);
   gmap.template sew<2>(d1, d2);
-  v.push_back(d1); v.push_back(gmap.beta(v[0],1));
-  v.push_back(gmap.beta(v[1],1));
+  v.push_back(d1);
+  v.push_back(gmap.alpha(v[0],0,1));
+  v.push_back(gmap.alpha(v[1],0,1));
   gmap.insert_cell_2_in_cell_3(v.begin(),v.end());
-  if ( !check_number_of_cells_3(gmap, 6, 3, 3, 3, 1) )
+  if ( !check_number_of_cells_3(gmap, 4, 5, 3, 2, 1) )
     return false;
   gmap.clear(); v.clear();
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_hexahedron();
-  d2 = gmap.beta(d1,2);
-  v.push_back(d2); v.push_back(gmap.beta(v[0],1,2,1));
-  v.push_back(gmap.beta(v[1],1,2,1)); v.push_back(gmap.beta(v[2],1,2,1));
+  d2 = gmap.alpha(d1,2);
+  v.push_back(d2);
+  v.push_back(gmap.alpha(v[0],0,1,2,1));
+  v.push_back(gmap.alpha(v[1],0,1,2,1));
+  v.push_back(gmap.alpha(v[2],0,1,2,1));
   gmap.insert_cell_2_in_cell_3(v.begin(),v.end());
-  if ( !check_number_of_cells_3(gmap, 6, 3, 3, 3, 1) )
+  if ( !check_number_of_cells_3(gmap, 8, 12, 7, 2, 1) )
     return false;
   gmap.clear(); v.clear();
 
@@ -252,15 +257,26 @@ bool test_face_insertion(GMAP& gmap)
   d1 = gmap.make_combinatorial_hexahedron();
   d2 = gmap.make_combinatorial_hexahedron();
   gmap.template sew<3>(d1,d2);
- // d3 = gmap.beta(d1, 2);
- // d4 = gmap.beta(d1, 1,3,1,2);
- // assert(d4==gmap.beta(d1,1,3,1,2));
+  d3 = gmap.alpha(d1, 2);
   gmap.template remove_cell<2>(d1);
- // v.push_back(d3); v.push_back(gmap.beta(v[0],1,2,1));
- // v.push_back(gmap.beta(v[1],1,2,1)); v.push_back(gmap.beta(v[2],1,2,1));
+  v.push_back(d3);
+  v.push_back(gmap.alpha(v[0],0,1,2,1));
+  v.push_back(gmap.alpha(v[1],0,1,2,1));
+  v.push_back(gmap.alpha(v[2],0,1,2,1));
   gmap.insert_cell_2_in_cell_3(v.begin(),v.end());
-  if ( !check_number_of_cells_3(gmap, 6, 3, 3, 3, 1) )
+  if ( !check_number_of_cells_3(gmap, 12, 20, 11, 2, 1) )
     return false;
+
+  GMAP gmap2;
+  d1 = gmap2.make_combinatorial_hexahedron();
+  d2 = gmap2.make_combinatorial_hexahedron();
+  gmap2.template sew<3>(d1,d2);
+  if ( !gmap.is_isomorphic_to(gmap2) )
+  {
+    std::cout<<"Error: gmap and gmap2 are not isomorphic (after insertion/removal).\n";
+    assert(false);
+    return false;
+  }
   gmap.clear(); v.clear();
 
   return true;

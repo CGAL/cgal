@@ -3253,13 +3253,12 @@ namespace CGAL {
      * @param adart a dart of the edge (!=NULL).
      * @return a dart of the new vertex.
      */
-    Dart_handle
-    insert_cell_0_in_cell_1( Dart_handle adart,
-                             typename Attribute_handle<0>::type
-                             ah=null_handle,
-                             bool update_attributes=true )
+    Dart_handle insert_cell_0_in_cell_1( Dart_handle adart,
+                                         typename Attribute_handle<0>::type
+                                         ah=null_handle,
+                                         bool update_attributes=true )
     {
-      Dart_handle d1, d2;
+      Dart_handle d1;
       size_type  amark=get_new_mark();
 
       // 1) We store all the darts of the edge.
@@ -3342,11 +3341,10 @@ namespace CGAL {
      * @param adart a dart of the facet to triangulate.
      * @return A dart incident to the new vertex.
      */
-    Dart_handle
-    insert_cell_0_in_cell_2( Dart_handle adart,
-                             typename Attribute_handle<0>::type
-                             ah=null_handle,
-                             bool update_attributes=true )
+    Dart_handle insert_cell_0_in_cell_2( Dart_handle adart,
+                                         typename Attribute_handle<0>::type
+                                         ah=null_handle,
+                                         bool update_attributes=true )
     {
       CGAL_assertion(adart!=null_handle);
 
@@ -3368,6 +3366,7 @@ namespace CGAL {
 
       // Stack of darts to degroup (one dart per edge of the face)
       std::deque<Dart_handle> todegroup;
+      if (are_attributes_automatically_managed() && update_attributes)
       {
         for ( typename Dart_of_cell_basic_range<2,2>::iterator
               it=darts_of_cell_basic<2,2>(adart).begin();
@@ -3464,11 +3463,12 @@ namespace CGAL {
   bool is_insertable_cell_1_in_cell_2(Dart_const_handle adart1,
                                       Dart_const_handle adart2)
   {
-    if ( adart1==adart2 || adart1==this->template alpha<0>(adart2) ) return false;
+    if ( adart1==adart2 || adart1==this->template alpha<0>(adart2) )
+      return false;
     for ( CGAL::GMap_dart_const_iterator_of_orbit<Self,0,1> it(*this,adart1);
           it.cont(); ++it )
     {
-      if ( it==adart2 )  return true;
+      if ( it==adart2 ) return true;
     }
     return false;
   }
@@ -3479,12 +3479,11 @@ namespace CGAL {
    * @return a dart of the new edge, and not incident to the
    *         same vertex than adart1.
    */
-  Dart_handle
-  insert_cell_1_in_cell_2(Dart_handle adart1,
-                          Dart_handle adart2,
-                          bool update_attributes=true,
-                          typename Attribute_handle<0>::type
-                          ah=null_handle)
+  Dart_handle insert_cell_1_in_cell_2(Dart_handle adart1,
+                                      Dart_handle adart2,
+                                      bool update_attributes=true,
+                                      typename Attribute_handle<0>::type
+                                      ah=null_handle)
   {
     if ( adart2!=null_handle)
     {
@@ -3610,24 +3609,24 @@ namespace CGAL {
     return this->template alpha<1,0>(adart1);
   }
 
-    /** Insert a dangling edge in a 2-cell between given by a dart.
-     * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
-     * @param update_attributes a boolean to update the enabled attributes
-     * @return a dart of the new edge, not incident to the vertex of adart1.
-     */
-    Dart_handle insert_dangling_cell_1_in_cell_2( Dart_handle adart1,
-                                                  typename Attribute_handle<0>::type
-                                                  ah=null_handle,
-                                                  bool update_attributes=true )
-    { return insert_cell_1_in_cell_2(adart1, NULL, update_attributes, ah); }
+  /** Insert a dangling edge in a 2-cell between given by a dart.
+   * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+   * @param update_attributes a boolean to update the enabled attributes
+   * @return a dart of the new edge, not incident to the vertex of adart1.
+   */
+  Dart_handle insert_dangling_cell_1_in_cell_2( Dart_handle adart1,
+                                                typename Attribute_handle<0>::
+                                                type ah=null_handle,
+                                                bool update_attributes=true )
+  { return insert_cell_1_in_cell_2(adart1, NULL, update_attributes, ah); }
 
   /** Test if a 2-cell can be inserted onto a given 3-cell along
-   * a path of edges.
-   * @param afirst iterator on the begining of the path.
-   * @param alast  iterator on the end of the path.
-   * @return true iff a 2-cell can be inserted along the path.
-   *         the path is a sequence of dartd, one per edge
-   *         where the face will be inserted.
+   *  a path of edges.
+   *  @param afirst iterator on the begining of the path.
+   *  @param alast  iterator on the end of the path.
+   *  @return true iff a 2-cell can be inserted along the path.
+   *          the path is a sequence of dartd, one per edge
+   *          where the face will be inserted.
    */
   template <class InputIterator>
   bool is_insertable_cell_2_in_cell_3(InputIterator afirst,
@@ -3645,24 +3644,21 @@ namespace CGAL {
       // The path must contain only non empty darts.
       if (*it == null_handle) return false;
 
+      if (this->template is_free<0>(*it)) return false;
+
       // Two consecutive darts of the path must belong to two edges
       // incident to the same vertex of the same volume.
-      if (prec != null_handle)
+      if (prec!=null_handle)
       {
-        if ( this->template is_free<0>(prec) ) return false;
-
-        // alpha0(prec) and *it must belong to the same vertex of the same volume
-        if ( !CGAL::belong_to_same_cell<Self, 0, 2>
-             (*this,  this->template alpha<0>(prec), *it) )
+        // prec and *it must belong to the same vertex of the same volume
+        if ( !CGAL::belong_to_same_cell<Self, 0, 2>(*this,  prec, *it) )
           return false;
       }
-      prec = *it;
+      prec = this->template alpha<0>(*it);
     }
 
     // The path must be closed.
-    if ( this->template is_free<0>(prec) ) return false;
-    if (!CGAL::belong_to_same_cell<Self, 0, 2>
-        (*this, this->template alpha<0>(prec), *afirst))
+    if (!CGAL::belong_to_same_cell<Self, 0, 2>(*this, prec, *afirst))
       return false;
 
     return true;
@@ -3672,19 +3668,19 @@ namespace CGAL {
    * @param amap the used generalized map.
    * @param afirst iterator on the begining of the path.
    * @param alast  iterator on the end of the path.
-   * the path is a sequence of dartd, one per edge
-   * where the face will be inserted.
+   *         the path is a sequence of darts, one per edge
+   *         where the face will be inserted.
    * @return a dart of the new 2-cell.
    */
   template<class InputIterator>
-  Dart_handle
-  insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast,
-                          bool update_attributes=true)
+  Dart_handle insert_cell_2_in_cell_3(InputIterator afirst,
+                                      InputIterator alast,
+                                      bool update_attributes=true)
   {
     CGAL_assertion(is_insertable_cell_2_in_cell_3(afirst,alast));
 
     Dart_handle prec = null_handle, d = null_handle,
-      dd = null_handle, first = null_handle;
+        dd = null_handle, first = null_handle;
     bool withAlpha3 = false;
 
     size_type treated = get_new_mark();
@@ -3692,7 +3688,7 @@ namespace CGAL {
     {
       for (InputIterator it(afirst); !withAlpha3 && it!=alast; ++it)
       {
-        if (!this->template is_free<3>(*it)) withAlpha3 = true;
+        if (!this->template is_free<2>(*it)) withAlpha3 = true;
       }
     }
 
@@ -3714,15 +3710,25 @@ namespace CGAL {
           if (withAlpha3)
             this->template basic_link_alpha<1>(this->template alpha<3>(prec), dd);
         }
-        else first = this->template alpha<0>(d);
+        else first= d;
 
         if ( !this->template is_free<2>(*it) )
         {
-          this->template link_alpha<2>(this->template alpha<2>(*it), dd);
+          this->template basic_link_alpha<2>(this->template alpha<2>(*it), dd);
+          this->template basic_link_alpha<2>(this->template alpha<0,2>(*it),
+                                       this->template alpha<0>(dd));
         }
 
         this->template link_alpha<2>(*it, d);
-        if (withAlpha3) this->template basic_link_alpha<3>(d, dd);
+        this->template link_alpha<2>(this->template alpha<0>(*it),
+                                     this->template alpha<0>(d));
+
+        if (withAlpha3)
+        {
+          this->template link_alpha<3>(d, dd);
+          this->template link_alpha<3>(this->template alpha<0>(d),
+                                       this->template alpha<0>(dd));
+        }
 
         prec = this->template alpha<0>(d);
       }
@@ -3736,6 +3742,7 @@ namespace CGAL {
     }
 
     // Make copies of the new facet for dimension >=4
+    // TODO LATER: AND VERIFY IF THERE IS A BUG IN CMAP ?
     /*  for ( unsigned int dim=4; dim<=GMap::dimension; ++dim )
         {
         if ( !amap.is_free(*it, dim) )
@@ -3755,19 +3762,14 @@ namespace CGAL {
         amap.basic_link_alpha(amap.template alpha<0>(dd),
         amap.template alpha<0>(dddd), dim);
         }
-
-
-
         }
         }*/
 
     // Make copies of the new facet for dimension >=4
-    for ( unsigned int dim=4; dim<=dimension; ++dim )
+    /*for ( unsigned int dim=4; dim<=dimension; ++dim )
     {
       if ( !is_free(first, dim) )
       {
-        Dart_handle first2 = null_handle;
-        prec = null_handle;
         for ( GMap_dart_iterator_basic_of_orbit<Self,0,1> it(*this, first);
               it.cont(); ++it )
         {
@@ -3779,12 +3781,13 @@ namespace CGAL {
             basic_link_alpha(this->template alpha<2,3>(it), dd, dim);
             this->template basic_link_alpha<3>(d, dd);
           }
-          if ( prec!=null_handle )
+          if ( !is_free(this->template alpha<0>(it), dim) )
           {
-            link_alpha<0>(prec, d);
+            link_alpha<0>(alpha(it,0,dim), d);
             if ( withAlpha3 )
             {
-              basic_link_alpha<1>(this->template alpha<3>(prec), dd);
+              link_alpha<0>(alpha(it,0,3,dim), d);
+              basic_link_alpha<1>(this->template alpha<0,3>(prec), dd);
             }
           }
           else first2 = prec;
@@ -3819,14 +3822,17 @@ namespace CGAL {
                                this->template alpha<3>(first2) );
         }
       }
-    }
+    }*/
 
     // Degroup the attributes
     if ( withAlpha3 )
     { // Here we cannot use Degroup_attribute_functor_run as new darts do not
       // have their 3-attribute
-      CGAL::internal::GMap_degroup_attribute_functor_run<Self, 3>::
-        run(this, first, this->template alpha<3>(first));
+      if (are_attributes_automatically_managed() && update_attributes)
+      {
+        CGAL::internal::GMap_degroup_attribute_functor_run<Self, 3>::
+            run(this, first, this->template alpha<3>(first));
+      }
     }
 
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS

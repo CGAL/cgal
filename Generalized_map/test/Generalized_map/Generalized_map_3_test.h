@@ -164,6 +164,9 @@ bool test_GMAP_3()
   if (!test_edge_insertion(gmap))
     return false;
 
+  if (!test_face_insertion(gmap))
+    return false;
+
   return true;
 }
 
