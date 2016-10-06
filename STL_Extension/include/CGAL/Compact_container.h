@@ -664,11 +664,11 @@ public:
       // elements) ?
       if ( p<c && c<(p+s-1) )
       {
+        CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
         return res+(c-p-1);
       }
 
       res += s-2;
-      CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
     }
 
     return (size_type)-1; // cit does not belong to this compact container
