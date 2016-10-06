@@ -3503,21 +3503,24 @@ namespace CGAL {
 
     Dart_handle d1=null_handle;
     Dart_handle d2=null_handle;
+    Dart_handle d3=null_handle;
+    Dart_handle d4=null_handle;
 
     size_type treated=get_new_mark();
+    bool isfree1 = (this->template is_free<1>(adart1));
 
     for ( ; it1.cont(); ++it1)
-    {
-      CGAL_assertion (it2.cont() );
+    {      
       d1 = create_dart();
       d2 = create_dart();
       mark(it1,treated);
 
-      if ( !this->template is_free<1>(it1) &&
-           is_marked(this->template alpha<1>(it1), treated) )
+      if (!isfree1)
       {
-        this->template basic_link_alpha<2>(this->template alpha<1,1>(it1), d1);
-        this->template basic_link_alpha<2>(this->template alpha<2,0>(d1), d2);
+        d3 = create_dart();
+        d4 = create_dart();
+        this->template basic_link_alpha<2>(d1, d3);
+        this->template basic_link_alpha<2>(d2, d4);
       }
 
       for ( unsigned int dim=3; dim<=dimension; ++dim)
@@ -3527,12 +3530,29 @@ namespace CGAL {
         {
           basic_link_alpha(alpha(it1, dim, 1), d1, dim);
           basic_link_alpha(alpha(d1, dim, 0), d2, dim);
+
+          if (!isfree1)
+          {
+            basic_link_alpha(alpha(it1, 1, dim, 1), d3, dim);
+            basic_link_alpha(alpha(d3, dim, 0), d4, dim);
+          }
+        }
+      }
+
+      if (!isfree1)
+      {
+        this->template link_alpha<1>(this->template alpha<1>(it1), d3);
+        if ( adart2!=null_handle )
+        {
+          CGAL_assertion (it2.cont());
+          this->template link_alpha<1>(this->template alpha<1>(it2), d4);
         }
       }
 
       this->template link_alpha<1>(it1, d1);
       if ( adart2!=null_handle )
       {
+        CGAL_assertion (it2.cont());
         this->template link_alpha<1>(it2, d2);
         ++it2;
       }
@@ -3540,8 +3560,11 @@ namespace CGAL {
       // We do the link_alpha<0> after the link_alpha<1> to update the
       // possible attributes of d2.
       this->template link_alpha<0>(d1, d2);
+      if (!isfree1)
+      { this->template link_alpha<0>(d3, d4); }
 
-      if (are_attributes_automatically_managed() && update_attributes && ah!=NULL)
+      if (are_attributes_automatically_managed() &&
+          update_attributes && ah!=NULL)
       {
         internal::Set_i_attribute_of_dart_functor<Self, 0>::run(this, d1, ah);
       }
@@ -3560,11 +3583,12 @@ namespace CGAL {
     if ( adart2!=null_handle )
     { it2.rewind(); negate_mark(m2); }
 
-    for ( ; it1.cont(); ++it1, ++it2)
+    for (; it1.cont(); ++it1)
     {
       mark(it1,m1);
       unmark(it1,treated);
-      if ( adart2!=null_handle ) mark(it2,m2);
+      if ( adart2!=null_handle )
+      { mark(it2,m2); ++it2; }
     }
     negate_mark(m1);
     CGAL_assertion( is_whole_map_unmarked(m1) );

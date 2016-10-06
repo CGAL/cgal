@@ -20,7 +20,7 @@
 #ifndef CGAL_GENERALIZED_MAP_MIN_ITEMS_H
 #define CGAL_GENERALIZED_MAP_MIN_ITEMS_H 1
 
-#include <CGAL/GMap_dart.h>
+#include <CGAL/Generalized_map_dart.h>
 
 namespace CGAL {
 
@@ -39,7 +39,7 @@ struct Generalized_map_min_items
    template < class Refs >
    struct Dart_wrapper
    {
-     typedef CGAL::GMap_dart< d, Refs > Dart;
+     typedef CGAL::Generalized_map_dart< d, Refs > Dart;
      typedef CGAL::cpp11::tuple<> Attributes;
    };
 };

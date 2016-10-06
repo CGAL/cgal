@@ -155,7 +155,7 @@ bool test_edge_insertion(GMAP& gmap)
   d2 = gmap.make_combinatorial_polygon(4);
   gmap.template sew<2>(d1, d2);
   gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1,0));
-  if ( !check_number_of_cells_3(gmap, 6, 3, 3, 3, 1) )
+  if ( !check_number_of_cells_3(gmap, 6, 8, 3, 1, 1) )
     return false;
   gmap.clear();
 
@@ -180,14 +180,14 @@ bool test_edge_insertion(GMAP& gmap)
   gmap.template sew<3>(d1, d2);
   gmap.template sew<1>(d1, gmap.alpha(d1, 0));
   gmap.insert_dangling_cell_1_in_cell_2(d1);
-  if ( !check_number_of_cells_3(gmap, 2, 2, 2, 2, 1) )
+  if ( !check_number_of_cells_3(gmap, 2, 2, 1, 2, 1) )
     return false;
   gmap.clear();
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
   gmap.insert_dangling_cell_1_in_cell_2(d1);
-  if ( !check_number_of_cells_3(gmap, 6, 3, 3, 3, 1) )
+  if ( !check_number_of_cells_3(gmap, 5, 5, 1, 1, 1) )
     return false;
   gmap.clear();
 
@@ -196,7 +196,16 @@ bool test_edge_insertion(GMAP& gmap)
   d2 = gmap.make_combinatorial_polygon(4);
   gmap.template sew<3>(d1, d2);
   gmap.insert_dangling_cell_1_in_cell_2(d1);
-  if ( !check_number_of_cells_3(gmap, 6, 3, 3, 3, 1) )
+  if ( !check_number_of_cells_3(gmap, 5, 5, 1, 2, 1) )
+    return false;
+  gmap.clear();
+
+  trace_test_begin();
+  d1 = gmap.make_combinatorial_polygon(4);
+  d2 = gmap.make_combinatorial_polygon(4);
+  gmap.template sew<2>(d1, d2);
+  gmap.insert_dangling_cell_1_in_cell_2(d1);
+  if ( !check_number_of_cells_3(gmap, 7, 8, 2, 1, 1) )
     return false;
   gmap.clear();
 
