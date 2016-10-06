@@ -1128,8 +1128,6 @@ bool test3D()
   d2 = map.make_combinatorial_hexahedron();
   map.template sew<3>(d1,d2);
   d3 = map.beta(d1, 2);
-  d4 = map.beta(d1, 1,3,1,2);
-  assert(d4==map.beta(d1,1,3,1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove facet4: " << flush; map.template remove_cell<2>(d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -1137,6 +1135,18 @@ bool test3D()
   v.push_back(map.beta(v[1],1,2,1)); v.push_back(map.beta(v[2],1,2,1));
   cout << "insert facet4: " << flush; map.insert_cell_2_in_cell_3(v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+
+  Map map2;
+  d1 = map2.make_combinatorial_hexahedron();
+  d2 = map2.make_combinatorial_hexahedron();
+  map2.template sew<3>(d1,d2);
+  if ( !map.is_isomorphic_to(map2) )
+  {
+    std::cout<<"Error: map and map2 are not isomorphic (after insertion/removal).\n";
+    assert(false);
+    return false;
+  }
+
   map.clear(); v.clear();
 
   cout << "***************************** TEST INSERT FACET 3D DONE."

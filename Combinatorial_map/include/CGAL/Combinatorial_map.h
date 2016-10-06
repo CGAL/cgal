@@ -4360,8 +4360,8 @@ namespace CGAL {
      * @return a dart of the new edge, not incident to the vertex of adart1.
      */
     Dart_handle insert_dangling_cell_1_in_cell_2( Dart_handle adart1,
-                                                  typename Attribute_handle<0>::type
-                                                  ah=null_handle,
+                                                  typename Attribute_handle<0>::
+                                                  type ah=null_handle,
                                                   bool update_attributes=true )
     {
       size_type mark1 = get_new_mark();
@@ -4381,7 +4381,8 @@ namespace CGAL {
 
       size_type treated=get_new_mark();
 
-      CMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, treated);
+      CMap_dart_iterator_basic_of_involution<Self,1>
+          it1(*this, adart1, treated);
 
       for ( ; it1.cont(); ++it1)
       {
@@ -4423,7 +4424,8 @@ namespace CGAL {
               (beta(it1, dim, CGAL_BETAINV(s1), 2), d2, dim);
           }
         }
-        if (are_attributes_automatically_managed() && update_attributes && ah!=NULL)
+        if (are_attributes_automatically_managed() &&
+            update_attributes && ah!=NULL)
         {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::run(this, d1, ah);
         }

@@ -239,6 +239,11 @@ namespace CGAL {
     typename Helper::Attribute_handles mattribute_handles;
   };
 
+  /// Old name, kept for backward compatibility
+  template <unsigned int d, typename Refs>
+  struct CGAL_DEPRECATED Dart : public Combinatorial_map_dart<d, Refs>
+  {};
+
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_DART_H //
