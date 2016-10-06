@@ -856,7 +856,6 @@ _image* _readNonInterlacedImage(const char *name) {
    on stdout */
 CGAL_INLINE_FUNCTION
 int _writeImage(_image *im, const char *name_to_be_written ) {
-
   int r = ImageIO_NO_ERROR;
   std::size_t length = 0;
   char *name = NULL;

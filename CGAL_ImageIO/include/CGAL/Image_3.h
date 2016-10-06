@@ -164,11 +164,16 @@ public:
                 const double vx = 1,
                 const double vy = 1,
                 const double vz = 1,
-		const unsigned int offset = 0)
+                const unsigned int offset = 0,
+                std::size_t wdim=1,
+                WORD_KIND wk = WK_FIXED,
+                SIGN sign = SGN_UNSIGNED
+                )
   {
     return private_read(::_readImage_raw(file,
                                          rx,ry,rz,
-                                         vx,vy,vz,offset));
+                                         vx,vy,vz,offset,
+                                         wdim, wk, sign));
   }
 
 public:
