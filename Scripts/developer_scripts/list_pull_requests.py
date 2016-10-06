@@ -1,7 +1,7 @@
 #! /bin/env python3
 
 from __future__ import print_function
-from builtins import (bytes)
+from builtins import (bytes, str)
 
 import github, sys, os, configparser, argparse, textwrap
 from github import Github, Label, Issue, PullRequest
@@ -54,11 +54,21 @@ s=config['main']['token']
 verbose=args.verbose
 unmerged=args.unmerged
 
-print_verbose("Getting commits in current branch", end='')
 sys.stderr.flush()
 repo = Repo.discover()
-print_verbose(" branch: {}".format(repo.refs.read_ref('HEAD')),\
-              end='')
+print_verbose("Found Git repository {}".format(repo))
+print_verbose("  control dir is {}".format(repo.controldir()))
+try:
+    repo.commondir
+except AttributeError:
+    print_verbose("dulwich does not know repo.commondir()")
+else:
+    print_verbose("   common dir is {}".format(repo.commondir()))
+
+print_verbose("   index path is {}".format(repo.index_path()))
+print_verbose("Getting commits in current branch", end='')
+print_verbose(" {}".\
+              format(str(repo.refs.read_ref('HEAD'), "ascii")), end='')
 sys.stderr.flush()
 walk = repo.get_walker(include=repo.head(),\
                        exclude=[repo.get_refs()[b'refs/remotes/cgal/master']])
@@ -106,9 +116,8 @@ for issue in cgal.get_issues(labels=[Ic]):
 
 for nb in issues.keys():
     if issues[nb]["sha"] not in commits:
-        if(unmerged):
-            print(issues[nb]["url"])
-        else:
+        print(issues[nb]["url"])
+        if(not unmerged):
             print_verbose("Warning: {} head {} is not in the current branch".\
                           format(issues[nb]["url"], issues[nb]["sha"]))
     else:
