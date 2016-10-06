@@ -1022,11 +1022,15 @@ if ( CGAL_BRANCH_BUILD )
     FALSE)
 
   option(CGAL_COMPUTE_DEPENDENCIES
-    "Enable the special targets \"packages_dependencies\", and \"pkg_<package>_deps\" for each package. \
+    "Enable the special targets \"packages_dependencies\", and \"pkg_<package>_deps\" for each package.
 Note that this option will modify the source directory!"
     FALSE)
 
   if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
+    if(NOT CMAKE_MAJOR_VERSION GREATER 2)
+      message(FATAL_ERROR "Your version of CMake is too old.
+You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
+    endif()
 
     message( "== Setting header checking ==" )
 
