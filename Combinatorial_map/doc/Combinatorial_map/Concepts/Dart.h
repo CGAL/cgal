@@ -7,7 +7,7 @@ The concept `Dart` defines a <I>d</I>-dimensional dart for generic maps. A dart 
 
 \cgalHeading{Creation}
 
-A dart `d0` is never constructed directly, but always created within a generic map `bm` by using the method \link GenericMap::create_dart `bm.create_dart()`\endlink. A new dart is initialized to be <I>i</I>-free, \f$ \forall \f$ <I>i</I>: 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>, and having all its attribute handles initialized to `NULL`, for each non `void` attribute.
+A dart `d0` is never constructed directly, but always created within a generic map `bm` by using the method \link GenericMap::create_dart `bm.create_dart()`\endlink. A new dart is initialized to be <I>i</I>-free, \f$ \forall \f$ <I>i</I>: 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ `#dimension`, and having all its attribute handles initialized to `NULL`, for each non `void` attribute.
 
 \cgalHasModel \link CGAL::Combinatorial_map_dart `CGAL::Combinatorial_map_dart<d,CMap>`\endlink
 \cgalHasModel \link CGAL::Generalized_map_dart `CGAL::Generalized_map_dart<d,GMap>`\endlink
@@ -41,14 +41,14 @@ typedef unspecified_type Dart_handle;
 typedef unspecified_type Dart_const_handle;
 
 /*!
-`Attribute_handle<i>::%type` is a handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`. Must be a model of `Handle` concept.
+`Attribute_handle<i>::%type` is a handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `#dimension`. Must be a model of `Handle` concept.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
 using Attribute_handle = unspecified_type;
 
 /*!
-`Attribute_const_handle<i>::%type` is a const handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`. Must be a model of `ConstHandle` concept.
+`Attribute_const_handle<i>::%type` is a const handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `#dimension`. Must be a model of `ConstHandle` concept.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
@@ -62,14 +62,14 @@ using Attribute_const_handle = unspecified_type;
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \link GenericMap::attribute `bm.attribute(dh)`\endlink instead.
 Returns a handle to the <I>i</I>-attribute associated to the dart.
-\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>, and <I>i</I>-attributes are non `void`.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ `#dimension`, and <I>i</I>-attributes are non `void`.
 */
 template <unsigned int i> Attribute_handle<i>::type attribute();
 
 /*!
 To simplify a future implementation, it is recommended to not use this function and to use \link GenericMap::attribute `bm.attribute(dh)`\endlink instead.
 Returns a const handle to the <I>i</I>-attribute associated to the dart, when the dart is const. 
-\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dimension</I>, and <I>i</I>-attributes are non `void`.
+\pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ `#dimension`, and <I>i</I>-attributes are non `void`.
 */
 template <unsigned int i>
 Attribute_const_handle<i>::type attribute() const;
