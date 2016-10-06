@@ -465,7 +465,7 @@ namespace CGAL {
             if ( *it1!=*it2 &&
                  !this->template exist_opposite_dart<3>(*it1) &&
                  !this->template exist_opposite_dart<3>(*it2) &&
-                 are_facets_same_geometry(*it1,beta(*it2, 0)) )
+                 are_facets_same_geometry(*it1,this->beta(*it2, 0)) )
             {
               ++res;
               this->template sew<3>(*it1,this->beta(*it2, 0));
@@ -791,21 +791,24 @@ namespace CGAL {
   // template parameters for Refs class which is a combinatorial map.
   template < unsigned int d_, unsigned int ambient_dim = d_,
              class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-             class Items_ = Linear_cell_complex_min_items<d_>,
+             class Items_ = Linear_cell_complex_for_combinatorial_map_min_items<d_>,
              class Alloc_ = CGAL_ALLOCATOR(int),
              template<unsigned int,class,class,class,class>
              class CMap = Combinatorial_map_base,
              class Storage_ = Linear_cell_complex_storage_1<d_, ambient_dim,
                                                             Traits_, Items_,
                                                             Alloc_> >
-    class Linear_cell_complex: public Linear_cell_complex_base<d_,
-        ambient_dim, Traits_, Items_, Alloc_, CMap,
-        Linear_cell_complex<d_, ambient_dim,
-               Traits_, Items_, Alloc_, CMap, Storage_>,
-        Storage_>
+    class Linear_cell_complex_for_combinatorial_map:
+        public Linear_cell_complex_base<d_, ambient_dim, Traits_,
+                                        Items_, Alloc_, CMap,
+                                        Linear_cell_complex_for_combinatorial_map
+                                        <d_, ambient_dim,
+                                         Traits_, Items_,
+                                         Alloc_, CMap, Storage_>,
+                                        Storage_>
     {
     public:
-      typedef Linear_cell_complex<d_, ambient_dim,
+      typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
                           Traits_, Items_, Alloc_, CMap, Storage_>  Self;
 
       typedef Linear_cell_complex_base<d_, ambient_dim,
@@ -846,7 +849,7 @@ namespace CGAL {
       typedef typename Base::Exception_no_more_available_mark
       Exception_no_more_available_mark;
 
-      Linear_cell_complex() : Base()
+      Linear_cell_complex_for_combinatorial_map() : Base()
       {}
 
       /** Copy the given linear cell complex into *this.
@@ -854,45 +857,62 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-      Linear_cell_complex(const Self & alcc) : Base()
+      Linear_cell_complex_for_combinatorial_map(const Self & alcc) : Base()
       { Base::template copy<Self>(alcc); }
 
       template < class LCC2 >
-      Linear_cell_complex(const LCC2& alcc) : Base()
+      Linear_cell_complex_for_combinatorial_map(const LCC2& alcc) : Base()
       { Base::template copy<LCC2>(alcc);}
 
       template < class LCC2, typename Converters >
-      Linear_cell_complex(const LCC2& alcc, Converters& converters) : Base()
+      Linear_cell_complex_for_combinatorial_map(const LCC2& alcc, Converters& converters) : Base()
       { Base::template copy<LCC2, Converters>(alcc, converters);}
 
       template < class LCC2, typename Converters, typename Pointconverter >
-      Linear_cell_complex(const LCC2& alcc, Converters& converters,
-                          const Pointconverter& pointconverter) : Base()
+      Linear_cell_complex_for_combinatorial_map(const LCC2& alcc, Converters& converters,
+                                                const Pointconverter& pointconverter) : Base()
       { Base::template copy<LCC2, Converters, Pointconverter>
             (alcc, converters, pointconverter);}
 
     };
+
+  template < unsigned int d_, unsigned int ambient_dim = d_,
+             class Traits_ = Linear_cell_complex_traits<ambient_dim>,
+             class Items_ = Linear_cell_complex_for_combinatorial_map_min_items<d_>,
+             class Alloc_ = CGAL_ALLOCATOR(int),
+             template<unsigned int,class,class,class,class>
+             class CMap = Combinatorial_map_base,
+             class Storage_ = Linear_cell_complex_storage_1<d_, ambient_dim,
+                                                            Traits_, Items_,
+                                                            Alloc_> >
+  class CGAL_DEPRECATED Linear_cell_complex:
+    public Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_,
+                                                     Alloc_, CMap, Storage_>
+  {};
 
   // GMap_linear_cell_complex using compact container with handle.
   // No difference with class Linear_cell_complex_base except the default
   // template parameters for Refs class which is a generalized map.
   template < unsigned int d_, unsigned int ambient_dim = d_,
              class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-             class Items_ = GMap_linear_cell_complex_min_items<d_>,
+             class Items_ = Linear_cell_complex_for_generalized_map_min_items<d_>,
              class Alloc_ = CGAL_ALLOCATOR(int),
              template<unsigned int,class,class,class,class>
              class CMap = Generalized_map_base,
              class Storage_ = GMap_linear_cell_complex_storage_1<d_, ambient_dim,
                                                                  Traits_, Items_,
                                                                  Alloc_> >
-    class GMap_linear_cell_complex: public Linear_cell_complex_base<d_,
-        ambient_dim, Traits_, Items_, Alloc_, CMap,
-        GMap_linear_cell_complex<d_, ambient_dim,
-               Traits_, Items_, Alloc_, CMap, Storage_>,
-        Storage_>
+    class Linear_cell_complex_for_generalized_map:
+                 public Linear_cell_complex_base<d_, ambient_dim, Traits_,
+                                                 Items_, Alloc_, CMap,
+                                                 Linear_cell_complex_for_generalized_map
+                                                 <d_, ambient_dim,
+                                                  Traits_, Items_,
+                                                  Alloc_, CMap, Storage_>,
+                                                 Storage_>
     {
     public:
-      typedef GMap_linear_cell_complex<d_, ambient_dim,
+      typedef Linear_cell_complex_for_generalized_map<d_, ambient_dim,
                           Traits_, Items_, Alloc_, CMap, Storage_>  Self;
 
       typedef Linear_cell_complex_base<d_, ambient_dim,
@@ -933,7 +953,7 @@ namespace CGAL {
       typedef typename Base::Exception_no_more_available_mark
       Exception_no_more_available_mark;
 
-      GMap_linear_cell_complex() : Base()
+      Linear_cell_complex_for_generalized_map() : Base()
       {}
 
       /** Copy the given linear cell complex into *this.
@@ -941,20 +961,20 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-      GMap_linear_cell_complex(const Self & alcc) : Base()
+      Linear_cell_complex_for_generalized_map(const Self & alcc) : Base()
       { Base::template copy<Self>(alcc); }
 
       template < class LCC2 >
-      GMap_linear_cell_complex(const LCC2& alcc)
+      Linear_cell_complex_for_generalized_map(const LCC2& alcc)
       { Base::template copy<LCC2>(alcc);}
 
       template < class LCC2, typename Converters >
-      GMap_linear_cell_complex(const LCC2& alcc, Converters& converters)
+      Linear_cell_complex_for_generalized_map(const LCC2& alcc, Converters& converters)
       { Base::template copy<LCC2, Converters>(alcc, converters);}
 
       template < class LCC2, typename Converters, typename Pointconverter >
-      GMap_linear_cell_complex(const LCC2& alcc, Converters& converters,
-                               const Pointconverter& pointconverter)
+      Linear_cell_complex_for_generalized_map(const LCC2& alcc, Converters& converters,
+                                              const Pointconverter& pointconverter)
       { Base::template copy<LCC2, Converters, Pointconverter>
             (alcc, converters, pointconverter);}
 

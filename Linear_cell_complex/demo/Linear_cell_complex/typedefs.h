@@ -153,7 +153,7 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart<3, Refs > Dart;
+    typedef CGAL::Combinatorial_map_dart<3, Refs > Dart;
 
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
@@ -166,7 +166,7 @@ public:
 typedef CGAL::Linear_cell_complex_traits
 <3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
 
-typedef CGAL::Linear_cell_complex<3,3,Mytraits,Myitems> LCC;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Mytraits,Myitems> LCC;
 typedef LCC::Dart_handle      Dart_handle;
 typedef LCC::Vertex_attribute Vertex;
 

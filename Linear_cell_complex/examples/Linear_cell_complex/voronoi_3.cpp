@@ -18,7 +18,7 @@ typedef CGAL::Linear_cell_complex<3,3,
   CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> > LCC_3;
 */
 
-typedef CGAL::Linear_cell_complex<3> LCC_3;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3;
 typedef LCC_3::Dart_handle           Dart_handle;
 typedef LCC_3::Point                 Point;
 

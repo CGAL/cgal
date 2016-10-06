@@ -20,8 +20,8 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H
 #define CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H 1
 
-#include <CGAL/Dart.h>
-#include <CGAL/GMap_dart.h>
+#include <CGAL/Combinatorial_map_dart.h>
+#include <CGAL/Generalized_map_dart.h>
 #include <CGAL/Cell_attribute_with_point.h>
 
 namespace CGAL {
@@ -36,18 +36,24 @@ namespace CGAL {
    * associated to vertices (containing points), and darts.
    */
   template <unsigned int d>
-  struct Linear_cell_complex_min_items
+  struct Linear_cell_complex_for_combinatorial_map_min_items
   {
     /// Dart_wrapper defines the type of darts used.
     template <class LCC>
     struct Dart_wrapper
     {
-      typedef CGAL::Dart<d, LCC> Dart;
-
-      typedef Cell_attribute_with_point<LCC> Vertex_attrib;
-      typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+      typedef CGAL::Combinatorial_map_dart<d, LCC> Dart;
+      typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
+      typedef CGAL::cpp11::tuple<Vertex_attrib>    Attributes;
     };
   };
+
+  /// Old name, kept for backward compatibility
+  template <unsigned int d>
+  struct CGAL_DEPRECATED Linear_cell_complex_min_items :
+    public Linear_cell_complex_for_combinatorial_map_min_items<d>
+  {};
+
 
   /** Minimal items for linear cell complexes for GMaps.
    * Linear_cell_complex_min_items defines what is the item class
@@ -55,16 +61,15 @@ namespace CGAL {
    * associated to vertices (containing points), and darts.
    */
   template <unsigned int d>
-  struct GMap_linear_cell_complex_min_items
+  struct Linear_cell_complex_for_generalized_map_min_items
   {
     /// Dart_wrapper defines the type of darts used.
     template <class LCC>
     struct Dart_wrapper
     {
-      typedef CGAL::GMap_dart<d, LCC> Dart;
-
-      typedef Cell_attribute_with_point<LCC> Vertex_attrib;
-      typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+      typedef CGAL::Generalized_map_dart<d, LCC>   Dart;
+      typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
+      typedef CGAL::cpp11::tuple<Vertex_attrib>    Attributes;
     };
   };
 

@@ -14,11 +14,11 @@
 
 /* // If you want to use exact constructions.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-typedef CGAL::Linear_cell_complex<2,2,
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2,
   CGAL::Linear_cell_complex_traits<2, CGAL::Exact_predicates_exact_constructions_kernel> > LCC_2;
 */
 
-typedef CGAL::Linear_cell_complex<2> LCC_2;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC_2;
 typedef LCC_2::Dart_handle           Dart_handle;
 typedef LCC_2::Point                 Point;
 

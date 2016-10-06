@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Linear_cell_complex<4,5> LCC_4;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,5> LCC_4;
 typedef LCC_4::Dart_handle             Dart_handle;
 typedef LCC_4::Point                   Point;
 typedef LCC_4::Vector                  Vector;

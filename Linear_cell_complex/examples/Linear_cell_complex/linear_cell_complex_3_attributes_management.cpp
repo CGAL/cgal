@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Linear_cell_complex<2,3> LCC_3;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3;
 typedef LCC_3::Dart_handle             Dart_handle;
 typedef LCC_3::Point                   Point;
 typedef LCC_3::FT                      FT;
