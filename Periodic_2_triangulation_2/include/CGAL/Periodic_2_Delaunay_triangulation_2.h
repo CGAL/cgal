@@ -427,13 +427,16 @@ public:
         return std::make_pair(fit, eit);
       case Triangulation::FACE:
       case Triangulation::EDGE:
-      case Triangulation::EMPTY:
+      case Triangulation::EMPTY: {
         *fit++ = fh; //put fh in OutputItFaces
         std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
         pit = propagate_conflicts(p, fh, 0, pit);
         pit = propagate_conflicts(p, fh, 1, pit);
         pit = propagate_conflicts(p, fh, 2, pit);
         return pit;
+      }
+      case Triangulation::OUTSIDE_CONVEX_HULL: CGAL_error();
+      case Triangulation::OUTSIDE_AFFINE_HULL: CGAL_error();
       }
     CGAL_triangulation_assertion(false);
     return std::make_pair(fit, eit);

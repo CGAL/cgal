@@ -51,6 +51,8 @@ Face_handle test_point_location(const Triangulation &t,
       CGAL_assertion(false);
       break;
     }
+    case Triangulation::OUTSIDE_CONVEX_HULL: CGAL_error();
+    case Triangulation::OUTSIDE_AFFINE_HULL: CGAL_error();
     }
 
   return fh;
