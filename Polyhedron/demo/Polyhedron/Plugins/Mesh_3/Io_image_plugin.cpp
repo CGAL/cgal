@@ -842,7 +842,35 @@ Io_image_plugin::load(QFileInfo fileinfo) {
                              raw_dialog.image_word_kind(),
                              raw_dialog.image_sign())
              ){
-            is_gray = (raw_dialog.image_word_kind() == WK_FLOAT);
+            switch(raw_dialog.image_word_kind())
+            {
+            case WK_FLOAT:
+              is_gray = true;
+              if(raw_dialog.image_word_size() == 8)
+              {
+                float *f_data = new float[image->xdim()*image->ydim()*image->zdim()];
+                double* d_data = (double*)(image->data());
+                //convert image from double to float
+                for(std::size_t x = 0; x<image->xdim(); ++x)
+                  for(std::size_t y = 0; y<image->ydim(); ++y)
+                    for(std::size_t z = 0; z<image->zdim(); ++z)
+                    {
+                      std::size_t i =(z * image->ydim() + y) * image->xdim() + x;
+                      f_data[i] =(float)d_data[i];
+                    }
+
+                image->image()->data = (void*)f_data;
+                image->image()->wdim = 4;
+              }
+              break;
+            case WK_FIXED:
+              is_gray = false;
+              if(raw_dialog.image_word_size() == 8)
+              {
+                //convert image from double to float
+              }
+              break;
+            }
             QSettings settings;
             settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
             settings.setValue("is_raw", true);
