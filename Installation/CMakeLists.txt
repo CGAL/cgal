@@ -1022,11 +1022,15 @@ if ( CGAL_BRANCH_BUILD )
     FALSE)
 
   option(CGAL_COMPUTE_DEPENDENCIES
-    "Enable the special targets \"packages_dependencies\", and \"pkg_<package>_deps\" for each package. \
+    "Enable the special targets \"packages_dependencies\", and \"pkg_<package>_deps\" for each package.
 Note that this option will modify the source directory!"
     FALSE)
 
   if(CGAL_ENABLE_CHECK_HEADERS OR CGAL_COMPUTE_DEPENDENCIES)
+    if(NOT CMAKE_MAJOR_VERSION GREATER 2)
+      message(FATAL_ERROR "Your version of CMake is too old.
+You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
+    endif()
 
     message( "== Setting header checking ==" )
 
@@ -1037,6 +1041,7 @@ Note that this option will modify the source directory!"
     find_package(IPE)
     find_package(RS3)
     find_package(LEDA)
+    find_package(OpenMesh)
 
     set(compile_options "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED \
@@ -1059,6 +1064,15 @@ and \"CGAL/Algebraic_kernel_rs_gmpz_d_1.h\" because RS_FOUND is false.")
 -DCGAL_USE_MPFI=1 \
 -DCGAL_USE_RS=1")
     endif()
+    if(NOT OpenMesh_FOUND)
+      set(compile_options "${compile_options} \
+-DCGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H \
+-DCGAL_BOOST_GRAPH_GRAPH_TRAITS_TRIMESH_ARRAYKERNELT_H \
+-DCGAL_HASH_OPENMESH_H \
+-DCGAL_PROPERTIES_POLYMESH_ARRAYKERNELT_H \
+-DCGAL_PROPERTIES_TRIMESH_ARRAYKERNELT_H")
+    endif()
+
     if(LEDA_FOUND)
       set(compile_options "${compile_options} -DCGAL_USE_LEDA")
     endif()
@@ -1096,6 +1110,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS and CGAL_COMPUTE_DEPENDENCIES.")
     foreach (incdir
         ${VTK_INCLUDE_DIRS}
         ${LEDA_INCLUDE_DIR}
+        ${OPENMESH_INCLUDE_DIR}
         ${RS_INCLUDE_DIR}
         ${EIGEN3_INCLUDE_DIR}
         ${QGLVIEWER_INCLUDE_DIR} ${Qt5OpenGL_INCLUDE_DIRS}
