@@ -132,12 +132,17 @@ public:
                            ColorMap color_map = ColorMap(),
                            EchoMap echo_map = EchoMap())
   {
-    typedef Attribute_color
-      <Kernel, RandomAccessIterator, ColorMap>                    Color;
-    typedef Attribute_echo_scatter
-      <Kernel, RandomAccessIterator, PointMap, EchoMap>           Echo_scatter;
+    generate_point_based_attributes (psc, begin, end, point_map);
+    generate_normal_based_attributes (psc, begin, end, normal_map);
+    generate_color_based_attributes (psc, begin, end, color_map);
+    generate_echo_based_attributes (psc, begin, end, echo_map);
+  }
 
-
+  
+  void generate_point_based_attributes (Point_set_classification& psc,
+                                        RandomAccessIterator begin, RandomAccessIterator end,
+                                        PointMap point_map)
+  {
     psc.add_attribute (Attribute_handle (new Anisotropy(begin, end, *m_eigen)));
     psc.add_attribute (Attribute_handle (new Distance_to_plane(begin, end, point_map, *m_eigen)));
     psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *m_eigen)));
@@ -152,26 +157,56 @@ public:
     psc.add_attribute (Attribute_handle (new Surface_variation(begin, end, *m_eigen)));
     psc.add_attribute (Attribute_handle (new Dispersion(begin, end, point_map,
                                       *m_grid, m_grid_resolution, m_radius_neighbors)));
-
-    
-    if (boost::is_convertible
-          <VectorMap, CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3> >::value)
-      psc.add_attribute (Attribute_handle (new Verticality(begin, end, *m_eigen)));
-    else
-      psc.add_attribute (Attribute_handle (new Verticality(begin, end, normal_map)));
-    
-    if (!(boost::is_convertible
-          <ColorMap, CGAL::Empty_property_map<RandomAccessIterator, RGB_Color> >::value))
-      psc.add_attribute (Attribute_handle (new Color(begin, end, color_map)));
-    
-    if (!(boost::is_convertible
-          <EchoMap, CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >::value))
-      psc.add_attribute (Attribute_handle (new Echo_scatter(begin, end, echo_map, *m_grid,
-                                          m_grid_resolution, m_radius_neighbors)));
   }
 
+  template <typename VectorMap>
+  void generate_normal_based_attributes(Point_set_classification& psc,
+                                        RandomAccessIterator begin, RandomAccessIterator end,
+                                        VectorMap normal_map)
+  {
+    psc.add_attribute (Attribute_handle (new Verticality(begin, end, normal_map)));
+  }
 
+  void generate_normal_based_attributes(Point_set_classification& psc,
+                                        RandomAccessIterator begin, RandomAccessIterator end,
+                                        const CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>&
+                                        = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>())
+  {
+    psc.add_attribute (Attribute_handle (new Verticality(begin, end, *m_eigen)));
+  }
 
+  template <typename ColorMap>
+  void generate_color_based_attributes(Point_set_classification& psc,
+                                       RandomAccessIterator begin, RandomAccessIterator end,
+                                       ColorMap color_map)
+  {
+    typedef Attribute_color<Kernel, RandomAccessIterator, ColorMap> Color;
+    psc.add_attribute (Attribute_handle (new Color(begin, end, color_map)));
+  }
+
+  void generate_color_based_attributes(const Point_set_classification&,
+                                       RandomAccessIterator, RandomAccessIterator,
+                                       const CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>&)
+  {
+  }
+
+  template <typename EchoMap>
+  void generate_echo_based_attributes(Point_set_classification& psc,
+                                      RandomAccessIterator begin, RandomAccessIterator end,
+                                      EchoMap echo_map)
+  {
+    typedef Attribute_echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap> Echo_scatter;
+    psc.add_attribute (Attribute_handle (new Echo_scatter(begin, end, echo_map, *m_grid,
+                                                          m_grid_resolution, m_radius_neighbors)));
+  }
+
+  void generate_echo_based_attributes(const Point_set_classification&,
+                                      RandomAccessIterator, RandomAccessIterator,
+                                      const CGAL::Empty_property_map<RandomAccessIterator, std::size_t>&)
+  {
+  }
+
+  
 };
 
 
