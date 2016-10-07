@@ -204,6 +204,7 @@ public Q_SLOTS:
         ui_widget.gridResolutionDoubleSpinBox->setValue(item->grid_resolution());
         ui_widget.radiusNeighborsDoubleSpinBox->setValue(item->radius_neighbors());
         ui_widget.radiusDTMDoubleSpinBox->setValue(item->radius_dtm());
+        ui_widget.number_of_trials->setValue(item->number_of_trials());
 
         // Clear class types
         for (std::size_t i = 0; i < class_rows.size(); ++ i)

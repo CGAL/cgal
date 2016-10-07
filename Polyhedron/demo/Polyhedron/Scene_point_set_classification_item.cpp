@@ -534,18 +534,36 @@ void Scene_point_set_classification_item::compute_features ()
                          m_points->point_set()->end(),
                          m_points->point_set()->point_map(),
                          m_grid_resolution, m_radius_neighbors, m_radius_dtm);
+  
+  m_helper->generate_point_based_attributes (*m_psc,
+                                             m_points->point_set()->begin(),
+                                             m_points->point_set()->end(),
+                                             m_points->point_set()->point_map());
 
   if (m_points->point_set()->has_normal_map())
-    m_helper->generate_attributes (*m_psc,
-                                   m_points->point_set()->begin(),
-                                   m_points->point_set()->end(),
-                                   m_points->point_set()->point_map(),
-                                   m_points->point_set()->normal_map());
+    m_helper->generate_normal_based_attributes (*m_psc,
+                                                m_points->point_set()->begin(),
+                                                m_points->point_set()->end(),
+                                                m_points->point_set()->normal_map());
   else
-    m_helper->generate_attributes (*m_psc,
-                                   m_points->point_set()->begin(),
-                                   m_points->point_set()->end(),
-                                   m_points->point_set()->point_map());
+    m_helper->generate_normal_based_attributes (*m_psc,
+                                                m_points->point_set()->begin(),
+                                                m_points->point_set()->end());
+
+  typename Point_set::Property_map<boost::uint8_t> echo_map;
+  bool okay;
+  boost::tie (echo_map, okay) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
+  if (okay)
+    m_helper->generate_echo_based_attributes (*m_psc,
+                                              m_points->point_set()->begin(),
+                                              m_points->point_set()->end(),
+                                              echo_map);
+
+  if (m_points->point_set()->has_colors())
+    m_helper->generate_color_based_attributes (*m_psc,
+                                               m_points->point_set()->begin(),
+                                               m_points->point_set()->end(),
+                                               Color_map(m_points->point_set()));
 
 }
 
