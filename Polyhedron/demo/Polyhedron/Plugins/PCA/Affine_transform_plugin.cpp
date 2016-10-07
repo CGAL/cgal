@@ -173,14 +173,12 @@ public:
       sp_retain.setRetainSizeWhenHidden(true);
       widget->setSizePolicy(sp_retain);
     }
-    connect(ui.applyMatrix_Button, &QPushButton::clicked,
-            this, &Polyhedron_demo_affine_transform_plugin::updateTransformMatrix);
-    connect(ui.resetMatrix_Button, &QPushButton::clicked,
-            this, &Polyhedron_demo_affine_transform_plugin::resetTransformMatrix);
     connect(ui.applyTransfo_Button, &QPushButton::clicked,
             this, &Polyhedron_demo_affine_transform_plugin::applySingleTransformation);
     connect(ui.transfo_ComboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(updateSingleTransfoValues(int)));
+    connect(ui.resetMatrix_Button, &QPushButton::clicked,
+            this, &Polyhedron_demo_affine_transform_plugin::resetTransformMatrix);
   }
 
   void start(Scene_polyhedron_item*);
@@ -219,7 +217,7 @@ private:
     tMatrix = manipulatedMatrix*scalingMatrix;
     double *res = new double[16];
     for(int i=0; i<16; ++i)
-      res[i] = (float)tMatrix.data()[i];
+      res[i] = (double)tMatrix.data()[i];
     return res;
   }
 
@@ -228,12 +226,12 @@ public Q_SLOTS:
   void transformed_killed();
 
   void updateUiMatrix();
-  void updateTransformMatrix();
   void resetTransformMatrix()
   {
     if(!transform_item)
       return;
     double matrix[16] = {0};
+    scaling[0]=scaling[1]=scaling[2]=1.0;
     matrix[0]=1; matrix[5] = 1; matrix[10] = 1; matrix[15] = 1;
     matrix[12] = transform_item->center().x;
     matrix[13] = transform_item->center().y;
@@ -401,38 +399,16 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
 
   double * tmatrix = transformMatrix();
   transform_item->setFMatrix(tmatrix);
-  //this matrix is not necessary but it clarifies the code to use one.
+  //this matrix is not mandatory but it clarifies the code to use one.
   QMatrix4x4 matrix;
   for (int i=0; i<16; ++i)
-    matrix.data()[i] = (float)tmatrix[i];
+    matrix.data()[i] = tmatrix[i];
   delete[] tmatrix;
 
-    ui.matrix_00->setText(QString("%1").arg(matrix(0,0))); ui.matrix_01->setText(QString("%1").arg(matrix(0,1))); ui.matrix_02->setText(QString("%1").arg(matrix(0,2))); ui.matrix_03->setText(QString("%1").arg(matrix(0,3)));
-    ui.matrix_10->setText(QString("%1").arg(matrix(1,0))); ui.matrix_11->setText(QString("%1").arg(matrix(1,1))); ui.matrix_12->setText(QString("%1").arg(matrix(1,2))); ui.matrix_13->setText(QString("%1").arg(matrix(1,3)));
-    ui.matrix_20->setText(QString("%1").arg(matrix(2,0))); ui.matrix_21->setText(QString("%1").arg(matrix(2,1))); ui.matrix_22->setText(QString("%1").arg(matrix(2,2))); ui.matrix_23->setText(QString("%1").arg(matrix(2,3)));
-    ui.matrix_30->setText(QString("%1").arg(matrix(3,0))); ui.matrix_31->setText(QString("%1").arg(matrix(3,1))); ui.matrix_32->setText(QString("%1").arg(matrix(3,2))); ui.matrix_33->setText(QString("%1").arg(matrix(3,3)));
-}
+    ui.matrix_00->setText(QString("%1").arg(matrix(0,0))); ui.matrix_01->setText(QString("%1").arg(matrix(0,1))); ui.matrix_02->setText(QString("%1").arg(matrix(0,2)));
+    ui.matrix_10->setText(QString("%1").arg(matrix(1,0))); ui.matrix_11->setText(QString("%1").arg(matrix(1,1))); ui.matrix_12->setText(QString("%1").arg(matrix(1,2)));
+    ui.matrix_20->setText(QString("%1").arg(matrix(2,0))); ui.matrix_21->setText(QString("%1").arg(matrix(2,1))); ui.matrix_22->setText(QString("%1").arg(matrix(2,2)));
 
-void Polyhedron_demo_affine_transform_plugin::updateTransformMatrix()
-{
-  if (!transform_item)
-    return;
-  double matrix[16];
-  matrix[0] = ui.matrix_00->text().toDouble(); matrix[4] = ui.matrix_01->text().toDouble(); matrix[8] = ui.matrix_02->text().toDouble(); matrix[12] = ui.matrix_03->text().toDouble();
-  matrix[1] = ui.matrix_10->text().toDouble(); matrix[5] = ui.matrix_11->text().toDouble(); matrix[9] = ui.matrix_12->text().toDouble(); matrix[13] = ui.matrix_13->text().toDouble();
-  matrix[2] = ui.matrix_20->text().toDouble(); matrix[6] = ui.matrix_21->text().toDouble(); matrix[10] = ui.matrix_22->text().toDouble(); matrix[14] = ui.matrix_23->text().toDouble();
-  matrix[3] = ui.matrix_30->text().toDouble(); matrix[7] = ui.matrix_31->text().toDouble(); matrix[11]= ui.matrix_32->text().toDouble(); matrix[15] = ui.matrix_33->text().toDouble();
-  //save the scaling values before the manipulated signal is sent by setFromMatrix()
-  scaling[0]= ui.matrix_00->text().toDouble();
-  scaling[1]= ui.matrix_11->text().toDouble();
-  scaling[2]= ui.matrix_22->text().toDouble();
-  //the scaling data is lost with this function...
-  transform_item->manipulatedFrame()->setFromMatrix(matrix);
-  //...but not with this one
-  double * tmatrix = transformMatrix();
-  transform_item->setFMatrix(tmatrix);
-  delete[] tmatrix;
-  transform_item->itemChanged();
 }
 
 void Polyhedron_demo_affine_transform_plugin::updateSingleTransfoValues(int index)
@@ -454,9 +430,8 @@ void Polyhedron_demo_affine_transform_plugin::updateSingleTransfoValues(int inde
     break;
   case 2:
     ui.lineEditA->hide();
-    ui.lineEditX->hide();
-    ui.lineEditY->hide();
-    ui.lineEditZ->setToolTip("Value along all the axis.");
+    ui.lineEditX->show();
+    ui.lineEditY->show();
     ui.lineEditZ->show();
     break;
   default:
@@ -495,8 +470,8 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
     //scaling
   case 2:
   {
-    scaling[0] = ui.lineEditZ->text().toDouble();
-    scaling[1] = ui.lineEditZ->text().toDouble();
+    scaling[0] = ui.lineEditX->text().toDouble();
+    scaling[1] = ui.lineEditY->text().toDouble();
     scaling[2] = ui.lineEditZ->text().toDouble();
     break;
   }
@@ -543,6 +518,7 @@ QVector3D transformed_tsr = QVector3D(tsr.x(), tsr.y(), tsr.z())*tMatrix;
   double * matrix = transformMatrix();
   transform_item->setFMatrix(matrix);
   delete[] matrix;
+  updateUiMatrix();
   transform_item->itemChanged();
 }
 

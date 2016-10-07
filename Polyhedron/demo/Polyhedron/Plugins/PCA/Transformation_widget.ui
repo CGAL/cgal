@@ -25,53 +25,68 @@
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <layout class="QGridLayout" name="gridLayout_3">
-           <item row="3" column="3">
-            <widget class="QLineEdit" name="matrix_33"/>
-           </item>
            <item row="0" column="1">
-            <widget class="QLineEdit" name="matrix_01"/>
-           </item>
-           <item row="0" column="3">
-            <widget class="QLineEdit" name="matrix_03"/>
+            <widget class="QLabel" name="matrix_01">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QLineEdit" name="matrix_00"/>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="matrix_31"/>
-           </item>
-           <item row="2" column="2">
-            <widget class="QLineEdit" name="matrix_22"/>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="matrix_21"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLineEdit" name="matrix_20"/>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLineEdit" name="matrix_13"/>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="matrix_11"/>
-           </item>
-           <item row="3" column="2">
-            <widget class="QLineEdit" name="matrix_32"/>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLineEdit" name="matrix_02"/>
-           </item>
-           <item row="2" column="3">
-            <widget class="QLineEdit" name="matrix_23"/>
-           </item>
-           <item row="1" column="2">
-            <widget class="QLineEdit" name="matrix_12"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLineEdit" name="matrix_30"/>
+            <widget class="QLabel" name="matrix_00">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QLineEdit" name="matrix_10"/>
+            <widget class="QLabel" name="matrix_10">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="matrix_21">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="matrix_22">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="matrix_12">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="matrix_02">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="matrix_11">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="matrix_20">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -81,13 +96,6 @@
             <widget class="QPushButton" name="resetMatrix_Button">
              <property name="text">
               <string>Reset</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="applyMatrix_Button">
-             <property name="text">
-              <string>Apply</string>
              </property>
             </widget>
            </item>
