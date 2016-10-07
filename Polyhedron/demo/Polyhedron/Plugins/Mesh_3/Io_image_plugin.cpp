@@ -806,6 +806,24 @@ bool Io_image_plugin::canLoad() const {
   return true;
 }
 
+template<typename Word>
+void convert(Image* image)
+{
+  float *f_data = (float*)ImageIO_alloc(image->xdim()*image->ydim()*image->zdim()*sizeof(float));
+  Word* d_data = (Word*)(image->data());
+  //convert image from double to float
+  for(std::size_t x = 0; x<image->xdim(); ++x)
+    for(std::size_t y = 0; y<image->ydim(); ++y)
+      for(std::size_t z = 0; z<image->zdim(); ++z)
+      {
+        std::size_t i =(z * image->ydim() + y) * image->xdim() + x;
+        f_data[i] =(float)d_data[i];
+      }
+  ImageIO_free(d_data);
+  image->image()->data = (void*)f_data;
+  image->image()->wdim = 4;
+  image->image()->wordKind = WK_FLOAT;
+}
 CGAL::Three::Scene_item*
 Io_image_plugin::load(QFileInfo fileinfo) {
   QApplication::restoreOverrideCursor();
@@ -846,64 +864,20 @@ Io_image_plugin::load(QFileInfo fileinfo) {
             {
             case WK_FLOAT:
               is_gray = true;
-              if(raw_dialog.image_word_size() == 8)
-              {
-                float *f_data = (float*)ImageIO_alloc(image->xdim()*image->ydim()*image->zdim()*sizeof(float));
-                double* d_data = (double*)(image->data());
-                //convert image from double to float
-                for(std::size_t x = 0; x<image->xdim(); ++x)
-                  for(std::size_t y = 0; y<image->ydim(); ++y)
-                    for(std::size_t z = 0; z<image->zdim(); ++z)
-                    {
-                      std::size_t i =(z * image->ydim() + y) * image->xdim() + x;
-                      f_data[i] =(float)d_data[i];
-                    }
-                ImageIO_free(d_data);
-                image->image()->data = (void*)f_data;
-                image->image()->wdim = 4;
-              }
+              convert<double>(image);
               break;
             case WK_FIXED:
             {
-              float *f_data = (float*)ImageIO_alloc(image->xdim()*image->ydim()*image->zdim()*sizeof(float));
               switch(raw_dialog.image_word_size())
               {
               case 2:
-              {
                 is_gray = true;
-                //convert image from short to char
-                short* s_data = (short*)(image->data());
-                for(std::size_t x = 0; x<image->xdim(); ++x)
-                  for(std::size_t y = 0; y<image->ydim(); ++y)
-                    for(std::size_t z = 0; z<image->zdim(); ++z)
-                    {
-                      std::size_t i =(z * image->ydim() + y) * image->xdim() + x;
-                      f_data[i] =(char)s_data[i];
-                    }
-                ImageIO_free(s_data);
-                image->image()->data = (void*)f_data;
-                image->image()->wdim = 4;
-                image->image()->wordKind = WK_FLOAT;
+                convert<short>(image);
                 break;
-              }
               case 4:
-              {
                 is_gray = true;
-                //convert image from int to char
-                int* i_data = (int*)(image->data());
-                for(std::size_t x = 0; x<image->xdim(); ++x)
-                  for(std::size_t y = 0; y<image->ydim(); ++y)
-                    for(std::size_t z = 0; z<image->zdim(); ++z)
-                    {
-                      std::size_t i =(z * image->ydim() + y) * image->xdim() + x;
-                      f_data[i] =(int)i_data[i];
-                    }
-                ImageIO_free(i_data);
-                image->image()->data = (void*)f_data;
-                image->image()->wdim = 4;
-                image->image()->wordKind = WK_FLOAT;
+                convert<int>(image);
                 break;
-              }
               default:
                 is_gray = false;
                 break;

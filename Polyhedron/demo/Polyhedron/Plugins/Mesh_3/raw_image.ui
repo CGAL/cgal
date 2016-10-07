@@ -23,17 +23,17 @@
       <item row="2" column="0">
        <widget class="QRadioButton" name="short_bt">
         <property name="toolTip">
-         <string>Word kind of the image : short int.</string>
+         <string/>
         </property>
         <property name="text">
-         <string>Short (16 bits)</string>
+         <string>Short int (16 bits)</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
        <widget class="QRadioButton" name="float_bt">
         <property name="toolTip">
-         <string>Word kind of the image : float.</string>
+         <string/>
         </property>
         <property name="text">
          <string>Float</string>
@@ -43,7 +43,7 @@
       <item row="0" column="1">
        <widget class="QRadioButton" name="int_bt">
         <property name="toolTip">
-         <string>Word kind of the image : integer.</string>
+         <string/>
         </property>
         <property name="text">
          <string>Int (32 bits)</string>
@@ -53,7 +53,7 @@
       <item row="3" column="1">
        <widget class="QRadioButton" name="double_bt">
         <property name="toolTip">
-         <string>Word kind of the image : double.</string>
+         <string/>
         </property>
         <property name="text">
          <string>Double</string>
@@ -73,7 +73,7 @@
       <item row="0" column="0">
        <widget class="QRadioButton" name="char_bt">
         <property name="toolTip">
-         <string>Word kind of the image : unsigned byte.</string>
+         <string/>
         </property>
         <property name="text">
          <string>char (8 bits)</string>
@@ -213,7 +213,7 @@
         <item row="3" column="0">
          <widget class="QLabel" name="offset_label">
           <property name="toolTip">
-           <string>Specifies how many bytes must be skipped before reading the data. (Use it to skip unhandled headers fo example)</string>
+           <string/>
           </property>
           <property name="text">
            <string>&amp;Offset:</string>
@@ -229,7 +229,7 @@
         <item row="3" column="1">
          <widget class="QSpinBox" name="offset">
           <property name="toolTip">
-           <string>Specifies how many bytes must be skipped before reading the data. (Use it to skip unhandled headers fo example)</string>
+           <string>Specifies how many bytes must be skipped before reading the data. (Use it to skip unhandled headers for example.)</string>
           </property>
           <property name="suffix">
            <string> bytes</string>
