@@ -71,7 +71,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     }
   };
 
-
+ public:
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
   typedef CGAL::Data_classification::RGB_Color Color;
@@ -186,7 +186,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   std::size_t& number_of_trials() { return m_nb_trials; }
   bool features_computed() const { return (m_helper != NULL); }
 
-  const std::vector<std::pair<Type_handle, QColor> >& types() { return m_types; }
+  std::vector<std::pair<Type_handle, QColor> >& types() { return m_types; }
+  std::size_t number_of_attributes() const { return m_psc->number_of_attributes(); }
+  Attribute_handle attribute(std::size_t i) { return m_psc->get_attribute(i); }
   void add_new_type (const char* name, const QColor& color)
   {
     m_types.push_back (std::make_pair (m_psc->add_classification_type(name),
@@ -215,13 +217,14 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   }
 
   template <typename ComboBox>
-  void fill_display_combo_box (ComboBox* cb)
+ void fill_display_combo_box (ComboBox* cb, ComboBox* cb1)
   {
     for (std::size_t i = 0; i < m_psc->number_of_attributes(); ++ i)
       {
         std::ostringstream oss;
         oss << "Attribute " << m_psc->get_attribute(i)->id();
         cb->addItem (oss.str().c_str());
+        cb1->addItem (m_psc->get_attribute(i)->id().c_str());
       }
   }
 

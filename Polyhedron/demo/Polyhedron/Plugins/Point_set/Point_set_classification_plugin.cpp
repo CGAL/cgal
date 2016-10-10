@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QInputDialog>
+#include <QSlider>
 
 #include <map>
 
@@ -41,10 +42,14 @@ class Polyhedron_demo_point_set_classification_plugin :
   struct ClassRow
   {
     QLabel* label;
+
     QPushButton* color_button;
     QPushButton* train;
     QPushButton* remove;
     QColor color;
+
+    QLabel* label2;
+    QComboBox* effect;
 
     ClassRow (QWidget* parent, const char* name, const QColor& color)
       : color (color)
@@ -60,6 +65,12 @@ class Polyhedron_demo_point_set_classification_plugin :
       
       train = new QPushButton ("Add selection");
       remove = new QPushButton ("Remove");
+      label2 = new QLabel (name, parent);
+      effect = new QComboBox;
+      effect->addItem("Penalized");
+      effect->addItem("Neutral");
+      effect->addItem("Favored");
+
     }
     ~ClassRow ()
     {
@@ -75,6 +86,7 @@ class Polyhedron_demo_point_set_classification_plugin :
       color_button->update();
     }
   };
+
 
 public:
   bool applicable(QAction*) const { 
@@ -141,6 +153,11 @@ public:
     connect(ui_widget.train,  SIGNAL(clicked()), this,
             SLOT(on_train_clicked()));
 
+    connect(ui_widget.selected_attribute,  SIGNAL(currentIndexChanged(int)), this,
+            SLOT(on_selected_attribute_changed(int)));
+    connect(ui_widget.attribute_weight,  SIGNAL(valueChanged(int)), this,
+            SLOT(on_attribute_weight_changed(int)));
+
     QObject* scene_obj = dynamic_cast<QObject*>(scene_interface);
     if(scene_obj)
       {
@@ -197,7 +214,9 @@ public Q_SLOTS:
   void update_plugin_from_item(Scene_point_set_classification_item* item)
   {
     if (item == NULL) // Deactivate plugin
-      ui_widget.tabWidget->setEnabled(false);
+      {
+        ui_widget.tabWidget->setEnabled(false);
+      }
     else
       {
         ui_widget.tabWidget->setEnabled(true);
@@ -209,6 +228,7 @@ public Q_SLOTS:
         // Clear class types
         for (std::size_t i = 0; i < class_rows.size(); ++ i)
           {
+
             ui_widget.gridLayout_3->removeWidget (class_rows[i].label);
             delete class_rows[i].label;
             ui_widget.gridLayout_3->removeWidget (class_rows[i].color_button);
@@ -217,6 +237,10 @@ public Q_SLOTS:
             delete class_rows[i].train;
             ui_widget.gridLayout_3->removeWidget (class_rows[i].remove);
             delete class_rows[i].remove;
+            ui_widget.gridLayout->removeWidget (class_rows[i].label2);
+            delete class_rows[i].label2;
+            ui_widget.gridLayout->removeWidget (class_rows[i].effect);
+            delete class_rows[i].effect;
           }
         class_rows.clear();
 
@@ -227,14 +251,17 @@ public Q_SLOTS:
 
         // Enabled classif if features computed
         ui_widget.tab_classif->setEnabled(item->features_computed());
+        ui_widget.tab_advanced->setEnabled(item->features_computed());
 
         ui_widget.display->clear();
         ui_widget.display->addItem("Real colors");
         ui_widget.display->addItem("Classification");
         ui_widget.display->addItem("Confidence");
         ui_widget.display->addItem("RANSAC");
-        item->fill_display_combo_box(ui_widget.display);
+        ui_widget.selected_attribute->clear();
+        item->fill_display_combo_box(ui_widget.display, ui_widget.selected_attribute);
         ui_widget.display->setCurrentIndex(1);
+        ui_widget.selected_attribute->setCurrentIndex(0);
       }
   }
 
@@ -662,24 +689,32 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     classification_item->train();
     QApplication::restoreOverrideCursor();
+    update_plugin_from_item(classification_item);
   }
 
   void add_new_class (const ClassRow& class_row)
   {
     class_rows.push_back (class_row);
     int position = class_rows.size();
+
     ui_widget.gridLayout_3->addWidget (class_rows.back().label, position, 0);
     ui_widget.gridLayout_3->addWidget (class_rows.back().color_button, position, 1);
     ui_widget.gridLayout_3->addWidget (class_rows.back().train, position, 3);
     ui_widget.gridLayout_3->addWidget (class_rows.back().remove, position, 5);
-    
+
     connect(class_rows.back().remove,  SIGNAL(clicked()), this,
             SLOT(on_remove_class_clicked()));
     connect(class_rows.back().color_button,  SIGNAL(clicked()), this,
             SLOT(on_color_changed_clicked()));
     connect(class_rows.back().train,  SIGNAL(clicked()), this,
             SLOT(on_add_selection_to_training_set_clicked()));
-    
+
+    ui_widget.gridLayout->addWidget (class_rows.back().label2, position, 0);
+    ui_widget.gridLayout->addWidget (class_rows.back().effect, position, 2);
+
+    connect(class_rows.back().effect,  SIGNAL(currentIndexChanged(int)), this,
+            SLOT(on_effect_changed(int)));
+
   }
 
   void on_remove_class_clicked()
@@ -708,6 +743,11 @@ public Q_SLOTS:
     delete class_rows[row_index].train;
     ui_widget.gridLayout_3->removeWidget (class_rows[row_index].remove);
     delete class_rows[row_index].remove;
+    
+    ui_widget.gridLayout->removeWidget (class_rows[row_index].label2);
+    delete class_rows[row_index].label2;
+    ui_widget.gridLayout->removeWidget (class_rows[row_index].effect);
+    delete class_rows[row_index].effect;
 
     for (std::size_t i = row_index + 1; i < class_rows.size(); ++ i)
       {
@@ -715,6 +755,8 @@ public Q_SLOTS:
         ui_widget.gridLayout_3->addWidget (class_rows[i].color_button, (int)i, 1);
         ui_widget.gridLayout_3->addWidget (class_rows[i].train, (int)i, 3);
         ui_widget.gridLayout_3->addWidget (class_rows[i].remove, (int)i, 5);
+        ui_widget.gridLayout->addWidget (class_rows[i].label2, (int)i, 0);
+        ui_widget.gridLayout->addWidget (class_rows[i].effect, (int)i, 2);
       }
     class_rows.erase (class_rows.begin() + row_index);
   }
@@ -761,6 +803,108 @@ public Q_SLOTS:
 
     classification_item->add_selection_to_training_set
       (class_rows[row_index].label->text().toStdString().c_str());
+  }
+
+  void on_selected_attribute_changed(int v)
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    if (classification_item->number_of_attributes() <= (std::size_t)v)
+      return;
+    
+    Scene_point_set_classification_item::Attribute_handle
+      att = classification_item->attribute(v);
+
+    if (att == Scene_point_set_classification_item::Attribute_handle())
+      return;
+
+    std::cerr << att->weight
+              << " " << (int)(1001. * 2. * std::atan(att->weight) / CGAL_PI) << std::endl;
+    ui_widget.attribute_weight->setValue ((int)(1001. * 2. * std::atan(att->weight) / CGAL_PI));
+
+    for (std::size_t i = 0; i < classification_item->types().size(); ++ i)
+      {
+        CGAL::Data_classification::Type::Attribute_effect
+          eff = classification_item->types()[i].first->attribute_effect(att);
+        if (eff == CGAL::Data_classification::Type::PENALIZED_ATT)
+          class_rows[i].effect->setCurrentIndex(0);
+        else if (eff == CGAL::Data_classification::Type::NEUTRAL_ATT)
+          class_rows[i].effect->setCurrentIndex(1);
+        else
+          class_rows[i].effect->setCurrentIndex(2);
+      }
+  }
+
+
+  void on_attribute_weight_changed(int v)
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+    Scene_point_set_classification_item::Attribute_handle
+      att = classification_item->attribute(ui_widget.selected_attribute->currentIndex());
+
+    if (att == Scene_point_set_classification_item::Attribute_handle())
+      return;
+
+    att->weight = std::tan ((CGAL_PI/2.) * v / 1001.);
+    std::cerr << att->weight << std::endl;
+
+    for (std::size_t i = 0; i < class_rows.size(); ++ i)
+      class_rows[i].effect->setEnabled(att->weight != 0.);
+  }
+
+  void on_effect_changed (int v)
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+    Scene_point_set_classification_item::Attribute_handle
+      att = classification_item->attribute(ui_widget.selected_attribute->currentIndex());
+
+    if (att == Scene_point_set_classification_item::Attribute_handle())
+      return;
+
+    QComboBox* combo = qobject_cast<QComboBox*>(QObject::sender());
+    for (std::size_t i = 0;i < class_rows.size(); ++ i)
+      if (class_rows[i].effect == combo)
+        {
+          std::cerr << att->id() << " is ";
+          if (v == 0)
+            {
+              classification_item->types()[i].first->set_attribute_effect
+                (att, CGAL::Data_classification::Type::PENALIZED_ATT);
+              std::cerr << " penalized for ";
+            }
+          else if (v == 1)
+            {
+              classification_item->types()[i].first->set_attribute_effect
+                (att, CGAL::Data_classification::Type::NEUTRAL_ATT);
+              std::cerr << " neutral for ";
+            }
+          else
+            {
+              classification_item->types()[i].first->set_attribute_effect
+                (att, CGAL::Data_classification::Type::FAVORED_ATT);
+              std::cerr << " favored for ";
+            }
+          std::cerr << classification_item->types()[i].first->id() << std::endl;
+          break;
+        }
   }
 
 private:
