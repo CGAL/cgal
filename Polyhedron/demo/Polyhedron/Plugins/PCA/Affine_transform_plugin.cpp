@@ -405,9 +405,10 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
     matrix.data()[i] = tmatrix[i];
   delete[] tmatrix;
 
-    ui.matrix_00->setText(QString("%1").arg(matrix(0,0))); ui.matrix_01->setText(QString("%1").arg(matrix(0,1))); ui.matrix_02->setText(QString("%1").arg(matrix(0,2)));
-    ui.matrix_10->setText(QString("%1").arg(matrix(1,0))); ui.matrix_11->setText(QString("%1").arg(matrix(1,1))); ui.matrix_12->setText(QString("%1").arg(matrix(1,2)));
-    ui.matrix_20->setText(QString("%1").arg(matrix(2,0))); ui.matrix_21->setText(QString("%1").arg(matrix(2,1))); ui.matrix_22->setText(QString("%1").arg(matrix(2,2)));
+    ui.matrix_00->setText(QString("%1").arg(matrix(0,0))); ui.matrix_01->setText(QString("%1").arg(matrix(0,1))); ui.matrix_02->setText(QString("%1").arg(matrix(0,2))); ui.matrix_03->setText(QString("%1").arg(matrix(0,3)));
+    ui.matrix_10->setText(QString("%1").arg(matrix(1,0))); ui.matrix_11->setText(QString("%1").arg(matrix(1,1))); ui.matrix_12->setText(QString("%1").arg(matrix(1,2))); ui.matrix_13->setText(QString("%1").arg(matrix(1,3)));
+    ui.matrix_20->setText(QString("%1").arg(matrix(2,0))); ui.matrix_21->setText(QString("%1").arg(matrix(2,1))); ui.matrix_22->setText(QString("%1").arg(matrix(2,2))); ui.matrix_23->setText(QString("%1").arg(matrix(2,3)));
+    ui.matrix_30->setText(QString("%1").arg(matrix(3,0))); ui.matrix_31->setText(QString("%1").arg(matrix(3,1))); ui.matrix_32->setText(QString("%1").arg(matrix(3,2))); ui.matrix_33->setText(QString("%1").arg(matrix(3,3)));
 
 }
 
@@ -478,6 +479,7 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
     //normalizing
   case 3:
   {
+    resetTransformMatrix();
     Polyhedron::Point_3 bil(transform_item->bbox().xmin(),
                             transform_item->bbox().ymin(),
                             transform_item->bbox().zmin());
@@ -486,24 +488,42 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
                             transform_item->bbox().ymax(),
                             transform_item->bbox().zmax());
 
+    //Get the scale factor for the item's coordinates to be in [0..1]
+    double max = (std::max)((double)tsr.x()-bil.x(), (double)tsr.y()-bil.y());
+    max = (std::max)(max, (double)tsr.z()-bil.z());
+
+    //recenter the item
+    QVector3D trans = QVector3D(-transform_item->center().x,-transform_item->center().y,-transform_item->center().z);
     transform_item->manipulatedFrame()->translate(qglviewer::Vec(
-                                                    -bil.x(),
-                                                    -bil.y(),
-                                                    -bil.z()));
-QMatrix4x4 tMatrix;
-for(int i=0; i<16; ++i)
-{
-  tMatrix.data()[i] = transform_item->manipulatedFrame()->matrix()[i];
-}
-QVector3D transformed_tsr = QVector3D(tsr.x(), tsr.y(), tsr.z())*tMatrix;
+                                                    trans.x(),
+                                                    trans.y(),
+                                                    trans.z()));
 
-    //Scale the item so that its coordinates are in [0..1]
-    double max = (std::max)((double)transformed_tsr.x(), (double)transformed_tsr.y());
-     max = (std::max)(max, (double)transformed_tsr.z());
-
-    scaling[0] = 1.0/max;
-    scaling[1] = 1.0/max;
-    scaling[2] = 1.0/max;
+    double* d_mat = transformMatrix();
+    float f_mat[15];
+    for(int i=0; i<16; ++i)
+      f_mat[i] = (float)d_mat[i];
+    //And put the new matrix in a QMatrix for further calculations
+    QMatrix4x4 frameMat(f_mat);
+    //Get the new coordinates of the min point of the BBox
+    bil = Polyhedron::Point_3(transform_item->bbox().xmin(),
+                              transform_item->bbox().ymin(),
+                              transform_item->bbox().zmin());
+    //Put it in a vector and apply the latter translation so the BBox is centered
+    QVector3D v_bil= QVector3D(bil.x()+trans.x(),bil.y()+trans.y(),bil.z()+trans.z());
+    //Get the new translation to put the new bil in (0,0,0)
+    trans = v_bil*frameMat;
+    //translate it so bil is in (0,0,0)
+    frameMat.translate(-trans);
+    //Then apply the scaling
+    frameMat.scale(1.0/max);
+    //save the scaling in the global vector
+    scaling[0]=scaling[1]=scaling[2]=1.0/max;
+    //apply the full transformation to the item's manipulatedFrame
+    for(int i=0; i<16; ++i)
+      d_mat[i] = (double)frameMat.data()[i];
+    transform_item->manipulatedFrame()->setFromMatrix(d_mat);
+    delete [] d_mat;
     break;
   }
   default:
@@ -515,9 +535,6 @@ QVector3D transformed_tsr = QVector3D(tsr.x(), tsr.y(), tsr.z())*tMatrix;
   ui.lineEditX->clear();
   ui.lineEditY->clear();
   ui.lineEditZ->clear();
-  double * matrix = transformMatrix();
-  transform_item->setFMatrix(matrix);
-  delete[] matrix;
   updateUiMatrix();
   transform_item->itemChanged();
 }
