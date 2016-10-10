@@ -1,10 +1,10 @@
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -23,8 +23,8 @@
 //
 //******************************************************************************
 
-#ifndef NEAREST_POINT_TRIANGLE_3_H_
-#define NEAREST_POINT_TRIANGLE_3_H_
+#ifndef CGAL_NEAREST_POINT_TRIANGLE_3_H_
+#define CGAL_NEAREST_POINT_TRIANGLE_3_H_
 
 #include <CGAL/kernel_basic.h>
 #include <CGAL/enum.h>
@@ -96,7 +96,6 @@ nearest_point_3(const typename K::Point_3& origin,
                 const K& k)
 {
   typedef typename K::FT FT;
-
   typename K::Compute_squared_distance_3 sq_distance =
     k.compute_squared_distance_3_object();
 
@@ -170,80 +169,15 @@ is_inside_triangle_3(const typename K::Point_3& p,
   }
 }
 
-/**
- * @brief Computes the closest_point from origin between bound and
- * any point of triangle.
- * @param origin the origin point
- * @param triangle the triangle
- * @param bound the farthest point
- * @param k the kernel
- * @return nearest point: bound or a point inside triangle
- */
-template <class K>
-typename K::Point_3
-nearest_point_3(const typename K::Point_3& origin,
-                const typename K::Triangle_3& triangle,
-                const typename K::Point_3& bound,
-                const K& k)
-{
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::FT FT;
 
-  typename K::Compute_squared_distance_3 sq_distance =
-    k.compute_squared_distance_3_object();
-  typename K::Compare_squared_distance_3 compare_sq_distance =
-    k.compare_squared_distance_3_object();
-  typename K::Construct_supporting_plane_3 supporting_plane =
-    k.construct_supporting_plane_3_object();
-  typename K::Construct_projected_point_3 projection =
-    k.construct_projected_point_3_object();
 
-  // Distance from origin to bound
-  const FT bound_sq_dist = sq_distance(origin, bound);
-
-  // Project origin on triangle supporting plane
-  const Point_3 proj = projection(supporting_plane(triangle), origin);
-
-  // If point is projected outside, return bound
-  if ( compare_sq_distance(origin, proj, bound_sq_dist) == CGAL::LARGER )
-  {
-    return bound;
-  }
-
-  Point_3 moved_point;
-  bool inside = is_inside_triangle_3(proj,triangle,moved_point,k);
-
-  // If proj is inside triangle, return it
-  if ( inside )
-  {
-    return proj;
-  }
-
-  // Else return the constructed point (nearest point of triangle from proj)
-  // if it is closest to origin than bound
-  if ( compare_sq_distance(origin, moved_point, bound_sq_dist)
-                                                        == CGAL::LARGER )
-  {
-    return bound;
-  }
-
-  return moved_point;
-}
 
 }  // end namespace internal
 
 
-template <class K>
-inline
-Point_3<K>
-nearest_point_3(const Point_3<K>& origin,
-                const Triangle_3<K>& triangle,
-                const Point_3<K>& bound)
-{
-  return internal::nearest_point_3(origin, triangle, bound, K());
-}
+
 
 }  // end namespace CGAL
 
 
-#endif // NEAREST_POINT_TRIANGLE_3_H_
+#endif // CGAL_NEAREST_POINT_TRIANGLE_3_H_

@@ -34,6 +34,8 @@
 #include <CGAL/intersection_3.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel/nearest_point_segment_3.h>
+#include <CGAL/Kernel/nearest_point_triangle_3.h>
 
 #include <cmath> // for Compute_dihedral_angle
 
@@ -1038,6 +1040,118 @@ namespace CommonKernelFunctors {
     operator()(	const Point_3& p1, const Point_3& p2, const Point_3& p3) const
     { return this->operator()(Return_base_tag(), p1, p2, p3); }
   };
+
+
+  template <typename K>
+  class Construct_closest_point_3
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Point_3           Point_3;
+    typedef typename K::Segment_3         Segment_3;
+    typedef typename K::Triangle_3        Triangle_3;
+  public:
+    typedef Point_3               result_type;
+
+  
+    Point_3 operator()(const typename K::Point_3& query,
+                       const typename K::Segment_3& segment,
+                       const typename K::Point_3& bound) const
+    {
+      typename K::Compute_squared_distance_3 sq_distance =
+        K().compute_squared_distance_3_object();
+      typename K::Compare_squared_distance_3 compare_sq_distance =
+        K().compare_squared_distance_3_object();
+      typename K::Construct_projected_point_3 projection =
+        K().construct_projected_point_3_object();
+      typename K::Is_degenerate_3 is_degenerate = 
+        K().is_degenerate_3_object();
+      typename K::Construct_vertex_3 vertex = 
+        K().construct_vertex_3_object();
+
+      // Square distance from query to bound
+      const FT bound_sq_dist = sq_distance(query, bound);
+
+      if(is_degenerate(segment)) {
+        const Point_3& p_on_seg = vertex(segment, 0);
+        if(compare_sq_distance(query, 
+                               p_on_seg,
+                               bound_sq_dist) == CGAL::LARGER) {
+          return bound; 
+        } else {
+          return p_on_seg;
+        }
+      }
+      // Project query on segment supporting line
+      const Point_3 proj = projection(segment.supporting_line(), query);
+
+      // If point is projected outside, return bound
+      if ( compare_sq_distance(query, proj, bound_sq_dist) == CGAL::LARGER )
+        return bound;
+
+      Point_3 closest_point_on_segment;
+      bool inside = internal::is_inside_segment_3(proj,segment,closest_point_on_segment,K());
+
+      // If proj is inside segment, returns it
+      if ( inside )
+        return proj;
+
+      // Else returns the constructed point (nearest segment' point from proj),
+      // if it is closest to query than bound
+      if ( compare_sq_distance(query, closest_point_on_segment, bound_sq_dist) == CGAL::LARGER )
+        return bound;
+
+      return closest_point_on_segment;
+    }
+
+   
+    Point_3 operator()(const typename K::Point_3& origin,
+                         const typename K::Triangle_3& triangle,
+                         const typename K::Point_3& bound) const
+    {
+      typename K::Compute_squared_distance_3 sq_distance =
+        K().compute_squared_distance_3_object();
+      typename K::Compare_squared_distance_3 compare_sq_distance =
+        K().compare_squared_distance_3_object();
+      typename K::Construct_supporting_plane_3 supporting_plane =
+        K().construct_supporting_plane_3_object();
+      typename K::Construct_projected_point_3 projection =
+        K().construct_projected_point_3_object();
+
+      // Distance from origin to bound
+      const FT bound_sq_dist = sq_distance(origin, bound);
+
+      // Project origin on triangle supporting plane
+      const Point_3 proj = projection(supporting_plane(triangle), origin);
+
+      // If point is projected outside, return bound
+      if ( compare_sq_distance(origin, proj, bound_sq_dist) == CGAL::LARGER )
+        {
+          return bound;
+        }
+
+      Point_3 moved_point;
+      bool inside = internal::is_inside_triangle_3(proj,triangle,moved_point,K());
+
+      // If proj is inside triangle, return it
+      if ( inside )
+        {
+          return proj;
+        }
+
+      // Else return the constructed point (nearest point of triangle from proj)
+      // if it is closest to origin than bound
+      if ( compare_sq_distance(origin, moved_point, bound_sq_dist)
+           == CGAL::LARGER )
+        {
+          return bound;
+        }
+
+      return moved_point;
+
+    }
+
+  };
+
 
   template <typename K>
   class Construct_iso_cuboid_3

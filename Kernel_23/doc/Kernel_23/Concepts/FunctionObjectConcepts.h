@@ -3887,6 +3887,54 @@ public:
 
 }; /* end Kernel::ConstructCircumcenter_3 */
 
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with four arguments) 
+
+  \sa `closest_point_grp`
+
+*/
+class ConstructClosestPoint_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+   /**
+     * @brief Computes the closest point from `query` between `bound` and
+     * any point of segment.
+     * @param query the query point
+     * @param segment the segment
+     * @param bound the farthest point
+     * @param k the kernel
+     * @return nearest point: `bound` or a point inside `segment`
+     */
+  Kernel::Point_3 operator()(const Kernel::Point_3& query,
+                             const Kernel::Segment_3& segment,
+                             const  Kernel::Point_3& bound);
+
+  /**
+     * @brief Computes the closest point from `query` between `bound` and
+     * any point of triangle.
+     * @param query the query point
+     * @param triangle the triangle
+     * @param bound the farthest point
+     * @param k the kernel
+     * @return nearest point: `bound` or a point inside `triangle`
+     */
+  Kernel::Point_3 operator()(const Kernel::Point_3& query,
+                             const Kernel::Triangle_3& triangle,
+                             const Kernel::Point_3& bound);
+
+  /// @}
+
+}; /* end Kernel::ConstructClosestPoint_3 */
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept

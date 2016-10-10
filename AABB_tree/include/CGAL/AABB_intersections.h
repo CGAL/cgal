@@ -20,5 +20,3 @@
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/internal/AABB_tree/nearest_point_segment_3.h>
-#include <CGAL/internal/AABB_tree/nearest_point_triangle_3.h>

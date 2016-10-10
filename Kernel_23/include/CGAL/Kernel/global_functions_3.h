@@ -250,6 +250,26 @@ circumcenter(const Triangle_3<K> &t)
   return internal::circumcenter(t, K());
 }
 
+template <class K>
+inline
+typename K::Point_3
+closest_point_3(const Point_3<K>& origin,
+                const Segment_3<K>& segment,
+                const Point_3<K>& bound)
+{
+  return internal::closest_point_3(origin, segment, bound, K());
+}
+
+template <class K>
+inline
+typename K::Point_3
+closest_point_3(const Point_3<K>& origin,
+                const Triangle_3<K>& triangle,
+                const Point_3<K>& bound)
+{
+  return internal::closest_point_3(origin, triangle, bound, K());
+}
+
 template < class K >
 inline
 typename K::Boolean

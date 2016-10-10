@@ -457,6 +457,48 @@ circumcenter( const CGAL::Tetrahedron_3<Kernel>& t);
 
 /// @}
 
+
+
+/// \defgroup closest_point_grp CGAL::closest_point()
+/// \ingroup kernel_global_function
+/// @{
+
+  /**
+     * compute the closest_point from query between bound and
+     * any point of segment.
+     * @param query the query point
+     * @param segment the segment
+     * @param bound the farthest point
+
+     * @return nearest point: bound or a point inside segment
+     */
+template <typename Kernel>
+CGAL::Point_3<Kernel>
+closest_point(const CGAL::Point_3<Kernel>& query,
+              const CGAL::Segment_3<Kernel>& segment,
+              const CGAL::Point_3<Kernel>& bound);
+
+  /**
+     * computes the closest_point from query between bound and
+     * any point of triangle.
+     * @param query the query point
+     * @param triangle the triangle
+     * @param bound the farthest point
+
+     * @return nearest point: bound or a point inside triangle
+     */
+template <typename Kernel>
+CGAL::Point_3<Kernel>
+closest_point(const CGAL::Point_3<Kernel>& query,
+              const CGAL::Triangle_3<Kernel>& triangle,
+              const CGAL::Point_3<Kernel>& bound);
+
+/// @}
+
+
+
+
+
 /// \defgroup collinear_are_ordered_along_line_grp CGAL::collinear_are_ordered_along_line()
 /// \ingroup kernel_global_function
 /// \sa `are_ordered_along_line_grp`
