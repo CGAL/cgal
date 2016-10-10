@@ -83,7 +83,6 @@ nearest_point_3(const typename K::Point_3& query,
                 const K& k)
 {
   typedef typename K::Point_3 Point_3;
-  typedef typename K::FT FT;
 
   typename K::Construct_projected_point_3 projection =
       k.construct_projected_point_3_object();

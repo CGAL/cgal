@@ -173,7 +173,6 @@ nearest_point_3(const typename K::Point_3& origin,
                 const K& k)
 {
   typedef typename K::Point_3 Point_3;
-  typedef typename K::FT FT;
 
   typename K::Construct_supporting_plane_3 supporting_plane =
     k.construct_supporting_plane_3_object();
