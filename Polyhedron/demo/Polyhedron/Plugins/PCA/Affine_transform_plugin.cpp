@@ -31,18 +31,21 @@ public:
   {
     frame->setPosition(pos);
     Point_set ps= *item->point_set();
+    const Kernel::Point_3& p = *(ps.begin());
+    CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     std::random_shuffle (ps.begin(), ps.end());
-
-
     std::vector<float> points;
     points.reserve(3*ps.size());
     for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
     {
+      bbox = bbox + it->bbox();
       const UI_point& p = *it;
       points.push_back(p.x()-center_.x);
       points.push_back(p.y()-center_.y);
       points.push_back(p.z()-center_.z);
     }
+    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                bbox.xmax(),bbox.ymax(),bbox.zmax());
     nb_points = points.size();
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
     program = getShaderProgram(Scene_polyhedron_transform_item::PROGRAM_WITHOUT_LIGHT, viewer);
@@ -73,6 +76,12 @@ public:
               .arg(getBase()->name());
   }
 
+  void setFMatrix(double matrix[16])
+  {
+    for (int i=0; i<16; ++i)
+      f_matrix.data()[i] = (float)matrix[i];
+  }
+
   ~Scene_transform_point_set_item() {delete frame; Q_EMIT killed(); }
   void drawPoints(Viewer_interface *viewer) const
   {
@@ -88,10 +97,6 @@ public:
     program=getShaderProgram(PROGRAM_NO_SELECTION);
     attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
-    QMatrix4x4 f_matrix;
-    for (int i=0; i<16; ++i){
-      f_matrix.data()[i] = (float)frame->matrix()[i];
-    }
     program->setAttributeValue("colors", QColor(Qt::green));
     program->setUniformValue("f_matrix", f_matrix);
     program->setUniformValue("is_selected", false);
@@ -119,6 +124,7 @@ private:
   CGAL::Three::Scene_item::ManipulatedFrame* frame;
   mutable QOpenGLShaderProgram *program;
   std::size_t nb_points;
+  QMatrix4x4 f_matrix;
 
 };
 using namespace CGAL::Three;
@@ -204,12 +210,28 @@ private:
   //Don't forget to delete the result.
   double* transformMatrix()const
   {
-    QMatrix4x4 tMatrix, manipulatedMatrix, scalingMatrix;
-    for(int i=0; i<16; ++i)
+    bool is_point_set = false;
+    if(!transform_item)
     {
-      manipulatedMatrix.data()[i] = transform_item->manipulatedFrame()->matrix()[i];
-      scalingMatrix.data()[i] = 0;
+     if(transform_points_item)
+       is_point_set = true;
+     else
+       qDebug()<<"Dafuq Luke..?";
     }
+
+    QMatrix4x4 tMatrix, manipulatedMatrix, scalingMatrix;
+    if(!is_point_set)
+      for(int i=0; i<16; ++i)
+      {
+        manipulatedMatrix.data()[i] = transform_item->manipulatedFrame()->matrix()[i];
+        scalingMatrix.data()[i] = 0;
+      }
+    else
+      for(int i=0; i<16; ++i)
+      {
+        manipulatedMatrix.data()[i] = transform_points_item->manipulatedFrame()->matrix()[i];
+        scalingMatrix.data()[i] = 0;
+      }
     scalingMatrix.data()[0] = scaling[0];
     scalingMatrix.data()[5] = scaling[1];
     scalingMatrix.data()[10] = scaling[2];
@@ -220,7 +242,8 @@ private:
       res[i] = (double)tMatrix.data()[i];
     return res;
   }
-
+  template<class Item>
+  void normalize(Item*);
 public Q_SLOTS:
   void go();
   void transformed_killed();
@@ -228,16 +251,31 @@ public Q_SLOTS:
   void updateUiMatrix();
   void resetTransformMatrix()
   {
+    bool is_point_set = false;
     if(!transform_item)
-      return;
+    {
+      if(transform_points_item)
+        is_point_set = true;
+      else
+        return;
+    }
     double matrix[16] = {0};
     scaling[0]=scaling[1]=scaling[2]=1.0;
     matrix[0]=1; matrix[5] = 1; matrix[10] = 1; matrix[15] = 1;
-    matrix[12] = transform_item->center().x;
-    matrix[13] = transform_item->center().y;
-    matrix[14] = transform_item->center().z;
-    transform_item->manipulatedFrame()->setFromMatrix(matrix);
-    transform_item->itemChanged();
+    matrix[12] = is_point_set ? transform_points_item->center().x : transform_item->center().x;
+    matrix[13] = is_point_set ? transform_points_item->center().y : transform_item->center().y;
+    matrix[14] = is_point_set ? transform_points_item->center().z : transform_item->center().z;
+
+    if(!is_point_set)
+    {
+      transform_item->manipulatedFrame()->setFromMatrix(matrix);
+      transform_item->itemChanged();
+    }
+    else
+    {
+      transform_points_item->manipulatedFrame()->setFromMatrix(matrix);
+      transform_points_item->itemChanged();
+    }
   }
   void updateSingleTransfoValues(int);
   void applySingleTransformation();
@@ -311,6 +349,8 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   transform_points_item->setName(tr("Affine Transformation"));
   connect(transform_points_item, SIGNAL(stop()),this, SLOT(go()));
   connect(transform_points_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
+  connect(transform_points_item->manipulatedFrame(), &qglviewer::ManipulatedFrame::modified,
+          this, &Polyhedron_demo_affine_transform_plugin::updateUiMatrix);
   tr_item_index=scene->addItem(transform_points_item);
   scene->setSelectedItem(tr_item_index);
 }
@@ -358,7 +398,6 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     new_item->setName(tr("%1_transformed").arg(transform_item->getBase()->name()));
 
     scene->replaceItem(tr_item_index,new_item);
-
     delete transform_item;
     transform_item = NULL;
   }
@@ -391,14 +430,24 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     delete transform_points_item;
     transform_points_item = NULL;
   }
-
+  dock_widget->hide();
 }
 
 void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
 {
-
+  bool is_point_set = false;
+  if(!transform_item)
+  {
+    if(transform_points_item)
+      is_point_set = true;
+    else
+      return;
+  }
   double * tmatrix = transformMatrix();
-  transform_item->setFMatrix(tmatrix);
+  if(is_point_set)
+    transform_points_item->setFMatrix(tmatrix);
+  else
+    transform_item->setFMatrix(tmatrix);
   //this matrix is not mandatory but it clarifies the code to use one.
   QMatrix4x4 matrix;
   for (int i=0; i<16; ++i)
@@ -444,10 +493,64 @@ void Polyhedron_demo_affine_transform_plugin::updateSingleTransfoValues(int inde
   }
 }
 
+template<class Item>
+void Polyhedron_demo_affine_transform_plugin::normalize(Item* item)
+{
+  Polyhedron::Point_3 bil(item->bbox().xmin(),
+                          item->bbox().ymin(),
+                          item->bbox().zmin());
+
+  Polyhedron::Point_3 tsr(item->bbox().xmax(),
+                          item->bbox().ymax(),
+                          item->bbox().zmax());
+
+  //Get the scale factor for the item's coordinates to be in [0..1]
+  double max = (std::max)((double)tsr.x()-bil.x(), (double)tsr.y()-bil.y());
+  max = (std::max)(max, (double)tsr.z()-bil.z());
+
+  //recenter the item
+  QVector3D trans = QVector3D(-item->center().x,-item->center().y,-item->center().z);
+  item->manipulatedFrame()->translate(qglviewer::Vec(
+                                                  trans.x(),
+                                                  trans.y(),
+                                                  trans.z()));
+
+  double* d_mat = transformMatrix();
+  float f_mat[15];
+  for(int i=0; i<16; ++i)
+    f_mat[i] = (float)d_mat[i];
+  //And put the new matrix in a QMatrix for further calculations
+  QMatrix4x4 frameMat(f_mat);
+  //Get the new coordinates of the min point of the BBox
+  bil = Polyhedron::Point_3(item->bbox().xmin(),
+                            item->bbox().ymin(),
+                            item->bbox().zmin());
+  //Put it in a vector and apply the latter translation so the BBox is centered
+  QVector3D v_bil= QVector3D(bil.x()+trans.x(),bil.y()+trans.y(),bil.z()+trans.z());
+  //Get the new translation to put the new bil in (0,0,0)
+  trans = v_bil*frameMat;
+  //translate it so bil is in (0,0,0)
+  frameMat.translate(-trans);
+  //Then apply the scaling
+  frameMat.scale(1.0/max);
+  //save the scaling in the global vector
+  scaling[0]=scaling[1]=scaling[2]=1.0/max;
+  //apply the full transformation to the item's manipulatedFrame
+  for(int i=0; i<16; ++i)
+    d_mat[i] = (double)frameMat.data()[i];
+  item->manipulatedFrame()->setFromMatrix(d_mat);
+  delete [] d_mat;
+}
 void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
 {
+  bool is_point_set = false;
   if(!transform_item)
-    return;
+  {
+    if(transform_points_item)
+      is_point_set = true;
+    else
+      return;
+  }
   switch(ui.transfo_ComboBox->currentIndex())
   {
   //rotation
@@ -457,15 +560,23 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
                         ui.lineEditY->text().toDouble(),
                         ui.lineEditZ->text().toDouble());
 
-    transform_item->manipulatedFrame()->rotate(qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*M_PI/180.0));
+    if(!is_point_set)
+      transform_item->manipulatedFrame()->rotate(qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*M_PI/180.0));
+    else
+      transform_points_item->manipulatedFrame()->rotate(qglviewer::Quaternion(axis, ui.lineEditA->text().toDouble()*M_PI/180.0));
     break;
   }
     //translation
   case 1:
   {
-    transform_item->manipulatedFrame()->translate(qglviewer::Vec(ui.lineEditX->text().toDouble() ,
-                                                                 ui.lineEditY->text().toDouble() ,
-                                                                 ui.lineEditZ->text().toDouble() ));
+    if(!is_point_set)
+      transform_item->manipulatedFrame()->translate(qglviewer::Vec(ui.lineEditX->text().toDouble() ,
+                                                                   ui.lineEditY->text().toDouble() ,
+                                                                   ui.lineEditZ->text().toDouble() ));
+    else
+      transform_points_item->manipulatedFrame()->translate(qglviewer::Vec(ui.lineEditX->text().toDouble() ,
+                                                                   ui.lineEditY->text().toDouble() ,
+                                                                   ui.lineEditZ->text().toDouble() ));
     break;
   }
     //scaling
@@ -480,50 +591,10 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
   case 3:
   {
     resetTransformMatrix();
-    Polyhedron::Point_3 bil(transform_item->bbox().xmin(),
-                            transform_item->bbox().ymin(),
-                            transform_item->bbox().zmin());
-
-    Polyhedron::Point_3 tsr(transform_item->bbox().xmax(),
-                            transform_item->bbox().ymax(),
-                            transform_item->bbox().zmax());
-
-    //Get the scale factor for the item's coordinates to be in [0..1]
-    double max = (std::max)((double)tsr.x()-bil.x(), (double)tsr.y()-bil.y());
-    max = (std::max)(max, (double)tsr.z()-bil.z());
-
-    //recenter the item
-    QVector3D trans = QVector3D(-transform_item->center().x,-transform_item->center().y,-transform_item->center().z);
-    transform_item->manipulatedFrame()->translate(qglviewer::Vec(
-                                                    trans.x(),
-                                                    trans.y(),
-                                                    trans.z()));
-
-    double* d_mat = transformMatrix();
-    float f_mat[15];
-    for(int i=0; i<16; ++i)
-      f_mat[i] = (float)d_mat[i];
-    //And put the new matrix in a QMatrix for further calculations
-    QMatrix4x4 frameMat(f_mat);
-    //Get the new coordinates of the min point of the BBox
-    bil = Polyhedron::Point_3(transform_item->bbox().xmin(),
-                              transform_item->bbox().ymin(),
-                              transform_item->bbox().zmin());
-    //Put it in a vector and apply the latter translation so the BBox is centered
-    QVector3D v_bil= QVector3D(bil.x()+trans.x(),bil.y()+trans.y(),bil.z()+trans.z());
-    //Get the new translation to put the new bil in (0,0,0)
-    trans = v_bil*frameMat;
-    //translate it so bil is in (0,0,0)
-    frameMat.translate(-trans);
-    //Then apply the scaling
-    frameMat.scale(1.0/max);
-    //save the scaling in the global vector
-    scaling[0]=scaling[1]=scaling[2]=1.0/max;
-    //apply the full transformation to the item's manipulatedFrame
-    for(int i=0; i<16; ++i)
-      d_mat[i] = (double)frameMat.data()[i];
-    transform_item->manipulatedFrame()->setFromMatrix(d_mat);
-    delete [] d_mat;
+    if(!is_point_set)
+      normalize(transform_item);
+    else
+      normalize(transform_points_item);
     break;
   }
   default:
@@ -536,7 +607,10 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
   ui.lineEditY->clear();
   ui.lineEditZ->clear();
   updateUiMatrix();
-  transform_item->itemChanged();
+  if(is_point_set)
+    transform_points_item->itemChanged();
+  else
+    transform_item->itemChanged();
 }
 
 #include "Affine_transform_plugin.moc"
