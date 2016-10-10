@@ -180,8 +180,18 @@ public:
                                        RandomAccessIterator begin, RandomAccessIterator end,
                                        ColorMap color_map)
   {
-    typedef Attribute_color<Kernel, RandomAccessIterator, ColorMap> Color;
-    psc.add_attribute (Attribute_handle (new Color(begin, end, color_map)));
+    // typedef Attribute_color<Kernel, RandomAccessIterator, ColorMap> Color;
+    // psc.add_attribute (Attribute_handle (new Color(begin, end, color_map)));
+    typedef Attribute_hsv<Kernel, RandomAccessIterator, ColorMap> Hsv;
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 0, 0, 30)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 0, 150, 30)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 0, 300, 30)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 1, 0, 10)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 1, 50, 10)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 1, 100, 10)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 2, 0, 10)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 2, 50, 10)));
+    psc.add_attribute (Attribute_handle (new Hsv(begin, end, color_map, 2, 100, 10)));
   }
 
   void generate_color_based_attributes(const Point_set_classification&,
