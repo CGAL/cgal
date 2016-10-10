@@ -215,8 +215,6 @@ private:
     {
      if(transform_points_item)
        is_point_set = true;
-     else
-       qDebug()<<"Dafuq Luke..?";
     }
 
     QMatrix4x4 tMatrix, manipulatedMatrix, scalingMatrix;
@@ -344,7 +342,6 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   double z=(bbox.zmin()+bbox.zmax())/2;
 
   transform_points_item = new Scene_transform_point_set_item(points_item,qglviewer::Vec(x,y,z));
-  //transform_points_item->setManipulatable(true);
   transform_points_item->setRenderingMode(Points);
   transform_points_item->setName(tr("Affine Transformation"));
   connect(transform_points_item, SIGNAL(stop()),this, SLOT(go()));
@@ -353,6 +350,7 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
           this, &Polyhedron_demo_affine_transform_plugin::updateUiMatrix);
   tr_item_index=scene->addItem(transform_points_item);
   scene->setSelectedItem(tr_item_index);
+  resetTransformMatrix();
 }
 
 
@@ -386,9 +384,10 @@ struct Modifier_transform_vertices : public CGAL::Modifier_base<Polyhedron::Half
 
 void Polyhedron_demo_affine_transform_plugin::end(){
   QApplication::restoreOverrideCursor();
+  const GLdouble* matrix = transformMatrix();
+  resetTransformMatrix();
   if(transform_item)
   {
-    const GLdouble* matrix = transformMatrix();
     Modifier_transform_vertices modifier(matrix,transform_item->center());
     delete[] matrix;
     Polyhedron* new_poly=new Polyhedron(*transform_item->getBase()->polyhedron());
@@ -403,7 +402,6 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   }
   else if(transform_points_item)
   {
-    const GLdouble* matrix = transform_points_item->manipulatedFrame()->matrix();
     QMatrix4x4 transform_matrix;
     for(int i=0; i<16; ++i)
       transform_matrix.data()[i] = (float)matrix[i];
@@ -453,7 +451,6 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
   for (int i=0; i<16; ++i)
     matrix.data()[i] = tmatrix[i];
   delete[] tmatrix;
-
     ui.matrix_00->setText(QString("%1").arg(matrix(0,0))); ui.matrix_01->setText(QString("%1").arg(matrix(0,1))); ui.matrix_02->setText(QString("%1").arg(matrix(0,2))); ui.matrix_03->setText(QString("%1").arg(matrix(0,3)));
     ui.matrix_10->setText(QString("%1").arg(matrix(1,0))); ui.matrix_11->setText(QString("%1").arg(matrix(1,1))); ui.matrix_12->setText(QString("%1").arg(matrix(1,2))); ui.matrix_13->setText(QString("%1").arg(matrix(1,3)));
     ui.matrix_20->setText(QString("%1").arg(matrix(2,0))); ui.matrix_21->setText(QString("%1").arg(matrix(2,1))); ui.matrix_22->setText(QString("%1").arg(matrix(2,2))); ui.matrix_23->setText(QString("%1").arg(matrix(2,3)));
@@ -503,43 +500,20 @@ void Polyhedron_demo_affine_transform_plugin::normalize(Item* item)
   Polyhedron::Point_3 tsr(item->bbox().xmax(),
                           item->bbox().ymax(),
                           item->bbox().zmax());
-
   //Get the scale factor for the item's coordinates to be in [0..1]
   double max = (std::max)((double)tsr.x()-bil.x(), (double)tsr.y()-bil.y());
   max = (std::max)(max, (double)tsr.z()-bil.z());
-
-  //recenter the item
-  QVector3D trans = QVector3D(-item->center().x,-item->center().y,-item->center().z);
-  item->manipulatedFrame()->translate(qglviewer::Vec(
-                                                  trans.x(),
-                                                  trans.y(),
-                                                  trans.z()));
-
-  double* d_mat = transformMatrix();
-  float f_mat[15];
-  for(int i=0; i<16; ++i)
-    f_mat[i] = (float)d_mat[i];
-  //And put the new matrix in a QMatrix for further calculations
-  QMatrix4x4 frameMat(f_mat);
-  //Get the new coordinates of the min point of the BBox
-  bil = Polyhedron::Point_3(item->bbox().xmin(),
-                            item->bbox().ymin(),
-                            item->bbox().zmin());
-  //Put it in a vector and apply the latter translation so the BBox is centered
-  QVector3D v_bil= QVector3D(bil.x()+trans.x(),bil.y()+trans.y(),bil.z()+trans.z());
-  //Get the new translation to put the new bil in (0,0,0)
-  trans = v_bil*frameMat;
-  //translate it so bil is in (0,0,0)
-  frameMat.translate(-trans);
-  //Then apply the scaling
-  frameMat.scale(1.0/max);
-  //save the scaling in the global vector
-  scaling[0]=scaling[1]=scaling[2]=1.0/max;
-  //apply the full transformation to the item's manipulatedFrame
+  QVector3D v_bil= QVector3D(bil.x(),bil.y(),bil.z());
+  QMatrix4x4 frameMat = QMatrix();
+  QVector3D center(item->center().x,
+  item->center().y,
+  item->center().z);
+  frameMat.translate(-(v_bil-center)/max);
+  double d_mat[16];
   for(int i=0; i<16; ++i)
     d_mat[i] = (double)frameMat.data()[i];
+  scaling[0]=scaling[1]=scaling[2]=1.0/max;
   item->manipulatedFrame()->setFromMatrix(d_mat);
-  delete [] d_mat;
 }
 void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
 {
