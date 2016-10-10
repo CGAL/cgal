@@ -294,6 +294,7 @@
 - `Kernel::ComputeAreaDividedByPi_3`
 - `Kernel::ComputeDeterminant_2`
 - `Kernel::ComputeDeterminant_3`
+- `Kernel::ComputeDihedralAngle_3`
 - `Kernel::ComputeDx_2`
 - `Kernel::ComputeDy_2`
 - `Kernel::ComputeHx_2`

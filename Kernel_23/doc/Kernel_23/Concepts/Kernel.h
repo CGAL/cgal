@@ -1223,6 +1223,11 @@ public:
   typedef unspecified_type Compute_determinant_3; 
 
   /*!
+    a model of `Kernel::ComputeDihedralAngle_3`
+  */ 
+  typedef unspecified_type Compute_dihedral_angle_3;
+
+  /*!
     a model of `Kernel::ComputeScalarProduct_3`
   */
   typedef unspecified_type Compute_scalar_product_3;
