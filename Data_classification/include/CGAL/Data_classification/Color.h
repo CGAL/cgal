@@ -44,7 +44,7 @@ inline HSV_Color rgb_to_hsv (const RGB_Color& c)
   if (delta != 0.)
     {
       if (Cmax == r)
-        H = 60. * (((int)((g - b) / delta)) % 6);
+        H = 60. * ((g - b) / delta);
       else if (Cmax == g)
         H = 60. * (((b - r) / delta) + 2.);
       else
