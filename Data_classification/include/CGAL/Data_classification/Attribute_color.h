@@ -79,6 +79,51 @@ public:
 };
 
 
+  /// \cond SKIP_IN_MANUAL
+template <typename Kernel, typename RandomAccessIterator, typename ColorPMap>
+class Attribute_hsv : public Attribute
+{
+  typedef typename Data_classification::RGB_Color RGB_Color;
+  typedef typename Data_classification::HSV_Color HSV_Color;
+  
+  std::vector<double> color_attribute;
+  std::string m_id;
+  
+public:
+  
+  Attribute_hsv (RandomAccessIterator begin,
+                 RandomAccessIterator end,
+                 ColorPMap color_pmap,
+                 std::size_t channel,
+                 double mean, double sd,
+                 double weight = 1.)
+  {
+    this->weight = weight;
+    for(std::size_t i = 0; i < (std::size_t)(end - begin);i++)
+      {
+        HSV_Color c = Data_classification::rgb_to_hsv (get(color_pmap, begin[i]));
+        color_attribute.push_back (std::exp (-(c[channel] - mean) * (c[channel] - mean) / (2. * sd * sd)));
+      }
+    this->compute_mean_max (color_attribute, this->mean, this->max);
+
+    std::ostringstream oss;
+    if (channel == 0) oss << "hue";
+    else if (channel == 1) oss << "saturation";
+    else if (channel == 2) oss << "value";
+    oss << "_" << mean;
+    m_id = oss.str();
+  }
+
+  virtual double value (std::size_t pt_index)
+  {
+    return color_attribute[pt_index];
+  }
+
+  virtual std::string id() { return m_id; }
+
+};
+/// \endcond
+
 } // namespace Data_classification
 
 } // namespace CGAL
