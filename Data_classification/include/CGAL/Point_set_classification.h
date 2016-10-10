@@ -788,6 +788,26 @@ public:
     std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_training_type);
   }
 
+  bool add_training_index (Data_classification::Type_handle class_type,
+                           std::size_t idx)
+  {
+    std::size_t type_idx = (std::size_t)(-1);
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      if (m_types[i] == class_type)
+        {
+          type_idx = i;
+          break;
+        }
+    if (type_idx == (std::size_t)(-1))
+      return false;
+
+    if (m_training_type.empty())
+      reset_training_sets();
+
+    m_training_type[idx] = type_idx;
+    return true;
+  }
+
   template <class IndexIterator>
   bool add_training_set (Data_classification::Type_handle class_type,
                          IndexIterator first,
@@ -809,7 +829,7 @@ public:
     for (IndexIterator it = first; it != beyond; ++ it)
       m_training_type[*it] = type_idx;
 
-    return false;
+    return true;
   }
   
   Data_classification::Type_handle training_type_of (std::size_t index) const
