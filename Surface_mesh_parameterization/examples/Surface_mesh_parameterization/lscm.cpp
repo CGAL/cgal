@@ -32,32 +32,33 @@ typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 /// A helper class that writes a face as a polyline in the xy-plane
-struct Face2Polyline {
+struct Face2Polyline
+{
   const Mesh& mesh;
   const UV_pmap uvpm;
-  
+
   Face2Polyline(const Mesh& mesh, const UV_pmap& uvpm)
     : mesh(mesh), uvpm(uvpm)
-  {}
-  
-  void operator()(face_descriptor fd) const 
+  { }
+
+  void operator()(face_descriptor fd) const
   {
-    halfedge_descriptor hd = halfedge(fd,mesh); 
-    
+    halfedge_descriptor hd = halfedge(fd,mesh);
+
     std::cout << "4 " << uvpm[target(hd,mesh)].x() << " " << uvpm[target(hd,mesh)].y() << " 0 ";
-    
+
     hd = next(hd,mesh);
     BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
       std::cout << uvpm[vd].x() << " " << uvpm[vd].y() << " 0 ";
     }
     std::cout << std::endl;
-  }  
+  }
 };
 
 int main(int argc, char * argv[])
 {
   SurfaceMesh sm;
-  std::vector<SM_edge_descriptor> seam; 
+  std::vector<SM_edge_descriptor> seam;
 
   std::ifstream in_mesh((argc>1)?argv[1]:"data/lion.off");
   in_mesh >> sm;
@@ -75,53 +76,54 @@ int main(int argc, char * argv[])
   if(iss >> p1 >> p2){
     two_vertices_given = true;
   }
-  
+
   int s,t;
   SM_halfedge_descriptor smhd;
   while(in >> s >> t){
-    SM_vertex_descriptor svd(s), tvd(t); 
-    SM_edge_descriptor ed = edge(svd, tvd,sm).first;
-    if(! is_border(ed,sm)){
+    SM_vertex_descriptor svd(s), tvd(t);
+    SM_edge_descriptor ed = edge(svd, tvd, sm).first;
+    if(! is_border(ed, sm)){
       put(seam_edge_pm, ed, true);
       put(seam_vertex_pm, svd, true);
       put(seam_vertex_pm, tvd, true);
       if(smhd == boost::graph_traits<SurfaceMesh>::null_halfedge()){
-        smhd = halfedge(edge(svd,tvd,sm).first,sm);
+        smhd = halfedge(edge(svd, tvd, sm).first, sm);
       }
     }
   }
-  
+
   Mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
 
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that the uv
-  // is only stored for the canonical halfedges representing a vertex  
+  // is only stored for the canonical halfedges representing a vertex
   UV_pmap uv_pm = sm.add_property_map<SM_halfedge_descriptor,Point_2>("h:uv").first;
 
   halfedge_descriptor bhd(smhd);
-  bhd = opposite(bhd,mesh); // a halfedge on the virtual border
+  bhd = opposite(bhd, mesh); // a halfedge on the virtual border
 
   typedef CGAL::Two_vertices_parameterizer_3<Mesh> Border_parameterizer;
   typedef CGAL::LSCM_parameterizer_3<Mesh, Border_parameterizer> Parameterizer;
 
   if(two_vertices_given){
     SM_halfedge_descriptor smhp1 = halfedge(SM_vertex_descriptor(p1),sm);
-    vertex_descriptor vp1 = target(halfedge_descriptor(smhp1),mesh);
-    
+    vertex_descriptor vp1 = target(halfedge_descriptor(smhp1), mesh);
+
     SM_halfedge_descriptor smhp2 = halfedge(SM_vertex_descriptor(p2),sm);
-    vertex_descriptor vp2 = target(halfedge_descriptor(smhp2),mesh);
-    
+    vertex_descriptor vp2 = target(halfedge_descriptor(smhp2), mesh);
+
     CGAL::parameterize(mesh, Parameterizer(Border_parameterizer(vp1, vp2)), bhd, uv_pm);
   } else {
     CGAL::parameterize(mesh, Parameterizer(), bhd, uv_pm);
   }
 
-  Face2Polyline f2p(mesh,uv_pm);
+  Face2Polyline f2p(mesh, uv_pm);
+
   // As the seam may define a patch we write
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(f2p));
-  
+
   return 0;
 }
 

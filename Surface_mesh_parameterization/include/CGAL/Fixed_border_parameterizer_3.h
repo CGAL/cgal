@@ -18,7 +18,6 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-
 #ifndef CGAL_FIXED_BORDER_PARAMETERIZER_3_H
 #define CGAL_FIXED_BORDER_PARAMETERIZER_3_H
 
@@ -28,14 +27,11 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Eigen_solver_traits.h>
 
-
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <boost/unordered_set.hpp>
-
-
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <boost/function_output_iterator.hpp>
@@ -47,7 +43,6 @@ namespace CGAL {
 // ------------------------------------------------------------------------------------
 // Declaration
 // ------------------------------------------------------------------------------------
-
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
@@ -66,8 +61,8 @@ namespace CGAL {
 /// - They may implement an optimized version of `is_one_to_one_mapping()`.
 ///
 // @todo `Fixed_border_parameterizer_3` should remove border vertices
-/// from the linear systems in order to have a symmetric positive definite
-/// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
+// from the linear systems in order to have a symmetric positive definite
+// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
 /// \cgalModels `ParameterizerTraits_3`
 ///
@@ -82,57 +77,56 @@ namespace CGAL {
 
 template
 <
-    class TriangleMesh,       ///< a model of  FaceGraph
-    class BorderParameterizer_3         ///< Strategy to parameterize the surface border
-                = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
-    class SparseLinearAlgebraTraits_d   ///< Traits class to solve a sparse linear system
-                = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > > >
+  class TriangleMesh,       ///< a model of  FaceGraph
+  class BorderParameterizer_3         ///< Strategy to parameterize the surface border
+    = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
+  class SparseLinearAlgebraTraits_d   ///< Traits class to solve a sparse linear system
+    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+                                          Eigen::IncompleteLUT< double > > > >
 
 class Fixed_border_parameterizer_3
-    : public Parameterizer_traits_3<TriangleMesh>
+  : public Parameterizer_traits_3<TriangleMesh>
 {
-  // Private types
+// Private types
 private:
   typedef Parameterizer_traits_3<TriangleMesh> Base;
 
-  // Public types
+// Public types
 public:
   // We have to repeat the types exported by superclass
   /// @cond SKIP_IN_MANUAL
   typedef typename Base::Error_code       Error_code;
   /// @endcond
-  
+
   /// Export BorderParameterizer_3 template parameter.
   typedef BorderParameterizer_3           Border_param;
   /// Export SparseLinearAlgebraTraits_d template parameter.
   typedef SparseLinearAlgebraTraits_d     Sparse_LA;
-  
-  // Private types
+
+// Private types
 private:
-  
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  
+
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
-  
+
   // Mesh_Adaptor_3 subtypes:
   typedef typename Base::NT            NT;
   typedef typename Base::Point_2       Point_2;
   typedef typename Base::Point_3       Point_3;
   typedef typename Base::Vector_3      Vector_3;
-  
-  
+
   // SparseLinearAlgebraTraits_d subtypes:
   typedef typename Sparse_LA::Vector      Vector;
   typedef typename Sparse_LA::Matrix      Matrix;
-  
+
 protected:
   // Using statements needed for derived class
   using Base::compute_angle_rad;
   using Base::cotangent;
-  
-  // Public operations
+
+// Public operations
 public:
   /// Constructor
   Fixed_border_parameterizer_3(Border_param border_param = Border_param(),
@@ -140,10 +134,10 @@ public:
                                Sparse_LA sparse_la = Sparse_LA())
     ///< Traits object to access a sparse linear system
     : m_borderParameterizer(border_param), m_linearAlgebra(sparse_la)
-  {}
-  
+  { }
+
   // Default copy constructor and operator =() are fine
-  
+
   /// Compute a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is linear by pieces (linear in each triangle).
@@ -152,17 +146,16 @@ public:
   /// \pre `mesh` must be a surface with one connected component.
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The mesh border must be mapped onto a convex polygon.
-  
+
   template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
-  Error_code  parameterize(TriangleMesh& mesh,
-                           halfedge_descriptor,
-                           VertexUVmap,
-                           VertexIndexMap vimap,
-                           VertexParameterizedMap vpm);
-  
-  // Protected operations
+  Error_code parameterize(TriangleMesh& mesh,
+                          halfedge_descriptor,
+                          VertexUVmap,
+                          VertexIndexMap vimap,
+                          VertexParameterizedMap vpm);
+
+// Protected operations
 protected:
-  
   /// Initialize A, Bu and Bv after border parameterization.
   /// Fill the border vertices' lines in both linear systems:
   /// "u = constant" and "v = constant".
@@ -170,12 +163,12 @@ protected:
   /// \pre Vertices must be indexed.
   /// \pre A, Bu and Bv must be allocated.
   /// \pre Border vertices must be parameterized.
-  template <typename VertexUVmap, typename VertexIndexMap >
-  void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
-                                            const TriangleMesh& tmesh,
-                                            halfedge_descriptor bhd,
-                                            VertexUVmap uvmap,
-                                            VertexIndexMap vimap)
+  template <typename VertexUVmap, typename VertexIndexMap>
+  void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv,
+                                          const TriangleMesh& tmesh,
+                                          halfedge_descriptor bhd,
+                                          VertexUVmap uvmap,
+                                          VertexIndexMap vimap)
   {
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
       // Get vertex index in sparse linear system
@@ -203,8 +196,8 @@ protected:
   /// \pre Vertices must be indexed.
   /// \pre Vertex i musn't be already parameterized.
   /// \pre Line i of A must contain only zeros.
-  // TODO: check if this must be virtual 
-  // virtual 
+  // TODO: check if this must be virtual
+  // virtual
   template <typename VertexIndexMap>
   Error_code setup_inner_vertex_relations(Matrix& A,
                                           Vector&,
@@ -214,21 +207,21 @@ protected:
                                           VertexIndexMap vimap)
   {
     int i = get(vimap,vertex);
-  
+
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
     NT w_ii = 0;
     int vertexIndex = 0;
-  
-    vertex_around_target_circulator v_j(halfedge(vertex,mesh), mesh), end = v_j;
+
+    vertex_around_target_circulator v_j(halfedge(vertex, mesh), mesh), end = v_j;
     CGAL_For_all(v_j, end){
       // Call to virtual method to do the actual coefficient computation
       NT w_ij = -1.0 * compute_w_ij(mesh, vertex, v_j);
       // w_ii = - sum of w_ijs
       w_ii -= w_ij;
-    
+
       // Get j index
       int j = get(vimap, *v_j);
-    
+
       // Set w_ij in matrix
       A.set_coef(i,j, w_ij, true /*new*/);
       vertexIndex++;
@@ -236,50 +229,50 @@ protected:
 
     if (vertexIndex < 2)
       return Base::ERROR_NON_TRIANGULAR_MESH;
-  
+
     // Set w_ii in matrix
     A.set_coef(i,i, w_ii, true /*new*/);
     return Base::OK;
   }
 
-
-  // Protected accessors
+// Protected accessors
 protected:
   /// Get the object that maps the surface's border onto a 2D space.
-  Border_param&   get_border_parameterizer()    { return m_borderParameterizer; }
+  Border_param& get_border_parameterizer() { return m_borderParameterizer; }
 
   /// Get the sparse linear algebra (traits object to access the linear system).
-  Sparse_LA&      get_linear_algebra_traits() { return m_linearAlgebra; }
+  Sparse_LA& get_linear_algebra_traits() { return m_linearAlgebra; }
 
-  // Fields
+// Fields
 private:
   /// Object that maps the surface's border onto a 2D space.
-  Border_param    m_borderParameterizer;
+  Border_param m_borderParameterizer;
 
   /// Traits object to solve a sparse linear system
-  Sparse_LA       m_linearAlgebra;
+  Sparse_LA m_linearAlgebra;
 };
 
-  namespace Parameterization {
-    
-    template <typename Mesh, typename Set>
-    struct Vertices_set {
+namespace Parameterization {
 
-      Vertices_set(const Mesh& mesh, Set& set)
-        : mesh(mesh), set(&set)
-      {}
-    
-      void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
-      {
-        BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
-          set->insert(vd);
-        }
-      }
+template <typename Mesh, typename Set>
+struct Vertices_set {
 
-      const Mesh& mesh;
-      mutable Set* set;
-    };
+  Vertices_set(const Mesh& mesh, Set& set)
+    : mesh(mesh), set(&set)
+  {}
+
+  void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
+  {
+    BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
+      set->insert(vd);
+    }
   }
+
+  const Mesh& mesh;
+  mutable Set* set;
+};
+
+} // namespace Parameterization
 
 
 // ------------------------------------------------------------------------------------
@@ -295,7 +288,7 @@ private:
 // - `mesh` must be a surface with one connected component.
 // - `mesh` must be a triangular mesh.
 // - The mesh border must be mapped onto a convex polygon.
-template <class TriangleMesh, class Border_param, class Sparse_LA> 
+template <class TriangleMesh, class Border_param, class Sparse_LA>
 template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
 typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
@@ -305,97 +298,92 @@ parameterize(TriangleMesh& mesh,
              VertexIndexMap vimap,
              VertexParameterizedMap vpm)
 {
-    Error_code status = Base::OK; 
+  Error_code status = Base::OK;
 
-    typedef boost::unordered_set<vertex_descriptor> Vertex_set;
-    Vertex_set vertices;
-    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
+  typedef boost::unordered_set<vertex_descriptor> Vertex_set;
+  Vertex_set vertices;
+  CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(Parameterization::Vertices_set<TriangleMesh,Vertex_set>(mesh,vertices)));
-    // Count vertices
-    int nbVertices = static_cast<int>(num_vertices(mesh));
-    // Compute (u,v) for border vertices
-    // and mark them as "parameterized"
-    status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);
+  // Count vertices
+  int nbVertices = static_cast<int>(num_vertices(mesh));
+  // Compute (u,v) for border vertices
+  // and mark them as "parameterized"
+  status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);
 
-    if (status != Base::OK)
-        return status;
-
-    // Create two sparse linear systems "A*Xu = Bu" and "A*Xv = Bv" (one line/column per vertex)
-    Matrix A(nbVertices, nbVertices);
-    Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
-
-    // Initialize A, Xu, Xv, Bu and Bv after border parameterization
-    // Fill the border vertices' lines in both linear systems:
-    // "u = constant" and "v = constant"
-    //
-    // @todo Fixed_border_parameterizer_3 should remove border vertices
-    // from the linear systems in order to have a symmetric positive definite
-    // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
-    initialize_system_from_mesh_border (A, Bu, Bv, mesh, bhd, uvmap, vimap);
-
-    // Fill the matrix for the inner vertices v_i: compute A's coefficient
-    // w_ij for each neighbor j; then w_ii = - sum of w_ijs
-    boost::unordered_set<vertex_descriptor> main_border;
-
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(bhd,mesh)){
-      main_border.insert(v);
-    }
-    int count = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices){
-      // inner vertices only
-      if( main_border.find(v) == main_border.end() )
-        {
-            // Compute the line i of matrix A for i inner vertex
-            status = setup_inner_vertex_relations(A, Bu, Bv,
-                                                  mesh,
-                                                  v,
-                                                  vimap);
-            if (status != Base::OK)
-                return status;
-        }else{
-        count++;
-      }
-    }
-    // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
-    // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-    NT Du, Dv;
-    if ( !get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
-         !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv) )
-    {
-        status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
-    }
-
-    if (status != Base::OK)
-        return status;
-
-    // WARNING: this package does not support homogeneous coordinates!
-    CGAL_assertion(Du == 1.0);
-    CGAL_assertion(Dv == 1.0);
-
-    // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-
-    BOOST_FOREACH(vertex_descriptor v, vertices)
-    {
-      // inner vertices only
-      if( main_border.find(v) == main_border.end() )
-        {
-          int index = get(vimap,v);
-          put(uvmap,v,Point_2(Xu[index],Xv[index]));
-          put(vpm,v,true);
-        }
-    }
-
-    // Check postconditions
-    // AF status = check_parameterize_postconditions(amesh, A, Bu, Bv);
-
-    if (status != Base::OK)
-        return status;
-
+  if (status != Base::OK)
     return status;
+
+  // Create two sparse linear systems "A*Xu = Bu" and "A*Xv = Bv" (one line/column per vertex)
+  Matrix A(nbVertices, nbVertices);
+  Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
+
+  // Initialize A, Xu, Xv, Bu and Bv after border parameterization
+  // Fill the border vertices' lines in both linear systems:
+  // "u = constant" and "v = constant"
+  //
+  // @todo Fixed_border_parameterizer_3 should remove border vertices
+  // from the linear systems in order to have a symmetric positive definite
+  // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
+  initialize_system_from_mesh_border(A, Bu, Bv, mesh, bhd, uvmap, vimap);
+
+  // Fill the matrix for the inner vertices v_i: compute A's coefficient
+  // w_ij for each neighbor j; then w_ii = - sum of w_ijs
+  boost::unordered_set<vertex_descriptor> main_border;
+
+  BOOST_FOREACH(vertex_descriptor v, vertices_around_face(bhd,mesh)){
+    main_border.insert(v);
+  }
+
+  int count = 0;
+  BOOST_FOREACH(vertex_descriptor v, vertices){
+    // inner vertices only
+    if(main_border.find(v) == main_border.end()){
+      // Compute the line i of matrix A for i inner vertex
+      status = setup_inner_vertex_relations(A, Bu, Bv, mesh, v, vimap);
+      if(status != Base::OK)
+        return status;
+    } else {
+      count++;
+    }
+  }
+
+  // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
+  // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
+  NT Du, Dv;
+  if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
+     !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
+  {
+    status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
+  }
+
+  if(status != Base::OK)
+      return status;
+
+  // WARNING: this package does not support homogeneous coordinates!
+  CGAL_assertion(Du == 1.0);
+  CGAL_assertion(Dv == 1.0);
+
+  // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
+  BOOST_FOREACH(vertex_descriptor v, vertices)
+  {
+    // inner vertices only
+    if(main_border.find(v) == main_border.end()){
+      int index = get(vimap,v);
+      put(uvmap,v,Point_2(Xu[index],Xv[index]));
+      put(vpm,v,true);
+    }
+  }
+
+  // Check postconditions
+  // AF status = check_parameterize_postconditions(amesh, A, Bu, Bv);
+
+  if(status != Base::OK)
+    return status;
+
+  return status;
 }
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif //CGAL_FIXED_BORDER_PARAMETERIZER_3_H
+#endif // CGAL_FIXED_BORDER_PARAMETERIZER_3_H

@@ -67,73 +67,70 @@ namespace CGAL {
 
 template
 <
-    class TriangleMesh,
-    class BorderParameterizer_3
-                = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
-    class SparseLinearAlgebraTraits_d
-                = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > >
+  class TriangleMesh,
+  class BorderParameterizer_3
+    = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
+  class SparseLinearAlgebraTraits_d
+    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+                                          Eigen::IncompleteLUT< double > > >
 >
 class Barycentric_mapping_parameterizer_3
-    : public Fixed_border_parameterizer_3<TriangleMesh,
+  : public Fixed_border_parameterizer_3<TriangleMesh,
                                         BorderParameterizer_3,
                                         SparseLinearAlgebraTraits_d>
 {
 // Private types
 private:
-    // Superclass
-    typedef Fixed_border_parameterizer_3<TriangleMesh,
-                                        BorderParameterizer_3,
-                                        SparseLinearAlgebraTraits_d>
-                                            Base;
+  // Superclass
+  typedef Fixed_border_parameterizer_3<TriangleMesh,
+                                      BorderParameterizer_3,
+                                      SparseLinearAlgebraTraits_d>  Base;
 
 // Public types
 public:
-    // We have to repeat the types exported by superclass
-    /// @cond SKIP_IN_MANUAL
-    typedef typename Base::Error_code       Error_code;
-    typedef BorderParameterizer_3           Border_param;
-    typedef SparseLinearAlgebraTraits_d     Sparse_LA;
-    /// @endcond
-
+  // We have to repeat the types exported by superclass
+  /// @cond SKIP_IN_MANUAL
+  typedef typename Base::Error_code       Error_code;
+  typedef BorderParameterizer_3           Border_param;
+  typedef SparseLinearAlgebraTraits_d     Sparse_LA;
+  /// @endcond
 
 protected:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>  vertex_around_target_circulator;
   typedef typename Parameterizer_traits_3<TriangleMesh>::NT  NT;
 
-    // SparseLinearAlgebraTraits_d subtypes:
-    typedef typename Sparse_LA::Vector      Vector;
-    typedef typename Sparse_LA::Matrix      Matrix;
+  // SparseLinearAlgebraTraits_d subtypes:
+  typedef typename Sparse_LA::Vector      Vector;
+  typedef typename Sparse_LA::Matrix      Matrix;
 
 // Public operations
 public:
-    /// Constructor
-    Barycentric_mapping_parameterizer_3(Border_param border_param = Border_param(),
-                                        ///< object that maps the surface's border to 2D space.
-                                        Sparse_LA sparse_la = Sparse_LA())
-                                        ///< Traits object to access a sparse linear system.
-    :   Fixed_border_parameterizer_3<TriangleMesh,
-                                   Border_param,
-                                   Sparse_LA>(border_param, sparse_la)
-    {}
+  /// Constructor
+  Barycentric_mapping_parameterizer_3(Border_param border_param = Border_param(),
+                                      ///< object that maps the surface's border to 2D space.
+                                      Sparse_LA sparse_la = Sparse_LA())
+                                      ///< Traits object to access a sparse linear system.
+  : Fixed_border_parameterizer_3<TriangleMesh,
+                                 Border_param,
+                                 Sparse_LA>(border_param, sparse_la)
+  { }
 
-    // Default copy constructor and operator =() are fine
+  // Default copy constructor and operator =() are fine
 
 // Protected operations
 protected:
-    /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
-    virtual NT compute_w_ij(const TriangleMesh& /* mesh */,
-			  vertex_descriptor /* main_vertex_v_i */,
-			  vertex_around_target_circulator /* neighbor_vertex_v_j */ )
-    {
-        /// Tutte Barycentric Mapping algorithm is the most simple one:
-        /// w_ij = 1 for j neighbor vertex of i.
-        return 1;
-    }
-
+  /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+  virtual NT compute_w_ij(const TriangleMesh& /* mesh */,
+      vertex_descriptor /* main_vertex_v_i */,
+      vertex_around_target_circulator /* neighbor_vertex_v_j */ )
+  {
+    /// Tutte Barycentric Mapping algorithm is the most simple one:
+    /// w_ij = 1 for j neighbor vertex of i.
+    return 1;
+  }
 };
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif //CGAL_BARYCENTRIC_MAPPING_PARAMETERIZER_3_H
+#endif // CGAL_BARYCENTRIC_MAPPING_PARAMETERIZER_3_H

@@ -35,74 +35,71 @@
 
 namespace CGAL {
 
-  namespace internal {
+namespace internal {
 
-  template <typename Set>
-  class Bool_property_map
+template <typename Set>
+class Bool_property_map
+{
+  typedef Set S;
+  typedef Bool_property_map<S> Self;
+
+public:
+  typedef typename Set::key_type key_type;
+  typedef bool value_type;
+  typedef bool reference;
+  typedef boost::read_write_property_map_tag category;
+
+  friend value_type get(const Self& pm, const key_type& k)
   {
-    typedef Set S;
-    typedef Bool_property_map<S> Self;
-
-  public:
-    typedef typename Set::key_type key_type;
-    typedef bool value_type;
-    typedef bool reference;
-    typedef boost::read_write_property_map_tag category;
-   
-    friend value_type get(const Self& pm, const key_type& k) 
-    {
-      return pm.m_s->find(k) != pm.m_s->end();
-    }
-
-    friend void put(const Self& pm, key_type& k, const value_type& v)
-    {
-      if(v){
-        pm.m_s->insert(k);
-      } else {
-        pm.m_s->erase(k);
-      }
-    }
-
-    Bool_property_map() : m_s(0) { }
-    Bool_property_map(S& s) : m_s(&s) { }
-   
-  private:
-    S* m_s;
-  };
-
-  } // namespace internal
-
-
-
-  namespace Parameterization {
-    
-    template <typename Mesh, typename Map>
-    struct Vertices {
-
-      Vertices(const Mesh& mesh, Map& map)
-        : mesh(mesh), map(&map), index(0)
-      {}
-    
-      void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
-      {
-
-        BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
-        
-          typename Map::iterator it;
-          bool new_element;
-          boost::tie(it,new_element) = map->insert(std::make_pair(vd,1));
-          if(new_element){
-            it->second = index++;
-          }
-        
-        }
-      }
-
-      const Mesh& mesh;
-      mutable Map* map;
-      int index;
-    };
+    return pm.m_s->find(k) != pm.m_s->end();
   }
+
+  friend void put(const Self& pm, key_type& k, const value_type& v)
+  {
+    if(v){
+      pm.m_s->insert(k);
+    } else {
+      pm.m_s->erase(k);
+    }
+  }
+
+  Bool_property_map() : m_s(0) { }
+  Bool_property_map(S& s) : m_s(&s) { }
+
+private:
+  S* m_s;
+};
+
+} // namespace internal
+
+
+namespace Parameterization {
+
+template <typename Mesh, typename Map>
+struct Vertices {
+
+  Vertices(const Mesh& mesh, Map& map)
+    : mesh(mesh), map(&map), index(0)
+  { }
+
+  void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
+  {
+    BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
+      typename Map::iterator it;
+      bool new_element;
+      boost::tie(it,new_element) = map->insert(std::make_pair(vd,1));
+      if(new_element){
+        it->second = index++;
+      }
+    }
+  }
+
+  const Mesh& mesh;
+  mutable Map* map;
+  int index;
+};
+
+} // namespace Parameterization
 
 
 /// \ingroup  PkgSurfaceParameterizationMainFunction
@@ -119,7 +116,6 @@ namespace CGAL {
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The mesh border must be mapped onto a convex polygon
 ///   (for fixed border parameterizations).
-
 template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
 parameterize(TriangleMesh& mesh,
@@ -138,6 +134,7 @@ parameterize(TriangleMesh& mesh,
   return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
 }
 
+
 /// \ingroup  PkgSurfaceParameterizationMainFunction
 ///
 /// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
@@ -155,8 +152,6 @@ parameterize(TriangleMesh& mesh,
              HD bhd,
              VertexUVmap uvm)
 {
-
-
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef boost::unordered_map<vertex_descriptor,int> Indices;
   Indices indices;
@@ -166,24 +161,24 @@ parameterize(TriangleMesh& mesh,
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(Parameterization::Vertices<TriangleMesh,Indices>(mesh,indices)));
-  
+
   Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
   return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
-  
+
   return Parameterizer_traits_3<TriangleMesh>::OK;
 }
 
 
-  template <class TM, class SEM, class SVM>
+template <class TM, class SEM, class SVM>
 class Seam_mesh;
 
 
-  template <class TM, class SEM, class SVM, class HD, class VertexUVmap>
-  typename Parameterizer_traits_3<Seam_mesh<TM,SEM,SVM> >::Error_code
-  parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
+template <class TM, class SEM, class SVM, class HD, class VertexUVmap>
+typename Parameterizer_traits_3<Seam_mesh<TM,SEM,SVM> >::Error_code
+parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
              HD bhd,
              VertexUVmap uvm)
-{ 
+{
   typedef typename boost::graph_traits<Seam_mesh<TM,SEM,SVM> >::vertex_descriptor vertex_descriptor;
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
@@ -204,7 +199,7 @@ parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
              Parameterizer parameterizer,
              HD bhd,
              VertexUVmap uvm)
-{ 
+{
   typedef typename boost::graph_traits<Seam_mesh<TM,SEM,SVM> >::vertex_descriptor vertex_descriptor;
 
   boost::unordered_set<vertex_descriptor> vs;
@@ -218,6 +213,6 @@ parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
   return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif //CGAL_PARAMETERIZE_H
+#endif // CGAL_PARAMETERIZE_H
