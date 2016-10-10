@@ -1691,7 +1691,10 @@ const CGAL::Vector_3<Kernel>& w);
 
 /// @}
 /*!
-returns the dihedral angle of ....   between `-180` and `180` degree.
+returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
+    The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise. 
+    The angle is given in degree.
+    \pre `p,q,r` and `p,q,s` are not collinear.
 */
 template <typename Kernel>
 Kernel::FT dihedral_angle(const CGAL::Point_3<Kernel>& p,
