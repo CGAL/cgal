@@ -79,13 +79,13 @@ int main (int argc, char** argv)
   
   std::cerr << "Using helper " << std::endl;
 
-  for (std::size_t i = 0; i < 3; ++ i)
-    {
+  // for (std::size_t i = 0; i < 3; ++ i)
+  //   {
       Helper helper (pts.begin(), pts.end(), Pmap(),
-                     (i+1) * grid_resolution, (i+1)*radius_neighbors, (i+1)*radius_dtm);
+                     grid_resolution, radius_neighbors, radius_dtm);
 
       helper.generate_attributes (psc, pts.begin(), pts.end(), Pmap());
-    }
+      //    }
   
   // Add types to PSC
   CGAL::Data_classification::Type_handle ground
@@ -102,16 +102,16 @@ int main (int argc, char** argv)
       switch (labels[i])
         {
         case 0:
-          vege->training_set().push_back (i);
+          psc.add_training_index(vege, i);
           break;
         case 1:
-          ground->training_set().push_back (i);
+          psc.add_training_index(ground, i);
           break;
         case 2:
-          roof->training_set().push_back (i);
+          psc.add_training_index(roof, i);
           break;
         case 3:
-          facade->training_set().push_back (i);
+          psc.add_training_index(facade, i);
           break;
         default:
           break;
@@ -121,11 +121,10 @@ int main (int argc, char** argv)
 
   //  psc.set_multiplicative(true);
   std::cerr << "Training" << std::endl;
-  psc.training();
+  psc.training(1000);
 
-  Helper::Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
-  psc.run_with_graphcut (neighborhood, 0.5);
-  //psc.run_quick();
+  //  psc.run_with_graphcut (helper.neighborhood(), 0.5);
+  psc.run();
   
   // Save the output in a colored PLY format
 
@@ -162,7 +161,9 @@ int main (int argc, char** argv)
           //          std::cerr << "Error: unknown classification type" << std::endl;
         }
     }
-
+  helper.save ("config.xml", psc);
+  
   std::cerr << "All done" << std::endl;
+  
   return EXIT_SUCCESS;
 }
