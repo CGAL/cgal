@@ -24,6 +24,8 @@
 #include <CGAL/Polynomial/internal/numeric_solvers_support.h>
 #include <vector>
 
+#ifdef CGAL_POLYNOMIAL_USE_GSL
+
 #include <gsl/gsl_poly.h>
 #include <gsl/gsl_errno.h>
 
@@ -220,4 +222,7 @@ struct GSL_cleaned_numeric_solver
 };
 
 } } } //namespace CGAL::POLYNOMIAL::internal
+
+#endif // CGAL_POLYNOMIAL_USE_GSL
+
 #endif
