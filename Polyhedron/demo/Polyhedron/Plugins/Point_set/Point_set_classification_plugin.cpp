@@ -150,6 +150,8 @@ public:
             SLOT(on_add_new_class_clicked()));
     connect(ui_widget.reset_training_sets,  SIGNAL(clicked()), this,
             SLOT(on_reset_training_sets_clicked()));
+    connect(ui_widget.validate_selection,  SIGNAL(clicked()), this,
+            SLOT(on_validate_selection_clicked()));
     connect(ui_widget.train,  SIGNAL(clicked()), this,
             SLOT(on_train_clicked()));
 
@@ -410,58 +412,55 @@ public Q_SLOTS:
 
   void on_save_config_button_clicked()
   {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
     QString filename = QFileDialog::getSaveFileName(mw,
                                                     tr("Save classification configuration"),
-                                                    QString("default.conf"),
-                                                    "Config file (*.conf);;");
+                                                    QString("config.xml"),
+                                                    "Config file (*.xml);;");
     if (filename == QString())
       return;
 
-    std::ofstream out(filename.toUtf8());
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    out << ui_widget.gridResolutionDoubleSpinBox->value() << " "
-        << ui_widget.radiusNeighborsDoubleSpinBox->value() << " "
-        << ui_widget.radiusDTMDoubleSpinBox->value() << " " << std::endl;
-
-    // TODO: save class types with attributes and weights
+    classification_item->save_config (filename.toStdString().c_str());
     
     QApplication::restoreOverrideCursor();
 
-    out.close();
   }
 
   void on_load_config_button_clicked()
   {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
     QString filename = QFileDialog::getOpenFileName(mw,
                                                     tr("Open classification configuration"),
                                                     ".",
-                                                    "Config file (*.conf);;All Files (*)");
+                                                    "Config file (*.xml);;All Files (*)");
 
     if (filename == QString())
       return;
 
-    std::ifstream in(filename.toUtf8());
-    
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    double gridResolution = 0., radiusNeighbors = 0., radiusDTM = 0.;
-    if (!(in >> gridResolution >> radiusNeighbors >> radiusDTM))
-      {
-        std::cerr << "Error: can't read config file." << std::endl;
-        return;
-      }
-
-    ui_widget.gridResolutionDoubleSpinBox->setValue(gridResolution);
-    ui_widget.radiusNeighborsDoubleSpinBox->setValue(radiusNeighbors);
-    ui_widget.radiusDTMDoubleSpinBox->setValue(radiusDTM);
-
-    // TODO: load class types and attributes
+    classification_item->load_config (filename.toStdString().c_str());
+    update_plugin_from_item(classification_item);
+    run (classification_item, 0);
     
     QApplication::restoreOverrideCursor();
-
-    in.close();
+    scene->itemChanged(classification_item);
   }
 
 
@@ -667,7 +666,20 @@ public Q_SLOTS:
 
     classification_item->reset_training_sets();
   }
-  
+
+  void on_validate_selection_clicked()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    classification_item->validate_selection();
+  }
+
   void on_train_clicked()
   {
     Scene_point_set_classification_item* classification_item

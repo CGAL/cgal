@@ -180,6 +180,21 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     m_points->resetSelection();
   }
 
+  void validate_selection ()
+  {
+    if (!(m_psc->classification_prepared()))
+      m_psc->prepare_classification();
+
+    for (Point_set::const_iterator it = m_points->point_set()->first_selected();
+         it != m_points->point_set()->end(); ++ it)
+      {
+        Type_handle t = m_psc->classification_type_of(*it);
+        m_psc->add_training_index (t, *it);
+      }
+
+    m_points->resetSelection();
+  }
+
   double& grid_resolution() { return m_grid_resolution; }
   double& radius_neighbors() { return m_radius_neighbors; }
   double& radius_dtm() { return m_radius_dtm; }
@@ -226,6 +241,109 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
         cb->addItem (oss.str().c_str());
         cb1->addItem (m_psc->get_attribute(i)->id().c_str());
       }
+  }
+
+  void save_config(const char* filename)
+  {
+    if (m_helper == NULL)
+      {
+        std::cerr << "Error: features not computed" << std::endl;
+        return;
+      }
+
+    m_helper->save (filename, *m_psc);
+  }
+
+  void load_config(const char* filename)
+  {
+    if (m_helper != NULL)
+      delete m_helper;
+
+    m_psc->clear_classification_types();
+    m_psc->clear_attributes();
+
+    bool normals = m_points->point_set()->has_normal_map();
+    bool colors = m_points->point_set()->has_colors();
+    typename Point_set::Property_map<boost::uint8_t> echo_map;
+    bool echo;
+    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
+
+    if (!normals && !colors && !echo)
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map());
+    else if (!normals && !colors && echo)
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map(),
+                             CGAL::Empty_property_map<Iterator, Vector_3>(),
+                             CGAL::Empty_property_map<Iterator, Color>(),
+                             echo_map);
+    else if (!normals && colors && !echo)
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map(),
+                             CGAL::Empty_property_map<Iterator, Vector_3>(),
+                             Color_map(m_points->point_set()));
+    else if (!normals && colors && echo)
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map(),
+                             CGAL::Empty_property_map<Iterator, Vector_3>(),
+                             Color_map(m_points->point_set()),
+                             echo_map);
+    else if (normals && !colors && !echo)
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map(),
+                             m_points->point_set()->normal_map());
+    else if (normals && !colors && echo)
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map(),
+                             m_points->point_set()->normal_map(),
+                             CGAL::Empty_property_map<Iterator, Color>(),
+                             echo_map);
+    else if (normals && colors && !echo)
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map(),
+                             m_points->point_set()->normal_map(),
+                             CGAL::Empty_property_map<Iterator, Color>());
+    else
+      m_helper = new Helper (*m_psc, filename,
+                             m_points->point_set()->begin(),
+                             m_points->point_set()->end(),
+                             m_points->point_set()->point_map(),
+                             m_points->point_set()->normal_map(),
+                             Color_map(m_points->point_set()),
+                             echo_map);
+    
+    std::vector<std::pair<Type_handle, QColor> > new_types;
+    for (std::size_t i = 0; i < m_psc->number_of_classification_types(); ++ i)
+      {
+        Type_handle t = m_psc->get_classification_type(i);
+        QColor color (192 + rand() % 60,
+                      192 + rand() % 60,
+                      192 + rand() % 60);
+
+        for (std::size_t j = 0; j < m_types.size(); ++ j)
+          if (t->id() == m_types[j].first->id())
+            {
+              color = m_types[j].second;
+              break;
+            }
+
+        new_types.push_back (std::make_pair (t, color));
+      }
+    m_types.swap (new_types);
   }
 
  public Q_SLOTS:

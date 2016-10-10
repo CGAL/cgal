@@ -658,6 +658,12 @@ void Scene_point_set_classification_item::train()
 
 bool Scene_point_set_classification_item::run (int method)
 {
+  if (m_helper == NULL)
+    {
+      std::cerr << "Error: features not computed" << std::endl;
+      return false;
+    }
+
   if (method == 0)
     m_psc->run();
   else if (method == 1)
