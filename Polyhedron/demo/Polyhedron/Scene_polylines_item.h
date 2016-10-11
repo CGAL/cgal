@@ -25,6 +25,16 @@ public:
 
     Scene_polylines_item();
     virtual ~Scene_polylines_item();
+    enum STATS {
+      NB_VERTICES = 0,
+      NB_EDGES,
+      MIN_LENGTH,
+      MAX_LENGTH,
+      MEAN_LENGTH
+    };
+    bool has_stats()const {return true;}
+    QString computeStats(int type);
+    CGAL::Three::Scene_item::Header_data header() const;
 
     bool isFinite() const { return true; }
     bool isEmpty() const;

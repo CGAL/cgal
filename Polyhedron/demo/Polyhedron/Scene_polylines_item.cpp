@@ -17,6 +17,16 @@ struct Scene_polylines_item_private {
         spheres_drawn_radius(0)
     {
       item = parent;
+      invalidate_stats();
+    }
+    void invalidate_stats()
+    {
+      nb_vertices = 0;
+      nb_edges = 0;
+      min_length = INT_MAX;
+      max_length = 0;
+      mean_length = 0;
+      computed_stats = false;
     }
 
     enum VAOs {
@@ -39,6 +49,12 @@ struct Scene_polylines_item_private {
     bool draw_extremities;
     double spheres_drawn_radius;
     Scene_polylines_item *item;
+    mutable std::size_t nb_vertices;
+    mutable std::size_t nb_edges;
+    mutable double min_length;
+    mutable double max_length;
+    mutable double mean_length;
+    mutable bool computed_stats;
 };
 
 
@@ -72,16 +88,33 @@ Scene_polylines_item_private::computeElements() const
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
+    double mean = 0;
     //Fills the VBO with the lines
     for(std::list<std::vector<Point_3> >::const_iterator it = item->polylines.begin();
         it != item->polylines.end();
-        ++it){
+        ++it)
+    {
         if(it->empty()) continue;
+        nb_vertices += it->size();
         for(size_t i = 0, end = it->size()-1;
             i < end; ++i)
         {
             const Point_3& a = (*it)[i];
             const Point_3& b = (*it)[i+1];
+            if(!computed_stats)
+            {
+              ++nb_edges;
+                double length = CGAL::sqrt(
+                      (a.x()-b.x()) * (a.x()-b.x()) +
+                      (a.y()-b.y()) * (a.y()-b.y()) +
+                      (a.z()-b.z()) * (a.z()-b.z()) );
+                if(max_length < length)
+                  max_length = length;
+                if(min_length > length)
+                  min_length = length;
+                mean += length;
+            }
+
             positions_lines.push_back(a.x());
             positions_lines.push_back(a.y());
             positions_lines.push_back(a.z());
@@ -94,6 +127,9 @@ Scene_polylines_item_private::computeElements() const
         }
 
     }
+    if(!computed_stats)
+      mean_length = mean/nb_edges;
+    computed_stats = true;
     QApplication::restoreOverrideCursor();
 }
 
@@ -390,6 +426,7 @@ QMenu* Scene_polylines_item::contextMenu()
 void Scene_polylines_item::invalidateOpenGLBuffers()
 {
     are_buffers_filled = false;
+    d->invalidate_stats();
     compute_bbox();
 
 
@@ -582,4 +619,38 @@ void Scene_polylines_item::smooth(std::vector<Point_3>& polyline){
     }
 
     if (is_closed) polyline[end]=polyline[0];
+}
+
+QString Scene_polylines_item::computeStats(int type)
+{
+  switch (type)
+  {
+  case NB_VERTICES:
+    return QString::number(d->nb_vertices);
+  case NB_EDGES:
+    return QString::number(d->nb_edges);
+  case MIN_LENGTH:
+    return QString::number(d->min_length);
+  case MAX_LENGTH:
+    return QString::number(d->max_length);
+  case MEAN_LENGTH:
+    return QString::number(d->mean_length);
+  default:
+    return QString();
+  }
+}
+CGAL::Three::Scene_item::Header_data Scene_polylines_item::header() const
+{
+  CGAL::Three::Scene_item::Header_data data;
+  //categories
+  data.categories.append(std::pair<QString,int>(QString("Properties"),5));
+
+
+  //titles
+  data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("#Segment Edges"));
+  data.titles.append(QString("Shortest Segment Edge Length"));
+  data.titles.append(QString("Longest Segment Edge Length"));
+  data.titles.append(QString("Average Segment Edge Length"));
+  return data;
 }
