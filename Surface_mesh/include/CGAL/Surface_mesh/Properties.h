@@ -399,7 +399,7 @@ public:
     // swap content with other Property_container
     void swap (Property_container& other)
     {
-      parray_.swap (other.parray_);
+      this->parrays_.swap (other.parrays_);
     }
   
 private:
