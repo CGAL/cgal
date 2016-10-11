@@ -280,6 +280,32 @@ class Surface_mesh
     class Handle_iterator;
 public:
 
+#ifndef DOXYGEN_RUNNING
+  template <class I, class T>
+  struct Property_map : Properties::Property_map<I, T>
+  {
+    typedef Properties::Property_map<I, T> Base;
+    typedef typename Base::reference reference;
+    Property_map() : Base() {}
+    Property_map(const Base& pm): Base(pm) {}
+
+    template <class K>
+    friend
+    reference
+    get(const Property_map<I, T>& pa, const K& k) {
+      return pa[k];
+    }
+
+    template <class K, class V>
+    friend
+    void
+    put(const Property_map<I, T>& pa, K k, const V& v)
+    {
+      pa[k] = v;
+    }
+  };
+#endif // DOXYGEN_RUNNING
+
     /// \name Basic Types
     ///
     ///@{
