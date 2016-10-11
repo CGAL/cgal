@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
  }
 
  // the storage of a property map is in primal
- Mesh::Property_map<face_descriptor,int> fccmap;
+ CGAL::Properties::Property_map<face_descriptor,int> fccmap;
  fccmap = primal.add_property_map<face_descriptor,int>("f:CC").first;
  int num = connected_components(finite_dual, fccmap);
 
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
    std::cout << f << " in connected component " << fccmap[f] << std::endl;
  }
 
- Mesh::Property_map<vertex_descriptor,int> vccmap;
+ CGAL::Properties::Property_map<vertex_descriptor,int> vccmap;
  vccmap = primal.add_property_map<vertex_descriptor,int>("v:CC").first;
  num = connected_components(primal, vccmap);
 

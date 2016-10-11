@@ -19,7 +19,7 @@ int main(int, char* argv[])
   //std::cin >> P;
   std::ifstream in(argv[1]);
   in >> P;
-  Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
+  CGAL::Properties::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = P.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
 
   boost::prim_minimum_spanning_tree(P, predecessor, boost::root_vertex(*vertices(P).first));
