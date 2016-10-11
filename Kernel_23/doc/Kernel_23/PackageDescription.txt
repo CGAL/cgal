@@ -288,13 +288,13 @@
 - `Kernel::ComputeB_2`
 - `Kernel::ComputeC_2`
 - `Kernel::ComputeApproximateArea_3`
+- `Kernel::ComputeApproximateDihedralAngle_3`
 - `Kernel::ComputeApproximateSquaredLength_3`
 - `Kernel::ComputeArea_2`
 - `Kernel::ComputeArea_3`
 - `Kernel::ComputeAreaDividedByPi_3`
 - `Kernel::ComputeDeterminant_2`
 - `Kernel::ComputeDeterminant_3`
-- `Kernel::ComputeDihedralAngle_3`
 - `Kernel::ComputeDx_2`
 - `Kernel::ComputeDy_2`
 - `Kernel::ComputeHx_2`
