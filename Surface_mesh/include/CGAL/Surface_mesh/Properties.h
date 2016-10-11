@@ -396,7 +396,12 @@ public:
             parrays_[i]->swap(i0, i1);
     }
 
-
+    // swap content with other Property_container
+    void swap (Property_container& other)
+    {
+      parray_.swap (other.parray_);
+    }
+  
 private:
     std::vector<Base_property_array*>  parrays_;
     size_t  size_;

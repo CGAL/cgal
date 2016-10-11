@@ -39,11 +39,11 @@ namespace CGAL {
   This class is a range of indices that provides the user with a
   flexible way to store and access a point set:
 
-  - it can store an arbitrary number of additional attributes such as
+  - It can store an arbitrary number of additional properties such as
     normal vectors, colors, indices, etc.;
 
-  - all functions of the package \ref PkgPointSetProcessing are
-    provided with an overload that take a `Point_set_3` object as an
+  - All functions of the package \ref PkgPointSetProcessing are
+    provided with an overload that takes a `Point_set_3` object as an
     argument.
 
   \tparam Point Point type.
@@ -174,7 +174,7 @@ public:
 
 
   /*!
-    \brief Create an empty point set with no additional property.
+    \brief Creates an empty point set with no additional property.
    */
   Point_set_3 (bool with_normal_map = false) : m_base()
   {
@@ -215,7 +215,7 @@ public:
   }
 
   /*!
-    \brief Merge `other` in the point set.
+    \brief Merges `other` in the point set.
 
     Shifts the indices of points of `other` by `number_of_points() +
     other.number_of_points()`.
@@ -241,11 +241,11 @@ public:
   }
   
   /*!
-    \brief Clears the point set attributes and content.
+    \brief Clears the point set properties and content.
 
     After calling this function, the object is the same as a newly
-    constructed object. The additional attributes (such as normal vectors)
-    are removed too and must be added again if they are still needed.
+    constructed object. The additional properties (such as normal
+    vectors) are also removed and must thus be re-added if needed.
    */
   void clear()
   {
@@ -254,9 +254,9 @@ public:
     boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
     m_nb_removed = 0;
   }
-
+  
   /*!
-    \brief Memory management: reserve size to make the following insertions quicker.
+    \brief Memory management: reserve size to make the following insertions faster.
 
     \param s Expected number of element to be inserted next.
 
@@ -266,7 +266,7 @@ public:
   void reserve (std::size_t s) { m_base.reserve (s); }
   
   /*!
-    \brief Change size of the point set.
+    \brief Changes size of the point set.
 
     \param s Target size of the point set.
 
@@ -297,7 +297,9 @@ public:
   }
 
   /*!
-    \brief Insert new element with default property values.
+    \brief Inserts new element with default property values.
+
+    \return The iterator on the newly added element.
    */
   iterator insert ()
   {
@@ -321,6 +323,8 @@ public:
 
     \note Properties of the added point are initialized to their
     default value.
+
+    \return The iterator on the newly added element.
    */
   iterator insert (const Point& p)
   {
@@ -340,6 +344,8 @@ public:
 
     \note A normal property must have been added to the point set
     before using this method.
+
+    \return The iterator on the newly added element.
    */
   iterator insert (const Point& p, const Vector& n)
   {
@@ -350,25 +356,26 @@ public:
   }
 
   /*!
-    \brief Return the begin iterator.
+    \brief Returns the begin iterator.
   */
   iterator begin() { return m_indices.begin(); }
   /*!
-    \brief Return the past-the-end iterator.
+    \brief Returns the past-the-end iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
   iterator end() { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Return the begin constant iterator.
+    \brief Returns the begin constant iterator.
   */
   const_iterator begin() const { return m_indices.begin(); }
   /*!
-    \brief Return the past-the-end constant iterator.
+    \brief Returns the past-the-end constant iterator.
     \note The returned value is the same as `garbage_begin()`.
   */
   const_iterator end() const { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Returns `true` if the number of non-removed element is 0.
+    \brief Returns `true` if the number of non-removed element is 0,
+    `false` otherwise.
 
     \note This does not count the removed elements.
 
@@ -380,7 +387,7 @@ public:
   bool empty() const { return is_empty(); }
   /// \endcond
   /*!
-    \brief Returns the number of elements (not counting removed one).
+    \brief Returns the number of elements (not counting the removed ones).
 
     \note See `number_of_removed_points()` for getting the number of removed elements.
 
@@ -393,35 +400,35 @@ public:
   /// \endcond
 
   /*!
-    \brief Get a constant reference to the wanted indexed point.
+    \brief Returns a constant reference to the specified indexed point.
 
-    \param index Index of the wanted point.
+    \param index Index of the specified point.
   */
   /*!
-    \brief Get a reference to the wanted indexed point.
+    \brief Returns a reference to the specified indexed point.
 
-    \param index Index of the wanted point.
+    \param index Index of the specified point.
   */
   Point& point (const Index& index) { return m_points[index]; }
   /*!
-    \brief Get a constant reference to the wanted indexed point.
+    \brief Returns a constant reference to the specified indexed point.
 
-    \param index Index of the wanted point.
+    \param index Index of the specified point.
   */
   const Point& point (const Index& index) const { return m_points[index]; }
   /*!
-    \brief Get a reference to the wanted indexed normal.
+    \brief Returns a reference to the specified indexed normal.
 
-    \param index Index of the wanted normal.
+    \param index Index of the specified normal.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
   */
   Vector& normal (const Index& index) { return m_normals[index]; }
   /*!
-    \brief Get a constant reference to the wanted indexed normal.
+    \brief Returns a constant reference to the specified indexed normal.
 
-    \param index Index of the wanted normal.
+    \param index Index of the specified normal.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -434,11 +441,11 @@ public:
   /// @{
 
   /*!
-    \brief Mark all elements between `first` and `last` as removed.
+    \brief Marks all elements between `first` and `last` as removed.
 
     \note The elements are just marked as removed and are not erased
     from the memory. `collect_garbage()` should be called if the
-    memory needs to be freed.
+    memory needs to be disallocated.
   */
   void remove (iterator first, iterator last)
   {
@@ -469,7 +476,7 @@ public:
   /// \endcond
   
   /*!
-    \brief Mark element as removed.
+    \brief Marks element specified by iterator as removed.
 
     \note The element is just marked as removed and is not erased from
     the memory. `collect_garbage()` should be called if the memory
@@ -482,7 +489,8 @@ public:
   }
 
   /*!
-    \brief Returns `true` if the element is marked as removed.
+    \brief Returns `true` if the element is marked as removed, `false`
+    otherwise.
 
     \note When iterating between `begin()` and `end()`, no element
     marked as removed can be found.
@@ -493,12 +501,12 @@ public:
   }
 
   /*!
-    \brief Constant iterator to the first removed element (equal to `garbage_end()` if
-    no elements are marked as removed.
+    \brief Returns the constant iterator to the first removed element
+    (equal to `garbage_end()` if no elements are marked as removed.
   */
   const_iterator garbage_begin () const { return m_indices.end() - m_nb_removed; }
   /*!
-    \brief Past-the-end constant iterator of the removed elements.
+    \brief Returns the past-the-end constant iterator of the removed elements.
   */
   const_iterator garbage_end () const { return m_indices.end(); }
   /*!
@@ -509,12 +517,13 @@ public:
   std::size_t garbage_size () const { return number_of_removed_points(); }
   /// \endcond
   /*!
-    \brief Returns `true` if there are still removed elements in memory.
+    \brief Returns `true` if there are still removed elements in
+    memory, `false` otherwise.
   */
   bool has_garbage () const { return (m_nb_removed != 0); }  
 
   /*!
-    \brief Erase from memory the elements marked as removed.
+    \brief Erases from memory the elements marked as removed.
   */
   void collect_garbage ()
   {
@@ -549,8 +558,8 @@ public:
   /*! \name Property Handling
 
     A property `Property_map<Type>` allows to associate properties of
-    type `Type` to an indexed point. Properties can be added, and
-    looked up with a string, and they can be removed at runtime.
+    type `Type` to an indexed point. Properties can be added,
+    looked up with a string and removed at runtime.
   */
 
   /// @{
@@ -570,7 +579,7 @@ public:
 
   
   /*!
-    \brief Test if property `name` of type `T` already exists.
+    \brief Tests whether property `name` of type `T` already exists.
 
     \tparam T type of the property.
 
@@ -608,13 +617,13 @@ public:
   }
   
   /*!
-    \brief Gets the property `name` of type `T`.
+    \brief Returns the property `name` of type `T`.
 
     \tparam T type of the property.
 
     \param name Name of the property.
 
-    \return Returns a pair containing: the wanted property map and a
+    \return Returns a pair containing: the specified property map and a
     Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
   */
@@ -629,7 +638,7 @@ public:
   }
 
   /*!
-    \brief Get a constant range for property `pmap`.
+    \brief Returns a constant range for property `pmap`.
   */
   template <class T>
   Property_range<T> range (const Property_map<T>& pmap) const
@@ -638,7 +647,7 @@ public:
   }
   
   /*!
-    \brief Removes the wanted property.
+    \brief Removes the specified property.
 
     \tparam T type of the property.
 
@@ -654,9 +663,9 @@ public:
   }
 
   /*!
-    \brief Convenience method that tests if the point set has normals.
+    \brief Convenience method that tests whether the point set has normals.
 
-    This method tests if a property of type `Vector` and named
+    This method tests whether a property of type `Vector` and named
     `normal` exists.
   */
   bool has_normal_map() const
@@ -680,7 +689,7 @@ public:
     return out;
   }
   /*!
-    \brief Get the property map of the normal attribute.
+    \brief Returns the property map of the normal property.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -690,7 +699,7 @@ public:
     return m_normals;
   }
   /*!
-    \brief Get the property map of the normal attribute (constant version).
+    \brief Returns the property map of the normal property (constant version).
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -700,7 +709,7 @@ public:
     return m_normals;
   }
   /*!
-    \brief Get a constant range of normals.
+    \brief Returns a constant range of normals.
   */
   Vector_range normals () const
   {
@@ -717,7 +726,7 @@ public:
     return m_base.remove (m_normals);
   }
   /*!
-    \brief Get the property map of the point attribute.
+    \brief Returns the property map of the point property.
   */
   Point_map point_map()
   {
@@ -725,14 +734,14 @@ public:
   }
 
   /*!
-    \brief Get the property map of the point attribute (constant version).
+    \brief Returns the property map of the point property (constant version).
   */
   const Point_map point_map() const
   {
     return m_points;
   }
   /*!
-    \brief Get a constant range of points.
+    \brief Returns a constant range of points.
   */
   Point_range points () const
   {
@@ -740,7 +749,13 @@ public:
   }
 
   /*!
-    \brief List properties with their types in a `std::string` object.
+
+    \brief Gets information on the point set and its properties in a
+    `std::string` object.
+
+    This method displays the type of Point used, the number of points,
+    the number of removed points and lists the properties with their
+    types (each property separated by a new line character).
   */
   std::string properties() const
   {
@@ -782,7 +797,7 @@ public:
 
   /// \cgalAdvancedBegin  
   /// Model of `WritablePropertyMap` based on `Property` and that
-  /// pushes a new item to the point set if needed.
+  /// is allowed to push new items to the point set if needed.
   /// \cgalAdvancedEnd
   template <class Property>
   using Push_property_map = unspecified_type;
@@ -879,13 +894,13 @@ public:
   /*!
     \cgalAdvancedBegin
     \cgalAdvancedFunction
-    \brief Gets the push property map of the given property.
+    \brief Returns the push property map of the given property.
 
     \tparam T type of the property.
 
     \param prop The property map.
 
-    \return Returns a pair containing: the wanted property map and a
+    \return Returns a pair containing: the specified property map and a
     Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
     \cgalAdvancedEnd
@@ -899,7 +914,7 @@ public:
   /*!
     \cgalAdvancedBegin
     \cgalAdvancedFunction
-    \brief Get the push property map of the point attribute.
+    \brief Returns the push property map of the point property.
     \cgalAdvancedEnd
   */
   Point_push_map point_push_map ()
@@ -909,7 +924,7 @@ public:
   /*!
     \cgalAdvancedBegin
     \cgalAdvancedFunction
-    \brief Get the push property map of the normal attribute.
+    \brief Returns the push property map of the normal property.
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
@@ -922,7 +937,7 @@ public:
   /*!
     \cgalAdvancedBegin
     \cgalAdvancedFunction
-    \brief Get the back inserter on the index attribute.
+    \brief Returns the back inserter on the index property.
     \cgalAdvancedEnd
   */
   Index_back_inserter index_back_inserter ()
@@ -932,7 +947,7 @@ public:
   /*!
     \cgalAdvancedBegin
     \cgalAdvancedFunction
-    \brief Get the back inserter on the point attribute.
+    \brief Returns the back inserter on the point property.
     \cgalAdvancedEnd
   */
   Point_back_inserter point_back_inserter ()
@@ -992,7 +1007,7 @@ private:
 
   \ingroup PkgPointSet3
 
-  \brief Inserts `other` into `ps`.
+  \brief Append `other` at the end of `ps`.
 
   \relates Point_set_3
   

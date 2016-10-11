@@ -29,7 +29,7 @@ int main (int, char**)
 {
   Point_set point_set;
 
-  // Generate points on a sphere
+  // Generate points on a unit sphere
   Point_generator generator(1.);
   std::size_t nb_pts = 10000;
   point_set.reserve (nb_pts);

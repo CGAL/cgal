@@ -7,10 +7,10 @@ namespace CGAL {
 \author Simon Giraudot
 
 
-\cgal provides several algorithms for processing point sets, from
+\cgal provides several algorithms for processing point sets, ranging from
 \ref Chapter_Point_Set_Shape_Detection "Shape Detection" to
 \ref Chapter_Advancing_Front_Surface_Reconstruction "Surface Reconstruction"
-including standard \ref Chapter_Point_Set_Processing "Point Set Processing" tools.
+through standard \ref Chapter_Point_Set_Processing "Point Set Processing" tools.
 
 While these algorithms do not impose specific data structures to work
 on, \cgal provides a 3D point set structure to make it easier for the
@@ -21,7 +21,7 @@ labels, and to call \cgal algorithms on them.
 \section Point_set_3_Principle General Principle
 
 `CGAL::Point_set_3<Point,Vector>` is a vector based data structure that
-contains, by default, only 2 properties:
+contains two properties by default:
 
 - A property named _index_ with \ref CGAL::Point_set_3::Index "Index"
 type used to easily change the order of the points without
@@ -35,7 +35,7 @@ type. Convenience methods are provided to handle the property named
 _normal_ with template type `Vector` that is a very common property on
 point sets.
 
-Reordering is only done by swapping index values: this guarantees that
+Reordering is achieved by swapping index values: this guarantees that
 these operations have a constant complexity no matter how many
 properties are defined. To avoid frequent memory allocation and
 deallocation, removal of points is also handled by swapping the index
@@ -104,15 +104,15 @@ format.
 
 \cgalExample{Point_set_3/point_set_read_xyz.cpp}
 
-The PLY number is the usual choice when storing an arbitrary number of
+The PLY format is the usual choice when storing an arbitrary number of
 additional properties of points is needed. \cgal provides a function
 `read_ply_point_set()` that allows the user to recover any PLY
 property he/she wants, provided the adapted PLY interpreter is
 implemented.
 
 The `CGAL::Point_set_3` object is filled with all readable properties
-of a PLY input. Each PLY property is read and stored on a point set
-property with the same name and same type.
+of a PLY input. Each PLY property is read and stored into a point set
+property with similar name and type.
 
 For example, if the following line is found in the PLY header:
 
@@ -141,11 +141,11 @@ recover a specific property afterwards:
 
 Using functions of \cgal to read files requires a slightly different
 behavior because, internally, the properties of an item are defined
-_before_ this item is inserted in the point set (which is not possible
-with `CGAL::Point_set_3`). Although using the provided overloads
-presented in the previous subsection should cover most usages, we
-document the specific back inserters and property maps that are used
-internally:
+_before_ this item is inserted into the point set (which is not
+possible with `CGAL::Point_set_3`). Although using the provided
+overloads presented in the previous subsection should cover most
+usages, we document the specific back inserters and property maps that
+are used internally:
 
 - `CGAL::Point_set_3::index_back_inserter()` is used as an output iterator that creates
 new item

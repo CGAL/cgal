@@ -23,7 +23,7 @@ int main (int argc, char** argv)
       std::cerr << "Can't read input file " << std::endl;
     }
   
-  std::cerr << point_set.properties(); // Shows which properties were defined
+  std::cerr << point_set.properties(); // Shows which properties are defined
 
   // Recover "label" property of type int
   Point_set::Property_map<boost::int32_t> label_prop;
