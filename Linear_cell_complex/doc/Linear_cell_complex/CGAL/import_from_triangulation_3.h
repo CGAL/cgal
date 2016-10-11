@@ -1,4 +1,4 @@
-
+namespace CGAL{
 
 /*!
 \ingroup PkgLinearCellComplexConstructions
@@ -15,3 +15,4 @@ Returns a dart created during the import.
 template <class LCC,class Triangulation_>
 typename LCC::Dart_handle import_from_triangulation_3(LCC& lcc,
 const Triangulation_&atr);
+}
