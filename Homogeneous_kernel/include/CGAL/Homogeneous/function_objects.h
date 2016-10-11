@@ -29,8 +29,6 @@
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/predicates/sign_of_determinant.h>
-#include <CGAL/Kernel/nearest_point_segment_3.h>
-#include <CGAL/Kernel/nearest_point_triangle_3.h>
 
 namespace CGAL {
 
@@ -3186,11 +3184,11 @@ namespace HomogeneousKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return internal::nearest_point_3(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return internal::nearest_point_3(p,s,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
   };
 
   template <class K> 

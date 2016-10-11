@@ -31,8 +31,6 @@
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 #include <CGAL/Cartesian/solve_3.h>
-#include <CGAL/Kernel/nearest_point_segment_3.h>
-#include <CGAL/Kernel/nearest_point_triangle_3.h>
 
 namespace CGAL {
 
@@ -3011,11 +3009,11 @@ namespace CartesianKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return internal::nearest_point_3(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return internal::nearest_point_3(p,s,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
   };
 
   template <class K> 
