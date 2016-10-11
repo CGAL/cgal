@@ -346,7 +346,7 @@ public:
   iterator insert (const Point& p, const Vector& n)
   {
     iterator out = insert (p);
-    assert (has_normals());
+    assert (has_normal_map());
     m_normals[size()-1] = n;
     return out;
   }
