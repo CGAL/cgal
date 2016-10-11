@@ -256,6 +256,24 @@ public:
   }
   
   /*!
+    \brief Clears the point set properties.
+
+    After calling this function, all properties other that `index` and
+    `point` are remove. The points are left unchanged.
+   */
+  void clear_properties()
+  {
+    Base other;
+    other.template add<Index>("index", (std::size_t)(-1));
+    other.template add<Point>("point", Point (0., 0., 0.));
+    other.resize(m_base.size());
+    other.transfer(m_base);
+    m_base.swap(other);
+    boost::tie (m_indices, boost::tuples::ignore) = this->property_map<Index>("index");
+    boost::tie (m_points, boost::tuples::ignore) = this->property_map<Point>("point");
+  }
+
+  /*!
     \brief Memory management: reserve size to make the following insertions faster.
 
     \param s Expected number of element to be inserted next.
