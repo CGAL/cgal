@@ -121,7 +121,7 @@ Q_SIGNALS:
 private:
   const Scene_points_with_normal_item* base;
   qglviewer::Vec center_;
-  mutable CGAL::Three::Scene_item::ManipulatedFrame* frame;
+  CGAL::Three::Scene_item::ManipulatedFrame* frame;
   mutable QOpenGLShaderProgram *program;
   std::size_t nb_points;
   QMatrix4x4 f_matrix;
@@ -277,6 +277,11 @@ public Q_SLOTS:
   }
   void updateSingleTransfoValues(int);
   void applySingleTransformation();
+  void resetItems()
+  {
+    transform_item = NULL;
+    transform_points_item = NULL;
+  }
 
 }; // end class Polyhedron_demo_affine_transform_plugin
 
@@ -328,6 +333,10 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_polyhedron_item* poly_
   connect(transform_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
   connect(transform_item->manipulatedFrame(), &qglviewer::ManipulatedFrame::modified,
           this, &Polyhedron_demo_affine_transform_plugin::updateUiMatrix);
+  connect(transform_item, &Scene_polyhedron_transform_item::aboutToBeDestroyed,
+          dock_widget, &QDockWidget::hide);
+  connect(transform_item, &Scene_polyhedron_transform_item::aboutToBeDestroyed,
+          this, &Polyhedron_demo_affine_transform_plugin::resetItems);
   tr_item_index=scene->addItem(transform_item);
   scene->setSelectedItem(tr_item_index);
   resetTransformMatrix();
@@ -348,6 +357,10 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   connect(transform_points_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
   connect(transform_points_item->manipulatedFrame(), &qglviewer::ManipulatedFrame::modified,
           this, &Polyhedron_demo_affine_transform_plugin::updateUiMatrix);
+  connect(transform_points_item, &Scene_transform_point_set_item::aboutToBeDestroyed,
+          dock_widget, &QDockWidget::hide);
+  connect(transform_points_item, &Scene_transform_point_set_item::aboutToBeDestroyed,
+          this, &Polyhedron_demo_affine_transform_plugin::resetItems);
   tr_item_index=scene->addItem(transform_points_item);
   scene->setSelectedItem(tr_item_index);
   resetTransformMatrix();
