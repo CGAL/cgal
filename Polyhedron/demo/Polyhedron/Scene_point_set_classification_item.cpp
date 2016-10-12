@@ -61,6 +61,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
 
   m_points->point_set()->unselect_all();
   m_points->point_set()->collect_garbage();
+  
   m_psc = new PSC(m_points->point_set()->begin(), m_points->point_set()->end(), m_points->point_set()->point_map());
 
   Type_handle ground = m_psc->add_classification_type("ground");
@@ -508,6 +509,20 @@ int Scene_point_set_classification_item::real_index_color() const
   return out;
 }
 
+void Scene_point_set_classification_item::reset_indices ()
+{
+  typename Point_set::Property_map<Point_set::Index> indices;
+
+  boost::tie (indices, boost::tuples::ignore)
+    = m_points->point_set()->property_map<Point_set::Index>("index");
+
+  m_points->point_set()->unselect_all();
+  Point_set::Index idx;
+  ++ idx;
+  for (std::size_t i = 0; i < m_points->point_set()->size(); ++ i)
+    *(indices.begin() + i) = idx ++;
+}
+
 void Scene_point_set_classification_item::estimate_parameters ()
 {
   double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (m_points->point_set()->begin(),
@@ -523,7 +538,8 @@ void Scene_point_set_classification_item::compute_features ()
   Q_ASSERT (!(m_points->point_set()->empty()));
   Q_ASSERT (m_psc != NULL);
   m_psc->clear_attributes();
-
+  reset_indices();
+  
   std::cerr << "Computing features with parameters "
             << m_grid_resolution << " " << m_radius_neighbors << " and " << m_radius_dtm << std::endl;
   compute_bbox();
@@ -663,13 +679,16 @@ bool Scene_point_set_classification_item::run (int method)
       std::cerr << "Error: features not computed" << std::endl;
       return false;
     }
-
+  reset_indices();
+  
   if (method == 0)
     m_psc->run();
   else if (method == 1)
     m_psc->run_with_graphcut (m_helper->neighborhood(), m_smoothing);
   else if (method == 2)
     m_psc->run_with_groups (m_helper->neighborhood(), m_radius_neighbors);
-
+  invalidateOpenGLBuffers();
+  Q_EMIT itemChanged();
+  
   return true;
 }

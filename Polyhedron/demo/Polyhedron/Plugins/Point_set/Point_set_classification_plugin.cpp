@@ -639,7 +639,7 @@ public Q_SLOTS:
                             tr("Add new classification type"), // dialog title
                             tr("Name:"), // field label
                             QLineEdit::Normal,
-                            tr("my_type"),
+                            tr("type%1").arg(class_rows.size() + 1),
                             &ok);
     if (!ok)
       return;
@@ -746,7 +746,7 @@ public Q_SLOTS:
     --row_index;
 
     classification_item->remove_type (class_rows[row_index].label->text().toStdString().c_str());
-    
+
     ui_widget.gridLayout_3->removeWidget (class_rows[row_index].label);
     delete class_rows[row_index].label;
     ui_widget.gridLayout_3->removeWidget (class_rows[row_index].color_button);
@@ -755,22 +755,25 @@ public Q_SLOTS:
     delete class_rows[row_index].train;
     ui_widget.gridLayout_3->removeWidget (class_rows[row_index].remove);
     delete class_rows[row_index].remove;
-    
+
     ui_widget.gridLayout->removeWidget (class_rows[row_index].label2);
     delete class_rows[row_index].label2;
     ui_widget.gridLayout->removeWidget (class_rows[row_index].effect);
     delete class_rows[row_index].effect;
 
-    for (std::size_t i = row_index + 1; i < class_rows.size(); ++ i)
-      {
-        ui_widget.gridLayout_3->addWidget (class_rows[i].label, (int)i, 0);
-        ui_widget.gridLayout_3->addWidget (class_rows[i].color_button, (int)i, 1);
-        ui_widget.gridLayout_3->addWidget (class_rows[i].train, (int)i, 3);
-        ui_widget.gridLayout_3->addWidget (class_rows[i].remove, (int)i, 5);
-        ui_widget.gridLayout->addWidget (class_rows[i].label2, (int)i, 0);
-        ui_widget.gridLayout->addWidget (class_rows[i].effect, (int)i, 2);
-      }
+    if (class_rows.size() > 1)
+      for (std::size_t i = row_index + 1; i < class_rows.size(); ++ i)
+        {
+          ui_widget.gridLayout_3->addWidget (class_rows[i].label, (int)i, 0);
+          ui_widget.gridLayout_3->addWidget (class_rows[i].color_button, (int)i, 1);
+          ui_widget.gridLayout_3->addWidget (class_rows[i].train, (int)i, 3);
+          ui_widget.gridLayout_3->addWidget (class_rows[i].remove, (int)i, 5);
+          ui_widget.gridLayout->addWidget (class_rows[i].label2, (int)i, 0);
+          ui_widget.gridLayout->addWidget (class_rows[i].effect, (int)i, 2);
+        }
+
     class_rows.erase (class_rows.begin() + row_index);
+
   }
 
   void on_color_changed_clicked()

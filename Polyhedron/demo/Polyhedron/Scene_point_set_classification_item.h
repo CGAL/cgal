@@ -129,7 +129,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
   void change_color (int index);
   int real_index_color() const;
-  
+
+  void reset_indices();
   void estimate_parameters ();
   void compute_features ();
   void compute_ransac ();
@@ -215,8 +216,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     for (std::size_t i = 0; i < m_types.size(); ++ i)
       if (m_types[i].first->id() == name)
         {
-          m_types.erase (m_types.begin() + i);
           m_psc->remove_classification_type (m_types[i].first);
+          m_types.erase (m_types.begin() + i);
           break;
         }
   }
@@ -261,7 +262,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
     m_psc->clear_classification_types();
     m_psc->clear_attributes();
-
+    reset_indices();
+    
     bool normals = m_points->point_set()->has_normal_map();
     bool colors = m_points->point_set()->has_colors();
     typename Point_set::Property_map<boost::uint8_t> echo_map;
