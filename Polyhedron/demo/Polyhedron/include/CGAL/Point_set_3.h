@@ -27,7 +27,7 @@
 
 #include <CGAL/Surface_mesh/Properties.h>
 
-#include <boost/core/demangle.hpp>
+#include <CGAL/demangle.h>
 
 namespace CGAL {
 
@@ -749,13 +749,13 @@ public:
   std::string properties() const
   {
     std::ostringstream oss;
-    oss << "CGAL::Point_set_3<" << boost::core::demangle(typeid(Point).name())
+    oss << "CGAL::Point_set_3<" << CGAL::demangle(typeid(Point).name())
         << "> with " << size() << " point(s) ("
         << number_of_removed_points() << " removed point(s) waiting to be deleted)" << std::endl;
     std::vector<std::string> prop = m_base.properties();
     for (std::size_t i = 0; i < prop.size(); ++ i)
       oss << " * \"" << prop[i] << "\" property of type "
-          << boost::core::demangle(m_base.get_type(prop[i]).name()) << std::endl;
+          << CGAL::demangle(m_base.get_type(prop[i]).name()) << std::endl;
 
     return oss.str();
   }
