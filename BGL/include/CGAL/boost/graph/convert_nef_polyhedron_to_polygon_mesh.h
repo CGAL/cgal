@@ -87,7 +87,7 @@ struct Shell_polygons_visitor
     typename Nef_polyhedron::Halffacet_const_handle f = opposite_facet->twin();
 
     typename Nef_polyhedron::SHalfedge_around_facet_const_circulator
-      sfc1(f->facet_cycles_begin()), sfc2(sfc1);
+      sfc1(f->facet_cycles_begin());
 
     // create a new polygon
     polygons.push_back( std::vector<std::size_t>() );
