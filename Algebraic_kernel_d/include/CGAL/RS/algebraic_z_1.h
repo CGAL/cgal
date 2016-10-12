@@ -184,7 +184,7 @@ boost::totally_ordered<Algebraic_z_1<Polynomial_,
 #else
 #define CGAL_RS_DBL_PREC        53
 #endif
-        double to_double(){
+        double to_double()const{
                 typedef Real_embeddable_traits<Bound>                   RT;
                 typedef typename RT::To_double                          TD;
                 ZRefiner()(get_zpol(),
@@ -258,7 +258,7 @@ public INTERN_RET::Real_embeddable_traits_base<
 
         class To_double:public std::unary_function<Type,double>{
                 public:
-                double operator()(Type a)const{return a.to_double();}
+                double operator()(const Type &a)const{return a.to_double();}
         };
 
         class To_interval:
