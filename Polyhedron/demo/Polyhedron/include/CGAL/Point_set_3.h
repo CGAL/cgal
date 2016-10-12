@@ -27,6 +27,8 @@
 
 #include <CGAL/Surface_mesh/Properties.h>
 
+#include <boost/core/demangle.hpp>
+
 namespace CGAL {
 
 
@@ -92,7 +94,7 @@ public:
     friend class Point_set_3;
     friend class Properties::Property_container<Index>;
     template <class> friend class Properties::Property_array;
-    template <class> friend class Property_map;
+    template <class> friend struct Property_map;
     template <class> friend class Push_property_map;
     friend class std::vector<Index>;
     std::size_t value;
@@ -134,15 +136,15 @@ public:
   public:
     typedef CGAL::Property_map_to_unary_function<Property_map<Type> > Unary_function;
     typedef boost::transform_iterator<Unary_function,
-                                      Point_set::const_iterator> const_iterator;
+                                      typename Point_set::const_iterator> const_iterator;
   private:
     const_iterator m_begin;
     const_iterator m_end;
     std::size_t m_size;
     
   public:
-    Property_range (const Property_map<Type>& pmap, Point_set::const_iterator begin, Point_set::const_iterator end,
-           std::size_t size)
+    Property_range (const Property_map<Type>& pmap, typename Point_set::const_iterator begin,
+                    typename Point_set::const_iterator end, std::size_t size)
     {
       m_begin = boost::make_transform_iterator (begin, Unary_function(pmap));
       m_end = boost::make_transform_iterator (end, Unary_function(pmap));
@@ -844,7 +846,7 @@ public:
                       Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Push_property_map& pm, Index& i, const reference t)
+    friend void put(const Push_property_map& pm, Index& i, reference t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->insert();
@@ -853,7 +855,7 @@ public:
       ++pm.ind;
     }
 
-    friend const reference get (const Push_property_map& pm, const Index& i)
+    friend reference get (const Push_property_map& pm, const Index& i)
     {
       return ((*(pm.prop))[i]);
     }

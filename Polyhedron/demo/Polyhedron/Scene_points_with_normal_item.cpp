@@ -744,7 +744,7 @@ void Scene_points_with_normal_item::computes_local_spacing(int k)
   // build kdtree
   Tree tree(d->m_points->begin(),
             d->m_points->end(),
-            typename Tree::Splitter(),
+            Tree::Splitter(),
             Search_traits (d->m_points->point_map())
             );
   Distance tr_dist(d->m_points->point_map());
