@@ -23,7 +23,7 @@ struct Scene_polylines_item_private {
     {
       nb_vertices = 0;
       nb_edges = 0;
-      min_length = INT_MAX;
+      min_length = std::numeric_limits<double>::max();
       max_length = 0;
       mean_length = 0;
       computed_stats = false;
