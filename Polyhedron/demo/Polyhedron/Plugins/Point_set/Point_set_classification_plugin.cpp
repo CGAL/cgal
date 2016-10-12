@@ -310,14 +310,17 @@ public Q_SLOTS:
 
     Scene_points_with_normal_item* points_item =
       qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if (!points_item)
+      return NULL;
+    
     Item_map::iterator it = item_map.find(points_item);
     if (it != item_map.end())
       return it->second;
 
     return NULL;
   }
-
   
+
   void on_create_from_item_button_clicked()
   {
     Scene_points_with_normal_item* points_item = getSelectedItem<Scene_points_with_normal_item>();
@@ -569,55 +572,15 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     std::vector<Scene_points_with_normal_item*> new_items;
-    for (std::size_t i = 0; i < 6; ++ i)
-      new_items.push_back (new Scene_points_with_normal_item);
-
-    classification_item->generate_point_set_items (new_items);
+    classification_item->generate_point_set_items<Scene_points_with_normal_item>
+      (new_items, classification_item->points_item()->name().toStdString().c_str());
 
     for (std::size_t i = 0; i < new_items.size(); ++ i)
       {
         if (new_items[i]->point_set()->empty())
           delete new_items[i];
         else
-          {
-            if (i == 0) // Vegetation
-              {
-                new_items[i]->setName(QString("%1 (vegetation)")
-                                      .arg(classification_item->name()));
-                new_items[i]->setColor(QColor(0, 255, 27));
-              }
-            else if (i == 1) // Ground
-              {
-                new_items[i]->setName(QString("%1 (ground)")
-                                      .arg(classification_item->name()));
-                new_items[i]->setColor(QColor(245, 180, 0));
-              }
-            else if (i == 2) // Road
-              {
-                new_items[i]->setName(QString("%1 (road)")
-                                      .arg(classification_item->name()));
-                new_items[i]->setColor(QColor(200, 200, 200));
-              }
-            else if (i == 3) // Roof
-              {
-                new_items[i]->setName(QString("%1 (roofs)")
-                                      .arg(classification_item->name()));
-                new_items[i]->setColor(QColor(255, 0, 170));
-              }
-            else if (i == 4) // Facade
-              {
-                new_items[i]->setName(QString("%1 (facades)")
-                                      .arg(classification_item->name()));
-                new_items[i]->setColor(QColor(100, 0, 255));
-              }
-            else if (i == 5) // Building
-              {
-                new_items[i]->setName(QString("%1 (buildings)")
-                                      .arg(classification_item->name()));
-                new_items[i]->setColor(QColor(0, 114, 225));
-              }
-            scene->addItem (new_items[i]);
-          }
+          scene->addItem (new_items[i]);
       }
     
     QApplication::restoreOverrideCursor();

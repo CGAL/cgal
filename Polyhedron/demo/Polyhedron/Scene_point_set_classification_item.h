@@ -138,9 +138,25 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   bool run (int method);
 
   template <typename Item>
-  void generate_point_set_items(std::vector<Item>& )
+  void generate_point_set_items(std::vector<Item*>& items,
+                                const char* name)
   {
-    // TODO
+    std::map<Type_handle, std::size_t> map_types;
+    for (std::size_t i = 0; i < m_types.size(); ++ i)
+      {
+        items.push_back (new Item);
+        items.back()->setName (QString("%1 (%2)").arg(name).arg(m_types[i].first->id().c_str()));
+        items.back()->setColor (m_types[i].second);
+        map_types[m_types[i].first] = i;
+      }
+
+    for (Point_set::const_iterator it = m_points->point_set()->begin();
+         it != m_points->point_set()->end(); ++ it)
+      {
+        Type_handle c = m_psc->classification_type_of(*it);
+        if (c != Type_handle())
+          items[map_types[c]]->point_set()->insert (m_points->point_set()->point(*it));
+      }
   }
 
   Scene_points_with_normal_item* points_item() { return m_points; }
