@@ -552,6 +552,29 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #define CGAL_NOEXCEPT(x)
 #endif
 
+// Very preliminary support for [[fallthrough]]
+
+// For boost >= 1.54 we can use BOOST_FALL_THROUGH
+// http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/boost_config/boost_macro_reference.html
+// says:
+// When compiled with Clang >3.2 in C++11 mode, the BOOST_FALLTHROUGH macro is 
+// expanded to [[clang::fallthrough]] attribute
+
+
+// For g++:  
+// https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+// says:
+// GCC provides an attribute, __attribute__ ((fallthrough))
+// C++17 provides a standard way to suppress the -Wimplicit-fallthrough warning using [[fallthrough]]; 
+// instead of the GNU attribute. 
+// In C++11 or C++14 users can use [[gnu::fallthrough]];
+
+#ifdef CGAL_USE_GNU_FALLTHROUGH
+#define CGAL_FALLTHROUGH [[gnu::fallthrough]]
+#else
+#define CGAL_FALLTHROUGH while(false){}
+#endif
+
 // https://svn.boost.org/trac/boost/ticket/2839
 #if defined(BOOST_MSVC) && BOOST_VERSION < 105600
 #define CGAL_CFG_BOOST_VARIANT_SWAP_BUG 1
