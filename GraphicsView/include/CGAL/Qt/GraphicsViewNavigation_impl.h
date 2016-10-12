@@ -115,6 +115,7 @@ namespace Qt {
       case ::Qt::Key_Control:
         cursor_backup = v->cursor();
         v->setCursor(::Qt::CrossCursor);
+        CGAL_FALLTHROUGH;
       default:
         return false;
       }

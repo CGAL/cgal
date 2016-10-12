@@ -1245,7 +1245,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
 	      regularize (v);
 	      return v;
 	      
-	    case ON_ORIENTED_BOUNDARY:
+	    default: // that is ON_ORIENTED_BOUNDARY:
 	      return vv;
 	    }
         }
