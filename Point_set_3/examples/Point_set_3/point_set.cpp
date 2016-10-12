@@ -25,8 +25,6 @@ void print_point_set (const Point_set& point_set)
 int main (int, char**)
 {
   Point_set point_set;
-  //  Point_set point_set2 ("visibility",Vector(0,0,0), "insensity", 1.0);
-  //  std::cerr << point_set2.properties();
   
   // Add points
   point_set.insert (Point (0., 0., 0.));
@@ -60,12 +58,12 @@ int main (int, char**)
   print_point_set(point_set); // New item has default values
   
   // Display information
-  std::cerr << point_set.properties();
+  std::cerr << "Number of removed points: " <<point_set.number_of_removed_points() << std::endl;
 
   point_set.collect_garbage();
   
   // Display information (garbage should be gone)
-  std::cerr << point_set.properties();
+  std::cerr << "After garbage collection: " <<point_set.number_of_removed_points() << std::endl;
 
   return 0;
 }

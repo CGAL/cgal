@@ -46,7 +46,10 @@ int main (int, char**)
   CGAL::grid_simplify_point_set (point_set,
                                  0.1); // Size of grid cell
 
-  std::cerr << point_set.properties();
+  std::vector<std::string> properties = point_set.properties();
+  std::cerr << "Properties:" << std::endl;
+  for (std::size_t i = 0; i < properties.size(); ++ i)
+    std::cerr << " * " << properties[i] << std::endl;
 
   // Detect sphere with RANSAC
   Efficient_ransac ransac;

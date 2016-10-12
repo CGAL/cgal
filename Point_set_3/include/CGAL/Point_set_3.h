@@ -798,15 +798,15 @@ public:
   }
 
   /*!
-
-    \brief Gets information on the point set and its properties in a
-    `std::string` object.
-
-    This method displays the type of Point used, the number of points,
-    the number of marked as removed points and lists the properties with their
-    types (each property separated by a new line character).
+    \brief Returns a vector with all strings that describe properties.
   */
-  std::string properties() const
+  std::vector<std::string> properties() const
+  {
+    return m_base.properties();
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  std::string info() const
   {
     std::ostringstream oss;
     oss << "CGAL::Point_set_3<" << CGAL::demangle(typeid(Point).name())
@@ -819,6 +819,7 @@ public:
 
     return oss.str();
   }
+  /// \endcond
   /// @}
 
   /// \name Ranges
