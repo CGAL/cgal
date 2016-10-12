@@ -33,6 +33,16 @@
 #define CGALRS_PTR(a)   void *a
 #endif
 
+// RS does not work with MPFR 3.1.4 and 3.1.5. In case the version of MPFR
+// is one of those buggy versions, ask the user to update and abort the
+// compilation.
+#include <boost/static_assert.hpp>
+BOOST_STATIC_ASSERT_MSG(
+        MPFR_VERSION_MAJOR!=3 || \
+        MPFR_VERSION_MINOR!=1 || \
+        (MPFR_VERSION_PATCHLEVEL!=4 && MPFR_VERSION_PATCHLEVEL!=5), \
+        "RS does not work with MPFR 3.1.4 and 3.1.5. Please update MPFR.");
+
 namespace CGAL{
 namespace RS2{
 
@@ -120,6 +130,7 @@ struct RS2_calls{
                         // Construct Gmpfr's with pointers to endpoints.
                         Gmpfr left(&(root_pointer->left),root_prec);
                         Gmpfr right(&(root_pointer->right),root_prec);
+                        CGAL_assertion(left<=right);
                         // Copy them, to have the data out of RS memory.
                         *x++=Gmpfi(left,right,root_prec+1);
                         ident_node=rs_export_list_vect_ibfr_nextnode

@@ -192,12 +192,13 @@ boost::totally_ordered<Algebraic_1<Polynomial_,
 #else
 #define CGAL_RS_DBL_PREC        53
 #endif
-        double to_double(){
+        // This function is const because left and right are mutable.
+        double to_double()const{
                 typedef Real_embeddable_traits<Bound>                   RT;
                 typedef typename RT::To_double                          TD;
-                Refiner()(get_pol(),get_left(),get_right(),CGAL_RS_DBL_PREC);
-                CGAL_assertion(TD()(get_left())==TD()(get_right()));
-                return TD()(get_left());
+                Refiner()(pol,left,right,CGAL_RS_DBL_PREC);
+                CGAL_assertion(TD()(left)==TD()(right));
+                return TD()(left);
         }
         std::pair<double,double> to_interval()const{
                 typedef Real_embeddable_traits<Bound>                   RT;
@@ -266,7 +267,7 @@ public INTERN_RET::Real_embeddable_traits_base<
 
         class To_double:public std::unary_function<Type,double>{
                 public:
-                double operator()(Type a)const{return a.to_double();}
+                double operator()(const Type &a)const{return a.to_double();}
         };
 
         class To_interval:
