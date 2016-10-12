@@ -695,7 +695,7 @@ nearest_vertex(const Point  &p, Face_handle f) const
   switch (this->dimension()) {
   case 0:
     if (this->number_of_vertices() == 0) return Vertex_handle();
-    if (this->number_of_vertices() == 1) return this->finite_vertex();
+    return this->finite_vertex();
     //break;
   case 1:
     return nearest_vertex_1D(p);
