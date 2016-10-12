@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot
+// Author(s)     : Simon Giraudot, Florent Lafarge
 
 #ifndef CGAL_POINT_SET_CLASSIFICATION_H
 #define CGAL_POINT_SET_CLASSIFICATION_H
@@ -86,6 +86,13 @@ public:
                                             RandomAccessIterator,
                                             PointPMap> Neighborhood;
 
+  
+#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+  typedef internal::Alpha_expansion_graph_cut_boost             Alpha_expansion;
+#else
+  typedef internal::Alpha_expansion_graph_cut_boykov_kolmogorov Alpha_expansion;
+#endif
+  
 private:
   
   class Point_range
@@ -338,7 +345,7 @@ public:
     prepare_classification ();
     
     // data term initialisation
-    CGAL_CLASSIFICATION_CERR << "Labeling... ";
+    CGAL_CLASSIFICATION_CERR << "Labeling with regularization weight " << weight << "... ";
 
     std::vector<std::pair<std::size_t, std::size_t> > edges;
     std::vector<double> edge_weights;
@@ -376,9 +383,8 @@ public:
           }
         m_assigned_type.push_back (nb_class_best);
       }
-
     
-    internal::Alpha_expansion_graph_cut_boost graphcut;
+    Alpha_expansion graphcut;
     graphcut(edges, edge_weights, probability_matrix, m_assigned_type);
   }
   
