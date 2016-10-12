@@ -409,6 +409,7 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See http://clang.llvm.org/docs/LanguageExtensions.html
+// See also http://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -423,6 +424,9 @@ using std::max;
 #endif
 #ifndef __has_attribute
   #define __has_attribute(x) 0  // Compatibility with non-clang compilers.
+#endif
+#ifndef __has_cpp_attribute
+  #define __has_cpp_attribute(x) 0  // Compatibility with non-supporting compilers.
 #endif
 #ifndef __has_warning
   #define __has_warning(x) 0  // Compatibility with non-clang compilers.
@@ -552,27 +556,21 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #define CGAL_NOEXCEPT(x)
 #endif
 
-// Very preliminary support for [[fallthrough]]
-
-// For boost >= 1.54 we can use BOOST_FALL_THROUGH
-// http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/boost_config/boost_macro_reference.html
-// says:
-// When compiled with Clang >3.2 in C++11 mode, the BOOST_FALLTHROUGH macro is 
-// expanded to [[clang::fallthrough]] attribute
-
-
-// For g++:  
-// https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-// says:
-// GCC provides an attribute, __attribute__ ((fallthrough))
-// C++17 provides a standard way to suppress the -Wimplicit-fallthrough warning using [[fallthrough]]; 
-// instead of the GNU attribute. 
-// In C++11 or C++14 users can use [[gnu::fallthrough]];
-
-#ifdef CGAL_USE_GNU_FALLTHROUGH
-#define CGAL_FALLTHROUGH [[gnu::fallthrough]]
+// The fallthrough attribute
+// See for clang:
+//   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
+// See for gcc:
+//   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+#if __has_cpp_attribute(fallthrough)
+#  define CGAL_FALLTHROUGH [[fallthrough]]
+#elseif __has_cpp_attribute(gnu::fallthrough)
+#  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
+#elseif __has_cpp_attribute(clang::fallthrough)
+#  define CGAL_FALLTHROUGH [[clang::fallthrough]]
+#elseif __has_attribute(fallthrough)
+#  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
 #else
-#define CGAL_FALLTHROUGH while(false){}
+#  define CGAL_FALLTHROUGH while(false){}
 #endif
 
 // https://svn.boost.org/trac/boost/ticket/2839
