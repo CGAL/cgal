@@ -53,6 +53,7 @@
 - `CGAL::Combinatorial_map_dart<d,CMap>`
 - `CGAL::Combinatorial_map_min_items<d>`
 - `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
+- `CGAL::Dart<d,CMap>`
 
 ## Global Functions ##
 ### Constructions for Combinatorial Maps ###
