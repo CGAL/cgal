@@ -270,6 +270,7 @@ public:
       operator std::pair<face_descriptor, int>() { return std::make_pair(first,second); }
       
       T2_halfedge_descriptor()
+        : first(), second(0)
       {}
       
       T2_halfedge_descriptor(const typename Tr::Edge& e)
