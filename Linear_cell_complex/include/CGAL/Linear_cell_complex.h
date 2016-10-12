@@ -136,20 +136,20 @@ namespace CGAL {
      *  @param alcc the linear cell complex to copy.
      *  @post *this is valid.
      */
-    Linear_cell_complex_base(const Self & alcc)
+    Linear_cell_complex_base(const Self & alcc) : Base()
     { Base::template copy<Self>(alcc); }
 
     template < class LCC2 >
-    Linear_cell_complex_base(const LCC2& alcc)
+    Linear_cell_complex_base(const LCC2& alcc) : Base()
     { Base::template copy<LCC2>(alcc);}
 
     template < class LCC2, typename Converters >
-    Linear_cell_complex_base(const LCC2& alcc, Converters& converters)
+    Linear_cell_complex_base(const LCC2& alcc, Converters& converters) : Base()
     { Base::template copy<LCC2, Converters>(alcc, converters);}
 
     template < class LCC2, typename Converters, typename Pointconverter >
     Linear_cell_complex_base(const LCC2& alcc, Converters& converters,
-                        const Pointconverter& pointconverter)
+                             const Pointconverter& pointconverter) : Base()
     { Base::template copy<LCC2, Converters, Pointconverter>
           (alcc, converters, pointconverter);}
 
@@ -908,16 +908,16 @@ namespace CGAL {
       { Base::template copy<Self>(alcc); }
 
       template < class LCC2 >
-      Linear_cell_complex(const LCC2& alcc)
+      Linear_cell_complex(const LCC2& alcc) : Base()
       { Base::template copy<LCC2>(alcc);}
 
       template < class LCC2, typename Converters >
-      Linear_cell_complex(const LCC2& alcc, Converters& converters)
+      Linear_cell_complex(const LCC2& alcc, Converters& converters) : Base()
       { Base::template copy<LCC2, Converters>(alcc, converters);}
 
       template < class LCC2, typename Converters, typename Pointconverter >
       Linear_cell_complex(const LCC2& alcc, Converters& converters,
-                                    const Pointconverter& pointconverter)
+                          const Pointconverter& pointconverter) : Base()
       { Base::template copy<LCC2, Converters, Pointconverter>
             (alcc, converters, pointconverter);}
 

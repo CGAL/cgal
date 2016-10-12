@@ -4752,17 +4752,17 @@ namespace CGAL {
     { Base::template copy<Self>(amap); }
 
     template < class CMap >
-    Combinatorial_map(const CMap & amap)
+    Combinatorial_map(const CMap & amap) : Base()
     { Base::template copy<CMap>(amap); }
 
     template < class CMap, typename Converters >
-    Combinatorial_map(const CMap & amap, const Converters& converters)
+    Combinatorial_map(const CMap & amap, const Converters& converters) : Base()
     { Base::template copy<CMap, Converters>
           (amap, converters); }
 
     template < class CMap, typename Converters, typename Pointconverter >
     Combinatorial_map(const CMap & amap, const Converters& converters,
-                      const Pointconverter& pointconverter)
+                      const Pointconverter& pointconverter) : Base()
     { Base::template copy<CMap, Converters, Pointconverter>
           (amap, converters, pointconverter); }
   };
