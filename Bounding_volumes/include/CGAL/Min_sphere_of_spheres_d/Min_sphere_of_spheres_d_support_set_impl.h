@@ -91,7 +91,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
         for (int j=0; j<D; ++j) {
           eps[m]   -= u[m][j]*e[m-1][j];
           phi[m]   -= u[m][j]*f[m-1][j];
-          delta[m] += sqr(u[m][j]-d[m-1][j]);
+          delta[m] += sqr<FT>(u[m][j]-d[m-1][j]);
         }
         phi[m] = FT(2)*(phi[m] - t1);
         eps[m] = t1*t2+FT(2)*eps[m];
@@ -151,7 +151,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       if (m > 1) {
         // compute the coeffients beta[i] and the center:
         for(unsigned int i=1; i<m; ++i) {
-          beta[i] = (delta[i]+eps[i]+sol[m]*phi[i])/alpha[i];
+          beta[i] = (static_cast<FT>(delta[i]+eps[i])+sol[m]*phi[i])/alpha[i];
           for (int j=0; j<D; ++j)
             center[j] += beta[i]*u[i][j];
         }
