@@ -269,7 +269,7 @@ void _test_has_on_predicate(SK sk) {
   Point_3 p_3_s_1 = Point_3(0,0,1);
   Point_3 p_4_s_1 = Point_3(1,0,1);
   std::cout << "Testing has_on(Sphere,Circular_arc_point)..." << std::endl;
-  Root_of_2 sqrt_1_div_3 = CGAL::make_root_of_2(FT(0),FT(1),FT(1) / FT(3));
+  Root_of_2 sqrt_1_div_3 = CGAL::make_root_of_2(FT(0),FT(1),FT(FT(1) / FT(3)));
   Root_of_2 sqrt_1_div_2 = CGAL::make_root_of_2(FT(0),FT(1),FT(FT(1) / FT(2)));
   Root_for_spheres_2_3 r_1_s_1 = Root_for_spheres_2_3(0,sqrt_1_div_2,sqrt_1_div_2);
   Root_for_spheres_2_3 r_2_s_1 = Root_for_spheres_2_3(sqrt_1_div_3,sqrt_1_div_3,sqrt_1_div_3);
@@ -327,8 +327,8 @@ void _test_has_on_predicate(SK sk) {
                      Polynomial_1_3(1,1,1,0));
   Circle_3 c_2 = theConstruct_circle_3(pc2);
   Root_of_2 r_1_1_c_2 = FT(FT(1) / FT(2));
-  Root_of_2 r_1_2_c_2 = CGAL::make_root_of_2(-FT(FT(1) / FT(4)),-FT(FT(1) / FT(4)),FT(5));
-  Root_of_2 r_1_3_c_2 = CGAL::make_root_of_2(-FT(FT(1) / FT(4)),FT(FT(1) / FT(4)),FT(5));
+  Root_of_2 r_1_2_c_2 = CGAL::make_root_of_2(FT(-FT(1) / FT(4)),FT(-FT(1) / FT(4)),FT(5));
+  Root_of_2 r_1_3_c_2 = CGAL::make_root_of_2(FT(-FT(1) / FT(4)),FT(FT(1) / FT(4)),FT(5));
   Root_for_spheres_2_3 r_1_c_2 = Root_for_spheres_2_3(r_1_1_c_2,r_1_2_c_2,r_1_3_c_2);
   Root_for_spheres_2_3 r_2_c_2 = Root_for_spheres_2_3(r_1_2_c_2,r_1_2_c_2,r_1_2_c_2);
   Circular_arc_point_3 cp_1_c_2 = Circular_arc_point_3(r_1_c_2);
@@ -408,14 +408,14 @@ void _test_has_on_predicate(SK sk) {
   Root_for_spheres_2_3 rt[10];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(-FT(FT(1) / FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(3)), 0);
-  rt[2] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
-  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(3)), FT(FT(1) / FT(2)), 0);
+  rt[1] = Root_for_spheres_2_3(FT(-FT(1) / FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(3)), 0);
+  rt[2] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(3)), FT(FT(1) / FT(2)), 0);
 
   rt[4] = Root_for_spheres_2_3(-1,0,0);
-  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(0,-1,0);
-  rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[8] = Root_for_spheres_2_3(1,0,0);
   rt[9] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
 
@@ -450,11 +450,11 @@ void _test_has_on_predicate(SK sk) {
   Root_for_spheres_2_3 rt2[8];
   rt2[0] = Root_for_spheres_2_3(0,CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)));
   rt2[1] = Root_for_spheres_2_3(0,0,1);
-  rt2[2] = Root_for_spheres_2_3(0,CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)));
+  rt2[2] = Root_for_spheres_2_3(0,CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)));
   rt2[3] = Root_for_spheres_2_3(0,-1,0);
-  rt2[4] = Root_for_spheres_2_3(0,CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)));
+  rt2[4] = Root_for_spheres_2_3(0,CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)));
   rt2[5] = Root_for_spheres_2_3(0,0,-1);
-  rt2[6] = Root_for_spheres_2_3(0,CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)));
+  rt2[6] = Root_for_spheres_2_3(0,CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)));
   rt2[7] = Root_for_spheres_2_3(0,1,0);
 
   for(int i=0; i<8; i++) {
@@ -579,11 +579,11 @@ void _test_do_overlap_predicate(SK sk) {
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
   rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
 

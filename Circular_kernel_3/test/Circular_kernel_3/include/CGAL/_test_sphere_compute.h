@@ -73,11 +73,11 @@ void _test_spherical_kernel_compute(SK sk)
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1)/FT(2)),FT(2)),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1)/FT(2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
   rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1)/FT(2)),FT(2)),0);
 
