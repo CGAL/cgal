@@ -75,25 +75,46 @@ public:
   
 private:
 
+  struct Scale
+  {
+    Planimetric_grid* grid;
+    Local_eigen_analysis* eigen;
+    std::vector<Attribute_handle> attributes;
+    Scale (RandomAccessIterator begin, RandomAccessIterator end, PointMap point_map,
+           const Iso_cuboid_3& bbox, Neighborhood* neighborhood,
+           double grid_resolution, double radius_neighbors)
+    {
+      grid = new Planimetric_grid (begin, end, point_map, bbox, grid_resolution);
+      eigen = new Local_eigen_analysis (begin, end, point_map, *neighborhood, radius_neighbors);
+    }
+    ~Scale()
+    {
+      delete grid;
+      delete eigen;
+    }
+
+  };
+
   double m_grid_resolution;
   double m_radius_neighbors;
   double m_radius_dtm;
   Iso_cuboid_3 m_bbox;
-  Planimetric_grid* m_grid;
   Neighborhood* m_neighborhood;
-  Local_eigen_analysis* m_eigen;
+  std::vector<Scale*> m_scales;
+
 
 public:
 
   Helper()
-    : m_grid (NULL), m_neighborhood (NULL), m_eigen (NULL)
+    : m_neighborhood (NULL)
   {
   }
 
   Helper (RandomAccessIterator begin, RandomAccessIterator end, PointMap point_map,
           double grid_resolution,
           double radius_neighbors = -1.,
-          double radius_dtm = -1.)
+          double radius_dtm = -1.,
+          std::size_t nb_scales = 1)
     : m_grid_resolution (grid_resolution)
     , m_radius_neighbors (radius_neighbors)
     , m_radius_dtm (radius_dtm)
@@ -107,11 +128,18 @@ public:
       (boost::make_transform_iterator (begin, CGAL::Property_map_to_unary_function<PointMap>(point_map)),
        boost::make_transform_iterator (end, CGAL::Property_map_to_unary_function<PointMap>(point_map)));
     m_neighborhood = new Neighborhood (begin, end, point_map);
-    m_grid = new Planimetric_grid (begin, end, point_map, m_bbox, m_grid_resolution);
-    m_eigen = new Local_eigen_analysis (begin, end, point_map, *m_neighborhood, m_radius_neighbors);
+
+    m_scales.reserve (nb_scales);
+    grid_resolution = m_grid_resolution;
+    radius_neighbors = m_radius_neighbors;
+    for (std::size_t i = 0; i < nb_scales; ++ i)
+      m_scales.push_back (new Scale (begin, end, point_map, m_bbox,
+                                     m_neighborhood,
+                                     value_at_scale(grid_resolution, i),
+                                     value_at_scale(radius_neighbors, i)));
   }
 
-  
+
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
            typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >
@@ -121,7 +149,7 @@ public:
           VectorMap normal_map = VectorMap(),
           ColorMap color_map = ColorMap(),
           EchoMap echo_map = EchoMap())
-    : m_grid (NULL), m_neighborhood (NULL), m_eigen (NULL)
+    : m_neighborhood (NULL)
   {
     load (psc, filename, begin, end, point_map, normal_map, color_map, echo_map);
   }
@@ -133,18 +161,24 @@ public:
 
   const Iso_cuboid_3& bbox() const { return m_bbox; }
   const Neighborhood& neighborhood() const { return *m_neighborhood; }
-  const Planimetric_grid& grid() const { return *m_grid; }
-  const Local_eigen_analysis& eigen() const { return *m_eigen; }
+  const Planimetric_grid& grid() const { return *(m_scales[0]->grid); }
+  const Local_eigen_analysis& eigen() const { return *(m_scales[0]->eigen); }
 
+
+  inline double value_at_scale (const double& v, std::size_t i)
+  {
+    if (i == 0)
+      return v;
+    return 2 * value_at_scale(v, i - 1);
+  }
   
   void clear()
   {
-    if (m_grid != NULL)
-      {
-        delete m_grid;
-        delete m_neighborhood;
-        delete m_eigen;
-      }
+    if (m_neighborhood != NULL)
+      delete m_neighborhood;
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      delete m_scales[i];
+    m_scales.clear();
   }
 
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
@@ -168,20 +202,27 @@ public:
                                         RandomAccessIterator begin, RandomAccessIterator end,
                                         PointMap point_map)
   {
-    psc.add_attribute (Attribute_handle (new Anisotropy(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Distance_to_plane(begin, end, point_map, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Elevation(begin, end, point_map,
-                                     m_bbox, *m_grid, m_grid_resolution,
-                                     m_radius_neighbors, m_radius_dtm)));
-    psc.add_attribute (Attribute_handle (new Linearity(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Omnivariance(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Planarity(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Sphericity(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Sum_eigen(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Surface_variation(begin, end, *m_eigen)));
-    psc.add_attribute (Attribute_handle (new Dispersion(begin, end, point_map,
-                                      *m_grid, m_grid_resolution, m_radius_neighbors)));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        psc.add_attribute (Attribute_handle (new Anisotropy(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Distance_to_plane(begin, end, point_map, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Elevation(begin, end, point_map,
+                                                           m_bbox, *(m_scales[i]->grid),
+                                                           value_at_scale(m_grid_resolution, i),
+                                                           value_at_scale(m_radius_neighbors, i),
+                                                           value_at_scale(m_radius_dtm, i))));
+        psc.add_attribute (Attribute_handle (new Linearity(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Omnivariance(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Planarity(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Sphericity(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Sum_eigen(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Surface_variation(begin, end, *(m_scales[i]->eigen))));
+        psc.add_attribute (Attribute_handle (new Dispersion(begin, end, point_map,
+                                                            *(m_scales[i]->grid),
+                                                            value_at_scale(m_grid_resolution, i),
+                                                            value_at_scale(m_radius_neighbors, i))));
+      }
   }
 
   template <typename VectorMap>
@@ -197,7 +238,8 @@ public:
                                         const CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>&
                                         = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>())
   {
-    psc.add_attribute (Attribute_handle (new Verticality(begin, end, *m_eigen)));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      psc.add_attribute (Attribute_handle (new Verticality(begin, end, *(m_scales[i]->eigen))));
   }
 
   template <typename ColorMap>
@@ -228,8 +270,10 @@ public:
                                       EchoMap echo_map)
   {
     typedef Attribute_echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap> Echo_scatter;
-    psc.add_attribute (Attribute_handle (new Echo_scatter(begin, end, echo_map, *m_grid,
-                                                          m_grid_resolution, m_radius_neighbors)));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      psc.add_attribute (Attribute_handle (new Echo_scatter(begin, end, echo_map, *(m_scales[i]->grid),
+                                                            value_at_scale(m_grid_resolution, i),
+                                                            value_at_scale(m_radius_neighbors, i))));
   }
 
   void generate_echo_based_attributes(const Point_set_classification&,
@@ -317,8 +361,7 @@ public:
       (boost::make_transform_iterator (begin, CGAL::Property_map_to_unary_function<PointMap>(point_map)),
        boost::make_transform_iterator (end, CGAL::Property_map_to_unary_function<PointMap>(point_map)));
     m_neighborhood = new Neighborhood (begin, end, point_map);
-    m_grid = new Planimetric_grid (begin, end, point_map, m_bbox, m_grid_resolution);
-    m_eigen = new Local_eigen_analysis (begin, end, point_map, *m_neighborhood, m_radius_neighbors);
+    m_scales.push_back (new Scale (begin, end, point_map, m_bbox, m_neighborhood, m_grid_resolution, m_radius_neighbors));
 
     std::map<std::string, Attribute_handle> att_map;
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.attributes"))
@@ -328,35 +371,35 @@ public:
 
         // Generate the right attribute if possible
         if (id == "anisotropy")
-          psc.add_attribute (Attribute_handle (new Anisotropy(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Anisotropy(begin, end, *(m_scales[0]->eigen))));
         else if (id == "distance_to_plane")
-          psc.add_attribute (Attribute_handle (new Distance_to_plane(begin, end, point_map, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Distance_to_plane(begin, end, point_map, *(m_scales[0]->eigen))));
         else if (id == "eigentropy")
-          psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *(m_scales[0]->eigen))));
         else if (id == "elevation")
           psc.add_attribute (Attribute_handle (new Elevation(begin, end, point_map,
-                                                             m_bbox, *m_grid, m_grid_resolution,
+                                                             m_bbox, *(m_scales[0]->grid), m_grid_resolution,
                                                              m_radius_neighbors, m_radius_dtm)));
         else if (id == "linearity")
-          psc.add_attribute (Attribute_handle (new Linearity(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Linearity(begin, end, *(m_scales[0]->eigen))));
         else if (id == "omnivariance")
-          psc.add_attribute (Attribute_handle (new Omnivariance(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Omnivariance(begin, end, *(m_scales[0]->eigen))));
         else if (id == "planarity")
-          psc.add_attribute (Attribute_handle (new Planarity(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Planarity(begin, end, *(m_scales[0]->eigen))));
         else if (id == "sphericity")
-          psc.add_attribute (Attribute_handle (new Sphericity(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Sphericity(begin, end, *(m_scales[0]->eigen))));
         else if (id == "sum_eigen")
-          psc.add_attribute (Attribute_handle (new Sum_eigen(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Sum_eigen(begin, end, *(m_scales[0]->eigen))));
         else if (id == "surface_variation")
-          psc.add_attribute (Attribute_handle (new Surface_variation(begin, end, *m_eigen)));
+          psc.add_attribute (Attribute_handle (new Surface_variation(begin, end, *(m_scales[0]->eigen))));
         else if (id == "vertical_dispersion")
           psc.add_attribute (Attribute_handle (new Dispersion(begin, end, point_map,
-                                                              *m_grid, m_grid_resolution, m_radius_neighbors)));
+                                                              *(m_scales[0]->grid), m_grid_resolution, m_radius_neighbors)));
         else if (id == "verticality")
           {
             if (boost::is_convertible<VectorMap,
                 typename CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3> >::value)
-              psc.add_attribute (Attribute_handle (new Verticality(begin, end, *m_eigen)));
+              psc.add_attribute (Attribute_handle (new Verticality(begin, end, *(m_scales[0]->eigen))));
             else
               psc.add_attribute (Attribute_handle (new Verticality(begin, end, normal_map)));
           }
@@ -368,7 +411,7 @@ public:
                 std::cerr << "Warning: echo_scatter required but no echo map given." << std::endl;
                 continue;
               }
-            psc.add_attribute (Attribute_handle (new Echo_scatter(begin, end, echo_map, *m_grid,
+            psc.add_attribute (Attribute_handle (new Echo_scatter(begin, end, echo_map, *(m_scales[0]->grid),
                                                                   m_grid_resolution, m_radius_neighbors)));
 
           }
@@ -435,6 +478,69 @@ public:
       }
     
     return true;
+  }
+
+
+
+  void write_ply (std::ostream& stream,
+                  RandomAccessIterator begin, RandomAccessIterator end,
+                  PointMap point_map, Point_set_classification& psc,
+                  std::vector<RGB_Color>* colors = NULL)
+  {
+    stream << "ply" << std::endl
+           << "format ascii 1.0" << std::endl
+           << "element vertex " << (end - begin) << std::endl
+           << "property double x" << std::endl
+           << "property double y" << std::endl
+           << "property double z" << std::endl
+           << "property uchar red" << std::endl
+           << "property uchar green" << std::endl
+           << "property uchar blue" << std::endl
+           << "property int label" << std::endl;
+
+    bool delete_colors = false;
+    if (colors == NULL)
+      {
+        colors = new std::vector<RGB_Color>();
+        delete_colors = true;
+      }
+    
+    std::map<Type_handle, std::size_t> map_types;
+    for (std::size_t i = 0; i < psc.number_of_classification_types(); ++ i)
+      {
+        map_types.insert (std::make_pair (psc.get_classification_type(i), i));
+        stream << "comment label " << i << " is " << psc.get_classification_type(i)->id() << std::endl;
+      }
+    map_types.insert (std::make_pair (Type_handle(), psc.number_of_classification_types()));
+    
+    stream << "end_header" << std::endl;
+
+    while (colors->size() < psc.number_of_classification_types())
+      {
+        RGB_Color c = {{ 192 + rand() % 60,
+                         192 + rand() % 60,
+                         192 + rand() % 60 }};
+        colors->push_back (c);
+      }
+    RGB_Color c = {{ 0, 0, 0 }};
+    colors->push_back (c);
+
+    std::size_t i = 0;
+    for (RandomAccessIterator it = begin; it != end; ++ it)
+      {
+        Type_handle t = psc.classification_type_of(i);
+        std::size_t idx = map_types[t];
+        
+        stream << get(point_map, *it) << " "
+               << (int)((*colors)[idx][0]) << " "
+               << (int)((*colors)[idx][1]) << " "
+               << (int)((*colors)[idx][2]) << " "
+               << idx << std::endl;
+        ++ i;
+      }
+
+    if (delete_colors)
+      delete colors;
   }
   
 };
