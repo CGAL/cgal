@@ -577,16 +577,16 @@ namespace CGAL {
                     {
                       if( v2.first == "p" )
                       {
-                        if (myDarts[id_dart_cellule]->
-                            template attribute<i>()==NULL )
+                        if (amap->template attribute<i>
+                            (myDarts[id_dart_cellule])==NULL )
                           amap->template set_attribute<i>
                             (myDarts[id_dart_cellule],
                              amap->template create_attribute<i>());
 
                         read_cmap_attribute_node
                           (v2,
-                           myDarts[id_dart_cellule]->
-                           template attribute<i>()->point());
+                           (amap->template attribute<i>
+                            (myDarts[id_dart_cellule])->point()));
                       }
                     }
                   }
@@ -638,15 +638,14 @@ namespace CGAL {
                     {
                       if( v2.first == "v" )
                       {
-                        if (myDarts[id_dart_cellule]->
-                            template attribute<i>()==NULL )
+                        if (amap->template attribute<i>
+                            (myDarts[id_dart_cellule])==NULL)
                           amap->template set_attribute<i>
                             (myDarts[id_dart_cellule],
                              amap->template create_attribute<i>());
                         read_cmap_attribute_node
                           (v2,
-                           myDarts[id_dart_cellule]->
-                           template attribute<i>()->info());
+                           amap->template info<i>(myDarts[id_dart_cellule]));
                       }
                     }
                   }

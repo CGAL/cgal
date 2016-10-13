@@ -26,7 +26,7 @@ struct Myitems_2
   template <class GMAP>
   struct Dart_wrapper
   {
-    typedef CGAL::Generalized_map_dart<2, GMAP> Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute<GMAP,int,CGAL::Tag_true,Sum_functor,
                                  Divide_by_two_functor> myattrib;
@@ -40,7 +40,7 @@ struct Myitems_2c
   template <class GMAP>
   struct Dart_wrapper
   {
-    typedef CGAL::Generalized_map_dart<2, GMAP> Dart;
+    typedef int Dart_info;
 
     typedef CGAL::Cell_attribute<GMAP,int,CGAL::Tag_false,Sum_functor,
                                  Divide_by_two_functor> myattrib;
@@ -53,7 +53,7 @@ struct Myitems_3
   template <class GMAP>
   struct Dart_wrapper
   {
-    typedef CGAL::Generalized_map_dart<3, GMAP> Dart;
+    typedef double* Dart_info;
 
     typedef CGAL::Cell_attribute<GMAP,int,CGAL::Tag_true,Sum_functor,
                                  Divide_by_two_functor> myattrib;
@@ -67,7 +67,7 @@ struct Myitems_3c
   template <class GMAP>
   struct Dart_wrapper
   {
-    typedef CGAL::Generalized_map_dart<3, GMAP> Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute<GMAP,int,CGAL::Tag_false,Sum_functor,
                                  Divide_by_two_functor> myattrib;
@@ -81,7 +81,7 @@ struct Myitems_4
   template <class GMAP>
   struct Dart_wrapper
   {
-    typedef CGAL::Generalized_map_dart<4, GMAP> Dart;
+    typedef double Dart_info;
 
     typedef CGAL::Cell_attribute<GMAP,int,CGAL::Tag_true,Sum_functor,
                                  Divide_by_two_functor> myattrib;
@@ -95,7 +95,7 @@ struct Myitems_4c
   template <class GMAP>
   struct Dart_wrapper
   {
-    typedef CGAL::Generalized_map_dart<4, GMAP> Dart;
+    typedef char* Dart_info;
 
     typedef CGAL::Cell_attribute<GMAP,int,CGAL::Tag_false,Sum_functor,
                                  Divide_by_two_functor> myattrib;

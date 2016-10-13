@@ -503,11 +503,10 @@ struct Degroup_nonvoid_attribute_functor_run
 
     // As we split, we set the dart of the first attribute to adart1 for which
     // we are sure it belongs to the first i-cell.
-    amap->template get_attribute<i>(a1).set_dart(adart1);
+    amap->template set_dart_of_attribute<i>(a1, adart1);
 
     typename CMap::template Attribute_handle<i>::type
-      a2 = amap->template
-      create_attribute<i>(amap->template get_attribute<i>(a1));
+      a2 = amap->template copy_attribute<i>(a1);
 
     amap->template set_attribute<i>(adart2, a2);
     CGAL::internal::Call_split_functor<CMap, i>::run(amap, a1, a2);

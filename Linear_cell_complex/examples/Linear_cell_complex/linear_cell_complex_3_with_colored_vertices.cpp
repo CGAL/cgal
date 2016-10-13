@@ -15,7 +15,7 @@ struct Myitem
   template<class Refs>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<3, Refs > Dart;
+    typedef void Dart_info;
     
     typedef CGAL::Cell_attribute_with_point< Refs, int, CGAL::Tag_true, 
                                              Average_functor >

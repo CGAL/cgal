@@ -14,7 +14,7 @@ struct Map_2_dart_items
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart< 2, Refs > Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
@@ -30,7 +30,7 @@ struct Map_2_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart< 2, Refs > Dart;
+    typedef double Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -47,7 +47,7 @@ struct Map_3_dart_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart< 3, Refs > Dart;
+    typedef char Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
@@ -64,7 +64,7 @@ struct Map_3_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart< 3, Refs > Dart;
+    typedef char* Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -82,7 +82,7 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart< 3, Refs > Dart;
+    typedef int* Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -96,7 +96,7 @@ struct Map_dart_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart< 4, Refs > Dart;
+    typedef Another_map_3_dart_items_3 Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -113,7 +113,7 @@ struct Map_dart_max_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart< 4, Refs > Dart;
+    typedef double Dart_info;
 
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
@@ -134,7 +134,7 @@ typedef CGAL::Linear_cell_complex_traits
 typedef CGAL::Linear_cell_complex_traits<4> Traits4_a;
 
 // Point_3, void, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a, CGAL::Linear_cell_complex_for_combinatorial_map_min_items<2> > Map1;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items > Map1;
 
 // Point_3+double, void, double
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a, Map_2_dart_items > Map2;
@@ -143,7 +143,7 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a, Map_2_da
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_b, Map_2_dart_max_items_3> Map3;
 
 // Point_3, void, void, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a, CGAL::Linear_cell_complex_for_combinatorial_map_min_items<3> > Map4;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items > Map4;
 
 // Point_3+double, void, int, double
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a, Map_3_dart_items_3> Map5;

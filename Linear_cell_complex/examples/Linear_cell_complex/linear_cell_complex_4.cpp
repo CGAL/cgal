@@ -1,4 +1,4 @@
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <iostream>
 #include <vector>

@@ -36,28 +36,45 @@
  */
 namespace CGAL
 {
+  struct Generic_map
+  {
+    typedef CGAL::Void Dart;
+    typedef CGAL::Void Dart_handle;
+    typedef CGAL::Void Dart_const_handle;
+    typedef CGAL::Void Alloc;
+  };
+  
   namespace internal
   {
     // There is a problem on windows to handle tuple containing void.
     // To solve this, we transform such a tuple in tuple containing Disabled.
-    template<typename T>
+    template<typename T, typename Refs>
     struct Convert_void
-    { typedef T type; };
+    { typedef typename T::template rebind<Refs>::type type; };
 
-    template<>
-    struct Convert_void<void>
+    template<typename Refs>
+    struct Convert_void<void, Refs>
     { typedef CGAL::Void type; };
 
-#if ! defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && \
+    // Struct to rebind an attribute with the given refs class, if it is
+    // not void
+    template<typename T, typename Refs>
+    struct Rebind_attr
+    { typedef typename T::template rebind<Refs>::type type; };
+    template<typename Refs>
+    struct Rebind_attr<CGAL::Void, Refs>
+    { typedef CGAL::Void type; };
+
+#if ! defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) &&  \
     ! defined(CGAL_CFG_NO_CPP0X_TUPLE)
     // Convert a tuple in a same tuple where each void type was replaced into
     // CGAL::Void.
-    template<typename ... Items>
+    template<class CMap, typename ... Items>
     struct Convert_tuple_with_void;
-    template<typename ... Items>
-    struct Convert_tuple_with_void<CGAL::cpp11::tuple<Items...> >
+    template<class CMap, typename ... Items>
+    struct Convert_tuple_with_void<CMap, CGAL::cpp11::tuple<Items...> >
     {
-      typedef CGAL::cpp11::tuple<typename Convert_void<Items>::type... > type;
+      typedef CGAL::cpp11::tuple<typename Convert_void<Items, CMap>::type... > type;
     };
 
     // Length of a variadic template
@@ -390,14 +407,14 @@ namespace CGAL
       template <class T>
       struct Add_compact_container{
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
-        typedef typename CMap::template Container_for_attributes<T> type;
+        typedef typename CMap::template Container_for_attributes<typename T::template rebind<CMap>::type > type;
       };
 
       // defines as type Compact_container<T>::iterator
       template <class T>
       struct Add_compact_container_iterator{
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
-        typedef typename CMap::template Container_for_attributes<T>::iterator
+        typedef typename CMap::template Container_for_attributes<typename T::template rebind<CMap>::type >::iterator
         iterator_type;
 
         // TODO case when there is no Use_index typedef in CMap
@@ -410,7 +427,7 @@ namespace CGAL
       template <class T>
       struct Add_compact_container_const_iterator{
         typedef typename CMap::Alloc::template rebind<T>::other Attr_allocator;
-        typedef typename CMap::template Container_for_attributes<T>::
+        typedef typename CMap::template Container_for_attributes<typename T::template rebind<CMap>::type >::
         const_iterator iterator_type;
 
         typedef typename boost::mpl::if_
@@ -420,7 +437,7 @@ namespace CGAL
 
       // All the attributes (with CGAL::Void)
       typedef typename CGAL::internal::Convert_tuple_with_void
-      <typename CMap::Attributes>::type Attributes;
+      <CMap, typename CMap::Attributes>::type Attributes;
 
       // defines as type Cell_attribute_binary_functor<T>
       template <class T>
@@ -471,12 +488,12 @@ namespace CGAL
                                         Enabled_attributes >::type
       Split_functors;
 
-      //Helper class allowing to retrieve the type of the
+      //Helper class allowing to retrieve the type of the 
       // attribute of dimension d
       template<int d, int in_tuple=(d<CGAL::internal::My_length
                                     <Attributes>::value)>
       struct Attribute_type
-      { typedef typename CGAL::cpp11::tuple_element<d,Attributes>::type type; };
+      { typedef typename Rebind_attr<typename CGAL::cpp11::tuple_element<d,Attributes>::type, CMap>::type  type; };
 
       template<int d>
       struct Attribute_type<d,0>

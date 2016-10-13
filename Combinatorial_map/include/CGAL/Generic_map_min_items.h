@@ -17,34 +17,33 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_GENERALIZED_MAP_MIN_ITEMS_H
-#define CGAL_GENERALIZED_MAP_MIN_ITEMS_H 1
-
-#include <CGAL/Generalized_map_dart.h>
+#ifndef CGAL_GENERIC_MAP_MIN_ITEMS_H
+#define CGAL_GENERIC_MAP_MIN_ITEMS_H 1
 
 namespace CGAL {
 
-/** @file Generalized_map_min_items.h
- * Definition of min item class for dD generalized map.
- */
+  /** @file Generic_map_min_items.h
+   * Definition of min item class for dD generic map.
+   */
 
-/** Minimal items for dD generalized map.
- * Generalized_map_min_items defines what is the minimal item
- * class for a d-gmap It provides definitions for darts without attribute.
- */
-template <unsigned int d>
-struct Generalized_map_min_items
-{
-   /// Dart_wrapper defines the type of darts used, and enabled attributes.
-   template < class Refs >
-   struct Dart_wrapper
-   {
-     typedef CGAL::Generalized_map_dart< d, Refs > Dart;
-     typedef CGAL::cpp11::tuple<> Attributes;
-   };
-};
+  /** Minimal items for dD generic map.
+   * Generic_map_min_items defines what is the minimal item class for a generic map.
+   * No information associated with darts, no enabled attribute.
+   */
+
+#ifndef CGAL_CMAP_DEPRECATED
+  struct Generic_map_min_items
+  {
+    template < class Refs >
+    struct Dart_wrapper
+    {
+      typedef void Dart_info;
+      typedef CGAL::cpp11::tuple<> Attributes;
+    };
+  };
+#endif  
 
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_MAP_MIN_ITEMS_H //
+#endif // CGAL_GENERIC_MAP_MIN_ITEMS_H
 // EOF //

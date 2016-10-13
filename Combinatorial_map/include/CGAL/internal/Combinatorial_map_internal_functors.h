@@ -256,17 +256,17 @@ struct Test_is_valid_attribute_functor
 
     if ( a!=amap->null_handle )
     {
-      if ( amap->template get_attribute<i>(a).get_nb_refs()!=nb )
+      if ( amap->template get_attribute_ref_counting<i>(a)!=nb )
       {
         std::cout<<"ERROR: the number of reference of an "<<i
                 <<"-attribute is not correct. Count: "<<nb
                <<" != Store in the attribute: "
-              <<amap->template get_attribute<i>(a).get_nb_refs()
+              <<amap->template get_attribute_ref_counting<i>(a)
              <<" for dart ";
         amap->display_dart(adart); std::cout<<std::endl;
         valid=false;
       }
-      if ( !amap->template get_attribute<i>(a).is_valid() )
+      if ( !amap->template is_valid_attribute<i>(a) )
       {
         std::cout<<"ERROR: the dart associated with an "<<i
                 <<"-attribute is NULL for dart ";
@@ -339,10 +339,10 @@ struct Correct_invalid_attributes_functor
 
     // If the i-cell has less darts than the ref counter of the i-attribute,
     // the i-attribute is shared by different cells => we duplicate it.
-    if ( nb!=amap->template get_attribute<i>(a).get_nb_refs() )
+    if ( nb!=amap->template get_attribute_ref_counting<i>(a) )
     {
       typename CMap::template Attribute_handle<i>::type
-        a2=amap->template create_attribute<i>(amap->template get_attribute<i>(a));
+        a2=amap->template copy_attribute<i>(a);
       amap->template set_attribute<i>(adart, a2);
     }
   }
@@ -433,12 +433,11 @@ struct Decrease_attribute_functor_run
   {
     if ( amap->template attribute<i>(adart)!=CMap::null_handle )
     {
-      amap->template get_attribute<i>(amap->template attribute<i>(adart)).
-        dec_nb_refs();
-      if ( amap->are_attributes_automatically_managed() &&
-           amap->template get_attribute<i>(amap->template attribute<i>(adart)).
-           get_nb_refs()==0 )
-        amap->template erase_attribute<i>(amap->template attribute<i>(adart));
+      amap.template dec_attribute_ref_counting<i>(amap.template attribute<i>(adart));
+      if ( amap.are_attributes_automatically_managed() &&
+           amap.template get_attribute_ref_counting<i>
+           (amap.template attribute<i>(adart))==0 )
+        amap.template erase_attribute<i>(amap.template attribute<i>(adart));
     }
   }
 };
@@ -740,7 +739,7 @@ struct Reverse_orientation_of_map_functor
         amap->beta(first_dart_in_cell,1);
       typename CMap::Helper::template Attribute_handle<0>::type
         attribute_for_first_dart=amap->template attribute<0>(current_dart_in_cell);
-      amap->template get_attribute<0>(attribute_for_first_dart).inc_nb_refs();
+      amap->template inc_attribute_ref_counting<0>(attribute_for_first_dart);
       do {
         amap->mark(current_dart_in_cell, mark);
         typename CMap::Dart_handle previous_dart_in_cell=
@@ -764,7 +763,7 @@ struct Reverse_orientation_of_map_functor
         amap->beta(current_dart_in_cell,1);
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
         run(amap, current_dart_in_cell, attribute_for_first_dart);
-      amap->template get_attribute<0>(attribute_for_first_dart).dec_nb_refs();
+      amap->template dec_attribute_ref_counting<0>(attribute_for_first_dart);
       amap->template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
       amap->template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
     }
@@ -831,7 +830,7 @@ struct Reverse_orientation_of_connected_component_functor
         amap->beta(first_dart_in_cell,1);
       typename CMap::Helper::template Attribute_handle<0>::type
         attribute_for_first_dart=amap->template attribute<0>(current_dart_in_cell);
-      amap->template get_attribute<0>(attribute_for_first_dart).inc_nb_refs();
+      amap->template inc_attribute_ref_counting<0>(attribute_for_first_dart);
       do {
         amap->mark(current_dart_in_cell, mark);
         typename CMap::Dart_handle previous_dart_in_cell=
@@ -855,7 +854,7 @@ struct Reverse_orientation_of_connected_component_functor
         amap->beta(current_dart_in_cell,1);
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
           run(amap, current_dart_in_cell, attribute_for_first_dart);
-      amap->template get_attribute<0>(attribute_for_first_dart).dec_nb_refs();
+      amap->template dec_attribute_ref_counting<0>(attribute_for_first_dart);
       amap->template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
       amap->template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
     }

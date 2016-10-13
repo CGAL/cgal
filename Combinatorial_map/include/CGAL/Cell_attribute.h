@@ -68,29 +68,20 @@ namespace CGAL {
   class Cell_attribute_without_info<Refs, Tag_false,
                                     OnMerge, OnSplit>
   {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
 
-    template < unsigned int, class, class, class, class >
-    friend class Generalized_map_base;
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
 
-    template <unsigned int, typename>
-    friend struct Dart;
+    template<unsigned int, unsigned int, class, class, class>
+    friend class Linear_cell_complex_storage_1;
 
-    template <unsigned int, typename>
-    friend struct GMap_dart;
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
     friend class Compact_container;
-
-    template<typename, unsigned int, typename>
-    friend struct internal::Decrease_attribute_functor_run;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_map_functor;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
     typedef Tag_false                            Supports_cell_dart;
@@ -180,29 +171,20 @@ namespace CGAL {
   class Cell_attribute_without_info<Refs, Tag_true,
                                     OnMerge, OnSplit>
   {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
 
-    template < unsigned int, class, class, class, class >
-    friend class Generalized_map_base;
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
 
-    template <unsigned int, typename>
-    friend struct Dart;
+    template<unsigned int, unsigned int, class, class, class>
+    friend class Linear_cell_complex_storage_1;
 
-    template <unsigned int, typename>
-    friend struct GMap_dart;
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
     friend class Compact_container;
-
-    template<typename, unsigned int, typename>
-    friend struct internal::Decrease_attribute_functor_run;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_map_functor;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
     typedef Tag_true                             Supports_cell_dart;
@@ -295,14 +277,20 @@ namespace CGAL {
   /// Specialization when Info==void.
   template <class Refs, class Tag_,
             class OnMerge, class OnSplit>
-  class Cell_attribute<Refs, void, Tag_, OnSplit, OnMerge> :
-    public Cell_attribute_without_info<Refs, Tag_, OnSplit, OnMerge>
+  class Cell_attribute<Refs, void, Tag_, OnMerge, OnSplit> :
+    public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit>
   {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
 
-    template < unsigned int, class, class, class, class >
-    friend class Generalized_map_base;
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class Linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
     friend class Compact_container;
@@ -316,6 +304,10 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef void                             Info;
 
+    template<typename T>
+    struct rebind
+    { typedef Cell_attribute<T, void, Tag_, OnMerge, OnSplit> type; };
+    
     //  protected:
     /// Default contructor.
     Cell_attribute()
@@ -330,11 +322,17 @@ namespace CGAL {
     public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit>,
     public Info_for_cell_attribute<Info_>
   {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
 
-    template < unsigned int, class, class, class, class >
-    friend class Generalized_map_base;
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class Linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
     friend class Compact_container;
@@ -349,6 +347,10 @@ namespace CGAL {
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;
     typedef Info_                            Info;
+
+    template<typename T>
+    struct rebind
+    { typedef Cell_attribute<T, Info_, Tag_, OnMerge, OnSplit> type; };
 
     bool operator==(const Self& other) const
     { return this->info()==other.info(); }

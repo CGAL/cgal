@@ -242,11 +242,10 @@ struct GMap_degroup_attribute_functor_run
 
     // As we split, we set the dart of the first attribute to adart1 for which
     // we are sure it belongs to the first i-cell.
-    amap->template get_attribute<i>(a1).set_dart(adart1);
+    amap->template set_dart_of_attribute<i>(a1, adart1);
 
     typename CMap::template Attribute_handle<i>::type
-      a2 = amap->template
-      create_attribute<i>(amap->template get_attribute<i>(a1));
+      a2 = amap->template copy_attribute<i>(a1);
 
     amap->template set_attribute<i>(adart2, a2);
     CGAL::internal::Call_split_functor<CMap, i>::run(amap, a1, a2);
@@ -448,7 +447,8 @@ struct GMap_test_split_attribute_functor_run<CMap, i, j, CGAL::Void>
                    typename CMap::size_type=CMap::INVALID_MARK)
   {}
   static void run( CMap*, const std::deque<typename CMap::Dart_handle>&,
-                   const std::deque<typename CMap::Dart_handle>&, typename CMap::size_type=CMap::INVALID_MARK)
+                   const std::deque<typename CMap::Dart_handle>&,
+                   typename CMap::size_type=CMap::INVALID_MARK)
   {}
 };
 // Specialization for i=j.
@@ -459,7 +459,8 @@ struct GMap_test_split_attribute_functor_run<CMap, i, i, T>
                    typename CMap::size_type=CMap::INVALID_MARK)
   {}
   static void run( CMap*, const std::deque<typename CMap::Dart_handle>&,
-                   const std::deque<typename CMap::Dart_handle>&, typename CMap::size_type=CMap::INVALID_MARK)
+                   const std::deque<typename CMap::Dart_handle>&,
+                   typename CMap::size_type=CMap::INVALID_MARK)
   {}
 };
 // Specialization for i=1 and j=0 (edge attributes are not modified
@@ -471,7 +472,8 @@ struct GMap_test_split_attribute_functor_run<CMap, 1, 0, T>
                    typename CMap::size_type=CMap::INVALID_MARK)
   {}
   static void run( CMap*, const std::deque<typename CMap::Dart_handle>&,
-                   const std::deque<typename CMap::Dart_handle>&, typename CMap::size_type=CMap::INVALID_MARK)
+                   const std::deque<typename CMap::Dart_handle>&,
+                   typename CMap::size_type=CMap::INVALID_MARK)
   {}
 };
 // ************************************************************************

@@ -25,7 +25,7 @@ struct Myitem
   template<class GMap>
   struct Dart_wrapper
   {
-    typedef CGAL::GMap_dart<3, GMap> Dart;
+    typedef void Dart_info;
     typedef CGAL::Cell_attribute<GMap, int, CGAL::Tag_true,
                                  Sum_functor, Divide_by_two_functor>
     Facet_attribute;
@@ -49,7 +49,7 @@ int main()
          it=gm.darts().begin(), itend=gm.darts().end();
        it!=itend; ++it)
   {
-    if ( it->attribute<2>()==NULL )
+    if ( gm.attribute<2>(it)==NULL )
       gm.set_attribute<2>(it, gm.create_attribute<2>());
   }
 
@@ -57,13 +57,13 @@ int main()
   for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator
          it=gm.one_dart_per_incident_cell<2,3>(dh1).begin(),
          itend=gm.one_dart_per_incident_cell<2,3>(dh1).end(); it!=itend; ++it)
-    { it->attribute<2>()->info()=7; }
+    { gm.info<2>(it)=7; }
 
   // 3) Set the color of all facets of the second cube to 19
   for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
 	 gm.one_dart_per_incident_cell<2,3>(dh2).begin(),
 	 itend=gm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
-    { it->attribute<2>()->info()=13; }
+    { gm.info<2>(it)=13; }
 
   // 4) 3-Sew the two cubes along one facet
   gm.sew<3>(dh1, dh2);

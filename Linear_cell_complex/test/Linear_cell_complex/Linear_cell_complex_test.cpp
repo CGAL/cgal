@@ -23,7 +23,7 @@ struct Myitems_2
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<2, LCC> Dart;
+    typedef int Dart_info;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
                                             Divide_by_two_functor> myattrib;
@@ -37,7 +37,7 @@ struct Myitems_2c
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<2, LCC> Dart;
+    typedef double Dart_info;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
                                             Divide_by_two_functor> myattrib;
@@ -50,7 +50,7 @@ struct Myitems_3
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<3, LCC> Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
                                             Divide_by_two_functor> myattrib;
@@ -64,7 +64,7 @@ struct Myitems_3c
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<3, LCC> Dart;
+    typedef char* Dart_info;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
                                             Divide_by_two_functor> myattrib;
@@ -78,7 +78,7 @@ struct Myitems_4
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<4, LCC> Dart;
+    typedef Myitems_3c Dart_info;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
                                             Divide_by_two_functor> myattrib;
@@ -92,7 +92,7 @@ struct Myitems_4c
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<4, LCC> Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
                                             Divide_by_two_functor> myattrib;

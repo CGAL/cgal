@@ -11,7 +11,7 @@ struct Map_2_dart_items
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 2, Refs > Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
@@ -26,7 +26,7 @@ struct Map_2_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 2, Refs > Dart;
+    typedef int Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
@@ -42,7 +42,7 @@ struct Map_3_dart_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 3, Refs > Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
@@ -58,7 +58,7 @@ struct Map_3_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 3, Refs > Dart;
+    typedef double Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
@@ -75,7 +75,7 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 3, Refs > Dart;
+    typedef Map_3_dart_max_items_3 Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
 
@@ -88,7 +88,7 @@ struct Map_dart_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 4, Refs > Dart;
+    typedef void Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
@@ -104,7 +104,7 @@ struct Map_dart_max_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef CGAL::Dart< 4, Refs > Dart;
+    typedef char* Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
@@ -115,13 +115,13 @@ struct Map_dart_max_items_4
   };
 };
 
-typedef CGAL::Combinatorial_map<2, CGAL::Combinatorial_map_min_items<2> > Map1;
+typedef CGAL::Combinatorial_map<2, CGAL::Generic_map_min_items > Map1;
 
 typedef CGAL::Combinatorial_map<2, Map_2_dart_items > Map2;
 
 typedef CGAL::Combinatorial_map<2, Map_2_dart_max_items_3> Map3;
 
-typedef CGAL::Combinatorial_map<3, CGAL::Combinatorial_map_min_items<3> > Map4;
+typedef CGAL::Combinatorial_map<3, CGAL::Generic_map_min_items > Map4;
 
 typedef CGAL::Combinatorial_map<3, Map_3_dart_items_3> Map5;
 

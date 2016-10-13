@@ -26,7 +26,13 @@
 #include <CGAL/internal/Combinatorial_map_copy_functors.h>
 #include <CGAL/internal/Combinatorial_map_sewable.h>
 #include <CGAL/Combinatorial_map_functors.h>
+
+#ifdef CGAL_CMAP_DEPRECATED
 #include <CGAL/Combinatorial_map_min_items.h>
+#else
+#include <CGAL/Generic_map_min_items.h>
+#endif
+
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
@@ -65,7 +71,11 @@ namespace CGAL {
    * the beta links, and to manage enabled attributes.
    */
   template < unsigned int d_, class Refs,
+#ifdef CGAL_CMAP_DEPRECATED
              class Items_=Combinatorial_map_min_items<d_>,
+#else
+             class Items_=Generic_map_min_items,
+#endif
              class Alloc_=CGAL_ALLOCATOR(int),
              class Storage_= Combinatorial_map_storage_1<d_, Items_, Alloc_> >
   class Combinatorial_map_base: public Storage_
@@ -95,12 +105,10 @@ namespace CGAL {
     typedef Storage_                                                    Storage;
     typedef Storage                                                     Base;
     typedef Combinatorial_map_base<d_, Refs, Items_, Alloc_, Storage_ > Self;
-
     typedef typename Base::Dart Dart;
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Dart_container Dart_container;
-    typedef typename Base::Dart_wrapper Dart_wrapper;
     typedef typename Base::size_type size_type;
     typedef typename Base::Helper Helper;
     typedef typename Base::Attributes Attributes;
@@ -129,7 +137,6 @@ namespace CGAL {
     using Base::dart_unlink_beta;
     using Base::attribute;
     using Base::mattribute_containers;
-    using Base::get_attribute;
     using Base::dart_of_attribute;
     using Base::set_dart_of_attribute;
     using Base::info_of_attribute;
@@ -167,9 +174,11 @@ namespace CGAL {
      */
     Combinatorial_map_base()
     {
+#ifdef CGAL_CMAP_DEPRECATED
       CGAL_static_assertion_msg(Dart::dimension==dimension,
                   "Dimension of dart different from dimension of map");
-
+#endif
+      
       CGAL_static_assertion_msg(Helper::nb_attribs<=dimension+1,
                   "Too many attributes in the tuple Attributes_enabled");
       this->init_storage();
@@ -591,11 +600,10 @@ namespace CGAL {
 
       if ( this->template attribute<i>(dh)!=null_handle )
       {
-        this->template get_attribute<i>(this->template attribute<i>(dh)).
-          dec_nb_refs();
+        this->template dec_attribute_ref_counting<i>(this->template attribute<i>(dh));
         if ( this->are_attributes_automatically_managed() &&
-             this->template get_attribute<i>(this->template attribute<i>(dh)).
-             get_nb_refs()==0 )
+             this->template get_attribute_ref_counting<i>
+             (this->template attribute<i>(dh))==0 )
           this->template erase_attribute<i>(this->template attribute<i>(dh));
       }
 
@@ -604,7 +612,7 @@ namespace CGAL {
       if ( ah!=null_handle )
       {
         this->template set_dart_of_attribute<i>(ah, dh);
-        this->template get_attribute<i>(ah).inc_nb_refs();
+        this->template inc_attribute_ref_counting<i>(ah);
       }
     }
 
@@ -916,7 +924,6 @@ namespace CGAL {
      */
     bool is_marked(Dart_const_handle adart, size_type amark) const
     {
-      // CGAL_assertion( adart != null_dart_handle );
       CGAL_assertion( is_reserved(amark) );
 
       return get_dart_mark(adart, amark)!=mmask_marks[amark];
@@ -1369,7 +1376,7 @@ namespace CGAL {
         (mattribute_containers).emplace(args...);
      // Reinitialize the ref counting of the new attribute. This is normally
      // not required except if create_attribute is used as "copy contructor".
-     this->template get_attribute<i>(res).mrefcounting = 0;
+     this->template init_attribute_ref_counting<i>(res);
      return res;
     }
 #else
@@ -1391,7 +1398,7 @@ namespace CGAL {
      typename Attribute_handle<i>::type res=
        CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(t1);
-     this->template get_attribute<i>(res).mrefcounting = 0;
+     this->template init_attribute_ref_counting<i>(res);
      return res;
     }
     template<unsigned int i, typename T1, typename T2>
@@ -2237,7 +2244,7 @@ namespace CGAL {
     void topo_unsew_0(Dart_handle adart)
     {
       CGAL_assertion( !this->template is_free<0>(adart) );
-      topo_unsew_1( adart->template beta<0>() );
+      topo_unsew_1(this->template beta<0>(adart) );
     }
 
     /** Topological unsew by betai the given dart plus all the required darts
@@ -4805,7 +4812,11 @@ namespace CGAL {
   };
 
   template < unsigned int d_,
+#ifdef CGAL_CMAP_DEPRECATED
              class Items_=Combinatorial_map_min_items<d_>,
+#else
+             class Items_=Generic_map_min_items,
+#endif
              class Alloc_=CGAL_ALLOCATOR(int),
              class Storage_= Combinatorial_map_storage_1<d_, Items_, Alloc_> >
   class Combinatorial_map :

@@ -63,9 +63,9 @@ namespace CGAL {
                           Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
-    template < unsigned int, class, class, class, class >
+    /*    template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
-
+    */
     template <class, class, class, class>
     friend class Compact_container;
 
@@ -118,9 +118,9 @@ namespace CGAL {
     public Cell_attribute<LCC, void, Tag, Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
-    template < unsigned int, class, class, class, class  >
+    /*    template < unsigned int, class, class, class, class  >
     friend class Combinatorial_map_base;
-
+    */
     template <class, class, class, class>
     friend class Compact_container;
 

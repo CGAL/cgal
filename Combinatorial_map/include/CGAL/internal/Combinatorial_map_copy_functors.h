@@ -63,7 +63,7 @@ struct Create_attribute_if_same_info_cmap<Map1, Map2, i, Info, Info>
   run(Map2& map2, const Info& info)
   { typename Map2::template Attribute_handle<i>::type
         res = map2.template create_attribute<i>();
-    map2.template get_attribute<i>(res).info()=info;
+    map2.template info_of_attribute<i>(res)=info;
     return res;
   }
 };
@@ -369,7 +369,7 @@ struct Cast_converter_cmap_attributes
     CGAL_assertion( map2.template attribute<i>(dh2)==Map2::null_handle );
     typename Map2::template Attribute_handle<i>::type
       res = map2.template create_attribute<i>();
-    map2.template get_attribute<i>(res).info() =
+    map2.template info_of_attribute<i>(res) =
       (typename Map2::template Attribute_type<i>::type::Info)
         map1.template info<i>(dh1);
     return res;
@@ -405,7 +405,7 @@ struct Default_converter_cmap_0attributes_with_point
     internal::Set_point_if_possible_cmap
         <typename Map1::template Attribute_type<0>::type::Point,
         typename Map2::template Attribute_type<0>::type::Point>::
-      run(map1.point(dh1), map2.template get_attribute<0>(res).point());
+      run(map1.point(dh1), map2.point_of_vertex_attribute(res));
     return res;
   }
 };

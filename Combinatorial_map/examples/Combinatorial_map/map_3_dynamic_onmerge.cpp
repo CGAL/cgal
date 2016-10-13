@@ -9,7 +9,7 @@ struct Myitem
   template<class CMap>
   struct Dart_wrapper
   {
-    typedef CGAL::Dart<3, CMap> Dart;
+    typedef void Dart_info;
     typedef CGAL::Cell_attribute<CMap, double> Face_attribute; // A weight
     typedef CGAL::cpp11::tuple<void,void,Face_attribute> Attributes;
   };

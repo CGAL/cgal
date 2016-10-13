@@ -20,7 +20,7 @@
 #ifndef CGAL_COMBINATORIAL_MAP_MIN_ITEMS_H
 #define CGAL_COMBINATORIAL_MAP_MIN_ITEMS_H 1
 
-#include <CGAL/Combinatorial_map_dart.h>
+#include <CGAL/Dart.h>
 
 namespace CGAL {
 
@@ -32,6 +32,7 @@ namespace CGAL {
    * Combinatorial_map_min_items defines what is the minimal item
    * class for a d-map It provides definitions for darts without attribute.
    */
+#ifdef CGAL_CMAP_DEPRECATED
   template <unsigned int d>
   struct Combinatorial_map_min_items
   {
@@ -39,10 +40,11 @@ namespace CGAL {
     template < class Refs >
     struct Dart_wrapper
     {
-      typedef CGAL::Combinatorial_map_dart< d, Refs > Dart;
+      typedef CGAL::Dart< d, Refs > Dart;
       typedef CGAL::cpp11::tuple<> Attributes;
     };
   };
+#endif
 
 } // namespace CGAL
 
