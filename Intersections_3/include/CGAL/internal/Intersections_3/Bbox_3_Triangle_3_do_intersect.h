@@ -159,7 +159,7 @@ namespace internal {
         return -sides[SIDE].y()*alpha + sides[SIDE].x()*beta;
       default:
         CGAL_error();
-        return typename K::FT(0.);
+        return typename K::FT(0);
     }
   }
 
@@ -192,8 +192,8 @@ namespace internal {
     typename K::Point_3 p_min, p_max;
     get_min_max<K, AXE>(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
                         AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
-                        AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x(): 0,
-                        bbox, p_min, p_max);
+                        AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x():
+			typename K::FT(0), bbox, p_min, p_max);
 
     switch ( AXE )
     {
