@@ -33,15 +33,18 @@
 #define CGALRS_PTR(a)   void *a
 #endif
 
-// RS does not work with MPFR 3.1.4 and 3.1.5. In case the version of MPFR
-// is one of those buggy versions, ask the user to update and abort the
-// compilation.
+// RS3 does not work with MPFR 3.1.3 to 3.1.5. In case RS3 is enabled and
+// the version of MPFR is one of those buggy versions, abort the compilation
+// and instruct the user to update MPFR or don't use RS3.
+#ifdef CGAL_USE_RS3
 #include <boost/static_assert.hpp>
 BOOST_STATIC_ASSERT_MSG(
-        MPFR_VERSION_MAJOR!=3 || \
-        MPFR_VERSION_MINOR!=1 || \
-        (MPFR_VERSION_PATCHLEVEL!=4 && MPFR_VERSION_PATCHLEVEL!=5), \
-        "RS does not work with MPFR 3.1.4 and 3.1.5. Please update MPFR.");
+        MPFR_VERSION_MAJOR!=3 ||
+        MPFR_VERSION_MINOR!=1 ||
+        MPFR_VERSION_PATCHLEVEL<3 || MPFR_VERSION_PATCHLEVEL>5,
+        "RS3 does not work with MPFR versions 3.1.3 to 3.1.5. "#
+        "Please update MPFR or disable RS3.");
+#endif // CGAL_USE_RS3
 
 namespace CGAL{
 namespace RS2{
