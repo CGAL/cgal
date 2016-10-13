@@ -563,11 +563,11 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 //   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 #if __has_cpp_attribute(fallthrough)
 #  define CGAL_FALLTHROUGH [[fallthrough]]
-#elseif __has_cpp_attribute(gnu::fallthrough)
+#elif __has_cpp_attribute(gnu::fallthrough)
 #  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
-#elseif __has_cpp_attribute(clang::fallthrough)
+#elif __has_cpp_attribute(clang::fallthrough)
 #  define CGAL_FALLTHROUGH [[clang::fallthrough]]
-#elseif __has_attribute(fallthrough)
+#elif __has_attribute(fallthrough)
 #  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
 #else
 #  define CGAL_FALLTHROUGH while(false){}
