@@ -34,7 +34,7 @@ inline std::string demangle(const char* name)
 #if BOOST_VERSION >= 105600
   return boost::core::demangle(name);
 #else
-  return boost::utils::detail::demangle(name);
+  return boost::units::detail::demangle(name);
 #endif
 }
   
