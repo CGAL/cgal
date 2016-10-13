@@ -45,6 +45,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
 #include <CGAL/utility.h>
+#include <CGAL/tss.h>
 
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -1423,14 +1424,6 @@ public:
 protected:
   void print_error_message() const;
 
-  void print_error_message(const Tag_false&) const
-  {
-    CGAL_error_msg("SDG::Insert aborted: intersecting segments found");
-  }
-
-  void print_error_message(const Tag_true&) const {}
-
-  //protected:
 public:
   // wrappers for constructions
   inline Point_2 circumcenter(const Face_handle& f) const {

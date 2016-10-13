@@ -901,7 +901,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
 				     const Site_2& /* t */, Vertex_handle /* v */,
 				     Tag_false)
 {
-  CGAL_error_msg("SDG::Insert aborted: intersecting segments found");
+  print_error_message();
   return Vertex_handle();
 }
 
@@ -2685,15 +2685,19 @@ void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 print_error_message() const
 {
-  std::cerr << std::endl;
-  std::cerr << "ATTENTION:" << std::endl;
-  std::cerr << "A segment-segment intersection was found."
-	    << std::endl;
-  std::cerr << "The Segment_Delaunay_graph_2 class is not configured"
-	    << " to handle this situation." << std::endl;
-  std::cerr << "Please look at the documentation on how to handle"
-	    << " this behavior." << std::endl;
-  std::cerr << std::endl;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, once, 0);
+  if(once == 0){
+    ++once;
+    std::cerr << std::endl;
+    std::cerr << "ATTENTION:" << std::endl;
+    std::cerr << "A segment-segment intersection was found."
+              << std::endl;
+    std::cerr << "The Segment_Delaunay_graph_2 class is not configured"
+              << " to handle this situation." << std::endl;
+    std::cerr << "Please look at the documentation on how to handle"
+              << " this behavior." << std::endl;
+    std::cerr << std::endl;
+  }
 }
 
 //--------------------------------------------------------------------
