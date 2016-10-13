@@ -126,9 +126,9 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     typedef typename Name::first_argument_type AT1_;                    \
     typedef typename Name::second_argument_type AT2_;                   \
     typedef typename Name::result_type   RT_;                           \
-    typedef typename Name::argument_type AT1_;                          \
-    typedef typename Name::argument_type AT2_;                          \
-    typedef typename Name::result_type   RT_;                           \
+    CGAL_USE_TYPE(AT1_);                                                \
+    CGAL_USE_TYPE(AT2_);                                                \
+    CGAL_USE_TYPE(RT_);                                                 \
     {CGAL_static_assertion(( ::boost::is_same<AT1,AT1_>::value));}      \
     {CGAL_static_assertion(( ::boost::is_same<AT2,AT2_>::value));}      \
     {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}        \
