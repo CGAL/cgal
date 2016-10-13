@@ -231,7 +231,7 @@ template <class R >
 std::istream&
 extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
 {
-    typename R::FT x, y;
+  typename R::FT x(0), y(0);
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(x) >> iformat(y);
