@@ -207,8 +207,8 @@ private:
   bool started;
   double scaling[3];
 
-  //Don't forget to delete the result.
-  double* transformMatrix()const
+  //takes a double[16]
+  void transformMatrix( double* res)const
   {
     bool is_point_set = false;
     if(!transform_item)
@@ -235,10 +235,8 @@ private:
     scalingMatrix.data()[10] = scaling[2];
     scalingMatrix.data()[15] = 1;
     tMatrix = manipulatedMatrix*scalingMatrix;
-    double *res = new double[16];
     for(int i=0; i<16; ++i)
       res[i] = (double)tMatrix.data()[i];
-    return res;
   }
   template<class Item>
   void normalize(Item*);
@@ -397,12 +395,12 @@ struct Modifier_transform_vertices : public CGAL::Modifier_base<Polyhedron::Half
 
 void Polyhedron_demo_affine_transform_plugin::end(){
   QApplication::restoreOverrideCursor();
-  const GLdouble* matrix = transformMatrix();
+  double matrix[16];
+  transformMatrix(&matrix[0]);
   resetTransformMatrix();
   if(transform_item)
   {
     Modifier_transform_vertices modifier(matrix,transform_item->center());
-    delete[] matrix;
     Polyhedron* new_poly=new Polyhedron(*transform_item->getBase()->polyhedron());
     new_poly->delegate(modifier);
 
@@ -454,7 +452,8 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
     else
       return;
   }
-  double * tmatrix = transformMatrix();
+  double tmatrix[16];
+  transformMatrix(&tmatrix[0]);
   if(is_point_set)
     transform_points_item->setFMatrix(tmatrix);
   else
@@ -463,7 +462,6 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
   QMatrix4x4 matrix;
   for (int i=0; i<16; ++i)
     matrix.data()[i] = tmatrix[i];
-  delete[] tmatrix;
   if(!is_point_set)
   {
     matrix(0,3) -= transform_item->center().x;
