@@ -217,14 +217,14 @@ void create_shifted_instance(const CGAL::Quadratic_program_from_mps <IT>& qp,
   std::vector<IT> Av(m, IT(0));
   for (int i=0; i<m; ++i) 
     for (int j=0; j<n; ++j)
-      Av[i] += (*(qp.get_a()+j))[i] * v[j];
+      Av[i] += (const IT&)(*(qp.get_a()+j))[i] * v[j];
 
   // compute - 2 v^T D into mvTD:
   std::vector<IT> mvTD(n, IT(0));  // -2D^Tv
   for (int i=0; i<n; ++i) {
     for (int j=0; j<n; ++j)
       mvTD[i] 
-	+= ( j <= i ? (*(qp.get_d()+i))[j] : (*(qp.get_d()+j))[i]) * v[j];
+	+= ( j <= i ? (const IT&)(*(qp.get_d()+i))[j] : (const IT&)(*(qp.get_d()+j))[i]) * v[j];
     mvTD[i] *= -1;
   }
 
