@@ -48,6 +48,13 @@
 #define CGAL_CLASSIFICATION_CERR std::ostream(0)
 #endif
 
+//#define CGAL_CLASSTRAINING_VERBOSE
+#if defined(CGAL_CLASSTRAINING_VERBOSE)
+#define CGAL_CLASSTRAINING_CERR std::cerr
+#else
+#define CGAL_CLASSTRAINING_CERR std::ostream(0)
+#endif
+
 namespace CGAL {
 
 /*!
@@ -357,7 +364,7 @@ public:
       {
         std::vector<std::size_t> neighbors;
 
-        neighborhood.k_neighbors (s, 12, std::back_inserter (neighbors));
+        neighborhood.k_neighbors (m_input[s], 12, std::back_inserter (neighbors));
 
         for (std::size_t i = 0; i < neighbors.size(); ++ i)
           {
@@ -435,7 +442,7 @@ public:
             m_clusters.back().indices.push_back (current);
             
             std::vector<std::size_t> neighbors;
-            neighborhood.range_neighbors (current, tolerance,
+            neighborhood.range_neighbors (m_input[current], tolerance,
                                           std::back_inserter (neighbors));
 
             for (std::size_t n = 0; n < neighbors.size(); ++ n)
@@ -558,7 +565,7 @@ public:
           continue;
         
         std::vector<std::size_t> neighbors;
-        neighborhood.range_neighbors (s, radius_neighbors,
+        neighborhood.range_neighbors (m_input[s], radius_neighbors,
                                       std::back_inserter (neighbors));
 
         std::vector<double> mean (values.size(), 0.);
@@ -786,7 +793,195 @@ public:
   */
   void training (std::size_t nb_tests = 3000)
   {
-    train_parameters(nb_tests);
+    if (m_training_type.empty())
+      return;
+
+    prepare_classification();
+    
+    std::vector<std::vector<std::size_t> > training_sets (m_types.size());
+    for (std::size_t i = 0; i < m_training_type.size(); ++ i)
+      if (m_training_type[i] != (std::size_t)(-1))
+        training_sets[m_training_type[i]].push_back (i);
+
+    for (std::size_t i = 0; i < training_sets.size(); ++ i)
+      if (training_sets[i].empty())
+        std::cerr << "WARNING: \"" << m_types[i]->id() << "\" doesn't have a training set." << std::endl;
+
+    std::vector<double> best_weights (m_attributes.size(), 1.);
+
+    struct Attribute_training
+    {
+      bool skipped;
+      double wmin;
+      double wmax;
+    };
+    std::vector<Attribute_training> att_train;
+    std::size_t nb_trials = 100;
+    double wmin = 1e-5, wmax = 1e5;
+    double factor = std::pow (wmax/wmin, 1. / (double)nb_trials);
+    for (std::size_t j = 0; j < m_attributes.size(); ++ j)
+      {
+        Data_classification::Attribute_handle att = m_attributes[j];
+        best_weights[j] = att->weight;
+
+        std::size_t nb_useful = 0;
+        double min = std::numeric_limits<double>::max();
+        double max = -std::numeric_limits<double>::max();
+
+        att->weight = wmin;
+        for (std::size_t i = 0; i < 100; ++ i)
+          {
+            estimate_attribute_effect(training_sets, att);
+            if (attribute_useful(att))
+              {
+                CGAL_CLASSTRAINING_CERR << "#";
+                nb_useful ++;
+                min = std::min (min, att->weight);
+                max = std::max (max, att->weight);
+              }
+            else
+              CGAL_CLASSTRAINING_CERR << "-";
+            att->weight *= factor;
+          }
+        CGAL_CLASSTRAINING_CERR << std::endl;
+        CGAL_CLASSTRAINING_CERR << att->id() << " useful in "
+                  << nb_useful << "% of the cases, in interval [ "
+                  << min << " ; " << max << " ]" << std::endl;
+        att_train.push_back (Attribute_training());
+        if (nb_useful < 2)
+          {
+            att_train.back().skipped = true;
+            att->weight = 0.;
+            best_weights[j] = att->weight;
+          }
+        else
+          att->weight = best_weights[j];
+        att_train.back().wmin = min / factor;
+        att_train.back().wmax = max * factor;
+      }
+
+    
+    double best_score = training_compute_worst_score(training_sets, best_score);
+    double best_confidence = training_compute_worst_confidence(training_sets, best_confidence);
+        
+    std::cerr << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
+
+    std::cerr << 100. * best_score << "% (found at initialization)" << std::endl;
+
+    
+    std::size_t current_att_changed = 0;
+    std::ofstream f("score.plot");
+    for (std::size_t i = 0; i < nb_tests; ++ i)
+      {
+        if (!(i % 10))
+          {
+            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
+              {
+                Data_classification::Attribute_handle att = m_attributes[j];
+                const Attribute_training& tr = att_train[current_att_changed];
+                if (tr.skipped)
+                  att->weight = 0.;
+                else
+                  att->weight = tr.wmin + (rand() / (double)RAND_MAX) * (tr.wmax - tr.wmin);
+              }
+          }
+        else
+          {
+            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
+              {
+                Data_classification::Attribute_handle att = m_attributes[j];
+                att->weight = best_weights[j];
+              }
+            Data_classification::Attribute_handle att = m_attributes[current_att_changed];            
+            const Attribute_training& tr = att_train[current_att_changed];
+            att->weight = tr.wmin + (rand() / (double)RAND_MAX) * (tr.wmax - tr.wmin);
+          }
+        
+        estimate_attributes_effects(training_sets);
+        std::size_t nb_used = 0;
+        for (std::size_t j = 0; j < m_attributes.size(); ++ j)
+          {
+            if (attribute_useful(m_attributes[j]))
+              nb_used ++;
+            else
+              m_attributes[j]->weight = 0;
+          }
+        
+        prepare_classification();
+        double worst_confidence = training_compute_worst_confidence(training_sets,
+                                                                    worst_confidence);
+
+        double worst_score = training_compute_worst_score(training_sets,
+                                                          worst_score);
+        
+        if (worst_score > best_score
+            && worst_confidence > best_confidence)
+          {
+            best_score = worst_score;
+            best_confidence = worst_confidence;
+            std::cerr << 100. * best_score << "% (found at iteration "
+                      << i+1 << "/" << nb_tests << ", "
+                      << nb_used
+                      << "/" << m_attributes.size() << " attribute(s) used)" << std::endl;
+            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
+              {
+                Data_classification::Attribute_handle att = m_attributes[j];
+                best_weights[j] = att->weight;
+                f << best_weights[j] << " ";
+              }
+            f << std::endl;
+          }
+
+        do
+          {
+            ++ current_att_changed;
+            if (current_att_changed == m_attributes.size())
+              current_att_changed = 0;
+          }
+        while (att_train[current_att_changed].skipped);
+      }
+
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      {
+        Data_classification::Attribute_handle att = m_attributes[i];
+        att->weight = best_weights[i];
+      }
+
+    estimate_attributes_effects(training_sets);
+    
+    std::cerr << std::endl << "Best score found is at least " << 100. * best_score
+              << "% of correct classification" << std::endl;
+
+    std::size_t nb_removed = 0;
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      {
+        Data_classification::Attribute_handle att = m_attributes[i];
+        CGAL_CLASSTRAINING_CERR << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
+        att->weight = best_weights[i];
+
+        Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
+        bool to_remove = true;
+        for (std::size_t j = 0; j < m_types.size(); ++ j)
+          {
+            Data_classification::Type_handle ctype = m_types[j];
+            if (ctype->attribute_effect(att) == Data_classification::Type::FAVORED_ATT)
+              CGAL_CLASSIFICATION_CERR << " * Favored for ";
+            else if (ctype->attribute_effect(att) == Data_classification::Type::PENALIZED_ATT)
+              CGAL_CLASSIFICATION_CERR << " * Penalized for ";
+            else
+              CGAL_CLASSIFICATION_CERR << " * Neutral for ";
+            if (ctype->attribute_effect(att) != side)
+              to_remove = false;
+            CGAL_CLASSIFICATION_CERR << ctype->id() << std::endl;
+          }
+        if (to_remove)
+          {
+            CGAL_CLASSTRAINING_CERR << "   -> Useless! Should be removed" << std::endl;
+            ++ nb_removed;
+          }
+      }
+    std::cerr << nb_removed
+              << " attribute(s) out of " << m_attributes.size() << " are useless" << std::endl;
   }
 
   void reset_training_sets()
@@ -852,189 +1047,56 @@ public:
   /// \cond SKIP_IN_MANUAL
   void train_parameters(std::size_t nb_tests)
   {
-    if (m_training_type.empty())
-      return;
-
-    prepare_classification();
-    
-    std::vector<std::vector<std::size_t> > training_sets (m_types.size());
-    for (std::size_t i = 0; i < m_training_type.size(); ++ i)
-      if (m_training_type[i] != (std::size_t)(-1))
-        training_sets[m_training_type[i]].push_back (i);
-
-    for (std::size_t i = 0; i < training_sets.size(); ++ i)
-      if (training_sets[i].empty())
-        std::cerr << "WARNING: \"" << m_types[i]->id() << "\" doesn't have a training set." << std::endl;
-    
-    std::vector<double> best_weights (m_attributes.size(), 1.);
-    for (std::size_t j = 0; j < m_attributes.size(); ++ j)
-      best_weights[j] = m_attributes[j]->weight;
-    
-    double best_score = training_compute_worst_score(training_sets);
-    double best_confidence = training_compute_worst_confidence(training_sets);
-        
-    std::cerr << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
-
-    std::cerr << 100. * best_score << "% (found at initialization)" << std::endl;
-    
-    std::size_t current_att_changed = 0;
-    std::ofstream f("score.plot");
-    for (std::size_t i = 0; i < nb_tests; ++ i)
-      {
-        if (!(i % 10))
-          {
-            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
-              {
-                Data_classification::Attribute_handle att = m_attributes[j];
-                att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
-              }
-          }
-        else
-          {
-            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
-              {
-                Data_classification::Attribute_handle att = m_attributes[j];
-                att->weight = best_weights[j];
-              }
-            Data_classification::Attribute_handle att = m_attributes[current_att_changed];
-            att->weight = (rand() / (double)RAND_MAX) * 3. * att->max;
-          }
-        
-        estimate_attribute_effects(training_sets);
-        std::size_t nb_used = 0;
-        for (std::size_t j = 0; j < m_attributes.size(); ++ j)
-          {
-            Data_classification::Attribute_handle att = m_attributes[j];
-            Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
-            bool used = false;
-            for (std::size_t k = 1; k < m_types.size(); ++ k)
-              if (m_types[k]->attribute_effect(att) != side)
-                {
-                  used = true;
-                  ++ nb_used;
-                  break;
-                }
-            if (!used)
-              att->weight = 0;
-          }
-        
-        prepare_classification();
-        double worst_confidence = training_compute_worst_confidence(training_sets);
-
-        double worst_score = training_compute_worst_score(training_sets);
-        
-        if (worst_score > best_score
-            && worst_confidence > best_confidence)
-          {
-            best_score = worst_score;
-            best_confidence = worst_confidence;
-            std::cerr << 100. * best_score << "% (found at iteration "
-                      << i+1 << "/" << nb_tests << ", "
-                      << nb_used << " attribute(s) used)" << std::endl;
-            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
-              {
-                Data_classification::Attribute_handle att = m_attributes[j];
-                best_weights[j] = att->weight;
-                f << best_weights[j] << " ";
-              }
-            f << std::endl;
-          }
-
-        if (!(i % 10))
-          {
-            ++ current_att_changed;
-            if (current_att_changed == m_attributes.size())
-              current_att_changed = 0;
-          }
-      }
-
-    for (std::size_t i = 0; i < best_weights.size(); ++ i)
-      {
-        Data_classification::Attribute_handle att = m_attributes[i];
-        att->weight = best_weights[i];
-      }
-
-    estimate_attribute_effects(training_sets);
-    
-    std::cerr << std::endl << "Best score found is at least " << 100. * best_score
-              << "% of correct classification" << std::endl;
-
-    std::size_t nb_removed = 0;
-    for (std::size_t i = 0; i < best_weights.size(); ++ i)
-      {
-        Data_classification::Attribute_handle att = m_attributes[i];
-        std::cerr << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
-        att->weight = best_weights[i];
-
-        Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
-        bool to_remove = true;
-        for (std::size_t j = 0; j < m_types.size(); ++ j)
-          {
-            Data_classification::Type_handle ctype = m_types[j];
-            if (ctype->attribute_effect(att) == Data_classification::Type::FAVORED_ATT)
-              CGAL_CLASSIFICATION_CERR << " * Favored for ";
-            else if (ctype->attribute_effect(att) == Data_classification::Type::PENALIZED_ATT)
-              CGAL_CLASSIFICATION_CERR << " * Penalized for ";
-            else
-              CGAL_CLASSIFICATION_CERR << " * Neutral for ";
-            if (ctype->attribute_effect(att) != side)
-              to_remove = false;
-            CGAL_CLASSIFICATION_CERR << ctype->id() << std::endl;
-          }
-        if (to_remove)
-          {
-            std::cerr << "   -> Useless! Should be removed" << std::endl;
-            ++ nb_removed;
-          }
-      }
-    std::cerr << nb_removed
-              << " attribute(s) out of " << m_attributes.size() << " are useless" << std::endl;
   }
 
-  void estimate_attribute_effects
+  void estimate_attributes_effects
   (const std::vector<std::vector<std::size_t> >& training_sets)
   {
     for (std::size_t i = 0; i < m_attributes.size(); ++ i)
-      {
-        Data_classification::Attribute_handle att = m_attributes[i];
+      estimate_attribute_effect (training_sets, m_attributes[i]);
+  }
 
-        std::vector<double> mean (m_types.size(), 0.);
+  void estimate_attribute_effect
+  (const std::vector<std::vector<std::size_t> >& training_sets,
+   Data_classification::Attribute_handle att)
+  {
+    std::vector<double> mean (m_types.size(), 0.);
                                   
-        for (std::size_t j = 0; j < m_types.size(); ++ j)
+    for (std::size_t j = 0; j < m_types.size(); ++ j)
+      {
+        for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
           {
-            for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
-              {
-                double val = att->normalized(training_sets[j][k]);
-                mean[j] += val;
-              }
-            mean[j] /= training_sets[j].size();
+            double val = att->normalized(training_sets[j][k]);
+            mean[j] += val;
           }
+        mean[j] /= training_sets[j].size();
+      }
 
-        std::vector<double> sd (m_types.size(), 0.);
+    std::vector<double> sd (m_types.size(), 0.);
         
-        for (std::size_t j = 0; j < m_types.size(); ++ j)
-          {
-            Data_classification::Type_handle ctype = m_types[j];
+    for (std::size_t j = 0; j < m_types.size(); ++ j)
+      {
+        Data_classification::Type_handle ctype = m_types[j];
             
-            for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
-              {
-                double val = att->normalized(training_sets[j][k]);
-                sd[j] += (val - mean[j]) * (val - mean[j]);
-              }
-            sd[j] = std::sqrt (sd[j] / training_sets[j].size());
-            if (mean[j] - sd[j] > 0.5)
-              ctype->set_attribute_effect (att, Data_classification::Type::FAVORED_ATT);
-            else if (mean[j] + sd[j] < 0.5)
-              ctype->set_attribute_effect (att, Data_classification::Type::PENALIZED_ATT);
-            else
-              ctype->set_attribute_effect (att, Data_classification::Type::NEUTRAL_ATT);
+        for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
+          {
+            double val = att->normalized(training_sets[j][k]);
+            sd[j] += (val - mean[j]) * (val - mean[j]);
           }
+        sd[j] = std::sqrt (sd[j] / training_sets[j].size());
+        if (mean[j] - sd[j] > 0.5)
+          ctype->set_attribute_effect (att, Data_classification::Type::FAVORED_ATT);
+        else if (mean[j] + sd[j] < 0.5)
+          ctype->set_attribute_effect (att, Data_classification::Type::PENALIZED_ATT);
+        else
+          ctype->set_attribute_effect (att, Data_classification::Type::NEUTRAL_ATT);
       }
   }
 
   
   double training_compute_worst_score
-  (const std::vector<std::vector<std::size_t> >& training_sets)
+  (const std::vector<std::vector<std::size_t> >& training_sets,
+   double lower_bound)
   {
     double worst_score = 1.;
     for (std::size_t j = 0; j < m_types.size(); ++ j)
@@ -1064,12 +1126,15 @@ public:
         double score = nb_okay / (double)(training_sets[j].size());
         if (score < worst_score)
           worst_score = score;
+        if (worst_score < lower_bound)
+          return worst_score;
       }
     return worst_score;
   }
 
   double training_compute_worst_confidence
-  (const std::vector<std::vector<std::size_t> >& training_sets)
+  (const std::vector<std::vector<std::size_t> >& training_sets,
+   double lower_bound)
   {
     double worst_confidence = std::numeric_limits<double>::max();
     for (std::size_t j = 0; j < m_types.size(); ++ j)
@@ -1103,9 +1168,21 @@ public:
 
         if (confidence < worst_confidence)
           worst_confidence = confidence;
+        if (worst_confidence < lower_bound)
+          return worst_confidence;
       }
     return worst_confidence;
   }
+
+  bool attribute_useful (Data_classification::Attribute_handle att)
+  {
+    Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
+    for (std::size_t k = 1; k < m_types.size(); ++ k)
+      if (m_types[k]->attribute_effect(att) != side)
+        return true;
+    return false;
+  }
+
   /// \endcond
 
 
