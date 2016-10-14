@@ -12,7 +12,7 @@ Darts and non void attributes are stored in memory using `Compact_container`, us
 
 \tparam d the dimension of the map.
 
-\tparam Items a model of the `GenericMapItems` concept. Equal to `Generalized_map_min_items<d>` by default.
+\tparam Items a model of the `GenericMapItems` concept. Equal to `Generic_map_min_items` by default.
 
 \tparam Alloc has to match the standard allocator requirements. The `rebind` mechanism  `Alloc` will be used to create appropriate allocators internally with value type `Dart`. Equal to `CGAL_ALLOCATOR(int)` from `<CGAL/memory.h>` by default.
 
@@ -34,7 +34,6 @@ The complexity of \link GenericMap::clear `clear`\endlink is in <I>O</I>( \f$ | 
 Other methods have all a constant time complexity.
 
 \sa `GenericMapItems`
-\sa `Dart`
 
 */
 template< unsigned int d, typename Items, typename Alloc >
@@ -62,7 +61,7 @@ typedef Generalized_map<d,Items,Alloc> Self;
 /*!
 
 */
-typedef Items::Dart_wrapper<Self>::Dart Dart;
+typedef Items::Dart_wrapper<Self>::Dart_info Dart_info;
 
 /// @}
 

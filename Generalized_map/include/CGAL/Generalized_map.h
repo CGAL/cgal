@@ -59,7 +59,7 @@ namespace CGAL {
    * the alpha links, and to manage enabled attributes.
    */
   template < unsigned int d_, class Refs,
-             class Items_=CGAL::Generic_map_min_items,
+             class Items_=Generic_map_min_items,
              class Alloc_=CGAL_ALLOCATOR(int),
              class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
   class Generalized_map_base: public Storage_

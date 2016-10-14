@@ -25,7 +25,6 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `Dart`
 - `GenericMap`
 - `GenericMapItems`
 - `CellAttribute`
@@ -33,9 +32,8 @@
 
 ## Classes ##
 - `CGAL::Generalized_map<d,Items,Alloc>`
-- `CGAL::Generalized_map_dart<d,GMap>`
-- `CGAL::Generalized_map_min_items<d>`
 - `CGAL::Cell_attribute<GMap,Info_,Tag,OnMerge,OnSplit>`
+- `CGAL::Generic_map_min_items<d>`
 
 */
 
