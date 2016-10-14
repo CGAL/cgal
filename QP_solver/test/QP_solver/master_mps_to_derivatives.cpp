@@ -57,6 +57,12 @@ namespace QP_from_mps_detail {
   struct MPS_type_name<int> {
     static const char *name() { return "integer"; }
   };
+#ifdef CGAL_USE_GMPXX
+  template<>
+  struct MPS_type_name<mpq_class> {
+    static const char *name() { return "rational"; }
+  };
+#endif
 #ifdef CGAL_USE_GMP  
   template<>
   struct MPS_type_name<CGAL::Gmpq> {
@@ -83,10 +89,22 @@ namespace QP_from_mps_detail {
   };
 
 #ifdef CGAL_USE_GMP
+#ifdef CGAL_USE_GMPXX
+  template<>
+  struct IT_to_ET<int> {
+    typedef mpz_class ET;
+  };
+
+  template<>
+  struct IT_to_ET<mpq_class> {
+    typedef mpq_class ET;
+  };
+#else
   template<>
   struct IT_to_ET<int> {
     typedef CGAL::Gmpz ET;
   };
+#endif
   
   template<>
   struct IT_to_ET<CGAL::Gmpq> {
