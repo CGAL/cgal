@@ -180,7 +180,7 @@ The 4 functions presented here work both with 2D points and 3D points
 and they shouldn't be used if the point sets do not sample a curve in
 2D or a surface in 3D.
 
-\subsection Point_set_processing_3Examples_scale_estimation Examples
+\subsection Point_set_processing_3Example_scale_estimation_global Global Scale Example 
 
 The following example reads a 3D point set in the `xyz` format and:
 
@@ -190,6 +190,8 @@ The following example reads a 3D point set in the `xyz` format and:
 - Uses it to simplify the point set
 
 \cgalExample{Point_set_processing_3/scale_estimation_example.cpp}
+
+\subsection Point_set_processing_3Example_scale_estimation_local Local Scales Example
 
 This second example generates a 2D point set sampling a circle with
 variable noise. It then estimates the scale at 3 different query
