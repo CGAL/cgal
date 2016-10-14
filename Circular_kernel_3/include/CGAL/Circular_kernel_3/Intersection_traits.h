@@ -52,7 +52,8 @@ struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Plane_3>
 {
   typedef boost::variant< 
             std::pair< typename SK::Circular_arc_point_3, unsigned int >,
-            typename SK::Circle_3 
+            typename SK::Circle_3,
+            int
           > type; };
 
 template <typename SK>
@@ -64,7 +65,8 @@ struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Sphere_3>
 { 
   typedef boost::variant< 
             std::pair< typename SK::Circular_arc_point_3, unsigned int >, 
-            typename SK::Circle_3 
+            typename SK::Circle_3 ,
+            int
           > type;
 };
 
@@ -77,7 +79,8 @@ struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Circle_3>
 {
   typedef boost::variant< 
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
-            typename SK::Circle_3 
+            typename SK::Circle_3,
+            int 
           > type; 
 };
 
@@ -99,7 +102,8 @@ struct SK3_Intersection_traits<SK, typename SK::Circular_arc_3, typename SK::Cir
   typedef boost::variant< 
             typename SK::Circle_3, 
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
-            typename SK::Circular_arc_3 
+            typename SK::Circular_arc_3 ,
+            int
           > type;
 };
 
@@ -108,7 +112,8 @@ struct SK3_Intersection_traits<SK, typename SK::Circular_arc_3, typename SK::Pla
 {
   typedef boost::variant<
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
-            typename SK::Circular_arc_3 
+            typename SK::Circular_arc_3,
+            int 
           > type;
 };
 
@@ -121,7 +126,8 @@ struct SK3_Intersection_traits<SK, typename SK::Line_arc_3, typename SK::Line_ar
 { 
   typedef boost::variant< 
             std::pair <typename SK::Circular_arc_point_3, unsigned int >,
-            typename SK::Line_arc_3 
+            typename SK::Line_arc_3,
+            int 
           > type; 
 };
   
@@ -133,7 +139,8 @@ struct SK3_intersect_ternary
             typename SK::Circle_3,
             typename SK::Plane_3,
             typename SK::Sphere_3,
-            std::pair< typename SK::Circular_arc_point_3, unsigned >
+            std::pair< typename SK::Circular_arc_point_3, unsigned >,
+            int
           > type;
 };
 
