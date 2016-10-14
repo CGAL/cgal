@@ -157,16 +157,16 @@ public:
     }
 
     /// Access the i'th element. No range check is performed!
-    reference operator[](int _idx)
+    reference operator[](std::size_t _idx)
     {
-        CGAL_assertion( size_t(_idx) < data_.size() );
+        CGAL_assertion( _idx < data_.size() );
         return data_[_idx];
     }
 
     /// Const access to the i'th element. No range check is performed!
-    const_reference operator[](int _idx) const
+    const_reference operator[](std::size_t _idx) const
     {
-        CGAL_assertion( size_t(_idx) < data_.size());
+        CGAL_assertion( _idx < data_.size());
         return data_[_idx];
     }
 
@@ -222,7 +222,7 @@ public:
             clear();
             parrays_.resize(_rhs.n_properties());
             size_ = _rhs.size();
-            for (unsigned int i=0; i<parrays_.size(); ++i)
+            for (std::size_t i=0; i<parrays_.size(); ++i)
                 parrays_[i] = _rhs.parrays_[i]->clone();
         }
         return *this;
@@ -230,8 +230,8 @@ public:
 
     void transfer(const Property_container& _rhs)
     {
-      for(unsigned int i=0; i<parrays_.size(); ++i){
-        for (unsigned int j=0; j<_rhs.parrays_.size(); ++j){
+      for(std::size_t i=0; i<parrays_.size(); ++i){
+        for (std::size_t j=0; j<_rhs.parrays_.size(); ++j){
           if(parrays_[i]->name() ==  _rhs.parrays_[j]->name()){
             parrays_[i]->transfer(* _rhs.parrays_[j]);
             break;
@@ -250,7 +250,7 @@ public:
     std::vector<std::string> properties() const
     {
         std::vector<std::string> names;
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             names.push_back(parrays_[i]->name());
         return names;
     }
@@ -272,7 +272,7 @@ public:
     std::pair<Property_map<Key, T>, bool>
     add(const std::string& name, const T t=T())
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
         {
             std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
             if (out.second)
@@ -295,7 +295,7 @@ public:
     std::pair<Property_map<Key, T>,bool>
     get(const std::string& name) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
           {
             std::pair<Property_map<Key, T>, bool> out = get<T>(name, i);
             if (out.second)
@@ -322,7 +322,7 @@ public:
     const std::type_info& 
     get_type(const std::string& name) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             if (parrays_[i]->name() == name)
                 return parrays_[i]->type();
         return typeid(void);
@@ -352,7 +352,7 @@ public:
     // delete all properties
     void clear()
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             delete parrays_[i];
         parrays_.clear();
         size_ = 0;
@@ -362,14 +362,14 @@ public:
     // reserve memory for n entries in all arrays
     void reserve(size_t n) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->reserve(n);
     }
 
     // resize all arrays to size n
     void resize(size_t n)
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->resize(n);
         size_ = n;
     }
@@ -377,14 +377,14 @@ public:
     // free unused space in all arrays
     void shrink_to_fit() const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->shrink_to_fit();
     }
 
     // add a new element to each vector
     void push_back()
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->push_back();
         ++size_;
     }
@@ -392,7 +392,7 @@ public:
     // swap elements i0 and i1 in all arrays
     void swap(size_t i0, size_t i1) const
     {
-        for (unsigned int i=0; i<parrays_.size(); ++i)
+        for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->swap(i0, i1);
     }
 
