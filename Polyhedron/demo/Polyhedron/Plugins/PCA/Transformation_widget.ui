@@ -143,6 +143,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="QPushButton" name="resetMatrix_Button">
+             <property name="toolTip">
+              <string>Resets the matrix to its initial state.</string>
+             </property>
              <property name="text">
               <string>Reset</string>
              </property>
@@ -160,9 +163,12 @@
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QComboBox" name="transfo_ComboBox">
+                <property name="toolTip">
+                 <string>Angle, axis coordinates</string>
+                </property>
                 <item>
                  <property name="text">
-                  <string>Rotation: </string>
+                  <string extracomment="Angle, axis coordinates">Rotation: </string>
                  </property>
                 </item>
                 <item>
@@ -230,8 +236,48 @@
               </item>
               <item>
                <widget class="QPushButton" name="applyTransfo_Button">
+                <property name="toolTip">
+                 <string>Saves the current state and applies the transformation.</string>
+                </property>
                 <property name="text">
                  <string>Apply</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0">
+              <item>
+               <widget class="QPushButton" name="undoButton">
+                <property name="toolTip">
+                 <string>Restores the previous state once.</string>
+                </property>
+                <property name="text">
+                 <string>Undo</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="clearButton">
+                <property name="toolTip">
+                 <string>Clears the fields.</string>
+                </property>
+                <property name="text">
+                 <string>Clear</string>
                 </property>
                </widget>
               </item>

@@ -115,6 +115,25 @@ public:
   const Scene_points_with_normal_item* getBase()const{return base;}
   const qglviewer::Vec& center() const { return center_; }
   CGAL::Three::Scene_item::ManipulatedFrame* manipulatedFrame() { return frame; }
+  void compute_bbox() const
+  {
+    Point_set ps= *base->point_set();
+    const Kernel::Point_3& p = *(ps.begin());
+    CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+
+    for (Point_set::const_iterator it = ps.begin(); it != ps.first_selected(); it++)
+    {
+      bbox = bbox + it->bbox();
+    }
+    qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
+
+    min +=frame->translation()-center();
+    max += frame->translation()-center();
+    _bbox = Bbox(min.x,min.y,min.z,
+                 max.x,max.y,max.z);
+  }
+  bool isEmpty() const{return false;}
 Q_SIGNALS:
   void stop();
   void killed();
@@ -155,7 +174,9 @@ public:
     for(int i=0; i<3; ++i)
     {
       scaling[i] = 1;
+      lastScaling[i] = 1 ;
     }
+    lastMatrix.setToIdentity();
     mw = _mw;
     this->scene = scene_interface;
     actionTransformPolyhedron = new QAction("Affine Transformation", mw);
@@ -185,6 +206,10 @@ public:
             this, SLOT(updateSingleTransfoValues(int)));
     connect(ui.resetMatrix_Button, &QPushButton::clicked,
             this, &Polyhedron_demo_affine_transform_plugin::resetTransformMatrix);
+    connect(ui.clearButton, &QPushButton::clicked,
+            this, &Polyhedron_demo_affine_transform_plugin::clear);
+    connect(ui.undoButton, &QPushButton::clicked,
+            this, &Polyhedron_demo_affine_transform_plugin::undo);
   }
 
   void start(Scene_polyhedron_item*);
@@ -206,6 +231,8 @@ private:
   CGAL::Three::Scene_interface* scene;
   bool started;
   double scaling[3];
+  double lastScaling[3];
+  QMatrix4x4 lastMatrix;
 
   //takes a double[16]
   void transformMatrix( double* res)const
@@ -245,6 +272,13 @@ public Q_SLOTS:
   void transformed_killed();
 
   void updateUiMatrix();
+  void clear()
+  {
+   ui.lineEditA->clear();
+   ui.lineEditX->clear();
+   ui.lineEditY->clear();
+   ui.lineEditZ->clear();
+  }
   void resetTransformMatrix()
   {
     bool is_point_set = false;
@@ -279,6 +313,35 @@ public Q_SLOTS:
   {
     transform_item = NULL;
     transform_points_item = NULL;
+  }
+  void undo()
+  {
+    bool is_point_set = false;
+    if(!transform_item)
+    {
+      if(transform_points_item)
+        is_point_set = true;
+      else
+        return;
+    }
+
+    double matrix[16];
+    for(short i = 0; i<16; ++i)
+      matrix[i] = (double)lastMatrix.data()[i];
+
+    for(short i = 0; i< 3; ++i)
+      scaling[i] = lastScaling[i];
+
+    if(!is_point_set)
+    {
+      transform_item->manipulatedFrame()->setFromMatrix(matrix);
+      transform_item->itemChanged();
+    }
+    else
+    {
+      transform_points_item->manipulatedFrame()->setFromMatrix(matrix);
+      transform_points_item->itemChanged();
+    }
   }
 
 }; // end class Polyhedron_demo_affine_transform_plugin
@@ -318,7 +381,10 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_polyhedron_item* poly_
   double x=(bbox.xmin()+bbox.xmax())/2;
   double y=(bbox.ymin()+bbox.ymax())/2;
   double z=(bbox.zmin()+bbox.zmax())/2;
-  
+  lastMatrix.setToIdentity();
+  lastMatrix.data()[12] = x;
+  lastMatrix.data()[13] = y;
+  lastMatrix.data()[14] = z;
   transform_item = new Scene_polyhedron_transform_item(qglviewer::Vec(x,y,z),poly_item,scene);
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
@@ -347,6 +413,10 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   double x=(bbox.xmin()+bbox.xmax())/2;
   double y=(bbox.ymin()+bbox.ymax())/2;
   double z=(bbox.zmin()+bbox.zmax())/2;
+  lastMatrix.setToIdentity();
+  lastMatrix.data()[12] = x;
+  lastMatrix.data()[13] = y;
+  lastMatrix.data()[14] = z;
 
   transform_points_item = new Scene_transform_point_set_item(points_item,qglviewer::Vec(x,y,z));
   transform_points_item->setRenderingMode(Points);
@@ -491,24 +561,28 @@ void Polyhedron_demo_affine_transform_plugin::updateSingleTransfoValues(int inde
     ui.lineEditX->show();
     ui.lineEditY->show();
     ui.lineEditZ->show();
+    ui.transfo_ComboBox->setToolTip("Angle, axis coordinates");
     break;
   case 1:
     ui.lineEditA->hide();
     ui.lineEditX->show();
     ui.lineEditY->show();
     ui.lineEditZ->show();
+    ui.transfo_ComboBox->setToolTip("Axis coordinates");
     break;
   case 2:
     ui.lineEditA->hide();
     ui.lineEditX->show();
     ui.lineEditY->show();
     ui.lineEditZ->show();
+    ui.transfo_ComboBox->setToolTip("Scaling along each axis");
     break;
   default:
     ui.lineEditA->hide();
     ui.lineEditX->hide();
     ui.lineEditY->hide();
     ui.lineEditZ->hide();
+    ui.transfo_ComboBox->setToolTip("Scales coordinates between [0..1] ");
     break;
   }
 }
@@ -548,6 +622,14 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
     else
       return;
   }
+  //save the matrix before the change
+  for(short i = 0; i<3; ++i)
+    lastScaling[i]=scaling[i];
+  double currentMatrix[16];
+  transformMatrix(&currentMatrix[0]);
+  for(short i = 0; i < 16; ++i)
+    lastMatrix.data()[i] = (float)currentMatrix[i];
+
   switch(ui.transfo_ComboBox->currentIndex())
   {
   //rotation
@@ -579,9 +661,9 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
     //scaling
   case 2:
   {
-    scaling[0] = ui.lineEditX->text().toDouble();
-    scaling[1] = ui.lineEditY->text().toDouble();
-    scaling[2] = ui.lineEditZ->text().toDouble();
+    scaling[0] = ui.lineEditX->text().isEmpty() ? 1 : scaling[0]*ui.lineEditX->text().toDouble();
+    scaling[1] = ui.lineEditY->text().isEmpty() ? 1 : scaling[1]*ui.lineEditY->text().toDouble();
+    scaling[2] = ui.lineEditZ->text().isEmpty() ? 1 : scaling[2]*ui.lineEditZ->text().toDouble();
     break;
   }
     //normalizing
@@ -599,15 +681,17 @@ void Polyhedron_demo_affine_transform_plugin::applySingleTransformation()
     break;
   }
   }
-  ui.lineEditA->clear();
-  ui.lineEditX->clear();
-  ui.lineEditY->clear();
-  ui.lineEditZ->clear();
   updateUiMatrix();
   if(is_point_set)
+  {
+    transform_points_item->compute_bbox();
     transform_points_item->itemChanged();
+  }
   else
+  {
+    transform_item->compute_bbox();
     transform_item->itemChanged();
+  }
 }
 
 #include "Affine_transform_plugin.moc"

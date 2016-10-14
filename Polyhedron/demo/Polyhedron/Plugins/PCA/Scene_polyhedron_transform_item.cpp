@@ -144,10 +144,15 @@ Scene_polyhedron_transform_item::compute_bbox() const {
     for(Polyhedron::Point_const_iterator it = d->poly->points_begin();
         it != d->poly->points_end();
         ++it) {
-        bbox = bbox + it->bbox();
+      bbox = bbox + it->bbox();
     }
-    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-                bbox.xmax(),bbox.ymax(),bbox.zmax());
+    qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
+
+    min +=d->frame->translation()-center();
+    max += d->frame->translation()-center();
+    _bbox = Bbox(min.x,min.y,min.z,
+                 max.x,max.y,max.z);
 }
 
 
