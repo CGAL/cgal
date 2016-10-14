@@ -44,7 +44,8 @@ struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
   typedef typename
   boost::variant< typename CK::Circle_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int > >
+                                      unsigned int >,
+                  int >
   type;
 };
 
@@ -54,7 +55,8 @@ struct CK2_Intersection_traits<CK, typename CK::Circular_arc_2, typename CK::Cir
   typedef typename
   boost::variant< typename CK::Circular_arc_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int > >
+                                      unsigned int >,
+                  int  >
   type;
 };
 
@@ -64,7 +66,8 @@ struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_ar
   typedef typename
   boost::variant< typename CK::Line_arc_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int > >
+                                      unsigned int >,
+                  int  >
   type;
 };
 
@@ -102,7 +105,8 @@ struct CK2_Intersection_traits<CK, typename CK::Line_arc_2, typename CK::Line_2>
   typedef typename
   boost::variant< typename CK::Line_arc_2,
                   typename std::pair< typename CK::Circular_arc_point_2,
-                                      unsigned int > >
+                                      unsigned int >,
+                  int  >
   type;
 };
 
