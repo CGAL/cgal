@@ -69,7 +69,7 @@ public:
         if (vect[i] < min)
           min = vect[i];
       }
-    std::cerr << id() << " Min/max = " << min << " / " << max << std::endl;
+    //    std::cerr << id() << " Min/max = " << min << " / " << max << std::endl;
     mean /= vect.size();
 
   }
