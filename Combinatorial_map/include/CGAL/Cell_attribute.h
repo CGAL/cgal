@@ -304,10 +304,6 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef void                             Info;
 
-    template<typename T>
-    struct rebind
-    { typedef Cell_attribute<T, void, Tag_, OnMerge, OnSplit> type; };
-    
     //  protected:
     /// Default contructor.
     Cell_attribute()
@@ -348,16 +344,11 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef Info_                            Info;
 
-    template<typename T>
-    struct rebind
-    { typedef Cell_attribute<T, Info_, Tag_, OnMerge, OnSplit> type; };
-
     bool operator==(const Self& other) const
     { return this->info()==other.info(); }
 
     bool operator!=(const Self& other) const
     { return !operator==(other); }
-
 
     // protected:
     /// Default contructor.

@@ -2,36 +2,34 @@
 \ingroup PkgCombinatorialMapsConcepts
 \cgalConcept
 
-The concept `GenericMapItems` allows to customize a <I>d</I>D generic map by choosing the type of darts, and by enabling and disabling some attributes. For that, it defines an inner class template named
-\link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, with one template parameter, `Map`, a model of the `GenericMap` concept. This inner class must define two types: `%Dart` and `%Attributes`.
+The concept `GenericMapItems` allows to customize a <I>d</I>D generic map by choosing the information associated with darts, and by enabling and disabling some attributes. For that, it defines an inner class template named
+\link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, with one template parameter, `Map`, a model of the `GenericMap` concept. This inner class must define two types: `%Dart_info` and `%Attributes`.
 
-\cgalHasModel \link CGAL::Combinatorial_map_min_items `CGAL::Combinatorial_map_min_items<d>`\endlink
-\cgalHasModel \link CGAL::Generalized_map_min_items `CGAL::Generalized_map_min_items<d>`\endlink
+\cgalHasModel \link CGAL::Generic_map_min_items `CGAL::Generic_map_min_items`\endlink
 
 \sa `GenericMap`
-\sa `Dart`
 
-  \cgalHeading{Example}
+\cgalHeading{Example}
 
-  The following examples show two possible models of the `GenericMapItems` concept: the first one for a 4D combinatorial map without enabled attributes, the second one for a 3D generalized map with edge attributes enabled, and associated with a \link CGAL::Cell_attribute `Cell_attribute`\endlink containing an `int`.
+The following examples show two possible models of the `GenericMapItems` concept: the first one for a generic map without dart information, nor enabled attributes, the second one for a generic map with a `double` associated with each dart, and edge attributes enabled, and associated with a \link CGAL::Cell_attribute `Cell_attribute`\endlink containing an `int`.
 
   \code{.cpp}
-  struct Exemple_Item_4
+  struct Exemple_Item_1
   {
     template < class CMap >
     struct Dart_wrapper
-    {
-      typedef CGAL::Combinatorial_map_dart<4, CMap> Dart;
+    {      
+      typedef void Dart_info;
       typedef CGAL::cpp11::tuple<> Attributes;
     };
   };
 
-  struct Exemple_Item_3
+  struct Exemple_Item_2
   {
     template < class GMap >
     struct Dart_wrapper
     {
-      typedef CGAL::Generalized_map_dart<3, GMap> Dart;
+      typedef double Dart_info;
       typedef CGAL::Cell_attribute<GMap, int> Edge_attrib;
       typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
     };
@@ -42,9 +40,9 @@ class GenericMapItems {
 public:
 
   /*!
-    Wrapper class defining type of darts and types of attributes. The class `%Dart_wrapper<Map>` must provide:
+    Wrapper class defining type of information associated with darts and types of attributes. The class `%Dart_wrapper<Map>` must provide:
 
-  - `%Dart_wrapper<Map>::%Dart`, the type of dart, a model of the `Dart` concept.
+  - `%Dart_wrapper<Map>::%Dart_info`, the type of information associated with darts. `void` to have no information.
   - `%Dart_wrapper<Map>::%Attributes` The tuple of attributes, containing at most \link GenericMap::dimension `Map::dimension+1`\endlink types (one for each possible cell of the generic map). Each type of the tuple must be either a model of the `CellAttribute` concept or `void`. The first type corresponds to 0-attributes, the second to 1-attributes and so on. If the \f$ i^{\mbox{th}}\f$ type in the tuple is `void`, (<I>i</I>-1)-attributes are disabled. Otherwise, (<I>i</I>-1)-attributes are enabled and have the given type. If the size of the tuple is <I>k</I>, with <I>k</I><\link GenericMap::dimension `Map::dimension`\endlink+1, \f$ \forall\f$<I>i</I>: <I>k</I>\f$ \leq\f$<I>i</I>\f$ \leq\f$\link GenericMap::dimension `Map::dimension`\endlink, <I>i</I>-attributes are disabled.
 
   \note It can be implemented using a nested template class.

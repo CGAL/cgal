@@ -6,7 +6,7 @@ The concept `GenericMap` defines a <I>d</I>-dimensional generic map. This concep
 
 \cgalRefines DefaultConstructible
 
-A generic map has a set of darts <I>D</I>, and functions defined on these darts \f$ f_0\f$,\f$ \ldots\f$,\f$ f_{d}\f$.
+A generic map has a set of darts <I>D</I>, and functions \f$ f_0\f$,\f$ \ldots\f$,\f$ f_{d}\f$ that link these darts between them.
 
 \cgalHasModel \link CGAL::Combinatorial_map `CGAL::Combinatorial_map<d,Items,Alloc>`\endlink
 \cgalHasModel \link CGAL::Generalized_map `CGAL::Generalized_map<d,Items,Alloc>`\endlink
@@ -35,19 +35,24 @@ GenericMap(const Map& bmap);
 /// @{
 
 /*!
-%Dart type, a model of the `Dart` concept.
+%Dart type.
 */
 typedef unspecified_type Dart;
 
 /*!
-%Dart handle type, equal to `Dart::Dart_handle`.
+%Dart handle type. \tred{For each `Dart_handle dh`, the type of `*dh` must be `Dart`.}
 */
 typedef unspecified_type Dart_handle;
 
 /*!
-%Dart const handle type, equal to `Dart::Dart_const_handle`.
+%Dart const handle type. \tred{For each `Dart_const_handle dh`, the type of `*dh` must be `const Dart`.}
 */
 typedef unspecified_type Dart_const_handle;
+
+/*!
+\tred{Information associated to each dart.}
+*/
+typedef unspecified_type Dart_info;
 
 /*!
 Size type (an unsigned integral type).
@@ -60,7 +65,7 @@ typedef unspecified_type size_type;
 /// @{
 
 /*!
-The dimension <I>d</I> of the generic map, equal to `Dart::dimension`.
+The dimension <I>d</I> of the generic map.
 */
 static const unsigned int dimension;
 
@@ -104,7 +109,7 @@ typedef unspecified_type Attributes;
   using Attribute_type = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes, equal to \link Dart::Attribute_handle `Dart::Attribute_handle<i>::type` \endlink.
+  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes. \tred{For each `Attribute_handle<i>::%type ah`, the type of `*ah` must be `Attribute_type<i>::%type`.}
   \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.
@@ -113,7 +118,7 @@ typedef unspecified_type Attributes;
   using Attribute_handle = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes, equal to \link Dart::Attribute_const_handle `Dart::Attribute_const_handle<i>::type` \endlink.
+  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes. \tred{For each `Attribute_const_handle<i>::%type ah`, the type of `*ah` must be `const Attribute_type<i>::%type`.}
   \pre 0\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.
@@ -371,6 +376,18 @@ std::ostream& display_characteristics(std::ostream & os) const;
 /// \name Attributes Access Member Functions
 /// @{
 ///
+
+/*!
+\tred{Returns the information associated to dart `*dh`.
+\pre `Dart_info` is not `void`.}
+*/
+Dart_info& info(Dart_handle dh);
+/*!  
+\tred{Returns the information associated to dart `*dh`, when the dart is const.
+\pre `Dart_info` is not `void`.}
+*/
+const Dart_info& info(Dart_const_handle dh) const;
+  
 /*!
 Returns a handle to the <I>i</I>-attribute associated to dart `*dh`.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.

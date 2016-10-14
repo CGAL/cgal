@@ -33,7 +33,8 @@ The complexity of \link GenericMap::clear `clear`\endlink is in <I>O</I>( \f$ | 
 Other methods have all a constant time complexity.
 
 \sa `GenericMapItems`
-\sa `Dart`
+
+\deprecated Before CGAL 4.9, `Items` had to define the type of dart used, and the default class was `Combinatorial_map_min_items`. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type.
 
 */
 template< unsigned int d, typename Items, typename Alloc >
@@ -61,7 +62,7 @@ typedef Combinatorial_map<d,Items,Alloc> Self;
 /*!
 
 */
-typedef Items::Dart_wrapper<Self>::Dart Dart;
+typedef Items::Dart_wrapper<Self>::Dart_info Dart_info;
 
 /// @}
 

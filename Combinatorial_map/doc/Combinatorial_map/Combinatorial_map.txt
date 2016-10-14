@@ -170,7 +170,7 @@ Considering these different advantages and drawbacks, you can choose to use gene
 
 \section secsoftwaredesign Software Design
 
-The diagram in \cgalFigureRef{fig_cmap_diagramme_class} shows the different classes of the package. `Combinatorial_map` is the main class (see Section \ref sseccombinatorialmap "Combinatorial Maps"). It allows to manage darts (see Section \ref ssecdarts "Darts") and attributes (see Section \ref ssecattributes "Cell Attributes"). Users can customize a combinatorial map thanks to an items class (see Section \ref ssecitem "Combinatorial Map Items"), which defines the dart type and the attribute types. These types may be different for different dimensions, and they may also be void \tred{(note that the main concepts of `GenericMap`, `GenericMapItems`, `Dart` and `CellAttribute` are shared between combinatorial maps and generalized maps)}.
+The diagram in \cgalFigureRef{fig_cmap_diagramme_class} shows the different classes of the package. `Combinatorial_map` is the main class (see Section \ref sseccombinatorialmap "Combinatorial Maps"). It allows to manage darts and attributes (see Section \ref ssecattributes "Cell Attributes"). Users can customize a combinatorial map thanks to an items class (see Section \ref ssecitem "Combinatorial Map Items"), which defines \tred{the information associated with darts} and the attribute types. These types may be different for different dimensions, and they may also be void \tred{(note that the main concepts of `GenericMap`, `GenericMapItems` and `CellAttribute` are shared between combinatorial maps and generalized maps)}.
 
 The darts and attributes are accessed through <I>handles</I>. A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `boost::unordered_map`.
 
@@ -184,26 +184,17 @@ The class `Combinatorial_map<d,Items,Alloc>` is a model of the `CombinatorialMap
 
 The main role of the class `Combinatorial_map` is the storage and the management of darts. It allows to create or remove an isolated dart from the combinatorial map. The \link GenericMap::Dart_handle `Dart_handle`\endlink type defines a handle to the type of used darts (given in the items class). `Combinatorial_map` provides several <I>ranges</I> which allow to iterate over specific subsets of darts of the combinatorial map (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). It also defines several methods to link and to unlink darts by \f$ \beta_i\f$s (see Section \ref sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a dart <I>d0</I> is <I>i</I>-free  if \f$ \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$ constant is represented in the class `Combinatorial_map` through a `Dart_handle` called \link CombinatorialMap::null_dart_handle `null_dart_handle`\endlink. Finally, some high level operations are defined as global functions taking a `Combinatorial_map` as argument (see Section \ref ssecoperations "Removal and Insertion Operations")
 
-The second role of the class `Combinatorial_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells.  A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the combinatorial map. Finally, `Combinatorial_map` defines several types allowing to manage the attributes. We can use \link GenericMap::Attribute_handle `Combinatorial_map::Attribute_handle<i>::type`\endlink for a handle to the <I>i</I>-attributes (and the const version \link GenericMap::Attribute_const_handle `Combinatorial_map::Attribute_const_handle<i>::type` \endlink) and \link GenericMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the <I>i</I>-attributes.
+The second role of the class `Combinatorial_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells. A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the combinatorial map. Finally, `Combinatorial_map` defines several types allowing to manage the attributes. We can use \link GenericMap::Attribute_handle `Combinatorial_map::Attribute_handle<i>::type`\endlink for a handle to the <I>i</I>-attributes (and the const version \link GenericMap::Attribute_const_handle `Combinatorial_map::Attribute_const_handle<i>::type` \endlink) and \link GenericMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the <I>i</I>-attributes.
 
-All information associated to darts (\f$ \beta\f$ links and attributes) can be accessed through member functions in `CombinatorialMap`.
-
+All information associated to darts (information, \f$ \beta\f$ links and attributes) are accessed through member functions in `CombinatorialMap`.
 
 \subsection ssecitem Combinatorial Map Items
 
-\tred{The `GenericMapItems` concept defines dart and attribute types of a combinatorial map. It contains one inner class named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `Map`, a model of `GenericMap` concept. The \link GenericMapItems::Dart_wrapper `Dart_wrapper<Map>`\endlink class provides two local types: `%Dart` which must be a model of the `::Dart` concept, and `%Attributes` which defines the attributes and their types.}
+\tred{The `GenericMapItems` concept defines information associated with darts, and attribute types of a combinatorial map. It contains one inner class named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `Map`, a model of `GenericMap` concept. The \link GenericMapItems::Dart_wrapper `Dart_wrapper<Map>`\endlink class provides two local types: `%Dart_info` for the information associated with darts (`void` if no information is associated with darts), and `%Attributes` which defines the attributes and their types.}
 
 The `%Attributes` tuple must contain at most <I>d</I>+1 types (one for each possible cell dimension of the combinatorial map). Each type of the tuple must be either a model of the `CellAttribute` concept or `void`. The first type corresponds to 0-attributes, the second to 1-attributes and so on. If the <i>i <sup>th</sup></i> type in the tuple is  `void`, <I>(i-1)</I>-attributes are disabled: we say that <I>(i-1)</I>-attributes are <I>void</I>. Otherwise, <I>(i-1)</I>-attributes are enabled and have the given type: we say <I>(i-1)</I>-attributes are <I>non void</I>. If the size of the tuple is <I>k</I>, with <I>k</I> \f$ < \f$ \link GenericMap::dimension `dimension`\endlink+1, \f$ \forall \f$ <I>i</I>: <I>k</I> \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>i</I>-attributes are void.
 
-The class `Combinatorial_map_min_items<d>` is a model of the `GenericMapItems` concept which can be used for default behaviors.  It defines `Combinatorial_map_dart<d,CMap>` as type of dart, and `Attributes` as empty tuple.
-
-\subsection ssecdarts Darts
-
-The class `Combinatorial_map_dart<d,CMap>`, a model of the `Dart` concept, defines a <I>d</I>D dart for combinatorial maps. It has two template parameters standing for the dimension of the combinatorial map, and a model of the `CombinatorialMap` concept, which provides the two types \link GenericMap::Dart_handle `Dart_handle`\endlink and \link GenericMap::Dart_const_handle `Dart_const_handle`\endlink.
-
-Each instance `d0` of `Combinatorial_map_dart<d,CMap>` stores the \f$ \beta_i\f$ pointers in an array of <I>d</I>+1 `Dart_handle` (because we describe also the \f$ \beta_0\f$ pointer). It also stores the attributes associated to this dart in a tuple of \link GenericMap::Attribute_handle `CMap::Attribute_handle<i>::type` \endlink, one for each non void <I>i</I>-attribute.
-
-Note that the use of the `Combinatorial_map_dart` class is not hard wired in the combinatorial map class. Users can provide their own model of the `Dart` concept, and pass it to the combinatorial map with the help of a custom item class.
+The class `Generic_map_items` is a model of the `GenericMapItems` concept which can be used for default behaviors.  It \tred{defines `void` as type of information associated with darts}, and `Attributes` as empty tuple.
 
 \subsection ssecattributes Cell Attributes
 
@@ -219,7 +210,7 @@ What we said for the dart also holds for the cell attribute. The combinatorial m
 
 \subsection ssecexampledef Example of Combinatorial Map Definition
 
-Here comes an example of two combinatorial map definitions. The first case `Example_cmap4` defines a 4D combinatorial map which uses all the default values (`Combinatorial_map_min_items`). The second example `Example_custom_cmap3` uses its own model of the `GenericMapItems` concept. In this model, the type of dart is `Combinatorial_map_dart<3,CMap>`, thus a dart is in 3D, and an attribute containing an integer is associated to edges.
+Here comes an example of two combinatorial map definitions. The first case `Example_cmap4` defines a 4D combinatorial map which uses all the default values (`Generic_map_min_items`). The second example `Example_custom_cmap3` uses its own model of the `GenericMapItems` concept. In this model, a `double` is associated as information on darts, and an attribute containing an integer is associated to edges.
 
 \code{.cpp}
 
@@ -230,7 +221,7 @@ struct Example_items_3
   template <class CMap>
   struct Dart_wrapper
   {
-    typedef CGAL::Combinatorial_map_dart<3, CMap> Dart;
+    typedef double Dart_info;
     typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
     typedef CGAL::cpp11::tuple<void,Edge_attrib> Attributes;
   };
@@ -266,7 +257,7 @@ There are also two different classes of ranges containing one dart per <I>i</I>-
 <LI>\link GenericMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<i,j,dim>`\endlink: range containing one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing a given dart, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dim+1</I> and  0 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ <I>dim+1</I> (for example \link GenericMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<0,3>`\endlink for the range of one dart per vertex of the volume incident to the starting dart). If <I>i</I>=<I>j</I>, the range contains only the given dart.
 </UL>
 
-The iterators of the \link GenericMap::Dart_range `Dart_range`\endlink are bidirectional iterators,  while the iterators of the other four ranges are forward iterators.  The value type of all these iterators is `Dart` thus all these  iterators can be directly used as \link GenericMap::Dart_handle `Dart_handle`\endlink.
+The iterators of the \link GenericMap::Dart_range `Dart_range`\endlink are bidirectional iterators,  while the iterators of the other four ranges are forward iterators.  The value type of all these iterators is `Dart` thus all these iterators can be directly used as \link GenericMap::Dart_handle `Dart_handle`\endlink.
 
 Additionally, there is a range over non void <I>i</I>-attributes: \link GenericMap::Attribute_range `Attribute_range<i>::type`\endlink, having a bidirectional iterator with value type \link GenericMap::Attribute_type Attribute_type<i>::type`\endlink.
 
@@ -461,7 +452,7 @@ The output is:
 
 \subsection sseccombimapwithcolor Combinatorial Map With Attributes
 
-In the following example, we illustrate how to specify the 2-attributes in a 3D combinatorial map. For that, we define our own item class using `Combinatorial_map_dart<3,CMap>` as type of dart, and \link Cell_attribute `Cell_attribute<CMap,int,Tag_true,Sum_functor,Divide_by_two_functor>`\endlink as attributes which contain an `int` and which are associated to 2-cells of the combinatorial map.
+In the following example, we illustrate how to specify the 2-attributes in a 3D combinatorial map. For that, we define our own item class using \link Cell_attribute `Cell_attribute<CMap,int,Tag_true,Sum_functor,Divide_by_two_functor>`\endlink as attributes which contain an `int` and which are associated to 2-cells of the combinatorial map.
 
 Functors `Sum_functor` and `Divide_by_two_functor` define a custom behavior: when two attributes `ca1` and `ca2` are merged into `ca1`, the value of `ca1` is the sum of the two initial values. When an attribute `ca1` is split in the two attributes `ca1` and `ca2`, the value of each attribute is half of the first value.
 

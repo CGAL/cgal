@@ -170,13 +170,6 @@ namespace CGAL {
   };
   
 #ifdef CGAL_CMAP_DEPRECATED
-  /*  namespace internal {
-    template <typename Map,unsigned int i>
-    struct basic_link_beta_functor;
-
-    template <typename CMap,unsigned int i>
-    struct link_beta_functor;
-    } */
 
 #define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
 
@@ -184,19 +177,13 @@ namespace CGAL {
    * are now deprecated.
    */
   template <unsigned int d, typename Refs>
-  struct Dart : public Dart_without_info<d, Refs>
+  struct CGAL_DEPRECATED Dart : public Dart_without_info<d, Refs>
   {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
-    friend class Generalized_map_storage_1;
-
     template<unsigned int, unsigned int, class, class, class>
     friend class Linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
     friend class Compact_container;

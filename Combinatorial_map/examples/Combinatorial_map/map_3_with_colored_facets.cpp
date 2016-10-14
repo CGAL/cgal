@@ -27,7 +27,7 @@ struct Myitem
   struct Dart_wrapper
   {
     typedef void Dart_info;
-    typedef CGAL::Cell_attribute<CGAL::Generic_map, int, CGAL::Tag_true,
+    typedef CGAL::Cell_attribute<CMap, int, CGAL::Tag_true,
      Sum_functor, Divide_by_two_functor> Facet_attribute;
     typedef CGAL::cpp11::tuple<void,void,Facet_attribute> Attributes;
   };

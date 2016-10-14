@@ -34,7 +34,7 @@ namespace CGAL {
    */
 #ifdef CGAL_CMAP_DEPRECATED
   template <unsigned int d>
-  struct Combinatorial_map_min_items
+  struct CGAL_DEPRECATED Combinatorial_map_min_items
   {
     /// Dart_wrapper defines the type of darts used, and enabled attributes.
     template < class Refs >

@@ -30,8 +30,6 @@ namespace CGAL {
    * Generic_map_min_items defines what is the minimal item class for a generic map.
    * No information associated with darts, no enabled attribute.
    */
-
-#ifndef CGAL_CMAP_DEPRECATED
   struct Generic_map_min_items
   {
     template < class Refs >
@@ -41,7 +39,6 @@ namespace CGAL {
       typedef CGAL::cpp11::tuple<> Attributes;
     };
   };
-#endif  
 
 } // namespace CGAL
 

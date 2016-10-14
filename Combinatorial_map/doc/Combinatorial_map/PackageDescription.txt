@@ -42,7 +42,6 @@
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `Dart`
 - `GenericMap`
 - `GenericMapItems`
 - `CellAttribute`
@@ -50,9 +49,9 @@
 
 ## Classes ##
 - `CGAL::Combinatorial_map<d,Items,Alloc>`
-- `CGAL::Combinatorial_map_dart<d,CMap>`
-- `CGAL::Combinatorial_map_min_items<d>`
 - `CGAL::Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`
+- `CGAL::Generic_min_items<d>`
+- `CGAL::Combinatorial_map_min_items<d>`
 - `CGAL::Dart<d,CMap>`
 
 ## Global Functions ##
