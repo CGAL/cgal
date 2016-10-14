@@ -10,6 +10,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
+#include <CGAL/grid_simplify_point_set.h>
 
 #include <CGAL/Data_classification/Image.h>
 
@@ -61,9 +62,6 @@ class Neighborhood
 
   Tree* m_tree;
   Distance m_distance;
-  RandomAccessIterator m_begin;
-  RandomAccessIterator m_end;
-  PointPMap m_point_pmap;
 
   std::vector<std::vector<std::size_t> > m_precomputed_neighbors;
   
@@ -81,8 +79,7 @@ public:
   Neighborhood (const RandomAccessIterator& begin,
                 const RandomAccessIterator& end,
                 PointPMap point_pmap)
-    : m_tree (NULL), m_begin (begin), m_end (end),
-      m_point_pmap (point_pmap)
+    : m_tree (NULL)
   {
     std::size_t size = end - begin;
     
@@ -92,6 +89,36 @@ public:
                        Splitter(),
                        Search_traits (pmap));
     m_distance = Distance (pmap);
+    m_tree->build();
+  }
+
+  /*!
+    \brief Constructs a simplified neighborhood object based on the input range.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_pmap Property map to access the input points
+  */
+  Neighborhood (const RandomAccessIterator& begin,
+                const RandomAccessIterator& end,
+                PointPMap point_pmap,
+                double voxel_size)
+    : m_tree (NULL)
+  {
+    // First, simplify
+    std::size_t size = end - begin;
+    std::vector<std::size_t> indices (size);
+    for (std::size_t i = 0; i < indices.size(); ++ i)
+      indices[i] = i;
+    My_point_property_map pmap (begin, point_pmap);
+
+    voxelize_point_set(indices, pmap, voxel_size);
+    
+    m_tree = new Tree (indices.begin(), indices.end(),
+                       Splitter(),
+                       Search_traits (pmap));
+    m_distance = Distance (pmap);
+    m_tree->build();
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -106,14 +133,14 @@ public:
     \brief Gets the nearest neighbors computed in a local sphere of user defined radius.
 
     \tparam OutputIterator Where the indices of found neighbor points are stored.
-    \param index Index of the query point.
+    \param query The query point.
     \param radius_neighbors Radius of the query sphere.
   */
   template <typename OutputIterator>
-  void range_neighbors (std::size_t index, const FT radius_neighbors, OutputIterator output) const
+  void range_neighbors (const Point& query, const FT radius_neighbors, OutputIterator output) const
   {
     CGAL_assertion (m_tree != NULL);
-    Sphere fs (get(m_point_pmap, m_begin[index]), radius_neighbors, 0, m_tree->traits());
+    Sphere fs (query, radius_neighbors, 0, m_tree->traits());
     m_tree->search (output, fs);
   }
 
@@ -125,12 +152,57 @@ public:
     \param k Number of nearest neighbors.
   */
   template <typename OutputIterator>
-  void k_neighbors (std::size_t index, const std::size_t k, OutputIterator output) const
+  void k_neighbors (const Point& query, const std::size_t k, OutputIterator output) const
   {
     CGAL_assertion (m_tree != NULL);
-    Knn search (*m_tree, get(m_point_pmap, m_begin[index]), k, 0, true, m_distance);
+    Knn search (*m_tree, query, k, 0, true, m_distance);
     for (typename Knn::iterator it = search.begin(); it != search.end(); ++ it)
       *(output ++) = it->first;
+  }
+
+private:
+
+  template <typename PointMap>
+  void voxelize_point_set (std::vector<std::size_t>& indices, PointMap point_map,
+                           double voxel_size)
+  {
+    std::map<Point, std::vector<std::size_t> > grid;
+
+    for (std::size_t i = 0; i < indices.size(); ++ i)
+      {
+        const Point& p = get(point_map, indices[i]);
+        Point ref (std::floor(p.x() / voxel_size),
+                   std::floor(p.y() / voxel_size),
+                   std::floor(p.z() / voxel_size));
+        typename std::map<Point, std::vector<std::size_t> >::iterator it;
+        boost::tie (it, boost::tuples::ignore)
+          = grid.insert (std::make_pair (ref, std::vector<std::size_t>()));
+        it->second.push_back (indices[i]);
+      }
+    indices.clear();
+    for (typename std::map<Point, std::vector<std::size_t> >::iterator
+           it = grid.begin(); it != grid.end(); ++ it)
+      {
+        const std::vector<std::size_t>& pts = it->second;
+        Point centroid = CGAL::centroid (boost::make_transform_iterator
+                                         (pts.begin(),
+                                          CGAL::Property_map_to_unary_function<PointMap>(point_map)),
+                                         boost::make_transform_iterator
+                                         (pts.end(),
+                                          CGAL::Property_map_to_unary_function<PointMap>(point_map)));
+        std::size_t chosen = 0;
+        double min_dist = std::numeric_limits<double>::max();
+        for (std::size_t i = 0; i < pts.size(); ++ i)
+          {
+            double dist = CGAL::squared_distance(get(point_map, pts[i]), centroid);
+            if (dist < min_dist)
+              {
+                min_dist = dist;
+                chosen = pts[i];
+              }
+          }
+        indices.push_back (chosen);
+      }
   }
 };
   
