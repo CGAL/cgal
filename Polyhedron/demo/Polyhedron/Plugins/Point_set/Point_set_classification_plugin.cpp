@@ -143,6 +143,8 @@ public:
             SLOT(on_update_radius_neighbors()));
     connect(ui_widget.radiusDTMDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
             SLOT(on_update_radius_dtm()));
+    connect(ui_widget.numberOfScalesSpinBox,  SIGNAL(valueChanged(int)), this,
+            SLOT(on_update_nb_scales()));
     connect(ui_widget.number_of_trials,  SIGNAL(valueChanged(int)), this,
             SLOT(on_update_number_of_trials()));
 
@@ -225,6 +227,7 @@ public Q_SLOTS:
         ui_widget.gridResolutionDoubleSpinBox->setValue(item->grid_resolution());
         ui_widget.radiusNeighborsDoubleSpinBox->setValue(item->radius_neighbors());
         ui_widget.radiusDTMDoubleSpinBox->setValue(item->radius_dtm());
+        ui_widget.numberOfScalesSpinBox->setValue(item->nb_scales());
         ui_widget.number_of_trials->setValue(item->number_of_trials());
 
         // Clear class types
@@ -290,6 +293,14 @@ public Q_SLOTS:
     if(!classification_item)
       return; 
     classification_item->radius_dtm() = ui_widget.radiusDTMDoubleSpinBox->value();
+  }
+  void on_update_nb_scales()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      return; 
+    classification_item->nb_scales() = ui_widget.numberOfScalesSpinBox->value();
   }
   void on_update_number_of_trials()
   {
@@ -802,8 +813,8 @@ public Q_SLOTS:
     if (att == Scene_point_set_classification_item::Attribute_handle())
       return;
 
-    std::cerr << att->weight
-              << " " << (int)(1001. * 2. * std::atan(att->weight) / CGAL_PI) << std::endl;
+    // std::cerr << att->weight
+    //           << " " << (int)(1001. * 2. * std::atan(att->weight) / CGAL_PI) << std::endl;
     ui_widget.attribute_weight->setValue ((int)(1001. * 2. * std::atan(att->weight) / CGAL_PI));
 
     for (std::size_t i = 0; i < classification_item->types().size(); ++ i)
@@ -836,7 +847,7 @@ public Q_SLOTS:
       return;
 
     att->weight = std::tan ((CGAL_PI/2.) * v / 1001.);
-    std::cerr << att->weight << std::endl;
+    //    std::cerr << att->weight << std::endl;
 
     for (std::size_t i = 0; i < class_rows.size(); ++ i)
       class_rows[i].effect->setEnabled(att->weight != 0.);
@@ -861,26 +872,26 @@ public Q_SLOTS:
     for (std::size_t i = 0;i < class_rows.size(); ++ i)
       if (class_rows[i].effect == combo)
         {
-          std::cerr << att->id() << " is ";
+          //          std::cerr << att->id() << " is ";
           if (v == 0)
             {
               classification_item->types()[i].first->set_attribute_effect
                 (att, CGAL::Data_classification::Type::PENALIZED_ATT);
-              std::cerr << " penalized for ";
+              //              std::cerr << " penalized for ";
             }
           else if (v == 1)
             {
               classification_item->types()[i].first->set_attribute_effect
                 (att, CGAL::Data_classification::Type::NEUTRAL_ATT);
-              std::cerr << " neutral for ";
+              //              std::cerr << " neutral for ";
             }
           else
             {
               classification_item->types()[i].first->set_attribute_effect
                 (att, CGAL::Data_classification::Type::FAVORED_ATT);
-              std::cerr << " favored for ";
+              //              std::cerr << " favored for ";
             }
-          std::cerr << classification_item->types()[i].first->id() << std::endl;
+          //          std::cerr << classification_item->types()[i].first->id() << std::endl;
           break;
         }
   }

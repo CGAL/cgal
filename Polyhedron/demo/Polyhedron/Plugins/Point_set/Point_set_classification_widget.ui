@@ -192,6 +192,20 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="numberOfScalesLabel">
+            <property name="text">
+             <string>Number of scales</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="numberOfScalesSpinBox">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -454,7 +468,7 @@
                 <number>10</number>
                </property>
                <property name="value">
-                <number>2000</number>
+                <number>300</number>
                </property>
               </widget>
              </item>

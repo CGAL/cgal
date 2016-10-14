@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QMenu>
 #include <QGLViewer/manipulatedCameraFrame.h>
-
+ 
 #include <set>
 #include <stack>
 #include <algorithm>
@@ -37,7 +37,8 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
   m_grid_resolution = 0.1;
   m_radius_neighbors = 0.5;
   m_radius_dtm = 2.5;
-  m_nb_trials = 2000;
+  m_nb_scales = 1;
+  m_nb_trials = 300;
   m_smoothing = 0.5;
   m_index_color = 1;
   is_selected = true;
@@ -55,8 +56,9 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
   m_grid_resolution = 0.1;
   m_radius_neighbors = 0.5;
   m_radius_dtm = 2.5;
+  m_nb_scales = 1;
   m_index_color = 1;
-  m_nb_trials = 2000;
+  m_nb_trials = 300;
   m_smoothing = 0.5;
 
   m_points->point_set()->unselect_all();
@@ -90,8 +92,9 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(const S
   m_grid_resolution = 0.1;
   m_radius_neighbors = 0.5;
   m_radius_dtm = 2.5;
+  m_nb_scales = 1;
   m_index_color = 1;
-  m_nb_trials = 2000;
+  m_nb_trials = 300;
   m_smoothing = 0.5;
   
   nb_points = 0;
@@ -330,55 +333,36 @@ Scene_point_set_classification_item::clone() const
 }
 
 // Write point set to .PLY file
-bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stream) const
+bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stream)
 {
   if (m_psc->classification_type_of(0) == Type_handle())
     {
       std::cerr << "Error: classification was not performed." << std::endl;
       return false;
     }
+
+  if (m_helper == NULL)
+    return false;
     
   stream.precision (std::numeric_limits<double>::digits10 + 2);
-  
-  stream << "ply" << std::endl
-         << "format ascii 1.0" << std::endl
-         << "element vertex " << m_points->point_set()->size() << std::endl
-         << "property float x" << std::endl
-         << "property float y" << std::endl
-         << "property float z" << std::endl
-         << "property uchar red" << std::endl
-         << "property uchar green" << std::endl
-         << "property uchar blue" << std::endl
-         << "end_header" << std::endl;
 
-  for (Point_set::const_iterator it = m_points->point_set()->begin();
-       it != m_points->point_set()->end(); ++ it)
+  reset_indices();
+
+  std::vector<Color> colors;
+  for (std::size_t i = 0; i < m_types.size(); ++ i)
     {
-      QColor color (0, 0, 0);
-      Type_handle c = m_psc->classification_type_of(m_psc->clusters()[*it].indices[0]);
-          
-      if (c != Type_handle())
-        {        
-          if (c->id() == "vegetation")
-            color = QColor(0, 255, 27);
-          else if (c->id() == "ground")
-            color = QColor(245, 180, 0);
-          else if (c->id() == "road")
-            color = QColor(114, 114, 130);
-          else if (c->id() == "roof")
-            color = QColor(255, 0, 170);
-          else if (c->id() == "facade")
-            color = QColor(100, 0, 255);
-          else if (c->id() == "building")
-                      color = QColor(0, 114, 225);
-        }
-      
-      stream << m_points->point_set()->point(*it) << " "
-             << color.red() << " "
-             << color.green() << " "
-             << color.blue() << std::endl;
+      Color c = {{ (unsigned char)(m_types[i].second.red()),
+                   (unsigned char)(m_types[i].second.green()),
+                   (unsigned char)(m_types[i].second.blue()) }};
+      colors.push_back (c);
     }
-    
+  
+  m_helper->write_ply (stream,
+                       m_points->point_set()->begin(),
+                       m_points->point_set()->end(),
+                       m_points->point_set()->point_map(),
+                       *m_psc,
+                       &colors);
   return true;
 }
 
@@ -549,7 +533,7 @@ void Scene_point_set_classification_item::compute_features ()
   m_helper = new Helper (m_points->point_set()->begin(),
                          m_points->point_set()->end(),
                          m_points->point_set()->point_map(),
-                         m_grid_resolution, m_radius_neighbors, m_radius_dtm);
+                         m_nb_scales);
   
   m_helper->generate_point_based_attributes (*m_psc,
                                              m_points->point_set()->begin(),
@@ -658,7 +642,6 @@ void Scene_point_set_classification_item::compute_clusters ()
 
 void Scene_point_set_classification_item::train()
 {
-
   if (m_helper == NULL)
     {
       std::cerr << "Error: features not computed" << std::endl;
@@ -667,9 +650,8 @@ void Scene_point_set_classification_item::train()
 
   m_psc->training(m_nb_trials);
   m_psc->run();
-  
-  invalidateOpenGLBuffers();
-  Q_EMIT itemChanged();
+  m_helper->info();
+
 }
 
 bool Scene_point_set_classification_item::run (int method)

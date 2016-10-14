@@ -106,7 +106,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   QMenu* contextMenu();
 
   // IO
-  bool write_ply_point_set(std::ostream& out) const;
+  bool write_ply_point_set(std::ostream& out);
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
@@ -171,6 +171,12 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
 
   void train();
 
+  void callback()
+  {
+    invalidateOpenGLBuffers();
+    Q_EMIT itemChanged();
+  }
+  
 
   Type_handle get_classification_type (const char* name)
   {
@@ -215,6 +221,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   double& grid_resolution() { return m_grid_resolution; }
   double& radius_neighbors() { return m_radius_neighbors; }
   double& radius_dtm() { return m_radius_dtm; }
+  std::size_t& nb_scales() { return m_nb_scales; }
   std::size_t& number_of_trials() { return m_nb_trials; }
   bool features_computed() const { return (m_helper != NULL); }
 
@@ -253,8 +260,9 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   {
     for (std::size_t i = 0; i < m_psc->number_of_attributes(); ++ i)
       {
+        std::size_t scale = m_helper->scale_of_attribute(m_psc->get_attribute(i));
         std::ostringstream oss;
-        oss << "Attribute " << m_psc->get_attribute(i)->id();
+        oss << "Attribute " << m_psc->get_attribute(i)->id() << "_" << scale;
         cb->addItem (oss.str().c_str());
         cb1->addItem (m_psc->get_attribute(i)->id().c_str());
       }
@@ -376,6 +384,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   double m_grid_resolution;
   double m_radius_neighbors;
   double m_radius_dtm;
+  std::size_t m_nb_scales;
 
   std::vector<std::pair<Type_handle, QColor> > m_types;
   std::size_t m_nb_trials;
