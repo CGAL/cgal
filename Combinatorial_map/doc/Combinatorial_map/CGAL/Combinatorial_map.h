@@ -12,7 +12,7 @@ Darts and non void attributes are stored in memory using `Compact_container`, us
 
 \tparam d the dimension of the map.
 
-\tparam Items a model of the `GenericMapItems` concept. Equal to `Combinatorial_map_min_items<d>` by default.
+\tparam Items a model of the `GenericMapItems` concept. Equal to `Generic_map_min_items` by default.
 
 \tparam Alloc has to match the standard allocator requirements. The `rebind` mechanism  `Alloc` will be used to create appropriate allocators internally with value type `Dart`. Equal to `CGAL_ALLOCATOR(int)` from `<CGAL/memory.h>` by default.
 
@@ -34,7 +34,7 @@ Other methods have all a constant time complexity.
 
 \sa `GenericMapItems`
 
-\deprecated Before CGAL 4.9, `Items` had to define the type of dart used, and the default class was `Combinatorial_map_min_items`. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type.
+\deprecated Before CGAL 4.9, `Items` had to define the type of dart used, and the default class was `Combinatorial_map_min_items`. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type. `CGAL_CMAP_DEPRECATED` can be defined to keep the old behavior.
 
 */
 template< unsigned int d, typename Items, typename Alloc >

@@ -33,5 +33,5 @@ public:
 
 /// @}
 
-}; /* end Combinatorial_map_min_items */
+}; /* end Generic_map_min_items */
 } /* end namespace CGAL */

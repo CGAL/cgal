@@ -12,7 +12,7 @@ The class `Linear_cell_complex_for_generalized_map` represents a linear cell com
 \tparam d the dimension of the generalized map.
 \tparam d2 the dimension of the ambient space. Equal to  `d` by default.
 \tparam LCCTraits a model of the `LinearCellComplexTraits` concept, satisfying \link LinearCellComplexTraits::ambient_dimension `LCCTraits::ambient_dimension`\endlink`==d2`. Equal to`CGAL::Linear_cell_complex_traits<d2>` by default.
-\tparam Items a model of the `LinearCellComplexItems` concept. Equal to `CGAL::Linear_cell_complex_for_generalized_map_min_items<d>` by default.
+\tparam Items a model of the `LinearCellComplexItems` concept. Equal to `CGAL::Linear_cell_complex_min_items<d>` by default.
 \tparam Alloc has to match the standard allocator requirements. Equal to `CGAL_ALLOCATOR(int)` by default.
 
 \cgalAdvancedBegin
@@ -20,7 +20,7 @@ Note that there is an additional, and undocumented, template parameter `GMap` fo
 
 \sa `CGAL::Generalized_map<d,Items,Alloc>`
 \sa `CGAL::Linear_cell_complex_traits<d,K>`
-\sa `CGAL::Linear_cell_complex_for_generalized_map_min_items<d>`
+\sa `CGAL::Linear_cell_complex_min_items<d>`
 
 */
 
@@ -39,19 +39,6 @@ static unsigned int ambient_dimension = d2;
 
 /// @}
 
-/// \name Types
-/// @{
-
-/*!
-
-*/
-typedef Linear_cell_complex_for_generalized_map<d,d2,LCCTraits,Items,Alloc> Self;
-
-/*!
-The type of dart, must satisfy \link Dart::dimension `Dart::dimension`\endlink`==d`.
-*/
-typedef Items::Dart_wrapper<Self>::Dart Dart;
-  
 }; /* end Linear_cell_complex_for_generalized_map */
   
 } /* end namespace CGAL */

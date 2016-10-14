@@ -37,7 +37,7 @@ Note that the dimension of the combinatorial \tred{or the generalized} map <I>d<
 
 \section Linear_cell_complexSoftware Software Design
 
-\tred{The diagram in \cgalFigureRef{fig_lcc_diagramme_class} shows the main classes of the package. `Linear_cell_complex_for_combinatorial_map` is the main class if you use combinatorial maps as combinatorial data-structure, and `Linear_cell_complex_for_generalized_map` is the main class if you use generalized maps as combinatorial data-structure (see Section \ref sseclinearcellcomplex). `Linear_cell_complex_for_combinatorial_map` inherits from the `Combinatorial_map` class and `Linear_cell_complex_for_generalized_map` inherits from the `Generalized_map` class.} Attributes can be associated to some cells of the linear cell complex thanks to an items class (see Section \ref sseclccitem "Linear Cell Complex Items"), which defines the dart type and the attributes types. These types may be different for different dimensions of cells, and they may also be void. In the class `Linear_cell_complex_for_combinatorial_map`, it is required that specific attributes are associated to all vertices of the \tred{combinatorial or generalized} map. These attributes must contain a point (a model of \link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink), and can be represented by instances of class `Cell_attribute_with_point` (see Section \ref ssecattributewp "Cell Attributes").
+\tred{The diagram in \cgalFigureRef{fig_lcc_diagramme_class} shows the main classes of the package. `Linear_cell_complex_for_combinatorial_map` is the main class if you use combinatorial maps as combinatorial data-structure, and `Linear_cell_complex_for_generalized_map` is the main class if you use generalized maps as combinatorial data-structure (see Section \ref sseclinearcellcomplex). `Linear_cell_complex_for_combinatorial_map` inherits from the `Combinatorial_map` class and `Linear_cell_complex_for_generalized_map` inherits from the `Generalized_map` class.} Attributes can be associated to some cells of the linear cell complex thanks to an items class (see Section \ref sseclccitem "Linear Cell Complex Items"), which defines \tred{the information associated to darts,} and the attributes types. These types may be different for different dimensions of cells, and they may also be void. In the class `Linear_cell_complex_for_combinatorial_map`, it is required that specific attributes are associated to all vertices of the \tred{combinatorial or generalized} map. These attributes must contain a point (a model of \link Kernel::Point_2 `Point_2`\endlink or \link Kernel::Point_3 `Point_3`\endlink or \link Kernel_d::Point_d `Point_d`\endlink), and can be represented by instances of class `Cell_attribute_with_point` (see Section \ref ssecattributewp "Cell Attributes").
 
 \cgalFigureBegin{fig_lcc_diagramme_class,lcc_diagramme_class.svg}
 UML diagram of the main classes of the package. Gray elements come from the \ref ChapterCombinatorialMap "Combinatorial maps" \tred{and \ref ChapterGeneralizedMap "Generalized maps"} packages.
@@ -75,10 +75,7 @@ The class `Linear_cell_complex_traits<d,K>` is a model of `LinearCellComplexTrai
 
 The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept.
 
-The class `Linear_cell_complex_for_combinatorial_map_min_items<d>` is a model of `LinearCellComplexItems` when using combinatorial maps. It uses `Combinatorial_map_dart<d>`, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
-
-\tred{Similarly, the class `Linear_cell_complex_for_generalized_map_min_items<d>` is a model of `LinearCellComplexItems` when using generalized maps. It uses `Generalized_map_dart<d>`, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.}
-
+The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexItems`. \tred{It defines `void` as information associated to darts,} and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
 
 \section Linear_cell_complexOperations Operations
 
@@ -202,7 +199,7 @@ The output is:
 This example illustrates the way to use a 3D linear cell complex by
 adding another information to vertices. For that, we need to define
 our own items class. The difference with the
-`Linear_cell_complex_for_combinatorial_map_min_items` class is about the definition of
+`Linear_cell_complex_min_items` class is about the definition of
 the vertex attribute where we use a `Cell_attribute_with_point`
 with a non `void` info. In this example, the <em>vertex color</em> is just
 given by an `int` (the second template parameter of the
