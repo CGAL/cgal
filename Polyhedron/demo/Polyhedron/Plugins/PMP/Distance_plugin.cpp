@@ -38,8 +38,8 @@ struct Distance_computation{
                        std::vector<double>& out )
     : tree(tree)
     , sample_points(sample_points)
-    , distance(d)
     , initial_hint(p)
+    , distance(d)
     , output(out)
   {
   }
@@ -154,7 +154,7 @@ private:
 
   //fills 'out' and returns the hausdorff distance for calibration of the color_ramp.
 
-  double compute_distances(const Polyhedron& m, const std::vector<Kernel::Point_3>& sample_points,double precision, PMP::Sampling_method method,
+  double compute_distances(const Polyhedron& m, const std::vector<Kernel::Point_3>& sample_points,
                            std::vector<double>& out)const
   {
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
@@ -298,8 +298,6 @@ private:
 
       double hausdorff = compute_distances(*poly_B,
                                            sorted_points,
-                                           400, //precision parameter must be the same than for the sampling
-                                           PMP::MONTE_CARLO,
                                            distances);
       //compute the colors
       colors.resize(sorted_points.size()*3);

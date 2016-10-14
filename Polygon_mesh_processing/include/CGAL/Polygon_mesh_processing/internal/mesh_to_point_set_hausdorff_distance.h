@@ -164,7 +164,7 @@ public:
   }
 
   const PointH* points () const { return m_point; }
-  const int edge () const { return m_edge; }
+  int edge () const { return m_edge; }
 
   void print () const
   {

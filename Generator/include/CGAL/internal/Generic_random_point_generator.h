@@ -67,7 +67,7 @@ public:
       Geometric_object object = object_from_id_map(id);
       ids.push_back(id);
       //compute the weight of a face
-      total_weight += to_double(compute_weight(object));
+      total_weight += to_double( compute_weight(object) );
       weights.push_back(total_weight);
     }
     //generate the first point

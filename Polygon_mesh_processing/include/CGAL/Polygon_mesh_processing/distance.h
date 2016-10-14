@@ -159,8 +159,6 @@ struct Distance_computation{
   }
 };
 #endif
-/// \todo test different strategies and put the better one in `approximated_Hausdorff_distance()`
-/// for particular cases one can still use a specific sampling method together with `max_distance_to_triangle_mesh()`
 
 enum Sampling_method{
   RANDOM_UNIFORM =0, /**< points are generated in a random and uniform way, depending on the area of each triangle.*/
