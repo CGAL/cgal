@@ -1002,15 +1002,19 @@ void
 Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,SDGLx>::
 print_error_message() const
 {
-  std::cerr << std::endl;
-  std::cerr << "ATTENTION:" << std::endl;
-  std::cerr << "A segment-segment intersection was found."
-	    << std::endl;
-  std::cerr << "The Segment_Delaunay_graph_hierarchy_2 class is not"
-	    << " configured to handle this situation." << std::endl;
-  std::cerr << "Please look at the documentation on how to handle"
-	    << " this behavior." << std::endl;
-  std::cerr << std::endl;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, once, 0);
+  if(once == 0){
+    ++once;
+    std::cerr << std::endl;
+    std::cerr << "ATTENTION:" << std::endl;
+    std::cerr << "A segment-segment intersection was found."
+              << std::endl;
+    std::cerr << "The Segment_Delaunay_graph_hierarchy_2 class is not"
+              << " configured to handle this situation." << std::endl;
+    std::cerr << "Please look at the documentation on how to handle"
+              << " this behavior." << std::endl;
+    std::cerr << std::endl;
+  }
 }
 
 //---------------------------------------------------------------------------
