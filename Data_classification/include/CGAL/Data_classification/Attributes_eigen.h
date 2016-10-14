@@ -24,7 +24,10 @@ public:
     for (std::size_t i = 0; i < size; ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back ((ev[2] - ev[1]) / (ev[2] + 1e-10));
+        if (ev[2] < 1e-15)
+          attrib.push_back (0.);
+        else
+          attrib.push_back ((ev[2] - ev[1]) / ev[2]);
       }
     this->compute_mean_max (attrib, mean, this->max);
   }
@@ -52,7 +55,10 @@ public:
     for (std::size_t i = 0; i < size; ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back ((ev[1] - ev[0]) / (ev[2] + 1e-10));
+        if (ev[2] < 1e-15)
+          attrib.push_back (0.);
+        else
+          attrib.push_back ((ev[1] - ev[0]) / ev[2]);
       }
     this->compute_mean_max (attrib, mean, this->max);
   }
@@ -80,7 +86,10 @@ public:
     for (std::size_t i = 0; i < size; ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (ev[0] / (ev[2] + 1e-10));
+        if (ev[2] < 1e-15)
+          attrib.push_back (0.);
+        else
+          attrib.push_back (ev[0] / ev[2]);
       }
     this->compute_mean_max (attrib, mean, this->max);
   }
@@ -136,7 +145,10 @@ public:
     for (std::size_t i = 0; i < size; ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back ((ev[2] - ev[0]) / (ev[2] + 1e-10));
+        if (ev[2] < 1e-15)
+          attrib.push_back (0.);
+        else
+          attrib.push_back ((ev[2] - ev[0]) / ev[2]);
       }
     this->compute_mean_max (attrib, mean, this->max);
   }
@@ -164,9 +176,14 @@ public:
     for (std::size_t i = 0; i < size; ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (- ev[0] * std::log(std::fabs(ev[0]) + 1e-10)
-                          - ev[1] * std::log(std::fabs(ev[1]) + 1e-10)
-                          - ev[2] * std::log(std::fabs(ev[2]) + 1e-10));
+        if (ev[0] < 1e-15
+            || ev[1] < 1e-15
+            || ev[2] < 1e-15)
+          attrib.push_back (0.);
+        else
+          attrib.push_back (- ev[0] * std::log(ev[0])
+                            - ev[1] * std::log(ev[1])
+                            - ev[2] * std::log(ev[2]));
       }
     this->compute_mean_max (attrib, mean, this->max);
   }
@@ -192,10 +209,8 @@ public:
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
-      {
-        const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (ev[0] + ev[1] + ev[2]);
-      }
+      attrib.push_back (eigen.sum_eigenvalues(i));
+
     this->compute_mean_max (attrib, mean, this->max);
   }
   virtual double value (std::size_t pt_index)
@@ -222,7 +237,11 @@ public:
     for (std::size_t i = 0; i < size; ++ i)
       {
         const typename Local_eigen_analysis::Eigenvalues& ev = eigen.eigenvalue(i);
-        attrib.push_back (ev[0] / (ev[0] + ev[1] + ev[2] + 1e-10));
+
+        if (ev[0] + ev[1] + ev[2] < 1e-15)
+          attrib.push_back (0.);
+        else
+          attrib.push_back (ev[0] / (ev[0] + ev[1] + ev[2]));
       }
     this->compute_mean_max (attrib, mean, this->max);
   }
@@ -232,6 +251,7 @@ public:
   }
   virtual std::string id() { return "surface_variation"; }
 };
+
 
 } // namespace Data_classification
 

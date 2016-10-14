@@ -44,11 +44,13 @@ public:
 
 
 private:
-  std::vector<Eigenvalues> eigenvalues;
-  std::vector<Point> centroids;
-  std::vector<Vector> smallest_eigenvectors;
-  std::vector<Vector> middle_eigenvectors;
-  std::vector<Vector> largest_eigenvectors;
+  std::vector<Eigenvalues> m_eigenvalues;
+  std::vector<double> m_sum_eigenvalues;
+  std::vector<Point> m_centroids;
+  std::vector<Vector> m_smallest_eigenvectors;
+  std::vector<Vector> m_middle_eigenvectors;
+  std::vector<Vector> m_largest_eigenvectors;
+
 
   
 public:
@@ -72,23 +74,25 @@ public:
                         double radius_neighbors)
   {
     std::size_t size = end - begin;
-    eigenvalues.reserve (size);
-    centroids.reserve (size);
-    smallest_eigenvectors.reserve (size);
-    middle_eigenvectors.reserve (size);
-    largest_eigenvectors.reserve (size);
-    
+    m_eigenvalues.reserve (size);
+    m_centroids.reserve (size);
+    m_smallest_eigenvectors.reserve (size);
+    m_middle_eigenvectors.reserve (size);
+    m_largest_eigenvectors.reserve (size);
+
+    double nb = 0.;
     for (std::size_t i = 0; i < size; i++)
       {
         std::vector<std::size_t> neighbors;
-        neighborhood.range_neighbors (i, radius_neighbors, std::back_inserter (neighbors));
-
+        neighborhood.range_neighbors (get(point_pmap, begin[i]), radius_neighbors, std::back_inserter (neighbors));
+        nb += neighbors.size();
         std::vector<Point> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(point_pmap, begin[neighbors[j]]));
         
         compute (get(point_pmap, begin[i]), neighbor_points);
       }
+    std::cerr << "Mean number of nearest neighbors: " << nb / size << std::endl;
   }
 
   /*! 
@@ -106,26 +110,34 @@ public:
                         RandomAccessIterator end,
                         PointPMap point_pmap,
                         Neighborhood& neighborhood,
-                        std::size_t knn)
+                        std::size_t knn,
+                        double& mean_range)
   {
     std::size_t size = end - begin;
-    eigenvalues.reserve (size);
-    centroids.reserve (size);
-    smallest_eigenvectors.reserve (size);
-    middle_eigenvectors.reserve (size);
-    largest_eigenvectors.reserve (size);
+    m_eigenvalues.reserve (size);
+    m_centroids.reserve (size);
+    m_smallest_eigenvectors.reserve (size);
+    m_middle_eigenvectors.reserve (size);
+    m_largest_eigenvectors.reserve (size);
     
+    mean_range = 0.;
+      
     for (std::size_t i = 0; i < size; i++)
       {
         std::vector<std::size_t> neighbors;
-        neighborhood.k_neighbors (i, knn, std::back_inserter (neighbors));
+        neighborhood.k_neighbors (get(point_pmap, begin[i]), knn, std::back_inserter (neighbors));
 
         std::vector<Point> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(point_pmap, begin[neighbors[j]]));
+
+        mean_range += std::sqrt (CGAL::squared_distance (get(point_pmap, begin[i]),
+                                                         get(point_pmap, begin[neighbors.back()])));
         
         compute (get(point_pmap, begin[i]), neighbor_points);
       }
+
+    mean_range /= size;
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -134,16 +146,16 @@ public:
     if (neighbor_points.size() == 0)
       {
         Eigenvalues v = {{ 0., 0., 0. }};
-        eigenvalues.push_back (v);
-        centroids.push_back (query);
-        smallest_eigenvectors.push_back (Vector (0., 0., 1.));
-        middle_eigenvectors.push_back (Vector (0., 1., 0.));
-        largest_eigenvectors.push_back (Vector (1., 0., 0.));
+        m_eigenvalues.push_back (v);
+        m_centroids.push_back (query);
+        m_smallest_eigenvectors.push_back (Vector (0., 0., 1.));
+        m_middle_eigenvectors.push_back (Vector (0., 1., 0.));
+        m_largest_eigenvectors.push_back (Vector (1., 0., 0.));
         return;
       }
 
     Point centroid = CGAL::centroid (neighbor_points.begin(), neighbor_points.end());
-    centroids.push_back (centroid);
+    m_centroids.push_back (centroid);
     
     CGAL::cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
       
@@ -165,28 +177,41 @@ public:
 
     DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
       (covariance, evalues, evectors);
-    
-    eigenvalues.push_back (evalues);
-    smallest_eigenvectors.push_back (Vector (evectors[0], evectors[1], evectors[2]));
-    middle_eigenvectors.push_back (Vector (evectors[3], evectors[4], evectors[5]));
-    largest_eigenvectors.push_back (Vector (evectors[6], evectors[7], evectors[8]));
+
+    // Normalize
+    double sum = evalues[0] + evalues[1] + evalues[2];
+    if (sum > 0.)
+      for (std::size_t i = 0; i < 3; ++ i)
+        evalues[i] = evalues[i] / sum;
+    m_sum_eigenvalues.push_back(sum);    
+    m_eigenvalues.push_back (evalues);
+    m_smallest_eigenvectors.push_back (Vector (evectors[0], evectors[1], evectors[2]));
+    m_middle_eigenvectors.push_back (Vector (evectors[3], evectors[4], evectors[5]));
+    m_largest_eigenvectors.push_back (Vector (evectors[6], evectors[7], evectors[8]));
+
   }
   /// \endcond
 
   /*!
     \brief Returns the estimated normal vector of the indexed point.
   */
-  const Vector& normal_vector (std::size_t index) const { return smallest_eigenvectors[index]; }
+  const Vector& normal_vector (std::size_t index) const { return m_smallest_eigenvectors[index]; }
 
   /*!
     \brief Returns the estimated local tangent plane of the index point.
   */
-  Plane plane (std::size_t index) const { return Plane (centroids[index], smallest_eigenvectors[index]); }
+  Plane plane (std::size_t index) const { return Plane (m_centroids[index], m_smallest_eigenvectors[index]); }
 
   /*!
-    \brief Returns the eigenvalues of the index point.
+    \brief Returns the normalized eigenvalue of the index point.
   */
-  const Eigenvalues& eigenvalue (std::size_t index) const { return eigenvalues[index]; }
+  const Eigenvalues& eigenvalue (std::size_t index) const { return m_eigenvalues[index]; }
+
+  /*!
+    \brief Returns the sum of eigenvalues of the index point.
+  */
+  const double& sum_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
+
 };
   
 
