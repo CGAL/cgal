@@ -551,14 +551,26 @@ public:
     the memory. `collect_garbage()` should be called if the memory
     needs to be freed.
 
-    \note The end iterator is invalidated. Other iterators are still
-    valid but not guaranteed to keep referring to the same elements
-    they were referring to before the call.
-
+    \note All iterators, pointers and references related to the container are invalidated.
   */
   void remove (iterator it)
   {
     std::iter_swap (it, (end() - 1));
+    ++ m_nb_removed;
+  }
+
+  /*!
+    \brief Marks element specified by `Index` as removed.
+
+    \note The element is just marked as removed and is not erased from
+    the memory. `collect_garbage()` should be called if the memory
+    needs to be freed.
+
+    \note All iterators, pointers and references related to the container are invalidated.
+  */
+  void remove (const Index& index)
+  {
+    std::swap (index, *(end() - 1));
     ++ m_nb_removed;
   }
 
@@ -802,7 +814,10 @@ public:
   */
   std::vector<std::string> properties() const
   {
-    return m_base.properties();
+    std::vector<std::string> out = m_base.properties();
+    out.remove (out.begin()); // remove "index"
+    out.remove (out.begin()); // remove "point"
+    return out;
   }
 
   /// \cond SKIP_IN_MANUAL

@@ -20,14 +20,9 @@ labels, and to call \cgal algorithms on them.
 
 \section Point_set_3_Principle General Principle
 
-`CGAL::Point_set_3<Point,Vector>` is a vector based data structure that
-contains two properties by default:
-
-- A property named _index_ with \ref CGAL::Point_set_3::Index "Index"
-type used to easily change the order of the points without
-having to move all the properties.
-
-- A property named _point_ with template `Point` type
+`CGAL::Point_set_3<Point,Vector>` is a vector based data structure
+that contains by default a property named _point_ with template
+`Point` type.
 
 Any property the user needs can be easily added, modified and
 removed. A property is identified by a unique name and a
@@ -59,9 +54,9 @@ normal property, set the normal values, add or remove an item, etc.
 \section Point_set_3_Properties Using Additional Properties
 
 Every information in the point set is a property. A raw point set
-comes with _index_ and _point_ properties. As we saw in the previous
-section, the user can easily add a _normal_ property. But this
-mechanism is generalized to any type of property.
+comes with a _point_ property only. As we saw in the previous section,
+the user can easily add a _normal_ property. But this mechanism is
+generalized to any type of property.
 
 The following example shows how to define a color property and an
 intensity property, and how to modify the point set according to this.

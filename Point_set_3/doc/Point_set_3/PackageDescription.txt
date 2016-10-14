@@ -38,7 +38,7 @@ The overloads, available after including
 `CGAL/Point_set_3/Point_set_processing_3.h`, all follow the same
 pattern based on the original point set processing functions:
 
-- Iterators and property maps of the original function are replaced
+- Iterators and property maps of the original functions are replaced
 with a single parameter `CGAL::Point_set_3<Point,Vector>`
 
 - The other parameters (and their potential default values) are
@@ -61,8 +61,8 @@ Input functions instanciate all the necessary property maps:
 - if found in the input, normal vectors are stored in the usual
 `CGAL::Point_set_3` property `normal` with template type `Vector`
 
-- for PLY input only, other properties are stored on point set
-properties with the name and type given by the PLY header
+- for PLY input only, other properties are stored as properties in the
+`Point_set_3` class with the name and type given by the PLY header
 
 For a complete documentation of these functions, please refer to the
 \ref PkgPointSetProcessing manual.
