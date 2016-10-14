@@ -40,7 +40,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-
+#include <CGAL/Three/Scene_item_with_properties.h>
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
 #include "ui_Statistics_on_item_dialog.h"
@@ -884,6 +884,9 @@ void MainWindow::reloadItem() {
   new_item->setColor(item->color());
   new_item->setRenderingMode(item->renderingMode());
   new_item->setVisible(item->visible());
+  Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+  if(property_item)
+    property_item->copyProperties(item);
   new_item->invalidateOpenGLBuffers();
   scene->replaceItem(item_index, new_item, true);
   item->deleteLater();

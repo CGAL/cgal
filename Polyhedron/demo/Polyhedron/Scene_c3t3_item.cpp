@@ -390,6 +390,7 @@ struct Set_show_tetrahedra {
   Scene_c3t3_item_priv* priv;
   Set_show_tetrahedra(Scene_c3t3_item_priv* priv) : priv(priv) {}
   void operator()(bool b) {
+    qDebug()<<"coucou";
     priv->show_tetrahedra = b;
     priv->item->show_intersection(b);
   }
@@ -1483,11 +1484,23 @@ Scene_c3t3_item::setColor(QColor c)
 void Scene_c3t3_item::show_grid(bool b)
 {
   d->is_grid_shown = b;
+  Q_FOREACH(QAction* action, contextMenu()->actions())
+    if(action->objectName() == "actionShowGrid")
+    {
+      action->setChecked(b);
+      break;
+    }
   itemChanged();
 }
 void Scene_c3t3_item::show_spheres(bool b)
 {
   d->spheres_are_shown = b;
+  Q_FOREACH(QAction* action, contextMenu()->actions())
+    if(action->objectName() == "actionShowSpheres")
+    {
+      action->setChecked(b);
+      break;
+    }
   if(b && !d->spheres)
   {
     d->spheres = new Scene_spheres_item(this, true);
@@ -1509,6 +1522,12 @@ void Scene_c3t3_item::show_spheres(bool b)
 }
 void Scene_c3t3_item::show_intersection(bool b)
 {
+  Q_FOREACH(QAction* action, contextMenu()->actions())
+    if(action->objectName() == "actionShowTets")
+    {
+      action->setChecked(b);
+      break;
+    }
   if(b && !d->intersection)
   {
     d->intersection = new Scene_intersection_item(this);
@@ -1535,6 +1554,12 @@ void Scene_c3t3_item::show_intersection(bool b)
 void Scene_c3t3_item::show_cnc(bool b)
 {
   d->cnc_are_shown = b;
+  Q_FOREACH(QAction* action, contextMenu()->actions())
+    if(action->objectName() == "actionShowCNC")
+    {
+      action->setChecked(b);
+      break;
+    }
   Q_EMIT redraw();
 
 }
@@ -1556,7 +1581,38 @@ void Scene_c3t3_item::setPosition(float x, float y, float z) {
   d->frame->setPosition(x, y, z);
 }
 
+bool Scene_c3t3_item::has_spheres()const { return d->spheres_are_shown;}
+
+bool Scene_c3t3_item::has_grid()const { return d->is_grid_shown;}
+
+bool Scene_c3t3_item::has_cnc()const { return d->cnc_are_shown;}
+
+bool Scene_c3t3_item::has_tets()const { if(d->intersection) return true; else return false; }
+
 void Scene_c3t3_item::setNormal(float x, float y, float z) {
   d->frame->setOrientation(x, y, z, 0.f);
+}
+
+void Scene_c3t3_item::copyProperties(Scene_item *item)
+{
+  Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
+  if(!c3t3_item)
+    return;
+  d->frame->setPositionAndOrientation(c3t3_item->manipulatedFrame()->position(),
+                                      c3t3_item->manipulatedFrame()->orientation());
+
+  if(c3t3_item->has_tets())
+    show_intersection(true);
+
+  if(c3t3_item->has_spheres())
+    show_spheres(true);
+
+
+  if(c3t3_item->has_cnc())
+    show_cnc(true);
+
+  show_grid(c3t3_item->has_grid());
+
+
 }
 #include "Scene_c3t3_item.moc"
