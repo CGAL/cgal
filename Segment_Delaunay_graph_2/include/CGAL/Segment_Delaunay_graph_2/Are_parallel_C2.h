@@ -62,8 +62,8 @@ private:
       x4 = s2.target().x(),
       y4 = s2.target().y();
 
-    FT det = determinant(x2 - x1, x4 - x3,
-			       y2 - y1, y4 - y3);
+    FT det = determinant<FT>(x2 - x1, x4 - x3,
+			     y2 - y1, y4 - y3);
 
     return ( CGAL::sign(det) == CGAL::ZERO );
   }
