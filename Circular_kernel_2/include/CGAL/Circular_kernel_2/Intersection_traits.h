@@ -38,6 +38,12 @@ struct CK2_Intersection_traits
 {};
 
 // Intersection_traits for the circular kernel
+
+// The additional int in the variant has the only purpose to work around
+// a bug of the Intel compiler, which without it produces the error
+// /usr/include/boost/type_traits/has_nothrow_copy.hpp(36): internal error: bad pointer
+// template struct has_nothrow_copy_constructor : public integral_constant{};
+// See also https://github.com/CGAL/cgal/issues/1581
 template<typename CK>
 struct CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>
 {

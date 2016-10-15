@@ -60,6 +60,13 @@ template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Plane_3, typename SK::Circle_3>
   : SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Plane_3> {};
 
+
+// The additional int in the variant has the only purpose to work around
+// a bug of the Intel compiler, which without it produces the error
+// /usr/include/boost/type_traits/has_nothrow_copy.hpp(36): internal error: bad pointer
+// template struct has_nothrow_copy_constructor : public integral_constant{};
+// See also https://github.com/CGAL/cgal/issues/1581
+
 template <typename SK>
 struct SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Sphere_3>
 { 
