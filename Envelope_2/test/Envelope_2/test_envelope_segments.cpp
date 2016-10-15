@@ -310,9 +310,9 @@ int main (int argc, char *argv[])
     // Determine the input format.
     Coord_input_format   format = F_RATIONAL;
     
-    if (strcmp (argv[2*i + 2], "-i") || strcmp (argv[2*i + 2], "-I"))
+    if (strcmp (argv[2*i + 2], "-i") == 0 || strcmp (argv[2*i + 2], "-I") == 0)
       format = F_INTEGER;
-    else if (strcmp (argv[2*i + 2], "-d") || strcmp (argv[2*i + 2], "-D"))
+    else if (strcmp (argv[2*i + 2], "-d") == 0 || strcmp (argv[2*i + 2], "-D") == 0)
       format = F_DOUBLE;
     
     // Read the input segments.
