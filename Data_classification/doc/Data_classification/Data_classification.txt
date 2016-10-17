@@ -65,7 +65,10 @@ A classification type represents how a point should be classified, for example: 
 - `NEUTRAL_ATT`: the type is not affected by the attribute
 - `PENALIZED_ATT`: the type is favored by low values of the attribute
 
-\subsection Data_classification_helper Helper
+\subsection Data_classification_types_example Example
+
+
+\section Data_classification_helper Helper
 
 The classification algorithm is designed to be as flexible as possible: the user may define its own attributes and classification types (see \ref Data_classification_custom).
 
@@ -77,12 +80,13 @@ Nevertheless, \cgal provides a predefined framework that should work correctly o
 - input/ouput methods are provided to save and recover a specific configuration (with all attributes, types and relationships between them).
 - classification can be saved as a PLY format with colors and labels.
 
-\section Data_classification_psc Point Set Classification
+\subsection Data_classification_helper_example Example
 
-\subsection Data_classification_training Training
+\section Data_classification_training Training
 
-\subsection Data_classification_regularization Regularization
+\subsection Data_classification_helper_example Example
 
+\section Data_classification_regularization Regularization
 
 
 Classification is performed by minizing an energy over the input point set. This energy can be regularized with different methods. \cgal provides 3 different methods for classification, ranging from high speed / low quality to low speed / high quality:
@@ -91,14 +95,11 @@ Classification is performed by minizing an energy over the input point set. This
 - `CGAL::Point_set_classification::run_with_local_smoothing()`
 - `CGAL::Point_set_classification::run_with_graphcut()`
 
-\cgalFigureBegin{Data_classification_image,classif2.png}
-Result of a data classification on a LIDAR point set (Vaihingen). Vegetation is in green, buildings in orange and ground in grey.
+\cgalFigureBegin{Data_classification_image,classif.png}
+Left: input point set. Right: output classification represented by a set of colors (ground is orange, facades are blue, roofs are pink and vegetation is green).
 \cgalFigureEnd
 
-
-\section Data_classification_custom Defining Custom attributes and Types
-
-\section Data_classification_example Example
+\subsection Data_classification_helper_example Example
 
 The following example:
 
@@ -110,6 +111,16 @@ The following example:
 - saves the result in a colored PLY format.
 
 \cgalExample{Data_classification/example_point_set_classification.cpp}
+
+
+\section Data_classification_custom Defining Custom attributes and Types
+
+\subsection Data_classification_custom_example Examples
+
+
+
+
+
 
 */
 } /* namespace CGAL */
