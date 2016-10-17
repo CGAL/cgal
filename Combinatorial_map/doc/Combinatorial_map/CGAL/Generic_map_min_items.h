@@ -17,10 +17,7 @@ struct Generic_map_min_items
 {
   template <class CMap>
   struct Dart_wrapper
-  {
-    typedef void Dart_info;
-    typedef CGAL::cpp11::tuple<> Attributes;
-  };
+  {};
 };
 \endcode
 

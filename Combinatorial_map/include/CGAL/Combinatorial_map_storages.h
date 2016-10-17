@@ -50,7 +50,7 @@ namespace CGAL {
       return h;
     }
   };
-
+  
   // Storage of darts with compact container, beta with handles
   template<unsigned int d_, class Items_, class Alloc_ >
   class Combinatorial_map_storage_1
@@ -59,24 +59,24 @@ namespace CGAL {
     typedef Combinatorial_map_storage_1<d_, Items_, Alloc_> Self;
     typedef CGAL::Tag_false Use_index;
 
-    typedef internal::Combinatorial_map_helper<Self> Helper;
+    typedef internal::Combinatorial_map_helper<Self>      Helper;
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 
-#ifdef CGAL_CMAP_DEPRECATED    
+#ifdef CGAL_CMAP_DEPRECATED
     typedef typename Dart_wrapper::Dart                   Dart;
 #else
-    // TODO Define by default Dart_info to void if it does not exist in Dart_wrapper
-    typedef typename Dart_wrapper::Dart_info              Dart_info;
+    typedef typename internal::template Get_dart_info<Dart_wrapper>::type
+                                                          Dart_info;
     typedef CGAL::Dart<d_, Self, Dart_info>               Dart;
 #endif
     typedef typename Alloc_::template rebind<Dart>::other Dart_allocator;
 
-    typedef Compact_container<Dart, Dart_allocator> Dart_container;
+    typedef Compact_container<Dart, Dart_allocator>       Dart_container;
 
-    typedef typename Dart_container::iterator       Dart_handle;
-    typedef typename Dart_container::const_iterator Dart_const_handle;
-    typedef typename Dart_container::size_type      size_type;
+    typedef typename Dart_container::iterator             Dart_handle;
+    typedef typename Dart_container::const_iterator       Dart_const_handle;
+    typedef typename Dart_container::size_type            size_type;
 
     typedef CGAL::Void* Null_handle_type;
     static const Null_handle_type null_handle;
@@ -90,7 +90,8 @@ namespace CGAL {
     {};
 
     /// Typedef for attributes
-    typedef typename Dart_wrapper::Attributes Attributes;
+    typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
+                                   Attributes;
 
     template<int i>
     struct Attribute_type: public Helper::template Attribute_type<i>

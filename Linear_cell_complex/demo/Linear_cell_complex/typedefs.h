@@ -153,8 +153,6 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef void Dart_info;
-
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
 

@@ -45,8 +45,6 @@ struct Map_3_dart_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef void Dart_info;
-
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
@@ -91,8 +89,6 @@ struct Map_dart_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef void Dart_info;
-
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
 

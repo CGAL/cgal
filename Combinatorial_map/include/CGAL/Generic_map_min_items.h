@@ -28,16 +28,14 @@ namespace CGAL {
 
   /** Minimal items for dD generic map.
    * Generic_map_min_items defines what is the minimal item class for a generic map.
-   * No information associated with darts, no enabled attribute.
+   * No information associated with darts (i.e. the type Dart_info is
+   * not defined), no enabled attribute (i.e. type Attributes not defined).
    */
   struct Generic_map_min_items
   {
     template < class Refs >
     struct Dart_wrapper
-    {
-      typedef void Dart_info;
-      typedef CGAL::cpp11::tuple<> Attributes;
-    };
+    {};
   };
 
 } // namespace CGAL

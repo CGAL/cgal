@@ -25,7 +25,6 @@ struct Myitem
   template<class GMap>
   struct Dart_wrapper
   {
-    typedef void Dart_info;
     typedef CGAL::Cell_attribute<GMap, int, CGAL::Tag_true,
                                  Sum_functor, Divide_by_two_functor>
     Facet_attribute;

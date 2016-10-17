@@ -26,6 +26,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/function.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 /** Some utilities allowing to manage attributes. Indeed, as they as stores
  *  in tuples, we need to define functors with variadic templated arguments
@@ -38,6 +39,22 @@ namespace CGAL
 {
   namespace internal
   {
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_dart_info,Dart_info,false)
+    template<typename T, bool typedefined=Has_dart_info<T>::value >
+    struct Get_dart_info
+    { typedef Void type; };
+    template<typename T>
+    struct Get_dart_info<T, true>
+    { typedef typename T::Dart_info type; };
+
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_attributes_tuple,Attributes,false)
+    template<typename T, bool typedefined=Has_attributes_tuple<T>::value >
+    struct Get_attributes_tuple
+    { typedef CGAL::cpp11::tuple<> type; };
+    template<typename T>
+    struct Get_attributes_tuple<T, true>
+    { typedef typename T::Attributes type; };
+
     // There is a problem on windows to handle tuple containing void.
     // To solve this, we transform such a tuple in tuple containing Void.
     template<typename T>
