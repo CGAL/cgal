@@ -54,6 +54,7 @@ struct Scene_spheres_item_priv
   mutable QOpenGLShaderProgram *program;
   mutable int nb_centers;
   Scene_spheres_item* item;
+  QString tooltip;
 
 };
 Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, bool planed)
@@ -276,8 +277,20 @@ void Scene_spheres_item::remove_sphere(CGAL::Sphere_3<Kernel> *sphere)
 
 void Scene_spheres_item::clear_spheres()
 {
+  Q_FOREACH(Sphere_pair pair, d->spheres)
+    delete pair.first;
   d->spheres.clear();
 }
 void Scene_spheres_item::setPrecision(int prec) { d->precision = prec; }
 void Scene_spheres_item::setPlane(Kernel::Plane_3 p_plane) { d->plane = p_plane; }
 void Scene_spheres_item::invalidateOpenGLBuffers(){are_buffers_filled = false;}
+
+QString
+Scene_spheres_item::toolTip() const {
+    return d->tooltip;
+}
+
+void Scene_spheres_item::setToolTip(QString s)
+{
+  d->tooltip = s;
+}
