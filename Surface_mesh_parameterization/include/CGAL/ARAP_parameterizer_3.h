@@ -415,23 +415,47 @@ private:
     return roots.size();
   }
 
-  int solve_cubic_equation_with_AK(const NT a3, const NT a2, const NT a1, const NT a0,
+  /// Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0 using CGAL's algeabric kernel.
+  int solve_cubic_equation_with_AK(const NT a3, const NT a2,
+                                   const NT a1, const NT a0,
                                    std::vector<NT>& roots) const
   {
     CGAL_precondition(roots.empty());
-    NT r1, r2, r3; // roots of the cubic equation
 
-    int root_n = CGAL::solve_cubic(a3, a2, a1, a0, r1, r2, r3);
-    CGAL_postcondition(root_n > 0);
+    typedef CGAL::GMP_arithmetic_kernel                       AK;
+    typedef CGAL::Algebraic_kernel_d_1<AK::Rational>          Algebraic_kernel_d_1;
+    typedef typename Algebraic_kernel_d_1::Polynomial_1       Polynomial_1;
+    typedef typename Algebraic_kernel_d_1::Algebraic_real_1   Algebraic_real_1;
+    typedef typename Algebraic_kernel_d_1::Multiplicity_type  Multiplicity_type;
+    typedef typename Algebraic_kernel_d_1::Coefficient        Coefficient;
 
-    roots.push_back(r1);
-    if(root_n > 1)
-      roots.push_back(r2);
-    if(root_n > 2)
-      roots.push_back(r3);
+    typedef CGAL::Polynomial_traits_d<Polynomial_1>           Polynomial_traits_1;
 
-    std::cout << "coeffs: " << a3 << " " << a2 << " " << a1 << " " << a0 << std::endl;
-    std::cout << root_n << " roots: " << r1 << " " << r2 << " " << r3 << std::endl;
+    typedef Algebraic_kernel_d_1::Solve_1                     Solve_1;
+
+    Algebraic_kernel_d_1 ak_1;
+    const Solve_1 solve_1 = ak_1.solve_1_object();
+    typename Polynomial_traits_1::Construct_polynomial construct_polynomial_1;
+    std::pair<CGAL::Exponent_vector, Coefficient> coeffs_x[1]
+      = {std::make_pair(CGAL::Exponent_vector(1,0),Coefficient(1))};
+    Polynomial_1 x=construct_polynomial_1(coeffs_x, coeffs_x+1);
+
+    AK::Rational a3q(a3);
+    AK::Rational a2q(a2);
+    AK::Rational a1q(a1);
+    AK::Rational a0q(a0);
+
+    Polynomial_1 pol = a3q*CGAL::ipower(x,3) + a2q*CGAL::ipower(x,2)
+                       + a1q*x + a0q;
+
+    std::vector<std::pair<Algebraic_real_1, Multiplicity_type> > ak_roots;
+    solve_1(pol, std::back_inserter(ak_roots));
+
+    for(std::size_t i=0; i<ak_roots.size(); i++)
+    {
+      roots.push_back(ak_roots[i].first.to_double());
+      std::cout << CGAL::to_double(ak_roots[i].first) << std::endl;
+    }
 
     return roots.size();
   }
@@ -639,12 +663,17 @@ private:
         std::vector<NT> roots;
         solve_cubic_equation(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots);
 
+        // The function above is correct up to 10^{-14}, but below can be used
+        // if more precision is needed (should never be the case)
+//        std::vector<NT> roots_with_AK;
+//        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots_with_AK);
+
         std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
                                                           ctmap, lp, lpmap, uvmap,
                                                           C2_denom, C3, roots);
         a = roots[ind];
         b = C3 * C2_denom * a;
-#else
+#else // solve the bivariate system
         std::vector<NT> a_roots;
         std::vector<NT> b_roots;
         solve_bivariate_system(C1, C2, C3, a_roots, b_roots);
