@@ -127,6 +127,7 @@ sub list_packages($) {
     my $package_full_path = File::Spec->catdir($packages_directory, $package_name);
     next if $package_name =~ /^\..*$/;
     next if (! -d $package_full_path );
+    next if ($package_full_path =~ /Maintenance$/); # skip Maintenance package
     $LISTOFALLPACKAGES{$package_name} = $packages_directory;
   }
   closedir(PACKAGESDIR);
