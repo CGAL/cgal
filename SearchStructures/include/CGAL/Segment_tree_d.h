@@ -103,7 +103,7 @@ protected:
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> Segment_tree_node_t;
   typedef Segment_tree_node<C_Data,C_Window,C_Interface> *link_type;
   
-  static std::allocator<Segment_tree_node_t> alloc;
+  std::allocator<Segment_tree_node_t> alloc;
   
   C_Interface m_interface;
   bool is_built;
