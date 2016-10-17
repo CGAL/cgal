@@ -1735,7 +1735,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   if ( v1->face() == f || v1->face() == g ) v1->set_face(tl);
 
 
-#ifndef CGAL_NO_ASSERTIONS
+#if ! defined(CGAL_TRIANGULATION_NO_ASSERTIONS) && ! defined(CGAL_NO_ASSERTIONS)
   for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
     int id;
     CGAL_triangulation_assertion( !fit->has_vertex(v2, id) );
