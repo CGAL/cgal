@@ -1151,11 +1151,10 @@ namespace CGAL {
       for ( typename Dart_range::const_iterator it=darts().begin();
            it!=darts().end(); ++it)
       {
-        os << " dart " << &(*it) << "; alpha[i]=";
+        os << " dart " << darts().index(it) << "; alpha[i]=";
         for ( unsigned int i=0; i<=dimension; ++i)
         {
-          os << &(*it->alpha(i)) << ",\t";
-          if (it->is_free(i)) os << "\t";
+          os << darts().index(alpha(it, i)) << ",\t";
         }
         if ( attribs )
         {

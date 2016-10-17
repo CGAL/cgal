@@ -22,6 +22,12 @@
 
 #include <CGAL/Combinatorial_map_storages.h>
 
+#include <boost/config.hpp>
+#if  (BOOST_GCC >= 40900)
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
+#endif
+
 namespace CGAL {
 
   /** @file Generalized_map_storages.h
@@ -337,13 +343,14 @@ namespace CGAL {
       return dart_of_attribute<i>(attribute<i>(adart));
     }
 
-    // Debug function // TODO UPDATE WHEN INDEX IS ADDED IN COMPACT CONTAINER
+    // Debug function
     void display_dart(Dart_const_handle ADart) const
-    { std::cout<<&*ADart; }
+    { std::cout<<mdarts.index(ADart); }
 
     template<unsigned int i>
     void display_attribute(typename Attribute_const_handle<i>::type ah) const
-    { std::cout<<&*ah; }
+    { std::cout<< CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).index(ah); }
 
   protected:
     // Set the handle on the i th attribute
@@ -405,5 +412,8 @@ namespace CGAL {
 
 } // namespace CGAL
 
+#if  (BOOST_GCC >= 40900)
+ _Pragma("GCC diagnostic pop")
+#endif
 #endif // CGAL_GENERALIZED_MAP_STORAGES_H //
 // EOF //

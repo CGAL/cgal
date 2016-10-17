@@ -52,7 +52,7 @@ namespace CGAL {
     Items_, Alloc_> Self;
     typedef CGAL::Tag_false Use_index;
 
-    typedef internal::Combinatorial_map_helper<Self> Helper;
+    typedef internal::Combinatorial_map_helper<Self>      Helper;
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 
@@ -62,11 +62,11 @@ namespace CGAL {
 
     typedef typename Alloc_::template rebind<Dart>::other Dart_allocator;
 
-    typedef Compact_container<Dart, Dart_allocator> Dart_container;
+    typedef Compact_container<Dart, Dart_allocator>       Dart_container;
 
-    typedef typename Dart_container::iterator       Dart_handle;
-    typedef typename Dart_container::const_iterator Dart_const_handle;
-    typedef typename Dart_container::size_type      size_type;
+    typedef typename Dart_container::iterator             Dart_handle;
+    typedef typename Dart_container::const_iterator       Dart_const_handle;
+    typedef typename Dart_container::size_type            size_type;
 
     typedef CGAL::Void* Null_handle_type;
     static const Null_handle_type null_handle;
@@ -376,13 +376,14 @@ namespace CGAL {
       return get_attribute<0>(vh).point();
     }
 
-    // Debug function // TODO UPDATE WHEN INDEX IS ADDED IN COMPACT CONTAINER
+    // Debug function
     void display_dart(Dart_const_handle ADart) const
-    { std::cout<<&*ADart; }
+    { std::cout<<mdarts.index(ADart); }
 
     template<unsigned int i>
     void display_attribute(typename Attribute_const_handle<i>::type ah) const
-    { std::cout<<&*ah; }
+    { std::cout<< CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).index(ah); }
 
   protected:
     // Set the handle on the i th attribute

@@ -23,6 +23,7 @@
 #include <CGAL/Handle_hash_function.h>
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/Dart.h>
 #include <bitset>
 #include <CGAL/Dart.h>
 
@@ -368,13 +369,14 @@ namespace CGAL {
       return dart_of_attribute<i>(attribute<i>(adart));
     }
 
-    // Debug function // TODO UPDATE WHEN INDEX IS ADDED IN COMPACT CONTAINER
+    // Debug function
     void display_dart(Dart_const_handle ADart) const
-    { std::cout<<&*ADart; }
+    { std::cout<<mdarts.index(ADart); }
 
     template<unsigned int i>
     void display_attribute(typename Attribute_const_handle<i>::type ah) const
-    { std::cout<<&*ah; }
+    { std::cout<< CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).index(ah); }
 
   protected:
     // Set the handle on the i th attribute
