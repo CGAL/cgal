@@ -47,9 +47,8 @@ namespace internal {
   public:
     // remove the following method and make SENTINEL_EDGE a static const
     // member of the class.
-    static const Edge& sentinel_edge() {
-      static Edge SENTINEL_EDGE = Edge(Face_handle(), sentinel_index());
-      return SENTINEL_EDGE;
+    static Edge sentinel_edge() {
+      return Edge(Face_handle(), sentinel_index());
     }
 
   private:
@@ -389,7 +388,7 @@ public:
   bool is_valid() const { return true; }
 
   bool is_in_list(const Edge& e) const {
-    static Use_stl_map_tag  map_tag;
+    Use_stl_map_tag  map_tag;
     return is_in_list_with_tag(e, map_tag);
   }
 
@@ -402,13 +401,13 @@ public:
 
   const Edge& next(const Edge& e) const {
     CGAL_precondition( is_in_list(e) );
-    static Use_stl_map_tag  map_tag;
+    Use_stl_map_tag  map_tag;
     return next_with_tag(e, map_tag);
   }
 
   const Edge& previous(const Edge& e) const {
     CGAL_precondition( is_in_list(e) );
-    static Use_stl_map_tag  map_tag;
+    Use_stl_map_tag  map_tag;
     return previous_with_tag(e, map_tag);
   }
 

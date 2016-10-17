@@ -243,7 +243,7 @@ public:
 
   void remove(const Edge& e) {
     CGAL_precondition( is_in_list(e) );
-    static Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
+    const Edge SENTINEL_QUEUE_EDGE = Edge(Face_handle(), -1);
 
     if ( is_singleton() ) {
       _front = SENTINEL_QUEUE_EDGE;
