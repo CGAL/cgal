@@ -336,7 +336,7 @@ void Polyhedron_demo_polylines_io_plugin::join()
 
   std::vector<Scene_polylines_item*> items;
   items.resize(scene->selectionIndices().size());
-  for(std::size_t i = 0; i < scene->selectionIndices().size(); ++i)
+  for(int i = 0; i < scene->selectionIndices().size(); ++i)
     items[i] = qobject_cast<Scene_polylines_item*>(scene->item(scene->selectionIndices().at(i)));
 
   Scene_polylines_item* new_polyline= new Scene_polylines_item();
