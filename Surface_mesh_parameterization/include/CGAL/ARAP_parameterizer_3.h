@@ -210,7 +210,7 @@ private:
     return status;
   }
 
-  template<typename VertexUVmap, typename VertexParameterizedMap>
+  template <typename VertexUVmap, typename VertexParameterizedMap>
   Error_code parameterize_border(const TriangleMesh& mesh,
                                  const Vertex_set& vertices,
                                  halfedge_descriptor bhd,
@@ -223,6 +223,7 @@ private:
 #define FIXED_VERTICES_IN_PARAMETERIZATION_SPACE
 #ifdef FIXED_VERTICES_IN_PARAMETERIZATION_SPACE
     // Find the two farthest vertices in the initial parameterization
+
     // @fixme brute force algorithm; use Convex hull + rotating caliphers instead
     NT max_dist = (std::numeric_limits<NT>::min)();
     vertex_descriptor vd1_max, vd2_max;
@@ -367,8 +368,8 @@ private:
 
   /// Initialize the (constant) matrix A in the linear system "A*X = B",
   /// after (at least two) border vertices parameterization.
-  template<typename VertexIndexMap,
-           typename VertexParameterizedMap>
+  template <typename VertexIndexMap,
+            typename VertexParameterizedMap>
   Error_code initialize_matrix_A(const TriangleMesh& mesh,
                                  const Vertex_set& vertices,
                                  const Cot_map ctmap,
@@ -537,7 +538,7 @@ private:
   }
 
   /// Compute the root that gives the lowest face energy.
-  template<typename VertexUVmap>
+  template <typename VertexUVmap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
                                               const Cot_map ctmap,
@@ -564,7 +565,7 @@ private:
   }
 
   /// Compute the root that gives the lowest face energy.
-  template<typename VertexUVmap>
+  template <typename VertexUVmap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
                                               const Cot_map ctmap,
@@ -590,7 +591,7 @@ private:
   }
 
   /// Compute the optimal values of the linear transformation matrices Lt.
-  template<typename VertexUVmap>
+  template <typename VertexUVmap>
   Error_code compute_optimal_Lt_matrices(const TriangleMesh& mesh,
                                          const Faces_vector& faces,
                                          const Cot_map ctmap,
@@ -728,8 +729,7 @@ private:
     z2 = Point_2(x2, y2);
   }
 
-  /// Utility for fill_linear_system_rhs():
-  /// Compute the local parameterization (2D) of the face and store them in memory.
+  /// Compute the local parameterization (2D) of a face and store it in memory.
   void project_face(const TriangleMesh& mesh,
                     vertex_descriptor vi,
                     vertex_descriptor vj,
@@ -754,7 +754,8 @@ private:
     lp.push_back(pvk);
   }
 
-  /// Compute the local isometric 2D parametrisation of the faces of the mesh.
+  /// Utility for fill_linear_system_rhs():
+  /// Compute the local isometric parametrization (2D) of the faces of the mesh.
   Error_code compute_local_parametrisation(const TriangleMesh& mesh,
                                            const Faces_vector& faces,
                                            Local_points& lp,
@@ -791,7 +792,7 @@ private:
     return Base::OK;
   }
 
-  /// Compute b_ij = (i, j) coefficient of matrix B for j neighbor vertex of i.
+  /// Compute the coefficient b_ij = (i, j) of the matrix B, for j neighbor vertex of i.
   void compute_b_ij(const TriangleMesh& mesh,
                     halfedge_descriptor hd,
                     const Cot_map ctmap,
@@ -866,7 +867,7 @@ private:
   /// \pre Vertices must be indexed.
   /// \pre Vertex i musn't be already parameterized.
   /// \pre Lines i of Bu and Bv must be zero.
-  template<typename VertexIndexMap>
+  template <typename VertexIndexMap>
   Error_code fill_linear_system_rhs(const TriangleMesh& mesh,
                                     vertex_descriptor vertex,
                                     const Cot_map ctmap,
@@ -905,9 +906,10 @@ private:
     return Base::OK;
   }
 
-  template<typename VertexUVmap,
-           typename VertexIndexMap,
-           typename VertexParameterizedMap>
+  /// Compute the entries of the right hand side of the linear system.
+  template <typename VertexUVmap,
+            typename VertexIndexMap,
+            typename VertexParameterizedMap>
   Error_code compute_rhs(const TriangleMesh& mesh,
                          const Vertex_set& vertices,
                          const Cot_map ctmap,
@@ -943,6 +945,7 @@ private:
     return status;
   }
 
+  /// Copy the data from two vectors to the UVmap.
   template <typename VertexUVmap, typename VertexIndexMap>
   void assign_solution(const Vector& Xu, const Vector& Xv,
                        const Vertex_set& vertices,
@@ -1007,8 +1010,8 @@ private:
         if(get(vpmap, vd)){
           int index = get(vimap, vd);
           std::cout << "at: " << index << " " << Xu[index] << " " << Xv[index] << std::endl;
-          CGAL_postcondition(std::abs( Xu[index] - Bu[index] ) < 1e-10);
-          CGAL_postcondition(std::abs( Xv[index] - Bv[index] ) < 1e-10);
+          CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
+          CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
         }
       }
     )
@@ -1018,8 +1021,8 @@ private:
   }
 
 
-  /// Compute the energy of a face, given a linear transformation matrix
-  template<typename VertexUVmap>
+  /// Compute the current energy of a face, given a linear transformation matrix.
+  template <typename VertexUVmap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
                                  const Cot_map ctmap,
@@ -1061,8 +1064,8 @@ private:
     return Ef;
   }
 
-  /// Compute the energy of a face.
-  template<typename VertexUVmap>
+  /// Compute the current energy of a face.
+  template <typename VertexUVmap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
                                  const Cot_map ctmap,
@@ -1081,7 +1084,7 @@ private:
   }
 
   /// Compute the current energy of the parameterization.
-  template<typename VertexUVmap>
+  template <typename VertexUVmap>
   NT compute_current_energy(const TriangleMesh& mesh,
                             const Faces_vector& faces,
                             const Cot_map ctmap,
