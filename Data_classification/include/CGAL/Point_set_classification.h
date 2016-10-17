@@ -965,14 +965,14 @@ public:
           {
             Data_classification::Type_handle ctype = m_types[j];
             if (ctype->attribute_effect(att) == Data_classification::Type::FAVORED_ATT)
-              CGAL_CLASSIFICATION_CERR << " * Favored for ";
+              CGAL_CLASSTRAINING_CERR << " * Favored for ";
             else if (ctype->attribute_effect(att) == Data_classification::Type::PENALIZED_ATT)
-              CGAL_CLASSIFICATION_CERR << " * Penalized for ";
+              CGAL_CLASSTRAINING_CERR << " * Penalized for ";
             else
-              CGAL_CLASSIFICATION_CERR << " * Neutral for ";
+              CGAL_CLASSTRAINING_CERR << " * Neutral for ";
             if (ctype->attribute_effect(att) != side)
               to_remove = false;
-            CGAL_CLASSIFICATION_CERR << ctype->id() << std::endl;
+            CGAL_CLASSTRAINING_CERR << ctype->id() << std::endl;
           }
         if (to_remove)
           {
