@@ -137,7 +137,7 @@ protected:
   /// Return cotangent of (P,Q,R) corner (i.e. cotan of QP,QR angle).
   double cotangent(const Point_3& P,
                    const Point_3& Q,
-                   const Point_3& R)
+                   const Point_3& R) const
   {
     // std::cerr << P <<  "   "  << Q  << "   " << R << std::endl;
     Vector_3 u = P - Q;
@@ -156,7 +156,7 @@ protected:
   /// Return tangent of (P,Q,R) corner (i.e. tangent of QP,QR angle).
   double tangent(const Point_3& P,
                  const Point_3& Q,
-                 const Point_3& R)
+                 const Point_3& R) const
   {
     Vector_3 u = P - Q;
     Vector_3 v = R - Q;

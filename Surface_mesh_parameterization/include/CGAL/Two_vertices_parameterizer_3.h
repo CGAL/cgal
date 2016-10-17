@@ -86,7 +86,7 @@ public:
     /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
 template <typename VertexUVmap, typename VertexParameterizedMap>
   typename Parameterizer_traits_3<TriangleMesh>::Error_code
-  parameterize_border(TriangleMesh& mesh,
+  parameterize_border(const TriangleMesh& mesh,
                       halfedge_descriptor,
                       VertexUVmap uvmap,
                       VertexParameterizedMap vpmap)
