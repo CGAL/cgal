@@ -109,12 +109,6 @@ public:
   static const Polynomial<NT> & polyZero();
   static const Polynomial<NT> & polyUnity();
 
-  static int NT_TYPE; // NT_TYPE = 1 if NT is integer type (int,long,BigInt)
-                      // NT_TYPE = 2 if NT is BigFloat 
-                      // NT_TYPE = 3 if NT is BigRat 
-                      // NT_TYPE = 4 if NT is Expr 
-                      // Hack?  NT_TYPE is needed for root bounds, etc.
-
   // Constructors:
   Polynomial(void);	// the Zero Polynomial
   Polynomial(int n);	// construct the Unit Polynomial of nominal deg n>=0
