@@ -14,36 +14,76 @@ This component implements an algorithm that classifies a point cloud into a user
 Organization of the package.
 \cgalFigureEnd
 
-
 \section Data_classification_structures Data Structures
 
-Classification is based on the computation of local attributes of points. These attributes often require precomputed data structures: such data structures might be shared by several attributes and are therefore computed separately.
+\subsection Data_classification_analysis Analysis
+
+Classification is based on the computation of local attributes of points. These attributes often require precomputed analysis structures: such data structures might be shared by several attributes and are therefore computed separately.
 
 \cgal provides the following structures:
 
-- `CGAL::Data_classification::Neighborhood` stores spatial searching structures and provides adapted queries on indexed points.
-- `CGAL::Data_classification::Local_eigen_analysis` precomputes covariance matrices on local neighborhood of points and stores the associated eigenvectors and eigenvalues.
+- `CGAL::Data_classification::Neighborhood` stores spatial searching structures and provides adapted queries on indexed points;
+- `CGAL::Data_classification::Local_eigen_analysis` precomputes covariance matrices on local neighborhood of points and stores the associated eigenvectors and eigenvalues;
 - `CGAL::Data_classification::Planimetric_grid` is a 2D grid used for digital terrain modeling.
 
-\section Data_classification_attributes Attributes
+\subsection Data_classification_attributes Attributes
 
-Segmentation attributes are defined as fields that associate each input point with a scalar value. In the \cgal classification framework, an abstract class `CGAL::Segmentation_attribute` defines what method the attribute must provide. All attributes must be derived from this class. User can define its own attribute and \cgal provides some commonly used one:
+Attributes are defined as scalar fields that associate each input point with a specific value. In the \cgal classification framework, an abstract class `CGAL::Data_classification::Attribute` defines what method the attribute must provide. All attributes must inherit this class. User can define its own attribute.
 
-- `CGAL::Segmentation_attribute_color` uses input color information if available;
-- `CGAL::Segmentation_attribute_distance_to_plane` is based on local non-planarity;
-- `CGAL::Segmentation_attribute_echo_scatter` uses the number of returns (echo) provided by most LIDAR scanners;
-- `CGAL::Segmentation_attribute_elevation` estimates the local distance to an estimated ground;
-- `CGAL::Segmentation_attribute_vertical_dispersion` computes how noisy the point set is on a local Z-cylinder;
-- `CGAL::Segmentation_attribute_verticality` compares the local normal vector to the vertical vector.
+Attributes are accessed through `Handle` objects, `CGAL::Data_classification::Attribute_handle`.
+
+\cgal provides some predefined attributes that make sense in urban scene classification:
+
+- `CGAL::Data_classification::Attribute_distance_to_plane` measures how far away a point is from a locally estimated plane;
+- `CGAL::Data_classification::Attribute_elevation` estimates the local distance to an estimated ground;
+- `CGAL::Data_classification::Attribute_vertical_dispersion` computes how noisy the point set is on a local Z-cylinder;
+- `CGAL::Data_classification::Attribute_verticality` compares the local normal vector to the vertical vector.
+
+For more details about how these different attributes can help identifying one classification type or the other, please refer to their associated reference manual pages. In addition, \cgal also provides attributes solely based on the local eigen values. Such attributes are less easy to relate to a specific classification type but can still be useful:
+
+- `CGAL::Data_classification::Attribute_anisotropy`;
+- `CGAL::Data_classification::Attribute_eigentropy`;
+- `CGAL::Data_classification::Attribute_linearity`;
+- `CGAL::Data_classification::Attribute_omnivariance`;
+- `CGAL::Data_classification::Attribute_planarity`;
+- `CGAL::Data_classification::Attribute_sphericity`;
+- `CGAL::Data_classification::Attribute_sum_eigenvalues`;
+- `CGAL::Data_classification::Attribute_surface_variation`.
+
+Finally, if the input point set has additional properties, these can also be used as attributes. For example, \cgal provides the following attributes:
+
+- `CGAL::Data_classification::Attribute_echo_scatter` uses the number of returns (echo) provided by most LIDAR scanners if available;
+- `CGAL::Data_classification::Attribute_hsv` uses input color information if available.
+
+\subsection Data_classification_types Classification Types
+
+A classification type represents how a point should be classified, for example: vegetation, building, road, etc. It is defined by the values the attributes are expected to take for a specific type. For example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
+
+\cgal provides a class `CGAL::Data_classification::Type` to define such a set of attribute effects, along with the associated `Handle` object: `CGAL::Data_classification::Type_handle`. Each type may define how a specific attribute affects it:
+
+- `FAVORED_ATT`: the type is favored by high values of the attribute
+- `NEUTRAL_ATT`: the type is not affected by the attribute
+- `PENALIZED_ATT`: the type is favored by low values of the attribute
+
+\subsection Data_classification_helper Helper
+
+The classification algorithm is designed to be as flexible as possible: the user may define its own attributes and classification types (see \ref Data_classification_custom).
+
+Nevertheless, \cgal provides a predefined framework that should work correctly on common urban point sets. The class `CGAL::Data_classification::Helper` is designed to make it easier for the user to classify its input point set:
+
+- it takes care of generating all needed analysis structure;
+- it generates all possible attributes (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.);
+- multiple scales can be used to increase the quality of the results
+- input/ouput methods are provided to save and recover a specific configuration (with all attributes, types and relationships between them).
+- classification can be saved as a PLY format with colors and labels.
+
+\section Data_classification_psc Point Set Classification
+
+\subsection Data_classification_training Training
+
+\subsection Data_classification_regularization Regularization
 
 
-\section Data_classification_types Classification types
-
-A classification type represents how a point should be classified, as vegetation, building, road, etc. It is defined by the values the attributes are expected to take for a specific type: for example, vegetation is expected to have a high distance to plane and have a color close to green (if colors are available); facades have a low distance to plane and a low verticality; etc.
-
-\cgal provides a class `CGAL::Classification_type` to define such a set of attribute effects.
-
-\section Data_classification_psc Point set classification
 
 Classification is performed by minizing an energy over the input point set. This energy can be regularized with different methods. \cgal provides 3 different methods for classification, ranging from high speed / low quality to low speed / high quality:
 
@@ -56,7 +96,7 @@ Result of a data classification on a LIDAR point set (Vaihingen). Vegetation is 
 \cgalFigureEnd
 
 
-\section Data_classification_custom Defining custom attributes and types
+\section Data_classification_custom Defining Custom attributes and Types
 
 \section Data_classification_example Example
 
