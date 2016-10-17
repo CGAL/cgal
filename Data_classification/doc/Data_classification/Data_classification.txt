@@ -8,7 +8,14 @@ namespace CGAL {
 
 This component implements an algorithm that classifies a point cloud into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can compute its own local attributes on the point cloud and define its own classes based on these attributes.
 
-\section Data_classification_structures Structures
+\section Data_classification_Organization Package Organization
+
+\cgalFigureBegin{Data_classification_Organization,organization.png}
+Organization of the package.
+\cgalFigureEnd
+
+
+\section Data_classification_structures Data Structures
 
 Classification is based on the computation of local attributes of points. These attributes often require precomputed data structures: such data structures might be shared by several attributes and are therefore computed separately.
 
