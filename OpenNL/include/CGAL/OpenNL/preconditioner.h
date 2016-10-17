@@ -200,7 +200,7 @@ SSOR_Preconditioner<T>::SSOR_Preconditioner(
 template <class T> 
 void mult(const SSOR_Preconditioner<T>& M, const FullVector<T>& x, FullVector<T>& y) {
 
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(FullVector<T>, work,0) ;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(FullVector<T>, work,0) ;
 
     const SparseMatrix<T>& A = M.A() ;
     int n = A.dimension() ;
