@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   CGAL::Timer time;
   time.start();
   std::cout << "Distance between meshes (parallel) "
-            << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<CGAL::Parallel_tag, K>(m1,m2,0.001, get(CGAL::vertex_point, m1), get(CGAL::vertex_point, m2), CGAL::Polygon_mesh_processing::GRID)
+            << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<CGAL::Parallel_tag>(m1,m2,40000)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   time.reset();
   time.start();
   std::cout << "Distance between meshes (sequential) "
-            << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<CGAL::Sequential_tag, K>(m1,m2,0.001, get(CGAL::vertex_point, m1), get(CGAL::vertex_point, m2), CGAL::Polygon_mesh_processing::GRID)
+            << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<CGAL::Sequential_tag>(m1,m2,40000)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";

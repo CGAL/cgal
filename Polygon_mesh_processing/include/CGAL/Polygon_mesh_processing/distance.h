@@ -175,10 +175,10 @@ enum Sampling_method{
  *                  `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
  *                  `GRID` : The distance between two consecutive points in the grid
  *
- * @param np a sequence of \ref namedparameters for `tm` among the ones listed below
+ * @param np a sequence of \ref namedparameters for `m` among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `m` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -341,7 +341,7 @@ double approximated_Hausdorff_distance(
 {
   std::vector<typename Kernel::Point_3> sample_points;
   sample_triangle_mesh<TriangleMesh, typename Kernel::Point_3, NamedParameters>(m1, precision ,sample_points, np, method );
-  return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap>(sample_points, m2, vpm);
+  return approximated_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2, vpm);
 }
 
 // documented functions
@@ -360,7 +360,7 @@ double approximated_Hausdorff_distance(
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`
  *                         and `Parallel_tag`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
+ * @tparam TriangleMesh a model of the concept `FaceListGraph`
  *         for `CGAL::vertex_point_t`
  * @tparam NamedParameters1 a sequence of \ref namedparameters for `tm1`
  * @tparam NamedParameters2 a sequence of \ref namedparameters for `tm2`
@@ -372,7 +372,7 @@ double approximated_Hausdorff_distance(
  * @param np2 optional sequence of \ref namedparameters for `tm2` among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` or `tm2` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -430,15 +430,14 @@ double approximated_symmetric_Hausdorff_distance(
  * \ingroup PMP_distance_grp
  * computes the approximated Hausdorff distance between `points` and `tm`
  * @tparam PointRange a Range of `Point_3`
- * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
- *         for `CGAL::vertex_point_t`
+ * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters for `tm`
  * @param points the point_set of interest
  * @param tm the triangle mesh to compute the distance to
  * @param np a sequence of \ref namedparameters for `tm` among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -472,8 +471,7 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  *  Computes the approximated Hausdorff distance between `tm` and `points`
  *
  * @tparam PointRange a Range of `Point_3`
- * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
- *         for `CGAL::vertex_point_t`
+ * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters for `tm`
  * @param tm the triangle mesh to compute the distance to
  * @param points the point_set of interest.
@@ -481,7 +479,7 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  * @param np a sequence of \ref namedparameters for `tm` among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -560,7 +558,7 @@ double approximated_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
                                                  const NamedParameters& np)
 {
   return approximated_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, precision, np1, parameters::all_default());
+    tm1, tm2, precision, np, parameters::all_default());
 }
 
 template< class Concurrency_tag,
