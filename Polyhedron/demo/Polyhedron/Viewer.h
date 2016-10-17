@@ -99,35 +99,7 @@ protected:
   void postDraw();
   void paintEvent(QPaintEvent *);
   void paintGL();
-  //! Holds useful data to draw the axis system
-  struct AxisData
-  {
-      std::vector<float> *vertices;
-      std::vector<float> *normals;
-      std::vector<float> *colors;
-  };
 
-  //! The buffers used to draw the axis system
-  QOpenGLBuffer buffers[4];
-  //! The VAO used to draw the axis system
-  QOpenGLVertexArrayObject vao[2];
-  //! The rendering program used to draw the axis system
-  QOpenGLShaderProgram rendering_program;
-  //! The rendering program used to draw the distance
-  QOpenGLShaderProgram rendering_program_dist;
-  QList<TextItem*>  distance_text;
-  //! Holds the vertices data for the axis system
-  std::vector<float> v_Axis;
-  //! Holds the normals data for the axis system
-  std::vector<float> n_Axis;
-  //! Holds the color data for the axis system
-  std::vector<float> c_Axis;
-  //! Decides if the axis system must be drawn or not
-  bool axis_are_displayed;
-  //! Decides if the text is displayed in the drawVisualHints function.
-  bool has_text;
-  //! Decides if the distance between APoint and BPoint must be drawn;
-  bool distance_is_displayed;
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*);
   void wheelEvent(QWheelEvent *);
@@ -137,44 +109,15 @@ protected:
   void contextMenuEvent(QContextMenuEvent*);
   //!Defines the behaviour for the key release events
   void keyReleaseEvent(QKeyEvent *);
-  //!Clears the distance display
-  void clearDistancedisplay();
-  /*!
-   * \brief makeArrow creates an arrow and stores it in a struct of vectors.
-   * \param R the radius of the arrow.
-   * \param prec the precision of the quadric. The lower this value is, the higher precision you get.
-   * It can be any int between 1 and 360.
-   * \param from the starting point of the arrow.
-   * \param to the destination point of the arrow (the pointed extremity).
-   * \param color the RGB color of the arrow.
-   * \param data the struct of std::vector that will contain the results.
-   */
 
-  void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
+
   void resizeGL(int w, int h);
-  bool i_is_pressed;
-
-  //!Draws the distance between two selected points.
-  void showDistance(QPoint);
-  qglviewer::Vec APoint;
-  qglviewer::Vec BPoint;
-  bool is_d_pressed;
 
 protected:
   friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
 
-private:
-  // F P S    d i s p l a y
-  QTime fpsTime;
-  unsigned int fpsCounter;
-  QString fpsString;
-  float f_p_s;
-  // M e s s a g e s
-  QString message;
-  bool _displayMessage;
-  QTimer messageTimer;
 }; // end class Viewer
 
 

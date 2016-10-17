@@ -24,12 +24,71 @@
 class Viewer_impl {
 public:
   CGAL::Three::Scene_draw_interface* scene;
+  Viewer *viewer;
   bool antialiasing;
   bool twosides;
   bool macro_mode;
   bool inFastDrawing;
   bool inDrawWithNames;
   QPainter *painter;
+  // F P S    d i s p l a y
+  QTime fpsTime;
+  unsigned int fpsCounter;
+  QString fpsString;
+  float f_p_s;
+  // M e s s a g e s
+  QString message;
+  bool _displayMessage;
+  QTimer messageTimer;
+
+  //! Holds useful data to draw the axis system
+  struct AxisData
+  {
+      std::vector<float> *vertices;
+      std::vector<float> *normals;
+      std::vector<float> *colors;
+  };
+
+  //! The buffers used to draw the axis system
+  QOpenGLBuffer buffers[4];
+  //! The VAO used to draw the axis system
+  QOpenGLVertexArrayObject vao[2];
+  //! The rendering program used to draw the axis system
+  QOpenGLShaderProgram rendering_program;
+  //! The rendering program used to draw the distance
+  QOpenGLShaderProgram rendering_program_dist;
+  QList<TextItem*>  distance_text;
+  //! Holds the vertices data for the axis system
+  std::vector<float> v_Axis;
+  //! Holds the normals data for the axis system
+  std::vector<float> n_Axis;
+  //! Holds the color data for the axis system
+  std::vector<float> c_Axis;
+  //! Decides if the axis system must be drawn or not
+  bool axis_are_displayed;
+  //! Decides if the text is displayed in the drawVisualHints function.
+  bool has_text;
+  //! Decides if the distance between APoint and BPoint must be drawn;
+  bool distance_is_displayed;
+  bool i_is_pressed;
+  //!Draws the distance between two selected points.
+  void showDistance(QPoint);
+  qglviewer::Vec APoint;
+  qglviewer::Vec BPoint;
+  bool is_d_pressed;
+  /*!
+   * \brief makeArrow creates an arrow and stores it in a struct of vectors.
+   * \param R the radius of the arrow.
+   * \param prec the precision of the quadric. The lower this value is, the higher precision you get.
+   * It can be any int between 1 and 360.
+   * \param from the starting point of the arrow.
+   * \param to the destination point of the arrow (the pointed extremity).
+   * \param color the RGB color of the arrow.
+   * \param data the struct of std::vector that will contain the results.
+   */
+  void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
+  //!Clears the distance display
+  void clearDistancedisplay();
   void draw_aux(bool with_names, Viewer*);
   //! Contains all the programs for the item rendering.
   mutable std::vector<QOpenGLShaderProgram*> shader_programs;
@@ -52,7 +111,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   textRenderer = new TextRenderer();
   connect( textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
-  connect(&messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
+  connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
@@ -91,15 +150,16 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 
 #endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
-  axis_are_displayed = true;
-  has_text = false;
-  i_is_pressed = false;
-  fpsTime.start();
-  fpsCounter=0;
-  f_p_s=0.0;
-  fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
-  distance_is_displayed = false;
-  is_d_pressed = false;
+  d->axis_are_displayed = true;
+  d->has_text = false;
+  d->i_is_pressed = false;
+  d->fpsTime.start();
+  d->fpsCounter=0;
+  d->f_p_s=0.0;
+  d->fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
+  d->distance_is_displayed = false;
+  d->is_d_pressed = false;
+  d->viewer = this;
 }
 
 Viewer::~Viewer()
@@ -179,9 +239,9 @@ void Viewer::initializeGL()
 
 
   setBackgroundColor(::Qt::white);
-  vao[0].create();
+  d->vao[0].create();
   for(int i=0; i<3; i++)
-    buffers[i].create();
+    d->buffers[i].create();
 
   //Vertex source code
   const char vertex_source[] =
@@ -255,23 +315,23 @@ void Viewer::initializeGL()
           std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
       }
 
-      if(!rendering_program.addShader(vertex_shader))
+      if(!d->rendering_program.addShader(vertex_shader))
       {
           std::cerr<<"adding vertex shader FAILED"<<std::endl;
       }
-      if(!rendering_program.addShader(fragment_shader))
+      if(!d->rendering_program.addShader(fragment_shader))
       {
           std::cerr<<"adding fragment shader FAILED"<<std::endl;
       }
-      if(!rendering_program.link())
+      if(!d->rendering_program.link())
       {
           //std::cerr<<"linking Program FAILED"<<std::endl;
-          qDebug() << rendering_program.log();
+          qDebug() << d->rendering_program.log();
       }
   //setting the program used for the distance
      {
-         vao[1].create();
-         buffers[3].create();
+         d->vao[1].create();
+         d->buffers[3].create();
          //Vertex source code
          const char vertex_source_dist[] =
          {
@@ -305,17 +365,17 @@ void Viewer::initializeGL()
              std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
          }
 
-         if(!rendering_program_dist.addShader(vertex_shader))
+         if(!d->rendering_program_dist.addShader(vertex_shader))
          {
              std::cerr<<"adding vertex shader FAILED"<<std::endl;
          }
-         if(!rendering_program_dist.addShader(fragment_shader))
+         if(!d->rendering_program_dist.addShader(fragment_shader))
          {
              std::cerr<<"adding fragment shader FAILED"<<std::endl;
          }
-         if(!rendering_program_dist.link())
+         if(!d->rendering_program_dist.link())
          {
-             qDebug() << rendering_program_dist.log();
+             qDebug() << d->rendering_program_dist.log();
          }
      }
 
@@ -335,15 +395,15 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   }
   else if(!event->modifiers()
           && event->button() == Qt::LeftButton
-          && i_is_pressed)
+          && d->i_is_pressed)
   {
       d->scene->printPrimitiveId(event->pos(), this);
   }
   else if(!event->modifiers()
           && event->button() == Qt::LeftButton
-          && is_d_pressed)
+          && d->is_d_pressed)
   {
-      showDistance(event->pos());
+      d->showDistance(event->pos());
       event->accept();
   }
   else {
@@ -386,22 +446,22 @@ void Viewer::keyPressEvent(QKeyEvent* e)
       return;
     }
     else if(e->key() == Qt::Key_A) {
-          axis_are_displayed = !axis_are_displayed;
+          d->axis_are_displayed = !d->axis_are_displayed;
           update();
         }
     else if(e->key() == Qt::Key_I) {
-          i_is_pressed = true;
+          d->i_is_pressed = true;
         }
     else if(e->key() == Qt::Key_D) {
         if(e->isAutoRepeat())
         {
             return;
         }
-        if(!is_d_pressed)
+        if(!d->is_d_pressed)
         {
-            clearDistancedisplay();
+            d->clearDistancedisplay();
         }
-        is_d_pressed = true;
+        d->is_d_pressed = true;
         update();
         return;
     }
@@ -430,7 +490,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
 void Viewer::keyReleaseEvent(QKeyEvent *e)
 {
   if(e->key() == Qt::Key_I) {
-    i_is_pressed = false;
+    d->i_is_pressed = false;
   }
   else if(!e->modifiers() && e->key() == Qt::Key_D)
   {
@@ -438,7 +498,7 @@ void Viewer::keyReleaseEvent(QKeyEvent *e)
     {
       return;
     }
-    is_d_pressed = false;
+    d->is_d_pressed = false;
   }
   QGLViewer::keyReleaseEvent(e);
 }
@@ -671,7 +731,7 @@ void Viewer::endSelection(const QPoint&)
     update();
 }
 
-void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data)
+void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, Viewer_impl::AxisData &data)
 {
     qglviewer::Vec temp = to-from;
     QVector3D dir = QVector3D(temp.x, temp.y, temp.z);
@@ -849,7 +909,7 @@ void Viewer::drawVisualHints()
 {
 
     QGLViewer::drawVisualHints();
-    if(axis_are_displayed)
+    if(d->axis_are_displayed)
     {
         QMatrix4x4 mvpMatrix;
         double mat[16];
@@ -893,24 +953,24 @@ void Viewer::drawVisualHints()
         // Shininess
         shininess = 51.2f;
 
-        rendering_program.bind();
-        rendering_program.setUniformValue("light_pos", position);
-        rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-        rendering_program.setUniformValue("mv_matrix", mvMatrix);
-        rendering_program.setUniformValue("light_diff", diffuse);
-        rendering_program.setUniformValue("light_spec", specular);
-        rendering_program.setUniformValue("light_amb", ambient);
-        rendering_program.setUniformValue("spec_power", shininess);
-        rendering_program.release();
+        d->rendering_program.bind();
+        d->rendering_program.setUniformValue("light_pos", position);
+        d->rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+        d->rendering_program.setUniformValue("mv_matrix", mvMatrix);
+        d->rendering_program.setUniformValue("light_diff", diffuse);
+        d->rendering_program.setUniformValue("light_spec", specular);
+        d->rendering_program.setUniformValue("light_amb", ambient);
+        d->rendering_program.setUniformValue("spec_power", shininess);
+        d->rendering_program.release();
 
-        vao[0].bind();
-        rendering_program.bind();
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_Axis.size() / 3));
-        rendering_program.release();
-        vao[0].release();
+        d->vao[0].bind();
+        d->rendering_program.bind();
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->v_Axis.size() / 3));
+        d->rendering_program.release();
+        d->vao[0].release();
     }
 
-    if(distance_is_displayed)
+    if(d->distance_is_displayed)
     {
         glDisable(GL_DEPTH_TEST);
 
@@ -926,13 +986,13 @@ void Viewer::drawVisualHints()
         {
             mvpMatrix.data()[i] = (float)mat[i];
         }
-        rendering_program_dist.bind();
-        rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
-        vao[1].bind();
+        d->rendering_program_dist.bind();
+        d->rendering_program_dist.setUniformValue("mvp_matrix", mvpMatrix);
+        d->vao[1].bind();
         glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(2));
         glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(2));
-        vao[1].release();
-        rendering_program_dist.release();
+        d->vao[1].release();
+        d->rendering_program_dist.release();
         glEnable(GL_DEPTH_TEST);
         glPointSize(1.0f);
         glLineWidth(1.0f);
@@ -945,7 +1005,7 @@ void Viewer::drawVisualHints()
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
     //prints FPS
-    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,fpsString,false, QFont(), Qt::gray);
+    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,d->fpsString,false, QFont(), Qt::gray);
     if(FPSIsDisplayed())
     {
       textRenderer->addText(fps_text);
@@ -953,15 +1013,15 @@ void Viewer::drawVisualHints()
     //Prints the displayMessage
     QFont font = QFont();
     QFontMetrics fm(font);
-    TextItem *message_text = new TextItem(10 + fm.width(message)/2, height()-20, 0, message, false, QFont(), Qt::gray );
-    if (_displayMessage)
+    TextItem *message_text = new TextItem(10 + fm.width(d->message)/2, height()-20, 0, d->message, false, QFont(), Qt::gray );
+    if (d->_displayMessage)
     {
       textRenderer->addText(message_text);
     }
     textRenderer->draw(this);
     if(FPSIsDisplayed())
       textRenderer->removeText(fps_text);
-    if (_displayMessage)
+    if (d->_displayMessage)
       textRenderer->removeText(message_text);
 }
 
@@ -982,48 +1042,48 @@ void Viewer::resizeGL(int w, int h)
 
     QVector4D length(60,60,60, 1.0);
     length = orthoMatrix * length;
-    AxisData data;
-    v_Axis.resize(0);
-    n_Axis.resize(0);
-    c_Axis.resize(0);
-    data.vertices = &v_Axis;
-    data.normals = &n_Axis;
-    data.colors = &c_Axis;
+    Viewer_impl::AxisData data;
+    d->v_Axis.resize(0);
+    d->n_Axis.resize(0);
+    d->c_Axis.resize(0);
+    data.vertices = &d->v_Axis;
+    data.normals =  &d->n_Axis;
+    data.colors =   &d->c_Axis;
     double l = length.x()*w/h;
-    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(l,0,0),qglviewer::Vec(1,0,0), data);
-    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,l,0),qglviewer::Vec(0,1,0), data);
-    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,l),qglviewer::Vec(0,0,1), data);
+    d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(l,0,0),qglviewer::Vec(1,0,0), data);
+    d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,l,0),qglviewer::Vec(0,1,0), data);
+    d->makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,l),qglviewer::Vec(0,0,1), data);
 
 
-    vao[0].bind();
-    buffers[0].bind();
-    buffers[0].allocate(v_Axis.data(), static_cast<int>(v_Axis.size()) * sizeof(float));
-    rendering_program.enableAttributeArray("vertex");
-    rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-    buffers[0].release();
+    d->vao[0].bind();
+    d->buffers[0].bind();
+    d->buffers[0].allocate(d->v_Axis.data(), static_cast<int>(d->v_Axis.size()) * sizeof(float));
+    d->rendering_program.enableAttributeArray("vertex");
+    d->rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    d->buffers[0].release();
 
-    buffers[1].bind();
-    buffers[1].allocate(n_Axis.data(), static_cast<int>(n_Axis.size() * sizeof(float)));
-    rendering_program.enableAttributeArray("normal");
-    rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
-    buffers[1].release();
+    d->buffers[1].bind();
+    d->buffers[1].allocate(d->n_Axis.data(), static_cast<int>(d->n_Axis.size() * sizeof(float)));
+    d->rendering_program.enableAttributeArray("normal");
+    d->rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
+    d->buffers[1].release();
 
-    buffers[2].bind();
-    buffers[2].allocate(c_Axis.data(), static_cast<int>(c_Axis.size() * sizeof(float)));
-    rendering_program.enableAttributeArray("colors");
-    rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
-    buffers[2].release();
+    d->buffers[2].bind();
+    d->buffers[2].allocate(d->c_Axis.data(), static_cast<int>(d->c_Axis.size() * sizeof(float)));
+    d->rendering_program.enableAttributeArray("colors");
+    d->rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
+    d->buffers[2].release();
 
-    rendering_program.release();
-    vao[0].release();
+    d->rendering_program.release();
+    d->vao[0].release();
 
 
 
-    rendering_program.bind();
-    rendering_program.setUniformValue("width", (float)dim.x);
-    rendering_program.setUniformValue("height", (float)dim.y);
-    rendering_program.setUniformValue("ortho_mat", orthoMatrix);
-    rendering_program.release();
+    d->rendering_program.bind();
+    d->rendering_program.setUniformValue("width", (float)dim.x);
+    d->rendering_program.setUniformValue("height", (float)dim.y);
+    d->rendering_program.setUniformValue("ortho_mat", orthoMatrix);
+    d->rendering_program.release();
 
 }
 
@@ -1384,26 +1444,26 @@ void Viewer::postDraw()
 
   // FPS computation
   const unsigned int maxCounter = 20;
-  if (++fpsCounter == maxCounter)
+  if (++d->fpsCounter == maxCounter)
   {
-    f_p_s = 1000.0 * maxCounter / fpsTime.restart();
-    fpsString = tr("%1Hz", "Frames per seconds, in Hertz").arg(f_p_s, 0, 'f', ((f_p_s < 10.0)?1:0));
-    fpsCounter = 0;
+    d->f_p_s = 1000.0 * maxCounter / d->fpsTime.restart();
+    d->fpsString = tr("%1Hz", "Frames per seconds, in Hertz").arg(d->f_p_s, 0, 'f', ((d->f_p_s < 10.0)?1:0));
+    d->fpsCounter = 0;
   }
 
 }
 void Viewer::displayMessage(const QString &_message, int delay)
 {
-          message = _message;
-          _displayMessage = true;
+          d->message = _message;
+          d->_displayMessage = true;
           // Was set to single shot in defaultConstructor.
-          messageTimer.start(delay);
+          d->messageTimer.start(delay);
           if (textIsEnabled())
                   update();
 }
 void Viewer::hideMessage()
 {
-        _displayMessage = false;
+        d->_displayMessage = false;
         if (textIsEnabled())
                 update();
 }
@@ -1412,12 +1472,12 @@ void Viewer::printMessage(QString _message, int ms_delay)
   displayMessage(_message, ms_delay);
 }
 
-void Viewer::showDistance(QPoint pixel)
+void Viewer_impl::showDistance(QPoint pixel)
 {
     static bool isAset = false;
     bool found;
     qglviewer::Vec point;
-    point = camera()->pointUnderPixel(pixel, found);
+    point = viewer->camera()->pointUnderPixel(pixel, found);
     if(!isAset && found)
     {
         //set APoint
@@ -1458,8 +1518,8 @@ void Viewer::showDistance(QPoint pixel)
 
         distance_text.append(centerCoord);
         Q_FOREACH(TextItem* ti, distance_text)
-          textRenderer->addText(ti);
-        Q_EMIT(sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
+          viewer->textRenderer->addText(ti);
+        Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
                   .arg(APoint.x)
                   .arg(APoint.y)
                   .arg(APoint.z)
@@ -1471,12 +1531,12 @@ void Viewer::showDistance(QPoint pixel)
 
 }
 
-void Viewer::clearDistancedisplay()
+void Viewer_impl::clearDistancedisplay()
 {
   distance_is_displayed = false;
   Q_FOREACH(TextItem* ti, distance_text)
   {
-    textRenderer->removeText(ti);
+    viewer->textRenderer->removeText(ti);
     delete ti;
   }
   distance_text.clear();
