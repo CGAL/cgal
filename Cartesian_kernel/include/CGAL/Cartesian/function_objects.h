@@ -2978,6 +2978,8 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_3    Point_3;
     typedef typename K::Plane_3    Plane_3;
     typedef typename K::Line_3     Line_3;
+    typedef typename K::Triangle_3 Triangle_3;
+    typedef typename K::Segment_3  Segment_3;
     typedef typename K::FT         FT;
   public:
     typedef Point_3                result_type;
@@ -3004,6 +3006,14 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()( const Plane_3& h, const Point_3& p ) const
     { return h.rep().projection(p); }
+
+    Point_3
+    operator()( const Triangle_3& t, const Point_3& p ) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
+
+    Point_3
+    operator()( const Segment_3& s, const Point_3& p ) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
   };
 
   template <class K> 

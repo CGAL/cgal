@@ -23,7 +23,7 @@
 #define CGAL_AABB_TRAITS_H_
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/AABB_intersections.h>
+#include <CGAL/intersections.h>
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
@@ -397,7 +397,12 @@ public:
 
     Point operator()(const Point& p, const Primitive& pr, const Point& bound) const
     {
-        return CGAL::nearest_point_3(p, internal::Primitive_helper<AT>::get_datum(pr,m_traits), bound);
+      GeomTraits geom_traits;
+      Point closest_point = geom_traits.construct_projected_point_3_object()(
+        internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
+      return
+        geom_traits.compare_distance_3_object()(p, closest_point, bound)==LARGER ?
+        bound : closest_point;
     }
   };
 

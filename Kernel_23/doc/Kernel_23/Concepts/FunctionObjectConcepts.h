@@ -5504,6 +5504,17 @@ public:
   Kernel::Point_3 operator()(const Kernel::Plane_3& h, 
                              const Kernel::Point_3& p); 
 
+  /*!
+    returns the point of `s` that is the closest to `p`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s,
+                             const Kernel::Point_3& p);
+
+  /*!
+    returns the point of `t` that is the closest to `p`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Triangle_3& h,
+                             const Kernel::Point_3& p);
 
   /// @}
 

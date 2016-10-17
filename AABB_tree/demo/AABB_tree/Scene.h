@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-#include <CGAL/AABB_intersections.h> 
+#include <CGAL/intersections.h>
 #include "types.h"
 #include "Color_ramp.h"
 
