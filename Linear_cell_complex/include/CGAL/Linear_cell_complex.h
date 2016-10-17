@@ -136,22 +136,36 @@ namespace CGAL {
      *  @param alcc the linear cell complex to copy.
      *  @post *this is valid.
      */
-    Linear_cell_complex_base(const Self & alcc)
+    Linear_cell_complex_base(const Self & alcc) : Base()
     { Base::template copy<Self>(alcc); }
 
     template < class LCC2 >
-    Linear_cell_complex_base(const LCC2& alcc)
+    Linear_cell_complex_base(const LCC2& alcc) : Base()
     { Base::template copy<LCC2>(alcc);}
 
     template < class LCC2, typename Converters >
-    Linear_cell_complex_base(const LCC2& alcc, Converters& converters)
+    Linear_cell_complex_base(const LCC2& alcc, Converters& converters) : Base()
     { Base::template copy<LCC2, Converters>(alcc, converters);}
 
     template < class LCC2, typename Converters, typename Pointconverter >
     Linear_cell_complex_base(const LCC2& alcc, Converters& converters,
-                        const Pointconverter& pointconverter)
+                             const Pointconverter& pointconverter) : Base()
     { Base::template copy<LCC2, Converters, Pointconverter>
           (alcc, converters, pointconverter);}
+
+    /** Affectation operation. Copies one map to the other.
+     * @param amap a lcc.
+     * @return A copy of that lcc.
+     */
+    Self & operator= (const Self & alcc)
+    {
+      if (this!=&alcc)
+      {
+        Self tmp(alcc);
+        this->swap(tmp);
+      }
+      return *this;
+    }
 
     /** Create a vertex attribute.
      * @return an handle on the new attribute.
@@ -276,29 +290,6 @@ namespace CGAL {
     typename Base::size_type number_of_vertex_attributes() const
     { return Base::template number_of_attributes<0>(); }
 
-#ifdef CGAL_CMAP_DEPRECATED
-    static Vertex_attribute_handle vertex_attribute(Dart_handle adart)
-    {
-      CGAL_assertion(adart!=NULL);
-      return adart->template attribute<0>();
-    }
-   static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle
-                                                          adart)
-    {
-      CGAL_assertion(adart!=NULL);
-      return adart->template attribute<0>();
-    }
-    static Point& point(Dart_handle adart)
-    {
-      CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
-      return adart->template attribute<0>()->point();
-    }
-    static const Point& point(Dart_const_handle adart)
-    {
-      CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
-      return adart->template attribute<0>()->point();
-    }
-#else
     /// Get the vertex_attribute associated with a dart.
     /// @param a dart
     /// @return the vertex_attribute.
@@ -329,17 +320,6 @@ namespace CGAL {
       CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
       return point_of_vertex_attribute(this->template attribute<0>(adart));
     }
-#endif // CGAL_CMAP_DEPRECATED
-
-    // Temporary methods to allow to write lcc->temp_vertex_attribute
-    // even with the old method. Depending if CGAL_CMAP_DEPRECATED is defined or not
-    // call the static method or the new method. To remove when we remove the
-    // old code.
-    Vertex_attribute_handle temp_vertex_attribute(Dart_handle adart)
-    {return vertex_attribute(adart); }
-    Vertex_attribute_const_handle
-    temp_vertex_attribute(Dart_const_handle adart) const
-    {return vertex_attribute(adart); }
 
     /** Test if the lcc is valid.
      * A Linear_cell_complex is valid if it is a valid Combinatorial_map with
@@ -397,6 +377,10 @@ namespace CGAL {
           CGAL_assertion( this->is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
         }
+
+      Helper::template
+        Foreach_enabled_attributes<internal::Cleanup_useless_attributes<Self> >::
+          run(this);
     }
 
     /** test if the two given facets have the same geometry
@@ -478,7 +462,7 @@ namespace CGAL {
                  are_facets_same_geometry(*it1,beta(*it2, 0)) )
             {
               ++res;
-              this->template sew<3>(*it1,beta(*it2, 0));
+              this->template sew<3>(*it1,this->beta(*it2, 0));
             }
           }
         }
@@ -924,16 +908,16 @@ namespace CGAL {
       { Base::template copy<Self>(alcc); }
 
       template < class LCC2 >
-      Linear_cell_complex(const LCC2& alcc)
+      Linear_cell_complex(const LCC2& alcc) : Base()
       { Base::template copy<LCC2>(alcc);}
 
       template < class LCC2, typename Converters >
-      Linear_cell_complex(const LCC2& alcc, Converters& converters)
+      Linear_cell_complex(const LCC2& alcc, Converters& converters) : Base()
       { Base::template copy<LCC2, Converters>(alcc, converters);}
 
       template < class LCC2, typename Converters, typename Pointconverter >
       Linear_cell_complex(const LCC2& alcc, Converters& converters,
-                                    const Pointconverter& pointconverter)
+                          const Pointconverter& pointconverter) : Base()
       { Base::template copy<LCC2, Converters, Pointconverter>
             (alcc, converters, pointconverter);}
 

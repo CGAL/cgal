@@ -65,7 +65,7 @@ namespace CGAL {
       {
         lcc.template link_beta<1>(prev_dart, cur);
 
-        Dart_handle opposite=find_dart_between(i,lcc.temp_vertex_attribute(prev_dart));
+        Dart_handle opposite=find_dart_between(i,lcc.vertex_attribute(prev_dart));
         if ( opposite!=lcc.null_handle )
         {
           CGAL_assertion( lcc.template is_free<2>(opposite) );
@@ -91,7 +91,7 @@ namespace CGAL {
       lcc.template link_beta<1>(prev_dart, first_dart);
 
       Dart_handle opposite =
-        find_dart_between(first_vertex,lcc.temp_vertex_attribute(prev_dart));
+        find_dart_between(first_vertex,lcc.vertex_attribute(prev_dart));
       if ( opposite!=lcc.null_handle )
       {
         CGAL_assertion( lcc.template is_free<2>(opposite) );
@@ -131,7 +131,7 @@ namespace CGAL {
 
       for ( ; it!=itend; ++it )
       {
-        if ( lcc.temp_vertex_attribute(lcc.template beta<1>(*it))==vh ) return (*it);
+        if ( lcc.vertex_attribute(lcc.template beta<1>(*it))==vh ) return (*it);
       }
       return lcc.null_handle;
     }

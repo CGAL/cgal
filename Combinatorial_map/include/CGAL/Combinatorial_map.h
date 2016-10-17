@@ -84,6 +84,8 @@ namespace CGAL {
     friend struct internal::Reverse_orientation_of_connected_component_functor;
     template<typename CMap>
     friend struct internal::Init_attribute_functor;
+    template<typename CMap>
+    friend struct Swap_attributes_functor;
 
   public:
     template < unsigned int A, class B, class I, class D, class S >
@@ -203,10 +205,13 @@ namespace CGAL {
 
       this->mnb_used_marks = amap.mnb_used_marks;
       this->mmask_marks    = amap.mmask_marks;
+      this->automatic_attributes_management =
+          amap.automatic_attributes_management;
 
       for (size_type i = 0; i < NB_MARKS; ++i)
       {
         this->mfree_marks_stack[i]        = amap.mfree_marks_stack[i];
+        this->mused_marks_stack[i]        = amap.mused_marks_stack[i];
         this->mindex_marks[i]             = amap.mindex_marks[i];
         this->mnb_marked_darts[i]         = amap.mnb_marked_darts[i];
         this->mnb_times_reserved_marks[i] = amap.mnb_times_reserved_marks[i];
@@ -323,7 +328,10 @@ namespace CGAL {
     {
       if (this!=&amap)
       {
-        amap.mdarts.swap(mdarts);
+        mdarts.swap(amap.mdarts);
+
+        Helper::template Foreach_enabled_attributes
+          < internal::Swap_attributes_functor <Self> >::run(this, &amap);
 
         std::swap_ranges(mnb_times_reserved_marks,
                          mnb_times_reserved_marks+NB_MARKS,
@@ -338,9 +346,11 @@ namespace CGAL {
                          amap.mused_marks_stack);
         std::swap_ranges(mnb_marked_darts,mnb_marked_darts+NB_MARKS,
                          amap.mnb_marked_darts);
-        mattribute_containers.swap(amap.mattribute_containers);
         std::swap(null_dart_handle, amap.null_dart_handle);
         this->mnull_dart_container.swap(amap.mnull_dart_container);
+
+        std::swap(automatic_attributes_management,
+                  amap.automatic_attributes_management);
       }
     }
 
@@ -583,7 +593,8 @@ namespace CGAL {
       {
         this->template get_attribute<i>(this->template attribute<i>(dh)).
           dec_nb_refs();
-        if ( this->template get_attribute<i>(this->template attribute<i>(dh)).
+        if ( this->are_attributes_automatically_managed() &&
+             this->template get_attribute<i>(this->template attribute<i>(dh)).
              get_nb_refs()==0 )
           this->template erase_attribute<i>(this->template attribute<i>(dh));
       }
@@ -1216,6 +1227,10 @@ namespace CGAL {
           CGAL_assertion( is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
         }
+
+      Helper::template
+        Foreach_enabled_attributes<internal::Cleanup_useless_attributes<Self> >::
+          run(this);
     }
 
     /// @return the number of darts.
@@ -2455,6 +2470,7 @@ namespace CGAL {
         if ( marks[acells[i]]==INVALID_MARK )
         {
           marks[acells[i]] = get_new_mark();
+          assert(is_whole_map_unmarked(marks[acells[i]]));
         }
       }
 
@@ -3693,7 +3709,7 @@ namespace CGAL {
               class Storage2>
     bool is_isomorphic_to(const Combinatorial_map_base
                           <d2,Refs2,Items2,Alloc2, Storage2>& map2,
-                          bool testAttributes=true)
+                          bool testAttributes=true) const
     {
       // if ( dimension!=map2.dimension ) return false;
 
@@ -4736,17 +4752,17 @@ namespace CGAL {
     { Base::template copy<Self>(amap); }
 
     template < class CMap >
-    Combinatorial_map(const CMap & amap)
+    Combinatorial_map(const CMap & amap) : Base()
     { Base::template copy<CMap>(amap); }
 
     template < class CMap, typename Converters >
-    Combinatorial_map(const CMap & amap, const Converters& converters)
+    Combinatorial_map(const CMap & amap, const Converters& converters) : Base()
     { Base::template copy<CMap, Converters>
           (amap, converters); }
 
     template < class CMap, typename Converters, typename Pointconverter >
     Combinatorial_map(const CMap & amap, const Converters& converters,
-                      const Pointconverter& pointconverter)
+                      const Pointconverter& pointconverter) : Base()
     { Base::template copy<CMap, Converters, Pointconverter>
           (amap, converters, pointconverter); }
   };

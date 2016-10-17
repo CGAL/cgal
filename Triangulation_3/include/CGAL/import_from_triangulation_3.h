@@ -40,7 +40,7 @@ namespace CGAL {
             typename LCC::Dart_handle >* avol_to_dart=NULL)
   {
     CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
-    
+
     // Case of empty triangulations.
     if (atr.number_of_vertices() == 0) return LCC::null_handle;
 
@@ -70,7 +70,7 @@ namespace CGAL {
     std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle> TC;
     std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle>*
       mytc = (avol_to_dart==NULL?&TC:avol_to_dart);
-    
+
     itmap_tcell maptcell_it;
 
     typename LCC::Dart_handle res=LCC::null_handle, dart=LCC::null_handle;
@@ -100,7 +100,7 @@ namespace CGAL {
           else if ( it->vertex(3) == atr.infinite_vertex() )
             dart = alcc.beta(res, 2, 0);
         }
-        
+
         for (unsigned int i = 0; i < 4; ++i)
         {
           switch (i)
@@ -123,8 +123,8 @@ namespace CGAL {
             case 2: neighbor = alcc.beta(maptcell_it->second, 2); break;
             case 3: neighbor = maptcell_it->second; break;
             }
-            while (alcc.temp_vertex_attribute(neighbor) !=
-                   alcc.temp_vertex_attribute(alcc.other_extremity(cur)) )
+            while (alcc.vertex_attribute(neighbor) !=
+                   alcc.vertex_attribute(alcc.other_extremity(cur)) )
               neighbor = alcc.beta(neighbor,1);
             alcc.template topo_sew<3>(cur, neighbor);
           }

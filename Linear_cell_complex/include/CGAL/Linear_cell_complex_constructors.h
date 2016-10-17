@@ -165,7 +165,6 @@ namespace CGAL {
     return first;
   }
 
-
   template < class LCC >
   void load_off(LCC& alcc, std::istream& in)
   {

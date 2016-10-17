@@ -104,7 +104,7 @@ void display_lcc(LCC& lcc)
     for ( unsigned int i=0; i<=LCC::dimension; ++i)
     {
       std::cout << &(*it->beta(i)) << ",\t";
-      if (it->is_free(i)) std::cout << "\t";
+      if (lcc.is_free(it, i)) std::cout << "\t";
     }
     std::cout<<it->template attribute<0>()->point();
     std::cout << std::endl;
@@ -129,6 +129,29 @@ bool test_LCC_2()
   Dart_handle dh3=lcc.make_segment(Point(2,2),Point(3,1));
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
+
+  { // Test swap operator
+    LCC lcc2;
+    lcc2.swap(lcc);
+    if ( !check_number_of_cells_2(lcc, 0, 0, 0, 0) )
+      return false;
+    if ( !check_number_of_cells_2(lcc2, 6, 3, 6, 3) )
+      return false;
+
+    lcc.swap(lcc2);
+    if ( !check_number_of_cells_2(lcc2, 0, 0, 0, 0) )
+      return false;
+    if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
+      return false;
+
+    // And test operator=
+    LCC lcc3;
+    lcc3=lcc;
+    if ( !check_number_of_cells_2(lcc3, 6, 3, 6, 3) )
+      return false;
+    if (!lcc.is_isomorphic_to(lcc3))
+      return false;
+  }
 
   typename LCC::Vertex_attribute_handle vh=lcc.template attribute<0>(dh1);
   if (!lcc.template is_attribute_used<0>(vh)) return false;

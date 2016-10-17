@@ -33,7 +33,7 @@ namespace CGAL {
    * @return A dart created during the convertion.
    */
   template< class LCC, class Polyhedron >
-  typename LCC::Dart_handle import_from_polyhedron_3(LCC& alcc, 
+  typename LCC::Dart_handle import_from_polyhedron_3(LCC& alcc,
                                                      const Polyhedron &apoly)
   {
     CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==3 );
@@ -43,7 +43,7 @@ namespace CGAL {
     typedef typename Polyhedron::Halfedge_around_facet_const_circulator
       HF_circulator;
 
-    typedef std::map < Halfedge_handle, typename LCC::Dart_handle> 
+    typedef std::map < Halfedge_handle, typename LCC::Dart_handle>
       Halfedge_handle_map;
     typedef typename Halfedge_handle_map::iterator itmap_hds;
     Halfedge_handle_map TC;
@@ -61,7 +61,7 @@ namespace CGAL {
       {
         d = alcc.create_dart();
         TC[j] = d;
-      
+
         if (prev != LCC::null_handle) alcc.template link_beta<1>(prev, d);
         else firstFacet = d;
         it = TC.find(j->opposite());
@@ -82,7 +82,7 @@ namespace CGAL {
       do
       {
         d = TC[j]; // Get the dart associated to the Halfedge
-        if (alcc.temp_vertex_attribute(d) == LCC::null_handle)
+        if (alcc.vertex_attribute(d) == LCC::null_handle)
         {
           alcc.set_vertex_attribute
             (d, alcc.create_vertex_attribute(j->opposite()->vertex()->point()));
