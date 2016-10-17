@@ -269,15 +269,15 @@ public:
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyZero() {
-  static Polynomial<NT> zeroP;
+  static const Polynomial<NT> zeroP;
   return zeroP;
 }
 
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyUnity() {
-  static NT c[] = {1};
-  static Polynomial<NT> unityP(0, c);
+  static const NT c[] = {1};
+  static const Polynomial<NT> unityP(0, c);
   return unityP;
 }
 
