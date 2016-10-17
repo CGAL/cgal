@@ -218,13 +218,12 @@ private:
                                  VertexParameterizedMap vpmap)
   {
     // Compute (u,v) for (at least two) border vertices and mark them as "parameterized"
-
     Error_code status = Base::OK;
 
-//    status = get_border_parameterizer().parameterize_border(mesh, bhd, uvmap, vpmap);
-
+#define FIXED_VERTICES_IN_PARAMETERIZATION_SPACE
+#ifdef FIXED_VERTICES_IN_PARAMETERIZATION_SPACE
+    // Find the two farthest vertices in the initial parameterization
     // @fixme brute force algorithm; use Convex hull + rotating caliphers instead
-
     NT max_dist = (std::numeric_limits<NT>::min)();
     vertex_descriptor vd1_max, vd2_max;
 
@@ -246,7 +245,11 @@ private:
     // the value in uvmap is already set
     put(vpmap, vd1_max, true);
     put(vpmap, vd2_max, true);
-
+#else
+    // This fixes two vertices that are far in the original geometry. We lose
+    // the UV information of the initial param
+    status = get_border_parameterizer().parameterize_border(mesh, bhd, uvmap, vpmap);
+#endif
     return status;
   }
 
