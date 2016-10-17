@@ -59,10 +59,6 @@ endif()
 include_directories( BEFORE ../../include )
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
- 
-  if (EIGEN3_FOUND)
-    # Executables that require Eigen 3.1
-    include( ${EIGEN3_USE_FILE} )
 
 
 # Creating entries for all .cpp/.C files with "main" routine
@@ -74,10 +70,14 @@ find_package( TBB )
 if( TBB_FOUND )
   include( ${TBB_USE_FILE} )
   list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
-  create_single_source_cgal_program( "hausdorff_distance_example.cpp")
 else()
   message( STATUS "NOTICE: Intel TBB was not found. hausdorff_distance_example will use sequential code." )
 endif()
+create_single_source_cgal_program( "hausdorff_distance_remeshing_example.cpp")
+if (EIGEN3_FOUND)
+  # Executables that require Eigen 3.1
+  include( ${EIGEN3_USE_FILE} )
+  create_single_source_cgal_program( "hausdorff_distance_reconstruction_example.cpp")
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )

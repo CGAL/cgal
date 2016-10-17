@@ -19,7 +19,6 @@
 #include <CGAL/property_map.h>
 #include <boost/container/flat_map.hpp>
 
-//This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
 using namespace CGAL::Three;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -228,12 +227,6 @@ private:
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
-
-//============== GRID ================
-        /*PMP::internal::triangle_grid_sampling<Kernel>(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
-                                                      f->halfedge()->next()->next()->vertex()->point(),
-                                                      0.05, std::back_inserter(sampled_points));*/
-//============== MONTE_CARLO ================
         std::size_t nb_points =  (std::max)((int)std::ceil(400 * PMP::face_area(f,*poly,PMP::parameters::geom_traits(Kernel()))),
                                             1);
         CGAL::Random_points_in_triangle_3<typename Kernel::Point_3> g(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
@@ -242,7 +235,6 @@ private:
         sampled_points.push_back(f->halfedge()->vertex()->point());
         sampled_points.push_back(f->halfedge()->next()->vertex()->point());
         sampled_points.push_back(f->halfedge()->next()->next()->vertex()->point());
-// FIN MONTE_CARLO
 
         //triangle facets with sample points for color display
         FT triangulation(f,sampled_points,nf,poly,diagonal);

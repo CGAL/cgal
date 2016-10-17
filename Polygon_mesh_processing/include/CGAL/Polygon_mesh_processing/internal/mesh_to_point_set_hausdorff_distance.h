@@ -24,7 +24,9 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
-
+#include <queue>
+namespace CGAL{
+namespace internal{
 template <typename Kernel>
 class CPointH
 {
@@ -53,7 +55,7 @@ public:
     m_hausdorff = p.hausdorff ();
   }
 
-  Point operator() () const { return m_point; }
+  const Point& operator() () const { return m_point; }
   Point& operator() () { return m_point; }
   FT hausdorff () const { return m_hausdorff; }
 
@@ -107,18 +109,10 @@ public:
     {
       m_bisector = PointH::mid_point (m_point[(m_edge+1)%3],
                                       m_point[(m_edge+2)%3]);
-
-      // Point p0 = m_point[(m_edge+1)%3]();
-      // Point p1 = m_point[(m_edge+2)%3]();
-
-
-      // m_bisector = Point ((p0.x () + p1.x ()) / 2.,
-      // 		    (p0.y () + p1.y ()) / 2.,
-      // 		    (p0.z () + p1.z ()) / 2.);
     }
 
     m_lower_bound = 0.;
-    m_upper_bound = 0.; //std::numeric_limits<FT>::max ();
+    m_upper_bound = 0.;
     for (unsigned int i = 0; i < 3; ++ i)
     {
       if (m_point[i].hausdorff () > m_lower_bound)
@@ -177,8 +171,8 @@ public:
               << " -> " << m_bisector << std::endl;
   }
 };
+}//internal
 
-namespace CGAL{
 template <typename Kernel>
 class CRefiner
 {
@@ -187,8 +181,8 @@ private:
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Triangle_3 Triangle;
   typedef typename Kernel::FT FT;
-  typedef CPointH<Kernel> PointH;
-  typedef CRefTriangle<Kernel> RefTriangle;
+  typedef internal::CPointH<Kernel> PointH;
+  typedef internal::CRefTriangle<Kernel> RefTriangle;
   typedef CGAL::Orthogonal_k_neighbor_search<CGAL::Search_traits_3<Kernel> > Knn;
   typedef typename Knn::Tree Tree;
   std::priority_queue<RefTriangle> m_queue;
@@ -203,7 +197,6 @@ public:
     m_lower_bound = 0.;
     m_upper_bound = std::numeric_limits<FT>::max ();
   }
-  ~CRefiner () { }
 
   bool empty ()
   {
@@ -262,7 +255,6 @@ public:
   bool clean_up_queue ()
   {
     unsigned int before = m_queue.size ();
-    //    std::cerr << "Cleaned " << m_queue.size () << " elements to ";
     std::vector<RefTriangle> to_keep;
     while (!(m_queue.empty ()))
     {
@@ -271,10 +263,9 @@ public:
         to_keep.push_back (current);
       m_queue.pop ();
     }
-    //    std::cerr << to_keep.size () << " elements" << std::endl;
 
     m_queue = std::priority_queue<RefTriangle> ();
-    for (auto& r : to_keep)
+    BOOST_FOREACH(RefTriangle& r, to_keep)
       m_queue.push (r);
 
     return (m_queue.size () < before);
@@ -282,7 +273,6 @@ public:
 
   FT refine (FT limit, const Tree& tree, FT upper_bound = 1e30)
   {
-    //    std::ofstream f ("rquick.plot");
 
     unsigned int nb_clean = 0;
 

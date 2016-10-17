@@ -46,7 +46,6 @@
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
-namespace PMP = CGAL::Polygon_mesh_processing;
 namespace internal{
 template <class Kernel, class OutputIterator>
 OutputIterator
@@ -136,7 +135,7 @@ struct Distance_computation{
   Point_3 initial_hint;
   cpp11::atomic<double>* distance;
 
-  Distance_computation(const AABB_tree& tree, const Point_3 p, const std::vector<Point_3>& sample_points, cpp11::atomic<double>* d)
+  Distance_computation(const AABB_tree& tree, const Point_3& p, const std::vector<Point_3>& sample_points, cpp11::atomic<double>* d)
     : tree(tree)
     , sample_points(sample_points)
     , distance(d)
@@ -150,7 +149,8 @@ struct Distance_computation{
     double hdist = 0;
     for( std::size_t i = range.begin(); i != range.end(); ++i)
     {
-      double d = CGAL::sqrt( squared_distance(hint,sample_points[i]) );
+      hint = tree.closest_point(sample_points[i], hint);
+      double d = CGAL::approximate_sqrt( squared_distance(hint,sample_points[i]) );
       if (d>hdist) hdist=d;
     }
 
@@ -161,19 +161,19 @@ struct Distance_computation{
 #endif
 
 /**
- * @brief enum used to select the sampling method in the function `sample_triangle_mesh`
+ * @brief enum used to select the sampling method in the function `sample_triangle_mesh()`
  */
 enum Sampling_method{
   RANDOM_UNIFORM =0,
   GRID,
   MONTE_CARLO
 };
-/** fills `sampled_points` with points taken on the mesh in a manner depending on `method`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`.
+/** fills `sampled_points` with points taken on the mesh in a way depending on `method`
+ * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @param m the triangle mesh that will be sampled
  * @param parameter depends on `method` :
- *                  RANDOM_UNIFORM and MONTE_CARLO: the number of points per squared area unit.
- *                  GRID : The distance between two consecutive points in the grid.
+ *                  `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
+ *                  `GRID` : The distance between two consecutive points in the grid
  *
  * @param np a sequence of \ref namedparameters for `tm` among the ones listed below
  *
@@ -182,23 +182,22 @@ enum Sampling_method{
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * @param method defines the method of sampling.
+ * @param method defines the method of sampling
  *
- * @tparam Sampling_method defines the method of sampling.
+ * @tparam Sampling_method defines the method of sampling
  *                         Possible values are :
- *- `RANDOM_UNIFORM` : points are generated in a random and uniform way, depending on the area of each triangle.,
+ *- `RANDOM_UNIFORM` : points are generated in a random and uniform way, depending on the area of each triangle.
  *
- *- `GRID` : points are generated in a grid, with a minimum of one point per triangle.
+ *- `GRID` : points are generated on a grid, with a minimum of one point per triangle.
  *
- *- `MONTE_CARLO` : points are generated randomly in each triangle. Their number in each triangle is proportional to the corresponding face area with a minimum
+ *- `MONTE_CARLO` : points are generated randomly in each triangle. The number of points per triangle is proportional to the triangle area with a minimum
  *                  of 1.
  *
  */
-template<class TriangleMesh, class NamedParameters>
+template<class TriangleMesh, class Point_3, class NamedParameters>
 void sample_triangle_mesh(const TriangleMesh& m,
                           double parameter,
-                          std::vector<typename GetGeomTraits<TriangleMesh,
-                          NamedParameters>::type::Point_3>& sampled_points,
+                          std::vector<Point_3>& sampled_points,
                           NamedParameters np,
                           Sampling_method method = RANDOM_UNIFORM)
 {
@@ -209,13 +208,13 @@ void sample_triangle_mesh(const TriangleMesh& m,
             NamedParameters>::const_type Vpm;
 
     Vpm pmap = choose_param(get_param(np, vertex_point),
-                           get_property_map(vertex_point, m));
+                           get_const_property_map(vertex_point, m));
   switch(method)
   {
   case RANDOM_UNIFORM:
   {
     std::size_t nb_points = std::ceil(
-       parameter * PMP::area(m, PMP::parameters::geom_traits(Geom_traits())));
+       parameter * area(m, parameters::geom_traits(Geom_traits())));
     Random_points_in_triangle_mesh_3<TriangleMesh, Vpm>
         g(m, pmap);
     CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
@@ -244,7 +243,7 @@ void sample_triangle_mesh(const TriangleMesh& m,
   {
     BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
     {
-      std::size_t nb_points =  (std::max)((int)std::ceil(parameter * PMP::face_area(f,m,PMP::parameters::geom_traits(Kernel()))),
+      std::size_t nb_points =  (std::max)((int)std::ceil(parameter * face_area(f,m,parameters::geom_traits(Geom_traits()))),
                                        1);
       //create the triangles and store them
       typename Geom_traits::Point_3 points[3];
@@ -260,6 +259,19 @@ void sample_triangle_mesh(const TriangleMesh& m,
     return;
   }
   }
+}
+template<class TriangleMesh, class Point_3>
+void sample_triangle_mesh(const TriangleMesh& m,
+                          double parameter,
+                          std::vector<Point_3>& sampled_points,
+                          Sampling_method method = RANDOM_UNIFORM)
+{
+    sample_triangle_mesh(
+                m,
+                parameter,
+                sampled_points,
+                parameters::all_default(),
+                method);
 }
 template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap>
 double approximated_Hausdorff_distance(
@@ -311,19 +323,19 @@ double approximated_Hausdorff_distance(
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh,
-          class VertexPointMap1 ,
+          class NamedParameters,
           class VertexPointMap2 >
 double approximated_Hausdorff_distance(
    const TriangleMesh& m1,
    const TriangleMesh& m2,
    double precision,
-   VertexPointMap1 vpm1,
+   NamedParameters np,
    VertexPointMap2 vpm2,
    Sampling_method method = RANDOM_UNIFORM
 )
 {
   std::vector<typename Kernel::Point_3> sample_points;
-  sample_triangle_mesh<Kernel>(m1, precision ,sample_points, vpm1, method );
+  sample_triangle_mesh<TriangleMesh, typename Kernel::Point_3, NamedParameters>(m1, precision ,sample_points, np, method );
   return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2>(sample_points, m2, vpm2);
 }
 
@@ -386,9 +398,9 @@ double approximated_Hausdorff_distance( const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_distance_grp
- * computes the approximated symmetric Hausdorff distance between `tm1` and `tm2`.
+ * computes the approximated symmetric Hausdorff distance between `tm1` and `tm2`
  * It returns the maximum of `approximated_Hausdorff_distance(tm1,tm2)` and
- * `approximated_Hausdorff_distance(tm1,tm2)`.
+ * `approximated_Hausdorff_distance(tm1,tm2)`
  *
  * \copydetails CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance()
  */
@@ -411,8 +423,8 @@ double approximated_symmetric_Hausdorff_distance(
 
 /**
  * \ingroup PMP_distance_grp
- * computes the approximated Hausdorff distance between `points` and `tm`.
- * @tparam PointRange a Range of `Point_3`.
+ * computes the approximated Hausdorff distance between `points` and `tm`
+ * @tparam PointRange a Range of `Point_3`
  * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
  *         for `CGAL::vertex_point_t`
  * @tparam NamedParameters a sequence of \ref namedparameters for `tm`
@@ -441,12 +453,21 @@ double max_distance_to_triangle_mesh(const PointRange& points,
                              get_const_property_map(vertex_point, tm)));
 }
 
+template< class Concurrency_tag,
+          class TriangleMesh,
+          class PointRange,
+          class NamedParameters>
+double max_distance_to_triangle_mesh(const PointRange& points,
+                                     const TriangleMesh& tm)
+{
+    max_distance_to_triangle_mesh<Concurrency_tag, TriangleMesh, PointRange>(points, tm, parameters::all_default());
+}
 
 /*!
  *\ingroup PMP_distance_grp
- *  Computes the approximated Hausdorff distance between `tm` and `points`.
+ *  Computes the approximated Hausdorff distance between `tm` and `points`
  *
- * @tparam PointRange a Range of `Point_3`.
+ * @tparam PointRange a Range of `Point_3`
  * @tparam TriangleMesh a model of the concept `FaceListGraph` that has an internal property map
  *         for `CGAL::vertex_point_t`
  * @tparam NamedParameters a sequence of \ref namedparameters for `tm`
@@ -491,6 +512,14 @@ double max_distance_to_point_set(const TriangleMesh& tm,
   return ref.refine(precision, tree);
 }
 
+template< class TriangleMesh,
+          class PointRange>
+double max_distance_to_point_set(const TriangleMesh& tm,
+                                 const PointRange& points,
+                                 const double precision)
+{
+  max_distance_to_point_set(tm, points, precision, parameters::all_default());
+}
 // convenience functions with default parameters
 
 template< class Concurrency_tag,
