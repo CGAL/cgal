@@ -328,19 +328,19 @@ double approximated_Hausdorff_distance(
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh,
           class NamedParameters,
-          class VertexPointMap2 >
+          class VertexPointMap >
 double approximated_Hausdorff_distance(
    const TriangleMesh& m1,
    const TriangleMesh& m2,
    double precision,
    NamedParameters np,
-   VertexPointMap2 vpm2,
+   VertexPointMap vpm,
    Sampling_method method = RANDOM_UNIFORM
 )
 {
   std::vector<typename Kernel::Point_3> sample_points;
   sample_triangle_mesh<TriangleMesh, typename Kernel::Point_3, NamedParameters>(m1, precision ,sample_points, np, method );
-  return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap2>(sample_points, m2, vpm2);
+  return approximated_Hausdorff_distance<Concurrency_tag, Kernel, TriangleMesh, VertexPointMap>(sample_points, m2, vpm);
 }
 
 // documented functions
@@ -552,11 +552,11 @@ double approximated_Hausdorff_distance( const TriangleMesh& tm1,
 
 template< class Concurrency_tag,
           class TriangleMesh,
-          class NamedParameters1>
+          class NamedParameters>
 double approximated_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
                                                  const TriangleMesh& tm2,
                                                  double precision,
-                                                 const NamedParameters1& np1)
+                                                 const NamedParameters& np)
 {
   return approximated_symmetric_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, precision, np1, parameters::all_default());
