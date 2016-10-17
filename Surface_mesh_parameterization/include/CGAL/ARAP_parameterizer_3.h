@@ -1170,37 +1170,38 @@ public:
     if(status != Base::OK)
       return status;
 
-    NT energy_this = 0.; // the initial value is not important because we skip the first iteration
+    NT energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
+                                            ltmap, uvmap);
     NT energy_last;
+    std::cout << "Initial energy: " << energy_this << std::endl;
 
     // main loop
-    for(unsigned int ite=0; ite<m_iterations; ++ite)
+    for(unsigned int ite=1; ite<=m_iterations; ++ite)
     {
       compute_optimal_Lt_matrices(mesh, faces, ctmap, lp, lpmap, uvmap, ltmap);
       status = update_solution(mesh, vertices, ctmap, lp, lpmap, ltmap,
                                                uvmap, vimap, vpmap, A);
+
+      // Output the current situation
       output_uvmap("ARAP_iteration_", ite, mesh, faces, uvmap);
+      energy_last = energy_this;
+      energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
+                                                        ltmap, uvmap);
+      std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
+      CGAL_warning(energy_this >= 0);
+
       if(status != Base::OK)
         return status;
 
       // energy based termination
-      if(m_tolerance > 0.0 && (ite + 1) < m_iterations) // if tolerance <= 0 then don't compute energy
+      if(m_tolerance > 0.0 && ite <= m_iterations) // if tolerance <= 0 then don't compute energy
       {                                                 // also no need compute energy if this iteration is the last iteration
-        energy_last = energy_this;
-        energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
-                                                          ltmap, uvmap);
-        std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
-        CGAL_warning(energy_this >= 0);
-
-        if(ite != 0) // skip the first iteration
-        {
-          double energy_diff = std::abs((energy_last - energy_this) / energy_this);
-          if(energy_diff < m_tolerance){
-            std::cout << "Minimization process over after: "
-                      << ite + 1 << " iterations. "
-                      << "Energy diff: " << energy_diff << std::endl;
-            break;
-          }
+        double energy_diff = std::abs((energy_last - energy_this) / energy_this);
+        if(energy_diff < m_tolerance){
+          std::cout << "Minimization process over after: "
+                    << ite + 1 << " iterations. "
+                    << "Energy diff: " << energy_diff << std::endl;
+          break;
         }
       }
     }
