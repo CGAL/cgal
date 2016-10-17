@@ -79,7 +79,8 @@ bool test2D()
 
     dh = map.make_combinatorial_tetrahedron();
     cout << "Nombre de brins : " << map.number_of_darts() << endl;
-
+    map.display_darts(std::cout, true);
+    
     cout << "Parcours de CC : ";
     for ( typename Map::template Dart_of_orbit_range<1,2>::iterator it ( map, dh );
             it.cont();++it )
