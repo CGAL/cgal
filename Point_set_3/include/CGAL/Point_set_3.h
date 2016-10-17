@@ -92,8 +92,6 @@ public:
   };
   typedef Property_map<Index> Index_map;
 
-  template <typename Property>
-  class Push_property_map;
   /// \endcond
   
   /*!
@@ -109,7 +107,6 @@ public:
     friend class Properties::Property_container<Index>;
     template <class> friend class Properties::Property_array;
     template <class> friend struct Property_map;
-    template <class> friend class Push_property_map;
     friend class std::vector<Index>;
     std::size_t value;
     
