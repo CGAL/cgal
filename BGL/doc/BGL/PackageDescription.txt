@@ -209,7 +209,8 @@ user might encounter.
 - `CGAL::reduce_vertex_selection()`
 - `CGAL::select_incident_faces()`
 
-## Miscellaneous ##
+## Conversion Functions ##
+- `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
 */

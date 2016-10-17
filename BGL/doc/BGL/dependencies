@@ -13,4 +13,6 @@ Surface_mesh_simplification
 Surface_mesh_segmentation
 Surface_mesh_deformation
 Property_map
+Nef_3
 Miscellany
+Polygon_mesh_processing

@@ -401,6 +401,15 @@ see Section \ref sectionPolyIO.
 
 \cgalExample{Nef_3/interface_polyhedron.cpp}
 
+\subsection Nef_3TheInterfacebetweenPolyhedron3andNefpolyhedron3 Conversion of Nef_polyhedron_3 to Polygon Mesh
+
+\anchor subsectionNef_3PolygonMesh
+
+Conversion to models of `MutableFaceGraph` are possible using the function `convert_nef_polyhedron_to_polygon_mesh()`.
+The following example shows how to output a simple `Nef_polyhedron_3` into a `Surface_mesh`.
+
+\cgalExample{Nef_3/nef_3_to_surface_mesh.cpp}
+
 \subsection Nef_3UsinganExtendedKernel Using an Extended Kernel
 
 The provided extended kernels are used the same way as any other
