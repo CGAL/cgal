@@ -58,10 +58,10 @@ The classification algorithm is designed to be as flexible as
 possible, letting the user free to use its own data structures,
 attributes and classification types.
 
-Nevertheless, \cgal provides a predefined framework so that should
-work correctly on common urban point sets. Using this class,
-classification can be performed without having to instanciate all
-attributes and data structures separately.
+Nevertheless, \cgal provides a predefined framework that should work
+correctly on common urban point sets. Using this class, classification
+can be performed without having to instanciate all attributes and data
+structures separately.
 
 This class also provides functions to save and load a specific
 configuration (attribute effects and weights), as well as a function
