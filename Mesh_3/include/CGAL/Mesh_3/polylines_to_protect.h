@@ -181,7 +181,7 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
 {
   typedef typename Kernel_traits<P>::Kernel K;
   typedef P Point_3;
-  typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, Point_3> Graph;
+  typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, Point_3> Graph;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   // typedef typename boost::graph_traits<Graph>::edge_iterator edge_iterator;
 
@@ -551,7 +551,7 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
                      PolylineInputIterator existing_polylines_end)
 {
   typedef P Point_3;
-  typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, Point_3> Graph;
+  typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, Point_3> Graph;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename std::iterator_traits<PolylineInputIterator>::value_type Polyline;
 
