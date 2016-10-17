@@ -20,13 +20,15 @@
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
 //                 Susan Hert      <hert@mpi-sb.mpg.de>
 //                 Lutz Kettner    <kettner@mpi-sb.mpg.de>
-#ifndef CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H
-#define CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H
+//                 Andreas Fabri
 
-#include <CGAL/Circulator_project.h>
+#ifndef CGAL_POLYGON_MESH_TO_NEF_3_H
+#define CGAL_POLYGON_MESH_TO_NEF_3_H
+
 #include <CGAL/normal_vector_newell_3.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
+#include <CGAL/boost/graph/helpers.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 29
@@ -108,77 +110,81 @@ struct Facet_plane_3 {
   }
 };
 
-template<typename Items, typename Polyhedron, typename SNC_structure>
-class Index_adder {
+template<typename Items, typename Polyhedron, typename SNC_structure, typename HalfedgeIndexMap>
+class Face_graph_index_adder {
   typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
-  
-  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
+
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
  public:
-  Index_adder(Polyhedron& ) {}
-  void set_hash(Halfedge_around_vertex_const_circulator,
+  Face_graph_index_adder(Polyhedron&, HalfedgeIndexMap ) {}
+  void set_hash(halfedge_descriptor,
 		SHalfedge_handle) {}
   void resolve_indexes() {}
 };
 
-template<typename Polyhedron, typename SNC_structure>
-class Index_adder<CGAL::SNC_indexed_items, Polyhedron, SNC_structure> {
+template<typename PolygonMesh, typename SNC_structure, typename HalfedgeIndexMap>
+class Face_graph_index_adder<CGAL::SNC_indexed_items, PolygonMesh, SNC_structure, HalfedgeIndexMap> {
 
   typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
-  
-  typedef typename Polyhedron::Halfedge_const_handle 
-    Halfedge_const_handle;
-  typedef typename Polyhedron::Facet_const_iterator 
-    Facet_const_iterator;
-  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
-  typedef typename Polyhedron::Halfedge_around_facet_const_circulator
-    Halfedge_around_facet_const_circulator;
-  typedef typename CGAL::Unique_hash_map<Halfedge_const_handle, 
-                                         SHalfedge_handle> Hash;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
-  Polyhedron& P;
+  typedef Halfedge_around_face_circulator<PolygonMesh>
+    Halfedge_around_facet_const_circulator;
+    typedef std::vector<SHalfedge_handle> Hash;
+
+  PolygonMesh& P;
+  HalfedgeIndexMap him;
   Hash hash;
 
- public:
-  Index_adder(Polyhedron& P_) : P(P_) {}
+public:
+  Face_graph_index_adder(PolygonMesh& P_, HalfedgeIndexMap him) : P(P_), him(him)
+  {
+    hash.resize(num_halfedges(P));
+  }
 
-  void set_hash(Halfedge_around_vertex_const_circulator evc,
+  void set_hash(halfedge_descriptor evc,
 		SHalfedge_handle se) {
-    hash[evc] = se;
+    hash[get(him,evc)] = se;
   }
   
-  void resolve_indexes() {
-    Facet_const_iterator fi;
-    for(fi = P.facets_begin(); fi != P.facets_end(); ++fi) {
+  void resolve_indexes()
+  {
+    BOOST_FOREACH(face_descriptor fi, faces(P)) {
       Halfedge_around_facet_const_circulator 
-	fc(fi->facet_begin()), end(fc);
-      hash[fc]->set_index();
-      hash[fc]->twin()->set_index();
-      hash[fc]->twin()->source()->set_index();
-      int se  = hash[fc]->get_index();
-      int set = hash[fc]->twin()->get_index();
-      int sv  = hash[fc]->twin()->source()->get_index();
+	fc(halfedge(fi,P),P), end(fc);
+      typename boost::property_traits<HalfedgeIndexMap>::value_type
+        index = get(him,*fc);
+      hash[index]->set_index();
+      hash[index]->twin()->set_index();
+      hash[index]->twin()->source()->set_index();
+      int se  = hash[index]->get_index();
+      int set = hash[index]->twin()->get_index();
+      int sv  = hash[index]->twin()->source()->get_index();
       
       ++fc;
       CGAL_For_all(fc, end) {
-	hash[fc]->set_index(se);
-	hash[fc]->twin()->set_index(set);
-	hash[fc]->source()->set_index(sv);
-	hash[fc]->twin()->source()->set_index();
-	sv = hash[fc]->twin()->source()->get_index();
+        index = get(him,*fc);
+	hash[index]->set_index(se);
+	hash[index]->twin()->set_index(set);
+	hash[index]->source()->set_index(sv);
+	hash[index]->twin()->source()->set_index();
+	sv = hash[index]->twin()->source()->get_index();
       }
-      hash[fc]->source()->set_index(sv);
+      hash[get(him,*fc)]->source()->set_index(sv);
     }
   }
 };
 
-template <class Polyhedron_, class SNC_structure>
-void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
+template <class PolygonMesh, class SNC_structure, class FaceIndexMap, class HalfedgeIndexMap>
+void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap, HalfedgeIndexMap himap)
 {
-  typedef Polyhedron_                                Polyhedron;
-  typedef typename Polyhedron::Facet::Plane_3        Plane;
-  typedef typename Polyhedron::Traits::Kernel        Kernel;
+  typedef typename boost::property_map<PolygonMesh, vertex_point_t>::type PMap;
+  typedef typename SNC_structure::Plane_3                   Plane;
+  typedef typename SNC_structure::Vector_3                           Vector_3;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
   typedef typename SNC_structure::SVertex_handle     SVertex_handle;
@@ -188,81 +194,67 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   typedef typename SNC_structure::Sphere_point       Sphere_point;
   typedef typename SNC_structure::Sphere_circle      Sphere_circle;
 
-  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
+  typedef Halfedge_around_target_circulator<PolygonMesh>
                                Halfedge_around_vertex_const_circulator;
 
-  Index_adder<typename SNC_structure::Items,
-    Polyhedron, SNC_structure> index_adder(P);
 
-  CGAL_NEF_TRACEN("  calculating facet's planes...");
-  std::transform( P.facets_begin(), P.facets_end(),
-		  P.planes_begin(), Facet_plane_3());
+  PMap pmap = get(CGAL::vertex_point,P);
 
-  typename Polyhedron::Vertex_iterator pvi;
-  for( pvi = P.vertices_begin(); pvi != P.vertices_end(); ++pvi ) {
-    typename Polyhedron::Vertex pv = *pvi;
+  std::vector<Vector_3> normals(num_faces(P));
+
+  BOOST_FOREACH(face_descriptor f, faces(P)){
+    Vertex_around_face_circulator<PolygonMesh> vafc(halfedge(f,P),P), done(vafc);
+    Vector_3 v;
+    normal_vector_newell_3(vafc, done, pmap, v);
+    normals[get(fimap,f)] = - v;
+  }
+
+  Face_graph_index_adder<typename SNC_structure::Items,
+                 PolygonMesh, SNC_structure,HalfedgeIndexMap> index_adder(P,himap);
+
+
+  BOOST_FOREACH(vertex_descriptor pv, vertices(P) ) {
     Vertex_handle nv = S.new_vertex();
-    nv->point() = pv.point();
+    nv->point() = get(pmap,pv);
     nv->mark() = true;
-    CGAL_NEF_TRACEN("v "<<pv.point());
+    CGAL_NEF_TRACEN("v "<< get(pmap,pv));
 
     SM_decorator SM(&*nv);
-    Halfedge_around_vertex_const_circulator pe = pv.vertex_begin(), pe_prev(pe);
-    CGAL_assertion_code(Halfedge_around_vertex_const_circulator pe_0(pe));
-    CGAL_assertion( pe != 0 );
+    Halfedge_around_vertex_const_circulator pec(pv,P), pec_prev(pec), done(pec);
+    halfedge_descriptor pe = *pec, pe_prev= *pec_prev;
+    CGAL_assertion_code(Halfedge_around_vertex_const_circulator pe_0(pec));
+    // CGAL_assertion( pe != 0 );
 
-    Point_3 pe_target_0(pe->opposite()->vertex()->point());
-    Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0-pv.point()));
+    Point_3 pe_target_0(get(pmap,target(opposite(pe,P),P)));
+    Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0 - get(pmap,pv)));
     Sphere_point sp_0(sp_point_0);
     SVertex_handle sv_0 = SM.new_svertex(sp_0);
     sv_0->mark() = true; 
-    pe++;
-    CGAL_assertion(pe != pv.vertex_begin());
+    pec++;
+    pe = *pec;
+    //CGAL_assertion(pe != pv->vertex_begin());
 
     SVertex_handle sv_prev = sv_0;
 
     bool with_border = false;
     do {
-      //      CGAL_assertion(!pe->is_border());
-      CGAL_assertion(pe_prev->face() == pe->opposite()->face());
-      CGAL_assertion(pe_prev->vertex()->point()==pv.point());
-      CGAL_assertion(pe->vertex()->point()==pv.point());
+      CGAL_assertion(face(pe_prev,P) == face(opposite(pe,P),P));
+      CGAL_assertion(get(pmap,target(pe_prev,P)) == get(pmap,pv));
+      CGAL_assertion(get(pmap,target(pe,P)) == get(pmap,pv));
 
-      Point_3 pe_target = pe->opposite()->vertex()->point();
-      Point_3 sp_point = CGAL::ORIGIN+(pe_target-pv.point());
+      Point_3 pe_target = get(pmap,target(opposite(pe,P),P));
+      Point_3 sp_point = CGAL::ORIGIN+(pe_target - get(pmap,pv));
       Sphere_point sp(sp_point);
       SVertex_handle sv = SM.new_svertex(sp);
       sv->mark() = true;
       
-      //      CGAL_NEF_TRACEN(pe_prev->facet()->plane());
       CGAL_NEF_TRACEN(pe_target);
-      CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
+      CGAL_NEF_TRACEN(get(pmap,target(opposite(pe_prev,P),P)));
 
-      /*
-      if(pe_prev->facet()->plane().is_degenerate()) {
-	typename Polyhedron::Halfedge_around_facet_const_circulator fc(pv.vertex_begin()), fcend(fc);
-	std::cerr << "wrong cycle "  << std::endl;
-	CGAL_For_all(fc,fcend) {
-	  std::cerr << "  " << fc->vertex()->point() << std::endl;
-	}
-      }
-      */
-      CGAL_assertion(pe_prev->is_border() ||
-                     !internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).is_degenerate());
-      CGAL_assertion(pe_prev->is_border() ||
-		     internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).
-		     has_on(pe_prev->opposite()->vertex()->point()));
-      CGAL_assertion(pe_prev->is_border() || 
-		     internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pe_target));
-      CGAL_assertion(pe_prev->is_border() || 
-		     internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pv.point()));
-
-      if(pe_prev->is_border())
+      if(is_border(pe_prev,P))
 	with_border = true;
       else {
-	typename Kernel::Plane_3 ss_plane
-	  (CGAL::ORIGIN, 
-           internal::Plane_constructor<Plane>::get_opposite_orthogonal_vector(pe_prev->facet()->plane()));
+	Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
 	Sphere_circle ss_circle(ss_plane);
 	
 	CGAL_assertion(ss_circle.has_on(sp));
@@ -277,36 +269,23 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       }
 
       sv_prev = sv;
-      pe_prev = pe;
-      ++pe;
+      pec_prev = pec;
+      ++pec;
+      pe = *pec;
+      pe_prev = *pec_prev;
     }
-    while( pe != pv.vertex_begin() );
+    while( pec != done );
 
-    CGAL_assertion(pe_prev->face() == pe_0->opposite()->face());
-    CGAL_assertion(pe_prev->vertex()->point()==pv.point());
-    CGAL_assertion(pe_0->vertex()->point()==pv.point());
-
-    CGAL_NEF_TRACEN(internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()));
-    CGAL_NEF_TRACEN(pe_target_0);
-    CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
-    CGAL_assertion(pe_prev->is_border() ||
-		   !internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).is_degenerate());
-    CGAL_assertion(pe_prev->is_border() ||
-		   internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).
-		   has_on(pe_prev->opposite()->vertex()->point()));
-    CGAL_assertion(pe_prev->is_border() || 
-		   internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pe_target_0));
-    CGAL_assertion(pe_prev->is_border() ||
-		   internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pv.point()));
+    CGAL_assertion(face(pe_prev,P) == face(opposite(*pe_0,P),P));
+    CGAL_assertion(get(pmap,target(pe_prev,P)) == get(pmap,pv));
+    CGAL_assertion(get(pmap,target(*pe_0,P)) == get(pmap,pv));
 
     SHalfedge_handle e;
-    if(pe_prev->is_border()) {
+    if(is_border(pe_prev,P)) {
       with_border = true;
       e = sv_prev->out_sedge();
     } else {
-      typename Kernel::Plane_3 ss_plane
-	(CGAL::ORIGIN,
-         internal::Plane_constructor<Plane>::get_opposite_orthogonal_vector(pe_prev->facet()->plane()));
+      Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
       Sphere_circle ss_circle(ss_plane);
       
       CGAL_assertion(ss_plane.has_on(sv_prev->point()));
@@ -338,8 +317,28 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
   index_adder.resolve_indexes();
 }
 
+template <class Polyhedron, class SNC_structure>
+void polyhedron_3_to_nef_3(Polyhedron& P, SNC_structure& S)
+{
+  typedef typename boost::property_map<Polyhedron, face_external_index_t>::type FIMap;
+  FIMap fimap = get(CGAL::face_external_index,P);
+  typedef typename boost::property_map<Polyhedron, halfedge_external_index_t>::type HIMap;
+  HIMap himap = get(CGAL::halfedge_external_index,P);
+  polygon_mesh_to_nef_3(P, S, fimap, himap);
+}
+
+template <class SM, class SNC_structure>
+void polygon_mesh_to_nef_3(SM& sm, SNC_structure& snc)
+{
+  typedef typename boost::property_map<SM, face_index_t>::type FIMap;
+  FIMap fimap = get(CGAL::face_index,sm);
+  typedef typename boost::property_map<SM, boost::halfedge_index_t>::type HIMap;
+  HIMap himap = get(boost::halfedge_index,sm);
+
+  polygon_mesh_to_nef_3(sm, snc, fimap, himap);
+}
 
 
 } //namespace CGAL
 
-#endif //CGAL_NEF_POLYHEDRON_3_TO_NEF_3_H
+#endif //CGAL_POLYGON_MESH_TO_NEF_3_H
