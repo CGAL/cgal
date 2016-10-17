@@ -505,11 +505,13 @@ private:
   }
 
   /// Compute the root that gives the lowest face energy.
+  template<typename VertexUVmap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
                                               const Cot_map ctmap,
                                               const Local_points& lp,
                                               const Lp_map lpmap,
+                                              const VertexUVmap uvmap,
                                               const NT C2_denom, const NT C3,
                                               const std::vector<NT>& roots) const
   {
@@ -520,7 +522,7 @@ private:
     {
       const NT a = roots[i];
       const NT b = C3 * C2_denom * a;
-      NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, a, b);
+      NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, uvmap, a, b);
       if(Ef < E_min){
         E_min = Ef;
         index_arg = i;
@@ -530,11 +532,13 @@ private:
   }
 
   /// Compute the root that gives the lowest face energy.
+  template<typename VertexUVmap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
                                               const Cot_map ctmap,
                                               const Local_points& lp,
                                               const Lp_map lpmap,
+                                              const VertexUVmap uvmap,
                                               const std::vector<NT>& a_roots,
                                               const std::vector<NT>& b_roots) const
   {
@@ -543,7 +547,7 @@ private:
     std::size_t index_arg = -1;
     for(std::size_t i=0; i<a_roots.size(); ++i)
     {
-      NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap,
+      NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, uvmap,
                                           a_roots[i], b_roots[i]);
       if(Ef < E_min){
         E_min = Ef;
@@ -554,18 +558,16 @@ private:
   }
 
   /// Compute the optimal values of the linear transformation matrices Lt.
+  template<typename VertexUVmap>
   Error_code compute_optimal_Lt_matrices(const TriangleMesh& mesh,
                                          const Faces_vector& faces,
                                          const Cot_map ctmap,
                                          const Local_points& lp,
                                          const Lp_map lpmap,
+                                         const VertexUVmap uvmap,
                                          Lt_map ltmap) const
   {
     Error_code status = Base::OK;
-
-    typedef typename boost::property_map<TriangleMesh,
-                                         boost::vertex_point_t>::const_type PPmap;
-    PPmap ppmap = get(vertex_point, mesh);
 
     BOOST_FOREACH(face_descriptor fd, faces){
       // Compute the coefficients C1, C2, C3
@@ -576,11 +578,11 @@ private:
         halfedge_descriptor hd = *hc;
         NT c = get(ctmap, hd);
 
-        // global positions
-        Point_3 pi = get(ppmap, source(hd, mesh));
-        Point_3 pj = get(ppmap, target(hd, mesh));
-        NT diff_x = pi.x() - pj.x();
-        NT diff_y = pi.y() - pj.y();
+        // UV positions
+        Point_2 uvpi = get(uvmap, source(hd, mesh));
+        Point_2 uvpj = get(uvmap, target(hd, mesh));
+        NT diff_x = uvpi.x() - uvpj.x();
+        NT diff_y = uvpi.y() - uvpj.y();
 
         // local positions (in the 2D param)
         Local_indices li = get(lpmap, hd);
@@ -632,7 +634,8 @@ private:
         std::vector<NT> roots;
         solve_cubic_equation(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots);
 
-        std::size_t ind = compute_root_with_lowest_energy(mesh, fd, ctmap, lp, lpmap,
+        std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
+                                                          ctmap, lp, lpmap, uvmap,
                                                           C2_denom, C3, roots);
         a = roots[ind];
         b = C3 * C2_denom * a;
@@ -641,7 +644,8 @@ private:
         std::vector<NT> b_roots;
         solve_bivariate_system(C1, C2, C3, a_roots, b_roots);
 
-        std::size_t ind = compute_root_with_lowest_energy(mesh, fd, ctmap, lp, lpmap,
+        std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
+                                                          ctmap, lp, lpmap, uvmap,
                                                           a_roots, b_roots);
         a = a_roots[ind];
         b = b_roots[ind];
@@ -977,17 +981,15 @@ private:
 
 
   /// Compute the energy of a face, given a linear transformation matrix
+  template<typename VertexUVmap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
                                  const Cot_map ctmap,
                                  const Local_points& lp,
                                  const Lp_map lpmap,
+                                 const VertexUVmap uvmap,
                                  const NT a, const NT b) const
   {
-    typedef typename boost::property_map<TriangleMesh,
-                                         boost::vertex_point_t>::const_type PPmap;
-    PPmap ppmap = get(vertex_point, mesh);
-
     NT Ef = 0.;
 
     halfedge_around_face_circulator hc(halfedge(fd, mesh), mesh), end(hc);
@@ -996,9 +998,9 @@ private:
       NT cot = get(ctmap, hd);
       NT nabla_x = 0., nabla_y = 0.;
 
-      // global positions
-      Point_3 pi = get(ppmap, source(hd, mesh));
-      Point_3 pj = get(ppmap, target(hd, mesh));
+      // UV positions
+      Point_2 pi = get(uvmap, source(hd, mesh));
+      Point_2 pj = get(uvmap, target(hd, mesh));
       NT diff_x = pi.x() - pj.x();
       NT diff_y = pi.y() - pj.y();
 
@@ -1022,12 +1024,14 @@ private:
   }
 
   /// Compute the energy of a face.
+  template<typename VertexUVmap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
                                  const Cot_map ctmap,
                                  const Local_points& lp,
                                  const Lp_map lpmap,
-                                 const Lt_map ltmap) const
+                                 const Lt_map ltmap,
+                                 const VertexUVmap uvmap) const
   {
     NT Ef = 0.;
 
@@ -1035,21 +1039,24 @@ private:
     NT a = ltm.first;
     NT b = ltm.second;
 
-    return compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, a, b);
+    return compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, uvmap, a, b);
   }
 
   /// Compute the current energy of the parameterization.
+  template<typename VertexUVmap>
   NT compute_current_energy(const TriangleMesh& mesh,
                             const Faces_vector& faces,
                             const Cot_map ctmap,
                             const Local_points& lp,
                             const Lp_map lpmap,
-                            const Lt_map ltmap) const
+                            const Lt_map ltmap,
+                            const VertexUVmap uvmap) const
   {
     NT E = 0.;
 
     BOOST_FOREACH(face_descriptor fd, faces){
-      NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, ltmap);
+      NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap,
+                                          ltmap, uvmap);
       E += Ef;
     }
 
@@ -1131,7 +1138,7 @@ public:
     // main loop
     for(unsigned int ite=0; ite<m_iterations; ++ite)
     {
-      compute_optimal_Lt_matrices(mesh, faces, ctmap, lp, lpmap, ltmap);
+      compute_optimal_Lt_matrices(mesh, faces, ctmap, lp, lpmap, uvmap, ltmap);
       status = update_solution(mesh, vertices, ctmap, lp, lpmap, ltmap,
                                                uvmap, vimap, vpmap, A);
       output_uvmap("ARAP_iteration_", ite, mesh, faces, uvmap);
@@ -1142,7 +1149,8 @@ public:
       if(m_tolerance > 0.0 && (ite + 1) < m_iterations) // if tolerance <= 0 then don't compute energy
       {                                                 // also no need compute energy if this iteration is the last iteration
         energy_last = energy_this;
-        energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap, ltmap);
+        energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
+                                                          ltmap, uvmap);
         std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
         CGAL_warning(energy_this >= 0);
 
