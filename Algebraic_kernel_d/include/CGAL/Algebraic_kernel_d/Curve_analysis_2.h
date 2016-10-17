@@ -39,7 +39,6 @@
 #include <CGAL/Cache.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Handle_with_policy.h>
-#include <CGAL/Arr_enums.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Interval_evaluate_1.h>
@@ -2099,21 +2098,21 @@ public:
     /*!
      * \brief Returns the limit an infinite arc converges to
      *
-     * \pre <tt>loc==CGAL::ARR_LEFT_BOUNDARY || 
-     *          loc==CGAL::ARR_RIGHT_BOUNDARY</tt>
+     * \pre <tt>loc==CGAL::LEFT_BOUNDARY || 
+     *          loc==CGAL::RIGHT_BOUNDARY</tt>
      *
      * This method returns for the <tt>arcno</tt>th arc that goes to -infinity
      * or +infinity (depending on \c loc) the y-coordinate it converges to.
      * Possible values are either a \c Algebraic_real_1 object, or one of the
-     * values \c CGAL::ARR_TOP_BOUNDARY, \c CGAL::ARR_BOTTOM_BOUNDARY
+     * values \c CGAL::TOP_BOUNDARY, \c CGAL::BOTTOM_BOUNDARY
      * that denote that the arc is unbounded in y-direction. 
      * The result is wrapped into a \c CGAL::Object object.
      */
-    Asymptote_y asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
+    Asymptote_y asymptotic_value_of_arc(CGAL::Box_parameter_space_2 loc,
                                         size_type arcno) const {
         
-        CGAL_precondition(loc == CGAL::ARR_LEFT_BOUNDARY ||
-                          loc == CGAL::ARR_RIGHT_BOUNDARY);
+        CGAL_precondition(loc == CGAL::LEFT_BOUNDARY ||
+                          loc == CGAL::RIGHT_BOUNDARY);
 
 #if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
         if(CGAL::degree(polynomial_2(),1)==2) {
@@ -2121,7 +2120,7 @@ public:
         }
 #endif
         
-        if(loc == CGAL::ARR_LEFT_BOUNDARY) {
+        if(loc == CGAL::LEFT_BOUNDARY) {
             
             if(! this->ptr()->horizontal_asymptotes_left) {
                 compute_horizontal_asymptotes();
@@ -2131,7 +2130,7 @@ public:
             CGAL_precondition(arcno>=0 && 
                               arcno<static_cast<size_type>(asym_info.size()));
             return asym_info[arcno];
-        } // else loc == CGAL::ARR_RIGHT_BOUNDARY
+        } // else loc == CGAL::RIGHT_BOUNDARY
 
         if(! this->ptr()->horizontal_asymptotes_right) {
             compute_horizontal_asymptotes();
@@ -2210,7 +2209,7 @@ private:
         while(i<number_of_roots_at_left_end) {
             if(current_stripe==static_cast<size_type>(stripe_bounds.size())) {
                 asym_left_info.push_back( CGAL::make_object
-                                              (CGAL::ARR_TOP_BOUNDARY) );
+                                              (CGAL::TOP_BOUNDARY) );
                 i++;
                 continue;
             }
@@ -2221,7 +2220,7 @@ private:
             if(roots_at_left_end[i].high() < stripe_bounds[current_stripe]) {
                 if(current_stripe==0) {
                     asym_left_info.push_back(CGAL::make_object
-                                                 (CGAL::ARR_BOTTOM_BOUNDARY));
+                                                 (CGAL::BOTTOM_BOUNDARY));
                     i++;
                     continue;
                 } else {
@@ -2249,7 +2248,7 @@ private:
         while(i<number_of_roots_at_right_end) {
             if(current_stripe==static_cast<size_type>(stripe_bounds.size())) {
                 asym_right_info.push_back(CGAL::make_object
-                                              (CGAL::ARR_TOP_BOUNDARY) );
+                                              (CGAL::TOP_BOUNDARY) );
                 i++;
                 continue;
             }
@@ -2260,7 +2259,7 @@ private:
             if(roots_at_right_end[i].high() < stripe_bounds[current_stripe]) {
                 if(current_stripe==0) {
                     asym_right_info.push_back(CGAL::make_object
-                                                  (CGAL::ARR_BOTTOM_BOUNDARY));
+                                                  (CGAL::BOTTOM_BOUNDARY));
                     i++;
                     continue;
                 } else {
@@ -2387,7 +2386,7 @@ private:
         CGAL_error_msg("Implement me");
     }
 
-    Asymptote_y conic_asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
+    Asymptote_y conic_asymptotic_value_of_arc(CGAL::Box_parameter_space_2 loc,
                                               size_type arcno) const {
         CGAL_error_msg("Implement me");
         return Asymptote_y();
@@ -2443,19 +2442,19 @@ std::ostream& operator<< (
       for (size_type i = 0; i < curve.arcs_over_interval(0); i++) {
         
         const Asymptote_y& curr_asym_info_obj 
-          = curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,i);
+          = curve.asymptotic_value_of_arc(CGAL::LEFT_BOUNDARY,i);
         typename Curve::Algebraic_real_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if (!is_finite) {
           // Assignment to prevent compiler warning
-          CGAL::Arr_parameter_space loc = CGAL::ARR_LEFT_BOUNDARY;
+          CGAL::Box_parameter_space_2 loc = CGAL::LEFT_BOUNDARY;
           CGAL_assertion_code(bool is_valid = )
             CGAL::assign(loc, curr_asym_info_obj);
           CGAL_assertion(is_valid);
-          if (loc == CGAL::ARR_TOP_BOUNDARY) {
+          if (loc == CGAL::TOP_BOUNDARY) {
             out << "+infty " << std::flush;
           } else {
-            CGAL_assertion(loc == CGAL::ARR_BOTTOM_BOUNDARY);
+            CGAL_assertion(loc == CGAL::BOTTOM_BOUNDARY);
             out << "-infty " << std::flush;
           }
         } else { // is_finite
@@ -2485,19 +2484,19 @@ std::ostream& operator<< (
       for (size_type i = 0; i < curve.arcs_over_interval(no_events); i++) {
         
         const Asymptote_y& curr_asym_info_obj 
-          = curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,i);
+          = curve.asymptotic_value_of_arc(CGAL::RIGHT_BOUNDARY,i);
         typename Curve::Algebraic_real_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if(! is_finite) {
           // Assignment to prevent compiler warning
-          CGAL::Arr_parameter_space loc = CGAL::ARR_LEFT_BOUNDARY;
+          CGAL::Box_parameter_space_2 loc = CGAL::LEFT_BOUNDARY;
           CGAL_assertion_code(bool is_valid = )
             CGAL::assign(loc, curr_asym_info_obj);
           CGAL_assertion(is_valid);
-          if(loc == CGAL::ARR_TOP_BOUNDARY) {
+          if(loc == CGAL::TOP_BOUNDARY) {
             out << "+infty " << std::flush;
           } else {
-            CGAL_assertion(loc == CGAL::ARR_BOTTOM_BOUNDARY);
+            CGAL_assertion(loc == CGAL::BOTTOM_BOUNDARY);
             out << "-infty " << std::flush;
           }
         } else { // is_finite

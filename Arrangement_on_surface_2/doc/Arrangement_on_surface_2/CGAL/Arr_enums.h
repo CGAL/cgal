@@ -24,9 +24,32 @@ enum Arr_halfedge_direction { ARR_LEFT_TO_RIGHT, ARR_RIGHT_TO_LEFT };
 /*!
   \ingroup PkgArrangement2Enums
 */
-enum Arr_parameter_space { ARR_LEFT_BOUNDARY,
-                           ARR_RIGHT_BOUNDARY,
-                           ARR_BOTTOM_BOUNDARY,
-                           ARR_TOP_BOUNDARY,
-                           ARR_INTERIOR};
+typedef Box_parameter_space_2 Arr_parameter_space;
+
+/*!
+  \ingroup PkgArrangement2Enums
+*/
+const Arr_parameter_space ARR_LEFT_BOUNDARY = LEFT_BOUNDARY;
+
+/*!
+  \ingroup PkgArrangement2Enums
+*/
+const Arr_parameter_space ARR_RIGHT_BOUNDARY = RIGHT_BOUNDARY;
+
+/*!
+  \ingroup PkgArrangement2Enums
+*/
+const Arr_parameter_space ARR_BOTTOM_BOUNDARY = BOTTOM_BOUNDARY;
+
+/*!
+  \ingroup PkgArrangement2Enums
+*/
+const Arr_parameter_space ARR_TOP_BOUNDARY = TOP_BOUNDARY;
+
+/*!
+  \ingroup PkgArrangement2Enums
+*/
+  const Arr_parameter_space ARR_INTERIOR = INTERIOR;
+
+
 } /* end namespace CGAL */
