@@ -12,6 +12,7 @@
 #include "ui_Image_res_dialog.h"
 
 #include <CGAL/Image_3.h>
+#include <CGAL/ImageIO.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
@@ -34,6 +35,7 @@
 #include <QString>
 #include <QFontMetrics>
 #include <QFileDialog>
+#include <QPushButton>
 
 #include <cassert>
 #include <iostream>
@@ -210,6 +212,7 @@ public:
     this->message_interface = mi;
     this->scene = scene_interface;
     this->mw = mainWindow;
+    this->is_gray = false;
     x_control = NULL;
     y_control = NULL;
     z_control = NULL;
@@ -274,7 +277,12 @@ public:
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
   bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item*, QFileInfo) { return false; }
+  bool save(const CGAL::Three::Scene_item* item, QFileInfo fi) {
+    const Scene_image_item* im_item = qobject_cast<const Scene_image_item*>(item);
+
+    point_image p_im = *im_item->image()->image();
+    return _writeImage(&p_im, fi.filePath().toUtf8()) == 0;
+  }
   QString name() const { return "segmented images"; }
 
 
@@ -439,6 +447,7 @@ private:
   vtkDemandDrivenPipeline* executive;
   vtkImageGaussianSmooth* smoother;
 #endif // CGAL_USE_VTK
+  bool is_gray;
   Messages_interface* message_interface;
   QMessageBox msgBox;
   QAction* planeSwitch;
@@ -797,6 +806,24 @@ bool Io_image_plugin::canLoad() const {
   return true;
 }
 
+template<typename Word>
+void convert(Image* image)
+{
+  float *f_data = (float*)ImageIO_alloc(image->xdim()*image->ydim()*image->zdim()*sizeof(float));
+  Word* d_data = (Word*)(image->data());
+  //convert image from double to float
+  for(std::size_t x = 0; x<image->xdim(); ++x)
+    for(std::size_t y = 0; y<image->ydim(); ++y)
+      for(std::size_t z = 0; z<image->zdim(); ++z)
+      {
+        std::size_t i =(z * image->ydim() + y) * image->xdim() + x;
+        f_data[i] =(float)d_data[i];
+      }
+  ImageIO_free(d_data);
+  image->image()->data = (void*)f_data;
+  image->image()->wdim = 4;
+  image->image()->wordKind = WK_FLOAT;
+}
 CGAL::Three::Scene_item*
 Io_image_plugin::load(QFileInfo fileinfo) {
   QApplication::restoreOverrideCursor();
@@ -816,17 +843,50 @@ Io_image_plugin::load(QFileInfo fileinfo) {
       if(qmb.exec() == QMessageBox::Yes) {
         Raw_image_dialog raw_dialog;
         raw_dialog.label_file_size->setText(QString("%1 B").arg(fileinfo.size()));
+        raw_dialog.buttonBox->button(QDialogButtonBox::Open)->setEnabled(false);
         if( raw_dialog.exec() ){
+
           QApplication::setOverrideCursor(Qt::WaitCursor);
 
           if(image->read_raw(fileinfo.filePath().toUtf8(),
-			     raw_dialog.dim_x->value(),
-			     raw_dialog.dim_y->value(),
-			     raw_dialog.dim_z->value(),
-			     raw_dialog.spacing_x->value(),
-			     raw_dialog.spacing_y->value(),
-			     raw_dialog.spacing_z->value(),
-                             raw_dialog.offset->value())){
+                             raw_dialog.dim_x->value(),
+                             raw_dialog.dim_y->value(),
+                             raw_dialog.dim_z->value(),
+                             raw_dialog.spacing_x->value(),
+                             raw_dialog.spacing_y->value(),
+                             raw_dialog.spacing_z->value(),
+                             raw_dialog.offset->value(),
+                             raw_dialog.image_word_size(),
+                             raw_dialog.image_word_kind(),
+                             raw_dialog.image_sign())
+             ){
+            switch(raw_dialog.image_word_kind())
+            {
+            case WK_FLOAT:
+              is_gray = true;
+              convert<double>(image);
+              break;
+            case WK_FIXED:
+            {
+              switch(raw_dialog.image_word_size())
+              {
+              case 2:
+                is_gray = true;
+                convert<short>(image);
+                break;
+              case 4:
+                is_gray = true;
+                convert<int>(image);
+                break;
+              default:
+                is_gray = false;
+                break;
+              }
+              break;
+            }
+            default:
+              break;
+            }
             QSettings settings;
             settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
             settings.setValue("is_raw", true);
@@ -837,6 +897,9 @@ Io_image_plugin::load(QFileInfo fileinfo) {
             settings.setValue("spacing_y", raw_dialog.spacing_y->value());
             settings.setValue("spacing_z", raw_dialog.spacing_z->value());
             settings.setValue("offset", raw_dialog.offset->value());
+            settings.setValue("wdim", QVariant::fromValue(raw_dialog.image_word_size()));
+            settings.setValue("wk", raw_dialog.image_word_kind());
+            settings.setValue("sign", raw_dialog.image_sign());
             settings.endGroup();
           }else {
             success = false;
@@ -845,7 +908,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
           success = false;
         }
       }else {
-        success = false;   
+        success = false;
       }
       if(!success){
         delete image;
@@ -855,13 +918,13 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   // Get display precision
   QDialog dialog;
   ui.setupUi(&dialog);
-  
+
   connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
   connect(ui.imageType, SIGNAL(currentIndexChanged(int)),
           this, SLOT(on_imageType_changed(int)));
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
-  
+
   // Add precision values to the dialog
   for ( int i=1 ; i<9 ; ++i )
   {
@@ -873,22 +936,29 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   ui.imageType->addItem(QString("Segmented image"));
   ui.imageType->addItem(QString("Gray-level image"));
 
-  
+  QString type;
+  int voxel_scale = 0;
   // Open window
   QApplication::restoreOverrideCursor();
-  int return_code = dialog.exec();
-  if(return_code != QDialog::Accepted)
+  if(!is_gray)
   {
-    delete image;
-    return NULL;
-  }
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  
-  // Get selected precision
-  int voxel_scale = ui.precisionList->currentIndex() + 1;
+    int return_code = dialog.exec();
+    if(return_code != QDialog::Accepted)
+    {
+      delete image;
+      return NULL;
+    }
 
-  //Get the image type
-  QString type = ui.imageType->currentText();
+    // Get selected precision
+    voxel_scale = ui.precisionList->currentIndex() + 1;
+
+    //Get the image type
+    type = ui.imageType->currentText();
+  }
+  else
+    type = "Gray-level image";
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
   Scene_image_item* image_item;
   if(type == "Gray-level image")
   {
@@ -907,9 +977,9 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   return image_item;
 }
 
-bool Io_image_plugin::canSave(const CGAL::Three::Scene_item*)
+bool Io_image_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
-  return false;
+  return qobject_cast<const Scene_image_item*>(item);
 }
 
 bool Io_image_plugin::loadDCM(QString dirname)

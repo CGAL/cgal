@@ -333,7 +333,7 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
     dk = 0.5;
   if (di == data_.xdim())
     di = data_.xdim()-0.5;
-  if (dj == data_.xdim())
+  if (dj == data_.ydim())
     dj = data_.ydim()-0.5;
   if (dk == data_.zdim())
     dk = data_.zdim()-0.5;
