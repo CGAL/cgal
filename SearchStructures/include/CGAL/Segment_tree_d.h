@@ -704,9 +704,6 @@ public:
   }
 };
 
-template <class C_Data, class C_Window, class C_Interface>
-std::allocator<Segment_tree_node<C_Data,C_Window,C_Interface> > 
-    Segment_tree_d<C_Data,C_Window,C_Interface>::alloc;
 
 } //namespace CGAL
 
