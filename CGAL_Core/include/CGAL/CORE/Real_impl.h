@@ -52,7 +52,7 @@ namespace CORE {
 
 CGAL_INLINE_FUNCTION
 const Real& Real::getZero() {
-  static Real Zero(0);
+  static const Real Zero(0);
   return Zero;
 }
 

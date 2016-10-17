@@ -392,15 +392,15 @@ public:
 
   static const int NumColors=7;
   static double red_comp(int i){
-  	static double RED_COMP[] = {0.9, 0.8, 0.7, 0.6, 0.8, 0.8, 0.7};
+  	static const double RED_COMP[] = {0.9, 0.8, 0.7, 0.6, 0.8, 0.8, 0.7};
 	return RED_COMP[i % NumColors];
   }
   static double green_comp(int i){
-  	static double GREEN_COMP[] = {0.5, 0.9, 0.3, 0.9, 0.7, 0.55, 0.95};
+  	static const double GREEN_COMP[] = {0.5, 0.9, 0.3, 0.9, 0.7, 0.55, 0.95};
 	return GREEN_COMP[i % NumColors];
   }
   static double blue_comp(int i){
-  	static double BLUE_COMP[] = {0.8, 0.3, 0.8, 0.5, 0.4, 0.85, 0.35};
+  	static const double BLUE_COMP[] = {0.8, 0.3, 0.8, 0.5, 0.4, 0.85, 0.35};
 	return BLUE_COMP[i % NumColors];
   }
 

@@ -180,8 +180,7 @@ public:
 
   /// helper function (to avoid warning under some compilers)
   static double getDoubleInfty() {
-    static double d = DBL_MAX;
-    return 2*d;
+    return 2*DBL_MAX;
   }
   //@}
 }; //filteredFp class

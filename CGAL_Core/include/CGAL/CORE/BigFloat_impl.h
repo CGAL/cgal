@@ -84,13 +84,13 @@ BigInt FiveTo(unsigned long exp) {
 // ZERO
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getZero() {
-  static BigFloat Zero(0);
+  static const BigFloat Zero(0);
   return Zero;
 }
 // ONE
 CGAL_INLINE_FUNCTION
 const BigFloat& BigFloat::getOne() {
-  static BigFloat One(1);
+  static const BigFloat One(1);
   return One;
 }
 
