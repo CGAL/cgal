@@ -30,25 +30,42 @@
 
 \cgalClassifedRefPages
 
-## Main Classes ##
-- `CGAL::Point_set_classification<Kernel, RandomAccessIterator, PointPMap>`
-- `CGAL::Classification_type`
+## Classification ##
+- `CGAL::Point_set_classification<Kernel, RandomAccessIterator, PointMap>`
 
-## Useful structures ##
+## Data Structures ##
 
-- `CGAL::Data_classification::Neighborhood<Kernel, RandomAccessIterator, PointPMap>`
-- `CGAL::Data_classification::Local_eigen_analysis<Kernel, RandomAccessIterator, PointPMap, DiagonalizeTraits>`
-- `CGAL::Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap>`
+- `CGAL::Data_classification::Helper<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Neighborhood<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Data_classification::Local_eigen_analysis<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap>`
 
+## Classification Type ##
 
-## Segmentation attributes ##
-- `CGAL::Segmentation_attribute`
-- `CGAL::Segmentation_attribute_color<Kernel, RandomAccessIterator, ColorPMap>`
-- `CGAL::Segmentation_attribute_distance_to_plane<Kernel, RandomAccessIterator, PointPMap, DiagonalizeTraits>`
-- `CGAL::Segmentation_attribute_echo_scatter<Kernel, RandomAccessIterator, PointPMap, EchoPMap>`
-- `CGAL::Segmentation_attribute_elevation<Kernel, RandomAccessIterator, PointPMap>`
-- `CGAL::Segmentation_attribute_vertical_dispersion<Kernel, RandomAccessIterator, PointPMap>>`
-- `CGAL::Segmentation_attribute_verticality<Kernel, RandomAccessIterator, PointPMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Type`
+- `CGAL::Data_classification::Type_handle`
+
+## Attribute ##
+
+- `CGAL::Data_classification::Attribute`
+- `CGAL::Data_classification::Attribute_handle`
+
+## Predefined Attributes ##
+
+- `CGAL::Data_classification::Attribute_anisotropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_distance_to_plane<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap>`
+- `CGAL::Data_classification::Attribute_eigentropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_elevation<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Data_classification::Attribute_hsv<Kernel, RandomAccessIterator, ColorMap>`
+- `CGAL::Data_classification::Attribute_linearity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_omnivariance<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_planarity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_sphericity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_sum_eigenvalues<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_surface_variation<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Data_classification::Attribute_verticality<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
 
 
 */

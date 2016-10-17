@@ -1,3 +1,22 @@
+// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Simon Giraudot
+
 #ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H
 #define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICALITY_H
 
@@ -12,7 +31,7 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief Segmentation attribute based on local verticality.
+    \brief Attribute based on local verticality.
 
     The orientation of the best fitting plane of a local neighborhood
     of the considered point can be useful to discriminate facades from
@@ -20,15 +39,15 @@ namespace Data_classification {
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointPMap Property map to access the input points.
+    \tparam PointMap Property map to access the input points.
     \tparam DiagonalizeTraits Solver used for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
+template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Attribute_verticality : public Attribute
 {
   typedef Data_classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointPMap, DiagonalizeTraits> Local_eigen_analysis;
+                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
   std::vector<double> verticality_attribute;
   
 public:
@@ -38,14 +57,12 @@ public:
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
     \param eigen Class with precompute eigenvectors and eigenvalues
-    \param weight Weight of the attribute
   */
   Attribute_verticality (RandomAccessIterator begin,
                          RandomAccessIterator end,
-                         const Local_eigen_analysis& eigen,
-                         double weight = 1.)
+                         const Local_eigen_analysis& eigen)
   {
-    this->weight = weight;
+    this->weight = 1.;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
@@ -62,23 +79,21 @@ public:
   /*!
     \brief Constructs the attribute using provided normals of points.
 
-    \tparam NormalPMap Property map to access the normal vectors of the input points.
+    \tparam NormalMap Property map to access the normal vectors of the input points.
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param weight Weight of the attribute
   */
-  template <typename NormalPMap>
+  template <typename NormalMap>
   Attribute_verticality (const RandomAccessIterator& begin,
                          const RandomAccessIterator& end,
-                         NormalPMap normal_pmap,
-                         double weight = 1.)
+                         NormalMap normal_map)
   {
-    this->weight = weight;
+    this->weight = 1.;
     typename Kernel::Vector_3 vertical (0., 0., 1.);
 
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       {
-        typename Kernel::Vector_3 normal = get(normal_pmap, begin[i]);
+        typename Kernel::Vector_3 normal = get(normal_map, begin[i]);
         normal = normal / std::sqrt (normal * normal);
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }

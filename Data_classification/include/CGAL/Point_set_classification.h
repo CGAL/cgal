@@ -63,19 +63,36 @@ namespace CGAL {
 \brief Classifies a point set based on a set of attribute and a set of classification types.
 
 This class implement the core of the algorithm. It uses a point set as
-input. Based on a set of segmentation attributes and a set of
-classification types, it segments the point set into the different
-types given. The output can be regularized with different smoothing
-methods.
+input and assign each input point to a classification type among a set
+of user defined classification types.
+
+To achieve this classification algorithm, a set of local geometric
+attributes are used, such as:
+
+- planarity
+- elevation
+- vertical dispersion
+
+The user must define a set of classification types such as:
+
+- building
+- ground
+- vegetation
+
+Each pair of attribute/type must be assigned an effect (for example,
+vegetation has a low planarity and a high vertical dispersion) and
+each attribute must be assigned a weight. These parameters can be set
+up by hand or by providing a training set for each classification
+type.
 
 \tparam Kernel The geometric kernel used
 \tparam RandomAccessIterator Iterator over the input
-\tparam PointPMap Property map to access the input points
+\tparam PointMap Property map to access the input points
 
 */
 template <typename Kernel,
           typename RandomAccessIterator,
-          typename PointPMap>
+          typename PointMap>
 class Point_set_classification
 {
 
@@ -91,7 +108,7 @@ public:
 
   typedef Data_classification::Neighborhood<Kernel,
                                             RandomAccessIterator,
-                                            PointPMap> Neighborhood;
+                                            PointMap> Neighborhood;
 
   
 #ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
@@ -106,18 +123,18 @@ private:
   {
     std::size_t m_size;
     RandomAccessIterator m_begin;
-    PointPMap m_point_pmap;
+    PointMap m_point_map;
     
   public:
 
     Point_range (RandomAccessIterator begin, RandomAccessIterator end,
-                 PointPMap point_pmap)
-      : m_size (end - begin), m_begin (begin), m_point_pmap (point_pmap)
+                 PointMap point_map)
+      : m_size (end - begin), m_begin (begin), m_point_map (point_map)
     { }
 
     std::size_t size() const { return m_size; }
     
-    const Point& operator[] (std::size_t index) const { return get (m_point_pmap, *(m_begin + index)); }
+    const Point& operator[] (std::size_t index) const { return get (m_point_map, *(m_begin + index)); }
 
     RandomAccessIterator begin() { return m_begin; }
     RandomAccessIterator end() { return m_begin + m_size; }
@@ -160,27 +177,32 @@ private:
 public:
 
 
-  /// \name Main methods
+  /// \name Constructor
   /// @{
   
   /*! 
-    \brief Constructs a classification object based on the input range.
+    \brief Constructs a classification object based on the input iterators.
+
+    This method just initializes the structure and does not compute
+    anything.
 
     \param begin Iterator to the first input object
 
     \param end Past-the-end iterator
 
-    \param point_pmap Property map to access the input points
+    \param point_map Property map to access the input points
 
   */
-
   Point_set_classification (RandomAccessIterator begin,
                             RandomAccessIterator end,
-                            PointPMap point_pmap)
-    : m_input (begin, end, point_pmap)
+                            PointMap point_map)
+    : m_input (begin, end, point_map)
   {
     m_multiplicative = false;
   }
+
+  /// @}
+
 
   /// \cond SKIP_IN_MANUAL
 
@@ -224,6 +246,10 @@ public:
     m_multiplicative = mult;
   }
   /// \endcond
+
+
+  /// \name Classification
+  /// @{
 
   
   /*! 
@@ -271,7 +297,7 @@ public:
 
 
   /*! 
-    \brief Runs the classification algorithm without local smoothing.
+    \brief Runs the classification algorithm with a local smoothing.
 
     The computed classification energy is smoothed on a user defined
     local neighborhood of points. This method is a compromise between
@@ -332,8 +358,7 @@ public:
 
 
   /*! 
-
-    \brief Runs the classification algorithm without a global
+    \brief Runs the classification algorithm with a global
     regularizarion based on a graphcut.
 
     The computed classification energy is globally regularized through
@@ -395,7 +420,8 @@ public:
     graphcut(edges, edge_weights, probability_matrix, m_assigned_type);
   }
   
-
+  /// @}
+  
   /// \cond SKIP_IN_MANUAL
   void reset_groups()
   {
@@ -598,9 +624,6 @@ public:
   /// \endcond
 
 
-  /// @}
-
-  
   /// \cond SKIP_IN_MANUAL
   void prepare_classification ()
   {
@@ -620,12 +643,15 @@ public:
   /// \endcond
 
 
-  /// \name Types and attributes
+  /// \name Classification Types
   /// @{
   
   /*!
-    \brief Adds a classification type
+    \brief Instanciates and adds a classification type.
 
+    \param name ID of the classification type.
+
+    \return A handle to the newly added classification type.
    */
   Data_classification::Type_handle add_classification_type (const char* name)
   {
@@ -636,19 +662,32 @@ public:
 
   
   /*!
-    \brief Adds a classification type
+    \brief Adds a classification type.
 
+    \param type The handle to the classification type that must be added.
    */
   void add_classification_type (Data_classification::Type_handle type)
   {
     m_types.push_back (type);
   }
 
-  void remove_classification_type (Data_classification::Type_handle type)
+  /*!
+    \brief Removes a classification type.
+
+    \param type The handle to the classification type that must be removed.
+
+    \return `true` if the classification type was correctly removed,
+    `false` if its handle was not found inside the object.
+   */ 
+ bool remove_classification_type (Data_classification::Type_handle type)
   {
     for (std::size_t i = 0; i < m_types.size(); ++ i)
       if (m_types[i] == type)
-        m_types.erase (m_types.begin() + i);
+        {
+          m_types.erase (m_types.begin() + i);
+          return true;
+        }
+    return false;
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -664,16 +703,22 @@ public:
   /// \endcond
 
   /*!
-    \brief Removes all classification types
+    \brief Removes all classification types.
    */
   void clear_classification_types ()
   {
     m_types.clear();
   }
 
+  /// @}
+
+  /// \name Attributes
+  /// @{
+
   /*!
-    \brief Adds an attribute
-    \param attribute Pointer to the attribute object
+    \brief Adds an attribute.
+
+    \param attribute Handle of the attribute to add.
    */
   void add_attribute (Data_classification::Attribute_handle attribute)
   {
@@ -681,7 +726,7 @@ public:
   }
 
   /*!
-    \brief Removes all attributes
+    \brief Removes all attributes.
    */
   void clear_attributes ()
   {
@@ -736,8 +781,14 @@ public:
 
   /*!
     \brief Gets the classification type of an indexed point.
+
+    \note If classification was not performed (using `run()`,
+    `run_with_local_smoothing()` or `run_with_graphcut()`), this
+    function always returns the default empty `Type_handle`.
+
     \param index Index of the input point
-    \return Pointer to the classification type 
+
+    \return Pointer to the classification type
   */
   Data_classification::Type_handle classification_type_of (std::size_t index) const
   {
@@ -766,6 +817,11 @@ public:
 
   /*!
     \brief Gets the confidence of the classification type of an indexed point.
+
+    \note If classification was not performed (using `run()`,
+    `run_with_local_smoothing()` or `run_with_graphcut()`), this
+    function always returns 0.
+
     \param index Index of the input point
     \return Confidence ranging from 0 (not confident at all) to 1 (very confident).
   */
@@ -787,11 +843,17 @@ public:
 
     The object must have been filled with the `Data_classification::Type`
     and `Data_classification::Attribute` objects before running this
-    function. Each classification type must be given a small set of
-    user-defined inliers to provide the training algorithm with a
-    ground truth.
+    function.
+
+    Each classification type must be given a small set of user-defined
+    inliers to provide the training algorithm with a ground truth.
+
+    \param nb_tests Number of tests to perform. Higher values may
+    provide the user with better results at the cost of higher
+    computation time. Using a value of at least 5 times the number of
+    attributes is advised.
   */
-  void training (std::size_t nb_tests = 3000)
+  void training (std::size_t nb_tests = 300)
   {
     if (m_training_type.empty())
       return;
@@ -984,11 +1046,22 @@ public:
               << " attribute(s) out of " << m_attributes.size() << " are useless" << std::endl;
   }
 
+  /*!
+    \brief Resets training sets.
+  */
   void reset_training_sets()
   {
     std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_training_type);
   }
 
+  /*!
+    \brief Adds the input point specified by index `idx` as an inlier
+    of `class_type` for the training algorithm.
+
+    \param class_type Handle to the classification type.
+
+    \param idx Index of the input point.
+  */
   bool add_training_index (Data_classification::Type_handle class_type,
                            std::size_t idx)
   {
@@ -1009,6 +1082,15 @@ public:
     return true;
   }
 
+  /*!
+    \brief Adds input points specified by a range of indices as
+    inliers of `class_type` for the training algorithm.
+
+    \param class_type Handle to the classification type.
+
+    \tparam IndexIterator Iterator with `std::size_t` as a
+    `value_type`. \cgalModels InputIterator
+  */
   template <class IndexIterator>
   bool add_training_set (Data_classification::Type_handle class_type,
                          IndexIterator first,
@@ -1033,20 +1115,16 @@ public:
     return true;
   }
   
+  /// @}
+
+  
+  /// \cond SKIP_IN_MANUAL
   Data_classification::Type_handle training_type_of (std::size_t index) const
   {
     if (m_training_type.size() <= index
         || m_training_type[index] == (std::size_t)(-1))
       return Data_classification::Type_handle();
     return m_types[m_training_type[index]];
-  }
-
-  /// @}
-
-  
-  /// \cond SKIP_IN_MANUAL
-  void train_parameters(std::size_t nb_tests)
-  {
   }
 
   void estimate_attributes_effects

@@ -17,10 +17,10 @@ namespace Data_classification {
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointPMap Property map to access the input points.
+    \tparam PointMap Property map to access the input points.
   */
 
-template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
+template <typename Kernel, typename RandomAccessIterator, typename PointMap>
 class Planimetric_grid
 {
   typedef typename Kernel::FT FT;
@@ -37,20 +37,22 @@ class Planimetric_grid
   
 public:
 
+  /// \cond SKIP_IN_MANUAL
   Planimetric_grid () { }
+  /// \endcond
 
   /*
     \brief Constructs a planimetric grid based on the input range.
 
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param point_pmap Property map to access the input points
+    \param point_map Property map to access the input points
     \param bbox The bounding box of the input range
     \param grid_resolution Resolution of the planimetric grid
   */
   Planimetric_grid (const RandomAccessIterator& begin,
                     const RandomAccessIterator& end,
-                    PointPMap point_pmap,
+                    PointMap point_map,
                     const Iso_cuboid_3& bbox,
                     const FT grid_resolution)
   {
@@ -62,7 +64,7 @@ public:
     
     for (std::size_t i = 0; i < size; ++ i)
       {
-        const Point_3& p = get(point_pmap, begin[i]);
+        const Point_3& p = get(point_map, begin[i]);
         m_x.push_back ((std::size_t)((p.x() - bbox.xmin()) / grid_resolution));
         m_y.push_back ((std::size_t)((p.y() - bbox.ymin()) / grid_resolution));
         m_grid(m_x.back(), m_y.back()).push_back (i);

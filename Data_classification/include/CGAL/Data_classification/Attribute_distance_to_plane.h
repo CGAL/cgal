@@ -1,3 +1,22 @@
+// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Simon Giraudot, Florent Lafarge
+
 #ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
 #define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_DISTANCE_TO_PLANE_H
 
@@ -12,23 +31,23 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief Segmentation attribute based on local distance to a fitted plane.
+    \brief Attribute based on local distance to a fitted plane.
 
     Characterizing a level of non-planarity can help identify noisy
     parts of the input such as vegetation. This attribute computes the
     distance of a point to a locally fitted plane.
     
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_pmap Property map to access the input points
+    \tparam Kernel The geometric kernel used.
+    \tparam RandomAccessIterator Iterator over the input.
+    \tparam PointMap Property map to access the input points.
     \tparam DiagonalizeTraits Solver used for matrix diagonalization.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointPMap,
+template <typename Kernel, typename RandomAccessIterator, typename PointMap,
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<double,3> >
 class Attribute_distance_to_plane : public Attribute
 {
   typedef Data_classification::Local_eigen_analysis<Kernel, RandomAccessIterator,
-                                                    PointPMap, DiagonalizeTraits> Local_eigen_analysis;
+                                                    PointMap, DiagonalizeTraits> Local_eigen_analysis;
 
   std::vector<double> distance_to_plane_attribute;
   
@@ -38,20 +57,18 @@ public:
 
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param point_pmap Property map to access the input points
+    \param point_map Property map to access the input points
     \param eigen Class with precompute eigenvectors and eigenvalues
-    \param weight Weight of the attribute
   */
   Attribute_distance_to_plane (RandomAccessIterator begin,
                                RandomAccessIterator end,
-                               PointPMap point_pmap,
-                               const Local_eigen_analysis& eigen,
-                               double weight = 1.)
+                               PointMap point_map,
+                               const Local_eigen_analysis& eigen)
   {
-    this->weight = weight;
+    this->weight = 1.;
     for(std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       distance_to_plane_attribute.push_back
-        (std::sqrt (CGAL::squared_distance (get(point_pmap, begin[i]), eigen.plane(i))));
+        (std::sqrt (CGAL::squared_distance (get(point_map, begin[i]), eigen.plane(i))));
     
     this->compute_mean_max (distance_to_plane_attribute, this->mean, this->max);
     //    max *= 2;

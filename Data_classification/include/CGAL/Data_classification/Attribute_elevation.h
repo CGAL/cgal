@@ -1,3 +1,22 @@
+// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Simon Giraudot, Florent Lafarge
+
 #ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ELEVATION_H
 #define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_ELEVATION_H
 
@@ -14,24 +33,26 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief Segmentation attribute based on local elevation.
+    \brief Attribute based on local elevation.
 
     The local position of the ground can be computed for urban
     scenes. This attribute computes the distance to the local
     estimation of the ground.
 
+    It is useful to discriminate the ground from horizontal roofs.
+
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointPMap Property map to access the input points.
+    \tparam PointMap Property map to access the input points.
 
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
+template <typename Kernel, typename RandomAccessIterator, typename PointMap>
 class Attribute_elevation : public Attribute
 {
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef Image<float> Image_float;
-  typedef Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
+  typedef Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
    
   std::vector<double> elevation_attribute;
   
@@ -41,26 +62,24 @@ public:
 
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param point_pmap Property map to access the input points
+    \param point_map Property map to access the input points
     \param bbox Bounding box of the input range
     \param grid Precomputed `Planimetric_grid`
     \param grid_resolution Resolution of the planimetric grid
     \param radius_neighbors Radius of local neighborhoods
     \param radius_dtm Radius for digital terrain modeling (must be bigger than the size of a building)
-    \param weight Weight of the attribute
 
   */
   Attribute_elevation (RandomAccessIterator begin,
                        RandomAccessIterator end,
-                       PointPMap point_pmap,
+                       PointMap point_map,
                        const Iso_cuboid_3& bbox,
                        const Grid& grid,
                        const double grid_resolution,
                        double radius_neighbors = -1.,
-                       double radius_dtm = -1.,
-                       double weight = 1.)
+                       double radius_dtm = -1.)
   {
-    this->weight = weight;
+    this->weight = 1.;
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
     if (radius_dtm < 0.)
@@ -76,7 +95,7 @@ public:
         double mean_height=0;
         std::vector < double > list_Z;
 		
-        for(std::size_t k=0;k<grid.indices(i,j).size();k++) list_Z.push_back(get(point_pmap, begin[grid.indices(i,j)[k]]).z());
+        for(std::size_t k=0;k<grid.indices(i,j).size();k++) list_Z.push_back(get(point_map, begin[grid.indices(i,j)[k]]).z());
 			
         if(list_Z.size()>0){
 			
@@ -180,7 +199,7 @@ public:
             double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
             if(distance<=radius_dtm){
               for(int nb=0;nb<(int)grid.indices(k,l).size();nb++)
-                list_pointsZ.push_back(get(point_pmap, begin[grid.indices(k,l)[nb]]).z());
+                list_pointsZ.push_back(get(point_map, begin[grid.indices(k,l)[nb]]).z());
             }
           }
         }
@@ -271,7 +290,7 @@ public:
       int I = grid.x(i);
       int J = grid.y(i);
       bool test=false;
-      if(get(point_pmap, begin[i]).z()-im_Zfront(I,J)<=0) {test=true; test_ground.push_back(test);}
+      if(get(point_map, begin[i]).z()-im_Zfront(I,J)<=0) {test=true; test_ground.push_back(test);}
       else{test_ground.push_back(test);}
     }
 
@@ -301,7 +320,7 @@ public:
 					
               for(int nb=0;nb<(int)grid.indices(k,l).size();nb++){
                 if(test_ground[grid.indices(k,l)[nb]])
-                  list_pointsZ.push_back(get(point_pmap, begin[grid.indices(k,l)[nb]]).z());
+                  list_pointsZ.push_back(get(point_map, begin[grid.indices(k,l)[nb]]).z());
               }
             }
           }
@@ -383,7 +402,7 @@ public:
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++){
       int I = grid.x(i);
       int J = grid.y(i);
-      elevation_attribute.push_back ((double)(get(point_pmap, begin[i]).z()-dtm(I,J)));
+      elevation_attribute.push_back ((double)(get(point_map, begin[i]).z()-dtm(I,J)));
     }
 
     this->compute_mean_max (elevation_attribute, this->mean, this->max);

@@ -1,3 +1,22 @@
+// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Simon Giraudot
+
 #ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_H
 #define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_H
 
@@ -10,18 +29,20 @@ namespace Data_classification {
 /*!
   \ingroup PkgDataClassification
 
-  \brief Abstract class describing a segmentation attribute.
+  \brief Abstract class describing a classification attribute.
 
-  A segmentation attribute associates a scalar value to each point
-  index of the classification input.
+  A classification attribute associates a scalar value to each point
+  of the classification input.
 */
 
 
 class Attribute
 {
 public:
+  double weight; ///< Weight of the attribute between 0 and +&infin;.
+
+  
   /// \cond SKIP_IN_MANUAL
-  double weight;
   double mean;
   double max;
 
@@ -29,17 +50,19 @@ public:
   /// \endcond
 
   /*!
-    \brief Get the ID of the attribute.
-    \return the ID of the attribute
+    \brief Returns the ID of the attribute.
+
+    This method returns _abstract\_attribute_ and should be overloaded
+    by a child class with a specific ID.
   */
   virtual std::string id() { return "abstract_attribute"; }
 
   /*!
-    \brief Value taken by the attribute on the given point.
+    \brief Returns the value taken by the attribute on the given point.
 
     This method must be implemented by inherited classes.
 
-    \param pt_index Index of the point in the classification input
+    \param pt_index Index of the input point.
 
     \return the value of the attribute on the point of index `pt_index`
   */
@@ -77,7 +100,18 @@ public:
 };
 
 
+#ifdef DOXYGEN_RUNNING
+/*!
+  \ingroup PkgDataClassification
+
+  \brief Handle to a classification `Attribute`.
+
+  \cgalModels Handle
+*/
+class Attribute_handle { };
+#else
 typedef boost::shared_ptr<Attribute> Attribute_handle;
+#endif
   
 } // namespace Data_classification
 

@@ -22,13 +22,13 @@ namespace Data_classification {
     \ingroup PkgDataClassification
 
     \brief Class that precomputes spatial searching structures and
-    gives access to local neighborhoods of points.
+    gives easy access to local neighborhoods of points.
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointPMap Property map to access the input points.
+    \tparam PointMap Property map to access the input points.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
+template <typename Kernel, typename RandomAccessIterator, typename PointMap>
 class Neighborhood
 {
   typedef typename Kernel::FT FT;
@@ -36,7 +36,7 @@ class Neighborhood
   
   class My_point_property_map{
     RandomAccessIterator begin;
-    PointPMap point_pmap;
+    PointMap point_map;
     
   public:
     typedef Point value_type;
@@ -44,9 +44,9 @@ class Neighborhood
     typedef std::size_t key_type;
     typedef boost::lvalue_property_map_tag category;
     My_point_property_map () { }
-    My_point_property_map (RandomAccessIterator begin, PointPMap point_pmap)
-      : begin (begin), point_pmap (point_pmap) { }
-    reference operator[] (key_type k) const { return get(point_pmap, begin[k]); }
+    My_point_property_map (RandomAccessIterator begin, PointMap point_map)
+      : begin (begin), point_map (point_map) { }
+    reference operator[] (key_type k) const { return get(point_map, begin[k]); }
     friend inline reference get (const My_point_property_map& ppmap, key_type i) 
     { return ppmap[i]; }
   };
@@ -66,24 +66,26 @@ class Neighborhood
   std::vector<std::vector<std::size_t> > m_precomputed_neighbors;
   
 public:
-  
+
+  /// \cond SKIP_IN_MANUAL
   Neighborhood () : m_tree (NULL) { }
+  /// \endcond
 
   /*!
     \brief Constructs a neighborhood object based on the input range.
 
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param point_pmap Property map to access the input points
+    \param point_map Property map to access the input points
   */
   Neighborhood (const RandomAccessIterator& begin,
                 const RandomAccessIterator& end,
-                PointPMap point_pmap)
+                PointMap point_map)
     : m_tree (NULL)
   {
     std::size_t size = end - begin;
     
-    My_point_property_map pmap (begin, point_pmap);
+    My_point_property_map pmap (begin, point_map);
     m_tree = new Tree (boost::counting_iterator<std::size_t> (0),
                        boost::counting_iterator<std::size_t> (size),
                        Splitter(),
@@ -95,13 +97,19 @@ public:
   /*!
     \brief Constructs a simplified neighborhood object based on the input range.
 
+    This method first computes a simplified version of the input point
+    set by voxelization: a 3D grid is defined and for each subset
+    present in one cell, only the point closest to the centroid of
+    this subset is used.
+
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param point_pmap Property map to access the input points
+    \param point_map Property map to access the input points
+    \param voxel_size
   */
   Neighborhood (const RandomAccessIterator& begin,
                 const RandomAccessIterator& end,
-                PointPMap point_pmap,
+                PointMap point_map,
                 double voxel_size)
     : m_tree (NULL)
   {
@@ -110,7 +118,7 @@ public:
     std::vector<std::size_t> indices (size);
     for (std::size_t i = 0; i < indices.size(); ++ i)
       indices[i] = i;
-    My_point_property_map pmap (begin, point_pmap);
+    My_point_property_map pmap (begin, point_map);
 
     voxelize_point_set(indices, pmap, voxel_size);
     
@@ -148,7 +156,7 @@ public:
     \brief Gets the K nearest neighbors.
 
     \tparam OutputIterator Where the indices of found neighbor points are stored.
-    \param index Index of the query point.
+    \param query The query point.
     \param k Number of nearest neighbors.
   */
   template <typename OutputIterator>
@@ -161,7 +169,7 @@ public:
   }
 
 private:
-
+  /// \cond SKIP_IN_MANUAL
   template <typename PointMap>
   void voxelize_point_set (std::vector<std::size_t>& indices, PointMap point_map,
                            double voxel_size)
@@ -204,6 +212,7 @@ private:
         indices.push_back (chosen);
       }
   }
+  /// \endcond
 };
   
 

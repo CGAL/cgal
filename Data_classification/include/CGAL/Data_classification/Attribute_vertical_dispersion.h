@@ -1,3 +1,22 @@
+// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Simon Giraudot
+
 #ifndef CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H
 #define CGAL_DATA_CLASSIFICATION_ATTRIBUTE_VERTICAL_DISPERSION_H
 
@@ -13,24 +32,24 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief Segmentation attribute based on local vertical dispersion of points.
+    \brief Attribute based on local vertical dispersion of points.
 
-    Urban scenes can usually be described as a set of 2D regions with
+    Urban scenes can often be decomposed as a set of 2D regions with
     different heights. While these heights are usually piecewise
     constant or piecewise linear, on some specific parts of the scene
     such as vegetation, they can become extremely unstable. This
-    attribute quantifies the vertical dispersion of the points on a local
-    Z-cylinder around the points.
+    attribute quantifies the vertical dispersion of the points on a
+    local Z-cylinder around the points.
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointPMap Property map to access the input points.
+    \tparam PointMap Property map to access the input points.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointPMap>
+template <typename Kernel, typename RandomAccessIterator, typename PointMap>
 class Attribute_vertical_dispersion : public Attribute
 {
   typedef Data_classification::Image<float> Image_float;
-  typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
+  typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
   std::vector<double> vertical_dispersion;
   
 public:
@@ -39,21 +58,19 @@ public:
 
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param point_pmap Property map to access the input points
+    \param point_map Property map to access the input points
     \param grid Precomputed `Planimetric_grid`
     \param grid_resolution Resolution of the planimetric grid
     \param radius_neighbors Radius of local neighborhoods
-    \param weight Weight of the attribute
   */
   Attribute_vertical_dispersion (RandomAccessIterator begin,
                                  RandomAccessIterator end,
-                                 PointPMap point_pmap,
+                                 PointMap point_map,
                                  const Grid& grid,
                                  const double grid_resolution,
-                                 double radius_neighbors = -1.,
-                                 double weight = 1.)
+                                 double radius_neighbors = -1.)
   {
-    this->weight = weight;
+    this->weight = 1.;
     if (radius_neighbors < 0.)
       radius_neighbors = 5. * grid_resolution;
     
@@ -85,7 +102,7 @@ public:
               for(int t=0; t<(int)grid.indices(k,l).size();t++)
                 {
                   int ip = grid.indices(k,l)[t];
-                  hori.push_back (get(point_pmap, begin[ip]).z());
+                  hori.push_back (get(point_map, begin[ip]).z());
                 }
         if (hori.empty())
           continue;

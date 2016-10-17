@@ -8,19 +8,18 @@ namespace Data_classification {
 /*!
 \ingroup PkgDataClassification
 
-\brief Definition of a classification type based on a set of
-relationship with attributes.
+\brief Classification type.
 
-A classification type is used to segment the input data set. Usual
-classification types are ground, vegetation and buildings (but others
-can be defined).
+A type is what is sought after when performing classification on an
+input point set (for example: vegetation, ground, etc.). It is defined
+as a set of relationship with classification attributes.
 
 */
 class Type
 {
 public:
   
-  enum Attribute_effect /// Defines the effect of the values of an attribute on the classification type.
+  enum Attribute_effect /// Defines how an attribute affects this type.
     {
       FAVORED_ATT = 0, ///< High values of the attribute favor this type
       NEUTRAL_ATT = 1, ///< The attribute has no effect on this type
@@ -28,8 +27,10 @@ public:
     };
 
 private:
+  /// \cond SKIP_IN_MANUAL
   std::string m_id;
   std::map<Attribute_handle, Attribute_effect> m_attribute_effects;
+  /// \endcond
 
 public:
 
@@ -42,9 +43,9 @@ public:
   /*! 
     \brief Sets how an attribute affects the classification type.
 
-    \param att Attribute whose effect on the classification type will be set
+    \param att Attribute whose effect on the classification type is set
 
-    \param effect The effect the attribute will have on the classification type
+    \param effect The effect the attribute has on the classification type
 
   */ 
   void set_attribute_effect (Attribute_handle att, Attribute_effect effect)
@@ -53,11 +54,7 @@ public:
   }
 
   /*!
-    \brief Gets the effects of an attribute on the classification type.
-
-    \param att Attribute
-
-    \return The effect of the attribute on the classification type.
+    \brief Returns the effect of attribute `att` on the classification type.
    */
   Attribute_effect attribute_effect (Attribute_handle att) 
   {
@@ -67,9 +64,7 @@ public:
   }
 
   /*!
-    \brief Gets the ID of the classification type.
-
-    \return The ID of the classification type.
+    \brief Returns the ID of the classification type.
   */
   const std::string& id() const { return m_id; }
   
@@ -93,7 +88,18 @@ public:
 
 };
 
+#ifdef DOXYGEN_RUNNING
+/*!
+  \ingroup PkgDataClassification
+
+  \brief Handle to a classification `Type`.
+
+  \cgalModels Handle
+*/
+class Type_handle { };
+#else
 typedef boost::shared_ptr<Type> Type_handle;
+#endif
 
 } // namespace Data_classification
 

@@ -11,21 +11,21 @@ namespace Data_classification {
   /*!
     \ingroup PkgDataClassification
 
-    \brief Segmentation attribute based on echo scatter.
+    \brief Attribute based on echo scatter.
 
     The number of returns (echo number) is a useful information
     provided by most LIDAR sensor. It can help identifying trees.
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointPMap Property map to access the input points.
-    \tparam EchoPMap Property map to access the echo values of input points.
+    \tparam PointMap Property map to access the input points.
+    \tparam EchoMap Property map to access the echo values of input points.
   */
-template <typename Kernel, typename RandomAccessIterator, typename PointPMap, typename EchoPMap>
+template <typename Kernel, typename RandomAccessIterator, typename PointMap, typename EchoMap>
 class Attribute_echo_scatter : public Attribute
 {
   typedef Data_classification::Image<float> Image_float;
-  typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointPMap> Grid;
+  typedef Data_classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap> Grid;
 
   std::vector<double> echo_scatter;
   
@@ -35,21 +35,19 @@ public:
 
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
-    \param echo_pmap Property map to access the echo values of the input points
+    \param echo_map Property map to access the echo values of the input points
     \param grid Precomputed `Planimetric_grid`
     \param grid_resolution Resolution of the planimetric grid
     \param radius_neighbors Radius of local neighborhoods
-    \param weight Weight of the attribute
   */
   Attribute_echo_scatter (RandomAccessIterator begin,
                           RandomAccessIterator end,
-                          EchoPMap echo_pmap,
+                          EchoMap echo_map,
                           Grid& grid,
                           const double grid_resolution,
-                          double radius_neighbors = 1.,
-                          double weight = 1.)
+                          double radius_neighbors = 1.)
   {
-    this->weight = weight;
+    this->weight = 1.;
     Image_float Scatter(grid.width(), grid.height());
     for (std::size_t j = 0; j < grid.height(); j++)
       for (std::size_t i = 0; i < grid.width(); i++)
@@ -80,7 +78,7 @@ public:
                   for(int t=0; t<(int)grid.indices(k,l).size();t++){
 												
                     int ip = grid.indices(k,l)[t]; 
-                    if(get(echo_pmap, begin[ip]) > 1)
+                    if(get(echo_map, begin[ip]) > 1)
                       NB_echo_sup++;
                   }
 									

@@ -1,3 +1,22 @@
+// Copyright (c) 2016  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Simon Giraudot
+
 #ifndef CGAL_DATA_CLASSIFICATION_HELPER_H
 #define CGAL_DATA_CLASSIFICATION_HELPER_H
 
@@ -29,6 +48,31 @@ namespace CGAL {
 namespace Data_classification {
   
 
+/*!
+\ingroup PkgDataClassification
+
+\brief Class designed to help the user using the classification
+algorithm.
+
+The classification algorithm is designed to be as flexible as
+possible, letting the user free to use its own data structures,
+attributes and classification types.
+
+Nevertheless, \cgal provides a predefined framework so that should
+work correctly on common urban point sets. Using this class,
+classification can be performed without having to instanciate all
+attributes and data structures separately.
+
+This class also provides functions to save and load a specific
+configuration (attribute effects and weights), as well as a function
+to write a classified point set in a PLY format with colors and
+labels.
+
+\tparam Kernel The geometric kernel used
+\tparam RandomAccessIterator Iterator over the input
+\tparam PointMap Property map to access the input points
+\tparam DiagonalizeTraits Solver used for matrix diagonalization.
+*/
 template <typename Kernel,
           typename RandomAccessIterator,
           typename PointMap,
@@ -38,7 +82,7 @@ class Helper
   
 public:
   typedef typename Kernel::Iso_cuboid_3                       Iso_cuboid_3;
-  typedef typename Kernel::Point_3                            Point;
+
   typedef CGAL::Point_set_classification
   <Kernel, RandomAccessIterator, PointMap>                    Point_set_classification;
   typedef CGAL::Data_classification::Planimetric_grid
@@ -49,6 +93,13 @@ public:
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Local_eigen_analysis;
   
   typedef CGAL::Data_classification::Attribute_handle         Attribute_handle;
+  typedef CGAL::Data_classification::Type                     Type;
+  typedef CGAL::Data_classification::Type_handle              Type_handle;
+  
+
+  /// \cond SKIP_IN_MANUAL
+  typedef typename Kernel::Point_3                            Point;
+  
   typedef Attribute_anisotropy
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Anisotropy;
   typedef Attribute_distance_to_plane
@@ -73,9 +124,7 @@ public:
   <Kernel, RandomAccessIterator, PointMap>                    Dispersion;
   typedef Attribute_verticality
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Verticality;
-
-  typedef CGAL::Data_classification::Type                     Type;
-  typedef CGAL::Data_classification::Type_handle              Type_handle;
+  /// \endcond
   
 private:
 
@@ -138,11 +187,31 @@ private:
   std::vector<Scale*> m_scales;
 
 public:
-
+  /// \cond SKIP_IN_MANUAL
   Helper()
   {
   }
+  /// \endcond
+  
 
+  /*!
+    \brief Constructs an helper object.
+
+    This triggers the instanciation of all necessary data structures
+    (neighborhood, eigen analysis, etc.) on the specified number of
+    scales.
+
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_map Property map to access the input points
+
+    \param nb_scales Number of scales. Default only uses the first
+    scale (unaltered point set). Increasing this value generates
+    recursively simplified point set and computes the associated
+    attributes. Using `nb_scales=5` usually provides satisfying
+    results. Using more than 10 scales is not recommended as it does
+    not help generating better results.
+  */
   Helper (RandomAccessIterator begin, RandomAccessIterator end, PointMap point_map,
           std::size_t nb_scales = 1)
   {
@@ -164,29 +233,60 @@ public:
   }
 
 
+  /*!
+    \brief Constructs an helper object by loading a configuration file.
+
+    All data structures, attributes and types specified in the input
+    file `filename` are instanciated if possible (in particular,
+    property maps needed should be provided).
+
+    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
+    \tparam ColorMap Property map to access the colors of the input points (if any).
+    \tparam EchoMap Property map to access the echo values of the input points (if any).
+    \param filename Name of the output file
+    \param psc Classification object where to store attributes and types
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_map Property map to access the input points
+  */
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
            typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >
-  Helper (Point_set_classification& psc, const char* filename, 
+  Helper (const char* filename, Point_set_classification& psc, 
           RandomAccessIterator begin, RandomAccessIterator end, 
           PointMap point_map,
           VectorMap normal_map = VectorMap(),
           ColorMap color_map = ColorMap(),
           EchoMap echo_map = EchoMap())
   {
-    load (psc, filename, begin, end, point_map, normal_map, color_map, echo_map);
+    load (filename, psc, begin, end, point_map, normal_map, color_map, echo_map);
   }
 
+  /// \cond SKIP_IN_MANUAL
   virtual ~Helper()
   {
     clear();
   }
+  /// \endcond
 
+  /*!
+    \brief Returns the bounding box of the input point set.
+  */
   const Iso_cuboid_3& bbox() const { return m_bbox; }
-  const Neighborhood& neighborhood() const { return (*m_scales[0]->neighborhood); }
-  const Planimetric_grid& grid() const { return *(m_scales[0]->grid); }
-  const Local_eigen_analysis& eigen() const { return *(m_scales[0]->eigen); }
+  /*!
+    \brief Returns the neighborhood structure at scale `scale`.
+  */
+  const Neighborhood& neighborhood(std::size_t scale = 0) const { return (*m_scales[scale]->neighborhood); }
+  /*!
+    \brief Returns the planimetric grid structure at scale `scale`.
+  */
+  const Planimetric_grid& grid(std::size_t scale = 0) const { return *(m_scales[scale]->grid); }
+  /*!
+    \brief Returns the local eigen analysis structure at scale `scale`.
+  */
+  const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
 
+  /// \cond SKIP_IN_MANUAL  
   void info() const
   {
     std::cerr << m_scales.size() << " scale(s) used:" << std::endl;
@@ -206,7 +306,11 @@ public:
                       << " (weight = " << m_scales[i]->attributes[j]->weight << ")" << std::endl;
       }
   }
+  /// \endcond
 
+  /*!
+    \brief Clears all computed data structures.
+  */
   void clear()
   {
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
@@ -214,65 +318,27 @@ public:
     m_scales.clear();
   }
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_0 (Point_set_classification& psc,
-                                                RandomAccessIterator begin,
-                                                RandomAccessIterator end,
-                                                const PointMap& = PointMap())
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, *(m_scales[i]->eigen))));
-        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
-      }
-  }
+  /*!
+    \brief Generate all possible attributes from an input range.
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_1 (Point_set_classification& psc,
-                                                RandomAccessIterator begin,
-                                                RandomAccessIterator end,
-                                                PointMap point_map)
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, point_map, *(m_scales[i]->eigen))));
-        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
-      }
-  }
+    This method calls `generate_point_based_attributes()`,
+    `generate_normal_based_attributes()`,
+    `generate_color_based_attributes()` and
+    `generate_echo_based_attributes()`.
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_2 (Point_set_classification& psc,
-                                                RandomAccessIterator begin,
-                                                RandomAccessIterator end,
-                                                PointMap point_map)
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, point_map,
-                                                                  *(m_scales[i]->grid),
-                                                                  m_scales[i]->grid_resolution(),
-                                                                  m_scales[i]->radius_neighbors())));
-        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
-      }
-  }
+    If a property map is left to its default
+    `CGAL::Empty_property_map` type, the corresponding attributes are
+    not computed (this method can thus be called even if a point set
+    does not have associated normal, color or echo properties).
 
-  template <typename Attribute_type>
-  void generate_multiscale_attribute_variant_3 (Point_set_classification& psc,
-                                                RandomAccessIterator begin,
-                                                RandomAccessIterator end,
-                                                PointMap point_map)
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      {
-        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, point_map,
-                                                                m_bbox, *(m_scales[i]->grid),
-                                                                m_scales[i]->grid_resolution(),
-                                                                m_scales[i]->radius_neighbors(),
-                                                                m_scales[i]->radius_dtm())));
-        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
-      }
-  }
-
+    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
+    \tparam ColorMap Property map to access the colors of the input points (if any).
+    \tparam EchoMap Property map to access the echo values of the input points (if any).
+    \param psc The classification object where to store the attributes
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_map Property map to access the input points
+  */
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
            typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >
@@ -290,6 +356,28 @@ public:
   }
 
   
+  /*!
+    \brief Generate all points attributes from an input range.
+
+    Generate, for all precomputed scales, the following attributes:
+
+    - `CGAL::Data_classification::Attribute_anisotropy`
+    - `CGAL::Data_classification::Attribute_distance_to_plane`
+    - `CGAL::Data_classification::Attribute_eigentropy`
+    - `CGAL::Data_classification::Attribute_elevation`
+    - `CGAL::Data_classification::Attribute_linearity`
+    - `CGAL::Data_classification::Attribute_omnivariance`
+    - `CGAL::Data_classification::Attribute_planarity`
+    - `CGAL::Data_classification::Attribute_sphericity`
+    - `CGAL::Data_classification::Attribute_sum_eigenvalues`
+    - `CGAL::Data_classification::Attribute_surface_variation`
+    - `CGAL::Data_classification::Attribute_vertical_dispersion`
+
+    \param psc The classification object where to store the attributes
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_map Property map to access the input points
+  */
   void generate_point_based_attributes (Point_set_classification& psc,
                                         RandomAccessIterator begin, RandomAccessIterator end,
                                         PointMap point_map)
@@ -315,10 +403,35 @@ public:
     std::cerr << "Eigen based attributes computed in " << teigen.time() << " second(s)" << std::endl;
   }
 
+  /*!
+    \brief Generate all normal attributes from an input range.
+
+    Generate, for all precomputed scales, the following attribute:
+
+    - `CGAL::Data_classification::Attribute_verticality`
+
+    If the normal map is left to its default type
+    `CGAL::Empty_property_map`, then the verticality attributes are
+    still computed by using an approximation of the normal vector
+    provided by the corresponding `Local_eigen_analysis` object.
+
+    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
+    \param psc The classification object where to store the attributes
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+  */
+  #ifdef DOXYGEN_RUNNING
+  template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3> >
+  #else
   template <typename VectorMap>
+  #endif
   void generate_normal_based_attributes(Point_set_classification& psc,
                                         RandomAccessIterator begin, RandomAccessIterator end,
+#ifdef DOXYGEN_RUNNING
+                                        VectorMap normal_map = VectorMap())
+#else
                                         VectorMap normal_map)
+#endif
   {
     CGAL::Timer t; t.start();
     psc.add_attribute (Attribute_handle (new Verticality(begin, end, normal_map)));
@@ -327,6 +440,7 @@ public:
     std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
+  /// \cond SKIP_IN_MANUAL
   void generate_normal_based_attributes(Point_set_classification& psc,
                                         RandomAccessIterator begin, RandomAccessIterator end,
                                         const CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>&
@@ -336,7 +450,33 @@ public:
     generate_multiscale_attribute_variant_0<Verticality> (psc, begin, end);
     std::cerr << "Normal based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
+  /// \endcond
 
+  /*!
+    \brief Generate a set of color attributes from an input range.
+
+    Generate the following attributes:
+
+    - 9 attributes `CGAL::Data_classification::Attribute_hsv` on
+      channel 0 (hue) with mean ranging from 0° to 360° and standard
+      deviation of 22.5.
+
+    - 5 attributes `CGAL::Data_classification::Attribute_hsv` on
+      channel 1 (saturation) with mean ranging from 0 to 100 and standard
+      deviation of 12.5
+
+    - 5 attributes `CGAL::Data_classification::Attribute_hsv` on
+      channel 2 (value) with mean ranging from 0 to 100 and standard
+      deviation of 12.5
+
+    This decomposition allows to handle all the color spectrum with a
+    usually sufficiently accurate precision.
+
+    \tparam ColorMap Property map to access the colors of the input points.
+    \param psc The classification object where to store the attributes
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+  */
   template <typename ColorMap>
   void generate_color_based_attributes(Point_set_classification& psc,
                                        RandomAccessIterator begin, RandomAccessIterator end,
@@ -364,12 +504,26 @@ public:
     std::cerr << "Color based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
+  /// \cond SKIP_IN_MANUAL
   void generate_color_based_attributes(const Point_set_classification&,
                                        RandomAccessIterator, RandomAccessIterator,
                                        const CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>&)
   {
   }
+  /// \endcond
 
+  /*!
+    \brief Generate all echo attributes from an input range.
+
+    Generate, for all precomputed scales, the following attribute:
+
+    - `CGAL::Data_classification::Attribute_echo_scatter`
+
+    \tparam EchoMap Property map to access the echo values of the input points.
+    \param psc The classification object where to store the attributes
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+  */
   template <typename EchoMap>
   void generate_echo_based_attributes(Point_set_classification& psc,
                                       RandomAccessIterator begin, RandomAccessIterator end,
@@ -388,6 +542,7 @@ public:
     std::cerr << "Echo based attributes computed in " << t.time() << " second(s)" << std::endl;
   }
 
+  /// \cond SKIP_IN_MANUAL
   void generate_echo_based_attributes(const Point_set_classification&,
                                       RandomAccessIterator, RandomAccessIterator,
                                       const CGAL::Empty_property_map<RandomAccessIterator, std::size_t>&)
@@ -417,7 +572,26 @@ public:
     oss << att->id() << "_" << map_scale[att];
     return oss.str();
   }
+  /// \endcond
 
+
+  /*!
+    \brief Saves the current configuration in the file `filename`.
+
+    This allows to easily save and recover a specific classification
+    configuration, that is to say:
+
+    - The smallest voxel size defined
+    - The attributes and their respective weights
+    - The classification types and the effect the attributes have on them
+
+    The output file is written in an XML format that is readable by
+    the `load()` method and the constructor that takes a file name
+    as parameter.
+
+    \param filename Name of the output file
+    \param psc Classification object whose attributes and types must be saved
+  */
   void save (const char* filename, Point_set_classification& psc)
   {
     boost::property_tree::ptree tree;
@@ -472,10 +646,29 @@ public:
   }
 
   
+  /*!
+    \brief Load a configuration from the file `filename`.
+
+    All data structures, attributes and types specified in the input
+    file `filename` are instanciated if possible (in particular,
+    property maps needed should be provided).
+
+    The input file is written in an XML format written by the `save()`
+    method.
+
+    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
+    \tparam ColorMap Property map to access the colors of the input points (if any).
+    \tparam EchoMap Property map to access the echo values of the input points (if any).
+    \param filename Name of the output file
+    \param psc Classification object where to store attributes and types
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_map Property map to access the input points
+  */
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
            typename EchoMap  = CGAL::Empty_property_map<RandomAccessIterator, std::size_t> >
-  bool load (Point_set_classification& psc, const char* filename, 
+  bool load (const char* filename, Point_set_classification& psc, 
              RandomAccessIterator begin, RandomAccessIterator end, 
              PointMap point_map,
              VectorMap normal_map = VectorMap(),
@@ -637,7 +830,29 @@ public:
   }
 
 
+  /*!
+    \brief Writes a classification in a colored and labeled PLY format.
 
+    The input point set is written in a PLY format with the addition
+    of several PLY properties:
+
+    - a property `label` to indicate which classification type is
+    assigned to the point. The types are indexed from 0 to N (the
+    correspondancy is given as comments in the PLY header).
+
+    - 3 properties `red`, `green` and `blue` to associate each label
+    to a color (this is useful to visualize the classification in a
+    viewer that supports PLY colors)
+
+    \param stream The output stream where to write the content
+    \param begin Iterator to the first input object
+    \param end Past-the-end iterator
+    \param point_map Property map to access the input points
+    \param psc The classification object to write from
+    \param colors A set of colors to be used to represent the
+    different classification types. If none is given, random colors
+    are picked.
+  */
   void write_ply (std::ostream& stream,
                   RandomAccessIterator begin, RandomAccessIterator end,
                   PointMap point_map, Point_set_classification& psc,
@@ -698,7 +913,69 @@ public:
     if (delete_colors)
       delete colors;
   }
-  
+
+private:
+    /// \cond SKIP_IN_MANUAL
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_0 (Point_set_classification& psc,
+                                                RandomAccessIterator begin,
+                                                RandomAccessIterator end,
+                                                const PointMap& = PointMap())
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, *(m_scales[i]->eigen))));
+        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
+      }
+  }
+
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_1 (Point_set_classification& psc,
+                                                RandomAccessIterator begin,
+                                                RandomAccessIterator end,
+                                                PointMap point_map)
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, point_map, *(m_scales[i]->eigen))));
+        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
+      }
+  }
+
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_2 (Point_set_classification& psc,
+                                                RandomAccessIterator begin,
+                                                RandomAccessIterator end,
+                                                PointMap point_map)
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, point_map,
+                                                                  *(m_scales[i]->grid),
+                                                                  m_scales[i]->grid_resolution(),
+                                                                  m_scales[i]->radius_neighbors())));
+        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
+      }
+  }
+
+  template <typename Attribute_type>
+  void generate_multiscale_attribute_variant_3 (Point_set_classification& psc,
+                                                RandomAccessIterator begin,
+                                                RandomAccessIterator end,
+                                                PointMap point_map)
+  {
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      {
+        psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, point_map,
+                                                                m_bbox, *(m_scales[i]->grid),
+                                                                m_scales[i]->grid_resolution(),
+                                                                m_scales[i]->radius_neighbors(),
+                                                                m_scales[i]->radius_dtm())));
+        m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
+      }
+  }
+
+  /// \endcond
 };
 
 
