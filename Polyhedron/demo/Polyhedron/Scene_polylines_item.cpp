@@ -100,6 +100,7 @@ Scene_polylines_item_private::computeElements() const
 void
 Scene_polylines_item_private::computeSpheres()
 {
+      spheres->clear_spheres();
       QApplication::setOverrideCursor(Qt::WaitCursor);
       // FIRST, count the number of incident cycles and polylines
       // for all extremities.
@@ -193,6 +194,16 @@ Scene_polylines_item_private::computeSpheres()
           K::Sphere_3 *sphere = new K::Sphere_3(center, spheres_drawn_radius);
           spheres->add_sphere(sphere, c);
       }
+      spheres->setToolTip(
+            QString("<p>Legende of endpoints colors: <ul>"
+                    "<li>black: one incident polyline</li>"
+                    "<li>green: two incident polylines</li>"
+                    "<li>blue: three incident polylines</li>"
+                    "<li>red: four incident polylines</li>"
+                    "<li>fuchsia: five or more incident polylines</li>"
+                    "</ul></p>"
+                    "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
+                            );
       QApplication::restoreOverrideCursor();
 }
 
@@ -279,15 +290,6 @@ Scene_polylines_item::toolTip() const {
             .arg(this->renderingModeName())
             .arg(this->color().name())
             .arg(polylines.size());
-    if(d->draw_extremities) {
-        s += tr("<p>Legende of endpoints colors: <ul>"
-                "<li>black: one incident polyline</li>"
-                "<li>green: two incident polylines</li>"
-                "<li>blue: three incident polylines</li>"
-                "<li>red: four incident polylines</li>"
-                "<li>fuchsia: five or more incident polylines</li>"
-                "</ul></p>");
-    }
     return s;
 }
 
