@@ -148,18 +148,6 @@ long gcd(long m, long n) {
   return p;
 }
 
-// return a gmp_randstate_t structure
-CGAL_INLINE_FUNCTION
-gmp_randstate_t* getRandstate() {
-  static gmp_randstate_t rstate;
-  static bool initialized = false;
-  if (!initialized) {
-    gmp_randinit(rstate, GMP_RAND_ALG_DEFAULT, 32L);
-    initialized = true;
-  }
-  return &rstate;
-}
-
 // char* core_itoa(int n, char* buffer)
 //      returns a pointer to the null-terminated string in buffer
 // NOTES:
