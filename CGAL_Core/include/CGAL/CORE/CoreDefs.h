@@ -39,6 +39,7 @@
 #define _CORE_COREDEFS_H_
 
 #include <CGAL/CORE/extLong.h>
+#include <CGAL/atomic.h>
 
 #ifdef CGAL_HEADER_ONLY
   
@@ -80,14 +81,14 @@ namespace CORE {
 /** The normal behavior is to abort when an invalid expression
  * is constructed.  This flag can be used to turn off this abort.
  * In any case, an error message will be printed */
-CGAL_GLOBAL_STATE_VAR(bool, AbortFlag, true)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, AbortFlag, true)
 
 /// Invalid Flag -- initiallly value is non-negative
 /** If the Abort Flag is false, then the Invalid flag will be set to
  *  a negative value whenever an invalid expression is constructed.
  *  It is the user's responsibility to check this flag and to make
  *  it non-negative again. */
-CGAL_GLOBAL_STATE_VAR(int, InvalidFlag, 0)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<int>, InvalidFlag, 0)
 
 /// Escape Precision in bits
 CGAL_GLOBAL_STATE_VAR(extLong, EscapePrec, CORE_posInfty)
@@ -99,7 +100,7 @@ CGAL_GLOBAL_STATE_VAR(long, EscapePrecFlag, 0)
 /// Escape Precision Warning Flag
 /** this flag is true by default, and will cause a warning to be printed
     when EscapePrec is reached */
-CGAL_GLOBAL_STATE_VAR(bool, EscapePrecWarning, true)
+  CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, EscapePrecWarning, true)
 
 // These following two values determine the precision of computing
 // approximations in Expr.
@@ -117,7 +118,7 @@ CGAL_GLOBAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
 	"controls the printout precision of std::cout for BigFloat"
     Perhaps, we should merge defOutputDigits and defBigFloatOutputDigits?
     */
-CGAL_GLOBAL_STATE_VAR(long, defBigFloatOutputDigits, 10)
+    CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defBigFloatOutputDigits, 10)
 
 /// default input precision in digits for converting a string to a Real or Expr
 /** This value can be CORE_INFTY */
@@ -127,11 +128,11 @@ CGAL_GLOBAL_STATE_VAR(extLong, defInputDigits, CORE_posInfty)
 /** This value cannot be CORE_INFTY
     See also defBigFloatOutputDigits. 
     (it really should be an int, as in std::cout.setprecision(int)). */
-CGAL_GLOBAL_STATE_VAR(long, defOutputDigits, get_static_defBigFloatOutputDigits())
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, get_static_defBigFloatOutputDigits())
 
 /// default input precision in digits for converting a string to a BigFloat
 /** This value cannot be CORE_INFTY. */
-CGAL_GLOBAL_STATE_VAR(long, defBigFloatInputDigits, 16)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defBigFloatInputDigits, 16)
 
 /// default BigFloat Division Relative Precision
 CGAL_GLOBAL_STATE_VAR(extLong, defBFdivRelPrec, 54)
@@ -143,15 +144,15 @@ CGAL_GLOBAL_STATE_VAR(extLong, defBFsqrtAbsPrec, 54)
 //////////////////////////////////////////////////////////////
 
 /// floating point filter flag
-CGAL_GLOBAL_STATE_VAR(bool, fpFilterFlag, true)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, fpFilterFlag, true)
 /// if true, evaluation of expressions would be incremental
-CGAL_GLOBAL_STATE_VAR(bool, incrementalEvalFlag, true)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, incrementalEvalFlag, true)
 /// progressive evaluation flag
-CGAL_GLOBAL_STATE_VAR(bool, progressiveEvalFlag, true)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, progressiveEvalFlag, true)
 /// rational reduction flag
-CGAL_GLOBAL_STATE_VAR(bool, rationalReduceFlag, false)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, rationalReduceFlag, false)
 /// default initial (bit) precision for AddSub Progressive Evaluation
-CGAL_GLOBAL_STATE_VAR(long, defInitialProgressivePrec, 64)
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defInitialProgressivePrec, 64)
 
 //////////////////////////////////////////////////////////////
 // methods for setting global precision parameters
