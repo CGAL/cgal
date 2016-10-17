@@ -108,7 +108,7 @@ public:
 
   static const Polynomial<NT> & polyZero();
   static const Polynomial<NT> & polyUnity();
-  static Polynomial polyWilkinson;	      // a sample polynomial
+
   static int NT_TYPE; // NT_TYPE = 1 if NT is integer type (int,long,BigInt)
                       // NT_TYPE = 2 if NT is BigFloat 
                       // NT_TYPE = 3 if NT is BigRat 
