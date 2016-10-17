@@ -50,8 +50,8 @@ enum RenderingMode { Points = 0,
                      Flat,
                      FlatPlusEdges,
                      Gouraud,
-                     LastRenderingMode = Gouraud,
-                     NumberOfRenderingMode = LastRenderingMode+1 };
+                     ShadedPoints,
+                     NumberOfRenderingMode};
 
 
 namespace CGAL {

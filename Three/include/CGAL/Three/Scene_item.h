@@ -285,6 +285,10 @@ public Q_SLOTS:
   void setPointsMode() {
     setRenderingMode(Points);
   }
+  //!Sets the RenderingMode to Points.
+  void setShadedPointsMode() {
+    setRenderingMode(ShadedPoints);
+  }
   //!Sets the RenderingMode to Wireframe.
   void setWireframeMode() {
     setRenderingMode(Wireframe);

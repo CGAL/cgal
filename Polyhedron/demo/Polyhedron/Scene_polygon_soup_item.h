@@ -125,7 +125,7 @@ public:
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return ( m!=PointsPlusNormals && m!=Splatting); }
+    virtual bool supportsRenderingMode(RenderingMode m) const { return ( m!=PointsPlusNormals && m!=Splatting && m!=ShadedPoints); }
     // OpenGL drawing in a display list
     virtual void draw() const {}
     virtual void draw(CGAL::Three::Viewer_interface*) const;
