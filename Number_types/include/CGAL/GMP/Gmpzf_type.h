@@ -23,6 +23,7 @@
 
 // includes
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/gmp.h>
 #include <mpfr.h>
@@ -484,7 +485,8 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
 			   const mpz_t*& b_aligned,
 			   Exponent& rexp,
 			   const Gmpzf& a, const Gmpzf& b) {
-  static Gmpz s;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Gmpz, s);
+
   switch (CGAL_NTS compare (b.exp(), a.exp())) {
   case SMALLER:
     {
