@@ -190,7 +190,7 @@ All information associated to darts (information, \f$ \beta\f$ links and attribu
 
 \subsection ssecitem Combinatorial Map Items
 
-\tred{The `GenericMapItems` concept defines information associated with darts, and attribute types of a combinatorial map. It contains one inner class named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `Map`, a model of `GenericMap` concept. The \link GenericMapItems::Dart_wrapper `Dart_wrapper<Map>`\endlink class \tred{can provide} two local types: `%Dart_info` for the information associated with darts, and `%Attributes` which defines the attributes and their types.}
+\tred{The `GenericMapItems` concept defines information associated with darts, and attribute types of a combinatorial map. It contains one inner class named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, having one template parameter, `Map`, a model of `GenericMap` concept. The \link GenericMapItems::Dart_wrapper `Dart_wrapper<Map>`\endlink class can provide two local types: `%Dart_info` for the information associated with darts, and `%Attributes` which defines the attributes and their types.}
 
 \tred{If `%Dart_info` is not defined or if it is equal to `void`, no information is associated with darts.}
 
