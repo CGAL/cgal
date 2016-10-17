@@ -254,7 +254,7 @@ private:
                                vertex_descriptor vi,
                                vertex_descriptor vj,
                                vertex_descriptor vk,
-                               Cot_map& ctmap) const
+                               Cot_map ctmap) const
   {
     typedef typename boost::property_map<TriangleMesh,
                                          boost::vertex_point_t>::const_type PPmap;
@@ -271,7 +271,7 @@ private:
   // Filling ctmap with the cotangent of the angles opposite of halfedges
   Error_code compute_cotangent_angles(const TriangleMesh& mesh,
                                       const Faces_vector& faces,
-                                      Cot_map& ctmap) const
+                                      Cot_map ctmap) const
   {
     BOOST_FOREACH(face_descriptor fd, faces){
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
@@ -298,7 +298,7 @@ private:
   /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
   NT compute_w_ij(const TriangleMesh& mesh,
                   halfedge_descriptor hd,
-                  const Cot_map& ctmap) const
+                  const Cot_map ctmap) const
   {
     // Note that halfedge and vertex circulators move clockwise!!
 
@@ -325,7 +325,7 @@ private:
   Error_code fill_linear_system_matrix(Matrix& A,
                                        const TriangleMesh& mesh,
                                        vertex_descriptor vertex,
-                                       const Cot_map& ct_map,
+                                       const Cot_map ct_map,
                                        VertexIndexMap vimap) const
   {
     int i = get(vimap, vertex);
@@ -367,7 +367,7 @@ private:
            typename VertexParameterizedMap>
   Error_code initialize_matrix_A(const TriangleMesh& mesh,
                                  const Vertex_set& vertices,
-                                 const Cot_map& ctmap,
+                                 const Cot_map ctmap,
                                  VertexIndexMap vimap,
                                  VertexParameterizedMap vpmap,
                                  Matrix& A) const
@@ -507,9 +507,9 @@ private:
   /// Compute the root that gives the lowest face energy.
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
-                                              const Cot_map& ctmap,
+                                              const Cot_map ctmap,
                                               const Local_points& lp,
-                                              const Lp_map& lpmap,
+                                              const Lp_map lpmap,
                                               const NT C2_denom, const NT C3,
                                               const std::vector<NT>& roots) const
   {
@@ -532,9 +532,9 @@ private:
   /// Compute the root that gives the lowest face energy.
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
-                                              const Cot_map& ctmap,
+                                              const Cot_map ctmap,
                                               const Local_points& lp,
-                                              const Lp_map& lpmap,
+                                              const Lp_map lpmap,
                                               const std::vector<NT>& a_roots,
                                               const std::vector<NT>& b_roots) const
   {
@@ -556,10 +556,10 @@ private:
   /// Compute the optimal values of the linear transformation matrices Lt.
   Error_code compute_optimal_Lt_matrices(const TriangleMesh& mesh,
                                          const Faces_vector& faces,
-                                         const Cot_map& ctmap,
+                                         const Cot_map ctmap,
                                          const Local_points& lp,
-                                         const Lp_map& lpmap,
-                                         Lt_map& ltmap) const
+                                         const Lp_map lpmap,
+                                         Lt_map ltmap) const
   {
     Error_code status = Base::OK;
 
@@ -717,7 +717,7 @@ private:
   Error_code compute_local_parametrisation(const TriangleMesh& mesh,
                                            const Faces_vector& faces,
                                            Local_points& lp,
-                                           Lp_map& lpmap) const
+                                           Lp_map lpmap) const
   {
     int global_index = 0;
 
@@ -753,10 +753,10 @@ private:
   /// Compute b_ij = (i, j) coefficient of matrix B for j neighbor vertex of i.
   void compute_b_ij(const TriangleMesh& mesh,
                     halfedge_descriptor hd,
-                    const Cot_map& ctmap,
+                    const Cot_map ctmap,
                     const Local_points& lp,
-                    const Lp_map& lpmap,
-                    const Lt_map& ltmap,
+                    const Lp_map lpmap,
+                    const Lt_map ltmap,
                     NT& x, NT& y) const // x for Bu and y for Bv
   {
     CGAL_precondition(x == 0.0 && y == 0.0);
@@ -827,10 +827,10 @@ private:
   template<typename VertexIndexMap>
   Error_code fill_linear_system_rhs(const TriangleMesh& mesh,
                                     vertex_descriptor vertex,
-                                    const Cot_map& ctmap,
+                                    const Cot_map ctmap,
                                     const Local_points& lp,
-                                    const Lp_map& lpmap,
-                                    const Lt_map& ltmap,
+                                    const Lp_map lpmap,
+                                    const Lt_map ltmap,
                                     VertexIndexMap vimap,
                                     Vector& Bu, Vector& Bv) const
   {
@@ -868,10 +868,10 @@ private:
            typename VertexParameterizedMap>
   Error_code compute_rhs(const TriangleMesh& mesh,
                          const Vertex_set& vertices,
-                         const Cot_map& ctmap,
+                         const Cot_map ctmap,
                          const Local_points& lp,
-                         const Lp_map& lpmap,
-                         const Lt_map& ltmap,
+                         const Lp_map lpmap,
+                         const Lt_map ltmap,
                          VertexUVmap uvmap,
                          VertexIndexMap vimap,
                          VertexParameterizedMap vpmap,
@@ -920,10 +920,10 @@ private:
             typename VertexParameterizedMap>
   Error_code update_solution(const TriangleMesh& mesh,
                              const Vertex_set& vertices,
-                             const Cot_map& ctmap,
+                             const Cot_map ctmap,
                              const Local_points& lp,
-                             const Lp_map& lpmap,
-                             const Lt_map& ltmap,
+                             const Lp_map lpmap,
+                             const Lt_map ltmap,
                              VertexUVmap uvmap,
                              VertexIndexMap vimap,
                              VertexParameterizedMap vpmap,
@@ -979,9 +979,9 @@ private:
   /// Compute the energy of a face, given a linear transformation matrix
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
-                                 const Cot_map& ctmap,
+                                 const Cot_map ctmap,
                                  const Local_points& lp,
-                                 const Lp_map& lpmap,
+                                 const Lp_map lpmap,
                                  const NT a, const NT b) const
   {
     typedef typename boost::property_map<TriangleMesh,
@@ -1024,10 +1024,10 @@ private:
   /// Compute the energy of a face.
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
-                                 const Cot_map& ctmap,
+                                 const Cot_map ctmap,
                                  const Local_points& lp,
-                                 const Lp_map& lpmap,
-                                 const Lt_map& ltmap) const
+                                 const Lp_map lpmap,
+                                 const Lt_map ltmap) const
   {
     NT Ef = 0.;
 
@@ -1041,10 +1041,10 @@ private:
   /// Compute the current energy of the parameterization.
   NT compute_current_energy(const TriangleMesh& mesh,
                             const Faces_vector& faces,
-                            const Cot_map& ctmap,
+                            const Cot_map ctmap,
                             const Local_points& lp,
-                            const Lp_map& lpmap,
-                            const Lt_map& ltmap) const
+                            const Lp_map lpmap,
+                            const Lt_map ltmap) const
   {
     NT E = 0.;
 
