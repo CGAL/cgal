@@ -163,6 +163,21 @@ public:
     return t.transform(*this);
   }
 
+  Point_2<R_>&
+  operator+=(const typename R::Vector_2 &v)
+  {
+    *this = R().construct_translated_point_2_object()(*this, v);
+    return *this;
+  }
+
+  Point_2<R_>&
+  operator-=(const typename R::Vector_2 &v)
+  {
+    *this = R().construct_translated_point_2_object()(*this,
+                  R().construct_opposite_vector_2_object()(v));
+    return *this;
+  }
+
 };
 
 
