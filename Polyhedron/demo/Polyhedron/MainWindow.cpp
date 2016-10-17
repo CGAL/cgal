@@ -1520,6 +1520,7 @@ bool MainWindow::on_actionErase_triggered()
 
 void MainWindow::on_actionEraseAll_triggered()
 {
+  scene->setSelectedItem(0);
   while(on_actionErase_triggered()) {
   }
 }

@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>OutlierRemovalDialog</class>
- <widget class="QDialog" name="OutlierRemovalDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="OutlierRemovalDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,65 +10,78 @@
     <height>120</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Outlier Removal</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QLabel" name="label" >
-     <property name="text" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
       <string>Removed Percentage:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <widget class="QDoubleSpinBox" name="m_inputPercentage" >
-     <property name="suffix" >
-      <string> %</string>
-     </property>
-     <property name="minimum" >
-      <double>0.010000000000000</double>
-     </property>
-     <property name="maximum" >
-      <double>100.000000000000000</double>
-     </property>
-     <property name="singleStep" >
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value" >
-      <double>5.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" >
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
       <string>Neighbors</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
-    <widget class="QSpinBox" name="m_inputNbNeighbors" >
-     <property name="minimum" >
+   <item row="2" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="m_inputNbNeighbors">
+     <property name="minimum">
       <number>6</number>
      </property>
-     <property name="maximum" >
+     <property name="maximum">
       <number>9999</number>
      </property>
-     <property name="value" >
+     <property name="value">
       <number>24</number>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+   <item row="0" column="1">
+    <widget class="QDoubleSpinBox" name="m_inputPercentage">
+     <property name="suffix">
+      <string> %</string>
      </property>
-     <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     <property name="minimum">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>5.000000000000000</double>
      </property>
     </widget>
+   </item>
+   <item row="3" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -79,11 +93,11 @@
    <receiver>OutlierRemovalDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -95,11 +109,11 @@
    <receiver>OutlierRemovalDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>
