@@ -53,6 +53,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_robust_weighted_circumcenter.cpp" )
   create_single_source_cgal_program( "test_meshing_determinism.cpp" )
   create_single_source_cgal_program( "test_c3t3_extract_subdomains_boundaries.cpp" )
+  create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
 
 else()
   
