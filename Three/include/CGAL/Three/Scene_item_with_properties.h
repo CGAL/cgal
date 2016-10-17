@@ -29,7 +29,7 @@ class Scene_item_with_properties {
 public:
   virtual ~Scene_item_with_properties(){}
  //!Copies properties from another Scene_item
- virtual void copyProperties(Scene_item*){}
+ virtual void copyProperties(Scene_item*)=0; //pure virtual method
 };
 }
 }
