@@ -190,7 +190,8 @@ protected:
                           vertex_around_target_circulator neighbor_vertex_v_j)
   = 0;
 
-  /// Compute the line i of matrix A for i inner vertex:/// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
+  /// Compute the line i of matrix A for i inner vertex:
+  /// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
   /// - compute w_ii = - sum of w_ijs.
   ///
   /// \pre Vertices must be indexed.
