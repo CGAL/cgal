@@ -32,11 +32,12 @@
 // @todo Use the algeabric kernel to solve the cubic equation
 // @todo Add the post processing step
 // @todo Add distortion measures
-// @todo Make it work with a surface mesh
+// @todo Make it work with a surface mesh type
 // @todo Use a boost array for the roots
+// @todo Handle the case cot(0) with a local parameterization aligned with the axes
+//       (this produces C2=0 which is problematic to compute a & b)
 
 // @todo Add support for the OpenNL solver?
-// @todo Should the same fixed vertices be used in LCSM and the present algorithm?
 // @todo The two systems A Xu = Bu and A Xv = BV could be merged in one system
 //       using complex numbers?
 
@@ -242,7 +243,7 @@ private:
       }
     }
 
-    // the value in uvmap in already set
+    // the value in uvmap is already set
     put(vpmap, vd1_max, true);
     put(vpmap, vd2_max, true);
 
@@ -435,6 +436,10 @@ private:
     return roots.size();
   }
 
+  /// Solve the bivariate system
+  /// { C1 * a + 2 * lambda * a ( a^2 + b^2 - 1 ) = C2
+  /// { C1 * b + 2 * lambda * b ( a^2 + b^2 - 1 ) = C3
+  /// using CGAL's algeabric kernel.
   int solve_bivariate_system(const NT C1, const NT C2, const NT C3,
                              std::vector<NT>& a_roots, std::vector<NT>& b_roots) const
   {
@@ -480,7 +485,7 @@ private:
     CGAL_precondition(is_square_free_2(pol2));
     if(!is_coprime_2(pol1, pol2)){
       std::cout << "not coprime" << std::endl;
-      CGAL_assertion(false); // disabled for now
+      CGAL_assertion(false); // @todo handle that case
 
       Polynomial_2 g, q1, q2;
       make_coprime_2(pol1, pol2, g, q1, q2);
@@ -584,7 +589,7 @@ private:
         NT diff_x = uvpi.x() - uvpj.x();
         NT diff_y = uvpi.y() - uvpj.y();
 
-        // local positions (in the 2D param)
+        // local positions (in the isometric 2D param)
         Local_indices li = get(lpmap, hd);
         Point_2 ppi = lp[ li.first ];
         Point_2 ppj = lp[ li.second ];
@@ -625,8 +630,8 @@ private:
         b = C3 * denom;
       }
       else { // general case
-#define USE_BASIC_CUBIC_SOLVER
-#ifdef USE_BASIC_CUBIC_SOLVER
+#define SOLVE_CUBIC_EQUATION
+#ifdef SOLVE_CUBIC_EQUATION
         CGAL_precondition(C2 != 0.);
         NT C2_denom = 1. / C2;
         NT a3_coeff = 2. * m_lambda * (C2 * C2 + C3 * C3) * C2_denom * C2_denom;
@@ -662,8 +667,7 @@ private:
     return status;
   }
 
-  /// Utility for fill_linear_system_rhs():
-  /// Computes the coordinates of the vertices of a triangle
+  /// Computes the coordinates of the vertices p0, p1, p2
   /// in a local 2D orthonormal basis of the triangle's plane.
   void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,  // in
                         Point_2& z0, Point_2& z1, Point_2& z2) const              // out
@@ -692,7 +696,8 @@ private:
     z2 = Point_2(x2, y2);
   }
 
-  // Compute the local parameterization of the face and store them in memory
+  /// Utility for fill_linear_system_rhs():
+  /// Compute the local parameterization (2D) of the face and store them in memory.
   void project_face(const TriangleMesh& mesh,
                     vertex_descriptor vi,
                     vertex_descriptor vj,
@@ -765,8 +770,9 @@ private:
   {
     CGAL_precondition(x == 0.0 && y == 0.0);
 
-    // Note that circulators move in a clockwise manner
-    // The halfedge hd points to vi
+    // Note that :
+    // -- Circulators move in a clockwise manner
+    // -- The halfedge hd points to vi
 
     // -- Face IJK with vk before vj while circulating around vi
     halfedge_descriptor hd_opp = opposite(hd, mesh); // hd_opp points to vj
