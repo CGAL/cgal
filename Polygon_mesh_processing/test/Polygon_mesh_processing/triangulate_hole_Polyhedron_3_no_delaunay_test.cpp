@@ -82,11 +82,11 @@ CGAL::internal::Weight_min_max_dihedral_and_area
     Halfedge_handle edge_it = halfedge(*begin, poly);
     double ang_max = 0;
     for(int i = 0; i < 3; ++i) {
-      double angle = 180 - CGAL::abs( 
-                                     CGAL::dihedral_angle(ppmap[target(edge_it,poly)],
-                                                          ppmap[source(edge_it,poly)],
-                                                          ppmap[target(next(edge_it,poly),poly)],
-                                                          ppmap[target(next(opposite(edge_it,poly),poly),poly)]) );
+      double angle = 180 -
+        CGAL::abs(CGAL::approximate_dihedral_angle(ppmap[target(edge_it,poly)],
+                                                   ppmap[source(edge_it,poly)],
+                                                   ppmap[target(next(edge_it,poly),poly)],
+                                                   ppmap[target(next(opposite(edge_it,poly),poly),poly)]) );
       edge_it = next(edge_it,poly);
       ang_max = (std::max)(angle, ang_max);
     }
