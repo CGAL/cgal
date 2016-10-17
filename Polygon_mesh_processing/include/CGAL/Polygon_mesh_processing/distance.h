@@ -274,9 +274,9 @@ void sample_triangle_mesh(const TriangleMesh& m,
                 method);
 }
 
-template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap>
+template <class Concurrency_tag, class Kernel, class PointRange, class TriangleMesh, class VertexPointMap>
 double approximated_Hausdorff_distance(
-  const std::vector<typename Kernel::Point_3>& original_sample_points,
+  const PointRange& original_sample_points,
   const TriangleMesh& m,
   VertexPointMap vpm
   )
@@ -287,7 +287,8 @@ double approximated_Hausdorff_distance(
   #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "Nb sample points " << sample_points.size() << "\n";
   #endif
-  std::vector<typename Kernel::Point_3> sample_points = original_sample_points;
+  std::vector<typename Kernel::Point_3> sample_points
+    (boost::begin(original_sample_points), boost::end(original_sample_points) );
 
   spatial_sort(sample_points.begin(), sample_points.end());
 
