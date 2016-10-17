@@ -44,20 +44,20 @@ namespace CGAL {
 //custom output iterator that fills both faces and vertices containers
 namespace internal {
 
-template<typename Mesh, typename UV_pmap>
+template<typename Mesh>
 struct ContainersFiller
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
   const Mesh& mesh;
-  const UV_pmap uvpm;
   std::vector<face_descriptor>& faces;
   boost::unordered_set<vertex_descriptor>& vertices;
-  ContainersFiller(const Mesh& mesh, const UV_pmap& uvpm,
+
+  ContainersFiller(const Mesh& mesh,
                  std::vector<face_descriptor>& faces,
                  boost::unordered_set<vertex_descriptor>& vertices)
-    : mesh(mesh), uvpm(uvpm), faces(faces), vertices(vertices)
+    : mesh(mesh), faces(faces), vertices(vertices)
   { }
 
   void operator()(face_descriptor fd)
@@ -212,7 +212,7 @@ public:
     solver.begin_system();
     std::vector<face_descriptor> ccfaces;
     boost::unordered_set<vertex_descriptor> ccvertices;
-    internal::ContainersFiller<TriangleMesh,VertexUVmap> fc(mesh, uvmap, ccfaces, ccvertices);
+    internal::ContainersFiller<TriangleMesh> fc(mesh, ccfaces, ccvertices);
     CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                        mesh,
                                                        boost::make_function_output_iterator(fc));
