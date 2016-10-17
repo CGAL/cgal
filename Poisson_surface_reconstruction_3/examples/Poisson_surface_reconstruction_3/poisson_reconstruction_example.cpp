@@ -12,6 +12,8 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
 
+#include <CGAL/Polygon_mesh_processing/distance.h>
+
 #include <vector>
 #include <fstream>
 
@@ -103,6 +105,12 @@ int main(void)
     Polyhedron output_mesh;
     CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
     out << output_mesh;
+    std::vector<Polyhedron::Point_3> query;
+    BOOST_FOREACH(Point_with_normal pn, points)
+        query.push_back(pn.position());
+
+    double dist = CGAL::Polygon_mesh_processing::max_distance_to_point_set(output_mesh, query, 4000);
+    std::cerr<<"Max distance to point_set :"<<dist<<std::endl;
 
     return EXIT_SUCCESS;
 }

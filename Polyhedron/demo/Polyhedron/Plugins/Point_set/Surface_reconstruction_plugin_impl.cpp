@@ -237,8 +237,6 @@ Polyhedron* poisson_reconstruct(Point_set& points,
 	  }
 
       }
-    
-
     return output_mesh;
 }
 

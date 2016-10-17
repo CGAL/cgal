@@ -273,9 +273,10 @@ void sample_triangle_mesh(const TriangleMesh& m,
                 parameters::all_default(),
                 method);
 }
+
 template <class Concurrency_tag, class Kernel, class TriangleMesh, class VertexPointMap>
 double approximated_Hausdorff_distance(
-  std::vector<typename Kernel::Point_3>& sample_points,
+  const std::vector<typename Kernel::Point_3>& original_sample_points,
   const TriangleMesh& m,
   VertexPointMap vpm
   )
@@ -286,6 +287,8 @@ double approximated_Hausdorff_distance(
   #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "Nb sample points " << sample_points.size() << "\n";
   #endif
+  std::vector<typename Kernel::Point_3> sample_points = original_sample_points;
+
   spatial_sort(sample_points.begin(), sample_points.end());
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
@@ -316,7 +319,8 @@ double approximated_Hausdorff_distance(
       hint = tree.closest_point(pt, hint);
       typename Kernel::FT dist = squared_distance(hint,pt);
       double d = to_double(CGAL::approximate_sqrt(dist));
-      if (d>hdist) hdist=d;
+      if(d>hdist)
+        hdist=d;
     }
     return hdist;
   }
@@ -455,12 +459,11 @@ double max_distance_to_triangle_mesh(const PointRange& points,
 
 template< class Concurrency_tag,
           class TriangleMesh,
-          class PointRange,
-          class NamedParameters>
+          class PointRange>
 double max_distance_to_triangle_mesh(const PointRange& points,
                                      const TriangleMesh& tm)
 {
-    max_distance_to_triangle_mesh<Concurrency_tag, TriangleMesh, PointRange>(points, tm, parameters::all_default());
+   return max_distance_to_triangle_mesh<Concurrency_tag, TriangleMesh, PointRange>(points, tm, parameters::all_default());
 }
 
 /*!
@@ -518,20 +521,20 @@ double max_distance_to_point_set(const TriangleMesh& tm,
                                  const PointRange& points,
                                  const double precision)
 {
-  max_distance_to_point_set(tm, points, precision, parameters::all_default());
+  return max_distance_to_point_set(tm, points, precision, parameters::all_default());
 }
 // convenience functions with default parameters
 
 template< class Concurrency_tag,
           class TriangleMesh,
-          class NamedParameters1>
+          class NamedParameters>
 double approximated_Hausdorff_distance( const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
                                         double precision,
-                                        const NamedParameters1& np1)
+                                        const NamedParameters& np)
 {
   return approximated_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, precision, np1, parameters::all_default());
+    tm1, tm2, precision, np, parameters::all_default());
 }
 
 template< class Concurrency_tag,
