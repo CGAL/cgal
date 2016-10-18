@@ -559,7 +559,8 @@ has_smaller_signed_dist_to_planeC3(
 // return minus the sign of the 5x5 determinant [P,Q,R,S,T]
 // where column [P] = transpose[px,py,pz,p^2 -wp,1]
 template <class FT>
-Oriented_side
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
 power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
               const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
               const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
@@ -596,8 +597,9 @@ power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz,
 
 
 template <class FT>
-Oriented_side
-power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
+power_side_of_oriented_power_sphereC3(const FT &px, const FT &py, const FT &pz, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
 	      const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
 	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
@@ -646,8 +648,9 @@ power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz,
 
 
 template <class FT>
-Oriented_side
-power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
+power_side_of_oriented_power_sphereC3(const FT &px, const FT &py, const FT &pz, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
 	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
 {
@@ -680,7 +683,8 @@ power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz,
 }
 
 template <class FT>
-Oriented_side
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Oriented_side, FT>::type
 power_side_of_oriented_power_sphereC3(const FT &pwt, const FT &qwt)
 {
     return CGAL_NTS compare(qwt, pwt);
@@ -709,8 +713,8 @@ compare_power_distanceC3(
 //with respect to the smallest sphere orthogonal to
 //p,q,r
 template< class FT >
-CGAL_MEDIUM_INLINE
-Sign
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Bounded_side, FT>::type
 power_side_of_bounded_power_sphereC3(
   const FT &px, const FT &py, const FT &pz, const FT  &pw,
   const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
@@ -752,17 +756,17 @@ power_side_of_bounded_power_sphereC3(
   FT sr = spx*rpx + spy*rpy + spz*rpz;
 
   CGAL_assertion( ! CGAL_NTS is_zero(den) );
-  // return  sign of (c- s)^2 - (c^2 - pw) - sw    note that den >= 0 -
-  return CGAL_NTS sign( den*(ss - sw + pw)- detq*sq - detr*sr);
+  // return - sign of (c- s)^2 - (c^2 - pw) - sw    note that den >= 0 -
+  return enum_cast<Bounded_side>(
+    - CGAL_NTS sign( den*(ss - sw + pw)- detq*sq - detr*sr));
 }
-
 
 
 // return the sign of the power test of weighted point (rx,ry,rz,rw)
  // with respect to the smallest sphere orthogoanal to
 // p,q
 template< class FT >
-Sign
+typename Same_uncertainty_nt<Bounded_side, FT>::type
 power_side_of_bounded_power_sphereC3(
  const FT &px, const FT &py, const FT &pz, const FT  &pw,
  const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
@@ -781,7 +785,8 @@ power_side_of_bounded_power_sphereC3(
   FT drw = rw - (pw + qw)/FT2;
   FT dr2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) + CGAL_NTS square(drz);
   FT dpr = dpx*drx + dpy*dry +dpz*drz;
-  return CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 - drw );
+  return enum_cast<Bounded_side>(
+    - CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 - drw ));
 }
 
 
