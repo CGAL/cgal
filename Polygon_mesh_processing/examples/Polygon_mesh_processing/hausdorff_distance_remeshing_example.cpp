@@ -2,18 +2,9 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/Timer.h>
-
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <boost/container/flat_map.hpp>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 
-
-#include <fstream>
-#include <ostream>
 
 #if CGAL_LINKED_WITH_TBB
 #define TAG CGAL::Parallel_tag
@@ -37,7 +28,7 @@ int main(int, char**)
                          m1);
   m2=m1;
   PMP::isotropic_remeshing(m2.faces(),.05, m2);
-  std::cerr<< " Approximated Hausdorff distance : "<< CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<TAG, Mesh>(m1,m2,400)<<std::endl;
+  std::cerr<< " Approximated Hausdorff distance : "<< CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<TAG>(m1,m2,4000)<<std::endl;
 
 }
 

@@ -161,6 +161,7 @@ struct Distance_computation{
 #endif
 
 /**
+ * \ingroup PMP_distance_grp
  * @brief enum used to select the sampling method in the function `sample_triangle_mesh()`
  */
 enum Sampling_method{
@@ -168,7 +169,8 @@ enum Sampling_method{
   GRID,
   MONTE_CARLO
 };
-/** fills `sampled_points` with points taken on the mesh in a way depending on `method`
+/** \ingroup PMP_distance_grp
+ *  fills `sampled_points` with points taken on `m` in a way depending on `method`
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @param m the triangle mesh that will be sampled
  * @param parameter depends on `method` :
@@ -260,6 +262,7 @@ void sample_triangle_mesh(const TriangleMesh& m,
   }
   }
 }
+
 template<class TriangleMesh, class Point_3>
 void sample_triangle_mesh(const TriangleMesh& m,
                           double parameter,
