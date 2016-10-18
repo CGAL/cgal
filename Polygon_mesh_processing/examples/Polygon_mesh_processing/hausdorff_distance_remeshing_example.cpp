@@ -28,7 +28,10 @@ int main(int, char**)
                          m1);
   m2=m1;
   PMP::isotropic_remeshing(m2.faces(),.05, m2);
-  std::cerr<< " Approximated Hausdorff distance : "<< CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<TAG>(m1,m2,4000)<<std::endl;
+  std::cerr<< " Approximated Hausdorff distance : "
+         << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<TAG>
+                                                                   (m1,m2,4000)
+         <<std::endl;
 
 }
 

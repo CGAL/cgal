@@ -135,7 +135,11 @@ struct Distance_computation{
   Point_3 initial_hint;
   cpp11::atomic<double>* distance;
 
-  Distance_computation(const AABB_tree& tree, const Point_3& p, const std::vector<Point_3>& sample_points, cpp11::atomic<double>* d)
+  Distance_computation(
+          const AABB_tree& tree,
+          const Point_3& p,
+          const std::vector<Point_3>& sample_points,
+          cpp11::atomic<double>* d)
     : tree(tree)
     , sample_points(sample_points)
     , distance(d)
@@ -245,7 +249,8 @@ void sample_triangle_mesh(const TriangleMesh& m,
   {
     BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(m))
     {
-      std::size_t nb_points =  (std::max)((int)std::ceil(parameter * face_area(f,m,parameters::geom_traits(Geom_traits()))),
+      std::size_t nb_points =  (std::max)(
+                  (int)std::ceil(parameter * face_area(f,m,parameters::geom_traits(Geom_traits()))),
                                        1);
       //create the triangles and store them
       typename Geom_traits::Point_3 points[3];
@@ -342,9 +347,15 @@ double approximated_Hausdorff_distance(
    Sampling_method method = RANDOM_UNIFORM
 )
 {
-  std::vector<typename Kernel::Point_3> sample_points;
-  sample_triangle_mesh<TriangleMesh, typename Kernel::Point_3, NamedParameters>(m1, precision ,sample_points, np, method );
-  return approximated_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2, vpm);
+    std::vector<typename Kernel::Point_3> sample_points;
+    sample_triangle_mesh<TriangleMesh,
+            typename Kernel::Point_3, NamedParameters>(
+                m1,
+                precision,
+                sample_points,
+                np,
+                method );
+    return approximated_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2, vpm);
 }
 
 // documented functions
@@ -466,7 +477,10 @@ template< class Concurrency_tag,
 double max_distance_to_triangle_mesh(const PointRange& points,
                                      const TriangleMesh& tm)
 {
-   return max_distance_to_triangle_mesh<Concurrency_tag, TriangleMesh, PointRange>(points, tm, parameters::all_default());
+   return max_distance_to_triangle_mesh<Concurrency_tag,
+           TriangleMesh,
+           PointRange>
+           (points, tm, parameters::all_default());
 }
 
 /*!
