@@ -270,7 +270,7 @@ public:
 			
         int nb_class_best=0; 
 
-        double val_class_best = std::numeric_limits<double>::max();
+        double val_class_best = (std::numeric_limits<double>::max)();
         std::vector<double> values;
       
         for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
@@ -336,7 +336,7 @@ public:
           }
 
         int nb_class_best=0; 
-        double val_class_best = std::numeric_limits<double>::max();
+        double val_class_best = (std::numeric_limits<double>::max)();
         for(std::size_t k = 0; k < mean.size(); ++ k)
           {
             mean[k] /= neighbors.size();
@@ -401,7 +401,7 @@ public:
           }
         
         std::size_t nb_class_best = 0;
-        double val_class_best = std::numeric_limits<double>::max();
+        double val_class_best = (std::numeric_limits<double>::max)();
         for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
           {
             double value = classification_value (k, s);
@@ -541,7 +541,7 @@ public:
         map_p2i[m_input[s]] = s;
 
         int nb_class_best=0; 
-        double val_class_best = std::numeric_limits<double>::max();
+        double val_class_best = (std::numeric_limits<double>::max)();
         for(std::size_t k = 0; k < m_effect_table.size(); ++ k)
           {
             double v = classification_value (k, s);
@@ -568,7 +568,7 @@ public:
         
         int nb_class_best=0; 
 
-        double val_class_best = std::numeric_limits<double>::max();
+        double val_class_best = (std::numeric_limits<double>::max)();
 
         for (std::size_t j = 0; j < mean.size(); ++ j)
           if (mean[j] < val_class_best)
@@ -600,7 +600,7 @@ public:
             mean[j] += values[j][neighbors[n]];
 
         int nb_class_best=0; 
-        double val_class_best = std::numeric_limits<double>::max();
+        double val_class_best = (std::numeric_limits<double>::max)();
         for(std::size_t k = 0; k < mean.size(); ++ k)
           {
             mean[k] /= neighbors.size();
@@ -891,8 +891,8 @@ public:
         best_weights[j] = att->weight;
 
         std::size_t nb_useful = 0;
-        double min = std::numeric_limits<double>::max();
-        double max = -std::numeric_limits<double>::max();
+        double min = (std::numeric_limits<double>::max)();
+        double max = -(std::numeric_limits<double>::max)();
 
         att->weight = wmin;
         for (std::size_t i = 0; i < 100; ++ i)
@@ -902,8 +902,8 @@ public:
               {
                 CGAL_CLASSTRAINING_CERR << "#";
                 nb_useful ++;
-                min = std::min (min, att->weight);
-                max = std::max (max, att->weight);
+                min = (std::min) (min, att->weight);
+                max = (std::max) (max, att->weight);
               }
             else
               CGAL_CLASSTRAINING_CERR << "-";
@@ -1182,7 +1182,7 @@ public:
         for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
           {
             std::size_t nb_class_best=0; 
-            double val_class_best = std::numeric_limits<double>::max();
+            double val_class_best = (std::numeric_limits<double>::max)();
       
             for(std::size_t l = 0; l < m_effect_table.size(); ++ l)
               {
@@ -1213,7 +1213,7 @@ public:
   (const std::vector<std::vector<std::size_t> >& training_sets,
    double lower_bound)
   {
-    double worst_confidence = std::numeric_limits<double>::max();
+    double worst_confidence = (std::numeric_limits<double>::max)();
     for (std::size_t j = 0; j < m_types.size(); ++ j)
       {
         double confidence = 0.;

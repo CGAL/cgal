@@ -495,7 +495,7 @@ int Scene_point_set_classification_item::real_index_color() const
 
 void Scene_point_set_classification_item::reset_indices ()
 {
-  typename Point_set::Property_map<Point_set::Index> indices;
+  Point_set::Property_map<Point_set::Index> indices;
 
   boost::tie (indices, boost::tuples::ignore)
     = m_points->point_set()->property_map<Point_set::Index>("index");
@@ -550,7 +550,7 @@ void Scene_point_set_classification_item::compute_features ()
                                                 m_points->point_set()->begin(),
                                                 m_points->point_set()->end());
 
-  typename Point_set::Property_map<boost::uint8_t> echo_map;
+  Point_set::Property_map<boost::uint8_t> echo_map;
   bool okay;
   boost::tie (echo_map, okay) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
   if (okay)
