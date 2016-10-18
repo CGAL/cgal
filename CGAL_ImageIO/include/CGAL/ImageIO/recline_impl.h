@@ -435,6 +435,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
       fprintf( stderr, "%s: switch to default recursive filter (Deriche's filters).\n", proc );
     }
     type_filter = ALPHA_DERICHE;
+    CGAL_FALLTHROUGH;
   case ALPHA_DERICHE :
 
     if ( (x < 0.1) || (x > 1.9) ) {
