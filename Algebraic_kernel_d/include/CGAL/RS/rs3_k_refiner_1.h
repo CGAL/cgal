@@ -28,7 +28,7 @@
 #include "Gmpfr_make_unique.h"
 
 // If we want assertions, we need to evaluate.
-#ifndef CGAL_NO_ASSERTIONS
+#ifndef CGAL_NO_PRECONDITIONS
 #include "signat_1.h"
 #endif
 
@@ -57,7 +57,7 @@ operator()
         typedef Polynomial_traits_d<Polynomial>         Ptraits;
         typedef Ptraits::Degree                         Degree;
         CGAL_precondition(left<=right);
-#ifndef CGAL_NO_ASSERTIONS
+#ifndef CGAL_NO_PRECONDITIONS
         typedef Ptraits::Make_square_free               Sfpart;
         typedef CGAL::RS_AK1::Signat_1<Polynomial,Gmpfr>
                                                         Signat;
@@ -111,7 +111,7 @@ operator()
         typedef Polynomial_traits_d<ZPolynomial>        ZPtraits;
         typedef ZPtraits::Degree                        ZDegree;
         CGAL_precondition(left<=right);
-#ifndef CGAL_NO_ASSERTIONS
+#ifndef CGAL_NO_PRECONDITIONS
         typedef ZPtraits::Make_square_free              ZSfpart;
         typedef CGAL::RS_AK1::Signat_1<ZPolynomial,Gmpfr>
                                                         Signat;
@@ -120,7 +120,7 @@ operator()
         Polynomial<Gmpz> zpol=CGAL::RS_AK1::Polynomial_converter_1<
                                         CGAL::Polynomial<Gmpq>,
                                         CGAL::Polynomial<Gmpz> >()(qpol);
-#ifndef CGAL_NO_ASSERTIONS
+#ifndef CGAL_NO_PRECONDITIONS
         ZPolynomial zsfpp=ZSfpart()(zpol);
         Signat signof(zsfpp);
         CGAL::Sign sl=signof(left);
