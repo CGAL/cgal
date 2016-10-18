@@ -141,8 +141,8 @@ void MdelaunayIpelet::protected_run(int fn)
           draw_in_ipe(rt);
           break;
         }
-        CGAL_FALLTHROUGH;
       }
+      CGAL_FALLTHROUGH;
     case 3://Delaunay and Voronoi of order n-1
       CGAL_FALLTHROUGH;
     case 8:
@@ -176,8 +176,8 @@ void MdelaunayIpelet::protected_run(int fn)
           draw_in_ipe(rt);
           break;
         }
-        CGAL_FALLTHROUGH;
       }
+      CGAL_FALLTHROUGH;
     case 4:
       CGAL_FALLTHROUGH;
     case 9://k-th Delauney and Voronoi
@@ -200,8 +200,8 @@ void MdelaunayIpelet::protected_run(int fn)
             draw_in_ipe(rt);
             break;
           }
-          CGAL_FALLTHROUGH;
         }
+        CGAL_FALLTHROUGH;
     case 5://Draw Voronoi diagrams
       if(fn==5) draw_dual_in_ipe(dt,bbox);
       if(fn==6) draw_dual_in_ipe(rti,bbox);
