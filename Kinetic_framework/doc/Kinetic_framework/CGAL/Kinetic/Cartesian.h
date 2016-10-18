@@ -75,7 +75,7 @@ typedef unspecified_type Side_of_oriented_sphere_3;
 /*!
 
 */ 
-typedef unspecified_type Power_test_3; 
+typedef unspecified_type Power_side_of_oriented_power_sphere_3; 
 
 /*!
 

@@ -192,7 +192,7 @@
 #include <CGAL/internal/info_check.h>
 //#include <CGAL/internal/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
-#include <CGAL/internal/Static_filters/Power_test_3.h>
+#include <CGAL/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
 //#include <CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>
