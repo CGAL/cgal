@@ -501,7 +501,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) co
   if (!stream)
     return false;
 
-  stream << d->m_points;
+  stream << *(d->m_points);
 
   return true;
 }
