@@ -23,19 +23,6 @@
 #include <iostream>
 
 
-template <typename Kernel, typename Iterator, typename Color_map>
-class Attribute_empty_color : public CGAL::Data_classification::Attribute_color<Kernel, Iterator, Color_map>
-{
-  typedef CGAL::Data_classification::Attribute_color<Kernel, Iterator, Color_map> Base;
-public:
-  Attribute_empty_color ()
-    : Base (Iterator(), Iterator(),
-            Color_map(), 1.)
-  { }
-  virtual double value (std::size_t) { return 1.; }
-};
-
-
 class QMenu;
 class QAction;
 
@@ -89,8 +76,6 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Point_map>           Elevation;
   typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Point_map>         Verticality;
   typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Point_map>   Distance_to_plane;
-  typedef CGAL::Data_classification::Attribute_color<Kernel, Iterator, Color_map>               Color_att;
-  typedef Attribute_empty_color<Kernel, Iterator, Color_map>                                    Empty_color;
 
 
  public:
@@ -295,12 +280,12 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
 
     if (!normals && !colors && !echo)
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map());
     else if (!normals && !colors && echo)
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map(),
@@ -308,14 +293,14 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
                              CGAL::Empty_property_map<Iterator, Color>(),
                              echo_map);
     else if (!normals && colors && !echo)
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map(),
                              CGAL::Empty_property_map<Iterator, Vector_3>(),
                              Color_map(m_points->point_set()));
     else if (!normals && colors && echo)
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map(),
@@ -323,13 +308,13 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
                              Color_map(m_points->point_set()),
                              echo_map);
     else if (normals && !colors && !echo)
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map(),
                              m_points->point_set()->normal_map());
     else if (normals && !colors && echo)
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map(),
@@ -337,14 +322,14 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
                              CGAL::Empty_property_map<Iterator, Color>(),
                              echo_map);
     else if (normals && colors && !echo)
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map(),
                              m_points->point_set()->normal_map(),
                              CGAL::Empty_property_map<Iterator, Color>());
     else
-      m_helper = new Helper (*m_psc, filename,
+      m_helper = new Helper (filename, *m_psc,
                              m_points->point_set()->begin(),
                              m_points->point_set()->end(),
                              m_points->point_set()->point_map(),
