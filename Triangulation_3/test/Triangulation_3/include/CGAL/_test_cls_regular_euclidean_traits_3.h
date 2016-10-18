@@ -28,12 +28,12 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   typedef typename Traits::Bare_point      Bare_point;
 
   typedef typename Traits::Segment_3       Segment_3;
-  typedef typename Traits::Power_side_of_power_sphere_3
-                                  Power_side_of_power_sphere_3;
+  typedef typename Traits::Power_side_of_oriented_power_sphere_3
+                                  Power_side_of_oriented_power_sphere_3;
   typedef typename Traits::Compare_power_distance_3
                                   Compare_power_distance_3;
-  typedef typename Traits::In_smallest_orthogonal_sphere_3
-                                  In_smallest_orthogonal_sphere_3;
+  typedef typename Traits::Power_side_of_bounded_power_sphere_3
+                                  Power_side_of_bounded_power_sphere_3;
   typedef typename Traits::Side_of_bounded_orthogonal_sphere_3
                                   Side_of_bounded_orthogonal_sphere_3;
   typedef typename Traits::Construct_weighted_circumcenter_3
@@ -50,12 +50,12 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
 
   CGAL_USE_TYPE(Segment_3);
   Traits traits;
-  Power_side_of_power_sphere_3 power_test =  
-    traits.power_side_of_power_sphere_3_object();
+  Power_side_of_oriented_power_sphere_3 power_test =  
+    traits.power_side_of_oriented_power_sphere_3_object();
   Compare_power_distance_3 compare_power_distance =
     traits.compare_power_distance_3_object();
-  In_smallest_orthogonal_sphere_3 in_smallest_orthogonal_sphere =
-    traits.in_smallest_orthogonal_sphere_3_object();
+  Power_side_of_bounded_power_sphere_3 bounded_power_test =
+    traits.power_side_of_bounded_power_sphere_3_object();
   Side_of_bounded_orthogonal_sphere_3 side_of_bounded_orthogonal_sphere =
     traits.side_of_bounded_orthogonal_sphere_3_object();
   Construct_weighted_circumcenter_3 weighted_circumcenter =
@@ -133,51 +133,51 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   Weighted_point wq02(q0, ww02);
   
  
-  assert(in_smallest_orthogonal_sphere(wq0, wq1, wq2) 
+  assert(bounded_power_test(wq0, wq1, wq2)
 	 == CGAL::POSITIVE);
-  assert(in_smallest_orthogonal_sphere(wq1, wq0, wq2) 
+  assert(bounded_power_test(wq1, wq0, wq2) 
 	 == CGAL::POSITIVE);
-  assert(in_smallest_orthogonal_sphere(wq1, wq2, wq0) 
+  assert(bounded_power_test(wq1, wq2, wq0) 
 	 == CGAL::ZERO);
-  assert(in_smallest_orthogonal_sphere(wq1, wq2, wq01)
+  assert(bounded_power_test(wq1, wq2, wq01)
 	 == CGAL::NEGATIVE);
-  assert(in_smallest_orthogonal_sphere(wq2, wq1, wq01)
+  assert(bounded_power_test(wq2, wq1, wq01)
 	 == CGAL::NEGATIVE);
-  assert(in_smallest_orthogonal_sphere(wq11, wq21, wq0)
+  assert(bounded_power_test(wq11, wq21, wq0)
 	 == CGAL::POSITIVE);
-  assert(in_smallest_orthogonal_sphere(wq21, wq11, wq0)
+  assert(bounded_power_test(wq21, wq11, wq0)
 	 == CGAL::POSITIVE);
   assert(side_of_bounded_orthogonal_sphere(wq21, wq11, wq0)
 	 == CGAL::ON_UNBOUNDED_SIDE);
 
   
-  assert(in_smallest_orthogonal_sphere(wq0, wq1, wq2, wq3)
+  assert(bounded_power_test(wq0, wq1, wq2, wq3)
 	 == CGAL::POSITIVE);
-  assert(in_smallest_orthogonal_sphere(wq1, wq0, wq2, wq3)
+  assert(bounded_power_test(wq1, wq0, wq2, wq3)
 	 == CGAL::POSITIVE);
   assert(side_of_bounded_orthogonal_sphere(wq1, wq0, wq2, wq3)
 	 == CGAL::ON_UNBOUNDED_SIDE);
-  assert(in_smallest_orthogonal_sphere(wq1, wq2, wq3, wq0)
+  assert(bounded_power_test(wq1, wq2, wq3, wq0)
 	 == CGAL::NEGATIVE);
-  assert(in_smallest_orthogonal_sphere(wq1, wq3, wq2, wq0)
+  assert(bounded_power_test(wq1, wq3, wq2, wq0)
 	 == CGAL::NEGATIVE);
-  assert(in_smallest_orthogonal_sphere(wq11, wq21, wq31, wq02)
+  assert(bounded_power_test(wq11, wq21, wq31, wq02)
  	 == CGAL::ZERO);
-  assert(in_smallest_orthogonal_sphere(wq31, wq21, wq11, wq02)
+  assert(bounded_power_test(wq31, wq21, wq11, wq02)
  	 == CGAL::ZERO);
   
   
-  assert(in_smallest_orthogonal_sphere(wq0, wq1, wq2, wq3, wq4)
+  assert(bounded_power_test(wq0, wq1, wq2, wq3, wq4)
 	 == CGAL::ZERO);
-  assert(in_smallest_orthogonal_sphere(wq1, wq0, wq2, wq3, wq4)
+  assert(bounded_power_test(wq1, wq0, wq2, wq3, wq4)
 	 == CGAL::ZERO);
-  assert(in_smallest_orthogonal_sphere(wq01, wq11, wq21, wq31, wq4)
+  assert(bounded_power_test(wq01, wq11, wq21, wq31, wq4)
 	 == CGAL::POSITIVE);
-  assert(in_smallest_orthogonal_sphere(wq01, wq21, wq11, wq31, wq4)
+  assert(bounded_power_test(wq01, wq21, wq11, wq31, wq4)
 	 == CGAL::POSITIVE);
-  assert(in_smallest_orthogonal_sphere(wq0, wq1, wq2, wq3, wq41)
+  assert(bounded_power_test(wq0, wq1, wq2, wq3, wq41)
 	 == CGAL::NEGATIVE);
-  assert(in_smallest_orthogonal_sphere(wq0, wq1, wq3, wq2, wq41)
+  assert(bounded_power_test(wq0, wq1, wq3, wq2, wq41)
 	 == CGAL::NEGATIVE);
   assert(side_of_bounded_orthogonal_sphere(wq0, wq1, wq3, wq2, wq41)
 	 == CGAL::ON_BOUNDED_SIDE);
