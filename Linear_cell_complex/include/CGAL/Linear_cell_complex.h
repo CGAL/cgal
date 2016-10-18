@@ -269,7 +269,7 @@ namespace CGAL {
                                       Vertex_attribute_handle ah)
     {
       return CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
-          run(this, adart,ah);
+          run(*this, adart, ah);
     }
 
     /** Set the vertex attribute of all the darts of the vertex.
@@ -278,7 +278,7 @@ namespace CGAL {
      */
     void set_vertex_attribute(Dart_handle adart,
                               Vertex_attribute_handle ah)
-    { return CGAL::Set_i_attribute_functor<Self, 0>::run(this, adart,ah); }
+    { return CGAL::Set_i_attribute_functor<Self, 0>::run(*this, adart, ah); }
 
     /// @return the Vertex_attribute_range for all vertex_attributes.
     Vertex_attribute_range& vertex_attributes()
@@ -357,14 +357,14 @@ namespace CGAL {
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
-          run(this,&marks);
+          run(*this, marks);
 
       for ( typename Dart_range::iterator it(this->darts().begin()),
              itend(this->darts().end()); it!=itend; ++it)
       {
         Helper::template Foreach_enabled_attributes
           <internal::Correct_invalid_attributes_functor<Self> >::
-          run(this,it,&marks);
+          run(*this, it, marks);
 
         if ( vertex_attribute(it)==null_handle )
         {
@@ -382,7 +382,7 @@ namespace CGAL {
 
       Helper::template
         Foreach_enabled_attributes<internal::Cleanup_useless_attributes<Self> >::
-          run(this);
+          run(*this);
     }
 
     /** test if the two given facets have the same geometry

@@ -11,8 +11,9 @@ template<typename Map>
 void test(Map& m)
 {
   // Create two tetrahedra.
-  typename Map::Dart_const_handle d1 = m.make_combinatorial_tetrahedron();
-  typename Map::Dart_const_handle d2 = m.make_combinatorial_tetrahedron();
+  typename Map::Dart_handle d1 = m.make_combinatorial_tetrahedron();
+  typename Map::Dart_handle d2 = m.make_combinatorial_tetrahedron();
+  m.template sew<3>(d1, d2);
 
   // Display the map characteristics.
   m.display_characteristics(std::cout);

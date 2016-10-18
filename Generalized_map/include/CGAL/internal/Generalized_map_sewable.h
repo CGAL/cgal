@@ -32,16 +32,16 @@ namespace CGAL
 namespace internal
 {
 // Generic case (and for the moment the only one).
-template<typename CMap, unsigned int i, unsigned int dim=CMap::dimension>
+template<typename GMap, unsigned int i, unsigned int dim=GMap::dimension>
 struct GMap_is_sewable_functor
 {
-  static bool run( const CMap* amap,
-                   typename CMap::Dart_const_handle adart1,
-                   typename CMap::Dart_const_handle adart2 )
+  static bool run( const GMap& amap,
+                   typename GMap::Dart_const_handle adart1,
+                   typename GMap::Dart_const_handle adart2 )
   {
-    CGAL_assertion( i<=CMap::dimension );
-    if ( !amap->template is_free<i>(adart1) ||
-         !amap->template is_free<i>(adart2) )
+    CGAL_assertion( i<=GMap::dimension );
+    if ( !amap.template is_free<i>(adart1) ||
+         !amap.template is_free<i>(adart2) )
       return false;
 
     if ( adart1==adart2 )
@@ -51,26 +51,26 @@ struct GMap_is_sewable_functor
     }
 
     // hash map to build the isomorphism between the two i-cells.
-    CGAL::Unique_hash_map<typename CMap::Dart_const_handle,
-        typename CMap::Dart_const_handle,
-        typename CMap::Hash_function> bijection;
+    CGAL::Unique_hash_map<typename GMap::Dart_const_handle,
+        typename GMap::Dart_const_handle,
+        typename GMap::Hash_function> bijection;
 
-    typename CMap::size_type m1 = amap->get_new_mark();
-    typename CMap::size_type m2 = amap->get_new_mark();
-    CGAL::GMap_dart_const_iterator_basic_of_involution<CMap,i>
-        I1(*amap, adart1, m1);
-    CGAL::GMap_dart_const_iterator_basic_of_involution<CMap,i>
-        I2(*amap, adart2, m2);
+    typename GMap::size_type m1 = amap.get_new_mark();
+    typename GMap::size_type m2 = amap.get_new_mark();
+    CGAL::GMap_dart_const_iterator_basic_of_involution<GMap,i>
+        I1(amap, adart1, m1);
+    CGAL::GMap_dart_const_iterator_basic_of_involution<GMap,i>
+        I2(amap, adart2, m2);
     bool res = true;
-    typename CMap::size_type mbijection = amap->get_new_mark();
+    typename GMap::size_type mbijection = amap.get_new_mark();
 
     while ( res && I1.cont() && I2.cont() )
     {
-      amap->mark(I1, mbijection);
+      amap.mark(I1, mbijection);
       bijection[I1]=I2;
 
-      CGAL_assertion( amap->template is_free<i>(I1) );
-      CGAL_assertion( amap->template is_free<i>(I2) );
+      CGAL_assertion( amap.template is_free<i>(I1) );
+      CGAL_assertion( amap.template is_free<i>(I2) );
 
       // We can remove this constraint which is not required for
       // generalized map definition, but which is quite "normal"
@@ -78,20 +78,20 @@ struct GMap_is_sewable_functor
       // of folded cells).
       if ( I1==adart2 || I2==adart1 ) res=false;
 
-      for ( unsigned int j=0; res && j<=CMap::dimension; ++j )
+      for ( unsigned int j=0; res && j<=GMap::dimension; ++j )
       {
         if ( j+1!=i && j!=i && j!=i+1 )
         {
-          if ( amap->is_free(I1,j) )
+          if ( amap.is_free(I1,j) )
           {
-            if ( !amap->is_free(I2,j) ) res=false;
+            if ( !amap.is_free(I2,j) ) res=false;
           }
           else
           {
-            if ( amap->is_free(I2,j) ) res=false;
-            else if ( amap->is_marked(amap->alpha(I1,j), mbijection) )
+            if ( amap.is_free(I2,j) ) res=false;
+            else if ( amap.is_marked(amap.alpha(I1,j), mbijection) )
             {
-              if ( bijection[amap->alpha(I1,j)]!=amap->alpha(I2,j) ) res=false;
+              if ( bijection[amap.alpha(I1,j)]!=amap.alpha(I2,j) ) res=false;
             }
           }
         }
@@ -101,21 +101,21 @@ struct GMap_is_sewable_functor
     if ( I1.cont()!=I2.cont() )
       res = false;
 
-    amap->negate_mark(m1);
-    amap->negate_mark(m2);
+    amap.negate_mark(m1);
+    amap.negate_mark(m2);
     I1.rewind(); I2.rewind();
-    while ( amap->number_of_marked_darts(mbijection)>0 )
+    while ( amap.number_of_marked_darts(mbijection)>0 )
     {
-      amap->unmark(I1, mbijection);
+      amap.unmark(I1, mbijection);
       ++I1; ++I2;
     }
 
-    CGAL_assertion( amap->is_whole_map_marked(m1) );
-    CGAL_assertion( amap->is_whole_map_marked(m2) );
-    CGAL_assertion( amap->is_whole_map_unmarked(mbijection) );
-    amap->free_mark(m1);
-    amap->free_mark(m2);
-    amap->free_mark(mbijection);
+    CGAL_assertion( amap.is_whole_map_marked(m1) );
+    CGAL_assertion( amap.is_whole_map_marked(m2) );
+    CGAL_assertion( amap.is_whole_map_unmarked(mbijection) );
+    amap.free_mark(m1);
+    amap.free_mark(m2);
+    amap.free_mark(mbijection);
 
     return res;
   }

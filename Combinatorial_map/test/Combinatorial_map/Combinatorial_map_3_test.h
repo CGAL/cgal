@@ -868,6 +868,7 @@ bool test3D()
         map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
       }
   }
+  std::cout<<"Size of map="<<map.bytes()<<std::endl;
   map.clear();
 
   cout << "***************************** TEST FACET REMOVAL 3D DONE."
@@ -986,28 +987,16 @@ bool test3D()
   cout << "***************************** TEST INSERT EDGE 3D:"
        << endl;
 
-  /*  d1 = map.create_dart();
-  d2 = map.create_dart();
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge1: " << flush; map.insert_cell_1_in_cell_2(d1, d2);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();*/
-
-  /*  d1 = map.make_edge(, );
-  map.template sew<1>(d1, d1);
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge2: " << flush; map.insert_cell_1_in_cell_2(d1, d1->beta(2));
-  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  map.clear();*/
-
-  d1 = map.make_edge();
-  d2 = map.make_edge();
+  d1 = map.make_edge(); map.template sew<1>(d1, map.make_edge());
+  d2 = map.make_edge(); map.template sew<0>(d2, map.make_edge());
+  map.template sew<0>(map.template beta<0>(d2), d2);
+  map.template sew<1>(map.template beta<1>(d1), d1);
   map.template sew<3>(d1, d2);
   map.template sew<3>(map.beta(d1,2), map.beta(d2,2));
-  map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  /*  cout << "insert edge3: " << flush; map.insert_cell_1_in_cell_2(d1, d1);
-      map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;*/
+  cout << "insert edge3: " << flush;
+  map.insert_cell_1_in_cell_2(d1, map.template beta<1>(d1));
+  map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = map.make_combinatorial_polygon(4 );

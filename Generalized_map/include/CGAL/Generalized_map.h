@@ -233,7 +233,7 @@ namespace CGAL {
         Helper::template Foreach_enabled_attributes
           < internal::Copy_attributes_functor <Gmap2, Refs, Converters,
             Pointconverter> >::
-          run(&amap, static_cast<Refs*>(this),
+          run(amap, static_cast<Refs&>(*this),
               dartmap_iter->first, dartmap_iter->second,
               converters, pointconverter);
       }
@@ -465,7 +465,7 @@ namespace CGAL {
 
       // 2) We update the attribute_ref_counting.
       Helper::template Foreach_enabled_attributes
-        <internal::Decrease_attribute_functor<Self> >::run(this,adart);
+        <internal::Decrease_attribute_functor<Self> >::run(*this,adart);
 
       // 3) We erase the dart.
       mdarts.erase(adart);
@@ -567,7 +567,7 @@ namespace CGAL {
         dart_unlink_alpha(adart, i);
 
       Helper::template Foreach_enabled_attributes
-          <internal::Init_attribute_functor<Self> >::run(this, adart);
+          <internal::Init_attribute_functor<Self> >::run(*this, adart);
     }
     // Initialize a given dart: all alpha to this and all
     // attributes to null, marks are given.
@@ -580,7 +580,7 @@ namespace CGAL {
         dart_unlink_alpha(adart, i);
 
       Helper::template Foreach_enabled_attributes
-          <internal::Init_attribute_functor<Self> >::run(this, adart);
+          <internal::Init_attribute_functor<Self> >::run(*this, adart);
     }
 
   public:
@@ -592,19 +592,19 @@ namespace CGAL {
     template<typename ...Alphas>
     Dart_handle alpha(Dart_handle ADart, Alphas... alphas)
     { return CGAL::internal::Alpha_functor<Self, Dart_handle, Alphas...>::
-        run(this, ADart, alphas...); }
+        run(*this, ADart, alphas...); }
     template<typename ...Alphas>
     Dart_const_handle alpha(Dart_const_handle ADart, Alphas... alphas) const
     { return CGAL::internal::Alpha_functor<const Self, Dart_const_handle, Alphas...>::
-        run(this, ADart, alphas...); }
+        run(*this, ADart, alphas...); }
     template<int... Alphas>
     Dart_handle alpha(Dart_handle ADart)
     { return CGAL::internal::Alpha_functor_static<Self, Dart_handle, Alphas...>::
-        run(this, ADart); }
+        run(*this, ADart); }
     template<int... Alphas>
     Dart_const_handle alpha(Dart_const_handle ADart) const
     { return CGAL::internal::Alpha_functor_static<const Self, Dart_const_handle, Alphas...>::
-        run(this, ADart); }
+        run(*this, ADart); }
 #else
     Dart_handle alpha(Dart_handle ADart, int B1)
     { return this->get_alpha(ADart, B1); }
@@ -1053,7 +1053,7 @@ namespace CGAL {
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
-          run(this,&marks);
+          run(*this, marks);
 
       for ( typename Dart_range::const_iterator it(darts().begin()),
              itend(darts().end()); it!=itend; ++it)
@@ -1090,7 +1090,7 @@ namespace CGAL {
           }
           Helper::template Foreach_enabled_attributes
             <internal::Test_is_valid_attribute_functor<Self> >::
-            run(this,it,&marks,&valid);
+            run(*this, it, marks, valid);
         }
       }
       for ( i=0; i<=dimension; ++i)
@@ -1112,14 +1112,14 @@ namespace CGAL {
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
-          run(this,&marks);
+          run(*this,marks);
 
       for ( typename Dart_range::iterator it(darts().begin()),
              itend(darts().end()); it!=itend; ++it)
       {
         Helper::template Foreach_enabled_attributes
           <internal::Correct_invalid_attributes_functor<Self> >::
-          run(this,it,&marks);
+          run(*this,it,marks);
       }
 
       for ( unsigned int i=0; i<=dimension; ++i)
@@ -1159,7 +1159,7 @@ namespace CGAL {
         if ( attribs )
         {
           Helper::template Foreach_enabled_attributes
-              <Display_attribute_functor<Self> >::run(this, it);
+              <Display_attribute_functor<Self> >::run(*this, it);
         }
         os << std::endl;
         ++nb;
@@ -1528,7 +1528,7 @@ namespace CGAL {
       CGAL_assertion( i<=dimension );
       Helper::template Foreach_enabled_attributes_except
         <internal::GMap_group_attribute_functor_of_dart<Self, i>, i>::
-        run(this,adart1,adart2);
+        run(*this,adart1,adart2);
       this->template dart_link_alpha<i>(adart1, adart2);
       this->template dart_link_alpha<i>(adart2, adart1);
     }
@@ -1585,7 +1585,7 @@ namespace CGAL {
     bool is_sewable(Dart_const_handle adart1, Dart_const_handle adart2) const
     {
       return CGAL::internal::
-          GMap_is_sewable_functor<Self, i>::run(this, adart1, adart2);
+          GMap_is_sewable_functor<Self, i>::run(*this, adart1, adart2);
     }
 
     /** Topological sew by alphai two given darts plus all the required darts
@@ -1638,7 +1638,7 @@ namespace CGAL {
       {
         Helper::template Foreach_enabled_attributes_except
             <CGAL::internal::GMap_group_attribute_functor<Self, i>, i>::
-            run(this, I1, I2);
+            run(*this, I1, I2);
       }
 
       // Now we update the alpha links.
@@ -1715,7 +1715,7 @@ namespace CGAL {
       // void attributes.
       Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::GMap_test_split_attribute_functor<Self, i>, i>::
-          run(this, modified_darts);
+          run(*this, modified_darts);
     }
 
     /** Unsew by alphai the given dart plus all the required darts
@@ -1769,7 +1769,7 @@ namespace CGAL {
         {
           CGAL::internal::Foreach_static
             <CGAL::internal::Count_cell_functor<Self>,dimension+1>::
-            run(this, it, &marks, &res);
+            run(*this, it, marks, res);
         }
       }
 
@@ -2726,14 +2726,6 @@ namespace CGAL {
                             typename Map2::Dart_const_handle,
                             typename Self::Hash_function> bijection;
 
-      if ( testAttributes )
-      {
-        internal::Test_is_same_attribute_functor<Self, Map2>::
-            value = true;
-        internal::Test_is_same_attribute_functor<Map2, Self>::
-            value = true;
-      }
-
       while (match && !toTreat1.empty())
       {
         // Next dart
@@ -2758,17 +2750,14 @@ namespace CGAL {
               // We need to test in both direction because
               // Foreach_enabled_attributes only test non void attributes
               // of Self.
-              Helper::template Foreach_enabled_attributes
-                < internal::Test_is_same_attribute_functor<Self, Map2> >::
-                run(this,&map2,current, other);
-              Map2::Helper::template Foreach_enabled_attributes
-                < internal::Test_is_same_attribute_functor<Map2, Self> >::
-                run(&map2,this,other, current);
-              if ( !internal::Test_is_same_attribute_functor<Self, Map2>::
-                   value ||
-                   !internal::Test_is_same_attribute_functor<Map2, Self>::
-                   value )
-                match=false;
+              if (match)
+                Helper::template Foreach_enabled_attributes
+                  < internal::Test_is_same_attribute_functor<Self, Map2> >::
+                  run(*this, map2, current, other, match);
+              if (match)
+                Map2::Helper::template Foreach_enabled_attributes
+                  < internal::Test_is_same_attribute_functor<Map2, Self> >::
+                  run(map2, *this, other, current, match);
             }
 
             // We test if the injection is valid with its neighboors.
@@ -3290,13 +3279,13 @@ namespace CGAL {
           // We copy all the attributes except for dim=0
           Helper::template Foreach_enabled_attributes_except
             <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 0>::
-            run(this,*it,d1);
+            run(*this,*it,d1);
         }
         if (ah != null_handle)
         {
           // We initialise the 0-atttrib to ah
           CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
-            run(this, d1, ah);
+            run(*this, d1, ah);
           mark(*it, amark);
         }
       }
@@ -3318,7 +3307,7 @@ namespace CGAL {
         if ( !(this->template is_free<1>(alpha<0>(adart))) )
         {
           CGAL::internal::GMap_degroup_attribute_functor_run<Self, 1>::
-              run(this, adart, alpha<0,1>(adart));
+              run(*this, adart, alpha<0,1>(adart));
         }
       }
 
@@ -3408,13 +3397,13 @@ namespace CGAL {
         // We copy all the attributes except for dim=1
         Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 1>::
-          run(this,*it,d1);
+          run(*this,*it,d1);
         Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 1>::
-          run(this,*it,d2);
+          run(*this,*it,d2);
         // We initialise the 0-atttrib to ah
         CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
-          run(this, d2, ah);
+          run(*this, d2, ah);
       }
     }
 
@@ -3437,7 +3426,7 @@ namespace CGAL {
       for (it = todegroup.begin(); it != todegroup.end(); ++it)
       {
         CGAL::internal::GMap_degroup_attribute_functor_run<Self, 2>::
-          run(this, adart, *it);
+          run(*this, adart, *it);
       }
     }
 
@@ -3558,7 +3547,7 @@ namespace CGAL {
       if (are_attributes_automatically_managed() &&
           update_attributes && ah!=NULL)
       {
-        internal::Set_i_attribute_of_dart_functor<Self, 0>::run(this, d1, ah);
+        internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d1, ah);
       }
     }
 
@@ -3566,7 +3555,7 @@ namespace CGAL {
     {
       if ( !this->template is_free<2>(d1) && d2!=null_handle )
         CGAL::internal::GMap_degroup_attribute_functor_run<Self, 2>::
-          run(this, d1, this->template alpha<2>(d1));
+          run(*this, d1, this->template alpha<2>(d1));
     }
 
     negate_mark(m1);
@@ -3824,7 +3813,7 @@ namespace CGAL {
       if (are_attributes_automatically_managed() && update_attributes)
       {
         CGAL::internal::GMap_degroup_attribute_functor_run<Self, 3>::
-            run(this, first, this->template alpha<3>(first));
+            run(*this, first, this->template alpha<3>(first));
       }
     }
 

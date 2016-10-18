@@ -211,8 +211,7 @@ void MainWindow::clear_all()
 void MainWindow::on_new_volume(Dart_handle adart)
 {
   CGAL_assertion( scene.lcc->attribute<3>(adart)==LCC::null_handle);
-  CGAL::Set_i_attribute_functor<LCC, 3>::
-      run(scene.lcc, adart, scene.lcc->create_attribute<3>());
+  scene.lcc->set_attribute<3>(adart, scene.lcc->create_attribute<3>());
   update_volume_list_add(scene.lcc->attribute<3>(adart));
 }
 
@@ -2750,10 +2749,9 @@ void MainWindow::sierpinski_carpet_copy_attributes_and_embed_vertex
     // We copy all the attributes except for dim=0
     LCC::Helper::Foreach_enabled_attributes_except
       <CGAL::internal::Group_attribute_functor_of_dart<LCC>, 0>::
-      run(scene.lcc,sierpinskiCarpetSurfaces[0],it);
+      run(*(scene.lcc),sierpinskiCarpetSurfaces[0],it);
     // We initialise the 0-atttrib to ah
-    CGAL::internal::Set_i_attribute_of_dart_functor<LCC, 0>::
-        run(scene.lcc, it, ah);
+    scene.lcc->template set_dart_attribute<0>(it, ah);
   }
 }
 
@@ -3155,14 +3153,13 @@ void MainWindow::onSierpinskiTriangleInc()
     for(std::size_t i = nbfacesinit; i < sierpinskiTriangleSurfaces.size(); i++)
     {
       LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
-        CGAL::Set_i_attribute_functor<LCC, 3>::
-            run(scene.lcc, sierpinskiTriangleSurfaces[i], ah);
-        scene.lcc->info<3>(sierpinskiTriangleSurfaces[i]).color()=
-          (CGAL::Color(myrandom.get_int(0,256),
-                       myrandom.get_int(0,256),
-                       myrandom.get_int(0,256)));
-
-        update_volume_list_add(scene.lcc->attribute<3>(sierpinskiTriangleSurfaces[i]));
+      scene.lcc->set_attribute<3>(sierpinskiTriangleSurfaces[i], ah);
+      scene.lcc->info<3>(sierpinskiTriangleSurfaces[i]).color()=
+        (CGAL::Color(myrandom.get_int(0,256),
+                     myrandom.get_int(0,256),
+                     myrandom.get_int(0,256)));
+      
+      update_volume_list_add(scene.lcc->attribute<3>(sierpinskiTriangleSurfaces[i]));
     }
 
     scene.lcc->correct_invalid_attributes();

@@ -40,56 +40,56 @@ namespace internal
 // ****************************************************************************
 // Alpha functor, used to combine several alpha.
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-template<typename CMap, typename Dart_handle, typename ... Alphas>
+template<typename GMap, typename Dart_handle, typename ... Alphas>
 struct Alpha_functor;
 
-template<typename CMap, typename Dart_handle>
-struct Alpha_functor<CMap, Dart_handle, int>
+template<typename GMap, typename Dart_handle>
+struct Alpha_functor<GMap, Dart_handle, int>
 {
-  static Dart_handle run(CMap* AMap, Dart_handle ADart, int B)
-  { return AMap->get_alpha(ADart, B); }
+  static Dart_handle run(GMap& AMap, Dart_handle ADart, int B)
+  { return AMap.get_alpha(ADart, B); }
 };
 
-template<typename CMap, typename Dart_handle>
-struct Alpha_functor<CMap, Dart_handle, unsigned int>
+template<typename GMap, typename Dart_handle>
+struct Alpha_functor<GMap, Dart_handle, unsigned int>
 {
-  static Dart_handle run(CMap* AMap, Dart_handle ADart, unsigned int B)
-  { return  AMap->get_alpha(ADart, B); }
+  static Dart_handle run(GMap& AMap, Dart_handle ADart, unsigned int B)
+  { return  AMap.get_alpha(ADart, B); }
 };
 
-template<typename CMap, typename Dart_handle, typename ... Alphas>
-struct Alpha_functor<CMap, Dart_handle, int, Alphas...>
+template<typename GMap, typename Dart_handle, typename ... Alphas>
+struct Alpha_functor<GMap, Dart_handle, int, Alphas...>
 {
-  static Dart_handle run(CMap* AMap, Dart_handle ADart, int B, Alphas... alphas)
-  { return Alpha_functor<CMap, Dart_handle, Alphas...>::
-      run(AMap, AMap->get_alpha(ADart, B), alphas...); }
+  static Dart_handle run(GMap& AMap, Dart_handle ADart, int B, Alphas... alphas)
+  { return Alpha_functor<GMap, Dart_handle, Alphas...>::
+      run(AMap, AMap.get_alpha(ADart, B), alphas...); }
 };
 
-template<typename CMap, typename Dart_handle, typename ... Alphas>
-struct Alpha_functor<CMap, Dart_handle, unsigned int, Alphas...>
+template<typename GMap, typename Dart_handle, typename ... Alphas>
+struct Alpha_functor<GMap, Dart_handle, unsigned int, Alphas...>
 {
-  static Dart_handle run(CMap* AMap, Dart_handle ADart, unsigned int B,
+  static Dart_handle run(GMap& AMap, Dart_handle ADart, unsigned int B,
                          Alphas... alphas)
-  { return Alpha_functor<CMap, Dart_handle, Alphas...>::
-      run(AMap, AMap->get_alpha(ADart, B), alphas...); }
+  { return Alpha_functor<GMap, Dart_handle, Alphas...>::
+      run(AMap, AMap.get_alpha(ADart, B), alphas...); }
 };
 // ****************************************************************************
-template<typename CMap, typename Dart_handle, int ... Alphas>
+template<typename GMap, typename Dart_handle, int ... Alphas>
 struct Alpha_functor_static;
 
-template<typename CMap, typename Dart_handle, int B>
-struct Alpha_functor_static<CMap, Dart_handle, B>
+template<typename GMap, typename Dart_handle, int B>
+struct Alpha_functor_static<GMap, Dart_handle, B>
 {
-  static Dart_handle run(CMap* AMap, Dart_handle ADart)
-  { return AMap->template get_alpha<B>(ADart); }
+  static Dart_handle run(GMap& AMap, Dart_handle ADart)
+  { return AMap.template get_alpha<B>(ADart); }
 };
 
-template<typename CMap, typename Dart_handle, int B, int ... Alphas>
-struct Alpha_functor_static<CMap, Dart_handle, B, Alphas...>
+template<typename GMap, typename Dart_handle, int B, int ... Alphas>
+struct Alpha_functor_static<GMap, Dart_handle, B, Alphas...>
 {
-  static Dart_handle run(CMap* AMap, Dart_handle ADart)
-  { return Alpha_functor_static<CMap, Dart_handle, Alphas...>::
-        run(AMap, AMap->template get_alpha<B>(ADart)); }
+  static Dart_handle run(GMap& AMap, Dart_handle ADart)
+  { return Alpha_functor_static<GMap, Dart_handle, Alphas...>::
+        run(AMap, AMap.template get_alpha<B>(ADart)); }
 };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 // ****************************************************************************

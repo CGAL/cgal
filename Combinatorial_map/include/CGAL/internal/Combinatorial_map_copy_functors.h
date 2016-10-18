@@ -139,12 +139,12 @@ template<typename Map1, typename Map2, unsigned int i, typename Converters,
 struct Get_convert_attribute_functor
 {
   static typename Map2::template Attribute_handle<i>::type
-  run( const Map1* cmap1, Map2* cmap2, typename Map1::Dart_const_handle dh1,
+  run( const Map1& cmap1, Map2& cmap2, typename Map1::Dart_const_handle dh1,
        typename Map2::Dart_handle dh2, const Converters& /*converters*/)
   {
     return
         CGAL::Default_converter_cmap_attributes<Map1, Map2, i>()
-        (*cmap1, *cmap2, dh1, dh2);
+        (cmap1, cmap2, dh1, dh2);
   }
 };
 
@@ -152,10 +152,10 @@ template<typename Map1, typename Map2, unsigned int i, typename Converters>
 struct Get_convert_attribute_functor<Map1,Map2,i,Converters,false>
 {
   static typename Map2::template Attribute_handle<i>::type
-  run( const Map1* cmap1, Map2* cmap2, typename Map1::Dart_const_handle dh1,
+  run( const Map1& cmap1, Map2& cmap2, typename Map1::Dart_const_handle dh1,
        typename Map2::Dart_handle dh2, const Converters& converters)
   {
-    return CGAL::cpp11::get<i>(converters) (*cmap1, *cmap2, dh1, dh2);
+    return CGAL::cpp11::get<i>(converters) (cmap1, cmap2, dh1, dh2);
   }
 };
 // ****************************************************************************
@@ -171,8 +171,8 @@ template< typename Map1, typename Map2, unsigned int i,
 struct Call_functor_if_both_attributes_have_info
 {
   static typename Map2::template Attribute_handle<i>::type
-  run( const Map1*,
-       Map2*,
+  run( const Map1&,
+       Map2&,
        typename Map1::Dart_const_handle,
        typename Map2::Dart_handle,
        const Converters&)
@@ -184,8 +184,8 @@ struct Call_functor_if_both_attributes_have_info<Map1, Map2, i,
     Converters, true, true>
 {
   static typename Map2::template Attribute_handle<i>::type
-  run( const Map1* cmap1,
-       Map2* cmap2,
+  run( const Map1& cmap1,
+       Map2& cmap2,
        typename Map1::Dart_const_handle dh1,
        typename Map2::Dart_handle dh2,
        const Converters& converters )
@@ -206,8 +206,8 @@ template< typename Map1, typename Map2, unsigned int i,
 struct Call_functor_if_both_attributes_have_point
 {
   static typename Map2::template Attribute_handle<i>::type
-  run( const Map1*,
-       Map2*,
+  run( const Map1&,
+       Map2&,
        typename Map1::Dart_const_handle,
        typename Map2::Dart_handle,
        const Pointconverter&)
@@ -219,12 +219,12 @@ struct Call_functor_if_both_attributes_have_point<Map1, Map2, 0,
     Pointconverter, true, true>
 {
   static typename Map2::template Attribute_handle<0>::type
-  run( const Map1* cmap1,
-       Map2* cmap2,
+  run( const Map1& cmap1,
+       Map2& cmap2,
        typename Map1::Dart_const_handle dh1,
        typename Map2::Dart_handle dh2,
        const Pointconverter& pointconverter )
-  { return pointconverter(*cmap1, *cmap2, dh1, dh2); }
+  { return pointconverter(cmap1, cmap2, dh1, dh2); }
 };
 // ****************************************************************************
 // Copy attribute when if both i-attributes are non void.
@@ -237,18 +237,18 @@ template<typename Map1, typename Map2, typename Converters,
          typename Attr2=typename Map2::template Attribute_type<i>::type >
 struct Copy_attribute_functor_if_nonvoid
 {
-  static void run( const Map1* cmap1,
-                   Map2* cmap2,
+  static void run( const Map1& cmap1,
+                   Map2& cmap2,
                    typename Map1::Dart_const_handle dh1,
                    typename Map2::Dart_handle dh2,
                    const Converters& converters,
                    const Pointconverter& pointconverter)
   {
     // If dh1 has no i-attribute, nothing to copy.
-    if ( cmap1->template attribute<i>(dh1)==Map1::null_handle ) return;
+    if ( cmap1.template attribute<i>(dh1)==Map1::null_handle ) return;
 
     // If dh2 has already an i-attribute, it was already copied.
-    if ( cmap2->template attribute<i>(dh2)!=Map2::null_handle ) return;
+    if ( cmap2.template attribute<i>(dh2)!=Map2::null_handle ) return;
 
     // Otherwise we copy the info if both attribute have non void info.
     typename Map2::template Attribute_handle<i>::type
@@ -257,7 +257,7 @@ struct Copy_attribute_functor_if_nonvoid
         run(cmap1, cmap2, dh1, dh2, converters);
 
     if ( res!=Map2::null_handle )
-      cmap2->template set_attribute<i>(dh2, res);
+      cmap2.template set_attribute<i>(dh2, res);
 
     // And the point if both attributes have points (and only for 0-attributes)
     res=Call_functor_if_both_attributes_have_point
@@ -265,8 +265,8 @@ struct Copy_attribute_functor_if_nonvoid
         run(cmap1, cmap2, dh1, dh2, pointconverter);
 
     if ( res!=Map2::null_handle &&
-         cmap2->template attribute<i>(dh2)==Map2::null_handle )
-      cmap2->template set_attribute<i>(dh2, res);
+         cmap2.template attribute<i>(dh2)==Map2::null_handle )
+      cmap2.template set_attribute<i>(dh2, res);
   }
 };
 // Specialisation when attr1 is void, and attr2 is non void i==0. Nothing to
@@ -277,21 +277,21 @@ template<typename Map1, typename Map2, typename Converters,
 struct Copy_attribute_functor_if_nonvoid<Map1, Map2, Converters,
     Pointconverter, 0, CGAL::Void, Attr2>
 {
-  static void run( const Map1*,
-                   Map2* cmap2,
+  static void run( const Map1&,
+                   Map2& cmap2,
                    typename Map1::Dart_const_handle,
                    typename Map2::Dart_handle dh2,
                    const Converters&,
                    const Pointconverter&)
   {
     // If dh2 has already an 0-attribute, it was already created.
-    if ( cmap2->template attribute<0>(dh2)!=Map2::null_handle ) return;
+    if ( cmap2.template attribute<0>(dh2)!=Map2::null_handle ) return;
 
     // Create the point if 0-attributes has Point.
     if ( CGAL::template Is_attribute_has_point
          <typename Map2::template Attribute_type<0>::type>::value )
-      cmap2->template
-          set_attribute<0>(dh2, cmap2->template create_attribute<0>());
+      cmap2.template
+          set_attribute<0>(dh2, cmap2.template create_attribute<0>());
   }
 };
 // Specialisation when attr1 is void, and attr2 is non void i!=0.
@@ -301,8 +301,8 @@ template<typename Map1, typename Map2, typename Converters, unsigned int i,
 struct Copy_attribute_functor_if_nonvoid<Map1, Map2, Converters,
     Pointconverter, i, CGAL::Void, Attr2>
 {
-  static void run( const Map1*,
-                   Map2*,
+  static void run( const Map1&,
+                   Map2&,
                    typename Map1::Dart_const_handle,
                    typename Map2::Dart_handle,
                    const Converters&,
@@ -318,8 +318,8 @@ template<typename Map1, typename Map2, typename Converters,
 struct Copy_attributes_functor
 {
   template<unsigned int i>
-  static void run( const Map1* cmap1,
-                   Map2* cmap2,
+  static void run( const Map1& cmap1,
+                   Map2& cmap2,
                    typename Map1::Dart_const_handle dh1,
                    typename Map2::Dart_handle dh2,
                    const Converters& converters,
