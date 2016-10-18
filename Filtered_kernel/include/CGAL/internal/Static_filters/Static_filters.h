@@ -75,7 +75,7 @@
 #include <CGAL/internal/Static_filters/Side_of_oriented_sphere_3.h>
 #include <CGAL/internal/Static_filters/Compare_squared_radius_3.h>
 #include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
-#include <CGAL/internal/Static_filters/Power_side_of_power_sphere_3.h>
+#include <CGAL/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
 
 
 // #include <CGAL/internal/Static_filters/Coplanar_orientation_3.h>
