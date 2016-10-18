@@ -22,6 +22,8 @@
 
 #include <vector>
 
+#include <CGAL/Data_classification/Local_eigen_analysis.h>
+
 namespace CGAL {
 
 namespace Data_classification {
@@ -467,7 +469,7 @@ public:
                                RandomAccessIterator end,
                                Local_eigen_analysis& eigen)
   {
-    this->weight = weight;
+    this->weight = 1.;
     std::size_t size = (std::size_t)(end - begin);
     attrib.reserve (size);
     for (std::size_t i = 0; i < size; ++ i)
