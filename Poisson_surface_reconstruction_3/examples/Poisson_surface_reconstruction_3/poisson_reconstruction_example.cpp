@@ -107,11 +107,12 @@ int main(void)
     out << output_mesh;
 
 
-    double dist = CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh<CGAL::Sequential_tag>(
-      points,
-      output_mesh);
+    double dist = CGAL::Polygon_mesh_processing::max_distance_to_point_set(
+                output_mesh,
+                points,
+                40000);
 
-    std::cerr<<"Max distance to point_set :"<<dist<<std::endl;
+    std::cout<<"Max distance to point_set: "<<dist<<std::endl;
 
     return EXIT_SUCCESS;
 }

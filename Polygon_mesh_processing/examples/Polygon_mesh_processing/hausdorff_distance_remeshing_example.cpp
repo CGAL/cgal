@@ -1,6 +1,6 @@
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
@@ -11,7 +11,7 @@
 #else
 #define TAG CGAL::Sequential_tag
 #endif
-typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3                     P_3;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 namespace PMP = CGAL::Polygon_mesh_processing;

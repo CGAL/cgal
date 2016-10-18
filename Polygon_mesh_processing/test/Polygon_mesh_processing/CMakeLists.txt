@@ -49,7 +49,7 @@ endif()
 # include for local package
 include_directories( BEFORE ../../include )
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 find_package( TBB )
 if( TBB_FOUND )
@@ -59,14 +59,16 @@ else()
   message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
 endif()
 
+include( CGAL_CreateSingleSourceCGALProgram )
 if (EIGEN3_FOUND)
-  # Executables that require Eigen 3.1
   include( ${EIGEN3_USE_FILE} )
 
   # Creating entries for all .cpp/.C files with "main" routine
   # ##########################################################
-
-  include( CGAL_CreateSingleSourceCGALProgram )
+  create_single_source_cgal_program("fairing_test.cpp")
+  create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
+  create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
+endif(EIGEN3_FOUND)
 
   create_single_source_cgal_program("connected_component_polyhedron.cpp")
   create_single_source_cgal_program("connected_component_surface_mesh.cpp")
@@ -86,16 +88,4 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("triangulate_faces_test.cpp")
   create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
   create_single_source_cgal_program("test_pmp_distance.cpp")
-
-if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
-  create_single_source_cgal_program("fairing_test.cpp")
-  create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
-  create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
   create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
-else()
-  message(STATUS "NOTICE: Some tests require Eigen 3.2 (or greater) and will not be compiled.")
-endif()
-
-else(EIGEN3_FOUND)
-    message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
-endif(EIGEN3_FOUND)

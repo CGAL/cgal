@@ -181,29 +181,31 @@ enum Sampling_method{
  *                  `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
  *                  `GRID` : The distance between two consecutive points in the grid
  *
- * @param np a sequence of \ref namedparameters for `m` among the ones listed below
+ * @param np an optionnal sequence of \ref namedparameters for `m` among the ones listed below
+ * If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh` and in all places where vertex_point_map is used
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `m` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `m`
+ *    If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
+ *    and in all places where vertex_point_map is used.\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * @param method defines the method of sampling
  *
- * @tparam Sampling_method defines the method of sampling
- *                         Possible values are :
+ * @tparam Sampling_method defines the sampling method. Possible values are :
  *- `RANDOM_UNIFORM` : points are generated in a random and uniform way, depending on the area of each triangle.
  *
  *- `GRID` : points are generated on a grid, with a minimum of one point per triangle.
  *
- *- `MONTE_CARLO` : points are generated randomly in each triangle. The number of points per triangle is proportional to the triangle area with a minimum
- *                  of 1.
+ *- `MONTE_CARLO` : points are generated randomly in each triangle.
+ * The number of points per triangle is proportional to the triangle area with a minimum of 1.
  *
  */
-template<class TriangleMesh, class Point_3, class NamedParameters>
-void sample_triangle_mesh(const TriangleMesh& m,
+template<class OutputIterator, class TriangleMesh, class NamedParameters>
+OutputIterator sample_triangle_mesh(const TriangleMesh& m,
                           double parameter,
-                          std::vector<Point_3>& sampled_points,
+                          OutputIterator out,
                           NamedParameters np,
                           Sampling_method method = RANDOM_UNIFORM)
 {
@@ -223,8 +225,8 @@ void sample_triangle_mesh(const TriangleMesh& m,
        parameter * area(m, parameters::geom_traits(Geom_traits())));
     Random_points_in_triangle_mesh_3<TriangleMesh, Vpm>
         g(m, pmap);
-    CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
-    return;
+    CGAL::cpp11::copy_n(g, nb_points, out);
+    return out;
   }
   case GRID:
   {
@@ -242,8 +244,8 @@ void sample_triangle_mesh(const TriangleMesh& m,
       }
       triangles.push_back(typename Geom_traits::Triangle_3(points[0], points[1], points[2]));
     }
-    sample_triangles<Geom_traits>(triangles, parameter, std::back_inserter(sampled_points));
-    return;
+    sample_triangles<Geom_traits>(triangles, parameter, out);
+    return out;
   }
   case MONTE_CARLO:
   {
@@ -261,23 +263,23 @@ void sample_triangle_mesh(const TriangleMesh& m,
         hd = next(hd, m);
       }
       Random_points_in_triangle_3<typename Geom_traits::Point_3> g(points[0], points[1], points[2]);
-      CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+      CGAL::cpp11::copy_n(g, nb_points, out);
     }
-    return;
+    return out;
   }
   }
 }
 
-template<class TriangleMesh, class Point_3>
-void sample_triangle_mesh(const TriangleMesh& m,
+template<class OutputIterator, class TriangleMesh>
+OutputIterator sample_triangle_mesh(const TriangleMesh& m,
                           double parameter,
-                          std::vector<Point_3>& sampled_points,
+                          OutputIterator out,
                           Sampling_method method = RANDOM_UNIFORM)
 {
-    sample_triangle_mesh(
+   return  sample_triangle_mesh(
                 m,
                 parameter,
-                sampled_points,
+                out,
                 parameters::all_default(),
                 method);
 }
@@ -348,11 +350,10 @@ double approximated_Hausdorff_distance(
 )
 {
     std::vector<typename Kernel::Point_3> sample_points;
-    sample_triangle_mesh<TriangleMesh,
-            typename Kernel::Point_3, NamedParameters>(
+    sample_triangle_mesh(
                 m1,
                 precision,
-                sample_points,
+                std::back_inserter(sample_points),
                 np,
                 method );
     return approximated_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2, vpm);
@@ -374,8 +375,7 @@ double approximated_Hausdorff_distance(
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`
  *                         and `Parallel_tag`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
- *         for `CGAL::vertex_point_t`
+ * @tparam `TriangleMesh` a model of the concept `FaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref namedparameters for `tm1`
  * @tparam NamedParameters2 a sequence of \ref namedparameters for `tm2`
  *
@@ -385,8 +385,11 @@ double approximated_Hausdorff_distance(
  * @param np1 optional sequence of \ref namedparameters for `tm1` among the ones listed below
  * @param np2 optional sequence of \ref namedparameters for `tm2` among the ones listed below
  *
+ *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` or `tm2` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` or `tm2`
+ *    If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
+ *    and in all places where vertex_point_map is used.\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -444,15 +447,19 @@ double approximated_symmetric_Hausdorff_distance(
  * \ingroup PMP_distance_grp
  * computes the approximated Hausdorff distance between `points` and `tm`
  * @tparam PointRange a Range of `Point_3`
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
+ * @tparam `TriangleMesh` a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters for `tm`
  * @param points the point_set of interest
  * @param tm the triangle mesh to compute the distance to
- * @param np a sequence of \ref namedparameters for `tm` among the ones listed below
+ * @param np an optionnal sequence of \ref namedparameters for `tm` among the ones listed below
+ * If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh` and in all places where vertex_point_map is used
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`
+ *    If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
+ *    and in all places where vertex_point_map is used.\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+ * If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh` and in all places where vertex_point_map is used.
  * \cgalNamedParamsEnd
  */
 template< class Concurrency_tag,
@@ -471,32 +478,23 @@ double max_distance_to_triangle_mesh(const PointRange& points,
                              get_const_property_map(vertex_point, tm)));
 }
 
-template< class Concurrency_tag,
-          class TriangleMesh,
-          class PointRange>
-double max_distance_to_triangle_mesh(const PointRange& points,
-                                     const TriangleMesh& tm)
-{
-   return max_distance_to_triangle_mesh<Concurrency_tag,
-           TriangleMesh,
-           PointRange>
-           (points, tm, parameters::all_default());
-}
-
 /*!
  *\ingroup PMP_distance_grp
  *  Computes the approximated Hausdorff distance between `tm` and `points`
  *
  * @tparam PointRange a Range of `Point_3`
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref namedparameters for `tm`
+ * @tparam `TriangleMesh` a model of the concept `FaceListGraph`
+ * @tparam NamedParameters an optionnal sequence of \ref namedparameters for `tm`
  * @param tm the triangle mesh to compute the distance to
  * @param points the point_set of interest.
  * @param precision the precision of the approximated value you want.
  * @param np a sequence of \ref namedparameters for `tm` among the ones listed below
+ * If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh` and in all places where vertex_point_map is used
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm` \cgalParamEnd
+ *    the property map with the points associated to the vertices of `tm`
+ *    If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
+ *    and in all places where vertex_point_map is used.\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -531,6 +529,20 @@ double max_distance_to_point_set(const TriangleMesh& tm,
   return ref.refine(precision, tree);
 }
 
+// convenience functions with default parameters
+
+template< class Concurrency_tag,
+          class TriangleMesh,
+          class PointRange>
+double max_distance_to_triangle_mesh(const PointRange& points,
+                                     const TriangleMesh& tm)
+{
+   return max_distance_to_triangle_mesh<Concurrency_tag,
+           TriangleMesh,
+           PointRange>
+           (points, tm, parameters::all_default());
+}
+
 template< class TriangleMesh,
           class PointRange>
 double max_distance_to_point_set(const TriangleMesh& tm,
@@ -539,7 +551,6 @@ double max_distance_to_point_set(const TriangleMesh& tm,
 {
   return max_distance_to_point_set(tm, points, precision, parameters::all_default());
 }
-// convenience functions with default parameters
 
 template< class Concurrency_tag,
           class TriangleMesh,

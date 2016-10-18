@@ -491,7 +491,7 @@ Jane Tournois worked on the finalization of the API, code, and documentation.
 \section PMPDistance Approximated Hausdorff Distance
 
 This package provides methods to compute approximated Hausdorff distances.
-These distances can be computed between two meshes, a mesh and a point set or a point set and a mesh.
+These distances can be computed between two meshes, a mesh and a point set, or a point set and a mesh.
 These computations are performed with :
 - `CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance()`
 - `CGAL::Polygon_mesh_processing::approximated_symmetric_Hausdorff_distance()`
@@ -499,11 +499,12 @@ These computations are performed with :
 - `CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
 
-The following example shows how to compute the approximated distance between a mesh and its isotropic remeshing.
+In the following example, a mesh is isotropically remeshed and the approximated distance between the input and the output is computed.
 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
-The following example shows how to compute the approximated distance between a point set and its Poisson reconstruction.
+In the following example, a triangulated surface mesh is constructed from a point set using the
+\link XXXX poisson reconstruction algorithm \endlink, and the distance between the point set and the reconstructed surface is computed.
 
 \cgalExample{Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp}
 */

@@ -41,7 +41,7 @@
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_distance_grp Approximated Hausdorff Distance
-/// Functions to compute the distance between meshes.
+/// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
 /// \ingroup PkgPolygonMeshProcessing
 
 
