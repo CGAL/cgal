@@ -812,8 +812,8 @@ public:
   std::vector<std::string> properties() const
   {
     std::vector<std::string> out = m_base.properties();
-    out.remove (out.begin()); // remove "index"
-    out.remove (out.begin()); // remove "point"
+    out.erase (out.begin()); // remove "index"
+    out.erase (out.begin()); // remove "point"
     return out;
   }
 
