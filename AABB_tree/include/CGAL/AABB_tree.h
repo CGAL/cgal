@@ -143,6 +143,15 @@ namespace CGAL {
 		AABB_tree(InputIterator first, InputIterator beyond,T1&,T2&,T3&,T4&,T5&);
     #endif
 
+    /// After one or more calls to `insert()` the internal data
+    /// structure of the tree must be reconstructed. This procedure
+    /// has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// primitives of the tree.  This procedure is called implicitly
+    /// at the first call to a query member function. You can call
+    /// `build()` explicitly to ensure that the next call to
+    /// query functions will not trigger the reconstruction of the
+    /// data structure.
+    void build();
     ///@}
 
 		/// \name Operations
@@ -235,21 +244,6 @@ namespace CGAL {
     /// Returns \c true, iff the tree contains no primitive.
 		bool empty() const { return m_primitives.empty(); }
 		///@}
-
-    /// \name Advanced
-    ///@{
-
-    /// After one or more calls to `AABB_tree::insert()` the internal data
-    /// structure of the tree must be reconstructed. This procedure
-    /// has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
-    /// primitives of the tree.  This procedure is called implicitly
-    /// at the first call to a query member function. You can call
-    /// AABB_tree::build() explicitly to ensure that the next call to
-    /// query functions will not trigger the reconstruction of the
-    /// data structure.
-    void build();
-
-    ///@}
 
 	private:
     #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
