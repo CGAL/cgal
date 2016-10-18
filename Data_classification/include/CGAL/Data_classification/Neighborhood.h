@@ -170,8 +170,8 @@ public:
 
 private:
   /// \cond SKIP_IN_MANUAL
-  template <typename PointMap>
-  void voxelize_point_set (std::vector<std::size_t>& indices, PointMap point_map,
+  template <typename Map>
+  void voxelize_point_set (std::vector<std::size_t>& indices, Map point_map,
                            double voxel_size)
   {
     std::map<Point, std::vector<std::size_t> > grid;
@@ -194,10 +194,10 @@ private:
         const std::vector<std::size_t>& pts = it->second;
         Point centroid = CGAL::centroid (boost::make_transform_iterator
                                          (pts.begin(),
-                                          CGAL::Property_map_to_unary_function<PointMap>(point_map)),
+                                          CGAL::Property_map_to_unary_function<Map>(point_map)),
                                          boost::make_transform_iterator
                                          (pts.end(),
-                                          CGAL::Property_map_to_unary_function<PointMap>(point_map)));
+                                          CGAL::Property_map_to_unary_function<Map>(point_map)));
         std::size_t chosen = 0;
         double min_dist = std::numeric_limits<double>::max();
         for (std::size_t i = 0; i < pts.size(); ++ i)
