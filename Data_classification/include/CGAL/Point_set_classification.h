@@ -850,13 +850,17 @@ public:
 
     \param nb_tests Number of tests to perform. Higher values may
     provide the user with better results at the cost of higher
-    computation time. Using a value of at least 5 times the number of
+    computation time. Using a value of at least 10 times the number of
     attributes is advised.
+
+    \return Minimum ratio (over all classification types) of provided
+    ground truth points correctly classified using the best
+    configuration found.
   */
-  void training (std::size_t nb_tests = 300)
+  double training (std::size_t nb_tests = 300)
   {
     if (m_training_type.empty())
-      return;
+      return 0.;
 
     prepare_classification();
     
@@ -910,21 +914,28 @@ public:
                   << nb_useful << "% of the cases, in interval [ "
                   << min << " ; " << max << " ]" << std::endl;
         att_train.push_back (Attribute_training());
+        att_train.back().wmin = min / factor;
+        att_train.back().wmax = max * factor;
         if (nb_useful < 2)
           {
             att_train.back().skipped = true;
             att->weight = 0.;
             best_weights[j] = att->weight;
           }
+        else if (best_weights[j] == 1.)
+          {
+            att->weight = att_train.back().wmin
+              + (rand() / (double)RAND_MAX) * (att_train.back().wmax - att_train.back().wmin);
+            best_weights[j] = att->weight;
+          }
         else
           att->weight = best_weights[j];
-        att_train.back().wmin = min / factor;
-        att_train.back().wmax = max * factor;
+        estimate_attribute_effect(training_sets, att);
       }
 
     
-    double best_score = training_compute_worst_score(training_sets, best_score);
-    double best_confidence = training_compute_worst_confidence(training_sets, best_confidence);
+    double best_score = training_compute_worst_score(training_sets, 0.);
+    double best_confidence = training_compute_worst_confidence(training_sets, 0.);
         
     std::cerr << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
@@ -935,29 +946,14 @@ public:
     std::ofstream f("score.plot");
     for (std::size_t i = 0; i < nb_tests; ++ i)
       {
-        if (!(i % 10))
+        for (std::size_t j = 0; j < m_attributes.size(); ++ j)
           {
-            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
-              {
-                Data_classification::Attribute_handle att = m_attributes[j];
-                const Attribute_training& tr = att_train[current_att_changed];
-                if (tr.skipped)
-                  att->weight = 0.;
-                else
-                  att->weight = tr.wmin + (rand() / (double)RAND_MAX) * (tr.wmax - tr.wmin);
-              }
+            Data_classification::Attribute_handle att = m_attributes[j];
+            att->weight = best_weights[j];
           }
-        else
-          {
-            for (std::size_t j = 0; j < m_attributes.size(); ++ j)
-              {
-                Data_classification::Attribute_handle att = m_attributes[j];
-                att->weight = best_weights[j];
-              }
-            Data_classification::Attribute_handle att = m_attributes[current_att_changed];            
-            const Attribute_training& tr = att_train[current_att_changed];
-            att->weight = tr.wmin + (rand() / (double)RAND_MAX) * (tr.wmax - tr.wmin);
-          }
+        Data_classification::Attribute_handle att = m_attributes[current_att_changed];            
+        const Attribute_training& tr = att_train[current_att_changed];
+        att->weight = tr.wmin + (rand() / (double)RAND_MAX) * (tr.wmax - tr.wmin);
         
         estimate_attributes_effects(training_sets);
         std::size_t nb_used = 0;
@@ -975,7 +971,7 @@ public:
 
         double worst_score = training_compute_worst_score(training_sets,
                                                           worst_score);
-        
+
         if (worst_score > best_score
             && worst_confidence > best_confidence)
           {
@@ -989,10 +985,11 @@ public:
               {
                 Data_classification::Attribute_handle att = m_attributes[j];
                 best_weights[j] = att->weight;
-                f << best_weights[j] << " ";
               }
-            f << std::endl;
           }
+        if (worst_score > best_score)
+          worst_score = best_score - (best_confidence - worst_confidence);
+        f << worst_score << " " << best_score << std::endl;
 
         do
           {
@@ -1044,6 +1041,8 @@ public:
       }
     std::cerr << nb_removed
               << " attribute(s) out of " << m_attributes.size() << " are useless" << std::endl;
+    
+    return best_score;
   }
 
   /*!
