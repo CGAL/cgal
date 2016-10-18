@@ -1514,11 +1514,6 @@ public:
   typedef unspecified_type Bounded_side_3; 
 
   /*!
-    a model of `Kernel::InSmallestOrthogonalSphere_3` 
-  */ 
-  typedef unspecified_type In_smallest_orthogonal_sphere_3; 
-
-  /*!
     a model of `Kernel::AreParallel_3` 
   */ 
   typedef unspecified_type Are_parallel_3 ; 
