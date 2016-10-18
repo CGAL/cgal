@@ -14,7 +14,7 @@ the weighted Alpha Shape.
 #include <vector>
 #include <list>
 
-#include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
@@ -29,7 +29,7 @@ typedef K::Segment_2  Segment;
 typedef K::Line_2  Line;
 typedef K::Triangle_2  Triangle;
 
-typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
+typedef CGAL::Regular_triangulation_euclidean_traits_2<K> Gt;
 typedef CGAL::Regular_triangulation_vertex_base_2<Gt> Rvb;
 typedef CGAL::Regular_triangulation_face_base_2<Gt> Rf;
 

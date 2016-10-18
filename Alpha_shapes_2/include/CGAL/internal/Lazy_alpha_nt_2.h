@@ -23,7 +23,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -61,8 +61,8 @@ struct Types_for_alpha_nt_2< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_a
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>   To_approx;
   typedef CGAL::Cartesian_converter<Kernel_input,Kernel_exact>   To_exact;
 //Traits types
-  typedef ::CGAL::Weighted_alpha_shape_euclidean_traits_2<Kernel_approx>                       Approx_traits;
-  typedef ::CGAL::Weighted_alpha_shape_euclidean_traits_2<Kernel_exact>                        Exact_traits;
+  typedef ::CGAL::Regular_triangulation_euclidean_traits_2<Kernel_approx>                       Approx_traits;
+  typedef ::CGAL::Regular_triangulation_euclidean_traits_2<Kernel_exact>                        Exact_traits;
 //Point types
   typedef typename Approx_traits::Weighted_point                                               Approx_point;
   typedef typename Exact_traits::Weighted_point                                                Exact_point;
