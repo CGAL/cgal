@@ -888,9 +888,9 @@ public:
 
     while (colors->size() < psc.number_of_classification_types())
       {
-        RGB_Color c = {{ (unsigned char)(192 + rand() % 60),
-                         (unsigned char)(192 + rand() % 60),
-                         (unsigned char)(192 + rand() % 60) }};
+        RGB_Color c = {{ (unsigned char)(64 + rand() % 128),
+                         (unsigned char)(64 + rand() % 128),
+                         (unsigned char)(64 + rand() % 128) }};
         colors->push_back (c);
       }
     RGB_Color c = {{ 0, 0, 0 }};
