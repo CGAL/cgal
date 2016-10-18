@@ -22,8 +22,12 @@ int main (int argc, char** argv)
     {
       std::cerr << "Can't read input file " << std::endl;
     }
-  
-  std::cerr << point_set.properties(); // Shows which properties were defined
+
+  // Shows which properties are defined
+  std::vector<std::string> properties = point_set.properties();
+  std::cerr << "Properties:" << std::endl;
+  for (std::size_t i = 0; i < properties.size(); ++ i)
+    std::cerr << " * " << properties[i] << std::endl;
 
   // Recover "label" property of type int
   Point_set::Property_map<boost::int32_t> label_prop;

@@ -2,6 +2,7 @@
 
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/Point_set_processing_3.h>
+#include <CGAL/Point_set_3/IO.h>
 #include <CGAL/grid_simplify_point_set.h>
 
 #include <fstream>
@@ -99,7 +100,22 @@ int main (int, char**)
   point_set.remove_property_map<Color> (color_prop);
   test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
 
+  point_set.add_property_map<int> ("label", 0);
+  point_set.add_property_map<double> ("intensity", 0.0);
+
+  test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
   
+  Point p_before = *(point_set.points().begin());
+  point_set.clear_properties();
+
+  test (point_set.base().n_properties() == 2, "point set should have 2 properties.");
+  test (!(point_set.has_property_map<int>("label")), "point set shouldn' have labels.");
+  test (!(point_set.has_property_map<double>("intensity")), "point set shouldn' have intensity.");
+  test (!(point_set.empty()), "point set shouldn' be empty.");
+
+  Point p_after = *(point_set.points().begin());
+
+  test (p_before == p_after, "points should not change when clearing properties.");
 
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
   

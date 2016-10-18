@@ -40,15 +40,15 @@ int main (int, char**)
   Point_set point_set;
 
   Color black = {{ 0, 0, 0 }};
-  bool okay = false;
+  bool success = false;
   Color_map color;
 
-  boost::tie (color, okay) = point_set.add_property_map<Color> ("color", black);
-  assert (okay);
+  boost::tie (color, success) = point_set.add_property_map<Color> ("color", black);
+  assert (success);
 
   FT_map intensity;
-  boost::tie (intensity, okay) = point_set.add_property_map<FT> ("intensity", 0.);
-  assert (okay);
+  boost::tie (intensity, success) = point_set.add_property_map<FT> ("intensity", 0.);
+  assert (success);
 
   point_set.reserve (10); // For memory optimization
   for (std::size_t i = 0; i < 10; ++ i)

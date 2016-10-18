@@ -266,7 +266,7 @@ namespace internal
   
   \ingroup PkgPointSet3IO
 
-  \brief Inserts the point set in an output stream in Ascii PLY
+  \brief Inserts the point set in an output stream in ASCII PLY
   format. All properties are inserted in their instantiation order.
 
   \relates Point_set_3
