@@ -407,7 +407,7 @@ public:
 		    const Weighted_point_3 & r,
 		    const Weighted_point_3 & s) const
   {
-    return in_smallest_orthogonal_sphereC3(
+    return power_side_of_bounded_power_sphereC3(
                               p.x(), p.y(), p.z(), p.weight(),
 			      q.x(), q.y(), q.z(), q.weight(),
 			      r.x(), r.y(), r.z(), r.weight(),
@@ -418,7 +418,7 @@ public:
 		    const Weighted_point_3 & q,
 		    const Weighted_point_3 & r) const
   {
-    return in_smallest_orthogonal_sphereC3(
+    return power_side_of_bounded_power_sphereC3(
                               p.x(), p.y(), p.z(), p.weight(),
 			      q.x(), q.y(), q.z(), q.weight(),
 			      r.x(), r.y(), r.z(), r.weight());

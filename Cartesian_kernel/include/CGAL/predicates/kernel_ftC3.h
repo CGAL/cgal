@@ -711,7 +711,7 @@ compare_power_distanceC3(
 template< class FT >
 CGAL_MEDIUM_INLINE
 Sign
-in_smallest_orthogonal_sphereC3(
+power_side_of_bounded_power_sphereC3(
   const FT &px, const FT &py, const FT &pz, const FT  &pw,
   const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
   const FT &rx, const FT &ry, const FT &rz, const FT  &rw,
@@ -763,7 +763,7 @@ in_smallest_orthogonal_sphereC3(
 // p,q
 template< class FT >
 Sign
-in_smallest_orthogonal_sphereC3(
+power_side_of_bounded_power_sphereC3(
  const FT &px, const FT &py, const FT &pz, const FT  &pw,
  const FT &qx, const FT &qy, const FT &qz, const FT  &qw,
  const FT &rx, const FT &ry, const FT &rz, const FT  &rw)
