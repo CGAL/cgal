@@ -1876,9 +1876,9 @@ dual(Cell_handle c) const
     is_Gabriel(Cell_handle c, int i) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
-    typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
-      geom_traits().side_of_bounded_orthogonal_sphere_3_object();
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
 
     if ((!is_infinite(c->vertex(i))) &&
       side_of_bounded_orthogonal_sphere(
@@ -1915,9 +1915,9 @@ dual(Cell_handle c) const
     is_Gabriel(Cell_handle c, int i, int j) const
   {
     CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
-    typename Geom_traits::Side_of_bounded_orthogonal_sphere_3
+    typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
-      geom_traits().side_of_bounded_orthogonal_sphere_3_object();
+      geom_traits().power_side_of_bounded_power_sphere_3_object();
 
     Facet_circulator fcirc = incident_facets(c,i,j),
       fdone(fcirc);

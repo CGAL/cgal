@@ -383,9 +383,9 @@ public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
   typedef typename K::Sign                           Sign;
 
-  typedef Sign             result_type;
+  typedef Bounded_side            result_type;
 
-  Sign operator() ( const Weighted_point_3 & p,
+  Bounded_side operator() (const Weighted_point_3 & p,
 		    const Weighted_point_3 & q,
 		    const Weighted_point_3 & r,
 		    const Weighted_point_3 & s,
@@ -399,10 +399,10 @@ public:
     CGAL_assertion( o != COPLANAR);
     // the minus sign below is due to the fact that power_test_3
     // return in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
-    return - o * os;
+    return enum_cast<Bounded_side>(o * os);
   }
 
-  Sign operator() ( const Weighted_point_3 & p,
+  Bounded_side operator() (const Weighted_point_3 & p,
 		    const Weighted_point_3 & q,
 		    const Weighted_point_3 & r,
 		    const Weighted_point_3 & s) const
@@ -414,7 +414,7 @@ public:
 			      s.x(), s.y(), s.z(), s.weight());
   }
 
-  Sign operator() ( const Weighted_point_3 & p,
+  Bounded_side operator() (const Weighted_point_3 & p,
 		    const Weighted_point_3 & q,
 		    const Weighted_point_3 & r) const
   {
@@ -424,54 +424,17 @@ public:
 			      r.x(), r.y(), r.z(), r.weight());
   }
 
-  Sign operator() ( const Weighted_point_3 & p,
+  Bounded_side operator() (const Weighted_point_3 & p,
 		    const Weighted_point_3 & q) const
   {
-    return CGAL_NTS sign( CGAL_NTS square(p.x()-q.x()) +
+    return enum_cast<Bounded_side>(
+           CGAL_NTS sign( CGAL_NTS square(p.x()-q.x()) +
 			  CGAL_NTS square(p.y()-q.y()) +
 			  CGAL_NTS square(p.z()-q.z()) +
-			  p.weight() - q.weight());
+			  p.weight() - q.weight()));
   }
 
 };
-
-template < typename K >
-class Side_of_bounded_orthogonal_sphere_3
-{
-public :
-  typedef typename K::Weighted_point_3                 Weighted_point_3;
-  typedef typename K::Power_side_of_bounded_power_sphere_3  In_sphere;
-  typedef typename K::Bounded_side                     Bounded_side;
-
-  typedef Bounded_side     result_type;
-
-  Bounded_side operator() ( const Weighted_point_3 & p,
-			    const Weighted_point_3 & q,
-			    const Weighted_point_3 & r,
-			    const Weighted_point_3 & s,
-			    const Weighted_point_3 & t) const
-  {
-    return enum_cast<CGAL::Bounded_side>( - In_sphere()(p,q,r,s,t));
-  }
-
-  Bounded_side operator() ( const Weighted_point_3 & p,
-			    const Weighted_point_3 & q,
-			    const Weighted_point_3 & r,
-			    const Weighted_point_3 & s) const
-  {
-    return enum_cast<CGAL::Bounded_side>( - In_sphere()(p,q,r,s) );
-  }
-
-  Bounded_side operator() ( const Weighted_point_3 & p,
-			    const Weighted_point_3 & q,
-			    const Weighted_point_3 & r) const
-  {
-    return enum_cast<CGAL::Bounded_side>( - In_sphere()(p,q,r) );
-  }
-
-};
-
-
 
 template < typename K >
 class Compute_weight_2

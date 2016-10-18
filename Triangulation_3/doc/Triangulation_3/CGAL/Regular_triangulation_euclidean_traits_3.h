@@ -106,7 +106,7 @@ corresponding respectively to
 `Bounded_side operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r) ; ` 
 
 */ 
-typedef unspecified_type Side_of_bounded_orthogonal_sphere_3; 
+typedef unspecified_type Power_side_of_bounded_power_sphere_3;
 
 
 /// @} 
@@ -171,9 +171,9 @@ power_side_of_oriented_power_sphere_3_object();
 
 /*!
 
-*/ 
-Side_of_bounded_orthogonal_sphere_3 
-side_of_bounded_orthogonal_sphere_3_object(); 
+*/
+Power_side_of_bounded_power_sphere_3
+power_side_of_bounded_power_sphere_3_object();
 
 
 /*!
