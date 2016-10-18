@@ -560,7 +560,7 @@ has_smaller_signed_dist_to_planeC3(
 // where column [P] = transpose[px,py,pz,p^2 -wp,1]
 template <class FT>
 Oriented_side
-power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
               const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
               const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
               const FT &sx, const FT &sy, const FT &sz, const FT &swt,
@@ -597,7 +597,7 @@ power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT
 
 template <class FT>
 Oriented_side
-power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
 	      const FT &rx, const FT &ry, const FT &rz, const FT &rwt,
 	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
@@ -647,7 +647,7 @@ power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT
 
 template <class FT>
 Oriented_side
-power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
+power_side_of_oriented_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qz, const FT &qwt,
 	      const FT &tx, const FT &ty, const FT &tz, const FT &twt)
 {
@@ -681,7 +681,7 @@ power_side_of_power_sphereC3( const FT &px, const FT &py, const FT &pz, const FT
 
 template <class FT>
 Oriented_side
-power_side_of_power_sphereC3(const FT &pwt, const FT &qwt)
+power_side_of_oriented_power_sphereC3(const FT &pwt, const FT &qwt)
 {
     return CGAL_NTS compare(qwt, pwt);
 }

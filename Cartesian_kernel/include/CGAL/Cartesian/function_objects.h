@@ -4092,7 +4092,7 @@ public:
 			     const Weighted_point_3 & s,
 			     const Weighted_point_3 & t) const
     {
-      return power_side_of_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
+      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
                           q.x(), q.y(), q.z(), q.weight(),
                           r.x(), r.y(), r.z(), r.weight(),
                           s.x(), s.y(), s.z(), s.weight(),
@@ -4104,7 +4104,7 @@ public:
 			     const Weighted_point_3 & r,
 			     const Weighted_point_3 & s) const
     {
-      return power_side_of_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
+      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
                           q.x(), q.y(), q.z(), q.weight(),
                           r.x(), r.y(), r.z(), r.weight(),
                           s.x(), s.y(), s.z(), s.weight());
@@ -4114,7 +4114,7 @@ public:
 			     const Weighted_point_3 & q,
 			     const Weighted_point_3 & r) const
     {
-      return power_side_of_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
+      return power_side_of_oriented_power_sphereC3(p.x(), p.y(), p.z(), p.weight(),
                           q.x(), q.y(), q.z(), q.weight(),
                           r.x(), r.y(), r.z(), r.weight());
     }
@@ -4122,7 +4122,7 @@ public:
   Oriented_side operator() ( const Weighted_point_3 & p,
 			     const Weighted_point_3 & q) const
     {
-      return power_side_of_power_sphereC3(p.weight(),q.weight());
+      return power_side_of_oriented_power_sphereC3(p.weight(),q.weight());
     }
 };
 
