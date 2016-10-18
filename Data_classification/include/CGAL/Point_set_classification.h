@@ -967,10 +967,10 @@ public:
         
         prepare_classification();
         double worst_confidence = training_compute_worst_confidence(training_sets,
-                                                                    worst_confidence);
+                                                                    best_confidence);
 
         double worst_score = training_compute_worst_score(training_sets,
-                                                          worst_score);
+                                                          best_score);
 
         if (worst_score > best_score
             && worst_confidence > best_confidence)
