@@ -80,7 +80,8 @@ namespace CGAL {
 
   template < class GMap >
   boost::property_tree::ptree gmap_save_darts
-  (const GMap& amap, std::map<typename GMap::Dart_const_handle, typename GMap::size_type>& myDarts)
+  (const GMap& amap,
+   std::map<typename GMap::Dart_const_handle, typename GMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
     
@@ -108,7 +109,7 @@ namespace CGAL {
       {
         if(!amap.is_free(it, dim))
         {
-          ptree & currentNext = ndart.add("b", myDarts[amap.alpha(it, dim)]);
+          ptree & currentNext = ndart.add("a", myDarts[amap.alpha(it, dim)]);
           currentNext.put("<xmlattr>.i", dim);
         }
       }
@@ -175,11 +176,11 @@ namespace CGAL {
 
     BOOST_FOREACH( const ptree::value_type &v, pt.get_child("data.darts") )
     {
-      if( v.first == "d" )
+      if( v.first == "d" ) // d for dart
       {
         BOOST_FOREACH( const ptree::value_type &v2, v.second )
         {
-          if (v2.first == "b")
+          if (v2.first == "a") // a for alpha
           {
             index = v2.second.get("<xmlattr>.i", 0);
             nextDartInt = boost::lexical_cast< int >(v2.second.data())-1;

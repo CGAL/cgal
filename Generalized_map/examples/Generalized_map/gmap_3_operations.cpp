@@ -25,20 +25,16 @@ int main()
   // Insert a facet along these two new edges plus two initial edges of the cube.
   std::vector<Dart_handle> path;
   path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<1>(d1));
-  path.push_back(gm.alpha<1>(d1));
+  path.push_back(gm.alpha<1,0,1,2,1>(d1));
+  path.push_back(gm.alpha<1,0>(d2));
+  path.push_back(gm.alpha<2,1>(d2));
 
   Dart_handle d3=gm.insert_cell_2_in_cell_3(path.begin(),path.end());
   CGAL_assertion( gm.is_valid() );
 
   // Display the m characteristics.
   gm.display_characteristics(std::cout) << ", valid=" <<
-    gm.is_valid() << std::endl;
+                                           gm.is_valid() << std::endl;
 
   // We use the removal operations to get back to the initial cube.
   gm.remove_cell<2>(d3);
@@ -53,7 +49,7 @@ int main()
 
   // Display the m characteristics.
   gm.display_characteristics(std::cout) << ", valid="
-					<< gm.is_valid() << std::endl;
+                                        << gm.is_valid() << std::endl;
 
   return EXIT_SUCCESS;
 }

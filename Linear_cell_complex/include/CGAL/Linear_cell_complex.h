@@ -460,8 +460,8 @@ namespace CGAL {
           for ( ++it2; it2!= it1end; ++it2 )
           {
             if ( *it1!=*it2 &&
-                 !this->template exist_opposite_dart<3>(*it1) &&
-                 !this->template exist_opposite_dart<3>(*it2) &&
+                 !this->template is_opposite_exist<3>(*it1) &&
+                 !this->template is_opposite_exist<3>(*it2) &&
                  are_facets_same_geometry(*it1,this->beta(*it2, 0)) )
             {
               ++res;

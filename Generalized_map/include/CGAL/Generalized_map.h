@@ -720,32 +720,32 @@ namespace CGAL {
 #endif
 
     // Generic function to iterate on CMap or GMap in a generic way
-    bool exist_previous_dart_in_face(Dart_const_handle ADart) const
+    bool is_previous_exist(Dart_const_handle ADart) const
     { return !this->template is_free<0>(ADart) &&
         !this->template is_free<1>(alpha<0>(ADart)); }
-    bool exist_next_dart_in_face(Dart_const_handle ADart) const
+    bool is_next_exist(Dart_const_handle ADart) const
     { return !this->template is_free<1>(ADart) &&
         !this->template is_free<0>(this->template alpha<1>(ADart)); }
     template<unsigned int dim>
-    bool exist_opposite_dart(Dart_const_handle ADart) const
+    bool is_opposite_exist(Dart_const_handle ADart) const
     { return !this->template is_free<dim>(ADart) &&
         !this->template is_free<0>(this->template alpha<dim>(ADart)); }
 
-    Dart_handle get_previous_dart_in_face(Dart_handle ADart)
+    Dart_handle previous(Dart_handle ADart)
     { return this->template alpha<1, 0>(ADart); }
-    Dart_const_handle get_previous_dart_in_face(Dart_const_handle ADart) const
+    Dart_const_handle previous(Dart_const_handle ADart) const
     { return this->template alpha<1, 0>(ADart); }
 
-    Dart_handle get_next_dart_in_face(Dart_handle ADart)
+    Dart_handle next(Dart_handle ADart)
     { return this->template alpha<0, 1>(ADart); }
-    Dart_const_handle get_next_dart_in_face(Dart_const_handle ADart) const
+    Dart_const_handle next(Dart_const_handle ADart) const
     { return this->template alpha<0, 1>(ADart); }
 
     template<unsigned int dim>
-    Dart_handle get_opposite_dart(Dart_handle ADart)
+    Dart_handle opposite(Dart_handle ADart)
     { return this->template alpha<0, dim>(ADart); }
     template<unsigned int dim>
-    Dart_const_handle get_opposite_dart(Dart_const_handle ADart) const
+    Dart_const_handle opposite(Dart_const_handle ADart) const
     { return this->template alpha<0, dim>(ADart); }
 
     /** Count the number of used marks.
@@ -3315,7 +3315,7 @@ namespace CGAL {
       CGAL_assertion( is_valid() );
 #endif
 
-      return alpha<0>(adart);
+      return alpha<0, 1>(adart);
     }
 
     /** Insert a vertex in the given 2-cell which is splitted in triangles,

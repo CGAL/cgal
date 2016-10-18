@@ -40,7 +40,6 @@ void test(Map& m)
   std::cout<<"Number of darts of the face incident to d1: "<<res<<std::endl;
 }
 
-
 int main()
 {
   CMap_3 cm;

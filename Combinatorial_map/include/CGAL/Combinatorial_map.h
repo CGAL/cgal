@@ -783,29 +783,29 @@ namespace CGAL {
 #endif
 
     // Generic function to iterate on CMap or GMap in a generic way
-    bool exist_previous_dart_in_face(Dart_const_handle ADart) const
+    bool is_previous_exist(Dart_const_handle ADart) const
     { return !this->template is_free<0>(ADart); }
-    bool exist_next_dart_in_face(Dart_const_handle ADart) const
+    bool is_next_exist(Dart_const_handle ADart) const
     { return !this->template is_free<1>(ADart); }
     template<unsigned int dim>
-    bool exist_opposite_dart(Dart_const_handle ADart) const
+    bool is_opposite_exist(Dart_const_handle ADart) const
     { return !this->template is_free<dim>(ADart); }
 
-    Dart_handle get_previous_dart_in_face(Dart_handle ADart)
+    Dart_handle previous(Dart_handle ADart)
     { return this->template beta<0>(ADart); }
-    Dart_const_handle get_previous_dart_in_face(Dart_const_handle ADart) const
+    Dart_const_handle previous(Dart_const_handle ADart) const
     { return this->template beta<0>(ADart); }
 
-    Dart_handle get_next_dart_in_face(Dart_handle ADart)
+    Dart_handle next(Dart_handle ADart)
     { return this->template beta<1>(ADart); }
-    Dart_const_handle get_next_dart_in_face(Dart_const_handle ADart) const
+    Dart_const_handle next(Dart_const_handle ADart) const
     { return this->template beta<1>(ADart); }
 
     template<unsigned int dim>
-    Dart_handle get_opposite_dart(Dart_handle ADart)
+    Dart_handle opposite(Dart_handle ADart)
     { return this->template beta<dim>(ADart); }
     template<unsigned int dim>
-    Dart_const_handle get_opposite_dart(Dart_const_handle ADart) const
+    Dart_const_handle opposite(Dart_const_handle ADart) const
     { return this->template beta<dim>(ADart); }
 
     /** Count the number of used marks.
@@ -4644,7 +4644,8 @@ namespace CGAL {
      * @return a dart of the new 2-cell.
      */
     template<class InputIterator>
-    Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast,
+    Dart_handle insert_cell_2_in_cell_3(InputIterator afirst,
+                                        InputIterator alast,
                                         bool update_attributes=true)
     {
       CGAL_assertion(is_insertable_cell_2_in_cell_3(afirst,alast));

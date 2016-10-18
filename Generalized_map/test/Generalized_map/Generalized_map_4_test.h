@@ -169,6 +169,16 @@ bool test_GMAP_4()
     assert(false);
     return false;
   }
+  gmap.clear();
+
+  if (!test_vertex_insertion(gmap))
+    return false;
+
+  if (!test_edge_insertion(gmap))
+    return false;
+
+  if (!test_face_insertion(gmap))
+    return false;
 
   return true;
 }

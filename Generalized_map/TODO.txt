@@ -7,6 +7,8 @@
 * Dans CMap import GMap
 * check that the managament of attribute works
 * iterator specializations with 3 alpha
+* faire la testsuite
+* voir si besoin de documenter les fonctions is_exist_previous is_exist_next et is_exist_opposite
 
 Common parts with Combinatorial_map:
 * Cell_attribute.h
@@ -16,13 +18,3 @@ Common parts with Combinatorial_map:
 * internal/Combinatorial_map_utility.h
 * internal/Combinatorial_map_utility_novariadic.h
 * internal/Combinatorial_map_copy_functors.h
-
-* modif de la doc ref manual de gmap (en suivant ce qui est fait dans CMap)
-* ajouter les concepts Basic 
-* faire le code des insertions; et vérifier que le brin retourné est le bon
-* faire la testsuite
-* renommer (both cmap and gmap)
-  get_next_dart_in_face -> next
-  get_opposite_dart -> opposite
-* ajouter function previous (both cmap and gmap)
-* voir si besoin de documenter les fonctions is_exist_previous is_exist_next et is_exist_opposite
