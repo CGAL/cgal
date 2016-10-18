@@ -534,27 +534,11 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
   Q_ASSERT(d->m_points != NULL);
 
   d->m_points->clear();
-  d->m_points->add_normal_map();
+
   bool ok = stream &&
     CGAL::read_xyz_point_set (stream, *(d->m_points)) &&
     !isEmpty();
 
-  if (ok)
-  {
-    bool has_normals = false;
-    for (Point_set::iterator it=d->m_points->begin(),
-           end=d->m_points->end();it!=end; ++it)
-      {
-        if (d->m_points->normal(*it) != CGAL::NULL_VECTOR)
-          {
-            has_normals=true;
-            setRenderingMode(PointsPlusNormals);
-            break;
-          }
-      }
-    if (!has_normals)
-      d->m_points->remove_normal_map();
-  }
   invalidateOpenGLBuffers();
   return ok;
 }
