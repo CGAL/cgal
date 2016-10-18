@@ -59,8 +59,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
   };
 
  public:
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
+  typedef Kernel::Point_3 Point_3;
+  typedef Kernel::Vector_3 Vector_3;
   typedef CGAL::Data_classification::RGB_Color Color;
   
   typedef Point_set::iterator Iterator;
@@ -275,7 +275,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     
     bool normals = m_points->point_set()->has_normal_map();
     bool colors = m_points->point_set()->has_colors();
-    typename Point_set::Property_map<boost::uint8_t> echo_map;
+    Point_set::Property_map<boost::uint8_t> echo_map;
     bool echo;
     boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
 
