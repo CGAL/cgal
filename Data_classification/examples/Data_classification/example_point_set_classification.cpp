@@ -7,10 +7,11 @@
 #include <CGAL/Point_set_classification.h>
 #include <CGAL/Data_classification/Planimetric_grid.h>
 #include <CGAL/Data_classification/Attribute.h>
+#include <CGAL/Data_classification/Attributes_eigen.h>
+#include <CGAL/Data_classification/Attribute_distance_to_plane.h>
 #include <CGAL/Data_classification/Attribute_vertical_dispersion.h>
 #include <CGAL/Data_classification/Attribute_elevation.h>
-#include <CGAL/Data_classification/Attribute_verticality.h>
-#include <CGAL/Data_classification/Attribute_distance_to_plane.h>
+
 #include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -24,12 +25,18 @@ typedef CGAL::Point_set_classification<Kernel, Iterator, Pmap> Classification;
 typedef CGAL::Data_classification::Planimetric_grid<Kernel, Iterator, Pmap>      Planimetric_grid;
 typedef CGAL::Data_classification::Neighborhood<Kernel, Iterator, Pmap>          Neighborhood;
 typedef CGAL::Data_classification::Local_eigen_analysis<Kernel, Iterator, Pmap>  Local_eigen_analysis;
+
 typedef CGAL::Data_classification::Type_handle                                           Type_handle;
 typedef CGAL::Data_classification::Attribute_handle                                      Attribute_handle;
-typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
-typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
-typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Pmap>         Verticality;
+
 typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Pmap>   Distance_to_plane;
+typedef CGAL::Data_classification::Attribute_linearity<Kernel, Iterator, Pmap>           Linearity;
+typedef CGAL::Data_classification::Attribute_omnivariance<Kernel, Iterator, Pmap>        Omnivariance;
+typedef CGAL::Data_classification::Attribute_planarity<Kernel, Iterator, Pmap>           Planarity;
+typedef CGAL::Data_classification::Attribute_surface_variation<Kernel, Iterator, Pmap>   Surface_variation;
+typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Pmap>           Elevation;
+typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
+
 
 
 int main (int argc, char** argv)
@@ -46,65 +53,85 @@ int main (int argc, char** argv)
       return EXIT_FAILURE;
     }
 
-  double grid_resolution = 0.5;
-  double radius_neighbors = 1.5;
-  double radius_dtm = 12.5;
+  double grid_resolution = 0.34;
+  double radius_neighbors = 1.7;
+  double radius_dtm = 15.0;
 
   std::cerr << "Computing useful structures" << std::endl;
 
   Iso_cuboid_3 bbox = CGAL::bounding_box (pts.begin(), pts.end());
   Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
-  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, radius_neighbors);
+  double garbage;
+  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, 6, garbage);
   
   std::cerr << "Computing attributes" << std::endl;
+  Attribute_handle d2p (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen));
+  Attribute_handle lin (new Linearity (pts.begin(), pts.end(), eigen));
+  Attribute_handle omni (new Omnivariance (pts.begin(), pts.end(), eigen));
+  Attribute_handle plan (new Planarity (pts.begin(), pts.end(), eigen));
+  Attribute_handle surf (new Surface_variation (pts.begin(), pts.end(), eigen));
   Attribute_handle disp (new Dispersion (pts.begin(), pts.end(), Pmap(), grid,
                                          grid_resolution,
-                                         radius_neighbors,
-                                         1.78)); // Weight
-  
+                                         radius_neighbors));
   Attribute_handle elev (new Elevation (pts.begin(), pts.end(), Pmap(), bbox, grid,
                                         grid_resolution,
                                         radius_neighbors,
-                                        radius_dtm,
-                                        2.86)); // Weight
+                                        radius_dtm));
   
-  Attribute_handle verti (new Verticality (pts.begin(), pts.end(), eigen,
-                                           3.70)); // Weight
-  
-  Attribute_handle d2p (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen,
-                                               0.0016));
+  std::cerr << "Setting weights" << std::endl;
+  d2p->weight  = 6.75e-2;
+  lin->weight  = 1.19;
+  omni->weight = 1.34e-1;
+  plan->weight = 7.32e-1;
+  surf->weight = 1.36e-1;
+  disp->weight = 5.45e-1;
+  elev->weight = 1.47e1;
 
-  Classification psc (pts.begin (), pts.end(), Pmap());
-  
   // Add attributes to PSC
+  Classification psc (pts.begin (), pts.end(), Pmap());
+  psc.add_attribute (d2p);
+  psc.add_attribute (lin);
+  psc.add_attribute (omni);
+  psc.add_attribute (plan);
+  psc.add_attribute (surf);
   psc.add_attribute (disp);
   psc.add_attribute (elev);
-  psc.add_attribute (verti);
-  psc.add_attribute (d2p);
 
+  std::cerr << "Setting up classification types" << std::endl;
+  
   // Create classification type and define how attributes affect them
   Type_handle ground = psc.add_classification_type ("ground");
-  ground->set_attribute_effect (disp, CGAL::Data_classification::Type::PENALIZED_ATT);
+  ground->set_attribute_effect (d2p,  CGAL::Data_classification::Type::NEUTRAL_ATT);
+  ground->set_attribute_effect (lin,  CGAL::Data_classification::Type::PENALIZED_ATT);
+  ground->set_attribute_effect (omni, CGAL::Data_classification::Type::NEUTRAL_ATT);
+  ground->set_attribute_effect (plan, CGAL::Data_classification::Type::FAVORED_ATT);
+  ground->set_attribute_effect (surf, CGAL::Data_classification::Type::PENALIZED_ATT);
+  ground->set_attribute_effect (disp, CGAL::Data_classification::Type::NEUTRAL_ATT);
   ground->set_attribute_effect (elev, CGAL::Data_classification::Type::PENALIZED_ATT);
-  ground->set_attribute_effect (verti, CGAL::Data_classification::Type::PENALIZED_ATT);
-  ground->set_attribute_effect (d2p, CGAL::Data_classification::Type::PENALIZED_ATT);
 
   Type_handle vege = psc.add_classification_type ("vegetation");
+  vege->set_attribute_effect (d2p,  CGAL::Data_classification::Type::FAVORED_ATT);
+  vege->set_attribute_effect (lin,  CGAL::Data_classification::Type::NEUTRAL_ATT);
+  vege->set_attribute_effect (omni, CGAL::Data_classification::Type::FAVORED_ATT);
+  vege->set_attribute_effect (plan, CGAL::Data_classification::Type::NEUTRAL_ATT);
+  vege->set_attribute_effect (surf, CGAL::Data_classification::Type::NEUTRAL_ATT);
   vege->set_attribute_effect (disp, CGAL::Data_classification::Type::FAVORED_ATT);
-  vege->set_attribute_effect (elev, CGAL::Data_classification::Type::FAVORED_ATT);
-  vege->set_attribute_effect (verti, CGAL::Data_classification::Type::NEUTRAL_ATT);
-  vege->set_attribute_effect (d2p, CGAL::Data_classification::Type::FAVORED_ATT);
+  vege->set_attribute_effect (elev, CGAL::Data_classification::Type::NEUTRAL_ATT);
   
   Type_handle roof = psc.add_classification_type ("roof");
-  roof->set_attribute_effect (disp, CGAL::Data_classification::Type::PENALIZED_ATT);
+  roof->set_attribute_effect (d2p,  CGAL::Data_classification::Type::NEUTRAL_ATT);
+  roof->set_attribute_effect (lin,  CGAL::Data_classification::Type::PENALIZED_ATT);
+  roof->set_attribute_effect (omni, CGAL::Data_classification::Type::FAVORED_ATT);
+  roof->set_attribute_effect (plan, CGAL::Data_classification::Type::FAVORED_ATT);
+  roof->set_attribute_effect (surf, CGAL::Data_classification::Type::PENALIZED_ATT);
+  roof->set_attribute_effect (disp, CGAL::Data_classification::Type::NEUTRAL_ATT);
   roof->set_attribute_effect (elev, CGAL::Data_classification::Type::FAVORED_ATT);
-  roof->set_attribute_effect (verti, CGAL::Data_classification::Type::NEUTRAL_ATT);
-  roof->set_attribute_effect (d2p, CGAL::Data_classification::Type::NEUTRAL_ATT);
 
   // Run classification
-  psc.run_with_graphcut (neighborhood, 0.5);
-
+  psc.run_with_graphcut (neighborhood, 0.2);
+  //psc.run();
+  
   // Save the output in a colored PLY format
 
   std::ofstream f ("classification.ply");
