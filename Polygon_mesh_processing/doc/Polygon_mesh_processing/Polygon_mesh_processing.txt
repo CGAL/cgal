@@ -35,22 +35,21 @@ details the requirements on the input polygon mesh.
 BGL \ref namedparameters are used to deal with optional parameters.
 
 \subsection PMPOutline Outline
-The algorithms described in this manual are organized in sections.
-Section 2 describes \ref PMPMeshing algorithms, including triangulation of non-triangulated
+The algorithms described in this manual are organized in sections:
+- \ref PMPMeshing : meshing algorithms, including triangulation of non-triangulated
 meshes, refinement, optimization by fairing, and isotropic remeshing of triangulated surface meshes.
-Section 3 lists the available, \ref PMPHoleFilling algorithms, which can possibly be combined with refinement and fairing.
-Section 4 gives a list of \ref PMPPredicates that can be evaluated on the processed polygon
-mesh, including point location and self intersection tests.
-Tools for checking or fixing the \ref PMPOrientation are then described.
-Section 5 deals with \ref PMPRepairing of polygon meshes and polygon soups.
-Section 6 offers algorithms for \ref PMPNormalComp at vertices and on faces of a polygon mesh.
-Section 7 describes a class that provides an operator able to compute intersections
-of the a polygon mesh with arbitrary planes, called \ref PMPSlicer.
-Section 8 deals with methods to compute \ref PMPConnectedComponents
-of a polygon mesh, and discard the smallest ones.
+- \ref Coref_section : methods to corefine triangle meshes and to compute
+  boolean operations out of corefined closed triangle meshes.
+- \ref PMPHoleFilling : available hole filling algorithms, which can possibly be combined with refinement and fairing.
+- \ref PMPPredicates : predicates that can be evaluated on the processed polygon
+mesh, which includes point location and self intersection tests.
+- \ref PMPOrientation : checking or fixing the \ref PMPOrientation of a polygon soup.
+- \ref PMPRepairing :  reparation of polygon meshes and polygon soups.
+- \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
+- \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
+- \ref PMPConnectedComponents : methods to deal with connected
+  components of a polygon mesh (extraction, marks, removal, ...)
 
-\todo Section 9 provides some extensive examples of how a polygon mesh can be treated using this package.
-\todo update me
 ****************************************
 \section PMPMeshing Meshing
 
