@@ -314,9 +314,9 @@ namespace CGAL {
 
 #if !defined(CGAL_CMAP_DART_DEPRECATED)
     // Get the information associated with a given dart
-    typename Dart::Info& info(Dart_handle adart)
+    Dart_info& info(Dart_handle adart)
     { return adart->info(); }
-    const typename Dart::Info& info(Dart_const_handle adart) const
+    const Dart_info& info(Dart_const_handle adart) const
     { return adart->info(); }
 #endif
 

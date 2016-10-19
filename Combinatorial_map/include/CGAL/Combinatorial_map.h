@@ -206,9 +206,11 @@ namespace CGAL {
      *  @param amap the combinatorial map to copy.
      *  @post *this is valid.
      */
-    template <typename CMap2, typename Converters, typename Pointconverter>
+    template <typename CMap2, typename Converters, typename DartInfoConverter,
+              typename PointConverter>
     void copy(const CMap2& amap, const Converters& converters,
-              const Pointconverter& pointconverter)
+              const DartInfoConverter& dartinfoconverter,
+              const PointConverter& pointconverter)
     {
       this->clear();
 
@@ -240,6 +242,9 @@ namespace CGAL {
       {
         dartmap[it]=mdarts.emplace();
         init_dart(dartmap[it], amap.get_marks(it));
+        internal::Copy_dart_info_functor::run
+            (amap, static_cast<Refs&>(*this), it, dartmap[it],
+             dartinfoconverter);
       }
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
@@ -266,7 +271,7 @@ namespace CGAL {
       {
         Helper::template Foreach_enabled_attributes
           < internal::Copy_attributes_functor <CMap2, Refs, Converters,
-            Pointconverter> >::
+            PointConverter> >::
           run(amap, static_cast<Refs&>(*this),
               dartmap_iter->first, dartmap_iter->second,
               converters, pointconverter);
@@ -279,41 +284,63 @@ namespace CGAL {
     void copy(const CMap2& amap)
     {
       CGAL::cpp11::tuple<> converters;
+      Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy< CMap2, CGAL::cpp11::tuple<>,
-          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
-          (amap, converters, pointconverter);
+      return copy/*< CMap2, CGAL::cpp11::tuple<>,
+          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >*/
+          (amap, converters, dartinfoconverter, pointconverter );
     }
 
     template <typename CMap2, typename Converters>
     void copy(const CMap2& amap, const Converters& converters)
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy< CMap2, Converters,
-          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
-          (amap, converters, pointconverter);
+      Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
+      return copy/*< CMap2, Converters,
+          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >*/
+          (amap, converters, dartinfoconverter, pointconverter);
+    }
+
+    template <typename CMap2, typename Converters, typename DartInfoConverter>
+    void copy(const CMap2& amap, const Converters& converters,
+              const DartInfoConverter& dartinfoconverter)
+    {
+      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
+      return copy/*< CMap2, Converters,
+          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >*/
+          (amap, converters, dartinfoconverter, pointconverter);
     }
 
     // Copy constructor from a map having exactly the same type.
     Combinatorial_map_base (const Self & amap)
-    { copy<Self>(amap); }
+    { copy/*<Self>*/(amap); }
 
     // "Copy constructor" from a map having different type.
     template <typename CMap2>
     Combinatorial_map_base(const CMap2& amap)
-    { copy<CMap2>(amap); }
+    { copy/*<CMap2>*/(amap); }
 
     // "Copy constructor" from a map having different type.
     template <typename CMap2, typename Converters>
     Combinatorial_map_base(const CMap2& amap, Converters& converters)
-    { copy<CMap2,Converters>(amap, converters); }
+    { copy/*<CMap2,Converters>*/(amap, converters); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters, typename Pointconverter>
+    template <typename CMap2, typename Converters, typename Dartinfoconverter>
     Combinatorial_map_base(const CMap2& amap, Converters& converters,
+                           const Dartinfoconverter& dartinfoconverter)
+    { copy/*<CMap2,Converters, Pointconverter>*/(amap, converters,
+                                                 dartinfoconverter); }
+
+    // "Copy constructor" from a map having different type.
+    template <typename CMap2, typename Converters, typename Dartinfoconverter,
+                           typename Pointconverter>
+    Combinatorial_map_base(const CMap2& amap, Converters& converters,
+                           const Dartinfoconverter& dartinfoconverter,
                            const Pointconverter& pointconverter)
-    { copy<CMap2,Converters, Pointconverter>
-          (amap, converters, pointconverter); }
+    { copy/*<CMap2,Converters, Pointconverter>*/(amap, converters,
+                                                 dartinfoconverter,
+                                                 pointconverter); }
 
     /** Affectation operation. Copies one map to the other.
      * @param amap a combinatorial map.
@@ -3549,8 +3576,8 @@ namespace CGAL {
      * @param dh1  initial dart for this map
      * @param map2 the second combinatorial map
      * @param dh2  initial dart for map2
-     * @param testAttributes Boolean to test the equality of attributes (true)
-     *                       or not (false)
+     * @param testAttributes Boolean to test the equality of attributes and
+     *                       dart info (true) or not (false)
      * @return true iff the cc of map is isomorphic to the cc of map2 starting
      *     from dh1 and dh2; by testing the equality of attributes if
      *     testAttributes is true
@@ -3564,7 +3591,6 @@ namespace CGAL {
                            <d2,Refs2,Items2,Alloc2, Storage2>::Dart_const_handle dh2,
                            bool testAttributes=true) const
     {
-      // CGAL_assertion(dimension==map2.dimension);
       typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2, Storage2> Map2;
 
       bool match = true;
@@ -3608,6 +3634,13 @@ namespace CGAL {
 
             if (testAttributes)
             {
+              // We first test info of darts
+#if !defined(CGAL_CMAP_DART_DEPRECATED) || defined(CGAL_NO_DEPRECATED_CODE)
+              if (match)
+                match=internal::Test_is_same_dart_info_functor<Self, Map2>::
+                    run(*this, map2, current, other);
+#endif
+
               // We need to test in both direction because
               // Foreach_enabled_attributes only test non void attributes
               // of Self. Functor Test_is_same_attribute_functor will modify

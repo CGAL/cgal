@@ -36,6 +36,12 @@ template< typename Map1, typename Map2, unsigned int i>
 struct Default_converter_cmap_attributes;
 template< typename Map1, typename Map2>
 struct Default_converter_cmap_0attributes_with_point;
+template< typename Map1, typename Map2>
+struct Cast_converter_dart_info;
+template< typename Map1, typename Map2,
+          typename Info1=typename Map1::Dart_info,
+          typename Info2=typename Map2::Dart_info>
+struct Default_converter_dart_info;
 // ****************************************************************************
 namespace internal
 {
@@ -330,6 +336,75 @@ struct Copy_attributes_functor
    }
 };
 // ****************************************************************************
+// Copy dart info if they have both the same type.
+// General case with both info different and non void (cf specialization below).
+template<typename Map1, typename Map2, typename DartInfoConverter,
+         typename Info1=typename Map1::Dart_info,
+         typename Info2=typename Map2::Dart_info>
+struct Copy_dart_info_functor_if_nonvoid
+{
+  static void run( const Map1& map1,
+                   Map2& map2,
+                   typename Map1::Dart_const_handle dh1,
+                   typename Map2::Dart_handle dh2,
+                   const DartInfoConverter& converter)
+  { converter(map1, map2, dh1, dh2); }
+};
+// Specialisation when Info1 is void.
+template<typename Map1, typename Map2, typename DartInfoConverter,
+         typename Info2>
+struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
+    CGAL::Void, Info2>
+{
+  static void run( const Map1&,
+                   Map2&,
+                   typename Map1::Dart_const_handle,
+                   typename Map2::Dart_handle,
+                   const DartInfoConverter&)
+  {}
+};
+// Specialisation when Info2 is void.
+template<typename Map1, typename Map2, typename DartInfoConverter,
+         typename Info1>
+struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
+    Info1, CGAL::Void>
+{
+  static void run( const Map1&,
+                   Map2&,
+                   typename Map1::Dart_const_handle,
+                   typename Map2::Dart_handle,
+                   const DartInfoConverter&)
+  {}
+};
+// Specialisation when both Info1 and Info2 are void.
+template<typename Map1, typename Map2, typename DartInfoConverter>
+struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
+    CGAL::Void, CGAL::Void>
+{
+  static void run( const Map1&,
+                   Map2&,
+                   typename Map1::Dart_const_handle,
+                   typename Map2::Dart_handle,
+                   const DartInfoConverter&)
+  {}
+};
+// ****************************************************************************
+/// Copy non void information of dart from one cmap to other.
+/// Map1 is the existing map, to copy into map2.
+struct Copy_dart_info_functor
+{
+  template<typename Map1, typename Map2,
+           typename DartInfoConverter=CGAL::Default_converter_dart_info<Map1, Map2> >
+  static void run( const Map1& cmap1,
+                   Map2& cmap2,
+                   typename Map1::Dart_const_handle dh1,
+                   typename Map2::Dart_handle dh2,
+                   const DartInfoConverter& converter=DartInfoConverter())
+  { Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter>::
+        run(cmap1, cmap2, dh1, dh2, converter);
+  }
+};
+// ****************************************************************************
 } // namespace internal
 // ****************************************************************************
 // "Converters" called during the copy of attributes, to copy Info.
@@ -374,6 +449,36 @@ struct Cast_converter_cmap_attributes
         map1.template info<i>(dh1);
     return res;
   }
+};
+// ****************************************************************************
+// Default converter copy only attributes if they have same info types.
+template< typename Map1, typename Map2,
+          typename Info1, typename Info2>
+struct Default_converter_dart_info
+{
+  void operator() (const Map1&, Map2&,
+                   typename Map1::Dart_const_handle,
+                   typename Map2::Dart_handle) const
+  {}
+};
+template< typename Map1, typename Map2, typename Info>
+struct Default_converter_dart_info<Map1, Map2, Info, Info>
+{
+  void operator() (const Map1& map1, Map2& map2,
+                   typename Map1::Dart_const_handle dh1,
+                   typename Map2::Dart_handle dh2) const
+  { map2.info(dh2)=map1.info(dh1); }
+};
+// ****************************************************************************
+// Cast converter of dart info. This can work only if both types are
+// convertible and this is user responsability to use it only in this case.
+template< typename Map1, typename Map2>
+struct Cast_converter_dart_info
+{
+  void operator() (const Map1& map1, Map2& map2,
+                   typename Map1::Dart_const_handle dh1,
+                   typename Map2::Dart_handle dh2) const
+  { map2.info(dh2)=(typename Map2::Dart_info)map1.info(dh1); }
 };
 // ****************************************************************************
 // "Converters" called during the copy of attributes, to copy Point (for

@@ -1129,7 +1129,7 @@ bool test3D()
   d1 = map2.make_combinatorial_hexahedron();
   d2 = map2.make_combinatorial_hexahedron();
   map2.template sew<3>(d1,d2);
-  if ( !map.is_isomorphic_to(map2) )
+  if ( !map.is_isomorphic_to(map2, false) )
   {
     std::cout<<"Error: map and map2 are not isomorphic (after insertion/removal).\n";
     assert(false);

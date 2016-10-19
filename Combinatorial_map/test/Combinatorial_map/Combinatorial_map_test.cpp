@@ -66,6 +66,18 @@ struct Map_3_dart_max_items_3
   };
 };
 
+struct MonInfo
+{
+  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))  
+  {}
+  int mnb;
+  std::string s;
+  char *ptr;
+
+  bool operator==(const MonInfo& info) const
+  { return mnb==info.mnb && s==info.s && ptr==info.ptr; }
+};
+
 class Another_map_3_dart_items_3
 {
 public:
@@ -73,7 +85,7 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef Map_3_dart_max_items_3 Dart_info;
+    typedef MonInfo Dart_info;
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
 

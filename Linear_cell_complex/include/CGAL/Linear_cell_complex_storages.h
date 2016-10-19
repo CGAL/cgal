@@ -313,7 +313,7 @@ namespace CGAL {
       ah->set_dart(adart);
     }
 
-#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
+#if !defined(CGAL_CMAP_DART_DEPRECATED) || defined(CGAL_NO_DEPRECATED_CODE)
     // Get the information associated with a given dart
     typename Dart::Info& info(Dart_handle adart)
     { return adart->info(); }

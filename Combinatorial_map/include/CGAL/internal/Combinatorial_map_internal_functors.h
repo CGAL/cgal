@@ -64,6 +64,9 @@
  * internal::Set_i_attribute_of_dart_functor<CMap, i> to set the i-attribute
  *   of a given dart.
  *
+ * internal::Test_is_same_dart_info_functor<Map1, Map2> to test if two
+ *   darts have the same info.
+ *
  * internal::Test_is_same_attribute_functor<Map1, Map2> to test if two
  *   i-attributes of two darts are isomorphic.
  *
@@ -585,6 +588,39 @@ struct Is_same_attribute_info_functor<Map1, Map2, i, Void, Void>
                   typename Map1::Dart_const_handle,
                   typename Map2::Dart_const_handle)
   { return true; }
+};
+// ****************************************************************************
+// Functor allowing to test if two darts have the same info or not.
+// Default case, T1!=T2
+template<typename Map1, typename Map2,
+         typename T1=typename Map1::Dart_info,
+         typename T2=typename Map2::Dart_info>
+struct Test_is_same_dart_info_functor
+{
+  static bool run(const Map1&, const Map2&,
+                  typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle)
+  { return false; }
+};
+
+// Case T1==T2==CGAL::Void
+template<typename Map1, typename Map2>
+struct Test_is_same_dart_info_functor<Map1, Map2, CGAL::Void, CGAL::Void>
+{
+  static bool run(const Map1&, const Map2&,
+                  typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle)
+  { return true; }
+};
+
+// Case T1==T2!=CGAL::Void
+template<typename Map1, typename Map2, typename T1>
+struct Test_is_same_dart_info_functor<Map1, Map2, T1, T1>
+{
+  static bool run(const Map1& map1, const Map2& map2,
+                  typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle dh2)
+  { return (map1.info(dh1)==map2.info(dh2)); }
 };
 
 // ****************************************************************************

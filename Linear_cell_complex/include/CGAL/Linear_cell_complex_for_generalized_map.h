@@ -103,21 +103,35 @@ namespace CGAL {
        *  @post *this is valid.
        */
       Linear_cell_complex_for_generalized_map(const Self & alcc) : Base()
-      { Base::template copy<Self>(alcc); }
+      { Base::copy(alcc); }
 
       template < class LCC2 >
       Linear_cell_complex_for_generalized_map(const LCC2& alcc)
-      { Base::template copy<LCC2>(alcc);}
+      { Base::copy(alcc);}
 
       template < class LCC2, typename Converters >
-      Linear_cell_complex_for_generalized_map(const LCC2& alcc, Converters& converters)
-      { Base::template copy<LCC2, Converters>(alcc, converters);}
+      Linear_cell_complex_for_generalized_map(const LCC2& alcc,
+                                              Converters& converters)
+      { Base::copy(alcc, converters);}
 
-      template < class LCC2, typename Converters, typename Pointconverter >
-      Linear_cell_complex_for_generalized_map(const LCC2& alcc, Converters& converters,
-                                              const Pointconverter& pointconverter)
-      { Base::template copy<LCC2, Converters, Pointconverter>
-            (alcc, converters, pointconverter);}
+      template < class LCC2, typename Converters, typename DartInfoConverter >
+      Linear_cell_complex_for_generalized_map(const LCC2& alcc,
+                                              Converters& converters,
+                                              const DartInfoConverter&
+                                              dartinfoconverter)
+      { Base::copy//TODO REMOVE<LCC2, Converters, Pointconverter>
+            (alcc, converters, dartinfoconverter);}
+
+      template < class LCC2, typename Converters, typename DartInfoConverter,
+                 typename Pointconverter >
+      Linear_cell_complex_for_generalized_map(const LCC2& alcc,
+                                              Converters& converters,
+                                              const DartInfoConverter&
+                                              dartinfoconverter,
+                                              const Pointconverter&
+                                              pointconverter)
+      { Base::copy//TODO REMOVE<LCC2, Converters, Pointconverter>
+            (alcc, converters, dartinfoconverter, pointconverter);}
 
     };
 

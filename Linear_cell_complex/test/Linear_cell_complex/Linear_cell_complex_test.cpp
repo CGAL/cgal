@@ -73,12 +73,25 @@ struct Myitems_3c
   };
 };
 
+struct MonInfo
+{
+  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
+  {}
+
+  bool operator==(const MonInfo& info) const
+  { return mnb==info.mnb && s==info.s && ptr==info.ptr; }
+
+  int mnb;
+  std::string s;
+  char *ptr;
+};
+
 struct Myitems_4
 {
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef Myitems_3c Dart_info;
+    typedef MonInfo Dart_info;
 
     typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
                                             Divide_by_two_functor> myattrib;

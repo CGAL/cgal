@@ -20,9 +20,8 @@
 #ifndef CGAL_LCC_3_TEST_H
 #define CGAL_LCC_3_TEST_H
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Combinatorial_map_operations.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/import_from_polyhedron_3.h>

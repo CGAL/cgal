@@ -39,22 +39,6 @@ namespace CGAL
 {
   namespace internal
   {
-    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_dart_info,Dart_info,false)
-    template<typename T, bool typedefined=Has_dart_info<T>::value >
-    struct Get_dart_info
-    { typedef Void type; };
-    template<typename T>
-    struct Get_dart_info<T, true>
-    { typedef typename T::Dart_info type; };
-
-    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_attributes_tuple,Attributes,false)
-    template<typename T, bool typedefined=Has_attributes_tuple<T>::value >
-    struct Get_attributes_tuple
-    { typedef CGAL::cpp11::tuple<> type; };
-    template<typename T>
-    struct Get_attributes_tuple<T, true>
-    { typedef typename T::Attributes type; };
-
     // There is a problem on windows to handle tuple containing void.
     // To solve this, we transform such a tuple in tuple containing Void.
     template<typename T>
@@ -64,6 +48,28 @@ namespace CGAL
     template<>
     struct Convert_void<void>
     { typedef CGAL::Void type; };
+
+    // Get the type Dart_info defined as inner type of T.
+    // If T::Dart_info is not defined or if T::Dart_info is void, defined
+    // CGAL::Void as type.
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_dart_info,Dart_info,false)
+    template<typename T, bool typedefined=Has_dart_info<T>::value >
+    struct Get_dart_info
+    { typedef CGAL::Void type; };
+    template<>
+    template<typename T>
+    struct Get_dart_info<T, true>
+    { typedef typename Convert_void<typename T::Dart_info>::type type; };
+
+    // Get the type Attributes defined as inner type of T.
+    // If T::Attributes is not defined, defined CGAL::cpp11::tuple<> as type.
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_attributes_tuple,Attributes,false)
+    template<typename T, bool typedefined=Has_attributes_tuple<T>::value >
+    struct Get_attributes_tuple
+    { typedef CGAL::cpp11::tuple<> type; };
+    template<typename T>
+    struct Get_attributes_tuple<T, true>
+    { typedef typename T::Attributes type; };
 
 #if ! defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) &&  \
     ! defined(CGAL_CFG_NO_CPP0X_TUPLE)

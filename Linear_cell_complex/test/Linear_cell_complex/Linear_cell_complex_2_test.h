@@ -20,7 +20,7 @@
 #ifndef CGAL_LCC_2_TEST_H
 #define CGAL_LCC_2_TEST_H
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <fstream>
@@ -281,7 +281,7 @@ bool test_LCC_2()
       std::cout<<"Error: impossible to open 'data/graph.txt'"<<std::endl;
       return false;
     }
-    CGAL:: import_from_plane_graph<LCC>(lcc,in);
+    CGAL::import_from_plane_graph<LCC>(lcc,in);
     if ( !check_number_of_cells_2(lcc, 61, 160, 101, 1) )
       return false;
     lcc.clear();

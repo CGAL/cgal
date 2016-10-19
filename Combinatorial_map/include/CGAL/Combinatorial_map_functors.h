@@ -118,8 +118,6 @@ struct Test_is_valid_attribute_functor
 };
 // ****************************************************************************
 /// Functor used to set the i-attribute of a given i-cell.
-/// We can use any range as Range type, by default we use
-/// Dart_of_cell_range<i>
 template<typename CMap, unsigned int i,
          typename T=typename CMap::template Attribute_type<i>::type>
 struct Set_i_attribute_functor
