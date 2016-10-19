@@ -413,7 +413,7 @@ public:
                 nb_class_best = k;
               }
           }
-        m_assigned_type.push_back (nb_class_best);
+        m_assigned_type[s] = nb_class_best;
       }
     
     Alpha_expansion graphcut;
