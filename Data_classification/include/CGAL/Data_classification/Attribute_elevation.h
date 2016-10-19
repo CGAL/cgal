@@ -97,7 +97,7 @@ public:
 		
         for(std::size_t k=0;k<grid.indices(i,j).size();k++) list_Z.push_back(get(point_map, begin[grid.indices(i,j)[k]]).z());
 			
-        if(list_Z.size()>0){
+        if(list_Z.size()>1){
 			
           std::sort(list_Z.begin(),list_Z.end());
           int ind_k= (int)floor((double)(list_Z.size()*0.9)-0.5);
@@ -208,7 +208,7 @@ public:
         float G1=0; 
         float G2=0;
 
-        if(list_pointsZ.size()>0){
+        if(list_pointsZ.size()>1){
           std::sort(list_pointsZ.begin(),list_pointsZ.end());
           int ind_k2= (int)floor((double)(list_pointsZ.size()*0.6)-0.5);
           int ind_k1= (int)floor((double)(list_pointsZ.size()*0.3)-0.5);
@@ -330,7 +330,7 @@ public:
         float G1=0; 
         float G2=0;
 
-        if(list_pointsZ.size()>0){
+        if(list_pointsZ.size()>1){
           std::sort(list_pointsZ.begin(),list_pointsZ.end());
           int ind_k2= (int)floor((double)(list_pointsZ.size()*0.6)-0.5);
           int ind_k1= (int)floor((double)(list_pointsZ.size()*0.3)-0.5);
