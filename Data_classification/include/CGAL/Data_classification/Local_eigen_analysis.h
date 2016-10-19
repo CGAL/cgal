@@ -137,8 +137,8 @@ public:
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
           neighbor_points.push_back (get(point_map, begin[neighbors[j]]));
 
-        mean_range += std::sqrt (CGAL::squared_distance (get(point_map, begin[i]),
-                                                         get(point_map, begin[neighbors.back()])));
+        mean_range += CGAL::sqrt (CGAL::squared_distance (get(point_map, begin[i]),
+                                                          get(point_map, begin[neighbors.back()])));
         
         compute (get(point_map, begin[i]), neighbor_points);
       }

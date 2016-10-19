@@ -68,8 +68,8 @@ public:
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       {
         typename Kernel::Vector_3 normal = eigen.normal_vector(i);
-        normal = normal / std::sqrt (normal * normal);
-        verticality_attribute.push_back (1. - std::fabs(normal * vertical));
+        normal = normal / CGAL::sqrt (normal * normal);
+        verticality_attribute.push_back (1. - CGAL::abs(normal * vertical));
       }
     
     this->compute_mean_max (verticality_attribute, this->mean, this->max);
@@ -94,7 +94,7 @@ public:
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       {
         typename Kernel::Vector_3 normal = get(normal_map, begin[i]);
-        normal = normal / std::sqrt (normal * normal);
+        normal = normal / CGAL::sqrt (normal * normal);
         verticality_attribute.push_back (1. - std::fabs(normal * vertical));
       }
     

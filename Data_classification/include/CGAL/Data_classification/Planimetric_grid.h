@@ -76,8 +76,8 @@ public:
         {
           if(m_grid(i,j).empty())
             {
-              int squareYmin = std::max (0,(int)j-square);
-              int squareYmax = std::min ((int)(height)-1,(int)j+square);
+              int squareYmin = (std::max) (0,(int)j-square);
+              int squareYmax = (std::min) ((int)(height)-1,(int)j+square);
 
               for (int k = squareYmin; k <= squareYmax; ++ k)
                 if (!(m_grid(k,j).empty()))
