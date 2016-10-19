@@ -481,13 +481,6 @@ the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
-
-\section PMPHistory Implementation History
-
-A first version of this package was started by Ilker %O. Yaz and Sébastien Loriot.
-Jane Tournois worked on the finalization of the API, code, and documentation.
-
-****************************************
 \section PMPDistance Approximated Hausdorff Distance
 
 This package provides methods to compute approximated Hausdorff distances.
@@ -504,8 +497,15 @@ In the following example, a mesh is isotropically remeshed and the approximated 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
 In the following example, a triangulated surface mesh is constructed from a point set using the
-\link XXXX poisson reconstruction algorithm \endlink, and the distance between the point set and the reconstructed surface is computed.
+\link PkgPoissonSurfaceReconstructionSummary poisson reconstruction algorithm \endlink, and the distance between the point set and the reconstructed surface is computed.
 
 \cgalExample{Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp}
+
+\section PMPHistory Implementation History
+
+A first version of this package was started by Ilker %O. Yaz and Sébastien Loriot.
+Jane Tournois worked on the finalization of the API, code, and documentation.
+
+
 */
 } /* namespace CGAL */

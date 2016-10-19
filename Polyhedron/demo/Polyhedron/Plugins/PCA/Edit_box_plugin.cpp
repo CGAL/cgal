@@ -109,6 +109,7 @@ void Edit_box_plugin::exportToPoly()
       break;
     }
   }
+
   Polyhedron::Point_3 points[8];
   for(int i=0; i<8; ++i)
   {

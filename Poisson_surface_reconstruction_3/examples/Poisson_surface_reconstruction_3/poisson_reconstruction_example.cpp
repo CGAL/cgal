@@ -107,12 +107,12 @@ int main(void)
     out << output_mesh;
 
 
-    double dist = CGAL::Polygon_mesh_processing::max_distance_to_point_set(
-                output_mesh,
-                points,
-                40000);
-
-    std::cout<<"Max distance to point_set: "<<dist<<std::endl;
+    // computes the approximation error of the reconstruction
+    double max_dist =
+      CGAL::Polygon_mesh_processing::max_distance_to_point_set(output_mesh,
+                                                               points,
+                                                               4000);
+    std::cout << "Max distance to point_set: " << max_dist << std::endl;
 
     return EXIT_SUCCESS;
 }
