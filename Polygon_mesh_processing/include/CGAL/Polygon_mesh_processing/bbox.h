@@ -109,9 +109,9 @@ namespace CGAL {
     * @return a bounding box of `pmesh`
     */
     template<typename PolygonMesh, typename NamedParameters>
-    CGAL::Bbox_3 bbox_3(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
-                        const PolygonMesh& pmesh,
-                        const NamedParameters& np)
+    CGAL::Bbox_3 vertex_bbox_3(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+                               const PolygonMesh& pmesh,
+                               const NamedParameters& np)
     {
       using boost::choose_param;
       using boost::get_param;
@@ -152,9 +152,9 @@ namespace CGAL {
     * @return a bounding box of `pmesh`
     */
     template<typename PolygonMesh, typename NamedParameters>
-    CGAL::Bbox_3 bbox_3(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed,
-                        const PolygonMesh& pmesh,
-                        const NamedParameters& np)
+    CGAL::Bbox_3 edge_bbox_3(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed,
+                             const PolygonMesh& pmesh,
+                             const NamedParameters& np)
     {
       using boost::choose_param;
       using boost::get_param;
@@ -198,9 +198,9 @@ namespace CGAL {
     * @return a bounding box of `pmesh`
     */
     template<typename PolygonMesh, typename NamedParameters>
-    CGAL::Bbox_3 bbox_3(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
-                        const PolygonMesh& pmesh,
-                        const NamedParameters& np)
+    CGAL::Bbox_3 face_bbox_3(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
+                             const PolygonMesh& pmesh,
+                             const NamedParameters& np)
     {
       using boost::choose_param;
       using boost::get_param;
@@ -224,22 +224,25 @@ namespace CGAL {
     }
 
     template<typename PolygonMesh>
-    CGAL::Bbox_3 bbox_3(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
-                        const PolygonMesh& pmesh)
+    CGAL::Bbox_3 vertex_bbox_3(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
+                               const PolygonMesh& pmesh)
     {
-      return bbox_3(vd, pmesh, parameters::all_default());
+      return vertex_bbox_3(vd, pmesh,
+        CGAL::Polygon_mesh_processing::parameters::all_default());
     }
     template<typename PolygonMesh>
-    CGAL::Bbox_3 bbox_3(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed,
-                        const PolygonMesh& pmesh)
+    CGAL::Bbox_3 edge_bbox_3(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed,
+                             const PolygonMesh& pmesh)
     {
-      return bbox_3(ed, pmesh, parameters::all_default());
+      return edge_bbox_3(ed, pmesh,
+        CGAL::Polygon_mesh_processing::parameters::all_default());
     }
     template<typename PolygonMesh>
-    CGAL::Bbox_3 bbox_3(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
-                        const PolygonMesh& pmesh)
+    CGAL::Bbox_3 face_bbox_3(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
+                             const PolygonMesh& pmesh)
     {
-      return bbox_3(fd, pmesh, parameters::all_default());
+      return face_bbox_3(fd, pmesh,
+        CGAL::Polygon_mesh_processing::parameters::all_default());
     }
 
     template<typename PolygonMesh>

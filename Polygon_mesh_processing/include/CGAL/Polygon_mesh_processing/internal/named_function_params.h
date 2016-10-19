@@ -399,8 +399,6 @@ namespace parameters{
 
 } //namespace CGAL
 
-#include <boost/graph/graph_traits.hpp>
-
 // partial specializations hate inheritance and we need to repeat
 // those here. this is rather fragile.
 namespace boost {
@@ -419,13 +417,6 @@ namespace boost {
       return lookup_named_param_def<Tag1, Base, Def>::get(p.m_base, def);
     }
   };
-
-  // add this specialization to disambiguate function overloads in the PMP package
-  // (like bbox_3 for exemple)
-  template <typename T, typename Tag, typename Base>
-  struct graph_traits< CGAL::pmp_bgl_named_params<T, Tag, Base> >
-  {};
-
 } // boost
 
 
