@@ -45,14 +45,14 @@ int main (int argc, char** argv)
 
   psc.run_with_graphcut (helper.neighborhood(), 0.5);
 
-  std::cerr << "[WRITING OUTPUT]" << std::endl;
+  std::cerr << std::endl << "[WRITING OUTPUT]" << std::endl;
 
   std::ofstream f ("output.ply");
   f.precision(18);
   srand (time (NULL)); // to get different colors everytime
   helper.write_ply (f, pts.begin(), pts.end(), Pmap(), psc);
 
-  std::cerr << std::endl << "[ALL DONE]" << std::endl;
+  std::cerr << "[ALL DONE]" << std::endl;
 
   return EXIT_SUCCESS;
 }
