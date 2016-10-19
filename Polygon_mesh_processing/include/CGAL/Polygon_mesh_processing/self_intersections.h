@@ -43,6 +43,11 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 namespace internal {
 template <class TM,//TriangleMesh
@@ -372,10 +377,10 @@ OutputIterator self_intersections(const FaceRange& face_range,
  * @return true if `tmesh` self-intersects
  */
 template <class TriangleMesh
-        , class NamedParameters
+        , class CGAL_PMP_NP_TEMPLATE_PARAMETERS
           >
 bool does_self_intersect(const TriangleMesh& tmesh
-                        , const NamedParameters& np)
+                        , const CGAL_PMP_NP_CLASS& np)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
 
@@ -390,7 +395,29 @@ bool does_self_intersect(const TriangleMesh& tmesh
   return false;
 }
 
-/// \todo document me
+/**
+ * \ingroup PMP_intersection_grp
+ * tests if a set of faces of a triangulated surface mesh self-intersects.
+ * This function depends on the package \ref PkgBoxIntersectionDSummary
+ * @pre `CGAL::is_triangle_mesh(tmesh)`
+ *
+ * @tparam FaceRange a range of `face_descriptor`
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * @param face_range the set of faces to test for self-intersection
+ * @param tmesh the triangulated surface mesh to be tested
+ * @param np optional sequence of \ref namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
+ *   If this parameter is omitted, an internal property map for
+ *   `CGAL::vertex_point_t` should be available in `TriangleMesh`\cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return true if the faces in `face_range` self-intersects
+ */
 template <class FaceRange,
           class TriangleMesh,
           class NamedParameters
@@ -419,6 +446,15 @@ bool does_self_intersect(const TriangleMesh& tmesh)
   return does_self_intersect(tmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
+
+template <class FaceRange, class TriangleMesh>
+bool does_self_intersect(const FaceRange& face_range,
+                         const TriangleMesh& tmesh)
+{
+  return does_self_intersect(face_range, tmesh,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
 /// \endcond
 
 }// end namespace Polygon_mesh_processing
