@@ -23,6 +23,12 @@ include( ${CGAL_USE_FILE} )
 # Boost and its components
 find_package( Boost REQUIRED )
 
+# Use Eigen
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if (EIGEN3_FOUND)
+  include( ${EIGEN3_USE_FILE} )
+endif()
+
 if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
