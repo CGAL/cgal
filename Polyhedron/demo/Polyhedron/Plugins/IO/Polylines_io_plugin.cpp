@@ -146,7 +146,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
 
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   QStringList polylines_metadata;
-  
+
   int counter = 0;
   std::size_t n;
   while(ifs >> n) {
@@ -169,7 +169,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
     }
     polylines_metadata << metadata;
     if(!metadata.isEmpty()) {
-      std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
+//      std::cerr << " (metadata: \"" << qPrintable(metadata) << "\")\n";
     } else {
     }
     if(ifs.bad() || ifs.fail()) return 0;
@@ -192,7 +192,7 @@ bool Polyhedron_demo_polylines_io_plugin::canSave(const CGAL::Three::Scene_item*
 
 bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
-  const Scene_polylines_item* poly_item = 
+  const Scene_polylines_item* poly_item =
     qobject_cast<const Scene_polylines_item*>(item);
 
   if(!poly_item)
