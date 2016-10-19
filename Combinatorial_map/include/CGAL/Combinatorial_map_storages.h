@@ -64,7 +64,7 @@ namespace CGAL {
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
     typedef typename Dart_wrapper::Dart                   Dart;
 #else
     typedef typename internal::template Get_dart_info<Dart_wrapper>::type
@@ -312,7 +312,7 @@ namespace CGAL {
       ah->set_dart(adart);
     }
 
-#ifndef CGAL_CMAP_DEPRECATED
+#if !defined(CGAL_CMAP_DART_DEPRECATED)
     // Get the information associated with a given dart
     typename Dart::Info& info(Dart_handle adart)
     { return adart->info(); }

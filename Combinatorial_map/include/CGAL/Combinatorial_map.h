@@ -27,7 +27,7 @@
 #include <CGAL/internal/Combinatorial_map_sewable.h>
 #include <CGAL/Combinatorial_map_functors.h>
 
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
 #include <CGAL/Combinatorial_map_min_items.h>
 #else
 #include <CGAL/Generic_map_min_items.h>
@@ -71,7 +71,7 @@ namespace CGAL {
    * the beta links, and to manage enabled attributes.
    */
   template < unsigned int d_, class Refs,
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
              class Items_=Combinatorial_map_min_items<d_>,
 #else
              class Items_=Generic_map_min_items,
@@ -174,7 +174,7 @@ namespace CGAL {
      */
     Combinatorial_map_base()
     {
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
       CGAL_static_assertion_msg(Dart::dimension==dimension,
                   "Dimension of dart different from dimension of map");
 #endif
@@ -4803,7 +4803,7 @@ namespace CGAL {
   };
 
   template < unsigned int d_,
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
              class Items_=Combinatorial_map_min_items<d_>,
 #else
              class Items_=Generic_map_min_items,

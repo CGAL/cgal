@@ -3,7 +3,7 @@
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 #define CGAL_NO_DEPRECATION_WARNINGS 1
-#define CGAL_CMAP_DEPRECATED 1
+#define CGAL_CMAP_DART_DEPRECATED 1
 
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>

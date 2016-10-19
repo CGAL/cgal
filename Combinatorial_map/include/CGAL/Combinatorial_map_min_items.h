@@ -32,7 +32,7 @@ namespace CGAL {
    * Combinatorial_map_min_items defines what is the minimal item
    * class for a d-map It provides definitions for darts without attribute.
    */
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
   template <unsigned int d>
   struct CGAL_DEPRECATED Combinatorial_map_min_items
   {

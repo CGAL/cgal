@@ -169,7 +169,7 @@ namespace CGAL {
     typename Helper::Attribute_handles mattribute_handles;
   };
   
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
 
 #define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
 
@@ -268,7 +268,7 @@ namespace CGAL {
         (mattribute_handles);
     }
   };
-#else // CGAL_CMAP_DEPRECATED
+#else // CGAL_CMAP_DART_DEPRECATED
   // Dart definition with an info;
   //  (there is a specialization below when Info_==void)
   template <unsigned int d, typename Refs, typename Info_=void>
@@ -320,7 +320,7 @@ namespace CGAL {
     typedef CGAL::Void Info;
   };
   
-#endif // CGAL_CMAP_DEPRECATED
+#endif // CGAL_CMAP_DART_DEPRECATED
   
 } // namespace CGAL
 

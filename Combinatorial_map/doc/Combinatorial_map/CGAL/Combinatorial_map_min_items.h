@@ -8,7 +8,7 @@ The class `Combinatorial_map_min_items` defines the type of darts which is a `Da
 
 \tparam d the dimension of the combinatorial map.
 
-\deprecated This class is deprecated since CGAL 4.9. Users are required to use class `Generic_map_min_items` instead, where the `Dart` type is no more defined, but replaced by the `Dart_info` type. `CGAL_CMAP_DEPRECATED` can be defined to keep the old behavior.
+\deprecated This class is deprecated since CGAL 4.9. Users are required to use class `Generic_map_min_items` instead, where the `Dart` type is no more defined, but replaced by the `Dart_info` type. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
 
 \cgalHeading{Example}
 

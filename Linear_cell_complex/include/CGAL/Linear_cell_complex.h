@@ -788,7 +788,7 @@ namespace CGAL {
   // template parameters for Refs class which is a combinatorial map.
   template < unsigned int d_, unsigned int ambient_dim = d_,
              class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
              class Items_ = Linear_cell_complex_min_items<d_>,
 #else
              class Items_ = Linear_cell_complex_min_items,
@@ -877,9 +877,10 @@ namespace CGAL {
 
     };
 
+#if !defined(CGAL_NO_DEPRECATED_CODE)
   template < unsigned int d_, unsigned int ambient_dim = d_,
              class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-#ifdef CGAL_CMAP_DEPRECATED
+#if defined(CGAL_CMAP_DART_DEPRECATED)
              class Items_ = Linear_cell_complex_min_items<d_>,
 #else
              class Items_ = Linear_cell_complex_min_items,
@@ -894,6 +895,7 @@ namespace CGAL {
     public Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_,
                                                      Alloc_, CMap, Storage_>
   {};
+#endif
 
 } // namespace CGAL
 
