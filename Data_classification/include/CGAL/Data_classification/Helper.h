@@ -223,12 +223,13 @@ public:
 
     m_scales.reserve (nb_scales);
     double voxel_size = - 1.;
-    for (std::size_t i = 0; i < nb_scales; ++ i)
+
+    m_scales.push_back (new Scale (begin, end, point_map, m_bbox, voxel_size));
+    
+    for (std::size_t i = 1; i < nb_scales; ++ i)
       {
-        m_scales.push_back (new Scale (begin, end, point_map, m_bbox, voxel_size));
-        if (i == 0)
-          voxel_size = m_scales[0]->voxel_size;
         voxel_size *= 2;
+        m_scales.push_back (new Scale (begin, end, point_map, m_bbox, voxel_size));
       }
   }
 
