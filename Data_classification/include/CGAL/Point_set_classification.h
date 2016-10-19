@@ -38,7 +38,6 @@
 #include <CGAL/Data_classification/Attribute.h>
 #include <CGAL/Data_classification/Type.h>
 
-#define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
 
 #define CGAL_CLASSIFICATION_VERBOSE
