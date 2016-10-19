@@ -125,7 +125,7 @@ void MdelaunayIpelet::protected_run(int fn)
           Point_2 pt1_ori1=it->first->vertex(Delaunay::ccw(it->second))->info().back();
 
           if(CGAL::compare_xy(pt0_ori0,pt1_ori0)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori0)==CGAL::EQUAL)
-`           rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori1),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori1),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
               CGAL::squared_distance(pt0_ori0,pt1_ori1)+CGAL::squared_distance(pt1_ori1,pt0_ori1))/9.));
           else
             if(CGAL::compare_xy(pt0_ori0,pt1_ori1)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori1)==CGAL::EQUAL)
