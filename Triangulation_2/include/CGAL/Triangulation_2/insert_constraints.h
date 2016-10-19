@@ -38,13 +38,16 @@ namespace CGAL {
                                     IndicesIterator indices_first,
                                     IndicesIterator indices_beyond )
   {
+    if(indices_first == indices_beyond){
+      return 0;
+    }
     typedef typename T::Vertex_handle Vertex_handle;
     typedef typename T::Face_handle Face_handle;
     typedef typename T::Geom_traits Geom_traits;
     typedef typename T::Point Point;
     typedef std::vector<std::size_t> Vertex_indices;
     typedef std::vector<Vertex_handle> Vertices;
-    
+
     Vertex_indices vertex_indices;
     vertex_indices.resize(points.size());
 
