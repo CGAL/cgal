@@ -114,12 +114,8 @@ public:
     
     connect(ui_widget.create_from_item,  SIGNAL(clicked()), this,
             SLOT(on_create_from_item_button_clicked()));
-    connect(ui_widget.estimate_parameters,  SIGNAL(clicked()), this,
-            SLOT(on_estimate_parameters_button_clicked()));
     connect(ui_widget.compute_features,  SIGNAL(clicked()), this,
             SLOT(on_compute_features_button_clicked()));
-    connect(ui_widget.compute_ransac,  SIGNAL(clicked()), this,
-            SLOT(on_compute_ransac_button_clicked()));
     connect(ui_widget.display,  SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_display_button_clicked(int)));
     connect(ui_widget.run,  SIGNAL(clicked()), this,
@@ -130,19 +126,13 @@ public:
             SLOT(on_load_config_button_clicked()));
     connect(ui_widget.run_with_smoothing,  SIGNAL(clicked()), this,
             SLOT(on_run_with_smoothing_button_clicked()));
-    connect(ui_widget.run_with_ransac,  SIGNAL(clicked()), this,
-            SLOT(on_run_with_ransac_button_clicked()));
+    connect(ui_widget.smoothingDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
+            SLOT(on_smoothing_value_changed(double)));
     connect(ui_widget.save,  SIGNAL(clicked()), this,
             SLOT(on_save_button_clicked()));
     connect(ui_widget.generate_point_set_items,  SIGNAL(clicked()), this,
             SLOT(on_generate_point_set_items_button_clicked()));
 
-    connect(ui_widget.gridResolutionDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
-            SLOT(on_update_grid_resolution()));
-    connect(ui_widget.radiusNeighborsDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
-            SLOT(on_update_radius_neighbors()));
-    connect(ui_widget.radiusDTMDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
-            SLOT(on_update_radius_dtm()));
     connect(ui_widget.numberOfScalesSpinBox,  SIGNAL(valueChanged(int)), this,
             SLOT(on_update_nb_scales()));
     connect(ui_widget.number_of_trials,  SIGNAL(valueChanged(int)), this,
@@ -220,13 +210,10 @@ public Q_SLOTS:
     if (item == NULL) // Deactivate plugin
       {
         ui_widget.tabWidget->setEnabled(false);
+        ui_widget.tabWidget->setCurrentIndex(0);
       }
     else
       {
-        ui_widget.tabWidget->setEnabled(true);
-        ui_widget.gridResolutionDoubleSpinBox->setValue(item->grid_resolution());
-        ui_widget.radiusNeighborsDoubleSpinBox->setValue(item->radius_neighbors());
-        ui_widget.radiusDTMDoubleSpinBox->setValue(item->radius_dtm());
         ui_widget.numberOfScalesSpinBox->setValue(item->nb_scales());
         ui_widget.number_of_trials->setValue(item->number_of_trials());
 
@@ -255,9 +242,9 @@ public Q_SLOTS:
                                    item->types()[i].second));
 
         // Enabled classif if features computed
-        ui_widget.tab_classif->setEnabled(item->features_computed());
-        ui_widget.tab_advanced->setEnabled(item->features_computed());
-
+        ui_widget.tabWidget->setEnabled(item->features_computed());
+        if (!(item->features_computed()))
+          ui_widget.tabWidget->setCurrentIndex(0);
         ui_widget.display->clear();
         ui_widget.display->addItem("Real colors");
         ui_widget.display->addItem("Classification");
@@ -270,30 +257,6 @@ public Q_SLOTS:
       }
   }
 
-  void on_update_grid_resolution()
-  {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
-      return; 
-    classification_item->grid_resolution() = ui_widget.gridResolutionDoubleSpinBox->value();
-  }
-  void on_update_radius_neighbors()
-  {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
-      return; 
-    classification_item->radius_neighbors() = ui_widget.radiusNeighborsDoubleSpinBox->value();
-  }
-  void on_update_radius_dtm()
-  {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
-      return; 
-    classification_item->radius_dtm() = ui_widget.radiusDTMDoubleSpinBox->value();
-  }
   void on_update_nb_scales()
   {
     Scene_point_set_classification_item* classification_item
@@ -357,28 +320,6 @@ public Q_SLOTS:
     update_plugin_from_item(new_item);
   }
 
-  void test() { std::cerr << "test" << std::endl; }
-
-  void on_estimate_parameters_button_clicked()
-  {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
-      {
-        print_message("Error: there is no point set classification item!");
-        return; 
-      }
-    
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
-
-    classification_item->estimate_parameters ();
-    std::cerr << "Parameters computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
-    update_plugin_from_item(classification_item);
-    QApplication::restoreOverrideCursor();
-  }
-
   void run (Scene_point_set_classification_item* classification_item, int method)
   {
     classification_item->run (method);
@@ -401,25 +342,6 @@ public Q_SLOTS:
     //    run (classification_item, 0);
     std::cerr << "Features computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
     update_plugin_from_item(classification_item);
-    QApplication::restoreOverrideCursor();
-    scene->itemChanged(classification_item);
-  }
-
-  void on_compute_ransac_button_clicked()
-  {
-    Scene_point_set_classification_item* classification_item
-      = get_classification_item();
-    if(!classification_item)
-      {
-        print_message("Error: there is no point set classification item!");
-        return; 
-      }
-    
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
-    classification_item->compute_ransac ();
-    std::cerr << "RANSAC computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     scene->itemChanged(classification_item);
   }
@@ -523,23 +445,13 @@ public Q_SLOTS:
     scene->itemChanged(classification_item);
   }
 
-  void on_run_with_ransac_button_clicked()
+  void on_smoothing_value_changed(double v)
   {
     Scene_point_set_classification_item* classification_item
       = get_classification_item();
     if(!classification_item)
-      {
-        print_message("Error: there is no point set classification item!");
-        return; 
-      }
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
-    time.start();
-    run (classification_item, 2);
-    std::cerr << "RANSAC-guided classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
-    QApplication::restoreOverrideCursor();
-    scene->itemChanged(classification_item);
+      return; 
+    classification_item->smoothing() = v;
   }
 
  void on_save_button_clicked()

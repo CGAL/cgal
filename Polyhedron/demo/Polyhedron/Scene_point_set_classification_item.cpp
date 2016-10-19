@@ -1,22 +1,10 @@
 #include "Scene_point_set_classification_item.h"
 #include "Color_ramp.h"
 
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/write_ply_points.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
 #include <CGAL/Three/Viewer_interface.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/jet_estimate_normals.h>
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/Shape_detection_3.h>
-#include <CGAL/regularize_planes.h>
-#include <CGAL/compute_average_spacing.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Alpha_shape_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 #include <QObject>
 #include <QMenu>
@@ -34,10 +22,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(PSC* ps
   m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
-  m_grid_resolution = 0.1;
-  m_radius_neighbors = 0.5;
-  m_radius_dtm = 2.5;
-  m_nb_scales = 1;
+  m_nb_scales = 5;
   m_nb_trials = 300;
   m_smoothing = 0.5;
   m_index_color = 1;
@@ -53,10 +38,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
     m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
-  m_grid_resolution = 0.1;
-  m_radius_neighbors = 0.5;
-  m_radius_dtm = 2.5;
-  m_nb_scales = 1;
+  m_nb_scales = 5;
   m_index_color = 1;
   m_nb_trials = 300;
   m_smoothing = 0.5;
@@ -89,10 +71,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(const S
    m_helper (NULL)
 {
   setRenderingMode(PointsPlusNormals);
-  m_grid_resolution = 0.1;
-  m_radius_neighbors = 0.5;
-  m_radius_dtm = 2.5;
-  m_nb_scales = 1;
+  m_nb_scales = 5;
   m_index_color = 1;
   m_nb_trials = 300;
   m_smoothing = 0.5;
@@ -507,16 +486,6 @@ void Scene_point_set_classification_item::reset_indices ()
     *(indices.begin() + i) = idx ++;
 }
 
-void Scene_point_set_classification_item::estimate_parameters ()
-{
-  double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (m_points->point_set()->begin(),
-                                                                                m_points->point_set()->end(),
-                                                                                m_points->point_set()->point_map(), 6);
-  m_grid_resolution = average_spacing;
-  m_radius_neighbors = 5 * m_grid_resolution;
-  m_radius_dtm = 5 * m_radius_neighbors;
-}
-
 void Scene_point_set_classification_item::compute_features ()
 {
   Q_ASSERT (!(m_points->point_set()->empty()));
@@ -524,8 +493,7 @@ void Scene_point_set_classification_item::compute_features ()
   m_psc->clear_attributes();
   reset_indices();
   
-  std::cerr << "Computing features with parameters "
-            << m_grid_resolution << " " << m_radius_neighbors << " and " << m_radius_dtm << std::endl;
+  std::cerr << "Computing features with " << m_nb_scales << " scale(s)" << std::endl;
   compute_bbox();
   if (m_helper != NULL) delete m_helper;
 
@@ -568,77 +536,6 @@ void Scene_point_set_classification_item::compute_features ()
 }
 
 
-void Scene_point_set_classification_item::compute_ransac ()
-{
-  Q_ASSERT (m_psc != NULL);
-
-  if (!(m_points->point_set()->has_normal_map()))
-    {
-      std::cerr << "Computing normals..." << std::endl;
-      m_points->point_set()->add_normal_map();
-
-      CGAL::jet_estimate_normals<CGAL::Sequential_tag>(m_points->point_set()->begin(),
-                                                       m_points->point_set()->end(),
-                                                       m_points->point_set()->point_map(),
-                                                       m_points->point_set()->normal_map(),
-                                                       12);
-    }
-  
-  typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Kernel, Point_set,
-                                                           Point_set::Point_map,
-                                                           Point_set::Vector_map> Traits;
-  typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
-
-  Shape_detection shape_detection;
-
-  shape_detection.set_input(*m_points->point_set(), m_points->point_set()->point_map(), m_points->point_set()->normal_map());
-
-  shape_detection.add_shape_factory<My_plane<Traits> >();
-  Shape_detection::Parameters op;
-  op.probability = 0.05;
-  op.min_points = std::max ((std::size_t)10, m_points->point_set()->size() / 250000);
-  
-  op.epsilon = m_radius_neighbors;
-  op.cluster_epsilon = m_radius_neighbors;
-  op.normal_threshold = 0.9;
-
-  std::cerr << "Computing RANSAC..." << std::endl;
-  shape_detection.detect(op);
-  
-  CGAL::regularize_planes (shape_detection, true, true, true, false,
-                           10., m_radius_neighbors);
-  
-  m_psc->reset_groups();
-
-  std::cerr << "Storing groups..." << std::endl;
-
-  std::size_t nb_planes = 0;
-  BOOST_FOREACH(boost::shared_ptr<Shape_detection::Shape> shape, shape_detection.shapes())
-    {
-      m_psc->add_plane ((Kernel::Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ()))));
-      BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
-        m_psc->set_group_of(shape->indices_of_assigned_points()[i], nb_planes);
-      ++ nb_planes;
-    }
-  std::cerr << "Found " << nb_planes << " group(s)" << std::endl;
-}
-
-
-void Scene_point_set_classification_item::compute_clusters ()
-{
-  Q_ASSERT (m_psc != NULL);
-  if (m_helper == NULL)
-    {
-      std::cerr << "Error: no neighborhood" << std::endl;
-      return;
-    }
-
-  m_psc->cluster_points (m_helper->neighborhood(), m_radius_neighbors);
-
-  invalidateOpenGLBuffers();
-}
-
-
 
 void Scene_point_set_classification_item::train()
 {
@@ -667,8 +564,6 @@ bool Scene_point_set_classification_item::run (int method)
     m_psc->run();
   else if (method == 1)
     m_psc->run_with_graphcut (m_helper->neighborhood(), m_smoothing);
-  else if (method == 2)
-    m_psc->run_with_groups (m_helper->neighborhood(), m_radius_neighbors);
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
   
