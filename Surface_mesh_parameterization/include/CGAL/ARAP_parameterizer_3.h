@@ -121,7 +121,7 @@ private:
   typedef CGAL::Unique_hash_map<halfedge_descriptor, NT>            Cot_hm;
   typedef boost::associative_property_map<Cot_hm>                   Cot_map;
 
-    // Each face has a local 2D isometric parametrisation
+    // Each face has a local 2D isometric parameterization
   typedef std::pair<int, int>                                       Local_indices;
   typedef CGAL::Unique_hash_map<halfedge_descriptor, Local_indices> Lp_hm;
   typedef boost::associative_property_map<Lp_hm>                    Lp_map;
@@ -156,6 +156,7 @@ private:
 
 // Private utilities
 private:
+  /// Print the parameterized mesh as a list of polylines.
   template <typename VertexUVmap>
   void output_uvmap(const std::string filename,
                     const TriangleMesh& mesh,
@@ -174,6 +175,7 @@ private:
     }
   }
 
+  /// Print the parameterized mesh as a list of polylines.
   template <typename VertexUVmap>
   void output_uvmap(const std::string filename,
                     const unsigned int iter,
@@ -208,6 +210,7 @@ private:
 
 // Private operations
 private:
+  /// Store the vertices and faces of the mesh in memory.
   void initialize_containers(const TriangleMesh& mesh,
                              halfedge_descriptor bhd,
                              Vertex_set& vertices,
@@ -221,6 +224,7 @@ private:
                        faces.size() == num_faces(mesh));
   }
 
+  /// Initialize the UV values with a first parameterization of the input.
   template <typename VertexUVmap>
   Error_code compute_initial_uv_map(TriangleMesh& mesh,
                                     halfedge_descriptor bhd,
@@ -250,7 +254,7 @@ private:
 #ifdef FIXED_VERTICES_IN_PARAMETERIZATION_SPACE
     // Find the two farthest vertices in the initial parameterization
 
-    // @fixme brute force algorithm; use Convex hull + rotating caliphers instead
+    // @fixme unefficient: brute force algorithm; use Convex hull + rotating caliphers instead
     NT max_dist = (std::numeric_limits<NT>::min)();
     vertex_descriptor vd1_max, vd2_max;
 
@@ -280,6 +284,7 @@ private:
     return status;
   }
 
+  /// Compute the cotangent of the angle between the vectors ij and ik.
   void compute_cotangent_angle(const TriangleMesh& mesh,
                                halfedge_descriptor hd,
                                vertex_descriptor vi,
@@ -299,7 +304,7 @@ private:
     put(ctmap, hd, cot);
   }
 
-  // Filling ctmap with the cotangent of the angles opposite of halfedges
+  /// Fill the map 'ctmap' with the cotangents of the angles of the faces of 'mesh'.
   Error_code compute_cotangent_angles(const TriangleMesh& mesh,
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
@@ -331,7 +336,7 @@ private:
                   halfedge_descriptor hd,
                   const Cot_map ctmap) const
   {
-    // Note that halfedge and vertex circulators move clockwise!!
+    // Note that BGL halfedge and vertex circulators move clockwise!!
 
     // coefficient corresponding to the angle at vk if vk is the vertex before vj
     // while circulating around vi
@@ -781,11 +786,11 @@ private:
   }
 
   /// Utility for fill_linear_system_rhs():
-  /// Compute the local isometric parametrization (2D) of the faces of the mesh.
-  Error_code compute_local_parametrisation(const TriangleMesh& mesh,
-                                           const Faces_vector& faces,
-                                           Local_points& lp,
-                                           Lp_map lpmap) const
+  /// Compute the local isometric parameterization (2D) of the faces of the mesh.
+  Error_code compute_local_parameterization(const TriangleMesh& mesh,
+                                            const Faces_vector& faces,
+                                            Local_points& lp,
+                                            Lp_map lpmap) const
   {
     int global_index = 0;
 
@@ -818,7 +823,8 @@ private:
     return Base::OK;
   }
 
-  /// Compute the coefficient b_ij = (i, j) of the matrix B, for j neighbor vertex of i.
+  /// Compute the coefficient b_ij = (i, j) of the matrix B,
+  /// for j neighbor vertex of i.
   void compute_b_ij(const TriangleMesh& mesh,
                     halfedge_descriptor hd,
                     const Cot_map ctmap,
@@ -842,7 +848,7 @@ private:
     NT a_k = ltm_k.first;
     NT b_k = ltm_k.second;
 
-    // Get the local parametrisation in the triangle ijk
+    // Get the local parameterization in the triangle ijk
     Local_indices loc_indices_k = get(lpmap, hd_opp);
     const Point_2& pvi_k = lp[ loc_indices_k.first ];
     const Point_2& pvj_k = lp[ loc_indices_k.second ];
@@ -861,12 +867,12 @@ private:
     // -- Face IJL with vl after vj while circulating around vi
     face_descriptor fd_l = face(hd, mesh);
 
-    // Get the matrix L_t corresponding to the face
+    // Get the matrix L_t corresponding to the face ijl
     Lt_matrix ltm_l = get(ltmap, fd_l);
     NT a_l = ltm_l.first;
     NT b_l = ltm_l.second;
 
-    // Get the local parametrisation in the triangle ijl
+    // Get the local parameterization in the triangle ijl
     Local_indices loc_indices_l = get(lpmap, hd);
     const Point_2& pvi_l = lp[ loc_indices_l.second ]; // because hd points to vi
     const Point_2& pvj_l = lp[ loc_indices_l.first ];
@@ -932,7 +938,7 @@ private:
     return Base::OK;
   }
 
-  /// Compute the entries of the right hand side of the linear system.
+  /// Compute the entries of the right hand side of the ARAP linear system.
   template <typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -1035,7 +1041,8 @@ private:
       BOOST_FOREACH(vertex_descriptor vd, vertices){
         if(get(vpmap, vd)){
           int index = get(vimap, vd);
-          std::cout << "at: " << index << " " << Xu[index] << " " << Xv[index] << std::endl;
+          std::cout << "at: " << index << " "
+                    << Xu[index] << " " << Xv[index] << std::endl;
           CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
           CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
         }
@@ -1732,7 +1739,7 @@ public:
     if(status != Base::OK)
       return status;
 
-    // Fix two vertices on the border
+    // Handle the boundary condition depending on lambda
     if(true || m_lambda == 0)
     {
       status = parameterize_border(mesh, vertices, bhd, uvmap, vpmap);
@@ -1747,11 +1754,11 @@ public:
     if(status != Base::OK)
       return status;
 
-    // Compute all local 2D parametrisation
+    // Compute all local 2D parameterizations
     Lp_hm lphm;
     Lp_map lpmap(lphm);
     Local_points lp;
-    status = compute_local_parametrisation(mesh, faces, lp, lpmap);
+    status = compute_local_parameterization(mesh, faces, lp, lpmap);
     if(status != Base::OK)
       return status;
 
