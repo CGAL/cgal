@@ -68,7 +68,7 @@ public:
     this->weight = 1.;
     for(std::size_t i = 0; i < (std::size_t)(end - begin); i++)
       distance_to_plane_attribute.push_back
-        (std::sqrt (CGAL::squared_distance (get(point_map, begin[i]), eigen.plane(i))));
+        (CGAL::sqrt (CGAL::squared_distance (get(point_map, begin[i]), eigen.plane(i))));
     
     this->compute_mean_max (distance_to_plane_attribute, this->mean, this->max);
     //    max *= 2;

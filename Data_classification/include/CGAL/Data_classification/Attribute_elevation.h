@@ -119,14 +119,14 @@ public:
           double distance_tot=0;	
           double val=0;
           std::size_t squareXmin = (i < square ? 0 : i - square);
-          std::size_t squareXmax = std::min(dem.width() - 1, i + square);
+          std::size_t squareXmax = (std::min)(dem.width() - 1, i + square);
           std::size_t squareYmin = (j < square ? 0 : j - square);
-          std::size_t squareYmax = std::min(dem.height() - 1, j + square);
+          std::size_t squareYmax = (std::min)(dem.height() - 1, j + square);
 			
           for(std::size_t k = squareXmin; k <= squareXmax; k++){
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
 					
-              double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
+              double distance=CGAL::sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
 					
               if((distance<=radius_neighbors)&&(dem(k,l)>0)&&(distance!=0)){
                 double dista=distance*distance;
@@ -189,14 +189,14 @@ public:
         //storage of the points in the disk
         std::vector<float> list_pointsZ;
         std::size_t squareXmin = (i < square ? 0 : i - square);
-        std::size_t squareXmax = std::min(dtm.width() - 1, i + square);
+        std::size_t squareXmax = (std::min)(dtm.width() - 1, i + square);
         std::size_t squareYmin = (j < square ? 0 : j - square);
-        std::size_t squareYmax = std::min(dtm.height() - 1, j + square);
+        std::size_t squareYmax = (std::min)(dtm.height() - 1, j + square);
 
         for(std::size_t k = squareXmin; k <= squareXmax; k++){
           for(std::size_t l = squareYmin; l <= squareYmax; l++){
 			
-            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
+            double distance=CGAL::sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
             if(distance<=radius_dtm){
               for(int nb=0;nb<(int)grid.indices(k,l).size();nb++)
                 list_pointsZ.push_back(get(point_map, begin[grid.indices(k,l)[nb]]).z());
@@ -242,9 +242,9 @@ public:
 
         //extension by duplication
         std::size_t IsquareXmin = (i < step/2 ? 0 : i-step/2);
-        std::size_t IsquareXmax = std::min(dtm.width()-1,i+step/2);
+        std::size_t IsquareXmax = (std::min)(dtm.width()-1,i+step/2);
         std::size_t JsquareYmin = (j < step/2 ? 0 : j-step/2);
-        std::size_t JsquareYmax = std::min(dtm.height()-1,j+step/2);
+        std::size_t JsquareYmax = (std::min)(dtm.height()-1,j+step/2);
 		
         if(dtm.width()-1-IsquareXmax<step) IsquareXmax=dtm.width()-1;
         if(dtm.height()-1-JsquareYmax<step) JsquareYmax=dtm.height()-1;
@@ -268,9 +268,9 @@ public:
         for (std::size_t i = 0; i < dtm.width(); i++) {
 		
           std::size_t IsquareXmin = (i < 1 ? 0 : i-1);
-          std::size_t IsquareXmax = std::min(dtm.width()-1,i+1); 
+          std::size_t IsquareXmax = (std::min)(dtm.width()-1,i+1); 
           std::size_t JsquareYmin = (j < 1 ? 0 : j-1);
-          std::size_t JsquareYmax = std::min(dtm.height()-1,j+1); 
+          std::size_t JsquareYmax = (std::min)(dtm.height()-1,j+1); 
           int count=0; 
 
           for(std::size_t k = IsquareXmin; k <= IsquareXmax; k++){ 
@@ -307,14 +307,14 @@ public:
         //stockage des nouveaux points
         std::vector < float > list_pointsZ;
         std::size_t squareXmin = (i < square ? 0 : i-square);
-        std::size_t squareXmax = std::min(dtm.width()-1,i+square);
+        std::size_t squareXmax = (std::min)(dtm.width()-1,i+square);
         std::size_t squareYmin = (j < square ? 0 : j-square);
-        std::size_t squareYmax = std::min(dtm.height()-1,j+square);
+        std::size_t squareYmax = (std::min)(dtm.height()-1,j+square);
 
         for(std::size_t k = squareXmin; k <= squareXmax; k++){
           for(std::size_t l = squareYmin; l <= squareYmax; l++){
 				
-            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
+            double distance=CGAL::sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
 				
             if(distance<=radius_dtm){
 					
@@ -357,9 +357,9 @@ public:
 
         //extension by duplication
         std::size_t IsquareXmin = (i < step/2 ? 0 : i-step/2);
-        std::size_t IsquareXmax = std::min(dtm.width()-1,i+step/2);
+        std::size_t IsquareXmax = (std::min)(dtm.width()-1,i+step/2);
         std::size_t JsquareYmin = (j < step/2 ? 0 : j-step/2);
-        std::size_t JsquareYmax = std::min(dtm.height()-1,j+step/2);
+        std::size_t JsquareYmax = (std::min)(dtm.height()-1,j+step/2);
 		
         if(dtm.width()-1-IsquareXmax<step) IsquareXmax=dtm.width()-1;
         if(dtm.height()-1-JsquareYmax<step) JsquareYmax=dtm.height()-1;
@@ -383,9 +383,9 @@ public:
         for (std::size_t i = 0; i < dtm.width(); i++) {
 		
           std::size_t IsquareXmin = (i < 1 ? 0 : i - 1);
-          std::size_t IsquareXmax = std::min(dtm.width()-1,i+1); 
+          std::size_t IsquareXmax = (std::min)(dtm.width()-1,i+1); 
           std::size_t JsquareYmin = (j < 1 ? 0 : j - 1);
-          std::size_t JsquareYmax = std::min(dtm.height()-1,j+1); 
+          std::size_t JsquareYmax = (std::min)(dtm.height()-1,j+1); 
           int count=0; 
 
           for(std::size_t k=IsquareXmin; k<=IsquareXmax; k++){ 

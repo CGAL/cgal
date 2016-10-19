@@ -61,9 +61,9 @@ public:
         if(grid.mask(i,j)){
 
           std::size_t squareXmin = (i < square ? 0 : i - square);
-          std::size_t squareXmax = std::min (grid.width()-1, i + square);
+          std::size_t squareXmax = (std::min) (grid.width()-1, i + square);
           std::size_t squareYmin = (j < square ? 0 : j - square);
-          std::size_t squareYmax = std::min (grid.height()-1, j + square);
+          std::size_t squareYmax = (std::min) (grid.height()-1, j + square);
 			
           int NB_echo_sup=0;
           int NB_echo_total=0;
@@ -71,7 +71,7 @@ public:
           for(std::size_t k = squareXmin; k <= squareXmax; k++){
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
 									
-              if(sqrt(pow((double)k-i,2)+pow((double)l-j,2))<=(double)0.5*radius_neighbors/grid_resolution){
+              if(CGAL::sqrt(pow((double)k-i,2)+pow((double)l-j,2))<=(double)0.5*radius_neighbors/grid_resolution){
 										
                 if(grid.indices(k,l).size()>0){
 									

@@ -199,7 +199,7 @@ private:
                                          (pts.end(),
                                           CGAL::Property_map_to_unary_function<Map>(point_map)));
         std::size_t chosen = 0;
-        double min_dist = std::numeric_limits<double>::max();
+        double min_dist = (std::numeric_limits<double>::max)();
         for (std::size_t i = 0; i < pts.size(); ++ i)
           {
             double dist = CGAL::squared_distance(get(point_map, pts[i]), centroid);
