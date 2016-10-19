@@ -30,6 +30,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 #include <boost/foreach.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL {
 
@@ -183,6 +184,37 @@ void reverse_face_orientations(PolygonMesh& pmesh)
   }
 }
 
+// Do the same thing as `reverse_face_orientations()` except that for
+// the reversal of the border cycles (last step in the aforementioned function),
+// this function guarantees that each cycle is reversed only once. This is
+// particularly useful if you mesh contains polylines (i.e. edge which halfedges
+// are both border halfedges).
+template<typename PolygonMesh>
+void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
+  // reverse the orientation of each face
+  BOOST_FOREACH(face_descriptor fd, faces(pmesh))
+    reverse_orientation(halfedge(fd,pmesh),pmesh);
+
+  //extract all border cycles
+  boost::unordered_set<halfedge_descriptor> already_seen;
+  std::vector<halfedge_descriptor> border_cycles;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
+    if ( is_border(h,pmesh) && already_seen.insert(h).second )
+    {
+      border_cycles.push_back(h);
+      BOOST_FOREACH(halfedge_descriptor h2, halfedges_around_face(h,pmesh))
+        already_seen.insert(h2);
+    }
+
+  // now reverse the border cycles
+  BOOST_FOREACH(halfedge_descriptor h, border_cycles)
+    reverse_orientation(h, pmesh);
+}
+
 /**
 * \ingroup PMP_orientation_grp
 * reverses for each face in `face_range` the order of the vertices along the face boundary.
@@ -223,4 +255,3 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H
-
