@@ -98,8 +98,11 @@ void MdelaunayIpelet::protected_run(int fn)
       draw_in_ipe(dt);
       break;
     case 1:
+      CGAL_FALLTHROUGH;
     case 6:
+      CGAL_FALLTHROUGH;
     case 2:
+      CGAL_FALLTHROUGH;
     case 7:        //Delaunay and Voronoi for 2nd-3rd order
       for (Delaunay::Finite_edges_iterator it=dt.finite_edges_begin();it!=dt.finite_edges_end();++it){
           Point_2 pt0=it->first->vertex(Delaunay::cw(it->second))->point();
@@ -139,7 +142,9 @@ void MdelaunayIpelet::protected_run(int fn)
           break;
         }
       }
+      CGAL_FALLTHROUGH;
     case 3://Delaunay and Voronoi of order n-1
+      CGAL_FALLTHROUGH;
     case 8:
       if(fn==3 ||fn==8){
         int order = pt_list.size()-1;
@@ -172,7 +177,9 @@ void MdelaunayIpelet::protected_run(int fn)
           break;
         }
       }
+      CGAL_FALLTHROUGH;
     case 4:
+      CGAL_FALLTHROUGH;
     case 9://k-th Delauney and Voronoi
         if(fn==4 ||fn==9){
           int order;
@@ -194,6 +201,7 @@ void MdelaunayIpelet::protected_run(int fn)
             break;
           }
         }
+        CGAL_FALLTHROUGH;
     case 5://Draw Voronoi diagrams
       if(fn==5) draw_dual_in_ipe(dt,bbox);
       if(fn==6) draw_dual_in_ipe(rti,bbox);

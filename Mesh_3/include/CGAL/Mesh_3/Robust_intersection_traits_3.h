@@ -391,7 +391,8 @@ ts_intersection(const typename K::Triangle_3 &t,
 #else
           return make_object(p);
 #endif
-        }
+        } else
+          return result_type();
       case NEGATIVE:
         // q sees the triangle in clockwise order
         if(orientation(p,q,a,b) != POSITIVE
@@ -403,7 +404,8 @@ ts_intersection(const typename K::Triangle_3 &t,
 #else
           return make_object(p);
 #endif
-        }
+        } else
+          return result_type();
       case COPLANAR:
         // the segment is coplanar with the triangle's supporting plane
         // we test whether the segment intersects the triangle in the common

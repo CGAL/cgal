@@ -774,7 +774,8 @@ private:
                 if(event_x(i).is_rational()) {
                     return create_event_slice_at_rational(i);
                 }
-                // FALL INTO NEXT CASE
+
+                CGAL_FALLTHROUGH;
             }
             case(CGAL::SHEAR_STRATEGY): {
                 return create_event_slice_with_shear(i);

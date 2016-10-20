@@ -3393,7 +3393,7 @@ is_valid(bool verbose, int level ) const
         CGAL_triangulation_assertion(false);
         return false;
       }
-      // no break; continue
+      CGAL_FALLTHROUGH;
     }
   case -1:
     {

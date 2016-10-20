@@ -253,6 +253,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
 	fprintf( stderr, "%s: switch to default coefficients (smoothing).\n", proc );
       }
       derivative = DERIVATIVE_0;
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_0 :
       a0     =  1.68;
       omega0 =  0.6318;
@@ -264,6 +265,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
       b1     =  1.723;
       break;
     case DERIVATIVE_1 :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_1_CONTOURS :
       a0     =  -0.6472;
       omega0 =  0.6719;
@@ -293,6 +295,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
     /*--- normalisation ---*/
     switch ( derivative ) {
     default :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_0 :
       sumA  = 2.0 * a1 * exp( b0 ) * cos0 * cos0 - a0 * sin0 * exp( 2.0 * b0 );
       sumA += a0 * sin0 - 2.0 * a1 * exp( b0 );
@@ -401,7 +404,9 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
     
     switch ( derivative ) {
     default :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_0 :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_2 :
       RFC->sn1 =   RFC->sp1 - RFC->sd1 * RFC->sp0;
       RFC->sn2 =   RFC->sp2 - RFC->sd2 * RFC->sp0;
@@ -409,7 +414,9 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
       RFC->sn4 = - RFC->sd4 * RFC->sp0;
       break;
     case DERIVATIVE_1 :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_1_CONTOURS :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_3 :
       RFC->sn1 = - RFC->sp1 + RFC->sd1 * RFC->sp0;
       RFC->sn2 = - RFC->sp2 + RFC->sd2 * RFC->sp0;
@@ -428,6 +435,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
       fprintf( stderr, "%s: switch to default recursive filter (Deriche's filters).\n", proc );
     }
     type_filter = ALPHA_DERICHE;
+    CGAL_FALLTHROUGH;
   case ALPHA_DERICHE :
 
     if ( (x < 0.1) || (x > 1.9) ) {
@@ -445,6 +453,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
 	fprintf( stderr, "%s: switch to default coefficients (smoothing).\n", proc );
       }
       derivative = DERIVATIVE_0;
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_0 :
       RFC->sp0 = (1.0 - ex) * (1.0 - ex) / (1.0 + 2.0 * x * ex - ex * ex);
       RFC->sp1 = RFC->sp0 * (x - 1.0) * ex;
@@ -535,6 +544,7 @@ int RecursiveFilter1D( RFcoefficientType *RFC,
       fprintf( stderr, "%s: unknown type of recursive filter.\n", proc );
     return( EXIT_ON_FAILURE );
   case GAUSSIAN_FIDRICH :
+    CGAL_FALLTHROUGH;
   case GAUSSIAN_DERICHE :
     /*--- filtrage generique d'ordre 4 ---*/
     rp0 = RFC->sp0;   rp1 = RFC->sp1;   rp2 = RFC->sp2;   rp3 = RFC->sp3;
@@ -583,7 +593,9 @@ int RecursiveFilter1D( RFcoefficientType *RFC,
     
     switch( RFC->derivative ) {
     default :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_0 :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_2 :
 
       rp0 = RFC->sp0;   rp1 = RFC->sp1;
@@ -619,6 +631,7 @@ int RecursiveFilter1D( RFcoefficientType *RFC,
       break;
       
     case DERIVATIVE_1 :
+      CGAL_FALLTHROUGH;
     case DERIVATIVE_1_CONTOURS :
       rp1 = RFC->sp1;
       rn1 = RFC->sn1;
