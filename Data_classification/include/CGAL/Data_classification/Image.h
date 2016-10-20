@@ -44,7 +44,7 @@ public:
       m_height (height)
   {
     if (m_width * m_height > 0)
-      m_raw = new Type[width * height];
+      m_raw = new Type[width * height]();
     else
       m_raw = NULL;
   }
@@ -90,11 +90,13 @@ public:
 
   Type& operator() (const std::size_t& x, const std::size_t& y)
   {
-    return m_raw[y * m_width + x];
+    //    return m_raw[y * m_width + x];
+    return m_raw[x * m_height + y];
   }
   const Type& operator() (const std::size_t& x, const std::size_t& y) const
   {
-    return m_raw[y * m_width + x];
+    //    return m_raw[y * m_width + x];
+    return m_raw[x * m_height + y];
   }
   
 
