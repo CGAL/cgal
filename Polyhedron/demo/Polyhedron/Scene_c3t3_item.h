@@ -23,13 +23,14 @@
 #include <Scene_polyhedron_item.h>
 #include <Scene_polygon_soup_item.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/Three/Scene_item_with_properties.h>
 
 struct Scene_c3t3_item_priv;
 class Scene_spheres_item;
 class Scene_intersection_item;
 using namespace CGAL::Three;
   class SCENE_C3T3_ITEM_EXPORT Scene_c3t3_item
-  : public Scene_group_item
+  : public Scene_group_item, public Scene_item_with_properties
 {
   Q_OBJECT
 public:
@@ -64,6 +65,11 @@ public:
   bool manipulatable() const {
     return true;
   }
+
+  bool has_spheres() const;
+  bool has_grid() const;
+  bool has_cnc() const;
+  bool has_tets() const;
   ManipulatedFrame* manipulatedFrame();
 
   void setPosition(float x, float y, float z) ;
@@ -108,6 +114,7 @@ public:
   void drawPoints(CGAL::Three::Viewer_interface * viewer) const;
   public:
     QMenu* contextMenu();
+    void copyProperties(Scene_item *);
   public Q_SLOTS:
   void export_facets_in_complex();
 
