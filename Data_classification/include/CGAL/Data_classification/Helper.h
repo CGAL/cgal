@@ -42,6 +42,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <CGAL/Timer.h>
+#include <CGAL/demangle.h>
 
 namespace CGAL {
 
@@ -225,6 +226,7 @@ public:
     double voxel_size = - 1.;
 
     m_scales.push_back (new Scale (begin, end, point_map, m_bbox, voxel_size));
+    voxel_size = m_scales[0]->grid_resolution();
     
     for (std::size_t i = 1; i < nb_scales; ++ i)
       {
@@ -693,6 +695,7 @@ public:
     
     m_scales.push_back (new Scale (begin, end, point_map, m_bbox, voxel_size));
 
+    CGAL::Timer t;
     std::map<std::string, Attribute_handle> att_map;
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.attributes"))
       {
@@ -703,7 +706,7 @@ public:
         std::string id = splitted_id[0];
         for (std::size_t i = 1; i < splitted_id.size() - 1; ++ i)
           id = id + "_" + splitted_id[i];
-        double scale = std::atof (splitted_id.back().c_str());
+        std::size_t scale = std::atoi (splitted_id.back().c_str());
 
         while (m_scales.size() <= scale)
           {
@@ -721,11 +724,15 @@ public:
         else if (id == "eigentropy")
           psc.add_attribute (Attribute_handle (new Eigentropy(begin, end, *(m_scales[scale]->eigen))));
         else if (id == "elevation")
-          psc.add_attribute (Attribute_handle (new Elevation(begin, end, point_map,
-                                                             m_bbox, *(m_scales[scale]->grid),
-                                                             m_scales[scale]->grid_resolution(),
-                                                             m_scales[scale]->radius_neighbors(),
-                                                             m_scales[scale]->radius_dtm())));
+          {
+            t.start();
+            psc.add_attribute (Attribute_handle (new Elevation(begin, end, point_map,
+                                                               m_bbox, *(m_scales[scale]->grid),
+                                                               m_scales[scale]->grid_resolution(),
+                                                               m_scales[scale]->radius_neighbors(),
+                                                               m_scales[scale]->radius_dtm())));
+            t.stop();
+          }
         else if (id == "linearity")
           psc.add_attribute (Attribute_handle (new Linearity(begin, end, *(m_scales[scale]->eigen))));
         else if (id == "omnivariance")
@@ -801,6 +808,7 @@ public:
         att->weight = weight;
         att_map[full_id] = att;
       }
+    std::cerr << "Elevation took " << t.time() << " second(s)" << std::endl;
 
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, tree.get_child("classification.types"))
       {
