@@ -324,7 +324,6 @@ void Viewer::compute_face(Dart_handle dh, LCC::size_type markface)
            he_circ_end = lcc.darts_of_orbit<1>(dh).end();
          he_circ!=he_circ_end; ++he_circ)
     {
-      std::cout<<lcc.point(he_circ)<<std::endl;
       CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
       if(first == NULL)
       { first = vh; }

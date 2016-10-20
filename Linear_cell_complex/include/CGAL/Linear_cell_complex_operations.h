@@ -36,9 +36,18 @@ namespace CGAL {
     template <class Point, class Vector>
     void newell_single_step_3_for_lcc(const Point& p, const Point& q, Vector& n)
     {
+      // Compute normal of the face by using Newell's method: for each edge PQ
+      // Nx += (Py - Qy) * (Pz + Qz);
+      // Ny += (Pz - Qz) * (Px + Qx);
+      // Nz += (Px - Qx) * (Py + Qy);
       n = Vector(n.x()+((p.y()-q.y())*(p.z()+q.z())),
                  n.y()+((p.z()-q.z())*(p.x()+q.x())),
                  n.z()+((p.x()-q.x())*(p.y()+q.y())));
+
+      // Dot product formula
+      /*n=Vector(n.x()+((p.y()*q.z())-(p.z()*q.y())),
+               n.y()+((p.x()*q.z())-(p.z()*q.x())),
+               n.z()+((p.x()*q.y())-(p.y()*q.x())));*/
     }
   } // End namespace internal
 
@@ -51,11 +60,6 @@ namespace CGAL {
   typename LCC::Vector compute_normal_of_cell_2
   (const LCC& amap, typename LCC::Dart_const_handle adart)
   {
-    // Compute normal of the face by using Newell's method: for each edge PQ
-    // Nx += (Py - Qy) * (Pz + Qz);
-    // Ny += (Pz - Qz) * (Px + Qx);
-    // Nz += (Px - Qx) * (Py + Qy);
-    
     typedef typename LCC::Point Point;
     typedef typename LCC::Vector Vector;
 
@@ -68,17 +72,28 @@ namespace CGAL {
 
     // Now we advance to process each edge
     unsigned int nb = 0;
-    const Point* curr = &amap.point(adart);
+    const Point* curr = &amap.point(start);
     
-    for ( adart=start; adart!=start && amap.is_next_exist(adart);
-          adart=next(adart) )
+    adart=start;
+    do
     {
-      const Point* next = &amap.point(amap.other_extremity(adart));
-      internal::newell_single_step_3_for_lcc(*curr, *next, normal);
-      ++nb;
-      curr = next;
+      if (amap.other_extremity(adart)==LCC::null_handle)
+        adart=start; // To leave the loop, because we know that adart has no next dart
+      else
+      {
+        const Point* next = &amap.point(amap.other_extremity(adart));
+        internal::newell_single_step_3_for_lcc(*curr, *next, normal);
+        ++nb;
+        curr = next;
+        if (amap.is_next_exist(adart) && amap.next(adart)!=start)
+          adart=amap.next(adart);
+        else
+          adart=start;
+      }
     }
+    while(adart!=start);
 
+    assert(nb>0);
     return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));
     //  return normal / std::sqrt(normal * normal);
   }
@@ -166,21 +181,38 @@ namespace CGAL {
       CGAL_static_assertion(2<=LCC::dimension);
       CGAL_assertion(adart != LCC::null_handle);
 
+      // We go to the beginning of the face (first dart, case of open face)
+      typename LCC::Dart_const_handle start=adart;
+      while ( amap.is_previous_exist(start) && amap.previous(start)!=adart )
+        start = amap.previous(start);
+
       typename LCC::Vector vec
         (typename LCC::Traits::Construct_vector()(CGAL::ORIGIN,
-                                                  amap.point(adart)));
+                                                  amap.point(start)));
+
+      if ((!amap.is_previous_exist(adart) && !amap.is_next_exist(adart)) ||
+          amap.next(adart)==adart)
+        return typename LCC::Traits::Construct_translated_point()
+            (CGAL::ORIGIN, vec);  // case of face with only one edge
+
       unsigned int nb = 1;
 
-        typename LCC::template Dart_of_cell_range<2,2>::const_iterator
-          vhit  = amap.template darts_of_cell<2,2>(adart).begin(),
-          vhend = amap.template darts_of_cell<2,2>(adart).end();
-      for( ++vhit; vhit!=vhend; ++vhit )
+      // Now we advance to process each edge
+      adart=amap.next(start); // Because the first vertex was already sum up
+      do
       {
         vec = typename LCC::Traits::Construct_sum_of_vectors()
           (vec, typename LCC::Traits::Construct_vector()(CGAL::ORIGIN,
-                                                         amap.point(vhit) ));
+                                                         amap.point(adart)));
         ++nb;
+        if (amap.is_next_exist(adart) && amap.next(adart)!=start)
+          adart=amap.next(adart);
+        else
+          adart=start;
       }
+      while(adart!=start);
+
+      assert(nb>1);
       return typename LCC::Traits::Construct_translated_point()
         (CGAL::ORIGIN, typename LCC::Traits::Construct_scaled_vector()
          (vec, 1.0/nb));
