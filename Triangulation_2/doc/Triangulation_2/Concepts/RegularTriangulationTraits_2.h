@@ -3,7 +3,7 @@
 \ingroup PkgTriangulation2Concepts
 \cgalConcept
 
-The concept `RegularTriangulationTraits_2` describe the requirements 
+The concept `RegularTriangulationTraits_2` describes the requirements 
 for the traits class of regular triangulations. It refines the 
 concept `TriangulationTraits_2` requiring the type 
 `CGAL::Weighted_point_2` and the *power test* predicate on those 
@@ -18,7 +18,7 @@ of Delaunay triangulations.
 
 \cgalRefines `TriangulationTraits_2` 
 
-\cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>` 
+\cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_2`
 
 \sa `TriangulationTraits_2` 
 \sa `CGAL::Regular_triangulation_2<Traits,Tds>` 
@@ -43,7 +43,9 @@ and it must be implicitely convertible from and to `Bare_point`.
   typedef unspecified_type Weighted_point_2; 
 
 /*!
-A function object that must provide operators for the power test applied to two, three, and four points. 
+A predicate object,
+model of `PowerSideOfOrientedPowerCircle_2`,
+that must provide operators for the power test applied to two, three, and four points. 
 
 Must provide the operators: 
 
@@ -71,7 +73,9 @@ typedef unspecified_type Power_side_of_oriented_power_circle_2;
 /// @{
 
 /*!
-A function object for comparing two power distances. 
+A function object,
+model of `Kernel::ComparePowerDistance_2`
+for comparing two power distances. 
 Must provide the operator: 
 
 `Comparison_result operator()(Bare_point p, Weighted_point_2 q, Weighted_point_2 r)`, 
@@ -81,8 +85,9 @@ power distance between `p` and `r`.
 typedef unspecified_type Compare_power_distance_2; 
 
 /*!
-A function
-object that constructs the weighted circumcenter of three 
+A function object,
+model of `Kernel::ConstructWeightedCircumcenter_2`,
+that constructs the weighted circumcenter of three 
 weighted points. 
 
 Must provide the operator:
@@ -92,7 +97,9 @@ Must provide the operator:
 typedef unspecified_type Construct_weighted_circumcenter_2; 
 
 /*!
-A function object that constructs 
+A function object,
+model of `Kernel::ConstructRadicalAxis_2`,
+that constructs 
 the radical axis of two weighted points. 
 
 Must provide the operator: 

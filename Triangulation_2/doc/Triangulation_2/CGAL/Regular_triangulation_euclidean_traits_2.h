@@ -7,7 +7,7 @@ namespace CGAL {
 `Regular_triangulation_euclidean_traits_2` is a model for the concept `RegularTriangulationTraits_2` 
 
 \tparam K must be a model of the `Kernel` concept.
-\tparam Weight  This template parameter is ignored, as  `K::Weighted_point_2` uses the type `K::FT`.
+\tparam Weight  This template parameter is ignored, as `Kernel::Weighted_point_2` uses the type `Kernel::FT`.
 
 \deprecated The template parameter `Weight` is deprecated. Users who need this feature must use a CGAL version prior to 4.9.
  

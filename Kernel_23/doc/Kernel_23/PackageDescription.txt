@@ -280,6 +280,7 @@
 - `Kernel::CompareSquaredDistance_2`
 - `Kernel::CompareSquaredDistance_3`
 - `Kernel::CompareSquaredRadius_3`
+- `Kernel::CompareWeightedSquaredRadius_3`
 - `Kernel::CompareXAtY_2`
 - `Kernel::CompareXYZ_3`
 - `Kernel::CompareXY_2`
@@ -317,6 +318,7 @@
 - `Kernel::ComputeSquaredLengthDividedByPiSquare_3`
 - `Kernel::ComputeSquaredRadius_2`
 - `Kernel::ComputeSquaredRadius_3`
+- `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
 - `Kernel::ComputeVolume_3`
 - `Kernel::ComputeWeight_2`
 - `Kernel::ComputeWeight_3`

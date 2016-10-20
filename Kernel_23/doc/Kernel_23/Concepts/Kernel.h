@@ -1303,6 +1303,11 @@ public:
   */ 
   typedef unspecified_type Compute_power_product_3; 
 
+  /*!
+    a model of `Kernel::ComputeSquaredRadiusSmallestOrthogonalSphere_3`
+  */
+  typedef unspecified_type Compute_squared_radius_smallest_orthogonal_sphere_3;
+
   /// @} 
 
   /// \name Three-dimensional Generalized Predicates
@@ -1362,6 +1367,11 @@ public:
     a model of `Kernel::LessXYZ_3` 
   */ 
   typedef unspecified_type Less_xyz_3; 
+
+  /*!
+    a model of `Kernel::CompareWeightedSquaredRadius_3`
+  */
+  typedef unspecified_type Compare_weighted_squared_radius_3;
 
   /*!
     a model of `Kernel::CompareX_3` 

@@ -580,8 +580,6 @@ CGAL_Kernel_pred(Compare_weighted_squared_radius_3,
                  compare_weighted_squared_radius_3_object)
 CGAL_Kernel_pred(Power_side_of_bounded_power_sphere_3,
                  power_side_of_bounded_power_sphere_3_object)
-CGAL_Kernel_pred(Side_of_bounded_orthogonal_sphere_3,
-                 side_of_bounded_orthogonal_sphere_3_object)
 CGAL_Kernel_pred(Oriented_side_2,
 		 oriented_side_2_object)
 CGAL_Kernel_pred(Oriented_side_3,

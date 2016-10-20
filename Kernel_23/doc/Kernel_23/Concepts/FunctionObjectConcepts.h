@@ -1142,6 +1142,48 @@ public:
 }; /* end Kernel::CompareSquaredRadius_3 */
 
 /*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
+
+\sa `ComputePowerProduct_3` for the definition of orthogonal
+    weighted points
+
+\cgalRefines `AdaptableFunctor`
+\cgalHasModels `Compare_weighted_squared_radius_3`
+
+*/
+class CompareWeightedSquaredRadius_3 {
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    compares the weight of the smallest sphere orthogonal to the
+    input weighted point(s) with the input weight.
+    */
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
+                                 const Kernel::Weighted_point_3& qw,
+                                 const Kernel::Weighted_point_3& rw,
+                                 const Kernel::Weighted_point_3& sw,
+                                 const Kernel::FT& w);
+
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
+                                 const Kernel::Weighted_point_3& qw,
+                                 const Kernel::Weighted_point_3& rw,
+                                 const Kernel::FT& w);
+
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
+                                 const Kernel::Weighted_point_3& qw,
+                                 const Kernel::FT& w);
+
+    Comparison_result operator()(const Kernel::Weighted_point_3& pw,
+                                 const Kernel::FT& w);
+
+    /// @}
+}; /* end Kernel::CompareWeightedSquaredRadius_3 */
+
+/*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
@@ -2363,6 +2405,43 @@ public:
                         const Kernel::Weighted_point_3& s, 
                         const Kernel::Weighted_point_3& t 
                         ) const; 
+
+  /// @}
+};
+
+/*!
+\ingroup PkgKernel23ConceptsFunctionObjects
+\cgalConcept
+
+\sa `CGAL::Weighted_point_3<Kernel>`
+\sa `ComputePowerProduct_3` for the definition of orthogonal sphere
+
+\cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeSquaredRadiusSmallestOrthogonalSphere_3 {
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+  returns the squared radius of the
+  smallest sphere orthogonal to the argument(s).
+  */
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw,
+                         const Kernel::Weighted_point_3& rw,
+                         const Kernel::Weighted_point_3& sw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw,
+                         const Kernel::Weighted_point_3& rw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw,
+                         const Kernel::Weighted_point_3& qw) const;
+
+  Kernel::FT operator() (const Kernel::Weighted_point_3& pw) const;
 
   /// @}
 };

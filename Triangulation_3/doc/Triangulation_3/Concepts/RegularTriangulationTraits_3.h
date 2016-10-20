@@ -62,7 +62,9 @@ The (un-weighted) point type.
 typedef unspecified_type Bare_point; 
 
 /*!
-A predicate object that must provide the following function operators: 
+A predicate object,
+model of `Kernel::PowerSideOfOrientedPowerSphere_3`,
+that must provide the following function operators: 
 
 `Oriented_side operator()( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s, 			 Weighted_point_3 t)`, 
 
@@ -121,7 +123,9 @@ typedef unspecified_type Power_side_of_oriented_power_sphere_3;
 
 
 /*!
-A predicate object that must provide the function operator 
+A predicate object,
+model of `ComparePowerDistance_3`,
+that must provide the function operator 
 
 `Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r)`, 
 
@@ -136,7 +140,9 @@ issued.
 typedef unspecified_type Compare_power_distance_3; 
 
 /*!
-A constructor type. The `operator()` constructs the bare point 
+A constructor type,
+model of `ConstructWeightedCircumcenter_3`.
+The `operator()` constructs the bare point 
 which is the center of the smallest orthogonal sphere to the input 
 weighted points. 
 
