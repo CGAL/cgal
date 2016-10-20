@@ -391,13 +391,11 @@ public:
         neighborhood.k_neighbors (m_input[s], 12, std::back_inserter (neighbors));
 
         for (std::size_t i = 0; i < neighbors.size(); ++ i)
-          {
-            edges.push_back (std::make_pair (s, neighbors[i]));
-            if (s != neighbors[i])
+          if (s != neighbors[i])
+            {
+              edges.push_back (std::make_pair (s, neighbors[i]));
               edge_weights.push_back (weight);
-            else
-              edge_weights.push_back (0.);
-          }
+            }
         
         std::size_t nb_class_best = 0;
         double val_class_best = (std::numeric_limits<double>::max)();
