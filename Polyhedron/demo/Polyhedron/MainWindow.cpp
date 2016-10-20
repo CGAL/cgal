@@ -423,19 +423,25 @@ void MainWindow::filterOperations()
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations);
 }
-#ifdef QT_SCRIPT_LIB
+
+#include <CGAL/Three/exceptions.h>
+
 void MainWindow::evaluate_script(QString script,
                                  const QString& filename,
                                  const bool quiet) {
   QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
-    QTextStream err(stderr);
-    err << "Qt Script exception:\n"
-        << script_engine->uncaughtException().toString()
-        << "\nBacktrace:\n";
-    Q_FOREACH(QString line, script_engine->uncaughtExceptionBacktrace()) {
-      err << "  " << line << "\n";
+    if(!quiet) {
+      QTextStream err(stderr);
+      err << "Qt Script exception:\n"
+          << script_engine->uncaughtException().toString()
+          << "\nBacktrace:\n";
+      Q_FOREACH(QString line, script_engine->uncaughtExceptionBacktrace()) {
+        err << "  " << line << "\n";
+      }
     }
+    throw CGAL::Three::Script_exception
+      (script_engine->uncaughtException().toString().toStdString());
   }
   else if(!quiet && !value.isNull() && !value.isUndefined()) {
     QTextStream(stderr) << "Qt Script evaluated to \""
@@ -448,7 +454,6 @@ void MainWindow::evaluate_script_quiet(QString script,
 {
   evaluate_script(script, filename, true);
 }
-#endif
 
 void MainWindow::enableScriptDebugger(bool b /* = true */)
 {
@@ -1345,7 +1350,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 bool MainWindow::loadScript(QString filename)
 {
   QFileInfo fileinfo(filename);
-  return loadScript(fileinfo);
+  boost::optional<bool> opt = wrap_a_call_to_cpp
+    ([this, fileinfo] {
+      return loadScript(fileinfo);
+    }, this, __FILE__, __LINE__, CGAL::Three::PARENT_CONTEXT);
+  if(!opt) return false;
+  else return *opt;
 }
 
 bool MainWindow::loadScript(QFileInfo info)
