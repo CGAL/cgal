@@ -66,24 +66,19 @@ public:
     \param bbox Bounding box of the input range
     \param grid Precomputed `Planimetric_grid`
     \param grid_resolution Resolution of the planimetric grid
-    \param radius_neighbors Radius of local neighborhoods
     \param radius_dtm Radius for digital terrain modeling (must be bigger than the size of a building)
 
   */
   Attribute_elevation (RandomAccessIterator begin,
                        RandomAccessIterator end,
                        PointMap point_map,
-                       const Iso_cuboid_3& bbox,
                        const Grid& grid,
                        const double grid_resolution,
-                       double radius_neighbors = -1.,
                        double radius_dtm = -1.)
   {
     this->weight = 1.;
-    if (radius_neighbors < 0.)
-      radius_neighbors = 5. * grid_resolution;
     if (radius_dtm < 0.)
-      radius_dtm = 5. * radius_neighbors;
+      radius_dtm = 100. * grid_resolution;
 
     //DEM
     Image_float dem(grid.width(),grid.height());

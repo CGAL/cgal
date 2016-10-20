@@ -727,9 +727,8 @@ public:
           {
             t.start();
             psc.add_attribute (Attribute_handle (new Elevation(begin, end, point_map,
-                                                               m_bbox, *(m_scales[scale]->grid),
+                                                               *(m_scales[scale]->grid),
                                                                m_scales[scale]->grid_resolution(),
-                                                               m_scales[scale]->radius_neighbors(),
                                                                m_scales[scale]->radius_dtm())));
             t.stop();
           }
@@ -976,9 +975,7 @@ private:
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       {
         psc.add_attribute (Attribute_handle (new Attribute_type(begin, end, point_map,
-                                                                m_bbox, *(m_scales[i]->grid),
                                                                 m_scales[i]->grid_resolution(),
-                                                                m_scales[i]->radius_neighbors(),
                                                                 m_scales[i]->radius_dtm())));
         m_scales[i]->attributes.push_back (psc.get_attribute (psc.number_of_attributes() - 1));
       }
