@@ -101,12 +101,10 @@ namespace CGAL {
       CGAL_assertion(v1 < initVertices.size());
       CGAL_assertion(v2 < initVertices.size());
 
-      d1 = alcc.create_dart(initVertices[v1]);
-      d2 = alcc.create_dart(initVertices[v2]);
-      alcc.template link_beta<2>(d1, d2);
+      d1 = alcc.make_segment(initVertices[v1], initVertices[v2], true);
 
       testVertices[v1].push_back(d1);
-      testVertices[v2].push_back(d2);
+      testVertices[v2].push_back(alcc.template opposite<2>(d1));
     }
 
     // LCC associating directions and darts.

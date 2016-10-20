@@ -3801,9 +3801,12 @@ namespace CGAL {
     }
 
     /** Create an edge.
+     * if closed==true, the edge has no 2-free dart.
+     * (note that for CMap there is no differente between true and false, but
+     *  this is not the case for GMap)
      * @return a dart of the new edge.
      */
-    Dart_handle make_edge()
+    Dart_handle make_edge(bool /*closed*/=false)
     {
       Dart_handle d1 = create_dart();
       Dart_handle d2 = create_dart();
@@ -3812,13 +3815,17 @@ namespace CGAL {
     }
 
     /** Create an edge given 2 Attribute_handle<0>.
+     * Note that this function can be used only if 0-attributes are non void
      * @param h0 the first vertex handle.
      * @param h1 the second vertex handle.
-     * Note that this function can be used only if 0-attributes are non void
+     * if closed==true, the edge has no 2-free dart.
+     * (note that for CMap there is no differente between true and false, but
+     *  this is not the case for GMap)
      * @return the dart of the new edge incident to h0.
      */
     Dart_handle make_segment(typename Attribute_handle<0>::type h0,
-                             typename Attribute_handle<0>::type h1)
+                             typename Attribute_handle<0>::type h1,
+                             bool /*closed*/=false)
     {
       Dart_handle d1 = this->make_edge();
 

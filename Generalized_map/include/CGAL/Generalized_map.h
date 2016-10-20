@@ -2950,30 +2950,47 @@ namespace CGAL {
     }
 
     /** Create an edge.
+     * if closed==true, the edge has no 2-free dart.
      * @return a dart of the new edge.
      */
-    Dart_handle make_edge()
+    Dart_handle make_edge(bool closed=false)
     {
-      Dart_handle d1 = create_dart();
-      Dart_handle d2 = create_dart();
+      Dart_handle d1=create_dart();
+      Dart_handle d2=create_dart();
       basic_link_alpha<0>(d1, d2);
+      if (closed)
+      {
+        Dart_handle d3=create_dart();
+        Dart_handle d4=create_dart();
+        basic_link_alpha<0>(d3, d4);
+        basic_link_alpha<2>(d1, d3);
+        basic_link_alpha<2>(d2, d4);
+      }
+      
       return d1;
     }
 
     /** Create an edge given 2 Attribute_handle<0>.
+     * Note that this function can be used only if 0-attributes are non void
      * @param h0 the first vertex handle.
      * @param h1 the second vertex handle.
-     * Note that this function can be used only if 0-attributes are non void
+     * if closed==true, the edge has no 2-free dart.
      * @return the dart of the new edge incident to h0.
      */
     Dart_handle make_segment(typename Attribute_handle<0>::type h0,
-                             typename Attribute_handle<0>::type h1)
+                             typename Attribute_handle<0>::type h1,
+                             bool closed=false)
     {
-      Dart_handle d1 = this->make_edge();
+      Dart_handle d1 = this->make_edge(closed);
 
       set_dart_attribute<0>(d1,h0);
       set_dart_attribute<0>(this->alpha<0>(d1),h1);
-
+      if (closed)
+      {
+        set_dart_attribute<0>(this->alpha<2>(d1),h0);
+        set_dart_attribute<0>(this->alpha<0,2>(d1),h1);
+      }
+      
       return d1;
     }
 

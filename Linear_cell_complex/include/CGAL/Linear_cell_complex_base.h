@@ -496,12 +496,15 @@ namespace CGAL {
     /** Create a segment given 2 points.
      * @param p0 the first point.
      * @param p1 the second point.
+     * if closed==true, the edge has no 2-free dart.
      * @return the dart of the new segment incident to p0.
      */
-    Dart_handle make_segment(const Point& p0,const Point& p1)
+    Dart_handle make_segment(const Point& p0,const Point& p1,
+                             bool closed=false)
     {
       return make_segment(create_vertex_attribute(p0),
-                          create_vertex_attribute(p1));
+                          create_vertex_attribute(p1),
+                          closed);
     }
 
     /** Create a triangle given 3 points.
