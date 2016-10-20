@@ -107,12 +107,13 @@ public:
             std::size_t squareXmax = (std::min)(grid.width() - 1, i + square);
 
             std::vector<double> z;
+            z.reserve(squareXmax - squareXmin +1 );
             for(std::size_t k = squareXmin; k <= squareXmax; k++)
               if (dem(k,j) != 0.)
                 z.push_back (dem(k,j));
             if (z.empty())
               continue;
-            std::sort (z.begin(), z.end());
+            std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
             dtm_x(i,j) = z[z.size() / 10];
           }
       }
@@ -127,12 +128,13 @@ public:
             std::size_t squareYmin = (j < square ? 0 : j - square);
             std::size_t squareYmax = (std::min)(grid.height() - 1, j + square);
             std::vector<double> z;
+            z.reserve(squareYmax - squareYmin +1 );
             for(std::size_t l = squareYmin; l <= squareYmax; l++)
               if (dtm_x(i,l) != 0.)
                 z.push_back (dtm_x(i,l));
             if (z.empty())
               continue;
-            std::sort (z.begin(), z.end());
+            std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
             dtm(i,j) = z[z.size() / 10];
           }
       }
