@@ -271,6 +271,7 @@ extract(std::istream& is, Line_2<R>& l)
         read(is, c);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;

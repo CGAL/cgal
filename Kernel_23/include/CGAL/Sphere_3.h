@@ -301,6 +301,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
         is >> o;
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
@@ -328,6 +329,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
         is >> o;
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;

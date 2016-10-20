@@ -241,6 +241,7 @@ extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
         read(is, y);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << std::endl << "Stream must be in ascii or binary mode"
                   << std::endl;
         break;
@@ -265,6 +266,7 @@ extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
         read(is, y);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
