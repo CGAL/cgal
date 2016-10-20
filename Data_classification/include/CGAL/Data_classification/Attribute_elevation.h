@@ -126,12 +126,11 @@ public:
           for(std::size_t k = squareXmin; k <= squareXmax; k++){
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
 					
-              double distance=CGAL::sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
+              double distance = (CGAL::square((double)i-k)+CGAL::square((double)j-l))*CGAL::square(grid_resolution);
 					
-              if((distance<=radius_neighbors)&&(dem(k,l)>0)&&(distance!=0)){
-                double dista=distance*distance;
-                val=val+dem(k,l)/dista;
-                distance_tot=distance_tot+1/dista;
+              if((distance<=CGAL::square(radius_neighbors))&&(dem(k,l)>0)&&(distance!=0)){
+                val=val+dem(k,l)/distance;
+                distance_tot=distance_tot+1/distance;
               }
             }
           }
@@ -196,8 +195,8 @@ public:
         for(std::size_t k = squareXmin; k <= squareXmax; k++){
           for(std::size_t l = squareYmin; l <= squareYmax; l++){
 			
-            double distance=CGAL::sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
-            if(distance<=radius_dtm){
+            double distance= (CGAL::square((double)i-k)+CGAL::square((double)j-l))*CGAL::square(grid_resolution);
+            if(distance <= CGAL::square(radius_dtm)){
               for(int nb=0;nb<(int)grid.indices(k,l).size();nb++)
                 list_pointsZ.push_back(get(point_map, begin[grid.indices(k,l)[nb]]).z());
             }
@@ -314,9 +313,9 @@ public:
         for(std::size_t k = squareXmin; k <= squareXmax; k++){
           for(std::size_t l = squareYmin; l <= squareYmax; l++){
 				
-            double distance=CGAL::sqrt(pow((double)i-k,2)+pow((double)j-l,2))*grid_resolution;
+            double distance = (CGAL::square((double)i-k)+CGAL::square((double)j-l))*CGAL::square(grid_resolution);
 				
-            if(distance<=radius_dtm){
+            if(distance <= CGAL::square(radius_dtm)){
 					
               for(int nb=0;nb<(int)grid.indices(k,l).size();nb++){
                 if(test_ground[grid.indices(k,l)[nb]])
