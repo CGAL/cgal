@@ -109,6 +109,7 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
   }
 
   if(mw) mw->message(QString("QtScript: ") + result, "");
+  QTextStream (stdout) << (QString("QtScript: ") + result) << "\n";
 
   return engine->undefinedValue();
 }
