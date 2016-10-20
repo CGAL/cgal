@@ -112,10 +112,12 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   CGAL_GET_FTOR(Approximate_relative_1,approximate_relative_1);
 #undef CGAL_GET_FTOR
 
-#define CGAL_CHECK_UFUNCTION(Name,AT,RT)                        \
-  {                                                             \
-    typedef typename Name::argument_type AT_;                   \
-    typedef typename Name::result_type   RT_;                   \
+#define CGAL_CHECK_UFUNCTION(Name,AT,RT)                          \
+  {                                                               \
+    typedef typename Name::argument_type AT_;                     \
+    typedef typename Name::result_type   RT_;                     \
+    CGAL_USE_TYPE(AT_);                                           \
+    CGAL_USE_TYPE(RT_);                                           \
     {CGAL_static_assertion(( ::boost::is_same<AT,AT_>::value));}  \
     {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}  \
   }
@@ -124,9 +126,12 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     typedef typename Name::first_argument_type AT1_;                    \
     typedef typename Name::second_argument_type AT2_;                   \
     typedef typename Name::result_type   RT_;                           \
-    {CGAL_static_assertion(( ::boost::is_same<AT1,AT1_>::value));}        \
-    {CGAL_static_assertion(( ::boost::is_same<AT2,AT2_>::value));}        \
-    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}          \
+    CGAL_USE_TYPE(AT1_);                                                \
+    CGAL_USE_TYPE(AT2_);                                                \
+    CGAL_USE_TYPE(RT_);                                                 \
+    {CGAL_static_assertion(( ::boost::is_same<AT1,AT1_>::value));}      \
+    {CGAL_static_assertion(( ::boost::is_same<AT2,AT2_>::value));}      \
+    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}        \
   }
 
   // TODO: missing check for Construct_algebraic_real_1
