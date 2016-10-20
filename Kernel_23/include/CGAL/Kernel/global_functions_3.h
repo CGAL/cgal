@@ -59,6 +59,17 @@ angle(const Point_3<K> &p, const Point_3<K> &q,
   return internal::angle(p, q, r, s, K());
 }
 
+template < class K >
+inline
+typename K::FT
+approximate_dihedral_angle(const Point_3<K> &p,
+                           const Point_3<K> &q,
+                           const Point_3<K> &r,
+                           const Point_3<K> &s)
+{
+  return internal::approximate_dihedral_angle(p, q, r, s, K());
+}
+
 template < typename K >
 inline
 typename K::Boolean
@@ -514,17 +525,6 @@ determinant(const Vector_3<K> &v0, const Vector_3<K> &v1,
             const Vector_3<K> &v2)
 {
   return internal::determinant(v0, v1, v2, K());
-}
-
-template < class K >
-inline
-typename K::FT
-dihedral_angle(const Point_3<K> &p,
-               const Point_3<K> &q,
-               const Point_3<K> &r,
-               const Point_3<K> &s)
-{
-  return internal::dihedral_angle(p, q, r, s, K());
 }
 
 template < class K >

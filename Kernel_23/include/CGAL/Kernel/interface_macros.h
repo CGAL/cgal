@@ -162,6 +162,8 @@ CGAL_Kernel_cons(Compute_c_3,
 		 compute_c_3_object)
 CGAL_Kernel_cons(Compute_d_3,
 		 compute_d_3_object)
+CGAL_Kernel_cons(Compute_approximate_dihedral_angle_3,
+		 compute_approximate_dihedral_angle_3_object)
 CGAL_Kernel_cons(Compute_approximate_area_3,
                  compute_approximate_area_3_object)
 CGAL_Kernel_cons(Compute_approximate_squared_length_3,
@@ -176,8 +178,6 @@ CGAL_Kernel_cons(Compute_determinant_2,
 		 compute_determinant_2_object)
 CGAL_Kernel_cons(Compute_determinant_3,
 		 compute_determinant_3_object)
-CGAL_Kernel_cons(Compute_dihedral_angle_3,
-		 compute_dihedral_angle_3_object)
 CGAL_Kernel_cons(Compute_scalar_product_2,
 		 compute_scalar_product_2_object)
 CGAL_Kernel_cons(Compute_scalar_product_3,

@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 
-
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -13,7 +11,6 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <CGAL/property_map.h>
 #include <cmath>
 
@@ -106,10 +103,10 @@ int main( int argc, char** argv )
                                             point(target(hd,surface_mesh),surface_mesh));
     }
     else{
-      double angle = CGAL::Mesh_3::dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
-                                                  point(target(hd,surface_mesh),surface_mesh),
-                                                  point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
-                                                  point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
+      double angle = CGAL::approximate_dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                      point(target(hd,surface_mesh),surface_mesh),
+                                                      point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                      point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
       if ( CGAL::abs(angle)<100 ){
         ++nb_sharp_edges;
         constraint_hmap[*eb]=true;
@@ -152,10 +149,10 @@ int main( int argc, char** argv )
                                                      point(target(hd,surface_mesh),surface_mesh)));
     }
     else{
-      double angle = CGAL::Mesh_3::dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
-                                                  point(target(hd,surface_mesh),surface_mesh),
-                                                  point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
-                                                  point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
+      double angle = approximate_dihedral_angle(point(target(opposite(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                point(target(hd,surface_mesh),surface_mesh),
+                                                point(target(next(hd,surface_mesh),surface_mesh),surface_mesh),
+                                                point(target(next(opposite(hd,surface_mesh),surface_mesh),surface_mesh),surface_mesh));
       if ( CGAL::abs(angle)<100 ){
         --nb_sharp_edges;
       assert(

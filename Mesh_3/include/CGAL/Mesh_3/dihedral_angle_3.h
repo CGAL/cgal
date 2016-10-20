@@ -41,7 +41,7 @@ dihedral_angle(const typename K::Point_3& a,
                K k = K())
 {
   // Now in the CGAL kernels
-  return k.compute_dihedral_angle_3_object()(a, b, c, d);
+  return k.compute_approximate_dihedral_angle_3_object()(a, b, c, d);
 }
 
   

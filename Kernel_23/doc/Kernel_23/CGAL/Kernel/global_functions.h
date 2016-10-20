@@ -48,7 +48,22 @@ Angle angle(const CGAL::Point_3<Kernel>& p,
 const CGAL::Point_3<Kernel>& q,
 const CGAL::Point_3<Kernel>& r);
 
+
+/*!
+returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
+    The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise. 
+    The angle is given in degree.
+    \pre `p,q,r` and `p,q,s` are not collinear.
+*/
+template <typename Kernel>
+Kernel::FT approximate_dihedral_angle(const CGAL::Point_3<Kernel>& p,
+                                      const CGAL::Point_3<Kernel>& q,
+                                      const CGAL::Point_3<Kernel>& r,
+                                      const CGAL::Point_3<Kernel>& s);
+
 /// @}
+
+
 
 /// \defgroup area_grp CGAL::area()
 /// \ingroup kernel_global_function
@@ -1690,14 +1705,6 @@ const CGAL::Vector_3<Kernel>& v,
 const CGAL::Vector_3<Kernel>& w);
 
 /// @}
-/*!
-returns the dihedral angle of ....   between `-180` and `180` degree.
-*/
-template <typename Kernel>
-Kernel::FT dihedral_angle(const CGAL::Point_3<Kernel>& p,
-                          const CGAL::Point_3<Kernel>& q,
-                          const CGAL::Point_3<Kernel>& r,
-                          const CGAL::Point_3<Kernel>& s);
 
 
 // This is there to keep the global functions in alphabetical order

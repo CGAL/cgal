@@ -344,30 +344,8 @@ namespace CommonKernelFunctors {
     }
   };
 
-  template <typename K>
-  class Compute_area_3
-  {
-    typedef typename K::FT                FT;
-    typedef typename K::Point_3           Point_3;
-    typedef typename K::Triangle_3        Triangle_3;
-  public:
-    typedef FT               result_type;
-
-    FT
-    operator()( const Triangle_3& t ) const
-    {
-	return CGAL_NTS sqrt(K().compute_squared_area_3_object()(t));
-    }
-
-    FT
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
-    {
-	return CGAL_NTS sqrt(K().compute_squared_area_3_object()(p, q, r));
-    }
-  };
-
  template <typename K>
- class Compute_dihedral_angle_3
+ class Compute_approximate_dihedral_angle_3
  {
     typedef typename K::Point_3 Point_3;  
  public:
@@ -400,6 +378,28 @@ namespace CommonKernelFunctors {
      return FT(std::atan2(y, x) * 180 / CGAL_PI );
    }
  };
+
+  template <typename K>
+  class Compute_area_3
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Point_3           Point_3;
+    typedef typename K::Triangle_3        Triangle_3;
+  public:
+    typedef FT               result_type;
+
+    FT
+    operator()( const Triangle_3& t ) const
+    {
+	return CGAL_NTS sqrt(K().compute_squared_area_3_object()(t));
+    }
+
+    FT
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r ) const
+    {
+	return CGAL_NTS sqrt(K().compute_squared_area_3_object()(p, q, r));
+    }
+  };
 
   template <typename K>
   class Compute_squared_distance_2
