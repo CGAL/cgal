@@ -29,6 +29,8 @@ public:
     virtual bool supportsRenderingMode(RenderingMode m) const { return m==Wireframe ; }
     virtual void invalidateOpenGLBuffers();
     virtual bool keyPressEvent(QKeyEvent*);
+    void setFMatrix(double matrix[16]);
+    bool isEmpty() const {return false;}
 
 protected:
     friend struct Scene_polyhedron_transform_item_priv;
