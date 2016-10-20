@@ -43,8 +43,7 @@ Scene_point_set_classification_item::Scene_point_set_classification_item(Scene_p
   m_nb_trials = 300;
   m_smoothing = 0.5;
 
-  m_points->point_set()->unselect_all();
-  m_points->point_set()->collect_garbage();
+  reset_indices();
   
   m_psc = new PSC(m_points->point_set()->begin(), m_points->point_set()->end(), m_points->point_set()->point_map());
 
