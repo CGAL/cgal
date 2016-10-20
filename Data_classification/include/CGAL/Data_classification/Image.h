@@ -51,8 +51,14 @@ public:
   
   ~Image ()
   {
+    free();
+  }
+
+  void free()
+  {
     if (m_raw != NULL)
       delete[] m_raw;
+    m_raw = NULL;
   }
 
   Image (const Image& other)
