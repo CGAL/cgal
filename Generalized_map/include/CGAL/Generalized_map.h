@@ -20,31 +20,35 @@
 #ifndef CGAL_GENERALIZED_MAP_H
 #define CGAL_GENERALIZED_MAP_H 1
 
-#include <CGAL/Compact_container.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
-#include <CGAL/internal/Combinatorial_map_copy_functors.h>
 #include <CGAL/internal/Generalized_map_group_functors.h>
-#include <CGAL/internal/Generalized_map_internal_functors.h>
+#include <CGAL/internal/Combinatorial_map_copy_functors.h>
 #include <CGAL/internal/Generalized_map_sewable.h>
+
+#include <CGAL/Generalized_map_storages.h>
 #include <CGAL/Combinatorial_map_functors.h>
+#include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Generalized_map_operations.h>
 #include <CGAL/Generic_map_min_items.h>
 #include <CGAL/GMap_dart_const_iterators.h>
 #include <CGAL/GMap_cell_const_iterators.h>
-#include <CGAL/Combinatorial_map_basic_operations.h>
-#include <CGAL/Generalized_map_storages.h>
-#include <CGAL/Generalized_map_operations.h>
+
 #include <CGAL/Unique_hash_map.h>
 #include <bitset>
 #include <vector>
 #include <deque>
-
 #include <boost/type_traits/is_same.hpp>
-
 #include <CGAL/config.h>
 
 #if defined( __INTEL_COMPILER )
 // Workarounf for warning in function basic_link_beta_0
 #pragma warning disable 1017
+#endif
+
+#include <boost/config.hpp>
+#if  (BOOST_GCC >= 40900)
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
 
 namespace CGAL {
@@ -74,14 +78,16 @@ namespace CGAL {
     friend struct Contract_cell_functor;
     template<typename Gmap>
     friend struct internal::Init_attribute_functor;
+    template<typename CMap>
+    friend struct Swap_attributes_functor;
 
   public:
     template < unsigned int A, class B, class I, class D, class S >
     friend class Generalized_map_base;
 
     /// Types definition
-    typedef Storage_                                                    Storage;
-    typedef Storage                                                     Base;
+    typedef Storage_                                                  Storage;
+    typedef Storage                                                   Base;
     typedef Generalized_map_base<d_, Refs, Items_, Alloc_, Storage_ > Self;
 
     typedef typename Base::Dart Dart;
@@ -177,18 +183,23 @@ namespace CGAL {
      *  @param amap the generalized map to copy.
      *  @post *this is valid.
      */
-    template <typename Gmap2, typename Converters, typename Pointconverter>
-    void copy(const Gmap2& amap, const Converters& converters,
-              const Pointconverter& pointconverter)
+    template <typename GMap2, typename Converters, typename DartInfoConverter,
+              typename PointConverter>
+    void copy(const GMap2& amap, const Converters& converters,
+              const DartInfoConverter& dartinfoconverter,
+              const PointConverter& pointconverter)
     {
       this->clear();
 
       this->mnb_used_marks = amap.mnb_used_marks;
       this->mmask_marks    = amap.mmask_marks;
+      this->automatic_attributes_management =
+          amap.automatic_attributes_management;
 
       for (size_type i = 0; i < NB_MARKS; ++i)
       {
         this->mfree_marks_stack[i]        = amap.mfree_marks_stack[i];
+        this->mused_marks_stack[i]        = amap.mused_marks_stack[i];
         this->mindex_marks[i]             = amap.mindex_marks[i];
         this->mnb_marked_darts[i]         = amap.mnb_marked_darts[i];
         this->mnb_times_reserved_marks[i] = amap.mnb_times_reserved_marks[i];
@@ -198,19 +209,22 @@ namespace CGAL {
       // TODO: replace the std::map by a boost::unordered_map
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      std::map<typename Gmap2::Dart_const_handle, Dart_handle> dartmap;
+      std::map<typename GMap2::Dart_const_handle, Dart_handle> dartmap;
 
-      for (typename Gmap2::Dart_const_range::const_iterator
+      for (typename GMap2::Dart_const_range::const_iterator
              it=amap.darts().begin(), itend=amap.darts().end();
            it!=itend; ++it)
       {
         dartmap[it]=mdarts.emplace();
         init_dart(dartmap[it], amap.get_marks(it));
+        internal::Copy_dart_info_functor::run
+            (amap, static_cast<Refs&>(*this), it, dartmap[it],
+             dartinfoconverter);
       }
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
 
-      typename std::map<typename Gmap2::Dart_const_handle,Dart_handle>
+      typename std::map<typename GMap2::Dart_const_handle,Dart_handle>
         ::iterator dartmap_iter, dartmap_iter_end=dartmap.end();
       for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
@@ -231,8 +245,8 @@ namespace CGAL {
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
-          < internal::Copy_attributes_functor <Gmap2, Refs, Converters,
-            Pointconverter> >::
+          < internal::Copy_attributes_functor <GMap2, Refs, Converters,
+            PointConverter> >::
           run(amap, static_cast<Refs&>(*this),
               dartmap_iter->first, dartmap_iter->second,
               converters, pointconverter);
@@ -241,23 +255,29 @@ namespace CGAL {
       CGAL_assertion (is_valid () == 1);
     }
 
-    template <typename Gmap2>
-    void copy(const Gmap2& amap)
+    template <typename GMap2>
+    void copy(const GMap2& amap)
     {
       CGAL::cpp11::tuple<> converters;
-      Default_converter_cmap_0attributes_with_point<Gmap2, Refs> pointconverter;
-      return copy< Gmap2, CGAL::cpp11::tuple<>,
-          Default_converter_cmap_0attributes_with_point<Gmap2, Refs> >
-          (amap, converters, pointconverter);
+      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
+      Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
+      return copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
-    template <typename Gmap2, typename Converters>
-    void copy(const Gmap2& amap, const Converters& converters)
+    template <typename GMap2, typename Converters>
+    void copy(const GMap2& amap, const Converters& converters)
     {
-      Default_converter_cmap_0attributes_with_point<Gmap2, Refs> pointconverter;
-      return copy< Gmap2, Converters,
-          Default_converter_cmap_0attributes_with_point<Gmap2, Refs> >
-          (amap, converters, pointconverter);
+      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
+      Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
+      return copy(amap, converters, dartinfoconverter, pointconverter);
+    }
+
+    template <typename GMap2, typename Converters, typename DartInfoConverter>
+    void copy(const GMap2& amap, const Converters& converters,
+              const DartInfoConverter& dartinfoconverter)
+    {
+      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
+      return copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     // Copy constructor from a map having exactly the same type.
@@ -265,21 +285,28 @@ namespace CGAL {
     { copy<Self>(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename Gmap2>
-    Generalized_map_base(const Gmap2& amap)
-    { copy<Gmap2>(amap); }
+    template <typename GMap2>
+    Generalized_map_base(const GMap2& amap)
+    { copy(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename Gmap2, typename Converters>
-    Generalized_map_base(const Gmap2& amap, Converters& converters)
-    { copy<Gmap2,Converters>(amap, converters); }
+    template <typename GMap2, typename Converters>
+    Generalized_map_base(const GMap2& amap, Converters& converters)
+    { copy(amap, converters); }
 
     // "Copy constructor" from a map having different type.
-    template <typename Gmap2, typename Converters, typename Pointconverter>
-    Generalized_map_base(const Gmap2& amap, Converters& converters,
-                         const Pointconverter& pointconverter)
-    { copy<Gmap2,Converters, Pointconverter>
-          (amap, converters, pointconverter); }
+    template <typename GMap2, typename Converters, typename DartInfoConverter>
+    Generalized_map_base(const GMap2& amap, Converters& converters,
+                         const DartInfoConverter& dartinfoconverter)
+    { copy(amap, converters, dartinfoconverter); }
+
+    // "Copy constructor" from a map having different type.
+    template <typename GMap2, typename Converters, typename DartInfoConverter,
+              typename PointConverter>
+    Generalized_map_base(const GMap2& amap, Converters& converters,
+                         const DartInfoConverter& dartinfoconverter,
+                         const PointConverter& pointconverter)
+    { copy(amap, converters, dartinfoconverter, pointconverter); }
 
     /** Affectation operation. Copies one map to the other.
      * @param amap a generalized map.
@@ -303,7 +330,10 @@ namespace CGAL {
     {
       if (this!=&amap)
       {
-        amap.mdarts.swap(mdarts);
+        mdarts.swap(amap.mdarts);
+
+        Helper::template Foreach_enabled_attributes
+          < internal::Swap_attributes_functor <Self> >::run(*this, amap);
 
         std::swap_ranges(mnb_times_reserved_marks,
                          mnb_times_reserved_marks+NB_MARKS,
@@ -318,7 +348,9 @@ namespace CGAL {
                          amap.mused_marks_stack);
         std::swap_ranges(mnb_marked_darts,mnb_marked_darts+NB_MARKS,
                          amap.mnb_marked_darts);
-        mattribute_containers.swap(amap.mattribute_containers);
+
+        std::swap(automatic_attributes_management,
+                  amap.automatic_attributes_management);
       }
     }
 
@@ -539,7 +571,8 @@ namespace CGAL {
       if ( this->template attribute<i>(dh)!=null_handle )
       {
         this->template dec_attribute_ref_counting<i>(this->template attribute<i>(dh));
-        if ( this->template get_attribute_ref_counting<i>
+        if ( this->are_attributes_automatically_managed() &&
+             this->template get_attribute_ref_counting<i>
              (this->template attribute<i>(dh))==0 )
           this->template erase_attribute<i>(this->template attribute<i>(dh));
       }
@@ -721,11 +754,11 @@ namespace CGAL {
 
     // Generic function to iterate on CMap or GMap in a generic way
     bool is_previous_exist(Dart_const_handle ADart) const
-    { return !this->template is_free<0>(ADart) &&
-        !this->template is_free<1>(alpha<0>(ADart)); }
-    bool is_next_exist(Dart_const_handle ADart) const
     { return !this->template is_free<1>(ADart) &&
-        !this->template is_free<0>(this->template alpha<1>(ADart)); }
+        !this->template is_free<0>(alpha<1>(ADart)); }
+    bool is_next_exist(Dart_const_handle ADart) const
+    { return !this->template is_free<0>(ADart) &&
+        !this->template is_free<1>(this->template alpha<0>(ADart)); }
     template<unsigned int dim>
     bool is_opposite_exist(Dart_const_handle ADart) const
     { return !this->template is_free<dim>(ADart) &&
@@ -1112,14 +1145,14 @@ namespace CGAL {
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
-          run(*this,marks);
+          run(*this, marks);
 
       for ( typename Dart_range::iterator it(darts().begin()),
              itend(darts().end()); it!=itend; ++it)
       {
         Helper::template Foreach_enabled_attributes
           <internal::Correct_invalid_attributes_functor<Self> >::
-          run(*this,it,marks);
+          run(*this, it, marks);
       }
 
       for ( unsigned int i=0; i<=dimension; ++i)
@@ -1128,6 +1161,10 @@ namespace CGAL {
           CGAL_assertion( is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
         }
+
+      Helper::template
+        Foreach_enabled_attributes<internal::Cleanup_useless_attributes<Self> >::
+          run(*this);
     }
 
     /// @return the number of darts.
@@ -1151,7 +1188,7 @@ namespace CGAL {
       for ( typename Dart_range::const_iterator it=darts().begin();
            it!=darts().end(); ++it)
       {
-        os << " dart " << darts().index(it) << "; alpha[i]=";
+        os << " dart " << darts().index(it)<<"; alpha[i]=";
         for ( unsigned int i=0; i<=dimension; ++i)
         {
           os << darts().index(alpha(it, i)) << ",\t";
@@ -1188,8 +1225,8 @@ namespace CGAL {
           ++nb;
           for ( Ite it2(*this, it1, amark); it2.cont(); ++it2 )
           {
-            aos << &(**it2) << " - " << std::flush;
-            mark(*it2, amark);
+            aos << darts().index(it2) << " - " << std::flush;
+            mark(it2, amark);
           }
           aos << std::endl;
         }
@@ -1758,6 +1795,7 @@ namespace CGAL {
         if ( marks[acells[i]]==INVALID_MARK )
         {
           marks[acells[i]] = get_new_mark();
+          assert(is_whole_map_unmarked(marks[acells[i]]));
         }
       }
 
@@ -2654,6 +2692,8 @@ namespace CGAL {
             it!=darts().end(); ++it)
       {
         dual[it] = amap.create_dart();
+        internal::Copy_dart_info_functor::run(amap, static_cast<Refs&>(*this),
+                                              it, dual[it]);
         if ( it==adart && res==amap.null_handle ) res = dual[it];
       }
 
@@ -2703,7 +2743,6 @@ namespace CGAL {
                            <d2,Refs2,Items2,Alloc2, Storage2>::Dart_const_handle dh2,
                            bool testAttributes=true) const
     {
-      // CGAL_assertion(dimension==map2.dimension);
       typedef Generalized_map_base<d2,Refs2,Items2,Alloc2, Storage2> Map2;
 
       bool match = true;
@@ -2747,17 +2786,23 @@ namespace CGAL {
 
             if (testAttributes)
             {
+               // We first test info of darts
+              if (match)
+                match=internal::Test_is_same_dart_info_functor<Self, Map2>::
+                    run(*this, map2, current, other);
+
               // We need to test in both direction because
               // Foreach_enabled_attributes only test non void attributes
-              // of Self.
+              // of Self. Functor Test_is_same_attribute_functor will modify
+              // the value of match to false if attributes do not match
               if (match)
                 Helper::template Foreach_enabled_attributes
-                  < internal::Test_is_same_attribute_functor<Self, Map2> >::
-                  run(*this, map2, current, other, match);
+                    < internal::Test_is_same_attribute_functor<Self, Map2> >::
+                    run(*this, map2, current, other, match);
               if (match)
                 Map2::Helper::template Foreach_enabled_attributes
-                  < internal::Test_is_same_attribute_functor<Map2, Self> >::
-                  run(map2, *this, other, current, match);
+                    < internal::Test_is_same_attribute_functor<Map2, Self> >::
+                    run(map2, *this, other, current, match);
             }
 
             // We test if the injection is valid with its neighboors.
@@ -2959,7 +3004,7 @@ namespace CGAL {
      * @return true iff the face containing adart is a polygon of length alg.
      */
     bool is_face_combinatorial_polygon(Dart_const_handle adart,
-                                       unsigned int alg)
+                                       unsigned int alg) const
     {
       CGAL_assertion(alg>0);
 
@@ -3241,7 +3286,7 @@ namespace CGAL {
                                          bool update_attributes=true )
     {
       Dart_handle d1;
-      size_type  amark=get_new_mark();
+      size_type amark=get_new_mark();
 
       // 1) We store all the darts of the edge.
       std::deque<Dart_handle> vect;
@@ -3877,26 +3922,38 @@ namespace CGAL {
     Generalized_map() : Base()
     {}
 
-    Generalized_map(const Self & amap) : Base()
-    { Base::template copy<Self>(amap); }
+    Generalized_map(const Self & amap) : Base(amap)
+    {}
 
     template < class Gmap >
-    Generalized_map(const Gmap & amap) : Base()
-    { Base::template copy<Gmap>(amap); }
+    Generalized_map(const Gmap & amap) : Base(amap)
+    {}
 
     template < class Gmap, typename Converters >
-    Generalized_map(const Gmap & amap, const Converters& converters) : Base()
-    { Base::template copy<Gmap, Converters>
-          (amap, converters); }
+    Generalized_map(const Gmap & amap, const Converters& converters) :
+      Base(amap, converters)
+    {}    
 
-    template < class Gmap, typename Converters, typename Pointconverter >
+    template < class Gmap, typename Converters, typename DartInfoConverter >
     Generalized_map(const Gmap & amap, const Converters& converters,
-                      const Pointconverter& pointconverter) : Base()
-    { Base::template copy<Gmap, Converters, Pointconverter>
-          (amap, converters, pointconverter); }
+                    const DartInfoConverter& dartinfoconverter) :
+      Base(amap, converters, dartinfoconverter)
+    {}
+
+    template < class Gmap, typename Converters, typename DartInfoConverter,
+               typename PointConverter >
+    Generalized_map(const Gmap & amap, const Converters& converters,
+                    const DartInfoConverter& dartinfoconverter,
+                    const PointConverter& pointconverter) :
+      Base(amap, converters, dartinfoconverter, pointconverter)
+    {}
   };
 
 } // namespace CGAL
+
+#if  (BOOST_GCC >= 40900)
+ _Pragma("GCC diagnostic pop")
+#endif
 
 #endif // CGAL_GENERALIZED_MAP_H //
 // EOF //

@@ -1166,7 +1166,7 @@ namespace CGAL {
 
       Helper::template
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
-          run(*this,marks);
+          run(*this, marks);
 
       for ( typename Dart_range::const_iterator it(darts().begin()),
              itend(darts().end()); it!=itend; ++it)
@@ -1243,7 +1243,7 @@ namespace CGAL {
           }
           Helper::template Foreach_enabled_attributes
             <internal::Test_is_valid_attribute_functor<Self> >::
-            run(*this,it,marks,valid);
+            run(*this, it, marks, valid);
         }
       }
       for ( i=0; i<=dimension; ++i)
