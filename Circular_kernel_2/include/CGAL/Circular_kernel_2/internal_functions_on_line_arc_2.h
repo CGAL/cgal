@@ -508,6 +508,13 @@ namespace CircularFunctors {
     bool operator()(const std::pair<typename CK::Circular_arc_point_2, unsigned>& pair) const {
       return has_on<CK>(*l,pair.first,true);
     }
+
+#ifdef CGAL_ADDITIONAL_VARIANT_FOR_ICL
+    bool operator()(const int) const
+    {
+      return true;
+    }
+#endif
   };
 
   template< class CK, class OutputIterator>

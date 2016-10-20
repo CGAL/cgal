@@ -584,4 +584,10 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #  define CGAL_NO_ASSERTIONS_BOOL true
 #endif
 
+#if defined( __INTEL_COMPILER)
+#define CGAL_ADDITIONAL_VARIANT_FOR_ICL ,int
+#else
+#define CGAL_ADDITIONAL_VARIANT_FOR_ICL
+#endif
+
 #endif // CGAL_CONFIG_H
