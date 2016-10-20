@@ -1320,14 +1320,22 @@ public:
   template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
   Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
     internal::Output_visitor<Self> visitor(this);
+    #if BOOST_VERSION==105800
+    t.apply_visitor(visitor);
+    #else
     boost::apply_visitor(visitor, t);
+    #endif
     return *this;
   }
 
   template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
   Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
     internal::Output_visitor<Self> visitor(this);
-    if(t) boost::apply_visitor(visitor, *t);
+    #if BOOST_VERSION==105800
+    if(t) t->apply_visitor(visitor);
+    #else
+    if(t)  boost::apply_visitor(visitor, *t);
+    #endif
     return *this;
   }
 
