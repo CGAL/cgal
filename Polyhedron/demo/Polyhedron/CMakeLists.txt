@@ -302,7 +302,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if( POLYHEDRON_QTSCRIPT_DEBUGGER )
     if(TARGET Qt5::ScriptTools)
-      qt5_use_modules(Polyhedron_3 ScriptTools)
+      qt5_use_modules(polyhedron_demo ScriptTools)
     else()
       message(STATUS "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt5 ScriptTools library was not found.")
     endif()
