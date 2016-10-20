@@ -324,6 +324,7 @@ void Viewer::compute_face(Dart_handle dh, LCC::size_type markface)
            he_circ_end = lcc.darts_of_orbit<1>(dh).end();
          he_circ!=he_circ_end; ++he_circ)
     {
+      std::cout<<lcc.point(he_circ)<<std::endl;
       CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
       if(first == NULL)
       { first = vh; }
@@ -639,11 +640,11 @@ void Viewer::sceneChanged()
 {
   compute_elements();
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
-						     bb.ymin(),
-						     bb.zmin()),
-				      qglviewer::Vec(bb.xmax(),
-						     bb.ymax(),
-						     bb.zmax()));
+                                                     bb.ymin(),
+                                                     bb.zmin()),
+                                      qglviewer::Vec(bb.xmax(),
+                                                     bb.ymax(),
+                                                     bb.zmax()));
   are_buffers_initialized = false;
 
   if (m_previous_scene_empty)

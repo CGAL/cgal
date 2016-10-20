@@ -17,10 +17,13 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_LINEAR_CELL_COMPLEX_STORAGES_H
-#define CGAL_LINEAR_CELL_COMPLEX_STORAGES_H 1
+#ifndef CGAL_CMAP_LINEAR_CELL_COMPLEX_STORAGES_H
+#define CGAL_CMAP_LINEAR_CELL_COMPLEX_STORAGES_H 1
 
-#include <CGAL/Combinatorial_map_storages.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Compact_container.h>
+#include <CGAL/Dart.h>
+#include <bitset>
 
 #include <boost/config.hpp>
 #if  (BOOST_GCC >= 40900)
@@ -30,8 +33,13 @@ _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 
 namespace CGAL {
 
-  /** @file Linear_cell_complex_storages.h
-   * Definition of storages for dD Linear cell complex.
+  namespace internal {
+    template <typename M>
+    struct Combinatorial_map_helper;
+  }
+
+  /** @file CMap_linear_cell_complex_storages.h
+   * Definition of storages for dD Linear cell complex for combinatorial maps.
    */
 
   // Storage of darts with compact container, beta with handles
@@ -41,14 +49,14 @@ namespace CGAL {
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_ >
-  class Linear_cell_complex_storage_1
+  class CMap_linear_cell_complex_storage_1
   {
   public:
     typedef typename Traits_::Point  Point;
     typedef typename Traits_::Vector Vector;
     typedef typename Traits_::FT     FT;
 
-    typedef Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+    typedef CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
     Items_, Alloc_> Self;
     typedef CGAL::Tag_false Use_index;
 
@@ -315,9 +323,9 @@ namespace CGAL {
 
 #if !defined(CGAL_CMAP_DART_DEPRECATED) || defined(CGAL_NO_DEPRECATED_CODE)
     // Get the information associated with a given dart
-    typename Dart::Info& info(Dart_handle adart)
+    Dart_info& info(Dart_handle adart)
     { return adart->info(); }
-    const typename Dart::Info& info(Dart_const_handle adart) const
+    const Dart_info& info(Dart_const_handle adart) const
     { return adart->info(); }
 #endif
 
@@ -458,15 +466,16 @@ namespace CGAL {
   /// null_handle
   template<unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_ >
-  const typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                               Items_, Alloc_>::Null_handle_type
-  Linear_cell_complex_storage_1<d_, ambient_dim, Traits_, Items_, Alloc_>::
-  null_handle = NULL;
+  const typename CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                         Items_, Alloc_>::Null_handle_type
+  CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                Items_, Alloc_>::null_handle = NULL;
 
 } // namespace CGAL
 
 #if  (BOOST_GCC >= 40900)
  _Pragma("GCC diagnostic pop")
 #endif
-#endif // CGAL_LINEAR_CELL_COMPLEX_STORAGES_H //
+
+#endif // CGAL_CMAP_LINEAR_CELL_COMPLEX_STORAGES_H //
 // EOF //

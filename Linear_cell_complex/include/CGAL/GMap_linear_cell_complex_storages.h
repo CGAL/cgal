@@ -20,7 +20,10 @@
 #ifndef CGAL_GMAP_LINEAR_CELL_COMPLEX_STORAGES_H
 #define CGAL_GMAP_LINEAR_CELL_COMPLEX_STORAGES_H 1
 
-#include <CGAL/Generalized_map_storages.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Compact_container.h>
+#include <CGAL/Dart.h>
+#include <bitset>
 
 #include <boost/config.hpp>
 #if  (BOOST_GCC >= 40900)
@@ -29,6 +32,11 @@ _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
 
 namespace CGAL {
+
+  namespace internal {
+    template <typename M>
+    struct Combinatorial_map_helper;
+  }
 
   /** @file GMap_linear_cell_complex_storages.h
    * Definition of storages for dD Linear cell complex for generalized map.
@@ -308,9 +316,9 @@ namespace CGAL {
     }
 
     // Get the information associated with a given dart
-    typename Dart::Info& info(Dart_handle adart)
+    Dart_info& info(Dart_handle adart)
     { return adart->info(); }
-    const typename Dart::Info& info(Dart_const_handle adart) const
+    const Dart_info& info(Dart_const_handle adart) const
     { return adart->info(); }
 
     // Get the info of the given attribute

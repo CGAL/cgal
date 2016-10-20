@@ -40,9 +40,9 @@ namespace CGAL {
              class Alloc_ = CGAL_ALLOCATOR(int),
              template<unsigned int,class,class,class,class>
              class CMap = Combinatorial_map_base,
-             class Storage_ = Linear_cell_complex_storage_1<d_, ambient_dim,
-                                                            Traits_, Items_,
-                                                            Alloc_> >
+             class Storage_ = CMap_linear_cell_complex_storage_1<d_, ambient_dim,
+                                                                 Traits_, Items_,
+                                                                 Alloc_> >
   class CGAL_DEPRECATED Linear_cell_complex:
     public Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_,
                                                      Alloc_, CMap, Storage_>

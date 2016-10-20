@@ -32,7 +32,15 @@ namespace CGAL {
   /** @file Linear_cell_complex_operations.h
    * Basic operators on  a linear cell complex.
    */
-
+  namespace internal {
+    template <class Point, class Vector>
+    void newell_single_step_3_for_lcc(const Point& p, const Point& q, Vector& n)
+    {
+      n = Vector(n.x()+((p.y()-q.y())*(p.z()+q.z())),
+                 n.y()+((p.z()-q.z())*(p.x()+q.x())),
+                 n.z()+((p.x()-q.x())*(p.y()+q.y())));
+    }
+  } // End namespace internal
 
   /** Compute the normal of the given facet.
    * @param amap the used linear cell complex.
@@ -43,46 +51,34 @@ namespace CGAL {
   typename LCC::Vector compute_normal_of_cell_2
   (const LCC& amap, typename LCC::Dart_const_handle adart)
   {
-    // TODO Better approximation by using Newell's method
-    // Nx += (Vy - V'y) * (Vz + V'z);
-    // Ny += (Vz - V'z) * (Vx + V'x);
-    // Nz += (Vx - V'x) * (Vy + V'y);
-    // But problem with functor since this is not the sum of normal vectors.
-
+    // Compute normal of the face by using Newell's method: for each edge PQ
+    // Nx += (Py - Qy) * (Pz + Qz);
+    // Ny += (Pz - Qz) * (Px + Qx);
+    // Nz += (Px - Qx) * (Py + Qy);
+    
     typedef typename LCC::Point Point;
     typedef typename LCC::Vector Vector;
+
     typename LCC::Dart_const_handle start=adart;
     Vector normal(CGAL::NULL_VECTOR);
 
-    while ( !amap.template is_free<0>(start) &&
-            amap.template beta<0>(start)!=adart )
-      start = amap.template beta<0>(start);
+    // We go to the beginning of the face (first dart)
+    while ( amap.is_previous_exist(start) && amap.previous(start)!=adart )
+      start = amap.previous(start);
 
-    if ( amap.template is_free<1>(start) ||
-         amap.other_extremity(amap.template beta<1>(start))==LCC::null_handle )
-      return normal;
-
+    // Now we advance to process each edge
     unsigned int nb = 0;
-    adart = amap.template beta<1>(start);
-
-    const Point* prev = &amap.point(start);
     const Point* curr = &amap.point(adart);
-    for ( ; adart!=start && amap.other_extremity(adart)!=LCC::null_handle;
-          adart=amap.template beta<1>(adart) )
+    
+    for ( adart=start; adart!=start && amap.is_next_exist(adart);
+          adart=next(adart) )
     {
-      const Point* next = &amap.point( amap.other_extremity(adart));
-      if ( !typename LCC::Traits::Collinear_3()(*prev, *curr, *next) )
-      {
-        normal = typename LCC::Traits::Construct_sum_of_vectors()
-          (normal, typename LCC::Traits::Construct_normal_3()
-           (*prev, *curr, *next));
-        prev = curr;
-        ++nb;
-      }
+      const Point* next = &amap.point(amap.other_extremity(adart));
+      internal::newell_single_step_3_for_lcc(*curr, *next, normal);
+      ++nb;
       curr = next;
     }
 
-    if ( nb<2 ) return normal;
     return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));
     //  return normal / std::sqrt(normal * normal);
   }

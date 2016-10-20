@@ -20,18 +20,20 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_FOR_GENERALIZED_MAP_H
 #define CGAL_LINEAR_CELL_COMPLEX_FOR_GENERALIZED_MAP_H 1
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_base.h>
+#include <CGAL/Linear_cell_complex_traits.h>
+#include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Generalized_map.h>
 #include <CGAL/GMap_linear_cell_complex_storages.h>
 
 namespace CGAL {
 
   /** @file Linear_cell_complex_for_generalized_map.h
-   * Definition of a linear cell complex based on generalized map, having points
-   * associated to all vertices.
+   * Definition of a linear cell complex based on generalized map, having
+   * points associated to all vertices.
    */
 
-  // GMap_linear_cell_complex using compact container with handle.
+  // Linear_cell_complex_for_generalized_map class.
   // No difference with class Linear_cell_complex_base except the default
   // template parameters for Refs class which is a generalized map.
   template < unsigned int d_, unsigned int ambient_dim = d_,
@@ -44,13 +46,13 @@ namespace CGAL {
                                                                  Traits_, Items_,
                                                                  Alloc_> >
     class Linear_cell_complex_for_generalized_map:
-                 public Linear_cell_complex_base<d_, ambient_dim, Traits_,
-                                                 Items_, Alloc_, CMap,
-                                                 Linear_cell_complex_for_generalized_map
-                                                 <d_, ambient_dim,
-                                                  Traits_, Items_,
-                                                  Alloc_, CMap, Storage_>,
-                                                 Storage_>
+        public Linear_cell_complex_base<d_, ambient_dim, Traits_,
+                                        Items_, Alloc_, CMap,
+                                        Linear_cell_complex_for_generalized_map
+                                        <d_, ambient_dim,
+                                         Traits_, Items_,
+                                         Alloc_, CMap, Storage_>,
+                                        Storage_>
     {
     public:
       typedef Linear_cell_complex_for_generalized_map<d_, ambient_dim,
@@ -102,36 +104,37 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-      Linear_cell_complex_for_generalized_map(const Self & alcc) : Base()
-      { Base::copy(alcc); }
+      Linear_cell_complex_for_generalized_map(const Self & alcc) : Base(alcc)
+      {}
 
       template < class LCC2 >
-      Linear_cell_complex_for_generalized_map(const LCC2& alcc)
-      { Base::copy(alcc);}
+      Linear_cell_complex_for_generalized_map(const LCC2& alcc) : Base(alcc)
+      {}
 
       template < class LCC2, typename Converters >
       Linear_cell_complex_for_generalized_map(const LCC2& alcc,
-                                              Converters& converters)
-      { Base::copy(alcc, converters);}
+                                              Converters& converters) :
+        Base(alcc, converters)
+      {}
 
       template < class LCC2, typename Converters, typename DartInfoConverter >
       Linear_cell_complex_for_generalized_map(const LCC2& alcc,
                                               Converters& converters,
                                               const DartInfoConverter&
-                                              dartinfoconverter)
-      { Base::copy//TODO REMOVE<LCC2, Converters, Pointconverter>
-            (alcc, converters, dartinfoconverter);}
+                                              dartinfoconverter) :
+        Base(alcc, converters, dartinfoconverter)
+      {}
 
       template < class LCC2, typename Converters, typename DartInfoConverter,
-                 typename Pointconverter >
+                 typename PointConverter >
       Linear_cell_complex_for_generalized_map(const LCC2& alcc,
                                               Converters& converters,
                                               const DartInfoConverter&
                                               dartinfoconverter,
-                                              const Pointconverter&
-                                              pointconverter)
-      { Base::copy//TODO REMOVE<LCC2, Converters, Pointconverter>
-            (alcc, converters, dartinfoconverter, pointconverter);}
+                                              const PointConverter&
+                                              pointconverter) :
+        Base(alcc, converters, dartinfoconverter, pointconverter)
+      {}
 
     };
 
