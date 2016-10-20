@@ -94,13 +94,13 @@ public:
 		
         double mean_height=0;
         std::vector < double > list_Z;
-		
+        list_Z.reserve (grid.indices(i,j).size());
         for(std::size_t k=0;k<grid.indices(i,j).size();k++) list_Z.push_back(get(point_map, begin[grid.indices(i,j)[k]]).z());
 			
         if(list_Z.size()>1){
 			
           std::sort(list_Z.begin(),list_Z.end());
-          int ind_k= (int)floor((double)(list_Z.size()*0.9)-0.5);
+          int ind_k= (int)floor((double)(list_Z.size()*0.9)-0.5); // 9/10
           mean_height=list_Z[ind_k];
         }
 
@@ -156,31 +156,11 @@ public:
       }
     }
 
-    //TODO: smooth the dem
-    for (std::size_t j = 1; j < dem.height()-1; j++){	
-      for (std::size_t i = 1; i < dem.width()-1; i++){
-        if(grid.mask(i,j)){
-          //dem(i,j)=
-        }
-      }
-    }
-
-    //DTM computation
     std::size_t step=15;
     square = (std::size_t)(radius_dtm/grid_resolution)+1;
     
     Image_float dtm (grid.width(), grid.height());
     Image_float im_Zfront(grid.width(),grid.height());
-
-
-    //round 1
-    for (std::size_t j = 0; j < dtm.height(); j++){	
-      for (std::size_t i = 0; i < dtm.width(); i++){
-        dtm(i,j)=0;
-        im_Zfront(i,j)=0;
-      }
-    }
-
 
     for (std::size_t j = step/2+1; j < dtm.height(); j = j+step){	
       for (std::size_t i = step+1/2; i < dtm.width(); i = i+step){
@@ -209,8 +189,8 @@ public:
 
         if(list_pointsZ.size()>1){
           std::sort(list_pointsZ.begin(),list_pointsZ.end());
-          int ind_k2= (int)floor((double)(list_pointsZ.size()*0.6)-0.5);
-          int ind_k1= (int)floor((double)(list_pointsZ.size()*0.3)-0.5);
+          int ind_k2= (int)floor((double)(list_pointsZ.size()*0.6)-0.5); // 6/10
+          int ind_k1= (int)floor((double)(list_pointsZ.size()*0.3)-0.5); // 3/10
           G1=list_pointsZ[ind_k1];
           G2=list_pointsZ[ind_k2];
         }
@@ -285,6 +265,7 @@ public:
 
     //round 2 
     std::vector < bool > test_ground;
+    test_ground.reserve(end - begin);
     for (std::size_t i = 0; i< (std::size_t)(end - begin); i++){
       int I = grid.x(i);
       int J = grid.y(i);
@@ -331,8 +312,8 @@ public:
 
         if(list_pointsZ.size()>1){
           std::sort(list_pointsZ.begin(),list_pointsZ.end());
-          int ind_k2= (int)floor((double)(list_pointsZ.size()*0.6)-0.5);
-          int ind_k1= (int)floor((double)(list_pointsZ.size()*0.3)-0.5);
+          int ind_k2= (int)floor((double)(list_pointsZ.size()*0.6)-0.5); // 6/10
+          int ind_k1= (int)floor((double)(list_pointsZ.size()*0.3)-0.5); // 3/10
           G1=list_pointsZ[ind_k1];
           G2=list_pointsZ[ind_k2];
         }
@@ -398,6 +379,7 @@ public:
     }
 
     //ranger les valeurs dans scans lidars
+    elevation_attribute.reserve(end - begin);
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++){
       int I = grid.x(i);
       int J = grid.y(i);
