@@ -16,18 +16,26 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
     enum VAOs{
       Edges = 0,
       Spheres,
+      Faces,
       S_Edges,
       S_Spheres,
+      S_Faces,
       Arrow,
-      Faces,
+      P_Edges,
+      P_Spheres,
+      P_Faces,
       NumberOfVaos
     };
     enum VBOs{
       VertexEdges = 0,
+      ColorsEdges,
       VertexSpheres,
       NormalSpheres,
+      CenterSpheres,
+      ColorsSpheres,
       VertexFaces,
       NormalFaces,
+      ColorsFaces,
       VertexArrow,
       NormalArrow,
       NumberOfVbos
@@ -46,6 +54,7 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
 
     QString toolTip() const;
 
+    bool eventFilter(QObject *, QEvent *);
     // Indicate if rendering mode is supported
     bool supportsRenderingMode(RenderingMode m) const;
     void draw(CGAL::Three::Viewer_interface *) const;
@@ -56,6 +65,9 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
       are_buffers_filled = false;
     }
     double point(short i, short j) const;
+
+public Q_SLOTS:
+    void highlight();
 protected:
     friend struct Scene_edit_box_item_priv;
     Scene_edit_box_item_priv* d;
