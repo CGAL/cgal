@@ -163,12 +163,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Confidence</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>RANSAC</string>
+          <string>Training sets</string>
          </property>
         </item>
        </widget>
@@ -499,7 +494,6 @@
        <zorder>frame_3</zorder>
        <zorder>verticalSpacer_13</zorder>
        <zorder>verticalSpacer_8</zorder>
-       <zorder></zorder>
        <zorder>verticalSpacer_4</zorder>
       </widget>
       <widget class="QWidget" name="tab_advanced">

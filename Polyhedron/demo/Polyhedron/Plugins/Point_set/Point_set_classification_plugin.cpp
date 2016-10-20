@@ -248,8 +248,7 @@ public Q_SLOTS:
         ui_widget.display->clear();
         ui_widget.display->addItem("Real colors");
         ui_widget.display->addItem("Classification");
-        ui_widget.display->addItem("Confidence");
-        ui_widget.display->addItem("RANSAC");
+        ui_widget.display->addItem("Training sets");
         ui_widget.selected_attribute->clear();
         item->fill_display_combo_box(ui_widget.display, ui_widget.selected_attribute);
         ui_widget.display->setCurrentIndex(1);

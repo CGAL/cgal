@@ -235,7 +235,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
           colors_points.push_back ((double)(color.blue()) / 255.);
         }
     }
-  else if (index_color == 2) // confidence
+  else if (index_color == 2) // training
     {
       std::map<Type_handle, QColor> map_colors;
       for (std::size_t i = 0; i < m_types.size(); ++ i)
@@ -250,37 +250,14 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
           if (c != Type_handle())
             color = map_colors[c];
 
-          double confidence = m_psc->confidence_of(*it);
-          colors_points.push_back (1. - confidence * (1. - (double)(color.red()) / 255.));
-          colors_points.push_back (1. - confidence * (1. - (double)(color.green()) / 255.));
-          colors_points.push_back (1. - confidence * (1. - (double)(color.blue()) / 255.));
-        }
-    }
-  else if (index_color == 3) // RANSAC
-    {
-      int seed = time(NULL);
-        
-      for (Point_set::const_iterator it = m_points->point_set()->begin();
-           it != m_points->point_set()->first_selected(); ++ it)
-        {
-          if (m_psc->group_of(*it) == (std::size_t)(-1))
-            {
-              colors_points.push_back (0.);
-              colors_points.push_back (0.);
-              colors_points.push_back (0.);
-            }
-          else
-            {
-              srand (m_psc->group_of(*it) + seed);
-              colors_points.push_back (0.25 + 0.6 * (rand() / (double)RAND_MAX));
-              colors_points.push_back (0.25 + 0.6 * (rand() / (double)RAND_MAX));
-              colors_points.push_back (0.25 + 0.6 * (rand() / (double)RAND_MAX));
-            }
+          colors_points.push_back ((double)(color.red()) / 255.);
+          colors_points.push_back ((double)(color.green()) / 255.);
+          colors_points.push_back ((double)(color.blue()) / 255.);
         }
     }
   else
     {
-      Attribute_handle att = m_psc->get_attribute(index_color - 4);
+      Attribute_handle att = m_psc->get_attribute(index_color - 3);
       double weight = att->weight;
       att->weight = att->max;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
