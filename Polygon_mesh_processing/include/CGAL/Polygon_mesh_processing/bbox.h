@@ -166,8 +166,6 @@ namespace CGAL {
       GT gt = choose_param(get_param(np, geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
-      typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-
       return get_bbox( get(vpm, source(ed, pmesh)) ) +
              get_bbox( get(vpm, target(ed, pmesh)) );
     }
