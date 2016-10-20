@@ -49,7 +49,7 @@ namespace CGAL {
     friend class Generalized_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class Linear_cell_complex_storage_1;
+    friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
@@ -183,7 +183,7 @@ namespace CGAL {
     friend class Combinatorial_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class Linear_cell_complex_storage_1;
+    friend class CMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
     friend class Compact_container;
@@ -282,7 +282,7 @@ namespace CGAL {
     friend class Generalized_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
-    friend class Linear_cell_complex_storage_1;
+    friend class CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;

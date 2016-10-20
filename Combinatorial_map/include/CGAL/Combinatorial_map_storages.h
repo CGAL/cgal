@@ -21,7 +21,6 @@
 #define CGAL_COMBINATORIAL_MAP_STORAGES_H 1
 
 #include <CGAL/Handle_hash_function.h>
-
 #include <CGAL/Compact_container.h>
 #include <CGAL/Dart.h>
 #include <bitset>
@@ -43,19 +42,10 @@ namespace CGAL {
   /** @file Combinatorial_map_storages.h
    * Definition of storages for dD Combinatorial map.
    */
-
-  struct Index_hash_function {
-    typedef std::size_t result_type;
-    template <class H>
-    std::size_t operator() (const H& h) const {
-      return h;
-    }
-  };
-  
   // Storage of darts with compact container, beta with handles
   template<unsigned int d_, class Items_, class Alloc_ >
   class Combinatorial_map_storage_1
-  {
+  {  
   public:
     typedef Combinatorial_map_storage_1<d_, Items_, Alloc_> Self;
     typedef CGAL::Tag_false Use_index;
@@ -312,7 +302,7 @@ namespace CGAL {
       ah->set_dart(adart);
     }
 
-#if !defined(CGAL_CMAP_DART_DEPRECATED)
+#if !defined(CGAL_CMAP_DART_DEPRECATED) || defined(CGAL_NO_DEPRECATED_CODE)
     // Get the information associated with a given dart
     Dart_info& info(Dart_handle adart)
     { return adart->info(); }

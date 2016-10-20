@@ -20,12 +20,15 @@
 #ifndef CGAL_COMBINATORIAL_MAP_H
 #define CGAL_COMBINATORIAL_MAP_H 1
 
-#include <CGAL/Compact_container.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
 #include <CGAL/internal/Combinatorial_map_copy_functors.h>
 #include <CGAL/internal/Combinatorial_map_sewable.h>
+
+#include <CGAL/Combinatorial_map_storages.h>
 #include <CGAL/Combinatorial_map_functors.h>
+#include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Combinatorial_map_operations.h>
 
 #if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
 #include <CGAL/Combinatorial_map_min_items.h>
@@ -35,16 +38,12 @@
 
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
-#include <CGAL/Combinatorial_map_basic_operations.h>
-#include <CGAL/Combinatorial_map_storages.h>
-#include <CGAL/Combinatorial_map_operations.h>
+
 #include <CGAL/Unique_hash_map.h>
 #include <bitset>
 #include <vector>
 #include <deque>
-
 #include <boost/type_traits/is_same.hpp>
-
 #include <CGAL/config.h>
 
 #if defined( __INTEL_COMPILER )
@@ -326,19 +325,19 @@ namespace CGAL {
     { copy/*<CMap2,Converters>*/(amap, converters); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters, typename Dartinfoconverter>
+    template <typename CMap2, typename Converters, typename DartInfoConverter>
     Combinatorial_map_base(const CMap2& amap, Converters& converters,
-                           const Dartinfoconverter& dartinfoconverter)
-    { copy/*<CMap2,Converters, Pointconverter>*/(amap, converters,
+                           const DartInfoConverter& dartinfoconverter)
+    { copy/*<CMap2,Converters, PointConverter>*/(amap, converters,
                                                  dartinfoconverter); }
 
     // "Copy constructor" from a map having different type.
-    template <typename CMap2, typename Converters, typename Dartinfoconverter,
-                           typename Pointconverter>
+    template <typename CMap2, typename Converters, typename DartInfoConverter,
+                           typename PointConverter>
     Combinatorial_map_base(const CMap2& amap, Converters& converters,
-                           const Dartinfoconverter& dartinfoconverter,
-                           const Pointconverter& pointconverter)
-    { copy/*<CMap2,Converters, Pointconverter>*/(amap, converters,
+                           const DartInfoConverter& dartinfoconverter,
+                           const PointConverter& pointconverter)
+    { copy/*<CMap2,Converters, PointConverter>*/(amap, converters,
                                                  dartinfoconverter,
                                                  pointconverter); }
 
@@ -1347,8 +1346,8 @@ namespace CGAL {
           ++nb;
           for ( Ite it2(*this, it1, amark); it2.cont(); ++it2 )
           {
-            aos << &(**it2) << " - " << std::flush;
-            mark(*it2, amark);
+            aos << darts().index(it2) << " - " << std::flush;
+            mark(it2, amark);
           }
           aos << std::endl;
         }
@@ -3530,6 +3529,8 @@ namespace CGAL {
             it!=darts().end(); ++it)
       {
         dual[it] = amap.create_dart();
+        internal::Copy_dart_info_functor::run(amap, static_cast<Refs&>(*this),
+                                              it, dual[it]);
         if ( it==adart && res==amap.null_handle ) res = dual[it];
       }
 
@@ -4861,23 +4862,31 @@ namespace CGAL {
     Combinatorial_map() : Base()
     {}
 
-    Combinatorial_map(const Self & amap) : Base()
-    { Base::template copy<Self>(amap); }
+    Combinatorial_map(const Self & amap) : Base(amap)
+    {}
 
     template < class CMap >
-    Combinatorial_map(const CMap & amap) : Base()
-    { Base::template copy<CMap>(amap); }
+    Combinatorial_map(const CMap & amap) : Base(amap)
+    {}
 
     template < class CMap, typename Converters >
-    Combinatorial_map(const CMap & amap, const Converters& converters) : Base()
-    { Base::template copy<CMap, Converters>
-          (amap, converters); }
+    Combinatorial_map(const CMap & amap, const Converters& converters) :
+      Base(amap, converters)
+    {}
 
-    template < class CMap, typename Converters, typename Pointconverter >
+    template < class CMap, typename Converters, typename DartInfoConverter >
     Combinatorial_map(const CMap & amap, const Converters& converters,
-                      const Pointconverter& pointconverter) : Base()
-    { Base::template copy<CMap, Converters, Pointconverter>
-          (amap, converters, pointconverter); }
+                      const DartInfoConverter& dartinfoconverter) :
+      Base(amap, converters, dartinfoconverter)
+    {}
+
+    template < class CMap, typename Converters, typename DartInfoConverter,
+               typename PointConverter >
+    Combinatorial_map(const CMap & amap, const Converters& converters,
+                      const DartInfoConverter& dartinfoconverter,
+                      const PointConverter& pointconverter) :
+      Base(amap, converters, dartinfoconverter, pointconverter)
+    {}
   };
 
 } // namespace CGAL
