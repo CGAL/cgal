@@ -138,13 +138,18 @@ OutputStream& operator<<(
 /*! \enum The various surface parameter space options categorizing the
  * surface range according to the parameter domain.
  */
-enum Arr_parameter_space {
-  ARR_LEFT_BOUNDARY = 0,
-  ARR_RIGHT_BOUNDARY,
-  ARR_BOTTOM_BOUNDARY,
-  ARR_TOP_BOUNDARY,
-  ARR_INTERIOR
-};
+
+typedef Box_parameter_space_2 Arr_parameter_space;
+
+const Arr_parameter_space ARR_LEFT_BOUNDARY = LEFT_BOUNDARY;
+
+const Arr_parameter_space ARR_RIGHT_BOUNDARY = RIGHT_BOUNDARY;
+
+const Arr_parameter_space ARR_BOTTOM_BOUNDARY = BOTTOM_BOUNDARY;
+
+const Arr_parameter_space ARR_TOP_BOUNDARY = TOP_BOUNDARY;
+
+const Arr_parameter_space ARR_INTERIOR = INTERIOR;
 
 
 //! \brief prints parameter space (for debugging)
