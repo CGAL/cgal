@@ -10,6 +10,11 @@ if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
+# Use C++14 for this directory and its sub-directories.
+# This line does not check if the compiler does have a correct support for C++14 features.
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 # Compatibility with CMake 3.0
 if(POLICY CMP0042)
   # Do not enable the use of MACOSX_RPATH
