@@ -170,11 +170,11 @@ public:
 //           is_extended_(x.is_extended()){}
 
     /*! \brief Constructor from some type NTX and ROOTX
-     *  NT must be constructible from NTX\\
+     *  NT must be constructible from NTX and NTY\\
      *  ROOT must be construcible from ROOTX\\
      */
-    template <class NTX,class ROOTX>
-    explicit Sqrt_extension(const NTX& a0, const NTX& a1, const ROOTX& root)
+    template <class NTX,class NTY,class ROOTX>
+    explicit Sqrt_extension(const NTX& a0, const NTY& a1, const ROOTX& root)
         : a0_(a0),
           a1_(a1),
           root_(root),

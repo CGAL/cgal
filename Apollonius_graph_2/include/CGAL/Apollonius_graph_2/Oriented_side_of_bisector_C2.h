@@ -73,14 +73,14 @@ private:
     if ( sign_of_Dw == POSITIVE ) {
       if ( R != SMALLER )  return LARGER;
 
-      Sign s = sign_a_plus_b_x_sqrt_c(D1 - D2 + CGAL::square(Dw),
-				      RT(2) * Dw, D1);
+      Sign s = sign_a_plus_b_x_sqrt_c<RT>(D1 - D2 + CGAL::square(Dw),
+					  RT(2) * Dw, D1);
       return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
     }
 
     if ( R != LARGER )  return SMALLER;
-    Sign s = sign_a_plus_b_x_sqrt_c(D1 - D2 - CGAL::square(Dw),
-				    RT(2) * Dw, D2);
+    Sign s = sign_a_plus_b_x_sqrt_c<RT>(D1 - D2 - CGAL::square(Dw),
+					RT(2) * Dw, D2);
 
     return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
   }

@@ -107,11 +107,11 @@ public:
     const FT k_q = tq * u;
     const FT k_r = tr * u;
 
-    return
-       sign_of_determinant(tp.x(), tp.y(), tp.z(), (tp2 + k_p) * u2 - k_p * k_p,
-			   tr.x(), tr.y(), tr.z(), (tr2 + k_r) * u2 - k_r * k_r,
-			   tq.x(), tq.y(), tq.z(), (tq2 + k_q) * u2 - k_q * k_q,
-                           u.x(),  u.y(),  u.z(), u2 * u2);
+    return sign_of_determinant<FT>(
+	tp.x(), tp.y(), tp.z(), (tp2 + k_p) * u2 - k_p * k_p,
+	tr.x(), tr.y(), tr.z(), (tr2 + k_r) * u2 - k_r * k_r,
+	tq.x(), tq.y(), tq.z(), (tq2 + k_q) * u2 - k_q * k_q,
+	 u.x(),  u.y(),  u.z(), u2 * u2);
     // Note that q and r have been swapped in the determinant above, to
     // inverse its sign.
   }
