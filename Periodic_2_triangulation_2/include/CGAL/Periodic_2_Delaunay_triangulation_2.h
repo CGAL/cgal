@@ -1121,15 +1121,27 @@ bool
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 remove_single_vertex(Vertex_handle v, const Offset &v_o)
 {
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, maxd,30);
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Face_handle> , f, maxd);
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<int>, i, maxd);
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Vertex_handle>, w, maxd);
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(std::vector<Offset>, offset_w, maxd);
+  struct Static_data{
+    int maxd;
+    std::vector<Face_handle> f;
+    std::vector<int> i;
+    std::vector<Vertex_handle> w;
+    std::vector<Offset> offset_w;
+    Static_data(int m)
+      : maxd(m)
+      , f(maxd)
+      , i(maxd)
+      , w(maxd)
+      , offset_w(maxd)
+    {}
+  };
+
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Static_data, sd, 30);
+
   int d;
   bool simplicity_criterion;
 
-  if (remove_degree_init(v, v_o, f, w, offset_w, i, d, maxd, simplicity_criterion))
+  if (remove_degree_init(v, v_o, sd.f, sd.w, sd.offset_w, sd.i, d, sd.maxd, simplicity_criterion))
     {
       if (is_1_cover())
         {
@@ -1139,9 +1151,9 @@ remove_single_vertex(Vertex_handle v, const Offset &v_o)
     }
 
   if (simplicity_criterion)
-    remove_degree_triangulate(v, f, w, i, d);
+    remove_degree_triangulate(v, sd.f, sd.w, sd.i, d);
   else
-    remove_degree_triangulate(v, f, w, offset_w, i, d);
+    remove_degree_triangulate(v, sd.f, sd.w, sd.offset_w, sd.i, d);
 
   this->delete_vertex(v);
 
