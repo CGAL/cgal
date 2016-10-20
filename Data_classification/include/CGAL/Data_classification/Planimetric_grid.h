@@ -31,7 +31,6 @@ class Planimetric_grid
   typedef Image<bool> Image_bool;
 
   Image_indices m_grid;
-  Image_bool m_mask;
   std::vector<std::size_t> m_x;
   std::vector<std::size_t> m_y;
   
@@ -56,12 +55,12 @@ public:
                     const Iso_cuboid_3& bbox,
                     const FT grid_resolution)
   {
+
     std::size_t size = (std::size_t)(end - begin);
     std::size_t width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
     std::size_t height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
     m_grid = Image_indices (width, height);
-    m_mask = Image_bool (width, height);
-    
+
     for (std::size_t i = 0; i < size; ++ i)
       {
         const Point_3& p = get(point_map, begin[i]);
@@ -70,25 +69,6 @@ public:
         m_grid(m_x.back(), m_y.back()).push_back (i);
       }
 
-    int square = 100;
-    for (std::size_t i = 0; i < width; ++ i)
-      for (std::size_t j = 0; j < height; ++ j)
-        {
-          if(m_grid(i,j).empty())
-            {
-              int squareYmin = (std::max) (0,(int)j-square);
-              int squareYmax = (std::min) ((int)(height)-1,(int)j+square);
-
-              for (int k = squareYmin; k <= squareYmax; ++ k)
-                if (!(m_grid(k,j).empty()))
-                  {
-                    m_mask(i,j) = true;
-                    break;
-                  }
-            }
-          else
-            m_mask(i,j) = true;
-        }
   }
 
   std::size_t width() const { return m_grid.width(); }
@@ -101,7 +81,7 @@ public:
   /*!
     \brief Returns `true` if the indexed cell is to be used for classification.
   */
-  bool mask(std::size_t x, std::size_t y) const { return m_mask(x,y); }
+  bool mask(std::size_t x, std::size_t y) const { return (!(m_grid(x,y).empty())); }
 
   /*!
     \breif Returns the `x` coordinate of the indexed point in the grid.
