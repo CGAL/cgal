@@ -5,9 +5,10 @@
 
 #include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
-#ifdef QT_SCRIPT_LIB
-#  include  <QScriptEngine>
-#endif
+
+#include <QScriptEngine>
+#include <QScriptable>
+
 
 #include <QVector>
 #include <QList>
@@ -45,7 +46,8 @@ namespace Ui {
 
 class MAINWINDOW_EXPORT MainWindow : 
   public CGAL::Qt::DemosMainWindow,
-  public Messages_interface
+  public Messages_interface,
+  protected QScriptable
 {
   Q_OBJECT
   Q_INTERFACES(Messages_interface)
