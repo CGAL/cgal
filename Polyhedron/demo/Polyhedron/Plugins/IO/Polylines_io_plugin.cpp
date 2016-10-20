@@ -65,6 +65,18 @@ public:
           menuFile->insertAction(actionAfterLoad,actionAdd_polylines);
         }
       }
+
+
+      actionJoin_polylines= new QAction(tr("Join Selected Polylines"), mainWindow);
+      actionJoin_polylines->setProperty("subMenuName", "Operations on Polylines");
+      actionJoin_polylines->setObjectName("actionJoinPolylines");
+
+      actionSplit_polylines= new QAction(tr("Split Selected Polylines"), mainWindow);
+      actionSplit_polylines->setProperty("subMenuName", "Operations on Polylines");
+      actionSplit_polylines->setObjectName("actionSplitPolylines");
+      connect(actionSplit_polylines, &QAction::triggered, this, &Polyhedron_demo_polylines_io_plugin::split);
+      connect(actionJoin_polylines, &QAction::triggered, this, &Polyhedron_demo_polylines_io_plugin::join);
+
     }
   QString name() const { return "polylines_io_plugin"; }
   QString nameFilters() const { return "Polylines files (*.polylines.txt *.cgal)"; }
@@ -73,9 +85,29 @@ public:
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
-  bool applicable(QAction*) const { return true;}
+  bool applicable(QAction* a) const {
+    bool all_polylines_selected = true;
+    Q_FOREACH(int index, scene->selectionIndices())
+    {
+      if (!qobject_cast<Scene_polylines_item*>(scene->item(index)))
+      {
+        all_polylines_selected = false;
+      }
+    }
+
+    if(a==actionSplit_polylines)
+      return (all_polylines_selected &&
+              scene->selectionIndices().size() == 1);
+    else if(a==actionJoin_polylines)
+      return (all_polylines_selected &&
+              scene->selectionIndices().size() > 1);
+    else
+      return false;
+  }
   QList<QAction*> actions() const {
-    return QList<QAction*>();
+
+    return QList<QAction*>()<<actionSplit_polylines
+                            <<actionJoin_polylines;
   }
   protected Q_SLOTS:
   //!Opens a dialog to add polylines on the fly.
@@ -84,9 +116,15 @@ public:
   void addPolylineButton_clicked();
   //!Closes the dialog
   void closePolylinesButton_clicked();
+  //!Splits the selected Scene_polylines_item in multiple items all containing a single polyline.
+  void split();
+  //!Joins the selected Scene_polylines_items in a single item containing all their polylines.
+  void join();
 
 private:
   QAction* actionAdd_polylines;
+  QAction* actionSplit_polylines;
+  QAction* actionJoin_polylines;
   Ui::Add_polylines_dialog *add_polydiagui;
   QDialog *add_polydiag;
 };
@@ -271,6 +309,52 @@ void Polyhedron_demo_polylines_io_plugin::addPolylineButton_clicked()
 void Polyhedron_demo_polylines_io_plugin::closePolylinesButton_clicked()
 {
     add_polydiag->close();
+}
+
+void Polyhedron_demo_polylines_io_plugin::split()
+{
+  Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
+  Scene_group_item* group = new Scene_group_item("Splitted Polylines");
+  scene->addItem(group);
+  group->setColor(item->color());
+  int i=0;
+  Q_FOREACH(Scene_polylines_item::Polyline polyline, item->polylines)
+  {
+    Scene_polylines_item::Polylines_container container;
+    container.push_back(polyline);
+    Scene_polylines_item *new_polyline = new Scene_polylines_item();
+    new_polyline->polylines = container;
+    new_polyline->setColor(item->color());
+    new_polyline->setName(QString("Splitted %1 #%2").arg(item->name()).arg(i++));
+    scene->addItem(new_polyline);
+    scene->changeGroup(new_polyline, group);
+  }
+}
+
+void Polyhedron_demo_polylines_io_plugin::join()
+{
+
+  std::vector<Scene_polylines_item*> items;
+  items.resize(scene->selectionIndices().size());
+  for(int i = 0; i < scene->selectionIndices().size(); ++i)
+    items[i] = qobject_cast<Scene_polylines_item*>(scene->item(scene->selectionIndices().at(i)));
+
+  Scene_polylines_item* new_polyline= new Scene_polylines_item();
+  Scene_polylines_item::Polylines_container container;
+  Q_FOREACH(Scene_polylines_item* item, items)
+  {
+    for(Scene_polylines_item::Polylines_container::iterator
+        it = item->polylines.begin();
+        it!= item->polylines.end();
+        ++it)
+    {
+      container.push_back(*it);
+    }
+  }
+  new_polyline->polylines = container;
+  new_polyline->setColor(QColor(Qt::black));
+  new_polyline->setName(QString("Joined from %1 items").arg(items.size()));
+  scene->addItem(new_polyline);
 }
 
 #include "Polylines_io_plugin.moc"
