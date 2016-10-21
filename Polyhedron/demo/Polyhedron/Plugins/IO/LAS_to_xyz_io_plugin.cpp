@@ -42,7 +42,7 @@ Polyhedron_demo_las_to_xyz_plugin::load(QFileInfo fileinfo) {
       return 0;
     }
   item->point_set()->check_colors();
-  std::cerr << item->point_set()->properties();
+  std::cerr << item->point_set()->info();
   
   item->setName(fileinfo.completeBaseName());
   return item;
