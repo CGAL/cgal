@@ -2,6 +2,7 @@
 #define CGAL_MVC_POST_PROCESSOR_3_H
 
 #include <CGAL/Two_vertices_parameterizer_3.h>
+#include <CGAL/parameterize.h>
 
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Constrained_triangulation_2.h>

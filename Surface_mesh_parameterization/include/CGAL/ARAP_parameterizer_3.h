@@ -1,16 +1,13 @@
 #ifndef CGAL_ARAP_PARAMETERIZER_3_H
 #define CGAL_ARAP_PARAMETERIZER_3_H
 
-#include <CGAL/assertions.h>
-#include <CGAL/circulator.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
+#include <CGAL/MVC_post_processor_3.h>
+#include <CGAL/LSCM_parameterizer_3.h>
+#include <CGAL/Two_vertices_parameterizer_3.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
-#include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/parameterize.h>
-#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
-#include <CGAL/LSCM_parameterizer_3.h>
-#include <CGAL/MVC_post_processor_3.h>
 
 #include <CGAL/Algebraic_kernel_d_2.h>
 #include <CGAL/Kernel/Conic_misc.h> // @tmp used for solving conic equations
@@ -18,10 +15,21 @@
 #include <CGAL/OpenNL/linear_solver.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/circulator.h>
+#include <CGAL/Timer.h>
+
+#include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/unordered_set.hpp>
+
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 /// \file ARAP_parameterizer_3.h
