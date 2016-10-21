@@ -501,7 +501,7 @@ private:
     int j = get(vimap, vd_j);
     int k = get(vimap, vd_k);
 
-    // if vh_i is fixed, there's nothing to do: A(i,i)=1 and A(i,j)=0 for j!=i
+    // if vh_i is fixed, there is nothing to do: A(i,i)=1 and A(i,j)=0 for j!=i
     if(get(vpmap, vd_i))
     {
       std::cout << i << " is fixed in A " << std::endl;
@@ -662,7 +662,7 @@ private:
     Matrix A(nbVertices, nbVertices);
     Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
 
-    // Compute the constant matrix A
+    // Compute the (constant) matrix A
     compute_mvc_matrix(ct, mesh, faces, uvmap, vimap, mvc_vpmap, A);
 
     // Compute the right hand side of the linear system

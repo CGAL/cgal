@@ -34,16 +34,15 @@
 
 /// \file ARAP_parameterizer_3.h
 
-// @todo Determine the proper name of this file
+// @todo Determine the proper name of this file and add the header
 // @todo Have an initial parameterization (LSCM or MVC) that depends on the number
 //       of components
 // @todo Add distortion measures
 // @todo Make it work with a surface mesh type
-// @todo Use a boost array for the roots
 // @todo Handle the case cot(0) with a local parameterization aligned with the axes
 //       (this produces C2=0 which is problematic to compute a & b)
 
-// @todo Add support for the OpenNL solver?
+// @todo Use a boost array for the roots?
 // @todo The two systems A Xu = Bu and A Xv = BV could be merged in one system
 //       using complex numbers?
 
@@ -95,9 +94,8 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator        face_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator      vertex_iterator;
 
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>    vertex_around_target_circulator;
   typedef CGAL::Halfedge_around_target_circulator<TriangleMesh>  halfedge_around_target_circulator;
-  typedef CGAL::Halfedge_around_face_circulator<TriangleMesh>  halfedge_around_face_circulator;
+  typedef CGAL::Halfedge_around_face_circulator<TriangleMesh>    halfedge_around_face_circulator;
 
   typedef boost::unordered_set<vertex_descriptor>       Vertex_set;
   typedef std::vector<face_descriptor>                  Faces_vector;
@@ -167,11 +165,11 @@ private:
 // Private utilities
 private:
   /// Print the parameterized mesh as a list of polylines.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   void output_uvmap(const std::string filename,
                     const TriangleMesh& mesh,
                     const Faces_vector& faces,
-                    const VertexUVmap uvmap) const
+                    const VertexUVMap uvmap) const
   {
     std::ofstream out(filename.c_str());
     BOOST_FOREACH(face_descriptor fd, faces){
@@ -187,12 +185,12 @@ private:
   }
 
   /// Print the parameterized mesh as a list of polylines.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   void output_uvmap(const std::string filename,
                     const unsigned int iter,
                     const TriangleMesh& mesh,
                     const Faces_vector& faces,
-                    const VertexUVmap uvmap) const
+                    const VertexUVMap uvmap) const
   {
     std::ostringstream outss;
     outss << filename << iter << ".txt" << std::ends;
@@ -216,10 +214,10 @@ private:
   }
 
   /// Initialize the UV values with a first parameterization of the input.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   Error_code compute_initial_uv_map(TriangleMesh& mesh,
                                     halfedge_descriptor bhd,
-                                    VertexUVmap uvmap) const
+                                    VertexUVMap uvmap) const
   {
     // Get the initial uv map from a LSCM run
     typedef CGAL::LSCM_parameterizer_3<TriangleMesh,
@@ -231,7 +229,7 @@ private:
     return status;
   }
 
-  template <typename VertexUVmap, typename VertexParameterizedMap>
+  template <typename VertexUVMap, typename VertexParameterizedMap>
   Error_code parameterize_border(const TriangleMesh& mesh,
                                  const Vertex_set& vertices,
                                  halfedge_descriptor bhd,
@@ -560,13 +558,13 @@ private:
   }
 
   /// Compute the root that gives the lowest face energy.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
                                               const Cot_map ctmap,
                                               const Local_points& lp,
                                               const Lp_map lpmap,
-                                              const VertexUVmap uvmap,
+                                              const VertexUVMap uvmap,
                                               const NT C2_denom, const NT C3,
                                               const std::vector<NT>& roots) const
   {
@@ -587,13 +585,13 @@ private:
   }
 
   /// Compute the root that gives the lowest face energy.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   std::size_t compute_root_with_lowest_energy(const TriangleMesh& mesh,
                                               face_descriptor fd,
                                               const Cot_map ctmap,
                                               const Local_points& lp,
                                               const Lp_map lpmap,
-                                              const VertexUVmap uvmap,
+                                              const VertexUVMap uvmap,
                                               const std::vector<NT>& a_roots,
                                               const std::vector<NT>& b_roots) const
   {
@@ -613,13 +611,13 @@ private:
   }
 
   /// Compute the optimal values of the linear transformation matrices Lt.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   Error_code compute_optimal_Lt_matrices(const TriangleMesh& mesh,
                                          const Faces_vector& faces,
                                          const Cot_map ctmap,
                                          const Local_points& lp,
                                          const Lp_map lpmap,
-                                         const VertexUVmap uvmap,
+                                         const VertexUVMap uvmap,
                                          Lt_map ltmap) const
   {
     Error_code status = Base::OK;
@@ -930,7 +928,7 @@ private:
   }
 
   /// Compute the entries of the right hand side of the ARAP linear system.
-  template <typename VertexUVmap,
+  template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
   Error_code compute_rhs(const TriangleMesh& mesh,
@@ -939,7 +937,7 @@ private:
                          const Local_points& lp,
                          const Lp_map lpmap,
                          const Lt_map ltmap,
-                         VertexUVmap uvmap,
+                         VertexUVMap uvmap,
                          VertexIndexMap vimap,
                          VertexParameterizedMap vpmap,
                          Vector& Bu, Vector& Bv) const
@@ -968,7 +966,7 @@ private:
     return status;
   }
 
-  template <typename VertexUVmap,
+  template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
   Error_code update_solution(const TriangleMesh& mesh,
@@ -977,7 +975,7 @@ private:
                              const Local_points& lp,
                              const Lp_map lpmap,
                              const Lt_map ltmap,
-                             VertexUVmap uvmap,
+                             VertexUVMap uvmap,
                              VertexIndexMap vimap,
                              VertexParameterizedMap vpmap,
                              const Matrix& A)
@@ -1031,13 +1029,13 @@ private:
 
 
   /// Compute the current energy of a face, given a linear transformation matrix.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
                                  const Cot_map ctmap,
                                  const Local_points& lp,
                                  const Lp_map lpmap,
-                                 const VertexUVmap uvmap,
+                                 const VertexUVMap uvmap,
                                  const NT a, const NT b) const
   {
     NT Ef = 0.;
@@ -1074,14 +1072,14 @@ private:
   }
 
   /// Compute the current energy of a face.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   NT compute_current_face_energy(const TriangleMesh& mesh,
                                  face_descriptor fd,
                                  const Cot_map ctmap,
                                  const Local_points& lp,
                                  const Lp_map lpmap,
                                  const Lt_map ltmap,
-                                 const VertexUVmap uvmap) const
+                                 const VertexUVMap uvmap) const
   {
     NT Ef = 0.;
 
@@ -1093,14 +1091,14 @@ private:
   }
 
   /// Compute the current energy of the parameterization.
-  template <typename VertexUVmap>
+  template <typename VertexUVMap>
   NT compute_current_energy(const TriangleMesh& mesh,
                             const Faces_vector& faces,
                             const Cot_map ctmap,
                             const Local_points& lp,
                             const Lp_map lpmap,
                             const Lt_map ltmap,
-                            const VertexUVmap uvmap) const
+                            const VertexUVMap uvmap) const
   {
     NT E = 0.;
 
@@ -1117,13 +1115,13 @@ private:
 // Post processing functions
   /// Use the convex virtual boundary algorithm of Karni et al.[2005] to fix
   /// the (hopefully few) flips in the result.
-  template <typename VertexUVmap,
+  template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code post_process(const TriangleMesh& mesh,
                           const Vertex_set& vertices,
                           const Faces_vector& faces,
                           halfedge_descriptor bhd,
-                          VertexUVmap uvmap,
+                          VertexUVMap uvmap,
                           const VertexIndexMap vimap) const
   {
     typedef CGAL::MVC_post_processor_3<TriangleMesh>     Post_processor;
@@ -1140,12 +1138,12 @@ private:
 
 // Public operations
 public:
-  template <typename VertexUVmap,
+  template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
   Error_code parameterize(TriangleMesh& mesh,
                           halfedge_descriptor bhd,
-                          VertexUVmap uvmap,
+                          VertexUVMap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap)
   {
