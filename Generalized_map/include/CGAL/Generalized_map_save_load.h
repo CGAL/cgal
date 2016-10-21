@@ -25,10 +25,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Generalized_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Cell_attribute_with_point.h>
 #include <CGAL/Combinatorial_map_save_load.h>
 
 #include <algorithm>

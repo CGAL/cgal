@@ -66,6 +66,9 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
+    template <class, class>
+    friend class Concurrent_compact_container;
+
   public:
     typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
                                       Functor_on_split_> Self;
@@ -90,7 +93,7 @@ namespace CGAL {
     bool operator!=(const Self& other) const
     { return !operator==(other); }
 
-    // protected:
+  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}
@@ -118,6 +121,9 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
+    template <class, class>
+    friend class Concurrent_compact_container;
+
   public:
     typedef Cell_attribute<LCC, void, Tag,
                            Functor_on_merge_, Functor_on_split_> Base1;
@@ -141,7 +147,7 @@ namespace CGAL {
     bool operator==(const Cellattr&) const
     { return false; }
 
-    //  protected:
+  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}

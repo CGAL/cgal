@@ -23,6 +23,7 @@
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
 

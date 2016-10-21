@@ -20,9 +20,9 @@
 #ifndef CGAL_GENERALIZED_MAP_STORAGES_H
 #define CGAL_GENERALIZED_MAP_STORAGES_H 1
 
-#include <CGAL/Handle_hash_function.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Dart.h>
+#include <CGAL/Handle_hash_function.h>
 #include <bitset>
 
 #include <boost/config.hpp>

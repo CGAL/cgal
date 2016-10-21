@@ -21,7 +21,6 @@
 #define CGAL_COMBINATORIAL_MAP_FUNCTORS_H
 
 #include <CGAL/Dart_const_iterators.h>
-#include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <vector>
 #include <boost/mpl/has_xxx.hpp>

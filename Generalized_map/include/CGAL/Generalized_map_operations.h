@@ -20,9 +20,10 @@
 #ifndef CGAL_GENERALIZED_MAP_OPERATIONS_H
 #define CGAL_GENERALIZED_MAP_OPERATIONS_H 1
 
-#include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/GMap_dart_const_iterators.h>
+#include <CGAL/internal/Combinatorial_map_group_functors.h>
+
 #include <deque>
-#include <stack>
 
 namespace CGAL
 {

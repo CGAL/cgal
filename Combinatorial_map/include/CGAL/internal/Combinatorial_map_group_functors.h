@@ -22,6 +22,7 @@
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Combinatorial_map_functors.h>
+#include <CGAL/Combinatorial_map_basic_operations.h>
 
 /* Definition of functors used to group/ungroup attributes (we need functors
  * as attributes are stored in tuple, thus all the access must be done at

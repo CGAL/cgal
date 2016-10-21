@@ -21,6 +21,10 @@
 #define CGAL_LINEAR_CELL_COMPLEX_H 1
 
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_traits.h>
+#include <CGAL/Linear_cell_complex_min_items.h>
+#include <CGAL/Combinatorial_map.h>
+#include <CGAL/CMap_linear_cell_complex_storages.h>
 
 namespace CGAL {
 

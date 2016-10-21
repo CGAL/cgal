@@ -26,6 +26,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/use.h>
+
 /* Definition of functors used internally to copy combinatorial maps attributes
  * (we need functors as attributes are stored in tuple, thus all the access
  *  must be done at compiling time).

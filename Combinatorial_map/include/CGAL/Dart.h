@@ -20,12 +20,29 @@
 #ifndef CGAL_DART_H
 #define CGAL_DART_H 1
 
-#include <CGAL/Compact_container.h>
 #include <CGAL/assertions.h>
+#include <CGAL/tuple.h>
 #include <bitset>
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 
 namespace CGAL {
+
+  template <class, class, class, class>
+  class Compact_container;
+
+  template <class, class>
+  class Concurrent_compact_container;
+
+  template<unsigned int, class, class>
+  class Combinatorial_map_storage_1;
+
+  template<unsigned int, class, class>
+  class Generalized_map_storage_1;
+
+  template<unsigned int, unsigned int, class, class, class>
+  class CMap_linear_cell_complex_storage_1;
+
+  template<unsigned int, unsigned int, class, class, class>
+  class GMap_linear_cell_complex_storage_1;
 
   /** @file Dart.h
    * Definition of nD dart.
@@ -57,12 +74,15 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
+    template <class, class>
+    friend class Concurrent_compact_container;
+
     typedef Dart_without_info<d,Refs>        Self;
     typedef typename Refs::Dart_handle       Dart_handle;
     typedef typename Refs::size_type         size_type;
     typedef typename Refs::Dart_const_handle Dart_const_handle;
     typedef typename Refs::Helper            Helper;
-    
+
     /// Typedef for attributes
     template<int i>
     struct Attribute_handle: public Refs::template Attribute_handle<i>
@@ -82,7 +102,7 @@ namespace CGAL {
     { return mf[0].for_compact_container(); }
     void * & for_compact_container()
     { return mf[0].for_compact_container(); }
-    
+
   protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial map class.
@@ -161,14 +181,14 @@ namespace CGAL {
   protected:
     /// Neighboors for each dimension +1 (from 0 to dimension).
     Dart_handle mf[dimension+1];
-    
+
     /// Values of Boolean marks.
     mutable std::bitset<NB_MARKS> mmarks;
 
     /// Attributes enabled
     typename Helper::Attribute_handles mattribute_handles;
   };
-  
+
 #if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
 
 #define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
@@ -187,13 +207,16 @@ namespace CGAL {
 
     template <class, class, class, class>
     friend class Compact_container;
-    
+
+    template <class, class>
+    friend class Concurrent_compact_container;
+
     typedef Dart_without_info<d, Refs> Base;
 
     using Base::dimension;
     using Base::mf;
     using Base::mattribute_handles;
-    
+
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Helper Helper;
@@ -206,7 +229,7 @@ namespace CGAL {
     struct Attribute_const_handle:
       public Refs::template Attribute_const_handle<i>
     {};
-    
+
   public:
     /** Return the beta of this dart for a given dimension.
      * @param i the dimension.
@@ -290,9 +313,12 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
+    template <class, class>
+    friend class Concurrent_compact_container;
+
     typedef Dart<d, Refs, Info_> Self;
     typedef Info_                Info;
-    
+
   protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial or generalized map class.
@@ -307,7 +333,7 @@ namespace CGAL {
     { return minfo; }
     const Info_& info() const
     { return minfo; }
-    
+
   protected:
     Info minfo;
   };
@@ -319,9 +345,9 @@ namespace CGAL {
   public:
     typedef CGAL::Void Info;
   };
-  
+
 #endif // CGAL_CMAP_DART_DEPRECATED
-  
+
 } // namespace CGAL
 
 #endif // CGAL_DART_H //

@@ -20,7 +20,6 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_H
 #define CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_H 1
 
-#include <CGAL/Linear_cell_complex.h>
 #include <vector>
 #include <cstddef>
 

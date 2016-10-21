@@ -20,9 +20,9 @@
 #ifndef CGAL_CMAP_LINEAR_CELL_COMPLEX_STORAGES_H
 #define CGAL_CMAP_LINEAR_CELL_COMPLEX_STORAGES_H 1
 
-#include <CGAL/Handle_hash_function.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Dart.h>
+#include <CGAL/Handle_hash_function.h>
 #include <bitset>
 
 #include <boost/config.hpp>
