@@ -233,43 +233,26 @@ private:
   Error_code parameterize_border(const TriangleMesh& mesh,
                                  const Vertex_set& vertices,
                                  halfedge_descriptor bhd,
-                                 VertexUVmap uvmap,
                                  VertexParameterizedMap vpmap)
   {
-    // Compute (u,v) for (at least two) border vertices and mark them as "parameterized"
     Error_code status = Base::OK;
+    CGAL_precondition(!vertices.empty());
 
-#define FIXED_VERTICES_IN_PARAMETERIZATION_SPACE
-#ifdef FIXED_VERTICES_IN_PARAMETERIZATION_SPACE
-    // Find the two farthest vertices in the initial parameterization
+    if(m_lambda != 0.){
+    // Fix a random vertex, the value in uvmap is already set
+      vertex_descriptor vd = *(vertices.begin());
+      put(vpmap, vd, true);
+    } else {
+    // This fixes two vertices that are far in the original geometry
 
-    // @fixme unefficient: brute force algorithm; use Convex hull + rotating caliphers instead
-    NT max_dist = (std::numeric_limits<NT>::min)();
-    vertex_descriptor vd1_max, vd2_max;
-
-    BOOST_FOREACH(vertex_descriptor vd1, vertices){
-      BOOST_FOREACH(vertex_descriptor vd2, vertices){
-        Point_2 uv1 = get(uvmap, vd1);
-        Point_2 uv2 = get(uvmap, vd2);
-
-        NT sq_d = CGAL::squared_distance(uv1, uv2);
-        if(sq_d > max_dist)
-        {
-          max_dist = sq_d;
-          vd1_max = vd1;
-          vd2_max = vd2;
-        }
-      }
+    // A local uvmap (that is then discarded) is passed to avoid changing
+    // the values of the real uvmap
+    CGAL::Unique_hash_map<vertex_descriptor, Point_2> useless_uvmap;
+    status = get_border_parameterizer().parameterize_border(mesh, bhd,
+                                                            VertexUVMap(useless_uvmap),
+                                                            vpmap);
     }
 
-    // the value in uvmap is already set
-    put(vpmap, vd1_max, true);
-    put(vpmap, vd2_max, true);
-#else
-    // This fixes two vertices that are far in the original geometry. We lose
-    // the UV information of the initial param
-    status = get_border_parameterizer().parameterize_border(mesh, bhd, uvmap, vpmap);
-#endif
     return status;
   }
 
@@ -1169,12 +1152,9 @@ public:
       return status;
 
     // Handle the boundary condition depending on lambda
-    if(true || m_lambda == 0)
-    {
-      status = parameterize_border(mesh, vertices, bhd, uvmap, vpmap);
-      if(status != Base::OK)
-        return status;
-    }
+    status = parameterize_border<VertexUVMap>(mesh, vertices, bhd, vpmap);
+    if(status != Base::OK)
+      return status;
 
     // Compute all cotangent angles
     Cot_hm cthm;
