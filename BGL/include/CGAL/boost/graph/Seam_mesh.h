@@ -319,13 +319,12 @@ public:
     : tm(tm), sem(sem), svm(svm), index(0)
   {}
 
-  /// Sets indices to 0,1,2,... for vertices in the connected component with the boundary on which lies `bhd`.
-  /// The values are written into a property map with keytype `vertex_descriptor` and
-  /// value type `boost::graph_traits<TM>::%vertices_size_type`.
-  ///
-  /// The highest index is cached and returned when calling `num_vertices(sm)`.
+  /// Puts in `vim` indices of vertices in the connected component with the boundary on which lies `bhd`.
+  /// Indices are consecutive and start at 0 or the last index+1 that was assigned in a previous call.
+  /// That value is cached and returned when calling `num_vertices(sm)`.
+  /// \tparam VertexIndexMap a model of `ReadWritePropertyMap` with `vertex_descriptor` as key and `int` as value-type
   template <typename VertexIndexMap>
-  void initialize_vertex_index_map(halfedge_descriptor bhd, VertexIndexMap& vipm)
+  void initialize_vertex_index_map(halfedge_descriptor bhd, VertexIndexMap& vim)
   {
     Self& mesh=*this;
 
@@ -340,15 +339,15 @@ public:
       BOOST_FOREACH(TM_halfedge_descriptor tmhd , halfedges_around_face(halfedge(fd,tm),tm)) {
         halfedge_descriptor hd(tmhd);
         vertex_descriptor vd = target(hd,mesh);
-        put(vipm,vd,-1);
+        put(vim,vd,-1);
       }
     }
     BOOST_FOREACH(face_descriptor fd, faces) {
       BOOST_FOREACH(TM_halfedge_descriptor tmhd , halfedges_around_face(halfedge(fd,tm),tm)) {
         halfedge_descriptor hd(tmhd);
         vertex_descriptor vd = target(hd,mesh);
-        if(get(vipm,vd) == -1) {
-          put(vipm,vd,index);
+        if(get(vim,vd) == -1) {
+          put(vim,vd,index);
           ++index;
         }
       }
