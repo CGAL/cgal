@@ -25,6 +25,8 @@
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Origin.h>
 
+#include<map>
+
 namespace CGAL {
 
   /** @file Linear_cell_complex_base.h
@@ -111,13 +113,21 @@ namespace CGAL {
     using Base::attribute;
     using Base::null_handle;
     using Base::point_of_vertex_attribute;
-
+    using Base::other_extremity;
+    using Base::darts;
+    
     using Base::are_attributes_automatically_managed;
     using Base::mark;
+    using Base::is_marked;
     using Base::unmark;
     using Base::free_mark;
     using Base::get_new_mark;
-
+    using Base::next;
+    using Base::previous;
+    using Base::opposite;
+    using Base::is_next_exist;
+    using Base::is_previous_exist;
+    
     using Base::make_segment;
     using Base::make_triangle;
     using Base::make_quadrangle;
@@ -127,7 +137,7 @@ namespace CGAL {
     using Base::insert_dangling_cell_1_in_cell_2;
     using Base::insert_cell_1_in_cell_2;
     using Base::insert_cell_2_in_cell_3;
-    
+
     Linear_cell_complex_base() : Base()
     {}
 
@@ -338,8 +348,8 @@ namespace CGAL {
     bool is_valid() const
     {
       bool valid = Base::is_valid();
-      for (typename Dart_range::const_iterator it(this->darts().begin()),
-             itend(this->darts().end()); valid && it != itend; ++it)
+      for (typename Dart_range::const_iterator it(darts().begin()),
+             itend(darts().end()); valid && it != itend; ++it)
       {
         if ( vertex_attribute(it)==null_handle )
         {
@@ -366,8 +376,8 @@ namespace CGAL {
         Foreach_enabled_attributes<Reserve_mark_functor<Self> >::
           run(*this, marks);
 
-      for ( typename Dart_range::iterator it(this->darts().begin()),
-             itend(this->darts().end()); it!=itend; ++it)
+      for ( typename Dart_range::iterator it(darts().begin()),
+             itend(darts().end()); it!=itend; ++it)
       {
         Helper::template Foreach_enabled_attributes
           <internal::Correct_invalid_attributes_functor<Self> >::
@@ -398,19 +408,82 @@ namespace CGAL {
     bool are_facets_same_geometry(Dart_const_handle d1,
                                   Dart_const_handle d2) const
     {
-      typename Base::template Dart_of_orbit_range<1>::const_iterator
-        it1(*this,d1);
-      typename Base::template Dart_of_orbit_range<0>::const_iterator
-        it2(*this,d2);
-      bool samegeometry = true;
-      for ( ; samegeometry && it1.cont() && it2.cont(); ++it1, ++it2)
+      Dart_const_handle s1=d1;
+      Dart_const_handle s2=d2;
+      while (is_previous_exist(d1) && previous(s1)!=d1)
       {
-        if ( this->other_extremity(it2)!=null_handle &&
-             point(it1)!=point(this->other_extremity(it2)) )
-          samegeometry = false;
+        s1=previous(s1);
+        if (!is_previous_exist(d2)) return false;
+        s2=previous(s2);
       }
-      if ( it1.cont() != it2.cont() ) samegeometry = false;
-      return samegeometry;
+
+      d1=s1;
+      d2=s2;
+      do
+      {
+        if (is_next_exist(d1)!=is_next_exist(d2))
+          return false;
+
+        if (point(d1)!=point(d2))
+          return false;
+
+        d1=next(d1);
+        d2=next(d2);
+      }
+      while(is_next_exist(d1) && d1!=s1);
+
+      if (is_next_exist(d1)!=is_next_exist(d2))
+          return false;
+
+      if (d1==s1 && d2!=s2) return false;
+
+      return true;
+    }
+
+    /** test if the two given facets have the same geometry but with
+     *  opposite orientations.
+     * @return true iff the two facets have the same geometry with opposite
+     *         orientation.
+     */
+    bool are_facets_opposite_and_same_geometry(Dart_const_handle d1,
+                                               Dart_const_handle d2) const
+    {
+      Dart_const_handle s1=d1;
+      Dart_const_handle s2=d2;
+      while (is_previous_exist(d1) && previous(s1)!=d1)
+      {
+        s1=previous(s1);
+        if (!is_next_exist(d2)) return false;
+        s2=next(s2);
+      }
+
+      d1=s1;
+      d2=s2;
+      do
+      {
+        if (is_next_exist(d1)!=is_previous_exist(d2))
+          return false;
+
+        if (other_extremity(d2)!=null_handle &&
+             point(d1)!=point(other_extremity(d2)))
+          return false;
+
+        // The only case where d2 could have no other_extremity
+        // is the end of an open path. In this case d1 is the
+        // beginning of an open path and we do not compare points
+        // but this is the correct thing to do.
+
+        d1=next(d1);
+        d2=previous(d2);
+      }
+      while(is_next_exist(d1) && d1!=s1);
+
+      if (is_next_exist(d1)!=is_previous_exist(d2))
+          return false;
+
+      if (d1==s1 && d2!=s2) return false;
+
+      return true;
     }
 
     /// Sew3 the marked facets having same geometry
@@ -424,16 +497,16 @@ namespace CGAL {
 
       // First we fill the std::map by one dart per facet, and by using
       // the minimal point as index.
-      for (typename Dart_range::iterator it(this->darts().begin()),
-             itend(this->darts().end()); it!=itend; ++it )
+      for (typename Dart_range::iterator it(darts().begin()),
+             itend(darts().end()); it!=itend; ++it )
       {
-        if ( !this->is_marked(it, mymark) && this->is_marked(it, AMark) )
+        if ( !is_marked(it, mymark) && is_marked(it, AMark) )
         {
           Point min_point=point(it);
           Dart_handle min_dart = it;
-          this->mark(it, mymark);
+          mark(it, mymark);
           typename Base::template
-            Dart_of_orbit_range<1>::iterator it2(*this,it);
+            Dart_of_cell_range<2>::iterator it2(*this,it);
           ++it2;
           for ( ; it2.cont(); ++it2 )
           {
@@ -457,22 +530,23 @@ namespace CGAL {
         itmap=one_dart_per_facet.begin(),
         itmapend=one_dart_per_facet.end();
 
-      for ( ; itmap!=itmapend; ++itmap )
+      for (; itmap!=itmapend; ++itmap)
       {
-        for ( typename std::vector<Dart_handle>::iterator
-                it1=(itmap->second).begin(),
-                it1end=(itmap->second).end(); it1!=it1end; ++it1 )
+        for (typename std::vector<Dart_handle>::iterator
+               it1=(itmap->second).begin(),
+               it1end=(itmap->second).end(); it1!=it1end; ++it1)
         {
           typename std::vector<Dart_handle>::iterator it2=it1;
-          for ( ++it2; it2!= it1end; ++it2 )
+          for (++it2; it2!=it1end; ++it2)
           {
-            if ( *it1!=*it2 &&
-                 !this->template is_opposite_exist<3>(*it1) &&
-                 !this->template is_opposite_exist<3>(*it2) &&
-                 are_facets_same_geometry(*it1,this->beta(*it2, 0)) )
+            if (*it1!=*it2 &&
+                !this->template is_opposite_exist<3>(*it1) &&
+                !this->template is_opposite_exist<3>(*it2) &&
+                are_facets_opposite_and_same_geometry
+                (*it1, this->previous(*it2)))
             {
               ++res;
-              this->template sew<3>(*it1,this->beta(*it2, 0));
+              this->template sew_opposite<3>(*it1, this->previous(*it2));
             }
           }
         }
@@ -765,8 +839,8 @@ namespace CGAL {
       // its geometry to each vertex (the barycenter of the corresponding
       // dim-cell in the initial map).
       typename Dart_range::iterator it2 = alcc.darts().begin();
-      for (typename Dart_range::iterator it(this->darts().begin());
-           it!=this->darts().end(); ++it, ++it2)
+      for (typename Dart_range::iterator it(darts().begin());
+           it!=darts().end(); ++it, ++it2)
       {
         if (vertex_attribute(it2)==null_handle)
         {

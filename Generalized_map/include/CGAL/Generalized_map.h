@@ -781,6 +781,14 @@ namespace CGAL {
     Dart_const_handle opposite(Dart_const_handle ADart) const
     { return this->template alpha<0, dim>(ADart); }
 
+    template<unsigned int dim>
+    void sew_opposite(Dart_handle dh1, Dart_handle dh2,
+                      bool update_attributes=true)
+    {
+      assert(dim>0);
+      sew<dim>(dh1, this->template alpha<0>(dh2), update_attributes);
+    }
+    
     /** Count the number of used marks.
      * @return the number of used marks.
      */
