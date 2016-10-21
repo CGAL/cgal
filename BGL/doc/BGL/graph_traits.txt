@@ -1,21 +1,3 @@
-#if 1
-
-/*!
-\defgroup PkgBGLTraits Specializations of boost::graph_traits
-
-\ingroup PkgBGL
-
-The \sc{Bgl} defines the class template
-<A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
-as a uniform interface to the properties and types of %graph types.
-
-We provide specializations of this class template for several \cgal data structures. 
-
-*/
-
-#else
-
-
 /*!
 \defgroup PkgBGLTraits Specializations of boost::graph_traits
 
@@ -273,11 +255,3 @@ provides the following types:
 | `edges_size_type`        | `Arrangement_2::size_type` | The size type of the edge list |
 | `degree_size_type`       | `Arrangement_2::size_type` | The size type of the adjacency list |
 */
-
-
-#endif
-
-
-
-
-

@@ -94,8 +94,8 @@ functions.
 \cgalModels `FaceGraph`
 
 \tparam TM a model of `FaceGraph`
-\tparam SEM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::edge_descriptor` as key type and `bool` as value type.
-\tparam SVM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::vertex_descriptor` as key type and `bool` as value type.
+\tparam SEM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::%edge_descriptor` as key type and `bool` as value type.
+\tparam SVM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::%vertex_descriptor` as key type and `bool` as value type.
 
 \sa \link BGLSeam_meshGT `boost::graph_traits<Seam_mesh<TM> >` \endlink
 
@@ -318,8 +318,8 @@ public:
   {}
 
   /// Sets indices to 0,1,2,... for vertices in the connected component with the boundary on which lies `bhd`.
-  /// The values are written into a property map with keytype `vertex_dscriptor` and
-  /// value type `boost::graph_traits<TM>::vertices_size_type`.
+  /// The values are written into a property map with keytype `vertex_descriptor` and
+  /// value type `boost::graph_traits<TM>::%vertices_size_type`.
   /// 
   /// The highest index is cached and returned when calling `num_vertices(sm)`.
   template <typename VertexIndexMap>
