@@ -57,11 +57,6 @@ and it must be implicitely convertible from and to `Bare_point`.
 typedef unspecified_type Weighted_point_3; 
 
 /*!
-The (un-weighted) point type. 
-*/ 
-typedef unspecified_type Bare_point; 
-
-/*!
 A predicate object,
 model of `Kernel::PowerSideOfOrientedPowerSphere_3`,
 that must provide the following function operators: 

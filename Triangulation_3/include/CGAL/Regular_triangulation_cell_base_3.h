@@ -94,7 +94,7 @@ public:
          this->vertex(3)->point());
   }
 
-  typename Geom_traits::Bare_point
+  typename Geom_traits::Point_3
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()
