@@ -35,24 +35,24 @@
 This \cgal package implements several parameterization methods:
 
 - Fixed border:
-  - Tutte Barycentric Mapping \cgalCite{t-hdg-63}.
+  - Tutte Barycentric Mapping \cgalCite{t-hdg-63} :
      One-to-one mapping is guaranteed for convex border.
-  - Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}.
+  - Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03} :
      One-to-one mapping is guaranteed for convex border.
-  - Discrete Conformal Map \cgalCite{cgal:eddhls-maam-95}.
+  - Discrete Conformal Map \cgalCite{cgal:eddhls-maam-95} :
     Conditionally guaranteed if all weights are positive and border is convex.
-  - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02}.
+  - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02} :
     Conditionally guaranteed if all weights are positive and border is convex.
 - Free border:
   - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
 
-- `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
-- `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3>`
-- `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Parameterizer_traits_3<TriangleMesh>`
+- `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
+- `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 ## Border Parameterization Methods ##
 
@@ -70,43 +70,36 @@ This package implements all common border parameterization methods:
 - For free border methods: at least two constraints (the pinned
 vertices).
 
-- `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>`
-- `CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>`
+- `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+- `CGAL::Circular_border_uniform_parameterizer_3<TriangleMesh>`
+- `CGAL::Square_border_arc_length_parameterizer_3<TriangleMesh>`
+- `CGAL::Square_border_uniform_parameterizer_3<TriangleMesh>`
+- `CGAL::Two_vertices_parameterizer_3<TriangleMesh>`
 
 ## Mesh ##
 
-The general definition of input meshes handled directly by `CGAL::parameterize()` is:
-
- - Model of `ParameterizationMesh_3`.
- - Triangulated.
- - 2-manifold.
- - Oriented.
- - Homeomorphic to a disc (may have holes).
-
-
+The general definition of input meshes handled directly by `CGAL::parameterize()`
+is a triangulated surface mesh model of `FaceGraph` that is homeomorphic to a disc (may have holes).
+In particular, it means that it must be 2-manifold and oriented.
 
 ## Checks and Assertions ##
 
 The package performs the next checks:
 
-For <i>fixed</i> border parameterizations:
+- For <i>fixed</i> border parameterizations:
  - Preconditions:
-    - check that the border is mapped onto a convex polygon.
-    - check that the input mesh is triangular.
-    - check that the input mesh is a surface with one connected component.
+    - the border is mapped onto a convex polygon.
+    - the input mesh is triangular.
+    - the input mesh is a surface with one connected component.
  - Postconditions:
-    - check one-to-one mapping.
+    - one-to-one mapping.
 
-For <i>free</i> border parameterizations:
-
+- For <i>free</i> border parameterizations:
  - Preconditions:
-    - check that the input mesh is triangular.
-    - check that the input mesh is a surface with one connected component.
- -Postconditions:
-    - check one-to-one mapping.
+    - the input mesh is triangular.
+    - the input mesh is a surface with one connected component.
+ - Postconditions:
+    - one-to-one mapping.
 
 
 */
