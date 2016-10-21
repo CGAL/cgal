@@ -245,13 +245,17 @@ public Q_SLOTS:
         ui_widget.tabWidget->setEnabled(item->features_computed());
         if (!(item->features_computed()))
           ui_widget.tabWidget->setCurrentIndex(0);
+        int index = ui_widget.display->currentIndex();
         ui_widget.display->clear();
         ui_widget.display->addItem("Real colors");
         ui_widget.display->addItem("Classification");
         ui_widget.display->addItem("Training sets");
         ui_widget.selected_attribute->clear();
         item->fill_display_combo_box(ui_widget.display, ui_widget.selected_attribute);
-        ui_widget.display->setCurrentIndex(1);
+        if (index >= ui_widget.display->count())
+          ui_widget.display->setCurrentIndex(1);
+        else
+          ui_widget.display->setCurrentIndex(index);
         ui_widget.selected_attribute->setCurrentIndex(0);
       }
   }
