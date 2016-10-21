@@ -1116,26 +1116,34 @@ remove(Vertex_handle v)
     }
 }
 
+namespace internal{
+namespace P2DT2{
+
+template<class P2DT2>
+struct Static_data{
+  int maxd;
+  std::vector<typename P2DT2::Face_handle> f;
+  std::vector<int> i;
+  std::vector<typename P2DT2::Vertex_handle> w;
+  std::vector<typename P2DT2::Offset> offset_w;
+  Static_data(int m)
+    : maxd(m)
+    , f(maxd)
+    , i(maxd)
+    , w(maxd)
+    , offset_w(maxd)
+  {}
+};
+
+} } //end of namespace internal::P2DT2
+
 template < class Gt, class Tds >
 bool
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 remove_single_vertex(Vertex_handle v, const Offset &v_o)
 {
-  struct Static_data{
-    int maxd;
-    std::vector<Face_handle> f;
-    std::vector<int> i;
-    std::vector<Vertex_handle> w;
-    std::vector<Offset> offset_w;
-    Static_data(int m)
-      : maxd(m)
-      , f(maxd)
-      , i(maxd)
-      , w(maxd)
-      , offset_w(maxd)
-    {}
-  };
-
+  typedef internal::P2DT2::
+    Static_data< Periodic_2_Delaunay_triangulation_2<Gt, Tds> > Static_data;
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(Static_data, sd, 30);
 
   int d;
