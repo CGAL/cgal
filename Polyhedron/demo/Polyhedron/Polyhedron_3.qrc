@@ -46,5 +46,6 @@
         <file>resources/euler_center.png</file>
         <file>resources/euler_facet.png</file>
         <file>resources/euler_vertex.png</file>
+        <file>javascript/lib.js</file>
     </qresource>
 </RCC>

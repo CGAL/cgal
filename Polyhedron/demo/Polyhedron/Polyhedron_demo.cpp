@@ -75,6 +75,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
     mainWindow.enableScriptDebugger();
   }
 #endif
+  mainWindow.loadScript(":/cgal/Polyhedron_3/javascript/lib.js");
   QFileInfo autostart_js("autostart.js");
   if(!parser.isSet(no_autostart) && autostart_js.exists()) {
     mainWindow.loadScript(autostart_js);
