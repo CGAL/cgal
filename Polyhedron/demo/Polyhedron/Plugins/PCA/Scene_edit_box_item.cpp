@@ -393,19 +393,16 @@ void Scene_edit_box_item::compute_bbox() const
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
 
-  double xmin,ymin,zmin,xmax,ymax,zmax;
-  xmin =d->vertices[0].position().x();
-  ymin =d->vertices[0].position().y();
-  zmin =d->vertices[0].position().z();
-  xmax =d->vertices[6].position().x();
-  ymax =d->vertices[6].position().y();
-  zmax =d->vertices[6].position().z();
-  QVector3D min(xmin, ymin, zmin);
-  QVector3D max(xmax, ymax, zmax);
-  min = f_matrix*min;
-  max = f_matrix*max;
-  Scene_item::Bbox bb(min.x(),min.y(),min.z(),max.x(),max.y(),max.z());
-  _bbox = bb;
+  QVector3D min(d->pool[0], d->pool[1], d->pool[2]);
+  QVector3D max(d->pool[3], d->pool[4], d->pool[5]);
+
+  for(int i=0; i< 3; ++i)
+  {
+   min[i] += d->frame->translation()[i]-d->center_[i];
+   max[i] += d->frame->translation()[i]-d->center_[i];
+  }
+
+  _bbox = Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z());
 }
 
 
@@ -938,7 +935,6 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
   program->release();
 }
 
-//!\todo redo the API to only use a list of selected vertices
 void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
   qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
@@ -957,7 +953,6 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
     for( int i=0; i<3; ++i)
       center_[i] =(pool[i]+pool[i+3])/2;
     frame->translate(frame->inverseTransformOf(relative_center_));
-    item->invalidateOpenGLBuffers();
   }
   else if(selected_edge != NULL)
   {
@@ -978,7 +973,6 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
     for( int i=0; i<3; ++i)
       center_[i] =(pool[i]+pool[i+3])/2;
     frame->translate(frame->inverseTransformOf(relative_center_));
-    item->invalidateOpenGLBuffers();
   }
   else if(selected_face != NULL)
   {
@@ -996,8 +990,8 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
     for( int i=0; i<3; ++i)
       center_[i] =(pool[i]+pool[i+3])/2;
     frame->translate(frame->inverseTransformOf(relative_center_));
-    item->invalidateOpenGLBuffers();
   }
+  item->invalidateOpenGLBuffers();
   constraint.setTranslationConstraintType(prev_cons);
 }
 
@@ -1015,7 +1009,6 @@ bool Scene_edit_box_item_priv::applyX(double x, double dirx)
   }
   return false;
 }
-
 bool Scene_edit_box_item_priv::applyY(double y, double diry)
 {
   if(y == pool[1])

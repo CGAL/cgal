@@ -43,7 +43,7 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
     Scene_edit_box_item(const CGAL::Three::Scene_interface* scene_interface);
     ~Scene_edit_box_item();
     bool isFinite() const { return true; }
-    bool isEmpty() const { return true; }
+    bool isEmpty() const { return false; }
     void compute_bbox() const;
 
     bool manipulatable() const { return true; }
