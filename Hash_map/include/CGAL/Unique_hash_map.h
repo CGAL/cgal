@@ -129,10 +129,13 @@ namespace boost {
 
   struct lvalue_property_map_tag;
 
-  template <typename KeyType, typename ValueType>
-  class associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >
+  template <typename KeyType, typename ValueType,
+            typename HashFunction, typename Allocator>
+  class associative_property_map<CGAL::Unique_hash_map<KeyType, ValueType,
+                                                       HashFunction, Allocator> >
   {
-    typedef CGAL::Unique_hash_map<KeyType,ValueType> C;
+    typedef CGAL::Unique_hash_map<KeyType, ValueType, HashFunction, Allocator> C;
+
   public:
     typedef KeyType key_type;
     typedef ValueType value_type;
@@ -146,16 +149,14 @@ namespace boost {
 
   friend
   const value_type&
-  get(const associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm,
-      const key_type& key)
+  get(const associative_property_map<C>& uhm, const key_type& key)
   {
     return uhm[key];
   }
 
   friend
   void
-  put(associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm,
-      const key_type& key, const value_type& val)
+  put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
   {
     uhm[key] = val;
   }
@@ -164,18 +165,18 @@ namespace boost {
     C* m_c;
   };
 
-
-  template <typename KeyType, typename ValueType>
-  associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >
-  make_assoc_property_map(CGAL::Unique_hash_map<KeyType,ValueType> & c)
+  template <typename KeyType, typename ValueType,
+            typename HashFunction, typename Allocator>
+  associative_property_map<CGAL::Unique_hash_map<KeyType, ValueType,
+                                                 HashFunction, Allocator> >
+  make_assoc_property_map(CGAL::Unique_hash_map<KeyType, ValueType,
+                                                HashFunction, Allocator>& c)
   {
-    return associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >(c);
+    return associative_property_map<CGAL::Unique_hash_map<KeyType, ValueType,
+                                                          HashFunction, Allocator> >(c);
   }
 
-
 }
-
-
 
 #endif // CGAL_UNIQUE_HASH_MAP_H
 // EOF
