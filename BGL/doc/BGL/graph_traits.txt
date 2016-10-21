@@ -85,7 +85,7 @@ For convenience, the type `edge_descriptor` is hashable using the functor `CGAL:
 that is the default hash functor of `CGAL::Unique_hash_map`.
 
 
-\section BGLSMGT Specialization for the OpenMesh::PolyMesh_ArrayKernelT Class
+\section BGLOMPAK Specialization for the OpenMesh::PolyMesh_ArrayKernelT Class
 
 Defined in `<CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>`
 
@@ -118,7 +118,7 @@ The traits class `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` prov
 | `degree_size_type`       | `unsigned` | The size type of the adjacency list |
 
 
-\section BGLSMGT Specialization for the OpenMesh::TriMesh_ArrayKernelT Class
+\section BGLOMTMAK Specialization for the OpenMesh::TriMesh_ArrayKernelT Class
 
 Defined in `<CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>`
 
