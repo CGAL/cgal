@@ -13,7 +13,7 @@
 #include <CGAL/MVC_post_processor_3.h>
 
 #include <CGAL/Algebraic_kernel_d_2.h>
-#include <CGAL/Conic_misc.h> // @tmp used for solving conic equations
+#include <CGAL/Kernel/Conic_misc.h> // @tmp used for solving conic equations
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/OpenNL/linear_solver.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
