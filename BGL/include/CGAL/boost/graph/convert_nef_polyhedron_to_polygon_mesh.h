@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/circulator.h>
 #include <boost/unordered_map.hpp>
 
 namespace CGAL{
