@@ -2633,6 +2633,30 @@ namespace boost {
     }
   };
 
+  template <>
+  struct hash<CGAL::SM_Halfedge_index > {
+    std::size_t operator()(const CGAL::SM_Halfedge_index& i) const
+    {
+      return i;
+    }
+  };
+
+  template <>
+  struct hash<CGAL::SM_Edge_index > {
+    std::size_t operator()(const CGAL::SM_Edge_index& i) const
+    {
+      return i;
+    }
+  };
+
+  template <>
+  struct hash<CGAL::SM_Face_index > {
+    std::size_t operator()(const CGAL::SM_Face_index& i) const
+    {
+      return i;
+    }
+  };
+
 } // namespace boost
 
 #endif /* CGAL_SURFACE_MESH_H */
