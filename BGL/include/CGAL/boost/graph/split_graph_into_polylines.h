@@ -46,10 +46,6 @@ struct Dummy_visitor_for_split_graph_into_polylines
   void add_node(typename boost::graph_traits<Graph>::vertex_descriptor){}
   void end_polyline(){}
 };
-} //end of namespace internal
-
-
-namespace internal {
 
 template <typename G_copy, typename Less_on_orig_vertex_descriptors>
 class Less_on_G_copy_vertex_descriptors {
@@ -69,9 +65,9 @@ public:
   }
 }; // end class Less_on_G_copy_vertex_descriptors
 
-/// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
-/// The vertices are duplicated, and new incident edges created.
-/// `OrigGraph` must be undirected
+// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
+// The vertices are duplicated, and new incident edges created.
+// `OrigGraph` must be undirected
 template <typename Graph,
           typename OrigGraph,
           typename IsTerminal>

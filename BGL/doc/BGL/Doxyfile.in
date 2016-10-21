@@ -14,3 +14,6 @@ EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
                               ${CGAL_BGL_EXAMPLE_DIR}
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"
+EXTRACT_ALL=NO
+HIDE_UNDOC_MEMBERS         =  YES
+HIDE_UNDOC_CLASSES         =  YES
