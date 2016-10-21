@@ -1023,7 +1023,6 @@ private:
       std::size_t id_in_vec = std::distance(
         m.remesher_ptr_->input_triangles().begin(), tr_it);
 
-      CGAL_assertion(0 <= id_in_vec);
       CGAL_assertion(id_in_vec < m.remesher_ptr_->input_patch_ids().size());
       CGAL_assertion(*tr_it == m.remesher_ptr_->input_triangles()[id_in_vec]);
 
