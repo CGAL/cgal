@@ -482,7 +482,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
     CGAL::read_ply_point_set (stream, *(d->m_points)) &&
             !isEmpty();
 
-  std::cerr << d->m_points->properties();
+  std::cerr << d->m_points->info();
 
   if (d->m_points->has_normal_map())
     setRenderingMode(PointsPlusNormals);
