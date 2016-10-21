@@ -706,7 +706,8 @@ public:
     const bool is_param_border_simple = is_polygon_simple(mesh, bhd, uvmap);
 
     // not sure how to handle non-simple yet
-    CGAL_postcondition(is_param_border_simple);
+    if(!is_param_border_simple)
+      return Base::ERROR_NON_CONVEX_BORDER;
     std::cout << "Border is simple!" << std::endl;
 
     // Triangulate the holes in the convex hull of the polygon
