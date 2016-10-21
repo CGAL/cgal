@@ -938,7 +938,7 @@ public:
 
     std::cerr << 100. * best_score << "% (found at initialization)" << std::endl;
 
-    
+    bool first_round = true;    
     std::size_t current_att_changed = 0;
     std::ofstream f("score.plot");
     for (std::size_t i = 0; i < nb_tests; ++ i)
@@ -950,7 +950,10 @@ public:
           }
         Data_classification::Attribute_handle att = m_attributes[current_att_changed];            
         const Attribute_training& tr = att_train[current_att_changed];
-        att->weight = tr.wmin + (rand() / (double)RAND_MAX) * (tr.wmax - tr.wmin);
+        if (first_round)
+          att->weight = 0.;
+        else
+          att->weight = tr.wmin + (rand() / (double)RAND_MAX) * (tr.wmax - tr.wmin);
         
         estimate_attributes_effects(training_sets);
         std::size_t nb_used = 0;
@@ -992,7 +995,10 @@ public:
           {
             ++ current_att_changed;
             if (current_att_changed == m_attributes.size())
-              current_att_changed = 0;
+              {
+                first_round = false;
+                current_att_changed = 0;
+              }
           }
         while (att_train[current_att_changed].skipped);
       }
