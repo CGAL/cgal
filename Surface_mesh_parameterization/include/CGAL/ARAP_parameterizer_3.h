@@ -111,16 +111,21 @@ private:
   // Memory maps
     // Each triangle is associated a linear transformation matrix
   typedef std::pair<NT, NT>                                         Lt_matrix;
-  typedef CGAL::Unique_hash_map<face_descriptor, Lt_matrix>         Lt_hash_map;
+  typedef CGAL::Unique_hash_map<face_descriptor,
+                                Lt_matrix,
+                                boost::hash<face_descriptor> >      Lt_hash_map;
   typedef boost::associative_property_map<Lt_hash_map>              Lt_map;
 
     // Each angle (uniquely determined by the opposite half edge) has a cotangent
-  typedef CGAL::Unique_hash_map<halfedge_descriptor, NT>            Cot_hm;
+  typedef CGAL::Unique_hash_map<halfedge_descriptor, NT,
+                                boost::hash<halfedge_descriptor> >  Cot_hm;
   typedef boost::associative_property_map<Cot_hm>                   Cot_map;
 
     // Each face has a local 2D isometric parameterization
   typedef std::pair<int, int>                                       Local_indices;
-  typedef CGAL::Unique_hash_map<halfedge_descriptor, Local_indices> Lp_hm;
+  typedef CGAL::Unique_hash_map<halfedge_descriptor,
+                                Local_indices,
+                                boost::hash<halfedge_descriptor> >  Lp_hm;
   typedef boost::associative_property_map<Lp_hm>                    Lp_map;
   typedef std::vector<Point_2>                                      Local_points;
 
@@ -163,10 +168,11 @@ private:
     std::ofstream out(filename.c_str());
     BOOST_FOREACH(face_descriptor fd, faces){
       halfedge_descriptor hd = halfedge(fd, mesh);
-      out << "4 " << uvmap[target(hd, mesh)] << " 0 ";
+      vertex_descriptor vd = target(hd, mesh);
+      out << "4 " << get(uvmap, vd) << " 0 ";
       hd = next(hd, mesh);
-      BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
-        out << uvmap[vd] << " 0 ";
+      BOOST_FOREACH(vd, vertices_around_face(hd, mesh)){
+        out << get(uvmap, vd) << " 0 ";
       }
       out << std::endl;
     }
