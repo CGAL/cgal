@@ -38,7 +38,7 @@ namespace CGAL {
       lcc(alcc)
     {}
 
-    Vertex_attribute_handle add_vertex (const Point_3& p)
+    Vertex_attribute_handle add_vertex(const Point_3& p)
     {
       Vertex_attribute_handle res = lcc.create_vertex_attribute(p);
       vertex_map.push_back(res);
@@ -58,7 +58,7 @@ namespace CGAL {
     {
       CGAL_assertion( i<new_vertices );
       // std::cout<<i<<"  "<<std::flush;
-      Dart_handle cur = lcc.create_dart(vertex_map[i]);
+      Dart_handle cur = lcc.make_half_edge(vertex_map[i]);
 
       if ( prev_dart!=lcc.null_handle )
       {

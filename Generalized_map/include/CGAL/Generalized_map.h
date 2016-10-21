@@ -780,13 +780,16 @@ namespace CGAL {
     template<unsigned int dim>
     Dart_const_handle opposite(Dart_const_handle ADart) const
     { return this->template alpha<0, dim>(ADart); }
-
-    template<unsigned int dim>
-    void sew_opposite(Dart_handle dh1, Dart_handle dh2,
-                      bool update_attributes=true)
+    
+    Dart_handle other_orientation(Dart_handle ADart)
     {
-      assert(dim>0);
-      sew<dim>(dh1, this->template alpha<0>(dh2), update_attributes);
+      CGAL_assertion(!this->template is_free<0>(ADart));
+      return this->alpha<0>(ADart);
+    }
+    Dart_const_handle other_orientation(Dart_const_handle ADart) const
+    {
+      CGAL_assertion(!this->template is_free<0>(ADart));
+      return this->alpha<0>(ADart);
     }
     
     /** Count the number of used marks.
@@ -2957,6 +2960,16 @@ namespace CGAL {
       this->automatic_attributes_management = newval;
     }
 
+    /** Create an half-edge.
+     * @return a dart of the new half-edge.
+     */
+    Dart_handle make_half_edge()
+    {
+      Dart_handle d1=create_dart();
+      basic_link_alpha<0>(d1, create_dart());
+      return d1;
+    }
+    
     /** Create an edge.
      * if closed==true, the edge has no 2-free dart.
      * @return a dart of the new edge.

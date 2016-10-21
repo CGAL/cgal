@@ -546,7 +546,8 @@ namespace CGAL {
                 (*it1, this->previous(*it2)))
             {
               ++res;
-              this->template sew_opposite<3>(*it1, this->previous(*it2));
+              this->template sew<3>(*it1,
+                                    this->other_orientation(previous(*it2)));
             }
           }
         }
