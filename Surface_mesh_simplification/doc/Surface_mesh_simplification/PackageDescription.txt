@@ -38,6 +38,7 @@
 - `CGAL::Surface_mesh_simplification::Edge_profile<ECM>`
 - `CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>`
 - `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>`
+- `CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<ECM>`
 - `CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>`
 - `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
