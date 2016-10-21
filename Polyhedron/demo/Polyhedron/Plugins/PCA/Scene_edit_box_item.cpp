@@ -250,9 +250,12 @@ struct Scene_edit_box_item_priv{
   void initializeBuffers(Viewer_interface *viewer)const;
 
   void computeElements() const;
-
   void draw_picking(Viewer_interface*);
   void remodel_box(const QVector3D &dir);
+
+  bool applyX(double x, double dirx);
+  bool applyY(double y, double diry);
+  bool applyZ(double z, double dirz);
   const Scene_interface* scene;
   Scene_edit_box_item* item;
 };
@@ -943,9 +946,12 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 
   if(selected_vertex != NULL)
   {
-    *selected_vertex->x += dir.x();
-    *selected_vertex->y += dir.y();
-    *selected_vertex->z += dir.z();
+    if(applyX(*selected_vertex->x, dir.x()))
+       *selected_vertex->x += dir.x();
+    if(applyY(*selected_vertex->y, dir.y()))
+      *selected_vertex->y += dir.y();
+    if(applyZ(*selected_vertex->z, dir.z()))
+      *selected_vertex->z += dir.z();
     for( int i=0; i<3; ++i)
       relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
     for( int i=0; i<3; ++i)
@@ -955,12 +961,18 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
   }
   else if(selected_edge != NULL)
   {
-    *selected_edge->source->x += dir.x();
-    *selected_edge->source->y += dir.y();
-    *selected_edge->source->z += dir.z();
-    *selected_edge->target->x += dir.x();
-    *selected_edge->target->y += dir.y();
-    *selected_edge->target->z += dir.z();
+    if(applyX(*selected_edge->source->x, dir.x()))
+       *selected_edge->source->x += dir.x();
+    if(applyY(*selected_edge->source->y, dir.y()))
+      *selected_edge->source->y += dir.y();
+    if(applyZ(*selected_edge->source->z, dir.z()))
+      *selected_edge->source->z += dir.z();
+    if(applyX(*selected_edge->target->x, dir.x()))
+       *selected_edge->target->x += dir.x();
+    if(applyY(*selected_edge->target->y, dir.y()))
+      *selected_edge->target->y += dir.y();
+    if(applyZ(*selected_edge->target->z, dir.z()))
+      *selected_edge->target->z += dir.z();
     for( int i=0; i<3; ++i)
       relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
     for( int i=0; i<3; ++i)
@@ -972,9 +984,12 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
   {
     for( int i=0; i<4; ++i)
     {
-      *selected_face->vertices[i]->x += dir.x();
-      *selected_face->vertices[i]->y += dir.y();
-      *selected_face->vertices[i]->z += dir.z();
+      if(applyX(*selected_face->vertices[i]->x, dir.x()))
+         *selected_face->vertices[i]->x += dir.x();
+      if(applyY(*selected_face->vertices[i]->y, dir.y()))
+        *selected_face->vertices[i]->y += dir.y();
+      if(applyZ(*selected_face->vertices[i]->z, dir.z()))
+        *selected_face->vertices[i]->z += dir.z();
     }
     for( int i=0; i<3; ++i)
       relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
@@ -984,4 +999,48 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
     item->invalidateOpenGLBuffers();
   }
   constraint.setTranslationConstraintType(prev_cons);
+}
+
+bool Scene_edit_box_item_priv::applyX(double x, double dirx)
+{
+  if(x == pool[0])
+  {
+    if(x+dirx < pool[3])
+      return true;
+  }
+  else
+  {
+    if(x+dirx > pool[0])
+      return true;
+  }
+  return false;
+}
+
+bool Scene_edit_box_item_priv::applyY(double y, double diry)
+{
+  if(y == pool[1])
+  {
+    if(y+diry < pool[4])
+      return true;
+  }
+  else
+  {
+    if(y+diry > pool[1])
+      return true;
+  }
+  return false;
+}
+bool Scene_edit_box_item_priv::applyZ(double z, double dirz)
+{
+  if(z == pool[2])
+  {
+    if(z+dirz < pool[5])
+      return true;
+  }
+  else
+  {
+    if(z+dirz > pool[2])
+      return true;
+  }
+  return false;
 }
