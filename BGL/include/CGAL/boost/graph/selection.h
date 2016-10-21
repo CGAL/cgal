@@ -27,7 +27,7 @@
 namespace CGAL {
 
 
-/// Operation on faces
+// Operation on faces
 namespace internal{
 // extract edges in non-selected faces (boundary excluded but one)
 template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
@@ -252,7 +252,7 @@ select_incident_faces(
   return out;
 }
 
-/// Operations on edges
+// Operations on edges
 /*!
 \ingroup PkgBGLSelectionFct
 Augments a selection with edges of `fg` that are adjacent
@@ -406,7 +406,7 @@ reduce_edge_selection(
   return out;
 }
 
-/// Operations on vertices
+// Operations on vertices
 /*!
 \ingroup PkgBGLSelectionFct
 Augments a selection with vertices of `fg` that are adjacent
