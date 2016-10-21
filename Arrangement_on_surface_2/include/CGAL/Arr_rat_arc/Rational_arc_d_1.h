@@ -1830,7 +1830,7 @@ class Continuous_rational_arc_d_1:
 {
 public:
   bool is_left_to_right() const
-  { return (this->_info & Base::IS_DIRECTED_RIGHT); }
+  { return (this->_info & Base::IS_DIRECTED_RIGHT) != 0; }
 
 public:
   typedef Algebraic_kernel_                             Algebraic_kernel;
