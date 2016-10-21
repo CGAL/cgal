@@ -17,7 +17,7 @@
 #include <fstream>
 #include <iostream>
 
-/// \file MVC_post_processor.h
+/// \file CGAL/MVC_post_processor_3.h
 
 // @todo Determine the proper name of this file
 // @todo Handle non-simple boundary

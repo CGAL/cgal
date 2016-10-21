@@ -87,15 +87,18 @@ namespace CGAL {
 /*!
 \ingroup PkgBGLHelper
 
-The class template `Seam_mesh` is an adaptor for a triangle mesh and some marked edges
-which look like boundary edges, when exploring the seam mesh with the generic BGL style
-functions, and `boost::graph_traits<Seam_mesh<TM> >`. 
+An adaptor for a triangle mesh which turns some marked edges into
+boundary edges when exploring the seam mesh with the generic BGL style
+functions.
 
 \cgalModels `FaceGraph`
 
-\tparam TM must be a model of `FaceGraph`
-\tparam SEM must be a property map with key type `boost::graph_traits<TM>::edge_descriptor` and value type `bool`.
-\tparam SVM must be a property map with key type `boost::graph_traits<TM>::vertex_descriptor` and value type `bool`.
+\tparam TM a model of `FaceGraph`
+\tparam SEM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::edge_descriptor` as key type and `bool` as value type.
+\tparam SVM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::vertex_descriptor` as key type and `bool` as value type.
+
+\sa \link BGLSeam_meshGT `boost::graph_traits<Seam_mesh<TM> >` \endlink
+
 */
 
 template <class TM, class SEM, class SVM>
