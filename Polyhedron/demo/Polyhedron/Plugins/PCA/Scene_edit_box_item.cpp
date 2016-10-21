@@ -70,9 +70,12 @@ struct Scene_edit_box_item_priv{
     double y=(bb.ymin()+bb.ymax())/2;
     double z=(bb.zmin()+bb.zmax())/2;
     center_ = qglviewer::Vec(x,y,z);
+    relative_center_ = qglviewer::Vec(0,0,0);
     remodel_frame = new Scene_item::ManipulatedFrame();
+    remodel_frame->setTranslationSensitivity(1.0);
     frame = new Scene_item::ManipulatedFrame();
     frame->setPosition(center_);
+    frame->setSpinningSensitivity(100.0); //forbid spinning
     constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
     constraint.setRotationConstraintDirection(qglviewer::Vec(.0,.0,.1));
     frame->setConstraint(&constraint);
@@ -98,7 +101,7 @@ struct Scene_edit_box_item_priv{
     // 0------3
 
     //vertices
-    for(short i = 0; i< 8; ++i)
+    for( int i = 0; i< 8; ++i)
     {
 
      vertices[i].x = ((i/2)%2==0)? &pool[0]:&pool[3];
@@ -116,7 +119,7 @@ struct Scene_edit_box_item_priv{
     // .--11--.
 
     //edges
-    for(short i=0; i<12; ++i)
+    for( int i=0; i<12; ++i)
     {
       edges[i].id = i;
       if(i<4)
@@ -154,14 +157,14 @@ struct Scene_edit_box_item_priv{
 
 
     //faces
-    for(short i=0; i<4; ++i)
+    for( int i=0; i<4; ++i)
     {
       faces[0].vertices[i] = &vertices[i];
       faces[0].edges[(i+1)%4] = &edges[i+7];
     }
     faces[0].id =0;
 
-    for(short i=1; i<4; ++i)
+    for( int i=1; i<4; ++i)
     {
       faces[i].vertices[0] = &vertices[i];
       faces[i].vertices[1] = &vertices[(i-1)];
@@ -186,7 +189,7 @@ struct Scene_edit_box_item_priv{
     faces[4].edges[3] = &edges[4];
     faces[4].id =4;
 
-    for(short i=0; i<4; ++i)
+    for( int i=0; i<4; ++i)
     {
       faces[5].vertices[i] = &vertices[i+4];
       faces[5].edges[i] = &edges[i+4];
@@ -196,9 +199,9 @@ struct Scene_edit_box_item_priv{
     vertex_faces.resize(0);
     normal_faces.resize(0);
 
-    for(short i=0; i<6; ++i)
+    for( int i=0; i<6; ++i)
     {
-      for(short j=0; j<4; ++j)
+      for( int j=0; j<4; ++j)
       {
         faces[i].vertices[j]->face_ = &faces[i];
         faces[i].edges[j]->face_ = &faces[i];
@@ -230,6 +233,7 @@ struct Scene_edit_box_item_priv{
   qglviewer::Vec rf_last_pos;
   qglviewer::LocalConstraint constraint;
   qglviewer::Vec center_;
+  qglviewer::Vec relative_center_;
 
   mutable QOpenGLShaderProgram pick_sphere_program;
   mutable Scene_edit_box_item::vertex vertices[8];
@@ -608,7 +612,7 @@ void Scene_edit_box_item_priv::computeElements() const
   color_spheres.clear();
 
   //edges
-  for(short i=0; i<12; ++i)
+  for( int i=0; i<12; ++i)
   {
     if(i<4)
     {
@@ -659,7 +663,7 @@ void Scene_edit_box_item_priv::computeElements() const
 
   }
   //faces
-  for(short i=0; i<6; ++i)
+  for( int i=0; i<6; ++i)
   {
     push_xyz(vertex_faces, faces[i].vertices[0]->position(), center_);
     push_xyz(vertex_faces, faces[i].vertices[3]->position(), center_);
@@ -669,7 +673,7 @@ void Scene_edit_box_item_priv::computeElements() const
     push_xyz(vertex_faces, faces[i].vertices[2]->position(), center_);
     push_xyz(vertex_faces, faces[i].vertices[1]->position(), center_);
 
-    for(short j=0; j<6; ++j)
+    for( int j=0; j<6; ++j)
     {
       push_normal(normal_faces, i);
 
@@ -680,7 +684,7 @@ void Scene_edit_box_item_priv::computeElements() const
   }
 
   //spheres
-  for(short i=0; i<8; ++i)
+  for( int i=0; i<8; ++i)
   {
     color_spheres.push_back((20.0*i+10)/255);
     color_spheres.push_back(0);
@@ -710,7 +714,7 @@ bool Scene_edit_box_item::supportsRenderingMode(RenderingMode m) const {
 Scene_item::ManipulatedFrame*
 Scene_edit_box_item::manipulatedFrame()
 {
-  return d->selection_on? d->remodel_frame :d->frame;
+  return d->frame;
 }
 
 double Scene_edit_box_item::point(short i, short j) const
@@ -757,6 +761,7 @@ void Scene_edit_box_item_priv::reset_selection()
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
   viewer->setManipulatedFrame(frame);
   viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, QGLViewer::SELECT);
+  constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
   selected_vertex= NULL;
   selected_edge= NULL;
   selected_face= NULL;
@@ -792,8 +797,7 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
       if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
       {
         d->selection_on = true;
-        d->remodel_frame->setPosition(d->center_);
-        d->rf_last_pos = d->center_;
+        d->rf_last_pos = d->remodel_frame->position();
         int r(std::ceil((buffer[0]-10)/20)), g(std::ceil((buffer[1]-10)/20)), b(std::ceil((buffer[2]-10)/20));
         int picked = (std::max)(r,g);
         picked = (std::max)(picked,b);
@@ -827,11 +831,11 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
             Kernel::Point_3 a1(d->selected_face->vertices[1]->position()), a0(d->selected_face->vertices[0]->position())
                 ,a3(d->selected_face->vertices[3]->position());
             QVector3D a(a1.x()-a0.x(), a1.y()-a0.y(),a1.z()-a0.z()),b(a3.x()-a0.x(), a3.y()-a0.y(),a3.z()-a0.z());
-            QVector3D n = QVector3D::crossProduct(a.normalized(),b.normalized()).normalized();
+            QVector3D n = QVector3D::crossProduct(a,b);
 
+            d->remodel_frame->setConstraint(&d->constraint);
             d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
             d->constraint.setTranslationConstraintDirection(qglviewer::Vec(n.x(), n.y(), n.z()));
-            d->remodel_frame->setConstraint(&d->constraint);
           }
         }
         viewer->setBackgroundColor(bgColor);
@@ -858,9 +862,9 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
     {
       if(d->selection_on)
       {
-        QVector3D dir(d->remodel_frame->position().x - d->rf_last_pos.x,
-                      d->remodel_frame->position().y - d->rf_last_pos.y,
-                      d->remodel_frame->position().z - d->rf_last_pos.z);
+        d->remodel_frame->setOrientation(d->frame->orientation());
+        qglviewer::Vec td(d->remodel_frame->transformOf(d->remodel_frame->position() - d->rf_last_pos));
+        QVector3D dir(td.x, td.y, td.z);
         d->rf_last_pos = d->remodel_frame->position();
         d->remodel_box(dir);
         return false;
@@ -934,12 +938,19 @@ void Scene_edit_box_item_priv::draw_picking(Viewer_interface* viewer)
 //!\todo redo the API to only use a list of selected vertices
 void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
+  qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
+  constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
 
   if(selected_vertex != NULL)
   {
     *selected_vertex->x += dir.x();
     *selected_vertex->y += dir.y();
     *selected_vertex->z += dir.z();
+    for( int i=0; i<3; ++i)
+      relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
+    for( int i=0; i<3; ++i)
+      center_[i] =(pool[i]+pool[i+3])/2;
+    frame->translate(frame->inverseTransformOf(relative_center_));
     item->invalidateOpenGLBuffers();
   }
   else if(selected_edge != NULL)
@@ -950,16 +961,27 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
     *selected_edge->target->x += dir.x();
     *selected_edge->target->y += dir.y();
     *selected_edge->target->z += dir.z();
+    for( int i=0; i<3; ++i)
+      relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
+    for( int i=0; i<3; ++i)
+      center_[i] =(pool[i]+pool[i+3])/2;
+    frame->translate(frame->inverseTransformOf(relative_center_));
     item->invalidateOpenGLBuffers();
   }
   else if(selected_face != NULL)
   {
-    for(short i=0; i<4; ++i)
+    for( int i=0; i<4; ++i)
     {
       *selected_face->vertices[i]->x += dir.x();
       *selected_face->vertices[i]->y += dir.y();
       *selected_face->vertices[i]->z += dir.z();
     }
+    for( int i=0; i<3; ++i)
+      relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
+    for( int i=0; i<3; ++i)
+      center_[i] =(pool[i]+pool[i+3])/2;
+    frame->translate(frame->inverseTransformOf(relative_center_));
     item->invalidateOpenGLBuffers();
   }
+  constraint.setTranslationConstraintType(prev_cons);
 }
