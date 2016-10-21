@@ -240,7 +240,8 @@ walk_to_next_3() {
     // by comparing its position relative to the planes through the
     // source and the edges of the cell.
     Orientation o[6];
-    Orientation op[4]; int pos = 0;
+    Orientation op[4];
+    int pos = 0;
     // We keep track of which orientations are calculated.
     bool calc[6] = { false, false, false, false, false, false };
 
@@ -264,15 +265,19 @@ walk_to_next_3() {
     // For the remembering stochastic walk, we start trying with a random facet.
     int li = rng.template get_bits<2>();
     CGAL_triangulation_assertion_code( bool incell = true; )
-    for( int k = 0; k < 4; ++k, li = _tr.increment_index(li) ) {
+    for( int k = 0; k < 4; ++k, li = _tr.increment_index(li) )
+    {
         // Skip the previous cell.
         Cell_handle next = get<0>(_cur)->neighbor(li);
         if( next == get<0>(_prev) )
-            continue;
-  
+        {
+          op[li] = POSITIVE;
+          pos += li;
+          continue;
+        }
         Vertex_handle backup = vert[li];
         vert[li] = _t_vert;
-       
+
         // Check if the target is on the opposite side of the supporting plane.
         op[li] = _tr.orientation( vert[0], vert[1], vert[2], vert[3] );
         if( op[li] == POSITIVE )
