@@ -780,7 +780,10 @@ namespace CGAL {
     template<unsigned int dim>
     Dart_const_handle opposite(Dart_const_handle ADart) const
     { return this->template alpha<0, dim>(ADart); }
-    
+
+    void set_next(Dart_handle dh1, Dart_handle dh2)
+    { this->link_alpha<1>(dh1, dh2); }
+
     Dart_handle other_orientation(Dart_handle ADart)
     {
       CGAL_assertion(!this->template is_free<0>(ADart));
@@ -792,6 +795,25 @@ namespace CGAL {
       return this->alpha<0>(ADart);
     }
     
+    size_type number_of_halfedges() const
+    {
+      assert(is_without_boundary(0));
+      return number_of_darts()/2;
+    }
+
+    bool are_all_faces_closed() const
+    {
+      for ( typename Dart_const_range::const_iterator it(darts().begin()),
+              itend(darts().end()); it!=itend; ++it)
+      {
+        if (this->template is_free<0>(it) ||
+            this->template is_free<1>(it))
+          return false;
+      }
+
+      return true;
+    }
+
     /** Count the number of used marks.
      * @return the number of used marks.
      */
@@ -2969,7 +2991,7 @@ namespace CGAL {
       basic_link_alpha<0>(d1, create_dart());
       return d1;
     }
-    
+
     /** Create an edge.
      * if closed==true, the edge has no 2-free dart.
      * @return a dart of the new edge.
@@ -2987,7 +3009,7 @@ namespace CGAL {
         basic_link_alpha<2>(d1, d3);
         basic_link_alpha<2>(d2, d4);
       }
-      
+
       return d1;
     }
 
@@ -3011,7 +3033,7 @@ namespace CGAL {
         set_dart_attribute<0>(this->alpha<2>(d1),h0);
         set_dart_attribute<0>(this->alpha<0,2>(d1),h1);
       }
-      
+
       return d1;
     }
 
@@ -3574,7 +3596,7 @@ namespace CGAL {
     bool isfree1 = (this->template is_free<1>(adart1));
 
     for ( ; it1.cont(); ++it1)
-    {      
+    {
       d1 = create_dart();
       d2 = create_dart();
       mark(it1,treated);
@@ -3970,7 +3992,7 @@ namespace CGAL {
     template < class Gmap, typename Converters >
     Generalized_map(const Gmap & amap, const Converters& converters) :
       Base(amap, converters)
-    {}    
+    {}
 
     template < class Gmap, typename Converters, typename DartInfoConverter >
     Generalized_map(const Gmap & amap, const Converters& converters,

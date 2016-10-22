@@ -177,7 +177,7 @@ namespace CGAL {
       CGAL_static_assertion_msg(Dart::dimension==dimension,
                   "Dimension of dart different from dimension of map");
 #endif
-      
+
       CGAL_static_assertion_msg(Helper::nb_attribs<=dimension+1,
                   "Too many attributes in the tuple Attributes_enabled");
       this->init_storage();
@@ -834,11 +834,29 @@ namespace CGAL {
     Dart_const_handle opposite(Dart_const_handle ADart) const
     { return this->template beta<dim>(ADart); }
 
+    void set_next(Dart_handle dh1, Dart_handle dh2)
+    { this->link_beta<1>(dh1, dh2); }
+
     Dart_handle other_orientation(Dart_handle ADart)
     { return ADart; }
     Dart_const_handle other_orientation(Dart_const_handle ADart) const
     { return ADart; }
-    
+
+    size_type number_of_halfedges() const
+    { return number_of_darts(); }
+
+    bool are_all_faces_closed() const
+    {
+      for (typename Dart_const_range::const_iterator it(darts().begin()),
+             itend(darts().end()); it!=itend; ++it)
+      {
+        if (this->template is_free<1>(it))
+          return false;
+      }
+
+      return true;
+    }
+
     /** Count the number of used marks.
      * @return the number of used marks.
      */
@@ -3810,7 +3828,7 @@ namespace CGAL {
      */
     Dart_handle make_half_edge()
     { return create_dart(); }
-    
+
     /** Create an edge.
      * if closed==true, the edge has no 2-free dart.
      * (note that for CMap there is no differente between true and false, but

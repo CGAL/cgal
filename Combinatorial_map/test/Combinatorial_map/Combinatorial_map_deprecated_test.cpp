@@ -8,6 +8,7 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Combinatorial_map_insertions.h>
 #include <CGAL/Cell_attribute.h>
 
 struct My_items
