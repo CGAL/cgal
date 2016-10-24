@@ -26,6 +26,7 @@
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/internal/info_check.h>
+#include <CGAL/tss.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
@@ -1115,20 +1116,40 @@ remove(Vertex_handle v)
     }
 }
 
+namespace internal{
+namespace P2DT2{
+
+template<class P2DT2>
+struct Static_data{
+  int maxd;
+  std::vector<typename P2DT2::Face_handle> f;
+  std::vector<int> i;
+  std::vector<typename P2DT2::Vertex_handle> w;
+  std::vector<typename P2DT2::Offset> offset_w;
+  Static_data(int m)
+    : maxd(m)
+    , f(maxd)
+    , i(maxd)
+    , w(maxd)
+    , offset_w(maxd)
+  {}
+};
+
+} } //end of namespace internal::P2DT2
+
 template < class Gt, class Tds >
 bool
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 remove_single_vertex(Vertex_handle v, const Offset &v_o)
 {
-  static int maxd = 30;
-  static std::vector<Face_handle> f(maxd);
-  static std::vector<int> i(maxd);
-  static std::vector<Vertex_handle> w(maxd);
-  static std::vector<Offset> offset_w(maxd);
+  typedef internal::P2DT2::
+    Static_data< Periodic_2_Delaunay_triangulation_2<Gt, Tds> > Static_data;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Static_data, sd, 30);
+
   int d;
   bool simplicity_criterion;
 
-  if (remove_degree_init(v, v_o, f, w, offset_w, i, d, maxd, simplicity_criterion))
+  if (remove_degree_init(v, v_o, sd.f, sd.w, sd.offset_w, sd.i, d, sd.maxd, simplicity_criterion))
     {
       if (is_1_cover())
         {
@@ -1138,9 +1159,9 @@ remove_single_vertex(Vertex_handle v, const Offset &v_o)
     }
 
   if (simplicity_criterion)
-    remove_degree_triangulate(v, f, w, i, d);
+    remove_degree_triangulate(v, sd.f, sd.w, sd.i, d);
   else
-    remove_degree_triangulate(v, f, w, offset_w, i, d);
+    remove_degree_triangulate(v, sd.f, sd.w, sd.offset_w, sd.i, d);
 
   this->delete_vertex(v);
 
