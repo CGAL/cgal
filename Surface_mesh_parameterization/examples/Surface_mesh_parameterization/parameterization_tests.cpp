@@ -319,14 +319,15 @@ int main(int argc, char * argv[])
     TM_halfedge_descriptor bhd(smhd);
     bhd = opposite(bhd, mesh); // a halfedge on the virtual border
 
-
+    // Indices
     typedef boost::unordered_map<TM_vertex_descriptor, int> Vertex_index_map;
     Vertex_index_map vim;
     boost::associative_property_map<Vertex_index_map> vipm(vim);
     mesh.initialize_vertex_index_map(bhd, vipm);
 
+    // Parameterized
     boost::unordered_set<TM_vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map< boost::unordered_set<TM_vertex_descriptor> > vpm(vs);
+    CGAL::internal::Bool_property_map<boost::unordered_set<TM_vertex_descriptor> > vpm(vs);
 
     typename CGAL::ARAP_parameterizer_3<TMesh> parameterizer;
     parameterizer.parameterize(mesh, bhd, uv_pm, vipm, vpm);

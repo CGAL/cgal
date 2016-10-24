@@ -36,10 +36,9 @@
 
 // @todo Determine the proper name of this file and add the header
 // @todo Have an initial parameterization (LSCM or MVC) that depends on the number
-//       of components
+//       of boundaries
 // @todo Add distortion measures
-// @todo Make it work with a surface mesh type
-// @todo Handle the case cot(0) with a local parameterization aligned with the axes
+// @todo Handle the case cot = 0 with a local parameterization aligned with the axes
 //       (this produces C2=0 which is problematic to compute a & b)
 
 // @todo Use a boost array for the roots?
@@ -625,6 +624,7 @@ private:
         Point_2 uvpj = get(uvmap, target(hd, mesh));
         NT diff_x = uvpi.x() - uvpj.x();
         NT diff_y = uvpi.y() - uvpj.y();
+//        CGAL_warning(diff_x == 0. && diff_y == 0.);
 
         // local positions (in the isometric 2D param)
         Local_indices li = get(lpmap, hd);
@@ -679,7 +679,8 @@ private:
         // The function above is correct up to 10^{-14}, but below can be used
         // if more precision is needed (should never be the case)
 //        std::vector<NT> roots_with_AK;
-//        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2, roots_with_AK);
+//        solve_cubic_equation_with_AK(a3_coeff, 0., (C1 - 2. * m_lambda), -C2,
+//                                     roots_with_AK);
 
         std::size_t ind = compute_root_with_lowest_energy(mesh, fd,
                                                           ctmap, lp, lpmap, uvmap,
@@ -715,12 +716,12 @@ private:
                         Point_2& z0, Point_2& z1, Point_2& z2) const              // out
   {
     Vector_3 X = p1 - p0;
-    NT X_norm = std::sqrt(X * X);
+    NT X_norm = CGAL::sqrt(X * X);
     if(X_norm != 0.0)
       X = X / X_norm;
 
     Vector_3 Z = CGAL::cross_product(X, p2 - p0);
-    NT Z_norm = std::sqrt(Z * Z);
+    NT Z_norm = CGAL::sqrt(Z * Z);
     if(Z_norm != 0.0)
       Z = Z / Z_norm;
 
@@ -728,7 +729,7 @@ private:
 
     NT x0 = 0;
     NT y0 = 0;
-    NT x1 = std::sqrt( (p1 - p0)*(p1 - p0) );
+    NT x1 = CGAL::sqrt( (p1 - p0)*(p1 - p0) );
     NT y1 = 0;
     NT x2 = (p2 - p0) * X;
     NT y2 = (p2 - p0) * Y;
