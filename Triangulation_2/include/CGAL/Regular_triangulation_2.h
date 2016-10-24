@@ -22,6 +22,7 @@
 #define CGAL_REGULAR_TRIANGULATION_2_H
 
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
@@ -39,31 +40,25 @@
 
 namespace CGAL { 
 
-template < typename K_ >
-struct Weighted_point_mapper_2 
-  :   public K_ 
-{
-  typedef typename K_::Weighted_point_2 Point_2;
-
-  Weighted_point_mapper_2() {}
-  Weighted_point_mapper_2(const K_& k) : K_(k) {}
-};
-
 template < class Gt, 
            class Tds  = Triangulation_data_structure_2 <
-                        Regular_triangulation_vertex_base_2<Gt>,
+                        Regular_triangulation_vertex_base_2<
+                          Regular_triangulation_euclidean_traits_2<Gt> >,
 		        Regular_triangulation_face_base_2<Gt> > >
 class Regular_triangulation_2 
-  : public Triangulation_2<Weighted_point_mapper_2<Gt>,Tds>
+  : public Triangulation_2<
+      Regular_triangulation_euclidean_traits_2<Gt>,
+      Tds>
 {
   typedef Regular_triangulation_2<Gt, Tds>                         Self;
-  typedef Triangulation_2<Weighted_point_mapper_2<Gt>,Tds>         Base;
+  typedef Regular_triangulation_euclidean_traits_2<Gt>             RT_traits;
+  typedef Triangulation_2<RT_traits, Tds>                          Base;
 public:
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
   typedef typename Gt::Point_2                 Bare_point;
   typedef typename Gt::Weighted_point_2        Weighted_point;
-  typedef typename Gt::Weight                  Weight;
+  typedef typename Gt::FT                      Weight;
 
   typedef typename Base::size_type             size_type;
   typedef typename Base::Face_handle           Face_handle;
@@ -194,15 +189,25 @@ private:
   size_type _hidden_vertices;
 
 public:
-  Regular_triangulation_2(const Gt& gt=Gt()) 
-    : Base(Weighted_point_mapper_2<Gt>(gt)), _hidden_vertices(0) {}
+  Regular_triangulation_2()
+    : Base(), _hidden_vertices(0) {}
+
+  Regular_triangulation_2(const Gt&)
+    : Base(), _hidden_vertices(0) {}
 
   Regular_triangulation_2(const Regular_triangulation_2 &rt);
 
   template < class InputIterator >
   Regular_triangulation_2(InputIterator first, InputIterator last,
-                          const Gt& gt=Gt())
-    : Base(Weighted_point_mapper_2<Gt>(gt)), _hidden_vertices(0)
+                          const Gt&)
+    : Base(), _hidden_vertices(0)
+  {
+    insert(first, last);
+  }
+
+  template < class InputIterator >
+  Regular_triangulation_2(InputIterator first, InputIterator last)
+    : Base(), _hidden_vertices(0)
   {
     insert(first, last);
   }

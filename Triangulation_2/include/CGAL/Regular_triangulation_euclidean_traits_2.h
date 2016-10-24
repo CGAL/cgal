@@ -36,9 +36,10 @@ public:
   typedef R                                     Rep;
   typedef typename R::FT                        Weight;
   typedef R                                     Traits;
-  typedef typename Traits::Point_2              Bare_point;
-  typedef typename Traits::Point_2              Point_2;
+  typedef typename R::Point_2                   Bare_point;
   typedef typename R::Weighted_point_2          Weighted_point_2;
+  typedef typename Weighted_point_2             Point_2;
+
   // This is required for the point() function of vertex base class
   // to be correctly return a weighted_point;
   // patch 27/11/00
@@ -46,34 +47,6 @@ public:
   // for the need of hierarchy
   // don't know if this is definitive
   //typedef Weighted_point                        Point_2;
-
-  typedef Regular_triangulation_euclidean_traits_2<R, W>   Self;
-
-  typedef typename R::Power_side_of_oriented_power_circle_2 Power_side_of_oriented_power_circle_2;
-  typedef typename R::Compare_power_distance_2  Compare_power_distance_2;
-
-  // construction objects
-  typedef typename R::Construct_weighted_circumcenter_2
-                                            Construct_weighted_circumcenter_2;
-  typedef typename R::Construct_radical_axis_2 Construct_radical_axis_2;
-  
-  Power_side_of_oriented_power_circle_2 
-  power_side_of_oriented_power_circle_2_object() const
-    {  return Power_side_of_oriented_power_circle_2();}
-
-  Compare_power_distance_2
-  compare_power_distance_2_object() const {
-    return Compare_power_distance_2();
-  }
-
-  //constructions for dual:
-  Construct_weighted_circumcenter_2
-  construct_weighted_circumcenter_2_object() const
-    {return Construct_weighted_circumcenter_2();}
-  
-  Construct_radical_axis_2
-  construct_radical_axis_2_object() const
-    {return Construct_radical_axis_2();}
 
 };
  

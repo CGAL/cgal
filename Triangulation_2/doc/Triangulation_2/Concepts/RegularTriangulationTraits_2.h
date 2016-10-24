@@ -18,9 +18,10 @@ of Delaunay triangulations.
 
 \cgalRefines `TriangulationTraits_2` 
 
+\cgalHasModel All CGAL Kernels
 \cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_2`
 
-\sa `TriangulationTraits_2` 
+\sa `TriangulationTraits_2`
 \sa `CGAL::Regular_triangulation_2<Traits,Tds>` 
 
 */
@@ -32,13 +33,13 @@ public:
 /// @{
 
 /*!
-Another name for the point type. 
+The (unweighted) point type.
+It has to be a model of the concept `Kernel::Point_2`.
 */ 
-  typedef unspecified_type Bare_point; 
+  typedef unspecified_type Point_2; 
 
 /*!
-The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_2`,
-and it must be implicitely convertible from and to `Bare_point`.
+The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_2`.
 */ 
   typedef unspecified_type Weighted_point_2; 
 
@@ -78,7 +79,7 @@ model of `Kernel::ComparePowerDistance_2`
 for comparing two power distances. 
 Must provide the operator: 
 
-`Comparison_result operator()(Bare_point p, Weighted_point_2 q, Weighted_point_2 r)`, 
+`Comparison_result operator()(Point_2 p, Weighted_point_2 q, Weighted_point_2 r)`, 
 which compares the power distance between `p` and `q` to the 
 power distance between `p` and `r`. 
 */ 
@@ -92,7 +93,7 @@ weighted points.
 
 Must provide the operator:
 
-`Bare_point operator() ( Weighted_point_2 p, Weighted_point_2 q, Weighted_point_2 r);` 
+`Point_2 operator() ( Weighted_point_2 p, Weighted_point_2 q, Weighted_point_2 r);` 
 */ 
 typedef unspecified_type Construct_weighted_circumcenter_2; 
 

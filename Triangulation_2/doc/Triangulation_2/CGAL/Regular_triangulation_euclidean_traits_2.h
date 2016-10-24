@@ -17,7 +17,6 @@ and uses a `K::Weighted_point_2` as point type.
 
 \cgalModels `RegularTriangulationTraits_2`
 
-\sa `RegularTriangulationTraits_2` 
 \sa `CGAL::Regular_triangulation_2` 
 
 */
