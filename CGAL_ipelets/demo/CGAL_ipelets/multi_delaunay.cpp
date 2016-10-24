@@ -126,16 +126,15 @@ void MdelaunayIpelet::protected_run(int fn)
           Point_2 pt0_ori1=it->first->vertex(Delaunay::cw(it->second))->info().back();
           Point_2 pt1_ori0=it->first->vertex(Delaunay::ccw(it->second))->info().front();
           Point_2 pt1_ori1=it->first->vertex(Delaunay::ccw(it->second))->info().back();
-          Point_2 pt3 = Point_2();
+
           if(CGAL::compare_xy(pt0_ori0,pt1_ori0)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori0)==CGAL::EQUAL)
-            pt3 = pt1_ori1;
+            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori1),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori1)+CGAL::squared_distance(pt1_ori1,pt0_ori1))/9.));
           else
             if(CGAL::compare_xy(pt0_ori0,pt1_ori1)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori1)==CGAL::EQUAL)
-              pt3 = pt1_ori0;
+              rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori0),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori0)+CGAL::squared_distance(pt1_ori0,pt0_ori1))/9.));
 
-          if(pt3!=Point_2()) //if adjacent wpoints comed from a delaunay triangle
-            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt3),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
-              CGAL::squared_distance(pt0_ori0,pt3)+CGAL::squared_distance(pt3,pt0_ori1))/9.));
         }
         if(fn==2){//Draw 3th Delauney
           draw_in_ipe(rt);

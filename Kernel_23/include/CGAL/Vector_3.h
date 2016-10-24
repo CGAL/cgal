@@ -315,7 +315,7 @@ template <class R >
 std::istream&
 extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&) 
 {
-  typename R::FT x, y, z;
+  typename R::FT x(0), y(0), z(0);
   switch(get_mode(is)) {
     case IO::ASCII :
       is >> iformat(x) >> iformat(y) >> iformat(z);
