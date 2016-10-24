@@ -50,6 +50,11 @@ The ray type.
 */ 
 typedef unspecified_type Ray_3; 
 
+/*!
+The (unweighted) point type.
+It has to be a model of the concept `Kernel::Point_3`.
+*/
+typedef unspecified_type Point_3;
 
 /*!
 The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_3`,
