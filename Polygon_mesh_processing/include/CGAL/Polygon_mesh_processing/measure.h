@@ -226,9 +226,10 @@ namespace Polygon_mesh_processing {
             len += edge_length(haf, pmesh, np);
             visited.insert(haf);
           }
-          if(result_len < len)
-          result_len = len;
-          result_halfedge = h;
+          if(result_len < len){
+            result_len = len;
+            result_halfedge = h;
+          }
         }
       }
     }
