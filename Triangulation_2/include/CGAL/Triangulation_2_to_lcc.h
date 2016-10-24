@@ -18,12 +18,10 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 
-#ifndef CGAL_IMPORT_FROM_TRIANGULATION_2_H
-#define CGAL_IMPORT_FROM_TRIANGULATION_2_H
+#ifndef CGAL_TRIANGULATION_2_TO_LCC_H
+#define CGAL_TRIANGULATION_2_TO_LCC_H
 
-#include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Triangulation_2.h>
-
+#include <CGAL/assertions.h>
 #include <map>
 
 namespace CGAL {
@@ -44,10 +42,10 @@ namespace CGAL {
     CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
     
     // Case of empty triangulations.
-    if (atr.number_of_vertices() == 0) return LCC::null_handle;
+    if (atr.number_of_vertices()==0) return LCC::null_handle;
 
     // Check the dimension.
-    if (atr.dimension() != 2) return LCC::null_handle;
+    if (atr.dimension()!=2) return LCC::null_handle;
     CGAL_assertion(atr.is_valid());
 
     typedef typename Triangulation::Vertex_handle         TVertex_handle;
@@ -95,17 +93,17 @@ namespace CGAL {
           if ( it->vertex(0) == atr.infinite_vertex() )
             dart = res;
           else if ( it->vertex(1) == atr.infinite_vertex() )
-            dart = alcc.beta(res,1);
+            dart = alcc.next(res);
           else if ( it->vertex(2) == atr.infinite_vertex() )
-            dart = alcc.beta(res,0);
+            dart = alcc.previous(res);
         }
         
         for (unsigned int i=0; i<3; ++i)
         {
           switch (i)
           {
-          case 0: cur = alcc.beta(res,1); break;
-          case 1: cur = alcc.beta(res,0); break;
+          case 0: cur = alcc.next(res); break;
+          case 1: cur = alcc.previous(res); break;
           case 2: cur = res; break;
           }
 
@@ -114,13 +112,13 @@ namespace CGAL {
           {
             switch (atr.mirror_index(it,i) )
             {
-            case 0: neighbor = alcc.beta(maptcell_it->second,1);
+            case 0: neighbor = alcc.next(maptcell_it->second);
               break;
-            case 1: neighbor = alcc.beta(maptcell_it->second,0);
+            case 1: neighbor = alcc.previous(maptcell_it->second);
               break;
             case 2: neighbor = maptcell_it->second; break;
             }
-            alcc.template topo_sew<2>(cur, neighbor);
+            alcc.template set_opposite<2>(cur, neighbor);
           }
         }
         (*mytc)[it] = res;
@@ -133,4 +131,4 @@ namespace CGAL {
   
 } // namespace CGAL
 
-#endif // CGAL_IMPORT_FROM_TRIANGULATION_2_H
+#endif // CGAL_TRIANGULATION_2_TO_LCC_H

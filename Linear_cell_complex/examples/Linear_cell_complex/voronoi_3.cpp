@@ -2,7 +2,7 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/import_from_triangulation_3.h>
+#include <CGAL/Triangulation_3_to_lcc.h>
 
 #include <iostream>
 #include <fstream>

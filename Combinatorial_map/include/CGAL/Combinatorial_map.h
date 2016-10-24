@@ -20,6 +20,7 @@
 #ifndef CGAL_COMBINATORIAL_MAP_H
 #define CGAL_COMBINATORIAL_MAP_H 1
 
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
 #include <CGAL/internal/Combinatorial_map_copy_functors.h>
@@ -29,6 +30,7 @@
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include <CGAL/Combinatorial_map_save_load.h>
 
 #if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
 #include <CGAL/Combinatorial_map_min_items.h>
@@ -63,6 +65,7 @@ namespace CGAL {
    * Definition of generic dD Combinatorial map.
    */
 
+  struct Combinatorial_map_tag {};
 
   /** Generic definition of combinatorial map in dD.
    * The Combinatorial_map class describes an dD combinatorial map. It allows
@@ -100,6 +103,8 @@ namespace CGAL {
     template < unsigned int A, class B, class I, class D, class S >
     friend class Combinatorial_map_base;
 
+    typedef Combinatorial_map_tag Combinatorial_data_structure;
+
     /// Types definition
     typedef Storage_                                                    Storage;
     typedef Storage                                                     Base;
@@ -121,7 +126,6 @@ namespace CGAL {
     static const unsigned int dimension = Base::dimension;
 
     typedef typename Base::Null_handle_type Null_handle_type;
-
     using Base::null_handle;
     using Base::null_dart_handle;
     using Base::mdarts;
@@ -285,9 +289,7 @@ namespace CGAL {
       CGAL::cpp11::tuple<> converters;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy/*< CMap2, CGAL::cpp11::tuple<>,
-          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >*/
-          (amap, converters, dartinfoconverter, pointconverter );
+      return copy(amap, converters, dartinfoconverter, pointconverter );
     }
 
     template <typename CMap2, typename Converters>
@@ -295,9 +297,7 @@ namespace CGAL {
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
-      return copy/*< CMap2, Converters,
-          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >*/
-          (amap, converters, dartinfoconverter, pointconverter);
+      return copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     template <typename CMap2, typename Converters, typename DartInfoConverter>
@@ -305,31 +305,28 @@ namespace CGAL {
               const DartInfoConverter& dartinfoconverter)
     {
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy/*< CMap2, Converters,
-          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >*/
-          (amap, converters, dartinfoconverter, pointconverter);
+      return copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     // Copy constructor from a map having exactly the same type.
     Combinatorial_map_base (const Self & amap)
-    { copy/*<Self>*/(amap); }
+    { copy(amap); }
 
     // "Copy constructor" from a map having different type.
     template <typename CMap2>
     Combinatorial_map_base(const CMap2& amap)
-    { copy/*<CMap2>*/(amap); }
+    { copy(amap); }
 
     // "Copy constructor" from a map having different type.
     template <typename CMap2, typename Converters>
     Combinatorial_map_base(const CMap2& amap, Converters& converters)
-    { copy/*<CMap2,Converters>*/(amap, converters); }
+    { copy(amap, converters); }
 
     // "Copy constructor" from a map having different type.
     template <typename CMap2, typename Converters, typename DartInfoConverter>
     Combinatorial_map_base(const CMap2& amap, Converters& converters,
                            const DartInfoConverter& dartinfoconverter)
-    { copy/*<CMap2,Converters, PointConverter>*/(amap, converters,
-                                                 dartinfoconverter); }
+    { copy(amap, converters, dartinfoconverter); }
 
     // "Copy constructor" from a map having different type.
     template <typename CMap2, typename Converters, typename DartInfoConverter,
@@ -337,9 +334,7 @@ namespace CGAL {
     Combinatorial_map_base(const CMap2& amap, Converters& converters,
                            const DartInfoConverter& dartinfoconverter,
                            const PointConverter& pointconverter)
-    { copy/*<CMap2,Converters, PointConverter>*/(amap, converters,
-                                                 dartinfoconverter,
-                                                 pointconverter); }
+    { copy(amap, converters, dartinfoconverter, pointconverter); }
 
     /** Affectation operation. Copies one map to the other.
      * @param amap a combinatorial map.
@@ -836,6 +831,10 @@ namespace CGAL {
 
     void set_next(Dart_handle dh1, Dart_handle dh2)
     { this->link_beta<1>(dh1, dh2); }
+
+    template<unsigned int dim>
+    void set_opposite(Dart_handle dh1, Dart_handle dh2)
+    { this->link_beta<dim>(dh1, dh2); }
 
     Dart_handle other_orientation(Dart_handle ADart)
     { return ADart; }
@@ -3623,8 +3622,14 @@ namespace CGAL {
       std::deque< Dart_const_handle > toTreat1;
       std::deque< typename Map2::Dart_const_handle > toTreat2;
 
+       // A dart of this map is marked with m1 if its bijection was set
+      // (and similarly for mark m2 and darts of map2)
       size_type m1 = get_new_mark();
       size_type m2 = map2.get_new_mark();
+
+      // A dart of this map is marked with markpush if it was already pushed
+      // in the queue toTreat1.
+      size_type markpush = get_new_mark();
 
       toTreat1.push_back(dh1);
       toTreat2.push_back(dh2);
@@ -3707,8 +3712,12 @@ namespace CGAL {
                     {
                       if (!is_marked(beta(current,i), m1))
                       {
-                        toTreat1.push_back(beta(current,i));
-                        toTreat2.push_back(map2.beta(other,i));
+                        if (!is_marked(beta(current,i), markpush))
+                        {
+                          toTreat1.push_back(beta(current,i));
+                          toTreat2.push_back(map2.beta(other,i));
+                          mark(beta(current,i), markpush);
+                        }
                       }
                       else
                       {
@@ -3744,6 +3753,10 @@ namespace CGAL {
       toTreat1.push_back(dh1);
       toTreat2.push_back(dh2);
 
+      unmark(dh1, m1);
+      unmark(dh1, markpush);
+      map2.unmark(dh2, m2);
+
       while (!toTreat1.empty())
       {
         current = toTreat1.front();
@@ -3751,22 +3764,24 @@ namespace CGAL {
         other = toTreat2.front();
         toTreat2.pop_front();
 
-        unmark(current, m1);
-        map2.unmark(other, m2);
-
-        for (i = 0; match && i <= dimension; ++i)
+        for (i = 0; i <= dimension; ++i)
         {
-          if (!is_free(current,i) && is_marked(beta(current,i), m1))
+          if (!is_free(current,i) && is_marked(beta(current,i), markpush))
           {
-            CGAL_assertion(!map2.is_free(other,i) &&
-                           map2.is_marked(map2.beta(other,i), m2));
             toTreat1.push_back(beta(current,i));
             toTreat2.push_back(map2.beta(other,i));
+            unmark(beta(current,i), m1);
+            unmark(beta(current,i), markpush);
+            map2.unmark(map2.beta(other,i), m2);            
           }
         }
       }
 
+      assert(is_whole_map_unmarked(m1));
+      assert(is_whole_map_unmarked(markpush));
+      assert(map2.is_whole_map_unmarked(m2));
       free_mark(m1);
+      free_mark(markpush);
       map2.free_mark(m2);
 
       return match;

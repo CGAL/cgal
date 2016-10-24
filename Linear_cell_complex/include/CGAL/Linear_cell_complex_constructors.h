@@ -26,6 +26,7 @@
 #include <CGAL/Linear_cell_complex_incremental_builder.h>
 
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <vector>
 #include <list>
@@ -149,18 +150,25 @@ namespace CGAL {
 
         while (it2!=tabDart.end())
         {
-          alcc.set_next(alcc.template opposite<2>
-                        (alcc.other_orientation(it2->second)), prec);
+          alcc.set_next(alcc.template opposite<2>(it2->second), prec);
           prec = it2->second;
           ++it2;
         }
-        alcc.set_next(alcc.template opposite<2>(alcc.other_orientation(first)),
-                      prec);
+        alcc.set_next(alcc.template opposite<2>(first), prec);
       }
     }
 
     // We return a dart from the imported object.
     return first;
+  }
+
+  template < class LCC >
+  typename LCC::Dart_handle
+  import_from_plane_graph(LCC& alcc, const char* filename)
+  {
+    std::ifstream input(filename);
+    if (!input.is_open()) return alcc.null_handle;
+    return import_from_plane_graph(alcc, input);
   }
 
   template < class LCC >
@@ -245,6 +253,14 @@ namespace CGAL {
     B.end_surface();
   }
 
+  template < class LCC >
+  void load_off(LCC& alcc, const char* filename)
+  {
+    std::ifstream input(filename);
+    if (input.is_open())
+      load_off(alcc, input);
+  }
+
   /** Export the alcc in off file format. If dimension>2, export all faces but only once.
    *  @pre all faces are closed (i.e. form by closed cycles of edges)
    */
@@ -321,6 +337,14 @@ namespace CGAL {
     }
     writer.write_footer();
     alcc.free_mark(m);
+  }
+
+  template < class LCC >
+  void write_off(LCC& alcc, const char* filename)
+  {
+    std::ofstream output(filename);
+    if (output.is_open())
+      write_off(alcc, output);
   }
 
 } // namespace CGAL

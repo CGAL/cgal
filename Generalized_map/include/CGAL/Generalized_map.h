@@ -32,6 +32,7 @@
 #include <CGAL/Generic_map_min_items.h>
 #include <CGAL/GMap_dart_const_iterators.h>
 #include <CGAL/GMap_cell_const_iterators.h>
+#include <CGAL/Generalized_map_save_load.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <bitset>
@@ -56,6 +57,8 @@ namespace CGAL {
   /** @file Generalized_map.h
    * Definition of generic dD Generalized map.
    */
+
+  struct Generalized_map_tag {};
 
   /** Generic definition of generalized map in dD.
    * The Generalized_map class describes an dD generalized map. It allows
@@ -84,6 +87,8 @@ namespace CGAL {
   public:
     template < unsigned int A, class B, class I, class D, class S >
     friend class Generalized_map_base;
+
+    typedef Generalized_map_tag Combinatorial_data_structure;
 
     /// Types definition
     typedef Storage_                                                  Storage;
@@ -259,8 +264,8 @@ namespace CGAL {
     void copy(const GMap2& amap)
     {
       CGAL::cpp11::tuple<> converters;
-      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
       Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
+      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
       return copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
@@ -782,7 +787,18 @@ namespace CGAL {
     { return this->template alpha<0, dim>(ADart); }
 
     void set_next(Dart_handle dh1, Dart_handle dh2)
-    { this->link_alpha<1>(dh1, dh2); }
+    {
+      assert(!this->template is_free<0>(dh1));
+      this->template link_alpha<1>(this->template alpha<0>(dh1), dh2); }
+
+    template<unsigned int dim>
+    void set_opposite(Dart_handle dh1, Dart_handle dh2)
+    {
+      assert(!this->template is_free<0>(dh1));
+      assert(!this->template is_free<0>(dh2));
+      this->template link_alpha<dim>(this->template alpha<0>(dh1), dh2);
+      this->template link_alpha<dim>(dh1, this->template alpha<0>(dh2));
+    }
 
     Dart_handle other_orientation(Dart_handle ADart)
     {
@@ -2784,8 +2800,14 @@ namespace CGAL {
       std::deque< Dart_const_handle > toTreat1;
       std::deque< typename Map2::Dart_const_handle > toTreat2;
 
+       // A dart of this map is marked with m1 if its bijection was set
+      // (and similarly for mark m2 and darts of map2)
       size_type m1 = get_new_mark();
       size_type m2 = map2.get_new_mark();
+
+      // A dart of this map is marked with markpush if it was already pushed
+      // in the queue toTreat1.
+      size_type markpush = get_new_mark();
 
       toTreat1.push_back(dh1);
       toTreat2.push_back(dh2);
@@ -2866,8 +2888,12 @@ namespace CGAL {
                     {
                       if (!is_marked(alpha(current,i), m1))
                       {
-                        toTreat1.push_back(alpha(current,i));
-                        toTreat2.push_back(map2.alpha(other,i));
+                        if (!is_marked(alpha(current,i), markpush))
+                        {
+                          toTreat1.push_back(alpha(current,i));
+                          toTreat2.push_back(map2.alpha(other,i));
+                          mark(alpha(current,i), markpush);
+                        }
                       }
                       else
                       {
@@ -2903,15 +2929,16 @@ namespace CGAL {
       toTreat1.push_back(dh1);
       toTreat2.push_back(dh2);
 
+      unmark(dh1, m1);
+      map2.unmark(dh2, m2);
+      unmark(dh1, markpush);
+
       while (!toTreat1.empty())
       {
         current = toTreat1.front();
         toTreat1.pop_front();
         other = toTreat2.front();
         toTreat2.pop_front();
-
-        unmark(current, m1);
-        map2.unmark(other, m2);
 
         for (i = 0; match && i <= dimension; ++i)
         {
@@ -2921,11 +2948,18 @@ namespace CGAL {
                            map2.is_marked(map2.alpha(other,i), m2));
             toTreat1.push_back(alpha(current,i));
             toTreat2.push_back(map2.alpha(other,i));
+            unmark(alpha(current,i), m1);
+            map2.unmark(map2.alpha(other,i), m2);
+            unmark(alpha(current,i), markpush);
           }
         }
       }
 
+      assert(is_whole_map_unmarked(m1));
+      assert(is_whole_map_unmarked(markpush));
+      assert(map2.is_whole_map_unmarked(m2));
       free_mark(m1);
+      free_mark(markpush);
       map2.free_mark(m2);
 
       return match;

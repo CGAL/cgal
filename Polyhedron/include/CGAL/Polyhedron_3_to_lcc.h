@@ -18,12 +18,12 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 
-#ifndef CGAL_IMPORT_FROM_POLYHEDRON_3_H
-#define CGAL_IMPORT_FROM_POLYHEDRON_3_H
+#ifndef CGAL_POLYHEDRON_3_TO_LCC_H
+#define CGAL_POLYHEDRON_3_TO_LCC_H
 
-#include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/assertions.h>
 #include <iostream>
+#include <map>
 
 namespace CGAL {
 
@@ -59,18 +59,18 @@ namespace CGAL {
       prev = LCC::null_handle;
       do
       {
-        d = alcc.create_dart();
+        d = alcc.make_half_edge();
         TC[j] = d;
 
-        if (prev != LCC::null_handle) alcc.template link_beta<1>(prev, d);
+        if (prev != LCC::null_handle) alcc.set_next(prev, d);
         else firstFacet = d;
         it = TC.find(j->opposite());
         if (it != TC.end())
-          alcc.template link_beta<2>(d, it->second);
+          alcc.template set_opposite<2>(d, it->second);
         prev = d;
       }
       while (++j != i->facet_begin());
-      alcc.template link_beta<1>(prev, firstFacet);
+      alcc.set_next(prev, firstFacet);
       if (firstAll == LCC::null_handle) firstAll = firstFacet;
     }
 
@@ -82,7 +82,7 @@ namespace CGAL {
       do
       {
         d = TC[j]; // Get the dart associated to the Halfedge
-        if (alcc.vertex_attribute(d) == LCC::null_handle)
+        if (alcc.vertex_attribute(d)==LCC::null_handle)
         {
           alcc.set_vertex_attribute
             (d, alcc.create_vertex_attribute(j->opposite()->vertex()->point()));
@@ -92,7 +92,6 @@ namespace CGAL {
     }
     return firstAll;
   }
-
 
   /** Convert a Polyhedron_3 read into a flux into 3D linear cell complex.
    * @param alcc the linear cell complex where Polyhedron_3 will be converted.

@@ -18,11 +18,11 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 
-#ifndef CGAL_IMPORT_FROM_TRIANGULATION_3_H
-#define CGAL_IMPORT_FROM_TRIANGULATION_3_H
+#ifndef CGAL_TRIANGULATION_3_TO_LCC_H
+#define CGAL_TRIANGULATION_3_TO_LCC_H
 
-#include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Triangulation_3.h>
+#include <CGAL/assertions.h>
+#include <map>
 
 namespace CGAL {
 
@@ -94,20 +94,20 @@ namespace CGAL {
           if ( it->vertex(0) == atr.infinite_vertex() )
             dart = res;
           else if ( it->vertex(1) == atr.infinite_vertex() )
-            dart = alcc.beta(res, 1);
+            dart = alcc.next(res);
           else if ( it->vertex(2) == atr.infinite_vertex() )
-            dart = alcc.beta(res, 1, 1);
+            dart = alcc.previous(res);
           else if ( it->vertex(3) == atr.infinite_vertex() )
-            dart = alcc.beta(res, 2, 0);
+            dart = alcc.previous(alcc.template opposite<2>(res));
         }
 
         for (unsigned int i = 0; i < 4; ++i)
         {
           switch (i)
           {
-          case 0: cur = alcc.beta(res, 1, 2); break;
-          case 1: cur = alcc.beta(res, 0, 2); break;
-          case 2: cur = alcc.beta(res, 2); break;
+          case 0: cur = alcc.template opposite<2>(alcc.next(res)); break;
+          case 1: cur = alcc.template opposite<2>(alcc.previous(res)); break;
+          case 2: cur = alcc.template opposite<2>(res); break;
           case 3: cur = res; break;
           }
 
@@ -116,17 +116,17 @@ namespace CGAL {
           {
             switch (atr.mirror_index(it,i) )
             {
-            case 0: neighbor = alcc.beta(maptcell_it->second, 1, 2);
+            case 0: neighbor = alcc.template opposite<2>(alcc.next(maptcell_it->second));
               break;
-            case 1: neighbor = alcc.beta(maptcell_it->second, 0, 2);
+            case 1: neighbor = alcc.template opposite<2>(alcc.previous(maptcell_it->second));
               break;
-            case 2: neighbor = alcc.beta(maptcell_it->second, 2); break;
+            case 2: neighbor = alcc.template opposite<2>(maptcell_it->second); break;
             case 3: neighbor = maptcell_it->second; break;
             }
             while (alcc.vertex_attribute(neighbor) !=
                    alcc.vertex_attribute(alcc.other_extremity(cur)) )
               neighbor = alcc.beta(neighbor,1);
-            alcc.template topo_sew<3>(cur, neighbor);
+            alcc.template topo_sew<3>(cur, alcc.other_orientation(neighbor));
           }
         }
         (*mytc)[it] = res;
@@ -138,4 +138,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif // CGAL_IMPORT_FROM_TRIANGULATION_3_H
+#endif // CGAL_TRIANGULATION_3_TO_LCC_H

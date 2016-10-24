@@ -23,6 +23,8 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Triangulation_2_to_lcc.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 #include <fstream>
 
 // #define LCC_TRACE_TEST_BEGIN 1
@@ -285,6 +287,30 @@ bool test_LCC_2()
     if ( !check_number_of_cells_2(lcc, 61, 160, 101, 1) )
       return false;
     lcc.clear();
+  }
+
+  // Construction from Triangulation_2
+  {
+    trace_test_begin();
+    CGAL::Triangulation_2<typename LCC::Traits> T;
+    std::ifstream in("data/points2D.txt");
+    if ( in.fail() )
+    {
+      std::cout<<"Error: impossible to open 'data/points2D.txt'"<<std::endl;
+      return false;
+    }
+    T.insert ( std::istream_iterator < Point >(in),
+               std::istream_iterator < Point >() );
+    CGAL::import_from_triangulation_2<LCC>(lcc,T);
+    if ( !lcc.is_valid() )
+      return false;
+
+    // Pb: the triangulation_2 is not the same on different machines ?
+    if ( !check_number_of_cells_2(lcc, 501, 1497, 998, 1) )
+      return false;
+
+    lcc.clear();
+    trace_test_end();
   }
 
   trace_test_begin();

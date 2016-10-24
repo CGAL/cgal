@@ -336,7 +336,14 @@ bool test_LCC_4()
   lcc.template sew<4>(dh1, dh3);
 
   LCC lcc2(lcc);
-  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+  trace_test_end();
+
+  trace_test_begin();
+  lcc2=lcc;
+  if ( !lcc2.is_valid() ) { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
   trace_test_end();
@@ -375,14 +382,6 @@ bool test_LCC_4()
   { assert(false); return false; }
   trace_test_end();
 
-  /*    import_from_polyhedron<LCC>(lcc,ap);
-
-        lcc.clear();
-    
-        import_from_plane_graph<LCC>(lcc,ais);
-
-        lcc.clear();*/
-    
   return true;
 }
 

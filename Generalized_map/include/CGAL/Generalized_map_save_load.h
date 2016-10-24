@@ -1,4 +1,4 @@
-!// Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
+// Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -79,7 +79,8 @@ namespace CGAL {
   template < class GMap >
   boost::property_tree::ptree gmap_save_darts
   (const GMap& amap,
-   std::map<typename GMap::Dart_const_handle, typename GMap::size_type>& myDarts)
+   std::map<typename GMap::Dart_const_handle, 
+              typename GMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
     
@@ -100,14 +101,14 @@ namespace CGAL {
     for(typename GMap::size_type num=0; num<amap.number_of_darts(); ++num, ++it)
     {
       // make a dart node
-      ptree & ndart = pt.add("d", "");
+      ptree& ndart = pt.add("d", "");
 
       // the beta, only for non free sews
       for(unsigned int dim=0; dim<=amap.dimension; dim++)
       {
         if(!amap.is_free(it, dim))
         {
-          ptree & currentNext = ndart.add("a", myDarts[amap.alpha(it, dim)]);
+          ptree& currentNext = ndart.add("a", myDarts[amap.alpha(it, dim)]);
           currentNext.put("<xmlattr>.i", dim);
         }
       }
@@ -124,23 +125,21 @@ namespace CGAL {
   bool save_generalized_map(const GMap& amap, std::ostream & output)
   {
     using boost::property_tree::ptree;
-    ptree data;
+    ptree tree;
 
     // map dart => number
     std::map<typename GMap::Dart_const_handle, typename GMap::size_type> myDarts;
 
-    // Get darts
-    ptree pt_darts;
-    pt_darts = gmap_save_darts(amap, myDarts);
-    data.add_child("data.darts",pt_darts);
+    // Save darts
+    ptree pt_darts=gmap_save_darts(amap, myDarts);
+    tree.add_child("data.darts",pt_darts);
 
-    // Get attributes
-    ptree pt_attr;
-    pt_attr = cmap_save_attributes(amap, myDarts);
-    data.add_child("data.attributes", pt_attr);
+    // Save attributes
+    ptree pt_attr=cmap_save_attributes(amap, myDarts);
+    tree.add_child("data.attributes", pt_attr);
 
     // save data in output
-    write_xml(output, data);
+    write_xml(output, tree);
 
     return true;
   }

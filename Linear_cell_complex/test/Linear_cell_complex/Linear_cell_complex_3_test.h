@@ -20,12 +20,11 @@
 #ifndef CGAL_LCC_3_TEST_H
 #define CGAL_LCC_3_TEST_H
 
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/import_from_polyhedron_3.h>
-#include <CGAL/import_from_triangulation_3.h>
+#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/Triangulation_3_to_lcc.h>
 #include "Linear_cell_complex_2_test.h"
 #include <fstream>
 
@@ -823,14 +822,26 @@ bool test_LCC_3()
     CGAL::import_from_polyhedron_3<LCC>(lcc,P);
     if ( !check_number_of_cells_3(lcc, 26002, 78000, 52000, 1, 1) )
       return false;
+
+    LCC lcc2; load_off(lcc2, "data/armadillo.off");
+    if ( !check_number_of_cells_3(lcc2, 26002, 78000, 52000, 1, 1) )
+      return false;
+
+    if (!lcc.is_isomorphic_to(lcc2))
+    {
+      assert(false);
+      return false;
+    }
+
     lcc.clear();
+    trace_test_end();
   }
 
   // Construction from Triangulation_3
   {
     trace_test_begin();
     CGAL::Triangulation_3<typename LCC::Traits> T;
-    std::ifstream in("data/points.txt");
+    std::ifstream in("data/points3D.txt");
     if ( in.fail() )
     {
       std::cout<<"Error: impossible to open 'data/points.txt'"<<std::endl;
@@ -839,10 +850,34 @@ bool test_LCC_3()
     T.insert ( std::istream_iterator < Point >(in),
                std::istream_iterator < Point >() );
     CGAL::import_from_triangulation_3<LCC>(lcc,T);
-    // Pb: the triangulation_3 is not the same on different machines ?
-    // if ( !check_number_of_cells_3(lcc, 795, 4156, 6722, 3361, 1) )
     if ( !lcc.is_valid() )
       return false;
+
+    // Pb: the triangulation_3 is not the same on different machines ?
+    if ( !check_number_of_cells_3(lcc, 795, 4162, 6734, 3367, 1) )
+      return false;
+
+    {
+      lcc.clear();
+      lcc.make_hexahedron(Point(0,0,0),Point(1,0,0),Point(1,1,0),Point(0,1,0),
+                          Point(0,1,1),Point(0,0,1),Point(1,0,1),Point(1,1,1));
+
+      std::ofstream os("save.map");
+      os<<lcc;
+      os.close();
+
+      LCC lcc2;
+      std::ifstream is("save.map");
+      assert(is.is_open());
+      is>>lcc2;
+
+      if (!lcc.is_isomorphic_to(lcc2))
+      {
+        assert(false);
+        return false;
+      }
+    }
+
     lcc.clear();
     trace_test_end();
   }

@@ -24,6 +24,62 @@
 #include <cstddef>
 
 namespace CGAL {
+  template<class LCC, class Combinatorial_data_structure=
+           typename LCC::Combinatorial_data_structure>
+  struct Add_vertex_to_face
+  {
+    static typename LCC::Dart_handle run(LCC&,
+                                         typename LCC::Vertex_attribute_handle,
+                                         typename LCC::Dart_handle)
+    {}
+  };
+  template<class LCC>
+  struct Add_vertex_to_face<LCC, Combinatorial_map_tag>
+  {
+    static typename LCC::Dart_handle run(LCC& lcc,
+                                         typename LCC::Vertex_attribute_handle vh,
+                                         typename LCC::Dart_handle prev_dart)
+    {
+      typename LCC::Dart_handle res=lcc.create_dart(vh);
+      if (prev_dart!=lcc.null_handle)
+      {
+        lcc.template link_beta<1>(prev_dart, res);
+      }
+      return res;
+    }
+    static void run_for_last(LCC&,
+                             typename LCC::Vertex_attribute_handle,
+                             typename LCC::Dart_handle)
+    { // here nothing to do, all darts were already created.
+    }
+  };
+  template<class LCC>
+  struct Add_vertex_to_face<LCC, Generalized_map_tag>
+  {
+    static typename LCC::Dart_handle run(LCC& lcc,
+                                         typename LCC::Vertex_attribute_handle vh,
+                                         typename LCC::Dart_handle prev_dart)
+    {
+      typename LCC::Dart_handle res=lcc.create_dart(vh);
+      if (prev_dart!=lcc.null_handle)
+      {
+        lcc.template link_alpha<0>(prev_dart, res);
+        lcc.template link_alpha<1>(res, lcc.create_dart(vh));
+        res=lcc.template alpha<1>(res);
+      }
+      return res;
+    }
+    static void run_for_last(LCC& lcc,
+                             typename LCC::Vertex_attribute_handle vh,
+                             typename LCC::Dart_handle prev_dart)
+    {
+      // here we need to create a last dart and 0-link it
+      assert(prev_dart!=lcc.null_handle);
+      lcc.template link_alpha<0>(prev_dart, lcc.create_dart(vh));
+    }
+  };
+
+  // Incremental builder
   template < class LCC_ >
   class Linear_cell_complex_incremental_builder_3
   {
@@ -58,20 +114,20 @@ namespace CGAL {
     {
       CGAL_assertion( i<new_vertices );
       // std::cout<<i<<"  "<<std::flush;
-      Dart_handle cur = lcc.make_half_edge(vertex_map[i]);
+      Dart_handle cur = Add_vertex_to_face<LCC>::
+          run(lcc, vertex_map[i], prev_dart);
 
       if ( prev_dart!=lcc.null_handle )
       {
-        lcc.template link_beta<1>(prev_dart, cur);
-
-        Dart_handle opposite=find_dart_between(i,lcc.vertex_attribute(prev_dart));
+        Dart_handle opposite=
+            find_dart_between(i,lcc.vertex_attribute(prev_dart));
         if ( opposite!=lcc.null_handle )
         {
           CGAL_assertion( lcc.template is_free<2>(opposite) );
-          lcc.template link_beta<2>(prev_dart, opposite);
+          lcc.template set_opposite<2>(prev_dart, opposite);
         }
 
-        add_dart_in_vertex_to_dart_map( prev_dart, prev_vertex );
+        add_dart_in_vertex_to_dart_map(prev_dart, prev_vertex);
       }
       else
       {
@@ -87,20 +143,23 @@ namespace CGAL {
     Dart_handle end_facet()
     {
       CGAL_assertion( first_dart!=lcc.null_handle && prev_dart!=lcc.null_handle );
-      lcc.template link_beta<1>(prev_dart, first_dart);
+
+      Add_vertex_to_face<LCC>::run_for_last(lcc, vertex_map[first_vertex],
+                                            prev_dart);
+
+      lcc.set_next(prev_dart, first_dart);
 
       Dart_handle opposite =
         find_dart_between(first_vertex,lcc.vertex_attribute(prev_dart));
       if ( opposite!=lcc.null_handle )
       {
         CGAL_assertion( lcc.template is_free<2>(opposite) );
-        lcc.template link_beta<2>(prev_dart, opposite);
+        lcc.template set_opposite<2>(prev_dart, opposite);
       }
 
-      add_dart_in_vertex_to_dart_map( prev_dart, prev_vertex );
+      add_dart_in_vertex_to_dart_map(prev_dart, prev_vertex);
 
       return first_dart;
-      // std::cout<<"  end facet."<<std::endl;
     }
 
     void begin_surface( std::size_t v, std::size_t /*f*/, std::size_t /*h*/)

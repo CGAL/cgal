@@ -29,6 +29,12 @@
 
 namespace CGAL {
 
+  // Tags allowing to make some template specialization for CMap and GMap,
+  // if necessary.
+  struct Combinatorial_map_tag;
+  struct Generalized_map_tag;
+
+
   /** @file Linear_cell_complex_base.h
    * Definition of a linear cell complex, i.e. a combinatorial data structure
    * (cmap or gmap) with points associated to all vertices.
