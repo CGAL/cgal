@@ -19,7 +19,8 @@ In addition to the requirements described for the traits class of
   `CGAL::Triangulation_3`, the geometric traits class of
   `CGAL::Regular_triangulation_3` must fulfill the following requirements.
 
-\cgalHasModel CGAL::Regular_triangulation_euclidean_traits_3 
+  \cgalHasModel All CGAL Kernels
+  \cgalHasModel CGAL::Regular_triangulation_euclidean_traits_3 
 
 */
 
@@ -52,7 +53,7 @@ typedef unspecified_type Ray_3;
 
 /*!
 The weighted point type. It has to be a model of the concept `Kernel::WeightedPoint_3`,
-and it must be implicitely convertible from and to `Bare_point`.
+and it must be implicitely convertible from and to `Point_3`.
 */ 
 typedef unspecified_type Weighted_point_3; 
 
@@ -141,7 +142,7 @@ The `operator()` constructs the bare point
 which is the center of the smallest orthogonal sphere to the input 
 weighted points. 
 
-`Bare_point operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s);` 
+`Point_3 operator() ( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s);` 
 
 
 \note Only required when the dual operations are used.
