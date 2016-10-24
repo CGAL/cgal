@@ -78,23 +78,6 @@ orthogonal to the weighted points with the input weight.
 typedef unspecified_type Compare_weighted_squared_radius_3; 
 
 /*!
-A predicate type, model of `Kernel::PowerSideOfOrientedPowerSphere_3`.
-The operator() takes 2 to 5 weighted points as arguments.
-It returns on which `Oriented_side` of the power sphere defined by
-all-but-the-last arguments, the last argument `t` lies.
-
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 s, Weighted_point_3 t) ;`
-
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r, Weighted_point_3 t) ;` 
-
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 t) ;`
-
-`Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 t) ;`
-
-*/ 
-typedef unspecified_type Power_side_of_oriented_power_sphere_3; 
-
-/*!
 A predicate type, model of `Kernel::PowerSideOfBoundedPowerSphere_3`.
 The operator() is similar to the operator() of 
 `Power_side_of_oriented_power_sphere_3` 
@@ -169,12 +152,6 @@ but its weight does not matter.
 */ 
 Compare_weighted_squared_radius_3 
 compare_weighted_squared_radius_3_object(); 
-
-/*!
-
-*/ 
-Power_side_of_oriented_power_sphere_3
-power_side_of_oriented_power_sphere_3_object(); 
 
 /*!
 
