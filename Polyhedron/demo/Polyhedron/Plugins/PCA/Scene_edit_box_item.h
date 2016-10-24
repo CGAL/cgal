@@ -59,6 +59,7 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
     bool supportsRenderingMode(RenderingMode m) const;
     void draw(CGAL::Three::Viewer_interface *) const;
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+    void drawSpheres(CGAL::Three::Viewer_interface* viewer, const QMatrix4x4 f_matrix) const;
     void invalidateOpenGLBuffers()
     {
       compute_bbox();

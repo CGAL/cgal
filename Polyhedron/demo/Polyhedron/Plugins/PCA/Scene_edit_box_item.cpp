@@ -7,26 +7,35 @@
 #include <QOpenGLShaderProgram>
 using namespace CGAL::Three;
 struct Scene_edit_box_item::vertex{
-  short id;
-  face* face_;
+  int id;
   double *x;
   double *y;
   double *z;
 
   CGAL::Point_3<Kernel> position()const
   {
-   return  CGAL::Point_3<Kernel>(*x,*y,*z);
+    return  CGAL::Point_3<Kernel>(*x,*y,*z);
+  }
+  double operator[](int i)
+  {
+    switch(i)
+    {
+    case 0:
+      return *x;
+    case 1:
+      return *y;
+    case 2:
+      return *z;
+    default:
+      return 0;
+    }
   }
 };
 struct Scene_edit_box_item::edge{
-  short id;
   vertex* source;
   vertex* target;
-  face* face_;
 };
 struct Scene_edit_box_item::face{
-  short id;
-  edge* edges[4];
   vertex* vertices[4];
 };
 
@@ -104,10 +113,10 @@ struct Scene_edit_box_item_priv{
     for( int i = 0; i< 8; ++i)
     {
 
-     vertices[i].x = ((i/2)%2==0)? &pool[0]:&pool[3];
-     vertices[i].y = (i/4==0)? &pool[1]:&pool[4];
-     vertices[i].z = (((i+1)/2)%2==1)? &pool[2]:&pool[5];
-     vertices[i].id = i;
+      vertices[i].x = ((i/2)%2==0)? &pool[0]:&pool[3];
+      vertices[i].y = (i/4==0)? &pool[1]:&pool[4];
+      vertices[i].z = (((i+1)/2)%2==1)? &pool[2]:&pool[5];
+      vertices[i].id = i;
     }
 
     //      .--5--.
@@ -121,7 +130,6 @@ struct Scene_edit_box_item_priv{
     //edges
     for( int i=0; i<12; ++i)
     {
-      edges[i].id = i;
       if(i<4)
       {
         edges[i].source = &vertices[i];
@@ -160,9 +168,7 @@ struct Scene_edit_box_item_priv{
     for( int i=0; i<4; ++i)
     {
       faces[0].vertices[i] = &vertices[i];
-      faces[0].edges[(i+1)%4] = &edges[i+7];
     }
-    faces[0].id =0;
 
     for( int i=1; i<4; ++i)
     {
@@ -170,12 +176,6 @@ struct Scene_edit_box_item_priv{
       faces[i].vertices[1] = &vertices[(i-1)];
       faces[i].vertices[2] = &vertices[i+3];
       faces[i].vertices[3] = &vertices[i+4];
-
-      faces[i].edges[0] = &edges[i+7];
-      faces[i].edges[1] = &edges[i-1];
-      faces[i].edges[2] = &edges[i+3];
-      faces[i].edges[3] = &edges[i];
-      faces[i].id = i;
     }
 
     faces[4].vertices[0] = &vertices[0];
@@ -183,30 +183,17 @@ struct Scene_edit_box_item_priv{
     faces[4].vertices[2] = &vertices[7];
     faces[4].vertices[3] = &vertices[4];
 
-    faces[4].edges[0] = &edges[0];
-    faces[4].edges[1] = &edges[3];
-    faces[4].edges[2] = &edges[7];
-    faces[4].edges[3] = &edges[4];
-    faces[4].id =4;
-
     for( int i=0; i<4; ++i)
     {
       faces[5].vertices[i] = &vertices[i+4];
-      faces[5].edges[i] = &edges[i+4];
     }
-    faces[5].id =5;
 
     vertex_faces.resize(0);
     normal_faces.resize(0);
 
-    for( int i=0; i<6; ++i)
-    {
-      for( int j=0; j<4; ++j)
-      {
-        faces[i].vertices[j]->face_ = &faces[i];
-        faces[i].edges[j]->face_ = &faces[i];
-      }
-    }
+    for(int i=0; i<8; ++i)
+      for(int j=0; j<3; ++j)
+        last_pool[i][j] = vertices[i][j];
 
     pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_spheres.v");
     pick_sphere_program.addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f");
@@ -226,6 +213,8 @@ struct Scene_edit_box_item_priv{
   mutable std::vector<float> normal_faces;
   mutable std::vector<float> color_faces;
   double pool[6];
+  //id|coord
+  double last_pool[8][3];
 
 
   qglviewer::ManipulatedFrame* frame;
@@ -240,9 +229,7 @@ struct Scene_edit_box_item_priv{
   mutable Scene_edit_box_item::edge edges[12];
   mutable Scene_edit_box_item::face faces[6];
 
-  Scene_edit_box_item::vertex* selected_vertex;
-  Scene_edit_box_item::edge* selected_edge;
-  Scene_edit_box_item::face* selected_face;
+  std::vector<Scene_edit_box_item::vertex*> selected_vertices;
   void reset_selection();
   bool selection_on;
 
@@ -253,9 +240,9 @@ struct Scene_edit_box_item_priv{
   void draw_picking(Viewer_interface*);
   void remodel_box(const QVector3D &dir);
 
-  bool applyX(double x, double dirx);
-  bool applyY(double y, double diry);
-  bool applyZ(double z, double dirz);
+  double applyX(int id, double x, double dirx);
+  double applyY(int id, double y, double diry);
+  double applyZ(int id, double z, double dirz);
   const Scene_interface* scene;
   Scene_edit_box_item* item;
 };
@@ -274,6 +261,38 @@ QString Scene_edit_box_item::toolTip() const {
   return QString();
 }
 
+void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4 f_matrix ) const
+{
+  vaos[Scene_edit_box_item_priv::Spheres]->bind();
+  GLdouble d_mat[16];
+  QMatrix4x4 mvp_mat;
+  viewer->camera()->getModelViewProjectionMatrix(d_mat);
+  for (int i=0; i<16; ++i)
+    mvp_mat.data()[i] = GLfloat(d_mat[i]);
+  mvp_mat = mvp_mat*f_matrix;
+  QMatrix4x4 mv_mat;
+  viewer->camera()->getModelViewMatrix(d_mat);
+  for (int i=0; i<16; ++i)
+    mv_mat.data()[i] = GLfloat(d_mat[i]);
+  mv_mat = mv_mat*f_matrix;
+  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
+  light_pos = light_pos*f_matrix;
+
+
+  d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
+  attribBuffers(viewer, PROGRAM_SPHERES);
+  d->program->bind();
+  d->program->setUniformValue("mvp_matrix", mvp_mat);
+  d->program->setUniformValue("mv_matrix", mv_mat);
+  d->program->setUniformValue("light_pos", light_pos);
+  d->program->setAttributeValue("colors", QColor(Qt::red));
+  viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                static_cast<GLsizei>(d->vertex_spheres.size()/3),
+                                static_cast<GLsizei>(8));
+  d->program->release();
+  vaos[Scene_edit_box_item_priv::Spheres]->release();
+}
+
 void Scene_edit_box_item::draw(Viewer_interface *viewer) const
 {
   if (!are_buffers_filled)
@@ -290,7 +309,7 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   viewer->camera()->getModelViewProjectionMatrix(d_mat);
   for (int i=0; i<16; ++i)
     mvp_mat.data()[i] = GLfloat(d_mat[i]);
-    mvp_mat = mvp_mat*f_matrix;
+  mvp_mat = mvp_mat*f_matrix;
   QMatrix4x4 mv_mat;
   viewer->camera()->getModelViewMatrix(d_mat);
   for (int i=0; i<16; ++i)
@@ -312,18 +331,7 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   vaos[Scene_edit_box_item_priv::Faces]->release();
   d->program->release();
 
-  vaos[Scene_edit_box_item_priv::Spheres]->bind();
-  d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
-  attribBuffers(viewer, PROGRAM_SPHERES);
-  d->program->bind();
-  d->program->setUniformValue("mvp_matrix", mvp_mat);
-  d->program->setUniformValue("light_pos", light_pos);
-  d->program->setAttributeValue("colors", QColor(Qt::red));
-  viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                static_cast<GLsizei>(d->vertex_spheres.size()/3),
-                                static_cast<GLsizei>(8));
-  d->program->release();
-  vaos[Scene_edit_box_item_priv::Spheres]->release();
+  drawSpheres(viewer, f_matrix);
 }
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
@@ -338,7 +346,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
   vaos[Edges]->bind();
-  viewer->glLineWidth(4.0f);
+  viewer->glLineWidth(8.0f);
   d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
   attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
   d->program->bind();
@@ -350,39 +358,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
   d->program->release();
   if(renderingMode() == Wireframe)
   {
-    if (!are_buffers_filled)
-    {
-      d->computeElements();
-      d->initializeBuffers(viewer);
-    }
-    vaos[Scene_edit_box_item_priv::Spheres]->bind();
-    GLdouble d_mat[16];
-    QMatrix4x4 mvp_mat;
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-      mvp_mat.data()[i] = GLfloat(d_mat[i]);
-    mvp_mat = mvp_mat*f_matrix;
-    QMatrix4x4 mv_mat;
-    viewer->camera()->getModelViewMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-      mv_mat.data()[i] = GLfloat(d_mat[i]);
-    mv_mat = mv_mat*f_matrix;
-    QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
-    light_pos = light_pos*f_matrix;
-
-
-    d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
-    attribBuffers(viewer, PROGRAM_SPHERES);
-    d->program->bind();
-    d->program->setUniformValue("mvp_matrix", mvp_mat);
-    d->program->setUniformValue("mv_matrix", mv_mat);
-    d->program->setUniformValue("light_pos", light_pos);
-    d->program->setAttributeValue("colors", QColor(Qt::red));
-    viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                  static_cast<GLsizei>(d->vertex_spheres.size()/3),
-                                  static_cast<GLsizei>(8));
-    d->program->release();
-    vaos[Scene_edit_box_item_priv::Spheres]->release();
+    drawSpheres(viewer, f_matrix);
   }
 }
 
@@ -398,8 +374,8 @@ void Scene_edit_box_item::compute_bbox() const
 
   for(int i=0; i< 3; ++i)
   {
-   min[i] += d->frame->translation()[i]-d->center_[i];
-   max[i] += d->frame->translation()[i]-d->center_[i];
+    min[i] += d->frame->translation()[i]-d->center_[i];
+    max[i] += d->frame->translation()[i]-d->center_[i];
   }
 
   _bbox = Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z());
@@ -554,6 +530,7 @@ Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
   }
   item->are_buffers_filled = true;
 }
+
 void push_xyz(std::vector<float> &v,
               const Scene_edit_box_item::Kernel::Point_3& p,
               qglviewer::Vec center_ = qglviewer::Vec(0,0,0))
@@ -562,6 +539,7 @@ void push_xyz(std::vector<float> &v,
   v.push_back(p.y()-center_.y);
   v.push_back(p.z()-center_.z);
 }
+
 void push_normal(std::vector<float> &v, int id)
 {
   switch(id)
@@ -600,6 +578,7 @@ void push_normal(std::vector<float> &v, int id)
     break;
   }
 }
+
 void Scene_edit_box_item_priv::computeElements() const
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -701,14 +680,7 @@ Scene_edit_box_item::~Scene_edit_box_item()
 
 // Indicate if rendering mode is supported
 bool Scene_edit_box_item::supportsRenderingMode(RenderingMode m) const {
-  switch(m)
-  {
-  case Wireframe:
-  case FlatPlusEdges:
-    return true;
-  default:
-    return false;
-  }
+  return (m==Wireframe || m==FlatPlusEdges);
 }
 
 Scene_item::ManipulatedFrame*
@@ -762,9 +734,7 @@ void Scene_edit_box_item_priv::reset_selection()
   viewer->setManipulatedFrame(frame);
   viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, QGLViewer::SELECT);
   constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-  selected_vertex= NULL;
-  selected_edge= NULL;
-  selected_face= NULL;
+  selected_vertices.clear();
 }
 //intercept events for picking
 bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
@@ -797,7 +767,17 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
       if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
       {
         d->selection_on = true;
-        d->rf_last_pos = d->remodel_frame->position();
+        bool found = false;
+        qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
+        if(found)
+        {
+          d->rf_last_pos = pos;
+          d->remodel_frame->setPosition(pos);
+        }
+        for(int i=0; i<8; ++i)
+          for(int j=0; j<3; ++j)
+            d->last_pool[i][j] = d->vertices[i][j];
+
         int r(std::ceil((buffer[0]-10)/20)), g(std::ceil((buffer[1]-10)/20)), b(std::ceil((buffer[2]-10)/20));
         int picked = (std::max)(r,g);
         picked = (std::max)(picked,b);
@@ -805,7 +785,7 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
         {
           if(picked <8)
           {
-            d->selected_vertex = &d->vertices[picked];
+            d->selected_vertices.push_back(&d->vertices[picked]);
             d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
             d->remodel_frame->setConstraint(&d->constraint);
           }
@@ -814,8 +794,9 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
         {
           if(picked <12)
           {
-            d->selected_edge = &d->edges[picked];
-            Kernel::Point_3 s(d->selected_edge->source->position()), t(d->selected_edge->target->position());
+            d->selected_vertices.push_back(d->edges[picked].source);
+            d->selected_vertices.push_back(d->edges[picked].target);
+            Kernel::Point_3 s(d->edges[picked].source->position()), t(d->edges[picked].target->position());
 
             qglviewer::Vec normal(t.x()-s.x(), t.y()-s.y(), t.z()-s.z());
             d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::PLANE);
@@ -827,9 +808,10 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
         {
           if(picked <6)
           {
-            d->selected_face= &d->faces[picked];
-            Kernel::Point_3 a1(d->selected_face->vertices[1]->position()), a0(d->selected_face->vertices[0]->position())
-                ,a3(d->selected_face->vertices[3]->position());
+            for(int i=0; i<4; ++i)
+              d->selected_vertices.push_back(d->faces[picked].vertices[i]);
+            Kernel::Point_3 a1(d->faces[picked].vertices[1]->position()), a0(d->faces[picked].vertices[0]->position())
+                ,a3(d->faces[picked].vertices[3]->position());
             QVector3D a(a1.x()-a0.x(), a1.y()-a0.y(),a1.z()-a0.z()),b(a3.x()-a0.x(), a3.y()-a0.y(),a3.z()-a0.z());
             QVector3D n = QVector3D::crossProduct(a,b);
 
@@ -849,7 +831,7 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
       }
       else
       {
-       d->reset_selection();
+        d->reset_selection();
       }
       delete fbo;
     }
@@ -863,9 +845,9 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
       if(d->selection_on)
       {
         d->remodel_frame->setOrientation(d->frame->orientation());
+        qglviewer::Vec sd(d->remodel_frame->position() - d->rf_last_pos);
         qglviewer::Vec td(d->remodel_frame->transformOf(d->remodel_frame->position() - d->rf_last_pos));
         QVector3D dir(td.x, td.y, td.z);
-        d->rf_last_pos = d->remodel_frame->position();
         d->remodel_box(dir);
         return false;
       }
@@ -940,51 +922,12 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
   qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
   constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
 
-  if(selected_vertex != NULL)
+  Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
   {
-    if(applyX(*selected_vertex->x, dir.x()))
-       *selected_vertex->x += dir.x();
-    if(applyY(*selected_vertex->y, dir.y()))
-      *selected_vertex->y += dir.y();
-    if(applyZ(*selected_vertex->z, dir.z()))
-      *selected_vertex->z += dir.z();
-    for( int i=0; i<3; ++i)
-      relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
-    for( int i=0; i<3; ++i)
-      center_[i] =(pool[i]+pool[i+3])/2;
-    frame->translate(frame->inverseTransformOf(relative_center_));
-  }
-  else if(selected_edge != NULL)
-  {
-    if(applyX(*selected_edge->source->x, dir.x()))
-       *selected_edge->source->x += dir.x();
-    if(applyY(*selected_edge->source->y, dir.y()))
-      *selected_edge->source->y += dir.y();
-    if(applyZ(*selected_edge->source->z, dir.z()))
-      *selected_edge->source->z += dir.z();
-    if(applyX(*selected_edge->target->x, dir.x()))
-       *selected_edge->target->x += dir.x();
-    if(applyY(*selected_edge->target->y, dir.y()))
-      *selected_edge->target->y += dir.y();
-    if(applyZ(*selected_edge->target->z, dir.z()))
-      *selected_edge->target->z += dir.z();
-    for( int i=0; i<3; ++i)
-      relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
-    for( int i=0; i<3; ++i)
-      center_[i] =(pool[i]+pool[i+3])/2;
-    frame->translate(frame->inverseTransformOf(relative_center_));
-  }
-  else if(selected_face != NULL)
-  {
-    for( int i=0; i<4; ++i)
-    {
-      if(applyX(*selected_face->vertices[i]->x, dir.x()))
-         *selected_face->vertices[i]->x += dir.x();
-      if(applyY(*selected_face->vertices[i]->y, dir.y()))
-        *selected_face->vertices[i]->y += dir.y();
-      if(applyZ(*selected_face->vertices[i]->z, dir.z()))
-        *selected_face->vertices[i]->z += dir.z();
-    }
+    int id = selected_vertex->id;
+    *selected_vertex->x = applyX(id, last_pool[id][0], dir.x());
+    *selected_vertex->y = applyY(id, last_pool[id][1], dir.y());
+    *selected_vertex->z = applyZ(id, last_pool[id][2], dir.z());
     for( int i=0; i<3; ++i)
       relative_center_[i] =(pool[i]+pool[i+3])/2 - center_[i];
     for( int i=0; i<3; ++i)
@@ -995,45 +938,80 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
   constraint.setTranslationConstraintType(prev_cons);
 }
 
-bool Scene_edit_box_item_priv::applyX(double x, double dirx)
+double Scene_edit_box_item_priv::applyX(int id, double x, double dirx)
 {
-  if(x == pool[0])
+  switch(id)
   {
+  case 0:
+  case 1:
+  case 4:
+  case 5:
     if(x+dirx < pool[3])
-      return true;
-  }
-  else
-  {
+      return x+dirx;
+    else
+      return pool[3];
+  case 2:
+  case 3:
+  case 6:
+  case 7:
     if(x+dirx > pool[0])
-      return true;
+      return x+dirx;
+    else
+      return pool[0];
+  default:
+    return 0;
   }
-  return false;
+  return 0;
 }
-bool Scene_edit_box_item_priv::applyY(double y, double diry)
+
+double Scene_edit_box_item_priv::applyY(int id, double y, double diry)
 {
-  if(y == pool[1])
+  switch(id)
   {
+  case 0:
+  case 1:
+  case 2:
+  case 3:
     if(y+diry < pool[4])
-      return true;
-  }
-  else
-  {
+      return y+diry;
+    else
+      return pool[4];
+  case 4:
+  case 5:
+  case 6:
+  case 7:
     if(y+diry > pool[1])
-      return true;
+      return y+diry;
+    else
+      return pool[1];
+  default:
+    return 0;
   }
-  return false;
+  return 0;
 }
-bool Scene_edit_box_item_priv::applyZ(double z, double dirz)
+
+double Scene_edit_box_item_priv::applyZ(int id, double z, double dirz)
 {
-  if(z == pool[2])
+  switch(id)
   {
+  case 1:
+  case 2:
+  case 5:
+  case 6:
     if(z+dirz < pool[5])
-      return true;
-  }
-  else
-  {
+      return z+dirz;
+    else
+      return pool[5];
+  case 0:
+  case 3:
+  case 4:
+  case 7:
     if(z+dirz > pool[2])
-      return true;
+      return z+dirz;
+    else
+      return pool[2];
+  default:
+    return 0;
   }
-  return false;
+  return 0;
 }
