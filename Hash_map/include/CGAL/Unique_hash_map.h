@@ -144,13 +144,18 @@ namespace boost {
       return (*m_c)[k];
     }
 
-  friend const ValueType&  get(const associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key)
+  friend
+  const value_type&
+  get(const associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm,
+      const key_type& key)
   {
     return uhm[key];
   }
 
   friend
-  void put(associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm, const KeyType& key, const ValueType& val)
+  void
+  put(associative_property_map<CGAL::Unique_hash_map<KeyType,ValueType> >& uhm,
+      const key_type& key, const value_type& val)
   {
     uhm[key] = val;
   }
