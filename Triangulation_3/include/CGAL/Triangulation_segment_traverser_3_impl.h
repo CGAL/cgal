@@ -226,6 +226,27 @@ walk_to_next() {
             break;
         }
     }
+#ifdef CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
+    if(_tr.dimension() == 3)
+    {
+      Cell_handle c = get<0>(_cur);
+      if (c != Cell_handle() && !_tr.is_infinite(c)) //hard to say anything in this case
+      {
+        typename Tr::Segment seg(_s_vert->point(), _t_vert->point());
+        bool intersects = false;
+        for (int i = 0; i < 4; ++i)
+        {
+          if (!_tr.is_infinite(c, i)
+            && CGAL::do_intersect(_tr.triangle(c, i), seg))
+          {
+            intersects = true;
+            break;
+          }
+        }
+        CGAL_assertion(intersects);
+      }
+    }
+#endif
 }
 
 template < class Tr, class Inc >
