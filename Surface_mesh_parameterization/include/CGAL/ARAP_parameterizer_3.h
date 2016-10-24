@@ -239,18 +239,24 @@ private:
     CGAL_precondition(!vertices.empty());
 
     if(m_lambda != 0.){
-    // Fix a random vertex, the value in uvmap is already set
+      // Fix a random vertex, the value in uvmap is already set
       vertex_descriptor vd = *(vertices.begin());
       put(vpmap, vd, true);
     } else {
-    // This fixes two vertices that are far in the original geometry
+      // This fixes two vertices that are far in the original geometry
 
-    // A local uvmap (that is then discarded) is passed to avoid changing
-    // the values of the real uvmap
-    CGAL::Unique_hash_map<vertex_descriptor, Point_2> useless_uvmap;
-    status = get_border_parameterizer().parameterize_border(mesh, bhd,
-                                                            VertexUVMap(useless_uvmap),
-                                                            vpmap);
+      // A local uvmap (that is then discarded) is passed to avoid changing
+      // the values of the real uvmap. Since we can't get VertexUVMap::C,
+      // we build a map with the same key and value type
+      typedef boost::unordered_map<typename VertexUVMap::key_type,
+                                   typename VertexUVMap::value_type> Useless_map;
+      typedef boost::associative_property_map<Useless_map>           Useless_pmap;
+
+      Useless_map useless_map;
+      Useless_pmap useless_uvpmap(useless_map);
+      status = get_border_parameterizer().parameterize_border(mesh, bhd,
+                                                              useless_uvpmap,
+                                                              vpmap);
     }
 
     return status;

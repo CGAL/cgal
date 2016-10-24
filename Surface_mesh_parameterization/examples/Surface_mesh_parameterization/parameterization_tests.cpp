@@ -8,6 +8,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <CGAL/boost/graph/Seam_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
 #include <CGAL/ARAP_parameterizer_3.h>
 #include <CGAL/Barycentric_mapping_parameterizer_3.h>
