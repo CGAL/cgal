@@ -38,6 +38,8 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
       ColorsFaces,
       VertexArrow,
       NormalArrow,
+      S_Vertex,
+      S_Normal,
       NumberOfVbos
     };
     Scene_edit_box_item(const CGAL::Three::Scene_interface* scene_interface);
@@ -58,6 +60,7 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
     // Indicate if rendering mode is supported
     bool supportsRenderingMode(RenderingMode m) const;
     void draw(CGAL::Three::Viewer_interface *) const;
+    void drawHl(CGAL::Three::Viewer_interface *) const;
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
     void drawSpheres(CGAL::Three::Viewer_interface* viewer, const QMatrix4x4 f_matrix) const;
     void invalidateOpenGLBuffers()

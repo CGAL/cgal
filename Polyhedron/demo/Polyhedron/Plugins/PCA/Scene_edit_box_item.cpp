@@ -66,11 +66,19 @@ struct Scene_edit_box_item_priv{
     ColorsFaces,
     VertexArrow,
     NormalArrow,
+    S_Vertex,
+    S_Normal,
     NumberOfVbos
   };
-
+  enum HL_Primitive{
+    VERTEX=0,
+    EDGE,
+    FACE,
+    NO_TYPE
+  };
   Scene_edit_box_item_priv(const Scene_interface *scene_interface, Scene_edit_box_item* ebi)
   {
+    ready_to_hl = true;
     scene = scene_interface;
     item = ebi;
     selection_on = false;
@@ -212,9 +220,13 @@ struct Scene_edit_box_item_priv{
   mutable std::vector<float> vertex_faces;
   mutable std::vector<float> normal_faces;
   mutable std::vector<float> color_faces;
+  mutable std::vector<float> hl_vertex;
+  mutable std::vector<float> hl_normal;
+
   double pool[6];
   //id|coord
   double last_pool[8][3];
+  bool ready_to_hl;
 
 
   qglviewer::ManipulatedFrame* frame;
@@ -232,6 +244,7 @@ struct Scene_edit_box_item_priv{
   std::vector<Scene_edit_box_item::vertex*> selected_vertices;
   void reset_selection();
   bool selection_on;
+  void picking(int& type, int& id, Viewer_interface *viewer);
 
   mutable QOpenGLShaderProgram* program;
   void initializeBuffers(Viewer_interface *viewer)const;
@@ -245,6 +258,8 @@ struct Scene_edit_box_item_priv{
   double applyZ(int id, double z, double dirz);
   const Scene_interface* scene;
   Scene_edit_box_item* item;
+  QPoint picked_pixel;
+  HL_Primitive hl_type;
 };
 
 
@@ -255,6 +270,8 @@ Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
   d = new Scene_edit_box_item_priv(scene_interface, this);
 
   are_buffers_filled = false;
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  viewer->setMouseTracking(true);
 }
 QString Scene_edit_box_item::toolTip() const {
 
@@ -279,12 +296,13 @@ void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4
   light_pos = light_pos*f_matrix;
 
 
-  d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
   attribBuffers(viewer, PROGRAM_SPHERES);
+  d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
   d->program->bind();
   d->program->setUniformValue("mvp_matrix", mvp_mat);
   d->program->setUniformValue("mv_matrix", mv_mat);
   d->program->setUniformValue("light_pos", light_pos);
+  d->program->setAttributeValue("radius",1);
   d->program->setAttributeValue("colors", QColor(Qt::red));
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                 static_cast<GLsizei>(d->vertex_spheres.size()/3),
@@ -346,7 +364,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
     f_matrix.data()[i] = (float)d->frame->matrix()[i];
   }
   vaos[Edges]->bind();
-  viewer->glLineWidth(8.0f);
+  viewer->glLineWidth(4.0f);
   d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
   attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
   d->program->bind();
@@ -360,6 +378,7 @@ void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
   {
     drawSpheres(viewer, f_matrix);
   }
+  drawHl(viewer);
 }
 
 void Scene_edit_box_item::compute_bbox() const
@@ -438,13 +457,12 @@ Scene_edit_box_item_priv::initializeBuffers(Viewer_interface *viewer)const
     item->buffers[NormalSpheres].release();
 
     item->buffers[CenterSpheres].bind();
-    program->enableAttributeArray("center");
     item->buffers[CenterSpheres].allocate(center_spheres.data(),
                                           static_cast<int>(center_spheres.size()*sizeof(float)));
+    program->enableAttributeArray("center");
     program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-    item->buffers[VertexEdges].release();
+    item->buffers[CenterSpheres].release();
     program->disableAttributeArray("radius");
-    program->setAttributeValue("radius",1);
     program->disableAttributeArray("colors");
 
     viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
@@ -675,6 +693,9 @@ void Scene_edit_box_item_priv::computeElements() const
 
 Scene_edit_box_item::~Scene_edit_box_item()
 {
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  viewer->setMouseTracking(false);
+
   delete d;
 }
 
@@ -703,28 +724,136 @@ double Scene_edit_box_item::point(short i, short j) const
 
 void Scene_edit_box_item::highlight()
 {
-  /*  if(is_ready_to_highlight)
-  {
     // highlight with mouse move event
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    qglviewer::Camera* camera = viewer->camera();
-
-    bool found = false;
-    const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found);
-    if(found)
+    d->ready_to_hl = true;
+    Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+    int type, id;
+    //pick
+    d->picking(type, id, viewer);
+    //highlight
+    d->hl_normal.clear();
+    d->hl_vertex.clear();
+    if(type !=-1)
     {
-      const qglviewer::Vec& orig = camera->position();
-      const qglviewer::Vec& dir = point - orig;
-      is_highlighting = true;
+      switch(type)
+      {
+      case 0:
+      {
+        //compute
+        d->hl_vertex.push_back(d->vertices[id].position().x()-d->center_.x);
+        d->hl_vertex.push_back(d->vertices[id].position().y()-d->center_.y);
+        d->hl_vertex.push_back(d->vertices[id].position().z()-d->center_.z);
+        //fill buffers
+        d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_SPHERES, viewer);
+        d->program->bind();
 
-      is_highlighting = false;
+        vaos[S_Spheres]->bind();
+        buffers[VertexSpheres].bind();
+        buffers[VertexSpheres].allocate(d->vertex_spheres.data(),
+                                        static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
+        d->program->enableAttributeArray("vertex");
+        d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+        buffers[VertexSpheres].release();
+
+        buffers[NormalSpheres].bind();
+        buffers[NormalSpheres].allocate(d->normal_spheres.data(),
+                                        static_cast<int>(d->normal_spheres.size()*sizeof(float)));
+        d->program->enableAttributeArray("normals");
+        d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+        buffers[NormalSpheres].release();
+
+        buffers[S_Vertex].bind();
+        buffers[S_Vertex].allocate(d->hl_vertex.data(),
+                                   static_cast<int>(d->hl_vertex.size()*sizeof(float)));
+        d->program->enableAttributeArray("center");
+        d->program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
+        buffers[S_Vertex].release();
+        d->program->disableAttributeArray("colors");
+
+        viewer->glVertexAttribDivisor(d->program->attributeLocation("center"), 1);
+        d->program->release();
+        vaos[S_Spheres]->release();
+        //draw
+        d->hl_type = Scene_edit_box_item_priv::VERTEX;
+        break;
+      }
+      case 1:
+      {
+        //compute
+        d->hl_vertex.push_back(d->edges[id].source->position().x()-d->center_.x);
+        d->hl_vertex.push_back(d->edges[id].source->position().y()-d->center_.y);
+        d->hl_vertex.push_back(d->edges[id].source->position().z()-d->center_.z);
+
+        d->hl_vertex.push_back(d->edges[id].target->position().x()-d->center_.x);
+        d->hl_vertex.push_back(d->edges[id].target->position().y()-d->center_.y);
+        d->hl_vertex.push_back(d->edges[id].target->position().z()-d->center_.z);
+
+        //fill buffers
+        d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
+        d->program->bind();
+
+        vaos[S_Edges]->bind();
+        buffers[S_Vertex].bind();
+        buffers[S_Vertex].allocate(d->hl_vertex.data(),
+                                   static_cast<GLsizei>(d->hl_vertex.size()*sizeof(float)));
+        d->program->enableAttributeArray("vertex");
+        d->program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[S_Vertex].release();
+        vaos[S_Edges]->release();
+        d->program->release();
+        //draw
+        d->hl_type = Scene_edit_box_item_priv::EDGE;
+        break;
+      }
+      case 2:
+      {
+        //compute
+        push_xyz(d->hl_vertex, d->faces[id].vertices[0]->position(), d->center_);
+        push_xyz(d->hl_vertex, d->faces[id].vertices[3]->position(), d->center_);
+        push_xyz(d->hl_vertex, d->faces[id].vertices[2]->position(), d->center_);
+
+        push_xyz(d->hl_vertex, d->faces[id].vertices[0]->position(), d->center_);
+        push_xyz(d->hl_vertex, d->faces[id].vertices[2]->position(), d->center_);
+        push_xyz(d->hl_vertex, d->faces[id].vertices[1]->position(), d->center_);
+
+        for( int j=0; j<6; ++j)
+        {
+          push_normal(d->hl_normal, id);
+        }
+        //fill buffers
+        d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITH_LIGHT, viewer);
+        attribBuffers(viewer, Scene_edit_box_item::PROGRAM_WITH_LIGHT);
+
+        d->program->bind();
+        vaos[S_Faces]->bind();
+        buffers[S_Vertex].bind();
+        buffers[S_Vertex].allocate(d->hl_vertex.data(),
+                                   static_cast<int>(d->hl_vertex.size()*sizeof(float)));
+        d->program->enableAttributeArray("vertex");
+        d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+        buffers[S_Normal].release();
+
+        buffers[S_Normal].bind();
+        buffers[S_Normal].allocate(d->hl_normal.data(),
+                                   static_cast<int>(d->hl_normal.size()*sizeof(float)));
+        d->program->enableAttributeArray("normals");
+        d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+        buffers[S_Normal].release();
+        vaos[S_Faces]->release();
+        d->program->release();
+
+        //draw
+        d->hl_type = Scene_edit_box_item_priv::FACE;
+        break;
+      }
+      default:
+        d->hl_type = Scene_edit_box_item_priv::NO_TYPE;
+        break;
+      }
     }
-    else
-    {
-      Q_EMIT clearHL();
-    }
-    is_ready_to_highlight = false;
-  }*/
+      itemChanged();
+
+  d->ready_to_hl = false;
 }
 
 void Scene_edit_box_item_priv::reset_selection()
@@ -745,30 +874,15 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
     if(e->modifiers() == Qt::ShiftModifier)
     {
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      int deviceWidth = viewer->camera()->screenWidth();
-      int deviceHeight = viewer->camera()->screenHeight();
-      QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(deviceWidth, deviceHeight,QOpenGLFramebufferObject::Depth);
-      fbo->bind();
-      glEnable(GL_DEPTH_TEST);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      QColor bgColor(viewer->backgroundColor());
-      //draws the image in the fbo
-      viewer->setBackgroundColor(::Qt::white);
       Viewer_interface* v_i = dynamic_cast<Viewer_interface*>(viewer);
-      //draw_picking
-      d->draw_picking(v_i);
-
-      int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
-      const static int dataLength = rowLength * deviceHeight;
-      GLubyte* buffer = new GLubyte[dataLength];
-      // Qt uses upper corner for its origin while GL uses the lower corner.
-      glReadPixels(e->pos().x(), deviceHeight-1-e->pos().y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-      //decode ID and pick (don't forget the case nothing is picked
-      if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
+      //pick
+      int type, picked;
+      d->picked_pixel = e->pos();
+      d->picking(type, picked, v_i);
+      if(type !=-1)
       {
-        d->selection_on = true;
         bool found = false;
-        qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
+        qglviewer::Vec pos = viewer->camera()->pointUnderPixel(d->picked_pixel, found);
         if(found)
         {
           d->rf_last_pos = pos;
@@ -777,51 +891,38 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
         for(int i=0; i<8; ++i)
           for(int j=0; j<3; ++j)
             d->last_pool[i][j] = d->vertices[i][j];
-
-        int r(std::ceil((buffer[0]-10)/20)), g(std::ceil((buffer[1]-10)/20)), b(std::ceil((buffer[2]-10)/20));
-        int picked = (std::max)(r,g);
-        picked = (std::max)(picked,b);
-        if(buffer[0] > 0)
+        d->selection_on = true;
+        if(type == 0)
         {
-          if(picked <8)
-          {
-            d->selected_vertices.push_back(&d->vertices[picked]);
-            d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-            d->remodel_frame->setConstraint(&d->constraint);
-          }
+          d->selected_vertices.push_back(&d->vertices[picked]);
+          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+          d->remodel_frame->setConstraint(&d->constraint);
         }
-        else if(buffer[1] > 0)
+        else if(type == 1)
         {
-          if(picked <12)
-          {
-            d->selected_vertices.push_back(d->edges[picked].source);
-            d->selected_vertices.push_back(d->edges[picked].target);
-            Kernel::Point_3 s(d->edges[picked].source->position()), t(d->edges[picked].target->position());
+          d->selected_vertices.push_back(d->edges[picked].source);
+          d->selected_vertices.push_back(d->edges[picked].target);
+          Kernel::Point_3 s(d->edges[picked].source->position()), t(d->edges[picked].target->position());
 
-            qglviewer::Vec normal(t.x()-s.x(), t.y()-s.y(), t.z()-s.z());
-            d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::PLANE);
-            d->constraint.setTranslationConstraintDirection(normal);
-            d->remodel_frame->setConstraint(&d->constraint);
-          }
+          qglviewer::Vec normal(t.x()-s.x(), t.y()-s.y(), t.z()-s.z());
+          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::PLANE);
+          d->constraint.setTranslationConstraintDirection(normal);
+          d->remodel_frame->setConstraint(&d->constraint);
         }
-        else if(buffer[2] > 0)
+        else if(type == 2)
         {
-          if(picked <6)
-          {
-            for(int i=0; i<4; ++i)
-              d->selected_vertices.push_back(d->faces[picked].vertices[i]);
-            Kernel::Point_3 a1(d->faces[picked].vertices[1]->position()), a0(d->faces[picked].vertices[0]->position())
-                ,a3(d->faces[picked].vertices[3]->position());
-            QVector3D a(a1.x()-a0.x(), a1.y()-a0.y(),a1.z()-a0.z()),b(a3.x()-a0.x(), a3.y()-a0.y(),a3.z()-a0.z());
-            QVector3D n = QVector3D::crossProduct(a,b);
+          for(int i=0; i<4; ++i)
+            d->selected_vertices.push_back(d->faces[picked].vertices[i]);
+          Kernel::Point_3 a1(d->faces[picked].vertices[1]->position()), a0(d->faces[picked].vertices[0]->position())
+              ,a3(d->faces[picked].vertices[3]->position());
+          QVector3D a(a1.x()-a0.x(), a1.y()-a0.y(),a1.z()-a0.z()),b(a3.x()-a0.x(), a3.y()-a0.y(),a3.z()-a0.z());
+          QVector3D n = QVector3D::crossProduct(a,b);
 
-            d->remodel_frame->setConstraint(&d->constraint);
-            d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
-            d->constraint.setTranslationConstraintDirection(qglviewer::Vec(n.x(), n.y(), n.z()));
-          }
+          d->remodel_frame->setConstraint(&d->constraint);
+          d->constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::AXIS);
+          d->constraint.setTranslationConstraintDirection(qglviewer::Vec(n.x(), n.y(), n.z()));
         }
-        viewer->setBackgroundColor(bgColor);
-        fbo->release();
+
         viewer->setManipulatedFrame(d->remodel_frame);
         viewer->setMouseBinding(
               Qt::ShiftModifier,
@@ -833,7 +934,6 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
       {
         d->reset_selection();
       }
-      delete fbo;
     }
     return false;
   }
@@ -845,17 +945,20 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
       if(d->selection_on)
       {
         d->remodel_frame->setOrientation(d->frame->orientation());
-        qglviewer::Vec sd(d->remodel_frame->position() - d->rf_last_pos);
         qglviewer::Vec td(d->remodel_frame->transformOf(d->remodel_frame->position() - d->rf_last_pos));
         QVector3D dir(td.x, td.y, td.z);
         d->remodel_box(dir);
-        return false;
       }
     }
     else if(d->selection_on)
     {
       d->reset_selection();
     }
+
+    d->ready_to_hl= true;
+    d->picked_pixel = e->pos();
+    QTimer::singleShot(0, this, SLOT(highlight()));
+    return false;
   }
   else if(event->type() == QEvent::MouseButtonRelease)
   {
@@ -921,7 +1024,6 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
   qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
   constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
-
   Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
   {
     int id = selected_vertex->id;
@@ -1014,4 +1116,130 @@ double Scene_edit_box_item_priv::applyZ(int id, double z, double dirz)
     return 0;
   }
   return 0;
+}
+
+//type : 0 = vertex, 1 = edge, 2 = face
+void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *viewer)
+{
+  type = -1;
+  id = -1;
+  int deviceWidth = viewer->camera()->screenWidth();
+  int deviceHeight = viewer->camera()->screenHeight();
+  QOpenGLFramebufferObject* fbo = new QOpenGLFramebufferObject(deviceWidth, deviceHeight,QOpenGLFramebufferObject::Depth);
+  fbo->bind();
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  QColor bgColor(viewer->backgroundColor());
+  //draws the image in the fbo
+  viewer->setBackgroundColor(::Qt::white);
+  draw_picking(viewer);
+
+  int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
+  const static int dataLength = rowLength * deviceHeight;
+  GLubyte* buffer = new GLubyte[dataLength];
+  // Qt uses upper corner for its origin while GL uses the lower corner.
+  glReadPixels(picked_pixel.x(), deviceHeight-1-picked_pixel.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+  //decode ID and pick (don't forget the case nothing is picked
+  if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
+  {
+    int r(std::ceil((buffer[0]-10)/20)), g(std::ceil((buffer[1]-10)/20)), b(std::ceil((buffer[2]-10)/20));
+    id = (std::max)(r,g);
+    id = (std::max)(id,b);
+    if(buffer[0] > 0)
+    {
+      if(id <8)
+        type = 0 ;
+    }
+    else if(buffer[1] > 0)
+    {
+      if(id <12)
+      {
+        type = 1;
+      }
+    }
+    else if(buffer[2] > 0)
+    {
+      if(id <6)
+      {
+        type = 2;
+      }
+    }
+  }
+  viewer->setBackgroundColor(bgColor);
+  fbo->release();
+  delete fbo;
+}
+
+void Scene_edit_box_item::drawHl(Viewer_interface* viewer)const
+{
+  GLfloat offset_factor;
+  GLfloat offset_units;
+  QMatrix4x4 f_matrix;
+  for (int i=0; i<16; ++i){
+    f_matrix.data()[i] = (float)d->frame->matrix()[i];
+  }
+  GLdouble d_mat[16];
+  QMatrix4x4 mvp_mat;
+  viewer->camera()->getModelViewProjectionMatrix(d_mat);
+  for (int i=0; i<16; ++i)
+    mvp_mat.data()[i] = GLfloat(d_mat[i]);
+  mvp_mat = mvp_mat*f_matrix;
+  QMatrix4x4 mv_mat;
+  viewer->camera()->getModelViewMatrix(d_mat);
+  for (int i=0; i<16; ++i)
+    mv_mat.data()[i] = GLfloat(d_mat[i]);
+  mv_mat = mv_mat*f_matrix;
+  QVector4D light_pos(0.0f,0.0f,1.0f, 1.0f );
+  light_pos = light_pos*f_matrix;
+
+  if(d->hl_type == Scene_edit_box_item_priv::VERTEX)
+  {
+    vaos[Scene_edit_box_item_priv::S_Spheres]->bind();
+    attribBuffers(viewer, PROGRAM_SPHERES);
+    d->program = getShaderProgram(PROGRAM_SPHERES, viewer);
+    d->program->bind();
+    d->program->setUniformValue("mvp_matrix", mvp_mat);
+    d->program->setUniformValue("mv_matrix", mv_mat);
+    d->program->setUniformValue("light_pos", light_pos);
+    d->program->setAttributeValue("colors", QColor(Qt::yellow));
+    d->program->setAttributeValue("radius",1);
+    viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                  static_cast<GLsizei>(d->vertex_spheres.size()/3),
+                                  static_cast<GLsizei>(d->hl_vertex.size()/3));
+
+    d->program->release();
+    vaos[Scene_edit_box_item_priv::S_Spheres]->release();
+  }
+  else if(d->hl_type == Scene_edit_box_item_priv::EDGE)
+  {
+    vaos[S_Edges]->bind();
+    viewer->glLineWidth(4.0f);
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setUniformValue("f_matrix", f_matrix);
+    d->program->setAttributeValue("colors", QColor(Qt::yellow));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
+    viewer->glLineWidth(1.0f);
+    vaos[S_Edges]->release();
+    d->program->release();
+  }
+  else if(d->hl_type == Scene_edit_box_item_priv::FACE)
+  {
+    viewer->glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+    viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+    glPolygonOffset(0.5f, 0.9f);
+    vaos[Scene_edit_box_item_priv::S_Faces]->bind();
+    d->program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
+    d->program->bind();
+    d->program->setUniformValue("mvp_matrix", mvp_mat);
+    d->program->setUniformValue("mv_matrix", mv_mat);
+    d->program->setUniformValue("light_pos", light_pos);
+    d->program->setAttributeValue("colors", QColor(Qt::yellow));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->hl_vertex.size()/3));
+    vaos[Scene_edit_box_item_priv::S_Faces]->release();
+    d->program->release();
+    glPolygonOffset(offset_factor, offset_units);
+  }
 }
