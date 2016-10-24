@@ -199,17 +199,45 @@ namespace Polygon_mesh_processing {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
-
+  /**
+  * \ingroup measure_grp
+  * finds the longest border of a given triangulated surface and returns
+  * a halfedge that is part of this border and the length of this border.
+  *
+  * @tparam PolygonMesh a model of `HalfedgeGraph`
+  * @tparam NamedParameters a sequence of \ref namedparameters
+  *
+  * @param pmesh the polygon mesh
+  * @param np optional sequence of \ref namedparameters among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+  *   If this parameter is omitted, an internal property map for
+  *   `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
+  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  * \cgalNamedParamsEnd
+  *
+  * @return a pair composed of two members:
+  *   - `first`: a halfedge on the longest border.
+  *     The return type `halfedge_descriptor` is a halfedge descriptor. It is
+  *     deduced from the graph traits corresponding to the type `PolygonMesh`.
+  *   - `second`: the length of the longest border
+  *     The return type `FT` is a number type. It is
+  *     either deduced from the `geom_traits` \ref namedparameters if provided,
+  *     or the geometric traits class deduced from the point property map
+  *     of `pmesh`
+  *
+  */
   template<typename PolygonMesh,
            typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
-   FT
+  std::pair<halfedge_descriptor, FT>
 #else
   std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
             typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT>
 #endif
   longest_border(const PolygonMesh& pmesh
-         , const NamedParameters& np)
+                 , const NamedParameters& np)
   {
     typedef typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
                                                                      CGAL::vertex_point_t>::type>::Kernel::FT  FT;
