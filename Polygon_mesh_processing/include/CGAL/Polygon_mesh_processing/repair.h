@@ -441,7 +441,7 @@ std::size_t remove_null_edges(
                            parameters::all_default());
 }
 
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PMP_repairing_grp
 /// removes the degenerate faces from a triangulated surface mesh.
 /// A face is considered degenerate if two of its vertices share the same location,
 /// or more generally if all its vertices are collinear.
@@ -472,7 +472,6 @@ std::size_t remove_null_edges(
 /// \cgalNamedParamsEnd
 ///
 /// \return number of removed degenerate faces
-/// \endcond
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
                                     const NamedParameters& np)
@@ -803,7 +802,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
   return nb_deg_faces;
 }
 
-/// \cond SKIP_IN_MANUAL
+
 template<class TriangleMesh>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 {
@@ -813,7 +812,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 /// \endcond
 
 
-/// \ingroup PkgPolygonMeshProcessing
+/// \ingroup PMP_repairing_grp
 /// removes the isolated vertices from any polygon mesh.
 /// A vertex is considered isolated if it is not incident to any simplex
 /// of higher dimension.
@@ -1148,7 +1147,7 @@ bool remove_self_intersections(TriangleMesh& tm, const int max_steps = 7, bool v
 
   return step<max_steps;
 }
-///
+/// \endcond
 
 } } // end of CGAL::Polygon_mesh_processing
 
