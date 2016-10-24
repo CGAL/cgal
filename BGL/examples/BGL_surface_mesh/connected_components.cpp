@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
   std::ifstream in((argc>1)?argv[1]:"data/prim.off");
   in >> sm;
 
-  Mesh::Property_map<vertex_descriptor,int> ccmap;
+  CGAL::Properties::Property_map<vertex_descriptor,int> ccmap;
   ccmap = sm.add_property_map<vertex_descriptor,int>("v:CC").first;
 
   int num = connected_components(sm, ccmap);
