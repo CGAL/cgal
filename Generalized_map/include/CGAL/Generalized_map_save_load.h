@@ -184,14 +184,8 @@ namespace CGAL {
             
             if ( index<=amap.dimension )
             {
-              // A->B
               amap.basic_link_alpha(myDarts[currentDartInt],
                                     myDarts[nextDartInt],
-                                    index);
-
-              //B->A
-              amap.basic_link_alpha(myDarts[nextDartInt],
-                                    myDarts[currentDartInt],
                                     index);
             }
           }

@@ -747,15 +747,9 @@ namespace CGAL {
             
             if ( index<=amap.dimension )
             {
-              // A->B
               amap.basic_link_beta(myDarts[currentDartInt],
                                    myDarts[nextDartInt],
                                    index);
-
-              //B->A
-              amap.basic_link_beta(myDarts[nextDartInt],
-                                   myDarts[currentDartInt],
-                                   CGAL_BETAINV(index));
             }
           }
           else if (v2.first=="v")
