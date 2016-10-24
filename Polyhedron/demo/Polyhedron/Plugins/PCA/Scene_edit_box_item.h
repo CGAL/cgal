@@ -13,35 +13,6 @@ class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
     struct vertex;
     struct edge;
     struct face;
-    enum VAOs{
-      Edges = 0,
-      Spheres,
-      Faces,
-      S_Edges,
-      S_Spheres,
-      S_Faces,
-      Arrow,
-      P_Edges,
-      P_Spheres,
-      P_Faces,
-      NumberOfVaos
-    };
-    enum VBOs{
-      VertexEdges = 0,
-      ColorsEdges,
-      VertexSpheres,
-      NormalSpheres,
-      CenterSpheres,
-      ColorsSpheres,
-      VertexFaces,
-      NormalFaces,
-      ColorsFaces,
-      VertexArrow,
-      NormalArrow,
-      S_Vertex,
-      S_Normal,
-      NumberOfVbos
-    };
     Scene_edit_box_item(const CGAL::Three::Scene_interface* scene_interface);
     ~Scene_edit_box_item();
     bool isFinite() const { return true; }
