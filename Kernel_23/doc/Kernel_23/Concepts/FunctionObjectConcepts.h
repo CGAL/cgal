@@ -1149,7 +1149,7 @@ public:
     weighted points
 
 \cgalRefines `AdaptableFunctor`
-\cgalHasModels `Compare_weighted_squared_radius_3`
+\cgalHasModel `Compare_weighted_squared_radius_3`
 
 */
 class CompareWeightedSquaredRadius_3 {
