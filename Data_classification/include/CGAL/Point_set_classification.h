@@ -854,7 +854,209 @@ public:
     ground truth points correctly classified using the best
     configuration found.
   */
+  
   double training (std::size_t nb_tests = 300)
+  {
+    if (m_training_type.empty())
+      return 0.;
+
+    std::vector<std::vector<std::size_t> > training_sets (m_types.size());
+    for (std::size_t i = 0; i < m_training_type.size(); ++ i)
+      if (m_training_type[i] != (std::size_t)(-1))
+        training_sets[m_training_type[i]].push_back (i);
+
+    for (std::size_t i = 0; i < training_sets.size(); ++ i)
+      if (training_sets[i].empty())
+        std::cerr << "WARNING: \"" << m_types[i]->id() << "\" doesn't have a training set." << std::endl;
+
+    std::vector<double> best_weights (m_attributes.size(), 1.);
+
+    struct Attribute_training
+    {
+      bool skipped;
+      double wmin;
+      double wmax;
+      double factor;
+    };
+    std::vector<Attribute_training> att_train;
+    std::size_t nb_trials = 100;
+    double wmin = 1e-5, wmax = 1e5;
+    double factor = std::pow (wmax/wmin, 1. / (double)nb_trials);
+    std::size_t att_used = 0;
+    for (std::size_t j = 0; j < m_attributes.size(); ++ j)
+      {
+        Data_classification::Attribute_handle att = m_attributes[j];
+        best_weights[j] = att->weight;
+
+        std::size_t nb_useful = 0;
+        double min = (std::numeric_limits<double>::max)();
+        double max = -(std::numeric_limits<double>::max)();
+
+        att->weight = wmin;
+        for (std::size_t i = 0; i < 100; ++ i)
+          {
+            estimate_attribute_effect(training_sets, att);
+            if (attribute_useful(att))
+              {
+                CGAL_CLASSTRAINING_CERR << "#";
+                nb_useful ++;
+                min = (std::min) (min, att->weight);
+                max = (std::max) (max, att->weight);
+              }
+            else
+              CGAL_CLASSTRAINING_CERR << "-";
+            att->weight *= factor;
+          }
+        CGAL_CLASSTRAINING_CERR << std::endl;
+        CGAL_CLASSTRAINING_CERR << att->id() << " useful in "
+                  << nb_useful << "% of the cases, in interval [ "
+                  << min << " ; " << max << " ]" << std::endl;
+        att_train.push_back (Attribute_training());
+        att_train.back().skipped = false;
+        att_train.back().wmin = min / factor;
+        att_train.back().wmax = max * factor;
+        if (nb_useful < 2)
+          {
+            att_train.back().skipped = true;
+            att->weight = 0.;
+            best_weights[j] = att->weight;
+          }
+        else if (best_weights[j] == 1.)
+          {
+            att->weight = 0.5 * (att_train.back().wmin + att_train.back().wmax);
+            best_weights[j] = att->weight;
+            ++ att_used;
+          }
+        else
+          {
+            att->weight = best_weights[j];
+            ++ att_used;
+          }
+        estimate_attribute_effect(training_sets, att);
+      }
+
+    std::size_t nb_trials_per_attribute = 1 + (std::size_t)(nb_tests / (double)(att_used));
+    std::cerr << "Trials = " << nb_tests << ", attributes = " << att_used
+              << ", trials per att = " << nb_trials_per_attribute << std::endl;
+    for (std::size_t i = 0; i < att_train.size(); ++ i)
+      if (!(att_train[i].skipped))
+        att_train[i].factor = std::pow (att_train[i].wmax / att_train[i].wmin,
+                                        1. / (double)nb_trials_per_attribute);
+    
+    
+    prepare_classification();
+    
+    double best_score = training_compute_worst_score(training_sets, 0.);
+    double best_confidence = training_compute_worst_confidence(training_sets, 0.);
+    
+    std::cerr << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
+
+    std::cerr << 100. * best_score << "% (found at initialization)" << std::endl;
+
+    std::size_t current_att_changed = 0;
+    for (std::size_t i = 0; i < att_used; ++ i)
+      {
+        while (att_train[current_att_changed].skipped)
+          {
+            ++ current_att_changed;
+            if (current_att_changed == m_attributes.size())
+              current_att_changed = 0;
+          }
+
+        std::size_t nb_used = 0;
+        for (std::size_t j = 0; j < m_attributes.size(); ++ j)
+          {
+            if (j == current_att_changed)
+              continue;
+            
+            m_attributes[j]->weight = best_weights[j];
+            estimate_attribute_effect(training_sets, m_attributes[j]);
+            if (attribute_useful(m_attributes[j]))
+              nb_used ++;
+          }
+        Data_classification::Attribute_handle current_att = m_attributes[current_att_changed];
+        const Attribute_training& tr = att_train[current_att_changed];
+        
+        current_att->weight = tr.wmin;
+        for (std::size_t j = 0; j < nb_trials_per_attribute; ++ j)
+          {
+            estimate_attribute_effect(training_sets, current_att);
+
+            prepare_classification();
+            double worst_confidence = training_compute_worst_confidence(training_sets,
+                                                                        best_confidence);
+
+            double worst_score = training_compute_worst_score(training_sets,
+                                                              best_score);
+
+            if (worst_score > best_score
+                && worst_confidence > best_confidence)
+              {
+                best_score = worst_score;
+                best_confidence = worst_confidence;
+                std::cerr << 100. * best_score << "% (found at iteration "
+                          << (i * nb_trials_per_attribute) + j << "/" << nb_tests << ", "
+                          << nb_used + (attribute_useful(current_att) ? 1 : 0)
+                          << "/" << m_attributes.size() << " attribute(s) used)" << std::endl;
+                for (std::size_t k = 0; k < m_attributes.size(); ++ k)
+                  {
+                    Data_classification::Attribute_handle att = m_attributes[k];
+                    best_weights[k] = att->weight;
+                  }
+              }
+            
+            current_att->weight *= tr.factor;
+          }
+
+        ++ current_att_changed;
+      }
+
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      {
+        Data_classification::Attribute_handle att = m_attributes[i];
+        att->weight = best_weights[i];
+      }
+
+    estimate_attributes_effects(training_sets);
+    
+    std::cerr << std::endl << "Best score found is at least " << 100. * best_score
+              << "% of correct classification" << std::endl;
+
+    std::size_t nb_removed = 0;
+    for (std::size_t i = 0; i < best_weights.size(); ++ i)
+      {
+        Data_classification::Attribute_handle att = m_attributes[i];
+        CGAL_CLASSTRAINING_CERR << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
+        att->weight = best_weights[i];
+
+        Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
+        bool to_remove = true;
+        for (std::size_t j = 0; j < m_types.size(); ++ j)
+          {
+            Data_classification::Type_handle ctype = m_types[j];
+            if (ctype->attribute_effect(att) == Data_classification::Type::FAVORED_ATT)
+              CGAL_CLASSTRAINING_CERR << " * Favored for ";
+            else if (ctype->attribute_effect(att) == Data_classification::Type::PENALIZED_ATT)
+              CGAL_CLASSTRAINING_CERR << " * Penalized for ";
+            else
+              CGAL_CLASSTRAINING_CERR << " * Neutral for ";
+            if (ctype->attribute_effect(att) != side)
+              to_remove = false;
+            CGAL_CLASSTRAINING_CERR << ctype->id() << std::endl;
+          }
+        if (to_remove)
+          {
+            CGAL_CLASSTRAINING_CERR << "   -> Useless! Should be removed" << std::endl;
+            ++ nb_removed;
+          }
+      }
+    std::cerr << nb_removed
+              << " attribute(s) out of " << m_attributes.size() << " are useless" << std::endl;
+    
+    return best_score;
+  }
+  
+  double training_old (std::size_t nb_tests = 300)
   {
     if (m_training_type.empty())
       return 0.;
