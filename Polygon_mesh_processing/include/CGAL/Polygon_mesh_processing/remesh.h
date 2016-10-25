@@ -41,8 +41,7 @@ namespace Polygon_mesh_processing {
 * edge flips, tangential relaxation and projection to the initial surface
 * to generate a smooth mesh with a prescribed edge length.
 *
-* @tparam PolygonMesh model of `MutableFaceGraph` that 
-*         has an internal property map for `CGAL::vertex_point_t`.
+* @tparam PolygonMesh model of `MutableFaceGraph`.
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
