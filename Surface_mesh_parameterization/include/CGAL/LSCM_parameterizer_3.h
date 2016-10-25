@@ -23,54 +23,29 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-
-#include <CGAL/circulator.h>
-#include <CGAL/Timer.h>
-#include <CGAL/OpenNL/linear_solver.h>
-
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_solver_traits.h>
-#endif
+#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
+#include <CGAL/circulator.h>
+#include <CGAL/Timer.h>
+
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#endif
+#include <CGAL/OpenNL/linear_solver.h>
+
+#include <boost/foreach.hpp>
+#include <boost/unordered_set.hpp>
+
 #include <iostream>
+#include <vector>
 
 /// \file LSCM_parameterizer_3.h
 
 namespace CGAL {
-//custom output iterator that fills both faces and vertices containers
-namespace internal {
-
-template<typename Mesh>
-struct ContainersFiller
-{
-  typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-
-  const Mesh& mesh;
-  std::vector<face_descriptor>& faces;
-  boost::unordered_set<vertex_descriptor>& vertices;
-
-  ContainersFiller(const Mesh& mesh,
-                 std::vector<face_descriptor>& faces,
-                 boost::unordered_set<vertex_descriptor>& vertices)
-    : mesh(mesh), faces(faces), vertices(vertices)
-  { }
-
-  void operator()(face_descriptor fd)
-  {
-    typename boost::graph_traits<Mesh>::halfedge_descriptor hd = halfedge(fd,mesh);
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
-      vertices.insert(vd);
-    }
-    faces.push_back(fd);
-  }
-};
-
-} // namespace internal
 
 // ------------------------------------------------------------------------------------
 // Declaration
@@ -212,10 +187,12 @@ public:
     solver.begin_system();
     std::vector<face_descriptor> ccfaces;
     boost::unordered_set<vertex_descriptor> ccvertices;
-    internal::ContainersFiller<TriangleMesh> fc(mesh, ccfaces, ccvertices);
-    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
-                                                       mesh,
-                                                       boost::make_function_output_iterator(fc));
+    CGAL::internal::Surface_mesh_parameterization::Containers_filler<TriangleMesh>
+                                                  fc(mesh, ccfaces, ccvertices);
+    CGAL::Polygon_mesh_processing::connected_component(
+                                      face(opposite(bhd,mesh),mesh),
+                                      mesh,
+                                      boost::make_function_output_iterator(fc));
     BOOST_FOREACH(face_descriptor fd, ccfaces){
       // Create two lines in the linear system per triangle (one for u, one for v)
       status = setup_triangle_relations(solver, mesh, fd, vimap);

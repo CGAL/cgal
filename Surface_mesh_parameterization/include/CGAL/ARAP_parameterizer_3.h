@@ -1,6 +1,8 @@
 #ifndef CGAL_ARAP_PARAMETERIZER_3_H
 #define CGAL_ARAP_PARAMETERIZER_3_H
 
+#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 #include <CGAL/MVC_post_processor_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
@@ -204,10 +206,12 @@ private:
                              Vertex_set& vertices,
                              Faces_vector& faces) const
   {
-    internal::ContainersFiller<TriangleMesh> fc(mesh, faces, vertices);
-    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd, mesh), mesh),
-                                                       mesh,
-                                                       boost::make_function_output_iterator(fc));
+    CGAL::internal::Surface_mesh_parameterization::Containers_filler<TriangleMesh>
+                                                      fc(mesh, faces, vertices);
+    CGAL::Polygon_mesh_processing::connected_component(
+                                      face(opposite(bhd, mesh), mesh),
+                                      mesh,
+                                      boost::make_function_output_iterator(fc));
     CGAL_postcondition(vertices.size() == num_vertices(mesh) &&
                        faces.size() == num_faces(mesh));
   }

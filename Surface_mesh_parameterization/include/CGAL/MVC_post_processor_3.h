@@ -1,6 +1,8 @@
 #ifndef CGAL_MVC_POST_PROCESSOR_3_H
 #define CGAL_MVC_POST_PROCESSOR_3_H
 
+#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/parameterize.h>
 
@@ -144,7 +146,24 @@ private:
 
 // Private operations
 private:
-  /// Checks whether the border polygon is simple.
+  /// Store the vertices and faces of the mesh in memory.
+  void initialize_containers(const TriangleMesh& mesh,
+                             halfedge_descriptor bhd,
+                             Vertex_set& vertices,
+                             Faces_vector& faces) const
+  {
+    CGAL::internal::Surface_mesh_parameterization::Containers_filler<TriangleMesh>
+                                                      fc(mesh, faces, vertices);
+    CGAL::Polygon_mesh_processing::connected_component(
+                                      face(opposite(bhd, mesh), mesh),
+                                      mesh,
+                                      boost::make_function_output_iterator(fc));
+    CGAL_postcondition(vertices.size() == num_vertices(mesh) &&
+                       faces.size() == num_faces(mesh));
+    std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
+  }
+
+  /// Checks whether the polygon's border is simple.
   template <typename VertexUVMap>
   bool is_polygon_simple(const TriangleMesh& mesh,
                          halfedge_descriptor bhd,
@@ -723,6 +742,21 @@ public:
     parameterize_convex_hull_with_MVC(mesh, vertices, faces, ct, uvmap, vimap, mvc_vpmap);
 
     return Base::OK;
+  }
+
+  template <typename VertexUVMap,
+            typename VertexIndexMap>
+  Error_code parameterize(const TriangleMesh& mesh,
+                          halfedge_descriptor bhd,
+                          VertexUVMap uvmap,
+                          const VertexIndexMap vimap)
+  {
+    // Fill vertex and faces information.
+    Vertex_set vertices;
+    Faces_vector faces;
+    initialize_containers(mesh, bhd, vertices, faces);
+
+    return parameterize(mesh, vertices, faces, bhd, uvmap, vimap);
   }
 };
 
