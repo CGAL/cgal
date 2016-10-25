@@ -22,6 +22,7 @@
 #define CGAL_ARAP_PARAMETERIZER_3_H
 
 #include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
 
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 #include <CGAL/MVC_post_processor_3.h>
@@ -222,37 +223,37 @@ private:
 
 // Private utilities
 private:
-  /// Print the parameterized mesh as a list of polylines.
-  template <typename VertexUVMap>
+  /// Print the parameterized mesh.
+  template <typename VertexUVMap,
+            typename VertexIndexMap>
   void output_uvmap(const std::string filename,
                     const TriangleMesh& mesh,
+                    const Vertex_set& vertices,
                     const Faces_vector& faces,
-                    const VertexUVMap uvmap) const
+                    const VertexUVMap uvmap,
+                    const VertexIndexMap vimap) const
   {
     std::ofstream out(filename.c_str());
-    BOOST_FOREACH(face_descriptor fd, faces){
-      halfedge_descriptor hd = halfedge(fd, mesh);
-      vertex_descriptor vd = target(hd, mesh);
-      out << "4 " << get(uvmap, vd) << " 0 ";
-      hd = next(hd, mesh);
-      BOOST_FOREACH(vd, vertices_around_face(hd, mesh)){
-        out << get(uvmap, vd) << " 0 ";
-      }
-      out << std::endl;
-    }
+    CGAL::Surface_mesh_parameterization::output_uvmap_to_off(mesh, vertices, faces,
+                                                             uvmap, vimap, out);
   }
 
-  /// Print the parameterized mesh as a list of polylines.
-  template <typename VertexUVMap>
+  /// Print the parameterized mesh.
+  template <typename VertexUVMap,
+            typename VertexIndexMap>
   void output_uvmap(const std::string filename,
                     const unsigned int iter,
                     const TriangleMesh& mesh,
+                    const Vertex_set& vertices,
                     const Faces_vector& faces,
-                    const VertexUVMap uvmap) const
+                    const VertexUVMap uvmap,
+                    const VertexIndexMap vimap) const
   {
-    std::ostringstream outss;
-    outss << filename << iter << ".txt" << std::ends;
-    output_uvmap(outss.str(), mesh, faces, uvmap);
+    std::ostringstream out_ss;
+    out_ss << filename << iter << ".off" << std::ends;
+    std::ofstream out(out_ss.str().c_str());
+    CGAL::Surface_mesh_parameterization::output_uvmap_to_off(mesh, vertices, faces,
+                                                             uvmap, vimap, out);
   }
 
 // Private operations
@@ -1188,7 +1189,7 @@ private:
     if(status != Base::OK)
       return status;
 
-    output_uvmap("ARAP_final_post_processing.txt", mesh, faces, uvmap);
+    output_uvmap("ARAP_final_post_processing.off", mesh, vertices, faces, uvmap, vimap);
 
     return Base::OK;
   }
@@ -1256,7 +1257,7 @@ public:
 
     // Compute the initial parameterization of the mesh
     status = compute_initial_uv_map(mesh, bhd, uvmap);
-    output_uvmap("ARAP_initial_param.txt", mesh, faces, uvmap);
+    output_uvmap("ARAP_initial_param.off", mesh, vertices, faces, uvmap, vimap);
     if(status != Base::OK)
       return status;
 
@@ -1298,7 +1299,7 @@ public:
                                                uvmap, vimap, vpmap, A);
 
       // Output the current situation
-      output_uvmap("ARAP_iteration_", ite, mesh, faces, uvmap);
+      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
       energy_last = energy_this;
       energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                                         ltmap, uvmap);
@@ -1321,7 +1322,7 @@ public:
       }
     }
 
-    output_uvmap("ARAP_final_pre_processing.txt", mesh, faces, uvmap);
+    output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
 
     // Use post processing to handle flipped elements
     status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);

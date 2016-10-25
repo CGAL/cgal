@@ -210,17 +210,6 @@ int main(int argc, char * argv[])
       std::cout << "Encountered a problem: " << status << std::endl;
     else
       std::cout << "Parameterized with ARAP!" << std::endl;
-
-    std::ofstream out("ARAP_final_param.txt");
-    BOOST_FOREACH(face_descriptor fd, faces(pm)){
-      halfedge_descriptor hd = halfedge(fd, pm);
-      out << "4 " << uvhm[target(hd, pm)] << " 0 ";
-      hd = next(hd, pm);
-      BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, pm)){
-        out << uvhm[vd] << " 0 ";
-      }
-      out << std::endl;
-    }
   }
 #endif
 
