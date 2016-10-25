@@ -3,16 +3,17 @@
 \ingroup PkgSurfaceParameterizationConcepts
 \cgalConcept
 
-`ParameterizerTraits_3` is a concept of parameterization object for a given type of mesh, `TriangleMesh`, which must be a model of the `FaceGraph` concept. 
+`ParameterizerTraits_3` is a concept of parameterization object for a given type
+of mesh, `TriangleMesh`, which must be a model of the `FaceGraph` concept.
 
+Creation
+--------------
 
-Creation 
--------------- 
-
-Construction and destruction are undefined. 
+Construction and destruction are undefined.
 
 \cgalHasModel `CGAL::Parameterizer_traits_3<TriangleMesh>`
 \cgalHasModel `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+\cgalHasModel `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 \cgalHasModel `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 \cgalHasModel `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 \cgalHasModel `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -24,19 +25,19 @@ Construction and destruction are undefined.
 class ParameterizerTraits_3 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-Export the type of mesh to parameterize. 
+Export the type of mesh to parameterize.
 
-*/ 
-typedef unspecified_type Adaptor; 
+*/
+typedef unspecified_type TriangleMesh;
 
-/// @} 
+/// @}
 
-/// \name Constants 
+/// \name Constants
 /// @{
 
     /// List of errors detected by this package
@@ -52,19 +53,19 @@ typedef unspecified_type Adaptor;
     ERROR_OUT_OF_MEMORY,            ///< Not enough memory
     ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
     };
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-Compute a one-to-one mapping from a triangular 3D surface `mesh` to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface. 
+Compute a one-to-one mapping from a triangular 3D surface `mesh` to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
 
-\pre `mesh` must be a surface with one connected component and no hole. `mesh` must be a triangular mesh. 
+\pre `mesh` must be a surface with one connected component and no hole. `mesh` must be a triangular mesh.
 
-*/ 
-Error_code parameterize(TriangleMesh& mesh); 
+*/
+Error_code parameterize(TriangleMesh& mesh);
 
 /// @}
 

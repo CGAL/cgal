@@ -37,36 +37,35 @@ namespace CGAL {
 // Declaration
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
 ///
-/// The class `Two_vertices_parameterizer_3`
-/// parameterizes two extreme vertices of a 3D surface.
+/// The class `Two_vertices_parameterizer_3` parameterizes two extreme vertices
+/// of a 3D surface.
 /// This kind of border parameterization is used by free border parameterizations.
 ///
 /// Implementation note:
-/// To simplify the implementation, `BorderParameterizer_3` models know only the
-/// `TriangleMesh` class. They do not know the parameterization algorithm
-/// requirements or the kind of sparse linear system used.
+/// To simplify the implementation, models of the concept `BorderParameterizer_3`
+/// know only the `TriangleMesh` class. They do not know the parameterization
+/// algorithm requirements or the kind of sparse linear system that is used.
 ///
 /// \cgalModels `BorderParameterizer_3`
 ///
-
-template<class TriangleMesh>      //< 3D surface
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
+///
+template<class TriangleMesh>
 class Two_vertices_parameterizer_3
 {
 // Public types
 public:
-  /// Export TriangleMesh template parameter
-  //typedef TriangleMesh TriangleMesh;
-
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+
 // Private types
 private:
-  typedef Parameterizer_traits_3<TriangleMesh> Adaptor;
-  typedef typename Adaptor::Point_2       Point_2;
-  typedef typename Adaptor::Point_3       Point_3;
-  typedef typename Adaptor::Vector_3      Vector_3;
+  typedef Parameterizer_traits_3<TriangleMesh>    Traits;
+  typedef typename Traits::Point_2                Point_2;
+  typedef typename Traits::Point_3                Point_3;
+  typedef typename Traits::Vector_3               Vector_3;
 
   vertex_descriptor vxmin, vxmax;
   bool vertices_given;
@@ -75,16 +74,29 @@ private:
 public:
   // Default constructor, copy constructor and operator =() are fine.
 
+  /// Constructor.
   Two_vertices_parameterizer_3()
     : vertices_given(false)
   { }
 
+  /// Constructor where fixed vertices are provided.
   Two_vertices_parameterizer_3(vertex_descriptor v1, vertex_descriptor v2)
     : vxmin(v1), vxmax(v2), vertices_given(true)
   { }
 
-    /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
-template <typename VertexUVmap, typename VertexParameterizedMap>
+  /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
+  ///
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+  ///         (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexParameterizedMap must be a property map that associates a boolean
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  ///
+  template <typename VertexUVmap, typename VertexParameterizedMap>
   typename Parameterizer_traits_3<TriangleMesh>::Error_code
   parameterize_border(const TriangleMesh& mesh,
                       halfedge_descriptor,
@@ -242,9 +254,9 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
     return Parameterizer_traits_3<TriangleMesh>::OK;
   }
 
-  /// Indicate if border's shape is convex.
+  /// Indicate if the border's shape is convex.
   /// Meaningless for free border parameterization algorithms.
-  bool  is_border_convex () { return false; }
+  bool is_border_convex() { return false; }
 };
 
 } // namespace CGAL

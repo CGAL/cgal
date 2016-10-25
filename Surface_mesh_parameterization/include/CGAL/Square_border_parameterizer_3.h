@@ -38,7 +38,7 @@ namespace CGAL {
 // Class Square_border_parameterizer_3
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a square.
@@ -55,8 +55,12 @@ namespace CGAL {
 ///
 /// \cgalModels `BorderParameterizer_3`
 ///
-
-template<class TriangleMesh_> ///< 3D surface
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
+///
+/// \sa `CGAL::Square_border_uniform_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Square_border_arc_length_parameterizer_3<TriangleMesh>`
+///
+template <class TriangleMesh_>
 class Square_border_parameterizer_3
 {
 // Public types
@@ -79,9 +83,6 @@ private:
 
 // Public operations
 public:
-  /// Destructor of base class should be virtual.
-  virtual ~Square_border_parameterizer_3() {}
-
   // Default constructor, copy constructor and operator =() are fine
 
   /// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
@@ -90,8 +91,7 @@ public:
                                         parameterize_border(TriangleMesh& mesh);
 
   /// Indicate if border's shape is convex.
-  bool  is_border_convex () { return true; }
-
+  bool is_border_convex() { return true; }
 
 // Private operations
 private:
@@ -119,8 +119,8 @@ double Square_border_parameterizer_3<TriangleMesh>::compute_border_length(const 
   return len;
 }
 
-// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
-// on border's shape. Mark them as "parameterized".
+/// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+/// on border's shape. Mark them as "parameterized".
 template<class TriangleMesh>
 inline
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
@@ -206,8 +206,8 @@ Square_border_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& m
   return Parameterizer_traits_3<TriangleMesh>::OK;
 }
 
-// Utility method for parameterize_border().
-// Compute mesh iterator whose offset is closest to 'value'.
+/// Utility method for parameterize_border().
+/// Compute mesh iterator whose offset is closest to 'value'.
 template<class TriangleMesh>
 inline
 typename Square_border_parameterizer_3<TriangleMesh>::halfedge_around_face_iterator
@@ -235,7 +235,7 @@ Square_border_parameterizer_3<TriangleMesh>::closest_iterator(TriangleMesh& mesh
 // Class Square_border_uniform_parameterizer_3
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a square
 /// in a uniform manner: points are equally spaced.
@@ -246,7 +246,9 @@ Square_border_parameterizer_3<TriangleMesh>::closest_iterator(TriangleMesh& mesh
 ///
 /// \cgalModels `BorderParameterizer_3`
 ///
-
+/// \sa `CGAL::Square_border_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Square_border_arc_length_parameterizer_3<TriangleMesh>`
+///
 template<class TriangleMesh_> ///< 3D surface
 class Square_border_uniform_parameterizer_3
   : public Square_border_parameterizer_3<TriangleMesh_>
@@ -285,7 +287,7 @@ protected:
 // Class Square_border_arc_length_parameterizer_3
 //
 
-/// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
+/// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a square,
 /// with an arc-length parameterization: (u,v) values are
@@ -295,10 +297,14 @@ protected:
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
+///
 /// \cgalModels `BorderParameterizer_3`
 ///
-
-template<class TriangleMesh_>      //< 3D surface
+/// \sa `CGAL::Square_border_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Square_border_uniform_parameterizer_3<TriangleMesh>`
+///
+template<class TriangleMesh_>
 class Square_border_arc_length_parameterizer_3
   : public Square_border_parameterizer_3<TriangleMesh_>
 {
@@ -321,8 +327,8 @@ protected:
     typedef typename boost::property_map<typename TriangleMesh::Polyhedron, boost::vertex_point_t>::const_type PPmap;
     PPmap ppmap = get(vertex_point, mesh.get_adapted_mesh());
 
-    /// Arc-length border parameterization: (u,v) values are
-    /// proportional to the length of border edges.
+    /// Arc-length border parameterization: (u,v) values are proportional
+    /// to the length of border edges.
     Vector_3 v = get(ppmap, target) - get(ppmap,source);
     return std::sqrt(v*v);
   }

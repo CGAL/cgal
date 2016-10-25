@@ -44,21 +44,19 @@ namespace CGAL {
 // Declaration
 // ------------------------------------------------------------------------------------
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup PkgSurfaceParameterizationMethods
 ///
 /// The class `Fixed_border_parameterizer_3`
 /// is the base class of fixed border parameterization methods (Tutte, Floater, ...).
 ///
-/// One-to-one mapping is guaranteed if the border of the surface is mapped onto a convex polygon.
+/// A one-to-one mapping is guaranteed if the border of the surface is mapped onto a convex polygon.
 ///
-/// This class is a pure virtual class, thus cannot be instantiated.
-/// Anyway, it implements most of the parameterization algorithm `parameterize()`.
-/// Subclasses are Strategies that modify the behavior of this algorithm:
-/// - They provide `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
-///   parameters.
-/// - They implement `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
+/// This class is a pure virtual class and thus cannot be instantiated.
+/// Nevertheless, it implements most of the parameterization algorithm `parameterize()`.
+/// Subclasses are Strategies \cgalCite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:
+/// - They provide the template parameters `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d`.
+/// - They implement `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
 ///   for j neighbor vertex of i.
-/// - They may implement an optimized version of `is_one_to_one_mapping()`.
 ///
 // @todo `Fixed_border_parameterizer_3` should remove border vertices
 // from the linear systems in order to have a symmetric positive definite
@@ -66,24 +64,29 @@ namespace CGAL {
 ///
 /// \cgalModels `ParameterizerTraits_3`
 ///
-///
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
+///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
+///         does not remove (yet) border vertices from the system.
 ///
 /// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
+/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-
+///
 template
 <
-  class TriangleMesh,       ///< a model of  FaceGraph
-  class BorderParameterizer_3         ///< Strategy to parameterize the surface border
+  class TriangleMesh,
+  class BorderParameterizer_3
     = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
-  class SparseLinearAlgebraTraits_d   ///< Traits class to solve a sparse linear system
+  class SparseLinearAlgebraTraits_d
     = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
-                                          Eigen::IncompleteLUT< double > > > >
-
+                                          Eigen::IncompleteLUT< double > > >
+>
 class Fixed_border_parameterizer_3
   : public Parameterizer_traits_3<TriangleMesh>
 {
@@ -111,7 +114,7 @@ private:
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
 
-  // Mesh_Adaptor_3 subtypes:
+  // Traits subtypes:
   typedef typename Base::NT            NT;
   typedef typename Base::Point_2       Point_2;
   typedef typename Base::Point_3       Point_3;
@@ -130,9 +133,9 @@ protected:
 public:
   /// Constructor
   Fixed_border_parameterizer_3(Border_param border_param = Border_param(),
-                               ///< Object that maps the surface's border to 2D space
+                               ///< %Object that maps the surface's border to 2D space
                                Sparse_LA sparse_la = Sparse_LA())
-    ///< Traits object to access a sparse linear system
+                               ///< Traits object to access a sparse linear system
     : m_borderParameterizer(border_param), m_linearAlgebra(sparse_la)
   { }
 
@@ -140,17 +143,30 @@ public:
 
   /// Compute a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
-  /// The mapping is linear by pieces (linear in each triangle).
+  /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  ///
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+  ///         (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexParameterizedMap must be a property map that associates a boolean
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param vpm an instanciation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a surface with one connected component.
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The mesh border must be mapped onto a convex polygon.
-
   template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
   Error_code parameterize(TriangleMesh& mesh,
-                          halfedge_descriptor,
-                          VertexUVmap,
+                          halfedge_descriptor bhd,
+                          VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpm);
 
@@ -160,24 +176,38 @@ protected:
   /// Fill the border vertices' lines in both linear systems:
   /// "u = constant" and "v = constant".
   ///
-  /// \pre Vertices must be indexed.
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+  ///         (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param A the matrix in both linear system
+  /// \param Bu the right hand side vector in the linear system of x coordinates
+  /// \param Bv the right hand side vector in the linear system of y coordinates
+  /// \param mesh a triangulated surface.
+  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  ///
+  /// \pre Vertices must be indexed (`vimap` must be initialized).
   /// \pre A, Bu and Bv must be allocated.
   /// \pre Border vertices must be parameterized.
   template <typename VertexUVmap, typename VertexIndexMap>
   void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv,
-                                          const TriangleMesh& tmesh,
+                                          const TriangleMesh& mesh,
                                           halfedge_descriptor bhd,
                                           VertexUVmap uvmap,
                                           VertexIndexMap vimap)
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
       // Get vertex index in sparse linear system
-      int index = get(vimap, target(hd,tmesh));
+      int index = get(vimap, target(hd, mesh));
       // Write a diagonal coefficient of A
       A.set_coef(index, index, 1, true /*new*/);
       // get the halfedge uv
       // Write constant in Bu and Bv
-      Point_2 uv = get(uvmap, target(hd,tmesh));
+      Point_2 uv = get(uvmap, target(hd, mesh));
       Bu[index] = uv.x();
       Bv[index] = uv.y();
     }
@@ -185,6 +215,10 @@ protected:
 
   /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
   /// Implementation note: Subclasses must at least implement compute_w_ij().
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param main_vertex_v_i the vertex of `mesh` with index `i`
+  /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j)
@@ -280,15 +314,29 @@ struct Vertices_set {
 // Implementation
 // ------------------------------------------------------------------------------------
 
-// Compute a one-to-one mapping from a triangular 3D surface mesh
-// to a piece of the 2D space.
-// The mapping is linear by pieces (linear in each triangle).
-// The result is the (u,v) pair image of each vertex of the 3D surface.
-//
-// Preconditions:
-// - `mesh` must be a surface with one connected component.
-// - `mesh` must be a triangular mesh.
-// - The mesh border must be mapped onto a convex polygon.
+/// Compute a one-to-one mapping from a triangular 3D surface mesh
+/// to a piece of the 2D space.
+/// The mapping is piecewise linear (linear in each triangle).
+/// The result is the (u,v) pair image of each vertex of the 3D surface.
+///
+/// \tparam VertexUVmap must be a property map that associates a %Point_2
+///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+///         (type deduced by the graph traits of `TriangleMesh`).
+/// \tparam VertexIndexMap must be a property map that associates a unique integer index
+///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+/// \tparam VertexParameterizedMap must be a property map that associates a boolean
+///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+///
+/// \param mesh a triangulated surface.
+/// \param bhd an halfedge descriptor on the boundary of `mesh`.
+/// \param uvmap an instanciation of the class `VertexUVmap`.
+/// \param vimap an instanciation of the class `VertexIndexMap`.
+/// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+///
+/// \pre `mesh` must be a surface with one connected component.
+/// \pre `mesh` must be a triangular mesh.
+/// \pre The mesh border must be mapped onto a convex polygon.
+/// \pre The vertices must be indexed (`vimap` must be initialized)
 template <class TriangleMesh, class Border_param, class Sparse_LA>
 template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
 typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code

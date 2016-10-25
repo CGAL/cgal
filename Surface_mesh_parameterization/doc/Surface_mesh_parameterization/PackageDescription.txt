@@ -12,7 +12,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgSolverSummary} 
+\cgalPkgDependsOn{\ref PkgSolverSummary}
 \cgalPkgBib{cgal:sal-pptsm2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -48,6 +48,7 @@ This \cgal package implements several parameterization methods:
 
 - `CGAL::Parameterizer_traits_3<TriangleMesh>`
 - `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 - `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 - `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 - `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -62,18 +63,16 @@ each instance of a vertex along the border).
 
 This package implements all common border parameterization methods:
 - For fixed border methods:
-   - the user can select a border
-      parameterization among two common methods: uniform or
-      arc-length parameterizations.
+   - the user can select a border parameterization among two common methods:
+     uniform or arc-length parameterizations.
    - one convex shape specified by:
     - one shape among a set of standard ones (circle, square).
-- For free border methods: at least two constraints (the pinned
-vertices).
+- For free border methods: at least two constraints (the pinned vertices).
 
-- `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
 - `CGAL::Circular_border_uniform_parameterizer_3<TriangleMesh>`
-- `CGAL::Square_border_arc_length_parameterizer_3<TriangleMesh>`
+- `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
 - `CGAL::Square_border_uniform_parameterizer_3<TriangleMesh>`
+- `CGAL::Square_border_arc_length_parameterizer_3<TriangleMesh>`
 - `CGAL::Two_vertices_parameterizer_3<TriangleMesh>`
 
 ## Mesh ##

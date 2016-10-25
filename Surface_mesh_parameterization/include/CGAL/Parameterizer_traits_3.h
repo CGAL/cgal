@@ -31,13 +31,13 @@
 
 namespace CGAL {
 
-/// \ingroup  PkgSurfaceParameterizationMethods
+/// \ingroup PkgSurfaceParameterizationMethods
 ///
 /// The class `Parameterizer_traits_3`
 /// is the base class of all parameterization methods.
-/// This class is a pure virtual class, thus cannot be instantiated.
+/// This class is a pure virtual class and thus cannot be instantiated.
 ///
-/// This class doesn't do much. Its main goal is to ensure that subclasses
+/// This class does not do much. Its main goal is to ensure that subclasses
 /// will be proper models of the `ParameterizerTraits_3` concept:
 /// - `Parameterizer_traits_3` defines the Error_code list of errors detected by this package
 /// - `Parameterizer_traits_3` declares a pure virtual method parameterize()
@@ -45,18 +45,20 @@ namespace CGAL {
 /// \cgalModels `ParameterizerTraits_3`
 ///
 /// ## Design Pattern ##
-/// `ParameterizerTraits_3` models are *Strategies*: they implement
+/// `ParameterizerTraits_3` models are *Strategies* \cgalCite{cgal:ghjv-dpero-95}: they implement
 /// a strategy of surface parameterization for models of `TriangleMesh`.
 ///
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
+/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-
-template<class TriangleMesh>       //< 3D surface
+///
+template <class TriangleMesh>
 class Parameterizer_traits_3
 {
 // Public types
@@ -80,7 +82,7 @@ public:
   typedef typename boost::property_traits<VPM>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
 
-  // Mesh_Adaptor_3 subtypes:
+  // Kernel subtypes:
   typedef typename Kernel::Point_2       Point_2;
   typedef typename Kernel::Vector_3      Vector_3;
   typedef typename Kernel::Vector_2      Vector_2;
@@ -103,7 +105,7 @@ public:
   ///
   /// \pre `mesh` must be a surface with one connected component.
   /// \pre `mesh` must be a triangular mesh.
-  //virtual Error_code parameterize (Adaptor& mesh) = 0;
+  //virtual Error_code parameterize (TriangleMesh& mesh) = 0;
 
   /// Get message corresponding to an error code
   /// \param error_code The code returned by `parameterize()`

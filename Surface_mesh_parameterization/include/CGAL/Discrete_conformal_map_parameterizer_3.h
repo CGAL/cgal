@@ -40,31 +40,30 @@ namespace CGAL {
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
-/// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// A one-to-one mapping is guaranteed if the surface's border is mapped onto a convex polygon.
 ///
-/// This class is used by the main
-/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
-/// - It provides default `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
-///   parameters.
-/// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
-///   for j neighbor vertex of i based on Discrete Conformal Map method.
+/// This class is a Strategy \cgalCite{cgal:ghjv-dpero-95} called by the main
+/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
+/// - provides the template parameters `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d`.
+/// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
+///   for j neighbor vertex of i, based on Discrete Conformal Map method.
 ///
 /// \cgalModels `ParameterizerTraits_3`
 ///
-///
-/// \param TriangleMesh       a model of `FaceGraph`
-/// \param BorderParameterizer_3        Strategy to parameterize the surface border.
-/// \param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
+/// \param TriangleMesh must be a model of `FaceGraph`.
+/// \param BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \param SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
 ///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///        does not remove (yet) border vertices from the system.
 ///
 /// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
 /// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
 /// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-
+///
 template
 <
   class TriangleMesh,
@@ -115,7 +114,7 @@ private:
 public:
   /// Constructor
   Discrete_conformal_map_parameterizer_3(Border_param border_param = Border_param(),
-                                         ///< Object that maps the surface's border to 2D space.
+                                         ///< %Object that maps the surface's border to 2D space.
                                          Sparse_LA sparse_la = Sparse_LA())
                                          ///< Traits object to access a sparse linear system.
   :   Fixed_border_parameterizer_3<TriangleMesh,
@@ -128,6 +127,10 @@ public:
 // Protected operations
 protected:
   /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param main_vertex_v_i the vertex of `mesh` with index `i`
+  /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j) // its target is main_vertex_v_i

@@ -58,17 +58,22 @@ namespace CGAL {
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
-/// This is a free border parameterization. No need to map the border of the surface
-/// onto a convex polygon (only two pinned vertices are needed to ensure a
-/// unique solution), but one-to-one mapping is *not* guaranteed.
-///
-/// Note that his parametrization method has no template parameter for changing the sparse solver.
+/// This is a free border parameterization. There is no need to map the border
+/// of the surface onto a convex polygon (only two pinned vertices are needed
+/// to ensure a unique solution), but a one-to-one mapping is *not* guaranteed.
 ///
 /// \cgalModels `ParameterizerTraits_3`
 ///
+/// \tparam TriangleMesh                 a model of `FaceGraph`
+/// \tparam BorderParameterizer_3        Strategy to parameterize the surface border. <br>
+///         Note: The minimum is to parameterize two vertices.
+/// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system. <br>
+///         Note: We may use a symmetric definite positive solver because LSCM
+///         solves the system in the least squares sense.
 ///
 /// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
 /// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -76,20 +81,15 @@ namespace CGAL {
 
 template
 <
-  class TriangleMesh,     ///< a model of `FaceGraph`
+  class TriangleMesh,
   class BorderParameterizer_3
     = Two_vertices_parameterizer_3<TriangleMesh>,
-                                      ///< Strategy to parameterize the surface border.
-                                      ///< The minimum is to parameterize two vertices.
   class SparseLinearAlgebraTraits_d
 #if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
     = Eigen_solver_traits<Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
 #else
     = OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
 #endif
-                                      ///< Traits class to solve a sparse linear system.
-                                      ///< We may use a symmetric definite positive solver because LSCM
-                                      ///< solves the system in the least squares sense.
 >
 class LSCM_parameterizer_3
   : public Parameterizer_traits_3<TriangleMesh>
@@ -133,13 +133,13 @@ private:
   typedef typename Sparse_LA::Vector      Vector;
   typedef typename Sparse_LA::Matrix      Matrix;
 
-  typedef typename OpenNL::LinearSolver<Sparse_LA>     LeastSquaresSolver ;
+  typedef typename OpenNL::LinearSolver<Sparse_LA>     LeastSquaresSolver;
 
 // Public operations
 public:
   /// Constructor
   LSCM_parameterizer_3(Border_param border_param = Border_param(),
-                       ///< Object that maps the surface's border to 2D space
+                       ///< %Object that maps the surface's border to 2D space
                        Sparse_LA sparse_la = Sparse_LA())
                        ///< Traits object to access a sparse linear system
     : m_borderParameterizer(border_param), m_linearAlgebra(sparse_la)
@@ -149,17 +149,33 @@ public:
 
   /// Compute a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
-  /// The mapping is linear by pieces (linear in each triangle).
+  /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  ///
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+  ///         (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexParameterizedMap must be a property map that associates a boolean
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a surface with one connected component.
   /// \pre `mesh` must be a triangular mesh.
+  /// \pre The vertices must be indexed (`vimap` must be initialized).
+  ///
   template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
   Error_code parameterize(TriangleMesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
-                          VertexParameterizedMap vpm)
+                          VertexParameterizedMap vpmap)
   {
     // Count vertices
     int nbVertices = num_vertices(mesh);
@@ -169,7 +185,7 @@ public:
 
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
-    Error_code status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);
+    Error_code status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpmap);
 
     if(status != Base::OK)
       return status;
@@ -181,7 +197,7 @@ public:
 
     // Initialize the "A*X = B" linear system after
     // (at least two) border vertices parameterization
-    initialize_system_from_mesh_border(solver, mesh, uvmap, vimap, vpm);
+    initialize_system_from_mesh_border(solver, mesh, uvmap, vimap, vpmap);
 
     // Fill the matrix for the other vertices
     solver.begin_system();
@@ -219,7 +235,7 @@ public:
       put(uvmap, vd, Point_2(u,v));
     }
     return status;
-}
+  }
 
 // Private operations
 private:
@@ -234,7 +250,7 @@ private:
                                           const TriangleMesh& mesh,
                                           UVmap uvmap,
                                           VertexIndexMap vimap,
-                                          VertexParameterizedMap vpm)
+                                          VertexParameterizedMap vpmap)
   {
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
       // Get vertex index in sparse linear system
@@ -250,7 +266,7 @@ private:
       solver.variable(2 * index + 1).set_value(uv.y());
 
       // Copy (u,v) in B if vertex is parameterized
-      if (get(vpm,v)) {
+      if (get(vpmap,v)) {
         solver.variable(2 * index    ).lock();
         solver.variable(2 * index + 1).lock();
       }
@@ -266,11 +282,11 @@ private:
   /// Create two lines in the linear system per triangle (one for u, one for v).
   ///
   /// \pre vertices must be indexed.
-  template <typename HalfedgeAsVertexIndexMap >
+  template <typename VertexIndexMap >
   Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                       const TriangleMesh& mesh,
                                       face_descriptor facet,
-                                      HalfedgeAsVertexIndexMap);
+                                      VertexIndexMap vimap);
 
 // Private accessors
 private:
@@ -282,7 +298,7 @@ private:
 
 // Fields
 private:
-  /// Object that maps (at least two) border vertices onto a 2D space
+  /// %Object that maps (at least two) border vertices onto a 2D space
   Border_param m_borderParameterizer;
 
   /// Traits object to solve a sparse linear system
@@ -325,10 +341,9 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,   // i
   z2 = Point_2(x2, y2);
 }
 
-// Create two lines in the linear system per triangle (one for u, one for v)
-//
-// Precondition: vertices must be indexed
-//
+/// Create two lines in the linear system per triangle (one for u, one for v).
+///
+/// \pre vertices of `mesh` must be indexed.
 // Implementation note: LSCM equation is:
 //       (Z1 - Z0)(U2 - U0) = (Z2 - Z0)(U1 - U0)
 // where Uk = uk + i.v_k is the complex number corresponding to (u,v) coords
@@ -343,7 +358,7 @@ LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 setup_triangle_relations(LeastSquaresSolver& solver,
                          const TriangleMesh& mesh,
                          face_descriptor facet,
-                         VertexIndexMap hvimap)
+                         VertexIndexMap vimap)
 {
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
   PPmap ppmap = get(vertex_point, mesh);
@@ -358,9 +373,9 @@ setup_triangle_relations(LeastSquaresSolver& solver,
   v2 = target(h2, mesh);
 
   // Get the vertices index
-  int id0 = get(hvimap, v0);
-  int id1 = get(hvimap, v1);
-  int id2 = get(hvimap, v2);
+  int id0 = get(vimap, v0);
+  int id1 = get(vimap, v1);
+  int id2 = get(vimap, v2);
 
   // Get the vertices position
   const Point_3& p0 = get(ppmap, v0);

@@ -51,23 +51,29 @@ namespace CGAL {
 ///
 /// \cgalModels `ParameterizerTraits_3`
 ///
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
+///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
+///         does not remove (yet) border vertices from the system.
 ///
 /// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
 /// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
-
+///
 template
 <
-  class TriangleMesh,     ///< a model of `FaceGraph`
-  class BorderParameterizer_3       ///< Strategy to parameterize the surface border
+  class TriangleMesh,
+  class BorderParameterizer_3
     = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
-  class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
-    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > >
+  class SparseLinearAlgebraTraits_d
+    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
+                                          Eigen::IncompleteLUT<double> > >
 >
-
 class Mean_value_coordinates_parameterizer_3
   : public Fixed_border_parameterizer_3<TriangleMesh,
                                         BorderParameterizer_3,
@@ -126,6 +132,10 @@ public:
 // Protected operations
 protected:
   /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param main_vertex_v_i the vertex of `mesh` with index `i`
+  /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j)

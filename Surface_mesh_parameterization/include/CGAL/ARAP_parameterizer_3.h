@@ -1,3 +1,23 @@
+// Copyright (c) 2016  GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     :
+
 #ifndef CGAL_ARAP_PARAMETERIZER_3_H
 #define CGAL_ARAP_PARAMETERIZER_3_H
 
@@ -53,16 +73,53 @@ namespace CGAL {
 // Declaration
 // ------------------------------------------------------------------------------------
 
+/// \ingroup PkgSurfaceParameterizationMethods
+///
+/// The class `ARAP_parameterizer_3` implements the
+/// *Local/Global Approach to Mesh Parameterization* \cgalCite{liu2008local}.
+///
+/// This parameterization allows the user to choose to give importance to angle preservation,
+/// to shape preservation, or a balance of both.
+/// A parameter &lambda; is used to control whether the priority is given to angle
+/// or to shape preservation: when &lambda; = 0, the parameterization is
+/// as-similar-as-possible (ASAP) and is equivalent to the (conforming) LSCM parameterization.
+/// As &lambda; grows, the shape preservation becomes more and more important,
+/// yielding, when &lambda; goes to infinity, a parameterization that is as-rigid-as-possible (ARAP).
+///
+/// This is a free border parameterization. There is no need to map the border of the surface
+/// onto a convex polygon.
+/// When &lambda; = 0, only two pinned vertices are needed to ensure a unique solution.
+/// When &lambda; is non-null, the border does not need to be parameterized and
+/// a random vertex is pinned.
+///
+/// If flips are present in the parameterization, a post-processing step is applied
+/// using `CGAL::MVC_post_processor_3<TriangleMesh, SparseLinearAlgebraTraits_d>`
+/// to attempt to obtain a valid final embedding.
+///
+/// A one-to-one mapping is *not* guaranteed.
+///
+/// \cgalModels `ParameterizerTraits_3`
+///
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
+///         Note: the system is *not* symmetric.
+///
+/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+
 template
 <
-  class TriangleMesh, ///< a model of `FaceGraph`
+  class TriangleMesh,
   class BorderParameterizer_3
     = Two_vertices_parameterizer_3<TriangleMesh>,
-    ///< Strategy to parameterize the surface border.
-    ///< The minimum is to parameterize two vertices.
   class SparseLinearAlgebraTraits_d
     = Eigen_solver_traits< > // defaults to Eigen::BICGSTAB with Eigen_sparse_matrix
-    ///< Traits class to solve a sparse linear system.
 >
 class ARAP_parameterizer_3
   : public Parameterizer_traits_3<TriangleMesh>
@@ -101,7 +158,7 @@ private:
   typedef boost::unordered_set<vertex_descriptor>       Vertex_set;
   typedef std::vector<face_descriptor>                  Faces_vector;
 
-  // Mesh_Adaptor_3 subtypes:
+  // Traits subtypes:
   typedef Parameterizer_traits_3<TriangleMesh>  Traits;
   typedef typename Traits::NT                   NT;
   typedef typename Traits::Point_2              Point_2;
@@ -141,15 +198,15 @@ private:
 
 // Private fields
 private:
-  /// Object that maps (at least two) border vertices onto a 2D space
+  /// %Object that maps (at least two) border vertices onto a 2D space
   Border_param m_borderParameterizer;
 
   /// Traits object to solve a sparse linear system
   Sparse_LA m_linearAlgebra;
 
-  /// Controlling parameter
+  /// Controlling parameters
   const NT m_lambda;
-  const NT m_lambda_tolerance;
+  const NT m_lambda_tolerance; // used to determine when we switch to full ARAP
 
   /// Energy minimization parameters
   const unsigned int m_iterations;
@@ -232,6 +289,8 @@ private:
     return status;
   }
 
+  /// Parameterize the border. The number of fixed vertices depends on the value
+  /// of the parameter &lambda;.
   template <typename VertexUVMap, typename VertexParameterizedMap>
   Error_code parameterize_border(const TriangleMesh& mesh,
                                  const Vertex_set& vertices,
@@ -409,7 +468,7 @@ private:
     return status;
   }
 
-  /// Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0.
+  /// Solves the cubic equation a3 x^3 + a2 x^2 + a1 x + a0 = 0.
   int solve_cubic_equation(const NT a3, const NT a2, const NT a1, const NT a0,
                            std::vector<NT>& roots) const
   {
@@ -431,7 +490,7 @@ private:
     return roots.size();
   }
 
-  /// Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0 using CGAL's algeabric kernel.
+  /// Solves the equation a3 x^3 + a2 x^2 + a1 x + a0 = 0, using CGAL's algeabric kernel.
   int solve_cubic_equation_with_AK(const NT a3, const NT a2,
                                    const NT a1, const NT a0,
                                    std::vector<NT>& roots) const
@@ -806,7 +865,7 @@ private:
     return Base::OK;
   }
 
-  /// Compute the coefficient b_ij = (i, j) of the matrix B,
+  /// Compute the coefficient b_ij = (i, j) of the right hand side vector B,
   /// for j neighbor vertex of i.
   void compute_b_ij(const TriangleMesh& mesh,
                     halfedge_descriptor hd,
@@ -876,7 +935,7 @@ private:
     std::cout << "xy: " << x << " " << y << std::endl;
   }
 
-  /// Compute the line i of vectors Bu and Bv
+  /// Compute the line i of right hand side vectors Bu and Bv
   /// - call compute_b_ij() for each neighbor v_j to compute the B coefficient b_i
   ///
   /// \pre Vertices must be indexed.
@@ -922,6 +981,8 @@ private:
   }
 
   /// Compute the entries of the right hand side of the ARAP linear system.
+  ///
+  /// \pre Vertices must be indexed.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -960,6 +1021,8 @@ private:
     return status;
   }
 
+  /// Compute the right hand side and solve the linear system to obtain the
+  /// new UV coordinates.
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -1130,8 +1193,43 @@ private:
     return Base::OK;
   }
 
+  /// Compute the quality of the parameterization.
+  void compute_quality(const TriangleMesh& mesh,
+                       const Faces_vector& faces) const
+  {
+
+    BOOST_FOREACH(face_descriptor fd, faces){
+      // compute the jacobian
+
+      // compute the singular values
+    }
+
+  }
+
 // Public operations
 public:
+  /// Compute a mapping from a triangular 3D surface mesh to a piece of the 2D space.
+  /// The mapping is piecewise linear (linear in each triangle).
+  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  ///
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+  ///         (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexParameterizedMap must be a property map that associates a boolean
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  ///
+  /// \pre `mesh` must be a surface with one connected component.
+  /// \pre `mesh` must be a triangular mesh.
+  /// \pre The vertices must be indexed (vimap must be initialized).
+  ///
   template <typename VertexUVMap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
@@ -1211,8 +1309,8 @@ public:
         return status;
 
       // energy based termination
-      if(m_tolerance > 0.0 && ite <= m_iterations) // if tolerance <= 0 then don't compute energy
-      {                                                 // also no need compute energy if this iteration is the last iteration
+      if(m_tolerance > 0.0 && ite <= m_iterations) // if tolerance <= 0, don't compute energy
+      {  // also no need compute energy if this iteration is the last iteration
         double energy_diff = std::abs((energy_last - energy_this) / energy_this);
         if(energy_diff < m_tolerance){
           std::cout << "Minimization process over after: "
@@ -1233,13 +1331,19 @@ public:
 
 public:
   /// Constructor
+  ///
+  /// \param border_param %Object that maps the surface's border to the 2D space.
+  /// \param sparse_la %Traits object to access a sparse linear system.
+  /// \param lambda Parameter to give importance to shape or angle preservation.
+  /// \param iterations Maximal number of iterations in the energy minimization process.
+  /// \param tolerance Minimal energy difference between two iterations for the minimization
+  ///        process to continue.
+  ///
   ARAP_parameterizer_3(Border_param border_param = Border_param(),
-                       ///< Object that maps the surface's border to 2D space
                        Sparse_LA sparse_la = Sparse_LA(),
-                       ///< Traits object to access a sparse linear system
-                       NT lambda = 1,
+                       NT lambda = 0.,
                        unsigned int iterations = 10,
-                       NT tolerance = 1e-4)
+                       NT tolerance = 1e-6)
     :
       m_borderParameterizer(border_param),
       m_linearAlgebra(sparse_la),

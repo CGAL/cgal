@@ -109,8 +109,21 @@ struct Vertices {
 /// The mapping is piecewise linear on the triangle mesh.
 /// The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
 ///
-/// One-to-one mapping may be guaranteed or
-/// not, depending on the chosen Parameterizer algorithm.
+/// A one-to-one mapping may be guaranteed or not, depending on
+/// the chosen Parameterizer algorithm.
+///
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam Parameterizer must be a model of `ParameterizerTraits_3`.
+/// \tparam HD must be the halfedge_descriptor type corresponding to the graph
+///         traits of TriangleMesh.
+/// \tparam VertexUVmap must be a property map that associates a %Point_2
+///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+///         (type deduced by the graph traits of `TriangleMesh`).
+///
+/// \param mesh a triangulated surface.
+/// \param parameterizer a parameterizer.
+/// \param bhd an halfedge descriptor on the boundary of `mesh`.
+/// \param uvm an instanciation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a surface with one connected component.
 /// \pre `mesh` must be a triangular mesh.
@@ -143,6 +156,17 @@ parameterize(TriangleMesh& mesh,
 ///
 /// The mapping is piecewise linear on the input mesh triangles.
 /// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
+///
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam HD must be the halfedge_descriptor type corresponding to the graph
+///         traits of TriangleMesh.
+/// \tparam VertexUVmap must be a property map that associates a %Point_2
+///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+///         (type deduced by the graph traits of `TriangleMesh`).
+///
+/// \param mesh a triangulated surface.
+/// \param bhd an halfedge descriptor on the boundary of `mesh`.
+/// \param uvm an instanciation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a surface with one connected component.
 /// \pre `mesh` must be a triangular mesh.

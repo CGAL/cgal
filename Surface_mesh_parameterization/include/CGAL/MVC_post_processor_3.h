@@ -1,3 +1,23 @@
+// Copyright (c) 2016  GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     :
+
 #ifndef CGAL_MVC_POST_PROCESSOR_3_H
 #define CGAL_MVC_POST_PROCESSOR_3_H
 
@@ -14,13 +34,12 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
 #include <boost/unordered_set.hpp>
-#include <boost/graph/graph_traits.hpp>
 
 #include <vector>
 #include <fstream>
 #include <iostream>
 
-/// \file CGAL/MVC_post_processor_3.h
+/// \file MVC_post_processor_3.h
 
 // @todo Determine the proper name of this file
 // @todo Handle non-simple boundary
@@ -62,10 +81,28 @@ void assign_solution(const Vector& Xu,
 // Declaration
 // ------------------------------------------------------------------------------------
 
+// /// \ingroup PkgSurfaceParameterizationMethods
+///
+/// The class `MVC_post_processor_3` implements
+/// the *Free boundary linear Parameterization* algorithm \cgalCite{kami2005free}.
+///
+/// This parameterizer provides a post processing step to other parameterizers
+/// that do not necessarily return a valid embedding. It is based on
+/// the convexification of the initial (2D) parameterization and the resolution
+/// of a linear system with coefficients based on Mean Value Coordinates.
+///
+/// \cgalModels `ParameterizerTraits_3`
+///
+/// \tparam TriangleMesh must be a model of `FaceGraph`.
+/// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
+///         Note: the system is *not* symmetric.
+///
+/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+///
 template
 <
-  class TriangleMesh, ///< a model of `FaceGraph`
-  class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system.
+  class TriangleMesh,
+  class SparseLinearAlgebraTraits_d
     = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                                           Eigen::IncompleteLUT< double > > >
 >
@@ -87,7 +124,6 @@ public:
   typedef typename Base::Error_code                   Error_code;
   /// @endcond
 
-
 // Private types
 private:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
@@ -99,8 +135,9 @@ private:
   typedef boost::unordered_set<vertex_descriptor>       Vertex_set;
   typedef std::vector<face_descriptor>                  Faces_vector;
 
-  // Mesh_Adaptor_3 subtypes:
+  // Traits subtypes:
   typedef Parameterizer_traits_3<TriangleMesh>  Traits;
+  typedef typename Traits::Kernel               Kernel;
   typedef typename Traits::NT                   NT;
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::Point_3              Point_3;
@@ -108,10 +145,24 @@ private:
   typedef typename Traits::Vector_3             Vector_3;
 
   // SparseLinearAlgebraTraits_d subtypes:
-  typedef SparseLinearAlgebraTraits_d                  Sparse_LA;
+  typedef SparseLinearAlgebraTraits_d           Sparse_LA;
 
-  typedef typename Sparse_LA::Vector                   Vector;
-  typedef typename Sparse_LA::Matrix                   Matrix;
+  typedef typename Sparse_LA::Vector            Vector;
+  typedef typename Sparse_LA::Matrix            Matrix;
+
+  // Types used for the convexification of the mesh
+    // Each triangulation vertex is associated its corresponding vertex_descriptor
+  typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor,
+                                                      Kernel>             Vb;
+    // Each triangultaion face is associated a color (inside/outside information)
+  typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>          Fb;
+  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>         Cfb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>                   TDS;
+  typedef CGAL::No_intersection_tag                                       Itag;
+
+    // Can choose either a triangulation or a Delauany triangulation
+  typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>            CT;
+//    typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>   CT;
 
 // Private fields
 private:
@@ -622,8 +673,7 @@ private:
     }
   }
 
-  /// Solve the linear systems A*Xu=Bu and A*Xv=Bv using Eigen's BiCGSTAB
-  /// and incompleteLUT factorization.
+  /// Solve the two linear systems A*Xu=Bu and A*Xv=Bv.
   Error_code solve_mvc(const Matrix& A,
                        const Vector& Bu, const Vector& Bv,
                        Vector& Xu, Vector& Xv) const
@@ -644,6 +694,7 @@ private:
     return status;
   }
 
+  /// Color the faces with inside/outside information and fix the border.
   template <typename CT, typename VertexParameterizedMap>
   Error_code prepare_CT_for_parameterization(const CT& ct,
                                              VertexParameterizedMap mvc_vpmap) const
@@ -697,8 +748,6 @@ private:
   }
 
 public:
-  /// Use the convex virtual boundary algorithm of Karni et al.[2005] to fix
-  /// the (hopefully few) flips in the result.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code parameterize(const TriangleMesh& mesh,
@@ -708,19 +757,6 @@ public:
                           VertexUVMap uvmap,
                           const VertexIndexMap vimap) const
   {
-    typedef typename Traits::Kernel                                        Kernel;
-
-    // Each triangulation vertex is associated its corresponding vertex_descriptor
-    typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor,
-                                                        Kernel>             Vb;
-    // Each triangultaion face is associated a color (inside/outside information)
-    typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>          Fb;
-    typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>         Cfb;
-    typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>                   TDS;
-    typedef CGAL::No_intersection_tag                                       Itag;
-    typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>            CT;
-//    typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>   CT;
-
     // Check if the polygon is simple
     const bool is_param_border_simple = is_polygon_simple(mesh, bhd, uvmap);
 
@@ -744,6 +780,21 @@ public:
     return Base::OK;
   }
 
+  /// Compute a one-to-one mapping from a triangular 2D surface mesh
+  /// that is not necessarily embedded to a piece of the 2D space.
+  ///
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
+  ///         (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  ///
   template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code parameterize(const TriangleMesh& mesh,

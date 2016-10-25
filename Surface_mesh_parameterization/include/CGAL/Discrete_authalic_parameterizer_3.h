@@ -35,39 +35,44 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class `Discrete_authalic_parameterizer_3`
-/// implements the *Discrete Authalic Parameterization* algorithm \cgalCite{cgal:dma-ipsm-02}.
-/// This method is sometimes called <i>DAP</i> or just <i>Authalic parameterization</i>.
+/// implements the *Discrete Authalic Parameterization* algorithm \cgalCite{cgal:dma-ipsm-02}. This method
+/// is sometimes called <i>DAP</i> or just <i>Authalic parameterization</i>.
 ///
 /// DAP is a weak area-preserving parameterization. It is a compromise between
 /// area-preserving and angle-preserving.
 ///
-/// One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
+/// A one-to-one mapping is guaranteed if the surface's border is mapped onto a convex polygon.
 ///
 /// This class is a Strategy \cgalCite{cgal:ghjv-dpero-95} called by the main
-/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
-/// `Discrete_authalic_parameterizer_3`:
-/// - It provides default `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
-///   parameters.
-/// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
-///   for j neighbor vertex of i based on Discrete Authalic Parameterization algorithm.
+/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
+/// - provides the template parameters `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d`.
+/// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of the matrix A
+///   for j neighbor vertex of i, based on Discrete Authalic Parameterization algorithm.
 ///
 /// \cgalModels `ParameterizerTraits_3`
 ///
-/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
+///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
+///         does not remove (yet) border vertices from the system.
+///
+/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`.
 /// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
 /// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-
+///
 template
 <
-  class TriangleMesh,     ///< a model of `FaceGraph`
-  class BorderParameterizer_3       ///< Strategy to parameterize the surface border
+  class TriangleMesh,
+  class BorderParameterizer_3
     = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
-  class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
+  class SparseLinearAlgebraTraits_d
     =  Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
-                                           Eigen::IncompleteLUT< double > > >
+                                           Eigen::IncompleteLUT<double> > >
 >
 class Discrete_authalic_parameterizer_3
   : public Fixed_border_parameterizer_3<TriangleMesh,
@@ -95,7 +100,7 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
 
-  // Mesh_Adaptor_3 subtypes:
+  // Traits subtypes:
   typedef typename Parameterizer_traits_3<TriangleMesh>::NT            NT;
   typedef typename Parameterizer_traits_3<TriangleMesh>::Point_3       Point_3;
   typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3      Vector_3;
@@ -110,9 +115,9 @@ private:
 public:
   /// Constructor
   Discrete_authalic_parameterizer_3(Border_param border_param = Border_param(),
-                                    ///< Object that maps the surface's border to 2D space.
+                                    ///< %Object that maps the surface's border to 2D space.
                                     Sparse_LA sparse_la = Sparse_LA())
-    ///< Traits object to access a sparse linear system.
+                                    ///< Traits object to access a sparse linear system.
     : Fixed_border_parameterizer_3<TriangleMesh,
                                    Border_param,
                                    Sparse_LA>(border_param, sparse_la)
@@ -122,7 +127,11 @@ public:
 
 // Protected operations
 protected:
-  /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  /// Compute w_ij = (i, j), coefficient of matrix A for j neighbor vertex of i.
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param main_vertex_v_i the vertex of `mesh` with index `i`
+  /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j)
