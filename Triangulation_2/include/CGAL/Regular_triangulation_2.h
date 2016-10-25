@@ -27,8 +27,11 @@
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/Object.h>
+#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
 
 #include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
@@ -36,6 +39,7 @@
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL { 
@@ -56,7 +60,11 @@ class Regular_triangulation_2
 public:
   typedef Tds                                  Triangulation_data_structure;
   typedef Gt                                   Geom_traits;
-  typedef typename Gt::Point_2                 Bare_point;
+  typedef typename boost::mpl::eval_if_c<
+      internal::Has_nested_type_Bare_point<Gt>::value,
+      typename internal::Bare_point_type<Gt>,
+      boost::mpl::identity<typename Gt::Point_2>
+    >::type                                    Bare_point;
   typedef typename Gt::Weighted_point_2        Weighted_point;
   typedef typename Gt::FT                      Weight;
 

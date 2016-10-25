@@ -39,7 +39,11 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
+
 #include <boost/bind.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/identity.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -117,7 +121,11 @@ namespace CGAL {
     typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
     typedef typename Gt::Weighted_point_3            Weighted_point;
-    typedef typename Gt::Point_3                     Bare_point;
+    typedef typename boost::mpl::eval_if_c<
+        internal::Has_nested_type_Bare_point<Gt>::value,
+        typename internal::Bare_point_type<Gt>,
+        boost::mpl::identity<typename Gt::Point_3>
+    >::type                                          Bare_point;
     typedef typename Gt::Segment_3                   Segment;
     typedef typename Gt::Triangle_3                  Triangle;
     typedef typename Gt::Tetrahedron_3               Tetrahedron;
@@ -166,12 +174,16 @@ namespace CGAL {
     using Tr_Base::find_conflicts;
     using Tr_Base::is_valid;
 
-    Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
+    Regular_triangulation_3()
+      : Tr_Base(Tr_Base_Gt(), NULL), hidden_point_visitor(this)
     {}
 
-    Regular_triangulation_3(Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(lock_ds, Tr_Base_Gt(gt)), hidden_point_visitor(this)
+    Regular_triangulation_3(const Gt &, Lock_data_structure *lock_ds = NULL)
+      : Tr_Base(Tr_Base_Gt(), lock_ds), hidden_point_visitor(this)
+    {}
+
+    Regular_triangulation_3(Lock_data_structure *lock_ds, const Gt &)
+      : Tr_Base(lock_ds, Tr_Base_Gt()), hidden_point_visitor(this)
     {}
 
     Regular_triangulation_3(const Regular_triangulation_3 & rt)
@@ -182,17 +194,32 @@ namespace CGAL {
 
     //insertion
     template < typename InputIterator >
-    Regular_triangulation_3(InputIterator first, InputIterator last,
-      const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
+    Regular_triangulation_3(InputIterator first, InputIterator last)
+      : Tr_Base(Tr_Base_Gt(), NULL), hidden_point_visitor(this)
     {
       insert(first, last);
     }
 
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
-      Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(Tr_Base_Gt(gt), lock_ds), hidden_point_visitor(this)
+      const Gt &, Lock_data_structure *lock_ds = NULL)
+      : Tr_Base(Tr_Base_Gt(), lock_ds), hidden_point_visitor(this)
+    {
+      insert(first, last);
+    }
+
+    template < typename InputIterator >
+    Regular_triangulation_3(InputIterator first, InputIterator last,
+      Lock_data_structure *lock_ds)
+      : Tr_Base(Tr_Base_Gt(), lock_ds), hidden_point_visitor(this)
+    {
+      insert(first, last);
+    }
+
+    template < typename InputIterator >
+    Regular_triangulation_3(InputIterator first, InputIterator last,
+      Lock_data_structure *lock_ds, const Gt &)
+      : Tr_Base(Tr_Base_Gt(), lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);
     }

@@ -32,10 +32,7 @@ template < class K, class Weight = typename K::RT >
 class Regular_triangulation_euclidean_traits_3
   : public K
 {
-  K k;
 public:
-  Regular_triangulation_euclidean_traits_3(K k) : k(k) {}
-
   typedef K                                          Kernel;
   typedef typename K::FT                             FT;
   typedef typename K::Point_3                        Bare_point;
