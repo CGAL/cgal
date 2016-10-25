@@ -597,10 +597,8 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef CGAL_USE_GMPXX
-  std::cout << "Testing Sqrt_extension with Quotient mpz_class" << std::endl;
-  //no specialization of Get_arithmetic_kernel of mpz_class is available, the default is to suppose it is
-  //a ring type and make a field type using CGAL::Quotient.
-  result = result && test_root_of_g<CGAL::Sqrt_extension<CGAL::Quotient<mpz_class>,CGAL::Quotient<mpz_class>,CGAL::Tag_true,CGAL::Tag_true >,mpz_class,CGAL::Quotient<mpz_class> >();
+  std::cout << "Testing Sqrt_extension with mpq_class" << std::endl;
+  result = result && test_root_of<CGAL::Sqrt_extension<mpq_class,mpq_class,CGAL::Tag_true,CGAL::Tag_true > >();
 #endif
 
   if (result) {
