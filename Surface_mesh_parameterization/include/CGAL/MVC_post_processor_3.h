@@ -47,36 +47,6 @@
 
 namespace CGAL {
 
-/// Copy the data from two vectors to the UVmap.
-template <typename TriangleMesh,
-          typename Vector,
-          typename Vertex_set,
-          typename VertexUVMap,
-          typename VertexIndexMap>
-void assign_solution(const Vector& Xu,
-                     const Vector& Xv,
-                     const Vertex_set& vertices,
-                     VertexUVMap uvmap,
-                     VertexIndexMap vimap)
-{
-  typedef Parameterizer_traits_3<TriangleMesh>          Traits;
-  typedef typename Traits::NT                           NT;
-  typedef typename Traits::Point_2                      Point_2;
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-
-  BOOST_FOREACH(vertex_descriptor vd, vertices){
-    int index = get(vimap, vd);
-    NT u = Xu(index);
-    NT v = Xv(index);
-
-//      Point_2 p = get(uvmap, vd);
-//      std::cout << "old: " << p << " || new: " << u << " " << v << std::endl;
-
-    put(uvmap, vd, Point_2(u, v));
-  }
-}
-
 // ------------------------------------------------------------------------------------
 // Declaration
 // ------------------------------------------------------------------------------------
@@ -193,6 +163,23 @@ private:
       out << '\n';
     }
     out << std::endl;
+  }
+
+  /// Copy the data from two vectors to the UVmap.
+  template <typename VertexUVMap,
+            typename VertexIndexMap>
+  void assign_solution(const Vector& Xu,
+                       const Vector& Xv,
+                       const Vertex_set& vertices,
+                       VertexUVMap uvmap,
+                       const VertexIndexMap vimap)
+  {
+    BOOST_FOREACH(vertex_descriptor vd, vertices){
+      int index = get(vimap, vd);
+      NT u = Xu(index);
+      NT v = Xv(index);
+      put(uvmap, vd, Point_2(u, v));
+    }
   }
 
 // Private operations
@@ -737,7 +724,7 @@ private:
     status = solve_mvc(A, Bu, Bv, Xu, Xv);
 
     // Assign the UV values
-    assign_solution<TriangleMesh>(Xu, Xv, vertices, uvmap, vimap);
+    assign_solution(Xu, Xv, vertices, uvmap, vimap);
 
     return Base::OK;
   }

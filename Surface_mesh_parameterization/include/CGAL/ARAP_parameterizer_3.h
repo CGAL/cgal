@@ -256,6 +256,23 @@ private:
                                                              uvmap, vimap, out);
   }
 
+  /// Copy the data from two vectors to the UVmap.
+  template <typename VertexUVMap,
+            typename VertexIndexMap>
+  void assign_solution(const Vector& Xu,
+                       const Vector& Xv,
+                       const Vertex_set& vertices,
+                       VertexUVMap uvmap,
+                       const VertexIndexMap vimap)
+  {
+    BOOST_FOREACH(vertex_descriptor vd, vertices){
+      int index = get(vimap, vd);
+      NT u = Xu(index);
+      NT v = Xv(index);
+      put(uvmap, vd, Point_2(u, v));
+    }
+  }
+
 // Private operations
 private:
   /// Store the vertices and faces of the mesh in memory.
@@ -1073,15 +1090,13 @@ private:
       BOOST_FOREACH(vertex_descriptor vd, vertices){
         if(get(vpmap, vd)){
           int index = get(vimap, vd);
-          std::cout << "at: " << index << " "
-                    << Xu[index] << " " << Xv[index] << std::endl;
           CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
           CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
         }
       }
     )
 
-    assign_solution<TriangleMesh>(Xu, Xv, vertices, uvmap, vimap);
+    assign_solution(Xu, Xv, vertices, uvmap, vimap);
     return status;
   }
 
