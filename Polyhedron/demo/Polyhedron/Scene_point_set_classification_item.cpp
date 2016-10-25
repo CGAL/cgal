@@ -246,13 +246,17 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
         {
           QColor color (0, 0, 0);
           Type_handle c = m_psc->training_type_of(*it);
+          Type_handle c2 = m_psc->classification_type_of(*it);
           
           if (c != Type_handle())
             color = map_colors[c];
-
-          colors_points.push_back ((double)(color.red()) / 255.);
-          colors_points.push_back ((double)(color.green()) / 255.);
-          colors_points.push_back ((double)(color.blue()) / 255.);
+          double div = 255.;
+          if (c != c2)
+            div = 400.;
+          
+          colors_points.push_back ((double)(color.red()) / div);
+          colors_points.push_back ((double)(color.green()) / div);
+          colors_points.push_back ((double)(color.blue()) / div);
         }
     }
   else
