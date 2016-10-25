@@ -195,9 +195,10 @@ public:
     > >::type* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
+    typename Fraction_traits<ROOT>::Compose compose_root;
     if ( a != 0 ) {
       a0_ = compose_nt(-b,2*a);
-      root_ = CGAL_NTS square(a0_) - ROOT(c,a);
+      root_ = CGAL_NTS square(a0_) - compose_root(c,a);
       if(CGAL_NTS is_zero(root_)) {
 	is_extended_ = false;
       } else {

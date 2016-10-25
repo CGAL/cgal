@@ -127,8 +127,8 @@ CGAL::Sqrt_extension<double,double,Tag1,Tag2> create_root_helper(RT a, RT b,CGAL
 template < class T, class RT,class Tag1, class Tag2 >
 CGAL::Sqrt_extension<T,T,Tag1,Tag2> create_root_helper(RT a, RT b, CGAL::Sqrt_extension<T,T,Tag1,Tag2> *)
 {
-  T t(a,b);
-  return CGAL::Sqrt_extension<T,T,Tag1,Tag2>( t );
+  typename CGAL::Fraction_traits<T>::Compose comp;
+  return CGAL::Sqrt_extension<T,T,Tag1,Tag2>( comp(a, b) );
 }
 
 template < class Root, class RT >
