@@ -676,18 +676,13 @@ private:
   /// Solve the two linear systems A*Xu=Bu and A*Xv=Bv.
   Error_code solve_mvc(const Matrix& A,
                        const Vector& Bu, const Vector& Bv,
-                       Vector& Xu, Vector& Xv) const
+                       Vector& Xu, Vector& Xv)
   {
     Error_code status = Base::OK;
 
-    typedef Eigen_solver_traits<
-              Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
-                              Eigen::IncompleteLUT<double> > >      EigenSolver;
-    EigenSolver solver;
-
     NT Du, Dv;
-    if(!solver.linear_solver(A, Bu, Xu, Du) ||
-       !solver.linear_solver(A, Bv, Xv, Dv)){
+    if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
+       !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)){
       status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
 
@@ -723,7 +718,7 @@ private:
                                                const CT& ct,
                                                VertexUVMap uvmap,
                                                const VertexIndexMap vimap,
-                                               const VertexParameterizedMap mvc_vpmap) const
+                                               const VertexParameterizedMap mvc_vpmap)
   {
     Error_code status = Base::OK;
 
@@ -755,7 +750,7 @@ public:
                           const Faces_vector& faces,
                           halfedge_descriptor bhd,
                           VertexUVMap uvmap,
-                          const VertexIndexMap vimap) const
+                          const VertexIndexMap vimap)
   {
     // Check if the polygon is simple
     const bool is_param_border_simple = is_polygon_simple(mesh, bhd, uvmap);
@@ -809,6 +804,16 @@ public:
 
     return parameterize(mesh, vertices, faces, bhd, uvmap, vimap);
   }
+
+public:
+  /// Constructor
+  ///
+  /// \param sparse_la %Traits object to access a sparse linear system.
+  ///
+  MVC_post_processor_3(Sparse_LA sparse_la = Sparse_LA())
+    :
+      m_linearAlgebra(sparse_la)
+  { }
 };
 
 } // namespace CGAL
