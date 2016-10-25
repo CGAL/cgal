@@ -38,6 +38,8 @@ typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Pmap>  
 typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Pmap> Dispersion;
 
 
+  ///////////////////////////////////////////////////////////////////
+  //! [Analysis]
 
 int main (int argc, char** argv)
 {
@@ -60,11 +62,18 @@ int main (int argc, char** argv)
   std::cerr << "Computing useful structures" << std::endl;
 
   Iso_cuboid_3 bbox = CGAL::bounding_box (pts.begin(), pts.end());
+
   Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
   double garbage;
   Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, 6, garbage);
   
+  //! [Analysis]
+  ///////////////////////////////////////////////////////////////////
+  
+  ///////////////////////////////////////////////////////////////////
+  //! [Attributes]
+
   std::cerr << "Computing attributes" << std::endl;
   Attribute_handle d2p (new Distance_to_plane (pts.begin(), pts.end(), Pmap(), eigen));
   Attribute_handle lin (new Linearity (pts.begin(), pts.end(), eigen));
@@ -88,6 +97,10 @@ int main (int argc, char** argv)
   disp->weight = 5.45e-1;
   elev->weight = 1.47e1;
 
+  //! [Attributes]
+  ///////////////////////////////////////////////////////////////////
+
+  
   // Add attributes to PSC
   Classification psc (pts.begin (), pts.end(), Pmap());
   psc.add_attribute (d2p);
