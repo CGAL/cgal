@@ -859,8 +859,6 @@ public:
     if (m_training_type.empty())
       return 0.;
 
-    prepare_classification();
-    
     std::vector<std::vector<std::size_t> > training_sets (m_types.size());
     for (std::size_t i = 0; i < m_training_type.size(); ++ i)
       if (m_training_type[i] != (std::size_t)(-1))
@@ -911,6 +909,7 @@ public:
                   << nb_useful << "% of the cases, in interval [ "
                   << min << " ; " << max << " ]" << std::endl;
         att_train.push_back (Attribute_training());
+        att_train.back().skipped = false;
         att_train.back().wmin = min / factor;
         att_train.back().wmax = max * factor;
         if (nb_useful < 2)
@@ -926,14 +925,17 @@ public:
             best_weights[j] = att->weight;
           }
         else
-          att->weight = best_weights[j];
+          {
+            att->weight = best_weights[j];
+          }
         estimate_attribute_effect(training_sets, att);
       }
 
+    prepare_classification();
     
     double best_score = training_compute_worst_score(training_sets, 0.);
     double best_confidence = training_compute_worst_confidence(training_sets, 0.);
-        
+    
     std::cerr << "TRAINING GLOBALLY: Best score evolution: " << std::endl;
 
     std::cerr << 100. * best_score << "% (found at initialization)" << std::endl;
@@ -985,11 +987,14 @@ public:
               {
                 Data_classification::Attribute_handle att = m_attributes[j];
                 best_weights[j] = att->weight;
+                if (!(att_train[j].skipped))
+                  f << att->weight << " ";
               }
+            f << std::endl;
           }
-        if (worst_score > best_score)
-          worst_score = best_score - (best_confidence - worst_confidence);
-        f << worst_score << " " << best_score << std::endl;
+        // if (worst_score > best_score)
+        //   worst_score = best_score - (best_confidence - worst_confidence);
+        // f << worst_score << " " << best_score << std::endl;
 
         do
           {
