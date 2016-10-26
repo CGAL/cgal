@@ -153,7 +153,7 @@ private:
     typename CT::Finite_faces_iterator fit = ct.finite_faces_begin(),
                                        fend = ct.finite_faces_end();
     for(; fit!=fend; ++fit){
-      if(fit->info() != -1) // filter interior faces
+      if(fit->info() != -1) // only output exterior (finite) faces
         continue;
 
       out << "4 ";
@@ -204,19 +204,16 @@ private:
   /// Checks whether the polygon's border is simple.
   template <typename VertexUVMap>
   bool is_polygon_simple(const TriangleMesh& mesh,
+                         halfedge_descriptor bhd,
                          const VertexUVMap uvmap) const
   {
+    // @fixme unefficient: use sweep line algorithms instead of brute force
+
     typedef typename Traits::Kernel                 Kernel;
     typedef typename Kernel::Segment_2              Segment_2;
 
-    // @fixme unefficient: brute force use sweep line algorithms instead
-    BOOST_FOREACH(halfedge_descriptor hd_1, halfedges(mesh)){
-      if(!is_border(hd_1, mesh))
-        continue;
-      BOOST_FOREACH(halfedge_descriptor hd_2, halfedges(mesh)){
-        if(!is_border(hd_2, mesh))
-          continue;
-
+    BOOST_FOREACH(halfedge_descriptor hd_1, halfedges_around_face(bhd, mesh)){
+      BOOST_FOREACH(halfedge_descriptor hd_2, halfedges_around_face(bhd, mesh)){
         if(hd_1 == hd_2 || // equality
            next(hd_1, mesh) == hd_2 || next(hd_2, mesh) == hd_1) // adjacency
           continue;
@@ -247,9 +244,9 @@ private:
     typedef typename CT::Face_handle    Face_handle;
 
     int fh_color = fh->info();
-    CGAL_precondition(fh_color); // fh must be colored
+    CGAL_precondition(fh_color != 0); // fh must be colored
 
-    // look at the three neighbors
+    // look at the three neighbors for potential further spreading
     for(std::size_t i=0; i<3; ++i)
     {
       // ignore infinite faces and faces that already have a color
@@ -263,36 +260,31 @@ private:
 
       bool is_common_edge_constrained = ct.is_constrained(Edge(fh, i));
 
-      // if the edge is constrained, switch the color
-      neigh_fh->info() = is_common_edge_constrained ? - fh_color : fh_color;
+      // Only constrain the exterior faces of the ct; since we have started
+      // from an exterior face, we must not go over any constrained edge
+      if(is_common_edge_constrained)
+        continue;
+      else
+        neigh_fh->info() = fh_color;
 
       spread(ct, neigh_fh);
     }
   }
 
-  /// Triangulate the holes in the convex hull of the parameterization.
+  /// Triangulate the convex hull of the border of the parameterization.
   template <typename CT,
             typename VertexUVMap>
   Error_code triangulate_convex_hull(const TriangleMesh& mesh,
+                                     halfedge_descriptor bhd,
                                      const VertexUVMap uvmap,
                                      CT& ct) const
   {
-    // Gather border edges
-    std::vector<halfedge_descriptor> border_hds;
-    CGAL::Polygon_mesh_processing::border_halfedges(mesh,
-                                                    std::back_inserter(border_hds));
-
     // Build the constrained triangulation
 
     // Since the border is closed and we are interest in triangles that are outside
     // of the border, we actually only need to insert points on the border
-
-    // Insert points
-    typename std::vector<halfedge_descriptor>::iterator vhd_iter = border_hds.begin();
-    const typename std::vector<halfedge_descriptor>::iterator vhd_end = border_hds.end();
-    for(; vhd_iter!=vhd_end; ++vhd_iter){
-      halfedge_descriptor hd = *vhd_iter;
-      vertex_descriptor s = source(hd, mesh), t = target(hd, mesh);
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
+      vertex_descriptor s = source(hd, mesh);
       Point_2 sp = get(uvmap, s);
 
       typename CT::Vertex_handle vh = ct.insert(sp);
@@ -300,10 +292,8 @@ private:
 //      std::cout << "Added point: " << sp << '\n';
     }
 
-    // Insert constraints
-    vhd_iter = border_hds.begin();
-    for(; vhd_iter!=vhd_end; ++vhd_iter){
-      halfedge_descriptor hd = *vhd_iter;
+    // Insert constraints (the border)
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
       vertex_descriptor s = source(hd, mesh), t = target(hd, mesh);
       Point_2 sp = get(uvmap, s), tp = get(uvmap, t);
 
@@ -317,68 +307,40 @@ private:
     return Base::OK;
   }
 
-  /// Color the (finite) faces of the constrained triangulation with an inside
-  /// or outside tag.
+  /// Color the (finite) faces of the constrained triangulation with an outside (-1) tag
   template <typename CT>
   Error_code color_faces(CT& ct) const
   {
     typedef typename CT::Edge                               Edge;
     typedef typename CT::Face_handle                        Face_handle;
 
-    // Initialize all colors to 0.
-    // 'Inside' is the color '1' and 'outside' is '-1'
+    // Initialize all colors to 0
     typename CT::Finite_faces_iterator fit = ct.finite_faces_begin(),
                                        fend = ct.finite_faces_end();
     for(; fit!=fend; ++fit)
       fit->info() = 0;
 
-    // start from an infinite face
-    Face_handle infinite_face = ct.infinite_face();
-    int index_of_inf_v = infinite_face->index(ct.infinite_vertex());
-    int mirror_index = infinite_face->mirror_index(index_of_inf_v);
+    // start from infinite faces and check if the neighboring finite face is
+    // inside or outside 'mesh'. If it is outside, mark it and spread to other
+    // neighboring exterior faces
+    typename CT::Vertex_handle infinite_vertex = ct.infinite_vertex();
+    typename CT::Face_circulator fc = ct.incident_faces(infinite_vertex), done(fc);
+    do {
+      CGAL_precondition(ct.is_infinite(fc));
+      int index_of_inf_vertex = fc->index(infinite_vertex);
 
-    Face_handle start_face = infinite_face->neighbor(index_of_inf_v);
-    CGAL_assertion(!ct.is_infinite(start_face));
+      Face_handle mirror_face = fc->neighbor(index_of_inf_vertex);
+      if(mirror_face->info() != 0)
+        continue;
 
-    bool is_edge_constrained = ct.is_constrained(Edge(start_face, mirror_index));
-
-    // If the edge is constrained, 'start_face' is an interior face, otherwise
-    // it is an exterior face
-    int color = is_edge_constrained ? 1 : -1;
-    start_face->info() = color;
-
-    spread<CT>(ct, start_face);
-
-    // Check that everything went smoothly
-    CGAL_expensive_postcondition_code(
-      // Look at all the finite faces and make sure that:
-      // -- a constrained edge has faces of different colors on each side
-      // -- an unconstrained edge has faces of same colors on each side
-
-      fit = ct.finite_faces_begin();
-      for(; fit!=fend; ++fit)
-      {
-        Face_handle fh_1 = fit;
-        CGAL_assertion(fh_1->info() != 0);
-
-        for(std::size_t i=0; i<3; ++i){
-          Face_handle fh_2 = fh_1->neighbor(i);
-
-          if(ct.is_infinite(fh_2))
-            continue;
-
-          CGAL_assertion(fh_2->info() != 0);
-
-          bool is_common_edge_constrained = ct.is_constrained(Edge(fh_1, i));
-          if(is_common_edge_constrained){
-            CGAL_assertion(fh_1->info() == -1 * fh_2->info());
-          }
-          else
-            CGAL_assertion(fh_1->info() == fh_2->info());
-        }
+      bool is_edge_constrained = ct.is_constrained(Edge(fc, index_of_inf_vertex));
+      if(!is_edge_constrained){
+        // edge is not constrained so the face is part of the convex hull but
+        // geometrically outside of 'mesh'
+        mirror_face->info() = -1; // outside
+        spread<CT>(ct, mirror_face);
       }
-      std::cout << "Passed the color check" << std::endl;
-    );
+    } while(++fc != done);
 
     // Output the exterior faces of the constrained triangulation
     output_ct_exterior_faces(ct);
@@ -402,12 +364,13 @@ private:
     return angle;
   }
 
-  /// Fix vertices that are on the convex hull ahead of the MVC parameterization.
+  /// Fix vertices that are on the convex hull.
   template <typename CT,
             typename VertexParameterizedMap>
   void fix_convex_hull_border(const CT& ct,
                               VertexParameterizedMap vpmap) const
   {
+    // All the vertices incident to the infinite vertex are on the convex hull
     typename CT::Vertex_circulator vc = ct.incident_vertices(ct.infinite_vertex()),
                                    vend = vc;
     do{
@@ -609,12 +572,13 @@ private:
   {
     Error_code status = Base::OK;
 
-    // The constrained triangulation has only "real" faces in the holes of
-    // the convex hull of 'mesh'.
+    // The constrained triangulation has only "real" faces outside of the border
+    // of mesh.
 
     // Thus, coefficients will come from 'ct' for faces that are in the convex hull
-    // but not in 'mesh' (those were colored '-1' in color_faces() ) and
-    // from 'mesh' for faces that are in the convex hull but not in 'ct'
+    // but not in 'mesh' nor in the holes of 'mesh'.
+    // The coefficients will come from 'mesh' for faces that are in the convex hull
+    // but not in 'ct'.
 
     // Loop over the "outside" faces of ct
     std::cout << "add from ct" << std::endl;
@@ -622,11 +586,9 @@ private:
                                        fend = ct.finite_faces_end();
     for(; fit!=fend; ++fit)
     {
-      CGAL_precondition(fit->info() != 0);
-      if(fit->info() == 1) // "interior" face
+      if(fit->info() != -1) // not an outside face
         continue;
 
-      CGAL_precondition(fit->info() == -1);
       fill_linear_system_matrix_mvc_from_ct_face(ct, fit, uvmap, vimap, vpmap, A);
     }
 
@@ -681,17 +643,17 @@ private:
   /// Color the faces with inside/outside information and fix the border.
   template <typename CT, typename VertexParameterizedMap>
   Error_code prepare_CT_for_parameterization(const CT& ct,
-                                             VertexParameterizedMap mvc_vpmap) const
+                                             VertexParameterizedMap vpmap) const
   {
     Error_code status = Base::OK;
 
-    // Gather the finite faces of the CT that are not faces of 'mesh'
+    // Gather the finite faces of the CT that are outside the (main) border of 'mesh'
     status = color_faces(ct);
     if(status != Base::OK)
       return status;
 
     // Gather the vertices that are on the border of the convex hull and will be fixed
-    fix_convex_hull_border(ct, mvc_vpmap);
+    fix_convex_hull_border(ct, vpmap);
 
     return status;
   }
@@ -707,7 +669,7 @@ private:
                                                const CT& ct,
                                                VertexUVMap uvmap,
                                                const VertexIndexMap vimap,
-                                               const VertexParameterizedMap mvc_vpmap)
+                                               const VertexParameterizedMap vpmap)
   {
     Error_code status = Base::OK;
 
@@ -717,13 +679,25 @@ private:
     Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
 
     // Compute the (constant) matrix A
-    compute_mvc_matrix(ct, mesh, faces, uvmap, vimap, mvc_vpmap, A);
+    compute_mvc_matrix(ct, mesh, faces, uvmap, vimap, vpmap, A);
 
     // Compute the right hand side of the linear system
-    compute_mvc_rhs(vertices, uvmap, vimap, mvc_vpmap, Bu, Bv);
+    compute_mvc_rhs(vertices, uvmap, vimap, vpmap, Bu, Bv);
 
     // Solve the linear system
     status = solve_mvc(A, Bu, Bv, Xu, Xv);
+
+    CGAL_postcondition_code
+    (
+      // make sure that the constrained vertices have not been moved
+      BOOST_FOREACH(vertex_descriptor vd, vertices){
+        if(get(vpmap, vd)){
+          int index = get(vimap, vd);
+          CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
+          CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
+        }
+      }
+    )
 
     // Assign the UV values
     assign_solution(Xu, Xv, vertices, uvmap, vimap);
@@ -737,30 +711,33 @@ public:
   Error_code parameterize(const TriangleMesh& mesh,
                           const Vertex_set& vertices,
                           const Faces_vector& faces,
-                          halfedge_descriptor,
+                          halfedge_descriptor bhd,
                           VertexUVMap uvmap,
                           const VertexIndexMap vimap)
   {
-    // Check if the polygon is simple
-    const bool is_param_border_simple = is_polygon_simple(mesh, uvmap);
+    // Check if the border forms a simple polygon.
+    // Note that there can be self-intersections in other borders,
+    // but it is irrelevant and potential holes do not matter.
+    const bool is_param_border_simple = is_polygon_simple(mesh, bhd, uvmap);
 
-    // not sure how to handle non-simple yet
+    // Not sure how to handle non-simple yet @fixme
     if(!is_param_border_simple){
-      std::cout << "Border(s) are not simple!" << std::endl;
+      std::cout << "Border is not simple!" << std::endl;
       return Base::ERROR_NON_CONVEX_BORDER;
     }
 
-    // Triangulate the holes in the convex hull of the polygon
+    // Compute the convex hull of the border of 'mesh'
     CT ct;
-    triangulate_convex_hull<CT>(mesh, uvmap, ct);
+    triangulate_convex_hull<CT>(mesh, bhd, uvmap, ct);
 
-    // Prepare the constrained triangulation by coloring faces and fixing the border
+    // Prepare the constrained triangulation: collect exterior faces (faces in
+    // the convex hull but not -- geometrically -- in 'mesh').
     boost::unordered_set<vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > mvc_vpmap(vs);
-    prepare_CT_for_parameterization(ct, mvc_vpmap);
+    CGAL::internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
+    prepare_CT_for_parameterization(ct, vpmap);
 
     // Run the MVC
-    parameterize_convex_hull_with_MVC(mesh, vertices, faces, ct, uvmap, vimap, mvc_vpmap);
+    parameterize_convex_hull_with_MVC(mesh, vertices, faces, ct, uvmap, vimap, vpmap);
 
     return Base::OK;
   }
@@ -787,7 +764,6 @@ public:
                           VertexUVMap uvmap,
                           const VertexIndexMap vimap)
   {
-    // Fill vertex and faces information.
     Vertex_set vertices;
     Faces_vector faces;
     initialize_containers(mesh, bhd, vertices, faces);
