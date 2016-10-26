@@ -108,13 +108,14 @@ public:
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : Base ()
+  Point_set_3 (const Point_set_3& p) : Base (p)
   {
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
     m_bounding_box = p.m_bounding_box;
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
     m_radii_are_uptodate = p.m_radii_are_uptodate;
+
   }
 
   iterator begin() { return this->m_indices.begin(); }
