@@ -297,13 +297,26 @@ private:
                                     halfedge_descriptor bhd,
                                     VertexUVMap uvmap) const
   {
-    // Get the initial uv map from a LSCM run
-    typedef CGAL::LSCM_parameterizer_3<TriangleMesh,
-                                       Border_param>         LSCM_parameterizer;
-//    typedef CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh,
-//                                       Border_param>         MVC_parameterizer;
+    Error_code status;
 
-    Error_code status = CGAL::parameterize(mesh, LSCM_parameterizer(), bhd, uvmap);
+    unsigned int number_of_borders =
+                         CGAL::Polygon_mesh_processing::number_of_borders(mesh);
+    if(number_of_borders == 0){
+      status = Base::ERROR_BORDER_TOO_SHORT;
+      return status;
+    }
+
+    // According to the paper, MVC is better for single border and LSCM is better
+    // when there are multiple borders
+    if(number_of_borders == 1){
+      typedef CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, Border_param> MVC_parameterizer;
+      status = CGAL::parameterize(mesh, MVC_parameterizer(), bhd, uvmap);
+    } else {
+      typedef CGAL::LSCM_parameterizer_3<TriangleMesh, Border_param> LSCM_parameterizer;
+      status = CGAL::parameterize(mesh, LSCM_parameterizer(), bhd, uvmap);
+    }
+
+    std::cout << "Computed initial parameterization" << std::endl;
     return status;
   }
 
