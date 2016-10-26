@@ -247,6 +247,10 @@ public:
   void
   build()
   {
+    // This function is not ready to be called when a tree already exists, one
+    // must call invalidate_built() first.
+    CGAL_assertion(!is_built());
+    CGAL_assertion(!removed_);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
@@ -299,6 +303,16 @@ public:
 
   void invalidate_built()
   {
+    if(removed_){
+      // Walk the tree to collect the remaining points.
+      // Writing directly to pts would likely work, but better be safe.
+      std::vector<Point_d> ptstmp;
+      //ptstmp.resize(root()->num_items());
+      root()->tree_items(std::back_inserter(ptstmp));
+      pts.swap(ptstmp);
+      removed_=false;
+      CGAL_assertion(is_built()); // the rest of the cleanup must happen
+    }
     if(is_built()){
       internal_nodes.clear();
       leaf_nodes.clear();
@@ -318,7 +332,6 @@ public:
   void
   insert(const Point_d& p)
   {
-    if (removed_) throw std::logic_error("Once you start removing points, you cannot insert anymore, you need to start again from scratch.");
     invalidate_built();
     pts.push_back(p);
   }
@@ -327,7 +340,6 @@ public:
   void
   insert(InputIterator first, InputIterator beyond)
   {
-    if (removed_ && first != beyond) throw std::logic_error("Once you start removing points, you cannot insert anymore, you need to start again from scratch.");
     invalidate_built();
     pts.insert(pts.end(),first, beyond);
   }

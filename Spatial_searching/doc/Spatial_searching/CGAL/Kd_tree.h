@@ -111,7 +111,7 @@ The value type of the `InputIterator` must be `Point_d`.
 template <class InputIterator> void insert(InputIterator first, InputIterator beyond);
 
 /*!
-Removes the point `p` from the `k-d` tree. It uses `operator==` to recognize the point after locating it. This is a limited and naive implementation that does not rebalance the tree. On the other hand, the tree remains valid and ready for queries. After removing a point, it is not possible to insert points again until the tree has been cleared.
+Removes the point `p` from the `k-d` tree. It uses `operator==` to recognize the point after locating it. This is a limited and naive implementation that does not rebalance the tree. On the other hand, the tree remains valid and ready for queries.
 */
 void remove(Point_d p);
 
