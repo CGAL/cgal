@@ -78,15 +78,14 @@ public:
          ++cell_it)
     {
       // Add subdomain index in internal map if needed
-      if ( subdomain_map_.end() ==
-              subdomain_map_.find(r_c3t3_.subdomain_index(cell_it)) )
-      {
-        subdomain_map_.insert(std::make_pair(r_c3t3_.subdomain_index(cell_it),
-                                             index_counter));
+      std::pair<typename Subdomain_map::iterator, bool> is_insert_successful =
+          subdomain_map_.insert(std::make_pair(r_c3t3_.subdomain_index(cell_it),
+                                               index_counter));
+
+      if(is_insert_successful.second)
         ++index_counter;
-      }
     }
-    
+
     // Rebind indices in alphanumeric order
     index_counter = first_index + 1;
     for ( typename Subdomain_map::iterator mit = subdomain_map_.begin() ;
@@ -181,11 +180,8 @@ public:
         cell_it != r_c3t3_.cells_in_complex_end();
         ++cell_it)
     {
-      // Add subdomain index in set if new
-      if ( subdomain_set.end() == subdomain_set.find(subdomain_index(cell_it)) )
-      {
-        subdomain_set.insert(subdomain_index(cell_it));
-      }
+      // Add subdomain index in set
+      subdomain_set.insert(subdomain_index(cell_it));
     }
     
     return subdomain_set.size();
@@ -231,14 +227,11 @@ public:
         ++facet_it)
     {
       // Add surface index in internal map if needed
-      if ( surface_map_.end() ==
-          surface_map_.find(c3t3.surface_patch_index((*facet_it).first,
-                                                     (*facet_it).second)) )
-      {
-        surface_map_.insert(std::make_pair(r_c3t3_.surface_patch_index(*facet_it),
-                                           index_counter));
+      std::pair<typename Surface_map::iterator, bool> is_insert_successful =
+          surface_map_.insert(std::make_pair(r_c3t3_.surface_patch_index(*facet_it),
+                                             index_counter));
+      if(is_insert_successful.second)
         ++index_counter;
-      }
     }
     
     // Find cell_pmap_ unused indices
@@ -249,12 +242,8 @@ public:
         cell_it != r_c3t3_.cells_in_complex_end();
         ++cell_it)
     {
-      // Add subdomain index in set if new
-      if ( cell_label_set.end()
-          == cell_label_set.find(get(cell_pmap_,cell_it)) )
-      {
-        cell_label_set.insert(get(cell_pmap_,cell_it));
-      }
+      // Add subdomain index in set
+      cell_label_set.insert(get(cell_pmap_, cell_it));
     }
     
     // Rebind indices
