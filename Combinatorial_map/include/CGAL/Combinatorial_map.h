@@ -3653,7 +3653,7 @@ namespace CGAL {
         if (!is_marked(current, m1))
         {
           if (map2.is_marked(other, m2))
-            match=false;
+          { match=false; }
           else
           {
             bijection[current] = other;
@@ -3690,24 +3690,25 @@ namespace CGAL {
             {
               if ( i>map2.dimension )
               {
-                if (!is_free(current,i)) match=false;
+                if (!is_free(current,i))
+                { match=false; }
               }
               else
               {
                 if (is_free(current,i))
                 {
                   if (!map2.is_free(other,i))
-                    match = false;
+                  { match=false; }
                 }
                 else
                 {
                   if (map2.is_free(other,i))
-                    match = false;
+                  { match=false; }
                   else
                   {
                     if (is_marked(beta(current,i), m1) !=
                         map2.is_marked(map2.beta(other,i), m2))
-                      match = false;
+                    { match=false; }
                     else
                     {
                       if (!is_marked(beta(current,i), m1))
@@ -3722,7 +3723,7 @@ namespace CGAL {
                       else
                       {
                         if (bijection[beta(current,i)]!=map2.beta(other,i))
-                          match = false;
+                        { match=false; }
                       }
                     }
                   }
@@ -3732,19 +3733,21 @@ namespace CGAL {
             // Now we test if the second map has more beta links than the first
             for ( i=dimension+1; match && i<=map2.dimension; ++i )
             {
-              if (!map2.is_free(other,i)) match=false;
+              if (!map2.is_free(other,i))
+              { match=false; }
             }
           }
         }
         else
         {
           if (!map2.is_marked(other, m2))
-            match = false;
+          { match=false; }
         }
       }
 
       // Here we test if both queue are empty
-      if ( !toTreat1.empty() || !toTreat2.empty() ) match = false;
+      if ( !toTreat1.empty() || !toTreat2.empty() )
+      { match=false; }
 
       // Here we unmark all the marked darts.
       toTreat1.clear();
@@ -3772,7 +3775,7 @@ namespace CGAL {
             toTreat2.push_back(map2.beta(other,i));
             unmark(beta(current,i), m1);
             unmark(beta(current,i), markpush);
-            map2.unmark(map2.beta(other,i), m2);            
+            map2.unmark(map2.beta(other,i), m2);
           }
         }
       }

@@ -21,15 +21,25 @@ struct Divide_by_two_functor
   }
 };
 
+template<typename LCC>
+struct Myattrib : public  CGAL::Cell_attribute_with_point
+    <LCC,int,CGAL::Tag_true,Sum_functor, Divide_by_two_functor>
+{
+  typedef CGAL::Cell_attribute_with_point
+  <LCC,int,CGAL::Tag_true,Sum_functor, Divide_by_two_functor>  Base;
+
+  Myattrib(const typename LCC::Point& p=CGAL::ORIGIN, int i=0): Base(p, 0)
+  {}
+};
+
+
 struct Myitems_2
 {
   template <class LCC>
   struct Dart_wrapper
   {
     typedef int Dart_info;
-
-    typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
-                                            Divide_by_two_functor> myattrib;
+    typedef Myattrib<LCC> myattrib;
     typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib>
     Attributes;
   };
@@ -41,9 +51,7 @@ struct Myitems_2c
   struct Dart_wrapper
   {
     typedef double Dart_info;
-
-    typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
-                                            Divide_by_two_functor> myattrib;
+    typedef Myattrib<LCC> myattrib;
     typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib>
     Attributes;
   };
@@ -54,9 +62,7 @@ struct Myitems_3
   struct Dart_wrapper
   {
     typedef void Dart_info;
-
-    typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_true,Sum_functor,
-                                            Divide_by_two_functor> myattrib;
+    typedef Myattrib<LCC> myattrib;
     typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib>
     Attributes;
   };
@@ -67,10 +73,8 @@ struct Myitems_3c
   template <class LCC>
   struct Dart_wrapper
   {
-    typedef char* Dart_info;
-
-    typedef CGAL::Cell_attribute_with_point<LCC,int,CGAL::Tag_false,Sum_functor,
-                                            Divide_by_two_functor> myattrib;
+    typedef void Dart_info;
+    typedef Myattrib<LCC> myattrib;
     typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib>
     Attributes;
   };
