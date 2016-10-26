@@ -97,11 +97,8 @@ int main (int argc, char** argv)
   disp->weight = 5.45e-1;
   elev->weight = 1.47e1;
 
-  //! [Attributes]
-  ///////////////////////////////////////////////////////////////////
-
   
-  // Add attributes to PSC
+  // Add attributes to classification object
   Classification psc (pts.begin (), pts.end(), Pmap());
   psc.add_attribute (d2p);
   psc.add_attribute (lin);
@@ -111,6 +108,12 @@ int main (int argc, char** argv)
   psc.add_attribute (disp);
   psc.add_attribute (elev);
 
+  //! [Attributes]
+  ///////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////
+  //! [Classification Types]
+  
   std::cerr << "Setting up classification types" << std::endl;
   
   // Create classification type and define how attributes affect them
@@ -141,9 +144,11 @@ int main (int argc, char** argv)
   roof->set_attribute_effect (disp, CGAL::Data_classification::Type::NEUTRAL_ATT);
   roof->set_attribute_effect (elev, CGAL::Data_classification::Type::FAVORED_ATT);
 
+  //! [Classification Types]
+  ///////////////////////////////////////////////////////////////////
+
   // Run classification
   psc.run_with_graphcut (neighborhood, 0.2);
-  //psc.run();
   
   // Save the output in a colored PLY format
 
