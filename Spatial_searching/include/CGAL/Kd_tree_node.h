@@ -233,7 +233,7 @@ namespace CGAL {
 	if (node->size()>0) 
 	  for (iterator i=node->begin(); i != node->end(); i++) 
 	    if (q.contains(*i)) 
-	      { result = boost::make_optional(*i);}
+	      { result = *i; break; }
       }
       else {
          Internal_node_const_handle node = 
@@ -320,6 +320,13 @@ namespace CGAL {
       return data + n;
     }
  
+    inline
+    void
+    drop_last_point()
+    {
+      --n;
+    }
+
   }; //leaf node
 
 
@@ -392,6 +399,20 @@ namespace CGAL {
       return upper_ch; 
     }
   	
+    inline
+    void
+    set_lower(Node_handle nh)
+    {
+      lower_ch = nh;
+    }
+
+    inline
+    void
+    set_upper(Node_handle nh)
+    {
+      upper_ch = nh;
+    }
+
     // inline Separator& separator() {return sep; }
     // use instead
     inline
@@ -513,6 +534,20 @@ namespace CGAL {
       return upper_ch; 
     }
   	
+    inline
+    void
+    set_lower(Node_handle nh)
+    {
+      lower_ch = nh;
+    }
+
+    inline
+    void
+    set_upper(Node_handle nh)
+    {
+      upper_ch = nh;
+    }
+
     // inline Separator& separator() {return sep; }
     // use instead
 
@@ -535,22 +570,6 @@ namespace CGAL {
     {
       return cut_dim;
     }
-
-    // members for extended internal node only
-    inline 
-    FT
-    low_value() const 
-    { 
-      return this->low_val;
-    }
-    
-    inline 
-    FT
-    high_value() const 
-    {
-      return this->high_val;
-    }
-       
 
    /* Separator& 
     separator() 

@@ -109,6 +109,8 @@ void build();
 
 /*!
 Inserts the point `p` in the `k-d` tree.
+\note Insertions do not dynamically update the tree. The next query
+automatically triggers a rebuild of the whole structure.
 */
 void insert(Point_d p);
 
@@ -118,6 +120,10 @@ The value type of the `InputIterator` must be `Point_d`.
 */
 template <class InputIterator> void insert(InputIterator first, InputIterator beyond);
 
+/*!
+Removes the point `p` from the `k-d` tree. It uses `operator==` to recognize the point after locating it. This is a limited and naive implementation that does not rebalance the tree. On the other hand, the tree remains valid and ready for queries.
+*/
+void remove(Point_d p);
 
 /*
 Pre-allocates memory in order to store at least 'size' points.

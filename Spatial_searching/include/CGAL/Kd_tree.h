@@ -103,6 +103,7 @@ private:
   mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
   #endif
   bool built_;
+  bool removed_;
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
@@ -236,13 +237,13 @@ private:
 public:
 
   Kd_tree(Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false)
+    : traits_(traits),split(s), built_(false), removed_(false)
   {}
 
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
 	  Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false)
+    : traits_(traits),split(s), built_(false), removed_(false)
   {
     pts.insert(pts.end(), first, beyond);
   }
@@ -254,6 +255,10 @@ public:
   void
   build()
   {
+    // This function is not ready to be called when a tree already exists, one
+    // must call invalidate_built() first.
+    CGAL_assertion(!is_built());
+    CGAL_assertion(!removed_);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
@@ -306,6 +311,16 @@ public:
 
   void invalidate_built()
   {
+    if(removed_){
+      // Walk the tree to collect the remaining points.
+      // Writing directly to pts would likely work, but better be safe.
+      std::vector<Point_d> ptstmp;
+      //ptstmp.resize(root()->num_items());
+      root()->tree_items(std::back_inserter(ptstmp));
+      pts.swap(ptstmp);
+      removed_=false;
+      CGAL_assertion(is_built()); // the rest of the cleanup must happen
+    }
     if(is_built()){
       internal_nodes.clear();
       leaf_nodes.clear();
@@ -319,6 +334,7 @@ public:
   {
     invalidate_built();
     pts.clear();
+    removed_ = false;
   }
 
   void
@@ -336,6 +352,76 @@ public:
     pts.insert(pts.end(),first, beyond);
   }
 
+  void
+  remove(const Point_d& p)
+  {
+#if 0
+    // This code could have quadratic runtime.
+    if (!is_built()) {
+      std::vector<Point_d>::iterator pi = std::find(pts.begin(), pts.end(), p);
+      // Precondition: the point must be there.
+      CGAL_assertion (pi != pts.end());
+      pts.erase(pi);
+      return;
+    }
+#endif
+    // This does not actually remove points, and further insertions
+    // would make the points reappear, so we disallow it.
+    removed_ = true;
+
+    CGAL_assertion_code(bool success = )
+    remove_(p, 0, false, 0, false, root());
+    CGAL_assertion(success);
+  }
+private:
+  bool remove_(const Point_d& p,
+      Internal_node_handle grandparent, bool islower,
+      Internal_node_handle parent, bool islower2,
+      Node_handle node) {
+    // Recurse to locate the point
+    if (!node->is_leaf()) {
+      Internal_node_handle newparent = static_cast<Internal_node_handle>(node);
+      // FIXME: This should be if(x<y) remove low; else remove up;
+      if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] <= newparent->cutting_value()) {
+	if (remove_(p, parent, islower2, newparent, true, newparent->lower()))
+	  return true;
+      }
+      //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
+	return remove_(p, parent, islower2, newparent, false, newparent->upper());
+
+      CGAL_assertion(false); // Point was not found
+    }
+
+    // Actual removal
+    Leaf_node_handle lnode = static_cast<Leaf_node_handle>(node);
+    if (lnode->size() > 1) {
+      iterator pi = std::find(lnode->begin(), lnode->end(), p);
+      // FIXME: we should ensure this never happens
+      if (pi == lnode->end()) return false;
+      iterator lasti = lnode->end() - 1;
+      if (pi != lasti) {
+	// Hack to get a non-const iterator
+	std::iter_swap(pts.begin()+(pi-pts.begin()), pts.begin()+(lasti-pts.begin()));
+      }
+      lnode->drop_last_point();
+    } else if (*lnode->begin() != p) {
+      // FIXME: we should ensure this never happens
+      return false;
+    } else if (grandparent) {
+      Node_handle brother = islower ? parent->upper() : parent->lower();
+      if (islower2)
+	grandparent->set_lower(brother);
+      else
+	grandparent->set_upper(brother);
+    } else if (parent) {
+      tree_root = islower ? parent->upper() : parent->lower();
+    } else {
+      clear();
+    }
+    return true;
+  }
+
+public:
   //For efficiency; reserve the size of the points vectors in advance (if the number of points is already known).
   void reserve(size_t size)
   {
