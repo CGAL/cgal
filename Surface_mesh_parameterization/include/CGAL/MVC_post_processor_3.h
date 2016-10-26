@@ -204,17 +204,19 @@ private:
   /// Checks whether the polygon's border is simple.
   template <typename VertexUVMap>
   bool is_polygon_simple(const TriangleMesh& mesh,
-                         halfedge_descriptor bhd,
                          const VertexUVMap uvmap) const
   {
     typedef typename Traits::Kernel                 Kernel;
     typedef typename Kernel::Segment_2              Segment_2;
 
     // @fixme unefficient: brute force use sweep line algorithms instead
-    // @todo handle the multiple borders
+    BOOST_FOREACH(halfedge_descriptor hd_1, halfedges(mesh)){
+      if(!is_border(hd_1, mesh))
+        continue;
+      BOOST_FOREACH(halfedge_descriptor hd_2, halfedges(mesh)){
+        if(!is_border(hd_2, mesh))
+          continue;
 
-    BOOST_FOREACH(halfedge_descriptor hd_1, halfedges_around_face(bhd, mesh)){
-      BOOST_FOREACH(halfedge_descriptor hd_2, halfedges_around_face(bhd, mesh)){
         if(hd_1 == hd_2 || // equality
            next(hd_1, mesh) == hd_2 || next(hd_2, mesh) == hd_1) // adjacency
           continue;
@@ -223,7 +225,7 @@ private:
                                         get(uvmap, target(hd_1, mesh))),
                               Segment_2(get(uvmap, source(hd_2, mesh)),
                                         get(uvmap, target(hd_2, mesh))))){
-          std::ofstream out("non-simple.txt");
+          std::ofstream out("non-simple.txt"); // polygon lines
           out << "2 " << get(uvmap, source(hd_1, mesh)) << " 0 "
                       << get(uvmap, target(hd_1, mesh)) << " 0" << std::endl;
           out << "2 " << get(uvmap, source(hd_2, mesh)) << " 0 "
@@ -735,17 +737,18 @@ public:
   Error_code parameterize(const TriangleMesh& mesh,
                           const Vertex_set& vertices,
                           const Faces_vector& faces,
-                          halfedge_descriptor bhd,
+                          halfedge_descriptor,
                           VertexUVMap uvmap,
                           const VertexIndexMap vimap)
   {
     // Check if the polygon is simple
-    const bool is_param_border_simple = is_polygon_simple(mesh, bhd, uvmap);
+    const bool is_param_border_simple = is_polygon_simple(mesh, uvmap);
 
     // not sure how to handle non-simple yet
-    if(!is_param_border_simple)
+    if(!is_param_border_simple){
+      std::cout << "Border(s) are not simple!" << std::endl;
       return Base::ERROR_NON_CONVEX_BORDER;
-    std::cout << "Border is simple!" << std::endl;
+    }
 
     // Triangulate the holes in the convex hull of the polygon
     CT ct;
