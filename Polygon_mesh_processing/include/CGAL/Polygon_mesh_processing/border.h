@@ -27,6 +27,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/algorithm.h>
 
 #include <set>
 
@@ -166,6 +167,8 @@ namespace Polygon_mesh_processing {
                                   , HalfedgeOutputIterator out
                                   , const NamedParameters& np)
   {
+    if (faces.empty()) return out;
+
     typedef PolygonMesh PM;
     typedef typename GetFaceIndexMap<PM, NamedParameters>::const_type     FIMap;
     typedef typename boost::property_map<typename internal::Dummy_PM,
@@ -187,7 +190,7 @@ namespace Polygon_mesh_processing {
                        boost::true_type>::value)
     {
       typename boost::range_iterator<const FaceRange>::type it = boost::const_begin(faces);
-      if (get(fim, *it++) == get(fim, *it))
+      if (get(fim, *it) == get(fim, *cpp11::next(it)))
       {
         std::cerr << "WARNING : the internal property map for CGAL::face_index_t" << std::endl
                   << "          is not properly initialized." << std::endl
