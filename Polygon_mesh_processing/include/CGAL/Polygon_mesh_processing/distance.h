@@ -288,7 +288,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
 }
 
 template <class Concurrency_tag, class Kernel, class PointRange, class TriangleMesh, class VertexPointMap>
-double approximated_Hausdorff_distance(
+double approximate_Hausdorff_distance(
   const PointRange& original_sample_points,
   const TriangleMesh& tm,
   VertexPointMap vpm
@@ -343,7 +343,7 @@ double approximated_Hausdorff_distance(
 template <class Concurrency_tag, class Kernel, class TriangleMesh,
           class NamedParameters,
           class VertexPointMap >
-double approximated_Hausdorff_distance(
+double approximate_Hausdorff_distance(
    const TriangleMesh& m1,
    const TriangleMesh& m2,
    double precision,
@@ -359,13 +359,13 @@ double approximated_Hausdorff_distance(
                 std::back_inserter(sample_points),
                 np,
                 method );
-    return approximated_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2, vpm);
+    return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, m2, vpm);
 }
 
 // documented functions
 /**
  * \ingroup PMP_distance_grp
- * computes the approximated Hausdorff distance of `tm1` from `tm2` by
+ * computes the approximate Hausdorff distance of `tm1` from `tm2` by
  * generating a uniform random point sampling on `tm1`, and by then
  * returning the distance of the furthest point from `tm2`.
  *
@@ -400,7 +400,7 @@ template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2>
-double approximated_Hausdorff_distance( const TriangleMesh& tm1,
+double approximate_Hausdorff_distance( const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
                                         double precision,
                                         const NamedParameters1& np1,
@@ -409,7 +409,7 @@ double approximated_Hausdorff_distance( const TriangleMesh& tm1,
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters1>::type Geom_traits;
 
-  return approximated_Hausdorff_distance<Concurrency_tag, Geom_traits>(
+  return approximate_Hausdorff_distance<Concurrency_tag, Geom_traits>(
     tm1, tm2,
               precision,
               choose_param(get_param(np1, vertex_point),
@@ -423,17 +423,17 @@ double approximated_Hausdorff_distance( const TriangleMesh& tm1,
 
 /**
  * \ingroup PMP_distance_grp
- * computes the approximated symmetric Hausdorff distance between `tm1` and `tm2`
- * It returns the maximum of `approximated_Hausdorff_distance(tm1,tm2)` and
- * `approximated_Hausdorff_distance(tm2,tm1)`
+ * computes the approximate symmetric Hausdorff distance between `tm1` and `tm2`
+ * It returns the maximum of `approximate_Hausdorff_distance(tm1,tm2)` and
+ * `approximate_Hausdorff_distance(tm2,tm1)`
  *
- * \copydetails CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance()
+ * \copydetails CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()
  */
 template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1,
           class NamedParameters2>
-double approximated_symmetric_Hausdorff_distance(
+double approximate_symmetric_Hausdorff_distance(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   double precision,
@@ -441,14 +441,14 @@ double approximated_symmetric_Hausdorff_distance(
   const NamedParameters2& np2)
 {
   return (std::max)(
-    approximated_Hausdorff_distance<Concurrency_tag>(tm1,tm2,precision,np1,np2),
-    approximated_Hausdorff_distance<Concurrency_tag>(tm2,tm1,precision,np2,np1)
+    approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,precision,np1,np2),
+    approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,precision,np2,np1)
   );
 }
 
 /**
  * \ingroup PMP_distance_grp
- * computes the approximated Hausdorff distance between `points` and `tm`
+ * computes the approximate Hausdorff distance between `points` and `tm`
  * @tparam PointRange a Range of `Point_3`
  * @tparam `TriangleMesh` a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters for `tm`
@@ -474,14 +474,14 @@ double max_distance_to_triangle_mesh(const PointRange& points,
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters>::type Geom_traits;
 
-  return approximated_Hausdorff_distance<Concurrency_tag, Geom_traits>
+  return approximate_Hausdorff_distance<Concurrency_tag, Geom_traits>
      (points,tm,choose_param(get_param(np, vertex_point),
                              get_const_property_map(vertex_point, tm)));
 }
 
 /*!
  *\ingroup PMP_distance_grp
- *  Computes the approximated Hausdorff distance between `tm` and `points`
+ *  Computes the approximate Hausdorff distance between `tm` and `points`
  *
  * @tparam PointRange a Range of `Point_3`
  * @tparam `TriangleMesh` a model of the concept `FaceListGraph`
@@ -555,22 +555,22 @@ double max_distance_to_point_set(const TriangleMesh& tm,
 template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters>
-double approximated_Hausdorff_distance( const TriangleMesh& tm1,
+double approximate_Hausdorff_distance( const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
                                         double precision,
                                         const NamedParameters& np)
 {
-  return approximated_Hausdorff_distance<Concurrency_tag>(
+  return approximate_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, precision, np, parameters::all_default());
 }
 
 template< class Concurrency_tag,
           class TriangleMesh>
-double approximated_Hausdorff_distance( const TriangleMesh& tm1,
+double approximate_Hausdorff_distance( const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
                                         double precision)
 {
-  return approximated_Hausdorff_distance<Concurrency_tag>(
+  return approximate_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, precision,
     parameters::all_default(),
     parameters::all_default());
@@ -580,22 +580,22 @@ double approximated_Hausdorff_distance( const TriangleMesh& tm1,
 template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters>
-double approximated_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
+double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
                                                  const TriangleMesh& tm2,
                                                  double precision,
                                                  const NamedParameters& np)
 {
-  return approximated_symmetric_Hausdorff_distance<Concurrency_tag>(
+  return approximate_symmetric_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, precision, np, parameters::all_default());
 }
 
 template< class Concurrency_tag,
           class TriangleMesh>
-double approximated_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
+double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
                                                  const TriangleMesh& tm2,
                                                  double precision)
 {
-  return approximated_symmetric_Hausdorff_distance<Concurrency_tag>(
+  return approximate_symmetric_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, precision,
     parameters::all_default(),
     parameters::all_default());

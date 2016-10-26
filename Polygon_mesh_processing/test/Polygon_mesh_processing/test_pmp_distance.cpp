@@ -20,7 +20,7 @@ bool general_tests(const Mesh& m1,
 {
 
     std::cout << "Symetric distance between meshes (sequential) "
-              << CGAL::Polygon_mesh_processing::approximated_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(m1,m2,4000)
+              << CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(m1,m2,4000)
               << "\n";
 
     std::vector<K::Point_3> points;
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   CGAL::Timer time;
   time.start();
   std::cout << "Distance between meshes (parallel) "
-            << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<CGAL::Parallel_tag>(m1,m2,40000)
+            << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<CGAL::Parallel_tag>(m1,m2,40000)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   time.reset();
   time.start();
   std::cout << "Distance between meshes (sequential) "
-            << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance<CGAL::Sequential_tag>(m1,m2,40000)
+            << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance<CGAL::Sequential_tag>(m1,m2,40000)
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";

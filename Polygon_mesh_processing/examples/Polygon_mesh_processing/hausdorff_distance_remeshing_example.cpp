@@ -27,7 +27,7 @@ int main()
   CGAL::Polygon_mesh_processing::isotropic_remeshing(tm2.faces(),.05, tm2);
 
   std::cout << "Approximated Hausdorff distance: "
-            << CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance
+            << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
                   <TAG>(m1, m2, 4000)
             << std::endl;
 }
