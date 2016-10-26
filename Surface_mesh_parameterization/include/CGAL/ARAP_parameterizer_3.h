@@ -309,7 +309,7 @@ private:
     // According to the paper, MVC is better for single border and LSCM is better
     // when there are multiple borders
     if(number_of_borders == 1){
-      typedef CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, Border_param> MVC_parameterizer;
+      typedef CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh> MVC_parameterizer;
       status = CGAL::parameterize(mesh, MVC_parameterizer(), bhd, uvmap);
     } else {
       typedef CGAL::LSCM_parameterizer_3<TriangleMesh, Border_param> LSCM_parameterizer;
