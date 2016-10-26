@@ -450,6 +450,9 @@ inline void read_float_or_quotient(std::istream & is, ET& et)
 template <typename Int, typename Rat>
 inline void read_float_or_quotient(std::istream& is, Rat &z)
 {
+  // To build a rational from numerator and denominator. Hope that Int and Fraction_traits::(Numerator|Denominator)_type are consistent...
+  typename Fraction_traits<Rat>::Compose compose;
+
   // reads rational and floating point literals.
   const std::istream::char_type zero = '0';
   std::istream::int_type c;
@@ -483,7 +486,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
     if (internal::is_eof(is, c) || internal::is_space(is, c)) {
       is.flags(old_flags);
       if (digits && !is.fail())
-        z = negative? Rat(-n,1): Rat(n,1);
+        z = negative? compose(-n,1): compose(n,1);
       return;
     }
   } else
@@ -498,7 +501,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
       is >> d;
       is.flags(old_flags);
       if (!is.fail())
-        z = negative? Rat(-n,d): Rat(n,d);
+        z = negative? compose(-n,d): compose(n,d);
       return;
     }
 
@@ -538,7 +541,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
     while (e++) d *= 10;
   is.flags(old_flags);
   if (!is.fail())
-    z = (negative ? Rat(-n,d) : Rat(n,d));
+    z = (negative ? compose(-n,d) : compose(n,d));
 
 } 
     
