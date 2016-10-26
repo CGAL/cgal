@@ -207,17 +207,56 @@ public Q_SLOTS:
     update_plugin_from_item(get_classification_item());
   }
 
+  void disable_everything ()
+  {
+    ui_widget.load_config->setEnabled(false);
+    ui_widget.save_config->setEnabled(false);
+    ui_widget.compute_features->setEnabled(false);
+    ui_widget.numberOfScalesSpinBox->setEnabled(false);
+    ui_widget.display->setEnabled(false);
+    ui_widget.tabWidget->setEnabled(false);
+    ui_widget.run->setEnabled(false);
+    ui_widget.run_smoothed->setEnabled(false);
+    ui_widget.frame->setEnabled(false);
+    ui_widget.save->setEnabled(false);
+    ui_widget.generate_point_set_items->setEnabled(false);
+  }
+
+  void enable_computation()
+  {
+    ui_widget.load_config->setEnabled(true);
+    ui_widget.compute_features->setEnabled(true);
+    ui_widget.numberOfScalesSpinBox->setEnabled(true);
+    ui_widget.display->setEnabled(true);
+  }
+
+  void enable_classif()
+  {
+    ui_widget.save_config->setEnabled(true);
+    ui_widget.tabWidget->setEnabled(true);
+    ui_widget.run->setEnabled(true);
+    ui_widget.run_smoothed->setEnabled(true);
+    ui_widget.frame->setEnabled(true);
+    ui_widget.save->setEnabled(true);
+    ui_widget.generate_point_set_items->setEnabled(true);
+  }
+
+
   void update_plugin_from_item(Scene_point_set_classification_item* item)
   {
     if (item == NULL) // Deactivate plugin
       {
-        ui_widget.tabWidget->setEnabled(false);
+        disable_everything();
         ui_widget.tabWidget->setCurrentIndex(0);
       }
     else
       {
+        disable_everything();
+        enable_computation();
+        
         ui_widget.numberOfScalesSpinBox->setValue(item->nb_scales());
         ui_widget.number_of_trials->setValue(item->number_of_trials());
+        ui_widget.smoothingDoubleSpinBoxt->setValue(item->smoothing());
 
         // Clear class types
         for (std::size_t i = 0; i < class_rows.size(); ++ i)
@@ -244,9 +283,11 @@ public Q_SLOTS:
                                    item->types()[i].second));
 
         // Enabled classif if features computed
-        ui_widget.tabWidget->setEnabled(item->features_computed());
         if (!(item->features_computed()))
           ui_widget.tabWidget->setCurrentIndex(0);
+        else
+          enable_classif();
+
         int index = ui_widget.display->currentIndex();
         ui_widget.display->clear();
         ui_widget.display->addItem("Real colors");

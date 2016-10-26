@@ -243,7 +243,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
         std::ostringstream oss;
         oss << "Attribute " << m_psc->get_attribute(i)->id() << "_" << scale;
         cb->addItem (oss.str().c_str());
-        cb1->addItem (m_psc->get_attribute(i)->id().c_str());
+        cb1->addItem (oss.str().c_str());
       }
   }
 
