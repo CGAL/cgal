@@ -36,6 +36,7 @@
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Fraction_traits.h>
 
 
 namespace CGAL {
@@ -450,7 +451,8 @@ inline void read_float_or_quotient(std::istream & is, ET& et)
 template <typename Int, typename Rat>
 inline void read_float_or_quotient(std::istream& is, Rat &z)
 {
-  // To build a rational from numerator and denominator. Hope that Int and Fraction_traits::(Numerator|Denominator)_type are consistent...
+  // To build a rational from numerator and denominator. Hope that `Int`
+  // and `Fraction_traits::(Numerator|Denominator)_type` are consistent...
   typename Fraction_traits<Rat>::Compose compose;
 
   // reads rational and floating point literals.
