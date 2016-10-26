@@ -61,4 +61,6 @@ class Real_embeddable_traits< ::__gmp_expr<T,U> >
 
 } //namespace CGAL
 
+#include <CGAL/GMPXX_arithmetic_kernel.h>
+
 #endif // CGAL_GMPXX_H
