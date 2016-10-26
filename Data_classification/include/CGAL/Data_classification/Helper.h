@@ -288,6 +288,18 @@ public:
     \brief Returns the local eigen analysis structure at scale `scale`.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
+  /*!
+    \brief Returns the grid resolution at scale `scale`.
+  */
+  double grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
+  /*!
+    \brief Returns the radius used for neighborhood queries at scale `scale`.
+  */
+  double radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
+  /*!
+    \brief Returns the radius used for digital terrain modeling at scale `scale`.
+  */
+  double radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
   /// \cond SKIP_IN_MANUAL  
   void info() const
