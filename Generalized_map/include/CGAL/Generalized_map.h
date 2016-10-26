@@ -810,7 +810,7 @@ namespace CGAL {
       CGAL_assertion(!this->template is_free<0>(ADart));
       return this->alpha<0>(ADart);
     }
-    
+
     size_type number_of_halfedges() const
     {
       assert(is_without_boundary(0));
@@ -1308,11 +1308,13 @@ namespace CGAL {
       { cells[i]=i; }
 
       std::vector<unsigned int> res = count_cells(cells);
+      bool orientable=is_orientable();
 
       os << "#Darts=" << number_of_darts();
       for ( unsigned int i=0; i<=dimension; ++i)
         os<<", #"<<i<<"-cells="<<res[i];
-      os<<", #ccs="<<res[dimension+1];
+      os<<", #ccs="<<res[dimension+1]
+        <<", orientable="<<(orientable?"true":"false");
 
       return os;
     }
@@ -2994,6 +2996,152 @@ namespace CGAL {
       }
 
       return false;
+    }
+
+    /** @return true iff the connected component containing dh is orientable
+     *  If amark!=INVALID_MARK, mark all darts in the cc with amark
+     *  If aorientationmark!=INVALID_MARK, and if the cc is orientable, mark
+     *       all darts of one orientation of the cc with aorientationmark
+     *       (i.e. one out of two darts)
+     *  Note it is not allow to have accmark!=INVALID_MARK and
+     *  aorientationmark==INVALID_MARK.
+     */
+    bool is_cc_orientable(Dart_const_handle dh,
+                          size_type accmark=INVALID_MARK,
+                          size_type aorientationmark=INVALID_MARK) const
+    {
+      if (accmark!=INVALID_MARK && aorientationmark==INVALID_MARK)
+      {
+        std::cerr<<"Error for is_cc_orientable: you cannot use accmark"
+                 <<" different from INVALID_MARK and aorientationmark "
+                 <<" equal to INVALID_MARK"<<std::endl;
+        accmark=INVALID_MARK;
+      }
+
+      size_type ccmark=(accmark==INVALID_MARK?get_new_mark():accmark);
+      size_type orientationmark=
+        (aorientationmark==INVALID_MARK?get_new_mark():aorientationmark);
+      bool stop_if_nonorientable =
+        (accmark==INVALID_MARK && aorientationmark==INVALID_MARK);
+
+      std::queue<Dart_const_handle> toTreat;
+      bool orientable=true;
+      Dart_const_handle cur;
+
+      // Iterator through the connected component
+      toTreat.push(dh);
+      mark(dh, ccmark);
+      mark(dh, orientationmark);
+
+      while((!stop_if_nonorientable || orientable) && !toTreat.empty())
+      {
+        cur=toTreat.front();
+        toTreat.pop();
+
+        for (int i=0; i<=dimension; ++i)
+        {
+          if (is_marked(cur, orientationmark))
+          {
+            if (!is_free(cur, i) &&
+                is_marked(alpha(cur, i), orientationmark))
+              orientable=false;
+          }
+          else
+          {
+            if (!is_free(cur, i))
+              mark(alpha(cur, i), orientationmark);
+          }
+
+          if (!is_marked(alpha(cur, i), ccmark))
+          {
+            mark(alpha(cur, i), ccmark);
+            toTreat.push(alpha(cur, i));
+          }
+        }
+      }
+
+      // Now we need to unmark the marked darts for accmark and/or for
+      // aorientationmark (when they are different from INVALID_MARK).
+      if (stop_if_nonorientable)
+      {
+        toTreat.push(dh);
+        unmark(dh, ccmark);
+        if (aorientationmark==INVALID_MARK) unmark(dh, orientationmark);
+
+        while(!toTreat.empty())
+        {
+          cur=toTreat.front();
+          toTreat.pop();
+
+          for (int i=0; i<=dimension; ++i)
+          {
+            if (aorientationmark==INVALID_MARK)
+              unmark(alpha(cur, i), orientationmark);
+
+            if (!is_marked(alpha(cur, i), ccmark))
+            {
+              unmark(alpha(cur, i), ccmark);
+              toTreat.push(alpha(cur, i));
+            }
+          }
+        }
+
+        if (aorientationmark==INVALID_MARK)
+        {
+          assert(is_whole_map_marked(orientationmark));
+          free_mark(orientationmark);
+        }
+
+        assert(is_whole_map_marked(ccmark));
+        free_mark(ccmark);
+      }
+
+      return orientable;
+    }
+
+    /** @return true iff the GMap is orientable
+     *  If aorientationmark!=INVALID_MARK, and if the cc is orientable, mark
+     *       all darts of one orientation of the cc with aorientationmark
+     *       (i.e. one out of two darts)
+     */
+    bool is_orientable(size_type aorientationmark=INVALID_MARK) const
+    {
+      size_type ccmark=get_new_mark();
+      size_type orientationmark=
+        (aorientationmark==INVALID_MARK?get_new_mark():aorientationmark);
+
+      bool stop_if_nonorientable = (aorientationmark==INVALID_MARK);
+      bool orientable=true;
+
+      for (typename Dart_const_range::const_iterator it=darts().begin(),
+             itend=darts().end();
+           (!stop_if_nonorientable || orientable) && it!=itend; ++it)
+      {
+        if (!is_marked(it, ccmark))
+        {
+          if (!is_cc_orientable(it, ccmark, orientationmark))
+            orientable=false;
+        }
+      }
+
+      for (typename Dart_const_range::const_iterator it=darts().begin(),
+             itend=darts().end();
+           number_of_marked_darts(ccmark)>0 && it!=itend; ++it)
+      {
+        unmark(it, ccmark);
+        if (aorientationmark==INVALID_MARK) unmark(it, orientationmark);
+      }
+
+      if (aorientationmark==INVALID_MARK)
+      {
+        assert(is_whole_map_unmarked(orientationmark));
+        free_mark(orientationmark);
+      }
+
+      assert(is_whole_map_unmarked(ccmark));
+      free_mark(ccmark);
+
+      return orientable;
     }
 
     /** Test if the attributes of this map are automatically updated.
