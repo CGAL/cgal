@@ -543,6 +543,9 @@ bool Scene_point_set_classification_item::run (int method)
   if (method == 0)
     m_psc->run();
   else if (method == 1)
+    m_psc->run_with_local_smoothing (m_helper->neighborhood(),
+                                     3. * m_helper->radius_neighbors());
+  else if (method == 2)
     m_psc->run_with_graphcut (m_helper->neighborhood(), m_smoothing);
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();

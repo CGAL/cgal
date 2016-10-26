@@ -426,6 +426,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="run_smoothed">
+            <property name="text">
+             <string>Run (smoothed)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QFrame" name="frame">
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
@@ -435,7 +442,7 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <widget class="QPushButton" name="run_with_smoothing">
+              <widget class="QPushButton" name="run_graphcut">
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -443,7 +450,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Run with smoothing</string>
+                <string>Run (graphcut)</string>
                </property>
               </widget>
              </item>

@@ -124,8 +124,10 @@ public:
             SLOT(on_save_config_button_clicked()));
     connect(ui_widget.load_config,  SIGNAL(clicked()), this,
             SLOT(on_load_config_button_clicked()));
-    connect(ui_widget.run_with_smoothing,  SIGNAL(clicked()), this,
-            SLOT(on_run_with_smoothing_button_clicked()));
+    connect(ui_widget.run_smoothed,  SIGNAL(clicked()), this,
+            SLOT(on_run_smoothed_button_clicked()));
+    connect(ui_widget.run_graphcut,  SIGNAL(clicked()), this,
+            SLOT(on_run_graphcut_button_clicked()));
     connect(ui_widget.smoothingDoubleSpinBox,  SIGNAL(valueChanged(double)), this,
             SLOT(on_smoothing_value_changed(double)));
     connect(ui_widget.save,  SIGNAL(clicked()), this,
@@ -429,7 +431,7 @@ public Q_SLOTS:
     scene->itemChanged(classification_item);
   }
 
-  void on_run_with_smoothing_button_clicked()
+  void on_run_smoothed_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
       = get_classification_item();
@@ -444,6 +446,25 @@ public Q_SLOTS:
     time.start();
     run (classification_item, 1);
     std::cerr << "Smoothed classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    QApplication::restoreOverrideCursor();
+    scene->itemChanged(classification_item);
+  }
+  
+  void on_run_graphcut_button_clicked()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_classification_item();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QTime time;
+    time.start();
+    run (classification_item, 2);
+    std::cerr << "Graphcut classification computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     scene->itemChanged(classification_item);
   }
