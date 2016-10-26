@@ -8,7 +8,7 @@
 
 
 # Is it already configured?
-if (IPE_INCLUDE_DIR AND IPE_LIBRARIES )
+if (IPE_INCLUDE_DIR AND IPE_LIBRARIES AND IPE_FULL_VERSION)
   set(IPE_FOUND TRUE)
 else()  
   find_path(IPE_INCLUDE_DIR 
