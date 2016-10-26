@@ -304,7 +304,8 @@ public:
 
     \param neighborhood Object used to access neighborhoods of points
   */
-  void run_with_local_smoothing (const Neighborhood& neighborhood)
+  void run_with_local_smoothing (const Neighborhood& neighborhood,
+                                 const double radius_neighbors)
   {
     prepare_classification ();
     
@@ -318,7 +319,8 @@ public:
     for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
-        neighborhood.get (s, neighbors);
+        neighborhood.range_neighbors (m_input[s], radius_neighbors,
+                                      std::back_inserter (neighbors));
 
         std::vector<double> mean (values.size(), 0.);
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
