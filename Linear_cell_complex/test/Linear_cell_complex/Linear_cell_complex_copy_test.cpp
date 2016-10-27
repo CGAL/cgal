@@ -383,7 +383,7 @@ struct DisplayAttribs
           itend=amap.template attributes<i>().end();
           it!=itend; ++it )
     {
-      std::cout<<it->info()<<"; ";
+      std::cout<<amap.template info<i>(it)<<"; ";
     }
     std::cout<<std::endl;
   }
@@ -406,7 +406,7 @@ struct DisplayVertexAttrib
           itend=amap.template attributes<0>().end();
           it!=itend; ++it )
     {
-      std::cout<<it->info()<<"; ";
+      std::cout<<amap.template info<0>()<<"; ";
     }
     std::cout<<std::endl;
   }
@@ -439,7 +439,7 @@ void displayAllAttribs2D(Map& amap, const char* c)
         itend=amap.template attributes<0>().end();
         it!=itend; ++it )
   {
-    std::cout<<it->point()<<"; ";
+    std::cout<<amap.point(it)<<"; ";
   }
   std::cout<<std::endl;
 }
@@ -459,7 +459,7 @@ void displayAllAttribs3D(Map& amap, const char* c)
         itend=amap.template attributes<0>().end();
         it!=itend; ++it )
   {
-    std::cout<<it->point()<<"; ";
+    std::cout<<amap.point(it)<<"; ";
   }
   std::cout<<std::endl;
 }
@@ -480,7 +480,7 @@ void displayAllAttribs4D(Map& amap, const char* c)
         itend=amap.template attributes<0>().end();
         it!=itend; ++it )
   {
-    std::cout<<it->point()<<"; ";
+    std::cout<<amap.point(it)<<"; ";
   }
   std::cout<<std::endl;
 

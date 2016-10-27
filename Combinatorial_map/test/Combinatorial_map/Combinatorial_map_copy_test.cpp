@@ -14,8 +14,6 @@ struct Map_2_dart_items
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef void Dart_info;
-
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
@@ -126,31 +124,31 @@ struct Map_dart_max_items_4
   };
 };
 
-// void, void, void
+// noinfo, void, void, void
 typedef CGAL::Combinatorial_map<2, CGAL::Generic_map_min_items > Map1;
 
-// double, void, double
+// noinfo, double, void, double
 typedef CGAL::Combinatorial_map<2, Map_2_dart_items > Map2;
 
-// int, int, double
+// info=int, int, int, double
 typedef CGAL::Combinatorial_map<2, Map_2_dart_max_items_3> Map3;
 
-// void, void, void, void
+// noinfo, void, void, void, void
 typedef CGAL::Combinatorial_map<3, CGAL::Generic_map_min_items > Map4;
 
-// double, void, int, double
+// noinfo, double, void, int, double
 typedef CGAL::Combinatorial_map<3, Map_3_dart_items_3> Map5;
 
-// int, int, int, double
+// info=int*, int, int, int, double
 typedef CGAL::Combinatorial_map<3, Map_3_dart_max_items_3> Map6;
 
-// int, void, int, void
+// info=MonInfo, int, void, int, void
 typedef CGAL::Combinatorial_map<3, Another_map_3_dart_items_3> Map7;
 
-// int, void, int, void, int
+// noinfo, int, void, int, void, int
 typedef CGAL::Combinatorial_map<4, Map_dart_items_4> Map8;
 
-// int, int, int, int, double
+// info=char, int, int, int, int, double
 typedef CGAL::Combinatorial_map<4, Map_dart_max_items_4> Map9;
 
 template<typename Map, unsigned int i, typename Attr=typename Map::
@@ -176,6 +174,43 @@ struct CreateAttributes<Map, i, CGAL::Void>
   static void run(Map&)
   {
   }
+};
+
+template<typename Map, typename Info=typename Map::Dart_info>
+struct InitDartInfo
+{
+  static void run(Map& map)
+  {
+    long int nb=0;
+    for(typename Map::Dart_range::iterator it=map.darts().begin(),
+        itend=map.darts().end(); it!=itend; ++it)
+    {
+      map.info(it)=Info(nb);
+    }
+  }
+};
+
+template<typename Map>
+struct InitDartInfo<Map, CGAL::Void>
+{
+  static void run(Map&)
+  {}
+};
+
+template<typename Map, unsigned int i, typename Attr=typename Map::
+         template Attribute_type<i>::type>
+struct DisplayNumberOfAttribs
+{
+  static void run(Map& amap)
+  {
+    std::cout<<i<<"-attributes="<<amap.template number_of_attributes<i>()<<"  ";
+  }
+};
+template<typename Map, unsigned int i>
+struct DisplayNumberOfAttribs<Map,i,CGAL::Void>
+{
+  static void run(Map&)
+  {}
 };
 
 template<typename Map, unsigned int i, typename Attr=typename Map::
@@ -240,6 +275,7 @@ void create2Dmap(Map& map)
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
+  CGAL_assertion ( map.is_valid() );
 }
 template<typename Map>
 void create3Dmap(Map& map)
@@ -255,6 +291,7 @@ void create3Dmap(Map& map)
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
+  InitDartInfo<Map>::run(map);
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
@@ -283,11 +320,13 @@ void create4Dmap(Map& map)
     while ( !map.template is_sewable<4>(d1, d2) ) ++d2;
     map.template sew<4>(d1,d2);
   }
+  InitDartInfo<Map>::run(map);
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
   CreateAttributes<Map,4>::run(map);
+  CGAL_assertion ( map.is_valid() );
 }
 
 bool testCopy()
@@ -318,8 +357,6 @@ bool testCopy()
   if ( !map1p.is_valid() || !map1.is_isomorphic_to(map1p) )
   { assert(false); return false; }
   Map2 map2p(map2);
-  if ( !map2.is_isomorphic_to(map2p, false) )
-  { assert(false); return false; }
   if ( !map2p.is_valid() || !map2.is_isomorphic_to(map2p) )
   { assert(false); return false; }
   Map3 map3p(map3);
@@ -353,31 +390,38 @@ bool testCopy()
     if ( !map1.is_isomorphic_to(map1p) ) { assert(false); return false; }
 
     Map3 map1t(map1); assert(map1t.is_valid());
-    if ( !map1.is_isomorphic_to(map1t) ) { assert(false); return false; }
+    if ( !map1.is_isomorphic_to(map1t, false) ) { assert(false); return false; }
 
-    if ( !map1p.is_isomorphic_to(map1t) ) { assert(false); return false; }
+    if ( !map1p.is_isomorphic_to(map1t, false) )
+    { assert(false); return false; }
 
     Map1 map2p(map2); assert(map2p.is_valid());
     if ( map2.is_isomorphic_to(map2p) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2p, false) ) { assert(false); return false; }
+    if ( !map2.is_isomorphic_to(map2p, false, false) ) 
+    { assert(false); return false; }
 
     Map3 map2t(map2); assert(map2t.is_valid());
     if ( map2.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2t, false) ) { assert(false); return false; }
+    if ( !map2.is_isomorphic_to(map2t, false, false) ) 
+    { assert(false); return false; }
 
     if ( map2p.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2p.is_isomorphic_to(map2t, false) ) { assert(false); return false; }
+    if ( !map2p.is_isomorphic_to(map2t, false, false) ) 
+    { assert(false); return false; }
 
     Map1 map3p(map3); assert(map3p.is_valid());
     if ( map3.is_isomorphic_to(map3p) ) { assert(false); return false; }
-    if ( !map3.is_isomorphic_to(map3p, false) ) { assert(false); return false; }
+    if ( !map3.is_isomorphic_to(map3p, false, false) )
+    { assert(false); return false; }
 
     Map2 map3t(map3); assert(map3t.is_valid());
     if ( map3.is_isomorphic_to(map3t) ) { assert(false); return false; }
-    if ( !map3.is_isomorphic_to(map3t, false) ) { assert(false); return false; }
+    if ( !map3.is_isomorphic_to(map3t, false, false) ) 
+    { assert(false); return false; }
 
     if ( map3p.is_isomorphic_to(map3t) ) { assert(false); return false; }
-    if ( !map3p.is_isomorphic_to(map3t, false) ) { assert(false); return false; }
+    if ( !map3p.is_isomorphic_to(map3t, false, false) )
+    { assert(false); return false; }
 
     assert( map1.is_isomorphic_to(map1p)==map1p.is_isomorphic_to(map1) );
     assert( map1.is_isomorphic_to(map1t)==map1t.is_isomorphic_to(map1) );
@@ -389,11 +433,13 @@ bool testCopy()
     // 3D
     Map4 map5a(map5); assert(map5a.is_valid());
     if ( map5.is_isomorphic_to(map5a) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5a, false) ) { assert(false); return false; }
+    if ( !map5.is_isomorphic_to(map5a, false, false) )
+    { assert(false); return false; }
 
     Map6 map5b(map5); assert(map5b.is_valid());
     if ( map5.is_isomorphic_to(map5b) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5b, false) ) { assert(false); return false; }
+    if ( !map5.is_isomorphic_to(map5b, false, false) )
+    { assert(false); return false; }
     assert( map5b.number_of_attributes<0>()==0 &&
             map5b.number_of_attributes<1>()==0 &&
             map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
@@ -401,7 +447,8 @@ bool testCopy()
 
     Map7 map5c(map5); assert(map5c.is_valid());
     if ( map5.is_isomorphic_to(map5c) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5c, false) ) { assert(false); return false; }
+    if ( !map5.is_isomorphic_to(map5c, false, false) ) 
+    { assert(false); return false; }
     assert( map5c.number_of_attributes<0>()==0 &&
             map5c.number_of_attributes<2>()==map5.number_of_attributes<2>() );
 
@@ -412,7 +459,8 @@ bool testCopy()
     // 4D
     Map8 map9a(map9); assert(map9a.is_valid());
     if ( map9.is_isomorphic_to(map9a) ) { assert(false); return false; }
-    if ( !map9.is_isomorphic_to(map9a, false) ) { assert(false); return false; }
+    if ( !map9.is_isomorphic_to(map9a, false, false) )
+    { assert(false); return false; }
     assert( map9a.number_of_attributes<0>()==map9.number_of_attributes<0>() &&
             map9a.number_of_attributes<2>()==map9.number_of_attributes<2>() &&
             map9a.number_of_attributes<4>()==0 );
@@ -420,7 +468,8 @@ bool testCopy()
 
     Map9 map8a(map8); assert(map8a.is_valid());
     if ( map8.is_isomorphic_to(map8a) ) { assert(false); return false; }
-    if ( !map8.is_isomorphic_to(map8a, false) ) { assert(false); return false; }
+    if ( !map8.is_isomorphic_to(map8a, false, false) )
+    { assert(false); return false; }
     assert( map8a.number_of_attributes<0>()==map8.number_of_attributes<0>() &&
             map8a.number_of_attributes<1>()==0 &&
             map8a.number_of_attributes<2>()==map8.number_of_attributes<2>() &&
@@ -434,7 +483,8 @@ bool testCopy()
   {
     Map5 map2a(map2); assert(map2a.is_valid());
     if ( map2a.is_isomorphic_to(map2) ) { assert(false); return false; }
-    if ( !map2a.is_isomorphic_to(map2, false) ) { assert(false); return false; }
+    if ( !map2a.is_isomorphic_to(map2, false, false) )
+    { assert(false); return false; }
     assert( map2a.number_of_attributes<0>()==map2.number_of_attributes<0>() &&
             map2a.number_of_attributes<2>()==0 &&
             map2a.number_of_attributes<3>()==0 );
@@ -483,7 +533,8 @@ bool testCopy()
 
     Map9 map5b(map5, myconverters2); assert(map5b.is_valid());
     if ( map5b.is_isomorphic_to(map5) ) { assert(false); return false; }
-    if ( !map5b.is_isomorphic_to(map5, false) ) { assert(false); return false; }
+    if ( !map5b.is_isomorphic_to(map5, false, false) )
+    { assert(false); return false; }
     assert( map5b.number_of_attributes<0>()==map5.number_of_attributes<0>() &&
             map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
             map5b.number_of_attributes<3>()==map5.number_of_attributes<3>() );
