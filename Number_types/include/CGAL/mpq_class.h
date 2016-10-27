@@ -273,6 +273,19 @@ public:
     }
 };
 
+// Copied from leda_rational.h
+namespace internal {
+  // See: Stream_support/include/CGAL/IO/io.h
+  template <typename ET>
+  void read_float_or_quotient(std::istream & is, ET& et);
+
+  template <>
+  inline void read_float_or_quotient(std::istream & is, mpq_class& et)
+  {
+    internal::read_float_or_quotient<mpz_class,mpq_class>(is, et);
+  }
+} // namespace internal
+
 } //namespace CGAL
 
 #undef CGAL_CHECK_GMP_EXPR
