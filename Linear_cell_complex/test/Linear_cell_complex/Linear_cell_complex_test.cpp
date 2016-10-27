@@ -125,6 +125,7 @@ int main()
 {
   std::cout<<"Linear_cell_complex start test (v1)."<<std::flush;
 
+  // ****************** TEST FOR CMAP ******************
   trace_display_msg("\ntest_LCC_2<LCC2>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC2;
   if ( !test_LCC_2<LCC2>() )
@@ -206,6 +207,91 @@ int main()
   if ( !test_LCC_4<LCC4c>() )
   {
     std::cout<<" Error during Test_LCC_4<LCC4c>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // ****************** TEST FOR GMAP ******************
+  trace_display_msg("\ntest_LCC_2<GLCC2>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<2> GLCC2;
+  if ( !test_LCC_2<GLCC2>() )
+  {
+    std::cout<<" Error during Test_LCC_2<GLCC2>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_3<GLCC3>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<3> GLCC3;
+  if ( !test_LCC_3<GLCC3>() )
+  {
+    std::cout<<" Error during Test_LCC_3<GLCC3>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_4<GLCC4>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<4> GLCC4;
+  if ( !test_LCC_4<GLCC4>() )
+  {
+    std::cout<<" Error during Test_LCC_4<GLCC4>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_2<GLCC2b>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<2,2,
+                                    CGAL::Linear_cell_complex_traits<2>,
+                                    Myitems_2> GLCC2b;
+  if ( !test_LCC_2<GLCC2b>() )
+  {
+    std::cout<<" Error during Test_LCC_2<GLCC2b>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_2<GLCC2c>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<2,2,
+                                    CGAL::Linear_cell_complex_traits<2>,
+                                    Myitems_2c> GLCC2c;
+  if ( !test_LCC_2<GLCC2c>() )
+  {
+    std::cout<<" Error during Test_LCC_2<GLCC2c>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_3<GLCC3b>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
+                                    CGAL::Linear_cell_complex_traits<3>,
+                                    Myitems_3> GLCC3b;
+  if ( !test_LCC_3<GLCC3b>() )
+  {
+    std::cout<<" Error during Test_LCC_3<GLCC3b>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_3<GLCC3c>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
+                                    CGAL::Linear_cell_complex_traits<3>,
+                                    Myitems_3c> GLCC3c;
+  if ( !test_LCC_3<GLCC3c>() )
+  {
+    std::cout<<" Error during Test_LCC_3<GLCC3c>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_4<GLCC4b>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
+                                    CGAL::Linear_cell_complex_traits<4>,
+                                    Myitems_4> GLCC4b;
+  if ( !test_LCC_4<GLCC4b>() )
+  {
+    std::cout<<" Error during Test_LCC_4<GLCC4b>."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
+  trace_display_msg("test_LCC_4<GLCC4c>");
+  typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
+                                    CGAL::Linear_cell_complex_traits<4>,
+                                    Myitems_4c> GLCC4c;
+  if ( !test_LCC_4<GLCC4c>() )
+  {
+    std::cout<<" Error during Test_LCC_4<GLCC4c>."<<std::endl;
     return EXIT_FAILURE;
   }
 

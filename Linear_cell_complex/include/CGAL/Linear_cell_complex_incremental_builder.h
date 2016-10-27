@@ -189,7 +189,7 @@ namespace CGAL {
 
       for ( ; it!=itend; ++it )
       {
-        if ( lcc.vertex_attribute(lcc.template beta<1>(*it))==vh ) return (*it);
+        if ( lcc.vertex_attribute(lcc.next(*it))==vh ) return (*it);
       }
       return lcc.null_handle;
     }
@@ -197,7 +197,6 @@ namespace CGAL {
     void add_dart_in_vertex_to_dart_map( Dart_handle adart, size_type i )
     {
       CGAL_assertion( adart!=lcc.null_handle );
-      CGAL_assertion( !lcc.template is_free<1>(adart) );
       vertex_to_dart_map[i].push_back(adart);
     }
 

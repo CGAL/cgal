@@ -108,8 +108,8 @@ namespace CGAL {
     Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
 
-    for ( CMap_one_dart_per_incident_cell_const_iterator<LCC,2,0>
-            it(amap, adart); it.cont(); ++it )
+    for ( typename LCC::template One_dart_per_incident_cell_range<2,0>::
+          const_iterator it(amap, adart); it.cont(); ++it )
     {
       normal = typename LCC::Traits::Construct_sum_of_vectors()
         (normal, CGAL::compute_normal_of_cell_2(amap,it));
@@ -135,8 +135,8 @@ namespace CGAL {
                                                   amap.point(adart)));
       unsigned int nb = 1;
 
-      CGAL::CMap_one_dart_per_incident_cell_const_iterator<LCC,0,i,i>
-          it(amap, adart);
+      typename LCC::template One_dart_per_incident_cell_range<0, i, i>::
+          const_iterator it(amap, adart);
       for ( ++it; it.cont(); ++it)
       {
         vec = typename LCC::Traits::Construct_sum_of_vectors()

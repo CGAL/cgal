@@ -2870,7 +2870,7 @@ namespace CGAL {
 
             if (match && testPoint)
             {
-              // Only point of 0-attribute are tested. TODO test point of all
+              // Only point of 0-attributes are tested. TODO test point of all
               // attributes ?
               match=internal::Test_is_same_attribute_point_functor
                   <Self, Map2, 0>::run(*this, map2, current, other);
@@ -2882,24 +2882,25 @@ namespace CGAL {
             {
               if ( i>map2.dimension )
               {
-                if (!is_free(current,i)) match=false;
+                if (!is_free(current,i))
+                { match=false; }
               }
               else
               {
                 if (is_free(current,i))
                 {
                   if (!map2.is_free(other,i))
-                    match = false;
+                  { match = false; }
                 }
                 else
                 {
                   if (map2.is_free(other,i))
-                    match = false;
+                  { match = false; }
                   else
                   {
                     if (is_marked(alpha(current,i), m1) !=
                         map2.is_marked(map2.alpha(other,i), m2))
-                      match = false;
+                    { match = false; }
                     else
                     {
                       if (!is_marked(alpha(current,i), m1))
@@ -2914,7 +2915,7 @@ namespace CGAL {
                       else
                       {
                         if (bijection[alpha(current,i)]!=map2.alpha(other,i))
-                          match = false;
+                        { match = false; }
                       }
                     }
                   }
@@ -2924,19 +2925,21 @@ namespace CGAL {
             // Now we test if the second map has more alpha links than the first
             for ( i=dimension+1; match && i<=map2.dimension; ++i )
             {
-              if (!map2.is_free(other,i)) match=false;
+              if (!map2.is_free(other,i))
+              { match=false; }
             }
           }
         }
         else
         {
           if (!map2.is_marked(other, m2))
-            match = false;
+          { match=false; }
         }
       }
 
       // Here we test if both queue are empty
-      if ( !toTreat1.empty() || !toTreat2.empty() ) match = false;
+      if ( !toTreat1.empty() || !toTreat2.empty() )
+      { match=false; }
 
       // Here we unmark all the marked darts.
       toTreat1.clear();
@@ -2946,8 +2949,8 @@ namespace CGAL {
       toTreat2.push_back(dh2);
 
       unmark(dh1, m1);
-      map2.unmark(dh2, m2);
       unmark(dh1, markpush);
+      map2.unmark(dh2, m2);
 
       while (!toTreat1.empty())
       {
@@ -2956,17 +2959,15 @@ namespace CGAL {
         other = toTreat2.front();
         toTreat2.pop_front();
 
-        for (i = 0; match && i <= dimension; ++i)
+        for (i = 0; i <= dimension; ++i)
         {
-          if (!is_free(current,i) && is_marked(alpha(current,i), m1))
+          if (!is_free(current,i) && is_marked(alpha(current,i), markpush))
           {
-            CGAL_assertion(!map2.is_free(other,i) &&
-                           map2.is_marked(map2.alpha(other,i), m2));
             toTreat1.push_back(alpha(current,i));
             toTreat2.push_back(map2.alpha(other,i));
             unmark(alpha(current,i), m1);
-            map2.unmark(map2.alpha(other,i), m2);
             unmark(alpha(current,i), markpush);
+            map2.unmark(map2.alpha(other,i), m2);
           }
         }
       }
@@ -3707,8 +3708,9 @@ namespace CGAL {
           <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 1>::
           run(*this,*it,d1);
         Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 1>::
-          run(*this,*it,d2);
+          <CGAL::internal::GMap_group_attribute_functor_of_dart<Self>, 0>::
+          run(*this,d1,d2);
+
         // We initialise the 0-atttrib to ah
         CGAL::internal::Set_i_attribute_of_dart_functor<Self, 0>::
           run(*this, d2, ah);
@@ -3845,18 +3847,24 @@ namespace CGAL {
         this->template link_alpha<1>(it2, d2);
         ++it2;
       }
+      else
+      {
+        if (are_attributes_automatically_managed() &&
+            update_attributes && ah!=NULL)
+        {
+          internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d2, ah);
+          if (!isfree1)
+          {
+            internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d4, ah);
+          }
+        }
+      }
 
       // We do the link_alpha<0> after the link_alpha<1> to update the
       // possible attributes of d2.
       this->template link_alpha<0>(d1, d2);
       if (!isfree1)
       { this->template link_alpha<0>(d3, d4); }
-
-      if (are_attributes_automatically_managed() &&
-          update_attributes && ah!=NULL)
-      {
-        internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d1, ah);
-      }
     }
 
     if (are_attributes_automatically_managed() && update_attributes)

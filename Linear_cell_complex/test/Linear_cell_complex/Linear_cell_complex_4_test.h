@@ -24,6 +24,14 @@
 #include <CGAL/Combinatorial_map_operations.h>
 #include "Linear_cell_complex_2_test.h"
 
+// Test orientation specialized below only for CMap. For GMap return true.
+template<typename LCC, typename Map=typename LCC::Combinatorial_data_structure>
+struct Test_change_orientation_LCC_4
+{
+  static bool run()
+  { return true; }
+};
+
 template<typename LCC>
 bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
                              unsigned int nbf, unsigned int nbvol,
@@ -87,15 +95,15 @@ bool test_LCC_4()
 
   // Construction operations
   trace_test_begin();
-  Dart_handle dh1=lcc.make_segment(apoint<LCC>(0,0,0,0),apoint<LCC>(1,0,0,0));
-  Dart_handle dh2=lcc.make_segment(apoint<LCC>(2,0,0,0),apoint<LCC>(2,1,0,0));
-  Dart_handle dh3=lcc.make_segment(apoint<LCC>(2,2,0,0),apoint<LCC>(3,1,0,0));
+  Dart_handle dh1=lcc.make_segment(apoint<LCC>(0,0,0,0),apoint<LCC>(1,0,0,0), true);
+  Dart_handle dh2=lcc.make_segment(apoint<LCC>(2,0,0,0),apoint<LCC>(2,1,0,0), true);
+  Dart_handle dh3=lcc.make_segment(apoint<LCC>(2,2,0,0),apoint<LCC>(3,1,0,0), true);
   if ( !check_number_of_cells_4(lcc, 6, 3, 6, 3, 3, 3) )
     return false;
   
   trace_test_begin();
-  lcc.template sew<0>(dh2,dh1);
-  lcc.template sew<1>(dh2,dh3);
+  lcc.template sew<1>(dh1,dh2);
+  lcc.template sew<1>(lcc.other_orientation(dh2),dh3);
   if ( !check_number_of_cells_4(lcc, 4, 3, 4, 1, 1, 1) )
     return false;
 
@@ -183,7 +191,8 @@ bool test_LCC_4()
     toremove.push( it );  
   while ( !toremove.empty() )
   {
-    lcc.template remove_cell<1>(toremove.top());
+    if (lcc.is_dart_used(toremove.top()))
+      lcc.template remove_cell<1>(toremove.top());
     toremove.pop();
   }
   if ( !check_number_of_cells_4(lcc, 20, 28, 16, 3, 3, 3) )
@@ -205,8 +214,8 @@ bool test_LCC_4()
     return false;
 
   trace_test_begin();
-  lcc.template remove_cell<1>(lcc.beta(dh14,2,1));
-  lcc.template remove_cell<1>(lcc.beta(dh14,0));
+  lcc.template remove_cell<1>(lcc.next(lcc.template opposite<2>(dh14)));
+  lcc.template remove_cell<1>(lcc.previous(dh14));
   lcc.template remove_cell<1>(dh14);
   if ( !check_number_of_cells_4(lcc, 18, 26, 17, 4, 3, 3) )
     return false;
@@ -235,7 +244,8 @@ bool test_LCC_4()
     toremove.push( it );  
   while ( !toremove.empty() )
   {
-    lcc.template remove_cell<1>(toremove.top());
+    if (lcc.is_dart_used(toremove.top()))
+      lcc.template remove_cell<1>(toremove.top());
     toremove.pop();
   }
   if ( !check_number_of_cells_4(lcc, 11, 13, 8, 2, 2, 2) )
@@ -254,7 +264,8 @@ bool test_LCC_4()
     toremove.push( it );  
   while ( !toremove.empty() )
   {
-    lcc.template remove_cell<1>(toremove.top());
+    if (lcc.is_dart_used(toremove.top()))
+      lcc.template remove_cell<1>(toremove.top());
     toremove.pop();
   }
   if ( !check_number_of_cells_4(lcc, 9, 9, 6, 2, 2, 2) )
@@ -277,12 +288,12 @@ bool test_LCC_4()
     return false;
 
   trace_test_begin();
-  lcc.template unsew<1>(dh2);
+  lcc.template unsew<1>(dh1);
   if ( !check_number_of_cells_4(lcc, 5, 3, 5, 2, 2, 2) )
     return false;
 
   trace_test_begin();
-  lcc.template unsew<0>(dh2); 
+  lcc.template unsew<1>(lcc.other_orientation(dh2));
   if ( !check_number_of_cells_4(lcc, 6, 3, 6, 3, 3, 3) )
     return false;
 
@@ -308,13 +319,13 @@ bool test_LCC_4()
   trace_test_end();
 
   trace_test_begin();
-  dh3 = lcc.beta(dh1,2);
-  dh5 = lcc.template beta<1, 2>(dh1);
+  dh3 = lcc.template opposite<2>(dh1);
+  dh5 = lcc.template opposite<2>(lcc.next(dh1));
 
   lcc.template unsew<2>(dh3);
   lcc.template unsew<2>(dh5);
   lcc.template sew<2>(dh1, dh5);
-  lcc.template sew<2>(lcc.beta(dh1,1), dh3);
+  lcc.template sew<2>(lcc.next(dh1), dh3);
 
   if ( lcc.template is_sewable<4>(dh1, dh2) )
   {
@@ -348,41 +359,75 @@ bool test_LCC_4()
   { assert(false); return false; }
   trace_test_end();
 
-  trace_test_begin();
-  lcc.reverse_orientation();
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc, false) )
-  { assert(false); return false; }
-  trace_test_end();
-
-  trace_test_begin();
-  lcc.reverse_orientation();
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc, false) )
-  { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  trace_test_end();
-
-  trace_test_begin();
-  lcc.reverse_orientation_connected_component(dh1);
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc, false) )
-  { assert(false); return false; }
-  trace_test_end();
-
-  trace_test_begin();
-  lcc.reverse_orientation_connected_component(dh1);
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  trace_test_end();
+  if ( !Test_change_orientation_LCC_4<LCC>::run() )
+    return false;
 
   return true;
 }
+
+template<typename LCC>
+struct Test_change_orientation_LCC_4<LCC, CGAL::Combinatorial_map_tag>
+{
+  static bool run()
+  {
+    LCC lcc;
+
+    trace_test_begin();
+    typename LCC::Dart_handle dh1 = lcc.make_tetrahedron(apoint<LCC>(-1, 0, 0,0),
+                                                         apoint<LCC>(0, 2, 0,0),
+                                                         apoint<LCC>(1, 0, 0,0),
+                                                         apoint<LCC>(1, 1, 2,0));
+    typename LCC::Dart_handle dh2 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -1,0),
+                                                         apoint<LCC>(-1, 0, -1,0),
+                                                         apoint<LCC>(1, 0, -1,0),
+                                                         apoint<LCC>(1, 1, -3,0));
+    typename LCC::Dart_handle dh3 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -4,0),
+                                                         apoint<LCC>(-1, 0, -4,0),
+                                                         apoint<LCC>(1, 0, -4,0),
+                                                         apoint<LCC>(1, 1, -5,0));
+    typename LCC::Dart_handle dh4 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -10,0),
+                                                         apoint<LCC>(-1, 0, -10,0),
+                                                         apoint<LCC>(1, 0, -10,0),
+                                                         apoint<LCC>(1, 1, -12,0));
+    lcc.template sew<3>(dh1, dh2);
+    lcc.template sew<4>(dh1, dh3);
+
+    LCC lcc2(lcc);
+
+    trace_test_begin();
+    lcc.reverse_orientation();
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc, false, false, false) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    trace_test_begin();
+    lcc.reverse_orientation();
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    trace_test_begin();
+    lcc.reverse_orientation_connected_component(dh1);
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc, false, false, false) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    trace_test_begin();
+    lcc.reverse_orientation_connected_component(dh1);
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    return true;
+  }
+};
 
 #endif // CGAL_LCC_4_TEST_H

@@ -3692,7 +3692,7 @@ namespace CGAL {
 
             if (match && testPoint)
             {
-              // Only point of 0-attribute are tested. TODO test point of all
+              // Only point of 0-attributes are tested. TODO test point of all
               // attributes ?
               match=internal::Test_is_same_attribute_point_functor
                   <Self, Map2, 0>::run(*this, map2, current, other);

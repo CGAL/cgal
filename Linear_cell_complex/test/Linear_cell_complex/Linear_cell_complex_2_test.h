@@ -56,6 +56,14 @@ void trace_display_msg(const char*
 #endif
 }
 
+// Test orientation specialized below only for CMap. For GMap return true.
+template<typename LCC, typename Map=typename LCC::Combinatorial_data_structure>
+struct Test_change_orientation_LCC_2
+{
+  static bool run()
+  { return true; }
+};
+
 template<typename LCC>
 bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
                              unsigned int nbf, unsigned int nbcc)
@@ -126,9 +134,9 @@ bool test_LCC_2()
 
   // Construction operations
   trace_test_begin();
-  Dart_handle dh1=lcc.make_segment(Point(0,0),Point(1,0));
-  Dart_handle dh2=lcc.make_segment(Point(2,0),Point(2,1));
-  Dart_handle dh3=lcc.make_segment(Point(2,2),Point(3,1));
+  Dart_handle dh1=lcc.make_segment(Point(0,0),Point(1,0), true);
+  Dart_handle dh2=lcc.make_segment(Point(2,0),Point(2,1), true);
+  Dart_handle dh3=lcc.make_segment(Point(2,2),Point(3,1), true);
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
 
@@ -159,8 +167,8 @@ bool test_LCC_2()
   if (!lcc.template is_attribute_used<0>(vh)) return false;
 
   trace_test_begin();
-  lcc.template sew<0>(dh2,dh1);
-  lcc.template sew<1>(dh2,dh3);
+  lcc.template sew<1>(dh1, dh2);
+  lcc.template sew<1>(lcc.other_orientation(dh2), dh3);
   if ( !check_number_of_cells_2(lcc, 4, 3, 4, 1) )
     return false;
 
@@ -216,7 +224,9 @@ bool test_LCC_2()
 
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
-    lcc.template remove_cell<1>(*it);
+    if (lcc.is_dart_used(*it)) // For GMap because we have 2 dart per edge incident to the vertex
+      lcc.template remove_cell<1>(*it);
+
   toremove.clear();
   if ( !check_number_of_cells_2(lcc, 11, 13, 8, 2) )
     return false;
@@ -235,7 +245,9 @@ bool test_LCC_2()
 
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
+    if (lcc.is_dart_used(*it)) // For GMap because we have 2 dart per edge incident to the vertex
     lcc.template remove_cell<1>(*it);
+
   toremove.clear();
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
@@ -257,12 +269,12 @@ bool test_LCC_2()
     return false;
 
   trace_test_begin();
-  lcc.template unsew<1>(dh2);
+  lcc.template unsew<1>(dh1);
   if ( !check_number_of_cells_2(lcc, 5, 3, 5, 2) )
     return false;
 
   trace_test_begin();
-  lcc.template unsew<0>(dh2);
+  lcc.template unsew<1>(lcc.other_orientation(dh2));
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
 
@@ -284,7 +296,7 @@ bool test_LCC_2()
       return false;
     }
     CGAL::import_from_plane_graph<LCC>(lcc,in);
-    if ( !check_number_of_cells_2(lcc, 61, 160, 101, 1) )
+    if ( !check_number_of_cells_2(lcc, 66, 166, 104, 2) )
       return false;
     lcc.clear();
   }
@@ -313,53 +325,71 @@ bool test_LCC_2()
     trace_test_end();
   }
 
-  trace_test_begin();
-  lcc.clear();
-  dh1=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
-  dh2=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
-  lcc.template sew<2>(dh1,dh2);
-
-  LCC lcc2(lcc);
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  trace_test_end();
-
-  trace_test_begin();
-  lcc.reverse_orientation();
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc, false) )
-  { assert(false); return false; }
-  trace_test_end();
-
-  trace_test_begin();
-  lcc.reverse_orientation();
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc, false) )
-  { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  trace_test_end();
-
-  trace_test_begin();
-  lcc.reverse_orientation_connected_component(dh1);
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc, false) )
-  { assert(false); return false; }
-  trace_test_end();
-
-  trace_test_begin();
-  lcc.reverse_orientation_connected_component(dh1);
-  if ( !lcc.is_valid() ) { assert(false); return false; }
-  if ( !lcc2.is_isomorphic_to(lcc) )
-  { assert(false); return false; }
-  trace_test_end();
+  if ( !Test_change_orientation_LCC_2<LCC>::run() )
+    return false;
 
   return true;
 }
+
+template<typename LCC>
+struct Test_change_orientation_LCC_2<LCC, CGAL::Combinatorial_map_tag>
+{
+  static bool run()
+  {
+    LCC lcc;
+
+    std::ifstream in("data/graph.txt");
+    if ( in.fail() )
+    {
+      std::cout<<"Error: impossible to open 'data/graph.txt'"<<std::endl;
+      return false;
+    }
+    CGAL::import_from_plane_graph<LCC>(lcc,in);
+
+    trace_test_begin();
+
+    LCC lcc2(lcc);
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    trace_test_begin();
+    lcc.reverse_orientation();
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc, false, false, false) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    trace_test_begin();
+    lcc.reverse_orientation();
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc, false, false, false) )
+    { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    trace_test_begin();
+    lcc.reverse_orientation_connected_component(lcc.darts().begin());
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc, false, false, false) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    trace_test_begin();
+    lcc.reverse_orientation_connected_component(lcc.darts().begin());
+    if ( !lcc.is_valid() ) { assert(false); return false; }
+    if ( !lcc2.is_isomorphic_to(lcc) )
+    { assert(false); return false; }
+    trace_test_end();
+
+    return true;
+  }
+};
 
 #endif // CGAL_LCC_2_TEST_H

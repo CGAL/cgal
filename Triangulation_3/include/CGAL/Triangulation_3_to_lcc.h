@@ -125,7 +125,7 @@ namespace CGAL {
             }
             while (alcc.vertex_attribute(neighbor) !=
                    alcc.vertex_attribute(alcc.other_extremity(cur)) )
-              neighbor = alcc.beta(neighbor,1);
+              neighbor = alcc.next(neighbor);
             alcc.template topo_sew<3>(cur, alcc.other_orientation(neighbor));
           }
         }

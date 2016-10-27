@@ -25,7 +25,7 @@ struct Display_vertices_of_cell : public std::unary_function<CMap, void>
            (cmap.dart_handle(d)).end();
          it!=itend; ++it)
     {
-      std::cout << &*it << "; ";
+      std::cout << cmap.darts().index(it) << "; ";
     }
     std::cout<<std::endl;
   }
