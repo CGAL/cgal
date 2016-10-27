@@ -65,8 +65,8 @@ public:
           std::size_t squareYmin = (j < square ? 0 : j - square);
           std::size_t squareYmax = (std::min) (grid.height()-1, j + square);
 			
-          int NB_echo_sup=0;
-          int NB_echo_total=0;
+          std::size_t NB_echo_sup=0;
+          std::size_t NB_echo_total=0;
 
           for(std::size_t k = squareXmin; k <= squareXmax; k++){
             for(std::size_t l = squareYmin; l <= squareYmax; l++){
@@ -75,9 +75,9 @@ public:
 										
                 if(grid.indices(k,l).size()>0){
 									
-                  for(int t=0; t<(int)grid.indices(k,l).size();t++){
+                  for(std::size_t t=0; t<grid.indices(k,l).size();t++){
 												
-                    int ip = grid.indices(k,l)[t]; 
+                    std::size_t ip = grid.indices(k,l)[t]; 
                     if(get(echo_map, begin[ip]) > 1)
                       NB_echo_sup++;
                   }
@@ -100,8 +100,8 @@ public:
 		
     }
     for(std::size_t i = 0; i < (std::size_t)(end - begin); i++){
-      int I= grid.x(i);
-      int J= grid.y(i);
+      std::size_t I= grid.x(i);
+      std::size_t J= grid.y(i);
       echo_scatter.push_back((double)Scatter(I,J));
     }
     this->compute_mean_max (echo_scatter, this->mean, this->max);

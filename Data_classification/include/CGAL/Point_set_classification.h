@@ -205,7 +205,8 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
-  double classification_value (std::size_t class_type, int pt_index) const
+  double classification_value (const std::size_t& class_type,
+                               const std::size_t& pt_index) const
   {
     double out = 0.;
     if (m_multiplicative)
@@ -267,7 +268,7 @@ public:
     for (std::size_t s = 0; s < m_input.size(); s++)
       {
 			
-        int nb_class_best=0; 
+        std::size_t nb_class_best=0; 
 
         double val_class_best = (std::numeric_limits<double>::max)();
         std::vector<double> values;
@@ -336,7 +337,7 @@ public:
                 mean[j] += values[j][neighbors[n]];
           }
 
-        int nb_class_best=0; 
+        std::size_t nb_class_best=0; 
         double val_class_best = (std::numeric_limits<double>::max)();
         for(std::size_t k = 0; k < mean.size(); ++ k)
           {

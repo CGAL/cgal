@@ -254,9 +254,9 @@ public Q_SLOTS:
         disable_everything();
         enable_computation();
         
-        ui_widget.numberOfScalesSpinBox->setValue(item->nb_scales());
-        ui_widget.number_of_trials->setValue(item->number_of_trials());
-        ui_widget.smoothingDoubleSpinBox->setValue(item->smoothing());
+        ui_widget.numberOfScalesSpinBox->setValue((int)(item->nb_scales()));
+        ui_widget.number_of_trials->setValue((int)(item->number_of_trials()));
+        ui_widget.smoothingDoubleSpinBox->setValue((int)(item->smoothing()));
 
         // Clear class types
         for (std::size_t i = 0; i < class_rows.size(); ++ i)
@@ -658,7 +658,7 @@ public Q_SLOTS:
   void add_new_class (const ClassRow& class_row)
   {
     class_rows.push_back (class_row);
-    int position = class_rows.size();
+    int position = static_cast<int>(class_rows.size());
 
     ui_widget.gridLayout_3->addWidget (class_rows.back().label, position, 0);
     ui_widget.gridLayout_3->addWidget (class_rows.back().color_button, position, 1);

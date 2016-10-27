@@ -27,7 +27,7 @@ class Planimetric_grid
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
   
-  typedef Image<std::vector<int> > Image_indices;
+  typedef Image<std::vector<std::size_t> > Image_indices;
   typedef Image<bool> Image_bool;
 
   Image_indices m_grid;
@@ -77,7 +77,7 @@ public:
   /*!
     \brief Returns the indices of points lying in the given indexed cell.
   */
-  const std::vector<int>& indices(std::size_t x, std::size_t y) const { return m_grid(x,y); }
+  const std::vector<std::size_t>& indices(std::size_t x, std::size_t y) const { return m_grid(x,y); }
   /*!
     \brief Returns `true` if the indexed cell is to be used for classification.
   */

@@ -99,9 +99,9 @@ public:
             if(CGAL::sqrt(pow((double)k-i,2)+pow((double)l-j,2))
                <=(double)0.5*radius_neighbors/grid_resolution
                && (grid.indices(k,l).size()>0))
-              for(int t=0; t<(int)grid.indices(k,l).size();t++)
+              for(std::size_t t=0; t<grid.indices(k,l).size();t++)
                 {
-                  int ip = grid.indices(k,l)[t];
+                  std::size_t ip = grid.indices(k,l)[t];
                   hori.push_back (get(point_map, begin[ip]).z());
                 }
         if (hori.empty())
@@ -135,8 +135,8 @@ public:
     }
     for (std::size_t i = 0; i < (std::size_t)(end - begin);i++)
       {
-        int I= grid.x(i);
-        int J= grid.y(i);
+        std::size_t I= grid.x(i);
+        std::size_t J= grid.y(i);
         vertical_dispersion.push_back((double)Dispersion(I,J));
       }
 

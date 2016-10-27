@@ -142,8 +142,8 @@ public:
 
     elevation_attribute.reserve(end - begin);
     for (std::size_t i = 0; i < (std::size_t)(end - begin); i++){
-      int I = grid.x(i);
-      int J = grid.y(i);
+      std::size_t I = grid.x(i);
+      std::size_t J = grid.y(i);
       elevation_attribute.push_back ((double)(get(point_map, begin[i]).z()-dtm(I,J)));
     }
 
