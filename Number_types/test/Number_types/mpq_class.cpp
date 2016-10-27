@@ -29,6 +29,13 @@ int main() {
         // backward compatiblity
         CGAL::test_rational_traits<NT>();   
     }
+    {
+      mpq_class q;
+      std::istringstream in("12.34");
+      in >> CGAL::iformat(q);
+      assert(q.get_num() == 617);
+      assert(q.get_den() == 50);
+    }
     return 0;
 }
 
