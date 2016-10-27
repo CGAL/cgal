@@ -149,7 +149,7 @@ If \link GenericMap::set_automatic_attributes_management `set_automatic_attribut
 \subsection Linear_cell_complexA3DLinearCellComplex A 3D Linear Cell Complex
 \anchor ssec3Dlcc
 
-This example uses a 3-dimensional linear cell complex. It creates two tetrahedra and displays all the points of the linear cell complex thanks to a \link LinearCellComplex::Vertex_attribute_const_range `Vertex_attribute_const_range`\endlink. Then, the two tetrahedra are \link CombinatorialMap::sew `3-sewn`\endlink and we translate all the points of the second tetrahedron along vector `v(3,1,1)`. Since the two tetrahedra are 3-sewn, this translation moves also the 2-cell of the first tetrahedron shared with the second one. This is illustrated by displaying all the points of each 3-cell. For that we use a `std::for_each` and the `Display_vol_vertices` functor.
+This example uses a 3-dimensional linear cell complex based on combinatorial maps. It creates two tetrahedra and displays all the points of the linear cell complex thanks to a \link LinearCellComplex::Vertex_attribute_const_range `Vertex_attribute_const_range`\endlink. Then, the two tetrahedra are \link CombinatorialMap::sew `3-sewn`\endlink and we translate all the points of the second tetrahedron along vector `v(3,1,1)`. Since the two tetrahedra are 3-sewn, this translation moves also the 2-cell of the first tetrahedron shared with the second one. This is illustrated by displaying all the points of each 3-cell. For that we use a `std::for_each` and the `Display_vol_vertices` functor.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_3.cpp}
 
@@ -179,17 +179,17 @@ the linear cell complex.
 \subsection Linear_cell_complexA4DLinearCellComplex A 4D Linear Cell Complex
 \anchor ssec5dexample
 
-This example uses a 4-dimensional linear cell complex embedded in a 5-dimensional ambient space. It creates two tetrahedra having 5D points and sews the two tetrahedra by \f$ \beta_4\f$. Then we use some high level operations, display the number of cells of the linear cell complex, and check its validity. Last we use the reverse operations to get back to the initial configuration.
+This example uses a 4-dimensional linear cell complex embedded in a 5-dimensional ambient space and based on generalized maps. It creates two tetrahedra having 5D points and sews the two tetrahedra by \f$ \beta_4\f$. Then we use some high level operations, display the number of cells of the linear cell complex, and check its validity. Last we use the reverse operations to get back to the initial configuration.
 
 \cgalExample{Linear_cell_complex/linear_cell_complex_4.cpp}
 
 The output is:
 \verbatim
-#Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #4-cells=2, #ccs=2, valid=1
-#Darts=24, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, valid=1
-#Darts=28, #0-cells=5, #1-cells=7, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, valid=1
-#Darts=32, #0-cells=5, #1-cells=8, #2-cells=5, #3-cells=1, #4-cells=2, #ccs=1, valid=1
-#Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #4-cells=2, #ccs=2, valid=1
+#Darts=48, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #4-cells=2, #ccs=2, orientable=true, valid=1
+#Darts=48, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, orientable=true, valid=1
+#Darts=56, #0-cells=5, #1-cells=7, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, orientable=true, valid=1
+#Darts=64, #0-cells=5, #1-cells=8, #2-cells=5, #3-cells=1, #4-cells=2, #ccs=1, orientable=true, valid=1
+#Darts=48, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #4-cells=2, #ccs=2, orientable=true, valid=1
 \endverbatim
 
 \subsection Linear_cell_complexA3DLinearCellComplexwith A 3D Linear Cell Complex with Colored Vertices
