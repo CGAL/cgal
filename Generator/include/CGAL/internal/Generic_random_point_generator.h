@@ -115,7 +115,7 @@ template< class Functor >
 struct Apply_approx_sqrt: public Functor
 {
   template <class T>
-  double operator()(const T& t) const
+  typename cpp11::result_of<Functor(T)>::type operator()(const T& t) const
   {
     return approximate_sqrt( static_cast<const Functor&>(*this)(t) );
   }
