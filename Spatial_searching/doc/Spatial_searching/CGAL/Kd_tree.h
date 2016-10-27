@@ -130,11 +130,20 @@ The value type of the `InputIterator` must be `Point_d`.
 template <class InputIterator> void insert(InputIterator first, InputIterator beyond);
 
 /*!
-Removes the point `p` from the `k-d` tree. It uses `operator==` to recognize
-the point after locating it. This is a limited and naive implementation that
-does not rebalance the tree. On the other hand, the tree remains valid and
-ready for queries. If the internal data structure is not already built, for
-instance because the last operation was an insertion, it first calls `build()`.
+Removes the point `p` from the `k-d` tree. It uses `equal_to_p` to identify
+the point after locating it, which can matter in particular when 2 points are
+in the same place. `Identify_point` is a unary functor that takes a `Point_d`
+and returns a `bool`.  This is a limited and naive implementation that does not
+rebalance the tree. On the other hand, the tree remains valid and ready for
+queries. If the internal data structure is not already built, for instance
+because the last operation was an insertion, it first calls `build()`.
+*/
+template<class Identify_point>
+void remove(Point_d p, Identify_point equal_to_p);
+
+/*!
+Removes point `p`, calling the 2-argument function `remove()` with a functor
+that simply compares coordinates.
 */
 void remove(Point_d p);
 

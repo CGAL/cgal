@@ -352,8 +352,30 @@ public:
     pts.insert(pts.end(),first, beyond);
   }
 
+private:
+  struct Equal_by_coordinates {
+    SearchTraits const* traits;
+    Point_d const* pp;
+    bool operator()(Point_d const&q) const {
+      typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits->construct_cartesian_const_iterator_d_object();
+      return std::equal(ccci(*pp), ccci(*pp,0), ccci(q));
+    }
+  };
+  Equal_by_coordinates equal_by_coordinates(Point_d const&p){
+    Equal_by_coordinates ret = { &traits(), &p };
+    return ret;
+  }
+
+public:
   void
   remove(const Point_d& p)
+  {
+    remove(p, equal_by_coordinates(p));
+  }
+
+  template<class Equal>
+  void
+  remove(const Point_d& p, Equal const& equal_to_p)
   {
 #if 0
     // This code could have quadratic runtime.
@@ -370,24 +392,25 @@ public:
     removed_ = true;
 
     CGAL_assertion_code(bool success = )
-    remove_(p, 0, false, 0, false, root());
+    remove_(p, 0, false, 0, false, root(), equal);
     CGAL_assertion(success);
   }
 private:
+  template<class Equal>
   bool remove_(const Point_d& p,
       Internal_node_handle grandparent, bool islower,
       Internal_node_handle parent, bool islower2,
-      Node_handle node) {
+      Node_handle node, Equal const& equal_to_p) {
     // Recurse to locate the point
     if (!node->is_leaf()) {
       Internal_node_handle newparent = static_cast<Internal_node_handle>(node);
       // FIXME: This should be if(x<y) remove low; else remove up;
       if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] <= newparent->cutting_value()) {
-	if (remove_(p, parent, islower2, newparent, true, newparent->lower()))
+	if (remove_(p, parent, islower2, newparent, true, newparent->lower(), equal_to_p))
 	  return true;
       }
       //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
-	return remove_(p, parent, islower2, newparent, false, newparent->upper());
+	return remove_(p, parent, islower2, newparent, false, newparent->upper(), equal_to_p);
 
       CGAL_assertion(false); // Point was not found
     }
@@ -395,7 +418,7 @@ private:
     // Actual removal
     Leaf_node_handle lnode = static_cast<Leaf_node_handle>(node);
     if (lnode->size() > 1) {
-      iterator pi = std::find(lnode->begin(), lnode->end(), p);
+      iterator pi = std::find_if(lnode->begin(), lnode->end(), equal_to_p);
       // FIXME: we should ensure this never happens
       if (pi == lnode->end()) return false;
       iterator lasti = lnode->end() - 1;
@@ -404,7 +427,7 @@ private:
 	std::iter_swap(pts.begin()+(pi-pts.begin()), pts.begin()+(lasti-pts.begin()));
       }
       lnode->drop_last_point();
-    } else if (*lnode->begin() != p) {
+    } else if (!equal_to_p(*lnode->begin())) {
       // FIXME: we should ensure this never happens
       return false;
     } else if (grandparent) {
