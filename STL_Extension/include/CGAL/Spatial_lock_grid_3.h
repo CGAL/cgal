@@ -143,16 +143,16 @@ public:
       std::vector<int> locked_cells_tmp;
 
       // For each cell inside the square
-      for (int i = std::max(0, index_x-lock_radius) ;
-           i <= std::min(m_num_grid_cells_per_axis - 1, index_x+lock_radius) ;
+      for (int i = (std::max)(0, index_x-lock_radius) ;
+           i <= (std::min)(m_num_grid_cells_per_axis - 1, index_x+lock_radius) ;
            ++i)
       {
-        for (int j = std::max(0, index_y-lock_radius) ;
-             j <= std::min(m_num_grid_cells_per_axis - 1, index_y+lock_radius) ;
+        for (int j = (std::max)(0, index_y-lock_radius) ;
+             j <= (std::min)(m_num_grid_cells_per_axis - 1, index_y+lock_radius) ;
              ++j)
         {
-          for (int k = std::max(0, index_z-lock_radius) ;
-               k <= std::min(m_num_grid_cells_per_axis - 1, index_z+lock_radius) ;
+          for (int k = (std::max)(0, index_z-lock_radius) ;
+               k <= (std::min)(m_num_grid_cells_per_axis - 1, index_z+lock_radius) ;
                ++k)
           {
             int index_to_lock =
