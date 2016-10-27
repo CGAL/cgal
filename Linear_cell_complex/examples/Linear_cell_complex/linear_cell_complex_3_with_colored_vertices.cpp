@@ -15,8 +15,6 @@ struct Myitem
   template<class Refs>
   struct Dart_wrapper
   {
-    typedef void Dart_info;
-    
     typedef CGAL::Cell_attribute_with_point< Refs, int, CGAL::Tag_true, 
                                              Average_functor >
     Vertex_attribute;
