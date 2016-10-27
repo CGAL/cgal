@@ -47,11 +47,12 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   QCommandLineOption no_try_catch("no-try-catch",
                                   tr("Do not catch uncaught exceptions."));
   parser.addOption(no_try_catch);
-#ifdef QT_SCRIPTTOOLS_LIB
   QCommandLineOption debug_scripts("debug-scripts",
                                    tr("Use the scripts debugger."));
   parser.addOption(debug_scripts);
-#endif
+  QCommandLineOption no_debug_scripts("no-debug-scripts",
+                                   tr("Do not use the scripts debugger."));
+  parser.addOption(no_debug_scripts);
   QCommandLineOption no_autostart("no-autostart",
                                   tr("Ignore the autostart.js file, if any."));
   parser.addOption(no_autostart);
@@ -74,7 +75,16 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   if(parser.isSet(debug_scripts)) {
     mainWindow.enableScriptDebugger();
   }
+  if(parser.isSet(no_debug_scripts)) {
+    mainWindow.enableScriptDebugger(false);
+  }
+#else
+  if(parser.isSet(debug_scripts)) {
+    std::cerr << "Qt Script Tools have not been configured!";
+    abort();
+  }
 #endif
+
   mainWindow.loadScript(":/cgal/Polyhedron_3/javascript/lib.js");
   QFileInfo autostart_js("autostart.js");
   if(!parser.isSet(no_autostart) && autostart_js.exists()) {

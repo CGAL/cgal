@@ -433,17 +433,25 @@ void MainWindow::evaluate_script(QString script,
                                  const bool quiet) {
   QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
+    QScriptValue js_exception = script_engine->uncaughtException();
+    QScriptValue js_bt =js_exception.property("backtrace");
+    QStringList bt = script_engine->uncaughtExceptionBacktrace();
+    if(js_bt.isValid()) {
+      QStringList other_bt;
+      qScriptValueToSequence(js_bt, other_bt);
+      if(!other_bt.isEmpty()) bt = other_bt;
+    }
     if(!quiet) {
       QTextStream err(stderr);
       err << "Qt Script exception:\n"
-          << script_engine->uncaughtException().toString()
+          << js_exception.toString()
           << "\nBacktrace:\n";
-      Q_FOREACH(QString line, script_engine->uncaughtExceptionBacktrace()) {
+      Q_FOREACH(QString line, bt) {
         err << "  " << line << "\n";
       }
     }
     throw CGAL::Three::Script_exception
-      (script_engine->uncaughtException().toString().toStdString());
+       (script_engine->uncaughtException().toString(), bt);
   }
   else if(!quiet && !value.isNull() && !value.isUndefined()) {
     QTextStream(stderr) << "Qt Script evaluated to \""
@@ -467,6 +475,10 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
   if(debugger) {
     if(b) {
       debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
+    }
+    else {
+      std::cerr << "Detach the script debugger\n";
+      debugger->detach();
     }
   }
   return;
@@ -1387,6 +1399,13 @@ bool MainWindow::loadScript(QFileInfo info)
   }
 #endif
   return false;
+}
+
+void MainWindow::throw_exception() {
+  wrap_a_call_to_cpp([]() {
+      throw std::runtime_error("Exception thrown in "
+                               "MainWindow::throw_exception()");
+    }, this, __FILE__, __LINE__);
 }
 
 void MainWindow::on_actionLoadScript_triggered() 

@@ -26,17 +26,23 @@
 #include <QScriptable>
 #include <QScriptContext>
 #include <boost/optional.hpp>
+#include <QStringList>
 
 namespace CGAL{
 namespace Three{
 
-struct Script_exception : public std::runtime_error {
-  Script_exception(const std::string& what_arg)
-    : std::runtime_error(what_arg)
-  {}
-  Script_exception(QString what_arg)
+class Script_exception : public std::runtime_error {
+  QStringList bt;
+public:
+  Script_exception(QString what_arg,
+                   QStringList backtrace)
     : std::runtime_error(what_arg.toStdString())
+    , bt(backtrace)
   {}
+
+  QStringList backtrace() const {
+    return bt;
+  }
 };
 
 template <typename T>
@@ -73,14 +79,41 @@ wrap_a_call_to_cpp(Callable f,
       return f();
     }
     catch(const std::exception& e) {
+      const Script_exception* se = dynamic_cast<const Script_exception*>(&e);
       QScriptContext* context = qs->context();
-      if(c == PARENT_CONTEXT) context = context->parentContext();
-      QString error = QObject::tr("Error");
-      if(file != 0) error += QObject::tr(" at file %1").arg(file);
-      if(line != -1) error += QString(":%1").arg(line);
-      error += QString(":\n%1").arg(e.what());
+      QStringList qt_bt = context->backtrace();
+      if(se) qt_bt = se->backtrace();
+      std::cerr << "Backtrace:\n";
+      Q_FOREACH(QString s, qt_bt)
+      {
+        std::cerr << "  " << qPrintable(s) << std::endl;
+      }
+      context = context->parentContext();
+      if(c == PARENT_CONTEXT) {
+        std::cerr << "> parent";
+        context = context->parentContext();
+      } else {
+        std::cerr << "> current";
+      }
+      std::cerr << " context: "
+                << qPrintable(context->toString()) << std::endl;
+      QString error;
+      if(se) {
+        error = se->what();
+      } else {
+        error = QObject::tr("Error");
+        QString context;
+        if(file != 0) context += QObject::tr(" at file %1").arg(file);
+        if(line != -1) context += QString(":%1").arg(line);
+        if(!context.isNull()) {
+          error += context;
+          qt_bt.push_front(QObject::tr("<cpp>") + context);
+        }
+        error += QString(": %1").arg(e.what());
+      }
       QScriptValue v = context->throwError(error);
-      v.setProperty("backtrace", context->backtrace().join(";"));
+      v.setProperty("backtrace",
+                    qScriptValueFromSequence(context->engine(), qt_bt));
       std::cerr << "result after throwError: "
                 << qPrintable(v.toString()) << std::endl;
       return Return_type();

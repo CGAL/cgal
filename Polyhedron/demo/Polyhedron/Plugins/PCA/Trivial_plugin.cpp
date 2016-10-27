@@ -139,13 +139,11 @@ private:
 };
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/exceptions.h>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_trivial_plugin : 
         public QObject,
-        public Polyhedron_demo_plugin_interface,
-        protected QScriptable
+        public Polyhedron_demo_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -163,13 +161,6 @@ public:
     return false;}
 public Q_SLOTS:
 
-    /// This slot is used to test exception handling in Qt Scripts.
-    void throw_exception() {
-      wrap_a_call_to_cpp([]() {
-          throw std::runtime_error("Exception thrown in "
-                                   "Trivial_plugin::throw_exception()");
-        }, this, __FILE__, __LINE__);
-    }
     void bbox();
     void enableAction();
 

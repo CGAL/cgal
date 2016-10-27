@@ -210,6 +210,8 @@ public Q_SLOTS:
    */
   void enableScriptDebugger(bool = true);
 
+  /// This slot is used to test exception handling in Qt Scripts.
+  void throw_exception();
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the sceneView and updates the scene
