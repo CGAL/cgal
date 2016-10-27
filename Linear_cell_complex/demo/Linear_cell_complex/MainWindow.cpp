@@ -21,8 +21,8 @@
 //
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/import_from_polyhedron_3.h>
-#include <CGAL/import_from_triangulation_3.h>
+#include <CGAL/Polyhedron_3_to_lcc.h>
+#include <CGAL/Triangulation_3_to_lcc.h>
 #include <QSettings>
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
