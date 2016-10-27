@@ -40,7 +40,7 @@
 /// Functions to orient polygon soups  and to stitch geometrically identical boundaries.
 /// \ingroup PkgPolygonMeshProcessing
 
-/// \defgroup PMP_distance_grp Approximated Hausdorff Distance
+/// \defgroup PMP_distance_grp Approximate Hausdorff Distance
 /// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
 /// \ingroup PkgPolygonMeshProcessing
 
