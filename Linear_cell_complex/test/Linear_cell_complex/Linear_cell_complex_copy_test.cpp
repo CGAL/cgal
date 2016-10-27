@@ -632,36 +632,45 @@ bool testCopy()
     // 2D
     Map2 map1p(map1); assert(map1p.is_valid());
     if ( map1.is_isomorphic_to(map1p) ) { assert(false); return false; }
-    if ( !map1.is_isomorphic_to(map1p, false) ) { assert(false); return false; }
+    if ( !map1.is_isomorphic_to(map1p, false, false, true) )
+    { assert(false); return false; }
 
     Map3 map1t(map1); assert(map1t.is_valid());
     if ( map1.is_isomorphic_to(map1t) ) { assert(false); return false; }
-    if ( !map1.is_isomorphic_to(map1t, false) ) { assert(false); return false; }
+    if ( !map1.is_isomorphic_to(map1t, false, false, false) )
+    { assert(false); return false; }
 
     if ( map1p.is_isomorphic_to(map1t) ) { assert(false); return false; }
-    if ( !map1p.is_isomorphic_to(map1t, false) ) { assert(false); return false; }
+    if ( !map1p.is_isomorphic_to(map1t, false, false, false) )
+    { assert(false); return false; }
 
     Map1 map2p(map2); assert(map2p.is_valid());
     if ( map2.is_isomorphic_to(map2p) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2p, false) ) { assert(false); return false; }
+    if ( !map2.is_isomorphic_to(map2p, false, false, true) )
+    { assert(false); return false; }
 
     Map3 map2t(map2); assert(map2t.is_valid());
     if ( map2.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2.is_isomorphic_to(map2t, false) ) { assert(false); return false; }
+    if ( !map2.is_isomorphic_to(map2t, false, false, false) )
+    { assert(false); return false; }
 
     if ( map2p.is_isomorphic_to(map2t) ) { assert(false); return false; }
-    if ( !map2p.is_isomorphic_to(map2t, false) ) { assert(false); return false; }
+    if ( !map2p.is_isomorphic_to(map2t, false, false, false) )
+    { assert(false); return false; }
 
     Map1 map3p(map3); assert(map3p.is_valid());
     if ( map3.is_isomorphic_to(map3p) ) { assert(false); return false; }
-    if ( !map3.is_isomorphic_to(map3p, false) ) { assert(false); return false; }
+    if ( !map3.is_isomorphic_to(map3p, false, false, false) )
+    { assert(false); return false; }
 
     Map2 map3t(map3); assert(map3t.is_valid());
     if ( map3.is_isomorphic_to(map3t) ) { assert(false); return false; }
-    if ( !map3.is_isomorphic_to(map3t, false) ) { assert(false); return false; }
+    if ( !map3.is_isomorphic_to(map3t, false, false, false) )
+    { assert(false); return false; }
 
     if ( map3p.is_isomorphic_to(map3t) ) { assert(false); return false; }
-    if ( !map3p.is_isomorphic_to(map3t, false) ) { assert(false); return false; }
+    if ( !map3p.is_isomorphic_to(map3t, false, false, false) )
+    { assert(false); return false; }
 
     assert( map1.is_isomorphic_to(map1p)==map1p.is_isomorphic_to(map1) );
     assert( map1.is_isomorphic_to(map1t)==map1t.is_isomorphic_to(map1) );
@@ -673,11 +682,13 @@ bool testCopy()
     // 3D
     Map4 map5a(map5); assert(map5a.is_valid());
     if ( map5.is_isomorphic_to(map5a) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5a, false) ) { assert(false); return false; }
+    if ( !map5.is_isomorphic_to(map5a, false, false, true) )
+    { assert(false); return false; }
 
     Map6 map5b(map5); assert(map5b.is_valid());
     if ( map5.is_isomorphic_to(map5b) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5b, false) ) { assert(false); return false; }
+    if ( !map5.is_isomorphic_to(map5b, false, false, false) )
+    { assert(false); return false; }
     assert( map5b.template number_of_attributes<0>()==
             map5.template number_of_attributes<0>() &&
             map5b.template number_of_attributes<1>()==0 &&
@@ -688,7 +699,10 @@ bool testCopy()
 
     Map7 map5c(map5); assert(map5c.is_valid());
     if ( map5.is_isomorphic_to(map5c) ) { assert(false); return false; }
-    if ( !map5.is_isomorphic_to(map5c, false) ) { assert(false); return false; }
+    if ( !map5.is_isomorphic_to(map5c, false, false, false) )
+    { assert(false); return false; }
+    if ( !map5b.is_isomorphic_to(map5c, false, false, true) )
+    { assert(false); return false; }
     assert( map5c.template number_of_attributes<0>()==
             map5.template number_of_attributes<0>() &&
             map5c.template number_of_attributes<2>()==
@@ -701,7 +715,8 @@ bool testCopy()
     // 4D
     Map8 map9a(map9); assert(map9a.is_valid());
     if ( map9.is_isomorphic_to(map9a) ) { assert(false); return false; }
-    if ( !map9.is_isomorphic_to(map9a, false) ) { assert(false); return false; }
+    if ( !map9.is_isomorphic_to(map9a, false, false, true) )
+    { assert(false); return false; }
     assert( map9a.template number_of_attributes<0>()==
             map9.template number_of_attributes<0>() &&
             map9a.template number_of_attributes<2>()==
@@ -711,7 +726,8 @@ bool testCopy()
 
     Map9 map8a(map8); assert(map8a.is_valid());
     if ( map8.is_isomorphic_to(map8a) ) { assert(false); return false; }
-    if ( !map8.is_isomorphic_to(map8a, false) ) { assert(false); return false; }
+    if ( !map8.is_isomorphic_to(map8a, false, false, true) )
+    { assert(false); return false; }
     assert( map8a.template number_of_attributes<0>()==
             map8.template number_of_attributes<0>() &&
             map8a.template number_of_attributes<1>()==0 &&
@@ -727,7 +743,8 @@ bool testCopy()
   {
     Map5 map2a(map2); assert(map2a.is_valid());
     if ( map2a.is_isomorphic_to(map2) ) { assert(false); return false; }
-    if ( !map2a.is_isomorphic_to(map2, false) ) { assert(false); return false; }
+    if ( !map2a.is_isomorphic_to(map2, false, false, true) )
+    { assert(false); return false; }
     assert( map2a.template number_of_attributes<0>()==
             map2.template number_of_attributes<0>() &&
             map2a.template number_of_attributes<2>()==0 &&
@@ -795,7 +812,8 @@ bool testCopy()
 
     Map9 map5b(map5, myconverters2); assert(map5b.is_valid());
     if ( map5b.is_isomorphic_to(map5) ) { assert(false); return false; }
-    if ( !map5b.is_isomorphic_to(map5, false) ) { assert(false); return false; }
+    if ( !map5b.is_isomorphic_to(map5, false, false, false) )
+    { assert(false); return false; }
     assert( map5b.template number_of_attributes<0>()==
             map5.template number_of_attributes<0>() &&
             map5b.template number_of_attributes<2>()==

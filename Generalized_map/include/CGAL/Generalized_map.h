@@ -2779,11 +2779,15 @@ namespace CGAL {
      * @param dh1  initial dart for this map
      * @param map2 the second generalized map
      * @param dh2  initial dart for map2
+     * @param testDartInfo Boolean to test the equality of dart info (true)
+     *                     or not (false)
      * @param testAttributes Boolean to test the equality of attributes (true)
      *                       or not (false)
+     * @param testPoint Boolean to test the equality of points (true)
+     *                     or not (false) (used for LCC)
      * @return true iff the cc of map is isomorphic to the cc of map2 starting
-     *     from dh1 and dh2; by testing the equality of attributes if
-     *     testAttributes is true
+     *     from dh1 and dh2; by testing the equality of dartinfo and/or
+     *     attributes and/or points.
      */
     template <unsigned int d2, typename Refs2, typename Items2, class Alloc2,
               class Storage2>
@@ -2792,7 +2796,9 @@ namespace CGAL {
                            <d2,Refs2,Items2,Alloc2, Storage2>& map2,
                            typename Generalized_map_base
                            <d2,Refs2,Items2,Alloc2, Storage2>::Dart_const_handle dh2,
-                           bool testAttributes=true) const
+                           bool testDartInfo=true,
+                           bool testAttributes=true,
+                           bool testPoint=true) const
     {
       typedef Generalized_map_base<d2,Refs2,Items2,Alloc2, Storage2> Map2;
 
@@ -2841,17 +2847,17 @@ namespace CGAL {
             mark(current, m1);
             map2.mark(other, m2);
 
+            // We first test info of darts
+            if (match && testDartInfo)
+              match=internal::Test_is_same_dart_info_functor<Self, Map2>::
+                  run(*this, map2, current, other);
+
+            // We need to test in both direction because
+            // Foreach_enabled_attributes only test non void attributes
+            // of Self. Functor Test_is_same_attribute_functor will modify
+            // the value of match to false if attributes do not match
             if (testAttributes)
             {
-               // We first test info of darts
-              if (match)
-                match=internal::Test_is_same_dart_info_functor<Self, Map2>::
-                    run(*this, map2, current, other);
-
-              // We need to test in both direction because
-              // Foreach_enabled_attributes only test non void attributes
-              // of Self. Functor Test_is_same_attribute_functor will modify
-              // the value of match to false if attributes do not match
               if (match)
                 Helper::template Foreach_enabled_attributes
                     < internal::Test_is_same_attribute_functor<Self, Map2> >::
@@ -2860,6 +2866,14 @@ namespace CGAL {
                 Map2::Helper::template Foreach_enabled_attributes
                     < internal::Test_is_same_attribute_functor<Map2, Self> >::
                     run(map2, *this, other, current, match);
+            }
+
+            if (match && testPoint)
+            {
+              // Only point of 0-attribute are tested. TODO test point of all
+              // attributes ?
+              match=internal::Test_is_same_attribute_point_functor
+                  <Self, Map2, 0>::run(*this, map2, current, other);
             }
 
             // We test if the injection is valid with its neighboors.
@@ -2970,8 +2984,12 @@ namespace CGAL {
     /** Test if this gmap is isomorphic to map2.
      * @pre gmap is connected.
      * @param map2 the second generalized map
+     * @param testDartInfo Boolean to test the equality of dart info (true)
+     *                     or not (false)
      * @param testAttributes Boolean to test the equality of attributes (true)
      *                       or not (false)
+     * @param testPoint Boolean to test the equality of points (true)
+     *                     or not (false) (used for LCC)
      * @return true iff this map is isomorphic to map2, testing the equality
      *         of attributes if testAttributes is true
      */
@@ -2979,7 +2997,9 @@ namespace CGAL {
               class Storage2>
     bool is_isomorphic_to(const Generalized_map_base
                           <d2,Refs2,Items2,Alloc2, Storage2>& map2,
-                          bool testAttributes=true)
+                          bool testDartInfo=true,
+                          bool testAttributes=true,
+                          bool testPoint=true) const
     {
       // if ( dimension!=map2.dimension ) return false;
 
@@ -2989,7 +3009,8 @@ namespace CGAL {
              Dart_range::const_iterator it(map2.darts().begin()),
              itend(map2.darts().end()); it!=itend; ++it)
       {
-        if (are_cc_isomorphic(d1, map2, it, testAttributes))
+        if (are_cc_isomorphic(d1, map2, it, testDartInfo, testAttributes,
+                              testPoint))
         {
           return true;
         }

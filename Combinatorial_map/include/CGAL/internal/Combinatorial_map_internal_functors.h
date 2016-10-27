@@ -68,7 +68,10 @@
  *   darts have the same info.
  *
  * internal::Test_is_same_attribute_functor<Map1, Map2> to test if two
- *   i-attributes of two darts are isomorphic.
+ *   i-attributes of two darts are isomorphic (ie they have the same info).
+ *
+ * inernal::Test_is_same_attribute_point_functor<Map1, Map2, i> to test if
+ *   the point of two i-attributes are equal.
  *
  * internal::Reverse_orientation_of_map_functor<CMap> to reverse the
  *   orientation of a whole combinatorial map
@@ -661,9 +664,12 @@ struct Is_same_point<Attr1, Attr2, Point, Point, Dynamic_dimension_tag >
 };
 
 // Case of two non void type, with two points
-template<typename Map1, typename Map2,
-         typename T1, typename T2, bool Withpoint1, bool Withpoint2, int i>
-struct Is_same_attribute_point_functor
+template<typename Map1, typename Map2, int i,
+         bool Withpoint1=Is_attribute_has_point
+         <typename Map1::template Attribute_type<i>::type>::value,
+         bool Withpoint2=Is_attribute_has_point
+         <typename Map2::template Attribute_type<i>::type>::value>
+struct Test_is_same_attribute_point_functor
 {
   static bool run(const Map1& m1, const Map2& m2,
                   typename Map1::Dart_const_handle dh1,
@@ -679,16 +685,16 @@ struct Is_same_attribute_point_functor
       return false;
 
     return
-      Is_same_point<T1,T2>::run
+      Is_same_point<typename Map1::template Attribute_type<i>::type,
+                    typename Map2::template Attribute_type<i>::type>::run
       (m1.template get_attribute<i>(m1.template attribute<i>(dh1)),
        m2.template get_attribute<i>(m2.template attribute<i>(dh2)));
   }
 };
 
 // Case of two non void type, first without point
-template<typename Map1, typename Map2,
-         typename T1, typename T2, int i>
-struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, true, i>
+template<typename Map1, typename Map2, int i>
+struct Test_is_same_attribute_point_functor<Map1, Map2, i, false, true>
 {
   static bool run(const Map1&, const Map2&,
                   typename Map1::Dart_const_handle,
@@ -697,9 +703,8 @@ struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, true, i>
 };
 
 // Case of two non void type, second without point
-template<typename Map1, typename Map2,
-         typename T1, typename T2, int i>
-struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, true, false, i>
+template<typename Map1, typename Map2, int i>
+struct Test_is_same_attribute_point_functor<Map1, Map2, i, true, false>
 {
   static bool run(const Map1&, const Map2&,
                   typename Map1::Dart_const_handle,
@@ -708,9 +713,8 @@ struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, true, false, i>
 };
 
 // Case of two non void type, both without point
-template<typename Map1, typename Map2,
-         typename T1, typename T2, int i>
-struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
+template<typename Map1, typename Map2, int i>
+struct Test_is_same_attribute_point_functor<Map1, Map2, i, false, false>
 {
   static bool run(const Map1&, const Map2&,
                   typename Map1::Dart_const_handle,
@@ -732,17 +736,6 @@ struct Test_is_same_attribute_functor
     {
       res = Is_same_attribute_info_functor
         <Map1, Map2, i>::run(m1, m2, dh1, dh2);
-    }
-    if (res)
-    {
-      res = Is_same_attribute_point_functor
-          <Map1, Map2,
-          typename Map1::template Attribute_type<i>::type,
-          typename Map2::template Attribute_type<i>::type,
-          Is_attribute_has_point<typename Map1::template
-          Attribute_type<i>::type>::value,
-          Is_attribute_has_point<typename Map2::template
-          Attribute_type<i>::type>::value, i>::run(m1, m2, dh1, dh2);
     }
   }
 };

@@ -827,7 +827,7 @@ bool test_LCC_3()
     if ( !check_number_of_cells_3(lcc2, 26002, 78000, 52000, 1, 1) )
       return false;
 
-    if (!lcc.is_isomorphic_to(lcc2))
+    if (!lcc.is_isomorphic_to(lcc2, false, false, true)) // dartinfo, attrib, point
     {
       assert(false);
       return false;
