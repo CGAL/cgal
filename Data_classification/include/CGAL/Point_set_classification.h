@@ -680,13 +680,35 @@ public:
    */ 
  bool remove_classification_type (Data_classification::Type_handle type)
   {
+    std::size_t idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_types.size(); ++ i)
       if (m_types[i] == type)
         {
           m_types.erase (m_types.begin() + i);
-          return true;
+          idx = i;
+          break;
         }
-    return false;
+    if (idx == (std::size_t)(-1))
+      return false;
+    std::cerr << idx << std::endl;
+    
+    for (std::size_t i = 0; i < m_assigned_type.size(); ++ i)
+      if (m_assigned_type[i] == (std::size_t)(-1))
+          continue;
+      else if (m_assigned_type[i] > idx)
+        m_assigned_type[i] --;
+      else if (m_assigned_type[i] == idx)
+        m_assigned_type[i] = (std::size_t)(-1);
+
+    for (std::size_t i = 0; i < m_training_type.size(); ++ i)
+      if (m_assigned_type[i] == (std::size_t)(-1))
+        continue;
+      else if (m_training_type[i] > idx)
+        m_training_type[i] --;
+      else if (m_training_type[i] == idx)
+        m_training_type[i] = (std::size_t)(-1);
+
+    return true;
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -793,7 +815,9 @@ public:
   {
     if (m_assigned_type.size() <= index
         || m_assigned_type[index] == (std::size_t)(-1))
+      {
       return Data_classification::Type_handle();
+      }
     return m_types[m_assigned_type[index]];
   }
 
