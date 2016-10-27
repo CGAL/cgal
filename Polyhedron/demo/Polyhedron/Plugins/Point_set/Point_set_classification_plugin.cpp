@@ -256,7 +256,7 @@ public Q_SLOTS:
         
         ui_widget.numberOfScalesSpinBox->setValue(item->nb_scales());
         ui_widget.number_of_trials->setValue(item->number_of_trials());
-        ui_widget.smoothingDoubleSpinBoxt->setValue(item->smoothing());
+        ui_widget.smoothingDoubleSpinBox->setValue(item->smoothing());
 
         // Clear class types
         for (std::size_t i = 0; i < class_rows.size(); ++ i)
@@ -724,7 +724,8 @@ public Q_SLOTS:
         }
 
     class_rows.erase (class_rows.begin() + row_index);
-
+    
+    scene->itemChanged(classification_item);
   }
 
   void on_color_changed_clicked()

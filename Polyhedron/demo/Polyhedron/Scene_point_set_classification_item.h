@@ -222,6 +222,8 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
           m_types.erase (m_types.begin() + i);
           break;
         }
+    invalidateOpenGLBuffers();
+    Q_EMIT itemChanged();
   }
 
   void change_type_color (const char* name, const QColor& color)
