@@ -174,17 +174,25 @@ enum Sampling_method{
   MONTE_CARLO
 };
 /** \ingroup PMP_distance_grp
- * generates points taken on `tm` in a way depending on `method` and put then in `out`.
+ * generates points taken on `tm` in a way depending on `method` and
+ * outputs them to `out`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam OutputIterator a model of `OutputIterator` that accepts points
- *                        of the same type as the value type of the vertex point map of `tm`
+ * @tparam OutputIterator a model of `OutputIterator` 
+ *  holding objects of the same point type as
+ *  the value type of the internal vertex point map of `tm`
+ * @tparam Sampling_method defines the sampling method. Possible values are:
+     - `RANDOM_UNIFORM`: points are generated in a random and uniform way, depending on the area of each triangle.
+     - `GRID`: points are generated on a grid in each triangle, with a minimum of one point per triangle.
+     - `MONTE_CARLO`: points are generated randomly in each triangle. The number of points per triangle is proportional to the triangle area with a minimum of 1.
+ *
  * @param tm the triangle mesh that will be sampled
  * @param parameter depends on `method`:
- *                  `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
- *                  `GRID`: The distance between two consecutive points in the grid
+     - `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
+     - `GRID`: the distance between two consecutive points in the grid
  *
- * @param out output iterator in which sampled points are put
- * @param np an optionnal sequence of \ref namedparameters for `tm` among the ones listed below
+ * @param out output iterator to be filled with sampled points
+ * @param np an optional sequence of \ref namedparameters among the ones listed below
+ * @param method defines the method of sampling
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}
@@ -192,17 +200,6 @@ enum Sampling_method{
  *    an internal property map for `CGAL::vertex_point_t` should be available for `TriangleMesh` \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
  * \cgalNamedParamsEnd
- *
- * @param method defines the method of sampling
- *
- * @tparam Sampling_method defines the sampling method. Possible values are:
- *- `RANDOM_UNIFORM`: points are generated in a random and uniform way, depending on the area of each triangle.
- *
- *- `GRID`: points are generated on a grid in each triangle, with a minimum of one point per triangle.
- *
- *- `MONTE_CARLO`: points are generated randomly in each triangle.
- * The number of points per triangle is proportional to the triangle area with a minimum of 1.
- *
  */
 template<class OutputIterator, class TriangleMesh, class NamedParameters>
 OutputIterator
