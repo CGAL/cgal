@@ -432,7 +432,9 @@ namespace Polygon_mesh_processing {
     typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT volume = 0.;
     BOOST_FOREACH(face_descriptor f, faces(tmesh))
     {
-      volume += CGAL::volume(origin,
+        typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+          CGAL::vertex_point_t>::type>::Kernel::Volume_3 volume;
+      volume += volume(origin,
         get(vpm, target(halfedge(f, tmesh), tmesh)),
         get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
         get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
@@ -446,6 +448,7 @@ namespace Polygon_mesh_processing {
     CGAL::vertex_point_t>::type>::Kernel::FT
   volume(const TriangleMesh& tmesh)
   {
+
     return volume(tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
