@@ -431,6 +431,18 @@ void MainWindow::filterOperations()
 void MainWindow::evaluate_script(QString script,
                                  const QString& filename,
                                  const bool quiet) {
+  QScriptContext* context = script_engine->currentContext();
+  QScriptValue object = context->activationObject();
+  QScriptValue former__FILE__ = object.property("__FILE__");;
+  QScriptValue::PropertyFlags flags = object.propertyFlags("__FILE__");
+  const bool change__FILE__ = !filename.isNull()
+    &&
+    ( !flags.testFlag(QScriptValue::ReadOnly) ||
+      !flags.testFlag(QScriptValue::PropertyGetter) ||
+      flags.testFlag(QScriptValue::PropertySetter) );
+
+  if(change__FILE__) object.setProperty("__FILE__", filename);
+
   QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
     QScriptValue js_exception = script_engine->uncaughtException();
@@ -457,6 +469,8 @@ void MainWindow::evaluate_script(QString script,
     QTextStream(stderr) << "Qt Script evaluated to \""
                         << value.toString() << "\"\n";
   }
+
+  if(change__FILE__) object.setProperty("__FILE__", former__FILE__);
 }
 
 void MainWindow::evaluate_script_quiet(QString script,
@@ -1388,6 +1402,9 @@ bool MainWindow::loadScript(QFileInfo info)
   QString filename = info.absoluteFilePath();
   QFile script_file(filename);
   script_file.open(QIODevice::ReadOnly);
+  if(!script_file.isReadable()) {
+    throw std::ios_base::failure(script_file.errorString().toStdString());
+  }
   program = script_file.readAll();
   if(!program.isEmpty())
   {
