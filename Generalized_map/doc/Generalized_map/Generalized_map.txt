@@ -350,7 +350,7 @@ In \cgalFigureRef{fig_gmap_example_3d_sew} (Left), if we call \link GeneralizedM
 \cgalAdvancedEnd
 
 \cgalModifBegin
-Sewing operations can be used in order to build a non-orientable generalized map. Let us consider the 2D generalized map representing a square given in \cgalFigureRef{fig_gmap_sew_non_orientable} (Left). Two opposite edges of the square can be identified by using the \link GeneralizedMap::sew `sew<2>`\endlink operation. But there are two possibilities to make this identification. The first one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Middle), creates an annulus which is thus orientable. The second one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Right), creates a Möbius strip which is thus non-orientable. The choice of the two darts for the sew operation is thus crucial.
+Sewing operations can be used in order to build a non-orientable generalized map. Let us consider the 2D generalized map representing a square given in \cgalFigureRef{fig_gmap_sew_non_orientable} (Left). Two opposite edges of the square can be identified by using the \link GeneralizedMap::sew `sew<2>`\endlink operation. But there are two possibilities to make this identification. The first one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Middle), creates an annulus which is thus orientable. The second one, shown in \cgalFigureRef{fig_gmap_sew_non_orientable} (Right), creates a Möbius strip which is thus non-orientable. The choice of the two darts for the sew operation is thus crucial. See the example \ref  ssecexample2DGMNO "A non orientable 2D Generalized Map".
 
 \cgalFigureBegin{fig_gmap_sew_non_orientable,gmap_sew_non_orientable.svg}
 Illustration of the use of the 2-sew operation to construct a non-orientable generalized map. Left: A 2D generalized map <I>M</I> representing a square (one side colored in orange, the other side in green). Middle: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,3)`\endlink. This map is orientable and corresponds to an annulus. Right: the generalized map obtained from <I>M</I> after \link GeneralizedMap::sew `sew<2>(1,4)`\endlink. This map is non-orientable and corresponds to a Möbius strip.
@@ -413,12 +413,12 @@ In this example, a 3-dimensional generalized map is constructed. Two combinatori
 
 The output is:
 \verbatim
-#Darts=48, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, valid=1
+#Darts=48, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, orientable=true, valid=1
 Number of darts of the first tetrahedron: 24
 Number of darts of the face incident to d1: 6
 \endverbatim
 
-which gives the number of darts of the generalized map, the numbers of different cells, the number of connected components, and finally a Boolean showing the validity of the generalized map (a tetrahedron is made up of 24 darts because there are 6 darts per facet and there are 4 facets).
+which gives the number of darts of the generalized map, the numbers of different cells, the number of connected components, a Boolean showing if the generalized map is orientable or not and finally a Boolean showing the validity of the generalized map (a tetrahedron is made up of 48 darts because there are 12 darts per facet and there are 4 facets).
 
 Note the creation in the for loops of the two instances of \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range`\endlink::`const_iterator`: `it` is the current iterator, and `itend` an iterator to the end of the range. Having `itend` avoids calling \link GenericMap::darts_of_orbit `gm.darts_of_orbit<0,1,2>(dh1)`\endlink`.end()` again and again as in the following example (which is a bad solution):
 
@@ -430,6 +430,19 @@ for (GMap_3::Dart_of_orbit_range<0,1,2>::const_iterator
 {...}
 
 \endcode
+
+\subsection ssecexample2DGMNO A non orientable 2D Generalized Map
+
+In this example, a square is constructed in a 2-dimensional generalized map. Then two darts belonging to two opposite edges of the square are 2-sewn. Since they darts do not belong to the same orientation of the initial square, this creates a torsion and thus leads to a non orientable generalized map which represents a Möbius strip (cf. \cgalFigureRef{fig_gmap_sew_non_orientable} (Right)).
+
+The output is:
+\verbatim
+#Darts=8, #0-cells=2, #1-cells=3, #2-cells=1, #ccs=1, orientable=false, valid=1
+\endverbatim
+
+showing that the generalized map is non orientable.
+
+\cgalExample{Generalized_map/gmap_2_moebius.cpp}
 
 \subsection Generalized_mapHighLevelOperations High Level Operations
 
@@ -443,8 +456,8 @@ The second part of this example removes the inserted elements. First we remove t
 
 The output is:
 \verbatim
-TODO (after the operation will be developed) #Darts=36, #0-cells=8, #1-cells=14, #2-cells=9, #3-cells=2, #ccs=1, valid=1
-TODO (after the operation will be developed) #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1 
+#Darts=72, #0-cells=8, #1-cells=14, #2-cells=9, #3-cells=2, #ccs=1, orientable=true, valid=1
+#Darts=48, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, orientable=true, valid=1
 \endverbatim
 
 The first line gives the characteristics of the generalized map after all the insertions (the generalized map drawn in \cgalFigureRef{fig_gmap_example_insertions} (Right)). There are two 3-cells (since the combinatorial hexahedron was split in two by the 2-cell insertion), nine 2-cells (since two 2-cells of the original hexahedron were split in two by the two 1-cell insertions, and a new 2-cell was created during the 2-cell insertion), fourteen 1-cells (since there are two new 1-cells created by the 1-cell insertion) while the number of 0-cells remains unchanged.
@@ -467,7 +480,7 @@ In this example, we also illustrate how to use the basic methods to build <em>by
 
 The output is:
 \verbatim
-#Darts=48, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, valid=1
+#Darts=48, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, orientable=true, valid=1
 \endverbatim
 
 \subsection ssecgenmapwithcolor Generalized Map With Attributes
@@ -480,9 +493,9 @@ Functors `Sum_functor` and `Divide_by_two_functor` define a custom behavior: whe
 
 The output is:
 \verbatim
-TODO (when operations will be developed) 20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13;
-TODO 2; 7; 7; 7; 7; 7; 2; 13; 13; 13; 13; 13; 5; 10;
-TODO #Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13; 
+2; 7; 7; 7; 7; 7; 10; 13; 13; 13; 13; 13; 5; 2; 
+#Darts=128, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, orientable=true, valid=1
 \endverbatim
 
 Before the `gm.`\link GeneralizedMap::sew `sew<3>`\endlink, each 2-cell of the first cube is associated with an attribute having 7 as value, and each 2-cell of the second cube with an attribute having 13 as value. During the `gm.`\link GeneralizedMap::sew `sew<3>`\endlink, two 2-cells are merged, thus the functor `Sum_functor` is called on the two associated 2-attributes, and the value of the new 2-cell is the sum of the two previous one: 20.

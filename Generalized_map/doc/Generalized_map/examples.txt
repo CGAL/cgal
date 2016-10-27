@@ -1,4 +1,5 @@
 /*!
+\example Generalized_map/gmap_2_moebius.cpp
 \example Generalized_map/gmap_3_marks.cpp
 \example Generalized_map/gmap_3_simple_example.cpp
 \example Generalized_map/gmap_3_operations.cpp
