@@ -31,8 +31,6 @@ typedef unspecified_type Sphere_3;
 
 /*!
 Point type.
-Given a point `p` of type `Point_3`, `p.x()`, `p.y()`, and `p.z()` must returns the Cartesian coordinates of `p`, each being convertible to `FT`.
-In addition, the inequality of two points can be checked using `operator!=()`.
 */ 
 typedef unspecified_type Point_3; 
 
@@ -99,6 +97,34 @@ A functor object to compute the squared distance between two points. Provides th
 */
 typedef unspecified_type Compute_squared_distance_3;
 
+/*!
+A functor object to compare the x-coordinates of two points. Provides the operator:
+`bool operator()(const Point_3& p, const Point_3& q);}` which returns `true` if the x-coordinate of `p` is smaller
+than the x-coordinate of `q`.
+*/
+typedef unspecified_type Less_x_3;
+
+/*!
+A functor object to compare the y-coordinates of two points. Provides the operator:
+`bool operator()(const Point_3& p, const Point_3& q);}` which returns `true` if the y-coordinate of `p` is smaller
+than the y-coordinate of `q`.
+*/
+typedef unspecified_type Less_y_3;
+
+/*!
+A functor object to compare the z-coordinates of two points. Provides the operator:
+`bool operator()(const Point_3& p, const Point_3& q);}` which returns `true` if the z-coordinate of `p` is smaller
+than the z-coordinate of `q`.
+*/
+typedef unspecified_type Less_z_3;
+
+/*!
+A functor object to compare two points. Provides the operator:
+`bool operator()(const Point_3& p, const Point_3& q);}` which returns `true` if `p` is equal to `q`.
+*/
+typedef unspecified_type Equal_3;
+
+
 
 /// @} 
 
@@ -144,6 +170,26 @@ Compute_squared_radius_3 compute_squared_radius_3_object();
 Returns the squared distance functor.
 */
 Compute_squared_distance_3 compute_squared_distance_3_object();
+
+/*!
+Returns the `Less_x_3` functor.
+*/
+Less_x_3 less_x_3_object();
+
+/*!
+Returns the `Less_y_3` functor.
+*/
+Less_y_3 less_y_3_object();
+
+/*!
+Returns the `Less_z_3` functor.
+*/
+Less_z_3 less_z_3_object();
+
+/*!
+Returns the equal functor.
+*/
+Equal_3 equal_3_object();
 
 /// @}
 
