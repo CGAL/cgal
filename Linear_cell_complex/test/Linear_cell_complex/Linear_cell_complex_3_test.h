@@ -861,6 +861,39 @@ bool test_LCC_3()
     return false;
   lcc.clear();
 
+  trace_test_begin();
+  lcc.clear();
+  dh1 = lcc.
+      make_hexahedron(Point(0,0,0),Point(1,0,0),
+                      Point(1,2,0),Point(0,2,0),
+                      Point(0,3,4),Point(0,0,4),
+                      Point(6,0,4),Point(6,3,4));
+  dh2 = lcc.
+      make_hexahedron(Point(0,0,4),Point(1,0,4),
+                      Point(1,2,4),Point(0,2,4),
+                      Point(0,3,8),Point(0,0,8),
+                      Point(6,0,8),Point(6,3,8));
+  dh3 = lcc.
+      make_hexahedron(Point(5,0,4),Point(5,0,4),
+                      Point(6,2,4),Point(5,2,4),
+                      Point(5,3,8),Point(5,0,8),
+                      Point(11,0,8),Point(11,3,8));
+  lcc.template sew<3>(dh1,lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2)))));
+  lcc.template sew<3>(lcc.template opposite<2>(lcc.next(dh1)), lcc.template opposite<2>(lcc.previous(dh3)));
+
+  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), lcc.previous(dh1));
+  dh2=lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh1))));
+  lcc.insert_cell_1_in_cell_2(dh2, lcc.next(lcc.next(dh2)));
+
+  std::vector<Dart_handle> path;
+  path.push_back(lcc.next(dh1));
+  path.push_back(lcc.next(lcc.template opposite<2>(lcc.previous(dh1))));
+  path.push_back(lcc.previous(dh2));
+  path.push_back(lcc.next(lcc.template opposite<2>(dh2)));
+  lcc.insert_cell_2_in_cell_3(path.begin(),path.end());
+  if ( !check_number_of_cells_3(lcc, 16, 30, 19, 4, 1) )
+    return false;
+
   // Construction from Polyhedron_3
   {
     trace_test_begin();
@@ -873,13 +906,14 @@ bool test_LCC_3()
     }
     in >> P;
     CGAL::import_from_polyhedron_3<LCC>(lcc,P);
-    if ( !check_number_of_cells_3(lcc, 1487, 4406, 2918, 1, 1) )
+    if ( !check_number_of_cells_3(lcc, 1539, 4434, 2894, 2, 2) )
       return false;
 
     CGAL::write_off(lcc, "copy-head.off");
 
     LCC lcc2; CGAL::load_off(lcc2, "copy-head.off");
-    if ( !check_number_of_cells_3(lcc2, 1487, 4406, 2918, 1, 1) )
+    //  LCC lcc2; CGAL::load_off(lcc2, "data/head.off");
+    if ( !check_number_of_cells_3(lcc2, 1539, 4434, 2894, 2, 2) )
       return false;
 
     if (!lcc.is_isomorphic_to(lcc2, false, false, true)) // dartinfo, attrib, point
@@ -909,7 +943,7 @@ bool test_LCC_3()
       return false;
 
     // Pb: the triangulation_3 is not the same on different machines ?
-    if ( !check_number_of_cells_3(lcc, 795, 4162, 6734, 3367, 1) )
+    if ( !check_number_of_cells_3(lcc, 286, 1490, 2408, 1204, 1) )
       return false;
 
     std::ofstream os("save.map");
@@ -928,9 +962,13 @@ bool test_LCC_3()
     }
 
     // dual o dual is isomorphic to the initial map
-    lcc2.dual_points_at_barycenter(lcc);
+    lcc.dual_points_at_barycenter(lcc2);
     LCC lcc3;
-    lcc3.dual_points_at_barycenter(lcc2);
+    lcc2.dual_points_at_barycenter(lcc3);
+
+    if ( !check_number_of_cells_3(lcc3, 286, 1490, 2408, 1204, 1) )
+      return false;
+
     if (!lcc3.is_isomorphic_to(lcc, true, true, false))
     {
       assert(false);

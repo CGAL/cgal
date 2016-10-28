@@ -359,6 +359,41 @@ bool test_LCC_4()
   { assert(false); return false; }
   trace_test_end();
 
+  trace_test_begin();
+  lcc.clear();
+  dh1 = lcc.
+      make_hexahedron(apoint<LCC>(0,0,0,0),apoint<LCC>(1,0,0,0),
+                      apoint<LCC>(1,2,0,0),apoint<LCC>(0,2,0,0),
+                      apoint<LCC>(0,3,4,0),apoint<LCC>(0,0,4,0),
+                      apoint<LCC>(6,0,4,0),apoint<LCC>(6,3,4,0));
+  dh2 = lcc.
+      make_hexahedron(apoint<LCC>(0,0,4,0),apoint<LCC>(1,0,4,0),
+                      apoint<LCC>(1,2,4,0),apoint<LCC>(0,2,4,0),
+                      apoint<LCC>(0,3,8,0),apoint<LCC>(0,0,8,0),
+                      apoint<LCC>(6,0,8,0),apoint<LCC>(6,3,8,0));
+  dh3 = lcc.
+      make_hexahedron(apoint<LCC>(5,0,4,0),apoint<LCC>(5,0,4,0),
+                      apoint<LCC>(6,2,4,0),apoint<LCC>(5,2,4,0),
+                      apoint<LCC>(5,3,8,0),apoint<LCC>(5,0,8,0),
+                      apoint<LCC>(11,0,8,0),apoint<LCC>(11,3,8,0));
+  lcc.template sew<3>(dh1,lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2)))));
+  lcc.template sew<3>(lcc.template opposite<2>(lcc.next(dh1)), lcc.template opposite<2>(lcc.previous(dh3)));
+
+  lcc.template close<4>();
+
+  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), lcc.previous(dh1));
+  dh2=lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh1))));
+  lcc.insert_cell_1_in_cell_2(dh2, lcc.next(lcc.next(dh2)));
+
+  std::vector<Dart_handle> path;
+  path.push_back(lcc.next(dh1));
+  path.push_back(lcc.next(lcc.template opposite<2>(lcc.previous(dh1))));
+  path.push_back(lcc.previous(dh2));
+  path.push_back(lcc.next(lcc.template opposite<2>(dh2)));
+  lcc.insert_cell_2_in_cell_3(path.begin(),path.end());
+  if ( !check_number_of_cells_4(lcc, 16, 30, 19, 4, 2, 1) )
+    return false;
+
   if ( !Test_change_orientation_LCC_4<LCC>::run() )
     return false;
 
@@ -385,10 +420,10 @@ struct Test_change_orientation_LCC_4<LCC, CGAL::Combinatorial_map_tag>
                                                          apoint<LCC>(-1, 0, -4,0),
                                                          apoint<LCC>(1, 0, -4,0),
                                                          apoint<LCC>(1, 1, -5,0));
-    typename LCC::Dart_handle dh4 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -10,0),
-                                                         apoint<LCC>(-1, 0, -10,0),
-                                                         apoint<LCC>(1, 0, -10,0),
-                                                         apoint<LCC>(1, 1, -12,0));
+    lcc.make_tetrahedron(apoint<LCC>(0, 2, -10,0),
+                         apoint<LCC>(-1, 0, -10,0),
+                         apoint<LCC>(1, 0, -10,0),
+                         apoint<LCC>(1, 1, -12,0));
     lcc.template sew<3>(dh1, dh2);
     lcc.template sew<4>(dh1, dh3);
 
