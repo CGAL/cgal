@@ -680,7 +680,6 @@ void push_normal(std::vector<float> &v, int id)
 
 void Scene_edit_box_item_priv::computeElements() const
 {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
   vertex_edges.clear();
   vertex_faces.clear();
   normal_faces.clear();
@@ -768,8 +767,6 @@ void Scene_edit_box_item_priv::computeElements() const
     color_spheres.push_back(0);
     color_spheres.push_back(0);
   }
-
-  QApplication::restoreOverrideCursor();
 }
 
 Scene_edit_box_item::~Scene_edit_box_item()
