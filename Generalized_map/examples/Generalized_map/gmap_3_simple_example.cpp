@@ -10,8 +10,8 @@ int main()
   GMap_3 gm;
 
   // Create two tetrahedra.
-  Dart_const_handle d1 = gm.make_combinatorial_tetrahedron();
-  Dart_const_handle d2 = gm.make_combinatorial_tetrahedron();
+  Dart_const_handle dh1 = gm.make_combinatorial_tetrahedron();
+  Dart_const_handle dh2 = gm.make_combinatorial_tetrahedron();
 
   // Display the map characteristics.
   gm.display_characteristics(std::cout);
@@ -22,22 +22,22 @@ int main()
   // Note that GMap_3::Dart_of_orbit_range<1,2> is in 3D equivalent to
   // GMap_3::Dart_of_cell_range<3>.
   for (GMap_3::Dart_of_orbit_range<0,1,2>::const_iterator
-         it(gm.darts_of_orbit<0,1,2>(d1).begin()),
-         itend(gm.darts_of_orbit<0,1,2>(d1).end());
+         it(gm.darts_of_orbit<0,1,2>(dh1).begin()),
+         itend(gm.darts_of_orbit<0,1,2>(dh1).end());
        it!=itend; ++it)
     ++res;
 
   std::cout<<"Number of darts of the first tetrahedron: "<<res<<std::endl;
 
   res = 0;
-  // Iterate through all the darts of the face incident to d1.
+  // Iterate through all the darts of the face incident to dh2.
   for (GMap_3::Dart_of_orbit_range<0,1>::const_iterator
-         it(gm.darts_of_orbit<0,1>(d1).begin()),
-         itend(gm.darts_of_orbit<0,1>(d1).end());
+         it(gm.darts_of_orbit<0,1>(dh2).begin()),
+         itend(gm.darts_of_orbit<0,1>(dh2).end());
        it!=itend; ++it)
     ++res;
 
-  std::cout<<"Number of darts of the face incident to d1: "<<res<<std::endl;
+  std::cout<<"Number of darts of the face incident to dh2: "<<res<<std::endl;
 
   return EXIT_SUCCESS;
 }
