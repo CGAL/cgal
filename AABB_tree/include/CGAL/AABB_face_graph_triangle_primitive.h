@@ -34,6 +34,7 @@ namespace CGAL {
  * It wraps a handle to a facet of a polyhedron to a 3D triangle.
  * The polyhedron from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
+ * The triangle type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Triangle_3`.
  *
  * \cgalModels `AABBPrimitiveWithSharedData`
  *
