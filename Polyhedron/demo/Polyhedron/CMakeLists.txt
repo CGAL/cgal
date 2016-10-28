@@ -5,14 +5,20 @@ project( Polyhedron_Demo )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-# Use C++14 for this directory and its sub-directories.
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_trailing_return_types has_cpp11)
+if(has_cpp11 LESS 0)
+  message(STATUS "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
+  return()
+endif()
+
+# Use C++11 for this directory and its sub-directories.
 # This line does not check if the compiler does have a correct support for C++14 features.
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # Compatibility with CMake 3.0
