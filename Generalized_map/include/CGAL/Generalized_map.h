@@ -3002,7 +3002,8 @@ namespace CGAL {
                           bool testAttributes=true,
                           bool testPoint=true) const
     {
-      // if ( dimension!=map2.dimension ) return false;
+      if (is_empty() && map2.is_empty()) return true;
+      if (is_empty() || map2.is_empty()) return false;
 
       Dart_const_handle d1=darts().begin();
 
@@ -3060,7 +3061,7 @@ namespace CGAL {
         cur=toTreat.front();
         toTreat.pop();
 
-        for (int i=0; i<=dimension; ++i)
+        for (unsigned int i=0; i<=dimension; ++i)
         {
           if (is_marked(cur, orientationmark))
           {
@@ -3095,7 +3096,7 @@ namespace CGAL {
           cur=toTreat.front();
           toTreat.pop();
 
-          for (int i=0; i<=dimension; ++i)
+          for (unsigned int i=0; i<=dimension; ++i)
           {
             if (aorientationmark==INVALID_MARK)
               unmark(alpha(cur, i), orientationmark);
@@ -3978,7 +3979,9 @@ namespace CGAL {
     CGAL_assertion(is_insertable_cell_2_in_cell_3(afirst,alast));
 
     Dart_handle prec = null_handle, d = null_handle,
-        dd = null_handle, first = null_handle;
+        dd = null_handle, first = null_handle, ddd = null_handle,
+        dddd = null_handle, it0, d0;
+
     bool withAlpha3 = false;
 
     size_type treated = get_new_mark();
@@ -3993,13 +3996,30 @@ namespace CGAL {
     {
       for (InputIterator it(afirst); it!=alast; ++it)
       {
+        it0=this->template alpha<0>(*it);
         d = create_dart();
-        this->template basic_link_alpha<0>(d, create_dart());
+        d0 = create_dart();
+        this->template basic_link_alpha<0>(d, d0);
+
+        Helper::template Foreach_enabled_attributes_except
+          <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+          run(*this,d,*it);
+        Helper::template Foreach_enabled_attributes_except
+          <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+          run(*this,d0, it0);
 
         if ( withAlpha3 )
         {
           dd = create_dart();
-          this->template basic_link_alpha<0>(dd, create_dart());
+          d0 = create_dart();
+          this->template basic_link_alpha<0>(dd, d0);
+
+          Helper::template Foreach_enabled_attributes_except
+            <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+            run(*this,dd,d);
+          Helper::template Foreach_enabled_attributes_except
+            <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+            run(*this,d0, it0);
         }
 
         if ( prec!=null_handle )
@@ -4017,15 +4037,66 @@ namespace CGAL {
                                        this->template alpha<0>(dd));
         }
 
-        this->template link_alpha<2>(*it, d);
-        this->template link_alpha<2>(this->template alpha<0>(*it),
-                                     this->template alpha<0>(d));
+        this->template basic_link_alpha<2>(*it, d);
+        this->template basic_link_alpha<2>(this->template alpha<0>(*it),
+            this->template alpha<0>(d));
 
         if (withAlpha3)
         {
-          this->template link_alpha<3>(d, dd);
-          this->template link_alpha<3>(this->template alpha<0>(d),
-                                       this->template alpha<0>(dd));
+          this->template basic_link_alpha<3>(d, dd);
+          this->template basic_link_alpha<3>(this->template alpha<0>(d),
+              this->template alpha<0>(dd));
+        }
+
+        // Make copies of the new facet for dimension >=4
+        for ( unsigned int dim=4; dim<=dimension; ++dim )
+        {
+          if ( !is_free(*it, dim) )
+          {
+            ddd = create_dart();
+            d0 = create_dart();
+            this->template basic_link_alpha<0>(ddd, d0);
+            basic_link_alpha(d, ddd, dim);
+            basic_link_alpha(this->template alpha<0>(d),
+                             d0, dim);
+
+            it0=alpha(d, dim);
+            Helper::template Foreach_enabled_attributes_except
+              <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+              run(*this,ddd,it0);
+            it0=alpha(d, 0, dim);
+            Helper::template Foreach_enabled_attributes_except
+              <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+              run(*this,d0,it0);
+
+            if ( withAlpha3 )
+            {
+              dddd = create_dart();
+              d0 = create_dart();
+              this->template basic_link_alpha<0>(dddd, d0);
+
+              basic_link_alpha(dd, dddd, dim);
+              basic_link_alpha(this->template alpha<0>(dd),
+                               d0, dim);
+
+              it0=alpha(d, dim);
+              Helper::template Foreach_enabled_attributes_except
+                <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+                run(*this,dddd,it0);
+              it0=alpha(d, 0, dim);
+              Helper::template Foreach_enabled_attributes_except
+                <internal::GMap_group_attribute_functor_of_dart<Self, 2>, 2>::
+                run(*this,d0,it0);
+            }
+
+            if ( prec!=null_handle )
+            {
+              this->template basic_link_alpha<1>(alpha(prec, dim), ddd);
+              if (withAlpha3)
+                this->template basic_link_alpha<1>(alpha(prec, 3, dim), dddd);
+            }
+
+          }
         }
 
         prec = this->template alpha<0>(d);
@@ -4039,88 +4110,19 @@ namespace CGAL {
                                          this->template alpha<3>(first));
     }
 
-    // Make copies of the new facet for dimension >=4
-    // TODO LATER: AND VERIFY IF THERE IS A BUG IN CMAP ?
-    /*  for ( unsigned int dim=4; dim<=GMap::dimension; ++dim )
-        {
-        if ( !amap.is_free(*it, dim) )
-        {
-        ddd = amap.create_dart();
-        amap.template basic_link_alpha<0>(ddd, amap.create_dart());
-        amap.basic_link_alpha(d, ddd, dim);
-        amap.basic_link_alpha(amap.template alpha<0>(d),
-        amap.template alpha<0>(ddd), dim);
-
-        if ( withAlpha3 )
-        {
-        dddd = amap.create_dart();
-        amap.template basic_link_alpha<0>(dddd, amap.create_dart());
-
-        amap.basic_link_alpha(dd, dddd, dim);
-        amap.basic_link_alpha(amap.template alpha<0>(dd),
-        amap.template alpha<0>(dddd), dim);
-        }
-        }
-        }*/
-
-    // Make copies of the new facet for dimension >=4
-    /*for ( unsigned int dim=4; dim<=dimension; ++dim )
+    for ( unsigned int dim=4; dim<=dimension; ++dim )
     {
       if ( !is_free(first, dim) )
       {
-        for ( GMap_dart_iterator_basic_of_orbit<Self,0,1> it(*this, first);
-              it.cont(); ++it )
-        {
-          d = create_dart();
-          basic_link_alpha(this->template alpha<2>(it), d, dim);
-          if ( withAlpha3 )
-          {
-            dd = create_dart();
-            basic_link_alpha(this->template alpha<2,3>(it), dd, dim);
-            this->template basic_link_alpha<3>(d, dd);
-          }
-          if ( !is_free(this->template alpha<0>(it), dim) )
-          {
-            link_alpha<0>(alpha(it,0,dim), d);
-            if ( withAlpha3 )
-            {
-              link_alpha<0>(alpha(it,0,3,dim), d);
-              basic_link_alpha<1>(this->template alpha<0,3>(prec), dd);
-            }
-          }
-          else first2 = prec;
-
-          // We consider dim2=2 out of the loop to use link_alpha instead of
-          // basic _link_alpha (to modify non void attributes only once).
-          if ( !this->template is_free<2>(it) &&
-               is_free(this->template alpha<2>(it), dim) )
-            this->template link_alpha<2>(alpha(it,2,dim), d);
-          if ( withAlpha3 &&
-               !this->template is_free<2>(this->template alpha<3>(it)) &&
-               is_free(this->template alpha<3,2>(it), dim) )
-            link_alpha<2>(alpha(it,3,2,dim), dd);
-
-          for ( unsigned int dim2=3; dim2<=dimension; ++dim2 )
-          {
-            if ( dim2+1!=dim && dim2!=dim && dim2!=dim+1 )
-            {
-              if ( !is_free(it, dim2) && is_free(alpha(it, dim2), dim) )
-                basic_link_alpha(alpha(it, dim2, dim), d, dim2);
-              if ( withAlpha3 && !is_free(this->template alpha<3>(it), dim2) &&
-                   is_free(alpha(it, 3, dim2), dim) )
-                basic_link_alpha(alpha(it, 3, dim2, dim), dd, dim2);
-            }
-          }
-          prec = d;
-        }
-        basic_link_alpha<0>( prec, first2 );
+        this->template basic_link_alpha<1>(alpha(prec, dim),
+            alpha(first, dim));
         if ( withAlpha3 )
         {
-          basic_link_alpha<1>( this->template alpha<3>(prec),
-                               this->template alpha<3>(first2) );
+          this->template basic_link_alpha<1>(alpha(prec, 3, dim),
+                                             alpha(first, 3, dim));
         }
       }
-    }*/
+    }
 
     // Degroup the attributes
     if ( withAlpha3 )

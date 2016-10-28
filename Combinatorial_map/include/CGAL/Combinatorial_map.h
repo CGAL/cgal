@@ -3824,6 +3824,9 @@ namespace CGAL {
                           bool testAttributes=true,
                           bool testPoint=true) const
     {
+      if (is_empty() && map2.is_empty()) return true;
+      if (is_empty() || map2.is_empty()) return false;
+
       Dart_const_handle d1=darts().begin();
 
       for (typename Combinatorial_map_base<d2,Refs2,Items2,Alloc2, Storage2>::
@@ -4758,7 +4761,7 @@ namespace CGAL {
       CGAL_assertion(is_insertable_cell_2_in_cell_3(afirst,alast));
 
       Dart_handle prec = null_handle, d = null_handle,
-        dd = null_handle, first = null_handle;
+        dd = null_handle, first = null_handle, it0=null_handle;
       bool withBeta3 = false;
 
       {
@@ -4772,8 +4775,17 @@ namespace CGAL {
         for (InputIterator it(afirst); it!=alast; ++it)
         {
           d = create_dart();
-          if ( withBeta3 )
+
+          if (withBeta3)
+          {
             dd = create_dart();
+            if ( !this->template is_free<2>((*it)) )
+              basic_link_beta_for_involution<2>(this->template beta<2>(*it), dd);
+
+            this->template basic_link_beta_for_involution<3>(d, dd);
+          }
+
+          this->template basic_link_beta_for_involution<2>(*it, d);
 
           if (prec != null_handle)
           {
@@ -4783,12 +4795,16 @@ namespace CGAL {
           }
           else first = d;
 
-          if ( !this->template is_free<2>((*it)) )
-            basic_link_beta_for_involution<2>(this->template beta<2>(*it), dd);
+          Helper::template Foreach_enabled_attributes_except
+            <internal::Group_attribute_functor_of_dart<Self, 2>, 2>::
+            run(*this,d,*it);
 
-          this->template link_beta_for_involution<2>(*it, d);
-          if ( withBeta3 )
-            this->template link_beta_for_involution<3>(d, dd);
+          if (withBeta3)
+          {
+            Helper::template Foreach_enabled_attributes_except
+                <internal::Group_attribute_functor_of_dart<Self, 2>, 2>::
+                run(*this,dd,d);
+          }
 
           prec = d;
         }
@@ -4812,44 +4828,43 @@ namespace CGAL {
                 it.cont(); ++it )
           {
             d = create_dart();
-            basic_link_beta_for_involution(this->template beta<2>(it), d, dim);
-            if ( withBeta3 )
+
+            it0=beta(it, dim); // Required because
+            //  Group_attribute_functor_of_dart takes references in parameter
+          
+            basic_link_beta_for_involution(it, d, dim);
+            if (withBeta3)
             {
               dd = create_dart();
-              basic_link_beta_for_involution(this->template beta<2,3>(it), dd, dim);
+
+              basic_link_beta_for_involution(this->template beta<3>(it), dd, dim);
               this->template basic_link_beta_for_involution<3>(d, dd);
+
+              if ( !this->template is_free<2>(it) )
+                basic_link_beta_for_involution<2>(beta(it0, 2), dd);
             }
+
+            this->template basic_link_beta_for_involution<2>(it0, d);
+
             if ( prec!=null_handle )
             {
-              link_beta_0(prec, d);
-              if ( withBeta3 )
+              basic_link_beta_0(prec, d);
+              if (withBeta3)
               {
                 basic_link_beta_1(this->template beta<3>(prec), dd);
               }
             }
             else first2 = prec;
 
-            // We consider dim2=2 out of the loop to use link_beta instead of
-            // basic _link_beta (to modify non void attributes only once).
-            if ( !this->template is_free<2>(it) && is_free(this->template beta<2>(it), dim) )
-              this->template link_beta_for_involution<2>(beta(it,2,dim), d);
-            if ( withBeta3 && !this->template is_free<2>(this->template beta<3>(it)) &&
-                 is_free(this->template beta<3,2>(it), dim) )
-             this->template link_beta_for_involution<2>(beta(it,3,2,dim), dd);
+            Helper::template Foreach_enabled_attributes_except
+                <internal::Group_attribute_functor_of_dart<Self, 2>, 2>::
+                run(*this,d,it0);
 
-            for ( unsigned int dim2=3; dim2<=dimension; ++dim2 )
-            {
-              if ( dim2+1!=dim && dim2!=dim && dim2!=dim+1 )
-              {
-                if ( !is_free(it, dim2) && is_free(beta(it, dim2), dim) )
-                  basic_link_beta_for_involution(beta(it, dim2, dim),
-                                                 d, dim2);
-                if ( withBeta3 && !is_free(this->template beta<3>(it), dim2) &&
-                     is_free(beta(it, 3, dim2), dim) )
-                  basic_link_beta_for_involution(beta(it, 3, dim2, dim), dd,
-                                                 dim2);
-              }
-            }
+            if (withBeta3)
+              Helper::template Foreach_enabled_attributes_except
+                  <internal::Group_attribute_functor_of_dart<Self, 2>, 2>::
+                  run(*this,dd,d);
+
             prec = d;
           }
           basic_link_beta_0( prec, first2 );
