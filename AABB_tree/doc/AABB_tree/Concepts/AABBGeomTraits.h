@@ -95,7 +95,7 @@ typedef unspecified_type Compute_squared_radius_3;
 
 /*!
 A functor object to compute the squared distance between two points. Provides the operator:
-`FT operator()(const Point_3& p, const Point_3& q);}` which returns the squared distance between \a p and \a q.
+`FT operator()(const Point_3& p, const Point_3& q);}` which returns the squared distance between `p` and `q`.
 */
 typedef unspecified_type Compute_squared_distance_3;
 
