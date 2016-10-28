@@ -881,9 +881,13 @@ bool test_LCC_3()
   lcc.template sew<3>(dh1,lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2)))));
   lcc.template sew<3>(lcc.template opposite<2>(lcc.next(dh1)), lcc.template opposite<2>(lcc.previous(dh3)));
 
-  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), lcc.previous(dh1));
+  lcc.template close<3>();
+  if ( !check_number_of_cells_3(lcc, 16, 28, 16, 4, 1) )
+    return false;
+
+  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), Alpha1<LCC>::run(lcc, lcc.previous(dh1)));
   dh2=lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh1))));
-  lcc.insert_cell_1_in_cell_2(dh2, lcc.next(lcc.next(dh2)));
+  lcc.insert_cell_1_in_cell_2(dh2, Alpha1<LCC>::run(lcc, lcc.next(lcc.next(dh2))));
 
   std::vector<Dart_handle> path;
   path.push_back(lcc.next(dh1));
@@ -891,12 +895,13 @@ bool test_LCC_3()
   path.push_back(lcc.previous(dh2));
   path.push_back(lcc.next(lcc.template opposite<2>(dh2)));
   lcc.insert_cell_2_in_cell_3(path.begin(),path.end());
-  if ( !check_number_of_cells_3(lcc, 16, 30, 19, 4, 1) )
+  if ( !check_number_of_cells_3(lcc, 16, 30, 19, 5, 1) )
     return false;
 
   // Construction from Polyhedron_3
   {
     trace_test_begin();
+    lcc.clear();
     CGAL::Polyhedron_3<typename LCC::Traits> P;
     std::ifstream in("data/head.off");
     if ( in.fail() )
@@ -905,6 +910,7 @@ bool test_LCC_3()
       return false;
     }
     in >> P;
+
     CGAL::import_from_polyhedron_3<LCC>(lcc,P);
     if ( !check_number_of_cells_3(lcc, 1539, 4434, 2894, 2, 2) )
       return false;
@@ -912,7 +918,6 @@ bool test_LCC_3()
     CGAL::write_off(lcc, "copy-head.off");
 
     LCC lcc2; CGAL::load_off(lcc2, "copy-head.off");
-    //  LCC lcc2; CGAL::load_off(lcc2, "data/head.off");
     if ( !check_number_of_cells_3(lcc2, 1539, 4434, 2894, 2, 2) )
       return false;
 
@@ -955,7 +960,10 @@ bool test_LCC_3()
     assert(is.is_open());
     is>>lcc2;
 
-    if (!lcc.is_isomorphic_to(lcc2))
+    if ( !check_number_of_cells_3(lcc2, 286, 1490, 2408, 1204, 1) )
+      return false;
+
+    if (!lcc.is_isomorphic_to(lcc2, false, true, true))
     {
       assert(false);
       return false;

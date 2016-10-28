@@ -379,11 +379,15 @@ bool test_LCC_4()
   lcc.template sew<3>(dh1,lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2)))));
   lcc.template sew<3>(lcc.template opposite<2>(lcc.next(dh1)), lcc.template opposite<2>(lcc.previous(dh3)));
 
+  lcc.template close<3>();
   lcc.template close<4>();
 
-  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), lcc.previous(dh1));
+  if ( !check_number_of_cells_4(lcc, 16, 28, 16, 4, 2, 1) )
+    return false;
+
+  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), Alpha1<LCC>::run(lcc, lcc.previous(dh1)));
   dh2=lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh1))));
-  lcc.insert_cell_1_in_cell_2(dh2, lcc.next(lcc.next(dh2)));
+  lcc.insert_cell_1_in_cell_2(dh2, Alpha1<LCC>::run(lcc, lcc.next(lcc.next(dh2))));
 
   std::vector<Dart_handle> path;
   path.push_back(lcc.next(dh1));
@@ -391,7 +395,7 @@ bool test_LCC_4()
   path.push_back(lcc.previous(dh2));
   path.push_back(lcc.next(lcc.template opposite<2>(dh2)));
   lcc.insert_cell_2_in_cell_3(path.begin(),path.end());
-  if ( !check_number_of_cells_4(lcc, 16, 30, 19, 4, 2, 1) )
+  if ( !check_number_of_cells_4(lcc, 16, 30, 19, 5, 2, 1) )
     return false;
 
   if ( !Test_change_orientation_LCC_4<LCC>::run() )

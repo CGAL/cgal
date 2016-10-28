@@ -56,6 +56,20 @@ void trace_display_msg(const char*
 #endif
 }
 
+template<typename LCC,
+         typename Map=typename LCC::Combinatorial_data_structure>
+struct Alpha1
+{
+  static typename LCC::Dart_handle run(LCC&, typename LCC::Dart_handle dh)
+  { return dh; }
+};
+template<typename LCC>
+struct Alpha1<LCC, CGAL::Generalized_map_tag>
+{
+  static typename LCC::Dart_handle run(LCC& lcc, typename LCC::Dart_handle dh)
+  { return lcc.template alpha<1>(dh); }
+};
+
 // Test orientation specialized below only for CMap. For GMap return true.
 template<typename LCC, typename Map=typename LCC::Combinatorial_data_structure>
 struct Test_change_orientation_LCC_2
