@@ -598,7 +598,7 @@ private:
     static tbb::atomic<unsigned int> last_id;
     unsigned int id = ++last_id;
     // Ensure it is > 0
-    return (1 + id%(std::numeric_limits<unsigned int>::max()));
+    return (1 + id%((std::numeric_limits<unsigned int>::max)()));
   }
 
 protected:
