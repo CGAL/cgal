@@ -1,5 +1,5 @@
-include = function (filename) {
-    var basename = __FILE__.replace(RegExp('/[^/]*$'), "")
+function include(filename) {
+    var basename = current_filename.replace(RegExp('/[^/]*$'), "")
     main_window.loadScript(basename + "/" + filename)
 }
 
@@ -11,7 +11,7 @@ print_backtrace = function(bt, prefix) {
 }
 
 print_exception_and_bt = function(e) {
-    print("Caught exception in " + __FILE__ + ": " + e)
+    print("Caught exception in " + current_filename + ": " + e)
     print("Backtrace:")
     print_backtrace(e.backtrace)
 }

@@ -433,15 +433,8 @@ void MainWindow::evaluate_script(QString script,
                                  const bool quiet) {
   QScriptContext* context = script_engine->currentContext();
   QScriptValue object = context->activationObject();
-  QScriptValue former__FILE__ = object.property("__FILE__");;
-  QScriptValue::PropertyFlags flags = object.propertyFlags("__FILE__");
-  const bool change__FILE__ = !filename.isNull()
-    &&
-    ( !flags.testFlag(QScriptValue::ReadOnly) ||
-      !flags.testFlag(QScriptValue::PropertyGetter) ||
-      flags.testFlag(QScriptValue::PropertySetter) );
-
-  if(change__FILE__) object.setProperty("__FILE__", filename);
+  QScriptValue former_current_filename = object.property("current_filename");;
+  object.setProperty("current_filename", filename);
 
   QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
@@ -470,7 +463,7 @@ void MainWindow::evaluate_script(QString script,
                         << value.toString() << "\"\n";
   }
 
-  if(change__FILE__) object.setProperty("__FILE__", former__FILE__);
+  object.setProperty("current_filename", former_current_filename);
 }
 
 void MainWindow::evaluate_script_quiet(QString script,
