@@ -365,10 +365,12 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     if (dialog.generate_structured ())
       {
-        std::cout << "Structuring point set... ";
+        std::cerr << "Structuring point set... ";
         
         Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
+        pts_full->point_set()->add_normal_map();
         CGAL::structure_point_set (points->begin (), points->end (),
+                                   points->point_map(), points->normal_map(),
                                    boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
                                    shape_detection,
                                    op.cluster_epsilon);
