@@ -55,7 +55,7 @@ typedef unspecified_type Intersect_3;
 
 /*!
 A functor object to construct the sphere centered at one point and passing through another one. Provides the operator: 
-`Sphere_3 operator()(const Point_3& p, const Point_3 & q);` which returns the sphere centered at `p` and passing through `q`. 
+- `Sphere_3 operator()(const Point_3& p, const FT & sr)` which returns the sphere centered at `p` with `sr` as squared radius.
 */ 
 typedef unspecified_type Construct_sphere_3; 
 
