@@ -234,6 +234,7 @@ namespace internal
     virtual std::string get_string(const typename CGAL::Point_set_3<Point,Vector>::Index& index)
     {
       std::ostringstream oss;
+      oss.precision (std::numeric_limits<double>::digits10 + 2);
       oss << get(m_pmap, index);
       return oss.str();
     }
