@@ -133,9 +133,9 @@ and provides a list of the parameters that are used in this package.
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
 
 ## Distance Functions ##
-- `CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance()`
-- `CGAL::Polygon_mesh_processing::approximated_symmetric_Hausdorff_distance()`
-- `CGAL::Polygon_mesh_processing::max_distance_to_point_set()`
+- `CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set()`
 - `CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
 

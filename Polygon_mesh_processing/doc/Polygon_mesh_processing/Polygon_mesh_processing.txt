@@ -486,9 +486,9 @@ the propagation of a connected component index to cross it.
 This package provides methods to compute approximated Hausdorff distances.
 These distances can be computed between two meshes, a mesh and a point set, or a point set and a mesh.
 These computations are performed with :
-- `CGAL::Polygon_mesh_processing::approximated_Hausdorff_distance()`
-- `CGAL::Polygon_mesh_processing::approximated_symmetric_Hausdorff_distance()`
-- `CGAL::Polygon_mesh_processing::max_distance_to_point_set()`
+- `CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set()`
 - `CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
 

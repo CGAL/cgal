@@ -2,7 +2,7 @@
 /// \cgalConcept
 ///
 /// Geometric traits concept for the functions `CGAL::self_intersections()` and `CGAL::does_self_intersect()`.
-class SelfIntersectionTraits{
+class PMPSelfIntersectionTraits{
 public:
   /// @name Geometric Types
   /// @{

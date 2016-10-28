@@ -109,7 +109,7 @@ int main(void)
 
     // computes the approximation error of the reconstruction
     double max_dist =
-      CGAL::Polygon_mesh_processing::max_distance_to_point_set(output_mesh,
+      CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set(output_mesh,
                                                                points,
                                                                4000);
     std::cout << "Max distance to point_set: " << max_dist << std::endl;

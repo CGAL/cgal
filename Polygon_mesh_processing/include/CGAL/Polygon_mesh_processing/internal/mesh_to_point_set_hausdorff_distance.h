@@ -25,23 +25,21 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <queue>
+#include <iostream>
+
 namespace CGAL{
 namespace internal{
 template <typename Kernel>
 class CPointH
 {
-private:
-
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::FT FT;
-  Point m_point;
-  FT m_hausdorff;
 
 public:
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::FT FT;
 
   CPointH ()
   {
-    m_point = Point (0., 0., 0.);
+    m_point = Point (FT(0.), FT(0.), FT(0.));
     m_hausdorff = 0.;
   }
   CPointH (const Point& p, FT h = 0.)
@@ -67,6 +65,10 @@ public:
   }
 
 
+private:
+
+    Point m_point;
+    FT m_hausdorff;
 };
 
 template <typename Kernel>
@@ -75,9 +77,9 @@ class CRefTriangle
 
 private:
 
-  typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
   typedef CPointH<Kernel> PointH;
+  typedef typename PointH::Point Point;
   PointH m_point[3];
   int m_edge;
   FT m_upper_bound;
@@ -93,9 +95,10 @@ public:
     m_point[2] = c;
 
     m_edge = -1;
-    for (unsigned int i = 0; i < 3; ++ i)
+    //should disappear when Simon reworks the code
+    /*for (unsigned int i = 0; i < 3; ++ i)
     {
-      if (CGAL::angle (m_point[(i+1)%3](), m_point[i](), m_point[(i+2)%3]())
+      if (CGAL::angle(m_point[(i+1)%3](), m_point[i](), m_point[(i+2)%3]())
           == CGAL::OBTUSE)
       {
         m_edge = i;
@@ -103,14 +106,14 @@ public:
       }
     }
 
+*/
     if (m_edge == -1)
-      m_bisector = CGAL::circumcenter (a(), b(), c());
+        m_bisector = typename Kernel::Construct_circumcenter_3() (a(), b(), c());
     else
     {
       m_bisector = PointH::mid_point (m_point[(m_edge+1)%3],
                                       m_point[(m_edge+2)%3]);
     }
-
     m_lower_bound = 0.;
     m_upper_bound = 0.;
     for (unsigned int i = 0; i < 3; ++ i)
@@ -118,8 +121,9 @@ public:
       if (m_point[i].hausdorff () > m_lower_bound)
         m_lower_bound = m_point[i].hausdorff ();
 
+      typename Kernel::Compute_squared_distance_3 squared_distance;
       FT up = m_point[i].hausdorff ()
-        + std::sqrt (CGAL::squared_distance (m_point[i](), m_bisector));
+        + CGAL::approximate_sqrt (squared_distance (m_point[i](), m_bisector));
 
       if (up > m_upper_bound)
         m_upper_bound = up;
@@ -160,6 +164,7 @@ public:
   const PointH* points () const { return m_point; }
   int edge () const { return m_edge; }
 
+  #ifdef CGAL_MTPS_HD_DEBUG
   void print () const
   {
     std::cerr << "[Refinement triangle]" << std::endl
@@ -170,6 +175,7 @@ public:
               << " * " << m_point[2]() << std::endl
               << " -> " << m_bisector << std::endl;
   }
+  #endif
 };
 }//internal
 
@@ -240,9 +246,9 @@ public:
   bool add (const Point& a, const Point& b, const Point& c, const Tree& tree)
   {
 
-    RefTriangle r (PointH (a, std::sqrt (Knn(tree, a, 1).begin()->second)),
-                   PointH (b, std::sqrt (Knn(tree, b, 1).begin()->second)),
-                   PointH (c, std::sqrt (Knn(tree, c, 1).begin()->second)));
+    RefTriangle r (PointH (a, CGAL::approximate_sqrt (Knn(tree, a, 1).begin()->second)),
+                   PointH (b, CGAL::approximate_sqrt (Knn(tree, b, 1).begin()->second)),
+                   PointH (c, CGAL::approximate_sqrt (Knn(tree, c, 1).begin()->second)));
 
     if (r.lower_bound () > m_lower_bound)
       {
@@ -280,7 +286,9 @@ public:
     {
       if (m_queue.size () > 100000)
       {
+        #ifdef CGAL_MTPS_HD_DEBUG
         m_queue.top ().print ();
+        #endif
         ++ nb_clean;
         if (nb_clean > 5)
           return m_upper_bound;
@@ -295,9 +303,9 @@ public:
 
       if (current.lower_bound () > m_lower_bound)
         m_lower_bound = current.lower_bound ();
+      typename Kernel::Compute_squared_area_3 squared_area;
 
-
-      if(CGAL::squared_area(current.points()[0](),
+      if(squared_area(current.points()[0](),
                             current.points()[1](),
                             current.points()[2]()
                             ) < 1e-20)
@@ -308,7 +316,7 @@ public:
       const Point& bisector = current.bisector ();
       m_point = bisector;
       //squared distance between bisector and its closst point in the mesh
-      FT hausdorff = std::sqrt (Knn(tree, bisector, 1).begin()->second);
+      FT hausdorff = CGAL::approximate_sqrt (Knn(tree, bisector, 1).begin()->second);
       if (hausdorff > m_lower_bound)
         m_lower_bound = hausdorff;
 
