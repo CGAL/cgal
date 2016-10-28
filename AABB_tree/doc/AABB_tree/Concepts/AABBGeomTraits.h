@@ -20,12 +20,19 @@ public:
 /// @{
 
 /*!
+A number type model of `Field`.
+*/
+typedef unspecified_type FT;
+
+/*!
 Sphere type, that should be consistent with the distance function chosen for the distance queries, namely the `Squared_distance_3` functor. 
 */ 
 typedef unspecified_type Sphere_3; 
 
 /*!
-Point type. 
+Point type.
+Given a point `p` of type `Point_3`, `p.x()`, `p.y()`, and `p.z()` must returns the Cartesian coordinates of `p`, each being convertible to `FT`.
+In addition, the inequality of two points can be checked using `operator!=()`.
 */ 
 typedef unspecified_type Point_3; 
 
