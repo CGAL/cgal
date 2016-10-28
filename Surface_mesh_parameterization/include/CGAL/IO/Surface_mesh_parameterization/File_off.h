@@ -118,7 +118,6 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
 
   os << "OFF" << '\n';
   os << vertices_counter << " " << faces_counter << " 0" << '\n';
-
   os << out_vertices.str() << out_faces.str();
 }
 

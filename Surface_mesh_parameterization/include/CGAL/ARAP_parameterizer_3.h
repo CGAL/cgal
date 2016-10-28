@@ -22,6 +22,7 @@
 #define CGAL_ARAP_PARAMETERIZER_3_H
 
 #include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+#include <CGAL/internal/Surface_mesh_parameterization/validity.h>
 #include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
 
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
@@ -1352,8 +1353,11 @@ public:
 
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
 
-    // Use post processing to handle flipped elements
-    status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);
+    if(!internal::Surface_mesh_parameterization::is_one_to_one_mapping(mesh, uvmap)){
+     // Use post processing to handle flipped elements
+      std::cout << "Parameterization is not valid; calling post processor" << std::endl;
+      status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);
+    }
 
     return status;
   }
