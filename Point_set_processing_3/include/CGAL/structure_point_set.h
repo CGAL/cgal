@@ -169,8 +169,8 @@ private:
   std::vector<Vector> m_normals;
   std::vector<std::size_t> m_indices;
   std::vector<Point_status> m_status;
-  Point_map m_point_pmap;
-  Normal_map m_normal_pmap;
+  Point_map m_point_map;
+  Normal_map m_normal_map;
     
   std::vector<boost::shared_ptr<Plane_shape> > m_planes;
   std::vector<Edge> m_edges;
@@ -185,16 +185,19 @@ public:
   */
   Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
                             Input_iterator end, ///< past-the-end iterator over the input points.
+                            Point_map point_map,
+                            Normal_map normal_map,
                             const Shape_detection_3::Efficient_RANSAC<Traits>&
                             shape_detection, ///< shape detection object
                             double epsilon, ///< size parameter
                             double attraction_factor = 3.) ///< attraction factor
-    : m_traits (shape_detection.traits())
+    : m_traits (shape_detection.traits()),
+      m_point_map(point_map), m_normal_map (normal_map)
   {
     for (Input_iterator it = begin; it != end; ++ it)
       {
-        m_points.push_back (get(m_point_pmap, *it));
-        m_normals.push_back (get(m_normal_pmap, *it));
+        m_points.push_back (get(m_point_map, *it));
+        m_normals.push_back (get(m_normal_map, *it));
       }
       
     m_indices = std::vector<std::size_t> (m_points.size (), (std::numeric_limits<std::size_t>::max)());
@@ -1398,8 +1401,36 @@ private:
 /// @note If no plane is found in the shape detection object, the
 /// algorithm does nothing and the output points are the unaltered
 /// input points.
-template <typename OutputIterator,
-          typename InputIterator,
+///
+/// @note Both property maps can be omitted if the default constructors of these property maps can be safely used.
+template <typename InputIterator,
+          typename OutputIterator,
+          typename Traits
+>
+OutputIterator
+structure_point_set (InputIterator first,  ///< iterator over the first input point.
+                     InputIterator beyond, ///< past-the-end iterator over the input points.
+                     typename Traits::Point_map point_map, ///< property map: value_type of InputIterator -> Point_3. 
+                     typename Traits::Normal_map normal_map, ///< property map: value_type of InputIterator -> Vector_3.
+                     OutputIterator output, ///< output iterator where output points are written
+                     Shape_detection_3::Efficient_RANSAC<Traits>&
+                     shape_detection, ///< shape detection object
+                     double epsilon, ///< size parameter
+                     double attraction_factor = 3.) ///< attraction factor
+{
+  Point_set_with_structure<Traits> pss (first, beyond, point_map, normal_map,
+                                        shape_detection, epsilon, attraction_factor);
+
+  for (std::size_t i = 0; i < pss.size(); ++ i)
+    *(output ++) = pss[i];
+
+  return output;
+}
+
+
+/// \cond SKIP_IN_MANUAL
+template <typename InputIterator,
+          typename OutputIterator,
           typename Traits
 >
 OutputIterator
@@ -1411,14 +1442,15 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
                      double epsilon, ///< size parameter
                      double attraction_factor = 3.) ///< attraction factor
 {
-  Point_set_with_structure<Traits> pss (first, beyond, shape_detection, epsilon, attraction_factor);
-
-  for (std::size_t i = 0; i < pss.size(); ++ i)
-    *(output ++) = pss[i];
-
-  return output;
+  return structure_point_set (first, beyond,
+                              Traits::Point_map(),
+                              Traits::Normal_map(),
+                              output,
+                              shape_detection,
+                              epsilon,
+                              attraction_factor);
 }
-
+/// \endcond
 
 
 
