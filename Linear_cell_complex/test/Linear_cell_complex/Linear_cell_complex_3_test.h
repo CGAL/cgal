@@ -865,21 +865,21 @@ bool test_LCC_3()
   {
     trace_test_begin();
     CGAL::Polyhedron_3<typename LCC::Traits> P;
-    std::ifstream in("data/armadillo.off");
+    std::ifstream in("data/head.off");
     if ( in.fail() )
     {
-      std::cout<<"Error: impossible to open 'data/armadillo.off'"<<std::endl;
+      std::cout<<"Error: impossible to open 'data/head.off'"<<std::endl;
       return false;
     }
     in >> P;
     CGAL::import_from_polyhedron_3<LCC>(lcc,P);
-    if ( !check_number_of_cells_3(lcc, 26002, 78000, 52000, 1, 1) )
+    if ( !check_number_of_cells_3(lcc, 1487, 4406, 2918, 1, 1) )
       return false;
 
-    CGAL::write_off(lcc, "copy-armadillo.off");
+    CGAL::write_off(lcc, "copy-head.off");
 
-    LCC lcc2; CGAL::load_off(lcc2, "copy-armadillo.off");
-    if ( !check_number_of_cells_3(lcc2, 26002, 78000, 52000, 1, 1) )
+    LCC lcc2; CGAL::load_off(lcc2, "copy-head.off");
+    if ( !check_number_of_cells_3(lcc2, 1487, 4406, 2918, 1, 1) )
       return false;
 
     if (!lcc.is_isomorphic_to(lcc2, false, false, true)) // dartinfo, attrib, point
@@ -912,21 +912,29 @@ bool test_LCC_3()
     if ( !check_number_of_cells_3(lcc, 795, 4162, 6734, 3367, 1) )
       return false;
 
+    std::ofstream os("save.map");
+    os<<lcc;
+    os.close();
+
+    LCC lcc2;
+    std::ifstream is("save.map");
+    assert(is.is_open());
+    is>>lcc2;
+
+    if (!lcc.is_isomorphic_to(lcc2))
     {
-      std::ofstream os("save.map");
-      os<<lcc;
-      os.close();
+      assert(false);
+      return false;
+    }
 
-      LCC lcc2;
-      std::ifstream is("save.map");
-      assert(is.is_open());
-      is>>lcc2;
-
-      if (!lcc.is_isomorphic_to(lcc2))
-      {
-        assert(false);
-        return false;
-      }
+    // dual o dual is isomorphic to the initial map
+    lcc2.dual_points_at_barycenter(lcc);
+    LCC lcc3;
+    lcc3.dual_points_at_barycenter(lcc2);
+    if (!lcc3.is_isomorphic_to(lcc, true, true, false))
+    {
+      assert(false);
+      return false;
     }
 
     lcc.clear();
