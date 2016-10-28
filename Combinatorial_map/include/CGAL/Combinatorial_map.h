@@ -1147,28 +1147,47 @@ namespace CGAL {
 
           link_beta_for_involution<i>(it, d);
 
-          // Special cases for 0 and 1
-          if ( !this->template is_free<1>(it) && !this->template is_free<i>(beta<1>(it)) )
-            link_beta<1>(beta<1,i>(it),d);
-          if ( !this->template is_free<0>(it) && !this->template is_free<i>(beta<0>(it)) )
-            link_beta<0>(beta<0,i>(it),d);
+          if (i>2)
+          {
+            // Special cases for 0 and 1
+            if ( !this->template is_free<1>(it) &&
+                 !this->template is_free<i>(beta<1>(it)) )
+              link_beta<1>(beta<1,i>(it),d);
+            if ( !this->template is_free<0>(it) &&
+                 !this->template is_free<i>(beta<0>(it)) )
+              link_beta<0>(beta<0,i>(it),d);
+          }
+
           // General case for 2...dimension
           for ( unsigned int j=2; j<=dimension; ++j)
           {
             if ( j+1!=i && j!=i && j!=i+1 &&
-                 !is_free(it,j) && !this->template is_free<i>(beta(it, j)) )
+                 !is_free(it, j) && !this->template is_free<i>(beta(it, j)) )
             {
               basic_link_beta_for_involution(beta(it, j, i), d, j);
             }
           }
 
-          d2 = it;
-          while (d2 != null_dart_handle && !this->template is_free<i-1>(d2))
-          { d2 = beta<i-1, i>(d2); }
-          if (d2 != null_dart_handle)
+          d2 = beta<i-1>(it);
+          while (d2!=null_dart_handle &&
+                 !this->template is_free<i-1>(beta<i>(d2)))
+          { d2 = beta<i, i-1>(d2); }
+          if (d2!=null_dart_handle && !this->template is_free<i>(d2))
           {
-            if (i==2) basic_link_beta<1>(d2, d);
-            else basic_link_beta_for_involution<i-1>(d2, d);
+            if (i==2) basic_link_beta<1>(beta<2>(d2), d);
+            else basic_link_beta_for_involution<i-1>(beta<i>(d2), d);
+          }
+
+          if (i==2) // We perhaps need also to link beta0
+          {
+            d2 = beta<0>(it);
+            while (d2!=null_dart_handle &&
+                   !this->template is_free<0>(beta<2>(d2)))
+            { d2 = beta<2, 0>(d2); }
+            if (d2!=null_dart_handle && !this->template is_free<2>(d2))
+            {
+              basic_link_beta<0>(beta<2>(d2), d);
+            }
           }
         }
       }
@@ -1205,8 +1224,8 @@ namespace CGAL {
               (!is_free(it, 1) && beta(it, 1, 0)!=it ))
           {
             std::cerr << "Map not valid: beta(0) "
-              "is not the inverse of beta(1) for "
-                      <<&(*it) << std::endl;
+              "is not the inverse of beta(1) for dart "
+                      <<darts().index(it) << std::endl;
             valid = false;
           }
 
@@ -1215,8 +1234,8 @@ namespace CGAL {
             if (!is_free(it, i) && beta(it, i, i)!=it)
             {
               std::cerr << "Map not valid: beta(" << i
-                        << ") is not an involution for "
-                        <<&(*it) << std::endl;
+                        << ") is not an involution for dart "
+                        <<darts().index(it)<< std::endl;
               valid = false;
             }
 
@@ -1228,8 +1247,8 @@ namespace CGAL {
                   (!is_free(it, i) && beta(it, 0, i)!=beta(it, i, 1)))
               {
                 std::cerr << "Map not valid: beta(0) o beta(" << i
-                          << ") is not an involution for "
-                          <<&(*it) << std::endl;
+                          << ") is not an involution for dart "
+                          <<darts().index(it)<< std::endl;
                 valid = false;
               }
           }
@@ -1240,8 +1259,8 @@ namespace CGAL {
                   (!is_free(it, i) && beta(it, 1, i)!=beta(it, i, 0)))
               {
                 std::cerr << "Map not valid: beta(1) o beta(" << i
-                          << ") is not an involution for "
-                          <<&(*it)<< std::endl;
+                          << ") is not an involution for dart "
+                          <<darts().index(it)<< std::endl;
                 valid = false;
               }
           }
@@ -1257,8 +1276,8 @@ namespace CGAL {
                 {
                   std::cerr << "Map not valid: beta(" << i
                             << ") o beta(" << j
-                            << ") is not an involution for "
-                            << &(*it)<< std::endl;
+                            << ") is not an involution for dart "
+                            << darts().index(it)<< std::endl;
                   valid = false;
                 }
             }
@@ -4818,9 +4837,10 @@ namespace CGAL {
       }
 
       // Make copies of the new facet for dimension >=4
+      assert(!is_free(first, 2));
       for ( unsigned int dim=4; dim<=dimension; ++dim )
       {
-        if ( !is_free(first, dim) )
+        if ( !is_free(beta(first, 2), dim) )
         {
           Dart_handle first2 = null_handle;
           prec = null_handle;
@@ -4829,9 +4849,6 @@ namespace CGAL {
           {
             d = create_dart();
 
-            it0=beta(it, dim); // Required because
-            //  Group_attribute_functor_of_dart takes references in parameter
-          
             basic_link_beta_for_involution(it, d, dim);
             if (withBeta3)
             {
@@ -4840,11 +4857,12 @@ namespace CGAL {
               basic_link_beta_for_involution(this->template beta<3>(it), dd, dim);
               this->template basic_link_beta_for_involution<3>(d, dd);
 
-              if ( !this->template is_free<2>(it) )
-                basic_link_beta_for_involution<2>(beta(it0, 2), dd);
+              if (!this->template is_free<2>(this->template beta<3>(it)))
+                basic_link_beta_for_involution<2>(beta(it, 3, 2, dim), dd);
             }
 
-            this->template basic_link_beta_for_involution<2>(it0, d);
+            assert(!is_free(it, 2));
+            this->template basic_link_beta_for_involution<2>(beta(it, 2, dim), d);
 
             if ( prec!=null_handle )
             {
@@ -4854,7 +4872,10 @@ namespace CGAL {
                 basic_link_beta_1(this->template beta<3>(prec), dd);
               }
             }
-            else first2 = prec;
+            else first2 = d;
+
+            it0=beta(it, 2, dim); // Required because
+            //  Group_attribute_functor_of_dart takes references in parameter
 
             Helper::template Foreach_enabled_attributes_except
                 <internal::Group_attribute_functor_of_dart<Self, 2>, 2>::
