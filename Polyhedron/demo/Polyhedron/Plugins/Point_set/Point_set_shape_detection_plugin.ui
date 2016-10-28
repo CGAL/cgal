@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>369</width>
-    <height>317</height>
+    <width>444</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
         <string>Cylinder</string>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -217,7 +217,14 @@
       <string>Regularize Planes</string>
      </property>
      <property name="checked">
-      <bool>true</bool>
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="m_generate_structured">
+     <property name="text">
+      <string>Generate structured point cloud</string>
      </property>
     </widget>
    </item>
