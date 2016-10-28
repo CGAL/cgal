@@ -1,3 +1,22 @@
+// Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//
 #ifndef GMAP_TEST_INSERTIONS_H
 #define GMAP_TEST_INSERTIONS_H
 
@@ -271,7 +290,7 @@ bool test_face_insertion(GMAP& gmap)
   d1 = gmap2.make_combinatorial_hexahedron();
   d2 = gmap2.make_combinatorial_hexahedron();
   gmap2.template sew<3>(d1,d2);
-  if ( !gmap.is_isomorphic_to(gmap2) )
+  if ( !gmap.is_isomorphic_to(gmap2, false, false, false) )
   {
     std::cout<<"Error: gmap and gmap2 are not isomorphic (after insertion/removal).\n";
     assert(false);
