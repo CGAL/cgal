@@ -64,9 +64,13 @@ namespace CGAL {
 
         if (prev != LCC::null_handle) alcc.set_next(prev, d);
         else firstFacet = d;
-        it = TC.find(j->opposite());
-        if (it != TC.end())
-          alcc.template set_opposite<2>(d, it->second);
+
+        if (!j->opposite()->is_border())
+        {
+          it = TC.find(j->opposite());
+          if (it != TC.end())
+            alcc.template set_opposite<2>(d, it->second);
+        }
         prev = d;
       }
       while (++j != i->facet_begin());
