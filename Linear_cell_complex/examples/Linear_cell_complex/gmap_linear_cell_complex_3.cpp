@@ -1,5 +1,4 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
-#include <CGAL/Linear_cell_complex_operations.h>
 #include <iostream>
 #include <algorithm>
 
