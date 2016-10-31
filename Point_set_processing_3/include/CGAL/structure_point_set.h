@@ -74,8 +74,6 @@ public:
   typedef Point_set_with_structure<Traits> Self;
 
   typedef typename Traits::FT FT;
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::Vector_3 Vector;
   typedef typename Traits::Segment_3 Segment;
   typedef typename Traits::Line_3 Line;
   typedef typename Traits::Plane_3 Plane;
@@ -88,10 +86,14 @@ public:
 
   typedef typename Input_range::iterator Input_iterator;
 
-  typedef Shape_detection_3::Shape_base<Traits> Shape; 
-  typedef Shape_detection_3::Plane<Traits> Plane_shape;
+  typedef Shape_detection_3::Shape_base<Traits> Shape;
 
   enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
+  /// \endcond
+
+  typedef typename Traits::Point_3 Point;
+  typedef typename Traits::Vector_3 Vector;
+  typedef Shape_detection_3::Plane<Traits> Plane_shape;
 
   /// \endcond
 
@@ -182,11 +184,14 @@ public:
   /*!
     Constructs a structured point set based on the input points and the
     associated shape detection object.
+
+    \note Both property maps can be omitted if the default constructors of these property maps can be safely used.
+
   */
   Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
                             Input_iterator end, ///< past-the-end iterator over the input points.
-                            Point_map point_map,
-                            Normal_map normal_map,
+                            Point_map point_map, ///< property map: value_type of InputIterator -> Point_3. 
+                            Normal_map normal_map, ///< property map: value_type of InputIterator -> Vector_3. 
                             const Shape_detection_3::Efficient_RANSAC<Traits>&
                             shape_detection, ///< shape detection object
                             double epsilon, ///< size parameter
@@ -223,6 +228,18 @@ public:
     run (epsilon, attraction_factor);
     clean ();
   }
+
+  /// \cond SKIP_IN_MANUAL
+  Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
+                            Input_iterator end, ///< past-the-end iterator over the input points.
+                            const Shape_detection_3::Efficient_RANSAC<Traits>&
+                            shape_detection, ///< shape detection object
+                            double epsilon, ///< size parameter
+                            double attraction_factor = 3.) ///< attraction factor
+    : Point_set_with_structure (begin, end, Point_map(), Normal_map(), shape_detection, epsilon, attraction_factor)
+  {
+  }
+  /// \endcond
 
   /// \cond SKIP_IN_MANUAL    
   virtual ~Point_set_with_structure ()
