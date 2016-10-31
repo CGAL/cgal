@@ -6,29 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>120</height>
+    <width>428</width>
+    <height>147</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Outlier Removal</string>
   </property>
   <layout class="QGridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Removed Percentage:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Neighbors</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
+   <item row="4" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -38,7 +24,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Neighbors:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
     <widget class="QSpinBox" name="m_inputNbNeighbors">
      <property name="minimum">
       <number>6</number>
@@ -51,13 +44,20 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Maximum Number of Removed Points</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
     <widget class="QDoubleSpinBox" name="m_inputPercentage">
      <property name="suffix">
       <string> %</string>
      </property>
      <property name="minimum">
-      <double>0.010000000000000</double>
+      <double>0.000000000000000</double>
      </property>
      <property name="maximum">
       <double>100.000000000000000</double>
@@ -66,11 +66,11 @@
       <double>0.100000000000000</double>
      </property>
      <property name="value">
-      <double>5.000000000000000</double>
+      <double>100.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="5" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -82,6 +82,29 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Distance threshold:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QDoubleSpinBox" name="m_distanceThreshold">
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100000.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.500000000000000</double>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
