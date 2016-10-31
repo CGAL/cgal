@@ -42,7 +42,7 @@ int main(int argc, char*argv[])
     = CGAL::remove_outliers(points.begin(), points.end(),
                             CGAL::Identity_property_map<Point>(),
                             nb_neighbors,
-                            0.,                    // No minimum percentage to remove
+                            100.,                  // No limit on the number of outliers to remove
                             2. * average_spacing); // Point with distance above 2*average_spacing are considered outliers
 
 
