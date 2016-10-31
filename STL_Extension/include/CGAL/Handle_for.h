@@ -159,6 +159,8 @@ public:
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
     {
+        CGAL_assume (h.ptr_->count > 0);
+        CGAL_assume (ptr_->count > 0);
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
         ptr_->count.fetch_add(1, CGAL::cpp11::memory_order_relaxed);
 #else // not CGAL::cpp11::atomic
@@ -169,6 +171,7 @@ public:
     Handle_for&
     operator=(const Handle_for& h)
     {
+        CGAL_assume (h.ptr_->count > 0);
         Handle_for tmp = h;
         swap(tmp);
         return *this;
