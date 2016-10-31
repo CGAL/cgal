@@ -1443,8 +1443,8 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
                      double attraction_factor = 3.) ///< attraction factor
 {
   return structure_point_set (first, beyond,
-                              Traits::Point_map(),
-                              Traits::Normal_map(),
+                              typename Traits::Point_map(),
+                              typename Traits::Normal_map(),
                               output,
                               shape_detection,
                               epsilon,
