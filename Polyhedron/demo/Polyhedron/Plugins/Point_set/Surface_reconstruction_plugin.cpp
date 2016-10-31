@@ -1039,7 +1039,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
 
       local_timer.start();
       Shape_detection shape_detection;
-      shape_detection.set_input(*points);
+      shape_detection.set_input(*points, points->point_map(), points->normal_map());
 
       shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
 
@@ -1061,10 +1061,12 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
 
       local_timer.start();
       Structuring structuring (points->begin (), points->end (),
+                               points->point_map(), points->normal_map(),
                                shape_detection,
                                op.cluster_epsilon);
 
       Scene_points_with_normal_item *structured = new Scene_points_with_normal_item;
+      structured->point_set()->add_normal_map();
       for (std::size_t i = 0; i < structuring.size(); ++ i)
         structured->point_set()->insert (structuring.point(i), structuring.normal(i));
 
