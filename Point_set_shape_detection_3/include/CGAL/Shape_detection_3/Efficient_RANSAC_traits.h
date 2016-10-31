@@ -178,7 +178,9 @@ namespace CGAL {
     Collinear_2 collinear_2_object() const
     { return m_gt.collinear_2_object(); }
 
+    ///
     typedef typename Gt::Intersect_3 Intersect_3;
+    ///
     Intersect_3 intersection_3_object() const
     { return m_gt.intersection_3_object(); }
     

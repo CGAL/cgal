@@ -63,7 +63,11 @@ set. Each output point is assigned to one, two or more primitives
 (depending wether it belongs to a planar section, an edge or a if it
 is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 
-\tparam Traits a model of `EfficientRANSACTraits`
+\tparam Traits a model of `EfficientRANSACTraits` that must provide in
+addition a function `Intersect_3 intersection_3_object() const` and a
+functor `Intersect_3` with:
+- `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
+- `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 
 */
 template <typename Traits>
@@ -1447,7 +1451,11 @@ private:
 ///
 /// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
 ///
-/// @tparam Traits A model of `EfficientRANSACTraits`
+/// @tparam Traits a model of `EfficientRANSACTraits` that must provide in
+/// addition a function `Intersect_3 intersection_3_object() const` and a
+/// functor `Intersect_3` with:
+/// - `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
+/// - `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 ///
 /// @tparam OutputIterator Type of the output iterator. The type of the objects
 /// put in it is `std::pair<Traits::Point_3, Traits::Vector_3>`.  Note that the
