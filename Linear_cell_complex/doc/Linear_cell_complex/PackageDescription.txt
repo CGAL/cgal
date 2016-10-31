@@ -29,7 +29,7 @@
 \cgalPkgPicture{lcc_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
-\cgalPkgDesc{This package implements linear cell complexes, objects in <I>d</I>-dimension with linear geometry. The combinatorial part of objects is described \tred{either by a combinatorial or a generalized map}, representing all the cells of the object plus the incidence and adjacency relations between cells. Geometry is added to \tred{the combinatorial data-structure} simply by associating a point to each vertex of the map. Taking a 2D combinatorial map, and using 3D points, gives a linear cell complex equivalent to a <I>Polyhedron_3</I>.}
+\cgalPkgDesc{This package implements linear cell complexes, objects in <I>d</I>-dimension with linear geometry. The combinatorial part of objects is described either by a combinatorial or a generalized map, representing all the cells of the object plus the incidence and adjacency relations between cells. Geometry is added to the combinatorial data-structure simply by associating a point to each vertex of the map. Taking a 2D combinatorial map, and using 3D points, gives a linear cell complex equivalent to a <I>Polyhedron_3</I>.}
 \cgalPkgManuals{Chapter_Linear_Cell_Complex,PkgLinearCellComplex}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
