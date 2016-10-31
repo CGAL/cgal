@@ -1,3 +1,6 @@
+#define CGAL_NO_DEPRECATION_WARNINGS 1
+#define CGAL_CMAP_DART_DEPRECATED 1
+
 #include "Messages_interface.h"
 #include <QApplication>
 #include <QMainWindow>

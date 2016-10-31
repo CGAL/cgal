@@ -21,9 +21,6 @@
 #ifndef CGAL_INTERNAL_COMBINATORIAL_MAP_FOR_COREFINEMENT_H
 #define CGAL_INTERNAL_COMBINATORIAL_MAP_FOR_COREFINEMENT_H
 
-#define CGAL_CMAP_DART_DEPRECATED 1
-#define CGAL_NO_DEPRECATION_WARNINGS 1
-
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Cell_attribute.h>
@@ -113,5 +110,4 @@ public:
 
 } } //namespace CGAL::internal_IOP
 
-#undef CGAL_NO_DEPRECATION_WARNINGS
 #endif //CGAL_INTERNAL_COMBINATORIAL_MAP_FOR_COREFINEMENT_H
