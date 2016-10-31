@@ -58,16 +58,18 @@ class Handle_for
     struct RefCounted {
         T t;
 #if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
-        CGAL::cpp11::atomic<unsigned int> count;
+        typedef CGAL::cpp11::atomic<unsigned int> Counter;
 #elif CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        boost::detail::atomic_count count;
+        typedef boost::detail::atomic_count Counter;
 #else // no atomic
-        unsigned int count;
+        typedef unsigned int Counter;
 #endif // no atomic
+        Counter count;
     };
 
     typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
     typedef typename Allocator::pointer                         pointer;
+    typedef typename RefCounted::Counter Counter;
 
     static Allocator   allocator;
     pointer            ptr_;
@@ -82,11 +84,7 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(); // we get the warning here
-#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        new (&(p->count)) boost::detail::atomic_count(1);
-#else // not Boost atomic counter
-        p->count = 1;
-#endif // not Boost atomic counter
+        new (&(p->count)) Counter(1);
         ptr_ = p;
     }
 
@@ -94,11 +92,7 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t);
-#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        new (&(p->count)) boost::detail::atomic_count(1);
-#else // not Boost atomic counter
-        p->count = 1;
-#endif // not Boost atomic counter
+        new (&(p->count)) Counter(1);
         ptr_ = p;
     }
 
@@ -107,11 +101,7 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(std::move(t));
-#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        new (&(p->count)) boost::detail::atomic_count(1);
-#else // not Boost atomic counter
-        p->count = 1;
-#endif // not Boost atomic counter
+        new (&(p->count)) Counter(1);
         ptr_ = p;
     }
 #endif
@@ -134,11 +124,7 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
-#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        new (&(p->count)) boost::detail::atomic_count(1);
-#else // not Boost atomic counter
-        p->count = 1;
-#endif // not Boost atomic counter
+        new (&(p->count)) Counter(1);
         ptr_ = p;
     }
 #else
@@ -147,11 +133,7 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t1, t2);
-#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        new (&(p->count)) boost::detail::atomic_count(1);
-#else // not Boost atomic counter
-        p->count = 1;
-#endif // not Boost atomic counter
+        new (&(p->count)) Counter(1);
         ptr_ = p;
     }
 
@@ -160,11 +142,7 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t1, t2, t3);
-#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        new (&(p->count)) boost::detail::atomic_count(1);
-#else // not Boost atomic counter
-        p->count = 1;
-#endif // not Boost atomic counter
+        new (&(p->count)) Counter(1);
         ptr_ = p;
     }
 
@@ -173,11 +151,7 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t1, t2, t3, t4);
-#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
-        new (&(p->count)) boost::detail::atomic_count(1);
-#else // not Boost atomic counter
-        p->count = 1;
-#endif // not Boost atomic counter
+        new (&(p->count)) Counter(1);
         ptr_ = p;
     }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
