@@ -29,6 +29,8 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
 
+#include <CGAL/Kernel/global_functions_3.h>
+
 #include <vector>
 #include <exception>
 #include <boost/foreach.hpp>
