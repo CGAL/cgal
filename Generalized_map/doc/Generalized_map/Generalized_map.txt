@@ -10,7 +10,7 @@ namespace CGAL {
 
 \section Generalized_mapIntroduction Introduction
 
-A <I>d</I>-dimensional generalized map is a data structure representing an orientable or non-orientable subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships. 
+A <I>d</I>-dimensional generalized map is a data structure representing an orientable or non-orientable subdivided <I>d</I>-dimensional object obtained by taking <I>d</I>D cells, and allowing to glue <I>d</I>D cells along <I>(d-1)</I>D cells. It provides a description of all the cells of the subdivision (for example vertices and edges), together with incidence and adjacency relationships.
 
 This package is a generalization of the \ref ChapterCombinatorialMap "combinatorial maps" data structure (which allows to describe only orientable objects) in order to be able to describe also non-orientable objects such as a Möbius strip (\cgalFigureRef{fig_gmap_non_orientable_objects} Left) or a Klein bottle (\cgalFigureRef{fig_gmap_non_orientable_objects} Right).
 
@@ -61,7 +61,7 @@ In this section, we describe <I>d</I>D generalized maps in terms of data structu
 \subsection ssecgenmapanddarts Generalized Map and Darts
 
 A <I>d</I>D generalized map is a set of darts <I>D</I>. A dart <I>d0</I> is an element that can be <I>linked</I> with <I>d</I>+1 darts by pointers called \f$ \alpha_i\f$, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>. %Dart <I>d0</I> is said <I>i-free</I> when \f$ \alpha_i\f$(<I>d0</I>)=<I>d0</I>. Each \f$ \alpha_i\f$ is its own inverse, i.e. \f$ \alpha_i\f$(\f$
-\alpha_i\f$(<I>d0</I>))=<I>d0</I>. 
+\alpha_i\f$(<I>d0</I>))=<I>d0</I>.
 
 A generalized map is <I>without i-boundary</I> if there is no <I>i</I>-free dart, and it is <I>without boundary</I> if it is without <I>i</I>-boundary for all dimensions 1 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>.
 
@@ -79,7 +79,7 @@ The first important property of a generalized map is that each dart belongs to a
 
 The second important property is that cells of a generalized map correspond to specific <I>orbits</I>. Given a set  <I>S</I>\f$ \subseteq\f${\f$ \alpha_1\f$,...,\f$ \alpha_d\f$} and a dart <I>d0</I>, the <I>orbit</I> \f$ \langle{}\f$ <I>S</I>\f$ \rangle{}\f$(<I>d0</I>) is the set of darts that can be reached from <I>d0</I> by following any combination of any \f$ \alpha_i\f$'s in <I>S</I> (to simplify notations, we can use for example \f$ \langle{}\f$\f$ \alpha_1\f$,\f$ \alpha_4\f$\f$\rangle{}\f$(<I>d0</I>) to denote \f$ \langle{}\f$ <I>S</I>\f$ \rangle{}\f$(<I>d0</I>) with <I>S</I>={\f$ \alpha_1\f$,\f$ \alpha_4\f$}).
 
-Given a dart <I>d0</I>, in general, \f$ \alpha_i\f$(<I>d0</I>) (with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>) belongs to the same cells as <I>d0</I>, only the <I>i</I>-cell is different. There are two exceptions: 
+Given a dart <I>d0</I>, in general, \f$ \alpha_i\f$(<I>d0</I>) (with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>) belongs to the same cells as <I>d0</I>, only the <I>i</I>-cell is different. There are two exceptions:
 <ol type="1">
 <li>if <I>d0</I> is <I>i</I>-free, then \f$ \alpha_i\f$(<I>d0</I>)=<I>d0</I>, the <I>i</I>-cell is not different;</li>
 <li>if \f$ \alpha_i\f$(<I>d0</I>) belongs to the same <I>i</I>-cell as <I>d0</I> (case of multi-incidence). For example if an edge is an isolated loop, it is incident twice to the same vertex, then given a dart <I>d0</I> belonging to this edge, \f$ \alpha_1\f$(<I>d0</I>) goes to the next edge, which is in fact the same edge.</li>
@@ -309,7 +309,7 @@ The \link GeneralizedMap::link_alpha `link_alpha`\endlink and \link GeneralizedM
 \cgalAdvancedEnd
 
 
-Linking two darts <I>d1</I> and <I>d2</I> by \f$ \alpha_i\f$, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I> and <I>d1</I> \f$ \neq \f$ <I>d2</I>, consists in modifying two \f$ \alpha_i\f$ pointers such that \f$ \alpha_i\f$(<I>d1</I>)=<I>d2</I> and \f$ \alpha_i\f$(<I>d2</I>)=<I>d1</I>. 
+Linking two darts <I>d1</I> and <I>d2</I> by \f$ \alpha_i\f$, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I> and <I>d1</I> \f$ \neq \f$ <I>d2</I>, consists in modifying two \f$ \alpha_i\f$ pointers such that \f$ \alpha_i\f$(<I>d1</I>)=<I>d2</I> and \f$ \alpha_i\f$(<I>d2</I>)=<I>d1</I>.
 
 Reciprocally, unlinking a given dart <I>d0</I> by \f$ \alpha_i\f$, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>d</I>, consists in modifying two \f$ \alpha_i\f$ pointers such that \f$ \alpha_i\f$(\f$ \alpha_i\f$(<I>d0</I>))=\f$ \alpha_i\f$(<I>d0</I>) and \f$ \alpha_i\f$(<I>d0</I>)=<I>d0</I>. Note that is it possible to unlink a given dart for \f$ \alpha_i\f$ only if it is not <I>i</I>-free.
 
@@ -480,8 +480,8 @@ Functors `Sum_functor` and `Divide_by_two_functor` define a custom behavior: whe
 
 The output is:
 \verbatim
-20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13; 
-2; 7; 7; 7; 7; 7; 10; 13; 13; 13; 13; 13; 5; 2; 
+20; 7; 7; 7; 7; 7; 13; 13; 13; 13; 13;
+2; 7; 7; 7; 7; 7; 10; 13; 13; 13; 13; 13; 5; 2;
 #Darts=128, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, orientable=true, valid=1
 \endverbatim
 
