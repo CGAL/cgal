@@ -50,7 +50,9 @@
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
 
-#ifdef CGAL_HAS_THREADS
+#if defined(CGAL_HAS_THREADS) && \
+      ! CGAL_HANDLE_FOR_DO_NOT_USE_ATOMIC &&                        \
+      ! CGAL_LAZY_DO_NOT_USE_MUTEX
 #  define CGAL_LAZY_USE_MUTEX 1
 #endif
 
