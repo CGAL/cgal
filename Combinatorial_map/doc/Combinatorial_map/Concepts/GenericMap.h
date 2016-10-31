@@ -40,17 +40,17 @@ GenericMap(const Map& bmap);
 typedef unspecified_type Dart;
 
 /*!
-%Dart handle type. \tred{For each `Dart_handle dh`, the type of `*dh` must be `Dart`.}
+%Dart handle type. For each `Dart_handle dh`, the type of `*dh` must be `Dart`.
 */
 typedef unspecified_type Dart_handle;
 
 /*!
-%Dart const handle type. \tred{For each `Dart_const_handle dh`, the type of `*dh` must be `const Dart`.}
+%Dart const handle type. For each `Dart_const_handle dh`, the type of `*dh` must be `const Dart`.
 */
 typedef unspecified_type Dart_const_handle;
 
 /*!
-\tred{Information associated to each dart.}
+Information associated to each dart.
 */
 typedef unspecified_type Dart_info;
 
@@ -109,7 +109,7 @@ typedef unspecified_type Attributes;
   using Attribute_type = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes. \tred{For each `Attribute_handle<i>::%type ah`, the type of `*ah` must be `Attribute_type<i>::%type`.}
+  `Attribute_handle<i>::%type` is a handle to <I>i</I>-attributes. For each `Attribute_handle<i>::%type ah`, the type of `*ah` must be `Attribute_type<i>::%type`.
   \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.
@@ -118,7 +118,7 @@ typedef unspecified_type Attributes;
   using Attribute_handle = unspecified_type;
 
   /*!
-  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes. \tred{For each `Attribute_const_handle<i>::%type ah`, the type of `*ah` must be `const Attribute_type<i>::%type`.}
+  `Attribute_handle<i>::%type` is a const handle to <I>i</I>-attributes. For each `Attribute_const_handle<i>::%type ah`, the type of `*ah` must be `const Attribute_type<i>::%type`.
   \pre 0\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink
        and <I>i</I>-attributes are non void.
   \note It can be implemented using a nested template class.
@@ -378,13 +378,13 @@ std::ostream& display_characteristics(std::ostream & os) const;
 ///
 
 /*!
-\tred{Returns the information associated to dart `*dh`.
-\pre `Dart_info` is not `void`.}
+Returns the information associated to dart `*dh`.
+\pre `Dart_info` is not `void`.
 */
 Dart_info& info(Dart_handle dh);
 /*!  
-\tred{Returns the information associated to dart `*dh`, when the dart is const.
-\pre `Dart_info` is not `void`.}
+Returns the information associated to dart `*dh`, when the dart is const.
+\pre `Dart_info` is not `void`.
 */
 const Dart_info& info(Dart_const_handle dh) const;
   

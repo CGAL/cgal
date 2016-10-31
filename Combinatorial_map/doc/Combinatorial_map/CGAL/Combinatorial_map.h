@@ -60,12 +60,12 @@ static const unsigned int dimension = d;
 typedef Combinatorial_map<d,Items,Alloc> Self;
 
 /*!
-\tred{Information associated with darts. Equal to `void` if `Dart_info` is not defined in the items class.}
+Information associated with darts. Equal to `void` if `Dart_info` is not defined in the items class.
 */
 typedef Items::Dart_wrapper<Self>::Dart_info Dart_info;
 
 /*!
-\tred{The tuple of cell attributes. Equal to `CGAL::cpp11::tuple<>` if `Attributes` is not defined in the items class.}
+The tuple of cell attributes. Equal to `CGAL::cpp11::tuple<>` if `Attributes` is not defined in the items class.
 */
 typedef Items::Dart_wrapper<Self>::Attributes Attributes;
 
