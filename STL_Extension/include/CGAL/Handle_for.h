@@ -37,7 +37,7 @@
 #  pragma warning(disable:4345) // Avoid warning  http://msdn.microsoft.com/en-us/library/wewb47ee(VS.80).aspx
 #endif
 
-#ifdef CGAL_HAS_THREADS
+#if defined(CGAL_HAS_THREADS) && ! CGAL_HANDLE_FOR_DO_NOT_USE_ATOMIC
 #  define CGAL_HANDLE_FOR_USE_ATOMIC 1
 #endif // CGAL_HAS_THREADS
 
