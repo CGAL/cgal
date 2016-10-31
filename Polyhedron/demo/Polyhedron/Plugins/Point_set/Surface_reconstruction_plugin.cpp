@@ -203,7 +203,7 @@ namespace SurfaceReconstruction
     
     std::vector<Point> subset;
     for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
-      if (rand() / (double)RAND_MAX < ratio_kept)
+      if (CGAL::get_default_random().get_double() < ratio_kept)
     	subset.push_back (points.point(*it));
     
     std::vector<unsigned int> scales;
@@ -274,7 +274,7 @@ namespace SurfaceReconstruction
     
     std::vector<Point> subset;
     for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
-      if (rand() / (double)RAND_MAX < ratio_kept)
+      if (CGAL::get_default_random().get_double() < ratio_kept)
     	subset.push_back (points.point(*it));
     
     std::vector<unsigned int> scales;
@@ -994,8 +994,6 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
 (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
-  CGAL::Random rand(time(0));
-  
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* point_set_item =

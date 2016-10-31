@@ -25,6 +25,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
+#include <CGAL/intersections.h>
 
 #include <CGAL/centroid.h>
 
@@ -68,9 +69,6 @@ is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 template <typename Traits>
 class Point_set_with_structure
 {
-public:
-
-  /// \cond SKIP_IN_MANUAL
   typedef Point_set_with_structure<Traits> Self;
 
   typedef typename Traits::FT FT;
@@ -80,22 +78,21 @@ public:
 
   typedef typename Traits::Point_2 Point_2;
 
-  typedef typename Traits::Point_map Point_map;
-  typedef typename Traits::Normal_map Normal_map;
-  typedef typename Traits::Input_range Input_range;
-
-  typedef typename Input_range::iterator Input_iterator;
 
   typedef Shape_detection_3::Shape_base<Traits> Shape;
 
   enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
-  /// \endcond
+
+public:
+
 
   typedef typename Traits::Point_3 Point;
   typedef typename Traits::Vector_3 Vector;
+  typedef typename Traits::Point_map Point_map;
+  typedef typename Traits::Normal_map Normal_map;
+  typedef typename Traits::Input_range Input_range;
+  typedef typename Input_range::iterator Input_iterator;
   typedef Shape_detection_3::Plane<Traits> Plane_shape;
-
-  /// \endcond
 
   /// Tag classifying the coherence of a triplet of points with
   /// respect to an inferred surface
@@ -108,7 +105,6 @@ public:
       PLANAR = 3       ///< Structure coherent, facet inside a planar section
     };
   
-  /// \cond SKIP_IN_MANUAL
 private:
 
   class My_point_property_map{
@@ -124,19 +120,6 @@ private:
     { return ppmap[i]; }
   };
 
-  struct On_the_fly_pair{
-    const std::vector<Point>& points;
-    typedef std::pair<Point, std::size_t> result_type;
-
-    On_the_fly_pair(const std::vector<Point>& points) : points(points) {}
-  
-    result_type
-    operator()(std::size_t i) const
-    {
-      return result_type(points[i],i);
-    }
-  };
-    
   struct Edge
   {
     CGAL::cpp11::array<std::size_t, 2> planes;
@@ -179,7 +162,7 @@ private:
   std::vector<Corner> m_corners;
     
 public:
-  /// \endcond
+
 
   /*!
     Constructs a structured point set based on the input points and the
@@ -199,14 +182,16 @@ public:
     : m_traits (shape_detection.traits()),
       m_point_map(point_map), m_normal_map (normal_map)
   {
+    m_points.reserve(end - begin);
+    m_normals.reserve(end - begin);
     for (Input_iterator it = begin; it != end; ++ it)
       {
         m_points.push_back (get(m_point_map, *it));
         m_normals.push_back (get(m_normal_map, *it));
       }
       
-    m_indices = std::vector<std::size_t> (m_points.size (), (std::numeric_limits<std::size_t>::max)());
-    m_status = std::vector<Point_status> (m_points.size (), POINT);
+    m_indices.resize (m_points.size (), (std::numeric_limits<std::size_t>::max)());
+    m_status.resize (m_points.size (), POINT);
 
     BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
       {
@@ -241,13 +226,6 @@ public:
   }
   /// \endcond
 
-  /// \cond SKIP_IN_MANUAL    
-  virtual ~Point_set_with_structure ()
-  {
-  }
-  /// \endcond
-
-  
   std::size_t size () const { return m_points.size (); }
   std::pair<Point, Vector> operator[] (std::size_t i) const
   { return std::make_pair (m_points[i], m_normals[i]); }
@@ -290,7 +268,7 @@ public:
     `f` with respect to the underlying structure.
 
    */
-  Coherence_type facet_coherence (CGAL::cpp11::array<std::size_t, 3>& f) const
+  Coherence_type facet_coherence (const CGAL::cpp11::array<std::size_t, 3>& f) const
   {
     // O- FREEFORM CASE
     if (m_status[f[0]] == POINT &&
@@ -595,8 +573,8 @@ private:
 
         //creation of a 2D-grid with cell width = grid_length, and image structures
         CGAL::Bbox_2 box_2d = CGAL::bbox_2 (points_2d.begin(), points_2d.end());
-        std::size_t Nx = (std::size_t)((box_2d.xmax() - box_2d.xmin()) / grid_length) + 1;
-        std::size_t Ny = (std::size_t)((box_2d.ymax() - box_2d.ymin()) / grid_length) + 1;
+        std::size_t Nx = static_cast<std::size_t>((box_2d.xmax() - box_2d.xmin()) / grid_length) + 1;
+        std::size_t Ny = static_cast<std::size_t>((box_2d.ymax() - box_2d.ymin()) / grid_length) + 1;
           
         std::vector<std::vector<bool> > Mask (Nx, std::vector<bool> (Ny, false));
         std::vector<std::vector<bool> > Mask_border (Nx, std::vector<bool> (Ny, false));
@@ -606,8 +584,8 @@ private:
         //storage of the points in the 2D-grid "point_map"
         for (std::size_t i = 0; i < points_2d.size(); ++ i)
           {
-            std::size_t ind_x = (std::size_t)((points_2d[i].x() - box_2d.xmin()) / grid_length);
-            std::size_t ind_y = (std::size_t)((points_2d[i].y() - box_2d.ymin()) / grid_length);
+            std::size_t ind_x = static_cast<std::size_t>((points_2d[i].x() - box_2d.xmin()) / grid_length);
+            std::size_t ind_y = static_cast<std::size_t>((points_2d[i].y() - box_2d.ymin()) / grid_length);
             Mask[ind_x][ind_y] = true;
             point_map[ind_x][ind_y].push_back (m_planes[c]->indices_of_assigned_points ()[i]);
           }
@@ -715,11 +693,11 @@ private:
   void find_pairs_of_adjacent_primitives (double radius)
   {
     typedef typename Traits::Search_traits Search_traits_base;
-    typedef Search_traits_adapter <std::size_t, My_point_property_map, Search_traits_base> Search_traits;
+    typedef Search_traits_adapter <std::size_t, typename Pointer_property_map<Point>::type, Search_traits_base> Search_traits;
     typedef CGAL::Kd_tree<Search_traits> Tree;
     typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
 
-    My_point_property_map pmap (m_points);
+    typename Pointer_property_map<Point>::type pmap = make_property_map(m_points);
 
     Tree tree (boost::counting_iterator<std::size_t> (0),
                boost::counting_iterator<std::size_t> (m_points.size()),
@@ -772,9 +750,11 @@ private:
         double angle_A = std::acos (std::abs (plane1->plane_normal() * plane2->plane_normal()));
         double angle_B = CGAL_PI - angle_A;
 
-        CGAL::Object ob_temp = CGAL::intersection (static_cast<Plane>(*plane1),
-                                                   static_cast<Plane>(*plane2));
-        if (!assign (m_edges[i].support, ob_temp))
+        typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
+          result = CGAL::intersection(static_cast<Plane>(*plane1),
+                                      static_cast<Plane>(*plane2));
+
+        if (!result)
           {
 #ifdef CGAL_PSP3_VERBOSE
             std::cerr << "Warning: bad plane/plane intersection" << std::endl;
@@ -782,6 +762,16 @@ private:
             continue;
           }
 
+        if (const Line* l = boost::get<Line>(&*result))
+          m_edges[i].support = *l;
+        else
+          {
+#ifdef CGAL_PSP3_VERBOSE
+            std::cerr << "Warning: bad plane/plane intersection" << std::endl;
+#endif
+            continue;
+          }
+        
         Vector direction_p1 (0., 0., 0.);
         for (std::size_t k = 0; k < plane1->indices_of_assigned_points ().size(); ++ k)
           {
@@ -895,11 +885,11 @@ private:
               }
           }
 
-        //faire un partitionnement ds une image 1D en votant si
-        //a la fois au moins un point de plan1 et aussi de plan
-        //2 tombent dans une case (meme pas que pour les plans).
+        // make a partition in a 1D image by voting if at the same
+        // time at least one point of plane1 and one of point2 fall in
+        // the same cell (same step as for planes)
         Segment seg (Pmin,Pmax);
-        std::size_t number_of_division = (std::size_t)(std::sqrt (seg.squared_length ()) / d_DeltaEdge) + 1;
+        std::size_t number_of_division = static_cast<std::size_t>(std::sqrt (seg.squared_length ()) / d_DeltaEdge) + 1;
         std::vector<std::vector<std::size_t> > division_tab (number_of_division);
 
         for (std::size_t k = 0; k < intersection_points.size(); ++ k)
@@ -933,9 +923,9 @@ private:
                 continue;
               }
 
-            Point perfect (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 0.5) / (double)number_of_division,
-                           seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 0.5) / (double)number_of_division,
-                           seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 0.5) / (double)number_of_division);
+            Point perfect (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 0.5) / double(number_of_division),
+                           seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 0.5) / double(number_of_division),
+                           seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 0.5) / double(number_of_division));
 
             // keep closest point, replace it by perfect one and skip the others
             double dist_min = (std::numeric_limits<double>::max)();
@@ -972,9 +962,9 @@ private:
           {
             if (division_tab[j].empty () || division_tab[j+1].empty ())
               continue;
-            Point anchor (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 1) / (double)number_of_division,
-                          seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 1) / (double)number_of_division,
-                          seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 1) / (double)number_of_division);
+            Point anchor (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 1) / double(number_of_division),
+                          seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 1) / double(number_of_division),
+                          seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 1) / double(number_of_division));
               
             Plane ortho = seg.supporting_line().perpendicular_plane(anchor); 
 
@@ -990,58 +980,81 @@ private:
                   pts2.push_back (m_points[inde]);
               }
 
-            Line line_p1;
-            CGAL::Object ob_temp1 = CGAL::intersection (static_cast<Plane> (*plane1), ortho);
-            if (!assign(line_p1, ob_temp1))
+            typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
+              result = CGAL::intersection (static_cast<Plane> (*plane1), ortho);
+            if (result)
+              {
+                if (const Line* l = boost::get<Line>(&*result))
+                  {
+                    if (!(pts1.empty()))
+                      {
+                        Vector vecp1 = l->to_vector();
+                        vecp1 = vecp1/ std::sqrt (vecp1 * vecp1);
+                        Vector vtest1 (anchor, CGAL::centroid (pts1.begin (), pts1.end ()));
+                        if (vtest1 * vecp1<0)
+                          vecp1 = -vecp1;
+
+                        direction_p1 = direction_p1+vecp1;
+
+                        Point anchor1 = anchor + vecp1 * r_edge;
+                        m_points.push_back (anchor1);
+                        m_normals.push_back (m_planes[m_edges[i].planes[0]]->plane_normal());
+                        m_indices.push_back (m_edges[i].planes[0]);
+                        m_status.push_back (PLANE);
+                      }
+                  }
+                else
+                  {
+#ifdef CGAL_PSP3_VERBOSE
+                    std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
+#endif
+                  }
+              }
+            else
               {
 #ifdef CGAL_PSP3_VERBOSE
                 std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
 #endif
               }
-            else if (!(pts1.empty()))
+
+            
+            result = CGAL::intersection (static_cast<Plane> (*plane2),ortho);
+            if (result)
               {
-                Vector vecp1 = line_p1.to_vector();
-                vecp1 = vecp1/ std::sqrt (vecp1 * vecp1);
-                Vector vtest1 (anchor, CGAL::centroid (pts1.begin (), pts1.end ()));
-                if (vtest1 * vecp1<0)
-                  vecp1 = -vecp1;
+                if (const Line* l = boost::get<Line>(&*result))
+                  {
+                    if (!(pts2.empty()))
+                      {
+                        Vector vecp2 = l->to_vector();
+                        vecp2 = vecp2 / std::sqrt (vecp2 * vecp2);
+                        Vector vtest2 (anchor, CGAL::centroid (pts2.begin (), pts2.end ()));
+                        if (vtest2 * vecp2 < 0)
+                          vecp2 =- vecp2;
 
-                direction_p1 = direction_p1+vecp1;
+                        direction_p2 = direction_p2+vecp2;
 
-                Point anchor1 = anchor + vecp1 * r_edge;
-                m_points.push_back (anchor1);
-                m_normals.push_back (m_planes[m_edges[i].planes[0]]->plane_normal());
-                m_indices.push_back (m_edges[i].planes[0]);
-                m_status.push_back (PLANE);
+                        Point anchor2 = anchor + vecp2 * r_edge;
+                        m_points.push_back (anchor2);
+                        m_normals.push_back (m_planes[m_edges[i].planes[1]]->plane_normal());
+                        m_indices.push_back (m_edges[i].planes[1]);
+                        m_status.push_back (PLANE);
+                      }
+                  }
+                else
+                  {
+#ifdef CGAL_PSP3_VERBOSE
+                    std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
+#endif
+                  }
               }
-
-            Line line_p2;
-            CGAL::Object ob_temp2 = CGAL::intersection (static_cast<Plane> (*plane2),ortho);
-            if (!assign(line_p2, ob_temp2))
+            else
               {
 #ifdef CGAL_PSP3_VERBOSE
                 std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
 #endif
               }
-            else if (!(pts2.empty()))
-              {
-                Vector vecp2 = line_p2.to_vector();
-                vecp2 = vecp2 / std::sqrt (vecp2 * vecp2);
-                Vector vtest2 (anchor, CGAL::centroid (pts2.begin (), pts2.end ()));
-                if (vtest2 * vecp2 < 0)
-                  vecp2 =- vecp2;
-
-                direction_p2 = direction_p2+vecp2;
-
-                Point anchor2 = anchor + vecp2 * r_edge;
-                m_points.push_back (anchor2);
-                m_normals.push_back (m_planes[m_edges[i].planes[1]]->plane_normal());
-                m_indices.push_back (m_edges[i].planes[1]);
-                m_status.push_back (PLANE);
-              }
-
           }
-
+        
         //if not information enough (not enough edges to create
         //anchor) we unactivate the edge, else we update the angle
         //and directions
@@ -1131,28 +1144,56 @@ private:
         Plane plane1 = static_cast<Plane> (*(m_planes[m_corners[i].planes[0]]));
         Plane plane2 = static_cast<Plane> (*(m_planes[m_corners[i].planes[1]]));
         Plane plane3 = static_cast<Plane> (*(m_planes[m_corners[i].planes[2]]));
-        Line line;
 
-        CGAL::Object ob_temp = CGAL::intersection(plane1, plane2);
-        if (!assign(line, ob_temp))
+        typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
+          result = CGAL::intersection(plane1, plane2);
+        
+        if (result)
+          {
+            if (const Line* l = boost::get<Line>(&*result))
+              {
+                typename cpp11::result_of<typename Traits::Intersect_3(Line, Plane)>::type
+                  result2 = CGAL::intersection(*l, plane3);
+
+                if (result2)
+                  {
+                    if (const Point* p = boost::get<Point>(&*result2))
+                      m_corners[i].support = *p;
+                    else
+                      {
+#ifdef CGAL_PSP3_VERBOSE
+                        std::cerr << "Warning: bad plane/line intersection" << std::endl;
+#endif
+                        m_corners[i].active = false;
+                        continue;
+                      }
+                  }
+                else
+                  {
+#ifdef CGAL_PSP3_VERBOSE
+                    std::cerr << "Warning: bad plane/line intersection" << std::endl;
+#endif
+                    m_corners[i].active = false;
+                    continue;
+
+                  }
+              }
+            else
+              {
+#ifdef CGAL_PSP3_VERBOSE
+                std::cerr << "Warning: bad plane/plane intersection" << std::endl;
+#endif
+                m_corners[i].active = false;
+                continue;
+              }
+          }
+        else
           {
 #ifdef CGAL_PSP3_VERBOSE
             std::cerr << "Warning: bad plane/plane intersection" << std::endl;
 #endif
             m_corners[i].active = false;
             continue;
-          }
-        else
-          {
-            CGAL::Object ob_temp2 = CGAL::intersection (line, plane3);
-            if (!assign (m_corners[i].support, ob_temp2))
-              {
-#ifdef CGAL_PSP3_VERBOSE
-                std::cerr << "Warning: bad plane/line intersection" << std::endl;
-#endif
-                m_corners[i].active = false;
-                continue;
-              }
           }
 
         // test if point is in bbox + delta
@@ -1406,27 +1447,24 @@ private:
 ///
 /// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
 ///
-/// @tparam InputIterator Iterator over input points
+/// @tparam Traits A model of `EfficientRANSACTraits`
 ///
 /// @tparam OutputIterator Type of the output iterator. The type of the objects
 /// put in it is `std::pair<Traits::Point_3, Traits::Vector_3>`.  Note that the
 /// user may use a <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
 /// to match specific needs.
 ///
-/// @tparam Traits A model of `EfficientRANSACTraits`
-///
 /// @note If no plane is found in the shape detection object, the
 /// algorithm does nothing and the output points are the unaltered
 /// input points.
 ///
 /// @note Both property maps can be omitted if the default constructors of these property maps can be safely used.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename Traits
+template <typename Traits,
+          typename OutputIterator
 >
 OutputIterator
-structure_point_set (InputIterator first,  ///< iterator over the first input point.
-                     InputIterator beyond, ///< past-the-end iterator over the input points.
+structure_point_set (typename Traits::Input_range::iterator first,  ///< iterator over the first input point.
+                     typename Traits::Input_range::iterator beyond, ///< past-the-end iterator over the input points.
                      typename Traits::Point_map point_map, ///< property map: value_type of InputIterator -> Point_3. 
                      typename Traits::Normal_map normal_map, ///< property map: value_type of InputIterator -> Vector_3.
                      OutputIterator output, ///< output iterator where output points are written
@@ -1446,13 +1484,12 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
 
 
 /// \cond SKIP_IN_MANUAL
-template <typename InputIterator,
-          typename OutputIterator,
-          typename Traits
+template <typename Traits,
+          typename OutputIterator
 >
 OutputIterator
-structure_point_set (InputIterator first,  ///< iterator over the first input point.
-                     InputIterator beyond, ///< past-the-end iterator over the input points.
+structure_point_set (typename Traits::Input_range::iterator first,  ///< iterator over the first input point.
+                     typename Traits::Input_range::iterator beyond, ///< past-the-end iterator over the input points.
                      OutputIterator output, ///< output iterator where output points are written
                      Shape_detection_3::Efficient_RANSAC<Traits>&
                      shape_detection, ///< shape detection object
