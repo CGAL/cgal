@@ -120,9 +120,11 @@ compute_avg_knn_sq_distance_3(
 ///
 /// @note There are two thresholds that can be used:
 /// `threshold_percent` and `threshold_distance`. This function
-/// returns the largest number of outliers such that both these
-/// threshold are fullfilled. Setting one of these parameters to `0`
-/// makes the function only use the other one.
+/// returns the smallest number of outliers such that at least one of
+/// these threshold is fullfilled. This means that if
+/// `threshold_percent=100`, only `threshold_distance` is taken into
+/// account; if `threshold_distance=0` only `threshold_percent` is
+/// taken into account.
 
 // This variant requires all parameters.
 template <typename InputIterator,
@@ -135,9 +137,9 @@ remove_outliers(
   InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< minimum percentage of points to remove.
+  double threshold_percent, ///< maximum percentage of points to remove.
   double threshold_distance, ///< minimum distance for a point to be
-                             ///< removed (distance here is the square root of the average
+                             ///< considered as outlier (distance here is the square root of the average
                              ///< squared distance to K nearest
                              ///< neighbors)
   const Kernel& /*kernel*/) ///< geometric traits.
@@ -187,7 +189,7 @@ remove_outliers(
 
   // Replaces [first, beyond) range by the multimap content.
   // Returns the iterator after the (100-threshold_percent) % best points.
-  InputIterator first_point_to_remove = beyond;
+  InputIterator first_point_to_remove = first;
   InputIterator dst = first;
   int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
   typename std::multimap<FT,Enriched_point>::iterator src;
@@ -197,7 +199,7 @@ remove_outliers(
        ++src, ++index)
   {
     *dst++ = src->second;
-    if (index <= first_index_to_remove &&
+    if (index <= first_index_to_remove ||
         src->first < threshold_distance * threshold_distance)
       first_point_to_remove = dst;
   }
