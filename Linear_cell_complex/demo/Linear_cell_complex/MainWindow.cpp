@@ -2751,7 +2751,7 @@ void MainWindow::sierpinski_carpet_copy_attributes_and_embed_vertex
       <CGAL::internal::Group_attribute_functor_of_dart<LCC>, 0>::
       run(*(scene.lcc),sierpinskiCarpetSurfaces[0],it);
     // We initialise the 0-atttrib to ah
-    scene.lcc->template set_dart_attribute<0>(it, ah);
+    scene.lcc->set_dart_attribute<0>(it, ah);
   }
 }
 
