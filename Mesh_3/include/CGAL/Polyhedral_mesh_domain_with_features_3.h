@@ -74,9 +74,9 @@ class Polyhedral_mesh_domain_with_features_3
     Polyhedral_mesh_domain_3<
       Polyhedron_, IGT_, TriangleAccessor,
       Use_patch_id_tag, Use_exact_intersection_construction_tag > > Base;
-  
+
   typedef Polyhedron_ Polyhedron;
-  
+
 public:
   // Index types
   typedef typename Base::Index                Index;
@@ -99,13 +99,14 @@ public:
   /// Constructors
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
     CGAL::Random* p_rng = NULL);
-  Polyhedral_mesh_domain_with_features_3(const std::string& filename,
+
+  CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3(const std::string& filename,
     CGAL::Random* p_rng = NULL);
 
   // The following is needed, because otherwise, when a "const char*" is
   // passed, the constructors templates are a better match, than the
   // constructor with `std::string`.
-  Polyhedral_mesh_domain_with_features_3(const char* filename,
+  CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3(const char* filename,
     CGAL::Random* p_rng = NULL);
 
   // Inherited constructors
@@ -193,9 +194,10 @@ Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
   this->set_random_generator(p_rng);
 }
 
+
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const char* filename,
                                        CGAL::Random* p_rng)
   : Base()
@@ -209,9 +211,10 @@ Polyhedral_mesh_domain_with_features_3(const char* filename,
   this->set_random_generator(p_rng);
 }
 
+
 template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+CGAL_DEPRECATED Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const std::string& filename,
                                        CGAL::Random* p_rng)
   : Base()

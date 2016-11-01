@@ -9,6 +9,7 @@
 
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -32,8 +33,15 @@ using namespace CGAL::parameters;
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
+  std::ifstream input(fname);
+  Polyhedron polyhedron;
+  input >> polyhedron;
+  if(input.bad()){
+    std::cerr << "Error: Cannot read file " <<  fname << std::endl;
+    return EXIT_FAILURE;
+  }
   // Create domain
-  Mesh_domain domain(fname);
+  Mesh_domain domain(polyhedron);
   
   // Get sharp features
   domain.detect_features();

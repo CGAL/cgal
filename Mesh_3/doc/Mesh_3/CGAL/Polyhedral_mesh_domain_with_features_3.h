@@ -58,7 +58,7 @@ template <typename Polyhedron>
 Polyhedral_mesh_domain_with_features_3(Polyhedron bounding_polyhedron); 
 
 /*!
-Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
+\deprecated Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
 detection is done at this level. 
 */ 
 Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
