@@ -222,9 +222,9 @@ namespace CGAL {
       {
         dartmap[it]=mdarts.emplace();
         init_dart(dartmap[it], amap.get_marks(it));
-        internal::Copy_dart_info_functor::run
-            (amap, static_cast<Refs&>(*this), it, dartmap[it],
-             dartinfoconverter);
+        internal::Copy_dart_info_functor<GMap2, Refs>::
+          run(amap, static_cast<Refs&>(*this), it, dartmap[it],
+              dartinfoconverter);
       }
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
@@ -2743,8 +2743,8 @@ namespace CGAL {
             it!=darts().end(); ++it)
       {
         dual[it] = amap.create_dart();
-        internal::Copy_dart_info_functor::run(amap, static_cast<Refs&>(*this),
-                                              it, dual[it]);
+        internal::Copy_dart_info_functor<Refs, Refs>::
+          run(amap, static_cast<Refs&>(*this), it, dual[it]);
         if ( it==adart && res==amap.null_handle ) res = dual[it];
       }
 

@@ -245,7 +245,7 @@ namespace CGAL {
       {
         dartmap[it]=mdarts.emplace();
         init_dart(dartmap[it], amap.get_marks(it));
-        internal::Copy_dart_info_functor::run
+        internal::Copy_dart_info_functor<CMap2, Refs>::run
             (amap, static_cast<Refs&>(*this), it, dartmap[it],
              dartinfoconverter);
       }
@@ -3570,8 +3570,8 @@ namespace CGAL {
             it!=darts().end(); ++it)
       {
         dual[it] = amap.create_dart();
-        internal::Copy_dart_info_functor::run(amap, static_cast<Refs&>(*this),
-                                              it, dual[it]);
+        internal::Copy_dart_info_functor<Refs, Refs>::
+          run(amap, static_cast<Refs&>(*this), it, dual[it]);
         if ( it==adart && res==amap.null_handle ) res = dual[it];
       }
 

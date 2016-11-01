@@ -392,12 +392,11 @@ struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
 // ****************************************************************************
 /// Copy non void information of dart from one cmap to other.
 /// Map1 is the existing map, to copy into map2.
+template<typename Map1, typename Map2,
+         typename DartInfoConverter=CGAL::Default_converter_dart_info<Map1, Map2> >
 struct Copy_dart_info_functor
 {
-  template<typename Map1, typename Map2,
-           typename DartInfoConverter=CGAL::Default_converter_dart_info<Map1, Map2> >
-  static void run( const Map1& cmap1,
-                   Map2& cmap2,
+  static void run( const Map1& cmap1, Map2& cmap2,
                    typename Map1::Dart_const_handle dh1,
                    typename Map2::Dart_handle dh2,
                    const DartInfoConverter& converter=DartInfoConverter())

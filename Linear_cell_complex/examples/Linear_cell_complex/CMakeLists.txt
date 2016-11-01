@@ -11,8 +11,8 @@ endif()
 # If you want to visualize a linear cell complex, you can use the following viewer
 # based on qt. Just uncomment the following two lines, plus the lines qt5_use_modules below
 
-find_package(CGAL COMPONENTS Qt5)
-include("CMakeLCCViewerQt.inc")
+# find_package(CGAL COMPONENTS Qt5)
+# include("CMakeLCCViewerQt.inc")
 
 # If you don't want to visualize, use the following line (otherwise comment it)
 find_package(CGAL QUIET)
@@ -43,19 +43,19 @@ if ( CGAL_FOUND )
   add_executable(voronoi_2 voronoi_2.cpp)
   target_link_libraries(voronoi_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
                                   ${MAP_VIEWER_LIBRARIES})
-  qt5_use_modules(voronoi_2 ${MAP_VIEWER_MODULES})
+#  qt5_use_modules(voronoi_2 ${MAP_VIEWER_MODULES})
 
   add_executable(voronoi_3 voronoi_3.cpp)
   target_link_libraries(voronoi_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
                                   ${MAP_VIEWER_LIBRARIES})
-  qt5_use_modules(voronoi_3 ${MAP_VIEWER_MODULES})
+#  qt5_use_modules(voronoi_3 ${MAP_VIEWER_MODULES})
 
   create_single_source_cgal_program( "gmap_linear_cell_complex_3.cpp" )
 
   add_executable(linear_cell_complex_3_operations linear_cell_complex_3_operations.cpp)
   target_link_libraries(linear_cell_complex_3_operations ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
                                   ${MAP_VIEWER_LIBRARIES})
-  qt5_use_modules(linear_cell_complex_3_operations ${MAP_VIEWER_MODULES})
+#  qt5_use_modules(linear_cell_complex_3_operations ${MAP_VIEWER_MODULES})
   
   
 else()
