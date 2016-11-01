@@ -61,7 +61,7 @@ namespace CGAL {
 
     std::string txt;
     typename LCC::FT x, y;
-    Dart_handle d1=alcc.null_handle, d2=alcc.null_handle;
+    Dart_handle d1=alcc.null_handle;
     unsigned int v1, v2;
 
     unsigned int nbSommets = 0;
