@@ -16,7 +16,8 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
+#include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex.h>
 
@@ -145,7 +146,7 @@ bool read_a_mesh(LCC& lcc, const std::string& str) {
   std::ifstream in(str.c_str());
   bool success = in.good();
   if(success)
-    CGAL::load_off_v2(lcc, in);
+    CGAL::load_off(lcc, in);
   return success;
 }
 

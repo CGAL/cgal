@@ -1249,7 +1249,7 @@ namespace CGAL {
      *        with true this is for its target (as in hds or surface mesh).
      * @return true iff the map is valid.
      */
-    bool is_valid(bool reverseextremity=false) const
+    bool is_valid() const
     {
       bool valid = true;
       unsigned int i = 0, j = 0;
