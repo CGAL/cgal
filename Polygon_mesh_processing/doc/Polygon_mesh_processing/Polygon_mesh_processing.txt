@@ -391,13 +391,29 @@ or to vertices, or to both :
 Property maps are used to record the computed normals.
 
 
-\subsection NormalsExample Normals Computation Example
+\subsection NormalsExample Normals Computation Examples
+
+Property maps are an API introduced in the boost library, that allows to
+associate values to keys. In the following examples we assocatiate
+a normal vector to each vertex and to each face.
+
+
+\subsubsection NormalsExampleSM Normals Computation for a Surface Mesh
 
 The following example illustrates how to
 compute the normals to faces and vertices
-and store them in property maps.
+and store them in property maps provided by the class `Surface_mesh`.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example.cpp}
+
+\subsubsection NormalsExampleP Normals Computation for a Poyhedron_3
+
+The following example illustrates how to
+compute the normals to faces and vertices
+and store them in ordered or unordered maps as the class `Polyhedron` does
+not provide storage for the normals.
+
+\cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}
 
 
 ****************************************
