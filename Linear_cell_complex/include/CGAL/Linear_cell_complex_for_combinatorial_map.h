@@ -108,7 +108,7 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-      Linear_cell_complex_for_combinatorial_map(const Self & alcc) : Base(alcc)
+      Linear_cell_complex_for_combinatorial_map(const Self& alcc) : Base(alcc)
       {}
 
       template < class LCC2 >
