@@ -29,6 +29,7 @@
 #include <CGAL/Sphere_3.h>
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
+#include <CGAL/tss.h>
 
 namespace CGAL {
 
@@ -692,7 +693,7 @@ public:
         // If the mid-point forms a left-turn with the source and the target
         // points, the orientation is positive (going counterclockwise).
         // Otherwise, it is negative (going clockwise).
-        static Alg_kernel k;
+        CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Alg_kernel, k);
         typename Alg_kernel::Orientation_2 orient_f = k.orientation_2_object();
         Orientation orient;
         if (orient_f(source, pmid, target) == LEFT_TURN)
