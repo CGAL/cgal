@@ -1146,7 +1146,7 @@ namespace CGAL {
      *        with true this is for its target (as in hds or surface mesh).
      * @return true iff the map is valid.
      */
-    bool is_valid(bool reverseextremity=false) const
+    bool is_valid() const
     {
       bool valid = true;
       unsigned int i = 0, j = 0;
@@ -1236,7 +1236,7 @@ namespace CGAL {
           }
           Helper::template Foreach_enabled_attributes
             <internal::Test_is_valid_attribute_functor<Self> >::
-            run(this,it,&marks,&valid, reverseextremity);
+            run(this,it,&marks,&valid);
         }
       }
       for ( i=0; i<=dimension; ++i)

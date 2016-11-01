@@ -87,7 +87,7 @@ public:
     {
       value_type v1 = map[b];
       value_type v2 = map[cmap.template beta<2>(b)];
-      CGAL_assertion(v1 - v2 == 1 || v1 - v2 == -1);
+      CGAL_assertion(v1==v2+1 || v2==v1+1);
     }
   }
 
