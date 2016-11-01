@@ -56,7 +56,6 @@ namespace CGAL
     template<typename T, bool typedefined=Has_dart_info<T>::value >
     struct Get_dart_info
     { typedef CGAL::Void type; };
-    template<>
     template<typename T>
     struct Get_dart_info<T, true>
     { typedef typename Convert_void<typename T::Dart_info>::type type; };
@@ -75,10 +74,10 @@ namespace CGAL
     ! defined(CGAL_CFG_NO_CPP0X_TUPLE)
     // Convert a tuple in a same tuple where each void type was replaced into
     // CGAL::Void.
-    template<class CMap, typename ... Items>
+    template<typename ... Items>
     struct Convert_tuple_with_void;
-    template<class CMap, typename ... Items>
-    struct Convert_tuple_with_void<CMap, CGAL::cpp11::tuple<Items...> >
+    template<typename ... Items>
+    struct Convert_tuple_with_void<CGAL::cpp11::tuple<Items...> >
     {
       typedef CGAL::cpp11::tuple<typename Convert_void<Items>::type... > type;
     };
@@ -443,7 +442,7 @@ namespace CGAL
 
       // All the attributes (with CGAL::Void)
       typedef typename CGAL::internal::Convert_tuple_with_void
-      <CMap, typename CMap::Attributes>::type Attributes;
+      <typename CMap::Attributes>::type Attributes;
 
       // defines as type Cell_attribute_binary_functor<T>
       template <class T>
@@ -494,7 +493,7 @@ namespace CGAL
                                         Enabled_attributes >::type
       Split_functors;
 
-      //Helper class allowing to retrieve the type of the 
+      //Helper class allowing to retrieve the type of the
       // attribute of dimension d
       template<int d, int in_tuple=(d<CGAL::internal::My_length
                                     <Attributes>::value)>
