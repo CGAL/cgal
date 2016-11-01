@@ -222,7 +222,7 @@ namespace CGAL {
       {
         dartmap[it]=mdarts.emplace();
         init_dart(dartmap[it], amap.get_marks(it));
-        internal::Copy_dart_info_functor<GMap2, Refs>::
+        internal::Copy_dart_info_functor<GMap2, Refs, DartInfoConverter>::
           run(amap, static_cast<Refs&>(*this), it, dartmap[it],
               dartinfoconverter);
       }
@@ -2744,7 +2744,8 @@ namespace CGAL {
       {
         dual[it] = amap.create_dart();
         internal::Copy_dart_info_functor<Refs, Refs>::
-          run(amap, static_cast<Refs&>(*this), it, dual[it]);
+          run(static_cast<Refs&>(amap), static_cast<Refs&>(*this),
+              it, dual[it]);
         if ( it==adart && res==amap.null_handle ) res = dual[it];
       }
 
@@ -3936,7 +3937,6 @@ namespace CGAL {
     // The path must have at least one dart.
     if (afirst==alast) return false;
     Dart_const_handle prec = null_handle;
-    Dart_const_handle od = null_handle;
 
     for (InputIterator it(afirst); it!=alast; ++it)
     {
@@ -3983,8 +3983,6 @@ namespace CGAL {
         dddd = null_handle, it0, d0, oldb2;
 
     bool withAlpha3 = false;
-
-    size_type treated = get_new_mark();
 
     {
       for (InputIterator it(afirst); !withAlpha3 && it!=alast; ++it)

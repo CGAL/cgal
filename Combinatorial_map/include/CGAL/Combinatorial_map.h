@@ -245,7 +245,7 @@ namespace CGAL {
       {
         dartmap[it]=mdarts.emplace();
         init_dart(dartmap[it], amap.get_marks(it));
-        internal::Copy_dart_info_functor<CMap2, Refs>::run
+        internal::Copy_dart_info_functor<CMap2, Refs, DartInfoConverter>::run
             (amap, static_cast<Refs&>(*this), it, dartmap[it],
              dartinfoconverter);
       }
@@ -289,7 +289,7 @@ namespace CGAL {
       CGAL::cpp11::tuple<> converters;
       Default_converter_dart_info<CMap2, Refs> dartinfoconverter;
       Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
-      return copy(amap, converters, dartinfoconverter, pointconverter );
+      return copy(amap, converters, dartinfoconverter, pointconverter);
     }
 
     template <typename CMap2, typename Converters>
@@ -3571,7 +3571,8 @@ namespace CGAL {
       {
         dual[it] = amap.create_dart();
         internal::Copy_dart_info_functor<Refs, Refs>::
-          run(amap, static_cast<Refs&>(*this), it, dual[it]);
+          run(static_cast<Refs&>(amap), static_cast<Refs&>(*this),
+              it, dual[it]);
         if ( it==adart && res==amap.null_handle ) res = dual[it];
       }
 
