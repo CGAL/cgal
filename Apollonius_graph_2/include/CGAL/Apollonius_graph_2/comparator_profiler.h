@@ -33,22 +33,31 @@ namespace ApolloniusGraph_2 {
 class comparator_profiler
 {
 public:
-  static CGAL::cpp11::atomic<bool> count_cases;
-  static CGAL::cpp11::atomic<unsigned long> case_1_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_2_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_3a_Jpos_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_3a_Jneg_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_3b_Jpos_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_3b_Jneg_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_4_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_5_counter;
-  static CGAL::cpp11::atomic<unsigned long> case_degenerate_counter;
+
+#ifdef CGAL_NO_ATOMIC
+  typedef bool bool_;
+  typedef unsigned long long_;
+#else
+  typedef CGAL::cpp11::atomic<bool> bool_;
+  typedef CGAL::cpp11::atomic<unsigned long> long_;
+#endif
+
+  static bool_ count_cases;
+  static long_ case_1_counter;
+  static long_ case_2_counter;
+  static long_ case_3a_Jpos_counter;
+  static long_ case_3a_Jneg_counter;
+  static long_ case_3b_Jpos_counter;
+  static long_ case_3b_Jneg_counter;
+  static long_ case_4_counter;
+  static long_ case_5_counter;
+  static long_ case_degenerate_counter;
 public:
-  static CGAL::cpp11::atomic<unsigned long> counter_rr;
-  static CGAL::cpp11::atomic<unsigned long> counter_rr_p3inf;
-  static CGAL::cpp11::atomic<unsigned long> counter_rr_p4;
-  static CGAL::cpp11::atomic<unsigned long> counter_rr_e;
-  static CGAL::cpp11::atomic<unsigned long> counter_rr_r0;
+  static long_ counter_rr;
+  static long_ counter_rr_p3inf;
+  static long_ counter_rr_p4;
+  static long_ counter_rr_e;
+  static long_ counter_rr_r0;
 
   static void reset()
   {
@@ -140,6 +149,26 @@ public:
   }
 };
 
+#ifdef CGAL_NO_ATOMIC
+
+bool comparator_profiler::count_cases = false;
+unsigned long comparator_profiler::case_1_counter = 0;
+unsigned long comparator_profiler::case_2_counter = 0;
+unsigned long comparator_profiler::case_3a_Jpos_counter = 0;
+unsigned long comparator_profiler::case_3a_Jneg_counter = 0;
+unsigned long comparator_profiler::case_3b_Jpos_counter = 0;
+unsigned long comparator_profiler::case_3b_Jneg_counter = 0;
+unsigned long comparator_profiler::case_4_counter = 0;
+unsigned long comparator_profiler::case_5_counter = 0;
+unsigned long comparator_profiler::case_degenerate_counter = 0;
+
+unsigned long comparator_profiler::counter_rr = 0;
+unsigned long comparator_profiler::counter_rr_p3inf = 0;
+unsigned long comparator_profiler::counter_rr_p4 = 0;
+unsigned long comparator_profiler::counter_rr_e = 0;
+unsigned long comparator_profiler::counter_rr_r0 = 0;
+
+#endif
 
 
 } //namespace ApolloniusGraph_2

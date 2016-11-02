@@ -35,18 +35,24 @@ namespace ApolloniusGraph_2 {
 class ag2_predicate_profiler
 {
 public:
+#ifdef CGAL_NO_ATOMIC
+  typedef unsigned long long_;
+#else
+  typedef CGAL::cpp11::atomic<unsigned long> long_;
+#endif
+
   // high level predicates
-  static CGAL::cpp11::atomic<unsigned long> side_of_bisector_counter;
-  static CGAL::cpp11::atomic<unsigned long> is_trivial_counter;
-  static CGAL::cpp11::atomic<unsigned long> infinite_edge_conflict_type_counter;
-  static CGAL::cpp11::atomic<unsigned long> finite_edge_conflict_type_counter;
+  static long_ side_of_bisector_counter;
+  static long_ is_trivial_counter;
+  static long_ infinite_edge_conflict_type_counter;
+  static long_ finite_edge_conflict_type_counter;
 
   // subpredicates
-  static CGAL::cpp11::atomic<unsigned long> inside_circular_arc_counter;
-  static CGAL::cpp11::atomic<unsigned long> distance_from_bitangent_counter;
-  static CGAL::cpp11::atomic<unsigned long> shadow_region_type_counter;
-  static CGAL::cpp11::atomic<unsigned long> incircle_counter;
-  static CGAL::cpp11::atomic<unsigned long> order_on_bisector_counter;
+  static long_ inside_circular_arc_counter;
+  static long_ distance_from_bitangent_counter;
+  static long_ shadow_region_type_counter;
+  static long_ incircle_counter;
+  static long_ order_on_bisector_counter;
 
   static void reset() {
     side_of_bisector_counter = 0;
@@ -62,6 +68,21 @@ public:
   }
 };
 
+
+#ifdef CGAL_NO_ATOMIC
+
+unsigned long ag2_predicate_profiler::side_of_bisector_counter = 0;
+unsigned long ag2_predicate_profiler::is_trivial_counter = 0;
+unsigned long ag2_predicate_profiler::infinite_edge_conflict_type_counter = 0;
+unsigned long ag2_predicate_profiler::finite_edge_conflict_type_counter = 0;
+
+unsigned long ag2_predicate_profiler::inside_circular_arc_counter = 0;
+unsigned long ag2_predicate_profiler::distance_from_bitangent_counter = 0;
+unsigned long ag2_predicate_profiler::shadow_region_type_counter = 0;
+unsigned long ag2_predicate_profiler::incircle_counter = 0;
+unsigned long ag2_predicate_profiler::order_on_bisector_counter = 0;
+
+#endif
 
 } //namespace ApolloniusGraph_2
 
