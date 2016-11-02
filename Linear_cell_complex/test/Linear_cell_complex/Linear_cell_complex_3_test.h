@@ -934,7 +934,7 @@ bool test_LCC_3()
   // Construction from Triangulation_3
   {
     trace_test_begin();
-    CGAL::Triangulation_3<typename LCC::Traits> T;
+    CGAL::Delaunay_triangulation_3<typename LCC::Traits> T;
     std::ifstream in("data/points3D.txt");
     if ( in.fail() )
     {
@@ -948,7 +948,7 @@ bool test_LCC_3()
       return false;
 
     // Pb: the triangulation_3 is not the same on different machines ?
-    if ( !check_number_of_cells_3(lcc, 286, 1490, 2408, 1204, 1) )
+    if ( !check_number_of_cells_3(lcc, 286, 2386, 4200, 2100, 1) )
       return false;
 
     std::ofstream os("save.map");
@@ -960,7 +960,7 @@ bool test_LCC_3()
     assert(is.is_open());
     is>>lcc2;
 
-    if ( !check_number_of_cells_3(lcc2, 286, 1490, 2408, 1204, 1) )
+    if ( !check_number_of_cells_3(lcc2, 286, 2386, 4200, 2100, 1) )
       return false;
 
     if (!lcc.is_isomorphic_to(lcc2, false, true, true))
@@ -974,7 +974,7 @@ bool test_LCC_3()
     LCC lcc3;
     lcc2.dual_points_at_barycenter(lcc3);
 
-    if ( !check_number_of_cells_3(lcc3, 286, 1490, 2408, 1204, 1) )
+    if ( !check_number_of_cells_3(lcc3, 286, 2386, 4200, 2100, 1) )
       return false;
 
     if (!lcc3.is_isomorphic_to(lcc, true, true, false))
