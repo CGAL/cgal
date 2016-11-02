@@ -115,7 +115,8 @@ struct Empty_node_visitor{
   template<class Iterator>
   void annotate_graph(Iterator,Iterator){}
   void update_terminal_nodes(std::vector<bool>&){}
-  void set_number_of_intersection_points_from_coplanar_facets(int){};
+  void set_number_of_intersection_points_from_coplanar_facets(int){}
+  void input_have_coplanar_facets(){}
   void add_filtered_intersection(Halfedge_handle,Halfedge_handle,const Polyhedron&,const Polyhedron&){}
   void start_new_polyline(int,int){}
   void add_node_to_polyline(int){}
@@ -2018,6 +2019,8 @@ class Intersection_of_Polyhedra_3{
     //first handle coplanar triangles
     compute_intersection_of_coplanar_facets(current_node);
     visitor->set_number_of_intersection_points_from_coplanar_facets(current_node+1);
+    if (!coplanar_facets.empty())
+      visitor->input_have_coplanar_facets();
     #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
     //print_edge_to_sfacet_debug();
     //compute intersection points of segments and triangles.

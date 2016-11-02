@@ -292,6 +292,7 @@ struct Default_node_vertex_visitor{
 struct Default_output_builder{
   template <class T1, class T2, class T3, class T4>
   void operator()(const T1&, const T2&, const T3&, const T4&){}
+  void input_have_coplanar_facets(){}
 };
 
 template< class Polyhedron,
@@ -525,7 +526,12 @@ public:
   void set_number_of_intersection_points_from_coplanar_facets(int n){
     number_coplanar_vertices=n;
   }
-  
+
+  void input_have_coplanar_facets()
+  {
+    output_builder.input_have_coplanar_facets();
+  }
+
   void check_node_on_non_manifold_vertex(int node_id,Halfedge_handle hedge){
     //we turn around the hedge and check no halfedge is a border halfedge
     Halfedge_handle curr=hedge;

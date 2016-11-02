@@ -1091,6 +1091,7 @@ private:
   Facet_id_pmap P_facet_id_pmap, Q_facet_id_pmap;
   PolyhedronPointPMap ppmap;
   EdgeMarkPropertyMap edge_mark_pmap;
+  bool input_with_coplanar_facets;
   // bitset containing information about operations that cannot be
   // performed because of non-manifoldness or that is ambiguous
   // 0 = P+Q
@@ -1587,11 +1588,12 @@ public:
     , Q_facet_id_pmap(Q_facet_id_pmap_)
     , ppmap(point_pmap)
     , edge_mark_pmap(edge_pmap)
+    , input_with_coplanar_facets(false)
     , is_P_inside_out( !Polygon_mesh_processing::is_outward_oriented(*P_ptr) )
     , is_Q_inside_out( !Polygon_mesh_processing::is_outward_oriented(*Q_ptr) )
     {}
 
-    Polyhedra_output_builder(
+  Polyhedra_output_builder(
     Polyhedron& P,
     Polyhedron& Q,
     cpp11::array<boost::optional<Polyhedron*>, 4 > desired_output_,
@@ -1602,6 +1604,7 @@ public:
     , desired_output( desired_output_ )
     , ppmap(point_pmap)
     , edge_mark_pmap(edge_pmap)
+    , input_with_coplanar_facets(false)
     , is_P_inside_out( !Polygon_mesh_processing::is_outward_oriented(*P_ptr) )
     , is_Q_inside_out( !Polygon_mesh_processing::is_outward_oriented(*Q_ptr) )
     {}
@@ -1614,6 +1617,11 @@ public:
   void P_is_inside_out() { is_P_inside_out = true; }
   void Q_is_inside_out() { is_Q_inside_out = true; }
 
+  void input_have_coplanar_facets()
+  {
+    input_with_coplanar_facets=true;
+  }
+
   template <class Nodes_vector>
   void operator()(
     std::map<Halfedge_const_handle,
@@ -1622,42 +1630,138 @@ public:
     An_edge_per_polyline_map& an_edge_per_polyline,
     const Poly_to_map_node& /* polyhedron_to_map_node_to_polyhedron_vertex */)
   {
+    std::size_t num_facets_P = internal::corefinement::init_facet_indices(*P_ptr, P_facet_id_pmap);
+    std::size_t num_facets_Q = internal::corefinement::init_facet_indices(*Q_ptr, Q_facet_id_pmap);
+    boost::dynamic_bitset<> coplanar_facets_P(num_facets_P, 0);
+    boost::dynamic_bitset<> coplanar_facets_Q(num_facets_Q, 0);
+
     // In the following loop we filter intersection edge that are strictly inside a patch
     // of coplanar facets so that we keep only the edges on the border of the patch.
     // This is not optimal and in an ideal world being able to find the outside edges
     // directly would avoid to compute the intersection of edge/facets inside the patch
-    #ifdef CGAL_COREFINEMENT_DEBUG
-    #warning Only do this loop if at least one pair of coplanar triangles has been seen in intersection_of_Polyhedra_3.h
-    #endif
-    typename An_edge_per_polyline_map::iterator epp_it=an_edge_per_polyline.begin(),
+    // This loop is done only if the input have some coplanar facets
+    typename An_edge_per_polyline_map::iterator epp_it=input_with_coplanar_facets
+                                                      ?an_edge_per_polyline.begin()
+                                                      :an_edge_per_polyline.end(),
                                                 epp_it_end=an_edge_per_polyline.end();
     for (;epp_it!=epp_it_end;)
     {
       Halfedge_handle first_hedge  = epp_it->second.first[P_ptr];
+      Halfedge_handle first_hedge_opp = first_hedge->opposite();
       Halfedge_handle second_hedge = epp_it->second.first[Q_ptr];
-
-      if (first_hedge->is_border_edge() || second_hedge->is_border_edge()){
-        ++epp_it;
-        continue;
-      }
+      Halfedge_handle second_hedge_opp = second_hedge->opposite();
 
       //vertices from P
-      Vertex_handle P1=first_hedge->opposite()->next()->vertex();
+      Vertex_handle P1=first_hedge_opp->next()->vertex();
       Vertex_handle P2=first_hedge->next()->vertex();
       //vertices from Q
-      Vertex_handle Q1=second_hedge->opposite()->next()->vertex();
+      Vertex_handle Q1=second_hedge_opp->next()->vertex();
       Vertex_handle Q2=second_hedge->next()->vertex();
-      int index_p1=node_index_of_incident_vertex(first_hedge->opposite()->next(),border_halfedges);
+
+      int index_p1=node_index_of_incident_vertex(first_hedge_opp->next(),border_halfedges);
       int index_p2=node_index_of_incident_vertex(first_hedge->next(),border_halfedges);
-      int index_q1=node_index_of_incident_vertex(second_hedge->opposite()->next(),border_halfedges);
+      int index_q1=node_index_of_incident_vertex(second_hedge_opp->next(),border_halfedges);
       int index_q2=node_index_of_incident_vertex(second_hedge->next(),border_halfedges);
 
-      bool P1_on_Q1_or_Q2 = index_p1==-1? ( (index_q1==-1 && P1->point()==Q1->point()) || (index_q2==-1 && P1->point()==Q2->point()) )
-                                        : (index_p1==index_q1 || index_p1==index_q2);
-      bool P2_on_Q1_or_Q2 = index_p2==-1? ( (index_q1==-1 && P2->point()==Q1->point()) || (index_q2==-1 && P2->point()==Q2->point()) )
-                                        : (index_p2==index_q1 || index_p2==index_q2);
+      // set boolean for the position of P1 wrt to Q1 and Q2
+      bool P1_eq_Q1=false, P1_eq_Q2=false;
+      if (!first_hedge_opp->is_border())
+      {
+        if (index_p1==-1)
+        {
+          if (!second_hedge_opp->is_border())
+          {
+            if (index_q1==-1)
+              P1_eq_Q1 =  get(ppmap, P1) == get(ppmap, Q1);
+            else
+              P1_eq_Q1 = nodes.to_exact(get(ppmap,P1)) == nodes.exact_node(index_q1);
+          }
+          if (!P1_eq_Q1 && !second_hedge->is_border())
+          {
+            if (index_q2==-1)
+              P1_eq_Q2 =  get(ppmap, P1) == get(ppmap, Q2);
+            else
+              P1_eq_Q2 = nodes.to_exact(get(ppmap,P1)) == nodes.exact_node(index_q2);
+          }
+        }
+        else
+        {
+          if (!second_hedge_opp->is_border())
+          {
+            if (index_q1==-1)
+              P1_eq_Q1 =  nodes.exact_node(index_p1) == nodes.to_exact(get(ppmap, Q1));
+            else
+              P1_eq_Q1 = index_p1 == index_q1;
+          }
+          if (!P1_eq_Q1 && !second_hedge->is_border())
+          {
+            if (index_q2==-1)
+              P1_eq_Q2 =  nodes.exact_node(index_p1) == nodes.to_exact(get(ppmap, Q2));
+            else
+              P1_eq_Q2 = index_p1 == index_q2;
+          }
+        }
+      }
 
-      if (P1_on_Q1_or_Q2 && P2_on_Q1_or_Q2)
+      // set boolean for the position of P2 wrt to Q1 and Q2
+      bool P2_eq_Q1=false, P2_eq_Q2=false;
+      if (!first_hedge->is_border())
+      {
+        if (index_p2==-1)
+        {
+          if ( !P1_eq_Q1 && !second_hedge_opp->is_border() )
+          {
+            if (index_q1==-1)
+              P2_eq_Q1 =  get(ppmap, P2) == get(ppmap, Q1);
+            else
+              P2_eq_Q1 = nodes.to_exact(get(ppmap,P2)) == nodes.exact_node(index_q1);
+          }
+          if (!P2_eq_Q1 && !P1_eq_Q2 && !second_hedge->is_border())
+          {
+            if (index_q2==-1)
+              P2_eq_Q2 =  get(ppmap, P2) == get(ppmap, Q2);
+            else
+              P2_eq_Q2 = nodes.to_exact(get(ppmap,P2)) == nodes.exact_node(index_q2);
+          }
+        }
+        else
+        {
+          if (!P1_eq_Q1 && !second_hedge_opp->is_border()){
+            if (index_q1==-1)
+              P2_eq_Q1 =  nodes.exact_node(index_p2) == nodes.to_exact(get(ppmap, Q1));
+            else
+              P2_eq_Q1 = index_p2 == index_q1;
+          }
+          if (!P2_eq_Q1 && !P1_eq_Q2 && !second_hedge->is_border())
+          {
+            if (index_q2==-1)
+              P2_eq_Q2 =  nodes.exact_node(index_p2) == nodes.to_exact(get(ppmap, Q2));
+            else
+              P2_eq_Q2 = index_p2 == index_q2;
+          }
+        }
+      }
+
+      //mark coplanar facets if any
+      if (P1_eq_Q1){
+        coplanar_facets_P.set(get(P_facet_id_pmap, first_hedge_opp->facet()));
+        coplanar_facets_Q.set(get(Q_facet_id_pmap, second_hedge_opp->facet()));
+      }
+      if (P1_eq_Q2){
+        coplanar_facets_P.set(get(P_facet_id_pmap, first_hedge_opp->facet()));
+        coplanar_facets_Q.set(get(Q_facet_id_pmap, second_hedge->facet()));
+      }
+      if (P2_eq_Q1){
+        coplanar_facets_P.set(get(P_facet_id_pmap, first_hedge->facet()));
+        coplanar_facets_Q.set(get(Q_facet_id_pmap, second_hedge_opp->facet()));
+      }
+      if (P2_eq_Q2){
+        coplanar_facets_P.set(get(P_facet_id_pmap, first_hedge->facet()));
+        coplanar_facets_Q.set(get(Q_facet_id_pmap, second_hedge->facet()));
+      }
+
+      // remove the edge if it is in the middle of a coplanar patch
+      if ( (P1_eq_Q1 || P1_eq_Q2) && (P2_eq_Q1 || P2_eq_Q2) )
       {
         typename An_edge_per_polyline_map::iterator it_to_rm=epp_it;
         ++epp_it;
@@ -1690,15 +1794,12 @@ public:
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
     /// \todo I need a property map indicating if an edge is an intersection edge
-    internal::corefinement::init_facet_indices(*P_ptr, P_facet_id_pmap);
     std::size_t P_nb_patches = internal::corefinement::
       mark_connected_components_v2(*P_ptr,
                                    is_not_marked,
                                    P_facet_id_pmap,
                                    P_patch_ids,
                                    P_patch_sizes);
-
-    internal::corefinement::init_facet_indices(*Q_ptr, Q_facet_id_pmap);
     std::size_t Q_nb_patches = internal::corefinement::
       mark_connected_components_v2(*Q_ptr,
                                    is_not_marked,
@@ -1718,9 +1819,6 @@ public:
     boost::dynamic_bitset<> coplanar_patches_of_Q(Q_nb_patches,false);
     boost::dynamic_bitset<> coplanar_patches_of_P_for_union_and_intersection(P_nb_patches,false);
     boost::dynamic_bitset<> coplanar_patches_of_Q_for_union_and_intersection(Q_nb_patches,false);
-
-    /// \todo handle the case when an_edge_per_polyline is empty or similarly there is an isolated cc without intersecting edges
-    ///       Note that could be the case of a cc that is identical (coplanar patch) in P and Q
 
     for (typename An_edge_per_polyline_map::const_iterator it=an_edge_per_polyline.begin();it!=an_edge_per_polyline.end();++it)
     {
@@ -2003,27 +2101,12 @@ public:
     // (2-b) Classify isolated surface patches wrt the other support polyhedron
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     #warning this does not work with open polyhedra
+    #warning this should not be done if we have surfaces with boundaries!!! ask the user a flag?
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     typedef Side_of_triangle_mesh<Polyhedron, Kernel, PolyhedronPointPMap> Inside_poly_test;
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    #warning we must do the following only if we need them, that is we take the Union or P-Q or Q-P (only one is needed then)\
-             for example this is useless if we consider the intersection
-    #warning this should not be done if we have surfaces with boundaries!!! ask the user a flag?
-
-    #warning Maybe we should forbid having several CC??
-    #warning in case of two identical meshes, we will end up directly here, we need to a have a special handling
-#endif
-    if ( an_edge_per_polyline.begin()==an_edge_per_polyline.end() )
-    {
-      // the models are either identical (two indentical meshes or same surface, like two cubes meshed differently) or disjoint
-      // \todo build the AABB-tree
-      // call any intersected primitive with a point, if no intersection then disjoint, otherwise same model
-    }
 
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     #warning stop using next_marked_halfedge_around_target_vertex and create lists of halfedges instead?
-
-    #warning this test is not robust if we have several CC and one has intersection and the other do not (thus forbidding several CC)
 #endif
 
     if ( patch_status_not_set_P.any() )
@@ -2039,8 +2122,31 @@ public:
         if ( patch_status_not_set_P.test( patch_id ) )
         {
           patch_status_not_set_P.reset( patch_id );
-          if ( inside_Q( get(ppmap,fit->halfedge()->vertex()) ) == in_Q )
+          CGAL::Bounded_side position = inside_Q( get(ppmap,fit->halfedge()->vertex()) );
+          if ( position == in_Q )
             is_patch_inside_Q.set(patch_id);
+          else
+            if ( position == ON_BOUNDARY )
+            {
+              if (coplanar_facets_P.test(get(P_facet_id_pmap, fit)))
+              {
+                coplanar_patches_of_P.set(patch_id);
+                coplanar_patches_of_P_for_union_and_intersection.set(patch_id);
+              }
+              else
+              {
+                Vertex_handle vn = fit->halfedge()->opposite()->vertex();
+                Bounded_side other_position = inside_Q( get(ppmap, vn) );
+                if (other_position==ON_BOUNDARY)
+                {
+                  // \todo improve this part which is not robust with a kernel with inexact constructions.
+                  other_position = inside_Q(midpoint(get(ppmap, vn),
+                                                     get(ppmap, fit->halfedge()->vertex()) ));
+                }
+                if ( other_position == in_Q )
+                  is_patch_inside_Q.set(patch_id);
+              }
+            }
 
           if ( patch_status_not_set_P.none() ) break;
         }
@@ -2060,9 +2166,31 @@ public:
         if ( patch_status_not_set_Q.test( patch_id ) )
         {
           patch_status_not_set_Q.reset( patch_id );
-          if ( inside_P( get(ppmap,fit->halfedge()->vertex()) ) == in_P )
+          Bounded_side position = inside_P( get(ppmap,fit->halfedge()->vertex()) );
+          if ( position == in_P )
             is_patch_inside_P.set(patch_id);
-
+          else
+            if ( position == ON_BOUNDARY )
+            {
+              if (coplanar_facets_Q.test(get(Q_facet_id_pmap, fit)))
+              {
+                coplanar_patches_of_Q.set(patch_id);
+                coplanar_patches_of_Q_for_union_and_intersection.set(patch_id);
+              }
+              else
+              {
+                Vertex_handle vn = fit->halfedge()->opposite()->vertex();
+                Bounded_side other_position = inside_P( get(ppmap, vn) );
+                if (other_position==ON_BOUNDARY)
+                {
+                  // \todo improve this part which is not robust with a kernel with inexact constructions.
+                  other_position = inside_P(midpoint(get(ppmap, vn),
+                                                     get(ppmap, fit->halfedge()->vertex()) ));
+                }
+                if ( other_position == in_P )
+                  is_patch_inside_P.set(patch_id);
+              }
+            }
           if ( patch_status_not_set_Q.none() ) break;
         }
       }
