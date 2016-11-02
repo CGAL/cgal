@@ -18,8 +18,8 @@ namespace Data_classification {
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap Property map to access the input points.
-    \tparam EchoMap Property map to access the echo values of input points.
+    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_t`.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap, typename EchoMap>
 class Attribute_echo_scatter : public Attribute

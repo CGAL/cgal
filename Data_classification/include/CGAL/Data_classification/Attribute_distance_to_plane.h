@@ -39,7 +39,7 @@ namespace Data_classification {
     
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap Property map to access the input points.
+    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
     \tparam DiagonalizeTraits Solver used for matrix diagonalization.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,

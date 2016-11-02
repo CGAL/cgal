@@ -48,7 +48,7 @@ namespace Data_classification {
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap Property map to access the colors of the input points.
+    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Data_classification::RGB_Color`.A
   */
 template <typename Kernel, typename RandomAccessIterator, typename ColorMap>
 class Attribute_hsv : public Attribute
