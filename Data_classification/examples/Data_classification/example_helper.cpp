@@ -17,6 +17,11 @@ typedef CGAL::Identity_property_map<Point> Pmap;
 typedef CGAL::Point_set_classification<Kernel, Iterator, Pmap> Classification;
 typedef CGAL::Data_classification::Helper<Kernel, Iterator, Pmap> Helper;
 
+
+/*
+ This interpreter is used to read a PLY input that contains training
+ attributes (with the PLY "label" property).
+*/
 class My_ply_interpreter
 {
   std::vector<Point>& points;
@@ -57,7 +62,7 @@ public:
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
+  std::string filename (argc > 1 ? argv[1] : "data/b9_training.ply");
   std::ifstream in (filename.c_str());
   std::vector<Point> pts;
   std::vector<int> labels;
@@ -71,21 +76,13 @@ int main (int argc, char** argv)
       return EXIT_FAILURE;
     }
 
-  double grid_resolution = 1.;
-  double radius_neighbors = 5.;
-  double radius_dtm = 30;
-
   Classification psc (pts.begin (), pts.end(), Pmap());
   
-  std::cerr << "Using helper " << std::endl;
+  std::cerr << "Generating attributes" << std::endl;
+  Helper helper (pts.begin(), pts.end(), Pmap(),
+                 5); // Using 5 scales
 
-  // for (std::size_t i = 0; i < 3; ++ i)
-  //   {
-      Helper helper (pts.begin(), pts.end(), Pmap(),
-                     grid_resolution, radius_neighbors, radius_dtm);
-
-      helper.generate_attributes (psc, pts.begin(), pts.end(), Pmap());
-      //    }
+  helper.generate_attributes (psc, pts.begin(), pts.end(), Pmap());
   
   // Add types to PSC
   CGAL::Data_classification::Type_handle ground
@@ -94,73 +91,43 @@ int main (int argc, char** argv)
     = psc.add_classification_type ("vegetation");
   CGAL::Data_classification::Type_handle roof
     = psc.add_classification_type ("roof");
-  CGAL::Data_classification::Type_handle facade
-    = psc.add_classification_type ("facade");
 
+  // Set training sets
   for (std::size_t i = 0; i < labels.size(); ++ i)
     {
       switch (labels[i])
         {
         case 0:
-          psc.add_training_index(vege, i);
+          psc.add_training_index(ground, i);
           break;
         case 1:
-          psc.add_training_index(ground, i);
+          psc.add_training_index(vege, i);
           break;
         case 2:
           psc.add_training_index(roof, i);
-          break;
-        case 3:
-          psc.add_training_index(facade, i);
           break;
         default:
           break;
         }
     }
 
-
-  //  psc.set_multiplicative(true);
   std::cerr << "Training" << std::endl;
-  psc.training(1000);
+  psc.training(800); // 800 trials
 
-  //  psc.run_with_graphcut (helper.neighborhood(), 0.5);
-  psc.run();
+  psc.run_with_graphcut (helper.neighborhood(), 0.5);
   
   // Save the output in a colored PLY format
-
   std::ofstream f ("classification.ply");
   f.precision(18);
-  f << "ply" << std::endl
-    << "format ascii 1.0" << std::endl
-    << "element vertex " << pts.size() << std::endl
-    << "property double x" << std::endl
-    << "property double y" << std::endl
-    << "property double z" << std::endl
-    << "property uchar red" << std::endl
-    << "property uchar green" << std::endl
-    << "property uchar blue" << std::endl
-    << "property int label" << std::endl
-    << "end_header" << std::endl;
-  
-  for (std::size_t i = 0; i < pts.size(); ++ i)
-    {
-      f << pts[i] << " ";
-      
-      CGAL::Data_classification::Type_handle type = psc.classification_type_of (i);
-      if (type == vege)
-        f << "0 255 27 0" << std::endl;
-      else if (type == ground)
-        f << "245 180 0 1" << std::endl;
-      else if (type == roof)
-        f << "255 0 170 2" << std::endl;
-      else if (type == facade)
-        f << "100 0 255 3" << std::endl;
-      else
-        {
-          f << "0 0 0 -1" << std::endl;
-          //          std::cerr << "Error: unknown classification type" << std::endl;
-        }
-    }
+
+  std::vector<CGAL::Data_classification::RGB_Color> colors;
+  colors.push_back(CGAL::make_array ((unsigned char)245, 180, 0)); // Ground
+  colors.push_back(CGAL::make_array ((unsigned char)0, 255, 27));  // Vegetation
+  colors.push_back(CGAL::make_array ((unsigned char)255, 0, 170)); // Roof
+
+  helper.write_ply (f, pts.begin(), pts.end(), Pmap(), psc, &colors);
+
+  /// Save the configuration to be able to reload it later
   helper.save ("config.xml", psc);
   
   std::cerr << "All done" << std::endl;
