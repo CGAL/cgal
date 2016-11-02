@@ -3640,6 +3640,10 @@ namespace CGAL {
                            bool testAttributes=true,
                            bool testPoint=true) const
     {
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
+      CGAL_USE(testDartInfo);
+#endif
+      
       typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2, Storage2> Map2;
 
       bool match = true;
@@ -4947,7 +4951,7 @@ namespace CGAL {
   };
 
   template < unsigned int d_,
-#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
+#if def36ined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
              class Items_=Combinatorial_map_min_items<d_>,
 #else
              class Items_=Generic_map_min_items,
