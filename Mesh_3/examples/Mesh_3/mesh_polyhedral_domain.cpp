@@ -40,7 +40,7 @@ int main(int argc, char*argv[])
   Polyhedron polyhedron;
   std::ifstream input(fname);
   input >> polyhedron;
-  if(input.bad()){
+  if(input.fail()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }

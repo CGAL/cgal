@@ -56,5 +56,5 @@ int main()
   std::ofstream off_file("out.off");
   c3t3.output_boundary_to_off(off_file);
 
-  return off_file.bad() ? EXIT_FAILURE : EXIT_SUCCESS;
+  return off_file.fail() ? EXIT_FAILURE : EXIT_SUCCESS;
 }
