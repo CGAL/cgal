@@ -333,6 +333,8 @@ For warnings we provide `set_warning_behaviour()` which works in the same way.
 The only difference is that for warnings the default value is
 `CONTINUE`.
 
+Setting the error and warning behavior is not thead safe.
+
 
 \subsection stl_control Control at a Finer Granularity
 
