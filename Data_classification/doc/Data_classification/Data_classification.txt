@@ -43,31 +43,31 @@ The following code snippet shows how to instantiate such data structures from an
 
 \subsection Data_classification_attributes Attributes
 
-Attributes are defined as scalar fields that associate each input point with a specific value. In the \cgal classification framework, an abstract class `CGAL::Data_classification::Attribute` defines what method the attribute must provide. All attributes must inherit this class. User can define its own attribute.
+Attributes are defined as scalar fields that associate each input point with a specific value. In the \cgal classification framework, an abstract class `CGAL::Data_classification::Attribute` defines what method the attribute must provide. All attributes must inherit this class. The attributes provided by \cgal are generally sufficient to handle most cases. However, the user may want to define its own attributes, especially if the input point set comes with additional properties that were not anticipated by \cgal. A user-defined attribute must inherit `CGAL::Data_classification::Attribute` and provide a method `value()` that associate a scalar value to each input point.
 
 Attributes are accessed through `Handle` objects, `CGAL::Data_classification::Attribute_handle`.
 
 \cgal provides some predefined attributes that make sense in urban scene classification:
 
-- `CGAL::Data_classification::Attribute_distance_to_plane` measures how far away a point is from a locally estimated plane;
-- `CGAL::Data_classification::Attribute_elevation` estimates the local distance to an estimated ground;
-- `CGAL::Data_classification::Attribute_vertical_dispersion` computes how noisy the point set is on a local Z-cylinder;
+- `CGAL::Data_classification::Attribute_distance_to_plane` measures how far away a point is from a locally estimated plane
+- `CGAL::Data_classification::Attribute_elevation` estimates the local distance to an estimated ground
+- `CGAL::Data_classification::Attribute_vertical_dispersion` computes how noisy the point set is on a local Z-cylinder
 - `CGAL::Data_classification::Attribute_verticality` compares the local normal vector to the vertical vector.
 
 For more details about how these different attributes can help identifying one classification type or the other, please refer to their associated reference manual pages. In addition, \cgal also provides attributes solely based on the local eigen values. Such attributes are less easy to relate to a specific classification type but can still be useful:
 
-- `CGAL::Data_classification::Attribute_anisotropy`;
-- `CGAL::Data_classification::Attribute_eigentropy`;
-- `CGAL::Data_classification::Attribute_linearity`;
-- `CGAL::Data_classification::Attribute_omnivariance`;
-- `CGAL::Data_classification::Attribute_planarity`;
-- `CGAL::Data_classification::Attribute_sphericity`;
-- `CGAL::Data_classification::Attribute_sum_eigenvalues`;
+- `CGAL::Data_classification::Attribute_anisotropy`
+- `CGAL::Data_classification::Attribute_eigentropy`
+- `CGAL::Data_classification::Attribute_linearity`
+- `CGAL::Data_classification::Attribute_omnivariance`
+- `CGAL::Data_classification::Attribute_planarity`
+- `CGAL::Data_classification::Attribute_sphericity`
+- `CGAL::Data_classification::Attribute_sum_eigenvalues`
 - `CGAL::Data_classification::Attribute_surface_variation`.
 
 Finally, if the input point set has additional properties, these can also be used as attributes. For example, \cgal provides the following attributes:
 
-- `CGAL::Data_classification::Attribute_echo_scatter` uses the number of returns (echo) provided by most LIDAR scanners if available;
+- `CGAL::Data_classification::Attribute_echo_scatter` uses the number of returns (echo) provided by most LIDAR scanners if available
 - `CGAL::Data_classification::Attribute_hsv` uses input color information if available.
 
 In the following code snippet, a subset of these attributes are instantiated, their weights are set and they are added to a newly created classification object:
@@ -213,38 +213,41 @@ Nevertheless, \cgal provides a predefined framework that should work correctly o
 - input/ouput methods are provided to save and recover a specific configuration (with all attributes, types and relationships between them).
 - classification can be saved as a PLY format with colors and labels.
 
-\subsection Data_classification_helper_example Example
-
 \section Data_classification_training Training
 
 Classification is based on relationships between attributes and types. Each attribute has a specific weight and each pair of attribute/type has a specific effect. This means that the number of parameters to set up becomes rapidly large: if 6 attributes are used to classify between 4 classification types, 30 parameters have to be set up.
 
 Though it is possible to set them one by one, \cgal also provides a training algorithm that requires a small set of ground truth points provided by the user. More specifically, the user must provide, for each classification type he/she wants to classify, a set of known inliers among the input point set (for example, selecting one roof, one tree, one section of the ground). The training algorithm works as follows:
 
-- weights are randomly picked;
+- for each attribute, a range of weights is tested: the effects each attribute have on each type is estimated. For a given weight, if an attribute has the same effect on each type, it is non-relevant for classification. The range of weights such that the attribute is relevant is estimated;
 
-- considering these weights, the effects each attribute have on each type is estimated. If an attribute has the same effect on each type, it is non-relevant for classification and therefore not used;
+- for each attribute, uniformly picked weight values are tested and their effects estimated;
 
 - each ground truth points provided by the user is classified using this set of weights and effects;
 
 - for each classification type, the ratio of correctly classified ground truth points is computed. The minimum of this ratios is used as a score for this set of weights and effects: a ratio of 0.8 means that for each classification type, at least 80\% of the provided ground truth point were correctly classified;
 
-- the same mechanism is repeated. Weights are only changed one by one, the other ones kept to the previous value that gave the best score.
+- the same mechanism is repeated until all attributes' ranges have been tested. Weights are only changed one by one, the other ones kept to the previous value that gave the best score.
 
-This usually converges to a satisfying solution quickly. The number of trials is user defined, set to 300 by default. Using at least 10 times the number of attributes is advised. If the solution is not satisfying, more ground truth points can be selected,for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new ground truth points into account.
+This usually converges to a satisfying solution. The number of trials is user defined, set to 300 by default. Using at least 10 times the number of attributes is advised. If the solution is not satisfying, more ground truth points can be selected,for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps the best weights found as initialization and carries on trying new weights by taking new ground truth points into account.
 
 \cgalFigureBegin{Data_classification_training_fig,classif_training.png}
 Example of evolution of training score. Purple curve is the score computed at the current iteration, green curve is the best score found so far. Iterations where better solutions are found are marked by vertical gray lines.
 \cgalFigureEnd
 
 
-\subsection Data_classification_helper_example Example
+\subsection Data_classification_helper_example Example with Helper and Training
 
+The following example:
 
+- reads a point set with a training set (embedded as a PLY attribute _label_);
+- uses the helper to generate attributes on 5 scales;
+- trains the algorithm using 500 trials;
+- runs the algorithm using the graphcut regularization;
+- saves the output using the helper.
 
-\section Data_classification_custom Defining Custom attributes and Types
+\cgalExample{Data_classification/example_helper.cpp}
 
-\subsection Data_classification_custom_example Examples
 
 
 
