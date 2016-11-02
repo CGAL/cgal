@@ -6,7 +6,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Simon Giraudot
 
-This component implements an algorithm that classifies a point cloud into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can compute its own local attributes on the point cloud and define its own classes based on these attributes.
+This component implements a generalization of the algorithm described in \cgalCite{cgal:lm-clscm-12}. It classifies a point cloud into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can compute its own local attributes on the point cloud and define its own classes based on these attributes.
 
 \section Data_classification_Organization Package Organization
 
@@ -54,7 +54,7 @@ Attributes are accessed through `Handle` objects, `CGAL::Data_classification::At
 - `CGAL::Data_classification::Attribute_vertical_dispersion` computes how noisy the point set is on a local Z-cylinder
 - `CGAL::Data_classification::Attribute_verticality` compares the local normal vector to the vertical vector.
 
-For more details about how these different attributes can help identifying one classification type or the other, please refer to their associated reference manual pages. In addition, \cgal also provides attributes solely based on the local eigen values. Such attributes are less easy to relate to a specific classification type but can still be useful:
+For more details about how these different attributes can help identifying one classification type or the other, please refer to their associated reference manual pages. In addition, \cgal also provides attributes solely based on the local eigen values \cgalCite{cgal:mbrsh-raofw-11}. Such attributes are less easy to relate to a specific classification type but can still be useful:
 
 - `CGAL::Data_classification::Attribute_anisotropy`
 - `CGAL::Data_classification::Attribute_eigentropy`
@@ -248,9 +248,9 @@ The following example:
 
 \cgalExample{Data_classification/example_helper.cpp}
 
+\section Data_classification_history History
 
-
-
+This package is based on a research code by Florent Lafarge that was generalized, extended and packaged by Simon Giraudot.
 
 
 
