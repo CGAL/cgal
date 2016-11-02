@@ -64,6 +64,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     {
       in.seekg(0);
       Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
+      item->setName(fileinfo.completeBaseName());
       if (scanner.size_of_vertices()==0) return item;
       if(!item->read_off_point_set(in))
         {
