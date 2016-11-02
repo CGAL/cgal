@@ -4,8 +4,9 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Simple_cartesian.h>
 #include "create_sphere.h"
+#include "Scene_edit_box_item_config.h"
 struct Scene_edit_box_item_priv;
-class Q_DECL_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
+class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_item
 {
     Q_OBJECT
   public:

@@ -804,7 +804,7 @@ void Scene_edit_box_item::highlight()
 {
   d->ready_to_hl = true;
   Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
-  int type, id;
+  int type = -1, id = -1;
   //pick
   if(!d->selection_on)
   {
@@ -1250,7 +1250,7 @@ void Scene_edit_box_item_priv::picking(int& type, int& id, Viewer_interface *vie
       }
     }
   }
-  delete buffer;
+  delete[] buffer;
   viewer->setBackgroundColor(bgColor);
   fbo->release();
   delete fbo;
