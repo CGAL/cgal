@@ -109,6 +109,8 @@ public:
                                             RandomAccessIterator,
                                             PointMap> Neighborhood;
 
+  typedef typename Data_classification::Type_handle      Type_handle;
+  typedef typename Data_classification::Attribute_handle Attribute_handle;
   
 #ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
   typedef internal::Alpha_expansion_graph_cut_boost             Alpha_expansion;
@@ -150,8 +152,8 @@ private:
   std::vector<std::size_t> m_training_type;
   std::vector<double> m_confidence;
 
-  std::vector<Data_classification::Type_handle> m_types; 
-  std::vector<Data_classification::Attribute_handle> m_attributes; 
+  std::vector<Type_handle> m_types; 
+  std::vector<Attribute_handle> m_attributes; 
 
   typedef Data_classification::Type::Attribute_effect Attribute_effect;
   std::vector<std::vector<Attribute_effect> > m_effect_table;
@@ -187,26 +189,6 @@ public:
   /// @}
 
 
-  /// \cond SKIP_IN_MANUAL
-
-  double classification_value (const std::size_t& class_type,
-                               const std::size_t& pt_index) const
-  {
-    double out = 0.;
-    for (std::size_t i = 0; i < m_effect_table[class_type].size(); ++ i)
-      {
-        if (m_attributes[i]->weight == 0.)
-          continue;
-        if (m_effect_table[class_type][i] == Data_classification::Type::FAVORED_ATT)
-          out += m_attributes[i]->favored (pt_index);
-        else if (m_effect_table[class_type][i] == Data_classification::Type::PENALIZED_ATT)
-          out += m_attributes[i]->penalized (pt_index);
-        else if (m_effect_table[class_type][i] == Data_classification::Type::NEUTRAL_ATT)
-          out += m_attributes[i]->ignored (pt_index);
-      }
-    return out;
-  }
-  /// \endcond
 
 
   /// \name Classification
@@ -379,23 +361,6 @@ public:
   
   /// @}
   
-  /// \cond SKIP_IN_MANUAL
-  void prepare_classification ()
-  {
-    // Reset data structure
-    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_assigned_type);
-    std::vector<double>(m_input.size()).swap (m_confidence);
-
-    m_effect_table = std::vector<std::vector<Attribute_effect> >
-      (m_types.size(), std::vector<Attribute_effect> (m_attributes.size(),
-                                                                 Data_classification::Type::NEUTRAL_ATT));
-    
-    for (std::size_t i = 0; i < m_effect_table.size (); ++ i)
-      for (std::size_t j = 0; j < m_effect_table[i].size (); ++ j)
-        m_effect_table[i][j] = m_types[i]->attribute_effect (m_attributes[j]);
-
-  }
-  /// \endcond
 
 
   /// \name Classification Types
@@ -408,9 +373,9 @@ public:
 
     \return A handle to the newly added classification type.
    */
-  Data_classification::Type_handle add_classification_type (const char* name)
+  Type_handle add_classification_type (const char* name)
   {
-    Data_classification::Type_handle out (new Data_classification::Type (name));
+    Type_handle out (new Data_classification::Type (name));
     m_types.push_back (out);
     return out;
   }
@@ -421,7 +386,7 @@ public:
 
     \param type The handle to the classification type that must be added.
    */
-  void add_classification_type (Data_classification::Type_handle type)
+  void add_classification_type (Type_handle type)
   {
     m_types.push_back (type);
   }
@@ -434,7 +399,7 @@ public:
     \return `true` if the classification type was correctly removed,
     `false` if its handle was not found inside the object.
    */ 
- bool remove_classification_type (Data_classification::Type_handle type)
+ bool remove_classification_type (Type_handle type)
   {
     std::size_t idx = (std::size_t)(-1);
     for (std::size_t i = 0; i < m_types.size(); ++ i)
@@ -473,7 +438,7 @@ public:
     return m_types.size();
   }
 
-  Data_classification::Type_handle get_classification_type (std::size_t idx)
+  Type_handle get_classification_type (std::size_t idx)
   {
     return m_types[idx];
   }
@@ -497,7 +462,7 @@ public:
 
     \param attribute Handle of the attribute to add.
    */
-  void add_attribute (Data_classification::Attribute_handle attribute)
+  void add_attribute (Attribute_handle attribute)
   {
     m_attributes.push_back (attribute);
   }
@@ -516,7 +481,7 @@ public:
     return m_attributes.size();
   }
 
-  Data_classification::Attribute_handle get_attribute(std::size_t idx)
+  Attribute_handle get_attribute(std::size_t idx)
   {
     return m_attributes[idx];
   }
@@ -538,12 +503,12 @@ public:
 
     \return Pointer to the classification type
   */
-  Data_classification::Type_handle classification_type_of (std::size_t index) const
+  Type_handle classification_type_of (std::size_t index) const
   {
     if (m_assigned_type.size() <= index
         || m_assigned_type[index] == (std::size_t)(-1))
       {
-      return Data_classification::Type_handle();
+      return Type_handle();
       }
     return m_types[m_assigned_type[index]];
   }
@@ -553,7 +518,7 @@ public:
   {
     return !(m_assigned_type.empty());
   }
-  void set_classification_type_of (std::size_t index, Data_classification::Type_handle class_type)
+  void set_classification_type_of (std::size_t index, Type_handle class_type)
   {
     for (std::size_t i = 0; i < m_types.size(); ++ i)
       if (m_types[i] == class_type)
@@ -638,7 +603,7 @@ public:
     std::size_t att_used = 0;
     for (std::size_t j = 0; j < m_attributes.size(); ++ j)
       {
-        Data_classification::Attribute_handle att = m_attributes[j];
+        Attribute_handle att = m_attributes[j];
         best_weights[j] = att->weight;
 
         std::size_t nb_useful = 0;
@@ -727,7 +692,7 @@ public:
             if (attribute_useful(m_attributes[j]))
               nb_used ++;
           }
-        Data_classification::Attribute_handle current_att = m_attributes[current_att_changed];
+        Attribute_handle current_att = m_attributes[current_att_changed];
         const Attribute_training& tr = att_train[current_att_changed];
         
         current_att->weight = tr.wmin;
@@ -753,7 +718,7 @@ public:
                           << "/" << m_attributes.size() << " attribute(s) used)" << std::endl;
                 for (std::size_t k = 0; k < m_attributes.size(); ++ k)
                   {
-                    Data_classification::Attribute_handle att = m_attributes[k];
+                    Attribute_handle att = m_attributes[k];
                     best_weights[k] = att->weight;
                   }
               }
@@ -766,7 +731,7 @@ public:
 
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
-        Data_classification::Attribute_handle att = m_attributes[i];
+        Attribute_handle att = m_attributes[i];
         att->weight = best_weights[i];
       }
 
@@ -778,7 +743,7 @@ public:
     std::size_t nb_removed = 0;
     for (std::size_t i = 0; i < best_weights.size(); ++ i)
       {
-        Data_classification::Attribute_handle att = m_attributes[i];
+        Attribute_handle att = m_attributes[i];
         CGAL_CLASSTRAINING_CERR << "ATTRIBUTE " << att->id() << ": " << best_weights[i] << std::endl;
         att->weight = best_weights[i];
 
@@ -786,7 +751,7 @@ public:
         bool to_remove = true;
         for (std::size_t j = 0; j < m_types.size(); ++ j)
           {
-            Data_classification::Type_handle ctype = m_types[j];
+            Type_handle ctype = m_types[j];
             if (ctype->attribute_effect(att) == Data_classification::Type::FAVORED_ATT)
               CGAL_CLASSTRAINING_CERR << " * Favored for ";
             else if (ctype->attribute_effect(att) == Data_classification::Type::PENALIZED_ATT)
@@ -826,7 +791,7 @@ public:
 
     \param idx Index of the input point.
   */
-  bool add_training_index (Data_classification::Type_handle class_type,
+  bool add_training_index (Type_handle class_type,
                            std::size_t idx)
   {
     std::size_t type_idx = (std::size_t)(-1);
@@ -856,7 +821,7 @@ public:
     `value_type`. \cgalModels InputIterator
   */
   template <class IndexIterator>
-  bool add_training_set (Data_classification::Type_handle class_type,
+  bool add_training_set (Type_handle class_type,
                          IndexIterator first,
                          IndexIterator beyond)
   {
@@ -883,12 +848,52 @@ public:
 
   
   /// \cond SKIP_IN_MANUAL
-  Data_classification::Type_handle training_type_of (std::size_t index) const
+  Type_handle training_type_of (std::size_t index) const
   {
     if (m_training_type.size() <= index
         || m_training_type[index] == (std::size_t)(-1))
-      return Data_classification::Type_handle();
+      return Type_handle();
     return m_types[m_training_type[index]];
+  }
+
+  /// \endcond
+
+
+private:
+
+  double classification_value (const std::size_t& class_type,
+                               const std::size_t& pt_index) const
+  {
+    double out = 0.;
+    for (std::size_t i = 0; i < m_effect_table[class_type].size(); ++ i)
+      {
+        if (m_attributes[i]->weight == 0.)
+          continue;
+        if (m_effect_table[class_type][i] == Data_classification::Type::FAVORED_ATT)
+          out += m_attributes[i]->favored (pt_index);
+        else if (m_effect_table[class_type][i] == Data_classification::Type::PENALIZED_ATT)
+          out += m_attributes[i]->penalized (pt_index);
+        else if (m_effect_table[class_type][i] == Data_classification::Type::NEUTRAL_ATT)
+          out += m_attributes[i]->ignored (pt_index);
+      }
+    return out;
+  }
+
+
+  void prepare_classification ()
+  {
+    // Reset data structure
+    std::vector<std::size_t>(m_input.size(), (std::size_t)(-1)).swap (m_assigned_type);
+    std::vector<double>(m_input.size()).swap (m_confidence);
+
+    m_effect_table = std::vector<std::vector<Attribute_effect> >
+      (m_types.size(), std::vector<Attribute_effect> (m_attributes.size(),
+                                                                 Data_classification::Type::NEUTRAL_ATT));
+    
+    for (std::size_t i = 0; i < m_effect_table.size (); ++ i)
+      for (std::size_t j = 0; j < m_effect_table[i].size (); ++ j)
+        m_effect_table[i][j] = m_types[i]->attribute_effect (m_attributes[j]);
+
   }
 
   void estimate_attributes_effects
@@ -900,7 +905,7 @@ public:
 
   void estimate_attribute_effect
   (const std::vector<std::vector<std::size_t> >& training_sets,
-   Data_classification::Attribute_handle att)
+   Attribute_handle att)
   {
     std::vector<double> mean (m_types.size(), 0.);
                                   
@@ -918,7 +923,7 @@ public:
         
     for (std::size_t j = 0; j < m_types.size(); ++ j)
       {
-        Data_classification::Type_handle ctype = m_types[j];
+        Type_handle ctype = m_types[j];
             
         for (std::size_t k = 0; k < training_sets[j].size(); ++ k)
           {
@@ -1016,7 +1021,7 @@ public:
     return worst_confidence;
   }
 
-  bool attribute_useful (Data_classification::Attribute_handle att)
+  bool attribute_useful (Attribute_handle att)
   {
     Data_classification::Type::Attribute_effect side = m_types[0]->attribute_effect(att);
     for (std::size_t k = 1; k < m_types.size(); ++ k)
@@ -1024,9 +1029,6 @@ public:
         return true;
     return false;
   }
-
-  /// \endcond
-
 
 };
 
