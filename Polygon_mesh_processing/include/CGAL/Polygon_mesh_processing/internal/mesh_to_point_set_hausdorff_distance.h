@@ -81,7 +81,7 @@ private:
   typedef CPointH<Kernel> PointH;
   typedef typename PointH::Point Point;
   PointH m_point[3];
-  int m_edge;
+  std::size_t m_edge;
   FT m_upper_bound;
   FT m_lower_bound;
   Point m_bisector;
@@ -94,26 +94,23 @@ public:
     m_point[1] = b;
     m_point[2] = c;
 
-    m_edge = -1;
-    //should disappear when Simon reworks the code
-    /*for (unsigned int i = 0; i < 3; ++ i)
-    {
-      if (CGAL::angle(m_point[(i+1)%3](), m_point[i](), m_point[(i+2)%3]())
-          == CGAL::OBTUSE)
+    m_edge = 0;
+    
+    typename Kernel::Compute_squared_distance_3 squared_distance;
+    FT length_max = squared_distance(m_point[1](), m_point[2]());
+    FT length1 = squared_distance(m_point[2](), m_point[0]());
+    if (length1 > length_max)
       {
-        m_edge = i;
-        break;
+        m_edge = 1;
+        length_max = length1;
       }
-    }
+    FT length2 = squared_distance(m_point[0](), m_point[1]());
+    if (length2 > length_max)
+      m_edge = 2;
 
-*/
-    if (m_edge == -1)
-        m_bisector = typename Kernel::Construct_circumcenter_3() (a(), b(), c());
-    else
-    {
-      m_bisector = PointH::mid_point (m_point[(m_edge+1)%3],
-                                      m_point[(m_edge+2)%3]);
-    }
+    m_bisector = PointH::mid_point (m_point[(m_edge+1)%3],
+                                    m_point[(m_edge+2)%3]);
+
     m_lower_bound = 0.;
     m_upper_bound = 0.;
     for (unsigned int i = 0; i < 3; ++ i)
@@ -121,7 +118,6 @@ public:
       if (m_point[i].hausdorff () > m_lower_bound)
         m_lower_bound = m_point[i].hausdorff ();
 
-      typename Kernel::Compute_squared_distance_3 squared_distance;
       FT up = m_point[i].hausdorff ()
         + CGAL::approximate_sqrt (squared_distance (m_point[i](), m_bisector));
 
@@ -162,7 +158,7 @@ public:
   }
 
   const PointH* points () const { return m_point; }
-  int edge () const { return m_edge; }
+  std::size_t edge () const { return m_edge; }
 
   #ifdef CGAL_MTPS_HD_DEBUG
   void print () const
@@ -324,30 +320,15 @@ public:
         return m_upper_bound;
 
       PointH new_point (bisector, hausdorff);
-      int i = current.edge ();
-      if (i == -1)
-      {
-        PointH p0 (current.points()[0]);
-        PointH p1 (current.points()[1]);
-        PointH p2 (current.points()[2]);
+      std::size_t i = current.edge ();
+      PointH p0 (current.points()[i]);
+      PointH p1 (current.points()[(i+1)%3]);
+      PointH p2 (current.points()[(i+2)%3]);
 
-        m_queue.pop ();
+      m_queue.pop ();
 
-        m_queue.push (RefTriangle (new_point, p0, p1));
-        m_queue.push (RefTriangle (new_point, p1, p2));
-        m_queue.push (RefTriangle (new_point, p2, p0));
-      }
-      else
-      {
-        PointH p0 (current.points()[i]);
-        PointH p1 (current.points()[(i+1)%3]);
-        PointH p2 (current.points()[(i+2)%3]);
-
-        m_queue.pop ();
-
-        m_queue.push (RefTriangle (new_point, p0, p1));
-        m_queue.push (RefTriangle (new_point, p0, p2));
-      }
+      m_queue.push (RefTriangle (new_point, p0, p1));
+      m_queue.push (RefTriangle (new_point, p0, p2));
     }
 
 
