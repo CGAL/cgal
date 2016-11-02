@@ -41,8 +41,8 @@ struct Split_functor
   void operator()(Face_attribute& ca1, Face_attribute& ca2)
   {
      // We need to reinitalize the weight of the two faces
-    CMap_3::size_type nb1=mmap.darts_of_cell<2>(ca1.dart()).size();
-    CMap_3::size_type nb2=mmap.darts_of_cell<2>(ca2.dart()).size();
+    GMap_3::size_type nb1=mmap.darts_of_cell<2>(ca1.dart()).size();
+    GMap_3::size_type nb2=mmap.darts_of_cell<2>(ca2.dart()).size();
     mmap.info<2>(ca1.dart())*=(double(nb1)/(nb1+nb2));
     mmap.info<2>(ca2.dart())*=(double(nb2)/(nb1+nb2));
     std::cout<<"After on split faces: info of face1="<<ca1.info()

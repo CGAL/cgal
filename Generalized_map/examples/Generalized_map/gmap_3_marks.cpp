@@ -4,7 +4,7 @@
 
 typedef CGAL::Generalized_map<3> GMap_3;
 typedef GMap_3::Dart_handle Dart_handle;
-typedef CMap_3::size_type size_type;
+typedef GMap_3::size_type size_type;
 
 int main()
 {
@@ -16,7 +16,7 @@ int main()
   {
     amark = gm.get_new_mark();
   }
-  catch (CMap_3::Exception_no_more_available_mark)
+  catch (GMap_3::Exception_no_more_available_mark)
   {
     std::cerr<<"No more free mark, exit."<<std::endl;
     exit(-1);
@@ -39,7 +39,7 @@ int main()
   for (GMap_3::Dart_of_cell_range<3>::iterator
        it(gm.darts_of_cell<3>(dh1).begin()),
        itend(gm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
-    gm.mark(it, mark);
+    gm.mark(it, amark);
 
   // 4) Remove the common 2-cell between the two cubes:
   //    the two tetrahedra are merged.
@@ -50,12 +50,12 @@ int main()
   for (GMap_3::Dart_range::iterator it(gm.darts().begin()),
          itend(gm.darts().end()); it!=itend; ++it)
   {
-    if ( gm.is_marked(it, mark) )
+    if ( gm.is_marked(it, amark) )
       ++res;
   }
 
   std::cout<<"Number of darts from the first tetrahedron: "<<res<<std::endl;
-  gm.free_mark(mark);
+  gm.free_mark(amark);
 
   return EXIT_SUCCESS;
 }
