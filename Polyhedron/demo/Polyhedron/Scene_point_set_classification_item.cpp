@@ -294,12 +294,6 @@ Scene_point_set_classification_item::clone() const
 // Write point set to .PLY file
 bool Scene_point_set_classification_item::write_ply_point_set(std::ostream& stream)
 {
-  if (m_psc->classification_type_of(0) == Type_handle())
-    {
-      std::cerr << "Error: classification was not performed." << std::endl;
-      return false;
-    }
-
   if (m_helper == NULL)
     return false;
     
