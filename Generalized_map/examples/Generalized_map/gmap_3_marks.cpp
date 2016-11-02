@@ -4,20 +4,25 @@
 
 typedef CGAL::Generalized_map<3> GMap_3;
 typedef GMap_3::Dart_handle Dart_handle;
+typedef CMap_3::size_type size_type;
 
 int main()
 {
   GMap_3 gm;
 
-  // Reserve a mark
-  int mark = gm.get_new_mark();
-  if ( mark==-1 )
+  // 1) Reserve a mark.
+  size_type amark;
+  try
+  {
+    amark = gm.get_new_mark();
+  }
+  catch (CMap_3::Exception_no_more_available_mark)
   {
     std::cerr<<"No more free mark, exit."<<std::endl;
     exit(-1);
   }
 
-  // Create two tetrahedra.
+  // 2) Create two tetrahedra.
   Dart_handle dh1 = gm.make_combinatorial_tetrahedron();
   Dart_handle dh2 = gm.make_combinatorial_tetrahedron();
 
@@ -25,8 +30,10 @@ int main()
   CGAL_assertion( gm.is_volume_combinatorial_tetrahedron(dh1) );
   CGAL_assertion( gm.is_volume_combinatorial_tetrahedron(dh2) );
 
-  // 3-sew them.
+  // 3) 3-sew them.
   gm.sew<3>(dh1, dh2);
+
+  // 4) Mark the darts belonging to the first tetrahedron.
 
   // Mark the darts belonging to the first tetrahedron.
   for (GMap_3::Dart_of_cell_range<3>::iterator
@@ -34,11 +41,11 @@ int main()
        itend(gm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
     gm.mark(it, mark);
 
-  // Remove the common 2-cell between the two cubes:
-  // the two tetrahedra are merged.
+  // 4) Remove the common 2-cell between the two cubes:
+  //    the two tetrahedra are merged.
   gm.remove_cell<2>(dh1);
 
-  // Thanks to the mark, we know which darts come from the first tetrahedron.
+  // 5) Thanks to the mark, we know which darts come from the first tetrahedron.
   unsigned int res=0;
   for (GMap_3::Dart_range::iterator it(gm.darts().begin()),
          itend(gm.darts().end()); it!=itend; ++it)
@@ -52,3 +59,4 @@ int main()
 
   return EXIT_SUCCESS;
 }
+

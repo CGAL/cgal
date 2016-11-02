@@ -9,10 +9,8 @@ int main()
 {
   GMap_3 gm;
 
-  // Create one hexahedron.
+  // Create one combinatorial hexahedron.
   Dart_handle d1 = gm.make_combinatorial_hexahedron();
-  CGAL_assertion( gm.is_valid() );
-  CGAL_assertion( gm.is_volume_combinatorial_hexahedron(d1) );
 
   // Add two edges along two opposite facets.
   gm.insert_cell_1_in_cell_2(d1,gm.alpha<0,1,0>(d1));
@@ -22,7 +20,8 @@ int main()
   gm.insert_cell_1_in_cell_2(d2,gm.alpha<0,1,0>(d2));
   CGAL_assertion( gm.is_valid() );
 
-  // Insert a facet along these two new edges plus two initial edges of the cube.
+  // Insert a facet along these two new edges plus two initial edges
+  // of the hexahedron.
   std::vector<Dart_handle> path;
   path.push_back(gm.alpha<1>(d1));
   path.push_back(gm.alpha<1,0,1,2,1>(d1));
@@ -32,11 +31,11 @@ int main()
   Dart_handle d3=gm.insert_cell_2_in_cell_3(path.begin(),path.end());
   CGAL_assertion( gm.is_valid() );
 
-  // Display the m characteristics.
+  // Display the generalized map characteristics.
   gm.display_characteristics(std::cout) << ", valid=" <<
                                            gm.is_valid() << std::endl;
 
-  // We use the removal operations to get back to the initial cube.
+   // We use the removal operations to get back to the initial hexahedron.
   gm.remove_cell<2>(d3);
   CGAL_assertion( gm.is_valid() );
 
@@ -47,9 +46,10 @@ int main()
   CGAL_assertion( gm.is_valid() );
   CGAL_assertion( gm.is_volume_combinatorial_hexahedron(d1) );
 
-  // Display the m characteristics.
+  // Display the generalized map characteristics.
   gm.display_characteristics(std::cout) << ", valid="
                                         << gm.is_valid() << std::endl;
 
   return EXIT_SUCCESS;
 }
+
