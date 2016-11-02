@@ -4951,7 +4951,7 @@ namespace CGAL {
   };
 
   template < unsigned int d_,
-#if def36ined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
+#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
              class Items_=Combinatorial_map_min_items<d_>,
 #else
              class Items_=Generic_map_min_items,
