@@ -28,6 +28,7 @@
 #include <string>
 #include <utility>
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -228,11 +229,9 @@ public:
     boost::rand48 rng;
 };
 
-#ifdef CGAL_HEADER_ONLY
-
 inline Random& get_default_random()
 {
-  static Random default_random;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Random, default_random);
   return default_random;
 }
 
@@ -240,16 +239,7 @@ inline Random& get_default_random()
   namespace { CGAL_DEPRECATED_UNUSED CGAL::Random& default_random = get_default_random(); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
-#else // CGAL_HEADER_ONLY
 
-// Global variables
-// ================
-CGAL_EXPORT extern Random default_random;
-
-inline Random& get_default_random()
-{ return default_random; }
-
-#endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
 
