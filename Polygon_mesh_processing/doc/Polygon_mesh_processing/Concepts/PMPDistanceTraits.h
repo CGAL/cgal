@@ -57,9 +57,6 @@ public:
     /// Functor for constructing scaled vectors.
     /// It provides `Vector_3 operator()(const Vector_3 &, const FT &)`
     typedef unspecified_type Construct_scaled_vector_3;
-    /// Functor for constructing the circumcenter of three points.
-    /// It provides `Point_3 operator()(const Point_3&, const Point_3&, const Point_3&)`
-    typedef unspecified_type Construct_circumcenter_3;
     /// @}
 
     /// @name Functions
@@ -68,6 +65,5 @@ public:
     Construct_translated_point_3 construct_translated_point_3_object();
     Construct_vector_3 construct_vector_3_object();
     Construct_scaled_vector_3 construct_scaled_vector_3_object();
-    Construct_circumcenter_3 construct_circumcenter_3_object();
     /// @}
 };

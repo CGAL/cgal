@@ -73,11 +73,6 @@ struct Custom_traits_Hausdorff
 
   };
 
-  struct Construct_circumcenter_3
-  {
-    Point_3 operator()(const Point_3&, const Point_3&, const Point_3&){return Point_3();}
-  };
-
   Compute_squared_area_3 compute_squared_area_3_object(){return Compute_squared_area_3();}
 // } end of new requirements
 
@@ -216,7 +211,6 @@ struct Real_embeddable_traits< Custom_traits_Hausdorff::FT >
 
 void exact(Custom_traits_Hausdorff::FT){}
 
-//}missing
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
@@ -249,6 +243,13 @@ void general_tests(const TriangleMesh& m1,
             << CGAL::Polygon_mesh_processing::max_distance_to_triangle_mesh<CGAL::Sequential_tag>(points,m1)
             << "\n";
 
+  std::vector<typename GeomTraits::Point_3> sample;
+  typename boost::graph_traits<TriangleMesh>::face_descriptor f = *faces(m1).first;
+  CGAL::Polygon_mesh_processing::sample_face(f, m1, 4000, std::back_inserter(sample),CGAL::Polygon_mesh_processing::parameters::all_default());
+  std::cout << "Number of sampled points in the first face of m1 (sequential) "
+            <<sample.size()
+            << "\n";
+
 }
 
 void test_concept()
@@ -261,7 +262,6 @@ void test_concept()
 int main(int, char** argv)
 {
   Mesh m1,m2;
-
   std::ifstream input(argv[1]);
   input >> m1;
   input.close();

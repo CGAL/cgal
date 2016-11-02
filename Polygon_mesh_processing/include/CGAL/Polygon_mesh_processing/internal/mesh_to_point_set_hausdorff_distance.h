@@ -59,9 +59,9 @@ public:
 
   static Point mid_point (const CPointH& a, const CPointH& b)
   {
-    return Point (0.5 * (a().x() + b().x()),
-                  0.5 * (a().y() + b().y()),
-                  0.5 * (a().z() + b().z()));
+    return Point (FT(0.5) * (a().x() + b().x()),
+                  FT(0.5) * (a().y() + b().y()),
+                  FT(0.5) * (a().z() + b().z()));
   }
 
 
