@@ -227,11 +227,7 @@ private:
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
-        std::size_t nb_points =  (std::max)((int)std::ceil(400 * PMP::face_area(f,*poly,PMP::parameters::geom_traits(Kernel()))),
-                                            1);
-        CGAL::Random_points_in_triangle_3<typename Kernel::Point_3> g(f->halfedge()->vertex()->point(), f->halfedge()->next()->vertex()->point(),
-                                                                f->halfedge()->next()->next()->vertex()->point());
-        CGAL::cpp11::copy_n(g, nb_points, std::back_inserter(sampled_points));
+        CGAL::Polygon_mesh_processing::sample_face(f, *poly, 400, std::back_inserter(sampled_points),CGAL::Polygon_mesh_processing::parameters::all_default());
         sampled_points.push_back(f->halfedge()->vertex()->point());
         sampled_points.push_back(f->halfedge()->next()->vertex()->point());
         sampled_points.push_back(f->halfedge()->next()->next()->vertex()->point());

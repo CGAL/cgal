@@ -414,12 +414,28 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                            get_const_property_map(vertex_point, tm));
     typedef Creator_uniform_3<typename Geom_traits::FT,
                               typename Geom_traits::Point_3> Creator;
+    std::size_t nb_points = std::ceil( to_double(
+                                           face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter);
   switch(method)
   {
+  case GRID:
+  {
+      //create the triangles and store them
+      typename Geom_traits::Point_3 points[3];
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd(halfedge(f,tm));
+      for(int i=0; i<3; ++i)
+      {
+        points[i] = get(pmap, target(hd, tm));
+        hd = next(hd, tm);
+      }
+
+    internal::triangle_grid_sampling<Geom_traits>(typename Geom_traits::Triangle_3(points[0], points[1], points[2]), parameter, out);
+    return out;
+  }
+  case MONTE_CARLO:
+      nb_points = (std::max)(nb_points, static_cast<std::size_t>(1));
   case RANDOM_UNIFORM:
   {
-      std::size_t nb_points = std::ceil( to_double(
-                                             face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter);
       typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd(halfedge(f,tm));
       typename Geom_traits::Point_3 points[3];
       for(int i=0; i<3; ++i)
@@ -432,37 +448,6 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
       CGAL::cpp11::copy_n(g, nb_points, out);
       return out;
   }
-    case GRID:
-    {
-        //create the triangles and store them
-        typename Geom_traits::Point_3 points[3];
-        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd(halfedge(f,tm));
-        for(int i=0; i<3; ++i)
-        {
-          points[i] = get(pmap, target(hd, tm));
-          hd = next(hd, tm);
-        }
-
-      internal::triangle_grid_sampling<Geom_traits>(typename Geom_traits::Triangle_3(points[0], points[1], points[2]), parameter, out);
-      return out;
-    }
-    case MONTE_CARLO:
-    {
-        std::size_t nb_points( (std::max)(
-                    std::ceil(to_double(face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter),
-                                         1.) );
-        //create the triangles and store them
-        typename Geom_traits::Point_3 points[3];
-        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd(halfedge(f,tm));
-        for(int i=0; i<3; ++i)
-        {
-          points[i] = get(pmap, target(hd, tm));
-          hd = next(hd, tm);
-        }
-        Random_points_in_triangle_3<typename Geom_traits::Point_3, Creator>
-          g(points[0], points[1], points[2]);
-        CGAL::cpp11::copy_n(g, nb_points, out);
-    }
   }
   return out;
 }
@@ -490,15 +475,24 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
  * @param tm2 the triangle mesh to compute the distance to
  * @param precision the number of points per squared area unit for the random sampling
  * @param np1 optional sequence of \ref namedparameters for `tm1` among the ones listed below
- * @param np2 optional sequence of \ref namedparameters for `tm2` among the ones listed below
- *
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map with the points associated to the vertices of `tm1` (`tm2`). If this parameter is omitted,
- *    an internal property map for `CGAL::vertex_point_t` should be available for `TriangleMesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1`
+ *      If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
+ *      and in all places where vertex_point_map is used.
+ *    \cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`\cgalParamEnd
  * \cgalNamedParamsEnd
+ *
+ * @param np2 optional sequence of \ref namedparameters for `tm2` among the ones listed below
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm2`
+ *      If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
+ *      and in all places where vertex_point_map is used.
+ *    \cgalParamEnd
+ * \cgalNamedParamsEnd
+ * The function `CGAL::Polygon_mesh_processing::params::all_default()` can be use to indicate to use the default values for
+ * `np1` and specify custom values for `np2`
  */
 template< class Concurrency_tag,
           class TriangleMesh,
