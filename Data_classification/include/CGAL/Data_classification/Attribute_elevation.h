@@ -43,7 +43,7 @@ namespace Data_classification {
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap Property map to access the input points.
+    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
 
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap>
@@ -63,7 +63,6 @@ public:
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
-    \param bbox Bounding box of the input range
     \param grid Precomputed `Planimetric_grid`
     \param grid_resolution Resolution of the planimetric grid
     \param radius_dtm Radius for digital terrain modeling (must be bigger than the size of a building)

@@ -84,11 +84,11 @@ public:
   bool mask(std::size_t x, std::size_t y) const { return (!(m_grid(x,y).empty())); }
 
   /*!
-    \breif Returns the `x` coordinate of the indexed point in the grid.
+    \brief Returns the `x` coordinate of the indexed point in the grid.
   */
   std::size_t x(std::size_t index) const { return m_x[index]; }
   /*!
-    \breif Returns the `y` coordinate of the indexed point in the grid.
+    \brief Returns the `y` coordinate of the indexed point in the grid.
   */
   std::size_t y(std::size_t index) const { return m_y[index]; }
 };

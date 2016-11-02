@@ -140,9 +140,10 @@ public:
   /*!
     \brief Gets the nearest neighbors computed in a local sphere of user defined radius.
 
-    \tparam OutputIterator Where the indices of found neighbor points are stored.
+    \tparam OutputIterator Iterator that must point to values of type `std::size_t`.
     \param query The query point.
     \param radius_neighbors Radius of the query sphere.
+    \param output Where the indices of found neighbor points are stored.
   */
   template <typename OutputIterator>
   void range_neighbors (const Point& query, const FT radius_neighbors, OutputIterator output) const
@@ -155,9 +156,10 @@ public:
   /*!
     \brief Gets the K nearest neighbors.
 
-    \tparam OutputIterator Where the indices of found neighbor points are stored.
+    \tparam OutputIterator Iterator that must point to values of type `std::size_t`.
     \param query The query point.
     \param k Number of nearest neighbors.
+    \param output Where the indices of found neighbor points are stored.
   */
   template <typename OutputIterator>
   void k_neighbors (const Point& query, const std::size_t k, OutputIterator output) const

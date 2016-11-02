@@ -39,7 +39,7 @@ namespace Data_classification {
 
     \tparam Kernel The geometric kernel used.
     \tparam RandomAccessIterator Iterator over the input.
-    \tparam PointMap Property map to access the input points.
+    \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
     \tparam DiagonalizeTraits Solver used for matrix diagonalization.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap,
@@ -79,14 +79,15 @@ public:
   /*!
     \brief Constructs the attribute using provided normals of points.
 
-    \tparam NormalMap Property map to access the normal vectors of the input points.
+    \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
+    \param normal_map Property map to access the normal vectors of the input points.
   */
-  template <typename NormalMap>
+  template <typename VectorMap>
   Attribute_verticality (const RandomAccessIterator& begin,
                          const RandomAccessIterator& end,
-                         NormalMap normal_map)
+                         VectorMap normal_map)
   {
     this->weight = 1.;
     typename Kernel::Vector_3 vertical (0., 0., 1.);

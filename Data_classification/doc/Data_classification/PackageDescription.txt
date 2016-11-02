@@ -21,7 +21,6 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.9}
 \cgalPkgBib{cgal:ovja-pssd}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
 \cgalPkgShortInfoEnd

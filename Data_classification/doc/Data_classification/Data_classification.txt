@@ -203,9 +203,7 @@ The following example:
 
 \section Data_classification_helper Helper
 
-The classification algorithm is designed to be as flexible as possible: the user may define its own attributes and classification types (see \ref Data_classification_custom).
-
-Nevertheless, \cgal provides a predefined framework that should work correctly on common urban point sets. The class `CGAL::Data_classification::Helper` is designed to make it easier for the user to classify its input point set:
+The classification algorithm is designed to be as flexible as possible: the user may define its own attributes and classification types. Nevertheless, \cgal provides a predefined framework that should work correctly on common urban point sets. The class `CGAL::Data_classification::Helper` is designed to make it easier for the user to classify its input point set:
 
 - it takes care of generating all needed analysis structure;
 - it generates all possible attributes (among all the \cgal predefined ones) based on which property maps are available (it uses colors if available, etc.);

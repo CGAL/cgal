@@ -244,6 +244,7 @@ public:
     efficiency and reliability.
 
     \param neighborhood Object used to access neighborhoods of points
+    \param radius_neighbors Radius used for smoothing
   */
   void run_with_local_smoothing (const Neighborhood& neighborhood,
                                  const double radius_neighbors)
@@ -816,6 +817,8 @@ public:
     inliers of `class_type` for the training algorithm.
 
     \param class_type Handle to the classification type.
+    \param first Iterator to the first index to add
+    \param beyond Past-the-end iterator
 
     \tparam IndexIterator Iterator with `std::size_t` as a
     `value_type`. \cgalModels InputIterator

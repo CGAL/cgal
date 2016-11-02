@@ -71,7 +71,7 @@ labels.
 
 \tparam Kernel The geometric kernel used
 \tparam RandomAccessIterator Iterator over the input
-\tparam PointMap Property map to access the input points
+\tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
 \tparam DiagonalizeTraits Solver used for matrix diagonalization.
 */
 template <typename Kernel,
@@ -243,14 +243,17 @@ public:
     file `filename` are instanciated if possible (in particular,
     property maps needed should be provided).
 
-    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
-    \tparam ColorMap Property map to access the colors of the input points (if any).
-    \tparam EchoMap Property map to access the echo values of the input points (if any).
+    \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
+    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Data_classification::RGB_Color`.
+    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_`.
     \param filename Name of the output file
     \param psc Classification object where to store attributes and types
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
+    \param normal_map Property map to access the normal vectors of the input points (if any).
+    \param color_map Property map to access the colors of the input points (if any).
+    \param echo_map Property map to access the echo values of the input points (if any).
   */
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
@@ -346,13 +349,16 @@ public:
     not computed (this method can thus be called even if a point set
     does not have associated normal, color or echo properties).
 
-    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
-    \tparam ColorMap Property map to access the colors of the input points (if any).
-    \tparam EchoMap Property map to access the echo values of the input points (if any).
+    \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
+    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Data_classification::RGB_Color`.
+    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_`.
     \param psc The classification object where to store the attributes
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
+    \param normal_map Property map to access the normal vectors of the input points (if any).
+    \param color_map Property map to access the colors of the input points (if any).
+    \param echo_map Property map to access the echo values of the input points (if any).
   */
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
@@ -434,6 +440,7 @@ public:
     \param psc The classification object where to store the attributes
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
+    \param normal_map Property map to access the normal vectors of the input points (if any).
   */
   #ifdef DOXYGEN_RUNNING
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3> >
@@ -487,10 +494,11 @@ public:
     This decomposition allows to handle all the color spectrum with a
     usually sufficiently accurate precision.
 
-    \tparam ColorMap Property map to access the colors of the input points.
+    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Data_classification::RGB_Color`.
     \param psc The classification object where to store the attributes
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
+    \param color_map Property map to access the colors of the input points.
   */
   template <typename ColorMap>
   void generate_color_based_attributes(Point_set_classification& psc,
@@ -534,10 +542,11 @@ public:
 
     - `CGAL::Data_classification::Attribute_echo_scatter`
 
-    \tparam EchoMap Property map to access the echo values of the input points.
+    \tparam EchoMap Property map to access the echo values of the input points (if any).
     \param psc The classification object where to store the attributes
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
+    \param echo_map Property map to access the echo values of the input points (if any).
   */
   template <typename EchoMap>
   void generate_echo_based_attributes(Point_set_classification& psc,
@@ -671,14 +680,17 @@ public:
     The input file is written in an XML format written by the `save()`
     method.
 
-    \tparam VectorMap Property map to access the normal vectors of the input points (if any).
-    \tparam ColorMap Property map to access the colors of the input points (if any).
-    \tparam EchoMap Property map to access the echo values of the input points (if any).
+    \tparam VectorMap is a model of `ReadablePropertyMap` with value type `Vector_3<Kernel>`.
+    \tparam ColorMap is a model of `ReadablePropertyMap` with value type `CGAL::Data_classification::RGB_Color`.
+    \tparam EchoMap is a model of `ReadablePropertyMap` with value type `std::size_`.
     \param filename Name of the output file
     \param psc Classification object where to store attributes and types
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
+    \param normal_map Property map to access the normal vectors of the input points (if any).
+    \param color_map Property map to access the colors of the input points (if any).
+    \param echo_map Property map to access the echo values of the input points (if any).
   */
   template<typename VectorMap = CGAL::Empty_property_map<RandomAccessIterator, typename Kernel::Vector_3>,
            typename ColorMap = CGAL::Empty_property_map<RandomAccessIterator, RGB_Color>,
