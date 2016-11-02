@@ -205,7 +205,7 @@ class Random_points_in_triangle_3 : public Random_generator_base<P> {
 	void generate_point();
 public:
 	typedef P result_type;
-	typedef Random_points_in_triangle_3<P> This;
+	typedef Random_points_in_triangle_3<P, Creator> This;
 	typedef typename Kernel_traits<P>::Kernel::Triangle_3 Triangle_3;
 	Random_points_in_triangle_3() {}
 	Random_points_in_triangle_3( const This& x,Random& rnd = get_default_random())
@@ -257,7 +257,7 @@ class Random_points_in_tetrahedron_3 : public Random_generator_base<P> {
 	void generate_point();
 public:
 	typedef P result_type;
-	typedef Random_points_in_tetrahedron_3<P> This;
+	typedef Random_points_in_tetrahedron_3<P, Creator> This;
 	typedef typename Kernel_traits<P>::Kernel::Tetrahedron_3 Tetrahedron_3;
 	Random_points_in_tetrahedron_3() {}
 	Random_points_in_tetrahedron_3( const This& x,Random& rnd = get_default_random())
@@ -306,14 +306,19 @@ void Random_points_in_tetrahedron_3<P, Creator>::generate_point() {
 
 
 
-template <class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
-                                                                                  CGAL::vertex_point_t>::const_type>
+template <class TriangleMesh,
+          class VertexPointMap = typename boost::property_map<TriangleMesh,
+                                                              CGAL::vertex_point_t>::const_type,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type >::Kernel::RT,
+                            typename boost::property_traits<VertexPointMap>::value_type >
+>
 struct Random_points_in_triangle_mesh_3
   : public Generic_random_point_generator<
              typename boost::graph_traits <TriangleMesh>::face_descriptor ,
              CGAL::Property_map_to_unary_function<CGAL::Triangle_from_face_descriptor_map<
                                                     TriangleMesh, VertexPointMap > >,
-             Random_points_in_triangle_3<typename boost::property_traits<VertexPointMap>::value_type>,
+             Random_points_in_triangle_3<typename boost::property_traits<VertexPointMap>::value_type, Creator>,
              typename boost::property_traits<VertexPointMap>::value_type>
 {
   typedef typename boost::property_traits<VertexPointMap>::value_type  P;
@@ -321,15 +326,14 @@ struct Random_points_in_triangle_mesh_3
             typename boost::graph_traits <TriangleMesh>::face_descriptor ,
             CGAL::Property_map_to_unary_function<typename CGAL::Triangle_from_face_descriptor_map<
             TriangleMesh,VertexPointMap> >,
-            Random_points_in_triangle_3<P> , P>                            Base;
+            Random_points_in_triangle_3<P, Creator> , P>                   Base;
   typedef typename CGAL::Triangle_from_face_descriptor_map<
                      TriangleMesh,VertexPointMap>                          Pmap;
   typedef typename CGAL::Triangle_from_face_descriptor_map<
                      TriangleMesh,VertexPointMap>                          Object_from_id_map;
-  typedef Random_points_in_triangle_3<P>                                   Generator_on_object;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      Id;
   typedef P result_type;
-  typedef Random_points_in_triangle_mesh_3< TriangleMesh, VertexPointMap>  This;
+  typedef Random_points_in_triangle_mesh_3< TriangleMesh, VertexPointMap, Creator>  This;
 
 
   Random_points_in_triangle_mesh_3( const TriangleMesh& mesh,Random& rnd = get_default_random())
@@ -408,7 +412,11 @@ public:
 };
 }//end namespace internal
 
-template <class C3t3>
+template <class C3t3,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename C3t3::Point >::Kernel::RT,
+                            typename C3t3::Point >
+>
 struct Random_points_in_tetrahedral_mesh_boundary_3
   : public Generic_random_point_generator<
              std::pair<typename C3t3::Triangulation::Cell_handle, int>,
@@ -419,11 +427,11 @@ struct Random_points_in_tetrahedral_mesh_boundary_3
   typedef Generic_random_point_generator<
             std::pair<typename C3t3::Triangulation::Cell_handle, int>,
             internal::Triangle_from_face_C3t3<typename C3t3::Triangulation>,
-            Random_points_in_triangle_3<typename C3t3::Point>,
+            Random_points_in_triangle_3<typename C3t3::Point, Creator>,
             typename C3t3::Point>                                    Base;
   typedef std::pair<typename C3t3::Triangulation::Cell_handle, int>  Id;
   typedef typename C3t3::Point                                       result_type;
-  typedef Random_points_in_tetrahedral_mesh_boundary_3<C3t3>         This;
+  typedef Random_points_in_tetrahedral_mesh_boundary_3<C3t3, Creator> This;
 
 
   Random_points_in_tetrahedral_mesh_boundary_3( const C3t3& c3t3,Random& rnd = get_default_random())
@@ -445,7 +453,11 @@ struct Random_points_in_tetrahedral_mesh_boundary_3
   }
 };
 
-template <class C3t3>
+template <class C3t3,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename C3t3::Point >::Kernel::RT,
+                            typename C3t3::Point >
+>
 struct Random_points_in_tetrahedral_mesh_3
   : public Generic_random_point_generator<
              typename C3t3::Triangulation::Cell_handle,
@@ -456,11 +468,11 @@ struct Random_points_in_tetrahedral_mesh_3
   typedef Generic_random_point_generator<
             typename C3t3::Triangulation::Cell_handle,
             internal::Tetrahedron_from_cell_C3t3<typename C3t3::Triangulation>,
-            Random_points_in_tetrahedron_3<typename C3t3::Point>,
+            Random_points_in_tetrahedron_3<typename C3t3::Point, Creator>,
             typename C3t3::Point>                                              Base;
   typedef typename C3t3::Triangulation::Cell_handle                            Id;
   typedef typename C3t3::Point                                                 result_type;
-  typedef Random_points_in_tetrahedral_mesh_3<C3t3>                            This;
+  typedef Random_points_in_tetrahedral_mesh_3<C3t3, Creator>                   This;
 
 
   Random_points_in_tetrahedral_mesh_3( const C3t3& c3t3,Random& rnd = get_default_random())
@@ -484,7 +496,11 @@ struct Random_points_in_tetrahedral_mesh_3
 
 
 template <class Point_3,
-         class Triangle_3=typename Kernel_traits<Point_3>::Kernel::Triangle_3>
+          class Triangle_3=typename Kernel_traits<Point_3>::Kernel::Triangle_3,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< Point_3 >::Kernel::RT,
+                            Point_3 >
+         >
 struct Random_points_in_triangles_3
     : public Generic_random_point_generator<const Triangle_3*,
                                             internal::Deref<Triangle_3>,
@@ -493,11 +509,11 @@ struct Random_points_in_triangles_3
 {
   typedef Generic_random_point_generator<const Triangle_3*,
                                          internal::Deref<Triangle_3>,
-                                         Random_points_in_triangle_3<Point_3>,
+                                         Random_points_in_triangle_3<Point_3, Creator>,
                                          Point_3>            Base;
   typedef const Triangle_3*                                         Id;
   typedef Point_3                                                   result_type;
-  typedef Random_points_in_triangles_3<Point_3>                     This;
+  typedef Random_points_in_triangles_3<Point_3, Triangle_3, Creator>  This;
 
   template<typename TriangleRange>
   Random_points_in_triangles_3( const TriangleRange& triangles, Random& rnd = get_default_random())

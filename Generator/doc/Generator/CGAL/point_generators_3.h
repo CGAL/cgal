@@ -358,7 +358,10 @@ The triangle range must be valid and unchanged while the iterator is used.
 \sa `std::random_shuffle`
 
 */
-template< typename Point_3>
+template< typename Point_3,
+          typename Triangle_3=typename Kernel_traits<Point_3>::Kernel::Triangle_3,
+          typename Creator = Creator_uniform_3< typename Kernel_traits< Point_3 >::Kernel::RT,
+                                                Point_3 > >
 class Random_points_in_triangles_3 {
 public:
 
@@ -429,8 +432,12 @@ The triangle mesh must be valid and unchanged while the iterator is used.
 \sa `std::random_shuffle`
 
 */
-template < class TriangleMesh, class VertexPointMap = typename boost::property_map<TriangleMesh,
-                                                                                   CGAL::vertex_point_t>::type> >
+template < class TriangleMesh,
+           class VertexPointMap = typename boost::property_map<TriangleMesh,
+                                                               CGAL::vertex_point_t>::type>,
+           class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename boost::property_traits<VertexPointMap>::value_type >::Kernel::RT,
+                            typename boost::property_traits<VertexPointMap>::value_type > >
 class Random_points_in_triangle_mesh_3 {
 public:
 
@@ -508,7 +515,11 @@ C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
 \sa `std::random_shuffle`
 
 */
-template <class C3T3>
+template <class C3T3,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename C3t3::Point >::Kernel::RT,
+                            typename C3t3::Point >
+>
 class Random_points_in_tetrahedral_mesh_boundary_3 {
 public:
 
@@ -581,7 +592,10 @@ C3T3 is a model of `Mesh_complex_3_in_triangulation_3`
 \sa `std::random_shuffle`
 
 */
-template <class C3T3>
+template <class C3T3,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename C3t3::Point >::Kernel::RT,
+                            typename C3t3::Point > >
 class Random_points_in_tetrahedral_mesh_3 {
 public:
 
