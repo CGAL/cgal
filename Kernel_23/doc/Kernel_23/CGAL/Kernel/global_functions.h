@@ -1617,11 +1617,11 @@ const CGAL::Point_3<Kernel>&s);
 /// @{
 
 /*!
-Let `p` be the plane defined by the points `p`, `q`,
+Let `P` be the plane defined by the points `p`, `q`,
 and `r`. Note that the order defines the orientation of
-`p`. The function computes the orientation of points `p`, 
-`q`, and `s` in `p`: Iff `p`, `q`, `s` are
-collinear, `CGAL::COLLINEAR` is returned. Iff `p` and the plane 
+`P`. The function computes the orientation of points `p`, 
+`q`, and `s` in `P`: Iff `p`, `q`, `s` are
+collinear, `CGAL::COLLINEAR` is returned. Iff `P` and the plane 
 defined by `p`, `q`, and `s` have the same orientation, 
 `CGAL::POSITIVE` is returned; otherwise `CGAL::NEGATIVE` is returned. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.

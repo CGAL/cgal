@@ -44,6 +44,7 @@ namespace CGAL {
  * while the AABB tree holding the primitive is in use.
  * The type of the 3D segment is taken from the kernel of the point type which is the value type
  * of `VertexPointPMap` (using the `Kernel_traits` mechanism).
+ * The segment type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Segment_3`.
  *
  * \cgalModels `AABBPrimitive` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_false`,
  *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.

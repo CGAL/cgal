@@ -251,13 +251,15 @@ public:
   typedef typename GeomTraits::Construct_max_vertex_3 Construct_max_vertex_3;
   typedef typename GeomTraits::Construct_iso_cuboid_3 Construct_iso_cuboid_3;
 
-
   /// Default constructor.
   AABB_traits() { };
 
 
   typedef typename GeomTraits::Compute_squared_distance_3 Squared_distance;
   Squared_distance squared_distance_object() const { return GeomTraits().compute_squared_distance_3_object(); }
+
+  typedef typename GeomTraits::Equal_3 Equal_3;
+  Equal_3 equal_3_object() const { return GeomTraits().equal_3_object(); }
 
   /**
    * @internal
@@ -459,11 +461,20 @@ private:
 
   /// Comparison functions
   static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-  { return internal::Primitive_helper<AT>::get_reference_point(pr1,traits).x() < internal::Primitive_helper<AT>::get_reference_point(pr2,traits).x(); }
+  {
+    return GeomTraits().less_x_3_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
+                                           internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
+  }
   static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-  { return internal::Primitive_helper<AT>::get_reference_point(pr1,traits).y() < internal::Primitive_helper<AT>::get_reference_point(pr2,traits).y(); }
+  {
+    return GeomTraits().less_y_3_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
+                                           internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
+  }
   static bool less_z(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-  { return internal::Primitive_helper<AT>::get_reference_point(pr1,traits).z() < internal::Primitive_helper<AT>::get_reference_point(pr2,traits).z(); }
+  {
+    return GeomTraits().less_z_3_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
+                                           internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
+  }
 
 };  // end class AABB_traits
 
