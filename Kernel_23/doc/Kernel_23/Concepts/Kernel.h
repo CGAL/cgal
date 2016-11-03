@@ -1194,6 +1194,11 @@ public:
   typedef unspecified_type  Compute_hw_3;
 
   /*!
+    a model of `Kernel::ComputeLInfinityDistance_3`
+  */
+  typedef unspecified_type  Compute_L_infinity_distance_3;
+
+  /*!
     a model of `Kernel::ComputeDx_3`
   */
   typedef unspecified_type  Compute_dx_3;

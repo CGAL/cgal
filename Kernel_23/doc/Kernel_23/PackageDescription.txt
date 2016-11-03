@@ -309,6 +309,7 @@
 - `Kernel::ComputeHx_2`
 - `Kernel::ComputeHy_2`
 - `Kernel::ComputeLInfinityDistance_2`
+- `Kernel::ComputeLInfinityDistance_3`
 - `Kernel::ComputePowerDistanceToPowerSphere_3`
 - `Kernel::ComputeScalarProduct_2`
 - `Kernel::ComputeScalarProduct_3`

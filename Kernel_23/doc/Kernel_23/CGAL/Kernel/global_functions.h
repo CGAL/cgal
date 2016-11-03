@@ -1988,6 +1988,13 @@ template <typename Kernel>
 Kernel::FT l_infinity_distance(const CGAL::Point_2<Kernel> &p,
                                const CGAL::Point_2<Kernel> &q);
 
+/*!
+returns the distance between `p` and `q` in the L-infinity metric.
+*/
+template <typename Kernel>
+Kernel::FT l_infinity_distance(const CGAL::Point_3<Kernel> &p,
+                               const CGAL::Point_3<Kernel> &q);
+
 /// @}
 
 /// \defgroup left_turn_grp CGAL::left_turn()

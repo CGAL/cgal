@@ -641,6 +641,13 @@ lexicographically_xyz_smaller_or_equal(const Point_3<K> &p,
 }
 
 template < class K >
+typename K::FT
+l_infinity_distance(const Point_3<K> &p, const Point_3<K> &q)
+{
+  return internal::l_infinity_distance(p,q, K());
+}
+
+template < class K >
 inline
 typename K::Point_3
 midpoint(const Point_3<K> &p, const Point_3<K> &q)
