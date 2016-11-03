@@ -1,3 +1,5 @@
+#define  CGAL_NO_DEPRECATION_WARNINGS
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -31,26 +33,18 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main(int argc, char*argv[])
+int main()
 {
-  const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
-  std::ifstream input(fname);
-  Polyhedron polyhedron;
-  input >> polyhedron;
-  if(input.fail()){
-    std::cerr << "Error: Cannot read file " <<  fname << std::endl;
-    return EXIT_FAILURE;
-  }
   // Create domain
-  Mesh_domain domain(polyhedron);
+  Mesh_domain domain("data/cube.off");
   
   // Get sharp features
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.025,
-                         facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
-                         cell_radius_edge_ratio = 3, cell_size = 0.05);
+  Mesh_criteria criteria(edge_size = 0.3,
+                         facet_angle = 25, facet_size = 0.3, facet_distance = 0.1,
+                         cell_radius_edge_ratio = 3, cell_size = 0.3);
   
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
