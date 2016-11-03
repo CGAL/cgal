@@ -1,5 +1,5 @@
-#ifndef CGAL_CLASSIFICATION_NEIGHBORHOOD_H
-#define CGAL_CLASSIFICATION_NEIGHBORHOOD_H
+#ifndef CGAL_CLASSIFICATION_POINT_SET_NEIGHBORHOOD_H
+#define CGAL_CLASSIFICATION_POINT_SET_NEIGHBORHOOD_H
 
 #include <vector>
 
@@ -29,8 +29,9 @@ namespace Classification {
     \tparam PointMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
   */
 template <typename Kernel, typename RandomAccessIterator, typename PointMap>
-class Neighborhood
+class Point_set_neighborhood
 {
+  
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   
@@ -67,8 +68,71 @@ class Neighborhood
   
 public:
 
-  /// \cond SKIP_IN_MANUAL
-  Neighborhood () : m_tree (NULL) { }
+  /*!
+    Functor that returns a neighborhood with a fixed number of points.
+
+    \cgalModels NeighborQuery
+  */
+  class K_neighbor_query
+  {
+  public:
+    typedef Point_set_neighborhood::Point value_type; ///<
+  private:
+    const Point_set_neighborhood& neighborhood;
+    std::size_t k;
+  public:
+    /*!
+      \brief Constructs a K neighbor query object.
+      \param neighborhood The point set neighborhood structure.
+      \param k The number of neighbors per query.
+     */
+    K_neighbor_query (const Point_set_neighborhood& neighborhood, std::size_t k)
+      : neighborhood (neighborhood), k(k) { }
+
+    /// \cond SKIP_IN_MANUAL
+    template <typename OutputIterator>
+    void operator() (const value_type& query, OutputIterator output) const
+    {
+      neighborhood.k_neighbors (query, k, output);
+    }
+    /// \endcond
+  };
+
+  /*!
+    Functor that returns a neighborhood with a fixed radius.
+
+    \cgalModels NeighborQuery
+  */
+  class Range_neighbor_query
+  {
+  public:
+    typedef Point_set_neighborhood::Point value_type; ///<
+  private:
+    const Point_set_neighborhood& neighborhood;
+    double radius;
+  public:
+    /*!
+      \brief Constructs a range neighbor query object.
+      \param neighborhood The point set neighborhood structure.
+      \param radius The radius of the neighbor query.
+    */
+    Range_neighbor_query (const Point_set_neighborhood& neighborhood, double radius)
+      : neighborhood (neighborhood), radius(radius) { }
+
+    /// \cond SKIP_IN_MANUAL
+    template <typename OutputIterator>
+    void operator() (const value_type& query, OutputIterator output) const
+    {
+      neighborhood.range_neighbors (query, radius, output);
+    }
+    /// \endcond
+  };
+
+  friend class K_neighbor_query;
+  friend class Range_neighbor_query;
+
+    /// \cond SKIP_IN_MANUAL
+  Point_set_neighborhood () : m_tree (NULL) { }
   /// \endcond
 
   /*!
@@ -78,7 +142,7 @@ public:
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
   */
-  Neighborhood (const RandomAccessIterator& begin,
+  Point_set_neighborhood (const RandomAccessIterator& begin,
                 const RandomAccessIterator& end,
                 PointMap point_map)
     : m_tree (NULL)
@@ -107,7 +171,7 @@ public:
     \param point_map Property map to access the input points
     \param voxel_size
   */
-  Neighborhood (const RandomAccessIterator& begin,
+  Point_set_neighborhood (const RandomAccessIterator& begin,
                 const RandomAccessIterator& end,
                 PointMap point_map,
                 double voxel_size)
@@ -130,7 +194,7 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  ~Neighborhood ()
+  ~Point_set_neighborhood ()
   {
     if (m_tree != NULL)
       delete m_tree;
@@ -138,13 +202,23 @@ public:
   /// \endcond
 
   /*!
-    \brief Gets the nearest neighbors computed in a local sphere of user defined radius.
-
-    \tparam OutputIterator Iterator that must point to values of type `std::size_t`.
-    \param query The query point.
-    \param radius_neighbors Radius of the query sphere.
-    \param output Where the indices of found neighbor points are stored.
+    \brief Returns a neighbor query object with fixed number of neighbors `k`.
   */
+  K_neighbor_query k_neighbor_query (const std::size_t k) const
+  {
+    return K_neighbor_query (*this, k);
+  }
+
+  /*!
+    \brief Returns a neighbor query object with fixed radius `radius`.
+  */
+  Range_neighbor_query range_neighbor_query (const double radius) const
+  {
+    return Range_neighbor_query (*this, radius);
+  }
+
+private:
+
   template <typename OutputIterator>
   void range_neighbors (const Point& query, const FT radius_neighbors, OutputIterator output) const
   {
@@ -153,14 +227,6 @@ public:
     m_tree->search (output, fs);
   }
 
-  /*!
-    \brief Gets the K nearest neighbors.
-
-    \tparam OutputIterator Iterator that must point to values of type `std::size_t`.
-    \param query The query point.
-    \param k Number of nearest neighbors.
-    \param output Where the indices of found neighbor points are stored.
-  */
   template <typename OutputIterator>
   void k_neighbors (const Point& query, const std::size_t k, OutputIterator output) const
   {
@@ -170,7 +236,6 @@ public:
       *(output ++) = it->first;
   }
 
-private:
   /// \cond SKIP_IN_MANUAL
   template <typename Map>
   void voxelize_point_set (std::vector<std::size_t>& indices, Map point_map,
@@ -223,4 +288,4 @@ private:
 }
 
 
-#endif // CGAL_CLASSIFICATION_NEIGHBORHOOD_H
+#endif // CGAL_CLASSIFICATION_POINT_SET_POINT_SET_NEIGHBORHOOD_H

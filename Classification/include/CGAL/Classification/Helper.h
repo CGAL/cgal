@@ -22,6 +22,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/Classifier.h>
+#include <CGAL/Classification/Point_set_neighborhood.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Local_eigen_analysis.h>
 #include <CGAL/Classification/Attribute.h>
@@ -88,7 +89,7 @@ public:
   <RandomAccessIterator, PointMap>                            Classifier;
   typedef CGAL::Classification::Planimetric_grid
   <Kernel, RandomAccessIterator, PointMap>                    Planimetric_grid;
-  typedef CGAL::Classification::Neighborhood
+  typedef CGAL::Classification::Point_set_neighborhood
   <Kernel, RandomAccessIterator, PointMap>                    Neighborhood;
   typedef CGAL::Classification::Local_eigen_analysis
   <Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits> Local_eigen_analysis;
@@ -157,7 +158,7 @@ private:
       t.reset();
       t.start();
       double range;
-      eigen = new Local_eigen_analysis (begin, end, point_map, *neighborhood, (std::size_t)6, range);
+      eigen = new Local_eigen_analysis (begin, end, point_map, neighborhood->k_neighbor_query(6), range);
       if (this->voxel_size < 0)
         this->voxel_size = range / 3;
       t.stop();

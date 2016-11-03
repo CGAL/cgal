@@ -231,12 +231,11 @@ public:
     local neighborhood of items. This method is a compromise between
     efficiency and reliability.
 
-    \param neighborhood Object used to access neighborhoods of items
-    \param radius_neighbors Radius used for smoothing
+    \tparam NeighborQuery is a model of `NeighborQuery`
+    \param neighbor_query is used to access neighborhoods of items
   */
-  template <typename Neighborhood>
-  void run_with_local_smoothing (const Neighborhood& neighborhood,
-                                 const double radius_neighbors)
+  template <typename NeighborQuery>
+  void run_with_local_smoothing (const NeighborQuery& neighbor_query)
   {
     prepare_classification ();
     
@@ -250,8 +249,7 @@ public:
     for (std::size_t s=0; s < m_input.size(); ++ s)
       {
         std::vector<std::size_t> neighbors;
-        neighborhood.range_neighbors (m_input[s], radius_neighbors,
-                                      std::back_inserter (neighbors));
+        neighbor_query (m_input[s], std::back_inserter (neighbors));
 
         std::vector<double> mean (values.size(), 0.);
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
@@ -296,15 +294,16 @@ public:
     and alpha-expansion algorithm. This method is slow but provides
     the user with good quality results.
 
-    \param neighborhood Object used to access neighborhoods of items
-
+    \tparam NeighborQuery is a model of `NeighborQuery`
+    \param neighbor_query is used to access neighborhoods of items
     \param weight Weight of the regularization with respect to the
     classification energy. Higher values produce more regularized
     output but may result in a loss of details.
+
   */
-  template <typename Neighborhood>
-  void run_with_graphcut (const Neighborhood& neighborhood,
-                          const double weight = 0.5)
+  template <typename NeighborQuery>
+  void run_with_graphcut (const NeighborQuery& neighbor_query,
+                          const double& weight)
   {
     prepare_classification ();
     
@@ -321,7 +320,7 @@ public:
       {
         std::vector<std::size_t> neighbors;
 
-        neighborhood.k_neighbors (m_input[s], 12, std::back_inserter (neighbors));
+        neighbor_query (m_input[s], std::back_inserter (neighbors));
 
         for (std::size_t i = 0; i < neighbors.size(); ++ i)
           if (s != neighbors[i])

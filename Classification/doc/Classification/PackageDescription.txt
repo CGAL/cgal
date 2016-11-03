@@ -29,13 +29,16 @@
 
 \cgalClassifedRefPages
 
+## Concepts ##
+- `CGAL::NeighborQuery`
+
 ## Classification ##
 - `CGAL::Classifier<RandomAccessIterator, ItemMap>`
 
 ## Data Structures ##
 
 - `CGAL::Classification::Helper<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
-- `CGAL::Classification::Neighborhood<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Classification::Point_set_neighborhood<Kernel, RandomAccessIterator, PointMap>`
 - `CGAL::Classification::Local_eigen_analysis<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
 - `CGAL::Classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap>`
 

@@ -5,6 +5,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classifier.h>
+#include <CGAL/Classification/Point_set_neighborhood.h>
 #include <CGAL/Classification/Planimetric_grid.h>
 #include <CGAL/Classification/Attribute.h>
 #include <CGAL/Classification/Attributes_eigen.h>
@@ -22,9 +23,9 @@ typedef CGAL::Identity_property_map<Point> Pmap;
 
 typedef CGAL::Classifier<Iterator, Pmap> Classification;
 
-typedef CGAL::Classification::Planimetric_grid<Kernel, Iterator, Pmap>      Planimetric_grid;
-typedef CGAL::Classification::Neighborhood<Kernel, Iterator, Pmap>          Neighborhood;
-typedef CGAL::Classification::Local_eigen_analysis<Kernel, Iterator, Pmap>  Local_eigen_analysis;
+typedef CGAL::Classification::Planimetric_grid<Kernel, Iterator, Pmap>       Planimetric_grid;
+typedef CGAL::Classification::Point_set_neighborhood<Kernel, Iterator, Pmap> Neighborhood;
+typedef CGAL::Classification::Local_eigen_analysis<Kernel, Iterator, Pmap>   Local_eigen_analysis;
 
 typedef CGAL::Classification::Type_handle                                           Type_handle;
 typedef CGAL::Classification::Attribute_handle                                      Attribute_handle;
@@ -66,7 +67,7 @@ int main (int argc, char** argv)
   Planimetric_grid grid (pts.begin(), pts.end(), Pmap(), bbox, grid_resolution);
   Neighborhood neighborhood (pts.begin(), pts.end(), Pmap());
   double garbage;
-  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood, 6, garbage);
+  Local_eigen_analysis eigen (pts.begin(), pts.end(), Pmap(), neighborhood.k_neighbor_query(6), garbage);
   
   //! [Analysis]
   ///////////////////////////////////////////////////////////////////
@@ -147,7 +148,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
 
   // Run classification
-  psc.run_with_graphcut (neighborhood, 0.2);
+  psc.run_with_graphcut (neighborhood.k_neighbor_query(12), 0.2);
   
   // Save the output in a colored PLY format
 

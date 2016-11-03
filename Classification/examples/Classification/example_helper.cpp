@@ -114,7 +114,7 @@ int main (int argc, char** argv)
   std::cerr << "Training" << std::endl;
   psc.training(800); // 800 trials
 
-  psc.run_with_graphcut (helper.neighborhood(), 0.5);
+  psc.run_with_graphcut (helper.neighborhood().k_neighbor_query(12), 0.5);
   
   // Save the output in a colored PLY format
   std::ofstream f ("classification.ply");

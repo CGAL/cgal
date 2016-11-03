@@ -9,8 +9,6 @@
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
 
-#include <CGAL/Classification/Neighborhood.h>
-
 namespace CGAL {
 
 namespace Classification {
@@ -37,7 +35,6 @@ public:
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::Plane_3 Plane;
-  typedef Classification::Neighborhood<Kernel, RandomAccessIterator, PointMap> Neighborhood;
   /// \endcond
   
   typedef CGAL::cpp11::array<double, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
@@ -60,63 +57,25 @@ public:
   /// \endcond
 
   /*! 
-    \brief Computes the local eigen analysis of an input range based
-    on a fixed number of local neighbors.
 
+    \brief Computes the local eigen analysis of an input range based
+    on a local neighborhood.
+
+    \tparam NeighborQuery is a model of `NeighborQuery`
     \param begin Iterator to the first input object
     \param end Past-the-end iterator
     \param point_map Property map to access the input points
-    \param neighborhood Object used to access neighborhoods of points
-    \param radius_neighbors Radius of the local neighborhood
-  */
-  Local_eigen_analysis (RandomAccessIterator begin,
-                        RandomAccessIterator end,
-                        PointMap point_map,
-                        Neighborhood& neighborhood,
-                        double radius_neighbors)
-  {
-    std::size_t size = end - begin;
-    m_eigenvalues.reserve (size);
-    m_centroids.reserve (size);
-    m_smallest_eigenvectors.reserve (size);
-    m_middle_eigenvectors.reserve (size);
-    m_largest_eigenvectors.reserve (size);
-
-    double nb = 0.;
-    for (std::size_t i = 0; i < size; i++)
-      {
-        std::vector<std::size_t> neighbors;
-        neighborhood.range_neighbors (get(point_map, begin[i]), radius_neighbors, std::back_inserter (neighbors));
-        nb += neighbors.size();
-        std::vector<Point> neighbor_points;
-        for (std::size_t j = 0; j < neighbors.size(); ++ j)
-          neighbor_points.push_back (get(point_map, begin[neighbors[j]]));
-        
-        compute (get(point_map, begin[i]), neighbor_points);
-      }
-    std::cerr << "Mean number of nearest neighbors: " << nb / size << std::endl;
-  }
-
-  /*! 
-
-    \brief Computes the local eigen analysis of an input range based
-    on a fixed radius local neighborhood.
-
-    \param begin Iterator to the first input object
-    \param end Past-the-end iterator
-    \param point_map Property map to access the input points
-    \param neighborhood Object used to access neighborhoods of points
-    \param knn Number of nearest neighbors used
+    \param neighbor_query Object used to access neighborhoods of points
 
     \param mean_range The mean value of the range corresponding to the
     `knn` number of neighbors is returned by the constructor through
     this reference.
   */
+  template <typename NeighborQuery>
   Local_eigen_analysis (RandomAccessIterator begin,
                         RandomAccessIterator end,
                         PointMap point_map,
-                        Neighborhood& neighborhood,
-                        std::size_t knn,
+                        const NeighborQuery& neighbor_query,
                         double& mean_range)
   {
     std::size_t size = end - begin;
@@ -131,7 +90,7 @@ public:
     for (std::size_t i = 0; i < size; i++)
       {
         std::vector<std::size_t> neighbors;
-        neighborhood.k_neighbors (get(point_map, begin[i]), knn, std::back_inserter (neighbors));
+        neighbor_query (get(point_map, begin[i]), std::back_inserter (neighbors));
 
         std::vector<Point> neighbor_points;
         for (std::size_t j = 0; j < neighbors.size(); ++ j)
