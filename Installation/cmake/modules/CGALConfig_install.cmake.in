@@ -15,6 +15,12 @@ set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 string(REPLACE "@CGAL_INSTALL_CMAKE_DIR@" "" CGAL_INSTALL_PREFIX "${CGAL_CONFIG_DIR}")
 
+ if(NOT EXISTS "${CGAL_INSTALL_PREFIX}/@CGAL_INSTALL_CMAKE_DIR@/CGALConfig.cmake")
+    # Cannot compute CGAL_INSTALL_PREFIX!
+    # Use the CMake prefix chosen at compile time.
+    set(CGAL_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@")
+ endif()
+
 set(CGAL_MAJOR_VERSION    "@CGAL_MAJOR_VERSION@" )
 set(CGAL_MINOR_VERSION    "@CGAL_MINOR_VERSION@" )
 set(CGAL_BUGFIX_VERSION   "@CGAL_BUGFIX_VERSION@" )
