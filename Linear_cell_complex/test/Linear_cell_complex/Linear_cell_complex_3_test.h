@@ -27,6 +27,7 @@
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include "Linear_cell_complex_2_test.h"
 #include <fstream>
+#include <typeinfo>
 
 template<typename LCC>
 bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
@@ -963,7 +964,13 @@ bool test_LCC_3()
     if ( !check_number_of_cells_3(lcc2, 286, 2386, 4200, 2100, 1) )
       return false;
 
-    if (!lcc.is_isomorphic_to(lcc2, false, true, true))
+    if (!lcc.is_isomorphic_to(lcc2, false, false, true))
+    {
+      std::cout<<"Different geometries after load for "
+               <<typeid(LCC).name()<<std::endl;
+    }
+
+    if (!lcc.is_isomorphic_to(lcc2, false, false, false))
     {
       assert(false);
       return false;
