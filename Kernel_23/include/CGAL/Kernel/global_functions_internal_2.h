@@ -772,6 +772,17 @@ lexicographically_yx_larger_or_equal(const typename K::Point_2 &p,
 
 template < class K >
 inline
+typename K::FT
+l_infinity_distance(const typename K::Point_2 &p,
+                    const typename K::Point_2 &q,
+                    const K& k)
+{
+  return k.compute_L_infinity_distance_2_object()(p, q);
+}
+
+
+template < class K >
+inline
 typename K::Point_2
 midpoint(const typename K::Point_2 &p,
          const typename K::Point_2 &q, const K &k)

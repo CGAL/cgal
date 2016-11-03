@@ -2323,6 +2323,7 @@ public:
 
 }; /* end Kernel::ComputeHw_2 */
 
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -2488,6 +2489,30 @@ public:
 
   /// @}
 };
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with 2 arguments)
+
+*/
+class ComputeLInfinityDistance_2 {
+public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns the distance between the two points in the L-infinity metric.
+  */
+  Kernel::FT operator()(const Kernel::Point_2& p,
+                        const Kernel::Point_2& q) const;
+
+
+  /// @}
+
+}; /* end Kernel::ComputeLInfinityDistance_2 */
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
