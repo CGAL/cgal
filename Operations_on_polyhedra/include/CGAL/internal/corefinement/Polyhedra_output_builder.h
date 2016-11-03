@@ -1666,81 +1666,22 @@ public:
 
       // set boolean for the position of P1 wrt to Q1 and Q2
       bool P1_eq_Q1=false, P1_eq_Q2=false;
-      if (!first_hedge_opp->is_border())
+      if (!first_hedge_opp->is_border() && index_p1!=-1)
       {
-        if (index_p1==-1)
-        {
-          if (!second_hedge_opp->is_border())
-          {
-            if (index_q1==-1)
-              P1_eq_Q1 =  get(ppmap, P1) == get(ppmap, Q1);
-            else
-              P1_eq_Q1 = nodes.to_exact(get(ppmap,P1)) == nodes.exact_node(index_q1);
-          }
-          if (!P1_eq_Q1 && !second_hedge->is_border())
-          {
-            if (index_q2==-1)
-              P1_eq_Q2 =  get(ppmap, P1) == get(ppmap, Q2);
-            else
-              P1_eq_Q2 = nodes.to_exact(get(ppmap,P1)) == nodes.exact_node(index_q2);
-          }
-        }
-        else
-        {
-          if (!second_hedge_opp->is_border())
-          {
-            if (index_q1==-1)
-              P1_eq_Q1 =  nodes.exact_node(index_p1) == nodes.to_exact(get(ppmap, Q1));
-            else
-              P1_eq_Q1 = index_p1 == index_q1;
-          }
-          if (!P1_eq_Q1 && !second_hedge->is_border())
-          {
-            if (index_q2==-1)
-              P1_eq_Q2 =  nodes.exact_node(index_p1) == nodes.to_exact(get(ppmap, Q2));
-            else
-              P1_eq_Q2 = index_p1 == index_q2;
-          }
-        }
+        if (!second_hedge_opp->is_border())
+          P1_eq_Q1 = index_p1 == index_q1;
+        if (!second_hedge->is_border())
+          P1_eq_Q2 = index_p1 == index_q2;
       }
 
       // set boolean for the position of P2 wrt to Q1 and Q2
       bool P2_eq_Q1=false, P2_eq_Q2=false;
-      if (!first_hedge->is_border())
+      if (!first_hedge->is_border() && index_p2!=-1)
       {
-        if (index_p2==-1)
-        {
-          if ( !P1_eq_Q1 && !second_hedge_opp->is_border() )
-          {
-            if (index_q1==-1)
-              P2_eq_Q1 =  get(ppmap, P2) == get(ppmap, Q1);
-            else
-              P2_eq_Q1 = nodes.to_exact(get(ppmap,P2)) == nodes.exact_node(index_q1);
-          }
-          if (!P2_eq_Q1 && !P1_eq_Q2 && !second_hedge->is_border())
-          {
-            if (index_q2==-1)
-              P2_eq_Q2 =  get(ppmap, P2) == get(ppmap, Q2);
-            else
-              P2_eq_Q2 = nodes.to_exact(get(ppmap,P2)) == nodes.exact_node(index_q2);
-          }
-        }
-        else
-        {
-          if (!P1_eq_Q1 && !second_hedge_opp->is_border()){
-            if (index_q1==-1)
-              P2_eq_Q1 =  nodes.exact_node(index_p2) == nodes.to_exact(get(ppmap, Q1));
-            else
-              P2_eq_Q1 = index_p2 == index_q1;
-          }
-          if (!P2_eq_Q1 && !P1_eq_Q2 && !second_hedge->is_border())
-          {
-            if (index_q2==-1)
-              P2_eq_Q2 =  nodes.exact_node(index_p2) == nodes.to_exact(get(ppmap, Q2));
-            else
-              P2_eq_Q2 = index_p2 == index_q2;
-          }
-        }
+        if (!second_hedge_opp->is_border())
+          P2_eq_Q1 = index_p2 == index_q1;
+        if (!P1_eq_Q2 && !second_hedge->is_border())
+          P2_eq_Q2 = index_p2 == index_q2;
       }
 
       //mark coplanar facets if any

@@ -387,81 +387,22 @@ public:
 
       // set boolean for the position of p1 wrt to q1 and q2
       bool p1_eq_q1=false, p1_eq_q2=false;
-      if (!is_border(h1_opp, tm1))
+      if (!is_border(h1_opp, tm1) && index_p1!=NID)
       {
-        if (index_p1==NID)
-        {
-          if (!is_border(h2_opp, tm2))
-          {
-            if (index_q1==NID)
-              p1_eq_q1 =  get(vpm1, p1) == get(vpm2, q1);
-            else
-              p1_eq_q1 = nodes.to_exact(get(vpm1,p1)) == nodes.exact_node(index_q1);
-          }
-          if (!p1_eq_q1 && !is_border(h2, tm2))
-          {
-            if (index_q2==NID)
-              p1_eq_q2 =  get(vpm1, p1) == get(vpm2, q2);
-            else
-              p1_eq_q2 = nodes.to_exact(get(vpm1,p1)) == nodes.exact_node(index_q2);
-          }
-        }
-        else
-        {
-          if (!is_border(h2_opp, tm2))
-          {
-            if (index_q1==NID)
-              p1_eq_q1 =  nodes.exact_node(index_p1) == nodes.to_exact(get(vpm2, q1));
-            else
-              p1_eq_q1 = index_p1 == index_q1;
-          }
-          if (!p1_eq_q1 && !is_border(h2, tm2))
-          {
-            if (index_q2==NID)
-              p1_eq_q2 =  nodes.exact_node(index_p1) == nodes.to_exact(get(vpm2, q2));
-            else
-              p1_eq_q2 = index_p1 == index_q2;
-          }
-        }
+        if (!is_border(h2_opp, tm2))
+          p1_eq_q1 = index_p1 == index_q1;
+        if (!is_border(h2, tm2))
+          p1_eq_q2 = index_p1 == index_q2;
       }
 
       // set boolean for the position of p2 wrt to q1 and q2
       bool p2_eq_q1=false, p2_eq_q2=false;
-      if (!is_border(h1, tm1))
+      if (!is_border(h1, tm1) && index_p2!=NID)
       {
-        if (index_p2==NID)
-        {
-          if ( !p1_eq_q1 && !is_border(h2_opp, tm2) )
-          {
-            if (index_q1==NID)
-              p2_eq_q1 =  get(vpm1, p2) == get(vpm2, q1);
-            else
-              p2_eq_q1 = nodes.to_exact(get(vpm1,p2)) == nodes.exact_node(index_q1);
-          }
-          if (!p2_eq_q1 && !p1_eq_q2 && !is_border(h2, tm2))
-          {
-            if (index_q2==NID)
-              p2_eq_q2 =  get(vpm1, p2) == get(vpm2, q2);
-            else
-              p2_eq_q2 = nodes.to_exact(get(vpm1,p2)) == nodes.exact_node(index_q2);
-          }
-        }
-        else
-        {
-          if (!p1_eq_q1 && !is_border(h2_opp, tm2)){
-            if (index_q1==NID)
-              p2_eq_q1 =  nodes.exact_node(index_p2) == nodes.to_exact(get(vpm2, q1));
-            else
-              p2_eq_q1 = index_p2 == index_q1;
-          }
-          if (!p2_eq_q1 && !p1_eq_q2 && !is_border(h2, tm2))
-          {
-            if (index_q2==-1)
-              p2_eq_q2 =  nodes.exact_node(index_p2) == nodes.to_exact(get(vpm2, q2));
-            else
-              p2_eq_q2 = index_p2 == index_q2;
-          }
-        }
+        if (!is_border(h2_opp, tm2))
+          p2_eq_q1 = index_p2 == index_q1;
+        if (!is_border(h2, tm2))
+          p2_eq_q2 = index_p2 == index_q2;
       }
 
       //mark coplanar facets if any
