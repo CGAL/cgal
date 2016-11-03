@@ -680,8 +680,8 @@ namespace CGAL {
    <Map_,Const,A2,A3,A4,A5,A6,A7,A8,A9>::type, A1>
   {
   public:
-    typedef typename GMap_dart_iterator_basic_of_orbit_generic
-    <Map_,Const,A1,A2,A3,A4,A5,A6,A7,A8,A9>::type Self;
+    typedef GMap_dart_iterator_basic_of_orbit_generic
+    <Map_,Const,A1,A2,A3,A4,A5,A6,A7,A8,A9> Self;
     typedef GMap_extend_iterator
     <Map_,typename Get_GMap_dart_iterator_basic_of_orbit
      <Map_,Const,A2,A3,A4,A5,A6,A7,A8,A9>::type, A1> Base;
@@ -693,6 +693,10 @@ namespace CGAL {
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
   public:
+    /// Main constructor.
+    GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart):
+      Base(amap, adart)
+    {}
     /// Main constructor.
     GMap_dart_iterator_basic_of_orbit_generic(Map& amap, Dart_handle adart,
                                               size_type amark):
