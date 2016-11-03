@@ -232,7 +232,7 @@ class Intersection_of_triangle_meshes
       break;
       case ON_EDGE  :
       {
-        h2=opposite(ipt.info_2,tm1);
+        h2=opposite(ipt.info_2,tm2);
         if (h2>ipt.info_2) h2=ipt.info_2;
       }
       break;
