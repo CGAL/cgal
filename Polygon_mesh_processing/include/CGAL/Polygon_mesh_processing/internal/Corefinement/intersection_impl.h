@@ -83,9 +83,10 @@ struct Default_surface_intersection_visitor{
   template<class Graph_node>
   void annotate_graph(std::vector<Graph_node>&){}
   void update_terminal_nodes(std::vector<bool>&){}
-  void set_number_of_intersection_points_from_coplanar_faces(int){};
+  void set_number_of_intersection_points_from_coplanar_faces(std::size_t){};
   void start_new_polyline(int,int){}
   void add_node_to_polyline(int){}
+  void input_have_coplanar_faces(){}
   template<class T,class VertexPointMap>
   void finalize(T&,
                 const TriangleMesh&, const TriangleMesh&,
@@ -836,6 +837,8 @@ public:
     else
       compute_intersection_of_coplanar_faces(current_node, tm2, tm1, vpm2, vpm1);
     visitor.set_number_of_intersection_points_from_coplanar_faces(current_node+1);
+    if (!coplanar_faces.empty())
+      visitor.input_have_coplanar_faces();
     #endif // not DO_NOT_HANDLE_COPLANAR_FACES
 
     //compute intersection points of segments and triangles.

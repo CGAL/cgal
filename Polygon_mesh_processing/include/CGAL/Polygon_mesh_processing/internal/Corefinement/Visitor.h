@@ -132,7 +132,8 @@ struct No_extra_output_from_corefinement
     const std::map<const G*,Mesh_to_intersection_edge_map>& /*mesh_to_intersection_edges*/,
     const Node_vector& /*nodes*/,
     const An_edge_per_polyline_map& /*an_edge_per_polyline*/,
-    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
+    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/,
+    bool /*input_have_coplanar_faces*/) const
   {}
 };
 
@@ -218,6 +219,7 @@ private:
   NewFaceVisitor& new_face_visitor;
   OutputBuilder& output_builder;
   const EdgeMarkMapBind& marks_on_edges;
+  bool input_with_coplanar_faces;
 // visitor public functions
 public:
   Visitor(NewNodeVisitor& v, NewFaceVisitor& f,
@@ -226,6 +228,7 @@ public:
     , new_face_visitor(f)
     , output_builder(o)
     , marks_on_edges(emm)
+    , input_with_coplanar_faces(false)
   {}
 
   template<class Graph_node>
@@ -269,6 +272,11 @@ public:
   void set_number_of_intersection_points_from_coplanar_faces(std::size_t n)
   {
       number_coplanar_vertices=n;
+  }
+
+  void input_have_coplanar_faces()
+  {
+    input_with_coplanar_faces=true;
   }
 
   void update_terminal_nodes(std::vector<bool>&)
@@ -973,6 +981,7 @@ public:
     output_builder(mesh_to_intersection_edges,
                    nodes,
                    an_edge_per_polyline,
+                   input_with_coplanar_faces,
                    mesh_to_node_id_to_vertex);
   }
 };

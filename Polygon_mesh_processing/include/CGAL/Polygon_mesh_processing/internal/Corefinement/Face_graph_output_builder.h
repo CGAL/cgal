@@ -320,6 +320,7 @@ public:
              Intersection_edge_map>& mesh_to_intersection_edges,
     const Nodes_vector& nodes,
     An_edge_per_polyline_map& an_edge_per_polyline,
+    bool input_have_coplanar_faces,
     const Mesh_to_map_node&)
   {
     // first build an unordered_map mapping a vertex to its node id
@@ -345,20 +346,27 @@ public:
       vertex_to_node_id2[target(it->first,tm2)]=it->second.second;
     }
 
+    // bitset to identify coplanar faces
+    boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
+    boost::dynamic_bitset<> tm2_coplanar_faces(num_faces(tm2), 0);
+
     // In the following loop we filter intersection edge that are strictly inside a patch
     // of coplanar facets so that we keep only the edges on the border of the patch.
     // This is not optimal and in an ideal world being able to find the outside edges
     // directly would avoid to compute the intersection of edge/facets inside the patch
-    #ifdef CGAL_COREFINEMENT_DEBUG
-    #warning Only do this loop if at least one pair of coplanar triangles \
-             has been seen while intersecting the triangle meshes
-    #endif
-    typename An_edge_per_polyline_map::iterator epp_it=an_edge_per_polyline.begin(),
-                                                epp_it_end=an_edge_per_polyline.end();
+    // This loop is done only if the input have some coplanar faces.
+    typename An_edge_per_polyline_map::iterator
+     epp_it_end=an_edge_per_polyline.end();
+    typename An_edge_per_polyline_map::iterator
+      epp_it=input_have_coplanar_faces ? an_edge_per_polyline.begin()
+                                       : epp_it_end;
+
     for (;epp_it!=epp_it_end;)
     {
       halfedge_descriptor h1  = epp_it->second.first[&tm1];
+      halfedge_descriptor h1_opp = opposite(h1, tm1);
       halfedge_descriptor h2 = epp_it->second.first[&tm2];
+      halfedge_descriptor h2_opp = opposite(h2, tm2);
 
       if (is_border_edge(h1,tm1) || is_border_edge(h2,tm2)){
         ++epp_it;
@@ -366,22 +374,114 @@ public:
       }
 
       //vertices from tm1
-      vertex_descriptor p1 = target(next(opposite(h1, tm1), tm1), tm1);
+      vertex_descriptor p1 = target(next(h1_opp, tm1), tm1);
       vertex_descriptor p2 = target(next(h1, tm1), tm1);
       Node_id index_p1 = get_node_id(p1, vertex_to_node_id1);
       Node_id index_p2 = get_node_id(p2, vertex_to_node_id1);
       //vertices from tm2
-      vertex_descriptor q1 = target(next(opposite(h2, tm2), tm2), tm2);
+      vertex_descriptor q1 = target(next(h2_opp, tm2), tm2);
       vertex_descriptor q2 = target(next(h2, tm2), tm2);
       Node_id index_q1 = get_node_id(q1, vertex_to_node_id2);
       Node_id index_q2 = get_node_id(q2, vertex_to_node_id2);
 
-      bool p1_on_q1_or_q2 = index_p1!=NID &&
-                            (index_p1==index_q1 || index_p1==index_q2);
-      bool p2_on_q1_or_q2 = index_p2!=NID &&
-                            (index_p2==index_q1 || index_p2==index_q2);
+      // set boolean for the position of p1 wrt to q1 and q2
+      bool p1_eq_q1=false, p1_eq_q2=false;
+      if (!is_border(h1_opp, tm1))
+      {
+        if (index_p1==NID)
+        {
+          if (!is_border(h2_opp, tm2))
+          {
+            if (index_q1==NID)
+              p1_eq_q1 =  get(vpm1, p1) == get(vpm2, q1);
+            else
+              p1_eq_q1 = nodes.to_exact(get(vpm1,p1)) == nodes.exact_node(index_q1);
+          }
+          if (!p1_eq_q1 && !is_border(h2, tm2))
+          {
+            if (index_q2==NID)
+              p1_eq_q2 =  get(vpm1, p1) == get(vpm2, q2);
+            else
+              p1_eq_q2 = nodes.to_exact(get(vpm1,p1)) == nodes.exact_node(index_q2);
+          }
+        }
+        else
+        {
+          if (!is_border(h2_opp, tm2))
+          {
+            if (index_q1==NID)
+              p1_eq_q1 =  nodes.exact_node(index_p1) == nodes.to_exact(get(vpm2, q1));
+            else
+              p1_eq_q1 = index_p1 == index_q1;
+          }
+          if (!p1_eq_q1 && !is_border(h2, tm2))
+          {
+            if (index_q2==NID)
+              p1_eq_q2 =  nodes.exact_node(index_p1) == nodes.to_exact(get(vpm2, q2));
+            else
+              p1_eq_q2 = index_p1 == index_q2;
+          }
+        }
+      }
 
-      if (p1_on_q1_or_q2 && p2_on_q1_or_q2)
+      // set boolean for the position of p2 wrt to q1 and q2
+      bool p2_eq_q1=false, p2_eq_q2=false;
+      if (!is_border(h1, tm1))
+      {
+        if (index_p2==NID)
+        {
+          if ( !p1_eq_q1 && !is_border(h2_opp, tm2) )
+          {
+            if (index_q1==NID)
+              p2_eq_q1 =  get(vpm1, p2) == get(vpm2, q1);
+            else
+              p2_eq_q1 = nodes.to_exact(get(vpm1,p2)) == nodes.exact_node(index_q1);
+          }
+          if (!p2_eq_q1 && !p1_eq_q2 && !is_border(h2, tm2))
+          {
+            if (index_q2==NID)
+              p2_eq_q2 =  get(vpm1, p2) == get(vpm2, q2);
+            else
+              p2_eq_q2 = nodes.to_exact(get(vpm1,p2)) == nodes.exact_node(index_q2);
+          }
+        }
+        else
+        {
+          if (!p1_eq_q1 && !is_border(h2_opp, tm2)){
+            if (index_q1==NID)
+              p2_eq_q1 =  nodes.exact_node(index_p2) == nodes.to_exact(get(vpm2, q1));
+            else
+              p2_eq_q1 = index_p2 == index_q1;
+          }
+          if (!p2_eq_q1 && !p1_eq_q2 && !is_border(h2, tm2))
+          {
+            if (index_q2==-1)
+              p2_eq_q2 =  nodes.exact_node(index_p2) == nodes.to_exact(get(vpm2, q2));
+            else
+              p2_eq_q2 = index_p2 == index_q2;
+          }
+        }
+      }
+
+      //mark coplanar facets if any
+      if (p1_eq_q1){
+        tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
+        tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
+      }
+      if (p1_eq_q2){
+        tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
+        tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
+      }
+      if (p2_eq_q1){
+        tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
+        tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
+      }
+      if (p2_eq_q2){
+        tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
+        tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
+      }
+
+      if ( (p1_eq_q1 || p1_eq_q2) && (p2_eq_q1 || p2_eq_q2) )
       {
         typename An_edge_per_polyline_map::iterator it_to_rm=epp_it;
         ++epp_it;
@@ -440,10 +540,6 @@ public:
     boost::dynamic_bitset<> coplanar_patches_of_tm2(nb_patches_tm2,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm1_for_union_and_intersection(nb_patches_tm1,false);
     boost::dynamic_bitset<> coplanar_patches_of_tm2_for_union_and_intersection(nb_patches_tm2,false);
-
-#warning AHNALSLDKF
-    /// \todo handle the case when an_edge_per_polyline is empty or similarly there is an isolated cc without intersecting edges
-    ///       Note that could be the case of a cc that is identical (coplanar patch) in P and Q
 
     for (typename An_edge_per_polyline_map::iterator
             it=an_edge_per_polyline.begin(),
@@ -805,22 +901,9 @@ public:
     typedef Side_of_triangle_mesh<TriangleMesh,
                                   Kernel,
                                   VertexPointMap> Inside_poly_test;
-    if ( an_edge_per_polyline.empty() )
-    {
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-    #warning in case of two identical meshes, we will end up directly here, we need to a have a special handling
-#endif
-      // the models are either identical (two indentical meshes or same surface, like two cubes meshed differently) or disjoint
-      // \todo build the AABB-tree
-      // call any intersected primitive with a point, if no intersection then disjoint, otherwise same model
-    }
 
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     #warning stop using next_marked_halfedge_around_target_vertex and create lists of halfedges instead?
-    #warning this test is not robust if we use a model that has been \
-             corefined for the side-of-triangle-mesh test \
-             (the isolated CC is fine since it is guarantee free from \
-              intersection)
 #endif
 
     if ( patch_status_not_set_tm1.any() )
@@ -836,10 +919,33 @@ public:
         if ( patch_status_not_set_tm1.test( patch_id ) )
         {
           patch_status_not_set_tm1.reset( patch_id );
-          if ( inside_tm2( get(vpm1, target(halfedge(f, tm1), tm1))) ==
-               in_tm2 )
+          vertex_descriptor v = target(halfedge(f, tm1), tm1);
+          Bounded_side position = inside_tm2( get(vpm1, v));
+          if ( position == in_tm2 )
             is_patch_inside_tm2.set(patch_id);
-
+          else
+            if( position == ON_BOUNDARY)
+            {
+              if (tm1_coplanar_faces.test(get(fids1, f)))
+              {
+                coplanar_patches_of_tm1.set(patch_id);
+                coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
+              }
+              else
+              {
+                vertex_descriptor vn = source(halfedge(f, tm1), tm1);
+                Bounded_side other_position = inside_tm2( get(vpm1, vn) );
+                if (other_position==ON_BOUNDARY)
+                {
+                  // \todo improve this part which is not robust with a kernel
+                  // with inexact constructions.
+                  other_position = inside_tm2(midpoint(get(vpm1, vn),
+                                                     get(vpm1, v) ));
+                }
+                if ( other_position == in_tm2 )
+                 is_patch_inside_tm2.set(patch_id);
+              }
+            }
           if ( patch_status_not_set_tm1.none() ) break;
         }
       }
@@ -857,10 +963,33 @@ public:
         if ( patch_status_not_set_tm2.test( patch_id ) )
         {
           patch_status_not_set_tm2.reset( patch_id );
-          if ( inside_tm1( get(vpm2, target(halfedge(f, tm2), tm2))) ==
-               in_tm1 )
+          vertex_descriptor v = target(halfedge(f, tm2), tm2);
+          Bounded_side position = inside_tm1( get(vpm2, v));
+          if ( position == in_tm1 )
             is_patch_inside_tm1.set(patch_id);
-
+          else
+            if( position == ON_BOUNDARY)
+            {
+              if (tm2_coplanar_faces.test(get(fids2, f)))
+              {
+                coplanar_patches_of_tm2.set(patch_id);
+                coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id);
+              }
+              else
+              {
+                vertex_descriptor vn = source(halfedge(f, tm2), tm2);
+                Bounded_side other_position = inside_tm1( get(vpm2, vn) );
+                if (other_position==ON_BOUNDARY)
+                {
+                  // \todo improve this part which is not robust with a kernel
+                  // with inexact constructions.
+                  other_position = inside_tm1(midpoint(get(vpm2, vn),
+                                                       get(vpm2, v) ));
+                }
+                if ( other_position == in_tm1 )
+                 is_patch_inside_tm1.set(patch_id);
+              }
+            }
           if ( patch_status_not_set_tm2.none() ) break;
         }
       }
