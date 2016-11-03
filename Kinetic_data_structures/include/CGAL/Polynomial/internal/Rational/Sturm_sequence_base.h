@@ -143,7 +143,7 @@ class Sturm_sequence_base
     protected:
 
         static const Polynomial &zero_poly() {
-            static Polynomial zero(NT(0));
+            static const Polynomial zero(NT(0));
             return zero;
         }
 

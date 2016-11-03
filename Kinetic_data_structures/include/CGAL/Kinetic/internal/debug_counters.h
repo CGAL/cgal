@@ -22,50 +22,40 @@
 #define CGAL_DEBUG_COUNTERS_H_
 
 #include <CGAL/Kinetic/basic.h>
+#include <CGAL/atomic.h>
 
 namespace CGAL { namespace Kinetic {
 namespace internal {
   
-#ifdef CGAL_HEADER_ONLY
+#ifdef CGAL_NO_ATOMIC
+  typedef unsigned int atomic_unsigned_int;
+#else
+  typedef CGAL::cpp11::atomic<unsigned int> atomic_unsigned_int;
+#endif
   
-  inline unsigned int& get_static_function_degeneracies()
+
+  inline atomic_unsigned_int& get_static_function_degeneracies()
   { 
-    static unsigned int function_degeneracies__ = 0;
+    static atomic_unsigned_int function_degeneracies__ ;
     return function_degeneracies__; 
   }
-  inline unsigned int& get_static_zero_certificates()
+  inline atomic_unsigned_int& get_static_zero_certificates()
   {
-    static unsigned int zero_certificates__ = 0;
+    static atomic_unsigned_int zero_certificates__ ;
     return zero_certificates__; 
   }
-  inline unsigned int& get_static_io_errors()
+  inline atomic_unsigned_int& get_static_io_errors()
   {
-    static unsigned int io_errors__ = 0;
+    static atomic_unsigned_int io_errors__ ;
     return io_errors__;
   }
-  inline unsigned int& get_static_audit_failures()
+  inline atomic_unsigned_int& get_static_audit_failures()
   {
-    static unsigned int audit_failures__ = 0;
+    static atomic_unsigned_int audit_failures__ ;
     return audit_failures__;
   }
 
-#else // CGAL_HEADER_ONLY
-  
-  CGAL_EXPORT extern unsigned int function_degeneracies__;
-  CGAL_EXPORT extern unsigned int zero_certificates__;
-  CGAL_EXPORT extern unsigned int io_errors__;
-  CGAL_EXPORT extern unsigned int audit_failures__;
 
-  inline unsigned int& get_static_function_degeneracies()
-  { return function_degeneracies__; }
-  inline unsigned int& get_static_zero_certificates()
-  { return zero_certificates__; }
-  inline unsigned int& get_static_io_errors()
-  { return io_errors__; }
-  inline unsigned int& get_static_audit_failures()
-  { return audit_failures__; }
-
-#endif // CGAL_HEADER_ONLY
 
 
   CGAL_EXPORT void write_debug_counters(std::ostream &out);
