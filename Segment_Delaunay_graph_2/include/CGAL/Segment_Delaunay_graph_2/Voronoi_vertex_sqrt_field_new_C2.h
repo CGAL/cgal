@@ -30,6 +30,10 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 
+#ifdef CGAL_PROFILE
+#  include <fstream>
+#endif
+
 namespace CGAL {
 
 namespace SegmentDelaunayGraph_2 {
