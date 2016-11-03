@@ -124,13 +124,13 @@ void display_lcc(LCC& lcc)
   for ( typename LCC::Dart_range::const_iterator it=lcc.darts().begin();
         it!=lcc.darts().end(); ++it)
   {
-    std::cout << " dart " << &(*it) << "; beta[i]=";
-    for ( unsigned int i=0; i<=LCC::dimension; ++i)
+    std::cout << " dart " << lcc.darts().index(it) << "; beta[i]=";
+    /* for ( unsigned int i=0; i<=LCC::dimension; ++i)
     {
       std::cout << &(*it->beta(i)) << ",\t";
       if (lcc.is_free(it, i)) std::cout << "\t";
-    }
-    std::cout<<it->template attribute<0>()->point();
+      } */
+    std::cout<<lcc.point(it);
     std::cout << std::endl;
     ++nb;
   }
