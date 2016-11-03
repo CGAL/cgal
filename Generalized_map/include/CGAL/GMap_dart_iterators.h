@@ -47,83 +47,83 @@ namespace CGAL {
   template<typename Map,bool Const,int... Alpha>
   class GMap_dart_iterator_basic_of_orbit_generic;
 #else
-  template <typename Map,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	    int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+  template <typename Map,bool Const,int A1=-1,int A2=-1,int A3=-1,int A4=-1,
+	    int A5=-1,int A6=-1,int A7=-1,int A8=-1,int A9=-1>
     class GMap_dart_iterator_basic_of_orbit_generic;
 
-  template <typename Map,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	    int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+  template <typename Map,bool Const,int A1=-1,int A2=-1,int A3=-1,int A4=-1,
+	    int A5=-1,int A6=-1,int A7=-1,int A8=-1,int A9=-1>
     struct Get_GMap_dart_iterator_basic_of_orbit;
 
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-	   int B7,int B8,int B9>
+  template<typename Map,bool Const,int A1,int A2,int A3,int A4,int A5,int A6,
+	   int A7,int A8,int A9>
   struct Get_GMap_dart_iterator_basic_of_orbit
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,
-                                                      B5,B6,B7,B8,B9> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,A1,A2,A3,A4,
+                                                      A5,A6,A7,A8,A9> type;
   };
 
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-	   int B7,int B8>
+  template<typename Map,bool Const,int A1,int A2,int A3,int A4,int A5,int A6,
+	   int A7,int A8>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,B6,B7,B8,-1>
+                                               A1,A2,A3,A4,A5,A6,A7,A8,-1>
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,B5,
-                                                      B6,B7,B8> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,A1,A2,A3,A4,A5,
+                                                      A6,A7,A8> type;
   };
 
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-	   int B7>
+  template<typename Map,bool Const,int A1,int A2,int A3,int A4,int A5,int A6,
+	   int A7>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,B6,B7,-1,-1>
+                                               A1,A2,A3,A4,A5,A6,A7,-1,-1>
   {
     typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,
-                                                      B1,B2,B3,B4,B5,B6,B7> type;
+                                                      A1,A2,A3,A4,A5,A6,A7> type;
   };
 
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5,int B6>
+  template<typename Map,bool Const,int A1,int A2,int A3,int A4,int A5,int A6>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,B6,-1,-1,-1>
+                                               A1,A2,A3,A4,A5,A6,-1,-1,-1>
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,B4,
-                                                      B5,B6> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,A1,A2,A3,A4,
+                                                      A5,A6> type;
   };
 
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4,int B5>
+  template<typename Map,bool Const,int A1,int A2,int A3,int A4,int A5>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,B5,-1,-1,-1,-1>
+                                               A1,A2,A3,A4,A5,-1,-1,-1,-1>
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,B1,B2,B3,B4,
-                                                      B5,Const> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,A1,A2,A3,A4,
+                                                      A5,Const> type;
   };
 
-  template<typename Map,bool Const,int B1,int B2,int B3,int B4>
+  template<typename Map,bool Const,int A1,int A2,int A3,int A4>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,B4,-1,-1,-1,-1,-1>
+                                               A1,A2,A3,A4,-1,-1,-1,-1,-1>
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3,
-                                                      B4> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,A1,A2,A3,
+                                                      A4> type;
   };
 
-  template<typename Map, int B1,int B2,int B3,bool Const>
+  template<typename Map, int A1,int A2,int A3,bool Const>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,B3,-1,-1,-1,-1,-1,-1>
+                                               A1,A2,A3,-1,-1,-1,-1,-1,-1>
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2,B3> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,A1,A2,A3> type;
   };
 
-  template<typename Map, int B1,int B2,bool Const>
+  template<typename Map, int A1,int A2,bool Const>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,B2,-1,-1,-1,-1,-1,-1,-1>
+                                               A1,A2,-1,-1,-1,-1,-1,-1,-1>
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1,B2> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,A1,A2> type;
   };
 
-  template<typename Map, int B1,bool Const>
+  template<typename Map, int A1,bool Const>
   struct Get_GMap_dart_iterator_basic_of_orbit<Map,Const,
-                                               B1,-1,-1,-1,-1,-1,-1,-1,-1>
+                                               A1,-1,-1,-1,-1,-1,-1,-1,-1>
   {
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,B1> type;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,Const,A1> type;
   };
 
   template<typename Map,bool Const>
@@ -502,19 +502,19 @@ namespace CGAL {
     bool mnext_try_first_alpha;
   };
   //****************************************************************************
-  /* Class GMap_dart_iterator_basic_of_orbit<Bi,Bj>: to iterate
-   * on the darts of the orbit <Bi,Bj>: Ai<dimension.
+  /* Class GMap_dart_iterator_basic_of_orbit<Ai,Aj>: to iterate
+   * on the darts of the orbit <Ai,Aj>: Ai<dimension.
    * Basic classes do not guaranty correct marks (i.e. do not unmark darts in
    * the destructor, possible problem with the rewind). If you are not sure,
    * use GMap_dart_iterator_basic_of_orbit.
    */
-  template <typename Map_,bool Const, int Bi, int Bj>
-  class GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Bi,Bj>:
-    public GMap_dart_iterator_basic_of_two_alpha<Map_,Const,Bi,Bj-Bi>
+  template <typename Map_,bool Const, int Ai, int Aj>
+  class GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Aj>:
+    public GMap_dart_iterator_basic_of_two_alpha<Map_,Const,Ai,Aj-Ai>
   {
   public:
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Bi,Bj> Self;
-    typedef GMap_dart_iterator_basic_of_two_alpha<Map_,Const,Bi,Bj-Bi> Base;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Aj> Self;
+    typedef GMap_dart_iterator_basic_of_two_alpha<Map_,Const,Ai,Aj-Ai> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
@@ -535,7 +535,8 @@ namespace CGAL {
     {}
   };
   //****************************************************************************
-  // TODO do the class and the specializations
+  /// TODO The template specialization with 3 alpha
+  
   //
   /* Class CMap_dart_iterator_basic_of_three_alpha<Ai,delta1,delta2>: to iterate
    * on the darts of the orbit <Ai,Ai+delta1,Ai+delta2>:
@@ -545,7 +546,8 @@ namespace CGAL {
    * the destructor, possible problem with the rewind). If you are not sure,
    * use CMap_dart_iterator_basic_of_two_alpha.
    */
-  template <typename Map_,bool Const,int Ai,unsigned int delta1,
+  /*
+    template <typename Map_,bool Const,int Ai,unsigned int delta1,
             unsigned int delta2>
   class GMap_dart_iterator_basic_of_three_alpha :
     public CMap_dart_iterator<Map_,Const>
@@ -574,26 +576,27 @@ namespace CGAL {
 
     /// Main constructor.
     GMap_dart_iterator_basic_of_three_alpha(Map& amap, Dart_handle adart,
-                                            size_type /*amark*/):
+                                            size_type):
       Base(amap, adart)
     {}
-  };
+  }; */
   //****************************************************************************
-  /* Class GMap_dart_iterator_basic_of_orbit<Map,Bi,Bj,Bk>: to iterate onto
-   * the darts of the orbit <Bi,Bj,Bk>, Bi<Bj<Bk<=dimension
+  /* Class GMap_dart_iterator_basic_of_orbit<Map,Ai,Aj,Ak>: to iterate onto
+   * the darts of the orbit <Ai,Aj,Ak>, Ai<Aj<Ak<=dimension
    * Basic classes do not guaranty correct marks (i.e. do not unmark
    * darts in the destructor, possible problem with the rewind).
-   * not for <B0,B3,Bk>, <B1,B3,Bk>, <B2,B3,Bk> which are specific cases.
+   * not for <B0,A3,Ak>, <A1,A3,Ak>, <A2,A3,Ak> which are specific cases.
    */
-  template <typename Map_,bool Const,int Bi,int Bj,int Bk>
-  class GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Bi,Bj,Bk>:
+
+  /*  template <typename Map_,bool Const,int Ai,int Aj,int Ak>
+  class GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Aj,Ak>:
     public GMap_extend_iterator<Map_,GMap_dart_iterator_basic_of_orbit_generic
-				<Map_,Const,Bi,Bj>, Bk>
+				<Map_,Const,Ai,Aj>, Ak>
   {
   public:
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Bi,Bj,Bk> Self;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Aj,Ak> Self;
     typedef GMap_extend_iterator<Map_,GMap_dart_iterator_basic_of_orbit_generic
-				 <Map_,Const,Bi,Bj>, Bk> Base;
+				 <Map_,Const,Ai,Aj>, Ak> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map         Map;
@@ -601,7 +604,7 @@ namespace CGAL {
 
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
-    CGAL_static_assertion( Bi<Bj && Bj<Bk && Bk<=Map::dimension );
+    CGAL_static_assertion( Ai<Aj && Aj<Ak && Ak<=Map::dimension );
 
   public:
     /// Main constructor.
@@ -609,22 +612,23 @@ namespace CGAL {
                                               size_type amark):
       Base(amap, adart, amark)
     {}
-  };
+    };
+  */
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //**************************************************************************
   /// Generic nD version.
-  template <typename Map_,bool Const,int Ai,int... Alpha>
-  class GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Alpha...>:
-    public CMap_extend_iterator<Map_,
+  template <typename Map_,bool Const,int Ai, int Aj, int... Alpha>
+  class GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Aj,Alpha...>:
+    public GMap_extend_iterator<Map_,
                                 GMap_dart_iterator_basic_of_orbit_generic
-                                <Map_,Const,Alpha...>,
+                                <Map_,Const,Aj,Alpha...>,
                                 Ai>
   {
   public:
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Alpha...> Self;
-    typedef CMap_extend_iterator<Map_,
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map_,Const,Ai,Aj,Alpha...> Self;
+    typedef GMap_extend_iterator<Map_,
                                  GMap_dart_iterator_basic_of_orbit_generic
-                                 <Map_,Const,Alpha...>,
+                                 <Map_,Const,Aj,Alpha...>,
                                  Ai> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
@@ -642,13 +646,13 @@ namespace CGAL {
   };
   //****************************************************************************
   /// Non const basic of orbit iterator
-  template<typename Map,int...Alpha>
+  template<typename Map,int Ai, int Aj, int...Alpha>
   class GMap_dart_iterator_basic_of_orbit:
-    public GMap_dart_iterator_basic_of_orbit_generic<Map,false,Alpha...>
+    public GMap_dart_iterator_basic_of_orbit_generic<Map,false,Ai,Aj,Alpha...>
   {
   public:
-    typedef GMap_dart_iterator_basic_of_orbit<Map,Alpha...> Self;
-    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,false,Alpha...> Base;
+    typedef GMap_dart_iterator_basic_of_orbit<Map,Ai,Aj,Alpha...> Self;
+    typedef GMap_dart_iterator_basic_of_orbit_generic<Map,false,Ai,Aj,Alpha...> Base;
 
     typedef typename Map::Dart_handle Dart_handle;
     typedef typename Base::Use_mark Use_mark; ///< True iff this iterator uses mark
@@ -668,19 +672,19 @@ namespace CGAL {
 #else //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   //****************************************************************************
   /// Generic nD version.
-  template <typename Map_,bool Const,int B1,int B2,int B3,int B4,int B5,int B6,
-	    int B7,int B8,int B9>
+  template <typename Map_,bool Const,int A1,int A2,int A3,int A4,int A5,int A6,
+	    int A7,int A8,int A9>
   class GMap_dart_iterator_basic_of_orbit_generic:
-    public CMap_extend_iterator
-  <Map_,typename Get_CMap_dart_iterator_basic_of_orbit
-   <Map_,Const,B2,B3,B4,B5,B6,B7,B8,B9>::type, B1>
+    public GMap_extend_iterator
+  <Map_,typename Get_GMap_dart_iterator_basic_of_orbit
+   <Map_,Const,A2,A3,A4,A5,A6,A7,A8,A9>::type, A1>
   {
   public:
     typedef typename GMap_dart_iterator_basic_of_orbit_generic
-    <Map_,Const,B1,B2,B3,B4,B5,B6,B7,B8,B9>::type Self;
-    typedef CMap_extend_iterator
-    <Map_,typename Get_CMap_dart_iterator_basic_of_orbit
-     <Map_,Const,B2,B3,B4,B5,B6,B7,B8,B9>::type, B1> Base;
+    <Map_,Const,A1,A2,A3,A4,A5,A6,A7,A8,A9>::type Self;
+    typedef GMap_extend_iterator
+    <Map_,typename Get_GMap_dart_iterator_basic_of_orbit
+     <Map_,Const,A2,A3,A4,A5,A6,A7,A8,A9>::type, A1> Base;
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
@@ -697,17 +701,17 @@ namespace CGAL {
   };
   //****************************************************************************
   /// Non const basic of orbit iterator
-  template<typename Map,int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-	   int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+  template<typename Map,int A1=-1,int A2=-1,int A3=-1,int A4=-1,int A5=-1,
+	   int A6=-1,int A7=-1,int A8=-1,int A9=-1>
                               class GMap_dart_iterator_basic_of_orbit:
-    public Get_GMap_dart_iterator_basic_of_orbit<Map,false,B1,B2,B3,B4,
-                                                 B5,B6,B7,B8,B9>::type
+    public Get_GMap_dart_iterator_basic_of_orbit<Map,false,A1,A2,A3,A4,
+                                                 A5,A6,A7,A8,A9>::type
   {
   public:
-    typedef GMap_dart_iterator_basic_of_orbit<Map,B1,B2,B3,B4,B5,B6,B7,B8,B9>
+    typedef GMap_dart_iterator_basic_of_orbit<Map,A1,A2,A3,A4,A5,A6,A7,A8,A9>
     Self;
-    typedef typename Get_GMap_dart_iterator_basic_of_orbit<Map,false,B1,B2,B3,B4,
-                                                           B5,B6,B7,B8,B9>::type
+    typedef typename Get_GMap_dart_iterator_basic_of_orbit<Map,false,A1,A2,A3,A4,
+                                                           A5,A6,A7,A8,A9>::type
     Base;
 
     typedef typename Map::Dart_handle Dart_handle;
@@ -1068,23 +1072,23 @@ namespace CGAL {
   };
 #else
   //****************************************************************************
-  template<typename Map_,bool Const,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	   int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+  template<typename Map_,bool Const,int A1=-1,int A2=-1,int A3=-1,int A4=-1,
+	   int A5=-1,int A6=-1,int A7=-1,int A8=-1,int A9=-1>
     class GMap_dart_iterator_of_orbit_generic:
     public CMap_non_basic_iterator<Map_,
 				   typename
 				   Get_GMap_dart_iterator_basic_of_orbit
-				   <Map_,Const,B1,B2,B3,B4,B5,
-				    B6,B7,B8,B9>::type>
+				   <Map_,Const,A1,A2,A3,A4,A5,
+				    A6,A7,A8,A9>::type>
     {
     public:
-      typedef GMap_dart_iterator_of_orbit_generic<Map_,Const,B1,B2,B3,B4,B5,
-                                                  B6,B7,B8,B9> Self;
+      typedef GMap_dart_iterator_of_orbit_generic<Map_,Const,A1,A2,A3,A4,A5,
+                                                  A6,A7,A8,A9> Self;
       typedef CMap_non_basic_iterator<Map_,
                                       typename
                                       Get_GMap_dart_iterator_basic_of_orbit
-                                      <Map_,Const,B1,B2,B3,B4,B5,
-                                       B6,B7,B8,B9>::type> Base;
+                                      <Map_,Const,A1,A2,A3,A4,A5,
+                                       A6,A7,A8,A9>::type> Base;
 
       typedef typename Base::Map Map;
       typedef typename Base::Dart_handle Dart_handle;
@@ -1096,16 +1100,16 @@ namespace CGAL {
       {}
     };
   //****************************************************************************
-  template<typename Map,int B1=-1,int B2=-1,int B3=-1,int B4=-1,
-	   int B5=-1,int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+  template<typename Map,int A1=-1,int A2=-1,int A3=-1,int A4=-1,
+	   int A5=-1,int A6=-1,int A7=-1,int A8=-1,int A9=-1>
     class GMap_dart_iterator_of_orbit:
     public GMap_dart_iterator_of_orbit_generic<Map,false,
-                                               B1,B2,B3,B4,B5,B6,B7,B8,B9>
+                                               A1,A2,A3,A4,A5,A6,A7,A8,A9>
     {
     public:
-      typedef GMap_dart_iterator_of_orbit<Map,B1,B2,B3,B4,B5,B6,B7,B8,B9> Self;
+      typedef GMap_dart_iterator_of_orbit<Map,A1,A2,A3,A4,A5,A6,A7,A8,A9> Self;
       typedef GMap_dart_iterator_of_orbit_generic<Map,false,
-                                                  B1,B2,B3,B4,B5,B6,B7,B8,B9> Base;
+                                                  A1,A2,A3,A4,A5,A6,A7,A8,A9> Base;
 
       typedef typename Base::Dart_handle Dart_handle;
       typedef Tag_false Basic_iterator; ///< True iff this iterator is basic
