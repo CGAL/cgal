@@ -25,6 +25,8 @@
 
 #include <deque>
 
+#define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
+
 namespace CGAL
 {
   /** @file Combinatorial_map_operations.h
