@@ -23,10 +23,11 @@ namespace Classification {
 template <typename Kernel, typename RandomAccessIterator, typename PointMap>
 class Planimetric_grid
 {
-  typedef typename Kernel::FT FT;
+public:
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
-  
+
+private:
   typedef Image<std::vector<std::size_t> > Image_indices;
   typedef Image<bool> Image_bool;
 
@@ -53,7 +54,7 @@ public:
                     const RandomAccessIterator& end,
                     PointMap point_map,
                     const Iso_cuboid_3& bbox,
-                    const FT grid_resolution)
+                    const double grid_resolution)
   {
 
     std::size_t size = (std::size_t)(end - begin);

@@ -30,12 +30,9 @@ template <typename Kernel, typename RandomAccessIterator, typename PointMap,
 class Local_eigen_analysis
 {
 public:
-  /// \cond SKIP_IN_MANUAL
-  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::Plane_3 Plane;
-  /// \endcond
   
   typedef CGAL::cpp11::array<double, 3> Eigenvalues; ///< Eigenvalues (sorted in ascending order)
 
@@ -105,7 +102,28 @@ public:
     mean_range /= size;
   }
 
-  /// \cond SKIP_IN_MANUAL
+  /*!
+    \brief Returns the estimated normal vector of the indexed point.
+  */
+  const Vector& normal_vector (std::size_t index) const { return m_smallest_eigenvectors[index]; }
+
+  /*!
+    \brief Returns the estimated local tangent plane of the index point.
+  */
+  Plane plane (std::size_t index) const { return Plane (m_centroids[index], m_smallest_eigenvectors[index]); }
+
+  /*!
+    \brief Returns the normalized eigenvalues of the index point.
+  */
+  const Eigenvalues& eigenvalue (std::size_t index) const { return m_eigenvalues[index]; }
+
+  /*!
+    \brief Returns the sum of eigenvalues of the index point.
+  */
+  const double& sum_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
+
+private:
+
   void compute (const Point& query, std::vector<Point>& neighbor_points)
   {
     if (neighbor_points.size() == 0)
@@ -155,27 +173,6 @@ public:
     m_largest_eigenvectors.push_back (Vector (evectors[6], evectors[7], evectors[8]));
 
   }
-  /// \endcond
-
-  /*!
-    \brief Returns the estimated normal vector of the indexed point.
-  */
-  const Vector& normal_vector (std::size_t index) const { return m_smallest_eigenvectors[index]; }
-
-  /*!
-    \brief Returns the estimated local tangent plane of the index point.
-  */
-  Plane plane (std::size_t index) const { return Plane (m_centroids[index], m_smallest_eigenvectors[index]); }
-
-  /*!
-    \brief Returns the normalized eigenvalues of the index point.
-  */
-  const Eigenvalues& eigenvalue (std::size_t index) const { return m_eigenvalues[index]; }
-
-  /*!
-    \brief Returns the sum of eigenvalues of the index point.
-  */
-  const double& sum_eigenvalues (std::size_t index) const { return m_sum_eigenvalues[index]; }
 
 };
   
