@@ -797,11 +797,11 @@ public Q_SLOTS:
 
     for (std::size_t i = 0; i < classification_item->types().size(); ++ i)
       {
-        CGAL::Data_classification::Type::Attribute_effect
+        CGAL::Classification::Type::Attribute_effect
           eff = classification_item->types()[i].first->attribute_effect(att);
-        if (eff == CGAL::Data_classification::Type::PENALIZED_ATT)
+        if (eff == CGAL::Classification::Type::PENALIZED_ATT)
           class_rows[i].effect->setCurrentIndex(0);
-        else if (eff == CGAL::Data_classification::Type::NEUTRAL_ATT)
+        else if (eff == CGAL::Classification::Type::NEUTRAL_ATT)
           class_rows[i].effect->setCurrentIndex(1);
         else
           class_rows[i].effect->setCurrentIndex(2);
@@ -854,19 +854,19 @@ public Q_SLOTS:
           if (v == 0)
             {
               classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Data_classification::Type::PENALIZED_ATT);
+                (att, CGAL::Classification::Type::PENALIZED_ATT);
               //              std::cerr << " penalized for ";
             }
           else if (v == 1)
             {
               classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Data_classification::Type::NEUTRAL_ATT);
+                (att, CGAL::Classification::Type::NEUTRAL_ATT);
               //              std::cerr << " neutral for ";
             }
           else
             {
               classification_item->types()[i].first->set_attribute_effect
-                (att, CGAL::Data_classification::Type::FAVORED_ATT);
+                (att, CGAL::Classification::Type::FAVORED_ATT);
               //              std::cerr << " favored for ";
             }
           //          std::cerr << classification_item->types()[i].first->id() << std::endl;

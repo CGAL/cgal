@@ -1,0 +1,5 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Classification"
+INPUT        = ${CMAKE_SOURCE_DIR}/Classification/doc/Classification/ \
+               ${CMAKE_SOURCE_DIR}/Classification/include/CGAL/Classification/ \
+               ${CMAKE_SOURCE_DIR}/Classification/include/CGAL/Classifier.h

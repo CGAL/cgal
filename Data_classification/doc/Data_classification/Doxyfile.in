@@ -1,5 +1,0 @@
-@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Data Classification"
-INPUT        = ${CMAKE_SOURCE_DIR}/Data_classification/doc/Data_classification/ \
-               ${CMAKE_SOURCE_DIR}/Data_classification/include/CGAL/Data_classification/ \
-               ${CMAKE_SOURCE_DIR}/Data_classification/include/CGAL/Point_set_classification.h

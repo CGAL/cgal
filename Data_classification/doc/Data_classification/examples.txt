@@ -1,4 +1,0 @@
-/*!
-\example Data_classification/example_point_set_classification.cpp
-\example Data_classification/example_helper.cpp
-*/

@@ -119,7 +119,7 @@ h1 {
 \package_listing{Point_set_processing_3}
 \package_listing{Point_set_shape_detection_3}
 \package_listing{Stream_lines_2}
-\package_listing{Data_classification}
+\package_listing{Classification}
 
 
 \section PartSearchStructures Spatial Searching and Sorting

@@ -2,16 +2,16 @@
 #define POINT_SET_CLASSIFICATION_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/Point_set_classification.h>
-#include <CGAL/Data_classification/Attribute.h>
-#include <CGAL/Data_classification/Attribute_vertical_dispersion.h>
-#include <CGAL/Data_classification/Attribute_elevation.h>
-#include <CGAL/Data_classification/Attribute_verticality.h>
-#include <CGAL/Data_classification/Attribute_distance_to_plane.h>
-#include <CGAL/Data_classification/Attribute_color.h>
-#include <CGAL/Data_classification/Attribute_echo_scatter.h>
-#include <CGAL/Data_classification/Attributes_eigen.h>
-#include <CGAL/Data_classification/Helper.h>
+#include <CGAL/Classifier.h>
+#include <CGAL/Classification/Attribute.h>
+#include <CGAL/Classification/Attribute_vertical_dispersion.h>
+#include <CGAL/Classification/Attribute_elevation.h>
+#include <CGAL/Classification/Attribute_verticality.h>
+#include <CGAL/Classification/Attribute_distance_to_plane.h>
+#include <CGAL/Classification/Attribute_color.h>
+#include <CGAL/Classification/Attribute_echo_scatter.h>
+#include <CGAL/Classification/Attributes_eigen.h>
+#include <CGAL/Classification/Helper.h>
 
 #include "Scene_point_set_classification_item_config.h"
 #include "Scene_points_with_normal_item.h"
@@ -36,7 +36,7 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
     class Point_set_color_map
   {
   public:
-    typedef CGAL::Data_classification::RGB_Color Color;
+    typedef CGAL::Classification::RGB_Color Color;
     typedef typename PointSet::Index key_type;
     typedef Color value_type;
     typedef value_type& reference;
@@ -60,21 +60,21 @@ class SCENE_POINT_SET_CLASSIFICATION_ITEM_EXPORT Scene_point_set_classification_
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
-  typedef CGAL::Data_classification::RGB_Color Color;
+  typedef CGAL::Classification::RGB_Color Color;
   
   typedef Point_set::iterator Iterator;
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
   typedef Point_set_color_map<Point_set> Color_map;
 
-  typedef CGAL::Point_set_classification<Kernel, Iterator, Point_map>                   PSC;
-  typedef CGAL::Data_classification::Helper<Kernel, Iterator, Point_map>                Helper;
-  typedef CGAL::Data_classification::Type_handle                                                Type_handle;
-  typedef CGAL::Data_classification::Attribute_handle                                           Attribute_handle;
-  typedef CGAL::Data_classification::Attribute_vertical_dispersion<Kernel, Iterator, Point_map> Dispersion;
-  typedef CGAL::Data_classification::Attribute_elevation<Kernel, Iterator, Point_map>           Elevation;
-  typedef CGAL::Data_classification::Attribute_verticality<Kernel, Iterator, Point_map>         Verticality;
-  typedef CGAL::Data_classification::Attribute_distance_to_plane<Kernel, Iterator, Point_map>   Distance_to_plane;
+  typedef CGAL::Classifier<Iterator, Point_map>                                         PSC;
+  typedef CGAL::Classification::Helper<Kernel, Iterator, Point_map>                Helper;
+  typedef CGAL::Classification::Type_handle                                                Type_handle;
+  typedef CGAL::Classification::Attribute_handle                                           Attribute_handle;
+  typedef CGAL::Classification::Attribute_vertical_dispersion<Kernel, Iterator, Point_map> Dispersion;
+  typedef CGAL::Classification::Attribute_elevation<Kernel, Iterator, Point_map>           Elevation;
+  typedef CGAL::Classification::Attribute_verticality<Kernel, Iterator, Point_map>         Verticality;
+  typedef CGAL::Classification::Attribute_distance_to_plane<Kernel, Iterator, Point_map>   Distance_to_plane;
 
 
  public:
