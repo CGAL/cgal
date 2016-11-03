@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 
@@ -61,19 +62,28 @@ test_self_intersections(const char* filename, const bool expected)
 
 int main(int argc, char** argv)
 {
-  const char* filename_ele = (argc > 1) ? argv[1] : "data/elephant.off";
-  const char* filename_man = (argc > 2) ? argv[2] : "data/mannequin-devil.off";
-  const char* filename_ove = (argc > 3) ? argv[3] : "data/overlapping_triangles.off";
+  const char* first_file_name = (argc > 1) ? argv[1] : "data/elephant.off";
+  if(argc > 1) assert(argc > 2);
+  const bool first_expected = (argc > 1) ? std::atoi(argv[2]) : false;
+
+  const char* second_file_name = (argc > 3) ? argv[3] : "data/mannequin-devil.off";
+  if(argc > 3) assert(argc > 4);
+  const bool second_expected = (argc > 3) ? std::atoi(argv[4]) : true;
+
+  const char* third_file_name = (argc > 5) ? argv[5] : "data/overlapping_triangles.off";
+  if(argc > 5) assert(argc > 6);
+  const bool third_expected = (argc > 5) ? std::atoi(argv[6]) : true;
+
 
   std::cout << "Testing with Epic:" << std::endl;
-  int r = test_self_intersections<Epic>(filename_ele, false);
-  r += test_self_intersections<Epic>(filename_man, true);
-  r += test_self_intersections<Epic>(filename_ove, true);
+  int r = test_self_intersections<Epic>(first_file_name, first_expected);
+  r += test_self_intersections<Epic>(second_file_name, second_expected);
+  r += test_self_intersections<Epic>(third_file_name, third_expected);
 
   std::cout << "Testing with Epec:" << std::endl;
-  r += test_self_intersections<Epec>(filename_ele, false);
-  r += test_self_intersections<Epec>(filename_man, true);
-  r += test_self_intersections<Epec>(filename_ove, true);
+  r += test_self_intersections<Epec>(first_file_name, first_expected);
+  r += test_self_intersections<Epec>(second_file_name, second_expected);
+  r += test_self_intersections<Epec>(third_file_name, third_expected);
 
   return r;
 }
