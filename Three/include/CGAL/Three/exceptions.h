@@ -25,6 +25,7 @@
 #include <QString>
 #include <QScriptable>
 #include <QScriptContext>
+#include <QScriptEngine>
 #include <boost/optional.hpp>
 #include <QStringList>
 
