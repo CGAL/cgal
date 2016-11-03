@@ -360,7 +360,8 @@ public:
     typename An_edge_per_polyline_map::iterator
       epp_it=input_have_coplanar_faces ? an_edge_per_polyline.begin()
                                        : epp_it_end;
-
+    boost::unordered_set<edge_descriptor> inter_edges_to_remove1,
+                                          inter_edges_to_remove2;
     for (;epp_it!=epp_it_end;)
     {
       halfedge_descriptor h1  = epp_it->second.first[&tm1];
@@ -486,8 +487,8 @@ public:
         typename An_edge_per_polyline_map::iterator it_to_rm=epp_it;
         ++epp_it;
         an_edge_per_polyline.erase(it_to_rm);
-        intersection_edges1.erase(edge(h1,tm1));
-        intersection_edges2.erase(edge(h2,tm2));
+        inter_edges_to_remove1.insert(edge(h1,tm1));
+        inter_edges_to_remove2.insert(edge(h2,tm2));
         #ifdef CGAL_COREFINEMENT_DEBUG
         /// \todo really??
         #warning we need to have the EdgeMarkPropertyMap to unmark intersection hedge
@@ -496,6 +497,10 @@ public:
       else
         ++epp_it;
     }
+    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove1)
+      intersection_edges1.erase(ed);
+    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove2)
+      intersection_edges2.erase(ed);
 
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.

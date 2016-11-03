@@ -1644,6 +1644,7 @@ public:
                                                       ?an_edge_per_polyline.begin()
                                                       :an_edge_per_polyline.end(),
                                                 epp_it_end=an_edge_per_polyline.end();
+    std::set<Halfedge_const_handle, Cmp_unik_ad> border_edges_to_remove;
     for (;epp_it!=epp_it_end;)
     {
       Halfedge_handle first_hedge  = epp_it->second.first[P_ptr];
@@ -1766,8 +1767,8 @@ public:
         typename An_edge_per_polyline_map::iterator it_to_rm=epp_it;
         ++epp_it;
         an_edge_per_polyline.erase(it_to_rm);
-        border_halfedges.erase(first_hedge);
-        border_halfedges.erase(second_hedge);
+        border_edges_to_remove.insert(first_hedge);
+        border_edges_to_remove.insert(second_hedge);
         #ifdef CGAL_COREFINEMENT_DEBUG
         #warning we need to have the EdgeMarkPropertyMap to unmark intersection hedge
         #endif
@@ -1775,6 +1776,9 @@ public:
       else
         ++epp_it;
     }
+
+    BOOST_FOREACH(Halfedge_const_handle h, border_edges_to_remove)
+      border_halfedges.erase(h);
 
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
