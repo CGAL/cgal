@@ -394,7 +394,7 @@ Property maps are used to record the computed normals.
 \subsection NormalsExample Normals Computation Examples
 
 Property maps are an API introduced in the boost library, that allows to
-associate values to keys. In the following examples we assocatiate
+associates values to keys. In the following examples we assocatiate
 a normal vector to each vertex and to each face.
 
 
