@@ -25,12 +25,27 @@
 namespace CGAL {
 namespace Data_classification {
 
-  /// \cond SKIP_IN_MANUAL
-  
+  /*!
+    \ingroup PkgDataClassificationColor
+
+    Color described in red/green/blue space. Each component is stored
+    as an unsigned char ranging from 0 (no color) to 255 (
+   */  
 typedef CGAL::cpp11::array<unsigned char, 3> RGB_Color;
+  /*!
+    \ingroup PkgDataClassificationColor
+
+    Color described in hue/saturation/value space. Each component is stored
+    as a double:
+
+    - `hue` ranges from 0° to 360° (corresponding to the color tint)
+    - `saturation` ranges from 0.0 (gray) to 100.0 (full saturation)
+    - `value` ranges from 0.0 (black) to 100.0 (white)
+   */  
 typedef CGAL::cpp11::array<double, 3> HSV_Color;
 
-  
+
+  /// \cond SKIP_IN_MANUAL
 inline HSV_Color rgb_to_hsv (const RGB_Color& c)
 {
   double r = (double)(c[0]) / 255.;
@@ -111,16 +126,6 @@ inline RGB_Color hsv_to_rgb (const HSV_Color& c)
   RGB_Color out = {{ (unsigned char)r, (unsigned char)g, (unsigned char)b }};
   return out;
 }
-
-inline void change_hue (RGB_Color& color, const RGB_Color& hue)
-{
-  HSV_Color hcolor = rgb_to_hsv (color);
-  HSV_Color hhue = rgb_to_hsv (hue);
-  hcolor[0] = hhue[0];
-  //    hcolor[1] = hhue[1];
-  color = hsv_to_rgb (hcolor);
-}
-  
   /// \endcond
 
 } // namespace Data_classification

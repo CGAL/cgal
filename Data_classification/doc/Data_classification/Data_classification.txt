@@ -240,7 +240,7 @@ The following example:
 
 - reads a point set with a training set (embedded as a PLY attribute _label_);
 - uses the helper to generate attributes on 5 scales;
-- trains the algorithm using 500 trials;
+- trains the algorithm using 800 trials;
 - runs the algorithm using the graphcut regularization;
 - saves the output using the helper.
 
