@@ -987,11 +987,12 @@ private:
                         const int k3,
                         const Cell_handle& cell) const
   { 
-    Construct_point_3 cp;
-    return CGAL::abs(CGAL::approximate_dihedral_angle(cp(p),
-                              cp(cell->vertex(k1)->point()),
-                              cp(cell->vertex(k2)->point()),
-                              cp(cell->vertex(k3)->point())));
+    typename Gt::Compute_approximate_dihedral_angle_3 approx_dihedral_angle
+      = Gt().compute_approximate_dihedral_angle_3_object();
+    return CGAL::abs(approx_dihedral_angle(p,
+                                           cell->vertex(k1)->point(),
+                                           cell->vertex(k2)->point(),
+                                           cell->vertex(k3)->point()));
   }
     
   /**
