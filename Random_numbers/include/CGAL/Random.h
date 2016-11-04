@@ -237,7 +237,7 @@ public:
 inline Random& get_default_random()
 {
 #if (defined( CGAL_TEST_SUITE ) || defined( CGAL_PRINT_SEED )) && !defined(CGAL_HEADER_ONLY)
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Random, default_random, internal::Random_print_seed() ));
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Random, default_random, internal::Random_print_seed() );
 #else
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Random, default_random);
 #endif
