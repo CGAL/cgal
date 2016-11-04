@@ -88,7 +88,7 @@ private Q_SLOTS:
                                 flags);
     if(!ok) return;
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
+    QApplication::processEvents();
     CGAL::Random_points_in_sphere_3<Kernel::Point_3> generator(max_dist);
 
     for(Point_set::iterator psit = points->begin_or_selection_begin(); psit != points->end(); ++psit)

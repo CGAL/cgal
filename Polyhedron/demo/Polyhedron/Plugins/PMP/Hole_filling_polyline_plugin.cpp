@@ -114,6 +114,7 @@ public Q_SLOTS:
       NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
       it != polylines_item->polylines.end(); ++it, ++counter) 
