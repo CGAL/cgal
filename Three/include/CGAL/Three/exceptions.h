@@ -47,13 +47,19 @@ public:
 };
 
 template <typename T>
-struct Optional_or_void {
+struct Optional_or_bool {
   typedef boost::optional<T> type;
+
+  template <typename Callable>
+  static type invoke(Callable f) { return type(f()); }
 };
 
 template <>
-struct Optional_or_void<void> {
-  typedef void type;
+struct Optional_or_bool<void> {
+  typedef bool type;
+
+  template <typename Callable>
+  static type invoke(Callable f) { f(); return true; }
 };
 
 enum Context { CURRENT_CONTEXT, PARENT_CONTEXT };
@@ -65,19 +71,20 @@ enum Context { CURRENT_CONTEXT, PARENT_CONTEXT };
 /// exception. That allows a Qt Script to catch the exception and deal
 /// with it.
 template <typename Callable>
-typename Optional_or_void<typename std::result_of<Callable()>::type>::type
+typename Optional_or_bool<typename std::result_of<Callable()>::type>::type
 wrap_a_call_to_cpp(Callable f,
                    QScriptable* qs = 0,
                    const char* file = 0,
                    int line = -1,
                    Context c = CURRENT_CONTEXT) {
   typedef typename std::result_of<Callable()>::type Callable_RT;
-  typedef typename Optional_or_void<Callable_RT>::type Return_type;
+  typedef Optional_or_bool<Callable_RT> O_r_b;
+  typedef typename O_r_b::type Return_type;
 
-  if(qs == 0 || !qs->context()) return f();
+  if(qs == 0 || !qs->context()) return O_r_b::invoke(f);
   else
     try {
-      return f();
+      return O_r_b::invoke(f);
     }
     catch(const std::exception& e) {
       const Script_exception* se = dynamic_cast<const Script_exception*>(&e);
