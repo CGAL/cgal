@@ -185,6 +185,8 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   // typedef typename boost::graph_traits<Graph>::edge_iterator edge_iterator;
 
+  typename K::Construct_point_3 cp;
+
   const int xdim = static_cast<int>(cgal_image.xdim());
   const int ydim = static_cast<int>(cgal_image.ydim());
   const int zdim = static_cast<int>(cgal_image.zdim());
@@ -342,13 +344,13 @@ case_4:
               for(double x = 0.05; x < 0.5; x+= 0.05)
               {
                 const Point_3 inter_left =
-                  p00
-                  +      x                * (p10 - p00)  // x
-                  + ((1.-2.*x)/(2.-3.*x)) * (p01 - p00); // y
+                  cp(p00)
+                  +      x                * (cp(p10) - cp(p00))  // x
+                  + ((1.-2.*x)/(2.-3.*x)) * (cp(p01) - cp(p00)); // y
                 const Point_3 inter_right =
-                  p11
-                  +      x                * (p01 - p11)  // x
-                  + ((1.-2.*x)/(2.-3.*x)) * (p10 - p11); // y
+                  cp(p11)
+                  +      x                * (cp(p01) - cp(p11))  // x
+                  + ((1.-2.*x)/(2.-3.*x)) * (cp(p10) - cp(p11)); // y
                 v_int_left  = g_manip.get_vertex(inter_left);
                 v_int_right = g_manip.get_vertex(inter_right);
                 g_manip.try_add_edge(old_left,  v_int_left);
@@ -380,7 +382,7 @@ case_4:
               ++case211;
               Point_3 midleft =  midpoint(p00, p01);
               Point_3 midright = midpoint(p10, p11);
-              Point_3 inter = midleft + (2./3)*(midright-midleft);
+              Point_3 inter = cp(midleft) + (2./3)*(cp(midright)-cp(midleft));
               vertex_descriptor v_inter = g_manip.get_vertex(inter);
               vertex_descriptor right  = g_manip.split(p10, p11, out10, out11);
               vertex_descriptor top    = g_manip.split(p01, p11, out01, out11);
@@ -395,13 +397,13 @@ case_4:
               for(double x = 0.51666; x < 0.66; x+= 0.016666)
               {
                 const Point_3 inter_top =
-                  p00
-                  +      x         * (p10 - p00)  // x
-                  + ((1./x) - 1.)  * (p01 - p00); // y
+                  cp(p00)
+                  +      x         * (cp(p10) - cp(p00))  // x
+                  + ((1./x) - 1.)  * (cp(p01) - cp(p00)); // y
                 const Point_3 inter_bottom =
-                  p00
-                  +      x         * (p10 - p00)  // x
-                  + (2.-(1./x))    * (p01 - p00); // y
+                  cp(p00)
+                  +      x         * (cp(p10) - cp(p00))  // x
+                  + (2.-(1./x))    * (cp(p01) - cp(p00)); // y
                 v_int_top    = g_manip.get_vertex(inter_top);
                 v_int_bottom = g_manip.get_vertex(inter_bottom);
                 g_manip.try_add_edge(old_top,    v_int_top);
@@ -496,9 +498,9 @@ case_4:
               for(double x = 0.55; x < 1.; x+= 0.05)
               {
                 const Point_3 inter =
-                  p00
-                  +      x         * (p10 - p00)  // x
-                  + (1.-1./(2.*x)) * (p01 - p00); // y
+                  cp(p00)
+                  +      x         * (cp(p10) - cp(p00))  // x
+                  + (1.-1./(2.*x)) * (cp(p01) - cp(p00)); // y
                 v_int = g_manip.get_vertex(inter);
                 g_manip.try_add_edge(old, v_int);
                 old = v_int;

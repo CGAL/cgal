@@ -561,32 +561,39 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
     const Point_3& p2 = cit->vertex(2)->point();
     const Point_3& p3 = cit->vertex(3)->point();
 
-    double a = CGAL::to_double(CGAL::abs(CGAL::approximate_dihedral_angle(p0, p1, p2, p3)));
+    typename Kernel::Construct_point_3 cp;
+    double a = CGAL::to_double(CGAL::abs(
+      CGAL::approximate_dihedral_angle(cp(p0), cp(p1), cp(p2), cp(p3))));
     histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
-    a = CGAL::to_double(CGAL::abs(CGAL::approximate_dihedral_angle(p0, p2, p1, p3)));
+    a = CGAL::to_double(CGAL::abs(
+      CGAL::approximate_dihedral_angle(cp(p0), cp(p2), cp(p1), cp(p3))));
     histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
-    a = CGAL::to_double(CGAL::abs(CGAL::approximate_dihedral_angle(p0, p3, p1, p2)));
+    a = CGAL::to_double(CGAL::abs(
+      CGAL::approximate_dihedral_angle(cp(p0), cp(p3), cp(p1), cp(p2))));
     histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
-    a = CGAL::to_double(CGAL::abs(CGAL::approximate_dihedral_angle(p1, p2, p0, p3)));
+    a = CGAL::to_double(CGAL::abs(
+      CGAL::approximate_dihedral_angle(cp(p1), cp(p2), cp(p0), cp(p3))));
     histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
-    a = CGAL::to_double(CGAL::abs(CGAL::approximate_dihedral_angle(p1, p3, p0, p2)));
+    a = CGAL::to_double(CGAL::abs(
+      CGAL::approximate_dihedral_angle(cp(p1), cp(p3), cp(p0), cp(p2))));
     histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
 
-    a = CGAL::to_double(CGAL::abs(CGAL::approximate_dihedral_angle(p2, p3, p0, p1)));
+    a = CGAL::to_double(CGAL::abs(
+      CGAL::approximate_dihedral_angle(cp(p2), cp(p3), cp(p0), cp(p1))));
     histo[static_cast<int>(std::floor(a))] += 1;
     min_value = (std::min)(min_value, a);
     max_value = (std::max)(max_value, a);
