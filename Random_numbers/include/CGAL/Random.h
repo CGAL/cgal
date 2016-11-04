@@ -65,7 +65,7 @@ public:
     {}
   };
   // creation
-  CGAL_EXPORT Random( );
+  CGAL_EXPORT Random( const char* = 0);
   CGAL_EXPORT Random( unsigned int  seed);
   
   // seed
@@ -231,7 +231,11 @@ public:
 
 inline Random& get_default_random()
 {
+#if (defined( CGAL_TEST_SUITE ) || defined( CGAL_PRINT_SEED )) && !defined(CGAL_HEADER_ONLY)
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Random, default_random, "print seed");
+#else
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Random, default_random);
+#endif
   return default_random;
 }
 
