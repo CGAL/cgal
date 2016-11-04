@@ -46,6 +46,10 @@
 
 namespace CGAL {
 
+  namespace internal { 
+    struct Random_print_seed{};
+  }
+
 class Random {
 public:
   // types
@@ -65,8 +69,9 @@ public:
     {}
   };
   // creation
-  CGAL_EXPORT Random( const char* = 0);
-  CGAL_EXPORT Random( unsigned int  seed);
+  CGAL_EXPORT Random( );
+  CGAL_EXPORT Random( internal::Random_print_seed );
+  CGAL_EXPORT Random( unsigned int  seed );
   
   // seed
   CGAL_EXPORT unsigned int get_seed ( ) const;
@@ -232,7 +237,7 @@ public:
 inline Random& get_default_random()
 {
 #if (defined( CGAL_TEST_SUITE ) || defined( CGAL_PRINT_SEED )) && !defined(CGAL_HEADER_ONLY)
-  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Random, default_random, "print seed");
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Random, default_random, internal::Random_print_seed() ));
 #else
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Random, default_random);
 #endif
