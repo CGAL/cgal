@@ -180,17 +180,21 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
 
   Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
 
-
-  if(protect_features && polylines.empty()){
+  if(protect_features && polylines.empty())
+  {
     std::vector<std::vector<Bare_point_3> > polylines_on_bbox;
-    CGAL::polylines_to_protect<Bare_point_3>(*pImage, polylines_on_bbox);
+    if(pImage->image()->wordKind == WK_FLOAT)
+      CGAL::polylines_to_protect<Bare_point_3, float>(*pImage, polylines_on_bbox);
+    else //WK_FIXED
+      CGAL::polylines_to_protect<Bare_point_3, unsigned char>(*pImage, polylines_on_bbox);
+
     p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
   }
   if(! polylines.empty()){
     // Insert edge in domain
     p_domain->add_features(polylines.begin(), polylines.end());
     protect_features = true; // so that it will be passed in make_mesh_3
-
+  }
   Mesh_parameters param;
   param.protect_features = protect_features;
   param.detect_connected_components = detect_connected_components;
