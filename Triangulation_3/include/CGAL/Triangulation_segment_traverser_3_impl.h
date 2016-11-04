@@ -61,7 +61,7 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, const Poin
     _s_vertex = s;
     _t_vertex = Vertex_handle();
     _s_vert = s;
-    _t_vert = _tds2.create_vertex( Vertex(_target) );
+    _t_vert = _tds2.create_vertex( Tr::Vertex(_target) );
 
     Cell_handle c = s->cell();
     // If a vertex of an infinite cell, we start inside the convex hull.
@@ -86,7 +86,7 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, Vertex_hand
     _target = t->point();
     _s_vertex = Vertex_handle();
     _t_vertex = t;
-    _s_vert = _tds2.create_vertex( Vertex(_source) );
+    _s_vert = _tds2.create_vertex( Tr::Vertex(_source) );
     _t_vert = t;
     
     get<0>(_cur) = _tr.locate( s, get<1>(_cur), get<2>(_cur), get<3>(_cur), hint );
