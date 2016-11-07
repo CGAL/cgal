@@ -565,7 +565,7 @@ public:
   /// Numbering
   vertices_size_type num_vertices() const
   {
-    if(number_of_vertices == static_cast<unsigned int>(-1)) {
+    if(number_of_vertices == static_cast<vertices_size_type>(-1)) {
       number_of_vertices = vertices().size();
     }
 
