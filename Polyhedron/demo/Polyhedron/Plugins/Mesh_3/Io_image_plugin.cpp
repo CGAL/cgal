@@ -13,6 +13,7 @@
 
 #include <CGAL/Image_3.h>
 #include <CGAL/ImageIO.h>
+#include <CGAL/read_sep_image_data.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
@@ -49,6 +50,7 @@
 #include "Raw_image_dialog.h"
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <fstream>
+#include <cstdlib>
 #ifdef CGAL_USE_VTK
 #include <CGAL/read_vtk_image_data.h>
 
@@ -798,7 +800,9 @@ private Q_SLOTS:
 
 
 QString Io_image_plugin::nameFilters() const {
-  return QString("Inrimage files (*.inr *.inr.gz) ;; Analyze files (*.hdr *.img *img.gz)");
+  return QString("Inrimage files (*.inr *.inr.gz) ;; "
+                 "Analyze files (*.hdr *.img *img.gz) ;; "
+                 "Stanford Exploration Project files (*.H *.HH)");
 }
 
 
@@ -828,8 +832,8 @@ CGAL::Three::Scene_item*
 Io_image_plugin::load(QFileInfo fileinfo) {
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
-  QApplication::restoreOverrideCursor();
-  if(!image->read(fileinfo.filePath().toUtf8()))
+  if(fileinfo.suffix() != "H" && fileinfo.suffix() != "HH" &&
+     !image->read(fileinfo.filePath().toUtf8()))
     {
       QMessageBox qmb(QMessageBox::NoIcon,
                       "Raw Dialog",
@@ -915,6 +919,13 @@ Io_image_plugin::load(QFileInfo fileinfo) {
         return NULL;
       }
     }
+  //read a sep file
+  else if(fileinfo.suffix() == "H" || fileinfo.suffix() == "HH")
+  {
+    Sep_reader<float> reader(fileinfo.filePath().toUtf8().data());
+    *image = *reader.cgal_image();
+    is_gray = true;
+  }
   // Get display precision
   QDialog dialog;
   ui.setupUi(&dialog);
