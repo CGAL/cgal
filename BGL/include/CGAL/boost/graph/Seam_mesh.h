@@ -20,10 +20,21 @@
 #ifndef CGAL_SEAM_MESH_H
 #define CGAL_SEAM_MESH_H
 
-#include <boost/unordered_set.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+
+#include <CGAL/circulator.h>
+#include <CGAL/Unique_hash_map.h>
+
+#include <boost/foreach.hpp>
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <utility>
 
 namespace CGAL {
 
@@ -43,8 +54,8 @@ struct Seam_mesh_halfedge_descriptor
     : tmhd(other.tmhd), seam(other.seam)
   { }
 
-  Seam_mesh_halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam=false)
-    : tmhd(tmhd),seam(seam)
+  Seam_mesh_halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam = false)
+    : tmhd(tmhd), seam(seam)
   { }
 
   bool operator==(const Seam_mesh_halfedge_descriptor& other) const
@@ -70,8 +81,13 @@ struct Seam_mesh_halfedge_descriptor
   friend
   std::ostream& operator<<(std::ostream& os, const Seam_mesh_halfedge_descriptor& hd)
   {
-    os << hd.tmhd  << ((hd.seam)?" on seam":"");
+    os << hd.tmhd << ((hd.seam)?" on seam":"");
     return os;
+  }
+
+  friend std::size_t hash_value(const Seam_mesh_halfedge_descriptor& hd)
+  {
+    return 2 * hash_value(hd.tmhd) + static_cast<std::size_t>(hd.seam);
   }
 };
 
@@ -102,17 +118,101 @@ class Seam_mesh
   typedef typename boost::graph_traits<TM>::edge_descriptor       TM_edge_descriptor;
   typedef typename boost::graph_traits<TM>::vertex_descriptor     TM_vertex_descriptor;
 
+  typedef CGAL::Unique_hash_map<TM_edge_descriptor, bool>          Seam_edge_uhm;
+  typedef CGAL::Unique_hash_map<TM_vertex_descriptor, bool>        Seam_vertex_uhm;
+  typedef boost::associative_property_map<Seam_edge_uhm>           Seam_edge_pmap;
+  typedef boost::associative_property_map<Seam_vertex_uhm>         Seam_vertex_pmap;
+
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
-  typedef Seam_mesh_halfedge_descriptor<TM_halfedge_descriptor>   halfedge_descriptor;
-  typedef typename boost::graph_traits<TM>::face_descriptor       face_descriptor;
+  typedef typename boost::graph_traits<TM>::degree_size_type     degree_size_type;
+  typedef typename boost::graph_traits<TM>::vertices_size_type   vertices_size_type;
+  typedef typename boost::graph_traits<TM>::edges_size_type      edges_size_type;
+  typedef typename boost::graph_traits<TM>::halfedges_size_type  halfedges_size_type;
+  typedef typename boost::graph_traits<TM>::faces_size_type      faces_size_type;
+/// @endcond
 
+private:
+  const TM& tm;
+
+  // seam edge property maps
+  SEM sem;
+  SVM svm;
+
+  // combinatorics
+  mutable edges_size_type number_of_seams;
+  mutable vertices_size_type number_of_vertices;
+
+public:
   const TM& mesh()const
   {
     return tm;
   }
 
-  ///  A vertex
+/// @cond CGAL_DOCUMENT_INTERNALS
+
+  /// A halfedge
+   // descriptor
+  typedef Seam_mesh_halfedge_descriptor<TM_halfedge_descriptor>   halfedge_descriptor;
+
+   // iterator
+  struct halfedge_iterator
+    : public boost::iterator_facade<halfedge_iterator,
+                                    halfedge_descriptor,
+                                    std::forward_iterator_tag,
+                                    halfedge_descriptor>
+  {
+    typedef boost::iterator_facade<halfedge_iterator,
+                                   halfedge_descriptor,
+                                   std::forward_iterator_tag,
+                                   halfedge_descriptor>                  Facade;
+
+    TM_halfedge_iterator hd, end;
+    bool seam;
+    const Self* mesh_;
+
+  public:
+    halfedge_iterator() : hd(), end(), seam(false), mesh_(NULL) { }
+
+    halfedge_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
+      : hd(ir.first), end(ir.second), seam(false), mesh_(m)
+    { }
+
+    // constructor for the past the end iterator
+    halfedge_iterator(const TM_halfedge_iterator& hd, const Self* m)
+      : hd(hd), end(hd), seam(false), mesh_(m)
+    { }
+
+  private:
+    friend class boost::iterator_core_access;
+
+    void increment()
+    {
+      if(hd == end)
+        return;
+
+      if(mesh_->has_on_seam(*hd) && seam == false)
+        seam = true;
+      else {
+        ++hd;
+        seam = false;
+      }
+    }
+
+    bool equal(const halfedge_iterator& other) const
+    {
+      return (this->mesh_ == other.mesh_) &&
+             (this->hd == other.hd) && (this->seam == other.seam);
+    }
+
+    halfedge_descriptor dereference() const
+    {
+      return halfedge_descriptor(*hd, seam);
+    }
+  };
+
+  /// A vertex
+   // descriptor
   struct vertex_descriptor
   {
     halfedge_descriptor hd;
@@ -127,12 +227,12 @@ public:
       : hd(other.hd)
     { }
 
-    bool operator ==(const vertex_descriptor& other) const
+    bool operator==(const vertex_descriptor& other) const
     {
       return (hd == other.hd);
     }
 
-    bool operator !=(const vertex_descriptor& other) const
+    bool operator!=(const vertex_descriptor& other) const
     {
       return (hd != other.hd);
     }
@@ -149,16 +249,17 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const vertex_descriptor vd)
     {
-      os << "seam mesh vertex: " <<  vd.hd;
+      os << "seam mesh vertex: " << vd.hd;
       return os;
     }
 
-    friend std::size_t hash_value(const vertex_descriptor&  vd)
+    friend std::size_t hash_value(const vertex_descriptor& vd)
     {
       return hash_value(vd.hd.tmhd);
     }
   };
 
+   // iterator
   class vertex_iterator
     : public boost::iterator_facade<vertex_iterator,
                                     vertex_descriptor,
@@ -166,31 +267,26 @@ public:
                                     vertex_descriptor>
   {
     typedef boost::iterator_facade<vertex_iterator,
-                                    vertex_descriptor,
-                                    std::forward_iterator_tag,
-                                    vertex_descriptor>                  Facade;
+                                   vertex_descriptor,
+                                   std::forward_iterator_tag,
+                                   vertex_descriptor>                  Facade;
+    TM_halfedge_iterator hd, end;
+    const Self* mesh_;
 
   public:
+    /// Constructors
     vertex_iterator() : hd(), end(), mesh_(NULL) { }
 
     vertex_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), mesh_(m)
     {
-      //std::cerr << "vertex_iterator(..)\n";
-      //std::cerr << *hd << std::endl;
-      if(hd == end)
-        return;
+//      std::cout << "vertex_iterator constructor\n";
 
-      TM_vertex_descriptor tvd = target(*hd, mesh_->mesh());
-      if( (!mesh_->has_on_seam(tvd)) && (halfedge(tvd, mesh_->mesh()) == *hd))
-        return;
-      if(mesh_->has_on_seam(edge(*hd, mesh_->mesh())))
-        return;
-      if(mesh_->has_on_seam(tvd) && is_border(opposite(*hd, mesh_->mesh()), mesh_->mesh()))
-        return;
-      increment();
-      //std::cerr << *hd << "  after increment" << std::endl;
-      //std::cerr << "leave vertex_iterator(..)\n";
+      if(!is_current_vertex_valid())
+        increment();
+
+//      std::cout << *hd << " after increment" << std::endl;
+//      std::cout << "leave vertex_iterator constructor\n";
     }
 
     // constructor for the past the end iterator
@@ -201,32 +297,48 @@ public:
   private:
     friend class boost::iterator_core_access;
 
+    bool is_current_vertex_valid() const
+    {
+//      std::cout << *hd << std::endl;
+
+      if(hd == end)
+        return true;
+
+//      std::cout << CGAL::source(*hd, mesh_->mesh()) << " --> "
+//                << CGAL::target(*hd, mesh_->mesh()) << std::endl;
+
+      TM_vertex_descriptor tvd = CGAL::target(*hd, mesh_->mesh());
+//      std::cout << "halfedge pointing at target: " << CGAL::halfedge(tvd, mesh_->mesh()) << std::endl;
+      if((!mesh_->has_on_seam(tvd))&& (CGAL::halfedge(tvd, mesh_->mesh()) == *hd)) {
+//        std::cout << "return as vertex not on seam "
+//                  << "and same halfedge as given by the base mesh\n";
+        return true;
+      }
+
+      if(mesh_->has_on_seam(CGAL::edge(*hd, mesh_->mesh()))) {
+//        std::cout <<"return as edge on seam\n";
+        return true;
+      }
+
+      if(mesh_->has_on_seam(tvd) &&
+         is_border(CGAL::opposite(*hd, mesh_->mesh()), mesh_->mesh())) {
+//        std::cout <<"return as edge on border and target on seam\n";
+        return true;
+      }
+
+      return false;
+    }
+
     void increment()
     {
-      //std::cerr << "increment\n";
+//      std::cout << "increment\n";
       if(hd == end)
         return;
 
       do {
         ++hd;
-        //std::cerr << *hd << "  ++" << std::endl;
-        if(hd == end) return;
-        TM_vertex_descriptor tvd = target(*hd, mesh_->mesh());
-        //std::cerr << "tvd = " << tvd << std::endl;
-        if( (!mesh_->has_on_seam(tvd))&& (halfedge(tvd, mesh_->mesh()) == *hd)) {
-          //std::cerr <<"return as not on seam and reverse incidence\n";
+        if(is_current_vertex_valid())
           return;
-        }
-
-        if(mesh_->has_on_seam(edge(*hd, mesh_->mesh()))) {
-          //std::cerr <<"return as edge on seam\n";
-          return;
-        }
-
-        if(mesh_->has_on_seam(tvd) && is_border(opposite(*hd, mesh_->mesh()), mesh_->mesh())) {
-          //std::cerr <<"return as edge on border and target on seam\n";
-          return;
-        }
       } while(true);
     }
 
@@ -239,11 +351,114 @@ public:
     {
       return vertex_descriptor(*hd);
     }
-
-    TM_halfedge_iterator hd, end;
-    const Self* mesh_;
   };
 
+  /// An edge
+    // descriptor
+  struct edge_descriptor
+  {
+    halfedge_descriptor hd;
+
+    friend
+    std::ostream& operator<<(std::ostream& os, const edge_descriptor& ed)
+    {
+      os << ed.hd;
+      return os;
+    }
+
+    edge_descriptor(const halfedge_descriptor& hd)
+      : hd(hd)
+    { }
+  };
+
+   // iterator
+  struct edge_iterator
+    : public boost::iterator_facade<edge_iterator,
+                                    edge_descriptor,
+                                    std::forward_iterator_tag,
+                                    edge_descriptor>
+  {
+    typedef boost::iterator_facade<edge_iterator,
+                                   edge_descriptor,
+                                   std::forward_iterator_tag,
+                                   edge_descriptor>                  Facade;
+
+    TM_halfedge_iterator hd, end;
+    bool seam;
+    const Self* mesh_;
+
+  public:
+    edge_iterator() : hd(), end(), seam(false), mesh_(NULL) { }
+
+    edge_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
+      : hd(ir.first), end(ir.second), seam(false), mesh_(m)
+    {
+      if(!is_current_edge_valid())
+        increment();
+    }
+
+    // constructor for the past the end iterator
+    edge_iterator(const TM_halfedge_iterator& hd, const Self* m)
+      : hd(hd), end(hd), seam(false), mesh_(m)
+    { }
+
+  private:
+    friend class boost::iterator_core_access;
+
+    bool is_current_edge_valid() const
+    {
+      if(hd == end)
+        return true;
+
+      return CGAL::source(*hd, mesh_->mesh()) < CGAL::target(*hd, mesh_->mesh());
+    }
+
+    void increment()
+    {
+      if(hd == end)
+        return;
+
+      do {
+        // a seam gives two edges
+        if(mesh_->has_on_seam(*hd) && seam == false)
+          seam = true;
+        else {
+          ++hd;
+          seam = false;
+        }
+
+        if(is_current_edge_valid())
+          return;
+
+      } while(true);
+    }
+
+    bool equal(const edge_iterator& other) const
+    {
+      return (this->mesh_ == other.mesh_) &&
+             (this->hd == other.hd) && (this->seam == other.seam);
+    }
+
+    edge_descriptor dereference() const
+    {
+      // if 'seam' is true, output an interior halfedge rather than the halfedge
+      // on the opposite virtual border
+
+      if(seam)
+        return edge_descriptor(mesh_->opposite(halfedge_descriptor(*hd, true)));
+      else
+        return edge_descriptor(halfedge_descriptor(*hd, false));
+    }
+  };
+
+  /// A face
+   // descriptor
+  typedef typename boost::graph_traits<TM>::face_descriptor     face_descriptor;
+   // iterator
+  typedef typename boost::graph_traits<TM>::face_iterator       face_iterator;
+
+public:
+  /// Seam-related functions
   bool has_on_seam(TM_vertex_descriptor vd) const
   {
     return get(svm, vd);
@@ -256,40 +471,361 @@ public:
 
   bool has_on_seam(TM_halfedge_descriptor tmhd) const
   {
-    return get(sem, edge(tmhd, tm));
+    return get(sem, CGAL::edge(tmhd, tm));
   }
 
   /// returns `true` if the halfedge is on the seam.
   bool has_on_seam(const halfedge_descriptor& hd) const
   {
-    return has_on_seam(edge(hd, tm));
+    return has_on_seam(CGAL::edge(hd, tm));
   }
 
-  Iterator_range<vertex_iterator> m_vertices() const
+public:
+  /// Iterators
+  // vertices()
+  vertex_iterator vertices_begin() const
   {
-    Iterator_range<TM_halfedge_iterator> ir = halfedges(tm);
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    return vertex_iterator(ir, this);
+  }
+
+  vertex_iterator vertices_end() const
+  {
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    return vertex_iterator(ir.second, this);
+  }
+
+  Iterator_range<vertex_iterator> vertices() const
+  {
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
     vertex_iterator beg(ir, this);
     vertex_iterator end(ir.second, this);
-    return make_range(beg,end);
+    return make_range(beg, end);
   }
 
-  struct edge_descriptor
+  // halfedges()
+  halfedge_iterator halfedges_begin() const
   {
-    halfedge_descriptor hd;
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    return halfedge_iterator(ir, this);
+  }
 
-    edge_descriptor(const halfedge_descriptor& hd)
-      : hd(hd)
-    { }
-  };
+  halfedge_iterator halfedges_end() const
+  {
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    return halfedge_iterator(ir.second, this);
+  }
 
-  const TM& tm;
-  SEM sem;
-  SVM svm;
-  int index;
+  Iterator_range<halfedge_iterator> halfedges() const
+  {
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    halfedge_iterator beg(ir, this);
+    halfedge_iterator end(ir.second, this);
+    return make_range(beg, end);
+  }
+
+  // edges()
+  edge_iterator edges_begin() const
+  {
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    return edge_iterator(ir, this);
+  }
+
+  edge_iterator edges_end() const
+  {
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    return edge_iterator(ir.second, this);
+  }
+
+  Iterator_range<edge_iterator> edges() const
+  {
+    Iterator_range<TM_halfedge_iterator> ir = CGAL::halfedges(tm);
+    edge_iterator beg(ir, this);
+    edge_iterator end(ir.second, this);
+    return make_range(beg, end);
+  }
+
+  // faces()
+  face_iterator faces_begin() const
+  {
+    return CGAL::faces(tm).begin();
+  }
+
+  face_iterator faces_end() const
+  {
+    return CGAL::faces(tm).end();
+  }
+
+  Iterator_range<face_iterator> faces() const
+  {
+    return CGAL::faces(tm);
+  }
+
+public:
+  /// Numbering
+  vertices_size_type num_vertices() const
+  {
+    if(number_of_vertices == static_cast<unsigned int>(-1)) {
+      number_of_vertices = vertices().size();
+    }
+
+    return number_of_vertices;
+  }
+
+  halfedges_size_type num_halfedges() const
+  {
+    return CGAL::num_halfedges(tm) + 2 * number_of_seams;
+  }
+
+  halfedges_size_type num_edges() const
+  {
+    return CGAL::num_edges(tm) + number_of_seams;
+  }
+
+  faces_size_type num_faces() const
+  {
+    return CGAL::num_faces(tm);
+  }
+
+public:
+  degree_size_type degree(vertex_descriptor v) const
+  {
+    degree_size_type count(0);
+
+    if(v.hd == halfedge_descriptor())
+      return count;
+
+    Halfedge_around_target_circulator<Self> hatc(v.hd, *this), end = hatc;
+    CGAL_For_all(hatc, end) {
+      ++count;
+    }
+
+    return count;
+  }
+
+public:
+  /// Descriptors
+  edge_descriptor edge(halfedge_descriptor h) const
+  {
+    return h;
+  }
+
+  halfedge_descriptor halfedge(edge_descriptor e) const
+  {
+    return e.hd;
+  }
+
+  halfedge_descriptor halfedge(vertex_descriptor v) const
+  {
+    TM_halfedge_descriptor h(v);
+    return halfedge_descriptor(h, false /*not on seam*/);
+  }
+
+  std::pair<halfedge_descriptor, bool> halfedge(vertex_descriptor u,
+                                                vertex_descriptor v) const
+  {
+//    std::cout << "trying to find an halfedge between: " << std::endl;
+//    std::cout << CGAL::source(u, tm) << " --> " << CGAL::target(u, tm) << std::endl;
+//    std::cout << CGAL::source(v, tm) << " --> " << CGAL::target(v, tm) << std::endl;
+
+    halfedge_descriptor hdv(v);
+    Halfedge_around_target_circulator<Self> hatcv(hdv, *this), endv = hatcv;
+    CGAL_For_all(hatcv, endv) {
+      halfedge_descriptor hd_around_v = *hatcv;
+      TM_halfedge_descriptor tmhd_around_v = hd_around_v.tmhd;
+      if(CGAL::source(tmhd_around_v, tm) == CGAL::target(u, tm)) {
+        // found a u next to v in the base mesh 'tm',
+        // but we must check that is also the case in the seam mesh 'this'
+        // that means that the halfedge 'u' is incident to the source of hd_around_v
+
+//        std::cout << "found a u next to v in tm: " << hd_around_v << std::endl;
+//        std::cout << "which has s/t: " << CGAL::source(hd_around_v, tm) << " "
+//                                       << CGAL::target(hd_around_v, tm) << std::endl;
+
+        halfedge_descriptor opp_hd_around_v = opposite(hd_around_v);
+        Halfedge_around_target_circulator<Self> hatcu(opp_hd_around_v, *this),
+                                                end2 = hatcu;
+        CGAL_For_all(hatcu, end2) {
+          halfedge_descriptor hd_around_u = *hatcu;
+          if(hd_around_u == u.hd) {
+            return std::make_pair(hd_around_v, true/*valid*/);
+          }
+        }
+      }
+    }
+
+//    std::cout << "failed to find a good halfedge" << std::endl;
+
+    // halfedge doesn't exist
+    return std::make_pair(halfedge_descriptor(), false/*invalid*/);
+  }
+
+  std::pair<edge_descriptor, bool> edge(vertex_descriptor u, vertex_descriptor v) const
+  {
+    std::pair<halfedge_descriptor, bool> he = halfedge(u, v);
+    return std::make_pair(he.first, he.second);
+  }
+
+  halfedge_descriptor halfedge(face_descriptor f) const
+  {
+    TM_halfedge_descriptor hd = CGAL::halfedge(f, tm);
+    return halfedge_descriptor(hd, false/*not on seam*/);
+  }
+
+  face_descriptor face(halfedge_descriptor h) const
+  {
+    if(h.seam)
+      return boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::null_face();
+
+    return CGAL::face(h, tm);
+  }
+
+public:
+  /// halfedge traveling
+  halfedge_descriptor next(const halfedge_descriptor& hd) const
+  {
+    if((!hd.seam) && (!is_border(hd.tmhd, tm)))
+      return halfedge_descriptor(CGAL::next(hd.tmhd, tm));
+
+    Halfedge_around_target_circulator<TM> hatc(hd.tmhd, tm);
+    do {
+      --hatc;
+    } while((!has_on_seam(*hatc)) && (!is_border(CGAL::opposite(*hatc, tm), tm)));
+
+    return halfedge_descriptor(CGAL::opposite(*hatc, tm),
+                               !is_border(CGAL::opposite(*hatc, tm), tm));
+  }
+
+  halfedge_descriptor prev(const halfedge_descriptor& hd) const
+  {
+    if((!hd.seam) && (!is_border(hd.tmhd, tm)))
+      return halfedge_descriptor(CGAL::prev(hd.tmhd, tm));
+
+    Halfedge_around_source_circulator<TM> hatc(hd.tmhd, tm);
+    do {
+      ++hatc;
+    } while((!has_on_seam(*hatc)) && (!is_border(CGAL::opposite(*hatc, tm), tm)));
+
+    return halfedge_descriptor(CGAL::opposite(*hatc, tm),
+                               !is_border(CGAL::opposite(*hatc, tm), tm));
+  }
+
+  halfedge_descriptor opposite(const halfedge_descriptor& hd) const
+  {
+    if(!hd.seam)
+      return halfedge_descriptor(CGAL::opposite(hd.tmhd, tm), has_on_seam(hd));
+
+    return halfedge_descriptor(CGAL::opposite(hd.tmhd, tm), false /*not on seam*/);
+  }
+
+  vertex_descriptor target(halfedge_descriptor hd) const
+  {
+    TM_halfedge_descriptor tmhd(hd);
+
+    if(!has_on_seam(CGAL::target(tmhd, tm))) {
+      tmhd = CGAL::halfedge(CGAL::target(tmhd, tm), tm);
+      return vertex_descriptor(halfedge_descriptor(tmhd, false /*not on seam*/));
+    }
+
+    if(hd.seam)
+      return target(halfedge_descriptor(CGAL::prev(CGAL::opposite(tmhd, tm), tm)));
+
+    while((!has_on_seam(tmhd)) && (!is_border(CGAL::opposite(tmhd, tm), tm))) {
+      tmhd = CGAL::prev(CGAL::opposite(tmhd, tm), tm);
+    }
+
+    return vertex_descriptor(halfedge_descriptor(tmhd));
+  }
+
+  vertex_descriptor source(const halfedge_descriptor& hd) const
+  {
+    return target(opposite(hd));
+  }
+
+  vertex_descriptor source(edge_descriptor e) const
+  {
+    return source(e.hd);
+  }
+
+  vertex_descriptor target(edge_descriptor e) const
+  {
+    return target(e.hd);
+  }
 
   /// @endcond
 
-public:
+  edges_size_type number_of_seam_edges() const
+  {
+    return number_of_seams;
+  }
+
+  /// Add seams to the mesh's property maps.
+  TM_halfedge_descriptor add_seams(const char* filename)
+  {
+    TM_halfedge_descriptor tmhd;
+
+    // Check the file type
+    std::string str = filename;
+    if(str.substr(str.length() - 14) != ".selection.txt") {
+      std::cout << "Error: seams must be given by a *.selection.txt file" << std::endl;
+      return tmhd;
+    }
+
+    // A '.selection.txt' file has:
+    // -- the first line for selected vertices,
+    // -- the second line for selected faces,
+    // -- the third line for selected edges
+    std::ifstream in(filename);
+    std::string line;
+    if(!std::getline(in, line) || !std::getline(in, line) || !std::getline(in, line)) {
+      std::cout << "Error: could not read input file: " << filename << std::endl;
+      return tmhd;
+    }
+
+    // The selection file is a list of integers, so we need to build a correspondence
+    // between vertices and the integers. Below is ugly, especially when using a
+    // Surface_mesh that could very well fit a TM_vertex_descriptor tmvd(int i)...
+    std::vector<TM_vertex_descriptor> tmvds;
+    tmvds.reserve(CGAL::num_vertices(tm));
+    typedef typename boost::graph_traits<TM>::vertex_iterator  TM_vertex_iterator;
+    TM_vertex_iterator tmvi = CGAL::vertices(tm).begin(),
+                       tmvi_end = CGAL::vertices(tm).end();
+    CGAL_For_all(tmvi, tmvi_end) {
+      tmvds.push_back(*tmvi);
+    }
+
+    // Read the selection file
+    std::istringstream edge_line(line);
+    int s, t;
+    while(edge_line >> s >> t) {
+      TM_vertex_descriptor tmvd_s = tmvds[s], tmvd_t = tmvds[t];
+
+      std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tmvd_s, tmvd_t, tm);
+      if(!tmed.second) {
+        std::cout << "Warning: the input seam " << s << " " << t << " was ignored";
+        std::cout << " because it is not a valid edge of the mesh" << std::endl;
+        continue;
+      }
+
+      if(!is_border(tmed.first, tm)) { // ignore seams that are also a border edge
+        std::cout << "Adding seam: " << s << " " << t << std::endl;
+        ++number_of_seams;
+
+        put(sem, tmed.first, true);
+        put(svm, tmvd_s, true);
+        put(svm, tmvd_t, true);
+
+        if(tmhd == boost::graph_traits<TM>::null_halfedge()) {
+          tmhd = CGAL::halfedge(CGAL::edge(tmvd_s, tmvd_t, tm).first, tm);
+        }
+      } else {
+        std::cout << "Warning: the input seam " << s << " " << t << " was ignored";
+        std::cout << " because it is on the border of the mesh" << std::endl;
+      }
+    }
+
+    return tmhd;
+  }
 
   /// Constructs a seam mesh for a triangle mesh and an edge and vertex property map
   /// \param tm the adapted mesh
@@ -297,113 +833,11 @@ public:
   /// \param svm the vertex property map with value `true` for seam vertices
 
   /// @note the vertices must be exactly the vertices on the seam edges. Maybe a bad design.
-  Seam_mesh(const TM& tm, const SEM& sem, const SVM& svm)
-    : tm(tm), sem(sem), svm(svm), index(0)
-  { }
-
-  /// Puts in `vim` indices of vertices in the connected component with the boundary on which lies `bhd`.
-  /// Indices are consecutive and start at 0 or the last index+1 that was assigned in a previous call.
-  /// That value is cached and returned when calling `num_vertices(sm)`.
-  /// \tparam VertexIndexMap a model of `ReadWritePropertyMap` with `vertex_descriptor` as key and `int` as value-type
-  template <typename VertexIndexMap>
-  void initialize_vertex_index_map(halfedge_descriptor bhd, VertexIndexMap& vim)
-  {
-    Self& mesh = *this;
-
-    index = 0;
-    std::vector<face_descriptor> faces;
-    typename boost::graph_traits<Seam_mesh>::halfedge_descriptor shd(opposite(bhd, *this));
-    CGAL::Polygon_mesh_processing::connected_component(face(shd,*this),
-                                                       *this,
-                                                       std::back_inserter(faces));
-
-    BOOST_FOREACH(face_descriptor fd, faces) {
-      BOOST_FOREACH(TM_halfedge_descriptor tmhd , halfedges_around_face(halfedge(fd, tm), tm)) {
-        halfedge_descriptor hd(tmhd);
-        vertex_descriptor vd = target(hd, mesh);
-        put(vim,vd,-1);
-      }
-    }
-
-    BOOST_FOREACH(face_descriptor fd, faces) {
-      BOOST_FOREACH(TM_halfedge_descriptor tmhd , halfedges_around_face(halfedge(fd, tm), tm)) {
-        halfedge_descriptor hd(tmhd);
-        vertex_descriptor vd = target(hd, mesh);
-        if(get(vim,vd) == -1) {
-          put(vim,vd,index);
-          ++index;
-        }
-      }
-    }
-  }
-
-/// @cond CGAL_DOCUMENT_INTERNALS
-  // this is the number of different halfedge indices
-  int m_num_vertices() const
-  {
-    return index;
-  }
-
-  halfedge_descriptor m_next(const halfedge_descriptor& hd) const
-  {
-    if((!hd.seam) && (!is_border(hd.tmhd, tm))) {
-      return halfedge_descriptor(next(hd.tmhd, tm));
-    }
-    Halfedge_around_target_circulator<TM> hatc(hd.tmhd, tm);
-    do {
-      --hatc;
-    } while((!has_on_seam(*hatc))&&(!is_border(opposite(*hatc, tm), tm)));
-
-    return halfedge_descriptor(opposite(*hatc, tm), !is_border(opposite(*hatc, tm), tm));
-  }
-
-  halfedge_descriptor m_prev(const halfedge_descriptor& hd) const
-  {
-    if((!hd.seam)&& (!is_border(hd.tmhd, tm))) {
-      return halfedge_descriptor(prev(hd.tmhd, tm));
-    }
-    Halfedge_around_source_circulator<TM> hatc(hd.tmhd, tm);
-    do {
-      ++hatc;
-    } while((!has_on_seam(*hatc))&&(!is_border(opposite(*hatc, tm), tm)));
-
-    return halfedge_descriptor(opposite(*hatc, tm), !is_border(opposite(*hatc, tm), tm));
-  }
-
-  halfedge_descriptor m_opposite(const halfedge_descriptor& hd) const
-  {
-    if(!hd.seam) {
-      return halfedge_descriptor(opposite(hd.tmhd, tm), has_on_seam(hd));
-    }
-
-    return halfedge_descriptor(opposite(hd.tmhd, tm));
-  }
-
-  vertex_descriptor m_target(halfedge_descriptor hd) const
-  {
-    TM_halfedge_descriptor tmhd(hd);
-    if(!has_on_seam(target(tmhd, tm))) {
-      tmhd = halfedge(target(tmhd, tm), tm);
-      return vertex_descriptor(halfedge_descriptor(tmhd));
-    }
-
-    if(hd.seam) {
-      return m_target(halfedge_descriptor(prev(opposite(tmhd, tm), tm)));
-    }
-
-    while((!has_on_seam(tmhd)) && (!is_border(opposite(tmhd, tm), tm))) {
-      tmhd = prev(opposite(tmhd, tm), tm);
-    }
-
-    return vertex_descriptor(halfedge_descriptor(tmhd));
-  }
-
-  vertex_descriptor m_source(const halfedge_descriptor& hd) const
-  {
-    return m_target(opposite(hd.tmhd, tm));
-  }
-
-  /// @endcond
+  Seam_mesh(const TM& tm_, const SEM& sem_, const SVM svm_)
+    : tm(tm_),
+      sem(sem_), svm(svm_),
+      number_of_seams(0), number_of_vertices(-1)
+  {  }
 };
 
 } // namespace CGAL
