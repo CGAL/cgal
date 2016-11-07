@@ -195,7 +195,7 @@ enum Sampling_method{
  *
  * @param out output iterator to be filled with sampled points
  * @param np an optional sequence of \ref namedparameters among the ones listed below
- * @param method defines the method of sampling
+ * @param method defines the sampling method
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map}
@@ -368,7 +368,7 @@ double approximate_Hausdorff_distance(
 
 // documented functions
 /** \ingroup PMP_distance_grp
- * generates points taken on `f`, facet of `tm`, in a way depending on `method` and
+ * generates points taken on `f`, a face of `tm`, in a way depending on `method` and
  * outputs them to `out`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam OutputIterator a model of `OutputIterator`
@@ -454,7 +454,7 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
 /**
  * \ingroup PMP_distance_grp
- * computes the approximate Hausdorff distance of `tm1` from `tm2` by
+ * computes the approximate Hausdorff distance from `tm1` to `tm2` by
  * generating a uniform random point sampling on `tm1`, and by then
  * returning the distance of the furthest point from `tm2`.
  *
@@ -491,7 +491,7 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
  *      and in all places where vertex_point_map is used.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
- * The function `CGAL::Polygon_mesh_processing::params::all_default()` can be use to indicate to use the default values for
+ * The function `CGAL::Polygon_mesh_processing::params::all_default()` can be used to indicate to use the default values for
  * `np1` and specify custom values for `np2`
  */
 template< class Concurrency_tag,
@@ -550,7 +550,7 @@ double approximate_symmetric_Hausdorff_distance(
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
- * @param points the point_set of interest
+ * @param points the range of points of interest
  * @param tm the triangle mesh to compute the distance to
  * @param np an optional sequence of \ref namedparameters among the ones listed below
  *
@@ -585,9 +585,9 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
- * @param tm the triangle mesh to compute the distance to
- * @param points the point_set of interest.
- * @param precision the precision of the approximated value you want.
+ * @param tm the triangle mesh to compute the distance from
+ * @param points the range of points of interest.
+ * @param precision the precision of the approximate value you want.
  * @param np an optional sequence of \ref namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
