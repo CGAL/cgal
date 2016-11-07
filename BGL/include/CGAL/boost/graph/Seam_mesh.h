@@ -827,6 +827,11 @@ public:
     return tmhd;
   }
 
+  void set_seam_number(const edges_size_type sn) const
+  {
+    number_of_seams = sn;
+  }
+
   /// Constructs a seam mesh for a triangle mesh and an edge and vertex property map
   /// \param tm the adapted mesh
   /// \param sem the edge property map with value `true` for seam edges

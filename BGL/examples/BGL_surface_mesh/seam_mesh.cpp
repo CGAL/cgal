@@ -12,121 +12,138 @@
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Surface_mesh<Point>                            Mesh;
-typedef CGAL::Seam_mesh<Mesh>                                Seam_mesh;
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor         SM_vertex_descriptor;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor       SM_halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::edge_descriptor           SM_edge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor           SM_face_descriptor;
+
+typedef Mesh::Property_map<SM_edge_descriptor, bool>            Seam_edge_pmap;
+typedef Mesh::Property_map<SM_vertex_descriptor, bool>          Seam_vertex_pmap;
+typedef CGAL::Seam_mesh<Mesh, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
+
+typedef boost::graph_traits<Seam_mesh>::vertex_descriptor         vertex_descriptor;
+typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor       halfedge_descriptor;
+typedef boost::graph_traits<Seam_mesh>::edge_descriptor           edge_descriptor;
+typedef boost::graph_traits<Seam_mesh>::face_descriptor           face_descriptor;
 
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   Mesh sm;
-  std::ifstream in((argc>1)?argv[1]:"data/cube.off");
+  std::ifstream in((argc>1) ? argv[1] : "data/cube.off");
   in >> sm;
 
-  std::vector<edge_descriptor> seam;  
+  Seam_edge_pmap seam_edge_pm =
+      sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
+  Seam_vertex_pmap seam_vertex_pm =
+      sm.add_property_map<SM_vertex_descriptor, bool>("v:on_seam",false).first;
 
-  // split cube in two connected components
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(*halfedges(sm).first,sm)){
-    seam.push_back(edge(hd,sm));
+  Seam_mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
+
+  // Add the seams
+#if 1
+  // Split the cube in two connected components
+  SM_halfedge_descriptor smhd = mesh.add_seams("data/two_connected_components.selection.txt");
+#else
+  // Seams are all edges incident to a vertex
+  SM_halfedge_descriptor smhd = mesh.add_seams("data/flatten.selection.txt");
+#endif
+  assert(smhd != SM_halfedge_descriptor());
+
+  std::cout << "Added: " << mesh.number_of_seam_edges() << " seam edges" << std::endl;
+
+  halfedge_descriptor bhd(smhd);
+  std::cout << "First seam halfedge: " << smhd << std::endl;
+  std::cout << "source = " << source(smhd, mesh)
+            << " (pointing to vertex: " << source(smhd, sm) << ")" << std::endl;
+  std::cout << "target = " << target(smhd, mesh)
+            << " (pointing to vertex: " << target(smhd, sm) << ")" << std::endl;
+
+  std::cout << "prev of seam halfedge in (base) mesh: " << prev(smhd, sm) << std::endl;
+  std::cout << "prev of seam halfedge in seam mesh: " << prev(bhd, mesh) << std::endl;
+
+  std::cout << "next of seam halfedge in (base) mesh: " << next(smhd, sm) << std::endl;
+  std::cout << "next of seam halfedge in seam mesh: " << next(bhd, mesh) << std::endl;
+
+  std::cout << "opposite of seam halfedge in (base) mesh: " << opposite(smhd, sm) << std::endl;
+  std::cout << "opposite of seam halfedge in seam mesh: " << opposite(bhd, mesh) << std::endl;
+
+  std::cout << "vertices on one of the seams" << std::endl;
+  BOOST_FOREACH(halfedge_descriptor hd,
+                halfedges_around_face(opposite(bhd, mesh), mesh)){
+    std::cout << target(hd.tmhd, sm) << " ";
   }
+  std::cout << std::endl;
 
-#if 0
-  //cube 
-  halfedge_descriptor hd = * halfedges(sm).first;
-  std::cout << "center = " << target(hd,sm) << std::endl;
-  int count=0;
-  BOOST_FOREACH(hd, halfedges_around_target(hd,sm)){
-    std::cout << "v = " << source(hd,sm) << std::endl;
-    if(count==0 || count==2){ 
-      seam.push_back(edge(hd,sm));
+  std::cout << "vertices around " << target(smhd , sm) << " in (base) mesh" << std::endl;
+  BOOST_FOREACH(SM_halfedge_descriptor hd, halfedges_around_target(smhd, sm)){
+    std::cout << source(hd, sm) << " ";
+  }
+  std::cout << std::endl;
+
+  std::cout << "vertices around " << target(bhd , mesh) << " in seam mesh" << std::endl;
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(bhd, mesh)){
+    std::cout << source(hd.tmhd, sm) << " ";
+  }
+  std::cout << std::endl;
+
+  std::cout << "vertices around " << source(smhd , sm) << " in (base) mesh" << std::endl;
+  BOOST_FOREACH(SM_halfedge_descriptor hd,
+                halfedges_around_source(source(smhd, sm), sm)){
+     std::cout << target(hd, sm) << " ";
+  }
+  std::cout << std::endl;
+
+  std::cout << "vertices around " << source(bhd , mesh) << " in seam mesh" << std::endl;
+  BOOST_FOREACH(halfedge_descriptor hd,
+                halfedges_around_source(source(bhd, mesh), mesh)){
+    std::cout << target(hd.tmhd, sm) << " ";
+  }
+  std::cout << std::endl;
+
+  std::cout << "vertices around vertices in seam mesh" << std::endl;
+  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    halfedge_descriptor hd = halfedge(vd, mesh);
+    std::cout << " " << vd << " has incident vertices:" << std::endl;
+    BOOST_FOREACH(halfedge_descriptor hd2, halfedges_around_target(hd, mesh)){
+      std::cout << "  " << hd2;
     }
-    if(seam.size() == 2)
-      break;
-    count++;
+    std::cout << std::endl;
   }
-#endif 
- 
-#if 0
-  //cube-ouvert
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges(sm)){
-    if(is_border(hd,sm)){
-      seam.push_back(edge(next(opposite(hd,sm),sm),sm));
-      break;
-    }
+  std::cout << "done" << std::endl;
+
+  std::cout << "the (base) mesh has: " << num_halfedges(sm) << " halfedges" << std::endl;
+  std::cout << "the seam mesh has: " << num_halfedges(mesh) << " halfedges" << std::endl;
+  std::cout << "halfedges in (base) mesh" << std::endl;
+  BOOST_FOREACH(SM_halfedge_descriptor hd, halfedges(sm)){
+     std::cout << hd << " ";
   }
-#endif 
+  std::cout << std::endl;
 
-  typedef std::map<Seam_mesh::halfedge_descriptor,int> H_vertex_index_map;
-  typedef boost::associative_property_map<H_vertex_index_map> H_vertex_index_pmap;
-  H_vertex_index_map hvim; H_vertex_index_pmap hvipm(hvim);
+  std::cout << "halfedges in seam mesh" << std::endl;
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)){
+     std::cout << hd << " ";
+  }
+  std::cout << std::endl;
 
-  halfedge_descriptor mhd = halfedge(seam.front(),sm);    
-  Seam_mesh ssm(sm, seam);
+  std::cout << "faces of the base and seam meshes" << std::endl;
+  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+    std::cout << fd << " ";
+  }
+  std::cout << std::endl;
 
   std::vector<face_descriptor> faces;
-  boost::graph_traits<Seam_mesh>::halfedge_descriptor shd(halfedge(seam.front(),sm));
-  CGAL::Polygon_mesh_processing::connected_component(face(shd,ssm),
-                                                     ssm,
+  CGAL::Polygon_mesh_processing::connected_component(face(bhd, mesh),
+                                                     mesh,
                                                      std::back_inserter(faces));
-  std::cerr << faces.size() << std::endl;
-  faces.clear();
-  shd = opposite(halfedge(seam.front(),sm),sm);
-  CGAL::Polygon_mesh_processing::connected_component(face(shd,ssm),
-                                                     ssm,
-                                                     std::back_inserter(faces));
-  std::cerr << faces.size() << std::endl;
+  std::cout << "the connected component (in the seam mesh) given by halfedge: "  << smhd;
+  std::cout << " has " << faces.size() << " faces." << std::endl;
 
-  return 0;  
-
-  BOOST_FOREACH(Seam_mesh::vertex_descriptor vd, vertices(ssm)){
-    halfedge_descriptor hd = vd;
-    std::cerr << vd << " has incident halfedges:" << std::endl;
-    BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd2, halfedges_around_target(vd,ssm)){
-      std::cerr << hd2 << std::endl;
-    }
-  }
-  std::cerr << "done"<< std::endl;
-
-
-  Seam_mesh::halfedge_descriptor smhd(mhd), smhd2(opposite(mhd,sm));
-  std::cout << "target = " << target(smhd,ssm) << std::endl;
-
-  std::cout << "vertices on seam" << std::endl;
-  BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd, halfedges_around_face(opposite(smhd,ssm),ssm)){
-    std::cout << target(hd.tmhd,sm) << std::endl;
-  }
-
-  std::cout << "vertices around target in mesh" << std::endl;
-   BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(mhd,sm)){
-     std::cout << source(hd,sm) << std::endl;
-  }
-  
-  std::cout << "vertices around target in seam mesh" << std::endl;
-   BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd, halfedges_around_target(smhd,ssm)){
-     std::cout << source(hd.tmhd,sm) << std::endl;
-  }
-
-  std::cout << "vertices around source in seam mesh" << std::endl;
-  BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd, halfedges_around_source(opposite(smhd,ssm),ssm)){
-     std::cout << target(hd.tmhd,sm) << std::endl;
-  }
-  std::cout << "vertices around source in seam mesh" << std::endl;
-   BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd, halfedges_around_source(smhd2,ssm)){
-     std::cout << target(hd.tmhd,sm) << std::endl;
-  }
-  std::cout << "vertices around target in seam mesh" << std::endl;
-  BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd, halfedges_around_target(opposite(smhd2,ssm),ssm)){
-     std::cout << source(hd.tmhd,sm) << std::endl;
-  }
-
-  
-  boost::property_map<Seam_mesh, CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,ssm);
-  //std::cout << get(vpm, source(hd,ssm)) << std::endl;
-  
-
+  std::cout << "accessing coordinates of the source of halfedge " << smhd << ": ";
+  boost::property_map<Seam_mesh, CGAL::vertex_point_t>::type vpm =
+                                                    get(CGAL::vertex_point, mesh);
+  std::cout << get(vpm, source(smhd, mesh)) << std::endl;
 
   return 0;
 }

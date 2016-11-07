@@ -58,7 +58,6 @@ struct Face2Polyline
 int main(int argc, char * argv[])
 {
   SurfaceMesh sm;
-  std::vector<SM_edge_descriptor> seam;
 
   std::ifstream in_mesh((argc>1)?argv[1]:"data/lion.off");
   in_mesh >> sm;
@@ -67,7 +66,9 @@ int main(int argc, char * argv[])
   Seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor,bool>("e:on_seam", false).first;
   Seam_vertex_pmap seam_vertex_pm = sm.add_property_map<SM_vertex_descriptor,bool>("v:on_seam",false).first;
 
-  std::ifstream in((argc>2)?argv[2]:"data/lion.selection.txt");
+  const char* filename = (argc>2) ? argv[2] : "data/lion.selection.txt";
+
+  std::ifstream in(filename);
   std::string vertices;
   std::getline(in,vertices);
   std::istringstream iss(vertices);
@@ -77,22 +78,9 @@ int main(int argc, char * argv[])
     two_vertices_given = true;
   }
 
-  int s,t;
-  SM_halfedge_descriptor smhd;
-  while(in >> s >> t){
-    SM_vertex_descriptor svd(s), tvd(t);
-    SM_edge_descriptor ed = edge(svd, tvd, sm).first;
-    if(! is_border(ed, sm)){
-      put(seam_edge_pm, ed, true);
-      put(seam_vertex_pm, svd, true);
-      put(seam_vertex_pm, tvd, true);
-      if(smhd == boost::graph_traits<SurfaceMesh>::null_halfedge()){
-        smhd = halfedge(edge(svd, tvd, sm).first, sm);
-      }
-    }
-  }
-
   Mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
+  SM_halfedge_descriptor smhd = mesh.add_seams(filename);
+  assert(smhd != SM_halfedge_descriptor());
 
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that the uv

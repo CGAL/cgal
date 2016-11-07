@@ -499,10 +499,12 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       }
     }
   }
+
   Seam_mesh *sMesh = new Seam_mesh(tMesh, seam_edge_pm, seam_vertex_pm);
+  sMesh->set_seam_number(seam_edges.size());
+
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
-
 
   QString new_item_name;
   //determine the different connected_components

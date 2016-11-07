@@ -207,10 +207,14 @@ parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
 
-  typedef boost::unordered_map<vertex_descriptor,int> Vertex_index_map;
-  Vertex_index_map vim;
-  boost::associative_property_map<Vertex_index_map> vipm(vim);
-  mesh.initialize_vertex_index_map(bhd,vipm);
+  typedef boost::unordered_map<vertex_descriptor, int> Indices;
+  Indices indices;
+  CGAL::Polygon_mesh_processing::connected_component(
+            face(opposite(bhd, mesh), mesh),
+            mesh,
+            boost::make_function_output_iterator(
+              Parameterization::Vertices<Seam_mesh<TM,SEM,SVM>, Indices>(mesh, indices)));
+  boost::associative_property_map<Indices> vipm(indices);
 
   Mean_value_coordinates_parameterizer_3<Seam_mesh<TM,SEM,SVM> > parameterizer;
   return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
@@ -229,10 +233,14 @@ parameterize(Seam_mesh<TM,SEM,SVM>& mesh,
   boost::unordered_set<vertex_descriptor> vs;
   internal::Bool_property_map< boost::unordered_set<vertex_descriptor> > vpm(vs);
 
-  typedef boost::unordered_map<vertex_descriptor,int> Vertex_index_map;
-  Vertex_index_map vim;
-  boost::associative_property_map<Vertex_index_map> vipm(vim);
-  mesh.initialize_vertex_index_map(bhd,vipm);
+  typedef boost::unordered_map<vertex_descriptor, int> Indices;
+  Indices indices;
+  CGAL::Polygon_mesh_processing::connected_component(
+            face(opposite(bhd, mesh), mesh),
+            mesh,
+            boost::make_function_output_iterator(
+              Parameterization::Vertices<Seam_mesh<TM,SEM,SVM>, Indices>(mesh, indices)));
+  boost::associative_property_map<Indices> vipm(indices);
 
   return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
 }
