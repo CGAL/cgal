@@ -590,7 +590,9 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #define CGAL_ADDITIONAL_VARIANT_FOR_ICL
 #endif
 
-#if __has_include(<Eigen/Jacobi>) && !defined CGAL_EIGEN3_ENABLED
+#if !defined CGAL_EIGEN3_ENABLED && \
+    !defined CGAL_EIGEN3_DISABLED && \
+    __has_include(<Eigen/Jacobi>)
 #  define CGAL_EIGEN3_ENABLED 1
 #endif
 
