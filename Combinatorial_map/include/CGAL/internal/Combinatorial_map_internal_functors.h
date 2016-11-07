@@ -748,51 +748,52 @@ struct Reverse_orientation_of_map_functor
 {
   static void run(CMap& amap)
   {
-    typename CMap::size_type mark = amap.get_new_mark();
-    CGAL_precondition(amap.is_whole_map_unmarked(mark));
+    typename CMap::size_type mymark = amap.get_new_mark();
+    CGAL_precondition(amap.is_whole_map_unmarked(mymark));
     CGAL_precondition(amap.is_valid());
+
+    typename CMap::Dart_handle first=NULL, current=NULL, prev=NULL, next=NULL;
+    typename CMap::Helper::template Attribute_handle<0>::type
+      first_attribute=NULL, next_attribute=NULL;
+
     for (typename CMap::Dart_range::iterator current_dart=amap.darts().begin(),
            last_dart = amap.darts().end(); current_dart!=last_dart;
          ++current_dart)
     {
-      if (amap.is_marked(current_dart, mark)) continue;
-      typename CMap::Dart_handle first_dart_in_cell= current_dart;
-      typename CMap::Dart_handle current_dart_in_cell=
-        amap.beta(first_dart_in_cell,1);
-      typename CMap::Helper::template Attribute_handle<0>::type
-        attribute_for_first_dart=amap.template attribute<0>(current_dart_in_cell);
-      amap.template inc_attribute_ref_counting<0>(attribute_for_first_dart);
-      do {
-        amap.mark(current_dart_in_cell, mark);
-        typename CMap::Dart_handle previous_dart_in_cell=
-          amap.template beta<0>(current_dart_in_cell);
-        typename CMap::Dart_handle next_dart_in_cell=
-          amap.template beta<1>(current_dart_in_cell);
-        typename CMap::Helper::template Attribute_handle<0>::type
-          next_attribute=amap.template attribute<0>(next_dart_in_cell);
-        // One line error???
+      if (amap.is_marked(current_dart, mymark)) continue;
+
+      first=current_dart;
+      current=amap.beta(current_dart, 1);
+      first_attribute=amap.template attribute<0>(current);
+      amap.template inc_attribute_ref_counting<0>(first_attribute);
+
+      do
+      {
+        amap.mark(current, mymark);
+        prev=amap.template beta<0>(current);
+        next=amap.template beta<1>(current);
+        next_attribute=amap.template attribute<0>(next);
         CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-          run(amap, current_dart_in_cell, next_attribute);
-        amap.template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
-        amap.template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
-        current_dart_in_cell = amap.beta(current_dart_in_cell,0);
+          run(amap, current, next_attribute);
+        amap.template dart_link_beta<1>(current, prev);
+        amap.template dart_link_beta<0>(current, next);
+        current = amap.beta(current,0); // the old beta1
       }
-      while (current_dart_in_cell != first_dart_in_cell);
-      amap.mark(current_dart_in_cell, mark);
-      typename CMap::Dart_handle previous_dart_in_cell=
-        amap.template beta<0>(current_dart_in_cell);
-      typename CMap::Dart_handle next_dart_in_cell=
-        amap.template beta<1>(current_dart_in_cell);
+      while (current!=first);
+
+      amap.mark(current, mymark);
+      prev=amap.template beta<0>(current);
+      next=amap.template beta<1>(current);
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-        run(amap, current_dart_in_cell, attribute_for_first_dart);
-      amap.template dec_attribute_ref_counting<0>(attribute_for_first_dart);
-      amap.template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
-      amap.template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
+        run(amap, current, first_attribute);
+      amap.template dart_link_beta<1>(current, prev);
+      amap.template dart_link_beta<0>(current, next);
+
+      amap.template dec_attribute_ref_counting<0>(first_attribute);
     }
-    amap.negate_mark(mark);
-    CGAL_postcondition(amap.is_whole_map_unmarked(mark));
+    CGAL_postcondition(amap.is_whole_map_marked(mymark));
     CGAL_postcondition(amap.is_valid());
-    amap.free_mark(mark);
+    amap.free_mark(mymark);
   }
 };
 // ****************************************************************************
@@ -802,33 +803,35 @@ struct Reverse_orientation_of_map_functor<CMap, CGAL::Void>
 {
   static void run(CMap& amap)
   {
-    typename CMap::size_type mark = amap.get_new_mark();
-    CGAL_precondition(amap.is_whole_map_unmarked(mark));
+    typename CMap::size_type mymark = amap.get_new_mark();
+    CGAL_precondition(amap.is_whole_map_unmarked(mymark));
     CGAL_precondition(amap.is_valid());
+
     for (typename CMap::Dart_range::iterator current_dart=amap.darts().begin(),
-         last_dart = amap.darts().end(); current_dart!=last_dart;
-         ++current_dart)
+         last_dart = amap.darts().end();
+         current_dart!=last_dart; ++current_dart)
     {
-      if (amap.is_marked(current_dart, mark)) continue;
-      for (typename CMap::template Dart_of_cell_range<2>::iterator
-             current_dart_in_cell=amap.template darts_of_cell<2>(current_dart).
-             begin(), last_dart_in_cell=amap.template darts_of_cell<2>
-             (current_dart).end(); current_dart_in_cell!=last_dart_in_cell;
-           ++current_dart_in_cell)
+      if (amap.is_marked(current_dart, mymark)) continue;
+
+      if (amap.is_marked(current_dart, mymark)) continue;
+      typename CMap::Dart_handle first_dart_in_cell= current_dart;
+      typename CMap::Dart_handle current_dart_in_cell=current_dart;
+      do
       {
-        amap.mark(current_dart_in_cell, mark);
+        amap.mark(current_dart_in_cell, mymark);
         typename CMap::Dart_handle previous_dart_in_cell=
           amap.template beta<0>(current_dart_in_cell);
         typename CMap::Dart_handle next_dart_in_cell=
           amap.template beta<1>(current_dart_in_cell);
-        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
-        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+        amap.template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
+        amap.template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
+        current_dart_in_cell = amap.beta(current_dart_in_cell,0);
       }
+      while (current_dart_in_cell!=first_dart_in_cell);
     }
-    amap.negate_mark(mark);
-    CGAL_postcondition(amap.is_whole_map_unmarked(mark));
+    CGAL_postcondition(amap.is_whole_map_marked(mymark));
     CGAL_postcondition(amap.is_valid());
-    amap.free_mark(mark);
+    amap.free_mark(mymark);
   }
 };
 // ****************************************************************************
@@ -837,58 +840,61 @@ template <typename CMap, typename Attrib=
           typename CMap::Helper::template Attribute_type<0>::type>
 struct Reverse_orientation_of_connected_component_functor
 {
-  static void run(CMap& amap, typename CMap::Dart_handle adart)
+  static void run(CMap& amap, typename CMap::Dart_handle adart,
+                  typename CMap::size_type amark=CMap::INVALID_MARK)
   {
-    typename CMap::size_type mark = amap.get_new_mark();
-    CGAL_precondition(amap.is_whole_map_unmarked(mark));
-    for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
-           current_dart=amap.template darts_of_cell<CMap::dimension+1>(adart).
-           begin(), last_dart=amap.template darts_of_cell<CMap::dimension+1>
-           (adart).end(); current_dart!=last_dart; ++current_dart)
-    {
-      if (amap.is_marked(current_dart, mark)) continue;
-      typename CMap::Dart_handle first_dart_in_cell=current_dart;
-      typename CMap::Dart_handle current_dart_in_cell=
-        amap.beta(first_dart_in_cell,1);
-      typename CMap::Helper::template Attribute_handle<0>::type
-        attribute_for_first_dart=amap.template attribute<0>(current_dart_in_cell);
-      amap.template inc_attribute_ref_counting<0>(attribute_for_first_dart);
-      do {
-        amap.mark(current_dart_in_cell, mark);
-        typename CMap::Dart_handle previous_dart_in_cell=
-          amap.template beta<0>(current_dart_in_cell);
-        typename CMap::Dart_handle next_dart_in_cell=
-          amap.template beta<1>(current_dart_in_cell);
-        typename CMap::Helper::template Attribute_handle<0>::type
-          next_attribute=amap.template attribute<0>(next_dart_in_cell);
+    typename CMap::size_type mymark =
+      (amark==CMap::INVALID_MARK?amap.get_new_mark():amark);
 
-        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-          run(amap, current_dart_in_cell, next_attribute);
-        amap.template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
-        amap.template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
-        current_dart_in_cell = amap.beta(current_dart_in_cell,0);
-      }
-      while (current_dart_in_cell != first_dart_in_cell);
-      amap.mark(current_dart_in_cell, mark);
-      typename CMap::Dart_handle previous_dart_in_cell=
-        amap.template beta<0>(current_dart_in_cell);
-      typename CMap::Dart_handle next_dart_in_cell=
-        amap.template beta<1>(current_dart_in_cell);
-      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-          run(amap, current_dart_in_cell, attribute_for_first_dart);
-      amap.template dec_attribute_ref_counting<0>(attribute_for_first_dart);
-      amap.template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
-      amap.template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
-    }
+    typename CMap::Dart_handle first=NULL, current=NULL, prev=NULL, next=NULL;
+    typename CMap::Helper::template Attribute_handle<0>::type
+      first_attribute=NULL, next_attribute=NULL;
+
     for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
-           current_dart=amap.template darts_of_cell<CMap::dimension+1>(adart).
-           begin(), last_dart=amap.template darts_of_cell<CMap::dimension+1>
-           (adart).end(); current_dart!=last_dart; ++current_dart)
+           current_dart=amap.template darts_of_cell<CMap::dimension+1>
+           (adart).begin(),
+           last_dart=amap.template darts_of_cell<CMap::dimension+1>
+           (adart).end();
+         current_dart!=last_dart; ++current_dart)
     {
-      amap.unmark(current_dart, mark);
+      if (amap.is_marked(current_dart, mymark)) continue;
+
+      first=current_dart;
+      current=amap.beta(current_dart, 1);
+      first_attribute=amap.template attribute<0>(current);
+      amap.template inc_attribute_ref_counting<0>(first_attribute);
+
+      do
+      {
+        amap.mark(current, mymark);
+        prev=amap.template beta<0>(current);
+        next=amap.template beta<1>(current);
+        next_attribute=amap.template attribute<0>(next);
+        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+          run(amap, current, next_attribute);
+        amap.template dart_link_beta<1>(current, prev);
+        amap.template dart_link_beta<0>(current, next);
+        current = amap.beta(current,0); // the old beta1
+      }
+      while (current!=first);
+
+      amap.mark(current, mymark);
+      prev=amap.template beta<0>(current);
+      next=amap.template beta<1>(current);
+      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+        run(amap, current, first_attribute);
+      amap.template dart_link_beta<1>(current, prev);
+      amap.template dart_link_beta<0>(current, next);
+
+      amap.template dec_attribute_ref_counting<0>(first_attribute);
     }
-    CGAL_postcondition(amap.is_whole_map_unmarked(mark));
-    amap.free_mark(mark);
+
+    if (amark==CMap::INVALID_MARK)
+    {
+      CGAL::unmark_cell<CMap, CMap::dimension+1>(amap, adart, mymark);
+      CGAL_postcondition(amap.is_whole_map_unmarked(mymark));
+      amap.free_mark(mymark);
+    }
   }
 };
 // ****************************************************************************
@@ -896,40 +902,45 @@ struct Reverse_orientation_of_connected_component_functor
 template <typename CMap>
 struct Reverse_orientation_of_connected_component_functor<CMap, CGAL::Void>
 {
-  static void run(CMap& amap, typename CMap::Dart_handle adart)
+  static void run(CMap& amap, typename CMap::Dart_handle adart,
+                  typename CMap::size_type amark=CMap::INVALID_MARK)
   {
-    typename CMap::size_type mark = amap.get_new_mark();
-    CGAL_precondition(amap.is_whole_map_unmarked(mark));
+    typename CMap::size_type mymark =
+      (amark==CMap::INVALID_MARK?amap.get_new_mark():amark);
+
     for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
-           current_dart=amap.template darts_of_cell<CMap::dimension+1>(adart).
-           begin(), last_dart=amap.template darts_of_cell<CMap::dimension+1>
-           (adart).end(); current_dart!=last_dart; ++current_dart)
+           current_dart=amap.template darts_of_cell<CMap::dimension+1>
+           (adart).begin(),
+           last_dart=amap.template darts_of_cell_basic<CMap::dimension+1>
+           (adart).end();
+         current_dart!=last_dart; ++current_dart)
     {
-      if (amap.is_marked(current_dart, mark)) continue;
-      for (typename CMap::template Dart_of_cell_range<2>::iterator
-             current_dart_in_cell=amap.template darts_of_cell<2>(current_dart).
-             begin(), last_dart_in_cell=amap.template darts_of_cell<2>
-             (current_dart).end(); current_dart_in_cell!=last_dart_in_cell;
-           ++current_dart_in_cell)
+      if (amap.is_marked(current_dart, mymark)) continue;
+
+      typename CMap::Dart_handle first_dart_in_cell=current_dart;
+      typename CMap::Dart_handle current_dart_in_cell=current_dart;
+
+      do
       {
-        amap.mark(current_dart_in_cell, mark);
+        amap.mark(current_dart_in_cell, mymark);
         typename CMap::Dart_handle previous_dart_in_cell=
           amap.template beta<0>(current_dart_in_cell);
         typename CMap::Dart_handle next_dart_in_cell=
           amap.template beta<1>(current_dart_in_cell);
-        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
-        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+
+        amap.template dart_link_beta<1>(current_dart_in_cell, previous_dart_in_cell);
+        amap.template dart_link_beta<0>(current_dart_in_cell, next_dart_in_cell);
+        current_dart_in_cell = amap.beta(current_dart_in_cell,0);
       }
+      while (current_dart_in_cell != first_dart_in_cell);
     }
-    for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
-           current_dart=amap.template darts_of_cell<CMap::dimension+1>(adart).
-           begin(), last_dart=amap.template darts_of_cell<CMap::dimension+1>
-           (adart).end(); current_dart!=last_dart; ++current_dart)
+
+    if (amark==CMap::INVALID_MARK)
     {
-      amap.unmark(current_dart, mark);
+      CGAL::unmark_cell<CMap::dimension+1>(adart, mymark);
+      CGAL_postcondition(amap.is_whole_map_unmarked(mymark));
+      amap.free_mark(mymark);
     }
-    CGAL_postcondition(amap.is_whole_map_unmarked(mark));
-    amap.free_mark(mark);
   }
 };
 // ****************************************************************************

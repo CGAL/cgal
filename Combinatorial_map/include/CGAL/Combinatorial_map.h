@@ -2534,10 +2534,11 @@ namespace CGAL {
      * @param adart handle to a dart
      * @return none
      */
-    void reverse_orientation_connected_component (Dart_handle adart)
+    void reverse_orientation_connected_component (Dart_handle adart,
+                                                  size_type amark=INVALID_MARK)
     {
       internal::Reverse_orientation_of_connected_component_functor<Self>::
-          run(*this, adart);
+        run(*this, adart, amark);
     }
 
     /** Count the marked cells (at least one marked dart).
