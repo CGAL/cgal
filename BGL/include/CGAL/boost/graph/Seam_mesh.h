@@ -796,8 +796,9 @@ public:
 
     // Read the selection file
     std::istringstream edge_line(line);
-    int s, t;
+    std::size_t s, t;
     while(edge_line >> s >> t) {
+      assert(s < tmvds.size() && t < tmvds.size());
       TM_vertex_descriptor tmvd_s = tmvds[s], tmvd_t = tmvds[t];
 
       std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tmvd_s, tmvd_t, tm);
