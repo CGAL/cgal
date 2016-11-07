@@ -196,8 +196,6 @@ private:
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
-    CGAL_postcondition(vertices.size() == num_vertices(mesh) &&
-                       faces.size() == num_faces(mesh));
     std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
   }
 
@@ -674,7 +672,7 @@ private:
     Error_code status = Base::OK;
 
     // Matrices and vectors needed in the resolution
-    int nbVertices = num_vertices(mesh);
+    int nbVertices = static_cast<int>(vertices.size());
     Matrix A(nbVertices, nbVertices);
     Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
 

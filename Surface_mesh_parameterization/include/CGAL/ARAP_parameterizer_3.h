@@ -288,8 +288,6 @@ private:
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
-    CGAL_postcondition(vertices.size() == num_vertices(mesh) &&
-                       faces.size() == num_faces(mesh));
     std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
   }
 
@@ -1081,7 +1079,7 @@ private:
     Error_code status = Base::OK;
 
     // Create two sparse linear systems "A*Xu = Bu" and "A*Xv = Bv"
-    int nbVertices = num_vertices(mesh);
+    int nbVertices = static_cast<int>(vertices.size());
     Vector Xu(nbVertices), Xv(nbVertices), Bu(nbVertices), Bv(nbVertices);
 
     // Fill the right hand side vectors
@@ -1280,9 +1278,6 @@ public:
   {
     Error_code status = Base::OK;
 
-    int nbVertices = num_vertices(mesh);
-    Matrix A(nbVertices, nbVertices); // the constant matrix using in the linear system A*X = B
-
     // vertices and faces containers
     Faces_vector faces;
     Vertex_set vertices;
@@ -1322,6 +1317,8 @@ public:
     std::cout << "All data structures initialized" << std::endl;
 
     // The matrix A is constant and can be initialized outside of the loop
+    int nbVertices = static_cast<int>(vertices.size());
+    Matrix A(nbVertices, nbVertices); // the constant matrix using in the linear system A*X = B
     status = initialize_matrix_A(mesh, vertices, ctmap, vimap, vpmap, A);
     if(status != Base::OK)
       return status;

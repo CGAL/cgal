@@ -339,7 +339,7 @@ parameterize(TriangleMesh& mesh,
                                       boost::make_function_output_iterator(fc));
 
   // Count vertices
-  int nbVertices = static_cast<int>(num_vertices(mesh));
+  int nbVertices = static_cast<int>(vertices.size());
 
   // Compute (u,v) for border vertices
   // and mark them as "parameterized"

@@ -322,7 +322,7 @@ int main(int argc, char * argv[])
     // Note that this is a halfedge property map, and that the uv
     // is only stored for the canonical halfedges representing a vertex
     SM_UV_pmap uv_pm = sm.add_property_map<SM_halfedge_descriptor,
-                                        Point_2>("h:uv").first;
+                                           Point_2>("h:uv").first;
 
     SM_SE_halfedge_descriptor bhd(smhd);
     bhd = opposite(bhd, mesh); // a halfedge on the virtual border

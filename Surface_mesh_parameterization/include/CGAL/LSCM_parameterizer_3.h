@@ -177,8 +177,19 @@ public:
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap)
   {
+    // Fill containers
+    boost::unordered_set<vertex_descriptor> ccvertices;
+    std::vector<face_descriptor> ccfaces;
+
+    CGAL::internal::Parameterization::Containers_filler<TriangleMesh>
+                                                  fc(mesh, ccvertices, &ccfaces);
+    CGAL::Polygon_mesh_processing::connected_component(
+                                      face(opposite(bhd, mesh), mesh),
+                                      mesh,
+                                      boost::make_function_output_iterator(fc));
+
     // Count vertices
-    int nbVertices = num_vertices(mesh);
+    int nbVertices = static_cast<int>(ccvertices.size());
 
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
@@ -198,16 +209,6 @@ public:
 
     // Fill the matrix for the other vertices
     solver.begin_system();
-
-    boost::unordered_set<vertex_descriptor> ccvertices;
-    std::vector<face_descriptor> ccfaces;
-
-    CGAL::internal::Parameterization::Containers_filler<TriangleMesh>
-                                                  fc(mesh, ccvertices, &ccfaces);
-    CGAL::Polygon_mesh_processing::connected_component(
-                                      face(opposite(bhd, mesh), mesh),
-                                      mesh,
-                                      boost::make_function_output_iterator(fc));
 
     BOOST_FOREACH(face_descriptor fd, ccfaces){
       // Create two lines in the linear system per triangle (one for u, one for v)
