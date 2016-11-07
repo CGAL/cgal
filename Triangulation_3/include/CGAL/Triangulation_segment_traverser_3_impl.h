@@ -19,6 +19,8 @@
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 
+#include <boost/array.hpp>
+
 namespace CGAL {
 
 template < class Tr, class Inc >
@@ -34,8 +36,6 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, Vertex_han
     _target = t->point();
     _s_vertex = s;
     _t_vertex = t;
-    _s_vert = s;
-    _t_vert = t;
     
     Cell_handle c = s->cell();
     // If a vertex of an infinite cell, we start inside the convex hull.
@@ -60,8 +60,6 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, Vertex_handle s, const Poin
     _target = t;
     _s_vertex = s;
     _t_vertex = Vertex_handle();
-    _s_vert = s;
-    _t_vert = _tds2.create_vertex( Tr::Vertex(_target) );
 
     Cell_handle c = s->cell();
     // If a vertex of an infinite cell, we start inside the convex hull.
@@ -86,8 +84,6 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, Vertex_hand
     _target = t->point();
     _s_vertex = Vertex_handle();
     _t_vertex = t;
-    _s_vert = _tds2.create_vertex( Tr::Vertex(_source) );
-    _t_vert = t;
     
     get<0>(_cur) = _tr.locate( s, get<1>(_cur), get<2>(_cur), get<3>(_cur), hint );
 
@@ -107,8 +103,6 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, const Point
     _target = t;
     _s_vertex = Vertex_handle();
     _t_vertex = Vertex_handle();
-    _s_vert = _tds2.create_vertex( Tr::Vertex(_source) );
-    _t_vert = _tds2.create_vertex( Tr::Vertex(_target) );
 
     get<0>(_cur) = _tr.locate( s, get<1>(_cur), get<2>(_cur), get<3>(_cur), hint );
 
@@ -232,7 +226,7 @@ walk_to_next() {
       Cell_handle c = get<0>(_cur);
       if (c != Cell_handle() && !_tr.is_infinite(c)) //hard to say anything in this case
       {
-        typename Tr::Segment seg(_s_vert->point(), _t_vert->point());
+        typename Tr::Segment seg(_source, _target);
         bool intersects = false;
         for (int i = 0; i < 4; ++i)
         {
@@ -251,11 +245,13 @@ walk_to_next() {
 
 template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
-walk_to_next_3() {
-    Vertex_handle vert[4] = { get<0>(_cur)->vertex(0),
-                              get<0>(_cur)->vertex(1),
-                              get<0>(_cur)->vertex(2),
-                              get<0>(_cur)->vertex(3) };
+walk_to_next_3()
+{
+    boost::array<Point*, 4> vert
+      = {&(get<0>(_cur)->vertex(0)->point()),
+         &(get<0>(_cur)->vertex(1)->point()),
+         &(get<0>(_cur)->vertex(2)->point()),
+         &(get<0>(_cur)->vertex(3)->point()) };
 
     // We check in which direction the target lies
     // by comparing its position relative to the planes through the
@@ -296,11 +292,11 @@ walk_to_next_3() {
           pos += li;
           continue;
         }
-        Vertex_handle backup = vert[li];
-        vert[li] = _t_vert;
+        Point* backup = vert[li];
+        vert[li] = &_target;
 
         // Check if the target is on the opposite side of the supporting plane.
-        op[li] = _tr.orientation( vert[0], vert[1], vert[2], vert[3] );
+        op[li] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
         if( op[li] == POSITIVE )
             pos += li;
         if( op[li] != NEGATIVE ) {
@@ -321,9 +317,9 @@ walk_to_next_3() {
             // Through the source and the edge opposite of ij.
             int oij = 5 - edgeIndex( li, lj );
             if( !calc[oij] ) {
-                Vertex_handle backup2 = vert[lj];
-                vert[lj] = _s_vert;
-                o[oij] = _tr.orientation( vert[0], vert[1], vert[2], vert[3] );
+                Point* backup2 = vert[lj];
+                vert[lj] = &_source;
+                o[oij] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
                 vert[lj] = backup2;
                 calc[oij] = true;
             }
@@ -438,15 +434,15 @@ walk_to_next_3_inf( int inf ) {
         return;
     }
 
-    Vertex_handle vert[4];
+    boost::array < Point*, 4> vert;
     for( int i = 0; i != 4; ++i )
         if( i != inf )
-            vert[i] = get<0>(_cur)->vertex(i);
-    vert[inf] = _t_vert;
+            vert[i] = &(get<0>(_cur)->vertex(i)->point());
+    vert[inf] = &_target;
     Orientation o[4];
 
     // Check if the target lies outside the convex hull.
-    if( _tr.orientation( vert[0], vert[1], vert[2], vert[3] ) == POSITIVE ) {
+    if( _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE ) {
         // The target lies in an infinite cell.
         // Note that we do not traverse to other infinite cells.
         _prev = Simplex( get<0>(_cur), Tr::OUTSIDE_CONVEX_HULL, -1, -1 );
@@ -454,8 +450,8 @@ walk_to_next_3_inf( int inf ) {
         return;
     }
 
-    vert[inf] = _s_vert;
-    CGAL_triangulation_assertion( _tr.orientation( vert[0], vert[1], vert[2], vert[3] ) == POSITIVE );
+    vert[inf] = &(_source);
+    CGAL_triangulation_assertion( _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
 
     // For the remembering stochastic walk, we start trying with a random index:
     int li = rng.template get_bits<2>();
@@ -476,9 +472,9 @@ walk_to_next_3_inf( int inf ) {
             continue;
         }
 
-        Vertex_handle backup = vert[li];
-        vert[li] = _t_vert;
-        o[li] = _tr.orientation( vert[0], vert[1], vert[2], vert[3] );
+        Point* backup = vert[li];
+        vert[li] = &(_target);
+        o[li] = _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] );
 
         if( o[li] != NEGATIVE ) {
             vert[li] = backup;
@@ -540,15 +536,17 @@ walk_to_next_3_inf( int inf ) {
 
 template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
-walk_to_next_2() {
-    Vertex_handle vert[3] = { get<0>(_cur)->vertex(0),
-                              get<0>(_cur)->vertex(1),
-                              get<0>(_cur)->vertex(2) };
+walk_to_next_2()
+{
+    boost::array<Point*, 3> vert
+              = { &(get<0>(_cur)->vertex(0)->point()),
+                  &(get<0>(_cur)->vertex(1)->point()),
+                  &(get<0>(_cur)->vertex(2)->point()) };
 
     switch( get<1>(_cur) ) {
         case Tr::VERTEX: {
             // First we try the incident edges.
-            Orientation ocw = _tr.coplanar_orientation( vert[get<2>(_cur)], vert[_tr.cw(get<2>(_cur))], vert[_tr.ccw(get<2>(_cur))], _t_vert );
+            Orientation ocw = CGAL::coplanar_orientation( *vert[get<2>(_cur)], *vert[_tr.cw(get<2>(_cur))], *vert[_tr.ccw(get<2>(_cur))], _target );
             if( get<0>(_cur)->neighbor( _tr.ccw(get<2>(_cur)) ) != get<0>(_prev) && ocw == NEGATIVE) {
                 Cell_handle tmp = get<0>(_cur)->neighbor( _tr.ccw(get<2>(_cur)) );
                 _prev = _cur;
@@ -556,7 +554,7 @@ walk_to_next_2() {
                 get<2>(_cur) = get<0>(_cur)->index( get<0>(_prev)->vertex(get<2>(_cur)) );
                 return;
             }
-            Orientation occw = _tr.coplanar_orientation( vert[get<2>(_cur)], vert[_tr.ccw(get<2>(_cur))], vert[_tr.cw(get<2>(_cur))], _t_vert );
+            Orientation occw = CGAL::coplanar_orientation( *vert[get<2>(_cur)], *vert[_tr.ccw(get<2>(_cur))], *vert[_tr.cw(get<2>(_cur))], _target );
             if( get<0>(_cur)->neighbor( _tr.cw(get<2>(_cur)) ) != get<0>(_prev) && occw == NEGATIVE) {
                 Cell_handle tmp = get<0>(_cur)->neighbor( _tr.cw(get<2>(_cur)) );
                 _prev = _cur;
@@ -566,7 +564,7 @@ walk_to_next_2() {
             }
 
             // Then we try the opposite edge.
-            Orientation op = _tr.coplanar_orientation( vert[_tr.ccw(get<2>(_cur))], vert[_tr.cw(get<2>(_cur))], vert[get<2>(_cur)], _t_vert );
+            Orientation op = CGAL::coplanar_orientation( *vert[_tr.ccw(get<2>(_cur))], *vert[_tr.cw(get<2>(_cur))], *vert[get<2>(_cur)], _target );
             if( op == NEGATIVE) {
                 Cell_handle tmp = get<0>(_cur)->neighbor(get<2>(_cur));
                 get<0>(_prev) = get<0>(_cur);
@@ -629,7 +627,7 @@ walk_to_next_2() {
 
             if( get<0>(_cur)->neighbor(lk) != get<0>(_prev) ) {
                 // Check the edge itself
-                switch( _tr.coplanar_orientation( vert[get<2>(_cur)], vert[get<3>(_cur)], vert[lk], _t_vert ) ) {
+                switch( CGAL::coplanar_orientation( *vert[get<2>(_cur)], *vert[get<3>(_cur)], *vert[lk], _target ) ) {
                     _prev = _cur;
                     case COLLINEAR:
                         // The target lies in this cell.
@@ -648,18 +646,18 @@ walk_to_next_2() {
                 }
             }
 
-            Orientation o = _tr.coplanar_orientation( _s_vert, vert[lk], vert[get<2>(_cur)], _t_vert );
+            Orientation o = CGAL::coplanar_orientation( _source, *vert[lk], *vert[get<2>(_cur)], _target );
             Orientation op;
             switch( o ) {
                 case POSITIVE: {
                     // The ray passes through the edge ik.
-                    op = _tr.coplanar_orientation( vert[lk], vert[get<2>(_cur)], _s_vert, _t_vert );
+                    op = CGAL::coplanar_orientation( *vert[lk], *vert[get<2>(_cur)], _source, _target );
                     if( op == NEGATIVE ) {
                         Cell_handle tmp = get<0>(_cur)->neighbor(get<3>(_cur));
                         get<0>(_prev) = get<0>(_cur);
                         get<0>(_cur) = tmp;
 
-                        if( _tr.collinear( _s_vert, vert[get<2>(_cur)], _t_vert ) ) {
+                        if( CGAL::collinear( _source, *vert[get<2>(_cur)], _target ) ) {
                             get<1>(_prev) = Tr::VERTEX;
                             get<2>(_prev) = get<2>(_cur);
                             get<1>(_cur) = Tr::VERTEX;
@@ -679,13 +677,13 @@ walk_to_next_2() {
                 }
                 default: {
                     // The ray passes through the edge jk.
-                    op = _tr.coplanar_orientation( vert[lk], vert[get<3>(_cur)], _s_vert, _t_vert );
+                    op = CGAL::coplanar_orientation( *vert[lk], *vert[get<3>(_cur)], _source, _target );
                     if( op == NEGATIVE ) {
                         Cell_handle tmp = get<0>(_cur)->neighbor(get<2>(_cur));
                         get<0>(_prev) = get<0>(_cur);
                         get<0>(_cur) = tmp;
 
-                        if( _tr.collinear( _s_vert, vert[get<3>(_cur)], _t_vert ) ) {
+                        if( CGAL::collinear( _source, *vert[get<3>(_cur)], _target ) ) {
                             get<1>(_prev) = Tr::VERTEX;
                             get<2>(_prev) = get<3>(_cur);
                             get<1>(_cur) = Tr::VERTEX;
@@ -744,13 +742,13 @@ walk_to_next_2() {
                     continue;
 
                 // The target should lie on the other side of the edge.
-                Orientation op = _tr.coplanar_orientation( vert[_tr.ccw(li)], vert[_tr.cw(li)], vert[li], _t_vert );
+                Orientation op = CGAL::coplanar_orientation( *vert[_tr.ccw(li)], *vert[_tr.cw(li)], *vert[li], _target );
                 if( op == POSITIVE )
                     continue;
 
                 // The target should lie inside the wedge.
                 if( !calc[_tr.ccw(li)] ) {
-                    o[_tr.ccw(li)] = _tr.coplanar_orientation( _s_vert, vert[_tr.ccw(li)], vert[_tr.cw(li)], _t_vert );
+                    o[_tr.ccw(li)] = CGAL::coplanar_orientation( _source, *vert[_tr.ccw(li)], *vert[_tr.cw(li)], _target );
                     calc[_tr.ccw(li)] = true;
                 }
                 if( o[_tr.ccw(li)] == NEGATIVE )
@@ -762,7 +760,7 @@ walk_to_next_2() {
                 }
 
                 if( !calc[_tr.cw(li)] ) {
-                    o[_tr.cw(li)] = _tr.coplanar_orientation( _s_vert, vert[_tr.cw(li)], vert[li], _t_vert );
+                    o[_tr.cw(li)] = CGAL::coplanar_orientation( _source, *vert[_tr.cw(li)], *vert[li], _target );
                     calc[_tr.cw(li)] = true;
                 }
                 if( o[_tr.cw(li)] == POSITIVE )
@@ -823,21 +821,30 @@ walk_to_next_2_inf( int inf ) {
     }
 
     // Check the neighboring cells.
-    Orientation occw = _tr.coplanar_orientation( _s_vert, get<0>(_cur)->vertex( _tr.ccw(inf)), get<0>(_cur)->vertex(_tr.cw(inf)), _t_vert );
+    Orientation occw = CGAL::coplanar_orientation( _source,
+      get<0>(_cur)->vertex( _tr.ccw(inf))->point(),
+      get<0>(_cur)->vertex(_tr.cw(inf))->point(),
+      _target );
     if( occw == NEGATIVE ) {
         Cell_handle tmp = get<0>(_cur)->neighbor(_tr.cw(inf));
         _prev = Simplex( get<0>(_cur), Tr::EDGE, _tr.ccw(inf), inf );
         _cur = Simplex( tmp, Tr::EDGE, tmp->index( get<0>(_prev)->vertex( get<2>(_prev) ) ), tmp->index( get<0>(_prev)->vertex( get<3>(_prev) ) ) );
         return;
     }
-    Orientation ocw = _tr.coplanar_orientation( _s_vert, get<0>(_cur)->vertex( _tr.cw(inf)), get<0>(_cur)->vertex(_tr.ccw(inf)), _t_vert );
+    Orientation ocw = CGAL::coplanar_orientation( _source,
+      get<0>(_cur)->vertex( _tr.cw(inf))->point(),
+      get<0>(_cur)->vertex(_tr.ccw(inf))->point(),
+      _target );
     if( ocw == NEGATIVE ) {
         Cell_handle tmp = get<0>(_cur)->neighbor(_tr.ccw(inf));
         _prev = Simplex( get<0>(_cur), Tr::EDGE, _tr.cw(inf), inf );
         _cur = Simplex( tmp, Tr::EDGE, tmp->index( get<0>(_prev)->vertex( get<2>(_prev) ) ), tmp->index( get<0>(_prev)->vertex( get<3>(_prev) ) ) );
         return;
     }
-    Orientation op = _tr.coplanar_orientation( get<0>(_cur)->vertex( _tr.ccw(inf) ), get<0>(_cur)->vertex( _tr.cw(inf) ), _s_vert, _t_vert );
+    Orientation op = CGAL::coplanar_orientation(
+      get<0>(_cur)->vertex( _tr.ccw(inf) )->point(),
+      get<0>(_cur)->vertex( _tr.cw(inf) )->point(),
+      _source, _target );
     switch( op ) {
     case NEGATIVE:
         if( occw == COLLINEAR ) {

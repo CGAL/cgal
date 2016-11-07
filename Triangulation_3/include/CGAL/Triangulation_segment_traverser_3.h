@@ -170,10 +170,6 @@ protected:
     // Where possible, facets are checked in a random order.
     mutable Random rng;
 
-private:
-    Tds             _tds2;              // provides a place to store vertices of points.
-    Vertex_handle   _s_vert, _t_vert;   // vertices for source and target, irrespective of whether they are points.
-
 public:
 // \name Constructors
 // \{
