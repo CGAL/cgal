@@ -351,11 +351,15 @@ parameterize(TriangleMesh& mesh,
 
   typedef boost::unordered_set<vertex_descriptor> Vertex_set;
   Vertex_set vertices;
-  CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
-                                                     mesh,
-                                                     boost::make_function_output_iterator(Parameterization::Vertices_set<TriangleMesh,Vertex_set>(mesh,vertices)));
+  CGAL::Polygon_mesh_processing::connected_component(
+    face(opposite(bhd, mesh), mesh),
+    mesh,
+    boost::make_function_output_iterator(
+      Parameterization::Vertices_set<TriangleMesh, Vertex_set>(mesh, vertices)));
+
   // Count vertices
   int nbVertices = static_cast<int>(num_vertices(mesh));
+
   // Compute (u,v) for border vertices
   // and mark them as "parameterized"
   status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);

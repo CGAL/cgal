@@ -58,16 +58,18 @@
 
 /// \file ARAP_parameterizer_3.h
 
-// @todo Determine the proper name of this file and add the header
-// @todo Have an initial parameterization (LSCM or MVC) that depends on the number
-//       of boundaries
-// @todo Add distortion measures
+// @todo Determine the proper name of this file
 // @todo Handle the case cot = 0 with a local parameterization aligned with the axes
 //       (this produces C2=0 which is problematic to compute a & b)
+// @todo Add to the polyhedron demo
+// @todo Add distortion measures
+// @todo remove the requirements on the vimap from all parameterizers
+// @todo is_one_to_one mapping functions in all parameterizers
 
 // @todo Use a boost array for the roots?
 // @todo The two systems A Xu = Bu and A Xv = BV could be merged in one system
 //       using complex numbers?
+// @todo Parallelize the local phase?
 
 namespace CGAL {
 
@@ -161,18 +163,18 @@ private:
   typedef std::vector<face_descriptor>                  Faces_vector;
 
   // Traits subtypes:
-  typedef Parameterizer_traits_3<TriangleMesh>  Traits;
-  typedef typename Traits::NT                   NT;
-  typedef typename Traits::Point_2              Point_2;
-  typedef typename Traits::Point_3              Point_3;
-  typedef typename Traits::Vector_2             Vector_2;
-  typedef typename Traits::Vector_3             Vector_3;
+  typedef Parameterizer_traits_3<TriangleMesh>          Traits;
+  typedef typename Traits::NT                           NT;
+  typedef typename Traits::Point_2                      Point_2;
+  typedef typename Traits::Point_3                      Point_3;
+  typedef typename Traits::Vector_2                     Vector_2;
+  typedef typename Traits::Vector_3                     Vector_3;
 
   // SparseLinearAlgebraTraits_d subtypes:
-  typedef SparseLinearAlgebraTraits_d                  Sparse_LA;
+  typedef SparseLinearAlgebraTraits_d                   Sparse_LA;
 
-  typedef typename Sparse_LA::Vector                   Vector;
-  typedef typename Sparse_LA::Matrix                   Matrix;
+  typedef typename Sparse_LA::Vector                    Vector;
+  typedef typename Sparse_LA::Matrix                    Matrix;
 
   // Memory maps
     // Each triangle is associated a linear transformation matrix
@@ -290,6 +292,7 @@ private:
                                       boost::make_function_output_iterator(fc));
     CGAL_postcondition(vertices.size() == num_vertices(mesh) &&
                        faces.size() == num_faces(mesh));
+    std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
   }
 
   /// Initialize the UV values with a first parameterization of the input.
@@ -516,8 +519,8 @@ private:
     if(root_n > 2)
       roots.push_back(r3);
 
-    std::cout << "coeffs: " << a3 << " " << a2 << " " << a1 << " " << a0 << std::endl;
-    std::cout << root_n << " roots: " << r1 << " " << r2 << " " << r3 << std::endl;
+//    std::cout << "coeffs: " << a3 << " " << a2 << " " << a1 << " " << a0 << std::endl;
+//    std::cout << root_n << " roots: " << r1 << " " << r2 << " " << r3 << std::endl;
 
     return roots.size();
   }
@@ -727,10 +730,18 @@ private:
         Point_2 ppj = lp[ li.second ];
         NT p_diff_x = ppi.x() - ppj.x();
         NT p_diff_y = ppi.y() - ppj.y();
+        CGAL_precondition(p_diff_x != 0. || p_diff_y != 0.);
 
         std::cout << "c: " << c << std::endl;
         std::cout << "diff: " << diff_x << " " << diff_y << std::endl;
         std::cout << "pdiff: " << p_diff_x << " " << p_diff_y << std::endl;
+
+        typedef typename boost::property_map<TriangleMesh,
+                                             boost::vertex_point_t>::const_type PPmap;
+        PPmap ppmap = get(vertex_point, mesh);
+
+        std::cout << "Point_3: " << get(ppmap, source(hd, mesh)) << " || "
+                                 << get(ppmap, target(hd, mesh)) << std::endl;
 
         std::cout << "ADD1: " << c * ( p_diff_x*p_diff_x + p_diff_y*p_diff_y ) << std::endl;
         std::cout << "ADD2: " << c * ( diff_x*p_diff_x + diff_y*p_diff_y ) << std::endl;
@@ -741,7 +752,7 @@ private:
         C3 += c * ( diff_x*p_diff_y - diff_y*p_diff_x );
       }
 
-      std::cout << "C1: " << C1 << " , C2: " <<  C2 << " , C3: " << C3 << std::endl;
+//      std::cout << "C1: " << C1 << " , C2: " <<  C2 << " , C3: " << C3 << std::endl;
 
       // Compute a and b
       NT a = 0., b = 0.;
@@ -1083,8 +1094,8 @@ private:
 
     std::cout << "A, B: " << std::endl << A.eigen_object() << std::endl << Bu << std::endl << Bv << std::endl;
 
-    // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
-    // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
+    // Solve "A*Xu = Bu". On success, the solution is (1/Du) * Xu.
+    // Solve "A*Xv = Bv". On success, the solution is (1/Dv) * Xv.
     NT Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
@@ -1310,6 +1321,8 @@ public:
     if(status != Base::OK)
       return status;
 
+    std::cout << "All data structures initialized" << std::endl;
+
     // The matrix A is constant and can be initialized outside of the loop
     status = initialize_matrix_A(mesh, vertices, ctmap, vimap, vpmap, A);
     if(status != Base::OK)
@@ -1343,7 +1356,7 @@ public:
       {  // also no need compute energy if this iteration is the last iteration
         double energy_diff = std::abs((energy_last - energy_this) / energy_this);
         if(energy_diff < m_tolerance){
-          std::cout << "Minimization process over after: "
+          std::cout << "Minimization process ended after: "
                     << ite + 1 << " iterations. "
                     << "Energy diff: " << energy_diff << std::endl;
           break;

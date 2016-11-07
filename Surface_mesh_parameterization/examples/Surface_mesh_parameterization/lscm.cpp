@@ -63,14 +63,14 @@ int main(int argc, char * argv[])
   in_mesh >> sm;
 
   // Two property maps to store the seam edges and vertices
-  Seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor,bool>("e:on_seam", false).first;
-  Seam_vertex_pmap seam_vertex_pm = sm.add_property_map<SM_vertex_descriptor,bool>("v:on_seam",false).first;
+  Seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
+  Seam_vertex_pmap seam_vertex_pm = sm.add_property_map<SM_vertex_descriptor, bool>("v:on_seam",false).first;
 
   const char* filename = (argc>2) ? argv[2] : "data/lion.selection.txt";
 
   std::ifstream in(filename);
   std::string vertices;
-  std::getline(in,vertices);
+  std::getline(in, vertices);
   std::istringstream iss(vertices);
   int p1, p2;
   bool two_vertices_given = false;
@@ -105,12 +105,14 @@ int main(int argc, char * argv[])
     CGAL::parameterize(mesh, Parameterizer(), bhd, uv_pm);
   }
 
-  Face2Polyline f2p(mesh, uv_pm);
+  std::ofstream out("/home/mrouxell/asd.polylines.txt");
+  Face2Polyline f2p(mesh, uv_pm, out);
 
   // As the seam may define a patch we write
-  CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
-                                                     mesh,
-                                                     boost::make_function_output_iterator(f2p));
+  CGAL::Polygon_mesh_processing::connected_component(
+                                     face(opposite(bhd, mesh), mesh),
+                                     mesh,
+                                     boost::make_function_output_iterator(f2p));
 
   return 0;
 }

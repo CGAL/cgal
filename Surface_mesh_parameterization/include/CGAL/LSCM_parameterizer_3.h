@@ -206,7 +206,7 @@ public:
     CGAL::internal::Surface_mesh_parameterization::Containers_filler<TriangleMesh>
                                                   fc(mesh, ccfaces, ccvertices);
     CGAL::Polygon_mesh_processing::connected_component(
-                                      face(opposite(bhd,mesh),mesh),
+                                      face(opposite(bhd,mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
     BOOST_FOREACH(face_descriptor fd, ccfaces){
@@ -216,7 +216,7 @@ public:
         return status;
     }
 
-    solver.end_system() ;
+    solver.end_system();
 
     // Solve the "A*X = B" linear system in the least squares sense
     if(! solver.solve())
