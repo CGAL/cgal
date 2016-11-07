@@ -18,11 +18,18 @@
 //
 // Author(s)     :
 
+#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+
+#include <CGAL/circulator.h>
 
 #include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/unordered/unordered_map.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <cstddef>
 #include <fstream>
@@ -34,7 +41,7 @@
 
 namespace CGAL {
 
-namespace Surface_mesh_parameterization {
+namespace Parameterization {
 
 template <typename TriangleMesh,
           typename VertexContainer,
@@ -83,8 +90,10 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
 }
 
 template <typename TriangleMesh,
+          typename HD,
           typename VertexUVMap>
 void output_uvmap_to_off(const TriangleMesh& mesh,
+                         HD bhd,
                          const VertexUVMap uvmap,
                          std::ostream& os)
 {
@@ -96,15 +105,24 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   Vertex_index_map vium;
   boost::associative_property_map<Vertex_index_map> vimap(vium);
 
+  boost::unordered_set<vertex_descriptor> vertices;
+  std::vector<face_descriptor> faces;
+
+  CGAL::internal::Parameterization::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
+  CGAL::Polygon_mesh_processing::connected_component(
+                                    face(opposite(bhd, mesh), mesh),
+                                    mesh,
+                                    boost::make_function_output_iterator(fc));
+
   std::ostringstream out_vertices, out_faces;
   std::size_t vertices_counter = 0, faces_counter = 0;
 
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+  BOOST_FOREACH(vertex_descriptor vd, vertices){
     put(vimap, vd, vertices_counter++);
     out_vertices << get(uvmap, vd) << " 0" << '\n';
   }
 
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  BOOST_FOREACH(face_descriptor fd, faces){
     halfedge_descriptor hd = halfedge(fd, mesh);
 
     out_faces << "3";
@@ -121,7 +139,7 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   os << out_vertices.str() << out_faces.str();
 }
 
-} // namespace Surface_mesh_parameterization
+} // namespace Parameterization
 
 } // namespace CGAL
 

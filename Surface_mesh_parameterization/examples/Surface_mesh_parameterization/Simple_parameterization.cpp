@@ -1,9 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
 
+#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
 #include <CGAL/parameterize.h>
+
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <iostream>
 #include <fstream>
@@ -19,7 +21,11 @@ typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 int main(int argc, char * argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/nefertiti.off");
+  std::ifstream in((argc>1)?argv[1]:"../data/mushroom_big_hole.off");
+  if(!in){
+    std::cerr << "Problem loading the input data" << std::endl;
+    return 1;
+  }
 
   Mesh sm;
   in >> sm;
@@ -27,20 +33,12 @@ int main(int argc, char * argv[])
   halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(sm).first;
 
   CGAL::Unique_hash_map<vertex_descriptor,Point_2> uvhm;
-  boost::associative_property_map<CGAL::Unique_hash_map<vertex_descriptor,Point_2> > uvpm(uvhm);
+  boost::associative_property_map<CGAL::Unique_hash_map<vertex_descriptor,Point_2> > uvmap(uvhm);
 
-  CGAL::parameterize(sm, hd, uvpm);
+  CGAL::parameterize(sm, hd, uvmap);
 
-  // Write the result in the polyline format that can be loaded in the Polyhedron demo
+  std::ofstream out("result.off");
+  CGAL::Parameterization::output_uvmap_to_off(sm, hd, uvmap, out);
 
-  BOOST_FOREACH(face_descriptor fd, faces(sm)){
-    halfedge_descriptor hd = halfedge(fd,sm);
-    std::cout << "4 " << uvhm[target(hd,sm)] << " 0 ";
-    hd = next(hd,sm);
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,sm)){
-      std::cout << uvhm[vd] << " 0 ";
-    }
-    std::cout << std::endl;
-  }
   return 0;
 }

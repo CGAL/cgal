@@ -139,6 +139,8 @@ int main(int argc, char * argv[])
 
 #ifdef MVC_POLY_MESH
   {
+    std::cout << "MVC POLY MESH" << std::endl;
+
     PMesh pm;
     in >> pm;
 
@@ -162,10 +164,15 @@ int main(int argc, char * argv[])
 
 #ifdef BARY_POLY_MESH
   {
+    std::cout << "BARY POLY MESH" << std::endl;
+
     PMesh pm;
+    in.clear();
+    in.seekg(0, std::ios::beg);
     in >> pm;
 
     PM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(pm).first;
+    assert(hd != PM_halfedge_descriptor());
 
     // UV map
     CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
@@ -176,10 +183,12 @@ int main(int argc, char * argv[])
     // Indices map
     typedef boost::unordered_map<PM_vertex_descriptor, int> Indices;
     Indices indices;
-    CGAL::Polygon_mesh_processing::connected_component(face(opposite(hd, pm), pm),
-                                                       pm,
+    CGAL::Polygon_mesh_processing::connected_component(
+      face(opposite(hd, pm), pm),
+      pm,
       boost::make_function_output_iterator(
-          CGAL::Parameterization::Vertices<PMesh, Indices>(pm, indices)));
+        CGAL::internal::Parameterization::Index_map_filler<PMesh,
+                                                           Indices>(pm, indices)));
 
     // Vertex parameterized map
     boost::unordered_set<PM_vertex_descriptor> vs;
@@ -198,7 +207,11 @@ int main(int argc, char * argv[])
 
 #ifdef ARAP_POLY_MESH
   {
+    std::cout << "ARAP POLY MESH" << std::endl;
+
     PMesh pm;
+    in.clear();
+    in.seekg(0, std::ios::beg);
     in >> pm;
 
     PM_halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(pm).first;
@@ -217,8 +230,9 @@ int main(int argc, char * argv[])
       face(opposite(hd, pm), pm),
       pm,
       boost::make_function_output_iterator(
-        CGAL::Parameterization::Vertices<PMesh,
-                                         Indices>(pm, indices)));
+      CGAL::internal::Parameterization::Index_map_filler<PMesh,
+                                                         Indices>(pm, indices)));
+
     boost::associative_property_map<Indices> vipm(indices);
 
     // Vertex parameterized map
@@ -247,6 +261,8 @@ int main(int argc, char * argv[])
 
 #ifdef ARAP_SURF_MESH
   {
+    std::cout << "ARAP SURF MESH" << std::endl;
+
     SMesh sm;
     in.clear();
     in.seekg(0, std::ios::beg);
@@ -263,14 +279,15 @@ int main(int argc, char * argv[])
                             boost::hash<SM_vertex_descriptor> > > uv_pm(uvhm);
 
     // Indices map
-    typedef boost::unordered_map<SM_vertex_descriptor, int> Vertex_index_map;
-    Vertex_index_map indices;
+    typedef boost::unordered_map<SM_vertex_descriptor, int> Indices;
+    Indices indices;
     CGAL::Polygon_mesh_processing::connected_component(
       face(opposite(bhd, sm), sm),
       sm,
       boost::make_function_output_iterator(
-        CGAL::Parameterization::Vertices<SMesh, Vertex_index_map>(sm, indices)));
-    boost::associative_property_map<Vertex_index_map> vipm(indices);
+      CGAL::internal::Parameterization::Index_map_filler<SMesh,
+                                                         Indices>(sm, indices)));
+    boost::associative_property_map<Indices> vipm(indices);
 
     boost::unordered_set<SM_vertex_descriptor> vs;
     CGAL::internal::Bool_property_map< boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
@@ -286,6 +303,8 @@ int main(int argc, char * argv[])
 
 #ifdef ARAP_SM_SEAM_MESH
   {
+    std::cout << "ARAP SURF SEAM MESH" << std::endl;
+
     SMesh sm;
     in.clear();
     in.seekg(0, std::ios::beg);
@@ -294,7 +313,7 @@ int main(int argc, char * argv[])
     SM_seam_edge_pmap seam_edge_pm =
         sm.add_property_map<SM_edge_descriptor,bool>("e:on_seam", false).first;
     SM_seam_vertex_pmap seam_vertex_pm =
-        sm.add_property_map<SM_vertex_descriptor,bool>("v:on_seam",false).first;
+        sm.add_property_map<SM_vertex_descriptor,bool>("v:on_seam", false).first;
 
     SM_Seam_mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
     SM_halfedge_descriptor smhd = mesh.add_seams("../data/lion.selection.txt");
@@ -312,10 +331,11 @@ int main(int argc, char * argv[])
     typedef boost::unordered_map<SM_SE_vertex_descriptor, int> Indices;
     Indices indices;
     CGAL::Polygon_mesh_processing::connected_component(
-              face(opposite(bhd, mesh), mesh),
-              mesh,
-              boost::make_function_output_iterator(
-                CGAL::Parameterization::Vertices<SM_Seam_mesh, Indices>(mesh, indices)));
+        face(opposite(bhd, mesh), mesh),
+        mesh,
+        boost::make_function_output_iterator(
+          CGAL::internal::Parameterization::Index_map_filler<SM_Seam_mesh,
+                                                             Indices>(mesh, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized
@@ -334,6 +354,8 @@ int main(int argc, char * argv[])
 
 #ifdef ARAP_PM_SEAM_MESH
   {
+    std::cout << "ARAP POLY SEAM MESH" << std::endl;
+
     PMesh pm;
     in.clear();
     in.seekg(0, std::ios::beg);
@@ -360,10 +382,11 @@ int main(int argc, char * argv[])
     typedef boost::unordered_map<PM_SE_vertex_descriptor, int> Indices;
     Indices indices;
     CGAL::Polygon_mesh_processing::connected_component(
-              face(opposite(bhd, mesh), mesh),
-              mesh,
-              boost::make_function_output_iterator(
-                CGAL::Parameterization::Vertices<PM_Seam_mesh, Indices>(mesh, indices)));
+      face(opposite(bhd, mesh), mesh),
+      mesh,
+      boost::make_function_output_iterator(
+      CGAL::internal::Parameterization::Index_map_filler<PM_Seam_mesh,
+                                                         Indices>(mesh, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized

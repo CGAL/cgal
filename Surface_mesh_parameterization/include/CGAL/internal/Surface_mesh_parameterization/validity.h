@@ -36,7 +36,7 @@ namespace CGAL {
 
 namespace internal {
 
-namespace Surface_mesh_parameterization {
+namespace Parameterization {
 
 template<typename TriangleMesh, typename VertexUVMap>
 bool has_flips(const TriangleMesh& mesh,
@@ -293,7 +293,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   return (counter == 0);
 }
 
-} // namespace Surface_mesh_parameterization
+} // namespace Parameterization
 
 } // namespace internal
 

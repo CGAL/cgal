@@ -24,17 +24,20 @@
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 
-#include <CGAL/circulator.h>
-#include <CGAL/Eigen_solver_traits.h>
+#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
+
+#include <CGAL/circulator.h>
+#include <CGAL/Eigen_solver_traits.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+
 #include <boost/foreach.hpp>
-#include <iostream>
+#include <boost/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <boost/function_output_iterator.hpp>
+#include <iostream>
 
 /// \file Fixed_border_parameterizer_3.h
 
@@ -287,29 +290,6 @@ private:
   Sparse_LA m_linearAlgebra;
 };
 
-namespace Parameterization {
-
-template <typename Mesh, typename Set>
-struct Vertices_set {
-
-  Vertices_set(const Mesh& mesh, Set& set)
-    : mesh(mesh), set(&set)
-  {}
-
-  void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
-  {
-    BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
-      set->insert(vd);
-    }
-  }
-
-  const Mesh& mesh;
-  mutable Set* set;
-};
-
-} // namespace Parameterization
-
-
 // ------------------------------------------------------------------------------------
 // Implementation
 // ------------------------------------------------------------------------------------
@@ -351,11 +331,12 @@ parameterize(TriangleMesh& mesh,
 
   typedef boost::unordered_set<vertex_descriptor> Vertex_set;
   Vertex_set vertices;
+
+  CGAL::internal::Parameterization::Containers_filler<TriangleMesh> fc(mesh, vertices);
   CGAL::Polygon_mesh_processing::connected_component(
-    face(opposite(bhd, mesh), mesh),
-    mesh,
-    boost::make_function_output_iterator(
-      Parameterization::Vertices_set<TriangleMesh, Vertex_set>(mesh, vertices)));
+                                      face(opposite(bhd, mesh), mesh),
+                                      mesh,
+                                      boost::make_function_output_iterator(fc));
 
   // Count vertices
   int nbVertices = static_cast<int>(num_vertices(mesh));

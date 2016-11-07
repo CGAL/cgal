@@ -180,9 +180,6 @@ public:
     // Count vertices
     int nbVertices = num_vertices(mesh);
 
-    // Index vertices from 0 to nbVertices-1
-    // TODO mesh.index_mesh_vertices();
-
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
     Error_code status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpmap);
@@ -201,14 +198,17 @@ public:
 
     // Fill the matrix for the other vertices
     solver.begin_system();
-    std::vector<face_descriptor> ccfaces;
+
     boost::unordered_set<vertex_descriptor> ccvertices;
-    CGAL::internal::Surface_mesh_parameterization::Containers_filler<TriangleMesh>
-                                                  fc(mesh, ccfaces, ccvertices);
+    std::vector<face_descriptor> ccfaces;
+
+    CGAL::internal::Parameterization::Containers_filler<TriangleMesh>
+                                                  fc(mesh, ccvertices, &ccfaces);
     CGAL::Polygon_mesh_processing::connected_component(
-                                      face(opposite(bhd,mesh), mesh),
+                                      face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
+
     BOOST_FOREACH(face_descriptor fd, ccfaces){
       // Create two lines in the linear system per triangle (one for u, one for v)
       status = setup_triangle_relations(solver, mesh, fd, vimap);

@@ -63,10 +63,8 @@
 //       (this produces C2=0 which is problematic to compute a & b)
 // @todo Add to the polyhedron demo
 // @todo Add distortion measures
-// @todo remove the requirements on the vimap from all parameterizers
 // @todo is_one_to_one mapping functions in all parameterizers
 
-// @todo Use a boost array for the roots?
 // @todo The two systems A Xu = Bu and A Xv = BV could be merged in one system
 //       using complex numbers?
 // @todo Parallelize the local phase?
@@ -237,8 +235,8 @@ private:
                     const VertexIndexMap vimap) const
   {
     std::ofstream out(filename.c_str());
-    CGAL::Surface_mesh_parameterization::output_uvmap_to_off(mesh, vertices, faces,
-                                                             uvmap, vimap, out);
+    CGAL::Parameterization::output_uvmap_to_off(mesh, vertices, faces,
+                                                uvmap, vimap, out);
   }
 
   /// Print the parameterized mesh.
@@ -255,8 +253,8 @@ private:
     std::ostringstream out_ss;
     out_ss << filename << iter << ".off" << std::ends;
     std::ofstream out(out_ss.str().c_str());
-    CGAL::Surface_mesh_parameterization::output_uvmap_to_off(mesh, vertices, faces,
-                                                             uvmap, vimap, out);
+    CGAL::Parameterization::output_uvmap_to_off(mesh, vertices, faces,
+                                                uvmap, vimap, out);
   }
 
   /// Copy the data from two vectors to the UVmap.
@@ -284,8 +282,8 @@ private:
                              Vertex_set& vertices,
                              Faces_vector& faces) const
   {
-    CGAL::internal::Surface_mesh_parameterization::Containers_filler<TriangleMesh>
-                                                      fc(mesh, faces, vertices);
+    CGAL::internal::Parameterization::Containers_filler<TriangleMesh>
+                                                     fc(mesh, vertices, &faces);
     CGAL::Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
@@ -1366,7 +1364,7 @@ public:
 
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
 
-    if(!internal::Surface_mesh_parameterization::is_one_to_one_mapping(mesh, uvmap)){
+    if(!internal::Parameterization::is_one_to_one_mapping(mesh, uvmap)){
      // Use post processing to handle flipped elements
       std::cout << "Parameterization is not valid; calling post processor" << std::endl;
       status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);

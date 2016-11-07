@@ -190,8 +190,8 @@ private:
                              Vertex_set& vertices,
                              Faces_vector& faces) const
   {
-    CGAL::internal::Surface_mesh_parameterization::Containers_filler<TriangleMesh>
-                                                      fc(mesh, faces, vertices);
+    internal::Parameterization::Containers_filler<TriangleMesh>
+                                                     fc(mesh, vertices, &faces);
     CGAL::Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
