@@ -135,6 +135,7 @@ public Q_SLOTS:
   void on_actionClose_volume_triggered();
   void on_actionSew3_same_facets_triggered();
   void on_actionUnsew3_all_triggered();
+  void on_actionInsideOut_triggered();
   void on_actionMerge_coplanar_faces_triggered();
   void on_actionMerge_all_volumes_triggered();
   void on_actionRemove_filled_volumes_triggered();
