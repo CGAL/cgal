@@ -426,6 +426,72 @@ inline bool operator==( typename Tr::Cell_handle ch, Triangulation_segment_cell_
 template < class Tr, class Inc >
 inline bool operator!=( typename Tr::Cell_handle ch, Triangulation_segment_cell_iterator_3<Tr,Inc> tci ) { return tci != ch; }
 
+
+
+/********************************************************************/
+/********************************************************************/
+/********************************************************************/
+template < class Tr_, class Inc = internal::Incrementer<Tr_> >
+class Triangulation_segment_simplex_iterator_3
+{
+  typedef Tr_                                         Tr;
+  typedef typename Tr::Triangulation_data_structure   Tds;
+  typedef typename Tr::Geom_traits                    Gt;
+  typedef Inc                                         Incrementer;
+
+private:
+  typedef Triangulation_segment_simplex_iterator_3<Tr_, Inc> Simplex_iterator;
+  typedef Triangulation_segment_cell_iterator_3<Tr_, Inc> SCI;
+  SCI cell_iterator;
+
+private:
+  typedef SCI::Point    Point;
+  typedef SCI::Segment  Segment;
+
+public:
+  // \{
+  typedef typename SCI::Vertex_handle Vertex_handle;        //< defines the type of a handle for a vertex in the triangulation
+  typedef typename SCI::Cell_handle  Cell_handle;        //< defines the type of a handle for a cell in the triangulation.
+  typedef typename SCI::Locate_type  Locate_type;        //< defines the simplex type returned from location.
+  typedef typename SCI::Simplex      Simplex;            //< defines the simplex type.
+
+  typedef Simplex        value_type;       //< defines the value type the iterator refers to.
+  typedef Simplex&       reference;        //< defines the reference type of the iterator.
+  typedef Simplex*       pointer;          //< defines the pointer type of the iterator.
+  typedef std::size_t    size_type;        //< defines the integral type that can hold the size of a sequence.
+  typedef std::ptrdiff_t difference_type;  //< defines the signed integral type that can hold the distance between two iterators.
+  typedef std::forward_iterator_tag iterator_category;      //< defines the iterator category.
+  // \}
+
+  Triangulation_segment_simplex_iterator_3(const Tr& tr
+    , Vertex_handle s, Vertex_handle t)
+    : cell_iterator(tr, s, t) {}
+  Triangulation_segment_simplex_iterator_3(const Tr& tr
+    , Vertex_handle s, const Point& t)
+    : cell_iterator(tr, s, t) {}
+  Triangulation_segment_simplex_iterator_3(const Tr& tr
+    , const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle())
+    : cell_iterator(tr, s, t, hint) {}
+  Triangulation_segment_simplex_iterator_3(const Tr& tr
+    , const Point& s, const Point& t, Cell_handle hint = Cell_handle())
+    : cell_iterator(tr, s, t, hint) {}
+  Triangulation_segment_simplex_iterator_3(const Tr& tr
+    , const Segment& seg, Cell_handle hint = Cell_handle())
+    : cell_iterator(tr, seg, hint) {}
+
+  Simplex_iterator end() const
+  {
+    return sci.end();
+  }
+
+  Simplex_iterator& operator++()
+  {
+    sci.walk_to_next();
+    return *this;
+  }
+
+};//class Triangulation_segment_simplex_iterator_3
+
 } // namespace CGAL
 
 #include <CGAL/Triangulation_segment_traverser_3_impl.h>
