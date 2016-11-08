@@ -65,8 +65,7 @@ This package implements all common border parameterization methods:
 - For fixed border methods:
    - the user can select a border parameterization among two common methods:
      uniform or arc-length parameterizations.
-   - one convex shape specified by:
-    - one shape among a set of standard ones (circle, square).
+   - the user can select a convex shape among a set of standard ones (circle, square).
 - For free border methods: at least two constraints (the pinned vertices).
 
 - `CGAL::Circular_border_uniform_parameterizer_3<TriangleMesh>`

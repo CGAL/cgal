@@ -36,11 +36,10 @@ planar domain (convex polygon vs. free border) and by the guarantees
 provided in terms of bijective mapping.
 
 The package proposes an interface for any model of the concept `FaceGraph`,
-that is classes as  `Polyhedron_3`, `Surface_mesh`, as well as mesh
+such as the classes `Surface_mesh`, `Polyhedron_3`, or the mesh
 classes of OpenMesh.
 
-
-Since parameterizing meshes require efficient representation of sparse
+Since parameterizing meshes requires an efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
 a unified interface to linear solvers  as described in Chapter 
 \ref PkgSolverSummary.
@@ -48,9 +47,8 @@ a unified interface to linear solvers  as described in Chapter
 Note that linear solvers commonly use double precision floating point
 numbers. Therefore, this package is intended to be used with a \cgal %Cartesian kernel with doubles.
 
-
 \cgalFigureBegin{Surface_mesh_parameterizationfigintroduction,introduction.jpg}
-Texture mapping via Least Squares Conformal Maps parameterization. Top: original mesh and texture. Bottom: parameterizedmesh (left: parameter space, right: textured mesh).
+Texture mapping via Least Squares Conformal Maps parameterization. Top: original mesh and texture. Bottom: parameterized mesh (left: parameter space, right: textured mesh).
 \cgalFigureEnd
 
 \section Surface_mesh_parameterizationBasics Basics
@@ -65,34 +63,32 @@ template <typename TriangleMesh>
 Parameterizer_traits<TriangleMesh>::Error_code
 parameterize(TriangleMesh & mesh,
              boost::graph_traits<TriangleMesh>::halfedge_descriptor bhd,
-             VertexUvMap uvm);
+             VertexUVMap uvm);
 \endcode
 
 The function `parameterize()` applies a default surface parameterization
 method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}, 
 to the connected component of the mesh of type `TriangleMesh` with the border given by the halfedge `bhd`.
 This border is parameterized with an arc-length circular border parameterization. 
-The sparse linear solver used is from the \ref thirdpartyEigen library. 
+The sparse linear solver of the \ref thirdpartyEigen library is used. 
 
-The mesh of type `TriangleMesh` which must be a model of the concept
-`FaceGraph`, additionally must be triangulated, 2-manifold, oriented,
-and homeomorphic to a disc (possibly with holes). We will later show
-how to parameterize a mesh that is not a topological disk.
+The mesh of type `TriangleMesh` must be a model of the concept
+`FaceGraph` and must additionally be triangulated, 2-manifold, oriented,
+and homeomorphic to a disc (possibly with holes). The last requirement
+is not hard and we will later show how to parameterize a mesh that is
+not a topological disk (Section \ref Surface_mesh_parameterizationComputingaCut).
+The result is stored in a property map (whose type is here VertexUVMap)
+for the mesh vertices. See also Chapter \ref PkgProperty_mapSummary.
 
-The result is stored in a property map for the mesh vertices. See also
-Chapter \ref PkgProperty_mapSummary.
-
-
-`Parameterizer_traits_3<TriangleMesh>` is a base class of all surface
+The class `Parameterizer_traits_3<TriangleMesh>` is a base class of all surface
 parameterizations and defines the error codes.
 
-
+\subsection Surface_mesh_parameterizationDefaultExample Default Parameterization Example
 In the following example, we apply the default parameterization to a
-`Polyhedron_3` mesh, and we use a `Unique_hash_map` to store the uv-coordinates
-of each vertex.
+`Surface_mesh` mesh. We store the UV-coordinates as a vertex property
+using the `Surface_mesh` built-in property mechanism.
 
-\cgalExample{Surface_mesh_parameterization/Simple_parameterization.cpp}
-
+\cgalExample{Surface_mesh_parameterization/simple_parameterization.cpp}
 
 \subsection Surface_mesh_parameterizationEnhancedparameterize Choosing a Parameterization Algorithm
 
@@ -105,21 +101,21 @@ Parameterizer_traits<TriangleMesh>::Error_code
 parameterize(TriangleMesh& mesh,
              ParameterizerTraits_3 parameterizer,
              boost::graph_traits<TriangleMesh>::halfedge_descriptor bhd,
-             VertexUvMap uvm);
+             VertexUVMap uvm);
 \endcode
 
+It computes a one-to-one mapping from a 3D triangle surface mesh to a simple 2D domain.
+The mapping is piecewise linear on the triangle mesh. The result is a pair (u,v)
+of parameter coordinates for each vertex of the input mesh.
+A one-to-one mapping may be guaranteed or not, depending on the chosen
+ParameterizerTraits_3 algorithm.
 
-
-In the following example, we apply the circular border parameterizations
-and then the discrete authalic parameterization to a
-`Surface_mesh`. We store the uv-coordinates as a vertex property
-using the built-in property mechanism.
+In the following example, we use a circular uniform border parameterization
+and then use the discrete authalic parameterizer with a
+`Surface_mesh`. We store the UV-coordinates as a vertex property
+using the `Surface_mesh` built-in property mechanism.
 
 \cgalExample{Surface_mesh_parameterization/discrete_authalic.cpp}
-
-
-
-
 
 \section secSurfaceParameterizationMethods Surface Parameterization Methods 
 
@@ -224,39 +220,34 @@ Border parameterizations for fixed border surface parameterizations
 are a family of methods to define a set of constraints, namely two
 \f$ u,v\f$ coordinates for each vertex along the border.
 
+Different choices are offered to the user when choosing border parameterizers
+for fixed border methods:
 <UL>
-
 <LI>The user can select a border parameterization among
 two commonly used methods: uniform or arc-length parameterization.
 
-<I>Usage:</I>
-
-Uniform border parameterization is more stable, although it gives
-poor visual results. The
-arc-length border parameterization is used by default.
+<I>Usage:</I> Uniform border parameterizations are more stable,
+although they give poor visual results. The arc-length border
+parameterization is used by default.
 
 <LI>One convex shape specified by one shape among two standard ones:
 a circle or a square.
 
-<I>Usage:</I>
-
-The circular border parameterization is used by default as it
+<I>Usage:</I> The circular border parameterization is used by default as it
 corresponds to the simplest convex shape. The square border
 parameterization is commonly used for texture mapping.
-
 </UL>
-
-`Circular_border_arc_length_parameterizer_3<TriangleMesh>` 
-
-`Circular_border_uniform_parameterizer_3<TriangleMesh>` 
-
-`Square_border_arc_length_parameterizer_3<TriangleMesh>` 
-
-`Square_border_uniform_parameterizer_3<TriangleMesh>` 
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigcircular_border,border.png}
 Left: Julius Cesar mask parameterization with Authalic/circular border. Right: Julius Cesar mask's image with Floater/square border.
 \cgalFigureEnd
+
+All combinations of uniform/arc-length and circle/square are provided by
+the following classes:
+`Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+`Circular_border_uniform_parameterizer_3<TriangleMesh>`
+`Square_border_arc_length_parameterizer_3<TriangleMesh>`
+`Square_border_uniform_parameterizer_3<TriangleMesh>`
 
 \subsection Surface_mesh_parameterizationFreeBorderSurface Free Border Surface Parameterizations
 
@@ -289,35 +280,37 @@ parameterization methods define only two constraints: the pinned vertices.
 
 <LI>`Two_vertices_parameterizer_3<TriangleMesh>` 
 
-<I>Usage:</I>
-
-`Two_vertices_parameterizer_3<TriangleMesh>` is the default
+<I>Usage:</I> `Two_vertices_parameterizer_3<TriangleMesh>` is the default
 free border parameterization, and is the only one available
 in the current version of this package.
 
 </UL>
 
-
 \section secCuttingaMesh Cutting a Mesh 
 
 \subsection Surface_mesh_parameterizationComputingaCut Computing a Cut Graph
 
-All surface parameterization methods proposed in this package only
+The surface parameterization methods proposed in this package only
 deal with meshes which are homeomorphic (topologically equivalent) to
-discs.  Nevertheless meshes with arbitrary topology and number of
-connected components car be parameterized, provided that the user
+discs. Nevertheless, meshes with arbitrary topology and number of
+connected components can be parameterized, provided that the user
 specifies a cut graph (a set of edges), which defines the
 border of a topological disc. These edges can be passed together with
-the mesh to a `Seam_mesh`.
+a mesh to a `Seam_mesh`.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigcut,cut.png}
 Cut Graph
 \cgalFigureEnd
 
+In the following example, we apply the default parameterization to a
+`Polyhedron_3`-based `Seam_mesh`. We store the UV-coordinates as a
+halfedge property using a `Unique_hash_map`.
 
-\cgalExample{Surface_mesh_parameterization/seam.cpp}
+Note that vertices on a seam are duplicated in a `Seam_mesh` structure
+and thus the UV-coordinates are here associated to halfedges of the
+seam mesh.
 
-
+\cgalExample{Surface_mesh_parameterization/seam_Polyhedron_3.cpp}
 
 \section Surface_mesh_parameterizationComplexity Complexity and Guarantees
 

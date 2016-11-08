@@ -1,6 +1,6 @@
 /*!
- \example Surface_mesh_parameterization/Simple_parameterization.cpp
+ \example Surface_mesh_parameterization/simple_parameterization.cpp
  \example Surface_mesh_parameterization/discrete_authalic.cpp
- \example Surface_mesh_parameterization/seam.cpp
+ \example Surface_mesh_parameterization/seam_Polyhedron_3.cpp
  \example Surface_mesh_parameterization/lscm.cpp
 */

@@ -216,7 +216,7 @@ protected:
     }
   }
 
-  /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  /// Compute w_ij, coefficient of matrix A for j neighbor vertex of i.
   /// Implementation note: Subclasses must at least implement compute_w_ij().
   ///
   /// \param mesh a triangulated surface.
