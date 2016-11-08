@@ -39,8 +39,6 @@
 
 #include <CGAL/tuple.h>
 
-#include <CGAL/internal/Dummy_gt.h>
-
 // If defined, type casting is done statically,
 // reducing type-safety overhead.
 #define CGAL_TST_ASSUME_CORRECT_TYPES
