@@ -1,23 +1,24 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/boost/graph/Seam_mesh.h>
 
 #include <CGAL/Circular_border_parameterizer_3.h>
 #include <CGAL/Square_border_parameterizer_3.h>
-
 #include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
-#include <CGAL/parameterize.h>
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/parameterize.h>
+
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <boost/foreach.hpp>
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #include <fstream>
 
 typedef CGAL::Simple_cartesian<double>       Kernel;
-typedef Kernel::Point_2                       Point_2;
+typedef Kernel::Point_2                      Point_2;
 typedef Kernel::Point_3                      Point_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3>  SurfaceMesh;
 
@@ -46,13 +47,11 @@ int main(int argc, char * argv[])
 //  typedef CGAL::Square_border_uniform_parameterizer_3<SurfaceMesh>       Border_parameterizer;
 //  typedef CGAL::Square_border_arc_length_parameterizer_3<SurfaceMesh>    Border_parameterizer;
 
-  // Parameterize onto a square (non-uniformly on the border)
-  typedef CGAL::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer>
-                                                                   Parameterizer;
-  Parameterizer::Error_code s_err = CGAL::parameterize(sm, Parameterizer(), bhd, uvpm);
+  typedef CGAL::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
+  Parameterizer::Error_code err = CGAL::parameterize(sm, Parameterizer(), bhd, uvpm);
 
-  if(s_err != Parameterizer::OK) {
-    std::cerr << "Error: " << Parameterizer::get_error_message(s_err) << std::endl;
+  if(err != Parameterizer::OK) {
+    std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
     return 1;
   }
 
