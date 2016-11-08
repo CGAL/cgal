@@ -24,7 +24,7 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-
+#include <CGAL/Circular_border_parameterizer_3.h>
 #include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/Eigen_solver_traits.h>
 

@@ -26,6 +26,8 @@
 
 #include <CGAL/Parameterizer_traits_3.h>
 
+#include <boost/foreach.hpp>
+
 #include <cfloat>
 #include <climits>
 
