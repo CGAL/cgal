@@ -42,11 +42,11 @@ namespace CGAL {
  \brief A template functor for constructing Yao graphs with a given set of 2D points and
          a given initial direction for the cone boundaries.
 
- \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` 
+ \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
                   or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
  \tparam Graph_  The graph type to store the constructed cone based spanner.
-                 It must be <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A> 
+                 It must be <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A>
                  with `Traits_::Point_2` as `VertexProperties`
  */
 template <typename Traits_, typename Graph_>
@@ -73,6 +73,9 @@ private:
     /* Store the number of cones.  */
     unsigned int  cone_number;
 
+    /* Store wheter this is an half-theta graph */
+    bool half;
+
     /* Store the directions of the rays dividing the plane. The initial direction will be
        stored in rays[0].  */
     std::vector<Direction_2>   rays;
@@ -85,10 +88,13 @@ public:
       \param initial_direction  A direction denoting one of the rays dividing the
                    cones. This allows arbitary rotations of the rays that divide
                    the plane.  (default: positive x-axis)
+     \param half_yao  Indicates whether all the cones are used or just half of
+                      them (default: all cones).
      */
     Construct_yao_graph_2 (unsigned int k,
-                           Direction_2 initial_direction = Direction_2(1,0)
-                          ): cone_number(k), rays(std::vector<Direction_2>(k))
+                           Direction_2 initial_direction = Direction_2(1,0),
+                           bool half_yao = false
+                          ): cone_number(k), rays(std::vector<Direction_2>(k)), half(half_yao)
 
     {
         if (k<2) {
@@ -127,7 +133,8 @@ public:
         unsigned int j;   // index of the ccw ray
 
         // add edges into the graph for every cone
-        for (i = 0; i < cone_number; i++) {
+        int increment = half ? 2 : 1;
+        for (i = 0; i < cone_number; i += increment) {
             j = (i+1) % cone_number;
             add_edges_in_cone(rays[i], rays[j], g);
         }
