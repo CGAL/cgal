@@ -1338,7 +1338,7 @@ void Scene_c3t3_item_priv::computeSpheres()
     Kernel::Point_3 center(vit->point().point().x(),
     vit->point().point().y(),
     vit->point().point().z());
-    float radius = CGAL::sqrt(vit->point().weight());
+    float radius = vit->point().weight();
     Kernel::Sphere_3* sphere = new Kernel::Sphere_3(center, radius);
     spheres->add_sphere(sphere, CGAL::Color(c.red(), c.green(), c.blue()));
   }

@@ -90,7 +90,7 @@ void Scene_spheres_item::computeElements() const
     d->centers.push_back(sp.first->center().y());
     d->centers.push_back(sp.first->center().z());
 
-    d->radius.push_back(sp.first->squared_radius());
+    d->radius.push_back(CGAL::sqrt(sp.first->squared_radius()));
 
   }
   QApplication::restoreOverrideCursor();
