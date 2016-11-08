@@ -314,6 +314,7 @@ public:
     edges(true),
     vertices(true),
     mono(false),
+    inverse_normal(false),
     size_points(7.),
     size_edges(3.1),
     ambient(0.6f, 0.5f, 0.5f, 0.5f),
@@ -603,7 +604,8 @@ protected:
     //compute flat normals
     Local_vector normal = geomutils.get_facet_normal(lcc, dh);
     normal = normal/(CGAL::sqrt(normal*normal));
-
+    if (inverse_normal) normal=normal*-1;
+    
     if (lcc.next(lcc.next(lcc.next(dh)))!=dh)
     {
       try
@@ -620,6 +622,8 @@ protected:
           if(first==NULL)
           { first=vh; }
           vh->info().v = geomutils.get_vertex_normal(lcc, cur);
+          if (inverse_normal) vh->info().v=vh->info().v*-1;
+          
           if(previous!=NULL && previous!=vh)
           { cdt.insert_constraint(previous, vh); }
           previous=vh;
@@ -760,7 +764,8 @@ protected:
       {
         Local_vector normal = geomutils.get_vertex_normal(lcc, cur);
         normal = normal/(CGAL::sqrt(normal*normal));
-        
+        if (inverse_normal) normal=normal*-1;
+
         smooth_normals.push_back(normal.x());
         smooth_normals.push_back(normal.y());
         smooth_normals.push_back(normal.z());
@@ -792,7 +797,7 @@ protected:
     }
   }
 
-  void compute_vertex(Dart_const_handle dh, bool empty)
+  void compute_vertex(Dart_const_handle dh, bool& empty)
   {
     Local_point p =  geomutils.get_point(lcc, dh);
     pos_points.push_back(p.x());
@@ -847,7 +852,6 @@ protected:
       if ( !lcc.is_marked(it, markvertices) )
       {
         compute_vertex(it, empty);
-        empty = false;
         CGAL::mark_cell<LCC, 0>(lcc, it, markvertices);
       }
     }
@@ -999,6 +1003,7 @@ protected:
     setKeyDescription(Qt::Key_E, "Toggles edges display");
     setKeyDescription(Qt::Key_V, "Toggles vertices display");
     setKeyDescription(Qt::Key_M, "Toggles mono color for all faces");
+    setKeyDescription(Qt::Key_N, "Inverse direction of normals");
     setKeyDescription(Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(Qt::Key_Minus, "Decrease size of edges");
     setKeyDescription(Qt::Key_Plus+Qt::ShiftModifier, "Increase size of vertices");
@@ -1046,25 +1051,37 @@ protected:
     if ((e->key()==Qt::Key_W) && (modifiers==Qt::NoButton))
     {
       wireframe = !wireframe;
-      if (wireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      else
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    if (wireframe)
+    {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      displayMessage("Wireframe.");
+    }
+    else
+    {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      displayMessage("Filled faces.");
+    }
       updateGL();
     }
     else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
     {
       flatShading = !flatShading;
+      if (flatShading)
+        displayMessage("Flat shading.");
+      else
+        displayMessage("Gouraud shading.");
       updateGL();
     }
     else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
     {
       edges = !edges;
+      displayMessage(QString("Draw edges=%1.").arg(edges?"true":"false"));
       updateGL();
     }
     else if ((e->key()==Qt::Key_V) && (modifiers==Qt::NoButton))
     {
       vertices = !vertices;
+      displayMessage(QString("Draw vertices=%1.").arg(vertices?"true":"false"));
       updateGL();
     }
     else if ((e->key()==Qt::Key_M) && (modifiers==Qt::NoButton))
@@ -1072,26 +1089,40 @@ protected:
       mono = !mono;
       initialize_buffers();
       compile_shaders();
+      displayMessage(QString("Mono color=%1.").arg(mono?"true":"false"));
+      updateGL();
+    }
+    else if ((e->key()==Qt::Key_N) && (modifiers==Qt::NoButton))
+    {
+      inverse_normal = !inverse_normal;
+      compute_elements();
+      initialize_buffers();
+      compile_shaders();
+      displayMessage(QString("Inverse normal=%1.").arg(inverse_normal?"true":"false"));
       updateGL();
     }
     else if ((e->key()==Qt::Key_Plus) && (modifiers==Qt::KeypadModifier))
     {
       size_edges+=.5;
+      displayMessage(QString("Size of edges=%1.").arg(size_edges));
       updateGL();
     }
     else if ((e->key()==Qt::Key_Minus) && (modifiers==Qt::KeypadModifier))
     {
       if (size_edges>.5) size_edges-=.5;
+      displayMessage(QString("Size of edges=%1.").arg(size_edges));
       updateGL();
     }
     else if ((e->key()==Qt::Key_Plus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
     {
       size_points+=.5;
+      displayMessage(QString("Size of points=%1.").arg(size_points));
       updateGL();
     }
     else if ((e->key()==Qt::Key_Minus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
     {
       if (size_points>.5) size_points-=.5;
+      displayMessage(QString("Size of points=%1.").arg(size_points));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton))
@@ -1102,6 +1133,8 @@ protected:
       if (ambient.y()>1.) ambient.setY(1.);
       ambient.setZ(ambient.x()+.1);
       if (ambient.z()>1.) ambient.setZ(1.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::NoButton))
@@ -1112,42 +1145,56 @@ protected:
       if (ambient.y()<0.) ambient.setY(0.);
       ambient.setZ(ambient.z()-.1);
       if (ambient.z()<0.) ambient.setZ(0.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ShiftModifier))
     {
       ambient.setX(ambient.x()+.1);
       if (ambient.x()>1.) ambient.setX(1.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::AltModifier))
     {
       ambient.setY(ambient.y()+.1);
       if (ambient.y()>1.) ambient.setY(1.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ControlModifier))
     {
       ambient.setZ(ambient.z()+.1);
       if (ambient.z()>1.) ambient.setZ(1.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ShiftModifier))
     {
       ambient.setX(ambient.x()-.1);
       if (ambient.x()<0.) ambient.setX(0.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::AltModifier))
     {
       ambient.setY(ambient.y()-.1);
       if (ambient.y()<0.) ambient.setY(0.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ControlModifier))
     {
       ambient.setZ(ambient.z()-.1);
       if (ambient.z()<0.) ambient.setZ(0.);
+      displayMessage(QString("Light color=(%1 %2 %3).").
+                     arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
       updateGL();
     }
     else
@@ -1195,7 +1242,8 @@ private:
   bool edges;
   bool vertices;
   bool mono;
-
+  bool inverse_normal;
+  
   double size_points;
   double size_edges;
 
