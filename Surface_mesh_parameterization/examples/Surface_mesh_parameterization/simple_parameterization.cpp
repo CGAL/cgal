@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
   SurfaceMesh sm;
   in >> sm;
 
-  // An edge on the border
+  // An halfedge on the border
   halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(sm).first;
 
   // The UV property map that holds the parameterized values

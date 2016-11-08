@@ -343,7 +343,7 @@ parameterize(TriangleMesh& mesh,
 
   // Compute (u,v) for border vertices
   // and mark them as "parameterized"
-  status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);
+  status = get_border_parameterizer().parameterize_border(mesh, bhd, uvmap, vpm);
 
   if (status != Base::OK)
     return status;

@@ -26,6 +26,7 @@
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
+#include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/Eigen_solver_traits.h>
 
 /// \file Discrete_authalic_parameterizer_3.h

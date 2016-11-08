@@ -89,7 +89,8 @@ int main(int argc, char * argv[])
     CGAL::parameterize(mesh, Parameterizer(), bhd, uv_pm);
   }
 
-  CGAL::Parameterization::output_uvmap_to_off(mesh, bhd, uv_pm, std::cout);
+  std::ofstream out("result.off");
+  CGAL::Parameterization::output_uvmap_to_off(mesh, bhd, uv_pm, out);
 
   return 0;
 }
