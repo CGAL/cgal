@@ -173,8 +173,16 @@ public:
       {
 	if (rectangle)
 	  return true;
+/*
+ * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
+ * However, it works very well even if the polygon is not simple, so we use this instead to avoid
+ * the cgal_assertion on is_simple().*/
 
-        if (domain_freeform.has_on_bounded_side (Point_2 (p.x, p.y)))
+
+        if (CGAL::bounded_side_2(domain_freeform.container().begin(),
+                                 domain_freeform.container().end(),
+                                 Point_2(p.x, p.y),
+                                 domain_freeform.traits_member())  == CGAL::ON_BOUNDED_SIDE)
           return true;
       }
     return false;
