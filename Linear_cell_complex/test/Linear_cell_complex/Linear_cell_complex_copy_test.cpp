@@ -91,7 +91,8 @@ public:
 
 struct MonInfo
 {
-  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
+  MonInfo(long long int i=0) : mnb(i==0?rand():i),
+                               ptr(reinterpret_cast<char*>(this))
   {}
   int mnb;
   std::string s;
@@ -275,7 +276,7 @@ struct SetInfoIfNonVoid
 {
   static void run(Map& map,
                   typename Map::template Attribute_handle<i>::type attr,
-                  long int nb)
+                  long long int nb)
   {
     map.template info_of_attribute<i>(attr)=nb;
   }
@@ -284,7 +285,7 @@ template<typename Map, int i>
 struct SetInfoIfNonVoid<Map, i, void>
 {
   static void run(Map&, typename Map::template Attribute_handle<i>::type,
-                  long int)
+                  long long int)
   {}
 };
 
@@ -294,7 +295,7 @@ struct CreateAttributes
 {
   static void run(Map& map)
   {
-    int nb=0;
+    long long int nb=0;
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
@@ -312,7 +313,7 @@ struct CreateAttributes<Map, 0, Attr>
 {
   static void run(Map& amap)
   {
-    int nb=0;
+    long long int nb=0;
     for ( typename Map::template Attribute_range<0>::type::iterator
           it=amap.template attributes<0>().begin(),
           itend=amap.template attributes<0>().end(); it!=itend; ++it )
@@ -339,7 +340,7 @@ struct InitDartInfo
 {
   static void run(Map& map)
   {
-    long int nb=0;
+    long long int nb=0;
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
