@@ -62,8 +62,8 @@ int main(int argc, char * argv[])
   assert(smhd != SM_halfedge_descriptor());
 
   // The 2D points of the uv parametrisation will be written into this map
-  // Note that this is a halfedge property map, and that the uv
-  // is only stored for the canonical halfedges representing a vertex
+  // Note that this is a halfedge property map, and that uv values
+  // are only stored for the canonical halfedges representing a vertex
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 

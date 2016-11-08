@@ -22,12 +22,10 @@ if ( CGAL_FOUND )
     # Executables that require Eigen 3.1
     include( ${EIGEN3_USE_FILE} ) 
 
+  create_single_source_cgal_program( "discrete_authalic.cpp" )
   create_single_source_cgal_program( "lscm.cpp" )
-  create_single_source_cgal_program( "next_bug.cpp" )
-  create_single_source_cgal_program( "seam.cpp" )
   create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
-  create_single_source_cgal_program( "Simple_parameterization.cpp" )
-  create_single_source_cgal_program( "parameterization_tests.cpp" )
+  create_single_source_cgal_program( "simple_parameterization.cpp" )
 
   else(EIGEN3_FOUND)
     message(STATUS "NOTICE: The examples require Eigen 3.1 (or greater) and will not be compiled.")  
