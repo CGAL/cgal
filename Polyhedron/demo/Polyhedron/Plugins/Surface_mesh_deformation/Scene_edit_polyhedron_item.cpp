@@ -409,8 +409,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
             if(spheres)
             {
               CGAL::Color c(0,255,0);
-              Kernel::Sphere_3 *sphere = new Kernel::Sphere_3(vd->point(), length_of_axis/15.0);
-              spheres->add_sphere(sphere, c);
+              spheres->add_sphere(Kernel::Sphere_3(vd->point(), length_of_axis/15.0*length_of_axis/15.0), c);
             }
         }
 
@@ -446,8 +445,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
             if(spheres_ctrl)
             {
               CGAL::Color c(255*r,0,255*b);
-              Kernel::Sphere_3 *sphere = new Kernel::Sphere_3((*hb)->point(), length_of_axis/15.0);
-              spheres_ctrl->add_sphere(sphere, c);
+              spheres_ctrl->add_sphere(Kernel::Sphere_3((*hb)->point(), length_of_axis/15.0*length_of_axis/15.0), c);
             }
         }
     }

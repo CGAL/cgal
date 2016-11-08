@@ -35,8 +35,7 @@ public:
     return (m == Gouraud || m == Wireframe);
   }
   void compute_bbox() const { _bbox = Bbox(); }
-  void add_sphere(CGAL::Sphere_3<Kernel>* sphere, CGAL::Color = CGAL::Color(120,120,120));
-  void remove_sphere(CGAL::Sphere_3<Kernel>* sphere);
+  void add_sphere(const CGAL::Sphere_3<Kernel> &sphere, CGAL::Color = CGAL::Color(120,120,120));
   void clear_spheres();
   void setPrecision(int prec);
 

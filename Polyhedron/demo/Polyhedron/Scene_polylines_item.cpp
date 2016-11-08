@@ -14,7 +14,7 @@ struct Scene_polylines_item_private {
 
     Scene_polylines_item_private(Scene_polylines_item *parent) :
         draw_extremities(false),
-        spheres_drawn_radius(0)
+        spheres_drawn_square_radius(0)
     {
       item = parent;
       invalidate_stats();
@@ -47,7 +47,7 @@ struct Scene_polylines_item_private {
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
     void computeElements() const;
     bool draw_extremities;
-    double spheres_drawn_radius;
+    double spheres_drawn_square_radius;
     Scene_polylines_item *item;
     mutable std::size_t nb_vertices;
     mutable std::size_t nb_edges;
@@ -227,8 +227,7 @@ Scene_polylines_item_private::computeSpheres()
 
           CGAL::Color c(colors[0], colors[1], colors[2]);
 
-          K::Sphere_3 *sphere = new K::Sphere_3(center, spheres_drawn_radius);
-          spheres->add_sphere(sphere, c);
+          spheres->add_sphere(K::Sphere_3(center, spheres_drawn_square_radius), c);
       }
       spheres->setToolTip(
             QString("<p>Legende of endpoints colors: <ul>"
@@ -436,7 +435,7 @@ void Scene_polylines_item::invalidateOpenGLBuffers()
 
 void Scene_polylines_item::change_corner_radii() {
     bool ok = true;
-    double proposed_radius = d->spheres_drawn_radius;
+    double proposed_radius = d->spheres_drawn_square_radius;
     if(proposed_radius == 0) {
         CGAL::Three::Scene_interface::Bbox b = bbox();
         proposed_radius = (std::max)(b.xmax() - b.xmin(),
@@ -462,7 +461,7 @@ void Scene_polylines_item::change_corner_radii() {
 
 void Scene_polylines_item::change_corner_radii(double r) {
     if(r >= 0) {
-        d->spheres_drawn_radius = r;
+        d->spheres_drawn_square_radius = r*r;
         d->draw_extremities = (r > 0);
         if(r>0 && !d->spheres)
         {
