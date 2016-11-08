@@ -279,8 +279,8 @@ walk_to_next_3()
         calc[ij] = true;
     }
 
-    // For the remembering stochastic walk, we start trying with a random facet.
-    int li = rng.template get_bits<2>();
+    // start trying
+    int li = 0;
     CGAL_triangulation_assertion_code( bool incell = true; )
     for( int k = 0; k < 4; ++k, li = _tr.increment_index(li) )
     {
@@ -307,7 +307,7 @@ walk_to_next_3()
 
         // Check if the target is inside the 3-wedge with
         // the source as apex and the facet as an intersection.
-        int lj = rng.template get_bits<2>();
+        int lj = 0;
         int Or = 0;
         for( int l = 0; l < 4; ++l, lj = _tr.increment_index(lj) ) {
             if( li == lj )
@@ -453,8 +453,8 @@ walk_to_next_3_inf( int inf ) {
     vert[inf] = &(_source);
     CGAL_triangulation_assertion( _tr.orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
 
-    // For the remembering stochastic walk, we start trying with a random index:
-    int li = rng.template get_bits<2>();
+    // start trying
+    int li = 0;
 
     // Check if the line enters an adjacent infinite cell.
     // This occurs if the target lies on the other side of
@@ -730,9 +730,8 @@ walk_to_next_2()
             return;
         }
         case Tr::FACET: {
-            // We test its edges in a random order until we find a neighbor to go further
-            int li = rng.get_int(0, 3);
-
+            // We test its until we find a neighbor to go further
+            int li = 0;
             Orientation o[3];
             bool calc[3] = { false, false, false };
 

@@ -40,7 +40,6 @@
 #include <CGAL/tuple.h>
 
 #include <CGAL/internal/Dummy_gt.h>
-#include <CGAL/Random.h>
 
 // If defined, type casting is done statically,
 // reducing type-safety overhead.
@@ -166,9 +165,6 @@ protected:
     // Note that the current cell will be Cell_handle() after incrementing past
     // the first cell containing the target.
     Simplex _cur, _prev;
-
-    // Where possible, facets are checked in a random order.
-    mutable Random rng;
 
 public:
 // \name Constructors
