@@ -28,6 +28,7 @@
 #include <QTreeView>
 #include <QSortFilterProxyModel>
 #include <QMap>
+#include <QSet>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <stdexcept>
@@ -633,11 +634,20 @@ void MainWindow::loadPlugins()
         plugins_directories << dir;
     }
   }
+
+  QSet<QString> loaded;
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
     qDebug("# Looking for plugins in directory \"%s\"...",
            qPrintable(pluginsDir.absolutePath()));
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
-      load_plugin(pluginsDir.absoluteFilePath(fileName), true);
+    {
+      QString abs_name = pluginsDir.absoluteFilePath(fileName);
+      if(loaded.find(abs_name) == loaded.end())
+      {
+        load_plugin(abs_name, true);
+        loaded.insert(abs_name);
+      }
+    }
   }
   updateMenus();
 }
