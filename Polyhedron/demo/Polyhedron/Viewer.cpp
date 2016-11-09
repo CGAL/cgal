@@ -75,6 +75,7 @@ public:
   void showDistance(QPoint);
   qglviewer::Vec APoint;
   qglviewer::Vec BPoint;
+  qglviewer::Vec offset;
   bool is_d_pressed;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
@@ -108,6 +109,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
+  d->offset = qglviewer::Vec(0,0,0);
   textRenderer = new TextRenderer();
   connect( textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -727,7 +729,7 @@ void Viewer::beginSelection(const QPoint &point)
 void Viewer::endSelection(const QPoint&)
 {
     glDisable(GL_SCISSOR_TEST);
-    //redraw thetrue scene for the glReadPixel in postSelection();
+    //redraw the true scene for the glReadPixel in postSelection();
     d->draw_aux(false, this);
 }
 
@@ -1772,5 +1774,12 @@ void Viewer::SetOrthoProjection(bool b)
 
 
 
+}
+
+void Viewer::setOffset(qglviewer::Vec offset){ d->offset = offset; }
+qglviewer::Vec Viewer::offset()const { return d->offset; }
+void Viewer::setSceneBoundingBox(const qglviewer::Vec &min, const qglviewer::Vec &max)
+{
+  QGLViewer::setSceneBoundingBox(min+d->offset, max+d->offset);
 }
  #include "Viewer.moc"

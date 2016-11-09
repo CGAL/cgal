@@ -134,6 +134,8 @@ public:
   bool extension_is_found;
   //!The matrix used for the picking.
   mutable GLfloat pickMatrix_[16];
+  //!Returns the scene's offset
+  virtual qglviewer::Vec offset()const = 0;
   //!Sets the binding for SHIFT+LEFT CLICK to SELECT (initially used in Scene_polyhedron_selection_item.h)
   void setBindingSelect()
   {

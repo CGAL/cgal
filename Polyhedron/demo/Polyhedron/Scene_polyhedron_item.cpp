@@ -715,7 +715,10 @@ Scene_polyhedron_item_priv::compute_normals_and_vertices(const bool colors_only)
             push_back_xyz(nv, normals_gouraud);
 
             //position
-            const Point& p = he->vertex()->point();
+            const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+            const Point& p = Point(he->vertex()->point().x()+offset.x,
+                                   he->vertex()->point().y()+offset.y,
+                                   he->vertex()->point().z()+offset.z);
             push_back_xyz(p, positions_facets);
             positions_facets.push_back(1.0);
          }
