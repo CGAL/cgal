@@ -325,7 +325,7 @@ parameterize(TriangleMesh& mesh,
              halfedge_descriptor bhd,
              VertexUVmap uvmap,
              VertexIndexMap vimap,
-             VertexParameterizedMap vpm)
+             VertexParameterizedMap vpmap)
 {
   Error_code status = Base::OK;
 
@@ -404,7 +404,7 @@ parameterize(TriangleMesh& mesh,
     if(main_border.find(v) == main_border.end()){
       int index = get(vimap,v);
       put(uvmap,v,Point_2(Xu[index],Xv[index]));
-      put(vpm,v,true);
+      put(vpmap,v,true);
     }
   }
 
