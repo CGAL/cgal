@@ -74,7 +74,6 @@ public:
     ERROR_NON_CONVEX_BORDER,        ///< This parameterization method requires a convex border
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Cannot solve linear system
     ERROR_NO_1_TO_1_MAPPING,        ///< Parameterization failed: no one-to-one mapping
-    ERROR_OUT_OF_MEMORY,            ///< Not enough memory
     ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
   };
 
@@ -122,7 +121,6 @@ public:
       "This parameterization method requires a convex border",
       "Cannot solve linear system",
       "Parameterization failed: no one-to-one mapping",
-      "Not enough memory",
       "A method received an unexpected parameter"
     };
 
