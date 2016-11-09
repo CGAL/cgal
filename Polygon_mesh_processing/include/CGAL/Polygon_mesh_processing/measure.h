@@ -293,7 +293,7 @@ namespace Polygon_mesh_processing {
   *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
-  *@pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
+  * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
   *
   * @return the area of `f`.
   * The return type `FT` is a number type. It is

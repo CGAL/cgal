@@ -172,7 +172,7 @@ private:
                        const Vector& Xv,
                        const Vertex_set& vertices,
                        VertexUVMap uvmap,
-                       const VertexIndexMap vimap)
+                       const VertexIndexMap vimap) const
   {
     BOOST_FOREACH(vertex_descriptor vd, vertices){
       int index = get(vimap, vd);

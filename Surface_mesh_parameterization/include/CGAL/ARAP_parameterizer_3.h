@@ -266,7 +266,7 @@ private:
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap)
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices){
+    BOOST_FOREACH(vertex_descriptor vd, vertices) {
       int index = get(vimap, vd);
       NT u = Xu(index);
       NT v = Xv(index);
@@ -282,9 +282,9 @@ private:
                              Vertex_set& vertices,
                              Faces_vector& faces) const
   {
-    CGAL::internal::Parameterization::Containers_filler<TriangleMesh>
+    internal::Parameterization::Containers_filler<TriangleMesh>
                                                      fc(mesh, vertices, &faces);
-    CGAL::Polygon_mesh_processing::connected_component(
+    Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
@@ -301,14 +301,14 @@ private:
 
     unsigned int number_of_borders =
                          CGAL::Polygon_mesh_processing::number_of_borders(mesh);
-    if(number_of_borders == 0){
+    if(number_of_borders == 0) {
       status = Base::ERROR_BORDER_TOO_SHORT;
       return status;
     }
 
     // According to the paper, MVC is better for single border and LSCM is better
     // when there are multiple borders
-    if(number_of_borders == 1){
+    if(number_of_borders == 1) {
       typedef CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh> MVC_parameterizer;
       status = CGAL::parameterize(mesh, MVC_parameterizer(), bhd, uvmap);
     } else {
@@ -331,7 +331,7 @@ private:
     Error_code status = Base::OK;
     CGAL_precondition(!vertices.empty());
 
-    if(m_lambda != 0.){
+    if(m_lambda != 0.) {
       // Fix a random vertex, the value in uvmap is already set
       vertex_descriptor vd = *(vertices.begin());
       put(vpmap, vd, true);
@@ -380,7 +380,7 @@ private:
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
   {
-    BOOST_FOREACH(face_descriptor fd, faces){
+    BOOST_FOREACH(face_descriptor fd, faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh);
@@ -390,7 +390,7 @@ private:
       vertex_descriptor vk = target(hd, mesh);
       hd = next(hd, mesh);
 
-      if(hd != hdb){ // make sure that it is a triangular face
+      if(hd != hdb) { // make sure that it is a triangular face
         return Base::ERROR_NON_TRIANGULAR_MESH;
       }
 
@@ -442,7 +442,7 @@ private:
     int vertexIndex = 0;
 
     halfedge_around_target_circulator hc(vertex, mesh), end = hc;
-    CGAL_For_all(hc, end){
+    CGAL_For_all(hc, end) {
       halfedge_descriptor hd = *hc;
       CGAL_assertion(target(hd, mesh) == vertex);
 
@@ -483,8 +483,8 @@ private:
 
     // compute A
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices){
-      if(!get(vpmap, vd)){ // not yet parameterized
+    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the line i of the matrix A
         status = fill_linear_system_matrix(A, mesh, vd, ctmap, vimap);
         if(status != Base::OK)
@@ -613,7 +613,7 @@ private:
 
     CGAL_precondition(is_square_free_2(pol1));
     CGAL_precondition(is_square_free_2(pol2));
-    if(!is_coprime_2(pol1, pol2)){
+    if(!is_coprime_2(pol1, pol2)) {
       std::cout << "not coprime" << std::endl;
       CGAL_assertion(false); // @todo handle that case
 
@@ -658,7 +658,7 @@ private:
       const NT a = roots[i];
       const NT b = C3 * C2_denom * a;
       NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, uvmap, a, b);
-      if(Ef < E_min){
+      if(Ef < E_min) {
         E_min = Ef;
         index_arg = i;
       }
@@ -684,7 +684,7 @@ private:
     {
       NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap, uvmap,
                                           a_roots[i], b_roots[i]);
-      if(Ef < E_min){
+      if(Ef < E_min) {
         E_min = Ef;
         index_arg = i;
       }
@@ -704,12 +704,12 @@ private:
   {
     Error_code status = Base::OK;
 
-    BOOST_FOREACH(face_descriptor fd, faces){
+    BOOST_FOREACH(face_descriptor fd, faces) {
       // Compute the coefficients C1, C2, C3
       NT C1 = 0., C2 = 0., C3 = 0.;
 
       halfedge_around_face_circulator hc(halfedge(fd, mesh), mesh), end(hc);
-      CGAL_For_all(hc, end){
+      CGAL_For_all(hc, end) {
         halfedge_descriptor hd = *hc;
         NT c = get(ctmap, hd);
 
@@ -753,13 +753,13 @@ private:
       // Compute a and b
       NT a = 0., b = 0.;
 
-      if(m_lambda == 0.){ // ASAP
+      if(m_lambda == 0.) { // ASAP
         CGAL_precondition(C1 != 0.);
         a = C2 / C1;
         b = C3 / C1;
       }
       else if( std::abs(C1) < m_lambda_tolerance * m_lambda &&
-               std::abs(C2) < m_lambda_tolerance * m_lambda ){ // ARAP
+               std::abs(C2) < m_lambda_tolerance * m_lambda ) { // ARAP
         // If lambda is large compared to C1 and C2, the cubic equation that
         // determines a and b can be simplified to a simple quadric equation
 
@@ -875,7 +875,7 @@ private:
   {
     int global_index = 0;
 
-    BOOST_FOREACH(face_descriptor fd, faces){
+    BOOST_FOREACH(face_descriptor fd, faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh); // hd is k -- > i
@@ -890,7 +890,7 @@ private:
       put(lpmap, hd, std::make_pair(global_index + 1, global_index + 2));
 
       hd = next(hd, mesh);
-      if(hd != hdb){ // to make sure that it is a triangular face
+      if(hd != hdb) { // to make sure that it is a triangular face
         return Base::ERROR_NON_TRIANGULAR_MESH;
       }
 
@@ -997,7 +997,7 @@ private:
     int vertexIndex = 0;
 
     halfedge_around_target_circulator hc(vertex, mesh), end = hc;
-    CGAL_For_all(hc, end){
+    CGAL_For_all(hc, end) {
       halfedge_descriptor hd = *hc;
       CGAL_assertion(target(hd, mesh) == vertex);
 
@@ -1040,8 +1040,8 @@ private:
     Error_code status = Base::OK;
 
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices){
-      if(!get(vpmap, vd)){ // not yet parameterized
+    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the lines i of the vectors Bu and Bv
         status = fill_linear_system_rhs(mesh, vd, ctmap, lp, lpmap,
                                                   ltmap, vimap, Bu, Bv);
@@ -1108,8 +1108,8 @@ private:
     CGAL_postcondition_code
     (
       // make sure that the constrained vertices have not been moved
-      BOOST_FOREACH(vertex_descriptor vd, vertices){
-        if(get(vpmap, vd)){
+      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+        if(get(vpmap, vd)) {
           int index = get(vimap, vd);
           CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
           CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
@@ -1135,7 +1135,7 @@ private:
     NT Ef = 0.;
 
     halfedge_around_face_circulator hc(halfedge(fd, mesh), mesh), end(hc);
-    CGAL_For_all(hc, end){
+    CGAL_For_all(hc, end) {
       halfedge_descriptor hd = *hc;
       NT cot = get(ctmap, hd);
       NT nabla_x = 0., nabla_y = 0.;
@@ -1196,7 +1196,7 @@ private:
   {
     NT E = 0.;
 
-    BOOST_FOREACH(face_descriptor fd, faces){
+    BOOST_FOREACH(face_descriptor fd, faces) {
       NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap,
                                           ltmap, uvmap);
       E += Ef;
@@ -1235,7 +1235,7 @@ private:
                        const Faces_vector& faces) const
   {
 
-    BOOST_FOREACH(face_descriptor fd, faces){
+    BOOST_FOREACH(face_descriptor fd, faces) {
       // compute the jacobian
 
       // compute the singular values
@@ -1350,7 +1350,7 @@ public:
       if(m_tolerance > 0.0 && ite <= m_iterations) // if tolerance <= 0, don't compute energy
       {  // also no need compute energy if this iteration is the last iteration
         double energy_diff = std::abs((energy_last - energy_this) / energy_this);
-        if(energy_diff < m_tolerance){
+        if(energy_diff < m_tolerance) {
           std::cout << "Minimization process ended after: "
                     << ite + 1 << " iterations. "
                     << "Energy diff: " << energy_diff << std::endl;
@@ -1361,7 +1361,7 @@ public:
 
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
 
-    if(!internal::Parameterization::is_one_to_one_mapping(mesh, uvmap)){
+    if(!is_one_to_one_mapping(mesh, uvmap)) {
      // Use post processing to handle flipped elements
       std::cout << "Parameterization is not valid; calling post processor" << std::endl;
       status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);

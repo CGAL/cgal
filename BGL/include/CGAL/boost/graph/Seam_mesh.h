@@ -118,10 +118,10 @@ class Seam_mesh
   typedef typename boost::graph_traits<TM>::edge_descriptor       TM_edge_descriptor;
   typedef typename boost::graph_traits<TM>::vertex_descriptor     TM_vertex_descriptor;
 
-  typedef CGAL::Unique_hash_map<TM_edge_descriptor, bool>          Seam_edge_uhm;
-  typedef CGAL::Unique_hash_map<TM_vertex_descriptor, bool>        Seam_vertex_uhm;
-  typedef boost::associative_property_map<Seam_edge_uhm>           Seam_edge_pmap;
-  typedef boost::associative_property_map<Seam_vertex_uhm>         Seam_vertex_pmap;
+  typedef CGAL::Unique_hash_map<TM_edge_descriptor, bool>         Seam_edge_uhm;
+  typedef CGAL::Unique_hash_map<TM_vertex_descriptor, bool>       Seam_vertex_uhm;
+  typedef boost::associative_property_map<Seam_edge_uhm>          Seam_edge_pmap;
+  typedef boost::associative_property_map<Seam_vertex_uhm>        Seam_vertex_pmap;
 
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
@@ -144,7 +144,8 @@ private:
   mutable vertices_size_type number_of_vertices;
 
 public:
-  const TM& mesh()const
+  /// Return the underlying mesh.
+  const TM& mesh() const
   {
     return tm;
   }
@@ -754,12 +755,27 @@ public:
 
   /// @endcond
 
+  /// Return the number of seam edges in the seam mesh.
   edges_size_type number_of_seam_edges() const
   {
     return number_of_seams;
   }
 
-  /// Add seams to the mesh's property maps.
+  /// Set the number of seam edges.
+  void set_seam_edges_number(const edges_size_type sn) const
+  {
+    number_of_seams = sn;
+  }
+
+  /// Add seams to the property maps of the seam mesh.
+  ///
+  /// In input, a seam edge is described by the pair of integers that correspond
+  /// to the indices of the extremeties (vertices) of the edge that one wishes
+  /// to mark as seam edge.
+  ///
+  /// @pre filename should be the name of a CGAL selection file: seam edges
+  /// are given as pairs of integers, on the third line of the file
+  /// @pre A seam edge must be an edge of the graph
   TM_halfedge_descriptor add_seams(const char* filename)
   {
     TM_halfedge_descriptor tmhd;
@@ -828,16 +844,12 @@ public:
     return tmhd;
   }
 
-  void set_seam_number(const edges_size_type sn) const
-  {
-    number_of_seams = sn;
-  }
-
   /// Constructs a seam mesh for a triangle mesh and an edge and vertex property map
+  ///
   /// \param tm the adapted mesh
   /// \param sem the edge property map with value `true` for seam edges
   /// \param svm the vertex property map with value `true` for seam vertices
-
+  ///
   /// @note the vertices must be exactly the vertices on the seam edges. Maybe a bad design.
   Seam_mesh(const TM& tm_, const SEM& sem_, const SVM svm_)
     : tm(tm_),

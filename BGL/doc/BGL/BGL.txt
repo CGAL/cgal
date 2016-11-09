@@ -486,7 +486,7 @@ to the real border, and switch back on the "other side" of the seam.
 in <em>(c)</em> the seam forms a closed polyline. While the first two define a single border, a cycle defines two borders
 and splits the set of faces in two connected components. Something similar happens when the seam touches the same border
 more than once. A seam can also connect different borders what changes the genus of the mesh.
-Finally, a seam may have more than one connected components.
+Finally, a seam may have more than one connected component.
 
 \cgalFigureBegin{fig_Seam_mesh_2, Seam_mesh_2.png}
 Walking around a seam <em>(a)</em> with no seam vertex on the real border, 
@@ -495,7 +495,7 @@ Walking around a seam <em>(a)</em> with no seam vertex on the real border,
 
 Seam meshes are used in the Chapter \ref PkgSurfaceParameterizationSummary.
 
-subsection BGLExamples Examples
+\subsection BGLExamples Examples
 
 \subsubsection BGLExampleIncidentVertices Example: Finding Incident Vertices in a HalfedgeGraph
 

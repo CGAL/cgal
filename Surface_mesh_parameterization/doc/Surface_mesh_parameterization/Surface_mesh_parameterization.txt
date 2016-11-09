@@ -157,8 +157,8 @@ Left: Tutte barycentric mapping parameterization (the red line depicts the cut g
 
 `Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
 
-Discrete conformal map parameterization has been introduced by Eck et
-al. to the graphics community \cgalCite{cgal:eddhls-maam-95}. It attempts to
+Discrete conformal map parameterization has been introduced to the graphics community
+by Eck et al. \cgalCite{cgal:eddhls-maam-95}. It attempts to
 lower angle deformation by minimizing a discrete version of the
 Dirichlet energy as derived by Pinkall and
 Polthier \cgalCite{cgal:pp-cdmsc-93}. A one-to-one mapping is guaranteed

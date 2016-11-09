@@ -155,7 +155,7 @@ protected:
     Point_3 position_v_l = get(ppmap, *next_vertex_v_l);
     double cotg_alpha_ij = cotangent(position_v_j, position_v_l, position_v_i);
 
-    double weight = cotg_beta_ij+cotg_alpha_ij;
+    double weight = cotg_beta_ij + cotg_alpha_ij;
     return weight;
   }
 };

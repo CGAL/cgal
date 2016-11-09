@@ -108,8 +108,8 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   boost::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
-  CGAL::internal::Parameterization::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
-  CGAL::Polygon_mesh_processing::connected_component(
+  internal::Parameterization::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
+  Polygon_mesh_processing::connected_component(
                                     face(opposite(bhd, mesh), mesh),
                                     mesh,
                                     boost::make_function_output_iterator(fc));

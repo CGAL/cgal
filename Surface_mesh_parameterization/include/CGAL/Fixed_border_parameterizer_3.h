@@ -332,8 +332,8 @@ parameterize(TriangleMesh& mesh,
   typedef boost::unordered_set<vertex_descriptor> Vertex_set;
   Vertex_set vertices;
 
-  CGAL::internal::Parameterization::Containers_filler<TriangleMesh> fc(mesh, vertices);
-  CGAL::Polygon_mesh_processing::connected_component(
+  internal::Parameterization::Containers_filler<TriangleMesh> fc(mesh, vertices);
+  Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));

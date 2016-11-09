@@ -181,9 +181,9 @@ public:
     boost::unordered_set<vertex_descriptor> ccvertices;
     std::vector<face_descriptor> ccfaces;
 
-    CGAL::internal::Parameterization::Containers_filler<TriangleMesh>
+    internal::Parameterization::Containers_filler<TriangleMesh>
                                                   fc(mesh, ccvertices, &ccfaces);
-    CGAL::Polygon_mesh_processing::connected_component(
+    Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
                                       boost::make_function_output_iterator(fc));
