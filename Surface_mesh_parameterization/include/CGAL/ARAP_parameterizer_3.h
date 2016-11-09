@@ -1245,6 +1245,20 @@ private:
 
 // Public operations
 public:
+  /// Check if the 3D -> 2D mapping is one-to-one.
+  template <typename VertexUVMap>
+  bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                             const VertexUVMap uvmap) const
+  {
+    /// Theorem: A one-to-one mapping is guaranteed if all w_ij coefficients
+    ///          are > 0 (for j vertex neighbor of i) and if the surface
+    ///          border is mapped onto a 2D convex polygon.
+    /// Here, all w_ij coefficients = 1 (for j vertex neighbor of i), thus a
+    /// valid embedding is guaranteed if the surface border is mapped
+    /// onto a 2D convex polygon.
+    return internal::Parameterization::is_one_to_one_mapping(mesh, uvmap);
+  }
+
   /// Compute a mapping from a triangular 3D surface mesh to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.

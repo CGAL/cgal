@@ -24,6 +24,7 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/internal/Surface_mesh_parameterization/validity.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
 #include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/Eigen_solver_traits.h>
@@ -117,6 +118,21 @@ public:
   { }
 
   // Default copy constructor and operator =() are fine
+
+  /// Check if the 3D -> 2D mapping is one-to-one.
+  template <typename VertexUVMap>
+  bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                             const VertexUVMap uvmap) const
+  {
+    /// Theorem: A one-to-one mapping is guaranteed if all w_ij coefficients
+    ///          are > 0 (for j vertex neighbor of i) and if the surface
+    ///          border is mapped onto a 2D convex polygon.
+    /// Here, all w_ij coefficients = 1 (for j vertex neighbor of i), thus a
+    /// valid embedding is guaranteed if the surface border is mapped
+    /// onto a 2D convex polygon.
+    return (Base::get_border_parameterizer().is_border_convex() ||
+            internal::Parameterization::is_one_to_one_mapping(mesh, uvmap));
+  }
 
 // Protected operations
 protected:

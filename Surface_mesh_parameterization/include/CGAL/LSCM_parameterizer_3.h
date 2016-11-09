@@ -24,6 +24,7 @@
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+#include <CGAL/internal/Surface_mesh_parameterization/validity.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
@@ -146,6 +147,14 @@ public:
   { }
 
   // Default copy constructor and operator =() are fine
+
+  /// Check if the 3D -> 2D mapping is one-to-one.
+  template <typename VertexUVMap>
+  bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                             const VertexUVMap uvmap) const
+  {
+    return internal::Parameterization::is_one_to_one_mapping(mesh, uvmap);
+  }
 
   /// Compute a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
