@@ -257,6 +257,8 @@ MainWindow::MainWindow(QWidget* parent)
           viewer, SLOT(setTwoSides(bool)));
   connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
+  connect(ui->actionSwitchProjection, SIGNAL(toggled(bool)),
+          viewer, SLOT(SetOrthoProjection(bool)));
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
