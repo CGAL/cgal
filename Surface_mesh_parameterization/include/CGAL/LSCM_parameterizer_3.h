@@ -251,7 +251,7 @@ private:
                                           const TriangleMesh& mesh,
                                           UVmap uvmap,
                                           VertexIndexMap vimap,
-                                          VertexParameterizedMap vpmap)
+                                          VertexParameterizedMap vpmap) const
   {
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
       // Get vertex index in sparse linear system
@@ -278,7 +278,7 @@ private:
   /// Computes the coordinates of the vertices of a triangle
   /// in a local 2D orthonormal basis of the triangle's plane.
   void project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,  // in
-                        Point_2& z0, Point_2& z1, Point_2& z2);                   // out
+                        Point_2& z0, Point_2& z1, Point_2& z2) const;             // out
 
   /// Create two lines in the linear system per triangle (one for u, one for v).
   ///
@@ -287,7 +287,7 @@ private:
   Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                       const TriangleMesh& mesh,
                                       face_descriptor facet,
-                                      VertexIndexMap vimap);
+                                      VertexIndexMap vimap) const;
 
 // Private accessors
 private:
@@ -314,7 +314,7 @@ inline
 void
 LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,   // in
-                 Point_2& z0, Point_2& z1, Point_2& z2)                     // out
+                 Point_2& z0, Point_2& z1, Point_2& z2) const               // out
 {
   Vector_3 X = p1 - p0;
   NT X_norm = std::sqrt(X * X);
@@ -359,7 +359,7 @@ LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 setup_triangle_relations(LeastSquaresSolver& solver,
                          const TriangleMesh& mesh,
                          face_descriptor facet,
-                         VertexIndexMap vimap)
+                         VertexIndexMap vimap) const
 {
   typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
   PPmap ppmap = get(vertex_point, mesh);

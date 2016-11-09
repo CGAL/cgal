@@ -138,7 +138,7 @@ protected:
   /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
-                          vertex_around_target_circulator neighbor_vertex_v_j)
+                          vertex_around_target_circulator neighbor_vertex_v_j) const
   {
     typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
 

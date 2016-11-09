@@ -123,7 +123,7 @@ protected:
   /// Compute w_ij = (i,j), coefficient of matrix A for j neighbor vertex of i.
   virtual NT compute_w_ij(const TriangleMesh& /* mesh */,
       vertex_descriptor /* main_vertex_v_i */,
-      vertex_around_target_circulator /* neighbor_vertex_v_j */ )
+      vertex_around_target_circulator /* neighbor_vertex_v_j */ ) const
   {
     /// In the Tutte Barycentric Mapping algorithm, we have w_ij = 1,
     /// for j neighbor vertex of i.

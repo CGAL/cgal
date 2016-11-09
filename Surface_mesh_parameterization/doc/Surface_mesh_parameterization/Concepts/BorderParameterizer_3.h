@@ -52,7 +52,7 @@ Error_code parameterize_border(const TriangleMesh& mesh);
 Indicate if the shape is convex.
 
 */
-bool is_border_convex();
+bool is_border_convex() const;
 
 /// @}
 

@@ -201,7 +201,7 @@ protected:
                                           const TriangleMesh& mesh,
                                           halfedge_descriptor bhd,
                                           VertexUVmap uvmap,
-                                          VertexIndexMap vimap)
+                                          VertexIndexMap vimap) const
   {
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
       // Get vertex index in sparse linear system
@@ -224,7 +224,7 @@ protected:
   /// \param neighbor_vertex_v_j the vertex of `mesh` with index `j`
   virtual NT compute_w_ij(const TriangleMesh& mesh,
                           vertex_descriptor main_vertex_v_i,
-                          vertex_around_target_circulator neighbor_vertex_v_j)
+                          vertex_around_target_circulator neighbor_vertex_v_j) const
   = 0;
 
   /// Compute the line i of matrix A for i inner vertex:
@@ -242,7 +242,7 @@ protected:
                                           Vector&,
                                           const TriangleMesh& mesh,
                                           vertex_descriptor vertex,
-                                          VertexIndexMap vimap)
+                                          VertexIndexMap vimap) const
   {
     int i = get(vimap,vertex);
 

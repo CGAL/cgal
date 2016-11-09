@@ -83,12 +83,13 @@ private:
 protected:
   virtual double compute_edge_length(const TriangleMesh& mesh,
                                      vertex_descriptor source,
-                                     vertex_descriptor target) = 0;
+                                     vertex_descriptor target) const = 0;
 
 // Private operations
 private:
   /// Compute the total length of the border
-  double compute_border_length(const TriangleMesh& mesh, halfedge_descriptor bhd)
+  double compute_border_length(const TriangleMesh& mesh,
+                               halfedge_descriptor bhd) const
   {
     double len = 0.0;
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
@@ -140,7 +141,7 @@ public:
   }
 
   /// Indicate if border's shape is convex.
-  bool is_border_convex() { return true; }
+  bool is_border_convex() const { return true; }
 };
 
 //
@@ -180,7 +181,7 @@ protected:
   /// Compute the length of an edge.
   virtual double compute_edge_length(const TriangleMesh& /* mesh */,
                                      vertex_descriptor /* source */,
-                                     vertex_descriptor /* target */)
+                                     vertex_descriptor /* target */) const
   {
     /// Uniform border parameterization: points are equally spaced.
     return 1.;
@@ -230,7 +231,7 @@ protected:
   /// Compute the length of an edge.
   virtual double compute_edge_length(const TriangleMesh& mesh,
                                      vertex_descriptor source,
-                                     vertex_descriptor target)
+                                     vertex_descriptor target) const
   {
     VPM ppmap = get(vertex_point, mesh);
 

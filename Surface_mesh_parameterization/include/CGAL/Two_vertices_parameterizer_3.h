@@ -258,7 +258,7 @@ public:
 
   /// Indicate if the border's shape is convex.
   /// Meaningless for free border parameterization algorithms.
-  bool is_border_convex() { return false; }
+  bool is_border_convex() const { return false; }
 };
 
 } // namespace CGAL
