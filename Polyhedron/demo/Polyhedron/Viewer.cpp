@@ -571,7 +571,7 @@ void Viewer::postSelection(const QPoint& pixel)
 {
   Q_EMIT selected(this->selectedName());
   bool found = false;
-  qglviewer::Vec point = camera()->pointUnderPixel(pixel, found);
+  qglviewer::Vec point = camera()->pointUnderPixel(pixel, found) - d->offset;
   if(found) {
     Q_EMIT selectedPoint(point.x,
                        point.y,
@@ -1511,9 +1511,9 @@ void Viewer_impl::showDistance(QPoint pixel)
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
         QFont font;
         font.setBold(true);
-        TextItem *ACoord = new TextItem(APoint.x, APoint.y, APoint.z,QString("A(%1,%2,%3)").arg(APoint.x).arg(APoint.y).arg(APoint.z), true, font, Qt::red, true);
+        TextItem *ACoord = new TextItem(APoint.x, APoint.y, APoint.z,QString("A(%1,%2,%3)").arg(APoint.x-offset.x).arg(APoint.y-offset.y).arg(APoint.z-offset.z), true, font, Qt::red, true);
         distance_text.append(ACoord);
-        TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x).arg(BPoint.y).arg(BPoint.z), true, font, Qt::red, true);
+        TextItem *BCoord = new TextItem(BPoint.x, BPoint.y, BPoint.z,QString("B(%1,%2,%3)").arg(BPoint.x-offset.x).arg(BPoint.y-offset.y).arg(BPoint.z-offset.z), true, font, Qt::red, true);
         distance_text.append(BCoord);
         qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(centerPoint.x, centerPoint.y, centerPoint.z,QString(" distance: %1").arg(dist), true, font, Qt::red, true);
@@ -1522,12 +1522,12 @@ void Viewer_impl::showDistance(QPoint pixel)
         Q_FOREACH(TextItem* ti, distance_text)
           viewer->textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
-                  .arg(APoint.x)
-                  .arg(APoint.y)
-                  .arg(APoint.z)
-                  .arg(BPoint.x)
-                  .arg(BPoint.y)
-                  .arg(BPoint.z)
+                  .arg(APoint.x-offset.x)
+                  .arg(APoint.y-offset.y)
+                  .arg(APoint.z-offset.z)
+                  .arg(BPoint.x-offset.x)
+                  .arg(BPoint.y-offset.y)
+                  .arg(BPoint.z-offset.z)
                   .arg(dist)));
     }
 
