@@ -45,7 +45,7 @@ Assign a 2D position (i.e.\ a `(u, v)` pair) on the shape  to (some of) the vert
 border of the mesh. Mark them as <I>parameterized</I>.
 
 */
-Error_code parameterize_border(const TriangleMesh& mesh);
+Error_code parameterize(const TriangleMesh& mesh);
 
 /*!
 

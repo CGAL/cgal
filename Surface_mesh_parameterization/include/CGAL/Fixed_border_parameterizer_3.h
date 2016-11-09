@@ -341,9 +341,8 @@ parameterize(TriangleMesh& mesh,
   // Count vertices
   int nbVertices = static_cast<int>(vertices.size());
 
-  // Compute (u,v) for border vertices
-  // and mark them as "parameterized"
-  status = get_border_parameterizer().parameterize_border(mesh, bhd, uvmap, vpm);
+  // Compute (u,v) for border vertices and mark them as "parameterized"
+  status = get_border_parameterizer().parameterize(mesh, bhd, uvmap, vpmap);
 
   if (status != Base::OK)
     return status;

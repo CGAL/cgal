@@ -106,10 +106,10 @@ public:
   /// on the circle. Mark them as <i>parameterized</i>.
   template <typename VertexUVmap, typename VertexParameterizedMap>
   Error_code
-  parameterize_border(const TriangleMesh& mesh,
-                      halfedge_descriptor bhd,
-                      VertexUVmap uvmap,
-                      VertexParameterizedMap vpmap)
+  parameterize(const TriangleMesh& mesh,
+               halfedge_descriptor bhd,
+               VertexUVmap uvmap,
+               VertexParameterizedMap vpmap)
   {
     // Nothing to do if no border
     if (bhd == halfedge_descriptor())

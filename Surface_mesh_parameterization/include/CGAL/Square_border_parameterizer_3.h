@@ -114,7 +114,7 @@ private:
     return len;
   }
 
-  /// Utility method for parameterize_border().
+  /// Utility method for parameterize().
   /// Compute the mesh iterator whose offset is closest to 'value'.
   halfedge_around_face_iterator closest_iterator(const TriangleMesh& mesh,
                                                  halfedge_descriptor bhd,
@@ -299,11 +299,11 @@ public:
   /// Assign to the vertices of the border of the mesh a 2D position
   /// (i.e.\ a (u,v) pair) on the border's shape. Mark them as <i>parameterized</i>.
   template<typename VertexUVMap, typename VertexParameterizedMap>
-  Error_code parameterize_border(const TriangleMesh& mesh,
-                                 halfedge_descriptor bhd,
-                                 VertexUVMap uvmap,
-                                 VertexParameterizedMap vpmap,
-                                 const char* filename = "../data/square_corners.selection.txt")
+  Error_code parameterize(const TriangleMesh& mesh,
+                          halfedge_descriptor bhd,
+                          VertexUVMap uvmap,
+                          VertexParameterizedMap vpmap,
+                          const char* filename = "../data/square_corners.selection.txt")
   {
   #ifdef DEBUG_TRACE
     std::cerr << "Map to a square" << std::endl;

@@ -202,7 +202,7 @@ public:
 
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
-    Error_code status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpmap);
+    Error_code status = get_border_parameterizer().parameterize(mesh, bhd, uvmap, vpmap);
 
     if(status != Base::OK)
       return status;

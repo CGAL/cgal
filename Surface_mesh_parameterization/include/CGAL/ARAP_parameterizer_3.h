@@ -347,9 +347,7 @@ private:
 
       Useless_map useless_map;
       Useless_pmap useless_uvpmap(useless_map);
-      status = get_border_parameterizer().parameterize_border(mesh, bhd,
-                                                              useless_uvpmap,
-                                                              vpmap);
+      status = get_border_parameterizer().parameterize(mesh, bhd, useless_uvpmap, vpmap);
     }
 
     return status;

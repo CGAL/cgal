@@ -100,10 +100,10 @@ public:
   ///
   template <typename VertexUVmap, typename VertexParameterizedMap>
   typename Parameterizer_traits_3<TriangleMesh>::Error_code
-  parameterize_border(const TriangleMesh& mesh,
-                      halfedge_descriptor,
-                      VertexUVmap uvmap,
-                      VertexParameterizedMap vpmap)
+  parameterize(const TriangleMesh& mesh,
+               halfedge_descriptor,
+               VertexUVmap uvmap,
+               VertexParameterizedMap vpmap)
   {
     if(vertices_given){
       put(uvmap, vxmin, Point_2(0, 0.5));
