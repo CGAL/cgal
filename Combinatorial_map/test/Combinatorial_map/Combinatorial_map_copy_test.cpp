@@ -72,7 +72,7 @@ struct MonInfo
   MonInfo(long long int i=0) : mnb(i==0?rand():i),
                                ptr(reinterpret_cast<char*>(this))
   {}
-  int mnb;
+  long long int mnb;
   std::string s;
   char *ptr;
 
@@ -163,8 +163,12 @@ struct CreateAttributes
         itend=map.darts().end(); it!=itend; ++it)
     {
       if ( map.template attribute<i>(it)==map.null_handle )
+      {
         map.template set_attribute<i>
-            (it, map.template create_attribute<i>(++nb));
+          (it, map.template create_attribute<i>
+           (typename Map::template Attribute_type<i>::type::Info(nb)));
+        ++nb;
+      }
     }
   }
 };

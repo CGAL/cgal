@@ -94,7 +94,7 @@ struct MonInfo
   MonInfo(long long int i=0) : mnb(i==0?rand():i),
                                ptr(reinterpret_cast<char*>(this))
   {}
-  int mnb;
+  long long int mnb;
   std::string s;
   char *ptr;
 
@@ -278,7 +278,8 @@ struct SetInfoIfNonVoid
                   typename Map::template Attribute_handle<i>::type attr,
                   long long int nb)
   {
-    map.template info_of_attribute<i>(attr)=nb;
+    map.template info_of_attribute<i>(attr)=
+      typename Map::template Attribute_type<i>::type::Info(nb);
   }
 };
 template<typename Map, int i>
