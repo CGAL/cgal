@@ -149,6 +149,185 @@ bool is_degenerated(
 }
 
 ///\cond SKIP_IN_MANUAL
+
+// this function remove a border edge even if it does not satisfy the link condition.
+// The only limitation is that the length connected component of the boundary this edge
+// is strictly greater than 3
+template <class TriangleMesh>
+typename boost::graph_traits<TriangleMesh>::vertex_descriptor
+remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
+                     TriangleMesh& tm)
+{
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::edge_descriptor edge_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+
+  halfedge_descriptor h=halfedge(ed,tm);
+
+  if ( is_border(h,tm) )
+    h=opposite(h,tm);
+  halfedge_descriptor opp_h = opposite(h,tm);
+  CGAL_assertion(is_border(opp_h,tm));
+  CGAL_assertion(!is_border(h,tm));
+
+  CGAL_assertion(next(next(opp_h, tm), tm) !=opp_h); // not working for a hole made of 2 edges
+  CGAL_assertion(next(next(next(opp_h, tm), tm), tm) !=opp_h); // not working for a hole make of 3 edges
+
+  if (CGAL::Euler::does_satisfy_link_condition(edge(h,tm),tm))
+    return CGAL::Euler::collapse_edge(ed, tm);
+
+  // collect edges that have one vertex in the link of
+  // the vertices of h and one of the vertex of h as other vertex
+  std::set<edge_descriptor> common_incident_edges;
+  BOOST_FOREACH(halfedge_descriptor hos, halfedges_around_source(h, tm))
+    BOOST_FOREACH(halfedge_descriptor hot, halfedges_around_target(h, tm))
+    {
+      if( target(hos, tm) == source(hot, tm) )
+      {
+        common_incident_edges.insert( edge(hot, tm) );
+        common_incident_edges.insert( edge(hos, tm) );
+      }
+    }
+
+  // in the following loop, we visit define a connected component of
+  // faces bounded by edges in common_incident_edges and h. We look
+  // for the maximal one. This set of faces is the one that will
+  // disappear while collapsing ed
+  std::set<face_descriptor> marked_faces;
+
+  std::vector<halfedge_descriptor> queue;
+  queue.push_back( opposite(next(h,tm), tm) );
+  queue.push_back( opposite(prev(h,tm), tm) );
+  marked_faces.insert( face(h, tm) );
+
+  do{
+    std::vector<halfedge_descriptor> boundary;
+    while(!queue.empty())
+    {
+      halfedge_descriptor back=queue.back();
+      queue.pop_back();
+      face_descriptor fback=face(back,tm);
+      if (common_incident_edges.count(edge(back,tm)))
+      {
+        boundary.push_back(back);
+        continue;
+      }
+      if ( !marked_faces.insert(fback).second )
+        continue;
+      queue.push_back( opposite(next(back,tm), tm) );
+      queue.push_back( opposite(prev(back,tm), tm) );
+    }
+    CGAL_assertion( boundary.size() == 2 );
+    common_incident_edges.erase( edge(boundary[0], tm) );
+    common_incident_edges.erase( edge(boundary[1], tm) );
+
+    queue.push_back(boundary[0]);
+    queue.push_back(boundary[1]);
+  }
+  while(!common_incident_edges.empty());
+
+  // hk1 and hk2 are bounding the region that will be removed.
+  // The edge of hk2 will be removed and hk2 will be replaced
+  // by the opposite edge of hk1
+  halfedge_descriptor hk1=queue.front();
+  halfedge_descriptor hk2=queue.back();
+  if ( target(hk1,tm)!=source(hk2,tm) )
+    std::swap(hk1, hk2);
+
+  CGAL_assertion( target(hk1,tm)==source(hk2,tm) );
+  CGAL_assertion( source(hk1,tm)==source(h,tm) );
+  CGAL_assertion( target(hk2,tm)==target(h,tm) );
+
+
+  // collect vertices and edges to remove and do remove faces
+  std::set<edge_descriptor> edges_to_remove;
+  std::set<vertex_descriptor> vertices_to_remove;
+  BOOST_FOREACH(face_descriptor fd, marked_faces)
+  {
+    halfedge_descriptor hd=halfedge(fd, tm);
+    for(int i=0; i<3; ++i)
+    {
+      edges_to_remove.insert( edge(hd, tm) );
+      vertices_to_remove.insert( target(hd,tm) );
+      hd=next(hd, tm);
+    }
+  }
+
+  vertex_descriptor vkept=source(hk1,tm);
+
+  //back-up next, prev halfedge to be restore pointers after removal
+  halfedge_descriptor hp=prev(opp_h, tm);
+  halfedge_descriptor hn=next(opp_h, tm);
+  halfedge_descriptor hk1_opp_next = next(hk2, tm);
+  halfedge_descriptor hk1_opp_prev = prev(hk2, tm);
+  face_descriptor hk1_opp_face = face(hk2,tm);
+
+  // we will remove the target of hk2, update vertex pointers
+  BOOST_FOREACH(halfedge_descriptor hot,
+                halfedges_around_target(hk2, tm))
+  {
+    set_target(hot, vkept, tm);
+  }
+
+  // update halfedge pointers since hk2 will be removed
+  set_halfedge(vkept, opposite(hk1, tm), tm);
+  set_halfedge(target(hk1,tm), hk1, tm);
+
+  // do not remove hk1 and its vertices
+  vertices_to_remove.erase( vkept );
+  vertices_to_remove.erase( target(hk1, tm) );
+  edges_to_remove.erase( edge(hk1,tm) );
+
+  bool hk2_equals_hp = hk2==hp;
+  CGAL_assertion( is_border(hk2, tm) == hk2_equals_hp );
+
+  /*
+  - case hk2!=hp
+
+         /\      /
+     hk1/  \hk2 /
+       /    \  /
+  ____/______\/____
+  hn   h_opp   hp
+
+  - case hk2==hp
+
+         /\
+     hk1/  \hk2 == hp
+       /    \
+  ____/______\
+  hn   h_opp
+  */
+
+  // remove vertices
+  BOOST_FOREACH(vertex_descriptor vd, vertices_to_remove)
+    remove_vertex(vd, tm);
+  // remove edges
+  BOOST_FOREACH(edge_descriptor ed, edges_to_remove)
+    remove_edge(ed, tm);
+  // remove faces
+  BOOST_FOREACH(face_descriptor fd, marked_faces)
+    remove_face(fd, tm);
+
+  // now update pointers
+  set_face(opposite(hk1, tm), hk1_opp_face, tm);
+  if (!hk2_equals_hp)
+  {
+    set_next(hp, hn, tm);
+    set_next(opposite(hk1, tm), hk1_opp_next, tm);
+    set_next(hk1_opp_prev, opposite(hk1, tm), tm);
+    set_halfedge(hk1_opp_face, opposite(hk1, tm), tm);
+  }
+  else
+  {
+    set_next(hk1_opp_prev, opposite(hk1, tm), tm);
+    set_next(opposite(hk1, tm), hn, tm);
+  }
+  return vkept;
+}
+
 template <class EdgeRange, class TriangleMesh, class NamedParameters>
 std::size_t remove_null_edges(
                        const EdgeRange& edge_range,
