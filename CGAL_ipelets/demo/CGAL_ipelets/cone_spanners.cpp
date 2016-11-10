@@ -124,7 +124,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
     cones(number_of_cones, Direction_2(1,0), directions.begin());
     for(std::vector<Point_2>::iterator it = lst.begin(); it != lst.end(); it++) {
       for(std::vector<Direction_2>::iterator dir = directions.begin(); dir != directions.end(); dir++) {
-        draw_in_ipe(Ray_2(*it, *dir));
+        draw_in_ipe(Segment_2(*it,*it + 100*dir->to_vector()));
       }
       group_selected_objects_();
       get_IpePage()->deselectAll();
