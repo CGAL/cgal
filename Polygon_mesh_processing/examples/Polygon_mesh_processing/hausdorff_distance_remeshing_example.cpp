@@ -28,6 +28,6 @@ int main()
 
   std::cout << "Approximated Hausdorff distance: "
             << CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance
-                  <TAG>(m1, m2, 4000)
+                  <TAG>(tm1, tm2, 4000)
             << std::endl;
 }
