@@ -36,7 +36,7 @@ cpp11::tuple<Intersection_type,
              bool,bool>
 find_intersection(const Point_3& p, const Point_3& q,  //segment
                   const Point_3& a, const Point_3& b, const Point_3& c, //triangle
-                  typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
+                  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd, // halfedge of the triangle face, its target is a
                   const TriangleMesh& tm,
                   bool is_src_coplanar=false,bool is_tgt_coplanar=false)
 {
@@ -52,8 +52,6 @@ find_intersection(const Point_3& p, const Point_3& q,  //segment
     return result_type(EMPTY,GT::null_halfedge(),false,false);
 
   int nb_coplanar=(ab==COPLANAR?1:0) + (bc==COPLANAR?1:0) + (ca==COPLANAR?1:0);
-
-  halfedge_descriptor hd=halfedge(fd,tm);
 
   if ( nb_coplanar==0 )
     return result_type(ON_FACE,hd,is_src_coplanar,is_tgt_coplanar);
@@ -123,11 +121,11 @@ intersection_type(
       return result_type(EMPTY,GT::null_halfedge(),false,false);
     case NEGATIVE:
       // p sees the triangle in counterclockwise order
-      return find_intersection(p,q,a,b,c,f_2,tm2);
+      return find_intersection(p,q,a,b,c,h_2,tm2);
     case COPLANAR:
       // q belongs to the triangle's supporting plane
       // p sees the triangle in counterclockwise order
-    return find_intersection(p,q,a,b,c,f_2,tm2,false,true);
+    return find_intersection(p,q,a,b,c,h_2,tm2,false,true);
 
     default: // should not happen.
       CGAL_assertion(false);
@@ -137,7 +135,7 @@ intersection_type(
     switch ( abcq ) {
     case POSITIVE:
       // q sees the triangle in counterclockwise order
-      return find_intersection(q,p,a,b,c,f_2,tm2);
+      return find_intersection(q,p,a,b,c,h_2,tm2);
     case NEGATIVE:
       // the segment lies in the negative open halfspaces defined by the
       // triangle's supporting plane
@@ -145,7 +143,7 @@ intersection_type(
     case COPLANAR:
       // q belongs to the triangle's supporting plane
       // p sees the triangle in clockwise order
-      return find_intersection(q,p,a,b,c,f_2,tm2,false,true);
+      return find_intersection(q,p,a,b,c,h_2,tm2,false,true);
     default: // should not happen.
       CGAL_assertion(false);
       return result_type(EMPTY,GT::null_halfedge(),false,false);
@@ -154,10 +152,10 @@ intersection_type(
     switch ( abcq ) {
     case POSITIVE:
       // q sees the triangle in counterclockwise order
-      return find_intersection(q,p,a,b,c,f_2,tm2,true);
+      return find_intersection(q,p,a,b,c,h_2,tm2,true);
     case NEGATIVE:
       // q sees the triangle in clockwise order
-      return find_intersection(p,q,a,b,c,f_2,tm2,true);
+      return find_intersection(p,q,a,b,c,h_2,tm2,true);
     case COPLANAR:
       // the segment is coplanar with the triangle's supporting plane
       // we test whether the segment intersects the triangle in the common
