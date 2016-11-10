@@ -73,7 +73,7 @@ void run_boolean_operations(
    std::stringstream fname;
    fname << scenario << "_P_union_Q.off";
    std::ofstream output(fname.str().c_str());
-   output << union_;
+   output << std::setprecision(17) << union_;
    #endif
   }
   else
@@ -86,7 +86,7 @@ void run_boolean_operations(
    std::stringstream fname;
    fname << scenario << "_P_inter_Q.off";
    std::ofstream output(fname.str().c_str());
-   output << inter;
+   output << std::setprecision(17) << inter;
    #endif
   }
   else
@@ -99,7 +99,7 @@ void run_boolean_operations(
    std::stringstream fname;
    fname << scenario << "_P_minus_Q.off";
    std::ofstream output(fname.str().c_str());
-   output << P_minus_Q;
+   output << std::setprecision(17) << P_minus_Q;
    #endif
   }
   else
@@ -112,7 +112,7 @@ void run_boolean_operations(
    std::stringstream fname;
    fname << scenario << "_Q_minus_P.off";
    std::ofstream output(fname.str().c_str());
-   output << Q_minus_P;
+   output << std::setprecision(17) << Q_minus_P;
    #endif
   }
   else
