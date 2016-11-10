@@ -79,13 +79,33 @@ bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_trait
 
 void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_triggered()
 {
+  typedef Scene_surface_mesh_item::SMesh Surface_mesh;
+  typedef boost::graph_traits<Surface_mesh>::face_descriptor Face_descriptor;
+  typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef Surface_mesh::Vertex_index Vertex_index;
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* poly_item =
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  //if the selected item is a polyhedron_item
-  if(poly_item)
+  bool found = false;
+  std::vector<Scene_polyhedron_item*> selected_polys;
+  std::vector<Scene_surface_mesh_item*> selected_sms;
+  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  {
+    Scene_polyhedron_item* poly_item =
+        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    if(poly_item)
+    {
+      selected_polys.push_back(poly_item);
+    }
+    else
+    {
+      Scene_surface_mesh_item* sm_item =
+          qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+      if(sm_item)
+      {
+        selected_sms.push_back(sm_item);
+      }
+    }
+  }
+  Q_FOREACH(Scene_polyhedron_item* poly_item, selected_polys)
   {
     typedef typename boost::graph_traits<Polyhedron>::face_descriptor Face_descriptor;
     Polyhedron* pMesh = poly_item->polyhedron();
@@ -115,69 +135,57 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       scene->addItem(selection_item);
       scene->itemChanged(poly_item);
       scene->itemChanged(selection_item);
+      found = true;
     }
-    else
-      QMessageBox::information(mw, tr("No self intersection"),
-                               tr("The polyhedron \"%1\" does not self-intersect.").
-                               arg(poly_item->name()));
   }
-  //else if the selected item is a Surface_mesh_item
-  else
+
+  Q_FOREACH(Scene_surface_mesh_item* sm_item, selected_sms)
   {
-    typedef Scene_surface_mesh_item::SMesh Surface_mesh;
-    typedef boost::graph_traits<Surface_mesh>::face_descriptor Face_descriptor;
-    typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
-    typedef Surface_mesh::Vertex_index Vertex_index;
-    Scene_surface_mesh_item* sm_item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
-    if(sm_item)
+    Surface_mesh* sMesh = sm_item->polyhedron();
+    std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;
+    // add intersecting triangles to a new Surface_mesh.
+    if(selfIntersect(sMesh, faces))
     {
-      Surface_mesh* sMesh = sm_item->polyhedron();
-      std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;
-      // add intersecting triangles to a new Surface_mesh.
-      if(selfIntersect(sMesh, faces))
+      //add the faces
+      Surface_mesh* new_mesh = new Surface_mesh();
+      for(std::vector<std::pair<Face_descriptor, Face_descriptor> >::iterator fb = faces.begin();
+          fb != faces.end(); ++fb)
       {
-        //add the faces
-        Surface_mesh* new_mesh = new Surface_mesh();
-        for(std::vector<std::pair<Face_descriptor, Face_descriptor> >::iterator fb = faces.begin();
-            fb != faces.end(); ++fb)
+        std::vector<Vertex_index> face_vertices;
+        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *sMesh), *sMesh))
         {
-          std::vector<Vertex_index> face_vertices;
-          BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->first, *sMesh), *sMesh))
-          {
-            face_vertices.push_back(new_mesh->add_vertex(get(sMesh->points(), target(he_circ, *sMesh))));
-          }
-          new_mesh->add_face(face_vertices);
-          face_vertices.clear();
-          BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *sMesh), *sMesh))
-          {
-            face_vertices.push_back(new_mesh->add_vertex(get(sMesh->points(), target(he_circ, *sMesh))));
-          }
-          new_mesh->add_face(face_vertices);
+          face_vertices.push_back(new_mesh->add_vertex(get(sMesh->points(), target(he_circ, *sMesh))));
         }
-        //add the edges
-        BOOST_FOREACH(Face_descriptor fd, new_mesh->faces())
+        new_mesh->add_face(face_vertices);
+        face_vertices.clear();
+        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fb->second, *sMesh), *sMesh))
         {
-          BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *new_mesh), *new_mesh))
-          {
-            new_mesh->add_edge(source(he_circ, *new_mesh), target(he_circ, *new_mesh));
-          }
+          face_vertices.push_back(new_mesh->add_vertex(get(sMesh->points(), target(he_circ, *sMesh))));
         }
-        Scene_surface_mesh_item* ism_item = new Scene_surface_mesh_item(new_mesh);
-        ism_item->invalidateOpenGLBuffers();
-        ism_item->setName(tr("%1(intersecting triangles)").arg(sm_item->name()));
-        ism_item->setColor(QColor(Qt::gray).darker(200));
-        sm_item->setRenderingMode(Wireframe);
-        scene->addItem(ism_item);
-        scene->itemChanged(sm_item);
-        scene->itemChanged(ism_item);
+        new_mesh->add_face(face_vertices);
       }
-      else
-        QMessageBox::information(mw, tr("No self intersection"),
-                                 tr("The surface_mesh \"%1\" does not self-intersect.").
-                                 arg(sm_item->name()));
+      //add the edges
+      BOOST_FOREACH(Face_descriptor fd, new_mesh->faces())
+      {
+        BOOST_FOREACH(halfedge_descriptor he_circ, halfedges_around_face( halfedge(fd, *new_mesh), *new_mesh))
+        {
+          new_mesh->add_edge(source(he_circ, *new_mesh), target(he_circ, *new_mesh));
+        }
+      }
+      Scene_surface_mesh_item* ism_item = new Scene_surface_mesh_item(new_mesh);
+      ism_item->invalidateOpenGLBuffers();
+      ism_item->setName(tr("%1(intersecting triangles)").arg(sm_item->name()));
+      ism_item->setColor(QColor(Qt::gray).darker(200));
+      sm_item->setRenderingMode(Wireframe);
+      scene->addItem(ism_item);
+      scene->itemChanged(sm_item);
+      scene->itemChanged(ism_item);
+      found = true;
     }
   }
+  if(!found)
+    QMessageBox::information(mw, tr("No self intersection"),
+                             tr("None of the selected surfaces self-intersect."));
   QApplication::restoreOverrideCursor();
 }
 
