@@ -103,7 +103,6 @@ private:
   boost::optional<IntConverter> ic;
   boost::optional<DoubleConverter> fc;
   Viewer_interface* viewer;
-
   void getPixel(const QPoint& e) {
     float data[3];
     int vp[4];
@@ -150,9 +149,12 @@ public Q_SLOTS:
   {
     if(!ready_to_move)
       return;
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     qglviewer::Vec v2 = v * (this->value() / scale);
+    v2+=offset;
     frame->setTranslationWithConstraint(v2);
     scene->itemChanged(id);
+
     Q_EMIT realChange(this->value() / scale);
     ready_to_move = false;
   }
@@ -166,6 +168,10 @@ public Q_SLOTS:
 #endif // QGLViewer < 2.6.0
     qglviewer_real a, b, c;
     frame->getPosition(a, b, c);
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    a-=offset.x;
+    b-=offset.y;
+    c-=offset.z;
     float sum1 = float(a + b + c);
     float sum2 = float(v.x + v.y + v.z);
     sum1 /= sum2;
@@ -444,6 +450,7 @@ public Q_SLOTS:
 
   }
 private:
+  qglviewer::Vec first_offset;
 #ifdef CGAL_USE_VTK
   vtkImageData* vtk_image;
   vtkDICOMImageReader* dicom_reader;
@@ -589,9 +596,9 @@ private:
       CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(seg_img, seg_img->name()))
 
           Volume_plane_intersection* i
-          = new Volume_plane_intersection(img->xdim() * img->vx(),
-                                          img->ydim() * img->vy(),
-                                          img->zdim() * img->vz());
+          = new Volume_plane_intersection(img->xdim() * img->vx()-1,
+                                          img->ydim() * img->vy()-1,
+                                          img->zdim() * img->vz()-1);
       this->intersection_id = scene->addItem(i);
       scene->changeGroup(i, group);
       group->lockChild(i);
@@ -639,7 +646,6 @@ private:
 
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
-
     threads.push_back(new Y_plane_thread<Word>(y_item,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
@@ -647,6 +653,8 @@ private:
     threads.push_back(new Z_plane_thread<Word>(z_item,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
+
+    first_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
   }
   template<typename T>
@@ -675,6 +683,14 @@ private Q_SLOTS:
     msgBox.setText(QString("Planes created : %1/3").arg(nbPlanes));
     if(nbPlanes == 3)
     {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+      if(offset != first_offset)
+      {
+        for(int i=0; i<scene->numberOfEntries(); ++i)
+        {
+          scene->item(i)->invalidateOpenGLBuffers();
+        }
+      }
       msgBox.hide();
       nbPlanes = 0;
       QApplication::restoreOverrideCursor();

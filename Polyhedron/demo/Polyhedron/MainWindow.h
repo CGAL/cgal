@@ -354,6 +354,7 @@ private:
   void updateMenus();
   void load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
+  void recomputeItems();
   QMap<QString, QMenu*> menu_map;
   QString get_item_stats();
   QString strippedName(const QString &fullFileName);

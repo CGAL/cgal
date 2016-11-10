@@ -861,13 +861,20 @@ void MainWindow::updateViewerBBox()
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax);
   qglviewer::Vec offset(0,0,0);
+  bool new_offset = false;
   for(int i=0; i<3; ++i)
   {
-   // if(log2(bbox.min(i)) > 13.0 )
+    if(log2(bbox.min(i)) > 13.0 )
+    {
       offset[i] = -bbox.min(i);
+      new_offset = true;
+    }
   }
-  viewer->setOffset(offset);
-  std::cerr<<offset.x<<", "<<offset.y<<", "<<offset.z<<std::endl;
+  if(new_offset)
+  {
+    viewer->setOffset(offset);
+    recomputeItems();
+  }
   viewer->setSceneBoundingBox(vec_min,
                               vec_max);
   viewer->camera()->showEntireScene();
@@ -1696,8 +1703,8 @@ void MainWindow::viewerShowObject()
   }
   if(index >= 0) {
     const Scene::Bbox bbox = scene->item(index)->bbox();
-    viewerShow((float)bbox.xmin(), (float)bbox.ymin(), (float)bbox.zmin(),
-               (float)bbox.xmax(), (float)bbox.ymax(), (float)bbox.zmax());
+    viewerShow((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z,
+               (float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
   }
 }
 
@@ -1946,4 +1953,12 @@ void MainWindow::resetHeader()
     sceneView->resizeColumnToContents(Scene::NameColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
   sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
+
+void MainWindow::recomputeItems()
+{
+  for(int i=0; i<scene->numberOfEntries(); ++i)
+  {
+    scene->item(i)->invalidateOpenGLBuffers();
+    scene->item(i)->itemChanged();
+  }
 }

@@ -49,15 +49,28 @@ void Volume_plane_intersection_priv::computeElements()
    a_vertex.resize(0);
    b_vertex.resize(0);
    c_vertex.resize(0);
+   const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
-   a_vertex.push_back(0.0); a_vertex.push_back(0.0); a_vertex.push_back(0.0);
-   a_vertex.push_back(x);   a_vertex.push_back(0.0); a_vertex.push_back(0.0);
+   a_vertex.push_back(0.0-offset.x);
+   a_vertex.push_back(0.0-offset.y);
+   a_vertex.push_back(0.0-offset.z);
+   a_vertex.push_back(x  -offset.x);
+   a_vertex.push_back(0.0-offset.y);
+   a_vertex.push_back(0.0-offset.z);
 
-   b_vertex.push_back(0.0); b_vertex.push_back(0.0); b_vertex.push_back(0.0);
-   b_vertex.push_back(0.0); b_vertex.push_back(y);   b_vertex.push_back(0.0);
+   b_vertex.push_back(0.0-offset.x);
+   b_vertex.push_back(0.0-offset.y);
+   b_vertex.push_back(0.0-offset.z);
+   b_vertex.push_back(0.0-offset.x);
+   b_vertex.push_back(y  -offset.y);
+   b_vertex.push_back(0.0-offset.z);
 
-   c_vertex.push_back(0.0); c_vertex.push_back(0.0); c_vertex.push_back(0.0);
-   c_vertex.push_back(0.0); c_vertex.push_back(0.0); c_vertex.push_back(z);
+   c_vertex.push_back(0.0-offset.x);
+   c_vertex.push_back(0.0-offset.y);
+   c_vertex.push_back(0.0-offset.z);
+   c_vertex.push_back(0.0-offset.x);
+   c_vertex.push_back(0.0-offset.y);
+   c_vertex.push_back(z  -offset.z);
 
    item->_bbox =  Scene_item::Bbox( 0, 0, 0,
                   x, y, z);
@@ -195,4 +208,9 @@ void Volume_plane_intersection::planeRemoved(Volume_plane_interface* i) {
   } else if(d->c == i) {
     d->c = NULL;
   }
+}
+
+void Volume_plane_intersection::invalidateOpenGLBuffers()
+{
+ are_buffers_filled = false;
 }

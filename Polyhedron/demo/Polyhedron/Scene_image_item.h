@@ -45,6 +45,7 @@ public:
   const Image* image() const { return m_image; }
   bool isGray();
   Image* m_image;
+  void invalidateOpenGLBuffers();
 protected :
   friend struct Scene_image_item_priv;
   Scene_image_item_priv* d;
