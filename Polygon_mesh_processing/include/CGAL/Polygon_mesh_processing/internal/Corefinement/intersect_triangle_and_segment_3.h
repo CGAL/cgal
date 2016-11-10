@@ -60,20 +60,26 @@ find_intersection(const Point_3& p, const Point_3& q,  //segment
 
   if (nb_coplanar==1){
     if (ab==COPLANAR)
+      // intersection is ab
       return result_type(ON_EDGE,next(hd,tm),is_src_coplanar,is_tgt_coplanar);
     if (bc==COPLANAR)
+      // intersection is bc
       return result_type(ON_EDGE,prev(hd,tm),is_src_coplanar,is_tgt_coplanar);
     CGAL_assertion(ca==COPLANAR);
+    // intersection is ca
     return result_type(ON_EDGE,hd,is_src_coplanar,is_tgt_coplanar);
   }
 
   CGAL_assertion(nb_coplanar==2);
 
   if (ab!=COPLANAR)
+    // intersection is c
     return result_type(ON_VERTEX,prev(hd,tm),is_src_coplanar,is_tgt_coplanar);
   if (bc!=COPLANAR)
+    // intersection is a
     return result_type(ON_VERTEX,hd,is_src_coplanar,is_tgt_coplanar);
   CGAL_assertion(ca!=COPLANAR);
+  // intersection is b
   return result_type(ON_VERTEX,next(hd,tm),is_src_coplanar,is_tgt_coplanar);
 }
 
@@ -99,9 +105,9 @@ intersection_type(
 
   halfedge_descriptor h_2=halfedge(f_2,tm2);
 
-  Point_ref a = get(vpm2, source(h_2,tm2) );
-  Point_ref b = get(vpm2, target(h_2,tm2) );
-  Point_ref c = get(vpm2, target(next(h_2,tm2),tm2) );
+  Point_ref a = get(vpm2, target(h_2,tm2) );
+  Point_ref b = get(vpm2, target(next(h_2,tm2),tm2) );
+  Point_ref c = get(vpm2, source(h_2,tm2) );
   Point_ref p = get(vpm1, source(h_1,tm1) );
   Point_ref q = get(vpm1, target(h_1,tm1) );
 
