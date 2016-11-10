@@ -863,7 +863,7 @@ void MainWindow::updateViewerBBox()
   qglviewer::Vec offset(0,0,0);
   for(int i=0; i<3; ++i)
   {
-    if(log2(bbox.min(i)) > 13.0 )
+   // if(log2(bbox.min(i)) > 13.0 )
       offset[i] = -bbox.min(i);
   }
   viewer->setOffset(offset);
