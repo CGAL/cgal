@@ -543,7 +543,7 @@ public:
         CDT_Vertex_handle vh=id_to_CDT_vh.find(id)->second;
         BOOST_FOREACH(Node_id id_n,neighbors)
         {
-          if (id_n < id) continue; //no need to do it twice
+        //   if (id_n < id) continue; //no need to do it twice
           typename std::map<Node_id,CDT_Vertex_handle>
             ::iterator it_vh=id_to_CDT_vh.find(id_n);
           // this condition ensures to consider only graph edges that are in
