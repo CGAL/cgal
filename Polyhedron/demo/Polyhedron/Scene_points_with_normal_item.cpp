@@ -292,6 +292,7 @@ void Scene_points_with_normal_item_priv::initializeBuffers(CGAL::Three::Viewer_i
 
 void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_points.resize(0);
     positions_lines.resize(0);
@@ -316,18 +317,18 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       for (Point_set::const_iterator it = m_points->begin();
            it != m_points->first_selected(); ++ it)
 	{
-	  positions_points.push_back(m_points->point(*it).x());
-	  positions_points.push_back(m_points->point(*it).y());
-	  positions_points.push_back(m_points->point(*it).z());
+          positions_points.push_back(m_points->point(*it).x()+offset.x);
+          positions_points.push_back(m_points->point(*it).y()+offset.y);
+          positions_points.push_back(m_points->point(*it).z()+offset.z);
 	}
 
         // Draw *selected* points
       for (Point_set::const_iterator it = m_points->first_selected();
            it != m_points->end(); ++ it)
 	{
-	  positions_selected_points.push_back(m_points->point(*it).x());
-	  positions_selected_points.push_back(m_points->point(*it).y());
-	  positions_selected_points.push_back(m_points->point(*it).z());
+          positions_selected_points.push_back(m_points->point(*it).x()+offset.x);
+          positions_selected_points.push_back(m_points->point(*it).y()+offset.y);
+          positions_selected_points.push_back(m_points->point(*it).z()+offset.z);
 	}
     }
 
@@ -357,13 +358,13 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 	    const Kernel::Point_3& p = m_points->point(*it);
 	    const Kernel::Vector_3& n = m_points->normal(*it);
             Point_set_3<Kernel>::Point q = p + normal_length * length_factor* n;
-	    positions_lines.push_back(p.x());
-	    positions_lines.push_back(p.y());
-	    positions_lines.push_back(p.z());
+            positions_lines.push_back(p.x()+offset.x);
+            positions_lines.push_back(p.y()+offset.y);
+            positions_lines.push_back(p.z()+offset.z);
 
-	    positions_lines.push_back(q.x());
-	    positions_lines.push_back(q.y());
-	    positions_lines.push_back(q.z());
+            positions_lines.push_back(q.x()+offset.x);
+            positions_lines.push_back(q.y()+offset.y);
+            positions_lines.push_back(q.z()+offset.z);
 
 
             positions_normals.push_back(n.x());
@@ -375,13 +376,13 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 	    const Kernel::Point_3& p = m_points->point(*it);
 	    const Kernel::Vector_3& n = m_points->normal(*it);
             Point_set_3<Kernel>::Point q = p + normal_length * length_factor* n;
-            positions_lines.push_back(p.x());
-            positions_lines.push_back(p.y());
-            positions_lines.push_back(p.z());
+            positions_lines.push_back(p.x()+offset.x);
+            positions_lines.push_back(p.y()+offset.y);
+            positions_lines.push_back(p.z()+offset.z);
 
-            positions_lines.push_back(q.x());
-            positions_lines.push_back(q.y());
-            positions_lines.push_back(q.z());
+            positions_lines.push_back(q.x()+offset.x);
+            positions_lines.push_back(q.y()+offset.y);
+            positions_lines.push_back(q.z()+offset.z);
 
 
             positions_selected_normals.push_back(n.x());

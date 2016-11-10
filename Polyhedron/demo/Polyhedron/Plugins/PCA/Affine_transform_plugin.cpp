@@ -29,7 +29,8 @@ public:
       center_(pos),
       frame(new CGAL::Three::Scene_item::ManipulatedFrame())
   {
-    frame->setPosition(pos);
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+    frame->setPosition(pos+offset);
     Point_set ps= *item->point_set();
     const Kernel::Point_3& p = ps.point(*(ps.begin()));
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
@@ -128,8 +129,6 @@ public:
     qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
     qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
 
-    min +=frame->translation()-center();
-    max += frame->translation()-center();
     _bbox = Bbox(min.x,min.y,min.z,
                  max.x,max.y,max.z);
   }
@@ -298,12 +297,16 @@ public Q_SLOTS:
 
     if(!is_point_set)
     {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
       transform_item->manipulatedFrame()->setFromMatrix(matrix);
+      transform_item->manipulatedFrame()->translate(offset);
       transform_item->itemChanged();
     }
     else
     {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
       transform_points_item->manipulatedFrame()->setFromMatrix(matrix);
+      transform_points_item->manipulatedFrame()->translate(offset);
       transform_points_item->itemChanged();
     }
   }
@@ -467,6 +470,10 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   QApplication::restoreOverrideCursor();
   double matrix[16];
   transformMatrix(&matrix[0]);
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  matrix[12]-=offset.x;
+  matrix[13]-=offset.y;
+  matrix[14]-=offset.z;
   resetTransformMatrix();
   if(transform_item)
   {
@@ -543,6 +550,10 @@ void Polyhedron_demo_affine_transform_plugin::updateUiMatrix()
     matrix(1,3) -= transform_points_item->center().y;
     matrix(2,3) -= transform_points_item->center().z;
   }
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  matrix.data()[12]-=offset.x;
+  matrix.data()[13]-=offset.y;
+  matrix.data()[14]-=offset.z;
   ui.matrix_00->setText(QString("%1").arg(matrix(0,0))); ui.matrix_01->setText(QString("%1").arg(matrix(0,1))); ui.matrix_02->setText(QString("%1").arg(matrix(0,2))); ui.matrix_03->setText(QString("%1").arg(matrix(0,3)));
   ui.matrix_10->setText(QString("%1").arg(matrix(1,0))); ui.matrix_11->setText(QString("%1").arg(matrix(1,1))); ui.matrix_12->setText(QString("%1").arg(matrix(1,2))); ui.matrix_13->setText(QString("%1").arg(matrix(1,3)));
   ui.matrix_20->setText(QString("%1").arg(matrix(2,0))); ui.matrix_21->setText(QString("%1").arg(matrix(2,1))); ui.matrix_22->setText(QString("%1").arg(matrix(2,2))); ui.matrix_23->setText(QString("%1").arg(matrix(2,3)));
