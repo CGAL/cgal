@@ -26,6 +26,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "lscm.cpp" )
   create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
   create_single_source_cgal_program( "simple_parameterization.cpp" )
+  create_single_source_cgal_program( "square_border_parameterizer.cpp" )
 
   else(EIGEN3_FOUND)
     message(STATUS "NOTICE: The examples require Eigen 3.1 (or greater) and will not be compiled.")  

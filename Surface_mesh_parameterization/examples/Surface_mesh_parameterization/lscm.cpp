@@ -1,7 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
 #include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
 #include <CGAL/parameterize.h>

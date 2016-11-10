@@ -75,7 +75,7 @@ class Square_border_parameterizer_3
 {
 // Public types
 public:
-  typedef TriangleMesh_  TriangleMesh;
+  typedef TriangleMesh_                                   TriangleMesh;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
@@ -84,7 +84,7 @@ public:
 
 // Private types
 private:
-    // Mesh_TriangleMesh_3 subtypes:
+  // Mesh_TriangleMesh_3 subtypes:
   typedef Parameterizer_traits_3<TriangleMesh>          Traits;
   typedef typename Traits::VPM                          VPM;
   typedef typename Traits::Point_2                      Point_2;
@@ -94,6 +94,10 @@ private:
 
   typedef typename std::vector<double>                  Offset_map;
 
+// Private members
+private:
+  vertex_descriptor v0, v1, v2, v3;
+  bool vertices_given;
 
 // Protected operations
 protected:
@@ -143,10 +147,10 @@ private:
   /// Set the corners by splitting the border of the mesh in four
   /// approximately equal segments.
   template<typename VertexParameterizedMap>
-  Error_code set_default_corners(const TriangleMesh& mesh,
-                                 halfedge_descriptor bhd,
-                                 VertexParameterizedMap vpmap,
-                                 Offset_map& offset) const
+  halfedge_descriptor compute_offsets_without_given_vertices(const TriangleMesh& mesh,
+                                                             halfedge_descriptor bhd,
+                                                             VertexParameterizedMap vpmap,
+                                                             Offset_map& offset) const
   {
     // map to [0,4[
     double len = 0.0; // current position on square in [0, total_len[
@@ -167,15 +171,11 @@ private:
     // First square corner is mapped to first vertex.
     // Then find closest points for three other corners.
     halfedge_around_face_iterator it0 = b;
-    offset[0] = 0; // snap the vertex to the corner
+    offset[0] = 0; // snap the vertex to the first corner
 
     halfedge_around_face_iterator it1 = closest_iterator(mesh, bhd, offset, 1.0);
     halfedge_around_face_iterator it2 = closest_iterator(mesh, bhd, offset, 2.0);
     halfedge_around_face_iterator it3 = closest_iterator(mesh, bhd, offset, 3.0);
-
-    // We may get into trouble if the border is too short
-    if (it0 == it1 || it1 == it2 || it2 == it3 || it3 == it0)
-      return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
 
     vertex_descriptor vd0 = source(*it0, mesh);
     vertex_descriptor vd1 = source(*it1, mesh);
@@ -187,69 +187,26 @@ private:
     put(vpmap, vd2, true);
     put(vpmap, vd3, true);
 
-    return Traits::OK;
+    return bhd;
   }
 
-  /// Set the corners. If a selection file is provided and has four valid vertices,
-  /// use those. Otherwise, split the border in four approximately equal segments
-  /// and initialize the corners from the extremities of these segments.
+  /// Compute the offset values for all the vertices of the border of
+  /// the mesh. The vertices between two given vertices vi and vj are
+  /// sent to the same side of the square.
   template<typename VertexParameterizedMap>
-  Error_code set_corners(const TriangleMesh& mesh,
-                         halfedge_descriptor bhd,
-                         VertexParameterizedMap vpmap,
-                         const char* filename,
-                         Offset_map& offset) const
+  halfedge_descriptor compute_offsets(const TriangleMesh& mesh,
+                                      halfedge_descriptor bhd,
+                                      VertexParameterizedMap vpmap,
+                                      Offset_map& offset)
   {
     assert(offset.empty());
 
-    if(filename == NULL) // no file given in input
-      return set_default_corners(mesh, bhd, vpmap, offset);
+    put(vpmap, v0, true);
+    put(vpmap, v1, true);
+    put(vpmap, v2, true);
+    put(vpmap, v3, true);
 
-    std::string str = filename;
-    if(str.substr(str.length() - 14) != ".selection.txt") {
-      std::cout << "Error: fixed vertices must be given by a *.selection.txt file" << std::endl;
-      return set_default_corners(mesh, bhd, vpmap, offset);
-    }
-
-    std::ifstream in(filename);
-    std::string line;
-    if(!std::getline(in, line)) {
-      std::cout << "Error: could not read input file: " << filename << std::endl;
-      return set_default_corners(mesh, bhd, vpmap, offset);
-    }
-
-    // The selection file is a list of integers, so we need to build a correspondence
-    // between vertices and the integers.
-    std::vector<vertex_descriptor> vds;
-    vds.reserve(num_vertices(mesh));
-    typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator  vertex_iterator;
-    vertex_iterator vi = vertices(mesh).begin(),
-                    vi_end = vertices(mesh).end();
-    CGAL_For_all(vi, vi_end) {
-      vds.push_back(*vi);
-    }
-
-    // Get the first line and read the fixed vertex indices
-    unsigned int counter = 0;
-    std::istringstream point_line(line);
-    std::size_t s;
-    while(point_line >> s) {
-      assert(s < vds.size());
-      vertex_descriptor vd = vds[s];
-      assert(is_border(halfedge(vd, mesh), mesh)); // must be on the border
-      put(vpmap, vd, true);
-      ++counter;
-    }
-
-    if(counter != 4) {
-      std::cout << "Error: exactly four vertices must form the corners" << std::endl;
-      return set_default_corners(mesh, bhd, vpmap, offset);
-    }
-
-    // All clear, initialize the offset vectors with values on [0;4[ with the
-    // given corners
-
-    // Move till the border halfedge has a fixed point as source
+    // Move till the border halfedge has a given vertex as source
     halfedge_descriptor start_hd = bhd;
     while(!get(vpmap, source(start_hd, mesh)))
       start_hd = next(start_hd, mesh);
@@ -273,14 +230,14 @@ private:
 
       // If the target is a corner vertex, we have the complete length of a side in 'len'
       // and we must "normalize" the previous entries
-
       if(get(vpmap, vt)) {
         // If both extremeties of a segment are corners, offsets are already correct
         if(!get(vpmap, vs)) {
           assert(len != 0.0);
           double ld = 1.0 / len;
           for(std::size_t i=index_of_previous_corner+1; i<=current_index; ++i) {
-              offset[i] = corner_offset + ld * offset[i];
+            // ld * offset[i] is in [0;1[
+            offset[i] = corner_offset + ld * offset[i];
           }
         }
         len = 0.0; // reset the length of the side
@@ -289,7 +246,8 @@ private:
 
       current_index++;
     }
-    return Traits::OK;
+
+    return start_hd;
   }
 
 // Public operations
@@ -302,13 +260,8 @@ public:
   Error_code parameterize(const TriangleMesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVMap uvmap,
-                          VertexParameterizedMap vpmap,
-                          const char* filename = "../data/square_corners.selection.txt")
+                          VertexParameterizedMap vpmap)
   {
-  #ifdef DEBUG_TRACE
-    std::cerr << "Map to a square" << std::endl;
-  #endif
-
     // Nothing to do if no border
     if (bhd == halfedge_descriptor())
       return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
@@ -318,12 +271,21 @@ public:
     if (total_len == 0)
         return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
 
-    Offset_map offset;
-    set_corners(mesh, bhd, vpmap, filename, offset);
+    // check the number of border edges
+    std::size_t size_of_border = halfedges_around_face(bhd, mesh).size();
+    if(size_of_border < 4) {
+      return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
+    }
 
-    halfedge_descriptor start_hd = bhd;
-    while(!get(vpmap, source(start_hd, mesh)))
-      start_hd = next(start_hd, mesh);
+    halfedge_descriptor start_hd; // border halfedge whose source is the first corner
+
+    // The offset is a vector of double between 0 and 4 that gives the position
+    // of the vertex through its distance to v0 on the "unrolled" border
+    Offset_map offset;
+    if(vertices_given)
+      start_hd = compute_offsets(mesh, bhd, vpmap, offset);
+    else
+      start_hd = compute_offsets_without_given_vertices(mesh, bhd, vpmap, offset);
 
     unsigned int corners_encountered = 0;
     std::size_t counter = 0;
@@ -354,6 +316,23 @@ public:
 
   /// Indicate if the border's shape is convex.
   bool is_border_convex() const { return true; }
+
+public:
+  /// Constructor.
+  Square_border_parameterizer_3()
+    :
+      vertices_given(false)
+  { }
+
+  /// Constructor with given vertices
+  ///
+  /// @pre The given vertices must be on the border.
+  Square_border_parameterizer_3(vertex_descriptor v0, vertex_descriptor v1,
+                                vertex_descriptor v2, vertex_descriptor v3)
+    :
+      v0(v0), v1(v1), v2(v2), v3(v3),
+      vertices_given(true)
+  { }
 };
 
 //
@@ -380,6 +359,8 @@ template<class TriangleMesh_>
 class Square_border_uniform_parameterizer_3
   : public Square_border_parameterizer_3<TriangleMesh_>
 {
+  typedef Square_border_parameterizer_3<TriangleMesh_>  Base;
+
 // Public types
 public:
   // We have to repeat the types exported by superclass
@@ -387,6 +368,19 @@ public:
   typedef TriangleMesh_ TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   /// @endcond
+
+public:
+  /// Constructor.
+  Square_border_uniform_parameterizer_3() : Base() { }
+
+  /// Constructor with given vertices
+  ///
+  /// @pre The given vertices must be on the border.
+  Square_border_uniform_parameterizer_3(vertex_descriptor v0, vertex_descriptor v1,
+                                        vertex_descriptor v2, vertex_descriptor v3)
+    :
+      Base(v0, v1, v2, v3)
+  { }
 
 // Protected operations
 protected:
@@ -425,16 +419,30 @@ template<class TriangleMesh_>
 class Square_border_arc_length_parameterizer_3
   : public Square_border_parameterizer_3<TriangleMesh_>
 {
+  typedef Square_border_parameterizer_3<TriangleMesh_>  Base;
+
+  typedef Parameterizer_traits_3<TriangleMesh_>         Traits;
+  typedef typename Traits::Vector_3                     Vector_3;
+  typedef typename Traits::VPM                          VPM;
+
 public:
   /// @cond SKIP_IN_MANUAL
-  typedef TriangleMesh_             TriangleMesh;
+  typedef TriangleMesh_                                 TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   /// @endcond
 
-private:
-  typedef Parameterizer_traits_3<TriangleMesh>          Traits;
-  typedef typename Traits::Vector_3                     Vector_3;
-  typedef typename Traits::VPM                          VPM;
+public:
+  /// Constructor.
+  Square_border_arc_length_parameterizer_3() : Base() { }
+
+  /// Constructor with given vertices
+  ///
+  /// @pre The given vertices must be on the border.
+  Square_border_arc_length_parameterizer_3(vertex_descriptor v0, vertex_descriptor v1,
+                                           vertex_descriptor v2, vertex_descriptor v3)
+    :
+      Base(v0, v1, v2, v3)
+  { }
 
 // Protected operations
 protected:
