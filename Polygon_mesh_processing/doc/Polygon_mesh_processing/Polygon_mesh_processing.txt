@@ -498,7 +498,7 @@ In the following example, a mesh is isotropically remeshed and the approximated 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
 In the following example, a triangulated surface mesh is constructed from a point set using the
-\link PkgPoissonSurfaceReconstructionSummary poisson reconstruction algorithm \endlink, and the distance between the point set and the reconstructed surface is computed.
+\link PkgPoissonSurfaceReconstructionSummary Poisson reconstruction algorithm \endlink, and the distance between the point set and the reconstructed surface is computed.
 
 \cgalExample{Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp}
 
