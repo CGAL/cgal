@@ -340,7 +340,7 @@ public:
     new_node_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar);
     switch(type)
     {
-      case ON_FACE: //Facet intersected by an edge
+      case ON_FACE: //Face intersected by an edge
         on_face[tm2_ptr][face(h_2,tm2)].push_back(node_id);
       break;
       case ON_EDGE: //Edge intersected by an edge
@@ -415,8 +415,8 @@ public:
   }
 
   void set_edge_per_polyline(TriangleMesh& tm,
-                                std::pair<std::size_t,std::size_t> indices,
-                                halfedge_descriptor hedge)
+                             std::pair<std::size_t,std::size_t> indices,
+                             halfedge_descriptor hedge)
   {
     if (indices.first>indices.second)
     {
@@ -505,7 +505,9 @@ public:
     if (node_id < number_coplanar_vertices){
       //XSL_TAG_CPL_VERT
       // Insert constrained edges from coplanar faces that have been
-      // retriangulated. This ensure that triangulations are compatible
+      // retriangulated. This ensure that triangulations are compatible.
+      // This edges were not constrained in the first mesh but are in the
+      // second (ensuring compatibility)
       std::map< Node_id,std::set<Node_id> >::iterator it_neighbors =
         coplanar_constraints.find(node_id);
       if (it_neighbors!=coplanar_constraints.end())
@@ -912,6 +914,8 @@ public:
             // between coplanar facets are the first inserted)
             if (vit->info() >= nb_nodes ||
                 vit->info() >= number_coplanar_vertices) continue;
+            // \todo no need to insert constrained edges (they also are constrained
+            // in the other mesh)!!
             std::map< Node_id,std::set<Node_id> >::iterator res =
                 coplanar_constraints.insert(
                     std::make_pair(vit->info(),std::set<Node_id>())).first;
@@ -942,6 +946,9 @@ public:
         // import the triangle in `cdt` in the face `f` of `tm`
         triangulate_a_face(f, tm, nodes, node_ids, node_id_to_vertex,
           edge_to_hedge, cdt, vpm, new_node_visitor, new_face_visitor);
+
+        // TODO Here we do the update only for internal edges.
+        // Update for border halfedges could be done during the split
 
         //3) mark halfedges that are common to two polyhedral surfaces
         //recover halfedges inserted that are on the intersection

@@ -346,6 +346,8 @@ public:
       vertex_to_node_id2[target(it->first,tm2)]=it->second.second;
     }
 
+    CGAL_assertion(intersection_edges1.size()==intersection_edges2.size());
+
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
     boost::dynamic_bitset<> tm2_coplanar_faces(num_faces(tm2), 0);
