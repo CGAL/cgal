@@ -338,9 +338,8 @@ class Node_visitor_refine_polyhedra{
   typedef std::map<Halfedge_handle,Polyhedron*,Cmp_unik_ad>            Hedge_to_polyhedron_map;
 
   typedef std::vector<int>                                             Node_ids;
-  typedef std::set<int>                                                Node_id_set; //avoid having duplicated node on edge of coplanar triangles
   typedef std::map< Face_handle,Node_ids,Cmp_handle >                  In_face_map;
-  typedef std::map< Halfedge_handle,Node_id_set,Cmp_unik_ad >          In_halfedge_map;
+  typedef std::map< Halfedge_handle,Node_ids,Cmp_unik_ad >             In_halfedge_map;
   //to keep the correspondance between node_id and vertex_handle in each polyhedron
   typedef std::map<int,Vertex_handle> Node_to_polyhedron_vertex_map;
   typedef std::map<Polyhedron*, Node_to_polyhedron_vertex_map > Poly_to_map_node;
@@ -568,8 +567,8 @@ public:
       break;
       case internal_IOP::EDGE: //Edge intersected by an edge
       {
-        typename In_halfedge_map::iterator it_hedge_map=in_hedge.insert(std::make_pair(additional_edge,Node_id_set())).first;
-        it_hedge_map->second.insert(node_id);
+        typename In_halfedge_map::iterator it_hedge_map=in_hedge.insert(std::make_pair(additional_edge,Node_ids())).first;
+        it_hedge_map->second.push_back(node_id);
         check_node_on_non_manifold_edge(node_id,additional_edge);
       }
       break;
@@ -611,8 +610,8 @@ public:
       }
       else{
         //handle intersection on principal edge
-        typename In_halfedge_map::iterator it_hedge_map=in_hedge.insert(std::make_pair(principal_edge,Node_id_set())).first;
-        it_hedge_map->second.insert(node_id);
+        typename In_halfedge_map::iterator it_hedge_map=in_hedge.insert(std::make_pair(principal_edge,Node_ids())).first;
+        it_hedge_map->second.push_back(node_id);
         check_node_on_non_manifold_edge(node_id,principal_edge);
       }
     }
@@ -746,7 +745,7 @@ public:
     Faces_boundary faces_boundary;
 
     //0) For each polyhedron, collect original vertices that belongs to the intersection.
-    //   From the graph of constaints, extract intersection edges that are incident to such vertices. In case
+    //   From the graph of constraints, extract intersection edges that are incident to such vertices. In case
     //   there exists another original vertex adjacent to the first one found, this halfedge must be
     //   marked on the boundary (and possibly update an_edge_per_polyline).
     //   This is done first to avoid halfedges stored to be modified in the steps following.
@@ -805,9 +804,8 @@ public:
     for (typename In_halfedge_map::iterator it=in_hedge.begin();it!=in_hedge.end();++it)
     {
       Halfedge_handle hedge=it->first; //the halfedge to be split (and its opposite too)
-      Node_ids node_ids;   //indices of the intersection points to be inserted
-      //we used a set to avoid having duplicated nodes reported on an edge of two coplanar triangles
-      std::copy(it->second.begin(),it->second.end(),std::back_inserter(node_ids));
+      Node_ids& node_ids = it->second;   //indices of the intersection points to be inserted
+      CGAL_assertion( std::set<int>(node_ids.begin(), node_ids.end()).size()==node_ids.size() );
       typename Hedge_to_polyhedron_map::iterator  it_poly=hedge_to_polyhedron.find( hedge->facet()->halfedge() );
       CGAL_assertion(it_poly!=hedge_to_polyhedron.end());
       Polyhedron* P=it_poly->second;  //the polyhedron in which vertices should be added
@@ -870,6 +868,7 @@ public:
     {
       Face_handle f = it->first; //the face to be retriangulated
       Node_ids& node_ids  = it->second; //the index of the intersection point that are interior to the face
+      CGAL_assertion(std::set<int>(node_ids.begin(), node_ids.end()).size()==node_ids.size());
       typename Faces_boundary::iterator it_fb=faces_boundary.find(f);
 
 

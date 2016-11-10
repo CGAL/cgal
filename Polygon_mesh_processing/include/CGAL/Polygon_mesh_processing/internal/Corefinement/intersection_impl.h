@@ -204,11 +204,12 @@ class Intersection_of_triangle_meshes
   }
 
   template<class Cpl_inter_pt,class Key>
-  int get_or_create_node(const Cpl_inter_pt& ipt,
-                         int& current_node,
-                         std::map<Key,int>& coplanar_node_map,
-                         const TriangleMesh& tm1,
-                         const TriangleMesh& tm2)
+  std::pair<int,bool>
+  get_or_create_node(const Cpl_inter_pt& ipt,
+                           int& current_node,
+                           std::map<Key,int>& coplanar_node_map,
+                     const TriangleMesh& tm1,
+                     const TriangleMesh& tm2)
   {
     halfedge_descriptor h1=graph_traits::null_halfedge(),h2=h1;
     switch(ipt.type_1){
@@ -248,9 +249,9 @@ class Intersection_of_triangle_meshes
       coplanar_node_map.insert(std::make_pair(key,current_node+1));
     if (res.second){ //insert a new node
       nodes.add_new_node(ipt.point);
-      return ++current_node;
+      return std::pair<int,bool>(++current_node, true);
     }
-    return res.first->second;
+    return std::pair<int,bool>(res.first->second, false);
   }
 
   template <class Output_iterator>
@@ -337,9 +338,11 @@ class Intersection_of_triangle_meshes
                                         halfedge_descriptor f_2,
                                         const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
-                                        int node_id)
+                                        int node_id,
+                                        bool is_new_node)
   {
-    visitor.new_node_added(node_id,ON_FACE,v_1,f_2,tm1,tm2,true,false);
+    if(is_new_node)
+      visitor.new_node_added(node_id,ON_FACE,v_1,f_2,tm1,tm2,true,false);
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 < &tm2
                                          ? stm_edge_to_ltm_faces
@@ -358,9 +361,11 @@ class Intersection_of_triangle_meshes
                                         halfedge_descriptor e_2,
                                         const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
-                                        int node_id)
+                                        int node_id,
+                                        bool is_new_node)
   {
-    visitor.new_node_added(node_id,ON_VERTEX,e_2,v_1,tm2,tm1,false,false);
+    if(is_new_node)
+      visitor.new_node_added(node_id,ON_VERTEX,e_2,v_1,tm2,tm1,false,false);
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 < &tm2
                                          ? stm_edge_to_ltm_faces
@@ -379,9 +384,11 @@ class Intersection_of_triangle_meshes
                                           halfedge_descriptor v_2,
                                           const TriangleMesh& tm1,
                                           const TriangleMesh& tm2,
-                                          int node_id)
+                                          int node_id,
+                                          bool is_new_node)
   {
-    visitor.new_node_added(node_id,ON_VERTEX,v_2,v_1,tm2,tm1,true,false);
+    if(is_new_node)
+      visitor.new_node_added(node_id,ON_VERTEX,v_2,v_1,tm2,tm1,true,false);
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 < &tm2
                                          ? stm_edge_to_ltm_faces
@@ -430,7 +437,10 @@ class Intersection_of_triangle_meshes
 
       BOOST_FOREACH(const Cpl_inter_pt& ipt, inter_pts)
       {
-        int node_id=get_or_create_node(ipt,current_node,coplanar_node_map,tm1,tm2);
+        int node_id;
+        bool is_new_node;
+        cpp11::tie(node_id, is_new_node) =
+            get_or_create_node(ipt,current_node,coplanar_node_map,tm1,tm2);
         cpln_nodes.push_back(node_id);
 
         switch(ipt.type_1){
@@ -438,13 +448,13 @@ class Intersection_of_triangle_meshes
         {
           switch(ipt.type_2){
           case ON_VERTEX:
-            handle_coplanar_case_VERTEX_VERTEX(ipt.info_1,ipt.info_2,tm1,tm2,node_id);
+            handle_coplanar_case_VERTEX_VERTEX(ipt.info_1,ipt.info_2,tm1,tm2,node_id,is_new_node);
           break;
           case ON_EDGE:
-            handle_coplanar_case_VERTEX_EDGE(ipt.info_1,ipt.info_2,tm1,tm2,node_id);
+            handle_coplanar_case_VERTEX_EDGE(ipt.info_1,ipt.info_2,tm1,tm2,node_id,is_new_node);
           break;
           case ON_FACE:
-            handle_coplanar_case_VERTEX_FACE(ipt.info_1,ipt.info_2,tm1,tm2,node_id);
+            handle_coplanar_case_VERTEX_FACE(ipt.info_1,ipt.info_2,tm1,tm2,node_id,is_new_node);
           break;
           default: CGAL_error_msg("Should not get there!");
           }
@@ -454,11 +464,12 @@ class Intersection_of_triangle_meshes
         {
           switch(ipt.type_2){
             case ON_VERTEX:
-              handle_coplanar_case_VERTEX_EDGE(ipt.info_2,ipt.info_1,tm2,tm1,node_id);
+              handle_coplanar_case_VERTEX_EDGE(ipt.info_2,ipt.info_1,tm2,tm1,node_id,is_new_node);
             break;
             case ON_EDGE:
             {
-              visitor.new_node_added(node_id,ON_EDGE,ipt.info_1,ipt.info_2,tm1,tm2,false,false);
+              if(is_new_node)
+                visitor.new_node_added(node_id,ON_EDGE,ipt.info_1,ipt.info_2,tm1,tm2,false,false);
               typename Edge_to_faces::iterator it_ets=stm_edge_to_ltm_faces.find(edge(ipt.info_1,tm1));
               Face_set* fset = (it_ets!=stm_edge_to_ltm_faces.end())?&(it_ets->second):NULL;
               cip_handle_case_edge(node_id,fset,ipt.info_1,ipt.info_2,tm1,tm2);
@@ -471,7 +482,7 @@ class Intersection_of_triangle_meshes
         case ON_FACE:
         {
           CGAL_assertion(ipt.type_2==ON_VERTEX);
-          handle_coplanar_case_VERTEX_FACE(ipt.info_2,ipt.info_1,tm2,tm1,node_id);
+          handle_coplanar_case_VERTEX_FACE(ipt.info_2,ipt.info_1,tm2,tm1,node_id,is_new_node);
         }
         break;
         default: CGAL_error_msg("Should not get there!");

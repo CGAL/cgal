@@ -60,6 +60,7 @@ triangulate_a_face(
 
   //insert the intersection point interior to the face inside the mesh and
   //save their vertex_descriptor
+  CGAL_assertion( node_ids.size()== std::set<Node_id>(node_ids.begin(), node_ids.end()).size() );
   BOOST_FOREACH(Node_id node_id, node_ids)
   {
     vertex_descriptor v=add_vertex(tm);

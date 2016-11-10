@@ -1376,8 +1376,9 @@ class Intersection_of_Polyhedra_3{
   }
 
 
-  void handle_coplanar_case_VERTEX_FACET(Halfedge_handle vertex,Halfedge_handle facet,int node_id){
-    visitor->new_node_added(node_id,internal_IOP::FACET,vertex,facet,true,false);
+  void handle_coplanar_case_VERTEX_FACET(Halfedge_handle vertex,Halfedge_handle facet,int node_id, bool is_new_node){
+    if (is_new_node)
+      visitor->new_node_added(node_id,internal_IOP::FACET,vertex,facet,true,false);
     std::vector<Halfedge_handle> all_edges;
     get_incident_edges_to_vertex(vertex,std::back_inserter(all_edges));
     typename std::vector<Halfedge_handle>::iterator it_edge=all_edges.begin();
@@ -1388,8 +1389,9 @@ class Intersection_of_Polyhedra_3{
     }
   }
 
-  void handle_coplanar_case_VERTEX_EDGE(Halfedge_handle vertex,Halfedge_handle edge,int node_id){
-    visitor->new_node_added(node_id,internal_IOP::VERTEX,edge,vertex,false,false);
+  void handle_coplanar_case_VERTEX_EDGE(Halfedge_handle vertex,Halfedge_handle edge,int node_id, bool is_new_node){
+    if(is_new_node)
+      visitor->new_node_added(node_id,internal_IOP::VERTEX,edge,vertex,false,false);
     std::vector<Halfedge_handle> all_edges;
     get_incident_edges_to_vertex(vertex,std::back_inserter(all_edges));
     typename std::vector<Halfedge_handle>::iterator it_edge=all_edges.begin();
@@ -1400,8 +1402,9 @@ class Intersection_of_Polyhedra_3{
     }
   }
 
-  void handle_coplanar_case_VERTEX_VERTEX(Halfedge_handle vertex1,Halfedge_handle vertex2,int node_id){
-    visitor->new_node_added(node_id,internal_IOP::VERTEX,vertex2,vertex1,true,false);
+  void handle_coplanar_case_VERTEX_VERTEX(Halfedge_handle vertex1,Halfedge_handle vertex2,int node_id, bool is_new_node){
+    if (is_new_node)
+      visitor->new_node_added(node_id,internal_IOP::VERTEX,vertex2,vertex1,true,false);
     std::vector<Halfedge_handle> all_edges;
     get_incident_edges_to_vertex(vertex1,std::back_inserter(all_edges));
     typename std::vector<Halfedge_handle>::iterator it_edge=all_edges.begin();
@@ -1414,7 +1417,7 @@ class Intersection_of_Polyhedra_3{
 
 
   template<class Cpl_inter_pt,class Coplanar_node_map>
-  int get_or_create_node(Cpl_inter_pt& ipt,int& current_node,Coplanar_node_map& coplanar_node_map){
+  std::pair<int,bool> get_or_create_node(Cpl_inter_pt& ipt,int& current_node,Coplanar_node_map& coplanar_node_map){
     void *v1, *v2;
     switch(ipt.type_1){
       case internal_IOP::VERTEX: v1=(void*)( &(*(ipt.info_1->vertex()))     );  break;
@@ -1443,9 +1446,9 @@ class Intersection_of_Polyhedra_3{
         else
           add_new_node(ipt.point);
       }
-      return ++current_node;
+      return std::pair<int,bool>(++current_node, true);
     }
-    return res.first->second;
+    return std::pair<int,bool>(res.first->second, false);
   }
 
   void compute_intersection_of_coplanar_facets(int& current_node){
@@ -1466,26 +1469,29 @@ class Intersection_of_Polyhedra_3{
         //iti->print_debug();
         #endif
         CGAL_assertion(iti->is_valid());
-        int node_id=get_or_create_node(*iti,current_node,coplanar_node_map);
+        int node_id;
+        bool is_new_node;
+        cpp11::tie(node_id, is_new_node)=get_or_create_node(*iti,current_node,coplanar_node_map);
         cpln_nodes.push_back(node_id);
 
         switch(iti->type_1){
           case internal_IOP::VERTEX:
           {
             switch(iti->type_2){
-              case internal_IOP::VERTEX: handle_coplanar_case_VERTEX_VERTEX(iti->info_1,iti->info_2,node_id); break;
-              case internal_IOP::EDGE  : handle_coplanar_case_VERTEX_EDGE(iti->info_1,iti->info_2,node_id);   break;
-              case internal_IOP::FACET : handle_coplanar_case_VERTEX_FACET(iti->info_1,iti->info_2,node_id);  break;
+              case internal_IOP::VERTEX: handle_coplanar_case_VERTEX_VERTEX(iti->info_1,iti->info_2,node_id, is_new_node); break;
+              case internal_IOP::EDGE  : handle_coplanar_case_VERTEX_EDGE(iti->info_1,iti->info_2,node_id, is_new_node);   break;
+              case internal_IOP::FACET : handle_coplanar_case_VERTEX_FACET(iti->info_1,iti->info_2,node_id, is_new_node);  break;
               default: CGAL_error_msg("Should not get there!");
             }
           }
           break;
           case internal_IOP::EDGE:{
             switch(iti->type_2){
-              case internal_IOP::VERTEX:handle_coplanar_case_VERTEX_EDGE(iti->info_2,iti->info_1,node_id);break;
+            case internal_IOP::VERTEX:handle_coplanar_case_VERTEX_EDGE(iti->info_2,iti->info_1,node_id, is_new_node);break;
               case internal_IOP::EDGE:
               {
-                visitor->new_node_added(node_id,internal_IOP::EDGE,iti->info_1,iti->info_2,false,false);
+                if (is_new_node)
+                  visitor->new_node_added(node_id,internal_IOP::EDGE,iti->info_1,iti->info_2,false,false);
                 typename Edge_to_intersected_facets::iterator it_ets=edge_to_sfacet.find(iti->info_1);
                 Facet_set* fset = (it_ets!=edge_to_sfacet.end())?&(it_ets->second):NULL;
                 cip_handle_case_edge(node_id,fset,iti->info_1,iti->info_2);
@@ -1499,7 +1505,7 @@ class Intersection_of_Polyhedra_3{
           case internal_IOP::FACET:
           {
             CGAL_assertion(iti->type_2==internal_IOP::VERTEX);
-            handle_coplanar_case_VERTEX_FACET(iti->info_2,iti->info_1,node_id);
+            handle_coplanar_case_VERTEX_FACET(iti->info_2,iti->info_1,node_id, is_new_node);
           }
           break;
 

@@ -676,9 +676,8 @@ public:
         halfedge_descriptor hedge=halfedge(it2->first,tm);
         //indices of the nodes to be inserted
         Node_ids& node_ids=it2->second;
-        //some nodes might be reported several times on an edge shared by two coplanar triangles
-        std::sort(node_ids.begin(),node_ids.end());
-        std::unique(node_ids.begin(),node_ids.end());
+        CGAL_assertion( std::set<Node_id>(node_ids.begin(), node_ids.end())
+                          .size()==node_ids.size() );
         //sort nodes along the egde to allow consecutive splits
         sort_vertices_along_hedge(node_ids,hedge,tm,vpm,nodes);
 
