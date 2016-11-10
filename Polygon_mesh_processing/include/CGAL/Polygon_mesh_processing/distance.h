@@ -226,8 +226,8 @@ sample_triangle_mesh(const TriangleMesh& tm,
   {
     case RANDOM_UNIFORM:
     {
-      std::size_t nb_points = std::ceil( to_double(
-         area(tm, parameters::geom_traits(Geom_traits()))*parameter) );
+      std::size_t nb_points = static_cast<int>(
+                                std::ceil( to_double(area(tm, parameters::geom_traits(Geom_traits()))*parameter)) );
       Random_points_in_triangle_mesh_3<TriangleMesh, Vpm, Creator>
           g(tm, pmap);
       CGAL::cpp11::copy_n(g, nb_points, out);
@@ -256,8 +256,8 @@ sample_triangle_mesh(const TriangleMesh& tm,
       BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(tm))
       {
         std::size_t nb_points( (std::max)(
-                    std::ceil(to_double(face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter),
-                                         1.) );
+                                          static_cast<int>(std::ceil(to_double(face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter)),
+                                         1) );
         //create the triangles and store them
         typename Geom_traits::Point_3 points[3];
         typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd(halfedge(f,tm));
@@ -414,8 +414,9 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                            get_const_property_map(vertex_point, tm));
     typedef Creator_uniform_3<typename Geom_traits::FT,
                               typename Geom_traits::Point_3> Creator;
-    std::size_t nb_points = std::ceil( to_double(
-                                           face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter);
+    std::size_t nb_points = static_cast<int>(
+                              std::ceil( to_double(
+                                                   face_area(f,tm,parameters::geom_traits(Geom_traits())))*parameter));
   switch(method)
   {
   case GRID:

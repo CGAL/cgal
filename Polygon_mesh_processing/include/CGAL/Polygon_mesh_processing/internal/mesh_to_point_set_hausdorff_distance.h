@@ -256,7 +256,7 @@ public:
   }
   bool clean_up_queue ()
   {
-    unsigned int before = m_queue.size ();
+    std::size_t before = m_queue.size ();
     std::vector<RefTriangle> to_keep;
     while (!(m_queue.empty ()))
     {
