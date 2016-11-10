@@ -51,7 +51,6 @@ void Scene_plane_item::initializeBuffers(Viewer_interface *viewer) const
 
 void Scene_plane_item::compute_normals_and_vertices(void) const
 {
-    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_quad.resize(0);
     positions_lines.resize(0);

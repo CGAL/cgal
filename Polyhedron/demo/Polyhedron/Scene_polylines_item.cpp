@@ -86,6 +86,7 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
 void
 Scene_polylines_item_private::computeElements() const
 {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     double mean = 0;
@@ -115,14 +116,14 @@ Scene_polylines_item_private::computeElements() const
                 mean += length;
             }
 
-            positions_lines.push_back(a.x());
-            positions_lines.push_back(a.y());
-            positions_lines.push_back(a.z());
+            positions_lines.push_back(a.x()+offset.x);
+            positions_lines.push_back(a.y()+offset.y);
+            positions_lines.push_back(a.z()+offset.z);
             positions_lines.push_back(1.0);
 
-            positions_lines.push_back(b.x());
-            positions_lines.push_back(b.y());
-            positions_lines.push_back(b.z());
+            positions_lines.push_back(b.x()+offset.x);
+            positions_lines.push_back(b.y()+offset.y);
+            positions_lines.push_back(b.z()+offset.z);
             positions_lines.push_back(1.0);
         }
 

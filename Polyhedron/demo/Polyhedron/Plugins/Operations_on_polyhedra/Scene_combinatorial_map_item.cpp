@@ -282,6 +282,7 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
     normals.resize(0);
     positions_lines.resize(0);
     positions_points.resize(0);
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
     //Facets
     {
@@ -331,9 +332,9 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
                               face_it!=face_end; ++face_it)
                         {
                             const Kernel::Point_3& p= face_it->attribute<0>()->point();
-                            positions_facets.push_back(p.x());
-                            positions_facets.push_back(p.y());
-                            positions_facets.push_back(p.z());
+                            positions_facets.push_back(p.x()+offset.x);
+                            positions_facets.push_back(p.y()+offset.y);
+                            positions_facets.push_back(p.z()+offset.z);
                             item->combinatorial_map().mark(face_it,facetreated);
                             item->combinatorial_map().mark(face_it, voltreated);
                         }
@@ -363,13 +364,13 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
             CGAL_assertion(!item->combinatorial_map().is_free(dit,1));
             const Kernel::Point_3& a = dit->attribute<0>()->point();
             const Kernel::Point_3& b = dit->beta(1)->attribute<0>()->point();
-            positions_lines.push_back(a.x());
-            positions_lines.push_back(a.y());
-            positions_lines.push_back(a.z());
+            positions_lines.push_back(a.x()+offset.x);
+            positions_lines.push_back(a.y()+offset.y);
+            positions_lines.push_back(a.z()+offset.z);
 
-            positions_lines.push_back(b.x());
-            positions_lines.push_back(b.y());
-            positions_lines.push_back(b.z());
+            positions_lines.push_back(b.x()+offset.x);
+            positions_lines.push_back(b.y()+offset.y);
+            positions_lines.push_back(b.z()+offset.z);
 
         }
     }
@@ -380,9 +381,9 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
         const Point_range& points=item->combinatorial_map().attributes<0>();
         for(Point_range::const_iterator pit=boost::next(points.begin());pit!=points.end();++pit){
             const Kernel::Point_3& p=pit->point();
-            positions_points.push_back(p.x());
-            positions_points.push_back(p.y());
-            positions_points.push_back(p.z());
+            positions_points.push_back(p.x()+offset.x);
+            positions_points.push_back(p.y()+offset.y);
+            positions_points.push_back(p.z()+offset.z);
         }
 
     }
