@@ -78,14 +78,14 @@ struct Default_surface_intersection_visitor{
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
   void new_node_added(
-    int,Intersection_type,halfedge_descriptor,halfedge_descriptor,
+    std::size_t,Intersection_type,halfedge_descriptor,halfedge_descriptor,
     const TriangleMesh&,const TriangleMesh&,bool,bool){}
   template<class Graph_node>
   void annotate_graph(std::vector<Graph_node>&){}
   void update_terminal_nodes(std::vector<bool>&){}
   void set_number_of_intersection_points_from_coplanar_faces(std::size_t){};
-  void start_new_polyline(int,int){}
-  void add_node_to_polyline(int){}
+  void start_new_polyline(std::size_t,std::size_t){}
+  void add_node_to_polyline(std::size_t){}
   void input_have_coplanar_faces(){}
   template<class T,class VertexPointMap>
   void finalize(T&,
@@ -118,11 +118,13 @@ class Intersection_of_triangle_meshes
   typedef std::pair<face_descriptor, face_descriptor> Face_pair;
   typedef std::set< Face_pair > Coplanar_face_set;
 
+  typedef std::size_t Node_id;
+
   typedef std::pair<Face_pair,int>                            Face_pair_and_int;
   // we use Face_pair_and_int and not Face_pair to handle coplanar case.
   // Indeed the boundary of the intersection of two coplanar triangles
   // may contain several segments.
-  typedef std::map< Face_pair_and_int, std::set<int> >       Faces_to_nodes_map;
+  typedef std::map< Face_pair_and_int, std::set<Node_id> >   Faces_to_nodes_map;
 
 
 // data members
@@ -204,10 +206,10 @@ class Intersection_of_triangle_meshes
   }
 
   template<class Cpl_inter_pt,class Key>
-  std::pair<int,bool>
+  std::pair<Node_id,bool>
   get_or_create_node(const Cpl_inter_pt& ipt,
-                           int& current_node,
-                           std::map<Key,int>& coplanar_node_map,
+                           Node_id& current_node,
+                           std::map<Key,Node_id>& coplanar_node_map,
                      const TriangleMesh& tm1,
                      const TriangleMesh& tm2)
   {
@@ -245,13 +247,13 @@ class Intersection_of_triangle_meshes
 
     Key key(ipt.type_1, ipt.type_2, h1, h2);
 
-    std::pair<typename std::map<Key,int>::iterator,bool> res=
+    std::pair<typename std::map<Key,Node_id>::iterator,bool> res=
       coplanar_node_map.insert(std::make_pair(key,current_node+1));
     if (res.second){ //insert a new node
       nodes.add_new_node(ipt.point);
-      return std::pair<int,bool>(++current_node, true);
+      return std::pair<Node_id,bool>(++current_node, true);
     }
-    return std::pair<int,bool>(res.first->second, false);
+    return std::pair<Node_id,bool>(res.first->second, false);
   }
 
   template <class Output_iterator>
@@ -268,7 +270,7 @@ class Intersection_of_triangle_meshes
                                                                   halfedge_descriptor e_2,
                                                                   const TriangleMesh& tm1,
                                                                   const TriangleMesh& tm2,
-                                                                  int node_id)
+                                                                  Node_id node_id)
   {
     std::vector<face_descriptor> incident_faces_2;
     get_incident_faces(e_2,tm2,std::back_inserter(incident_faces_2));
@@ -279,12 +281,12 @@ class Intersection_of_triangle_meshes
                           : Face_pair(f_2,f_1);
       if ( coplanar_faces.count(face_pair) ) continue;
       typename Faces_to_nodes_map::iterator it_list=
-        f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,0),std::set<int>()) ).first;
+        f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,0),std::set<Node_id>()) ).first;
       it_list->second.insert(node_id);
     }
   }
 
-  void cip_handle_case_edge(int node_id,
+  void cip_handle_case_edge(Node_id node_id,
                             Face_set* fset,
                             halfedge_descriptor e_1,
                             halfedge_descriptor edge_intersected,
@@ -320,7 +322,7 @@ class Intersection_of_triangle_meshes
     }
   }
 
-  void cip_handle_case_vertex(int node_id,
+  void cip_handle_case_vertex(Node_id node_id,
                               Face_set* fset,
                               halfedge_descriptor edge,
                               halfedge_descriptor vertex_intersected,
@@ -338,7 +340,7 @@ class Intersection_of_triangle_meshes
                                         halfedge_descriptor f_2,
                                         const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
-                                        int node_id,
+                                        Node_id node_id,
                                         bool is_new_node)
   {
     if(is_new_node)
@@ -361,7 +363,7 @@ class Intersection_of_triangle_meshes
                                         halfedge_descriptor e_2,
                                         const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
-                                        int node_id,
+                                        Node_id node_id,
                                         bool is_new_node)
   {
     if(is_new_node)
@@ -384,7 +386,7 @@ class Intersection_of_triangle_meshes
                                           halfedge_descriptor v_2,
                                           const TriangleMesh& tm1,
                                           const TriangleMesh& tm2,
-                                          int node_id,
+                                          Node_id node_id,
                                           bool is_new_node)
   {
     if(is_new_node)
@@ -404,7 +406,7 @@ class Intersection_of_triangle_meshes
   }
 
   void compute_intersection_of_coplanar_faces(
-    int& current_node,
+    Node_id& current_node,
     const TriangleMesh& tm1,
     const TriangleMesh& tm2,
     const VertexPointMap& vpm1,
@@ -417,7 +419,7 @@ class Intersection_of_triangle_meshes
                          halfedge_descriptor,
                          halfedge_descriptor> Key;
 
-    typedef std::map<Key,int> Coplanar_node_map;
+    typedef std::map<Key,Node_id> Coplanar_node_map;
     Coplanar_node_map coplanar_node_map;
 
     BOOST_FOREACH(const Face_pair& face_pair, coplanar_faces)
@@ -433,11 +435,11 @@ class Intersection_of_triangle_meshes
       intersection_coplanar_faces(f1, f2, tm1, tm2, vpm1, vpm2, inter_pts);
 
       std::size_t nb_pts=inter_pts.size();
-      std::vector<int> cpln_nodes; cpln_nodes.reserve(nb_pts);
+      std::vector<Node_id> cpln_nodes; cpln_nodes.reserve(nb_pts);
 
       BOOST_FOREACH(const Cpl_inter_pt& ipt, inter_pts)
       {
-        int node_id;
+        Node_id node_id;
         bool is_new_node;
         cpp11::tie(node_id, is_new_node) =
             get_or_create_node(ipt,current_node,coplanar_node_map,tm1,tm2);
@@ -493,7 +495,7 @@ class Intersection_of_triangle_meshes
         case 1:
         {
           typename Faces_to_nodes_map::iterator it_list=
-            f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,1),std::set<int>()) ).first;
+            f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,1),std::set<Node_id>()) ).first;
           it_list->second.insert(cpln_nodes[0]);
         }
         break;
@@ -502,7 +504,7 @@ class Intersection_of_triangle_meshes
           std::size_t stop=nb_pts + (nb_pts<3?-1:0);
           for (std::size_t k=0;k<stop;++k){
             typename Faces_to_nodes_map::iterator it_list=
-              f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,k+1),std::set<int>()) ).first;
+              f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,k+1),std::set<Node_id>()) ).first;
             it_list->second.insert( cpln_nodes[k] );
             it_list->second.insert( cpln_nodes[(k+1)%nb_pts] );
           }
@@ -538,7 +540,7 @@ class Intersection_of_triangle_meshes
                                    const TriangleMesh& tm2,
                                    const VertexPointMap& vpm1,
                                    const VertexPointMap& vpm2,
-                                   int& current_node)
+                                   Node_id& current_node)
   {
     typedef cpp11::tuple<Intersection_type, halfedge_descriptor, bool,bool>  Inter_type;
 
@@ -595,7 +597,7 @@ class Intersection_of_triangle_meshes
           {
             CGAL_assertion(f_2==face(cpp11::get<1>(res),tm2));
 
-            int node_id=++current_node;
+            Node_id node_id=++current_node;
             add_new_node(h_1,f_2,tm1,tm2,vpm1,vpm2,res);
             visitor.new_node_added(node_id,ON_FACE,h_1,halfedge(f_2,tm2),tm1,tm2,CGAL::cpp11::get<3>(res),CGAL::cpp11::get<2>(res));
             for (;it_edge!=all_edges.end();++it_edge){
@@ -615,7 +617,7 @@ class Intersection_of_triangle_meshes
           // Case when the edge intersect one edge of the face.
           case ON_EDGE:
           {
-            int node_id=++current_node;
+            Node_id node_id=++current_node;
             add_new_node(h_1,f_2,tm1,tm2,vpm1,vpm2,res);
             halfedge_descriptor h_2=cpp11::get<1>(res);
             visitor.new_node_added(node_id,ON_EDGE,h_1,h_2,tm1,tm2,cpp11::get<3>(res),cpp11::get<2>(res));
@@ -633,7 +635,7 @@ class Intersection_of_triangle_meshes
 
           case ON_VERTEX:
           {
-            int node_id=++current_node;
+            Node_id node_id=++current_node;
             halfedge_descriptor h_2=cpp11::get<1>(res);
             nodes.add_new_node(get(vpm2, target(h_2,tm2))); //we use the original vertex to create the node
             //before it was ON_FACE but do not remember why, probably a bug...
@@ -656,25 +658,25 @@ class Intersection_of_triangle_meshes
   }
 
   struct Graph_node{
-    std::set<std::size_t> neighbors;
+    std::set<Node_id> neighbors;
     unsigned degree;
 
     Graph_node():degree(0){}
 
-    void insert(std::size_t i){
+    void insert(Node_id i){
       ++degree;
-      CGAL_assertion(neighbors.find(i)==neighbors.end());
+      CGAL_assertion(!neighbors.count(i));
       neighbors.insert(i);
     }
 
-    void erase(std::size_t i){
-      CGAL_assertion(neighbors.find(i)!=neighbors.end());
+    void erase(Node_id i){
+      CGAL_assertion(neighbors.count(i));
       neighbors.erase(i);
     }
     void make_terminal() {degree=45;}
     bool is_terminal()const {return degree!=2;}
     bool empty() const {return neighbors.empty();}
-    int top() const {return *neighbors.begin();}
+    Node_id top() const {return *neighbors.begin();}
     void pop() {
       CGAL_assertion(!neighbors.empty());
       neighbors.erase(neighbors.begin());
@@ -690,11 +692,11 @@ class Intersection_of_triangle_meshes
     //counts the number of time each node has been seen
     bool isolated_point_seen=false;
     for (typename Faces_to_nodes_map::iterator it=f_to_node.begin();it!=f_to_node.end();++it){
-      const std::set<int>& segment=it->second;
+      const std::set<Node_id>& segment=it->second;
       CGAL_assertion(segment.size()==2 || segment.size()==1);
       if (segment.size()==2){
-        int i=*segment.begin();
-        int j=*boost::next(segment.begin());
+        Node_id i=*segment.begin();
+        Node_id j=*boost::next(segment.begin());
         graph[i].insert(j);
         graph[j].insert(i);
       }
@@ -770,12 +772,12 @@ class Intersection_of_triangle_meshes
       Graph_node& node_i=graph[i];
       std::vector<Point_3> polyline;
 
-      int j=node_i.top();
+      Node_id j=node_i.top();
       visitor.start_new_polyline(i,j);
       interior_nodes.reset(i);
       polyline.push_back(nodes[i]);
       visitor.add_node_to_polyline(i);
-      int first=i;
+      Node_id first=i;
       do{
         Graph_node& node_j=graph[j];
         interior_nodes.reset(j);
@@ -794,7 +796,7 @@ class Intersection_of_triangle_meshes
 
   void remove_duplicated_intersecting_edges()
   {
-    std::set< std::pair<int,int> > already_seen;
+    std::set< std::pair<Node_id,Node_id> > already_seen;
     std::vector<typename Faces_to_nodes_map::iterator> to_erase;
     for (typename Faces_to_nodes_map::iterator it=f_to_node.begin();
           it!=f_to_node.end(); ++it)
@@ -802,7 +804,7 @@ class Intersection_of_triangle_meshes
       if (it->second.size()==1) continue;
       CGAL_precondition(it->second.size()==2);
       CGAL_assertion(*(it->second.begin())<*cpp11::next(it->second.begin()));
-      //it->second is a set so int are already sorted
+      //it->second is a set so node ids are already sorted
       bool is_new=already_seen.insert(  std::make_pair(
                                        *(it->second.begin()),
                                        *cpp11::next(it->second.begin()) )
@@ -839,7 +841,8 @@ public:
     filter_intersections(tm1, tm2, vpm1, vpm2, throw_on_self_intersection);
     filter_intersections(tm2, tm1, vpm2, vpm1, throw_on_self_intersection);
 
-    int current_node=-1;
+    Node_id current_node(-1);
+    CGAL_assertion(current_node+1==0);
 
     #ifndef DO_NOT_HANDLE_COPLANAR_FACES
     //first handle coplanar triangles
