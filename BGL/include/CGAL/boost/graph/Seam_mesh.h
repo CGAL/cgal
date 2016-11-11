@@ -22,6 +22,7 @@
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
+
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/circulator.h>
@@ -851,9 +852,9 @@ public:
   /// \param svm the vertex property map with value `true` for seam vertices
   ///
   /// @note the vertices must be exactly the vertices on the seam edges. Maybe a bad design.
-  Seam_mesh(const TM& tm_, const SEM& sem_, const SVM svm_)
-    : tm(tm_),
-      sem(sem_), svm(svm_),
+  Seam_mesh(const TM& tm, const SEM& sem, const SVM svm)
+    : tm(tm),
+      sem(sem), svm(svm),
       number_of_seams(0), number_of_vertices(-1)
   {  }
 };

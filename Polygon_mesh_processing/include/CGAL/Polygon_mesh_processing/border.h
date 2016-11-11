@@ -250,7 +250,6 @@ namespace Polygon_mesh_processing {
 
     return border_counter;
   }
-
 } // end of namespace Polygon_mesh_processing
 } // end of namespace CGAL
 

@@ -4,7 +4,6 @@
 #include <CGAL/boost/graph/Seam_mesh.h>
 
 #include <CGAL/Circular_border_parameterizer_3.h>
-#include <CGAL/Square_border_parameterizer_3.h>
 #include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
 #include <CGAL/parameterize.h>
@@ -41,13 +40,9 @@ int main(int argc, char * argv[])
   bool created;
   boost::tie(uvpm, created) = sm.add_property_map<vertex_descriptor, Point_2>("v:uv");
 
-  // Four different border parameterizers (pick one)
-  typedef CGAL::Circular_border_uniform_parameterizer_3<SurfaceMesh>     Border_parameterizer;
-//  typedef CGAL::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
-//  typedef CGAL::Square_border_uniform_parameterizer_3<SurfaceMesh>       Border_parameterizer;
-//  typedef CGAL::Square_border_arc_length_parameterizer_3<SurfaceMesh>    Border_parameterizer;
-
+  typedef CGAL::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
   typedef CGAL::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
+
   Parameterizer::Error_code err = CGAL::parameterize(sm, Parameterizer(), bhd, uvpm);
 
   if(err != Parameterizer::OK) {

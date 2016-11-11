@@ -105,7 +105,7 @@ public:
                VertexUVmap uvmap,
                VertexParameterizedMap vpmap)
   {
-    if(vertices_given){
+    if(vertices_given) {
       put(uvmap, vxmin, Point_2(0, 0.5));
       put(uvmap, vxmax, Point_2(1, 0.5));
       put(vpmap, vxmin, true);
@@ -124,7 +124,7 @@ public:
     double ymax = (std::numeric_limits<double>::min)();
     double zmax = (std::numeric_limits<double>::min)();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       Point_3 position = get(ppmap,vd);
 
       xmin = (std::min)(position.x(), xmin);
@@ -219,7 +219,7 @@ public:
     double vmin = (std::numeric_limits<double>::max)();
     double vmax = (std::numeric_limits<double>::min)();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       Point_3  position = get(ppmap,vd);
       Vector_3 position_as_vector = position - Point_3(0,0,0);
 
@@ -233,12 +233,12 @@ public:
       u = (u - V1_min) / (V1_max - V1_min);
       v = (v - V2_min) / (V2_max - V2_min);
 
-      if(u < umin || (u==umin && v < vmin)){
+      if(u < umin || (u==umin && v < vmin)) {
         vxmin = vd ;
         umin = u ;
         vmin = v ;
       }
-      if(u > umax || (u==umax && v > vmax)){
+      if(u > umax || (u==umax && v > vmax)) {
         vxmax = vd ;
         umax = u ;
         vmax = v ;
