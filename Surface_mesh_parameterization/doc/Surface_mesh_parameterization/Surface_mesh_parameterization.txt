@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes
 
 \anchor chapsurface_mesh_parameterization
@@ -26,7 +26,7 @@ transparency, reflection or light modulation maps), fitting scattered
 data, re-parameterizing spline surfaces, repairing CAD models,
 approximating surfaces and remeshing.
 
-This \cgal package implements 
+This \cgal package implements
 surface parameterization methods, such as least squares conformal maps,
 discrete conformal map, discrete authalic
 parameterization, Floater mean value coordinates or Tutte barycentric
@@ -41,7 +41,7 @@ classes of OpenMesh.
 
 Since parameterizing meshes requires an efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
-a unified interface to linear solvers  as described in Chapter 
+a unified interface to linear solvers  as described in Chapter
 \ref PkgSolverSummary.
 
 Note that linear solvers commonly use double precision floating point
@@ -67,10 +67,10 @@ parameterize(TriangleMesh & mesh,
 \endcode
 
 The function `parameterize()` applies a default surface parameterization
-method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}, 
+method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03},
 to the connected component of the mesh of type `TriangleMesh` with the border given by the halfedge `bhd`.
-This border is parameterized with an arc-length circular border parameterization. 
-The sparse linear solver of the \ref thirdpartyEigen library is used. 
+This border is parameterized with an arc-length circular border parameterization.
+The sparse linear solver of the \ref thirdpartyEigen library is used.
 
 The mesh of type `TriangleMesh` must be a model of the concept
 `FaceGraph` and must additionally be triangulated, 2-manifold, oriented,
@@ -117,7 +117,7 @@ using the `Surface_mesh` built-in property mechanism.
 
 \cgalExample{Surface_mesh_parameterization/discrete_authalic.cpp}
 
-\section secSurfaceParameterizationMethods Surface Parameterization Methods 
+\section secSurfaceParameterizationMethods Surface Parameterization Methods
 
 This \cgal package implements surface parameterization methods, such
 as Least Squares Conformal Maps, Discrete Conformal Map, Discrete
@@ -134,7 +134,7 @@ Such border parameterizations are described in Section
 
 \subsubsection Surface_mesh_parameterizationTutteBarycentric Tutte Barycentric Mapping
 
-`Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
+`Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The Barycentric Mapping parameterization method has been introduced by
 Tutte \cgalCite{t-hdg-63}. In parameter space, each vertex is
@@ -155,7 +155,7 @@ Left: Tutte barycentric mapping parameterization (the red line depicts the cut g
 
 \subsubsection Surface_mesh_parameterizationDiscreteConformal Discrete Conformal Map
 
-`Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
+`Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 Discrete conformal map parameterization has been introduced to the graphics community
 by Eck et al. \cgalCite{cgal:eddhls-maam-95}. It attempts to
@@ -177,7 +177,7 @@ Left: discrete conformal map. Right: parameter space.
 
 \subsubsection Surface_mesh_parameterizationFloaterMean Floater Mean Value Coordinates
 
-`Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
+`Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The mean value coordinates parameterization method has been introduced
 by Floater \cgalCite{cgal:f-mvc-03}. Each vertex in parameter space is
@@ -195,7 +195,7 @@ Floater Mean Value Coordinates
 
 \subsubsection Surface_mesh_parameterizationDiscreteAuthalic Discrete Authalic Parameterization
 
-`Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
+`Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The discrete authalic parameterization method has been introduced by
 Desbrun et al. \cgalCite{cgal:dma-ipsm-02}. It corresponds to
@@ -210,7 +210,7 @@ for both systems) is asymmetric.
 Discrete Authalic Parameterization
 \cgalFigureEnd
 
-\subsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods 
+\subsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods
 
 Parameterization methods for
 borders are used as traits classes modifying the behavior of
@@ -244,16 +244,19 @@ Left: Julius Cesar mask parameterization with Authalic/circular border. Right: J
 
 All combinations of uniform/arc-length and circle/square are provided by
 the following classes:
-`Circular_border_arc_length_parameterizer_3<TriangleMesh>`
-`Circular_border_uniform_parameterizer_3<TriangleMesh>`
-`Square_border_arc_length_parameterizer_3<TriangleMesh>`
-`Square_border_uniform_parameterizer_3<TriangleMesh>`
+
+<UL>
+<LI>`Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+<LI>`Circular_border_uniform_parameterizer_3<TriangleMesh>`
+<LI>`Square_border_arc_length_parameterizer_3<TriangleMesh>`
+<LI>`Square_border_uniform_parameterizer_3<TriangleMesh>`
+</UL>
 
 \subsection Surface_mesh_parameterizationFreeBorderSurface Free Border Surface Parameterizations
 
 \subsubsection Surface_mesh_parameterizationLeastSquares Least Squares Conformal Maps
 
-`LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>` 
+`LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The Least Squares Conformal Maps (LSCM) parameterization method has
 been introduced by L&eacute;vy et al. \cgalCite{cgal:lprm-lscm-02}.
@@ -268,7 +271,7 @@ which implies solving a symmetric matrix.
 Least squares conformal maps.
 \cgalFigureEnd
 
-\subsection secBorderParameterizationsforFreeMethods Border Parameterizations for Free Methods 
+\subsection secBorderParameterizationsforFreeMethods Border Parameterizations for Free Methods
 
 Parameterization methods for
 borders are used as traits classes modifying the behavior of
@@ -278,7 +281,7 @@ parameterization methods define only two constraints: the pinned vertices.
 
 <UL>
 
-<LI>`Two_vertices_parameterizer_3<TriangleMesh>` 
+<LI>`Two_vertices_parameterizer_3<TriangleMesh>`
 
 <I>Usage:</I> `Two_vertices_parameterizer_3<TriangleMesh>` is the default
 free border parameterization, and is the only one available
@@ -286,7 +289,7 @@ in the current version of this package.
 
 </UL>
 
-\section secCuttingaMesh Cutting a Mesh 
+\section secCuttingaMesh Cutting a Mesh
 
 \subsection Surface_mesh_parameterizationComputingaCut Computing a Cut Graph
 
@@ -372,6 +375,6 @@ a `FaceGraph`, and it replaces a wrapper which had a more complicated API.
 
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

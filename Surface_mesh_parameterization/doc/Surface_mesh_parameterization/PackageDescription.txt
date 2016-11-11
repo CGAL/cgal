@@ -89,17 +89,11 @@ The package performs the next checks:
     - the border is mapped onto a convex polygon.
     - the input mesh is triangular.
     - the input mesh is a surface with one connected component.
- - Postconditions:
-    - one-to-one mapping.
 
 - For <i>free</i> border parameterizations:
  - Preconditions:
     - the input mesh is triangular.
     - the input mesh is a surface with one connected component.
- - Postconditions:
-    - one-to-one mapping.
-
-
 */
 
 /// \defgroup PkgSurfaceParameterizationMainFunction Main Function
@@ -146,11 +140,5 @@ This package implements all common border parameterization methods:
 vertices).
 */
 
-
-
-
-
 */
-
-
 
