@@ -84,7 +84,7 @@ namespace CGAL {
       }
     };
 
-    std::string dot_it(int i)
+    inline std::string dot_it(int i)
     {
       std::stringstream ss;
       dotted::imbue(ss);
