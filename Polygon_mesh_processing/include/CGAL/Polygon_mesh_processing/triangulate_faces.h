@@ -104,13 +104,13 @@ public:
     {
       halfedge_descriptor v0, v1, v2, v3;
       v0 = halfedge(f, pmesh);
-      Point_ref p0 = _vpmap[target(v0, pmesh)];
+      Point_ref p0 = get(_vpmap, target(v0, pmesh));
       v1 = next(v0, pmesh);
-      Point_ref p1 = _vpmap[target(v1, pmesh)];
+      Point_ref p1 = get(_vpmap, target(v1, pmesh));
       v2 = next(v1, pmesh);
-      Point_ref p2 = _vpmap[target(v2, pmesh)];
+      Point_ref p2 = get(_vpmap, target(v2, pmesh));
       v3 = next(v2, pmesh);
-      Point_ref p3 = _vpmap[target(v3, pmesh)];
+      Point_ref p3 = get(_vpmap, target(v3, pmesh));
 
       /* Chooses the diagonal that will split the quad in two triangles that maximize
        * the scalar product of of the un-normalized normals of the two triangles.
@@ -144,7 +144,7 @@ public:
       Tr_Vertex_handle previous, first;
       do
       {
-        Tr_Vertex_handle vh = cdt.insert(_vpmap[target(h, pmesh)]);
+        Tr_Vertex_handle vh = cdt.insert(get(_vpmap, target(h, pmesh)));
         if (first == Tr_Vertex_handle()) {
           first = vh;
         }

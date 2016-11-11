@@ -117,8 +117,8 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   int id = 0;
   Hedge_around_face_circulator circ(border_halfedge,pmesh), done(circ);
   do{
-    P.push_back(vpmap[target(*circ, pmesh)]);
-    Q.push_back(vpmap[target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)]);
+    P.push_back(get(vpmap, target(*circ, pmesh)));
+    Q.push_back(get(vpmap, target(next(opposite(next(*circ,pmesh),pmesh),pmesh),pmesh)));
     P_edges.push_back(*circ);
     if(!vertex_map.insert(std::make_pair(target(*circ,pmesh), id++)).second) {
       #ifndef CGAL_TEST_SUITE
