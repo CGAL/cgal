@@ -21,8 +21,10 @@
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/parameterize.h>
+#include <CGAL/ARAP_parameterizer_3.h>
 #include <CGAL/Discrete_conformal_map_parameterizer_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
+#include <CGAL/Discrete_authalic_parameterizer_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 
 #include <CGAL/Textured_polyhedron_builder.h>
@@ -36,6 +38,8 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include "ui_Parameterization_widget.h"
+#include "ui_ARAP_dialog.h"
+
 typedef boost::unordered_set<Textured_polyhedron::Base::Facet_handle> Component;
 typedef std::vector<Component> Components;
 struct Is_selected_property_map{
@@ -134,6 +138,7 @@ private:
   bool is_dragging;
   QPointF prev_pos;
 };
+
 typedef Kernel::FT                                                    FT;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor            vertex_descriptor;
 typedef Kernel::Point_2                                               Point_2;
@@ -252,13 +257,19 @@ public:
     QAction* actionMVC = new QAction("Mean Value Coordinates", mw);
     QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
     QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
+    QAction* actionDAP = new QAction("Discrete Authalic", mw);
+    QAction* actionARAP = new QAction("As Rigid As Possible", mw);
     actionMVC->setObjectName("actionMVC");
     actionDCP->setObjectName("actionDCP");
     actionLSC->setObjectName("actionLSC");
+    actionDAP->setObjectName("actionDAP");
+    actionARAP->setObjectName("actionARAP");
 
     _actions << actionMVC
              << actionDCP
-             << actionLSC;
+             << actionLSC
+             << actionDAP
+             << actionARAP;
     autoConnectActions();
     Q_FOREACH(QAction *action, _actions)
       action->setProperty("subMenuName",
@@ -292,6 +303,8 @@ public Q_SLOTS:
   void on_actionMVC_triggered();
   void on_actionDCP_triggered();
   void on_actionLSC_triggered();
+  void on_actionDAP_triggered();
+  void on_actionARAP_triggered();
   void on_prevButton_pressed();
   void on_nextButton_pressed();
   void replacePolyline()
@@ -346,7 +359,7 @@ public Q_SLOTS:
   }
 
 protected:
-  enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC };
+  enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC, PARAM_DAP, PARAM_ARAP};
   void parameterize(Parameterization_method method);
 private:
   Messages_interface *messages;
@@ -434,10 +447,9 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
   Seam_vertex_uhm seam_vertex_uhm(false);
   Seam_vertex_pmap seam_vertex_pm(seam_vertex_uhm);
-  if(!is_seamed
-     && pMesh->is_closed())
+  if(!is_seamed && pMesh->is_closed())
   {
-    messages->error("The selected polyhedron has no border and is not seamed.");
+    messages->error("The selected mesh has no border and is not seamed.");
     return;
   }
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -501,7 +513,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 
   Seam_mesh *sMesh = new Seam_mesh(tMesh, seam_edge_pm, seam_vertex_pm);
-  sMesh->set_seam_number(seam_edges.size());
+  sMesh->set_seam_edges_number(seam_edges.size());
 
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
@@ -614,7 +626,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
         boost::graph_traits<Seam_mesh>::vertex_descriptor vp1 = target(halfedge_descriptor(phd),*sMesh);
         boost::graph_traits<Seam_mesh>::vertex_descriptor vp2 = target(halfedge_descriptor(phd2),*sMesh);
-        boost::property_map<Seam_mesh,CGAL::vertex_point_t>::type vpm = get(boost::vertex_point, *sMesh);
         Parameterizer_with_border::Error_code err = CGAL::parameterize(*sMesh,
                                                                        Parameterizer_with_border(Border_parameterizer(vp1, vp2)),
                                                                        bhd,
@@ -631,14 +642,50 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       }
       break;
     }
+    case PARAM_DAP:
+    {
+      new_item_name = tr("%1 (parameterized (DAP))").arg(poly_item->name());
+      std::cout << "Parameterize (DAP)...";
+      typedef CGAL::Discrete_authalic_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      success = (err == Parameterizer::OK);
+      break;
+    }
+    case PARAM_ARAP:
+    {
+      new_item_name = tr("%1 (parameterized (ARAP))").arg(poly_item->name());
+      std::cout << "Parameterize (ARAP)...";
+
+      QDialog dialog(mw);
+      Ui::ARAP_dialog ui;
+      ui.setupUi(&dialog);
+      connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+      connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+      // Get values
+      QApplication::setOverrideCursor(Qt::ArrowCursor);
+
+      int i = dialog.exec();
+      if (i == QDialog::Rejected)
+        return;
+
+      FT lambda = ui.lambdaSpinBox->value();
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      typedef CGAL::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(lambda), bhd, uv_pm);
+      success = (err == Parameterizer::OK);
+      break;
+    }
     }//end switch
+
+    QApplication::restoreOverrideCursor();
 
     if(success)
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     else
     {
       std::cout << "failure" << std::endl;
-      QApplication::restoreOverrideCursor();
       return;
     }
   } //end for each component
@@ -652,7 +699,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       it1 != tMesh.halfedges_end()&&
       it2 != tpMesh->halfedges_end();
       ++it1, ++it2)
-  {      
+  {
     Seam_mesh::halfedge_descriptor hd(it1);
     FT u = uv_pm[target(hd,*sMesh)].x();
     FT v = uv_pm[target(hd,*sMesh)].y();
@@ -725,6 +772,18 @@ void Polyhedron_demo_parameterization_plugin::on_actionLSC_triggered()
 {
   std::cerr << "LSC...";
   parameterize(PARAM_LSC);
+}
+
+void Polyhedron_demo_parameterization_plugin::on_actionDAP_triggered()
+{
+  std::cerr << "DAP...";
+  parameterize(PARAM_DAP);
+}
+
+void Polyhedron_demo_parameterization_plugin::on_actionARAP_triggered()
+{
+  std::cerr << "ARAP...";
+  parameterize(PARAM_ARAP);
 }
 
 #include "Parameterization_plugin.moc"

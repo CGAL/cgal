@@ -26,8 +26,8 @@
 #include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
 
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
-#include <CGAL/MVC_post_processor_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
+#include <CGAL/MVC_post_processor_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 
 #include <CGAL/Parameterizer_traits_3.h>
@@ -1384,6 +1384,17 @@ public:
 
 public:
   /// Constructor
+  ARAP_parameterizer_3(NT lambda)
+    :
+      m_borderParameterizer(Border_param()),
+      m_linearAlgebra(Sparse_LA()),
+      m_lambda(lambda),
+      m_lambda_tolerance(1e-10),
+      m_iterations(50),
+      m_tolerance(1e-6)
+  { }
+
+
   ///
   /// \param border_param %Object that maps the surface's border to the 2D space.
   /// \param sparse_la %Traits object to access a sparse linear system.
@@ -1394,8 +1405,8 @@ public:
   ///
   ARAP_parameterizer_3(Border_param border_param = Border_param(),
                        Sparse_LA sparse_la = Sparse_LA(),
-                       NT lambda = 0.,
-                       unsigned int iterations = 10,
+                       NT lambda = 1000.,
+                       unsigned int iterations = 50,
                        NT tolerance = 1e-6)
     :
       m_borderParameterizer(border_param),
