@@ -663,7 +663,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
       // Get values
-      QApplication::setOverrideCursor(Qt::ArrowCursor);
+      QApplication::restoreOverrideCursor();
 
       int i = dialog.exec();
       if (i == QDialog::Rejected)
