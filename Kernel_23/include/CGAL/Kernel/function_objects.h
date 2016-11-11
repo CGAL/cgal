@@ -1170,8 +1170,8 @@ public:
                const Point_3& q) const
     {
       return (std::max)( CGAL::abs( K().compute_x_3_object()(p) -  K().compute_x_3_object()(q)),
-                         CGAL::abs( K().compute_y_3_object()(p) -  K().compute_y_3_object()(q)),
-                         CGAL::abs( K().compute_z_3_object()(p) -  K().compute_z_3_object()(q)));
+                         (std::max)(CGAL::abs( K().compute_y_3_object()(p) -  K().compute_y_3_object()(q)),
+                                    CGAL::abs( K().compute_z_3_object()(p) -  K().compute_z_3_object()(q))));
     }
   };
 
