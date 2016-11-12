@@ -234,7 +234,7 @@ _test_fct_point_3(const R& )
  }
 
  assert(CGAL::l_infinity_distance(p1,p2) == FT(11));
- assert(CGAL::l_infinity_distance(p1,p5) == FT(12));
+ assert(CGAL::l_infinity_distance(p1,p5) == FT(6));
  // More tests, that require sqrt().
  {
      typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
