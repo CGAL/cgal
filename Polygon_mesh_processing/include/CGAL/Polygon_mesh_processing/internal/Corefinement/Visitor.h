@@ -132,8 +132,8 @@ struct No_extra_output_from_corefinement
     const std::map<const G*,Mesh_to_intersection_edge_map>& /*mesh_to_intersection_edges*/,
     const Node_vector& /*nodes*/,
     const An_edge_per_polyline_map& /*an_edge_per_polyline*/,
-    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/,
-    bool /*input_have_coplanar_faces*/) const
+    bool /*input_have_coplanar_faces*/,
+    const Mesh_to_map_node& /*mesh_to_node_id_to_vertex*/) const
   {}
 };
 
