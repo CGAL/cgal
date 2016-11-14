@@ -237,6 +237,9 @@ public:
   // Types not required by any of these concepts:
   typedef void                                          adjacency_iterator;
 
+  typedef typename Arrangement_on_surface_2::Halfedge_handle
+                                                        halfedge_descriptor;
+
   /*! Constructor. */
   graph_traits (const Arrangement_on_surface_2& arr) :
     p_arr (const_cast<Arrangement_on_surface_2 *> (&arr)),
