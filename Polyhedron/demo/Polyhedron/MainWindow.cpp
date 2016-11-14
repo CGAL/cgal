@@ -866,7 +866,7 @@ void MainWindow::updateViewerBBox()
   {
     //if(log2(bbox.min(i)) > 13.0 )
     {
-      offset[i] = -200;//-bbox.min(i);
+      offset[i] = -bbox.min(i);
       new_offset = true;
     }
   }

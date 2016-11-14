@@ -196,11 +196,10 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
                            tr("The nef polyhedron \"%1\" is not simple, "
                               "and thus cannot be converted!")
                               .arg(item->name()));
+      QApplication::restoreOverrideCursor();
       return;
     }
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    
     Scene_polyhedron_item* new_item = item->convert_to_polyhedron();
     new_item->setName(tr("%1 (from nef)").arg(item->name()));
     new_item->setRenderingMode(item->renderingMode());
