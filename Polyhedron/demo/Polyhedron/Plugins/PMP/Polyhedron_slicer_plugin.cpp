@@ -219,10 +219,11 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   }
 
   if(!on_Update_plane_button_clicked()) { return; }
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   QApplication::setOverrideCursor(Qt::WaitCursor);
   // get plane position and normal
   qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();
-  const qglviewer::Vec& pos = mf->position();
+  const qglviewer::Vec& pos = mf->position()-offset;
   // WARNING: due to fp arithmetic (setting quaternion based orientation from base vectors then getting plane normal back from this orientation)
   // for base vectors like: 1,0,0 - 0,1,0 we might not have exact corresponding normal vector.
   // So not using below normal but construct plane directly from bases from text boxes
