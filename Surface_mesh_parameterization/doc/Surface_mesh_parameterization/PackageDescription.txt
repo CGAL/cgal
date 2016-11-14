@@ -32,8 +32,7 @@ Discrete Authalic Parameterization, Floater Mean Value Coordinates or Tutte Bary
 
 ## Concepts ##
 
-- `ParameterizerTraits_3`
-- `BorderParameterizer_3`
+- `Parameterizer_3`
 
 ## Surface Parameterization Methods ##
 
@@ -52,14 +51,13 @@ This \cgal package implements several parameterization methods:
   - As Rigid As Possible Maps \cgalCite{liu2008local}
   - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
 
-- `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`
-- `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
-- `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, Parameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, Parameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, Parameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, Parameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, Parameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, Parameterizer_3>`
+- `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, Parameterizer_3, SparseLinearAlgebraTraits_d>`
 
 ## Border Parameterization Methods ##
 

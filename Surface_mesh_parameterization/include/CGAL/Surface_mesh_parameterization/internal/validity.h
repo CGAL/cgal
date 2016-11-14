@@ -21,13 +21,13 @@
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_VALIDITY_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_VALIDITY_H
 
+#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
+
 #include <CGAL/box_intersection_d.h>
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Kernel/global_functions_2.h>
-#include <CGAL/Kernel/global_functions_3.h>
-#include <CGAL/intersection_2.h>
-#include <CGAL/intersection_3.h>
+#include <CGAL/Kernel/global_functions.h>
+#include <CGAL/intersections.h>
 #include <CGAL/Bbox_2.h>
 
 #include <boost/foreach.hpp>
@@ -46,14 +46,11 @@ bool has_flips(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  typedef typename boost::property_map<TriangleMesh,
-                                       CGAL::vertex_point_t>::const_type    VPM;
-  typedef typename boost::property_traits<VPM>::value_type                  Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel                           Kernel;
-
   // Kernel subtypes:
-  typedef typename Kernel::Point_2               Point_2;
-  typedef typename Kernel::Vector_3              Vector_3;
+  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel      Kernel;
+  typedef typename Kernel::Point_2                                    Point_2;
+  typedef typename Kernel::Point_3                                    Point_3;
+  typedef typename Kernel::Vector_3                                   Vector_3;
 
   Vector_3 first_triangle_normal(0., 0., 0.);
   bool is_normal_set = false;
@@ -97,16 +94,12 @@ class Intersect_facets
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  typedef typename boost::property_map<TriangleMesh,
-                                       CGAL::vertex_point_t>::const_type    VPM;
-  typedef typename boost::property_traits<VPM>::value_type                  Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel                           Kernel;
-
   // Kernel subtypes:
-  typedef typename Kernel::Point_2               Point_2;
-  typedef typename Kernel::Segment_2             Segment_2;
-  typedef typename Kernel::Triangle_2            Triangle_2;
-  typedef typename Kernel::FT                    NT;
+  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename Kernel::Point_2                                  Point_2;
+  typedef typename Kernel::Segment_2                                Segment_2;
+  typedef typename Kernel::Triangle_2                               Triangle_2;
+  typedef typename Kernel::FT                                       NT;
 
   typename Kernel::Construct_segment_2 segment_functor;
   typename Kernel::Construct_triangle_2 triangle_functor;
@@ -241,14 +234,10 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  typedef typename boost::property_map<TriangleMesh,
-                                       CGAL::vertex_point_t>::const_type    VPM;
-  typedef typename boost::property_traits<VPM>::value_type                  Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel                           Kernel;
-
   // Kernel subtypes:
-  typedef typename Kernel::Point_2               Point_2;
-  typedef typename Kernel::FT                    NT;
+  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel      Kernel;
+  typedef typename Kernel::FT                                         NT;
+  typedef typename Kernel::Point_2                                    Point_2;
 
   typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor> Box;
 

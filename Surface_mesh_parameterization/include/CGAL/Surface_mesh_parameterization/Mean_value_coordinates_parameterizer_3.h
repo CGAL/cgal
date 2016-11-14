@@ -24,7 +24,10 @@
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
+
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+
 #include <CGAL/Eigen_solver_traits.h>
 
 /// \file Mean_value_coordinates_parameterizer_3.h
@@ -51,15 +54,15 @@ namespace Surface_mesh_parameterization {
 ///   for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.
 /// - It implements an optimized version of `is_one_to_one_mapping()`.
 ///
-/// \cgalModels `ParameterizerTraits_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border
+///         and must be a model of `Parameterizer_3`.
 /// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
 ///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///         does not remove (yet) border vertices from the system.
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -92,7 +95,6 @@ private:
 public:
   // We have to repeat the types exported by superclass
   /// @cond SKIP_IN_MANUAL
-  typedef typename Base::Error_code       Error_code;
   typedef BorderParameterizer_3           Border_param;
   typedef SparseLinearAlgebraTraits_d     Sparse_LA;
   /// @endcond
@@ -100,22 +102,22 @@ public:
 // Private types
 private:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor   face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator     face_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   vertex_iterator;
 
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
 
   // Mesh_TriangleMesh_3 subtypes:
-  typedef typename Parameterizer_traits_3<TriangleMesh>::NT            NT;
-  typedef typename Parameterizer_traits_3<TriangleMesh>::Point_3       Point_3;
-  typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3      Vector_3;
+  typedef typename Base::PPM              PPM;
+  typedef typename Base::Kernel           Kernel;
+  typedef typename Base::NT               NT;
+  typedef typename Base::Point_3          Point_3;
+  typedef typename Base::Vector_3         Vector_3;
 
   // SparseLinearAlgebraTraits_d subtypes:
   typedef typename Sparse_LA::Vector      Vector;
   typedef typename Sparse_LA::Matrix      Matrix;
-
-  using Base::compute_angle_rad;
 
 // Public operations
 public:
@@ -157,32 +159,30 @@ protected:
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j) const
   {
-    typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
-
-    const PPmap ppmap = get(vertex_point, mesh);
+    const PPM ppmap = get(vertex_point, mesh);
 
     Point_3 position_v_i = get(ppmap, main_vertex_v_i);
     Point_3 position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
     // Compute the norm of v_j -> v_i vector
     Vector_3 edge = position_v_i - position_v_j;
-    double len = std::sqrt(edge * edge);
+    NT len = std::sqrt(edge * edge);
 
     // Compute angle of (v_j,v_i,v_k) corner (i.e. angle of v_i corner)
     // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     previous_vertex_v_k--;
     Point_3 position_v_k = get(ppmap, *previous_vertex_v_k);
-    double gamma_ij = compute_angle_rad(position_v_j, position_v_i, position_v_k);
+    NT gamma_ij = internal::compute_angle_rad<Kernel>(position_v_j, position_v_i, position_v_k);
 
     // Compute angle of (v_l,v_i,v_j) corner (i.e. angle of v_i corner)
     // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     next_vertex_v_l++;
     Point_3 position_v_l = get(ppmap, *next_vertex_v_l);
-    double delta_ij = compute_angle_rad(position_v_l, position_v_i, position_v_j);
+    NT delta_ij = internal::compute_angle_rad<Kernel>(position_v_l, position_v_i, position_v_j);
 
-    double weight = 0.0;
+    NT weight = 0.0;
     CGAL_assertion(len != 0.0); // two points are identical!
     if(len != 0.0)
       weight = (std::tan(0.5*gamma_ij) + std::tan(0.5*delta_ij)) / len;

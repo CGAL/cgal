@@ -22,6 +22,7 @@
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
+#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
 
@@ -30,7 +31,6 @@
 #include <CGAL/Surface_mesh_parameterization/MVC_post_processor_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 
-#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Algebraic_kernel_d_2.h>
@@ -41,6 +41,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Timer.h>
 
 #include <boost/foreach.hpp>
@@ -102,14 +103,14 @@ namespace Surface_mesh_parameterization {
 ///
 /// A one-to-one mapping is *not* guaranteed.
 ///
-/// \cgalModels `ParameterizerTraits_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
-/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border
+///         and must be a model of `Parameterizer_3`.
 /// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
 ///         Note: the system is *not* symmetric.
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -126,27 +127,11 @@ template
     = Eigen_solver_traits< > // defaults to Eigen::BICGSTAB with Eigen_sparse_matrix
 >
 class ARAP_parameterizer_3
-  : public Parameterizer_traits_3<TriangleMesh>
 {
-// Private types
-private:
-  // This class
-  typedef ARAP_parameterizer_3<TriangleMesh,
-                               BorderParameterizer_3,
-                               SparseLinearAlgebraTraits_d>       Self;
-
-  // Superclass
-  typedef Parameterizer_traits_3<TriangleMesh>                    Base;
-
 // Public types
 public:
-  // We have to repeat the types exported by superclass
-  /// @cond SKIP_IN_MANUAL
-  typedef typename Base::Error_code                   Error_code;
-  /// @endcond
-
   /// Export BorderParameterizer_3 template parameter.
-  typedef BorderParameterizer_3                       Border_param;
+  typedef BorderParameterizer_3                            Border_param;
 
 // Private types
 private:
@@ -159,22 +144,22 @@ private:
   typedef CGAL::Halfedge_around_target_circulator<TriangleMesh>  halfedge_around_target_circulator;
   typedef CGAL::Halfedge_around_face_circulator<TriangleMesh>    halfedge_around_face_circulator;
 
-  typedef boost::unordered_set<vertex_descriptor>       Vertex_set;
-  typedef std::vector<face_descriptor>                  Faces_vector;
+  typedef boost::unordered_set<vertex_descriptor>          Vertex_set;
+  typedef std::vector<face_descriptor>                     Faces_vector;
 
   // Traits subtypes:
-  typedef Parameterizer_traits_3<TriangleMesh>          Traits;
-  typedef typename Traits::NT                           NT;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::Point_3                      Point_3;
-  typedef typename Traits::Vector_2                     Vector_2;
-  typedef typename Traits::Vector_3                     Vector_3;
+  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename Kernel::FT                                       NT;
+  typedef typename Kernel::Point_2                                  Point_2;
+  typedef typename Kernel::Point_3                                  Point_3;
+  typedef typename Kernel::Vector_2                                 Vector_2;
+  typedef typename Kernel::Vector_3                                 Vector_3;
 
   // SparseLinearAlgebraTraits_d subtypes:
-  typedef SparseLinearAlgebraTraits_d                   Sparse_LA;
+  typedef SparseLinearAlgebraTraits_d                      Sparse_LA;
 
-  typedef typename Sparse_LA::Vector                    Vector;
-  typedef typename Sparse_LA::Matrix                    Matrix;
+  typedef typename Sparse_LA::Vector                       Vector;
+  typedef typename Sparse_LA::Matrix                       Matrix;
 
   // Memory maps
     // Each triangle is associated a linear transformation matrix
@@ -196,9 +181,6 @@ private:
                                 boost::hash<halfedge_descriptor> >  Lp_hm;
   typedef boost::associative_property_map<Lp_hm>                    Lp_map;
   typedef std::vector<Point_2>                                      Local_points;
-
-  // Angle computations
-  using Base::cotangent;
 
 // Private fields
 private:
@@ -290,9 +272,9 @@ private:
     std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
 
     if (vertices.empty() || faces.empty())
-      return Base::ERROR_EMPTY_MESH;
+      return ERROR_EMPTY_MESH;
 
-    return Base::OK;
+    return OK;
   }
 
   /// Initialize the UV values with a first parameterization of the input.
@@ -306,7 +288,7 @@ private:
     unsigned int number_of_borders =
                          CGAL::Polygon_mesh_processing::number_of_borders(mesh);
     if(number_of_borders == 0) {
-      status = Base::ERROR_BORDER_TOO_SHORT;
+      status = ERROR_BORDER_TOO_SHORT;
       return status;
     }
 
@@ -326,13 +308,16 @@ private:
 
   /// Parameterize the border. The number of fixed vertices depends on the value
   /// of the parameter &lambda;.
-  template <typename VertexUVMap, typename VertexParameterizedMap>
+  template <typename VertexUVMap,
+            typename VertexIndexMap,
+            typename VertexParameterizedMap>
   Error_code parameterize_border(const TriangleMesh& mesh,
                                  const Vertex_set& vertices,
                                  halfedge_descriptor bhd,
+                                 VertexIndexMap vimap,
                                  VertexParameterizedMap vpmap)
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
     CGAL_precondition(!vertices.empty());
 
     if(m_lambda != 0.) {
@@ -344,14 +329,15 @@ private:
 
       // A local uvmap (that is then discarded) is passed to avoid changing
       // the values of the real uvmap. Since we can't get VertexUVMap::C,
-      // we build a map with the same key and value type
+      // we build a map with the same key and value types
       typedef boost::unordered_map<typename VertexUVMap::key_type,
                                    typename VertexUVMap::value_type> Useless_map;
       typedef boost::associative_property_map<Useless_map>           Useless_pmap;
 
       Useless_map useless_map;
       Useless_pmap useless_uvpmap(useless_map);
-      status = get_border_parameterizer().parameterize(mesh, bhd, useless_uvpmap, vpmap);
+      status = get_border_parameterizer().parameterize(mesh, bhd, useless_uvpmap,
+                                                       vimap, vpmap);
     }
 
     return status;
@@ -367,13 +353,13 @@ private:
   {
     typedef typename boost::property_map<TriangleMesh,
                                          boost::vertex_point_t>::const_type PPmap;
-    PPmap ppmap = get(vertex_point, mesh);
+    const PPmap ppmap = get(vertex_point, mesh);
 
     Point_3 position_vi = get(ppmap, vi);
     Point_3 position_vj = get(ppmap, vj);
     Point_3 position_vk = get(ppmap, vk);
 
-    double cot = cotangent(position_vi, position_vj, position_vk);
+    NT cot = internal::cotangent<Kernel>(position_vi, position_vj, position_vk);
     put(ctmap, hd, cot);
   }
 
@@ -393,7 +379,7 @@ private:
       hd = next(hd, mesh);
 
       if(hd != hdb) { // make sure that it is a triangular face
-        return Base::ERROR_NON_TRIANGULAR_MESH;
+        return ERROR_NON_TRIANGULAR_MESH;
       }
 
       compute_cotangent_angle(mesh, hd, vk, vj, vi , ctmap); // angle at v_j
@@ -401,7 +387,7 @@ private:
       compute_cotangent_angle(mesh, prev(hd, mesh), vj, vi, vk , ctmap); // angle at v_i
     }
 
-    return Base::OK;
+    return OK;
   }
 
   /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
@@ -419,7 +405,7 @@ private:
     // while circulating around vi
     NT c_l = get(ctmap, hd);
 
-    double weight = c_k + c_l;
+    NT weight = c_k + c_l;
     return weight;
   }
 
@@ -463,11 +449,11 @@ private:
     }
 
     if (vertexIndex < 2)
-      return Base::ERROR_NON_TRIANGULAR_MESH;
+      return ERROR_NON_TRIANGULAR_MESH;
 
     // Set w_ii in matrix
     A.set_coef(i, i, w_ii, true /*new*/);
-    return Base::OK;
+    return OK;
   }
 
   /// Initialize the (constant) matrix A in the linear system "A*X = B",
@@ -481,7 +467,7 @@ private:
                                  VertexParameterizedMap vpmap,
                                  Matrix& A) const
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     // compute A
     unsigned int count = 0;
@@ -489,7 +475,7 @@ private:
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the line i of the matrix A
         status = fill_linear_system_matrix(A, mesh, vd, ctmap, vimap);
-        if(status != Base::OK)
+        if(status != OK)
           return status;
       } else { // fixed vertices
         int index = get(vimap, vd);
@@ -704,7 +690,7 @@ private:
                                          const VertexUVMap uvmap,
                                          Lt_map ltmap) const
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     BOOST_FOREACH(face_descriptor fd, faces) {
       // Compute the coefficients C1, C2, C3
@@ -736,7 +722,7 @@ private:
 
         typedef typename boost::property_map<TriangleMesh,
                                              boost::vertex_point_t>::const_type PPmap;
-        PPmap ppmap = get(vertex_point, mesh);
+        const PPmap ppmap = get(vertex_point, mesh);
 
         std::cout << "Point_3: " << get(ppmap, source(hd, mesh)) << " || "
                                  << get(ppmap, target(hd, mesh)) << std::endl;
@@ -852,7 +838,7 @@ private:
   {
     typedef typename boost::property_map<TriangleMesh,
                                          boost::vertex_point_t>::const_type PPmap;
-    PPmap ppmap = get(vertex_point, mesh);
+    const PPmap ppmap = get(vertex_point, mesh);
 
     Point_3 position_vi = get(ppmap, vi);
     Point_3 position_vj = get(ppmap, vj);
@@ -893,7 +879,7 @@ private:
 
       hd = next(hd, mesh);
       if(hd != hdb) { // to make sure that it is a triangular face
-        return Base::ERROR_NON_TRIANGULAR_MESH;
+        return ERROR_NON_TRIANGULAR_MESH;
       }
 
       project_face(mesh, vi, vj, vk, lp);
@@ -901,9 +887,9 @@ private:
     }
 
     if(lp.size() != 3 * faces.size())
-      return Base::ERROR_NON_TRIANGULAR_MESH;
+      return ERROR_NON_TRIANGULAR_MESH;
 
-    return Base::OK;
+    return OK;
   }
 
   /// Compute the coefficient b_ij = (i, j) of the right hand side vector B,
@@ -1016,9 +1002,9 @@ private:
     Bv.set(i, bv_i);
 
     if (vertexIndex < 2)
-      return Base::ERROR_NON_TRIANGULAR_MESH;
+      return ERROR_NON_TRIANGULAR_MESH;
 
-    return Base::OK;
+    return OK;
   }
 
   /// Compute the entries of the right hand side of the ARAP linear system.
@@ -1039,7 +1025,7 @@ private:
                          Vector& Bu, Vector& Bv) const
   {
     // Initialize the right hand side B in the linear system "A*X = B"
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     unsigned int count = 0;
     BOOST_FOREACH(vertex_descriptor vd, vertices) {
@@ -1047,7 +1033,7 @@ private:
         // Compute the lines i of the vectors Bu and Bv
         status = fill_linear_system_rhs(mesh, vd, ctmap, lp, lpmap,
                                                   ltmap, vimap, Bu, Bv);
-        if(status != Base::OK)
+        if(status != OK)
           return status;
       } else { // fixed vertices
         int index = get(vimap, vd);
@@ -1078,7 +1064,7 @@ private:
                              VertexParameterizedMap vpmap,
                              const Matrix& A)
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     // Create two sparse linear systems "A*Xu = Bu" and "A*Xv = Bv"
     int nbVertices = static_cast<int>(vertices.size());
@@ -1087,7 +1073,7 @@ private:
     // Fill the right hand side vectors
     status = compute_rhs(mesh, vertices, ctmap, lp, lpmap, ltmap,
                                          uvmap, vimap, vpmap, Bu, Bv);
-    if (status != Base::OK)
+    if (status != OK)
       return status;
 
     std::cout << "A, B: " << std::endl << A.eigen_object() << std::endl << Bu << std::endl << Bv << std::endl;
@@ -1099,7 +1085,7 @@ private:
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
     {
       std::cout << "Could not solve linear system" << std::endl;
-      status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
+      status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
       return status;
     }
 
@@ -1224,12 +1210,12 @@ private:
 
     Post_processor p;
     Error_code status = p.parameterize(mesh, vertices, faces, bhd, uvmap, vimap);
-    if(status != Base::OK)
+    if(status != OK)
       return status;
 
     output_uvmap("ARAP_final_post_processing.off", mesh, vertices, faces, uvmap, vimap);
 
-    return Base::OK;
+    return OK;
   }
 
   /// Compute the quality of the parameterization.
@@ -1260,15 +1246,16 @@ public:
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
   ///
   /// \tparam VertexUVmap must be a property map that associates a %Point_2
-  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
-  ///         (type deduced by the graph traits of `TriangleMesh`).
+  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
+  ///         to a `vertex_descriptor` (type deduced by the graph traits
+  ///         of `TriangleMesh`).
   /// \tparam VertexIndexMap must be a property map that associates a unique integer index
   ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
-  /// \tparam VertexParameterizedMap must be a property map that associates a boolean
+  /// \tparam VertexParameterizedMap must be a property map that associates a Boolean
   ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
   ///
   /// \param mesh a triangulated surface.
-  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
+  /// \param bhd a halfedge descriptor on the boundary of `mesh`.
   /// \param uvmap an instanciation of the class `VertexUVmap`.
   /// \param vimap an instanciation of the class `VertexIndexMap`.
   /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
@@ -1286,13 +1273,13 @@ public:
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap)
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     // vertices and faces containers
     Faces_vector faces;
     Vertex_set vertices;
     status = initialize_containers(mesh, bhd, vertices, faces);
-    if(status != Base::OK)
+    if(status != OK)
       return status;
 
     // linear transformation matrices L_t
@@ -1303,19 +1290,19 @@ public:
     // Compute the initial parameterization of the mesh
     status = compute_initial_uv_map(mesh, bhd, uvmap);
     output_uvmap("ARAP_initial_param.off", mesh, vertices, faces, uvmap, vimap);
-    if(status != Base::OK)
+    if(status != OK)
       return status;
 
     // Handle the boundary condition depending on lambda
-    status = parameterize_border<VertexUVMap>(mesh, vertices, bhd, vpmap);
-    if(status != Base::OK)
+    status = parameterize_border<VertexUVMap>(mesh, vertices, bhd, vimap, vpmap);
+    if(status != OK)
       return status;
 
     // Compute all cotangent angles
     Cot_hm cthm;
     Cot_map ctmap(cthm);
     status = compute_cotangent_angles(mesh, faces, ctmap);
-    if(status != Base::OK)
+    if(status != OK)
       return status;
 
     // Compute all local 2D parameterizations
@@ -1323,7 +1310,7 @@ public:
     Lp_map lpmap(lphm);
     Local_points lp;
     status = compute_local_parameterization(mesh, faces, lp, lpmap);
-    if(status != Base::OK)
+    if(status != OK)
       return status;
 
     std::cout << "All data structures initialized" << std::endl;
@@ -1332,7 +1319,7 @@ public:
     int nbVertices = static_cast<int>(vertices.size());
     Matrix A(nbVertices, nbVertices); // the constant matrix using in the linear system A*X = B
     status = initialize_matrix_A(mesh, vertices, ctmap, vimap, vpmap, A);
-    if(status != Base::OK)
+    if(status != OK)
       return status;
 
     NT energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
@@ -1348,14 +1335,14 @@ public:
                                                uvmap, vimap, vpmap, A);
 
       // Output the current situation
-      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
+//      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
       energy_last = energy_this;
       energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
                                                         ltmap, uvmap);
       std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
       CGAL_warning(energy_this >= 0);
 
-      if(status != Base::OK)
+      if(status != OK)
         return status;
 
       // energy based termination

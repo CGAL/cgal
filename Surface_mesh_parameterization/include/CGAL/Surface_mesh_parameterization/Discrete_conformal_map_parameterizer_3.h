@@ -23,7 +23,12 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/Surface_mesh_parameterization/internal/angles.h>
+#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
+
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+
 #include <CGAL/Eigen_solver_traits.h>
 
 /// \file Discrete_conformal_map_parameterizer_3.h
@@ -49,15 +54,15 @@ namespace Surface_mesh_parameterization {
 /// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
 ///   for j neighbor vertex of i, based on Discrete Conformal Map method.
 ///
-/// \cgalModels `ParameterizerTraits_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \param TriangleMesh must be a model of `FaceGraph`.
-/// \param BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \param BorderParameterizer_3 is a Strategy to parameterize the surface border
+///        and must be a model of `Parameterizer_3`.
 /// \param SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
 ///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///        does not remove (yet) border vertices from the system.
 ///
-/// \sa `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -90,7 +95,6 @@ private:
 public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
-    typedef typename Base::Error_code       Error_code;
     typedef BorderParameterizer_3           Border_param;
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
     /// @endcond
@@ -100,16 +104,16 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
 
-  // Mesh_TriangleMesh_3 subtypes:
-  typedef typename Parameterizer_traits_3<TriangleMesh>::NT            NT;
-  typedef typename Parameterizer_traits_3<TriangleMesh>::Point_3       Point_3;
-  typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3      Vector_3;
+  // Traits subtypes:
+  typedef typename Base::Kernel             Kernel;
+  typedef typename Base::NT                 NT;
+  typedef typename Base::Point_3            Point_3;
+  typedef typename Base::Vector_3           Vector_3;
+  typedef typename Base::PPM                PPM;
 
   // SparseLinearAlgebraTraits_d subtypes:
-  typedef typename Sparse_LA::Vector      Vector;
-  typedef typename Sparse_LA::Matrix      Matrix;
-
-  using Base::cotangent;
+  typedef typename Sparse_LA::Vector        Vector;
+  typedef typename Sparse_LA::Matrix        Matrix;
 
 // Public operations
 public:
@@ -136,8 +140,7 @@ protected:
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j) const // its target is main_vertex_v_i
   {
-    typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
-    PPmap ppmap = get(vertex_point, mesh);
+    const PPM ppmap = get(vertex_point, mesh);
 
     Point_3 position_v_i = get(ppmap, main_vertex_v_i);
     Point_3 position_v_j = get(ppmap, *neighbor_vertex_v_j);
@@ -147,16 +150,16 @@ protected:
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     previous_vertex_v_k--;
     Point_3 position_v_k = get(ppmap, *previous_vertex_v_k);
-    double cotg_beta_ij = cotangent(position_v_i, position_v_k, position_v_j);
+    NT cotg_beta_ij = internal::cotangent<Kernel>(position_v_i, position_v_k, position_v_j);
 
     // Compute cotangent of (v_j,v_l,v_i) corner (i.e. cotan of v_l corner)
     // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     next_vertex_v_l++;
     Point_3 position_v_l = get(ppmap, *next_vertex_v_l);
-    double cotg_alpha_ij = cotangent(position_v_j, position_v_l, position_v_i);
+    NT cotg_alpha_ij = internal::cotangent<Kernel>(position_v_j, position_v_l, position_v_i);
 
-    double weight = cotg_beta_ij + cotg_alpha_ij;
+    NT weight = cotg_beta_ij + cotg_alpha_ij;
     return weight;
   }
 };

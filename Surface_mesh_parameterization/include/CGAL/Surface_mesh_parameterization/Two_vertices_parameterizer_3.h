@@ -23,7 +23,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
+#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
 #include <boost/foreach.hpp>
 
@@ -65,10 +66,13 @@ public:
 
 // Private types
 private:
-  typedef Parameterizer_traits_3<TriangleMesh>    Traits;
-  typedef typename Traits::Point_2                Point_2;
-  typedef typename Traits::Point_3                Point_3;
-  typedef typename Traits::Vector_3               Vector_3;
+  // Traits subtypes:
+  typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
+  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename Kernel::FT                                       NT;
+  typedef typename Kernel::Point_2                                  Point_2;
+  typedef typename Kernel::Point_3                                  Point_3;
+  typedef typename Kernel::Vector_3                                 Vector_3;
 
   vertex_descriptor vxmin, vxmax;
   bool vertices_given;
@@ -90,32 +94,37 @@ public:
   /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
   ///
   /// \tparam VertexUVmap must be a property map that associates a %Point_2
-  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
-  ///         (type deduced by the graph traits of `TriangleMesh`).
-  /// \tparam VertexParameterizedMap must be a property map that associates a boolean
+  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
+  ///         to a `vertex_descriptor` (type deduced by the graph traits
+  ///         of `TriangleMesh`).
+  /// \tparam VertexParameterizedMap must be a property map that associates a Boolean
   ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
   ///
   /// \param mesh a triangulated surface.
   /// \param uvmap an instanciation of the class `VertexUVmap`.
   /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
   ///
-  template <typename VertexUVmap, typename VertexParameterizedMap>
-  typename Parameterizer_traits_3<TriangleMesh>::Error_code
-  parameterize(const TriangleMesh& mesh,
-               halfedge_descriptor,
-               VertexUVmap uvmap,
-               VertexParameterizedMap vpmap)
+  /// \pre `mesh` must be a surface with one connected component.
+  /// \pre `mesh` must be a triangular mesh.
+  ///
+  template <typename VertexUVmap,
+            typename VertexIndexMap,
+            typename VertexParameterizedMap>
+  Error_code parameterize(const TriangleMesh& mesh,
+                          halfedge_descriptor /* bhd */,
+                          VertexUVmap uvmap,
+                          VertexIndexMap /* vimap */,
+                          VertexParameterizedMap vpmap)
   {
     if(vertices_given) {
       put(uvmap, vxmin, Point_2(0, 0.5));
       put(uvmap, vxmax, Point_2(1, 0.5));
       put(vpmap, vxmin, true);
       put(vpmap, vxmax, true);
-      return Parameterizer_traits_3<TriangleMesh>::OK;
+      return OK;
     }
 
-    typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
-    PPmap ppmap = get(vertex_point, mesh);
+    const PPM ppmap = get(vertex_point, mesh);
 
     // Get mesh's bounding box
     double xmin = (std::numeric_limits<double>::max)();
@@ -169,23 +178,23 @@ public:
     }
 
     Vector_3 V1,                // bounding box' longest axis
-             V2 ;               // bounding box' 2nd longest axis
+             V2;                // bounding box' 2nd longest axis
     double V1_min=0, V1_max=0;  // bounding box' dimensions along V1
     double V2_min=0, V2_max=0;  // bounding box' dimensions along V2
     switch (longest_axis)
     {
     case X_AXIS:
-      V1 = Vector_3(1,0,0);
+      V1 = Vector_3(1, 0, 0);
       V1_min = xmin;
       V1_max = xmax;
       break;
     case Y_AXIS:
-      V1 = Vector_3(0,1,0);
+      V1 = Vector_3(0, 1, 0);
       V1_min = ymin;
       V1_max = ymax;
       break;
     case Z_AXIS:
-      V1 = Vector_3(0,0,1);
+      V1 = Vector_3(0, 0, 1);
       V1_min = zmin;
       V1_max = zmax;
       break;
@@ -195,17 +204,17 @@ public:
     switch (second_longest_axis)
     {
     case X_AXIS:
-      V2 = Vector_3(1,0,0) ;
+      V2 = Vector_3(1, 0, 0);
       V2_min = xmin;
       V2_max = xmax;
       break;
     case Y_AXIS:
-      V2 = Vector_3(0,1,0) ;
+      V2 = Vector_3(0, 1, 0);
       V2_min = ymin;
       V2_max = ymax;
       break;
     case Z_AXIS:
-      V2 = Vector_3(0,0,1) ;
+      V2 = Vector_3(0, 0, 1);
       V2_min = zmin;
       V2_max = zmax;
       break;
@@ -221,12 +230,12 @@ public:
     double vmax = (std::numeric_limits<double>::min)();
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
-      Point_3  position = get(ppmap,vd);
-      Vector_3 position_as_vector = position - Point_3(0,0,0);
+      Point_3  position = get(ppmap, vd);
+      Vector_3 position_as_vector = position - Point_3(0, 0, 0);
 
       // coordinate along the bounding box' main axes
-      double u = position_as_vector * V1 ;
-      double v = position_as_vector * V2 ;
+      double u = position_as_vector * V1;
+      double v = position_as_vector * V2;
 
       // convert to unit square coordinates
       CGAL_assertion(V1_max > V1_min);
@@ -235,18 +244,19 @@ public:
       v = (v - V2_min) / (V2_max - V2_min);
 
       if(u < umin || (u==umin && v < vmin)) {
-        vxmin = vd ;
-        umin = u ;
-        vmin = v ;
+        vxmin = vd;
+        umin = u;
+        vmin = v;
       }
       if(u > umax || (u==umax && v > vmax)) {
-        vxmax = vd ;
-        umax = u ;
-        vmax = v ;
+        vxmax = vd;
+        umax = u;
+        vmax = v;
       }
     }
-    put(uvmap, vxmin, Point_2(umin,vmin)) ; // useful only for vxmin and vxmax
-    put(uvmap, vxmax, Point_2(umax,vmax)) ; // useful only for vxmin and vxmax
+
+    put(uvmap, vxmin, Point_2(umin, vmin)); // useful only for vxmin and vxmax
+    put(uvmap, vxmax, Point_2(umax, vmax)); // useful only for vxmin and vxmax
     put(vpmap, vxmin, true);
     put(vpmap, vxmax, true);
 
@@ -254,7 +264,7 @@ public:
     std::cerr << "  map two vertices..." << std::endl;
 #endif
 
-    return Parameterizer_traits_3<TriangleMesh>::OK;
+    return OK;
   }
 
   /// Indicate if the border's shape is convex.

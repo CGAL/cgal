@@ -3,9 +3,10 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 
-#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
@@ -45,10 +46,10 @@ int main(int argc, char * argv[])
   typedef SMP::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
   typedef SMP::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
 
-  Parameterizer::Error_code err = parameterize(sm, Parameterizer(), bhd, uvpm);
+  SMP::Error_code err = SMP::parameterize(sm, Parameterizer(), bhd, uvpm);
 
-  if(err != Parameterizer::OK) {
-    std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+  if(err != SMP::OK) {
+    std::cerr << "Error: " << SMP::get_error_message(err) << std::endl;
     return 1;
   }
 

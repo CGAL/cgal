@@ -21,7 +21,9 @@
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_MVC_POST_PROCESSOR_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_MVC_POST_PROCESSOR_3_H
 
+
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
+#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
@@ -63,7 +65,7 @@ namespace Surface_mesh_parameterization {
 /// the convexification of the initial (2D) parameterization and the resolution
 /// of a linear system with coefficients based on Mean Value Coordinates.
 ///
-/// \cgalModels `ParameterizerTraits_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 /// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
@@ -79,22 +81,11 @@ template
                                           Eigen::IncompleteLUT< double > > >
 >
 class MVC_post_processor_3
-  : public Parameterizer_traits_3<TriangleMesh>
 {
 // Private types
 private:
   // This class
   typedef MVC_post_processor_3<TriangleMesh, SparseLinearAlgebraTraits_d>  Self;
-
-  // Superclass
-  typedef Parameterizer_traits_3<TriangleMesh>                             Base;
-
-// Public types
-public:
-  // We have to repeat the types exported by superclass
-  /// @cond SKIP_IN_MANUAL
-  typedef typename Base::Error_code                   Error_code;
-  /// @endcond
 
 // Private types
 private:
@@ -108,13 +99,11 @@ private:
   typedef std::vector<face_descriptor>                  Faces_vector;
 
   // Traits subtypes:
-  typedef Parameterizer_traits_3<TriangleMesh>  Traits;
-  typedef typename Traits::Kernel               Kernel;
-  typedef typename Traits::NT                   NT;
-  typedef typename Traits::Point_2              Point_2;
-  typedef typename Traits::Point_3              Point_3;
-  typedef typename Traits::Vector_2             Vector_2;
-  typedef typename Traits::Vector_3             Vector_3;
+  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename Kernel::FT                                       NT;
+  typedef typename Kernel::Point_2                                  Point_2;
+  typedef typename Kernel::Vector_2                                 Vector_2;
+  typedef typename Kernel::Segment_2                                Segment_2;
 
   // SparseLinearAlgebraTraits_d subtypes:
   typedef SparseLinearAlgebraTraits_d           Sparse_LA;
@@ -208,9 +197,6 @@ private:
   {
     // @fixme unefficient: use sweep line algorithms instead of brute force
 
-    typedef typename Traits::Kernel                 Kernel;
-    typedef typename Kernel::Segment_2              Segment_2;
-
     BOOST_FOREACH(halfedge_descriptor hd_1, halfedges_around_face(bhd, mesh)){
       BOOST_FOREACH(halfedge_descriptor hd_2, halfedges_around_face(bhd, mesh)){
         if(hd_1 == hd_2 || // equality
@@ -303,7 +289,7 @@ private:
     std::ofstream out("constrained_triangulation.cgal");
     out << ct;
 
-    return Base::OK;
+    return OK;
   }
 
   /// Color the (finite) faces of the constrained triangulation with an outside (-1) tag
@@ -344,7 +330,7 @@ private:
     // Output the exterior faces of the constrained triangulation
     output_ct_exterior_faces(ct);
 
-    return Base::OK;
+    return OK;
   }
 
   //                                                       -> ->
@@ -569,7 +555,7 @@ private:
                                 const VertexParameterizedMap vpmap,
                                 Matrix& A) const
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     // The constrained triangulation has only "real" faces outside of the border
     // of mesh.
@@ -628,12 +614,12 @@ private:
                        const Vector& Bu, const Vector& Bv,
                        Vector& Xu, Vector& Xv)
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     NT Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)){
-      status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
+      status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
 
     return status;
@@ -644,11 +630,11 @@ private:
   Error_code prepare_CT_for_parameterization(const CT& ct,
                                              VertexParameterizedMap vpmap) const
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     // Gather the finite faces of the CT that are outside the (main) border of 'mesh'
     status = color_faces(ct);
-    if(status != Base::OK)
+    if(status != OK)
       return status;
 
     // Gather the vertices that are on the border of the convex hull and will be fixed
@@ -670,7 +656,7 @@ private:
                                                const VertexIndexMap vimap,
                                                const VertexParameterizedMap vpmap)
   {
-    Error_code status = Base::OK;
+    Error_code status = OK;
 
     // Matrices and vectors needed in the resolution
     int nbVertices = static_cast<int>(vertices.size());
@@ -685,6 +671,8 @@ private:
 
     // Solve the linear system
     status = solve_mvc(A, Bu, Bv, Xu, Xv);
+    if(status != OK)
+      return status;
 
     CGAL_postcondition_code
     (
@@ -701,7 +689,7 @@ private:
     // Assign the UV values
     assign_solution(Xu, Xv, vertices, uvmap, vimap);
 
-    return Base::OK;
+    return OK;
   }
 
 public:
@@ -722,7 +710,7 @@ public:
     // Not sure how to handle non-simple yet @fixme
     if(!is_param_border_simple){
       std::cout << "Border is not simple!" << std::endl;
-      return Base::ERROR_NON_CONVEX_BORDER;
+      return ERROR_NON_CONVEX_BORDER;
     }
 
     // Compute the convex hull of the border of 'mesh'
@@ -738,20 +726,21 @@ public:
     // Run the MVC
     parameterize_convex_hull_with_MVC(mesh, vertices, faces, ct, uvmap, vimap, vpmap);
 
-    return Base::OK;
+    return OK;
   }
 
   /// Compute a one-to-one mapping from a triangular 2D surface mesh
   /// that is not necessarily embedded to a piece of the 2D space.
   ///
   /// \tparam VertexUVmap must be a property map that associates a %Point_2
-  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
-  ///         (type deduced by the graph traits of `TriangleMesh`).
+  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
+  ///         to a `vertex_descriptor` (type deduced by the graph traits
+  ///         of `TriangleMesh`).
   /// \tparam VertexIndexMap must be a property map that associates a unique integer index
   ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
   ///
   /// \param mesh a triangulated surface.
-  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
+  /// \param bhd a halfedge descriptor on the boundary of `mesh`.
   /// \param uvmap an instanciation of the class `VertexUVmap`.
   /// \param vimap an instanciation of the class `VertexIndexMap`.
   ///

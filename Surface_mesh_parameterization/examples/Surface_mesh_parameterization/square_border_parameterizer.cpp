@@ -123,10 +123,10 @@ int main(int argc, char * argv[])
   Border_parameterizer border_param(vda[0], vda[1], vda[2], vda[3]);
 //  Border_parameterizer border_param; // the border parameterizer will compute the corner vertices
 
-  Parameterizer::Error_code err = SMP::parameterize(sm, Parameterizer(border_param), bhd, uv_map);
+  SMP::Error_code err = SMP::parameterize(sm, Parameterizer(border_param), bhd, uv_map);
 
-  if(err != Parameterizer::OK) {
-    std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
+  if(err != SMP::OK) {
+    std::cerr << "Error: " << SMP::get_error_message(err) << std::endl;
     return 1;
   }
 

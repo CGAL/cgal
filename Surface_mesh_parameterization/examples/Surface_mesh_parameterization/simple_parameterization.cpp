@@ -33,17 +33,17 @@ int main(int argc, char * argv[])
   SurfaceMesh sm;
   in >> sm;
 
-  // An halfedge on the border
-  halfedge_descriptor hd = CGAL::Polygon_mesh_processing::longest_border(sm).first;
+  // a halfedge on the border
+  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(sm).first;
 
   // The UV property map that holds the parameterized values
   typedef SurfaceMesh::Property_map<vertex_descriptor, Point_2>  UV_pmap;
   UV_pmap uv_map = sm.add_property_map<vertex_descriptor, Point_2>("h:uv").first;
 
-  SMP::parameterize(sm, hd, uv_map);
+  SMP::parameterize(sm, bhd, uv_map);
 
   std::ofstream out("result.off");
-  SMP::IO::output_uvmap_to_off(sm, hd, uv_map, out);
+  SMP::IO::output_uvmap_to_off(sm, bhd, uv_map, out);
 
   return 0;
 }

@@ -1,5 +1,7 @@
 #define CGAL_CHECK_EXPENSIVE
 
+#include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
@@ -10,9 +12,8 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/surface_mesh_parameterization.h>
-
-#include <CGAL/Simple_cartesian.h>
 
 #include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
@@ -60,8 +61,6 @@ typedef boost::graph_traits<PMesh>::halfedge_descriptor           PM_halfedge_de
 
 typedef CGAL::Unique_hash_map<PM_halfedge_descriptor, Point_2>    PM_UV_hmap;
 typedef boost::associative_property_map<PM_UV_hmap>               PM_UV_pmap;
-
-typedef SMP::Parameterizer_traits_3<PMesh>::Error_code           Error_code;
 #endif
 
 #ifdef SURF_MESH
@@ -235,9 +234,9 @@ int main(int argc, char * argv[])
 
     // Parameterizer
     typename SMP::ARAP_parameterizer_3<PMesh> parameterizer;
-    Error_code status = parameterizer.parameterize(pm, hd, uvpm, vipm, vpm);
+    SMP::Error_code status = parameterizer.parameterize(pm, hd, uvpm, vipm, vpm);
 
-    if(status != SMP::Parameterizer_traits_3<PMesh>::OK)
+    if(status != SMP::OK)
       std::cout << "Encountered a problem: " << status << std::endl;
     else
       std::cout << "Parameterized with ARAP!" << std::endl;

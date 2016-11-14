@@ -23,9 +23,12 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
+#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
 #include <CGAL/boost/graph/iterator.h>
+
+#include <CGAL/number_utils.h>
 
 #include <boost/foreach.hpp>
 
@@ -50,11 +53,11 @@ namespace Surface_mesh_parameterization {
 /// the function `compute_edge_length()` to compute a segment's length.
 ///
 /// Implementation note:
-/// To simplify the implementation, `BorderParameterizer_3` models know only the
-/// `TriangleMesh` class. They do not know the parameterization algorithm
+/// To simplify the implementation, the border parameterizer knows only the
+/// `TriangleMesh` class and does not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \cgalModels `BorderParameterizer_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
@@ -71,28 +74,27 @@ public:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  // Private types
-private:
-  typedef Parameterizer_traits_3<TriangleMesh>  Traits;
-  typedef typename Traits::VPM                  VPM;
-  typedef typename Traits::Point_3              Point_3;
-  typedef typename Traits::Vector_3             Vector_3;
-  typedef typename Traits::Point_2              Point_2;
-  typedef typename Traits::Error_code           Error_code;
+// Protected types
+protected:
+  typedef typename internal::Kernel_traits<TriangleMesh_>::PPM       PPM;
+  typedef typename internal::Kernel_traits<TriangleMesh_>::Kernel    Kernel;
+  typedef typename Kernel::FT                                        NT;
+  typedef typename Kernel::Point_2                                   Point_2;
+  typedef typename Kernel::Vector_3                                  Vector_3;
 
 // Protected operations
 protected:
-  virtual double compute_edge_length(const TriangleMesh& mesh,
-                                     vertex_descriptor source,
-                                     vertex_descriptor target) const = 0;
+  virtual NT compute_edge_length(const TriangleMesh& mesh,
+                                 vertex_descriptor source,
+                                 vertex_descriptor target) const = 0;
 
 // Private operations
 private:
   /// Compute the total length of the border
-  double compute_border_length(const TriangleMesh& mesh,
-                               halfedge_descriptor bhd) const
+  NT compute_border_length(const TriangleMesh& mesh,
+                           halfedge_descriptor bhd) const
   {
-    double len = 0.0;
+    NT len = 0.0;
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       len += compute_edge_length(mesh, source(hd, mesh), target(hd, mesh));
     }
@@ -101,32 +103,53 @@ private:
 
 // Public operations
 public:
-  // Default constructor, copy constructor and operator =() are fine
-
   /// Assign to the mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
   /// on the circle. Mark them as <i>parameterized</i>.
-  template <typename VertexUVmap, typename VertexParameterizedMap>
-  Error_code
-  parameterize(const TriangleMesh& mesh,
-               halfedge_descriptor bhd,
-               VertexUVmap uvmap,
-               VertexParameterizedMap vpmap)
+  ///
+  /// The distribution of vertices over the circle depends on the function
+  /// `compute_edge_length()`.
+  ///
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
+  ///         to a `vertex_descriptor` (type deduced by the graph traits
+  ///         of `TriangleMesh`).
+  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexParameterizedMap must be a property map that associates a Boolean
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param bhd a halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  ///
+  /// \pre `mesh` must be a surface with one connected component.
+  /// \pre `mesh` must be a triangular mesh.
+  ///
+  template <typename VertexUVmap,
+            typename VertexIndexMap,
+            typename VertexParameterizedMap>
+  Error_code parameterize(const TriangleMesh& mesh,
+                          halfedge_descriptor bhd,
+                          VertexUVmap uvmap,
+                          VertexIndexMap /* vimap */,
+                          VertexParameterizedMap vpmap)
   {
     // Nothing to do if no border
     if (bhd == halfedge_descriptor())
-      return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
+      return ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
-    double total_len = compute_border_length(mesh, bhd);
+    NT total_len = compute_border_length(mesh, bhd);
     if (total_len == 0)
-      return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
+      return ERROR_BORDER_TOO_SHORT;
 
-    const double tmp = 2 * CGAL_PI / total_len;
-    double len = 0.0;           // current position on circle in [0, total_len]
+    const NT tmp = 2 * CGAL_PI / total_len;
+    NT len = 0.0; // current position on circle in [0, total_len]
 
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       vertex_descriptor vd = source(hd, mesh);
-      double angle = len * tmp; // current position on the circle in radians
+      NT angle = len * tmp; // current position on the circle in radians
 
       // Map vertex on unit circle
       Point_2 uv(0.5 + 0.5*std::cos(-angle), 0.5 + 0.5*std::sin(-angle));
@@ -138,7 +161,7 @@ public:
       len += compute_edge_length(mesh, vd, target(hd, mesh));
     }
 
-    return Parameterizer_traits_3<TriangleMesh>::OK;
+    return OK;
   }
 
   /// Indicate if border's shape is convex.
@@ -158,7 +181,7 @@ public:
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
-/// \cgalModels `BorderParameterizer_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Circular_border_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
@@ -173,16 +196,21 @@ class Circular_border_uniform_parameterizer_3
 public:
   // We have to repeat the types exported by superclass
   /// @cond SKIP_IN_MANUAL
-  typedef TriangleMesh_ TriangleMesh;
+  typedef TriangleMesh_       TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   /// @endcond
+
+// Private types
+private:
+  typedef Circular_border_parameterizer_3<TriangleMesh_>   Base;
+  typedef typename Base::NT                                NT;
 
 // Protected operations
 protected:
   /// Compute the length of an edge.
-  virtual double compute_edge_length(const TriangleMesh& /* mesh */,
-                                     vertex_descriptor /* source */,
-                                     vertex_descriptor /* target */) const
+  virtual NT compute_edge_length(const TriangleMesh& /* mesh */,
+                                 vertex_descriptor /* source */,
+                                 vertex_descriptor /* target */) const
   {
     /// Uniform border parameterization: points are equally spaced.
     return 1.;
@@ -201,7 +229,7 @@ protected:
 /// The class `Circular_border_parameterizer_3` implements most of the border
 /// parameterization algorithm.
 ///
-/// \cgalModels `BorderParameterizer_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
@@ -223,23 +251,25 @@ public:
 
 // Private types
 private:
-  typedef Parameterizer_traits_3<TriangleMesh>          Traits;
-  typedef typename Traits::Vector_3                     Vector_3;
-  typedef typename Traits::VPM                          VPM;
+  typedef Circular_border_parameterizer_3<TriangleMesh_>   Base;
+
+  typedef typename Base::PPM                               PPM;
+  typedef typename Base::NT                                NT;
+  typedef typename Base::Vector_3                          Vector_3;
 
 // Protected operations
 protected:
   /// Compute the length of an edge.
-  virtual double compute_edge_length(const TriangleMesh& mesh,
-                                     vertex_descriptor source,
-                                     vertex_descriptor target) const
+  virtual NT compute_edge_length(const TriangleMesh& mesh,
+                                 vertex_descriptor source,
+                                 vertex_descriptor target) const
   {
-    VPM ppmap = get(vertex_point, mesh);
+    const PPM ppmap = get(vertex_point, mesh);
 
     /// Arc-length border parameterization: (u,v) values are proportional
     /// to the length of border edges.
     Vector_3 v = get(ppmap, target) - get(ppmap, source);
-    return std::sqrt(v * v);
+    return CGAL::sqrt(v * v);
   }
 };
 

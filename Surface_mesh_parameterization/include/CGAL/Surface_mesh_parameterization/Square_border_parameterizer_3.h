@@ -23,7 +23,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
+#include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
 #include <CGAL/circulator.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -60,11 +61,11 @@ namespace Surface_mesh_parameterization {
 /// mapped to the four corners of the square.
 ///
 /// Implementation note:
-/// To simplify the implementation, `BorderParameterizer_3` models know only the
-/// `TriangleMesh` class. They do not know the parameterization algorithm
+/// To simplify the implementation, the border parameterizer knows only the
+/// `TriangleMesh` class and does not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \cgalModels `BorderParameterizer_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
@@ -83,17 +84,16 @@ public:
 
   typedef Halfedge_around_face_iterator<TriangleMesh>  halfedge_around_face_iterator;
 
-// Private types
-private:
-  // Mesh_TriangleMesh_3 subtypes:
-  typedef Parameterizer_traits_3<TriangleMesh>          Traits;
-  typedef typename Traits::VPM                          VPM;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::Point_3                      Point_3;
-  typedef typename Traits::Vector_3                     Vector_3;
-  typedef typename Traits::Error_code                   Error_code;
+// Protected types
+protected:
+  // Traits subtypes:
+  typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
+  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename Kernel::FT                                       NT;
+  typedef typename Kernel::Point_2                                  Point_2;
+  typedef typename Kernel::Vector_3                                 Vector_3;
 
-  typedef typename std::vector<double>                  Offset_map;
+  typedef typename std::vector<NT>                                  Offset_map;
 
 // Private members
 private:
@@ -257,25 +257,46 @@ public:
 
   /// Assign to the vertices of the border of the mesh a 2D position
   /// (i.e.\ a (u,v) pair) on the border's shape. Mark them as <i>parameterized</i>.
-  template<typename VertexUVMap, typename VertexParameterizedMap>
+  ///
+  /// \tparam VertexUVmap must be a property map that associates a %Point_2
+  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
+  ///         to a `vertex_descriptor` (type deduced by the graph traits
+  ///         of `TriangleMesh`).
+  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexParameterizedMap must be a property map that associates a Boolean
+  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param bhd a halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  ///
+  /// \pre `mesh` must be a surface with one connected component.
+  /// \pre `mesh` must be a triangular mesh.
+  ///
+  template<typename VertexUVMap,
+           typename VertexIndexMap,
+           typename VertexParameterizedMap>
   Error_code parameterize(const TriangleMesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVMap uvmap,
+                          VertexIndexMap /* vimap */,
                           VertexParameterizedMap vpmap)
   {
     // Nothing to do if no border
     if (bhd == halfedge_descriptor())
-      return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
+      return ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
     double total_len = compute_border_length(mesh, bhd);
     if (total_len == 0)
-        return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
+        return ERROR_BORDER_TOO_SHORT;
 
     // check the number of border edges
     std::size_t size_of_border = halfedges_around_face(bhd, mesh).size();
     if(size_of_border < 4) {
-      return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
+      return ERROR_BORDER_TOO_SHORT;
     }
 
     halfedge_descriptor start_hd; // border halfedge whose source is the first corner
@@ -312,7 +333,7 @@ public:
         ++corners_encountered;
     }
 
-    return Traits::OK;
+    return OK;
   }
 
   /// Indicate if the border's shape is convex.
@@ -362,8 +383,6 @@ template<class TriangleMesh_>
 class Square_border_uniform_parameterizer_3
   : public Square_border_parameterizer_3<TriangleMesh_>
 {
-  typedef Square_border_parameterizer_3<TriangleMesh_>  Base;
-
 // Public types
 public:
   // We have to repeat the types exported by superclass
@@ -371,6 +390,11 @@ public:
   typedef TriangleMesh_ TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   /// @endcond
+
+// Private types
+private:
+  typedef Square_border_parameterizer_3<TriangleMesh_>          Base;
+  typedef typename Base::NT                                     NT;
 
 public:
   /// Constructor.
@@ -390,12 +414,12 @@ public:
 // Protected operations
 protected:
   /// Compute the length of an edge.
-  virtual double compute_edge_length(const TriangleMesh& /* mesh */,
-                                     vertex_descriptor /* source */,
-                                     vertex_descriptor /* target */) const
+  virtual NT compute_edge_length(const TriangleMesh& /* mesh */,
+                                 vertex_descriptor /* source */,
+                                 vertex_descriptor /* target */) const
   {
     /// Uniform border parameterization: points are equally spaced.
-    return 1;
+    return 1.;
   }
 };
 
@@ -415,7 +439,7 @@ protected:
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
-/// \cgalModels `BorderParameterizer_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_uniform_parameterizer_3<TriangleMesh>`
@@ -424,17 +448,19 @@ template<class TriangleMesh_>
 class Square_border_arc_length_parameterizer_3
   : public Square_border_parameterizer_3<TriangleMesh_>
 {
-  typedef Square_border_parameterizer_3<TriangleMesh_>  Base;
-
-  typedef Parameterizer_traits_3<TriangleMesh_>         Traits;
-  typedef typename Traits::Vector_3                     Vector_3;
-  typedef typename Traits::VPM                          VPM;
-
+// Public types
 public:
   /// @cond SKIP_IN_MANUAL
-  typedef TriangleMesh_                                 TriangleMesh;
+  typedef TriangleMesh_                                         TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   /// @endcond
+
+// Private types
+private:
+  typedef Square_border_parameterizer_3<TriangleMesh_>          Base;
+  typedef typename Base::PPM                                    PPM;
+  typedef typename Base::NT                                     NT;
+  typedef typename Base::Vector_3                               Vector_3;
 
 public:
   /// Constructor.
@@ -454,11 +480,11 @@ public:
 // Protected operations
 protected:
   /// Compute the length of an edge.
-  virtual double compute_edge_length(const TriangleMesh& mesh,
-                                     vertex_descriptor source,
-                                     vertex_descriptor target) const
+  virtual NT compute_edge_length(const TriangleMesh& mesh,
+                                 vertex_descriptor source,
+                                 vertex_descriptor target) const
   {
-    VPM ppmap = get(vertex_point, mesh);
+    const PPM ppmap = get(vertex_point, mesh);
 
     /// In this arc-length border parameterization: the (u,v) values are
     /// proportional to the length of the border edges.

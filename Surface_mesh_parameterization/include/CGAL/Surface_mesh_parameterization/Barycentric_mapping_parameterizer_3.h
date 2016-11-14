@@ -50,16 +50,16 @@ namespace Surface_mesh_parameterization {
 ///   the matrix A for `j` neighbor vertex of `i`, based on Tutte Barycentric
 ///   Mapping method.
 ///
-/// \cgalModels `ParameterizerTraits_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
-/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border.
+/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border
+///         and must be a model of `Parameterizer_3`.
 /// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
 ///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///         does not remove (yet) border vertices from the system.
 
 /*!
-\sa `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`
 \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -93,15 +93,15 @@ private:
 public:
   // We have to repeat the types exported by superclass
   /// @cond SKIP_IN_MANUAL
-  typedef typename Base::Error_code       Error_code;
   typedef BorderParameterizer_3           Border_param;
   typedef SparseLinearAlgebraTraits_d     Sparse_LA;
   /// @endcond
 
 protected:
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>  vertex_around_target_circulator;
-  typedef typename Parameterizer_traits_3<TriangleMesh>::NT  NT;
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>            vertex_around_target_circulator;
+
+  typedef typename Base::NT               NT;
 
   // SparseLinearAlgebraTraits_d subtypes:
   typedef typename Sparse_LA::Vector      Vector;
@@ -145,7 +145,7 @@ protected:
   {
     /// In the Tutte Barycentric Mapping algorithm, we have w_ij = 1,
     /// for j neighbor vertex of i.
-    return 1;
+    return 1.;
   }
 };
 

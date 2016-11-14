@@ -23,8 +23,11 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Mean_value_coordinates_parameterizer_3.h>
+
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+
 #include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -84,7 +87,7 @@ private:
 /// the chosen Parameterizer algorithm.
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
-/// \tparam Parameterizer must be a model of `ParameterizerTraits_3`.
+/// \tparam Parameterizer must be a model of `Parameterizer_3`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
 ///         traits of TriangleMesh.
 /// \tparam VertexUVmap must be a property map that associates a %Point_2
@@ -93,7 +96,7 @@ private:
 ///
 /// \param mesh a triangulated surface.
 /// \param parameterizer a parameterizer.
-/// \param bhd an halfedge descriptor on the boundary of `mesh`.
+/// \param bhd a halfedge descriptor on the boundary of `mesh`.
 /// \param uvm an instanciation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a surface with one connected component.
@@ -101,11 +104,10 @@ private:
 /// \pre The mesh border must be mapped onto a convex polygon
 ///   (for fixed border parameterizations).
 template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap>
-typename Parameterizer_traits_3<TriangleMesh>::Error_code
-parameterize(TriangleMesh& mesh,
-             Parameterizer parameterizer,
-             HD bhd,
-             VertexUVmap uvm)
+Error_code parameterize(TriangleMesh& mesh,
+                        Parameterizer parameterizer,
+                        HD bhd,
+                        VertexUVmap uvm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
@@ -141,16 +143,15 @@ parameterize(TriangleMesh& mesh,
 ///         (type deduced by the graph traits of `TriangleMesh`).
 ///
 /// \param mesh a triangulated surface.
-/// \param bhd an halfedge descriptor on the boundary of `mesh`.
+/// \param bhd a halfedge descriptor on the boundary of `mesh`.
 /// \param uvm an instanciation of the class `VertexUVmap`.
 ///
 /// \pre `mesh` must be a surface with one connected component.
 /// \pre `mesh` must be a triangular mesh.
 template <class TriangleMesh, class HD, class VertexUVmap>
-typename Parameterizer_traits_3<TriangleMesh>::Error_code
-parameterize(TriangleMesh& mesh,
-             HD bhd,
-             VertexUVmap uvm)
+Error_code parameterize(TriangleMesh& mesh,
+                        HD bhd,
+                        VertexUVmap uvm)
 {
   Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
   return parameterize(mesh, parameterizer, bhd, uvm);
@@ -160,11 +161,10 @@ template <class TM, class SEM, class SVM>
 class Seam_mesh;
 
 template <class TM, class SEM, class SVM, class Parameterizer, class HD, class VertexUVmap>
-typename Parameterizer_traits_3<Seam_mesh<TM, SEM, SVM> >::Error_code
-parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
-             Parameterizer parameterizer,
-             HD bhd,
-             VertexUVmap uvm)
+Error_code parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
+                        Parameterizer parameterizer,
+                        HD bhd,
+                        VertexUVmap uvm)
 {
   typedef typename boost::graph_traits<Seam_mesh<TM, SEM, SVM> >::vertex_descriptor vertex_descriptor;
   boost::unordered_set<vertex_descriptor> vs;
@@ -184,10 +184,9 @@ parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
 }
 
 template <class TM, class SEM, class SVM, class HD, class VertexUVmap>
-typename Parameterizer_traits_3<Seam_mesh<TM, SEM, SVM> >::Error_code
-parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
-             HD bhd,
-             VertexUVmap uvm)
+Error_code parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
+                        HD bhd,
+                        VertexUVmap uvm)
 {
   Mean_value_coordinates_parameterizer_3<Seam_mesh<TM, SEM, SVM> > parameterizer;
   return parameterize(mesh, parameterizer, bhd, uvm);
