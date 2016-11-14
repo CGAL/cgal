@@ -73,7 +73,7 @@ private:
     /* Store the number of cones.  */
     unsigned int  cone_number;
 
-    /* Store wheter this is an half-theta graph */
+    /* Store whether this is an half-theta graph */
     bool half;
 
     /* Store the directions of the rays dividing the plane. The initial direction will be
