@@ -380,6 +380,8 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     //get the vertices and normals
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.resize(0);
     positions_lines.resize(0);
@@ -421,9 +423,9 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
             for(size_type i = 0; i < it->size(); ++i)
             {
                 const Point_3& p = soup->points[it->at(i)];
-                positions_poly.push_back(p.x());
-                positions_poly.push_back(p.y());
-                positions_poly.push_back(p.z());
+                positions_poly.push_back(p.x()+offset.x);
+                positions_poly.push_back(p.y()+offset.y);
+                positions_poly.push_back(p.z()+offset.z);
                 positions_poly.push_back(1.0);
                 if(!soup->fcolors.empty())
                 {
@@ -450,14 +452,14 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
 
             const Point_3& pa = soup->points[it->at(i)];
             const Point_3& pb = soup->points[it->at((i+1)%it->size())];
-            positions_lines.push_back(pa.x());
-            positions_lines.push_back(pa.y());
-            positions_lines.push_back(pa.z());
+            positions_lines.push_back(pa.x()+offset.x);
+            positions_lines.push_back(pa.y()+offset.y);
+            positions_lines.push_back(pa.z()+offset.z);
             positions_lines.push_back(1.0);
 
-            positions_lines.push_back(pb.x());
-            positions_lines.push_back(pb.y());
-            positions_lines.push_back(pb.z());
+            positions_lines.push_back(pb.x()+offset.x);
+            positions_lines.push_back(pb.y()+offset.y);
+            positions_lines.push_back(pb.z()+offset.z);
             positions_lines.push_back(1.0);
         }
     }
@@ -469,14 +471,14 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
 
         const Point_3& a = soup->points[edge[0]];
         const Point_3& b = soup->points[edge[1]];
-        positions_nm_lines.push_back(a.x());
-        positions_nm_lines.push_back(a.y());
-        positions_nm_lines.push_back(a.z());
+        positions_nm_lines.push_back(a.x()+offset.x);
+        positions_nm_lines.push_back(a.y()+offset.y);
+        positions_nm_lines.push_back(a.z()+offset.z);
         positions_nm_lines.push_back(1.0);
 
-        positions_nm_lines.push_back(b.x());
-        positions_nm_lines.push_back(b.y());
-        positions_nm_lines.push_back(b.z());
+        positions_nm_lines.push_back(b.x()+offset.x);
+        positions_nm_lines.push_back(b.y()+offset.y);
+        positions_nm_lines.push_back(b.z()+offset.z);
         positions_nm_lines.push_back(1.0);
     }
     QApplication::restoreOverrideCursor();
