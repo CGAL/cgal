@@ -53,7 +53,7 @@ public:
   }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const;
-  Plane_3 plane() const;
+  Plane_3 plane(qglviewer::Vec offset = qglviewer::Vec(0,0,0)) const;
 
 public Q_SLOTS:
   virtual void invalidateOpenGLBuffers();

@@ -209,8 +209,8 @@ QString Scene_plane_item::toolTip() const {
     .arg(manipulable?tr("true"):tr("false"));
 }
 
-Plane_3 Scene_plane_item::plane() const {
-  const qglviewer::Vec& pos = frame->position();
+Plane_3 Scene_plane_item::plane(qglviewer::Vec offset) const {
+  const qglviewer::Vec& pos = frame->position() - offset;
   const qglviewer::Vec& n =
     frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
   return Plane_3(n[0], n[1],  n[2], - n * pos);
