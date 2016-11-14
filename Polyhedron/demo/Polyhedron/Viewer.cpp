@@ -576,7 +576,7 @@ void Viewer::postSelection(const QPoint& pixel)
     Q_EMIT selectedPoint(point.x,
                        point.y,
                        point.z);
-    const qglviewer::Vec orig = camera()->position();
+    const qglviewer::Vec orig = camera()->position() - d->offset;
     const qglviewer::Vec dir = point - orig;
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);

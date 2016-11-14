@@ -425,6 +425,7 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(Facet_handle fit,const V
 void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<float>& p_facets, std::vector<float>& p_lines, std::vector<float>& p_points, std::vector<float>& p_normals,
                                                            const Selection_set_vertex& p_sel_vertices, const Selection_set_facet& p_sel_facets, const Selection_set_edge& p_sel_edges)const
 {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     p_facets.clear();
     p_lines.clear();
     p_points.clear();
@@ -463,22 +464,23 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         CGAL_For_all(he,cend)
         {
           const Point& p = he->vertex()->point();
-          p_facets.push_back(p.x());
-          p_facets.push_back(p.y());
-          p_facets.push_back(p.z());
+          p_facets.push_back(p.x()+offset.x);
+          p_facets.push_back(p.y()+offset.y);
+          p_facets.push_back(p.z()+offset.z);
         }
       }
       else if (is_quad(f->halfedge(), *poly))
       {
+        Kernel::Vector_3 v_offset(offset.x, offset.y, offset.z);
         Vector nf = get(nf_pmap, f);
         //1st half-quad
         Point p0 = f->halfedge()->vertex()->point();
         Point p1 = f->halfedge()->next()->vertex()->point();
         Point p2 = f->halfedge()->next()->next()->vertex()->point();
 
-        push_back_xyz(p0, p_facets);
-        push_back_xyz(p1, p_facets);
-        push_back_xyz(p2, p_facets);
+        push_back_xyz(p0+v_offset, p_facets);
+        push_back_xyz(p1+v_offset, p_facets);
+        push_back_xyz(p2+v_offset, p_facets);
 
         push_back_xyz(nf, p_normals);
         push_back_xyz(nf, p_normals);
@@ -489,9 +491,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         p1 = f->halfedge()->prev()->vertex()->point();
         p2 = f->halfedge()->vertex()->point();
 
-        push_back_xyz(p0, p_facets);
-        push_back_xyz(p1, p_facets);
-        push_back_xyz(p2, p_facets);
+        push_back_xyz(p0+v_offset, p_facets);
+        push_back_xyz(p1+v_offset, p_facets);
+        push_back_xyz(p2+v_offset, p_facets);
 
         push_back_xyz(nf, p_normals);
         push_back_xyz(nf, p_normals);
@@ -509,13 +511,13 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         for(Selection_set_edge::iterator it = p_sel_edges.begin(); it != p_sel_edges.end(); ++it) {
             const Point& a = (it->halfedge())->vertex()->point();
             const Point& b = (it->halfedge())->opposite()->vertex()->point();
-            p_lines.push_back(a.x());
-            p_lines.push_back(a.y());
-            p_lines.push_back(a.z());
+            p_lines.push_back(a.x()+offset.x);
+            p_lines.push_back(a.y()+offset.y);
+            p_lines.push_back(a.z()+offset.z);
 
-            p_lines.push_back(b.x());
-            p_lines.push_back(b.y());
-            p_lines.push_back(b.z());
+            p_lines.push_back(b.x()+offset.x);
+            p_lines.push_back(b.y()+offset.y);
+            p_lines.push_back(b.z()+offset.z);
         }
 
     }
@@ -527,9 +529,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
             it != end; ++it)
         {
             const Point& p = (*it)->point();
-            p_points.push_back(p.x());
-            p_points.push_back(p.y());
-            p_points.push_back(p.z());
+            p_points.push_back(p.x()+offset.x);
+            p_points.push_back(p.y()+offset.y);
+            p_points.push_back(p.z()+offset.z);
         }
     }
 }
@@ -547,6 +549,7 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
                        item->temp_selected_vertices, item->temp_selected_facets, item->temp_selected_edges);
   //The fixed points
   {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     color_fixed_points.clear();
     positions_fixed_points.clear();
     int i=0;
@@ -556,9 +559,9 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
         it != end; ++it)
     {
       const Point& p = (*it)->point();
-      positions_fixed_points.push_back(p.x());
-      positions_fixed_points.push_back(p.y());
-      positions_fixed_points.push_back(p.z());
+      positions_fixed_points.push_back(p.x()+offset.x);
+      positions_fixed_points.push_back(p.y()+offset.y);
+      positions_fixed_points.push_back(p.z()+offset.z);
 
       if(*it == constrained_vertices.first()|| *it == constrained_vertices.last())
       {
@@ -1084,11 +1087,12 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
     case 11:
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
       if(viewer->manipulatedFrame() != d->manipulated_frame)
       {
         temp_selected_vertices.insert(vh);
         k_ring_selector.setEditMode(false);
-        d->manipulated_frame->setPosition(vh->point().x(), vh->point().y(), vh->point().z());
+        d->manipulated_frame->setPosition(vh->point().x()+offset.x, vh->point().y()+offset.y, vh->point().z()+offset.z);
         viewer->setManipulatedFrame(d->manipulated_frame);
         connect(d->manipulated_frame, SIGNAL(modified()), this, SLOT(updateTick()));
         invalidateOpenGLBuffers();
@@ -1098,7 +1102,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       {
         temp_selected_vertices.clear();
         temp_selected_vertices.insert(vh);
-        d->manipulated_frame->setPosition(vh->point().x(), vh->point().y(), vh->point().z());
+        d->manipulated_frame->setPosition(vh->point().x()+offset.x, vh->point().y()+offset.y, vh->point().z()+offset.z);
         invalidateOpenGLBuffers();
       }
       break;
@@ -1911,10 +1915,11 @@ void Scene_polyhedron_selection_item::moveVertex()
 {
   if(d->ready_to_move)
   {
+     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     Vertex_handle vh = *temp_selected_vertices.begin();
-    vh->point() = Kernel::Point_3(d->manipulated_frame->position().x,
-                                  d->manipulated_frame->position().y,
-                                  d->manipulated_frame->position().z);
+    vh->point() = Kernel::Point_3(d->manipulated_frame->position().x-offset.x,
+                                  d->manipulated_frame->position().y-offset.y,
+                                  d->manipulated_frame->position().z-offset.z);
     invalidateOpenGLBuffers();
     poly_item->invalidateOpenGLBuffers();
     d->ready_to_move = false;

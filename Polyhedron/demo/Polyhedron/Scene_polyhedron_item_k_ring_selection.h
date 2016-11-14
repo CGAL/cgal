@@ -115,15 +115,16 @@ public Q_SLOTS:
   {
     if(is_ready_to_paint_select)
     {
+      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
       // paint with mouse move event
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
 
       bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found);
+      const qglviewer::Vec& point = camera->pointUnderPixel(paint_pos, found) - offset;
       if(found)
       {
-        const qglviewer::Vec& orig = camera->position();
+        const qglviewer::Vec& orig = camera->position() - offset;
         const qglviewer::Vec& dir = point - orig;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
       }
@@ -133,17 +134,17 @@ public Q_SLOTS:
 
   void highlight()
   {
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     if(is_ready_to_highlight)
     {
       // highlight with mouse move event
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
-
       bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found);
+      const qglviewer::Vec& point = camera->pointUnderPixel(hl_pos, found) - offset;
       if(found)
       {
-        const qglviewer::Vec& orig = camera->position();
+        const qglviewer::Vec& orig = camera->position() - offset;
         const qglviewer::Vec& dir = point - orig;
         is_highlighting = true;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
