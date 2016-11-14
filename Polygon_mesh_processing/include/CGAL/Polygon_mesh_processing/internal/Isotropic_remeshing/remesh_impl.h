@@ -1129,7 +1129,8 @@ private:
         if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
           return false;//collapse would induce pinching the selection
         else
-          return is_collapse_allowed(he) && is_collapse_allowed(hopp);
+          return (is_collapse_allowed_on_patch(he)
+               && is_collapse_allowed_on_patch(hopp));
       }
       else if (is_on_patch_border(he))
         return is_collapse_allowed_on_patch_border(he);
@@ -1138,7 +1139,7 @@ private:
       return false;
     }
 
-    bool is_collapse_allowed(const halfedge_descriptor& he) const
+    bool is_collapse_allowed_on_patch(const halfedge_descriptor& he) const
     {
       halfedge_descriptor hopp = opposite(he, mesh_);
 
