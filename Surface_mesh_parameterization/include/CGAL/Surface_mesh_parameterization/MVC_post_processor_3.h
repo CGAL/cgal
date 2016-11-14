@@ -732,12 +732,13 @@ public:
   /// Compute a one-to-one mapping from a triangular 2D surface mesh
   /// that is not necessarily embedded to a piece of the 2D space.
   ///
-  /// \tparam VertexUVmap must be a property map that associates a %Point_2
-  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
-  ///         to a `vertex_descriptor` (type deduced by the graph traits
-  ///         of `TriangleMesh`).
-  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
-  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         as value type.
+  /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a unique integer as value type.
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.

@@ -90,9 +90,10 @@ private:
 /// \tparam Parameterizer must be a model of `Parameterizer_3`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
 ///         traits of TriangleMesh.
-/// \tparam VertexUVmap must be a property map that associates a %Point_2
-///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
-///         (type deduced by the graph traits of `TriangleMesh`).
+/// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+///         as value type.
 ///
 /// \param mesh a triangulated surface.
 /// \param parameterizer a parameterizer.
@@ -138,9 +139,10 @@ Error_code parameterize(TriangleMesh& mesh,
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
 ///         traits of TriangleMesh.
-/// \tparam VertexUVmap must be a property map that associates a %Point_2
-///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
-///         (type deduced by the graph traits of `TriangleMesh`).
+/// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+///         as value type.
 ///
 /// \param mesh a triangulated surface.
 /// \param bhd a halfedge descriptor on the boundary of `mesh`.

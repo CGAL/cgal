@@ -48,9 +48,9 @@ namespace Surface_mesh_parameterization {
 /// This kind of border parameterization is used by free border parameterizations.
 ///
 /// Implementation note:
-/// To simplify the implementation, models of the concept `Parameterizer_3`
-/// know only the `TriangleMesh` class. They do not know the parameterization
-/// algorithm requirements or the kind of sparse linear system that is used.
+/// To simplify the implementation, the border parameterizer knows only the
+/// `TriangleMesh` class and does not know the parameterization algorithm
+/// requirements or the kind of sparse linear system used.
 ///
 /// \cgalModels `Parameterizer_3`
 ///
@@ -93,12 +93,13 @@ public:
 
   /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
   ///
-  /// \tparam VertexUVmap must be a property map that associates a %Point_2
-  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
-  ///         to a `vertex_descriptor` (type deduced by the graph traits
-  ///         of `TriangleMesh`).
-  /// \tparam VertexParameterizedMap must be a property map that associates a Boolean
-  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         as value type.
+  /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a Boolean as value type.
   ///
   /// \param mesh a triangulated surface.
   /// \param uvmap an instanciation of the class `VertexUVmap`.

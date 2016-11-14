@@ -1245,14 +1245,16 @@ public:
   /// The mapping is piecewise linear (linear in each triangle).
   /// The result is the (u,v) pair image of each vertex of the 3D surface.
   ///
-  /// \tparam VertexUVmap must be a property map that associates a %Point_2
-  ///         (type deduced from `TriangleMesh` using the `Kernel_traits`)
-  ///         to a `vertex_descriptor` (type deduced by the graph traits
-  ///         of `TriangleMesh`).
-  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
-  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
-  /// \tparam VertexParameterizedMap must be a property map that associates a Boolean
-  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
+  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         as value type.
+  /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a unique integer as value type.
+  /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a Boolean as value type.
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
