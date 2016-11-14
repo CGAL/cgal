@@ -875,7 +875,7 @@ public:
 
   /// @}
 
-  /// Add the seams to the property maps of the seam mesh.
+  /// adds the seams to the property maps of the seam mesh.
   ///
   /// In input, a seam edge is described by the pair of integers that correspond
   /// to the indices of the extremeties (vertices) of the edge that should be
@@ -953,7 +953,7 @@ public:
     return tmhd;
   }
 
-  /// Constructs a seam mesh for a triangle mesh and an edge and vertex property map
+  /// constructs a seam mesh for a triangle mesh and an edge and vertex property map
   ///
   /// \param tm the adapted mesh
   /// \param sem the edge property map with value `true` for seam edges
