@@ -27,10 +27,10 @@ data, re-parameterizing spline surfaces, repairing CAD models,
 approximating surfaces and remeshing.
 
 This \cgal package implements
-surface parameterization methods, such as least squares conformal maps,
-discrete conformal map, discrete authalic
-parameterization, Floater mean value coordinates or Tutte barycentric
-mapping. These methods mainly distinguish by the distortion they
+surface parameterization methods, such as As Rigid As Possible Parameterization,
+Least Squares Conformal Maps, Discrete Conformal Map, Discrete Authalic
+Parameterization, Floater Mean Value Coordinates or Tutte Barycentric
+Mapping. These methods mainly distinguish by the distortion they
 minimize (angles vs. areas), by the constrained border onto the
 planar domain (convex polygon vs. free border) and by the guarantees
 provided in terms of bijective mapping.
@@ -76,7 +76,7 @@ The mesh of type `TriangleMesh` must be a model of the concept
 `FaceGraph` and must additionally be triangulated, 2-manifold, oriented,
 and homeomorphic to a disc (possibly with holes). The last requirement
 is not hard and we will later show how to parameterize a mesh that is
-not a topological disk (Section \ref Surface_mesh_parameterizationComputingaCut).
+not a topological disk (Section \ref secCuttingaMesh).
 The result is stored in a property map (whose type is here VertexUVMap)
 for the mesh vertices. See also Chapter \ref PkgProperty_mapSummary.
 
@@ -271,6 +271,21 @@ which implies solving a symmetric matrix.
 Least squares conformal maps.
 \cgalFigureEnd
 
+\subsubsection Surface_mesh_parameterizationARAP As Rigid As Possible Parameterization
+
+`ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+
+An as rigid as possible parameterization was introduced by Liu et al. \cgalCite{liu2008local}.
+shape-preserving method based on an iterative energy minimization process.
+Each step alternates a local optimization technique to find the best local mapping
+and a global stitching technique equivalent to the resolution of a linear system
+to guarantee that the parameterized mesh is a triangulation.
+
+A generalization of the formulation of the local optimization introduces a scalar
+coefficient &lambda; that allows the user to choose to give importance to angle
+preservation (conforming) when &lambda; = 0, to shape preservation (as rigid as
+possible) when &lambda; goes to infinity, or a balance of both.
+
 \subsection secBorderParameterizationsforFreeMethods Border Parameterizations for Free Methods
 
 Parameterization methods for
@@ -291,15 +306,13 @@ in the current version of this package.
 
 \section secCuttingaMesh Cutting a Mesh
 
-\subsection Surface_mesh_parameterizationComputingaCut Computing a Cut Graph
-
 The surface parameterization methods proposed in this package only
 deal with meshes which are homeomorphic (topologically equivalent) to
 discs. Nevertheless, meshes with arbitrary topology and number of
 connected components can be parameterized, provided that the user
 specifies a cut graph (a set of edges), which defines the
 border of a topological disc. These edges can be passed together with
-a mesh to a `Seam_mesh`.
+a mesh via the `Seam_mesh` structure.
 
 \cgalFigureBegin{Surface_mesh_parameterizationfigcut,cut.png}
 Cut Graph
@@ -346,8 +359,8 @@ This is the case with positive weights (Tutte barycentric mapping and Floater me
 
 <LI>One-to-one mapping
 
-No guarantee is provided by LSCM (both global overlaps and triangle flips can
-occur).
+No guarantee is provided by either LSCM or ARAP parameterizations (both global
+overlaps and triangle flips can occur).
 
 <LI>Non-singularity of the matrix
 

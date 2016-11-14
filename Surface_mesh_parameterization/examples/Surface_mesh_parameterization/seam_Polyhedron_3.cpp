@@ -68,7 +68,7 @@ int main(int argc, char * argv[])
   UV_pmap uv_pm(uv_uhm);
 
   halfedge_descriptor bhd(smhd);
-  bhd = opposite(bhd,mesh); // a halfedge on the virtual border
+  bhd = opposite(bhd, mesh); // a halfedge on the virtual border
 
   CGAL::parameterize(mesh, bhd, uv_pm);
 

@@ -41,8 +41,8 @@ namespace CGAL {
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 ///
-/// This class is used by the main
-/// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()`.
+/// This class is used by the main parameterization algorithm
+/// `Fixed_border_parameterizer_3::parameterize()`.
 /// - It provides default` BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
 ///   parameters.
 /// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A

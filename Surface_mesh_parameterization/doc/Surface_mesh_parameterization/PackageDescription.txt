@@ -7,8 +7,13 @@
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Saboret, Pierre Alliez, Bruno Lévy, and Andreas Fabri}
-\cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from a suitable domain to the surface. In this package, we focus on triangulated surfaces that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.  This package implements several surface mesh parameterization methods, such as least squares conformal maps, discrete conformal map, discrete authalic parameterization, Floater mean value coordinates or Tutte barycentric mapping.}
-\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes,PkgSurfaceParameterization}
+\cgalPkgDesc{Parameterizing a surface amounts to finding a one-to-one mapping from
+a suitable domain to the surface. In this package, we focus on triangulated surfaces
+that are homeomorphic to a disk and on piecewise linear mappings into a planar domain.
+This package implements several surface mesh parameterization methods, such as
+As Rigid As Possible Parameterization, Least Squares Conformal Maps, Discrete Conformal Map,
+Discrete Authalic Parameterization, Floater Mean Value Coordinates or Tutte Barycentric Mapping.}
+\cgalPkgManuals{Chapter_Planar_Parameterization_of_Triangulated_Surface_Meshes, PkgSurfaceParameterization}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
@@ -44,6 +49,7 @@ This \cgal package implements several parameterization methods:
   - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02} :
     Conditionally guaranteed if all weights are positive and border is convex.
 - Free border:
+  - As Rigid As Possible Maps \cgalCite{liu2008local}
   - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
 
 - `CGAL::Parameterizer_traits_3<TriangleMesh>`
@@ -61,7 +67,7 @@ Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
 each instance of a vertex along the border).
 
-This package implements all common border parameterization methods:
+This package implements common border parameterization methods:
 - For fixed border methods:
    - the user can select a border parameterization among two common methods:
      uniform or arc-length parameterizations.
@@ -118,6 +124,7 @@ This \cgal package implements several parameterization methods:
   - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02}.
     Conditionally guaranteed if all weights are positive and border is convex.
  - Free border:
+  - As Rigid As Possible Maps \cgalCite{liu2008local}
   - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
 */
 
@@ -129,7 +136,7 @@ Border parameterization methods define a
 set of constraints (a constraint specifies two (u,v) coordinates for
 each instance of a vertex along the border).
 
-This package implements all common border parameterization methods:
+This package implements common border parameterization methods:
  - For fixed border methods:
    - the user can select a border
       parameterization among two common methods: uniform or

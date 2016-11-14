@@ -22,7 +22,8 @@ Construction and destruction are undefined.
 
 */
 
-class ParameterizerTraits_3 {
+class ParameterizerTraits_3
+{
 public:
 
 /// \name Types
@@ -51,21 +52,7 @@ typedef unspecified_type TriangleMesh;
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Cannot solve linear system
     ERROR_NO_1_TO_1_MAPPING,        ///< Parameterization failed: no one-to-one mapping
     ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
-    };
-/// @}
-
-/// \name Operations
-/// @{
-
-/*!
-
-Compute a one-to-one mapping from a triangular 3D surface `mesh` to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
-
-\pre `mesh` must be a surface with one connected component and no hole. `mesh` must be a triangular mesh.
-
-*/
-Error_code parameterize(TriangleMesh& mesh);
-
+  };
 /// @}
 
 }; /* end ParameterizerTraits_3 */

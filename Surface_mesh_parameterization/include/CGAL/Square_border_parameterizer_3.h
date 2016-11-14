@@ -49,14 +49,14 @@ namespace CGAL {
 ///
 /// This is the base class of strategies that parameterize the border
 /// of a 3D surface onto a square.
+///
 /// `Square_border_parameterizer_3` is a pure virtual class, thus
-/// cannot be instantiated.
+/// cannot be instantiated. It implements most of the algorithm. Subclasses only
+/// have to implement the function `compute_edge_length()` to compute a segment's
+/// length.
 ///
-/// It implements most of the algorithm. Subclasses only have to implement
-/// the function `compute_edge_length()` to compute a segment's length.
-///
-/// A CGAL selection file can be used to provide four chosen vertices that
-/// will be the four corners of the square.
+/// The user can provide four vertices on the border of the mesh, which will be
+/// mapped to the four corners of the square.
 ///
 /// Implementation note:
 /// To simplify the implementation, `BorderParameterizer_3` models know only the
@@ -324,7 +324,9 @@ public:
       vertices_given(false)
   { }
 
-  /// Constructor with given vertices
+  /// Constructor with user-defined corners: the user provides four vertices
+  /// of the border of the mesh, which will be parameterized to the corners
+  /// of the square.
   ///
   /// @pre The given vertices must be on the border.
   Square_border_parameterizer_3(vertex_descriptor v0, vertex_descriptor v1,
@@ -373,7 +375,9 @@ public:
   /// Constructor.
   Square_border_uniform_parameterizer_3() : Base() { }
 
-  /// Constructor with given vertices
+  /// Constructor with user-defined corners: the user provides four vertices
+  /// of the border of the mesh, which will be parameterized to the corners
+  /// of the square.
   ///
   /// @pre The given vertices must be on the border.
   Square_border_uniform_parameterizer_3(vertex_descriptor v0, vertex_descriptor v1,
@@ -435,7 +439,9 @@ public:
   /// Constructor.
   Square_border_arc_length_parameterizer_3() : Base() { }
 
-  /// Constructor with given vertices
+  /// Constructor with user-defined corners: the user provides four vertices
+  /// of the border of the mesh, which will be parameterized to the corners
+  /// of the square.
   ///
   /// @pre The given vertices must be on the border.
   Square_border_arc_length_parameterizer_3(vertex_descriptor v0, vertex_descriptor v1,
@@ -453,8 +459,8 @@ protected:
   {
     VPM ppmap = get(vertex_point, mesh);
 
-    /// Arc-length border parameterization: (u,v) values are proportional
-    /// to the length of border edges.
+    /// In this arc-length border parameterization: the (u,v) values are
+    /// proportional to the length of the border edges.
     Vector_3 v = get(ppmap, target) - get(ppmap, source);
     return std::sqrt(v * v);
   }

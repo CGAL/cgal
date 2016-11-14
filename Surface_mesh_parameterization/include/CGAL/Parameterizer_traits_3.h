@@ -33,20 +33,20 @@ namespace CGAL {
 
 /// \ingroup PkgSurfaceParameterizationMethods
 ///
-/// The class `Parameterizer_traits_3`
-/// is the base class of all parameterization methods.
-/// This class is a pure virtual class and thus cannot be instantiated.
+/// The class `Parameterizer_traits_3` is the base class of all parameterization
+/// methods.
 ///
-/// This class does not do much. Its main goal is to ensure that subclasses
-/// will be proper models of the `ParameterizerTraits_3` concept:
-/// - `Parameterizer_traits_3` defines the Error_code list of errors detected by this package
-/// - `Parameterizer_traits_3` declares a pure virtual method parameterize()
+/// This class is a pure virtual class and thus cannot be instantiated. Its main
+/// goal is to ensure that subclasses will be proper models of the
+/// `ParameterizerTraits_3` concept. Additionally, `Parameterizer_traits_3` defines
+/// the Error_code list of errors detected by this package.
 ///
 /// \cgalModels `ParameterizerTraits_3`
 ///
 /// ## Design Pattern ##
-/// `ParameterizerTraits_3` models are *Strategies* \cgalCite{cgal:ghjv-dpero-95}: they implement
-/// a strategy of surface parameterization for models of `TriangleMesh`.
+/// `ParameterizerTraits_3` models are *Strategies* \cgalCite{cgal:ghjv-dpero-95} :
+/// they implement a strategy of surface parameterization for models of
+/// `TriangleMesh`.
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
@@ -93,18 +93,9 @@ protected:
 // Public operations
 public:
   /// Destructor of base class should be virtual.
-  virtual ~Parameterizer_traits_3() {}
+  virtual ~Parameterizer_traits_3() { }
 
   // Default constructor, copy constructor and operator =() are fine
-
-  /// Compute a one-to-one mapping from a 3D surface mesh
-  /// to a piece of the 2D space.
-  /// The mapping is linear by pieces (linear in each triangle).
-  /// The result is the (u,v) pair image of each vertex of the 3D surface.
-  ///
-  /// \pre `mesh` must be a surface with one connected component.
-  /// \pre `mesh` must be a triangular mesh.
-  //virtual Error_code parameterize (TriangleMesh& mesh) = 0;
 
   /// Get message corresponding to an error code
   /// \param error_code The code returned by `parameterize()`

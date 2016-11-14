@@ -44,7 +44,7 @@ namespace CGAL {
 ///
 /// A one-to-one mapping is guaranteed if the surface's border is mapped onto a convex polygon.
 ///
-/// This class is a Strategy \cgalCite{cgal:ghjv-dpero-95} called by the main
+/// This class is a *Strategy* \cgalCite{cgal:ghjv-dpero-95} called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
 /// - provides the template parameters `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d`.
 /// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of the matrix A

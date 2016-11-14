@@ -277,10 +277,10 @@ private:
 // Private operations
 private:
   /// Store the vertices and faces of the mesh in memory.
-  void initialize_containers(const TriangleMesh& mesh,
-                             halfedge_descriptor bhd,
-                             Vertex_set& vertices,
-                             Faces_vector& faces) const
+  Error_code initialize_containers(const TriangleMesh& mesh,
+                                   halfedge_descriptor bhd,
+                                   Vertex_set& vertices,
+                                   Faces_vector& faces) const
   {
     internal::Parameterization::Containers_filler<TriangleMesh>
                                                      fc(mesh, vertices, &faces);
@@ -289,6 +289,11 @@ private:
                                       mesh,
                                       boost::make_function_output_iterator(fc));
     std::cout << vertices.size() << " vertices & " << faces.size() << " faces" << std::endl;
+
+    if (vertices.empty() || faces.empty())
+      return Base::ERROR_EMPTY_MESH;
+
+    return Base::OK;
   }
 
   /// Initialize the UV values with a first parameterization of the input.
@@ -1248,12 +1253,6 @@ public:
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
                              const VertexUVMap uvmap) const
   {
-    /// Theorem: A one-to-one mapping is guaranteed if all w_ij coefficients
-    ///          are > 0 (for j vertex neighbor of i) and if the surface
-    ///          border is mapped onto a 2D convex polygon.
-    /// Here, all w_ij coefficients = 1 (for j vertex neighbor of i), thus a
-    /// valid embedding is guaranteed if the surface border is mapped
-    /// onto a 2D convex polygon.
     return internal::Parameterization::is_one_to_one_mapping(mesh, uvmap);
   }
 
@@ -1293,7 +1292,9 @@ public:
     // vertices and faces containers
     Faces_vector faces;
     Vertex_set vertices;
-    initialize_containers(mesh, bhd, vertices, faces);
+    status = initialize_containers(mesh, bhd, vertices, faces);
+    if(status != Base::OK)
+      return status;
 
     // linear transformation matrices L_t
     // Only need to store 2 indices since the complete matrix is {{a,b},{-b,a}}
@@ -1383,7 +1384,7 @@ public:
   }
 
 public:
-  /// Constructor
+  /// Constructor taking only the parameter &lambda;.
   ARAP_parameterizer_3(NT lambda)
     :
       m_borderParameterizer(Border_param()),
@@ -1394,7 +1395,7 @@ public:
       m_tolerance(1e-6)
   { }
 
-
+  /// %Default Constructor.
   ///
   /// \param border_param %Object that maps the surface's border to the 2D space.
   /// \param sparse_la %Traits object to access a sparse linear system.

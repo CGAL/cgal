@@ -200,6 +200,9 @@ public:
     // Count vertices
     int nbVertices = static_cast<int>(ccvertices.size());
 
+    if (ccvertices.empty() || ccfaces.empty())
+      return Base::ERROR_EMPTY_MESH;
+
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
     Error_code status = get_border_parameterizer().parameterize(mesh, bhd, uvmap, vpmap);

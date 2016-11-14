@@ -56,7 +56,7 @@ namespace CGAL {
 ///
 /// This class is a pure virtual class and thus cannot be instantiated.
 /// Nevertheless, it implements most of the parameterization algorithm `parameterize()`.
-/// Subclasses are Strategies \cgalCite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:
+/// Subclasses are *Strategies* \cgalCite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:
 /// - They provide the template parameters `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d`.
 /// - They implement `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
 ///   for j neighbor vertex of i.
@@ -142,36 +142,17 @@ public:
     : m_borderParameterizer(border_param), m_linearAlgebra(sparse_la)
   { }
 
+  /// Destructor of base class should be virtual.
+  virtual ~Fixed_border_parameterizer_3() { }
+
   // Default copy constructor and operator =() are fine
 
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
-  /// to a piece of the 2D space.
-  /// The mapping is piecewise linear (linear in each triangle).
-  /// The result is the (u,v) pair image of each vertex of the 3D surface.
-  ///
-  /// \tparam VertexUVmap must be a property map that associates a %Point_2
-  ///         (type deduced by `Parameterized_traits_3`) to a `vertex_descriptor`
-  ///         (type deduced by the graph traits of `TriangleMesh`).
-  /// \tparam VertexIndexMap must be a property map that associates a unique integer index
-  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
-  /// \tparam VertexParameterizedMap must be a property map that associates a boolean
-  ///         to a `vertex_descriptor` (type deduced by the graph traits of `TriangleMesh`).
-  ///
-  /// \param mesh a triangulated surface.
-  /// \param bhd an halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpm an instanciation of the class `VertexParameterizedMap`.
-  ///
-  /// \pre `mesh` must be a surface with one connected component.
-  /// \pre `mesh` must be a triangular mesh.
-  /// \pre The mesh border must be mapped onto a convex polygon.
   template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
   Error_code parameterize(TriangleMesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
-                          VertexParameterizedMap vpm);
+                          VertexParameterizedMap vpmap);
 
 // Protected operations
 protected:
@@ -340,6 +321,9 @@ parameterize(TriangleMesh& mesh,
 
   // Count vertices
   int nbVertices = static_cast<int>(vertices.size());
+
+  if (nbVertices == 0)
+    return Base::ERROR_EMPTY_MESH;
 
   // Compute (u,v) for border vertices and mark them as "parameterized"
   status = get_border_parameterizer().parameterize(mesh, bhd, uvmap, vpmap);
