@@ -493,14 +493,17 @@ These computations are performed with :
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::sample_face()`
 
+\subsection AHDExample Approximate Hausdorff Distance Example
 In the following example, a mesh is isotropically remeshed and the approximated distance between the input and the output is computed.
 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
+\subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
 In the following example, a triangulated surface mesh is constructed from a point set using the
 \link PkgPoissonSurfaceReconstructionSummary Poisson reconstruction algorithm \endlink, and the distance between the point set and the reconstructed surface is computed.
 
 \cgalExample{Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp}
+
 
 \section PMPHistory Implementation History
 

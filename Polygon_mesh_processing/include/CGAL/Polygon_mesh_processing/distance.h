@@ -379,6 +379,7 @@ double approximate_Hausdorff_distance(
      - `GRID`: points are generated on a grid, with a minimum of one point .
      - `MONTE_CARLO`: points are generated randomly . The number of points is proportional to the face area with a minimum of 1.
  *
+ * @param f the face descriptor of the sampled face.
  * @param tm the triangle mesh that contains `f`
  * @param parameter depends on `method`:
      - `RANDOM_UNIFORM` and `MONTE_CARLO`: the number of points per squared area unit
@@ -474,7 +475,7 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
  *
  * @param tm1 the triangle mesh that will be sampled
  * @param tm2 the triangle mesh to compute the distance to
- * @param precision the number of points per squared area unit for the random sampling
+ * @param precision the number of points per squared area unit returned by the random sampling
  * @param np1 optional sequence of \ref namedparameters for `tm1` among the ones listed below
  *
  * \cgalNamedParamsBegin
