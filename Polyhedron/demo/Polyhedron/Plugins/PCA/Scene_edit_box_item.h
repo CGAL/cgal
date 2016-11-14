@@ -44,6 +44,7 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item: public CGAL::Three::Scene_
 
 public Q_SLOTS:
     void highlight();
+    void clearHL();
 protected:
     friend struct Scene_edit_box_item_priv;
     Scene_edit_box_item_priv* d;

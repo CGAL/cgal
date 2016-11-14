@@ -5,6 +5,8 @@
 #include <QMouseEvent>
 #include <QOpenGLFramebufferObject>
 #include <QOpenGLShaderProgram>
+#include <QCursor>
+
 using namespace CGAL::Three;
 struct Scene_edit_box_item::vertex{
   int id;
@@ -274,6 +276,8 @@ struct Scene_edit_box_item_priv{
     reset_selection();
     last_picked_id = -1;
     last_picked_type = -1;
+    QPixmap pix(":/cgal/cursors/resources/rotate_around_cursor.png");
+    rotate_cursor = QCursor(pix);
   }
   ~Scene_edit_box_item_priv(){
     delete frame;
@@ -321,7 +325,6 @@ struct Scene_edit_box_item_priv{
   void computeElements() const;
   void draw_picking(Viewer_interface*);
   void remodel_box(const QVector3D &dir);
-
   double applyX(int id, double x, double dirx);
   double applyY(int id, double y, double diry);
   double applyZ(int id, double z, double dirz);
@@ -331,6 +334,7 @@ struct Scene_edit_box_item_priv{
   HL_Primitive hl_type;
   int last_picked_id;
   int last_picked_type;
+  QCursor rotate_cursor;
 
 };
 
@@ -938,6 +942,81 @@ void Scene_edit_box_item::highlight()
   d->ready_to_hl = false;
 }
 
+void Scene_edit_box_item::clearHL()
+{
+  Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
+  d->hl_normal.clear();
+  d->hl_vertex.clear();
+
+  d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_SPHERES, viewer);
+  d->program->bind();
+
+  vaos[Scene_edit_box_item_priv::S_Spheres]->bind();
+  buffers[Scene_edit_box_item_priv::VertexSpheres].bind();
+  buffers[Scene_edit_box_item_priv::VertexSpheres].allocate(d->vertex_spheres.data(),
+                                                            static_cast<int>(d->vertex_spheres.size()*sizeof(float)));
+  d->program->enableAttributeArray("vertex");
+  d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+  buffers[Scene_edit_box_item_priv::VertexSpheres].release();
+
+  buffers[Scene_edit_box_item_priv::NormalSpheres].bind();
+  buffers[Scene_edit_box_item_priv::NormalSpheres].allocate(d->normal_spheres.data(),
+                                                            static_cast<int>(d->normal_spheres.size()*sizeof(float)));
+  d->program->enableAttributeArray("normals");
+  d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+  buffers[Scene_edit_box_item_priv::NormalSpheres].release();
+
+  buffers[Scene_edit_box_item_priv::S_Vertex].bind();
+  buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
+                                                       static_cast<int>(d->hl_vertex.size()*sizeof(float)));
+  d->program->enableAttributeArray("center");
+  d->program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
+  buffers[Scene_edit_box_item_priv::S_Vertex].release();
+  d->program->disableAttributeArray("colors");
+
+  viewer->glVertexAttribDivisor(d->program->attributeLocation("center"), 1);
+  d->program->release();
+  vaos[Scene_edit_box_item_priv::S_Spheres]->release();
+  //draw
+  d->hl_type = Scene_edit_box_item_priv::VERTEX;
+  d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
+  d->program->bind();
+
+  vaos[Scene_edit_box_item_priv::S_Edges]->bind();
+  buffers[Scene_edit_box_item_priv::S_Vertex].bind();
+  buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
+                                                       static_cast<GLsizei>(d->hl_vertex.size()*sizeof(float)));
+  d->program->enableAttributeArray("vertex");
+  d->program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+  buffers[Scene_edit_box_item_priv::S_Vertex].release();
+  vaos[Scene_edit_box_item_priv::S_Edges]->release();
+  d->program->release();
+
+  d->program = getShaderProgram(Scene_edit_box_item::PROGRAM_WITH_LIGHT, viewer);
+  attribBuffers(viewer, Scene_edit_box_item::PROGRAM_WITH_LIGHT);
+
+  d->program->bind();
+  vaos[Scene_edit_box_item_priv::S_Faces]->bind();
+  buffers[Scene_edit_box_item_priv::S_Vertex].bind();
+  buffers[Scene_edit_box_item_priv::S_Vertex].allocate(d->hl_vertex.data(),
+                                                       static_cast<int>(d->hl_vertex.size()*sizeof(float)));
+  d->program->enableAttributeArray("vertex");
+  d->program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+  buffers[Scene_edit_box_item_priv::S_Normal].release();
+
+  buffers[Scene_edit_box_item_priv::S_Normal].bind();
+  buffers[Scene_edit_box_item_priv::S_Normal].allocate(d->hl_normal.data(),
+                                                       static_cast<int>(d->hl_normal.size()*sizeof(float)));
+  d->program->enableAttributeArray("normals");
+  d->program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+  buffers[Scene_edit_box_item_priv::S_Normal].release();
+  vaos[Scene_edit_box_item_priv::S_Faces]->release();
+  d->program->release();
+  d->hl_type = Scene_edit_box_item_priv::NO_TYPE;
+
+  itemChanged();
+
+}
 void Scene_edit_box_item_priv::reset_selection()
 {
   selection_on = false;
@@ -1033,21 +1112,47 @@ bool Scene_edit_box_item::eventFilter(QObject *, QEvent *event)
         QVector3D dir(td.x, td.y, td.z);
         d->remodel_box(dir);
       }
+      d->ready_to_hl= true;
+      d->picked_pixel = e->pos();
+      QTimer::singleShot(0, this, SLOT(highlight()));
+    }
+    else if(e->modifiers() == Qt::ControlModifier &&
+            e->buttons() == Qt::LeftButton)
+    {
+      QApplication::setOverrideCursor(d->rotate_cursor);
     }
     else if(d->selection_on)
     {
       d->reset_selection();
     }
-
-    d->ready_to_hl= true;
     d->picked_pixel = e->pos();
-    QTimer::singleShot(0, this, SLOT(highlight()));
     return false;
   }
   else if(event->type() == QEvent::MouseButtonRelease)
   {
     d->reset_selection();
-    QApplication::restoreOverrideCursor();
+    QApplication::setOverrideCursor(QCursor());
+  }
+
+  else if(event->type() == QEvent::KeyPress)
+  {
+     QKeyEvent* e = static_cast<QKeyEvent*>(event);
+     if(e->key() == Qt::Key_Shift)
+     {
+       d->ready_to_hl= true;
+       QTimer::singleShot(0, this, SLOT(highlight()));
+     }
+  }
+  else if(event->type() == QEvent::KeyRelease)
+  {
+     QKeyEvent* e = static_cast<QKeyEvent*>(event);
+     if(e->key() == Qt::Key_Shift)
+       QTimer::singleShot(0, this, SLOT(clearHL()));
+     else if(e->key() == Qt::Key_Control)
+     {
+
+       QApplication::setOverrideCursor(QCursor());
+     }
   }
   return false;
 }
