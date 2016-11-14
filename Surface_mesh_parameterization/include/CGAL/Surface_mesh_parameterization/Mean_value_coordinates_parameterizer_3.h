@@ -38,9 +38,9 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
-/// The class Mean_value_coordinates_parameterizer_3
-/// implements *Floater Mean Value Coordinates* parameterization  \cgalCite{cgal:f-mvc-03}.
-/// This method is sometimes called simply *Floater parameterization*.
+/// The class `Mean_value_coordinates_parameterizer_3`
+/// implements *Floater Mean Value Coordinates* parameterization.
+/// This method is sometimes called simply *Floater parameterization* \cgalCite{cgal:f-mvc-03}.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
@@ -48,7 +48,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// This class is used by the main parameterization algorithm
 /// `Fixed_border_parameterizer_3::parameterize()`.
-/// - It provides default` BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
+/// - It provides default `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d` template
 ///   parameters.
 /// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.
@@ -57,11 +57,11 @@ namespace Surface_mesh_parameterization {
 /// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_3 is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.
-/// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
+/// \tparam SparseLinearAlgebraTraits_d is a traits class to solve a sparse linear system. <br>
 ///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
-///         does not remove (yet) border vertices from the system.
+///         does not remove border vertices from the system.
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`

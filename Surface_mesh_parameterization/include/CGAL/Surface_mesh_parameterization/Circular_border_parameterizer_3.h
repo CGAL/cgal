@@ -178,7 +178,7 @@ public:
 /// in a uniform manner: points are equally spaced.
 ///
 /// Circular_border_parameterizer_3 implements most of the border parameterization
-/// algorithm. This class implements only compute_edge_length() to compute a
+/// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
 ///
 /// \cgalModels `Parameterizer_3`
@@ -224,7 +224,7 @@ protected:
 /// \ingroup  PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a circle,
-/// with an arc-length parameterization: the (u,v) values are proportional
+/// with an arc-length parameterization: the `(u,v)` values are proportional
 /// to the length of border edges.
 /// The class `Circular_border_parameterizer_3` implements most of the border
 /// parameterization algorithm.
@@ -266,7 +266,7 @@ protected:
   {
     const PPM ppmap = get(vertex_point, mesh);
 
-    /// Arc-length border parameterization: (u,v) values are proportional
+    /// Arc-length border parameterization: `(u,v)` values are proportional
     /// to the length of border edges.
     Vector_3 v = get(ppmap, target) - get(ppmap, source);
     return CGAL::sqrt(v * v);

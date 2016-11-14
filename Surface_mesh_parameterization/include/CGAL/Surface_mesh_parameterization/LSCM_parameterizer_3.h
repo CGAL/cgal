@@ -68,7 +68,7 @@ namespace Surface_mesh_parameterization {
 /// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam BorderParameterizer_3 is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_3 is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`. <br>
 ///         Note: The minimum is to parameterize two vertices.
 /// \tparam SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system. <br>

@@ -48,11 +48,11 @@ namespace Surface_mesh_parameterization {
 /// This kind of border parameterization is used by free border parameterizations.
 ///
 /// Implementation note:
-/// To simplify the implementation, models of the concept `BorderParameterizer_3`
+/// To simplify the implementation, models of the concept `Parameterizer_3`
 /// know only the `TriangleMesh` class. They do not know the parameterization
 /// algorithm requirements or the kind of sparse linear system that is used.
 ///
-/// \cgalModels `BorderParameterizer_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///

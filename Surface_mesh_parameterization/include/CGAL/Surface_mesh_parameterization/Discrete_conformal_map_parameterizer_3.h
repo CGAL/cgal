@@ -39,16 +39,16 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
-/// The class Discrete_conformal_map_parameterizer_3
-/// implements the <i>Discrete Conformal Map (DCM)</i> parameterization \cgalCite{cgal:eddhls-maam-95}.
+/// The class `Discrete_conformal_map_parameterizer_3`
+/// implements the <i>Discrete Conformal Map (DCM)</i> parameterization.
 /// This algorithm is also called <i>Discrete Conformal Parameterization (DCP)</i>,
-/// <i>Discrete Harmonic Map</i> or <i>Fixed Conformal Parameterization</i> by other authors.
+/// <i>Discrete Harmonic Map</i> or <i>Fixed Conformal Parameterization</i> by other authors \cgalCite{cgal:eddhls-maam-95}.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///
 /// A one-to-one mapping is guaranteed if the surface's border is mapped onto a convex polygon.
 ///
-/// This class is a *Strategy* \cgalCite{cgal:ghjv-dpero-95} called by the main
+/// This class is a strategy called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
 /// - provides the template parameters `BorderParameterizer_3` and `SparseLinearAlgebraTraits_d`.
 /// - implements `compute_w_ij()` to compute w_ij = (i, j), coefficient of matrix A
@@ -57,11 +57,11 @@ namespace Surface_mesh_parameterization {
 /// \cgalModels `Parameterizer_3`
 ///
 /// \param TriangleMesh must be a model of `FaceGraph`.
-/// \param BorderParameterizer_3 is a Strategy to parameterize the surface border
+/// \param BorderParameterizer_3 is a strategy to parameterize the surface border
 ///        and must be a model of `Parameterizer_3`.
-/// \param SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
+/// \param SparseLinearAlgebraTraits_d is a traits class to solve a sparse linear system. <br>
 ///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
-///        does not remove (yet) border vertices from the system.
+///        does not remove border vertices from the system.
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`

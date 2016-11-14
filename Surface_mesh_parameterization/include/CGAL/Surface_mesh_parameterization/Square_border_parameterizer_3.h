@@ -369,10 +369,10 @@ public:
 /// in a uniform manner: points are equally spaced.
 ///
 /// Square_border_parameterizer_3 implements most of the border parameterization
-/// algorithm. This class implements only compute_edge_length() to compute a
+/// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
 ///
-/// \cgalModels `BorderParameterizer_3`
+/// \cgalModels `Parameterizer_3`
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
@@ -430,11 +430,11 @@ protected:
 /// \ingroup PkgSurfaceParameterizationBorderParameterizationMethods
 ///
 /// This class parameterizes the border of a 3D surface onto a square,
-/// with an arc-length parameterization: (u,v) values are
+/// with an arc-length parameterization: `(u,v)` values are
 /// proportional to the length of border edges.
 ///
 /// Square_border_parameterizer_3 implements most of the border parameterization
-/// algorithm. This class implements only compute_edge_length() to compute a
+/// algorithm. This class implements only `compute_edge_length()` to compute a
 /// segment's length.
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
@@ -486,7 +486,7 @@ protected:
   {
     const PPM ppmap = get(vertex_point, mesh);
 
-    /// In this arc-length border parameterization: the (u,v) values are
+    /// In this arc-length border parameterization: the `(u,v)` values are
     /// proportional to the length of the border edges.
     Vector_3 v = get(ppmap, target) - get(ppmap, source);
     return std::sqrt(v * v);

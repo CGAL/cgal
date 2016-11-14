@@ -129,7 +129,7 @@ Such border parameterizations are described in Section
 
 \subsubsection Surface_mesh_parameterizationTutteBarycentric Tutte Barycentric Mapping
 
-`CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The Barycentric Mapping parameterization method has been introduced by
 Tutte \cgalCite{t-hdg-63}. In parameter space, each vertex is
@@ -150,7 +150,7 @@ Left: Tutte barycentric mapping parameterization (the red line depicts the cut g
 
 \subsubsection Surface_mesh_parameterizationDiscreteConformal Discrete Conformal Map
 
-`CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 Discrete conformal map parameterization has been introduced to the graphics community
 by Eck et al. \cgalCite{cgal:eddhls-maam-95}. It attempts to
@@ -172,7 +172,7 @@ Left: discrete conformal map. Right: parameter space.
 
 \subsubsection Surface_mesh_parameterizationFloaterMean Floater Mean Value Coordinates
 
-`CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The mean value coordinates parameterization method has been introduced
 by Floater \cgalCite{cgal:f-mvc-03}. Each vertex in parameter space is
@@ -190,7 +190,7 @@ Floater Mean Value Coordinates
 
 \subsubsection Surface_mesh_parameterizationDiscreteAuthalic Discrete Authalic Parameterization
 
-`CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The discrete authalic parameterization method has been introduced by
 Desbrun et al. \cgalCite{cgal:dma-ipsm-02}. It corresponds to
@@ -239,10 +239,10 @@ All combinations of uniform/arc-length and circle/square are provided by
 the following classes:
 
 <UL>
-<LI>`CGAL::Surface_mesh_parameterization::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
-<LI>`CGAL::Surface_mesh_parameterization::Circular_border_uniform_parameterizer_3<TriangleMesh>`
-<LI>`CGAL::Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
-<LI>`CGAL::Surface_mesh_parameterization::Square_border_uniform_parameterizer_3<TriangleMesh>`
+<LI>`Surface_mesh_parameterization::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+<LI>`Surface_mesh_parameterization::Circular_border_uniform_parameterizer_3<TriangleMesh>`
+<LI>`Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
+<LI>`Surface_mesh_parameterization::Square_border_uniform_parameterizer_3<TriangleMesh>`
 </UL>
 
 An illustration of the use of different border parameterizers can be found in the
@@ -252,7 +252,7 @@ example `Surface_mesh_parameterization/square_border_parameterizer.cpp`.
 
 \subsubsection Surface_mesh_parameterizationLeastSquares Least Squares Conformal Maps
 
-`CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 The Least Squares Conformal Maps (LSCM) parameterization method has
 been introduced by L&eacute;vy et al. \cgalCite{cgal:lprm-lscm-02}.
@@ -269,7 +269,7 @@ Least squares conformal maps.
 
 \subsubsection Surface_mesh_parameterizationARAP As Rigid As Possible Parameterization
 
-`CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+`Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 An as rigid as possible parameterization was introduced by Liu et al. \cgalCite{liu2008local}.
 shape-preserving method based on an iterative energy minimization process.
@@ -292,9 +292,9 @@ the pinned vertices.
 
 <UL>
 
-<LI>`Two_vertices_parameterizer_3<TriangleMesh>`
+<LI>`Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh>`
 
-<I>Usage:</I> `Two_vertices_parameterizer_3<TriangleMesh>` is the default
+<I>Usage:</I> `Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh>` is the default
 free border parameterization, and is the only one available
 in the current version of this package.
 
