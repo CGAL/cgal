@@ -18,7 +18,7 @@
 //
 // Author(s)     :
 
-#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+#include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -41,7 +41,9 @@
 
 namespace CGAL {
 
-namespace Parameterization {
+namespace Surface_mesh_parameterization {
+
+namespace IO {
 
 template <typename TriangleMesh,
           typename VertexContainer,
@@ -108,7 +110,7 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   boost::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
-  internal::Parameterization::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
+  internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
   Polygon_mesh_processing::connected_component(
                                     face(opposite(bhd, mesh), mesh),
                                     mesh,
@@ -139,7 +141,9 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
   os << out_vertices.str() << out_faces.str();
 }
 
-} // namespace Parameterization
+} // namespace IO
+
+} // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
 

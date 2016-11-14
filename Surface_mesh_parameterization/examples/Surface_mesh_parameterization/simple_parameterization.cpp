@@ -3,8 +3,8 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 
-#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
-#include <CGAL/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
@@ -19,6 +19,8 @@ typedef CGAL::Surface_mesh<Kernel::Point_3>     SurfaceMesh;
 typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor     vertex_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::halfedge_descriptor   halfedge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::face_descriptor       face_descriptor;
+
+namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
@@ -38,10 +40,10 @@ int main(int argc, char * argv[])
   typedef SurfaceMesh::Property_map<vertex_descriptor, Point_2>  UV_pmap;
   UV_pmap uv_map = sm.add_property_map<vertex_descriptor, Point_2>("h:uv").first;
 
-  CGAL::parameterize(sm, hd, uv_map);
+  SMP::parameterize(sm, hd, uv_map);
 
   std::ofstream out("result.off");
-  CGAL::Parameterization::output_uvmap_to_off(sm, hd, uv_map, out);
+  SMP::IO::output_uvmap_to_off(sm, hd, uv_map, out);
 
   return 0;
 }

@@ -18,13 +18,12 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-#ifndef CGAL_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
-#define CGAL_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-
-#include <CGAL/Parameterizer_traits_3.h>
+#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
 
 #include <boost/foreach.hpp>
 
@@ -34,6 +33,8 @@
 /// \file Two_vertices_parameterizer_3.h
 
 namespace CGAL {
+
+namespace Surface_mesh_parameterization {
 
 //
 // Declaration
@@ -261,6 +262,8 @@ public:
   bool is_border_convex() const { return false; }
 };
 
+} // Surface_mesh_parameterization
+
 } // namespace CGAL
 
-#endif // CGAL_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_TWO_VERTICES_PARAMETERIZER_3_H_INCLUDED

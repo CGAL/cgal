@@ -18,8 +18,8 @@
 //
 // Author(s)     :
 
-#ifndef CGAL_INTERNAL_SURFACE_MESH_PARAMETERIZATION_CONTAINERS_FILLER_H
-#define CGAL_INTERNAL_SURFACE_MESH_PARAMETERIZATION_CONTAINERS_FILLER_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_CONTAINERS_FILLER_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_CONTAINERS_FILLER_H
 
 #include <boost/foreach.hpp>
 #include "boost/tuple/tuple.hpp"
@@ -29,9 +29,9 @@
 
 namespace CGAL {
 
-namespace internal {
+namespace Surface_mesh_parameterization {
 
-namespace Parameterization {
+namespace internal {
 
 // Custom output iterator that fills 'faces' and 'vertices' containers from a mesh
 template<typename TriangleMesh,
@@ -102,10 +102,10 @@ struct Index_map_filler
   int index;
 };
 
-} // namespace Parameterization
-
 } // namespace internal
+
+} // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_SURFACE_MESH_PARAMETERIZATION_CONTAINERS_FILLER_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_CONTAINERS_FILLER_H

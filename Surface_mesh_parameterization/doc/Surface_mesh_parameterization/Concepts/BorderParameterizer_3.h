@@ -8,9 +8,9 @@ a given type of mesh, `TriangleMesh`, which is a model of the `FaceGraph` concep
 Some of the vertices (possibly all) of the mesh are assigned a 2D position on a
 shape (a geometrical object).
 
-\cgalHasModel `CGAL::Circular_border_parameterizer_3<TriangleMesh>`
-\cgalHasModel `CGAL::Square_border_parameterizer_3<TriangleMesh>`
-\cgalHasModel `CGAL::Two_vertices_parameterizer_3<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_parameterization::Circular_border_parameterizer_3<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_parameterization::Square_border_parameterizer_3<TriangleMesh>`
+\cgalHasModel `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh>`
 
 \sa `ParameterizerTraits_3`
 
@@ -41,7 +41,7 @@ typedef unspecified_type Error_code;
 
 /*!
 
-Assign a 2D position (i.e.\ a `(u, v)` pair) on the shape  to (some of) the vertices on the
+Assign a 2D position (i.e.\ a `(u, v)` pair) on the shape to (some of) the vertices on the
 border of the mesh. Mark them as <I>parameterized</I>.
 
 */

@@ -20,12 +20,12 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
-#include <CGAL/parameterize.h>
-#include <CGAL/ARAP_parameterizer_3.h>
-#include <CGAL/Discrete_conformal_map_parameterizer_3.h>
-#include <CGAL/LSCM_parameterizer_3.h>
-#include <CGAL/Discrete_authalic_parameterizer_3.h>
-#include <CGAL/Two_vertices_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/ARAP_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Discrete_conformal_map_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 
 #include <CGAL/Textured_polyhedron_builder.h>
 
@@ -39,6 +39,8 @@
 
 #include "ui_Parameterization_widget.h"
 #include "ui_ARAP_dialog.h"
+
+namespace SMP = CGAL::Surface_mesh_parameterization;
 
 typedef boost::unordered_set<Textured_polyhedron::Base::Facet_handle> Component;
 typedef std::vector<Component> Components;
@@ -583,8 +585,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       std::cout << "Parameterize (MVC)...";
       new_item_name = tr("%1 (parameterized (MVC))").arg(poly_item->name());
-      typedef CGAL::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      typedef SMP::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = SMP::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
       success = err == Parameterizer::OK;
       break;
     }
@@ -592,8 +594,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       new_item_name = tr("%1 (parameterized (DCP))").arg(poly_item->name());
       std::cout << "Parameterize (DCP)...";
-      typedef CGAL::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      typedef SMP::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = SMP::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
       success = err == Parameterizer::OK;
       break;
     }
@@ -601,9 +603,9 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
       std::cout << "Parameterize (LSC)...";
-      typedef CGAL::Two_vertices_parameterizer_3<Seam_mesh> Border_parameterizer;
-      typedef CGAL::LSCM_parameterizer_3<Seam_mesh, Border_parameterizer> Parameterizer_with_border;
-      typedef CGAL::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
+      typedef SMP::Two_vertices_parameterizer_3<Seam_mesh> Border_parameterizer;
+      typedef SMP::LSCM_parameterizer_3<Seam_mesh, Border_parameterizer> Parameterizer_with_border;
+      typedef SMP::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
       if(!border.empty())
       {
         double max_dist = 0;
@@ -626,18 +628,18 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
         boost::graph_traits<Seam_mesh>::vertex_descriptor vp1 = target(halfedge_descriptor(phd),*sMesh);
         boost::graph_traits<Seam_mesh>::vertex_descriptor vp2 = target(halfedge_descriptor(phd2),*sMesh);
-        Parameterizer_with_border::Error_code err = CGAL::parameterize(*sMesh,
-                                                                       Parameterizer_with_border(Border_parameterizer(vp1, vp2)),
-                                                                       bhd,
-                                                                       uv_pm);
+        Parameterizer_with_border::Error_code err = SMP::parameterize(*sMesh,
+                                                                      Parameterizer_with_border(Border_parameterizer(vp1, vp2)),
+                                                                      bhd,
+                                                                      uv_pm);
         success = err == Parameterizer_with_border::OK;
       }
       else
       {
-        Parameterizer::Error_code err = CGAL::parameterize(*sMesh,
-                                                           Parameterizer(),
-                                                           bhd,
-                                                           uv_pm);
+        Parameterizer::Error_code err = SMP::parameterize(*sMesh,
+                                                          Parameterizer(),
+                                                          bhd,
+                                                          uv_pm);
         success = err == Parameterizer::OK;
       }
       break;
@@ -646,8 +648,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       new_item_name = tr("%1 (parameterized (DAP))").arg(poly_item->name());
       std::cout << "Parameterize (DAP)...";
-      typedef CGAL::Discrete_authalic_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      typedef SMP::Discrete_authalic_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = SMP::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
       success = (err == Parameterizer::OK);
       break;
     }
@@ -672,8 +674,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       FT lambda = ui.lambdaSpinBox->value();
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      typedef CGAL::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
-      Parameterizer::Error_code err = CGAL::parameterize(*sMesh, Parameterizer(lambda), bhd, uv_pm);
+      typedef SMP::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
+      Parameterizer::Error_code err = SMP::parameterize(*sMesh, Parameterizer(lambda), bhd, uv_pm);
       success = (err == Parameterizer::OK);
       break;
     }

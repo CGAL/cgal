@@ -18,20 +18,20 @@
 //
 // Author(s)     :
 
-#ifndef CGAL_ARAP_PARAMETERIZER_3_H
-#define CGAL_ARAP_PARAMETERIZER_3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 
-#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
-#include <CGAL/internal/Surface_mesh_parameterization/validity.h>
-#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
+#include <CGAL/Surface_mesh_parameterization/internal/validity.h>
+#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
 
-#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
-#include <CGAL/LSCM_parameterizer_3.h>
-#include <CGAL/MVC_post_processor_3.h>
-#include <CGAL/Two_vertices_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Mean_value_coordinates_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/MVC_post_processor_3.h>
+#include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 
-#include <CGAL/Parameterizer_traits_3.h>
-#include <CGAL/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Algebraic_kernel_d_2.h>
 #include <CGAL/Kernel/Conic_misc.h> // @tmp used for solving conic equations
@@ -71,6 +71,8 @@
 
 namespace CGAL {
 
+namespace Surface_mesh_parameterization {
+
 // ------------------------------------------------------------------------------------
 // Declaration
 // ------------------------------------------------------------------------------------
@@ -95,7 +97,7 @@ namespace CGAL {
 /// a random vertex is pinned.
 ///
 /// If flips are present in the parameterization, a post-processing step is applied
-/// using `CGAL::MVC_post_processor_3<TriangleMesh, SparseLinearAlgebraTraits_d>`
+/// using `CGAL::Surface_mesh_parameterization::MVC_post_processor_3<TriangleMesh, SparseLinearAlgebraTraits_d>`
 /// to attempt to obtain a valid final embedding.
 ///
 /// A one-to-one mapping is *not* guaranteed.
@@ -107,13 +109,13 @@ namespace CGAL {
 /// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
 ///         Note: the system is *not* symmetric.
 ///
-/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
-/// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
-/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
+/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <
@@ -235,8 +237,7 @@ private:
                     const VertexIndexMap vimap) const
   {
     std::ofstream out(filename.c_str());
-    CGAL::Parameterization::output_uvmap_to_off(mesh, vertices, faces,
-                                                uvmap, vimap, out);
+    IO::output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
   }
 
   /// Print the parameterized mesh.
@@ -253,8 +254,7 @@ private:
     std::ostringstream out_ss;
     out_ss << filename << iter << ".off" << std::ends;
     std::ofstream out(out_ss.str().c_str());
-    CGAL::Parameterization::output_uvmap_to_off(mesh, vertices, faces,
-                                                uvmap, vimap, out);
+    output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
   }
 
   /// Copy the data from two vectors to the UVmap.
@@ -282,8 +282,7 @@ private:
                                    Vertex_set& vertices,
                                    Faces_vector& faces) const
   {
-    internal::Parameterization::Containers_filler<TriangleMesh>
-                                                     fc(mesh, vertices, &faces);
+    internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
     Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
@@ -314,11 +313,11 @@ private:
     // According to the paper, MVC is better for single border and LSCM is better
     // when there are multiple borders
     if(number_of_borders == 1) {
-      typedef CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh> MVC_parameterizer;
-      status = CGAL::parameterize(mesh, MVC_parameterizer(), bhd, uvmap);
+      typedef Mean_value_coordinates_parameterizer_3<TriangleMesh>  MVC_parameterizer;
+      status = CGAL::Surface_mesh_parameterization::parameterize(mesh, MVC_parameterizer(), bhd, uvmap);
     } else {
-      typedef CGAL::LSCM_parameterizer_3<TriangleMesh, Border_param> LSCM_parameterizer;
-      status = CGAL::parameterize(mesh, LSCM_parameterizer(), bhd, uvmap);
+      typedef LSCM_parameterizer_3<TriangleMesh, Border_param>      LSCM_parameterizer;
+      status = CGAL::Surface_mesh_parameterization::parameterize(mesh, LSCM_parameterizer(), bhd, uvmap);
     }
 
     std::cout << "Computed initial parameterization" << std::endl;
@@ -1221,7 +1220,7 @@ private:
                           VertexUVMap uvmap,
                           const VertexIndexMap vimap) const
   {
-    typedef CGAL::MVC_post_processor_3<TriangleMesh>     Post_processor;
+    typedef MVC_post_processor_3<TriangleMesh>     Post_processor;
 
     Post_processor p;
     Error_code status = p.parameterize(mesh, vertices, faces, bhd, uvmap, vimap);
@@ -1253,7 +1252,7 @@ public:
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
                              const VertexUVMap uvmap) const
   {
-    return internal::Parameterization::is_one_to_one_mapping(mesh, uvmap);
+    return internal::is_one_to_one_mapping(mesh, uvmap);
   }
 
   /// Compute a mapping from a triangular 3D surface mesh to a piece of the 2D space.
@@ -1421,6 +1420,8 @@ public:
   // Default copy constructor and operator=() are fine
 };
 
+} // namespace Surface_mesh_parameterization
+
 } // namespace CGAL
 
-#endif // CGAL_ARAP_PARAMETERIZER_3_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H

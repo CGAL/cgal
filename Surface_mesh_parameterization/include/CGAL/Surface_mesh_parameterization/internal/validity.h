@@ -18,8 +18,8 @@
 //
 // Author(s)     :
 
-#ifndef CGAL_INTERNAL_SURFACE_MESH_PARAMETERIZATION_VALIDITY_H
-#define CGAL_INTERNAL_SURFACE_MESH_PARAMETERIZATION_VALIDITY_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_VALIDITY_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_VALIDITY_H
 
 #include <CGAL/box_intersection_d.h>
 
@@ -34,9 +34,9 @@
 
 namespace CGAL {
 
-namespace internal {
+namespace Surface_mesh_parameterization {
 
-namespace Parameterization {
+namespace internal {
 
 template<typename TriangleMesh, typename VertexUVMap>
 bool has_flips(const TriangleMesh& mesh,
@@ -293,10 +293,10 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   return (counter == 0);
 }
 
-} // namespace Parameterization
-
 } // namespace internal
+
+} // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_SURFACE_MESH_PARAMETERIZATION_VALIDITY_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_VALIDITY_H

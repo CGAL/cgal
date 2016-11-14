@@ -18,20 +18,20 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-#ifndef CGAL_DISCRETE_AUTHALIC_PARAMETERIZER_3_H
-#define CGAL_DISCRETE_AUTHALIC_PARAMETERIZER_3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_DISCRETE_AUTHALIC_PARAMETERIZER_3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_DISCRETE_AUTHALIC_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-
-#include <CGAL/Fixed_border_parameterizer_3.h>
-#include <CGAL/Circular_border_parameterizer_3.h>
-#include <CGAL/Fixed_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
 #include <CGAL/Eigen_solver_traits.h>
 
 /// \file Discrete_authalic_parameterizer_3.h
 
 namespace CGAL {
+
+namespace Surface_mesh_parameterization {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
@@ -58,13 +58,13 @@ namespace CGAL {
 ///         Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///         does not remove (yet) border vertices from the system.
 ///
-/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`.
-/// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
-/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`.
+/// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
+/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 ///
 template
 <
@@ -170,6 +170,8 @@ protected:
   }
 };
 
+} // namespace Surface_mesh_parameterization
+
 } // namespace CGAL
 
-#endif // CGAL_DISCRETE_AUTHALIC_PARAMETERIZER_3_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_DISCRETE_AUTHALIC_PARAMETERIZER_3_H

@@ -5,8 +5,8 @@
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
-#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
-#include <CGAL/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Unique_hash_map.h>
 
@@ -35,6 +35,8 @@ typedef CGAL::Seam_mesh<PolyMesh, Seam_edge_pmap, Seam_vertex_pmap> Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+
+namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
@@ -70,9 +72,9 @@ int main(int argc, char * argv[])
   halfedge_descriptor bhd(smhd);
   bhd = opposite(bhd, mesh); // a halfedge on the virtual border
 
-  CGAL::parameterize(mesh, bhd, uv_pm);
+  SMP::parameterize(mesh, bhd, uv_pm);
 
-  CGAL::Parameterization::output_uvmap_to_off(mesh, bhd, uv_pm, std::cout);
+  SMP::IO::output_uvmap_to_off(mesh, bhd, uv_pm, std::cout);
 
   return 0;
 }

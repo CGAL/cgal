@@ -10,13 +10,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-#include <CGAL/ARAP_parameterizer_3.h>
-#include <CGAL/Barycentric_mapping_parameterizer_3.h>
-#include <CGAL/Discrete_authalic_parameterizer_3.h>
-#include <CGAL/Discrete_conformal_map_parameterizer_3.h>
-#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
-#include <CGAL/LSCM_parameterizer_3.h>
-#include <CGAL/parameterize.h>
+#include <CGAL/surface_mesh_parameterization.h>
 
 #include <CGAL/Simple_cartesian.h>
 
@@ -25,6 +19,8 @@
 
 #include <iostream>
 #include <fstream>
+
+namespace SMP = CGAL::Surface_mesh_parameterization;
 
 typedef CGAL::Simple_cartesian<double>            Kernel;
 typedef Kernel::Point_2                           Point_2;
@@ -65,7 +61,7 @@ typedef boost::graph_traits<PMesh>::halfedge_descriptor           PM_halfedge_de
 typedef CGAL::Unique_hash_map<PM_halfedge_descriptor, Point_2>    PM_UV_hmap;
 typedef boost::associative_property_map<PM_UV_hmap>               PM_UV_pmap;
 
-typedef CGAL::Parameterizer_traits_3<PMesh>::Error_code           Error_code;
+typedef SMP::Parameterizer_traits_3<PMesh>::Error_code           Error_code;
 #endif
 
 #ifdef SURF_MESH
@@ -152,7 +148,7 @@ int main(int argc, char * argv[])
       CGAL::Unique_hash_map<PM_vertex_descriptor, Point_2,
                             boost::hash<PM_vertex_descriptor> > > uvpm(uvhm);
     // Go to default (aka Mean values)
-    CGAL::parameterize(pm, hd, uvpm);
+    SMP::parameterize(pm, hd, uvpm);
 
     std::cout << "Parameterized with Default (Mean Values)!" << std::endl;
   }
@@ -187,13 +183,12 @@ int main(int argc, char * argv[])
       face(opposite(hd, pm), pm),
       pm,
       boost::make_function_output_iterator(
-        CGAL::internal::Parameterization::Index_map_filler<PMesh,
-                                                           Indices>(pm, indices)));
+                 SMP::internal::Index_map_filler<PMesh, Indices>(pm, indices)));
 
     // Vertex parameterized map
     boost::unordered_set<PM_vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
-    typename CGAL::Barycentric_mapping_parameterizer_3<PMesh> parameterizer;
+    SMP::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
+    typename SMP::Barycentric_mapping_parameterizer_3<PMesh> parameterizer;
 
     parameterizer.parameterize(pm, hd, uvpm, boost::make_assoc_property_map(indices), vpm);
 
@@ -230,21 +225,19 @@ int main(int argc, char * argv[])
       face(opposite(hd, pm), pm),
       pm,
       boost::make_function_output_iterator(
-      CGAL::internal::Parameterization::Index_map_filler<PMesh,
-                                                         Indices>(pm, indices)));
+                 SMP::internal::Index_map_filler<PMesh, Indices>(pm, indices)));
 
     boost::associative_property_map<Indices> vipm(indices);
 
     // Vertex parameterized map
     boost::unordered_set<PM_vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
+    SMP::internal::Bool_property_map<boost::unordered_set<PM_vertex_descriptor> > vpm(vs);
 
     // Parameterizer
-    typename CGAL::ARAP_parameterizer_3<PMesh> parameterizer;
-    Error_code status =
-      parameterizer.parameterize(pm, hd, uvpm, vipm, vpm);
+    typename SMP::ARAP_parameterizer_3<PMesh> parameterizer;
+    Error_code status = parameterizer.parameterize(pm, hd, uvpm, vipm, vpm);
 
-    if(status != CGAL::Parameterizer_traits_3<PMesh>::OK)
+    if(status != SMP::Parameterizer_traits_3<PMesh>::OK)
       std::cout << "Encountered a problem: " << status << std::endl;
     else
       std::cout << "Parameterized with ARAP!" << std::endl;
@@ -285,14 +278,13 @@ int main(int argc, char * argv[])
       face(opposite(bhd, sm), sm),
       sm,
       boost::make_function_output_iterator(
-      CGAL::internal::Parameterization::Index_map_filler<SMesh,
-                                                         Indices>(sm, indices)));
+                SMP::internal::Index_map_filler<SMesh, Indices>(sm, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     boost::unordered_set<SM_vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map< boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
+    SMP::internal::Bool_property_map< boost::unordered_set<SM_vertex_descriptor> > vpm(vs);
 
-    typename CGAL::ARAP_parameterizer_3<SMesh> parameterizer;
+    typename SMP::ARAP_parameterizer_3<SMesh> parameterizer;
     parameterizer.parameterize(sm, bhd, uv_pm, vipm, vpm);
   }
 #endif
@@ -334,15 +326,14 @@ int main(int argc, char * argv[])
         face(opposite(bhd, mesh), mesh),
         mesh,
         boost::make_function_output_iterator(
-          CGAL::internal::Parameterization::Index_map_filler<SM_Seam_mesh,
-                                                             Indices>(mesh, indices)));
+        SMP::internal::Index_map_filler<SM_Seam_mesh, Indices>(mesh, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized
     boost::unordered_set<SM_SE_vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map<boost::unordered_set<SM_SE_vertex_descriptor> > vpm(vs);
+    SMP::internal::Bool_property_map<boost::unordered_set<SM_SE_vertex_descriptor> > vpm(vs);
 
-    typename CGAL::ARAP_parameterizer_3<SM_Seam_mesh> parameterizer;
+    typename SMP::ARAP_parameterizer_3<SM_Seam_mesh> parameterizer;
     parameterizer.parameterize(mesh, bhd, uv_pm, vipm, vpm);
 
   }
@@ -385,15 +376,14 @@ int main(int argc, char * argv[])
       face(opposite(bhd, mesh), mesh),
       mesh,
       boost::make_function_output_iterator(
-      CGAL::internal::Parameterization::Index_map_filler<PM_Seam_mesh,
-                                                         Indices>(mesh, indices)));
+        SMP::internal::Index_map_filler<PM_Seam_mesh, Indices>(mesh, indices)));
     boost::associative_property_map<Indices> vipm(indices);
 
     // Parameterized
     boost::unordered_set<PM_SE_vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map<boost::unordered_set<PM_SE_vertex_descriptor> > vpm(vs);
+    SMP::internal::Bool_property_map<boost::unordered_set<PM_SE_vertex_descriptor> > vpm(vs);
 
-    typename CGAL::ARAP_parameterizer_3<PM_Seam_mesh> parameterizer;
+    typename SMP::ARAP_parameterizer_3<PM_Seam_mesh> parameterizer;
     parameterizer.parameterize(mesh, bhd, uv_pm, vipm, vpm);
   }
 #endif

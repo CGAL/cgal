@@ -3,10 +3,10 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 
-#include <CGAL/Circular_border_parameterizer_3.h>
-#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
-#include <CGAL/Discrete_authalic_parameterizer_3.h>
-#include <CGAL/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
@@ -25,6 +25,8 @@ typedef boost::graph_traits<SurfaceMesh>::halfedge_descriptor  halfedge_descript
 typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::face_descriptor      face_descriptor;
 
+namespace SMP = CGAL::Surface_mesh_parameterization;
+
 int main(int argc, char * argv[])
 {
   SurfaceMesh sm;
@@ -40,10 +42,10 @@ int main(int argc, char * argv[])
   bool created;
   boost::tie(uvpm, created) = sm.add_property_map<vertex_descriptor, Point_2>("v:uv");
 
-  typedef CGAL::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
-  typedef CGAL::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
+  typedef SMP::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
+  typedef SMP::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
 
-  Parameterizer::Error_code err = CGAL::parameterize(sm, Parameterizer(), bhd, uvpm);
+  Parameterizer::Error_code err = parameterize(sm, Parameterizer(), bhd, uvpm);
 
   if(err != Parameterizer::OK) {
     std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
@@ -51,7 +53,7 @@ int main(int argc, char * argv[])
   }
 
   std::ofstream out("result.off");
-  CGAL::Parameterization::output_uvmap_to_off(sm, bhd, uvpm, out);
+  SMP::IO::output_uvmap_to_off(sm, bhd, uvpm, out);
 
   return 0;
 }

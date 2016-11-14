@@ -18,16 +18,16 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-#ifndef CGAL_LSCM_PARAMETERIZER_3_H
-#define CGAL_LSCM_PARAMETERIZER_3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_LSCM_PARAMETERIZER_3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_LSCM_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
-#include <CGAL/internal/Surface_mesh_parameterization/validity.h>
+#include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
+#include <CGAL/Surface_mesh_parameterization/internal/validity.h>
 
-#include <CGAL/Parameterizer_traits_3.h>
-#include <CGAL/Two_vertices_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
+#include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/circulator.h>
@@ -47,6 +47,8 @@
 /// \file LSCM_parameterizer_3.h
 
 namespace CGAL {
+
+namespace Surface_mesh_parameterization {
 
 // ------------------------------------------------------------------------------------
 // Declaration
@@ -72,13 +74,13 @@ namespace CGAL {
 ///         Note: We may use a symmetric definite positive solver because LSCM
 ///         solves the system in the least squares sense.
 ///
-/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
-/// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Parameterizer_traits_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <
@@ -153,7 +155,7 @@ public:
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
                              const VertexUVMap uvmap) const
   {
-    return internal::Parameterization::is_one_to_one_mapping(mesh, uvmap);
+    return internal::is_one_to_one_mapping(mesh, uvmap);
   }
 
   /// Compute a one-to-one mapping from a triangular 3D surface mesh
@@ -190,8 +192,7 @@ public:
     boost::unordered_set<vertex_descriptor> ccvertices;
     std::vector<face_descriptor> ccfaces;
 
-    internal::Parameterization::Containers_filler<TriangleMesh>
-                                                  fc(mesh, ccvertices, &ccfaces);
+    internal::Containers_filler<TriangleMesh> fc(mesh, ccvertices, &ccfaces);
     Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
@@ -446,6 +447,8 @@ setup_triangle_relations(LeastSquaresSolver& solver,
   return Base::OK;
 }
 
+} // namespace
+
 } // namespace CGAL
 
-#endif // CGAL_LSCM_PARAMETERIZER_3_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_LSCM_PARAMETERIZER_3_H

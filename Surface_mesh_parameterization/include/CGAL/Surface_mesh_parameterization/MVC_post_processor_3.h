@@ -18,13 +18,13 @@
 //
 // Author(s)     :
 
-#ifndef CGAL_MVC_POST_PROCESSOR_3_H
-#define CGAL_MVC_POST_PROCESSOR_3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_MVC_POST_PROCESSOR_3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_MVC_POST_PROCESSOR_3_H
 
-#include <CGAL/internal/Surface_mesh_parameterization/Containers_filler.h>
+#include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 
-#include <CGAL/Two_vertices_parameterizer_3.h>
-#include <CGAL/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Constrained_triangulation_2.h>
@@ -47,6 +47,8 @@
 
 namespace CGAL {
 
+namespace Surface_mesh_parameterization {
+
 // ------------------------------------------------------------------------------------
 // Declaration
 // ------------------------------------------------------------------------------------
@@ -67,7 +69,7 @@ namespace CGAL {
 /// \tparam SparseLinearAlgebraTraits_d is a Traits class to solve a sparse linear system. <br>
 ///         Note: the system is *not* symmetric.
 ///
-/// \sa `CGAL::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 ///
 template
 <
@@ -190,8 +192,7 @@ private:
                              Vertex_set& vertices,
                              Faces_vector& faces) const
   {
-    internal::Parameterization::Containers_filler<TriangleMesh>
-                                                     fc(mesh, vertices, &faces);
+    internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
     CGAL::Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
@@ -731,7 +732,7 @@ public:
     // Prepare the constrained triangulation: collect exterior faces (faces in
     // the convex hull but not -- geometrically -- in 'mesh').
     boost::unordered_set<vertex_descriptor> vs;
-    CGAL::internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
+    internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
     prepare_CT_for_parameterization(ct, vpmap);
 
     // Run the MVC
@@ -779,6 +780,8 @@ public:
   { }
 };
 
+} // namespace Surface_mesh_parameterization
+
 } // namespace CGAL
 
-#endif // CGAL_MVC_POST_PROCESSOR_3_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_MVC_POST_PROCESSOR_3_H

@@ -3,10 +3,10 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
-#include <CGAL/Square_border_parameterizer_3.h>
-#include <CGAL/Discrete_conformal_map_parameterizer_3.h>
-#include <CGAL/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/Square_border_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Discrete_conformal_map_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Unique_hash_map.h>
@@ -33,6 +33,8 @@ typedef boost::array<vertex_descriptor, 4>                       Vd_array;
 
 typedef CGAL::Unique_hash_map<vertex_descriptor, Point_2>        UV_uhm;
 typedef boost::associative_property_map<UV_uhm>                  UV_pmap;
+
+namespace SMP = CGAL::Surface_mesh_parameterization;
 
 bool read_vertices(const PolyMesh& mesh,
                    const char* filename,
@@ -114,14 +116,14 @@ int main(int argc, char * argv[])
     return 1;
   }
 
-  typedef CGAL::Square_border_uniform_parameterizer_3<PolyMesh> Border_parameterizer;
-  typedef CGAL::Discrete_conformal_map_parameterizer_3<PolyMesh, Border_parameterizer> Parameterizer;
+  typedef SMP::Square_border_uniform_parameterizer_3<PolyMesh> Border_parameterizer;
+  typedef SMP::Discrete_conformal_map_parameterizer_3<PolyMesh, Border_parameterizer> Parameterizer;
 
   // Border parameterizers (pick one)
   Border_parameterizer border_param(vda[0], vda[1], vda[2], vda[3]);
 //  Border_parameterizer border_param; // the border parameterizer will compute the corner vertices
 
-  Parameterizer::Error_code err = CGAL::parameterize(sm, Parameterizer(border_param), bhd, uv_map);
+  Parameterizer::Error_code err = SMP::parameterize(sm, Parameterizer(border_param), bhd, uv_map);
 
   if(err != Parameterizer::OK) {
     std::cerr << "Error: " << Parameterizer::get_error_message(err) << std::endl;
@@ -129,7 +131,7 @@ int main(int argc, char * argv[])
   }
 
   std::ofstream out("result.off");
-  CGAL::Parameterization::output_uvmap_to_off(sm, bhd, uv_map, out);
+  SMP::IO::output_uvmap_to_off(sm, bhd, uv_map, out);
 
   return 0;
 }

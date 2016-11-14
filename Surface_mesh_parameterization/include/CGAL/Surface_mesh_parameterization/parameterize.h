@@ -18,13 +18,12 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-#ifndef CGAL_PARAMETERIZE_H
-#define CGAL_PARAMETERIZE_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_PARAMETERIZE_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_PARAMETERIZE_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-
-#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/Mean_value_coordinates_parameterizer_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <boost/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -34,6 +33,8 @@
 /// \file parameterize.h
 
 namespace CGAL {
+
+namespace Surface_mesh_parameterization {
 
 namespace internal {
 
@@ -114,8 +115,7 @@ parameterize(TriangleMesh& mesh,
          face(opposite(bhd, mesh), mesh),
          mesh,
          boost::make_function_output_iterator(
-         internal::Parameterization::Index_map_filler<TriangleMesh,
-                                                      Indices>(mesh, indices)));
+         internal::Index_map_filler<TriangleMesh, Indices>(mesh, indices)));
   boost::associative_property_map<Indices> vipm(indices);
 
   boost::unordered_set<vertex_descriptor> vs;
@@ -153,7 +153,7 @@ parameterize(TriangleMesh& mesh,
              VertexUVmap uvm)
 {
   Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
-  return CGAL::parameterize(mesh, parameterizer, bhd, uvm);
+  return parameterize(mesh, parameterizer, bhd, uvm);
 }
 
 template <class TM, class SEM, class SVM>
@@ -176,8 +176,8 @@ parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
          face(opposite(bhd, mesh), mesh),
          mesh,
          boost::make_function_output_iterator(
-         internal::Parameterization::Index_map_filler<Seam_mesh<TM, SEM, SVM>,
-                                                      Indices>(mesh, indices)));
+         internal::Index_map_filler<Seam_mesh<TM, SEM, SVM>,
+                                    Indices>(mesh, indices)));
   boost::associative_property_map<Indices> vipm(indices);
 
   return parameterizer.parameterize(mesh, bhd, uvm, vipm, vpm);
@@ -190,8 +190,10 @@ parameterize(Seam_mesh<TM, SEM, SVM>& mesh,
              VertexUVmap uvm)
 {
   Mean_value_coordinates_parameterizer_3<Seam_mesh<TM, SEM, SVM> > parameterizer;
-  return CGAL::parameterize(mesh, parameterizer, bhd, uvm);
+  return parameterize(mesh, parameterizer, bhd, uvm);
 }
+
+} // namespace Surface_mesh_parameterization
 
 } // namespace CGAL
 

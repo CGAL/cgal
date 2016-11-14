@@ -5,10 +5,10 @@
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
-#include <CGAL/IO/Surface_mesh_parameterization/File_off.h>
-#include <CGAL/parameterize.h>
-#include <CGAL/Two_vertices_parameterizer_3.h>
-#include <CGAL/LSCM_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
+#include <CGAL/Surface_mesh_parameterization/parameterize.h>
+#include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
 
 #include <boost/foreach.hpp>
 #include <iostream>
@@ -34,6 +34,8 @@ typedef CGAL::Seam_mesh<SurfaceMesh, Seam_edge_pmap, Seam_vertex_pmap> Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+
+namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
@@ -76,8 +78,8 @@ int main(int argc, char * argv[])
   halfedge_descriptor bhd(smhd);
   bhd = opposite(bhd, mesh); // a halfedge on the virtual border
 
-  typedef CGAL::Two_vertices_parameterizer_3<Mesh>                Border_parameterizer;
-  typedef CGAL::LSCM_parameterizer_3<Mesh, Border_parameterizer>  Parameterizer;
+  typedef SMP::Two_vertices_parameterizer_3<Mesh>                Border_parameterizer;
+  typedef SMP::LSCM_parameterizer_3<Mesh, Border_parameterizer>  Parameterizer;
 
   if(two_vertices_given){
     SM_halfedge_descriptor smhp1 = halfedge(SM_vertex_descriptor(p1), sm);
@@ -86,13 +88,13 @@ int main(int argc, char * argv[])
     SM_halfedge_descriptor smhp2 = halfedge(SM_vertex_descriptor(p2), sm);
     vertex_descriptor vp2 = target(halfedge_descriptor(smhp2), mesh);
 
-    CGAL::parameterize(mesh, Parameterizer(Border_parameterizer(vp1, vp2)), bhd, uv_pm);
+    SMP::parameterize(mesh, Parameterizer(Border_parameterizer(vp1, vp2)), bhd, uv_pm);
   } else {
-    CGAL::parameterize(mesh, Parameterizer(), bhd, uv_pm);
+    SMP::parameterize(mesh, Parameterizer(), bhd, uv_pm);
   }
 
   std::ofstream out("result.off");
-  CGAL::Parameterization::output_uvmap_to_off(mesh, bhd, uv_pm, out);
+  SMP::IO::output_uvmap_to_off(mesh, bhd, uv_pm, out);
 
   return 0;
 }

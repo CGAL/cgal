@@ -18,13 +18,12 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
-#ifndef CGAL_CIRCULAR_BORDER_PARAMETERIZER_3_H
-#define CGAL_CIRCULAR_BORDER_PARAMETERIZER_3_H
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_CIRCULAR_BORDER_PARAMETERIZER_3_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_CIRCULAR_BORDER_PARAMETERIZER_3_H
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
-
-#include <CGAL/Parameterizer_traits_3.h>
+#include <CGAL/Surface_mesh_parameterization/Parameterizer_traits_3.h>
 
 #include <CGAL/boost/graph/iterator.h>
 
@@ -33,6 +32,8 @@
 /// \file Circular_border_parameterizer_3.h
 
 namespace CGAL {
+
+namespace Surface_mesh_parameterization {
 
 //
 // Class Circular_border_parameterizer_3
@@ -57,8 +58,8 @@ namespace CGAL {
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
-/// \sa `CGAL::Circular_border_uniform_parameterizer_3<TriangleMesh>`
-/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Circular_border_uniform_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
 ///
 template<class TriangleMesh_>
 class Circular_border_parameterizer_3
@@ -159,8 +160,8 @@ public:
 ///
 /// \cgalModels `BorderParameterizer_3`
 ///
-/// \sa `CGAL::Circular_border_parameterizer_3<TriangleMesh>`
-/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Circular_border_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
@@ -204,8 +205,8 @@ protected:
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 ///
-/// \sa `CGAL::Circular_border_parameterizer_3<TriangleMesh>`
-/// \sa `CGAL::Circular_border_uniform_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Circular_border_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Surface_mesh_parameterization::Circular_border_uniform_parameterizer_3<TriangleMesh>`
 ///
 template<class TriangleMesh_>
 class Circular_border_arc_length_parameterizer_3
@@ -242,6 +243,8 @@ protected:
   }
 };
 
+} // namespace Surface_mesh_parameterization
+
 } // namespace CGAL
 
-#endif // CGAL_CIRCULAR_BORDER_PARAMETERIZER_3_H
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_CIRCULAR_BORDER_PARAMETERIZER_3_H
