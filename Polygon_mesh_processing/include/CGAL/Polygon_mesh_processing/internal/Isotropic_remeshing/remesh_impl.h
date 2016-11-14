@@ -1175,6 +1175,8 @@ private:
       {
         if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
           return false;
+        else if (next_on_patch_border(h) == hopp)
+          return false; //isolated patch border
         else
           return true;
       }
