@@ -240,6 +240,9 @@ public:
   typedef typename Arrangement_on_surface_2::Halfedge_handle
                                                         halfedge_descriptor;
 
+  typedef typename Arrangement_on_surface_2::Face_handle
+                                                        face_descriptor;
+
   /*! Constructor. */
   graph_traits (const Arrangement_on_surface_2& arr) :
     p_arr (const_cast<Arrangement_on_surface_2 *> (&arr)),
@@ -606,6 +609,64 @@ edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 
   return std::make_pair (gt_arr.edges_begin(), gt_arr.edges_end());
 }
+
+template <class GeomTraits, class TopTraits>
+typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                            TopTraits> >::halfedge_descriptor  
+halfedge(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::vertex_descriptor v,
+         const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return v->incident_halfedges();
+}
+
+template <class GeomTraits, class TopTraits>
+typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                            TopTraits> >::halfedge_descriptor  
+halfedge(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::face_descriptor f,
+         const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return f->outer_ccb();
+}
+
+template <class GeomTraits, class TopTraits>
+typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                            TopTraits> >::halfedge_descriptor  
+opposite(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::halfedge_descriptor h,
+         const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return h->twin();
+}
+
+
+template <class GeomTraits, class TopTraits>
+typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                            TopTraits> >::face_descriptor  
+face(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::halfedge_descriptor h,
+     const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return h->face();
+}
+
+
+template <class GeomTraits, class TopTraits>
+typename CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                            TopTraits> ::Halfedge_handle
+nexti(typename CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits>::Halfedge_handle h,
+     const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return h->next();
+}
+
+
+template <class GeomTraits, class TopTraits>
+typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                            TopTraits> >::halfedge_descriptor  
+previ(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::halfedge_descriptor h,
+     const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return h->next();
+}
+
 
 } //namespace CGAL
 
