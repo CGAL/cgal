@@ -21,6 +21,7 @@
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_ARAP_PARAMETERIZER_3_H
 
+#include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
@@ -277,10 +278,12 @@ private:
   }
 
   /// Initialize the UV values with a first parameterization of the input.
-  template <typename VertexUVMap>
+  template <typename VertexUVMap,
+            typename VertexIndexMap>
   Error_code compute_initial_uv_map(TriangleMesh& mesh,
                                     halfedge_descriptor bhd,
-                                    VertexUVMap uvmap) const
+                                    VertexUVMap uvmap,
+                                    VertexIndexMap vimap) const
   {
     Error_code status;
 
@@ -291,14 +294,20 @@ private:
       return status;
     }
 
+    // temporary vpmap since we do not need it in the future
+    boost::unordered_set<vertex_descriptor> vs;
+    internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
+
     // According to the paper, MVC is better for single border and LSCM is better
     // when there are multiple borders
     if(number_of_borders == 1) {
       typedef Mean_value_coordinates_parameterizer_3<TriangleMesh>  MVC_parameterizer;
-      status = CGAL::Surface_mesh_parameterization::parameterize(mesh, MVC_parameterizer(), bhd, uvmap);
+      MVC_parameterizer mvc_parameterizer;
+      status = mvc_parameterizer.parameterize(mesh, bhd, uvmap, vimap, vpmap);
     } else {
       typedef LSCM_parameterizer_3<TriangleMesh, Border_param>      LSCM_parameterizer;
-      status = CGAL::Surface_mesh_parameterization::parameterize(mesh, LSCM_parameterizer(), bhd, uvmap);
+      LSCM_parameterizer lscm_parameterizer;
+      status = lscm_parameterizer.parameterize(mesh, bhd, uvmap, vimap, vpmap);
     }
 
     std::cout << "Computed initial parameterization" << std::endl;
@@ -1290,7 +1299,7 @@ public:
     Lt_map ltmap(lt_hm); // will be filled in 'compute_optimal_Lt_matrices()'
 
     // Compute the initial parameterization of the mesh
-    status = compute_initial_uv_map(mesh, bhd, uvmap);
+    status = compute_initial_uv_map(mesh, bhd, uvmap, vimap);
     output_uvmap("ARAP_initial_param.off", mesh, vertices, faces, uvmap, vimap);
     if(status != OK)
       return status;

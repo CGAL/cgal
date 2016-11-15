@@ -23,6 +23,8 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/Surface_mesh_parameterization/internal/Bool_property_map.h>
+
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Mean_value_coordinates_parameterizer_3.h>
 
@@ -38,43 +40,6 @@
 namespace CGAL {
 
 namespace Surface_mesh_parameterization {
-
-namespace internal {
-
-template <typename Set>
-class Bool_property_map
-{
-  typedef Set S;
-  typedef Bool_property_map<S> Self;
-
-public:
-  typedef typename Set::key_type key_type;
-  typedef bool value_type;
-  typedef bool reference;
-  typedef boost::read_write_property_map_tag category;
-
-  friend value_type get(const Self& pm, const key_type& k)
-  {
-    return pm.m_s->find(k) != pm.m_s->end();
-  }
-
-  friend void put(const Self& pm, key_type& k, const value_type& v)
-  {
-    if(v){
-      pm.m_s->insert(k);
-    } else {
-      pm.m_s->erase(k);
-    }
-  }
-
-  Bool_property_map() : m_s(0) { }
-  Bool_property_map(S& s) : m_s(&s) { }
-
-private:
-  S* m_s;
-};
-
-} // namespace internal
 
 /// \ingroup  PkgSurfaceParameterizationMainFunction
 ///
