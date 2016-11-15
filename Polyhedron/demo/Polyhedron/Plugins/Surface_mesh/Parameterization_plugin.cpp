@@ -490,8 +490,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
            ||
            (ta->id() == b->id() && tb->id() == a->id()))
         {
-          sel_item->selected_vertices.insert(a);
-          sel_item->selected_vertices.insert(b);
           T_edge_descriptor ted(it);
           seam_edges.push_back(ted);
           break;
