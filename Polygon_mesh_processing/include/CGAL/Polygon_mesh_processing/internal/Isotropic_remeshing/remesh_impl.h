@@ -835,7 +835,6 @@ namespace internal {
     void tangential_relaxation(const bool relax_constraints/*1d smoothing*/
                              , const unsigned int nb_iterations)
     {
-      //todo : move border vertices along 1-dimensional features
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Tangential relaxation (" << nb_iterations << " iter.)...";
       std::cout << std::endl;
