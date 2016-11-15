@@ -18,6 +18,7 @@
 #include <Messages_interface.h>
 
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/Surface_mesh_parameterization/ARAP_parameterizer_3.h>
@@ -513,19 +514,19 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
   }
 
-  Seam_mesh *sMesh = new Seam_mesh(tMesh, seam_edge_pm, seam_vertex_pm);
-  sMesh->set_seam_edges_number(seam_edges.size());
+  Seam_mesh sMesh(tMesh, seam_edge_pm, seam_vertex_pm);
+  sMesh.set_seam_edges_number(seam_edges.size());
 
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 
   QString new_item_name;
   //determine the different connected_components
-  boost::property_map<Textured_polyhedron::Base, boost::face_external_index_t>::type fim
-      = get(boost::face_external_index, tMesh);
+  boost::property_map<Textured_polyhedron::Base,
+                      boost::face_external_index_t>::type fim = get(boost::face_external_index, tMesh);
   boost::vector_property_map<int,
-      boost::property_map<Textured_polyhedron::Base, boost::face_external_index_t>::type>
-      fccmap(fim);
+                             boost::property_map<Textured_polyhedron::Base,
+                                                 boost::face_external_index_t>::type> fccmap(fim);
 
   Is_selected_property_map edge_pmap(mark);
 
@@ -535,11 +536,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         fccmap,
         CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
           edge_pmap));
+
   Components t_components(number_of_components);
   Textured_polyhedron::Base::Facet_iterator fit;
-  for(fit = tMesh.facets_begin();
-      fit != tMesh.facets_end();
-      ++fit)
+  for(fit = tMesh.facets_begin(); fit != tMesh.facets_end(); ++fit)
   {
     t_components.at(fccmap[fit]).insert(fit);
   }
@@ -585,7 +585,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       std::cout << "Parameterize (MVC)...";
       new_item_name = tr("%1 (parameterized (MVC))").arg(poly_item->name());
       typedef SMP::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       success = err == SMP::OK;
       break;
     }
@@ -594,7 +594,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       new_item_name = tr("%1 (parameterized (DCP))").arg(poly_item->name());
       std::cout << "Parameterize (DCP)...";
       typedef SMP::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       success = err == SMP::OK;
       break;
     }
@@ -602,41 +602,9 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
       std::cout << "Parameterize (LSC)...";
-      typedef SMP::Two_vertices_parameterizer_3<Seam_mesh> Border_parameterizer;
-      typedef SMP::LSCM_parameterizer_3<Seam_mesh, Border_parameterizer> Parameterizer_with_border;
       typedef SMP::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
-      if(!border.empty())
-      {
-        double max_dist = 0;
-        int indice_max = 0;
-        Kernel::Point_3 a = target(border[0], tMesh)->point();
-        for(std::size_t i=1; i<border.size(); ++i)
-        {
-          Kernel::Point_3 b = target(border[i], tMesh)->point();
-          double dist = std::sqrt((b.x()-a.x())*(b.x()-a.x())+
-                                  (b.y()-a.y())*(b.y()-a.y())+
-                                  (b.z()-a.z())*(b.z()-a.z()));
-
-          if(dist>max_dist)
-          {
-            max_dist = dist;
-            indice_max = i;
-          }
-        }
-        T_halfedge_descriptor phd2 = opposite(border[indice_max], tMesh);
-
-        boost::graph_traits<Seam_mesh>::vertex_descriptor vp1 = target(halfedge_descriptor(phd),*sMesh);
-        boost::graph_traits<Seam_mesh>::vertex_descriptor vp2 = target(halfedge_descriptor(phd2),*sMesh);
-        SMP::Error_code err = SMP::parameterize(*sMesh,
-                                                Parameterizer_with_border(Border_parameterizer(vp1, vp2)),
-                                                bhd, uv_pm);
-        success = err == SMP::OK;
-      }
-      else
-      {
-        SMP::Error_code err = SMP::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
-        success = err == SMP::OK;
-      }
+      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
+      success = err == SMP::OK;
       break;
     }
     case PARAM_DAP:
@@ -644,7 +612,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       new_item_name = tr("%1 (parameterized (DAP))").arg(poly_item->name());
       std::cout << "Parameterize (DAP)...";
       typedef SMP::Discrete_authalic_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(*sMesh, Parameterizer(), bhd, uv_pm);
+      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       success = (err == SMP::OK);
       break;
     }
@@ -670,7 +638,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       typedef SMP::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(*sMesh, Parameterizer(lambda), bhd, uv_pm);
+      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(lambda), bhd, uv_pm);
       success = (err == SMP::OK);
       break;
     }
@@ -698,8 +666,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       ++it1, ++it2)
   {
     Seam_mesh::halfedge_descriptor hd(it1);
-    FT u = uv_pm[target(hd,*sMesh)].x();
-    FT v = uv_pm[target(hd,*sMesh)].y();
+    FT u = uv_pm[target(hd, sMesh)].x();
+    FT v = uv_pm[target(hd, sMesh)].y();
     it2->u() = u;
     it2->v() = v;
     if(u<min.x())
@@ -711,6 +679,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     if(v>max.y())
       max.setY(v);
   }
+
   Components* components = new Components(0);
   components->resize(number_of_components);
   Textured_polyhedron::Base::Facet_iterator bfit;
