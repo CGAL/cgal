@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
   // remesh the region around the intersection polylines
   PMP::isotropic_remeshing(
     selected_faces,
-    0.01,
+    0.02,
     mesh1,
     params::edge_is_constrained_map(is_constrained_map) );
 
