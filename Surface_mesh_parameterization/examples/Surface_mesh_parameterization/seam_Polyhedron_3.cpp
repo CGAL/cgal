@@ -2,6 +2,7 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
@@ -9,6 +10,7 @@
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <iostream>
 #include <fstream>
@@ -61,7 +63,9 @@ int main(int argc, char * argv[])
 
   const char* filename = (argc>2) ? argv[2] : "data/lion.selection.txt";
   SM_halfedge_descriptor smhd = mesh.add_seams(filename);
-  assert(smhd != SM_halfedge_descriptor());
+  if(smhd == SM_halfedge_descriptor() ) {
+    std::cerr << "Warning: No seams in input" << std::endl;
+  }
 
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that uv values
@@ -69,8 +73,8 @@ int main(int argc, char * argv[])
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 
-  halfedge_descriptor bhd(smhd);
-  bhd = opposite(bhd, mesh); // a halfedge on the virtual border
+  // a halfedge on the (possibly virtual) border
+  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
 
   SMP::parameterize(mesh, bhd, uv_pm);
 

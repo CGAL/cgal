@@ -123,12 +123,19 @@ struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::vertex_point_t>
 namespace CGAL {
 
 template<class TM, class SEM, class SVM>
-  typename boost:: property_map<CGAL::Seam_mesh<TM, SEM, SVM>, vertex_point_t>::const_type
-  get(vertex_point_t, const Seam_mesh<TM, SEM, SVM>& sm)
-  {
-    return Seam_mesh_point_map<TM, SEM, SVM>(sm, get(vertex_point, sm.mesh()));
-  }
+typename boost:: property_map<CGAL::Seam_mesh<TM, SEM, SVM>, vertex_point_t>::const_type
+get(vertex_point_t, const Seam_mesh<TM, SEM, SVM>& sm)
+{
+  return Seam_mesh_point_map<TM, SEM, SVM>(sm, get(vertex_point, sm.mesh()));
+}
 
 } // namespace CGAL
+
+namespace boost
+{
+template<class TM, class SEM, class SVM>
+struct graph_has_property<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::vertex_point_t>
+  : CGAL::Tag_true {};
+} //boost
 
 #endif // CGAL_PROPERTIES_SEAM_MESH_H

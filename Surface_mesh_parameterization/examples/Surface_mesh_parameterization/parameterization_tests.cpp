@@ -307,7 +307,10 @@ int main(int argc, char * argv[])
         sm.add_property_map<SM_vertex_descriptor,bool>("v:on_seam", false).first;
 
     SM_Seam_mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
-    SM_halfedge_descriptor smhd = mesh.add_seams("../data/lion.selection.txt");
+    SM_halfedge_descriptor smhd = mesh.add_seams(selection);
+    if(smhd == SM_halfedge_descriptor() ) {
+      std::cerr << "Warning: No seams in input" << std::endl;
+    }
 
     // The 2D points of the uv parametrisation will be written into this map
     // Note that this is a halfedge property map, and that the uv
@@ -315,8 +318,8 @@ int main(int argc, char * argv[])
     SM_UV_pmap uv_pm = sm.add_property_map<SM_halfedge_descriptor,
                                            Point_2>("h:uv").first;
 
-    SM_SE_halfedge_descriptor bhd(smhd);
-    bhd = opposite(bhd, mesh); // a halfedge on the virtual border
+    // a halfedge on the (possibly virtual) border
+    SM_SE_halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
 
     // Indices
     typedef boost::unordered_map<SM_SE_vertex_descriptor, int> Indices;
@@ -357,7 +360,10 @@ int main(int argc, char * argv[])
     PM_seam_vertex_pmap seam_vertex_pm(seam_vertex_hm);
 
     PM_Seam_mesh mesh(pm, seam_edge_pm, seam_vertex_pm);
-    PM_halfedge_descriptor pmhd = mesh.add_seams("../data/lion.selection.txt");
+    PM_halfedge_descriptor pmhd = mesh.add_seams(selection);
+    if(pmhd == PM_halfedge_descriptor() ) {
+      std::cerr << "Warning: No seams in input" << std::endl;
+    }
 
     // The 2D points of the uv parametrisation will be written into this map
     // Note that this is a halfedge property map, and that the uv
@@ -365,8 +371,8 @@ int main(int argc, char * argv[])
     PM_UV_hmap uv_hm;
     PM_UV_pmap uv_pm(uv_hm);
 
-    PM_SE_halfedge_descriptor bhd(pmhd);
-    bhd = opposite(bhd, mesh); // a halfedge on the virtual border
+    // a halfedge on the (possibly virtual) border
+    PM_SE_halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
 
     // Indices
     typedef boost::unordered_map<PM_SE_vertex_descriptor, int> Indices;

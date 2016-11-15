@@ -2,6 +2,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
@@ -9,6 +10,8 @@
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
+
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <boost/foreach.hpp>
 #include <iostream>
@@ -68,15 +71,17 @@ int main(int argc, char * argv[])
 
   Mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
   SM_halfedge_descriptor smhd = mesh.add_seams(filename);
-  assert(smhd != SM_halfedge_descriptor());
+  if(smhd == SM_halfedge_descriptor() ) {
+    std::cerr << "Warning: No seams in input" << std::endl;
+  }
 
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that uv values
   // are only stored for the canonical halfedges representing a vertex
   UV_pmap uv_pm = sm.add_property_map<SM_halfedge_descriptor, Point_2>("h:uv").first;
 
-  halfedge_descriptor bhd(smhd);
-  bhd = opposite(bhd, mesh); // a halfedge on the virtual border
+  // a halfedge on the (possibly virtual) border
+  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh, CGAL::Polygon_mesh_processing::parameters::all_default()).first;
 
   typedef SMP::Two_vertices_parameterizer_3<Mesh>                Border_parameterizer;
   typedef SMP::LSCM_parameterizer_3<Mesh, Border_parameterizer>  Parameterizer;

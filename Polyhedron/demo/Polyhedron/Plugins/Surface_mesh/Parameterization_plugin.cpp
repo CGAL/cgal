@@ -576,7 +576,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
 
     halfedge_descriptor bhd(phd);
-    bhd = opposite(bhd,*sMesh); // a halfedge on the virtual border
+    bhd = opposite(bhd, *sMesh); // a halfedge on the virtual border
     bool success = false;
     switch(method)
     {
