@@ -108,8 +108,9 @@ public:
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : Base ()
+  Point_set_3 (const Point_set_3& p) : Base (p)
   {
+    check_colors();
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
     m_bounding_box = p.m_bounding_box;
     m_barycenter = p.m_barycenter;
