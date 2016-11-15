@@ -16,7 +16,7 @@
       padding-top: 0.2em;
     }
     code::before, code::after {
-      content: " ";
+      content: " ";
       letter-spacing: -0.2em;
     }
   </style>
@@ -167,6 +167,20 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
+<h3>Triangulated Surface Mesh Parameterization</h3>
+<ul>
+  <li>
+    <b>Breaking change</b>: The package was rewritten and can operate on any model of the
+    <code>MutableFaceGraph</code> concept. The adapter to add virtual seams is now the class
+    <code>CGAL::Seam_mesh</code> in the package <em>CGAL and the BGL</em>. As the new version
+    is in the namespace <code>CGAL::Surface_mesh_parameterization</code>, the deprecated
+    code still works.
+  </li>
+  <li>
+     Add the <em>As Rigid As Possible Parameterization</em> method.
+  </li>
+</ul>
+
 <!-- Spatial Searching and Sorting -->
 <h3>Spatial Searching</h3>
   <ul>
@@ -185,7 +199,11 @@ and <code>src/</code> directories).
       wraps an existing graph and hide all simplices that are not
       in the selected connected components.
     </li>
+    <li>
+      Add the class <code>CGAL::Seam_mesh</code> that enables to mark edges as seam edges.
+    </li>
   </ul>
+
 <!-- Visualization -->
 
 <!-- end of the div for 4.10 -->
@@ -700,11 +718,6 @@ and <code>src/</code> directories).
     mesh.</li>
     <li>Add function <code>bbox_3()</code> to compute the bounding box of a
     polygon mesh.</li>
-  </ul>
-  <h3>Surface Mesh Parameterization</h3>
-  <ul>
-    <li><code>LSCM_parameterizer_3</code> now uses by default Eigen instead
-    of OpenNL as a model of <code>SparseLinearAlgebraTraits_d</code>.</li>
   </ul>
   <h3>Point Set Processing</h3>
   <ul>
@@ -1270,15 +1283,15 @@ and <code>src/</code> directories).
           longer supported since CGAL-4.5.</li>
       </ul>
     </li>
-    <li>Since CGAL version 4.0, Eigen was the recommended third-party
+    <li>Since CGAL version 4.0, Eigen was the recommended third-party
       library to use with <i>Planar Parameterization of Triangulated
       Surface Meshes</i>, <i>Surface Reconstruction from Point
       Sets</i>, <i>Approximation of Ridges and Umbilics on Triangulated
       Surface Meshes</i>, and <i>Estimation of Local Differential
       Properties of Point-Sampled Surfaces</i> packages. From CGAL
-      version 4.5, Taucs, Blas and Lapack are no longer supported.
+      version 4.5, Taucs, Blas and Lapack are no longer supported.
     </li>
-    <li>CGAL is now compatible with the new CMake version 3.0.</li>
+    <li>CGAL is now compatible with the new CMake version 3.0.</li>
   </ul>
 
 <!-- New packages -->
@@ -1471,7 +1484,7 @@ and <code>src/</code> directories).
     <li>Additional supported platforms:
       <ul>
         <li>The Apple Clang compiler version 5.0 is now supported on
-          OS X Mavericks.</li>
+          OS X Mavericks.</li>
         <li>The Microsoft Windows Visual C++ compiler 2013 (VC12) is now
           supported.</li>
       </ul>
@@ -1645,7 +1658,7 @@ and <code>src/</code> directories).
           constructor added to <code>CGAL::Object</code>. However, it is
           recommended to upgrade your code.  The previous behavior can be
           restored by defining the
-          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
+          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
         </li>
       </ul>
       <h4>2D Arrangements</h4>
@@ -1969,7 +1982,7 @@ and <code>src/</code> directories).
     <li>Additional supported platforms:
       <ul>
         <li>The Apple Clang compiler versions 3.1 and 3.2 are now supported on
-          Mac OS X.</li>
+          Mac OS X.</li>
       </ul>
     </li>
     <li>Improved configuration for essential and optional external third party software</li>

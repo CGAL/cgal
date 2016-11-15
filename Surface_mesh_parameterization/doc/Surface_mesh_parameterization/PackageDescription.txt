@@ -18,7 +18,7 @@ Discrete Authalic Parameterization, Floater Mean Value Coordinates or Tutte Bary
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
 \cgalPkgDependsOn{\ref PkgSolverSummary}
-\cgalPkgBib{cgal:sal-pptsm2}
+\cgalPkgBib{cgal:salf-pptsm2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
