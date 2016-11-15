@@ -214,7 +214,7 @@ public:
 
     // Initialize the "A*X = B" linear system after
     // (at least two) border vertices parameterization
-    initialize_system_from_mesh_border(solver, mesh, uvmap, vimap, vpmap);
+    initialize_system_from_mesh_border(solver, ccvertices, uvmap, vimap, vpmap);
 
     // Fill the matrix for the other vertices
     solver.begin_system();
@@ -257,12 +257,12 @@ private:
   /// \pre At least 2 border vertices must be parameterized.
   template <typename UVmap, typename VertexIndexMap, typename VertexParameterizedMap>
   void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
-                                          const TriangleMesh& mesh,
+                                          const boost::unordered_set<vertex_descriptor>& ccvertices,
                                           UVmap uvmap,
                                           VertexIndexMap vimap,
                                           VertexParameterizedMap vpmap) const
   {
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
+    BOOST_FOREACH(vertex_descriptor v, ccvertices){
       // Get vertex index in sparse linear system
       int index = get(vimap, v);
 

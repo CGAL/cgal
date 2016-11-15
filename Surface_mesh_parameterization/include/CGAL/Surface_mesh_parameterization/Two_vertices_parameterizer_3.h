@@ -23,6 +23,7 @@
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
+#include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
@@ -91,28 +92,12 @@ public:
     : vxmin(v1), vxmax(v2), vertices_given(true)
   { }
 
-  /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
-  ///
-  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
-  ///         as value type.
-  /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
-  ///         a Boolean as value type.
-  ///
-  /// \param mesh a triangulated surface.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
-  ///
-  /// \pre `mesh` must be a surface with one connected component.
-  /// \pre `mesh` must be a triangular mesh.
-  ///
-  template <typename VertexUVmap,
+  template <typename VertexContainer,
+            typename VertexUVmap,
             typename VertexIndexMap,
             typename VertexParameterizedMap>
   Error_code parameterize(const TriangleMesh& mesh,
-                          halfedge_descriptor /* bhd */,
+                          const VertexContainer& vertices,
                           VertexUVmap uvmap,
                           VertexIndexMap /* vimap */,
                           VertexParameterizedMap vpmap)
@@ -135,7 +120,7 @@ public:
     double ymax = (std::numeric_limits<double>::min)();
     double zmax = (std::numeric_limits<double>::min)();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+    BOOST_FOREACH(vertex_descriptor vd, vertices) {
       Point_3 position = get(ppmap,vd);
 
       xmin = (std::min)(position.x(), xmin);
@@ -230,7 +215,7 @@ public:
     double vmin = (std::numeric_limits<double>::max)();
     double vmax = (std::numeric_limits<double>::min)();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+    BOOST_FOREACH(vertex_descriptor vd, vertices) {
       Point_3  position = get(ppmap, vd);
       Vector_3 position_as_vector = position - Point_3(0, 0, 0);
 
@@ -266,6 +251,49 @@ public:
 #endif
 
     return OK;
+  }
+
+
+  /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
+  ///
+  /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         as value type.
+  /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a unique integer as value type.
+  /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
+  ///         `boost::graph_traits<TM>::%vertex_descriptor` as key type and
+  ///         a Boolean as value type.
+  ///
+  /// \param mesh a triangulated surface.
+  /// \param bhd a halfedge descriptor on the boundary of `mesh`.
+  /// \param uvmap an instanciation of the class `VertexUVmap`.
+  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  ///
+  /// \pre `mesh` must be a surface with one connected component.
+  /// \pre `mesh` must be a triangular mesh.
+  ///
+  template <typename VertexUVmap,
+            typename VertexIndexMap,
+            typename VertexParameterizedMap>
+  Error_code parameterize(const TriangleMesh& mesh,
+                          halfedge_descriptor bhd,
+                          VertexUVmap uvmap,
+                          VertexIndexMap vimap,
+                          VertexParameterizedMap vpmap)
+  {
+    // Fill containers
+    boost::unordered_set<vertex_descriptor> vertices;
+    internal::Containers_filler<TriangleMesh> fc(mesh, vertices);
+    Polygon_mesh_processing::connected_component(
+                                      face(opposite(bhd, mesh), mesh),
+                                      mesh,
+                                      boost::make_function_output_iterator(fc));
+
+    return parameterize(mesh, vertices, uvmap, vimap, vpmap);
   }
 
   /// Indicate if the border's shape is convex.

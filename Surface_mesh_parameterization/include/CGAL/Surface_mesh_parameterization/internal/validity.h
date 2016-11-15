@@ -44,6 +44,7 @@ namespace internal {
 
 template<typename TriangleMesh, typename VertexUVMap>
 bool has_flips(const TriangleMesh& mesh,
+               typename boost::graph_traits<TriangleMesh>::halfedge_descriptor bhd,
                const VertexUVMap uvmap)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
@@ -56,10 +57,20 @@ bool has_flips(const TriangleMesh& mesh,
   typedef typename Kernel::Point_3                                    Point_3;
   typedef typename Kernel::Vector_3                                   Vector_3;
 
+  // Fill containers
+  boost::unordered_set<vertex_descriptor> vertices;
+  std::vector<face_descriptor> faces;
+
+  internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
+  Polygon_mesh_processing::connected_component(
+                                    face(opposite(bhd, mesh), mesh),
+                                    mesh,
+                                    boost::make_function_output_iterator(fc));
+
   Vector_3 first_triangle_normal(0., 0., 0.);
   bool is_normal_set = false;
 
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  BOOST_FOREACH(face_descriptor fd, faces) {
     // Get 3 vertices of the facet
     halfedge_descriptor hd = halfedge(fd, mesh);
     vertex_descriptor vd0 = target(hd, mesh);
