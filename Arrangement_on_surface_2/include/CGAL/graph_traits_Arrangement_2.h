@@ -35,6 +35,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <boost/foreach.hpp>
 
 namespace boost {
 
@@ -722,6 +723,21 @@ faces (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
     gt_arr (arr);
 
   return make_range (gt_arr.faces_begin(), gt_arr.faces_end());
+}
+
+template <class GeomTraits, class TopTraits>
+typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,
+                                                            TopTraits> >::faces_size_type
+degree(typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,TopTraits> >::face_descriptor f,
+         const CGAL::Arrangement_2<GeomTraits, TopTraits>& arr)
+{
+  typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,
+                                                              TopTraits> >::faces_size_type count = 0;
+  typedef typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,TopTraits> >::halfedge_descriptor halfedge_descriptor;
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(*(halfedges(arr).first), arr)){
+    ++count;
+  }
+   return count;
 }
 
 

@@ -52,14 +52,21 @@ int main ()
   }
 
   BOOST_FOREACH(face_descriptor fd, faces(arr)){
-    std::cerr << /* degree(fd,arr) << */ std::endl;
+    std::cerr << degree(fd,arr) <<   std::endl;
   }
+
   BOOST_FOREACH(halfedge_descriptor hd, halfedges(arr)){
     std::cerr << /* degree(fd,arr) << */ std::endl;
   }
-  BOOST_FOREACH(edge_descriptor ed, edges(arr)){
-    std::cerr << /* degree(fd,arr) << */ std::endl;
+
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(*(halfedges(arr).first), arr)){
+    std::cerr << target(hd,arr)->point() <<  std::endl;
   }
+
+  BOOST_FOREACH(edge_descriptor ed, edges(arr)){
+    std::cerr <<  /* degree(fd,arr) << */ std::endl;
+  }
+
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << num_vertices(arr)
