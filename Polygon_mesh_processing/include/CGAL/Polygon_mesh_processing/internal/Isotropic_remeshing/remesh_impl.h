@@ -602,29 +602,29 @@ namespace internal {
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
 
+        bool swap_done = false;
         if (is_on_patch_border(va) && !is_on_patch_border(vb))
         {
           he = opposite(he, mesh_);
           va = source(he, mesh_);
           vb = target(he, mesh_);
+          swap_done = true;
           CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
         }
-        else if (is_on_patch(va) && is_on_patch(vb))
-        {
-          if(!collapse_does_not_invert_face(he))
-          {
-            if (collapse_does_not_invert_face(opposite(he, mesh_)))
-            {
-              he = opposite(he, mesh_);
-              va = source(he, mesh_);
-              vb = target(he, mesh_);
-            }
-            else
-              continue;//both directions invert a face
-          }
-          CGAL_assertion(collapse_does_not_invert_face(he));
-        }
 
+        if(!collapse_does_not_invert_face(he))
+        {
+          if (!swap_done//if swap has already been done, don't re-swap
+           && collapse_does_not_invert_face(opposite(he, mesh_)))
+          {
+            he = opposite(he, mesh_);
+            va = source(he, mesh_);
+            vb = target(he, mesh_);
+          }
+          else
+            continue;//both directions invert a face
+        }
+        CGAL_assertion(collapse_does_not_invert_face(he));
         CGAL_assertion(is_collapse_allowed(e));
 
         if (degree(va, mesh_) < 3
@@ -662,7 +662,8 @@ namespace internal {
           }
 
           //before collapse
-          bool mesh_border_case     = is_on_border(opposite(he, mesh_));
+          bool mesh_border_case     = is_on_border(he);
+          bool mesh_border_case_opp = is_on_border(opposite(he, mesh_));
           halfedge_descriptor ep_p  = prev(opposite(he, mesh_), mesh_);
           halfedge_descriptor epo_p = opposite(ep_p, mesh_);
           halfedge_descriptor en    = next(he, mesh_);
@@ -674,14 +675,16 @@ namespace internal {
 
           // merge halfedge_status to keep the more important on both sides
           //do it before collapse is performed to be sure everything is valid
-          merge_status(en, s_epo, s_ep);
           if (!mesh_border_case)
+            merge_status(en, s_epo, s_ep);
+          if (!mesh_border_case_opp)
             merge_status(en_p, s_epo_p, s_ep_p);
 
-          if (!mesh_border_case)
-            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
           halfedge_and_opp_removed(he);
-          halfedge_and_opp_removed(prev(he, mesh_));
+          if (!mesh_border_case)
+            halfedge_and_opp_removed(prev(he, mesh_));
+          if (!mesh_border_case_opp)
+            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
 
           //constrained case
           bool constrained_case = is_constrained(va) || is_constrained(vb);
@@ -1136,6 +1139,7 @@ private:
         return false;
       if (is_on_patch(he)) //hopp is also on patch
       {
+        CGAL_assertion(is_on_patch(hopp));
         if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
           return false;//collapse would induce pinching the selection
         else
@@ -1329,6 +1333,9 @@ private:
 
     Vector_3 compute_normal(const face_descriptor& f) const
     {
+      if (f == boost::graph_traits<PM>::null_face())
+        return CGAL::NULL_VECTOR;
+
       halfedge_descriptor hd = halfedge(f, mesh_);
       typename GeomTraits::Triangle_3
         tr(get(vpmap_, target(hd, mesh_)),
