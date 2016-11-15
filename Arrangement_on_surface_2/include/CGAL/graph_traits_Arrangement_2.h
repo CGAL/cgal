@@ -34,6 +34,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_accessor.h>
+#include <CGAL/boost/graph/iterator.h>
 
 namespace boost {
 
@@ -66,8 +67,12 @@ private:
   typedef typename Arrangement_on_surface_2::Halfedge_handle Halfedge_handle;
   typedef typename Arrangement_on_surface_2::Halfedge_iterator
                                                              Halfedge_iterator;
+  //typedef typename Arrangement_on_surface_2::Edge_handle     Edge_handle;
+  typedef typename Arrangement_on_surface_2::Edge_iterator   Edge_iterator;
   typedef typename Arrangement_on_surface_2::Halfedge_around_vertex_circulator
                                              Halfedge_around_vertex_circulator;
+  typedef typename Arrangement_on_surface_2::Face_iterator
+                                                             Face_iterator;
 
   /*! \struct
    * Define the arrangement traversal category, which indicates the arrangement
@@ -231,7 +236,7 @@ public:
   typedef typename Arrangement_on_surface_2::Size       vertices_size_type;
 
   // Types required by the EdgeListGraph concept:
-  typedef boost::counting_iterator<Halfedge_iterator>   edge_iterator;
+  typedef boost::counting_iterator<Edge_iterator>       edge_iterator;
   typedef typename Arrangement_on_surface_2::Size       edges_size_type;
 
   // Types not required by any of these concepts:
@@ -240,8 +245,15 @@ public:
   typedef typename Arrangement_on_surface_2::Halfedge_handle
                                                         halfedge_descriptor;
 
+  typedef boost::counting_iterator<Halfedge_iterator>   halfedge_iterator;
+
   typedef typename Arrangement_on_surface_2::Face_handle
                                                         face_descriptor;
+
+
+  // Types required by the FaceListGraph concept:
+  typedef boost::counting_iterator<Face_iterator>       face_iterator;
+  typedef typename Arrangement_on_surface_2::Size       faces_size_type;
 
   /*! Constructor. */
   graph_traits (const Arrangement_on_surface_2& arr) :
@@ -265,17 +277,44 @@ public:
     return arr_access.valid_vertices_end();
   }
 
-  /*! Traverse the edges. */
-  edge_iterator edges_begin()
+  /*! Traverse the halfedges. */
+  halfedge_iterator halfedges_begin()
   {
     return p_arr->halfedges_begin();
   }
 
-  edge_iterator edges_end()
+  halfedge_iterator halfedges_end()
   {
     return p_arr->halfedges_end();
   }
+ 
 
+  /*! Traverse the edges. */
+  edge_iterator edges_begin()
+  {
+    return p_arr->edges_begin();
+  }
+
+  edge_iterator edges_end()
+  {
+    return p_arr->edges_end();
+  }
+ 
+  /*! Traverse the faces. */
+  faces_size_type number_of_faces()
+  {
+    return p_arr->number_of_faces();
+  }
+
+  face_iterator faces_begin()
+  {
+    return p_arr->faces_begin();
+  }
+
+  face_iterator faces_end()
+  {
+    return p_arr->faces_end();
+  }
   /*! Get the vertex degree (in degree or out degree). */
   degree_size_type degree (vertex_descriptor v)
   {
@@ -396,11 +435,7 @@ out_degree (typename
  * \return A pair of out-edges iterators.
  */
 template <class GeomTraits, class TopTraits>
-std::pair<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
-                                                             TopTraits> >::
-                                                         out_edge_iterator,
-          typename
+Iterator_range<typename
           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                          out_edge_iterator>
@@ -413,7 +448,7 @@ out_edges (typename
   boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
-  return std::make_pair (gt_arr.out_edges_begin (v), gt_arr.out_edges_end (v));
+  return make_range (gt_arr.out_edges_begin (v), gt_arr.out_edges_end (v));
 }
 
 /*!
@@ -487,11 +522,7 @@ in_degree (typename
  * \return A pair of in-edges iterators.
  */
 template <class GeomTraits, class TopTraits>
-std::pair<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
-                                                             TopTraits> >::
-                                                             in_edge_iterator,
-          typename
+Iterator_range<typename
           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              in_edge_iterator>
@@ -504,7 +535,7 @@ in_edges (typename
   boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
-  return std::make_pair (gt_arr.in_edges_begin (v), gt_arr.in_edges_end (v));
+  return make_range (gt_arr.in_edges_begin (v), gt_arr.in_edges_end (v));
 }
 
 /*!
@@ -555,11 +586,7 @@ num_vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
  * \return A pair of vertex iterators.
  */
 template <class GeomTraits, class TopTraits>
-std::pair<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
-                                                             TopTraits> >::
-                                                             vertex_iterator,
-          typename
+Iterator_range<typename
           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              vertex_iterator>
@@ -568,7 +595,7 @@ vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
-  return std::make_pair (gt_arr.vertices_begin(), gt_arr.vertices_end());
+  return make_range (gt_arr.vertices_begin(), gt_arr.vertices_end());
 }
 
 // Functions required by the EdgeListGraph concept:
@@ -588,17 +615,8 @@ num_edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   return arr.number_of_halfedges(); 
 }
 
-/*!
- * Get the range of halfedges of the given arrangement.
- * \param arr The arrangement.
- * \return A pair of halfedge iterators.
- */
 template <class GeomTraits, class TopTraits>
-std::pair<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
-                                                             TopTraits> >::
-                                                             edge_iterator,
-          typename
+Iterator_range<typename
           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              edge_iterator>
@@ -607,7 +625,27 @@ edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
-  return std::make_pair (gt_arr.edges_begin(), gt_arr.edges_end());
+  return make_range (gt_arr.edges_begin(), gt_arr.edges_end());
+}
+
+
+
+/*!
+ * Get the range of halfedges of the given arrangement.
+ * \param arr The arrangement.
+ * \return A pair of halfedge iterators.
+ */
+template <class GeomTraits, class TopTraits>
+Iterator_range<typename
+          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                             TopTraits> >::
+                                                             halfedge_iterator>
+halfedges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+    gt_arr (arr);
+
+  return make_range (gt_arr.halfedges_begin(), gt_arr.halfedges_end());
 }
 
 template <class GeomTraits, class TopTraits>
@@ -649,22 +687,41 @@ face(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, Top
 
 
 template <class GeomTraits, class TopTraits>
-typename CGAL::Arrangement_on_surface_2<GeomTraits,
-                                                            TopTraits> ::Halfedge_handle
-nexti(typename CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits>::Halfedge_handle h,
-     const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+typename CGAL::Arrangement_2<GeomTraits,TopTraits> ::Halfedge_handle
+next(typename CGAL::Arrangement_2<GeomTraits,TopTraits>::Halfedge_handle h,
+     const CGAL::Arrangement_2<GeomTraits, TopTraits>& arr)
 {
   return h->next();
 }
 
+template <class GeomTraits, class TopTraits>
+typename CGAL::Arrangement_2<GeomTraits,TopTraits> ::Halfedge_handle
+prev(typename CGAL::Arrangement_2<GeomTraits,TopTraits>::Halfedge_handle h,
+     const CGAL::Arrangement_2<GeomTraits, TopTraits>& arr)
+{
+  return h->prev();
+}
 
 template <class GeomTraits, class TopTraits>
-typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
-                                                            TopTraits> >::halfedge_descriptor  
-previ(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::halfedge_descriptor h,
-     const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+typename
+boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+                                                               faces_size_type
+num_faces (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  return h->next();
+  return arr.number_of_faces(); 
+}
+
+template <class GeomTraits, class TopTraits>
+Iterator_range<typename
+          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                             TopTraits> >::
+                                                             face_iterator>
+faces (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+    gt_arr (arr);
+
+  return make_range (gt_arr.faces_begin(), gt_arr.faces_end());
 }
 
 
