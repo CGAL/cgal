@@ -80,12 +80,17 @@ bool read_vertices(const PolyMesh& mesh,
       return false;
     }
 
+    if(counter >= 4) { // too many border vertices
+      std::cerr << "Error: Too many vertices are fixed" << std::endl;
+      return false;
+    }
+
     fixed_vertices[counter++] = vd;
     indices.insert(s);
   }
 
-  if(indices.size() != 4) {
-    std::cerr << "Error: exactly four unique vertices must be provided" << std::endl;
+  if(indices.size() < 4) {
+    std::cerr << "Error: at least four unique vertices must be provided" << std::endl;
     return false;
   }
 

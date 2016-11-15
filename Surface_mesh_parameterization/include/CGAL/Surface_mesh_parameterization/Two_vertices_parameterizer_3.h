@@ -103,6 +103,24 @@ public:
                           VertexParameterizedMap vpmap)
   {
     if(vertices_given) {
+      bool found_min = false, found_max = false;
+      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+        if(vd == vxmin) {
+          found_min = true;
+          if(found_max) break;
+        }
+
+        if(vd == vxmax) {
+          found_max = true;
+          if(found_min) break;
+        }
+      }
+
+      if(!found_min || !found_max) {
+        std::cerr << "Error: Fixed vertices must be in the same connected component" << std::endl;
+        return ERROR_NON_CONVEX_BORDER;
+      }
+
       put(uvmap, vxmin, Point_2(0, 0.5));
       put(uvmap, vxmax, Point_2(1, 0.5));
       put(vpmap, vxmin, true);

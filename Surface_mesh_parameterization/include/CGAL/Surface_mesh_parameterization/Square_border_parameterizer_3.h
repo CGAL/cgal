@@ -301,6 +301,22 @@ public:
       return ERROR_BORDER_TOO_SHORT;
     }
 
+    // make sure that the given vertices all belong to the border defined by 'bhd'
+    unsigned int v_counter = 0;
+    if(vertices_given) {
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
+        vertex_descriptor vd = source(hd, mesh);
+        if(vd == v0 || vd == v1 || vd == v2 || vd == v3)
+          v_counter++;
+      }
+
+      if(v_counter != 4) {
+        std::cerr << "Error: Fixed vertices must belong to the same border";
+        std::cerr << " (defined by 'bhd')." << std::endl;
+        return ERROR_NON_CONVEX_BORDER;
+      }
+    }
+
     halfedge_descriptor start_hd; // border halfedge whose source is the first corner
 
     // The offset is a vector of double between 0 and 4 that gives the position
