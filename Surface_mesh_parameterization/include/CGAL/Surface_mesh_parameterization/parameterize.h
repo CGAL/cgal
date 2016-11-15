@@ -81,7 +81,7 @@ private:
 /// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
 /// simple 2D domain.
 /// The mapping is piecewise linear on the triangle mesh.
-/// The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
+/// The result is a pair `(u,v)` of parameter coordinates for each vertex of the input mesh.
 ///
 /// A one-to-one mapping may be guaranteed or not, depending on
 /// the chosen Parameterizer algorithm.
@@ -134,7 +134,7 @@ Error_code parameterize(TriangleMesh& mesh,
 /// A one-to-one mapping is guaranteed.
 ///
 /// The mapping is piecewise linear on the input mesh triangles.
-/// The result is a (u,v) pair of parameter coordinates for each vertex of the input mesh.
+/// The result is a `(u,v)` pair of parameter coordinates for each vertex of the input mesh.
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`.
 /// \tparam HD must be the halfedge_descriptor type corresponding to the graph
