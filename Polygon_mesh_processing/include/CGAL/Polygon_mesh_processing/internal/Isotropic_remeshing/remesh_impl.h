@@ -609,6 +609,9 @@ namespace internal {
             he = opposite(he, mesh_);
             va = source(he, mesh_);
             vb = target(he, mesh_);
+
+            if (is_on_patch_border(va) && !is_on_patch_border(vb))
+              continue;//we cannot swap again. It would lead to a face inversion
           }
           else
             continue;//both directions invert a face
