@@ -930,7 +930,21 @@ namespace internal {
       // perform moves
       BOOST_FOREACH(const VP_pair& vp, new_locations)
       {
+        const Point initial_pos = get(vpmap_, vp.first);
+        const Vector_3 move(initial_pos, vp.second);
+
         put(vpmap_, vp.first, vp.second);
+
+        //check that no inversion happened
+        double frac = 1.;
+        while (frac > 0.03 //5 attempts maximum
+           && !check_normals(vp.first)) //if a face has been inverted
+        {
+          frac = 0.5 * frac;
+          put(vpmap_, vp.first, initial_pos + frac * move);//shorten the move by 2
+        }
+        if (frac <= 0.02)
+          put(vpmap_, vp.first, initial_pos);//cancel move
       }
 
       CGAL_assertion(is_valid(mesh_));
