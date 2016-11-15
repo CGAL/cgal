@@ -475,7 +475,7 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
  *
  * @param tm1 the triangle mesh that will be sampled
  * @param tm2 the triangle mesh to compute the distance to
- * @param precision the number of points per squared area unit returned by the random sampling
+ * @param density the number of points per squared area unit returned by the random sampling
  * @param np1 optional sequence of \ref namedparameters for `tm1` among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -487,6 +487,7 @@ sample_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
  * \cgalNamedParamsEnd
  *
  * @param np2 optional sequence of \ref namedparameters for `tm2` among the ones listed below
+ *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm2`
  *      If this parameter is omitted, an internal property map for CGAL::vertex_point_t should be available in `TriangleMesh`
@@ -502,7 +503,7 @@ template< class Concurrency_tag,
           class NamedParameters2>
 double approximate_Hausdorff_distance( const TriangleMesh& tm1,
                                         const TriangleMesh& tm2,
-                                        double precision,
+                                        double density,
                                         const NamedParameters1& np1,
                                         const NamedParameters2& np2)
 {
@@ -511,7 +512,7 @@ double approximate_Hausdorff_distance( const TriangleMesh& tm1,
 
   return approximate_Hausdorff_distance<Concurrency_tag, Geom_traits>(
     tm1, tm2,
-              precision,
+              density,
               choose_param(get_param(np1, vertex_point),
                            get_const_property_map(vertex_point, tm1)),
 
