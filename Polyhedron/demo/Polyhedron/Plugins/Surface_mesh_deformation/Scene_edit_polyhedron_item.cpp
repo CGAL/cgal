@@ -30,6 +30,7 @@ struct Scene_edit_polyhedron_item_priv
     spheres = NULL;
     spheres_ctrl = NULL;
     need_change = false;
+
   }
   ~Scene_edit_polyhedron_item_priv()
   {
@@ -209,13 +210,28 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
 {
     //vao for the facets
     {
+        std::vector<GLdouble> *vertices;
+        const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+        if(offset.norm() !=0)
+        {
+          vertices = new std::vector<GLdouble>();
+          vertices->resize(positions.size());
+          for(std::size_t i=0; i<positions.size(); ++i)
+          {
+            (*vertices)[i] = positions[i]+offset[i%3];
+          }
+        }
+        else
+        {
+          vertices = &positions;
+        }
         program = item->getShaderProgram(Scene_edit_polyhedron_item::PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
         item->vaos[Facets]->bind();
         item->buffers[Facet_vertices].bind();
-        item->buffers[Facet_vertices].allocate(positions.data(),
-                            static_cast<int>(positions.size()*sizeof(double)));
+        item->buffers[Facet_vertices].allocate(vertices->data(),
+                            static_cast<int>(vertices->size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         item->buffers[Facet_vertices].release();
@@ -228,6 +244,7 @@ void Scene_edit_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_inte
         item->buffers[Facet_normals].release();
         item->vaos[Facets]->release();
         program->release();
+        delete vertices;
     }
     //vao for the ROI points
     {   program = item->getShaderProgram(Scene_edit_polyhedron_item::PROGRAM_NO_SELECTION, viewer);
@@ -398,18 +415,21 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
     control_points.resize(0);
     control_color.resize(0);
     pos_frame_plane.resize(0);
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
     BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
     {
         if(!deform_mesh->is_control_vertex(vd))
         {
-            ROI_points.push_back(vd->point().x());
-            ROI_points.push_back(vd->point().y());
-            ROI_points.push_back(vd->point().z());
+            ROI_points.push_back(vd->point().x()+offset.x);
+            ROI_points.push_back(vd->point().y()+offset.y);
+            ROI_points.push_back(vd->point().z()+offset.z);
 
             if(spheres)
             {
               CGAL::Color c(0,255,0);
-              spheres->add_sphere(Kernel::Sphere_3(vd->point(), length_of_axis/15.0*length_of_axis/15.0), c);
+              Kernel::Point_3 point(vd->point().x()+offset.x, vd->point().y()+offset.y, vd->point().z()+offset.z);
+              spheres->add_sphere(Kernel::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), c);
             }
         }
 
@@ -435,9 +455,9 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
 
         for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->ctrl_vertices_group.begin(); hb != hgb_data->ctrl_vertices_group.end(); ++hb)
         {
-            control_points.push_back((*hb)->point().x());
-            control_points.push_back((*hb)->point().y());
-            control_points.push_back((*hb)->point().z());
+            control_points.push_back((*hb)->point().x()+offset.x);
+            control_points.push_back((*hb)->point().y()+offset.y);
+            control_points.push_back((*hb)->point().z()+offset.z);
             control_color.push_back(r);
             control_color.push_back(0);
             control_color.push_back(b);
@@ -445,7 +465,11 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(void)
             if(spheres_ctrl)
             {
               CGAL::Color c(255*r,0,255*b);
-              spheres_ctrl->add_sphere(Kernel::Sphere_3((*hb)->point(), length_of_axis/15.0*length_of_axis/15.0), c);
+
+              Kernel::Point_3 center((*hb)->point().x()+offset.x,
+                                     (*hb)->point().y()+offset.y,
+                                     (*hb)->point().z()+offset.z);
+              spheres_ctrl->add_sphere(Kernel::Sphere_3(center, length_of_axis/15.0*length_of_axis/15.0), c);
             }
         }
     }
@@ -1395,7 +1419,9 @@ void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
   }
 
   // No empty group of control vertices
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
+  new_frame->setPosition(offset);
   new_frame->setRotationSensitivity(2.0f);
   connect(new_frame, SIGNAL(manipulated()), this, SLOT(change()));
 
@@ -1475,9 +1501,10 @@ void Scene_edit_polyhedron_item::pivoting_end()
     //update constraint rotation vector, set only for the last group
     it->rot_direction = it->frame->rotation().rotate( qglviewer::Vec(0.,0.,1.) );
     //translate center of the frame
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
     qglviewer::Vec vec= it->frame->position();
     it->refresh();
-    it->frame_initial_center = vec;
+    it->frame_initial_center = vec-offset;
     it->frame->setPosition(vec);
   }
   for(Ctrl_vertices_group_data_list::iterator it = d->ctrl_vertex_frame_map.begin(); it != d->ctrl_vertex_frame_map.end(); ++it)
