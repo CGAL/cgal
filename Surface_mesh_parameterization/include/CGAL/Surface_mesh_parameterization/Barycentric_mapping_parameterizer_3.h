@@ -97,11 +97,13 @@ public:
   typedef SparseLinearAlgebraTraits_d     Sparse_LA;
   /// @endcond
 
-protected:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>            vertex_around_target_circulator;
+// Private types
+private:
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>              vertex_around_target_circulator;
 
-  typedef typename Base::NT               NT;
+  typedef typename Base::NT                       NT;
 
   // SparseLinearAlgebraTraits_d subtypes:
   typedef typename Sparse_LA::Vector      Vector;
@@ -122,8 +124,10 @@ public:
   // Default copy constructor and operator =() are fine
 
   /// Check if the 3D -> 2D mapping is one-to-one.
-  template <typename VertexUVMap>
+  template <typename VertexUVMap,
+            typename Faces_Container>
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                             halfedge_descriptor bhd,
                              const VertexUVMap uvmap) const
   {
     /// Theorem: A one-to-one mapping is guaranteed if all w_ij coefficients
@@ -133,7 +137,7 @@ public:
     /// valid embedding is guaranteed if the surface border is mapped
     /// onto a 2D convex polygon.
     return (Base::get_border_parameterizer().is_border_convex() ||
-            internal::is_one_to_one_mapping(mesh, uvmap));
+            internal::is_one_to_one_mapping(mesh, bhd, uvmap));
   }
 
 // Protected operations

@@ -1236,9 +1236,10 @@ public:
   /// Check if the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                             const Faces_vector& faces,
                              const VertexUVMap uvmap) const
   {
-    return internal::is_one_to_one_mapping(mesh, uvmap);
+    return internal::is_one_to_one_mapping(mesh, faces, uvmap);
   }
 
   /// Compute a mapping from a triangular 3D surface mesh to a piece of the 2D space.
@@ -1362,7 +1363,7 @@ public:
 
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
 
-    if(!is_one_to_one_mapping(mesh, uvmap)) {
+    if(!is_one_to_one_mapping(mesh, faces, uvmap)) {
      // Use post processing to handle flipped elements
       std::cout << "Parameterization is not valid; calling post processor" << std::endl;
       status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);

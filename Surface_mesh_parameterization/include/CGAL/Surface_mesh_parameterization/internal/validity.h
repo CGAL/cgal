@@ -21,16 +21,20 @@
 #ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_VALIDITY_H
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_INTERNAL_VALIDITY_H
 
+#include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
+#include <CGAL/Bbox_2.h>
 #include <CGAL/box_intersection_d.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/intersections.h>
-#include <CGAL/Bbox_2.h>
 
 #include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
+
+#include <vector>
 
 namespace CGAL {
 
@@ -226,8 +230,11 @@ public:
 /// Check if the 3D -> 2D mapping is one-to-one.
 /// This function is stronger than "has_flips()" because the parameterized
 /// surface can loop over itself without creating any flips.
-template <typename TriangleMesh, typename VertexUVMap>
+template <typename TriangleMesh,
+          typename Faces_Container,
+          typename VertexUVMap>
 bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                           const Faces_Container& faces,
                            const VertexUVMap uvmap)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
@@ -244,7 +251,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   // Create the corresponding vector of bounding boxes
   std::vector<Box> boxes;
 
-  BOOST_FOREACH(face_descriptor fd, faces(mesh)){
+  BOOST_FOREACH(face_descriptor fd, faces){
     halfedge_descriptor hd = halfedge(fd, mesh);
     vertex_descriptor vd0 = target(hd, mesh);
     vertex_descriptor vd1 = target(next(hd, mesh), mesh);
@@ -268,7 +275,6 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   BOOST_FOREACH(Box& b, boxes)
     boxes_ptr.push_back(&b);
 
-
   // Run the self intersection algorithm with all defaults
   unsigned int counter = 0;
   Intersect_facets<TriangleMesh, VertexUVMap> intersect_facets(mesh, uvmap, counter);
@@ -280,6 +286,27 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
 //  std::cout << counter << " intersections" << std::endl;
 
   return (counter == 0);
+}
+
+template <typename TriangleMesh,
+          typename VertexUVMap>
+bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                           typename boost::graph_traits<TriangleMesh>::halfedge_descriptor bhd,
+                           const VertexUVMap uvmap)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
+
+  boost::unordered_set<vertex_descriptor> vertices;
+  std::vector<face_descriptor> faces;
+
+  internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
+  Polygon_mesh_processing::connected_component(
+                                    face(opposite(bhd, mesh), mesh),
+                                    mesh,
+                                    boost::make_function_output_iterator(fc));
+
+  return is_one_to_one_mapping(mesh, faces, uvmap);
 }
 
 } // namespace internal

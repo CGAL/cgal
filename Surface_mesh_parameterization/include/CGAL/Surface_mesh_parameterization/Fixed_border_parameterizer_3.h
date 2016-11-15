@@ -26,13 +26,15 @@
 #include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
-#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
+#include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 
-#include <CGAL/circulator.h>
-#include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+
+#include <CGAL/circulator.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Eigen_solver_traits.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>

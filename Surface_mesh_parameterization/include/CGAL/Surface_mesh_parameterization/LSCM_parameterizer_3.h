@@ -107,11 +107,12 @@ private:
 
 // Private types
 private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor     face_descriptor;
+
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator     vertex_iterator;
+  typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
 
   // Traits subtypes:
   typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
@@ -143,9 +144,10 @@ public:
   /// Check if the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
   bool is_one_to_one_mapping(const TriangleMesh& mesh,
+                             halfedge_descriptor bhd,
                              const VertexUVMap uvmap) const
   {
-    return internal::is_one_to_one_mapping(mesh, uvmap);
+    return internal::is_one_to_one_mapping(mesh, bhd, uvmap);
   }
 
   /// Compute a one-to-one mapping from a triangular 3D surface mesh
