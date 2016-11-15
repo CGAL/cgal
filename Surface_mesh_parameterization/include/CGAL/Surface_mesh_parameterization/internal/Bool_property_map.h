@@ -49,7 +49,7 @@ public:
 
   friend void put(const Self& pm, key_type& k, const value_type& v)
   {
-    if(v){
+    if(v) {
       pm.m_s->insert(k);
     } else {
       pm.m_s->erase(k);

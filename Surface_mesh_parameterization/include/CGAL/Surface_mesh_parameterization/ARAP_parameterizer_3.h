@@ -59,15 +59,16 @@
 
 /// \file ARAP_parameterizer_3.h
 
-// @todo Determine the proper name of this file
 // @todo Handle the case cot = 0 with a local parameterization aligned with the axes
 //       (this produces C2=0 which is problematic to compute a & b)
-// @todo Add to the polyhedron demo
+// @todo test ARAP + SEAM
 // @todo Add distortion measures
-// @todo is_one_to_one mapping functions in all parameterizers
+// @todo non-simple border in MVC_post_processor
+// @todo clean OpenNL from LSCM
+// @todo Fix PMP::border_halfedges() (add a "!")
 
-// @todo The two systems A Xu = Bu and A Xv = BV could be merged in one system
-//       using complex numbers?
+// @todo look up the matlab code
+
 // @todo Parallelize the local phase?
 
 namespace CGAL {

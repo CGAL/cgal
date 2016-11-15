@@ -123,7 +123,7 @@ int main(int argc, char * argv[])
 //  std::ifstream in((argc>1)?argv[1]:"../data/mushroom_big_hole.off");
 //  std::ifstream in((argc>1)?argv[1]:"../data/mushroom_hole_1.off");
 
-  if(!in){
+  if(!in) {
     std::cerr << "Problem loading the input data" << std::endl;
     return 1;
   }

@@ -91,7 +91,7 @@ bool has_flips(const TriangleMesh& mesh,
     Vector_3 normal = CGAL::cross_product(v01_3D, v02_3D);
 
     // Check that all normals are oriented the same way
-    if (!is_normal_set){
+    if (!is_normal_set) {
       first_triangle_normal = normal;
       is_normal_set = true;
     } else {
@@ -140,7 +140,7 @@ public:
     // check for shared egde
     if(face(opposite(h, mesh), mesh) == b->info() ||
        face(opposite(prev(h, mesh), mesh), mesh) == b->info() ||
-       face(opposite(next(h, mesh), mesh), mesh) == b->info()){
+       face(opposite(next(h, mesh), mesh), mesh) == b->info()) {
       // shared edge
 
       // intersection if the orientations are not identical
@@ -149,7 +149,7 @@ public:
                            get(uvmap, source(h, mesh))) !=
          CGAL::orientation(get(uvmap, target(g, mesh)),
                            get(uvmap, target(next(g, mesh), mesh)),
-                           get(uvmap, source(g, mesh)))){
+                           get(uvmap, source(g, mesh)))) {
         ++self_intersection_counter;
       }
       return;
@@ -172,7 +172,7 @@ public:
     if(target(h, mesh) == target(next(next(g, mesh), mesh), mesh))
       hd = next(next(g, mesh), mesh);
 
-    if(hd == halfedge_descriptor()){
+    if(hd == halfedge_descriptor()) {
       h = next(h, mesh);
       if(target(h, mesh) == target(g, mesh))
         hd = g;
@@ -180,7 +180,7 @@ public:
         hd = next(g, mesh);
       if(target(h, mesh) == target(next(next(g, mesh), mesh), mesh))
         hd = next(next(g, mesh), mesh);
-      if(hd == halfedge_descriptor()){
+      if(hd == halfedge_descriptor()) {
         h = next(h, mesh);
         if(target(h, mesh) == target(g, mesh))
           hd = g;
@@ -191,7 +191,7 @@ public:
       }
     }
 
-    if(hd != halfedge_descriptor()){
+    if(hd != halfedge_descriptor()) {
       // shared vertex
       CGAL_assertion(target(h, mesh) == target(hd, mesh));
 
@@ -208,9 +208,9 @@ public:
       Segment_2 s2 = segment_functor(get(uvmap, target(next(hd, mesh), mesh)),
                                      get(uvmap, target(next(next(hd, mesh), mesh), mesh)));
 
-      if(do_intersect_2_functor(t1, s2)){
+      if(do_intersect_2_functor(t1, s2)) {
         ++self_intersection_counter;
-      } else if(do_intersect_2_functor(t2, s1)){
+      } else if(do_intersect_2_functor(t2, s1)) {
         ++self_intersection_counter;
       }
       return;
@@ -223,7 +223,7 @@ public:
     Triangle_2 t2 = triangle_functor(get(uvmap, target(g, mesh)),
                                      get(uvmap, target(next(g, mesh), mesh)),
                                      get(uvmap, target(next(next(g, mesh), mesh), mesh)));
-    if(do_intersect_2_functor(t1, t2)){
+    if(do_intersect_2_functor(t1, t2)) {
       ++self_intersection_counter;
     }
   }
@@ -262,7 +262,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   // Create the corresponding vector of bounding boxes
   std::vector<Box> boxes;
 
-  BOOST_FOREACH(face_descriptor fd, faces){
+  BOOST_FOREACH(face_descriptor fd, faces) {
     halfedge_descriptor hd = halfedge(fd, mesh);
     vertex_descriptor vd0 = target(hd, mesh);
     vertex_descriptor vd1 = target(next(hd, mesh), mesh);

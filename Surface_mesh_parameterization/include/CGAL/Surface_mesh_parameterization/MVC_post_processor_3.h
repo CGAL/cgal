@@ -143,12 +143,12 @@ private:
     std::ofstream out("constrained_triangulation_exterior.txt");
     typename CT::Finite_faces_iterator fit = ct.finite_faces_begin(),
                                        fend = ct.finite_faces_end();
-    for(; fit!=fend; ++fit){
+    for(; fit!=fend; ++fit) {
       if(fit->info() != -1) // only output exterior (finite) faces
         continue;
 
       out << "4 ";
-      for(std::size_t i=0; i<4; ++i){
+      for(std::size_t i=0; i<4; ++i) {
         out << fit->vertex(i%3)->point() << " 0 ";
       }
       out << '\n';
@@ -165,7 +165,7 @@ private:
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap) const
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices){
+    BOOST_FOREACH(vertex_descriptor vd, vertices) {
       int index = get(vimap, vd);
       NT u = Xu(index);
       NT v = Xv(index);
@@ -197,8 +197,8 @@ private:
   {
     // @fixme unefficient: use sweep line algorithms instead of brute force
 
-    BOOST_FOREACH(halfedge_descriptor hd_1, halfedges_around_face(bhd, mesh)){
-      BOOST_FOREACH(halfedge_descriptor hd_2, halfedges_around_face(bhd, mesh)){
+    BOOST_FOREACH(halfedge_descriptor hd_1, halfedges_around_face(bhd, mesh)) {
+      BOOST_FOREACH(halfedge_descriptor hd_2, halfedges_around_face(bhd, mesh)) {
         if(hd_1 == hd_2 || // equality
            next(hd_1, mesh) == hd_2 || next(hd_2, mesh) == hd_1) // adjacency
           continue;
@@ -206,7 +206,7 @@ private:
         if(CGAL::do_intersect(Segment_2(get(uvmap, source(hd_1, mesh)),
                                         get(uvmap, target(hd_1, mesh))),
                               Segment_2(get(uvmap, source(hd_2, mesh)),
-                                        get(uvmap, target(hd_2, mesh))))){
+                                        get(uvmap, target(hd_2, mesh))))) {
           std::ofstream out("non-simple.txt"); // polygon lines
           out << "2 " << get(uvmap, source(hd_1, mesh)) << " 0 "
                       << get(uvmap, target(hd_1, mesh)) << " 0" << std::endl;
@@ -268,7 +268,7 @@ private:
 
     // Since the border is closed and we are interest in triangles that are outside
     // of the border, we actually only need to insert points on the border
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       vertex_descriptor s = source(hd, mesh);
       Point_2 sp = get(uvmap, s);
 
@@ -278,7 +278,7 @@ private:
     }
 
     // Insert constraints (the border)
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
       vertex_descriptor s = source(hd, mesh), t = target(hd, mesh);
       Point_2 sp = get(uvmap, s), tp = get(uvmap, t);
 
@@ -319,7 +319,7 @@ private:
         continue;
 
       bool is_edge_constrained = ct.is_constrained(Edge(fc, index_of_inf_vertex));
-      if(!is_edge_constrained){
+      if(!is_edge_constrained) {
         // edge is not constrained so the face is part of the convex hull but
         // geometrically outside of 'mesh'
         mirror_face->info() = -1; // outside
@@ -373,7 +373,7 @@ private:
     // For flipped triangles, the connectivity is inversed and thus the angle
     // computed by the previous function is not the one we need. Instead,
     // we need the explementary angle.
-    if(angle > CGAL_PI){ // flipped triangle
+    if(angle > CGAL_PI) { // flipped triangle
       angle = 2 * CGAL_PI - angle;
     }
     NT weight = std::tan(0.5 * angle);
@@ -579,7 +579,7 @@ private:
 
     // Loop over the faces of 'mesh'
     std::cout << "add from mesh" << std::endl;
-    BOOST_FOREACH(face_descriptor fd, faces){
+    BOOST_FOREACH(face_descriptor fd, faces) {
       fill_linear_system_matrix_mvc_from_mesh_face(mesh, fd, uvmap, vimap, vpmap, A);
     }
 
@@ -596,10 +596,10 @@ private:
                        const VertexParameterizedMap vpmap,
                        Vector& Bu, Vector& Bv) const
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices){
+    BOOST_FOREACH(vertex_descriptor vd, vertices) {
       int index = get(vimap, vd);
       Point_2 uv = get(uvmap, vd);
-      if(!get(vpmap, vd)){ // not yet parameterized
+      if(!get(vpmap, vd)) { // not yet parameterized
         Bu[index] = 0.; // might not be needed
         Bv[index] = 0.;
       } else { // fixed vertices
@@ -618,7 +618,7 @@ private:
 
     NT Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
-       !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)){
+       !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
       status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
     }
 
@@ -677,8 +677,8 @@ private:
     CGAL_postcondition_code
     (
       // make sure that the constrained vertices have not been moved
-      BOOST_FOREACH(vertex_descriptor vd, vertices){
-        if(get(vpmap, vd)){
+      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+        if(get(vpmap, vd)) {
           int index = get(vimap, vd);
           CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
           CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
@@ -708,7 +708,7 @@ public:
     const bool is_param_border_simple = is_polygon_simple(mesh, bhd, uvmap);
 
     // Not sure how to handle non-simple yet @fixme
-    if(!is_param_border_simple){
+    if(!is_param_border_simple) {
       std::cout << "Border is not simple!" << std::endl;
       return ERROR_NON_CONVEX_BORDER;
     }
@@ -726,6 +726,7 @@ public:
     // Run the MVC
     parameterize_convex_hull_with_MVC(mesh, vertices, faces, ct, uvmap, vimap, vpmap);
 
+    std::cout << "End of post processing: Ok" << std::endl;
     return OK;
   }
 

@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
   std::istringstream iss(vertices);
   int p1, p2;
   bool two_vertices_given = false;
-  if(iss >> p1 >> p2){
+  if(iss >> p1 >> p2) {
     two_vertices_given = true;
   }
 
@@ -86,7 +86,7 @@ int main(int argc, char * argv[])
   typedef SMP::Two_vertices_parameterizer_3<Mesh>                Border_parameterizer;
   typedef SMP::LSCM_parameterizer_3<Mesh, Border_parameterizer>  Parameterizer;
 
-  if(two_vertices_given){
+  if(two_vertices_given) {
     SM_halfedge_descriptor smhp1 = halfedge(SM_vertex_descriptor(p1), sm);
     vertex_descriptor vp1 = target(halfedge_descriptor(smhp1), mesh);
 

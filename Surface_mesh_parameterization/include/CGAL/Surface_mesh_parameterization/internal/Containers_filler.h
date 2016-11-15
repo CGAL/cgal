@@ -65,7 +65,7 @@ public:
   void operator()(face_descriptor fd)
   {
     halfedge_descriptor hd = halfedge(fd, mesh);
-    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)){
+    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd, mesh)) {
       vertices.insert(vd);
     }
 
@@ -87,11 +87,11 @@ struct Index_map_filler
   void operator()(const face_descriptor& fd)
   {
     BOOST_FOREACH(vertex_descriptor vd,
-                  vertices_around_face(halfedge(fd, mesh), mesh)){
+                  vertices_around_face(halfedge(fd, mesh), mesh)) {
       typename Map::iterator it;
       bool new_element;
       boost::tie(it,new_element) = map->insert(std::make_pair(vd,1));
-      if(new_element){
+      if(new_element) {
         it->second = index++;
       }
     }
