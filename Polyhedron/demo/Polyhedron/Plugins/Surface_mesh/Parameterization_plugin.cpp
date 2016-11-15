@@ -549,8 +549,6 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   uv_borders.resize(number_of_components);
   for(int current_component=0; current_component<number_of_components; ++current_component)
   {
-
-    T_halfedge_descriptor phd;
     std::vector<T_halfedge_descriptor> border;
     PMP::border_halfedges(t_components.at(current_component),
                           tMesh,
@@ -567,16 +565,36 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         uv_borders[current_component].push_back(target(hd, tMesh)->point().z());
     }
 
-    if(!border.empty())
-      phd = opposite(border.front(), tMesh);
-    //in case there are no border, take the first halfedge of the seam.
-    if(phd == boost::graph_traits<Textured_polyhedron::Base>::null_halfedge())
+    // find longest border in the connected component
+    halfedge_descriptor bhd; // a halfedge on the (possibly virtual) border
+    boost::unordered_set<halfedge_descriptor> visited;
+    FT result_len = 0;
+    BOOST_FOREACH(T_halfedge_descriptor thd, border)
     {
-      phd = halfedge(*seam_edges.begin(), tMesh);
-    }
+      halfedge_descriptor hd(thd);
+      if(sMesh.has_on_seam(thd))
+        hd.seam = true; // virtual border halfedge
 
-    halfedge_descriptor bhd(phd);
-    bhd = opposite(bhd, *sMesh); // a halfedge on the virtual border
+      assert(is_border(hd, sMesh));
+
+      if(visited.find(hd) == visited.end())
+      {
+        FT len = 0;
+        BOOST_FOREACH(halfedge_descriptor haf, halfedges_around_face(hd, sMesh))
+        {
+          len += PMP::edge_length(haf, sMesh);
+          visited.insert(haf);
+        }
+
+        if(result_len < len)
+        {
+          result_len = len;
+          bhd = hd;
+        }
+      }
+    }
+    assert(bhd != halfedge_descriptor() && is_border(bhd, sMesh));
+
     bool success = false;
     switch(method)
     {
