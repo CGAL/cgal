@@ -37,6 +37,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/foreach.hpp>
 
+
 namespace boost {
 
 /*! \class
@@ -68,7 +69,7 @@ private:
   typedef typename Arrangement_on_surface_2::Halfedge_handle Halfedge_handle;
   typedef typename Arrangement_on_surface_2::Halfedge_iterator
                                                              Halfedge_iterator;
-  //typedef typename Arrangement_on_surface_2::Edge_handle     Edge_handle;
+
   typedef typename Arrangement_on_surface_2::Edge_iterator   Edge_iterator;
   typedef typename Arrangement_on_surface_2::Halfedge_around_vertex_circulator
                                              Halfedge_around_vertex_circulator;
@@ -223,9 +224,6 @@ public:
 
   typedef Arr_traversal_category                        traversal_category;
 
-  // Types required by the IncidenceGraph concept:
-  typedef typename Arrangement_on_surface_2::Halfedge_handle
-                                                        edge_descriptor;
   typedef Halfedge_around_vertex_iterator               out_edge_iterator;
   typedef typename Arrangement_on_surface_2::Size       degree_size_type;
 
@@ -255,6 +253,26 @@ public:
   // Types required by the FaceListGraph concept:
   typedef boost::counting_iterator<Face_iterator>       face_iterator;
   typedef typename Arrangement_on_surface_2::Size       faces_size_type;
+
+
+  // Types required by the IncidenceGraph concept:
+  //  typedef typename Arrangement_on_surface_2::Halfedge_handle
+  //                                                      edge_descriptor;
+
+  struct edge_descriptor {
+    halfedge_descriptor hd;
+
+    edge_descriptor(halfedge_descriptor hd)
+      : hd(hd)
+    {}
+
+    bool operator==(const edge_descriptor& other) const
+    {
+      return (hd == other.hd) || (hd == other.hd->twin());
+    }
+  };
+
+  
 
   /*! Constructor. */
   graph_traits (const Arrangement_on_surface_2& arr) :
@@ -316,8 +334,9 @@ public:
   {
     return p_arr->faces_end();
   }
+
   /*! Get the vertex degree (in degree or out degree). */
-  degree_size_type degree (vertex_descriptor v)
+  degree_size_type degree(vertex_descriptor v)
   {
     if (v->is_isolated())
       return 0;
@@ -338,7 +357,7 @@ public:
   }
 
   /*! Traverse the outgoing halfedges of a given vertex. */
-  out_edge_iterator out_edges_begin (vertex_descriptor v)
+  out_edge_iterator out_edges_begin(vertex_descriptor v)
   {
     if (v->is_isolated())
       return out_edge_iterator();
@@ -346,7 +365,7 @@ public:
     return out_edge_iterator (v->incident_halfedges(), true, 0, static_cast<int>(v->degree()));
   }
 
-  out_edge_iterator out_edges_end (vertex_descriptor v)
+  out_edge_iterator out_edges_end(vertex_descriptor v)
   {
     if (v->is_isolated())
       return out_edge_iterator ();
@@ -356,7 +375,7 @@ public:
   }
 
   /*! Traverse the ingoing halfedges of a given vertex. */
-  in_edge_iterator in_edges_begin (vertex_descriptor v)
+  in_edge_iterator in_edges_begin(vertex_descriptor v)
   {
     if (v->is_isolated())
       return in_edge_iterator();
@@ -364,7 +383,7 @@ public:
     return in_edge_iterator (v->incident_halfedges(), false, 0, v->degree());
   }
 
-  in_edge_iterator in_edges_end (vertex_descriptor v)
+  in_edge_iterator in_edges_end(vertex_descriptor v)
   {
     if (v->is_isolated())
       return in_edge_iterator ();
@@ -394,7 +413,7 @@ class graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> > :
 public:
 
   /*! Constructor. */
-  graph_traits (const CGAL::Arrangement_2<Traits_2, Dcel>& arr) :
+  graph_traits(const CGAL::Arrangement_2<Traits_2, Dcel>& arr) :
     Base (arr)
   {}
 };
@@ -402,6 +421,7 @@ public:
 } // namespace boost
 
 namespace CGAL {
+
 
 // Functions required by the IncidenceGraph concept:
 // -------------------------------------------------
@@ -414,15 +434,15 @@ namespace CGAL {
  */
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                               degree_size_type
-out_degree (typename
-            boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+out_degree(typename
+            boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                                TopTraits> >::
                                                            vertex_descriptor v,
-            const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+            const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return gt_arr.degree (v);
@@ -437,16 +457,16 @@ out_degree (typename
  */
 template <class GeomTraits, class TopTraits>
 Iterator_range<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+          boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                          out_edge_iterator>
-out_edges (typename
-           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+out_edges(typename
+           boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                               TopTraits> >::
                                                           vertex_descriptor v,
-           const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+           const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return make_range (gt_arr.out_edges_begin (v), gt_arr.out_edges_end (v));
@@ -460,15 +480,41 @@ out_edges (typename
  */
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                            vertex_descriptor
-source (typename
-        boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+source(typename
+        boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                            TopTraits> >::
                                                            edge_descriptor e,
-        const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& /* arr */)
+        const Arrangement_on_surface_2<GeomTraits, TopTraits>& /* arr */)
 {
-  return e->source();
+  return e.hd->source();
+}
+
+template <class GeomTraits, class TopTraits>
+typename
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+                                                           vertex_descriptor
+source(typename
+        boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
+                                                           TopTraits> >::
+                                                           halfedge_descriptor hd,
+        const Arrangement_on_surface_2<GeomTraits, TopTraits>& /* arr */)
+{
+  return hd->source();
+}
+
+template <class GeomTraits, class TopTraits>
+typename
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+                                                           vertex_descriptor
+target(typename
+        boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
+                                                           TopTraits> >::
+                                                           halfedge_descriptor hd,
+        const Arrangement_on_surface_2<GeomTraits, TopTraits>& /* arr */)
+{
+  return hd->target();
 }
 
 /*!
@@ -479,15 +525,15 @@ source (typename
  */
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                            vertex_descriptor
-target (typename
-        boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+target(typename
+        boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                            TopTraits> >::
                                                            edge_descriptor e,
-        const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& /* arr */)
+        const Arrangement_on_surface_2<GeomTraits, TopTraits>& /* arr */)
 {
-  return e->target();
+  return e.hd->target();
 }
 
 // Functions required by the BidirectionalGraph concept:
@@ -501,15 +547,15 @@ target (typename
  */
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                            degree_size_type
-in_degree (typename
-           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+in_degree(typename
+           boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                               TopTraits> >::
                                                            vertex_descriptor v,
-           const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+           const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return gt_arr.degree (v);
@@ -524,16 +570,16 @@ in_degree (typename
  */
 template <class GeomTraits, class TopTraits>
 Iterator_range<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+          boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              in_edge_iterator>
-in_edges (typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+in_edges(typename
+          boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                            vertex_descriptor v,
-          const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+          const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return make_range (gt_arr.in_edges_begin (v), gt_arr.in_edges_end (v));
@@ -547,18 +593,18 @@ in_edges (typename
  */
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                              degree_size_type
-degree (typename
-        boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+degree(typename
+        boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                            TopTraits> >::
                                                            vertex_descriptor v,
-        const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+        const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
-  return (2 * gt_arr.degree (v));
+  return gt_arr.degree (v);
 }
 
 // Functions required by the VertexListGraph concept:
@@ -571,11 +617,11 @@ degree (typename
  */
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                             vertices_size_type
-num_vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+num_vertices(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return gt_arr.number_of_vertices(); 
@@ -588,12 +634,12 @@ num_vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
  */
 template <class GeomTraits, class TopTraits>
 Iterator_range<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+          boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              vertex_iterator>
-vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+vertices(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return make_range (gt_arr.vertices_begin(), gt_arr.vertices_end());
@@ -609,21 +655,21 @@ vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
  */
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                                edges_size_type
-num_edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+num_edges(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
   return arr.number_of_halfedges(); 
 }
 
 template <class GeomTraits, class TopTraits>
 Iterator_range<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+          boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              edge_iterator>
-edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+edges(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return make_range (gt_arr.edges_begin(), gt_arr.edges_end());
@@ -638,106 +684,125 @@ edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
  */
 template <class GeomTraits, class TopTraits>
 Iterator_range<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+          boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              halfedge_iterator>
-halfedges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+halfedges(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return make_range (gt_arr.halfedges_begin(), gt_arr.halfedges_end());
 }
 
 template <class GeomTraits, class TopTraits>
-typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                             TopTraits> >::halfedge_descriptor  
-halfedge(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::vertex_descriptor v,
-         const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+halfedge(typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits,TopTraits> >::vertex_descriptor v,
+         const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
   return v->incident_halfedges();
 }
 
 template <class GeomTraits, class TopTraits>
-typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                             TopTraits> >::halfedge_descriptor  
-halfedge(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::face_descriptor f,
-         const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+halfedge(typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits,TopTraits> >::face_descriptor f,
+         const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  return f->outer_ccb();
+  if(! f->is_unbounded()){
+    return f->outer_ccb();
+  }
+  return *(f->holes_begin());
 }
 
 template <class GeomTraits, class TopTraits>
-typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                             TopTraits> >::halfedge_descriptor  
-opposite(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,TopTraits> >::halfedge_descriptor h,
-         const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+opposite(typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits,TopTraits> >::halfedge_descriptor h,
+         const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
   return h->twin();
 }
 
 
 template <class GeomTraits, class TopTraits>
-typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                             TopTraits> >::face_descriptor  
-face(typename boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::halfedge_descriptor h,
-     const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+face(typename boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::halfedge_descriptor h,
+     const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
   return h->face();
 }
 
 
 template <class GeomTraits, class TopTraits>
-typename CGAL::Arrangement_2<GeomTraits,TopTraits> ::Halfedge_handle
-next(typename CGAL::Arrangement_2<GeomTraits,TopTraits>::Halfedge_handle h,
-     const CGAL::Arrangement_2<GeomTraits, TopTraits>& arr)
+typename Arrangement_2<GeomTraits,TopTraits> ::Halfedge_handle
+next(typename Arrangement_2<GeomTraits,TopTraits>::Halfedge_handle h,
+     const Arrangement_2<GeomTraits, TopTraits>& arr)
 {
   return h->next();
 }
 
 template <class GeomTraits, class TopTraits>
-typename CGAL::Arrangement_2<GeomTraits,TopTraits> ::Halfedge_handle
-prev(typename CGAL::Arrangement_2<GeomTraits,TopTraits>::Halfedge_handle h,
-     const CGAL::Arrangement_2<GeomTraits, TopTraits>& arr)
+typename Arrangement_2<GeomTraits,TopTraits> ::Halfedge_handle
+prev(typename Arrangement_2<GeomTraits,TopTraits>::Halfedge_handle h,
+     const Arrangement_2<GeomTraits, TopTraits>& arr)
 {
   return h->prev();
 }
 
 template <class GeomTraits, class TopTraits>
 typename
-boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >::
+boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >::
                                                                faces_size_type
-num_faces (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+num_faces(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
   return arr.number_of_faces(); 
 }
 
 template <class GeomTraits, class TopTraits>
 Iterator_range<typename
-          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+          boost::graph_traits<Arrangement_on_surface_2<GeomTraits,
                                                              TopTraits> >::
                                                              face_iterator>
-faces (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+faces(const Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 {
-  boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits> >
+  boost::graph_traits<Arrangement_on_surface_2<GeomTraits, TopTraits> >
     gt_arr (arr);
 
   return make_range (gt_arr.faces_begin(), gt_arr.faces_end());
 }
 
 template <class GeomTraits, class TopTraits>
-typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,
+typename boost::graph_traits<Arrangement_2<GeomTraits,
                                                             TopTraits> >::faces_size_type
-degree(typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,TopTraits> >::face_descriptor f,
-         const CGAL::Arrangement_2<GeomTraits, TopTraits>& arr)
+degree(typename boost::graph_traits<Arrangement_2<GeomTraits,TopTraits> >::face_descriptor f,
+         const Arrangement_2<GeomTraits, TopTraits>& arr)
 {
-  typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,
+  typename boost::graph_traits<Arrangement_2<GeomTraits,
                                                               TopTraits> >::faces_size_type count = 0;
-  typedef typename boost::graph_traits<CGAL::Arrangement_2<GeomTraits,TopTraits> >::halfedge_descriptor halfedge_descriptor;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(*(halfedges(arr).first), arr)){
+  typedef typename boost::graph_traits<Arrangement_2<GeomTraits,TopTraits> >::halfedge_descriptor halfedge_descriptor;
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(f,arr), arr)){
     ++count;
   }
    return count;
+}
+
+template <class GeomTraits, class TopTraits>
+typename Arrangement_2<GeomTraits,TopTraits> ::Halfedge_handle
+halfedge(typename boost::graph_traits<Arrangement_2<GeomTraits,TopTraits> >::edge_descriptor ed,
+     const Arrangement_2<GeomTraits, TopTraits>& arr)
+{
+  return ed.hd;
+}
+
+template <class GeomTraits, class TopTraits>
+typename boost::graph_traits<Arrangement_2<GeomTraits,TopTraits> >::edge_descriptor
+edge(typename boost::graph_traits<Arrangement_2<GeomTraits,TopTraits> >::halfedge_descriptor hd,
+     const Arrangement_2<GeomTraits, TopTraits>& arr)
+{
+  return typename boost::graph_traits<Arrangement_2<GeomTraits,TopTraits> >::edge_descriptor(hd);
 }
 
 

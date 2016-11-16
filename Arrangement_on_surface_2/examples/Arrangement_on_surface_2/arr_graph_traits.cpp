@@ -27,13 +27,21 @@ int main ()
   Arrangement_2           arr;
   std::list<Segment_2>    segments;
 
-  segments.push_back (Segment_2 (Point_2(1, 0), Point_2(2, 4)));
-  segments.push_back (Segment_2 (Point_2(5, 0), Point_2(5, 5)));
-  segments.push_back (Segment_2 (Point_2(1, 0), Point_2(5, 3)));  
-  segments.push_back (Segment_2 (Point_2(0, 2), Point_2(6, 0)));
-  segments.push_back (Segment_2 (Point_2(3, 0), Point_2(5, 5)));
+  segments.push_back (Segment_2 (Point_2(0, 0), Point_2(1, 0)));
+  segments.push_back (Segment_2 (Point_2(1, 0), Point_2(3, 0)));
+  segments.push_back (Segment_2 (Point_2(0, 0), Point_2(1, 2)));  
+  segments.push_back (Segment_2 (Point_2(1, 0), Point_2(1, 2)));
+  segments.push_back (Segment_2 (Point_2(1, 0), Point_2(2, 1)));
+  segments.push_back (Segment_2 (Point_2(2, 1), Point_2(1, 2)));
+  segments.push_back (Segment_2 (Point_2(2, 1), Point_2(3, 2)));
+  segments.push_back (Segment_2 (Point_2(3, 0), Point_2(3, 2)));
+  segments.push_back (Segment_2 (Point_2(1, 2), Point_2(3, 2)));
 
   insert (arr, segments.begin(), segments.end());
+
+  BOOST_FOREACH(vertex_descriptor vd, vertices(arr)){
+    std::cerr << vd->point() << std::endl;
+  }
 
   vertex_iterator vi = *(vertices(arr).first);
   vertex_descriptor vd = *vi;
@@ -42,30 +50,51 @@ int main ()
   halfedge_descriptor hdo = opposite(hd, arr);
 
   face_descriptor fd = face(hd,arr);
+
   hd = halfedge(fd,arr);
 
   hd = next(hd,arr);
   hd = prev(hd,arr);
 
   BOOST_FOREACH(vertex_descriptor vd, vertices(arr)){
-    std::cerr << degree(vd,arr) << std::endl;
+    std::cerr << vd->point() << std::endl;
+    std::size_t d = degree(vd,arr), i=0;
+    std::cerr << "degree = " << d << std::endl;
+    BOOST_FOREACH(edge_descriptor ed, out_edges(vd,arr)){
+      ++i;
+      assert(source(ed,arr) == vd);
+    }
+    assert(i == d);
   }
 
+  int i = 0;
   BOOST_FOREACH(face_descriptor fd, faces(arr)){
-    std::cerr << degree(fd,arr) <<   std::endl;
+    std::cerr << "face degree = "<< degree(fd,arr) << std::endl;
+    ++i;
   }
+  std::cerr << i << " faces" << std::endl;
 
+  i = 0;
   BOOST_FOREACH(halfedge_descriptor hd, halfedges(arr)){
-    std::cerr << /* degree(fd,arr) << */ std::endl;
+    ++i;
   }
+  std::cerr << i << " halfedges" << std::endl;
+
 
   BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(*(halfedges(arr).first), arr)){
     std::cerr << target(hd,arr)->point() <<  std::endl;
   }
 
+  i = 0;
   BOOST_FOREACH(edge_descriptor ed, edges(arr)){
-    std::cerr <<  /* degree(fd,arr) << */ std::endl;
+    halfedge_descriptor hd = halfedge(ed,arr);
+    halfedge_descriptor ohd = opposite(hd,arr);
+    assert(ed == edge(ohd,arr));
+    ++i;
   }
+
+  std::cerr << i << " edges" << std::endl;
+
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
