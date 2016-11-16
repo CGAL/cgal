@@ -124,10 +124,10 @@ public:
   }
 
   //! The power test for weighted points.
-  typedef Certificate_generator<This, Cartesian_power_test_3<This> > Power_side_of_power_sphere_3;
-  Power_side_of_power_sphere_3 power_side_of_power_sphere_3_object() const
+  typedef Certificate_generator<This, Cartesian_power_test_3<This> > Power_side_of_oriented_power_sphere_3;
+  Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
   {
-    return Power_side_of_power_sphere_3(k_);
+    return Power_side_of_oriented_power_sphere_3(k_);
   }
 
   //! An orientation test for weighted points.
