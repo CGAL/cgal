@@ -65,8 +65,6 @@ create_single_source_cgal_program( "range.cpp" )
 
 create_single_source_cgal_program( "transform_iterator.cpp" )
 
-create_single_source_cgal_program( "change.cpp" )
-
 create_single_source_cgal_program( "copy_polyhedron.cpp" )
 
 
