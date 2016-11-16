@@ -9,6 +9,9 @@ namespace CGAL {
 
 \section sms_sec_intro Introduction
 
+Chapter \ref Chapter_2D_Regularized_Boolean_Set-Operations
+"2D Regularized Boolean Set-Operations"
+
 <em>Movable Separability of Sets</em> \cgalCite{t-mss-85} is a class
 of problems that deal with moving sets of objects, such as polygons in
 the plane; the challange is to avoid collisions between the objects
@@ -67,11 +70,12 @@ directions.
 The input polygon must satisfy two conditions as follows. First, it
 has to be simple. Essentially, a simple polygon is topologically
 equivalent to a disk; see Chapter \ref
-Chapter_2D_Regularized_Boolean_Set-Operations "2D Regularized Boolean
-Set-Operations" for the precise definition of simple
-polygons. Secondly, not consecuitive three vertices can be linear. If
-you suspect that the input polygon may not satisfy the latter
-condition, pre-process the polygon to elliminate this ill-condition.
+Chapter_2D_Regularized_Boolean_Set-Operations
+"2D Regularized Boolean Set-Operations" for the precise definition of
+simple polygons. Secondly, any consecuitive three vertices cannot be
+linear. If you suspect that the input polygon may not satisfy the
+latter condition, pre-process the polygon to elliminate this
+ill-condition.
 
 The implementation is based on an algorithm developed by Shamai and
 Halperin; see \cgalCite{cgal:ss-spfis-16} for the generalization of
@@ -82,14 +86,15 @@ constructions as well as exact predicates.
 
 \cgalExample{Set_movable_separability_2/single_mold_translational_casting.cpp}
 
-This package also provides the following two functions: (i)
-`is_top_edge_single_mold_translational_casting_2()` and (ii)
-'top_edge_directions_single_mold_translational_casting_2().  The
-former accepts a simple closed polygon \f$P\f$ and and edge \f$e\f$ of
-the polygon. It determines whether \f$e\f$ is a top edge of
-\f$P\f$. The latter accepts a simple closed polygon \f$P\f$ and a top
-edge \f$e\f$ of \f$P\f$ and computes the range of pull
-directions of \f$e\f$.
+This package also provides the function
+`top_edge_single_mold_translational_casting_2()` that accepts a simple
+closed polygon \f$P\f$ and an edge \f$e\f$ of the polygon \f$P\f$; it
+determines whether \f$e\f$ is a top edge of \f$P\f$, and if so, it
+computes the range of pull directions of \f$e\f$.
+
+An overload of each of the two fimctions above that accepts an
+additional traits argument is also provided by the package.
+
 */
 
 } /* namespace CGAL */

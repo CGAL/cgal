@@ -3,6 +3,9 @@
 /// \defgroup PkgSetMovableSeparability2Funcs Free Functions
 /// \ingroup PkgSetMovableSeparability2
 
+/// \defgroup PkgSetMovableSeparability2Concepts Concepts
+/// \ingroup PkgSetMovableSeparability2
+
 /*!
 \addtogroup PkgSetMovableSeparability2
 \cgalPkgDescriptionBegin{2D Movable Separability of Sets,PkgSetMovableSeparability2Summary}
@@ -26,5 +29,9 @@ This package consists of the implementations of various predicates and operation
 
 ## Functions ##
 - `CGAL::single_mold_translational_casting_2()`
+- `CGAL::top_edge_single_mold_translational_casting_2()`
+
+## Concepts ##
+- `CastingTraits_2`
 
 */

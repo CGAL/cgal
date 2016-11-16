@@ -14,6 +14,9 @@ namespace Set_movable_separability_2 {
  * \f$y\f$-direction. Each top edge and corresponding range is added to a
  * container referred to by a given output iterator.
  *
+ * The type that substitutes the template parameter `%CastingTraits_2` must be
+ * a model of the concept `CastingTraits_2`.
+ *
  * \param[in] pgn the input polygon.
  * \param[out] oi the output iterator. Its value type is a pair, where
  *             (i) the first element in the pair identifies a valid top edge
@@ -26,9 +29,9 @@ namespace Set_movable_separability_2 {
  * \pre `png` must be non-degenerate (has at least 3 vertices), simple, and
  * does not have three consecutive collinear vertices.
  */
-template <typename Kernel, typename OutputIterator>
+template <typename CastingTraits_2, typename OutputIterator>
 OutputIterator
-single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
+single_mold_translational_casting_2(const CGAL::Polygon_2<CastingTraits>& pgn,
                                     OutputIterator oi);
 
 } /* end namesapce Set_movable_separability_2 */
