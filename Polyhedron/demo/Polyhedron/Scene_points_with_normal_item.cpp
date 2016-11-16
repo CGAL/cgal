@@ -64,6 +64,7 @@ struct Scene_points_with_normal_item_priv
     nb_selected_points = 0;
     nb_lines = 0;
     Polyhedron::Vertex_iterator v;
+    m_points->add_normal_map();
     for (v = const_cast<Polyhedron&>(input_mesh).vertices_begin();
          v != const_cast<Polyhedron&>(input_mesh).vertices_end(); v++)
     {
