@@ -47,7 +47,7 @@ namespace CGAL {
 template < class Gt, 
            class Tds  = Triangulation_data_structure_2 <
                         Regular_triangulation_vertex_base_2<
-                          Regular_triangulation_euclidean_traits_2<Gt> >,
+                          Regular_triangulation_euclidean_traits_2<Gt, typename Gt::RT> >,
 		        Regular_triangulation_face_base_2<Gt> > >
 class Regular_triangulation_2 
   : public Triangulation_2<

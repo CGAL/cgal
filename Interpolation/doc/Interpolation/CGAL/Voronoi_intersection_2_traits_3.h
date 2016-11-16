@@ -108,7 +108,7 @@ typedef Orientation_with_normal_plane_2_3<Rep> Orientation_2;
 /*!
 
 */ 
-typedef Side_of_plane_centered_sphere_2_3<Point_2> Power_test_2; 
+typedef Side_of_plane_centered_sphere_2_3<Point_2> Power_side_of_oriented_power_circle_2; 
 
 /*!
 
