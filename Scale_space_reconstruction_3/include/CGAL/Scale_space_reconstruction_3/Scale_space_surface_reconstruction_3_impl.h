@@ -752,7 +752,7 @@ detect_bubbles(FT border_angle) {
 			  || _shape->classify (f1) != Shape::REGULAR)
 			continue;
 		      
-		      double angle = CGAL::approximate_dihedral_angle (vedge.first->point (),
+		      double angle = Gt().compute_approximate_dihedral_angle_3_object()(vedge.first->point (),
                                                                        vedge.second->point (),
                                                                        c->vertex (i)->point (),
                                                                        c->vertex ((i + (j+2)%3 + 1)%4)->point ());
