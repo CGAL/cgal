@@ -34,5 +34,15 @@ OutputIterator
 single_mold_translational_casting_2(const CGAL::Polygon_2<CastingTraits>& pgn,
                                     OutputIterator oi);
 
+/*! \ingroup PkgSetMovableSeparability2Funcs
+ *
+ * Same as above with the additional traits argument.
+ * \param[in] traits the traits to use.
+ */
+template <typename CastingTraits_2, typename OutputIterator>
+OutputIterator
+single_mold_translational_casting_2(const CGAL::Polygon_2<CastingTraits>& pgn,
+                                    OutputIterator oi, CastingTraits_2& traits);
+
 } /* end namesapce Set_movable_separability_2 */
 } /* end namesapce CGAL */

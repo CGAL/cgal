@@ -12,8 +12,6 @@
 
   \cgalHasModel Any CGAL kernel, e.g., CGAL::Exact_predicates_exact_constructions_kernel.
 
-  \sa `GeneralPolygon_2`
-
 */
 
 class CastingTraits_2 {

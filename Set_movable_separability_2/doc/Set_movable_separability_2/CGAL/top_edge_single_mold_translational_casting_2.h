@@ -25,10 +25,21 @@ namespace Set_movable_separability_2 {
  * does not have three consecutive collinear vertices.
  */
 template <typename CastingTraits_2>
-pair<bool, pair<typename CastingTraits_2::Direction_2,
-                typename CastingTraits_2::Direction_2>
-top_edge_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
-                                             size_t i);
+std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
+                          typename CastingTraits_2::Direction_2> >
+top_edge_single_mold_translational_casting_2
+(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i);
+
+/*! \ingroup PkgSetMovableSeparability2Funcs
+ *
+ * Same as above with the additional traits argument.
+ * \param[in] traits the traits to use.
+ */
+template <typename CastingTraits_2>
+std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
+                          typename CastingTraits_2::Direction_2> >
+top_edge_single_mold_translational_casting_2
+(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i, CastingTraits_2& traits);
 
 } /* end namesapce Set_movable_separability_2 */
 } /* end namesapce CGAL */
