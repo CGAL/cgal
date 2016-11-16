@@ -498,8 +498,8 @@ Skin_surface_base_3<MixedComplexTraits_3>::
 construct_bounding_box() 
 {
   typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename Regular::Geom_traits     GT;
-  typedef typename GT::Point                Weighted_point;
+  typedef typename Regular::Geom_traits       GT;
+  typedef typename GT::Weighted_point         Weighted_point;
   typedef typename GT::FT                     FT;
   
   Finite_vertices_iterator vit = regular().finite_vertices_begin();
