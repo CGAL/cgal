@@ -571,10 +571,11 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
   switch ( m )
   {
   case Points:
+    return true;
   case ShadedPoints:
   case PointsPlusNormals:
   case Splatting:
-    return true;
+    return has_normals();
 
   default:
     return false;
