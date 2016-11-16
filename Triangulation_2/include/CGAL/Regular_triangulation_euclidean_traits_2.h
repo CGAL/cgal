@@ -38,7 +38,7 @@ public:
   typedef R                                     Traits;
   typedef typename R::Point_2                   Bare_point;
   typedef typename R::Weighted_point_2          Weighted_point_2;
-  typedef typename Weighted_point_2             Point_2;
+  typedef Weighted_point_2                      Point_2;
 
   // This is required for the point() function of vertex base class
   // to be correctly return a weighted_point;
