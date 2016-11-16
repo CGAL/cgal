@@ -56,9 +56,7 @@ namespace Polygon_mesh_processing {
         {
           //halfedge_descriptor is model of `LessThanComparable`
           bool from_face = (h < opposite(h, pmesh));
-          halfedge_descriptor he = from_face
-            ? h
-            : opposite(h, pmesh);
+          halfedge_descriptor he = from_face ? h : opposite(h, pmesh);
           if (border.find(he) != border.end())
             border.erase(he); //even number of appearances
           else
@@ -69,7 +67,7 @@ namespace Polygon_mesh_processing {
       typedef typename std::map<halfedge_descriptor, bool>::value_type HD_bool;
       BOOST_FOREACH(const HD_bool& hd, border)
       {
-        if (hd.second)
+        if (!hd.second) // to get the border halfedge (which is not on the face)
           *out++ = hd.first;
         else
           *out++ = opposite(hd.first, pmesh);
@@ -115,10 +113,10 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  * collects the border of a surface patch
-  * defined as a face range. The border is "seen from inside" the patch,
-  * i.e. the collected halfedges are
-  * the ones that belong to the input faces.
+  * collects the border halfedges of a surface patch
+  * defined as a face range, that is the halfedges who either do not have an
+  * incident face or whose incident face does not belong to the patch.
+  * The collected halfedges thus do not belong to the input faces.
   *
   * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh
   *  `has an internal property map
@@ -132,12 +130,10 @@ namespace Polygon_mesh_processing {
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param pmesh the polygon mesh to which `faces` belong
-  * @param faces the range of faces defining the patch
-  *              around which the border is collected
-  * @param out the output iterator that collects halfedges that form the border
-  *            of `faces`, seen from inside the surface patch
-  * @param np optional sequence of \ref namedparameters among
-     the ones listed below
+  * @param faces the range of faces defining the patch whose border halfedges
+  *              are collected
+  * @param out the output iterator that collects the border halfedges of the patch
+  * @param np optional sequence of \ref namedparameters among the ones listed below
 
   * \cgalNamedParamsBegin
       \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
