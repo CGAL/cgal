@@ -26,7 +26,7 @@ int main()
 
   rt.insert(wp);
 
-  assert( T.is_valid() );
+  assert( rt.is_valid() );
 
   return 0;
 }
