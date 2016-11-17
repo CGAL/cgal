@@ -1699,30 +1699,35 @@ private:
     }
 #endif
 
-    //warning : when v is on a sharp edge (angle <= 90 deg)
-    // which is not constrained (it's not mandatory)
-    //this test will return false, though normals are correct
+    //check whether the normals to faces incident to v
+    //have all their 2 by 2 dot products > 0
     bool check_normals(const vertex_descriptor& v) const
     {
-      if (!is_on_patch(v))
-        return true;//not much to say if we are on a boundary/sharp edge
+      if (is_corner(v))
+        return true;//if we want to deal with this case,
+                    //we should use a multimap to store <Patch_id, Normal>
 
-      std::vector<Vector_3> normals;
+      std::vector<Vector_3> normals_patch1;
+      std::vector<Vector_3> normals_patch2;
+      Patch_id patch1 = -1, patch2 = -1;
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
-        normals.push_back(n);
-        CGAL_assertion(n != CGAL::NULL_VECTOR);
+        Patch_id pid = get_patch_id(face(hd, mesh_));
+
+        if (patch1 == -1)      patch1 = pid; //not met yet
+        else if (patch2 == -1) patch2 = pid; //not met yet
+        CGAL_assertion(pid == patch1 || pid == patch2);
+
+        if (pid == patch1)     normals_patch1.push_back(n);
+        else                   normals_patch2.push_back(n);
       }
+
+      //on each surface patch,
       //check all normals have same orientation
-      for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-      {
-        double dot = to_double(normals[i - 1] * normals[i]);
-        if(dot <= 0.)
-          return false;
-      }
-      return true;
+      return check_orientation(normals_patch1)
+          && check_orientation(normals_patch2);
     }
 
     bool check_normals(const halfedge_descriptor& h) const
@@ -1732,6 +1737,19 @@ private:
       Vector_3 n = compute_normal(face(h, mesh_));
       Vector_3 no = compute_normal(face(opposite(h, mesh_), mesh_));
       return n * no > 0.;
+    }
+
+    bool check_orientation(const std::vector<Vector_3>& normals) const
+    {
+      if (normals.size() < 2)
+        return true;
+      for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
+      {
+        double dot = to_double(normals[i - 1] * normals[i]);
+        if (dot <= 0.)
+          return false;
+      }
+      return true;
     }
 
   public:
