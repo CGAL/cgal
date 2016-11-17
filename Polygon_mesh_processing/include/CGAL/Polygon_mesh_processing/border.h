@@ -113,10 +113,9 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PkgPolygonMeshProcessing
-  * collects the border halfedges of a surface patch
-  * defined as a face range, that is the halfedges who either do not have an
-  * incident face or whose incident face does not belong to the patch.
-  * The collected halfedges thus do not belong to the input faces.
+  * collects the border halfedges of a surface patch defined as a face range.
+  * For each returned halfedge `h`, `opposite(h, pmesh)` belongs to a face of the patch,
+  * but `face(h, pmesh)` does not belong to the patch.
   *
   * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh
   *  `has an internal property map
@@ -132,7 +131,8 @@ namespace Polygon_mesh_processing {
   * @param pmesh the polygon mesh to which `faces` belong
   * @param faces the range of faces defining the patch whose border halfedges
   *              are collected
-  * @param out the output iterator that collects the border halfedges of the patch
+  * @param out the output iterator that collects the border halfedges of the patch,
+  *            seen from outside.
   * @param np optional sequence of \ref namedparameters among the ones listed below
 
   * \cgalNamedParamsBegin
