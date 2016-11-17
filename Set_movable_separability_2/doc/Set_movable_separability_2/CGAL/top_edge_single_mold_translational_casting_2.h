@@ -33,6 +33,8 @@ top_edge_single_mold_translational_casting_2
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
  * Same as above with the additional traits argument.
+ * \param[in] pgn the input polygon.
+ * \param[in] i the index of an edge in pgn.
  * \param[in] traits the traits to use.
  */
 template <typename CastingTraits_2>

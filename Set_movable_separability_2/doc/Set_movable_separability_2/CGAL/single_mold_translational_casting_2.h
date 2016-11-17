@@ -37,6 +37,14 @@ single_mold_translational_casting_2(const CGAL::Polygon_2<CastingTraits>& pgn,
 /*! \ingroup PkgSetMovableSeparability2Funcs
  *
  * Same as above with the additional traits argument.
+ * \param[in] pgn the input polygon.
+ * \param[out] oi the output iterator. Its value type is a pair, where
+ *             (i) the first element in the pair identifies a valid top edge
+ *                 represented by its index the type of which is convertible to
+                   `size_t`, and
+ *             (ii) the second element is a closed range of pull-out directions
+ *                  represented as a pair of the extreme directions in the
+ *                  range of type `Kernel::Direction_2`.
  * \param[in] traits the traits to use.
  */
 template <typename CastingTraits_2, typename OutputIterator>
