@@ -143,26 +143,30 @@ and <code>src/</code> directories).
   </ul>
 
 <!-- New packages -->
-<!-- Major and breaking changes -->
-<!-- Arithmetic and Algebra -->
-<!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels -->
-<!-- Convex Hull Algorithms -->
-<!-- Polygons -->
-<!-- Cell Complexes and Polyhedra -->
   <h3>Generalized Maps (new package)</h3>
   <ul>
     <li>
       This package implements Generalized Maps in d dimensions. A generalized map is a data structure enabling to represent an orientable or non orientable subdivided object by describing all the cells of the subdivision (for example in 3D vertices, edges, faces, volumes) and all the incidence and adjacency relationships between these cells. This data structure is the generalization of the combinatorial maps in order to be able to represent non orientable objects.</li>     
     </li>
   </ul>
+<!-- Major and breaking changes -->
 <h3>Combinatorial Maps and Linear cell complex</h3>
   <ul>
     <li>
       <b>Breaking change</b>: the requirements of the item class used to customize a combinatorial map and a linear cell complex changed. Instead of defining the type of darts used, you have to define the information you want to add in each dart. You can define the CGAL_CMAP_DART_DEPRECATED macro to keep the old behavior. 
     </li>
   </ul>
-<h3>Linear cell complex</h3>
+<!-- Arithmetic and Algebra -->
+<!-- Combinatorial Algorithms -->
+<!-- Geometry Kernels -->
+<!-- Convex Hull Algorithms -->
+<!-- Polygons -->
+<!-- Cell Complexes and Polyhedra -->
+  <h3>3D Boolean Operations on Nef Polyhedra</h3>
+  <ul>
+    <li>Add a new constructor from a face graph model</li>
+  </ul>
+  <h3>Linear cell complex</h3>
   <ul>
     <li>
       Deprecate class <code>Linear_cell_complex</code> which is now renamed <code>Linear_cell_complex_for_combinatorial_map_dart</code>.
