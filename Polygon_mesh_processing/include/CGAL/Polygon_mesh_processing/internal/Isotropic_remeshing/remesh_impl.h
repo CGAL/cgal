@@ -1714,6 +1714,8 @@ private:
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
+        if (n == CGAL::NULL_VECTOR)
+          continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
 
         if (patch1 == -1)      patch1 = pid; //not met yet
