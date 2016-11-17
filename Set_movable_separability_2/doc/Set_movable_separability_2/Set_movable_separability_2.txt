@@ -43,7 +43,7 @@ Casting is a manufacturing process where liquid material is poured
 into a cavity inside a mold, which has the shape of a desired
 product. After the material solidifies, the product is pulled out of
 the mold. Typically a mold is used to manufacture numerous copies of a
-product. The challenge is design a proper mold, such that the
+product. The challenge is designing a proper mold, such that the
 solidified product can be separated from its mold without breaking it.
 
 This package provides a function called
@@ -54,7 +54,7 @@ plane) that has the shape of \f$P\f$ can be used so that the polygon
 mold (but possibly sliding along the mold surface); see
 \cgalFigureRef{sms_2_fig_mold} for an illustration. If the polygon
 is <em>castable</em>, the function computes the set of top edges of
-such cavities and the corresponding closed ranges of pull
+such cavities and the corresponding closed ranges of pull-out
 directions. Assuming the top edge normal is parallel to the
 \f$y\f$-axis, every direction in a range must have a positive
 component in the positive \f$y\f$-direction.
@@ -79,7 +79,12 @@ Halperin; see \cgalCite{cgal:ss-spfis-16} for the generalization of
 the algorithm to 3D. The time and space complexities are in \f$O(n)\f$
 and \f$O(1)\f$, respectively. In order to ensure robustness and
 correctness you are adviced to use a kernel that guarantees exact
-constructions as well as exact predicates.
+constructions as well as exact predicates, e,g,.
+`Exact_predicates_exact_constructions_kernel`.
+
+The following example computes the top edges and their pull-out
+directions of an input polygon read from a file and reports the results.
+
 
 \cgalExample{Set_movable_separability_2/single_mold_translational_casting.cpp}
 
@@ -87,9 +92,9 @@ This package also provides the function
 `top_edge_single_mold_translational_casting_2()` that accepts a simple
 closed polygon \f$P\f$ and an edge \f$e\f$ of the polygon \f$P\f$; it
 determines whether \f$e\f$ is a top edge of \f$P\f$, and if so, it
-computes the range of pull directions of \f$e\f$.
+computes the range of pull-out directions of \f$e\f$.
 
-An overload of each of the two fimctions above that accepts an
+An overload of each of the two functions above that accepts an
 additional traits argument is also provided by the package.
 
 */
