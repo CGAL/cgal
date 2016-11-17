@@ -92,13 +92,14 @@ bool is_any_edge_colinear(const CGAL::Polygon_2<Kernel>& pgn)
 /*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
  * \param[in] pgn the input polygon that we want to check if is castable or not.
  * \param[in,out] oi the output iterator to put the top edges in
+ * \param[in] kernel the kernel to use.
  * \return all the possible top edges of the polygon and there pullout direction
  *   (with no rotation)
  */
 template <typename Kernel, typename OutputIterator>
 OutputIterator
 single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
-                                    OutputIterator oi)
+                                    OutputIterator oi, Kernel& kernel)
 {
   /* Legend
    * point = Represented as  Direction_2. It is the intersection between the
@@ -115,11 +116,10 @@ single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
   CGAL::Orientation poly_orientation = pgn.orientation();
   auto segment_outer_circle =
     get_segment_outer_circle<Kernel>(*e_it++, poly_orientation);
-  internal::Circle_arrangment<Kernel>
-    circle_arrangment(segment_outer_circle);
+  internal::Circle_arrangment<Kernel> circle_arrangment(segment_outer_circle);
 
   ++edge_index;
-  for (; e_it!= pgn.edges_end(); ++e_it,++edge_index) {
+  for (; e_it!= pgn.edges_end(); ++e_it, ++edge_index) {
     segment_outer_circle =
       get_segment_outer_circle<Kernel>(*e_it, poly_orientation);
     circle_arrangment.add_segment_outer_circle(segment_outer_circle, edge_index);
@@ -127,6 +127,21 @@ single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
   }
   circle_arrangment.get_all_1_edges(oi);
   return oi;
+}
+
+/*! \fn OutputIterator find_single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
+ * \param[in] pgn the input polygon that we want to check if is castable or not.
+ * \param[in,out] oi the output iterator to put the top edges in
+ * \return all the possible top edges of the polygon and there pullout direction
+ *   (with no rotation)
+ */
+template <typename Kernel, typename OutputIterator>
+OutputIterator
+single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
+                                    OutputIterator oi)
+{
+  Kernel kernel;
+  return single_mold_translational_casting_2(pgn, oi, kernel);
 }
 
 } // end of namespace Set_movable_separability_2

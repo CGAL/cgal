@@ -28,11 +28,21 @@ template <typename CastingTraits_2>
 std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
                           typename CastingTraits_2::Direction_2> >
 top_edge_single_mold_translational_casting_2
-(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i)
+(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i, Kernel& kernel)
 {
   typedef CastingTraits_2               Casting_traits_2;
   typename Casting_traits_2::Direction_2 d1, d2;
   return std::make_pair(false, std::make_pair(d1, d2));
+}
+
+template <typename CastingTraits_2>
+std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
+                          typename CastingTraits_2::Direction_2> >
+top_edge_single_mold_translational_casting_2
+(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i)
+{
+  Kernel kernel;
+  return top_edge_single_mold_translational_casting_2(pgn, i, kernel);
 }
 
 } // end of namespace Set_movable_separability_2
