@@ -284,7 +284,6 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   typedef typename PTraits::Traits_xz_3 Traits_xz_3;
 
   std::list<Point_3> CH_2;
-  typedef typename std::list<Point_3>::iterator  CH_2_iterator;
  
   Traits_xy_3 traits_xy;
   typename Traits_xy_3::Left_turn_2 left_turn_in_xy = traits_xy.left_turn_2_object();
