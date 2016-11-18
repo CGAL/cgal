@@ -38,7 +38,7 @@
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
-static double max_error_value=.00005;
+static const double max_error_value=.00005;
 
 namespace {
 template <bool CLEAN, class NT>

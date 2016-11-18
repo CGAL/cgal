@@ -269,7 +269,7 @@ public:
     return audit_time_;
 #else
     CGAL_precondition(0);
-    static NT z(0);
+    static const NT z(0);
     return z;
 #endif
   }
