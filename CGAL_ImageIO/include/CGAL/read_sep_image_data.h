@@ -300,8 +300,6 @@ public:
 
     const double v11 = raw_value(i1, j1);
     const double v12 = raw_value(i1, j2);
-    const double v22 = raw_value(i2, j2);
-    const double v21 = raw_value(i2, j1);
 
     return 
       (v11 * di2 + v12 * di1) * dj2 + 
