@@ -25,7 +25,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h> 
 #include <CGAL/convex_hull_2.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
@@ -47,7 +46,10 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/internal/Exact_type_selector.h>
-
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>
@@ -241,45 +243,7 @@ public:
 };
 
 
-template<class HDS, class ForwardIterator>
-class Build_coplanar_poly : public Modifier_base<HDS> {
- public:
-  Build_coplanar_poly(ForwardIterator i, ForwardIterator j) 
-    {
-      start = i;
-      end = j;
-    }
-  void operator()( HDS& hds) {
-    Polyhedron_incremental_builder_3<HDS> B(hds,true);
-    ForwardIterator iter = start;
-    int count = 0;
-    while (iter != end)
-      {
-	count++;
-	iter++;
-      }
-    B.begin_surface(count, 1, 2*count);
-    iter = start;
-    while (iter != end)
-      {
-	B.add_vertex(*iter);
-	iter++;
-      }
-    iter = start;
-    B.begin_facet();
-    int p = 0;
-    while (p < count)
-      {
-	B.add_vertex_to_facet(p);
-	p++;
-      }
-    B.end_facet();
-    B.end_surface();
-  }
- private:
-  ForwardIterator start;
-  ForwardIterator end;    
-};
+
 
 
 namespace internal { namespace Convex_hull_3{
@@ -345,10 +309,11 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
     }
   }
 
-  typedef typename Polyhedron_3::Halfedge_data_structure HDS;
-
-  Build_coplanar_poly<HDS,CH_2_iterator> poly(CH_2.begin(),CH_2.end());
-  P.delegate(poly);
+  std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> vertices(CH_2.size());
+  BOOST_FOREACH(const Point_3& p, CH_2){
+    vertices.push_back(add_vertex(p,P));
+  }
+  Euler::add_face(vertices, P);
 }
 
 
@@ -635,57 +600,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
 }
 
 
-namespace internal{
-  
-template <class HDS,class TDS>
-class Build_convex_hull_from_TDS_2 : public CGAL::Modifier_base<HDS> {
-  typedef std::map<typename TDS::Vertex_handle,unsigned> Vertex_map;
-  
-  const TDS& t;
-  template <class Builder>
-  static unsigned get_vertex_index( Vertex_map& vertex_map,
-                                    typename TDS::Vertex_handle vh,
-                                    Builder& builder,
-                                    unsigned& vindex)
-  {
-    std::pair<typename Vertex_map::iterator,bool>
-      res=vertex_map.insert(std::make_pair(vh,vindex));
-    if (res.second){
-      builder.add_vertex(vh->point());
-      ++vindex;
-    }
-    return res.first->second;
-  }
-  
-public:
-  Build_convex_hull_from_TDS_2(const TDS& t_):t(t_) 
-  {
-    CGAL_assertion(t.dimension()==2);
-  }
-  void operator()( HDS& hds) {
-    // Postcondition: `hds' is a valid polyhedral surface.
-    
-    CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
-    Vertex_map vertex_map;
-    //start the surface
-    B.begin_surface( t.number_of_vertices(), t.number_of_faces());
-    unsigned vindex=0;
-    for (typename TDS::Face_iterator it=t.faces_begin();it!=t.faces_end();++it)
-    {
-      unsigned i0=get_vertex_index(vertex_map,it->vertex(0),B,vindex);
-      unsigned i1=get_vertex_index(vertex_map,it->vertex(1),B,vindex);
-      unsigned i2=get_vertex_index(vertex_map,it->vertex(2),B,vindex);
-      B.begin_facet();
-      B.add_vertex_to_facet( i0 );
-      B.add_vertex_to_facet( i1 );
-      B.add_vertex_to_facet( i2 );
-      B.end_facet();      
-    }
-    B.end_surface();
-  }
-};
-  
-} //namespace internal
+
 
 template <class InputIterator, class Polyhedron_3, class Traits>
 void
@@ -760,11 +675,10 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
     points.erase(max_it);
     if (!points.empty()){
       non_coplanar_quickhull_3(points, tds, traits);
-      internal::Build_convex_hull_from_TDS_2<typename Polyhedron_3::HalfedgeDS,Tds> builder(tds);
-      P.delegate(builder);
+      copy_face_graph(tds,P);
     }
     else
-      P.make_tetrahedron(v0->point(),v1->point(),v2->point(),v3->point());
+      make_tetrahedron(v0->point(),v1->point(),v2->point(),v3->point(),P);
   }
   
 }
