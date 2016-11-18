@@ -29,6 +29,7 @@
 #endif
 
 #include <ctime>
+#include <iostream>
 #include <sstream>
 
 namespace CGAL {
@@ -39,19 +40,28 @@ namespace CGAL {
 // constructors
 CGAL_INLINE_FUNCTION
 Random::
-Random( )
+Random()
     :  val(0)
 {
     // get system's time
     std::time_t s;
     std::time( &s);
     seed = (unsigned int)s;
-#if (defined( CGAL_TEST_SUITE ) || defined( CGAL_PRINT_SEED )) && !defined(CGAL_HEADER_ONLY)
-    // In header only, the following line  generates __gnu_cxx::recursive_init_error
-    if(this == & get_default_random()){
-      std::cerr << "CGAL::get_default_random()::get_seed() = " << seed << std::endl;
-    }
-#endif
+    // initialize random numbers generator
+    rng.seed(static_cast<boost::int32_t>(seed));
+    random_value = get_int(0, 1<<15);
+}
+
+CGAL_INLINE_FUNCTION
+Random::
+Random(internal::Random_print_seed)
+    :  val(0)
+{
+    // get system's time
+    std::time_t s;
+    std::time( &s);
+    seed = (unsigned int)s;
+    std::cerr << "CGAL::Random()::get_seed() = " << seed << std::endl;
     // initialize random numbers generator
     rng.seed(static_cast<boost::int32_t>(seed));
     random_value = get_int(0, 1<<15);

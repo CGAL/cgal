@@ -183,12 +183,13 @@ bool operator == ( Random const& random2) const;
   \ingroup PkgGenerators
   The global function `get_default_random()` returns the default random 
   numbers generator used for the generator functions and classes.
+  The returned generator is thread local.
 */
 Random &get_default_random();
 
 /*!
   \ingroup PkgGenerators
-  \deprecated The variable `default_random` is the default random
+  \deprecated The variable `default_random` was the default random
   numbers generator used for the generator functions and
   classes. Deprecated. Use `get_default_random()` instead.
 */
