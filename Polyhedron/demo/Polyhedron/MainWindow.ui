@@ -682,7 +682,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Orthographic/Perspective Projection</string>
+    <string>Orthographic Projection</string>
    </property>
   </action>
  </widget>
