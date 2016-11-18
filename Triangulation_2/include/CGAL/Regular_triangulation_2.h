@@ -200,15 +200,15 @@ public:
   Regular_triangulation_2()
     : Base(), _hidden_vertices(0) {}
 
-  Regular_triangulation_2(const Gt&)
-    : Base(), _hidden_vertices(0) {}
+  Regular_triangulation_2(const Gt& gt)
+    : Base(RT_traits(gt)), _hidden_vertices(0) {}
 
   Regular_triangulation_2(const Regular_triangulation_2 &rt);
 
   template < class InputIterator >
   Regular_triangulation_2(InputIterator first, InputIterator last,
-                          const Gt&)
-    : Base(), _hidden_vertices(0)
+                          const Gt& gt)
+    : Base(RT_traits(gt)), _hidden_vertices(0)
   {
     insert(first, last);
   }

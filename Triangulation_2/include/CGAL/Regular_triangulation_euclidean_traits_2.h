@@ -32,6 +32,9 @@ class Regular_triangulation_euclidean_traits_2
   : public R
 {
 public:
+  Regular_triangulation_euclidean_traits_2() {}
+  Regular_triangulation_euclidean_traits_2(const R& k) : R(k) {}
+
   typedef R                                     Kernel;
   typedef R                                     Rep;
   typedef typename R::FT                        Weight;

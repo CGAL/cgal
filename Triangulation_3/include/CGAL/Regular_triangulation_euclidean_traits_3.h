@@ -34,7 +34,7 @@ class Regular_triangulation_euclidean_traits_3
 {
 public:
   Regular_triangulation_euclidean_traits_3() {}
-  Regular_triangulation_euclidean_traits_3(const K&) {}
+  Regular_triangulation_euclidean_traits_3(const K& k): K(k) {}
 
   typedef K                                          Kernel;
   typedef typename K::FT                             FT;
