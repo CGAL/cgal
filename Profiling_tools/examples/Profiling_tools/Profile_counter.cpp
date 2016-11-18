@@ -4,7 +4,7 @@
 
 int main()
 {
-  for (int i=0; i<10; ++i)
+  for (int i=0; i<10000; ++i)
   {
     CGAL_PROFILER("iterations of the for-loop");
   }

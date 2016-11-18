@@ -52,6 +52,7 @@
 
 #include <CGAL/config.h>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <string>
 #include <map>
@@ -74,6 +75,24 @@
 
 namespace CGAL {
 
+  namespace internal {
+    struct dotted : std::numpunct<char> {
+      char do_thousands_sep()   const { return '.'; }  // separate with dots
+      std::string do_grouping() const { return "\3"; } // groups of 3 digits
+      static void imbue(std::ostream &os) {
+        os.imbue(std::locale(os.getloc(), new dotted));
+      }
+    };
+
+    inline std::string dot_it(int i)
+    {
+      std::stringstream ss;
+      dotted::imbue(ss);
+      ss << i;
+      return ss.str();
+    }
+  }
+
 struct Profile_counter
 {
     Profile_counter(const std::string & ss)
@@ -86,8 +105,10 @@ struct Profile_counter
 
     ~Profile_counter()
     {
-        std::cerr << "[CGAL::Profile_counter] "
-                  << std::setw(10) << i << " " << s << std::endl;
+     
+      
+      std::cerr << "[CGAL::Profile_counter] "
+                << std::setw(10) << internal::dot_it(i) << " " << s << std::endl;
     }
 
 private:
@@ -131,8 +152,8 @@ public:
         for (Counters::const_iterator it=counters.begin(), end=counters.end();
              it != end; ++it) {
             std::cerr << "[CGAL::Profile_histogram_counter] " << s;
-            std::cerr << " [ " << std::setw(10) << it->first << " : "
-                               << std::setw(10) << it->second << " ]"
+            std::cerr << " [ " << std::setw(10) << internal::dot_it(it->first) << " : "
+                      << std::setw(10) << internal::dot_it(it->second) << " ]"
                                << std::endl;
             total += it->second;
         }
@@ -162,8 +183,8 @@ struct Profile_branch_counter
     ~Profile_branch_counter()
     {
         std::cerr << "[CGAL::Profile_branch_counter] "
-                  << std::setw(10) << j << " / "
-                  << std::setw(10) << i << " " << s << std::endl;
+                  << std::setw(10) << internal::dot_it(j) << " / "
+                  << std::setw(10) << internal::dot_it(i) << " " << s << std::endl;
     }
 
 private:
@@ -192,9 +213,9 @@ struct Profile_branch_counter_3
     ~Profile_branch_counter_3()
     {
         std::cerr << "[CGAL::Profile_branch_counter_3] "
-                  << std::setw(10) << k << " / "
-                  << std::setw(10) << j << " / "
-                  << std::setw(10) << i << " " << s << std::endl;
+                  << std::setw(10) << internal::dot_it(k) << " / "
+                  << std::setw(10) << internal::dot_it(j) << " / "
+                  << std::setw(10) << internal::dot_it(i) << " " << s << std::endl;
     }
 
 private:
