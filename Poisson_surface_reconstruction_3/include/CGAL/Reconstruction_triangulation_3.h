@@ -312,8 +312,8 @@ public:
   void initialize_bounding_sphere() const
   {
     Iso_cuboid ic = bounding_box(points.begin(), points.end());
-    Point center = midpoint(ic.min(), ic.max());
-    sphere = Sphere(center, squared_distance(center, ic.max()));
+    Point center = midpoint((ic.min)(), (ic.max)());
+    sphere = Sphere(center, squared_distance(center, (ic.max)()));
   }
 
   /// Insert point in the triangulation.
