@@ -67,11 +67,11 @@ point set or not. This function is used in postcondition testing for
 The functions `halfspace_intersection_3()` and
 `halfspace_intersection_with_constructions_3()`
 uses the convex hull algorithm and the duality to compute the intersection
-of a list of halfspaces. The first version does not explicitly computes
+of a list of halfspaces. The first version does not explicitly compute
 the dual points: the traits class handles this issue. The second one constructs
 these points and hence is less robust but the computation is faster.
 
-In order to compute, the intersection an interior point is needed. It could be
+In order to compute the intersection an interior point is needed. It can be
 either given by the user or computed using linear programming. Notice that the
 second approach is slower due to the resolution of a linear program.
 
