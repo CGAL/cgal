@@ -104,7 +104,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   }
   // Detect edges
   QApplication::setOverrideCursor(Qt::WaitCursor);
-
+  QApplication::processEvents();
   Q_FOREACH(Poly_tuple tuple, polyhedrons)
   {
     Polyhedron* pMesh = tuple.second;

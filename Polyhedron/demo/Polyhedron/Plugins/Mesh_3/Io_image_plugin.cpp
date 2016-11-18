@@ -434,6 +434,7 @@ public Q_SLOTS:
         settings.setValue("Open directory",
           fileinfo.absoluteDir().absolutePath());
         QApplication::setOverrideCursor(Qt::WaitCursor);
+        QApplication::processEvents();
         loadDCM(dir);
         QApplication::restoreOverrideCursor();
       }
@@ -847,6 +848,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
         if( raw_dialog.exec() ){
 
           QApplication::setOverrideCursor(Qt::WaitCursor);
+          QApplication::processEvents();
 
           if(image->read_raw(fileinfo.filePath().toUtf8(),
                              raw_dialog.dim_x->value(),
@@ -958,7 +960,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   else
     type = "Gray-level image";
   QApplication::setOverrideCursor(Qt::WaitCursor);
-
+  QApplication::processEvents();
   Scene_image_item* image_item;
   if(type == "Gray-level image")
   {
@@ -1028,6 +1030,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
       return false;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
 
     // Get selected precision
     int voxel_scale = ui.precisionList->currentIndex() + 1;

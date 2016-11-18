@@ -237,6 +237,7 @@ public Q_SLOTS:
 
     if(!ok) { return; }
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
     // sample random points and constuct item
     Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
     point_item->setName(QString("sample-%1").arg(nb_points));

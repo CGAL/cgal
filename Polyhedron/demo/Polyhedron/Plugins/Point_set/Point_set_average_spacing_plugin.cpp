@@ -87,7 +87,7 @@ void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_t
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
+    QApplication::processEvents();
     CGAL::Timer task_timer; task_timer.start();
     std::cerr << "Average spacing (k=" << nb_neighbors <<")...\n";
 

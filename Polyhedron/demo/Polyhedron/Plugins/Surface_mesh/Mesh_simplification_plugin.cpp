@@ -84,6 +84,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     time.start();
     std::cout << "Simplify...";
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
     namespace SMS = CGAL::Surface_mesh_simplification;
     SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target #edges
     SMS::edge_collapse( *pMesh, stop,
