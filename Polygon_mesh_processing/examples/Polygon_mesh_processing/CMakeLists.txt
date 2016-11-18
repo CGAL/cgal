@@ -72,6 +72,7 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
+create_single_source_cgal_program( "compute_normals_example_Polyhedron.cpp"  CXX_FEATURES cxx_range_for )
 create_single_source_cgal_program( "compute_normals_example.cpp" CXX_FEATURES cxx_range_for cxx_auto_type )
 create_single_source_cgal_program( "point_inside_example.cpp")
 create_single_source_cgal_program( "triangulate_faces_example.cpp")
