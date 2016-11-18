@@ -82,7 +82,7 @@ public:
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
-      double sdf_value = sdf_values[*facet_it];
+      double sdf_value = get(sdf_values, *facet_it);
       CGAL_assertion(sdf_value == -1 || sdf_value >= 0); // validity check
       if(sdf_value != -1.0) {
         min_sdf = (std::min)(sdf_value, min_sdf);
@@ -95,7 +95,7 @@ public:
       std::size_t nb_valid_neighbors = 0;
       do {
         if(!(face(opposite(*facet_circulator,mesh),mesh) == boost::graph_traits<Polyhedron>::null_face())) {
-            double neighbor_sdf = sdf_values[face(opposite(*facet_circulator,mesh),mesh)];
+            double neighbor_sdf = get(sdf_values, face(opposite(*facet_circulator,mesh),mesh));
           if(neighbor_sdf != -1) {
             total_neighbor_sdf += neighbor_sdf;
             ++nb_valid_neighbors;
@@ -107,7 +107,7 @@ public:
         still_missing_facets.push_back(*facet_it);
       } else {
         sdf_value = total_neighbor_sdf / nb_valid_neighbors;
-        sdf_values[*facet_it] = sdf_value;
+        put(sdf_values, *facet_it, sdf_value);
         // trying to update min_sdf is pointless, since it is interpolated one of the neighbors sdf will be smaller than it
       }
     }
@@ -116,7 +116,7 @@ public:
     for(typename std::vector<face_descriptor>::iterator it =
           still_missing_facets.begin();
         it != still_missing_facets.end(); ++it) {
-      sdf_values[*it] = min_sdf;
+      put(sdf_values, *it, min_sdf);
     }
   }
 
@@ -128,7 +128,7 @@ public:
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
-      double sdf_value = sdf_values[*facet_it];
+      double sdf_value = get(sdf_values, *facet_it);
       max_sdf = (std::max)(sdf_value, max_sdf);
       min_sdf = (std::min)(sdf_value, min_sdf);
     }
@@ -154,7 +154,7 @@ public:
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
-      sdf_values[*facet_it] = (sdf_values[*facet_it] - min_sdf) / max_min_dif;
+      put(sdf_values, *facet_it, (get(sdf_values, *facet_it) - min_sdf) / max_min_dif);
     }
     return std::make_pair(min_sdf, max_sdf);
   }
@@ -295,7 +295,7 @@ public:
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend;
         ++facet_it, ++label_it) {
-      segment_pmap[*facet_it] = *label_it; // fill with cluster-ids
+      put(segment_pmap, *facet_it, *label_it); // fill with cluster-ids
     }
     if(clusters_to_segments) {
       // assign a segment id for each facet
@@ -351,7 +351,7 @@ private:
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
-      double log_normalized = log(sdf_values[*facet_it] * CGAL_NORMALIZATION_ALPHA +
+      double log_normalized = log(get(sdf_values, *facet_it) * CGAL_NORMALIZATION_ALPHA +
                                   1) / log(CGAL_NORMALIZATION_ALPHA + 1);
       normalized_sdf_values.push_back(log_normalized);
     }
@@ -458,7 +458,7 @@ private:
     face_iterator facet_it, fend;
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
-      if(segments[*facet_it] <
+      if(get(segments, *facet_it) <
           number_of_clusters) { // not visited by depth_first_traversal
         double average_sdf_value = breadth_first_traversal(*facet_it, segment_id,
                                    sdf_values, segments);
@@ -485,8 +485,8 @@ private:
     //                        . Then place its sorted index to pmap
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
-      std::size_t segment_id = segments[*facet_it] - number_of_clusters;
-      segments[*facet_it] = segment_id_to_sorted_id_map[segment_id];
+      std::size_t segment_id = get(segments, *facet_it) - number_of_clusters;
+      put(segments, *facet_it, segment_id_to_sorted_id_map[segment_id]);
     }
     return segment_id - number_of_clusters;
   }
@@ -507,10 +507,10 @@ private:
     std::queue<face_descriptor> facet_queue;
     facet_queue.push(root);
 
-    std::size_t prev_segment_id = segments[root];
-    segments[root] = segment_id;
+    std::size_t prev_segment_id = get(segments, root);
+    put(segments, root, segment_id);
 
-    double total_sdf_value = sdf_values[root];
+    double total_sdf_value = get(sdf_values, root);
     std::size_t    visited_facet_count = 1;
 
     while(!facet_queue.empty()) {
@@ -522,11 +522,11 @@ private:
           continue;  // no facet to traversal
         }
         face_descriptor neighbor = face(opposite(*facet_circulator,mesh),mesh);
-        if(prev_segment_id == segments[neighbor]) {
-          segments[neighbor] = segment_id;
+        if(prev_segment_id == get(segments, neighbor)) {
+          put(segments, neighbor, segment_id);
           facet_queue.push(neighbor);
 
-          total_sdf_value += sdf_values[neighbor];
+          total_sdf_value += get(sdf_values, neighbor);
           ++visited_facet_count;
         }
       } while( ++facet_circulator != done);
