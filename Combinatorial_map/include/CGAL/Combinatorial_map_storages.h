@@ -24,7 +24,6 @@
 #include <CGAL/Dart.h>
 #include <CGAL/Handle_hash_function.h>
 #include <bitset>
-#include <CGAL/Dart.h>
 
 #include <boost/config.hpp>
 #if  (BOOST_GCC >= 40900)

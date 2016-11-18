@@ -32,6 +32,5 @@ template<class LCC>
 typename LCC::Dart_handle import_from_plane_graph(LCC& lcc,
 std::istream& ais);
 
-
 } /* namespace CGAL */
 

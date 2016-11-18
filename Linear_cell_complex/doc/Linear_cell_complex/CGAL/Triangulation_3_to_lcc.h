@@ -3,11 +3,8 @@ namespace CGAL{
 /*!
 \ingroup PkgLinearCellComplexConstructions
 
-Imports `atr` (a `Triangulation_3`) into `lcc`. 
-Objects are added in `lcc`, existing darts are not modified.
-Returns a dart created during the import.
-\pre \ref CombinatorialMap::dimension "LCC::dimension"\f$ \geq\f$ 3 and
-  \ref Linear_cell_complex::ambient_dimension "LCC::ambient_dimension"==3.
+Imports `atr` (a `Triangulation_3`) into `lcc`, a model of the `LinearCellComplex` concept. Objects are added in `lcc`, existing darts are not modified. Returns a dart created during the import.
+\pre \link GenericMap::dimension `LCC::dimension`\endlink \f$ \geq\f$ 3 and \link LinearCellComplex::ambient_dimension `LCC::ambient_dimension`\endlink==3.
 
 \sa `CGAL::import_from_plane_graph<LCC>`
 \sa `CGAL::import_from_polyhedron_3<LCC,Polyhedron>`
