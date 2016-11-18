@@ -14,7 +14,7 @@ This version constructs explicitly the dual points using the convex hull algorit
 \pre The computed intersection must be a bounded convex polyhedron.
 
 \tparam PlaneIterator must be an input iterator where the value type must be `Polyhedron::Traits::Plane_3`
-\tparam Polyhedron must be a model of `ConvexHullPolyhedron_3`.
+\tparam Polyhedron must be a model of `MutableFaceGraph`.
 \tparam Traits must be a model of the concept `ConvexHullTraits_3`.
 
 \sa `halfspace_intersection_3()` 

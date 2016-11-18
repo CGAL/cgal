@@ -2,9 +2,8 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/convex_hull_3_to_polyhedron_3.h>
 #include <CGAL/algorithm.h>
-
+#include <CGAL/star_to_face_graph.h>
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
@@ -18,7 +17,7 @@ int main()
   CGAL::Random_points_in_sphere_3<Point_3> gen(100.0);
   std::list<Point_3>   points;
 
-  // generate 250 points randomly on a sphere of radius 100.0
+  // generate 250 points randomly in a sphere of radius 100.0
   // and insert them into the triangulation
   CGAL::cpp11::copy_n(gen, 250, std::back_inserter(points) );
   Delaunay T;
@@ -40,12 +39,10 @@ int main()
   //copy the convex hull of points into a polyhedron and use it
   //to get the number of points on the convex hull
   Polyhedron_3 chull;
-  CGAL::convex_hull_3_to_polyhedron_3(T,chull);
+  CGAL::star_to_face_graph(T, T.infinite_vertex(), chull);
   
   std::cout << "After removal of 25 points, there are "
             << chull.size_of_vertices() << " points on the convex hull." << std::endl;
-  
 
-  
   return 0;
 }

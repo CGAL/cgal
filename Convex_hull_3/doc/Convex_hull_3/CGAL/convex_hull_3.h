@@ -14,7 +14,7 @@ that is `P` will contain only triangular facets.
 [`first`, `last`) not all of which are collinear.
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`. 
-\tparam Polyhedron_3 must be a model of `ConvexHullPolyhedron_3`.
+\tparam Polyhedron_3 must be a model of `MutableFaceGraph`.
 \tparam Traits must be a model of the concept `ConvexHullTraits_3`. 
 For the purposes of checking the postcondition that the convex hull 
 is valid, `Traits` should also be a model of the concept 
@@ -26,8 +26,6 @@ If the kernel `R` of the points determined by the value type of `InputIterator`
 is a kernel with exact predicates but inexact constructions 
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type), 
 then the default traits class of `::convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise. 
-
-\sa `convex_hull_incremental_3()` 
 
 \cgalHeading{Implementation}
 
@@ -57,7 +55,7 @@ in case the result is a polyhedron.
 For the purposes of checking the postcondition that the convex hull 
 is valid, `Traits` should also be a model of the concept 
 `IsStronglyConvexTraits_3`.   Furthermore, `Traits` must define a type `Polyhedron_3` that is a model of 
-`ConvexHullPolyhedron_3`. 
+`MutableFaceGraph`. 
 
 If the kernel `R` of the points determined by the value type  of `InputIterator` 
 is a kernel with exact predicates but inexact constructions 
