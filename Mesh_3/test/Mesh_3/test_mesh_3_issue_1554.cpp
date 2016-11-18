@@ -7,8 +7,11 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
+#include <fstream>
+
 // Domain 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -43,7 +46,10 @@ int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   // Create domain
-  Mesh_domain domain(fname);
+  std::ifstream in(fname);
+  Polyhedron poly;
+  in >> poly;
+  Mesh_domain domain(poly);
   
   // Get sharp features
   domain.detect_features();
