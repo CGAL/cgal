@@ -1718,8 +1718,10 @@ private:
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
 
-        if (patch1 == -1)      patch1 = pid; //not met yet
-        else if (patch2 == -1) patch2 = pid; //not met yet
+        if (patch1 == -1)
+          patch1 = pid; //not met yet
+        else if (patch2 == -1 && patch1 != pid)
+          patch2 = pid; //not met yet
         CGAL_assertion(pid == patch1 || pid == patch2);
 
         if (pid == patch1)     normals_patch1.push_back(n);
