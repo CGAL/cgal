@@ -59,7 +59,7 @@ protected:
 #else
   static const FT& OFFSET()
   {
-    static FT offset_(10000);
+    static const FT offset_(10000);
     return offset_;
   }
 #endif

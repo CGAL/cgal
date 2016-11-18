@@ -48,21 +48,6 @@ public:
 private:
     typedef Algebraic_structure_traits<FT> AST;
 protected:
-  // static stuff
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
-  // hack to avoid nasty warning for G++ 3.4 on Darwin
-  static FT STEP()
-  {
-    return FT(2);
-  }
-#else
-  static const FT& STEP()
-  {
-    static FT step_(2);
-    return step_;
-  }
-#endif
 
   //  inline static
   //  FT square(const FT &x)
@@ -291,9 +276,9 @@ public:
 
     pleft.push_back(o);
     pright.push_back(o);
-
+    const FT STEP(2);
     for (int i = 1; i <= 100; i++) {
-      p = compute_points(i * i * STEP());
+      p = compute_points(i * i * STEP);
 
       W << p[0];
       W << p[1];
