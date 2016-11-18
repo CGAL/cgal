@@ -25,7 +25,6 @@
 #include <map>
 #include <fstream>
 
-
 // Class for visualizing selection 
 // provides mouse selection functionality
 class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public CGAL::Three::Scene_item
@@ -37,10 +36,12 @@ class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public CGAL::Three::S
   typedef K::Point_2 Point_2;
   typedef K::Point_3 Point_3;
   typedef CGAL::Polygon_2<K> Polygon_2;
+  typedef std::vector<Point_2> Polyline_2;
+  typedef std::vector<Polyline_2> Polylines;
   
   bool rectangle;
   std::vector<Point_2> contour_2d;
-  Scene_polylines_item* polyline;
+  Polylines* polyline;
   Bbox point_set_bbox;
   CGAL::Bbox_2 domain_rectangle;
   Polygon_2 domain_freeform;
@@ -50,10 +51,8 @@ public:
   Scene_point_set_selection_visualizer(bool rectangle, const Bbox& point_set_bbox)
     : rectangle (rectangle), point_set_bbox (point_set_bbox)
   {
-    polyline = new Scene_polylines_item();
-    polyline->setRenderingMode (Wireframe);
-    polyline->setVisible (true);
-    polyline->polylines.push_back (Scene_polylines_item::Polyline());
+    polyline = new Polylines(0);
+    polyline->push_back(Polyline_2());
   }
   ~Scene_point_set_selection_visualizer() {
   }
@@ -70,63 +69,71 @@ public:
   }
 
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Wireframe);
+    return (m == Points);
   }
-  
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    viewer->glLineWidth(3.f);
-    polyline->setRbgColor(0, 255, 0); 
-    polyline->drawEdges(viewer);
+  /*
+   * We use drawPoints because it is the last drawing function to be called
+   * This way, as this item is always the last in the list, it is always the last
+   * thing to be drawn. It allow us to safely call glClear(GL_DEPTH_BUFFER_BIT)
+   * and have the selection lines always on top of the other items.
+   */
+  void drawPoints(CGAL::Three::Viewer_interface* viewer) const {
+
+    QPainter *painter = viewer->getPainter();
+    QPen pen;
+    pen.setColor(QColor(Qt::green));
+    pen.setWidth(5);
+
+    painter->setPen(pen);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    for(std::size_t i=0; i<polyline->size(); ++i)
+    {
+      Polyline_2 poly = (*polyline)[i];
+      if(!poly.empty())
+        for(std::size_t j=0; j<poly.size()-1; ++j)
+        {
+          viewer->getPainter()->drawLine(poly[j].x(), poly[j].y(), poly[j+1].x(), poly[j+1].y());
+        }
+    }
   }
 
-  Scene_polylines_item::Polyline& poly() const
-  { return polyline->polylines.front(); }
+  Polyline_2& poly() const
+  { return polyline->front(); }
   
   bool update_polyline () const
   {
     if (contour_2d.size() < 2 ||
-	(!(poly().empty()) && scene_point (contour_2d.back ()) == poly().back()))
+        (!(poly().empty()) && contour_2d.back () == poly().back()))
       return false;
     
     if (rectangle)
       {
 	poly().clear();
 	
-	poly().push_back (scene_point (Point_2 (domain_rectangle.xmin(),
-						domain_rectangle.ymin())));
-	poly().push_back (scene_point (Point_2 (domain_rectangle.xmax(),
-						domain_rectangle.ymin())));
-	poly().push_back (scene_point (Point_2 (domain_rectangle.xmax(),
-						domain_rectangle.ymax())));
-	poly().push_back (scene_point (Point_2 (domain_rectangle.xmin(),
-						domain_rectangle.ymax())));
-	poly().push_back (scene_point (Point_2 (domain_rectangle.xmin(),
-						domain_rectangle.ymin())));
+        poly().push_back ( Point_2 (domain_rectangle.xmin(),
+                                domain_rectangle.ymin()));
+        poly().push_back ( Point_2 (domain_rectangle.xmax(),
+                                domain_rectangle.ymin()));
+        poly().push_back ( Point_2 (domain_rectangle.xmax(),
+                                domain_rectangle.ymax()));
+        poly().push_back ( Point_2 (domain_rectangle.xmin(),
+                                domain_rectangle.ymax()));
+        poly().push_back ( Point_2 (domain_rectangle.xmin(),
+                                                domain_rectangle.ymin()));
 
       }
     else
       {
-	if (!(poly().empty()) && scene_point (contour_2d.back ()) == poly().back())
+        if (!(poly().empty()) && contour_2d.back () == poly().back())
 	  return false;
 
 	poly().clear();
 
 	for (unsigned int i = 0; i < contour_2d.size (); ++ i)
-	  poly().push_back (scene_point (contour_2d[i]));
+          poly().push_back (contour_2d[i]);
       }
     return true;
   }
-
-  Point_3 scene_point (const Point_2& p) const
-  {
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    qglviewer::Camera* camera = viewer->camera();
-    qglviewer::Vec vp (p.x(), p.y(), 0.1);
-    qglviewer::Vec vsp = camera->unprojectedCoordinatesOf (vp);
-    
-    return Point_3 (vsp.x, vsp.y, vsp.z);
-  }
-
 
   
   void sample_mouse_path()
@@ -144,7 +151,7 @@ public:
 
     if (update_polyline ())
       {
-        polyline->invalidateOpenGLBuffers();
+
 	Q_EMIT itemChanged();
       }
   }
@@ -166,9 +173,17 @@ public:
       {
 	if (rectangle)
 	  return true;
-	
-	if (domain_freeform.has_on_bounded_side (Point_2 (p.x, p.y)))
-	  return true;
+/*
+ * domain_freeform.has_on_bounded_side() requires the polygon to be simple, which is never the case.
+ * However, it works very well even if the polygon is not simple, so we use this instead to avoid
+ * the cgal_assertion on is_simple().*/
+
+
+        if (CGAL::bounded_side_2(domain_freeform.container().begin(),
+                                 domain_freeform.container().end(),
+                                 Point_2(p.x, p.y),
+                                 domain_freeform.traits_member())  == CGAL::ON_BOUNDED_SIDE)
+          return true;
       }
     return false;
   }
@@ -266,7 +281,7 @@ protected:
 	    visualizer = new Scene_point_set_selection_visualizer(rectangle,
 								  point_set_item->bbox());
 	    visualizer->setName(tr("Point set selection visualizer"));
-	    visualizer->setRenderingMode (Wireframe);
+            visualizer->setRenderingMode (Points);
 	    visualizer->setVisible (true);
 
 	    // Hack to prevent camera for "jumping" when creating new item
