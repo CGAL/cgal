@@ -21,6 +21,7 @@
  * @brief The API which contains free template functions for SDF computation and mesh segmentation.
  */
 #include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <boost/config.hpp>
 
 namespace CGAL
@@ -64,7 +65,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
  * It is possible to compute raw SDF values (without post-processing). In such a case,
  * -1 is used to indicate when no SDF value could be computed for a facet.
  *
- * @pre @a triangle_mesh.is_pure_triangle()
+ * @pre `is_triangle_mesh(triangle_mesh)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `double` as value type
@@ -79,7 +80,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
  * @param traits traits class
  * @param ppmap point property map. An overload is provided with `get(boost::vertex_point,triangle_mesh)` as default.
  *
- * @return minimum and maximum raw SDF values if @a postprocess is `true`, otherwise minimum and maximum SDF values (before linear normalization)
+ * @return minimum and maximum raw SDF values if  `postprocess` is `true`, otherwise minimum and maximum SDF values (before linear normalization)
  */
 template <class TriangleMesh, class SDFPropertyMap, class PointPropertyMap
 #ifdef DOXYGEN_RUNNING
@@ -117,7 +118,7 @@ sdf_values( const TriangleMesh& triangle_mesh,
  *
  * See the section \ref Surface_mesh_segmentationPostprocessing for more details.
  *
- * @pre @a triangle_mesh.is_pure_triangle()
+ * @pre `is_triangle_mesh(triangle_mesh)`
  * @pre Raw values should be greater or equal to 0. -1 indicates when no value could be computed
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
@@ -133,7 +134,7 @@ std::pair<double, double>
 sdf_values_postprocessing(const TriangleMesh& triangle_mesh,
                           SDFPropertyMap sdf_values_map)
 {
-  CGAL_precondition(triangle_mesh.is_pure_triangle());
+  CGAL_precondition(is_triangle_mesh(triangle_mesh));
   return internal::Postprocess_sdf_values<TriangleMesh>().postprocess(triangle_mesh,
          sdf_values_map);
 }
@@ -155,8 +156,8 @@ sdf_values_postprocessing(const TriangleMesh& triangle_mesh,
  * \note There is no direct relation between the parameter `number_of_clusters`
  * and the final number of segments after segmentation. However, setting a large number of clusters will result in a detailed segmentation of the mesh with a large number of segments.
  *
- * @pre @a triangle_mesh.is_pure_triangle()
- * @pre @a number_of_clusters > 0
+ * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre `number_of_clusters > 0`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `double` as value type
@@ -252,8 +253,8 @@ segmentation_via_sdf_values(const TriangleMesh& triangle_mesh,
  * it is more efficient to first compute the SDF values using `CGAL::sdf_values()` and use them in different calls to
  * `CGAL::segmentation_from_sdf_values()`.
  *
- * @pre @a triangle_mesh.is_pure_triangle()
- * @pre @a number_of_clusters > 0
+ * @pre `is_triangle_mesh(triangle_mesh)`
+ * @pre `number_of_clusters > 0`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type
