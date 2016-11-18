@@ -90,9 +90,8 @@ namespace CGAL {
       Triangulation_vertex_base_3<Tr_Base_Gt>,
       Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
-    typedef Triangulation_3<Tr_Base_Gt,Tds,Lock_data_structure_> Tr_Base;
-
   public:
+    typedef Triangulation_3<Tr_Base_Gt,Tds,Lock_data_structure_> Tr_Base;
 
     typedef Tds                                   Triangulation_data_structure;
     typedef Gt                                    Geom_traits;

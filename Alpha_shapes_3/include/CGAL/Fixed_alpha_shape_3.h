@@ -407,7 +407,7 @@ public:
     //Do remove the vertex from the underlying triangulation
     Dt tmp;
     typename Dt:: template Vertex_remover<Dt> remover(tmp);
-    typedef CGAL::Triangulation_3<typename Dt::Geom_traits,typename Dt::Triangulation_data_structure> Tr_Base;
+    typedef typename Dt::Tr_Base Tr_Base;
     Tr_Base::remove(vertex_to_remove,remover);
     
     if (this->dimension()<3){
