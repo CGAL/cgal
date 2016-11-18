@@ -76,9 +76,9 @@ bool is_locally_convex(Polyhedron P, Vpmap vpmap, Facet_handle f_hdl, const Trai
 template<class Polyhedron, class Traits>
 bool is_strongly_convex_3(const Polyhedron& P, const Traits& traits)
 { 
-  typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<Polyhedron>::vertex_iterator vertex_iterator;
-  typedef boost::graph_traits<Polyhedron>::face_iterator face_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
 
   typedef typename Traits::Point_3             Point_3; 
   typedef typename Traits::Ray_3               Ray_3; 
@@ -213,17 +213,16 @@ bool all_points_inside( ForwardIterator first,
 			const Traits&  traits)
 {  
   typedef typename Traits::Plane_3			   Plane_3; 
-  typedef typename boost::graph_traits<Polyhedron::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
    typename Traits::Has_on_positive_side_3   has_on_positive_side = 
              traits.has_on_positive_side_3_object();
 
    for (ForwardIterator p_it = first; p_it != last; p_it++)
    {
-      Facet_iterator f_it;
       BOOST_FOREACH(face_descriptor fd, faces(P))
       {
 	Plane_3 plane;
-	get_plane2(P,plane, f_it);
+	get_plane2(P,plane, fd);
 	if (has_on_positive_side(plane,*p_it)){
              return false;
 	}

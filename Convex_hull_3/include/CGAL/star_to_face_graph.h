@@ -58,7 +58,7 @@ void star_to_face_graph(const Triangulation_3& t,
       if(no_infinite_faces && t.is_infinite(vhj)){
         infinite_face = true;
       } else {
-        std::pair<Vertex_map::iterator,bool> res 
+        std::pair<typename Vertex_map::iterator,bool> res 
           = vertex_map.insert(std::make_pair(vhj,nullvertex));
         if(res.second){
           res.first->second = add_vertex(vhj->point(), fg);

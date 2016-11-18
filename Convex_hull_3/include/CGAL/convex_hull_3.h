@@ -309,7 +309,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
     }
   }
 
-  std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> vertices(CH_2.size());
+  std::vector<typename boost::graph_traits<Polyhedron_3>::vertex_descriptor> vertices(CH_2.size());
   BOOST_FOREACH(const Point_3& p, CH_2){
     vertices.push_back(add_vertex(p,P));
   }
