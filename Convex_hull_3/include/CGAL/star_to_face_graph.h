@@ -48,6 +48,7 @@ void star_to_face_graph(const Triangulation_3& t,
   std::vector<Cell_handle>  cells;
   t.incident_cells(t.infinite_vertex(),std::back_inserter(cells));
   CGAL::cpp11::array<vertex_descriptor,3> face;
+
   BOOST_FOREACH(Cell_handle ch, cells){
     bool infinite_face = false;
     int vhi = ch->index(vh);
@@ -60,7 +61,7 @@ void star_to_face_graph(const Triangulation_3& t,
         std::pair<Vertex_map::iterator,bool> res 
           = vertex_map.insert(std::make_pair(vhj,nullvertex));
         if(res.second){
-          res.first->second = add_vertex(ch->vertex(i)->point(), fg);
+          res.first->second = add_vertex(vhj->point(), fg);
         }
         face[i] = res.first->second;
       }
