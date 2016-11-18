@@ -1,9 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/star_to_face_graph.h>
+#include <CGAL/convexity_check_3.h>
 
 #include <list>
 
@@ -11,7 +12,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
 typedef K::Point_3                                              Point_3;
 typedef CGAL::Delaunay_triangulation_3<K>                       Delaunay;
 typedef Delaunay::Vertex_handle                                 Vertex_handle;
-typedef CGAL::Polyhedron_3<K>                                   Polyhedron_3;
+typedef CGAL::Surface_mesh<Point_3>                             Polyhedron_3;
 
 int main()
 {
