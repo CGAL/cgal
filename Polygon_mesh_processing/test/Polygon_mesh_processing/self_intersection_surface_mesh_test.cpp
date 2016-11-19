@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -24,8 +25,8 @@ test_self_intersections(const char* filename, const bool expected)
   std::ifstream input(filename);
   Mesh m;
 
-  if ( !input || !(input >> m) ){
-    std::cerr << "Error: can not read file.";
+  if ( !input || !(input >> m) ) {
+    std::cerr << "Error: cannot read file: " << filename << std::endl;
     return 1;
   }
 
@@ -48,8 +49,8 @@ test_self_intersections(const char* filename, const bool expected)
   bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect(m,
     CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
 
-  std::cerr << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
-  std::cerr << (intersecting_2 ? "There is a self-intersection." :
+  std::cout << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
+  std::cout << (intersecting_2 ? "There is a self-intersection." :
                                  "There are no self-intersections.") << std::endl;
 
   assert(intersecting_1 == intersecting_2);
@@ -62,28 +63,58 @@ test_self_intersections(const char* filename, const bool expected)
 
 int main(int argc, char** argv)
 {
-  const char* first_file_name = (argc > 1) ? argv[1] : "data/elephant.off";
-  if(argc > 1) assert(argc > 2);
-  const bool first_expected = (argc > 1) ? std::atoi(argv[2]) : false;
+  // If file(s) are provided, the associated expected result must also be provided.
+  // Note that this expected value is a Boolean that is passed in command line
+  // with either 'true' or 'false' (and not integers), that is for example:
+  // > self_intersection_surface_mesh_test data/U.off false
 
-  const char* second_file_name = (argc > 3) ? argv[3] : "data/mannequin-devil.off";
-  if(argc > 3) assert(argc > 4);
-  const bool second_expected = (argc > 3) ? std::atoi(argv[4]) : true;
+  // First test ----------------------------------------------------------------
+  bool expected = false;
+  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  if(argc > 1) {
+    assert(argc > 2);
+    std::stringstream ss(argv[2]);
+    ss >> std::boolalpha >> expected;
+    assert(!ss.fail()); // make sure that argv[2] is either 'true' or 'false'
+  }
 
-  const char* third_file_name = (argc > 5) ? argv[5] : "data/overlapping_triangles.off";
-  if(argc > 5) assert(argc > 6);
-  const bool third_expected = (argc > 5) ? std::atoi(argv[6]) : true;
+  std::cout << "First test (Epic):" << std::endl;
+  int r = test_self_intersections<Epic>(filename, expected);
 
+  std::cout << "First test (Epec):" << std::endl;
+  r += test_self_intersections<Epec>(filename, expected);
 
-  std::cout << "Testing with Epic:" << std::endl;
-  int r = test_self_intersections<Epic>(first_file_name, first_expected);
-  r += test_self_intersections<Epic>(second_file_name, second_expected);
-  r += test_self_intersections<Epic>(third_file_name, third_expected);
+  // Second test ---------------------------------------------------------------
+  expected = true;
+  filename = (argc > 3) ? argv[3] : "data/mannequin-devil.off";
+  if(argc > 3) {
+    assert(argc > 4);
+    std::stringstream ss(argv[4]);
+    ss >> std::boolalpha >> expected;
+    assert(!ss.fail());
+  }
 
-  std::cout << "Testing with Epec:" << std::endl;
-  r += test_self_intersections<Epec>(first_file_name, first_expected);
-  r += test_self_intersections<Epec>(second_file_name, second_expected);
-  r += test_self_intersections<Epec>(third_file_name, third_expected);
+  std::cout << "Second test (Epic):" << std::endl;
+  r += test_self_intersections<Epic>(filename, expected);
+
+  std::cout << "Second test (Epec):" << std::endl;
+  r += test_self_intersections<Epec>(filename, expected);
+
+  // Third test ----------------------------------------------------------------
+  expected = true;
+  filename = (argc > 5) ? argv[5] : "data/overlapping_triangles.off";
+  if(argc > 5) {
+    assert(argc > 6);
+    std::stringstream ss(argv[6]);
+    ss >> std::boolalpha >> expected;
+    assert(!ss.fail());
+  }
+
+  std::cout << "Third test (Epic):" << std::endl;
+  r += test_self_intersections<Epic>(filename, expected);
+
+  std::cout << "Third test (Epec):" << std::endl;
+  r += test_self_intersections<Epec>(filename, expected);
 
   return r;
 }
