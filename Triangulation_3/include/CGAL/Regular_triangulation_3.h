@@ -38,6 +38,7 @@
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
 
