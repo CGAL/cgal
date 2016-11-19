@@ -22,24 +22,22 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 
-#include <CGAL/basic.h>
-
 namespace CGAL {
 
 
 
-template < class K, class Weight = typename K::RT >
+template < class K_, class Weight = typename K_::RT >
 class Regular_triangulation_euclidean_traits_3
-  : public K
+  : public K_
 {
 public:
   Regular_triangulation_euclidean_traits_3() {}
-  Regular_triangulation_euclidean_traits_3(const K& k): K(k) {}
+  Regular_triangulation_euclidean_traits_3(const K_& k): K_(k) {}
 
-  typedef K                                          Kernel;
-  typedef typename K::FT                             FT;
-  typedef typename K::Point_3                        Bare_point;
-  typedef typename K::Weighted_point_3               Weighted_point;
+  typedef K_                                         Kernel;
+  typedef typename K_::FT                            FT;
+  typedef typename K_::Point_3                       Bare_point;
+  typedef typename K_::Weighted_point_3              Weighted_point;
   typedef Weighted_point                             Weighted_point_3;
   typedef Weighted_point                             Point_3;
 };
