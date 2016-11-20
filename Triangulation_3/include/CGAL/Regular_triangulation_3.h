@@ -79,8 +79,8 @@ namespace CGAL {
   : public Triangulation_3<
     Regular_triangulation_euclidean_traits_3<Gt>,
       typename Default::Get<Tds_, Triangulation_data_structure_3 <
-                                    Triangulation_vertex_base_3<Regular_triangulation_euclidean_traits_3<Gt> >,
-                                    Regular_triangulation_cell_base_3<Gt > > >::type,
+                                    Regular_triangulation_vertex_base_3<Gt>,
+                                    Regular_triangulation_cell_base_3<Gt> > >::type,
       Lock_data_structure_>
   {
 
@@ -88,7 +88,7 @@ namespace CGAL {
     typedef Regular_triangulation_euclidean_traits_3<Gt> Tr_Base_Gt;
 
     typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
-      Triangulation_vertex_base_3<Tr_Base_Gt>,
+      Regular_triangulation_vertex_base_3<Gt>,
       Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
   public:
