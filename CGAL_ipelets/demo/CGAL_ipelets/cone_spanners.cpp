@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
 #include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Construct_theta_graph_2.h>
 #include <CGAL/Construct_yao_graph_2.h>
@@ -10,9 +10,9 @@
 
 namespace CGAL_cone_spanners {
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel        Kernel;
-typedef Kernel::Point_2                                            Point_2;
-typedef Kernel::Direction_2                                        Direction_2;
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_root_of Kernel;
+typedef Kernel::Point_2                                                Point_2;
+typedef Kernel::Direction_2                                            Direction_2;
 
 /* Note: due to a bug in the boost library, using a directed graph
  * will cause a compilation error with g++ and clang++ when using c++11 standard.
