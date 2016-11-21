@@ -20,7 +20,6 @@
 //               : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 
 #include <CGAL/Regular_triangulation_3.h>
-
 #include <iostream>
 #include <cassert>
 #include <list>

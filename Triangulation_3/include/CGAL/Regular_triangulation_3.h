@@ -131,7 +131,12 @@ namespace CGAL {
     typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
     typedef typename Gt::Weighted_point_3            Weighted_point;
-    typedef typename Gt::Point_3                     Bare_point;
+    typedef typename boost::mpl::eval_if_c<
+      internal::Has_nested_type_Bare_point<Gt>::value,
+      typename internal::Bare_point_type<Gt>,
+      boost::mpl::identity<typename Gt::Point_3>
+    >::type                                          Bare_point;
+
     typedef typename Gt::Segment_3                   Segment;
     typedef typename Gt::Triangle_3                  Triangle;
     typedef typename Gt::Tetrahedron_3               Tetrahedron;
