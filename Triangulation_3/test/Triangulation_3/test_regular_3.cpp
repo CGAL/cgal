@@ -436,9 +436,6 @@ void test_RT()
 
 int main()
 {
-  std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
-            << std::endl;
-
   test_RT<CGAL::Regular_triangulation_3<traits> >();
   
 #ifdef CGAL_LINKED_WITH_TBB

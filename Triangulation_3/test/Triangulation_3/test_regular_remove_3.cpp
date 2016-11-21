@@ -321,9 +321,6 @@ bool test_case (std::istream &is)
 
 int main(int argc, char **argv)
 {
-    std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
-            << std::endl;
-
     // Test various data sets that crashed the code at some point in the past.
     // File format is:
     // number of points of first data set

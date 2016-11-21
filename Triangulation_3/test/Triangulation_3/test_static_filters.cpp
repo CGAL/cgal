@@ -9,16 +9,15 @@
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 typedef CGAL::Simple_cartesian<double>                                    Double_kernel;
 typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >           Exact_kernel;
 typedef CGAL::Filtered_kernel<Double_kernel, true>                        FK_with_SF;
 typedef CGAL::Filtered_kernel<Double_kernel, false>                       FK_without_SF;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<Exact_kernel>      Exact_traits;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK_without_SF>     FTr_without_SF;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK_with_SF>        FTr_with_SF;
+typedef Exact_kernel                                                      Exact_traits;
+typedef FK_without_SF                                                     FTr_without_SF;
+typedef FK_with_SF                                                        FTr_with_SF;
 typedef std::pair<double,double>                                          NT_pair;
 
 template < class K1, class K2, class Cmp = CGAL::dont_check_equal >
@@ -77,7 +76,7 @@ double my_rand()
 Weighted_point_3 my_rand_wp3()
 {
   double x = my_rand(), y = my_rand(), z = my_rand(), r=my_rand();
-  return Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
+  return Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Point_3(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Point_3(x, y, z),r) );
 }
 
 // Perturbation with given maximum relative epsilon.
@@ -87,7 +86,7 @@ void perturb(Weighted_point_3 &p, double rel_eps)
   double y = CGAL_IA_FORCE_TO_DOUBLE(p.first.y()*(1+rand_base()*rel_eps));
   double z = CGAL_IA_FORCE_TO_DOUBLE(p.first.z()*(1+rand_base()*rel_eps));
   double r = CGAL_IA_FORCE_TO_DOUBLE(p.first.weight()*(1+rand_base()*rel_eps));
-  p=Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Bare_point(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Bare_point(x, y, z),r) );
+  p=Weighted_point_3( FTr_with_SF::Weighted_point_3(FTr_with_SF::Point_3(x, y, z),r) , FTr_without_SF::Weighted_point_3(FTr_without_SF::Point_3(x, y, z),r) );
 }
 
 void toto (int){}

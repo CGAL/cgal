@@ -2,11 +2,8 @@
 #include <CGAL/Fixed_alpha_shape_cell_base_3.h>
 #include <CGAL/Fixed_alpha_shape_vertex_base_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#ifndef CGAL_NO_DEPRECATED_CODE
-#  include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
-#endif
+
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <iostream>
 #include <fstream>
@@ -16,7 +13,6 @@
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
-//#include "Filtered_weighted_alpha_shape_euclidean_traits_3.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     K;
 typedef CGAL::Regular_triangulation_vertex_base_3<K>                                 Vbb;

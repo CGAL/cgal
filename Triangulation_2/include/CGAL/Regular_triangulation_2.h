@@ -44,18 +44,27 @@
 
 namespace CGAL { 
 
+template < typename K_ >
+struct Weighted_point_mapper_2 
+  :   public K_ 
+{
+  typedef typename K_::Weighted_point_2 Point_2;
+
+  Weighted_point_mapper_2() {}
+  Weighted_point_mapper_2(const K_& k) : K_(k) {}
+};
+
 template < class Gt, 
            class Tds  = Triangulation_data_structure_2 <
-                        Regular_triangulation_vertex_base_2<
-                          Regular_triangulation_euclidean_traits_2<Gt, typename Gt::RT> >,
+                        Regular_triangulation_vertex_base_2<Gt>,
 		        Regular_triangulation_face_base_2<Gt> > >
 class Regular_triangulation_2 
   : public Triangulation_2<
-      Regular_triangulation_euclidean_traits_2<Gt>,
+      Weighted_point_mapper_2<Gt>,
       Tds>
 {
   typedef Regular_triangulation_2<Gt, Tds>                         Self;
-  typedef Regular_triangulation_euclidean_traits_2<Gt>             RT_traits;
+  typedef Weighted_point_mapper_2<Gt>                              RT_traits;
   typedef Triangulation_2<RT_traits, Tds>                          Base;
 public:
   typedef Tds                                  Triangulation_data_structure;

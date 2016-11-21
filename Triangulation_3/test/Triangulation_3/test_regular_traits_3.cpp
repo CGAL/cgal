@@ -19,6 +19,8 @@
 //
 // Author(s)     : Mariette Yvinec
 
+#define CGAL_NO_DEPRECATION_WARNINGS
+
 #include <cassert>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

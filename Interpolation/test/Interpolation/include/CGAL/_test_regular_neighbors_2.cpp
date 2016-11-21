@@ -68,8 +68,8 @@ _test_regular_neighbors_2( const Triangul & )
 
   typedef typename Triangul::Geom_traits          Gt;
   typedef typename Gt::Weighted_point_2           Weighted_point;
-  typedef typename Gt::Bare_point                 Bare_point;
-  typedef typename Gt::Rep::FT                    Coord_type;
+  typedef typename Gt::Point_2                    Bare_point;
+  typedef typename Gt::FT                         Coord_type;
 
   typedef std::vector< std::pair< Weighted_point, Coord_type > >
                                                   Point_coordinate_vector;
