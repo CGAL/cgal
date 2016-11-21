@@ -28,6 +28,17 @@
 
 #include <set>
 
+template < typename K_ >
+struct Weighted_point_mapper_3 
+  :   public K_ 
+{
+  typedef typename K_::Weighted_point_3 Point_3;
+
+  Weighted_point_mapper_3() {}
+  Weighted_point_mapper_3(const K_& k) : K_(k) {}
+};
+
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
@@ -37,7 +48,6 @@
 
 
 #include <CGAL/Triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/internal/Triangulation/Has_nested_type_Bare_point.h>
@@ -77,7 +87,7 @@ namespace CGAL {
   template < class Gt, class Tds_ = Default, class Lock_data_structure_ = Default >
   class Regular_triangulation_3
   : public Triangulation_3<
-    Regular_triangulation_euclidean_traits_3<Gt>,
+    Weighted_point_mapper_3<Gt>,
       typename Default::Get<Tds_, Triangulation_data_structure_3 <
                                     Regular_triangulation_vertex_base_3<Gt>,
                                     Regular_triangulation_cell_base_3<Gt> > >::type,
@@ -85,7 +95,7 @@ namespace CGAL {
   {
 
     typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
-    typedef Regular_triangulation_euclidean_traits_3<Gt> Tr_Base_Gt;
+    typedef Weighted_point_mapper_3<Gt> Tr_Base_Gt;
 
     typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
       Regular_triangulation_vertex_base_3<Gt>,

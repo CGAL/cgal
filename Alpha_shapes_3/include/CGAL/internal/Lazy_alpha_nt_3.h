@@ -65,7 +65,7 @@ struct Types_for_alpha_nt_3< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_a
 //Point types
   typedef typename Approx_traits::Weighted_point Approx_point;
   typedef typename Exact_traits::Weighted_point  Exact_point;
-  typedef typename Input_traits::Weighted_point  Input_point;
+  typedef typename Input_traits::Weighted_point_3  Input_point;
 //Constructions 
   typedef typename Approx_traits::Compute_squared_radius_smallest_orthogonal_sphere_3           Approx_squared_radius;
   typedef typename Exact_traits::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius; 
@@ -322,7 +322,7 @@ template <class GeomTraits>
 struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Tag_true>
 {
   typedef Lazy_alpha_nt_3<GeomTraits,typename GeomTraits::Kernel,true,Tag_true> Type_of_alpha;
-  typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Weighted_point> Functor;
+  typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Weighted_point_3> Functor;
   struct Compute_squared_radius_3{
     template<class As>
     Functor operator()(const As&){return Functor();}    

@@ -52,8 +52,8 @@ _test_weighted_alpha_shape_3()
   typedef AS                 Alpha_shape_3;
 
   //typedef typename AS::Point Point;
-  typedef typename AS::Gt::Weighted_point Weighted_point;
-  typedef typename AS::Gt::Bare_point     Bare_point;
+  typedef typename AS::Gt::Weighted_point_3 Weighted_point;
+  typedef typename AS::Gt::Point_3     Bare_point;
   typedef typename AS::Alpha_iterator Alpha_iterator;
   std::list<Weighted_point> L;
   bool verbose = false;

@@ -51,7 +51,7 @@ the documentation of the operations for more details.
 \sa `CGAL::Delaunay_triangulation_3` 
 */
 template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SurjectiveLockDataStructure >
-class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure> {
+class Regular_triangulation_3 : public Triangulation_3<Weighted_point_mapper<RegularTriangulationTraits_3>,TriangulationDataStructure_3,SurjectiveLockDataStructure> {
 public:
 
 /// \name Types 
@@ -61,7 +61,7 @@ public:
 The type for points 
 `p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
 */ 
-typedef RegularTriangulationTraits_3::Bare_point Bare_point; 
+typedef RegularTriangulationTraits_3::Point_3 Bare_point; 
 
 /*!
 

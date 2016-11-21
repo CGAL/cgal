@@ -20,7 +20,6 @@
 //               : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <iostream>
 #include <cassert>
@@ -32,8 +31,7 @@
 
 bool del=true;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel traits;
 
 
 // Explicit instantiation of the whole class :
@@ -448,7 +446,7 @@ int main()
   typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                      Lock_ds;
   typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Triangulation_vertex_base_3<traits>, 
+    CGAL::Regular_triangulation_vertex_base_3<traits>, 
     CGAL::Regular_triangulation_cell_base_3<traits>, 
     CGAL::Parallel_tag >	                            Tds_parallel;
   typedef CGAL::Regular_triangulation_3<

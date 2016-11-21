@@ -40,13 +40,11 @@ public:
 };
 
 
-//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-
 struct My_simulation_traits {
   typedef My_simulation_traits This;
 
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
-  //typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
