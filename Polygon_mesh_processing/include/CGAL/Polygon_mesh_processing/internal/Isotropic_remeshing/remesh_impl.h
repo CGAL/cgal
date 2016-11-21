@@ -1279,37 +1279,43 @@ private:
       //move source at target
       put(vpmap_, vs, get(vpmap_, vt));
 
+      //collect halfedges around vs and vt
+      std::vector<halfedge_descriptor> hedges;
+      BOOST_FOREACH(halfedge_descriptor hd,
+        halfedges_around_target(h, mesh_))
+          hedges.push_back(hd);
+      BOOST_FOREACH(halfedge_descriptor hd,
+        halfedges_around_target(opposite(h, mesh_), mesh_))
+          hedges.push_back(hd);
+
       //collect normals to faces around vs AND vt
       //vertices are at the same location, but connectivity is still be same,
       //with plenty of degenerate triangles (which are common to both stars)
-      std::vector<Vector_3> normals;
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    halfedges_around_target(h, mesh_))
+      std::vector<Vector_3> normals_patch1;
+      std::vector<Vector_3> normals_patch2;
+      Patch_id patch1 = -1, patch2 = -1;
+      BOOST_FOREACH(halfedge_descriptor hd, hedges)
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
-        //n can be 0 in the splitting step because we remove degenerate faces
-        //only at the end of the splitting step
-        if(n != CGAL::NULL_VECTOR)
-          normals.push_back(n);
-      }
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    halfedges_around_target(opposite(h, mesh_), mesh_))
-      {
-        Vector_3 n = compute_normal(face(hd, mesh_));
-        if(n != CGAL::NULL_VECTOR)
-          normals.push_back(n);
+        if (n == CGAL::NULL_VECTOR) //for degenerate faces
+          continue;
+        Patch_id pid = get_patch_id(face(hd, mesh_));
+
+        if (patch1 == Patch_id(-1))
+          patch1 = pid; //not met yet
+        else if (patch2 == Patch_id(-1) && patch1 != pid)
+          patch2 = pid; //not met yet
+        CGAL_assertion(pid == patch1 || pid == patch2);
+
+        if (pid == patch1)     normals_patch1.push_back(n);
+        else                   normals_patch2.push_back(n);
       }
 
+      //on each surface patch,
       //check all normals have same orientation
-      bool res = true;
-      for(std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-      {
-        if (normals[i-1] * normals[i] <= 0.)
-        {
-          res = false;
-          break;
-        }
-      }
+      bool res = check_orientation(normals_patch1)
+              && check_orientation(normals_patch2);
+
       //restore position
       put(vpmap_, vs, ps);
       return res;
