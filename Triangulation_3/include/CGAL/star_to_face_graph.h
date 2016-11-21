@@ -32,15 +32,17 @@ namespace CGAL {
 
 
 template<class Triangulation_3,class FG>
-void star_to_face_graph(const Triangulation_3& t,
-                        typename Triangulation_3::Vertex_handle vh,
-                        FG& fg, 
-                        bool no_infinite_faces = true)
+typename boost::graph_trait<FG>::vertex_descriptor
+star_to_face_graph(const Triangulation_3& t,
+                   typename Triangulation_3::Vertex_handle vh,
+                   FG& fg, 
+                   bool no_infinite_faces = true)
 {
   typedef typename Triangulation_3::Cell_handle Cell_handle;
   typedef typename Triangulation_3::Vertex_handle Vertex_handle;
   typedef typename boost::graph_traits<FG>::vertex_descriptor vertex_descriptor;
 
+  vertex_descriptor inf;
   vertex_descriptor nullvertex = boost::graph_traits<FG>::null_vertex();
   fg.clear();
   typedef boost::unordered_map<Vertex_handle, vertex_descriptor> Vertex_map;
@@ -62,6 +64,9 @@ void star_to_face_graph(const Triangulation_3& t,
           = vertex_map.insert(std::make_pair(vhj,nullvertex));
         if(res.second){
           res.first->second = add_vertex(vhj->point(), fg);
+          if(t.is_infinite(vhj)){
+            inf = res.first->second;
+          }
         }
         face[i] = res.first->second;
       }
@@ -70,6 +75,7 @@ void star_to_face_graph(const Triangulation_3& t,
       Euler::add_face(face,fg);
     }
   }
+  return inf;
 }
 
 } //namespace CGAL
