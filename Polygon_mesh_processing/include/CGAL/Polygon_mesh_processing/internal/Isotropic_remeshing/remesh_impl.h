@@ -1718,9 +1718,9 @@ private:
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
 
-        if (patch1 == -1)
+        if (patch1 == Patch_id(-1))
           patch1 = pid; //not met yet
-        else if (patch2 == -1 && patch1 != pid)
+        else if (patch2 == Patch_id(-1) && patch1 != pid)
           patch2 = pid; //not met yet
         CGAL_assertion(pid == patch1 || pid == patch2);
 
