@@ -17,7 +17,7 @@ that is `P` will contain only triangular facets.
 \tparam Polyhedron_3 must be a model of `MutableFaceGraph`.
 \tparam Traits must be a model of the concept `ConvexHullTraits_3`. 
 For the purposes of checking the postcondition that the convex hull 
-is valid, `Traits` should also be a model of the concept 
+is valid, `Traits` must also be a model of the concept 
 `IsStronglyConvexTraits_3`. 
 
 
@@ -53,7 +53,7 @@ in case the result is a polyhedron.
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`. 
 \tparam Traits must be model of the concept `ConvexHullTraits_3`. 
 For the purposes of checking the postcondition that the convex hull 
-is valid, `Traits` should also be a model of the concept 
+is valid, `Traits` must also be a model of the concept 
 `IsStronglyConvexTraits_3`.   Furthermore, `Traits` must define a type `Polyhedron_3` that is a model of 
 `MutableFaceGraph`. 
 
