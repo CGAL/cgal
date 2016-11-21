@@ -1002,7 +1002,7 @@ private:
   Patch_id get_patch_id(const face_descriptor& f) const
   {
     if (f == boost::graph_traits<PM>::null_face())
-      return Patch_id();
+      return Patch_id(-1);
     return get(patch_ids_map_, f);
   }
 
