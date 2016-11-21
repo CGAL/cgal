@@ -1334,7 +1334,7 @@ private:
         if (nb_incident_features > 2)
           return true;
       }
-      return false;
+      return (nb_incident_features == 1);
     }
 
     Vector_3 compute_normal(const face_descriptor& f) const
