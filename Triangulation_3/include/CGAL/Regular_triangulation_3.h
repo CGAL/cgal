@@ -2074,9 +2074,9 @@ dual(Cell_handle c) const
   template <class RegularTriangulation_3>
   class Regular_triangulation_3<Gt, Tds, Lds>::Vertex_remover {
     typedef RegularTriangulation_3 Regular;
-    typedef typename Gt::Point_3 Point;
+    typedef typename Gt::Weighted_point_3 Weighted_point;
   public:
-    typedef typename std::vector<Point>::iterator
+    typedef typename std::vector<Weighted_point>::iterator
       Hidden_points_iterator;
 
     Vertex_remover(Regular &tmp_) : tmp(tmp_) {}
@@ -2095,15 +2095,15 @@ dual(Cell_handle c) const
       return hidden.end();
     }
 
-    Bounded_side side_of_bounded_circle(const Point &p, const Point &q,
-      const Point &r, const Point &s, bool perturb = false) const {
+    Bounded_side side_of_bounded_circle(const Weighted_point &p, const Weighted_point &q,
+      const Weighted_point &r, const Weighted_point &s, bool perturb = false) const {
         return tmp.side_of_bounded_power_circle(p,q,r,s,perturb);
     }
 
   private:
     // The removal of v may un-hide some points,
     // Space functions output them.
-    std::vector<Point> hidden;
+    std::vector<Weighted_point> hidden;
   };
 
   // The displacement method works only
