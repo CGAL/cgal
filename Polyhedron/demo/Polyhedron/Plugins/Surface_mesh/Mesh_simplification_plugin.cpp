@@ -1,6 +1,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Scene_polyhedron_item.h"
+#include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
 
 #include <QApplication>
@@ -13,13 +14,15 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
 #include "ui_Mesh_simplification_dialog.h"
 
 class Custom_stop_predicate
 {
   bool m_and;
-    CGAL::Surface_mesh_simplification::Count_stop_predicate<Polyhedron> m_count_stop;
+  CGAL::Surface_mesh_simplification::Count_stop_predicate<Polyhedron> m_count_stop;
   CGAL::Surface_mesh_simplification::Edge_length_stop_predicate<double> m_length_stop;
   
 public:
@@ -31,7 +34,6 @@ public:
               << " * Number of edges = " << nb_edges << std::endl
               << (use_and ? " AND " : " OR ") << std::endl
               << " * Minimum edge length = " << edge_length << std::endl;
-
   }
 
   template <typename Profile>
@@ -39,11 +41,11 @@ public:
                    std::size_t initial_count, std::size_t current_count) const 
   {
     if (m_and)
-      return (m_count_stop(current_count, edge_profile, initial_count, current_count)
-              && m_length_stop(current_count, edge_profile, initial_count, current_count));
+      return (m_count_stop(current_cost, edge_profile, initial_count, current_count)
+              && m_length_stop(current_cost, edge_profile, initial_count, current_count));
     else
-      return (m_count_stop(current_count, edge_profile, initial_count, current_count)
-              || m_length_stop(current_count, edge_profile, initial_count, current_count));
+      return (m_count_stop(current_cost, edge_profile, initial_count, current_count)
+              || m_length_stop(current_cost, edge_profile, initial_count, current_count));
   }
 
 };
@@ -78,7 +80,8 @@ public:
 
   }
   bool applicable(QAction*) const { 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
+      || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
   }
 public Q_SLOTS:
   void on_actionSimplify_triggered();
@@ -93,12 +96,17 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  Scene_polyhedron_item* item = 
+  Scene_polyhedron_item* poly_item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  if(item)
+  Scene_polyhedron_selection_item* selection_item =
+    qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
+
+  if (poly_item || selection_item)
   {
-    Polyhedron* pMesh = item->polyhedron();
+    Polyhedron& pmesh = (poly_item != NULL)
+      ? *poly_item->polyhedron()
+      : *selection_item->polyhedron();
 
     // get option
     QDialog dialog(mw);
@@ -109,13 +117,16 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     connect(ui.buttonBox, SIGNAL(rejected()),
             &dialog, SLOT(reject()));
 
-    Scene_interface::Bbox bbox = item->bbox();
+    Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
+      : (selection_item != NULL ? selection_item->bbox()
+        : scene->bbox());
+
     double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
                                      + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) +
                                      (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
     
-    ui.m_nb_edges->setValue ((int)(pMesh->size_of_halfedges () / 4));
-    ui.m_nb_edges->setMaximum ((int)(pMesh->size_of_halfedges ()));
+    ui.m_nb_edges->setValue ((int)(pmesh.size_of_halfedges () / 4));
+    ui.m_nb_edges->setMaximum ((int)(pmesh.size_of_halfedges ()));
     ui.m_edge_length->setValue (diago_length * 0.05);
 
     // check user cancellation
@@ -137,15 +148,41 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
                                 (ui.m_use_edge_length->isChecked()
                                  ? ui.m_edge_length->value()
                                  : std::numeric_limits<double>::max()));
+
+    if (selection_item)
+      {
+        CGAL::Surface_mesh_simplification::Constrained_placement
+          <CGAL::Surface_mesh_simplification::LindstromTurk_placement
+           <Polyhedron>,
+           Scene_polyhedron_selection_item::Is_constrained_map
+           <Scene_polyhedron_selection_item::Selection_set_edge> >
+          placement (selection_item->constrained_edges_pmap());
+        
+        CGAL::Surface_mesh_simplification::edge_collapse
+          (pmesh, stop,
+           CGAL::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
+           .get_placement(placement));
+      }
+    else
+      {
+        CGAL::Surface_mesh_simplification::edge_collapse
+          (pmesh, stop,
+           CGAL::parameters::vertex_index_map(get(boost::vertex_index, pmesh)));
+      }
     
-    CGAL::Surface_mesh_simplification::edge_collapse( *pMesh, stop,
-                        CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,*pMesh))
-                                         .halfedge_index_map(get(CGAL::halfedge_external_index,*pMesh)));
     std::cout << "ok (" << time.elapsed() << " ms, " 
-      << pMesh->size_of_halfedges() / 2 << " edges)" << std::endl;
+      << pmesh.size_of_halfedges() / 2 << " edges)" << std::endl;
 
     // update scene
-    item->invalidateOpenGLBuffers();
+    if (poly_item != NULL)
+      poly_item->invalidateOpenGLBuffers();
+    else
+      {
+        selection_item->poly_item_changed();
+        selection_item->changed_with_poly_item();
+        selection_item->invalidateOpenGLBuffers();
+      }
+
     scene->itemChanged(index);
     QApplication::restoreOverrideCursor();
   }
