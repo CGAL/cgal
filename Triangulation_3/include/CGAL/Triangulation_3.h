@@ -397,6 +397,7 @@ public:
   typedef typename Tds::Concurrency_tag        Concurrency_tag;
 
   typedef typename Tds::Vertex                 Vertex;
+  CGAL_static_assertion((boost::is_same<Point, typename Vertex::Point>::value));
   typedef typename Tds::Cell                   Cell;
   typedef typename Tds::Facet                  Facet;
   typedef typename Tds::Edge                   Edge;

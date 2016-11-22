@@ -252,11 +252,11 @@ void make_one_run(const char* filename){
   std::cout << "Build Fixed weighted alpha complex" << std::endl;
   WFixed_AS wfixed_as(T);
  
-  
 //copy triangulation for family alpha-shape
   WDT T1;
   T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(),wfixed_as.infinite_vertex() ) );
   std::cout << "Build family weighted alpha complex" << std::endl;
+
   WAS w_as(T1,0,WAS::GENERAL);
   
 
