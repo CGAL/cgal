@@ -14,9 +14,9 @@ typedef CGAL::Regular_triangulation_3<K>       Regular;
 #include <fstream>
 
 #include <CGAL/Triangulation_simplex_3.h>
-typedef Regular_traits::RT                     Weight;
-typedef Regular_traits::Point_3                Point;
-typedef Regular_traits::Weighted_point_3       Weighted_point;
+typedef K::RT                                  Weight;
+typedef K::Point_3                             Point;
+typedef K::Weighted_point_3                    Weighted_point;
 typedef Regular::Vertex_handle                 Vertex_handle;
 typedef Regular::Edge                          Edge;
 typedef Regular::Facet                         Facet;
