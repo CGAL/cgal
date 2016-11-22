@@ -875,6 +875,34 @@ public:
 
   /// @}
 
+  bool add_seam(TM_vertex_descriptor tmvd_s, TM_vertex_descriptor tmvd_t)
+  {
+    std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tmvd_s, tmvd_t, tm);
+    if(!tmed.second) {
+      std::cout << "was ignored because it is not a valid edge of the mesh (Warning!)" << std::endl;
+      return false;
+    }
+
+    if(!is_border(tmed.first, tm)) { // ignore seams that are also a border edge
+      if(get(sem, tmed.first) == true) {
+        std::cout << "was ignored because it is already marked as a seam (Warning!)" << std::endl;
+        return false;
+      }
+
+      std::cout << "was added to the seam mesh" << std::endl;
+
+      put(sem, tmed.first, true);
+      put(svm, tmvd_s, true);
+      put(svm, tmvd_t, true);
+      ++number_of_seams;
+    } else {
+      std::cout << "was ignored because it is on the border of the mesh (Warning!)" << std::endl;
+      return false;
+    }
+
+    return true;
+  }
+
   /// adds the seams to the property maps of the seam mesh.
   ///
   /// In input, a seam edge is described by the pair of integers that correspond
@@ -926,27 +954,12 @@ public:
       assert(s < tmvds.size() && t < tmvds.size());
       TM_vertex_descriptor tmvd_s = tmvds[s], tmvd_t = tmvds[t];
 
-      std::pair<TM_edge_descriptor, bool> tmed = CGAL::edge(tmvd_s, tmvd_t, tm);
-      if(!tmed.second) {
-        std::cout << "Warning: the input seam " << s << " " << t << " was ignored";
-        std::cout << " because it is not a valid edge of the mesh" << std::endl;
+      std::cout << "Seam " << s << " " << t << " ";
+      if(!add_seam(tmvd_s, tmvd_t))
         continue;
-      }
 
-      if(!is_border(tmed.first, tm)) { // ignore seams that are also a border edge
-        std::cout << "Adding seam: " << s << " " << t << std::endl;
-        ++number_of_seams;
-
-        put(sem, tmed.first, true);
-        put(svm, tmvd_s, true);
-        put(svm, tmvd_t, true);
-
-        if(tmhd == boost::graph_traits<TM>::null_halfedge()) {
-          tmhd = CGAL::halfedge(CGAL::edge(tmvd_s, tmvd_t, tm).first, tm);
-        }
-      } else {
-        std::cout << "Warning: the input seam " << s << " " << t << " was ignored";
-        std::cout << " because it is on the border of the mesh" << std::endl;
+      if(tmhd == boost::graph_traits<TM>::null_halfedge()) {
+        tmhd = CGAL::halfedge(CGAL::edge(tmvd_s, tmvd_t, tm).first, tm);
       }
     }
 
