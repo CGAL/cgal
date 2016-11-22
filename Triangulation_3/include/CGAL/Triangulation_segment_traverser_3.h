@@ -473,23 +473,23 @@ public:
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, Vertex_handle t)
     : cell_iterator(tr, s, t)
-  { init_curr_simplex(); }
+  { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, const Point& t)
     : cell_iterator(tr, s, t)
-  { init_curr_simplex(); }
+  { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle())
     : cell_iterator(tr, s, t, hint)
-  { init_curr_simplex(); }
+  { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, const Point& t, Cell_handle hint = Cell_handle())
     : cell_iterator(tr, s, t, hint)
-  { init_curr_simplex(); }
+  { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Segment& seg, Cell_handle hint = Cell_handle())
     : cell_iterator(tr, seg, hint)
-  { init_curr_simplex(); }
+  { set_curr_simplex(); }
 
   bool operator==(const Simplex_iterator& sit) const
   {
@@ -510,7 +510,7 @@ private:
   {}
 
 private:
-  void init_curr_simplex()
+  void set_curr_simplex()
   {
     //check what is the entry type of cell_iterator
     if (Cell_handle(cell_iterator) == Cell_handle())
@@ -560,12 +560,12 @@ public:
     case 3 :/*Cell_handle*/
     {
       ++cell_iterator;
-      init_curr_simplex();
+      set_curr_simplex();
       break;
     }
     case 2 :/*Facet*/
     {
-      std::cout << "which type is Facet...!?" << std::endl;
+      std::cout << "todo : facet degenerate case" << std::endl;
       break;
     }
     case 1 :/*Edge*/
