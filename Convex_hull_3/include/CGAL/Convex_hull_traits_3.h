@@ -29,6 +29,7 @@
 #include <list>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 template < class R_ >
@@ -185,7 +186,7 @@ struct Convex_hull_traits_base_3<R_, Tag_true>{
 };
 
 
-  template <class R_, class Polyhedron = Polyhedron_3<R_>, class Has_filtered_predicates_tag = Tag_false>
+  template <class R_, class Polyhedron = Default, class Has_filtered_predicates_tag = Tag_false>
 class Convex_hull_traits_3 :
   public Convex_hull_traits_base_3<R_, Has_filtered_predicates_tag>
 {
@@ -198,7 +199,7 @@ class Convex_hull_traits_3 :
   typedef Point_triple<R>                        Plane_3;
   typedef typename R::Vector_3                   Vector_3;
 
-  typedef Polyhedron                             Polyhedron_3;
+  typedef typename Default::Get<Polyhedron, Polyhedron_3<R> >::type Polyhedron_3;
 
   typedef typename R::Construct_segment_3        Construct_segment_3;
   typedef typename R::Construct_ray_3            Construct_ray_3;

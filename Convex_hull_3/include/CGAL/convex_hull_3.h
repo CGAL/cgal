@@ -71,7 +71,7 @@ struct Default_traits_for_Chull_3{
 //FT is a floating point type and Kernel is a filtered kernel
 template <class Point_3>
 struct Default_traits_for_Chull_3<Point_3,boost::true_type,Tag_true>{
-  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, Tag_true > type;
+  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, Default, Tag_true > type;
 };
 
 template <class Traits>
@@ -79,9 +79,9 @@ struct Default_polyhedron_for_Chull_3{
   typedef CGAL::Polyhedron_3<Traits> type;
 };
 
-template <class K,class Tag>
-struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, Tag> >{
-  typedef typename  Convex_hull_traits_3<K, Tag>::Polyhedron_3 type;
+template <class K, class P, class Tag>
+struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, P, Tag> >{
+  typedef typename  Convex_hull_traits_3<K, P, Tag>::Polyhedron_3 type;
 };
  
 //utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3
@@ -130,11 +130,11 @@ public:
 //The main operator() first tries the static version of the predicate, then uses
 //interval arithmetic (the protector must be created before using this predicate)
 //and in case of failure, exact arithmetic is used.
-template <class Kernel>
-class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, Tag_true>,Tag_true>{
-  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>         PK;
+template <class Kernel, class P>
+class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>,Tag_true>{
+  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  PK;
   typedef Simple_cartesian<Interval_nt_advanced >                               CK;  
-  typedef Convex_hull_traits_3<Kernel, Tag_true>                                Traits;
+  typedef Convex_hull_traits_3<Kernel, P, Tag_true>                             Traits;
   typedef typename Traits::Point_3                                              Point_3;
   
   Cartesian_converter<Kernel,CK>                        to_CK;
@@ -616,6 +616,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   typedef Triangulation_data_structure_2<
     Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<Traits> >,
     Convex_hull_face_base_2<int, Traits> >                           Tds;
+
   typedef typename Tds::Vertex_handle                     Vertex_handle;
   typedef typename Tds::Face_handle                     Face_handle;
 
@@ -684,6 +685,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
 }
 
 } } //namespace internal::Convex_hull_3
+
 
 template <class InputIterator, class Traits>
 void
@@ -768,7 +770,8 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   }
 
   // result will be a polyhedron
-  typename internal::Convex_hull_3::Default_polyhedron_for_Chull_3<Traits>::type P;
+  typedef typename internal::Convex_hull_3::Default_polyhedron_for_Chull_3<Traits>::type Polyhedron;
+  Polyhedron P;
 
   P3_iterator minx, maxx, miny, it;
   minx = maxx = miny = it = points.begin();
@@ -783,14 +786,18 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   } else {
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it, P, traits);
   }
-  CGAL_assertion(P.size_of_vertices()>=3);
-  if (boost::next(P.vertices_begin(),3) == P.vertices_end()){
+  CGAL_assertion(num_vertices(P)>=3);
+  boost::graph_traits<Polyhedron>::halfedge_iterator b,e;
+  boost::tie(b,e) = halfedges(P);
+  if (boost::next(b,3) == e){
+    typename boost::property_map<Polyhedron, vertex_point_t>::type vpmap  = get(CGAL::vertex_point, P);
     typedef typename Traits::Triangle_3                Triangle_3;
     typename Traits::Construct_triangle_3 construct_triangle =
            traits.construct_triangle_3_object();
-    Triangle_3 tri = construct_triangle(P.halfedges_begin()->vertex()->point(), 
-                                        P.halfedges_begin()->next()->vertex()->point(),
-                                        P.halfedges_begin()->opposite()->vertex()->point());
+    
+    Triangle_3 tri = construct_triangle(get(vpmap, target(*b,P)), 
+                                        get(vpmap, target(next(*b,P),P)),
+                                        get(vpmap, target(opposite(*b,P),P)));
     ch_object = make_object(tri);
   }
   else

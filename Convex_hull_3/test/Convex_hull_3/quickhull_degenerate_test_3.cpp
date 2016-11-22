@@ -151,6 +151,9 @@ void test_collinear()
 
 }
 
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+
+
 int main()
 {
   std::vector<Point_3> points;

@@ -87,7 +87,10 @@ bool is_strongly_convex_3(const Polyhedron& P, const Traits& traits)
  
   typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
 
-  if (P.vertices_begin() == P.vertices_end()) return false;
+  vertex_iterator v_it, v_it_e;
+  boost::tie(v_it, v_it_e) = vertices(P);
+
+  if (v_it == v_it_e) return false;
   
   BOOST_FOREACH(face_descriptor fd , faces(P))
     if (!is_locally_convex(P, vpmap, fd, traits)) 
@@ -97,9 +100,6 @@ bool is_strongly_convex_3(const Polyhedron& P, const Traits& traits)
   // side of each facet of P
  
   typename Traits::Coplanar_3 coplanar = traits.coplanar_3_object();
-
-  vertex_iterator v_it, v_it_e;
-  boost::tie(v_it, v_it_e) = vertices(P);
 
   face_iterator f_it, f_it_e;
   boost::tie(f_it, f_it_e) = faces(P);

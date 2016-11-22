@@ -32,7 +32,7 @@ namespace CGAL {
 
 
 template<class Triangulation_3,class FG>
-typename boost::graph_trait<FG>::vertex_descriptor
+typename boost::graph_traits<FG>::vertex_descriptor
 star_to_face_graph(const Triangulation_3& t,
                    typename Triangulation_3::Vertex_handle vh,
                    FG& fg, 
