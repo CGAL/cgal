@@ -32,7 +32,7 @@ Edge_length_stop_predicate<ECM>( FT threshold );
 /// @{
 
 /*!
-Returns `(CGAL::squared_distance(edge_profile.p0(),edge_profile.p1()) < threshold*threshold)`.
+Returns `(CGAL::squared_distance(edge_profile.p0(),edge_profile.p1()) > threshold*threshold)`.
 All other parameters are ignored (but exist since this is a generic policy).
 */
 bool operator()( FT const&
