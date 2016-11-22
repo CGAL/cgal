@@ -513,6 +513,11 @@ private:
   void init_curr_simplex()
   {
     //check what is the entry type of cell_iterator
+    if (Cell_handle(cell_iterator) == Cell_handle())
+    {
+      curr_simplex = Cell_handle();
+      return;//end has been reached
+    }
     Locate_type lt;
     int li, lj;
     cell_iterator.entry(lt, li, lj);
@@ -592,6 +597,11 @@ public:
   /*  \return the current cell.
   */
   Simplex_type&   operator*()         { return curr_simplex; }
+
+  //  provides a conversion operator.
+  /* 	\return a handle to the current cell.
+  */
+  operator const  Cell_handle() const { return Cell_handle(cell_iterator); }
 
   bool is_vertex() const { return curr_simplex.which() == 0; }
   bool is_edge()   const { return curr_simplex.which() == 1; }
