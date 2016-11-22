@@ -149,7 +149,7 @@ public:
   typedef Coord_type                                NT;
   typedef Coord_type                                FT;
 
-  typedef typename Gt::Point_3                      Point;
+  typedef typename Dt::Point                        Point;
   
   typedef typename Dt::Cell_handle                  Cell_handle;
   typedef typename Dt::Vertex_handle                Vertex_handle;
