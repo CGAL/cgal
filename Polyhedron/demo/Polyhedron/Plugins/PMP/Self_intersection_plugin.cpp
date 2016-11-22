@@ -107,7 +107,7 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
   }
   Q_FOREACH(Scene_polyhedron_item* poly_item, selected_polys)
   {
-    typedef typename boost::graph_traits<Polyhedron>::face_descriptor Face_descriptor;
+    typedef boost::graph_traits<Polyhedron>::face_descriptor Face_descriptor;
     Polyhedron* pMesh = poly_item->polyhedron();
     std::vector<std::pair<Face_descriptor, Face_descriptor> > facets;
     // add intersecting triangles to a selection_item.
