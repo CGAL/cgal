@@ -1,6 +1,5 @@
 #include "config.h"
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "ui_Remeshing_dialog.h"
 
@@ -24,17 +23,17 @@ CGAL::Three::Scene_item* cgal_code_remesh(QWidget* parent,
 using namespace CGAL::Three;
 class Polyhedron_demo_remeshing_plugin : 
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionRemeshing = this->getActionFromMainWindow(mw, "actionRemeshing");
+    actionRemeshing = new QAction(tr("Remeshing"), mw);
     actionRemeshing->setProperty("subMenuName", "3D Surface Mesh Generation");
     if(actionRemeshing) {
       connect(actionRemeshing, SIGNAL(triggered()),
@@ -54,6 +53,8 @@ public Q_SLOTS:
 
 private:
   QAction* actionRemeshing;
+  Scene_interface *scene;
+  QMainWindow *mw;
 }; // end class Polyhedron_demo_remeshing_plugin
 
 void Polyhedron_demo_remeshing_plugin::remesh()

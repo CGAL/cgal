@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( AABB_tree_ )
+project( AABB_tree_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

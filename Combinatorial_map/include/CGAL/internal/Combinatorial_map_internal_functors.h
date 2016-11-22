@@ -34,6 +34,9 @@
  * internal/Combinatorial_map_group_functors.h. Public functions are defined
  * in Combinatorial_map_functors.h.
  *
+ * internal::Swap_attributes_functor<CMap> to swap the i-attributes between
+ *    two cmaps having same type
+ *
  * internal::Call_split_functor<CMap,i> to call the OnSplit functors on two
  *    given i-attributes.
  *
@@ -72,6 +75,11 @@
  *
  * internal::Init_attribute_functor to initialize all attributes to NULL.
  *
+ * internal::Correct_invalid_attributes_functor to correct the i-attribute
+ *   associated with a given i-cell
+ *
+ * internal::Cleanup_useless_attributes to erase all attributes having
+ *   no more associated dart
  */
 
 namespace CGAL
@@ -84,6 +92,20 @@ struct Is_attribute_has_point;
 // ****************************************************************************
 namespace internal
 {
+// ****************************************************************************
+/// Swap i-attribute between the two maps having same type.
+template<typename CMap>
+struct Swap_attributes_functor
+{
+  template<unsigned int i>
+  static void run( CMap* cmap1,
+                   CMap* cmap2)
+  { CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+        (cmap1->mattribute_containers).swap(
+          CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
+          (cmap2->mattribute_containers));
+   }
+};
 // ****************************************************************************
 // Functor which call Functor::operator() on the two given cell_attributes
  template<typename CMap, typename Cell_attribute, typename Functor>
@@ -275,7 +297,6 @@ struct Correct_invalid_attributes_functor
                   typename CMap::Dart_handle adart,
                   std::vector<size_type>* marks)
   {
-    // std::cout << "Correct_invalid_attributes_functor for " << i << "-cell" << std::endl;
     CGAL_static_assertion_msg(CMap::Helper::template
                               Dimension_index<i>::value>=0,
                               "Correct_invalid_attributes_functor<i> but "
@@ -323,6 +344,30 @@ struct Correct_invalid_attributes_functor
       typename CMap::template Attribute_handle<i>::type
         a2=amap->template create_attribute<i>(amap->template get_attribute<i>(a));
       amap->template set_attribute<i>(adart, a2);
+    }
+  }
+};
+// ****************************************************************************
+/// Functor used to erase all attributes having no more associated dart
+template<typename CMap>
+struct Cleanup_useless_attributes
+{
+  template <unsigned int i>
+  static void run(CMap* amap)
+  {
+    CGAL_static_assertion_msg(CMap::Helper::template
+                              Dimension_index<i>::value>=0,
+                              "Cleanup_useless_attributes<i> but "
+                              " i-attributes are disabled");
+
+    for ( typename CMap::template Attribute_range<i>::type::iterator
+            it=amap->template attributes<i>().begin(),
+            itend=amap->template attributes<i>().end(); it!=itend; ++it )
+    {
+      if ( amap->template get_attribute<i>(it).get_nb_refs()==0 )
+      {
+        amap->template erase_attribute<i>(it);
+      }
     }
   }
 };
@@ -390,7 +435,8 @@ struct Decrease_attribute_functor_run
     {
       amap->template get_attribute<i>(amap->template attribute<i>(adart)).
         dec_nb_refs();
-      if ( amap->template get_attribute<i>(amap->template attribute<i>(adart)).
+      if ( amap->are_attributes_automatically_managed() &&
+           amap->template get_attribute<i>(amap->template attribute<i>(adart)).
            get_nb_refs()==0 )
         amap->template erase_attribute<i>(amap->template attribute<i>(adart));
     }

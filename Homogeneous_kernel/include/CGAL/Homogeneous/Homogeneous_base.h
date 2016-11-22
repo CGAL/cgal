@@ -25,7 +25,7 @@
 #ifndef CGAL_HOMOGENEOUS_BASE_H
 #define CGAL_HOMOGENEOUS_BASE_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/basic_classes.h>
 
 #include <CGAL/Kernel/global_functions.h>
@@ -43,7 +43,7 @@
 #include <CGAL/Cartesian/Triangle_2.h>
 #include <CGAL/Homogeneous/VectorH2.h>
 #include <CGAL/Homogeneous/Data_accessorH2.h>
-#include <CGAL/ConicHPA2.h>
+#include <CGAL/Homogeneous/ConicHPA2.h>
 
 #include <CGAL/Homogeneous/Aff_transformationH3.h>
 #include <CGAL/Homogeneous/DirectionH3.h>

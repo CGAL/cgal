@@ -38,8 +38,11 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+#include <CGAL/algorithm.h>
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/iterator.h>
 
 namespace CGAL {
 

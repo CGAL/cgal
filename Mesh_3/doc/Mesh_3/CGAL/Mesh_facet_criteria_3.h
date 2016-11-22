@@ -14,7 +14,7 @@ for the approximation error criterion.
 `Triangulation` of the instance used as model of 
 `MeshComplex_3InTriangulation_3`. 
 
-\cgalModels `MeshFacetCriteria_3`` 
+\cgalModels `MeshFacetCriteria_3`
 
 \sa `CGAL::Mesh_facet_topology` 
 \sa `MeshCriteria_3` 
@@ -42,14 +42,16 @@ typedef Tr::Geom_traits::FT FT;
 /// @{
 
 /*!
-Returns an object to serve as criteria for facets. The argument 
-`angle_bound` is the lower bound for the angle in degrees of the 
-surface mesh facets. The argument `radius_bound` is a uniform upper bound 
-for the radius of the surface Delaunay balls. The argument 
-`distance_bound` is an upper bound for the center-center distances 
-of the surface mesh facets. `topology` is the set of topological constraints 
+Returns an object to serve as criteria for facets.
+\param angle_bound is the lower bound for the angle in degrees of the 
+surface mesh facets.
+\param radius_bound is a uniform upper bound 
+for the radius of the surface Delaunay balls.
+\param distance_bound is an upper bound for the center-center distances 
+of the surface mesh facets.
+\param topology is the set of topological constraints 
 which have to be verified by each surface facet. See 
-section \ref introsecparam for further details. 
+section \ref Mesh_3DelaunayRefinement for further details. 
 Note that if one parameter is set to 0, then its corresponding criteria is ignored. 
 */ 
 Mesh_facet_criteria_3( 

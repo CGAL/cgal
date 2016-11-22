@@ -1,4 +1,3 @@
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
@@ -8,32 +7,34 @@
 
 #include "Scene.h"
 #include <QApplication>
+#include <QMainWindow>
 
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 using namespace CGAL::Three;
 class Polyhedron_demo_jet_fitting_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionEstimateCurvature";
+
+  QList<QAction*> actions() const {
+    return _actions;
   }
-  void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
+  void init(QMainWindow* mw,
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
-      mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionEstimateCurvature"] = getActionFromMainWindow(mw, "actionEstimateCurvature");
-      actions_map["actionEstimateCurvature"]->setProperty("subMenuName",
-                                                          "Estimation of Local Differential Properties");
-      autoConnectActions();
+      QAction *actionEstimateCurvature = new QAction(tr("Curvature Estimation"), mw);
+      actionEstimateCurvature->setProperty("subMenuName",
+                                           "Estimation of Local Differential Properties");
+      connect(actionEstimateCurvature, SIGNAL(triggered()), this, SLOT(on_actionEstimateCurvature_triggered()));
+      _actions <<actionEstimateCurvature;
 
   }
 
@@ -43,6 +44,9 @@ public:
 
 public Q_SLOTS:
   void on_actionEstimateCurvature_triggered();
+private :
+  Scene_interface *scene;
+  QList<QAction*> _actions;
 }; // end Polyhedron_demo_jet_fitting_plugin
 
 void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()

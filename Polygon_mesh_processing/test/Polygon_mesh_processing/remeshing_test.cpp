@@ -3,6 +3,7 @@
 //#define CGAL_PMP_REMESHING_DEBUG
 //#define CGAL_DUMP_REMESHING_STEPS
 #define CGAL_PMP_REMESHING_VERBOSE
+//#define CGAL_PMP_REMESHING_VERY_VERBOSE
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -21,15 +22,22 @@
 #include <vector>
 #include <cstdlib>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3> Mesh;
-
-typedef boost::graph_traits<Mesh>::halfedge_descriptor  halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
-
 namespace PMP = CGAL::Polygon_mesh_processing;
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+
+template <class K>
+struct Main {
+
+
+typedef CGAL::Surface_mesh<typename K::Point_3> Mesh;
+
+typedef typename boost::graph_traits<Mesh>::halfedge_descriptor  halfedge_descriptor;
+typedef typename boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
+typedef typename boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
+typedef typename boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
+
+
 
 void collect_patch(const char* file,
                    const Mesh& m,
@@ -53,7 +61,7 @@ void collect_patch(const char* file,
   std::istringstream facet_line(line);
   while (facet_line >> id) {
     if (id >= m.number_of_faces()) { return; }
-    patch.insert(Mesh::Face_index(Mesh::size_type(id)));
+    patch.insert(typename Mesh::Face_index(typename Mesh::size_type(id)));
   }
 
   if (!std::getline(in, line)) { return ; }
@@ -109,7 +117,6 @@ struct halfedge2edge
   std::set<edge_descriptor>& m_edges;
 };
 
-
 struct Constraints_pmap
 {
   std::set<edge_descriptor>* set_ptr_;
@@ -123,12 +130,18 @@ public:
   Constraints_pmap(std::set<edge_descriptor>* set_ptr)
     : set_ptr_(set_ptr)
   {}
-  friend bool get(const Constraints_pmap& map, const edge_descriptor& e)
+  Constraints_pmap()
+    : set_ptr_(NULL)
+  {}
+
+  friend value_type get(const Constraints_pmap& map, const key_type& e)
   {
     CGAL_assertion(map.set_ptr_ != NULL);
-    return map.set_ptr_->count(e) != 0;
+    return !map.set_ptr_->empty()
+         && map.set_ptr_->count(e);
   }
-  friend void put(Constraints_pmap& map, const edge_descriptor& e, const bool is)
+  friend void put(Constraints_pmap& map
+                , const key_type& e, const value_type is)
   {
     CGAL_assertion(map.set_ptr_ != NULL);
     if (is)                map.set_ptr_->insert(e);
@@ -136,7 +149,9 @@ public:
   }
 };
 
-int main(int argc, char* argv[])
+
+
+Main(int argc, char* argv[])
 {
 #ifdef CGAL_PMP_REMESHING_DEBUG
   std::cout.precision(17);
@@ -149,7 +164,7 @@ int main(int argc, char* argv[])
   Mesh m;
   if (!input || !(input >> m)){
     std::cerr << "Error: can not read file.\n";
-    return 1;
+    return;
   }
 
   double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.079;
@@ -168,7 +183,7 @@ int main(int argc, char* argv[])
   if(!facets.empty())
   {
     std::cout << "Input is self intersecting. STOP" << std::endl;
-    return 0;
+    return;
   }
   else
     std::cout << "OK." << std::endl;
@@ -215,6 +230,9 @@ int main(int argc, char* argv[])
     m,
     PMP::parameters::number_of_iterations(nb_iter)
     .protect_constraints(true) //only borders. they have been refined by previous remeshing
+    .edge_is_constrained_map(ecmap)
+    .relax_constraints(true)
+    .number_of_relaxation_steps(3)
     );
   t.stop();
   std::cout << "Remeshing all took " << t.time() << std::endl;
@@ -226,6 +244,12 @@ int main(int argc, char* argv[])
   //this test should make the precondition fail
   test_precondition("data/joint_refined.off",
     "data/joint-patch-toolargeconstraints.selection.txt");
+}
+};
+
+int main(int argc, char* argv[])
+{
+  Main<Epic> m(argc,argv);
 
   return 0;
 }

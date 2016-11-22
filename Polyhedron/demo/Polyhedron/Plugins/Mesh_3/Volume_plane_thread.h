@@ -4,7 +4,7 @@
 #include "Volume_plane.h"
 #include <CGAL/Image_3.h>
 
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 
 #include <QApplication>
 #include <QThread>
@@ -24,10 +24,13 @@ class Volume_plane_thread : public QThread {
 Q_OBJECT  
 public:
   Volume_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : img(img), clamper(clamp), item(NULL), name(name) { }
+    : img(img), clamper(clamp), item(NULL), name(name) { _type = 'n';}
 
   Volume_plane_interface* getItem() {
     return item;
+  }
+  char type()const{
+    return _type;
   }
 
 Q_SIGNALS:
@@ -39,13 +42,14 @@ protected:
   Volume_plane_interface* item;
   std::vector<float> buffer;
   QString name;
+  char _type;
 };
 
 template<typename Word>
 class X_plane_thread : public Volume_plane_thread {
 public:
  X_plane_thread(Volume_plane<x_tag>*p_it, const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-  : Volume_plane_thread(img, clamp, name) { item = p_it;}
+  : Volume_plane_thread(img, clamp, name) { item = p_it; _type = 'x';}
 protected:
   void run();
 };
@@ -54,7 +58,7 @@ template<typename Word>
 class Y_plane_thread : public Volume_plane_thread {
 public:
  Y_plane_thread(Volume_plane<y_tag>* p_it, const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-  : Volume_plane_thread(img, clamp, name) {item = p_it; }
+  : Volume_plane_thread(img, clamp, name) {item = p_it; _type = 'y';}
 protected:
   void run();
 };
@@ -63,7 +67,7 @@ template<typename Word>
 class Z_plane_thread : public Volume_plane_thread {
 public:
  Z_plane_thread(Volume_plane<z_tag>* p_it, const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-  : Volume_plane_thread(img, clamp, name) {item = p_it;}
+  : Volume_plane_thread(img, clamp, name) {item = p_it; _type = 'z';}
 protected:
   void run();
 };

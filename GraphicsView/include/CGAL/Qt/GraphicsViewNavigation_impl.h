@@ -115,6 +115,7 @@ namespace Qt {
       case ::Qt::Key_Control:
         cursor_backup = v->cursor();
         v->setCursor(::Qt::CrossCursor);
+        CGAL_FALLTHROUGH;
       default:
         return false;
       }
@@ -183,7 +184,7 @@ namespace Qt {
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
       QPointF pos = v->mapToScene(mouseEvent->pos());
       QString xy = QString(" ") + QString::number(pos.x(),'g', 6) + " , " + QString::number(pos.y(),'g', 6) + " ";
-      emit mouseCoordinates(xy);
+      Q_EMIT mouseCoordinates(xy);
       if(rectItem->isVisible()) {
 	QPointF size = v->mapToScene(mouseEvent->pos());
 	size = size - rect_first_point;

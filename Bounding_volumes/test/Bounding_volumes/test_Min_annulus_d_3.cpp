@@ -24,10 +24,10 @@
 // implementation: test program for Min_annulus (3D traits class)
 // ============================================================================
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_3.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpq.h>

@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "iris.h"
-#include "iris_impl.h"
+#include <CGAL/ImageIO/iris.h>
+#include <CGAL/ImageIO/iris_impl.h>
 
 #endif // CGAL_HEADER_ONLY

@@ -41,7 +41,10 @@ namespace CGAL {
   mapping between source and target elements. The target graph is not
   cleared.
 
-  \tparam SourceMesh a model of `FaceListGraph`
+  \tparam SourceMesh a model of `FaceListGraph`. 
+          The descriptor types `boost::graph_traits<SourceMesh>::%vertex_descriptor`
+          and `boost::graph_traits<SourceMesh>::%face_descriptor` must be
+          models of `Hashable`.
   \tparam TargetMesh a model of `FaceListGraph`
   \tparam V2V a model of `OutputIterator` accepting `std::pair<sm_vertex_descriptor, tm_vertex_descriptor>`
   \tparam H2H a model of `OutputIterator` accepting `std::pair<sm_halfedge_descriptor, tm_halfedge_descriptor>`
@@ -49,6 +52,8 @@ namespace CGAL {
 
   where the prefix `sm_` and `tm_` mean belonging to the source and
   target mesh respectively.
+
+  The types `sm_vertex_descriptor` and `sm_face_descriptor` must be models of the concept `Hashable`.
 
   \param sm the source mesh
   \param tm the target mesh
@@ -137,7 +142,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   
 }
 
-#if !defined(CGAL_CXX11)
+#if !defined(CGAL_CXX11)  && !defined(DOXYGEN_RUNNING)
 template <typename SourceMesh, typename TargetMesh>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
 { copy_face_graph(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator()); }

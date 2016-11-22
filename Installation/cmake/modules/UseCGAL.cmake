@@ -9,6 +9,11 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 cgal_setup_module_path()
 
+# Save the current source directory. That variable can be changed by
+# a `CMakeLists.txt`, for `CMakeLists.txt` files that are created in
+# the binary directory.
+set(CGAL_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 
@@ -53,8 +58,13 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
 
-  link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
-  link_libraries      ( ${CGAL_LIBRARIES}     ${CGAL_3RD_PARTY_LIBRARIES}      )
-
+  if (CGAL_HEADER_ONLY)
+    add_definitions(-DCGAL_HEADER_ONLY)
+    link_directories    ( ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+    link_libraries      ( ${CGAL_3RD_PARTY_LIBRARIES}      )
+  else()
+    link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+    link_libraries      ( ${CGAL_LIBRARIES}     ${CGAL_3RD_PARTY_LIBRARIES}      )
+  endif()
 
 endif()

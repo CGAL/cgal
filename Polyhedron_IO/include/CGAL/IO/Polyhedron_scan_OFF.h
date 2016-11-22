@@ -85,7 +85,13 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
         Point p;
         file_scan_vertex( scanner, p);
         B.add_vertex( p);
-        scanner.skip_to_next_vertex( i);
+        if(scanner.has_colors())
+        {
+         Color c;
+         file_scan_color(scanner, c);
+        }
+        else
+         scanner.skip_to_next_vertex( i);
     }
     if ( ! m_in  || B.error()) {
         B.rollback();
@@ -114,6 +120,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
             scanner.scan_facet_vertex_index( index, i);
             B.add_vertex_to_facet( index);
         }
+        //TO DO : Insert read color
         B.end_facet();
         scanner.skip_to_next_facet( i);
     }

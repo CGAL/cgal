@@ -748,7 +748,7 @@ public:
   }
 protected:
   unsigned int select(Queue &source, Queue &target/*, bool binf*/) {
-    CGAL_assertion_code(unsigned int sz= source.size() + target.size();)
+    CGAL_assertion_code(std::size_t sz= source.size() + target.size();)
     int count=0;
     Iterator it= source.begin();
     while (it != source.end()) {
@@ -911,7 +911,7 @@ protected:
     //CGAL_assertion(is_valid());
     CGAL_precondition(!back_.empty());
     CGAL_precondition(front_.empty());
-    CGAL_assertion_code(unsigned int sz= front_.size()+back_.size()+ inf_.size());
+    CGAL_assertion_code(std::size_t sz= front_.size()+back_.size()+ inf_.size());
     Queue cand;
     cand.splice(cand.begin(), back_);
     ub_ += step_;

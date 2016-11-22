@@ -34,20 +34,25 @@ namespace CGAL{
   enum sparse_linear_solver_t       { sparse_linear_solver };
   enum geom_traits_t                { geom_traits };
   enum number_of_iterations_t       { number_of_iterations };
+  enum number_of_relaxation_steps_t { number_of_relaxation_steps };
   enum protect_constraints_t        { protect_constraints };
+  enum relax_constraints_t          { relax_constraints };
   enum vertex_is_constrained_t      { vertex_is_constrained };
+  enum face_patch_t                 { face_patch };
 
   //to be documented
-  enum smooth_along_features_t      { smooth_along_features };
   enum face_normal_t                { face_normal };
 
   //internal
   enum weight_calculator_t          { weight_calculator };
   enum all_default_t                { all_default };
 
+  struct named_params_base {};
+
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct pmp_bgl_named_params
     : CGAL::cgal_bgl_named_params<T, Tag, Base>
+    , CGAL::named_params_base
   {
     typedef CGAL::cgal_bgl_named_params<T, Tag, Base> base;
     typedef pmp_bgl_named_params self;
@@ -135,6 +140,14 @@ namespace CGAL{
       return Params(n, *this);
     }
 
+    template<typename NT>
+    pmp_bgl_named_params<NT, number_of_relaxation_steps_t, self>
+    number_of_relaxation_steps(const NT& n) const
+    {
+      typedef pmp_bgl_named_params<NT, number_of_relaxation_steps_t, self> Params;
+      return Params(n, *this);
+    }
+
     template<typename Boolean>
     pmp_bgl_named_params<Boolean, protect_constraints_t, self>
     protect_constraints(const Boolean b) const
@@ -144,10 +157,10 @@ namespace CGAL{
     }
 
     template<typename Boolean>
-    pmp_bgl_named_params<Boolean, smooth_along_features_t, self>
-      smooth_along_features(const Boolean b) const
+    pmp_bgl_named_params<Boolean, relax_constraints_t, self>
+    relax_constraints(const Boolean b) const
     {
-      typedef pmp_bgl_named_params<Boolean, smooth_along_features_t, self> Params;
+      typedef pmp_bgl_named_params<Boolean, relax_constraints_t, self> Params;
       return Params(b, *this);
     }
 
@@ -157,6 +170,14 @@ namespace CGAL{
     {
       typedef pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t, self> Params;
       return Params(vm, *this);
+    }
+
+    template <typename FacetPatch>
+    pmp_bgl_named_params<FacetPatch, face_patch_t, self>
+    face_patch_map(const FacetPatch& fp) const
+    {
+      typedef pmp_bgl_named_params<FacetPatch, face_patch_t, self> Params;
+      return Params(fp, *this);
     }
 
     //overload
@@ -281,6 +302,14 @@ namespace parameters{
     return Params(n);
   }
 
+  template<typename NT>
+  pmp_bgl_named_params<NT, number_of_relaxation_steps_t>
+  number_of_relaxation_steps(const NT& n)
+  {
+    typedef pmp_bgl_named_params<NT, number_of_relaxation_steps_t> Params;
+    return Params(n);
+  }
+
   template <typename Boolean>
   pmp_bgl_named_params<Boolean, protect_constraints_t>
   protect_constraints(const Boolean b)
@@ -290,10 +319,10 @@ namespace parameters{
   }
 
   template<typename Boolean>
-  pmp_bgl_named_params<Boolean, smooth_along_features_t>
-  smooth_along_features(const Boolean b)
+  pmp_bgl_named_params<Boolean, relax_constraints_t>
+  relax_constraints(const Boolean b)
   {
-    typedef pmp_bgl_named_params<Boolean, smooth_along_features_t> Params;
+    typedef pmp_bgl_named_params<Boolean, relax_constraints_t> Params;
     return Params(b);
   }
 
@@ -303,6 +332,14 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t> Params;
     return Params(vm);
+  }
+
+  template <typename FacetPatch>
+  pmp_bgl_named_params<FacetPatch, face_patch_t>
+  face_patch_map(const FacetPatch& fp)
+  {
+    typedef pmp_bgl_named_params<FacetPatch, face_patch_t> Params;
+    return Params(fp);
   }
 
   //overload

@@ -29,11 +29,12 @@ private:
   QAction* actionOutlierRemoval;
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
-    actionOutlierRemoval = new QAction(tr("Point Set Outliers Selection"), mainWindow);
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+    scene = scene_interface;
+    actionOutlierRemoval = new QAction(tr("Outliers Selection"), mainWindow);
+    actionOutlierRemoval->setProperty("subMenuName","Point Set Processing");
     actionOutlierRemoval->setObjectName("actionOutlierRemoval");
-
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+    autoConnectActions();
   }
   
   //! Applicate for Point_sets with normals.
@@ -92,8 +93,9 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     // Computes outliers
     Point_set::iterator first_point_to_remove =
       CGAL::remove_outliers(points->begin(), points->end(),
+                            points->point_map(),
                             nb_neighbors,
-                            removed_percentage);
+                            removed_percentage, Kernel());
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
     std::size_t memory = CGAL::Memory_sizer().virtual_size();

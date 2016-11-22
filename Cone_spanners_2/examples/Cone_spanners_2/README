@@ -1,0 +1,9 @@
+[Examples description]
+compute_cones.cpp: this example computes the cone boundaries given the number of cones
+   and the initial direction.
+
+theta_io.cpp: this example constructs a Theta graph exactly with an input file containing a vertex list,
+   and then generates the Gnuplot files for plotting the constructed Theta graph.
+
+dijkstra_theta.cpp: this example constructs Theta graph first and then calculates
+   the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.

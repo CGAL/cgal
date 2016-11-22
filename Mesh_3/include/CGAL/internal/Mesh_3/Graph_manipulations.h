@@ -56,7 +56,14 @@ struct Graph_manipulations
     }
   }
 
-  vertex_descriptor split(const Point_3& a, const Point_3& b) {
+  vertex_descriptor split(const Point_3& a, const Point_3& b,
+                          bool a_is_outside, bool b_is_outside)
+  {
+#ifdef CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
+    std::cerr << "split(" << a << ", " << b << ", "
+              << std::boolalpha << a_is_outside << ", "
+              <<  std::boolalpha << b_is_outside << ")\n";
+#endif // CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
     const Point_3 mid = a < b ? midpoint(a, b) : midpoint(b, a);
     vertex_descriptor vmid = get_vertex(mid);
     typename std::map<Point_3, vertex_descriptor>::iterator
@@ -72,15 +79,25 @@ struct Graph_manipulations
       remove_edge(edge, g);
       if(!b) {
         // The edge was already here.
-        try_add_edge(va, vmid);
-        try_add_edge(vb, vmid);
+        if(!a_is_outside) try_add_edge(va, vmid);
+        if(!b_is_outside) try_add_edge(vb, vmid);
+#ifdef CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
+        std::cerr << " --> vmid = " << vmid << "\n";
+#endif // CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
         return vmid;
       }
     }
+#ifdef CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
+    std::cerr << " --> vmid = " << vmid << "\n";
+#endif // CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
     return vmid;
   }
 
   bool try_add_edge(vertex_descriptor v1, vertex_descriptor v2) {
+#ifdef CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
+    std::cerr << "try_add_edge(" << v1 << " (" << g[v1]
+              << "), " << v2 << " (" << g[v2] << "))\n";
+#endif // CGAL_MESH_3_DEBUG_GRAPH_MANIPULATION
     if(v1 != v2) {
       edge_descriptor edge;
       bool b;

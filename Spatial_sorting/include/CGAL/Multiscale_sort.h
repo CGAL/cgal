@@ -20,7 +20,8 @@
 #ifndef CGAL_MULTISCALE_SORT_H
 #define CGAL_MULTISCALE_SORT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/assertions.h>
 #include <iterator>
 #include <cstddef>
 
@@ -46,7 +47,7 @@ public:
 	typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
         RandomAccessIterator middle = begin;
         if (end - begin >= _threshold) {
-            middle = begin + difference_type ((end - begin) * _ratio);
+            middle = begin + difference_type (double(end - begin) * _ratio);
             this->operator() (begin, middle);
         }
         _sort (middle, end);

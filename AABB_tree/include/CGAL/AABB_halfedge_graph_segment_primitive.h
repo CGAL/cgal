@@ -23,7 +23,7 @@
 #define CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/internal/AABB_tree/Halfedge_and_face_graph_property_maps.h>
+#include <CGAL/boost/graph/property_maps.h>
 
 #include <iterator>
 #include <boost/mpl/and.hpp>
@@ -44,6 +44,7 @@ namespace CGAL {
  * while the AABB tree holding the primitive is in use.
  * The type of the 3D segment is taken from the kernel of the point type which is the value type
  * of `VertexPointPMap` (using the `Kernel_traits` mechanism).
+ * The segment type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Segment_3`.
  *
  * \cgalModels `AABBPrimitive` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_false`,
  *    and `AABBPrimitiveWithSharedData` if `OneHalfedgeGraphPerTree` is `CGAL::Tag_true`.
@@ -73,12 +74,12 @@ template < class HalfedgeGraph,
 class AABB_halfedge_graph_segment_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<  typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
-                            Segment_from_edge_descriptor_property_map<
+                            Segment_from_edge_descriptor_map<
                               HalfedgeGraph,
                               typename Default::Get<VertexPointPMap,
                                                     typename boost::property_map< HalfedgeGraph,
                                                                                   vertex_point_t>::type >::type >,
-                            Source_point_from_edge_descriptor<
+                            Source_point_from_edge_descriptor_map<
                               HalfedgeGraph,
                               typename Default::Get<VertexPointPMap,
                                                     typename boost::property_map< HalfedgeGraph,
@@ -90,8 +91,8 @@ class AABB_halfedge_graph_segment_primitive
   typedef typename Default::Get<VertexPointPMap,typename boost::property_map< HalfedgeGraph,vertex_point_t>::type >::type  VertexPointPMap_;
 
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
-  typedef Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap_>  Segment_property_map;
-  typedef Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap_> Point_property_map;
+  typedef Segment_from_edge_descriptor_map<HalfedgeGraph,VertexPointPMap_>  Segment_property_map;
+  typedef Source_point_from_edge_descriptor_map<HalfedgeGraph,VertexPointPMap_> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Segment_property_map,

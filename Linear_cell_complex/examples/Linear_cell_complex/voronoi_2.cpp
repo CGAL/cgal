@@ -2,6 +2,8 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/import_from_triangulation_2.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -49,7 +51,7 @@ void display_voronoi(LCC_2& alcc, Dart_handle adart)
   
   while( !toremove.empty() )
   {
-    CGAL::remove_cell<LCC_2, 2>(alcc, toremove.top());
+    alcc.remove_cell<2>(toremove.top());
     toremove.pop();
   }
 

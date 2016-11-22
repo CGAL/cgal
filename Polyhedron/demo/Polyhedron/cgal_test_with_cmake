@@ -98,85 +98,103 @@ else
   echo "Run all tests."
 
   for target in  \
-      Polyhedron_3 \
-      camera_positions_plugin \
-      convex_hull_plugin \
-      corefinement_plugin \
-      cut_plugin \
-      clip_polyhedron_plugin \
-      create_bbox_mesh_plugin \
-      demo_framework \
-      edit_polyhedron_plugin \
-      features_detection_plugin \
-      gocad_plugin \
-      inside_out_plugin \
-      intersection_plugin \
-      io_implicit_function_plugin \
-      isotropic_remeshing_plugin \
-      jet_fitting_plugin \
-      join_and_split_polyhedra_plugin \
-      kernel_plugin \
-      mean_curvature_flow_skeleton_plugin \
-      mesh_3_plugin \
-      mesh_segmentation_plugin \
-      mesh_simplification_plugin \
-      nef_io_plugin \
-      nef_plugin \
-      off_plugin \
-      off_to_nef_plugin \
-      off_to_xyz_plugin \
-      orient_soup_plugin \
-      parameterization_plugin \
-      pca_plugin \
-      ply_to_xyz_plugin \
-      point_dialog \
-      point_inside_polyhedron_plugin \
-      point_set_average_spacing_plugin \
-      point_set_bilateral_smoothing_plugin \
-      point_set_normal_estimation_plugin \
-      point_set_outliers_removal_plugin \
-      point_set_selection_plugin \
-      point_set_shape_detection_plugin  \
-      point_set_simplification_plugin \
-      point_set_smoothing_plugin \
-      point_set_upsampling_plugin \
-      point_set_wlop_plugin \
-      polyhedron_slicer_plugin \
-      polyhedron_stitching_plugin \
-      polylines_io_plugin \
-      remeshing_plugin \
-      scene_basic_objects \
-      scene_c2t3_item \
-      scene_combinatorial_map_item \
-      scene_edit_polyhedron_item \
-      scene_implicit_function_item \
-      scene_nef_polyhedron_item \
-      scene_points_with_normal_item \
-      scene_polygon_soup_item \
-      scene_polyhedron_item \
-      scene_polyhedron_item_decorator \
-      scene_polyhedron_item_k_ring_selection \
-      scene_polyhedron_selection_item \
-      scene_polyhedron_shortest_path_item \
-      scene_polyhedron_transform_item \
-      scene_polylines_item \
-      scene_textured_polyhedron_item \
-      selection_io_plugin \
-      selection_plugin \
-      self_intersection_plugin \
-      shortest_path_plugin \
-      stl_plugin \
-      subdivision_methods_plugin \
-      surface_reconstruction_plugin \
-      transform_polyhedron_plugin \
-      triangulate_facets_plugin \
-      trivial_plugin \
-      xyz_plugin \
-      p_klein_function_plugin \
-      p_sphere_function_plugin \
-      p_tanglecube_function_plugin \
-      shortest_path_plugin \
-      advancing_front_plugin \
+demo_framework \
+gl_splat \
+point_dialog \
+Polyhedron_3 \
+polyhedron_demo \
+scene_basic_objects \
+scene_color_ramp \
+scene_c2t3_item \
+scene_c3t3_item \
+scene_combinatorial_map_item \
+scene_edit_polyhedron_item \
+scene_image_item \
+scene_implicit_function_item \
+scene_nef_polyhedron_item \
+scene_points_with_normal_item \
+scene_polygon_soup_item \
+scene_polyhedron_item \
+scene_polyhedron_item_decorator \
+scene_polyhedron_item_k_ring_selection \
+scene_polyhedron_selection_item \
+scene_polyhedron_shortest_path_item \
+scene_polyhedron_transform_item \
+scene_polylines_item \
+scene_surface_mesh_item \
+scene_textured_polyhedron_item \
+c3t3_io_plugin \
+camera_positions_plugin \
+clip_polyhedron_plugin \
+convex_hull_plugin \
+corefinement_plugin \
+create_bbox_mesh_plugin \
+cut_plugin \
+detect_sharp_edges_plugin \
+edit_polyhedron_plugin \
+fairing_plugin \
+features_detection_plugin \
+gocad_plugin \
+hole_filling_plugin \
+hole_filling_polyline_plugin \
+inside_out_plugin \
+intersection_plugin \
+io_image_plugin \
+io_implicit_function_plugin \
+isotropic_remeshing_plugin \
+jet_fitting_plugin \
+join_and_split_polyhedra_plugin \
+kernel_plugin \
+mean_curvature_flow_skeleton_plugin \
+merge_point_sets_plugin \
+mesh_2_plugin \
+mesh_2_plugin \
+mesh_3_optimization_plugin \
+mesh_3_plugin \
+mesh_segmentation_plugin \
+mesh_simplification_plugin \
+nef_io_plugin \
+nef_plugin \
+off_plugin \
+off_to_nef_plugin \
+orient_soup_plugin \
+parameterization_plugin \
+pca_plugin \
+p_klein_function_plugin \
+ply_to_xyz_plugin \
+point_inside_polyhedron_plugin \
+point_set_average_spacing_plugin \
+point_set_bilateral_smoothing_plugin \
+point_set_from_vertices_plugin \
+point_set_interference_plugin \
+point_set_normal_estimation_plugin \
+point_set_outliers_removal_plugin \
+point_set_selection_plugin \
+point_set_shape_detection_plugin \
+point_set_simplification_plugin \
+point_set_smoothing_plugin \
+point_set_upsampling_plugin \
+point_set_wlop_plugin \
+polyhedron_slicer_plugin \
+polyhedron_stitching_plugin \
+polylines_io_plugin \
+p_sphere_function_plugin \
+p_tanglecube_function_plugin \
+remeshing_plugin \
+repair_polyhedron_plugin \
+selection_io_plugin \
+selection_plugin \
+self_intersection_plugin \
+shortest_path_plugin \
+stl_plugin \
+subdivision_methods_plugin \
+surface_mesh_io_plugin \
+surface_reconstruction_plugin \
+transform_polyhedron_plugin \
+triangulate_facets_plugin \
+trivial_plugin \
+vtk_plugin \
+xyz_plugin \
       all
   do
       if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 

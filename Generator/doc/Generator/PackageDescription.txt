@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Geometric Object Generators,PkgGeneratorsSummary}
 \cgalPkgPicture{dice.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pedro M. M. de Castro, Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, Sven Schönherr, and Alexandru Tifrea}
+\cgalPkgAuthors{Pedro M. M. de Castro, Olivier Devillers, Susan Hert, Michael Hoffmann, Lutz Kettner, Sven Schönherr, Alexandru Tifrea, and Maxime Gimeno}
 \cgalPkgDesc{This package provides a variety of generators for geometric objects. They are useful as synthetic test data sets, e.g. for testing algorithms on degenerate object sets and for performance analysis. }
 \cgalPkgManuals{Chapter_Geometric_Object_Generators,PkgGenerators}
 \cgalPkgSummaryEnd
@@ -50,10 +50,7 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::random_polygon_2()` 
 - `CGAL::random_selection()` 
 - `CGAL::random_convex_hull_in_disc_2()`
-
-## Variables ##
-
-- `CGAL::default_random` 
+- `CGAL::get_default_random()` 
 
 ## Classes ##
 
@@ -63,12 +60,16 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::Random_points_in_cube_3<Point_3, Creator>` 
 - `CGAL::Random_points_in_cube_d<Point_d>` 
 - `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
-- `CGAL::Random_points_in_triangle_2<Point_2, Creator>` 
+- `CGAL::Random_points_in_triangle_2<Point_2, Creator>`
 - `CGAL::Random_points_in_sphere_3<Point_3, Creator>` 
 - `CGAL::Random_points_in_triangle_3<Point_3, Creator>` 
 - `CGAL::Random_points_in_tetrahedron_3<Point_3, Creator>` 
+- `CGAL::Random_points_in_tetrahedral_mesh_3<C3t3>`
 - `CGAL::Random_points_in_square_2<Point_2, Creator>` 
 - `CGAL::Random_points_on_circle_2<Point_2, Creator>` 
+- `CGAL::Random_points_in_triangle_mesh_2<Point_2, Triangulation>`
+- `CGAL::Random_points_in_triangle_mesh_3<Point_3, Mesh>`
+- `CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3t3>`
 - `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
 - `CGAL::Random_points_on_sphere_3<Point_3, Creator>` 
 - `CGAL::Random_points_on_sphere_d<Point_d>` 

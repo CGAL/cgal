@@ -194,7 +194,7 @@ functor followed by the suffix `_object`.For example, the function that returns 
       in a single file, its name (and its capitalization) should be used for
       the file name. For
       example, the file `Triangulation_2.h` contains the data structure
-      `Triangulation\_2`.
+      `Triangulation_2`.
 <LI>If a file does not contain a single class, its name should not begin
       with a capital letter.
 <LI>No two files should have the same names even when capitalization is

@@ -17,8 +17,7 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
-#ifndef CGAL_PERIODIC_2_TRIANGULATION_DUMMY_12_H
-#define CGAL_PERIODIC_2_TRIANGULATION_DUMMY_12_H
+#ifdef CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 
 #include <vector>
 
@@ -165,4 +164,4 @@ Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()
   return ret_vector;
 }
 
-#endif // CGAL_PERIODIC_2_TRIANGULATION_DUMMY_12_H
+#endif // CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H

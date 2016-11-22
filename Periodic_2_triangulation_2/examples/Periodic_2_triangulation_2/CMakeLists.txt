@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Periodic_2_triangulation_2_ )
+project( Periodic_2_triangulation_2_Examples )
 
 cmake_minimum_required(VERSION 2.8.10)
 

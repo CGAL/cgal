@@ -32,6 +32,7 @@
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/Timer.h>
+#include <CGAL/Object.h>
 #include <list>
 #include <string>
 #include <sstream>

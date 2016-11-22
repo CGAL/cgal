@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Linear_cell_complex_ )
+project( Linear_cell_complex_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

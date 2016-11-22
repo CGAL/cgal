@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -51,9 +51,9 @@
     <addaction name="actionSaveAs"/>
     <addaction name="actionSaveSnapshot"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_Script"/>
+    <addaction name="actionLoadScript"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_plugin"/>
+    <addaction name="actionLoadPlugin"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -64,34 +64,13 @@
     <addaction name="actionShowHide"/>
     <addaction name="actionSetPolyhedronA"/>
     <addaction name="actionSetPolyhedronB"/>
-    <addaction name="actionSelect_all_items"/>
+    <addaction name="actionSelectAllItems"/>
     <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
      <string>&amp;Operations</string>
     </property>
-    <widget class="QMenu" name="menu_Boolean_operations">
-     <property name="title">
-      <string>&amp;Boolean Operations</string>
-     </property>
-     <addaction name="actionToNef"/>
-     <addaction name="actionToPoly"/>
-     <addaction name="actionUnion"/>
-     <addaction name="actionIntersection"/>
-     <addaction name="actionDifference"/>
-     <addaction name="separator"/>
-     <addaction name="actionMinkowskiSum"/>
-    </widget>
-    <addaction name="actionEstimateCurvature"/>
-    <addaction name="actionSelfIntersection"/>
-    <addaction name="actionConvexHull"/>
-    <addaction name="actionKernel"/>
-    <addaction name="actionSimplify"/>
-    <addaction name="actionRemeshing"/>
-    <addaction name="actionConvexDecomposition"/>
-    <addaction name="menu_Boolean_operations"/>
-    <addaction name="actionInsideOut"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -108,14 +87,15 @@
       <string>Ca&amp;mera</string>
      </property>
      <addaction name="actionDumpCamera"/>
-     <addaction name="action_Copy_camera"/>
-     <addaction name="action_Paste_camera"/>
+     <addaction name="actionCopyCamera"/>
+     <addaction name="actionPasteCamera"/>
     </widget>
     <addaction name="actionRecenterScene"/>
-    <addaction name="action_Look_at"/>
+    <addaction name="actionLookAt"/>
     <addaction name="actionAntiAliasing"/>
-    <addaction name="actionDraw_two_sides"/>
-    <addaction name="actionQuick_camera_mode"/>
+    <addaction name="actionDrawTwoSides"/>
+    <addaction name="actionQuickCameraMode"/>
+    <addaction name="actionMaxTextItemsDisplayed"/>
     <addaction name="actionSetBackgroundColor"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
@@ -127,6 +107,12 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="sceneDockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="locale">
     <locale language="English" country="UnitedStates"/>
    </property>
@@ -221,6 +207,12 @@
        </item>
        <item>
         <widget class="QTreeView" name="sceneView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
          </property>
@@ -232,6 +224,9 @@
          </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
          </property>
          <property name="indentation">
           <number>10</number>
@@ -298,8 +293,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>534</width>
-            <height>174</height>
+            <width>541</width>
+            <height>176</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -580,7 +575,7 @@
     <string>Convert to Normal Polyhedron</string>
    </property>
   </action>
-  <action name="actionDraw_two_sides">
+  <action name="actionDrawTwoSides">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -596,7 +591,7 @@
     <string>Re&amp;center Scene</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+C</string>
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionSetBackgroundColor">
@@ -612,7 +607,7 @@
     <string>Ctrl+O, M</string>
    </property>
   </action>
-  <action name="action_Look_at">
+  <action name="actionLookAt">
    <property name="text">
     <string>&amp;Look at...</string>
    </property>
@@ -627,17 +622,17 @@
     <string>&amp;Dump Camera Coordinates</string>
    </property>
   </action>
-  <action name="action_Copy_camera">
+  <action name="actionCopyCamera">
    <property name="text">
     <string>&amp;Copy Camera</string>
    </property>
   </action>
-  <action name="action_Paste_camera">
+  <action name="actionPasteCamera">
    <property name="text">
     <string>&amp;Paste Camera</string>
    </property>
   </action>
-  <action name="actionSelect_all_items">
+  <action name="actionSelectAllItems">
    <property name="text">
     <string>Select All Items</string>
    </property>
@@ -645,7 +640,7 @@
     <string>Ctrl+A</string>
    </property>
   </action>
-  <action name="actionLoad_Script">
+  <action name="actionLoadScript">
    <property name="text">
     <string>Load &amp;Script</string>
    </property>
@@ -660,12 +655,12 @@
     <string>Least Square Conformal Maps</string>
    </property>
   </action>
-  <action name="actionLoad_plugin">
+  <action name="actionLoadPlugin">
    <property name="text">
     <string>Load Plugin</string>
    </property>
   </action>
-  <action name="actionQuick_camera_mode">
+  <action name="actionQuickCameraMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -674,6 +669,11 @@
    </property>
    <property name="text">
     <string>Quick Camera Mode</string>
+   </property>
+  </action>
+  <action name="actionMaxTextItemsDisplayed">
+   <property name="text">
+    <string>Set Maximum  Text Items Displayed :</string>
    </property>
   </action>
  </widget>

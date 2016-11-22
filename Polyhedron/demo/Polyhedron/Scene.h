@@ -123,6 +123,9 @@ public:
    */
   bool keyPressEvent(QKeyEvent* e);
 
+  void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*);
+  void printPrimitiveIds(CGAL::Three::Viewer_interface*);
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer);
   //!@returns the scene bounding box
   Bbox bbox() const;
   float get_bbox_length() const;
@@ -130,9 +133,9 @@ public:
   double len_diagonal() const
   {
     Bbox box = bbox();
-    double dx = box.xmax - box.xmin;
-    double dy = box.ymax - box.ymin;
-    double dz = box.zmax - box.zmin;
+    double dx = box.xmax() - box.xmin();
+    double dy = box.ymax() - box.ymin();
+    double dz = box.zmax() - box.zmin();
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
 
@@ -149,7 +152,6 @@ public:
   /*! Sets the column data for the target index. Returns false if index is not valid and
    * if role is not EditRole.*/
   bool setData(const QModelIndex &index, const QVariant &value, int role);
-  QList<CGAL::Three::Scene_group_item*> group_entries() const ;
   QList<CGAL::Three::Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   //!Selects the row at index i in the sceneView.
@@ -162,10 +164,10 @@ public Q_SLOTS:
   void setExpanded(QModelIndex);
   //!Specifies a group as Collapsed for the view
   void setCollapsed(QModelIndex);
-  /*! This is an overloaded function.
-   * Notifies the scene that the sender item was modified.
-   * Called by the items. Calls @ref Scene_item#changed().
-   * This function is called by the items.*/
+  /*!
+   *Calls itemChanged() on the sender if it's an item.
+
+*/
   void itemChanged();
   /*! Notifies the scene that the item at index i was modified.
    * Called by the items. Calls @ref Scene_item#changed().
@@ -178,15 +180,18 @@ public Q_SLOTS:
   //!Removes item from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
 
-  void add_group(Scene_group_item* group);
+  void addGroup(Scene_group_item* group);
   //!Re-organizes the sceneView.
-  void group_added();
-  //! Sets the selected item to the target index.
+  void redraw_model();
+  //! Sets the selected item to the target index. Emits a signal to notify
+  //! that a new item is now selected.
   void setSelectedItemIndex(int i)
   {
     selected_item = i;
+    Q_EMIT itemIndexSelected(i);
   }
-  //! Sets the selected item to the target index and emits selectionChanged(i).
+  //! Clears the current selection then sets the selected item to the target index.
+  //! Used to update the selection in the QTreeView.
   void setSelectedItem(int i )
   {
     selected_item = i;
@@ -243,13 +248,17 @@ Q_SIGNALS:
   void updated();
   void itemAboutToBeDestroyed(CGAL::Three::Scene_item*);
   void selectionRay(double, double, double, double, double, double);
+  //! Used to update the selected item in the QTreeView.
   void selectionChanged(int i);
+  //! Used when you don't want to update the sleectedItem in the QTreeView.
+  void itemIndexSelected(int i);
   void restoreCollapsedState();
+  void drawFinished();
 private Q_SLOTS:
   //! Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
-
+  void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
 private:
   /*! Calls the drawing functions of each visible item according
    * to its current renderingMode. If with_names is true, uses
@@ -263,8 +272,6 @@ private:
   Entries m_entries;
   //! Index of the currently selected item.
   int selected_item;
-  //!List containing all the scene_group_items.
-  QList<CGAL::Three::Scene_group_item*> m_group_entries;
   //!List of indices of the currently selected items.
   QList<int> selected_items_list;
   //!Index of the item_A.

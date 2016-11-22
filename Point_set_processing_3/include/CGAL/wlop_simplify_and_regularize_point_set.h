@@ -487,11 +487,7 @@ wlop_simplify_and_regularize_point_set(
 
   for(it = first_sample_iter; it != beyond; ++it)
   {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    sample_points.push_back(get(point_pmap, it));
-#else
     sample_points.push_back(get(point_pmap, *it));
-#endif
   }
   
   //compute default neighbor_radius, if no radius in
@@ -516,15 +512,7 @@ wlop_simplify_and_regularize_point_set(
   // Initiate a KD-tree search for original points
   std::vector<Kd_tree_element> original_treeElements;
   for (it = first_original_iter, i=0 ; it != beyond ; ++it, ++i)
-  {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point& p0 = get(point_pmap, it);
-#else
-      Point& p0 = get(point_pmap, *it);
-#endif 
-    
-    original_treeElements.push_back(Kd_tree_element(p0, i));
-  }
+    original_treeElements.push_back( Kd_tree_element(get(point_pmap, *it), i) );
   Kd_Tree original_kd_tree(original_treeElements.begin(), 
                            original_treeElements.end());
 
@@ -543,11 +531,7 @@ wlop_simplify_and_regularize_point_set(
       FT density = simplify_and_regularize_internal::
                    compute_density_weight_for_original_point<Kernel, Kd_Tree>
                                          (
-                                         #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                           get(point_pmap, it),
-                                         #else
                                            get(point_pmap, *it),
-                                         #endif  
                                            original_kd_tree, 
                                            radius);
 
@@ -696,13 +680,9 @@ wlop_simplify_and_regularize_point_set(
   return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
           first, beyond,
           output,
-        #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-          make_dereference_property_map(first),
-        #else
           make_identity_property_map(typename std::iterator_traits
                                      <RandomAccessIterator >::
                                      value_type()),
-        #endif
           select_percentage, 
           neighbor_radius, 
           max_iter_number, 

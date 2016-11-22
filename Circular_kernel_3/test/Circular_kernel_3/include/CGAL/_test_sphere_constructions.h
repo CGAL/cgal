@@ -1784,11 +1784,11 @@ void _test_intersection_construct(SK sk) {
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
   rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
 
@@ -2479,11 +2479,11 @@ void _test_split_construct(SK sk) {
   Root_for_spheres_2_3 rt[8];
 
   rt[0] = Root_for_spheres_2_3(0,1,0);
-  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
+  rt[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
   rt[2] = Root_for_spheres_2_3(-1,0,0);
-  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[3] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[4] = Root_for_spheres_2_3(0,-1,0);
-  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)),0);
+  rt[5] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),0);
   rt[6] = Root_for_spheres_2_3(1,0,0);
   rt[7] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)),0);
 
@@ -2567,13 +2567,13 @@ void _test_extremal_points_construct(SK sk) {
 	
 	Circular_arc_point_3 pc[4], ps[6], res[6];
 
-	pc[0] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)), 
+	pc[0] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)),
 	                             0,
 	                             CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)));
 	pc[1] = Root_for_spheres_2_3(0,1,0);
 	pc[2] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(0),FT(FT(1) / FT(2)),FT(2)), 
 	                             0,
-	                             CGAL::make_root_of_2(FT(0),-FT(FT(1) / FT(2)),FT(2)));
+	                             CGAL::make_root_of_2(FT(0),FT(-FT(1) / FT(2)),FT(2)));
 	pc[3] = Root_for_spheres_2_3(0,-1,0);
 	
 	res[0] = x_extremal_point(c, true);
@@ -2590,11 +2590,11 @@ void _test_extremal_points_construct(SK sk) {
 	assert(res[4] == pc[0]);
 	assert(res[5] == pc[2]);
 	
-	ps[0] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(1),-FT(1),FT(2)), 1, 1);
+	ps[0] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(1),FT(-1),FT(2)), 1, 1);
 	ps[1] = Root_for_spheres_2_3(CGAL::make_root_of_2(FT(1),FT(1),FT(2)), 1, 1);
-	ps[2] = Root_for_spheres_2_3(1, CGAL::make_root_of_2(FT(1),-FT(1),FT(2)), 1);
+	ps[2] = Root_for_spheres_2_3(1, CGAL::make_root_of_2(FT(1),FT(-1),FT(2)), 1);
 	ps[3] = Root_for_spheres_2_3(1, CGAL::make_root_of_2(FT(1),FT(1),FT(2)), 1);
-	ps[4] = Root_for_spheres_2_3(1, 1, CGAL::make_root_of_2(FT(1),-FT(1),FT(2)));
+	ps[4] = Root_for_spheres_2_3(1, 1, CGAL::make_root_of_2(FT(1),FT(-1),FT(2)));
 	ps[5] = Root_for_spheres_2_3(1, 1, CGAL::make_root_of_2(FT(1),FT(1),FT(2)));
 
 	res[0] = x_extremal_point(s, true);

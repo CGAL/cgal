@@ -20,6 +20,7 @@
 #define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
 
 #include <CGAL/Polygon_2.h>
+#include <CGAL/number_utils.h>
 #include <vector>
 #include <list>
 

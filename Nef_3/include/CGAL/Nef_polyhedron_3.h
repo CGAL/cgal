@@ -49,10 +49,12 @@
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
 
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
+#include <CGAL/Nef_3/polygon_mesh_to_nef_3.h>
 #include <CGAL/Nef_3/shell_to_nef_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/assertions.h>
 
@@ -63,6 +65,9 @@
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
+
+#include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
 
 // RO: includes for "vertex cycle to Nef" constructor
 #include <CGAL/Nef_3/vertex_cycle_to_nef_3.h>
@@ -600,6 +605,41 @@ protected:
     initialize_infibox_vertices(EMPTY);
     polyhedron_3_to_nef_3
       <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
+    build_external_structure();
+    simplify();
+    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
+    delegate(mbv);
+    set_snc(snc());
+  }
+
+ template <class PolygonMesh>
+ explicit Nef_polyhedron_3(const PolygonMesh& pm) {
+    CGAL_NEF_TRACEN("construction from PolygonMesh with internal index maps");
+    SNC_structure rsnc;
+    *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
+    initialize_infibox_vertices(EMPTY);
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
+    build_external_structure();
+    simplify();
+    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
+    delegate(mbv);
+    set_snc(snc());
+  }
+
+ template <class PolygonMesh, class HalfedgeIndexMap, class FaceIndexMap>
+ explicit Nef_polyhedron_3(const PolygonMesh& pm,
+                           const HalfedgeIndexMap& him,
+                           const FaceIndexMap& fim,
+                           typename boost::disable_if <
+                              boost::is_same<FaceIndexMap, bool>
+                           >::type* = NULL // disambiguate with another constructor
+  )
+  {
+    CGAL_NEF_TRACEN("construction from PolygonMesh");
+    SNC_structure rsnc;
+    *this = Nef_polyhedron_3(rsnc, new SNC_point_locator_default, false);
+    initialize_infibox_vertices(EMPTY);
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
     build_external_structure();
     simplify();
     CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
@@ -1264,6 +1304,7 @@ protected:
 		    SNC_point_locator* _pl = new SNC_point_locator_default,
 		    bool clone_pl = true,
 		    bool clone_snc = true);
+
   /*{\Xcreate makes |\Mvar| a new object.  If |cloneit==true| then the
   underlying structure of |W| is copied into |\Mvar|.}*/
   // TODO: granados: define behavior when clone=false
@@ -1555,7 +1596,8 @@ protected:
 
    SVertex_iterator sv;
    CGAL_forall_svertices(sv, snc()) {
-     sv->out_sedge() = sv->out_sedge()->twin();
+     if (!sv->is_isolated())
+      sv->out_sedge() = sv->out_sedge()->twin();
    }
 
    SHalfedge_iterator se;

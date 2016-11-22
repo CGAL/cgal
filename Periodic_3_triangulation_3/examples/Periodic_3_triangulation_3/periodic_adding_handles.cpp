@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
@@ -34,7 +34,7 @@ public:
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Periodic_3_Delaunay_triangulation_filtered_traits_3<K> GT;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<K> GT;
 
 typedef CGAL::Periodic_3_triangulation_ds_vertex_base_3<> VbDS;
 typedef CGAL::Periodic_3_triangulation_ds_cell_base_3<> CbDS;

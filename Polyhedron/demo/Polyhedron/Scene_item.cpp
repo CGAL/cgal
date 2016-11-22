@@ -19,7 +19,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
     vaos(vaos_size)
 {
   is_bbox_computed = false;
-  is_monochrome = true;
+  is_diag_bbox_computed = false;
   for(int i=0; i<vaosSize; i++)
   {
     addVaos(i);
@@ -36,10 +36,12 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
   nb_isolated_vertices = 0;
   has_group = 0;
   parent_group = 0;
+  is_selected = false;
 }
 
 CGAL::Three::Scene_item::~Scene_item() {
-  delete defaultContextMenu;
+  if(defaultContextMenu)
+    defaultContextMenu->deleteLater();
   for(int i=0; i<buffersSize; i++)
   {
     buffers[i].destroy();
@@ -52,7 +54,9 @@ CGAL::Three::Scene_item::~Scene_item() {
 
 void CGAL::Three::Scene_item::itemAboutToBeDestroyed(CGAL::Three::Scene_item* item) {
     if(this == item)
-    Q_EMIT aboutToBeDestroyed();
+    {
+      Q_EMIT aboutToBeDestroyed();
+    }
 }
 
 
@@ -61,6 +65,8 @@ QString modeName(RenderingMode mode) {
     {
     case Points:
         return QObject::tr("points");
+    case ShadedPoints:
+        return QObject::tr("shaded points");
     case Wireframe:
         return QObject::tr("wire");
     case Flat:
@@ -84,6 +90,8 @@ const char* slotName(RenderingMode mode) {
     {
     case Points:
         return SLOT(setPointsMode());
+    case ShadedPoints:
+      return SLOT(setShadedPointsMode());
     case Wireframe:
         return SLOT(setWireframeMode());
     case Flat:
@@ -165,10 +173,10 @@ void CGAL::Three::Scene_item::select(double /*orig_x*/,
 }
 
 // set-up the uniform attributes of the shader programs.
-void CGAL::Three::Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer,
+void CGAL::Three::Scene_item::attribBuffers(CGAL::Three::Viewer_interface* viewer,
                                              int program_name) const
 {
-    viewer->attrib_buffers(program_name);
+    viewer->attribBuffers(program_name);
     viewer->getShaderProgram(program_name)->bind();
     if(is_selected)
         viewer->getShaderProgram(program_name)->setUniformValue("is_selected", true);
@@ -208,7 +216,32 @@ CGAL::Three::Scene_item::Header_data CGAL::Three::Scene_item::header() const
   return data;
 }
 
-QString CGAL::Three::Scene_item::compute_stats(int )
+QString CGAL::Three::Scene_item::computeStats(int )
 {
   return QString();
+}
+
+void CGAL::Three::Scene_item::printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*)
+{
+}
+
+void CGAL::Three::Scene_item::printPrimitiveIds(CGAL::Three::Viewer_interface*)const
+{
+}
+bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)
+{
+    return false;
+}
+
+#include <CGAL/double.h>
+
+void CGAL::Three::Scene_item::compute_diag_bbox()const
+{
+ const Bbox& b_box = bbox();
+  _diag_bbox = CGAL::sqrt(
+        CGAL::square(b_box.xmax() - b_box.xmin())
+        + CGAL::square(b_box.ymax() - b_box.ymin())
+        + CGAL::square(b_box.zmax() - b_box.zmin())
+        );
+
 }

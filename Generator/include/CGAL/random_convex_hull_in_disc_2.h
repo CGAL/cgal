@@ -26,6 +26,10 @@
 #define CGAL_RANDOM_CONVEX_HULL_DISC_H 1
 #include <boost/random.hpp>
 #include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/copy_n.h>
+#include <CGAL/number_type_config.h>
+#include <list>
 
 namespace CGAL {
 namespace internal {

@@ -48,11 +48,7 @@ enum MaxFilesNumber {
 // Stream:
 #if BENCH_KERNEL == LEDA_KERNEL || BENCH_KERNEL == MY_KERNEL
 #if defined(USE_CGAL_WINDOW)
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/rat_window.h>
-#else
 #include <LEDA/graphics/rat_window.h>
-#endif
 #else
 #include <CGAL/IO/Qt_widget_Leda_rat.h>
 #endif

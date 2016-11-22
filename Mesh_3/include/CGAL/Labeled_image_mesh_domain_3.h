@@ -32,6 +32,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Default.h>
 
 namespace CGAL {
 
@@ -42,39 +43,85 @@ namespace CGAL {
  */
 template<class Image,
          class BGT,
-         typename Image_word_type = unsigned char,
+         typename Image_word_type_ = unsigned char,
          typename Subdomain_index = int,
-         class Wrapper = Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
-                                                                   Image_word_type,
-                                                                   Subdomain_index> >
+         class Null_subdomain_index = Default,
+         class Wrapper_ = Default >
 class Labeled_image_mesh_domain_3
-: public Labeled_mesh_domain_3<Wrapper, BGT>
+: public Labeled_mesh_domain_3
+<typename Default::Get
+   <Wrapper_,
+    Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
+                                              Image_word_type_,
+                                              Subdomain_index>
+    >::type,
+ BGT,
+ Null_subdomain_index
+ >
 {
 public:
-  typedef Labeled_mesh_domain_3<Wrapper, BGT> Base;
+  typedef Image_word_type_ Image_word_type;
+  typedef typename Default::Get
+    <Wrapper_,
+     Mesh_3::Image_to_labeled_function_wrapper<Image, BGT,
+                                               Image_word_type,
+                                               Subdomain_index>
+     >::type Wrapper;
+  typedef typename Default::Get<Null_subdomain_index,
+                                CGAL::Null_subdomain_index>::type Null;
+
+  typedef Labeled_mesh_domain_3<Wrapper, BGT, Null_subdomain_index> Base;
 
   typedef typename Base::Sphere_3 Sphere_3;
   typedef typename Base::FT FT;
   typedef BGT Geom_traits;
   typedef CGAL::Bbox_3 Bbox_3;
+  typedef CGAL::Identity<Subdomain_index> Identity;
 
   /// Constructor
   Labeled_image_mesh_domain_3(const Image& image,
                               const FT& error_bound = FT(1e-3),
+                              Subdomain_index value_outside = 0,
+                              Null null = Null(),
                               CGAL::Random* p_rng = NULL)
-    : Base(Wrapper(image),
+    : Base(Wrapper(image, Identity(), value_outside),
            compute_bounding_box(image),
            error_bound,
+           null,
            p_rng)
   {}
 
   Labeled_image_mesh_domain_3(const Image& image,
                               const CGAL::Bbox_3& bbox,
                               const FT& error_bound = FT(1e-3),
+                              Subdomain_index value_outside = 0,
+                              Null null = Null(),
                               CGAL::Random* p_rng = NULL)
+    : Base(Wrapper(image, Identity(), value_outside),
+           bbox,
+           error_bound,
+           null,
+           p_rng)
+  {}
+
+  Labeled_image_mesh_domain_3(const Image& image,
+                              const FT error_bound,
+                              CGAL::Random* p_rng)
+    : Base(Wrapper(image),
+           compute_bounding_box(image),
+           error_bound,
+           Null(),
+           p_rng)
+  {}
+
+  Labeled_image_mesh_domain_3(const Image& image,
+                              const CGAL::Bbox_3& bbox,
+                              const FT error_bound,
+                              CGAL::Random* p_rng)
     : Base(Wrapper(image),
            bbox,
            error_bound,
+           Null(),
            p_rng)
   {}
 
@@ -88,7 +135,9 @@ private:
   Bbox_3 compute_bounding_box(const Image& im) const
   {
     return Bbox_3(-1,-1,-1,
-                  im.xdim()*im.vx()+1, im.ydim()*im.vy()+1, im.zdim()*im.vz()+1);
+                  double(im.xdim())*im.vx()+1,
+                  double(im.ydim())*im.vy()+1,
+                  double(im.zdim())*im.vz()+1);
   }
 
 private:

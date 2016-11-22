@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Segment_voronoi_linf_2)
+project (Segment_Delaunay_graph_Linf_2_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
@@ -34,13 +34,13 @@ add_definitions(-DQT_NO_KEYWORDS)
 qt5_wrap_ui( CDT_UI_FILES Segment_voronoi_2.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( CDT_RESOURCE_FILES ./Segment_voronoi_2.qrc )
+qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Segment_voronoi_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 qt5_generate_moc( "Segment_voronoi_linf_2.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Segment_voronoi_linf_2.moc" )
 
 # The executable itself.
-add_executable  ( Segment_voronoi_linf_2 Segment_voronoi_linf_2.cpp Segment_voronoi_linf_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
+add_executable  ( Segment_voronoi_linf_2 Segment_voronoi_linf_2.cpp Segment_voronoi_linf_2.moc ${CDT_UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
 qt5_use_modules(Segment_voronoi_linf_2 Xml Script OpenGL Svg)
 

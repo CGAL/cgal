@@ -89,7 +89,7 @@ processInput( CGAL::Object o )
     CGAL::insert( *( this->arrangement ), curve );
   }
     
-  emit CGAL::Qt::GraphicsViewInput::modelChanged( );
+  Q_EMIT CGAL::Qt::GraphicsViewInput::modelChanged( );
 }
 
 template < typename Arr_ >

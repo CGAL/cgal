@@ -82,7 +82,7 @@ flip_edge (LCC & m, Dart_handle d)
   CGAL_assertion ( !m.is_free(d,1) && !m.is_free(d,0) );
   CGAL_assertion ( !m.is_free(m.beta(d,2), 0) && !m.is_free(m.beta(d, 2), 1) );
   
-  if (!CGAL::is_removable<LCC,1>(m,d)) return LCC::null_handle;
+  if (!m.is_removable<1>(d)) return LCC::null_handle;
 
   Dart_handle d1 = m.beta(d,1);
   Dart_handle d2 = m.beta(d,2,0);

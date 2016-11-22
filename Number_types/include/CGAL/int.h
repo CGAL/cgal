@@ -28,8 +28,11 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Modular_traits.h>
+#include <CGAL/Modular_arithmetic/Residue_type.h>
 
 namespace CGAL {
+
+
 
 namespace INTERN_INT {
     template< class Type >
@@ -230,8 +233,9 @@ template<> class Algebraic_structure_traits< short int >
         void operator()( const Type& x,
                          const Type& y,
                          Type& q, Type& r) const {
-          q = x / y;
-          r = x % y;
+          q = Type(x / y);
+          r = Type(x % y);
+          CGAL_assertion(x == q * y + r);
           return;
         }
     };
@@ -242,8 +246,8 @@ template<> class Algebraic_structure_traits< short int >
                                 Type > {
       public:
         Type operator()( const Type& x,
-                                        const Type& y) const {
-          return x / y;
+                         const Type& y) const {
+          return Type(x / y);
         };
     };
 
@@ -253,8 +257,8 @@ template<> class Algebraic_structure_traits< short int >
                                 Type > {
       public:
         Type operator()( const Type& x,
-                                        const Type& y) const {
-          return x % y;
+                         const Type& y) const {
+          return Type(x % y);
         };
     };
 

@@ -28,7 +28,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/Kernel_traits.h>
 
 #include <boost/foreach.hpp>
 
@@ -67,8 +66,7 @@ namespace internal{
  *      In other words, the answer to this predicate would be the same for each
  *      isolated connected component.
  *
- * @tparam PolygonMesh a model of `FaceListGraph` that has an internal property map
- *         for `boost::vertex_point_t`
+ * @tparam PolygonMesh a model of `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param pmesh the closed polygon mesh to be tested
@@ -91,14 +89,13 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid(pmesh));
 
-  using boost::choose_const_pmap;
+  using boost::choose_param;
   using boost::get_param;
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-  VPMap vpmap = choose_const_pmap(get_param(np, boost::vertex_point),
-                                  pmesh,
-                                  boost::vertex_point);
+  VPMap vpmap = choose_param(get_param(np, vertex_point),
+                             get_const_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
 

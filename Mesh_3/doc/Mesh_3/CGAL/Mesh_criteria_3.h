@@ -125,7 +125,8 @@ surface mesh facets.
 a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls. 
 
 - `facet_distance`: a scalar field (resp. a constant) describing a space varying (resp. a uniform) 
-upper bound for the same distance. 
+upper bound for the distance between the facet circumcenter and the center of its surface
+Delaunay ball.
 
 - `facet_topology`: the set of topological constraints 
 which have to be verified by each surface facet. The default value is 
@@ -138,10 +139,10 @@ get all possible values.
 a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra. 
 
 Note that each size or distance parameter can be specified using two ways: either as 
-scalar field or as a numerical value when the field is uniform. 
+a scalar field or as a numerical value when the field is uniform. 
 
 Each parameter has a special default value `ignored` which means that the 
-corresponding criteria will be ignored. 
+corresponding criterion will be ignored. 
 Numerical sizing or distance values, as well as scalar fields 
 should be given in the unit used for coordinates of points in the mesh domain class 
 of the mesh generation process. 

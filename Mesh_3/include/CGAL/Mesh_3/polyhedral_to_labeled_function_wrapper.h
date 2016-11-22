@@ -32,6 +32,8 @@
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
 #include <CGAL/AABB_polyhedron_segment_primitive.h>
 
+#include <CGAL/point_generators_3.h>
+
 namespace CGAL {
 
 namespace Mesh_3 {

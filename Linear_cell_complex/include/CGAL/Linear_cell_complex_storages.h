@@ -23,7 +23,7 @@
 #include <CGAL/Combinatorial_map_storages.h>
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 50000)
+#if  (BOOST_GCC >= 40900)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
@@ -65,7 +65,7 @@ namespace CGAL {
     typedef typename Dart_container::size_type      size_type;
 
     typedef CGAL::Void* Null_handle_type;
-    static Null_handle_type null_handle;
+    static const Null_handle_type null_handle;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -86,14 +86,14 @@ namespace CGAL {
     {};
     template<int i>
     struct Attribute_const_handle:
-        public Helper::template Attribute_const_handle<i>
+      public Helper::template Attribute_const_handle<i>
     {};
     template<int i>
     struct Attribute_range: public Helper::template Attribute_range<i>
     {};
     template<int i>
     struct Attribute_const_range:
-        public Helper::template Attribute_const_range<i>
+      public Helper::template Attribute_const_range<i>
     {};
 
     typedef typename Attribute_type<0>::type Vertex_attribute;
@@ -116,21 +116,15 @@ namespace CGAL {
     // Init
     void init_storage()
     {
-#ifdef CGAL_CMAP_DEPRECATED
-      // We must do this ony once, but problem because null_dart_handle
-      // is static !
-      if ( mnull_dart_container.empty() )
-#endif // CGAL_CMAP_DEPRECATED
-      { // emplace null_dart; initialized in Combinatorial_map class
-        null_dart_handle = mnull_dart_container.emplace();
-      }
+      // emplace null_dart; initialized in Combinatorial_map class
+      null_dart_handle = mnull_dart_container.emplace();
     }
 
-    /** Return if this dart is free for adimension.
-       * @param dh a dart handle
-       * @param i the dimension.
-       * @return true iff dh is linked with NULL for \em adimension.
-       */
+   /** Return if this dart is free for adimension.
+     * @param dh a dart handle
+     * @param i the dimension.
+     * @return true iff dh is linked with NULL for \em adimension.
+     */
     template<unsigned int i>
     bool is_free(Dart_const_handle dh) const
     {
@@ -208,24 +202,24 @@ namespace CGAL {
     typename Attribute_handle<i>::type attribute(Dart_handle ADart)
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                       "attribute<i> called but i-attributes are disabled.");
+                     "attribute<i> called but i-attributes are disabled.");
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-          (ADart->mattribute_handles);
+        (ADart->mattribute_handles);
     }
     template<unsigned int i>
     typename Attribute_const_handle<i>::type
     attribute(Dart_const_handle ADart) const
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                       "attribute<i> called but i-attributes are disabled.");
+                     "attribute<i> called but i-attributes are disabled.");
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-          (ADart->mattribute_handles);
+        (ADart->mattribute_handles);
     }
 
     // get the attribute given its handle
     template<unsigned int i>
-    typename Attribute_type<i>::type& get_attribute
-    (typename Attribute_handle<i>::type ah)
+    typename Attribute_type<i>::type&
+    get_attribute(typename Attribute_handle<i>::type ah)
     {
       CGAL_assertion( ah!=NULL );
       return *ah;
@@ -257,8 +251,8 @@ namespace CGAL {
       return ah->dart();
     }
     template<unsigned int i>
-    Dart_const_handle dart_of_attribute
-    (typename Attribute_const_handle<i>::type ah) const
+    Dart_const_handle
+    dart_of_attribute(typename Attribute_const_handle<i>::type ah) const
     {
       CGAL_assertion( ah!=NULL );
       return ah->dart();
@@ -289,7 +283,7 @@ namespace CGAL {
       return ah->info();
     }
 
-    // Get the info of the given dart
+    // Get the info of the i-cell attribute associated with the given dart
     template<unsigned int i>
     typename Attribute_type<i>::type::Info & info(Dart_handle adart)
     {
@@ -350,14 +344,14 @@ namespace CGAL {
                                   typename Attribute_handle<i>::type ah)
     {
       CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-          (dh->mattribute_handles) = ah;
+        (dh->mattribute_handles) = ah;
     }
 
     /** Link a dart with a given dart for a given dimension.
-       * @param adart the dart to link.
-       * @param adart2 the dart to link with.
-       * @param i the dimension.
-       */
+     * @param adart the dart to link.
+     * @param adart2 the dart to link with.
+     * @param i the dimension.
+     */
     template<unsigned int i>
     void dart_link_beta(Dart_handle adart, Dart_handle adart2)
     {
@@ -375,9 +369,9 @@ namespace CGAL {
     }
 
     /** Unlink a dart for a given dimension.
-       * @param adart a dart.
-       * @param i the dimension.
-       */
+     * @param adart a dart.
+     * @param i the dimension.
+     */
     template<unsigned int i>
     void dart_unlink_beta(Dart_handle adart)
     {
@@ -392,9 +386,6 @@ namespace CGAL {
 
   public:
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
-#ifdef CGAL_CMAP_DEPRECATED
-    static
-#endif // CGAL_CMAP_DEPRECATED
     Dart_handle null_dart_handle; // Todo Dart_const_handle ??
 
   protected:
@@ -402,9 +393,6 @@ namespace CGAL {
     Dart_container mdarts;
 
     /// Container for the null_dart_handle, static data member.
-#ifdef CGAL_CMAP_DEPRECATED
-    static
-#endif // CGAL_CMAP_DEPRECATED
     Dart_container mnull_dart_container;
 
     /// Tuple of attributes containers
@@ -414,36 +402,14 @@ namespace CGAL {
   /// null_handle
   template <unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_ >
-  typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+  const typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
                                          Items_, Alloc_>::Null_handle_type
   Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
                                 Items_, Alloc_>::null_handle = NULL;
 
-#ifdef CGAL_CMAP_DEPRECATED
-  /// Allocation of static data members
-  /// mnull_dart_container
-  template <unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_ >
-  typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                         Items_, Alloc_>::Dart_container
-  Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                         Items_, Alloc_>::mnull_dart_container;
-
-  /// null_dart_handle
-  template <unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_ >
-  typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                         Items_, Alloc_>::Dart_handle
-  Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                         Items_, Alloc_>::null_dart_handle;
-  // =  mnull_dart_container.emplace( std::bitset<NB_MARKS>() );
-  // Does not work on windows => segfault
-  // Thus we initialize null_dart_handle in the Combinatorial_map constructor
-#endif // CGAL_CMAP_DEPRECATED
-
 } // namespace CGAL
 
-#if  (BOOST_GCC >= 50000)
+#if  (BOOST_GCC >= 40900)
  _Pragma("GCC diagnostic pop")
 #endif
 #endif // CGAL_LINEAR_CELL_COMPLEX_STORAGES_H //

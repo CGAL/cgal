@@ -1,7 +1,8 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Alpha_shape_3)
+project (Alpha_shapes_3_Demo)
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
@@ -32,15 +33,15 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   qt5_wrap_ui( uis MainWindow.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources ( RESOURCE_FILES ./Alpha_shape_3.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Alpha_shape_3.qrc )
 
-  add_executable  ( Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${RESOURCE_FILES} )
+  add_executable  ( Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
   qt5_use_modules(Alpha_shape_3 Xml Script OpenGL Svg)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Alpha_shape_3 )
 
   target_link_libraries( Alpha_shape_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
   target_link_libraries( Alpha_shape_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Alpha_shape_3 ${OPENGL_gl_LIBRARY} )
+  target_link_libraries( Alpha_shape_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
 else()
 

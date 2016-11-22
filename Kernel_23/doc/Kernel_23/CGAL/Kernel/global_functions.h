@@ -48,7 +48,22 @@ Angle angle(const CGAL::Point_3<Kernel>& p,
 const CGAL::Point_3<Kernel>& q,
 const CGAL::Point_3<Kernel>& r);
 
+
+/*!
+returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
+    The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise. 
+    The angle is given in degree.
+    \pre `p,q,r` and `p,q,s` are not collinear.
+*/
+template <typename Kernel>
+Kernel::FT approximate_dihedral_angle(const CGAL::Point_3<Kernel>& p,
+                                      const CGAL::Point_3<Kernel>& q,
+                                      const CGAL::Point_3<Kernel>& r,
+                                      const CGAL::Point_3<Kernel>& s);
+
 /// @}
+
+
 
 /// \defgroup area_grp CGAL::area()
 /// \ingroup kernel_global_function
@@ -1602,11 +1617,11 @@ const CGAL::Point_3<Kernel>&s);
 /// @{
 
 /*!
-Let `p` be the plane defined by the points `p`, `q`,
+Let `P` be the plane defined by the points `p`, `q`,
 and `r`. Note that the order defines the orientation of
-`p`. The function computes the orientation of points `p`, 
-`q`, and `s` in `p`: Iff `p`, `q`, `s` are
-collinear, `CGAL::COLLINEAR` is returned. Iff `p` and the plane 
+`P`. The function computes the orientation of points `p`, 
+`q`, and `s` in `P`: Iff `p`, `q`, `s` are
+collinear, `CGAL::COLLINEAR` is returned. Iff `P` and the plane 
 defined by `p`, `q`, and `s` have the same orientation, 
 `CGAL::POSITIVE` is returned; otherwise `CGAL::NEGATIVE` is returned. 
 \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear.
@@ -1690,6 +1705,7 @@ const CGAL::Vector_3<Kernel>& v,
 const CGAL::Vector_3<Kernel>& w);
 
 /// @}
+
 
 // This is there to keep the global functions in alphabetical order
 // instead of processing order.
@@ -2356,6 +2372,26 @@ const CGAL::Point_2<Kernel> &r);
 
 /// @}
 
+
+
+/// \defgroup scalar_product_grp CGAL::scalar_product()
+/// \ingroup kernel_global_function
+/// @{
+
+/*!
+returns the scalar product of `u` and `v`.
+*/
+template <typename Kernel>
+Kernel::FT scalar_product( const CGAL::Vector_2<Kernel>& u,
+                           const CGAL::Vector_2<Kernel>& v );
+
+/*!
+returns the scalar product of `u` and `v`.
+*/
+template <typename Kernel>
+Kernel::FT scalar_product( const CGAL::Vector_3<Kernel>& u,
+                           const CGAL::Vector_3<Kernel>& v );
+/// @}
 
 /// \defgroup side_of_bounded_circle_grp CGAL::side_of_bounded_circle()
 /// \ingroup kernel_global_function

@@ -436,7 +436,7 @@ next_marked_dart_around_target_vertex(
   CGAL_precondition(final_map.is_marked(dart,mark_index));
   typename Combinatorial_map_3::Dart_handle next=dart->beta(1);
   while ( ! final_map.is_marked(next,mark_index) ){
-    if (next->is_free(2) )//we reach a boundary
+    if (final_map.is_free(next,2) )//we reach a boundary
       return  boost::optional<typename Combinatorial_map_3::Dart_handle>();
     next=next->beta(2)->beta(1);
   }
@@ -458,7 +458,7 @@ get_next_marked_dart_around_target_vertex(
   CGAL_precondition(final_map.is_marked(dart,mark_index));
   typename Combinatorial_map_3::Dart_handle next=dart->beta(1);
   while ( !final_map.is_marked(next,mark_index) ){
-    CGAL_assertion( !next->is_free(2) );
+    CGAL_assertion( !final_map.is_free(next,2) );
     next=next->beta(2)->beta(1);
     CGAL_assertion(next != dart);
   }
@@ -478,7 +478,7 @@ get_next_marked_dart_around_source_vertex(
   CGAL_precondition(final_map.is_marked(dart,mark_index));
   typename Combinatorial_map_3::Dart_handle next=dart->beta(0);
   while ( ! final_map.is_marked(next,mark_index) ){ 
-    CGAL_assertion( !next->is_free(2) );
+    CGAL_assertion( !final_map.is_free(next,2) );
     next=next->beta(2)->beta(0);
     CGAL_assertion(next != dart);
   }
@@ -499,8 +499,8 @@ void sew_2_marked_darts( Combinatorial_map_3& final_map,
                          const std::pair<int,int>& indices,
                          const std::pair<bool,int>& polyline_info)
 {
-  CGAL_precondition( dart_1->is_free(2) );
-  CGAL_precondition( dart_2->is_free(2) );
+  CGAL_precondition( final_map.is_free(dart_1,2) );
+  CGAL_precondition( final_map.is_free(dart_2,2) );
   CGAL_precondition( final_map.is_marked(dart_1,mark_index) );
   CGAL_precondition( final_map.is_marked(dart_2,mark_index) );
   CGAL_precondition( dart_1->template attribute<0>()->point() == dart_2->beta(1)->template attribute<0>()->point() );
@@ -572,7 +572,7 @@ void sew_3_marked_darts( Combinatorial_map_3& final_map,
   typename Combinatorial_map_3::Dart_handle start=not_top;
   do
   {
-    CGAL_assertion(!not_top->is_free(3));
+    CGAL_assertion(!final_map.is_free(not_top,3));
     darts_to_remove.insert(not_top);   darts_to_remove.insert(not_top->beta(1)); darts_to_remove.insert(not_top->beta(1)->beta(1));
     darts_to_remove.insert(not_top->beta(3));   darts_to_remove.insert(not_top->beta(3)->beta(1)); darts_to_remove.insert(not_top->beta(3)->beta(1)->beta(1));
     O_Dart_handle current_1=next_marked_dart_around_target_vertex(final_map,not_top,mark_index);

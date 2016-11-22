@@ -25,6 +25,7 @@
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/utility.h>
+#include <CGAL/Object.h>
 
 #include <boost/bind.hpp>
 
@@ -401,10 +402,10 @@ private:
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
     size_type n = number_of_vertices();
-    std::vector<std::ptrdiff_t> indices;
+    std::vector<std::size_t> indices;
     std::vector<Weighted_point> points;
     std::vector<typename Triangulation_data_structure::Vertex::Info> infos;
-    std::ptrdiff_t index=0;
+    std::size_t index=0;
     for (InputIterator it=first;it!=last;++it){
       Tuple_or_pair pair = *it;
       points.push_back( top_get_first(pair) );
@@ -412,13 +413,16 @@ private:
       indices.push_back(index++);
     }
 
-    typedef Spatial_sort_traits_adapter_2<Geom_traits,Weighted_point*> Search_traits;
+    typedef typename Pointer_property_map<Weighted_point>::type Pmap;
+    typedef Spatial_sort_traits_adapter_2<Geom_traits,Pmap> Search_traits;
     
-    spatial_sort(indices.begin(),indices.end(),Search_traits(&(points[0]),geom_traits()));    
+    spatial_sort(indices.begin(),
+                 indices.end(),
+                 Search_traits(make_property_map(points),geom_traits()));
 
     Face_handle hint;
     Vertex_handle v_hint;
-    for (typename std::vector<std::ptrdiff_t>::const_iterator
+    for (typename std::vector<std::size_t>::const_iterator
       it = indices.begin(), end = indices.end();
       it != end; ++it)
     {
@@ -1241,7 +1245,7 @@ insert(const Weighted_point &p, Locate_type lt, Face_handle loc, int li)
 	      regularize (v);
 	      return v;
 	      
-	    case ON_ORIENTED_BOUNDARY:
+	    default: // that is ON_ORIENTED_BOUNDARY:
 	      return vv;
 	    }
         }

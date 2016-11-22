@@ -719,4 +719,8 @@ void clear(FaceGraph& g)
 
 } // namespace CGAL
 
+// Include "Euler_operations.h" at the end, because its implementation
+// requires this header.
+#include <CGAL/boost/graph/Euler_operations.h>
+
 #endif // CGAL_BOOST_GRAPH_HELPERS_H

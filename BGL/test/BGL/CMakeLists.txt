@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( BGL )
+project( BGL_Tests )
 
 
 cmake_minimum_required(VERSION 2.8.11)
@@ -69,6 +69,8 @@ create_single_source_cgal_program( "graph_concept_Dual.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Surface_mesh.cpp" )
+
 create_single_source_cgal_program( "test_clear.cpp" )
 
 create_single_source_cgal_program( "test_graph_geometry.cpp" )
@@ -76,6 +78,8 @@ create_single_source_cgal_program( "test_graph_geometry.cpp" )
 create_single_source_cgal_program( "test_helpers.cpp" )
 
 create_single_source_cgal_program( "test_Has_member_clear.cpp" )
+
+create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 

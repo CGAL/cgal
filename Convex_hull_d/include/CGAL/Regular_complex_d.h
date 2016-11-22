@@ -42,11 +42,7 @@
 #include <CGAL/Kernel_d/debug.h>
 
 #ifdef CGAL_USE_LEDA
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/memory.h>
-#else
 #include <LEDA/system/memory.h>
-#endif
 #endif
 
 namespace CGAL {
@@ -626,13 +622,13 @@ std::list<Vertex_const_handle> all_vertices() const
 
 
 const R& kernel() const { return Kernel_; }
-static Point_d nil_point;
+static const Point_d nil_point;
 
 }; // Regular_complex_d<R>
 
 // init static member:
 template <class R> 
-typename Regular_complex_d<R>::Point_d Regular_complex_d<R>::nil_point;
+const typename Regular_complex_d<R>::Point_d Regular_complex_d<R>::nil_point;
 
 
 template <class R>

@@ -25,6 +25,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <iterator>
 #include <set>
@@ -413,10 +414,8 @@ bilateral_smooth_point_set(
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
   typedef typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> > Pwns;
-  typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
   CGAL_point_set_processing_precondition(first != beyond);
@@ -433,13 +432,8 @@ bilateral_smooth_point_set(
   Pwns pwns;
   for(ForwardIterator it = first; it != beyond; ++it)
   {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    const Point& p = get(point_pmap, it);
-    const Vector& n = get(normal_pmap, it);
-#else
-    const Point& p = get(point_pmap, *it);
-    const Vector& n = get(normal_pmap, *it);
-#endif
+    typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
+    typename boost::property_traits<NormalPMap>::reference n = get(normal_pmap, *it);
     CGAL_point_set_processing_precondition(n.squared_length() > 1e-10);
     
     pwns.push_back(Pwn(p, n));
@@ -569,16 +563,10 @@ bilateral_smooth_point_set(
    ForwardIterator it = first;
    for(unsigned int i = 0 ; it != beyond; ++it, ++i)
    {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-     Point& p = get(point_pmap, it);
-     Vector& n = get(normal_pmap, it);
-#else
-     Point& p = get(point_pmap, *it);
-     Vector& n = get(normal_pmap, *it);
-#endif
+     typename boost::property_traits<PointPMap>::reference p = get(point_pmap, *it);
      sum_move_error += CGAL::squared_distance(p, update_pwns[i].position());
-     p = update_pwns[i].position();
-     n = update_pwns[i].normal();
+     put (point_pmap, *it, update_pwns[i].position());
+     put (normal_pmap, *it, update_pwns[i].normal());
    }
      
    return sum_move_error / nb_points;
@@ -628,12 +616,8 @@ bilateral_smooth_point_set(
 {
   return bilateral_smooth_point_set<Concurrency_tag>(
     first, beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(first),
-#else
     make_identity_property_map(
     typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
     normal_pmap, 
     k,
     sharpness_angle);

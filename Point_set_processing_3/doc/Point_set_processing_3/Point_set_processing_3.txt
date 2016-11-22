@@ -223,7 +223,7 @@ the covariance matrix: \f[ \sigma(p) = \frac{\lambda_0}{\lambda_0 +
 
 This function goes from \f$0\f$ if the cluster is coplanar to
 \f$1/3\f$ if it is fully isotropic. If a cluster's variation is above
-`var_max`, it is splitted. If `var_max` is equal to \f$1/3\f$, this
+`var_max`, it is split. If `var_max` is equal to \f$1/3\f$, this
 parameter has no effect and the clustering is regular on the whole
 point set.
 
@@ -385,7 +385,7 @@ Upsampling for different sharpness_angle parameter values. The input containing 
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3upsample_neighborhood_size Parameter: neighbor_radius
-Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller that zero.
+Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller than zero.
 
 \cgalFigureBegin{Point_set_processing_3figupsample_neighborhood_size, upsample_neighborhood_size.jpg}
 Comparison between different sizes of neighbor radius. 

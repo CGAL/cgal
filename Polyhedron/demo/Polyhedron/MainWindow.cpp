@@ -2,6 +2,7 @@
 #include "MainWindow.h"
 #include "Scene.h"
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -39,7 +40,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-
+#include <CGAL/Three/Scene_item_with_properties.h>
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
 #include "ui_Statistics_on_item_dialog.h"
@@ -124,9 +125,8 @@ MainWindow::MainWindow(QWidget* parent)
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
-  ui->menuBar->removeAction(ui->actionLoad_Script);
+  ui->menuBar->removeAction(ui->actionLoadScript);
 #endif
-  
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
   viewer = ui->viewer;
@@ -135,7 +135,9 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup scene
   scene = new Scene(this);
+  viewer->textRenderer->setScene(scene);
   viewer->setScene(scene);
+  ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(viewer->textRenderer->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -176,10 +178,10 @@ MainWindow::MainWindow(QWidget* parent)
           this, SLOT(updateDisplayInfo()));
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
-          viewer, SLOT(updateGL()));
+          viewer, SLOT(update()));
 
   connect(scene, SIGNAL(updated()),
-          viewer, SLOT(updateGL()));
+          viewer, SLOT(update()));
 
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));
@@ -237,6 +239,8 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
+  connect(viewer, SIGNAL(sendMessage(QString)),
+          this, SLOT(information(QString)));
 
   // The contextMenuPolicy of infoLabel is now the default one, so that one
   // can easily copy-paste its text.
@@ -249,9 +253,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 
-  connect(ui->actionDraw_two_sides, SIGNAL(toggled(bool)),
+  connect(ui->actionDrawTwoSides, SIGNAL(toggled(bool)),
           viewer, SLOT(setTwoSides(bool)));
-  connect(ui->actionQuick_camera_mode, SIGNAL(toggled(bool)),
+  connect(ui->actionQuickCameraMode, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
 
   // add the "About CGAL..." and "About demo..." entries
@@ -267,9 +271,8 @@ MainWindow::MainWindow(QWidget* parent)
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
-
   // Connect "Select all items"
-  connect(ui->actionSelect_all_items, SIGNAL(triggered()),
+  connect(ui->actionSelectAllItems, SIGNAL(triggered()),
           this, SLOT(selectAll()));
 
   // Recent files menu
@@ -348,7 +351,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   if(actionAddToGroup) {
     connect(actionAddToGroup, SIGNAL(triggered()),
-            this, SLOT(make_new_group()));
+            this, SLOT(makeNewGroup()));
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
@@ -521,7 +524,10 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
     if(a->property("added").toBool())
       hasAction = true;
   if(!hasAction)
+  {
+    ui->menuOperations->removeAction(a);
     menu->addAction(a);
+  }
   a->setProperty("added", true);
   //If the parent menu already exists, don't create a new one.
   if(menu_map.contains(parentName))
@@ -537,7 +543,6 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
     menu_map[parentName] = parentMenu;
   }
   parentMenu->addMenu(menu);
-  ui->menuOperations->removeAction(a);
 }
 
 void MainWindow::load_plugin(QString fileName, bool blacklisted)
@@ -804,7 +809,6 @@ void MainWindow::message(QString message, QString colorName, QString font) {
   if (message.endsWith('\n')) {
     message.remove(message.length()-1, 1);
   }
-  std::cerr << qPrintable(message) << std::endl;
   statusBar()->showMessage(message, 5000);
   message = "<font color=\"" + colorName + "\" style=\"font-style: " + font + ";\" >" +
     message + "</font><br>";
@@ -828,12 +832,12 @@ void MainWindow::error(QString text) {
 void MainWindow::updateViewerBBox()
 {
   const Scene::Bbox bbox = scene->bbox();
-  const double xmin = bbox.xmin;
-  const double ymin = bbox.ymin;
-  const double zmin = bbox.zmin;
-  const double xmax = bbox.xmax;
-  const double ymax = bbox.ymax;
-  const double zmax = bbox.zmax;
+  const double xmin = bbox.xmin();
+  const double ymin = bbox.ymin();
+  const double zmin = bbox.zmin();
+  const double xmax = bbox.xmax();
+  const double ymax = bbox.ymax();
+  const double zmax = bbox.zmax();
    //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
    //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
   qglviewer::Vec 
@@ -844,7 +848,7 @@ void MainWindow::updateViewerBBox()
   viewer->camera()->showEntireScene();
 }
 
-void MainWindow::reload_item() {
+void MainWindow::reloadItem() {
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(!sender_action) return;
   
@@ -867,25 +871,28 @@ void MainWindow::reload_item() {
   QString loader_name = item->property("loader_name").toString();
   if(filename.isEmpty() || loader_name.isEmpty()) {
     std::cerr << "Cannot reload item: "
-              << "the item has no \"source filename\" or no \"loader_name\" attached attached\n";
+              << "the item has no \"source filename\" or no \"loader_name\" attached\n";
     return;
   }
 
-  CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
+  CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = findLoader(loader_name);
   QFileInfo fileinfo(filename);
 
-  CGAL::Three::Scene_item* new_item = load_item(fileinfo, fileloader);
+  CGAL::Three::Scene_item* new_item = loadItem(fileinfo, fileloader);
 
   new_item->setName(item->name());
   new_item->setColor(item->color());
   new_item->setRenderingMode(item->renderingMode());
   new_item->setVisible(item->visible());
+  Scene_item_with_properties *property_item = dynamic_cast<Scene_item_with_properties*>(new_item);
+  if(property_item)
+    property_item->copyProperties(item);
   new_item->invalidateOpenGLBuffers();
   scene->replaceItem(item_index, new_item, true);
   item->deleteLater();
 }
 
-CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
+CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::findLoader(const QString& loader_name) const {
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin,
             io_plugins) {
     if(io_plugin->name() == loader_name) {
@@ -937,7 +944,7 @@ void MainWindow::open(QString filename)
     program=filename.right(filename.size() - 9);
   }
   if(filename.endsWith(".js")) {
-    load_script(fileinfo);
+    loadScript(fileinfo);
     return;
   }
   if(!program.isEmpty())
@@ -1009,9 +1016,7 @@ void MainWindow::open(QString filename)
   QSettings settings;
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
-
-  CGAL::Three::Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
-
+  CGAL::Three::Scene_item* scene_item = loadItem(fileinfo, findLoader(load_pair.first));
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
@@ -1022,7 +1027,7 @@ bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename); 
   CGAL::Three::Scene_item* item;
   try {
-    item = load_item(fileinfo, find_loader(loader_name));
+    item = loadItem(fileinfo, findLoader(loader_name));
   }
   catch(std::logic_error e) {
     std::cerr << e.what() << std::endl;
@@ -1033,7 +1038,7 @@ bool MainWindow::open(QString filename, QString loader_name) {
 }
 
 
-CGAL::Three::Scene_item* MainWindow::load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
+CGAL::Three::Scene_item* MainWindow::loadItem(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
   CGAL::Three::Scene_item* item = NULL;
   if(!fileinfo.isFile() || !fileinfo.isReadable()) {
     throw std::invalid_argument(QString("File %1 is not a readable file.")
@@ -1135,7 +1140,6 @@ int MainWindow::getSelectedSceneItemIndex() const
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
-
   QModelIndexList selectedIndices = sceneView->selectionModel()->selectedIndexes();
   QList<int> result;
   Q_FOREACH(QModelIndex index, selectedIndices) {
@@ -1173,7 +1177,7 @@ void MainWindow::selectionChanged()
     connect(viewer->manipulatedFrame(), SIGNAL(modified()),
             this, SLOT(updateInfo()));
   }
-  viewer->updateGL();
+  viewer->update();
 }
 
 void MainWindow::contextMenuRequested(const QPoint& global_pos) {
@@ -1184,7 +1188,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  CGAL::Three::Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0,QModelIndex())));
+  CGAL::Three::Scene_item* item = scene->item(selectedItemIndex);
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";
@@ -1199,14 +1203,14 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
             menu->addAction(tr("Statistics..."));
         actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
         connect(actionStatistics, SIGNAL(triggered()),
-                this, SLOT(statistics_on_item()));
+                this, SLOT(statisticsOnItem()));
       }
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload Item from File"));
         reload->setData(qVariantFromValue(selectedItemIndex));
         connect(reload, SIGNAL(triggered()),
-                this, SLOT(reload_item()));
+                this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
       saveas->setData(qVariantFromValue(selectedItemIndex));
@@ -1249,7 +1253,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
       }
       else
       {
-          index = proxyModel->mapToSource(modelIndex).row();
+          index = scene->getIdFromModelIndex(proxyModel->mapToSource(modelIndex));
           scene->setSelectedItemIndex(index);
       }
   }
@@ -1273,15 +1277,16 @@ void MainWindow::updateInfo() {
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
-    item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
-            .arg(item->bbox().xmin)
-            .arg(item->bbox().ymin)
-            .arg(item->bbox().zmin)
-            .arg(item->bbox().xmax)
-            .arg(item->bbox().ymax)
-            .arg(item->bbox().zmax);
+    if(item->bbox()!=CGAL::Bbox_3())
+      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
+          .arg(item->bbox().xmin())
+          .arg(item->bbox().ymin())
+          .arg(item->bbox().zmin())
+          .arg(item->bbox().xmax())
+          .arg(item->bbox().ymax())
+          .arg(item->bbox().zmax());
     if(!item_filename.isEmpty()) {
-      item_text += QString("<br />File:<i> %1").arg(item_filename);
+      item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }
     ui->infoLabel->setText(item_text);
   }
@@ -1298,14 +1303,12 @@ void MainWindow::updateDisplayInfo() {
 
 void MainWindow::readSettings()
 {
-  {
     QSettings settings;
     // enable anti-aliasing 
     ui->actionAntiAliasing->setChecked(settings.value("antialiasing", false).toBool());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
-  }
 }
 
 void MainWindow::writeSettings()
@@ -1339,13 +1342,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-bool MainWindow::load_script(QString filename)
+bool MainWindow::loadScript(QString filename)
 {
   QFileInfo fileinfo(filename);
-  return load_script(fileinfo);
+  return loadScript(fileinfo);
 }
 
-bool MainWindow::load_script(QFileInfo info)
+bool MainWindow::loadScript(QFileInfo info)
 {
 #if defined(QT_SCRIPT_LIB)
   QString program;
@@ -1365,7 +1368,7 @@ bool MainWindow::load_script(QFileInfo info)
   return false;
 }
 
-void MainWindow::on_actionLoad_Script_triggered() 
+void MainWindow::on_actionLoadScript_triggered() 
 {
 #if defined(QT_SCRIPT_LIB)
   QString filename = QFileDialog::getOpenFileName(
@@ -1374,7 +1377,7 @@ void MainWindow::on_actionLoad_Script_triggered()
     ".",
     "QTScripts (*.js);;All Files (*)");
 
-  load_script(QFileInfo(filename));
+  loadScript(QFileInfo(filename));
 #endif
 }
 
@@ -1426,7 +1429,7 @@ void MainWindow::on_actionLoad_triggered()
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
-      item = load_item(info, selectedPlugin);
+      item = loadItem(info, selectedPlugin);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);
       this->addToRecentFiles(filename);
@@ -1479,20 +1482,30 @@ void MainWindow::on_actionSaveAs_triggered()
                                  caption,
                                  QString(),
                                  filters.join(";;"));
+  if(filename.isEmpty())
+    return;
   save(filename, item);
 }
 
 void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
   QFileInfo fileinfo(filename);
-
+  bool saved = false;
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(  plugin->canSave(item) &&
         file_matches_filter(plugin->saveNameFilters(),filename) )
     {
       if(plugin->save(item, fileinfo))
+      {
+        saved = true;
         break;
+      }
     }
   }
+  if(!saved)
+    QMessageBox::warning(this,
+                         tr("Cannot save"),
+                         tr("The selected object %1 was not saved. (Maybe a wrong extension ?)")
+                         .arg(item->name()));
 }
 
 void MainWindow::on_actionSaveSnapshot_triggered()
@@ -1503,12 +1516,16 @@ void MainWindow::on_actionSaveSnapshot_triggered()
 bool MainWindow::on_actionErase_triggered()
 {
   int next_index = scene->erase(scene->selectionIndices());
+  //Secure the case where erase triggers other items deletions
+  if(scene->numberOfEntries()< next_index +1 )
+    next_index = -1;
   selectSceneItem(next_index);
   return next_index >= 0;
 }
 
 void MainWindow::on_actionEraseAll_triggered()
 {
+  scene->setSelectedItem(0);
   while(on_actionErase_triggered()) {
   }
 }
@@ -1602,7 +1619,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
   }
 }
 
-void MainWindow::on_action_Look_at_triggered()
+void MainWindow::on_actionLookAt_triggered()
 {
   Show_point_dialog dialog(this);
   dialog.setWindowTitle(tr("Look at..."));
@@ -1625,12 +1642,12 @@ void MainWindow::viewerShowObject()
   }
   if(index >= 0) {
     const Scene::Bbox bbox = scene->item(index)->bbox();
-    viewerShow((float)bbox.xmin, (float)bbox.ymin, (float)bbox.zmin,
-               (float)bbox.xmax, (float)bbox.ymax, (float)bbox.zmax);
+    viewerShow((float)bbox.xmin(), (float)bbox.ymin(), (float)bbox.zmin(),
+               (float)bbox.xmax(), (float)bbox.ymax(), (float)bbox.zmax());
   }
 }
 
-QString MainWindow::camera_string() const
+QString MainWindow::cameraString() const
 {
   return viewer->dumpCameraCoordinates();
 }
@@ -1638,15 +1655,15 @@ QString MainWindow::camera_string() const
 void MainWindow::on_actionDumpCamera_triggered()
 {
   information(QString("Camera: %1")
-              .arg(camera_string()));
+              .arg(cameraString()));
 }
 
-void MainWindow::on_action_Copy_camera_triggered()
+void MainWindow::on_actionCopyCamera_triggered()
 {
-  qApp->clipboard()->setText(this->camera_string());
+  qApp->clipboard()->setText(this->cameraString());
 }
 
-void MainWindow::on_action_Paste_camera_triggered()
+void MainWindow::on_actionPasteCamera_triggered()
 {
   QString s = qApp->clipboard()->text();
   viewer->moveCameraToCoordinates(s, 0.5f);
@@ -1663,7 +1680,7 @@ void MainWindow::on_actionRecenterScene_triggered()
   viewer->camera()->interpolateToFitScene();
 }
 
-void MainWindow::on_actionLoad_plugin_triggered()
+void MainWindow::on_actionLoadPlugin_triggered()
 {
     //pop a dialog of path selection, get the path and add it to plugins_directory
 
@@ -1708,10 +1725,10 @@ void MainWindow::restoreCollapseState()
     if(modelIndex.isValid())
         recurseExpand(modelIndex);
 }
-void MainWindow::make_new_group()
+void MainWindow::makeNewGroup()
 {
     Scene_group_item * group = new Scene_group_item("New group");
-    scene->add_group(group);
+    scene->addItem(group);
 }
 
 void MainWindow::on_upButton_pressed()
@@ -1735,7 +1752,7 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
     }
 }
 
-void MainWindow::statistics_on_item()
+void MainWindow::statisticsOnItem()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -1746,7 +1763,7 @@ void MainWindow::statistics_on_item()
     connect(statistics_ui->okButtonBox, SIGNAL(accepted()),
             statistics_dlg, SLOT(accept()));
     connect(statistics_ui->updateButton, SIGNAL(clicked()),
-            this, SLOT(statistics_on_item()));
+            this, SLOT(statisticsOnItem()));
   }
   statistics_ui->label_htmltab->setText(get_item_stats());
 
@@ -1808,7 +1825,7 @@ QString MainWindow::get_item_stats()
         str.append(QString("<td> %1 </td>").arg(data.titles.at(title)));
         Q_FOREACH(Scene_item* sit, items[i])
         {
-          str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+          str.append(QString("<td>%1</td>").arg(sit->computeStats(title)));
         }
         title++;
         for(;title<titles_limit; title++)
@@ -1816,7 +1833,7 @@ QString MainWindow::get_item_stats()
           str.append(QString("</tr><tr><td> %1 </td>").arg(data.titles.at(title)));
           Q_FOREACH(Scene_item* sit, items[i])
           {
-            str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+            str.append(QString("<td>%1</td>").arg(sit->computeStats(title)));
           }
         }
 
@@ -1828,6 +1845,7 @@ QString MainWindow::get_item_stats()
   }
   return str;
 }
+
 void MainWindow::setCollapsed(QModelIndex index)
 {
   Q_EMIT collapsed(proxyModel->mapToSource(index));
@@ -1836,4 +1854,19 @@ void MainWindow::setCollapsed(QModelIndex index)
 void MainWindow::setExpanded(QModelIndex index)
 {
   Q_EMIT expanded(proxyModel->mapToSource(index));
+}
+
+
+void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
+{
+  bool ok;
+  bool valid;
+  QString text = QInputDialog::getText(this, tr("Maximum Number of Text Items"),
+                                       tr("Maximum Text Items Diplayed:"), QLineEdit::Normal,
+                                       QString("%1").arg(viewer->textRenderer->getMax_textItems()), &ok);
+  text.toInt(&valid);
+  if (ok && valid){
+    viewer->textRenderer->setMax(text.toInt());
+    ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
+  }
 }

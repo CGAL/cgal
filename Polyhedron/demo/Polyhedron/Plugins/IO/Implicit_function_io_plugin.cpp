@@ -22,8 +22,6 @@
 // File Description : 
 //******************************************************************************
 
-//#include <CGAL_demo/Plugin_interface.h>
-//#include <CGAL_demo/Plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
@@ -37,7 +35,6 @@
 #include <QMainWindow>
 #include <QPluginLoader>
 #include <QDir>
-#include <QApplication>
 #include <QMenu>
 #include <QList>
 #include <QLibrary>
@@ -65,7 +62,7 @@ public:
   typedef Polyhedron_demo_plugin_helper Plugin_helper;
   
   using Plugin_helper::init;
-  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
+  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
   
   QList<QAction*> actions() const
   {
@@ -93,7 +90,7 @@ Io_implicit_function_plugin()
 
 void
 Io_implicit_function_plugin::
-init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
+init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface *)
 {
   this->scene = scene_interface;
   this->mw = mainWindow;
@@ -129,7 +126,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
     {
       menuFile->insertAction(actionAfterLoad,actionLoadFunction);      
     }
-    
+
   }
 }
 
@@ -141,7 +138,7 @@ load_function() const
   QDialog dialog(mw);
   Ui::FunctionDialog ui;
   ui.setupUi(&dialog);
-  
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
   

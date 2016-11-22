@@ -28,6 +28,10 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+#ifdef CGAL_HEADER_ONLY
+#  define CGAL_NO_AUTOLINK 1
+#endif
+
 // Workaround for a bug in Boost, that checks WIN64 instead of _WIN64
 //   https://svn.boost.org/trac/boost/ticket/5519
 #if defined(_WIN64) && ! defined(WIN64)
@@ -54,8 +58,9 @@
 // https://bugreports.qt-project.org/browse/QTBUG-22829
 #ifdef Q_MOC_RUN
 // When Qt moc runs on CGAL files, do not process
-// <boost/type_traits/has_operator.hpp>
+// <boost/type_traits/detail/has_binary_operator.hpp>
 #  define BOOST_TT_HAS_OPERATOR_HPP_INCLUDED
+#  define BOOST_TT_HAS_BIT_AND_HPP_INCLUDED
 #  define BOOST_TT_HAS_BIT_AND_ASSIGN_HPP_INCLUDED
 #  define BOOST_TT_HAS_BIT_OR_HPP_INCLUDED
 #  define BOOST_TT_HAS_BIT_OR_ASSIGN_HPP_INCLUDED
@@ -86,6 +91,18 @@
 // do not include <boost/random.hpp> either
 // it includes <boost/type_traits/has_binary_operator.hpp>
 #  define BOOST_RANDOM_HPP
+// <boost/type_traits/detail/has_prefix_operator.hpp> fails as well
+#  define BOOST_TT_HAS_COMPLEMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_DEREFERENCE_HPP_INCLUDED
+#  define BOOST_TT_HAS_LOGICAL_NOT_HPP_INCLUDED
+#  define BOOST_TT_HAS_NEGATE_HPP_INCLUDED
+#  define BOOST_TT_HAS_PRE_DECREMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_PRE_INCREMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_UNARY_MINUS_HPP_INCLUDED
+#  define BOOST_TT_HAS_UNARY_PLUS_HPP_INCLUDED
+// <boost/type_traits/detail/has_postfix_operator.hpp> fails as well
+#  define BOOST_TT_HAS_POST_DECREMENT_HPP_INCLUDED
+#  define BOOST_TT_HAS_POST_INCREMENT_HPP_INCLUDED
 #endif
 
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
@@ -392,6 +409,7 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See http://clang.llvm.org/docs/LanguageExtensions.html
+// See also http://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -407,27 +425,11 @@ using std::max;
 #ifndef __has_attribute
   #define __has_attribute(x) 0  // Compatibility with non-clang compilers.
 #endif
+#ifndef __has_cpp_attribute
+  #define __has_cpp_attribute(x) 0  // Compatibility with non-supporting compilers.
+#endif
 #ifndef __has_warning
   #define __has_warning(x) 0  // Compatibility with non-clang compilers.
-#endif
-
-// Macro to trigger deprecation warnings
-#ifdef CGAL_NO_DEPRECATION_WARNINGS
-#  define CGAL_DEPRECATED
-#elif defined(__GNUC__) || __has_attribute(__deprecated__)
-#  define CGAL_DEPRECATED __attribute__((__deprecated__))
-#elif defined (_MSC_VER) && (_MSC_VER > 1300)
-#  define CGAL_DEPRECATED __declspec(deprecated)
-#else
-#  define CGAL_DEPRECATED
-#endif
-
-
-// Macro to specify a 'noreturn' attribute.
-#if defined(__GNUG__) || __has_attribute(__noreturn__)
-#  define CGAL_NORETURN  __attribute__ ((__noreturn__))
-#else
-#  define CGAL_NORETURN
 #endif
 
 // Macro to specify a 'unused' attribute.
@@ -435,6 +437,49 @@ using std::max;
 #  define CGAL_UNUSED  __attribute__ ((__unused__))
 #else
 #  define CGAL_UNUSED
+#endif
+
+// Macro to trigger deprecation warnings
+#ifdef CGAL_NO_DEPRECATION_WARNINGS
+#  define CGAL_DEPRECATED
+#  define CGAL_DEPRECATED_UNUSED CGAL_UNUSED
+#elif defined(__GNUC__) || __has_attribute(__deprecated__)
+#  define CGAL_DEPRECATED __attribute__((__deprecated__))
+#if __has_attribute(__unused__)
+#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__, __unused__))
+#else
+#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__))
+#endif
+#elif defined (_MSC_VER) && (_MSC_VER > 1300)
+#  define CGAL_DEPRECATED __declspec(deprecated)
+#  define CGAL_DEPRECATED_UNUSED __declspec(deprecated)
+#else
+#  define CGAL_DEPRECATED
+#  define CGAL_DEPRECATED_UNUSED
+#endif
+
+// Macro to trigger deprecation warnings with a custom message
+#ifdef CGAL_NO_DEPRECATION_WARNINGS
+#  define CGAL_DEPRECATED_MSG(msg)
+#elif defined(__GNUC__) || __has_attribute(__deprecated__)
+#  if BOOST_GCC >= 40500 || __has_attribute(__deprecated__)
+#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
+#  else
+#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated))
+#  endif
+#elif defined (_MSC_VER) && (_MSC_VER > 1300)
+#  define CGAL_DEPRECATED_MSG(msg) __declspec(deprecated(msg))
+#elif defined(__clang__)
+#  define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
+#else
+#  define CGAL_DEPRECATED_MSG(msg)
+#endif
+
+// Macro to specify a 'noreturn' attribute.
+#if defined(__GNUG__) || __has_attribute(__noreturn__)
+#  define CGAL_NORETURN  __attribute__ ((__noreturn__))
+#else
+#  define CGAL_NORETURN
 #endif
 
 // Macro CGAL_ASSUME
@@ -461,6 +506,7 @@ using std::max;
 #if __has_feature(cxx_thread_local) || \
     ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1900 )
+// see also Installation/config/support/CGAL_test_cpp_version.cpp
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 
@@ -510,10 +556,38 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #define CGAL_NOEXCEPT(x)
 #endif
 
+// The fallthrough attribute
+// See for clang:
+//   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
+// See for gcc:
+//   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+#if __has_cpp_attribute(fallthrough)
+#  define CGAL_FALLTHROUGH [[fallthrough]]
+#elif __has_cpp_attribute(gnu::fallthrough)
+#  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
+#elif __has_cpp_attribute(clang::fallthrough)
+#  define CGAL_FALLTHROUGH [[clang::fallthrough]]
+#elif __has_attribute(fallthrough) && ! __clang__
+#  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
+#else
+#  define CGAL_FALLTHROUGH while(false){}
+#endif
+
+// https://svn.boost.org/trac/boost/ticket/2839
+#if defined(BOOST_MSVC) && BOOST_VERSION < 105600
+#define CGAL_CFG_BOOST_VARIANT_SWAP_BUG 1
+#endif
+
 #ifndef CGAL_NO_ASSERTIONS
 #  define CGAL_NO_ASSERTIONS_BOOL false
 #else
 #  define CGAL_NO_ASSERTIONS_BOOL true
+#endif
+
+#if defined( __INTEL_COMPILER)
+#define CGAL_ADDITIONAL_VARIANT_FOR_ICL ,int
+#else
+#define CGAL_ADDITIONAL_VARIANT_FOR_ICL
 #endif
 
 #endif // CGAL_CONFIG_H

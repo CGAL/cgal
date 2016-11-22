@@ -7,6 +7,7 @@
 #include "Scene_textured_polyhedron_item.h"
 #include "Textured_polyhedron_type.h"
 #include "Polyhedron_type.h"
+#include "Messages_interface.h"
 
 #include <QTime>
 
@@ -35,35 +36,33 @@ class Polyhedron_demo_parameterization_plugin :
 
 public:
   // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionMVC"
-                         << "actionDCP"
-                         << "actionLSC";
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
   void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
+            Scene_interface* scene_interface,
+            Messages_interface* m_i)
   {
       mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionMVC"] = new QAction("Mean Value Coordinates", mw);
-      actions_map["actionMVC"]->setProperty("subMenuName",
-        "Triangulated Surface Mesh Parameterization");
+      message = m_i;
+      QAction* actionMVC = new QAction("Mean Value Coordinates", mw);
+      QAction* actionDCP = new QAction ("Discrete Conformal Map", mw);
+      QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
+      actionMVC->setObjectName("actionMVC");
+      actionDCP->setObjectName("actionDCP");
+      actionLSC->setObjectName("actionLSC");
 
-      actions_map["actionDCP"] = new QAction ("Discrete Conformal Map", mw);
-      actions_map["actionDCP"]->setProperty("subMenuName",
-        "Triangulated Surface Mesh Parameterization");
+      _actions << actionMVC
+               << actionDCP
+               << actionLSC;
+      autoConnectActions();
+      Q_FOREACH(QAction *action, _actions)
+        action->setProperty("subMenuName",
+                            "Triangulated Surface Mesh Parameterization");
 
-      actions_map["actionLSC"] = new QAction("Least Square Conformal Map", mw);
-      actions_map["actionLSC"]->setProperty("subMenuName",
-        "Triangulated Surface Mesh Parameterization");
 
-      connect(actions_map["actionMVC"], SIGNAL(triggered()),
-              this, SLOT(on_actionMVC_triggered()));
-      connect(actions_map["actionDCP"], SIGNAL(triggered()),
-              this, SLOT(on_actionDCP_triggered()));
-      connect(actions_map["actionLSC"], SIGNAL(triggered()),
-              this, SLOT(on_actionLSC_triggered()));
   }
 
   bool applicable(QAction*) const { 
@@ -78,6 +77,9 @@ public Q_SLOTS:
 protected:
   enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC };
   void parameterize(Parameterization_method method);
+private:
+  QList<QAction*> _actions;
+  Messages_interface* message;
 }; // end Polyhedron_demo_parameterization_plugin
 
 
@@ -90,7 +92,9 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(!poly_item)
     return;
-
+  poly_item->polyhedron()->normalize_border();
+  if(poly_item->polyhedron()->size_of_border_halfedges()==0)
+    message->warning("The polyhedorn has no border, therefore the Parameterization cannot apply.");
   Polyhedron* pMesh = poly_item->polyhedron();
   if(!pMesh)
     return;

@@ -46,6 +46,8 @@ EOF
 
 cmake_minimum_required(VERSION 2.8.10)
 
+set(CMAKE_CXX_STANDARD 14)
+
 EOF
   
     cat <<'EOF'
@@ -58,6 +60,10 @@ if ( CGAL_FOUND )
   include( CGAL_CreateSingleSourceCGALProgram )
 
 EOF
+    if [ -d "${SOURCE_DIR}" ] ; then
+      echo "  set(CGAL_CURRENT_SOURCE_DIR \"${SOURCE_DIR}\")"
+      echo
+    fi
     if [ -d "${SOURCE_DIR}../../include" ] ; then
       echo "  include_directories (BEFORE \"${SOURCE_DIR}../../include\")"
       echo

@@ -222,7 +222,7 @@ public:
   }
 
 
-  Constrained_triangulation_plus_2(std::list<std::pair<Point,Point> > constraints,
+  Constrained_triangulation_plus_2(const std::list<std::pair<Point,Point> > &constraints,
 				   const Geom_traits& gt=Geom_traits() )
     : Triangulation(gt)
      , hierarchy(Vh_less_xy(this))
@@ -664,13 +664,16 @@ public:
   {
     Vertices_in_constraint_iterator u = boost::prior(v);
     Vertices_in_constraint_iterator w = boost::next(v);
+    bool unew = (*u != *w);
     hierarchy.simplify(u,v,w);
     
     Triangulation::remove_incident_constraints(*v);
   
     Triangulation::remove(*v);
   
-    Triangulation::insert_constraint(*u, *w);
+    if(unew){
+      Triangulation::insert_constraint(*u, *w);
+    }
   }
 
   std::size_t remove_points_without_corresponding_vertex(Constraint_id cid)

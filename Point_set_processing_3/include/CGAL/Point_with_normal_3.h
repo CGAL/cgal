@@ -121,7 +121,7 @@ private:
 
 //=========================================================================
 
-#ifndef CGAL_USE_PROPERTY_MAPS_API_V1
+
 /// Property map that accesses the normal vector from a Point_with_normal_3 object
 ///
 /// @heading Is Model for the Concepts:
@@ -138,17 +138,16 @@ struct Normal_of_point_with_normal_pmap
 
   typedef Point_with_normal key_type;
   typedef Vector value_type;
-  typedef value_type& reference;
+  typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
   /// Access a property map element
-  reference operator[](key_type& pwn) const { return pwn.normal(); }
+  value_type& operator[](key_type& pwn) const { return pwn.normal(); }
 
   typedef Normal_of_point_with_normal_pmap<Gt> Self;
   /// \name Put/get free functions
   /// @{
-  friend const value_type& get(const Self&,const key_type& k) {return k.normal();}
-  friend         reference get(const Self&,      key_type& k) {return k.normal();}
+  friend reference get(const Self&,const key_type& k) {return k.normal();}
   friend void put(const Self&,key_type& k, const value_type& v) {k.normal()=v;}
   /// @};}
 };
@@ -164,51 +163,6 @@ Normal_of_point_with_normal_pmap<
 {
   return Normal_of_point_with_normal_pmap<typename CGAL::Kernel_traits<Point_with_normal>::Kernel>();
 }
-
-#else
-/// Property map that accesses the normal vector from a Point_with_normal_3* pointer
-/// (or in general an iterator over Point_with_normal_3 elements).
-///
-/// @heading Is Model for the Concepts:
-/// \cgalModels `LvaluePropertyMap`
-///
-/// @heading Parameters:
-/// @param Gt Geometric traits class.
-
-template <class Gt>
-struct Normal_of_point_with_normal_pmap
-  : public boost::put_get_helper<typename Gt::Vector_3&,
-                                 Normal_of_point_with_normal_pmap<Gt> >
-{
-  typedef Point_with_normal_3<Gt> Point_with_normal; ///< Position + normal
-  typedef typename Gt::Vector_3 Vector; /// normal
-
-  typedef Point_with_normal* key_type;
-  typedef Vector value_type;
-  typedef value_type& reference;
-  typedef boost::lvalue_property_map_tag category;
-
-  /// Access a property map element.
-  ///
-  /// @tparam Iter Type convertible to key_type.
-  template <class Iter>
-  reference operator[](Iter it) const { return (reference) it->normal(); }
-};
-
-/// Free function to create a Normal_of_point_with_normal_pmap property map.
-///
-/// @relates Normal_of_point_with_normal_pmap
-
-template <class Iter> // Type convertible to key_type
-Normal_of_point_with_normal_pmap<typename CGAL::Kernel_traits<typename CGAL::value_type_traits<Iter>::type>::Kernel>
-make_normal_of_point_with_normal_pmap(Iter)
-{
-  // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  typedef typename CGAL::value_type_traits<Iter>::type Value_type;
-  typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
-  return Normal_of_point_with_normal_pmap<Kernel>();
-}
-#endif
 
 /// \endcond
 

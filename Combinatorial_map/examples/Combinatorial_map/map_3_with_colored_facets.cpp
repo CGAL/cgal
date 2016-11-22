@@ -1,6 +1,5 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Cell_attribute.h>
 #include <iostream>
 #include <algorithm>
@@ -42,8 +41,8 @@ int main()
   CMap_3 cm;
 
   // Create 2 hexahedra.
-  Dart_handle dh1 = CGAL::make_combinatorial_hexahedron(cm);
-  Dart_handle dh2 = CGAL::make_combinatorial_hexahedron(cm);
+  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
+  Dart_handle dh2 = cm.make_combinatorial_hexahedron();
 
   // 1) Create all 2-attributes and associated them to darts.
   for (CMap_3::Dart_range::iterator
@@ -79,7 +78,7 @@ int main()
   std::cout<<std::endl;
 
   // 6) Insert a vertex in the facet between the two hexahedra.
-  CGAL::insert_cell_0_in_cell_2(cm, dh2);
+  cm.insert_cell_0_in_cell_2(dh2);
 
   // 7) Display all the values of 2-attributes.
   for (CMap_3::Attribute_range<2>::type::iterator

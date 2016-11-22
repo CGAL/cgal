@@ -185,7 +185,7 @@ public:
             RT b_ = b_num * a_den * c_den;
             RT c_ = c_num * a_den * b_den;
 
-            return make_root_of_2(a_,b_,c_,smaller);
+            return make_root_of_2<RT>(a_,b_,c_,smaller);
         } 
     };
 

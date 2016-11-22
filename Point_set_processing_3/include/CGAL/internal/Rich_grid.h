@@ -26,6 +26,7 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/value_type_traits.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <iterator>
 #include <algorithm>
@@ -253,10 +254,10 @@ void Rich_grid<Kernel>::travel_itself(
   iterator startb, iterator endb, FT radius)
 ) 
 {
-  static int corner[8*3] = { 0, 0, 0,  1, 0, 0,  0, 1, 0,  0, 0, 1,
+  static const int corner[8*3] = { 0, 0, 0,  1, 0, 0,  0, 1, 0,  0, 0, 1,
     0, 1, 1,  1, 0, 1,  1, 1, 0,  1, 1, 1 };
 
-  static int diagonals[14*2] = { 0, 0, //remove this to avoid self intesextion
+  static const int diagonals[14*2] = { 0, 0, //remove this to avoid self intesextion
     0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7,
     2, 3, 1, 3, 1, 2,                       
     1, 4, 2, 5, 3, 6 };
@@ -268,8 +269,8 @@ void Rich_grid<Kernel>::travel_itself(
         self(get_start_iter(origin), get_end_iter(origin), radius);   
         // compute between other girds
         for(int d = 2; d < 28; d += 2) { // skipping self
-          int *cs = corner + 3*diagonals[d];
-          int *ce = corner + 3*diagonals[d+1];
+          const int *cs = corner + 3*diagonals[d];
+          const int *ce = corner + 3*diagonals[d+1];
           if((x + cs[0] < x_side) && (y + cs[1] < y_side) && (z + cs[2] < z_side) 
           && (x + ce[0] < x_side) && (y + ce[1] < y_side) && (z + ce[2] < z_side)) 
           {
@@ -293,10 +294,10 @@ void Rich_grid<Kernel>::travel_others(
                         const typename Kernel::FT radius)
 ) 
 {
-  static int corner[8*3] = { 0, 0, 0,  1, 0, 0,  0, 1, 0,  0, 0, 1,
+  static const int corner[8*3] = { 0, 0, 0,  1, 0, 0,  0, 1, 0,  0, 0, 1,
     0, 1, 1,  1, 0, 1,  1, 1, 0,  1, 1, 1 };
 
-  static int diagonals[14*2] = { 0, 0, //remove this to avoid self intesextion
+  static const int diagonals[14*2] = { 0, 0, //remove this to avoid self intesextion
     0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7,
     2, 3, 1, 3, 1, 2,                       
     1, 4, 2, 5, 3, 6 };
@@ -313,8 +314,8 @@ void Rich_grid<Kernel>::travel_others(
 
 
         for(int d = 2; d < 28; d += 2) { //skipping self
-          int *cs = corner + 3*diagonals[d];
-          int *ce = corner + 3*diagonals[d+1];
+          const int *cs = corner + 3*diagonals[d];
+          const int *ce = corner + 3*diagonals[d+1];
           if((x+cs[0] < x_side) && (y+cs[1] < y_side) && (z+cs[2] < z_side) &&
             (x+ce[0] < x_side) && (y+ce[1] < y_side) && (z+ce[2] < z_side)) {
 

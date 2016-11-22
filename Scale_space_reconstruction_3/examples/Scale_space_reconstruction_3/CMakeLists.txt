@@ -1,4 +1,4 @@
-project( Scale_space )
+project( Scale_space_reconstruction_3_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 

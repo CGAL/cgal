@@ -26,6 +26,7 @@
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/internal/info_check.h>
+#include <CGAL/tss.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
@@ -266,10 +267,10 @@ private:
   {
     if (first == last) return 0;
 
-    std::vector<std::ptrdiff_t> indices;
+    std::vector<std::size_t> indices;
     std::vector<Point> points;
     std::vector<typename Tds::Vertex::Info> infos;
-    std::ptrdiff_t index = 0;
+    std::size_t index = 0;
     for (InputIterator it = first; it != last; ++it)
       {
         Tuple_or_pair value = *it;
@@ -278,7 +279,8 @@ private:
         indices.push_back(index++);
       }
 
-    typedef Spatial_sort_traits_adapter_2<Geom_traits, Point*> Search_traits;
+    typedef typename Pointer_property_map<Point>::type Pmap;
+    typedef Spatial_sort_traits_adapter_2<Geom_traits, Pmap> Search_traits;
 
     size_type n = number_of_vertices();
 
@@ -287,7 +289,7 @@ private:
     if (n != 0) is_large_point_set = false;
 
     std::set<Vertex_handle> dummy_points;
-    typename std::vector<std::ptrdiff_t>::iterator pbegin = indices.begin();
+    typename std::vector<std::size_t>::iterator pbegin = indices.begin();
 
     if (is_large_point_set)
       {
@@ -320,14 +322,16 @@ private:
     CGAL_assertion(is_1_cover());
 
     // Insert the points
-    spatial_sort(indices.begin(), indices.end(), Search_traits(&(points[0]), geom_traits()));
+    spatial_sort(indices.begin(),
+                 indices.end(),
+                 Search_traits(make_property_map(points), geom_traits()));
 
     Face_handle f;
     Locate_type lt;
     int li;
 
     Face_handle hint;
-    for (typename std::vector<std::ptrdiff_t>::const_iterator it = pbegin, end = indices.end();
+    for (typename std::vector<std::size_t>::const_iterator it = pbegin, end = indices.end();
          it != end; ++it)
       {
         f = locate(points[*it], lt, li, f);
@@ -1112,20 +1116,40 @@ remove(Vertex_handle v)
     }
 }
 
+namespace internal{
+namespace P2DT2{
+
+template<class P2DT2>
+struct Static_data{
+  int maxd;
+  std::vector<typename P2DT2::Face_handle> f;
+  std::vector<int> i;
+  std::vector<typename P2DT2::Vertex_handle> w;
+  std::vector<typename P2DT2::Offset> offset_w;
+  Static_data(int m)
+    : maxd(m)
+    , f(maxd)
+    , i(maxd)
+    , w(maxd)
+    , offset_w(maxd)
+  {}
+};
+
+} } //end of namespace internal::P2DT2
+
 template < class Gt, class Tds >
 bool
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 remove_single_vertex(Vertex_handle v, const Offset &v_o)
 {
-  static int maxd = 30;
-  static std::vector<Face_handle> f(maxd);
-  static std::vector<int> i(maxd);
-  static std::vector<Vertex_handle> w(maxd);
-  static std::vector<Offset> offset_w(maxd);
+  typedef internal::P2DT2::
+    Static_data< Periodic_2_Delaunay_triangulation_2<Gt, Tds> > Static_data;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(Static_data, sd, 30);
+
   int d;
   bool simplicity_criterion;
 
-  if (remove_degree_init(v, v_o, f, w, offset_w, i, d, maxd, simplicity_criterion))
+  if (remove_degree_init(v, v_o, sd.f, sd.w, sd.offset_w, sd.i, d, sd.maxd, simplicity_criterion))
     {
       if (is_1_cover())
         {
@@ -1135,9 +1159,9 @@ remove_single_vertex(Vertex_handle v, const Offset &v_o)
     }
 
   if (simplicity_criterion)
-    remove_degree_triangulate(v, f, w, i, d);
+    remove_degree_triangulate(v, sd.f, sd.w, sd.i, d);
   else
-    remove_degree_triangulate(v, f, w, offset_w, i, d);
+    remove_degree_triangulate(v, sd.f, sd.w, sd.offset_w, sd.i, d);
 
   this->delete_vertex(v);
 

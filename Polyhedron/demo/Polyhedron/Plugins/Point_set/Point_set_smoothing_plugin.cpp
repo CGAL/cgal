@@ -31,11 +31,13 @@ class Polyhedron_demo_point_set_smoothing_plugin :
   QAction* actionJetSmoothing;
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
-    actionJetSmoothing = new QAction(tr("Point Set Jet Smoothing"), mainWindow);
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+    scene = scene_interface;
+    mw = mainWindow;
+    actionJetSmoothing = new QAction(tr("Jet Smoothing"), mainWindow);
+    actionJetSmoothing->setProperty("subMenuName","Point Set Processing");
     actionJetSmoothing->setObjectName("actionJetSmoothing");
-
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+    autoConnectActions();
   }
 
   QList<QAction*> actions() const {
@@ -78,13 +80,15 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
     if(!ok) return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    CGAL::jet_smooth_point_set<Concurrency_tag>(points->begin(), points->end(), nb_neighbors);
+    QApplication::processEvents();
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points->begin_or_selection_begin(), points->end(),
+                                                points->point_map(),
+                                                nb_neighbors, Kernel());
 
     points->invalidate_bounds();
 
     // calling jet_smooth_point_set breaks the normals
-    item->set_has_normals(false);
+    points->remove_normal_map();
 
     // update scene
     item->invalidateOpenGLBuffers();

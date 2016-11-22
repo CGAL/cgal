@@ -25,6 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/intersections.h>
+#include <CGAL/Segment_Delaunay_graph_Linf_2/basic.h>
 
 
 // Polychainsegment_2
@@ -105,7 +106,7 @@ operator<<(std::ostream &os,
               ::Vertex_const_iterator
            i;
 
-  switch(os.iword(IO::mode)) {
+  switch(get_mode(os)) {
     case IO::ASCII :
       os << p.size() << ' ';
       for (i = p.vertices_begin(); i != p.vertices_end(); ++i) {
@@ -278,7 +279,7 @@ operator<<(std::ostream &os,
 {
   typename Polychainray_2<Traits_P,Container_P>::Vertex_const_iterator i;
 
-  switch(os.iword(IO::mode)) {
+  switch(get_mode(os)) {
     case IO::ASCII :
       os << p.size() << ' ';
       for (i = p.vertices_begin(); i != p.vertices_end(); ++i) {
@@ -794,7 +795,7 @@ operator<<(std::ostream &os,
 {
   typename Polychainline_2<Traits_P,Container_P>::Vertex_const_iterator i;
 
-  switch(os.iword(IO::mode)) {
+  switch(get_mode(os)) {
     case IO::ASCII :
       os << p.size() << ' ';
       os << ", dinc=" << p.get_incoming() << ", ";

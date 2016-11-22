@@ -83,8 +83,8 @@ private:
       typename Base::Node_const_handle bestChild, otherChild;
       FT new_off;
       FT val = *(query_object_it + new_cut_dim);
-      FT diff1 = val - node->high_value();
-      FT diff2 = val - node->low_value();
+      FT diff1 = val - node->upper_low_value();
+      FT diff2 = val - node->lower_high_value();
       if ( (diff1 + diff2 <  FT(0.0)) ) 
       {
           new_off = diff1;
@@ -141,19 +141,23 @@ private:
       typename Base::Node_const_handle bestChild, otherChild;
       FT new_off;
       FT val = *(query_object_it + new_cut_dim);
-      FT diff1 = val - node->high_value();
-      FT diff2 = val - node->low_value();
+      FT diff1 = val - node->lower_high_value();
+      FT diff2 = val - node->upper_low_value();
       if ( (diff1 + diff2 >= FT(0.0)) ) 
       {
-          new_off= diff2;
-          bestChild = node->upper();
-          otherChild = node->lower();
+          new_off = 2*val < node->upper_low_value()+node->upper_high_value() ?
+                    val - node->upper_high_value():
+                    val - node->upper_low_value();
+          bestChild = node->lower();
+          otherChild = node->upper();
       }
       else // compute new distance
       {
-          new_off= diff1;
-          bestChild = node->lower();
-          otherChild = node->upper();             
+          new_off = 2*val < node->lower_low_value()+node->lower_high_value() ?
+                    val - node->lower_high_value():
+                    val - node->lower_low_value();
+          bestChild = node->upper();
+          otherChild = node->lower();
       }
       compute_furthest_neighbors_orthogonally(bestChild,rd);
       FT dst=dists[new_cut_dim];

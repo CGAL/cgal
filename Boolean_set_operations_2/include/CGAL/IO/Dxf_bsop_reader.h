@@ -28,6 +28,7 @@
 #include <list>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
+#include <CGAL/squared_distance_2.h>
 
 namespace CGAL {
 

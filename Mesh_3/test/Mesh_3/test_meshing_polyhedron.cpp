@@ -22,9 +22,14 @@
 // File Description :
 //******************************************************************************
 
+#include <CGAL/Mesh_3/io_signature.h>
 #include "test_meshing_utilities.h"
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+
+#include <boost/type_traits/is_same.hpp>
+
+#include <CGAL/Mesh_3/Dump_c3t3.h>
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_tester : public Tester<K>
@@ -34,7 +39,12 @@ struct Polyhedron_tester : public Tester<K>
     typedef K Gt;
     typedef CGAL::Polyhedron_3<Gt> Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Gt> Mesh_domain;
-    
+
+    CGAL_static_assertion((boost::is_same<
+                            typename Mesh_domain::Surface_patch_index,
+                            std::pair<int, int>
+                           >::value));
+
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
@@ -56,8 +66,8 @@ struct Polyhedron_tester : public Tester<K>
     input.close();
 
     std::cout << "\tSeed is\t"
-      << CGAL::default_random.get_seed() << std::endl;
-    Mesh_domain domain(polyhedron, &CGAL::default_random);
+      << CGAL::get_default_random().get_seed() << std::endl;
+    Mesh_domain domain(polyhedron, &CGAL::get_default_random());
 
     // Set mesh criteria
     Facet_criteria facet_criteria(30, 0.2, 0.02);
@@ -88,7 +98,7 @@ struct Polyhedron_tester : public Tester<K>
     if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
-                   110, 140, 190, 230, 350, 420); 
+                   110, 140, 190, 235, 300, 450); 
     }
     else
 #endif //CGAL_LINKED_WITH_TBB
@@ -96,6 +106,9 @@ struct Polyhedron_tester : public Tester<K>
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
                    119, 121, 200, 204, 350, 360);  
     }
+
+    // test the dump function
+    CGAL::dump_c3t3(c3t3, "test_meshing_polyhedron-out");
   }
 };
 

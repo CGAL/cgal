@@ -2,6 +2,8 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -9,14 +11,16 @@
 
 #include <CGAL/Timer.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
-
-int main(int argc, char** argv)
+template <typename K>
+int
+test_self_intersections(const char* filename)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+
   std::ifstream input(filename);
   Polyhedron poly;
 
@@ -50,6 +54,13 @@ int main(int argc, char** argv)
   std::cerr
     << (intersecting_2 ? "There is a self-intersection." : "There are no self-intersections.")
     << std::endl;
-
   return 0;
+}
+
+int main(int argc, char** argv)
+{
+  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  int r = test_self_intersections<Epic>(filename);
+  r += test_self_intersections<Epec>(filename);
+  return r;
 }

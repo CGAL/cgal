@@ -282,13 +282,19 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       # Nothing to add for Core
 
       if (${component} STREQUAL "ImageIO")
-        find_package( OpenGL QUIET )
         find_package( ZLIB QUIET )
+
+        if(ZLIB_FOUND)
+          cache_set(CGAL_ImageIO_USE_ZLIB "ON")
+          add_definitions("-DCGAL_USE_ZLIB")
+          include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
+        endif(ZLIB_FOUND)
+
       endif()
 
       if (${component} STREQUAL "Qt5")
-        find_package( OpenGL QUIET )
-        find_package( Qt5 QUIET COMPONENTS OpenGL Svg )
+        find_package(OpenGL QUIET)
+        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
       endif()
 
     else(WITH_CGAL_${component})
@@ -312,14 +318,20 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
           ####message( STATUS "External library ${component} has not been preconfigured")
           if (${component} STREQUAL "ImageIO")
-            find_package( OpenGL )
-            find_package( ZLIB )
+            find_package( ZLIB QUIET )
+
+            if(ZLIB_FOUND)
+              cache_set(CGAL_ImageIO_USE_ZLIB "ON")
+              add_definitions("-DCGAL_USE_ZLIB")
+              include_directories( SYSTEM ${ZLIB_INCLUDE_DIR} )
+            endif(ZLIB_FOUND)
+
           endif()
 
           if (${component} STREQUAL "Qt5")
             set(CGAL_${component}_FOUND TRUE)
-            find_package( OpenGL )
-            find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
+            find_package(OpenGL QUIET)
+            find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
           endif()
           ####message( STATUS "External library ${vlib} after find")
           if (${vlib}_FOUND)
@@ -399,8 +411,13 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( create_CGALconfig_files )
 
+    include(CMakePackageConfigHelpers)
+
     # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in"  "${CMAKE_BINARY_DIR}/CGALConfig.cmake"        @ONLY)
+    write_basic_package_version_file("${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"
+      VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}"
+      COMPATIBILITY SameMajorVersion)
 
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
@@ -449,7 +466,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
-
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
 
@@ -685,6 +701,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
   if(ADD_SUBDIR)
     message("\n-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
     if(EXISTS ${entry}/CMakeLists.txt)
+      set(source_dir ${entry})
       add_subdirectory( ${entry} ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME} )
     else()
       if(CGAL_CREATE_CMAKE_SCRIPT)
@@ -695,9 +712,14 @@ function(process_CGAL_subdirectory entry subdir type_name)
           RESULT_VARIABLE RESULT_VAR OUTPUT_QUIET)
         if(NOT RESULT_VAR)
 #          message("Subdir ${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
-          add_subdirectory( "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+          set(source_dir "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
+          add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
         endif()
       endif()
+    endif()
+    if(source_dir AND type_name STREQUAL "demo")
+      # Do not test demos
+      set_property(DIRECTORY "${entry}"	PROPERTY CGAL_NO_TESTING TRUE)
     endif()
   else()
     message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")

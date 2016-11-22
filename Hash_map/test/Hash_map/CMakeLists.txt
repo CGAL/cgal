@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Hash_map_ )
+project( Hash_map_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

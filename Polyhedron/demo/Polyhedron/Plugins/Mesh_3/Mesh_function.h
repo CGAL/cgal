@@ -35,11 +35,16 @@
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
+#include <CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h>
 
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
 #include <CGAL/make_mesh_3.h> // for C3t3_initializer
 #include <CGAL/use.h>
+
+namespace CGAL {
+  class Image_3;
+}
 
 struct Mesh_parameters
 {
@@ -49,14 +54,17 @@ struct Mesh_parameters
   
   double tet_shape;
   double tet_sizing;
+  double edge_sizing;
   bool protect_features;
+  bool detect_connected_components;
   int manifold;
+  const CGAL::Image_3* image_3_ptr;
   
   inline QStringList log() const;
 };
 
 
-template < typename Domain_ >
+template < typename Domain_, typename Image_tag >
 class Mesh_function
   : public Mesh_function_interface
 {
@@ -92,6 +100,9 @@ private:
   
   typedef CGAL::Mesh_3::Mesher_3<C3t3, Mesh_criteria, Domain>   Mesher;
   
+  void initialize(const Mesh_criteria& criteria, CGAL::Tag_true);
+  void initialize(const Mesh_criteria& criteria, CGAL::Tag_false);
+
 private:
   C3t3& c3t3_;
   Domain* domain_;
@@ -114,11 +125,14 @@ Mesh_parameters::
 log() const
 {
   return QStringList()
+  << QString("edge max size: %1").arg(edge_sizing)
   << QString("facet min angle: %1").arg(facet_angle)
   << QString("facet max size: %1").arg(facet_sizing)
   << QString("facet approx error: %1").arg(facet_approx)
   << QString("tet shape (radius-edge): %1").arg(tet_shape)
   << QString("tet max size: %1").arg(tet_sizing)
+  << QString("detect connected components: %1")
+    .arg(detect_connected_components)
   << QString("protect features: %1").arg(protect_features);
 }
 
@@ -126,8 +140,8 @@ log() const
 // -----------------------------------
 // Class Mesh_function
 // -----------------------------------
-template < typename D_ >
-Mesh_function<D_>::
+template < typename D_, typename Tag >
+Mesh_function<D_,Tag>::
 Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 : c3t3_(c3t3)
 , domain_(domain)
@@ -144,8 +158,8 @@ Mesh_function(C3t3& c3t3, Domain* domain, const Mesh_parameters& p)
 }
 
 
-template < typename D_ >
-Mesh_function<D_>::
+template < typename D_, typename Tag >
+Mesh_function<D_,Tag>::
 ~Mesh_function()
 {
   delete domain_;
@@ -160,26 +174,32 @@ CGAL::Mesh_facet_topology topology(int manifold) {
      CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
 }
 
-template < typename D_ >
+template < typename D_, typename Tag >
 void
-Mesh_function<D_>::
-launch()
+Mesh_function<D_,Tag>::
+initialize(const Mesh_criteria& criteria, CGAL::Tag_true) // for an image
 {
-#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
-  CGAL::default_random = CGAL::Random(0);
-#endif
+  if(p_.detect_connected_components) {
+    initialize_triangulation_from_labeled_image(c3t3_
+                                                , *domain_
+                                                , *p_.image_3_ptr
+                                                , criteria
+                                                , typename D_::Image_word_type()
+                                                , p_.protect_features);
+  } else {
+    initialize(criteria, CGAL::Tag_false());
+  }
+}
 
-  // Create mesh criteria
-  Mesh_criteria criteria(Edge_criteria(p_.facet_sizing),
-                         Facet_criteria(p_.facet_angle,
-                                        p_.facet_sizing,
-                                        p_.facet_approx,
-                                        topology(p_.manifold)),
-                         Cell_criteria(p_.tet_shape,
-                                       p_.tet_sizing));
-
+template < typename D_, typename Tag >
+void
+Mesh_function<D_,Tag>::
+initialize(const Mesh_criteria& criteria, CGAL::Tag_false) // for the other domain types
+{
   // Initialization of the mesh, either with the protection of sharp
   // features, or with the initial points (or both).
+  // If `detect_connected_components==true`, the initialization is
+  // already done.
   CGAL::internal::Mesh_3::C3t3_initializer<
     C3t3,
     Domain,
@@ -189,6 +209,28 @@ launch()
      *domain_,
      criteria,
      p_.protect_features);
+}
+
+
+template < typename D_, typename Tag >
+void
+Mesh_function<D_,Tag>::
+launch()
+{
+#ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
+  CGAL::default_random = CGAL::Random(0);
+#endif
+
+  // Create mesh criteria
+  Mesh_criteria criteria(Edge_criteria(p_.edge_sizing),
+                         Facet_criteria(p_.facet_angle,
+                                        p_.facet_sizing,
+                                        p_.facet_approx,
+                                        topology(p_.manifold)),
+                         Cell_criteria(p_.tet_shape,
+                                       p_.tet_sizing));
+
+  initialize(criteria, CGAL::Boolean_tag<Tag::value>());
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
@@ -217,27 +259,27 @@ launch()
 }
 
 
-template < typename D_ >
+template < typename D_, typename Tag >
 void
-Mesh_function<D_>::
+Mesh_function<D_,Tag>::
 stop()
 {
   continue_ = false;
 }
 
 
-template < typename D_ >
+template < typename D_, typename Tag >
 QStringList
-Mesh_function<D_>::
+Mesh_function<D_,Tag>::
 parameters_log() const
 {
   return p_.log();
 }
 
 
-template < typename D_ >
+template < typename D_, typename Tag >
 QString
-Mesh_function<D_>::
+Mesh_function<D_,Tag>::
 status(double time_period) const
 {
   QString result;

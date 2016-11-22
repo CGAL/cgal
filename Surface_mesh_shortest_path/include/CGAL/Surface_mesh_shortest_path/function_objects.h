@@ -19,15 +19,14 @@
 
 #include <cstddef>
 
-#include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <boost/graph/graph_traits.hpp>
 #include <CGAL/result_of.h>
 #include <CGAL/assertions.h>
 
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#include <CGAL/Cartesian_converter.h>
 
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H

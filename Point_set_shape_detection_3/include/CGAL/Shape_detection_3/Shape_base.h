@@ -24,12 +24,14 @@
 
 #include <vector>
 #include <set>
+#include <stack>
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/property_map.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Random.h>
+#include <CGAL/Origin.h>
 
 /*!
  \file Shape_base.h
@@ -507,7 +509,7 @@ namespace CGAL {
       int score = 0;
       std::vector<std::size_t> indices(num);
       for (std::size_t i = 0;i<num;i++)
-        indices[i] = m_indices[default_random(m_indices.size())];
+        indices[i] = m_indices[get_default_random()(m_indices.size())];
       
       std::vector<FT> dists(num), angles(num);
       other->squared_distance(indices, dists);
@@ -521,7 +523,7 @@ namespace CGAL {
         return false;
 
       for (std::size_t i = 0;i<num;i++)
-        indices[i] = other->m_indices[default_random(other->m_indices.size())];
+        indices[i] = other->m_indices[get_default_random()(other->m_indices.size())];
 
       this->squared_distance(indices, dists);
       this->cos_to_normal(indices, angles);

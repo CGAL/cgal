@@ -18,8 +18,8 @@
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#ifndef CGAL_PERIODIC_3_TRIANGULATION_DUMMY_36_H
-#define CGAL_PERIODIC_3_TRIANGULATION_DUMMY_36_H
+#ifdef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H 
+
 
 template < class GT, class TDS >
 inline std::vector<typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle >
@@ -754,4 +754,4 @@ Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
   return ret_vector;
 }
 
-#endif // CGAL_PERIODIC_3_TRIANGULATION_DUMMY_36_H
+#endif // CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H

@@ -29,7 +29,7 @@
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_orientation_grp Orientation Functions
-//  Functions to compute or change the orientation of faces and surfaces.
+///  Functions to compute or change the orientation of faces and surfaces.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_intersection_grp Intersection Functions
@@ -77,6 +77,7 @@ and provides a list of the parameters that are used in this package.
 ## Meshing Functions ##
 - `CGAL::Polygon_mesh_processing::fair()`
 - `CGAL::Polygon_mesh_processing::refine()`
+- `CGAL::Polygon_mesh_processing::triangulate_face()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
@@ -87,7 +88,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()`
 - `CGAL::Polygon_mesh_processing::triangulate_hole_polyline()`
 
-## Predicate Functions##
+## Predicate Functions ##
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
 
@@ -99,6 +100,7 @@ and provides a list of the parameters that are used in this package.
 
 ## Combinatorial Repairing Functions ##
 - \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+- `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
 
@@ -109,7 +111,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::compute_vertex_normals()`
 - `CGAL::Polygon_mesh_processing::compute_normals()`
 
-## Connected Components
+## Connected Components ##
 - `CGAL::Polygon_mesh_processing::connected_component()`
 - `CGAL::Polygon_mesh_processing::connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
@@ -117,7 +119,7 @@ and provides a list of the parameters that are used in this package.
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
-## Geometric Measure functions
+## Geometric Measure Functions ##
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::volume()` \endlink
@@ -128,12 +130,11 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Side_of_triangle_mesh`
 - `CGAL::Polygon_mesh_processing::bbox_3()`
+- `CGAL::Polygon_mesh_processing::vertex_bbox_3()`
+- `CGAL::Polygon_mesh_processing::edge_bbox_3()`
+- `CGAL::Polygon_mesh_processing::face_bbox_3()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 
 
-\todo add in BGL `clear(pmesh)` and use it in `keep_largest_connected_components(pmesh, 0);`
-\todo document BGL/include/CGAL/boost/graph/Dual.h and remove the example from dont_submit
 \todo fix and restore remove_degenerate_faces in the user and the reference manual
-\todo publish `is_polygon_soup_a_polygon_mesh` defined in `polygon_soup_to_polygon_mesh.h`
-\todo publish `triangulate_face`. Can be helpful as a preprocessing for isotropic_remeshing
 */

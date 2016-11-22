@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Mesh_3_test )
+project( Mesh_3_Tests )
 
 cmake_minimum_required(VERSION 2.8.11)
 
@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_backward_compatibility.cpp" )
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
   create_single_source_cgal_program( "test_c3t3.cpp" )
+  create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )
   create_single_source_cgal_program( "test_implicit_multi_domain_to_labeling_function_wrapper.cpp" )
   create_single_source_cgal_program( "test_mesh_3_implicit_vector_to_labeled_function_wrapper.cpp" )
   create_single_source_cgal_program( "test_c3t3_io.cpp" )
@@ -48,9 +49,12 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
   create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
   create_single_source_cgal_program( "test_meshing_unit_tetrahedron.cpp" )
+  create_single_source_cgal_program( "test_meshing_with_default_edge_size.cpp" )
   create_single_source_cgal_program( "test_robust_weighted_circumcenter.cpp" )
   create_single_source_cgal_program( "test_meshing_determinism.cpp" )
   create_single_source_cgal_program( "test_c3t3_extract_subdomains_boundaries.cpp" )
+  create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
+  create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
 
 else()
   

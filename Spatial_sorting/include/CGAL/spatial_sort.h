@@ -20,7 +20,7 @@
 #ifndef CGAL_SPATIAL_SORT_H
 #define CGAL_SPATIAL_SORT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include <CGAL/hilbert_sort.h>
 #include <CGAL/Multiscale_sort.h>

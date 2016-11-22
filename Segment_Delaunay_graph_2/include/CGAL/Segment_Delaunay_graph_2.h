@@ -44,13 +44,16 @@
 #include <CGAL/Segment_Delaunay_graph_2/Traits_wrapper_2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
-#include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
+#include <CGAL/tss.h>
 
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
+#include <CGAL/assertions.h>
+
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 /*
   Conventions:
@@ -99,12 +102,11 @@ namespace Internal {
     typedef Node                   argument_type;
     typedef typename Node::Site_2  Site;
     typedef Site                   result_type;
-    Site& operator()(const Node& x) const { 
-      static Site s;
-      s = x.site();
-      return s;
+
+    Site operator()(const Node& x) const {
+      return x.site();
     }
-    //    const Site& operator()(const Node& x) const { return x.site(); }
+
   };
 
   template < class Node, class Site_t >
@@ -112,18 +114,15 @@ namespace Internal {
     typedef Node                   argument_type;
     typedef Site_t                 Site;
     typedef Site                   result_type;
-    Site& operator()(const Node& x) const {
-      static Site s;
+
+    Site operator()(const Node& x) const {
       if ( boost::tuples::get<2>(x) /*x.third*/ ) { // it is a point
-	//	s = Site::construct_site_2(*x.first);
-	s = Site::construct_site_2( *boost::tuples::get<0>(x) );
-      } else {
-	//	s = Site::construct_site_2(*x.first, *x.second);
-	s = Site::construct_site_2
-	  (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
+	return Site::construct_site_2( *boost::tuples::get<0>(x) );
       }
-      return s;
+      return Site::construct_site_2
+        (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
     }
+
   };
 
   template<typename T, typename U>
@@ -267,11 +266,11 @@ protected:
   Handle_map;
 
 public:
-  typedef Iterator_project<All_inputs_iterator, Proj_input_to_site>
+  typedef boost::transform_iterator<Proj_input_to_site, All_inputs_iterator>
   Input_sites_iterator;
-
-  typedef Iterator_project<Finite_vertices_iterator, 
-                           Proj_site>            Output_sites_iterator;
+  
+  typedef boost::transform_iterator<Proj_site, Finite_vertices_iterator>
+  Output_sites_iterator;
 protected:
   // LOCAL VARIABLE(S)
   //------------------
@@ -582,18 +581,20 @@ public:
                                IndicesIterator indices_first,
                                IndicesIterator indices_beyond )
   {
-    typedef std::vector<std::ptrdiff_t> Vertex_indices;
+    typedef std::vector<std::size_t> Vertex_indices;
     typedef std::vector<Vertex_handle> Vertices;
 
     Vertex_indices vertex_indices;
     vertex_indices.resize(points.size());
 
-    std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
-              boost::counting_iterator<std::ptrdiff_t>(points.size()),
+    std::copy(boost::counting_iterator<std::size_t>(0),
+              boost::counting_iterator<std::size_t>(points.size()),
               std::back_inserter(vertex_indices));
 
     size_type n = this->number_of_vertices();
-    Spatial_sort_traits_adapter_2<Gt,const Point_2*> sort_traits(&(points[0]));
+    Spatial_sort_traits_adapter_2<Gt,
+                                  typename Pointer_property_map<Point_2>::const_type >
+      sort_traits(make_property_map(points));
 
     spatial_sort(vertex_indices.begin(), vertex_indices.end(), sort_traits);
 
@@ -1423,20 +1424,6 @@ public:
 protected:
   void print_error_message() const;
 
-  void print_error_message(const Tag_false&) const
-  {
-    static int i = 0;
-
-    if ( i == 0 ) {
-      i++;
-      std::cerr << "SDG::Insert aborted: intersecting segments found"
-		<< std::endl;
-    }
-  }
-
-  void print_error_message(const Tag_true&) const {}
-
-  //protected:
 public:
   // wrappers for constructions
   inline Point_2 circumcenter(const Face_handle& f) const {

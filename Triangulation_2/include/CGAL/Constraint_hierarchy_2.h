@@ -25,7 +25,6 @@
 #include <utility>
 #include <map> 
 #include <list> 
-#include <CGAL/Iterator_project.h>
 #include <CGAL/triangulation_assertions.h>
 
 namespace CGAL {

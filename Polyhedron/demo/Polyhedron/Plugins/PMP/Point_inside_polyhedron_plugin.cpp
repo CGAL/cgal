@@ -55,7 +55,7 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
 
-  using Polyhedron_demo_plugin_helper::init;
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     mw = mainWindow;
@@ -70,7 +70,7 @@ public:
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
 
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(ui_widget.Select_button,  SIGNAL(clicked()), this, SLOT(on_Select_button())); 
     connect(ui_widget.Sample_random_points_from_bbox,  SIGNAL(clicked()), this, SLOT(on_Sample_random_points_from_bbox())); 
@@ -106,7 +106,7 @@ public Q_SLOTS:
       print_message("Error: please check at least one parameter check box.");
       return;
     }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     // place all selected polyhedron and point items to vectors below
     std::vector<const Polyhedron*> polys;
     typedef CGAL::Side_of_triangle_mesh<Polyhedron, Kernel> Point_inside;
@@ -132,7 +132,7 @@ public Q_SLOTS:
     else
       print_message("Error: there is no selected point set item(s).");
     }
-    if(inside_testers.empty() || point_sets.empty()) { return; }
+    if(inside_testers.empty() || point_sets.empty()) { QApplication::restoreOverrideCursor(); return; }
 
     // deselect all points
     for(std::vector<Point_set*>::iterator point_set_it = point_sets.begin(); 
@@ -158,7 +158,7 @@ public Q_SLOTS:
         Point_set::iterator point_it = point_set->begin() + pt;
         for (std::size_t i = 0; i < inside_testers.size(); ++i)
         {
-        CGAL::Bounded_side res = (*inside_testers[i])(point_it->position());
+        CGAL::Bounded_side res = (*inside_testers[i])(point_set->point(*point_it));
 
         if( (inside      && res == CGAL::ON_BOUNDED_SIDE) ||
             (on_boundary && res == CGAL::ON_BOUNDARY)     ||
@@ -189,10 +189,11 @@ public Q_SLOTS:
         scene->itemChanged(point_item);
       }
     }
-    if(!found && !generated_points.empty())
+    if(!found && !generated_points.empty()) {
       generated_points.last()->invalidateOpenGLBuffers();
       scene->itemChanged(generated_points.last());
-
+    }
+    QApplication::restoreOverrideCursor();
   }
 
   void on_Sample_random_points_from_bbox() {
@@ -235,21 +236,22 @@ public Q_SLOTS:
       &ok);
 
     if(!ok) { return; }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
     // sample random points and constuct item
     Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
     point_item->setName(QString("sample-%1").arg(nb_points));
     CGAL::Random rg(1340818006);
 
-    double grid_dx = bbox->xmax - bbox->xmin;
-    double grid_dy = bbox->ymax - bbox->ymin;
-    double grid_dz = bbox->zmax - bbox->zmin;
+    double grid_dx = bbox->xmax() - bbox->xmin();
+    double grid_dy = bbox->ymax() - bbox->ymin();
+    double grid_dz = bbox->zmax() - bbox->zmin();
 
     for(int i=0; i < nb_points; i++){
-      point_item->point_set()->push_back(
-      Epic_kernel::Point_3(bbox->xmin + rg.get_double()* grid_dx, 
-        bbox->ymin + rg.get_double()* grid_dy,
-        bbox->zmin + rg.get_double()* grid_dz)
+      point_item->point_set()->insert(
+      Epic_kernel::Point_3(bbox->xmin ()+ rg.get_double()* grid_dx,
+        bbox->ymin() + rg.get_double()* grid_dy,
+        bbox->zmin() + rg.get_double()* grid_dz)
       );
     }
 
@@ -258,6 +260,7 @@ public Q_SLOTS:
     generated_points.append(point_item);
     connect(point_item, SIGNAL(destroyed(QObject*)),
             this, SLOT(resetGeneratedPoints(QObject*)));
+    QApplication::restoreOverrideCursor();
   }
 private Q_SLOTS:
   void resetGeneratedPoints(QObject* o)

@@ -170,11 +170,11 @@ public:
 //           is_extended_(x.is_extended()){}
 
     /*! \brief Constructor from some type NTX and ROOTX
-     *  NT must be constructible from NTX\\
+     *  NT must be constructible from NTX and NTY\\
      *  ROOT must be construcible from ROOTX\\
      */
-    template <class NTX,class ROOTX>
-    explicit Sqrt_extension(const NTX& a0, const NTX& a1, const ROOTX& root)
+    template <class NTX,class NTY,class ROOTX>
+    explicit Sqrt_extension(const NTX& a0, const NTY& a1, const ROOTX& root)
         : a0_(a0),
           a1_(a1),
           root_(root),
@@ -195,9 +195,10 @@ public:
     > >::type* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
+    typename Fraction_traits<ROOT>::Compose compose_root;
     if ( a != 0 ) {
       a0_ = compose_nt(-b,2*a);
-      root_ = CGAL_NTS square(a0_) - ROOT(c,a);
+      root_ = CGAL_NTS square(a0_) - compose_root(c,a);
       if(CGAL_NTS is_zero(root_)) {
 	is_extended_ = false;
       } else {

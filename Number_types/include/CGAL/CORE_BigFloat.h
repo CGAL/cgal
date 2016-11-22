@@ -531,6 +531,7 @@ namespace Eigen {
     typedef CORE::BigFloat Real;
     typedef CORE::BigFloat NonInteger;
     typedef CORE::BigFloat Nested;
+    typedef CORE::BigFloat Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

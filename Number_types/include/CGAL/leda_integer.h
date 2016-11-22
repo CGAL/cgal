@@ -33,13 +33,8 @@
 #include <CGAL/Interval_nt.h>
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/integer.h>
-#include <LEDA/bigfloat.h>// for To_interval
-#else
 #include <LEDA/numbers/integer.h>
 #include <LEDA/numbers/bigfloat.h>// for To_interval
-#endif
 
 #include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
@@ -116,18 +111,6 @@ template <> class Algebraic_structure_traits< leda_integer >
 //       public:
 //         Type operator()( const Type& x, const Type& y ) const {
 //           Type m = x % y;
-// #if CGAL_LEDA_VERSION < 520
-//           // Fix wrong leda result
-//           if( x < 0 && m != 0 )
-//             m -= y;
-// #elif CGAL_LEDA_VERSION < 600
-//           // Fix another wrong leda result
-//           if( x < 0 && y > 0 && m != 0 )
-//             m -= y;
-// #else
-//           // Do nothing, it seems to work now!
-//           // TODO: be careful for future improvements of LEDA
-// #endif
 //           return m;
 //         }
 //         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )

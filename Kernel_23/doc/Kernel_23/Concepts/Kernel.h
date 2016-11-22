@@ -1218,6 +1218,11 @@ public:
   typedef unspecified_type Compute_approximate_area_3; 
 
   /*!
+    a model of `Kernel::ComputeApproximateDihedralAngle_3`
+  */ 
+  typedef unspecified_type Compute_approximate_dihedral_angle_3;
+
+  /*!
     a model of `Kernel::ComputeDeterminant_3` 
   */ 
   typedef unspecified_type Compute_determinant_3; 

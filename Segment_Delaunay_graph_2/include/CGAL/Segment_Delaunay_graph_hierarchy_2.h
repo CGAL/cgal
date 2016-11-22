@@ -139,10 +139,7 @@ protected:
   typedef typename Base::Arrangement_type          Arrangement_type;
   typedef typename Base::AT2                       AT2;
 
-protected:
-  // LOCAL VARIABLES
-  //----------------
-  static const int UNDEFINED_LEVEL = -1;
+  enum { UNDEFINED_LEVEL = -1 };
 
   // here is the stack of triangulations which form the hierarchy
   Base*   hierarchy[sdg_hierarchy_2__maxlevel];
@@ -367,17 +364,7 @@ protected:
 				       const Site_2& ,
 				       Vertex_handle ,
 				       int , Tag_false /* itag */, Tag) {
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
-    // hack to avoid nasty warning for G++ 3.4 on Darwin
-    static int i;
-#else
-    static int i = 0;
-#endif
-    if ( i == 0 ) {
-      i = 1;
-      print_error_message();
-    }
+    print_error_message();
     return Vertex_handle();
   }
 

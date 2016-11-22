@@ -56,14 +56,17 @@
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_PMP_REMESHING_VERBOSE_PROGRESS
 #endif
 
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
 #define CGAL_PMP_REMESHING_VERBOSE
+#define CGAL_PMP_REMESHING_VERBOSE_PROGRESS
 #endif
 
-
-
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
+#define CGAL_PMP_REMESHING_VERBOSE
+#endif
 
 
 namespace CGAL {
@@ -96,11 +99,12 @@ namespace internal {
     friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
   };
 
-  template <typename PM, typename FaceRange>
+  template <typename PM, typename FaceRange, typename FaceIndexMap>
   struct Border_constraint_pmap
   {
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+    typedef FaceIndexMap FIMap;
 
     boost::shared_ptr< std::set<edge_descriptor> > border_edges_ptr;
     const PM* pmesh_ptr_;
@@ -115,25 +119,28 @@ namespace internal {
       : border_edges_ptr(new std::set<edge_descriptor>() )
       , pmesh_ptr_(NULL)
     {}
-    Border_constraint_pmap(const PM& pmesh, const FaceRange& faces)
+    Border_constraint_pmap(const PM& pmesh
+                         , const FaceRange& faces
+                         , const FIMap& fimap)
       : border_edges_ptr(new std::set<edge_descriptor>() )
       , pmesh_ptr_(&pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border));
+      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border)
+        , PMP::parameters::face_index_map(fimap));
 
       BOOST_FOREACH(halfedge_descriptor h, border)
         border_edges_ptr->insert(edge(h, *pmesh_ptr_));
     }
 
-    friend bool get(const Border_constraint_pmap<PM, FaceRange>& map,
+    friend bool get(const Border_constraint_pmap<PM, FaceRange, FIMap>& map,
                     const edge_descriptor& e)
     {
       CGAL_assertion(map.pmesh_ptr_!=NULL);
       return map.border_edges_ptr->count(e)!=0;
     }
 
-    friend void put(Border_constraint_pmap<PM, FaceRange>& map,
+    friend void put(Border_constraint_pmap<PM, FaceRange, FIMap>& map,
                     const edge_descriptor& e,
                     const bool is)
     {
@@ -142,6 +149,55 @@ namespace internal {
         map.border_edges_ptr->insert(e);
       else
         map.border_edges_ptr->erase(e);
+    }
+  };
+
+  template <typename PM,
+            typename EdgeIsConstrainedMap,
+            typename FaceIndexMap>
+  struct Connected_components_pmap
+  {
+    typedef typename boost::graph_traits<PM>::face_descriptor   face_descriptor;
+    typedef std::size_t                                         Patch_id;
+    typedef FaceIndexMap                                        FIMap;
+    typedef EdgeIsConstrainedMap                                ECMap;
+    typedef Connected_components_pmap<PM, ECMap, FIMap>         CCMap;
+
+    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
+
+  public:
+    typedef face_descriptor                     key_type;
+    typedef Patch_id                            value_type;
+    typedef Patch_id&                           reference;
+    typedef boost::read_write_property_map_tag  category;
+
+    Connected_components_pmap()
+      : patch_ids_map()
+    {}
+    Connected_components_pmap(const PM& pmesh
+                            , EdgeIsConstrainedMap ecmap
+                            , FIMap fimap)
+      : patch_ids_map()
+    {
+      PMP::connected_components(pmesh,
+        boost::make_assoc_property_map(patch_ids_map),
+        PMP::parameters::edge_is_constrained_map(ecmap)
+        .face_index_map(fimap));
+    }
+
+    friend value_type get(const CCMap& m, const key_type& f)
+    {
+      CGAL_assertion(!m.patch_ids_map.empty());
+      CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
+
+      return m.patch_ids_map.at(f);
+    }
+    friend void put(CCMap& m, const key_type& f, const value_type i)
+    {
+      if (m.patch_ids_map.find(f) == m.patch_ids_map.end())
+        m.patch_ids_map.insert(std::make_pair(f, i));
+      else
+        m.patch_ids_map[f] = i;
     }
   };
 
@@ -174,10 +230,10 @@ namespace internal {
   template<typename PolygonMesh
          , typename VertexPointMap
          , typename GeomTraits
-         , typename EdgeIsConstrainedMap = No_constraint_pmap<
-              typename boost::graph_traits<PolygonMesh>::edge_descriptor>
-         , typename VertexIsConstrainedMap = No_constraint_pmap<
-              typename boost::graph_traits<PolygonMesh>::vertex_descriptor>
+         , typename EdgeIsConstrainedMap
+         , typename VertexIsConstrainedMap
+         , typename FacePatchMap
+         , typename FaceIndexMap
   >
   class Incremental_remesher
   {
@@ -196,10 +252,12 @@ namespace internal {
                                , GeomTraits
                                , EdgeIsConstrainedMap
                                , VertexIsConstrainedMap
+                               , FacePatchMap
+                               , FaceIndexMap
                                > Self;
 
   private:
-    typedef std::size_t                                  Patch_id;
+    typedef typename boost::property_traits<FacePatchMap>::value_type Patch_id;
     typedef std::vector<Triangle_3>                      Triangle_list;
     typedef std::vector<Patch_id>                        Patch_id_list;
 
@@ -212,8 +270,10 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
                        , const bool protect_constraints
-                       , EdgeIsConstrainedMap ecmap = EdgeIsConstrainedMap()
-                       , VertexIsConstrainedMap vcmap = VertexIsConstrainedMap()
+                       , EdgeIsConstrainedMap ecmap
+                       , VertexIsConstrainedMap vcmap
+                       , FacePatchMap fpmap
+                       , FaceIndexMap fimap
                        , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
@@ -222,9 +282,10 @@ namespace internal {
       , input_patch_ids_()
       , halfedge_status_map_()
       , protect_constraints_(protect_constraints)
-      , patch_ids_map_()
+      , patch_ids_map_(fpmap)
       , ecmap_(ecmap)
       , vcmap_(vcmap)
+      , fimap_(fimap)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -239,12 +300,6 @@ namespace internal {
     void init_remeshing(const FaceRange& face_range)
     {
       tag_halfedges_status(face_range); //called first
-      Constraint_property_map cpmap(*this);
-
-      //build AABB tree of input surface
-      PMP::connected_components(mesh_,
-        boost::make_assoc_property_map(patch_ids_map_),// set patch_id() for each face
-        PMP::parameters::edge_is_constrained_map(cpmap));
 
       BOOST_FOREACH(face_descriptor f, face_range)
       {
@@ -383,7 +438,7 @@ namespace internal {
         double sqlen = eit->first;
         long_edges.right.erase(eit);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << long_edges.left.size() << " long edges, ";
         std::cout << nb_splits << " splits)";
         std::cout.flush();
@@ -391,6 +446,10 @@ namespace internal {
 
         if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
           continue;
+
+        //collect patch_ids
+        Patch_id patch_id = get_patch_id(face(he, mesh_));
+        Patch_id patch_id_opp = get_patch_id(face(opposite(he, mesh_), mesh_));
 
         //split edge
         Point refinement_point = this->midpoint(he);
@@ -422,7 +481,6 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
         {
-          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
@@ -445,7 +503,6 @@ namespace internal {
         //do it again on the other side if we're not on boundary
         if (!is_on_border(hnew_opp))
         {
-          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
@@ -454,8 +511,8 @@ namespace internal {
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
-          set_patch_id(face(hnew2, mesh_), patch_id);
-          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
+          set_patch_id(face(hnew2, mesh_), patch_id_opp);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id_opp);
 
           if (snew == PATCH)
           {
@@ -471,7 +528,6 @@ namespace internal {
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
-      CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
       debug_status_map();
       debug_self_intersections();
 #endif
@@ -517,11 +573,15 @@ namespace internal {
         halfedge_descriptor he = eit->second;
         short_edges.right.erase(eit);
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << short_edges.left.size() << " short edges, ";
         std::cout << nb_collapses << " collapses)";
         std::cout.flush();
 #endif
+
+        edge_descriptor e = edge(he, mesh_);
+        if (!is_collapse_allowed(e))
+          continue; //situation could have changed since it was added to the bimap
 
         //handle the boundary case :
         //a PATCH_BORDER edge can be collapsed,
@@ -565,11 +625,11 @@ namespace internal {
           CGAL_assertion(collapse_does_not_invert_face(he));
         }
 
-        CGAL_assertion(is_collapse_allowed(edge(he, mesh_)));
+        CGAL_assertion(is_collapse_allowed(e));
 
         if (degree(va, mesh_) < 3
           || degree(vb, mesh_) < 3
-          || !CGAL::Euler::does_satisfy_link_condition(edge(he, mesh_), mesh_))//necessary to collapse
+          || !CGAL::Euler::does_satisfy_link_condition(e, mesh_))//necessary to collapse
           continue;
 
         //check that collapse would not create an edge with length > high
@@ -623,17 +683,28 @@ namespace internal {
           halfedge_and_opp_removed(he);
           halfedge_and_opp_removed(prev(he, mesh_));
 
+          //constrained case
+          bool constrained_case = is_constrained(va) || is_constrained(vb);
+          if (constrained_case)
+          {
+            CGAL_assertion(is_constrained(va) ^ is_constrained(vb));//XOR
+            set_constrained(va, false);
+            set_constrained(vb, false);
+          }
+
           //perform collapse
           Point target_point = get(vpmap_, vb);
-          vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
+          vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_);
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
+
+          //fix constrained case
+          if (constrained_case)//we have made sure that collapse goes to constrained vertex
+            set_constrained(vkept, true);
 
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-          CGAL_assertion_code(std::size_t nbb = nb_valid_halfedges());
-          CGAL_assertion(nbb == halfedge_status_map_.size());
           debug_status_map();
           CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
 #endif
@@ -659,7 +730,6 @@ namespace internal {
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-      CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       CGAL_expensive_assertion(is_triangle_mesh(mesh_));
       debug_status_map();
       debug_self_intersections();
@@ -682,10 +752,10 @@ namespace internal {
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
         //only the patch edges are allowed to be flipped
-        halfedge_descriptor he = halfedge(e, mesh_);
-        if (!is_on_patch(he))
+        if (!is_flip_allowed(e))
           continue;
 
+        halfedge_descriptor he = halfedge(e, mesh_);
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
@@ -699,10 +769,12 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
 
+        Patch_id pid = get_patch_id(face(he, mesh_));
+
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << nb_flips << " flips)";
         std::cout.flush();
 #endif
@@ -710,7 +782,6 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s2o = status(opposite(he, mesh_)));
         CGAL_assertion(s1 == s2   && s1 == PATCH);
         CGAL_assertion(s1o == s2o && s1o == PATCH);
-        CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
         CGAL_assertion(!is_border(he, mesh_));
 
         CGAL_assertion(
@@ -743,6 +814,9 @@ namespace internal {
                (va == source(he, mesh_) && vb == target(he, mesh_))
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
+
+        set_patch_id(face(he, mesh_), pid);
+        set_patch_id(face(opposite(he, mesh_), mesh_), pid);
       }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -750,7 +824,6 @@ namespace internal {
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-      CGAL_assertion(nb_valid_halfedges() == halfedge_status_map_.size());
       debug_status_map();
       CGAL_assertion(0 == PMP::remove_degenerate_faces(mesh_
                             , PMP::parameters::vertex_point_map(vpmap_)
@@ -767,14 +840,21 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    void tangential_relaxation(const bool smooth_along_features/*1d smoothing*/)
+    void tangential_relaxation(const bool relax_constraints/*1d smoothing*/
+                             , const unsigned int nb_iterations)
     {
       //todo : move border vertices along 1-dimensional features
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Tangential relaxation...";
-      std::cout.flush();
+      std::cout << "Tangential relaxation (" << nb_iterations << " iter.)...";
+      std::cout << std::endl;
 #endif
-
+      for (unsigned int nit = 0; nit < nb_iterations; ++nit)
+      {
+#ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
+        std::cout << "\r\t(iteration " << (nit + 1) << " / ";
+        std::cout << nb_iterations << ") ";
+        std::cout.flush();
+#endif
       //todo : use boost::vector_property_map to improve computing time
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
       VNormalsMap vnormals;
@@ -804,7 +884,7 @@ namespace internal {
 
           barycenters[v] = get(vpmap_, v) + move;
         }
-        else if (smooth_along_features
+        else if (relax_constraints
               && !protect_constraints_
               && is_on_patch_border(v)
               && !is_corner(v)
@@ -822,8 +902,8 @@ namespace internal {
           {
             vertex_descriptor ph0 = source(border_halfedges[0], mesh_);
             vertex_descriptor ph1 = source(border_halfedges[1], mesh_);
-            double dot = Vector_3(get(vpmap_, v), get(vpmap_, ph0))
-                       * Vector_3(get(vpmap_, v), get(vpmap_, ph1));
+            double dot = to_double(Vector_3(get(vpmap_, v), get(vpmap_, ph0))
+                                   * Vector_3(get(vpmap_, v), get(vpmap_, ph1)));
             //check squared cosine is < 0.25 (~120 degrees)
             if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
               barycenters[v] = CGAL::midpoint(midpoint(border_halfedges[0]),
@@ -852,8 +932,9 @@ namespace internal {
       }
 
       CGAL_assertion(is_valid(mesh_));
-
       CGAL_assertion(is_triangle_mesh(mesh_));
+      }//end for loop (nit == nb_iterations)
+
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
 #endif
@@ -864,23 +945,6 @@ namespace internal {
       dump("4-relaxation.off");
 #endif
     }
-
-    struct Constraint_property_map
-    {
-      typedef boost::readable_property_map_tag      category;
-      typedef bool                                  value_type;
-      typedef bool                                  reference;
-      typedef edge_descriptor                       key_type;
-      const Self* remesher_ptr_;
-      Constraint_property_map(): remesher_ptr_(NULL) {}
-      Constraint_property_map(const Self& remesher)
-        : remesher_ptr_(&remesher) {}
-      friend bool get(const Constraint_property_map& m,
-                      const edge_descriptor& e) {
-        return m.remesher_ptr_->is_on_border(e) ||
-               m.remesher_ptr_->is_on_patch_border(e);
-      }
-    };
 
     // PMP book :
     // "maps the vertices back to the surface"
@@ -894,7 +958,7 @@ namespace internal {
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v) || is_constrained(v))
+        if (is_constrained(v) || !is_on_patch(v))
           continue;
         //note if v is constrained, it has not moved
 
@@ -907,17 +971,13 @@ namespace internal {
           tree_ptr_->traits(),
           pid_pmap
           );
-
         tree_ptr_->traversal(get(vpmap_, v), projection_traits);
         CGAL_assertion(projection_traits.found());
-
         Point proj = projection_traits.closest_point();
         put(vpmap_, v, proj);
       }
-
       CGAL_assertion(is_valid(mesh_));
       CGAL_assertion(is_triangle_mesh(mesh_));
-
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_self_intersections();
 #endif
@@ -933,18 +993,14 @@ namespace internal {
 private:
   Patch_id get_patch_id(const face_descriptor& f) const
   {
-    if (patch_ids_map_.empty())
-      return -1;
-    else
-      return patch_ids_map_.at(f);
+    if (f == boost::graph_traits<PM>::null_face())
+      return Patch_id();
+    return get(patch_ids_map_, f);
   }
 
   void set_patch_id(const face_descriptor& f, const Patch_id& i)
   {
-    if (patch_ids_map_.find(f) == patch_ids_map_.end())
-      patch_ids_map_.insert(std::make_pair(f, i));
-    else
-      patch_ids_map_[f] = i;
+    put(patch_ids_map_, f, i);
   }
 
   struct Patch_id_property_map
@@ -967,7 +1023,6 @@ private:
       std::size_t id_in_vec = std::distance(
         m.remesher_ptr_->input_triangles().begin(), tr_it);
 
-      CGAL_assertion(0 <= id_in_vec);
       CGAL_assertion(id_in_vec < m.remesher_ptr_->input_patch_ids().size());
       CGAL_assertion(*tr_it == m.remesher_ptr_->input_triangles()[id_in_vec]);
 
@@ -988,7 +1043,7 @@ private:
     double sqlength(const vertex_descriptor& v1,
                     const vertex_descriptor& v2) const
     {
-      return CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2));
+      return to_double(CGAL::squared_distance(get(vpmap_, v1), get(vpmap_, v2)));
     }
 
     double sqlength(const halfedge_descriptor& h) const
@@ -1049,7 +1104,7 @@ private:
 
     bool is_constrained(const edge_descriptor& e) const
     {
-      return get(Constraint_property_map(*this), e);
+      return is_on_border(e) || is_on_patch_border(e);
     }
 
     bool is_split_allowed(const edge_descriptor& e) const
@@ -1081,19 +1136,41 @@ private:
         return false;
       if (is_on_patch(he)) //hopp is also on patch
       {
-        if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
-          return false;//too many cases to be handled
-        else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
-          return false;//too many cases to be handled
-        else if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
+        if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
           return false;//collapse would induce pinching the selection
-        else return true;
+        else
+          return is_collapse_allowed(he) && is_collapse_allowed(hopp);
       }
       else if (is_on_patch_border(he))
         return is_collapse_allowed_on_patch_border(he);
       else if (is_on_patch_border(hopp))
         return is_collapse_allowed_on_patch_border(hopp);
       return false;
+    }
+
+    bool is_collapse_allowed(const halfedge_descriptor& he) const
+    {
+      halfedge_descriptor hopp = opposite(he, mesh_);
+
+      if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
+        return false;//too many cases to be handled
+      if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
+        return false;//too many cases to be handled
+      else if (is_on_patch_border(next(he, mesh_)))
+      {
+        //avoid generation of degenerate faces, and self-intersections
+        if (source(he, mesh_) ==
+          target(next(next_on_patch_border(next(he, mesh_)), mesh_), mesh_))
+          return false;
+      }
+      else if (is_on_patch_border(prev(hopp, mesh_)))
+      {
+        //avoid generation of degenerate faces, and self-intersections
+        if (target(hopp, mesh_) ==
+          source(prev(prev_on_patch_border(prev(hopp, mesh_)), mesh_), mesh_))
+          return false;
+      }
+      return true;
     }
 
     bool is_collapse_allowed_on_patch_border(const halfedge_descriptor& h) const
@@ -1113,6 +1190,70 @@ private:
       }
       CGAL_assertion(is_on_mesh(hopp) || is_on_border(hopp));
       return true;//we already checked we're not pinching a hole in the patch
+    }
+
+    bool is_flip_allowed(const edge_descriptor& e) const
+    {
+      return is_flip_allowed(halfedge(e, mesh_))
+          && is_flip_allowed(opposite(halfedge(e, mesh_), mesh_));
+    }
+
+    bool is_flip_allowed(const halfedge_descriptor& h) const
+    {
+      if (!is_on_patch(h))
+        return false;
+      if (!is_on_patch_border(target(h, mesh_)))
+        return true;
+      if ( is_on_patch_border(next(h, mesh_))
+        && is_on_patch_border(prev(opposite(h, mesh_), mesh_)))
+        return false;
+      return true;
+    }
+
+    halfedge_descriptor next_on_patch_border(const halfedge_descriptor& h) const
+    {
+      CGAL_precondition(is_on_patch_border(h));
+      CGAL_assertion_code(const Patch_id& pid = get_patch_id(face(h, mesh_)));
+
+      halfedge_descriptor end = opposite(h, mesh_);
+      halfedge_descriptor nxt = next(h, mesh_);
+      do
+      {
+        if (is_on_patch_border(nxt))
+        { 
+          CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
+          return nxt;
+        }
+        nxt = next(opposite(nxt, mesh_), mesh_);
+      }
+      while (end != nxt);
+
+      CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
+      CGAL_assertion(is_on_patch_border(end));
+      return end;
+    }
+
+    halfedge_descriptor prev_on_patch_border(const halfedge_descriptor& h) const
+    {
+      CGAL_precondition(is_on_patch_border(h));
+      CGAL_assertion_code(const Patch_id& pid = get_patch_id(face(h, mesh_)));
+
+      halfedge_descriptor end = opposite(h, mesh_);
+      halfedge_descriptor prv = prev(h, mesh_);
+      do
+      {
+        if (is_on_patch_border(prv))
+        {
+          CGAL_assertion(get_patch_id(face(prv, mesh_)) == pid);
+          return prv;
+        }
+        prv = prev(opposite(prv, mesh_), mesh_);
+      }
+      while (end != prv);
+
+      CGAL_assertion(is_on_patch_border(end));
+      CGAL_assertion(get_patch_id(face(prv, mesh_)) == pid);
+      return end;
     }
 
     bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
@@ -1165,6 +1306,10 @@ private:
     {
       return get(vcmap_, v);
     }
+    void set_constrained(const vertex_descriptor& v, const bool b)
+    {
+      put(vcmap_, v, b);
+    }
 
     bool is_corner(const vertex_descriptor& v) const
     {
@@ -1202,9 +1347,7 @@ private:
       {
         //being part of the border of the mesh is predominant
         if (is_border(h, mesh_))
-          halfedge_status_map_[h] = MESH_BORDER; //erase previous value if exists
-        else
-          halfedge_status_map_[h] = MESH;
+          set_status(h, MESH_BORDER); //erase previous value if exists
       }
 
       //tag PATCH,       //h and hopp belong to the patch to be remeshed
@@ -1213,31 +1356,31 @@ private:
         BOOST_FOREACH(halfedge_descriptor h,
                       halfedges_around_face(halfedge(f, mesh_), mesh_))
         {
-          halfedge_status_map_[h] = PATCH;
+          set_status(h, PATCH);
         }
       }
 
-      internal::Border_constraint_pmap<PM, FaceRange> border_map(mesh_, face_range);
+      internal::Border_constraint_pmap<PM, FaceRange, FaceIndexMap>
+        border_map(mesh_, face_range, fimap_);
       //override the border of PATCH
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (get(ecmap_, e) || get(border_map, e))
+        if (get(ecmap_, e)
+          || get(border_map, e)
+          || get_patch_id(face(halfedge(e, mesh_), mesh_))
+              != get_patch_id(face(opposite(halfedge(e, mesh_), mesh_), mesh_)))
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
-          if (halfedge_status_map_[h] == PATCH)
-            halfedge_status_map_[h] = PATCH_BORDER;
+          if (status(h) == PATCH)
+            set_status(h, PATCH_BORDER);
 
           halfedge_descriptor hopp = opposite(h, mesh_);
-          if (halfedge_status_map_[hopp] == PATCH)
-            halfedge_status_map_[hopp] = PATCH_BORDER;
-
-          put(ecmap_, e, false);
+          if (status(hopp) == PATCH)
+            set_status(hopp, PATCH_BORDER);
         }
       }
-
-      CGAL_assertion(halfedge_status_map_.size() == nb_valid_halfedges());
     }
 
     Halfedge_status status(const halfedge_descriptor& h) const
@@ -1246,17 +1389,23 @@ private:
         halfedge_descriptor, Halfedge_status >::const_iterator
           it = halfedge_status_map_.find(h);
       if (it == halfedge_status_map_.end())
-        std::cout << "Something goes wrong with status function" << std::endl;
-      CGAL_assertion(it != halfedge_status_map_.end());
+        return MESH;
       return it->second;
+    }
+
+    void set_status(const halfedge_descriptor& h,
+                    const Halfedge_status& s)
+    {
+      if (s == MESH)
+        halfedge_status_map_.erase(h);
+      else
+        halfedge_status_map_[h] = s;
     }
 
     void merge_status(const halfedge_descriptor& en,
                       const Halfedge_status& s_epo,
                       const Halfedge_status& s_ep)
     {
-      CGAL_assertion(halfedge_status_map_.find(en) != halfedge_status_map_.end());
-
       //get missing data
       halfedge_descriptor eno = opposite(en, mesh_);
       Halfedge_status s_eno = status(eno);
@@ -1269,8 +1418,8 @@ private:
         || s_epo == PATCH_BORDER
         || s_ep == PATCH_BORDER)
       {
-        halfedge_status_map_[en]  = s_epo;
-        halfedge_status_map_[eno] = s_ep;
+        set_status(en, s_epo);
+        set_status(eno, s_ep);
       }
       // else keep current status for en and eno
     }
@@ -1327,13 +1476,13 @@ private:
             CGAL_assertion_code(++nb_done);
 
             //update halfedge_status_map_
-            halfedge_status_map_[h_ab] = merge_status(h_ab, hf, hfo);
-            halfedge_status_map_[h_ca] = merge_status(h_ca, hf, hfo);
-            halfedge_status_map_[hf] =
-              (is_on_patch(h_ca) || is_on_patch_border(h_ca))
-              ? PATCH
-              : MESH;
-            halfedge_status_map_[hfo] = status(hf);
+            set_status(h_ab, merge_status(h_ab, hf, hfo));
+            set_status(h_ca, merge_status(h_ca, hf, hfo));
+            if (is_on_patch(h_ca) || is_on_patch_border(h_ca))
+            {
+              set_status(hf, PATCH);
+              set_status(hfo, PATCH);
+            }
 #ifdef CGAL_PMP_REMESHING_DEBUG
             debug_status_map();
 #endif
@@ -1554,7 +1703,7 @@ private:
       //check all normals have same orientation
       for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
       {
-        double dot = normals[i - 1] * normals[i];
+        double dot = to_double(normals[i - 1] * normals[i]);
         if(dot <= 0.)
           return false;
       }
@@ -1600,9 +1749,10 @@ private:
     Patch_id_list input_patch_ids_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
-    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map_;
+    FacePatchMap patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
     VertexIsConstrainedMap vcmap_;
+    FaceIndexMap fimap_;
 
   };//end class Incremental_remesher
 }//end namespace internal

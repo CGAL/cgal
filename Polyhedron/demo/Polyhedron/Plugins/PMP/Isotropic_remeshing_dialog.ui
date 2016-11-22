@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
-    <height>318</height>
+    <width>376</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,44 +55,38 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Isotropic remeshing</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="2,0">
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="nbIterations_spinbox">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="nbIterations_label">
+     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0" columnstretch="0,1">
+      <item row="6" column="0">
+       <widget class="QLabel" name="preserveDuplicates_label">
         <property name="text">
-         <string>Number of iterations</string>
+         <string>Preserve duplicated edges</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>nbIterations_spinbox</cstring>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="nbSmoothing_spinbox">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QCheckBox" name="preserveDuplicates_checkbox">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -106,6 +100,79 @@
         </property>
         <property name="buddy">
          <cstring>edgeLength_dspinbox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="protect_label">
+        <property name="text">
+         <string>Protect borders/selected edges</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="nbSmoothing_label">
+        <property name="text">
+         <string>Number of Smoothing iterations</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="nbIterations_spinbox">
+        <property name="minimumSize">
+         <size>
+          <width>110</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="value">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="smooth1D_label">
+        <property name="text">
+         <string>Allow 1D smoothing along borders</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="nbIterations_label">
+        <property name="text">
+         <string>Number of Main iterations</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>nbIterations_spinbox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QCheckBox" name="smooth1D_checkbox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="protect_checkbox">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -125,59 +192,21 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="protect_label">
-        <property name="text">
-         <string>Protect borders/selected edges</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="protect_checkbox">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="smooth1D_checkbox">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="smooth1D_label">
-        <property name="text">
-         <string>Allow 1D smoothing along borders</string>
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="sizeType">
+         <enum>QSizePolicy::Maximum</enum>
         </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QCheckBox" name="preserveDuplicates_checkbox">
-        <property name="text">
-         <string/>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
         </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="preserveDuplicates_label">
-        <property name="text">
-         <string>Preserve duplicated edges</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -187,10 +216,13 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::MinimumExpanding</enum>
+     </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -208,8 +240,13 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>splitEdgesOnly_checkbox</tabstop>
   <tabstop>edgeLength_dspinbox</tabstop>
   <tabstop>nbIterations_spinbox</tabstop>
+  <tabstop>nbSmoothing_spinbox</tabstop>
+  <tabstop>protect_checkbox</tabstop>
+  <tabstop>smooth1D_checkbox</tabstop>
+  <tabstop>preserveDuplicates_checkbox</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -221,8 +258,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>388</x>
-     <y>288</y>
+     <x>397</x>
+     <y>333</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -237,8 +274,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>388</x>
-     <y>288</y>
+     <x>397</x>
+     <y>333</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

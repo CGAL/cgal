@@ -163,17 +163,25 @@ private:
     nh->set_separator(sep);
 
     int cd  = nh->cutting_dimension();
-    if(!c_low.empty())
-      nh->low_val = c_low.tight_bounding_box().max_coord(cd);
-    else
-      nh->low_val = c_low.bounding_box().min_coord(cd);
-    if(!c.empty())
-      nh->high_val = c.tight_bounding_box().min_coord(cd);
-    else
-      nh->high_val = c.bounding_box().max_coord(cd);
+    if(!c_low.empty()){
+      nh->lower_low_val = c_low.tight_bounding_box().min_coord(cd);
+      nh->lower_high_val = c_low.tight_bounding_box().max_coord(cd);
+    }
+    else{
+      nh->lower_low_val = nh->cutting_value();
+      nh->lower_high_val = nh->cutting_value();
+    }
+    if(!c.empty()){
+      nh->upper_low_val = c.tight_bounding_box().min_coord(cd);
+      nh->upper_high_val = c.tight_bounding_box().max_coord(cd);
+    }
+    else{
+      nh->upper_low_val = nh->cutting_value();
+      nh->upper_high_val = nh->cutting_value();
+    }
 
-    CGAL_assertion(nh->cutting_value() >= nh->low_val);
-    CGAL_assertion(nh->cutting_value() <= nh->high_val);
+    CGAL_assertion(nh->cutting_value() >= nh->lower_low_val);
+    CGAL_assertion(nh->cutting_value() <= nh->upper_high_val);
 
     if (c_low.size() > split.bucket_size()){
       nh->lower_ch = create_internal_node_use_extension(c_low);

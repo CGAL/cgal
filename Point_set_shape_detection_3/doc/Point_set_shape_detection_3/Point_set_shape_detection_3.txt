@@ -67,7 +67,10 @@ The following minimal example reads a point set from a file and detects only pla
 
 \subsection Point_set_shape_detection_3Usage_parameters Setting Parameters and Using Different Types of Shape
 
-This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). Basic information of the detected shapes is written to the standard output. The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
+This example illustrates the user selection of parameters using the `Shape_detection_3::Efficient_RANSAC::Parameters` struct. Shape detection is performed on five types of shapes (plane, cylinder, sphere, cone, torus). The input point set is sampled on a surface mostly composed of piece-wise planar and cylindrical parts, in addition to free-form parts.
+
+Basic information of the detected shapes is written to the standard output: if the plane is either a plane or a cylinder, specific parameters are recovered, otherwise the general method `info()` is used to get the shape parameters in a string object. Note that specific parameters can be recovered for any of the provided shape.
+
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_parameters.cpp}
 

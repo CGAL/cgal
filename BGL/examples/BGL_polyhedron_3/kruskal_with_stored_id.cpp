@@ -23,7 +23,7 @@ void
 kruskal( const Polyhedron& P)
 {
 
-  // We use the default edge weight which is the squared length of the edge
+  // We use the default edge weight which is the length of the edge
   // This property map is defined in graph_traits_Polyhedron_3.h
   
   // This function call requires a vertex_index_map named parameter which

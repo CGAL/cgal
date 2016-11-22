@@ -174,11 +174,7 @@ public:
     typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
 
 protected:
-#ifndef _MSC_VER
-    // Somehow the static initialization does not work correctly for MSVC
-    // ---> strange linker errors
-    static
-#endif // _MSC_VER
+
     Allocator alloc;
 
     iterator start_;
@@ -520,11 +516,6 @@ protected:
     }
 }; // class vector
 
-#ifndef _MSC_VER
-// init static member allocator object
-template <class T, class Alloc>
-Alloc vector< T, Alloc>::alloc = Alloc();
-#endif // _MSC_VER
 
 
 template <class T, class Alloc>

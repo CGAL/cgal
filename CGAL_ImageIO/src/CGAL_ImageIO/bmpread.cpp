@@ -21,7 +21,7 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include "bmpread.h"
-#include "bmpread_impl.h"
+#include <CGAL/ImageIO/bmpread.h>
+#include <CGAL/ImageIO/bmpread_impl.h>
 
 #endif // CGAL_HEADER_ONLY

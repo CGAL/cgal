@@ -611,7 +611,7 @@ MainWindow::loadEdgConstraints(QString fileName)
   int n;
   ifs >> n;
   
-  K::Point_2 p,q, qold;
+  K::Point_2 p,q, qold(0,0); // initialize to avoid maybe-uninitialized warning from GCC6
 
   CDT::Vertex_handle vp, vq, vqold;
   while(ifs >> p) {

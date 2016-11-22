@@ -56,6 +56,10 @@
 # include <tbb/enumerable_thread_specific.h>
 #endif
 
+// To handle I/O for Surface_patch_index if that is a pair of `int` (the
+// default)
+#include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -486,7 +490,8 @@ public:
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-        CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
+        CGAL_precondition(r_domain_.do_intersect_surface_object()(q)
+                          != boost::none);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
         intersection = r_domain_.tree_.any_intersection(q);

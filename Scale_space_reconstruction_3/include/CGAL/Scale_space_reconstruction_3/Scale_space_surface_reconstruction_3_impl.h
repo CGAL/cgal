@@ -31,7 +31,6 @@
 #include <boost/lexical_cast.hpp>
 #include <string>
 
-#include <CGAL/Mesh_3/dihedral_angle_3.h>
 
 
 namespace CGAL {
@@ -753,10 +752,10 @@ detect_bubbles(FT border_angle) {
 			  || _shape->classify (f1) != Shape::REGULAR)
 			continue;
 		      
-		      double angle = CGAL::Mesh_3::dihedral_angle (vedge.first->point (),
-								   vedge.second->point (),
-								   c->vertex (i)->point (),
-								   c->vertex ((i + (j+2)%3 + 1)%4)->point ());
+		      double angle = CGAL::approximate_dihedral_angle (vedge.first->point (),
+                                                                       vedge.second->point (),
+                                                                       c->vertex (i)->point (),
+                                                                       c->vertex ((i + (j+2)%3 + 1)%4)->point ());
 
 		      if (-border_angle < angle && angle < border_angle)
 			{

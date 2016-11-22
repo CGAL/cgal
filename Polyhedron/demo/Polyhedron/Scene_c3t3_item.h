@@ -19,17 +19,18 @@
 #include <QOpenGLShaderProgram>
 
 #include <CGAL/Three/Viewer_interface.h>
-
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_group_item.h>
 #include <Scene_polyhedron_item.h>
 #include <Scene_polygon_soup_item.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/Three/Scene_item_with_properties.h>
 
 struct Scene_c3t3_item_priv;
-
+class Scene_spheres_item;
+class Scene_intersection_item;
 using namespace CGAL::Three;
   class SCENE_C3T3_ITEM_EXPORT Scene_c3t3_item
-  : public Scene_item
+  : public Scene_group_item, public Scene_item_with_properties
 {
   Q_OBJECT
 public:
@@ -64,17 +65,16 @@ public:
   bool manipulatable() const {
     return true;
   }
-  ManipulatedFrame* manipulatedFrame() {
-    return frame;
-  }
 
-  void setPosition(float x, float y, float z) {
-    frame->setPosition(x, y, z);
-  }
+  bool has_spheres() const;
+  bool has_grid() const;
+  bool has_cnc() const;
+  bool has_tets() const;
+  ManipulatedFrame* manipulatedFrame();
 
-  void setNormal(float x, float y, float z) {
-    frame->setOrientation(x, y, z, 0.f);
-  }
+  void setPosition(float x, float y, float z) ;
+
+  void setNormal(float x, float y, float z) ;
 
   Kernel::Plane_3 plane() const;
 
@@ -86,8 +86,12 @@ public:
            && c3t3().number_of_cells_in_complex()    == 0  );
   }
 
-  void compute_bbox() const;
 
+  void compute_bbox() const;
+  Scene_item::Bbox bbox() const
+  {
+      return Scene_item::bbox();
+  }
   Scene_c3t3_item* clone() const {
     return 0;
   }
@@ -102,138 +106,44 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m != PointsPlusNormals && m != Splatting);
+    return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points && m != ShadedPoints);
   }
 
   void draw(CGAL::Three::Viewer_interface* viewer) const;
-  void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-  void draw_points(CGAL::Three::Viewer_interface * viewer) const;
-private:
-
-  bool need_changed;
-  void reset_cut_plane();
-  void draw_triangle(const Kernel::Point_3& pa,
-    const Kernel::Point_3& pb,
-    const Kernel::Point_3& pc, bool /* is_cut */) const;
-
-  void draw_triangle_edges(const Kernel::Point_3& pa,
-    const Kernel::Point_3& pb,
-    const Kernel::Point_3& pc)const;
-
-  double complex_diag() const;
-
-  void compute_color_map(const QColor& c);
-
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+  void drawPoints(CGAL::Three::Viewer_interface * viewer) const;
+  public:
+    QMenu* contextMenu();
+    void copyProperties(Scene_item *);
   public Q_SLOTS:
   void export_facets_in_complex();
 
   void data_item_destroyed();
 
-  void show_spheres(bool b)
-  {
-    spheres_are_shown = b;
-    Q_EMIT redraw();
+  void reset_spheres();
 
-  }
+  void reset_intersection_item();
+  void show_spheres(bool b);
+  void show_intersection(bool b);
+  void show_grid(bool b);
+  void show_cnc(bool b);
+
   virtual QPixmap graphicalToolTip() const;
 
   void update_histogram();
 
   void changed();
 
-  void timerEvent(QTimerEvent*);
+  void updateCutPlane();
 
-private:
   void build_histogram();
 
   QColor get_histogram_color(const double v) const;
 
-public:
-  QMenu* contextMenu();
+  protected:
+    friend struct Scene_c3t3_item_priv;
+    Scene_c3t3_item_priv* d;
 
-  void set_scene(CGAL::Three::Scene_interface* scene){ last_known_scene = scene; }
-
-protected:
-  friend struct Scene_c3t3_item_priv;
-
-  Scene_c3t3_item_priv* d;
-
-private:
-
-  
-  
-  mutable bool are_intersection_buffers_filled;
-  enum Buffer
-  {
-      Facet_vertices =0,
-      Facet_normals,
-      Facet_colors,
-      Edges_vertices,
-      Grid_vertices,
-      Sphere_vertices,
-      Sphere_normals,
-      Sphere_colors,
-      Sphere_radius,
-      Sphere_center,
-      Wired_spheres_vertices,
-      iEdges_vertices,
-      iFacet_vertices,
-      iFacet_normals,
-      iFacet_colors,
-      NumberOfBuffers
-  };
-  enum Vao
-  {
-      Facets=0,
-      Edges,
-      Grid,
-      Spheres,
-      Wired_spheres,
-      iEdges,
-      iFacets,
-      NumberOfVaos
-  };
-  qglviewer::ManipulatedFrame* frame;
-  CGAL::Three::Scene_interface* last_known_scene;
-
-  bool spheres_are_shown;
-  const Scene_item* data_item_;
-  QPixmap histogram_;
-
-  typedef std::set<int> Indices;
-  Indices indices_;
-
-  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
-  typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
-  typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
-  //!Allows OpenGL 2.1 context to get access to gkFrameBufferTexture2D.
-  PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
-  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
-  PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
-
-  mutable std::size_t positions_poly_size;
-  mutable std::size_t positions_lines_size;
-  mutable std::vector<float> positions_lines;
-  mutable std::vector<float> positions_grid;
-  mutable std::vector<float> positions_poly;
-  mutable std::vector<float> normals;
-  mutable std::vector<float> f_colors;
-  mutable std::vector<float> s_normals;
-  mutable std::vector<float> s_colors;
-  mutable std::vector<float> s_vertex;
-  mutable std::vector<float> ws_vertex;
-  mutable std::vector<float> s_radius;
-  mutable std::vector<float> s_center;
-  mutable QOpenGLShaderProgram *program;
-  mutable QOpenGLShaderProgram *program_sphere;
-
-  using Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer);
-  void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer);
-  void compute_elements();
-  void compute_intersections();
-  void compile_shaders();
 };
 
 #endif // SCENE_C3T3_ITEM_H

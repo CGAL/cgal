@@ -72,6 +72,17 @@ angle(const typename K::Point_3 &p,
 
 template < class K >
 inline
+typename K::FT
+approximate_dihedral_angle(const typename K::Point_3 &p,
+                           const typename K::Point_3 &q,
+                           const typename K::Point_3 &r,
+                           const typename K::Point_3 &s, const K& k)
+{
+  return k.compute_approximate_dihedral_angle_3_object()(p, q, r, s);
+}
+
+template < class K >
+inline
 typename K::Boolean
 are_ordered_along_line(const typename K::Point_3 &p,
                        const typename K::Point_3 &q,

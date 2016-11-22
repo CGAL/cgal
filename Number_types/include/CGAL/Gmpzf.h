@@ -151,7 +151,8 @@ public:
         double operator()(const Quotient<Gmpzf>& q) const {
 	  std::pair<double, long> n = q.numerator().to_double_exp();
 	  std::pair<double, long> d = q.denominator().to_double_exp();
-	  double scale = std::ldexp(1.0, n.second - d.second);
+	  double scale = std::ldexp(1.0,
+                                    static_cast<int>(n.second - d.second));
 	  return (n.first / d.first) * scale;
 	}
     };
@@ -165,10 +166,10 @@ public:
 	  std::pair<std::pair<double, double>, long> d =
 	    q.denominator().to_interval_exp();
 
-	  CGAL_assertion_msg(CGAL::abs(1.0*n.second - d.second) < (1<<30)*2.0,
+	  CGAL_assertion_msg(CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
                      "Exponent overflow in Quotient<MP_Float> to_interval");
 	  return ldexp(Interval_nt<>(n.first) / Interval_nt<>(d.first),
-               n.second - d.second).pair();
+                       static_cast<int>(n.second - d.second)).pair();
         }
     };
 };

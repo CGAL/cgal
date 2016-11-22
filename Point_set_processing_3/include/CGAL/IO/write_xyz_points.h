@@ -22,6 +22,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <iostream>
 #include <iterator>
@@ -61,10 +62,6 @@ write_xyz_points_and_normals(
   NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-
   CGAL_point_set_processing_precondition(first != beyond);
 
   if(!stream)
@@ -76,14 +73,8 @@ write_xyz_points_and_normals(
   // Write positions + normals
   for(ForwardIterator it = first; it != beyond; it++)
   {
-  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    Point p = get(point_pmap, it);
-    Vector n = get(normal_pmap, it);
-  #else
-    Point p = get(point_pmap, *it);
-    Vector n = get(normal_pmap, *it);
-  #endif
-    stream << p << " " << n << std::endl;
+    stream << get(point_pmap, *it) << " "
+           << get(normal_pmap, *it) << std::endl;
   }
 
   return ! stream.fail();
@@ -129,12 +120,8 @@ write_xyz_points_and_normals(
   return write_xyz_points_and_normals(
     stream,
     first, beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(output),
-#else
     make_identity_property_map(
       typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
     normal_pmap);
 }
 /// @endcond
@@ -166,9 +153,6 @@ write_xyz_points(
   PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-
   CGAL_point_set_processing_precondition(first != beyond);
 
   if(!stream)
@@ -179,15 +163,7 @@ write_xyz_points(
 
   // Write positions
   for(ForwardIterator it = first; it != beyond; it++)
-  {
-  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    Point p = get(point_pmap, it);
-  #else
-    Point p = get(point_pmap, *it);
-  #endif
-    
-    stream << p << std::endl;
-  }
+    stream << get(point_pmap, *it) << std::endl;
 
   return ! stream.fail();
 }
@@ -227,12 +203,8 @@ write_xyz_points(
   return write_xyz_points(
     stream,
     first, beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(output)
-#else
     make_identity_property_map(
       typename std::iterator_traits<ForwardIterator>::value_type())
-#endif
     );
 }
 /// @endcond

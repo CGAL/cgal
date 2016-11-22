@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the AABB tree demo.
 
-project( AABB_demo )
+project( AABB_tree_Demo )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -13,19 +13,21 @@ endif()
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
+
 # Find CGAL and CGAL Qt5
-find_package(CGAL COMPONENTS Qt5 )
-include( ${CGAL_USE_FILE} )
+find_package(CGAL COMPONENTS Qt5)
 
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Gui Svg)
+
+include( ${CGAL_USE_FILE} )
 
 # Find OpenGL
 find_package(OpenGL)
 
 # Find QGLViewer
 if(Qt5_FOUND)
-  find_package(QGLViewer )
+  find_package(QGLViewer)
 endif(Qt5_FOUND)
 
 if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
@@ -45,13 +47,13 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
   qt5_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
   add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
 
-  qt5_add_resources ( RESOURCE_FILES AABB_demo.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES AABB_demo.qrc )
 
   add_file_dependencies( AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
                                        "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp"
                                        "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
 
-  add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${RESOURCE_FILES} )
+  add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
   qt5_use_modules(AABB_demo Gui OpenGL Xml Script Svg )
   # Link with Qt libraries
   target_link_libraries( AABB_demo ${QT_LIBRARIES} )
@@ -60,12 +62,12 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
   target_link_libraries( AABB_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with libQGLViewer, OpenGL
-  target_link_libraries( AABB_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} )
+  target_link_libraries( AABB_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS AABB_demo )
 
 
-else (CGAL_FOUND AND CGAL_CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(AABB_MISSING_DEPS "")
 
@@ -74,7 +76,7 @@ else (CGAL_FOUND AND CGAL_CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLV
   endif()
 
   if(NOT CGAL_Qt5_FOUND)
-    set(AABB_MISSING_DEPS "the CGAL Qt5 library, ${AABB_MISSING_DEPS}")
+    set(AABB_MISSING_DEPS "CGAL_Qt5, ${AABB_MISSING_DEPS}")
   endif()
 
   if(NOT Qt5_FOUND)

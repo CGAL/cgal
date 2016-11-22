@@ -28,6 +28,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/gmpxx_coercion_traits.h>
 #include <CGAL/mpz_class.h> // for GCD in Type traits
+#include <CGAL/IO/io.h>
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
@@ -260,6 +261,30 @@ public:
         }
     };
 };
+
+template <>
+class Input_rep<mpq_class> : public IO_rep_is_specialized {
+    mpq_class& q;
+public:
+    Input_rep( mpq_class& qq) : q(qq) {}
+    std::istream& operator()( std::istream& in) const {
+      internal::read_float_or_quotient<mpz_class,mpq_class>(in, q);
+      return in;
+    }
+};
+
+// Copied from leda_rational.h
+namespace internal {
+  // See: Stream_support/include/CGAL/IO/io.h
+  template <typename ET>
+  void read_float_or_quotient(std::istream & is, ET& et);
+
+  template <>
+  inline void read_float_or_quotient(std::istream & is, mpq_class& et)
+  {
+    internal::read_float_or_quotient<mpz_class,mpq_class>(is, et);
+  }
+} // namespace internal
 
 } //namespace CGAL
 

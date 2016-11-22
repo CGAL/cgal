@@ -773,7 +773,7 @@ private:
 
     Point_2 sourcePoints[2];
     sourcePoints[0] = cb2(cv2(layoutFaces[0], 0), t0, cv2(layoutFaces[0], 1), t1);
-    sourcePoints[1] = cb2(cv2(layoutFaces[1], 0), t0, cv2(layoutFaces[1], 1), t1);
+    sourcePoints[1] = cb2(cv2(layoutFaces[1], 0), t1, cv2(layoutFaces[1], 1), t0);
 
     Cone_tree_node* edgeRoot = new Cone_tree_node(m_traits, m_graph, m_rootNodes.size());
     node_created();
@@ -1564,15 +1564,16 @@ private:
         case Cone_tree_node::EDGE_SOURCE:
         {
           Segment_2 entrySegment = current->entry_segment();
-          Ray_2 rayToLocation(construct_ray_2(current->source_image(), currentLocation));
+          Point_2 currentSourceImage = current->source_image();
+          Ray_2 rayToLocation(construct_ray_2(currentSourceImage, currentLocation));
 
           LineLineIntersectResult cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
 
           CGAL_assertion(bool(cgalIntersection));
 
-          Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+          const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
 
-          CGAL_assertion(result && "Error, did not get point intersection on path walk to source");
+          if (!result) result = &currentSourceImage;
 
           FT t0 = parametric_distance_along_segment_2(construct_source_2(entrySegment), construct_target_2(entrySegment), *result);
 
@@ -1734,10 +1735,8 @@ private:
           std::size_t oppositeIndex = internal::edge_index(oppositeHalfedge, m_graph);
 
           FT oppositeLocationCoords[3] = { FT(0.0), FT(0.0), FT(0.0) };
-
           oppositeLocationCoords[oppositeIndex] = cbcw(location, (associatedEdge + 1) % 3);
           oppositeLocationCoords[(oppositeIndex + 1) % 3] = cbcw(location, associatedEdge);
-
           std::pair<Node_distance_pair,Barycentric_coordinate> mainFace = nearest_on_face(f, location);
           Barycentric_coordinate oppositeLocation(cbc(oppositeLocationCoords[0], oppositeLocationCoords[1], oppositeLocationCoords[2]));
           std::pair<Node_distance_pair,Barycentric_coordinate> otherFace = nearest_on_face(face(oppositeHalfedge, m_graph), oppositeLocation);
@@ -2452,7 +2451,8 @@ public:
 
   static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
-    return point(f, location, tm, CGAL::get(CGAL::vertex_point, tm), traits);
+    using boost::get;
+    return point(f, location, tm, get(CGAL::vertex_point, tm), traits);
   }
 
   static Point_3 point(face_descriptor f, Barycentric_coordinate location, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
@@ -2482,7 +2482,8 @@ public:
 
   static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& tm, const Traits& traits = Traits())
   {
-    return point(edge, t, tm, CGAL::get(CGAL::vertex_point, tm), traits);
+    using boost::get;
+    return point(edge, t, tm, get(CGAL::vertex_point, tm), traits);
   }
 
   static Point_3 point(halfedge_descriptor edge, FT t, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())

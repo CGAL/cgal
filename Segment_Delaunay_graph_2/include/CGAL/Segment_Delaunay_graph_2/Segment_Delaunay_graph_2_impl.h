@@ -901,17 +901,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
 				     const Site_2& /* t */, Vertex_handle /* v */,
 				     Tag_false)
 {
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
-  // hack to avoid nasty warning for G++ 3.4 on Darwin
-  static int i;
-#else
-  static int i = 0;
-#endif
-  if ( i == 0 ) {
-    i = 1;
-    print_error_message();
-  }
+  print_error_message();
   return Vertex_handle();
 }
 
@@ -2695,15 +2685,19 @@ void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 print_error_message() const
 {
-  std::cerr << std::endl;
-  std::cerr << "ATTENTION:" << std::endl;
-  std::cerr << "A segment-segment intersection was found."
-	    << std::endl;
-  std::cerr << "The Segment_Delaunay_graph_2 class is not configured"
-	    << " to handle this situation." << std::endl;
-  std::cerr << "Please look at the documentation on how to handle"
-	    << " this behavior." << std::endl;
-  std::cerr << std::endl;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, once, 0);
+  if(once == 0){
+    ++once;
+    std::cerr << std::endl;
+    std::cerr << "ATTENTION:" << std::endl;
+    std::cerr << "A segment-segment intersection was found."
+              << std::endl;
+    std::cerr << "The Segment_Delaunay_graph_2 class is not configured"
+              << " to handle this situation." << std::endl;
+    std::cerr << "Please look at the documentation on how to handle"
+              << " this behavior." << std::endl;
+    std::cerr << std::endl;
+  }
 }
 
 //--------------------------------------------------------------------

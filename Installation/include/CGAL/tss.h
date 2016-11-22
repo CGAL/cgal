@@ -32,12 +32,21 @@
 
 #  ifdef CGAL_USE_BOOST_THREAD
 
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(TYPE, VAR)               \
+       static boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
+       if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE());} \
+       TYPE& VAR =  * VAR##_ptr.get()
+
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, VAR, ARG1)               \
        static boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
        if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1));} \
        TYPE& VAR =  * VAR##_ptr.get()
 
+
 #  else
+
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(TYPE, VAR)       \
+       static thread_local TYPE VAR
 
 #    define CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, VAR, ARG1)       \
        static thread_local TYPE VAR(ARG1)
@@ -45,6 +54,8 @@
 #  endif
 
 #else 
+
+#  define CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(TYPE, VAR) static TYPE VAR
 
 #  define CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, VAR,ARG1) static TYPE VAR(ARG1)
 

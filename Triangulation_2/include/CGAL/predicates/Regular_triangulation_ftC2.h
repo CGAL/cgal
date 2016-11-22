@@ -22,6 +22,8 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_FTC2_H
 #define CGAL_REGULAR_TRIANGULATION_FTC2_H
 
+#include <CGAL/number_utils.h>
+
 // This file contains the low level cartesian predicates
 // used by the 2D regular triangulation.
 

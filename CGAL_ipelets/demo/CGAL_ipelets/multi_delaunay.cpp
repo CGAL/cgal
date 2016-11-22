@@ -98,8 +98,11 @@ void MdelaunayIpelet::protected_run(int fn)
       draw_in_ipe(dt);
       break;
     case 1:
+      CGAL_FALLTHROUGH;
     case 6:
+      CGAL_FALLTHROUGH;
     case 2:
+      CGAL_FALLTHROUGH;
     case 7:        //Delaunay and Voronoi for 2nd-3rd order
       for (Delaunay::Finite_edges_iterator it=dt.finite_edges_begin();it!=dt.finite_edges_end();++it){
           Point_2 pt0=it->first->vertex(Delaunay::cw(it->second))->point();
@@ -123,23 +126,24 @@ void MdelaunayIpelet::protected_run(int fn)
           Point_2 pt0_ori1=it->first->vertex(Delaunay::cw(it->second))->info().back();
           Point_2 pt1_ori0=it->first->vertex(Delaunay::ccw(it->second))->info().front();
           Point_2 pt1_ori1=it->first->vertex(Delaunay::ccw(it->second))->info().back();
-          Point_2 pt3 = Point_2();
+
           if(CGAL::compare_xy(pt0_ori0,pt1_ori0)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori0)==CGAL::EQUAL)
-            pt3 = pt1_ori1;
+            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori1),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori1)+CGAL::squared_distance(pt1_ori1,pt0_ori1))/9.));
           else
             if(CGAL::compare_xy(pt0_ori0,pt1_ori1)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori1)==CGAL::EQUAL)
-              pt3 = pt1_ori0;
+              rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori0),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori0)+CGAL::squared_distance(pt1_ori0,pt0_ori1))/9.));
 
-          if(pt3!=Point_2()) //if adjacent wpoints comed from a delaunay triangle
-            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt3),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
-              CGAL::squared_distance(pt0_ori0,pt3)+CGAL::squared_distance(pt3,pt0_ori1))/9.));
         }
         if(fn==2){//Draw 3th Delauney
           draw_in_ipe(rt);
           break;
         }
       }
+      CGAL_FALLTHROUGH;
     case 3://Delaunay and Voronoi of order n-1
+      CGAL_FALLTHROUGH;
     case 8:
       if(fn==3 ||fn==8){
         int order = pt_list.size()-1;
@@ -172,7 +176,9 @@ void MdelaunayIpelet::protected_run(int fn)
           break;
         }
       }
+      CGAL_FALLTHROUGH;
     case 4:
+      CGAL_FALLTHROUGH;
     case 9://k-th Delauney and Voronoi
         if(fn==4 ||fn==9){
           int order;
@@ -194,6 +200,7 @@ void MdelaunayIpelet::protected_run(int fn)
             break;
           }
         }
+        CGAL_FALLTHROUGH;
     case 5://Draw Voronoi diagrams
       if(fn==5) draw_dual_in_ipe(dt,bbox);
       if(fn==6) draw_dual_in_ipe(rti,bbox);

@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Skin_surface_3_ )
+project( Skin_surface_3_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

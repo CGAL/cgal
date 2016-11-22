@@ -5,12 +5,14 @@ namespace CGAL {
 
 The class `Polyhedral_mesh_domain_with_features_3` implements a domain whose 
 boundary is a simplicial polyhedral surface. 
-This surface must be free of intersection. 
-It must also be either closed 
-or included inside another polyhedral surface which is closed and free of intersection.	
+This surface must be free of intersection.
+It can either be closed,
+included inside another polyhedral surface which is closed and free of intersection,
+or open. In the latter case, the meshing process will only take care of the quality
+of the 1D (features and boundaries) and 2D (surfaces) components of the mesh.
 
 It is a model of the concept `MeshDomainWithFeatures_3`. It also 
-provides a member function to automatically detect sharp features from 
+provides a member function to automatically detect sharp features and boundaries from 
 the input polyhedral surface(s). 
 
 \tparam IGT stands for a geometric traits class providing the types 
@@ -49,19 +51,15 @@ Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface 
 The only requirement on type `Polyhedron` is that `CGAL::Mesh_polyhedron_3<IGT>::%type` should 
 be constructible from `Polyhedron`. 
 No feature detection is done at this level. Note that a copy of `bounding_polyhedron` will be done. 
-The interior of `bounding_polyhedron` will be meshed.
+The polyhedron `bounding_polyhedron` has to be closed and free of intersections.
+Its interior of `bounding_polyhedron` will be meshed.
 */ 
 template <typename Polyhedron> 
 Polyhedral_mesh_domain_with_features_3(Polyhedron bounding_polyhedron); 
 
-/*!
-Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
-detection is done at this level. 
-*/ 
-Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
 
 /*!
-Constructs  a `Polyhedral_mesh_domain_with_features_3` a polyhedral surface, and a bounding polyhedral surface,.
+Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface, and a bounding polyhedral surface.
 `CGAL::Mesh_polyhedron_3<IGT>::%type` should be constructible from `Polyhedron`. 
 The first polyhedron should be entirely included inside `bounding_polyhedron`, which has to be closed 
 and free of intersections. 
@@ -72,13 +70,20 @@ template <typename Polyhedron>
 Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron,
 							 Polyhedron bounding_polyhedron);
 
+/*!
+\deprecated Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
+detection is done at this level. Users must read the file into a `Polyhedron_3` and call the
+constructor above.
+*/ 
+Polyhedral_mesh_domain_with_features_3(const std::string& filename); 
+
 /// @} 
 
 /// \name Operations 
 /// @{
 
 /*!
-Detects sharp features of the internal bounding polyhedron (and the potential internal polyhedron) 
+Detects sharp features and boundaries of the internal bounding polyhedron (and the potential internal polyhedron) 
 and inserts them as features of the domain. `angle_bound` gives the maximum
 angle (in degrees) between the two normal vectors of adjacent triangles.
 For an edge of the polyhedron, if the angle between the two normal vectors of its
@@ -86,6 +91,13 @@ incident facets is bigger than the given bound, then the edge is considered as
 a feature edge.
 */ 
 void detect_features(FT angle_bound=120); 
+
+
+/*!
+Detects border edges of the bounding polyhedron and inserts them as features of the domain.
+This function should be called alone only, and not before or after `detect_features()`.
+*/
+   void detect_borders();
 
 /// @}
 

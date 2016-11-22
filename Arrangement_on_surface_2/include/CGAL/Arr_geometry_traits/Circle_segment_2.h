@@ -2033,9 +2033,9 @@ protected:
     if (CGAL::sign(denom) == ZERO)
       return;
 
-    const NT      x_numer = b()*cv.c() - c()*cv.b();
-    const NT      y_numer = c()*cv.a() - a()*cv.c();
-    Point_2       p (x_numer / denom, y_numer / denom);
+    const NT      x = (b()*cv.c() - c()*cv.b()) / denom;
+    const NT      y = (c()*cv.a() - a()*cv.c()) / denom;
+    Point_2       p (x, y);
 
     inter_list.push_back (Intersection_point_2 (p, mult));
     return;

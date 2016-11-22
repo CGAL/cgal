@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Mesh_3_example )
+project( Mesh_3_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 
@@ -71,7 +71,8 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "mesh_cubes_intersection.cpp" )
     create_single_source_cgal_program( "mesh_cubes_intersection_with_features.cpp" )
     create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
-   create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+    create_single_source_cgal_program( "remesh_polyhedral_surface.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     if( WITH_CGAL_ImageIO )
       if( VTK_FOUND AND "${VTK_VERSION_MAJOR}" GREATER "5" )
@@ -79,11 +80,16 @@ if ( CGAL_FOUND )
         target_link_libraries(  mesh_3D_gray_vtk_image ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBS}) 
       endif()
  
+      create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
+      create_single_source_cgal_program( "mesh_3D_image_with_features.cpp" )
       if( CGAL_ImageIO_USE_ZLIB )
         create_single_source_cgal_program( "mesh_optimization_example.cpp" )
+
         create_single_source_cgal_program( "mesh_optimization_lloyd_example.cpp" )
+
         create_single_source_cgal_program( "mesh_3D_image.cpp" )
-        create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
+        create_single_source_cgal_program( "mesh_3D_image_with_custom_initialization.cpp" )
+
         create_single_source_cgal_program( "mesh_3D_image_variable_size.cpp" )
       else()
         message( STATUS "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled." )

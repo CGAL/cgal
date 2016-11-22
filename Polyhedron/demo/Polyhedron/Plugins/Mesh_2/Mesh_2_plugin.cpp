@@ -109,7 +109,7 @@ mark_nested_domains(CDT& cdt)
 }
 
 template <class CDT, class TriangleMesh>
-void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm)
+void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm, int constant_coordinate_index, double constant_coordinate)
 {
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
@@ -127,8 +127,12 @@ void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm)
       bool insert_ok;
       boost::tie(it,insert_ok) =
         descriptors.insert(std::make_pair(fit->vertex(i),vertex_descriptor()));
-      if (insert_ok)
-        it->second = add_vertex(fit->vertex(i)->point(),tm);
+      if (insert_ok){
+        const Kernel::Point_3& pt=fit->vertex(i)->point();
+        double coords[3] = {pt[0], pt[1], pt[2]};
+        coords[constant_coordinate_index]=constant_coordinate;
+        it->second = add_vertex(Kernel::Point_3(coords[0],coords[1],coords[2]), tm);
+      }
       vds[i]=it->second;
     }
 
@@ -146,7 +150,8 @@ class Polyhedron_demo_mesh_2_plugin :
 
 public:
   void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface)
+            CGAL::Three::Scene_interface* scene_interface,
+            Messages_interface*)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -214,37 +219,28 @@ private:
       ui.radioSeedsOut->setDisabled(true);
       ui.radioNesting->setChecked(true);
     }
-    else{
+    else
       ui.radioSeedsOut->setChecked(true);
-      connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-              ui.radioSeedsOut, SLOT(setEnabled(bool)));
-      connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-              ui.radioSeedsIn, SLOT(setEnabled(bool)));
-    }
-    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-            ui.radioNesting, SLOT(setEnabled(bool)));
-    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-            ui.radioAll, SLOT(setEnabled(bool)));
-    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
-            ui.runLloyd_checkbox, SLOT(setEnabled(bool)));
     return ui;
   }
 
   template <class ProjectionTraits>
   void mesh(const std::vector<Scene_polylines_item*>& polylines_items,
             const std::vector<Scene_points_with_normal_item*>& points_items,
-            double diagonal_length)
+            double diagonal_length,
+            int constant_coordinate_index)
   {
     // extract seeds
     std::vector<Kernel::Point_3> seeds;
     Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
-      Q_FOREACH(UI_point_3<Kernel> pt, *points_item->point_set())
-        seeds.push_back(pt);
+      Q_FOREACH(Point_set_3<Kernel>::Index it, *points_item->point_set())
+        seeds.push_back(points_item->point_set()->point(it));
 
     // Create dialog box
     QDialog dialog(mw);
     Ui::mesh_2_dialog ui =
       create_dialog(&dialog, diagonal_length, seeds.empty());
+    dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
 
     // Get values
     int i = dialog.exec();
@@ -269,6 +265,7 @@ private:
     typedef CGAL::No_intersection_tag                                   Tag;
     typedef CGAL::Constrained_Delaunay_triangulation_2<Gt, TDS, Tag>    CDT;
     typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>               Criteria;
+    typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                   Mesher;
 
     QTime time; // global timer
     time.start();
@@ -279,6 +276,8 @@ private:
 
     QTime ltime; //local timer
     ltime.start();
+    double constant_coordinate =
+      polylines_items.back()->polylines.back().back()[constant_coordinate_index];
     try{
       Q_FOREACH(Scene_polylines_item* polylines_item, polylines_items)
         Q_FOREACH(const std::vector<Kernel::Point_3>& points,
@@ -297,29 +296,32 @@ private:
       return;
     }
 
-    if (runMesh2){
-      ltime.restart();
-      std::cout << " Running refine_Delaunay_mesh_2 ..." << std::flush;
-      Criteria criteria(0.125, target_length);
-      bool use_seeds=ui.radioSeedsOut->isChecked() ||
-                     ui.radioSeedsIn->isChecked();
-      if (!use_seeds){
-        bool use_nesting = ui.radioNesting->isChecked();
-        if (use_nesting){
-          mark_nested_domains(cdt);
-          for(typename CDT::All_faces_iterator fit=cdt.all_faces_begin(),
-                                               fit_end=cdt.all_faces_end();
-                                               fit!=fit_end;++fit)
-          {
-            fit->set_in_domain(fit->info().in_domain());
-          }
+    // start by marking the domain to mesh
+    Criteria criteria(0.125, target_length);
+    Mesher mesher(cdt, criteria);
+    bool use_seeds=ui.radioSeedsOut->isChecked() ||
+                   ui.radioSeedsIn->isChecked();
+    bool use_nesting = ui.radioNesting->isChecked();
+
+    if (!use_seeds){
+      if (use_nesting){
+        mark_nested_domains(cdt);
+        for(typename CDT::All_faces_iterator fit=cdt.all_faces_begin(),
+                                             fit_end=cdt.all_faces_end();
+                                             fit!=fit_end;++fit)
+        {
+          fit->set_in_domain(fit->info().in_domain());
         }
-        CGAL::refine_Delaunay_mesh_2(cdt, criteria, use_nesting);
       }
-      else
-        CGAL::refine_Delaunay_mesh_2(cdt,
-                                     seeds.begin(), seeds.end(),
-                                     criteria, ui.radioSeedsIn->isChecked());
+      mesher.init(use_nesting);
+    }
+    else
+      mesher.set_seeds(seeds.begin(), seeds.end(), ui.radioSeedsIn->isChecked(), true);
+
+    if (runMesh2){
+      time.restart();
+      std::cout << " Running refine_Delaunay_mesh_2 ..." << std::flush;
+      mesher.refine_mesh();
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 
@@ -340,7 +342,10 @@ private:
     if (runLloyd) iname+=QString("_Lloyd_")+QString::number(nb_iter);
     Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
     poly_item->setName(iname);
-    cdt2_to_face_graph(cdt,*poly_item->polyhedron());
+    cdt2_to_face_graph(cdt,
+                       *poly_item->polyhedron(),
+                       constant_coordinate_index,
+                       constant_coordinate);
     scene->addItem(poly_item);
     poly_item->invalidateOpenGLBuffers();
 
@@ -376,8 +381,8 @@ private:
         }
     if (res==-1) return res;
     Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
-      Q_FOREACH(UI_point_3<Kernel> pt, *points_item->point_set())
-        if (pt[res]!=ref[res])
+      Q_FOREACH(Point_set_3<Kernel>::Index pt, *points_item->point_set())
+      if (points_item->point_set()->point(pt)[res]!=ref[res])
           return -1;
     return res;
   }
@@ -386,6 +391,7 @@ public Q_SLOTS:
 
   void run()
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     //collect input polylines
     std::vector<Scene_polylines_item*> polylines_items;
     std::vector<Scene_points_with_normal_item*> points_items;
@@ -407,19 +413,24 @@ public Q_SLOTS:
       }
     }
 
-    double diag = bbox.diagonal_length();
+    double diag = CGAL::sqrt(
+          (bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
+          +(bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
+          +(bbox.zmax()-bbox.zmax()) *(bbox.zmax()-bbox.zmax())
+          );
+    QApplication::restoreOverrideCursor();
     switch( detect_constant_coordinate(polylines_items, points_items) )
     {
       using namespace CGAL;
       typedef Kernel K;
       case 0:
-        mesh<Projection_traits_yz_3<K> >(polylines_items, points_items, diag);
+        mesh<Projection_traits_yz_3<K> >(polylines_items, points_items, diag, 0);
       break;
       case 1:
-        mesh<Projection_traits_xz_3<K> >(polylines_items, points_items, diag);
+        mesh<Projection_traits_xz_3<K> >(polylines_items, points_items, diag, 1);
       break;
       case 2:
-        mesh<Projection_traits_xy_3<K> >(polylines_items, points_items, diag);
+        mesh<Projection_traits_xy_3<K> >(polylines_items, points_items, diag, 2);
       break;
       default:
         QMessageBox::critical(mw,

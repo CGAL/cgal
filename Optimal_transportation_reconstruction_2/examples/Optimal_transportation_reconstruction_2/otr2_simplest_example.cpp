@@ -22,7 +22,11 @@ int main ()
   CGAL::cpp11::copy_n(point_generator, 100, std::back_inserter(points));
 
   Otr otr(points);
-  otr.run(100); // 100 steps
+
+  if (otr.run(100)) //100 steps
+    std::cerr << "All done." << std::endl;
+  else
+    std::cerr << "Premature ending." << std::endl;
 
   return 0;
 }

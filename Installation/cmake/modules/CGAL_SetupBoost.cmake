@@ -5,17 +5,16 @@ if ( NOT CGAL_Boost_Setup )
   set ( CGAL_requires_Boost_libs TRUE )
   if ( DEFINED  MSVC_VERSION AND "${MSVC_VERSION}" GREATER 1800)
     set ( CGAL_requires_Boost_libs FALSE )
-  endif()
-  if ( CMAKE_COMPILER_IS_GNUCXX
-      AND(
-        #GCC 4.8+ with c++11 on
-        ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8
-          AND CMAKE_CXX_FLAGS MATCHES "\\-std=(c|gnu)\\+\\+[01][14yxz]")
-        #GCC 6.0+ without c++03 on
-        OR ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0
-             AND NOT CMAKE_CXX_FLAGS MATCHES "\\-std=(c|gnu)\\+\\+[90][83]")
-      ) )
-    set ( CGAL_requires_Boost_libs FALSE )
+  else()
+    try_run( CGAL_test_cpp_version_RUN_RES CGAL_test_cpp_version_COMPILE_RES
+      "${CMAKE_BINARY_DIR}"
+      "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/CGAL_test_cpp_version.cpp"
+      RUN_OUTPUT_VARIABLE CGAL_cplusplus)
+    message(STATUS "__cplusplus is ${CGAL_cplusplus}")
+    if(NOT CGAL_test_cpp_version_RUN_RES)
+      set ( CGAL_requires_Boost_libs FALSE )
+      message(STATUS "  --> Do not link with Boost.Thread")
+    endif()
   endif()
 
   if (CGAL_requires_Boost_libs)

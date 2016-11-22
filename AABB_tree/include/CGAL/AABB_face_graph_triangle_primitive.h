@@ -23,7 +23,7 @@
 #define CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/internal/AABB_tree/Halfedge_and_face_graph_property_maps.h>
+#include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
@@ -34,6 +34,7 @@ namespace CGAL {
  * It wraps a handle to a facet of a polyhedron to a 3D triangle.
  * The polyhedron from which the primitive is built should not be deleted
  * while the AABB tree holding the primitive is in use.
+ * The triangle type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Triangle_3`.
  *
  * \cgalModels `AABBPrimitiveWithSharedData`
  *
@@ -61,12 +62,12 @@ template < class FaceGraph,
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<typename boost::graph_traits<FaceGraph>::face_descriptor,
-                        Triangle_from_face_descriptor_property_map<
+                        Triangle_from_face_descriptor_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
                                                                               vertex_point_t>::type >::type>,
-                        One_point_from_face_descriptor_property_map<
+                        One_point_from_face_descriptor_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
                                                 typename boost::property_map< FaceGraph,
@@ -78,8 +79,8 @@ class AABB_face_graph_triangle_primitive
   typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::type >::type VertexPointPMap_;
 
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor Id_;
-  typedef Triangle_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
-  typedef One_point_from_face_descriptor_property_map<FaceGraph,VertexPointPMap_> Point_property_map;
+  typedef Triangle_from_face_descriptor_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
+  typedef One_point_from_face_descriptor_map<FaceGraph,VertexPointPMap_> Point_property_map;
 
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
@@ -118,7 +119,7 @@ public:
     \tparam Iterator an input iterator with `Id` as value type.
     Constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
-    is available with `vppm` set to `boost::get(vertex_point, graph)`.
+    is available with `vppm` set to `get(vertex_point, graph)`.
   */
   template <class Iterator>
   AABB_face_graph_triangle_primitive(Iterator it, const FaceGraph& graph, VertexPointPMap_ vppm)
@@ -130,7 +131,7 @@ public:
   /*!
     Constructs a primitive.
     If `VertexPointPMap` is the default of the class, an additional constructor
-    is available with `vppm` set to `boost::get(vertex_point, graph)`.
+    is available with `vppm` set to `get(vertex_point, graph)`.
   */
   AABB_face_graph_triangle_primitive(Id id, const FaceGraph& graph, VertexPointPMap_ vppm)
     : Base( Id_(id),

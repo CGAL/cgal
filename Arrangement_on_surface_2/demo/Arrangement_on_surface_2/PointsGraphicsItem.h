@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <CGAL/Qt/GraphicsItem.h>
+#include <CGAL/number_utils.h>
 #include <QPen>
 
 class QPainter;
@@ -57,7 +58,7 @@ public:
   void setPointRadius( double d );
   double getPointRadius( ) const;
 
-public slots:
+public Q_SLOTS:
   virtual void modelChanged( );
 
 protected:

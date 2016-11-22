@@ -1,4 +1,4 @@
-project( Optimal_transportation_reconstruction_2_test )
+project( Optimal_transportation_reconstruction_2_Tests )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_quality.cpp" )
   create_single_source_cgal_program( "test_reconstruction_until.cpp" )
   create_single_source_cgal_program( "test_vertex_edge.cpp" )
+  create_single_source_cgal_program( "otr2_epeck.cpp" )
 
 else()
   

@@ -26,7 +26,7 @@
 #ifndef CGAL_HANDLE_HASH_FUNCTION_H
 #define CGAL_HANDLE_HASH_FUNCTION_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cstddef>
 
 namespace CGAL {

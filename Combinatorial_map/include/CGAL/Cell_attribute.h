@@ -21,6 +21,7 @@
 #define CGAL_CELL_ATTRIBUTE_H 1
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 
 namespace CGAL {
 

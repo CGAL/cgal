@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Polygon_mesh_processing )
+project( Polygon_mesh_processing_Tests )
 
 
 cmake_minimum_required(VERSION 2.6.2)
@@ -70,8 +70,8 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("polygon_mesh_slicer_test.cpp" )
   create_single_source_cgal_program("self_intersection_polyhedron_test.cpp" )
   create_single_source_cgal_program("self_intersection_surface_mesh_test.cpp" )
+  create_single_source_cgal_program("test_is_polygon_soup_a_polygon_mesh.cpp")
   create_single_source_cgal_program("test_stitching.cpp")
-  create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_bgl_named_params.cpp")
   create_single_source_cgal_program("remeshing_test.cpp" )
   create_single_source_cgal_program("measures_test.cpp")

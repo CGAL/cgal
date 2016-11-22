@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-#include <functional>
+#include <boost/functional.hpp>
 
 typedef int                                     Value;
 typedef std::vector<Value>                      Vector;
@@ -23,7 +23,7 @@ int main()
   Vector a;
   const int n = 5;
   for (int i = 0; i < n; ++i)
-    a.push_back(CGAL::default_random(100));
+    a.push_back(CGAL::get_default_random()(100));
   std::sort(a.begin(), a.end());
   std::cout << "a = ( ";
   std::copy(a.begin(), a.end(), std::ostream_iterator<int>(std::cout," "));
@@ -38,7 +38,7 @@ int main()
   CGAL::sorted_matrix_search(
     &M, &M + 1,
     CGAL::sorted_matrix_search_traits_adaptor(
-      std::bind2nd(std::greater_equal<Value>(), bound), M));
+      boost::bind2nd(std::greater_equal<Value>(), bound), M));
   std::cout << "Upper bound for " << bound << " is "
             << upper_bound << "." << std::endl;
 

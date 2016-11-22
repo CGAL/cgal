@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, ClÃ©ment Jamin
 
 #ifndef CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
 #define CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
@@ -38,7 +38,8 @@
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
-#include <boost/property_map/property_map.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/type_traits/is_float.hpp>
 
 namespace CGAL {
 
@@ -173,11 +174,6 @@ protected:
   FT m_ghost; // ghost vs solid
   unsigned int m_relocation; // # relocations
 
-  // bbox
-  FT m_bbox_x;
-  FT m_bbox_y;
-  FT m_bbox_size;
-
   PointPMap point_pmap;
   MassPMap  mass_pmap;
 
@@ -230,9 +226,6 @@ public:
     m_alpha(0.5),
     m_ghost(1.0),
     m_relocation(relocation),
-    m_bbox_x(0.0),
-    m_bbox_y(0.0),
-    m_bbox_size(1.0),
     point_pmap(point_map),
     mass_pmap(mass_map)
   {
@@ -306,7 +299,7 @@ public:
   As the cost is defined by mass time squared distance the
   relevance is unitless.
 
-  The default value is 0, so that all edges receiving some mass
+  The default value is 1, so that all edges receiving some mass
   are considered relevant.
   Setting a large relevance value is used to get robustness to a
   large amount of outliers.
@@ -345,10 +338,6 @@ public:
     m_ghost = FT(1);
     m_relocation = 0;
 
-    m_bbox_x = FT(0);
-    m_bbox_y = FT(0);
-    m_bbox_size = FT(1);
-
     m_ignore = 0;
   }
 
@@ -372,11 +361,46 @@ public:
   void initialize(InputIterator start, InputIterator beyond) {
 
     clear();
-    insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
+    Property_map_to_unary_function<PointPMap> get_point(point_pmap);
+
+    Bbox_2 bbox = bbox_2(
+      boost::make_transform_iterator(start,get_point),
+      boost::make_transform_iterator(beyond,get_point));
+
+    insert_loose_bbox(bbox);
     init(start, beyond);
 
     std::vector<Sample_*> m_samples;
     for (InputIterator it = start; it != beyond; it++) {
+      Point point = get(point_pmap, *it);
+      FT    mass  = get( mass_pmap, *it);
+      Sample_* s = new Sample_(point, mass);
+      m_samples.push_back(s);
+    }
+    assign_samples(m_samples.begin(), m_samples.end());
+  }
+
+  template <class InputIterator>
+  void initialize_with_custom_vertices(InputIterator samples_start,
+                                       InputIterator samples_beyond,
+                                       InputIterator vertices_start,
+                                       InputIterator vertices_beyond,
+                                       PointPMap point_map,
+                                       MassPMap  mass_map) {
+    point_pmap = point_map;
+    mass_pmap  = mass_map;
+    clear();
+    Property_map_to_unary_function<PointPMap> get_point(point_pmap);
+
+    Bbox_2 bbox = bbox_2(
+      boost::make_transform_iterator(samples_start,get_point),
+      boost::make_transform_iterator(samples_beyond,get_point));
+
+    insert_loose_bbox(bbox);
+    init(vertices_start, vertices_beyond);
+
+    std::vector<Sample_*> m_samples;
+    for (InputIterator it = samples_start; it != samples_beyond; it++) {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point point = get(point_pmap, it);
       FT    mass  = get( mass_pmap, it);
@@ -408,50 +432,53 @@ public:
     {
       delete *s_it;
     }
-
-    m_dt.clear();
-    m_mindex.clear();
   }
 
 
   // INIT //
-  void insert_loose_bbox(const FT x, const FT y, const FT size) {
+  void insert_loose_bbox(const Bbox_2& bbox) {
     CGAL::Real_timer timer;
-    std::cerr << "insert loose bbox" << "...";
+    if (m_verbose > 0)
+      std::cerr << "insert loose bbox...";
+
+    double dl = (std::max)((bbox.xmax()-bbox.xmin()) / 2.,
+                           (bbox.ymax()-bbox.ymin()) / 2.);
 
     timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
-    insert_point(m_traits.construct_point_2_object()(x - size, y - size), true, nb++);
-    insert_point(m_traits.construct_point_2_object()(x - size, y + size), true, nb++);
-    insert_point(m_traits.construct_point_2_object()(x + size, y + size), true, nb++);
-    insert_point(m_traits.construct_point_2_object()(x + size, y - size), true, nb++);
+    typename Traits::Construct_point_2 point_2
+      = m_traits.construct_point_2_object();
+    insert_point(point_2(bbox.xmin()-dl, bbox.ymin()-dl), true, nb++);
+    insert_point(point_2(bbox.xmin()-dl, bbox.ymax()+dl), true, nb++);
+    insert_point(point_2(bbox.xmax()+dl, bbox.ymax()+dl), true, nb++);
+    insert_point(point_2(bbox.xmax()+dl, bbox.ymin()-dl), true, nb++);
 
-    std::cerr << "done" << " (" << nb << " vertices, "
-      << timer.time() << " s)" << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done (" << nb << " vertices, "
+                << timer.time() << " s)" << std::endl;
   }
 
   template<class Iterator>  // value_type = Point*
   void init(Iterator begin, Iterator beyond) {
     CGAL::Real_timer timer;
-    std::cerr << "init" << "...";
+    if (m_verbose > 0)
+      std::cerr << "init...";
 
     timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
     m_dt.infinite_vertex()->pinned() = true;
     for (Iterator it = begin; it != beyond; it++) {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-#else
       Point point = get(point_pmap, *it);
-#endif
       insert_point(point, false, nb++);
     }
 
-    std::cerr << "done" << " (" << nb << " vertices, "
-      << timer.time() << " s)"
-      << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done (" << nb << " vertices, "
+                << timer.time() << " s)"
+                << std::endl;
   }
 
+private:
   Vertex_handle insert_point(
     const Point& point, const bool pinned, const int id) 
   {
@@ -460,6 +487,7 @@ public:
     v->id() = id;
     return v;
   }
+public:
 
   // ASSIGNMENT //
 
@@ -470,13 +498,15 @@ public:
   template<class Iterator>  // value_type = Sample_*
   void assign_samples(Iterator begin, Iterator end) {
     CGAL::Real_timer timer;
-    std::cerr << "assign samples" << "...";
+    if (m_verbose > 0)
+      std::cerr << "assign samples...";
 
     timer.start();
     m_dt.assign_samples(begin, end);
     m_dt.reset_all_costs();
 
-    std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done (" << timer.time() << " s)" << std::endl;
   }
 
   void reassign_samples() {
@@ -502,8 +532,8 @@ public:
     Vertex_handle s = m_dt.source_vertex(edge);
     Vertex_handle t = m_dt.target_vertex(edge);
 
-    if (m_verbose > 0) {
-      std::cerr << std::endl << "do collapse " << "("
+    if (m_verbose > 1) {
+      std::cerr << std::endl << "do collapse ("
           << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
@@ -522,7 +552,8 @@ public:
     // debug test
     bool ok = m_dt.check_kernel_test(edge);
     if (!ok) {
-      std::cerr << "do_collapse: kernel test failed: " << std::endl;
+      if (m_verbose > 1)
+        std::cerr << "do_collapse: kernel test failed: " << std::endl;
       return false;
     }
     //
@@ -540,7 +571,7 @@ public:
       relocate_one_ring(hull.begin(), hull.end());
     }
 
-    if (m_verbose > 0) {
+    if (m_verbose > 1) {
       std::cerr << "done" << std::endl;
     }
 
@@ -553,7 +584,7 @@ public:
     Vertex_handle t = m_dt.target_vertex(edge);
 
     if (m_verbose > 1) {
-      std::cerr << "simulate collapse " << "("
+      std::cerr << "simulate collapse ("
         << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
@@ -881,6 +912,8 @@ public:
     Vertex_handle_map cvmap;
 
     Vertex_handle s = m_dt.source_vertex(edge);
+    CGAL_assertion(s != m_dt.infinite_vertex() );
+
     Vertex_handle cs = copy.tds().create_vertex();
     cvmap[s] = copy_vertex(s, cs);
 
@@ -889,6 +922,7 @@ public:
     CGAL_For_all(vcirc, vend)
     {
       Vertex_handle v = vcirc;
+      CGAL_assertion(v!=m_dt.infinite_vertex());
       if (cvmap.find(v) == cvmap.end()) {
         Vertex_handle cv = copy.tds().create_vertex();
         cvmap[v] = copy_vertex(v, cv);
@@ -1120,6 +1154,24 @@ public:
     return grad;
   }
 
+  // If the underlying number type used is not a floating point base
+  // number type (like a multiprecision), the coordinates of the points
+  // will increase a lot due to the relocation step. These functions
+  // simply turn a relocated point to a rounded to double version.
+  void relocate_on_the_double_grid(Point&, boost::true_type) const
+  {}
+  void relocate_on_the_double_grid(Point& p, boost::false_type) const
+  {
+    double x=to_double(m_traits.compute_x_2_object()(p));
+    double y=to_double(m_traits.compute_y_2_object()(p));
+    p=m_traits.construct_point_2_object()(FT(x),FT(y));
+  }
+  void relocate_on_the_double_grid(Point& p) const
+  {
+    relocate_on_the_double_grid(p,
+      typename boost::is_float<typename Traits::FT>::type());
+  }
+
   Point compute_relocation(Vertex_handle vertex) const {
     FT coef = FT(0);
     Vector rhs = m_traits.construct_vector_2_object()(FT(0), FT(0));
@@ -1142,9 +1194,11 @@ public:
     if (coef == FT(0))
       return vertex->point();
 
-    return m_traits.construct_translated_point_2_object()(
+    Point res = m_traits.construct_translated_point_2_object()(
       CGAL::ORIGIN,
       m_traits.construct_scaled_vector_2_object()(rhs, FT(1) / coef));
+    relocate_on_the_double_grid(res);
+    return res;
   }
 
   void compute_relocation_for_vertex(
@@ -1336,6 +1390,7 @@ public:
 
     std::cerr << "STATS" << std::endl;
     std::cerr << "# vertices : " << m_dt.number_of_vertices()-4 << std::endl;
+    std::cerr << "# isolated vertices : " << number_of_isolated_vertices() << std::endl;
     std::cerr << "# triangles: " << m_dt.number_of_faces() << std::endl;
     std::cerr << "# edges: " << m_dt.tds().number_of_edges() << std::endl;
     std::cerr << "# solid: " << nb_solid << std::endl;
@@ -1349,6 +1404,32 @@ public:
   std::size_t number_of_vertices() const {
     return m_dt.number_of_vertices() - 4;
 
+  }
+
+  /*!
+    Returns the number of isolated vertices present in the reconstructed triangulation.
+  */
+  int number_of_isolated_vertices () const
+  {
+    int nb_isolated = 0;
+    for (Vertex_iterator vi = m_dt.vertices_begin();
+         vi != m_dt.vertices_end(); ++vi)
+      {
+        if (!((*vi).has_sample_assigned()))
+          continue;
+
+        typename Triangulation::Edge_circulator start = m_dt.incident_edges(vi);
+        typename Triangulation::Edge_circulator cur   = start;
+
+        do {
+          if (!m_dt.is_ghost(*cur)) {
+            ++nb_isolated;
+            break;
+          }
+          ++cur;
+        } while (cur != start);
+      }
+    return nb_isolated;
   }
 
   /*!
@@ -1396,10 +1477,14 @@ public:
     Computes a shape consisting of `np` points, reconstructing the input
     points.
     \param np The number of points which will be present in the output.
+    \return `true` if the number of points `np` was reached, `false`
+    if the algorithm was prematurely ended because no more edge
+    collapse was possible.
    */
-  void run_until(std::size_t np) {
+  bool run_until(std::size_t np) {
     CGAL::Real_timer timer;
-    std::cerr << "reconstruct until " << np << " V";
+    if (m_verbose > 0)
+      std::cerr << "reconstruct until " << np << " V";
 
     timer.start();
     std::size_t N = np + 4;
@@ -1411,20 +1496,27 @@ public:
       performed++;
     }
 
-    std::cerr << " done" << " (" << performed
-        << " iters, " << m_dt.number_of_vertices() - 4 << " V "
-        << timer.time() << " s)"
-        << std::endl;
+    if (m_verbose)
+      std::cerr << " done" << " (" << performed
+                << " iters, " << m_dt.number_of_vertices() - 4 << " V "
+                << timer.time() << " s)"
+                << std::endl;
+    
+    return (m_dt.number_of_vertices() <= N);
   }
 
   /*!
     Computes a shape, reconstructing the input, by performing `steps`
     edge collapse operators on the output simplex.
     \param steps The number of edge collapse operators to be performed.
+    \return `true` if the required number of steps was performed,
+    `false` if the algorithm was prematurely ended because no more
+    edge collapse was possible.
    */
-  void run(const unsigned steps) {
+  bool run(const unsigned steps) {
     CGAL::Real_timer timer;
-    std::cerr << "reconstruct " << steps;
+    if (m_verbose > 0)
+      std::cerr << "reconstruct " << steps;
 
     timer.start();
     unsigned performed = 0;
@@ -1435,10 +1527,12 @@ public:
       performed++;
     }
 
-    std::cerr << " done" << " (" << performed << "/"
-        << steps << " iters, " << m_dt.number_of_vertices() - 4
-        << " V, " << timer.time() << " s)"
-        << std::endl;
+    if (m_verbose > 0)
+      std::cerr << " done" << " (" << performed << "/"
+                << steps << " iters, " << m_dt.number_of_vertices() - 4
+                << " V, " << timer.time() << " s)"
+                << std::endl;
+    return (performed == steps);
   }
 
 
@@ -1447,7 +1541,8 @@ public:
    */
   void relocate_all_points() {
     CGAL::Real_timer timer;
-    std::cerr << "relocate all points" << "...";
+    if (m_verbose > 0)
+      std::cerr << "relocate all points" << "...";
 
     timer.start();
     m_mindex.clear(); // pqueue must be recomputed
@@ -1483,7 +1578,8 @@ public:
       }
     }
 
-    std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
+    if (m_verbose > 0)
+      std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
   }
 
   /// @}

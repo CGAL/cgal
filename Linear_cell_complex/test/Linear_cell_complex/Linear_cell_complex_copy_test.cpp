@@ -664,6 +664,10 @@ bool testCopy()
             map5b.number_of_attributes<2>()==map5.number_of_attributes<2>() &&
             map5b.number_of_attributes<3>()==map5.number_of_attributes<3>() );
     assert( map5b.is_isomorphic_to(map5)==map5.is_isomorphic_to(map5b) );
+
+    Map9 map5c;
+    map5c=map5b; // To test operator=
+    if ( !map5c.is_isomorphic_to(map5b) ) { assert(false); return false; }
   }
 
   /*map2.display_characteristics(std::cout)<<std::endl;

@@ -40,7 +40,7 @@
 #include <CGAL/Cartesian/Iso_rectangle_2.h>
 #include <CGAL/Cartesian/Aff_transformation_2.h>
 #include <CGAL/Cartesian/Data_accessor_2.h>
-#include <CGAL/ConicCPA2.h>
+#include <CGAL/Cartesian/ConicCPA2.h>
 
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <CGAL/Cartesian/predicates_on_directions_2.h>

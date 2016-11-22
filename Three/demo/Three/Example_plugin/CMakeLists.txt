@@ -24,18 +24,25 @@ find_package(Qt5
              OPTIONAL_COMPONENTS   ScriptTools)
              
 if(Qt5_FOUND AND CGAL_FOUND)  
-  find_package(CGAL_polyhedron_demo
-  HINTS "${CGAL_DIR}" "${CGAL_DIR}/Polyhedron/demo/Polyhedron-build"
-  )
+  find_package(CGAL_polyhedron_demo)
 
 include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-
            
-  #include( ${CMAKE_CURRENT_SOURCE_DIR}/../../Polyhedron/demo/Polyhedron/polyhedron_demo_macros.cmake )
-  qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
-  qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
-  polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
-  target_link_libraries(example_plugin scene_polyhedron_item)  
+
+  polyhedron_demo_plugin(example_plugin Example_plugin)
+  
+  qt5_wrap_ui( basicUI_FILES Basic_dialog_plugin.ui  )
+  polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
+
+  qt5_wrap_ui( dockUI_FILES Basic_dock_widget.ui )
+  polyhedron_demo_plugin(dock_widget_plugin Dock_widget_plugin ${dockUI_FILES})
+
+  polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
+
+#  links the library containing the scene_plane_item with the plugin
+  target_link_libraries(basic_item_plugin Polyhedron_scene_basic_objects)
+
 endif()

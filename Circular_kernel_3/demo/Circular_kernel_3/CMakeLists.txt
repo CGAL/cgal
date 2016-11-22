@@ -1,4 +1,4 @@
-project (Circular_kernel_3)
+project (Circular_kernel_3_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
@@ -19,7 +19,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
   include_directories (${QGLVIEWER_INCLUDE_DIR})
   include_directories (BEFORE ../../include ./ )
 
-  add_executable  ( Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp )
+  add_executable (Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
   qt5_use_modules( Circular_kernel_3 Xml Script OpenGL)
 
@@ -27,7 +27,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_
 
   target_link_libraries( Circular_kernel_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
   target_link_libraries( Circular_kernel_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Circular_kernel_3 ${OPENGL_gl_LIBRARY} )
+  target_link_libraries( Circular_kernel_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
 
 else()
 

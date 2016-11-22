@@ -46,8 +46,6 @@ public:
     typedef typename Mesh_criteria::Facet_criteria Facet_criteria;
     typedef typename Mesh_criteria::Cell_criteria Cell_criteria;
 
-    CGAL_USE_TYPE(typename Mesh_domain::Surface_patch_index);
-
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
@@ -55,8 +53,8 @@ public:
     image.read("data/liver.inr.gz");
 
     std::cout << "\tSeed is\t"
-      << CGAL::default_random.get_seed() << std::endl;
-    Mesh_domain domain(image, 1e-9, &CGAL::default_random);
+      << CGAL::get_default_random().get_seed() << std::endl;
+    Mesh_domain domain(image, 1e-9, &CGAL::get_default_random());
 
     // Set mesh criteria
     Facet_criteria facet_criteria(25, 20*image.vx(), 5*image.vx());
@@ -71,6 +69,10 @@ public:
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
     this->verify(c3t3,domain,criteria, Bissection_tag());
+
+    typedef typename Mesh_domain::Surface_patch_index Patch_id;
+    CGAL_static_assertion(CGAL::Output_rep<Patch_id>::is_specialized);
+    CGAL_USE_TYPE(Patch_id);
   }
 
 };

@@ -12,13 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
-// Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>,
-//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+// Author(s) : Tali Zvi <talizvi@post.tau.ac.il>,
+//             Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ron Wein <wein@post.tau.ac.il>
+//             Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_SWEEP_LINE_SUBCURVE_H
 #define CGAL_SWEEP_LINE_SUBCURVE_H
@@ -48,34 +45,31 @@ namespace CGAL {
  * - an iterator that points to the location of the subcurve at the status line.
  * - two pointers to subcurves that are the originating subcurves in case of
  *   an overlap, otherwise thay are both NULL.
- *
  */
 template <typename Traits_>
 class Sweep_line_subcurve {
 public:
+  typedef Traits_                                   Traits_2;
+  typedef typename Traits_2::Point_2                Point_2;
+  typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
 
-  typedef Traits_                                    Traits_2;
-  typedef typename Traits_2::Point_2                 Point_2;
-  typedef typename Traits_2::X_monotone_curve_2      X_monotone_curve_2;
+  typedef Sweep_line_subcurve<Traits_2>             Self;
+  typedef Curve_comparer<Traits_2, Self>            Compare_curves;
+  typedef Multiset<Self*, Compare_curves, CGAL_ALLOCATOR(int)>
+                                                    Status_line;
+  typedef typename Status_line::iterator            Status_line_iterator;
 
-  typedef Sweep_line_subcurve<Traits_2>              Self;
-  typedef Curve_comparer<Traits_2, Self>             Compare_curves;
-  typedef Multiset<Self*,
-                   Compare_curves,
-                   CGAL_ALLOCATOR(int)>              Status_line;
-  typedef typename Status_line::iterator             Status_line_iterator;
-
-  typedef Sweep_line_event<Traits_2, Self>           Event;
+  typedef Sweep_line_event<Traits_2, Self>          Event;
 
 protected:
   // Data members:
   X_monotone_curve_2 m_lastCurve;   // The portion of the curve that lies to
-                                    // the right of the last event point 
+                                    // the right of the last event point
                                     // that occured on the curve.
 
   Event* m_left_event;              // The event associated with the left end.
   Event* m_right_event;             // The event associated with the right end
-  
+
   Status_line_iterator m_hint;      // The location of the subcurve in the
                                     // status line (the Y-structure).
 
@@ -84,13 +78,15 @@ protected:
 
 public:
 
-  /*! Default constructor. */
+  /*! Construct default.
+   */
   Sweep_line_subcurve() :
     m_orig_subcurve1(NULL),
     m_orig_subcurve2(NULL)
   {}
 
-  /*! Constructor given a curve. */
+  /*! Construct from a curve.
+   */
   Sweep_line_subcurve(const X_monotone_curve_2& curve) :
     m_lastCurve(curve),
     m_orig_subcurve1(NULL),
@@ -112,11 +108,11 @@ public:
   /*! Set the last intersecing curve so far. */
   void set_last_curve(const X_monotone_curve_2& cv) { m_lastCurve = cv; }
 
-  /*! Check if the given event is the matches the right-end event. */  
+  /*! Check if the given event is the matches the right-end event. */
   template <typename SweepEvent>
   bool is_end_point(const SweepEvent* event) const
   { return (m_right_event == (Event*)event); }
- 
+
   /*! Get the event that corresponds to the left end of the subcurve. */
   Event* left_event() const { return m_left_event; }
 
@@ -154,8 +150,7 @@ public:
   OutputIterator all_leaves(OutputIterator oi)
   {
     if (m_orig_subcurve1 == NULL) {
-      *oi = this;
-      ++oi;
+      *oi++ = this;
       return oi;
     }
 
@@ -177,20 +172,19 @@ public:
   bool is_leaf(Self* s)
   {
     if (m_orig_subcurve1 == NULL) return (this == s);
-    return (m_orig_subcurve1->is_leaf(s) ||
-            m_orig_subcurve2->is_leaf(s));
+    return (m_orig_subcurve1->is_leaf(s) || m_orig_subcurve2->is_leaf(s));
   }
 
   /*! Check if the two hierarchies contain the same leaf nodes. */
-  bool has_same_leaves(Self *s)
+  bool has_same_leaves(Self* s)
   {
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
-    
-    this->all_leaves (std::back_inserter(my_leaves));
-    s->all_leaves (std::back_inserter(other_leaves));
 
-    typename std::list<Self*>::iterator  iter;
+    this->all_leaves(std::back_inserter(my_leaves));
+    s->all_leaves(std::back_inserter(other_leaves));
+
+    typename std::list<Self*>::iterator iter;
     for (iter = my_leaves.begin(); iter != my_leaves.end(); ++iter) {
       if (std::find(other_leaves.begin(), other_leaves.end(), *iter) ==
           other_leaves.end())
@@ -211,7 +205,7 @@ public:
   {
     std::list<Self*> my_leaves;
     std::list<Self*> other_leaves;
-    
+
     this->all_leaves(std::back_inserter(my_leaves));
     s->all_leaves(std::back_inserter(other_leaves));
 
@@ -225,32 +219,19 @@ public:
   }
 
   /*! Get all distinct nodes from the two hierarchies. */
-  template <class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator distinct_nodes(Self* s, OutputIterator oi)
   {
     if (m_orig_subcurve1 == NULL) {
-      if (s->is_leaf(this)) {
-        *oi = this;
-        ++oi;
-      }
+      if (s->is_leaf(this)) *oi++ = this;
       return oi;
     }
 
-    if (! s->is_inner_node (m_orig_subcurve1)) {
-      *oi = m_orig_subcurve1;
-      ++oi;
-    }
-    else {
-      oi = m_orig_subcurve1->distinct_nodes(s, oi);
-    }
+    if (! s->is_inner_node (m_orig_subcurve1)) *oi++ = m_orig_subcurve1;
+    else oi++ = m_orig_subcurve1->distinct_nodes(s, oi);
 
-    if (! s->is_inner_node (m_orig_subcurve2)) {
-      *oi = m_orig_subcurve2;
-      ++oi;
-    }
-    else {
-      oi = m_orig_subcurve2->distinct_nodes(s, oi);
-    }
+    if (! s->is_inner_node (m_orig_subcurve2)) *oi++ = m_orig_subcurve2;
+    else oi++ = m_orig_subcurve2->distinct_nodes(s, oi);
 
     return oi;
   }
@@ -265,7 +246,7 @@ public:
     if (depth1 > depth2) return (depth1 + 1);
     else return (depth2 + 1);
   }
- 
+
 #ifdef CGAL_SL_VERBOSE
   void Print() const;
 #endif
@@ -275,11 +256,10 @@ public:
   template<class Traits>
   void Sweep_line_subcurve<Traits>::Print() const
   {
-    std::cout << "Curve " << this 
-              << "  (" << m_lastCurve << ") " 
+    std::cout << "Curve " << this
+              << "  (" << m_lastCurve << ") "
               << " [sc1: " << m_orig_subcurve1
-              << ", sc2: " << m_orig_subcurve2 << "]"
-              << std::endl;
+              << ", sc2: " << m_orig_subcurve2 << "]";
   }
 #endif
 

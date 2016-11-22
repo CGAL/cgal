@@ -27,6 +27,7 @@
 #include <CGAL/wmult.h>
 #include <boost/next_prior.hpp>
 #include <CGAL/Intersection_traits_3.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 
@@ -1072,18 +1073,22 @@ intersection(const typename K::Plane_3 &plane,
             return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(target);
         case ON_POSITIVE_SIDE:
             return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>();
-        case ON_NEGATIVE_SIDE:
+        default: // ON_NEGATIVE_SIDE:
           { 
             // intersection object should be a point, but rounding errors 
-            // could lead to a line. In such case, return seg.
+            // could lead to:
+            // - a line: in such case, return seg,
+            // - the empty set: return the empty set.
             typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
               v = internal::intersection(plane, seg.supporting_line(), k);
             if(v) {
               if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
                 return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(*p);
-            else
+              else
                 return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(seg);
             }
+            else
+              return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>();
           }
         }
     case ON_NEGATIVE_SIDE:
@@ -1093,15 +1098,19 @@ intersection(const typename K::Plane_3 &plane,
         case ON_POSITIVE_SIDE:
           { 
             // intersection object should be a point, but rounding errors 
-            // could lead to a line. In such case, return seg.
+            // could lead to:
+            // - a line: in such case, return seg,
+            // - the empty set: return the empty set.
             typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
               v = internal::intersection(plane, seg.supporting_line(), k);
             if(v) {
               if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
                 return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(*p);
-            else 
+              else
                 return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(seg);
             }
+            else
+              return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>();
           }
         case ON_NEGATIVE_SIDE:
             return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>();

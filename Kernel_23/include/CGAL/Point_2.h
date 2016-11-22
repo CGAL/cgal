@@ -32,6 +32,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/result_of.h>
 
 namespace CGAL {
 
@@ -162,6 +163,21 @@ public:
     return t.transform(*this);
   }
 
+  Point_2<R_>&
+  operator+=(const typename R::Vector_2 &v)
+  {
+    *this = R().construct_translated_point_2_object()(*this, v);
+    return *this;
+  }
+
+  Point_2<R_>&
+  operator-=(const typename R::Vector_2 &v)
+  {
+    *this = R().construct_translated_point_2_object()(*this,
+                  R().construct_opposite_vector_2_object()(v));
+    return *this;
+  }
+
 };
 
 
@@ -213,7 +229,7 @@ template <class R >
 std::istream&
 extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
 {
-    typename R::FT x, y;
+  typename R::FT x(0), y(0);
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(x) >> iformat(y);
@@ -223,6 +239,7 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
         read(is, y);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
@@ -249,6 +266,7 @@ extract(std::istream& is, Point_2<R>& p, const Homogeneous_tag&)
         read(is, hw);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;

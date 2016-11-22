@@ -80,7 +80,15 @@ namespace CGAL{
             ijk[j] = iti->second;
           }
         }
-        facets.push_back(ijk);
+        if((ijk[0] != ijk[1]) && 
+           (ijk[0] != ijk[2]) &&
+           (ijk[1] != ijk[2])){
+          facets.push_back(ijk);
+        }else{
+          if(verbose){
+            std::cerr << "ignore degenerate face" << std::endl;
+          }
+        }
         char c;
         input.read(reinterpret_cast<char*>(&c), sizeof(c));
         input.read(reinterpret_cast<char*>(&c), sizeof(c));

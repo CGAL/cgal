@@ -27,6 +27,11 @@ target_link_libraries(selection_io_plugin scene_polyhedron_selection_item)
 polyhedron_demo_plugin(stl_plugin STL_io_plugin)
 target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
 
+polyhedron_demo_plugin(surface_mesh_io_plugin Surface_mesh_io_plugin)
+target_link_libraries(surface_mesh_io_plugin scene_surface_mesh_item scene_polygon_soup_item)
+
+
+
 find_package(VTK QUIET COMPONENTS
   vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if (VTK_FOUND)
@@ -34,9 +39,9 @@ if (VTK_FOUND)
   if ("${VTK_VERSION_MAJOR}" GREATER "5")
     if(VTK_LIBRARIES)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin)
-      target_link_libraries(vtk_plugin scene_polyhedron_item scene_polylines_item
-                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
-                                        vtkFiltersCore vtkFiltersSources)
+      target_link_libraries(vtk_plugin scene_polyhedron_item scene_polylines_item scene_c3t3_item
+                                       vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
+                                       vtkFiltersCore vtkFiltersSources)
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()

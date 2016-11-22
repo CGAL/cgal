@@ -82,6 +82,38 @@ else
     echo 'No new files.'
 fi
 
+#check cmake scripts of tests, examples are present
+for i in `ls -d ^build*/examples/*/ ^build*/test/*/`; do
+  if ! [ -f $i/CMakeLists.txt ]; then
+    echo "Error: $i/CMakeLists.txt does not exist!"
+    exit 1
+  fi
+done
+
+
+# check project in cmake scripts is correct
+project_name_tests=$(for i in ^build*test/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Tests\s*\)" -L $i;  done)
+project_name_examples=$(for i in ^build*examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Examples\s*\)" -L $i;  done)
+project_name_demo=$(for i in ^build*demo/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Demo\s*\)" -L $i;  done)
+
+if [ -n "${project_name_tests}" ]; then
+  echo "CMakeLists with incorrect project name"
+  echo ${project_name_tests}
+  exit 1
+fi
+
+if [ -n "${project_name_examples}" ]; then
+  echo "CMakeLists with incorrect project name"
+  echo ${project_name_examples}
+  exit 1
+fi
+
+if [ -n "${project_name_demo}" ]; then
+  echo "CMakeLists with incorrect project name"
+  echo ${project_name_demo}
+  exit 1
+fi
+
 current_rev=$(${git} rev-parse HEAD)
 trap 'echo "(aborting the merge now)" && ${git} reset --quiet --hard ${current_rev}' EXIT
 

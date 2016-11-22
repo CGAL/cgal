@@ -314,7 +314,7 @@ public:
   {
     Point new_closest_point = m_traits.closest_point_object()
       (query, primitive, m_closest_point);
-    if(new_closest_point != m_closest_point)
+    if( !m_traits.equal_3_object()(new_closest_point, m_closest_point) )
     {
       m_closest_primitive = primitive.id();
       m_closest_point = new_closest_point; // this effectively shrinks the sphere 

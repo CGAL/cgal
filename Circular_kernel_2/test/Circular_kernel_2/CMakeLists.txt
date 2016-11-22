@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Circular_kernel_2_test )
+project( Circular_kernel_2_Tests )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 

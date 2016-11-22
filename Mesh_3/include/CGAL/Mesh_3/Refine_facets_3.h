@@ -567,7 +567,7 @@ protected:
 
   /// Removes facet from refinement queue
   // Sequential
-  void remove_bad_facet(Facet& facet, Sequential_tag)
+  void remove_bad_facet(const Facet& facet, Sequential_tag)
   {
     // If sequential AND NOT lazy, remove cell from refinement queue
 #if !defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -580,7 +580,7 @@ protected:
 #ifdef CGAL_LINKED_WITH_TBB
   /// Removes facet from refinement queue
   // Parallel: it's always lazy, so do nothing
-  void remove_bad_facet(Facet&, Parallel_tag) {}
+  void remove_bad_facet(const Facet&, Parallel_tag) {}
 #endif // CGAL_LINKED_WITH_TBB
 
   /// Sets facet f to not visited
@@ -1310,6 +1310,7 @@ conflicts_zone_impl(const Point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
+	this->remove_bad_facet(facet, Ct());
       }
     }
   }
@@ -1371,6 +1372,7 @@ conflicts_zone_impl(const Point& point
       {
         // Facet is not on surface
         this->remove_facet_from_surface(facet);
+	this->remove_bad_facet(facet, Ct());
       }
     }
   }

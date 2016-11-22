@@ -92,27 +92,29 @@ public:
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
     using Base_traits::Construct_cartesian_const_iterator_d::operator();
+    typedef typename Base_traits::Construct_cartesian_const_iterator_d Base;
     
     Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
       :Base_traits::Construct_cartesian_const_iterator_d(base), ppmap(ppmap_){}
     
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p) const
-    { return this->operator() (get(ppmap,p)); }
+    { return Base::operator() (get(ppmap,p)); }
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
-    { return this->operator() (get(ppmap,p),0); }
+    { return Base::operator() (get(ppmap,p),0); }
   };
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
     PointPropertyMap ppmap;
     typedef typename Base_traits::FT  FT; // needed for VC++, because otherwise it is taken from the private typedef of the base class
+    typedef typename Base::Construct_iso_box_d Base_functor;
 
     Iso_box_d operator() () const {
-      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() ();
+      return Base_functor::operator() ();
     }
     Iso_box_d operator() (const Point_with_info& p, const Point_with_info& q) const
     {
-      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (get(ppmap,p),get(ppmap,q));
+      return Base_functor::operator() (get(ppmap,p),get(ppmap,q));
     }
   };
   
@@ -120,7 +122,7 @@ public:
   
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
     return Construct_cartesian_const_iterator_d(
-      static_cast<const Base*>(this)->construct_cartesian_const_iterator_d_object(),
+      Base::construct_cartesian_const_iterator_d_object(),
       ppmap);
   }
 };
@@ -148,30 +150,30 @@ public:
 
   FT transformed_distance(const Query_item& p1, const Point_with_info& p2) const
   {
-    return this->transformed_distance(p1,get(ppmap,p2));
+    return Base_distance::transformed_distance(p1,get(ppmap,p2));
   }
 
   template <class FT,class Dimension>
   FT min_distance_to_rectangle(const Query_item& p, const CGAL::Kd_tree_rectangle<FT,Dimension>& b) const
   {
-    return static_cast<const Base_distance*>(this)->min_distance_to_rectangle(p,b);
+    return Base_distance::min_distance_to_rectangle(p,b);
   }
 
   template <class FT,class Dimension>
-  FT min_distance_to_rectangle(const Query_item& p, const CGAL::Kd_tree_rectangle<FT,Dimension>& b,std::vector<FT>& dists) 
+  FT min_distance_to_rectangle(const Query_item& p, const CGAL::Kd_tree_rectangle<FT,Dimension>& b,std::vector<FT>& dists) const
   {
-    return static_cast<Base_distance*>(this)->min_distance_to_rectangle(p,b,dists);
+    return Base_distance::min_distance_to_rectangle(p,b,dists);
   }
 
   template <class FT,class Dimension>
   FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT,Dimension>& b) const
   {
-    return static_cast<const Base_distance*>(this)->max_distance_to_rectangle(p,b);
+    return Base_distance::max_distance_to_rectangle(p,b);
   }  
   template <class FT,class Dimension>
-  FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT,Dimension>& b,std::vector<FT>& dists)
+  FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT,Dimension>& b,std::vector<FT>& dists) const
   {
-    return static_cast<Base_distance*>(this)->max_distance_to_rectangle(p,b,dists);
+    return Base_distance::max_distance_to_rectangle(p,b,dists);
   }  
 };
 

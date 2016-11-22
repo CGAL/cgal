@@ -30,8 +30,7 @@ or `CGAL::Dynamic_dimension_tag`.
 typedef unspecified_type Dimension;
 
 /*!
-Point type. `CGAL::Kernel_traits` has to be 
-specialized for this type. 
+Point type.
 */ 
 typedef unspecified_type Point_d; 
 

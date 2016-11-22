@@ -21,7 +21,7 @@
 
 #include <cstdlib>
 #include <CGAL/auto_link/LAPACK.h>
-
+#include <CGAL/assertions.h>
 extern "C" {
   // taken from acml.h
 void dgelss(int m, int n, int nrhs, 

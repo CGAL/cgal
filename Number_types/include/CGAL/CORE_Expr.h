@@ -196,6 +196,7 @@ namespace Eigen {
     typedef CORE::Expr Real;
     typedef CORE::Expr NonInteger;
     typedef CORE::Expr Nested;
+    typedef CORE::Expr Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

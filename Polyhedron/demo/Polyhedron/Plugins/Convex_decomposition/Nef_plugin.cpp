@@ -2,7 +2,6 @@
 #include "Scene_nef_polyhedron_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <QString>
 #include <QAction>
@@ -14,41 +13,52 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_nef_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+    public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  QStringList actionsNames() const {
-    return QStringList() << "actionToNef" 
-                         << "actionToPoly"
-                         << "actionUnion"
-                         << "actionIntersection"
-                         << "actionDifference"
-                         << "actionConvexDecomposition"
-                         << "actionMinkowskiSum";
-  }
 
-  void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
-  {
-      mw = mainWindow;
-      scene = scene_interface;
-      actions_map["actionConvexDecomposition"] = getActionFromMainWindow(mw, "actionConvexDecomposition");
-      actions_map["actionConvexDecomposition"]->setProperty("subMenuName",
-                                                            "Convex Decomposition");
+void init(QMainWindow* mw,
+          Scene_interface* scene_interface,
+          Messages_interface* )
+{
+    scene = scene_interface;
+    this->mw = mw;
+    QAction *actionConvexDecomposition = new QAction("Convex Decomposition", mw);
+    actionConvexDecomposition->setProperty("subMenuName",
+                                           "Convex Decomposition");
 
-      actions_map["actionToNef"] = getActionFromMainWindow(mw, "actionToNef");
-      actions_map["actionToPoly"] = getActionFromMainWindow(mw, "actionToPoly");
-      actions_map["actionUnion"] = getActionFromMainWindow(mw, "actionUnion");
-      actions_map["actionIntersection"] = getActionFromMainWindow(mw, "actionIntersection");
-      actions_map["actionDifference"] = getActionFromMainWindow(mw, "actionDifference");
-      actions_map["actionMinkowskiSum"] = getActionFromMainWindow(mw, "actionMinkowskiSum");
-      autoConnectActions();
+    QAction *actionToNef = new QAction("Convert to Nef Polyhedron", mw);
+    QAction *actionToPoly = new QAction("Convert to Normal Polyhedron", mw);
+    QAction *actionUnion = new QAction("Union (A/B)", mw);
+    QAction *actionIntersection = new QAction("Intersection (A/B)", mw);
+    QAction *actionDifference = new QAction("&Difference (A/B)", mw);
+    QAction *actionMinkowskiSum = new QAction("&Minkowski Sum (A/B)", mw);
 
-  }
+    connect(actionToNef       , SIGNAL(triggered()), this, SLOT(on_actionToNef_triggered()));
+    connect(actionToPoly      , SIGNAL(triggered()), this, SLOT(on_actionToPoly_triggered()));
+    connect(actionUnion       , SIGNAL(triggered()), this, SLOT(on_actionUnion_triggered()));
+    connect(actionIntersection, SIGNAL(triggered()), this, SLOT(on_actionIntersection_triggered()));
+    connect(actionDifference  , SIGNAL(triggered()), this, SLOT(on_actionDifference_triggered()));
+    connect(actionMinkowskiSum, SIGNAL(triggered()), this, SLOT(on_actionMinkowskiSum_triggered()));
+
+
+    _actions<< actionToNef
+            << actionToPoly
+            << actionUnion
+            << actionIntersection
+            << actionDifference
+            << actionMinkowskiSum;
+    Q_FOREACH(QAction * action, _actions)
+      action->setProperty("subMenuName",
+                          "Boolean Operations");
+    _actions<< actionConvexDecomposition;
+    connect(actionConvexDecomposition, SIGNAL(triggered()), this, SLOT(on_actionConvexDecomposition_triggered()));
+
+}
 
   bool applicable(QAction*) const {
     const int indexA = scene->selectionAindex();
@@ -63,21 +73,15 @@ public:
       ;
   }
 
-//   QList<QAction*> actions() const {
-//     QMenu* menu = new QMenu(tr("Boolean Operations"), mw);
-//     QAction* action_to_nef = new QAction(tr("Convert to Nef Polyhedron"), mw);
-//     connect(action_to_nef, SIGNAL(triggered()),
-//             this, SLOT(convert_to_nef_polyhedron()));
-//     QAction* action_to_poly = new QAction(tr("Convert Nef Polyhedron to Polyhedron"), mw);
-//     connect(action_to_poly, SIGNAL(triggered()),
-//             this, SLOT(convert_to_polyhedron()));
-//     menu->addAction(action_to_nef);
-//     menu->addAction(action_to_poly);
-
-//     return QList<QAction*>() << menu->menuAction();
-//   }
+  QList<QAction*> actions() const {
+    return _actions;
+  }
 
 private:
+  Scene_interface* scene;
+  QList<QAction*> _actions;
+  QMainWindow* mw;
+
   enum  Boolean_operation { BOOLEAN_UNION,
                             BOOLEAN_INTERSECTION,
                             BOOLEAN_DIFFERENCE,
@@ -99,8 +103,8 @@ void
 Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* item = 
+
+  Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
   if(item)
@@ -110,7 +114,7 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
     time.start();
     std::cerr << "Convert polyhedron to nef polyhedron...";
 
-    Scene_nef_polyhedron_item* new_nef_item = 
+    Scene_nef_polyhedron_item* new_nef_item =
       Scene_nef_polyhedron_item::from_polyhedron(item);
 
     new_nef_item->setName(tr("%1 (to nef)").arg(item->name()));
@@ -128,15 +132,16 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
 void
 Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polyhedron_item* pitem = 
+
+  Scene_polyhedron_item* pitem =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  Scene_nef_polyhedron_item* item =   
+  Scene_nef_polyhedron_item* item =
     (pitem)? Scene_nef_polyhedron_item::from_polyhedron(pitem)
            : qobject_cast<Scene_nef_polyhedron_item*>(scene->item(index));
-  
+  QApplication::restoreOverrideCursor();
   if(item) {
     QTime time;
     time.start();
@@ -179,6 +184,7 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
 
   if(item)
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
     std::cerr << "Convert nef polyhedron to polyhedron...";
@@ -208,23 +214,31 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
 
 void Polyhedron_demo_nef_plugin::on_actionUnion_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(BOOLEAN_UNION);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_nef_plugin::on_actionIntersection_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(BOOLEAN_INTERSECTION);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_nef_plugin::on_actionDifference_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(BOOLEAN_DIFFERENCE);
+  QApplication::restoreOverrideCursor();
 }
 
 void
 Polyhedron_demo_nef_plugin::on_actionMinkowskiSum_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   boolean_operation(MINKOWSKI_SUM);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation operation)
@@ -242,7 +256,7 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
     QMessageBox::warning(mw,
                          tr("Boolean operation cannot be applied on normal polyhedron"),
                          tr("You need to call the operation \"%1\" in the menu \"%2\".")
-                         .arg(actions_map["actionToNef"]->text())
+                         .arg(QString("Convert to Nef Polyhedron"))
                          .arg(menu ? menu->title() : "Boolean Operations"));
   }
   Scene_nef_polyhedron_item* itemA = 

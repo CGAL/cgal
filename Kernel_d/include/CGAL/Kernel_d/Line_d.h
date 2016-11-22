@@ -26,8 +26,11 @@
 #define CGAL_LINE_D_H
 
 #include <CGAL/Kernel_d/Pair_d.h> 
+#include <CGAL/Kernel_d/Point_d.h> 
+#include <CGAL/Kernel_d/Direction_d.h> 
 #include <CGAL/Kernel_d/Segment_d.h> 
 #include <CGAL/Kernel_d/Ray_d.h>
+#include <CGAL/Kernel_d/Aff_transformation_d.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

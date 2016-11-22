@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Kernel_23_ )
+project( Kernel_23_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

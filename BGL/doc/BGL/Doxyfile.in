@@ -8,8 +8,12 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/selection.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/split_graph_into_polylines.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/copy_face_graph.h \
-         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Dual.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Dual.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/convert_nef_polyhedron_to_polygon_mesh.h
 EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
                               ${CGAL_BGL_EXAMPLE_DIR}
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"
+EXTRACT_ALL=NO
+HIDE_UNDOC_MEMBERS         =  YES
+HIDE_UNDOC_CLASSES         =  YES

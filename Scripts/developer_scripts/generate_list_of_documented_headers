@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Used to regenerate `Installation/list_of_documented_headers.cmake`
+#
+# Run it in the `Installation` directory of a Git layout, with
+#  `../build-doc/doc_output/` containing the build of the Doxygen
+#  documentation.
+
+file=cmake/modules/list_of_documented_headers.cmake
+
+printf "# Generated using $0\n" > "$file"
+
+exec >> "$file"
+
+printf 'set(list_of_documented_headers_txt [=[\n'
+ack --no-heading --no-filename --output='$2' --cpp --html '# *include *(&lt;|[<"])(CGAL/[^>&]*)([>"]|&gt;)' ../build-doc/doc_output ../*/examples/*/*.cpp | sort | uniq
+printf ']=])\n'
+printf 'separate_arguments(list_of_documented_headers UNIX_COMMAND ${list_of_documented_headers_txt})\n'

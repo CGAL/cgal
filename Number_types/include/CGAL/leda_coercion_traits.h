@@ -31,17 +31,10 @@
 #ifdef CGAL_USE_LEDA
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/integer.h>
-#include <LEDA/bigfloat.h>
-#include <LEDA/rational.h>
-#include <LEDA/real.h>
-#else
 #include <LEDA/numbers/integer.h>
 #include <LEDA/numbers/bigfloat.h>
 #include <LEDA/numbers/rational.h>
 #include <LEDA/numbers/real.h>
-#endif
 
 namespace CGAL {
 
@@ -107,21 +100,7 @@ struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{
         typedef Type result_type;
         Type operator()(const ::leda::rational& x)  const { return x;}
         Type operator()(const ::leda::bigfloat& x) const {
-#if CGAL_LEDA_VERSION < 500
-            ::leda::integer e = x.get_exponent();
-            ::leda::integer s = x.get_significant();
-            if(e<0) {
-                ::leda::bigfloat b_two_to_e = ::leda::ipow2(-e);
-                ::leda::integer two_to_e = ::leda::floor(b_two_to_e);
-                return ::leda::rational(s,two_to_e);
-            }
-            // e >= 0
-            ::leda::bigfloat b_two_to_e = ::leda::ipow2(e);
-            ::leda::integer two_to_e = ::leda::floor(b_two_to_e);
-            return ::leda::rational(s * two_to_e);
-#else
             return x.to_rational();
-#endif
         }
     };
 };

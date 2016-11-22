@@ -74,7 +74,7 @@ private:
     // in a small inline function, optimizers might like that
     // better than a static function.
     const I& null_iterator() const {
-        static I it = I(); // zero-initialized and a default constructor
+        static const I it = I(); // zero-initialized and a default constructor
         return it;
     }
 public:

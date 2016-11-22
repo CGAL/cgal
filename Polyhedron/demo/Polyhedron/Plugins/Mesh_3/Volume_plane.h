@@ -58,6 +58,30 @@ template<typename Tag>
 class Volume_plane : public Volume_plane_interface, public Tag {
 public:
  Volume_plane();
+
+ void compute_bbox()const
+ {
+   compute_bbox(*this);
+ }
+
+ void compute_bbox(x_tag)const
+ {
+   _bbox = Bbox(0,0,0,
+               0, (adim_ - 1) * yscale_, (bdim_ - 1) * zscale_);
+ }
+
+ void compute_bbox(y_tag)const
+ {
+   _bbox = Bbox(0,0,0,
+               (adim_ - 1) * xscale_, 0, (bdim_ - 1) * zscale_);
+ }
+
+ void compute_bbox(z_tag)const
+ {
+   _bbox = Bbox(0,0,0,
+               (adim_ - 1) * xscale_, (bdim_ - 1) * yscale_, 0);
+ }
+
  void setData(unsigned int adim, unsigned int bdim, unsigned int cdim,
                  float xscale, float yscale, float zscale, std::vector<float>& colors);
 
@@ -231,7 +255,7 @@ const char* Volume_plane<T>::vertexShader_bordures_source =
       "uniform highp vec4 color; \n"
       "uniform highp mat4 mvp_matrix; \n"
       "uniform highp mat4 f_matrix; \n"
-      "varying vec4 fullColor; \n"
+      "varying highp vec4 fullColor; \n"
       "void main() \n"
       "{ gl_Position = mvp_matrix * f_matrix * vertex; \n"
       " fullColor = color; } \n";
@@ -307,11 +331,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   rectBuffer.allocate(v_rec.data(), static_cast<int>(v_rec.size()*sizeof(float)));
   program_bordures.setAttributeBuffer("vertex",GL_FLOAT,0,3);
   program_bordures.enableAttributeArray("vertex");
-  float current_color[4];
-  glGetFloatv(GL_CURRENT_COLOR, current_color);
-  QColor color;
-  color.setRgbF(current_color[0], current_color[1], current_color[2]);
-  program_bordures.setUniformValue("color",color);
+  program_bordures.setUniformValue("color",this->color());
   glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(v_rec.size()/3));
   rectBuffer.release();
   program_bordures.release();

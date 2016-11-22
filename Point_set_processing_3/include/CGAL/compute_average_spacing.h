@@ -177,14 +177,7 @@ compute_average_spacing(
   // Note: We have to convert each input iterator to Point_3.
   std::vector<Point> kd_tree_points; 
   for(InputIterator it = first; it != beyond; it++)
-  {
-  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-  #else
-      Point point = get(point_pmap, *it);
-  #endif
-      kd_tree_points.push_back(point);
-  }
+    kd_tree_points.push_back(get(point_pmap, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
   // iterate over input points, compute and output normal
@@ -210,11 +203,7 @@ compute_average_spacing(
        for(InputIterator it = first; it != beyond; it++)
 	 {
 	   sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-									  get(point_pmap,it),
-#else
 									  get(point_pmap,*it),
-#endif
 									  tree,k);
 	 }
      }
@@ -257,12 +246,8 @@ compute_average_spacing(
 {
   return compute_average_spacing<Concurrency_tag>(
     first,beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(first),
-#else
     make_identity_property_map(
     typename std::iterator_traits<InputIterator>::value_type()),
-#endif
     k);
 }
 /// @endcond
@@ -271,4 +256,3 @@ compute_average_spacing(
 } //namespace CGAL
 
 #endif // CGAL_AVERAGE_SPACING_3_H
-

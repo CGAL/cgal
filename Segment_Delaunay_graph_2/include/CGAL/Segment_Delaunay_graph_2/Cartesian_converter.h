@@ -45,12 +45,6 @@ private:
 
   typedef typename K1::Intersections_tag  Intersections_tag;
 
-private:
-  static const Intersections_tag&  intersections_tag()
-  {
-    static Intersections_tag itag;
-    return itag;
-  }
 
 private:
   // with intersections
@@ -116,7 +110,7 @@ public:
   K2_Site_2
   operator()(const K1_Site_2& t) const
   {
-    return convert_site(t, intersections_tag());
+    return convert_site(t, Intersections_tag());
   }
 
 #if defined(_MSC_VER)

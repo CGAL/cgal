@@ -5,6 +5,7 @@
 #include "config.h"
 #include "Scene.h"
 #include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_print_interface_item.h>
 
 #include <QObject>
 #include <QMetaObject>
@@ -39,7 +40,8 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-
+    connect(this, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+            this, SLOT(s_itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
@@ -50,10 +52,6 @@ Scene::Scene(QObject* parent)
 Scene::Item_id
 Scene::addItem(CGAL::Three::Scene_item* item)
 {
-    CGAL::Three::Scene_group_item* group =
-            qobject_cast<CGAL::Three::Scene_group_item*>(item);
-    if(group)
-        m_group_entries.prepend(group);
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
@@ -80,21 +78,10 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     Q_EMIT updated();
     Item_id id = m_entries.size() - 1;
     Q_EMIT newItem(id);
-    //if group selected, add item to it
-    if(mainSelectionIndex() >=0)
-    {
-        //if new item is a group, don't do that, to avoid any ambiguity
-        if(!group)
-        {
-            CGAL::Three::Scene_group_item* selected_group =
-                    qobject_cast<CGAL::Three::Scene_group_item*>(m_entries.at(mainSelectionIndex()));
-            if(selected_group)
-            {
-                selected_group->addChild(item);
-                group_added();
-            }
-        }
-    }
+    CGAL::Three::Scene_group_item* group =
+            qobject_cast<CGAL::Three::Scene_group_item*>(item);
+    if(group)
+        addGroup(group);
     return id;
 }
 
@@ -110,6 +97,18 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    CGAL::Three::Scene_group_item* group =
+            qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
+    if(group)
+    {
+      QList<int> children;
+      Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+      {
+        group->unlockChild(child);
+        children << item_id(child);
+      }
+      erase(children);
+    }
     std::swap(m_entries[index], item);
     if ( item->isFinite() && !item->isEmpty() &&
          m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
@@ -118,36 +117,40 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     Q_EMIT updated_bbox();
     }
   Q_EMIT updated();
+    group =
+            qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
+    if(group)
+    {
+        addGroup(group);
+    }
     itemChanged(index);
     Q_EMIT restoreCollapsedState();
-    group_added();
+    redraw_model();
+    Q_EMIT selectionChanged(index);
     return item;
 }
 
 Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
+  CGAL::Three::Scene_item* item = m_entries[index];
+  if(item->parentGroup()
+     && item->parentGroup()->isChildLocked(item))
+    return -1;
+  //clears the Scene_view
     clear();
     index_map.clear();
     if(index < 0 || index >= m_entries.size())
         return -1;
+  if(item->parentGroup())
+    item->parentGroup()->removeChild(item);
 
-    CGAL::Three::Scene_item* item = m_entries[index];
-    CGAL::Three::Scene_group_item* group =
-            qobject_cast<CGAL::Three::Scene_group_item*>(item);
-  if(group)
-  {
-      m_group_entries.removeAll(group);
-  }
-    Q_FOREACH(CGAL::Three::Scene_group_item* group, m_group_entries)
-    {
-        if(group->getChildren().contains(item))
-            group->removeChild(item);
-    }
+  //removes the item from all groups that contain it
   Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
     m_entries.removeAll(item);
     selected_item = -1;
+    //re-creates the Scene_view
     Q_FOREACH(Scene_item* item, m_entries)
     {
         organize_items(item, invisibleRootItem(), 0);
@@ -167,6 +170,8 @@ Scene::erase(Scene::Item_id index)
 int
 Scene::erase(QList<int> indices)
 {
+  if(indices.empty())
+    return -1;
   QList<CGAL::Three::Scene_item*> to_be_removed;
   int max_index = -1;
   Q_FOREACH(int index, indices) {
@@ -175,20 +180,17 @@ Scene::erase(QList<int> indices)
 
     max_index = (std::max)(max_index, index);
     CGAL::Three::Scene_item* item = m_entries[index];
+    if(item->parentGroup()
+       && item->parentGroup()->isChildLocked(item))
+      if(!indices.contains(item_id(item->parentGroup())))
+        continue;
     if(!to_be_removed.contains(item))
       to_be_removed.push_back(item);
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
-    CGAL::Three::Scene_group_item* group =
-        qobject_cast<CGAL::Three::Scene_group_item*>(item);
-    if(group)
-    {
-      m_group_entries.removeAll(group);
-    }
-    Q_FOREACH(CGAL::Three::Scene_group_item* group_item, m_group_entries)
-      if(group_item->getChildren().contains(item))
-        group_item->removeChild(item);
+      if(item->parentGroup())
+        item->parentGroup()->removeChild(item);
     Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
     m_entries.removeAll(item);
@@ -219,19 +221,17 @@ Scene::erase(QList<int> indices)
 
 void Scene::remove_item_from_groups(Scene_item* item)
 {
-    Q_FOREACH(CGAL::Three::Scene_group_item* group, m_group_entries)
+    CGAL::Three::Scene_group_item* group = item->parentGroup();
+    if(group)
     {
-        if(group->getChildren().contains(item))
-        {
-            group->removeChild(item);
-        }
+        group->removeChild(item);
     }
 }
 Scene::~Scene()
 {
     Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
     {
-        delete item_ptr;
+         item_ptr->deleteLater();
     }
     m_entries.clear();
 
@@ -299,6 +299,14 @@ void Scene::initializeGL()
     gl_init = true;
 }
 
+void Scene::s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *rmv_itm)
+{
+ Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+ {
+   if(item == rmv_itm)
+     item->itemAboutToBeDestroyed(item);
+ }
+}
 bool
 Scene::keyPressEvent(QKeyEvent* e){
     bool res=false;
@@ -337,6 +345,8 @@ void
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     QMap<float, int> picked_item_IDs;
+    if(with_names)
+      glEnable(GL_DEPTH_TEST);
     if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
     if(!gl_init)
@@ -345,6 +355,15 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(index == selected_item || selected_items_list.contains(index))
+        {
+            item.selection_changed(true);
+        }
+        else
+
+        {
+            item.selection_changed(false);
+        }
         if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
@@ -355,19 +374,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 }
                 viewer->glEnable(GL_LIGHTING);
-                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item || selected_items_list.contains(index))
-                {
-                    item.selection_changed(true);
-                }
-                else
-
-                {
-                    item.selection_changed(false);
-                }
-
                 if(item.renderingMode() == Gouraud)
                     viewer->glShadeModel(GL_SMOOTH);
                 else
@@ -396,6 +404,15 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(index == selected_item || selected_items_list.contains(index))
+        {
+            item.selection_changed(true);
+        }
+        else
+        {
+            item.selection_changed(false);
+        }
+
         if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
@@ -409,29 +426,17 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     || item.renderingMode() == Wireframe)
             {
                 viewer->glDisable(GL_LIGHTING);
-                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item || selected_items_list.contains(index))
-                {
-                    item.selection_changed(true);
-                }
-                else
-                {
-                    item.selection_changed(false);
-                }
-
-
 
                 if(viewer)
-                    item.draw_edges(viewer);
+                    item.drawEdges(viewer);
                 else
-                    item.draw_edges();
+                    item.drawEdges();
             }
             else{
                 if( item.renderingMode() == PointsPlusNormals ){
                     viewer->glDisable(GL_LIGHTING);
-                    viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                     viewer->glPointSize(2.f);
                     viewer->glLineWidth(1.0f);
                     if(index == selected_item || selected_items_list.contains(index))
@@ -445,9 +450,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                         item.selection_changed(false);
                     }
                     if(viewer)
-                        item.draw_edges(viewer);
+                        item.drawEdges(viewer);
                     else
-                        item.draw_edges();
+                        item.drawEdges();
                 }
             }
             if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
@@ -477,17 +482,17 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             }
             if(item.renderingMode() == Points  ||
-                    (!with_names && item.renderingMode() == PointsPlusNormals))
+                    (!with_names && item.renderingMode() == PointsPlusNormals)  ||
+                 (!with_names && item.renderingMode() == ShadedPoints))
             {
                 viewer->glDisable(GL_LIGHTING);
-                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
                 viewer->glPointSize(2.0f);
                 viewer->glLineWidth(1.0f);
 
                 if(viewer)
-                    item.draw_points(viewer);
+                    item.drawPoints(viewer);
                 else
-                    item.draw_points();
+                    item.drawPoints();
             }
             if(item.renderingMode() == Points && with_names) {
                 //    read depth buffer at pick location;
@@ -499,48 +504,50 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     picked_item_IDs[depth] = index;
                 }
             }
-        }
-    }
-    if(!with_names)
-    {
-        glDepthFunc(GL_LESS);
-        // Splatting
-        if(!with_names && ms_splatting->isSupported())
-        {
-            ms_splatting->beginVisibilityPass();
-            for(int index = 0; index < m_entries.size(); ++index)
+
+            if(!with_names)
             {
-                CGAL::Three::Scene_item& item = *m_entries[index];
-                if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
-                if(item.visible() && item.renderingMode() == Splatting)
+                glDepthFunc(GL_LESS);
+                // Splatting
+                if(!with_names && ms_splatting->isSupported())
                 {
-
-                    if(viewer)
+                    ms_splatting->beginVisibilityPass();
+                    for(int index = 0; index < m_entries.size(); ++index)
                     {
-                        item.draw_splats(viewer);
+                        CGAL::Three::Scene_item& item = *m_entries[index];
+                        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
+                        if(item.visible() && item.renderingMode() == Splatting)
+                        {
+
+                          if(viewer)
+                          {
+                             item.drawSplats(viewer);
+                          }
+                          else
+                              item.drawSplats();
+                        }
+
                     }
-                    else
-                        item.draw_splats();
+                    ms_splatting->beginAttributePass();
+                    for(int index = 0; index < m_entries.size(); ++index)
+                    {  CGAL::Three::Scene_item& item = *m_entries[index];
+                        if(item.visible() && item.renderingMode() == Splatting)
+                        {
+                            viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
+                            if(viewer)
+                                item.drawSplats(viewer);
+                            else
+                                item.drawSplats();
+                        }
+                    }
+                    ms_splatting->finalize();
                 }
-
+                else
+                    item.drawSplats();
             }
-            ms_splatting->beginAttributePass();
-            for(int index = 0; index < m_entries.size(); ++index)
-            {  CGAL::Three::Scene_item& item = *m_entries[index];
-                if(item.visible() && item.renderingMode() == Splatting)
-                {
-                    viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
-                    if(viewer)
-                        item.draw_splats(viewer);
-                    else
-                        item.draw_splats();
-                }
-            }
-            ms_splatting->finalize();
-
         }
     }
-    else
+    if(with_names)
     {
         QList<float> depths = picked_item_IDs.keys();
         if(!depths.isEmpty())
@@ -561,7 +568,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     {
         Q_EMIT(itemPicked(index_map.key(mainSelectionIndex())));
     }
-
+    Q_EMIT drawFinished();
 }
 
 // workaround for Qt-4.2 (see above)
@@ -744,59 +751,57 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
     //get IDs of all children of selected groups
     Q_FOREACH(int i, selected_items_list)
     {
-        CGAL::Three::Scene_group_item* group =
-                qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
-        if(group)
-            Q_FOREACH(Scene_item* child, group->getChildren())
-              groups_children << item_id(child);
+      CGAL::Three::Scene_group_item* group =
+          qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
+      if(group)
+        Q_FOREACH(Scene_item* child, group->getChildren())
+          groups_children << item_id(child);
     }
     // Insure that children of selected groups will not be added twice
     Q_FOREACH(int i, selected_items_list)
     {
-        if(!groups_children.contains(i))
-          items << item(i);
+      if(!groups_children.contains(i))
+      {
+        items << item(i);
+      }
     }
     //Gets the group at the drop position
-    CGAL::Three::Scene_group_item* group =
-            qobject_cast<CGAL::Three::Scene_group_item*>(this->item(index_map[parent]));
+    CGAL::Three::Scene_group_item* group = NULL;
+    if(parent.isValid())
+        group = qobject_cast<CGAL::Three::Scene_group_item*>(this->item(index_map[parent]));
     bool one_contained = false;
     if(group)
     {
-    Q_FOREACH(int id, selected_items_list)
+      Q_FOREACH(int id, selected_items_list)
         if(group->getChildren().contains(item(id)))
         {
-            one_contained = true;
-            break;
+          one_contained = true;
+          break;
+
         }
     }
     //if the drop item is not a group_item or if it already contains the item, then the drop action must be ignored
     if(!group ||one_contained)
     {
-        //unless the drop zone is empty, which means the item should be removed from all groups.
-        if(!parent.isValid())
+      //unless the drop zone is empty, which means the item should be removed from all groups.
+      if(!parent.isValid())
+      {
+        Q_FOREACH(Scene_item* item, items)
         {
-          Q_FOREACH(Scene_item* item, items)
-            while(item->has_group!=0)
-            {
-              Q_FOREACH(CGAL::Three::Scene_group_item* group_item, m_group_entries)
-                if(group_item->getChildren().contains(item))
-                {
-                  group_item->removeChild(item);
-                  break;
-                }
-            }
-        group_added();
-        return true;
+          if(item->parentGroup())
+          {
+            item->parentGroup()->removeChild(item);
+          }
         }
-        return false;
+        redraw_model();
+        return true;
+      }
+      return false;
     }
-      Q_FOREACH(Scene_item* item, items)
-    changeGroup(item, group);
-    //group->addChild(item(mainSelectionIndex()));
-    group_added();
+    Q_FOREACH(Scene_item* item, items)
+      changeGroup(item, group);
+    redraw_model();
     return true;
-
-
 }
 
 void Scene::moveRowUp()
@@ -806,12 +811,12 @@ void Scene::moveRowUp()
     {
         if(item(mainSelectionIndex())->has_group >0)
         {
-            Q_FOREACH(Scene_group_item* group, m_group_entries)
-                if(group->getChildren().contains(selected_item))
-                {
-                    int id = group->getChildren().indexOf(selected_item);
-                    group->moveUp(id);
-                }
+            Scene_group_item* group = selected_item->parentGroup();
+            if(group)
+            {
+                int id = group->getChildren().indexOf(selected_item);
+                group->moveUp(id);
+            }
         }
         else
         {
@@ -820,7 +825,7 @@ void Scene::moveRowUp()
             int newId = index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent())) ;
             m_entries.move(mainSelectionIndex(), newId);
         }
-        group_added();
+        redraw_model();
         setSelectedItem(m_entries.indexOf(selected_item));
     }
 }
@@ -831,12 +836,12 @@ void Scene::moveRowDown()
     {
         if(item(mainSelectionIndex())->has_group >0)
         {
-            Q_FOREACH(Scene_group_item* group, m_group_entries)
-                if(group->getChildren().contains(selected_item))
-                {
-                    int id = group->getChildren().indexOf(selected_item);
-                    group->moveDown(id);
-                }
+            Scene_group_item* group = selected_item->parentGroup();
+            if(group)
+            {
+                int id = group->getChildren().indexOf(selected_item);
+                group->moveDown(id);
+            }
         }
         else
         {
@@ -845,7 +850,7 @@ void Scene::moveRowDown()
             int newId = index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent())) ;
             m_entries.move(mainSelectionIndex(), newId);
         }
-        group_added();
+        redraw_model();
         setSelectedItem(m_entries.indexOf(selected_item));
     }
 }
@@ -867,6 +872,7 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
+
     return QItemSelection(index_map.keys(i).at(0),
                           index_map.keys(i).at(4));
 }
@@ -1093,16 +1099,12 @@ Scene::Bbox Scene::bbox() const
     }
     return bbox;
 }
-QList<CGAL::Three::Scene_group_item*> Scene::group_entries() const
-{
-    return m_group_entries;
-}
 
 QList<Scene_item*> Scene::item_entries() const
 {
     return m_entries;
 }
-void Scene::group_added()
+void Scene::redraw_model()
 {
     //makes the hierarchy in the tree
     //clears the model
@@ -1118,26 +1120,57 @@ void Scene::group_added()
 void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_group)
 {
     //remove item from the containing group if any
- if(item->has_group!=0)
-  Q_FOREACH(CGAL::Three::Scene_group_item* group, m_group_entries)
-  {
-    if(group->getChildren().contains(item))
+    if(item->parentGroup())
     {
-        remove_item_from_groups(item);
-      break;
+      if(item->parentGroup()->isChildLocked(item))
+        return;
+      item->parentGroup()->removeChild(item);
     }
-  }
- //add the item to the target group
- target_group->addChild(item);
- item->moveToGroup(target_group);
+    //add the item to the target group
+    target_group->addChild(item);
+    item->moveToGroup(target_group);
+    redraw_model();
+    Q_EMIT updated();
 }
 
 float Scene::get_bbox_length() const
 {
-    return bbox().height();
+    return bbox().ymax()-bbox().ymin();
 }
 
-
+void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer)
+{
+  Scene_item *it = item(mainSelectionIndex());
+  if(it)
+  {
+    //Only call printPrimitiveId if the item is a Scene_print_interface_item
+    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    if(item)
+      item->printPrimitiveId(point, viewer);
+  }
+}
+void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
+{
+  Scene_item *it = item(mainSelectionIndex());
+  if(it)
+  {
+    //Only call printPrimitiveIds if the item is a Scene_print_interface_item
+    Scene_print_interface_item* item= dynamic_cast<Scene_print_interface_item*>(it);
+    if(item)
+      item->printPrimitiveIds(viewer);
+  }
+}
+bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
+{
+    CGAL::Three::Scene_item *i = item(mainSelectionIndex());
+    if(i && i->visible())
+    {
+        bool res = i->testDisplayId(x,y,z, viewer);
+        return res;
+    }
+    else
+      return false;
+}
 #include "Scene_find_items.h"
 
 void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
@@ -1170,7 +1203,7 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
 void Scene::setExpanded(QModelIndex id)
 {
     CGAL::Three::Scene_group_item* group =
-            qobject_cast<CGAL::Three::Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
+            qobject_cast<CGAL::Three::Scene_group_item*>(item(getIdFromModelIndex(id)));
     if(group)
     {
         group->setExpanded(true);
@@ -1196,71 +1229,10 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
     return index_map.keys(id);
 }
 
-void Scene::add_group(Scene_group_item* group)
+void Scene::addGroup(Scene_group_item* group)
 {
-    //Find the indices of the selected items
-    QList<int> indices;
-    QList<int> blacklist;
-    Q_FOREACH(int id, selectionIndices()){
-        CGAL::Three::Scene_group_item* group =
-                qobject_cast<CGAL::Three::Scene_group_item*>(item(id));
-        if(group)
-            Q_FOREACH(CGAL::Three::Scene_item *item, group->getChildren())
-                blacklist<<item_id(item);
-
-        if(!indices.contains(id) && !blacklist.contains(id))
-            indices<<id;
-}
-    //checks if all the selected items are in the same group
-    bool all_in_one = true;
-    if(indices.isEmpty())
-        all_in_one = false;
-    //group containing the selected item
-    CGAL::Three::Scene_group_item * existing_group = 0;
-    //for each selected item
-    Q_FOREACH(int id, indices){
-        //if the selected item is in a group
-        if(item(id)->has_group!=0){
-            //for each group
-            Q_FOREACH(CGAL::Three::Scene_group_item *group, group_entries())
-            {
-                //if the group contains the selected item
-                if(group->getChildren().contains(item(id))){
-                    //if it is the first one, we initialize existing_group
-                    if(existing_group == 0)
-                        existing_group = group;
-                    //else we check if it is the same group as before.
-                    //If not, all selected items are not in the same group
-                    else if(existing_group != group)
-                        all_in_one = false;
-                    break;
-                }
-            }//end for each group
-        }
-        //else it is impossible that all the selected items are in the same group
-        else{
-            all_in_one = false;
-            break;
-        }
-    }//end foreach selected item
-
-    //If all the selected items are in the same group, we put them in a sub_group of this group
-    if(all_in_one)
-    {
-        Q_FOREACH(int id, indices)
-            changeGroup(item(id),group);
-        changeGroup(group, existing_group);
-        addItem(group);
-        group_added();
-    }
-    //else wer create a new group
-    else
-    {
-        Q_FOREACH(int id, indices)
-            changeGroup(item(id),group);
-        addItem(group);
-        group_added();
-    }
+    connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
+    group->setScene(this);
 }
 
 namespace scene { namespace details {

@@ -25,6 +25,7 @@
 #include <CGAL/result_of.h>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/internal/Get_dimension_tag.h>
+#include <vector>
 
 namespace CGAL {
 
@@ -85,7 +86,7 @@ namespace CGAL {
 	}
 
      inline FT min_distance_to_rectangle(const Query_item& q,
-					      const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) {
+					      const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) const {
 		FT distance = FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
                   traits.construct_cartesian_const_iterator_d_object();
@@ -131,7 +132,7 @@ namespace CGAL {
      inline 
     FT 
     max_distance_to_rectangle(const Query_item& q,
-			      const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) {
+			      const Kd_tree_rectangle<FT,Dimension>& r,std::vector<FT>& dists) const {
       FT distance=FT(0);
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();

@@ -920,14 +920,20 @@ private:
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalCirculator`
  */
-
-
-
 template <typename Graph>
 class Face_around_face_circulator
 {};
 
-
+/**
+ * \ingroup PkgBGLIterators
+ * A bidirectional iterator with value type `boost::graph_traits<Graph>::%face_descriptor`.
+ * It iterates over the same halfedges as the `Halfedge_around_face_iterator`,
+ * and provides the face descriptor associated to the opposite halfedge.  The face descriptor
+ * may be the null face, and it may be several times the same face descriptor.
+ *
+ * \tparam Graph must be a model of the concept `HalfedgeGraph`
+ * \cgalModels `BidirectionalIterator`
+ */
 template <typename Graph>
 class Face_around_target_iterator
 #ifndef DOXYGEN_RUNNING  
@@ -1133,7 +1139,6 @@ opposite_edges_around_face(typename boost::graph_traits<Graph>::halfedge_descrip
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
  * \cgalModels `BidirectionalCirculator`
  */
-
 template <typename Graph>
 class Vertex_around_target_circulator
 #ifndef DOXYGEN_RUNNING
@@ -1186,7 +1191,14 @@ private:
 
 
 
-
+/**
+ * \ingroup PkgBGLIterators
+ * A bidirectional iterator with value type `boost::graph_traits<Graph>::%vertex_descriptor` over all vertices adjacent to the same vertex.
+ * It iterates over the same halfedges as the `Halfedge_around_target_iterator`.
+ *
+ * \tparam Graph must be a model of the concept `HalfedgeGraph`
+ * \cgalModels `BidirectionalIterator`
+ */
 template <typename Graph>
 class Vertex_around_target_iterator
 #ifndef DOXYGEN_RUNNING

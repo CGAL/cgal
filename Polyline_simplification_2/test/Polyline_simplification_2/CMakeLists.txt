@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Polyline_simplification_2 )
+project( Polyline_simplification_2_Tests )
 
 
 cmake_minimum_required(VERSION 2.8.11)
@@ -50,5 +50,7 @@ include_directories( BEFORE ../../include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "simplify_polygon_test.cpp" )
+
+create_single_source_cgal_program( "simplify_polyline_with_duplicate_points.cpp" )
 
 

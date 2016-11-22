@@ -23,7 +23,7 @@
 
 #include <iterator>
 #include <CGAL/triangulation_assertions.h>
-//#include <CGAL/Triangulation_iterator_adaptator.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 

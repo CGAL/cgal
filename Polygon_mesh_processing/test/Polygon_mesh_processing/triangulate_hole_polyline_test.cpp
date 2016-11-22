@@ -1,5 +1,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <cassert>
 #include <vector>
@@ -14,13 +15,13 @@
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
-typedef Kernel::Point_3                  Point_3;
-typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Epic;
+typedef CGAL::Exact_predicates_exact_constructions_kernel  Epec;
 
 // to debug visually, construct polyhedron from patch
-template<class HDS>
+template<class HDS, class K>
 class Polyhedron_builder : public CGAL::Modifier_base<HDS> {
+  typedef typename K::Point_3 Point_3;
 public:
   Polyhedron_builder(std::vector<boost::tuple<int, int, int> >* triangles, 
     std::vector<Point_3>* polyline) 
@@ -31,12 +32,12 @@ public:
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
     B.begin_surface(polyline->size() -1, triangles->size());
 
-    for(std::vector<Point_3>::iterator it = polyline->begin();
+    for(typename std::vector<Point_3>::iterator it = polyline->begin();
       it != --polyline->end(); ++it) {
         B.add_vertex(*it);
     }
 
-    for(std::vector<boost::tuple<int, int, int> >::iterator it = triangles->begin();
+    for(typename std::vector<boost::tuple<int, int, int> >::iterator it = triangles->begin();
       it != triangles->end(); ++it) {
         B.begin_facet();
         B.add_vertex_to_facet(it->get<0>());
@@ -53,6 +54,12 @@ private:
   std::vector<Point_3>* polyline;
 };
 
+
+template <typename K>
+struct Main {
+
+typedef typename  K::Point_3                  Point_3;
+  typedef CGAL::Polyhedron_3<K>       Polyhedron;
 
 // it reads .polylines.txt (there should be one polyline with last point repeated)
 void read_polyline_one_line(const char* file_name, std::vector<Point_3>& points) {
@@ -119,7 +126,7 @@ void check_constructed_polyhedron(const char* file_name,
   std::vector<Point_3>* polyline) 
 {
   Polyhedron poly;
-  Polyhedron_builder<Polyhedron::HalfedgeDS> patch_builder(triangles, polyline);
+  Polyhedron_builder<typename Polyhedron::HalfedgeDS,K> patch_builder(triangles, polyline);
   poly.delegate(patch_builder);
 
   if(!poly.is_valid()) {
@@ -185,7 +192,7 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
   std::cerr << "  Done!" << std::endl;
 }
 
-int main() {
+ Main() {
   std::vector<std::string> input_files_1;
   input_files_1.push_back("data/triangle.polylines.txt");
   input_files_1.push_back("data/quad.polylines.txt");
@@ -212,6 +219,13 @@ int main() {
   test_should_be_no_output("data/collinear.polylines.txt", true);
   test_should_be_no_output("data/collinear.polylines.txt", false);
   std::cerr << "All Done!" << std::endl;
+ }
 
+};
+
+int main()
+{
+  Main<Epic> m;
+  Main<Epec> m2;
   return 0;
 }

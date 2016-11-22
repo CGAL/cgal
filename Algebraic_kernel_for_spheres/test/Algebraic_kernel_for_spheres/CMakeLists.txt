@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Algebraic_kernel_for_spheres_ )
+project( Algebraic_kernel_for_spheres_Tests )
 
 cmake_minimum_required(VERSION 2.8.10)
 

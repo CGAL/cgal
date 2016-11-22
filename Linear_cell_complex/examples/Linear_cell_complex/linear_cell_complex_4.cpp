@@ -49,17 +49,17 @@ int main()
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // Add one edge to cut the face containing dart d3 in two.
-  Dart_handle d4 = CGAL::insert_cell_1_in_cell_2(lcc,d3,lcc.beta(d1, 0));
+  Dart_handle d4 = lcc.insert_cell_1_in_cell_2(d3,lcc.beta(d1, 0));
   CGAL_assertion( lcc.is_valid() );
   
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   // We use removal operations to get back to the initial configuration.
-  CGAL::remove_cell<LCC_4,1>(lcc,d4);
+  lcc.remove_cell<1>(d4);
   CGAL_assertion( lcc.is_valid() );
 
-  CGAL::remove_cell<LCC_4,0>(lcc,d3);
+  lcc.remove_cell<0>(d3);
   CGAL_assertion( lcc.is_valid() );
 
   lcc.unsew<4>(d1);

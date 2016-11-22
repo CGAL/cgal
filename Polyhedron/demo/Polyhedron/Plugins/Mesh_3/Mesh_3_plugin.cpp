@@ -2,7 +2,6 @@
 #include "config_mesh_3.h"
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
 
@@ -24,7 +23,7 @@
 #include "Scene_implicit_function_item.h"
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 #endif
 
 #include "Meshing_thread.h"
@@ -40,66 +39,84 @@ const QColor default_mesh_color(45,169,70);
 
 class Mesh_3_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* msg_interface)
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
+
     actionMesh_3 = new QAction("Create a Tetrahedral Mesh", mw);
     if(actionMesh_3) {
       actionMesh_3->setProperty("subMenuName", "Tetrahedral Mesh Generation");
       connect(actionMesh_3, SIGNAL(triggered()),
-              this, SLOT(mesh_3()));
+              this, SLOT(mesh_3_volume()));
     }
+
+    actionMesh_3_surface = new QAction("Create a Surface Triangle Mesh", mw);
+    if (actionMesh_3_surface){
+      actionMesh_3_surface->setProperty("subMenuName", "Tetrahedral Mesh Generation");
+      connect(actionMesh_3_surface, SIGNAL(triggered()),
+              this, SLOT(mesh_3_surface()));
+    }
+
     this->msg = msg_interface;
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionMesh_3;
+    return QList<QAction*>() << actionMesh_3 << actionMesh_3_surface;
   }
 
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction* a) const {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
+    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())) != NULL
+      && a == actionMesh_3)
       return true;
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
     Q_FOREACH(int ind, scene->selectionIndices()){
-      if( qobject_cast<Scene_segmented_image_item*>(scene->item(ind)))
+      if( qobject_cast<Scene_image_item*>(scene->item(ind)))
         return true;
     }
 #endif  
     Q_FOREACH(int ind, scene->selectionIndices()){
-      if( qobject_cast<Scene_polyhedron_item*>(scene->item(ind)))
-        return true;
+      Scene_polyhedron_item* poly_item
+        = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+      if (NULL == poly_item)
+        continue;
+      if (a == actionMesh_3) return poly_item->polyhedron()->is_closed();
+      else                   return true;
     }
     return false;
   }
 
 public Q_SLOTS:
-  void mesh_3();
+  void mesh_3_volume();
+  void mesh_3_surface();
   void meshing_done(Meshing_thread* t);
   void status_report(QString str);
 
 private:
+  void mesh_3(const bool surface_only);
   void launch_thread(Meshing_thread* mesh_thread);
   void treat_result(Scene_item& source_item, Scene_c3t3_item& result_item) const;
 
 private:
   QAction* actionMesh_3;
+  QAction* actionMesh_3_surface;
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
+  CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
 }; // end class Mesh_3_plugin
 
 double
@@ -116,18 +133,26 @@ get_approximate(double d, int precision, int& decimals)
     return std::floor(d)*std::pow(10.,decimals);
 }
 
-void Mesh_3_plugin::mesh_3()
+void Mesh_3_plugin::mesh_3_surface()
+{
+  mesh_3(true);
+}
+void Mesh_3_plugin::mesh_3_volume()
+{
+  mesh_3(false);
+}
+
+void Mesh_3_plugin::mesh_3(const bool surface_only)
 {
   Scene_polyhedron_item* poly_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
-  Scene_segmented_image_item* image_item = NULL;
+  Scene_image_item* image_item = NULL;
   Scene_polylines_item* polylines_item = NULL;
 
   Q_FOREACH(int ind, scene->selectionIndices()) {
 
     if(poly_item == NULL){
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
-
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
@@ -136,7 +161,7 @@ void Mesh_3_plugin::mesh_3()
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
     if(image_item == NULL){
-      image_item = qobject_cast<Scene_segmented_image_item*>(scene->item(ind));
+      image_item = qobject_cast<Scene_image_item*>(scene->item(ind));
     }
 #endif
     if(polylines_item == NULL){
@@ -147,12 +172,6 @@ void Mesh_3_plugin::mesh_3()
   bool features_protection_available = false;
   if(NULL != poly_item)
   {
-    if (!poly_item->polyhedron()->is_closed())
-    {
-      QMessageBox::warning(mw, tr(""),
-                           tr("Selected Scene_polyhedron_item is not closed."));
-      return;
-    }
     if (!poly_item->polyhedron()->is_pure_triangle())
     {
       QMessageBox::warning(mw, tr(""),
@@ -169,7 +188,34 @@ void Mesh_3_plugin::mesh_3()
   else if (NULL != image_item)
   {
     item = image_item;
-    features_protection_available = true;
+    features_protection_available = (polylines_item != NULL) || !image_item->isGray();
+
+    bool fit_wrdtp = true;
+    std::size_t img_wdim = image_item->image()->image()->wdim;
+    WORD_KIND img_wordKind = image_item->image()->image()->wordKind;
+    //check if the word type fits the hardcoded values in the plugin
+    if(image_item->isGray())
+    {
+      if(img_wordKind != WK_FLOAT)
+        fit_wrdtp = false;
+      else
+        if(img_wdim != 4)
+          fit_wrdtp = false;
+    }
+    else
+    {
+      if(img_wordKind != WK_FIXED)
+        fit_wrdtp = false;
+      else
+        if(img_wdim != 1)
+          fit_wrdtp = false;
+    }
+    if(!fit_wrdtp)
+    {
+      QMessageBox::warning(mw, tr(""),
+                           tr("Selected object can't be meshed because the image's word type is not supported by this plugin."));
+      return;
+    }
   }
 #endif
 
@@ -185,6 +231,7 @@ void Mesh_3_plugin::mesh_3()
   QDialog dialog(mw);
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
@@ -206,15 +253,27 @@ void Mesh_3_plugin::mesh_3()
   connect(ui.noTetShape, SIGNAL(toggled(bool)),
           ui.tetShape,   SLOT(setEnabled(bool)));
 
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.noEdgeSizing,   SLOT(setEnabled(bool)));
+
+  connect(ui.protect, SIGNAL(toggled(bool)),
+          ui.noEdgeSizing,   SLOT(setChecked(bool)));
+
+  connect(ui.noEdgeSizing, SIGNAL(toggled(bool)),
+          ui.edgeLabel,   SLOT(setEnabled(bool)));
+
+  connect(ui.noEdgeSizing, SIGNAL(toggled(bool)),
+          ui.edgeSizing,   SLOT(setEnabled(bool)));
+
   // Set default parameters
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
   ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
-                             .arg(bbox.width(),0,'g',3)
-                             .arg(bbox.height(),0,'g',3)
-                             .arg(bbox.depth(),0,'g',3) );
+                             .arg(bbox.xmax() - bbox.xmin(),0,'g',3)
+                             .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
+                             .arg(bbox.zmax() - bbox.zmin(),0,'g',3) );
 
-  double diag = bbox.diagonal_length();
+  double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   int decimals = 0;
   double sizing_default = get_approximate(diag * 0.05, 2, decimals);
   ui.facetSizing->setDecimals(-decimals+2);
@@ -222,6 +281,7 @@ void Mesh_3_plugin::mesh_3()
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(sizing_default); // default value
+  ui.edgeSizing->setValue(sizing_default);
 
   ui.tetSizing->setDecimals(-decimals+2);
   ui.tetSizing->setSingleStep(std::pow(10.,decimals));
@@ -237,12 +297,24 @@ void Mesh_3_plugin::mesh_3()
   ui.approx->setValue(approx_default);
 
   ui.protect->setEnabled(features_protection_available);
-  if (!features_protection_available)
-    ui.protect->setChecked(false);
+  ui.protect->setChecked(features_protection_available);
+
+  ui.initializationGroup->setVisible(image_item != NULL && !image_item->isGray());
+  ui.grayImgGroup->setVisible(image_item != NULL && image_item->isGray());
+  if (poly_item != NULL)
+    ui.volumeGroup->setVisible(!surface_only && poly_item->polyhedron()->is_closed());
+  else
+    ui.volumeGroup->setVisible(!surface_only);
+  ui.noEdgeSizing->setChecked(ui.protect->isChecked());
+  ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
+  ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
 
   // -----------------------------------
   // Get values
   // -----------------------------------
+
+  //reset cursor from the code for the scripts
+  QApplication::restoreOverrideCursor();
   int i = dialog.exec();
   if( i == QDialog::Rejected ) { return; }
 
@@ -252,8 +324,14 @@ void Mesh_3_plugin::mesh_3()
   const double facet_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
+  const double edge_size = !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   const bool protect_features = ui.protect->isChecked();
+  const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
+  const float iso_value = ui.iso_value_spinBox->value();
+  const float value_outside = ui.value_outside_spinBox->value();
+  const float inside_is_less =  ui.inside_is_less_checkBox->isChecked();
+
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -278,9 +356,11 @@ void Mesh_3_plugin::mesh_3()
                                  facet_sizing,
                                  approx,
                                  tet_sizing,
+                                 edge_size,
                                  radius_edge,
                                  protect_features,
                                  manifold,
+                                 surface_only,
                                  scene);
   }
   // Image
@@ -299,6 +379,7 @@ void Mesh_3_plugin::mesh_3()
                                  facet_sizing,
                                  approx,
                                  tet_sizing,
+                                 edge_size,
                                  radius_edge,
                                  manifold,
                                  scene);
@@ -322,10 +403,16 @@ void Mesh_3_plugin::mesh_3()
                                  facet_sizing,
                                  approx,
                                  tet_sizing,
+                                 edge_size,
                                  radius_edge,
                                  protect_features,
                                  manifold,
-                                 scene);
+                                 scene,
+                                 detect_connected_components,
+                                 image_item->isGray(),
+                                 iso_value,
+                                 value_outside,
+                                 inside_is_less);
   }
 #endif
 
@@ -407,12 +494,12 @@ meshing_done(Meshing_thread* thread)
   Scene_c3t3_item* result_item = thread->item();
   const Scene_item::Bbox& bbox = result_item->bbox();
   str.append(QString("BBox (x,y,z): [ %1, %2 ], [ %3, %4 ], [ %5, %6 ], <br>")
-    .arg(bbox.xmin)
-    .arg(bbox.xmax)
-    .arg(bbox.ymin)
-    .arg(bbox.ymax)
-    .arg(bbox.zmin)
-    .arg(bbox.zmax));
+    .arg(bbox.xmin())
+    .arg(bbox.xmax())
+    .arg(bbox.ymin())
+    .arg(bbox.ymax())
+    .arg(bbox.zmin())
+    .arg(bbox.zmax()));
 
   msg->information(qPrintable(str));
 
@@ -439,9 +526,9 @@ treat_result(Scene_item& source_item,
   result_item.c3t3_changed();
 
   const Scene_item::Bbox& bbox = result_item.bbox();
-  result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
-                          (bbox.ymin + bbox.ymax)/2.f,
-                          (bbox.zmin + bbox.zmax)/2.f);
+  result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
+                          (bbox.ymin() + bbox.ymax())/2.f,
+                          (bbox.zmin() + bbox.zmax())/2.f);
 
   result_item.setColor(default_mesh_color);
   result_item.setRenderingMode(source_item.renderingMode());
@@ -451,7 +538,7 @@ treat_result(Scene_item& source_item,
 
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   scene->itemChanged(index);
-
+  scene->setSelectedItem(-1);
   Scene_interface::Item_id new_item_id = scene->addItem(&result_item);
   scene->setSelectedItem(new_item_id);
 }

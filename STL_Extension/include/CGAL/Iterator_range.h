@@ -74,7 +74,7 @@ namespace CGAL {
   /// returns `std::distance(begin(), end())==0`
   bool empty() const
   {
-    return std::distance(begin(), end())==0;
+    return begin()==end();
   }
 
 };

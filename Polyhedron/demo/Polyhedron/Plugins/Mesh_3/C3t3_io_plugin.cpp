@@ -2,6 +2,7 @@
 #include "Scene_c3t3_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
@@ -9,18 +10,31 @@
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
-  public CGAL::Three::Polyhedron_demo_io_plugin_interface
+  public CGAL::Three::Polyhedron_demo_io_plugin_interface,
+  public CGAL::Three::Polyhedron_demo_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
+  void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
+  {
+    this->scene = sc;
+  }
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
-  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am)"; }
+  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
   QString loadNameFilters() const { return "binary files (*.cgal)" ; }
-
+  QList<QAction*> actions() const
+  {
+    return QList<QAction*>();
+  }
+  bool applicable(QAction*) const
+  {
+    return false;
+  }
   bool canLoad() const;
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
@@ -30,6 +44,7 @@ public:
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
+  CGAL::Three::Scene_interface* scene;
 };
 
 
@@ -55,6 +70,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
         Scene_c3t3_item* item = new Scene_c3t3_item();
         item->setName(fileinfo.baseName());
+        item->setScene(scene);
 
 
         if(item->load_binary(in)) {
@@ -127,6 +143,12 @@ save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
     {
       std::ofstream avizo_file (qPrintable(path));
       CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
+      return true;
+    }
+    else if (fileinfo.suffix() == "off")
+    {
+      std::ofstream off_file(qPrintable(path));
+      c3t3_item->c3t3().output_facets_in_complex_to_off(off_file);
       return true;
     }
     else
@@ -268,69 +290,6 @@ typedef CGAL::Triangulation_data_structure_3<Fake_CDT_3_vertex_base<>, Fake_CDT_
 typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
 
 typedef Fake_mesh_domain::Surface_patch_index Fake_patch_id;
-
-#include <CGAL/Mesh_3/io_signature.h>
-
-#ifdef CGAL_MESH_3_IO_SIGNATURE_H
-namespace CGAL {
-template <>
-struct Get_io_signature<Fake_patch_id> {
-  std::string operator()() const
-  {
-    return std::string("std::pair<i,i>");
-  }
-}; // end Get_io_signature<Fake_patch_id>
-} // end namespace CGAL
-#endif
-
-namespace std {
-  inline std::ostream& operator<<(std::ostream& out, const Fake_patch_id& id) {
-    return out << id.first << " " << id.second;
-  }
-  inline std::istream& operator>>(std::istream& in, Fake_patch_id& id) {
-    return in >> id.first >> id.second;
-  }
-} // end namespace std
-
-namespace CGAL {
-template <>
-class Output_rep<Fake_patch_id> {
-  typedef Fake_patch_id T;
-  const T& t;
-public:
-  //! initialize with a const reference to \a t.
-  Output_rep( const T& tt) : t(tt) {}
-  //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& out) const {
-    if(is_ascii(out)) {
-      out << t.first << " " << t.second;
-    } else {
-      CGAL::write(out, t.first);
-      CGAL::write(out, t.second);
-    }
-    return out;
-  }
-};
-
-template <>
-class Input_rep<Fake_patch_id> {
-  typedef Fake_patch_id T;
-  T& t;
-public:
-  //! initialize with a const reference to \a t.
-  Input_rep( T& tt) : t(tt) {}
-  //! perform the output, calls \c operator\<\< by default.
-  std::istream& operator()( std::istream& in) const {
-    if(is_ascii(in)) {
-      in >> t.first >> t.second;
-    } else {
-      CGAL::read(in, t.first);
-      CGAL::read(in, t.second);
-    }
-    return in;
-  }
-};
-} // end namespace CGAL
 
 struct Update_vertex {
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;

@@ -1,48 +1,26 @@
-Subject: CGAL 4.8 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.9 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.8
+The CGAL Open Source Project is pleased to announce the release 4.9
 of CGAL, the Computational Geometry Algorithms Library.
 
-Besides fixes to existing packages, the following has changed since
-CGAL 4.7:
+Besides fixes and general enhancement to existing packages, the following
+has changed since CGAL 4.8:
 
   o General
 
-    - The support for Qt3 is dropped and all demos using it got removed.
+    - CGAL can now be used in headers only mode, i.e. without compiling the
+      CGAL libraries and linking with these libraries when compiling
+      examples, tests and demos. Note that running CMake on CGAL is still
+      required in order to generate some configuration files.
 
 
-  o Installation
+  o Cone Based Spanners (new package)
 
-    - Starting with Visual C++ 2015 we no longer require Boost.Thread as we
-      use the C++11 keyword thread_local and the C+11 class std::mutex.
-
-    - The same holds for g++ 4.8 or later when the C++11 standard is used.
-
-
-  o Optimal Transportation Curve Reconstruction (new package)
-
-    - This package implements a method to reconstruct and simplify 2D point
-      sets.  The input is a set of 2D points with mass attributes, possibly
-      hampered by noise and outliers. The output is a set of line segments
-      and isolated points which approximate the input points.
-
-  o 3D Mesh Generation
-  
-    - Add support of 3D gray level images as input for the tetrahedral mesh
-      generation.
-
-  o Polygon Mesh Processing
-
-    - Add a new triangle-based isotropic remeshing algorithm for
-      triangulated surface meshes.
-
-  o Point Set Processing
-  
-    - Add Concurrency_tag to the functions compute_average_spacing(),
-      edge_aware_upsample_point_set(), jet_estimate_normals(),
-      jet_smooth_point_set(), and pca_estimate_normals().
+    - This package provides algorithms for constructing two kinds of
+      cone-based spanners: Yao graph and Theta graph, given a set of
+      vertices on the plane and the directions of cone boundaries.
 
 
 See http://www.cgal.org/releases.html for a complete list of changes.

@@ -29,7 +29,7 @@
 // logic and is not plug'n play (requires users providing bounds).
 // If it should be provided again, it should probably be separate.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>
@@ -50,6 +50,7 @@
 
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Equal_3.h>
+#  include <CGAL/internal/Static_filters/Equal_2.h>
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_COMPARE_X_2_STATIC_FILTERS
@@ -115,6 +116,7 @@ class Static_filters : public K_base {
 
 public:
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
+  typedef Static_filters_predicates::Equal_2<K_base>                        Equal_2;
   typedef Static_filters_predicates::Equal_3<K_base>                        Equal_3;
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
@@ -147,6 +149,10 @@ public:
   { return Orientation_3(); }
 
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
+ Equal_2
+  equal_2_object() const
+  { return Equal_2(); }
+
  Equal_3
   equal_3_object() const
   { return Equal_3(); }

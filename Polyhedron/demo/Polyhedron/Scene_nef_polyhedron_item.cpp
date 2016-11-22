@@ -10,17 +10,18 @@
 #include <CGAL/Inverse_index.h>
 
 #include <QObject>
+#include <QApplication>
 
 #include <CGAL/minkowski_sum_3.h>
 #include <CGAL/convex_decomposition_3.h>
 
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
 typedef Nef_polyhedron::Traits Traits;
 typedef Nef_polyhedron::Halffacet Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 typedef Nef_polyhedron::Halfedge_const_handle Halfedge_handle;
 struct Face_info {
     Nef_polyhedron::Halfedge_const_handle e[3];
@@ -32,7 +33,7 @@ typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
 P_traits>          Fb1;
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Exact_predicates_tag                                    Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
 TDS,
 Itag>             CDTbase;
@@ -48,64 +49,126 @@ struct DPoint {
     }
     GLdouble coords[3];
 };
-Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
-    : Scene_item(NbOfVbos,NbOfVaos),
-      nef_poly(new Nef_polyhedron)
+
+
+
+struct Scene_nef_polyhedron_item_priv
 {
-    is_selected = true;
+  typedef CGAL::Three::Scene_item Base;
+  typedef std::vector<QColor> Color_vector;
+
+  Scene_nef_polyhedron_item_priv(Scene_nef_polyhedron_item* parent)
+    :nef_poly(new Nef_polyhedron)
+  {
+    item = parent;
     nb_points = 0;
     nb_lines = 0;
     nb_facets = 0;
+  }
+  Scene_nef_polyhedron_item_priv(Nef_polyhedron* const p, Scene_nef_polyhedron_item *parent)
+    :nef_poly(p)
+  {
+    item = parent;
+    nb_points = 0;
+    nb_lines = 0;
+    nb_facets = 0;
+  }
+  Scene_nef_polyhedron_item_priv(const Nef_polyhedron& p, Scene_nef_polyhedron_item* parent)
+    :nef_poly(new Nef_polyhedron(p))
+  {
+    item = parent;
+    nb_points = 0;
+    nb_lines = 0;
+    nb_facets = 0;
+  }
+
+~Scene_nef_polyhedron_item_priv()
+  {
+      delete nef_poly;
+  }
+
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+  void compute_normals_and_vertices(void) const;
+  Nef_polyhedron* nef_poly;
+
+  enum VAOs {
+      Facets = 0,
+      Edges,
+      Points,
+      NbOfVaos
+  };
+  enum VBOs {
+      Facets_vertices = 0,
+      Facets_normals,
+      Edges_vertices,
+      Points_vertices,
+      NbOfVbos
+  };
+
+  mutable std::vector<double> positions_lines;
+  mutable std::vector<double> positions_facets;
+  mutable std::vector<double> positions_points;
+  mutable std::vector<double> normals;
+  mutable std::vector<double> color_lines;
+  mutable std::vector<double> color_facets;
+  mutable std::vector<double> color_points;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_lines;
+  mutable std::size_t nb_facets;
+  mutable QOpenGLShaderProgram *program;
+  Scene_nef_polyhedron_item *item;
+
+};
+Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
+    : Scene_item(Scene_nef_polyhedron_item_priv::NbOfVbos,Scene_nef_polyhedron_item_priv::NbOfVaos)
+{
+  is_selected = true;
+  d = new Scene_nef_polyhedron_item_priv(this);
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
-    : Scene_item(NbOfVbos,NbOfVaos),
-      nef_poly(p)
+    : Scene_item(Scene_nef_polyhedron_item_priv::NbOfVbos,Scene_nef_polyhedron_item_priv::NbOfVaos)
 {
     is_selected = true;
-    nb_points = 0;
-    nb_lines = 0;
-    nb_facets = 0;
+    d = new Scene_nef_polyhedron_item_priv(p, this);
+
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
-    : Scene_item(NbOfVbos,NbOfVaos),
-      nef_poly(new Nef_polyhedron(p))
+    : Scene_item(Scene_nef_polyhedron_item_priv::NbOfVbos,Scene_nef_polyhedron_item_priv::NbOfVaos)
 {
      is_selected = true;
-     nb_points = 0;
-     nb_lines = 0;
-     nb_facets = 0;
+     d = new Scene_nef_polyhedron_item_priv(p, this);
 }
 
 Scene_nef_polyhedron_item::~Scene_nef_polyhedron_item()
 {
-    delete nef_poly;
+  delete d;
 }
 
-void Scene_nef_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+void Scene_nef_polyhedron_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
     //vao for the facets
     {
-        program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_nef_polyhedron_item::PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[Facets]->bind();
-        buffers[Facets_vertices].bind();
-        buffers[Facets_vertices].allocate(positions_facets.data(),
+        item->vaos[Facets]->bind();
+        item->buffers[Facets_vertices].bind();
+        item->buffers[Facets_vertices].allocate(positions_facets.data(),
                             static_cast<int>(positions_facets.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[Facets_vertices].release();
+        item->buffers[Facets_vertices].release();
 
 
 
-        buffers[Facets_normals].bind();
-        buffers[Facets_normals].allocate(normals.data(),
+        item->buffers[Facets_normals].bind();
+        item->buffers[Facets_normals].allocate(normals.data(),
                             static_cast<int>(normals.size()*sizeof(double)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[Facets_normals].release();
+        item->buffers[Facets_normals].release();
 
         nb_facets = positions_facets.size();
         positions_facets.resize(0);
@@ -119,49 +182,50 @@ void Scene_nef_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface
     }
     //vao for the edges
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_nef_polyhedron_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[Edges]->bind();
-        buffers[Edges_vertices].bind();
-        buffers[Edges_vertices].allocate(positions_lines.data(),
+        item->vaos[Edges]->bind();
+        item->buffers[Edges_vertices].bind();
+        item->buffers[Edges_vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[Edges_vertices].release();
+        item->buffers[Edges_vertices].release();
 
 
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
         std::vector<double>(positions_lines).swap(positions_lines);
-        vaos[Edges]->release();
+        item->vaos[Edges]->release();
         program->release();
     }
     //vao for the points
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_nef_polyhedron_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[Points]->bind();
-        buffers[Points_vertices].bind();
-        buffers[Points_vertices].allocate(positions_points.data(),
+        item->vaos[Points]->bind();
+        item->buffers[Points_vertices].bind();
+        item->buffers[Points_vertices].allocate(positions_points.data(),
                             static_cast<int>(positions_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[Points_vertices].release();
+        item->buffers[Points_vertices].release();
 
-        vaos[Points]->release();
+        item->vaos[Points]->release();
 
         nb_points = positions_points.size();
         positions_points.resize(0);
         std::vector<double>(positions_points).swap(positions_points);
         program->release();
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 }
-void Scene_nef_polyhedron_item::compute_normals_and_vertices(void) const
+void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
 {
-     int count = 0;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    int count = 0;
     positions_facets.resize(0);
     positions_points.resize(0);
     normals.resize(0);
@@ -323,21 +387,22 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void) const
             positions_points.push_back(CGAL::to_double(p.y()));
             positions_points.push_back(CGAL::to_double(p.z()));
 
-                color_points.push_back(this->color().lighter(50).redF());
-                color_points.push_back(this->color().lighter(50).greenF());
-                color_points.push_back(this->color().lighter(50).blueF());
+                color_points.push_back(item->color().lighter(50).redF());
+                color_points.push_back(item->color().lighter(50).greenF());
+                color_points.push_back(item->color().lighter(50).blueF());
 
-                color_points.push_back(this->color().lighter(50).redF());
-                color_points.push_back(this->color().lighter(50).greenF());
-                color_points.push_back(this->color().lighter(50).blueF());
+                color_points.push_back(item->color().lighter(50).redF());
+                color_points.push_back(item->color().lighter(50).greenF());
+                color_points.push_back(item->color().lighter(50).blueF());
 
         }
 
     } //end points
+    QApplication::restoreOverrideCursor();
 }
 Scene_nef_polyhedron_item* 
 Scene_nef_polyhedron_item::clone() const {
-    return new Scene_nef_polyhedron_item(*nef_poly);
+    return new Scene_nef_polyhedron_item(*d->nef_poly);
 }
 
 bool
@@ -348,7 +413,7 @@ Scene_nef_polyhedron_item::load_from_off(std::istream& in)
 
     Exact_polyhedron exact_poly;
     in >> exact_poly;
-    *nef_poly = Nef_polyhedron(exact_poly);
+    *d->nef_poly = Nef_polyhedron(exact_poly);
 
     //   Polyhedron poly;
     //   in >> poly;
@@ -367,7 +432,7 @@ Scene_nef_polyhedron_item::font() const {
 bool
 Scene_nef_polyhedron_item::load(std::istream& in)
 {
-    in >> *nef_poly;
+    in >> *d->nef_poly;
     invalidateOpenGLBuffers();
     return (bool) in;
 }
@@ -375,14 +440,14 @@ Scene_nef_polyhedron_item::load(std::istream& in)
 bool
 Scene_nef_polyhedron_item::save(std::ostream& in) const
 {
-    in << *nef_poly;
+    in << *d->nef_poly;
     return (bool) in;
 }
 
 QString 
 Scene_nef_polyhedron_item::toolTip() const
 {
-    if(!nef_poly)
+    if(!d->nef_poly)
         return QString();
 
     return QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
@@ -392,91 +457,90 @@ Scene_nef_polyhedron_item::toolTip() const
                        "Number of facets: %4<br />"
                        "number of volumes: %7</p>")
             .arg(this->name())
-            .arg(nef_poly->number_of_vertices())
-            .arg(nef_poly->number_of_edges())
-            .arg(nef_poly->number_of_facets())
+            .arg(d->nef_poly->number_of_vertices())
+            .arg(d->nef_poly->number_of_edges())
+            .arg(d->nef_poly->number_of_facets())
             .arg(this->renderingModeName())
             .arg(this->color().name())
-            .arg(nef_poly->number_of_volumes());
+            .arg(d->nef_poly->number_of_volumes());
 }
 
 void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
-        compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        d->compute_normals_and_vertices();
+        d->initializeBuffers(viewer);
     }
-    vaos[Facets]->bind();
+    vaos[Scene_nef_polyhedron_item_priv::Facets]->bind();
 
     // tells the GPU to use the program just created
-    program=getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
-    program->bind();
-    program->setUniformValue("is_two_side", 1);
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
-    vaos[Facets]->release();
-    program->release();
+    d->program=getShaderProgram(PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
+    d->program->bind();
+    d->program->setUniformValue("is_two_side", 1);
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
+    vaos[Scene_nef_polyhedron_item_priv::Facets]->release();
+    d->program->release();
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
     viewer->glPointSize(10.f);
 
-    draw_points(viewer);
+    drawPoints(viewer);
     viewer->glPointSize(point_size);
 
 }
-void Scene_nef_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_nef_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
-        compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        d->compute_normals_and_vertices();
+        d->initializeBuffers(viewer);
     }
 
-    vaos[Edges]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
-    program->bind();
-    viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(nb_lines/3));
-    vaos[Edges]->release();
-    program->release();
+    vaos[Scene_nef_polyhedron_item_priv::Edges]->bind();
+    d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer ,PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(d->nb_lines/3));
+    vaos[Scene_nef_polyhedron_item_priv::Edges]->release();
+    d->program->release();
     if(renderingMode() == PointsPlusNormals)
     {
         GLfloat point_size;
         viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
         viewer->glPointSize(10.f);
 
-        draw_points(viewer);
+        drawPoints(viewer);
         viewer->glPointSize(point_size);
     }
 }
-void Scene_nef_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+void Scene_nef_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
-        compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        d->compute_normals_and_vertices();
+        d->initializeBuffers(viewer);
     }
-    vaos[Points]->bind();
-    program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
-    program->bind();
-    program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(nb_points/3));
-    vaos[Points]->release();
-    program->release();
+    vaos[Scene_nef_polyhedron_item_priv::Points]->bind();
+    d->program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer ,PROGRAM_WITHOUT_LIGHT);
+    d->program->bind();
+    d->program->setAttributeValue("colors", this->color());
+    viewer->glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(d->nb_points/3));
+    vaos[Scene_nef_polyhedron_item_priv::Points]->release();
+    d->program->release();
 
 }
 
-
-Nef_polyhedron* 
+Nef_polyhedron*
 Scene_nef_polyhedron_item::nef_polyhedron() {
-    return nef_poly;
+    return d->nef_poly;
 }
 
 bool
 Scene_nef_polyhedron_item::isEmpty() const {
-    return (nef_poly == 0) || nef_poly->is_empty();
+    return (d->nef_poly == 0) || d->nef_poly->is_empty();
 }
 
 void
@@ -486,9 +550,9 @@ Scene_nef_polyhedron_item::compute_bbox() const {
         _bbox = Bbox();
         return;
     }
-    CGAL::Bbox_3 bbox(nef_poly->vertices_begin()->point().bbox());
-    for(Nef_polyhedron::Vertex_const_iterator it = nef_poly->vertices_begin();
-        it != nef_poly->vertices_end();
+    CGAL::Bbox_3 bbox(d->nef_poly->vertices_begin()->point().bbox());
+    for(Nef_polyhedron::Vertex_const_iterator it = d->nef_poly->vertices_begin();
+        it != d->nef_poly->vertices_end();
         ++it) {
         bbox = bbox + it->point().bbox();
     }
@@ -576,7 +640,7 @@ void to_exact(Polyhedron& in,
 
 bool Scene_nef_polyhedron_item::is_simple() const
 {
-    return nef_poly->is_simple();
+    return d->nef_poly->is_simple();
 }
 
 // [static]
@@ -597,7 +661,7 @@ Scene_nef_polyhedron_item::from_polyhedron(Scene_polyhedron_item* item)
 Scene_polyhedron_item*
 Scene_nef_polyhedron_item::convert_to_polyhedron() const {
     Exact_polyhedron exact_poly;
-    nef_poly->convert_to_Polyhedron(exact_poly);
+    d->nef_poly->convert_to_Polyhedron(exact_poly);
     Polyhedron* poly = new Polyhedron;
     from_exact(exact_poly, *poly);
     exact_poly.clear();
@@ -608,7 +672,7 @@ Scene_nef_polyhedron_item&
 Scene_nef_polyhedron_item::
 operator+=(const Scene_nef_polyhedron_item& other)
 {
-    (*nef_poly) += (*other.nef_poly);
+    (*d->nef_poly) += (*other.d->nef_poly);
     return *this;
 }
 
@@ -616,7 +680,7 @@ Scene_nef_polyhedron_item&
 Scene_nef_polyhedron_item::
 operator*=(const Scene_nef_polyhedron_item& other)
 {
-    (*nef_poly) *= (*other.nef_poly);
+    (*d->nef_poly) *= (*other.d->nef_poly);
     return *this;
 }
 
@@ -624,7 +688,7 @@ Scene_nef_polyhedron_item&
 Scene_nef_polyhedron_item::
 operator-=(const Scene_nef_polyhedron_item& other)
 {
-    (*nef_poly) -= (*other.nef_poly);
+    (*d->nef_poly) -= (*other.d->nef_poly);
     return *this;
 }
 
@@ -633,8 +697,8 @@ Scene_nef_polyhedron_item::
 sum(const Scene_nef_polyhedron_item& a, 
     const Scene_nef_polyhedron_item& b)
 {
-    return new Scene_nef_polyhedron_item(CGAL::minkowski_sum_3(*a.nef_poly,
-                                                               *b.nef_poly));
+    return new Scene_nef_polyhedron_item(CGAL::minkowski_sum_3(*a.d->nef_poly,
+                                                               *b.d->nef_poly));
 }
 
 void
@@ -642,7 +706,7 @@ Scene_nef_polyhedron_item::
 convex_decomposition(std::list< Scene_polyhedron_item*>& convex_parts)
 {
     // copy the Nef polyhedron, as markers are added
-    Nef_polyhedron N(*nef_poly);
+    Nef_polyhedron N(*d->nef_poly);
     CGAL::convex_decomposition_3(N);
 
     typedef Nef_polyhedron::Volume_const_iterator Volume_const_iterator;
@@ -666,9 +730,10 @@ Scene_nef_polyhedron_item::
 invalidateOpenGLBuffers()
 {
     compute_bbox();
-    Base::invalidateOpenGLBuffers();
+    CGAL::Three::Scene_item::invalidateOpenGLBuffers();
     are_buffers_filled = false;
 }
+
 void
 Scene_nef_polyhedron_item::selection_changed(bool p_is_selected)
 {

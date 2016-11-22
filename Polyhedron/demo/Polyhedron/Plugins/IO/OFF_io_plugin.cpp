@@ -64,6 +64,8 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     {
       in.seekg(0);
       Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
+      item->setName(fileinfo.completeBaseName());
+      if (scanner.size_of_vertices()==0) return item;
       if(!item->read_off_point_set(in))
         {
           delete item;
@@ -155,9 +157,16 @@ bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFile
 
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
-  return (poly_item && poly_item->save(out)) || 
-    (soup_item && soup_item->save(out)) ||
-    (points_item && points_item->write_off_point_set(out));
+
+  if(fileinfo.suffix().toLower() == "off"){
+    return (poly_item && poly_item->save(out)) || 
+      (soup_item && soup_item->save(out)) ||
+      (points_item && points_item->write_off_point_set(out));
+  }
+  if(fileinfo.suffix().toLower() == "obj"){
+    return (poly_item && poly_item->save_obj(out));
+  }
+  return false;
 }
 
 #include "OFF_io_plugin.moc"

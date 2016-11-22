@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -10,8 +11,10 @@
 #include <fstream>
 #include <set>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
+template <typename K>
 void test_polyhedron(const char* fname)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
@@ -33,8 +36,10 @@ void test_polyhedron(const char* fname)
   std::cout << "OK\n";
 }
 
+
 void test_surface_mesh(const char* fname)
 {
+  typedef Epic K;
   typedef K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Mesh;
 
@@ -56,13 +61,15 @@ void test_surface_mesh(const char* fname)
 
 int main()
 {
-  test_polyhedron("data_stitching/full_border.off");
-  test_polyhedron("data_stitching/full_border_quads.off");
-  test_polyhedron("data_stitching/half_border.off");
-  test_polyhedron("data_stitching/mid_border.off");
-  test_polyhedron("data_stitching/multiple_incidence.off");
-  test_polyhedron("data_stitching/incidence_3.off");
-  test_polyhedron("data_stitching/incoherent_patch_orientation.off");
+  test_polyhedron<Epec>("data_stitching/full_border.off");
+
+  test_polyhedron<Epic>("data_stitching/full_border.off");
+  test_polyhedron<Epic>("data_stitching/full_border_quads.off");
+  test_polyhedron<Epic>("data_stitching/half_border.off");
+  test_polyhedron<Epic>("data_stitching/mid_border.off");
+  test_polyhedron<Epic>("data_stitching/multiple_incidence.off");
+  test_polyhedron<Epic>("data_stitching/incidence_3.off");
+  test_polyhedron<Epic>("data_stitching/incoherent_patch_orientation.off");
 
   test_surface_mesh("data_stitching/full_border.off");
   test_surface_mesh("data_stitching/full_border_quads.off");
@@ -70,7 +77,7 @@ int main()
   test_surface_mesh("data_stitching/mid_border.off");
   test_surface_mesh("data_stitching/multiple_incidence.off");
   test_surface_mesh("data_stitching/incidence_3.off");
-  test_polyhedron("data_stitching/incoherent_patch_orientation.off");
+  test_polyhedron<Epic>("data_stitching/incoherent_patch_orientation.off");
 
   return 0;
 }

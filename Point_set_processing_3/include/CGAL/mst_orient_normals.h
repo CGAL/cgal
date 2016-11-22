@@ -149,24 +149,16 @@ struct Propagate_normal_orientation
     template <class Edge>
     void operator()(Edge& edge, const MST_graph& mst_graph)
     {
-        typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+        typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
         typedef typename MST_graph::vertex_descriptor vertex_descriptor;
 
         // Gets source normal
         vertex_descriptor source_vertex = source(edge, mst_graph);
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-        const Vector source_normal = get(mst_graph.m_normal_pmap, mst_graph[source_vertex].input_point);
-#else
-        const Vector source_normal = get(mst_graph.m_normal_pmap, *(mst_graph[source_vertex].input_point) );
-#endif
+        Vector_ref source_normal = get(mst_graph.m_normal_pmap, *(mst_graph[source_vertex].input_point) );
         const bool source_normal_is_oriented = mst_graph[source_vertex].is_oriented;
         // Gets target normal
         vertex_descriptor target_vertex = target(edge, mst_graph);
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-        const Vector& target_normal = get( mst_graph.m_normal_pmap, mst_graph[target_vertex].input_point);
-#else
-        const Vector& target_normal = get( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point) );
-#endif
+        Vector_ref target_normal = get( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point) );
         bool& target_normal_is_oriented = ((MST_graph&)mst_graph)[target_vertex].is_oriented;
         if ( ! target_normal_is_oriented )
         {
@@ -175,11 +167,7 @@ struct Propagate_normal_orientation
           double normals_dot = source_normal * target_normal;
           if (normals_dot < 0)
           {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-            put( mst_graph.m_normal_pmap, mst_graph[target_vertex].input_point, -target_normal);
-#else
             put( mst_graph.m_normal_pmap, *(mst_graph[target_vertex].input_point), -target_normal );
-#endif
           }
 
           // Is orientation robust?
@@ -220,6 +208,7 @@ mst_find_source(
 
     // Input points types
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
 
     // Precondition: at least one element in the container
     CGAL_point_set_processing_precondition(first != beyond);
@@ -229,32 +218,19 @@ mst_find_source(
     for (ForwardIterator v = ++first; v != beyond; v++)
     {
       
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      double top_z = get(point_pmap,top_point).z(); // top_point's Z coordinate
-      double z = get(point_pmap,v).z();
-#else
       double top_z = get(point_pmap,*top_point).z(); // top_point's Z coordinate
       double z = get(point_pmap,*v).z();
-#endif  
       
       if (top_z < z)
         top_point = v;
     }
 
     // Orients its normal towards +Z axis
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    const Vector& normal = get(normal_pmap,top_point);
-#else
-    const Vector& normal = get(normal_pmap,*top_point);
-#endif
+    Vector_ref normal = get(normal_pmap,*top_point);
     const Vector Z(0, 0, 1);
     if (Z * normal < 0) {
       CGAL_TRACE("  Flip top point normal\n");
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    put(normal_pmap,top_point, -normal);
-#else
     put(normal_pmap,*top_point, -normal);
-#endif
     }
 
     return top_point;
@@ -293,8 +269,8 @@ create_riemannian_graph(
     const Kernel& /*kernel*/) ///< geometric traits.
 {
     // Input points types
-    typedef typename boost::property_traits<PointPMap>::value_type Point;
-    typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename boost::property_traits<PointPMap>::reference Point_ref;
+    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
 
     // Types for K nearest neighbors search structure
     typedef Point_vertex_handle_3<ForwardIterator> Point_vertex_handle_3;
@@ -327,11 +303,7 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-        Point point = get(point_pmap, it);
-#else
-        Point point = get(point_pmap, *it);
-#endif  
+        Point_ref point = get(point_pmap, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         kd_tree_points.push_back(point_wrapper);
     }
@@ -363,22 +335,14 @@ create_riemannian_graph(
     for (ForwardIterator it = first; it != beyond; it++)
     {
         std::size_t it_index = get(index_pmap,it);
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-        Vector it_normal_vector = get(normal_pmap,it);
-#else
-        Vector it_normal_vector = get(normal_pmap,*it);
-#endif  
+        Vector_ref it_normal_vector = get(normal_pmap,*it);
         
         // Gather set of (k+1) neighboring points.
         // Perform k+1 queries (as in point set, the query point is
         // output first). Search may be aborted if k is greater
         // than number of input points.
         
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-        Point point = get(point_pmap, it);
-#else
-        Point point = get(point_pmap, *it);
-#endif  
+        Point_ref point = get(point_pmap, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         Neighbor_search search(*tree, point_wrapper, k+1);
         Search_iterator search_iterator = search.begin();
@@ -403,11 +367,7 @@ create_riemannian_graph(
                 // Computes edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
                 
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                Vector neighbor_normal_vector = get(normal_pmap,neighbor);
-#else
-                Vector neighbor_normal_vector = get(normal_pmap,*neighbor);
-#endif  
+                Vector_ref neighbor_normal_vector = get(normal_pmap,*neighbor);
                 double weight = 1.0 - std::abs(it_normal_vector * neighbor_normal_vector);
                 if (weight < 0)
                     weight = 0; // safety check
@@ -699,12 +659,8 @@ mst_orient_normals(
 {
     return mst_orient_normals(
       first,beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      make_dereference_property_map(first),
-#else
       make_identity_property_map(
       typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
       normal_pmap,
       k);
 }

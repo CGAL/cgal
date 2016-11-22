@@ -122,6 +122,12 @@ namespace CGAL {
     using Base::free_mark;
     using Base::get_new_mark;
 
+    using Base::insert_cell_0_in_cell_1;
+    using Base::insert_cell_0_in_cell_2;
+    using Base::insert_dangling_cell_1_in_cell_2;
+    using Base::insert_cell_1_in_cell_2;
+    using Base::insert_cell_2_in_cell_3;
+    
     Linear_cell_complex_base() : Base()
     {}
 
@@ -130,22 +136,36 @@ namespace CGAL {
      *  @param alcc the linear cell complex to copy.
      *  @post *this is valid.
      */
-    Linear_cell_complex_base(const Self & alcc)
+    Linear_cell_complex_base(const Self & alcc) : Base()
     { Base::template copy<Self>(alcc); }
 
     template < class LCC2 >
-    Linear_cell_complex_base(const LCC2& alcc)
+    Linear_cell_complex_base(const LCC2& alcc) : Base()
     { Base::template copy<LCC2>(alcc);}
 
     template < class LCC2, typename Converters >
-    Linear_cell_complex_base(const LCC2& alcc, Converters& converters)
+    Linear_cell_complex_base(const LCC2& alcc, Converters& converters) : Base()
     { Base::template copy<LCC2, Converters>(alcc, converters);}
 
     template < class LCC2, typename Converters, typename Pointconverter >
     Linear_cell_complex_base(const LCC2& alcc, Converters& converters,
-                        const Pointconverter& pointconverter)
+                             const Pointconverter& pointconverter) : Base()
     { Base::template copy<LCC2, Converters, Pointconverter>
           (alcc, converters, pointconverter);}
+
+    /** Affectation operation. Copies one map to the other.
+     * @param amap a lcc.
+     * @return A copy of that lcc.
+     */
+    Self & operator= (const Self & alcc)
+    {
+      if (this!=&alcc)
+      {
+        Self tmp(alcc);
+        this->swap(tmp);
+      }
+      return *this;
+    }
 
     /** Create a vertex attribute.
      * @return an handle on the new attribute.
@@ -270,29 +290,6 @@ namespace CGAL {
     typename Base::size_type number_of_vertex_attributes() const
     { return Base::template number_of_attributes<0>(); }
 
-#ifdef CGAL_CMAP_DEPRECATED
-    static Vertex_attribute_handle vertex_attribute(Dart_handle adart)
-    {
-      CGAL_assertion(adart!=NULL);
-      return adart->template attribute<0>();
-    }
-   static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle
-                                                          adart)
-    {
-      CGAL_assertion(adart!=NULL);
-      return adart->template attribute<0>();
-    }
-    static Point& point(Dart_handle adart)
-    {
-      CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
-      return adart->template attribute<0>()->point();
-    }
-    static const Point& point(Dart_const_handle adart)
-    {
-      CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
-      return adart->template attribute<0>()->point();
-    }
-#else
     /// Get the vertex_attribute associated with a dart.
     /// @param a dart
     /// @return the vertex_attribute.
@@ -323,17 +320,6 @@ namespace CGAL {
       CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
       return point_of_vertex_attribute(this->template attribute<0>(adart));
     }
-#endif // CGAL_CMAP_DEPRECATED
-
-    // Temporary methods to allow to write lcc->temp_vertex_attribute
-    // even with the old method. Depending if CGAL_CMAP_DEPRECATED is defined or not
-    // call the static method or the new method. To remove when we remove the
-    // old code.
-    Vertex_attribute_handle temp_vertex_attribute(Dart_handle adart)
-    {return vertex_attribute(adart); }
-    Vertex_attribute_const_handle
-    temp_vertex_attribute(Dart_const_handle adart) const
-    {return vertex_attribute(adart); }
 
     /** Test if the lcc is valid.
      * A Linear_cell_complex is valid if it is a valid Combinatorial_map with
@@ -391,6 +377,10 @@ namespace CGAL {
           CGAL_assertion( this->is_whole_map_marked(marks[i]) );
           free_mark(marks[i]);
         }
+
+      Helper::template
+        Foreach_enabled_attributes<internal::Cleanup_useless_attributes<Self> >::
+          run(this);
     }
 
     /** test if the two given facets have the same geometry
@@ -472,7 +462,7 @@ namespace CGAL {
                  are_facets_same_geometry(*it1,beta(*it2, 0)) )
             {
               ++res;
-              this->template sew<3>(*it1,beta(*it2, 0));
+              this->template sew<3>(*it1,this->beta(*it2, 0));
             }
           }
         }
@@ -502,7 +492,7 @@ namespace CGAL {
     Dart_handle make_segment(Vertex_attribute_handle h0,
                              Vertex_attribute_handle h1)
     {
-      Dart_handle d1 = make_edge(*this);
+      Dart_handle d1 = this->make_edge();
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(beta(d1, 2),h1);
 
@@ -530,7 +520,7 @@ namespace CGAL {
                               Vertex_attribute_handle h1,
                               Vertex_attribute_handle h2)
     {
-      Dart_handle d1 = make_combinatorial_polygon(*this,3);
+      Dart_handle d1 = this->make_combinatorial_polygon(3);
 
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(beta(d1, 1),h1);
@@ -566,7 +556,7 @@ namespace CGAL {
                                 Vertex_attribute_handle h2,
                                 Vertex_attribute_handle h3)
     {
-      Dart_handle d1 = make_combinatorial_polygon(*this,4);
+      Dart_handle d1 = this->make_combinatorial_polygon(4);
 
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(beta(d1, 1),h1);
@@ -613,7 +603,7 @@ namespace CGAL {
       Dart_handle d3 = make_triangle(h1, h3, h2);
       Dart_handle d4 = make_triangle(h3, h0, h2);
 
-      return make_combinatorial_tetrahedron(*this, d1, d2, d3, d4);
+      return this->make_combinatorial_tetrahedron(d1, d2, d3, d4);
     }
 
     /** Create a tetrahedron given 4 points.
@@ -672,7 +662,7 @@ namespace CGAL {
       Dart_handle d5 = make_quadrangle(h0, h1, h2, h3);
       Dart_handle d6 = make_quadrangle(h5, h4, h7, h6);
 
-      return make_combinatorial_hexahedron(*this, d1, d2, d3, d4, d5, d6);
+      return this->make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
     }
 
     /** Create an hexahedron given 8 points.
@@ -731,9 +721,10 @@ namespace CGAL {
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p, bool update_attributes)
+    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p,
+                                       bool update_attributes)
     {
-      return CGAL::insert_cell_0_in_cell_1(*this, dh,
+      return this->insert_cell_0_in_cell_1(dh,
                                            create_vertex_attribute(p),
                                            update_attributes);
     }
@@ -744,11 +735,12 @@ namespace CGAL {
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p, bool update_attributes)
+    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p,
+                                       bool update_attributes)
     {
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
-      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v, update_attributes);
+      Dart_handle first = this->insert_cell_0_in_cell_2(dh, v, update_attributes);
 
       if ( first==null_handle ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
@@ -767,7 +759,8 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
-    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p, bool update_attributes = true)
+    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p,
+                                     bool update_attributes = true)
     {
       CGAL_static_assertion(1<=i && i<=2);
       if (i==1) return insert_point_in_cell_1(dh, p, update_attributes);
@@ -784,8 +777,8 @@ namespace CGAL {
                                                  const Point& p,
                                                  bool update_attributes = true)
     {
-      return CGAL::insert_dangling_cell_1_in_cell_2
-          (*this, dh, create_vertex_attribute(p), update_attributes);
+      return this->insert_dangling_cell_1_in_cell_2
+          (dh, create_vertex_attribute(p), update_attributes);
     }
 
     /** Insert a point in a given i-cell.
@@ -915,16 +908,16 @@ namespace CGAL {
       { Base::template copy<Self>(alcc); }
 
       template < class LCC2 >
-      Linear_cell_complex(const LCC2& alcc)
+      Linear_cell_complex(const LCC2& alcc) : Base()
       { Base::template copy<LCC2>(alcc);}
 
       template < class LCC2, typename Converters >
-      Linear_cell_complex(const LCC2& alcc, Converters& converters)
+      Linear_cell_complex(const LCC2& alcc, Converters& converters) : Base()
       { Base::template copy<LCC2, Converters>(alcc, converters);}
 
       template < class LCC2, typename Converters, typename Pointconverter >
       Linear_cell_complex(const LCC2& alcc, Converters& converters,
-                                    const Pointconverter& pointconverter)
+                          const Pointconverter& pointconverter) : Base()
       { Base::template copy<LCC2, Converters, Pointconverter>
             (alcc, converters, pointconverter);}
 

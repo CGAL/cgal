@@ -8,7 +8,6 @@
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Messages_interface.h"
@@ -76,22 +75,28 @@ QString translate(CGAL::Mesh_optimization_return_code rc);
 using namespace CGAL::Three;
 class Mesh_3_optimization_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  typedef Polyhedron_demo_plugin_helper Base;
+  typedef Polyhedron_demo_plugin_interface Base;
 public:
   Mesh_3_optimization_plugin();
-  
-  using Base::init;
   virtual void init(QMainWindow*, Scene_interface*, Messages_interface*);
   inline virtual QList<QAction*> actions() const;
   
-  bool applicable(QAction*) const {
-    return qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
+  bool applicable(QAction* a) const {
+    Scene_c3t3_item* item
+      = qobject_cast<Scene_c3t3_item*>(scene->item(scene->mainSelectionIndex()));
+    if (NULL == item)
+      return false;
+
+    if (a == actionOdt || a == actionLloyd)
+      return true;
+    else //actionPerturb or actionExude
+      return item->c3t3().number_of_cells() > 0;
   }
 
 public Q_SLOTS:
@@ -128,6 +133,8 @@ private:
   QMessageBox* message_box_;
   
   Scene_c3t3_item* source_item_;
+  Scene_interface *scene;
+  QMainWindow* mw;
 }; // end class Mesh_3_optimization_plugin
 
 Mesh_3_optimization_plugin::
@@ -139,6 +146,8 @@ Mesh_3_optimization_plugin()
   , msg(NULL)
   , message_box_(NULL)
   , source_item_(NULL)
+  , scene(NULL)
+  , mw(NULL)
 {
 }
 
@@ -217,8 +226,9 @@ Mesh_3_optimization_plugin::odt()
   QDialog dialog(mw);
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Odt-smoothing parameters"));
-  
+
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
@@ -284,6 +294,7 @@ Mesh_3_optimization_plugin::lloyd()
   QDialog dialog(mw);
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Lloyd-smoothing parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -350,6 +361,7 @@ Mesh_3_optimization_plugin::perturb()
   QDialog dialog(mw);
   Ui::LocalOptim_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Sliver perturbation parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -414,6 +426,7 @@ Mesh_3_optimization_plugin::exude()
   QDialog dialog(mw);
   Ui::LocalOptim_dialog ui;
   ui.setupUi(&dialog);
+  dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Sliver exudation parameters"));
   
   connect(ui.buttonBox, SIGNAL(accepted()),
@@ -503,9 +516,9 @@ treat_result(Scene_c3t3_item& source_item,
   if ( &source_item != &result_item)
   {
     const Scene_item::Bbox& bbox = result_item.bbox();
-    result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
-                            (bbox.ymin + bbox.ymax)/2.f,
-                            (bbox.zmin + bbox.zmax)/2.f);
+    result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
+                            (bbox.ymin() + bbox.ymax())/2.f,
+                            (bbox.zmin() + bbox.zmax())/2.f);
     
     result_item.setColor(QColor(59,74,226));
     result_item.setRenderingMode(source_item.renderingMode());

@@ -1,10 +1,10 @@
 // computes the distance between two cubes in R^3 using double
 // as input type and some internal EXACT floating point type
-#include <iostream>
-#include <cassert>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Polytope_distance_d_traits_3.h>
+#include <CGAL/Homogeneous.h>
+#include <iostream>
+#include <cassert>
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>

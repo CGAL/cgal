@@ -10,7 +10,6 @@
 #include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/convex_hull_3.h>
@@ -18,28 +17,24 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_convex_hull_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-    void init(QMainWindow* mainWindow,
-              Scene_interface* scene_interface)
+    void init(QMainWindow*mw,
+              Scene_interface* scene_interface,
+              Messages_interface*)
     {
-        mw = mainWindow;
         scene = scene_interface;
-        actions_map["actionConvexHull"] = getActionFromMainWindow(mw, "actionConvexHull");
-        actions_map["actionConvexHull"]->setProperty("subMenuName",
-                                                     "3D Convex Hulls");
-        autoConnectActions();
-
+        QAction *actionConvexHull = new QAction("Convex Hull", mw);
+        actionConvexHull->setProperty("subMenuName","3D Convex Hulls");
+        connect(actionConvexHull, SIGNAL(triggered()), this, SLOT(on_actionConvexHull_triggered()));
+        _actions <<actionConvexHull;
     }
 
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionConvexHull";
-  }
+  QList<QAction*> actions()const {return _actions;}
 
   bool applicable(QAction*) const {
     return 
@@ -51,7 +46,9 @@ public:
 
 public Q_SLOTS:
   void on_actionConvexHull_triggered();
-
+private:
+  QList<QAction*> _actions;
+  Scene_interface* scene;
 }; // end Polyhedron_demo_convex_hull_plugin
 
 // for transform iterator
@@ -100,7 +97,9 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     }
     else{
       if (pts_item)
-        CGAL::convex_hull_3(pts_item->point_set()->begin(),pts_item->point_set()->end(),*pConvex_hull);
+        CGAL::convex_hull_3(pts_item->point_set()->points().begin(),
+                            pts_item->point_set()->points().end(),
+                            *pConvex_hull);
       else{
         std::size_t nb_points=0;
         for(std::list<std::vector<Kernel::Point_3> >::const_iterator it = lines_item->polylines.begin();
@@ -128,6 +127,8 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     // default cursor
     QApplication::restoreOverrideCursor();
   }
+
+
 }
 
 #include "Convex_hull_plugin.moc"

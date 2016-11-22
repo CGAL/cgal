@@ -1448,7 +1448,7 @@ private:
       switch (type) {
       case FX:
 	this->set_u (var_index, true, val);
-	// no break here!!
+	CGAL_FALLTHROUGH;
       case LO:
 	this->set_l (var_index, true, val);
 	break;

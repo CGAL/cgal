@@ -98,7 +98,7 @@ public:
     return (m == Wireframe);
   }
   void draw() const {}
-  void draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
       if(it == active_hole) { viewer->glLineWidth(7.f); }
@@ -109,7 +109,7 @@ public:
       else 
       { it->polyline->setRbgColor(0, 0, 255); }
 
-      it->polyline->draw_edges(viewer);
+      it->polyline->drawEdges(viewer);
     }
   }
 
@@ -303,7 +303,7 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
 
-  using Polyhedron_demo_plugin_helper::init;
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
 
   virtual void closure()
@@ -410,7 +410,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   ui_widget.Accept_button->setVisible(false);
   ui_widget.Reject_button->setVisible(false);
 
-  add_dock_widget(dock_widget);
+  addDockWidget(dock_widget);
   
   connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
   connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
@@ -429,7 +429,8 @@ void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(CGAL::Three
   Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
   if(poly_item) {
     // erase assoc polylines item
-    scene->erase( scene->item_id( get_hole_visualizer(poly_item) ) );
+    if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(poly_item))
+      scene->erase( scene->item_id( hole_visualizer ) );
     visualizers.remove(poly_item);
     // close accept-reject dialog if it is open
     if(last_active_item == poly_item) {
@@ -458,7 +459,7 @@ void Polyhedron_demo_hole_filling_plugin::dock_widget_closed() {
 }
 // creates a Scene_hole_visualizer and associate it with active Scene_polyhedron_item
 void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
-  Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
+  Scene_polyhedron_item* poly_item = getSelectedItem<Scene_polyhedron_item>();
   if(!poly_item) {
     print_message("Error: please select a polyhedron item from Geometric Objects list!");
     return;
@@ -468,10 +469,11 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     print_message("Error: selected polyhedron item already has an associated hole visualizer!");
     return;
   }
-
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   Scene_hole_visualizer* hole_visualizer = new Scene_hole_visualizer(poly_item, mw);
   visualizers[poly_item] = hole_visualizer;
   connect(hole_visualizer, SIGNAL(itemChanged()), this, SLOT(hole_visualizer_changed()));
+  QApplication::restoreOverrideCursor();
 
   if(hole_visualizer->polyline_data_list.empty()) {
     print_message("There is no hole in selected polyhedron item!");
@@ -480,7 +482,6 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
     return;
   }
   else {
-    // poly_item->setFlatMode(); // for better visualization
     int item_id = scene->addItem(hole_visualizer);
     scene->setSelectedItem(item_id);
     hole_visualizer->setName(tr("%1-hole visualizer").arg(poly_item->name()));
@@ -489,7 +490,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
 // fills selected holes on active Scene_hole_visualizer
 void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   // get active polylines item
-  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  Scene_hole_visualizer* hole_visualizer = getSelectedItem<Scene_hole_visualizer>();
   if(!hole_visualizer) {
     print_message(no_selected_hole_visualizer_error_message());
     return;
@@ -520,7 +521,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
 
 // fills all holes and removes associated Scene_hole_visualizer if any
 void Polyhedron_demo_hole_filling_plugin::on_Select_all_holes_button() {
-  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  Scene_hole_visualizer* hole_visualizer = getSelectedItem<Scene_hole_visualizer>();
   if(!hole_visualizer) {
     print_message(no_selected_hole_visualizer_error_message());
     return;
@@ -529,7 +530,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Select_all_holes_button() {
 }
 
 void Polyhedron_demo_hole_filling_plugin::on_Select_small_holes_button() {
-  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  Scene_hole_visualizer* hole_visualizer = getSelectedItem<Scene_hole_visualizer>();
   if(!hole_visualizer) {
     print_message(no_selected_hole_visualizer_error_message());
     return;
@@ -547,7 +548,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Select_small_holes_button() {
 }
 
 void Polyhedron_demo_hole_filling_plugin::on_Deselect_all_holes_button() {
-  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  Scene_hole_visualizer* hole_visualizer = getSelectedItem<Scene_hole_visualizer>();
   if(!hole_visualizer) {
     print_message(no_selected_hole_visualizer_error_message());
     return;
@@ -557,7 +558,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Deselect_all_holes_button() {
 
 // Simply create polyline items and put them into scene - nothing related with other parts of the plugin
 void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
-  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  Scene_hole_visualizer* hole_visualizer = getSelectedItem<Scene_hole_visualizer>();
   if(!hole_visualizer) {
     print_message(no_selected_hole_visualizer_error_message());
     return;

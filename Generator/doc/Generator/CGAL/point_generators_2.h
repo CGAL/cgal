@@ -36,7 +36,7 @@ are needed from `rnd` for each point.
 */
   template <class ForwardIterator, class Creator>
 void perturb_points_2( ForwardIterator first, ForwardIterator last,
-double xeps, double yeps = xeps, Random& rnd = default_random,
+double xeps, double yeps = xeps, Random& rnd = get_default_random(),
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
 
@@ -132,7 +132,7 @@ Returns the value of `first2` after inserting the \f$ n\f$ points.
   template <class RandomAccessIterator, class OutputIterator, class Creator>
 OutputIterator random_collinear_points_2( RandomAccessIterator first,
 RandomAccessIterator last,
-std::size_t n, OutputIterator first2, Random& rnd = default_random,
+std::size_t n, OutputIterator first2, Random& rnd = get_default_random(),
 Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);
 
 /// @}
@@ -199,7 +199,7 @@ i.e.\ \f$ |*g| < r\f$. Two random numbers are needed from
 
 */
 Random_points_in_disc_2( double r, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 
@@ -268,7 +268,7 @@ Two random numbers are needed from `rnd` for each point.
 
 */
 Random_points_in_square_2( double a, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 
@@ -326,32 +326,170 @@ typedef const Point_2* pointer;
 
 */
 typedef const Point_2& reference;
+ /*!
+ Creates  an input iterator `g` generating points of type `Point_2` uniformly
+ distributed inside the triangle with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
+ \f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
+ Two random numbers are needed from `rnd` for each point.
+
+ */
+ Random_points_in_triangle_2(Point_2& p, Point_2& q, Point_2& r, Random& rnd =
+ get_default_random() );
+
+ /*!
+ Creates  an input iterator `g` generating points of type `Point_2` uniformly
+ distributed inside a triangle \f$t\f$ with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
+ \f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
+ Two random numbers are needed from `rnd` for each point.
+
+ */
+ Random_points_in_triangle_2(Triangle_2& t, Random& rnd =
+ get_default_random() );
+
+ /// @}
+
+ }; /* end Random_points_in_triangle_2 */
+
+ /*!
+
+ The class `Random_points_in_triangle_mesh_2` is an input iterator creating points uniformly distributed inside a 2D domain represented by a 2D triangulation. Triangulation must be a \cgal triangulation with a face model of `DelaunayMeshFaceBase_2`.
+ The sampled model is the union of the faces for which `DelaunayMeshFaceBase_2::is_in_domain()` returns `true`.
+ The triangulation must be valid and unchanged while the iterator is used.
 
 
+ \cgalModels `InputIterator`
+ \cgalModels `PointGenerator`
+
+ \sa `CGAL::cpp11::copy_n()`
+ \sa `CGAL::Counting_iterator`
+ \sa `CGAL::Points_on_segment_2<Point_2>`
+ \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+ \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
+ \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
+ \sa`CGAL::Random_points_in_triangle_mesh_3<Point_3, TriangleMesh>`
+ \sa`CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3T3>`
+ \sa`CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
+ \sa `CGAL::Random_points_in_triangles_3<Point_3>`
+ \sa `CGAL::Random_points_in_triangles_2<Point_2>`
+ \sa `std::random_shuffle`
+
+ */
+ template< typename Point_2, typename Triangulation >
+ class Random_points_in_triangle_mesh_2 {
+ public:
+
+ /// \name Types
+ /// @{
+
+ /*!
+
+ */
+ typedef std::input_iterator_tag iterator_category;
+
+ /*!
+
+ */
+ typedef Point_2 value_type;
+
+ /*!
+
+ */
+ typedef std::ptrdiff_t difference_type;
+
+ /*!
+
+ */
+ typedef const Point_2* pointer;
+
+ /*!
+
+ */
+ typedef const Point_2& reference;
 
 /*!
 Creates  an input iterator `g` generating points of type `Point_2` uniformly
-distributed inside the triangle with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
-\f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
-Two random numbers are needed from `rnd` for each point.
+distributed between the triangles of the triangulation. Each triangle has a probability to be chosen to hold the point depending on its area.
 
 */
-Random_points_in_triangle_2(Point_2& p, Point_2& q, Point_2& r, Random& rnd =
-default_random);
-
-/*!
-Creates  an input iterator `g` generating points of type `Point_2` uniformly
-distributed inside a triangle \f$t\f$ with vertices \f$ p, q \f$ and \f$ r \f$, i.e., \f$*g = \alpha p + \beta q + \gamma r \f$, for some
-\f$ \alpha, \beta, \gamma \in [0, 1] \f$ and \f$ \alpha + \beta + \gamma = 1 \f$.
-Two random numbers are needed from `rnd` for each point.
-
-*/
-Random_points_in_triangle_2(Triangle_2& t, Random& rnd =
-default_random);
+Random_points_in_triangle_mesh_2(const Triangulation& triangulation, Random& rnd =
+get_default_random() );
 
 /// @}
 
-}; /* end Random_points_in_triangle_2 */
+}; /* end Random_points_in_triangle_mesh_2 */
+
+/*!
+
+ The class `Random_points_in_triangles_2` is an input iterator creating points uniformly distributed inside a range of `Triangle_2`.
+ The triangle range must be valid and unchanged while the iterator is used.
+
+
+ \cgalModels `InputIterator`
+ \cgalModels `PointGenerator`
+
+ \sa `CGAL::cpp11::copy_n()`
+ \sa `CGAL::Counting_iterator`
+ \sa `CGAL::Points_on_segment_2<Point_2>`
+ \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_on_segment_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_on_square_2<Point_2, Creator>`
+ \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
+ \sa `CGAL::Random_points_in_triangle_3<Point_2, Creator>`
+ \sa `CGAL::Random_points_in_tetrahedron_3<Point_2, Creator>`
+ \sa `CGAL::Random_points_in_triangle_mesh_3<Point_3, TriangleMesh>`
+ \sa `CGAL::Random_points_in_tetrahedral_mesh_boundary_3<C3T3>`
+ \sa `CGAL::Random_points_in_tetrahedral_mesh_3<C3T3>`
+ \sa `CGAL::Random_points_in_triangles_3<Point_3>`
+ \sa `std::random_shuffle`
+
+ */
+ template< typename Point_2 >
+ class Random_points_in_triangles_2 {
+ public:
+
+ /// \name Types
+ /// @{
+
+ /*!
+
+ */
+ typedef std::input_iterator_tag iterator_category;
+
+ /*!
+
+ */
+ typedef Point_2 value_type;
+
+ /*!
+
+ */
+ typedef std::ptrdiff_t difference_type;
+
+ /*!
+
+ */
+ typedef const Point_2* pointer;
+
+ /*!
+
+ */
+ typedef const Point_2& reference;
+
+/*!
+Creates  an input iterator `g` generating points of type `Point_2` uniformly
+distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
+
+*/
+template<typename TriangleRange>
+Random_points_in_triangles_2(const TriangleRange& triangles, Random& rnd =
+get_default_random() );
+
+/// @}
+
+}; /* end Random_points_in_triangles_2 */
 
 /*!
 
@@ -418,7 +556,7 @@ i.e.\ \f$ |*g| == r\f$. A single random number is needed from
 
 */
 Random_points_on_circle_2( double r, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 
@@ -488,7 +626,7 @@ A single random number is needed from `rnd` for each point.
 The expressions `to_double(p.x())` and `to_double(p.y())` must result in the respective `double` representation of the coordinates of \f$ p\f$, and similarly for \f$ q\f$.
 */
 Random_points_on_segment_2( const Point_2& p, const Point_2& q,
-Random& rnd = default_random);
+Random& rnd = get_default_random());
 
 /// @}
 
@@ -560,7 +698,7 @@ A single random number is needed from `rnd` for each point.
 
 */
 Random_points_on_square_2( double a, Random& rnd =
-default_random);
+get_default_random());
 
 /// @}
 

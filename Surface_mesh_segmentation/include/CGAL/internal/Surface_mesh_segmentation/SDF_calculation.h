@@ -81,16 +81,13 @@ private:
 
   typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor   face_handle;
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor   halfedge_handle;
 
   typedef AABB_face_graph_triangle_primitive<Polyhedron, VertexPointPmap> Primitive;
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
   AABB_traits_internal;
   typedef typename CGAL::AABB_tree<AABB_traits_internal>                 Tree;
-
-  typedef typename Tree::Object_and_primitive_id
-  Object_and_primitive_id;
-  typedef typename Tree::Primitive_id
-  Primitive_id;
+  typedef typename Tree::Primitive_id Primitive_id;
 
   // Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = weight.
   typedef boost::tuple<double, double, double> Disk_sample;
@@ -102,6 +99,14 @@ private:
 
 // member variables
 private:
+  static AABB_traits_internal
+  create_traits(const Polyhedron& mesh,
+                VertexPointPmap vertex_point_map )
+  {
+    AABB_traits_internal traits;
+    traits.set_shared_data(mesh, vertex_point_map);
+    return traits;
+  }
   GeomTraits traits;
   const Polyhedron& mesh;
   VertexPointPmap vertex_point_map;
@@ -119,7 +124,7 @@ private:
   bool   use_diagonal;
 public:
   /**
-   * Construct AABB tree with a mesh.
+   * Construct AABB tree with a mesh. Ignores degenerated faces.
    * @param mesh `CGAL Polyhedron` on which AABB tree constructed
    * @param build_kd_tree requirement on internal kd-tree (it is only required if find_closest_with_AABB_distance is planned to use)
    * @param use_diagonal if true: calculates diagonal of AABB tree and cast segments instead of rays using diagonal length
@@ -139,9 +144,24 @@ public:
     normal_functor(traits.construct_normal_3_object()),
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
+    tree(create_traits(mesh, vertex_point_map)),
     use_diagonal(use_diagonal) 
   {
-    tree.insert(faces(mesh).first, faces(mesh).second, mesh, vertex_point_map);
+    typedef typename boost::property_traits<VertexPointPmap>::reference Point_ref;
+    typename GeomTraits::Collinear_3  collinear = traits.collinear_3_object();
+    face_iterator it, end;
+    for(it = faces(mesh).begin(), end = faces(mesh).end(); it!=end; it++)
+    {
+        halfedge_handle h = halfedge(*it, mesh);
+        Point_ref a(get(vertex_point_map, target(h, mesh)));
+        h = next(h, mesh);
+        Point_ref b(get(vertex_point_map,target(h, mesh)));
+        h = next(h, mesh);
+        Point_ref c(get(vertex_point_map, target(h, mesh)));
+        bool test = collinear(a,b,c);
+        if(!test)
+          tree.insert(Primitive(it, mesh, vertex_point_map));
+    }
     tree.build();
 
     if(build_kd_tree) {
@@ -313,7 +333,7 @@ public:
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum(ray, skip, accept_if_acute);
+          = ray_casting(ray, skip, accept_if_acute);
       }
 
       if(!intersection_is_acute) {
@@ -326,7 +346,7 @@ public:
     }
 
     if(ray_distances.empty()) {
-      return boost::optional<double>();
+      return boost::none;
     }
 
     return boost::optional<double>(remove_outliers_and_calculate_sdf_value(
@@ -374,7 +394,8 @@ private:
 
   /**
    * Finds closest intersection for parameter @a query.
-   * @param query `Segment` or `Ray` type query
+   * @param query `Segment` or `Ray` type query.
+   * It is now only used with `Segment` as the function `first_intersection()` is faster if rays are used
    * @param tree AABB tree which includes polyhedron
    * @param facet parent facet of @a query
    * (since numerical limitations on both center calculation and intersection test, query might intersect with related facet, should be skipped in such case)
@@ -384,15 +405,17 @@ private:
    *   - get<2> double : distance between ray/segment origin and intersection point (0.0 if get<0> is false)
    *   - get<3> Primitive_id : closest intersected primitive if get<0> is true, else Primitive_id()
    */
-  template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
+  template <class Query, class SkipPrimitiveFunctor>
   boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
     const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
     boost::tuple<bool, bool, double, Primitive_id>
     min_distance(false, false, 0.0, Primitive_id());
-    std::list<Object_and_primitive_id> intersections;
+
+    typedef typename Tree:: template Intersection_and_primitive_id<Query>::Type Intersection_and_primitive_id;
+    std::list<Intersection_and_primitive_id> intersections;
 
     //SL: the difference with all_intersections is that in the traversal traits, we do do_intersect before calling intersection.
-    typedef  std::back_insert_iterator< std::list<Object_and_primitive_id> >
+    typedef  std::back_insert_iterator< std::list<Intersection_and_primitive_id> >
     Output_iterator;
     Listing_intersection_traits_ray_or_segment_triangle<typename Tree::AABB_traits,Query,Output_iterator>
     traversal_traits(std::back_inserter(intersections), tree.traits());
@@ -400,17 +423,17 @@ private:
 
     Vector min_i_ray(NULL_VECTOR);
     Primitive_id min_id;
-    for(typename std::list<Object_and_primitive_id>::iterator op_it =
+    for(typename std::list<Intersection_and_primitive_id>::iterator op_it =
           intersections.begin();
         op_it != intersections.end() ; ++op_it) {
-      Object object = op_it->first;
+      const typename Intersection_and_primitive_id::first_type& object = op_it->first;
       Primitive_id id = op_it->second;
       if( skip(id) ) {
         continue;
       }
 
       const Point* i_point;
-      if(!(i_point = object_cast<Point>(&object))) {
+      if(!(i_point = boost::get<Point>(&object))) {
         continue;  // continue in case of segment.
       }
 
@@ -445,6 +468,48 @@ private:
 
     min_distance.template get<1>() = true; // founded intersection is acceptable.
     min_distance.template get<2>() = std::sqrt(min_distance.template get<2>());
+    return min_distance;
+  }
+
+  // function similar to `cast_and_return_minimum()` but using the function
+  // first_intersection with a Ray to get the closest intersected primitive
+  template<typename SkipFunctor>
+  boost::tuple<bool, bool, double, Primitive_id> ray_casting(
+    const Ray& query, SkipFunctor s, bool accept_if_acute) const {
+
+    const boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
+      min_intersection = tree.first_intersection(query, s);
+    if(!min_intersection)
+      return boost::make_tuple(false, false, 0.0, Primitive_id());
+
+    const Point* i_point = boost::get<Point>( &min_intersection->first );
+    if (!i_point) //segment case ignored
+      return boost::make_tuple(false, false, 0.0, Primitive_id());
+
+    Vector min_i_ray(*i_point, query.source());
+
+    boost::tuple<bool, bool, double, Primitive_id>
+    min_distance(true, false, to_double(min_i_ray.squared_length()), min_intersection->second);
+
+    const Primitive_id& min_id = min_distance.template get<3>();
+
+    if(accept_if_acute) {
+      // check whether the ray makes acute angle with intersected facet
+      const Point& min_v1 = get(vertex_point_map,target(halfedge(min_id,mesh),mesh));
+      const Point& min_v2 = get(vertex_point_map,target(next(halfedge(min_id,mesh),mesh),mesh));
+      const Point& min_v3 = get(vertex_point_map,target(prev(halfedge(min_id,mesh),mesh),mesh));
+      Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
+
+      if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
+                       Point(ORIGIN),
+                       translated_point_functor(Point(ORIGIN), min_normal)) != ACUTE) {
+        return min_distance;
+      }
+    }
+
+    min_distance.template get<1>() = true; // founded intersection is acceptable.
+    min_distance.template get<2>() = std::sqrt(min_distance.template get<2>());
+
     return min_distance;
   }
 

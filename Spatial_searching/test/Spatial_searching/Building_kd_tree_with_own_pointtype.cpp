@@ -10,7 +10,7 @@
 #include "Distance.h"
 #include "Point_with_info.h"
 
-typedef CGAL::Random_points_in_cube_3<Point>                                            Random_points_iterator;
+typedef CGAL::Random_points_in_cube_3<Point, CGAL::Creator_uniform_3<double,Point> >    Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator>                                 N_Random_points_iterator;
 typedef CGAL::Search_traits<double, Point, const double*, Construct_coord_iterator>     Traits;
 typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance>                            K_neighbor_search;

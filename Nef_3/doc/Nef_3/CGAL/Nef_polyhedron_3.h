@@ -1188,6 +1188,26 @@ public:
   Nef_polyhedron_3(Polyhedron& P); 
 
 /*!
+  creates a Nef polyhedron, which represents the same point set as
+  the polyhedral surface `pm` does. `him` and `fim` must be both initialized
+  so that halfedges and faces are indexed in `[0, num_halfedges(pm)[`
+  and `[0, num_faces(pm)[` respectively. If `PolygonMesh` has an internal
+  halfedge index map and an internal face index map, the last two parameters
+  can be omitted.
+  \tparam PolygonMesh a model of `FaceListGraph` and `VertexListGraph`.
+  \tparam HalfedgeIndexMap a class model of `ReadablePropertyMap` with
+          `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` as key type
+           a value type convertible to `std::size_t`
+  \tparam FaceIndexMap a class model of `ReadablePropertyMap` with
+          `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
+           a value type convertible to `std::size_t`
+*/
+ template <class PolygonMesh, class HalfedgeIndexMap, class FaceIndexMap>
+ explicit Nef_polyhedron_3(const PolygonMesh& pm,
+                           const HalfedgeIndexMap& him,
+                           const FaceIndexMap& fim);
+
+/*!
   creates a Nef polyhedron consisting of a single polygon 
   spanned by the list of points in the iterator range 
   `[begin,end)`. If the points do not lie on a common
@@ -1501,7 +1521,9 @@ public:
   void transform(const Aff_transformation_3& aff); 
 
 /*!
-  converts `N` into a Polyhedron. \pre `N` is simple. 
+  converts `N` into a triangulated Polyhedron.
+  For conversion to other types, see `convert_nef_polyhedron_to_polygon_mesh()`.
+  \pre `N` is simple.
 */ 
   void convert_to_polyhedron(Polyhedron& P) const; 
 

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/CGAL/cgal.svg?branch=master)](https://travis-ci.org/CGAL/cgal)
+
 #![CGAL](Installation/doc_html/images/cgal_2013_grey.png)
 
 The Computational Geometry Algorithms Library (CGAL) is a C++ library that
@@ -48,4 +50,6 @@ See the file [LICENSE.md](LICENSE.md).
 More information
 ================
 * [The CGAL web site](http://www.cgal.org/)
-* [Lastest CGAL release documentation pages](http://doc.cgal.org/)
+* [Latest CGAL release documentation pages](http://doc.cgal.org/)
+* [Latest CGAL master documentation pages, updated once a week](https://cgal.geometryfactory.com/CGAL/doc/master/)
+* [CGAL daily testsuite results](https://cgal.geometryfactory.com/CGAL/testsuite/)

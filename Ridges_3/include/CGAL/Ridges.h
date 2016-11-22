@@ -27,9 +27,10 @@
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 #include <CGAL/barycenter.h>
-#include <CGAL/property_map.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/foreach.hpp>
 
 namespace CGAL {
  

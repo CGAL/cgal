@@ -1,4 +1,4 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -23,12 +23,16 @@
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Pedro Machado Manhaes de Castro  <pmmc@cin.ufpe.br>
 //                 Alexandru Tifrea
+//                 Maxime Gimeno
+
 
 #ifndef CGAL_POINT_GENERATORS_2_H
 #define CGAL_POINT_GENERATORS_2_H 1
 #include <CGAL/generators.h>
 #include <iterator>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/internal/Generic_random_point_generator.h>
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 
@@ -504,15 +508,15 @@ public:
 	typedef Random_points_in_triangle_2<P> This;
 	typedef typename Kernel_traits<P>::Kernel::Triangle_2 Triangle_2;
 	Random_points_in_triangle_2() {}
-	Random_points_in_triangle_2( const This& x,Random& rnd = default_random)
+	Random_points_in_triangle_2( const This& x,Random& rnd = get_default_random())
 	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r) {
 		generate_point();
 	}
-	Random_points_in_triangle_2( const P& p, const P& q, const P& r, Random& rnd = default_random)
+	Random_points_in_triangle_2( const P& p, const P& q, const P& r, Random& rnd = get_default_random())
 	: Random_generator_base<P>( 1, rnd ),_p(p),_q(q),_r(r) {
 		generate_point();
 	}
-	Random_points_in_triangle_2( const Triangle_2& triangle,Random& rnd = default_random)
+	Random_points_in_triangle_2( const Triangle_2& triangle,Random& rnd = get_default_random())
 	: Random_generator_base<P>( 1,
 			rnd),_p(triangle[0]),_q(triangle[1]),_r(triangle[2]) {
 		generate_point();
@@ -541,6 +545,116 @@ void Random_points_in_triangle_2<P, Creator>::generate_point() {
 	this->d_item = creator(T(to_double(_p.x())*b1+to_double(_q.x())*b2+to_double(_r.x())*b3),
 							T(to_double(_p.y())*b1+to_double(_q.y())*b2+to_double(_r.y())*b3));
 }
+
+namespace internal {
+//Functor returning Triangle_2 from Triangulation_2 Faces
+template <class T>
+class Triangle_from_face_2
+{
+  typedef typename T::Triangle Triangle;
+public:
+  typedef Triangle result_type;
+  Triangle_from_face_2() {}
+
+  Triangle operator()(typename T::Face_handle face)const {
+    return Triangle(face->vertex(0)->point(), face->vertex(1)->point(), face->vertex(2)->point());
+  }
+};
+}//end namespace internal
+template <class P, class T>
+class Random_points_in_triangle_mesh_2 : public Generic_random_point_generator<
+  typename T::Face_handle ,
+  internal::Triangle_from_face_2<T>,
+    Random_points_in_triangle_2<P> , P> {
+public:
+  typedef Generic_random_point_generator<typename T::Face_handle,
+                                         internal::Triangle_from_face_2<T>,
+                                         Random_points_in_triangle_2<P>,
+                                         P>                           Base;
+  typedef typename T::Face_handle                                     Id;
+  typedef P result_type;
+  typedef Random_points_in_triangle_mesh_2<P, T>                      This;
+
+
+  Random_points_in_triangle_mesh_2( const T& triangulation, Random& rnd = get_default_random())
+    : Base( CGAL::make_prevent_deref_range(triangulation.finite_faces_begin(),
+                                           triangulation.finite_faces_end()),
+            internal::Triangle_from_face_2<T>(),
+            typename Kernel_traits<P>::Kernel::Compute_area_2(),
+            rnd )
+  {
+  }
+  This& operator++() {
+    Base::generate_point();
+    return *this;
+  }
+  This operator++(int) {
+    This tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+};
+
+namespace internal
+{
+
+template<class T>
+class Deref
+{
+public:
+  typedef const T& result_type;
+  const T& operator()(const T* triangle) const
+  {
+    return *triangle;
+  }
+};
+
+template<class A>
+struct Address_of {
+  typedef const A* result_type;
+  const A* operator()(const A& a) const
+  {
+    return &a;
+  }
+};
+
+}//namesapce internal
+
+template <class Point_2,
+          class Triangle_2=typename Kernel_traits<Point_2>::Kernel::Triangle_2>
+struct Random_points_in_triangles_2
+  : public Generic_random_point_generator<const Triangle_2*,
+                                          internal::Deref<Triangle_2>,
+                                          Random_points_in_triangle_2<Point_2>,
+                                          Point_2>
+{
+  typedef Generic_random_point_generator<const Triangle_2*,
+                                         internal::Deref<Triangle_2>,
+                                         Random_points_in_triangle_2<Point_2>,
+                                         Point_2>                   Base;
+  typedef const Triangle_2*                                         Id;
+  typedef Point_2                                                   result_type;
+  typedef Random_points_in_triangles_2<Point_2>                     This;
+
+  template<typename TriangleRange>
+  Random_points_in_triangles_2( const TriangleRange& triangles, Random& rnd = get_default_random())
+    : Base(make_range( boost::make_transform_iterator(triangles.begin(), internal::Address_of<Triangle_2>()),
+                       boost::make_transform_iterator(triangles.end(), internal::Address_of<Triangle_2>()) ),
+           internal::Deref<Triangle_2>(),
+           typename Kernel_traits<Point_2>::Kernel::Compute_area_2(),
+           rnd )
+  {
+  }
+  This& operator++() {
+    Base::generate_point();
+    return *this;
+  }
+  This operator++(int) {
+    This tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+};
 
 } //namespace CGAL
 #endif // CGAL_POINT_GENERATORS_2_H //

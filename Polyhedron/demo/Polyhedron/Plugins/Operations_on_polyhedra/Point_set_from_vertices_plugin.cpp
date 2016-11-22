@@ -23,7 +23,7 @@ class Polyhedron_demo_point_set_from_vertices_plugin :
 
 public:
   void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface);
+            CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
 
   bool applicable(QAction*) const {
     const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -44,7 +44,8 @@ private:
 }; // end Polyhedron_demo_point_set_from_vertices_plugin
 
 void Polyhedron_demo_point_set_from_vertices_plugin::init(QMainWindow* mainWindow,
-                                                          CGAL::Three::Scene_interface* scene_interface)
+                                                          CGAL::Three::Scene_interface* scene_interface,
+                                                          Messages_interface*)
 {
   scene = scene_interface;
   actionPointSetFromPolyhedronVertices = new QAction(tr("&Create Point Set from Vertices"), mainWindow);
@@ -59,6 +60,7 @@ QList<QAction*> Polyhedron_demo_point_set_from_vertices_plugin::actions() const 
 
 void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* poly_item =
@@ -92,11 +94,12 @@ void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
         = soup_item->points();
 
       for (std::size_t i = 0; i < pts.size(); ++ i)
-        points->point_set()->push_back (pts[i]);
+        points->point_set()->insert (pts[i]);
       
       scene->addItem (points);
     }
 
+  QApplication::restoreOverrideCursor();
 }
 
 

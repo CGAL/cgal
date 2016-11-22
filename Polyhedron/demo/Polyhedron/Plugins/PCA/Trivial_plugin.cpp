@@ -7,6 +7,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <QAction>
 #include <QMainWindow>
+#include <QApplication>
 
 class Q_DECL_EXPORT Scene_bbox_item : public CGAL::Three::Scene_item
 {
@@ -16,9 +17,8 @@ public:
         :  Scene_item(1,1), scene(scene_interface)
 
     {
-
         positions_lines.resize(0);
-        //Generates an integer which will be used as ID for each buffer
+        are_buffers_filled = false;
     }
     ~Scene_bbox_item()
     {
@@ -37,9 +37,9 @@ public:
                        "<p>x range: (%1, %2)<br />"
                        "y range: (%3, %4)<br />"
                        "z range: (%5, %6)</p>")
-                .arg(bb.xmin).arg(bb.xmax)
-                .arg(bb.ymin).arg(bb.ymax)
-                .arg(bb.zmin).arg(bb.zmax);
+                .arg(bb.xmin()).arg(bb.xmax())
+                .arg(bb.ymin()).arg(bb.ymax())
+                .arg(bb.zmin()).arg(bb.zmax());
     }
 
     // Indicate if rendering mode is supported
@@ -47,13 +47,16 @@ public:
         return (m == Wireframe);
     }
 
-    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
-            initialize_buffers(viewer);
+        {
+            computeElements();
+            initializeBuffers(viewer);
+        }
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors", this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
@@ -64,17 +67,16 @@ public:
 
     void invalidateOpenGLBuffers()
     {
-        compute_elements();
-        are_buffers_filled = false;
         compute_bbox();
+        are_buffers_filled = false;
     }
 
 private:
 
     mutable std::vector<float> positions_lines;
     mutable QOpenGLShaderProgram *program;
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
 
         //vao containing the data for the lines
@@ -97,38 +99,40 @@ private:
         are_buffers_filled = true;
     }
 
-    void compute_elements() const
+    void computeElements() const
     {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
         positions_lines.clear();
         const Bbox& bb = scene->bbox();
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        QApplication::restoreOverrideCursor();
     }
 
     const CGAL::Three::Scene_interface* scene;
@@ -145,14 +149,15 @@ class Polyhedron_demo_trivial_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
+    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
     QList<QAction*> actions() const {
         return QList<QAction*>() << actionBbox;
     }
 
     bool applicable(QAction*) const {
+      if(scene->numberOfEntries() > 0)
         return true;
-    }
+    return false;}
 public Q_SLOTS:
 
     void bbox();
@@ -165,11 +170,10 @@ private:
 
 }; // end Polyhedron_demo_trivial_plugin
 
-void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
+void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
 {
     scene = scene_interface;
     actionBbox = new QAction(tr("Create Bbox"), mainWindow);
-    //actionBbox->setProperty("subMenuName", "Object creation");
     connect(actionBbox, SIGNAL(triggered()),
             this, SLOT(bbox()));
 }
@@ -182,6 +186,7 @@ void Polyhedron_demo_trivial_plugin::bbox()
         if(qobject_cast<Scene_bbox_item*>(scene->item(i)))
             return;
     }
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_item* item = new Scene_bbox_item(scene);
     connect(item, SIGNAL(destroyed()),
             this, SLOT(enableAction()));
@@ -190,6 +195,7 @@ void Polyhedron_demo_trivial_plugin::bbox()
     item->setRenderingMode(Wireframe);
     scene->addItem(item);
     actionBbox->setEnabled(false);
+    QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_trivial_plugin::enableAction() {

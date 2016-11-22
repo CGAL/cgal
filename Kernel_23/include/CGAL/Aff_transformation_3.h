@@ -25,6 +25,7 @@
 #define CGAL_AFF_TRANSFORMATION_3_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/aff_transformation_tags.h>
 
 namespace CGAL {
 

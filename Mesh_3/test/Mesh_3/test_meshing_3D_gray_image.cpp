@@ -54,7 +54,7 @@ public:
       Image,
       K_e_i,
       Image_word_type,
-      Greater_than<Image_word_type> >                   Mesh_domain;
+      Greater_than<double> >                            Mesh_domain;
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -76,14 +76,14 @@ public:
     }
 
     std::cout << "\tSeed is\t"
-      << CGAL::default_random.get_seed() << std::endl;
+              << CGAL::get_default_random().get_seed() << std::endl;
 
     // Domain
     Mesh_domain domain(image,
       2.9f, //isovalue
       0.f,  //value_outside
       1e-3, //error_bound
-      &CGAL::default_random);//random generator for determinism
+      &CGAL::get_default_random());//random generator for determinism
 
     const CGAL::Mesh_facet_topology topology =
       boost::is_same<Concurrency_tag, CGAL::Sequential_tag>::value ?

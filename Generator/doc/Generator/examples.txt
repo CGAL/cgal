@@ -15,4 +15,11 @@
 \example Generator/random_convex_hull_2.cpp
 \example Generator/random_points_triangle_2.cpp
 \example Generator/random_points_tetrahedron_and_triangle_3.cpp
+\example Generator/random_points_on_triangle_mesh_2.cpp
+\example Generator/random_points_on_triangle_mesh_3.cpp
+\example Generator/random_points_on_tetrahedral_mesh_3.cpp
+\example Generator/random_points_in_tetrahedral_mesh_3.cpp
+\example Generator/random_points_in_triangles_2.cpp
+\example Generator/random_points_in_triangles_3.cpp
+
 */

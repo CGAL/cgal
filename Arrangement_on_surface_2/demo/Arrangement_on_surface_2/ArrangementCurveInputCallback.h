@@ -73,7 +73,7 @@ public:
     }
 #endif
     
-    emit CGAL::Qt::GraphicsViewInput::modelChanged( );
+    Q_EMIT CGAL::Qt::GraphicsViewInput::modelChanged( );
   }
 
   void setScene( QGraphicsScene* scene )

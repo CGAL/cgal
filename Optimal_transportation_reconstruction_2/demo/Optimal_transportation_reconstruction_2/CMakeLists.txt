@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the Optimal_transportation_reconstruction_2 demo.
 
-project(Optimal_transportation_reconstruction_2_demo)
+project(Optimal_transportation_reconstruction_2_Demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
@@ -49,7 +49,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
   )
 
   set( 
-  MOCS 
+  CGAL_Qt5_MOC_FILES 
   moc_dialog_options.cxx 
   moc_glviewer.cxx 
   moc_window.cxx 
@@ -74,22 +74,32 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
   qt5_generate_moc( "dialog_options.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_dialog_options.cxx" )
   add_file_dependencies( moc_dialog_options.cxx "${CMAKE_CURRENT_SOURCE_DIR}/dialog_options.h" )
 
-  qt5_add_resources ( RESOURCE_FILES pwsrec.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES pwsrec.qrc )
 
-  add_executable  ( Optimal_transportation_reconstruction_2_demo ${SRCS} ${MOCS} ${UI_FILES} ${RESOURCE_FILES} ${CGAL_ADDITIONAL_FILES} ${CGAL_RESOURCE_FILES})
+  add_executable  ( Otr2_demo ${SRCS} ${CGAL_Qt5_MOC_FILES} ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES})
   
-  qt5_use_modules(Optimal_transportation_reconstruction_2_demo OpenGL)
+  qt5_use_modules(Otr2_demo OpenGL)
 
   # Link with Qt libraries
-  target_link_libraries( Optimal_transportation_reconstruction_2_demo ${QT_LIBRARIES} )
+  target_link_libraries( Otr2_demo ${QT_LIBRARIES} )
 
   # Link with CGAL
-  target_link_libraries( Optimal_transportation_reconstruction_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( Otr2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with OpenGL
-  target_link_libraries( Optimal_transportation_reconstruction_2_demo ${OPENGL_gl_LIBRARY} )
+  target_link_libraries( Otr2_demo ${OPENGL_gl_LIBRARY} )
+  
+  # Link with pthread if necessary
+  if (CIMG_INCLUDE_DIR)
+    # Is pthread around? If yes, we need to link against it
+    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    find_package (Threads)
+    if (CMAKE_USE_PTHREADS_INIT)
+      target_link_libraries( Otr2_demo ${CMAKE_THREAD_LIBS_INIT} )
+    endif()
+  endif()
     
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Optimal_transportation_reconstruction_2_demo )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Otr2_demo )
 
 else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 

@@ -223,6 +223,7 @@ Kernel_23/test/Kernel_23/Makefile
 Kernel_23/test/Kernel_23/Simple_cartesian
 Kernel_23/test/Kernel_23/Simple_homogeneous
 Kernel_23/test/Kernel_23/Test_IO.out
+/Kernel_23/test/Kernel_23/Test-*IO.out
 Kernel_23/test/Kernel_23/cgal_test_with_cmake
 Kernel_23/test/Kernel_23/test_kernel__
 Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_2
@@ -262,7 +263,7 @@ Linear_cell_complex/examples/Linear_cell_complex/voronoi_2
 Linear_cell_complex/examples/Linear_cell_complex/voronoi_3
 Maintenance/infrastructure/*/reference*platforms/*/*.bak
 Maintenance/infrastructure/*/reference*platforms/*/bin
-Maintenance/infrastructure/*/reference*platforms/*/CGALConfig.cmake
+Maintenance/infrastructure/*/reference*platforms/*/CGAL*Config.cmake
 Maintenance/infrastructure/*/reference*platforms/*/CGALExports.cmake
 Maintenance/infrastructure/*/reference*platforms/*/cmake
 Maintenance/infrastructure/*/reference*platforms/*/CMakeCache.txt.backup
@@ -373,6 +374,7 @@ Mesh_3/examples/Mesh_3/*.mesh.*
 Mesh_3/examples/Mesh_3/*.off
 Mesh_3/examples/Mesh_3/*.png
 Mesh_3/examples/Mesh_3/.*.deps
+Mesh_3/examples/Mesh_3/random-image.inr
 Mesh_3/examples/Mesh_3/Makefile
 Mesh_3/examples/Mesh_3/applications
 Mesh_3/examples/Mesh_3/cgal_test_with_cmake
@@ -453,12 +455,15 @@ Mesh_3/examples/Mesh_3/test_off
 /Mesh_3/test/Mesh_3/test_mesh_3_implicit_vector_to_labeled_function_wrapper
 /Mesh_3/test/Mesh_3/test_mesh_3_labeled_mesh_domain_3
 /Mesh_3/test/Mesh_3/test_mesh_criteria_creation
+/Mesh_3/test/Mesh_3/test_mesh_implicit_domains
 /Mesh_3/test/Mesh_3/test_meshing_3D_gray_image
 /Mesh_3/test/Mesh_3/test_meshing_3D_image
+/Mesh_3/test/Mesh_3/test_meshing_determinism
 /Mesh_3/test/Mesh_3/test_meshing_implicit_function
 /Mesh_3/test/Mesh_3/test_meshing_polyhedron
 /Mesh_3/test/Mesh_3/test_meshing_polyhedron_with_features
 /Mesh_3/test/Mesh_3/test_meshing_polylines_only
+/Mesh_3/test/Mesh_3/test_meshing_unit_tetrahedron
 /Mesh_3/test/Mesh_3/test_off
 /Mesh_3/test/Mesh_3/test_robust_weighted_circumcenter
 /Mesh_3/test/Mesh_3/test-tetgen.elem

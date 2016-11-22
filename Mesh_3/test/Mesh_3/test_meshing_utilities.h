@@ -40,6 +40,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 
+#include <limits>
 #include <vector>
 #include <boost/optional/optional_io.hpp>
 
@@ -224,7 +225,7 @@ struct Tester
     typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>   Criterion;
     typedef typename C3t3::Cells_in_complex_iterator                  Cell_iterator;
     
-    double min_value = Criterion::max_value;
+    double min_value = (std::numeric_limits<double>::max)();
     Criterion criterion(min_value, c3t3.triangulation());
     
     for ( Cell_iterator cit = c3t3.cells_in_complex_begin(),
@@ -298,13 +299,7 @@ struct Tester
         assert(index.first != index.second);
         Cell_handle c1 = f.first;
         Cell_handle c2 = f.first->neighbor(f.second);
-        if( ! (
-               (c1->subdomain_index() == index.first
-                && c2->subdomain_index() == index.second)
-               ||
-               (c2->subdomain_index() == index.first
-                && c1->subdomain_index() == index.second)
-               ))
+        if( c1->subdomain_index() == c2->subdomain_index() )
         {
           std::cerr << "ERROR:"
                     << "\nc1->subdomain_index(): " << c1->subdomain_index()

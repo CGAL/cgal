@@ -25,21 +25,17 @@ class Polyhedron_demo_xyz_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
-    // To silent a warning -Woverloaded-virtual
-    // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-    using Polyhedron_demo_plugin_helper::init;
+
     //! Adds an action to the menu and configures the widget
     void init(QMainWindow* mainWindow,
-              CGAL::Three::Scene_interface* scene_interface) {
+              CGAL::Three::Scene_interface* scene_interface,
+              Messages_interface*) {
       //get the references
       this->scene = scene_interface;
       this->mw = mainWindow;
       //creates and link the actions
       actionAdd_point_set= new QAction("Add Point Sets", mw);
-      if(actionAdd_point_set) {
-        connect(actionAdd_point_set, SIGNAL(triggered()),
-                this, SLOT(on_actionAdd_point_set_triggered()));
-      }
+      connect(actionAdd_point_set, SIGNAL(triggered()), this, SLOT(on_actionAdd_point_set_triggered()));
 
       QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
       if ( NULL != menuFile )
@@ -172,6 +168,7 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
     msgBox->exec();
     return;
   }
+
   Q_FOREACH(QString s, list)
   {
       if(!s.isEmpty())
@@ -194,11 +191,7 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
       if(counter == 3)
       {
           const Kernel::Point_3 p(coord[0], coord[1], coord[2]);
-          Kernel::Vector_3 n(0,0,0);
-          UI_point point(p,n);
-          item->point_set()->push_back(point);
-
-
+          item->point_set()->insert(p);
           counter =0;
       }
   }

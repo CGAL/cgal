@@ -2,6 +2,8 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include <CGAL/Three/Scene_group_item.h>
+
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
@@ -39,18 +41,18 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
     QAction* actionDetect;
 
-  typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
-  typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
+  typedef Point_set_3<Kernel>::Point_map PointPMap;
+  typedef Point_set_3<Kernel>::Vector_map NormalPMap;
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
   
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+    scene = scene_interface;
     actionDetect = new QAction(tr("Point Set Shape Detection"), mainWindow);
     actionDetect->setObjectName("actionDetect");
-
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+    autoConnectActions();
   }
 
   bool applicable(QAction*) const {
@@ -104,6 +106,7 @@ public:
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
+
   CGAL::Random rand(time(0));
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -112,7 +115,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
   Scene_points_with_normal_item::Bbox bb = item->bbox();
  
-  double diam = bb.diagonal_length();
+  double diam = CGAL::sqrt((bb.xmax()-bb.xmin())*(bb.xmax()-bb.xmin()) + (bb.ymax()-bb.ymin())*(bb.ymax()-bb.ymin()) + (bb.zmax()-bb.zmin())*(bb.zmax()-bb.zmin()));
 
   if(item)
   {
@@ -131,24 +134,36 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    
-    Shape_detection shape_detection;
-    shape_detection.set_input(*points);
+    typedef Point_set::Point_map PointPMap;
+    typedef Point_set::Vector_map NormalPMap;
 
+    typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
+    typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
+
+    Shape_detection shape_detection;
+    shape_detection.set_input(*points, points->point_map(), points->normal_map());
+
+    std::vector<Scene_group_item *> groups;
+    groups.resize(5);
     // Shapes to be searched for are registered by using the template Shape_factory
     if(dialog.detect_plane()){
-        shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
-      }
+      groups[0] = new Scene_group_item("Planes");
+      shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+    }
     if(dialog.detect_cylinder()){
+      groups[1] = new Scene_group_item("Cylinders");
       shape_detection.add_shape_factory<CGAL::Shape_detection_3::Cylinder<Traits> >();
     }
     if(dialog.detect_torus()){
-       shape_detection.add_shape_factory< CGAL::Shape_detection_3::Torus<Traits> >();
+      groups[2] = new Scene_group_item("Torus");
+      shape_detection.add_shape_factory< CGAL::Shape_detection_3::Torus<Traits> >();
     }
     if(dialog.detect_cone()){
+      groups[3] = new Scene_group_item("Cones");
       shape_detection.add_shape_factory< CGAL::Shape_detection_3::Cone<Traits> >();
     }
     if(dialog.detect_sphere()){
+      groups[4] = new Scene_group_item("Spheres");
       shape_detection.add_shape_factory< CGAL::Shape_detection_3::Sphere<Traits> >();
     }
 
@@ -189,8 +204,10 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       }
         
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
+      point_item->point_set()->add_normal_map();
+      
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
-        point_item->point_set()->push_back((*points)[i]);
+        point_item->point_set()->insert(points->point(*(points->begin()+i)));
       
       unsigned char r, g, b;
 
@@ -242,6 +259,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
                                  .arg (QString::number (shape->indices_of_assigned_points().size())));
               poly_item->setRenderingMode (Flat);
               scene->addItem(poly_item);
+                if(scene->item_id(groups[0]) == -1)
+                   scene->addItem(groups[0]);
+                scene->changeGroup(poly_item, groups[0]);
             }
         }
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
@@ -256,15 +276,55 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       //names[i] = ss.str(		
       point_item->setName(QString::fromStdString(ss.str()));
-      point_item->set_has_normals(true);
       point_item->setRenderingMode(item->renderingMode());
-      if (dialog.generate_subset())
+
+      if (dialog.generate_subset()){
         scene->addItem(point_item);
+        if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get()))
+        {
+          if(scene->item_id(groups[1]) == -1)
+             scene->addItem(groups[1]);
+          scene->changeGroup(point_item, groups[1]);
+        }
+        else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
+        {
+          CGAL::Shape_detection_3::Plane<Traits> * plane = dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get());
+
+          //set normals for point_item to the plane's normal
+          for(Point_set::iterator it = point_item->point_set()->begin(); it != point_item->point_set()->end(); ++it)
+            point_item->point_set()->normal(*it) = plane->plane_normal();
+
+          if(scene->item_id(groups[0]) == -1)
+             scene->addItem(groups[0]);
+          scene->changeGroup(point_item, groups[0]);
+        }
+        else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
+        {
+          if(scene->item_id(groups[3]) == -1)
+             scene->addItem(groups[3]);
+          scene->changeGroup(point_item, groups[3]);
+        }
+        else if (dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
+        {
+          if(scene->item_id(groups[2]) == -1)
+             scene->addItem(groups[2]);
+          scene->changeGroup(point_item, groups[2]);
+        }
+        else if (dynamic_cast<CGAL::Shape_detection_3::Sphere<Traits> *>(shape.get()))
+        {
+          if(scene->item_id(groups[4]) == -1)
+             scene->addItem(groups[4]);
+          scene->changeGroup(point_item, groups[4]);
+        }
+      }
       else
         delete point_item;
 
       ++index;
     }
+    Q_FOREACH(Scene_group_item* group, groups)
+      if(group && group->getChildren().empty())
+        delete group;
 
     // Updates scene
     scene->itemChanged(index);
@@ -298,8 +358,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
   std::vector<Point_2> projections;
   projections.reserve (points.size ());
 
-  for (std::size_t i = 0; i < points.size (); ++ i)
-    projections.push_back (plane->to_2d (points[i]));
+  for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
+    projections.push_back (plane->to_2d (points.point(*it)));
 
   Alpha_shape_2 ashape (projections.begin (), projections.end (), epsilon);
   

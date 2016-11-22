@@ -172,6 +172,8 @@ public:
   /// \cond SKIP_IN_MANUAL
   Ply_reader () : m_nb_points (0) { }
 
+  const std::vector<internal::Ply_read_number*>& readers() const { return m_readers; }
+
   template <typename Stream>
   bool init (Stream& stream)
   {
@@ -351,7 +353,7 @@ public:
         {
           internal::Ply_read_typed_number<Type>*
             reader = dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]);
-          assert (reader != NULL);
+          CGAL_assertion (reader != NULL);
           t = reader->buffer();
           return;
         }
@@ -389,7 +391,7 @@ public:
             {
               internal::Ply_read_typed_number<float>*
                 reader_float = dynamic_cast<internal::Ply_read_typed_number<float>*>(m_readers[i]);
-              assert (reader_float != NULL);
+              CGAL_assertion (reader_float != NULL);
               t = reader_float->buffer();
             }
           else
@@ -412,10 +414,8 @@ public:
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 /// @tparam OutputIterator iterator over output points.
 /// @tparam PointPMap is a model of `WritablePropertyMap` with  value type `Point_3<Kernel>`.
-///        It can be omitted if the value type of `OutputIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// \cgalModels `PlyInterpreter`
 //-----------------------------------------------------------------------------------
@@ -472,13 +472,8 @@ public:
     Vector normal (nx, ny, nz);
     Enriched_point pwn;
       
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    put(m_point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-    put(m_normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-#else
     put(m_point_pmap,  pwn, point);  // point_pmap[&pwn] = point
     put(m_normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
-#endif
     *m_output++ = pwn;
   }
 
@@ -636,11 +631,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
   return read_ply_points_and_normals
     <OutputIteratorValueType>(stream,
                               output,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                              make_dereference_property_map(output),
-#else
                               make_identity_property_map(OutputIteratorValueType()),
-#endif
                               normal_pmap);
 }
 
@@ -759,11 +750,7 @@ bool read_ply_points(std::istream& stream, ///< input stream.
   return read_ply_points
     <OutputIteratorValueType>(stream,
                               output,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                              make_dereference_property_map(output)
-#else
                               make_identity_property_map(OutputIteratorValueType())
-#endif
                               );
 }
 

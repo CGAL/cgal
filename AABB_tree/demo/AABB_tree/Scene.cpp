@@ -1111,7 +1111,6 @@ void Scene::compute_distance_function(const Tree& tree)
 {
     // Get transformation
     Aff_transformation t = frame_transformation();
-
     m_max_distance_function = FT(0);
     FT diag = bbox_diag();
 
@@ -1126,7 +1125,6 @@ void Scene::compute_distance_function(const Tree& tree)
         for(int j=0 ; j<m_grid_size ; ++j)
         {
             FT y = -diag/fd + FT(j)/FT(m_grid_size) * dy;
-
             Point query = t( Point(x,y,z) );
             FT dist = CGAL::sqrt( tree.squared_distance(query) );
 

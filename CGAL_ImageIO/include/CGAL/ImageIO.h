@@ -383,7 +383,11 @@ CGAL_IMAGEIO_EXPORT _image* _readImage_raw(const char *name,
                                            const double vx = 1.,
                                            const double vy = 1.,
                                            const double vz = 1.,
-                                           const unsigned int offset = 0);
+                                           const unsigned int offset = 0,
+                                           const std::size_t wdim = 1,
+                                           WORD_KIND wk = WK_FIXED,
+                                           SIGN sgned = SGN_UNSIGNED
+                                           );
 
 
 /** Writes given image in file 'name'.<br>
@@ -516,7 +520,7 @@ CGAL_IMAGEIO_EXPORT char *ImageIO_gets( const _image *im, char *str, int size );
 
 /** replaces fseek function
  */
-CGAL_IMAGEIO_EXPORT int ImageIO_seek( const _image *im, long offset, int whence );
+CGAL_IMAGEIO_EXPORT long ImageIO_seek( const _image *im, long offset, int whence );
 
 /** replaces ferror function
  */
@@ -614,13 +618,22 @@ static_evaluate(const _image* image,
 
 template <typename Word>
 inline
-Word
+Word&
 static_evaluate(const _image* image,
                 const std::size_t i,
                 const std::size_t j,
                 const std::size_t k)
 {
   return ((Word*)image->data)[(k * image->ydim + j) * image->xdim + i];
+}
+
+template <typename Word>
+inline
+Word&
+static_evaluate(const _image* image,
+                const std::size_t i)
+{
+  return ((Word*)image->data)[i];
 }
 
 } // end namespace IMAGEIO

@@ -1,37 +1,38 @@
 #include <QApplication>
 #include <QAction>
 #include <QStringList>
-
+#include <QMainWindow>
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 using namespace CGAL::Three;
 class Polyhedron_demo_inside_out_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionInsideOut";
+
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
-  void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
+  void init(QMainWindow* mw,
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
-      mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionInsideOut"] = getActionFromMainWindow(mw, "actionInsideOut");
-      actions_map["actionInsideOut"]->setProperty("subMenuName", "Polygon Mesh Processing");
-      autoConnectActions();
+      QAction* actionInsideOut = new QAction(tr("Inside Out"), mw);
+
+      actionInsideOut->setProperty("subMenuName", "Polygon Mesh Processing");
+      connect(actionInsideOut, SIGNAL(triggered()), this, SLOT(on_actionInsideOut_triggered()));
+      _actions << actionInsideOut;
 
   }
   bool applicable(QAction*) const { 
@@ -43,6 +44,9 @@ public:
 public Q_SLOTS:
   void on_actionInsideOut_triggered();
 
+private:
+  QList<QAction*> _actions;
+  Scene_interface *scene;
 }; // end Polyhedron_demo_inside_out_plugin
 
 void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()

@@ -22,6 +22,7 @@
 #ifndef CGAL_VISIBILITY_UTILS_H
 #define CGAL_VISIBILITY_UTILS_H
 
+#include <iostream>
 #include <vector>
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>

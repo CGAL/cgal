@@ -59,6 +59,17 @@ angle(const Point_3<K> &p, const Point_3<K> &q,
   return internal::angle(p, q, r, s, K());
 }
 
+template < class K >
+inline
+typename K::FT
+approximate_dihedral_angle(const Point_3<K> &p,
+                           const Point_3<K> &q,
+                           const Point_3<K> &r,
+                           const Point_3<K> &s)
+{
+  return internal::approximate_dihedral_angle(p, q, r, s, K());
+}
+
 template < typename K >
 inline
 typename K::Boolean
@@ -992,6 +1003,14 @@ radical_plane(const Sphere_3<K> &s1,
               const Sphere_3<K> &s2)
 {
   return K().construct_radical_plane_3_object()(s1,s2);
+}
+
+template < class K >
+inline
+typename K::FT
+scalar_product(const Vector_3<K> &v, const Vector_3<K> &w)
+{
+  return K().compute_scalar_product_3_object()(v, w);
 }
 
 template <class K >

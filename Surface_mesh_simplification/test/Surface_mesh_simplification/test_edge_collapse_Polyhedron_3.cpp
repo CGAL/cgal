@@ -203,7 +203,7 @@ void write ( SurfaceSP aSurface, string aName )
 }
 
 template<class T>
-string opt2str ( optional<T> const& o )
+string opt2str ( boost::optional<T> const& o )
 {
   ostringstream ss ;
   if ( o )
@@ -225,7 +225,7 @@ string point2str ( P const& p )
 }
 
 template<class P>
-string optpoint2str ( optional<P> const& p )
+string optpoint2str ( boost::optional<P> const& p )
 {
   ostringstream ss ;
   if ( p )
@@ -235,7 +235,7 @@ string optpoint2str ( optional<P> const& p )
   return ss.str(); 
 }
 template<class N>
-string optfloat2str ( optional<N> const& n )
+string optfloat2str ( boost::optional<N> const& n )
 {
   ostringstream ss ;
   if ( n )
@@ -261,7 +261,7 @@ string edge2str ( E const& e )
   return ss.str(); 
 }
 
-template<class T> ostream&  operator << ( ostream& os, optional<T> const& o ) { return os << opt2str(o); }
+template<class T> ostream&  operator << ( ostream& os, boost::optional<T> const& o ) { return os << opt2str(o); }
 
 string normalize_EOL ( string line )
 {
@@ -307,12 +307,12 @@ public :
     CHECK(aSurface.is_valid());
   } 
   
-  virtual void OnCollected( Profile const& aProfile, optional<FT> const& aCost ) const 
+  virtual void OnCollected( Profile const& aProfile, boost::optional<FT> const& aCost ) const 
   {
     TEST_TRACE( str ( format("Collecting %1% : cost=%2%") % edge2str(aProfile.v0_v1()) % optfloat2str(aCost) ) ) ;
   }                
   
-  virtual void OnCollapsing( Profile const& aProfile, optional<Point> const& aP ) const 
+  virtual void OnCollapsing( Profile const& aProfile, boost::optional<Point> const& aP ) const 
   {
     TEST_TRACE( str ( format("S %1% - Collapsing %2% : placement=%3%") % mStep % edge2str(aProfile.v0_v1()) % optpoint2str(aP) ) ) ;
     

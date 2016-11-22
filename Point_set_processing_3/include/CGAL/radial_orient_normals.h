@@ -71,6 +71,8 @@ radial_orient_normals(
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename boost::property_traits<PointPMap>::reference Point_ref;
+    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
     typedef typename Kernel::FT FT;
 
     // Precondition: at least one element in the container.
@@ -83,11 +85,7 @@ radial_orient_normals(
     int nb_points = 0;
     for (ForwardIterator it = first; it != beyond; it++)
     {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-#else
-      Point point = get(point_pmap, *it);
-#endif  
+      Point_ref point = get(point_pmap, *it);
       sum = sum + (point - CGAL::ORIGIN);
       nb_points++;
     }
@@ -98,20 +96,13 @@ radial_orient_normals(
     std::deque<Enriched_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
     {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-#else
-      Point point = get(point_pmap, *it);
-#endif 
+      Point_ref point = get(point_pmap, *it);
+
       // Radial vector towards exterior of the point set
       Vector vec1 = point - barycenter;
 
       // Point's normal
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Vector vec2 = get(normal_pmap, it);
-#else
-      Vector vec2 = get(normal_pmap, *it);
-#endif
+      Vector_ref vec2 = get(normal_pmap, *it);
       
       //         ->               ->
       // Orients vec2 parallel to vec1
@@ -119,11 +110,7 @@ radial_orient_normals(
       if (dot < 0)
         vec2 = -vec2;
 
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      put(normal_pmap, it, vec2); 
-#else
       put(normal_pmap, *it, vec2);
-#endif
 
       // Is orientation robust?
       bool oriented = (std::abs(dot) > std::cos(80.*CGAL_PI/180.)); // robust iff angle < 80 degrees
@@ -179,12 +166,8 @@ radial_orient_normals(
 {
     return radial_orient_normals(
       first,beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      make_dereference_property_map(first),
-#else
       make_identity_property_map(
       typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
       normal_pmap);
 }
 /// @endcond

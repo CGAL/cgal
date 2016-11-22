@@ -34,6 +34,18 @@
 
 namespace CGAL {
 
+struct Compare_to_isovalue {
+  float iso_value;
+  bool less;
+
+  Compare_to_isovalue(float iso_value, bool less)
+    : iso_value(iso_value), less(less) {}
+
+  bool operator()(float x) const {
+    return (x < iso_value) == less;
+  }
+};
+
 /**
  * \class Polyhedron_demo_labeled_mesh_domain_3
  * LabeledDomain must be a Labeled_mesh_domain_3
@@ -71,14 +83,26 @@ public:
     const typename Base::Bbox_3& bbox,
     const typename Base::FT& error_bound = Base::FT(1e-3),
     CGAL::Random* p_rng = NULL)
-    : Base(f, bbox, error_bound, p_rng)
+    : Base(f, bbox, error_bound,
+           // Subdomain_index(), Null_subdomain_index(),
+           p_rng)
   {}
 
   Polyhedron_demo_labeled_mesh_domain_3(
     const Image& img,
     const typename Base::FT& error_bound = Base::FT(1e-3),
     CGAL::Random* p_rng = NULL)
-    : Base(img, error_bound, p_rng)
+    : Base(img, error_bound,
+           // Subdomain_index(), Null_subdomain_index(),
+           p_rng)
+  {}
+
+  ///Constructor for the Gray-level Images
+  Polyhedron_demo_labeled_mesh_domain_3(
+    const Image& img,
+    const Compare_to_isovalue iso_value_transform,
+    const float value_outside)
+   : Base(img, iso_value_transform, value_outside)
   {}
 
   /**

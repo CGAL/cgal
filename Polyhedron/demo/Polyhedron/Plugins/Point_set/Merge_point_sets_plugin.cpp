@@ -1,6 +1,5 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <QObject>
@@ -15,7 +14,7 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_merge_point_sets_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -25,11 +24,11 @@ private:
   QAction* actionMergePointSets;
   
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
+    scene = scene_interface;
     actionMergePointSets = new QAction(tr("Merge"), mainWindow);
     actionMergePointSets->setObjectName("actionMergePointSets");
-
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+    connect(actionMergePointSets, SIGNAL(triggered()), this, SLOT(on_actionMergePointSets_triggered()));
   }
 
   QList<QAction*> actions() const {
@@ -50,10 +49,13 @@ public:
 
 public Q_SLOTS:
   void on_actionMergePointSets_triggered();
+private :
+  Scene_interface *scene;
 }; // end Polyhedron_demo_merge_point_sets_plugin
 
 void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered()
 {
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Three::Scene_interface::Item_id mainSelectionIndex
     = scene->mainSelectionIndex();
   Scene_points_with_normal_item* mainSelectionItem
@@ -70,8 +72,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
       if(item)
         {
           indices_to_remove.push_front(index);
-          std::copy (item->point_set()->begin(), item->point_set()->end(),
-                     std::back_inserter (*(mainSelectionItem->point_set())));
+          mainSelectionItem->point_set()->merge_with (*(item->point_set()));
           mainSelectionItem->setName(tr("%1 + %2").arg(mainSelectionItem->name()).arg(item->name()));
         }
     }
@@ -85,6 +86,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
   {
     scene->erase(index);
   }
+  QApplication::restoreOverrideCursor();
 }
 
 

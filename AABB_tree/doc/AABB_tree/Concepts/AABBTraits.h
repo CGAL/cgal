@@ -7,6 +7,8 @@ The concept `AABBTraits` provides the geometric primitive types and methods for 
 
 \cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 
+\cgalRefines `SearchGeomTraits_3`
+
 \sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
@@ -156,6 +158,11 @@ A functor object to compute the squared distance between two points. Provides th
 */ 
 typedef unspecified_type Squared_distance; 
 
+/*!
+A functor object to compare two points. Provides the operator:
+`bool operator()(const Point_3& p, const Point_3& q);}` which returns `true` if `p` is equal to `q`.
+*/
+typedef unspecified_type Equal_3;
 /// @} 
 
 /// \name Operations 
@@ -205,6 +212,11 @@ Closest_point closest_point_object();
 Returns the squared distance functor.
 */ 
 Squared_distance squared_distance_object(); 
+
+/*!
+Returns the equal functor.
+*/
+Equal_3 equal_3_object();
 
 /// @}
 

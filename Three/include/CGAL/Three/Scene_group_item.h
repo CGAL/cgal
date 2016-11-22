@@ -23,6 +23,7 @@
 #define SCENE_GROUP_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_interface.h>
 using namespace CGAL::Three;
 
 #include <QtCore/qglobal.h>
@@ -40,12 +41,30 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
 public :
-    Scene_group_item(QString name = QString("New group"));
+    Scene_group_item(QString name = QString("New group"), int nb_vbos = 0, int nb_vaos = 0);
     ~Scene_group_item() {}
+    //!Sets the scene;
+    void setScene(Scene_interface* s) { scene = s; }
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const;
     //!Returns true to avoid disturbing the BBox of the scene.
     bool isEmpty() const ;
+    /*!
+     * \brief Locks a child
+     * A locked child cannot be moved out of the group nor can it be deleted.
+     */
+    void lockChild(CGAL::Three::Scene_item*);
+    /*!
+     * \brief Unlocks a child
+     * @see lockChild()
+     */
+    void unlockChild(CGAL::Three::Scene_item*);
+    /*!
+     * \brief Tells if a child is locked.
+     * \return true if the child is locked.
+     * @see lockChild()
+     */
+    bool isChildLocked(CGAL::Three::Scene_item*);
     //!Returns if the group_item is currently expanded or collapsed in the view.
     //! True means expanded, false means collapsed.
     //! @see setExpanded.
@@ -58,7 +77,7 @@ public :
     Bbox bbox() const;
     //!Not supported.
     Scene_item* clone() const {return 0;}
-    //! Indicate if rendering mode is supported.
+    //! Indicates if the rendering mode is supported.
     bool supportsRenderingMode(RenderingMode m) const;
     //!Prints the number of children.
     QString toolTip() const;
@@ -66,9 +85,9 @@ public :
     /// Draw functions
     ///@{
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_splats(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
+    virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
     ///@}
 
     //!Adds a Scene_item* to the list of children.
@@ -116,31 +135,34 @@ public :
     void setSplattingMode(){
       setRenderingMode(Splatting);
     }
-    //!Returns a list of all the children.
+    //!Returns a list of all the direct children.
     QList<Scene_item*> getChildren() const {return children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
     {
-      Scene_group_item* group =
-              qobject_cast<Scene_group_item*>(item);
-      if(group)
-        Q_FOREACH(Scene_item* child, group->getChildren())
-            removeChild(child);
-      item->has_group=0;
-      children.removeOne(item);
+     if(isChildLocked(item))
+      return;
+     update_group_number(item,0);
+     children.removeOne(item);
     }
     //!Moves a child up in the list.
     void moveUp(int);
     //!Moves a child down in the list.
     void moveDown(int);
 
+public Q_SLOTS:
+    void resetDraw() { already_drawn = false;}
 private:
+    //!Updates the property has_group for each group and sub-groups containing new_item.
+    void update_group_number(Scene_item*new_item, int n);
+
+    bool expanded;
+    mutable bool already_drawn;
+protected:
+    Scene_interface *scene;
     //!Contains a reference to all the children of this group.
     QList<Scene_item*> children;
-    //!Updates the property has_group for each group and sub-groups containing new_item.
-    void add_group_number(Scene_item*new_item);
-    bool expanded;
 
 }; //end of class Scene_group_item
 

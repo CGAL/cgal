@@ -30,6 +30,8 @@
 
 #include <boost/current_function.hpp>
 
+struct Scene_polyhedron_shortest_path_item_priv;
+
 class SCENE_POLYHEDRON_SHORTEST_PATH_ITEM_EXPORT Scene_polyhedron_shortest_path_item : public Scene_polyhedron_item_decorator
 {
   Q_OBJECT
@@ -57,64 +59,20 @@ public:
   typedef Surface_mesh_shortest_path_traits::Ray_3 Ray_3;
   typedef Surface_mesh_shortest_path_traits::Point_3 Point_3;
   typedef Surface_mesh_shortest_path_traits::FT FT;
-  
+
   enum Selection_mode
   {
     INSERT_POINTS_MODE = 0,
     REMOVE_POINTS_MODE = 1,
     SHORTEST_PATH_MODE = 2
   };
-  
+
   enum Primitives_mode
   {
     VERTEX_MODE = 0,
     EDGE_MODE = 1,
     FACE_MODE = 2
   };
-  
-  enum VAOs {
-      Selected_Edges=0,
-      NbOfVaos = Selected_Edges+1
-  };
-  enum VBOs {
-      Vertices = 0,
-      NbOfVbos = Vertices+1
-  };
-private:
-  Messages_interface* m_messages;
-  QMainWindow* m_mainWindow;
-  CGAL::Three::Scene_interface* m_sceneInterface;
-  Surface_mesh_shortest_path* m_shortestPaths;
-  AABB_face_graph_tree m_aabbTree;
-  
-  std::string m_deferredLoadFilename;
-  
-  Selection_mode m_selectionMode;
-  Primitives_mode m_primitivesMode;
-
-  bool m_isTreeCached;
-  
-  bool m_shiftHeld;
-  
-private:
-  bool get_mouse_ray(QMouseEvent* mouseEvent, Kernel::Ray_3&);
-
-  void recreate_shortest_path_object();
-  void ensure_aabb_object();
-  void ensure_shortest_paths_tree();
-  
-  bool run_point_select(const Kernel::Ray_3&);
-  void remove_nearest_point(const Face_location& ray);
-  void get_as_edge_point(Face_location& inOutLocation);
-  void get_as_vertex_point(Face_location& inOutLocation);
-
-  mutable std::vector<float> vertices;
-  mutable QOpenGLShaderProgram *program;
-
-  using Scene_polyhedron_item_decorator::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
-  void compute_elements(void) const;
-  
   
 public:
 
@@ -131,7 +89,7 @@ public:
   using Scene_polyhedron_item_decorator::draw;
   virtual void draw(CGAL::Three::Viewer_interface*) const;
   // Points OpenGL drawing
-  virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+  virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
   
   virtual Scene_polyhedron_shortest_path_item* clone() const;
   
@@ -147,6 +105,8 @@ protected:
   virtual bool isEmpty() const;
   virtual void compute_bbox()const;
   virtual QString toolTip() const;
+  friend struct Scene_polyhedron_shortest_path_item_priv;
+  Scene_polyhedron_shortest_path_item_priv* d;
   
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event);

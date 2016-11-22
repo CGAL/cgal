@@ -74,6 +74,7 @@ public:
   bool applicable(QAction *) const { return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFillingPolyline; }
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m){
     mw = mainWindow;
     scene = scene_interface;
@@ -113,6 +114,7 @@ public Q_SLOTS:
       NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
       it != polylines_item->polylines.end(); ++it, ++counter) 

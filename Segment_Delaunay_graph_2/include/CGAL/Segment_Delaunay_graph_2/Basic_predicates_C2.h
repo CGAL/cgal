@@ -65,17 +65,7 @@ private:
 public:
     typedef Boolean_tag<CGAL::is_same_or_derived<Field_with_sqrt_tag,RT_Category>::value>  RT_Has_sqrt;
     typedef Boolean_tag<CGAL::is_same_or_derived<Field_with_sqrt_tag,FT_Category>::value>  FT_Has_sqrt;
- 
-  static const RT_Has_sqrt& rt_has_sqrt() {
-    static RT_Has_sqrt has_sqrt;
-    return has_sqrt;
-  }
 
-  static const FT_Has_sqrt& ft_has_sqrt() {
-    static FT_Has_sqrt has_sqrt;
-    return has_sqrt;
-  }
-				   
 
   class Line_2
   {
@@ -145,15 +135,15 @@ public:
   static
   FT to_ft(const Sqrt_1& x)
   {
-    FT sqrt_c = compute_sqrt( x.root(), ft_has_sqrt() );
+    FT sqrt_c = compute_sqrt( x.root(), FT_Has_sqrt() );
     return x.a0() + x.a1() * sqrt_c;
   }
 
   static
   FT to_ft(const Sqrt_3& x)
   {
-    FT sqrt_e = compute_sqrt( to_ft(x.e()), ft_has_sqrt() );
-    FT sqrt_f = compute_sqrt( to_ft(x.f()), ft_has_sqrt() );
+    FT sqrt_e = compute_sqrt( to_ft(x.e()), FT_Has_sqrt() );
+    FT sqrt_f = compute_sqrt( to_ft(x.f()), FT_Has_sqrt() );
     FT sqrt_ef = sqrt_e * sqrt_f;
     return to_ft(x.a()) + to_ft(x.b()) * sqrt_e
       + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;

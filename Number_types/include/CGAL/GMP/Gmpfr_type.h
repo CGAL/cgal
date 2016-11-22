@@ -1088,7 +1088,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         if(neg_mant)
                 mant=-mant;
 
-        is.putback(c);
+        is.putback(static_cast<std::istream::char_type>(c));
         internal::eat_white_space(is);
 
         switch(c=is.get()){
@@ -1117,7 +1117,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         internal::eat_white_space(is);
         while((c=is.get())>='0'&&c<='9')
                 exp=10*exp+(c-'0');
-        is.putback(c);
+        is.putback(static_cast<std::istream::char_type>(c));
         if(exp.bit_size()>8*sizeof(mpfr_exp_t))
                 mpfr_set_erangeflag();
 

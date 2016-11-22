@@ -5,7 +5,7 @@
 #include "Scene_polyhedron_item.h"
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #include "Scene_implicit_function_item.h"
@@ -98,8 +98,8 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   // Image
-  const Scene_segmented_image_item* image_item = 
-    qobject_cast<const Scene_segmented_image_item*>(c3t3_item.data_item());
+  const Scene_image_item* image_item = 
+    qobject_cast<const Scene_image_item*>(c3t3_item.data_item());
   
   if ( NULL != image_item )
   {
@@ -153,12 +153,12 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     const Implicit_function_interface* p_function = function_item->function();
     if ( NULL == p_function ) { return NULL; }
     
-    CGAL::Bbox_3 dom_bbox (p_function->bbox().xmin,
-                           p_function->bbox().ymin,
-                           p_function->bbox().zmin,
-                           p_function->bbox().xmax,
-                           p_function->bbox().ymax,
-                           p_function->bbox().zmax);
+    CGAL::Bbox_3 dom_bbox (p_function->bbox().xmin(),
+                           p_function->bbox().ymin(),
+                           p_function->bbox().zmin(),
+                           p_function->bbox().xmax(),
+                           p_function->bbox().ymax(),
+                           p_function->bbox().zmax());
     
     Function_mesh_domain* p_domain =
       new Function_mesh_domain(Function_wrapper(*p_function), dom_bbox, 1e-7);
@@ -598,7 +598,7 @@ protected:
     perturb_->set_time_limit(p_.time_limit);
     
     // Set sliver bound (0 means no sliver bound)
-    if ( 0 == p_.sliver_bound ) { p_.sliver_bound = Sc::max_value; }
+    if ( 0 == p_.sliver_bound ) { p_.sliver_bound = criterion_.get_max_value(); }
     
     // Launch perturber
     return (*perturb_)(Visitor(&status_));

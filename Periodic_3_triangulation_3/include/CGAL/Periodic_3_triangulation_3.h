@@ -246,7 +246,7 @@ public:
     typedef typename internal::Exact_field_selector<FT>::Type EFT;
     typedef NT_converter<FT,EFT> NTC;
     CGAL_USE_TYPE(NTC);
-    CGAL_triangulation_assertion_code( NTC ntc; )
+    CGAL_triangulation_precondition_code( NTC ntc; )
     CGAL_triangulation_precondition(ntc(_domain.xmax())-ntc(_domain.xmin())
 	== ntc(_domain.ymax())-ntc(_domain.ymin()));
     CGAL_triangulation_precondition(ntc(_domain.ymax())-ntc(_domain.ymin())
@@ -2165,10 +2165,10 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
     Point_hider &hider, Vertex_handle vh)
 {
   Vertex_handle v;
-  CGAL_triangulation_assertion(number_of_vertices() != 0);
+  CGAL_triangulation_precondition(number_of_vertices() != 0);
   CGAL_triangulation_precondition_code(
       Locate_type lt_assert; int i_assert; int j_assert;);
-  CGAL_triangulation_assertion(side_of_cell(tester.point(),o, c,
+  CGAL_triangulation_precondition(side_of_cell(tester.point(),o, c,
       lt_assert, i_assert, j_assert) != ON_UNBOUNDED_SIDE);
 
   tester.set_offset(o);
@@ -2424,8 +2424,9 @@ std::vector<Vertex_handle>();
   }
   return vir_vertices[0][0][0];
 }
-
+#define CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 #include <CGAL/Periodic_3_triangulation_dummy_36.h>
+#undef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 /** finds all cells that are in conflict with the currently added point
   * (stored in tester).

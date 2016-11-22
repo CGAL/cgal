@@ -321,9 +321,10 @@ public:
   void refine_to(const Rational& lo, const Rational& hi) const {
     // test whether lo < x < hi
     // and refines isolating interval until in ]lo,hi[
-    CGAL::Comparison_result s;
-    s  = compare_distinct(lo); CGAL_assertion(CGAL::LARGER == s);
-    s = compare_distinct(hi) ; CGAL_assertion(CGAL::SMALLER == s);
+    CGAL_assertion_code(CGAL::Comparison_result s =) compare_distinct(lo);
+    CGAL_assertion(CGAL::LARGER == s);
+    CGAL_assertion_code(s =) compare_distinct(hi);
+    CGAL_assertion(CGAL::SMALLER == s);
   }
 
 

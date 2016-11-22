@@ -32,6 +32,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
@@ -56,11 +57,8 @@ namespace CGAL {
       unsigned int nb_pts = 0;
       while(begin != end) 
 	{
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	  const Point& point = get(point_pmap, begin);
-#else
-	  const Point& point = get(point_pmap, *begin);
-#endif
+	  typename boost::property_traits<PointPMap>::reference point =
+            get(point_pmap, *begin);
 	  x += point.x ();  y += point.y ();  z += point.z ();
 	  ++ nb_pts;
 	  ++ begin;
@@ -81,19 +79,13 @@ namespace CGAL {
     {
       typedef typename std::list<Input_type>::iterator Iterator;
       typedef typename K::FT FT;
-      typedef typename K::Point_3 Point;
 
       FT dist_min = (std::numeric_limits<FT>::max)();
 
       typename std::list<Input_type>::iterator point_min;
       for (Iterator it = cluster.begin (); it != cluster.end (); ++ it)
 	{
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	  const Point& point = get(point_pmap, it);
-#else
-	  const Point& point = get(point_pmap, *it);
-#endif
-	  FT dist = CGAL::squared_distance (point, centroid);
+	  FT dist = CGAL::squared_distance (get(point_pmap, *it), centroid);
 	  if (dist < dist_min)
 	    {
 	      dist_min = dist;
@@ -199,11 +191,7 @@ namespace CGAL {
 	for (typename std::list<Input_type>::iterator it = current_cluster->first.begin ();
 	     it != current_cluster->first.end (); ++ it)
 	  {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	    const Point& point = get(point_pmap, it);
-#else
 	    const Point& point = get(point_pmap, *it);
-#endif
 	    Vector d = point - current_cluster->second;
 	    covariance[0] += d.x () * d.x ();
 	    covariance[1] += d.x () * d.y ();
@@ -242,11 +230,7 @@ namespace CGAL {
 	    while (it != current_cluster->first.end ())
 	      {
 		typename std::list<Input_type>::iterator current = it ++;
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                const Point& point = get(point_pmap, current);
-#else
                 const Point& point = get(point_pmap, *current);
-#endif
 
 		// Test if point is on negative side of plane and
 		// transfer it to the negative_side cluster if it is
@@ -371,11 +355,7 @@ namespace CGAL {
   {
     return hierarchy_simplify_point_set
       (begin, end,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-       make_dereference_property_map(first),
-#else
        make_identity_property_map (typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
        size, var_max);
   }
   /// @endcond  

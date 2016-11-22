@@ -116,6 +116,8 @@ user might encounter.
 - \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
 - \link BGLT2GT `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` \endlink
 - \link BGLArgtGT `boost::graph_traits< CGAL::Arrangement_2<T,DC> >` \endlink
+- \link BGLOMPAK `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` \endlink
+- \link BGLOMTMAK `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` \endlink
 
 ## Helper Classes ##
 - `CGAL::Triangulation_vertex_base_with_id_2`
@@ -209,7 +211,8 @@ user might encounter.
 - `CGAL::reduce_vertex_selection()`
 - `CGAL::select_incident_faces()`
 
-## Miscellaneous ##
+## Conversion Functions ##
+- `CGAL::convert_nef_polyhedron_to_polygon_mesh()`
 - `CGAL::split_graph_into_polylines()`
 
 */

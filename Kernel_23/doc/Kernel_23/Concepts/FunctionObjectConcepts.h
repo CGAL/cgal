@@ -1626,6 +1626,37 @@ public:
 
 }; /* end Kernel::ComputeApproximateArea_3 */
 
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor`
+
+*/
+class ComputeApproximateDihedralAngle_3 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns an approximation of the signed dihedral angle in the tetrahedron `pqrs` of edge `pq`.
+    The sign is negative if `orientation(p,q,r,s)` is `CGAL::NEGATIVE` and positive otherwise.
+    The angle is given in degree.
+    \pre `p,q,r` and `p,q,s` are not collinear.
+  */
+  Kernel::FT operator()(const Kernel::Point_3& p,
+                        const Kernel::Point_3& q,
+                        const Kernel::Point_3& r,
+                        const Kernel::Point_3& s) const;
+
+  /// @}
+
+}; /* end Kernel::ComputeApproximateDihedralAngle_3 */
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -1924,6 +1955,8 @@ public:
   /// @}
 
 }; /* end Kernel::ComputeDeterminant_3 */
+
+
 
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
@@ -2243,6 +2276,7 @@ public:
   \cgalConcept
 
   \sa `CGAL::Vector_2<Kernel>` 
+  \sa scalar_product_grp
 
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
@@ -2270,7 +2304,8 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
-  \sa `CGAL::Vector_3<Kernel>` 
+  \sa `CGAL::Vector_3<Kernel>`
+  \sa scalar_product_grp 
 
 */
 class ComputeScalarProduct_3 {
@@ -5502,6 +5537,17 @@ public:
   Kernel::Point_3 operator()(const Kernel::Plane_3& h, 
                              const Kernel::Point_3& p); 
 
+  /*!
+    returns the point of `s` that is the closest to `p`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s,
+                             const Kernel::Point_3& p);
+
+  /*!
+    returns the point of `t` that is the closest to `p`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Triangle_3& h,
+                             const Kernel::Point_3& p);
 
   /// @}
 

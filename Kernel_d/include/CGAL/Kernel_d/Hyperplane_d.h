@@ -26,6 +26,9 @@
 #define CGAL_HYPERPLANE_D_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/Kernel_d/Point_d.h>
+#include <CGAL/Kernel_d/Direction_d.h>
+#include <CGAL/enum.h>
 
 namespace CGAL {
 

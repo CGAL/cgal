@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-project( Surface_mesh_deformation_ )
+project( Surface_mesh_deformation_Examples )
 
 cmake_minimum_required(VERSION 2.8.11)
 
@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "deform_polyhedron_with_custom_pmap_example.cpp" )
     create_single_source_cgal_program( "k_ring_roi_translate_rotate_example.cpp" )
     create_single_source_cgal_program( "k_ring_roi_translate_rotate_Surface_mesh.cpp" )
+    create_single_source_cgal_program( "deform_mesh_for_botsch08_format_sre_arap.cpp" )
 
     find_package( OpenMesh QUIET )
     if ( OpenMesh_FOUND )

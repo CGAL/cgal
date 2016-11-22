@@ -11,7 +11,7 @@
 
 template <typename fl_t>
 fl_t random_float(fl_t min, fl_t max) {
-  return fl_t(CGAL::default_random.get_double(min, max));
+  return fl_t(CGAL::get_default_random().get_double(min, max));
 }
 
 template <typename K>

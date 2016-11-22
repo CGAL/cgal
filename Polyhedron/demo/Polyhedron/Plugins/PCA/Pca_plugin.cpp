@@ -5,7 +5,6 @@
 #include "Scene_plane_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/centroid.h>
@@ -28,34 +27,35 @@ typedef Kernel::FT FT;
 using namespace CGAL::Three;
 class Polyhedron_demo_pca_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionFitPlane"
-                         << "actionFitLine";
+
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
-  void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface)
+  void init(QMainWindow* mw,
+            Scene_interface* scene_interface,
+            Messages_interface*)
   {
-      mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionFitPlane"] = new QAction("Fit Plane", mw);
-      actions_map["actionFitPlane"]->setProperty("subMenuName", "Principal Component Analysis");
+      QAction *actionFitPlane = new QAction("Fit Plane", mw);
+      QAction *actionFitLine = new QAction("Fit Line", mw);
 
-      actions_map["actionFitLine"] = new QAction("Fit Line", mw);
-      actions_map["actionFitLine"]->setProperty("subMenuName", "Principal Component Analysis");
-
-      connect(actions_map["actionFitPlane"], SIGNAL(triggered()),
+      connect(actionFitPlane, SIGNAL(triggered()),
               this, SLOT(on_actionFitPlane_triggered()));
-      connect(actions_map["actionFitLine"], SIGNAL(triggered()),
+      connect(actionFitLine, SIGNAL(triggered()),
               this, SLOT(on_actionFitLine_triggered()));
+      _actions << actionFitPlane
+               << actionFitLine;
+      Q_FOREACH(QAction* action, _actions)
+        action->setProperty("subMenuName", "Principal Component Analysis");
+
 
   }
 
@@ -69,6 +69,9 @@ public Q_SLOTS:
   void on_actionFitPlane_triggered();
   void on_actionFitLine_triggered();
 
+private:
+  Scene_interface* scene;
+  QList<QAction*> _actions;
 }; // end Polyhedron_demo_pca_plugin
 
 void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
@@ -80,6 +83,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
 
   if(item)
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Polyhedron* pMesh = item->polyhedron();
 
     // get triangles from the mesh
@@ -103,33 +107,6 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
 
     // compute centroid
     Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
-
-//     // compute bounding box diagonal
-//     Iso_cuboid bbox = CGAL::bounding_box(pMesh->points_begin(),pMesh->points_end());
-
-//     // compute scale (for rendering) using diagonal of bbox
-//     Point cmin = (bbox.min)();
-//     Point cmax = (bbox.max)();
-//     FT diag = std::sqrt(CGAL::squared_distance(cmin,cmax));
-//     Vector u1 = plane.base1();
-//     u1 = u1 / std::sqrt(u1*u1);
-//     u1 = u1 * 0.7 * diag;
-//     Vector u2 = plane.base2();
-//     u2 = u2 / std::sqrt(u2*u2);
-//     u2 = u2 * 0.7 * diag;
-//     std::list<Point> points;
-//     points.push_back(center_of_mass + u1);
-//     points.push_back(center_of_mass + u2);
-//     points.push_back(center_of_mass - u1);
-//     points.push_back(center_of_mass - u2);
-
-    // add best fit plane as new polyhedron
-//     Polyhedron *pFit = new Polyhedron;
-//     typedef std::list<Point>::iterator Iterator;
-//     Make_quad_soup<Polyhedron,Kernel,Iterator> quad;
-//     quad.run(points.begin(),points.end(),*pFit);
-
-//     Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pFit);
     Scene_plane_item* new_item = new Scene_plane_item(this->scene);
     new_item->setPosition(center_of_mass.x(),
                           center_of_mass.y(),
@@ -154,6 +131,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
 
   if(item)
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     Polyhedron* pMesh = item->polyhedron();
 
     // get triangles from the mesh

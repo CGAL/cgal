@@ -28,7 +28,7 @@ void load_and_simplify_off(LCC_3& lcc, const std::string& filename,
     {
       dh=it++;
       if ( it!=itend && it==lcc.beta<2>(dh) ) ++it;
-      CGAL::remove_cell<LCC_3, 1>(lcc, dh);
+      lcc.remove_cell<1>(dh);
       --nb;
     }
     if ( !updateattribs ) lcc.set_automatic_attributes_management(true);

@@ -1,4 +1,115 @@
 
+-------------------------------- Release 4.9 --------------------------------
+
+Release date: Sept 2016
+
+
+* Header-only mode
+
+  - CGAL can now be used in headers only mode, i.e. without compiling the CGAL
+    libraries and linking with these libraries when compiling examples, tests
+    and demos. Note that running CMake on CGAL is still required in order to
+    generate some configuration files.
+
+
+* Cone Based Spanners (new package)
+
+  - This package provides algorithms for constructing two kinds of cone-based
+    spanners: Yao graph and Theta graph, given a set of vertices on the plane
+    and the directions of cone boundaries.
+
+
+* 2D Minkowski Sums
+
+  - Introduce a convex decomposition strategy, namely
+    Polygon_nop_decomposition_2, that merely passed the input polygon to the
+    list of output polygons.
+
+  - Introduce overloads of the function minkowski_sum_2(), which accepts 2
+    decomposition strategies.
+
+  - Introduce an overloaded function called minkowski_sum_by_decomposition_2(P,
+    Q, decom_no_holes, decomp_with_holes), which computes the 2D Minkowski sum
+    using optimal choices of decomposition strategies.
+
+
+* Combinatorial Maps
+
+  - Deprecate global functions (make_combinatorial_hexahedron(),
+    make_combinatorial_polygon(), make_combinatorial_tetrahedron(), make_edge
+    (), insert_cell_0_in_cell_1(), insert_cell_0_in_cell_2(),
+    insert_cell_1_in_cell_2(), insert_cell_2_in_cell_3(),
+    insert_dangling_cell_1_in_cell_2(), is_insertable_cell_1_in_cell_2(),
+    is_insertable_cell_2_in_cell_3(), is_removable(), remove_cell()) which are
+    now member functions in the CombinatorialMap concept.
+
+  - It is not longer possible to use the old API switched on by defining the
+    macro CGAL_CMAP_DEPRECATED. This API was deprecated since CGAL 4.4.
+
+
+* Point Set Processing
+
+  - New function CGAL::read_ply_custom_points() that allows the user to read
+    any additional point attribute from a PLY input point set.
+
+
+* Point Set Shape Detection
+
+  - New post-processing algorithm: CGAL::regularize_planes(). This allows the
+    user to favor parallelism, orthogonality, coplanarity and/or axial symmetry
+    between detected planes.
+
+
+* Polygon Mesh Processing
+
+  - Add the function CGAL::Polygon_mesh_processing::
+    is_polygon_soup_a_polygon_mesh() to check whether a polygon soup is a
+    polygon mesh.
+
+  - Add some new features to CGAL::isotropic_remeshing():
+
+      - It is now possible to select fixed vertices that survive the remeshing
+        process, and to keep face attributes such as colors valid after
+        remeshing.
+
+      - The user can choose the number of relaxation steps happening at each
+        loop, and to run 1-dimensional relaxation along constrained polylines.
+
+
+  - The functions CGAL::Polygon_mesh_processing::triangulate_face() and CGAL::
+    Polygon_mesh_processing::triangulate_faces() now indicate whether some
+    faces have not been triangulated.
+
+
+* Surface Mesh Deformation
+
+  - Add a new tag SRE_ARAP to use the Smoothed Rotation Enhanced As-Rigid-As-
+    Possible deformation algorithm.
+
+
+* 3D Fast Intersection and Distance Computation
+
+  - Add the functions AABB_tree::first_intersection() and AABB_tree::
+    first_intersected_primitive() that compute the intersection which is
+    closest to the source of a ray
+
+
+* CGAL and the Boost Graph Library (BGL)
+
+  - Add a helper function CGAL::copy_face_graph() to copy a source
+    FaceListGraph into another FaceListGraph of different type.
+
+  - Add a class CGAL::Dual that creates the dual view of a FaceGraph and a
+    creation function CGAL::dual(primal).
+
+
+ ** CGAL and Boost Property Maps
+
+  - It is not longer possible to use the old API of the property maps provided
+    by CGAL, switched on by defining the macro CGAL_USE_PROPERTY_MAPS_API_V1.
+    This API was deprecated since CGAL 4.3.
+
+
 -------------------------------- Release 4.8 --------------------------------
 
 Release date: April 2016
@@ -183,8 +294,6 @@ Release date: April 2016
 
   - Add a helper function CGAL::clear which clears a MutableFaceGraph
     efficiently and generically.
-
-
 
 
 -------------------------------- Release 4.7 --------------------------------

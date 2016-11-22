@@ -12,14 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
-// Author(s)     : Tali Zvi        <talizvi@post.tau.ac.il>,
-//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
-//                 Efi Fogel       <efif@post.tau.ac.il>
+// Author(s) : Tali Zvi        <talizvi@post.tau.ac.il>,
+//             Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ron Wein        <wein@post.tau.ac.il>
+//             Efi Fogel       <efif@gmail.com>
 
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
@@ -29,6 +25,7 @@
  */
 
 #include <list>
+
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 
 namespace CGAL {
@@ -71,6 +68,7 @@ public:
   //struct SC_container { typedef std::list<SC> other; };
   typedef std::list<Subcurve*>                          Subcurve_container;
   typedef typename Subcurve_container::iterator         Subcurve_iterator;
+  typedef typename Subcurve_container::const_iterator   Subcurve_const_iterator;
   typedef typename Subcurve_container::reverse_iterator
     Subcurve_reverse_iterator;
 
@@ -107,7 +105,7 @@ protected:
 public:
   /*! Default constructor. */
   Sweep_line_event() :
-    m_type (0),
+    m_type(0),
     m_ps_x(static_cast<char>(ARR_INTERIOR)),
     m_ps_y(static_cast<char>(ARR_INTERIOR)),
     m_closed(1)
@@ -156,7 +154,7 @@ public:
 
       // Replace the existing curve in case of overlap.
       // EBEB 2011-10-27: Fixed to detect overlaps correctly
-      if (curve != *iter && curve->has_common_leaf(*iter)) {
+      if ((curve != *iter) && (curve->has_common_leaf(*iter))) {
         //std::cout << "add_curve_to_left, curve overlaps" << std::endl;
         *iter = curve;
         return;
@@ -232,7 +230,7 @@ public:
   {
     Subcurve_iterator iter;
     for (iter = m_leftCurves.begin(); iter!= m_leftCurves.end(); ++iter) {
-      if (curve->has_common_leaf (*iter)) {
+      if (curve->has_common_leaf(*iter)) {
         m_leftCurves.erase(iter);
         return;
       }
@@ -253,25 +251,43 @@ public:
       of the event. */
   Subcurve_iterator right_curves_end() { return (m_rightCurves.end()); }
 
+  /*! Returns a const iterator to the first curve to the left of the event. */
+  Subcurve_const_iterator left_curves_begin() const
+  { return m_leftCurves.begin(); }
+
+  /*! Returns a const iterator to the past the end curve to the left
+    of the event. */
+  Subcurve_const_iterator left_curves_end() const
+  { return m_leftCurves.end(); }
+
+  /*! Returns a const iterator to the first curve to the right of the event. */
+  Subcurve_const_iterator right_curves_begin() const
+  { return m_rightCurves.begin(); }
+
+  /*! Returns a const iterator to the past the end curve to the right
+    of the event. */
+  Subcurve_const_iterator right_curves_end() const
+  { return m_rightCurves.end(); }
+
   /*! Returns a reverse_iterator to the first curve of the reversed list
       of the right curves of the event. */
   Subcurve_reverse_iterator right_curves_rbegin()
-  { return (m_rightCurves.rbegin()); }
+  { return m_rightCurves.rbegin(); }
 
   /*! Returns a reverse_iterator to the past-end curve of the reversed list
       of the right curves of the event. */
   Subcurve_reverse_iterator right_curves_rend()
-  { return (m_rightCurves.rend()); }
+  { return m_rightCurves.rend(); }
 
   /*! Returns a reverse_iterator to the first curve of the reversed list
       of the left curves of the event. */
   Subcurve_reverse_iterator left_curves_rbegin()
-  { return (m_leftCurves.rbegin()); }
+  { return m_leftCurves.rbegin(); }
 
   /*! Returns a reverse_iterator to the past-end curve of the reversed list
       of the left curves of the event. */
   Subcurve_reverse_iterator left_curves_rend()
-  { return (m_leftCurves.rend()); }
+  { return m_leftCurves.rend(); }
 
   /*! Returns the number of curves defined to the left of the event. */
   size_t number_of_left_curves() { return m_leftCurves.size(); }
@@ -301,8 +317,8 @@ public:
    */
   Point_2& point()
   {
-    CGAL_precondition (is_closed());
-    return (m_point);
+    CGAL_precondition(is_closed());
+    return m_point;
   }
 
   /*!
@@ -377,13 +393,12 @@ public:
 
   /*! Replace the set of left subcurves. */
   template <typename InputIterator>
-  void replace_left_curves (InputIterator begin, InputIterator end)
+  void replace_left_curves(InputIterator begin, InputIterator end)
   {
     Subcurve_iterator left_iter = m_leftCurves.begin();
-    InputIterator     iter;
-    for (iter = begin; iter != end; ++iter, ++left_iter)
+    for (InputIterator iter = begin; iter != end; ++iter, ++left_iter)
       *left_iter = static_cast<Subcurve*>(*iter);
-    m_leftCurves.erase (left_iter, m_leftCurves.end());
+    m_leftCurves.erase(left_iter, m_leftCurves.end());
   }
 
   bool is_right_curve_bigger(Subcurve* c1, Subcurve* c2)

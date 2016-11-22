@@ -29,12 +29,15 @@
 #include <CGAL/IO/File_tetgen.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 
+#include <fstream>
+
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_with_features_tester : public Tester<K>
 {
   void operator()() const
   {
     typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Gt;
+    typedef typename CGAL::Mesh_polyhedron_3<Gt>::type Polyhedron;
     typedef CGAL::Polyhedral_mesh_domain_with_features_3<Gt> Mesh_domain;
     
     typedef typename CGAL::Mesh_triangulation_3<
@@ -55,8 +58,11 @@ struct Polyhedron_with_features_tester : public Tester<K>
     // Data generation
     //-------------------------------------------------------
     std::cout << "\tSeed is\t"
-      << CGAL::default_random.get_seed() << std::endl;
-    Mesh_domain domain("data/cube.off", &CGAL::default_random);
+      << CGAL::get_default_random().get_seed() << std::endl;
+    std::ifstream input("data/cube.off");
+    Polyhedron polyhedron;
+    input >> polyhedron;
+    Mesh_domain domain(polyhedron, &CGAL::get_default_random());
     domain.detect_features();
 
     // Set mesh criteria

@@ -20,9 +20,10 @@
 #ifndef CGAL_HILBERT_SORT_MIDDLE_d_H
 #define CGAL_HILBERT_SORT_MIDDLE_d_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <functional>
 #include <cstddef>
+#include <vector>
 #include <CGAL/Hilbert_sort_middle_base.h>
 
 namespace CGAL {

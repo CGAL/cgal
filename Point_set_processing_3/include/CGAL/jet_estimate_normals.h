@@ -211,14 +211,7 @@ jet_estimate_normals(
   // Note: We have to convert each input iterator to Point_3.
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
-  {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    Point point = get(point_pmap, it);
-#else
-    Point point = get(point_pmap, *it);
-#endif
-    kd_tree_points.push_back(point);
-  }
+    kd_tree_points.push_back(get(point_pmap, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
@@ -239,11 +232,7 @@ jet_estimate_normals(
      unsigned int i = 0;
      for(it = first; it != beyond; ++ it, ++ i)
        {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	 put (normal_pmap, it, normals[i]);
-#else
 	 put (normal_pmap, *it, normals[i]);
-#endif  
        }
    }
    else
@@ -252,18 +241,10 @@ jet_estimate_normals(
        for(it = first; it != beyond; it++)
 	 {
 	   Vector normal = internal::jet_estimate_normal<Kernel,SvdTraits,Tree>(
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-										get(point_pmap,it), 
-#else
 										get(point_pmap,*it), 
-#endif      
 										tree, k, degree_fitting);
 
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	   put(normal_pmap, it, normal); // normal_pmap[it] = normal
-#else
 	   put(normal_pmap, *it, normal); // normal_pmap[it] = normal
-#endif 
     
 	 }
      }
@@ -344,12 +325,8 @@ jet_estimate_normals(
 {
   jet_estimate_normals<Concurrency_tag>(
     first,beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(first),
-#else
     make_identity_property_map(
     typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
     normal_pmap,
     k,
     degree_fitting);

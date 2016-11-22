@@ -307,7 +307,7 @@ gmpz_new_read(std::istream &is, Gmpz &z)
       c=is.peek();
   }
 
-  std::istream::char_type cc= c;
+  std::istream::char_type cc= static_cast<std::istream::char_type>(c);
 
   if (c== std::istream::traits_type::eof() ||
       !std::isdigit(cc, std::locale::classic() ) ){
@@ -342,7 +342,7 @@ gmpz_new_read(std::istream &is, Gmpz &z)
       if (c== std::istream::traits_type::eof()) {
         break;
       }
-      cc=c;
+      cc=static_cast<std::istream::char_type>(c);
       if  ( !std::isdigit(cc, std::locale::classic() )) {
         break;
       }

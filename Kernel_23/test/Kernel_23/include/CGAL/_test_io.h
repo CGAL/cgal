@@ -25,16 +25,20 @@
 #include <fstream>
 #include <cassert>
 
+#ifndef TEST_FILENAME
+#  define TEST_FILENAME "Test_IO.out"
+#endif
+
 template <class T>
 void
 _test_io_for(const T& t)
 {
     {
-        std::ofstream oFile("Test_IO.out", std::ios::out);
+        std::ofstream oFile(TEST_FILENAME, std::ios::out);
         oFile << t << std::endl;
     }
 
-    std::ifstream iFile("Test_IO.out", std::ios::in);
+    std::ifstream iFile(TEST_FILENAME, std::ios::in);
     T u;
     iFile >> u;
     assert(!iFile.fail());

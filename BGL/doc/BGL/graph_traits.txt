@@ -72,8 +72,8 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 | `in_edge_iterator`       | `CGAL::Out_edge_iterator<Polyhedron_3<T> >` | Iterate through the in-edges of a vertex. |
 | `vertex_iterator`        | `unspecified_type`     | Iterate through the vertices of a polyhedron.|
 | `edge_iterator`          | `unspecified_type`     | Iterate through the edges of a polyhedron.|
-| `halfedge_iterator`      | `Polyhedron_3::Halfedge_iterator`     | Iterate through the halfedges of a polyhedron.|
-| `face_iterator`          | `Polyhedron_3::Face_iterator`         | Iterate through the faces of a polyhedron.|
+| `halfedge_iterator`      | `unspecified_type`     | Iterate through the halfedges of a polyhedron.|
+| `face_iterator`          | `unspecified_type`         | Iterate through the faces of a polyhedron.|
 | `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
 | `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
@@ -83,6 +83,74 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 
 For convenience, the type `edge_descriptor` is hashable using the functor `CGAL::Handle_hash_function`
 that is the default hash functor of `CGAL::Unique_hash_map`.
+
+
+\section BGLOMPAK Specialization for the OpenMesh::PolyMesh_ArrayKernelT Class
+
+Defined in `<CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>`
+
+We provide partial specialization for the class `OpenMesh::PolyMesh_ArrayKernelT` so that it is a model
+of the graph concepts
+<A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
+<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+and of the concept `MutableFaceGraph`.
+
+The traits class `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` provides the following types:
+
+| Member                   | Value  | Description |
+| :----------------------- | :----: | :---------- |
+| `vertex_descriptor`      | `OpenMesh::PolyMesh_ArrayKernelT::VertexHandle`     | The vertex descriptor |
+| `edge_descriptor`        | `unspecified_type`   | The edge descriptor |
+| `halfedge_descriptor`    | `OpenMesh::PolyMesh_ArrayKernelT::HalfedgeHandle`   | The halfedge descriptor |
+| `face_descriptor`        | `Surface_mesh::FaceHande`       | The face descriptor |
+| `adjacency_iterator`     | `unspecified_type` | Iterates through adjacent vertices|
+| `out_edge_iterator`      | `unspecified_type` | Iterate through the out-edges of a vertex. |
+| `in_edge_iterator`       | `unspecified_type` | Iterate through the in-edges of a vertex. |
+| `vertex_iterator`        | `unspecified_type`     | Iterate through the vertices of a polyhedron.|
+| `edge_iterator`          | `unspecified_type`     | Iterate through the edges of a polyhedron.|
+| `halfedge_iterator`      | `OpenMesh::PolyMesh_ArrayKernelT::HalfedgeIter`     | Iterate through the halfedges of a polyhedron.|
+| `face_iterator`          | `OpenMesh::PolyMesh_ArrayKernelT::FaceIter`         | Iterate through the faces of a polyhedron.|
+| `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
+| `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
+| `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
+| `vertices_size_type`     | `unsigned int` | The size type of the vertex list |
+| `edges_size_type`        | `unsigned int` | The size type of the edge list |
+| `degree_size_type`       | `unsigned` | The size type of the adjacency list |
+
+
+\section BGLOMTMAK Specialization for the OpenMesh::TriMesh_ArrayKernelT Class
+
+Defined in `<CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>`
+
+We provide partial specialization for the class `OpenMesh::TriMesh_ArrayKernelT` so that it is a model
+of the graph concepts
+<A HREF="http://www.boost.org/libs/graph/doc/BidirectionalGraph.html">`BidirectionalGraph`</A> and
+<A HREF="http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html">`EdgeAndVertexListGraph`</A>
+and of the concept `MutableFaceGraph`.
+
+The traits class `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` provides the following types:
+
+| Member                   | Value  | Description |
+| :----------------------- | :----: | :---------- |
+| `vertex_descriptor`      | `OpenMesh::TriMesh_ArrayKernelT::VertexHandle`     | The vertex descriptor |
+| `edge_descriptor`        | `unspecified_type`   | The edge descriptor |
+| `halfedge_descriptor`    | `OpenMesh::TriMesh_ArrayKernelT::HalfedgeHandle`   | The halfedge descriptor |
+| `face_descriptor`        | `Surface_mesh::FaceHande`       | The face descriptor |
+| `adjacency_iterator`     | `unspecified_type` | Iterates through adjacent vertices|
+| `out_edge_iterator`      | `unspecified_type` | Iterate through the out-edges of a vertex. |
+| `in_edge_iterator`       | `unspecified_type` | Iterate through the in-edges of a vertex. |
+| `vertex_iterator`        | `unspecified_type`     | Iterate through the vertices of a polyhedron.|
+| `edge_iterator`          | `unspecified_type`     | Iterate through the edges of a polyhedron.|
+| `halfedge_iterator`      | `OpenMesh::TriMesh_ArrayKernelT::HalfedgeIter`     | Iterate through the halfedges of a polyhedron.|
+| `face_iterator`          | `OpenMesh::TriMesh_ArrayKernelT::FaceIter`         | Iterate through the faces of a polyhedron.|
+| `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
+| `edge_parallel_category` | `boost::disallow_parallel_edge_tag`   | Indicates that this graph does not support multiedges |
+| `traversal_category`     | `boost::bidirectional_graph_tag`      | Indicates that this graph is bidirectional |
+| `vertices_size_type`     | `unsigned int` | The size type of the vertex list |
+| `edges_size_type`        | `unsigned int` | The size type of the edge list |
+| `degree_size_type`       | `unsigned` | The size type of the adjacency list |
+
+
 
 \section BGLT2GT Specializations for the 2D Triangulation Classes
 

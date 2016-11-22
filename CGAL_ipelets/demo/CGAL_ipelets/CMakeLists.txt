@@ -1,3 +1,5 @@
+project(CGAL_ipelets_Demo)
+
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
@@ -22,40 +24,31 @@ find_package(CGAL QUIET COMPONENTS Core)
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
 
-  find_package(IPE)
+  find_package(IPE 6)
 
   if ( IPE_FOUND )
     include_directories(BEFORE ${IPE_INCLUDE_DIR})
 
-    #check IPE version
-    FILE(READ "${IPE_INCLUDE_DIR}/ipebase.h" IPEBASE_H)
-    STRING(REGEX MATCH "IPELIB_VERSION[ ]*=[ ]*([67])([0-9][0-9])([0-9][0-9]);" FOUND_IPE_VERSION "${IPEBASE_H}")
-    if (FOUND_IPE_VERSION)
-      set(IPE_VERSION ${CMAKE_MATCH_1})
-      set(IPE_MINOR_VERSION_1 ${CMAKE_MATCH_2})
-      set(IPE_MINOR_VERSION_2 ${CMAKE_MATCH_3})
-
-      if (${IPE_VERSION} EQUAL "7")
-        set(WITH_IPE_7 ON)
-      elseif(${IPE_VERSION} EQUAL "6")
-        set(WITH_IPE_7 OFF)
-      else()
-        message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 6 and 7 are).")
-        set(IPE_FOUND FALSE)
-      endif()
-      # starting ipe 7.2.1, a compiler with c++11 must be used to compile ipelets
-      if (${IPE_VERSION} EQUAL "7" AND
-          ${IPE_MINOR_VERSION_1} GREATER "1" AND
-          ${IPE_MINOR_VERSION_2} GREATER "0")
-        message(STATUS "Starting from Ipe 7.2.1 a compiler with c++11 support must be used")
-        include(CheckCXXCompilerFlag)
-        CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-        CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-        if(COMPILER_SUPPORTS_CXX11)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-        elseif(COMPILER_SUPPORTS_CXX0X)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-        endif()
+    if (${IPE_VERSION} EQUAL "7")
+      set(WITH_IPE_7 ON)
+    elseif(${IPE_VERSION} EQUAL "6")
+      set(WITH_IPE_7 OFF)
+    else()
+      message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 6 and 7 are).")
+      set(IPE_FOUND FALSE)
+    endif()
+    # starting ipe 7.2.1, a compiler with c++11 must be used to compile ipelets
+    if (${IPE_VERSION} EQUAL "7" AND
+        ${IPE_MINOR_VERSION_1} GREATER "1" AND
+        ${IPE_MINOR_VERSION_2} GREATER "0")
+      message(STATUS "Starting from Ipe 7.2.1 a compiler with c++11 support must be used")
+      include(CheckCXXCompilerFlag)
+      CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+      CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+      if(COMPILER_SUPPORTS_CXX11)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+      elseif(COMPILER_SUPPORTS_CXX0X)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
       endif()
     endif()
   endif()

@@ -7,22 +7,71 @@
 #include <QMenu>
 #include <QAction>
 #include <QtDebug>
+#include <QApplication>
 #include <QDebug>
 #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
 
-Scene_combinatorial_map_item::Scene_combinatorial_map_item(CGAL::Three::Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL; are_buffers_filled = false; nb_points = 0; nb_lines =0; nb_facets =0;}
-Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map;}
+struct Scene_combinatorial_map_item_priv
+{
+  Scene_combinatorial_map_item_priv(CGAL::Three::Scene_interface* scene, void* ad_A, Scene_combinatorial_map_item* parent)
+  :last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(ad_A)
+  {
+    item = parent;
+    item->are_buffers_filled = false;
+    nb_points = 0;
+    nb_lines =0;
+    nb_facets =0;
+  }
+
+  Kernel::Vector_3 compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const;
+
+  template <class Predicate>
+  void export_as_polyhedron(Predicate,const QString&) const;
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  void compute_elements(void) const;
+
+  Scene_combinatorial_map_item *item;
+  enum VAOs {
+      Edges = 0,
+      Points,
+      Facets,
+      NbOfVaos
+  };
+  enum VBOs {
+      Edges_vertices = 0,
+      Points_vertices,
+      Facets_vertices,
+      Facets_normals,
+      NbOfVbos
+  };
+
+  CGAL::Three::Scene_interface* last_known_scene;
+  std::size_t volume_to_display;
+  QAction* exportSelectedVolume;
+  void* address_of_A;
+
+  mutable QOpenGLShaderProgram *program;
+  mutable std::vector<double> positions_lines;
+  mutable std::vector<double> positions_points;
+  mutable std::vector<double> positions_facets;
+  mutable std::vector<double> normals;
+  mutable std::size_t nb_lines;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_facets;
+};
+Scene_combinatorial_map_item::Scene_combinatorial_map_item(CGAL::Three::Scene_interface* scene,void* address){m_combinatorial_map=NULL; d = new Scene_combinatorial_map_item_priv(scene, address, this);}
+Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map; delete d;}
 
 Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return NULL;}
 
-Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const
+Kernel::Vector_3 Scene_combinatorial_map_item_priv::compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const
 {
     typedef Combinatorial_map_3::Dart_of_orbit_const_range<1> Dart_in_facet_range;
     typedef Kernel::Vector_3 Vector_3;
     Vector_3 normal = CGAL::NULL_VECTOR;
 
-    Dart_in_facet_range vertices=combinatorial_map().darts_of_orbit<1>(adart);
+    Dart_in_facet_range vertices=item->combinatorial_map().darts_of_orbit<1>(adart);
     Kernel::Point_3 points[3];
     int index=0;
     Dart_in_facet_range::const_iterator pit=vertices.begin();
@@ -49,25 +98,25 @@ Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial
 
 void Scene_combinatorial_map_item::set_next_volume(){
     //Update des vectors faits ici
-    ++volume_to_display;
-    volume_to_display=volume_to_display%(combinatorial_map().attributes<3>().size()+1);
+    ++d->volume_to_display;
+    d->volume_to_display=d->volume_to_display%(combinatorial_map().attributes<3>().size()+1);
   are_buffers_filled = false;
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 
-    if (exportSelectedVolume!=NULL && ( volume_to_display==1 || volume_to_display==0 ) )
-        exportSelectedVolume->setEnabled(!exportSelectedVolume->isEnabled());
+    if (d->exportSelectedVolume!=NULL && ( d->volume_to_display==1 || d->volume_to_display==0 ) )
+        d->exportSelectedVolume->setEnabled(!d->exportSelectedVolume->isEnabled());
 }
 
 
 template <class Predicate> 
-void Scene_combinatorial_map_item::export_as_polyhedron(Predicate pred,const QString& name) const {
+void Scene_combinatorial_map_item_priv::export_as_polyhedron(Predicate pred,const QString& name) const {
     typedef Combinatorial_map_3::Dart_const_handle Dart_handle;
-    typedef Combinatorial_map_3::One_dart_per_cell_const_range<3> One_dart_per_vol_range;
+    typedef Combinatorial_map_3::One_dart_per_cell_range<3> One_dart_per_vol_range;
     typedef CGAL::internal::Import_volume_as_polyhedron<Polyhedron::HalfedgeDS> Volume_import_modifier;
 
     std::vector<Dart_handle> darts;
-    One_dart_per_vol_range cell_range=combinatorial_map().template one_dart_per_cell<3>();
+    One_dart_per_vol_range cell_range=item->combinatorial_map().template one_dart_per_cell<3>();
 
 
     for (One_dart_per_vol_range::const_iterator it = cell_range.begin();it!= cell_range.end() ; ++it )
@@ -79,8 +128,8 @@ void Scene_combinatorial_map_item::export_as_polyhedron(Predicate pred,const QSt
     if (!darts.empty())
     {
         Volume_import_modifier modifier=Predicate::swap_orientation?
-                    Volume_import_modifier(combinatorial_map(),darts.begin(),darts.end(),Predicate::swap_orientation):
-                    Volume_import_modifier(combinatorial_map(),darts.begin(),darts.end());
+                    Volume_import_modifier(item->combinatorial_map(),darts.begin(),darts.end(),Predicate::swap_orientation):
+                    Volume_import_modifier(item->combinatorial_map(),darts.begin(),darts.end());
 
         Polyhedron* new_poly=new Polyhedron();
         new_poly->delegate(modifier);
@@ -104,10 +153,10 @@ private:
 };
 
 void Scene_combinatorial_map_item::export_current_volume_as_polyhedron() const {
-    if (volume_to_display==0) return; //no volume selected
+    if (d->volume_to_display==0) return; //no volume selected
 
-    Select_volume predicate(volume_to_display);
-    export_as_polyhedron(predicate,QString("%1_%2").arg(this->name()).arg(volume_to_display-1));
+    Select_volume predicate(d->volume_to_display);
+    d->export_as_polyhedron(predicate,QString("%1_%2").arg(this->name()).arg(d->volume_to_display-1));
 }
 
 struct Select_union{
@@ -151,18 +200,18 @@ private:
 };
 
 void Scene_combinatorial_map_item::export_union_as_polyhedron() const {
-    export_as_polyhedron(Select_union(),QString("%1_union_%2").arg("A").arg("B"));
+    d->export_as_polyhedron(Select_union(),QString("%1_union_%2").arg("A").arg("B"));
 }
 void Scene_combinatorial_map_item::export_intersection_as_polyhedron() const{
-    export_as_polyhedron(Select_inter(),QString("%1_inter_%2").arg("A").arg("B"));
+    d->export_as_polyhedron(Select_inter(),QString("%1_inter_%2").arg("A").arg("B"));
 }
 void Scene_combinatorial_map_item::export_A_minus_B_as_polyhedron() const{
-    Select_A_minus_B predicate(address_of_A);
-    export_as_polyhedron(predicate,QString("%1_minus_%2").arg("A").arg("B"));
+    Select_A_minus_B predicate(d->address_of_A);
+    d->export_as_polyhedron(predicate,QString("%1_minus_%2").arg("A").arg("B"));
 }
 void Scene_combinatorial_map_item::export_B_minus_A_as_polyhedron() const{
-    Select_B_minus_A predicate(address_of_A);
-    export_as_polyhedron(predicate,QString("%1_minus_%2").arg("B").arg("A"));
+    Select_B_minus_A predicate(d->address_of_A);
+    d->export_as_polyhedron(predicate,QString("%1_minus_%2").arg("B").arg("A"));
 }
 
 QMenu* Scene_combinatorial_map_item::contextMenu()
@@ -181,11 +230,11 @@ QMenu* Scene_combinatorial_map_item::contextMenu()
         actionSelectNextVolume->setObjectName("actionSelectNextVolume");
         connect(actionSelectNextVolume, SIGNAL(triggered()),this, SLOT(set_next_volume()));
 
-        exportSelectedVolume =
+        d->exportSelectedVolume =
                 menu->addAction(tr("Export current volume as polyhedron"));
-        exportSelectedVolume->setObjectName("exportSelectedVolume");
-        connect(exportSelectedVolume, SIGNAL(triggered()),this, SLOT(export_current_volume_as_polyhedron()));
-        exportSelectedVolume->setEnabled(volume_to_display!=0);
+        d->exportSelectedVolume->setObjectName("exportSelectedVolume");
+        connect(d->exportSelectedVolume, SIGNAL(triggered()),this, SLOT(export_current_volume_as_polyhedron()));
+        d->exportSelectedVolume->setEnabled(d->volume_to_display!=0);
         menu->setProperty(prop_name, true);
 
         if(is_from_corefinement()){
@@ -226,7 +275,8 @@ bool Scene_combinatorial_map_item::keyPressEvent(QKeyEvent* e){
     return false;
 }
 
-void Scene_combinatorial_map_item::compute_elements(void) const{
+void Scene_combinatorial_map_item_priv::compute_elements(void) const{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     positions_facets.resize(0);
     normals.resize(0);
@@ -237,34 +287,34 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
     {
     std::size_t index = 0;
     Combinatorial_map_3::size_type voltreated
-      = combinatorial_map().get_new_mark();
+      = item->combinatorial_map().get_new_mark();
     Combinatorial_map_3::size_type facetreated
-      = combinatorial_map().get_new_mark();
+      = item->combinatorial_map().get_new_mark();
     Combinatorial_map_3::Dart_const_range::const_iterator
-            darts_it=combinatorial_map().darts().begin(), darts_end=combinatorial_map().darts().end();
+            darts_it=item->combinatorial_map().darts().begin(), darts_end=item->combinatorial_map().darts().end();
     for( ; darts_it!=darts_end; ++darts_it)
     {
-        if ( !combinatorial_map().is_marked(darts_it,voltreated) )
+        if ( !item->combinatorial_map().is_marked(darts_it,voltreated) )
         {
             ++index;
             //iterate over all the darts of the volume
             Combinatorial_map_3::Dart_of_cell_const_range<3>::const_iterator
-                    vol_it=combinatorial_map().darts_of_cell<3>(darts_it).begin(),
-                    vol_end=combinatorial_map().darts_of_cell<3>(darts_it).end();
+                    vol_it=item->combinatorial_map().darts_of_cell<3>(darts_it).begin(),
+                    vol_end=item->combinatorial_map().darts_of_cell<3>(darts_it).end();
             if ( volume_to_display!=0 && index!=volume_to_display )
             {
                 //only mark darts if the volume is not the one to display
                 for ( ;vol_it!=vol_end; ++vol_it )
                 {
-                    combinatorial_map().mark(vol_it,facetreated);
-                    combinatorial_map().mark(vol_it, voltreated);
+                    item->combinatorial_map().mark(vol_it,facetreated);
+                    item->combinatorial_map().mark(vol_it, voltreated);
                 }
             }
             else
             {
                 for ( ;vol_it!=vol_end; ++vol_it )
                 {
-                    if ( !combinatorial_map().is_marked(vol_it,facetreated) )
+                    if ( !item->combinatorial_map().is_marked(vol_it,facetreated) )
                     {
                         Kernel::Vector_3 normal = compute_face_normal(vol_it);
                         for(int i=0; i<3; i++)
@@ -276,16 +326,16 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
 
                         //iterate over all darts of facets
                         for ( Combinatorial_map_3::Dart_of_orbit_const_range<1>::const_iterator
-                              face_it=combinatorial_map().darts_of_orbit<1>(vol_it).begin(),
-                              face_end=combinatorial_map().darts_of_orbit<1>(vol_it).end();
+                              face_it=item->combinatorial_map().darts_of_orbit<1>(vol_it).begin(),
+                              face_end=item->combinatorial_map().darts_of_orbit<1>(vol_it).end();
                               face_it!=face_end; ++face_it)
                         {
                             const Kernel::Point_3& p= face_it->attribute<0>()->point();
                             positions_facets.push_back(p.x());
                             positions_facets.push_back(p.y());
                             positions_facets.push_back(p.z());
-                            combinatorial_map().mark(face_it,facetreated);
-                            combinatorial_map().mark(face_it, voltreated);
+                            item->combinatorial_map().mark(face_it,facetreated);
+                            item->combinatorial_map().mark(face_it, voltreated);
                         }
                     }
                 }
@@ -296,21 +346,21 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
     //mark remaining darts to have an O(1) free_mark
     for( ;  darts_it!=darts_end; ++darts_it)
     {
-        combinatorial_map().mark(darts_it, facetreated);
-        combinatorial_map().mark(darts_it, voltreated);
+        item->combinatorial_map().mark(darts_it, facetreated);
+        item->combinatorial_map().mark(darts_it, voltreated);
     }
 
-    combinatorial_map().free_mark(facetreated);
-    combinatorial_map().free_mark(voltreated);
+    item->combinatorial_map().free_mark(facetreated);
+    item->combinatorial_map().free_mark(voltreated);
     }
 
     //edges
     {
 
-        typedef Combinatorial_map_3::One_dart_per_cell_const_range<1> Edge_darts;
-        Edge_darts darts=combinatorial_map().one_dart_per_cell<1>();
+        typedef Combinatorial_map_3::One_dart_per_cell_range<1,3> Edge_darts;
+        Edge_darts darts=item->combinatorial_map().one_dart_per_cell<1>();
         for (Edge_darts::const_iterator dit=darts.begin();dit!=darts.end();++dit){
-            CGAL_assertion(!dit->is_free(1));
+            CGAL_assertion(!item->combinatorial_map().is_free(dit,1));
             const Kernel::Point_3& a = dit->attribute<0>()->point();
             const Kernel::Point_3& b = dit->beta(1)->attribute<0>()->point();
             positions_lines.push_back(a.x());
@@ -327,7 +377,7 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
     //points
     {
         typedef Combinatorial_map_3::Attribute_const_range<0>::type Point_range;
-        const Point_range& points=combinatorial_map().attributes<0>();
+        const Point_range& points=item->combinatorial_map().attributes<0>();
         for(Point_range::const_iterator pit=boost::next(points.begin());pit!=points.end();++pit){
             const Kernel::Point_3& p=pit->point();
             positions_points.push_back(p.x());
@@ -336,42 +386,43 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
         }
 
     }
-
+    QApplication::restoreOverrideCursor();
 }
 
-void Scene_combinatorial_map_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+
+void Scene_combinatorial_map_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
 {
     //vao for the edges
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_combinatorial_map_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[Edges]->bind();
-        buffers[Edges_vertices].bind();
-        buffers[Edges_vertices].allocate(positions_lines.data(),
+        item->vaos[Scene_combinatorial_map_item_priv::Edges]->bind();
+        item->buffers[Scene_combinatorial_map_item_priv::Edges_vertices].bind();
+        item->buffers[Scene_combinatorial_map_item_priv::Edges_vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[Edges_vertices].release();
+        item->buffers[Scene_combinatorial_map_item_priv::Edges_vertices].release();
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
         std::vector<double>(positions_lines).swap(positions_lines);
-        vaos[Edges]->release();
+        item->vaos[Scene_combinatorial_map_item_priv::Edges]->release();
         program->release();
     }
     //vao for the points
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_combinatorial_map_item::PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[Points]->bind();
-        buffers[Points_vertices].bind();
-        buffers[Points_vertices].allocate(positions_points.data(),
+        item->vaos[Scene_combinatorial_map_item_priv::Points]->bind();
+        item->buffers[Scene_combinatorial_map_item_priv::Points_vertices].bind();
+        item->buffers[Scene_combinatorial_map_item_priv::Points_vertices].allocate(positions_points.data(),
                             static_cast<int>(positions_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[Points_vertices].release();
-        vaos[Points]->release();
+        item->buffers[Scene_combinatorial_map_item_priv::Points_vertices].release();
+        item->vaos[Scene_combinatorial_map_item_priv::Points]->release();
         nb_points = positions_points.size();
         positions_points.resize(0);
         std::vector<double>(positions_points).swap(positions_points);
@@ -379,32 +430,32 @@ void Scene_combinatorial_map_item::initialize_buffers(CGAL::Three::Viewer_interf
     }
     //vao for the facets
     {
-        program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+        program = item->getShaderProgram(Scene_combinatorial_map_item::PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[Facets]->bind();
-        buffers[Facets_vertices].bind();
-        buffers[Facets_vertices].allocate(positions_facets.data(),
+        item->vaos[Scene_combinatorial_map_item_priv::Facets]->bind();
+        item->buffers[Scene_combinatorial_map_item_priv::Facets_vertices].bind();
+        item->buffers[Scene_combinatorial_map_item_priv::Facets_vertices].allocate(positions_facets.data(),
                             static_cast<int>(positions_facets.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[Facets_vertices].release();
+        item->buffers[Scene_combinatorial_map_item_priv::Facets_vertices].release();
 
-        buffers[Facets_normals].bind();
-        buffers[Facets_normals].allocate(normals.data(),
+        item->buffers[Scene_combinatorial_map_item_priv::Facets_normals].bind();
+        item->buffers[Scene_combinatorial_map_item_priv::Facets_normals].allocate(normals.data(),
                             static_cast<int>(normals.size()*sizeof(double)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[Facets_normals].release();
+        item->buffers[Scene_combinatorial_map_item_priv::Facets_normals].release();
         nb_facets = positions_facets.size();
         positions_facets.resize(0);
         std::vector<double>(positions_facets).swap(positions_facets);
         normals.resize(0);
         std::vector<double>(normals).swap(normals);
-        vaos[Facets]->release();
+        item->vaos[Scene_combinatorial_map_item_priv::Facets]->release();
         program->release();
     }
-    are_buffers_filled = true;
+    item->are_buffers_filled = true;
 
 
 }
@@ -431,7 +482,7 @@ QString Scene_combinatorial_map_item::toolTip() const{
     for (unsigned int i=0; i<=4; ++i)
         cells[i]=i;
     std::vector<unsigned int> res = combinatorial_map().count_cells(cells);
-    if (volume_to_display==0)
+    if (d->volume_to_display==0)
         return QObject::tr("<p>Combinatorial_map_3 <b>%1</b> (mode: %8, color: %9)</p>"
                            "<p>Number of darts: %2<br />"
                            "Number of vertices: %3<br />"
@@ -465,7 +516,7 @@ QString Scene_combinatorial_map_item::toolTip() const{
             .arg(res[4])
             .arg(this->renderingModeName())
             .arg(this->color().name())
-            .arg(volume_to_display-1);
+            .arg(d->volume_to_display-1);
 }
 
 
@@ -473,50 +524,50 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
 {
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        d->compute_elements();
+        d->initialize_buffers(viewer);
     }
-    vaos[Facets]->bind();
-    program=getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
-    program->bind();
-    program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
-    vaos[Facets]->release();
-    program->release();
-
+    vaos[Scene_combinatorial_map_item_priv::Facets]->bind();
+    d->program=getShaderProgram(PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
+    d->program->bind();
+    d->program->setAttributeValue("colors", this->color());
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->nb_facets/3));
+    vaos[Scene_combinatorial_map_item_priv::Facets]->release();
+    d->program->release();
 }
- void Scene_combinatorial_map_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+ void Scene_combinatorial_map_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
      if(!are_buffers_filled)
      {
-         compute_elements();
-         initialize_buffers(viewer);
+         d->compute_elements();
+         d->initialize_buffers(viewer);
      }
-     vaos[Edges]->bind();
-     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
-     program->bind();
-     program->setAttributeValue("colors", this->color());
-     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
-     vaos[Edges]->release();
-     program->release();
+     vaos[Scene_combinatorial_map_item_priv::Edges]->bind();
+     d->program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
+     d->program->bind();
+     d->program->setAttributeValue("colors", this->color());
+     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/3));
+     vaos[Scene_combinatorial_map_item_priv::Edges]->release();
+     d->program->release();
 
 }
- void Scene_combinatorial_map_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+ void Scene_combinatorial_map_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
      if(!are_buffers_filled)
      {
-         compute_elements();
-         initialize_buffers(viewer);
+         d->compute_elements();
+         d->initialize_buffers(viewer);
      }
-     vaos[Points]->bind();
-     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
-     program->bind();
-     program->setAttributeValue("colors", this->color());
-     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
-     vaos[Points]->release();
-     program->release();
-
+     vaos[Scene_combinatorial_map_item_priv::Points]->bind();
+     d->program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+     attribBuffers(viewer,PROGRAM_WITHOUT_LIGHT);
+     d->program->bind();
+     d->program->setAttributeValue("colors", this->color());
+     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_points/3));
+     vaos[Scene_combinatorial_map_item_priv::Points]->release();
+     d->program->release();
 }
+
+ bool Scene_combinatorial_map_item::is_from_corefinement() const{return d->address_of_A!=NULL;}

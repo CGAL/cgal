@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>444</width>
-    <height>269</height>
+    <width>369</width>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,7 +60,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -77,10 +77,10 @@
         <number>3</number>
        </property>
        <property name="maximum">
-        <double>1.000000000000000</double>
+        <double>1000000.000000000000000</double>
        </property>
        <property name="singleStep">
-        <double>0.001000000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="value">
         <double>0.002000000000000</double>
@@ -90,7 +90,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
@@ -114,11 +114,11 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Minimum Numbr of Points:</string>
+        <string>Minimum Number of Points:</string>
        </property>
       </widget>
      </item>
@@ -141,7 +141,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
@@ -158,10 +158,10 @@
         <number>2</number>
        </property>
        <property name="maximum">
-        <double>1.000000000000000</double>
+        <double>1000000.000000000000000</double>
        </property>
        <property name="singleStep">
-        <double>0.010000000000000</double>
+        <double>1.000000000000000</double>
        </property>
        <property name="value">
         <double>0.020000000000000</double>
@@ -171,7 +171,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
@@ -214,12 +214,25 @@
    <item>
     <widget class="QCheckBox" name="m_regularize">
      <property name="text">
-      <string>Regularize planes</string>
+      <string>Regularize Planes</string>
      </property>
      <property name="checked">
       <bool>true</bool>
      </property>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
