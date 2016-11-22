@@ -442,53 +442,184 @@ class Triangulation_segment_simplex_iterator_3
 private:
   typedef Triangulation_segment_simplex_iterator_3<Tr_, Inc> Simplex_iterator;
   typedef Triangulation_segment_cell_iterator_3<Tr_, Inc> SCI;
-  SCI cell_iterator;
 
 private:
-  typedef SCI::Point    Point;
-  typedef SCI::Segment  Segment;
+  typedef typename SCI::Point    Point;
+  typedef typename SCI::Segment  Segment;
 
 public:
   // \{
-  typedef typename SCI::Vertex_handle Vertex_handle;        //< defines the type of a handle for a vertex in the triangulation
-  typedef typename SCI::Cell_handle  Cell_handle;        //< defines the type of a handle for a cell in the triangulation.
-  typedef typename SCI::Locate_type  Locate_type;        //< defines the simplex type returned from location.
-  typedef typename SCI::Simplex      Simplex;            //< defines the simplex type.
+  typedef typename SCI::Vertex_handle Vertex_handle;//< defines the type of a handle for a vertex in the triangulation
+  typedef typename SCI::Cell_handle   Cell_handle;  //< defines the type of a handle for a cell in the triangulation.
+  typedef typename SCI::Triangulation::Edge  Edge;  //< defines the type of an edge in the triangulation.
+  typedef typename SCI::Triangulation::Facet Facet; //< defines the type of a facet in the triangulation.
+  typedef typename SCI::Locate_type   Locate_type;  //< defines the simplex type returned from location.
 
-  typedef Simplex        value_type;       //< defines the value type the iterator refers to.
-  typedef Simplex&       reference;        //< defines the reference type of the iterator.
-  typedef Simplex*       pointer;          //< defines the pointer type of the iterator.
+  typedef boost::variant<Vertex_handle, Edge, Facet, Cell_handle> Simplex_type; //types sorted by dimension
+
+  typedef Simplex_type   value_type;       //< defines the value type  the iterator refers to.
+  typedef Simplex_type&  reference;        //< defines the reference type of the iterator.
+  typedef Simplex_type*  pointer;          //< defines the pointer type of the iterator.
   typedef std::size_t    size_type;        //< defines the integral type that can hold the size of a sequence.
   typedef std::ptrdiff_t difference_type;  //< defines the signed integral type that can hold the distance between two iterators.
   typedef std::forward_iterator_tag iterator_category;      //< defines the iterator category.
   // \}
 
+private:
+  SCI cell_iterator;
+  Simplex_type curr_simplex;
+
+public:
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, Vertex_handle t)
-    : cell_iterator(tr, s, t) {}
+    : cell_iterator(tr, s, t)
+  { init_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, const Point& t)
-    : cell_iterator(tr, s, t) {}
+    : cell_iterator(tr, s, t)
+  { init_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle())
-    : cell_iterator(tr, s, t, hint) {}
+    : cell_iterator(tr, s, t, hint)
+  { init_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, const Point& t, Cell_handle hint = Cell_handle())
-    : cell_iterator(tr, s, t, hint) {}
+    : cell_iterator(tr, s, t, hint)
+  { init_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Segment& seg, Cell_handle hint = Cell_handle())
-    : cell_iterator(tr, seg, hint) {}
+    : cell_iterator(tr, seg, hint)
+  { init_curr_simplex(); }
 
+  bool operator==(const Simplex_iterator& sit) const
+  {
+    return sit.cell_iterator == cell_iterator
+        && sit.curr_simplex == curr_simplex;
+  }
+  bool operator!=(const Simplex_iterator& sit) const
+  {
+    return sit.cell_iterator != cell_iterator
+        || sit.curr_simplex != curr_simplex;
+  }
+
+private:
+  Triangulation_segment_simplex_iterator_3
+    (const SCI& sci)
+    : cell_iterator(sci)
+    , curr_simplex(Cell_handle())
+  {}
+
+private:
+  void init_curr_simplex()
+  {
+    //check what is the entry type of cell_iterator
+    Locate_type lt;
+    int li, lj;
+    cell_iterator.entry(lt, li, lj);
+    switch (lt)
+    {
+    case Locate_type::VERTEX:
+      curr_simplex = Cell_handle(cell_iterator)->vertex(li);
+      break;
+    case Locate_type::EDGE:
+      curr_simplex = Edge(Cell_handle(cell_iterator), li, lj);
+      break;
+    case Locate_type::FACET: //basic case where segment enters a cell
+                             //by crossing a facet
+      //the 3 cases below correspond to the case when cell_iterator
+      //is in its initial position: _cur is locate(source)
+    case Locate_type::CELL:
+    case Locate_type::OUTSIDE_CONVEX_HULL:
+    case Locate_type::OUTSIDE_AFFINE_HULL:
+      curr_simplex = Cell_handle(cell_iterator);
+      break;
+    default:
+      CGAL_assertion(false);
+    };
+  }
+
+public:
   Simplex_iterator end() const
   {
-    return sci.end();
+    Simplex_iterator sit(cell_iterator.end());
+    return sit;
   }
 
+  //  provides the increment postfix operator.
   Simplex_iterator& operator++()
   {
-    sci.walk_to_next();
+    CGAL_assertion(!curr_simplex.empty());
+
+    switch(curr_simplex.which())
+    {
+    case 3 :/*Cell_handle*/
+    {
+      ++cell_iterator;
+      init_curr_simplex();
+      break;
+    }
+    case 2 :/*Facet*/
+    {
+      std::cout << "which type is Facet...!?" << std::endl;
+      break;
+    }
+    case 1 :/*Edge*/
+    case 0 :/*Vertex_handle*/
+    {
+      //move to the cell actually traversed
+      curr_simplex = Cell_handle(cell_iterator);
+      break;
+    }
+    default:
+      CGAL_assertion(false);
+    };
     return *this;
   }
+  //  provides the increment prefix operator.
+  Simplex_iterator operator++(int)
+  {
+    Simplex_iterator tmp(*this);
+    ++(*this);
+    return tmp;
+  }
+
+  //  provides a dereference operator.
+  /* 	\return a pointer to the current cell.
+  */
+  Simplex_type*   operator->()        { return &*curr_simplex; }
+
+  //  provides an indirection operator.
+  /*  \return the current cell.
+  */
+  Simplex_type&   operator*()         { return curr_simplex; }
+
+  bool is_vertex() const { return curr_simplex.which() == 0; }
+  bool is_edge()   const { return curr_simplex.which() == 1; }
+  bool is_facet()  const { return curr_simplex.which() == 2; }
+  bool is_cell()   const { return curr_simplex.which() == 3; }
+
+  const Simplex_type& get_simplex() const { return curr_simplex; }
+  Vertex_handle get_vertex() const
+  {
+    CGAL_assertion(is_vertex());
+    return boost::get<Vertex_handle>(curr_simplex);
+  }
+  Vertex_handle get_edge() const
+  {
+    CGAL_assertion(is_edge());
+    return boost::get<Edge>(curr_simplex);
+  }
+  Vertex_handle get_facet() const
+  {
+    CGAL_assertion(is_facet());
+    return boost::get<Facet>(curr_simplex);
+  }
+  Vertex_handle get_cell() const
+  {
+    CGAL_assertion(is_cell());
+    return boost::get<Cell_handle>(curr_simplex);
+  }
+
 
 };//class Triangulation_segment_simplex_iterator_3
 
