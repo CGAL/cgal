@@ -253,10 +253,10 @@ void make_one_run(const char* filename){
   WFixed_AS wfixed_as(T);
  
   
-//copy triangulation for familly alpha-shape
+//copy triangulation for family alpha-shape
   WDT T1;
   T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(),wfixed_as.infinite_vertex() ) );
-  std::cout << "Build familly weighted alpha complex" << std::endl;
+  std::cout << "Build family weighted alpha complex" << std::endl;
   WAS w_as(T1,0,WAS::GENERAL);
   
 
@@ -275,7 +275,7 @@ void make_one_run(const char* filename){
 
   std::cout << "Build Fixed alpha complex" << std::endl;
   Fixed_AS fixed_as(delaunay0);
-  std::cout << "Build familly alpha complex" << std::endl;
+  std::cout << "Build family alpha complex" << std::endl;
   AS as(delaunay1,0,AS::GENERAL); 
   std::cout << "Compare both.... ";
   compare_all(fixed_as,as);
