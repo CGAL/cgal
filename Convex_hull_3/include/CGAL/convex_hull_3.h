@@ -787,7 +787,8 @@ convex_hull_3(InputIterator first, InputIterator beyond,
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it, P, traits);
   }
   CGAL_assertion(num_vertices(P)>=3);
-  boost::graph_traits<Polyhedron>::halfedge_iterator b,e;
+
+  typename boost::graph_traits<Polyhedron>::halfedge_iterator b,e;
   boost::tie(b,e) = halfedges(P);
   if (boost::next(b,3) == e){
     typename boost::property_map<Polyhedron, vertex_point_t>::type vpmap  = get(CGAL::vertex_point, P);

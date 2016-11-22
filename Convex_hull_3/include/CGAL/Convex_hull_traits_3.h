@@ -199,7 +199,7 @@ class Convex_hull_traits_3 :
   typedef Point_triple<R>                        Plane_3;
   typedef typename R::Vector_3                   Vector_3;
 
-  typedef typename Default::Get<Polyhedron, Polyhedron_3<R> >::type Polyhedron_3;
+  typedef typename Default::Get<Polyhedron, CGAL::Polyhedron_3<R> >::type Polyhedron_3;
 
   typedef typename R::Construct_segment_3        Construct_segment_3;
   typedef typename R::Construct_ray_3            Construct_ray_3;
