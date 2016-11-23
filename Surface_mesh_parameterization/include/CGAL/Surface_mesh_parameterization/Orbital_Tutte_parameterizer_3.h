@@ -386,18 +386,22 @@ public:
                                const Matrix& L,
                                VertexUVMap uvmap, VertexIndexMap vimap) const
   {
-    std::size_t n = B.size();
+    CGAL_precondition(A.column_dimension() == L.column_dimension());
+    std::size_t n = L.column_dimension();
+    std::size_t big_n = n + A.column_dimension();
+
+    std::cout << "big_n: " << big_n << std::endl;
 
     // Fill the large system M.Xf = Bf:
     // ( L A' ) ( Xf ) = ( B )
     // ( A 0  ) ( Xf ) = ( 0 )
-    Matrix M(2*n, 2*n);
-    Vector Bf(2*n);
+    Matrix M(big_n, big_n);
+    Vector Bf(big_n);
     NT D;
-    Vector Xf(2*n);
+    Vector Xf(big_n);
 
     // full B
-    for(std::size_t i=0; i<n; ++i) {
+    for(std::size_t i=0; i<B.size(); ++i) {
       Bf[n+i] = B[i];
     }
 
