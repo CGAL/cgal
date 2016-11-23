@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud
+// Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud, Simon Giraudot
 
 #ifndef POINT_SET_3_H
 #define POINT_SET_3_H
@@ -91,6 +91,9 @@ private:
   Byte_map m_red;
   Byte_map m_green;
   Byte_map m_blue;
+  Double_map m_fred;
+  Double_map m_fgreen;
+  Double_map m_fblue;
 
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
@@ -132,8 +135,6 @@ public:
   double& radius (const Index& index) { return m_radius[index]; }
   const double& radius (const Index& index) const { return m_radius[index]; }
 
-  void test () { }
-  
   bool check_colors()
   {
     bool found = false;
@@ -143,7 +144,7 @@ public:
       {
         boost::tie (m_red, found) = this->template property_map<unsigned char>("r");
         if (!found)
-          return false;
+          return get_float_colors();
       }
 
     boost::tie (m_green, found) = this->template property_map<unsigned char>("green");
@@ -165,17 +166,53 @@ public:
     return true;
   }
 
+  bool get_float_colors()
+  {
+    bool found = false;
+
+    boost::tie (m_fred, found) = this->template property_map<double>("red");
+    if (!found)
+      {
+        boost::tie (m_fred, found) = this->template property_map<double>("r");
+        if (!found)
+          return false;
+      }
+
+    boost::tie (m_fgreen, found) = this->template property_map<double>("green");
+    if (!found)
+      {
+        boost::tie (m_fgreen, found) = this->template property_map<double>("g");
+        if (!found)
+          return false;
+      }
+
+    boost::tie (m_fblue, found) = this->template property_map<double>("blue");
+    if (!found)
+      {
+        boost::tie (m_fblue, found) = this->template property_map<double>("b");
+        if (!found)
+          return false;
+      }
+    return true;
+  }
+
   bool has_colors() const
   {
-    return m_blue != Byte_map();
+    return (m_blue != Byte_map() || m_fblue != Double_map());
+  }
+
+  bool has_byte_colors() const
+  {
+    return (m_blue != Byte_map());
   }
     
-  unsigned char& red (const Index& index) { return m_red[index]; }
-  unsigned char& green (const Index& index) { return m_green[index]; }
-  unsigned char& blue (const Index& index) { return m_blue[index]; }
-  const unsigned char& red (const Index& index) const { return m_red[index]; }
-  const unsigned char& green (const Index& index) const { return m_green[index]; }
-  const unsigned char& blue (const Index& index) const { return m_blue[index]; }
+  double red (const Index& index) const
+  { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
+  double green (const Index& index) const
+  { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
+  double blue (const Index& index) const
+  { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
+
   
   iterator first_selected() { return this->m_indices.end() - this->m_nb_removed; }
   const_iterator first_selected() const { return this->m_indices.end() - this->m_nb_removed; }
