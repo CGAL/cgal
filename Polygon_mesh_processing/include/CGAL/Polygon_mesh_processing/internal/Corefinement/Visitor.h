@@ -76,6 +76,20 @@ struct No_mark
   {}
 };
 
+template<class TriangleMesh, class EdgeMarkMap>
+void mark_all_edges(TriangleMesh& tm, const EdgeMarkMap& edge_mark_map)
+{
+  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
+                edges(tm))
+  {
+    put(edge_mark_map, ed, true);
+  }
+}
+
+template<class TriangleMesh>
+void mark_all_edges(TriangleMesh& tm, const No_mark<TriangleMesh>&)
+{} //nothing to do
+
 //binds two edge constrained pmaps
 template <class G, class Ecm1, class Ecm2=Ecm1>
 struct Ecm_bind{

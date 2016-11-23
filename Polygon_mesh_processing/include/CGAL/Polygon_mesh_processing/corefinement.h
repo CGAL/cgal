@@ -24,6 +24,7 @@
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Visitor.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Face_graph_output_builder.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/iterator.h>
 
 namespace CGAL {
@@ -99,6 +100,7 @@ boolean_operation(      TriangleMesh& tm1,
                                      NamedParametersOut3>& nps_out,
                   const bool throw_on_self_intersection = false )
 {
+
 // Vertex point maps
   //for input meshes
   typedef typename GetVertexPointMap<TriangleMesh,
@@ -123,6 +125,42 @@ boolean_operation(      TriangleMesh& tm1,
   CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(1)
   CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(2)
   CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP(3)
+
+  if (&tm1==&tm2)
+  {
+    // for now edges in a coplanar patch are not constrained so there is nothing to constrained here
+    // \todo marked edges from input to output are not ported
+
+    if (desired_output[Corefinement::UNION] != boost::none)
+      if (&tm1 != *desired_output[Corefinement::UNION])
+        copy_face_graph(tm1,
+                        *(*desired_output[Corefinement::UNION]),
+                        Emptyset_iterator(),
+                        Emptyset_iterator(),
+                        Emptyset_iterator(),
+                        vpm1,
+                        vpm_out[Corefinement::UNION]);
+
+    if (desired_output[Corefinement::INTER] != boost::none)
+      if (&tm1 != *desired_output[Corefinement::INTER])
+        copy_face_graph(tm1,
+                        *(*desired_output[Corefinement::INTER]),
+                        Emptyset_iterator(),
+                        Emptyset_iterator(),
+                        Emptyset_iterator(),
+                        vpm1,
+                        vpm_out[Corefinement::INTER]);
+
+    if (desired_output[Corefinement::TM1_MINUS_TM2] != boost::none)
+      if (&tm1 == *desired_output[Corefinement::TM1_MINUS_TM2])
+        clear(tm1);
+
+    if (desired_output[Corefinement::TM2_MINUS_TM1] != boost::none)
+      if (&tm1 == *desired_output[Corefinement::TM2_MINUS_TM1])
+        clear(tm1);
+
+    return CGAL::make_array(true, true, true, true);
+  }
 
 // Edge is-constrained maps
   //for input meshes
@@ -428,6 +466,13 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
                             Corefinement::No_mark<TriangleMesh>() );
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;
+
+  if (&tm1==&tm2)
+  {
+    Corefinement::mark_all_edges(tm1, ecm1);
+    Corefinement::mark_all_edges(tm2, ecm2);
+    return;
+  }
 
 // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
