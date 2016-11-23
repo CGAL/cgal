@@ -8,7 +8,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/single_mold_translational_casting_2.h>
+#include <CGAL/top_edges_single_mold_translational_casting_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
@@ -45,7 +45,7 @@ bool test_one_file(std::ifstream& inp)
   // std::cout << pgn << std::endl;
 
   std::vector<Top_edge> top_edges;
-  SMS::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
+  SMS::top_edges_single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
 
   size_t exp_num_top_edges;
   inp >> exp_num_top_edges;
