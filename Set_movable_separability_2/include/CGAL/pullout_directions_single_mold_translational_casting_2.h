@@ -67,8 +67,8 @@ std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
 pullout_directions_single_mold_translational_casting_2
 (const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i)
 {
-  Kernel kernel;
-  return top_edge_single_mold_translational_casting_2(pgn, i, kernel);
+  CastingTraits_2 traits;
+  return pullout_directions_single_mold_translational_casting_2(pgn, i, traits);
 }
 
 } // end of namespace Set_movable_separability_2

@@ -68,14 +68,15 @@ class Circle_arrangment {
    *            epsilon area of p. false: same with clockwise
    * \param[in] A an Arc that should contain the epsilon area
    */
-  static bool is_open_direction_contained_in_arc(const Point p,
-                                                 const bool is_counterclockwise,
-                                                 const Arc A)
+  bool is_open_direction_contained_in_arc(const Point p,
+                                          const bool is_counterclockwise,
+                                          const Arc A) const
   {
     if ((is_counterclockwise && (p == A.second)) ||
         (!is_counterclockwise && (p == A.first)))
       return false;
-    return !p.counterclockwise_in_between(A.first,A.second);
+    auto cc_in_between = m_kernel.counterclockwise_in_between_2_object();
+    return !cc_in_between(p, A.first, A.second);
   }
 
   /*! \fn bool is_a_contained_in_b(bool is_a_start_closed,bool is_a_end_closed, arc A, arc B)
@@ -85,18 +86,19 @@ class Circle_arrangment {
    * \param[in] A - an arc
    * \param[in] B - an *open* arc
    */
-  static bool is_a_contained_in_b(const bool is_a_start_closed,
-                                  const bool is_a_end_closed,
-                                  const Arc A,const Arc B)
+  bool is_a_contained_in_b(const bool is_a_start_closed,
+                           const bool is_a_end_closed,
+                           const Arc A,const Arc B) const
   {
     //A is closed, B is open and they share an vertex -> A not contained in B
     if ((is_a_start_closed &&(A.first == B.first)) ||
         (is_a_end_closed && (A.second == B.second)))
       return false;
     if ((A.first == B.second) || (B.first == A.second)) return false;
-    return (!A.first.counterclockwise_in_between(B.first, B.second) &&
-            !A.second.counterclockwise_in_between(B.first, B.second) &&
-            !A.first.counterclockwise_in_between(B.first, A.second));
+    auto cc_in_between = m_kernel.counterclockwise_in_between_2_object();
+    return (!cc_in_between(A.first, B.first, B.second) &&
+            !cc_in_between(A.second, B.first, B.second) &&
+            !cc_in_between(A.first, B.first, A.second));
   }
 
   /*! \Circle_arrangment_edge
@@ -161,9 +163,14 @@ class Circle_arrangment {
 
   typedef typename std::list<struct Circle_arrangment_edge> Circle_edges;
 
+  //! The kernel to use.
+  const Kernel& m_kernel;
+
   Circle_edges m_edges;
 
-  /*! \fn void insert_if_legal(const Circle_edge_iterator cur_it,const Circle_edge_iterator next_it,const struct Circle_arrangment_edge &edge)
+  /*! \fn void insert_if_legal(const Circle_edge_iterator cur_it,
+   *                           const Circle_edge_iterator next_it,
+   *                           const struct Circle_arrangment_edge &edge)
    * Adds new edge to the arrangement if it won't create some empty edges
    * \param[in] cur_it iterator to the edge before where the new edge should be
    *        inserted
@@ -221,7 +228,8 @@ public:
    * depth 0, but it was much easier for me to ignore the case where the all
    * circle is a single arc, so I choose this implementation.
    */
-  Circle_arrangment(const Arc first_segment_outer_circle)
+  Circle_arrangment(const Kernel& kernel, const Arc first_segment_outer_circle) :
+    m_kernel(kernel)
   {
     m_edges.push_back(Circle_arrangment_edge(first_segment_outer_circle.first,
                                              0, false));
@@ -281,9 +289,10 @@ public:
       // ?------------?  = "old" arc (the edge from the array)
       if (is_start_contained) {
         if (is_end_contained) {
-          bool isordered =
-            !segment_outer_circle.second.
-            counterclockwise_in_between(segment_outer_circle.first, edge.second);
+          auto cc_in_between = m_kernel.counterclockwise_in_between_2_object();
+          bool isordered = !cc_in_between(segment_outer_circle.second,
+                                          segment_outer_circle.first,
+                                          edge.second);
           if (isordered) {
             //      o~~~~~~~~~~~~o
             // ?-----------------------?

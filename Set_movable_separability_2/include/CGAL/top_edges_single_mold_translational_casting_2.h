@@ -116,10 +116,11 @@ top_edges_single_mold_translational_casting_2
   CGAL::Orientation poly_orientation = pgn.orientation();
   auto segment_outer_circle =
     get_segment_outer_circle<Kernel>(*e_it++, poly_orientation);
-  internal::Circle_arrangment<Kernel> circle_arrangment(segment_outer_circle);
+  internal::Circle_arrangment<Kernel> circle_arrangment(kernel,
+                                                        segment_outer_circle);
 
   ++edge_index;
-  for (; e_it!= pgn.edges_end(); ++e_it, ++edge_index) {
+  for (; e_it != pgn.edges_end(); ++e_it, ++edge_index) {
     segment_outer_circle =
       get_segment_outer_circle<Kernel>(*e_it, poly_orientation);
     circle_arrangment.add_segment_outer_circle(segment_outer_circle, edge_index);
@@ -141,7 +142,7 @@ top_edges_single_mold_translational_casting_2
 (const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
 {
   Kernel kernel;
-  return single_mold_translational_casting_2(pgn, oi, kernel);
+  return top_edges_single_mold_translational_casting_2(pgn, oi, kernel);
 }
 
 } // end of namespace Set_movable_separability_2

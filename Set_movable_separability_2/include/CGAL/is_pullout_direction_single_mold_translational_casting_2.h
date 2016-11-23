@@ -44,7 +44,8 @@ is_pullout_direction_single_mold_translational_casting_2
  typename CastingTraits_2::Direction_2& d)
 {
   CastingTraits_2 traits;
-  return is_pullout_direction_single_mold_translational_casting_2(pgn, i, d, traits);
+  return is_pullout_direction_single_mold_translational_casting_2(pgn, i, d,
+                                                                  traits);
 }
 
 } /* end namesapce Set_movable_separability_2 */
