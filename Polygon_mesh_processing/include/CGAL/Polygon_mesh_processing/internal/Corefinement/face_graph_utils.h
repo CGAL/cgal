@@ -54,7 +54,6 @@ triangulate_a_face(
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
 
@@ -417,7 +416,6 @@ void import_polyline(
                 ::edge_descriptor>& output_shared_edges)
 {
   typedef boost::graph_traits<PolygonMesh> GT;
-  typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
@@ -895,7 +893,6 @@ void disconnect_patches(
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
 
   // disconnect each patch one by one
   for (std::size_t i=patches_to_remove.find_first();
@@ -1115,7 +1112,6 @@ remove_patches(TriangleMesh& tm,
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
-  typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
 

@@ -58,7 +58,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
   if (desired_output[i]!=boost::none) \
   { \
     vpm_out.push_back(  \
-        choose_param(get_param(get<i>(nps_out), vertex_point), \
+        choose_param(get_param(cpp11::get<i>(nps_out), vertex_point), \
                                get_property_map(vertex_point, \
                                  *(*desired_output[i])))); \
     output_vpms[i]=&vpm_out.back(); \
@@ -73,8 +73,8 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np);
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
-      choose_param( get_param(get<I>(nps_out), edge_is_constrained),  \
-                              Corefinement::No_mark<TriangleMesh>() );
+      boost::choose_param( get_param(cpp11::get<I>(nps_out), edge_is_constrained),  \
+                           Corefinement::No_mark<TriangleMesh>() );
 
 
 /**

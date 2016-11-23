@@ -658,7 +658,7 @@ public:
                    vpm1, vpm2,
                    nodes) ) //p1==q2
             {
-              CGAL_assertion( index_p1!=index_p2 || index_p1==-1 );
+              CGAL_assertion( index_p1!=index_p2 || index_p1==Node_id(-1) );
               coplanar_patches_of_tm1.set(patch_id_p1);
               coplanar_patches_of_tm2.set(patch_id_q2);
               bool q1_is_between_p1p2 = sorted_around_edge_filtered(
@@ -728,17 +728,17 @@ public:
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
-              ( index_p1 == -1 ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
-              ( index_q1 == -1 ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
+              ( index_p1 == Node_id(-1) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
+              ( index_q1 == Node_id(-1) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
           &&
-              ( index_p2 == -1 ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
-              ( index_q1 == -1 ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
+              ( index_p2 == Node_id(-1) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
+              ( index_q1 == Node_id(-1) ? nodes.to_exact(get(vpm2,q1)): nodes.exact_node(index_q1) )
           &&
-              ( index_p1 == -1 ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
-              ( index_q2 == -1 ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
+              ( index_p1 == Node_id(-1) ? nodes.to_exact(get(vpm1,p1)): nodes.exact_node(index_p1) ) !=
+              ( index_q2 == Node_id(-1) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
           &&
-              ( index_p2 == -1 ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
-              ( index_q2 == -1 ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
+              ( index_p2 == Node_id(-1) ? nodes.to_exact(get(vpm1,p2)): nodes.exact_node(index_p2) ) !=
+              ( index_q2 == Node_id(-1) ? nodes.to_exact(get(vpm2,q2)): nodes.exact_node(index_q2) )
           );
 
           bool q1_is_between_p1p2 = sorted_around_edge_filtered(
