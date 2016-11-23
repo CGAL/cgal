@@ -36,7 +36,7 @@ see an example of a 2D object and a 3D object in \cgalFigureRef{figexemple3Dmani
 showing some cells of the subdivision and some
 adjacency and incidence relations.
 
-\cgalFigureBegin{figexemple3Dmanifold,objects2d-3d.png}
+\cgalFigureBegin{figexemple3Dmanifold,objects2d-3d.svg}
 Example of subdivided objects that can be
 described by combinatorial maps. Left: A 2D object composed of
 three facets (2-cells), named <I>f1</I>, <I>f2</I> and <I>f3</I>, nine
@@ -70,7 +70,7 @@ the example in \cgalFigureRef{figexemplecombimaps} showing the 2D and 3D
 combinatorial maps describing the two objects given in
 \cgalFigureRef{figexemple3Dmanifold}.
 
-\cgalFigureBegin{figexemplecombimaps,cmaps2d-3d.png}
+\cgalFigureBegin{figexemplecombimaps,cmaps2d-3d.svg}
 Combinatorial maps representing the objects given in
 \cgalFigureRef{figexemple3Dmanifold}. Left: The 2D combinatorial map which
 contains 12 darts. Right: The 3D combinatorial map which
@@ -120,7 +120,7 @@ facet (2-cell). Starting from any of these six darts and following
 \f$ \beta_2\f$ and \f$ \beta_3\f$ pointers, we can reach exactly the six darts
 describing edge <I>e4</I>.
 
-\cgalFigureBegin{figintuitiveexemple,cmaps2d-3d-zoom.png}
+\cgalFigureBegin{figintuitiveexemple,cmaps2d-3d-zoom.svg}
 Two zooms on the 3D combinatorial map given in \cgalFigureRef{figexemplecombimaps} (Right).
 Left: Zoom around the central edge
 <I>e4</I> which details the six darts belonging to the
@@ -241,7 +241,7 @@ have for example \f$ \beta_1\f$(1)=2, \f$ \beta_2\f$(1)=10, and \f$
 for example \f$ \beta_3\f$(10)=\f$ \varnothing\f$ and \f$
 \beta_3\f$(12)=\f$ \varnothing\f$.
 
-\cgalFigureBegin{figexemplecarte3d,cmap3d-example2.png}
+\cgalFigureBegin{figexemplecarte3d,cmap3d-example2.svg}
 Example of a 3D combinatorial map. Left: A 3D object made of
 two volumes adjacent along facet <I>f2</I>. Right: The
 corresponding 3D combinatorial map. Darts are drawn with arrows,
@@ -449,7 +449,7 @@ corresponding to the length of the associated 1-cell, and 2-attributes
 containing a color in RGB format. In the second example (Right), a 3D
 combinatorial map has 2-attributes containing a color in RGB format.
 
-\cgalFigureBegin{figexempleattribs,cmap2d-3d-attribs.png}
+\cgalFigureBegin{figexempleattribs,cmap2d-3d-attribs.svg}
 Example of combinatorial maps with attributes. Attributes
 are represented by black rectangles containing an information, and
 association between darts and attributes are represented by small
@@ -487,7 +487,7 @@ to a 3D ball (intuitively, two objects are homeomorphic if each object
 can be continuously deformed into the second one; in such a case, the
 two objects have exactly the same topological properties).
 
-\cgalFigureBegin{figquasivariete,quasivarietes.png}
+\cgalFigureBegin{figquasivariete,quasivarietes.svg}
 Example of a 3D quasi-manifold which is not a manifold. The
 object to the right is made of the four pyramids (shown to the left)
 glued together along facets, thus it is a quasi-manifold.
@@ -506,7 +506,7 @@ not possible to describe non quasi-manifold objects as those shown in
 \cgalFigureRef{fignonquasimanifold} by combinatorial maps.
 
 
-\cgalFigureBegin{fignonquasimanifold,nonmanifolds.png}
+\cgalFigureBegin{fignonquasimanifold,nonmanifolds.svg}
 Three examples of non quasi-manifold objects. Left:
 A 2D object which is not a quasi-manifold since the two 2-cells share
 a common vertex but no common 1-cell. Middle: A 3D object which
@@ -523,7 +523,7 @@ by \f$ \beta_i\f$'s, with 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>
 correspond to a quasi-manifold? As we can see in
 \cgalFigureRef{figpbcarte}, the answer is no.
 
-\cgalFigureBegin{figpbcarte,problems-cmaps.png}
+\cgalFigureBegin{figpbcarte,problems-cmaps.svg}
 Two examples of darts linked together by some
 \f$ \beta_1\f$, \f$ \beta_2\f$ and \f$ \beta_3\f$ which
 does not represent a 3D quasi-manifold, and thus which are not 3D
@@ -588,7 +588,7 @@ All handles are model of `LessThanComparable` and `Hashable`,
 that is they can be used as keys in containers such as `std::map`
 and `boost::unordered_map`.
 
-\cgalFigureBegin{figdiagram_class,Diagramme_class.png}
+\cgalFigureBegin{figdiagram_class,Diagramme_class.svg}
 UML diagram of the main classes of the package. k is the number of non void attributes.
 \cgalFigureEnd
 
@@ -994,7 +994,7 @@ modification is \f$ \beta_1\f$(<I>d0</I>)=\f$ \varnothing\f$ (and thus
 definition of \f$ \beta_0\f$). Note that is it possible to unlink a
 given dart for \f$ \beta_i\f$ only if it is not <I>i</I>-free.
 
-\cgalFigureBegin{figexemplesew,exemple-3d-sew.png}
+\cgalFigureBegin{figexemplesew,exemple-3d-sew.svg}
 Example of \ref CombinatorialMap::sew "3-sew" operation.
 Left: A 3D combinatorial
 map containing two volumes that are not connected, with
@@ -1154,7 +1154,7 @@ examples on \cgalFigureRef{figinsertvertex}, \cgalFigureRef{figinsertedge}
 and \cgalFigureRef{figinsertface}).
 
 
-\cgalFigureBegin{figinsertvertex,insert-vertex.png}
+\cgalFigureBegin{figinsertvertex,insert-vertex.svg}
 Example of `insert_cell_0_in_cell_1` and `remove_cell<0>`
 operations. Left: Initial combinatorial map. Right:
 After the insertion of a 0-cell in the 1-cell containing dart
@@ -1175,7 +1175,7 @@ because parameters are different depending on `i` and `j`.
 `cm.insert_cell_0_in_cell_2(dh0)` adds a 0-cell in the 2-cell containing dart `d0`. The 2-cell is split in triangles, one for each initial edge of the facet. This operation is possible if `d0`\f$
 \in\f$\ref CombinatorialMap::darts "cm.darts()" (see example on \cgalFigureRef{figtriangulate}).
 
-\cgalFigureBegin{figtriangulate,triangulation.png}
+\cgalFigureBegin{figtriangulate,triangulation.svg}
 Example of `insert_cell_0_in_cell_2` operation.
 \cgalFigureEnd
 
@@ -1189,7 +1189,7 @@ operation is possible if <I>d1</I>\f$ \in\f$\f$ \langle{}\f$\f$
 <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge
 between <I>d1</I> and <I>d3</I>.
 
-\cgalFigureBegin{figinsertedge,insert-edge.png}
+\cgalFigureBegin{figinsertedge,insert-edge.svg}
 Example of `insert_cell_1_in_cell_2` and `remove_cell<1>`
 operations. Left: Initial combinatorial map. Right:
 After the insertion of two 1-cells: a first one between the two
@@ -1214,7 +1214,7 @@ can be tested thanks to
 `cm.is_insertable_cell_2_in_cell_3(itbegin,itend)` (see example on
 \cgalFigureRef{figinsertface}).
 
-\cgalFigureBegin{figinsertface,insert-facet.png}
+\cgalFigureBegin{figinsertface,insert-facet.svg}
 Example of `insert_cell_2_in_cell_3` and `remove_cell<2>`
 operations.  Left: Initial combinatorial map. Right: After the
 insertion of a 2-cell along the path of 1-cells containing
@@ -1312,7 +1312,7 @@ The second line is the result after the removal operations. We
 retrieve the original combinatorial hexahedron since we have removed
 all the inserted elements.
 
-\cgalFigureBegin{fig_exemple_ope,example-insertions.png}
+\cgalFigureBegin{fig_exemple_ope,example-insertions.svg}
 Example of high level operations. Left: Initial 3D
 combinatorial map after the creation of the combinatorial
 hexahedron. Middle: Combinatorial map obtained after the two
