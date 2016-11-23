@@ -13,6 +13,9 @@ namespace Set_movable_separability_2 {
  * \f$y\f$-axis. In other words, every direction in the range (if exists) must
  * have a positive component in the positive \f$y\f$-direction.
  *
+ * The type that substitutes the template parameter `%CastingTraits_2` must be
+ * a model of the concept `CastingTraits_2`.
+ *
  * \param[in] pgn the input polygon.
  * \param[in] i the index of an edge in pgn.
  * \return a pair of elements, where the first is a Boolean that indicates

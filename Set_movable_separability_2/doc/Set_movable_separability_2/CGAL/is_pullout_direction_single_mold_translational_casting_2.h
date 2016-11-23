@@ -11,6 +11,9 @@ namespace Set_movable_separability_2 {
  * colliding into the mold (but possibly sliding along the mold surface). It is
  * required that the polygon is <em>castable</em> this way.
  *
+ * The type that substitutes the template parameter `%CastingTraits_2` must be
+ * a model of the concept `CastingTraits_2`.
+ *
  * \param[in] pgn the input polygon.
  * \param[in] i the index of an edge in pgn.
  * \param[in] d the tested direction.
