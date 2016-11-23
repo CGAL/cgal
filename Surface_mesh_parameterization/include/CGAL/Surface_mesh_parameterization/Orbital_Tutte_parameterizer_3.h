@@ -27,6 +27,7 @@
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Timer.h>
@@ -132,8 +133,8 @@ public:
   {
     std::cout << "Constraining " << ind << std::endl;
 
-    A.set_coef(2*ind, 2*ind, w, true /*new_coeff*/);
-    A.set_coef(2*ind + 1, 2*ind + 1, w, true /*new_coeff*/);
+    A.set_coef(2*ind, 2*ind, w, true /*new_coef*/);
+    A.set_coef(2*ind + 1, 2*ind + 1, w, true /*new_coef*/);
 
     B[2*ind] = rhs[0];
     B[2*ind + 1] = rhs[1];
@@ -158,8 +159,8 @@ public:
 
       // <T(vert_ind,:), x_si>
       // obj.A(end+1, 2*sinds(ind)+[-1,0]) = T(vert_ind,:);
-      A.set_coef(2*s + vert_ind, 2*s, T(vert_ind, 0), true /*new_coeff*/);
-      A.set_coef(2*s + vert_ind, 2*s + 1, T(vert_ind, 1), true /*new_coeff*/);
+      A.set_coef(2*s + vert_ind, 2*s, T(vert_ind, 0), true /*new_coef*/);
+      A.set_coef(2*s + vert_ind, 2*s + 1, T(vert_ind, 1), true /*new_coef*/);
 
       // -<T(vert_ind,:), x_s1>
       // obj.A(end, 2*sinds(1)+[-1,0]) = obj.A(end, 2*sinds(1)+[-1,0]) - T(vert_ind,:);
@@ -367,7 +368,7 @@ public:
                        const VertexIndexMap vimap) const
   {
     std::cout << "size of X: " << X.size() << std::endl;
-    CGAL_assertion(X.size() == 2*num_vertices(mesh) );
+    CGAL_assertion(X.size() == 2 * num_vertices(mesh) );
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       int index = get(vimap, vd);
@@ -411,7 +412,7 @@ public:
     for(int k=0; k<L.eigen_object().outerSize(); ++k) {
       for(typename Eigen::SparseMatrix<double>::InnerIterator
                                             it(L.eigen_object(), k); it; ++it) {
-        M.set_coef(it.row(), it.col(), it.value(), true /*new_coeff*/);
+        M.set_coef(it.row(), it.col(), it.value(), true /*new_coef*/);
 //        std::cout <<  it.row() << " " << it.col() << " " << it.value() << '\n';
       }
     }
@@ -421,8 +422,8 @@ public:
     for(int k=0; k<A.eigen_object().outerSize(); ++k) {
       for(typename Eigen::SparseMatrix<double>::InnerIterator
                                             it(A.eigen_object(), k); it; ++it) {
-        M.set_coef(it.col(), it.row() + n, it.value(), true /*new_coeff*/); // A
-        M.set_coef(it.row() + n, it.col(), it.value(), true /*new_coeff*/); // A'
+        M.set_coef(it.col(), it.row() + n, it.value(), true /*new_coef*/); // A
+        M.set_coef(it.row() + n, it.col(), it.value(), true /*new_coef*/); // A'
 //        std::cout <<  it.row() << " " << it.col() << " " << it.value() << '\n';
       }
     }
@@ -518,7 +519,7 @@ public:
     //  Energy (Laplacian)
     // %%%%%%%%%%%%%%%%%%%%
 
-    Matrix L(2*nbVertices, 2*nbVertices);
+    Matrix L(2 * nbVertices, 2 * nbVertices);
     mean_value_laplacian(mesh, vimap, L);
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES

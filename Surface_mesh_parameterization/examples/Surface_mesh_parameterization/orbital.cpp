@@ -148,7 +148,7 @@ int main(int argc, char * argv[])
 
   SurfaceMesh sm; // underlying mesh of the seam mesh
 
-  const char* mesh_filename = (argc>1) ? argv[1] : "../data/bunny.off";
+  const char* mesh_filename = (argc>1) ? argv[1] : "../data/bear.off";
   std::ifstream in_mesh(mesh_filename);
   if(!in_mesh) {
     std::cerr << "Error: problem loading the input data" << std::endl;
@@ -160,7 +160,7 @@ int main(int argc, char * argv[])
   // -- the first line for the cones indices
   // -- the second line must be empty
   // -- the third line optionally provides the seam edges indices as 'e11 e12 e21 e22 e31 e32' etc.
-  const char* cone_filename = (argc>2) ? argv[2] : "../data/bunny.selection.txt";
+  const char* cone_filename = (argc>2) ? argv[2] : "../data/bear.selection.txt";
 
   // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
   std::vector<SM_vertex_descriptor> cone_vds_in_sm(3);

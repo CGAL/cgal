@@ -73,7 +73,7 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
     vertex_descriptor vd = *vit;
     os << get(uvmap, vd) << " 0" << '\n';
 
-    // the vertices in 'vertices' are not in the same order as in vimap
+    // in case the vertices in 'vertices' are not in the same order as in vimap
     renumbering_vector[get(vimap, vd)] = counter++;
   }
 
@@ -92,10 +92,9 @@ void output_uvmap_to_off(const TriangleMesh& mesh,
 }
 
 template <typename TriangleMesh,
-          typename HD,
           typename VertexUVMap>
 void output_uvmap_to_off(const TriangleMesh& mesh,
-                         HD bhd,
+                         typename boost::graph_traits<TriangleMesh>::halfedge_descriptor bhd,
                          const VertexUVMap uvmap,
                          std::ostream& os)
 {

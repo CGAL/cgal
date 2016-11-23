@@ -42,7 +42,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Timer.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
@@ -61,14 +60,8 @@
 
 // @todo Handle the case cot = 0 with a local parameterization aligned with the axes
 //       (this produces C2=0 which is problematic to compute a & b)
-// @todo test ARAP + SEAM
 // @todo Add distortion measures
 // @todo non-simple border in MVC_post_processor
-// @todo clean OpenNL from LSCM
-// @todo Fix PMP::border_halfedges() (add a "!")
-
-// @todo look up the matlab code
-
 // @todo Parallelize the local phase?
 
 namespace CGAL {
@@ -1091,8 +1084,7 @@ private:
     // Solve "A*Xv = Bv". On success, the solution is (1/Dv) * Xv.
     NT Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
-       !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
-    {
+       !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
       std::cout << "Could not solve linear system" << std::endl;
       status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
       return status;
@@ -1225,19 +1217,6 @@ private:
     output_uvmap("ARAP_final_post_processing.off", mesh, vertices, faces, uvmap, vimap);
 
     return OK;
-  }
-
-  /// Compute the quality of the parameterization.
-  void compute_quality(const TriangleMesh& mesh,
-                       const Faces_vector& faces) const
-  {
-
-    BOOST_FOREACH(face_descriptor fd, faces) {
-      // compute the jacobian
-
-      // compute the singular values
-    }
-
   }
 
 // Public operations

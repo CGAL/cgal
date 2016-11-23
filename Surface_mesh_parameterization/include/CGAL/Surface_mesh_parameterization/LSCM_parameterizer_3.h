@@ -31,7 +31,6 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <CGAL/circulator.h>
-#include <CGAL/Timer.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
