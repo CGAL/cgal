@@ -32,7 +32,9 @@
 #include <CGAL/Timer.h>
 
 #include <Eigen/Dense>
+#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
 #include <Eigen/SPQRSupport>
+#endif
 
 #include <boost/foreach.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -79,11 +81,16 @@ template
 <
   typename TriangleMesh,
   typename SparseLinearAlgebraTraits_d
-    // ~1s (for bear.off)
+#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+    // ~1s (for the input `bear.off`)
     = Eigen_solver_traits<Eigen::SPQR<Eigen_sparse_symmetric_matrix<double>::EigenType> >
-
+#else
     // ~15s
 //    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+
+    //
+    = Eigen_solver_traits<Eigen::SparseQR<Eigen_sparse_symmetric_matrix<double>::EigenType,
+                                          Eigen::COLAMDOrdering<int> > >
 
     // ~20s
 //    = Eigen_solver_traits< >
@@ -92,6 +99,7 @@ template
 //    = Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> >
 
     // Can't use SuperLU / UmfPackLU, and SparseQR / SparseLU are way too slow
+#endif
 >
 class Orbital_Tutte_parameterizer_3
 {
@@ -417,7 +425,7 @@ public:
 
     std::cout << "Filled M and Bf" << std::endl;
 
-#ifdef SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
     std::ofstream outM("linears_M.txt");
     outM << M.eigen_object() << std::endl;
 #endif
@@ -438,7 +446,7 @@ public:
       X[i] = Xf[i];
     }
 
-#ifdef SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
     std::ofstream outf("solution.txt");
     outf << X << std::endl;
 #endif
@@ -488,7 +496,7 @@ public:
     // add rotational constraints
     AddRotationalConstraint(mesh, cmap, vimap, A, B);
 
-#ifdef SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
     std::cout << "A and B are filled" << std::endl;
     std::ofstream outA("A.txt"), outB("B.txt");
 
@@ -509,14 +517,20 @@ public:
     Matrix L(2*nbVertices, 2*nbVertices);
     mean_value_laplacian(mesh, vimap, L);
 
-#ifdef SMP_OUTPUT_ORBITAL_MATRICES
+#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
     std::ofstream outL("MVCc.txt");
     outL << L.eigen_object() << std::endl;
 #endif
 
     // compute the flattening by solving the boundary conditions
     // while satisfying the convex combination property with L
-    std::cout << "solving system" << std::endl;
+    std::cout << "Solving the system ";
+#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+    std::cout << "with a sparse linear solver from Sparsesuite." << std::endl;
+#else
+    std::cout << "with a sparse linear solver from Eigen." << std::endl;
+#endif
+
     status = computeFlattening(mesh, A, B, L, uvmap, vimap);
     if(status != OK)
       return status;
