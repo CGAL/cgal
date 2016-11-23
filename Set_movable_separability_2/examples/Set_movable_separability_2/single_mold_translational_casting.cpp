@@ -29,7 +29,8 @@ int main(int  argc, char* argv[])
 
   auto poly_orientation = pgn.orientation();
   std::list<Top_edge> top_edges;
-  SMS::single_mold_translational_casting_2(pgn, std::back_inserter(top_edges));
+  SMS::top_edges_single_mold_translational_casting_2
+    (pgn, std::back_inserter(top_edges));
 
   if (top_edges.empty())
     std::cout << "The polygon is not castable!" << std::endl;

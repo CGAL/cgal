@@ -15,8 +15,8 @@
 // Author(s): Shahar    <shasha94@gmail.com>
 //            Efi Fogel <efif@gmail.com>
 
-#ifndef CGAL_TOP_EDGE_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
-#define CGAL_TOP_EDGE_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+#ifndef CGAL_PULLOUT_DIRECTIONS_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+#define CGAL_PULLOUT_DIRECTIONS_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
 
 #include <CGAL/Polygon_2.h>
 
@@ -48,7 +48,7 @@ namespace Set_movable_separability_2 {
 template <typename CastingTraits_2>
 std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
                           typename CastingTraits_2::Direction_2> >
-top_edge_single_mold_translational_casting_2
+pullout_directions_single_mold_translational_casting_2
 (const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i, Kernel& kernel)
 {
   typedef CastingTraits_2               Casting_traits_2;
@@ -64,7 +64,7 @@ std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
  * \param[in] i the index of an edge in pgn.
  * \param[in] traits the traits to use.
  */
-top_edge_single_mold_translational_casting_2
+pullout_directions_single_mold_translational_casting_2
 (const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i)
 {
   Kernel kernel;

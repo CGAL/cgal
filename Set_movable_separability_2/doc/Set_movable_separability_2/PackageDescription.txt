@@ -28,8 +28,9 @@ This package consists of the implementations of various predicates and operation
 \cgalClassifedRefPages
 
 ## Functions ##
-- `CGAL::single_mold_translational_casting_2()`
-- `CGAL::top_edge_single_mold_translational_casting_2()`
+- `CGAL::top_edges_single_mold_translational_casting_2()`
+- `CGAL::pullout_directions_single_mold_translational_casting_2()`
+- `CGAL::is_pullout_direction_single_mold_translational_casting_2()`
 
 ## Concepts ##
 - `CastingTraits_2`

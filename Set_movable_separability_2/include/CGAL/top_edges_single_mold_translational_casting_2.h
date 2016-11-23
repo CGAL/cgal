@@ -15,8 +15,8 @@
 // Author(s): Shahar    <shasha94@gmail.com>
 //            Efi Fogel <efif@gmail.com>
 
-#ifndef CGAL_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
-#define CGAL_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+#ifndef CGAL_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
+#define CGAL_TOP_EDGES_SINGLE_MOLD_TRANSLATIONAL_CASTING_2_H
 
 #include <iostream>
 #include <list>
@@ -98,8 +98,8 @@ bool is_any_edge_colinear(const CGAL::Polygon_2<Kernel>& pgn)
  */
 template <typename Kernel, typename OutputIterator>
 OutputIterator
-single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
-                                    OutputIterator oi, Kernel& kernel)
+top_edges_single_mold_translational_casting_2
+(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi, Kernel& kernel)
 {
   /* Legend
    * point = Represented as  Direction_2. It is the intersection between the
@@ -137,8 +137,8 @@ single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
  */
 template <typename Kernel, typename OutputIterator>
 OutputIterator
-single_mold_translational_casting_2(const CGAL::Polygon_2<Kernel>& pgn,
-                                    OutputIterator oi)
+top_edges_single_mold_translational_casting_2
+(const CGAL::Polygon_2<Kernel>& pgn, OutputIterator oi)
 {
   Kernel kernel;
   return single_mold_translational_casting_2(pgn, oi, kernel);
