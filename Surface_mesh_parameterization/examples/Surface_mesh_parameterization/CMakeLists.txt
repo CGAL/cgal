@@ -22,15 +22,33 @@ if ( CGAL_FOUND )
     # Executables that require Eigen 3.1
     include( ${EIGEN3_USE_FILE} ) 
 
-  set(CMAKE_MODULE_PATH "${EIGEN3_INCLUDE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
-  
-  find_package(SPQR)
-  if (NOT SPQR_FOUND)
-    message(STATUS "NOTICE: External sparse solver libraries not found")
-  endif()
+# ------------------------------------------------------------------
+# Detect SuiteSparse libraries:
+# If not found automatically, set SuiteSparse_DIR in CMake to the 
+# directory where SuiteSparse was built.
+# ------------------------------------------------------------------
 
-  include_directories(${SPQR_INCLUDES})
 
+set(SuiteSparse_USE_LAPACK_BLAS ON)
+find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+if(NOT SuiteSparse_FOUND)
+        set(SuiteSparse_VERBOSE ON)
+        find_package(SuiteSparse REQUIRED) # 2nd: Use FindSuiteSparse.cmake module
+        include_directories(${SuiteSparse_INCLUDE_DIRS})
+else()
+        message(STATUS "Find SuiteSparse : include(${USE_SuiteSparse})")
+        include(${USE_SuiteSparse})
+endif()
+MESSAGE(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+# ------------------------------------------------------------------
+#   End of SuiteSparse detection
+# ------------------------------------------------------------------
+
+
+
+
+
+ 
   create_single_source_cgal_program( "discrete_authalic.cpp" )
   create_single_source_cgal_program( "lscm.cpp" )
   create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
@@ -38,7 +56,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "square_border_parameterizer.cpp" )
   create_single_source_cgal_program( "orbital.cpp" )
   
-  target_link_libraries(orbital ${SPQR_LIBRARIES})
+  target_link_libraries(orbital ${SuiteSparse_LIBRARIES} )
   
   else(EIGEN3_FOUND)
     message(STATUS "NOTICE: The examples require Eigen 3.1 (or greater) and will not be compiled.")  
