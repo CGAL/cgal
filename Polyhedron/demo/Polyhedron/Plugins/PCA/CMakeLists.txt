@@ -10,3 +10,6 @@ polyhedron_demo_plugin(trivial_plugin Trivial_plugin)
 
 polyhedron_demo_plugin(create_bbox_mesh_plugin Create_bbox_mesh_plugin)
 target_link_libraries(create_bbox_mesh_plugin scene_polyhedron_item)
+
+polyhedron_demo_plugin(recenter_plugin Recenter_plugin)
+target_link_libraries(recenter_plugin scene_points_with_normal_item)

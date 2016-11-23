@@ -1,0 +1,73 @@
+/*!
+\defgroup PkgClassification Classification Reference
+
+\defgroup PkgClassificationConcepts Concepts
+\ingroup PkgClassification
+
+\defgroup PkgClassificationShapes Shapes
+\ingroup PkgClassification
+
+\addtogroup PkgClassification
+
+\cgalPkgDescriptionBegin{Classification, PkgClassificationSummary}
+\cgalPkgPicture{data_classif.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of classes (such as ground, vegetation, buildings, etc.). A flexible API is provided so that the user can classify any type of data, compute its own local attributes on the data set and define its own classes based on these attributes.}
+\cgalPkgManuals{Chapter_Classification, PkgClassification}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.9}
+\cgalPkgBib{cgal:ovja-pssd}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `CGAL::NeighborQuery`
+
+## Classification ##
+- `CGAL::Classifier<RandomAccessIterator, ItemMap>`
+
+## Data Structures ##
+
+- `CGAL::Classification::Helper<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Point_set_neighborhood<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Classification::Local_eigen_analysis<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Planimetric_grid<Kernel, RandomAccessIterator, PointMap>`
+
+## Classification Type ##
+
+- `CGAL::Classification::Type`
+- `CGAL::Classification::Type_handle`
+
+## Attribute ##
+
+- `CGAL::Classification::Attribute`
+- `CGAL::Classification::Attribute_handle`
+
+## Predefined Attributes ##
+
+- `CGAL::Classification::Attribute_anisotropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_distance_to_plane<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_echo_scatter<Kernel, RandomAccessIterator, PointMap, EchoMap>`
+- `CGAL::Classification::Attribute_eigentropy<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_elevation<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Classification::Attribute_hsv<Kernel, RandomAccessIterator, ColorMap>`
+- `CGAL::Classification::Attribute_linearity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_omnivariance<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_planarity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_sphericity<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_sum_eigenvalues<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_surface_variation<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+- `CGAL::Classification::Attribute_vertical_dispersion<Kernel, RandomAccessIterator, PointMap>`
+- `CGAL::Classification::Attribute_verticality<Kernel, RandomAccessIterator, PointMap, DiagonalizeTraits>`
+
+
+*/

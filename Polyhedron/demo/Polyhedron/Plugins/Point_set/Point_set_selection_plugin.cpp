@@ -406,6 +406,7 @@ protected:
 	  (points->begin() + unselected.size());
       } 
     point_set_item->invalidateOpenGLBuffers();
+    point_set_item->itemChanged();
   }
 
   

@@ -66,6 +66,7 @@ Three
 Triangulation_3
 Triangulation
 Ridges_3
+Point_set_3  
 Point_set_processing_3
 Point_set_shape_detection_3
 Polyline_simplification_2
@@ -95,6 +96,6 @@ Barycentric_coordinates_2
 Surface_mesh
 Surface_mesh_shortest_path
 Polygon_mesh_processing
-
+Classification
 
 

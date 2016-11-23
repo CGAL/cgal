@@ -348,6 +348,23 @@ make_property_map(const std::vector<T>& v)
   return make_property_map(&v[0]);
 }
 
+/// Empty property map that only returns the default value type
+///
+/// \cgalModels `ReadablePropertyMap`
+///
+/// \endcond
+template<class InputIterator, class ValueType>
+struct Empty_property_map{
+  typedef typename InputIterator::value_type key_type;
+  typedef boost::readable_property_map_tag category;
+
+  /// Free function to use a get the value from an iterator using Input_iterator_property_map.
+  inline friend ValueType
+  get (const Empty_property_map&, const key_type&){ return ValueType(); }
+};
+
 } // namespace CGAL
+
+
 
 #endif // CGAL_POINT_SET_PROPERTY_MAP_H
