@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
 # ------------------------------------------------------------------
     # set(SuiteSparse_VERBOSE ON)
     set(SuiteSparse_USE_LAPACK_BLAS ON)
-    find_package(SuiteSparse REQUIRED) # Use FindSuiteSparse.cmake module
+    find_package(SuiteSparse QUIET) # Use FindSuiteSparse.cmake module
     if(SuiteSparse_FOUND)
       message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
       include_directories(${SuiteSparse_INCLUDE_DIRS})
