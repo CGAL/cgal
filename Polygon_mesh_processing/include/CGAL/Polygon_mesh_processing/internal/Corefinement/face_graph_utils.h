@@ -792,7 +792,7 @@ void append_patches_to_triangle_mesh(
         next_around_source = prev(opposite(next_around_source, output), output);
       }while( next_around_source!=GT::null_halfedge() &&
               next_around_source!=opposite(h_out, output) &&
-              !is_border(next_around_target, output));
+              !is_border(next_around_source, output));
     }
   }
 }

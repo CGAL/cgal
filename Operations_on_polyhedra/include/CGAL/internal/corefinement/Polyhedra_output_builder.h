@@ -580,7 +580,7 @@ public:
         next_around_source = next_around_source->opposite()->prev();
       }while( next_around_source!=Halfedge_handle() &&
               next_around_source!=h->opposite() &&
-              !next_around_target->is_border());
+              !next_around_source->is_border());
     }
   }
 };
