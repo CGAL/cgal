@@ -27,16 +27,39 @@ if ( CGAL_FOUND )
 # If not found automatically, set SuiteSparse_DIR in CMake to the 
 # directory where SuiteSparse was built.
 # ------------------------------------------------------------------
-    # set(SuiteSparse_VERBOSE ON)
-    set(SuiteSparse_USE_LAPACK_BLAS ON)
-    find_package(SuiteSparse QUIET) # Use FindSuiteSparse.cmake module
-    if(SuiteSparse_FOUND)
+
+
+
+set(SuiteSparse_USE_LAPACK_BLAS ON)
+find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+if(NOT SuiteSparse_FOUND)
+        set(SuiteSparse_VERBOSE ON)
+        find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+        if(SuiteSparse_FOUND )
+          include_directories(${SuiteSparse_INCLUDE_DIRS})
+        endif()
+else()
+        include(${USE_SuiteSparse})
+endif()
+
+if(SuiteSparse_FOUND)
       message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-      include_directories(${SuiteSparse_INCLUDE_DIRS})
+      
       add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
-    else(SuiteSparse_FOUND)
+else(SuiteSparse_FOUND)
       message(STATUS "NOTICE: The example `orbital.cpp` will be compiled without the Sparsesuite library.")
-    endif(SuiteSparse_FOUND)
+endif(SuiteSparse_FOUND)
+
+#    set(SuiteSparse_VERBOSE ON)
+#    set(SuiteSparse_USE_LAPACK_BLAS ON)
+#    find_package(SuiteSparse REQUIRED COMPONENTS suitesparse ) # Use FindSuiteSparse.cmake module
+#    if(SuiteSparse_FOUND)
+#      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+#      include_directories(${SuiteSparse_INCLUDE_DIRS})
+#      add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
+#    else(SuiteSparse_FOUND)
+#      message(STATUS "NOTICE: The example `orbital.cpp` will be compiled without the Sparsesuite library.")
+#    endif(SuiteSparse_FOUND)
 
 # ------------------------------------------------------------------
 #   End of SuiteSparse detection
