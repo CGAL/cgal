@@ -396,9 +396,9 @@ public:
     typename K::Power_side_of_oriented_power_sphere_3 power_test = traits.power_side_of_oriented_power_sphere_3_object();
     typename K::Orientation o = orientation(p,q,r,s);
     typename K::Oriented_side os = power_test(p,q,r,s,t);
-    CGAL_assertion( o != COPLANAR);
-    // the minus sign below is due to the fact that power_test_3
-    // return in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
+    // power_test_3
+    // returns in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
+    CGAL_assertion(o != COPLANAR);
     return enum_cast<Bounded_side>(o * os);
   }
 
@@ -428,7 +428,7 @@ public:
 		    const Weighted_point_3 & q) const
   {
     return enum_cast<Bounded_side>(
-           CGAL_NTS sign( CGAL_NTS square(p.x()-q.x()) +
+         - CGAL_NTS sign( CGAL_NTS square(p.x()-q.x()) +
 			  CGAL_NTS square(p.y()-q.y()) +
 			  CGAL_NTS square(p.z()-q.z()) +
 			  p.weight() - q.weight()));
