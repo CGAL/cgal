@@ -16,50 +16,36 @@ if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
   include( CGAL_CreateSingleSourceCGALProgram )
+
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
- 
   if (EIGEN3_FOUND)
     # Executables that require Eigen 3.1
-    include( ${EIGEN3_USE_FILE} ) 
+    include( ${EIGEN3_USE_FILE} )
 
 # ------------------------------------------------------------------
 # Detect SuiteSparse libraries:
-# If not found automatically, set SuiteSparse_DIR in CMake to the 
+# If not found automatically, set SuiteSparse_DIR in CMake to the
 # directory where SuiteSparse was built.
 # ------------------------------------------------------------------
 
+    set(SuiteSparse_USE_LAPACK_BLAS ON)
+    find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
+    if(NOT SuiteSparse_FOUND)
+      set(SuiteSparse_VERBOSE ON)
+      find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+      if(SuiteSparse_FOUND)
+        include_directories(${SuiteSparse_INCLUDE_DIRS})
+      endif(SuiteSparse_FOUND)
+    else(NOT SuiteSparse_FOUND)
+      include(${USE_SuiteSparse})
+    endif(NOT SuiteSparse_FOUND)
 
-
-set(SuiteSparse_USE_LAPACK_BLAS ON)
-find_package(SuiteSparse QUIET NO_MODULE)  # 1st: Try to locate the *config.cmake file.
-if(NOT SuiteSparse_FOUND)
-        set(SuiteSparse_VERBOSE ON)
-        find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
-        if(SuiteSparse_FOUND )
-          include_directories(${SuiteSparse_INCLUDE_DIRS})
-        endif()
-else()
-        include(${USE_SuiteSparse})
-endif()
-
-if(SuiteSparse_FOUND)
+    if(SuiteSparse_FOUND)
       message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-      
       add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
-else(SuiteSparse_FOUND)
+    else(SuiteSparse_FOUND)
       message(STATUS "NOTICE: The example `orbital.cpp` will be compiled without the Sparsesuite library.")
-endif(SuiteSparse_FOUND)
-
-#    set(SuiteSparse_VERBOSE ON)
-#    set(SuiteSparse_USE_LAPACK_BLAS ON)
-#    find_package(SuiteSparse REQUIRED COMPONENTS suitesparse ) # Use FindSuiteSparse.cmake module
-#    if(SuiteSparse_FOUND)
-#      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-#      include_directories(${SuiteSparse_INCLUDE_DIRS})
-#      add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
-#    else(SuiteSparse_FOUND)
-#      message(STATUS "NOTICE: The example `orbital.cpp` will be compiled without the Sparsesuite library.")
-#    endif(SuiteSparse_FOUND)
+    endif(SuiteSparse_FOUND)
 
 # ------------------------------------------------------------------
 #   End of SuiteSparse detection
@@ -75,9 +61,9 @@ endif(SuiteSparse_FOUND)
     if(SuiteSparse_FOUND)
       target_link_libraries(orbital ${SuiteSparse_LIBRARIES})
     endif()
-    
+
   else(EIGEN3_FOUND)
-    message(STATUS "NOTICE: The examples require Eigen 3.1 (or greater) and will not be compiled.")  
+    message(STATUS "NOTICE: The examples require Eigen 3.1 (or greater) and will not be compiled.")
   endif(EIGEN3_FOUND)
 
 else()

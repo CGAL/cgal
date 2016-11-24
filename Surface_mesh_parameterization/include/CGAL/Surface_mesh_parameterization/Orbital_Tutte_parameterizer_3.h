@@ -140,9 +140,9 @@ public:
     ++id_r; // current line index in A is increased
   }
 
-  /// adds constraints so that T * x_sinds = x_tinds, where T is a 2x2
+  /// Adds constraints so that T * x_sinds = x_tinds, where T is a 2x2
   /// matrix, and the Transformation T is modified to affine from
-  /// linear by requiring that T * x_si - x_ti = T * x_s1 - x_t1
+  /// linear by requiring that T * x_si - x_ti = T * x_s1 - x_t1.
   void addTransConstraints(int s0, int s, int t,
                            int& id_r,
                            const Eigen::Matrix2d& T,
@@ -184,7 +184,7 @@ public:
     ++id_r; // current line index in A is increased
   }
 
-  /// Compute the rotational constraint on the border of the mesh.
+  /// Computes the rotational constraint on the border of the mesh.
   /// Cone constraints are also added.
   template<typename ConeMap,
            typename VertexIndexMap>
@@ -298,7 +298,7 @@ public:
     return weight;
   }
 
-  /// Compute the coefficients of the mean value Laplacian matrix for the edge
+  /// Computes the coefficients of the mean value Laplacian matrix for the edge.
   /// `ij` in the face `ijk`
   void fill_mvc_matrix(const Point_3& pi, int i,
                        const Point_3& pj, int j,
@@ -390,7 +390,7 @@ public:
     }
   }
 
-  /// Solve the linear system.
+  /// Solves the linear system.
   template <typename VertexUVMap,
             typename VertexIndexMap>
   Error_code computeFlattening(const TriangleMesh& mesh,
@@ -442,8 +442,20 @@ public:
     std::cout << "Filled M and Bf" << std::endl;
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
-    std::ofstream outM("linears_M.txt");
-    outM << M.eigen_object() << std::endl;
+    std::ofstream outM("M.txt");
+    outM.precision(20);
+    outM << M.row_dimension() << " " << M.column_dimension() << std::endl;
+    for(int k=0; k<M.eigen_object().outerSize(); ++k) {
+      for(typename Eigen::SparseMatrix<double>::InnerIterator
+                                            it(M.eigen_object(), k); it; ++it) {
+        outM <<  it.row() << " " << it.col() << " " << it.value() << '\n';
+      }
+    }
+
+    std::ofstream outBf("Bf.txt");
+    outBf.precision(20);
+    outBf << Bf.size() << std::endl;
+    outBf << Bf << std::endl;
 #endif
 
     CGAL::Timer task_timer;
@@ -472,7 +484,7 @@ public:
     return OK;
   }
 
-  /// Flatten the mesh to one of the orbifolds. In the end, the
+  /// Flattens the mesh to one of the orbifolds. In the end, the
   /// position of each vertex is stored in the property map `uvmap`.
   ///
   /// \param mesh a model of the `FaceGraph` concept
@@ -522,8 +534,6 @@ public:
         outA << "(" << it.row() << ", " << it.col() << ") " << it.value() << std::endl;
       }
     }
-    outA << std::endl << A.eigen_object() << std::endl << std::endl;
-
     outB << B << std::endl;
 #endif
 
@@ -535,8 +545,15 @@ public:
     mean_value_laplacian(mesh, vimap, L);
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
-    std::ofstream outL("MVCc.txt");
-    outL << L.eigen_object() << std::endl;
+    std::ofstream outL("L.txt");
+    outL.precision(20);
+    outL << L.row_dimension() << " " << L.column_dimension() << std::endl;
+    for(int k=0; k<L.eigen_object().outerSize(); ++k) {
+      for(typename Eigen::SparseMatrix<double>::InnerIterator
+                                            it(L.eigen_object(), k); it; ++it) {
+        outL <<  it.row() << " " << it.col() << " " << it.value() << '\n';
+      }
+    }
 #endif
 
     // compute the flattening by solving the boundary conditions
