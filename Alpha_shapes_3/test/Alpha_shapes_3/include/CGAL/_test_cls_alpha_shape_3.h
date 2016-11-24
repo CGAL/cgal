@@ -111,6 +111,7 @@ _test_cls_alpha_shape_3()
     a1.set_alpha(*alpha_it);
     if (verbose) {
       std::cerr << std::endl;
+      CGAL::to_double(* alpha_it);
       std::cerr << "alpha value " << * alpha_it << std::endl;
     }
     count_faces(a1, verbose);

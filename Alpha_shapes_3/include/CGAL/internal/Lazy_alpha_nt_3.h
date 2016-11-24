@@ -337,6 +337,12 @@ struct Alpha_nt_selector_3:
 
 } //namespace internal
 
+template<class Input_traits, class Kernel_input, bool mode, class Weighted_tag>
+double to_double(const internal::Lazy_alpha_nt_3<Input_traits, Kernel_input, mode, Weighted_tag>& a)
+{
+  return to_double(a.approx());
+}
+
 } //namespace CGAL
 
 #endif //CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
