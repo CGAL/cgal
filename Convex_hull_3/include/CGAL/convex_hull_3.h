@@ -708,6 +708,8 @@ convex_hull_3(InputIterator first, InputIterator beyond,
     --size;
   }
 
+  typename Traits::Collinear_3 collinear = traits.collinear_3_object();
+
   if ( size == 1 )                // 1 point 
   {
       ch_object = make_object(*points.begin());
@@ -722,7 +724,9 @@ convex_hull_3(InputIterator first, InputIterator beyond,
       ch_object = make_object(seg);
       return;
   }
-  else if ( size == 3 )           // 3 points 
+  else if ( ( size == 3 ) && (! collinear(*(points.begin()), 
+                                          *(++points.begin()),
+                                          *(--points.end()) ) ) )           // 3 points 
   {
       typedef typename Traits::Triangle_3                Triangle_3;  
       typename Traits::Construct_triangle_3 construct_triangle =
@@ -735,7 +739,6 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   }
 
   // at least 4 points 
-  typename Traits::Collinear_3 collinear = traits.collinear_3_object();
   
   P3_iterator point1_it = points.begin();
   P3_iterator point2_it = points.begin();
