@@ -518,16 +518,26 @@ private:
       curr_simplex = Cell_handle();
       return;//end has been reached
     }
+
+    Cell_handle cell = Cell_handle(cell_iterator);
     Locate_type lt;
     int li, lj;
     cell_iterator.entry(lt, li, lj);
+
     switch (lt)
     {
     case Locate_type::VERTEX:
-      curr_simplex = Cell_handle(cell_iterator)->vertex(li);
+      if (is_vertex()) //previous visited simplex was also a vertex
+      {
+        lj = cell->index(get_vertex());
+        curr_simplex = Edge(cell, li, lj);
+      }
+      else
+        curr_simplex = cell->vertex(li);
       break;
+
     case Locate_type::EDGE:
-      curr_simplex = Edge(Cell_handle(cell_iterator), li, lj);
+      curr_simplex = Edge(cell, li, lj);
       break;
     case Locate_type::FACET: //basic case where segment enters a cell
                              //by crossing a facet
@@ -536,7 +546,7 @@ private:
     case Locate_type::CELL:
     case Locate_type::OUTSIDE_CONVEX_HULL:
     case Locate_type::OUTSIDE_AFFINE_HULL:
-      curr_simplex = Cell_handle(cell_iterator);
+      curr_simplex = cell;
       break;
     default:
       CGAL_assertion(false);
@@ -565,14 +575,39 @@ public:
     }
     case 2 :/*Facet*/
     {
-      std::cout << "todo : facet degenerate case" << std::endl;
+      //todo
       break;
     }
-    case 1 :/*Edge*/
+    case 1:/*Edge*/
+    {
+      //todo
+      break;
+    }
     case 0 :/*Vertex_handle*/
     {
-      //move to the cell actually traversed
-      curr_simplex = Cell_handle(cell_iterator);
+      Cell_handle ch = Cell_handle(cell_iterator);
+      ++cell_iterator;
+      Cell_handle chnext = Cell_handle(cell_iterator);
+      //cell_iterator is one step forward curr_simplex
+
+      Locate_type lt;
+      int li, lj;
+      cell_iterator.entry(lt, li, lj);
+
+      int index_v = ch->index(get_vertex());
+      int index_vnext = ch->index(chnext->vertex(li));
+
+      if (lt == Locate_type::VERTEX)
+      {
+        curr_simplex = Edge(ch, index_v, index_vnext);
+      }
+      else if (lt == Locate_type::EDGE)
+      {
+        int index_f = 6 - (index_v + index_vnext + ch->index(chnext->vertex(lj)));
+        curr_simplex = Facet(ch, index_f);
+      }
+      else
+        curr_simplex = Cell_handle(cell_iterator);
       break;
     }
     default:
