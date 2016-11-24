@@ -107,7 +107,6 @@ class Lazy_alpha_nt_3{
 
 
 //members  
-  unsigned nb_pt;
   //the members can be updated when calling method exact()
   mutable boost::optional<NT_exact> exact_;
   mutable NT_approx approx_;
@@ -127,7 +126,7 @@ public:
   typedef NT_approx              Approximate_nt;
 
   void update_exact() const{
-    switch (nb_pt){
+    switch (data().size()){
       case 1:
         exact_ = Exact_squared_radius()( to_exact(*data()[0]) );
       break;
@@ -146,7 +145,7 @@ public:
   }
   
   void set_approx(){
-    switch (nb_pt){
+    switch (data().size()){
       case 1:
         approx_ = Approx_squared_radius()( to_approx(*data()[0]) );
       break;
@@ -176,21 +175,21 @@ public:
     return approx_;
   }
 //Constructors  
-  Lazy_alpha_nt_3():nb_pt(0),exact_(Exact_nt(0)),approx_(0){}
+  Lazy_alpha_nt_3():exact_(Exact_nt(0)),approx_(0){}
   
-  Lazy_alpha_nt_3(double d):nb_pt(0),exact_(Exact_nt(d)),approx_(d){}
+  Lazy_alpha_nt_3(double d):exact_(Exact_nt(d)),approx_(d){}
   
-  Lazy_alpha_nt_3(const Input_point& wp1):nb_pt(1),inputs_ptr(new Data_vector())
+  Lazy_alpha_nt_3(const Input_point& wp1):inputs_ptr(new Data_vector())
   {
-    data().reserve(nb_pt);
+    data().reserve(1);
     data().push_back(&wp1);
     set_approx();
   }
 
   Lazy_alpha_nt_3(const Input_point& wp1,
-           const Input_point& wp2):nb_pt(2),inputs_ptr(new Data_vector())
+           const Input_point& wp2):inputs_ptr(new Data_vector())
   {
-    data().reserve(nb_pt);
+    data().reserve(2);
     data().push_back(&wp1);
     data().push_back(&wp2);
     set_approx();
@@ -198,9 +197,9 @@ public:
 
   Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
-           const Input_point& wp3):nb_pt(3),inputs_ptr(new Data_vector())
+           const Input_point& wp3):inputs_ptr(new Data_vector())
   {
-    data().reserve(nb_pt);
+    data().reserve(3);
     data().push_back(&wp1);
     data().push_back(&wp2);
     data().push_back(&wp3);
@@ -210,9 +209,9 @@ public:
   Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
            const Input_point& wp3,
-           const Input_point& wp4):nb_pt(4),inputs_ptr(new Data_vector())
+           const Input_point& wp4):inputs_ptr(new Data_vector())
   {
-    data().reserve(nb_pt);
+    data().reserve(4);
     data().push_back(&wp1);
     data().push_back(&wp2);
     data().push_back(&wp3);
