@@ -28,13 +28,19 @@
 #include <boost/optional.hpp>
 #include <iostream>
 
-#if BOOST_VERSION >= 105400
-#include <boost/container/static_vector.hpp>
-#endif
-
 namespace CGAL {
 
 namespace internal{
+
+template <class Ptr>
+struct Input_points_for_lazy_alpha_nt_3
+{
+  int nbpts;
+  const Ptr* p0;
+  const Ptr* p1;
+  const Ptr* p2;
+  const Ptr* p3;
+};
 
 //non-weighted case  
 template <class Weighted_tag,class Input_traits,class Kernel_input,class Kernel_approx,class Kernel_exact>
@@ -116,58 +122,30 @@ class Lazy_alpha_nt_3{
   mutable NT_approx approx_;
 
 //private functions
-  #if BOOST_VERSION >= 105400
-  typedef boost::container::static_vector<const Input_point*, 4> Data_vector;
+  typedef Input_points_for_lazy_alpha_nt_3<Input_point> Data_vector;
   Data_vector input_points;
 
   const Data_vector& data() const{ return input_points;}
   Data_vector& data(){ return input_points;}
-  void init_input(int) {}
 
-public:
-  // why is the default one not fine?
-  Lazy_alpha_nt_3<Input_traits, Kernel_input, mode, Weighted_tag>&
-  operator=(const Lazy_alpha_nt_3<Input_traits, Kernel_input, mode, Weighted_tag>& other)
-  {
-    input_points=other.input_points;
-    approx_=other.approx_;
-    exact_=other.exact_;
-    return *this;
-  }
-private:
-
-  #else
-  typedef std::vector<const Input_point*> Data_vector;
-  boost::shared_ptr<Data_vector> input_points_ptr;
-
-  const Data_vector& data() const{ return *input_points_ptr;}
-  Data_vector& data(){ return *input_points_ptr;}
-
-  void init_input(int i) {
-    input_points_ptr = boost::shared_ptr<Data_vector>( new Data_vector() );
-    input_points_ptr->reserve(i);
-  }
-  #endif
-  
-  
 public:
 
   typedef NT_exact               Exact_nt;
   typedef NT_approx              Approximate_nt;
 
   void update_exact() const{
-    switch (data().size()){
+    switch (data().nbpts){
       case 1:
-        exact_ = Exact_squared_radius()( to_exact(*data()[0]) );
+        exact_ = Exact_squared_radius()( to_exact(*data().p0) );
       break;
       case 2:
-        exact_ = Exact_squared_radius()( to_exact(*data()[0]),to_exact(*data()[1]) );
+        exact_ = Exact_squared_radius()( to_exact(*data().p0),to_exact(*data().p1) );
       break;
       case 3:
-        exact_ = Exact_squared_radius()( to_exact(*data()[0]),to_exact(*data()[1]),to_exact(*data()[2]) );
+        exact_ = Exact_squared_radius()( to_exact(*data().p0),to_exact(*data().p1),to_exact(*data().p2) );
       break;
       case 4:
-        exact_ = Exact_squared_radius()( to_exact(*data()[0]),to_exact(*data()[1]),to_exact(*data()[2]),to_exact(*data()[3]) );
+        exact_ = Exact_squared_radius()( to_exact(*data().p0),to_exact(*data().p1),to_exact(*data().p2),to_exact(*data().p3) );
       break;
       default:
         CGAL_assertion(false);
@@ -175,18 +153,18 @@ public:
   }
   
   void set_approx(){
-    switch (data().size()){
+    switch (data().nbpts){
       case 1:
-        approx_ = Approx_squared_radius()( to_approx(*data()[0]) );
+        approx_ = Approx_squared_radius()( to_approx(*data().p0) );
       break;
       case 2:
-        approx_ = Approx_squared_radius()( to_approx(*data()[0]),to_approx(*data()[1]) );
+        approx_ = Approx_squared_radius()( to_approx(*data().p0),to_approx(*data().p1) );
       break;
       case 3:
-        approx_ = Approx_squared_radius()( to_approx(*data()[0]),to_approx(*data()[1]),to_approx(*data()[2]) );
+        approx_ = Approx_squared_radius()( to_approx(*data().p0),to_approx(*data().p1),to_approx(*data().p2) );
       break;
       case 4:
-        approx_ = Approx_squared_radius()( to_approx(*data()[0]),to_approx(*data()[1]),to_approx(*data()[2]),to_approx(*data()[3]) );
+        approx_ = Approx_squared_radius()( to_approx(*data().p0),to_approx(*data().p1),to_approx(*data().p2),to_approx(*data().p3) );
       break;
       default:
         CGAL_assertion(false);
@@ -211,17 +189,17 @@ public:
   
   Lazy_alpha_nt_3(const Input_point& wp1)
   {
-    init_input(1);
-    data().push_back(&wp1);
+    data().nbpts=1;
+    data().p0=&wp1;
     set_approx();
   }
 
   Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2)
   {
-    init_input(2);
-    data().push_back(&wp1);
-    data().push_back(&wp2);
+    data().nbpts=2;
+    data().p0=&wp1;
+    data().p1=&wp2;
     set_approx();
   }
 
@@ -229,10 +207,10 @@ public:
            const Input_point& wp2,
            const Input_point& wp3)
   {
-    init_input(3);
-    data().push_back(&wp1);
-    data().push_back(&wp2);
-    data().push_back(&wp3);
+    data().nbpts=3;
+    data().p0=&wp1;
+    data().p1=&wp2;
+    data().p2=&wp3;
     set_approx();
   }
 
@@ -241,11 +219,11 @@ public:
            const Input_point& wp3,
            const Input_point& wp4)
   {
-    init_input(4);
-    data().push_back(&wp1);
-    data().push_back(&wp2);
-    data().push_back(&wp3);
-    data().push_back(&wp4);
+    data().nbpts=4;
+    data().p0=&wp1;
+    data().p1=&wp2;
+    data().p2=&wp3;
+    data().p3=&wp4;
     set_approx();
   }
     
