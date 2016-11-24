@@ -23,7 +23,6 @@
 
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
-#include <CGAL/In_smallest_orthogonal_sphere_3.h>
 
 namespace CGAL {
 
@@ -34,9 +33,7 @@ public:
   typedef RegularTriangulation_3                       Regular_triangulation;
   typedef typename Regular_triangulation::Geom_traits  Geom_traits;
   typedef typename Geom_traits::Weighted_point_3       Weighted_point;
-
-  typedef In_smallest_orthogonal_sphere_3<Geom_traits> In_smallest_orthogonal_sphere_3; 
-
+  
   typedef typename RegularTriangulation_3::Vertex_handle Vertex_handle;
   typedef typename RegularTriangulation_3::Cell_handle   Cell_handle;
   typedef typename RegularTriangulation_3::Facet         Facet;
@@ -147,22 +144,16 @@ private:
 
   // Test whether the anchor of edge (wp1,wp2) and wp2 are equal
   Sign test_anchor(Weighted_point &wp1, Weighted_point &wp2) {
-    In_smallest_orthogonal_sphere_3 iso;
-    assert(iso(wp1,wp2) == enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2)));
     return 
       enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2));
   }
   Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
                    Weighted_point const& wp3) {
-    In_smallest_orthogonal_sphere_3 iso;
-    assert(iso(wp1,wp2,wp3) == enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2,wp3)));
     return 
       enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
   }
   Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
                    Weighted_point const& wp3, Weighted_point const& wp4) {
-    In_smallest_orthogonal_sphere_3 iso;
-    assert(iso(wp1,wp2,wp3,wp4) == enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2,wp3,wp4)));
     return 
       enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4));
   }
@@ -203,8 +194,7 @@ private:
       default:
         CGAL_error();
     }
-    In_smallest_orthogonal_sphere_3 iso;
-    assert(iso(wp1,wp2,wp3) == enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2,wp3)));
+
     return 
       enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
   }
@@ -213,12 +203,7 @@ private:
   // Test whether the anchor of ch and anchor of the facet (ch,i) are equal
   Sign test_anchor(Cell_handle ch, int i) {
     CGAL_assertion(!reg.is_infinite(ch));
-    Weighted_point wp1 = ch->vertex((i+1)&3)->point(),
-      wp2 = ch->vertex((i+2)&3)->point(),
-      wp3 = ch->vertex((i+3)&3)->point(),
-      wp4 = ch->vertex(i)->point();
-   In_smallest_orthogonal_sphere_3 iso;
-   assert(iso(wp1,wp2,wp3,wp4) == enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2,wp3,wp4)));
+
     return enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(
       ch->vertex((i+1)&3)->point(),
       ch->vertex((i+2)&3)->point(),
@@ -230,14 +215,6 @@ private:
     CGAL_assertion(!reg.is_infinite(ch2));
 
     int index = ch2->index(ch);
-      Weighted_point wp1 = ch->vertex(0)->point(),
-        wp2 = ch->vertex(1)->point(),
-        wp3 = ch->vertex(2)->point(),
-        wp4 = ch->vertex(3)->point(),
-        wp5 = ch2->vertex(index)->point();
-
-   In_smallest_orthogonal_sphere_3 iso;
-   assert(iso(wp1,wp2,wp3,wp4,wp5) == enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2,wp3,wp4,wp5)));
     return enum_cast<Sign>(
              reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(
       ch->vertex(0)->point(),
@@ -250,8 +227,6 @@ private:
     Weighted_point const& wp1, Weighted_point const& wp2,
     Weighted_point const& wp3, Weighted_point const& wp4,
     Weighted_point const& wp5) {
-    In_smallest_orthogonal_sphere_3 iso;
-    assert(iso(wp1,wp2,wp3,wp4,wp5) == enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2,wp3,wp4,wp5)));
     return enum_cast<Sign>(
              reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4, wp5));
   }

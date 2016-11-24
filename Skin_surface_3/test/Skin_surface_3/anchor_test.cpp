@@ -6,8 +6,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cassert>
 #include <CGAL/Regular_triangulation_3.h>
-// typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Simple_cartesian<CGAL::Gmpq> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Regular_triangulation_3<K>       Regular;
 
 #include <CGAL/Compute_anchor_3.h>
