@@ -9009,8 +9009,8 @@ public:
     const Kernel::Weighted_point_3 & t);
 
   /*!
-  Analogous to the previous method, for coplanar points,
-  with the power circle \f$ {z(p,q,r)}^{(w)}\f$.
+  Analogous to the previous method,
+  with the power sphere \f$ {z(p,q,r)}^{(w)}\f$ of the points \f$ (p,q,r)\f$.
   \pre `p, q, r` are not collinear.
 
   If all the points have a weight equal to 0, then
@@ -9023,9 +9023,10 @@ public:
     const Kernel::Weighted_point_3 & t);
 
   /*!
-  which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the
-  power segment of `p` and `q`.
-  \pre `p` and `q` have different bare points.
+   Analogous to the previous method,
+   where \f$ {z(p,q)}^{(w)}\f$ is the
+   power sphere of `p` and `q`.
+   \pre `p` and `q` have different bare points.
 
   If all points have a weight equal to 0, then
   `power_side_of_bounded_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate
@@ -9038,10 +9039,14 @@ public:
     const Kernel::Weighted_point_3 & t);
 
   /*!
-  which is the same for equal points, that is when `p` and `q`
-  have equal coordinates, then it returns the comparison of the weights
+  Analogous to the previous method,
+  where \f$ {z(p)}^{(w)}\f$ of the power sphere of `p`,
+  that is the sphere with the bare point of `p` as center,
+  and \f$ -w_p\f$ as weight.
+
+  When `p` and `q`
+  have equal bare points, then it returns the comparison of the weights
   (`ON_BOUNDED_SIDE` when `q` is heavier than `p`).
-  \pre `p` and `q` have equal bare points.
   */
   CGAL::Bounded_side
     operator()(const Kernel::Weighted_point_3 & p,
