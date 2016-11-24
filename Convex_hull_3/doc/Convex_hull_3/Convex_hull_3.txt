@@ -55,15 +55,31 @@ the traits `Convex_hull_traits_3<R>` should be used
 (`R` being the input kernel). Note that the default traits class takes this into
 account.
 
-\subsection Convex_hull_3ConvexityChecking Convexity Checking
+\subsubsection Convex_hull_3Example Example
 
-The function `is_strongly_convex_3()`
-implements the algorithm of Mehlhorn <I>et al.</I> \cgalCite{mnssssu-cgpvg-96} 
-to determine if the vertices of a given polytope constitute a strongly convex 
-point set or not. This function is used in postcondition testing for
-`convex_hull_3()`.
+The following program reads points from an input file and computes
+their convex hull.  We assume that the points are
+not all identical and not all collinear, thus we directly use a polyhedron
+as output. In the example you see that the convex hull function can
+write in any model of the concept `MutableFaceListGraph`.
+
+
+\cgalExample{Convex_hull_3/quickhull_3.cpp}
+
+
+\subsubsection Convex_hull_3Example Example for lower dimensional results
+
+The following program reads points from an input file and computes
+their convex hull. Depending on the dimension of the result, we will
+get a point, a segment, a triangle, or a polyhedral surface.
+Note that the latter may also be planar polygon with a border.
+
+\cgalExample{Convex_hull_3/quickhull_any_dim_3.cpp}
+
+
 
 \subsection Convex_hull_3HalfspaceIntersection Halfspace Intersection
+
 The functions `halfspace_intersection_3()` and
 `halfspace_intersection_with_constructions_3()`
 uses the convex hull algorithm and the duality to compute the intersection
@@ -75,21 +91,22 @@ In order to compute the intersection an interior point is needed. It can be
 either given by the user or computed using linear programming. Notice that the
 second approach is slower due to the resolution of a linear program.
 
+\subsubsection Convex_hull_3HalfspaceInntersectionExample Example
+
 The following program computes the intersection of halfspaces defined by
 tangent planes to a sphere:
 
 \cgalExample{Convex_hull_3/halfspace_intersection_3.cpp}
 
-\subsection Convex_hull_3Example Example
 
-The following program computes the convex hull of a set of 250 random
-points chosen from a sphere of radius 100. We assume that the points are
-not all identical and not all collinear, thus we directly use a polyhedron
-as output. Note the usage of the functor `Plane_from_facet` together with
-`std::transform()` to compute the equations of the plane of each facet
-of the convex hull.
+\subsection Convex_hull_3ConvexityChecking Convexity Checking
 
-\cgalExample{Convex_hull_3/quickhull_3.cpp}
+The function `is_strongly_convex_3()`
+implements the algorithm of Mehlhorn <I>et al.</I> \cgalCite{mnssssu-cgpvg-96} 
+to determine if the vertices of a given polytope constitute a strongly convex 
+point set or not. This function is used in postcondition testing for
+`convex_hull_3()`.
+
 
 \section Convex_hull_3Dynamic Dynamic Convex Hull Construction
 
