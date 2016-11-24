@@ -12,4 +12,5 @@
 \example Polygon_mesh_processing/refine_fair_example.cpp
 \example Polygon_mesh_processing/mesh_slicer_example.cpp
 \example Polygon_mesh_processing/isotropic_remeshing_example.cpp
+\example Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp
 */
