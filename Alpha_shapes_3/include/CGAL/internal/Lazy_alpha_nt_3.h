@@ -225,12 +225,11 @@ public:
   bool \
   operator CMP (const Lazy_alpha_nt_3<Input_traits,Kernel_input,mode,Weighted_tag> &other) const \
   { \
-    try{ \
-      return this->approx() CMP other.approx(); \
-    } \
-    catch(CGAL::Uncertain_conversion_exception&){ \
+    Uncertain<bool> res = this->approx() CMP other.approx(); \
+    if (res.is_certain()) \
+      return res; \
+    else \
       return this->exact() CMP other.exact(); \
-    } \
   } \
 
   CGAL_LANT_COMPARE_FUNCTIONS(<)
