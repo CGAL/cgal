@@ -8,11 +8,11 @@ namespace Set_movable_separability_2 {
  * polygon could be casted in the mold and then pulled out of the mold without
  * colliding into the mold (but possibly sliding along the mold surface). If the
  * polygon is <em>castable</em>, the function computes the set of top edges of
- * such cavities and the corresponding closed ranges of pullout directions.
- * Assuming the top edge normal is parallel to the \f$y\f$-axis, every direction
- * in a range must have a positive component in the positive
- * \f$y\f$-direction. Each top edge and corresponding range is added to a
- * container referred to by a given output iterator.
+ * such cavities and the corresponding closed ranges of pullout directions.  Let
+ * \f$n\f$ denote the normal to a top \f$e\f$, and let \f$d\f$ denote a pullout
+ * direction of \f$e\f$. Naturally, the angle between \f$n\f$ and \f$d\f$ is
+ * larger than zero (\f$n \cdot d > 0\f$). Each top edge and corresponding range
+ * is added to a container referred to by a given output iterator.
  *
  * The type that substitutes the template parameter `%CastingTraits_2` must be
  * a model of the concept `CastingTraits_2`.

@@ -9,9 +9,7 @@ namespace Set_movable_separability_2 {
  * edge being the top edge and then pulled out of the mold without colliding
  * into the mold (but possibly sliding along the mold surface). If the polygon
  * is <em>castable</em> this way, the function computes the closed range of
- * pullout directions asuming that the the top edge normal is parallel to the
- * \f$y\f$-axis. In other words, every direction in the range (if exists) must
- * have a positive component in the positive \f$y\f$-direction.
+ * pullout directions.
  *
  * The type that substitutes the template parameter `%CastingTraits_2` must be
  * a model of the concept `CastingTraits_2`.

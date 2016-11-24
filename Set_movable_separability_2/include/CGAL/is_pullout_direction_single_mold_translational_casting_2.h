@@ -48,6 +48,31 @@ is_pullout_direction_single_mold_translational_casting_2
                                                                   traits);
 }
 
+/*!
+ */
+template <typename CastingTraits_2>
+std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
+                          typename CastingTraits_2::Direction_2> >
+is_pullout_direction_single_mold_translational_casting_2
+(const CGAL::Polygon_2<CastingTraits_2>& pgn,
+ typename CastingTraits_2::Direction_2& d, CastingTraits_2& traits)
+{
+  return false;
+}
+
+/*!
+ */
+template <typename CastingTraits_2>
+std::pair<bool, std::pair<typename CastingTraits_2::Direction_2,
+                          typename CastingTraits_2::Direction_2> >
+is_pullout_direction_single_mold_translational_casting_2
+(const CGAL::Polygon_2<CastingTraits_2>& pgn, size_t i,
+ typename CastingTraits_2::Direction_2& d)
+{
+  CastingTraits_2 traits;
+  return is_pullout_direction_single_mold_translational_casting_2(pgn, d, traits);
+}
+
 } /* end namesapce Set_movable_separability_2 */
 } /* end namesapce CGAL */
 
