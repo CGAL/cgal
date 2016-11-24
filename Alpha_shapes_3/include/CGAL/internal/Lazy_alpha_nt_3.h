@@ -28,6 +28,10 @@
 #include <boost/optional.hpp>
 #include <iostream>
 
+#if BOOST_VERSION >= 105400
+#include <boost/container/static_vector.hpp>
+#endif
+
 namespace CGAL {
 
 namespace internal{
@@ -110,14 +114,40 @@ class Lazy_alpha_nt_3{
   //the members can be updated when calling method exact()
   mutable boost::optional<NT_exact> exact_;
   mutable NT_approx approx_;
+
+//private functions
+  #if BOOST_VERSION >= 105400
+  typedef boost::container::static_vector<const Input_point*, 4> Data_vector;
+  Data_vector input_points;
+
+  const Data_vector& data() const{ return input_points;}
+  Data_vector& data(){ return input_points;}
+  void init_input(int) {}
+
+public:
+  // why is the default one not fine?
+  Lazy_alpha_nt_3<Input_traits, Kernel_input, mode, Weighted_tag>&
+  operator=(const Lazy_alpha_nt_3<Input_traits, Kernel_input, mode, Weighted_tag>& other)
+  {
+    input_points=other.input_points;
+    approx_=other.approx_;
+    exact_=other.exact_;
+    return *this;
+  }
+private:
+
+  #else
   typedef std::vector<const Input_point*> Data_vector;
-  boost::shared_ptr<Data_vector> inputs_ptr;
+  boost::shared_ptr<Data_vector> input_points_ptr;
 
-//private functions  
-  const Data_vector& data() const{ return *inputs_ptr;}
+  const Data_vector& data() const{ return *input_points_ptr;}
+  Data_vector& data(){ return *input_points_ptr;}
 
-  Data_vector& 
-  data(){ return *inputs_ptr;}  
+  void init_input(int i) {
+    input_points_ptr = boost::shared_ptr<Data_vector>( new Data_vector() );
+    input_points_ptr->reserve(i);
+  }
+  #endif
   
   
 public:
@@ -179,17 +209,17 @@ public:
   
   Lazy_alpha_nt_3(double d):exact_(Exact_nt(d)),approx_(d){}
   
-  Lazy_alpha_nt_3(const Input_point& wp1):inputs_ptr(new Data_vector())
+  Lazy_alpha_nt_3(const Input_point& wp1)
   {
-    data().reserve(1);
+    init_input(1);
     data().push_back(&wp1);
     set_approx();
   }
 
   Lazy_alpha_nt_3(const Input_point& wp1,
-           const Input_point& wp2):inputs_ptr(new Data_vector())
+           const Input_point& wp2)
   {
-    data().reserve(2);
+    init_input(2);
     data().push_back(&wp1);
     data().push_back(&wp2);
     set_approx();
@@ -197,9 +227,9 @@ public:
 
   Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
-           const Input_point& wp3):inputs_ptr(new Data_vector())
+           const Input_point& wp3)
   {
-    data().reserve(3);
+    init_input(3);
     data().push_back(&wp1);
     data().push_back(&wp2);
     data().push_back(&wp3);
@@ -209,9 +239,9 @@ public:
   Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
            const Input_point& wp3,
-           const Input_point& wp4):inputs_ptr(new Data_vector())
+           const Input_point& wp4)
   {
-    data().reserve(4);
+    init_input(4);
     data().push_back(&wp1);
     data().push_back(&wp2);
     data().push_back(&wp3);
