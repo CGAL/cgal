@@ -39,6 +39,7 @@
 #include <Eigen/UmfPackSupport>
 #endif
 
+#include <boost/array.hpp>
 #include <boost/foreach.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
@@ -116,7 +117,46 @@ private:
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Point_3                                  Point_3;
 
+  Orbifold_type orb_type;
+
 public:
+  // Orbifold type functions
+  boost::array<Point_2, 2> get_cones_parameterized_coordinates() const
+  {
+    boost::array<Point_2, 2> tcoords;
+    if(orb_type == Square) {
+      tcoords[0] = Point_2(-1, -1);
+      tcoords[1] = Point_2(1, 1);
+    } else if(orb_type == Parallelogram) {
+      tcoords[0] = Point_2(0, -0.5);
+      tcoords[1] = Point_2(0, 0.5);
+    } else { // if(orb_type == Diamond || orb_type == Triangle)
+      tcoords[0] = Point_2(-1, 1);
+      tcoords[1] = Point_2(-1, -1);
+    }
+    return tcoords;
+  }
+
+  boost::array<NT, 2> get_angles_at_cones() const
+  {
+    boost::array<NT, 2> angs;
+    if(orb_type == Square) {
+      angs[0] = 4.;
+      angs[1] = 4.;
+    } else if(orb_type == Diamond) {
+      angs[0] = 3.;
+      angs[1] = 3.;
+    } else if(orb_type == Triangle) {
+      angs[0] = 6.;
+      angs[1] = 2.;
+    } else { // if(orb_type == Parallelogram)
+      angs[0] = 2;
+      angs[1] = 2;
+//      angs[2] = 2; // tmp
+    }
+    return angs;
+  }
+
   // Linear system
   /// Compute the number of linear constraints in the system.
   int number_of_linear_constraints(const TriangleMesh& mesh) const
@@ -194,15 +234,11 @@ public:
                                Matrix& A, Vector& B) const
   {
     // positions of the cones in the plane TMP
-    std::vector<Vector_2> tcoords(2);
-    tcoords[0] = Vector_2(-1, -1);
-    tcoords[1] = Vector_2(1, 1);
+    const boost::array<Point_2, 2>& tcoords = get_cones_parameterized_coordinates();
 
     // rotations of the seams TMP
     // angles at the cones
-    std::vector<NT> angs(2);
-    angs[0] = 4; // singularity is [4; 4] for orb1
-    angs[1] = 4; // singularity is [4; 4] for orb1
+    const boost::array<NT, 2>& angs = get_angles_at_cones();
 
     // the matrix A is
     // the index of the line in A that we are filling
@@ -574,6 +610,10 @@ public:
 
     return OK;
   }
+
+/// Constructor
+public:
+  Orbital_Tutte_parameterizer_3() : orb_type(Square) { }
 };
 
 } // namespace Surface_mesh_parameterization
