@@ -144,18 +144,18 @@ private:
 
   // Test whether the anchor of edge (wp1,wp2) and wp2 are equal
   Sign test_anchor(Weighted_point &wp1, Weighted_point &wp2) {
-    return 
-      enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2));
+    return enum_cast<Sign>(
+        -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2));
   }
   Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
                    Weighted_point const& wp3) {
-    return 
-      enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
+    return enum_cast<Sign>(
+        -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
   }
   Sign test_anchor(Weighted_point const& wp1, Weighted_point const& wp2, 
                    Weighted_point const& wp3, Weighted_point const& wp4) {
-    return 
-      enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4));
+    return enum_cast<Sign>(
+        -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4));
   }
   // Test whether the anchor of e and anchor of e.first->vertex(i) are equal
   Sign test_anchor(Edge e, int i) {
@@ -194,9 +194,8 @@ private:
       default:
         CGAL_error();
     }
-
-    return 
-      enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
+    return enum_cast<Sign>(
+       -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3));
   }
 
 
@@ -204,11 +203,12 @@ private:
   Sign test_anchor(Cell_handle ch, int i) {
     CGAL_assertion(!reg.is_infinite(ch));
 
-    return enum_cast<Sign>(reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(
+    return enum_cast<Sign>(
+      - reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(
       ch->vertex((i+1)&3)->point(),
       ch->vertex((i+2)&3)->point(),
       ch->vertex((i+3)&3)->point(),
-      ch->vertex(i)->point()));                
+      ch->vertex(i)->point()));
   }
   Sign test_anchor(Cell_handle ch, Cell_handle ch2) {
     CGAL_assertion(!reg.is_infinite(ch));
@@ -216,7 +216,7 @@ private:
 
     int index = ch2->index(ch);
     return enum_cast<Sign>(
-             reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(
+             -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(
       ch->vertex(0)->point(),
       ch->vertex(1)->point(),
       ch->vertex(2)->point(),
@@ -228,7 +228,7 @@ private:
     Weighted_point const& wp3, Weighted_point const& wp4,
     Weighted_point const& wp5) {
     return enum_cast<Sign>(
-             reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4, wp5));
+             -reg.geom_traits().power_side_of_bounded_power_sphere_3_object()(wp1, wp2, wp3, wp4, wp5));
   }
 
   const Regular_triangulation &reg;
