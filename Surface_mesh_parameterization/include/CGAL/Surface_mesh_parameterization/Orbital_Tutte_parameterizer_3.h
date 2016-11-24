@@ -402,7 +402,7 @@ public:
     Vector Xf(big_n);
 
     // full B
-    for(std::size_t i=0; i<B.size(); ++i) {
+    for(int i=0; i<B.size(); ++i) {
       Bf[n+i] = B[i];
     }
 
