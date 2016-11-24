@@ -25,6 +25,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/optional.hpp>
 #include <iostream>
 
 namespace CGAL {
@@ -108,8 +109,7 @@ class Lazy_alpha_nt_3{
 //members  
   unsigned nb_pt;
   //the members can be updated when calling method exact()
-  mutable bool updated;
-  mutable NT_exact exact_;
+  mutable boost::optional<NT_exact> exact_;
   mutable NT_approx approx_;
   typedef std::vector<const Input_point*> Data_vector;
   boost::shared_ptr<Data_vector> inputs_ptr;
@@ -143,7 +143,6 @@ public:
       default:
         CGAL_assertion(false);
     }
-    updated=true;
   }
   
   void set_approx(){
@@ -166,22 +165,22 @@ public:
   }
 
   const NT_exact& exact() const {
-    if (!updated){
+    if (exact_ == boost::none){
       update_exact();
-      approx_=to_interval(exact_);
+      approx_=to_interval(*exact_);
     }
-    return exact_;
+    return *exact_;
   }
 
   const NT_approx& approx() const{
     return approx_;
   }
 //Constructors  
-  Lazy_alpha_nt_3():nb_pt(0),updated(true),exact_(0),approx_(0){}
+  Lazy_alpha_nt_3():nb_pt(0),exact_(Exact_nt(0)),approx_(0){}
   
-  Lazy_alpha_nt_3(double d):nb_pt(0),updated(true),exact_(d),approx_(d){}
+  Lazy_alpha_nt_3(double d):nb_pt(0),exact_(Exact_nt(d)),approx_(d){}
   
-  Lazy_alpha_nt_3(const Input_point& wp1):nb_pt(1),updated(false),inputs_ptr(new Data_vector())
+  Lazy_alpha_nt_3(const Input_point& wp1):nb_pt(1),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
     data().push_back(&wp1);
@@ -189,7 +188,7 @@ public:
   }
 
   Lazy_alpha_nt_3(const Input_point& wp1,
-           const Input_point& wp2):nb_pt(2),updated(false),inputs_ptr(new Data_vector())
+           const Input_point& wp2):nb_pt(2),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
     data().push_back(&wp1);
@@ -199,7 +198,7 @@ public:
 
   Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
-           const Input_point& wp3):nb_pt(3),updated(false),inputs_ptr(new Data_vector())
+           const Input_point& wp3):nb_pt(3),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
     data().push_back(&wp1);
@@ -211,7 +210,7 @@ public:
   Lazy_alpha_nt_3(const Input_point& wp1,
            const Input_point& wp2,
            const Input_point& wp3,
-           const Input_point& wp4):nb_pt(4),updated(false),inputs_ptr(new Data_vector())
+           const Input_point& wp4):nb_pt(4),inputs_ptr(new Data_vector())
   {
     data().reserve(nb_pt);
     data().push_back(&wp1);
