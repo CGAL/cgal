@@ -32,9 +32,11 @@
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Timer.h>
 
-#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
 #include <Eigen/SPQRSupport>
+#include <Eigen/UmfPackSupport>
 #endif
 
 #include <boost/foreach.hpp>
@@ -50,6 +52,8 @@
 #include <utility>
 
 /// \file Orbital_Tutte_parameterizer_3.h
+
+// #define CGAL_SMP_OUTPUT_ORBITAL_MATRICES
 
 // @todo checks that cones are different, are on seams, seam is one connected
 //       component
@@ -83,23 +87,9 @@ template
   typename TriangleMesh,
   typename SparseLinearAlgebraTraits_d
 #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
-    // ~1s (for the input `bear.off`)
-    = Eigen_solver_traits<Eigen::SPQR<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+    = Eigen_solver_traits<Eigen::UmfPackLU<Eigen_sparse_symmetric_matrix<double>::EigenType> >
 #else
-    // ~15s
-//    = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_symmetric_matrix<double>::EigenType> >
-
-    //
-    = Eigen_solver_traits<Eigen::SparseQR<Eigen_sparse_symmetric_matrix<double>::EigenType,
-                                          Eigen::COLAMDOrdering<int> > >
-
-    // ~20s
-//    = Eigen_solver_traits< >
-
-    // ~35s
-//    = Eigen_solver_traits<Eigen::ConjugateGradient<Eigen_sparse_symmetric_matrix<double>::EigenType> >
-
-    // Can't use SuperLU / UmfPackLU, and SparseQR / SparseLU are way too slow
+    = Eigen_solver_traits<Eigen::SparseLU<Eigen_sparse_symmetric_matrix<double>::EigenType> >
 #endif
 >
 class Orbital_Tutte_parameterizer_3
@@ -128,22 +118,33 @@ private:
 
 public:
   // Linear system
-  /// adds a positional constraint on a vertex x_ind, so that x_ind*w=rhs
-  void addConstraint(Matrix& A, Vector& B, int ind, double w, Vector_2 rhs) const
+  /// Compute the number of linear constraints in the system.
+  int number_of_linear_constraints(const TriangleMesh& mesh) const
   {
-    std::cout << "Constraining " << ind << std::endl;
+    // number of constraints for orb I, II, III is the number of edges
+    // on the seam and 2 constrained cones.
+    return 2 + static_cast<int>(mesh.number_of_seam_edges());
+  }
 
-    A.set_coef(2*ind, 2*ind, w, true /*new_coef*/);
-    A.set_coef(2*ind + 1, 2*ind + 1, w, true /*new_coef*/);
+  /// Adds a positional constraint on a vertex x_ind, so that x_ind * w = rhs.
+  void addConstraint(Matrix& A, Vector& B, int& id_r, int id_c, double w, Point_2 rhs) const
+  {
+    std::cout << "Constraining " << id_c << std::endl;
 
-    B[2*ind] = rhs[0];
-    B[2*ind + 1] = rhs[1];
+    A.set_coef(2*id_r, 2*id_c, w, true /*new_coef*/);
+    A.set_coef(2*id_r + 1, 2*id_c + 1, w, true /*new_coef*/);
+
+    B[2*id_r] = rhs.x();
+    B[2*id_r + 1] = rhs.y();
+
+    ++id_r; // current line index in A is increased
   }
 
   /// adds constraints so that T * x_sinds = x_tinds, where T is a 2x2
   /// matrix, and the Transformation T is modified to affine from
   /// linear by requiring that T * x_si - x_ti = T * x_s1 - x_t1
   void addTransConstraints(int s0, int s, int t,
+                           int& id_r,
                            const Eigen::Matrix2d& T,
                            Matrix& A, Vector& B) const
   {
@@ -159,26 +160,28 @@ public:
 
       // <T(vert_ind,:), x_si>
       // obj.A(end+1, 2*sinds(ind)+[-1,0]) = T(vert_ind,:);
-      A.set_coef(2*s + vert_ind, 2*s, T(vert_ind, 0), true /*new_coef*/);
-      A.set_coef(2*s + vert_ind, 2*s + 1, T(vert_ind, 1), true /*new_coef*/);
+      A.set_coef(2*id_r + vert_ind, 2*s, T(vert_ind, 0), true /*new_coef*/);
+      A.set_coef(2*id_r + vert_ind, 2*s + 1, T(vert_ind, 1), true /*new_coef*/);
 
       // -<T(vert_ind,:), x_s1>
       // obj.A(end, 2*sinds(1)+[-1,0]) = obj.A(end, 2*sinds(1)+[-1,0]) - T(vert_ind,:);
-      A.add_coef(2*s + vert_ind, 2*s0, - T(vert_ind, 0));
-      A.add_coef(2*s + vert_ind, 2*s0 + 1, -T(vert_ind, 1));
+      A.add_coef(2*id_r + vert_ind, 2*s0, - T(vert_ind, 0));
+      A.add_coef(2*id_r + vert_ind, 2*s0 + 1, -T(vert_ind, 1));
 
       //  - x_ti
       // obj.A(end, 2*tinds(ind)+vert_ind-2) = obj.A(end, 2*tinds(ind)+vert_ind-2)-1;
-      A.add_coef(2*s + vert_ind, 2*t + vert_ind, -1);
+      A.add_coef(2*id_r + vert_ind, 2*t + vert_ind, -1);
 
       // + x_t1
       // obj.A(end, 2*tinds(1)+vert_ind-2) = obj.A(end, 2*tinds(1)+vert_ind-2)+1;
-      A.add_coef(2*s + vert_ind, 2*t0 + vert_ind, 1);
+      A.add_coef(2*id_r + vert_ind, 2*t0 + vert_ind, 1);
 
       // left hand side is zero
       // obj.b=[obj.b; 0];
-      B[2*s + vert_ind] = 0;
+      B[2*id_r + vert_ind] = 0;
     }
+
+    ++id_r; // current line index in A is increased
   }
 
   /// Compute the rotational constraint on the border of the mesh.
@@ -200,6 +203,10 @@ public:
     std::vector<NT> angs(2);
     angs[0] = 4; // singularity is [4; 4] for orb1
     angs[1] = 4; // singularity is [4; 4] for orb1
+
+    // the matrix A is
+    // the index of the line in A that we are filling
+    int current_line_id_in_A = 0.;
 
     // Go through the seam
     boost::unordered_set<int> constrained_cones;
@@ -224,7 +231,8 @@ public:
       std::cout << "starting from " << start_cone_index << std::endl;
 
       // Mark 'start_cone' as constraint
-      addConstraint(A, B, start_cone_index, 1. /*entry in A*/, tcoords[i]);
+      addConstraint(A, B, current_line_id_in_A, start_cone_index,
+                    1. /*entry in A*/, tcoords[i]);
 
       // Go through the seam, marking rotation and cone constraints
       halfedge_descriptor hd = halfedge(start_cone, mesh);
@@ -258,7 +266,8 @@ public:
 
         std::cout << "hd1/hd2: " << hd1t_index << " " << hd2t_index << std::endl;
 
-        addTransConstraints(start_cone_index, hd1t_index, hd2t_index, R, A, B);
+        addTransConstraints(start_cone_index, hd1t_index, hd2t_index,
+                            current_line_id_in_A, R, A, B);
 
         // Check if we have reached the duplicated cone
         vertex_descriptor bhd_target = target(bhd, mesh); // also known as 'hd1_target'
@@ -274,6 +283,8 @@ public:
         CGAL_postcondition(mesh.has_on_seam(bhd) && is_border(bhd, mesh));
       }
     }
+
+    CGAL_postcondition(current_line_id_in_A == 2 * number_of_linear_constraints(mesh));
   }
 
   // MVC computations
@@ -389,9 +400,9 @@ public:
   {
     CGAL_precondition(A.column_dimension() == L.column_dimension());
     std::size_t n = L.column_dimension();
-    std::size_t big_n = n + A.column_dimension();
+    std::size_t big_n = n + A.row_dimension();
 
-    std::cout << "big_n: " << big_n << std::endl;
+    std::cout << "n: " << n << " and big_n: " << big_n << std::endl;
 
     // Fill the large system M.Xf = Bf:
     // ( L A' ) ( Xf ) = ( B )
@@ -494,9 +505,10 @@ public:
     // %%%%%%%%%%%%%%%%%%%%%%%
     //   Boundary conditions
     // %%%%%%%%%%%%%%%%%%%%%%%
-    std::size_t nbVertices = num_vertices(mesh);
-    Matrix A(2 * nbVertices, 2 * nbVertices);
-    Vector B(2 * nbVertices);
+    int lcn = number_of_linear_constraints(mesh);
+    int nbVertices = static_cast<int>(num_vertices(mesh));
+    Matrix A(2 * lcn, 2 * nbVertices); // change me 2 * n_of_constraints
+    Vector B(2 * lcn);
 
     // add rotational constraints
     AddRotationalConstraint(mesh, cmap, vimap, A, B);
