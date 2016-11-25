@@ -387,13 +387,10 @@ public:
       return;
     }
 #endif
-    // This does not actually remove points, and further insertions
-    // would make the points reappear, so we disallow it.
-    removed_ = true;
-
-    CGAL_assertion_code(bool success = )
-    remove_(p, 0, false, 0, false, root(), equal);
+    bool success = remove_(p, 0, false, 0, false, root(), equal_to_p);
     CGAL_assertion(success);
+
+    removed_ |= success;
   }
 private:
   template<class Equal>
