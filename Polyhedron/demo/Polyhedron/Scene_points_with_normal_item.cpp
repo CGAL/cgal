@@ -395,12 +395,12 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 
         for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
 	  {
-            colors_points.push_back ((double)(m_points->red(*it) / 255.));
-            colors_points.push_back ((double)(m_points->green(*it) / 255.));
-            colors_points.push_back ((double)(m_points->blue(*it) / 255.));
-            colors_points.push_back ((double)(m_points->red(*it) / 255.));
-            colors_points.push_back ((double)(m_points->green(*it) / 255.));
-            colors_points.push_back ((double)(m_points->blue(*it) / 255.));
+            colors_points.push_back (m_points->red(*it));
+            colors_points.push_back (m_points->green(*it));
+            colors_points.push_back (m_points->blue(*it));
+            colors_points.push_back (m_points->red(*it));
+            colors_points.push_back (m_points->green(*it));
+            colors_points.push_back (m_points->blue(*it));
 	  }
     }
         
@@ -589,9 +589,9 @@ void Scene_points_with_normal_item::drawSplats(CGAL::Three::Viewer_interface* vi
        {
          const Point_set::Point& p = d->m_points->point (*it);
          const Point_set::Vector& n = d->m_points->normal (*it);
-         viewer->glColor4d((double)(d->m_points->red(*it)) / 255.,
-                           (double)(d->m_points->green(*it)) / 255.,
-                           (double)(d->m_points->blue(*it)) / 255.,
+         viewer->glColor4d(d->m_points->red(*it),
+                           d->m_points->green(*it),
+                           d->m_points->blue(*it),
                            1.0);
          viewer->glNormal3dv(&n.x());
          viewer->glMultiTexCoord1d(GL_TEXTURE2, d->m_points->radius(*it));
@@ -738,7 +738,6 @@ void Scene_points_with_normal_item::computes_local_spacing(int k)
 
   // Compute the radius of each point = (distance max to k nearest neighbors)/2.
   {
-    d->m_points->test();
     int i=0;
     for (Point_set::iterator it=d->m_points->begin(); it!=d->m_points->end(); ++it, ++i)
     {
