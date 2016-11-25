@@ -320,7 +320,7 @@ public:
       }
     }
 
-    CGAL_postcondition(current_line_id_in_A == 2 * number_of_linear_constraints(mesh));
+    CGAL_postcondition(current_line_id_in_A == number_of_linear_constraints(mesh));
   }
 
   // MVC computations
