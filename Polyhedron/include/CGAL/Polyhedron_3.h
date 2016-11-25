@@ -1537,9 +1537,7 @@ public:
 
 } //namespace CGAL
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#endif
 
 #include <CGAL/IO/Polyhedron_iostream.h>
 
