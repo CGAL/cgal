@@ -88,6 +88,13 @@ template
     = Two_vertices_parameterizer_3<TriangleMesh>,
   class SparseLinearAlgebraTraits_d
 #if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
+    // WARNING: at the moment, the choice of SparseLinearAlgebraTraits_d is completely
+    // ignored and `OpenNL::LinearSolver<Sparse_LA>` is used anyway. If you were to
+    // use Eigen solver traits, there is a bug in the line below, though.
+    // Indeed  `Eigen_sparse_symmetric_matrix<double>::EigenType` is a NON SYMMETRIC
+    // Eigen sparse matrix, and thus Sparse_LA::Matrix will be a NON SYMMETRIC matrix
+    // and the whole symmetry aspect will be completely ignored.
+    // @fixme
     = Eigen_solver_traits<Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
 #else
     = OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
