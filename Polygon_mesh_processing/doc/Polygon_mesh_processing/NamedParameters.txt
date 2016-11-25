@@ -152,8 +152,10 @@ a default property map where no edge is constrained is provided.
 \cgalNPEnd
 
 \cgalNPBegin{ vertex_is_constrained_map } \anchor PMP_vertex_is_constrained_map
-the property map containing information about vertices of the input polygon mesh being constrained or not.\n
-\b Type : a class model of `ReadablePropertyMap` with
+the property map containing information about vertices of the input polygon mesh being constrained or not.
+Constrained vertices may be replaced by new vertices, but the number and location
+of vertices remain unchanged.\n
+\b Type : a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
 `bool` as value type. It should be default constructible.\n
 \b Default : if this parameter is omitted,
