@@ -20,4 +20,10 @@ int main()
   t.insert(Point(5,5));
   t.build();
   assert(t.size()==2);
+  t.clear();
+  for(int i=0;i<1000;++i)
+    t.insert(Point(i,-i));
+  for(int i=0;i<1000;++i)
+    t.remove(Point(i,-i));
+  t.print();
 }

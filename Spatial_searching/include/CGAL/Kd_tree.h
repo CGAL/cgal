@@ -390,24 +390,26 @@ public:
     bool success = remove_(p, 0, false, 0, false, root(), equal_to_p);
     CGAL_assertion(success);
 
-    removed_ |= success;
+    // Do not set the flag is the tree has been cleared.
+    if(is_built())
+      removed_ |= success;
   }
 private:
   template<class Equal>
   bool remove_(const Point_d& p,
-      Internal_node_handle grandparent, bool islower,
-      Internal_node_handle parent, bool islower2,
+      Internal_node_handle grandparent, bool parent_islower,
+      Internal_node_handle parent, bool islower,
       Node_handle node, Equal const& equal_to_p) {
     // Recurse to locate the point
     if (!node->is_leaf()) {
       Internal_node_handle newparent = static_cast<Internal_node_handle>(node);
       // FIXME: This should be if(x<y) remove low; else remove up;
       if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] <= newparent->cutting_value()) {
-	if (remove_(p, parent, islower2, newparent, true, newparent->lower(), equal_to_p))
+	if (remove_(p, parent, islower, newparent, true, newparent->lower(), equal_to_p))
 	  return true;
       }
       //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
-	return remove_(p, parent, islower2, newparent, false, newparent->upper(), equal_to_p);
+	return remove_(p, parent, islower, newparent, false, newparent->upper(), equal_to_p);
 
       CGAL_assertion(false); // Point was not found
     }
@@ -429,7 +431,7 @@ private:
       return false;
     } else if (grandparent) {
       Node_handle brother = islower ? parent->upper() : parent->lower();
-      if (islower2)
+      if (parent_islower)
 	grandparent->set_lower(brother);
       else
 	grandparent->set_upper(brother);
