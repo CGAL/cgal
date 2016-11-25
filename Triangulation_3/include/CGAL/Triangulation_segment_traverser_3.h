@@ -527,13 +527,7 @@ private:
     switch (lt)
     {
     case Locate_type::VERTEX:
-      if (is_vertex()) //previous visited simplex was also a vertex
-      {
-        lj = cell->index(get_vertex());
-        _curr_simplex = Edge(cell, li, lj);
-      }
-      else
-        _curr_simplex = cell->vertex(li);
+      _curr_simplex = cell->vertex(li);
       break;
 
     case Locate_type::EDGE:
@@ -580,12 +574,64 @@ public:
     }
     case 1:/*Edge*/
     {
-      //todo
+      if (cell_iterator_is_ahead())
+      {
+        set_curr_simplex();//vertex or facet, entry of cell_iterator
+        break;
+      }
+      //cell_iterator's entry is edge
+      Cell_handle ch = Cell_handle(_cell_iterator);
+      Locate_type clt;
+      int cli, clj;
+      _cell_iterator.entry(clt, cli, clj);
+
+      ++_cell_iterator;
+      Cell_handle chnext = Cell_handle(_cell_iterator);
+      //_cell_iterator is one step forward _curr_simplex
+
+      Locate_type lt;
+      int li, lj;
+      _cell_iterator.entry(lt, li, lj);
+
+      if (lt == Locate_type::VERTEX)
+      {
+        _curr_simplex = ch;
+      }
+      else if (lt == Locate_type::EDGE)
+      {
+        int index_v3 = -1;
+        int tmp = ch->index(chnext->vertex(li));
+        if (tmp != cli && tmp != clj)
+          index_v3 = tmp;
+        else
+        {
+          tmp = ch->index(chnext->vertex(lj));
+          index_v3 = tmp;
+        }
+        CGAL_assertion(index_v3 != -1);
+        _curr_simplex = Facet(ch, (6 - li - lj - index_v3));
+      }
+      else if (lt == Locate_type::FACET)
+      {
+        _curr_simplex = ch;
+      }
+      
       break;
     }
     case 0 :/*Vertex_handle*/
     {
+      if (degeneracy())
+      {
+        set_curr_simplex();
+        break;
+      }
       Cell_handle ch = Cell_handle(_cell_iterator);
+      if (cell_iterator_is_ahead())
+      {
+        _curr_simplex = ch;
+        break;
+      }
+
       ++_cell_iterator;
       Cell_handle chnext = Cell_handle(_cell_iterator);
       //_cell_iterator is one step forward _curr_simplex
@@ -665,6 +711,41 @@ public:
     return boost::get<Cell_handle>(_curr_simplex);
   }
 
+private:
+  /** returns true when _current_simplex does not have the same
+  * type as the "entry" of _cell_iterator
+  * it is for example the case after vertex - edge.
+  * the following value should be vertex, and the corresponding vertex
+  * is the entry of _cell_iterator
+  */
+  bool degeneracy() const
+  {
+    Locate_type lt;
+    int li, lj;
+    _cell_iterator.entry(lt, li, lj);
+    return (is_vertex() && lt != Locate_type::VERTEX)
+        || (is_edge() && lt != Locate_type::EDGE)
+        || (is_facet() && lt != Locate_type::FACET);
+  }
+
+  bool cell_iterator_is_ahead() const
+  {
+    Cell_handle ch = Cell_handle(_cell_iterator);
+    switch (_curr_simplex.which())
+    {
+    case 0 ://vertex
+      return !ch->has_vertex(get_vertex());
+    case 1 ://edge
+      return !ch->has_edge(get_edge());
+    case 2 ://facet
+      return !ch->has_facet(get_facet());
+    case 3 ://cell
+      return ch != get_cell();
+    }
+    //should not be reached
+    CGAL_assertion(false);
+    return false;
+  }
 
 };//class Triangulation_segment_simplex_iterator_3
 
