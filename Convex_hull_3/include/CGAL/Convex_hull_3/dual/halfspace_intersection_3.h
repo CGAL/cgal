@@ -51,7 +51,7 @@ namespace CGAL
                                     const Point_3& origin)
             {
               typedef typename Kernel_traits<Point_3>::Kernel Kernel;
-              typedef typename K::RT RT;
+              typedef typename Kernel::RT RT;
 
               // Typedefs for dual
               typedef typename Polyhedron_dual::Facet Facet;
@@ -66,8 +66,8 @@ namespace CGAL
               typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
               // Typedefs for intersection
-              typedef typename K::Plane_3 Plane_3;
-              typedef typename K::Line_3 Line_3;
+              typedef typename Kernel::Plane_3 Plane_3;
+              typedef typename Kernel::Line_3 Line_3;
               typedef boost::optional< boost::variant< Point_3,
                                                        Line_3,
                                                        Plane_3 > > result_inter;
@@ -141,23 +141,23 @@ namespace CGAL
             bool point_inside_convex_polyhedron (const Polyhedron &P,
                                                  Point const& p) {
             // Compute the equations of the facets of the polyhedron
-            typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-            typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+            typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+            typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
             
-            typename boost::property_map<Polyhedron, vertex_point_t>::type vpmap  = get(CGAL::vertex_point, P);
+            typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
 
             BOOST_FOREACH(face_descriptor fd, faces(P))
                 {
                   halfedge_descriptor h = halfedge(fd,P), done(h);
-                  Point_3 const& p1 = get(vpmap, target(h,P));
-                  h = next(h,p);
-                  Point_3 const& p2 = get(vpmap, target(h,P));
-                  h = next(h,p);
-                  Point_3 const& p3 = get(vpmap, target(h,P));
+                  Point const& p1 = get(vpmap, target(h,P));
+                  h = next(h,P);
+                  Point const& p2 = get(vpmap, target(h,P));
+                  h = next(h,P);
+                  Point const& p3 = get(vpmap, target(h,P));
 
                   while( h!=done && collinear(p1,p2,p3) )
                   {
-                    h = next(h,p);
+                    h = next(h,P);
                     p3 = get(vpmap, target(h,P));
                   }
                   if (h==done) continue; //degenerate facet, skip it
