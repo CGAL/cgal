@@ -3,13 +3,14 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull3Functions
 
-\deprecated This function is deprecated since \cgal 4.10, and users should use `star_to_face_graph()` instead.
-
 fills a polyhedron with the convex hull of a set of 3D points contained in a 3D triangulation of \cgal. 
 
 The polyhedron `P` is cleared and the convex hull of the set of 3D points is stored in `P`.
 
 \attention This function does not compute the plane equations of the faces of `P`.
+
+\attention This function works only for `CGAL::Polyhedron_3<Traits>`, and users who want
+to generate a `Surface_mesh` or any other model of a `FaceGraph` mayuse `star_to_face_graph()` instead.
 
 \pre `T.dimension()`==3.
 
