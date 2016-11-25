@@ -67,7 +67,7 @@ write in any model of the concept `MutableFaceGraph`.
 \cgalExample{Convex_hull_3/quickhull_3.cpp}
 
 
-\subsubsection Convex_hull_3Example Example for lower dimensional results
+\subsubsection Convex_hull_3ExampleLower Example for Lower Dimensional Results
 
 The following program reads points from an input file and computes
 their convex hull. Depending on the dimension of the result, we will
