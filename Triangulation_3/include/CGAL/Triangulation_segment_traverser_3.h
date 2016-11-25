@@ -466,63 +466,63 @@ public:
   // \}
 
 private:
-  SCI cell_iterator;
-  Simplex_type curr_simplex;
+  SCI _cell_iterator;
+  Simplex_type _curr_simplex;
 
 public:
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, Vertex_handle t)
-    : cell_iterator(tr, s, t)
+    : _cell_iterator(tr, s, t)
   { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, const Point& t)
-    : cell_iterator(tr, s, t)
+    : _cell_iterator(tr, s, t)
   { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle())
-    : cell_iterator(tr, s, t, hint)
+    : _cell_iterator(tr, s, t, hint)
   { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, const Point& t, Cell_handle hint = Cell_handle())
-    : cell_iterator(tr, s, t, hint)
+    : _cell_iterator(tr, s, t, hint)
   { set_curr_simplex(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Segment& seg, Cell_handle hint = Cell_handle())
-    : cell_iterator(tr, seg, hint)
+    : _cell_iterator(tr, seg, hint)
   { set_curr_simplex(); }
 
   bool operator==(const Simplex_iterator& sit) const
   {
-    return sit.cell_iterator == cell_iterator
-        && sit.curr_simplex == curr_simplex;
+    return sit._cell_iterator == _cell_iterator
+        && sit._curr_simplex == _curr_simplex;
   }
   bool operator!=(const Simplex_iterator& sit) const
   {
-    return sit.cell_iterator != cell_iterator
-        || sit.curr_simplex != curr_simplex;
+    return sit._cell_iterator != _cell_iterator
+        || sit._curr_simplex != _curr_simplex;
   }
 
 private:
   Triangulation_segment_simplex_iterator_3
     (const SCI& sci)
-    : cell_iterator(sci)
-    , curr_simplex(Cell_handle())
+    : _cell_iterator(sci)
+    , _curr_simplex(Cell_handle())
   {}
 
 private:
   void set_curr_simplex()
   {
-    //check what is the entry type of cell_iterator
-    if (Cell_handle(cell_iterator) == Cell_handle())
+    //check what is the entry type of _cell_iterator
+    if (Cell_handle(_cell_iterator) == Cell_handle())
     {
-      curr_simplex = Cell_handle();
+      _curr_simplex = Cell_handle();
       return;//end has been reached
     }
 
-    Cell_handle cell = Cell_handle(cell_iterator);
+    Cell_handle cell = Cell_handle(_cell_iterator);
     Locate_type lt;
     int li, lj;
-    cell_iterator.entry(lt, li, lj);
+    _cell_iterator.entry(lt, li, lj);
 
     switch (lt)
     {
@@ -530,23 +530,23 @@ private:
       if (is_vertex()) //previous visited simplex was also a vertex
       {
         lj = cell->index(get_vertex());
-        curr_simplex = Edge(cell, li, lj);
+        _curr_simplex = Edge(cell, li, lj);
       }
       else
-        curr_simplex = cell->vertex(li);
+        _curr_simplex = cell->vertex(li);
       break;
 
     case Locate_type::EDGE:
-      curr_simplex = Edge(cell, li, lj);
+      _curr_simplex = Edge(cell, li, lj);
       break;
     case Locate_type::FACET: //basic case where segment enters a cell
                              //by crossing a facet
-      //the 3 cases below correspond to the case when cell_iterator
+      //the 3 cases below correspond to the case when _cell_iterator
       //is in its initial position: _cur is locate(source)
     case Locate_type::CELL:
     case Locate_type::OUTSIDE_CONVEX_HULL:
     case Locate_type::OUTSIDE_AFFINE_HULL:
-      curr_simplex = cell;
+      _curr_simplex = cell;
       break;
     default:
       CGAL_assertion(false);
@@ -556,20 +556,20 @@ private:
 public:
   Simplex_iterator end() const
   {
-    Simplex_iterator sit(cell_iterator.end());
+    Simplex_iterator sit(_cell_iterator.end());
     return sit;
   }
 
   //  provides the increment postfix operator.
   Simplex_iterator& operator++()
   {
-    CGAL_assertion(!curr_simplex.empty());
+    CGAL_assertion(!_curr_simplex.empty());
 
-    switch(curr_simplex.which())
+    switch(_curr_simplex.which())
     {
     case 3 :/*Cell_handle*/
     {
-      ++cell_iterator;
+      ++_cell_iterator;
       set_curr_simplex();
       break;
     }
@@ -585,29 +585,29 @@ public:
     }
     case 0 :/*Vertex_handle*/
     {
-      Cell_handle ch = Cell_handle(cell_iterator);
-      ++cell_iterator;
-      Cell_handle chnext = Cell_handle(cell_iterator);
-      //cell_iterator is one step forward curr_simplex
+      Cell_handle ch = Cell_handle(_cell_iterator);
+      ++_cell_iterator;
+      Cell_handle chnext = Cell_handle(_cell_iterator);
+      //_cell_iterator is one step forward _curr_simplex
 
       Locate_type lt;
       int li, lj;
-      cell_iterator.entry(lt, li, lj);
+      _cell_iterator.entry(lt, li, lj);
 
       int index_v = ch->index(get_vertex());
       int index_vnext = ch->index(chnext->vertex(li));
 
       if (lt == Locate_type::VERTEX)
       {
-        curr_simplex = Edge(ch, index_v, index_vnext);
+        _curr_simplex = Edge(ch, index_v, index_vnext);
       }
       else if (lt == Locate_type::EDGE)
       {
         int index_f = 6 - (index_v + index_vnext + ch->index(chnext->vertex(lj)));
-        curr_simplex = Facet(ch, index_f);
+        _curr_simplex = Facet(ch, index_f);
       }
       else
-        curr_simplex = Cell_handle(cell_iterator);
+        _curr_simplex = Cell_handle(_cell_iterator);
       break;
     }
     default:
@@ -626,43 +626,43 @@ public:
   //  provides a dereference operator.
   /* 	\return a pointer to the current cell.
   */
-  Simplex_type*   operator->()        { return &*curr_simplex; }
+  Simplex_type*   operator->()        { return &*_curr_simplex; }
 
   //  provides an indirection operator.
   /*  \return the current cell.
   */
-  Simplex_type&   operator*()         { return curr_simplex; }
+  Simplex_type&   operator*()         { return _curr_simplex; }
 
   //  provides a conversion operator.
   /* 	\return a handle to the current cell.
   */
-  operator const  Cell_handle() const { return Cell_handle(cell_iterator); }
+  operator const  Cell_handle() const { return Cell_handle(_cell_iterator); }
 
-  bool is_vertex() const { return curr_simplex.which() == 0; }
-  bool is_edge()   const { return curr_simplex.which() == 1; }
-  bool is_facet()  const { return curr_simplex.which() == 2; }
-  bool is_cell()   const { return curr_simplex.which() == 3; }
+  bool is_vertex() const { return _curr_simplex.which() == 0; }
+  bool is_edge()   const { return _curr_simplex.which() == 1; }
+  bool is_facet()  const { return _curr_simplex.which() == 2; }
+  bool is_cell()   const { return _curr_simplex.which() == 3; }
 
-  const Simplex_type& get_simplex() const { return curr_simplex; }
+  const Simplex_type& get_simplex() const { return _curr_simplex; }
   Vertex_handle get_vertex() const
   {
     CGAL_assertion(is_vertex());
-    return boost::get<Vertex_handle>(curr_simplex);
+    return boost::get<Vertex_handle>(_curr_simplex);
   }
   Vertex_handle get_edge() const
   {
     CGAL_assertion(is_edge());
-    return boost::get<Edge>(curr_simplex);
+    return boost::get<Edge>(_curr_simplex);
   }
   Vertex_handle get_facet() const
   {
     CGAL_assertion(is_facet());
-    return boost::get<Facet>(curr_simplex);
+    return boost::get<Facet>(_curr_simplex);
   }
   Vertex_handle get_cell() const
   {
     CGAL_assertion(is_cell());
-    return boost::get<Cell_handle>(curr_simplex);
+    return boost::get<Cell_handle>(_curr_simplex);
   }
 
 
