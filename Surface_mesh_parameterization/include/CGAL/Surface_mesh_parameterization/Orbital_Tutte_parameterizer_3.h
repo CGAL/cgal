@@ -88,9 +88,9 @@ template
   typename TriangleMesh,
   typename SparseLinearAlgebraTraits_d
 #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
-    = Eigen_solver_traits<Eigen::UmfPackLU<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+    = Eigen_solver_traits<Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
 #else
-    = Eigen_solver_traits<Eigen::SparseLU<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+    = Eigen_solver_traits<Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
 #endif
 >
 class Orbital_Tutte_parameterizer_3
