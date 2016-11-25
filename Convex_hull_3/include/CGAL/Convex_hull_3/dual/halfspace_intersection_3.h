@@ -153,7 +153,7 @@ namespace CGAL
                   h = next(h,P);
                   Point const& p2 = get(vpmap, target(h,P));
                   h = next(h,P);
-                  Point const& p3 = get(vpmap, target(h,P));
+                  Point p3 = get(vpmap, target(h,P));
 
                   while( h!=done && collinear(p1,p2,p3) )
                   {
