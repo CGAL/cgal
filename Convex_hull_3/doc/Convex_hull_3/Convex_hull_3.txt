@@ -61,7 +61,7 @@ The following program reads points from an input file and computes
 their convex hull.  We assume that the points are
 not all identical and not all collinear, thus we directly use a polyhedron
 as output. In the example you see that the convex hull function can
-write in any model of the concept `MutableFaceListGraph`.
+write in any model of the concept `MutableFaceGraph`.
 
 
 \cgalExample{Convex_hull_3/quickhull_3.cpp}
@@ -93,8 +93,8 @@ second approach is slower due to the resolution of a linear program.
 
 \subsubsection Convex_hull_3HalfspaceInntersectionExample Example
 
-The following program computes the intersection of halfspaces defined by
-tangent planes to a sphere:
+The following example computes the intersection of halfspaces defined by
+tangent planes to a sphere. 
 
 \cgalExample{Convex_hull_3/halfspace_intersection_3.cpp}
 
@@ -124,6 +124,12 @@ infinite vertex of the triangulation are on the convex hull but it may be that
 not all of them are vertices of the hull.
 
 \subsection Convex_hull_3Example_2 Example
+
+The following example shows how to compute a convex hull with a triangulation.
+The vertices incident to the infinite vertex are on the convex hull.
+
+The function `star_to_face_graph()` can be used to obtain a polyhedral surface 
+that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surface_mesh`.
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 

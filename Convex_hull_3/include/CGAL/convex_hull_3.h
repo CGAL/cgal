@@ -38,7 +38,6 @@
 #include <algorithm>
 #include <utility>
 #include <list>
-#include <map>
 #include <vector>
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
@@ -50,6 +49,8 @@
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+
+#include <boost/unordered_map.hpp>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>
@@ -327,7 +328,7 @@ find_visible_set(TDS_2& tds,
                  const typename Traits::Point_3& point, 
                  typename TDS_2::Face_handle start,
                  std::list<typename TDS_2::Face_handle>& visible,
-                 std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge>& outside,
+                 boost::unordered_map<typename TDS_2::Vertex_handle, typename TDS_2::Edge>& outside,
                  const Traits& traits)
 {
    typedef typename Traits::Plane_3                   Plane_3;
@@ -473,7 +474,7 @@ ch_quickhull_3_scan(TDS_2& tds,
   typedef typename Traits::Point_3			  Point_3;
   typedef std::list<Point_3>                              Outside_set;
   typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
-  typedef std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge> Border_edges;
+  typedef boost::unordered_map<typename TDS_2::Vertex_handle, typename TDS_2::Edge> Border_edges;
 
   std::list<Face_handle>                     visible_set;
   typename std::list<Face_handle>::iterator  vis_set_it;

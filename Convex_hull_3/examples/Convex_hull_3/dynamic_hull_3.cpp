@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/star_to_face_graph.h>
 
@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
 typedef K::Point_3                                              Point_3;
 typedef CGAL::Delaunay_triangulation_3<K>                       Delaunay;
 typedef Delaunay::Vertex_handle                                 Vertex_handle;
-typedef CGAL::Polyhedron_3<K>                                   Polyhedron_3;
+typedef CGAL::Surface_mesh<Point_3>                             Surface_mesh;
 
 int main()
 {
@@ -39,7 +39,7 @@ int main()
 
   //copy the convex hull of points into a polyhedron and use it
   //to get the number of points on the convex hull
-  Polyhedron_3 chull;
+  Surface_mesh chull;
   CGAL::star_to_face_graph(T, T.infinite_vertex(), chull);
   
   std::cout << "After removal of 25 points, there are "
