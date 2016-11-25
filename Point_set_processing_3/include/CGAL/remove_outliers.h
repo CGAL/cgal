@@ -117,6 +117,14 @@ compute_avg_knn_sq_distance_3(
 ///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return iterator over the first point to remove.
+///
+/// @note There are two thresholds that can be used:
+/// `threshold_percent` and `threshold_distance`. This function
+/// returns the smallest number of outliers such that at least one of
+/// these threshold is fullfilled. This means that if
+/// `threshold_percent=100`, only `threshold_distance` is taken into
+/// account; if `threshold_distance=0` only `threshold_percent` is
+/// taken into account.
 
 // This variant requires all parameters.
 template <typename InputIterator,
@@ -129,7 +137,11 @@ remove_outliers(
   InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< percentage of points to remove.
+  double threshold_percent, ///< maximum percentage of points to remove.
+  double threshold_distance, ///< minimum distance for a point to be
+                             ///< considered as outlier (distance here is the square root of the average
+                             ///< squared distance to K nearest
+                             ///< neighbors)
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // geometric types
@@ -177,7 +189,7 @@ remove_outliers(
 
   // Replaces [first, beyond) range by the multimap content.
   // Returns the iterator after the (100-threshold_percent) % best points.
-  InputIterator first_point_to_remove = beyond;
+  InputIterator first_point_to_remove = first;
   InputIterator dst = first;
   int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
   typename std::multimap<FT,Enriched_point>::iterator src;
@@ -187,7 +199,8 @@ remove_outliers(
        ++src, ++index)
   {
     *dst++ = src->second;
-    if (index == first_index_to_remove)
+    if (index <= first_index_to_remove ||
+        src->first < threshold_distance * threshold_distance)
       first_point_to_remove = dst;
   }
 
@@ -205,14 +218,16 @@ remove_outliers(
   InputIterator beyond, ///< past-the-end iterator
   PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
-  double threshold_percent) ///< percentage of points to remove
+  double threshold_percent, ///< percentage of points to remove
+  double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
+                             ///< for a point to be removed.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   return remove_outliers(
     first,beyond,
     point_pmap,
-    k,threshold_percent,
+    k, threshold_percent, threshold_distance,
     Kernel());
 }
 /// @endcond
@@ -226,13 +241,15 @@ remove_outliers(
   InputIterator first, ///< iterator over the first input point
   InputIterator beyond, ///< past-the-end iterator
   unsigned int k, ///< number of neighbors.
-  double threshold_percent) ///< percentage of points to remove
+  double threshold_percent, ///< percentage of points to remove
+  double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
+                             ///< for a point to be removed.
 {
   return remove_outliers(
     first,beyond,
     make_identity_property_map(
     typename std::iterator_traits<InputIterator>::value_type()),
-    k,threshold_percent);
+    k, threshold_percent, threshold_distance);
 }
 /// @endcond
 
