@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3
 
-fills a face graph with the link of a triangulation vertex. 
+fills a face graph with the <A HREF="https://en.wikipedia.org/wiki/Simplicial_complex#Closure.2C_star.2C_and_link">link</a> of a triangulation vertex.  
 
 
 \pre `T.dimension()`==3.
