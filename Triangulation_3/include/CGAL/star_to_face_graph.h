@@ -20,8 +20,8 @@
 //
 
 
-#ifndef CGAL_STAR_TO_FACE_GRAPH_H
-#define CGAL_STAR_TO_FACE_GRAPH_H
+#ifndef CGAL_LINK_TO_FACE_GRAPH_H
+#define CGAL_LINK_TO_FACE_GRAPH_H
 
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
@@ -33,7 +33,7 @@ namespace CGAL {
 
 template<class Triangulation_3,class FG>
 typename boost::graph_traits<FG>::vertex_descriptor
-star_to_face_graph(const Triangulation_3& t,
+link_to_face_graph(const Triangulation_3& t,
                    typename Triangulation_3::Vertex_handle vh,
                    FG& fg, 
                    bool no_infinite_faces = true)
@@ -80,4 +80,4 @@ star_to_face_graph(const Triangulation_3& t,
 
 } //namespace CGAL
 
-#endif //CGAL_STAR_TO_FACE_GRAPH_H
+#endif //CGAL_LINK_TO_FACE_GRAPH_H

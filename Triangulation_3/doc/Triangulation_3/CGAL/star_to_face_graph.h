@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3
 
-fills a face graph with the star of a triangulation vertex. 
+fills a face graph with the link of a triangulation vertex. 
 
 
 \pre `T.dimension()`==3.
@@ -12,7 +12,7 @@ fills a face graph with the star of a triangulation vertex.
 \tparam TriangleMesh must be a model of the concept `MutableFaceGraph`. 
 
 \param t the 3D triangulation
-\param vh the vertex handle of the vertex of the star
+\param vh the vertex handle of the vertex of the link
 \param tm the triangle mesh
 \param no_infinite_faces If `vh` is on the convex hull
          of the triangulation, `no_infinite_faces == true` generates a triangle mesh with a border.
@@ -25,7 +25,7 @@ fills a face graph with the star of a triangulation vertex.
 */
 template <class Triangulation, class TriangleMesh>
 typename boost::graph_trait<FG>::vertex_descriptor
-star_to_face_graph(const Triangulation& t,
+link_to_face_graph(const Triangulation& t,
                    typename Triangulation_3::Vertex_handle vh,
                    TriangleMesh& tm, 
                    bool no_infinite_faces = true);

@@ -3,7 +3,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/star_to_face_graph.h>
+#include <CGAL/link_to_face_graph.h>
 
 #include <list>
 
@@ -40,7 +40,7 @@ int main()
   //copy the convex hull of points into a polyhedron and use it
   //to get the number of points on the convex hull
   Surface_mesh chull;
-  CGAL::star_to_face_graph(T, T.infinite_vertex(), chull);
+  CGAL::link_to_face_graph(T, T.infinite_vertex(), chull);
   
   std::cout << "After removal of 25 points, there are "
             << num_vertices(chull) << " points on the convex hull." << std::endl;

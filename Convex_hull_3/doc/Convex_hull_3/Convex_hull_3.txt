@@ -128,7 +128,7 @@ not all of them are vertices of the hull.
 The following example shows how to compute a convex hull with a triangulation.
 The vertices incident to the infinite vertex are on the convex hull.
 
-The function `star_to_face_graph()` can be used to obtain a polyhedral surface 
+The function `link_to_face_graph()` can be used to obtain a polyhedral surface 
 that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surface_mesh`.
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}

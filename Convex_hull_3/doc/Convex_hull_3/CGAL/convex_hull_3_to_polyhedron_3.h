@@ -10,7 +10,7 @@ The polyhedron `P` is cleared and the convex hull of the set of 3D points is sto
 \attention This function does not compute the plane equations of the faces of `P`.
 
 \attention This function works only for `CGAL::Polyhedron_3<Traits>`, and users who want
-to generate a `Surface_mesh` or any other model of a `FaceGraph` mayuse `star_to_face_graph()` instead.
+to generate a `Surface_mesh` or any other model of a `FaceGraph` may use `link_to_face_graph()` instead.
 
 \pre `T.dimension()`==3.
 
@@ -18,7 +18,7 @@ to generate a `Surface_mesh` or any other model of a `FaceGraph` mayuse `star_to
 \tparam Polyhedron is an instantiation of `CGAL::Polyhedron_3<Traits>`. 
 
 \sa `convex_hull_3()`
-\sa `star_to_face_graph()`
+\sa `link_to_face_graph()`
 
 */
 template <class Triangulation, class Polyhedron>
