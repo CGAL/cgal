@@ -14,7 +14,7 @@ fills a face graph with the star of a triangulation vertex.
 \param t the 3D triangulation
 \param vh the vertex handle of the vertex of the star
 \param tm the triangle mesh
-\param no_infinite_faces If ``vh`is on the convex hull
+\param no_infinite_faces If `vh` is on the convex hull
          of the triangulation, `no_infinite_faces == true` generates a triangle mesh with a border.
 
 \returns the vertex descriptor of the `tm` corresponding to the infinite vertex of `t`, 
