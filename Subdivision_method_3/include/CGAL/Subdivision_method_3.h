@@ -61,7 +61,7 @@ namespace Subdivision_method_3 {
   //
   template <class Polyhedron>
   void CatmullClark_subdivision(Polyhedron& p, int step = 1) {
-    PQQ(p, CatmullClark_mask_3<Polyhedron>(), step);
+    PQQ(p, CatmullClark_mask_3<Polyhedron>(p), step);
   }
   //
   template <class Polyhedron>
