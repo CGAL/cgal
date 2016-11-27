@@ -825,7 +825,6 @@ template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron,  const Traits& traits)
 {
-  std::cerr << typeid(Traits).name() << std::endl;
   typedef typename Traits::Point_3                Point_3;  
   typedef std::list<Point_3>                      Point_3_list;
   typedef typename Point_3_list::iterator         P3_iterator;

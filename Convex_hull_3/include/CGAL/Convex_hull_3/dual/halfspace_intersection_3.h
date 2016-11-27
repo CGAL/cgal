@@ -123,17 +123,11 @@ namespace CGAL
                 std::vector<vertex_descriptor> vertices;
                 typename Polyhedron_dual::Halfedge_around_vertex_const_circulator
                   h0 = it->vertex_begin(), hf = h0;
-                
-                //B.begin_facet();
                   do {
                     vertices.push_back(primal_vertices[hf->facet()]);
                   } while (--hf != h0);
                   Euler::add_face(vertices,primal);
-                  //B.end_facet();
-                
               }
-
-
             }
 
             // Test if a point is inside a convex polyhedron
