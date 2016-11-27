@@ -89,7 +89,6 @@ namespace CGAL {
     {
       CGAL_assertion(power >= FT(0));
       the_weights.resize(dim);
-      std::copy(begin, end, the_weights.begin());
       for (int i = 0; i < dim; ++i){
 	the_weights[i] = *begin;
 	++begin;
