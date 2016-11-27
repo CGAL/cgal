@@ -328,7 +328,7 @@ find_visible_set(TDS_2& tds,
                  const typename Traits::Point_3& point, 
                  typename TDS_2::Face_handle start,
                  std::list<typename TDS_2::Face_handle>& visible,
-                 boost::unordered_map<typename TDS_2::Vertex_handle, typename TDS_2::Edge>& outside,
+                 std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge>& outside,
                  const Traits& traits)
 {
    typedef typename Traits::Plane_3                   Plane_3;
@@ -474,7 +474,7 @@ ch_quickhull_3_scan(TDS_2& tds,
   typedef typename Traits::Point_3			  Point_3;
   typedef std::list<Point_3>                              Outside_set;
   typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
-  typedef boost::unordered_map<typename TDS_2::Vertex_handle, typename TDS_2::Edge> Border_edges;
+  typedef std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge> Border_edges;
 
   std::list<Face_handle>                     visible_set;
   typename std::list<Face_handle>::iterator  vis_set_it;
@@ -825,6 +825,7 @@ template <class InputIterator, class Polyhedron_3, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    Polyhedron_3& polyhedron,  const Traits& traits)
 {
+  std::cerr << typeid(Traits).name() << std::endl;
   typedef typename Traits::Point_3                Point_3;  
   typedef std::list<Point_3>                      Point_3_list;
   typedef typename Point_3_list::iterator         P3_iterator;
