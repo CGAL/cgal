@@ -610,48 +610,50 @@ public:
     }
     case 1:/*Edge*/
     {
-      if (cell_iterator_is_ahead())
+      if (!cell_iterator_is_ahead())
       {
-        set_curr_simplex();//vertex or facet, entry of cell_iterator
-        break;
+        //we cannot be in any of the degenerate cases, only detected by
+        //taking cell_iterator one step forward
+        _curr_simplex = Cell_handle(cell_iterator);
       }
-      //cell_iterator's entry is edge
-      Cell_handle ch = Cell_handle(_cell_iterator);
-      Locate_type clt;
-      int cli, clj;
-      _cell_iterator.entry(clt, cli, clj);
-
-      ++_cell_iterator;
-      Cell_handle chnext = Cell_handle(_cell_iterator);
-      //_cell_iterator is one step forward _curr_simplex
-
-      Locate_type lt;
-      int li, lj;
-      _cell_iterator.entry(lt, li, lj);
-
-      if (lt == Locate_type::VERTEX)
+      else
       {
-        _curr_simplex = ch;
-      }
-      else if (lt == Locate_type::EDGE)
-      {
-        int index_v3 = -1;
-        int tmp = ch->index(chnext->vertex(li));
-        if (tmp != cli && tmp != clj)
-          index_v3 = tmp;
-        else
+        Cell_handle chnext = Cell_handle(_cell_iterator);
+        Locate_type ltnext;
+        int linext, ljnext;
+        _cell_iterator.entry(ltnext, linext, ljnext);
+        switch (ltnext)//entry simplex in next cell
         {
-          tmp = ch->index(chnext->vertex(lj));
-          index_v3 = tmp;
-        }
-        CGAL_assertion(index_v3 != -1);
-        _curr_simplex = Facet(ch, (6 - li - lj - index_v3));
+        case Locate_type::VERTEX:
+          if (edge_has_vertex(get_edge(), chnext->vertex(linext)))
+            _curr_simplex = chnext->vertex(linext);
+          else
+            _curr_simplex = get_edge();
+          break;
+
+        case Locate_type::EDGE:
+          //find the Facet between current and next edges
+          Cell_handle ch = Cell_handle(cell_iterator);
+          Locate_type lt;
+          int li, lj;
+          _cell_iterator.entry(lt, li, lj);
+          int index_v3 = -1;
+          int tmp = ch->index(chnext->vertex(li));
+          if (tmp != cli && tmp != clj)
+            index_v3 = tmp;
+          else
+          {
+            tmp = ch->index(chnext->vertex(lj));
+            index_v3 = tmp;
+          }
+          CGAL_assertion(index_v3 != -1);
+          _curr_simplex = Facet(ch, (6 - li - lj - index_v3));
+          break;
+
+        case Locate_type::FACET:
+          _curr_simplex = ch;//query goes through the cell
+          break;
       }
-      else if (lt == Locate_type::FACET)
-      {
-        _curr_simplex = ch;
-      }
-      
       break;
     }
     case 0 :/*Vertex_handle*/
