@@ -121,55 +121,77 @@ private:
 
 public:
   // Orbifold type functions
-  boost::array<Point_2, 2> get_cones_parameterized_coordinates() const
+  std::vector<Point_2> get_cones_parameterized_coordinates() const
   {
-    boost::array<Point_2, 2> tcoords;
+    std::vector<Point_2> tcoords;
     if(orb_type == Square) {
-      tcoords[0] = Point_2(-1, -1);
-      tcoords[1] = Point_2(1, 1);
+      tcoords.push_back(Point_2(-1, -1));
+      tcoords.push_back(Point_2(1, 1));
     } else if(orb_type == Parallelogram) {
-      tcoords[0] = Point_2(0, -0.5);
-      tcoords[1] = Point_2(0, 0.5);
+      tcoords.push_back(Point_2(0, -0.5));
+      tcoords.push_back(Point_2(1, -0.5));
+      tcoords.push_back(Point_2(0, 0.5));
     } else { // if(orb_type == Diamond || orb_type == Triangle)
-      tcoords[0] = Point_2(-1, 1);
-      tcoords[1] = Point_2(-1, -1);
+      tcoords.push_back(Point_2(-1, 1));
+      tcoords.push_back(Point_2(-1, -1));
     }
     return tcoords;
   }
 
-  boost::array<NT, 2> get_angles_at_cones() const
+  std::vector<NT> get_angles_at_cones() const
   {
-    boost::array<NT, 2> angs;
+    std::vector<NT> angs;
     if(orb_type == Square) {
-      angs[0] = 4.;
-      angs[1] = 4.;
+      angs.push_back(4.);
+      angs.push_back(4.);
     } else if(orb_type == Diamond) {
-      angs[0] = 3.;
-      angs[1] = 3.;
+      angs.push_back(3.);
+      angs.push_back(3.);
     } else if(orb_type == Triangle) {
-      angs[0] = 6.;
-      angs[1] = 2.;
+      angs.push_back(6.);
+      angs.push_back(2.);
     } else { // if(orb_type == Parallelogram)
-      angs[0] = 2;
-      angs[1] = 2;
-//      angs[2] = 2; // tmp
+      angs.push_back(2);
+      angs.push_back(1);
+      angs.push_back(2);
     }
     return angs;
   }
 
   // Linear system
+  template<typename ConeMap,
+           typename VertexIndexMap>
+  void find_start_cone(const ConeMap& cmap,
+                       VertexIndexMap vimap,
+                       vertex_descriptor& cone,
+                       int& cone_index) const
+  {
+    typename ConeMap::const_iterator cmit = cmap.begin(), cend = cmap.end();
+    for(; cmit!=cend; ++cmit) {
+      if(cmit->second != Unique_cone)
+        continue;
+
+      cone = cmit->first;
+      cone_index = get(vimap, cone);
+      return;
+    }
+  }
+
   /// Compute the number of linear constraints in the system.
   int number_of_linear_constraints(const TriangleMesh& mesh) const
   {
     // number of constraints for orb I, II, III is the number of edges
     // on the seam and 2 constrained cones.
-    return 2 + static_cast<int>(mesh.number_of_seam_edges());
+    if(orb_type == Parallelogram)
+      return 3 + static_cast<int>(mesh.number_of_seam_edges());
+    else // orb_type == Square, Diamond, Triangle
+      return 2 + static_cast<int>(mesh.number_of_seam_edges());
   }
 
   /// Adds a positional constraint on a vertex x_ind, so that x_ind * w = rhs.
   void addConstraint(Matrix& A, Vector& B, int& id_r, int id_c, double w, Point_2 rhs) const
   {
-    std::cout << "Constraining " << id_c << std::endl;
+    std::cout << "Constraining " << id_c << " to " << rhs << std::endl;
 
     A.set_coef(2*id_r, 2*id_c, w, true /*new_coef*/);
     A.set_coef(2*id_r + 1, 2*id_c + 1, w, true /*new_coef*/);
@@ -183,16 +205,16 @@ public:
   /// Adds constraints so that T * x_sinds = x_tinds, where T is a 2x2
   /// matrix, and the Transformation T is modified to affine from
   /// linear by requiring that T * x_si - x_ti = T * x_s1 - x_t1.
-  void addTransConstraints(int s0, int s, int t,
+  void addTransConstraints(int s0, int t0, int s, int t,
                            int& id_r,
                            const Eigen::Matrix2d& T,
                            Matrix& A, Vector& B) const
   {
+    std::cout << "transconstraints: " << s << " " << t << std::endl;
+
     // Matlab lines are commented for comparison.
     // Matlab fills together 2*x-1 and 2*x, but C++ fills 2*x and 2*x+1,
     // as everything (including loops!) starts at 0 and not 1.
-
-    int t0 = s0; // for clarity
 
     // iterate on both rows ot the 2x2 matrix T
     for(int vert_ind=0; vert_ind<2; ++vert_ind) {
@@ -205,7 +227,7 @@ public:
 
       // -<T(vert_ind,:), x_s1>
       // obj.A(end, 2*sinds(1)+[-1,0]) = obj.A(end, 2*sinds(1)+[-1,0]) - T(vert_ind,:);
-      A.add_coef(2*id_r + vert_ind, 2*s0, - T(vert_ind, 0));
+      A.add_coef(2*id_r + vert_ind, 2*s0, -T(vert_ind, 0));
       A.add_coef(2*id_r + vert_ind, 2*s0 + 1, -T(vert_ind, 1));
 
       //  - x_ti
@@ -224,6 +246,46 @@ public:
     ++id_r; // current line index in A is increased
   }
 
+  void parameterize_seam_segment(const std::vector<std::pair<int, int> >& seam_segment,
+                                 NT ang, int& current_line_id_in_A,
+                                 Matrix& A, Vector& B) const
+  {
+    // check that if there is a common vertex, it is at the beginning
+    bool is_reversed = (seam_segment.back().first == seam_segment.back().second);
+
+    if(is_reversed) {
+      ang *= -1;
+    }
+
+    // the rotation matrix according to the angle 'ang'
+    Eigen::Matrix2d R;
+    R(0,0) = std::cos(2 * CGAL_PI / ang); R(0,1) = - std::sin(2 * CGAL_PI / ang);
+    R(1,0) = std::sin(2 * CGAL_PI / ang); R(1,1) = std::cos(2 * CGAL_PI / ang);
+
+    int s0 = is_reversed ? seam_segment.back().first : seam_segment.front().first;
+    int t0 = is_reversed ? seam_segment.back().second : seam_segment.front().second;
+
+    std::cout << "s0/t0: " << s0 << " " << t0 << std::endl;
+
+    typename std::vector<std::pair<int, int> >::const_iterator it = seam_segment.begin(),
+                                                               end = seam_segment.end();
+
+    // ignore the first entry of the seam segment (they correspond to a constrained point)
+    if(is_reversed)
+      --end;
+    else
+      ++it;
+
+    for(; it!=end; ++it) {
+      int s = it->first;
+      int t = it->second;
+      std::cout << "v1/v2: " << s << " " << t << std::endl;
+      CGAL_assertion(s != t);
+
+      addTransConstraints(s0, t0, s, t, current_line_id_in_A, R, A, B);
+    }
+  }
+
   /// Computes the rotational constraint on the border of the mesh.
   /// Cone constraints are also added.
   template<typename ConeMap,
@@ -233,93 +295,98 @@ public:
                                VertexIndexMap vimap,
                                Matrix& A, Vector& B) const
   {
-    // positions of the cones in the plane TMP
-    const boost::array<Point_2, 2>& tcoords = get_cones_parameterized_coordinates();
+    // positions of the cones in the plane
+    const std::vector<Point_2>& tcoords = get_cones_parameterized_coordinates();
 
-    // rotations of the seams TMP
     // angles at the cones
-    const boost::array<NT, 2>& angs = get_angles_at_cones();
+    const std::vector<NT>& angs = get_angles_at_cones();
 
-    // the matrix A is
-    // the index of the line in A that we are filling
+    // the index of the line in A that we are filling next
     int current_line_id_in_A = 0.;
 
-    // Go through the seam
-    boost::unordered_set<int> constrained_cones;
-    for(int i=0; i<2; ++i) { // TMP
-      // Find a non-duplicated cone that has not yet been constrained
-      vertex_descriptor start_cone;
-      int start_cone_index = -1;
+    // Initialize some variables used in the seam walk
+    int start_cone_index = -1; // index of the beginning of the seam
+    vertex_descriptor start_cone;
+    find_start_cone(cmap, vimap, start_cone, start_cone_index);
+    CGAL_postcondition(start_cone != vertex_descriptor() && start_cone_index != -1);
 
-      BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
-        typename ConeMap::const_iterator it = cmap.find(vd);
-        if(it != cmap.end() && it->second == Unique_cone) {
-          start_cone_index = get(vimap, vd);
-          if(constrained_cones.find(start_cone_index) == constrained_cones.end() ) {
-            start_cone = vd;
-            constrained_cones.insert(start_cone_index);
-            break;
-          }
-        }
+    // parameterize the initial cone
+    addConstraint(A, B, current_line_id_in_A, start_cone_index,
+                  1. /*entry in A*/, tcoords[0]);
+
+    // by property of the seam mesh, the canonical halfedge that points to `hd`
+    // is on the seam, and is not on the border
+    halfedge_descriptor hd = halfedge(start_cone, mesh);
+    CGAL_precondition(mesh.has_on_seam(hd));
+    halfedge_descriptor bhd = opposite(hd, mesh);
+    CGAL_precondition(is_border(bhd, mesh));
+
+    // points between two cones, and the corresponding points on the opposite side of the seam
+    std::vector<std::pair<int, int> > seam_segment;
+    int segment_index = 0; // counting the segments (3 max)
+
+    // Go through the seam, marking rotation and cone constraints
+    while(true) { // breaking at the last cone
+      // Get the two halfedges on each side of the stream
+      halfedge_descriptor hd1 = bhd; // only for clarity
+
+      // the non-border halfedge with same vertices (in the underlying mesh of the seam
+      // mesh) as bhd is simply bhd with the 'seam' boolean set to false
+      halfedge_descriptor hd2 = bhd;
+      hd2.seam = false;
+
+      // Compute the corresponding indices
+      vertex_descriptor hd1_source = source(hd1, mesh);
+      vertex_descriptor hd2_source = source(hd2, mesh);
+      int hd1s_index = get(vimap, hd1_source);
+      int hd2s_index = get(vimap, hd2_source);
+      std::cout << hd1s_index << " " << hd2s_index << std::endl;
+
+      // If orbifold type IV and it is second cone in flattening, add constraint
+      if(orb_type == Parallelogram && cmap.find(hd1_source) != cmap.end()
+                                   && segment_index == 1) {
+        addConstraint(A, B, current_line_id_in_A, hd1s_index,
+                      1. /*entry in A*/, tcoords[1]);
       }
-      CGAL_postcondition(start_cone != vertex_descriptor() && start_cone_index != -1);
 
-      std::cout << "starting from " << start_cone_index << std::endl;
+      // Add the pair to the seam segment
+      seam_segment.push_back(std::make_pair(hd1s_index, hd2s_index));
 
-      // Mark 'start_cone' as constraint
-      addConstraint(A, B, current_line_id_in_A, start_cone_index,
-                    1. /*entry in A*/, tcoords[i]);
-
-      // Go through the seam, marking rotation and cone constraints
-      halfedge_descriptor hd = halfedge(start_cone, mesh);
-      CGAL_precondition(mesh.has_on_seam(hd));
-      halfedge_descriptor bhd = opposite(hd, mesh);
-      CGAL_precondition(is_border(bhd, mesh));
-
-      // the rotation angle
-      double ang = angs[i];
-
-      // the rotation matrix according to the angle 'ang'
-      Eigen::Matrix2d R;
-      R(0,0) = std::cos(2 * CGAL_PI / ang); R(0,1) = - std::sin(2 * CGAL_PI / ang);
-      R(1,0) = std::sin(2 * CGAL_PI / ang); R(1,1) = std::cos(2 * CGAL_PI / ang);
-
-      // move through the seam from start_cone_index till we reach a duplicated cone
-      while(true) {
-        // Get the two halfedges on each side of the stream
-        halfedge_descriptor hd1 = bhd; // only for clarity
-
-        // the non-border halfedge with same vertices (in the underlying mesh of the seam
-        // mesh) as bhd is simply bhd with the 'seam' boolean set to false
-        halfedge_descriptor hd2 = bhd;
-        hd2.seam = false;
-
-        // Add the rotational constraint between the two halfedges on the seam
+      // Check if we have reached a cone
+      vertex_descriptor bhd_target = target(bhd, mesh);
+      typename ConeMap::const_iterator is_in_map = cmap.find(bhd_target);
+      if(is_in_map != cmap.end()) {
+        // add the target to finish the seam segment
         vertex_descriptor hd1_target = target(hd1, mesh);
         vertex_descriptor hd2_target = target(hd2, mesh);
         int hd1t_index = get(vimap, hd1_target);
         int hd2t_index = get(vimap, hd2_target);
 
-        std::cout << "hd1/hd2: " << hd1t_index << " " << hd2t_index << std::endl;
+        seam_segment.push_back(std::make_pair(hd1t_index, hd2t_index));
 
-        addTransConstraints(start_cone_index, hd1t_index, hd2t_index,
-                            current_line_id_in_A, R, A, B);
+        CGAL_assertion(segment_index < angs.size());
+        NT ang = angs[segment_index];
+        parameterize_seam_segment(seam_segment, ang, current_line_id_in_A, A, B);
 
-        // Check if we have reached the duplicated cone
-        vertex_descriptor bhd_target = target(bhd, mesh); // also known as 'hd1_target'
-        typename ConeMap::const_iterator is_in_map = cmap.find(bhd_target);
-        if(is_in_map != cmap.end()) {
-          // starting from a unique cone, the next cone must be the duplicated cone
-          CGAL_assertion(is_in_map->second == Duplicated_cone);
+        // the last cone of the seam is constrained
+        if(is_in_map->second == Unique_cone) { // reached the end of the seam
+          CGAL_assertion(hd1_target == hd2_target);
+          addConstraint(A, B, current_line_id_in_A, hd1t_index,
+                        1. /*entry in A*/, tcoords.back());
           break;
         }
 
-        // move to the next halfedge couple (walking on the border of the seam)
-        bhd = next(bhd, mesh);
-        CGAL_postcondition(mesh.has_on_seam(bhd) && is_border(bhd, mesh));
+        std::cout << "-------------------------" << std::endl;
+        seam_segment.clear();
+        segment_index++;
       }
+
+      // move to the next halfedge couple (walking on the border of the seam)
+      bhd = next(bhd, mesh);
+      CGAL_postcondition(mesh.has_on_seam(bhd) && is_border(bhd, mesh));
     }
 
+    std::cout << current_line_id_in_A << " vs " << number_of_linear_constraints(mesh) << std::endl;
     CGAL_postcondition(current_line_id_in_A == number_of_linear_constraints(mesh));
   }
 
@@ -497,6 +564,7 @@ public:
     CGAL::Timer task_timer;
     task_timer.start();
 
+    std::cout << "Solving..." << std::endl;
     SparseLinearAlgebraTraits_d solver;
     if(!solver.linear_solver(M, Bf, Xf, D)) {
       std::cout << "Could not solve linear system" << std::endl;
@@ -547,6 +615,11 @@ public:
                           VertexUVMap uvmap,
                           VertexIndexMap vimap) const
   {
+    if(orb_type == Parallelogram)
+      CGAL_precondition(cmap.size() == 6);
+    else // orb_type == Square, Diamond, Triangle
+      CGAL_precondition(cmap.size() == 4);
+
     std::cout << "Flattening" << std::endl;
     Error_code status;
 
@@ -613,7 +686,7 @@ public:
 
 /// Constructor
 public:
-  Orbital_Tutte_parameterizer_3() : orb_type(Square) { }
+  Orbital_Tutte_parameterizer_3(Orbifold_type orb_type) : orb_type(orb_type) { }
 };
 
 } // namespace Surface_mesh_parameterization

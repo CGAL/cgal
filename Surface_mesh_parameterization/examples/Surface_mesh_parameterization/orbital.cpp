@@ -54,36 +54,38 @@ SMP::Error_code read_cones(const SurfaceMesh& sm, const char* filename,
   std::string vertices_line;
   std::getline(in, vertices_line); // read the first line of the file
   std::istringstream iss(vertices_line);
-  int index_1, index_2, index_3;
-  if(!(iss >> index_1 >> index_2 >> index_3)) {
+  std::vector<int> cones;
+  cones.reserve(4);
+  int cone_index;
+  while(iss >> cone_index) {
+    cones.push_back(cone_index);
+  }
+
+  if(cones.size() < 3 || cones.size() > 4) {
     std::cerr << "Error: problem loading the input cones" << std::endl;
     return SMP::ERROR_WRONG_PARAMETER;
   }
 
-  std::cout << "Cones: " << index_1 << " " << index_2 << " " << index_3 << std::endl;
+  std::cout << "Cones: ";
+  for(std::size_t i=0; i<cones.size(); ++i)
+    std::cout << cones[i] << " ";
+  std::cout << std::endl;
 
   // Locate the cones in the underlying mesh 'sm'
-  SM_vertex_descriptor vd_1, vd_2, vd_3;
+  CGAL_assertion(cone_vds_in_sm.empty());
+  cone_vds_in_sm.resize(cones.size());
 
-  int counter = 0;
-  BOOST_FOREACH(SM_vertex_descriptor vd, vertices(sm)) {
-    if(counter == index_1) {
-      vd_1 = vd;
-    } else if(counter == index_2) {
-      vd_2 = vd;
-    } else if(counter == index_3) {
-      vd_3 = vd;
+  for(std::size_t i=0; i<cones.size(); ++i) {
+    int counter = 0;
+    BOOST_FOREACH(SM_vertex_descriptor vd, vertices(sm)) {
+      if(counter == cones[i]) {
+        cone_vds_in_sm[i] = vd;
+        break;
+      }
+      ++counter;
     }
-    ++counter;
+    CGAL_postcondition(cone_vds_in_sm[i] != SM_vertex_descriptor());
   }
-
-  CGAL_postcondition(vd_1 != SM_vertex_descriptor() &&
-                     vd_2 != SM_vertex_descriptor() &&
-                     vd_3 != SM_vertex_descriptor());
-
-  cone_vds_in_sm[0] = vd_1;
-  cone_vds_in_sm[1] = vd_2;
-  cone_vds_in_sm[2] = vd_3;
 
   return SMP::OK;
 }
@@ -104,41 +106,23 @@ void locate_cones(const Mesh& mesh,
   typedef SMP::internal::Kernel_traits<Mesh>::PPM            PPM;
   const PPM ppmap = get(boost::vertex_point, mesh);
 
-  // to know the ID of the vertex in the seam mesh (debug)
-  int counter = 0;
-
-  // to check that the duplicated vertex is correctly seen twice
-  // TMP till a proper check is made
-  int is_doubled_at_v3 = 0;
-
   // the cones in the underlying mesh
-  CGAL_precondition(cone_vds_in_sm.size() == 3);
-  SM_vertex_descriptor vd_1 = cone_vds_in_sm[0];
-  SM_vertex_descriptor vd_2 = cone_vds_in_sm[1];
-  SM_vertex_descriptor vd_3 = cone_vds_in_sm[2];
-
-  BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
-    if(get(ppmap, vd) == get(sm_ppmap, vd_1)) {
-      cones.insert(std::make_pair(vd, SMP::Unique_cone));
-      std::cout << counter  << " [eq to ind1]" << std::endl;
-    } else if(get(ppmap, vd) == get(sm_ppmap, vd_2)) {
-      std::cout << counter  << " [eq to ind2]" << std::endl;
-      cones.insert(std::make_pair(vd, SMP::Unique_cone));
-    } else if(get(ppmap, vd) == get(sm_ppmap, vd_3)) {
-      std::cout << counter  << " [eq to ind3]" << std::endl;
-      is_doubled_at_v3++;
-      cones.insert(std::make_pair(vd, SMP::Duplicated_cone));
+  std::size_t cvdss = cone_vds_in_sm.size();
+  for(std::size_t i=0; i<cvdss; ++i) {
+    SM_vertex_descriptor smvd = cone_vds_in_sm[i];
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
+      if(get(ppmap, vd) == get(sm_ppmap, smvd)) {
+        SMP::Cone_type ct = (i == 0 || i == cvdss-1) ? SMP::Unique_cone : SMP::Duplicated_cone;
+        cones.insert(std::make_pair(vd, ct));
+      }
     }
-    ++counter;
   }
 
-  std::cout << cone_vds_in_sm.size() << " in sm" << std::endl;
-  std::cout << cones.size() << " cones" << std::endl;
+  CGAL_postcondition((cone_vds_in_sm.size() == 3 && cones.size() == 4) ||
+                     (cone_vds_in_sm.size() == 4 && cones.size() == 6));
 
-  if(is_doubled_at_v3 != 2)
-    exit(0);
-
-  CGAL_postcondition(cones.size() == 4 && is_doubled_at_v3 == 2);
+  std::cout << cone_vds_in_sm.size() << " cones in sm" << std::endl;
+  std::cout << cones.size() << " cones in mesh" << std::endl;
 }
 
 int main(int argc, char * argv[])
@@ -163,7 +147,7 @@ int main(int argc, char * argv[])
   const char* cone_filename = (argc>2) ? argv[2] : "../data/bear.selection.txt";
 
   // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
-  std::vector<SM_vertex_descriptor> cone_vds_in_sm(3);
+  std::vector<SM_vertex_descriptor> cone_vds_in_sm;
   read_cones(sm, cone_filename, cone_vds_in_sm);
 
   // Two property maps to store the seam edges and vertices
@@ -210,7 +194,7 @@ int main(int argc, char * argv[])
 
   // Parameterizer
   typedef SMP::Orbital_Tutte_parameterizer_3<Mesh>         Parameterizer;
-  Parameterizer parameterizer;
+  Parameterizer parameterizer(SMP::Triangle);
 
   // a halfedge on the (possibly virtual) border
   // only used in output (will also be used to handle multiple connected components in the future)

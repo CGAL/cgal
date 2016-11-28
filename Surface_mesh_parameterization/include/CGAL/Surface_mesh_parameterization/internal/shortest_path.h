@@ -148,11 +148,11 @@ void compute_shortest_paths_between_cones(const TriangleMesh& mesh,
                                           const Cones_vector& cones,
                                           Seam_container& seams)
 {
-  CGAL_precondition(cones.size() == 3);
-  compute_shortest_paths_between_two_cones(mesh, cones[0], cones[2],
-                                           std::back_inserter(seams));
-  compute_shortest_paths_between_two_cones(mesh, cones[1], cones[2],
-                                           std::back_inserter(seams));
+  CGAL_precondition(cones.size() == 3 || cones.size() == 4);
+  for(std::size_t i=0; i<cones.size() - 1; ++i) {
+    compute_shortest_paths_between_two_cones(mesh, cones[i], cones[i+1],
+        std::back_inserter(seams));
+  }
 
   std::ofstream out("shortest_path.selection.txt");
   output_shortest_paths_to_selection_file(mesh, seams, out);
