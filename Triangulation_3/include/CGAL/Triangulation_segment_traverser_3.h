@@ -569,7 +569,14 @@ public:
     }
     case 2 :/*Facet*/
     {
-      if (cell_iterator_is_ahead())
+      if (!cell_iterator_is_ahead())
+      {
+        //cell_iterator is not ahead. get_facet() is part of cell_iterator
+        //we cannot be in any of the degenerate cases, only detected by
+        //taking cell_iterator one step forward
+        _curr_simplex = Cell_handle(_cell_iterator);
+      }
+      else
       {
         Cell_handle chnext = Cell_handle(_cell_iterator);
         Locate_type ltnext;
@@ -586,7 +593,7 @@ public:
           break;
 
         case Locate_type::EDGE:
-          if (facet_has_edge(get_edge(), Edge(chnext, linext, ljnext)))
+          if (facet_has_edge(get_facet(), Edge(chnext, linext, ljnext)))
             set_curr_simplex();
           else
             _curr_simplex = chnext;
@@ -598,14 +605,8 @@ public:
 
         default:
           CGAL_assertion(false);
-        }
-      }
-      else //cell_iterator is not ahead. get_facet() is part of cell_iterator
-      {
-        //we cannot be in any of the degenerate cases, only detected by
-        //taking cell_iterator one step forward
-        _curr_simplex = Cell_handle(cell_iterator);
-      }
+        };
+      }//end else
       break;
     }
     case 1:/*Edge*/
@@ -614,7 +615,7 @@ public:
       {
         //we cannot be in any of the degenerate cases, only detected by
         //taking cell_iterator one step forward
-        _curr_simplex = Cell_handle(cell_iterator);
+        _curr_simplex = Cell_handle(_cell_iterator);
       }
       else
       {
@@ -632,14 +633,15 @@ public:
           break;
 
         case Locate_type::EDGE:
+        {
           //find the Facet between current and next edges
-          Cell_handle ch = Cell_handle(cell_iterator);
+          Cell_handle ch = Cell_handle(_cell_iterator);
           Locate_type lt;
           int li, lj;
           _cell_iterator.entry(lt, li, lj);
-          int index_v3 = -1;
+          int index_v3 = -1;//todo : check this is correct
           int tmp = ch->index(chnext->vertex(li));
-          if (tmp != cli && tmp != clj)
+          if (tmp != li && tmp != lj)
             index_v3 = tmp;
           else
           {
@@ -649,11 +651,12 @@ public:
           CGAL_assertion(index_v3 != -1);
           _curr_simplex = Facet(ch, (6 - li - lj - index_v3));
           break;
-
+        }
         case Locate_type::FACET:
-          _curr_simplex = ch;//query goes through the cell
+          _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
           break;
-      }
+        };
+      }//end else
       break;
     }
     case 0 :/*Vertex_handle*/
@@ -774,15 +777,27 @@ private:
     case 0 ://vertex
       return !ch->has_vertex(get_vertex());
     case 1 ://edge
-      return !ch->has_edge(get_edge());
+      return !cell_has_edge(ch, get_edge());
     case 2 ://facet
-      return !ch->has_facet(get_facet());
+      return !cell_has_facet(ch, get_facet());
     case 3 ://cell
       return ch != get_cell();
     }
     //should not be reached
     CGAL_assertion(false);
     return false;
+  }
+
+  bool cell_has_edge(const Cell_handle ch, const Edge& e) const
+  {
+    Vertex_handle v1 = e.first->vertex(e.second);
+    Vertex_handle v2 = e.first->vertex(e.third);
+    return ch->has_vertex(v1) && ch->has_vertex(v2);
+  }
+  bool cell_has_facet(const Cell_handle c, const Facet& f) const
+  {
+    return f.first == c
+        || f.first->neighbor(f.second) == c;
   }
 
   bool facet_has_vertex(const Facet& f, const Vertex_handle v) const
@@ -795,6 +810,31 @@ private:
         return true;
     }
     return false;
+  }
+
+  bool facet_has_edge(const Facet& f, const Edge& e) const
+  {
+    Vertex_handle v1 = e.first->vertex(e.second);
+    Vertex_handle v2 = e.first->vertex(e.third);
+    Cell_handle c = f.first;
+    const int fi = f.second;
+
+    unsigned int count = 0;
+    for (int i = 1; i < 4; ++i)
+    {
+      Vertex_handle vi = c->vertex((fi + i) % 4);
+      if (vi == v1) ++count;
+      else if (vi == v2) ++count;
+      if (count == 2)
+        return true;
+    }
+    return false;
+  }
+
+  bool edge_has_vertex(const Edge& e, const Vertex_handle v) const
+  {
+    return e.first->vertex(e.second) == v
+        || e.first->vertex(e.third) == v;
   }
 
 };//class Triangulation_segment_simplex_iterator_3
