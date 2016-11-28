@@ -569,7 +569,43 @@ public:
     }
     case 2 :/*Facet*/
     {
-      //todo
+      if (cell_iterator_is_ahead())
+      {
+        Cell_handle chnext = Cell_handle(_cell_iterator);
+        Locate_type ltnext;
+        int linext, ljnext;
+        _cell_iterator.entry(ltnext, linext, ljnext);
+        switch (ltnext)//entry simplex in next cell
+        {
+        case Locate_type::VERTEX:
+          //if the entry vertex is a vertex of current facet
+          if (facet_has_vertex(get_facet(), chnext->vertex(linext)))
+            set_curr_simplex();
+          else
+            _curr_simplex = chnext;
+          break;
+
+        case Locate_type::EDGE:
+          if (facet_has_edge(get_edge(), Edge(chnext, linext, ljnext)))
+            set_curr_simplex();
+          else
+            _curr_simplex = chnext;
+          break;
+
+        case Locate_type::FACET:
+          _curr_simplex = chnext;
+          break;
+
+        default:
+          CGAL_assertion(false);
+        }
+      }
+      else //cell_iterator is not ahead. get_facet() is part of cell_iterator
+      {
+        //we cannot be in any of the degenerate cases, only detected by
+        //taking cell_iterator one step forward
+        _curr_simplex = Cell_handle(cell_iterator);
+      }
       break;
     }
     case 1:/*Edge*/
@@ -695,17 +731,17 @@ public:
     CGAL_assertion(is_vertex());
     return boost::get<Vertex_handle>(_curr_simplex);
   }
-  Vertex_handle get_edge() const
+  Edge get_edge() const
   {
     CGAL_assertion(is_edge());
     return boost::get<Edge>(_curr_simplex);
   }
-  Vertex_handle get_facet() const
+  Facet get_facet() const
   {
     CGAL_assertion(is_facet());
     return boost::get<Facet>(_curr_simplex);
   }
-  Vertex_handle get_cell() const
+  Cell_handle get_cell() const
   {
     CGAL_assertion(is_cell());
     return boost::get<Cell_handle>(_curr_simplex);
@@ -744,6 +780,18 @@ private:
     }
     //should not be reached
     CGAL_assertion(false);
+    return false;
+  }
+
+  bool facet_has_vertex(const Facet& f, const Vertex_handle v) const
+  {
+    Cell_handle c = f.first;
+    const int fi = f.second;
+    for (int i = 1; i < 4; ++i)
+    {
+      if (c->vertex((fi + i) % 4) == v)
+        return true;
+    }
     return false;
   }
 
