@@ -8,8 +8,8 @@ If `origin` is given then it must be a point strictly inside the polyhedron. If 
 This version constructs explicitly the dual points using the convex hull algorithm parametrized with the given traits class.
 
 \attention Halfspaces are considered as lower halfspaces that is to say if the plane's equation is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the corresponding halfspace is defined by \f$ a\, x +b\, y +c\, z + d \le 0 \f$ .
-\attention The value type of `PlaneIterator` and the point type of `origin` must come from the same \cgal Kernel.
 
+\pre The value type of `PlaneIterator` and the point type of `origin` must come from the same \cgal Kernel.
 \pre if provided, `origin` is inside the intersection of halfspaces defined by the range `[begin, end)`.
 \pre The computed intersection must be a bounded convex polyhedron.
 
