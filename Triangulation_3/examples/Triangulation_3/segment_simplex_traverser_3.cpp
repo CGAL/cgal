@@ -1,5 +1,3 @@
-#define CGAL_TRIANGULATION_3_TRAVERSER_CHECK_INTERSECTION
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
@@ -21,11 +19,12 @@ typedef CGAL::Delaunay_triangulation_3< Kernel >                DT;
 
 typedef DT::Cell_handle                                         Cell_handle;
 
-typedef CGAL::Triangulation_segment_cell_iterator_3< DT >       Cell_traverser;
+typedef CGAL::Triangulation_segment_simplex_iterator_3<DT>      Simplex_traverser;
 
 int main(int argc, char* argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/blobby.xyz";
+  int nb_seg = (argc > 2) ? atoi(argv[2]) : 100;
 
   // Reads a .xyz point set file in points.
   // As the point is the second element of the tuple (that is with index 1)
@@ -50,10 +49,7 @@ int main(int argc, char* argv[])
     CGAL::default_random = CGAL::Random(0);
     CGAL::Random rng(0);
 
-    unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-
-    unsigned int nb_seg = 100;
-    for (unsigned int i = 0; i < nb_seg; ++i)
+    for (int i = 0; i < nb_seg; ++i)
     {
       // Construct a traverser.
       Point_3 p1(rng.get_double(-0.48, 0.31),
@@ -64,48 +60,59 @@ int main(int argc, char* argv[])
                  rng.get_double(-0.19, 0.19));
 
       std::cout << "Traverser " << (i + 1)
-        << "\n\t(" << p1
-        << ")\n\t(" << p2 << ")" << std::endl;
-      Cell_traverser ct(dt, p1, p2);
+                << "\n\t(" << p1
+                << ")\n\t(" << p2 << ")" << std::endl;
+      Simplex_traverser st(dt, p1, p2);
 
       // Count the number of finite cells traversed.
       unsigned int inf = 0, fin = 0;
-      for( ; ct != ct.end(); ++ct )
+      unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
+      unsigned int nb_collinear = 0;
+      for (; st != st.end(); ++st)
       {
-        if( dt.is_infinite(ct) )
+        if( dt.is_infinite(st) )
             ++inf;
         else
         {
           ++fin;
+          if (st.is_facet())       ++nb_facets;
+          else if (st.is_edge())   ++nb_edges;
+          else if (st.is_vertex()) ++nb_vertex;
 
-          DT::Locate_type lt;
-          int li, lj;
-          ct.entry(lt, li, lj);
-
-          switch (lt)
+          if (st.is_facet())
+            std::cout << "facet " << std::endl;
+          else if (st.is_edge())
+            std::cout << "edge " << std::endl;
+          else if (st.is_vertex())
+            std::cout << "vertex " << std::endl;
+          else
           {
-          case DT::Locate_type::FACET:
-            ++nb_facets;
-            break;
-          case DT::Locate_type::EDGE:
-            ++nb_edges;
-            break;
-          case DT::Locate_type::VERTEX:
-            ++nb_vertex;
-            break;
-          default:
-            /*when source is in a cell*/
-            CGAL_assertion(lt == DT::Locate_type::CELL);
+            CGAL_assertion(st.is_cell());
+            std::cout << "cell " << std::endl;
           }
+
+          if (st.is_collinear())   ++nb_collinear;
         }
       }
 
-      std::cout << "While traversing from " << ct.source()
-                << " to " << ct.target() << std::endl;
-      std::cout << inf << " infinite and "
-                << fin << " finite cells were visited." << std::endl;
+      std::cout << "While traversing from " << st.source()
+                << " to " << st.target() << std::endl;
+      std::cout << "\tinfinite cells : " << inf << std::endl;
+      std::cout << "\tfinite cells   : " << fin << std::endl;
+      std::cout << "\tfacets   : " << nb_facets << std::endl;
+      std::cout << "\tedges    : " << nb_edges << std::endl;
+      std::cout << "\tvertices : " << nb_vertex << std::endl;
       std::cout << std::endl << std::endl;
     }
 
-     return 0;
+    // TODO : add cases with degeneracies, with query :
+    // - along an edge
+    // - along a facet via edge/facet/edge
+    // - along a facet via edge/facet/vertex
+    // - along a facet via vertex/facet/edge
+    // - along 2 successive facets (vertex/facet/edge/facet/edge)
+    // - along 2 successive edges (vertex/edge/vertex/edge/vertex)
+    // - along a facet and an edge successively
+    
+    return 0;
 }
