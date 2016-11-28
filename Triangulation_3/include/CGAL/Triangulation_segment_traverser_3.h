@@ -661,40 +661,41 @@ public:
     }
     case 0 :/*Vertex_handle*/
     {
-      if (degeneracy())
-      {
-        set_curr_simplex();
-        break;
-      }
       Cell_handle ch = Cell_handle(_cell_iterator);
       if (cell_iterator_is_ahead())
       {
         _curr_simplex = ch;
-        break;
-      }
-
-      ++_cell_iterator;
-      Cell_handle chnext = Cell_handle(_cell_iterator);
-      //_cell_iterator is one step forward _curr_simplex
-
-      Locate_type lt;
-      int li, lj;
-      _cell_iterator.entry(lt, li, lj);
-
-      int index_v = ch->index(get_vertex());
-      int index_vnext = ch->index(chnext->vertex(li));
-
-      if (lt == Locate_type::VERTEX)
-      {
-        _curr_simplex = Edge(ch, index_v, index_vnext);
-      }
-      else if (lt == Locate_type::EDGE)
-      {
-        int index_f = 6 - (index_v + index_vnext + ch->index(chnext->vertex(lj)));
-        _curr_simplex = Facet(ch, index_f);
+        std::cerr << "cell_iterator is ahead in vertex case (check to be done)"
+          << std::endl;
       }
       else
-        _curr_simplex = Cell_handle(_cell_iterator);
+      {
+        ++_cell_iterator;
+        Cell_handle chnext = Cell_handle(_cell_iterator);
+        //_cell_iterator is one step forward _curr_simplex
+
+        Locate_type lt;
+        int li, lj;
+        _cell_iterator.entry(lt, li, lj);
+
+        int index_v = ch->index(get_vertex());
+        int index_vnext = ch->index(chnext->vertex(li));
+        switch (lt)
+        {
+        case Locate_type::VERTEX:
+          _curr_simplex = Edge(ch, index_v, index_vnext);
+          break;
+        case Locate_type::EDGE:
+        {
+          int index_f = 6 - (index_v + index_vnext + ch->index(chnext->vertex(lj)));
+          _curr_simplex = Facet(ch, index_f);
+          break;
+        }
+        default ://FACET
+          CGAL_assertion(lt == Locate_type::FACET);
+          _curr_simplex = ch;
+        };
+      }
       break;
     }
     default:
@@ -753,22 +754,6 @@ public:
   }
 
 private:
-  /** returns true when _current_simplex does not have the same
-  * type as the "entry" of _cell_iterator
-  * it is for example the case after vertex - edge.
-  * the following value should be vertex, and the corresponding vertex
-  * is the entry of _cell_iterator
-  */
-  bool degeneracy() const
-  {
-    Locate_type lt;
-    int li, lj;
-    _cell_iterator.entry(lt, li, lj);
-    return (is_vertex() && lt != Locate_type::VERTEX)
-        || (is_edge() && lt != Locate_type::EDGE)
-        || (is_facet() && lt != Locate_type::FACET);
-  }
-
   bool cell_iterator_is_ahead() const
   {
     Cell_handle ch = Cell_handle(_cell_iterator);
