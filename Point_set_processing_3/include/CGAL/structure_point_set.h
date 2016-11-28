@@ -186,6 +186,28 @@ public:
     : m_traits (shape_detection.traits()),
       m_point_map(point_map), m_normal_map (normal_map)
   {
+    constructor (begin, end, shape_detection, epsilon, attraction_factor);
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
+                            Input_iterator end, ///< past-the-end iterator over the input points.
+                            const Shape_detection_3::Efficient_RANSAC<Traits>&
+                            shape_detection, ///< shape detection object
+                            double epsilon, ///< size parameter
+                            double attraction_factor = 3.) ///< attraction factor
+    : m_traits (shape_detection.traits())
+  {
+    constructor (begin, end, shape_detection, epsilon, attraction_factor);
+  }
+
+  void constructor(Input_iterator begin, ///< iterator over the first input point.
+                   Input_iterator end, ///< past-the-end iterator over the input points.
+                   const Shape_detection_3::Efficient_RANSAC<Traits>&
+                   shape_detection, ///< shape detection object
+                   double epsilon, ///< size parameter
+                   double attraction_factor = 3.) ///< attraction factor
+  {
     m_points.reserve(end - begin);
     m_normals.reserve(end - begin);
     for (Input_iterator it = begin; it != end; ++ it)
@@ -216,17 +238,6 @@ public:
 
     run (epsilon, attraction_factor);
     clean ();
-  }
-
-  /// \cond SKIP_IN_MANUAL
-  Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
-                            Input_iterator end, ///< past-the-end iterator over the input points.
-                            const Shape_detection_3::Efficient_RANSAC<Traits>&
-                            shape_detection, ///< shape detection object
-                            double epsilon, ///< size parameter
-                            double attraction_factor = 3.) ///< attraction factor
-    : Point_set_with_structure (begin, end, Point_map(), Normal_map(), shape_detection, epsilon, attraction_factor)
-  {
   }
   /// \endcond
 
