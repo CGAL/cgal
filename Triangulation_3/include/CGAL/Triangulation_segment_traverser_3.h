@@ -753,6 +753,25 @@ public:
     return boost::get<Cell_handle>(_curr_simplex);
   }
 
+public:
+  //returns true in any of the degenerate cases,
+  //i.e. when _curr_simplex has the following values successively
+  // edge / facet / edge
+  // edge / facet / vertex
+  // vertex / facet / edge
+  // vertex / edge / vertex
+  // TODO : rename this function
+  bool is_collinear() const
+  {
+    int curr_dim = _curr_simplex.which();
+    //this concerns only edges and facets
+    if (curr_dim == 1 || curr_dim == 2)
+      return cell_iterator_is_ahead();
+      //the degeneracy has been detected by moving cell_iterator forward
+    else
+      return false;
+  }
+
 private:
   bool cell_iterator_is_ahead() const
   {
