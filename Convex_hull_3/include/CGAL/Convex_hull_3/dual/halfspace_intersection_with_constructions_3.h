@@ -30,11 +30,14 @@
 #include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
 #include <CGAL/internal/Exact_type_selector.h>
 
+#include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
 #include <list>
 #include <vector>
 
 namespace CGAL
 {
+  namespace Convex_hull_3 {
     namespace internal
     {
       template <class Polyhedron, class Point_3>
@@ -52,8 +55,7 @@ namespace CGAL
         typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, primal);
         // compute coordinates of extreme vertices in the dual polyhedron
         // from primal faces
-        std::map<face_descriptor, vertex_descriptor> extreme_points;
-        size_t n = 0;
+        boost::unordered_map<face_descriptor, vertex_descriptor> extreme_points;
 
         BOOST_FOREACH (face_descriptor fd , faces( primal)){
           halfedge_descriptor h = halfedge(fd,primal);
@@ -81,6 +83,7 @@ namespace CGAL
         
       }
     } // namespace internal
+  } // namespace Convex_hull_3
 
         // Compute the intersection of halfspaces by constructing explicitly
         // the dual points with the traits class for convex_hull_3 given
@@ -129,7 +132,7 @@ namespace CGAL
           Polyhedron ch;
           CGAL::convex_hull_3(dual_points.begin(), dual_points.end(), ch, ch_traits);
 
-          internal::build_dual_polyhedron (ch, P, p_origin);
+          Convex_hull_3::internal::build_dual_polyhedron (ch, P, p_origin);
         }
 
         // Compute the intersection of halfspaces by constructing explicitly
@@ -147,7 +150,7 @@ namespace CGAL
         }
 
 
-      } // namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_HALFSPACE_INTERSECTION_WITH_CONSTRUCTION_3_H
 
