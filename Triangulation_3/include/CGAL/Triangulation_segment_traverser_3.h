@@ -441,7 +441,7 @@ class Triangulation_segment_simplex_iterator_3
 
 private:
   typedef Triangulation_segment_simplex_iterator_3<Tr_, Inc> Simplex_iterator;
-  typedef Triangulation_segment_cell_iterator_3<Tr_, Inc> SCI;
+  typedef Triangulation_segment_cell_iterator_3<Tr_, Inc>    SCI;
 
 private:
   typedef typename SCI::Point    Point;
@@ -501,6 +501,9 @@ public:
     return sit._cell_iterator != _cell_iterator
         || sit._curr_simplex != _curr_simplex;
   }
+
+  const Point&    source() const      { return _cell_iterator.source(); }
+  const Point&    target() const      { return _cell_iterator.target(); }
 
 private:
   Triangulation_segment_simplex_iterator_3
