@@ -166,9 +166,9 @@ int main (int argc, char* argv[])
   std::cerr << "done\nWriting result... ";
 
   std::vector<Facet> output;
-  const typename Reconstruction::TDS_2& tds = R.triangulation_data_structure_2();
+  const Reconstruction::TDS_2& tds = R.triangulation_data_structure_2();
 
-  for(typename Reconstruction::TDS_2::Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit)
+  for(Reconstruction::TDS_2::Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit)
     if(fit->is_on_surface())
       output.push_back (CGAL::make_array(fit->vertex(0)->vertex_3()->id(),
                                          fit->vertex(1)->vertex_3()->id(),
