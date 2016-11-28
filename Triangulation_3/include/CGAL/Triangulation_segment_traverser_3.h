@@ -473,23 +473,23 @@ public:
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, Vertex_handle t)
     : _cell_iterator(tr, s, t)
-  { set_curr_simplex(); }
+  { set_curr_simplex_to_entry(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , Vertex_handle s, const Point& t)
     : _cell_iterator(tr, s, t)
-  { set_curr_simplex(); }
+  { set_curr_simplex_to_entry(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, Vertex_handle t, Cell_handle hint = Cell_handle())
     : _cell_iterator(tr, s, t, hint)
-  { set_curr_simplex(); }
+  { set_curr_simplex_to_entry(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Point& s, const Point& t, Cell_handle hint = Cell_handle())
     : _cell_iterator(tr, s, t, hint)
-  { set_curr_simplex(); }
+  { set_curr_simplex_to_entry(); }
   Triangulation_segment_simplex_iterator_3(const Tr& tr
     , const Segment& seg, Cell_handle hint = Cell_handle())
     : _cell_iterator(tr, seg, hint)
-  { set_curr_simplex(); }
+  { set_curr_simplex_to_entry(); }
 
   bool operator==(const Simplex_iterator& sit) const
   {
@@ -510,7 +510,7 @@ private:
   {}
 
 private:
-  void set_curr_simplex()
+  void set_curr_simplex_to_entry()
   {
     //check what is the entry type of _cell_iterator
     if (Cell_handle(_cell_iterator) == Cell_handle())
@@ -529,12 +529,12 @@ private:
     case Locate_type::VERTEX:
       _curr_simplex = cell->vertex(li);
       break;
-
     case Locate_type::EDGE:
       _curr_simplex = Edge(cell, li, lj);
       break;
-    case Locate_type::FACET: //basic case where segment enters a cell
-                             //by crossing a facet
+    case Locate_type::FACET: 
+      _curr_simplex = Facet(cell, li);
+      break;
       //the 3 cases below correspond to the case when _cell_iterator
       //is in its initial position: _cur is locate(source)
     case Locate_type::CELL:
@@ -564,7 +564,7 @@ public:
     case 3 :/*Cell_handle*/
     {
       ++_cell_iterator;
-      set_curr_simplex();
+      set_curr_simplex_to_entry();
       break;
     }
     case 2 :/*Facet*/
@@ -587,14 +587,14 @@ public:
         case Locate_type::VERTEX:
           //if the entry vertex is a vertex of current facet
           if (facet_has_vertex(get_facet(), chnext->vertex(linext)))
-            set_curr_simplex();
+            set_curr_simplex_to_entry();
           else
             _curr_simplex = chnext;
           break;
 
         case Locate_type::EDGE:
           if (facet_has_edge(get_facet(), Edge(chnext, linext, ljnext)))
-            set_curr_simplex();
+            set_curr_simplex_to_entry();
           else
             _curr_simplex = chnext;
           break;
