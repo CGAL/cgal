@@ -81,9 +81,7 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
-if(OpenMesh_FOUND)
-  target_link_libraries( test_graph_geometry ${OPENMESH_LIBRARIES})
-endif()
+
 
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
