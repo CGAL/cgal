@@ -72,6 +72,9 @@ struct Seam_mesh_halfedge_descriptor
 
   bool operator<(const Seam_mesh_halfedge_descriptor& other) const
   {
+    if(tmhd == other.tmhd)
+      return static_cast<int>(seam) < static_cast<int>(other.seam);
+
     return tmhd < other.tmhd;
   }
 
