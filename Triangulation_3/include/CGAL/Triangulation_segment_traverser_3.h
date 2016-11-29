@@ -676,6 +676,7 @@ public:
         ++_cell_iterator;
         Cell_handle chnext = Cell_handle(_cell_iterator);
         //_cell_iterator is one step forward _curr_simplex
+        CGAL_assertion(ch != chnext);
 
         Locate_type lt;
         int li, lj;
@@ -686,6 +687,18 @@ public:
         switch (lt)
         {
         case Locate_type::VERTEX:
+          while (index_v == index_vnext)//another cell with same vertex has been found
+          {
+            ch = chnext;
+            index_v = ch->index(get_vertex());
+
+            ++_cell_iterator;
+            chnext = Cell_handle(_cell_iterator);
+            CGAL_assertion(ch != chnext);
+            _cell_iterator.entry(lt, li, lj);
+            CGAL_assertion(lt == Locate_type::VERTEX);
+            index_vnext = ch->index(chnext->vertex(li));
+          }
           _curr_simplex = Edge(ch, index_v, index_vnext);
           break;
         case Locate_type::EDGE:
@@ -773,6 +786,11 @@ public:
       //the degeneracy has been detected by moving cell_iterator forward
     else
       return false;
+  }
+
+  int simplex_dimension() const
+  {
+    return _curr_simplex.which();
   }
 
 private:
