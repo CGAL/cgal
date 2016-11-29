@@ -20,18 +20,33 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/property_map.h>
+
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+
 #include <CGAL/boost/graph/Seam_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
+
 #include <CGAL/Surface_mesh_parameterization/ARAP_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Discrete_authalic_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Discrete_conformal_map_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
+#include <CGAL/Surface_mesh_parameterization/internal/orbital_cone_helper.h>
+#include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Textured_polyhedron_builder.h>
 
+#include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <algorithm>
 #include <iostream>
+#include <iterator>
+#include <vector>
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -41,6 +56,7 @@
 
 #include "ui_Parameterization_widget.h"
 #include "ui_ARAP_dialog.h"
+#include "ui_OTE_dialog.h"
 
 namespace SMP = CGAL::Surface_mesh_parameterization;
 
@@ -143,32 +159,44 @@ private:
   QPointF prev_pos;
 };
 
-typedef Kernel::FT                                                    FT;
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor            vertex_descriptor;
-typedef Kernel::Point_2                                               Point_2;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor              P_edge_descriptor;
-typedef boost::graph_traits<Polyhedron>::halfedge_descriptor          P_halfedge_descriptor;
+namespace SMP = CGAL::Surface_mesh_parameterization;
 
+typedef Kernel::FT                                                  FT;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor          P_vertex_descriptor;
+typedef Kernel::Point_2                                             Point_2;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor            P_edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor        P_halfedge_descriptor;
 
+// Textured polyhedron
 typedef boost::graph_traits<Textured_polyhedron::Base>::
-                                         edge_descriptor              T_edge_descriptor;
+                                         edge_descriptor            T_edge_descriptor;
 typedef boost::graph_traits<Textured_polyhedron::Base>::
-                                         halfedge_descriptor          T_halfedge_descriptor;
+                                         halfedge_descriptor        T_halfedge_descriptor;
 typedef boost::graph_traits<Textured_polyhedron::Base>::
-                                         vertex_descriptor            T_vertex_descriptor;
+                                         vertex_descriptor          T_vertex_descriptor;
 
+// Seam
+typedef CGAL::Unique_hash_map<T_halfedge_descriptor,Point_2>        UV_uhm;
+typedef CGAL::Unique_hash_map<T_edge_descriptor,bool>               Seam_edge_uhm;
+typedef CGAL::Unique_hash_map<T_vertex_descriptor,bool>             Seam_vertex_uhm;
 
-typedef CGAL::Unique_hash_map<T_halfedge_descriptor,Point_2>          UV_uhm;
-typedef CGAL::Unique_hash_map<T_edge_descriptor,bool>                 Seam_edge_uhm;
-typedef CGAL::Unique_hash_map<T_vertex_descriptor,bool>               Seam_vertex_uhm;
-
-typedef boost::associative_property_map<UV_uhm>                       UV_pmap;
-typedef boost::associative_property_map<Seam_edge_uhm>                Seam_edge_pmap;
-typedef boost::associative_property_map<Seam_vertex_uhm>              Seam_vertex_pmap;
-
+typedef boost::associative_property_map<UV_uhm>                     UV_pmap;
+typedef boost::associative_property_map<Seam_edge_uhm>              Seam_edge_pmap;
+typedef boost::associative_property_map<Seam_vertex_uhm>            Seam_vertex_pmap;
 
 typedef CGAL::Seam_mesh<Textured_polyhedron::Base, Seam_edge_pmap, Seam_vertex_pmap> Seam_mesh;
-typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor           halfedge_descriptor;
+
+typedef boost::graph_traits<Seam_mesh>::vertex_descriptor           vertex_descriptor;
+typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor         halfedge_descriptor;
+typedef boost::graph_traits<Seam_mesh>::face_descriptor             face_descriptor;
+
+typedef boost::graph_traits<Seam_mesh>::face_iterator               face_iterator;
+
+typedef boost::unordered_set<Textured_polyhedron::Base::Facet_handle>  Component;
+typedef std::vector<Component>                                         Components;
+
+typedef boost::unordered_set<face_descriptor>                           SComponent;
+typedef std::vector<SComponent>                                         SComponents;
 
 class UVItem : public QGraphicsItem
 {
@@ -263,17 +291,19 @@ public:
     QAction* actionLSC = new QAction("Least Square Conformal Map", mw);
     QAction* actionDAP = new QAction("Discrete Authalic", mw);
     QAction* actionARAP = new QAction("As Rigid As Possible", mw);
+    QAction* actionOTE = new QAction("Orbifold Tutte Embedding", mw);
     actionMVC->setObjectName("actionMVC");
     actionDCP->setObjectName("actionDCP");
     actionLSC->setObjectName("actionLSC");
     actionDAP->setObjectName("actionDAP");
     actionARAP->setObjectName("actionARAP");
+    actionOTE->setObjectName("actionOTE");
 
     _actions << actionMVC
              << actionDCP
              << actionLSC
              << actionDAP
-             << actionARAP;
+             << actionOTE;
     autoConnectActions();
     Q_FOREACH(QAction *action, _actions)
       action->setProperty("subMenuName",
@@ -309,6 +339,7 @@ public Q_SLOTS:
   void on_actionLSC_triggered();
   void on_actionDAP_triggered();
   void on_actionARAP_triggered();
+  void on_actionOTE_triggered();
   void on_prevButton_pressed();
   void on_nextButton_pressed();
   void replacePolyline()
@@ -318,8 +349,7 @@ public Q_SLOTS:
     int id = scene->mainSelectionIndex();
     Q_FOREACH(UVItem* pl, projections)
     {
-      if(pl==NULL
-         || pl != projections[scene->item(id)])
+      if(pl==NULL || pl != projections[scene->item(id)])
         continue;
       current_uv_item = pl;
       break;
@@ -363,8 +393,10 @@ public Q_SLOTS:
   }
 
 protected:
-  enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC, PARAM_DAP, PARAM_ARAP};
+  enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC,
+                                 PARAM_DAP, PARAM_ARAP, PARAM_OTE};
   void parameterize(Parameterization_method method);
+
 private:
   Messages_interface *messages;
   QList<QAction*> _actions;
@@ -439,10 +471,10 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     sel_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
     if(!sel_item)
       continue;
-    if(sel_item->selected_edges.empty()
-       || !sel_item->selected_facets.empty()
-       || !sel_item->selected_vertices.empty())
+    if(sel_item->selected_edges.empty())
       continue;
+    if(method == PARAM_OTE && sel_item->selected_vertices.empty())
+       continue;
     is_seamed = true;
   }
   // Two property maps to store the seam edges and vertices
@@ -514,9 +546,26 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
   }
 
+  // map the cones from the selection plugin to the textured polyhedron
+  boost::unordered_set<T_vertex_descriptor> unordered_cones;
+  if(method == PARAM_OTE) {
+    BOOST_FOREACH(P_vertex_descriptor vd, sel_item->selected_vertices) {
+      Polyhedron::Vertex_handle pvd(vd);
+      Textured_polyhedron::Vertex_iterator it = tMesh.vertices_begin(),
+          end = tMesh.vertices_end();
+      for(; it!=end; ++it) {
+        Textured_polyhedron::Vertex_handle tvd(it);
+        if(it->id() == pvd->id()) {
+          unordered_cones.insert(tvd);
+        }
+      }
+    }
+  }
+
   Seam_mesh sMesh(tMesh, seam_edge_pm, seam_vertex_pm);
   sMesh.set_seam_edges_number(seam_edges.size());
 
+  // The parameterized values
   UV_uhm uv_uhm;
   UV_pmap uv_pm(uv_uhm);
 
@@ -537,24 +586,45 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
           edge_pmap));
 
-  Components t_components(number_of_components);
+
+  // Next is the gathering of the border halfedges of the connected component.
+  // It is wrong to pass the underlying mesh tMesh: a sphere split in half does
+  // not have any border according if border_halfedges() is run with tMesh.
+  //
+  // The proper way would be to completely redesign the plugin to use Seam meshes
+  // everywhere. But that's not worth it. Instead, we abuse the fact that faces
+  // are the same in tMesh and sMesh.
+
+  // the SEAM MESH faces of each connected component
+  SComponents s_components(number_of_components);
+
   Textured_polyhedron::Base::Facet_iterator fit;
-  for(fit = tMesh.facets_begin(); fit != tMesh.facets_end(); ++fit)
-  {
-    t_components.at(fccmap[fit]).insert(fit);
+  for(fit = tMesh.facets_begin(); fit != tMesh.facets_end(); ++fit) {
+    s_components.at(fccmap[fit]).insert(face_descriptor(fit));
   }
 
   //once per component
   std::vector<std::vector<float> >uv_borders;
   uv_borders.resize(number_of_components);
+
   for(int current_component=0; current_component<number_of_components; ++current_component)
   {
-    std::vector<T_halfedge_descriptor> border;
-    PMP::border_halfedges(t_components.at(current_component),
-                          tMesh,
-                          std::back_inserter(border));
+    std::vector<halfedge_descriptor> border;
 
-    BOOST_FOREACH(T_halfedge_descriptor hd, border)
+    // using `impl` to avoid face_index_t property maps
+//    PMP::internal::border_halfedges_impl(s_components.at(current_component),
+//                                         std::back_inserter(border),
+//                                         sMesh);
+
+    PMP::internal::border_halfedges_impl(s_components.at(current_component),
+                                         std::back_inserter(border),
+                                         sMesh);
+
+    std::cout << sMesh.number_of_seam_edges() << " seams" << std::endl;
+    std::cout << (s_components.at(current_component)).size() << " faces" << std::endl;
+    std::cout << border.size() << " border halfedges" << std::endl;
+
+    BOOST_FOREACH(halfedge_descriptor hd, border)
     {
         uv_borders[current_component].push_back(source(hd, tMesh)->point().x());
         uv_borders[current_component].push_back(source(hd, tMesh)->point().y());
@@ -569,12 +639,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     halfedge_descriptor bhd; // a halfedge on the (possibly virtual) border
     boost::unordered_set<halfedge_descriptor> visited;
     FT result_len = 0;
-    BOOST_FOREACH(T_halfedge_descriptor thd, border)
+    BOOST_FOREACH(halfedge_descriptor hd, border)
     {
-      halfedge_descriptor hd(thd);
-      if(sMesh.has_on_seam(thd))
-        hd.seam = true; // virtual border halfedge
-
       assert(is_border(hd, sMesh));
 
       if(visited.find(hd) == visited.end())
@@ -593,7 +659,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
         }
       }
     }
-    assert(bhd != halfedge_descriptor() && is_border(bhd, sMesh));
+    CGAL_postcondition(bhd != halfedge_descriptor());
+    CGAL_postcondition(is_border(bhd, sMesh));
 
     bool success = false;
     switch(method)
@@ -657,6 +724,64 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
 
       typedef SMP::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
       SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(lambda), bhd, uv_pm);
+      success = (err == SMP::OK);
+      break;
+    }
+    case PARAM_OTE:
+    {
+      new_item_name = tr("%1 (parameterized (OTE))").arg(poly_item->name());
+      std::cout << "Parameterize (OTE)...";
+
+      // does not handle multiple connected components right now
+      // @todo (need to remove the assertions such as cones.size() == 4
+      //        and check where and when cones are used (passed by ID, for ex.?))
+      CGAL_assertion(number_of_components == 1);
+
+      CGAL_precondition(!unordered_cones.empty());
+
+      typedef SMP::Orbital_Tutte_parameterizer_3<Seam_mesh> Parameterizer;
+
+      QDialog dialog(mw);
+      Ui::OTE_dialog ui;
+      ui.setupUi(&dialog);
+      connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+      connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+      // Get values
+      QApplication::restoreOverrideCursor();
+
+      int i = dialog.exec();
+      if (i == QDialog::Rejected)
+        return;
+
+      SMP::Orbifold_type orb = static_cast<SMP::Orbifold_type>(ui.OrbComboBox->currentIndex());
+      std::cout << "selected orbifold type: " << ui.OrbComboBox->currentText().toStdString() << std::endl;
+
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      // Now, parameterize
+      Parameterizer parameterizer(orb);
+
+      // mark cones in the seam mesh
+      typedef boost::unordered_map<vertex_descriptor, SMP::Cone_type>  Cones;
+      Cones cmap;
+      SMP::internal::locate_unordered_cones<Seam_mesh,
+                                            Textured_polyhedron::Base,
+                                            boost::unordered_set<T_vertex_descriptor>,
+                                            Cones>(sMesh, unordered_cones, cmap);
+
+      // vimap and uvmap
+      typedef boost::unordered_map<vertex_descriptor, int> Indices;
+      Indices indices;
+      CGAL::Polygon_mesh_processing::connected_component(
+             face(opposite(bhd, sMesh), sMesh),
+             sMesh,
+             boost::make_function_output_iterator(
+             SMP::internal::Index_map_filler<Seam_mesh, Indices>(sMesh, indices)));
+      boost::associative_property_map<Indices> vimap(indices);
+
+      // Call to parameterizer
+      SMP::Error_code err =  parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
       success = (err == SMP::OK);
       break;
     }
@@ -768,6 +893,12 @@ void Polyhedron_demo_parameterization_plugin::on_actionARAP_triggered()
 {
   std::cerr << "ARAP...";
   parameterize(PARAM_ARAP);
+}
+
+void Polyhedron_demo_parameterization_plugin::on_actionOTE_triggered()
+{
+  std::cerr << "OTE...";
+  parameterize(PARAM_OTE);
 }
 
 #include "Parameterization_plugin.moc"

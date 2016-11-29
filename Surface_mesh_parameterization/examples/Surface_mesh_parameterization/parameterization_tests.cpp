@@ -5,15 +5,16 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+
 #include <CGAL/boost/graph/Seam_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Seam_mesh.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/surface_mesh_parameterization.h>
+
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>

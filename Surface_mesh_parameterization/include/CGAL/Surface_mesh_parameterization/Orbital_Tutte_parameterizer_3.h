@@ -23,6 +23,7 @@
 
 #include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
+#include <CGAL/Surface_mesh_parameterization/internal/orbital_cone_helper.h>
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
@@ -58,20 +59,16 @@
 
 // @todo checks that cones are different, are on seams, seam is one connected
 //       component
+// @todo Should the order of cones provided in entry matter ? Map the first cone
+//       to [-1, -1] for example ?
 
 namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-enum Cone_type
-{
-  Unique_cone,
-  Duplicated_cone
-};
-
 enum Orbifold_type
 {
-  Square,
+  Square = 0,
   Diamond,
   Triangle,
   Parallelogram
@@ -246,10 +243,12 @@ public:
     ++id_r; // current line index in A is increased
   }
 
-  void parameterize_seam_segment(const std::vector<std::pair<int, int> >& seam_segment,
-                                 NT ang, int& current_line_id_in_A,
-                                 Matrix& A, Vector& B) const
+  void constrain_seam_segment(const std::vector<std::pair<int, int> >& seam_segment,
+                              NT ang, int& current_line_id_in_A,
+                              Matrix& A, Vector& B) const
   {
+    std::cout << "constraining segment of length " << seam_segment.size() << std::endl;
+
     // check that if there is a common vertex, it is at the beginning
     bool is_reversed = (seam_segment.back().first == seam_segment.back().second);
 
@@ -323,7 +322,7 @@ public:
 
     // points between two cones, and the corresponding points on the opposite side of the seam
     std::vector<std::pair<int, int> > seam_segment;
-    int segment_index = 0; // counting the segments (3 max)
+    std::size_t segment_index = 0; // counting the segments (3 max)
 
     // Go through the seam, marking rotation and cone constraints
     while(true) { // breaking at the last cone
@@ -366,7 +365,7 @@ public:
 
         CGAL_assertion(segment_index < angs.size());
         NT ang = angs[segment_index];
-        parameterize_seam_segment(seam_segment, ang, current_line_id_in_A, A, B);
+        constrain_seam_segment(seam_segment, ang, current_line_id_in_A, A, B);
 
         // the last cone of the seam is constrained
         if(is_in_map->second == Unique_cone) { // reached the end of the seam
@@ -378,7 +377,7 @@ public:
 
         std::cout << "-------------------------" << std::endl;
         seam_segment.clear();
-        segment_index++;
+        ++segment_index;
       }
 
       // move to the next halfedge couple (walking on the border of the seam)
@@ -482,7 +481,7 @@ public:
                        const VertexIndexMap vimap) const
   {
     std::cout << "size of X: " << X.size() << std::endl;
-    CGAL_assertion(X.size() == 2 * num_vertices(mesh) );
+    CGAL_assertion(X.size() == static_cast<int>(2 * num_vertices(mesh)));
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       int index = get(vimap, vd);

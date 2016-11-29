@@ -46,87 +46,16 @@ typedef SurfaceMesh::Property_map<SM_halfedge_descriptor, Point_2>      UV_pmap;
 
 namespace SMP = CGAL::Surface_mesh_parameterization;
 
-/// Read the cones from the input file.
-SMP::Error_code read_cones(const SurfaceMesh& sm, const char* filename,
-                           std::vector<SM_vertex_descriptor>& cone_vds_in_sm)
-{
-  std::ifstream in(filename);
-  std::string vertices_line;
-  std::getline(in, vertices_line); // read the first line of the file
-  std::istringstream iss(vertices_line);
-  std::vector<int> cones;
-  cones.reserve(4);
-  int cone_index;
-  while(iss >> cone_index) {
-    cones.push_back(cone_index);
-  }
-
-  if(cones.size() < 3 || cones.size() > 4) {
-    std::cerr << "Error: problem loading the input cones" << std::endl;
-    return SMP::ERROR_WRONG_PARAMETER;
-  }
-
-  std::cout << "Cones: ";
-  for(std::size_t i=0; i<cones.size(); ++i)
-    std::cout << cones[i] << " ";
-  std::cout << std::endl;
-
-  // Locate the cones in the underlying mesh 'sm'
-  CGAL_assertion(cone_vds_in_sm.empty());
-  cone_vds_in_sm.resize(cones.size());
-
-  for(std::size_t i=0; i<cones.size(); ++i) {
-    int counter = 0;
-    BOOST_FOREACH(SM_vertex_descriptor vd, vertices(sm)) {
-      if(counter == cones[i]) {
-        cone_vds_in_sm[i] = vd;
-        break;
-      }
-      ++counter;
-    }
-    CGAL_postcondition(cone_vds_in_sm[i] != SM_vertex_descriptor());
-  }
-
-  return SMP::OK;
-}
-
-/// Locate the cones on the seam mesh (find the corresponding seam mesh
-/// vertex_descriptor) and mark them with a tag that indicates whether it is a
-/// simple cone or a duplicated cone.
-template<typename ConeMap>
-void locate_cones(const Mesh& mesh,
-                  const std::vector<SM_vertex_descriptor>& cone_vds_in_sm,
-                  ConeMap& cones)
-{
-  // property map to go from SM_vertex_descriptor to Point_3
-  typedef SMP::internal::Kernel_traits<SurfaceMesh>::PPM     SM_PPM;
-  const SM_PPM sm_ppmap = get(boost::vertex_point, mesh.mesh());
-
-  // property map to go from vertex_descriptor to Point_3
-  typedef SMP::internal::Kernel_traits<Mesh>::PPM            PPM;
-  const PPM ppmap = get(boost::vertex_point, mesh);
-
-  // the cones in the underlying mesh
-  std::size_t cvdss = cone_vds_in_sm.size();
-  for(std::size_t i=0; i<cvdss; ++i) {
-    SM_vertex_descriptor smvd = cone_vds_in_sm[i];
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
-      if(get(ppmap, vd) == get(sm_ppmap, smvd)) {
-        SMP::Cone_type ct = (i == 0 || i == cvdss-1) ? SMP::Unique_cone : SMP::Duplicated_cone;
-        cones.insert(std::make_pair(vd, ct));
-      }
-    }
-  }
-
-  CGAL_postcondition((cone_vds_in_sm.size() == 3 && cones.size() == 4) ||
-                     (cone_vds_in_sm.size() == 4 && cones.size() == 6));
-
-  std::cout << cone_vds_in_sm.size() << " cones in sm" << std::endl;
-  std::cout << cones.size() << " cones in mesh" << std::endl;
-}
-
 int main(int argc, char * argv[])
 {
+  std::cout.precision(20);
+
+#if (EIGEN_WORLD_VERSION == 3 && EIGEN_MAJOR_VERSION == 3)
+  std::cout << "Using eigen 3.3" << std::endl;
+#elif (EIGEN_WORLD_VERSION == 3 && EIGEN_MAJOR_VERSION == 2)
+  std::cout << "Using eigen 3.2" << std::endl;
+#endif
+
   CGAL::Timer task_timer;
   task_timer.start();
 
@@ -147,8 +76,9 @@ int main(int argc, char * argv[])
   const char* cone_filename = (argc>2) ? argv[2] : "../data/bear.selection.txt";
 
   // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
-  std::vector<SM_vertex_descriptor> cone_vds_in_sm;
-  read_cones(sm, cone_filename, cone_vds_in_sm);
+  typedef std::vector<SM_vertex_descriptor>       Cones_in_smesh_container;
+  Cones_in_smesh_container cone_vds_in_sm;
+  SMP::internal::read_cones<SurfaceMesh>(sm, cone_filename, cone_vds_in_sm);
 
   // Two property maps to store the seam edges and vertices
   Seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
@@ -185,7 +115,9 @@ int main(int argc, char * argv[])
   // Mark the cones in the seam mesh
   typedef boost::unordered_map<vertex_descriptor, SMP::Cone_type>  Cones;
   Cones cmap;
-  locate_cones(mesh, cone_vds_in_sm, cmap);
+  SMP::internal::locate_cones<Mesh, SurfaceMesh,
+                              Cones_in_smesh_container,
+                              Cones>(mesh, cone_vds_in_sm, cmap);
 
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that uv values
