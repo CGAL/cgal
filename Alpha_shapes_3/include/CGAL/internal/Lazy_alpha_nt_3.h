@@ -32,14 +32,14 @@ namespace CGAL {
 
 namespace internal{
 
-template <class Ptr>
+template <class T>
 struct Input_points_for_lazy_alpha_nt_3
 {
   int nbpts;
-  const Ptr* p0;
-  const Ptr* p1;
-  const Ptr* p2;
-  const Ptr* p3;
+  const T* p0;
+  const T* p1;
+  const T* p2;
+  const T* p3;
 };
 
 //non-weighted case  
