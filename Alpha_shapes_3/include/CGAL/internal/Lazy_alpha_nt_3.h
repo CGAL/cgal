@@ -183,41 +183,63 @@ public:
     return approx_;
   }
 //Constructors  
-  Lazy_alpha_nt_3():exact_(Exact_nt(0)),approx_(0){}
+  Lazy_alpha_nt_3()
+   : exact_(Exact_nt(0)),approx_(0)
+  {
+    data().nbpts=0;
+    data().p0=NULL;
+    data().p1=NULL;
+    data().p2=NULL;
+    data().p3=NULL;
+  }
   
-  Lazy_alpha_nt_3(double d):exact_(Exact_nt(d)),approx_(d){}
+  Lazy_alpha_nt_3(double d)
+   : exact_(Exact_nt(d)),approx_(d)
+  {
+    data().nbpts=0;
+    data().p0=NULL;
+    data().p1=NULL;
+    data().p2=NULL;
+    data().p3=NULL;
+  }
   
   Lazy_alpha_nt_3(const Input_point& wp1)
   {
     data().nbpts=1;
     data().p0=&wp1;
+    data().p1=NULL;
+    data().p2=NULL;
+    data().p3=NULL;
     set_approx();
   }
 
   Lazy_alpha_nt_3(const Input_point& wp1,
-           const Input_point& wp2)
+                  const Input_point& wp2)
   {
     data().nbpts=2;
     data().p0=&wp1;
     data().p1=&wp2;
+    data().p2=NULL;
+    data().p3=NULL;
     set_approx();
   }
 
   Lazy_alpha_nt_3(const Input_point& wp1,
-           const Input_point& wp2,
-           const Input_point& wp3)
+                  const Input_point& wp2,
+                  const Input_point& wp3)
   {
     data().nbpts=3;
     data().p0=&wp1;
     data().p1=&wp2;
     data().p2=&wp3;
+    data().p3=NULL;
     set_approx();
   }
 
   Lazy_alpha_nt_3(const Input_point& wp1,
-           const Input_point& wp2,
-           const Input_point& wp3,
-           const Input_point& wp4)
+                  const Input_point& wp2,
+                  const Input_point& wp3,
+                  const Input_point& wp4)
   {
     data().nbpts=4;
     data().p0=&wp1;
