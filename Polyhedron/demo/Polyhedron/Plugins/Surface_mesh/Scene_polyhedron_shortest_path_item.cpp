@@ -121,12 +121,14 @@ void Scene_polyhedron_shortest_path_item_priv::compute_elements() const
     QApplication::setOverrideCursor(Qt::WaitCursor);
     vertices.resize(0);
 
+     const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
     for(Scene_polyhedron_shortest_path_item::Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
     {
       const Kernel::Point_3& p = m_shortestPaths->point(it->first, it->second);
-      vertices.push_back(p.x());
-      vertices.push_back(p.y());
-      vertices.push_back(p.z());
+      vertices.push_back(p.x() + offset.x);
+      vertices.push_back(p.y() + offset.y);
+      vertices.push_back(p.z() + offset.z);
     }
     QApplication::restoreOverrideCursor();
 }
@@ -275,14 +277,14 @@ void Scene_polyhedron_shortest_path_item::invalidateOpenGLBuffers()
 bool Scene_polyhedron_shortest_path_item_priv::get_mouse_ray(QMouseEvent* mouseEvent, Kernel::Ray_3& outRay)
 {
   bool found = false;
-  
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
   qglviewer::Camera* camera = viewer->camera();
-  const qglviewer::Vec point = camera->pointUnderPixel(mouseEvent->pos(), found);
+  const qglviewer::Vec point = camera->pointUnderPixel(mouseEvent->pos(), found) - offset;
   
   if(found)
   {
-    const qglviewer::Vec orig = camera->position();
+    const qglviewer::Vec orig = camera->position() - offset;
     outRay = Ray_3(Point_3(orig.x, orig.y, orig.z), Point_3(point.x, point.y, point.z));
   }
   

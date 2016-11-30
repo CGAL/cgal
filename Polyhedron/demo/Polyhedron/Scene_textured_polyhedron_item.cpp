@@ -188,6 +188,8 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
     typedef Base::Facet Facet;
     typedef Base::Facet_iterator Facet_iterator;
 
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+
     //Facets
     Facet_iterator f = poly->facets_begin();
 
@@ -224,9 +226,9 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
 
             //position
             const Point& p = he->vertex()->point();
-            positions_facets.push_back(p.x());
-            positions_facets.push_back(p.y());
-            positions_facets.push_back(p.z());
+            positions_facets.push_back(p.x() + offset.x);
+            positions_facets.push_back(p.y() + offset.y);
+            positions_facets.push_back(p.z() + offset.z);
             positions_facets.push_back(1.0);
 
             const double u = he->vertex()->u();
@@ -250,9 +252,9 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
 
         const Point& a = he->vertex()->point();
         const Point& b = he->opposite()->vertex()->point();
-        positions_lines.push_back(a.x());
-        positions_lines.push_back(a.y());
-        positions_lines.push_back(a.z());
+        positions_lines.push_back(a.x() + offset.x);
+        positions_lines.push_back(a.y() + offset.y);
+        positions_lines.push_back(a.z() + offset.z);
         positions_lines.push_back(1.0);
 
         const double u = he->vertex()->u();
@@ -260,9 +262,9 @@ Scene_textured_polyhedron_item_priv::compute_normals_and_vertices(void) const
         textures_map_lines.push_back(u);
         textures_map_lines.push_back(v);
 
-        positions_lines.push_back(b.x());
-        positions_lines.push_back(b.y());
-        positions_lines.push_back(b.z());
+        positions_lines.push_back(b.x()+ offset.x);
+        positions_lines.push_back(b.y()+ offset.y);
+        positions_lines.push_back(b.z()+ offset.z);
         positions_lines.push_back(1.0);
 
         const double ou = he->opposite()->vertex()->u();

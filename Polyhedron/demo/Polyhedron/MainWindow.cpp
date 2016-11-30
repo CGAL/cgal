@@ -861,20 +861,20 @@ void MainWindow::updateViewerBBox()
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax);
   qglviewer::Vec offset(0,0,0);
-  bool new_offset = false;
   for(int i=0; i<3; ++i)
   {
     if(log2(bbox.min(i)) > 13.0 )
     {
       offset[i] = -bbox.min(i);
-      new_offset = true;
     }
   }
-  if(new_offset)
+  if(offset != viewer->offset())
   {
     viewer->setOffset(offset);
     recomputeItems();
   }
+
+
   viewer->setSceneBoundingBox(vec_min,
                               vec_max);
   viewer->camera()->showEntireScene();
