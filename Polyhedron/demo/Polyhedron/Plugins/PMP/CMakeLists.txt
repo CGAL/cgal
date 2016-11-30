@@ -13,7 +13,7 @@ if(EIGEN3_FOUND)
 
     qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
     polyhedron_demo_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES})
-    target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item)
+    target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item)
 
     qt5_wrap_ui( fairingUI_FILES Fairing_widget.ui)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES})
