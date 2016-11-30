@@ -5,7 +5,7 @@ namespace CGAL {
 
 fills a polyhedron with the convex hull of a set of 3D points contained in a 3D triangulation of \cgal. 
 
-The polyhedron `P` is cleared and the convex hull of the set of 3D points is stored in `pm`.
+The polyhedron `pm` is cleared and the convex hull of the set of 3D points is stored in `pm`.
 
 \attention This function does not compute the plane equations of the faces of `pm`.
 
