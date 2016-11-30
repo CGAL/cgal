@@ -1241,7 +1241,7 @@ public:
                                   ~patches_of_tm2_used[inplace_operation_tm2],
                                   patches_of_tm2);
         // now remove patches temporarily kept in tm1
-        //  remove_disconnected_patches(*&tm1, patches_of_tm1, patches_of_tm1_removed);
+        remove_disconnected_patches(tm1, patches_of_tm1, patches_of_tm1_removed);
         // remove polylines only on the border of patches not kept in tm1
         if (polylines_in_tm1.to_skip.any())
           remove_unused_polylines(tm1,

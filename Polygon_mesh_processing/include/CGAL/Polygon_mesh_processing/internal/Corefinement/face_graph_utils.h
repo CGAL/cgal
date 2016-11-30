@@ -1350,6 +1350,39 @@ void remove_unused_polylines(
     remove_edge(e,tm);
 }
 
+template <class TriangleMesh, class PatchContainer>
+void remove_disconnected_patches(
+  TriangleMesh& tm,
+  PatchContainer& patches,
+  const boost::dynamic_bitset<>& patches_to_remove)
+{
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+
+  for (std::size_t i=patches_to_remove.find_first();
+                   i < patches_to_remove.npos;
+                   i = patches_to_remove.find_next(i))
+  {
+    Patch_description<TriangleMesh>& patch = patches[i];
+
+    BOOST_FOREACH(halfedge_descriptor h, patch.interior_edges)
+      remove_edge(edge(h, tm), tm);
+    // There is no shared halfedge between duplicated patches even
+    // if they were before the duplication. Thus the erase that follows is safe.
+    // However remember that vertices were not duplicated which is why their
+    // removal is not handled here (still in use or to be removed in
+    // remove_unused_polylines())
+    BOOST_FOREACH(halfedge_descriptor h, patch.shared_edges)
+      remove_edge(edge(h, tm), tm);
+    BOOST_FOREACH(face_descriptor f, patch.faces)
+      remove_face(f, tm);
+    BOOST_FOREACH(vertex_descriptor v, patch.interior_vertices)
+      remove_vertex(v, tm);
+  }
+}
+
 } } // end of namespace CGAL::Corefinement
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_FACE_GRAPH_UTILS_H
