@@ -794,14 +794,10 @@ Scene_edit_box_item::manipulatedFrame()
 
 double Scene_edit_box_item::point(short i, short j) const
 {
-  QVector3D pos(d->vertices[i].position().x()-d->center_.x,
-                d->vertices[i].position().y()-d->center_.y,
-                d->vertices[i].position().z()-d->center_.z);
-  QMatrix4x4 f_matrix;
-  for (int k=0; k<16; ++k){
-    f_matrix.data()[k] = (float)d->frame->matrix()[k];
-  }
-  return (f_matrix*pos)[j];
+  qglviewer::Vec pos(d->vertices[i].position().x()-d->center_.x,
+                     d->vertices[i].position().y()-d->center_.y,
+                     d->vertices[i].position().z()-d->center_.z);
+  return (d->frame->inverseCoordinatesOf(pos))[j];
 }
 
 void Scene_edit_box_item::highlight()
