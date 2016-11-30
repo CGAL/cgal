@@ -762,7 +762,7 @@ private:
         boost::shared_ptr<Plane_shape> plane1 = m_planes[m_edges[i].planes[0]];
         boost::shared_ptr<Plane_shape> plane2 = m_planes[m_edges[i].planes[1]];       
 
-        double angle_A = std::acos (std::abs (plane1->plane_normal() * plane2->plane_normal()));
+        double angle_A = std::acos (CGAL::abs (plane1->plane_normal() * plane2->plane_normal()));
         double angle_B = CGAL_PI - angle_A;
 
         typename cpp11::result_of<typename Traits::Intersect_3(Plane, Plane)>::type
@@ -810,7 +810,7 @@ private:
             const Point& point = m_points[index_point];
             Point projected = m_edges[i].support.projection (point);
             if (std::sqrt (CGAL::squared_distance (point, projected))
-                < 2 * std::min (4., 1 / std::sin (angle_A)) * epsilon
+                < 2 * (std::min) (4., 1 / std::sin (angle_A)) * epsilon
                 && m_status[index_point] != SKIPPED)
               direction_p2 = direction_p2 + Vector (projected, point);
           }
@@ -821,8 +821,8 @@ private:
       
         if (direction_p1.squared_length() == 0
             || direction_p2.squared_length() == 0
-            || (std::fabs (angle - angle_A) > 1e-2
-                && std::fabs (angle - angle_B) > 1e-2 ))
+            || (CGAL::abs (angle - angle_A) > 1e-2
+                && CGAL::abs (angle - angle_B) > 1e-2 ))
           {
             m_edges[i].active = false;
           }
