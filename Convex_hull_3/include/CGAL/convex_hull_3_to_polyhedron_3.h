@@ -19,11 +19,11 @@
 // Author(s)     : Sebastien Loriot
 //
 
-#include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Modifier_base.h>
-
 #ifndef CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H
 #define CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H
+
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Modifier_base.h>
 
 namespace CGAL {
 
@@ -82,7 +82,7 @@ public:
 };
 
 template<class Triangulation_3,class Polyhedron_3>
-void convex_hull_3_to_polyhedron_3(const Triangulation_3& T,Polyhedron_3& P){
+CGAL_DEPRECATED void convex_hull_3_to_polyhedron_3(const Triangulation_3& T,Polyhedron_3& P){
   P.clear();
   Convex_hull_modifier_from_triangulation_3<typename Polyhedron_3::HalfedgeDS,Triangulation_3> modifier(T);
   P.delegate(modifier);

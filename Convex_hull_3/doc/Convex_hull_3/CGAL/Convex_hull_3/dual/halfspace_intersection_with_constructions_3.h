@@ -15,17 +15,17 @@ This version constructs explicitly the dual points using the convex hull algorit
 
 \tparam PlaneIterator must be an input iterator where the value type is a model of the 
         concept `Kernel::Plane_3` and this plane type must come from the same kernel as the point type.
-\tparam Polyhedron must be a model of `MutableFaceGraph`.
+\tparam PolygonMesh must be a model of `MutableFaceGraph`.
 \tparam Traits must be a model of the concept `ConvexHullTraits_3`.
 
 \sa `halfspace_intersection_3()` 
  */
 
-template <class PlaneIterator, class Polyhedron, class Traits>
+template <class PlaneIterator, class PolygonMesh, class Traits>
 void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
                                                  PlaneIterator pend,
-                                                 Polyhedron &P,
-                                                 boost::optional<Polyhedron::Vertex::Point_3> origin = boost::none,
+                                                 PolygonMesh &P,
+                                                 boost::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = boost::none,
                                                  const Traits & ch_traits = Default_traits);
 
 } /* namespace CGAL */

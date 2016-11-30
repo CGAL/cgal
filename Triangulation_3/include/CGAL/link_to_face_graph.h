@@ -27,6 +27,7 @@
 #include <boost/unordered_map.hpp>
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL {
 
@@ -42,6 +43,7 @@ link_to_face_graph(const Triangulation_3& t,
   typedef typename Triangulation_3::Vertex_handle Vertex_handle;
   typedef typename boost::graph_traits<FG>::vertex_descriptor vertex_descriptor;
 
+  clear(fg);
   vertex_descriptor inf;
   vertex_descriptor nullvertex = boost::graph_traits<FG>::null_vertex();
   fg.clear();

@@ -9,7 +9,7 @@ to be strongly convex if it consists of only extreme points (i.e.,
 vertices of the convex hull). 
 
 
-\tparam Polyhedron must be a model of the concept`FaceListGraph`.
+\tparam PolygonMesh must be a model of the concept`FaceListGraph`.
 \tparam Traits must be a model of the concept `IsStronglyConvexTraits_3`.
 
 
@@ -22,8 +22,8 @@ determine convexity and requires \f$ O(e + f)\f$ time for a polyhedron with
 
 */
 
-template<class Polyhedron, class Traits>
-bool is_strongly_convex_3(Polyhedron& P, 
+template<class PolygonMesh, class Traits>
+bool is_strongly_convex_3(PolygonMesh& P, 
 const Traits& traits = Default_traits);
 
 } /* namespace CGAL */

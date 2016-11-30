@@ -128,16 +128,16 @@ not all of them are vertices of the hull.
 The following example shows how to compute a convex hull with a triangulation.
 The vertices incident to the infinite vertex are on the convex hull.
 
-The function `link_to_face_graph()` can be used to obtain a polyhedral surface 
+The function `convex_hull_3_to_face_graph()` can be used to obtain a polyhedral surface 
 that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surface_mesh`.
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
 \section Convex_hull_3Performance Performance
 
-In the following, we compare the running times of the three approaches to compute 3D convex hulls.
+In the following, we compare the running times of the two approaches to compute 3D convex hulls.
 For the static version (using `convex_hull_3()`) and the dynamic version
-(using `Delaunay_triangulation_3` and `link_to_face_graph()`), the kernel
+(using `Delaunay_triangulation_3` and `convex_hull_3_to_face_graph()`), the kernel
 used was `Exact_predicates_inexact_constructions_kernel`.
 
 To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 

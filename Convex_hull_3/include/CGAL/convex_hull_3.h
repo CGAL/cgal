@@ -82,7 +82,7 @@ struct Default_polyhedron_for_Chull_3{
 
 template <class K, class P, class Tag>
 struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, P, Tag> >{
-  typedef typename  Convex_hull_traits_3<K, P, Tag>::Polyhedron_3 type;
+  typedef typename  Convex_hull_traits_3<K, P, Tag>::Polygon_mesh type;
 };
  
 //utility class to select the right version of internal predicate Is_on_positive_side_of_plane_3

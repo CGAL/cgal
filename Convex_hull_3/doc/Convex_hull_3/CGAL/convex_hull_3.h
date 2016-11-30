@@ -14,7 +14,7 @@ that is `P` will contain only triangular facets.
 [`first`, `last`) not all of which are collinear.
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`. 
-\tparam Polyhedron_3 must be a model of `MutableFaceGraph`.
+\tparam PolygonMesh must be a model of `MutableFaceGraph`.
 \tparam Traits must be a model of the concept `ConvexHullTraits_3`. 
 For the purposes of checking the postcondition that the convex hull 
 is valid, `Traits` must also be a model of the concept 
@@ -35,8 +35,8 @@ Barnard <I>et al.</I> \cgalCite{bdh-qach-96}.
 
 */
 
-template <class InputIterator, class Polyhedron_3, class Traits>
-void convex_hull_3(InputIterator first, InputIterator last, Polyhedron_3& P, const Traits& ch_traits = Default_traits);
+template <class InputIterator, class PolygonMesh, class Traits>
+void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& P, const Traits& ch_traits = Default_traits);
 
 /*!
 \ingroup PkgConvexHull3Functions
@@ -54,7 +54,7 @@ in case the result is a polyhedron.
 \tparam Traits must be model of the concept `ConvexHullTraits_3`. 
 For the purposes of checking the postcondition that the convex hull 
 is valid, `Traits` must also be a model of the concept 
-`IsStronglyConvexTraits_3`.   Furthermore, `Traits` must define a type `Polyhedron_3` that is a model of 
+`IsStronglyConvexTraits_3`.   Furthermore, `Traits` must define a type `PolygonMesh` that is a model of 
 `MutableFaceGraph`. 
 
 If the kernel `R` of the points determined by the value type  of `InputIterator` 

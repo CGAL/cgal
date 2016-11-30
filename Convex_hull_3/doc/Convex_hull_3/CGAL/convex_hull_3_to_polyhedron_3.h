@@ -7,6 +7,8 @@ fills a polyhedron with the convex hull of a set of 3D points contained in a 3D 
 
 The polyhedron `P` is cleared and the convex hull of the set of 3D points is stored in `P`.
 
+\deprecated since \cgal 4.10. Use `convex_hull_to_face_graph() instead.
+
 \attention This function does not compute the plane equations of the faces of `P`.
 
 \attention This function works only for `CGAL::Polyhedron_3<Traits>`, and users who want
