@@ -23,7 +23,7 @@ determine convexity and requires \f$ O(e + f)\f$ time for a polyhedron with
 */
 
 template<class PolygonMesh, class Traits>
-bool is_strongly_convex_3(PolygonMesh& P, 
+bool is_strongly_convex_3(PolygonMesh& pm, 
 const Traits& traits = Default_traits);
 
 } /* namespace CGAL */

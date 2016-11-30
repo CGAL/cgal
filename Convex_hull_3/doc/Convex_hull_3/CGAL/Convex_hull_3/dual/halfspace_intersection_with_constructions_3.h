@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull3Functions
 
-\brief computes the intersection of the halfspaces defined by the planes contained in the range [`begin`, `end`). The result is stored in the polyhedron `P`.
+\brief computes the intersection of the halfspaces defined by the planes contained in the range [`begin`, `end`). The result is stored in the polyhedron `pm`.
 If `origin` is given then it must be a point strictly inside the polyhedron. If an interior point is not given then it is computed using a linear program and thus is slower.
 This version constructs explicitly the dual points using the convex hull algorithm parametrized with the given traits class.
 
@@ -24,7 +24,7 @@ This version constructs explicitly the dual points using the convex hull algorit
 template <class PlaneIterator, class PolygonMesh, class Traits>
 void halfspace_intersection_with_constructions_3(PlaneIterator pbegin,
                                                  PlaneIterator pend,
-                                                 PolygonMesh &P,
+                                                 PolygonMesh &pm,
                                                  boost::optional<Kernel_traits<std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> > origin = boost::none,
                                                  const Traits & ch_traits = Default_traits);
 

@@ -5,9 +5,9 @@ namespace CGAL {
 
 fills a polyhedron with the convex hull of a set of 3D points contained in a 3D triangulation of \cgal. 
 
-The polyhedron `P` is cleared and the convex hull of the set of 3D points is stored in `P`.
+The polyhedron `P` is cleared and the convex hull of the set of 3D points is stored in `pm`.
 
-\attention This function does not compute the plane equations of the faces of `P`.
+\attention This function does not compute the plane equations of the faces of `pm`.
 
 \pre `T.dimension()`==3.
 
@@ -19,6 +19,6 @@ The polyhedron `P` is cleared and the convex hull of the set of 3D points is sto
 
 */
 template <class Triangulation, class PolygonMesh>
-void convex_hull_3_to_face_graph(const Triangulation& T,PolygonMesh& P);
+void convex_hull_3_to_face_graph(const Triangulation& T,PolygonMesh& pm);
 
 } /* namespace CGAL */
