@@ -10,9 +10,10 @@ namespace Set_movable_separability_2 {
  * polygon is <em>castable</em>, the function computes the set of top edges of
  * such cavities and the corresponding closed ranges of pullout directions.  Let
  * \f$n\f$ denote the normal to a top \f$e\f$, and let \f$d\f$ denote a pullout
- * direction of \f$e\f$. Naturally, the angle between \f$n\f$ and \f$d\f$ is
- * larger than zero (\f$n \cdot d > 0\f$). Each top edge and corresponding range
- * is added to a container referred to by a given output iterator.
+ * direction of \f$e\f$. Naturally, the angle between \f$n\f$ and \f$d\f$ must
+ * be in the open range (-90&deg;, 90&deg;); that is, \f$n \cdot d > 0\f$. Each
+ * top edge and corresponding range is added to a container referred to by a
+ * given output iterator.
  *
  * The type that substitutes the template parameter `%CastingTraits_2` must be
  * a model of the concept `CastingTraits_2`.

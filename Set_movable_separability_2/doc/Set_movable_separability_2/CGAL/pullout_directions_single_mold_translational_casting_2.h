@@ -5,8 +5,8 @@ namespace Set_movable_separability_2 {
  *
  * Given a simple polygon and an edge of the polygon, this function determines
  * whether a cavity (of a mold in the plane) that has the shape of the polygon
- * can be used so that the polygon could be casted in the mold with the input
- * edge being the top edge and then pulled out of the mold without colliding
+ * can be used so that the polygon could be casted in the mold using the input
+ * edge as the top edge and then pulled out of the mold without colliding
  * into the mold (but possibly sliding along the mold surface). If the polygon
  * is <em>castable</em> this way, the function computes the closed range of
  * pullout directions.
