@@ -907,7 +907,7 @@ void disconnect_patches(
     new_patch_border.reserve( nb_shared_edges );
     boost::unordered_map<halfedge_descriptor, halfedge_descriptor> old_to_new;
 
-    // save faces inside the patch and set the Halfedge
+    // save faces inside the patch and set the halfedge
     // to be duplicated on the boundary
     std::vector<face_descriptor> face_backup;
     face_backup.reserve( nb_shared_edges );
@@ -950,7 +950,7 @@ void disconnect_patches(
       set_face(new_hedge, face_backup[k], tm1);
       set_target(new_hedge, target(h, tm1), tm1);
       set_target(opposite(new_hedge,tm1), source(h, tm1), tm1);
-      set_halfedge(face(h, tm1), new_hedge, tm1);
+      set_halfedge(face_backup[k], new_hedge, tm1);
 
       new_patch_border.push_back(new_hedge);
       set_face(opposite(new_hedge, tm1), GT::null_face(), tm1);
