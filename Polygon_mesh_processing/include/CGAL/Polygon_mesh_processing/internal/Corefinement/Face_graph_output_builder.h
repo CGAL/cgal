@@ -32,6 +32,13 @@
 
 #include <boost/dynamic_bitset.hpp>
 
+
+#define CGAL_COREF_SELECT_OUT_ECM(I) \
+  (I == 0 ? cpp11::get<0>(out_edge_mark_maps) \
+          : I == 1 ? cpp11::get<1>(out_edge_mark_maps) \
+                   : I == 2 ? cpp11::get<2>(out_edge_mark_maps) \
+                            : cpp11::get<3>(out_edge_mark_maps))
+
 namespace CGAL {
 namespace Corefinement {
 
@@ -1147,6 +1154,9 @@ public:
         polylines,
         intersection_edges1, intersection_edges2,
         vpm1, vpm2, *output_vpms[operation],
+        marks_on_input_edges.ecm1,
+        marks_on_input_edges.ecm2,
+        CGAL_COREF_SELECT_OUT_ECM(operation),
         shared_edges
       );
       mark_edges(out_edge_mark_maps, shared_edges, operation);
@@ -1223,6 +1233,9 @@ public:
             inplace_operation_tm1 == TM2_MINUS_TM1,
           polylines_in_tm1,
           vpm1, vpm2,
+          marks_on_input_edges.ecm1,
+          marks_on_input_edges.ecm2,
+          CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1),
           disconnected_patches_edge_to_tm2_edge);
         // Operation in tm2: discard patches and append the one from tm2
         CGAL_assertion( *desired_output[inplace_operation_tm2] == &tm2 );
@@ -1234,6 +1247,9 @@ public:
                                    inplace_operation_tm2==TM2_MINUS_TM1,
                                    vpm2,
                                    vpm1,
+                                   marks_on_input_edges.ecm2,
+                                   marks_on_input_edges.ecm1,
+                                   CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm2),
                                    disconnected_patches_edge_to_tm2_edge);
         // remove polylines only on the border of patches not kept in tm2
         if (polylines_in_tm2.to_skip.any())
@@ -1241,7 +1257,15 @@ public:
                                   ~patches_of_tm2_used[inplace_operation_tm2],
                                   patches_of_tm2);
         // now remove patches temporarily kept in tm1
-        remove_disconnected_patches(tm1, patches_of_tm1, patches_of_tm1_removed);
+        remove_disconnected_patches(tm1,
+                                    patches_of_tm1,
+                                    patches_of_tm1_removed,
+                                    marks_on_input_edges.ecm1);
+
+        // transfer marks of edges of patches kept to the output edge mark property
+        copy_edge_mark<TriangleMesh>(
+          tm1, marks_on_input_edges.ecm1, CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1));
+
         // remove polylines only on the border of patches not kept in tm1
         if (polylines_in_tm1.to_skip.any())
           remove_unused_polylines(tm1,
@@ -1271,6 +1295,9 @@ public:
           inplace_operation_tm1 == TM1_MINUS_TM2,
           vpm1,
           vpm2,
+          marks_on_input_edges.ecm1,
+          marks_on_input_edges.ecm2,
+          CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm1),
           polylines
         );
         // remove polylines only on the border of patches not kept
@@ -1307,6 +1334,9 @@ public:
                                    inplace_operation_tm2==TM2_MINUS_TM1,
                                    vpm2,
                                    vpm1,
+                                   marks_on_input_edges.ecm2,
+                                   marks_on_input_edges.ecm1,
+                                   CGAL_COREF_SELECT_OUT_ECM(inplace_operation_tm2),
                                    polylines);
 
         // remove polylines only on the border of patches not kept
@@ -1320,5 +1350,7 @@ public:
 
 
 } } // CGAL::Corefinement
+
+#undef CGAL_COREF_SELECT_OUT_ECM
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_FACE_GRAPH_OUTPUT_BUILDER_H

@@ -189,6 +189,7 @@ boolean_operation(      TriangleMesh& tm1,
   CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(2)
   CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(3)
 
+  // In the current version all types must be the same so an array would be fine
   typedef cpp11::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
                                                             Edge_mark_map_tuple;
 

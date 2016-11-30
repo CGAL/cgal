@@ -103,8 +103,9 @@ void test_corefine(Triangle_mesh tm1, Triangle_mesh tm2)
   assert( count_constrained_edges(tm2, ecm2)==655 );
 }
 
-void test_union(Triangle_mesh tm1, Triangle_mesh tm2, Triangle_mesh tm_out,
-                const char* outname, bool skip_test_1=false, bool skip_test_2=false)
+void test_union_no_copy(
+  Triangle_mesh& tm1, Triangle_mesh& tm2, Triangle_mesh& tm_out,
+  const char* outname, bool skip_test_1, bool skip_test_2)
 {
   Constrained_edge_map ecm1 =
     tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
@@ -125,18 +126,75 @@ void test_union(Triangle_mesh tm1, Triangle_mesh tm2, Triangle_mesh tm_out,
 
   assert( skip_test_1 || count_constrained_edges(tm1, ecm1)==658 );
   assert( skip_test_2 || count_constrained_edges(tm2, ecm2)==655 );
-
-  dump_constrained_edges(tm1, ecm1, "out_cst1.cgal");
-  dump_constrained_edges(tm2, ecm2, "out_cst2.cgal");
-  dump_constrained_edges(tm_out, ecm_out, "out_cst_out.cgal");
-
-  std::cout << "nb cst " << count_constrained_edges(tm_out, ecm_out) << "\n";
-  std::ofstream output("union.off");
-  output << tm_out;
-  output.close();
-
-  assert( count_constrained_edges(tm2, ecm2)==978 );
+  assert( count_constrained_edges(tm_out, ecm_out)==838 );
 }
+
+void test_union(Triangle_mesh tm1, Triangle_mesh tm2, Triangle_mesh tm_out,
+                const char* outname, bool skip_test_1=false, bool skip_test_2=false)
+{
+  test_union_no_copy(tm1, tm2, tm_out, outname, skip_test_1, skip_test_2);
+}
+
+void test_union(Triangle_mesh tm1, Triangle_mesh tm2, int tm1_or_tm2,
+                const char* outname, bool skip_test_1=false, bool skip_test_2=false)
+{
+  if (tm1_or_tm2==1)
+    test_union_no_copy(tm1, tm2, tm1, outname, skip_test_1, skip_test_2);
+  if (tm1_or_tm2==2)
+    test_union_no_copy(tm1, tm2, tm2, outname, skip_test_1, skip_test_2);
+}
+
+void test_bool_op_no_copy(
+  Triangle_mesh& tm1, Triangle_mesh& tm2,
+  Triangle_mesh& union_out,
+  Triangle_mesh& inter_out,
+  const char*outname,
+  bool reverse)
+{
+  Constrained_edge_map ecm1 =
+    tm1.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+  Constrained_edge_map ecm2 =
+    tm2.property_map<Triangle_mesh::Edge_index,bool>("e:cst").first;
+  Constrained_edge_map ecm_out_union = reverse
+    ? tm2.property_map<Triangle_mesh::Edge_index,bool>(outname).first
+    : tm1.property_map<Triangle_mesh::Edge_index,bool>(outname).first;
+  Constrained_edge_map ecm_out_inter = reverse
+    ? tm1.property_map<Triangle_mesh::Edge_index,bool>(outname).first
+    : tm2.property_map<Triangle_mesh::Edge_index,bool>(outname).first;
+
+  assert( count_constrained_edges(tm1, ecm1)==307 );
+  assert( count_constrained_edges(tm2, ecm2)==307 );
+
+  typedef boost::optional<Triangle_mesh*> OTM;
+  OTM none;
+  const CGAL::cpp11::array<OTM,4>& desired_output =
+    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), none, none)
+            : CGAL::make_array(OTM(&tm1), OTM(&tm2), none, none);
+  PMP::boolean_operation(tm1,
+                         tm2,
+                         desired_output,
+                         params::edge_is_constrained_map(ecm1),
+                         params::edge_is_constrained_map(ecm2),
+                         CGAL::cpp11::make_tuple(params::edge_is_constrained_map(ecm_out_union),
+                                                 params::edge_is_constrained_map(ecm_out_inter),
+                                                 params::no_parameters(params::edge_is_constrained_map(ecm_out_union)),
+                                                 params::no_parameters(params::edge_is_constrained_map(ecm_out_union))));
+
+  dump_constrained_edges(*(*desired_output[0]), ecm_out_union, "out_cst_union.cgal");
+  dump_constrained_edges(*(*desired_output[1]), ecm_out_inter, "out_cst_inter.cgal");
+
+  assert( count_constrained_edges(*(*desired_output[0]), ecm_out_union)==838 );
+  assert( count_constrained_edges(*(*desired_output[1]), ecm_out_inter)==475 );
+}
+
+void test_bool_op(Triangle_mesh tm1, Triangle_mesh tm2, bool reverse, const char* outname)
+{
+  if (reverse)
+    test_bool_op_no_copy(tm1, tm2, tm2, tm1, outname, reverse);
+  else
+    test_bool_op_no_copy(tm1, tm2, tm1, tm2, outname, reverse);
+}
+
 
 int main()
 {
@@ -155,9 +213,7 @@ int main()
     tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false).first;
 
   mark_sharp_edge(tm1, get(CGAL::vertex_point, tm1), ecm1);
-  mark_sharp_edge(tm1, get(CGAL::vertex_point, tm1), ecm1_out);
   mark_sharp_edge(tm2, get(CGAL::vertex_point, tm2), ecm2);
-  mark_sharp_edge(tm2, get(CGAL::vertex_point, tm2), ecm2_out);
 
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
@@ -170,8 +226,13 @@ int main()
   std::cout << "Testing union out-of-place\n";
   test_union(tm1, tm2, tm_out, "e:cst_out");
   std::cout << "Testing union in-place\n";
-  test_union(tm1, tm2, tm1, "e:cst_out");
-  test_union(tm1, tm2, tm2, "e:cst_out");
-  test_union(tm1, tm2, tm1, "e:cst", true, false);
-  test_union(tm1, tm2, tm2, "e:cst", false, true);
+  test_union(tm1, tm2, 1, "e:cst_out", true, false);
+  test_union(tm1, tm2, 2, "e:cst_out", false, true);
+  test_union(tm1, tm2, 1, "e:cst", true, false);
+  test_union(tm1, tm2, 2, "e:cst", false, true);
+  std::cout << "Testing bool op function with two in-place operations\n";
+  test_bool_op(tm1, tm2, true, "e:cst_out");
+  test_bool_op(tm1, tm2, false, "e:cst_out");
+  test_bool_op(tm1, tm2, true, "e:cst");
+  test_bool_op(tm1, tm2, false, "e:cst");
 }

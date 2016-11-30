@@ -63,42 +63,15 @@ struct Default_face_visitor{
   void after_subface_created(face_descriptor /*f_new*/,TriangleMesh&){}
 };
 
-template <typename G>
-struct No_mark
-{
-  friend bool get(No_mark<G>,
-                  typename boost::graph_traits<G>::edge_descriptor)
-  {
-    return false;
-  }
-  friend void put(No_mark<G>,
-                  typename boost::graph_traits<G>::edge_descriptor, bool)
-  {}
-};
-
-template<class TriangleMesh, class EdgeMarkMap>
-void mark_all_edges(TriangleMesh& tm, const EdgeMarkMap& edge_mark_map)
-{
-  BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
-                edges(tm))
-  {
-    put(edge_mark_map, ed, true);
-  }
-}
-
-template<class TriangleMesh>
-void mark_all_edges(TriangleMesh& tm, const No_mark<TriangleMesh>&)
-{} //nothing to do
-
 //binds two edge constrained pmaps
 template <class G, class Ecm1, class Ecm2=Ecm1>
 struct Ecm_bind{
   G& g1;
-  const Ecm1& ecm1;
+  Ecm1& ecm1;
   G& g2;
-  const Ecm2& ecm2;
+  Ecm2& ecm2;
 
-  Ecm_bind(G& g1, G& g2, const Ecm1& ecm1, const Ecm2& ecm2)
+  Ecm_bind(G& g1, G& g2, Ecm1& ecm1, Ecm2& ecm2)
   : g1(g1), ecm1(ecm1), g2(g2), ecm2(ecm2)
   {}
 
@@ -127,6 +100,7 @@ struct Ecm_bind{
 template <class G>
 struct Ecm_bind<G, No_mark<G>, No_mark<G> >
 {
+  No_mark<G> ecm1, ecm2;
   Ecm_bind(G&, G&, const No_mark<G>&, const No_mark<G>&){}
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   void call_put(G&, edge_descriptor, bool) const {}
