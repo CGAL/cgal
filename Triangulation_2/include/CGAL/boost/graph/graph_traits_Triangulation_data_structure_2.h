@@ -308,6 +308,21 @@ public:
   } // namespace detail
 } // namespace CGAL
 
+namespace std{
+
+// workaround a bug detected on at least g++ 4.4 where boost::next(Iterator)
+// is picked as a candidate for next(h,g)
+template <typename Tr>
+struct iterator_traits< CGAL::detail::TDS2_halfedge_descriptor<Tr> >
+{
+  typedef void* iterator_category;
+  typedef void* difference_type;
+  typedef void* value_type;
+  typedef void* reference;
+};
+
+} // end of namespace std
+
 namespace boost { 
 
   template <class GT, class TDS>
