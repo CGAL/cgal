@@ -14,7 +14,10 @@ This version does not construct the dual points explicitely but uses a special t
 \pre The point type of `origin` and the point type of the vertices of `Polyhedron` must come from the same \cgal %Kernel.\pre if provided, `origin` is inside the intersection of halfspaces defined by the range `[begin, end)`.
 \pre The computed intersection must be a bounded convex polyhedron.
 
-\tparam PlaneIterator must be an input iterator where the value type must be `Polyhedron::Traits::Plane_3`
+
+\tparam PlaneIterator must be an input iterator where the value type is a model of the 
+        concept `Kernel::Plane_3` and this plane type must come from the same kernel as the point type.
+
 \tparam Polyhedron must be a model of `MutableFaceGraph`.
 
 \sa `halfspace_intersection_with_constructions_3()` 

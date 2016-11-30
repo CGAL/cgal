@@ -137,7 +137,7 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 In the following, we compare the running times of the three approaches to compute 3D convex hulls.
 For the static version (using `convex_hull_3()`) and the dynamic version
-(using `Delaunay_triangulation_3` and `star_to_face_graph()`), the kernel
+(using `Delaunay_triangulation_3` and `link_to_face_graph()`), the kernel
 used was `Exact_predicates_inexact_constructions_kernel`.
 
 To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 
