@@ -545,7 +545,7 @@ public:
     std::cout << "Filled M and Bf" << std::endl;
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
-    std::ofstream outM("M.txt");
+    std::ofstream outM("matrices/M.txt");
     outM.precision(20);
     outM << M.row_dimension() << " " << M.column_dimension() << std::endl;
     for(int k=0; k<M.eigen_object().outerSize(); ++k) {
@@ -555,10 +555,27 @@ public:
       }
     }
 
-    std::ofstream outBf("Bf.txt");
+//    std::ofstream outfM("matrices/fullM.txt");
+//    outfM << M.eigen_object() << std::endl;
+
+    std::ofstream outBf("matrices/Bf.txt");
     outBf.precision(20);
     outBf << Bf.size() << std::endl;
     outBf << Bf << std::endl;
+
+#ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES_FOR_MATLAB
+    std::ofstream mat_outM("matrices/matrixM.dat");
+    mat_outM.precision(20);
+    for(int k=0; k<M.eigen_object().outerSize(); ++k) {
+      for(typename Eigen::SparseMatrix<double>::InnerIterator
+                                            it(M.eigen_object(), k); it; ++it) {
+        mat_outM <<  it.row()+1 << " " << it.col()+1 << " " << it.value() << '\n';
+      }
+    }
+
+    std::ofstream matoutBf("matrices/vectorB.dat");
+    matoutBf.precision(20);
+    matoutBf << Bf << std::endl;
 #endif
 
     CGAL::Timer task_timer;
@@ -579,8 +596,11 @@ public:
     }
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
-    std::ofstream outf("solution.txt");
-    outf << X << std::endl;
+    std::ofstream outf("matrices/X.txt");
+    for(std::size_t i=0; i<n; ++i) {
+      outf << X[i] << " ";
+      outf << X[++i] << std::endl;
+    }
 #endif
 
     assign_solution(mesh, X, uvmap, vimap);
@@ -636,7 +656,7 @@ public:
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
     std::cout << "A and B are filled" << std::endl;
-    std::ofstream outA("A.txt"), outB("B.txt");
+    std::ofstream outA("matrices/A.txt"), outB("matrices/B.txt");
 
     for(int k=0; k<A.eigen_object().outerSize(); ++k) {
       for(Eigen::SparseMatrix<double>::InnerIterator it(A.eigen_object(), k); it; ++it) {
@@ -654,7 +674,7 @@ public:
     mean_value_laplacian(mesh, vimap, L);
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
-    std::ofstream outL("L.txt");
+    std::ofstream outL("matrices/L.txt");
     outL.precision(20);
     outL << L.row_dimension() << " " << L.column_dimension() << std::endl;
     for(int k=0; k<L.eigen_object().outerSize(); ++k) {
