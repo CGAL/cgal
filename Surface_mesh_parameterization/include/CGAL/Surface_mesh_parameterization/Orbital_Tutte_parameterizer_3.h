@@ -421,7 +421,7 @@ public:
     // is called from the neighboring faces of F_ijk that share the vertex i
 
     // Compute: - tan(alpha / 2)
-    NT w_i_base = -1.0 * compute_w_ij_mvc(pi, pj, pk);
+    NT w_i_base = 1.0 * compute_w_ij_mvc(pi, pj, pk);
 
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
