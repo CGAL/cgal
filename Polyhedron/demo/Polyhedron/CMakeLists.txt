@@ -117,7 +117,7 @@ endif()
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
-  find_package(Boost COMPONENTS thread system)
+  find_package(Boost COMPONENTS thread system filesystem)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
