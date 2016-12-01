@@ -728,7 +728,7 @@ void Viewer::endSelection(const QPoint&)
 {
     glDisable(GL_SCISSOR_TEST);
     //redraw thetrue scene for the glReadPixel in postSelection();
-    update();
+    d->draw_aux(false, this);
 }
 
 void Viewer_impl::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, Viewer_impl::AxisData &data)
