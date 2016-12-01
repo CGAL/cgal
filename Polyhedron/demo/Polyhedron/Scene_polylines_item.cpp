@@ -137,6 +137,9 @@ Scene_polylines_item_private::computeElements() const
 void
 Scene_polylines_item_private::computeSpheres()
 {
+  const qglviewer::Vec v_offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
+  K::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
+
       spheres->clear_spheres();
       QApplication::setOverrideCursor(Qt::WaitCursor);
       // FIRST, count the number of incident cycles and polylines
@@ -227,8 +230,7 @@ Scene_polylines_item_private::computeSpheres()
           }
 
           CGAL::Color c(colors[0], colors[1], colors[2]);
-
-          spheres->add_sphere(K::Sphere_3(center, spheres_drawn_square_radius), c);
+          spheres->add_sphere(K::Sphere_3(center+offset, spheres_drawn_square_radius), c);
       }
       spheres->setToolTip(
             QString("<p>Legende of endpoints colors: <ul>"
