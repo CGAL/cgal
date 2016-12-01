@@ -458,11 +458,11 @@ private:
       return;
     }
 
-    bool Q_is_between_P1P2 = sorted_around_edge_filtered(indices.first,
-                                                         indices.second,
-                                                         index_p1,index_p2,
-                                                         index_q,P1,P2,Q,
-                                                         nodes,ppmap);
+    bool Q_is_between_P1P2 = OOP::sorted_around_edge_filtered(indices.first,
+                                                              indices.second,
+                                                              index_p1,index_p2,
+                                                              index_q,P1,P2,Q,
+                                                              nodes,ppmap);
 
     if (Q_is_between_P1P2) {
       // poly_first  - poly_second            = took_opposite?P1Q:QP2
@@ -601,8 +601,8 @@ private:
     Vertex_handle Q1=second_hedge->opposite()->next()->vertex();
     // Vertex_handle Q2=second_hedge->next()->vertex();
     bool Q1_is_between_P1P2 =
-      sorted_around_edge_filtered( indices.first, indices.second, index_p1,
-                                   index_p2, index_q1, P1, P2, Q1, nodes, ppmap);
+      OOP::sorted_around_edge_filtered( indices.first, indices.second, index_p1,
+                                        index_p2, index_q1, P1, P2, Q1, nodes, ppmap);
 
 
     //Recover the dart that will be the start point of the different sewing
@@ -1049,13 +1049,13 @@ public:
                        && get(ppmap,P2) !=get(ppmap,Q1) && get(ppmap,P2)!=get(ppmap,Q2));
 
         bool Q1_is_between_P1P2 =
-          sorted_around_edge_filtered( indices.first, indices.second,
-                                       index_p1, index_p2, index_q1,
-                                       P1, P2, Q1, nodes, ppmap);
+          OOP::sorted_around_edge_filtered( indices.first, indices.second,
+                                            index_p1, index_p2, index_q1,
+                                            P1, P2, Q1, nodes, ppmap);
         bool Q2_is_between_P1P2 =
-          sorted_around_edge_filtered( indices.first, indices.second,
-                                       index_p1, index_p2, index_q2,
-                                       P1, P2, Q2, nodes, ppmap);
+          OOP::sorted_around_edge_filtered( indices.first, indices.second,
+                                            index_p1, index_p2, index_q2,
+                                            P1, P2, Q2, nodes, ppmap);
 
         //Recover the dart that will be the start point of the different sewing
         //  dof_X_outside = dart of face of, meaning the triangle containing the
@@ -1074,9 +1074,9 @@ public:
         if ( Q1_is_between_P1P2 ) {
           if( Q2_is_between_P1P2 ) {
             bool P1_is_between_Q1Q2 =
-              sorted_around_edge_filtered(indices.first, indices.second,
-                                          index_q1, index_q2, index_p1,
-                                          Q1, Q2, P1, nodes, ppmap);
+              OOP::sorted_around_edge_filtered(indices.first, indices.second,
+                                               index_q1, index_q2, index_p1,
+                                               Q1, Q2, P1, nodes, ppmap);
             if (!P1_is_between_Q1Q2) {
               // poly_first  - poly_second            = P1Q1 U Q2P2
               // poly_second - poly_first             = {0}
@@ -1160,9 +1160,9 @@ public:
                                 indices, polyline_info); //P2Q1
           } else {
             bool P1_is_between_Q1Q2 =
-              sorted_around_edge_filtered(indices.first, indices.second,
-                                          index_q1,index_q2,index_p1,Q1,Q2,P1,
-                                          nodes,ppmap);
+              OOP::sorted_around_edge_filtered(indices.first, indices.second,
+                                               index_q1,index_q2,index_p1,Q1,Q2,P1,
+                                               nodes,ppmap);
             if (!P1_is_between_Q1Q2) {
               // poly_first  - poly_second            = P1P2
               // poly_second - poly_first             = Q1Q2

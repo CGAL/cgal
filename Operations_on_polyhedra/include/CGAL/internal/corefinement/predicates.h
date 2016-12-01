@@ -25,6 +25,7 @@ namespace CGAL{
 
 namespace Corefinement{
 
+namespace OOP{
 //Considering the plane with normal vector [O_prime,O] and containing O.
 //We define the counterclockwise order around O when looking from
 //the side of the plane into which the vector [O_prime,O] is pointing.
@@ -119,6 +120,8 @@ bool sorted_around_edge_filtered( int O_prime_index,
 
 }
 
-} // end of namespace CGAL::Corefinement
+}
+
+} // end of namespace CGAL::Corefinement::OOP
 
 #endif //CGAL_INTERNAL_COREFINEMENT_PREDICATES_H

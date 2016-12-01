@@ -1653,11 +1653,11 @@ public:
       Halfedge_handle second_hedge_opp = second_hedge->opposite();
 
       //vertices from P
-      Vertex_handle P1=first_hedge_opp->next()->vertex();
-      Vertex_handle P2=first_hedge->next()->vertex();
+      // Vertex_handle P1=first_hedge_opp->next()->vertex();
+      // Vertex_handle P2=first_hedge->next()->vertex();
       //vertices from Q
-      Vertex_handle Q1=second_hedge_opp->next()->vertex();
-      Vertex_handle Q2=second_hedge->next()->vertex();
+      // Vertex_handle Q1=second_hedge_opp->next()->vertex();
+      // Vertex_handle Q2=second_hedge->next()->vertex();
 
       int index_p1=node_index_of_incident_vertex(first_hedge_opp->next(),border_halfedges);
       int index_p2=node_index_of_incident_vertex(first_hedge->next(),border_halfedges);
@@ -1896,7 +1896,7 @@ public:
 
             CGAL_assertion( !are_triangles_coplanar_same_side_filtered(indices.first,indices.second,index_p2,index_q2,P2,Q2,nodes) );
 
-            bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
+            bool Q2_is_between_P1P2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
             if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 1
             else is_patch_inside_Q.set(patch_id_p2); //case 2
             continue;
@@ -1907,7 +1907,7 @@ public:
               CGAL_assertion( index_p1!=index_p2 || index_p1==-1 );
               coplanar_patches_of_P.set(patch_id_p1);
               coplanar_patches_of_Q.set(patch_id_q2);
-              bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
+              bool Q1_is_between_P1P2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
               if ( Q1_is_between_P1P2 )
               { // case 3
                 is_patch_inside_P.set(patch_id_q1);
@@ -1921,7 +1921,7 @@ public:
               {
                 coplanar_patches_of_P.set(patch_id_p2);
                 coplanar_patches_of_Q.set(patch_id_q1);
-                bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
+                bool Q2_is_between_P1P2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
                 if ( Q2_is_between_P1P2 )
                 {  //case 5
                   is_patch_inside_P.set(patch_id_q2);
@@ -1936,7 +1936,7 @@ public:
                   coplanar_patches_of_Q.set(patch_id_q2);
                   coplanar_patches_of_P_for_union_and_intersection.set(patch_id_p2);
                   coplanar_patches_of_Q_for_union_and_intersection.set(patch_id_q2);
-                  bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
+                  bool Q1_is_between_P1P2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
                   if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1);  //case 7
                   else is_patch_inside_Q.set(patch_id_p1); //case 8
                   continue;
@@ -1962,15 +1962,15 @@ public:
               ( index_q2 == -1 ? nodes.to_exact(get(ppmap,Q2)): nodes.exact_node(index_q2) )
           );
 
-          bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
-          bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
+          bool Q1_is_between_P1P2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
+          bool Q2_is_between_P1P2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
 
           if ( Q1_is_between_P1P2 ){
             is_patch_inside_P.set(patch_id_q1);
             if( Q2_is_between_P1P2 )
             {
               is_patch_inside_P.set(patch_id_q2);
-              bool P1_is_between_Q1Q2 = sorted_around_edge_filtered(indices.first,indices.second,index_q1,index_q2,index_p1,Q1,Q2,P1,nodes,ppmap);
+              bool P1_is_between_Q1Q2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_q1,index_q2,index_p1,Q1,Q2,P1,nodes,ppmap);
               if (!P1_is_between_Q1Q2){
                 // case (a4)
                 // poly_first  - poly_second            = P1Q1 U Q2P2
@@ -2014,7 +2014,7 @@ public:
             }
             else
             {
-              bool P1_is_between_Q1Q2 = sorted_around_edge_filtered(indices.first,indices.second,index_q1,index_q2,index_p1,Q1,Q2,P1,nodes,ppmap);
+              bool P1_is_between_Q1Q2 = OOP::sorted_around_edge_filtered(indices.first,indices.second,index_q1,index_q2,index_p1,Q1,Q2,P1,nodes,ppmap);
               if (!P1_is_between_Q1Q2){
                 //case (e4)
                 // poly_first  - poly_second            = P1P2
