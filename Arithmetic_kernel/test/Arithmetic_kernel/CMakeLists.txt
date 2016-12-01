@@ -10,9 +10,12 @@ cmake_minimum_required(VERSION 2.8.11)
 
 find_package(CGAL QUIET COMPONENTS Core GMP MPFR)
 
+if ( CGAL_FOUND)
+  include( ${CGAL_USE_FILE} )
+endif()
+
 if ( CGAL_FOUND AND GMP_FOUND )
 
-  include( ${CGAL_USE_FILE} )
   include( CGAL_VersionUtils )
   
   get_dependency_version( GMP )
