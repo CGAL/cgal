@@ -1762,6 +1762,15 @@ void Viewer_impl::sendSnapshotToClipboard(Viewer *viewer)
 #endif
     delete snap;
   }
+}
+void Viewer::SetOrthoProjection(bool b)
+{
+  if(b)
+    camera()->setType(qglviewer::Camera::ORTHOGRAPHIC);
+  else
+    camera()->setType(qglviewer::Camera::PERSPECTIVE);
+
+
 
 }
  #include "Viewer.moc"

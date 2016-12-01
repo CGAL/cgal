@@ -95,6 +95,7 @@
     <addaction name="actionAntiAliasing"/>
     <addaction name="actionDrawTwoSides"/>
     <addaction name="actionQuickCameraMode"/>
+    <addaction name="actionSwitchProjection"/>
     <addaction name="actionMaxTextItemsDisplayed"/>
     <addaction name="actionSetBackgroundColor"/>
     <addaction name="menuDockWindows"/>
@@ -674,6 +675,14 @@
   <action name="actionMaxTextItemsDisplayed">
    <property name="text">
     <string>Set Maximum  Text Items Displayed :</string>
+   </property>
+  </action>
+  <action name="actionSwitchProjection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Orthographic Projection</string>
    </property>
   </action>
  </widget>

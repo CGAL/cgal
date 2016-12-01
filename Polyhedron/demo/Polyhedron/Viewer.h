@@ -79,6 +79,7 @@ public Q_SLOTS:
   //! If b is true, facets will be ligted from both internal and external sides.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   void setTwoSides(bool b);
+  void SetOrthoProjection( bool b);
   //! If b is true, some items are displayed in a simplified version when moving the camera.
   //! If b is false, items display is never altered, even when moving.
   void setFastDrawing(bool b);
