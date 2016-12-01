@@ -149,12 +149,12 @@ private:
     if(orb_type == Parallelogram) {
       if(cmap.size() != 6) {
         std::cerr << "Using orb_type " << get_orbifold_type(orb_type)
-                  << " requires 6 vertices marked as cones in the seam mesh :" << std::endl;
+                  << " requires 4 vertices marked as cones (thus 6 in the seam mesh)" << std::endl;
         return ERROR_WRONG_PARAMETER;
       }
     } else if(cmap.size() != 4){ // orb_type == Square, Diamond, Triangle
       std::cerr << "Using orb_type " << get_orbifold_type(orb_type)
-                << " requires 4 vertices marked as cones in the seam mesh :" << std::endl;
+                << " requires 3 vertices marked as cones (thus 4 in the seam mesh)" << std::endl;
       return ERROR_WRONG_PARAMETER;
     }
 
@@ -224,7 +224,7 @@ private:
   {
     typename ConeMap::const_iterator cmit = cmap.begin(), cend = cmap.end();
     for(; cmit!=cend; ++cmit) {
-      if(cmit->second != Unique_cone)
+      if(cmit->second != First_unique_cone)
         continue;
 
       cone = cmit->first;
@@ -433,7 +433,7 @@ private:
         constrain_seam_segment(seam_segment, ang, current_line_id_in_A, A, B);
 
         // the last cone of the seam is constrained
-        if(is_in_map->second == Unique_cone) { // reached the end of the seam
+        if(is_in_map->second == Second_unique_cone) { // reached the end of the seam
           CGAL_assertion(hd1_target == hd2_target);
           addConstraint(A, B, current_line_id_in_A, hd1t_index,
                         1. /*entry in A*/, tcoords.back());

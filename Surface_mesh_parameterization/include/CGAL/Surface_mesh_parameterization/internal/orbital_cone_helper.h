@@ -42,7 +42,8 @@ namespace Surface_mesh_parameterization {
 
 enum Cone_type
 {
-  Unique_cone = 0,
+  First_unique_cone = 0,
+  Second_unique_cone,
   Duplicated_cone
 };
 
@@ -127,11 +128,23 @@ void locate_cones(const Mesh& mesh,
 
   // the cones in the underlying mesh
   std::size_t cvdss = cone_vds_in_sm.size();
+
+  std::cout << cvdss << " cones to locate" << std::endl;
+
   for(std::size_t i=0; i<cvdss; ++i) {
     BM_vertex_descriptor smvd = cone_vds_in_sm[i];
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       if(get(ppmap, vd) == get(pm_ppmap, smvd)) {
-        Cone_type ct = (i == 0 || i == cvdss-1) ? Unique_cone : Duplicated_cone;
+        Cone_type ct;
+        if(i == 0)
+          ct = First_unique_cone;
+        else if(i == cvdss-1)
+          ct = Second_unique_cone;
+        else
+          ct = Duplicated_cone;
+        std::cout << smvd << " and "
+                  << vd << " (" << target(halfedge(vd, mesh), mesh.mesh()) << ")"
+                  << " ct: " << ct << std::endl;
         cones.insert(std::make_pair(vd, ct));
       }
     }
@@ -184,6 +197,8 @@ void locate_unordered_cones(const Mesh& mesh,
   typedef typename Kernel_traits<Mesh>::PPM            PPM;
   const PPM ppmap = get(boost::vertex_point, mesh);
 
+  bool first_cone_met = false;
+
   // walk on the seam and mark if we encounter a cone
   vertex_descriptor end = vertex_on_seam;
   do {
@@ -205,8 +220,17 @@ void locate_unordered_cones(const Mesh& mesh,
         CGAL_assertion(other_hd.seam);
         other_hd.seam = false;
 
-        Cone_type ct = (target(hd, mesh) == source(other_hd, mesh)) ? Unique_cone
-                                                                    : Duplicated_cone;
+        Cone_type ct;
+        if(target(hd, mesh) == source(other_hd, mesh)) {
+          if(first_cone_met)
+            ct = Second_unique_cone;
+          else {
+            ct = First_unique_cone;
+            first_cone_met = true;
+          }
+        } else {
+          ct = Duplicated_cone;
+        }
 
         std::cout << "new cone with type: " << ct << std::endl;
 
