@@ -42,7 +42,7 @@ namespace Surface_mesh_parameterization {
 
 enum Cone_type
 {
-  Unique_cone,
+  Unique_cone = 0,
   Duplicated_cone
 };
 

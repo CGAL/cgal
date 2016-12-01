@@ -35,6 +35,7 @@
 #include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Mean_value_coordinates_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/MVC_post_processor_3.h>
+#include <CGAL/Surface_mesh_parameterization/Orbital_Tutte_parameterizer_3.h>
 
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 

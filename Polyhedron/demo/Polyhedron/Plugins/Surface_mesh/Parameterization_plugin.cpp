@@ -91,8 +91,8 @@ public:
   Navigation()
     :CGAL::Qt::GraphicsViewNavigation(),
       prev_pos(QPoint(0,0))
-  {
-  }
+  { }
+
 protected:
   bool eventFilter(QObject *obj, QEvent *ev)
   {
@@ -211,8 +211,7 @@ public :
       components(components),
       m_borders(uv_borders),
       m_current_component(0)
-  {
-  }
+  { }
 
   ~UVItem()
   {
@@ -225,6 +224,7 @@ public :
   {
     return bounding_rect;
   }
+
   QString item_name()const{ return texMesh_name; }
   void set_item_name(QString s){ texMesh_name = s;}
 
@@ -249,9 +249,11 @@ public :
       painter->drawLine(pt_C, pt_A);
     }
   }
+
   int number_of_components()const{return components->size();}
   int current_component()const{return m_current_component;}
   void set_current_component(int n){m_current_component = n;}
+
 private:
   Textured_polyhedron* texMesh;
   QString texMesh_name;
@@ -262,6 +264,7 @@ private:
 };
 
 using namespace CGAL::Three;
+
 class Polyhedron_demo_parameterization_plugin :
     public QObject,
     public Polyhedron_demo_plugin_helper
@@ -272,7 +275,8 @@ class Polyhedron_demo_parameterization_plugin :
 
 public:
   // used by Polyhedron_demo_plugin_helper
-  QList<QAction*> actions() const {
+  QList<QAction*> actions() const
+  {
     return _actions;
   }
 
@@ -322,10 +326,10 @@ public:
     addDockWidget(dock_widget);
     dock_widget->setVisible(false);
     current_uv_item = NULL;
-
   }
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction*) const
+  {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -333,6 +337,7 @@ public:
   {
     dock_widget->hide();
   }
+
 public Q_SLOTS:
   void on_actionMVC_triggered();
   void on_actionDCP_triggered();
@@ -342,11 +347,14 @@ public Q_SLOTS:
   void on_actionOTE_triggered();
   void on_prevButton_pressed();
   void on_nextButton_pressed();
+
   void replacePolyline()
   {
     if(current_uv_item)
       qobject_cast<Scene_textured_polyhedron_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0));
+
     int id = scene->mainSelectionIndex();
+
     Q_FOREACH(UVItem* pl, projections)
     {
       if(pl==NULL || pl != projections[scene->item(id)])
@@ -354,6 +362,7 @@ public Q_SLOTS:
       current_uv_item = pl;
       break;
     }
+
     if(!current_uv_item)
     {
       dock_widget->setWindowTitle(tr("UVMapping"));
@@ -363,6 +372,7 @@ public Q_SLOTS:
     {
       if(!graphics_scene->items().empty())
         graphics_scene->removeItem(graphics_scene->items().first());
+
       graphics_scene->addItem(current_uv_item);
       ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(), Qt::KeepAspectRatio);
       ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
@@ -371,6 +381,7 @@ public Q_SLOTS:
 
     }
   }
+
   void destroyPolyline(CGAL::Three::Scene_item* item)
   {
     Q_FOREACH(UVItem* pli, projections)
@@ -382,6 +393,7 @@ public Q_SLOTS:
       projections.remove(item);
       break;
     }
+
     if(projections.empty() || projections.first() == NULL)
     {
       current_uv_item = NULL;
@@ -444,13 +456,12 @@ void Polyhedron_demo_parameterization_plugin::on_nextButton_pressed()
   ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
   replacePolyline();
 }
+
 void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterization_method method)
 {
-
   // get active polyhedron
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_polyhedron_item* poly_item =
-      qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(!poly_item)
   {
     messages->error("Selected item is not of the right type.");
@@ -463,6 +474,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     messages->error("Selected item has no valid polyhedron.");
     return;
   }
+
   pMesh->normalize_border();
   Scene_polyhedron_selection_item* sel_item = NULL;
   bool is_seamed = false;
@@ -477,17 +489,20 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
        continue;
     is_seamed = true;
   }
+
   // Two property maps to store the seam edges and vertices
   Seam_edge_uhm seam_edge_uhm(false);
   Seam_edge_pmap seam_edge_pm(seam_edge_uhm);
 
   Seam_vertex_uhm seam_vertex_uhm(false);
   Seam_vertex_pmap seam_vertex_pm(seam_vertex_uhm);
+
   if(!is_seamed && pMesh->is_closed())
   {
-    messages->error("The selected mesh has no border and is not seamed.");
+    messages->error("The selected mesh has no (real or virtual) border.");
     return;
   }
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   ///////////////////////////////////
@@ -530,7 +545,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       }
 
     }
-    qDebug()<<sel_item->selected_edges.size()<<", "<<seam_edges.size();
+    qDebug() << sel_item->selected_edges.size() << ", " << seam_edges.size();
     //fill seam mesh pmaps
     BOOST_FOREACH(T_edge_descriptor ed, seam_edges)
     {
@@ -827,6 +842,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   {
     components->at(fccmap[bfit]).insert(tfit);
   }
+
   UVItem *projection
       = new UVItem(tpMesh, components, uv_borders, QRectF(min, max));
   projection->set_item_name(new_item_name);

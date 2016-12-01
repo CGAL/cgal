@@ -16,6 +16,8 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/boost/graph/properties.h>
 
+#include <CGAL/Timer.h>
+
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 

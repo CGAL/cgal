@@ -171,6 +171,7 @@ public:
 
       cone = cmit->first;
       cone_index = get(vimap, cone);
+
       return;
     }
   }
@@ -578,6 +579,8 @@ public:
     matoutBf << Bf << std::endl;
 #endif
 
+#endif
+
     CGAL::Timer task_timer;
     task_timer.start();
 
@@ -608,6 +611,7 @@ public:
     return OK;
   }
 
+public:
   /// Flattens the mesh to one of the orbifolds. In the end, the
   /// position of each vertex is stored in the property map `uvmap`.
   ///
