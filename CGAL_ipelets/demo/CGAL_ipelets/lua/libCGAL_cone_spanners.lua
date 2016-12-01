@@ -19,8 +19,10 @@ end
 methods = {
   { label="Theta-k-graph" },
   { label="Yao-k-graph" },
-  { label="Half-theta-k-graph" },
-  { label="Half-Yao-k-graph" },
+  { label="Half-theta-k-graph with even cones" },
+  { label="Half-Yao-k-graph with even cones" },
+  { label="Half-theta-k-graph with odd cones" },
+  { label="Half-Yao-k-grap with odd cones" },
   { label="k cones" },
   { label="Help" },
 }

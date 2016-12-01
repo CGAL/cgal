@@ -28,13 +28,15 @@ typedef boost::adjacency_list<boost::listS,
                               Point_2
                              > Graph;
 
-const std::string labels[] = {  "Theta-k-graph", "Yao-k-graph", "Half-theta-k-graph", "Half-Yao-k-graph", "k cones", "Help" };
+const std::string labels[] = {  "Theta-k-graph", "Yao-k-graph", "Half-theta-k-graph with even cones", "Half-Yao-k-graph with even cones", "Half-theta-k-graph with odd cones", "Half-Yao-k-graph with odd cones", "k cones", "Help" };
 const std::string hmsg[] = {
-  "Compute a theta-graph with k cones.",
-  "Compute a Yao-graph with k cones.",
-  "Compute an half-theta-graph with k cones.",
-  "Compute an half-Yao-graph with k cones.",
-  "Draw k cones around the points.",
+  "Draws a theta-graph with k cones.",
+  "Draws a Yao-graph with k cones.",
+  "Draws an half-theta-graph with the even of k cones.",
+  "Draws an half-Yao-graph with the even of k cones.",
+  "Draws an half-theta-graph with the odd of k cones.",
+  "Draws an half-Yao-graph with the odd of k cones.",
+  "Draws k cones around the points.",
 };
 
 class Cone_spanners_ipelet
@@ -56,6 +58,8 @@ void Cone_spanners_ipelet::protected_run(int fn)
     case 2:
     case 3:
     case 4:
+    case 5:
+    case 6:
     {
       std::vector<Point_2> points_read;
       read_active_objects(
@@ -84,18 +88,23 @@ void Cone_spanners_ipelet::protected_run(int fn)
       }
       break;
     }
-    case 5:
+    case 7:
       show_help();
       return;
   }
 
-  if(fn >= 0 && fn <= 3) {
-    bool half = (fn == 2 || fn == 3);
+  if(fn >= 0 && fn <= 5) {
+    CGAL::Half half = CGAL::ALL_CONES;
+    if(fn == 2 || fn == 3)
+      half = CGAL::EVEN_CONES;
+    else if(fn == 4 || fn == 5)
+      half = CGAL::ODD_CONES;
 
     Graph g;
     switch (fn){
       case 0:
       case 2:
+      case 4:
       {
         CGAL::Construct_theta_graph_2<Kernel, Graph> theta(number_of_cones, Direction_2(1,0), half);
         theta(lst.begin(), lst.end(), g);
@@ -103,6 +112,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
       }
       case 1:
       case 3:
+      case 5:
       {
         CGAL::Construct_yao_graph_2<Kernel, Graph> yao(number_of_cones, Direction_2(1,0), half);
         yao(lst.begin(), lst.end(), g);
