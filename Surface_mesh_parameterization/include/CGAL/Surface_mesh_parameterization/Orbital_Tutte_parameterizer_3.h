@@ -184,7 +184,7 @@ private:
       tcoords.push_back(Point_2(1, 1));
     } else if(orb_type == Parallelogram) {
       tcoords.push_back(Point_2(0, -0.5));
-      tcoords.push_back(Point_2(1, -0.5));
+      tcoords.push_back(Point_2(-1, -0.5));
       tcoords.push_back(Point_2(0, 0.5));
     } else { // if(orb_type == Diamond || orb_type == Triangle)
       tcoords.push_back(Point_2(-1, 1));
@@ -198,18 +198,18 @@ private:
   {
     std::vector<NT> angs;
     if(orb_type == Square) {
-      angs.push_back(-4.);
-      angs.push_back(-4.);
+      angs.push_back(4.);
+      angs.push_back(4.);
     } else if(orb_type == Diamond) {
-      angs.push_back(-3.);
-      angs.push_back(-3.);
+      angs.push_back(3.);
+      angs.push_back(3.);
     } else if(orb_type == Triangle) {
-      angs.push_back(-6.);
-      angs.push_back(-2.);
+      angs.push_back(6.);
+      angs.push_back(2.);
     } else { // if(orb_type == Parallelogram)
-      angs.push_back(-2);
-      angs.push_back(-1);
-      angs.push_back(-2);
+      angs.push_back(2);
+      angs.push_back(1);
+      angs.push_back(2);
     }
     return angs;
   }
@@ -345,7 +345,8 @@ private:
       std::cout << "v1/v2: " << s << " " << t << std::endl;
       CGAL_assertion(s != t);
 
-      addTransConstraints(s0, t0, s, t, current_line_id_in_A, R, A, B);
+      // sending s to t is important to not get some reflexion of the result
+      addTransConstraints(t0, s0, t, s, current_line_id_in_A, R, A, B);
     }
   }
 
