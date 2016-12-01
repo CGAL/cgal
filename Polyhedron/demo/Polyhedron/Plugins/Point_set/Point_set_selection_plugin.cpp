@@ -339,6 +339,8 @@ protected:
       points->unselect_all();
     
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(viewer)->offset();
+
     qglviewer::Camera* camera = viewer->camera();
 
     std::vector<Point_set::Index> unselected, selected;
@@ -349,8 +351,8 @@ protected:
 	bool already_selected = points->is_selected (it);
 
         const Kernel::Point_3 p = points->point (*it);
-	qglviewer::Vec vp (p.x (), p.y (), p.z ());
-	qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
+        qglviewer::Vec vp (p.x (), p.y (), p.z ());
+        qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
 	    
 	bool now_selected = visualizer->is_selected (vsp);
 
