@@ -658,49 +658,44 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     CGAL_postcondition(bhd != halfedge_descriptor());
     CGAL_postcondition(is_border(bhd, sMesh));
 
-    bool success = false;
     switch(method)
     {
     case PARAM_MVC:
     {
-      std::cout << "Parameterize (MVC)...";
+      std::cout << "Parameterize (MVC)..." << std::endl;
       new_item_name = tr("%1 (parameterized (MVC))").arg(poly_item->name());
       typedef SMP::Mean_value_coordinates_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
-      success = err == SMP::OK;
+      status = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       break;
     }
     case PARAM_DCP:
     {
       new_item_name = tr("%1 (parameterized (DCP))").arg(poly_item->name());
-      std::cout << "Parameterize (DCP)...";
+      std::cout << "Parameterize (DCP)..." << std::endl;
       typedef SMP::Discrete_conformal_map_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
-      success = err == SMP::OK;
+      status = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       break;
     }
     case PARAM_LSC:
     {
       new_item_name = tr("%1 (parameterized (LSC))").arg(poly_item->name());
-      std::cout << "Parameterize (LSC)...";
+      std::cout << "Parameterize (LSC)..." << std::endl;
       typedef SMP::LSCM_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
-      success = err == SMP::OK;
+      status = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       break;
     }
     case PARAM_DAP:
     {
       new_item_name = tr("%1 (parameterized (DAP))").arg(poly_item->name());
-      std::cout << "Parameterize (DAP)...";
+      std::cout << "Parameterize (DAP)..." << std::endl;
       typedef SMP::Discrete_authalic_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
-      success = (err == SMP::OK);
+      status = SMP::parameterize(sMesh, Parameterizer(), bhd, uv_pm);
       break;
     }
     case PARAM_ARAP:
     {
       new_item_name = tr("%1 (parameterized (ARAP))").arg(poly_item->name());
-      std::cout << "Parameterize (ARAP)...";
+      std::cout << "Parameterize (ARAP)..." << std::endl;
 
       QDialog dialog(mw);
       Ui::ARAP_dialog ui;
@@ -719,14 +714,13 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       typedef SMP::ARAP_parameterizer_3<Seam_mesh> Parameterizer;
-      SMP::Error_code err = SMP::parameterize(sMesh, Parameterizer(lambda), bhd, uv_pm);
-      success = (err == SMP::OK);
+      status = SMP::parameterize(sMesh, Parameterizer(lambda), bhd, uv_pm);
       break;
     }
     case PARAM_OTE:
     {
       new_item_name = tr("%1 (parameterized (OTE))").arg(poly_item->name());
-      std::cout << "Parameterize (OTE)...";
+      std::cout << "Parameterize (OTE)..." << std::endl;
 
       // does not handle multiple connected components right now
       // @todo (need to remove the assertions such as cones.size() == 4
@@ -777,23 +771,25 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       boost::associative_property_map<Indices> vimap(indices);
 
       // Call to parameterizer
-      SMP::Error_code err =  parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
-      success = (err == SMP::OK);
+      status =  parameterizer.parameterize(sMesh, bhd, cmap, uv_pm, vimap);
       break;
     }
-    }//end switch
+    } //end switch
 
-    QApplication::restoreOverrideCursor();
-
-    if(success)
-      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-    else
-    {
-      std::cout << "failure" << std::endl;
+    std::cout << "Connected component " << current_component << ": ";
+    if(status == SMP::OK) {
+      std::cout << "success (in " << time.elapsed() << " ms)" << std::endl;
+    } else {
+      std::cout << "failure: " << SMP::get_error_message(status) << std::endl;
       return;
     }
+
+    if(status != SMP::OK)
+      break;
+
   } //end for each component
 
+  QApplication::restoreOverrideCursor();
 
   Textured_polyhedron::Base::Halfedge_iterator it1;
   Textured_polyhedron::Halfedge_iterator it2;
