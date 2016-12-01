@@ -167,7 +167,7 @@ void test_bool_op_no_copy(
 
   typedef boost::optional<Triangle_mesh*> OTM;
   OTM none;
-  const CGAL::cpp11::array<OTM,4>& desired_output =
+  const CGAL::cpp11::array<OTM,4> desired_output =
     reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), none, none)
             : CGAL::make_array(OTM(&tm1), OTM(&tm2), none, none);
   PMP::boolean_operation(tm1,

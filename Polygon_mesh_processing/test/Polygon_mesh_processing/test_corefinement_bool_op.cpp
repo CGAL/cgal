@@ -1,25 +1,36 @@
-#define CGAL_COREFINEMENT_POLYHEDRA_DEBUG
+// #define CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 // #define CGAL_COREFINEMENT_DEBUG
+// #define CGAL_TODO_WARNINGS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Timer.h>
+
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <sstream>
 
-#define CGAL_TODO_WARNINGS
-
+// includes for Operations on polyhedra
 #include <CGAL/intersection_of_Polyhedra_3.h>
 #include <CGAL/intersection_of_Polyhedra_3_refinement_visitor.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/internal/corefinement/Polyhedra_output_builder.h>
+
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel              Kernel;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+namespace CFR = CGAL::Corefinement;
+
+//includes typedefs for Operations on polyhedra
 typedef CGAL::Polyhedron_3<Kernel>                                   Polyhedron;
 typedef std::map<Polyhedron::Facet_const_handle,std::size_t>       Facet_id_map;
 typedef boost::associative_property_map<Facet_id_map>             Facet_id_pmap;
@@ -28,7 +39,6 @@ typedef CGAL::Corefinement
                                         Facet_id_pmap>           Output_builder;
 typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron,
                                             Output_builder&>       Split_visitor;
-
 
 void run_boolean_operations(
   Polyhedron& P,
@@ -119,10 +129,94 @@ void run_boolean_operations(
     std::cout << "  Q-P is invalid\n";
 }
 
+
+void run_boolean_operations(
+  Surface_mesh& tm1,
+  Surface_mesh& tm2,
+  Surface_mesh& union_,
+  Surface_mesh& inter,
+  Surface_mesh& tm1_minus_tm2,
+  Surface_mesh& tm2_minus_tm1,
+  std::string scenario,
+  int id)
+{
+  std::cout << "Scenario #" << id << " - " << scenario << "\n";
+
+  typedef boost::optional<Surface_mesh*> OSM;
+
+  CGAL::cpp11::array<OSM,4> desired_output;
+  
+  desired_output[CFR::UNION]=OSM( &union_ );
+  desired_output[CFR::INTER]=OSM( &inter );
+  desired_output[CFR::TM1_MINUS_TM2]=OSM( &tm1_minus_tm2 );
+  desired_output[CFR::TM2_MINUS_TM1]=OSM( &tm2_minus_tm1 );
+
+  std::cout << "  Vertices before " <<  tm1.number_of_vertices()
+            << " " << tm2.number_of_vertices() << std::endl;
+
+  CGAL::cpp11::array<bool,4> res = PMP::boolean_operation(tm1, tm2, desired_output);
+
+  std::cout << "  Vertices after " <<  tm1.number_of_vertices()
+            << " " << tm2.number_of_vertices() << std::endl;
+
+  if ( res[CFR::UNION] ){
+   std::cout << "  Union is a valid operation\n";
+   assert(union_.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
+   std::stringstream fname;
+   fname << scenario << "_tm1_union_tm2.off";
+   std::ofstream output(fname.str().c_str());
+   output << std::setprecision(17) << union_;
+   #endif
+  }
+  else
+    std::cout << "  Union is invalid\n";
+
+  if ( res[CFR::INTER] ){
+   std::cout << "  Intersection is a valid operation\n";
+   assert(inter.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
+   std::stringstream fname;
+   fname << scenario << "_tm1_inter_tm2.off";
+   std::ofstream output(fname.str().c_str());
+   output << std::setprecision(17) << inter;
+   #endif
+  }
+  else
+    std::cout << "  Intersection is invalid\n";
+
+  if ( res[CFR::TM1_MINUS_TM2] ){
+   std::cout << "  tm1-tm2 is a valid operation\n";
+   assert(tm1_minus_tm2.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
+   std::stringstream fname;
+   fname << scenario << "_tm1_minus_tm2.off";
+   std::ofstream output(fname.str().c_str());
+   output << std::setprecision(17) << tm1_minus_tm2;
+   #endif
+  }
+  else
+    std::cout << "  tm1-tm2 is invalid\n";
+
+  if ( res[CFR::TM2_MINUS_TM1] ){
+   std::cout << "  tm2-tm1 is a valid operation\n";
+   assert(tm2_minus_tm1.is_valid());
+   #ifdef CGAL_COREFINEMENT_DEBUG
+   std::stringstream fname;
+   fname << scenario << "_tm2_minus_tm1.off";
+   std::ofstream output(fname.str().c_str());
+   output << std::setprecision(17) << tm2_minus_tm1;
+   #endif
+  }
+  else
+    std::cout << "  tm2-tm1 is invalid\n";
+}
+
+template <class TriangleMesh>
 void run(char* P_fname, char* Q_fname, int k=-1)
 {
-  Polyhedron P, Q, W, X, Y, Z;
-  std::vector< CGAL::cpp11::array<Polyhedron*,4> > scenarios;
+  TriangleMesh P, Q, W, X, Y, Z;
+  std::vector< CGAL::cpp11::array<TriangleMesh*,4> > scenarios;
   std::vector< std::string > scenarios_str;
   scenarios.reserve(21); // 21 = An2 + 2* An1 + An0
   scenarios_str.reserve(21);
@@ -210,12 +304,39 @@ void run(char* P_fname, char* Q_fname, int k=-1)
 int main(int argc,char** argv)
 {
   if (argc<3){
-    std::cerr << "Usage "<< argv[0] << " file1.off file2.off [scenario_id]\n";
+    std::cerr << "Usage "<< argv[0] << " file1.off file2.off [SM/POLY] [scenario_id]\n";
     return 1;
   }
   if (argc==3)
-    run(argv[1], argv[2]);
+    run<Surface_mesh>(argv[1], argv[2]);
   else
-    run(argv[1], argv[2], atoi(argv[3]));
+  {
+    if (argc==4)
+    {
+      if ( std::string(argv[3])==std::string("SM") )
+        run<Surface_mesh>(argv[1], argv[2]);
+      else
+        if ( std::string(argv[3])==std::string("POLY") )
+          run<Polyhedron>(argv[1], argv[2]);
+        else
+        {
+          std::cout <<"Invalid value, only SM or POLY can be given\n";
+          return 1;
+        }
+    }
+    else
+    {
+      if ( std::string(argv[3])==std::string("SM") )
+        run<Surface_mesh>(argv[1], argv[2], atoi(argv[4]));
+      else
+        if ( std::string(argv[3])==std::string("POLY") )
+          run<Polyhedron>(argv[1], argv[2], atoi(argv[4]));
+        else
+        {
+          std::cout <<"Invalid value, only SM or POLY can be given\n";
+          return 1;
+        }
+    }
+  }
   return 0;
 }
