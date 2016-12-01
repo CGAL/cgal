@@ -135,22 +135,23 @@ public:
     return tcoords;
   }
 
+  /// Angles are minus as we go around the seam border in a counterclockwise manner
   std::vector<NT> get_angles_at_cones() const
   {
     std::vector<NT> angs;
     if(orb_type == Square) {
-      angs.push_back(4.);
-      angs.push_back(4.);
+      angs.push_back(-4.);
+      angs.push_back(-4.);
     } else if(orb_type == Diamond) {
-      angs.push_back(3.);
-      angs.push_back(3.);
+      angs.push_back(-3.);
+      angs.push_back(-3.);
     } else if(orb_type == Triangle) {
-      angs.push_back(6.);
-      angs.push_back(2.);
+      angs.push_back(-6.);
+      angs.push_back(-2.);
     } else { // if(orb_type == Parallelogram)
-      angs.push_back(2);
-      angs.push_back(1);
-      angs.push_back(2);
+      angs.push_back(-2);
+      angs.push_back(-1);
+      angs.push_back(-2);
     }
     return angs;
   }
