@@ -4,7 +4,6 @@
 struct Scene_spheres_item_priv
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-  typedef std::pair<CGAL::Sphere_3<Kernel>*, CGAL::Color> Sphere_pair ;
 
   Scene_spheres_item_priv(bool planed, Scene_spheres_item* parent)
     :precision(36)
@@ -13,11 +12,14 @@ struct Scene_spheres_item_priv
   {
     item = parent;
     create_flat_and_wire_sphere(1.0f,vertices,normals, edges);
+    colors.clear();
+    edges_colors.clear();
+    centers.clear();
+    radius.clear();
   }
 
-  ~Scene_spheres_item_priv() {
-    Q_FOREACH(Sphere_pair sphere, spheres)
-      delete sphere.first;
+  ~Scene_spheres_item_priv()
+  {
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const;
   enum Vbos
@@ -43,7 +45,6 @@ struct Scene_spheres_item_priv
   mutable CGAL::Plane_3<Kernel> plane;
   bool has_plane;
 
-  QList<Sphere_pair> spheres;
   mutable std::vector<float> vertices;
   mutable std::vector<float> normals;
   mutable std::vector<float> edges;
@@ -68,32 +69,6 @@ Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, bool planed)
 Scene_spheres_item::~Scene_spheres_item()
 {
   delete d;
-}
-void Scene_spheres_item::computeElements() const
-{
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  d->colors.clear();
-  d->edges_colors.clear();
-  d->centers.clear();
-  d->radius.clear();
-  Q_FOREACH(Sphere_pair sp, d->spheres)
-  {
-    d->colors.push_back((float)sp.second.red()/255);
-    d->colors.push_back((float)sp.second.green()/255);
-    d->colors.push_back((float)sp.second.blue()/255);
-
-    d->edges_colors.push_back((float)sp.second.red()/255);
-    d->edges_colors.push_back((float)sp.second.green()/255);
-    d->edges_colors.push_back((float)sp.second.blue()/255);
-
-    d->centers.push_back(sp.first->center().x());
-    d->centers.push_back(sp.first->center().y());
-    d->centers.push_back(sp.first->center().z());
-
-    d->radius.push_back(sp.first->squared_radius());
-
-  }
-  QApplication::restoreOverrideCursor();
 }
 
 void Scene_spheres_item_priv::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
@@ -206,7 +181,6 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
 {
   if (!are_buffers_filled)
   {
-    computeElements();
     d->initializeBuffers(viewer);
   }
   vaos[Scene_spheres_item_priv::Facets]->bind();
@@ -235,7 +209,6 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 {
   if (!are_buffers_filled)
   {
-    computeElements();
     d->initializeBuffers(viewer);
   }
   vaos[Scene_spheres_item_priv::Edges]->bind();
@@ -259,27 +232,29 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
   d->program->release();
   vaos[Scene_spheres_item_priv::Edges]->release();
 }
-void Scene_spheres_item::add_sphere(CGAL::Sphere_3<Kernel> *sphere, CGAL::Color color)
+void Scene_spheres_item::add_sphere(const CGAL::Sphere_3<Kernel>& sphere, CGAL::Color color)
 {
-  Scene_spheres_item::Sphere_pair pair_(sphere, color);
-  d->spheres.append(pair_);
-}
+    d->colors.push_back((float)color.red()/255);
+    d->colors.push_back((float)color.green()/255);
+    d->colors.push_back((float)color.blue()/255);
 
-void Scene_spheres_item::remove_sphere(CGAL::Sphere_3<Kernel> *sphere)
-{
-  Q_FOREACH(Sphere_pair pair_, d->spheres)
-    if(pair_.first == sphere)
-    {
-      d->spheres.removeAll(pair_);
-      break;
-    }
+    d->edges_colors.push_back((float)color.red()/255);
+    d->edges_colors.push_back((float)color.green()/255);
+    d->edges_colors.push_back((float)color.blue()/255);
+
+    d->centers.push_back(sphere.center().x());
+    d->centers.push_back(sphere.center().y());
+    d->centers.push_back(sphere.center().z());
+
+    d->radius.push_back(CGAL::sqrt(sphere.squared_radius()));
 }
 
 void Scene_spheres_item::clear_spheres()
 {
-  Q_FOREACH(Sphere_pair pair, d->spheres)
-    delete pair.first;
-  d->spheres.clear();
+  d->colors.clear();
+  d->edges_colors.clear();
+  d->centers.clear();
+  d->radius.clear();
 }
 void Scene_spheres_item::setPrecision(int prec) { d->precision = prec; }
 void Scene_spheres_item::setPlane(Kernel::Plane_3 p_plane) { d->plane = p_plane; }
