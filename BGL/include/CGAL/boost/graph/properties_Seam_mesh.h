@@ -109,7 +109,13 @@ private:
 
 } // namespace CGAL
 
+// overloads and specializations in the boost namespace
 namespace boost {
+
+template<class TM, class SEM, class SVM, typename T>
+struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, T>
+  : public cgal_no_property
+{ };
 
 template<class TM, class SEM, class SVM>
 struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::vertex_point_t>

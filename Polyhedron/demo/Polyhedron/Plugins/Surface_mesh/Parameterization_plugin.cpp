@@ -603,22 +603,18 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     s_components.at(fccmap[fit]).insert(face_descriptor(fit));
   }
 
-  //once per component
+  // once per component
   std::vector<std::vector<float> >uv_borders;
   uv_borders.resize(number_of_components);
+
+  // to track whether the components are successfully parameterized
+  SMP::Error_code status = SMP::OK;
 
   for(int current_component=0; current_component<number_of_components; ++current_component)
   {
     std::vector<halfedge_descriptor> border;
-
-    // using `impl` to avoid face_index_t property maps
-//    PMP::internal::border_halfedges_impl(s_components.at(current_component),
-//                                         std::back_inserter(border),
-//                                         sMesh);
-
-    PMP::internal::border_halfedges_impl(s_components.at(current_component),
-                                         std::back_inserter(border),
-                                         sMesh);
+    PMP::border_halfedges(s_components.at(current_component),
+                          sMesh, std::back_inserter(border));
 
     std::cout << sMesh.number_of_seam_edges() << " seams" << std::endl;
     std::cout << (s_components.at(current_component)).size() << " faces" << std::endl;
