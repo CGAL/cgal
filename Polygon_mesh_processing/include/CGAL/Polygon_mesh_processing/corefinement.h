@@ -238,6 +238,21 @@ boolean_operation(      TriangleMesh& tm1,
                           ob.tm2_minus_tm1_is_valid());
 }
 
+template <class TriangleMesh>
+cpp11::array<bool,4>
+boolean_operation(      TriangleMesh& tm1,
+                        TriangleMesh& tm2,
+                  const cpp11::array< boost::optional<TriangleMesh*>,4>& desired_output,
+                  const bool throw_on_self_intersection = false )
+{
+  using namespace CGAL::Polygon_mesh_processing::parameters;
+  return boolean_operation(tm1, tm2, desired_output,
+                           all_default(), all_default(),
+                           cpp11::make_tuple(all_default(), all_default(),
+                                             all_default(), all_default()),
+                           throw_on_self_intersection);
+}
+
 #undef CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP
 #undef CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP
 /// \endcond
