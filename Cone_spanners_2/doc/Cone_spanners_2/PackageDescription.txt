@@ -18,7 +18,8 @@ thus avoiding the use of \f$ \pi \f$, which cannot be represented exactly.
 In inexact construction, the cone boundaries are calculated using the approximate \f$ \pi \f$
 value defined in \cgal, which is still accurate enough for most applications.
 Moreover, for visualization purpose, this package provides a global function to
-generate the data and script files used by Gnuplot to plot the constructed graphs. }
+generate the data and script files used by Gnuplot to plot the constructed graphs.
+This package also provides options for the Half Yao graph and the Half Theta graph.}
 \cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeBasedSpanners}
 \cgalPkgSummaryEnd
 
@@ -40,5 +41,8 @@ generate the data and script files used by Gnuplot to plot the constructed graph
 
 ## Functions ##
 - `CGAL::gnuplot_output_2()`
+
+## Enumerations ##
+- `CGAL::Half`
 
 */

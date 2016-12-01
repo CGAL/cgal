@@ -58,6 +58,11 @@ in \cgalFigureRef{f-theta}, vertex \f$u\f$'s <i>closest</i> vertex will be verte
 The bisector in a cone of a Theta Graph.
 \cgalFigureEnd
 
+Variants of Yao graph and Theta graph are Half Yao graph and Half Theta graph. The difference
+is that only the edges in the even or odd cones are drawn. For instance, in the even case of
+the Theta graph with \f$k=6\f$, only the edges in the cones \f$c(u, 0)\f$, \f$c(u, 2)\f$, and
+\f$c(u, 4)\f$ are drawn.
+
 \section sec_CBS_design Software Design
 This package provides the following template functors:
 
