@@ -1019,7 +1019,7 @@ public:
   Halfedge_iterator halfedges_begin() { return halfedges.begin();}
   Halfedge_iterator halfedges_end()   { return halfedges.end(); }
   Iterator_range<Prevent_deref<Halfedge_iterator> >
-  halfegde_handles()
+  halfedge_handles()
   {
     return make_prevent_deref_range(halfedges_begin(), halfedges_end());
   }
@@ -1051,7 +1051,7 @@ public:
   Halfedge_const_iterator halfedges_begin() const { return halfedges.begin(); }
   Halfedge_const_iterator halfedges_end() const { return halfedges.end(); }
   Iterator_range<Prevent_deref<Halfedge_iterator> >
-  halfegde_handles() const
+  halfedge_handles() const
   {
     return make_prevent_deref_range(halfedges_begin(), halfedges_end());
   }

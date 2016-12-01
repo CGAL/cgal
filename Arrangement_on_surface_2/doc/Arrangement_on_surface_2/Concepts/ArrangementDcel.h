@@ -209,7 +209,7 @@ returns a past-the-end iterator of the halfedges in `dcel`.
 Halfedge_const_iterator halfedges_end() const; 
 
 /*!
-returns a cosnt range over handles of the halfedges in `dcel`.
+returns a const range over handles of the halfedges in `dcel`.
 */
 unspecified_type halfedge_handles() const;
 
