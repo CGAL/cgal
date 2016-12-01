@@ -843,6 +843,8 @@ public:
     , final_map_ptr(new  Combinatorial_map_3())
   {}
 
+  void input_have_coplanar_facets(){}
+
   template <class Nodes_vector>
   void operator()(
     const std::map<Halfedge_const_handle,

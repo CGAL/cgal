@@ -373,9 +373,14 @@ void inplace_clip_open_polyhedron(Polyhedron& P, const Plane_3& p)
   internal::Edge_is_marked4coref<Polyhedron> cr_edge_is_marked(marked_halfedges);
   typedef typename Polyhedron::Traits::Kernel K;
   typedef CGAL::Node_visitor_refine_polyhedra<
-            Polyhedron,K,internal::Edge_is_marked4coref<Polyhedron> >
+            Polyhedron,CGAL::Default,K,internal::Edge_is_marked4coref<Polyhedron> >
                   Split_visitor;
-    Split_visitor visitor(NULL, true, cr_edge_is_marked);
+  CGAL::Default_output_builder output_builder;
+
+    Split_visitor visitor(output_builder,
+                          Default_polyhedron_ppmap<Polyhedron>(),
+                          cr_edge_is_marked);
+
     CGAL::Intersection_of_Polyhedra_3<Polyhedron,K,Split_visitor>
       polyline_intersections(visitor);
     CGAL::Emptyset_iterator emptyset_iterator;
