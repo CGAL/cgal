@@ -28,6 +28,8 @@
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
+#include <CGAL/Polygon_mesh_processing/Weights.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Eigen_solver_traits.h>
@@ -74,6 +76,12 @@ enum Orbifold_type
   Parallelogram
 };
 
+enum Weight_type
+{
+  Cotangent = 0,
+  Mean_value
+};
+
 const char* get_orbifold_type(int orb_type)
 {
   // Messages corresponding to Error_code list above. Must be kept in sync!
@@ -89,12 +97,6 @@ const char* get_orbifold_type(int orb_type)
   else
     return type[orb_type];
 }
-
-enum Weight_type
-{
-  Cotan,
-  Mvc
-};
 
 template
 <
@@ -131,6 +133,7 @@ private:
   typedef typename Kernel::Point_3                                  Point_3;
 
   Orbifold_type orb_type;
+  Weight_type weight_type;
 
 private:
   // check input
@@ -534,6 +537,51 @@ private:
     }
   }
 
+  template<typename VertexIndexMap>
+  void cotangent_laplacien(TriangleMesh& mesh,
+                           VertexIndexMap vimap,
+                           Matrix& L) const
+  {
+    const PPM ppmap = get(vertex_point, mesh);
+
+    // not exactly sure which cotan weights should be used:
+    // 0.5 (cot a + cot b) ? 1/T1 cot a + 1/T2 cot b ? 1/Vor(i) (cot a + cot b?)
+    // Comparing to the matlab code, the basic Cotangent_weight gives the same results.
+    typedef CGAL::internal::Cotangent_weight<TriangleMesh>                      Cotan_weights;
+//    typedef CGAL::internal::Cotangent_weight_with_triangle_area<TriangleMesh>   Cotan_weights;
+
+    Cotan_weights cotan_weight_calculator(mesh, ppmap);
+
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(mesh)) {
+      vertex_descriptor vi = source(hd, mesh);
+      vertex_descriptor vj = target(hd, mesh);
+      int i = get(vimap, vi);
+      int j = get(vimap, vj);
+
+      if(i > j)
+        continue;
+
+      // times 2 because Cotangent_weight returns 1/2 (cot alpha + cot beta)...
+      double w_ij = 2 * cotan_weight_calculator(hd);
+
+      // ij
+      L.set_coef(2*i, 2*j, w_ij, true /* new coef */);
+      L.set_coef(2*i +1, 2*j + 1, w_ij, true /* new coef */);
+
+      // ji
+      L.set_coef(2*j, 2*i, w_ij, true /* new coef */);
+      L.set_coef(2*j +1, 2*i + 1, w_ij, true /* new coef */);
+
+      // ii
+      L.add_coef(2*i, 2*i, - w_ij);
+      L.add_coef(2*i + 1, 2*i + 1, - w_ij);
+
+      // jj
+      L.add_coef(2*j, 2*j, - w_ij);
+      L.add_coef(2*j + 1, 2*j + 1, - w_ij);
+    }
+  }
+
   /// Copy the solution into the UV property map.
   template <typename VertexIndexMap, typename VertexUVMap>
   void assign_solution(const TriangleMesh& mesh,
@@ -734,7 +782,10 @@ public:
     // %%%%%%%%%%%%%%%%%%%%
 
     Matrix L(2 * nbVertices, 2 * nbVertices);
-    mean_value_laplacian(mesh, vimap, L);
+    if(weight_type == Cotangent)
+      cotangent_laplacien(mesh, vimap, L);
+    else // weight_type == Mean_value
+      mean_value_laplacian(mesh, vimap, L);
 
 #ifdef CGAL_SMP_OUTPUT_ORBITAL_MATRICES
     std::ofstream outL("matrices/L.txt");
@@ -769,7 +820,12 @@ public:
 
 /// Constructor
 public:
-  Orbital_Tutte_parameterizer_3(Orbifold_type orb_type) : orb_type(orb_type) { }
+  Orbital_Tutte_parameterizer_3(Orbifold_type orb_type = Square,
+                                Weight_type weight_type = Cotangent)
+    :
+      orb_type(orb_type),
+      weight_type(weight_type)
+  { }
 };
 
 } // namespace Surface_mesh_parameterization
