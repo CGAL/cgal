@@ -33,6 +33,7 @@
 #include <CGAL/Compute_cone_boundaries_2.h>
 #include <CGAL/Cone_spanners_2/Less_by_direction_2.h>
 #include <CGAL/Cone_spanners_2/Plane_scan_tree.h>
+#include <CGAL/Cone_spanners_2_enum.h>
 
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -79,7 +80,7 @@ private:
     unsigned int  cone_number;
 
     /* Store whether this is an half-theta graph */
-    bool half;
+    Half half;
 
     /* Store the directions of the rays dividing the plane. The initial direction will be
      * stored in rays[0].
@@ -98,7 +99,7 @@ public:
      */
     Construct_theta_graph_2 (unsigned int k,
                              Direction_2 initial_direction = Direction_2(1,0),
-                             bool half_theta = false
+                             Half half_theta = ALL_CONES
                             ): cone_number(k), rays(std::vector<Direction_2>(k)), half(half_theta)
 
     {
@@ -137,8 +138,9 @@ public:
         unsigned int j;   // index of the ccw ray
 
         // add edges into the graph for every cone
-        int increment = half ? 2 : 1;
-        for (i = 0; i < cone_number; i += increment) {
+        int new_start = half != ALL_CONES ? half : 0;
+        int increment = half != ALL_CONES ? 2 : 1;
+        for (i = new_start; i < cone_number; i += increment) {
             j = (i+1) % cone_number;
             add_edges_in_cone(rays[i], rays[j], g);
         }
