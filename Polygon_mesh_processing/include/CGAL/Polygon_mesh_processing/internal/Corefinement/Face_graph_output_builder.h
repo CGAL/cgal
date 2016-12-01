@@ -97,10 +97,10 @@ class Face_graph_output_builder
   // property maps of input meshes
   const VertexPointMap &vpm1, &vpm2;
   const FaceIdMap &fids1, &fids2;
-  const EdgeMarkMapBind& marks_on_input_edges;
+  EdgeMarkMapBind& marks_on_input_edges;
   // property maps of output meshes
   const cpp11::array<VertexPointMap*, 4 >& output_vpms;
-  const EdgeMarkMapTuple& out_edge_mark_maps;
+  EdgeMarkMapTuple& out_edge_mark_maps;
   // output meshes
   const cpp11::array<boost::optional<TriangleMesh*>, 4>& desired_output;
   // input meshes closed ?
@@ -285,9 +285,9 @@ public:
                             const VertexPointMap &vpm2,
                             const FaceIdMap& fids1,
                             const FaceIdMap& fids2,
-                            const EdgeMarkMapBind& marks_on_input_edges,
+                                  EdgeMarkMapBind& marks_on_input_edges,
                             const cpp11::array<VertexPointMap*, 4>& output_vpms,
-                            const EdgeMarkMapTuple& out_edge_mark_maps,
+                                  EdgeMarkMapTuple& out_edge_mark_maps,
                             const cpp11::array<
                               boost::optional<TriangleMesh*>, 4 >& desired_output)
     : tm1(tm1), tm2(tm2)

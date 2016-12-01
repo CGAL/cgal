@@ -42,6 +42,7 @@ mark_sharp_edge(const TriangleMesh& tm,
       }
     }
   }
+  return nb_sharp_edges;
 }
 
 
@@ -145,9 +146,8 @@ void test_union(Triangle_mesh tm1, Triangle_mesh tm2, int tm1_or_tm2,
 }
 
 void test_bool_op_no_copy(
-  Triangle_mesh& tm1, Triangle_mesh& tm2,
-  Triangle_mesh& union_out,
-  Triangle_mesh& inter_out,
+  Triangle_mesh& tm1,
+  Triangle_mesh& tm2,
   const char*outname,
   bool reverse)
 {
@@ -189,10 +189,7 @@ void test_bool_op_no_copy(
 
 void test_bool_op(Triangle_mesh tm1, Triangle_mesh tm2, bool reverse, const char* outname)
 {
-  if (reverse)
-    test_bool_op_no_copy(tm1, tm2, tm2, tm1, outname, reverse);
-  else
-    test_bool_op_no_copy(tm1, tm2, tm1, tm2, outname, reverse);
+  test_bool_op_no_copy(tm1, tm2, outname, reverse);
 }
 
 
@@ -205,12 +202,10 @@ int main()
 
   Constrained_edge_map ecm1 =
     tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst", false).first;
-  Constrained_edge_map ecm1_out =
-    tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false).first;
+  tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false).first;
   Constrained_edge_map ecm2 =
     tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst", false).first;
-  Constrained_edge_map ecm2_out =
-    tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false).first;
+  tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false).first;
 
   mark_sharp_edge(tm1, get(CGAL::vertex_point, tm1), ecm1);
   mark_sharp_edge(tm2, get(CGAL::vertex_point, tm2), ecm2);

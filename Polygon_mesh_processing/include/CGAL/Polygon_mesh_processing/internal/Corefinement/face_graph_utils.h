@@ -54,7 +54,7 @@ void mark_all_edges(G& tm, EdgeMarkMap& edge_mark_map)
 }
 
 template<class G>
-void mark_all_edges(G& tm, No_mark<G>&)
+void mark_all_edges(G&, No_mark<G>&)
 {} //nothing to do
 
 template<class G,
@@ -76,11 +76,12 @@ void unmark_edges(      G&,
 {} //nothing to do
 
 template <class G,
+          class edge_descriptor,
           class EdgeMarkMapIn,
           class EdgeMarkMapOut>
-void copy_edge_mark(typename boost::graph_traits<G>::edge_descriptor ed_in,
-                    typename boost::graph_traits<G>::edge_descriptor ed_out,
-                    const EdgeMarkMapIn & edge_mark_map_in,
+void copy_edge_mark(edge_descriptor ed_in,
+                    edge_descriptor ed_out,
+                    const EdgeMarkMapIn& edge_mark_map_in,
                           EdgeMarkMapOut& edge_mark_map_out)
 {
   if(get(edge_mark_map_in, ed_in))
@@ -88,26 +89,29 @@ void copy_edge_mark(typename boost::graph_traits<G>::edge_descriptor ed_in,
 }
 
 template <class G,
+          class edge_descriptor,
           class EdgeMarkMapOut>
-void copy_edge_mark(typename boost::graph_traits<G>::edge_descriptor ed_in,
-                    typename boost::graph_traits<G>::edge_descriptor ed_out,
-                    const No_mark<G> & edge_mark_map_in,
-                          EdgeMarkMapOut& edge_mark_map_out)
+void copy_edge_mark(edge_descriptor,
+                    edge_descriptor,
+                    No_mark<G>,
+                    EdgeMarkMapOut)
 {} // nothing to do
 
 template <class G,
+          class edge_descriptor,
           class EdgeMarkMapIn>
-void copy_edge_mark(typename boost::graph_traits<G>::edge_descriptor ed_in,
-                    typename boost::graph_traits<G>::edge_descriptor ed_out,
-                    const EdgeMarkMapIn & edge_mark_map_in,
-                          No_mark<G>& edge_mark_map_out)
+void copy_edge_mark(edge_descriptor,
+                    edge_descriptor,
+                    EdgeMarkMapIn,
+                    No_mark<G>)
 {} // nothing to do
 
-template <class G>
-void copy_edge_mark(typename boost::graph_traits<G>::edge_descriptor ed_in,
-                    typename boost::graph_traits<G>::edge_descriptor ed_out,
-                    const No_mark<G> & edge_mark_map_in,
-                          No_mark<G>& edge_mark_map_out)
+template <class G,
+          class edge_descriptor>
+void copy_edge_mark(edge_descriptor,
+                    edge_descriptor,
+                    No_mark<G>,
+                    No_mark<G>)
 {} // nothing to do
 
 template <class G,
@@ -125,21 +129,21 @@ void copy_edge_mark(G& g,
 template <class G,
           class EdgeMarkMapOut>
 void copy_edge_mark(G&,
-                    const No_mark<G> & edge_mark_map_in,
-                          EdgeMarkMapOut& edge_mark_map_out)
+                    const No_mark<G> &,
+                          EdgeMarkMapOut&)
 {} // nothing to do
 
 template <class G,
           class EdgeMarkMapIn>
 void copy_edge_mark(G&,
-                    const EdgeMarkMapIn & edge_mark_map_in,
-                          No_mark<G>& edge_mark_map_out)
+                    const EdgeMarkMapIn&,
+                          No_mark<G>&)
 {} // nothing to do
 
 template <class G>
 void copy_edge_mark(G&,
-                    const No_mark<G> & edge_mark_map_in,
-                          No_mark<G>& edge_mark_map_out)
+                    const No_mark<G>&,
+                          No_mark<G>&)
 {} // nothing to do
 
 template < class TriangleMesh,
@@ -1184,7 +1188,7 @@ void compute_inplace_operation_delay_removal_and_insideout(
   const IntersectionPolylines& polylines,
   const VertexPointMap& vpm1,
   const VertexPointMap& vpm2,
-        EdgeMarkMapIn1& edge_mark_map1,
+        EdgeMarkMapIn1&,
   const EdgeMarkMapIn2& edge_mark_map2,
   const EdgeMarkMapOut& edge_mark_map_out1,
   EdgeMap& disconnected_patches_edge_to_tm2_edge)
