@@ -74,6 +74,22 @@ enum Orbifold_type
   Parallelogram
 };
 
+const char* get_orbifold_type(int orb_type)
+{
+  // Messages corresponding to Error_code list above. Must be kept in sync!
+  static const char* type[Parallelogram+1] = {
+    "Square",
+    "Diamond",
+    "Triangle",
+    "Parallelogram"
+  };
+
+  if(orb_type > Parallelogram || orb_type < 0)
+    return "Unknown orbifold type";
+  else
+    return type[orb_type];
+}
+
 enum Weight_type
 {
   Cotan,
@@ -116,7 +132,46 @@ private:
 
   Orbifold_type orb_type;
 
-public:
+private:
+  // check input
+  template<typename ConeMap,
+           typename VertexIndexMap,
+           typename VertexUVMap>
+  Error_code check_input(const TriangleMesh& mesh,
+                         halfedge_descriptor bhd,
+                         ConeMap cmap,
+                         VertexUVMap uvmap,
+                         VertexIndexMap vimap) const
+  {
+    if(orb_type == Parallelogram) {
+      if(cmap.size() != 6) {
+        std::cerr << "Using orb_type " << get_orbifold_type(orb_type)
+                  << " requires 6 vertices marked as cones in the seam mesh :" << std::endl;
+        return ERROR_WRONG_PARAMETER;
+      }
+    } else if(cmap.size() != 4){ // orb_type == Square, Diamond, Triangle
+      std::cerr << "Using orb_type " << get_orbifold_type(orb_type)
+                << " requires 4 vertices marked as cones in the seam mesh :" << std::endl;
+      return ERROR_WRONG_PARAMETER;
+    }
+
+    std::cout << "cones and ids" << std::endl;
+    typename ConeMap::const_iterator it = cmap.begin(), end = cmap.end();
+    for(; it!=end; ++it) {
+//      std::cout << target(halfedge(it->first,mesh), mesh.mesh())
+//                << " n°: " << get(vimap, it->first) << std::endl;
+    }
+
+    // check that the seams don't intersect
+
+    // check that unique vertices are actually unique and duplicated cones are
+    // actually duplicated
+
+    // check that the seam forms one connected component
+
+    return OK;
+  }
+
   // Orbifold type functions
   std::vector<Point_2> get_cones_parameterized_coordinates() const
   {
@@ -179,12 +234,16 @@ public:
   /// Compute the number of linear constraints in the system.
   int number_of_linear_constraints(const TriangleMesh& mesh) const
   {
-    // number of constraints for orb I, II, III is the number of edges
-    // on the seam and 2 constrained cones.
-    if(orb_type == Parallelogram)
+    if(orb_type == Parallelogram) {
+      // number of constraints for orb I, II, III is the number of seam edges
+      // and 3 constrained cones.
       return 3 + static_cast<int>(mesh.number_of_seam_edges());
-    else // orb_type == Square, Diamond, Triangle
+    }
+    else { // orb_type == Square, Diamond, Triangle
+      // number of constraints for orb I, II, III is the number of seam edges
+      // and 2 constrained cones.
       return 2 + static_cast<int>(mesh.number_of_seam_edges());
+    }
   }
 
   /// Adds a positional constraint on a vertex x_ind, so that x_ind * w = rhs.
@@ -633,19 +692,19 @@ public:
   template<typename ConeMap,
            typename VertexIndexMap,
            typename VertexUVMap>
-  Error_code parameterize(const TriangleMesh& mesh,
+  Error_code parameterize(TriangleMesh& mesh,
                           halfedge_descriptor bhd,
                           ConeMap cmap,
                           VertexUVMap uvmap,
                           VertexIndexMap vimap) const
   {
-    if(orb_type == Parallelogram)
-      CGAL_precondition(cmap.size() == 6);
-    else // orb_type == Square, Diamond, Triangle
-      CGAL_precondition(cmap.size() == 4);
-
     std::cout << "Flattening" << std::endl;
     Error_code status;
+
+    status = check_input(mesh, bhd, cmap, uvmap, vimap);
+    if(status != OK) {
+      return status;
+    }
 
     // %%%%%%%%%%%%%%%%%%%%%%%
     //   Boundary conditions
