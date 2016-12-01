@@ -20,7 +20,7 @@
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/unordered_map.hpp>
-
+#include "Color_map.h"
 using namespace CGAL::Three;
 class Polyhedron_demo_join_and_split_polyhedra_plugin:
   public QObject,
@@ -75,6 +75,7 @@ public Q_SLOTS:
 
 private :
   CGAL::Three::Scene_interface* scene;
+  std::vector<QColor> colors_;
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_triggered()
@@ -122,6 +123,7 @@ struct Polyhedron_appender{
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_triggered()
 {
   Q_FOREACH(int index, scene->selectionIndices()) {
+    colors_.clear();
     Scene_polyhedron_item* item =
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(item)
@@ -137,16 +139,23 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       {
         delete new_polyhedra.front();
         msg_interface->information( tr("%1 has only one connected component").arg(item->name()) );
+        QApplication::restoreOverrideCursor();
         continue;
       }
 
       int cc=0;
+      compute_color_map(item->color(), item->isItemMulticolor() ? new_polyhedra.size() : 1,
+                        std::back_inserter(colors_));
+      Scene_group_item *group = new Scene_group_item("CC");
+       scene->addItem(group);
       BOOST_FOREACH(Polyhedron* polyhedron_ptr, new_polyhedra)
       {
         Scene_polyhedron_item* new_item=new Scene_polyhedron_item(polyhedron_ptr);
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
+        new_item->setColor(colors_[item->isItemMulticolor()? cc : 0]);
         ++cc;
         scene->addItem(new_item);
+        scene->changeGroup(new_item, group);
       }
       item->setVisible(false);
       QApplication::restoreOverrideCursor();
