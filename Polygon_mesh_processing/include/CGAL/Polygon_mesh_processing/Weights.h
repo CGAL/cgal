@@ -139,11 +139,16 @@ public:
     return pmesh_;
   }
 
+  Point_property_map& ppmap()
+  {
+    return ppmap_;
+  }
+
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = get(ppmap, v0) - get(ppmap, v1);
-    Vector b = get(ppmap, v2) - get(ppmap, v1);
-    
+    Vector a = get(ppmap(), v0) - get(ppmap(), v1);
+    Vector b = get(ppmap(), v2) - get(ppmap(), v1);
+
     double dot_ab = a*b;
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();
@@ -322,9 +327,9 @@ public:
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
 
-      const Point& v0_p = get(this->ppmap, v0);
-      const Point& v1_p = get(this->ppmap, v1);
-      const Point& v_op_p = get(this->ppmap, v_op);
+      const Point& v0_p = get(ppmap(), v0);
+      const Point& v1_p = get(ppmap(), v1);
+      const Point& v_op_p = get(ppmap(), v_op);
 
       // (?) check if there is a better way to predicate triangle is obtuse or not
       CGAL::Angle angle0 = CGAL::angle(v1_p, v0_p, v_op_p);
