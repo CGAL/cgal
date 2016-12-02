@@ -26,6 +26,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/function.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 /** Some utilities allowing to manage attributes. Indeed, as they as stores
  *  in tuples, we need to define functors with variadic templated arguments
@@ -39,7 +40,7 @@ namespace CGAL
   namespace internal
   {
     // There is a problem on windows to handle tuple containing void.
-    // To solve this, we transform such a tuple in tuple containing Disabled.
+    // To solve this, we transform such a tuple in tuple containing Void.
     template<typename T>
     struct Convert_void
     { typedef T type; };
@@ -48,7 +49,28 @@ namespace CGAL
     struct Convert_void<void>
     { typedef CGAL::Void type; };
 
-#if ! defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && \
+    // Get the type Dart_info defined as inner type of T.
+    // If T::Dart_info is not defined or if T::Dart_info is void, defined
+    // CGAL::Void as type.
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_dart_info,Dart_info,false)
+    template<typename T, bool typedefined=Has_dart_info<T>::value >
+    struct Get_dart_info
+    { typedef CGAL::Void type; };
+    template<typename T>
+    struct Get_dart_info<T, true>
+    { typedef typename Convert_void<typename T::Dart_info>::type type; };
+
+    // Get the type Attributes defined as inner type of T.
+    // If T::Attributes is not defined, defined CGAL::cpp11::tuple<> as type.
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_attributes_tuple,Attributes,false)
+    template<typename T, bool typedefined=Has_attributes_tuple<T>::value >
+    struct Get_attributes_tuple
+    { typedef CGAL::cpp11::tuple<> type; };
+    template<typename T>
+    struct Get_attributes_tuple<T, true>
+    { typedef typename T::Attributes type; };
+
+#if ! defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) &&  \
     ! defined(CGAL_CFG_NO_CPP0X_TUPLE)
     // Convert a tuple in a same tuple where each void type was replaced into
     // CGAL::Void.
@@ -232,7 +254,7 @@ namespace CGAL
     template <class Functor,int n>
     struct Foreach_static{
       template <class  ... T>
-      static void run(const T& ... t){
+      static void run(T& ... t){
         Functor:: template run<n>(t...);
         Foreach_static<Functor,n-1>::run(t...);
       }
@@ -241,7 +263,7 @@ namespace CGAL
     template <class Functor>
     struct Foreach_static<Functor,0>{
       template <class  ... T>
-      static void run(const T& ... t)
+      static void run(T& ... t)
       {
         Functor:: template run<0>( t... );
       }
@@ -252,7 +274,7 @@ namespace CGAL
     template <class Functor,int n,class Type>
     struct Conditionnal_run{
       template <class ... T>
-      static void run(const T& ... t){
+      static void run(T& ... t){
         Functor:: template run<n>(t...);
       }
     };
@@ -261,7 +283,7 @@ namespace CGAL
     struct Conditionnal_run<Functor,n,Void>
     {
       template <class ... T>
-      static void run(T...){}
+      static void run(T& ...){}
     };
 
     //Helper function that is calling
@@ -269,7 +291,7 @@ namespace CGAL
     template <class Functor,int n,int j,class Type>
     struct Conditionnal_run_except{
       template <class ... T>
-      static void run(const T& ... t){
+      static void run(T& ... t){
         Functor:: template run<n>(t...);
       }
     };
@@ -278,21 +300,21 @@ namespace CGAL
     struct Conditionnal_run_except<Functor,n,j,Void>
     {
       template <class ... T>
-      static void run(T...){}
+      static void run(T& ...){}
     };
 
     template <class Functor,int n,class Type>
     struct Conditionnal_run_except<Functor,n,n,Type>
     {
       template <class ... T>
-      static void run(T...){}
+      static void run(T& ...){}
     };
 
     template <class Functor,int n>
     struct Conditionnal_run_except<Functor,n,n,Void>
     {
       template <class ... T>
-      static void run(T...){}
+      static void run(T& ...){}
     };
 
     //Same as Foreach_static excepted that Functor
@@ -307,7 +329,7 @@ namespace CGAL
                                      CGAL::cpp11::tuple<Head,Items...>,n>
     {
       template <class  ... T>
-      static void run(const T& ... t){
+      static void run(T& ... t){
         Conditionnal_run<Functor,n,Head>::run(t...);
         Foreach_static_restricted
           <Functor,CGAL::cpp11::tuple<Items...>,n+1>::run(t...);
@@ -317,7 +339,7 @@ namespace CGAL
     template <class Functor,int n>
     struct Foreach_static_restricted<Functor,CGAL::cpp11::tuple<>,n>{
       template <class  ... T>
-      static void run(const T& ... ){}
+      static void run(T& ... ){}
     };
 
     //Same as Foreach_static_restricted excepted that Functor
@@ -331,7 +353,7 @@ namespace CGAL
         CGAL::cpp11::tuple<Head,Items...>,n>
     {
       template <class  ... T>
-      static void run(const T& ... t){
+      static void run(T& ... t){
         Conditionnal_run_except<Functor,n,j,Head>::run(t...);
         Foreach_static_restricted_except
           <Functor,j,CGAL::cpp11::tuple<Items...>,n+1>::run(t...);
@@ -342,7 +364,7 @@ namespace CGAL
     struct Foreach_static_restricted_except<Functor,j,CGAL::cpp11::tuple<>,n>
     {
       template <class  ... T>
-      static void run(const T& ... ){}
+      static void run(T& ... ){}
     };
 #else
     // Definitions of structs are moved to another file.
@@ -560,7 +582,7 @@ namespace CGAL
       struct Foreach_enabled_attributes
       {
         template <class ...Ts>
-        static void run(const Ts& ... t)
+        static void run(Ts& ... t)
         { Foreach_static_restricted<Functor, Attributes>::run(t...); }
       };
       // To iterate onto each enabled attributes, except j-attributes
@@ -568,7 +590,7 @@ namespace CGAL
       struct Foreach_enabled_attributes_except
       {
         template <class ...Ts>
-        static void run(const Ts& ... t)
+        static void run(Ts& ... t)
         { Foreach_static_restricted_except<Functor, j, Attributes>::run(t...); }
       };
 #else
@@ -581,49 +603,49 @@ namespace CGAL
       {Foreach_static_restricted<Functor,Attributes >::run();}
 
       template <class T1>
-      static void run(const T1& t1)
+      static void run(T1& t1)
       {Foreach_static_restricted<Functor,Attributes >::run(t1);}
 
       template <class T1,class T2>
-      static void run(const T1& t1,const T2& t2)
+      static void run(T1& t1,T2& t2)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2);}
 
       template <class T1,class T2,class T3>
-      static void run(const T1& t1,const T2& t2,const T3& t3)
+      static void run(T1& t1,T2& t2,T3& t3)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3);}
 
       template <class T1,class T2,class T3,class T4>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4);}
 
       template <class T1,class T2,class T3,class T4,class T5>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5,t6);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6,const T7& t7)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6,T7& t7)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5,
                                                            t6,t7);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6,
                 class T7,class T8>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6,const T7& t7,const T8& t8)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6,T7& t7,T8& t8)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,t5,t6,
                                                            t7,t8);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6,
                 class T7,class T8,class T9>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6,const T7& t7,const T8& t8,
-                      const T9& t9)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6,T7& t7,T8& t8,
+                      T9& t9)
       {Foreach_static_restricted<Functor,Attributes >::run(t1,t2,t3,t4,
                                                            t5,t6,t7,t8,t9);}
     };
@@ -636,49 +658,49 @@ namespace CGAL
       {Foreach_static_restricted_except<Functor,j,Attributes>::run();}
 
       template <class T1>
-      static void run(const T1& t1)
+      static void run(T1& t1)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1);}
 
       template <class T1,class T2>
-      static void run(const T1& t1,const T2& t2)
+      static void run(T1& t1,T2& t2)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2);}
 
       template <class T1,class T2,class T3>
-      static void run(const T1& t1,const T2& t2,const T3& t3)
+      static void run(T1& t1,T2& t2,T3& t3)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3);}
 
       template <class T1,class T2,class T3,class T4>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4);}
 
       template <class T1,class T2,class T3,class T4,class T5>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,t6);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6,const T7& t7)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6,T7& t7)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,
                                                            t6,t7);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6,
                 class T7,class T8>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6,const T7& t7,const T8& t8)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6,T7& t7,T8& t8)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,t5,t6,
                                                            t7,t8);}
 
       template <class T1,class T2,class T3,class T4,class T5,class T6,
                 class T7,class T8,class T9>
-      static void run(const T1& t1,const T2& t2,const T3& t3,const T4& t4,
-                      const T5& t5,const T6& t6,const T7& t7,const T8& t8,
-                      const T9& t9)
+      static void run(T1& t1,T2& t2,T3& t3,T4& t4,
+                      T5& t5,T6& t6,T7& t7,T8& t8,
+                      T9& t9)
       {Foreach_static_restricted_except<Functor,j,Attributes>::run(t1,t2,t3,t4,
                                                            t5,t6,t7,t8,t9);}
     };

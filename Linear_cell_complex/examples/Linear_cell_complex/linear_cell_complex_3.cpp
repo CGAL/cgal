@@ -1,12 +1,10 @@
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_operations.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <iostream>
 #include <algorithm>
 
-typedef CGAL::Linear_cell_complex<3> LCC_3;
-typedef LCC_3::Dart_handle           Dart_handle;
-typedef LCC_3::Point                 Point;
-typedef LCC_3::FT                    FT;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3;
+typedef LCC_3::Dart_handle                                 Dart_handle;
+typedef LCC_3::Point                                       Point;
 
 // Functor used to display all the vertices of a given volume.
 template<class LCC> 

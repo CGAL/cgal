@@ -34,14 +34,14 @@ public:
   {
   }
 
-  Vertex operator  () (Vertex & v) const
+  std::pair<Point_3, Dart_handle> operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
 
     // Old points aren't concerned.
     if (mlcc.is_marked(d, old))
     {       
-    return v;
+      return make_pair(v.point(), d);
     }
 
     std::vector<LCC::Point> facetsPoints;
@@ -55,7 +55,7 @@ public:
       // If the vertex is on a border.
       if (mlcc.is_free(it,2))
       { 
-        return v;
+        return make_pair(v.point(), d);
       }
       // If we found barycenter of a facet.
       if (!mlcc.is_marked(mlcc.opposite(it), old))
@@ -68,7 +68,7 @@ public:
     // They aren't concerned.
     if (facetsPoints.size() > 2 || facetsPoints.size() < 2)
     {       
-      return v;
+      return make_pair(v.point(), d);
     }
 
     // Average.
@@ -92,8 +92,8 @@ public:
     barycenterV = LCC::Traits::Construct_scaled_vector()
                   ( barycenterV, (1.0f/2.0f) );
 
-    Vertex res = LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, barycenterV);
-    res.set_dart (d);
+    std::pair<Point_3, Dart_handle> res=std::make_pair
+      (LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, barycenterV), d);
 
     return res;
   }
@@ -115,14 +115,14 @@ public:
   {
   }
 
-  Vertex operator  () (Vertex & v) const
+  std::pair<Point_3, Dart_handle> operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
 
     // Just old points are concerned.
     if (!mlcc.is_marked(d, old))
     {       
-      return v;
+      return make_pair(v.point(), d);
     }
 
     unsigned int degree = 0;
@@ -140,7 +140,7 @@ public:
       // If the vertex is on a border
       if (mlcc.is_free(it,2))
       { 
-        return v;
+        return make_pair(v.point(), d);
       }
       // If incident isn't an old point, it's an edge point.
       if (!mlcc.is_marked(mlcc.opposite(it), old))
@@ -156,12 +156,12 @@ public:
 
     if (facetsPoints.size() < 3 || edgesPoints.size() < 3 )
     {       
-      return v;
+      return make_pair(v.point(), d);
     }
 
     // Average of incidents "edge points".
-    LCC::Vector averageEdgesV = LCC::Traits::Construct_vector() 
-			        (CGAL::ORIGIN, LCC::Point(0,0,0));                                                   
+    LCC::Vector averageEdgesV = LCC::Traits::Construct_vector()
+                              (CGAL::ORIGIN, LCC::Point(0,0,0));                                                   
 
     for (unsigned int i=0; i < edgesPoints.size(); i++)
     {
@@ -207,8 +207,8 @@ public:
     newPosition = LCC::Traits::Construct_sum_of_vectors()
       		  ( newPosition, pointV);
 
-    Vertex res = LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, newPosition);
-    res.set_dart (d);
+    std::pair<Point_3, Dart_handle> res=std::make_pair
+      (LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, newPosition), d);
 
     return res;
   }
@@ -291,33 +291,33 @@ subdivide_lcc_pqq (LCC & m)
   m.free_mark (treated);
 
   // 3) Smooth old points. 
-  std::vector < Vertex > old_vertices; // smooth the old vertices.
+  std::vector<std::pair<Point_3, Dart_handle> > old_vertices; // smooth the old vertices.
   old_vertices.reserve (m.number_of_attributes<0> ()); // get intermediate space.
-  std::transform (m.vertex_attributes().begin (), 
-		  m.vertex_attributes().end (),
-		  std::back_inserter (old_vertices), 
-		  Smooth_vertex_pqq (m, old));
+  std::transform (m.vertex_attributes().begin(), 
+		  m.vertex_attributes().end(),
+		  std::back_inserter(old_vertices), 
+		  Smooth_vertex_pqq(m, old));
 
   // Update.
-  for (std::vector < Vertex >::iterator vit = old_vertices.begin ();
-      vit != old_vertices.end (); ++vit)
+  for (std::vector<std::pair<Point_3, Dart_handle> >::iterator
+         vit=old_vertices.begin(); vit!=old_vertices.end(); ++vit)
   {
-    m.point(vit->dart())=vit->point();
+    m.point(vit->second)=vit->first;
   }
 
   // 4) Smooth new edges points.	  
-  std::vector < Vertex > vertices; // smooth the old vertices.
-  vertices.reserve (m.number_of_attributes<0> ()); // get intermediate space.
-  std::transform (m.vertex_attributes().begin (), 
-		  m.vertex_attributes().end (),
-		  std::back_inserter (vertices), 
-		  Smooth_edge_pqq (m, old));
+  std::vector<std::pair<Point_3, Dart_handle> > vertices; // smooth the old vertices.
+  vertices.reserve(m.number_of_attributes<0>()); // get intermediate space.
+  std::transform (m.vertex_attributes().begin(), 
+		  m.vertex_attributes().end(),
+		  std::back_inserter(vertices), 
+		  Smooth_edge_pqq(m, old));
 
   // Update.
-  for (std::vector < Vertex >::iterator vit = vertices.begin ();
-      vit != vertices.end (); ++vit)
+  for (std::vector<std::pair<Point_3, Dart_handle> >::iterator
+         vit=vertices.begin(); vit!=vertices.end(); ++vit)
   {
-    m.point(vit->dart())=vit->point();
+    m.point(vit->second)=vit->first;
   }
 
   m.unmark_all (old);

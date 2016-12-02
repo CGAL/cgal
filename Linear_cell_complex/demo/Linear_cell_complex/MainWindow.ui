@@ -67,6 +67,8 @@
     <addaction name="actionSew3_same_facets"/>
     <addaction name="actionUnsew3_all"/>
     <addaction name="separator"/>
+    <addaction name="actionInsideOut"/>
+    <addaction name="separator"/>
     <addaction name="actionSubdivide"/>
     <addaction name="actionSubdivide_pqq"/>
     <addaction name="actionClose_volume"/>
@@ -188,6 +190,11 @@
   <action name="actionUnsew3_all">
    <property name="text">
     <string>&amp;Unsew3 volumes</string>
+   </property>
+  </action>
+  <action name="actionInsideOut">
+   <property name="text">
+    <string>Reverse &amp;orientation</string>
    </property>
   </action>
   <action name="actionVolume_list">

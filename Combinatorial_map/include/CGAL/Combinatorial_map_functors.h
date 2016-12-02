@@ -21,7 +21,6 @@
 #define CGAL_COMBINATORIAL_MAP_FUNCTORS_H
 
 #include <CGAL/Dart_const_iterators.h>
-#include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <vector>
 #include <boost/mpl/has_xxx.hpp>
@@ -68,8 +67,8 @@ struct Reserve_mark_functor
   typedef typename CMap::size_type size_type;
 
   template <unsigned int i>
-  static void run(const CMap* amap, std::vector<size_type>* marks)
-  { (*marks)[i] = amap->get_new_mark(); }
+  static void run(const CMap& amap, std::vector<size_type>& marks)
+  { marks[i] = amap.get_new_mark(); }
 };
 // ****************************************************************************
 /// Functor used to display the address of the i-cell attribute. Can be used
@@ -78,13 +77,13 @@ template<typename CMap>
 struct Display_attribute_functor
 {
   template <unsigned int i>
-  static void run(const CMap* /*amap*/,
+  static void run(const CMap& amap,
                   typename CMap::Dart_const_handle adart)
   {
-    if ( adart->template attribute<i>()==NULL )
+    if ( amap.template attribute<i>(adart)==NULL )
       std::cout<<"NULL";
     else
-      std::cout<<&*(adart->template attribute<i>());
+      amap.template display_attribute<i>(amap.template attribute<i>(adart));
   }
 };
 // ****************************************************************************
@@ -93,48 +92,46 @@ template<typename CMap>
 struct Test_is_valid_attribute_functor
 {
   template <unsigned int i>
-  static bool run(const CMap* amap,
+  static bool run(const CMap& amap,
                   typename CMap::Dart_const_handle adart)
   {
     typedef typename CMap::size_type size_type;
 
-    size_type mark=amap->get_new_mark();
+    size_type mark=amap.get_new_mark();
     bool res = true;
     CGAL::internal::Test_is_valid_attribute_functor<CMap>::
         run<i>(amap, adart, mark, &res);
 
-    amap->negate_mark(mark);
-    if ( !amap->is_whole_map_marked(mark) )
+    amap.negate_mark(mark);
+    if ( !amap.is_whole_map_marked(mark) )
     {
       for ( CGAL::CMap_dart_const_iterator_basic_of_cell<CMap,i>
             it(*amap, adart, mark); it.cont(); ++it )
-        amap->unmark(it, mark);
+        amap.unmark(it, mark);
     }
-    CGAL_assertion ( amap->is_whole_map_marked(mark) );
-    amap->free_mark(mark);
+    CGAL_assertion ( amap.is_whole_map_marked(mark) );
+    amap.free_mark(mark);
 
     return res;
   }
 };
 // ****************************************************************************
 /// Functor used to set the i-attribute of a given i-cell.
-/// We can use any range as Range type, by default we use
-/// Dart_of_cell_range<i>
 template<typename CMap, unsigned int i,
          typename T=typename CMap::template Attribute_type<i>::type>
 struct Set_i_attribute_functor
 {
-  static void run( CMap* amap, typename CMap::Dart_handle dh,
+  static void run( CMap& amap, typename CMap::Dart_handle dh,
                    typename CMap::template Attribute_handle<i>::type ah )
   {
-    amap->template set_attribute<i>(dh, ah);
+    amap.template set_attribute<i>(dh, ah);
   }
 };
 /// Specialization for void attributes.
 template<typename CMap, unsigned int i>
 struct Set_i_attribute_functor<CMap,i,CGAL::Void>
 {
-  static void run( CMap*, typename CMap::Dart_handle,
+  static void run( CMap&, typename CMap::Dart_handle,
                    typename CMap::template Attribute_handle<i>::type)
   {}
 };

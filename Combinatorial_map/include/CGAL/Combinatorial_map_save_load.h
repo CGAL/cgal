@@ -27,10 +27,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Combinatorial_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Cell_attribute_with_point.h>
 
 #include <algorithm>
 #include <map>
@@ -154,17 +152,18 @@ namespace CGAL {
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_save_one_attrib<CMap, i, true, true>
   {
-    static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
+    static void run(CMap& amap, boost::property_tree::ptree& ptree,
+                    std::map<typename CMap::Dart_const_handle,
+                               typename CMap::size_type>& myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
         it_attrib, itend_attrib;
-      it_attrib=amap->template attributes<i>().begin();
-      itend_attrib=amap->template attributes<i>().end();
+      it_attrib=amap.template attributes<i>().begin();
+      itend_attrib=amap.template attributes<i>().end();
 
       // add dimension & type
-      boost::property_tree::ptree & ndim = ptree->add("dimension", "");
+      boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
       ndim.add("type", typeid(typename CMap::template Attribute_type<i>::type::Info).name());
       ndim.add("type_point", typeid(RPoint_3).name());
@@ -175,7 +174,7 @@ namespace CGAL {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
         /* boost::property_tree::ptree & ndarts = */
-          nattr.add("d", (*myDarts)[it_attrib->dart()]);
+          nattr.add("d", myDarts[it_attrib->dart()]);
 
         // update property node to add a value node (from basic or custom type
         write_cmap_attribute_node(nattr, it_attrib->info());
@@ -188,17 +187,18 @@ namespace CGAL {
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_save_one_attrib<CMap, i, false, true>
   {
-    static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
+    static void run(CMap& amap, boost::property_tree::ptree& ptree,
+                    std::map<typename CMap::Dart_const_handle,
+                               typename CMap::size_type>& myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
         it_attrib, itend_attrib;
-      it_attrib=amap->template attributes<i>().begin();
-      itend_attrib=amap->template attributes<i>().end();
+      it_attrib=amap.template attributes<i>().begin();
+      itend_attrib=amap.template attributes<i>().end();
 
       // add dimension & type
-      boost::property_tree::ptree & ndim = ptree->add("dimension", "");
+      boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
       ndim.add("type", "void");
       ndim.add("type_point", typeid(RPoint_3).name());
@@ -209,7 +209,7 @@ namespace CGAL {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
         /* boost::property_tree::ptree & ndarts = */
-          nattr.add("d", (*myDarts)[it_attrib->dart()]);
+        nattr.add("d", myDarts[it_attrib->dart()]);
 
         // update property node to add a value node (from basic or custom type
         write_cmap_attribute_node(nattr, it_attrib->point());
@@ -221,19 +221,21 @@ namespace CGAL {
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_save_one_attrib<CMap, i, true, false>
   {
-    static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
+    static void run(CMap& amap, boost::property_tree::ptree& ptree,
+                    std::map<typename CMap::Dart_const_handle,
+                               typename CMap::size_type>& myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
         it_attrib, itend_attrib;
-      it_attrib=amap->template attributes<i>().begin();
-      itend_attrib=amap->template attributes<i>().end();
+      it_attrib=amap.template attributes<i>().begin();
+      itend_attrib=amap.template attributes<i>().end();
 
       // add dimension & type
-      boost::property_tree::ptree & ndim = ptree->add("dimension", "");
+      boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
-      ndim.add("type", typeid(typename CMap::template Attribute_type<i>::type::Info).name());
+      ndim.add("type", typeid(typename CMap::template
+                              Attribute_type<i>::type::Info).name());
       ndim.add("type_point", "void");
 
       // for every attribute of the dimension
@@ -242,7 +244,7 @@ namespace CGAL {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
         /* boost::property_tree::ptree & ndarts = */
-          nattr.add("d", (*myDarts)[it_attrib->dart()]);
+        nattr.add("d", myDarts[it_attrib->dart()]);
 
         // update property node to add a value node (from basic or custom type
         write_cmap_attribute_node(nattr, it_attrib->info());
@@ -254,17 +256,18 @@ namespace CGAL {
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_save_one_attrib<CMap, i, false, false>
   {
-    static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
+    static void run(CMap& amap, boost::property_tree::ptree& ptree,
+                    std::map<typename CMap::Dart_const_handle,
+                               typename CMap::size_type>& myDarts)
     {
       // to check all i-cells of the map
       typename CMap::template Attribute_range<i>::type::const_iterator
         it_attrib, itend_attrib;
-      it_attrib=amap->template attributes<i>().begin();
-      itend_attrib=amap->template attributes<i>().end();
+      it_attrib=amap.template attributes<i>().begin();
+      itend_attrib=amap.template attributes<i>().end();
 
       // add dimension & type
-      boost::property_tree::ptree & ndim = ptree->add("dimension", "");
+      boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
       ndim.add("type", "void");
       ndim.add("type_point", "void");
@@ -275,7 +278,7 @@ namespace CGAL {
         // make composant, dart and property node
         boost::property_tree::ptree & nattr = ndim.add("a", "");
         /* boost::property_tree::ptree & ndarts = */
-          nattr.add("d", (*myDarts)[it_attrib->dart()]);
+        nattr.add("d", myDarts[it_attrib->dart()]);
       }
     }
   };
@@ -284,16 +287,18 @@ namespace CGAL {
   struct My_functor_cmap_save_attrib
   {
     template <unsigned int i>
-    static void run(const CMap* amap, boost::property_tree::ptree* ptree,
-                    std::map<typename CMap::Dart_const_handle, typename CMap::size_type>* myDarts)
+    static void run(CMap& amap, boost::property_tree::ptree& ptree,
+                    std::map<typename CMap::Dart_const_handle,
+                               typename CMap::size_type>& myDarts)
     {
-        My_functor_cmap_save_one_attrib<CMap, i>::run(amap, ptree, myDarts);
+      My_functor_cmap_save_one_attrib<CMap, i>::run(amap, ptree, myDarts);
     }
   };
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_darts
-  (const CMap& amap, std::map<typename CMap::Dart_const_handle, typename CMap::size_type>& myDarts)
+  (CMap& amap, std::map<typename CMap::Dart_const_handle,
+                                typename CMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
     
@@ -314,14 +319,14 @@ namespace CGAL {
     for(typename CMap::size_type num=0; num<amap.number_of_darts(); ++num, ++it)
     {
       // make a dart node
-      ptree & ndart = pt.add("d", "");
+      ptree& ndart = pt.add("d", "");
 
       // the beta, only for non free sews
       for(unsigned int dim=1; dim<=amap.dimension; dim++)
       {
         if(!amap.is_free(it, dim))
         {
-          ptree & currentNext = ndart.add("b", myDarts[amap.beta(it, dim)]);
+          ptree& currentNext = ndart.add("b", myDarts[amap.beta(it, dim)]);
           currentNext.put("<xmlattr>.i", dim);
         }
       }
@@ -336,14 +341,15 @@ namespace CGAL {
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_attributes
-  (const CMap& amap, std::map<typename CMap::Dart_const_handle, typename CMap::size_type>& myDarts)
+  (const CMap& amap, std::map<typename CMap::Dart_const_handle,
+                                typename CMap::size_type>& myDarts)
   {
     using boost::property_tree::ptree;
     ptree pt;
 
     // update pt adding nodes containing attributes informations
     CMap::Helper::template Foreach_enabled_attributes
-      <My_functor_cmap_save_attrib<CMap> >::run(&amap, &pt, &myDarts);
+      <My_functor_cmap_save_attrib<CMap> >::run(const_cast<CMap&>(amap), pt, myDarts);
 
     return pt;
   }
@@ -352,23 +358,22 @@ namespace CGAL {
   bool save_combinatorial_map(const CMap& amap, std::ostream & output)
   {
     using boost::property_tree::ptree;
-    ptree data;
+    ptree tree;
+    tree.put("data", "");
 
     // map dart => number
     std::map<typename CMap::Dart_const_handle, typename CMap::size_type> myDarts;
 
-    // Get darts
-    ptree pt_darts;
-    pt_darts = cmap_save_darts(amap, myDarts);
-    data.add_child("data.darts",pt_darts);
+    // Save darts
+    ptree pt_darts=cmap_save_darts(amap, myDarts);
+    tree.add_child("data.darts",pt_darts);
 
-    // Get attributes
-    ptree pt_attr;
-    pt_attr = cmap_save_attributes(amap, myDarts);
-    data.add_child("data.attributes", pt_attr);
+    // Save attributes
+    ptree pt_attr=cmap_save_attributes(amap, myDarts);
+    tree.add_child("data.attributes", pt_attr);
 
     // save data in output
-    write_xml(output, data);
+    write_xml(output, tree);
 
     return true;
   }
@@ -463,29 +468,29 @@ namespace CGAL {
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_load_one_attrib<CMap, i, true, true>
   {
-      static void run(const boost::property_tree::ptree& pt, CMap* amap,
-                          const std::vector<typename CMap::Dart_handle>& myDarts)
+    static void run(const boost::property_tree::ptree& pt, CMap& amap,
+                    const std::vector<typename CMap::Dart_handle>& myDarts)
+    {
+      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
+                     pt.get_child("data.attributes") )
       {
-          BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
-                         pt.get_child("data.attributes") )
+        // <dimension>
+        if (v0.first == "dimension")
+        {
+          int dimension=v0.second.get("<xmlattr>.index", -1);
+          
+          // if map.dimension == dimension saved in the xml file
+          if (dimension==i)
           {
-            // <dimension>
-            if (v0.first == "dimension")
-            {
-              int dimension=v0.second.get("<xmlattr>.index", -1);
-
-              // if map.dimension == dimension saved in the xml file
-              if (dimension==i)
-              {
-                unsigned int id_dart_cellule=0;
-                std::string type =  v0.second.get<std::string>("type");
-                std::string type_map=std::string
-                  (typeid(typename CMap::template Attribute_type<i>::type::Info).name());
-
-                std::string ptype =  v0.second.get<std::string>("type_point");
-                std::string ptype_map= std::string
-                  (typeid(typename CMap::template Attribute_type<i>::type::Point).name());
-
+            unsigned int id_dart_cellule=0;
+            std::string type =  v0.second.get<std::string>("type");
+            std::string type_map=std::string
+              (typeid(typename CMap::template Attribute_type<i>::type::Info).name());
+            
+            std::string ptype =  v0.second.get<std::string>("type_point");
+            std::string ptype_map= std::string
+              (typeid(typename CMap::template Attribute_type<i>::type::Point).name());
+            
                 //  std::cout<<"ptype="<<ptype<<"  and type_map="<<type_map<<std::endl;
                 /* if(type!=type_map && ptype!=ptype_map)
                 {
@@ -493,71 +498,70 @@ namespace CGAL {
                   return;
                   }*/
 
-                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
-                              v0.second )
+            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+                          v0.second )
+            {
+              if( v1.first == "a" )
+              {
+                id_dart_cellule=v1.second.get<unsigned int>("d")-1;
+                
+                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
+                              v1.second )
                 {
-                  if( v1.first == "a" )
+                  if( type==type_map && v2.first == "v" )
                   {
-                    id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-
-                    BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
-                                  v1.second )
-                    {
-                      if( type==type_map && v2.first == "v" )
-                      {
-                        if (myDarts[id_dart_cellule]->
-                            template attribute<i>()==NULL )
-                          amap->template set_attribute<i>
-                              (myDarts[id_dart_cellule],
-                               amap->template create_attribute<i>());
-                        read_cmap_attribute_node
-                            (v2,
-                             myDarts[id_dart_cellule]->
-                             template attribute<i>()->info());
-                      }
-                      if( ptype==ptype_map && v2.first == "p" )
-                      {
-                        if (myDarts[id_dart_cellule]->
-                            template attribute<i>()==NULL )
-                          amap->template set_attribute<i>
-                              (myDarts[id_dart_cellule],
-                               amap->template create_attribute<i>());
-                        read_cmap_attribute_node
-                            (v2,
-                             myDarts[id_dart_cellule]->
-                             template attribute<i>()->point());
-                      }
-                    }
+                    if (amap.template attribute<i>(myDarts[id_dart_cellule])
+                        ==NULL )
+                      amap.template set_attribute<i>
+                        (myDarts[id_dart_cellule],
+                         amap.template create_attribute<i>());
+                    read_cmap_attribute_node
+                      (v2,
+                       amap.template info<i>(myDarts[id_dart_cellule]));
+                  }
+                  if( ptype==ptype_map && v2.first == "p" )
+                  {
+                    if (amap.template attribute<i>(myDarts[id_dart_cellule])
+                        ==NULL )
+                      amap.template set_attribute<i>
+                        (myDarts[id_dart_cellule],
+                         amap.template create_attribute<i>());
+                    read_cmap_attribute_node
+                      (v2,
+                       amap.template attribute<i>(myDarts[id_dart_cellule])
+                       ->point());
                   }
                 }
               }
             }
           }
+        }
       }
+    }
   };
 
   // An attribute with point and without info
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_load_one_attrib<CMap, i, false, true>
   {
-      static void run(const boost::property_tree::ptree& pt, CMap* amap,
-                          const std::vector<typename CMap::Dart_handle>& myDarts)
+    static void run(const boost::property_tree::ptree& pt, CMap& amap,
+                    const std::vector<typename CMap::Dart_handle>& myDarts)
+    {
+      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
+                     pt.get_child("data.attributes") )
       {
-          BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
-                         pt.get_child("data.attributes") )
+        // <dimension>
+        if (v0.first == "dimension")
+        {
+          int dimension=v0.second.get("<xmlattr>.index", -1);
+          
+          // if map.dimension == dimension saved in the xml file
+          if (dimension==i)
           {
-            // <dimension>
-            if (v0.first == "dimension")
-            {
-              int dimension=v0.second.get("<xmlattr>.index", -1);
-
-              // if map.dimension == dimension saved in the xml file
-              if (dimension==i)
-              {
-                unsigned int id_dart_cellule=0;
-                std::string ptype =  v0.second.get<std::string>("type_point");
-                std::string type_map= typeid
-                  (typename CMap::template Attribute_type<i>::type::Point).name();
+            unsigned int id_dart_cellule=0;
+            std::string ptype =  v0.second.get<std::string>("type_point");
+            std::string type_map= typeid
+              (typename CMap::template Attribute_type<i>::type::Point).name();
                 //  std::cout<<"ptype="<<ptype<<"  and type_map="<<type_map<<std::endl;
                 /*                if(ptype!=type_map)
                 {
@@ -565,60 +569,60 @@ namespace CGAL {
                   return;
                   }*/
 
-                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
-                              v0.second )
+            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+                          v0.second )
+            {
+              if( v1.first == "a" )
+              {
+                id_dart_cellule=v1.second.get<unsigned int>("d")-1;
+                
+                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
+                              v1.second )
                 {
-                  if( v1.first == "a" )
+                  if( v2.first == "p" )
                   {
-                    id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-
-                    BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
-                                  v1.second )
-                    {
-                      if( v2.first == "p" )
-                      {
-                        if (myDarts[id_dart_cellule]->
-                            template attribute<i>()==NULL )
-                          amap->template set_attribute<i>
-                            (myDarts[id_dart_cellule],
-                             amap->template create_attribute<i>());
-
-                        read_cmap_attribute_node
-                          (v2,
-                           myDarts[id_dart_cellule]->
-                           template attribute<i>()->point());
-                      }
-                    }
+                    if (amap.template attribute<i>
+                        (myDarts[id_dart_cellule])==NULL )
+                      amap.template set_attribute<i>
+                        (myDarts[id_dart_cellule],
+                         amap.template create_attribute<i>());
+                    
+                    read_cmap_attribute_node
+                      (v2,
+                       (amap.template attribute<i>
+                        (myDarts[id_dart_cellule])->point()));
                   }
                 }
               }
             }
           }
+        }
       }
+    }
   };
 
   // An attribute without point and with info
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_load_one_attrib<CMap, i, true, false>
   {
-      static void run(const boost::property_tree::ptree& pt, CMap* amap,
-                          const std::vector<typename CMap::Dart_handle>& myDarts)
+    static void run(const boost::property_tree::ptree& pt, CMap& amap,
+                    const std::vector<typename CMap::Dart_handle>& myDarts)
+    {
+      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
+                     pt.get_child("data.attributes") )
       {
-          BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
-                         pt.get_child("data.attributes") )
+        // <dimension>
+        if (v0.first == "dimension")
+        {
+          int dimension=v0.second.get("<xmlattr>.index", -1);
+          
+          // if map.dimension == dimension saved in the xml file
+          if (dimension==i)
           {
-            // <dimension>
-            if (v0.first == "dimension")
-            {
-              int dimension=v0.second.get("<xmlattr>.index", -1);
-
-              // if map.dimension == dimension saved in the xml file
-              if (dimension==i)
-              {
-                unsigned int id_dart_cellule=0;
-                std::string ptype =  v0.second.get<std::string>("type");
-                std::string type_map= typeid
-                  (typename CMap::template Attribute_type<i>::type::Info).name();
+            unsigned int id_dart_cellule=0;
+            std::string ptype =  v0.second.get<std::string>("type");
+            std::string type_map= typeid
+              (typename CMap::template Attribute_type<i>::type::Info).name();
                 //  std::cout<<"ptype="<<ptype<<"  and type_map="<<type_map<<std::endl;
                 /*      if(ptype!=type_map)
                 {
@@ -626,75 +630,73 @@ namespace CGAL {
                   return;
                   } */
 
-                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
-                              v0.second )
+            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+                          v0.second )
+            {
+              if( v1.first == "a" )
+              {
+                id_dart_cellule=v1.second.get<unsigned int>("d")-1;
+                
+                BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
+                              v1.second )
                 {
-                  if( v1.first == "a" )
+                  if( v2.first == "v" )
                   {
-                    id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-
-                    BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
-                                  v1.second )
-                    {
-                      if( v2.first == "v" )
-                      {
-                        if (myDarts[id_dart_cellule]->
-                            template attribute<i>()==NULL )
-                          amap->template set_attribute<i>
-                            (myDarts[id_dart_cellule],
-                             amap->template create_attribute<i>());
-                        read_cmap_attribute_node
-                          (v2,
-                           myDarts[id_dart_cellule]->
-                           template attribute<i>()->info());
-                      }
-                    }
+                    if (amap.template attribute<i>
+                        (myDarts[id_dart_cellule])==NULL)
+                      amap.template set_attribute<i>
+                        (myDarts[id_dart_cellule],
+                         amap.template create_attribute<i>());
+                    read_cmap_attribute_node
+                      (v2,
+                       amap.template info<i>(myDarts[id_dart_cellule]));
                   }
                 }
               }
             }
           }
         }
+      }
+    }
   };
 
   // An attribute without point and without info
   template<typename CMap, unsigned int i>
   struct My_functor_cmap_load_one_attrib<CMap, i, false, false>
   {
-          static void run(const boost::property_tree::ptree& pt, CMap* amap,
-                              const std::vector<typename CMap::Dart_handle>& myDarts)
+    static void run(const boost::property_tree::ptree& pt, CMap& amap,
+                    const std::vector<typename CMap::Dart_handle>& myDarts)
+    {
+      BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
+                     pt.get_child("data.attributes") )
       {
-              BOOST_FOREACH( const boost::property_tree::ptree::value_type &v0,
-                             pt.get_child("data.attributes") )
+        // <dimension>
+        if (v0.first == "dimension")
+        {
+          int dimension=v0.second.get("<xmlattr>.index", -1);
+          
+          // if map.dimension == dimension saved in the xml file
+          if (dimension==i)
+          {
+            unsigned int id_dart_cellule=0;
+            
+            BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
+                          v0.second )
+            {
+              if( v1.first == "a" )
               {
-                // <dimension>
-                if (v0.first == "dimension")
-                {
-                  int dimension=v0.second.get("<xmlattr>.index", -1);
-
-                  // if map.dimension == dimension saved in the xml file
-                  if (dimension==i)
-                  {
-                    unsigned int id_dart_cellule=0;
-
-                    BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
-                                  v0.second )
-                    {
-                      if( v1.first == "a" )
-                      {
-                        id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-
-                        if (myDarts[id_dart_cellule]->
-                            template attribute<i>()==NULL )
-                          amap->template set_attribute<i>
-                            (myDarts[id_dart_cellule],
-                             amap->template create_attribute<i>());
-                        }
-                      }
-                    }
-                  }
-                }
+                id_dart_cellule=v1.second.get<unsigned int>("d")-1;
+                
+                if (amap.template attribute<i>(myDarts[id_dart_cellule])==NULL)
+                  amap.template set_attribute<i>
+                    (myDarts[id_dart_cellule],
+                   amap.template create_attribute<i>());
+              }
+            }
+          }
+        }
       }
+    }
   };
 
   /** Functor called to load i-attributes.
@@ -706,7 +708,7 @@ namespace CGAL {
   struct My_functor_cmap_load_attrib
   {
     template <unsigned int i>
-    static void run(const boost::property_tree::ptree& pt, CMap* amap,
+    static void run(const boost::property_tree::ptree& pt, CMap& amap,
                     const std::vector<typename CMap::Dart_handle>& myDarts)
     {
        My_functor_cmap_load_one_attrib<CMap, i>::run(pt, amap, myDarts);
@@ -745,15 +747,9 @@ namespace CGAL {
             
             if ( index<=amap.dimension )
             {
-              // A->B
               amap.basic_link_beta(myDarts[currentDartInt],
                                    myDarts[nextDartInt],
                                    index);
-
-              //B->A
-              amap.basic_link_beta(myDarts[nextDartInt],
-                                   myDarts[currentDartInt],
-                                   CGAL_BETAINV(index));
             }
           }
           else if (v2.first=="v")
@@ -771,7 +767,7 @@ namespace CGAL {
                             const std::vector<typename CMap::Dart_handle>& myDarts)
   {
     CMap::Helper::template Foreach_enabled_attributes
-      <My_functor_cmap_load_attrib<CMap> >::run(pt,&amap,myDarts);
+      <My_functor_cmap_load_attrib<CMap> >::run(pt, amap, myDarts);
   }
 
   template < class CMap >

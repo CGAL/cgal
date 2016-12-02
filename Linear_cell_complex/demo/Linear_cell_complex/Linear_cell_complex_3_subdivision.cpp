@@ -34,7 +34,7 @@ public:
   {
   }
 
-  Vertex operator  () (Vertex & v) const
+  std::pair<Point_3, Dart_handle> operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
 
@@ -50,7 +50,7 @@ public:
     }
 
     if (open)
-      return v;
+      return make_pair(v.point(), d);
 
     LCC::FT alpha = (4.0f - 2.0f *
                      (LCC::FT) cos (2.0f * PI / (LCC::FT) degree)) / 9.0f;
@@ -65,8 +65,8 @@ public:
         * alpha / degree;
     }
 
-    Vertex res= LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, vec);
-    res.set_dart (d);
+    std::pair<Point_3, Dart_handle> res=std::make_pair
+      (LCC::Traits::Construct_translated_point() (CGAL::ORIGIN, vec), d);
 
     return res;
   }
@@ -133,7 +133,7 @@ subdivide_lcc_3 (LCC & m)
   m.negate_mark (mark);  // All the old darts are marked in O(1).
 
   // 1) We smoth the old vertices.
-  std::vector < Vertex > vertices;  // smooth the old vertices
+  std::vector <std::pair<Point_3, Dart_handle> > vertices;  // smooth the old vertices
   vertices.reserve (m.number_of_attributes<0> ());  // get intermediate space
   std::transform (m.vertex_attributes().begin (), 
 		  m.vertex_attributes().end (),
@@ -161,10 +161,10 @@ subdivide_lcc_3 (LCC & m)
   m.free_mark (treated);
 
   // 3) We update the coordinates of old vertices.
-  for (std::vector < Vertex >::iterator vit = vertices.begin ();
-       vit != vertices.end (); ++vit)
+  for (std::vector<std::pair<Point_3, Dart_handle> >::iterator
+         vit=vertices.begin(); vit!=vertices.end(); ++vit)
   {
-    m.point(vit->dart())=vit->point();
+    m.point(vit->second)=vit->first;
   }
 
   // 4) We flip all the old edges.

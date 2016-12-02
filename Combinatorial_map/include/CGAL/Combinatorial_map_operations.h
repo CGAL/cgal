@@ -20,13 +20,12 @@
 #ifndef CGAL_COMBINATORIAL_MAP_OPERATIONS_H
 #define CGAL_COMBINATORIAL_MAP_OPERATIONS_H 1
 
-#include <CGAL/Combinatorial_map_basic_operations.h>
-#include <CGAL/Combinatorial_map_insertions.h>
-#include <CGAL/internal/Combinatorial_map_sewable.h>
+#include <CGAL/Dart_const_iterators.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
 
 #include <deque>
-#include <stack>
+
+#define CGAL_BETAINV(i) (i>1?i:(i==1?0:1))
 
 namespace CGAL
 {
@@ -129,7 +128,7 @@ namespace CGAL
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
-              run(&amap, dg1, dg2);
+              run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -231,12 +230,12 @@ namespace CGAL
         if ( i==1 )
           CMap::Helper::template Foreach_enabled_attributes_except
               <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-              run(&amap, modified_darts, modified_darts2,
+              run(amap, modified_darts, modified_darts2,
                   mark_modified_darts);
         else
           CMap::Helper::template Foreach_enabled_attributes_except
               <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-              run(&amap, modified_darts, mark_modified_darts);
+              run(amap, modified_darts, mark_modified_darts);
       }
 
       // We remove all the darts of the i-cell.
@@ -277,7 +276,7 @@ namespace CGAL
 
   /** Remove a d-cell, in a d-map (special case).
    *  @param amap the used combinatorial map.
-   *  @param adart a dart of the volume to remove.
+   *  @param adart a dart of the d-cell to remove.
    *  @param update_attributes a boolean to update the enabled attributes
    *         (deprecated, now we use are_attributes_automatically_managed())
    *  @return the number of deleted darts.
@@ -303,7 +302,7 @@ namespace CGAL
         ++res;
       }
 
-      // We unlink all the darts of the volume for beta-d.
+      // We unlink all the darts of the d-cell for beta-d.
       typename std::deque<typename CMap::Dart_handle>::iterator
         it = to_erase.begin();
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
@@ -325,7 +324,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::Test_split_attribute_functor<CMap,i>,
-           CMap::dimension>::run(&amap, modified_darts);
+           CMap::dimension>::run(amap, modified_darts);
       }
 
       // We remove all the darts of the d-cell.
@@ -382,7 +381,7 @@ namespace CGAL
         // We group the two edges incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap, 1>::
-              run(&amap, dg1, dg2);
+              run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -454,7 +453,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
             <CGAL::internal::Test_split_attribute_functor<CMap,0>, 1>::
-            run(&amap,modified_darts, modified_darts2);
+            run(amap, modified_darts, modified_darts2);
       }
 
       // We remove all the darts of the 0-cell.
@@ -576,10 +575,10 @@ namespace CGAL
 
       if ( amap.are_attributes_automatically_managed() && update_attributes )
       {
-        // We group the two (i+1)-cells incident if they exist.
+        // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap,i-1>::
-            run(&amap, dg1, dg2);
+            run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -663,7 +662,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-          run(&amap, modified_darts, mark_modified_darts);
+          run(amap, modified_darts, mark_modified_darts);
       }
 
       // We remove all the darts of the i-cell.
@@ -733,7 +732,7 @@ namespace CGAL
         // We group the two vertices incident if they exist.
         if ( dg1!=amap.null_handle )
           CGAL::internal::Group_attribute_functor_run<CMap, 0, 1>::
-            run(&amap, dg1, dg2);
+            run(amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -798,7 +797,7 @@ namespace CGAL
         // void attributes.
         CMap::Helper::template Foreach_enabled_attributes_except
           <CGAL::internal::Test_split_attribute_functor<CMap,1>, 1>::
-          run(&amap, modified_darts, modified_darts2);
+          run(amap, modified_darts, modified_darts2);
       }
 
 #ifdef CGAL_CMAP_TEST_VALID_CONTRACTIONS

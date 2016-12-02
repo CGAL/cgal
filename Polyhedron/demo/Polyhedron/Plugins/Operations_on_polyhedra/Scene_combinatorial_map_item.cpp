@@ -1,3 +1,6 @@
+#define CGAL_NO_DEPRECATION_WARNINGS 1
+#define CGAL_CMAP_DART_DEPRECATED 1
+
 #include "Scene_combinatorial_map_item.h"
 #include "Scene_polyhedron_item.h"
 #include <CGAL/Three/Scene_interface.h>

@@ -56,6 +56,7 @@ h1 {
 \package_listing{HalfedgeDS}
 \package_listing{Surface_mesh}
 \package_listing{Combinatorial_map}
+\package_listing{Generalized_map}
 \package_listing{Linear_cell_complex}
 \package_listing{Nef_3}
 \package_listing{Convex_decomposition_3}

@@ -25,6 +25,7 @@ GraphicsView
 HalfedgeDS
 BGL
 Combinatorial_map
+Generalized_map
 Linear_cell_complex
 Interval_skip_list
 Nef_2

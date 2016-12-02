@@ -27,98 +27,125 @@
 #include <QGLViewer/vec.h>
 #include <QDebug>
 
+//Vertex source code
+const char vertex_source[] =
+  {
+    "#version 120 \n"
+    "attribute highp vec4 vertex;\n"
+    "attribute highp vec3 normal;\n"
+    "attribute highp vec3 color;\n"
+
+    "uniform highp mat4 mvp_matrix;\n"
+    "uniform highp mat4 mv_matrix; \n"
+
+    "varying highp vec4 fP; \n"
+    "varying highp vec3 fN; \n"
+    "varying highp vec4 fColor; \n"
+    "void main(void)\n"
+    "{\n"
+    "   fP = mv_matrix * vertex; \n"
+    "   fN = mat3(mv_matrix)* normal; \n"
+    "   fColor = vec4(color, 1.0); \n"
+    "   gl_Position = mvp_matrix * vertex;\n"
+    "}"
+  };
+
+//Vertex source code
+const char fragment_source[] =
+  {
+    "#version 120 \n"
+    "varying highp vec4 fP; \n"
+    "varying highp vec3 fN; \n"
+    "varying highp vec4 fColor; \n"
+    "uniform vec4 light_pos;  \n"
+    "uniform vec4 light_diff; \n"
+    "uniform vec4 light_spec; \n"
+    "uniform vec4 light_amb;  \n"
+    "uniform float spec_power ; \n"
+
+    "void main(void) { \n"
+
+    "   vec3 L = light_pos.xyz - fP.xyz; \n"
+    "   vec3 V = -fP.xyz; \n"
+
+    "   vec3 N = normalize(fN); \n"
+    "   L = normalize(L); \n"
+    "   V = normalize(V); \n"
+
+    "   vec3 R = reflect(-L, N); \n"
+    "   vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
+    "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+
+    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "} \n"
+    "\n"
+  };
+
+//Vertex source code
+const char vertex_source_p_l[] =
+  {
+    "#version 120 \n"
+    "attribute highp vec4 vertex;\n"
+    "uniform highp mat4 mvp_matrix;\n"
+    "void main(void)\n"
+    "{\n"
+    "   gl_Position = mvp_matrix * vertex;\n"
+    "}"
+  };
+//Vertex source code
+const char fragment_source_p_l[] =
+  {
+    "#version 120 \n"
+    "uniform highp vec4 color; \n"
+    "void main(void) { \n"
+    "gl_FragColor = color; \n"
+    "} \n"
+    "\n"
+  };
+
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent), wireframe(false),
-    flatShading(true), edges(true), vertices(true),
-    m_previous_scene_empty(true), are_buffers_initialized(false)
+  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent),
+    wireframe(false),
+    flatShading(true),
+    edges(true),
+    vertices(true),
+    inverse_normal(false),
+    size_points(7.),
+    size_edges(3.1),
+    ambient(0.6f, 0.5f, 0.5f, 0.5f),
+    m_previous_scene_empty(true),
+    are_buffers_initialized(false)
 {
 }
 
 Viewer::~Viewer()
 {
-  buffers[0].destroy();
-  buffers[1].destroy();
-  buffers[2].destroy();
-  buffers[3].destroy();
-  buffers[4].destroy();
-  buffers[5].destroy();
-  buffers[6].destroy();
-  buffers[7].destroy();
-  vao[0].destroy();
-  vao[1].destroy();
-  vao[2].destroy();
-  vao[3].destroy();
+  for (int i=0; i<NB_VBO_BUFFERS; ++i)
+    buffers[i].destroy();
+  
+  for (int i=0; i<NB_VAO_BUFFERS; ++i)
+    vao[i].destroy();
 }
 
 void Viewer::compile_shaders()
 {
-  if(!buffers[0].create() || !buffers[1].create() || !buffers[2].create() ||
-     !buffers[3].create() || !buffers[4].create() || !buffers[5].create() ||
-     !buffers[6].create() || !buffers[7].create())
-  {
-    std::cerr<<"VBO Creation FAILED"<<std::endl;
-  }
-
-  if(!vao[0].create() || !vao[1].create() || !vao[2].create() || !vao[3].create())
-  {
-    std::cerr<<"VAO Creation FAILED"<<std::endl;
-  }
+  rendering_program.removeAllShaders();
+  rendering_program_p_l.removeAllShaders();
+  
+  // Create the buffers
+  for (int i=0; i<NB_VBO_BUFFERS; ++i)
+    if(!buffers[i].isCreated() && !buffers[i].create())
+    {
+      std::cerr<<"VBO Creation number "<<i<<" FAILED"<<std::endl;
+    }
+  
+  for (int i=0; i<NB_VAO_BUFFERS; ++i)
+    if(!vao[i].isCreated() && !vao[i].create())
+    {
+      std::cerr<<"VAO Creation number "<<i<<" FAILED"<<std::endl;
+    }
 
   //The Facets
-
-  //Vertex source code
-  const char vertex_source[] =
-    {
-      "#version 120 \n"
-      "attribute highp vec4 vertex;\n"
-      "attribute highp vec3 normal;\n"
-      "attribute highp vec3 color;\n"
-
-      "uniform highp mat4 mvp_matrix;\n"
-      "uniform highp mat4 mv_matrix; \n"
-
-      "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"
-      "varying highp vec4 fColor; \n"
-      "void main(void)\n"
-      "{\n"
-      "   fP = mv_matrix * vertex; \n"
-      "   fN = mat3(mv_matrix)* normal; \n"
-      "   fColor = vec4(color, 1.0); \n"
-      "   gl_Position = mvp_matrix * vertex;\n"
-      "}"
-    };
-  //Vertex source code
-  const char fragment_source[] =
-    {
-      "#version 120 \n"
-      "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"
-      "varying highp vec4 fColor; \n"
-      "uniform vec4 light_pos;  \n"
-      "uniform vec4 light_diff; \n"
-      "uniform vec4 light_spec; \n"
-      "uniform vec4 light_amb;  \n"
-      "uniform float spec_power ; \n"
-
-      "void main(void) { \n"
-
-      "   vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   vec3 V = -fP.xyz; \n"
-
-      "   vec3 N = normalize(fN); \n"
-      "   L = normalize(L); \n"
-      "   V = normalize(V); \n"
-
-      "   vec3 R = reflect(-L, N); \n"
-      "   vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
-      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-
-      "gl_FragColor = light_amb*fColor + diffuse  ; \n"
-      "} \n"
-      "\n"
-    };
-
   QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
   if(!vertex_shader->compileSourceCode(vertex_source))
   {
@@ -144,28 +171,6 @@ void Viewer::compile_shaders()
     std::cerr<<"linking Program FAILED"<<std::endl;
   }
   rendering_program.bind();
-
-  //Vertex source code
-  const char vertex_source_p_l[] =
-    {
-      "#version 120 \n"
-      "attribute highp vec4 vertex;\n"
-      "uniform highp mat4 mvp_matrix;\n"
-      "void main(void)\n"
-      "{\n"
-      "   gl_Position = mvp_matrix * vertex;\n"
-      "}"
-    };
-  //Vertex source code
-  const char fragment_source_p_l[] =
-    {
-      "#version 120 \n"
-      "uniform highp vec4 color; \n"
-      "void main(void) { \n"
-      "gl_FragColor = color; \n"
-      "} \n"
-      "\n"
-    };
 
   vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
   if(!vertex_shader->compileSourceCode(vertex_source_p_l))
@@ -311,134 +316,143 @@ void Viewer::compute_face(Dart_handle dh, LCC::size_type markface)
   //compute flat normals
   LCC::Vector normal = CGAL::compute_normal_of_cell_2(lcc,dh);
   normal = normal/(CGAL::sqrt(normal*normal));
-
+  if (inverse_normal)
+    normal=normal*-1;
+  
   if (lcc.beta<1,1,1>(dh)!=dh)
   {
-    P_traits cdt_traits(normal);
-    CDT cdt(cdt_traits);
-
-    // Iterates on the vector of facet handles
-    CDT::Vertex_handle previous = NULL, first = NULL;
-    for (LCC::Dart_of_orbit_range<1>::const_iterator
-           he_circ = lcc.darts_of_orbit<1>(dh).begin(),
-           he_circ_end = lcc.darts_of_orbit<1>(dh).end();
-         he_circ!=he_circ_end; ++he_circ)
+    try // Try catch to avoir crash of triangulation
     {
-      CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
-      if(first == NULL)
-      { first = vh; }
-      vh->info().v = CGAL::compute_normal_of_cell_0<LCC>(lcc, he_circ);
-      if(previous!=NULL && previous != vh)
-      { cdt.insert_constraint(previous, vh); }
-      previous = vh;
-    }
-    if (previous!=NULL)
-      cdt.insert_constraint(previous, first);
-
-    // sets mark is_external
-    for(CDT::All_faces_iterator fit = cdt.all_faces_begin(),
-          fitend = cdt.all_faces_end(); fit!=fitend; ++fit)
-    {
-      fit->info().is_external = true;
-      fit->info().is_process = false;
-    }
-    //check if the facet is external or internal
-    std::queue<CDT::Face_handle> face_queue;
-    CDT::Face_handle face_internal = NULL;
-    face_queue.push(cdt.infinite_vertex()->face());
-    while(! face_queue.empty() )
-    {
-      CDT::Face_handle fh = face_queue.front();
-      face_queue.pop();
-      if(!fh->info().is_process)
+      P_traits cdt_traits(normal);
+      CDT cdt(cdt_traits);
+      
+      // Iterates on the vector of facet handles
+      CDT::Vertex_handle previous = NULL, first = NULL;
+      for (LCC::Dart_of_orbit_range<1>::const_iterator
+             he_circ = lcc.darts_of_orbit<1>(dh).begin(),
+             he_circ_end = lcc.darts_of_orbit<1>(dh).end();
+           he_circ!=he_circ_end; ++he_circ)
       {
-        fh->info().is_process = true;
-        for(int i = 0; i <3; ++i)
+        CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
+        if(first == NULL)
+        { first = vh; }
+        vh->info().v = CGAL::compute_normal_of_cell_0<LCC>(lcc, he_circ);
+        if (inverse_normal) vh->info().v=vh->info().v*-1;
+        if(previous!=NULL && previous != vh)
+        { cdt.insert_constraint(previous, vh); }
+        previous = vh;
+      }
+      if (previous!=NULL)
+        cdt.insert_constraint(previous, first);
+
+      // sets mark is_external
+      for(CDT::All_faces_iterator fit = cdt.all_faces_begin(),
+            fitend = cdt.all_faces_end(); fit!=fitend; ++fit)
+      {
+        fit->info().is_external = true;
+        fit->info().is_process = false;
+      }
+      //check if the facet is external or internal
+      std::queue<CDT::Face_handle> face_queue;
+      CDT::Face_handle face_internal = NULL;
+      face_queue.push(cdt.infinite_vertex()->face());
+      while(! face_queue.empty() )
+      {
+        CDT::Face_handle fh = face_queue.front();
+        face_queue.pop();
+        if(!fh->info().is_process)
         {
-          if(!cdt.is_constrained(std::make_pair(fh, i)))
+          fh->info().is_process = true;
+          for(int i = 0; i <3; ++i)
           {
-            face_queue.push(fh->neighbor(i));
-          }
-          else if (face_internal==NULL)
-          {
-            face_internal = fh->neighbor(i);
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+              face_queue.push(fh->neighbor(i));
+            }
+            else if (face_internal==NULL)
+            {
+              face_internal = fh->neighbor(i);
+            }
           }
         }
       }
-    }
 
-    if ( face_internal!=NULL )
-      face_queue.push(face_internal);
+      if ( face_internal!=NULL )
+        face_queue.push(face_internal);
 
-    while(! face_queue.empty() )
-    {
-      CDT::Face_handle fh = face_queue.front();
-      face_queue.pop();
-      if(!fh->info().is_process)
+      while(! face_queue.empty() )
       {
-        fh->info().is_process = true;
-        fh->info().is_external = false;
-        for(int i = 0; i <3; ++i)
+        CDT::Face_handle fh = face_queue.front();
+        face_queue.pop();
+        if(!fh->info().is_process)
         {
-          if(!cdt.is_constrained(std::make_pair(fh, i)))
+          fh->info().is_process = true;
+          fh->info().is_external = false;
+          for(int i = 0; i <3; ++i)
           {
-            face_queue.push(fh->neighbor(i));
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+              face_queue.push(fh->neighbor(i));
+            }
           }
         }
       }
-    }
 
-    //iterates on the internal faces to add the vertices to the positions
-    //and the normals to the appropriate vectors
-    for(CDT::Finite_faces_iterator ffit = cdt.finite_faces_begin(),
-          ffitend = cdt.finite_faces_end(); ffit != ffitend; ++ffit)
-    {
-      if(!ffit->info().is_external)
+      //iterates on the internal faces to add the vertices to the positions
+      //and the normals to the appropriate vectors
+      for(CDT::Finite_faces_iterator ffit = cdt.finite_faces_begin(),
+            ffitend = cdt.finite_faces_end(); ffit != ffitend; ++ffit)
       {
-        flat_normals.push_back(normal.x());
-        flat_normals.push_back(normal.y());
-        flat_normals.push_back(normal.z());
+        if(!ffit->info().is_external)
+        {
+          flat_normals.push_back(normal.x());
+          flat_normals.push_back(normal.y());
+          flat_normals.push_back(normal.z());
 
-        flat_normals.push_back(normal.x());
-        flat_normals.push_back(normal.y());
-        flat_normals.push_back(normal.z());
+          flat_normals.push_back(normal.x());
+          flat_normals.push_back(normal.y());
+          flat_normals.push_back(normal.z());
 
-        flat_normals.push_back(normal.x());
-        flat_normals.push_back(normal.y());
-        flat_normals.push_back(normal.z());
+          flat_normals.push_back(normal.x());
+          flat_normals.push_back(normal.y());
+          flat_normals.push_back(normal.z());
 
-        smooth_normals.push_back(ffit->vertex(0)->info().v.x());
-        smooth_normals.push_back(ffit->vertex(0)->info().v.y());
-        smooth_normals.push_back(ffit->vertex(0)->info().v.z());
+          smooth_normals.push_back(ffit->vertex(0)->info().v.x());
+          smooth_normals.push_back(ffit->vertex(0)->info().v.y());
+          smooth_normals.push_back(ffit->vertex(0)->info().v.z());
 
-        smooth_normals.push_back(ffit->vertex(1)->info().v.x());
-        smooth_normals.push_back(ffit->vertex(1)->info().v.y());
-        smooth_normals.push_back(ffit->vertex(1)->info().v.z());
+          smooth_normals.push_back(ffit->vertex(1)->info().v.x());
+          smooth_normals.push_back(ffit->vertex(1)->info().v.y());
+          smooth_normals.push_back(ffit->vertex(1)->info().v.z());
 
-        smooth_normals.push_back(ffit->vertex(2)->info().v.x());
-        smooth_normals.push_back(ffit->vertex(2)->info().v.y());
-        smooth_normals.push_back(ffit->vertex(2)->info().v.z());
+          smooth_normals.push_back(ffit->vertex(2)->info().v.x());
+          smooth_normals.push_back(ffit->vertex(2)->info().v.y());
+          smooth_normals.push_back(ffit->vertex(2)->info().v.z());
 
-        pos_facets.push_back(ffit->vertex(0)->point().x());
-        pos_facets.push_back(ffit->vertex(0)->point().y());
-        pos_facets.push_back(ffit->vertex(0)->point().z());
+          pos_facets.push_back(ffit->vertex(0)->point().x());
+          pos_facets.push_back(ffit->vertex(0)->point().y());
+          pos_facets.push_back(ffit->vertex(0)->point().z());
 
-        pos_facets.push_back(ffit->vertex(1)->point().x());
-        pos_facets.push_back(ffit->vertex(1)->point().y());
-        pos_facets.push_back(ffit->vertex(1)->point().z());
+          pos_facets.push_back(ffit->vertex(1)->point().x());
+          pos_facets.push_back(ffit->vertex(1)->point().y());
+          pos_facets.push_back(ffit->vertex(1)->point().z());
 
-        pos_facets.push_back(ffit->vertex(2)->point().x());
-        pos_facets.push_back(ffit->vertex(2)->point().y());
-        pos_facets.push_back(ffit->vertex(2)->point().z());
+          pos_facets.push_back(ffit->vertex(2)->point().x());
+          pos_facets.push_back(ffit->vertex(2)->point().y());
+          pos_facets.push_back(ffit->vertex(2)->point().z());
 
-        colors.push_back(r);colors.push_back(g);colors.push_back(b);
-        colors.push_back(r);colors.push_back(g);colors.push_back(b);
-        colors.push_back(r);colors.push_back(g);colors.push_back(b);
+          colors.push_back(r);colors.push_back(g);colors.push_back(b);
+          colors.push_back(r);colors.push_back(g);colors.push_back(b);
+          colors.push_back(r);colors.push_back(g);colors.push_back(b);
+        }
       }
+    }
+    catch(...)
+    { // Triangulation crash: the face is not filled
     }
   }
   else
-  {
+  { // The face is a triangle
     colors.push_back(r);colors.push_back(g);colors.push_back(b);
     colors.push_back(r);colors.push_back(g);colors.push_back(b);
     colors.push_back(r);colors.push_back(g);colors.push_back(b);
@@ -462,6 +476,7 @@ void Viewer::compute_face(Dart_handle dh, LCC::size_type markface)
       //compute Smooth normals
       LCC::Vector normal = CGAL::compute_normal_of_cell_0(lcc,orbitIter);
       normal = normal/(CGAL::sqrt(normal*normal));
+      if (inverse_normal) normal=normal*-1;
 
       smooth_normals.push_back(normal.x());
       smooth_normals.push_back(normal.y());
@@ -595,7 +610,6 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
     mvMatrix.data()[i] = (float)mat[i];
   }
   // define material
-  QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
   QVector4D diffuse( 0.9f,
                      0.9f,
                      0.9f,
@@ -639,11 +653,11 @@ void Viewer::sceneChanged()
 {
   compute_elements();
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
-						     bb.ymin(),
-						     bb.zmin()),
-				      qglviewer::Vec(bb.xmax(),
-						     bb.ymax(),
-						     bb.zmax()));
+                                                     bb.ymin(),
+                                                     bb.zmin()),
+                                      qglviewer::Vec(bb.xmax(),
+                                                     bb.ymax(),
+                                                     bb.zmax()));
   are_buffers_initialized = false;
 
   if (m_previous_scene_empty)
@@ -691,13 +705,14 @@ void Viewer::draw()
       color.setRgbF(0.2f, 0.2f, 0.7f);
       rendering_program_p_l.bind();
       rendering_program_p_l.setAttributeValue(colorLocation,color);
+      ::glLineWidth(size_edges);
       glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
       rendering_program_p_l.release();
       vao[2].release();
     }
     if(vertices)
     {
-      ::glPointSize(7.f);
+      ::glPointSize(size_points);
       vao[3].bind();
       attrib_buffers(this);
       color.setRgbF(.2f,.2f,.6f);
@@ -722,10 +737,17 @@ void Viewer::init()
   setKeyDescription(Qt::Key_F, "Toggles flat shading display");
   setKeyDescription(Qt::Key_E, "Toggles edges display");
   setKeyDescription(Qt::Key_V, "Toggles vertices display");
+  setKeyDescription(Qt::Key_N, "Inverse direction of normals");
+  setKeyDescription(Qt::Key_Plus, "Increase size of edges");
+  setKeyDescription(Qt::Key_Minus, "Decrease size of edges");
+  setKeyDescription(Qt::Key_Plus+Qt::ShiftModifier, "Increase size of vertices");
+  setKeyDescription(Qt::Key_Minus+Qt::ShiftModifier, "Decrease size of vertices");
+  setKeyDescription(Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
+  setKeyDescription(Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
 
   // Light default parameters
-  ::glLineWidth(1.4f);
-  ::glPointSize(4.f);
+  ::glLineWidth(size_edges);
+  ::glPointSize(size_points);
   ::glEnable(GL_POLYGON_OFFSET_FILL);
   ::glPolygonOffset(1.0f,1.0f);
   ::glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -752,24 +774,138 @@ void Viewer::keyPressEvent(QKeyEvent *e)
   {
     wireframe = !wireframe;
     if (wireframe)
+    {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      displayMessage("Wireframe.");
+    }
     else
+    {
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      displayMessage("Filled faces.");
+    }
     updateGL();
   }
   else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
   {
     flatShading = !flatShading;
+    if (flatShading)
+      displayMessage("Flat shading.");
+    else
+      displayMessage("Gouraud shading.");
     updateGL();
   }
   else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
   {
     edges = !edges;
+    displayMessage(QString("Draw edges=%1.").arg(edges?"true":"false"));
     updateGL();
   }
   else if ((e->key()==Qt::Key_V) && (modifiers==Qt::NoButton))
   {
     vertices = !vertices;
+    displayMessage(QString("Draw vertices=%1.").arg(vertices?"true":"false"));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_N) && (modifiers==Qt::NoButton))
+  {
+    inverse_normal = !inverse_normal;
+    displayMessage(QString("Inverse normal=%1.").arg(inverse_normal?"true":"false"));
+    sceneChanged();
+  }
+  else if ((e->key()==Qt::Key_Plus) && (modifiers==Qt::KeypadModifier))
+  {
+    size_edges+=.5;
+    displayMessage(QString("Size of edges=%1.").arg(size_edges));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_Minus) && (modifiers==Qt::KeypadModifier))
+  {
+    if (size_edges>.5) size_edges-=.5;
+    displayMessage(QString("Size of edges=%1.").arg(size_edges));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_Plus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
+  {
+    size_points+=.5;
+    displayMessage(QString("Size of points=%1.").arg(size_points));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_Minus) && (modifiers==(Qt::ShiftModifier|Qt::KeypadModifier)))
+  {
+    if (size_points>.5) size_points-=.5;
+    displayMessage(QString("Size of points=%1.").arg(size_points));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton))
+  {
+    ambient.setX(ambient.x()+.1);
+    if (ambient.x()>1.) ambient.setX(1.);
+    ambient.setY(ambient.x()+.1);
+    if (ambient.y()>1.) ambient.setY(1.);
+    ambient.setZ(ambient.x()+.1);
+    if (ambient.z()>1.) ambient.setZ(1.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::NoButton))
+  {
+    ambient.setX(ambient.x()-.1);
+    if (ambient.x()<0.) ambient.setX(0.);
+    ambient.setY(ambient.y()-.1);
+    if (ambient.y()<0.) ambient.setY(0.);
+    ambient.setZ(ambient.z()-.1);
+    if (ambient.z()<0.) ambient.setZ(0.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ShiftModifier))
+  {
+    ambient.setX(ambient.x()+.1);
+    if (ambient.x()>1.) ambient.setX(1.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::AltModifier))
+  {
+    ambient.setY(ambient.y()+.1);
+    if (ambient.y()>1.) ambient.setY(1.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::ControlModifier))
+  {
+    ambient.setZ(ambient.z()+.1);
+    if (ambient.z()>1.) ambient.setZ(1.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ShiftModifier))
+  {
+    ambient.setX(ambient.x()-.1);
+    if (ambient.x()<0.) ambient.setX(0.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::AltModifier))
+  {
+    ambient.setY(ambient.y()-.1);
+    if (ambient.y()<0.) ambient.setY(0.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
+    updateGL();
+  }
+  else if ((e->key()==Qt::Key_PageDown) && (modifiers==Qt::ControlModifier))
+  {
+    ambient.setZ(ambient.z()-.1);
+    if (ambient.z()<0.) ambient.setZ(0.);
+    displayMessage(QString("Light color=(%1 %2 %3).").
+        arg(ambient.x()).arg(ambient.y()).arg(ambient.z()));
     updateGL();
   }
   else

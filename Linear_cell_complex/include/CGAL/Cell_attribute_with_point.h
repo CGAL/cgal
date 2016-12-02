@@ -63,11 +63,11 @@ namespace CGAL {
                           Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
-
     template <class, class, class, class>
     friend class Compact_container;
+
+    template <class, class>
+    friend class Concurrent_compact_container;
 
   public:
     typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
@@ -93,7 +93,7 @@ namespace CGAL {
     bool operator!=(const Self& other) const
     { return !operator==(other); }
 
-    // protected:
+  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}
@@ -118,11 +118,11 @@ namespace CGAL {
     public Cell_attribute<LCC, void, Tag, Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
-    template < unsigned int, class, class, class, class  >
-    friend class Combinatorial_map_base;
-
     template <class, class, class, class>
     friend class Compact_container;
+
+    template <class, class>
+    friend class Concurrent_compact_container;
 
   public:
     typedef Cell_attribute<LCC, void, Tag,
@@ -147,7 +147,7 @@ namespace CGAL {
     bool operator==(const Cellattr&) const
     { return false; }
 
-    //  protected:
+  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}

@@ -1,5 +1,4 @@
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_operations.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <iostream>
 #include <algorithm>
 
@@ -15,8 +14,6 @@ struct Myitem
   template<class Refs>
   struct Dart_wrapper
   {
-    typedef CGAL::Dart<3, Refs > Dart;
-    
     typedef CGAL::Cell_attribute_with_point< Refs, int, CGAL::Tag_true, 
                                              Average_functor >
     Vertex_attribute;
@@ -27,7 +24,7 @@ struct Myitem
 
 typedef CGAL::Linear_cell_complex_traits
 <3, CGAL::Exact_predicates_inexact_constructions_kernel> Traits;
-typedef CGAL::Linear_cell_complex<3,3,Traits,Myitem>     LCC_3;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Traits,Myitem> LCC_3;
 typedef LCC_3::Dart_handle                               Dart_handle;
 typedef LCC_3::Point                                     Point;
 typedef LCC_3::FT                                        FT;

@@ -31,6 +31,9 @@
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 
+#define NB_VBO_BUFFERS 8
+#define NB_VAO_BUFFERS 4
+
 class Viewer : public QGLViewer, public QOpenGLFunctions_2_1
 {
   Q_OBJECT
@@ -71,11 +74,18 @@ private:
 
 private:
   Scene* scene;
+  
   bool wireframe;
   bool flatShading;
   bool edges;
-  bool vertices;
-  CGAL::Bbox_3 bb;
+  bool vertices;  
+  bool inverse_normal;
+  
+  double size_points;
+  double size_edges;
+
+  QVector4D ambient;
+  
   bool m_previous_scene_empty;
   bool are_buffers_initialized;
 
@@ -95,10 +105,12 @@ private:
   std::vector<float> flat_normals;
   std::vector<float> colors;
 
-  QGLBuffer buffers[10];
-  QOpenGLVertexArrayObject vao[10];
+  QGLBuffer buffers[NB_VBO_BUFFERS];
+  QOpenGLVertexArrayObject vao[NB_VAO_BUFFERS];
   QOpenGLShaderProgram rendering_program;
   QOpenGLShaderProgram rendering_program_p_l;
+
+  CGAL::Bbox_3 bb;
 };
 
 #endif

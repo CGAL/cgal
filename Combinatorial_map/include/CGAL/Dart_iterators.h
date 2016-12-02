@@ -666,7 +666,7 @@ namespace CGAL {
         else
         {          
           if ( !mfirst_border ) 
-            this->set_current_dart(mit->beta(delta));
+            this->set_current_dart(this->mmap->beta(mit, delta));
           else
             this->set_current_dart(mit);
         }

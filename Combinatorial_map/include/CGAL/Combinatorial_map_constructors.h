@@ -22,8 +22,6 @@
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-#include <CGAL/Combinatorial_map_basic_operations.h>
-
 namespace CGAL {
 
   /** @file Combinatorial_map_constructors.h

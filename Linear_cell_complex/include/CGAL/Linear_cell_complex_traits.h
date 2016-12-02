@@ -23,6 +23,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/predicates_d.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
 

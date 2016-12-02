@@ -1,8 +1,7 @@
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/Linear_cell_complex_operations.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/import_from_triangulation_2.h>
+#include <CGAL/Triangulation_2_to_lcc.h>
 
 #include <iostream>
 #include <fstream>
@@ -12,13 +11,9 @@
 #include "linear_cell_complex_3_viewer_qt.h"
 #endif
 
-/* // If you want to use exact constructions.
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-typedef CGAL::Linear_cell_complex<2,2,
-  CGAL::Linear_cell_complex_traits<2, CGAL::Exact_predicates_exact_constructions_kernel> > LCC_2;
-*/
-
-typedef CGAL::Linear_cell_complex<2> LCC_2;
+// This example works both with cmap and gmap as combinatorial data structure.
+//typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC_2;
+typedef CGAL::Linear_cell_complex_for_generalized_map<2> LCC_2;
 typedef LCC_2::Dart_handle           Dart_handle;
 typedef LCC_2::Point                 Point;
 
@@ -42,11 +37,11 @@ void display_voronoi(LCC_2& alcc, Dart_handle adart)
          it=alcc.darts_of_cell<2>(adart).begin(),
          itend=alcc.darts_of_cell<2>(adart).end(); it!=itend; ++it)
   {
-    if ( !alcc.is_marked(alcc.beta(it,2), mark_toremove) )
+    if ( !alcc.is_marked(alcc.opposite<2>(it), mark_toremove) )
     {
-      CGAL::mark_cell<LCC_2,2>(alcc, alcc.beta(it,2), mark_toremove);
-      toremove.push(alcc.beta(it,2));
-    }    
+      CGAL::mark_cell<LCC_2,2>(alcc, alcc.opposite<2>(it), mark_toremove);
+      toremove.push(alcc.opposite<2>(it));
+    }   
   }
   
   while( !toremove.empty() )
