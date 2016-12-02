@@ -134,6 +134,13 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, get_static_def
 /** This value cannot be CORE_INFTY. */
 CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defBigFloatInputDigits, 16)
 
+inline
+long
+getBigFloatInputDigits()
+{
+  return get_static_defBigFloatInputDigits();
+}
+
 /// default BigFloat Division Relative Precision
 CGAL_GLOBAL_STATE_VAR(extLong, defBFdivRelPrec, 54)
 /// default BigFloat Sqrt Absolute Precision
@@ -233,6 +240,11 @@ inline bool setProgressiveEvalFlag(bool f) {
   get_static_progressiveEvalFlag() = f;
   return oldf;
 }
+
+  inline long getInitialProgressivePrec()
+  {
+    return get_static_defInitialProgressivePrec();
+  }
 
 /// set initial bit precision for progressive evaluation:
 inline long setDefInitialProgressivePrec(long n) {

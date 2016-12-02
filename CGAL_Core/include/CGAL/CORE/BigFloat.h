@@ -183,7 +183,7 @@ public:
   /// \name String Conversion Functions
   //@{
   /// set value from <tt>const char*</tt> (base = 10)
-  void fromString(const char* s, const extLong& p=get_static_defBigFloatInputDigits()) {
+  void fromString(const char* s, extLong p = getBigFloatInputDigits()) {
     rep->fromString(s, p);
   }
   /// convert to <tt>std::string</tt> (base = 10)

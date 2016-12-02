@@ -117,7 +117,7 @@ CGAL::cpp11::atomic<long> defBigFloatOutputDigits = 10;
 
 /**  NORMALLY, we like to make this equal to defBigFloatOutputDigits
   *  8/3/01, Chee: re-introduced this parameter */
-CGAL::cpp11::atomic<long> defOutputDigits = defBigFloatOutputDigits;
+CGAL::cpp11::atomic<long> defOutputDigits = 10; // == defBigFloatOutputDigits;
 
 /** String Input Precision */
 

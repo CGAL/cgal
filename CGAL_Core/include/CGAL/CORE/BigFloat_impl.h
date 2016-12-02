@@ -1009,7 +1009,7 @@ std::string BigFloatRep::round(std::string inRep, long& L10, unsigned int width)
 // See the file Real.cc for the differences
 
 CGAL_INLINE_FUNCTION
-void BigFloatRep :: fromString(const char *str, const extLong & prec ) {
+void BigFloatRep :: fromString(const char *str, extLong prec ) {
   // NOTE: prec defaults to get_static_defBigFloatInputDigits() (see BigFloat.h)
   // check that prec is not INFTY
   if (prec.isInfty())
