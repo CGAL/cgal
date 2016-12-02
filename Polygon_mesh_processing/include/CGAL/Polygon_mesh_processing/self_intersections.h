@@ -29,6 +29,8 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
 
+#include <CGAL/Kernel/global_functions_3.h>
+
 #include <vector>
 #include <exception>
 #include <boost/foreach.hpp>
@@ -97,16 +99,34 @@ struct Intersect_facets
     do_intersect_3_functor(kernel.do_intersect_3_object())
   { }
 
-  void operator()(const Box* b,
-    const Box* c) const
+  void operator()(const Box* b, const Box* c) const
   {
-    halfedge_descriptor h  = halfedge(b->info(),m_tmesh);
+    halfedge_descriptor h = halfedge(b->info(), m_tmesh);
+    halfedge_descriptor opp_h;
 
-    // check for shared egde --> no intersection
-    if(face(opposite(h,m_tmesh),m_tmesh) == c->info() ||
-       face(opposite(next(h,m_tmesh),m_tmesh),m_tmesh) == c->info() ||
-       face(opposite(next(next(h,m_tmesh),m_tmesh),m_tmesh),m_tmesh) == c->info())
-      return;
+    // check for shared egde
+    for(unsigned int i=0; i<3; ++i){
+      opp_h = opposite(h, m_tmesh);
+      if(face(opp_h, m_tmesh) == c->info()){
+        // there is an intersection if the four points are coplanar and
+        // the triangles overlap
+        if(CGAL::coplanar(get(m_vpmap, target(h, m_tmesh)),
+                          get(m_vpmap, target(next(h, m_tmesh), m_tmesh)),
+                          get(m_vpmap, source(h, m_tmesh)),
+                          get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh))) &&
+           CGAL::coplanar_orientation(get(m_vpmap, source(h, m_tmesh)),
+                                      get(m_vpmap, target(h, m_tmesh)),
+                                      get(m_vpmap, target(next(h, m_tmesh), m_tmesh)),
+                                      get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh)))
+             == CGAL::POSITIVE){
+          *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
+          return;
+        } else { // there is a shared edge but no intersection
+          return;
+        }
+      }
+      h = next(h, m_tmesh);
+    }
 
     // check for shared vertex --> maybe intersection, maybe not
     halfedge_descriptor g = halfedge(c->info(),m_tmesh);
