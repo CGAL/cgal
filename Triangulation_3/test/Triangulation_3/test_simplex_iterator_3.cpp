@@ -217,6 +217,59 @@ void test_edge_facet_vertex(const DT& dt, const std::size_t& nb_tests)
   }
 }
 
+void test_vertex_facet_edge(const DT& dt, const std::size_t& nb_tests)
+{
+  std::cout << "* test_vertex_facet_edge *" << std::endl;
+  std::vector<Facet> facets;
+  DT::Finite_facets_iterator fit = dt.finite_facets_begin();
+  ++fit; ++fit; ++fit; //just avoid using the same faces as for test_edge_facet_vertex
+  for (; fit != dt.finite_facets_end() && facets.size() < nb_tests;
+       ++fit)
+  {
+    facets.push_back(*fit);
+  }
+  for (std::size_t i = 0; i < nb_tests; ++i)
+  {
+    const int fi = facets[i].second;
+    Vertex_handle v1 = facets[i].first->vertex((fi + 1) % 4);
+    Vertex_handle v2 = facets[i].first->vertex((fi + 2) % 4);
+    Vertex_handle v3 = facets[i].first->vertex((fi + 3) % 4);
+
+    Point_3 p1 = v1->point();
+    Point_3 p2 = CGAL::midpoint(v2->point(), v3->point());
+    Vector_3 v(p1, p2);
+
+    std::cout << "TEST " << i << " (" << p1 << " ** " << p2 << ")"
+      << std::endl;
+    std::cout << "\t(";
+    Simplex_traverser st(dt, p1 - 2.*v, p2 + 3.*v);
+    Simplex_traverser end = st.end();
+    for (; st != end; ++st)
+    {
+      std::cout << st.simplex_dimension();
+      if (dt.is_infinite(st))
+        std::cout << "i";
+      std::cout << " ";
+
+      if (st.is_vertex() && st.get_vertex() == v1)
+      {
+        ++st;
+        assert(st.is_facet());
+        assert(st.get_facet() == facets[i]
+            || st.get_facet() == dt.mirror_facet(facets[i]));
+        ++st;
+        assert(st.is_edge());
+        Edge e = st.get_edge();
+        Vertex_handle va = e.first->vertex(e.second);
+        Vertex_handle vb = e.first->vertex(e.third);
+        assert((va == v2 && vb == v3) || (va == v3 && vb == v2));
+      }
+    }
+    std::cout << ")" << std::endl;
+  }
+}
+
+
 int main(int argc, char* argv[])
 {
   const char* fname = (argc>1) ? argv[1] : "data/blobby.xyz";
@@ -300,6 +353,8 @@ int main(int argc, char* argv[])
   test_edge_facet_vertex(dt, 3);
 
   // - along a facet via vertex/facet/edge
+  test_vertex_facet_edge(dt, 3);
+
   // - along 2 successive facets (vertex/facet/edge/facet/edge)
   // - along 2 successive edges (vertex/edge/vertex/edge/vertex)
   // - along a facet and an edge successively
