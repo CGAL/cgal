@@ -103,9 +103,8 @@ public:
 
   // STATIC MEMBERS
   // static NT ccc_; // THIS IS A TEMPORARY HACK
-  static  int COEFF_PER_LINE;		// pretty print parameters
-  static const char * INDENT_SPACE;		// pretty print parameters
-
+  static const int COEFF_PER_LINE = 4;		// pretty print parameters
+  static const char INDENT_SPACE[];  		// pretty print parameters
   static const Polynomial<NT> & polyZero();
   static const Polynomial<NT> & polyUnity();
 
