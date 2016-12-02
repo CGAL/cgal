@@ -37,6 +37,7 @@
 #include <new>           // for placement new
 #include <cassert>
 #include <CGAL/assertions.h>
+#include <CGAL/tss.h>
 #include <vector>
 
 namespace CORE { 
@@ -50,6 +51,7 @@ private:
       Thunk* next;
    };
 
+  typedef MemoryPool<T,nObjects> Self;
 public:
    MemoryPool() : head( 0 ) {}
 
@@ -78,7 +80,8 @@ public:
    void free(void* p);
 
   // Access the corresponding static global allocator.
-  static MemoryPool<T>& global_allocator() {
+  static MemoryPool<T,nObjects>& global_allocator() {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Self, memPool);
     return memPool;
   }
  
@@ -86,13 +89,8 @@ private:
    Thunk* head; // next available block in the pool
   std::vector<void*> blocks;
 
-private:
-  // Static global allocator.
-  static MemoryPool<T, nObjects> memPool;   
+  
 };
-
-template <class T, int nObjects >
-MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
 
 template< class T, int nObjects >
 void* MemoryPool< T, nObjects >::allocate(std::size_t) {

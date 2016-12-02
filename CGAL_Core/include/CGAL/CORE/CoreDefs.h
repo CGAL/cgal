@@ -128,7 +128,7 @@ CGAL_GLOBAL_STATE_VAR(extLong, defInputDigits, CORE_posInfty)
 /** This value cannot be CORE_INFTY
     See also defBigFloatOutputDigits. 
     (it really should be an int, as in std::cout.setprecision(int)). */
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, get_static_defBigFloatOutputDigits())
+CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
 
 /// default input precision in digits for converting a string to a BigFloat
 /** This value cannot be CORE_INFTY. */
