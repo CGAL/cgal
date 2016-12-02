@@ -1012,7 +1012,10 @@ void MainWindow::open(QString filename)
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
   selectSceneItem(scene->addItem(scene_item));
-  sceneView->resizeColumnToContents(Scene::NameColumn);
+  if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+  else
+    sceneView->resizeColumnToContents(Scene::NameColumn);
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
@@ -1723,7 +1726,10 @@ void MainWindow::makeNewGroup()
 {
     Scene_group_item * group = new Scene_group_item();
     scene->addItem(group);
-    sceneView->resizeColumnToContents(Scene::NameColumn);
+    if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
+      sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+    else
+      sceneView->resizeColumnToContents(Scene::NameColumn);
 }
 
 void MainWindow::on_upButton_pressed()
@@ -1874,9 +1880,12 @@ void MainWindow::resetHeader()
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width(" Color "));
+  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  sceneView->resizeColumnToContents(Scene::NameColumn);
-  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString(" AB ")));
-  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString(" View ")));
+  if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+  else
+    sceneView->resizeColumnToContents(Scene::NameColumn);
+  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
+  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
 }

@@ -619,7 +619,7 @@ Scene::data(const QModelIndex &index, int role) const
                 return "B";
         }
         else if(role == ::Qt::TextAlignmentRole) {
-            return ::Qt::AlignCenter;
+            return ::Qt::AlignLeft;
         }
         break;
     case VisibleColumn:
@@ -644,7 +644,7 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
                 return tr("Name");
                 break;
             case ColorColumn:
-                return tr("Color");
+                return tr("#");
                 break;
             case RenderingModeColumn:
                 return tr("Mode");
