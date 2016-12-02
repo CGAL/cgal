@@ -92,7 +92,7 @@ private:
         matrix.add_coef(row_id, col_id, multiplier);
       }
       else { 
-        typename boost::property_traits<VertexPointMap>::reference p = ppmap[v];
+        typename boost::property_traits<VertexPointMap>::reference p = get(ppmap, v);
         x += multiplier * - to_double(p.x());
         y += multiplier * - to_double(p.y());
         z += multiplier * - to_double(p.z());
