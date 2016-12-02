@@ -647,7 +647,9 @@ public:
           chnext = Cell_handle(_cell_iterator);
           _cell_iterator.entry(ltnext, linext, ljnext);
         }
-        if (ltnext == Locate_type::EDGE)
+        if (_cell_iterator == _cell_iterator.end())
+          _curr_simplex = Cell_handle(_cell_iterator);
+        else if (ltnext == Locate_type::EDGE)
           _curr_simplex = shared_facet(get_edge(), Edge(chnext, linext, ljnext));
         else if (ltnext == Locate_type::FACET)
           _curr_simplex = chnext->neighbor(linext);//chnext will be met after the facet
@@ -684,37 +686,52 @@ public:
         //_cell_iterator is one step forward _curr_simplex
         CGAL_assertion(ch != chnext);
 
-        Locate_type lt;
-        int li, lj;
-        _cell_iterator.entry(lt, li, lj);
+        Locate_type ltnext;
+        int linext, ljnext;
+        _cell_iterator.entry(ltnext, linext, ljnext);
 
-        int index_v = ch->index(get_vertex());
-        int index_vnext = ch->index(chnext->vertex(li));
-        switch (lt)
+        switch (ltnext)
         {
         case Locate_type::VERTEX:
-          while (index_v == index_vnext)//another cell with same vertex has been found
+        {
+          while (ltnext == Locate_type::VERTEX
+              && _cell_iterator != _cell_iterator.end()
+              && get_vertex() == chnext->vertex(linext))//another cell with same vertex has been found
           {
             ch = chnext;
-            index_v = ch->index(get_vertex());
 
             ++_cell_iterator;
             chnext = Cell_handle(_cell_iterator);
-            CGAL_assertion(ch != chnext);
-            _cell_iterator.entry(lt, li, lj);
-            CGAL_assertion(lt == Locate_type::VERTEX);
-            index_vnext = ch->index(chnext->vertex(li));
+            _cell_iterator.entry(ltnext, linext, ljnext);
           }
-          _curr_simplex = Edge(ch, index_v, index_vnext);
+          if (_cell_iterator == _cell_iterator.end())
+          {
+            _curr_simplex = Cell_handle(_cell_iterator);
+          }
+          else
+          {
+            if (ltnext == Locate_type::VERTEX)
+              _curr_simplex = Edge(ch, ch->index(get_vertex()), ch->index(chnext->vertex(linext)));
+            else if (ltnext == Locate_type::EDGE)
+              _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
+            else if (ltnext == Locate_type::FACET)
+            {
+              CGAL_assertion(!facet_has_vertex(Facet(chnext, linext), get_vertex()));
+              _curr_simplex = ch;
+            }
+          }
           break;
+        }
         case Locate_type::EDGE:
         {
-          int index_f = 6 - (index_v + index_vnext + ch->index(chnext->vertex(lj)));
+          int index_v = ch->index(get_vertex());
+          int index_vnext = ch->index(chnext->vertex(linext));
+          int index_f = 6 - (index_v + index_vnext + ch->index(chnext->vertex(ljnext)));
           _curr_simplex = Facet(ch, index_f);
           break;
         }
         default ://FACET
-          CGAL_assertion(lt == Locate_type::FACET);
+          CGAL_assertion(ltnext == Locate_type::FACET);
           _curr_simplex = ch;
         };
       }
