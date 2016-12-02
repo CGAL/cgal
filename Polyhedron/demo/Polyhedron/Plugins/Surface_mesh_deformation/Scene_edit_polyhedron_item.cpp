@@ -496,18 +496,20 @@ void Scene_edit_polyhedron_item::deform()
 struct ROI_faces_pmap
 {
   typedef face_descriptor                    key_type;
-  typedef bool                               value_type;
-  typedef bool                               reference;
+  typedef std::size_t                        value_type;
+  typedef std::size_t&                       reference;
   typedef boost::read_write_property_map_tag category;
 
-  friend bool get(const ROI_faces_pmap&, const key_type& f)
-  {
-    return f->patch_id() == 12345;/*magic number*/
+  friend value_type get(const ROI_faces_pmap&, const key_type& f)
+  { 
+    /*magic number 12345*/
+    if (f->patch_id() == 12345) return 1;
+    else                        return 0;
   }
   friend void put(ROI_faces_pmap&, const key_type& f, const value_type b)
   {
-    if (b)  f->set_patch_id(12345);
-    else    f->set_patch_id(patch_id_default_value(1));
+    if(b != 0)  f->set_patch_id(12345);
+    else        f->set_patch_id(0);
   }
 };
 
@@ -621,7 +623,7 @@ void Scene_edit_polyhedron_item_priv::remesh()
       if(add_face)
       {
         roi_facets.insert(fv);
-        put(roi_faces_pmap, fv, true);
+        put(roi_faces_pmap, fv, 1/*true*/);
       }
     }
   }
@@ -712,14 +714,14 @@ void Scene_edit_polyhedron_item_priv::remesh()
 
   BOOST_FOREACH(face_descriptor f, faces(g))
   {
-    if (!get(roi_faces_pmap, f))
+    if (get(roi_faces_pmap, f) == 0/*false*/)
       continue;
     BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, g), g))
     {
       vertex_descriptor v = target(h, g);
       item->insert_roi_vertex(v);
     }
-    put(roi_faces_pmap, f, false); //reset ids
+    put(roi_faces_pmap, f, 0/*false*/); //reset ids
   }
 
   reset_drawing_data();

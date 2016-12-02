@@ -591,29 +591,32 @@ namespace internal {
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
 
+        bool swap_done = false;
         if (is_on_patch_border(va) && !is_on_patch_border(vb))
         {
           he = opposite(he, mesh_);
           va = source(he, mesh_);
           vb = target(he, mesh_);
+          swap_done = true;
           CGAL_assertion(is_on_patch_border(vb) && !is_on_patch_border(va));
         }
-        else if (is_on_patch(va) && is_on_patch(vb))
-        {
-          if(!collapse_does_not_invert_face(he))
-          {
-            if (collapse_does_not_invert_face(opposite(he, mesh_)))
-            {
-              he = opposite(he, mesh_);
-              va = source(he, mesh_);
-              vb = target(he, mesh_);
-            }
-            else
-              continue;//both directions invert a face
-          }
-          CGAL_assertion(collapse_does_not_invert_face(he));
-        }
 
+        if(!collapse_does_not_invert_face(he))
+        {
+          if (!swap_done//if swap has already been done, don't re-swap
+           && collapse_does_not_invert_face(opposite(he, mesh_)))
+          {
+            he = opposite(he, mesh_);
+            va = source(he, mesh_);
+            vb = target(he, mesh_);
+
+            if (is_on_patch_border(va) && !is_on_patch_border(vb))
+              continue;//we cannot swap again. It would lead to a face inversion
+          }
+          else
+            continue;//both directions invert a face
+        }
+        CGAL_assertion(collapse_does_not_invert_face(he));
         CGAL_assertion(is_collapse_allowed(e));
 
         if (degree(va, mesh_) < 3
@@ -651,7 +654,8 @@ namespace internal {
           }
 
           //before collapse
-          bool mesh_border_case     = is_on_border(opposite(he, mesh_));
+          bool mesh_border_case     = is_on_border(he);
+          bool mesh_border_case_opp = is_on_border(opposite(he, mesh_));
           halfedge_descriptor ep_p  = prev(opposite(he, mesh_), mesh_);
           halfedge_descriptor epo_p = opposite(ep_p, mesh_);
           halfedge_descriptor en    = next(he, mesh_);
@@ -663,14 +667,16 @@ namespace internal {
 
           // merge halfedge_status to keep the more important on both sides
           //do it before collapse is performed to be sure everything is valid
-          merge_status(en, s_epo, s_ep);
           if (!mesh_border_case)
+            merge_status(en, s_epo, s_ep);
+          if (!mesh_border_case_opp)
             merge_status(en_p, s_epo_p, s_ep_p);
 
-          if (!mesh_border_case)
-            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
           halfedge_and_opp_removed(he);
-          halfedge_and_opp_removed(prev(he, mesh_));
+          if (!mesh_border_case)
+            halfedge_and_opp_removed(prev(he, mesh_));
+          if (!mesh_border_case_opp)
+            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
 
           //constrained case
           bool constrained_case = is_constrained(va) || is_constrained(vb);
@@ -832,7 +838,6 @@ namespace internal {
     void tangential_relaxation(const bool relax_constraints/*1d smoothing*/
                              , const unsigned int nb_iterations)
     {
-      //todo : move border vertices along 1-dimensional features
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Tangential relaxation (" << nb_iterations << " iter.)...";
       std::cout << std::endl;
@@ -917,7 +922,21 @@ namespace internal {
       // perform moves
       BOOST_FOREACH(const VP_pair& vp, new_locations)
       {
+        const Point initial_pos = get(vpmap_, vp.first);
+        const Vector_3 move(initial_pos, vp.second);
+
         put(vpmap_, vp.first, vp.second);
+
+        //check that no inversion happened
+        double frac = 1.;
+        while (frac > 0.03 //5 attempts maximum
+           && !check_normals(vp.first)) //if a face has been inverted
+        {
+          frac = 0.5 * frac;
+          put(vpmap_, vp.first, initial_pos + frac * move);//shorten the move by 2
+        }
+        if (frac <= 0.02)
+          put(vpmap_, vp.first, initial_pos);//cancel move
       }
 
       CGAL_assertion(is_valid(mesh_));
@@ -983,7 +1002,7 @@ private:
   Patch_id get_patch_id(const face_descriptor& f) const
   {
     if (f == boost::graph_traits<PM>::null_face())
-      return Patch_id();
+      return Patch_id(-1);
     return get(patch_ids_map_, f);
   }
 
@@ -1126,10 +1145,12 @@ private:
         return false;
       if (is_on_patch(he)) //hopp is also on patch
       {
+        CGAL_assertion(is_on_patch(hopp));
         if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
           return false;//collapse would induce pinching the selection
         else
-          return is_collapse_allowed(he) && is_collapse_allowed(hopp);
+          return (is_collapse_allowed_on_patch(he)
+               && is_collapse_allowed_on_patch(hopp));
       }
       else if (is_on_patch_border(he))
         return is_collapse_allowed_on_patch_border(he);
@@ -1138,7 +1159,7 @@ private:
       return false;
     }
 
-    bool is_collapse_allowed(const halfedge_descriptor& he) const
+    bool is_collapse_allowed_on_patch(const halfedge_descriptor& he) const
     {
       halfedge_descriptor hopp = opposite(he, mesh_);
 
@@ -1175,6 +1196,8 @@ private:
       {
         if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
           return false;
+        else if (next_on_patch_border(h) == hopp)
+          return false; //isolated patch border
         else
           return true;
       }
@@ -1256,37 +1279,43 @@ private:
       //move source at target
       put(vpmap_, vs, get(vpmap_, vt));
 
+      //collect halfedges around vs and vt
+      std::vector<halfedge_descriptor> hedges;
+      BOOST_FOREACH(halfedge_descriptor hd,
+        halfedges_around_target(h, mesh_))
+          hedges.push_back(hd);
+      BOOST_FOREACH(halfedge_descriptor hd,
+        halfedges_around_target(opposite(h, mesh_), mesh_))
+          hedges.push_back(hd);
+
       //collect normals to faces around vs AND vt
       //vertices are at the same location, but connectivity is still be same,
       //with plenty of degenerate triangles (which are common to both stars)
-      std::vector<Vector_3> normals;
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    halfedges_around_target(h, mesh_))
+      std::vector<Vector_3> normals_patch1;
+      std::vector<Vector_3> normals_patch2;
+      Patch_id patch1 = -1, patch2 = -1;
+      BOOST_FOREACH(halfedge_descriptor hd, hedges)
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
-        //n can be 0 in the splitting step because we remove degenerate faces
-        //only at the end of the splitting step
-        if(n != CGAL::NULL_VECTOR)
-          normals.push_back(n);
-      }
-      BOOST_FOREACH(halfedge_descriptor hd,
-                    halfedges_around_target(opposite(h, mesh_), mesh_))
-      {
-        Vector_3 n = compute_normal(face(hd, mesh_));
-        if(n != CGAL::NULL_VECTOR)
-          normals.push_back(n);
+        if (n == CGAL::NULL_VECTOR) //for degenerate faces
+          continue;
+        Patch_id pid = get_patch_id(face(hd, mesh_));
+
+        if (patch1 == Patch_id(-1))
+          patch1 = pid; //not met yet
+        else if (patch2 == Patch_id(-1) && patch1 != pid)
+          patch2 = pid; //not met yet
+        CGAL_assertion(pid == patch1 || pid == patch2);
+
+        if (pid == patch1)     normals_patch1.push_back(n);
+        else                   normals_patch2.push_back(n);
       }
 
+      //on each surface patch,
       //check all normals have same orientation
-      bool res = true;
-      for(std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-      {
-        if (normals[i-1] * normals[i] <= 0.)
-        {
-          res = false;
-          break;
-        }
-      }
+      bool res = check_orientation(normals_patch1)
+              && check_orientation(normals_patch2);
+
       //restore position
       put(vpmap_, vs, ps);
       return res;
@@ -1311,11 +1340,14 @@ private:
         if (nb_incident_features > 2)
           return true;
       }
-      return false;
+      return (nb_incident_features == 1);
     }
 
     Vector_3 compute_normal(const face_descriptor& f) const
     {
+      if (f == boost::graph_traits<PM>::null_face())
+        return CGAL::NULL_VECTOR;
+
       halfedge_descriptor hd = halfedge(f, mesh_);
       typename GeomTraits::Triangle_3
         tr(get(vpmap_, target(hd, mesh_)),
@@ -1673,30 +1705,39 @@ private:
     }
 #endif
 
-    //warning : when v is on a sharp edge (angle <= 90 deg)
-    // which is not constrained (it's not mandatory)
-    //this test will return false, though normals are correct
+    //check whether the normals to faces incident to v
+    //have all their 2 by 2 dot products > 0
     bool check_normals(const vertex_descriptor& v) const
     {
-      if (!is_on_patch(v))
-        return true;//not much to say if we are on a boundary/sharp edge
+      if (is_corner(v))
+        return true;//if we want to deal with this case,
+                    //we should use a multimap to store <Patch_id, Normal>
 
-      std::vector<Vector_3> normals;
+      std::vector<Vector_3> normals_patch1;
+      std::vector<Vector_3> normals_patch2;
+      Patch_id patch1 = -1, patch2 = -1;
       BOOST_FOREACH(halfedge_descriptor hd,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         Vector_3 n = compute_normal(face(hd, mesh_));
-        normals.push_back(n);
-        CGAL_assertion(n != CGAL::NULL_VECTOR);
+        if (n == CGAL::NULL_VECTOR)
+          continue;
+        Patch_id pid = get_patch_id(face(hd, mesh_));
+
+        if (patch1 == Patch_id(-1))
+          patch1 = pid; //not met yet
+        else if (patch2 == Patch_id(-1) && patch1 != pid)
+          patch2 = pid; //not met yet
+        CGAL_assertion(pid == patch1 || pid == patch2);
+
+        if (pid == patch1)     normals_patch1.push_back(n);
+        else                   normals_patch2.push_back(n);
       }
+
+      //on each surface patch,
       //check all normals have same orientation
-      for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-      {
-        double dot = to_double(normals[i - 1] * normals[i]);
-        if(dot <= 0.)
-          return false;
-      }
-      return true;
+      return check_orientation(normals_patch1)
+          && check_orientation(normals_patch2);
     }
 
     bool check_normals(const halfedge_descriptor& h) const
@@ -1706,6 +1747,19 @@ private:
       Vector_3 n = compute_normal(face(h, mesh_));
       Vector_3 no = compute_normal(face(opposite(h, mesh_), mesh_));
       return n * no > 0.;
+    }
+
+    bool check_orientation(const std::vector<Vector_3>& normals) const
+    {
+      if (normals.size() < 2)
+        return true;
+      for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
+      {
+        double dot = to_double(normals[i - 1] * normals[i]);
+        if (dot <= 0.)
+          return false;
+      }
+      return true;
     }
 
   public:
