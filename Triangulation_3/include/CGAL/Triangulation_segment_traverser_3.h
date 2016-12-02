@@ -222,6 +222,9 @@ private:
 public:
 // \name Accessors
 // \{
+
+    const Tr& triangulation() const     { return _tr; }
+
     //  gives the source point of the segment followed.
     /*  \return the source point.
      */
@@ -614,52 +617,50 @@ public:
     }
     case 1:/*Edge*/
     {
-      if (!cell_iterator_is_ahead())
-      {
-        //we cannot be in any of the degenerate cases, only detected by
-        //taking cell_iterator one step forward
-        _curr_simplex = Cell_handle(_cell_iterator);
-      }
-      else
-      {
-        Cell_handle chnext = Cell_handle(_cell_iterator);
-        Locate_type ltnext;
-        int linext, ljnext;
-        _cell_iterator.entry(ltnext, linext, ljnext);
-        switch (ltnext)//entry simplex in next cell
-        {
-        case Locate_type::VERTEX:
-          if (edge_has_vertex(get_edge(), chnext->vertex(linext)))
-            _curr_simplex = chnext->vertex(linext);
-          else
-            _curr_simplex = get_edge();
-          break;
+      Cell_handle ch = Cell_handle(_cell_iterator);
+      Locate_type lt;
+      int li, lj;
+      _cell_iterator.entry(lt, li, lj);
 
-        case Locate_type::EDGE:
+      if (!cell_iterator_is_ahead())
+        ++_cell_iterator;//cell_iterator needs to be ahead to detect degeneracies
+
+      Cell_handle chnext = Cell_handle(_cell_iterator);
+      Locate_type ltnext;
+      int linext, ljnext;
+      _cell_iterator.entry(ltnext, linext, ljnext);
+      switch (ltnext)//entry simplex in next cell
+      {
+      case Locate_type::VERTEX:
+        if (edge_has_vertex(get_edge(), chnext->vertex(linext)))
+          _curr_simplex = chnext->vertex(linext);
+        else
+          _curr_simplex = ch;
+        break;
+
+      case Locate_type::EDGE:
+      {
+        while (ltnext == Locate_type::EDGE
+            && is_same(get_edge(), Edge(chnext, linext, ljnext)))
         {
-          //find the Facet between current and next edges
-          Cell_handle ch = Cell_handle(_cell_iterator);
-          Locate_type lt;
-          int li, lj;
-          _cell_iterator.entry(lt, li, lj);
-          int index_v3 = -1;//todo : check this is correct
-          int tmp = ch->index(chnext->vertex(li));
-          if (tmp != li && tmp != lj)
-            index_v3 = tmp;
-          else
-          {
-            tmp = ch->index(chnext->vertex(lj));
-            index_v3 = tmp;
-          }
-          CGAL_assertion(index_v3 != -1);
-          _curr_simplex = Facet(ch, (6 - li - lj - index_v3));
-          break;
+          ++_cell_iterator;
+          chnext = Cell_handle(_cell_iterator);
+          _cell_iterator.entry(ltnext, linext, ljnext);
         }
-        case Locate_type::FACET:
-          _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
-          break;
-        };
-      }//end else
+        if (ltnext == Locate_type::EDGE)
+          _curr_simplex = shared_facet(get_edge(), Edge(chnext, linext, ljnext));
+        else if (ltnext == Locate_type::FACET)
+          _curr_simplex = chnext->neighbor(linext);//chnext will be met after the facet
+        else if (ltnext == Locate_type::VERTEX)
+          _curr_simplex = shared_cell(get_edge(), chnext->vertex(linext));
+        else //CELL
+          CGAL_assertion(false);
+        break;
+      }
+      case Locate_type::FACET:
+        _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
+        break;
+      };
       break;
     }
     case 0 :/*Vertex_handle*/
@@ -860,6 +861,76 @@ private:
   {
     return e.first->vertex(e.second) == v
         || e.first->vertex(e.third) == v;
+  }
+
+  bool is_same(const Edge& e1, const Edge& e2) const
+  {
+    Vertex_handle v1a = e1.first->vertex(e1.second);
+    Vertex_handle v1b = e1.first->vertex(e1.third);
+    Vertex_handle v2a = e2.first->vertex(e2.second);
+    Vertex_handle v2b = e2.first->vertex(e2.third);
+    return (v1a == v2a && v1b == v2b)
+        || (v1a == v2b && v1b == v2a);
+  }
+
+  Vertex_handle shared_vertex(const Edge& e1, const Edge& e2) const
+  {
+    Vertex_handle v1a = e1.first->vertex(e1.second);
+    Vertex_handle v1b = e1.first->vertex(e1.third);
+    Vertex_handle v2a = e2.first->vertex(e2.second);
+    Vertex_handle v2b = e2.first->vertex(e2.third);
+
+    if (v1a == v2a || v1a == v2b)
+      return v1a;
+    else if (v1b == v2a || v1b == v2b)
+      return v1b;
+
+    std::cerr << "There is no vertex shared by e1 and e2" << std::endl;
+    CGAL_assertion(false);
+    return Vertex_handle();
+  }
+
+  Facet shared_facet(const Edge& e1, const Edge& e2) const
+  {
+    Vertex_handle v2a = e2.first->vertex(e2.second);
+    Vertex_handle v2b = e2.first->vertex(e2.third);
+
+    Vertex_handle sv = shared_vertex(e1, e2);
+    Vertex_handle nsv2 = (sv == v2a) ? v2b : v2a;
+
+    typename Tr::Facet_circulator circ
+      = _cell_iterator.triangulation().incident_facets(e1);
+    typename Tr::Facet_circulator end = circ;
+    do
+    {
+      Facet f = *circ;
+      for (int i = 0; i < 4; ++i)
+      {
+        if (nsv2 == f.first->vertex((f.second + i) % 4))
+          return f;
+      }
+    } while (++circ != end);
+
+    std::cerr << "There is no facet shared by e1 and e2" << std::endl;
+    CGAL_assertion(false);
+    return Facet(Cell_handle(), 0);
+  }
+
+  Cell_handle shared_cell(const Edge& e, const Vertex_handle v) const
+  {
+    typename Tr::Cell_circulator circ
+      = _cell_iterator.triangulation().incident_cells(e);
+    typename Tr::Cell_circulator end = circ;
+    do
+    {
+      Cell_handle c = circ;
+      if (c->has_vertex(v))
+        return c;
+    } while (++circ != end);
+
+    std::cerr << "There is no cell shared by e and v" << std::endl;
+    CGAL_assertion(false);
+    return Cell_handle();
   }
 
 };//class Triangulation_segment_simplex_iterator_3
