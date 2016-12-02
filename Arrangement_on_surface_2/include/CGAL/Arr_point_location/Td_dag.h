@@ -28,6 +28,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/Handle.h>
+#include <CGAL/tss.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -383,7 +384,7 @@ std::ostream& write(std::ostream&  out,
                     const Td_dag<T>& t,
                     const Traits& traits)
 {
-  static int depth;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, depth,0);
   int i;
   if (!!t) {
     out << "\n";
@@ -413,7 +414,7 @@ std::ostream& write(std::ostream&  out,
 template<class T> std::ostream& operator<<(std::ostream&  out, 
                                            const Td_dag<T>& t)
 {
-  static int depth;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, depth,0);
   int i;
   if (!!t) {
     out << "\n";
