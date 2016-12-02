@@ -157,19 +157,8 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(delegate);
+  resetHeader();
 
- //sceneView->header()->setStretchLastSection(false);
-  /* sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
-  sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
-  sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
-  sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
-  sceneView->resizeColumnToContents(Scene::ColorColumn);
-  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
-  sceneView->resizeColumnToContents(Scene::ABColumn);
-  sceneView->resizeColumnToContents(Scene::VisibleColumn);
-*/
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
@@ -1023,6 +1012,10 @@ void MainWindow::open(QString filename)
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
   selectSceneItem(scene->addItem(scene_item));
+  if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+  else
+    sceneView->resizeColumnToContents(Scene::NameColumn);
 }
 
 bool MainWindow::open(QString filename, QString loader_name) {
@@ -1180,6 +1173,7 @@ void MainWindow::selectionChanged()
             this, SLOT(updateInfo()));
   }
   viewer->update();
+  resetHeader();
 }
 
 void MainWindow::contextMenuRequested(const QPoint& global_pos) {
@@ -1726,11 +1720,16 @@ void MainWindow::restoreCollapseState()
     QModelIndex modelIndex = scene->index(0,0,scene->invisibleRootItem()->index());
     if(modelIndex.isValid())
         recurseExpand(modelIndex);
+    resetHeader();
 }
 void MainWindow::makeNewGroup()
 {
-    Scene_group_item * group = new Scene_group_item("New group");
+    Scene_group_item * group = new Scene_group_item();
     scene->addItem(group);
+    if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
+      sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+    else
+      sceneView->resizeColumnToContents(Scene::NameColumn);
 }
 
 void MainWindow::on_upButton_pressed()
@@ -1871,4 +1870,22 @@ void MainWindow::on_actionMaxTextItemsDisplayed_triggered()
     viewer->textRenderer->setMax(text.toInt());
     ui->actionMaxTextItemsDisplayed->setText(QString("Set Maximum Text Items Displayed : %1").arg(text.toInt()));
   }
+}
+
+void MainWindow::resetHeader()
+{
+  scene->invisibleRootItem()->setColumnCount(5);
+  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Interactive);
+  sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::Fixed);
+  sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::ResizeToContents);
+  sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
+  sceneView->header()->setSectionResizeMode(Scene::VisibleColumn, QHeaderView::Fixed);
+  sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
+  sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
+  if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+  else
+    sceneView->resizeColumnToContents(Scene::NameColumn);
+  sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
+  sceneView->header()->resizeSection(Scene::VisibleColumn, sceneView->header()->fontMetrics().width(QString("_View_")));
 }

@@ -591,9 +591,7 @@ Scene::data(const QModelIndex &index, int role) const
     switch(index.column())
     {
     case ColorColumn:
-        if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
-            return m_entries.value(id)->color();
-        else if(role == ::Qt::DecorationRole)
+        if(role == ::Qt::DecorationRole)
             return m_entries.value(id)->color();
         break;
     case NameColumn:
@@ -621,7 +619,7 @@ Scene::data(const QModelIndex &index, int role) const
                 return "B";
         }
         else if(role == ::Qt::TextAlignmentRole) {
-            return ::Qt::AlignCenter;
+            return ::Qt::AlignLeft;
         }
         break;
     case VisibleColumn:
@@ -646,7 +644,7 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
                 return tr("Name");
                 break;
             case ColorColumn:
-                return tr("Color");
+                return tr("#");
                 break;
             case RenderingModeColumn:
                 return tr("Mode");
@@ -937,8 +935,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                 QColor color =
                         QColorDialog::getColor(model->data(index).value<QColor>(),
                                                0/*,
-                                                                                                                                 tr("Select color"),
-                                                                                                                                 QColorDialog::ShowAlphaChannel*/);
+                                               tr("Select color"),
+                                               QColorDialog::ShowAlphaChannel*/);
                 if (color.isValid()) {
                     model->setData(index, color );
                 }

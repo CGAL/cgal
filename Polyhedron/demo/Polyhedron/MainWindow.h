@@ -315,6 +315,9 @@ protected Q_SLOTS:
   void filterOperations();
   //!Updates the bounding box and moves the camera to fits the scene.
   void on_actionRecenterScene_triggered();
+
+  //!Resizes the header of the scene view
+  void resetHeader();
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
   /*! For each objects in the sceneView, loads the associated plugins.
