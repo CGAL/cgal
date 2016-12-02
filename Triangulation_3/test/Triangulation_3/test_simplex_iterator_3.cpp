@@ -50,6 +50,7 @@ typedef CGAL::Triangulation_segment_simplex_iterator_3<DT>      Simplex_traverse
 
 void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
 {
+  std::cout << "* test_vertex_edge_vertex *" << std::endl;
   std::vector<Edge> edges;
   for (DT::Finite_edges_iterator eit = dt.finite_edges_begin();
        eit != dt.finite_edges_end() && edges.size() < nb_tests;
@@ -76,20 +77,21 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
         std::cout << "i";
       std::cout << " ";
 
-      if (st.is_vertex())
+      if (st.is_vertex() && st.get_vertex() == v1)
       {
-        assert(st.get_vertex() == v1);
         ++st;
+        std::cout << st.simplex_dimension() << " ";
         assert(st.is_edge());
         Edge e = st.get_edge();
         Vertex_handle ve1 = e.first->vertex(e.second);
         Vertex_handle ve2 = e.first->vertex(e.third);
         assert((ve1 == v1 && ve2 == v2)
             || (ve1 == v2 && ve2 == v1));
+
         ++st;
+        std::cout << st.simplex_dimension() << " ";
         assert(st.is_vertex());
         assert(st.get_vertex() == v2);
-        break; //test OK
       }
     }
     std::cout << ")" << std::endl;
@@ -98,6 +100,7 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
 
 void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
 {
+  std::cout << "* test_edge_facet_edge *" << std::endl;
   std::vector<Facet> facets;
   for (DT::Finite_facets_iterator fit = dt.finite_facets_begin();
     fit != dt.finite_facets_end() && facets.size() < nb_tests;
@@ -136,15 +139,78 @@ void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
           || (va == v2 && vb == v1))
         {
           ++st;
-          int dim = st.simplex_dimension();
+          std::cout << st.simplex_dimension() << " ";
           assert(st.is_facet());
+
           ++st;
+          std::cout << st.simplex_dimension() << " ";
           assert(st.is_edge());
           Edge e2 = st.get_edge();
           Vertex_handle va2 = e2.first->vertex(e2.second);
           Vertex_handle vb2 = e2.first->vertex(e2.third);
           assert(va == va2 || va == vb2 || vb == va2 || vb == vb2);
         }
+      }
+    }
+    std::cout << ")" << std::endl;
+  }
+}
+
+void test_edge_facet_vertex(const DT& dt, const std::size_t& nb_tests)
+{
+  std::cout << "* test_edge_facet_vertex *" << std::endl;
+  std::vector<Facet> facets;
+  for (DT::Finite_facets_iterator fit = dt.finite_facets_begin();
+    fit != dt.finite_facets_end() && facets.size() < nb_tests;
+    ++fit)
+  {
+    facets.push_back(*fit);
+  }
+  for (std::size_t i = 0; i < nb_tests; ++i)
+  {
+    const int fi = facets[i].second;
+    Vertex_handle v1 = facets[i].first->vertex((fi + 1) % 4);
+    Vertex_handle v2 = facets[i].first->vertex((fi + 2) % 4);
+    Vertex_handle v3 = facets[i].first->vertex((fi + 3) % 4);
+
+    Point_3 p1 = CGAL::midpoint(v1->point(), v2->point());
+    Point_3 p2 = v3->point();
+    Vector_3 v(p1, p2);
+
+    std::cout << "TEST " << i << " (" << p1 << " ** " << p2 << ")"
+      << std::endl;
+    std::cout << "\t(";
+    Simplex_traverser st(dt, p1 - 2.*v, p2 + 3.*v);
+    Simplex_traverser end = st.end();
+    for (; st != end; ++st)
+    {
+      std::cout << st.simplex_dimension();
+      if (dt.is_infinite(st))
+        std::cout << "i";
+      std::cout << " ";
+
+      if (st.is_edge())
+      {
+        Edge e = st.get_edge();
+        Vertex_handle va = e.first->vertex(e.second);
+        Vertex_handle vb = e.first->vertex(e.third);
+        if ((va == v1 && vb == v2) || (va == v2 && vb == v1))
+        {
+          ++st;
+          std::cout << st.simplex_dimension() << " ";
+          assert(st.is_facet());
+
+          ++st;
+          std::cout << st.simplex_dimension() << " ";
+          assert(st.is_vertex());
+          assert(st.get_vertex() == v3);
+        }
+        ++st;
+        std::cout << st.simplex_dimension() << " ";
+        if (st == st.end())
+          break;
+        else if (dt.is_infinite(st)) std::cout << "i ";
+        assert(st.is_cell());
       }
     }
     std::cout << ")" << std::endl;
@@ -229,7 +295,10 @@ int main(int argc, char* argv[])
 
   // - along a facet via edge/facet/edge
   test_edge_facet_edge(dt, 3);
+
   // - along a facet via edge/facet/vertex
+  test_edge_facet_vertex(dt, 3);
+
   // - along a facet via vertex/facet/edge
   // - along 2 successive facets (vertex/facet/edge/facet/edge)
   // - along 2 successive edges (vertex/edge/vertex/edge/vertex)
