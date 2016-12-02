@@ -204,9 +204,9 @@ public:
                                           cone_angle, true, disk_samples);
 
       if(sdf_value) {
-        sdf_values[*facet_begin] = *sdf_value;
+        put(sdf_values, *facet_begin, *sdf_value);
       } else          {
-        sdf_values[*facet_begin] = -1.0;
+        put(sdf_values, *facet_begin, -1.0);
       }
     }
   }
