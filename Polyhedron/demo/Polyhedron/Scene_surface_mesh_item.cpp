@@ -181,10 +181,11 @@ Scene_surface_mesh_item::clone() const
 
 void Scene_surface_mesh_item_priv::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Color *c) const
 {
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
 
-  flat_vertices.push_back((cgal_gl_data)p.x());
-  flat_vertices.push_back((cgal_gl_data)p.y());
-  flat_vertices.push_back((cgal_gl_data)p.z());
+  flat_vertices.push_back((cgal_gl_data)p.x()+offset[0]);
+  flat_vertices.push_back((cgal_gl_data)p.y()+offset[1]);
+  flat_vertices.push_back((cgal_gl_data)p.z()+offset[2]);
 
   flat_normals.push_back((cgal_gl_data)n.x());
   flat_normals.push_back((cgal_gl_data)n.y());
@@ -201,6 +202,14 @@ void Scene_surface_mesh_item_priv::addFlatData(Point p, Kernel::Vector_3 n, CGAL
 void Scene_surface_mesh_item_priv::compute_elements()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  smooth_vertices.clear();
+  smooth_normals.clear();
+  flat_vertices.clear();
+  flat_normals.clear();
+  f_colors.clear();
+  v_colors.clear();
+  const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
   CGAL::Properties::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
   CGAL::Properties::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
@@ -234,9 +243,9 @@ void Scene_surface_mesh_item_priv::compute_elements()
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
       {
         Point p = positions[source(hd, *smesh_)];
-        flat_vertices.push_back((cgal_gl_data)p.x());
-        flat_vertices.push_back((cgal_gl_data)p.y());
-        flat_vertices.push_back((cgal_gl_data)p.z());
+        flat_vertices.push_back((cgal_gl_data)p.x()+offset.x);
+        flat_vertices.push_back((cgal_gl_data)p.y()+offset.y);
+        flat_vertices.push_back((cgal_gl_data)p.z()+offset.z);
 
         Kernel::Vector_3 n = fnormals[fd];
         flat_normals.push_back((cgal_gl_data)n.x());
@@ -312,9 +321,9 @@ void Scene_surface_mesh_item_priv::compute_elements()
     BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
     {
       Point p = positions[vd];
-      smooth_vertices.push_back((cgal_gl_data)p.x());
-      smooth_vertices.push_back((cgal_gl_data)p.y());
-      smooth_vertices.push_back((cgal_gl_data)p.z());
+      smooth_vertices.push_back((cgal_gl_data)p.x()+offset.x);
+      smooth_vertices.push_back((cgal_gl_data)p.y()+offset.y);
+      smooth_vertices.push_back((cgal_gl_data)p.z()+offset.z);
 
       Kernel::Vector_3 n = vnormals[vd];
       smooth_normals.push_back((cgal_gl_data)n.x());
@@ -364,12 +373,16 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   //vao containing the data for the smooth facets
   item->vaos[Scene_surface_mesh_item_priv::Smooth_facets]->bind();
   item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].bind();
-  if(!floated)
+  if(!floated||viewer->offset() == qglviewer::Vec(0,0,0))
+  {
     item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].allocate(positions.data(),
                              static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
+  }
   else
+  {
     item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].allocate(smooth_vertices.data(),
                                static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
+  }
   program->enableAttributeArray("vertex");
   program->setAttributeBuffer("vertex",CGAL_GL_DATA,0,3);
   item->buffers[Scene_surface_mesh_item_priv::Smooth_vertices].release();
@@ -412,7 +425,10 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
   glShadeModel(GL_SMOOTH);
   if(!are_buffers_filled)
+  {
+    d->compute_elements();
     d->initializeBuffers(viewer);
+  }
   attribBuffers(viewer, PROGRAM_WITH_LIGHT);
   d->program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
   d->program->bind();
@@ -449,8 +465,11 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 
 void Scene_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface *viewer) const
 {
- if(!are_buffers_filled)
-   d->initializeBuffers(viewer);
+  if(!are_buffers_filled)
+  {
+    d->compute_elements();
+    d->initializeBuffers(viewer);
+  }
  attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
  d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
  d->program->bind();
