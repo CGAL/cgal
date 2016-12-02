@@ -729,9 +729,10 @@ public:
         }
         case Locate_type::EDGE:
         {
-          int index_v = ch->index(get_vertex());
-          int index_vnext = ch->index(chnext->vertex(linext));
-          int index_f = 6 - (index_v + index_vnext + ch->index(chnext->vertex(ljnext)));
+          //facet shared by get_vertex() and the edge (ch is a common neighbor)
+          int index_f = 6 - (ch->index(get_vertex())
+                             + ch->index(chnext->vertex(linext))
+                             + ch->index(chnext->vertex(ljnext)));
           _curr_simplex = Facet(ch, index_f);
           break;
         }
