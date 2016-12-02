@@ -26,3 +26,4 @@ data-coref/cube.off data-coref/coplanar_with_cube4.off
 data-coref/square1.off data-coref/square_pair.off
 data-coref/cube_meshed.off data-coref/cube.off
 data-coref/cube.off data-coref/cube_interior_tgt.off
+data-coref/cube.off data-coref/edge_tangent_to_cube.off
