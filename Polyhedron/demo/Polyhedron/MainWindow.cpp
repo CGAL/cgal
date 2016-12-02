@@ -1052,7 +1052,7 @@ void MainWindow::open(QString filename)
   }
   selectSceneItem(scene->addItem(scene_item));
   if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
   else
     sceneView->resizeColumnToContents(Scene::NameColumn);
 }
@@ -1343,6 +1343,8 @@ void MainWindow::updateDisplayInfo() {
     ui->displayLabel->setPixmap(item->graphicalToolTip());
   else 
     ui->displayLabel->clear();
+
+  resetHeader();
 }
 
 void MainWindow::readSettings()
@@ -1456,7 +1458,7 @@ void MainWindow::on_actionLoad_triggered()
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
-        qDebug() << "Duplicate Filter: " << it.value();
+        qDebug() << "Duplicate Filter: " << it.value()->name();
         qDebug() << "This filter will not be available.";
       } else {
         filterPluginMap[filter] = plugin;
@@ -1782,7 +1784,7 @@ void MainWindow::makeNewGroup()
     Scene_group_item * group = new Scene_group_item();
     scene->addItem(group);
     if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-      sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+      sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
     else
       sceneView->resizeColumnToContents(Scene::NameColumn);
 }
@@ -1938,7 +1940,7 @@ void MainWindow::resetHeader()
   sceneView->header()->resizeSection(Scene::ColorColumn, sceneView->header()->fontMetrics().width("_#_"));
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   if(sceneView->columnWidth(Scene::NameColumn) > fontMetrics().width(QString("This is a very long name")))
-    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("This is a very long name")));
+    sceneView->header()->resizeSection(Scene::NameColumn, sceneView->header()->fontMetrics().width(QString("_This is a very long name_")));
   else
     sceneView->resizeColumnToContents(Scene::NameColumn);
   sceneView->header()->resizeSection(Scene::ABColumn, sceneView->header()->fontMetrics().width(QString("_AB_")));
