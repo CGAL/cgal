@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_ConeBasedSpanners
 
 \cgalAutoToc
-\author Weisheng Si and Quincy Tse
+\author Weisheng Si, Quincy Tse and Frédérik Paradis
 
 \section sec_CBS_Introduction Introduction
 
@@ -296,6 +296,32 @@ The following two files will be generated for \gnuplot:
 \cgalFigureBegin{f-t4, t4n20.jpg}
 A directed Theta graph of 20 vertices with \f$k=4\f$.
 \cgalFigureEnd
+
+\subsection CBS_half Constructing Half Theta or Yao Graphs
+
+By default, the functors `Construct_theta_graph_2`
+and `Construct_yao_graph_2` construct full Theta and Yao graphs. They also provide a way
+to compute Half Theta and Yao graphs. As mentionned in Section \ref sec_CBS_mydefinitions,
+only the edges for the odd or even cones are added to the graph in an Half Theta and Yao
+graph. To do so, the constructor of the functors provides a parameter of type
+`Cones_selected` which is a enumeration that contains the following possible values:
+`ALL_CONES`, `EVEN_CONES` and `ODD_CONES`. Users should include the
+`CGAL/Cone_spanners_enum_2.h` header file. The following are examples of constructions of
+the functors for Half Theta and Yao Graphs.
+
+\code{.cpp}
+// Construct an Half Theta graph with the edges only in the even cones.
+CGAL::Construct_theta_graph_2<Kernel, Graph> theta(k, Direction_2(1,0), CGAL::EVEN_CONES);
+
+// Construct an Half Theta graph with the edges only in the odd cones.
+CGAL::Construct_theta_graph_2<Kernel, Graph> theta(k, Direction_2(1,0), CGAL::ODD_CONES);
+
+// Construct an Half Yao graph with the edges only in the even cones.
+CGAL::Construct_yao_graph_2<Kernel, Graph> yao(k, Direction_2(1,0), CGAL::EVEN_CONES);
+
+// Construct an Half Yao graph with the edges only in the odd cones.
+CGAL::Construct_yao_graph_2<Kernel, Graph> yao(k, Direction_2(1,0), CGAL::ODD_CONES);
+\endcode
 
 \subsection CBS_diff_exact Exact Construction Can Make a Difference
 

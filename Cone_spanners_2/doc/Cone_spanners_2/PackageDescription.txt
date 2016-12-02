@@ -9,7 +9,7 @@
 \cgalPkgPicture{Logo-ConeSpanners.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Weisheng Si and Quincy Tse}
+\cgalPkgAuthors{Weisheng Si, Quincy Tse and Frédérk Paradis}
 \cgalPkgDesc{This package provides functors for constructing two kinds of cone-based spanners:
 Yao graph and Theta graph, given a set of vertices on the plane and the directions of cone boundaries.
 Both exact and inexact constructions are supported.
@@ -43,6 +43,6 @@ This package also provides options for the Half Yao graph and the Half Theta gra
 - `CGAL::gnuplot_output_2()`
 
 ## Enumerations ##
-- `CGAL::Half`
+- `CGAL::Cones_selected`
 
 */
