@@ -53,6 +53,22 @@ namespace internal{
     }
 
   };
+
+  template<typename Kernel, typename PM, typename NamedParameters>
+  bool is_outward_oriented(typename boost::graph_traits<PM>::vertex_descriptor vd,
+                           const PM& pmesh,
+                           const NamedParameters& np)
+  {
+    const typename Kernel::Vector_3&
+      normal_v_min = compute_vertex_normal(vd, pmesh, np);
+
+    return normal_v_min[0] < 0 || (
+              normal_v_min[0] == 0 && (
+                normal_v_min[1] < 0  ||
+                ( normal_v_min[1]==0  && normal_v_min[2] < 0 )
+              )
+           );
+  }
 } // end of namespace internal
 
 /**
@@ -108,15 +124,7 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   typename boost::graph_traits<PolygonMesh>::vertex_iterator v_min
     = std::min_element(vbegin, vend, less_xyz);
 
-  const typename Kernel::Vector_3&
-    normal_v_min = compute_vertex_normal(*v_min, pmesh, np);
-
-  return normal_v_min[0] < 0 || (
-            normal_v_min[0] == 0 && (
-              normal_v_min[1] < 0  ||
-              ( normal_v_min[1]==0  && normal_v_min[2] < 0 )
-            )
-         );
+  return internal::is_outward_oriented<Kernel>(*v_min, pmesh, np);
 }
 
 ///\cond SKIP_IN_MANUAL
