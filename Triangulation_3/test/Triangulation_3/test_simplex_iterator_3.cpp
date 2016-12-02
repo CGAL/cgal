@@ -43,11 +43,12 @@ typedef CGAL::Delaunay_triangulation_3< Kernel >    DT;
 typedef DT::Vertex_handle                           Vertex_handle;
 typedef DT::Cell_handle                             Cell_handle;
 typedef DT::Edge                                    Edge;
+typedef DT::Facet                                   Facet;
 
 typedef CGAL::Triangulation_segment_simplex_iterator_3<DT>      Simplex_traverser;
 
 
-void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests = 2)
+void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
 {
   std::vector<Edge> edges;
   for (DT::Finite_edges_iterator eit = dt.finite_edges_begin();
@@ -93,7 +94,61 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests = 2)
     }
     std::cout << ")" << std::endl;
   }
+}
 
+void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
+{
+  std::vector<Facet> facets;
+  for (DT::Finite_facets_iterator fit = dt.finite_facets_begin();
+    fit != dt.finite_facets_end() && facets.size() < nb_tests;
+    ++fit)
+  {
+    facets.push_back(*fit);
+  }
+  for (std::size_t i = 0; i < nb_tests; ++i)
+  {
+    const int fi = facets[i].second;
+    Vertex_handle v1 = facets[i].first->vertex((fi + 1) % 4);
+    Vertex_handle v2 = facets[i].first->vertex((fi + 2) % 4);
+    Vertex_handle v3 = facets[i].first->vertex((fi + 3) % 4);
+
+    Point_3 p1 = CGAL::midpoint(v1->point(), v2->point());
+    Point_3 p2 = CGAL::midpoint(v2->point(), v3->point());
+    Vector_3 v(p1, p2);
+
+    std::cout << "TEST " << i << " (" << p1 << " ** " << p2 << ")"
+      << std::endl;
+    std::cout << "\t(";
+    Simplex_traverser st(dt, p1 - 2.*v, p2 + 3.*v);
+    for (; st != st.end(); ++st)
+    {
+      std::cout << st.simplex_dimension();
+      if (dt.is_infinite(st))
+        std::cout << "i";
+      std::cout << " ";
+
+      if (st.is_edge())
+      {
+        Edge e = st.get_edge();
+        Vertex_handle va = e.first->vertex(e.second);
+        Vertex_handle vb = e.first->vertex(e.third);
+        if ((va == v1 && vb == v2)
+          || (va == v2 && vb == v1))
+        {
+          ++st;
+          int dim = st.simplex_dimension();
+          assert(st.is_facet());
+          ++st;
+          assert(st.is_edge());
+          Edge e2 = st.get_edge();
+          Vertex_handle va2 = e2.first->vertex(e2.second);
+          Vertex_handle vb2 = e2.first->vertex(e2.third);
+          assert(va == va2 || va == vb2 || vb == va2 || vb == vb2);
+        }
+      }
+    }
+    std::cout << ")" << std::endl;
+  }
 }
 
 int main(int argc, char* argv[])
@@ -170,9 +225,10 @@ int main(int argc, char* argv[])
 
   //check degenerate cases
   // - along an edge
-  test_vertex_edge_vertex(dt);
+  test_vertex_edge_vertex(dt, 2);
 
   // - along a facet via edge/facet/edge
+  test_edge_facet_edge(dt, 3);
   // - along a facet via edge/facet/vertex
   // - along a facet via vertex/facet/edge
   // - along 2 successive facets (vertex/facet/edge/facet/edge)
