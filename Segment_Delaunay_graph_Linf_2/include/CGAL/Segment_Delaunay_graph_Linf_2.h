@@ -90,6 +90,7 @@ public:
   typedef typename Base::Point_2                 Point_2;
 
   typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename Base::Finite_edges_iterator     Finite_edges_iterator;
 
   typedef typename Base::All_faces_iterator All_faces_iterator;
   typedef typename Base::All_vertices_iterator All_vertices_iterator;
@@ -101,6 +102,7 @@ public:
   typedef typename Base::Face           Face;
 
   typedef typename Base::Vertex_circulator     Vertex_circulator;
+  typedef typename Base::Edge_circulator       Edge_circulator;
   typedef typename Base::Face_circulator       Face_circulator;
 
 protected:
@@ -130,12 +132,16 @@ public:
   using Base::all_edges_end;
   using Base::all_faces_begin;
   using Base::all_faces_end;
+  using Base::finite_edges_begin;
+  using Base::finite_edges_end;
   using Base::tds;
   using Base::incident_vertices;
   using Base::incident_faces;
   using Base::infinite_vertex;
   using Base::is_infinite;
   using Base::storage_traits;
+  using Base::primal;
+  using Base::is_endpoint_of_segment;
 
 private:
   // CREATION helper
@@ -401,6 +407,69 @@ public:
     os << "SDG verbose output ends" << std::endl;
     os << "=======================" << std::endl;
 
+  }
+
+  template< class Stream >
+  Stream& draw_dual(Stream& str) const
+  {
+    Finite_edges_iterator eit = finite_edges_begin();
+    for (; eit != finite_edges_end(); ++eit) {
+      draw_dual_edge(*eit, str);
+    }
+    return str;
+  }
+
+  template < class Stream >
+  Stream& draw_skeleton(Stream& str) const
+  {
+    Finite_edges_iterator eit = finite_edges_begin();
+    for (; eit != finite_edges_end(); ++eit) {
+      Site_2 p = eit->first->vertex(  cw(eit->second) )->site();
+      Site_2 q = eit->first->vertex( ccw(eit->second) )->site();
+
+      bool is_endpoint_of_seg =
+	( p.is_segment() && q.is_point() &&
+	  is_endpoint_of_segment(q, p) ) ||
+	( p.is_point() && q.is_segment() &&
+	  is_endpoint_of_segment(p, q) );
+
+      if ( !is_endpoint_of_seg ) {
+	draw_dual_edge(*eit, str);
+      }
+    }
+    return str;
+  }
+
+  // MK: this has to be rewritten. all the checking must be done in
+  // the geometric traits class.
+  template< class Stream >
+  Stream& draw_dual_edge(Edge e, Stream& str) const
+  {
+    CGAL_precondition( !is_infinite(e) );
+
+    CGAL::Polychainline_2<Geom_traits>      pcl;
+    CGAL::Polychainray_2<Geom_traits>       pcr;
+    CGAL::Polychainsegment_2<Geom_traits>   pcs;
+
+    Object o = primal(e);
+
+    if (CGAL::assign(pcl, o))   pcl.draw(str);
+    if (CGAL::assign(pcr, o))   pcr.draw(str);
+    if (CGAL::assign(pcs, o))   pcs.draw(str);
+
+    return str;
+  }
+
+  template< class Stream >
+  inline
+  Stream& draw_dual_edge(Edge_circulator ec, Stream& str) const {
+    return draw_dual_edge(*ec, str);
+  }
+
+  template< class Stream >
+  inline
+  Stream& draw_dual_edge(Finite_edges_iterator eit, Stream& str) const {
+    return draw_dual_edge(*eit, str);
   }
 
 };
