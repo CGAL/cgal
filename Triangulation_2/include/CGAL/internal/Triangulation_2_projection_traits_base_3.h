@@ -24,6 +24,7 @@
 
 #include <CGAL/Profile_timer.h>
 #include <CGAL/intersections.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 
 namespace CGAL {
 
