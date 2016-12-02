@@ -652,7 +652,12 @@ public:
         else if (ltnext == Locate_type::FACET)
           _curr_simplex = chnext->neighbor(linext);//chnext will be met after the facet
         else if (ltnext == Locate_type::VERTEX)
-          _curr_simplex = shared_cell(get_edge(), chnext->vertex(linext));
+        {
+          if (edge_has_vertex(get_edge(), chnext->vertex(linext)))
+            _curr_simplex = chnext->vertex(linext);
+          else
+            _curr_simplex = shared_facet(get_edge(), chnext->vertex(linext));
+        }
         else //CELL
           CGAL_assertion(false);
         break;
@@ -912,6 +917,23 @@ private:
     } while (++circ != end);
 
     std::cerr << "There is no facet shared by e1 and e2" << std::endl;
+    CGAL_assertion(false);
+    return Facet(Cell_handle(), 0);
+  }
+
+  Facet shared_facet(const Edge& e, const Vertex_handle v) const
+  {
+    typename Tr::Facet_circulator circ
+      = _cell_iterator.triangulation().incident_facets(e);
+    typename Tr::Facet_circulator end = circ;
+    do
+    {
+      Facet f = *circ;
+      if (facet_has_vertex(f, v))
+        return f;
+    } while (++circ != end);
+
+    std::cerr << "There is no facet shared by e and v" << std::endl;
     CGAL_assertion(false);
     return Facet(Cell_handle(), 0);
   }
