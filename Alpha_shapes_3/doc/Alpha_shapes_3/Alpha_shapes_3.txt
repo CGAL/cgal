@@ -238,7 +238,7 @@ and it must be parameterized with vertex and cell classes, which are model of th
 The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
-\section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 vs.\ Fixed_alpha_shape_3
+\section Alpha_shapes_3AlphaShape3OrFixedAlphaShape3 Alpha_shape_3 vs. Fixed_alpha_shape_3
 
 The class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole family
 of alpha shapes for a given set of points while the class `Fixed_alpha_shape_3<Dt>`
