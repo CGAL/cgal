@@ -884,15 +884,13 @@ void MainWindow::reloadItem() {
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(!sender_action) return;
   
-  bool ok;
-  int item_index = sender_action->data().toInt(&ok);
-  QObject* item_object = scene->item(item_index);
-  if(!ok || !item_object || sender_action->data().type() != QVariant::Int) {
+  Scene_item* item = (Scene_item*)sender_action->data().value<void*>();
+  QObject* item_object = item;
+  if(!item || !item_object) {
     std::cerr << "Cannot reload item: "
               << "the reload action has not item attached\n";
     return;
   }
-  CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(item_object);
   if(!item) {
     std::cerr << "Cannot reload item: "
               << "the reload action has a QObject* pointer attached\n"
@@ -920,7 +918,7 @@ void MainWindow::reloadItem() {
   if(property_item)
     property_item->copyProperties(item);
   new_item->invalidateOpenGLBuffers();
-  scene->replaceItem(item_index, new_item, true);
+  scene->replaceItem(scene->item_id(item), new_item, true);
   item->deleteLater();
 }
 
@@ -1254,16 +1252,16 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload Item from File"));
-        reload->setData(qVariantFromValue(selectedItemIndex));
+        reload->setData(qVariantFromValue((void*)item));
         connect(reload, SIGNAL(triggered()),
                 this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
-      saveas->setData(qVariantFromValue(selectedItemIndex));
+      saveas->setData(qVariantFromValue((void*)item));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
       QAction* showobject = menu->addAction(tr("&Zoom to this Object"));
-      showobject->setData(qVariantFromValue(selectedItemIndex));
+      showobject->setData(qVariantFromValue((void*)item));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
 
@@ -1502,19 +1500,11 @@ void MainWindow::on_actionLoad_triggered()
 
 void MainWindow::on_actionSaveAs_triggered()
 {
-  int index = -1;
+  Scene_item* item = NULL;
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(sender_action && !sender_action->data().isNull()) {
-    index = sender_action->data().toInt();
+    item = (Scene_item*)sender_action->data().value<void*>();
   }
-
-  if(index < 0) {
-    QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-    if(selectedRows.size() != 1)
-      return;
-    index = getSelectedSceneItemIndex();
-  }
-  CGAL::Three::Scene_item* item = scene->item(index);
 
   if(!item)
     return;
@@ -1696,13 +1686,13 @@ void MainWindow::on_actionLookAt_triggered()
 
 void MainWindow::viewerShowObject()
 {
-  int index = -1;
+  Scene_item* item = NULL;
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(sender_action && !sender_action->data().isNull()) {
-    index = sender_action->data().toInt();
+    item = (Scene_item*)sender_action->data().value<void*>();
   }
-  if(index >= 0) {
-    const Scene::Bbox bbox = scene->item(index)->bbox();
+  if(item) {
+    const Scene::Bbox bbox = item->bbox();
     viewerShow((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z,
                (float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
   }
