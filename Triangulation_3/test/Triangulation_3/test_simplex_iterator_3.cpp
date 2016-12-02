@@ -295,52 +295,50 @@ int main(int argc, char* argv[])
   DT dt(points.begin(), points.end());
   assert(dt.is_valid());
 
-  //CGAL::default_random = CGAL::Random(0);
-  //CGAL::Random rng(0);
+  CGAL::Random rng;
+  for (int i = 0; i < nb_seg; ++i)
+  {
+    // Construct a traverser.
+    Point_3 p1(rng.get_double(-0.48, 0.31),
+               rng.get_double(-0.22, 0.22),
+               rng.get_double(-0.19, 0.19));
+    Point_3 p2(rng.get_double(-0.48, 0.31),
+               rng.get_double(-0.22, 0.22),
+               rng.get_double(-0.19, 0.19));
 
-  //for (int i = 0; i < nb_seg; ++i)
-  //{
-  //  // Construct a traverser.
-  //  Point_3 p1(rng.get_double(-0.48, 0.31),
-  //    rng.get_double(-0.22, 0.22),
-  //    rng.get_double(-0.19, 0.19));
-  //  Point_3 p2(rng.get_double(-0.48, 0.31),
-  //    rng.get_double(-0.22, 0.22),
-  //    rng.get_double(-0.19, 0.19));
+    std::cout << "Traverser " << (i + 1)
+      << "\n\t(" << p1
+      << ")\n\t(" << p2 << ")" << std::endl;
+    Simplex_traverser st(dt, p1, p2);
 
-  //  std::cout << "Traverser " << (i + 1)
-  //    << "\n\t(" << p1
-  //    << ")\n\t(" << p2 << ")" << std::endl;
-  //  Simplex_traverser st(dt, p1, p2);
+    // Count the number of finite cells traversed.
+    unsigned int inf = 0, fin = 0;
+    unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
+    unsigned int nb_collinear = 0;
+    for (; st != st.end(); ++st)
+    {
+      if (dt.is_infinite(st))
+        ++inf;
+      else
+      {
+        ++fin;
+        if (st.is_facet())       ++nb_facets;
+        else if (st.is_edge())   ++nb_edges;
+        else if (st.is_vertex()) ++nb_vertex;
 
-  //  // Count the number of finite cells traversed.
-  //  unsigned int inf = 0, fin = 0;
-  //  unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
-  //  unsigned int nb_collinear = 0;
-  //  for (; st != st.end(); ++st)
-  //  {
-  //    if (dt.is_infinite(st))
-  //      ++inf;
-  //    else
-  //    {
-  //      ++fin;
-  //      if (st.is_facet())       ++nb_facets;
-  //      else if (st.is_edge())   ++nb_edges;
-  //      else if (st.is_vertex()) ++nb_vertex;
+        if (st.is_collinear())   ++nb_collinear;
+      }
+    }
 
-  //      if (st.is_collinear())   ++nb_collinear;
-  //    }
-  //  }
-
-  //  std::cout << "While traversing from " << st.source()
-  //    << " to " << st.target() << std::endl;
-  //  std::cout << "\tinfinite cells : " << inf << std::endl;
-  //  std::cout << "\tfinite cells   : " << fin << std::endl;
-  //  std::cout << "\tfacets   : " << nb_facets << std::endl;
-  //  std::cout << "\tedges    : " << nb_edges << std::endl;
-  //  std::cout << "\tvertices : " << nb_vertex << std::endl;
-  //  std::cout << std::endl << std::endl;
-  //}
+    std::cout << "While traversing from " << st.source()
+      << " to " << st.target() << std::endl;
+    std::cout << "\tinfinite cells : " << inf << std::endl;
+    std::cout << "\tfinite cells   : " << fin << std::endl;
+    std::cout << "\tfacets   : " << nb_facets << std::endl;
+    std::cout << "\tedges    : " << nb_edges << std::endl;
+    std::cout << "\tvertices : " << nb_vertex << std::endl;
+    std::cout << std::endl << std::endl;
+  }
 
   //check degenerate cases
   // - along an edge
