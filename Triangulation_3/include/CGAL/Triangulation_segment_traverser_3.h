@@ -508,6 +508,8 @@ public:
   const Point&    source() const      { return _cell_iterator.source(); }
   const Point&    target() const      { return _cell_iterator.target(); }
 
+  const Tr& triangulation() const     { return _cell_iterator.triangulation(); }
+
 private:
   Triangulation_segment_simplex_iterator_3
     (const SCI& sci)
@@ -591,13 +593,15 @@ public:
         switch (ltnext)//entry simplex in next cell
         {
         case Locate_type::VERTEX:
+        {
           //if the entry vertex is a vertex of current facet
-          if (facet_has_vertex(get_facet(), chnext->vertex(linext)))
+          int i;
+          if (triangulation().has_vertex(get_facet(), chnext->vertex(linext), i))
             set_curr_simplex_to_entry();
           else
             _curr_simplex = chnext;
           break;
-
+        }
         case Locate_type::EDGE:
           if (facet_has_edge(get_facet(), Edge(chnext, linext, ljnext)))
             set_curr_simplex_to_entry();
@@ -641,7 +645,7 @@ public:
       case Locate_type::EDGE:
       {
         while (ltnext == Locate_type::EDGE
-            && is_same(get_edge(), Edge(chnext, linext, ljnext)))
+            && are_equal(get_edge(), Edge(chnext, linext, ljnext)))
         {
           ++_cell_iterator;
           chnext = Cell_handle(_cell_iterator);
@@ -716,7 +720,8 @@ public:
               _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
             else if (ltnext == Locate_type::FACET)
             {
-              CGAL_assertion(!facet_has_vertex(Facet(chnext, linext), get_vertex()));
+              CGAL_assertion_code(int i);
+              CGAL_assertion(!triangulation().has_vertex(Facet(chnext, linext), get_vertex(), i));
               _curr_simplex = ch;
             }
           }
@@ -848,18 +853,6 @@ private:
         || f.first->neighbor(f.second) == c;
   }
 
-  bool facet_has_vertex(const Facet& f, const Vertex_handle v) const
-  {
-    Cell_handle c = f.first;
-    const int fi = f.second;
-    for (int i = 1; i < 4; ++i)
-    {
-      if (c->vertex((fi + i) % 4) == v)
-        return true;
-    }
-    return false;
-  }
-
   bool facet_has_edge(const Facet& f, const Edge& e) const
   {
     Vertex_handle v1 = e.first->vertex(e.second);
@@ -871,8 +864,8 @@ private:
     for (int i = 1; i < 4; ++i)
     {
       Vertex_handle vi = c->vertex((fi + i) % 4);
-      if (vi == v1) ++count;
-      else if (vi == v2) ++count;
+      if (vi == v1 || vi == v2)
+        ++count;
       if (count == 2)
         return true;
     }
@@ -885,7 +878,7 @@ private:
         || e.first->vertex(e.third) == v;
   }
 
-  bool is_same(const Edge& e1, const Edge& e2) const
+  bool are_equal(const Edge& e1, const Edge& e2) const
   {
     Vertex_handle v1a = e1.first->vertex(e1.second);
     Vertex_handle v1b = e1.first->vertex(e1.third);
@@ -921,7 +914,7 @@ private:
     Vertex_handle nsv2 = (sv == v2a) ? v2b : v2a;
 
     typename Tr::Facet_circulator circ
-      = _cell_iterator.triangulation().incident_facets(e1);
+      = triangulation().incident_facets(e1);
     typename Tr::Facet_circulator end = circ;
     do
     {
@@ -941,12 +934,13 @@ private:
   Facet shared_facet(const Edge& e, const Vertex_handle v) const
   {
     typename Tr::Facet_circulator circ
-      = _cell_iterator.triangulation().incident_facets(e);
+      = triangulation().incident_facets(e);
     typename Tr::Facet_circulator end = circ;
     do
     {
       Facet f = *circ;
-      if (facet_has_vertex(f, v))
+      int i;
+      if (triangulation().has_vertex(f, v, i))
         return f;
     } while (++circ != end);
 
@@ -958,7 +952,7 @@ private:
   Cell_handle shared_cell(const Edge& e, const Vertex_handle v) const
   {
     typename Tr::Cell_circulator circ
-      = _cell_iterator.triangulation().incident_cells(e);
+      = triangulation().incident_cells(e);
     typename Tr::Cell_circulator end = circ;
     do
     {
