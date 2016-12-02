@@ -299,15 +299,15 @@ struct Update_vertex {
     v2.set_dimension(v1.in_dimension());
     v2.set_special(v1.is_special());
     switch(v1.in_dimension()) {
-    case 0:
-    case 1:
-    case 3:
-      v2.set_index(boost::get<int>(v1.index()));
-      break;
-    default: // case 2
+    case 2:
+    {
       const typename V1::Index& index = v1.index();
       const Sp_index sp_index = boost::get<Sp_index>(index);
       v2.set_index((std::max)(sp_index.first, sp_index.second));
+    }
+    break;
+    default:// -1, 0, 1, 3
+      v2.set_index(boost::get<int>(v1.index()));
     }
     return true;
   }
