@@ -202,13 +202,10 @@ boolean_operation(      TriangleMesh& tm1,
     static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
   CGAL_static_assertion(same_fidmap);
 
-  Fid_map fid_map1 = choose_pmap(get_param(np1, face_index),
-                                 tm1,
-                                 face_index);
-  Fid_map fid_map2 = choose_pmap(get_param(np2, face_index),
-                                 tm2,
-                                 face_index);
-
+  Fid_map fid_map1 = choose_param(get_param(np1, face_index),
+                                  get_property_map(face_index, tm1));
+  Fid_map fid_map2 = choose_param(get_param(np2, face_index),
+                                  get_property_map(face_index, tm2));
   // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
   typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
