@@ -34,7 +34,9 @@
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
 #include <boost/function_output_iterator.hpp>
-
+#if ! defined(CGAL_NO_PRECONDITIONS)
+#  include <sstream>
+#endif
 namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
@@ -316,7 +318,16 @@ private:
     // if(minimal_size_ != FT() && s < minimal_size_) 
     //   return minimal_size_;
     // else
-      return s;
+    if(s <= FT(0)) {
+      std::stringstream msg;
+      msg.precision(17);
+      msg << "Error: the sizing field is null at ";
+      if(dim == 0) msg << "corner (";
+      else msg << "point (";
+      msg << p << ")";
+      CGAL_error_msg(msg.str().c_str());
+    }
+    return s;
   }
 
 private:
@@ -895,7 +906,15 @@ insert_balls(const Vertex_handle& vp,
 #endif
   CGAL_precondition(d > 0);
   CGAL_precondition(sp <= sq);
-  CGAL_precondition(sp > 0);
+#if ! defined(CGAL_NO_PRECONDITIONS)
+  if(sp <= 0) {
+    std::stringstream msg;;
+    msg.precision(17);
+    msg << "Error: the mesh sizing field is null at point (";
+    msg << vp->point().point() << ")!";
+    CGAL_precondition_msg(sp > 0, msg.str().c_str());
+  }
+#endif // ! CGAL_NO_PRECONDITIONS
 
   // Notations:
   // sp = size_p,   sq = size_q,   d = pq_geodesic
