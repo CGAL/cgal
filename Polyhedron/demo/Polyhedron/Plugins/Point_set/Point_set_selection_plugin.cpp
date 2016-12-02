@@ -12,6 +12,7 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Point_set_selection_widget.h"
+#include <Plugins/PCA/Scene_edit_box_item.h>
 #include "Point_set_3.h"
 
 #include <QAction>
@@ -220,6 +221,7 @@ public:
     ui_widget.setupUi(dock_widget);
     addDockWidget(dock_widget);
 
+    ui_widget.Add_to_selection_Button->setVisible(false);
     connect(ui_widget.Selection_tool_combo_box, SIGNAL(currentIndexChanged(int)), 
             this, SLOT(on_Selection_tool_combo_box_changed(int)));
     connect(ui_widget.Selection_mode_combo_box, SIGNAL(currentIndexChanged(int)), 
@@ -229,10 +231,11 @@ public:
     connect(ui_widget.Invert_selection_button,  SIGNAL(clicked()), this, SLOT(on_Invert_selection_button_clicked()));
     connect(ui_widget.Erase_selected_points_button,  SIGNAL(clicked()), this, SLOT(on_Erase_selected_points_button_clicked()));
     connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
-
+    connect(ui_widget.Add_to_selection_Button, SIGNAL(clicked()), this, SLOT(select_points()));
     rectangle = true;
     selection_mode = 0;
     visualizer = NULL;
+    edit_box = NULL;
     shift_pressing = false;
     
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -249,7 +252,7 @@ public:
 protected:
 
   bool eventFilter(QObject *, QEvent *event) {
-    if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()))
+    if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || ui_widget.Selection_tool_combo_box->currentIndex()==2)
       return false;
     
     Scene_points_with_normal_item* point_set_item
@@ -259,7 +262,8 @@ protected:
     }
     int item_id = scene->item_id (point_set_item);
       
-    if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
+    if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+    {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
@@ -289,7 +293,7 @@ protected:
 	
 	    scene->setSelectedItem(item_id);
 	    visualizer->sample_mouse_path();
-	    return true;
+            return true;
 	  }
 	// Cancel selection
 	else if (mouseEvent->button() == Qt::RightButton && visualizer)
@@ -299,7 +303,7 @@ protected:
 	    scene->setSelectedItem(item_id);
 	    visualizer = NULL;
 	    QApplication::restoreOverrideCursor();
-	    return true;
+            return true;
 	  }
 
       }
@@ -324,6 +328,7 @@ protected:
     return false;
   }
 
+protected Q_SLOTS:
   void select_points()
   {
     Scene_points_with_normal_item* point_set_item = getSelectedItem<Scene_points_with_normal_item>();
@@ -344,7 +349,6 @@ protected:
     qglviewer::Camera* camera = viewer->camera();
 
     std::vector<Point_set::Index> unselected, selected;
-    
     for(Point_set::iterator it = points->begin ();
 	it != points->end(); ++ it)
       {
@@ -353,8 +357,22 @@ protected:
         const Kernel::Point_3 p = points->point (*it);
         qglviewer::Vec vp (p.x (), p.y (), p.z ());
         qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp + offset);
-	    
-	bool now_selected = visualizer->is_selected (vsp);
+        bool now_selected = false;
+        if(ui_widget.Selection_tool_combo_box->currentIndex() != 2)
+          now_selected = visualizer->is_selected (vsp);
+        else if(edit_box)
+        {
+         if(p.x() >= edit_box->point(0,0) &&
+            p.y() >= edit_box->point(0,1) &&
+            p.z() <= edit_box->point(0,2) &&
+            p.x() <= edit_box->point(6,0) &&
+            p.y() <= edit_box->point(6,1) &&
+            p.z() >= edit_box->point(6,2)
+            )
+         {
+           now_selected = true;
+         }
+        }
 
 	// NEW INTERSECTION
 	if (selection_mode == 0)
@@ -408,6 +426,7 @@ protected:
 	  (points->begin() + unselected.size());
       } 
     point_set_item->invalidateOpenGLBuffers();
+    point_set_item->itemChanged();
   }
 
   
@@ -544,6 +563,26 @@ public Q_SLOTS:
   void on_Selection_tool_combo_box_changed (int index)
   {
     rectangle = (index == 0);
+    if(index == 2)
+    {
+      edit_box = new Scene_edit_box_item(scene);
+      edit_box->setRenderingMode(Wireframe);
+      edit_box->setName("Selection Box");
+      connect(edit_box, &Scene_edit_box_item::aboutToBeDestroyed,
+              this, &Polyhedron_demo_point_set_selection_plugin::reset_editbox);
+      scene->addItem(edit_box);
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      viewer->installEventFilter(edit_box);
+      ui_widget.Add_to_selection_Button->setVisible(true);
+    }
+    else
+    {
+     scene->erase(scene->item_id(edit_box));
+     edit_box = NULL;
+     ui_widget.Add_to_selection_Button->setVisible(false);
+    }
+
+
   }
 
   void on_Selection_mode_combo_box_changed (int index)
@@ -551,6 +590,11 @@ public Q_SLOTS:
     selection_mode = index;
   }
 
+  void reset_editbox()
+  {
+    edit_box = NULL;
+    ui_widget.Add_to_selection_Button->setVisible(false);
+  }
 
 private:
   Messages_interface* messages;
@@ -562,6 +606,7 @@ private:
   int selection_mode;
   Scene_point_set_selection_visualizer* visualizer;
   bool shift_pressing;
+  Scene_edit_box_item* edit_box;
 
 }; // end Polyhedron_demo_point_set_selection_plugin
 

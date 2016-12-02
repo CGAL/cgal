@@ -37,7 +37,7 @@ endif()
 
   qt5_wrap_ui( point_set_selectionUI_FILES Point_set_selection_widget.ui)
   polyhedron_demo_plugin(point_set_selection_plugin Point_set_selection_plugin ${point_set_selectionUI_FILES})
-  target_link_libraries(point_set_selection_plugin scene_points_with_normal_item scene_polylines_item)
+  target_link_libraries(point_set_selection_plugin scene_points_with_normal_item scene_polylines_item scene_edit_box_item)
 
   qt5_wrap_ui(point_set_shape_detectionUI_FILES Point_set_shape_detection_plugin.ui)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})

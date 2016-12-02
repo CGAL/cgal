@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>369</width>
-    <height>239</height>
+    <height>248</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,6 +39,11 @@
           <item>
            <property name="text">
             <string>Free Form</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Selection Box</string>
            </property>
           </item>
          </widget>
@@ -108,6 +113,16 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Add_to_selection_Button">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Add to Selection</string>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="Invert_selection_button">
