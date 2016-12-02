@@ -23,6 +23,7 @@
 
 #include <exception>
 #include <QString>
+#include <QApplication>
 #include <QScriptable>
 #include <QScriptContext>
 #include <QScriptEngine>
@@ -81,7 +82,8 @@ wrap_a_call_to_cpp(Callable f,
   typedef Optional_or_bool<Callable_RT> O_r_b;
   typedef typename O_r_b::type Return_type;
 
-  if(qs == 0 || !qs->context()) return O_r_b::invoke(f);
+  const bool no_try_catch = qApp->property("no-try-catch").toBool();
+  if(no_try_catch || qs == 0 || !qs->context()) return O_r_b::invoke(f);
   else
     try {
       return O_r_b::invoke(f);
