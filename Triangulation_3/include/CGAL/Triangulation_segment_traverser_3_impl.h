@@ -209,7 +209,16 @@ walk_to_next() {
             if( get<0>(_cur)->has_vertex( _tr.infinite_vertex(), inf ) )
                 walk_to_next_3_inf( inf );
             else
+            {
+              Vertex_handle entry_vertex = (get<1>(_cur) == Locate_type::VERTEX)
+                                          ? get<0>(_cur)->vertex(get<2>(_cur))
+                                          : Vertex_handle();
+              do {
                 walk_to_next_3();
+              } while (get<1>(_cur) == Locate_type::VERTEX
+                    && entry_vertex == get<0>(_cur)->vertex(get<2>(_cur))
+                    && !get<0>(_cur)->has_vertex(_tr.infinite_vertex(), inf));//end
+            }
             break;
         }
         case 2: {

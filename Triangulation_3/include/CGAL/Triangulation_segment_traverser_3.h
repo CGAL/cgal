@@ -704,7 +704,8 @@ public:
         {
           while (ltnext == Locate_type::VERTEX
               && _cell_iterator != _cell_iterator.end()
-              && get_vertex() == chnext->vertex(linext))//another cell with same vertex has been found
+              && get_vertex() == chnext->vertex(linext)//another cell with same vertex has been found
+              && !triangulation().is_infinite(chnext))
           {
             ch = chnext;
 
@@ -719,7 +720,18 @@ public:
           else
           {
             if (ltnext == Locate_type::VERTEX)
-              _curr_simplex = Edge(ch, ch->index(get_vertex()), ch->index(chnext->vertex(linext)));
+            {
+              if (triangulation().is_infinite(chnext) && get_vertex() == chnext->vertex(linext))
+                _curr_simplex = chnext;
+              else
+              {
+                Cell_handle ec;
+                int ei, ej;
+                if (!triangulation().is_edge(get_vertex(), chnext->vertex(linext), ec, ei, ej))
+                  CGAL_assertion(false);
+                _curr_simplex = Edge(ec, ei, ej);
+              }
+            }
             else if (ltnext == Locate_type::EDGE)
               _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
             else if (ltnext == Locate_type::FACET)
@@ -733,11 +745,9 @@ public:
         }
         case Locate_type::EDGE:
         {
-          //facet shared by get_vertex() and the edge (ch is a common neighbor)
-          int index_f = 6 - (ch->index(get_vertex())
-                             + ch->index(chnext->vertex(linext))
-                             + ch->index(chnext->vertex(ljnext)));
-          _curr_simplex = Facet(ch, index_f);
+          //facet shared by get_vertex() and the edge
+          //none of ch and chnext is certainly shared by both endpoints
+          _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
           break;
         }
         default ://FACET
