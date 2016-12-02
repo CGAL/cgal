@@ -37,6 +37,7 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree.h> // TODO remove
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/Random.h>
+#include <CGAL/tss.h>
 
 #include <boost/optional.hpp>
 
@@ -58,7 +59,7 @@ Integer caching_binomial(int n, int k) {
     typedef std::vector< Integer > Row;
     typedef std::vector< Row > Triangle;
     // MSVC uses "pascal" as a keyword or defines it as a macro!
-    static Triangle my_pascal;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Triangle, my_pascal);
 
     int old_size = int(my_pascal.size());
     if (n >= old_size) {
@@ -169,8 +170,9 @@ private:
     Integer_vector bernstein_coeff_; // empty if uninitialized
     long bernstein_coeff_prec_; // $ = p+1 $ in [E08]
 
-    static Mn_cache mn_cache_;
+
     static const Mn& get_mn(int n) {
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Mn_cache, mn_cache_);
         Mn& mn = mn_cache_[n];
         if (mn.degree() == -1) mn.set_degree(n);
         return mn;
@@ -197,10 +199,6 @@ public:
     }
 }; // class Bitstream_bernstein_from_power
 
-// static member definition
-template <class Traits_>
-std::map<int, Power_to_Bernstein_pm1_nofrac_matrix<typename Traits_::Integer> >
-Bitstream_bernstein_from_power<Traits_>::mn_cache_;
 
 // non-member functions
 template <class Traits_>

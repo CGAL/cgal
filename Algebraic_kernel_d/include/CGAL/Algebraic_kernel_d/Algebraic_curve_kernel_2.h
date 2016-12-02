@@ -55,6 +55,8 @@
 #include <CGAL/Algebraic_kernel_d/Curve_analysis_2.h>
 #include <CGAL/Algebraic_kernel_d/Curve_pair_analysis_2.h>
 
+#include <CGAL/tss.h>
+
 #include <boost/shared_ptr.hpp>
 
 
@@ -401,7 +403,7 @@ public:
 public: 
     static Algebraic_curve_kernel_2& get_static_instance(){
       // a default constructed ack_2 instance
-      static Algebraic_curve_kernel_2 ack_2_instance;
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Algebraic_curve_kernel_2, ack_2_instance);
       return ack_2_instance;
     }
 

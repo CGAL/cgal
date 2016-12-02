@@ -25,6 +25,8 @@
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/tss.h>
+
 #include <rs_exports.h>
 
 #ifdef CGAL_RS_OLD_INCLUDES
@@ -52,7 +54,7 @@ namespace RS2{
 struct RS2_calls{
 
         static void init_solver(){
-                static bool first=true;
+                CGAL_STATIC_THREAD_LOCAL_VARIABLE(bool, first,true);
                 if(first){
                         first=false;
                         rs_init_rs();
