@@ -5,10 +5,20 @@ project( Polyhedron_Demo )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
+
+list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_trailing_return_types has_cpp11)
+if(has_cpp11 LESS 0)
+  message(STATUS "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
+  return()
+endif()
+
+# Use C++11 for this directory and its sub-directories.
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # Compatibility with CMake 3.0
 if(POLICY CMP0042)
@@ -298,7 +308,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if( POLYHEDRON_QTSCRIPT_DEBUGGER )
     if(TARGET Qt5::ScriptTools)
-      qt5_use_modules(Polyhedron_3 ScriptTools)
+      qt5_use_modules(polyhedron_demo ScriptTools)
     else()
       message(STATUS "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt5 ScriptTools library was not found.")
     endif()

@@ -5,9 +5,10 @@
 
 #include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
-#ifdef QT_SCRIPT_LIB
-#  include  <QScriptEngine>
-#endif
+
+#include <QScriptEngine>
+#include <QScriptable>
+
 
 #include <QVector>
 #include <QList>
@@ -45,7 +46,8 @@ namespace Ui {
 
 class MAINWINDOW_EXPORT MainWindow : 
   public CGAL::Qt::DemosMainWindow,
-  public Messages_interface
+  public Messages_interface,
+  protected QScriptable
 {
   Q_OBJECT
   Q_INTERFACES(Messages_interface)
@@ -208,6 +210,8 @@ public Q_SLOTS:
    */
   void enableScriptDebugger(bool = true);
 
+  /// This slot is used to test exception handling in Qt Scripts.
+  void throw_exception();
 protected Q_SLOTS:
 
    //!Gets the new selected item(s) from the sceneView and updates the scene

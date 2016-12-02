@@ -52,19 +52,19 @@ public:
 
   //!Adds item to the items list, gives it an ID and
   //!updates the bounding box if needed.
-  int addItem(CGAL::Three::Scene_item* item);
+  int addItem(CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE;
 
-  void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group);
+  void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) Q_DECL_OVERRIDE;
   //!Sets item as the item at index and calls @ref Scene_item#changed().
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
-  CGAL::Three::Scene_item* replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false);
+  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) Q_DECL_OVERRIDE;
   /*! Deletes the item with the target index.
    * @returns  the index of the polyhedra just before the
    * one that is erased, or just after. -1 if
    * the list is empty.
    */
-  Q_INVOKABLE Item_id erase(Item_id);
+  Q_INVOKABLE int erase(int) Q_DECL_OVERRIDE;
 
   /*! Deletes the items with the target indexes.
    * @returns the index of the polyhedra just before the
@@ -76,17 +76,17 @@ public:
   /*! Duplicate a scene item.
    * @returns the ID of the new item (-1 on error).
    */
-  int duplicate(int index); 
+  int duplicate(int index) Q_DECL_OVERRIDE;
 
   // Accessors (getters)
   //! @returns the number of items.
-  int numberOfEntries() const;
+  int numberOfEntries() const Q_DECL_OVERRIDE;
   //! @returns the list of items.
   const QList<CGAL::Three::Scene_item*>& entries() const { return m_entries; }
   //! @returns the item at the target index.
-  Q_INVOKABLE CGAL::Three::Scene_item* item(int) const ;
+  Q_INVOKABLE CGAL::Three::Scene_item* item(int) const Q_DECL_OVERRIDE;
   //! @returns the id of the target item.
-  Item_id item_id(CGAL::Three::Scene_item*) const;
+  int item_id(CGAL::Three::Scene_item*) const Q_DECL_OVERRIDE;
   
   //! \todo Replace Index based selection functionality with those
   //! functions.
@@ -98,39 +98,40 @@ public:
   ///@}
 
   //!@returns the currently selected item's index.
-  int mainSelectionIndex() const;
+  int mainSelectionIndex() const Q_DECL_OVERRIDE;
   //!@returns the list of currently selected items indices.
-  QList<int> selectionIndices() const;
+  QList<int> selectionIndices() const Q_DECL_OVERRIDE;
   //!@returns the index of the Item_A
-  int selectionAindex() const;
+  int selectionAindex() const Q_DECL_OVERRIDE;
   //!@returns the index of the Item_B
-  int selectionBindex() const;
+  int selectionBindex() const Q_DECL_OVERRIDE;
 
   /*! Is called by Viewer::initializeGL(). Allows all the initialization
    * of OpenGL code that needs a context.
    */
-  void initializeGL();
+  void initializeGL() Q_DECL_OVERRIDE;
   /*! Sets the screen coordinates of the currently picked point.*/
-  void setPickedPixel(const QPoint &p) {picked_pixel = p;}
+  void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
   /*! Is called by Viewer::draw(Viewer_interface*). Calls draw_aux(false, viewer).
    * @see draw_aux(bool with_names, Viewer_interface).*/
-  void draw(CGAL::Three::Viewer_interface*);
+  void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   /*! Is called by Viewer::drawWithNames(Viewer_interface*). Calls draw_aux(true, viewer).
    * @see draw_aux(bool with_names, Viewer_interface).*/
-  void drawWithNames(CGAL::Three::Viewer_interface*);
+  void drawWithNames(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
   /*! Manages the key events.
    * @returns true if the keyEvent executed well.
    */
-  bool keyPressEvent(QKeyEvent* e);
+  bool keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
 
-  void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*);
-  void printPrimitiveIds(CGAL::Three::Viewer_interface*);
-  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer);
+  void printPrimitiveId(QPoint point,
+                        CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  void printPrimitiveIds(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
   //!@returns the scene bounding box
-  Bbox bbox() const;
-  float get_bbox_length() const;
+  Bbox bbox() const Q_DECL_OVERRIDE;
+  float get_bbox_length() const Q_DECL_OVERRIDE;
   //!@returns the length of the bounding box's diagonal.
-  double len_diagonal() const
+  double len_diagonal() const Q_DECL_OVERRIDE
   {
     Bbox box = bbox();
     double dx = box.xmax() - box.xmin();
@@ -143,15 +144,19 @@ public:
   // QStandardItemModel functions
   void moveRowUp();
   void moveRowDown();
-  bool dropMimeData(const QMimeData *, Qt::DropAction, int, int, const QModelIndex &parent);
-  QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
+  bool dropMimeData(const QMimeData *, Qt::DropAction, int, int,
+                    const QModelIndex &parent) Q_DECL_OVERRIDE;
+  QVariant data ( const QModelIndex & index,
+                  int role = ::Qt::DisplayRole ) const Q_DECL_OVERRIDE;
   //!@returns the type of data correspondind to the role.
-  QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
+  QVariant headerData ( int section, ::Qt::Orientation orientation,
+                        int role = ::Qt::DisplayRole ) const Q_DECL_OVERRIDE;
   //!@returns the flags for the item at the target index.
-  ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
+  ::Qt::ItemFlags flags ( const QModelIndex & index ) const Q_DECL_OVERRIDE;
   /*! Sets the column data for the target index. Returns false if index is not valid and
    * if role is not EditRole.*/
-  bool setData(const QModelIndex &index, const QVariant &value, int role);
+  bool setData(const QModelIndex &index, const QVariant &value,
+               int role) Q_DECL_OVERRIDE;
   QList<CGAL::Three::Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   //!Selects the row at index i in the sceneView.
@@ -172,15 +177,15 @@ public Q_SLOTS:
   /*! Notifies the scene that the item at index i was modified.
    * Called by the items. Calls @ref Scene_item#changed().
    * This function is called by the items.*/
-  void itemChanged(int i); 
+  void itemChanged(int i) Q_DECL_OVERRIDE;
   /*! Notifies the scene that the item was modified.
    *  Calls @ref Scene_item#changed().
    * This function is called by the items.*/
-  void itemChanged(CGAL::Three::Scene_item*);
+  void itemChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
   //!Removes item from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
 
-  void addGroup(Scene_group_item* group);
+  void addGroup(Scene_group_item* group) Q_DECL_OVERRIDE;
   //!Re-organizes the sceneView.
   void redraw_model();
   //! Sets the selected item to the target index. Emits a signal to notify
@@ -192,7 +197,7 @@ public Q_SLOTS:
   }
   //! Clears the current selection then sets the selected item to the target index.
   //! Used to update the selection in the QTreeView.
-  void setSelectedItem(int i )
+  void setSelectedItem(int i ) Q_DECL_OVERRIDE
   {
     selected_item = i;
     Q_EMIT selectionChanged(i);

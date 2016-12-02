@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
+#include <CGAL/Three/exceptions.h>
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -108,6 +109,7 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
   }
 
   if(mw) mw->message(QString("QtScript: ") + result, "");
+  QTextStream (stdout) << (QString("QtScript: ") + result) << "\n";
 
   return engine->undefinedValue();
 }
@@ -414,24 +416,45 @@ void MainWindow::filterOperations()
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations);
 }
-#ifdef QT_SCRIPT_LIB
+
+#include <CGAL/Three/exceptions.h>
+
 void MainWindow::evaluate_script(QString script,
                                  const QString& filename,
                                  const bool quiet) {
+  QScriptContext* context = script_engine->currentContext();
+  QScriptValue object = context->activationObject();
+  QScriptValue former_current_filename = object.property("current_filename");;
+  object.setProperty("current_filename", filename);
+
   QScriptValue value = script_engine->evaluate(script, filename);
   if(script_engine->hasUncaughtException()) {
-    QTextStream err(stderr);
-    err << "Qt Script exception:\n"
-        << script_engine->uncaughtException().toString()
-        << "\nBacktrace:\n";
-    Q_FOREACH(QString line, script_engine->uncaughtExceptionBacktrace()) {
-      err << "  " << line << "\n";
+    QScriptValue js_exception = script_engine->uncaughtException();
+    QScriptValue js_bt =js_exception.property("backtrace");
+    QStringList bt = script_engine->uncaughtExceptionBacktrace();
+    if(js_bt.isValid()) {
+      QStringList other_bt;
+      qScriptValueToSequence(js_bt, other_bt);
+      if(!other_bt.isEmpty()) bt = other_bt;
     }
+    if(!quiet) {
+      QTextStream err(stderr);
+      err << "Qt Script exception:\n"
+          << js_exception.toString()
+          << "\nBacktrace:\n";
+      Q_FOREACH(QString line, bt) {
+        err << "  " << line << "\n";
+      }
+    }
+    throw CGAL::Three::Script_exception
+       (script_engine->uncaughtException().toString(), bt);
   }
   else if(!quiet && !value.isNull() && !value.isUndefined()) {
     QTextStream(stderr) << "Qt Script evaluated to \""
                         << value.toString() << "\"\n";
   }
+
+  object.setProperty("current_filename", former_current_filename);
 }
 
 void MainWindow::evaluate_script_quiet(QString script,
@@ -439,7 +462,6 @@ void MainWindow::evaluate_script_quiet(QString script,
 {
   evaluate_script(script, filename, true);
 }
-#endif
 
 void MainWindow::enableScriptDebugger(bool b /* = true */)
 {
@@ -451,6 +473,10 @@ void MainWindow::enableScriptDebugger(bool b /* = true */)
   if(debugger) {
     if(b) {
       debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
+    }
+    else {
+      std::cerr << "Detach the script debugger\n";
+      debugger->detach();
     }
   }
   return;
@@ -1020,9 +1046,18 @@ void MainWindow::open(QString filename)
 
 bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename); 
-  CGAL::Three::Scene_item* item;
+  boost::optional<CGAL::Three::Scene_item*> item_opt;
+  CGAL::Three::Scene_item* item = 0;
   try {
-    item = loadItem(fileinfo, findLoader(loader_name));
+    item_opt = wrap_a_call_to_cpp
+      ([this, fileinfo, loader_name]()
+       {
+         return loadItem(fileinfo, findLoader(loader_name));
+       },
+       this, __FILE__, __LINE__
+       );
+    if(!item_opt) return false;
+    else item = *item_opt;
   }
   catch(std::logic_error e) {
     std::cerr << e.what() << std::endl;
@@ -1341,7 +1376,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 bool MainWindow::loadScript(QString filename)
 {
   QFileInfo fileinfo(filename);
-  return loadScript(fileinfo);
+  boost::optional<bool> opt = wrap_a_call_to_cpp
+    ([this, fileinfo] {
+      return loadScript(fileinfo);
+    }, this, __FILE__, __LINE__, CGAL::Three::PARENT_CONTEXT);
+  if(!opt) return false;
+  else return *opt;
 }
 
 bool MainWindow::loadScript(QFileInfo info)
@@ -1351,6 +1391,9 @@ bool MainWindow::loadScript(QFileInfo info)
   QString filename = info.absoluteFilePath();
   QFile script_file(filename);
   script_file.open(QIODevice::ReadOnly);
+  if(!script_file.isReadable()) {
+    throw std::ios_base::failure(script_file.errorString().toStdString());
+  }
   program = script_file.readAll();
   if(!program.isEmpty())
   {
@@ -1362,6 +1405,13 @@ bool MainWindow::loadScript(QFileInfo info)
   }
 #endif
   return false;
+}
+
+void MainWindow::throw_exception() {
+  wrap_a_call_to_cpp([]() {
+      throw std::runtime_error("Exception thrown in "
+                               "MainWindow::throw_exception()");
+    }, this, __FILE__, __LINE__);
 }
 
 void MainWindow::on_actionLoadScript_triggered() 
