@@ -78,6 +78,7 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("triangulate_faces_test.cpp")
   create_single_source_cgal_program("test_corefinement_and_constraints.cpp")
   create_single_source_cgal_program("test_corefinement_bool_op.cpp")
+  create_single_source_cgal_program("test_corefine.cpp")
   create_single_source_cgal_program("polyhedron_clipping.cpp")
 
 if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))

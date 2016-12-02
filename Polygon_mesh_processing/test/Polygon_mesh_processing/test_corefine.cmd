@@ -1,8 +1,6 @@
 data-coref/sphere.off data-coref/elephant.off
 data-coref/cow.off data-coref/cross.off
 data-coref/broken_bound-1.off data-coref/broken_bound-2.off
-data-coref/surface1.off data-coref/surface2.off
-data-coref/output4Orig.OFF  data-coref/output3Orig.OFF
 data-coref/P7.off  data-coref/Q7.off
 data-coref/testsuite/big_triangle.off data-coref/testsuite/sphere.off
 data-coref/testsuite/big_triangle.off data-coref/testsuite/t3bis.off
@@ -24,9 +22,6 @@ data-coref/coplanar_triangles/tr2-1.off data-coref/coplanar_triangles/tr2-2.off
 data-coref/coplanar_triangles/tr3-1.off data-coref/coplanar_triangles/tr3-2.off
 data-coref/coplanar_triangles/tr4-1.off data-coref/coplanar_triangles/tr4-2.off
 data-coref/elephant_split_1.off data-coref/elephant_split_2.off
-data-coref/F1.off data-coref/F2.off
-data-coref/F1.off data-coref/F1.off
-data-coref/F2.off data-coref/F2.off
 data-coref/c1.off data-coref/c2.off
 data-coref/c1.off data-coref/c2_bis.off
 data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr1-1.off data-coref/coplanar_triangles/all_cases/deg/collinear_edges/tr1-2.off
@@ -81,7 +76,7 @@ data-coref/coplanar_triangles/tr6-1.off data-coref/coplanar_triangles/tr6-2.off
 data-coref/coplanar_triangles/tr7-1.off data-coref/coplanar_triangles/tr7-2.off
 data-coref/coplanar_triangles/tr8-1.off data-coref/coplanar_triangles/tr8-2.off
 data-coref/coplanar_triangles/tr9-1.off data-coref/coplanar_triangles/tr9-2.off
-data-coref/coplanar_triangles/simple/tr1-1.off data-coref/coplanar_triangles/simple/tr1-2.off 
+data-coref/coplanar_triangles/simple/tr1-1.off data-coref/coplanar_triangles/simple/tr1-2.off
 data-coref/coplanar_triangles/simple/tr2-1.off data-coref/coplanar_triangles/simple/tr2-2.off
 data-coref/coplanar_triangles/simple/tr3-1.off data-coref/coplanar_triangles/simple/tr3-2.off
 data-coref/coplanar_triangles/simple/tr4-1.off data-coref/coplanar_triangles/simple/tr4-2.off
@@ -100,6 +95,5 @@ data-coref/coplanar_segments/tr5-2.off data-coref/coplanar_segments/tr5-1.off
 data-coref/coplanar_segments/tr6-1.off data-coref/coplanar_segments/tr6-2.off
 data-coref/intersection_edge/ex1-1.off data-coref/intersection_edge/ex1-2.off
 data-coref/intersection_edge/ex2-1.off data-coref/intersection_edge/ex2-2.off
-data-coref/intersection_vertex/ex1-1.off  data-coref/intersection_vertex/ex1-2.off  
+data-coref/intersection_vertex/ex1-1.off  data-coref/intersection_vertex/ex1-2.off
 data-coref/intersection_vertex/ex2-1.off data-coref/intersection_vertex/ex2-2.off
-data-coref/P7.OFF data-coref/P7.OFF

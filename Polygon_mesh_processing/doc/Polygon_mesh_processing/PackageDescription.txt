@@ -144,5 +144,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::bbox_3()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 
+\todo add `clip_triangle_mesh()` using the code of `Polyhedron_place_clipping.h` and `PMP::corefine()`
 \todo fix and restore remove_degenerate_faces in the user and the reference manual
 */
