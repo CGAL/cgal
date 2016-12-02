@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Authors: Weisheng Si, Quincy Tse
+// Authors: Weisheng Si, Quincy Tse, Frédérk Paradis
 
 /*! \file Construct_yao_graph_2.h
  *
@@ -31,7 +31,7 @@
 #include <utility>
 #include <CGAL/Compute_cone_boundaries_2.h>
 #include <CGAL/Cone_spanners_2/Less_by_direction_2.h>
-#include <CGAL/Cone_spanners_2_enum.h>
+#include <CGAL/Cone_spanners_enum_2.h>
 
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -74,8 +74,8 @@ private:
     /* Store the number of cones.  */
     unsigned int  cone_number;
 
-    /* Store whether this is an half-yao graph */
-    Half half;
+    /* Store whether even, odd or all cones are selected to construct graph. */
+    Cones_selected cones_choice;
 
     /* Store the directions of the rays dividing the plane. The initial direction will be
        stored in rays[0].  */
@@ -89,13 +89,13 @@ public:
       \param initial_direction  A direction denoting one of the rays dividing the
                    cones. This allows arbitary rotations of the rays that divide
                    the plane.  (default: positive x-axis)
-     \param half_yao  Indicates whether all the cones are used or just half of
-                      them (default: all cones).
+      \param cones_selected  Indicates whether even, odd or all cones are
+                   selected to construct graph.
      */
     Construct_yao_graph_2 (unsigned int k,
                            Direction_2 initial_direction = Direction_2(1,0),
-                           Half half_yao = ALL_CONES
-                          ): cone_number(k), rays(std::vector<Direction_2>(k)), half(half_yao)
+                           Cones_selected cones_selected = ALL_CONES
+                          ): cone_number(k), rays(std::vector<Direction_2>(k)), cones_choice(cones_selected)
 
     {
         if (k<2) {
@@ -134,8 +134,8 @@ public:
         unsigned int j;   // index of the ccw ray
 
         // add edges into the graph for every cone
-        int new_start = half != ALL_CONES ? half : 0;
-        int increment = half != ALL_CONES ? 2 : 1;
+        int new_start = cones_choice != ALL_CONES ? cones_choice : 0;
+        int increment = cones_choice != ALL_CONES ? 2 : 1;
         for (i = new_start; i < cone_number; i += increment) {
             j = (i+1) % cone_number;
             add_edges_in_cone(rays[i], rays[j], g);

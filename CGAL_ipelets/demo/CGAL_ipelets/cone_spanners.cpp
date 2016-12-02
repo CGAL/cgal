@@ -4,6 +4,7 @@
 #include <CGAL/Construct_theta_graph_2.h>
 #include <CGAL/Construct_yao_graph_2.h>
 #include <CGAL/Compute_cone_boundaries_2.h>
+#include <CGAL/Cone_spanners_enum_2.h>
 #include <CGAL/property_map.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -40,10 +41,10 @@ const std::string hmsg[] = {
 };
 
 class Cone_spanners_ipelet
-  : public CGAL::Ipelet_base<Kernel,6> {
+  : public CGAL::Ipelet_base<Kernel,7> {
 public:
   Cone_spanners_ipelet()
-    :CGAL::Ipelet_base<Kernel,6>("Cone Spanners",labels,hmsg){}
+    :CGAL::Ipelet_base<Kernel,7>("Cone Spanners",labels,hmsg){}
   void protected_run(int);
 private:
 };
@@ -94,11 +95,11 @@ void Cone_spanners_ipelet::protected_run(int fn)
   }
 
   if(fn >= 0 && fn <= 5) {
-    CGAL::Half half = CGAL::ALL_CONES;
+    CGAL::Cones_selected cones_selected = CGAL::ALL_CONES;
     if(fn == 2 || fn == 3)
-      half = CGAL::EVEN_CONES;
+      cones_selected = CGAL::EVEN_CONES;
     else if(fn == 4 || fn == 5)
-      half = CGAL::ODD_CONES;
+      cones_selected = CGAL::ODD_CONES;
 
     Graph g;
     switch (fn){
@@ -106,7 +107,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
       case 2:
       case 4:
       {
-        CGAL::Construct_theta_graph_2<Kernel, Graph> theta(number_of_cones, Direction_2(1,0), half);
+        CGAL::Construct_theta_graph_2<Kernel, Graph> theta(number_of_cones, Direction_2(1,0), cones_selected);
         theta(lst.begin(), lst.end(), g);
         break;
       }
@@ -114,7 +115,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
       case 3:
       case 5:
       {
-        CGAL::Construct_yao_graph_2<Kernel, Graph> yao(number_of_cones, Direction_2(1,0), half);
+        CGAL::Construct_yao_graph_2<Kernel, Graph> yao(number_of_cones, Direction_2(1,0), cones_selected);
         yao(lst.begin(), lst.end(), g);
         break;
       }
@@ -128,7 +129,7 @@ void Cone_spanners_ipelet::protected_run(int fn)
     }
     group_selected_objects_();
   }
-  else if(fn == 4) {
+  else if(fn == 6) {
     CGAL::Compute_cone_boundaries_2<Kernel> cones;
     std::vector<Direction_2> directions(number_of_cones);
     cones(number_of_cones, Direction_2(1,0), directions.begin());
