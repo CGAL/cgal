@@ -151,7 +151,7 @@ int edge_collapse ( ECM& aSurface
 template<class ECM, class ShouldStop>
 int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop ) 
 {
-  return edge_collapse(aSurface,aShould_stop, halfedge_index_map(get(boost::halfedge_index,aSurface))); // AF why the halfedge_index_map?
+  return edge_collapse(aSurface,aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index,aSurface)));
 }
 
   template<class ECM, class ShouldStop, class GT>
