@@ -84,7 +84,8 @@ public:
       std::map<face_descriptor, std::size_t> neighbors;
       NeighborSelector()(mesh,*facet_it, window_size,
                          neighbors); // gather neighbors in the window
-      double current_sdf_value = values[*facet_it];
+
+      double current_sdf_value = get(values, *facet_it);
 
       double range_parameter_actual;
       if(!range_parameter) {
@@ -92,7 +93,7 @@ public:
         double deviation = 0.0;
         for(typename std::map<face_descriptor, std::size_t>::iterator it =
               neighbors.begin(); it != neighbors.end(); ++it) {
-          deviation += std::pow(values[it->first] - current_sdf_value, 2);
+          deviation += std::pow(get(values, it->first) - current_sdf_value, 2);
         }
         deviation = std::sqrt(deviation / neighbors.size());
         if(deviation == 0.0) {
@@ -112,12 +113,12 @@ public:
             neighbors.begin(); it != neighbors.end(); ++it) {
         double spatial_weight = gaussian_function(static_cast<double>(it->second),
                                 spatial_parameter_actual);
-        double range_weight = gaussian_function(values[it->first] - current_sdf_value,
+        double range_weight = gaussian_function(get(values, it->first) - current_sdf_value,
                                                 range_parameter_actual);
         // we can use just spatial_weight for Gaussian filtering
         double weight = spatial_weight * range_weight;
 
-        total_sdf_value += values[it->first] * weight;
+        total_sdf_value += get(values, it->first) * weight;
         total_weight += weight;
       }
       smoothed_values.push_back(total_sdf_value / total_weight);
@@ -127,7 +128,7 @@ public:
     for(boost::tie(facet_it,fend) = faces(mesh);
         facet_it != fend;
         ++facet_it, ++smoothed_value_it) {
-      values[*facet_it] = *smoothed_value_it;
+      put(values, *facet_it, *smoothed_value_it);
     }
   }
 private:
