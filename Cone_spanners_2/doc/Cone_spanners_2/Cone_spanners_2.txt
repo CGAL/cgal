@@ -301,13 +301,14 @@ A directed Theta graph of 20 vertices with \f$k=4\f$.
 
 By default, the functors `Construct_theta_graph_2`
 and `Construct_yao_graph_2` construct full Theta and Yao graphs. They also provide a way
-to compute Half Theta and Yao graphs. As mentionned in Section \ref sec_CBS_mydefinitions,
+to compute Half Theta and Yao graphs. As mentioned in Section \ref sec_CBS_mydefinitions,
 only the edges for the odd or even cones are added to the graph in an Half Theta and Yao
 graph. To do so, the constructor of the functors provides a parameter of type
 `Cones_selected` which is a enumeration that contains the following possible values:
 `ALL_CONES`, `EVEN_CONES` and `ODD_CONES`. Users should include the
-`CGAL/Cone_spanners_enum_2.h` header file. The following are examples of constructions of
-the functors for Half Theta and Yao Graphs.
+`CGAL/Cone_spanners_enum_2.h` header file to use these enum values. The following are the
+examples on the functor constructions for Half Theta and Yao Graphs.
+
 
 \code{.cpp}
 // Construct an Half Theta graph with the edges only in the even cones.
