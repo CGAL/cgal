@@ -113,7 +113,7 @@ namespace CGAL {
           traits.construct_cartesian_const_iterator_d_object();
 	typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
                                                           end = construct_it(c, 0);
-        for (int i = 0; cit != end && (distance < squared_radius) ; ++cit,++i) {
+        for (int i = 0; cit != end && (distance <= squared_radius) ; ++cit,++i) {
 		if ((*cit) <= (rectangle.min_coord(i)+rectangle.max_coord(i))/FT(2))
 			distance += 
 			(rectangle.max_coord(i)-(*cit))*(rectangle.max_coord(i)-(*cit));
