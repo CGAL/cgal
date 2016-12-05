@@ -144,7 +144,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       }
 
       int cc=0;
-      compute_color_map(item->color(), item->isItemMulticolor() ? new_polyhedra.size() : 1,
+      compute_color_map(item->color(), item->isItemMulticolor() ? static_cast<unsigned int>(new_polyhedra.size()) : 1,
                         std::back_inserter(colors_));
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
