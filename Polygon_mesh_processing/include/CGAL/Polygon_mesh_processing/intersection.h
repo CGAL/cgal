@@ -39,7 +39,7 @@ namespace Polygon_mesh_processing{
  * @tparam NamedParameters1 a sequence of \ref namedparameters
  * @tparam NamedParameters2 a sequence of \ref namedparameters
  * @tparam OutputIterator an output iterator in which `std::vector` of points
- *                        can be put in. The point type is the one from the
+ *                        can be put. The point type is the one from the
  *                        vertex property map
  *
  * @param tm1 first input triangulated surface mesh

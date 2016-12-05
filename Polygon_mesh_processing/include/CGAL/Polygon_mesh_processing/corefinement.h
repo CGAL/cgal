@@ -467,7 +467,6 @@ boolean_operation(      TriangleMesh& tm1,
   *     constrained edge in `tm1` or `tm2`.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
-  * \todo in the code only edges on the intersection are marked!
   *
   * @return `true` if the output surface mesh is manifold and is put into `tm_out`.
   *         If `false` is returned and if `tm_out` is one of the input surface meshes,
