@@ -670,7 +670,7 @@ class Intersection_of_triangle_meshes
     }
 
     void erase(Node_id i){
-      CGAL_assertion(neighbors.count(i));
+      CGAL_assertion(neighbors.count(i)!= 0);
       neighbors.erase(i);
     }
     void make_terminal() {degree=45;}

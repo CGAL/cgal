@@ -230,9 +230,9 @@ triangulate_a_face(
 
     Node_id i0=cdt_v0->info(), i1=cdt_v1->info(), i2=cdt_v2->info();
 
-    CGAL_assertion(edge_to_hedge.count(std::make_pair(i0,i1)));
-    CGAL_assertion(edge_to_hedge.count(std::make_pair(i1,i2)));
-    CGAL_assertion(edge_to_hedge.count(std::make_pair(i2,i0)));
+    CGAL_assertion(edge_to_hedge.count(std::make_pair(i0,i1))!= 0);
+    CGAL_assertion(edge_to_hedge.count(std::make_pair(i1,i2))!= 0);
+    CGAL_assertion(edge_to_hedge.count(std::make_pair(i2,i0))!= 0);
 
     halfedge_descriptor h01=edge_to_hedge[std::make_pair(i0,i1)];
     halfedge_descriptor h12=edge_to_hedge[std::make_pair(i1,i2)];
@@ -498,7 +498,7 @@ next_marked_halfedge_around_target_vertex(
    const PolygonMesh& pm,
    const MarkedEdgeSet& marked_edges)
 {
-  CGAL_assertion( marked_edges.count(edge(h,pm)) );
+  CGAL_assertion( marked_edges.count(edge(h,pm))!= 0 );
   typename boost::graph_traits<PolygonMesh>::halfedge_descriptor nxt =
     next(h, pm);
   while( !marked_edges.count(edge(nxt,pm)) )
@@ -661,7 +661,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, true>
 
   halfedge_descriptor get_hedge(halfedge_descriptor h_tm)
   {
-    CGAL_assertion( tm_to_output_edges.count(edge(h_tm, tm)) );
+    CGAL_assertion( tm_to_output_edges.count(edge(h_tm, tm))!=0 );
     const std::pair<edge_descriptor, edge_descriptor>& key_and_value =
       *tm_to_output_edges.find(edge(h_tm, tm));
     return halfedge(key_and_value.first,tm) != h_tm
@@ -702,7 +702,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, false>
 
   halfedge_descriptor get_hedge(halfedge_descriptor h_tm)
   {
-    CGAL_assertion( tm_to_output_edges.count(edge(h_tm, tm)) );
+    CGAL_assertion( tm_to_output_edges.count(edge(h_tm, tm))!=0 );
     const std::pair<edge_descriptor, edge_descriptor>& key_and_value =
       *tm_to_output_edges.find(edge(h_tm, tm));
     return halfedge(key_and_value.first,tm) == h_tm
