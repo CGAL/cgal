@@ -254,10 +254,12 @@ void test_vertex_facet_edge(const DT& dt, const std::size_t& nb_tests)
       if (st.is_vertex() && st.get_vertex() == v1)
       {
         ++st;
+        std::cout << st.simplex_dimension() << " ";
         assert(st.is_facet());
         assert(st.get_facet() == facets[i]
             || st.get_facet() == dt.mirror_facet(facets[i]));
         ++st;
+        std::cout << st.simplex_dimension() << " ";
         assert(st.is_edge());
         Edge e = st.get_edge();
         Vertex_handle va = e.first->vertex(e.second);
