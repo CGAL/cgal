@@ -77,7 +77,6 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("measures_test.cpp")
   create_single_source_cgal_program("triangulate_faces_test.cpp")
   create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
-  create_single_source_cgal_program("test.cpp")
 
 if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
   create_single_source_cgal_program("fairing_test.cpp")
