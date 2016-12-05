@@ -532,6 +532,7 @@ private:
       layout->addWidget(x_control);
 
       QLabel* label = new QLabel(x_control);
+      label->setStyleSheet("QLabel { color : red; }");
       label->setText("X Slice");
 
       x_cubeLabel = new QLabel(x_control);
@@ -554,6 +555,7 @@ private:
       layout->addWidget(y_control);
 
       QLabel* label = new QLabel(y_control);
+      label->setStyleSheet("QLabel { color : green; }");
       label->setText("Y Slice");
 
       y_cubeLabel = new QLabel(y_control);
@@ -577,6 +579,7 @@ private:
       layout->addWidget(z_control);
 
       QLabel* label = new QLabel(z_control);
+      label->setStyleSheet("QLabel { color : blue; }");
       label->setText("Z Slice");
 
       z_cubeLabel = new QLabel(z_control);
@@ -624,6 +627,9 @@ private:
     Volume_plane<x_tag> *x_item = new Volume_plane<x_tag>();
     Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>();
     Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>();
+    x_item->setColor(QColor("red"));
+    y_item->setColor(QColor("green"));
+    z_item->setColor(QColor("blue"));
     scene->setSelectedItem(-1);
     group = new Scene_group_item(QString("Planes for %1").arg(seg_img->name()));
     connect(group, SIGNAL(aboutToBeDestroyed()),

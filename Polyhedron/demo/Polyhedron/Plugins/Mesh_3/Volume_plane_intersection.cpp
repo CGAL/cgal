@@ -193,7 +193,7 @@ Volume_plane_intersection::Volume_plane_intersection(float x, float y, float z)
   :Scene_item(Volume_plane_intersection_priv::NumberOfVbos, Volume_plane_intersection_priv::NumberOfVaos),
     d(new Volume_plane_intersection_priv(x,y,z,this))
 {
-  setColor(QColor(255, 0, 0));
+  setColor(QColor(255, 128, 0));
   setName("Volume plane intersection");
 }
 
