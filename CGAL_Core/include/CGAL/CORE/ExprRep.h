@@ -922,7 +922,7 @@ protected:
     return Operator::get_name();
   }
 private:
-  static Operator Op;
+  Operator Op;
 };//AddSubRep class
 
 template <class Operator>
