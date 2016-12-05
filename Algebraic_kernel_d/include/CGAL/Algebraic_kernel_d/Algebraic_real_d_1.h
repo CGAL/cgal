@@ -33,6 +33,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/convert_to_bfi.h>
+#include <CGAL/tss.h>
 
 #include <iterator>
 #include <list>
@@ -104,7 +105,7 @@ private:
   
 private: 
   static inline Self& get_default_instance(){
-    static Self x = Self(0); 
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self, x,0); 
     return x; 
   }
 public:

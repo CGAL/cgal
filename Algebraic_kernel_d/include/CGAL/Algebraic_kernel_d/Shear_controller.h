@@ -24,6 +24,7 @@
 #define CGAL_ACK_SHEAR_CONTROLLER 1
 
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 
 #include<set>
 
@@ -96,7 +97,7 @@ namespace CGAL {
 	Int m_max;
 
         static std::vector<Int>& value_order() {
-          static std::vector<Int> value_order_;
+          CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(std::vector<Int>, value_order_);
           return value_order_;
         }
 
