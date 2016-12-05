@@ -121,9 +121,8 @@ int main(int argc, char* argv[])
   Coref_point_map mesh1_pm(mesh1_exact_points, mesh1_exact_points_computed, mesh1);
   Coref_point_map mesh2_pm(mesh2_exact_points, mesh2_exact_points_computed, mesh2);
 
-  Mesh mesh2_copy = mesh2; // do a copy to not corefine mesh2 yet
   if ( PMP::corefine_and_compute_intersection(mesh1,
-                                              mesh2_copy,
+                                              mesh2,
                                               mesh1,
                                               params::vertex_point_map(mesh1_pm),
                                               params::vertex_point_map(mesh2_pm),

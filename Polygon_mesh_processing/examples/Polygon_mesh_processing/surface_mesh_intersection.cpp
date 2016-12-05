@@ -20,7 +20,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor      vertex_descriptor;
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/XXXXXXX.off";
+  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
   std::ifstream input(filename1);
 
   Mesh mesh1;
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   }
   input.close();
 
-  const char* filename2 = (argc > 2) ? argv[2] : "data/XXXXXXX.off";
+  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
   input.open(filename2);
 
   Mesh mesh2;
