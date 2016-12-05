@@ -229,6 +229,14 @@ namespace parameters{
     return Params();
   }
 
+  template <typename T, typename Tag, typename Base>
+  pmp_bgl_named_params<T,Tag,Base>
+  inline no_parameters(pmp_bgl_named_params<T,Tag,Base>)
+  {
+    typedef pmp_bgl_named_params<T,Tag,Base> Params;
+    return Params();
+  }
+
   template <typename Double>
   pmp_bgl_named_params<Double, density_control_factor_t>
   density_control_factor(const Double& d)

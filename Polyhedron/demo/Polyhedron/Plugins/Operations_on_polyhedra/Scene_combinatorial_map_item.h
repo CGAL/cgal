@@ -64,7 +64,7 @@ public:
         return *m_combinatorial_map;
     }
 
-    Combinatorial_map_3* m_combinatorial_map;
+    boost::shared_ptr<Combinatorial_map_3> m_combinatorial_map;
 
 
 public Q_SLOTS:

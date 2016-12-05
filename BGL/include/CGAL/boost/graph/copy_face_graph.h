@@ -49,7 +49,8 @@ namespace CGAL {
   \tparam V2V a model of `OutputIterator` accepting `std::pair<sm_vertex_descriptor, tm_vertex_descriptor>`
   \tparam H2H a model of `OutputIterator` accepting `std::pair<sm_halfedge_descriptor, tm_halfedge_descriptor>`
   \tparam F2F a model of `OutputIterator` accepting `std::pair<sm_face_descriptor, tm_face_descriptor>`
-
+  \tparam Src_vpm a model of `ReadablePropertyMap` with `sm_vertex_descriptor` as key
+  \tparam Tgt_vpm a model of `WritablePropertyMap` with `tm_vertex_descriptor` as key
   where the prefix `sm_` and `tm_` mean belonging to the source and
   target mesh respectively.
 
@@ -60,12 +61,13 @@ namespace CGAL {
   \param v2v pairs of `vertex_descriptors` from `sm` and corresponding `vertex_descriptors` in `tm` are added to `v2v`
   \param h2h pairs of `halfedge_descriptors` from `sm` and corresponding `halfedge_descriptors` in `tm` are added to `h2h`
   \param f2f pairs of `face_descriptors` from `sm` and corresponding `face_descriptors` in `tm` are added to `f2f`
+  \param sm_vpm vertex point map for `sm`
+  \param tm_vpm vertex point map for `tm`
 
-  This function assumes that both graphs have an internal property
-  `vertex_point`. Values of that property are converted using
-  `CGAL::Cartesian_converter<SourceKernel,
-  TargetKernel>`. `SourceKernel` and `TargetKernel` are deduced using
-  `CGAL::Kernel_traits`.
+  The points from `sm` to `tm` are converted using
+  `CGAL::Cartesian_converter<SourceKernel, TargetKernel>`.
+  `SourceKernel` and `TargetKernel` are deduced using `CGAL::Kernel_traits`
+  from the value types of `Src_vpm` and `Tgt_vpm`.
 
   Other properties are not copied.
 */
@@ -73,14 +75,20 @@ namespace CGAL {
 template <typename SourceMesh, typename TargetMesh,
           typename V2V = Emptyset_iterator,
           typename H2H = Emptyset_iterator,
-          typename F2F = Emptyset_iterator>
+          typename F2F = Emptyset_iterator,
+          typename Src_vpm = typename boost::property_map<SourceMesh, vertex_point_t>::const_type,
+          typename Tgt_vpm = typename boost::property_map<TargetMesh, vertex_point_t>::type,>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     V2V v2v = V2V(), H2H h2h = H2H(), F2F f2f = F2F())
+                     V2V v2v = V2V(), H2H h2h = H2H(), F2F f2f = F2F(),
+                     Src_vpm sm_vpm = get(vertex_point, sm),
+                     Tgt_vpm tm_vpm = get(vertex_point, tm) )
 #else // use the overloads
 template <typename SourceMesh, typename TargetMesh,
-          typename V2V, typename H2H, typename F2F>
+          typename V2V, typename H2H, typename F2F,
+          typename Src_vpm, typename Tgt_vpm>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     V2V v2v, H2H h2h, F2F f2f)
+                     V2V v2v, H2H h2h, F2F f2f,
+                     Src_vpm sm_vpm, Tgt_vpm tm_vpm )
 #endif
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
@@ -92,15 +100,9 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   typedef typename boost::graph_traits<SourceMesh>::halfedge_descriptor sm_halfedge_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
 
-  typedef typename boost::property_map<SourceMesh, vertex_point_t>::const_type sm_PMap;
-  typedef typename boost::property_map<TargetMesh, vertex_point_t>::type tm_PMap;
-
-  Cartesian_converter<typename Kernel_traits<typename boost::property_traits<sm_PMap>::value_type>::type, 
-                      typename Kernel_traits<typename boost::property_traits<tm_PMap>::value_type>::type > 
+  Cartesian_converter<typename Kernel_traits<typename boost::property_traits<Src_vpm>::value_type>::type,
+                      typename Kernel_traits<typename boost::property_traits<Tgt_vpm>::value_type>::type >
     conv;
-
-  sm_PMap sm_pmap = get(vertex_point, sm);
-  tm_PMap tm_pmap = get(vertex_point, tm);
 
   // internal f2f and v2v
   boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v_;
@@ -110,7 +112,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
     tm_vertex_descriptor tvd = add_vertex(tm);
     v2v_[svd] = tvd;
     *v2v++ = std::make_pair(svd, tvd);
-    put(tm_pmap, tvd, conv(get(sm_pmap, svd)));
+    put(tm_vpm, tvd, conv(get(sm_vpm, svd)));
   }
 
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
@@ -145,15 +147,18 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
 #if !defined(CGAL_CXX11)  && !defined(DOXYGEN_RUNNING)
 template <typename SourceMesh, typename TargetMesh>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
-{ copy_face_graph(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator()); }
+{ copy_face_graph(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
+                  get(vertex_point, sm), get(vertex_point, tm)); }
 
 template <typename SourceMesh, typename TargetMesh, typename V2V>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v)
-{ copy_face_graph(sm, tm, v2v, Emptyset_iterator(), Emptyset_iterator()); }
+{ copy_face_graph(sm, tm, v2v, Emptyset_iterator(), Emptyset_iterator(),
+                  get(vertex_point, sm), get(vertex_point, tm)); }
 
 template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h)
-{ copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator()); }
+{ copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator(),
+                  get(vertex_point, sm), get(vertex_point, tm)); }
 #endif
 
 } // namespace CGAL

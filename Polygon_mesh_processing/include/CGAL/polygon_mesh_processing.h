@@ -41,3 +41,21 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
+
+// the named parameter header being not documented the doc is put here for now
+#ifdef DOXYGEN_RUNNING
+namespace CGAL {
+namespace Polygon_mesh_processing {
+namespace parameters {
+
+/*! \ingroup namedparameters
+This function can be used to indicate that all optional named parameters
+to be used are the default ones. This is particularly useful when a function
+requires more than one sequence of named parameters and default values is
+fine only for some of them.
+*/
+unspecified_type all_default();
+
+} } } // end of namespace CGAL::Polygon_mesh_processing::parameters
+#endif
