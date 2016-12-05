@@ -743,7 +743,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     //order edges
   QVector<Polyhedron::Halfedge_handle> b_edges;
   Polyhedron::Halfedge_handle c_e = *buffer.begin();
-  b_edges.reserve(buffer.size());
+  b_edges.reserve(static_cast<int>(buffer.size()));
   b_edges.push_back(c_e);
   buffer.erase(c_e);
   while(!buffer.empty())
