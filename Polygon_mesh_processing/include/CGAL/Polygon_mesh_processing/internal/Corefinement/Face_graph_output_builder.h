@@ -439,10 +439,6 @@ public:
         an_edge_per_polyline.erase(it_to_rm);
         inter_edges_to_remove1.insert(edge(h1,tm1));
         inter_edges_to_remove2.insert(edge(h2,tm2));
-        #ifdef CGAL_COREFINEMENT_DEBUG
-        /// \todo really??
-        #warning we need to have the EdgeMarkPropertyMap to unmark intersection hedge
-        #endif
       }
       else
         ++epp_it;
