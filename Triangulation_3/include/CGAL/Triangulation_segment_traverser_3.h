@@ -118,6 +118,7 @@ public:
 
     typedef typename Tr::Cell                           Cell;                   //< defines the type of a cell of the triangulation.
     typedef typename Tr::Edge                           Edge;                   //< defines the type of an edge of the triangulation.
+    typedef typename Tr::Facet                          Facet;                  //< defines the type of a facet of the triangulation.
 
     typedef typename Tr::Vertex_handle                  Vertex_handle;          //< defines the type of a handle for a vertex in the triangulation.
     typedef typename Tr::Cell_handle                    Cell_handle;            //< defines the type of a handle for a cell in the triangulation.
