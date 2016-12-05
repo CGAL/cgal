@@ -265,6 +265,7 @@ boolean_operation(      TriangleMesh& tm1,
                                      NamedParameters1>::type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::type Vpm2;
+  CGAL_USE_TYPE(Vpm2);
   CGAL_assertion_code(
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
   CGAL_static_assertion(same_vpm);
@@ -356,6 +357,7 @@ boolean_operation(      TriangleMesh& tm1,
                                    NamedParameters1>::type Fid_map;
   typedef typename GetFaceIndexMap<TriangleMesh,
                                    NamedParameters2>::type Fid_map2;
+  CGAL_USE_TYPE(Fid_map2);
   CGAL_assertion_code(
     static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
   CGAL_static_assertion(same_fidmap);
@@ -608,6 +610,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
                                      NamedParameters1>::type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::type Vpm2;
+  CGAL_USE_TYPE(Vpm2);
   CGAL_assertion_code(
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);

@@ -77,6 +77,7 @@ surface_intersection(const TriangleMesh& tm1,
                                      NamedParameters1>::const_type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::const_type Vpm2;
+  CGAL_USE_TYPE(Vpm2);
   CGAL_assertion_code(
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);

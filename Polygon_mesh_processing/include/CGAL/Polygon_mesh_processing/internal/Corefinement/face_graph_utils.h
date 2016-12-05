@@ -754,10 +754,12 @@ void append_patches_to_triangle_mesh(
                    i < patches_to_append.npos;
                    i = patches_to_append.find_next(i))
   {
+    #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     #warning the size of tm_to_output_edges will increase at each step \
              when adding new patches  by the size of internal edges. \
              Maybe the use of a copy would be better since we do not need \
              the internal edges added?
+    #endif
 
     Patch_description<TriangleMesh>& patch = patches[i];
 
