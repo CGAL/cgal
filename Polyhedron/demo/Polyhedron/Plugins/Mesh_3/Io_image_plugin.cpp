@@ -129,15 +129,6 @@ public:
     connect(frame,  SIGNAL(manipulated()), this, SLOT(updateCutPlane()));
   }
 
-public:
-  void sliderChange(SliderChange c) {
-    QSlider::sliderChange(c);
-    if(c == SliderValueChange) {
-      updateFramePosition();
-    }
-
-  }
-
 public Q_SLOTS:
   void updateCutPlane()
   {
@@ -179,6 +170,11 @@ public Q_SLOTS:
     ready_to_cut = false;
   }
 
+  void updateFramePosition()
+  {
+    ready_to_move = true;
+    QTimer::singleShot(0,this,SLOT(setFramePosition()));
+  }
 Q_SIGNALS:
   void realChange(int);
 
@@ -190,11 +186,6 @@ private:
   int id;
   Scene_interface* scene;
   qglviewer::ManipulatedFrame* frame;
-  void updateFramePosition()
-  {
-    ready_to_move = true;
-    QTimer::singleShot(0,this,SLOT(setFramePosition()));
-  }
 };
 
 const unsigned int Plane_slider::scale = 100;
@@ -360,6 +351,7 @@ public Q_SLOTS:
       x_slider->setRange(0, (plane->cDim() - 1) * 100);
       connect(x_slider, SIGNAL(realChange(int)), x_cubeLabel, SLOT(setNum(int)));
       connect(x_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      connect(x_slider, SIGNAL(sliderMoved(int)), x_slider, SLOT(updateFramePosition()));
       connect(plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
       x_box->addWidget(x_slider);
@@ -373,6 +365,7 @@ public Q_SLOTS:
       y_slider->setRange(0, (plane->cDim() - 1) * 100);
       connect(y_slider, SIGNAL(realChange(int)), y_cubeLabel, SLOT(setNum(int)));
       connect(y_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      connect(y_slider, SIGNAL(sliderMoved(int)), y_slider, SLOT(updateFramePosition()));
       connect(plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
       y_box->addWidget(y_slider);
@@ -386,6 +379,7 @@ public Q_SLOTS:
       z_slider->setRange(0, (plane->cDim() - 1) * 100);
       connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      connect(z_slider, SIGNAL(sliderMoved(int)), z_slider, SLOT(updateFramePosition()));
       connect(plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
       z_box->addWidget(z_slider);
@@ -627,6 +621,11 @@ private:
     Volume_plane<x_tag> *x_item = new Volume_plane<x_tag>();
     Volume_plane<y_tag> *y_item = new Volume_plane<y_tag>();
     Volume_plane<z_tag> *z_item = new Volume_plane<z_tag>();
+
+    x_item->setProperty("img",qVariantFromValue((void*)seg_img));
+    y_item->setProperty("img",qVariantFromValue((void*)seg_img));
+    z_item->setProperty("img",qVariantFromValue((void*)seg_img));
+
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
     z_item->setColor(QColor("blue"));
@@ -634,6 +633,9 @@ private:
     viewer->installEventFilter(x_item);
     viewer->installEventFilter(y_item);
     viewer->installEventFilter(z_item);
+    connect(x_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
+    connect(y_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
+    connect(z_item, SIGNAL(selected(CGAL::Three::Scene_item*)), this, SLOT(select_plane(CGAL::Three::Scene_item*)));
     scene->setSelectedItem(-1);
     group = new Scene_group_item(QString("Planes for %1").arg(seg_img->name()));
     connect(group, SIGNAL(aboutToBeDestroyed()),
@@ -685,6 +687,13 @@ private:
   }
 
 private Q_SLOTS:
+  void select_plane(CGAL::Three::Scene_item* item)
+  {
+    //Scene* true_scene = dynamic_cast<Scene*>(scene);
+    Scene_image_item* img = (Scene_image_item*)item->property("img").value<void*>();
+    if(img)
+      scene->setSelectedItem(scene->item_id(img));
+  }
   //updates the msgBox
   void update_msgBox()
   {
@@ -737,9 +746,15 @@ private Q_SLOTS:
   void connect_controls(int id)
   {
     CGAL::Three::Scene_item* sel_itm = scene->item(id);
-    if(!sel_itm || !group_map.contains(sel_itm)) //the planes are not yet created or the selected item is not a segmented_image
-    {
+    if(!sel_itm)
       return;
+    if(!group_map.contains(sel_itm)) //the planes are not yet created or the selected item is not a segmented_image
+    {
+      Scene_image_item* img = (Scene_image_item*)sel_itm->property("img").value<void*>();
+      if(img)
+        sel_itm = img;
+      else
+        return;
     }
     Controls c = group_map[sel_itm];
     current_control = &group_map[sel_itm];
@@ -756,6 +771,7 @@ private Q_SLOTS:
       connect(x_plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
       connect(x_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
       connect(x_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      connect(x_slider, SIGNAL(sliderMoved(int)), x_slider, SLOT(updateFramePosition()));
       x_slider->setValue(c.x_value);
 
       x_box->addWidget(x_slider);
@@ -774,6 +790,7 @@ private Q_SLOTS:
       connect(y_plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
       connect(y_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
       connect(y_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      connect(y_slider, SIGNAL(sliderMoved(int)), y_slider, SLOT(updateFramePosition()));
       y_slider->setValue(c.y_value);
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
@@ -790,6 +807,7 @@ private Q_SLOTS:
       connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(z_plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(z_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
+      connect(x_slider, SIGNAL(sliderMoved(int)), z_slider, SLOT(updateFramePosition()));
       connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       z_slider->setValue(c.z_value);
       z_box->addWidget(z_slider);

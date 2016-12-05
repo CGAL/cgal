@@ -627,6 +627,7 @@ bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
             if(!found)
                 return false;
             is_grabbing = true;
+            emitSelection();
             viewer->setManipulatedFrame(manipulatedFrame());
             viewer->setMouseBinding(
                         Qt::NoModifier,

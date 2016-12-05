@@ -33,12 +33,14 @@ public:
   }
 
   virtual unsigned int getCurrentCube() const = 0;
+  void emitSelection()  { Q_EMIT selected(this); }
 
   virtual qglviewer::ManipulatedFrame* manipulatedFrame() { return mFrame_; }
 
 Q_SIGNALS:
   void planeDestructionIncoming(Volume_plane_interface*);
   void manipulated(int);
+  void selected(CGAL::Three::Scene_item*);
 private Q_SLOTS:
   void propagateManipulation() {
     Q_EMIT manipulated(getCurrentCube());
