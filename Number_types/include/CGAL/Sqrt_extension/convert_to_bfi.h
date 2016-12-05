@@ -28,6 +28,7 @@
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
 #include <CGAL/assertions.h>
+#include <CGAL/tss.h>
 
 
 // Disbale SQRT_EXTENSION_TO_BFI_CACHE by default
@@ -55,11 +56,15 @@ class Sqrt_extension_bfi_cache {
 
 public:
   typedef Cache<Input,Output,Creator> Cache_type;
-  static Cache_type cache; 
+
+  static Cache_type& cache()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Cache_type, cache_);
+    return cache_;
+  } 
+
 };
-template <typename BFI, typename ROOT>
-typename Sqrt_extension_bfi_cache<BFI,ROOT>::Cache_type 
-Sqrt_extension_bfi_cache<BFI,ROOT>::cache;
+
 } // namespace INTERN_SQRT_EXTENSION 
 
 
@@ -76,7 +81,7 @@ convert_to_bfi(const CGAL::Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x) {
     typedef INTERN_SQRT_EXTENSION::Sqrt_extension_bfi_cache<BFI,ROOT> Get_cache;
     BFI a0(convert_to_bfi(x.a0()));
     BFI a1(convert_to_bfi(x.a1()));
-    BFI root(Get_cache::cache(std::make_pair(precision,x.root())));  
+    BFI root(Get_cache::cache()(std::make_pair(precision,x.root())));
     result = a0+a1*root;
   }else{
     result =  convert_to_bfi(x.a0());
