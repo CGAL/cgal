@@ -78,11 +78,13 @@ namespace Polygon_mesh_processing {
 
     template<typename PM
            , typename FaceRange
-           , typename HalfedgeOutputIterator>
+           , typename HalfedgeOutputIterator
+           , typename NamedParameters>
     HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
                                                , typename boost::cgal_no_property::type
                                                , HalfedgeOutputIterator out
-                                               , const PM& pmesh)
+                                               , const PM& pmesh
+                                               , const NamedParameters& /* np */)
     {
       return border_halfedges_impl(faces, out, pmesh);
     }
@@ -90,14 +92,30 @@ namespace Polygon_mesh_processing {
     template<typename PM
            , typename FaceRange
            , typename FaceIndexMap
-           , typename HalfedgeOutputIterator>
+           , typename HalfedgeOutputIterator
+           , typename NamedParameters>
     HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
                                                , const FaceIndexMap& fmap
                                                , HalfedgeOutputIterator out
-                                               , const PM& pmesh)
+                                               , const PM& pmesh
+                                               , const NamedParameters& /* np */)
     {
       typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
       typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
+
+      //make a minimal check that it's properly initialized :
+      //if the 2 first faces have the same id, we know the property map is not initialized
+      if (boost::is_same<typename GetFaceIndexMap<PM, NamedParameters>::Is_internal_map,
+                         boost::true_type>::value)
+      {
+        typename boost::range_iterator<const FaceRange>::type it = boost::const_begin(faces);
+        if (get(fmap, *it) == get(fmap, *cpp11::next(it)))
+        {
+          std::cerr << "WARNING : the internal property map for CGAL::face_index_t" << std::endl
+                    << "          is not properly initialized." << std::endl
+                    << "          Initialize it before calling border_halfedges()" << std::endl;
+        }
+      }
 
       std::vector<bool> present(num_faces(pmesh), false);
       BOOST_FOREACH(face_descriptor fd, faces)
@@ -180,21 +198,7 @@ namespace Polygon_mesh_processing {
     FIMap fim = choose_param(get_param(np, CGAL::face_index),
                              get_const_property_map(CGAL::face_index, pmesh));
 
-    //make a minimal check that it's properly initialized :
-    //if the 2 first faces have the same id, we know the property map is not initialized
-    if (boost::is_same<typename GetFaceIndexMap<PM, NamedParameters>::Is_internal_map,
-                       boost::true_type>::value)
-    {
-      typename boost::range_iterator<const FaceRange>::type it = boost::const_begin(faces);
-      if (get(fim, *it) == get(fim, *cpp11::next(it)))
-      {
-        std::cerr << "WARNING : the internal property map for CGAL::face_index_t" << std::endl
-                  << "          is not properly initialized." << std::endl
-                  << "          Initialize it before calling border_halfedges()" << std::endl;
-      }
-    }
-
-    return internal::border_halfedges_impl(faces, fim, out, pmesh);
+    return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
   }
 
   template<typename PolygonMesh
