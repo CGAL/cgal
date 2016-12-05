@@ -14,6 +14,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
+#include <QMouseEvent>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Qt/debug.h>
 
@@ -65,6 +66,7 @@ public:
      const qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(QGLViewer::QGLViewerPool().first())->offset();
      mFrame_->setPosition(offset.x, offset.y, offset.z);
  }
+ bool eventFilter(QObject *, QEvent *);
  void compute_bbox()const
  {
    compute_bbox(*this);
@@ -122,6 +124,7 @@ public:
   void init();
 
 private:
+  bool is_grabbing;
   static const char* vertexShader_source;
 
   static const char* fragmentShader_source;
@@ -484,7 +487,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
 
 template<typename T>
 void Volume_plane<T>::init() {
-  
+  is_grabbing = false;
   initShaders();
 
   // for each vertex
@@ -585,5 +588,63 @@ void Volume_plane<T>::initShaders() {
   program_bordures.link();
 }
 
+
+//intercept events for picking
+template<typename T>
+bool Volume_plane<T>::eventFilter(QObject *, QEvent *event)
+{
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    if(event->type() == QEvent::MouseButtonPress)
+    {
+        QMouseEvent* e = static_cast<QMouseEvent*>(event);
+        if(e->modifiers() == Qt::NoModifier)
+        {
+            //pick
+            bool found = false;
+            qglviewer::Vec pos = viewer->camera()->pointUnderPixel(e->pos(), found);
+            if(!found)
+                return false;
+            found = false;
+            //check the found point is on a sphere
+            pos = manipulatedFrame()->inverse().inverseCoordinatesOf(pos);
+            int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+            float sq_radius = max_dim/40.0f * max_dim/40.0f;
+            qglviewer::Vec center;
+            //is the picked point on the sphere ?
+            for (int i=0; i<4; ++i)
+            {
+                center = qglviewer::Vec(c_spheres[i*3], c_spheres[i*3+1], c_spheres[i*3+2]);
+                if(
+                        (center.x - pos.x) * (center.x - pos.x) +
+                        (center.y - pos.y) * (center.y - pos.y) +
+                        (center.z - pos.z) * (center.z - pos.z)
+                        <= sq_radius)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+            is_grabbing = true;
+            viewer->setManipulatedFrame(manipulatedFrame());
+            viewer->setMouseBinding(
+                        Qt::NoModifier,
+                        Qt::LeftButton,
+                        QGLViewer::FRAME,
+                        QGLViewer::TRANSLATE);
+        }
+    }
+    else if(event->type() == QEvent::MouseButtonRelease && is_grabbing)
+    {
+        is_grabbing = false;
+        viewer->setMouseBinding(
+                    Qt::NoModifier,
+                    Qt::LeftButton,
+                    QGLViewer::CAMERA,
+                    QGLViewer::ROTATE);
+    }
+    return false;
+}
 
 #endif /* CGAL_VOLUME_PLANE_H */
