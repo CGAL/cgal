@@ -210,14 +210,12 @@ walk_to_next() {
                 walk_to_next_3_inf( inf );
             else
             {
-              Vertex_handle entry_vertex = (get<1>(_cur) == Locate_type::VERTEX)
-                                          ? get<0>(_cur)->vertex(get<2>(_cur))
-                                          : Vertex_handle();
+              const Simplex backup = _cur;
               do {
                 walk_to_next_3();
-              } while (get<1>(_cur) == Locate_type::VERTEX
-                    && entry_vertex == get<0>(_cur)->vertex(get<2>(_cur))
-                    && !get<0>(_cur)->has_vertex(_tr.infinite_vertex(), inf));//end
+              } while (get<0>(_cur) != Cell_handle()//end
+                    && !get<0>(_cur)->has_vertex(_tr.infinite_vertex(), inf)
+                    && have_same_entry(backup, _cur));
             }
             break;
         }
@@ -250,6 +248,35 @@ walk_to_next() {
       }
     }
 #endif
+}
+
+template<class Tr, class Inc>
+bool Triangulation_segment_cell_iterator_3<Tr, Inc>::
+have_same_entry(const Simplex& s1, const Simplex& s2) const
+{
+  //type
+  if (get<1>(s1) != get<1>(s2))
+    return false;
+  switch (get<1>(s1))
+  {
+  case Locate_type::VERTEX:
+    return get<0>(s1)->vertex(get<2>(s1)) == get<0>(s2)->vertex(get<2>(s2));
+  case Locate_type::EDGE:
+  {
+    Vertex_handle v1a = get<0>(s1)->vertex(get<2>(s1));
+    Vertex_handle v1b = get<0>(s1)->vertex(get<3>(s1));
+    Vertex_handle v2a = get<0>(s2)->vertex(get<2>(s2));
+    Vertex_handle v2b = get<0>(s2)->vertex(get<3>(s2));
+    return (v1a == v2a && v1b == v2b)
+        || (v1a == v2b && v1b == v2a);
+  }
+  case Locate_type::FACET:
+    return triangulation().are_equal(Facet(get<0>(s1), get<2>(s1)),
+                                     Facet(get<0>(s2), get<2>(s2)));
+  default:
+    CGAL_assertion(false);
+  };
+  return false;
 }
 
 template < class Tr, class Inc >

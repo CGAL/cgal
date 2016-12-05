@@ -411,6 +411,9 @@ private:
         CGAL_triangulation_precondition( i != j );
         return ( i==0 || j==0 ) ? i+j-1 : i+j;
     }
+
+    bool have_same_entry(const Simplex& s1, const Simplex& s2) const;
+
 }; // class Triangulation_segment_cell_iterator_3
 	
 //  compares a handle to a cell to a traverser.
@@ -643,7 +646,7 @@ public:
         if (edge_has_vertex(get_edge(), chnext->vertex(linext)))
           _curr_simplex = chnext->vertex(linext);
         else
-          _curr_simplex = ch;
+          _curr_simplex = shared_facet(get_edge(), chnext->vertex(linext));
         break;
 
       case Locate_type::EDGE:
@@ -934,7 +937,7 @@ private:
     do
     {
       Facet f = *circ;
-      for (int i = 0; i < 4; ++i)
+      for (int i = 1; i < 4; ++i)
       {
         if (nsv2 == f.first->vertex((f.second + i) % 4))
           return f;
