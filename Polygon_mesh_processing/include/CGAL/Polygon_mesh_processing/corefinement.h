@@ -589,7 +589,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *     `CGAL::vertex_point_t` should be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the
- *     constrained-or-not status of each edge of `tm1` (resp. `tm2`)
+ *     constrained-or-not status of each edge of `tm1` (`tm2`)
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  *

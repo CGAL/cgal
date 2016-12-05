@@ -56,7 +56,7 @@ namespace Polygon_mesh_processing{
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
  *    a property map with the points associated to the vertices of `tm1`
- *    (resp. `tm2`). The two property map types must be the same.
+ *    (`tm2`). The two property map types must be the same.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
