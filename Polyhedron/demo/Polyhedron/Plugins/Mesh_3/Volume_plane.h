@@ -10,6 +10,7 @@
 #include <QGLViewer/qglviewer.h>
 
 #include "Volume_plane_interface.h"
+#include "create_sphere.h"
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -172,8 +173,12 @@ private:
   mutable QOpenGLBuffer cbuffer;
   mutable QOpenGLBuffer rectBuffer;
   mutable std::vector<float> v_rec;
+  mutable std::vector<float> v_spheres;
+  mutable std::vector<float> n_spheres;
+  mutable std::vector<float> c_spheres;
   mutable QOpenGLShaderProgram program_bordures;
   mutable QOpenGLShaderProgram program;
+  mutable QOpenGLShaderProgram* spheres_program;
   mutable std::vector< std::pair<QOpenGLBuffer, unsigned int> > ebos;
   std::vector< float > colors_;
 
@@ -203,6 +208,40 @@ private:
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back((adim_ - 1) * xscale_); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
       v_rec.push_back(0.0f); v_rec.push_back((bdim_ - 1) * yscale_); v_rec.push_back(0.0f);
+  }
+
+  void drawSpheres(x_tag) const
+  {
+      int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+      create_flat_sphere(max_dim/40.0f, v_spheres, n_spheres);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_ ); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
+      c_spheres.push_back(0.0f); c_spheres.push_back((adim_ - 1) * yscale_/2.0f + max_dim/15.0f); c_spheres.push_back((bdim_ - 1 ) * zscale_);
+      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f + max_dim/15.0f);
+
+  }
+
+  void drawSpheres(y_tag) const
+  {
+      int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+      create_flat_sphere(max_dim/40.0f, v_spheres, n_spheres);
+
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_);
+      c_spheres.push_back(0.0f); c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * zscale_/2.0f);
+  }
+
+  void drawSpheres(z_tag) const
+  {
+      int max_dim = (std::max)((std::max)(adim_, bdim_ ), cdim_);
+      create_flat_sphere(max_dim/40.0f, v_spheres, n_spheres);
+
+      c_spheres.push_back(0.0f); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f - max_dim/15.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back((bdim_ - 1) * yscale_); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_); c_spheres.push_back((bdim_ - 1) * yscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f);
+      c_spheres.push_back((adim_ - 1) * xscale_/2.0f-max_dim/15.0f); c_spheres.push_back(0.0f); c_spheres.push_back(0.0f);
   }
 
   qglviewer::Constraint* setConstraint(x_tag) {
@@ -245,6 +284,38 @@ private:
       return mFrame_->matrix()[14] / zscale_ - offset.z;
   }
 
+  void initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
+  {
+      spheres_program = getShaderProgram(PROGRAM_INSTANCED, viewer);
+
+      spheres_program->bind();
+      vaos[0]->bind();
+      buffers[0].bind();
+      buffers[0].allocate(v_spheres.data(),
+                                 static_cast<int>(v_spheres.size()*sizeof(float)));
+      spheres_program->enableAttributeArray("vertex");
+      spheres_program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+      buffers[0].release();
+
+      buffers[1].bind();
+      buffers[1].allocate(n_spheres.data(),
+                                static_cast<int>(n_spheres.size()*sizeof(float)));
+      spheres_program->enableAttributeArray("normals");
+      spheres_program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+      buffers[1].release();
+
+      buffers[2].bind();
+      buffers[2].allocate(c_spheres.data(),
+                               static_cast<int>(c_spheres.size()*sizeof(float)));
+      spheres_program->enableAttributeArray("center");
+      spheres_program->setAttributeBuffer("center", GL_FLOAT, 0, 3);
+      buffers[2].release();
+
+      viewer->glVertexAttribDivisor(spheres_program->attributeLocation("center"), 1);
+      vaos[0]->release();
+      spheres_program->release();
+      are_buffers_filled = true;
+  }
 };
 
 template<typename T>
@@ -304,6 +375,10 @@ void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int
  currentCube = 0;
  colors_.swap(colors);
  mFrame_->setConstraint(setConstraint(*this));
+ v_spheres.resize(0);
+ n_spheres.resize(0);
+ c_spheres.resize(0);
+ drawSpheres(*this);
 }
 template<typename T>
 Volume_plane<T>::~Volume_plane() {
@@ -374,6 +449,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   cbuffer.release();
 
 
+
   printGlError(__LINE__);
 
  for(unsigned int i = 0; i < ebos.size(); ++i)
@@ -388,6 +464,22 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   program.release();
 
   printGlError(__LINE__);
+
+  if(!are_buffers_filled)
+      initializeBuffers(viewer);
+  mvp = mvp*f;
+  vaos[0]->bind();
+  spheres_program = getShaderProgram(PROGRAM_INSTANCED, viewer);
+  attribBuffers(viewer, PROGRAM_INSTANCED);
+
+  spheres_program->bind();
+  spheres_program->setAttributeValue("colors", this->color());
+  spheres_program->setUniformValue("mvp_matrix", mvp);
+  viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                static_cast<GLsizei>(v_spheres.size()/3),
+                                static_cast<GLsizei>(4));
+  spheres_program->release();
+  vaos[0]->release();
 }
 
 template<typename T>
