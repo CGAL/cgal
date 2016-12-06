@@ -652,7 +652,7 @@ private:
     group_map[seg_img] = c;
     current_control = &group_map[seg_img];
     connect(seg_img, SIGNAL(aboutToBeDestroyed()),
-            this, SLOT(erase_group()));
+            this, SLOT(on_img_detroyed()));
 
     threads.push_back(new X_plane_thread<Word>(x_item, img, clamper, name));
 
@@ -735,7 +735,37 @@ private Q_SLOTS:
         }
       }
     }
-
+      //try to re-connect to another group
+      if(!group_map.isEmpty())
+      {
+        int id = scene->item_id(group_map.keys().first());
+        connect_controls(id);
+      }
+  }
+    //destroy planes on image deletion
+    void on_img_detroyed()
+    {
+      Scene_image_item* img_item = qobject_cast<Scene_image_item*>(sender());
+      if(img_item)
+      {
+        Scene_group_item* group = qobject_cast<Scene_group_item*>(group_map[img_item].group);
+        if(!group)
+          return;
+        group_map[img_item].x_item = NULL;
+        group_map[img_item].y_item = NULL;
+        group_map[img_item].z_item = NULL;
+        disconnect(group_map[img_item].group, SIGNAL(aboutToBeDestroyed()),
+                           this, SLOT(erase_group()));
+        group_map.remove(img_item);
+        QList<int> deletion;
+        Q_FOREACH(Scene_item* child, group->getChildren())
+        {
+          group->unlockChild(child);
+          deletion.append(scene->item_id(child));
+        }
+        deletion.append(scene->item_id(group));
+        static_cast<Scene*>(scene)->erase(deletion);
+      }
     //try to re-connect to another group
     if(!group_map.isEmpty())
     {
@@ -807,7 +837,7 @@ private Q_SLOTS:
       connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(z_plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(z_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
-      connect(x_slider, SIGNAL(sliderMoved(int)), z_slider, SLOT(updateFramePosition()));
+      connect(z_slider, SIGNAL(sliderMoved(int)), z_slider, SLOT(updateFramePosition()));
       connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       z_slider->setValue(c.z_value);
       z_box->addWidget(z_slider);
