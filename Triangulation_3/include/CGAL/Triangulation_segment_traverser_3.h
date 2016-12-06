@@ -656,25 +656,13 @@ public:
           || triangulation().is_infinite(chnext)
           || !are_equal(get_edge(), Edge(chnext, linext, ljnext)));
 
-        
         if (_cell_iterator == _cell_iterator.end())
           _curr_simplex = Cell_handle(_cell_iterator);
         else if (triangulation().is_infinite(chnext)
               && are_equal(get_edge(), Edge(chnext, linext, ljnext)))
           _curr_simplex = chnext;
-        else if (ltnext == Locate_type::EDGE)
+        else
           _curr_simplex = shared_facet(get_edge(), Edge(chnext, linext, ljnext));
-        else if (ltnext == Locate_type::FACET)
-          _curr_simplex = chnext->neighbor(linext);//chnext will be met after the facet
-        else if (ltnext == Locate_type::VERTEX)
-        {
-          if (edge_has_vertex(get_edge(), chnext->vertex(linext)))
-            _curr_simplex = chnext->vertex(linext);
-          else
-            _curr_simplex = shared_facet(get_edge(), chnext->vertex(linext));
-        }
-        else //CELL
-          CGAL_assertion(false);
         break;
       }
       case Locate_type::FACET:
@@ -717,26 +705,15 @@ public:
           }
           else
           {
-            if (ltnext == Locate_type::VERTEX)
+            if (triangulation().is_infinite(chnext) && get_vertex() == chnext->vertex(linext))
+              _curr_simplex = chnext;
+            else
             {
-              if (triangulation().is_infinite(chnext) && get_vertex() == chnext->vertex(linext))
-                _curr_simplex = chnext;
-              else
-              {
-                Cell_handle ec;
-                int ei, ej;
-                if (!triangulation().is_edge(get_vertex(), chnext->vertex(linext), ec, ei, ej))
-                  CGAL_assertion(false);
-                _curr_simplex = Edge(ec, ei, ej);
-              }
-            }
-            else if (ltnext == Locate_type::EDGE)
-              _curr_simplex = shared_facet(Edge(chnext, linext, ljnext), get_vertex());
-            else if (ltnext == Locate_type::FACET)
-            {
-              CGAL_assertion_code(int i);
-              CGAL_assertion(!triangulation().has_vertex(Facet(chnext, linext), get_vertex(), i));
-              _curr_simplex = ch;
+              Cell_handle ec;
+              int ei, ej;
+              if (!triangulation().is_edge(get_vertex(), chnext->vertex(linext), ec, ei, ej))
+                CGAL_assertion(false);
+              _curr_simplex = Edge(ec, ei, ej);
             }
           }
           break;
