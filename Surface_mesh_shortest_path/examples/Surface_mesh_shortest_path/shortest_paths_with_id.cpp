@@ -41,8 +41,8 @@ int main(int argc, char** argv)
   const int target_face_index = rand.get_int(0, num_faces(polyhedron));
   face_iterator face_it = faces(polyhedron).first;
   std::advance(face_it,target_face_index);
-  // ... and define a barycentric coordinate inside the face
-  Traits::Barycentric_coordinate face_location = {{0.25, 0.5, 0.25}};
+  // ... and define a barycentric coordinates inside the face
+  Traits::Barycentric_coordinates face_location = {{0.25, 0.5, 0.25}};
 
   // construct a shortest path query object and add a source point
   Surface_mesh_shortest_path shortest_paths(polyhedron);

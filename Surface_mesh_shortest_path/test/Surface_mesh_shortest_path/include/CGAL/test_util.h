@@ -24,7 +24,7 @@ struct Sequence_item
 {
   typedef typename Traits::Triangle_mesh Triangle_mesh;
   typedef typename Traits::FT FT;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef typename Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef typename boost::graph_traits<Triangle_mesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
@@ -32,7 +32,7 @@ struct Sequence_item
   
   Sequence_item_type type;
   size_t index;
-  Barycentric_coordinate faceAlpha;
+  Barycentric_coordinates faceAlpha;
   FT edgeAlpha;
   
   halfedge_descriptor halfedge;
@@ -48,7 +48,7 @@ struct Edge_sequence_collector
 {
   typedef typename Traits::Triangle_mesh Triangle_mesh;
   typedef typename Traits::FT FT;
-  typedef typename Traits::Barycentric_coordinate Barycentric_coordinate;
+  typedef typename Traits::Barycentric_coordinates Barycentric_coordinates;
   typedef VIM VertexIndexMap;
   typedef HIM HalfedgeIndexMap;
   typedef FIM FaceIndexMap;
@@ -96,7 +96,7 @@ struct Edge_sequence_collector
     m_sequence.push_back(item);
   }
   
-  void operator()(face_descriptor f, Barycentric_coordinate alpha)
+  void operator()(face_descriptor f, Barycentric_coordinates alpha)
   {
     Sequence_item<Traits> item;
     item.type = SEQUENCE_ITEM_FACE;
@@ -108,13 +108,13 @@ struct Edge_sequence_collector
 };
 
 template <class Traits>
-typename Traits::Barycentric_coordinate random_coordinate(CGAL::Random& rand)
+typename Traits::Barycentric_coordinates random_coordinates(CGAL::Random& rand)
 {
   typedef typename Traits::FT FT;
-  typename Traits::Construct_barycentric_coordinate construct_barycentric_coordinate;
+  typename Traits::Construct_barycentric_coordinates construct_barycentric_coordinates;
   FT u = rand.uniform_real(FT(0.0), FT(1.0));
   FT v = rand.uniform_real(FT(0.0), FT(FT(1.0) - u));
-  return construct_barycentric_coordinate(u, v, FT(FT(1.0) - u - v));
+  return construct_barycentric_coordinates(u, v, FT(FT(1.0) - u - v));
 }
 
 template <class FT>

@@ -57,24 +57,23 @@ public:
 
   typedef typename Kernel::FT FT;
 
-  /// Barycentric coordinate type
-  typedef typename CGAL::cpp11::array<FT,3> Barycentric_coordinate;
+  /// Barycentric coordinates type
+  typedef typename CGAL::cpp11::array<FT,3> Barycentric_coordinates;
 
   // Predicates
-public:
   typedef typename Surface_mesh_shortest_paths_3::Compare_relative_intersection_along_segment_2<Kernel> Compare_relative_intersection_along_segment_2;
   typedef typename Surface_mesh_shortest_paths_3::Is_saddle_vertex<Kernel, Triangle_mesh> Is_saddle_vertex;
 
   // Constructions
 public:
-  class Construct_barycentric_coordinate
+  class Construct_barycentric_coordinates
   {
   public:
-    typedef Barycentric_coordinate result_type;
+    typedef Barycentric_coordinates result_type;
 
     result_type operator() (const FT& a, const FT& b, const FT& c) const
     {
-      Barycentric_coordinate output;
+      Barycentric_coordinates output;
       output[0] = a;
       output[1] = b;
       output[2] = c;
@@ -82,12 +81,12 @@ public:
     }
   };
 
-  class Construct_barycentric_coordinate_weight
+  class Construct_barycentric_coordinates_weight
   {
   public:
     typedef FT result_type;
 
-    result_type operator() (const Barycentric_coordinate b, std::size_t i) const
+    result_type operator() (const Barycentric_coordinates b, std::size_t i) const
     {
       return b[i % 3];
     }
@@ -96,19 +95,19 @@ public:
   typedef typename Surface_mesh_shortest_paths_3::Construct_triangle_3_to_triangle_2_projection<K> Construct_triangle_3_to_triangle_2_projection;
   typedef typename Surface_mesh_shortest_paths_3::Construct_triangle_3_along_segment_2_flattening<K> Construct_triangle_3_along_segment_2_flattening;
   typedef typename Surface_mesh_shortest_paths_3::Compute_parametric_distance_along_segment_2<K> Compute_parametric_distance_along_segment_2;
-  typedef typename Surface_mesh_shortest_paths_3::Construct_barycentric_coordinate_in_triangle_2<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_2;
-  typedef typename Surface_mesh_shortest_paths_3::Construct_barycentric_coordinate_in_triangle_3<K, Barycentric_coordinate, Construct_barycentric_coordinate> Construct_barycentric_coordinate_in_triangle_3;
-  typedef typename Surface_mesh_shortest_paths_3::Classify_barycentric_coordinate<Barycentric_coordinate, Construct_barycentric_coordinate_weight> Classify_barycentric_coordinate;
+  typedef typename Surface_mesh_shortest_paths_3::Construct_barycentric_coordinates_in_triangle_2<K, Barycentric_coordinates, Construct_barycentric_coordinates> Construct_barycentric_coordinates_in_triangle_2;
+  typedef typename Surface_mesh_shortest_paths_3::Construct_barycentric_coordinates_in_triangle_3<K, Barycentric_coordinates, Construct_barycentric_coordinates> Construct_barycentric_coordinates_in_triangle_3;
+  typedef typename Surface_mesh_shortest_paths_3::Classify_barycentric_coordinates<Barycentric_coordinates, Construct_barycentric_coordinates_weight> Classify_barycentric_coordinates;
 
 private:
   Kernel m_kernel;
-  Construct_barycentric_coordinate m_construct_barycentric_coordinate_object;
-  Construct_barycentric_coordinate_weight m_construct_barycentric_coordinate_weight_object;
-  Classify_barycentric_coordinate m_classify_barycentric_coordinate_object;
+  Construct_barycentric_coordinates m_construct_barycentric_coordinates_object;
+  Construct_barycentric_coordinates_weight m_construct_barycentric_coordinates_weight_object;
+  Classify_barycentric_coordinates m_classify_barycentric_coordinates_object;
   Construct_triangle_3_to_triangle_2_projection m_construct_triangle_3_to_triangle_2_projection_object;
   Construct_triangle_3_along_segment_2_flattening m_construct_triangle_3_along_segment_2_flattening_object;
-  Construct_barycentric_coordinate_in_triangle_2 m_construct_barycentric_coordinate_in_triangle_2_object;
-  Construct_barycentric_coordinate_in_triangle_3 m_construct_barycentric_coordinate_in_triangle_3_object;
+  Construct_barycentric_coordinates_in_triangle_2 m_construct_barycentric_coordinates_in_triangle_2_object;
+  Construct_barycentric_coordinates_in_triangle_3 m_construct_barycentric_coordinates_in_triangle_3_object;
   Compare_relative_intersection_along_segment_2 m_compare_relative_intersection_along_segment_2_object;
   Is_saddle_vertex m_is_saddle_vertex_object;
   Compute_parametric_distance_along_segment_2 m_compute_parametric_distance_along_segment_2_object;
@@ -121,32 +120,49 @@ public:
 
   Surface_mesh_shortest_path_traits(const Kernel& kernel)
     : m_kernel(kernel)
-    , m_classify_barycentric_coordinate_object(m_construct_barycentric_coordinate_weight_object)
+    , m_classify_barycentric_coordinates_object(m_construct_barycentric_coordinates_weight_object)
     , m_construct_triangle_3_to_triangle_2_projection_object(m_kernel)
     , m_construct_triangle_3_along_segment_2_flattening_object(m_kernel)
     , m_is_saddle_vertex_object(m_kernel, m_construct_triangle_3_to_triangle_2_projection_object, m_construct_triangle_3_along_segment_2_flattening_object)
     , m_compare_relative_intersection_along_segment_2_object(m_kernel)
-    , m_construct_barycentric_coordinate_in_triangle_2_object(m_construct_barycentric_coordinate_object, m_kernel.construct_vector_2_object(), m_kernel.compute_scalar_product_2_object())
-    , m_construct_barycentric_coordinate_in_triangle_3_object(m_construct_barycentric_coordinate_object, m_kernel.construct_vector_3_object(), m_kernel.compute_scalar_product_3_object())
+    , m_construct_barycentric_coordinates_in_triangle_2_object(m_construct_barycentric_coordinates_object, m_kernel.construct_vector_2_object(), m_kernel.compute_scalar_product_2_object())
+    , m_construct_barycentric_coordinates_in_triangle_3_object(m_construct_barycentric_coordinates_object, m_kernel.construct_vector_3_object(), m_kernel.compute_scalar_product_3_object())
   {
   }
 
-  Construct_barycentric_coordinate construct_barycentric_coordinate_object() const { return m_construct_barycentric_coordinate_object; }
-  Construct_barycentric_coordinate_weight construct_barycentric_coordinate_weight_object() const { return m_construct_barycentric_coordinate_weight_object; }
-  Classify_barycentric_coordinate classify_barycentric_coordinate_object() const { return m_classify_barycentric_coordinate_object; }
+  Construct_barycentric_coordinates construct_barycentric_coordinates_object() const { return m_construct_barycentric_coordinates_object; }
+  Construct_barycentric_coordinates_weight construct_barycentric_coordinates_weight_object() const { return m_construct_barycentric_coordinates_weight_object; }
+  Classify_barycentric_coordinates classify_barycentric_coordinates_object() const { return m_classify_barycentric_coordinates_object; }
 
   Is_saddle_vertex is_saddle_vertex_object() const { return m_is_saddle_vertex_object; }
 
   Compare_relative_intersection_along_segment_2 compare_relative_intersection_along_segment_2_object() const { return m_compare_relative_intersection_along_segment_2_object; }
   Construct_triangle_3_to_triangle_2_projection construct_triangle_3_to_triangle_2_projection_object() const { return m_construct_triangle_3_to_triangle_2_projection_object; }
   Construct_triangle_3_along_segment_2_flattening construct_triangle_3_along_segment_2_flattening_object() const { return m_construct_triangle_3_along_segment_2_flattening_object; }
-  Construct_barycentric_coordinate_in_triangle_2 construct_barycentric_coordinate_in_triangle_2_object() const { return m_construct_barycentric_coordinate_in_triangle_2_object; }
-  Construct_barycentric_coordinate_in_triangle_3 construct_barycentric_coordinate_in_triangle_3_object() const { return m_construct_barycentric_coordinate_in_triangle_3_object; }
+  Construct_barycentric_coordinates_in_triangle_2 construct_barycentric_coordinates_in_triangle_2_object() const { return m_construct_barycentric_coordinates_in_triangle_2_object; }
+  Construct_barycentric_coordinates_in_triangle_3 construct_barycentric_coordinates_in_triangle_3_object() const { return m_construct_barycentric_coordinates_in_triangle_3_object; }
   Compute_parametric_distance_along_segment_2 compute_parametric_distance_along_segment_2_object() const { return m_compute_parametric_distance_along_segment_2_object; }
+
+  #ifndef CGAL_NO_DEPRECATED_CODE
+  //deprecated in CGAL 4.10
+  typedef Barycentric_coordinates Barycentric_coordinate;
+  typedef Construct_barycentric_coordinates_weight Construct_barycentric_coordinate_weight;
+  typedef Construct_barycentric_coordinates Construct_barycentric_coordinate;
+  typedef Construct_barycentric_coordinates_in_triangle_2 Construct_barycentric_coordinate_in_triangle_2;
+  typedef Construct_barycentric_coordinates_in_triangle_3 Construct_barycentric_coordinate_in_triangle_3;
+  typedef Classify_barycentric_coordinates Classify_barycentric_coordinate;
+
+  Construct_barycentric_coordinates construct_barycentric_coordinate_object() const { return m_construct_barycentric_coordinates_object; }
+  Construct_barycentric_coordinates_weight construct_barycentric_coordinate_weight_object() const { return m_construct_barycentric_coordinates_weight_object; }
+  Classify_barycentric_coordinates classify_barycentric_coordinate_object() const { return m_classify_barycentric_coordinates_object; }
+  Construct_barycentric_coordinates_in_triangle_2 construct_barycentric_coordinate_in_triangle_2_object() const { return m_construct_barycentric_coordinates_in_triangle_2_object; }
+  Construct_barycentric_coordinates_in_triangle_3 construct_barycentric_coordinate_in_triangle_3_object() const { return m_construct_barycentric_coordinates_in_triangle_3_object; }
+  #endif
+
 };
 
 template <class Kernel, class Triangle_mesh>
-std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_traits<Kernel, Triangle_mesh>::Barycentric_coordinate b)
+std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_traits<Kernel, Triangle_mesh>::Barycentric_coordinates b)
 {
   return os << b[0] << " " << b[1] << " " << b[2];
 }

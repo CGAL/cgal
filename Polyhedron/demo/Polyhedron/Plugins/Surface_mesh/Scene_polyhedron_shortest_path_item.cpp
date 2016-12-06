@@ -27,8 +27,8 @@ struct Scene_polyhedron_shortest_path_item_priv
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
 
-  typedef Surface_mesh_shortest_path_traits::Barycentric_coordinate Barycentric_coordinate;
-  typedef Surface_mesh_shortest_path_traits::Construct_barycentric_coordinate Construct_barycentric_coordinate;
+  typedef Surface_mesh_shortest_path_traits::Barycentric_coordinates Barycentric_coordinates;
+  typedef Surface_mesh_shortest_path_traits::Construct_barycentric_coordinates Construct_barycentric_coordinates;
   typedef Surface_mesh_shortest_path_traits::Ray_3 Ray_3;
   typedef Surface_mesh_shortest_path_traits::Point_3 Point_3;
   typedef Surface_mesh_shortest_path_traits::FT FT;
@@ -344,12 +344,12 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_edge_point(Scene_polyhedro
     }
   }
 
-  Construct_barycentric_coordinate construct_barycentric_coordinate;
+  Construct_barycentric_coordinates construct_barycentric_coordinates;
 
   Point_3 trianglePoints[3] = {
-    m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinate(FT(1.0), FT(0.0), FT(0.0))),
-    m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinate(FT(0.0), FT(1.0), FT(0.0))),
-    m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(1.0))),
+    m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinates(FT(1.0), FT(0.0), FT(0.0))),
+    m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinates(FT(0.0), FT(1.0), FT(0.0))),
+    m_shortestPaths->point(inOutLocation.first, construct_barycentric_coordinates(FT(0.0), FT(0.0), FT(1.0))),
   };
   
   CGAL::Surface_mesh_shortest_paths_3::Parametric_distance_along_segment_3<Surface_mesh_shortest_path_traits> parametricDistanceSegment3;
@@ -363,7 +363,7 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_edge_point(Scene_polyhedro
   coords[nearestEdge[1]] = distanceAlongSegment;
   coords[nearestEdge[0]] = FT(1.0) - distanceAlongSegment;
 
-  inOutLocation.second = construct_barycentric_coordinate(coords[0], coords[1], coords[2]);
+  inOutLocation.second = construct_barycentric_coordinates(coords[0], coords[1], coords[2]);
 }
 
 void Scene_polyhedron_shortest_path_item_priv::get_as_vertex_point(Scene_polyhedron_shortest_path_item::Face_location& inOutLocation)
@@ -383,8 +383,8 @@ void Scene_polyhedron_shortest_path_item_priv::get_as_vertex_point(Scene_polyhed
   FT coords[3] = { FT(0.0), FT(0.0), FT(0.0), };
   coords[maxIndex] = FT(1.0);
   
-  Construct_barycentric_coordinate construct_barycentric_coordinate;
-  inOutLocation.second = construct_barycentric_coordinate(coords[0], coords[1], coords[2]);
+  Construct_barycentric_coordinates construct_barycentric_coordinates;
+  inOutLocation.second = construct_barycentric_coordinates(coords[0], coords[1], coords[2]);
 }
 
 bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray)
@@ -535,8 +535,8 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
 
   std::string line;
   std::size_t faceId;
-  Barycentric_coordinate location;
-  Construct_barycentric_coordinate construct_barycentric_coordinate;
+  Barycentric_coordinates location;
+  Construct_barycentric_coordinates construct_barycentric_coordinates;
 
   while (std::getline(inFile, line))
   {
@@ -544,7 +544,7 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* p
     FT coords[3];
     lineStream >> faceId >> coords[0] >> coords[1] >> coords[2];
     
-    location = construct_barycentric_coordinate(coords[0], coords[1], coords[2]);
+    location = construct_barycentric_coordinates(coords[0], coords[1], coords[2]);
     
     // std::cout << "Read in face: " << faceId << " , " << location << std::endl;
     

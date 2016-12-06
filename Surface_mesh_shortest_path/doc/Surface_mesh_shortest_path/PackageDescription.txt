@@ -43,7 +43,7 @@
 
 ## Enums ##
 
-- `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinate_type`
+- `CGAL::Surface_mesh_shortest_paths_3::Barycentric_coordinates_type`
 
 */
 

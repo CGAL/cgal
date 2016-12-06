@@ -21,7 +21,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
 typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
 typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-typedef Traits::Barycentric_coordinate Barycentric_coordinate;
+typedef Traits::Barycentric_coordinates Barycentric_coordinates;
 typedef boost::graph_traits<Polyhedron_3> Graph_traits;
 typedef Graph_traits::vertex_iterator vertex_iterator;
 typedef Graph_traits::face_iterator face_iterator;
@@ -35,7 +35,7 @@ struct Sequence_collector
 {
   typedef boost::variant< vertex_descriptor,
                          std::pair<halfedge_descriptor,double>,
-                         std::pair<face_descriptor, Barycentric_coordinate> > Simplex;
+                         std::pair<face_descriptor, Barycentric_coordinates> > Simplex;
   std::vector< Simplex > sequence;
 
   void operator()(halfedge_descriptor he, double alpha)
@@ -49,7 +49,7 @@ struct Sequence_collector
     sequence.push_back( v );
   }
 
-  void operator()(face_descriptor f, Barycentric_coordinate alpha)
+  void operator()(face_descriptor f, Barycentric_coordinates alpha)
   {
     sequence.push_back( std::make_pair(f, alpha) );
   }
@@ -74,7 +74,7 @@ struct Print_visitor : public boost::static_visitor<> {
                                             << h_a.second << ")\n";
   }
 
-  void operator()(const std::pair<face_descriptor, Barycentric_coordinate>& f_bc)
+  void operator()(const std::pair<face_descriptor, Barycentric_coordinates>& f_bc)
   {
     std::cout << "#" << ++i << " : Face : " << get(CGAL::face_index, g)[f_bc.first] << " , ("
                                             << f_bc.second[0] << " , "
@@ -100,8 +100,8 @@ int main(int argc, char** argv)
   const int target_face_index = rand.get_int(0, num_faces(polyhedron));
   face_iterator face_it = faces(polyhedron).first;
   std::advance(face_it,target_face_index);
-  // ... and define a barycentric coordinate inside the face
-  Barycentric_coordinate face_location = {{0.25, 0.5, 0.25}};
+  // ... and define a barycentric coordinates inside the face
+  Barycentric_coordinates face_location = {{0.25, 0.5, 0.25}};
 
   // construct a shortest path query object and add a source point
   Surface_mesh_shortest_path shortest_paths(polyhedron);
