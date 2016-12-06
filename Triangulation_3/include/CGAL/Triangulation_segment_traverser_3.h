@@ -247,7 +247,11 @@ public:
 	 *	\return the current cell.
 	 *	\sa `handle()`.
 	 */
-    const Cell      cell() const        { return *get<0>(_cur); }
+    const Cell      cell() const
+    {
+      using CGAL::cpp11::get;
+      return *get<0>(_cur);
+    }
 
     //  gives a handle to the current cell.
     /*  By invariance, this cell is intersected by the segment
@@ -255,7 +259,11 @@ public:
 	 *	\return a handle to the current cell.
 	 *	\sa `cell()`.
 	 */
-    Cell_handle     handle()            { return get<0>(_cur); }
+    Cell_handle     handle()
+    {
+      using CGAL::cpp11::get;
+      return get<0>(_cur);
+    }
 
     //  gives the previous cell.
     /*  This cell is uninitialized until the iterator leaves the initial
@@ -265,22 +273,38 @@ public:
 	 *	\return the previous cell.
 	 *	\sa `handle()`.
 	 */
-    Cell_handle     previous() const    { return get<0>(_prev); }
+    Cell_handle     previous() const
+    {
+      using CGAL::cpp11::get;
+      return get<0>(_prev);
+    }
 
     //  provides a dereference operator.
     /* 	\return a pointer to the current cell.
 	 */
-    Cell*           operator->()        { return &*get<0>(_cur); }
+    Cell*           operator->()
+    {
+      using CGAL::cpp11::get;
+      return &*get<0>(_cur);
+    }
 
     //  provides an indirection operator.
     /*  \return the current cell.
 	 */
-    Cell&           operator*()         { return *get<0>(_cur); }
+    Cell&           operator*()
+    {
+      using CGAL::cpp11::get;
+      return *get<0>(_cur);
+    }
 
     //  provides a conversion operator.
     /* 	\return a handle to the current cell.
 	 */
-    operator const  Cell_handle() const { return get<0>(_cur); }
+    operator const  Cell_handle() const
+    {
+      using CGAL::cpp11::get;
+      return get<0>(_cur);
+    }
 
     //  provides a conversion operator.
     /* 	\return the simplex through wich the current cell was entered.
@@ -292,18 +316,29 @@ public:
 	 *	the interior of the segment between `source()` and `target()`.
 	 *	\return true iff the current cell contains the `target()`.
 	 */
-    bool            has_next() const    { return get<0>(_cur) != Cell_handle(); }
+    bool            has_next() const
+    {
+      using CGAL::cpp11::get;
+      return get<0>(_cur) != Cell_handle();
+    }
 
     //  gives the simplex through which the current cell was entered.
     /* 	For the first cell, containing the `source()` \f$ s \f$,
      *  this indicates the location of \f$ s \f$ in this cell.
 	 */
-    void            entry( Locate_type& lt, int& li, int& lj ) const    { lt = get<1>(_cur); li = get<2>(_cur); lj = get<3>(_cur); }
-
+    void            entry( Locate_type& lt, int& li, int& lj ) const
+    {
+      using CGAL::cpp11::get;
+      lt = get<1>(_cur); li = get<2>(_cur); lj = get<3>(_cur);
+    }
     //  gives the simplex through which the previous cell was exited.
     /* 	\pre the current cell is not the initial cell.
 	 */
-    void            exit( Locate_type& lt, int& li, int& lj ) const    { lt = get<1>(_prev); li = get<2>(_prev); lj = get<3>(_prev); }
+    void            exit( Locate_type& lt, int& li, int& lj ) const
+    {
+      using CGAL::cpp11::get;
+      lt = get<1>(_prev); li = get<2>(_prev); lj = get<3>(_prev);
+    }
 
     //  gives the past-the-end iterator associated with this iterator.
     SCI             end() const;
@@ -360,7 +395,11 @@ public:
      *	\sa `operator!=( const Cell_handle& ch ) const`.
      *	\sa `operator==( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
      */
-    bool            operator==( const Cell_handle& ch ) const   { return ch == get<0>(_cur); }
+    bool            operator==( const Cell_handle& ch ) const
+    {
+      using CGAL::cpp11::get;
+      return ch == get<0>(_cur);
+    }
 		
     //  compares the current cell with `ch`.
     /*  \param ch a handle to the other cell.
@@ -368,7 +407,11 @@ public:
      *	\sa `operator==( const Cell_handle& ch )`.
      *	\sa `operator!=( typename TriangulationTraits_3::Cell_handle ch, Triangulation_segment_cell_iterator_3<TriangulationTraits_3> t )`.
      */
-    bool            operator!=( const Cell_handle& ch ) const   { return ch != get<0>(_cur); }
+    bool            operator!=( const Cell_handle& ch ) const
+    {
+      using CGAL::cpp11::get;
+      return ch != get<0>(_cur);
+    }
 // \}
 
 	bool            operator==( Nullptr_t CGAL_triangulation_assertion_code(n) ) const;
@@ -387,7 +430,7 @@ protected:
      *  \sa `complete()`.
 	 */
     void            increment() {
-        typedef Incrementer::SCI    Expected;
+        typedef typename Incrementer::SCI    Expected;
 #ifdef CGAL_TST_ASSUME_CORRECT_TYPES
         Expected& sci = static_cast<Expected&>( *this );
 #else // CGAL_TST_ASSUME_CORRECT_TYPES
@@ -671,6 +714,9 @@ public:
       case Locate_type::FACET:
         _curr_simplex = Cell_handle(_cell_iterator);//query goes through the cell
         break;
+
+      default:
+        CGAL_assertion(false);//should not happen
       };
       break;
     }
