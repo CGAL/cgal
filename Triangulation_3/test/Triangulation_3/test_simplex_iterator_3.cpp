@@ -34,8 +34,9 @@
 
 // Define the kernel.
 typedef CGAL::Exact_predicates_exact_constructions_kernel     Kernel;
-typedef Kernel::Point_3                                         Point_3;
-typedef Kernel::Vector_3                                        Vector_3;
+typedef Kernel::Point_3                                       Point_3;
+typedef Kernel::Vector_3                                      Vector_3;
+typedef Kernel::Segment_3                                     Segment_3;
 
 // Define the structure.
 typedef CGAL::Delaunay_triangulation_3< Kernel >    DT;
@@ -271,6 +272,62 @@ void test_vertex_facet_edge(const DT& dt, const std::size_t& nb_tests)
   }
 }
 
+void test_triangulation_on_a_grid()
+{
+  std::cout << "* test_triangulation_on_a_grid *" << std::endl;
+  DT dt;
+  for (double x = 0.; x < 11.; x = x + 1.)
+    for (double y = 0.; y < 11.; y = y + 1.)
+      for (double z = 0.; z < 11.; z = z + 1.)
+        dt.insert(Point_3(x, y, z));
+
+  int nb_queries = 5;
+  std::vector<Segment_3> queries(nb_queries);
+  //along an axis of the grid
+  queries[0] = Segment_3(Point_3(1., 1., 1.), Point_3(1., 8., 1.));
+  //along an axis, but between two layers
+  queries[1] = Segment_3(Point_3(1., 1.5, 1.), Point_3(10., 1.5, 1.));
+  //along a diagonal
+  queries[2] = Segment_3(Point_3(1., 1., 1.), Point_3(6., 6., 6.));
+  //along a diagonal, in the plane (y = 1)
+  queries[3] = Segment_3(Point_3(1., 1., 1.), Point_3(7., 1., 7.));
+  //along a border of the cube
+  queries[4] = Segment_3(Point_3(0., 0., 0.), Point_3(11., 0., 5.));
+
+  BOOST_FOREACH(Segment_3 s, queries)
+  {
+    std::cout << "Query segment : (" << s.source()
+                         << ") to (" << s.target() << ") [";
+    Simplex_traverser st(dt, s);
+    unsigned int inf = 0, fin = 0;
+    unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
+    unsigned int nb_collinear = 0;
+    for (; st != st.end(); ++st)
+    {
+      std::cout << st.simplex_dimension() << " ";
+      std::cout.flush();
+      if (st.is_cell())
+      {
+        if (dt.is_infinite(st)) ++inf;
+        else                    ++fin;
+      }
+      if (st.is_facet())       ++nb_facets;
+      else if (st.is_edge())   ++nb_edges;
+      else if (st.is_vertex()) ++nb_vertex;
+
+      if (st.is_collinear())   ++nb_collinear;
+    }
+    std::cout << "\b]" << std::endl;
+
+    std::cout << "\tinfinite cells : " << inf << std::endl;
+    std::cout << "\tfinite cells   : " << fin << std::endl;
+    std::cout << "\tfacets         : " << nb_facets << std::endl;
+    std::cout << "\tedges          : " << nb_edges << std::endl;
+    std::cout << "\tvertices       : " << nb_vertex << std::endl;
+    std::cout << "\tcollinear      : " << nb_collinear << std::endl;
+    std::cout << std::endl;
+  }
+}
 
 int main(int argc, char* argv[])
 {
@@ -319,17 +376,16 @@ int main(int argc, char* argv[])
     unsigned int nb_collinear = 0;
     for (; st != st.end(); ++st)
     {
-      if (dt.is_infinite(st))
-        ++inf;
-      else
+      if (st.is_cell())
       {
-        ++fin;
-        if (st.is_facet())       ++nb_facets;
-        else if (st.is_edge())   ++nb_edges;
-        else if (st.is_vertex()) ++nb_vertex;
-
-        if (st.is_collinear())   ++nb_collinear;
+        if (dt.is_infinite(st)) ++inf;
+        else                    ++fin;
       }
+      if (st.is_facet())       ++nb_facets;
+      else if (st.is_edge())   ++nb_edges;
+      else if (st.is_vertex()) ++nb_vertex;
+
+      if (st.is_collinear())   ++nb_collinear;
     }
 
     std::cout << "While traversing from " << st.source()
@@ -358,6 +414,8 @@ int main(int argc, char* argv[])
   // - along 2 successive facets (vertex/facet/edge/facet/edge)
   // - along 2 successive edges (vertex/edge/vertex/edge/vertex)
   // - along a facet and an edge successively
+  test_triangulation_on_a_grid();
+
 
   return 0;
 }
