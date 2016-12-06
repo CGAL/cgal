@@ -446,7 +446,7 @@ set_face(typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h,
          const Gwdwg<Graph> & w)
 {
   assert(in_same_graph(h,w));
-  assert(in_same_graph(f,w));
+  assert(f==boost::graph_traits<Gwdwg<Graph> >::null_face() || in_same_graph(f,w));
   set_face(h.descriptor, f.descriptor, *w.graph);
 }
 
@@ -710,6 +710,11 @@ namespace boost {
     typedef CGAL::Gwdwg_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::type, PropertyTag> type;
     typedef CGAL::Gwdwg_property_map<Graph, typename boost::property_map<Graph, PropertyTag >::const_type, PropertyTag> const_type;
   };
+
+  template<typename Graph, typename PropertyTag>
+  struct graph_has_property<CGAL::Gwdwg<Graph>, PropertyTag>
+    : graph_has_property<Graph, PropertyTag> {};
+
 }// namespace boost
 
 #endif //CGAL_BOOST_GRAPH_GWDWG_H
