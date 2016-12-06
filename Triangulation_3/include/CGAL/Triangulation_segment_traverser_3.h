@@ -36,6 +36,7 @@
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
 
 #include <CGAL/tuple.h>
 
@@ -466,7 +467,8 @@ public:
   typedef typename SCI::Triangulation::Facet Facet; //< defines the type of a facet in the triangulation.
   typedef typename SCI::Locate_type   Locate_type;  //< defines the simplex type returned from location.
 
-  typedef boost::variant<Vertex_handle, Edge, Facet, Cell_handle> Simplex_type; //types sorted by dimension
+  //typedef boost::variant<Vertex_handle, Edge, Facet, Cell_handle> Simplex_type; //types sorted by dimension
+  typedef CGAL::Triangulation_simplex_3<Tds>  Simplex_type;
 
   typedef Simplex_type   value_type;       //< defines the value type  the iterator refers to.
   typedef Simplex_type&  reference;        //< defines the reference type of the iterator.
@@ -522,7 +524,7 @@ private:
   Triangulation_segment_simplex_iterator_3
     (const SCI& sci)
     : _cell_iterator(sci)
-    , _curr_simplex(Cell_handle())
+    , _curr_simplex()
   {}
 
 private:
@@ -531,7 +533,7 @@ private:
     //check what is the entry type of _cell_iterator
     if (Cell_handle(_cell_iterator) == Cell_handle())
     {
-      _curr_simplex = Cell_handle();
+      _curr_simplex = Simplex_type();
       return;//end has been reached
     }
 
@@ -573,9 +575,9 @@ public:
   //  provides the increment postfix operator.
   Simplex_iterator& operator++()
   {
-    CGAL_assertion(!_curr_simplex.empty());
+    CGAL_assertion(_curr_simplex.incident_cell() != Cell_handle());
 
-    switch(_curr_simplex.which())
+    switch(_curr_simplex.dimension())
     {
     case 3 :/*Cell_handle*/
     {
@@ -590,6 +592,7 @@ public:
         //cell_iterator is not ahead. get_facet() is part of cell_iterator
         //we cannot be in any of the degenerate cases, only detected by
         //taking cell_iterator one step forward
+        CGAL_assertion(cell_has_facet(Cell_handle(_cell_iterator), get_facet()));
         _curr_simplex = Cell_handle(_cell_iterator);
       }
       else
@@ -654,12 +657,12 @@ public:
       {
         CGAL_assertion(_cell_iterator == _cell_iterator.end()
           || triangulation().is_infinite(chnext)
-          || !are_equal(get_edge(), Edge(chnext, linext, ljnext)));
+          || _curr_simplex != Simplex_type(Edge(chnext, linext, ljnext)));
 
         if (_cell_iterator == _cell_iterator.end())
-          _curr_simplex = Cell_handle(_cell_iterator);
+          _curr_simplex = Simplex_type();
         else if (triangulation().is_infinite(chnext)
-              && are_equal(get_edge(), Edge(chnext, linext, ljnext)))
+          && _curr_simplex == Simplex_type(Edge(chnext, linext, ljnext)))
           _curr_simplex = chnext;
         else
           _curr_simplex = shared_facet(get_edge(), Edge(chnext, linext, ljnext));
@@ -701,7 +704,7 @@ public:
  
           if (_cell_iterator == _cell_iterator.end())
           {
-            _curr_simplex = Cell_handle(_cell_iterator);
+            _curr_simplex = Simplex_type();
           }
           else
           {
@@ -760,31 +763,31 @@ public:
   */
   operator const  Cell_handle() const { return Cell_handle(_cell_iterator); }
 
-  bool is_vertex() const { return _curr_simplex.which() == 0; }
-  bool is_edge()   const { return _curr_simplex.which() == 1; }
-  bool is_facet()  const { return _curr_simplex.which() == 2; }
-  bool is_cell()   const { return _curr_simplex.which() == 3; }
+  bool is_vertex() const { return _curr_simplex.dimension() == 0; }
+  bool is_edge()   const { return _curr_simplex.dimension() == 1; }
+  bool is_facet()  const { return _curr_simplex.dimension() == 2; }
+  bool is_cell()   const { return _curr_simplex.dimension() == 3; }
 
   const Simplex_type& get_simplex() const { return _curr_simplex; }
   Vertex_handle get_vertex() const
   {
     CGAL_assertion(is_vertex());
-    return boost::get<Vertex_handle>(_curr_simplex);
+    return Vertex_handle(_curr_simplex);
   }
   Edge get_edge() const
   {
     CGAL_assertion(is_edge());
-    return boost::get<Edge>(_curr_simplex);
+    return Edge(_curr_simplex);
   }
   Facet get_facet() const
   {
     CGAL_assertion(is_facet());
-    return boost::get<Facet>(_curr_simplex);
+    return Facet(_curr_simplex);
   }
   Cell_handle get_cell() const
   {
     CGAL_assertion(is_cell());
-    return boost::get<Cell_handle>(_curr_simplex);
+    return Cell_handle(_curr_simplex);
   }
 
 public:
@@ -797,7 +800,7 @@ public:
   // TODO : rename this function
   bool is_collinear() const
   {
-    int curr_dim = _curr_simplex.which();
+    int curr_dim = _curr_simplex.dimension();
     //this concerns only edges and facets
     if (curr_dim == 1 || curr_dim == 2)
       return cell_iterator_is_ahead();
@@ -808,14 +811,14 @@ public:
 
   int simplex_dimension() const
   {
-    return _curr_simplex.which();
+    return _curr_simplex.dimension();
   }
 
 private:
   bool cell_iterator_is_ahead() const
   {
     Cell_handle ch = Cell_handle(_cell_iterator);
-    switch (_curr_simplex.which())
+    switch (_curr_simplex.dimension())
     {
     case 0 ://vertex
       return !ch->has_vertex(get_vertex());
@@ -866,16 +869,6 @@ private:
   {
     return e.first->vertex(e.second) == v
         || e.first->vertex(e.third) == v;
-  }
-
-  bool are_equal(const Edge& e1, const Edge& e2) const
-  {
-    Vertex_handle v1a = e1.first->vertex(e1.second);
-    Vertex_handle v1b = e1.first->vertex(e1.third);
-    Vertex_handle v2a = e2.first->vertex(e2.second);
-    Vertex_handle v2b = e2.first->vertex(e2.third);
-    return (v1a == v2a && v1b == v2b)
-        || (v1a == v2b && v1b == v2a);
   }
 
   Vertex_handle shared_vertex(const Edge& e1, const Edge& e2) const
