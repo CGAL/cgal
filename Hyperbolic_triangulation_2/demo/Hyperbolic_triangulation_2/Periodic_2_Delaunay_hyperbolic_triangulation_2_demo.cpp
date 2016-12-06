@@ -114,6 +114,12 @@ MainWindow::MainWindow()
   qreal width = diameter, height = diameter;
   
   disk = new QGraphicsEllipseItem(left_top_corner_x, left_top_corner_y, width, height);
+
+  QPen pen;  // creates a default pen
+  pen.setWidth(0);
+  pen.setBrush(Qt::black);
+  disk->setPen(pen);
+  
   scene.addItem(disk);
   
   // delete:
@@ -316,9 +322,9 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
   bool ok = false;
   const int number_of_points = 
-    QInputDialog::getInteger(this, 
-                             tr("Number of random points"),
-                             tr("Enter number of random points"),
+    QInputDialog::getInt(this, 
+                        tr("Number of random points"),
+                        tr("Enter number of random points"),
 			     100,
 			     0,
 			     std::numeric_limits<int>::max(),

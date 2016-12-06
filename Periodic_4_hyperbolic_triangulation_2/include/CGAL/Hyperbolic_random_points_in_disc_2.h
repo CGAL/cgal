@@ -3,6 +3,7 @@
 
 #include <boost/math/special_functions/acosh.hpp>
 #include <CGAL/Cartesian.h>
+
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 
@@ -25,7 +26,7 @@ FT r_e(FT r_h)
   return -dist;
 }
 
-
+// iiordanov: Added for testing purposes (to generate points with coordinates that are doubles)
 typedef double                                            NT_dbl;
 typedef CGAL::Cartesian<NT_dbl>                           Kernel_dbl;
 typedef Kernel_dbl::Point_2                               Point_2_dbl;
@@ -65,9 +66,10 @@ void Hyperbolic_random_points_in_disc_2_double(std::vector<Point_2_dbl>& output,
   }
 }
 
+
 // if seed = -1, then the seed will get a random value.
 template<class Gt>
-void Hyperbolic_random_points_in_disc_2(std::vector<typename Gt::Point_2>& output, int nb, int seed = 1, typename Gt::FT e = 0.01)
+void Hyperbolic_random_points_in_disc_2(std::vector<typename Gt::Point_2>& output, int nb, int seed = 1, typename Gt::FT e = 0.0001)
 {
   typedef typename Gt::FT FT;
   typedef typename Gt::Point_2 Point_2;

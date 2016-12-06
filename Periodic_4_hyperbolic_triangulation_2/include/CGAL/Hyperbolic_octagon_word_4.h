@@ -551,14 +551,6 @@ public:
   	
 
   	Octagon_translation_matrix get_matrix() const {
-  		// vector<Octagon_translation_matrix> gens;
-  		// get_generators(gens);
-  		// Octagon_translation_matrix m;
-  		// for (int i = 0; i < 4; i++) {
-  		// 	if (b(i)) {
-  		// 		m = m * gens[operator()(i)];
-  		// 	}
-  		// }
   		return gmap[get_string()];
   	}
 

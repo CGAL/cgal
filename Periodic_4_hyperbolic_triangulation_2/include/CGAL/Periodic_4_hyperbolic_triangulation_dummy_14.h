@@ -280,7 +280,6 @@ namespace CGAL {
             ret.push_back(vertices[i]);
         }
 
-
         CGAL_triangulation_assertion(is_valid(true));
 
         return ret;

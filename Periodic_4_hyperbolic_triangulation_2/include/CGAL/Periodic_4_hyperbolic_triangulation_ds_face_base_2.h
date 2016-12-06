@@ -19,6 +19,7 @@
 // Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
 //                 
 
+
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_DS_FACE_BASE_2
 #define CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_DS_FACE_BASE_2
 
@@ -336,11 +337,9 @@ public:
   				inv = tmp;
   			}
   		}
-
   		o[0] = inv.append(o[0]);
   		o[1] = inv.append(o[1]);
   		o[2] = inv.append(o[2]);
-
   	}
 
 

@@ -175,6 +175,7 @@ MainWindow::MainWindow()
 {
 
   dt.insert_dummy_points();
+
   cidx = 0;
   for (int i = 0; i < 14; i++)
     ccol.push_back(i);
@@ -230,6 +231,7 @@ MainWindow::MainWindow()
   // 
   // Manual handling of actions
   //
+
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
 
@@ -260,7 +262,6 @@ MainWindow::MainWindow()
   this->addAboutDemo(":/cgal/help/about_Triangulation_triangulation_2.html");
   this->addAboutCGAL();
 
-
 }
 
 
@@ -275,6 +276,7 @@ MainWindow::processInput(CGAL::Object o)
   emit(changed());
 
 }
+
 
 
 

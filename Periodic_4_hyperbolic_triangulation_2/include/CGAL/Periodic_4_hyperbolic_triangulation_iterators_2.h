@@ -16,8 +16,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
-//                 
+// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Iordan Iordanov  <Iordan.Iordanov@loria.fr>
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_ITERATORS_2_H
 #define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_ITERATORS_2_H

@@ -487,6 +487,7 @@ public:
         ii = newi;
       }
     } while (!complete_walk);
+
     // At this point, bdry_edges contains the edges that define
     // the boundary of the hole with a specific ordering: for any
     // two consecutive edges in the vector e1 = (f1, i1), 

@@ -191,22 +191,6 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       }
 
     }
-
-  /*
-  if(visibleEdges()) {
-    for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
-        eit != t->finite_edges_end();
-        ++eit){
-
-    	//typename T::Vertex_handle vh = eit->first->finite_vertices_begin();
-    	//std::cout << vh << std::endl;
-
-    	//typename T::Geom_traits::Segment_2 sg = t->segment(*eit);
-    	//std::cout << sg(0) << std::endl;
-
-      	painterostream << t->segment(*eit);
-    } 
-  }*/
   
   //delete
   painter->setPen(old);

@@ -15,6 +15,7 @@
 // Author(s)     : Mikhail Bogdanov
 // Modified by   : Iordan Iordanov
 
+
 #ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 #define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 

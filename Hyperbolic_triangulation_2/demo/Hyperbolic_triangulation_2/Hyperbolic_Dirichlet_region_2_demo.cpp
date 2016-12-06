@@ -244,6 +244,11 @@ MainWindow::MainWindow()
   //std::cout << "width "<< diskPen.width() << std::endl;
   //disk->setPen(diskPen);
   
+  QPen pen;  // creates a default pen
+  pen.setWidth(0);
+  pen.setBrush(Qt::black);
+  disk->setPen(pen);
+
   scene.addItem(disk);
   
   // another input point, instead of the origin
@@ -697,9 +702,9 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
   bool ok = false;
   const int number_of_points = 
-    QInputDialog::getInteger(this, 
-                             tr("Number of random points"),
-                             tr("Enter number of random points"),
+    QInputDialog::getInt(this, 
+                        tr("Number of random points"),
+                        tr("Enter number of random points"),
 			     100,
 			     0,
 			     std::numeric_limits<int>::max(),

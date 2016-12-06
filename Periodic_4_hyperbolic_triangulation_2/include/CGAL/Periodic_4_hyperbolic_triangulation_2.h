@@ -19,6 +19,7 @@
 // Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
 //                 
 
+
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H
 #define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H
 
@@ -61,7 +62,6 @@ namespace CGAL {
 #ifndef CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 	#define CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
 #endif // no CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
-
 
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
@@ -907,7 +907,7 @@ public:
   	Vertex_handle create_initial_triangulation(const Point &p);
 
 public:
-  	std::vector<Vertex_handle> insert_dummy_points(bool rational = false);
+  	std::vector<Vertex_handle> insert_dummy_points(bool rational = true);
 
     template <class Conflict_tester>
     Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Conflict_tester& tester, Face_handle f = Face_handle()) const;
@@ -1367,7 +1367,6 @@ side_of_face(const Point &q, const Offset &off, Face_handle f, Locate_type &lt, 
     	}
     }
 }
-
 
 /// tests if two vertices of one cell are just periodic copies of each other
 
