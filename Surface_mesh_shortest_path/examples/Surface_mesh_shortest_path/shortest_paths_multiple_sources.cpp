@@ -34,7 +34,7 @@ int main(int argc, char** argv)
   input >> polyhedron;
   input.close();
 
-  // initialize indices of vertices, halfedges and facets
+  // initialize indices of vertices, halfedges and faces
   CGAL::set_halfedgeds_items_id(polyhedron);
 
   // pick up some source points inside faces,
