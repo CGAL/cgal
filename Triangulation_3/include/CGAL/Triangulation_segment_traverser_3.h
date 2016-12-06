@@ -653,10 +653,15 @@ public:
       case Locate_type::EDGE:
       {
         CGAL_assertion(_cell_iterator == _cell_iterator.end()
-                   || !are_equal(get_edge(), Edge(chnext, linext, ljnext)));
+          || triangulation().is_infinite(chnext)
+          || !are_equal(get_edge(), Edge(chnext, linext, ljnext)));
 
+        
         if (_cell_iterator == _cell_iterator.end())
           _curr_simplex = Cell_handle(_cell_iterator);
+        else if (triangulation().is_infinite(chnext)
+              && are_equal(get_edge(), Edge(chnext, linext, ljnext)))
+          _curr_simplex = chnext;
         else if (ltnext == Locate_type::EDGE)
           _curr_simplex = shared_facet(get_edge(), Edge(chnext, linext, ljnext));
         else if (ltnext == Locate_type::FACET)
