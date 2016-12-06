@@ -652,13 +652,14 @@ public:
 
       case Locate_type::EDGE:
       {
-        while (ltnext == Locate_type::EDGE
-            && are_equal(get_edge(), Edge(chnext, linext, ljnext)))
-        {
-          ++_cell_iterator;
-          chnext = Cell_handle(_cell_iterator);
-          _cell_iterator.entry(ltnext, linext, ljnext);
-        }
+        //while (ltnext == Locate_type::EDGE
+        //    && _cell_iterator != _cell_iterator.end()
+        //    && are_equal(get_edge(), Edge(chnext, linext, ljnext)))
+        //{
+        //  ++_cell_iterator;
+        //  chnext = Cell_handle(_cell_iterator);
+        //  _cell_iterator.entry(ltnext, linext, ljnext);
+        //}
         if (_cell_iterator == _cell_iterator.end())
           _curr_simplex = Cell_handle(_cell_iterator);
         else if (ltnext == Locate_type::EDGE)
@@ -706,17 +707,17 @@ public:
         {
         case Locate_type::VERTEX:
         {
-          while (ltnext == Locate_type::VERTEX
-              && _cell_iterator != _cell_iterator.end()
-              && get_vertex() == chnext->vertex(linext)//another cell with same vertex has been found
-              && !triangulation().is_infinite(chnext))
-          {
-            ch = chnext;
+          //while (ltnext == Locate_type::VERTEX
+          //    && _cell_iterator != _cell_iterator.end()
+          //    && get_vertex() == chnext->vertex(linext)//another cell with same vertex has been found
+          //    && !triangulation().is_infinite(chnext))
+          //{
+          //  ch = chnext;
 
-            ++_cell_iterator;
-            chnext = Cell_handle(_cell_iterator);
-            _cell_iterator.entry(ltnext, linext, ljnext);
-          }
+          //  ++_cell_iterator;
+          //  chnext = Cell_handle(_cell_iterator);
+          //  _cell_iterator.entry(ltnext, linext, ljnext);
+          //}
           if (_cell_iterator == _cell_iterator.end())
           {
             _curr_simplex = Cell_handle(_cell_iterator);
