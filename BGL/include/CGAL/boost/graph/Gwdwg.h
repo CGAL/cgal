@@ -48,7 +48,6 @@ public:
   Gwdwg_descriptor(Descriptor descriptor, Graph& graph)
     : graph(&graph), descriptor(descriptor)
   {}
-  
 };
 
 template<typename Graph,typename Descriptor>
@@ -164,13 +163,13 @@ struct graph_traits< CGAL::Gwdwg<Graph> >
 
   typedef CGAL::Descriptor2Descriptor<Graph, typename boost::graph_traits<Graph>::vertex_descriptor,vertex_descriptor> V2V;
   typedef boost::transform_iterator<V2V,typename boost::graph_traits<Graph>::vertex_iterator> vertex_iterator;
- 
+
   typedef CGAL::Descriptor2Descriptor<Graph, typename boost::graph_traits<Graph>::halfedge_descriptor,halfedge_descriptor> H2H;
   typedef boost::transform_iterator<H2H,typename boost::graph_traits<Graph>::halfedge_iterator> halfedge_iterator;
 
   typedef CGAL::Descriptor2Descriptor<Graph, typename boost::graph_traits<Graph>::edge_descriptor,edge_descriptor> E2E;
   typedef boost::transform_iterator<E2E,typename boost::graph_traits<Graph>::edge_iterator> edge_iterator;
-  
+
   typedef CGAL::Descriptor2Descriptor<Graph, typename boost::graph_traits<Graph>::face_descriptor,face_descriptor> F2F;
   typedef boost::transform_iterator<F2F,typename boost::graph_traits<Graph>::face_iterator> face_iterator;
 
@@ -254,7 +253,6 @@ typename boost::graph_traits<Graph>::degree_size_type
 in_degree(typename boost::graph_traits<Gwdwg<Graph> >::vertex_descriptor v,
           const Gwdwg<Graph>& w)
 {
-  
   assert(in_same_graph(v,w));
   return in_degree(v.descriptor, *w.graph);
 }
@@ -331,7 +329,7 @@ inline void out_edges(typename boost::graph_traits<Gwdwg<Graph> >::vertex_descri
 #endif
 //
 // MutableHalfedgeGraph
-// 
+//
 template <class Graph>
 typename boost::graph_traits< Gwdwg<Graph> >::vertex_descriptor
 add_vertex(Gwdwg<Graph> & w)
@@ -379,7 +377,7 @@ remove_edge(typename boost::graph_traits< Gwdwg<Graph> >::edge_descriptor e,
 }
 
 template <class Graph>
-void 
+void
 set_target(typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h1,
            typename boost::graph_traits< Gwdwg<Graph> >::vertex_descriptor v,
            Gwdwg<Graph> & w)
@@ -390,7 +388,7 @@ set_target(typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h1,
 }
 
 template <class Graph>
-void 
+void
 set_next(typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h1,
          typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h2,
          Gwdwg<Graph> & w)
@@ -401,7 +399,7 @@ set_next(typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h1,
 }
 
 //
-// MutableFaceGraph 
+// MutableFaceGraph
 //
 template <class Graph>
 typename boost::graph_traits< Gwdwg<Graph> >::face_descriptor
@@ -451,7 +449,7 @@ set_face(typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h,
 }
 
 template <class Graph>
-void 
+void
 set_halfedge(typename boost::graph_traits< Gwdwg<Graph> >::face_descriptor f,
              typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h,
              Gwdwg<Graph> & w)
@@ -479,7 +477,7 @@ template <class Graph>
 typename boost::graph_traits< Gwdwg<Graph> >::edge_descriptor
 edge(typename boost::graph_traits< Gwdwg<Graph> >::halfedge_descriptor h,
      const Gwdwg<Graph> & w)
-{ 
+{
   typedef typename boost::graph_traits< Gwdwg<Graph> >::edge_descriptor edge_descriptor;
   assert(in_same_graph(h,w));
   return edge_descriptor(edge(h.descriptor, *w.graph), *w.graph);
@@ -675,7 +673,7 @@ struct Gwdwg_property_map {
   }
 
   template <typename Descriptor>
-  friend 
+  friend
   void
   put(const Gwdwg_property_map<Graph,PM,T>& gpm, const Descriptor& d,   const value_type& v)
   {
