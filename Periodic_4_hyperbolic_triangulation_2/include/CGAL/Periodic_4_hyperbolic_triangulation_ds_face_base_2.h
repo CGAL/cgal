@@ -16,8 +16,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Iordan Iordanov  <Iordan.Iordanov@loria.fr>
+// Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
+//                 
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_DS_FACE_BASE_2
 #define CGAL_PERIODIC_4_HYPERBOLIC_TIANGULATION_DS_FACE_BASE_2
@@ -26,7 +26,6 @@
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Hyperbolic_octagon_word_4.h>
-//#include <CGAL/Hyperbolic_octagon_word_8.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 
 namespace CGAL {
@@ -205,24 +204,14 @@ public:
 		int myi = Triangulation_cw_ccw_2::ccw(i);
 		Offset myof = o[myi];
 
-		//if (myof.length() > o[Triangulation_cw_ccw_2::cw(i)].length()) {
-		//	myi = Triangulation_cw_ccw_2::cw(i);
-		//	myof = o[myi];
-		//}
-
 		Offset nbof;
 		bool did_it = false;
 		for (int c = 0; c < 3; c++) {
-            //std::cout << "    -- neighbor_offset: N[i]->vertex(c) = " << N[i]->vertex(c)->idx() << ", V[myi] = " << V[myi]->idx() << std::endl;
 			if (N[i]->vertex(c) == V[myi]) {
 				nbof = N[i]->offset(c);
 				did_it = true;
 				break;
 			}
-		}
-
-		if (!did_it) {
-			cout << "Do not believe the neighbor offset! It's a lie!!1!" << endl;
 		}
 
 		return (myof - nbof);
@@ -311,32 +300,8 @@ public:
   		return true; 
   	}
 
-/*
-  	bool is_canonical() {
-
-  		for (int i = 0; i < 3; i++) {
-  			if (o[i].is_identity()) {
-  				Offset lo = o[Triangulation_cw_ccw_2::ccw(i)];
-  				//Offset ro = o[Triangulation_cw_ccw_2::cw(i)];
-  				//if ( (lo.is_identity() || lo(0) == 1 || lo(0) == 3 || lo(0) == 4 || lo(0) == 6) && (ro.is_identity() || ro(0) == 1 || ro(0) == 3 || ro(0) == 4 || ro(0) == 6 )) {
-  					//if (!(ro < lo)) {
-  					if ( lo.is_identity() || lo(0) > 3 ) {
-  						Offset ro = o[Triangulation_cw_ccw_2::cw(i)];
-  						if (!(ro < lo)) {
-  							return true;
-  						}
-  					}
-  					//}
-  				//}
-  			}
-  		}
-
-  		return false;
-  	}
-*/
 
   	void make_canonical() {
-  		//std::cout << "face [" << get_number() << "] original offsets: " << o[0] << ", " << o[1] << ", " << o[2] << endl;
 
   		int dst = 50;
   		Offset inv;
@@ -345,8 +310,6 @@ public:
   			o[0] = Offset();
   			o[1] = Offset();
   			o[2] = Offset();
-  			//std::cout << "face [" << get_number() << "] offsets: " << o[0] << ", " << o[1] << ", " << o[2] << endl;
-  			//std::cout << "----------" << endl << endl;
   			return;
   		}
 
@@ -358,7 +321,6 @@ public:
   			if (o[i].is_identity() && !o[j].is_identity()) {
   				rd = offset_reference_distance(o[j]);
   				tmp = Offset();
-  				//cout << "   case 1, rd = " << rd << endl;
   			} else if (!o[i].is_identity()) {
   				tmp = o[i].inverse();
   				Offset cmb = tmp.append(o[j]);
@@ -367,7 +329,6 @@ public:
   				} else {
   					rd = offset_reference_distance(cmb);
   				}
-  				//cout << "   case 2, rd = " << rd << endl;
   			}
 
   			if (rd < dst) {
@@ -376,13 +337,10 @@ public:
   			}
   		}
 
-  		//cout << " chosen: " << inv << " with distance " << dst << endl;
   		o[0] = inv.append(o[0]);
   		o[1] = inv.append(o[1]);
   		o[2] = inv.append(o[2]);
 
-  		//std::cout << "face [" << get_number() << "] offsets: " << o[0] << ", " << o[1] << ", " << o[2] << endl;
-  		//std::cout << "----------" << endl << endl;
   	}
 
 
@@ -410,7 +368,6 @@ public:
   		V[0]->store_offset(noff.append(o[0]));
   		V[1]->store_offset(noff.append(o[1]));
   		V[2]->store_offset(noff.append(o[2]));
-  		//cout << "Now the vertices of face " << get_number() << " store offsets " << V[0]->get_offset() << ", " << V[1]->get_offset() << ", " << V[2]->get_offset() << endl;
   	}
 
   	void restore_offsets(Offset loff = Offset()) {

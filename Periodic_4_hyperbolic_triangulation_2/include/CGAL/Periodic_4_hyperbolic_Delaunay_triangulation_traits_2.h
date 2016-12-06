@@ -296,7 +296,7 @@ public:
         }
 
         // This tells us whether the point is in the side of the open boundary
-        bool on_open_side = ( ( p.y() + (CGAL_PI / 8.) * p.x() ) < 0.0 );
+        bool on_open_side = ( ( p.y() + tan(CGAL_PI / 8.) * p.x() ) < 0.0 );
 
         Point t(x, y);
 

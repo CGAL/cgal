@@ -16,8 +16,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Iordan Iordanov  <Iordan.Iordanov@loria.fr>
+// Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
+//                 
 
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DS_VERTEX_BASE_2_H
@@ -114,18 +114,15 @@ public:
   	void store_offset(Offset o) {
   		if (!_stored_offset) {
   			_o = o;
-        //cout << " -- Stored offset " << _o << " in vertex " << _idx << endl;
   			_stored_offset = true;
   		}
   	}
 
   	Offset get_offset() {
-        //CGAL_assertion(_stored_offset);
   		return _o;
   	}
 
   	void remove_offset() {
-      //std::cout << " -- Clearing offset " << _o << " from vertex " << _idx << std::endl;
   		_o = Offset();
   		_stored_offset = false;
   	}

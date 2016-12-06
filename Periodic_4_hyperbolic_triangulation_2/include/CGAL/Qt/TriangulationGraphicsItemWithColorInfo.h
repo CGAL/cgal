@@ -183,7 +183,16 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   	painter->drawImage(target, image);
   #endif
 
+    for (typename T::Face_iterator fit = t->finite_faces_begin();
+         fit != t->finite_faces_end(); fit++) {
 
+      for (int k = 0; k < 3; k++) {
+        painterostream << t->segment(fit, k);
+      }
+
+    }
+
+  /*
   if(visibleEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();
@@ -196,8 +205,8 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     	//std::cout << sg(0) << std::endl;
 
       	painterostream << t->segment(*eit);
-    }
-  }
+    } 
+  }*/
   
   //delete
   painter->setPen(old);

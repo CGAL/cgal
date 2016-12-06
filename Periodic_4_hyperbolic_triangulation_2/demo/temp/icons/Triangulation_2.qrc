@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/cgal/Triangulation_2" >
-        <file>Delaunay_triangulation_2.png</file>
-        <file>Voronoi_diagram_2.png</file>
-    </qresource>
-</RCC>

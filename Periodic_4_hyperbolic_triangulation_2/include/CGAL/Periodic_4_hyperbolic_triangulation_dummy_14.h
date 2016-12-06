@@ -50,7 +50,7 @@ namespace CGAL {
     template < class GT, class TDS >
     inline std::vector<typename Periodic_4_hyperbolic_triangulation_2<GT, TDS>::Vertex_handle >
     Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
-    insert_dummy_points() {
+    insert_dummy_points(bool rational) {
 
         typedef typename GT::FT FT;
 
@@ -62,37 +62,62 @@ namespace CGAL {
         int fcount = 32;    // Faces count
         int vcount = 14;    // Vertices count
 
-        FT F0 = FT(0);
-        FT F1 = FT(1);
-        FT F2 = FT(2);
-
         std::vector<typename GT::Point_2> pts;
 
-        pts.push_back(Point( FT(0), FT(0) ));   // origin -> pt 0
+        if (rational) {
 
-        FT i1(CGAL::sqrt(FT(2) - sqrt(FT(2))));
-        FT i2(FT(2)*i1);
-        FT i3(FT(2)*CGAL::sqrt(FT(2)) - i2);
-        FT i4(-1 + i3);
-        Point a0(FT( CGAL::sqrt( i4 )), FT(0));          // internal point
-        
-        a0 = rot8(a0);
-        pts.push_back(a0);
-        for (int k = 1; k < 8; k++) {
-            a0 = rotate(a0);
-            pts.push_back(a0);   // pt 1 - 8
+            // Push back the origin
+            pts.push_back(Point( FT(0), FT(0) ));  
+
+            // Compute rational approximation of internal points
+            pts.push_back( Point(  FT( 1)/FT(2),  FT(-4)/FT(19) ) ); // 0
+            pts.push_back( Point(  FT( 1)/FT(2),  FT( 4)/FT(19) ) ); // 1
+            pts.push_back( Point(  FT( 4)/FT(19), FT( 1)/FT(2)  ) ); // 2
+            pts.push_back( Point(  FT(-4)/FT(19), FT( 1)/FT(2)  ) ); // 3
+            pts.push_back( Point(  FT(-1)/FT(2),  FT( 4)/FT(19) ) ); // 4
+            pts.push_back( Point(  FT(-1)/FT(2),  FT(-4)/FT(19) ) ); // 5
+            pts.push_back( Point(  FT(-4)/FT(19), FT(-1)/FT(2)  ) ); // 6
+            pts.push_back( Point(  FT( 4)/FT(19), FT(-1)/FT(2)  ) ); // 7
+
+            // Compute rational approximations of the midpoints 
+            pts.push_back( Point( FT(-9)/FT(14),  FT(0)    ) );      // 4
+            pts.push_back( Point( FT(-5)/FT(11),  FT(-5)/FT(11) ) ); // 5
+            pts.push_back( Point( FT(0),          FT(-9)/FT(14) ) ); // 6
+            pts.push_back( Point( FT(5)/FT(11),   FT(-5)/FT(11) ) ); // 7
+
+
+            // The vertex v_0
+            pts.push_back( Point( FT(97)/FT(125), FT(-26)/FT(81)  ) ); // 0
+
+
+        } else { // Algebraic dummy points
+
+            FT F0 = FT(0);
+            FT F1 = FT(1);
+            FT F2 = FT(2);
+
+            pts.push_back(Point( FT(0), FT(0) ));   // origin
+
+            FT i1(CGAL::sqrt(FT(2) - sqrt(FT(2))));
+            FT i2(FT(2)*i1);
+            FT i3(FT(2)*CGAL::sqrt(FT(2)) - i2);
+            FT i4(-1 + i3);
+            Point a0(FT( CGAL::sqrt( i4 )), FT(0));          // internal point
+            a0 = rot8(a0);
+            pts.push_back(a0);
+            for (int k = 1; k < 8; k++) {
+                a0 = rotate(a0);
+                pts.push_back(a0);
+            }
+
+            pts.push_back(Point(FT( -CGAL::sqrt(CGAL::sqrt(F2) - F1)), F0));                                                         //  μ(s_0)
+            pts.push_back(Point(FT( -CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2) ), FT(-CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2)) ));      //  μ(s_1)
+            pts.push_back(Point(F0, FT( -CGAL::sqrt(CGAL::sqrt(F2) - F1))));                                                         //  μ(s_2)
+            pts.push_back(Point(FT(CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2)), -FT(CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2)) ));       //  μ(s_3)
+            pts.push_back(Point(FT( CGAL::sqrt(CGAL::sqrt(F2) + F1)/ F2 ), - FT( CGAL::sqrt(CGAL::sqrt(F2) - F1)/ F2) ));           //  v_0
+
         }
 
-
-        pts.push_back(Point(-FT( CGAL::sqrt(CGAL::sqrt(F2) - F1)), F0));                                                          //  μ(s_0)  pt 9
-        pts.push_back(Point(-FT( CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2) ), -FT(CGAL::sqrt((CGAL::sqrt(F2) - F1) / F2)) ));       //  μ(s_1)  pt 10
-        pts.push_back(Point(F0,                                             -FT(CGAL::sqrt(CGAL::sqrt(F2) - F1))));               //  μ(s_2)  pt 11
-        pts.push_back(Point(FT(CGAL::sqrt( (CGAL::sqrt(F2) - F1) / F2)),    -FT(CGAL::sqrt((CGAL::sqrt(F2) - F1) / F2)) ));       //  μ(s_3)  pt 12
-        pts.push_back(Point(FT( CGAL::sqrt(CGAL::sqrt(F2) + F1)/ F2 ),      -FT(CGAL::sqrt(CGAL::sqrt(F2) - F1)/ F2) ));          //  v_0     pt 13
-        
-        // for (int i = 0; i < 4; i++) {
-        //     pts[12-i] = opposite(pts[12-i]);
-        // }
 
         Offset off[32][3]; 
         for (int i = 0; i < 32; i++) {
@@ -253,11 +278,6 @@ namespace CGAL {
         std::vector<Vertex_handle> ret(vcount);
         for (int i = 0; i < vcount; i++) {
             ret.push_back(vertices[i]);
-        }
-
-
-        for (int i = 0; i < 32; i++) {
-            cout << "Face " << i << ": vertices " << tri[i][0] << ", " << tri[i][1] << ", " << tri[i][2] << "    offsets " << off[i][0] << ", " << off[i][1] << ", " << off[i][2] << endl;
         }
 
 

@@ -33,9 +33,5 @@ int main(void) {
 
     assert(tr.is_valid(true));
 
-    for (Face_iterator fi = tr.faces_begin(); fi != tr.faces_end(); fi++) {
-        cout << "Face " << fi->get_number() << " is canonical: " << (fi->is_canonical() ? "TRUE" : "FALSE") << endl;
-    }
-
     return 0;
 }

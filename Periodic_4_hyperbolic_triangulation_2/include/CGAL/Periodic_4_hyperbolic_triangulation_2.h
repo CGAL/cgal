@@ -16,8 +16,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Iordan Iordanov  <Iordan.Iordanov@loria.fr>
+// Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
+//                 
 
 #ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H
 #define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_2_H
@@ -62,15 +62,6 @@ namespace CGAL {
 	#define CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
 #endif // no CGAL_P4T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 
-/*
-template < class GT, class TDS > class Periodic_4_hyperbolic_triangulation_2;
-
-template < class GT, class TDS > std::istream& operator>>
-	(std::istream& is, Periodic_4_hyperbolic_triangulation_2<GT, TDS> &tr);
-
-template < class GT, class TDS > std::ostream& operator<<
-	(std::ostream& os, const Periodic_4_hyperbolic_triangulation_2<GT, TDS> &tr);
-*/
 
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
@@ -155,9 +146,6 @@ template < 	class GT,
 		>
 class Periodic_4_hyperbolic_triangulation_2 : public Triangulation_2<GT, TDS> {
 
-//	friend std::istream& operator>> <>
-//	(std::istream& is, Periodic_4_hyperbolic_triangulation_2<GT, TDS> &tr);
-
 	typedef Periodic_4_hyperbolic_triangulation_2<GT, TDS> 		Self;
   typedef Triangulation_2<GT, TDS>                          Base;
 
@@ -194,28 +182,27 @@ public:
 	typedef typename TDS::Face_handle 				        Face_handle;
 
 	typedef typename TDS::size_type             	    size_type;
-  	typedef typename TDS::difference_type        	  difference_type;
+	typedef typename TDS::difference_type        	  difference_type;
 
-  	typedef typename TDS::Face_iterator         	  Face_iterator;
-  	typedef typename TDS::Edge_iterator          	  Edge_iterator;
-  	typedef typename TDS::Vertex_iterator        	  Vertex_iterator;
-  	typedef typename TDS::Face_circulator       	  Face_circulator;
-    typedef typename TDS::Edge_circulator         	Edge_circulator;
-    typedef typename TDS::Vertex_circulator       	Vertex_circulator;
-    //typedef typename TDS::Face_base               Face_base;
+	typedef typename TDS::Face_iterator         	  Face_iterator;
+	typedef typename TDS::Edge_iterator          	  Edge_iterator;
+	typedef typename TDS::Vertex_iterator        	  Vertex_iterator;
+	typedef typename TDS::Face_circulator       	  Face_circulator;
+  typedef typename TDS::Edge_circulator         	Edge_circulator;
+  typedef typename TDS::Vertex_circulator       	Vertex_circulator;
 
 
-    typedef typename Base::Line_face_circulator     Line_face_circulator;
+  typedef typename Base::Line_face_circulator     Line_face_circulator;
 
-  	typedef Face_iterator                       	All_faces_iterator;
-  	typedef Edge_iterator                        	All_edges_iterator;
-  	typedef Vertex_iterator                      	All_vertices_iterator;
+	typedef Face_iterator                       	All_faces_iterator;
+	typedef Edge_iterator                        	All_edges_iterator;
+	typedef Vertex_iterator                      	All_vertices_iterator;
 
-    typedef Face_iterator                         Finite_faces_iterator;
-    typedef Edge_iterator                         Finite_edges_iterator;
-    typedef Vertex_iterator                       Finite_vertices_iterator;
+  typedef Face_iterator                         Finite_faces_iterator;
+  typedef Edge_iterator                         Finite_edges_iterator;
+  typedef Vertex_iterator                       Finite_vertices_iterator;
 
-  	typedef Periodic_4_hyperbolic_triangulation_unique_vertex_iterator_2<Self>
+	typedef Periodic_4_hyperbolic_triangulation_unique_vertex_iterator_2<Self>
                                                		Unique_vertex_iterator;
 
 private:
@@ -830,19 +817,6 @@ protected:
   	}
 
 
-/*
-  	Face_handle
-  	periodic_locate(const Point & p, const Offset &o_p,
-        			Locate_type & lt, int & li, int & lj,
-        			Face_handle start = Face_handle()) const {
-
-    	typedef Triangulation_structural_filtering_traits<Geometric_traits> TSFT;
-    	typedef typename internal::Periodic_4_hyperbolic_structural_filtering_2_tag<TSFT::Use_structural_filtering_tag::value >::Tag Should_filter_tag;
-
-    	return generic_periodic_locate(p, o_p, lt, li, lj, start, Should_filter_tag());
-  	}
-  	*/
-
   	Face_handle
   	inexact_locate( const Point& p,
                  	Face_handle start = Face_handle(),
@@ -933,7 +907,7 @@ public:
   	Vertex_handle create_initial_triangulation(const Point &p);
 
 public:
-  	std::vector<Vertex_handle> insert_dummy_points();
+  	std::vector<Vertex_handle> insert_dummy_points(bool rational = false);
 
     template <class Conflict_tester>
     Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Conflict_tester& tester, Face_handle f = Face_handle()) const;
@@ -1196,9 +1170,6 @@ protected:
   	template <class ConflictTester>
   	bool is_valid_conflict(ConflictTester &tester, bool verbose = false, int level = 0) const;
   
-//protected:
-//  	template < class Cmp >
-//  	class Perturbation_order;
 
 public:
   // undocumented access functions
@@ -1241,15 +1212,6 @@ protected:
 
   	Offset get_neighbor_offset(Face_handle ch, int i, Face_handle nb) const;
   
-  	//friend class Perturbation_order<typename GT::Compare_xyz_3>;
-  	
-  	/*
-  	friend std::istream& operator>> <>
-      	  (std::istream& is, Periodic_4_hyperbolic_triangulation_2<GT,TDS> &tr);
-  	
-  	friend std::ostream& operator<< <>
-      	  (std::ostream& os, const Periodic_4_hyperbolic_triangulation_2<GT,TDS> &tr);
-	*/
 
 public:
 
@@ -1406,105 +1368,6 @@ side_of_face(const Point &q, const Offset &off, Face_handle f, Locate_type &lt, 
     }
 }
 
-
-/*
-template<class GT, class TDS>
-typename 	  Periodic_4_hyperbolic_triangulation_2 < GT, TDS >::
-Vertex_handle Periodic_4_hyperbolic_triangulation_2 < GT, TDS >::
-create_initial_triangulation(const Point& p) {
-  	CGAL_assertion(this->empty());
-
-  	/// Virtual vertices, one per periodic domain
-  	Vertex_handle vir_vertices;
-  	
-  	/// Virtual faces, two per periodic domain
-  	Face_handle faces[2];
-
-  	// Initialise vertices:
-  	vir_vertices = _tds.create_vertex();
-  	vir_vertices->set_point(p);
-  	virtual_vertices_reverse[vir_vertices] = std::vector<Vertex_handle>();
-
-  	// Create faces:
-    for (int f = 0; f < 2; f++) {
-      	// f faces per 'rectangle'
-      	faces[f] = _tds.create_face();
-    }
-
-  	_tds.set_dimension(2);
-
-  	return vir_vertices;
-}
-
-
-*/
-
-
-/*! \brief Insert point into triangulation.
- *
- * Inserts the point p into the triangulation. It expects
- * - a face to start the point location
- * - a testing function to determine cells in conflict
- * - a testing function to determine if a vertex is hidden.
- *
- * Implementation:
- * - If the triangulation is empty call a special function
- * (create_initial_triangulation) to construct the basic
- * triangulation.
- * - Run point location to get the face c containing point p.
- * - Call periodic_insert to insert p into the 3-cover.
- * - Also insert the eight periodic copies of p. (??)
- */
- /*
-template < class GT, class TDS >
-template < class Conflict_tester, class Point_hider >
-inline typename Periodic_4_hyperbolic_triangulation_2<GT,TDS>::Vertex_handle
-Periodic_4_hyperbolic_triangulation_2<GT,TDS>::
-insert_in_conflict(const Point & p, Locate_type lt, Face_handle c, int li, int lj, 
-				   const Conflict_tester &tester, Point_hider &hider) {
-
-	// Verify that the point is inside the Poincaré disc. Note that if the point
-	// lies on the boundary it is considered to be inside the disc. 
-	CGAL_triangulation_assertion( !_domain.has_on_unbounded_side(p) );
-
-  	if (number_of_vertices() == 0) {
-    	return create_initial_triangulation(p);
-  	}
-
-  	// Why are we comparing weights?
-  	if ( (lt == VERTEX) && (tester.compare_weight(c->vertex(li)->point(), p) == 0) ) {
-    	return c->vertex(li);
-  	}
-
-  	Vertex_handle vstart;
-    Virtual_vertex_map_it vvmit = virtual_vertices.find(c->vertex(0));
-    if (vvmit == virtual_vertices.end())
-    	vstart = c->vertex(0);
-    else
-    	vstart = vvmit->second.first;
-
-    CGAL_triangulation_assertion(virtual_vertices.find(vstart) == virtual_vertices.end());
-
-    CGAL_triangulation_assertion(virtual_vertices_reverse.find(vstart) != virtual_vertices_reverse.end());
-  	
-  	GAL_triangulation_assertion( number_of_vertices() != 0 );
-
-  	Vertex_handle vh = periodic_insert(p, Offset(), lt, c, tester, hider);
-
-  	// Verify that each triangle of the triangulation makes sense
-  	for (Face_iterator it = all_faces_begin(); it != all_faces_end(); it++){
-    	CGAL_triangulation_assertion(it->neighbor(0)->neighbor(it->neighbor(0)->index(it))==it);
-    	CGAL_triangulation_assertion(it->neighbor(1)->neighbor(it->neighbor(1)->index(it))==it);
-    	CGAL_triangulation_assertion(it->neighbor(2)->neighbor(it->neighbor(2)->index(it))==it);
-  	}
-
-  	// Do we need to re-control here?
-  	CGAL_triangulation_expensive_assertion(is_valid());
-
-   	return vh;
-}
-
-*/
 
 /// tests if two vertices of one cell are just periodic copies of each other
 
@@ -1837,7 +1700,6 @@ euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Offset& lo
     }
 
   }
-
 
 
   Orientation o1 = orientation(f->vertex(0)->point(), f->vertex(1)->point(), p,

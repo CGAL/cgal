@@ -13,6 +13,7 @@
 // 
 //
 // Author(s)     : Mikhail Bogdanov
+// Modified by   : Iordan Iordanov
 
 #ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 #define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
@@ -189,12 +190,7 @@ public:
 };
 
 
-
-//template< class GT, template <class> class Hyperbolic_octagon_translation_matrix>
-//typename Hyperbolic_octagon_translation_matrix<GT>::Field_number Hyperbolic_octagon_translation_matrix<GT>::factor = Hyperbolic_octagon_translation_matrix<GT>:: Field_number(-1, 1); 
-
-
-// just to give an order(ing)
+// just to give an ordering
 template< class GT >
 bool operator<( const std::complex<GT>& lh,
                 const std::complex<GT>& rh)
@@ -287,7 +283,6 @@ void get_generators(std::vector< Hyperbolic_octagon_translation_matrix<GT> >& ge
     gens.push_back(Matrix(A, B[i], labels[i]));
   }
 }
-
 
 
 

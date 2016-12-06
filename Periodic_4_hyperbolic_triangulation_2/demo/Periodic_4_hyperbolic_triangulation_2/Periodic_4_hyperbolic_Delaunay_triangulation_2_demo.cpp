@@ -9,7 +9,6 @@
 
 // unique words
 #include <CGAL/Square_root_2_field.h>
-// to be deleted (iiordano: why?)
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -28,13 +27,8 @@
 
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/TriangulationCircumcircle.h>
-//#include <CGAL/Qt/TriangulationMovingPoint.h>
-//#include <CGAL/Qt/TriangulationConflictZone.h>
-//#include <CGAL/Qt/TriangulationRemoveVertex.h>
 #include <CGAL/Qt/TriangulationPointInputAndConflictZone.h>
-//#include <CGAL/Qt/VoronoiGraphicsItem.h>
 #include <CGAL/Qt/TriangulationGraphicsItemWithColorInfo.h>     // Visualise color
-//#include <CGAL/TranslationInfo.h>                               // Store color
 #include <CGAL/Qt/DemosMainWindow.h>
 
 
@@ -118,15 +112,12 @@ void my_unique_words(std::vector<Point>& p, Point input, int depth) {
     s.insert( v[i] );
   }
 
-  cout << "Translating... " << endl;
   for (set<Octagon_matrix>::iterator it = s.begin(); it != s.end(); it++) {
     Octagon_matrix m = *it;
     Point res;
     res = m.apply(input);
     p.push_back( res );
   }
-  cout << "Done! Now I need to draw " << p.size() << " points..." << endl;
-
 }
 
 
@@ -150,12 +141,6 @@ private:
   QGraphicsScene                                                scene;  
 
   CGAL::Qt::TriangulationGraphicsItem<Triangulation>          * dgi;
-  
-  
-  // for drawing Voronoi diagram of the orbit of the origin
-
-  //CGAL::Qt::TriangulationMovingPoint<Triangulation>                * mp;
-  //CGAL::Qt::TriangulationRemoveVertex<Triangulation>               * trv;
   CGAL::Qt::TriangulationPointInputAndConflictZone<Triangulation>  * pi;
   CGAL::Qt::TriangulationCircumcircle<Triangulation>               * tcc;
 public:
@@ -189,12 +174,7 @@ MainWindow::MainWindow()
   : DemosMainWindow(), dt(Traits())
 {
 
-  cout << "Inserting dummy points!" << endl;
-
   dt.insert_dummy_points();
-
-  cout << "Dummy points inserted!" << endl;
-
   cidx = 0;
   for (int i = 0; i < 14; i++)
     ccol.push_back(i);
@@ -243,27 +223,13 @@ MainWindow::MainWindow()
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
-
-  //mp = new CGAL::Qt::TriangulationMovingPoint<Triangulation>(&dt, this);
-  // TriangulationMovingPoint<Triangulation> emits a modelChanged() signal each
-  // time the moving point moves.
-  // The following connection is for the purpose of emitting changed().
-  //QObject::connect(mp, SIGNAL(modelChanged()),
-	//	   this, SIGNAL(changed()));
-
-  //trv = new CGAL::Qt::TriangulationRemoveVertex<Triangulation>(&dt, this);
-  //QObject::connect(trv, SIGNAL(modelChanged()),
-	//	   this, SIGNAL(changed()));
-
   tcc = new CGAL::Qt::TriangulationCircumcircle<Triangulation>(&scene, &dt, this);
   tcc->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-  //cz = new CGAL::Qt::TriangulationConflictZone<Triangulation>(&scene, &dt, this);
-
+ 
   // 
   // Manual handling of actions
   //
-
   QObject::connect(this->actionQuit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
 
@@ -294,10 +260,6 @@ MainWindow::MainWindow()
   this->addAboutDemo(":/cgal/help/about_Triangulation_triangulation_2.html");
   this->addAboutCGAL();
 
-  //this->addRecentFiles(this->menuFile, this->actionQuit);
-  //connect(this, SIGNAL(openRecentFile(QString)),
-	//        this, SLOT(open(QString)));
-
 
 }
 
@@ -316,8 +278,6 @@ MainWindow::processInput(CGAL::Object o)
 
 
 
-
-
 /* 
  *  Qt Automatic Connections
  *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
@@ -330,10 +290,8 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pi);
-    //scene.installEventFilter(trv);
   } else {
     scene.removeEventFilter(pi);
-    //scene.removeEventFilter(trv);
   }
 }
 
@@ -423,7 +381,6 @@ MainWindow::on_actionLoadPoints_triggered()
 }
 
 
-
 void
 MainWindow::on_actionRecenter_triggered()
 {
@@ -438,28 +395,13 @@ int main(int argc, char **argv)
 {
 
   QApplication app(argc, argv);
-
-  //Q_INIT_RESOURCE(res);
-
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Periodic_4_hyperbolic_Delaunay_triangulation_2 testing name");
-
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  //Q_INIT_RESOURCE(File);
-  //Q_INIT_RESOURCE(Triangulation_2);
-  //Q_INIT_RESOURCE(Input);
-  //Q_INIT_RESOURCE(CGAL);
-
   MainWindow mainWindow;
   mainWindow.show();
-
   QStringList args = app.arguments();
   args.removeAt(0);
-  //Q_FOREACH(QString filename, args) {
-    //mainWindow.open(filename);
-  //}
 
   return app.exec();
 }

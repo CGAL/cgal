@@ -50,8 +50,75 @@ private:
 	static const Int INVERSES_DISTANCE = 4;			// How many elements between inverses, i.e., inv(a) = (a + INVERSE_DISTANCE) % RELATION_LENGTH
 	
 	static std::map<std::string, int> wmap;
-	static std::map<std::string, int> init_map() {
-		std::cout << "Initializing map!" << endl;
+	static std::map<std::string, Octagon_translation_matrix> gmap;
+
+	static std::map<std::string, Octagon_translation_matrix> init_gmap() {
+		std::map<std::string, Octagon_translation_matrix> m;
+		vector<Octagon_translation_matrix> g;
+  		get_generators(g);
+
+  		m["_"] 		= Octagon_translation_matrix();
+		m["0527"] 	=  g[0]*g[5]*g[2]*g[7];
+		m["052"] 	=  g[0]*g[5]*g[2];
+		m["05"] 	=  g[0]*g[5];
+		m["0"] 		=  g[0];
+		m["03"] 	=  g[0]*g[3];
+		m["036"]	=  g[0]*g[3]*g[6];
+
+		m["1630"] 	=  g[1]*g[6]*g[3]*g[0];
+		m["163"] 	=  g[1]*g[6]*g[3];
+		m["16"] 	=  g[1]*g[6];
+		m["1"] 		=  g[1];
+		m["14"] 	=  g[1]*g[4];
+		m["147"]	=  g[1]*g[4]*g[7];
+
+		m["2741"] 	= g[2]*g[7]*g[4]*g[1];
+		m["274"] 	= g[2]*g[7]*g[4];
+		m["27"] 	= g[2]*g[7];
+		m["2"] 		= g[2];
+		m["25"] 	= g[2]*g[5];
+		m["250"]	= g[2]*g[5]*g[0];
+
+		m["3052"] 	= g[3]*g[0]*g[5]*g[2];
+		m["305"] 	= g[3]*g[0]*g[5];
+		m["30"] 	= g[3]*g[0];
+		m["3"] 		= g[3];
+		m["36"] 	= g[3]*g[6];
+		m["361"]	= g[3]*g[6]*g[1];
+
+		m["4163"] 	= g[4]*g[1]*g[6]*g[3];
+		m["416"] 	= g[4]*g[1]*g[6];
+		m["41"] 	= g[4]*g[1];
+		m["4"] 		= g[4];
+		m["47"] 	= g[4]*g[7];
+		m["472"]	= g[4]*g[7]*g[2];
+
+		m["5274"]	= g[5]*g[2]*g[7]*g[4];
+		m["527"] 	= g[5]*g[2]*g[7];
+		m["52"] 	= g[5]*g[2];
+		m["5"] 		= g[5];
+		m["50"] 	= g[5]*g[0];
+		m["503"]	= g[5]*g[0]*g[3];
+
+		m["6305"] 	= g[6]*g[3]*g[0]*g[5];
+		m["630"] 	= g[6]*g[3]*g[0];
+		m["63"] 	= g[6]*g[3];
+		m["6"] 		= g[6];
+		m["61"] 	= g[6]*g[1];
+		m["614"]	= g[6]*g[1]*g[4];
+
+		m["7416"] 	= g[7]*g[4]*g[1]*g[6];
+		m["741"] 	= g[7]*g[4]*g[1];
+		m["74"] 	= g[7]*g[4];
+		m["7"] 		= g[7];
+		m["72"] 	= g[7]*g[2];
+		m["725"]	= g[7]*g[2]*g[5];
+
+		return m;
+	}
+
+
+	static std::map<std::string, int> init_wmap() {
 		std::map<std::string, int> m;
 		m["_"] 		= -1;
 		m["0527"] 	=  0;
@@ -484,15 +551,15 @@ public:
   	
 
   	Octagon_translation_matrix get_matrix() const {
-  		vector<Octagon_translation_matrix> gens;
-  		get_generators(gens);
-  		Octagon_translation_matrix m;
-  		for (int i = 0; i < 4; i++) {
-  			if (b(i)) {
-  				m = m * gens[operator()(i)];
-  			}
-  		}
-  		return m;
+  		// vector<Octagon_translation_matrix> gens;
+  		// get_generators(gens);
+  		// Octagon_translation_matrix m;
+  		// for (int i = 0; i < 4; i++) {
+  		// 	if (b(i)) {
+  		// 		m = m * gens[operator()(i)];
+  		// 	}
+  		// }
+  		return gmap[get_string()];
   	}
 
   	Point apply(Point p) const {
@@ -504,8 +571,10 @@ public:
 
 
 template <class Int, class GT>
-std::map<std::string, int> Hyperbolic_octagon_word_4<Int, GT>::wmap = init_map();
+std::map<std::string, int> Hyperbolic_octagon_word_4<Int, GT>::wmap = init_wmap();
 
+template <class Int, class GT>
+std::map<std::string, Hyperbolic_octagon_translation_matrix<GT> > Hyperbolic_octagon_word_4<Int, GT>::gmap = init_gmap();
 
 template <class Int, class GT>
 int offset_distance(const Hyperbolic_octagon_word_4<Int, GT>& o1, const Hyperbolic_octagon_word_4<Int, GT>& o2) {
@@ -565,7 +634,7 @@ ostream& operator<<(ostream& s, const Hyperbolic_octagon_word_4<Int, GT>& o) {
 	return s;
 } 
 
-// just to give an order(ing)
+// just to give an ordering
 template<class Int, class GT>
 bool operator == (const Hyperbolic_octagon_word_4<Int, GT>& lh,
   				  const Hyperbolic_octagon_word_4<Int, GT>& rh)
@@ -591,7 +660,7 @@ bool operator != (const Hyperbolic_octagon_word_4<Int, GT>& lh,
 }
 
 
-// just to give an order(ing)
+// just to give an ordering
 template<class Int, class GT>
 bool operator < (const Hyperbolic_octagon_word_4<Int, GT>& lh,
   				 const Hyperbolic_octagon_word_4<Int, GT>& rh)
