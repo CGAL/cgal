@@ -248,7 +248,7 @@ public:
   /*!
   Function object type that provides
   `Barycentric_coordinates operator()(FT a, FT b, FT c)`
-  to introduce some new triangular barycentric coordinates.
+  to introduce new triangular barycentric coordinates.
   */
   typedef unspecified_type Construct_barycentric_coordinates;
 
