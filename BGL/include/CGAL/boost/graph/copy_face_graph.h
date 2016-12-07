@@ -71,7 +71,7 @@ namespace CGAL {
 
   Other properties are not copied.
 */
-#if defined(CGAL_CXX11) || defined(DOXYGEN_RUNNING) // Use template default arguments
+#if defined(DOXYGEN_RUNNING) // Use template default arguments
 template <typename SourceMesh, typename TargetMesh,
           typename V2V = Emptyset_iterator,
           typename H2H = Emptyset_iterator,
@@ -144,7 +144,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   
 }
 
-#if !defined(CGAL_CXX11)  && !defined(DOXYGEN_RUNNING)
+#if !defined(DOXYGEN_RUNNING)
 template <typename SourceMesh, typename TargetMesh>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
 { copy_face_graph(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator(),
@@ -159,6 +159,11 @@ template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h)
 { copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator(),
                   get(vertex_point, sm), get(vertex_point, tm)); }
+
+template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename Src_vpm>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, Src_vpm sm_vpm)
+{ copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator(),
+                  sm_vpm, get(vertex_point, tm)); }
 #endif
 
 } // namespace CGAL
