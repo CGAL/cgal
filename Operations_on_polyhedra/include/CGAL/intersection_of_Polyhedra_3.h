@@ -516,6 +516,7 @@ public:
       }
     }
   }
+  void input_have_coplanar_facets() {}
 };
 
 

@@ -1,6 +1,3 @@
-#define CGAL_NO_DEPRECATION_WARNINGS 1
-#define CGAL_CMAP_DART_DEPRECATED 1
-
 #include "Scene_combinatorial_map_item.h"
 #include "Scene_polyhedron_item.h"
 #include <CGAL/Three/Scene_interface.h>
@@ -79,7 +76,7 @@ Kernel::Vector_3 Scene_combinatorial_map_item_priv::compute_face_normal(Combinat
     int index=0;
     Dart_in_facet_range::const_iterator pit=vertices.begin();
     for (;pit!=vertices.end() && index!=3;++pit,++index ){
-        points[index]=pit->attribute<0>()->point();
+        points[index]=item->combinatorial_map().attribute<0>(pit)->point();
     }
 
     if (index!=3) return normal;
@@ -92,7 +89,7 @@ Kernel::Vector_3 Scene_combinatorial_map_item_priv::compute_face_normal(Combinat
         points[1]=points[2];
         if ( pit==vertices.end() ) break;
 
-        points[2]=pit->attribute<0>()->point();
+        points[2]=item->combinatorial_map().attribute<0>(pit)->point();
         ++pit;
     }while(true);
 
@@ -163,57 +160,63 @@ void Scene_combinatorial_map_item::export_current_volume_as_polyhedron() const {
 }
 
 struct Select_union{
+    const Combinatorial_map_3& map;
+    Select_union(const Combinatorial_map_3& m) : map(m) {}
     static const bool only_one_run=false;
     static const bool swap_orientation=true;
     template <class Dart_handle>
-    bool operator() (Dart_handle d){ return d->template attribute<3>()->info().outside.size()==2; }
+    bool operator() (Dart_handle d){ return map.template attribute<3>(d)->info().outside.size()==2; }
 };
 
 struct Select_inter{
+    const Combinatorial_map_3& map;
+    Select_inter(const Combinatorial_map_3& m) : map(m) {}
     static const bool only_one_run=false;
     static const bool swap_orientation=false;
     template <class Dart_handle>
-    bool operator() (Dart_handle d){ return d->template attribute<3>()->info().inside.size()==2; }
+    bool operator() (Dart_handle d){ return map.template attribute<3>(d)->info().inside.size()==2; }
 };
 
 struct Select_A_minus_B{
+    const Combinatorial_map_3& map;
     static const bool only_one_run=false;
     static const bool swap_orientation=false;
-    Select_A_minus_B(void* address):address_of_A(address){}
+    Select_A_minus_B(const Combinatorial_map_3& m, void* address):map(m), address_of_A(address){}
     template <class Dart_handle>
     bool operator() (Dart_handle d){
-        return d->template attribute<3>()->info().inside.size()==1 &&
-                static_cast<void*>(*d->template attribute<3>()->info().inside.begin())==address_of_A;
+        return map.template attribute<3>(d)->info().inside.size()==1 &&
+                static_cast<void*>(*map.template attribute<3>(d)->info().inside.begin())==address_of_A;
     }
 private:
     void* address_of_A;
 };
 
 struct Select_B_minus_A{
+    const Combinatorial_map_3& map;
     static const bool only_one_run=false;
     static const bool swap_orientation=false;
-    Select_B_minus_A(void* address):address_of_A(address){}
+    Select_B_minus_A(const Combinatorial_map_3& m, void* address):map(m), address_of_A(address){}
     template <class Dart_handle>
     bool operator() (Dart_handle d){
-        return d->template attribute<3>()->info().inside.size()==1 &&
-                static_cast<void*>(*d->template attribute<3>()->info().inside.begin())!=address_of_A;
+        return map.template attribute<3>(d)->info().inside.size()==1 &&
+                static_cast<void*>(*map.template attribute<3>(d)->info().inside.begin())!=address_of_A;
     }
 private:
     void* address_of_A;
 };
 
 void Scene_combinatorial_map_item::export_union_as_polyhedron() const {
-    d->export_as_polyhedron(Select_union(),QString("%1_union_%2").arg("A").arg("B"));
+    d->export_as_polyhedron(Select_union(this->combinatorial_map()),QString("%1_union_%2").arg("A").arg("B"));
 }
 void Scene_combinatorial_map_item::export_intersection_as_polyhedron() const{
-    d->export_as_polyhedron(Select_inter(),QString("%1_inter_%2").arg("A").arg("B"));
+    d->export_as_polyhedron(Select_inter(this->combinatorial_map()),QString("%1_inter_%2").arg("A").arg("B"));
 }
 void Scene_combinatorial_map_item::export_A_minus_B_as_polyhedron() const{
-    Select_A_minus_B predicate(d->address_of_A);
+    Select_A_minus_B predicate(this->combinatorial_map(),d->address_of_A);
     d->export_as_polyhedron(predicate,QString("%1_minus_%2").arg("A").arg("B"));
 }
 void Scene_combinatorial_map_item::export_B_minus_A_as_polyhedron() const{
-    Select_B_minus_A predicate(d->address_of_A);
+    Select_B_minus_A predicate(this->combinatorial_map(),d->address_of_A);
     d->export_as_polyhedron(predicate,QString("%1_minus_%2").arg("B").arg("A"));
 }
 
@@ -333,7 +336,7 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
                               face_end=item->combinatorial_map().darts_of_orbit<1>(vol_it).end();
                               face_it!=face_end; ++face_it)
                         {
-                            const Kernel::Point_3& p= face_it->attribute<0>()->point();
+                            const Kernel::Point_3& p= item->combinatorial_map().attribute<0>(face_it)->point();
                             positions_facets.push_back(p.x());
                             positions_facets.push_back(p.y());
                             positions_facets.push_back(p.z());
@@ -364,8 +367,8 @@ void Scene_combinatorial_map_item_priv::compute_elements(void) const{
         Edge_darts darts=item->combinatorial_map().one_dart_per_cell<1>();
         for (Edge_darts::const_iterator dit=darts.begin();dit!=darts.end();++dit){
             CGAL_assertion(!item->combinatorial_map().is_free(dit,1));
-            const Kernel::Point_3& a = dit->attribute<0>()->point();
-            const Kernel::Point_3& b = dit->beta(1)->attribute<0>()->point();
+            const Kernel::Point_3& a = item->combinatorial_map().attribute<0>(dit)->point();
+            const Kernel::Point_3& b = item->combinatorial_map().attribute<0>(item->combinatorial_map().beta(dit,1))->point();
             positions_lines.push_back(a.x());
             positions_lines.push_back(a.y());
             positions_lines.push_back(a.z());

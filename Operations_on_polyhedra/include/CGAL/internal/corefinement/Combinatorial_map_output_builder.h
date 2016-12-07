@@ -41,21 +41,21 @@ namespace internal_IOP {
 template <class Combinatorial_map_3>
 boost::optional<typename Combinatorial_map_3::Dart_handle>
 next_marked_dart_around_target_vertex(
-  const Combinatorial_map_3& final_map,
+  Combinatorial_map_3& final_map,
   typename Combinatorial_map_3::Dart_handle dart,
   int mark_index)
 {
   CGAL_precondition(final_map.is_marked(dart,mark_index));
-  typename Combinatorial_map_3::Dart_handle next=dart->beta(1);
+  typename Combinatorial_map_3::Dart_handle next=final_map.beta(dart,1);
   while ( ! final_map.is_marked(next,mark_index) ) {
     if (final_map.is_free(next,2) )//we reach a boundary
       return  boost::optional<typename Combinatorial_map_3::Dart_handle>();
-    next=next->beta(2)->beta(1);
+    next=final_map.beta(next,2,1);
   }
   if (next == dart) //no new dart have been found
     return  boost::optional<typename Combinatorial_map_3::Dart_handle>();
-  CGAL_precondition(&dart->beta(1)->template attribute<0>()->point() ==
-                    &next->template attribute<0>()->point());
+  CGAL_precondition(&final_map.template attribute<0>(final_map.beta(dart,1))->point() ==
+                    &final_map.template attribute<0>(next)->point());
   return boost::optional<typename Combinatorial_map_3::Dart_handle> (next);
 }
 
@@ -64,19 +64,19 @@ next_marked_dart_around_target_vertex(
 template <class Combinatorial_map_3>
 typename Combinatorial_map_3::Dart_handle
 get_next_marked_dart_around_target_vertex(
-  const Combinatorial_map_3& final_map,
+  Combinatorial_map_3& final_map,
   typename Combinatorial_map_3::Dart_handle dart,
   int mark_index)
 {
   CGAL_precondition(final_map.is_marked(dart,mark_index));
-  typename Combinatorial_map_3::Dart_handle next=dart->beta(1);
+  typename Combinatorial_map_3::Dart_handle next=final_map.beta(dart,1);
   while ( !final_map.is_marked(next,mark_index) ) {
     CGAL_assertion( !final_map.is_free(next,2) );
-    next=next->beta(2)->beta(1);
+    next=final_map.beta(next,2,1);
     CGAL_assertion(next != dart);
   }
-  CGAL_precondition(&dart->beta(1)->template attribute<0>()->point() ==
-                    &next->template attribute<0>()->point());
+  CGAL_precondition(&final_map.template attribute<0>(final_map.beta(dart,1))->point() ==
+                    &final_map.template attribute<0>(next)->point());
   return next;
 }
 
@@ -85,19 +85,19 @@ get_next_marked_dart_around_target_vertex(
 template <class Combinatorial_map_3>
 typename Combinatorial_map_3::Dart_handle
 get_next_marked_dart_around_source_vertex(
-  const Combinatorial_map_3& final_map,
+  Combinatorial_map_3& final_map,
   typename Combinatorial_map_3::Dart_handle dart,
   int mark_index)
 {
   CGAL_precondition(final_map.is_marked(dart,mark_index));
-  typename Combinatorial_map_3::Dart_handle next=dart->beta(0);
+  typename Combinatorial_map_3::Dart_handle next=final_map.beta(dart,0);
   while ( ! final_map.is_marked(next,mark_index) ) {
     CGAL_assertion( !final_map.is_free(next,2) );
-    next=next->beta(2)->beta(0);
+    next=final_map.beta(next,2,0);
     CGAL_assertion(next != dart);
   }
-  CGAL_precondition(&dart->template attribute<0>()->point() ==
-                    &next->beta(1)->template attribute<0>()->point());
+  CGAL_precondition(&final_map.template attribute<0>(dart)->point() ==
+                    &final_map.template attribute<0>(final_map.beta(next,1))->point());
   return next;
 }
 
@@ -118,15 +118,15 @@ void sew_2_marked_darts( Combinatorial_map_3& final_map,
   CGAL_precondition( final_map.is_free(dart_2, 2) );
   CGAL_precondition( final_map.is_marked(dart_1,mark_index) );
   CGAL_precondition( final_map.is_marked(dart_2,mark_index) );
-  CGAL_precondition( dart_1->template attribute<0>()->point() ==
-                     dart_2->beta(1)->template attribute<0>()->point() );
-  CGAL_precondition( dart_1->beta(1)->template attribute<0>()->point() ==
-                     dart_2->template attribute<0>()->point() );
+  CGAL_precondition( final_map.template attribute<0>(dart_1)->point() ==
+                     final_map.template attribute<0>(final_map.beta(dart_2,1))->point() );
+  CGAL_precondition( final_map.template attribute<0>(final_map.beta(dart_1,1))->point() ==
+                     final_map.template attribute<0>(dart_2)->point() );
 
   int src_index = ( ( indices.first < indices.second) ==  polyline_info.first )
                   ? indices.second:indices.first;
 
-  if ( dart_1->template attribute<0>()->point() != nodes[ src_index ] )
+  if ( final_map.template attribute<0>(dart_1)->point() != nodes[ src_index ] )
     std::swap(dart_1,dart_2);
 
   int nb_segs=polyline_info.second-1,k=1;
@@ -163,50 +163,50 @@ void sew_3_marked_darts( Combinatorial_map_3& final_map,
   typedef boost::optional<typename Combinatorial_map_3::Dart_handle>
     O_Dart_handle;
 
-  if ( not_top->template attribute<3>()->info().is_empty ) {
-    CGAL_assertion(not_down->template attribute<3>()->info().is_empty);
+  if ( final_map.template attribute<3>(not_top)->info().is_empty ) {
+    CGAL_assertion(final_map.template attribute<3>(not_down)->info().is_empty);
     return;
   }
 
-  CGAL_assertion(!not_down->template attribute<3>()->info().is_empty);
+  CGAL_assertion(!final_map.template attribute<3>(not_down)->info().is_empty);
 
   //merge attribute of the two volumes:
   internal_IOP::Volume_on_merge merge_attributes;
-  merge_attributes(*top->template attribute<3>(),
-                   *not_top->template attribute<3>());
-  merge_attributes(*down->template attribute<3>(),
-                   *not_down->template attribute<3>());
+  merge_attributes(*final_map.template attribute<3>(top),
+                   *final_map.template attribute<3>(not_top));
+  merge_attributes(*final_map.template attribute<3>(down),
+                   *final_map.template attribute<3>(not_down));
 
   //set volume attributes as empty to avoid double sew_3
   //of the same topological disk of triangles
-  not_top->template attribute<3>()->info().is_empty=true;
-  not_down->template attribute<3>()->info().is_empty=true;
+  final_map.template attribute<3>(not_top)->info().is_empty=true;
+  final_map.template attribute<3>(not_down)->info().is_empty=true;
 
   CGAL_precondition( final_map.is_marked(not_top,mark_index)
                      && final_map.is_marked(top,mark_index) );
   CGAL_precondition( final_map.is_marked(not_down,mark_index)
                      && final_map.is_marked(down,mark_index) );
-  CGAL_precondition( not_top->template attribute<0>()->point() ==
-                     not_down->beta(1)->template attribute<0>()->point() );
-  CGAL_precondition( not_top->beta(1)->template attribute<0>()->point() ==
-                     not_down->template attribute<0>()->point() );
-  CGAL_precondition( not_top->template attribute<0>()->point() ==
-                     top->template attribute<0>()->point() );
-  CGAL_precondition( not_down->template attribute<0>()->point() ==
-                     down->template attribute<0>()->point() );
+  CGAL_precondition( final_map.template attribute<0>(not_top)->point() ==
+                     final_map.template attribute<0>(final_map.beta(not_down,1))->point() );
+  CGAL_precondition( final_map.template attribute<0>(final_map.beta(not_top,1))->point() ==
+                     final_map.template attribute<0>(not_down)->point() );
+  CGAL_precondition( final_map.template attribute<0>(not_top)->point() ==
+                     final_map.template attribute<0>(top)->point() );
+  CGAL_precondition( final_map.template attribute<0>(not_down)->point() ==
+                     final_map.template attribute<0>(down)->point() );
 
-  CGAL_assertion( top->beta(3)==down );
+  CGAL_assertion( final_map.beta(top,3)==down );
 
   //set to be removed the darts of the two no longer used volumes
   typename Combinatorial_map_3::Dart_handle start=not_top;
   do {
     CGAL_assertion(!final_map.is_free(not_top, 3));
     darts_to_remove.insert(not_top);
-    darts_to_remove.insert(not_top->beta(1));
-    darts_to_remove.insert(not_top->beta(1)->beta(1));
-    darts_to_remove.insert(not_top->beta(3));
-    darts_to_remove.insert(not_top->beta(3)->beta(1));
-    darts_to_remove.insert(not_top->beta(3)->beta(1)->beta(1));
+    darts_to_remove.insert(final_map.beta(not_top,1));
+    darts_to_remove.insert(final_map.beta(not_top,1,1));
+    darts_to_remove.insert(final_map.beta(not_top,3));
+    darts_to_remove.insert(final_map.beta(not_top,3,1));
+    darts_to_remove.insert(final_map.beta(not_top,3,1,1));
     O_Dart_handle current_1 =
       next_marked_dart_around_target_vertex(final_map, not_top, mark_index);
     CGAL_precondition(bool(current_1));
@@ -259,7 +259,7 @@ typename Map::Dart_handle import_from_polyhedron_subset(
 
       if (prev != NULL) {
         amap.template link_beta<1>(prev, d);
-        amap.template link_beta<1>(d->beta(3),prev->beta(3));//for opposite volume
+        amap.template link_beta<1>(amap.beta(d,3),amap.beta(prev,3));//for opposite volume
       } else {
         first_dart_of_face = d;
         if (first_dart==NULL) first_dart=d;
@@ -274,8 +274,8 @@ typename Map::Dart_handle import_from_polyhedron_subset(
             //link the opposites halfedges only when both
             //corresponding darts have been created
             amap.template link_beta<2>(d, it->second);
-            amap.template link_beta<2>(d->beta(3),
-                                       it->second->beta(3));//for opposite volume
+            amap.template link_beta<2>(amap.beta(d,3),
+                                       amap.beta(it->second,3));//for opposite volume
           }
         }
       } else {
@@ -285,14 +285,14 @@ typename Map::Dart_handle import_from_polyhedron_subset(
         if ( it_hedge_map!=selected_hedge_to_dart.end() ) it_hedge_map->second=d;
         //darts d and d->beta(3) are special edges
         amap.mark(d,mark_index);
-        amap.mark(d->beta(3),mark_index);
+        amap.mark(amap.beta(d,3),mark_index);
       }
       prev = d;
       current=current->next();
     } while (current != start);
     amap.template link_beta<1>(prev, first_dart_of_face);
-    amap.template link_beta<1>(first_dart_of_face->beta(3),
-                               prev->beta(3));//for opposite volume
+    amap.template link_beta<1>(amap.beta(first_dart_of_face,3),
+                               amap.beta(prev,3));//for opposite volume
   }
 
   // Second traversal to update the geometry.
@@ -303,7 +303,7 @@ typename Map::Dart_handle import_from_polyhedron_subset(
     do {
       typename Map::Dart_handle d =
         hedge_to_dart[current]; // Get the dart associated to the Halfedge
-      if (d->template attribute<0>() == NULL) {
+      if (amap.template attribute<0>(d) == NULL) {
         amap.template set_attribute<0>(d,
           amap.template create_attribute<0>(
             get(ppmap, current->opposite()->vertex()))
@@ -409,20 +409,20 @@ private:
                                 selected_hedge_to_dart);
 
     if (index_p1!=-1 && index_p1==index_q) {
-      Dart_handle top=dof_P1_outside->beta(3),
-                  not_top=took_opposite?dof_Q_outside->beta(3):dof_Q_outside;
+      Dart_handle top=final_map().beta(dof_P1_outside,3),
+                  not_top=took_opposite?final_map().beta(dof_Q_outside,3):dof_Q_outside;
       Dart_handle down=dof_P1_outside,
-                  not_down=took_opposite?dof_Q_outside:dof_Q_outside->beta(3);
+                  not_down=took_opposite?dof_Q_outside:final_map().beta(dof_Q_outside,3);
 
-      if ( top->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(top)->info().is_empty )
         std::swap(not_top,top);
-      if ( down->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(down)->info().is_empty )
         std::swap(not_down,down);
-      CGAL_assertion( !top->template attribute<3>()->info().is_empty );
-      CGAL_assertion( !down->template attribute<3>()->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(top)->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(down)->info().is_empty );
 
       //P1P2 or QP2
-      sew_2_marked_darts( final_map(), top, dof_P2_outside->beta(3),
+      sew_2_marked_darts( final_map(), top, final_map().beta(dof_P2_outside,3),
                           mark_index, nodes, indices, polyline_info);
       //P2Q or P2P1
       sew_2_marked_darts( final_map(),dof_P2_outside, down,
@@ -434,20 +434,20 @@ private:
     }
 
     if (index_p2!=-1 && index_p2==index_q) {
-      Dart_handle top=dof_P2_outside->beta(3),
-                  not_top=took_opposite?dof_Q_outside:dof_Q_outside->beta(3);
+      Dart_handle top=final_map().beta(dof_P2_outside,3),
+                  not_top=took_opposite?dof_Q_outside:final_map().beta(dof_Q_outside,3);
       Dart_handle down=dof_P2_outside,
-                  not_down=took_opposite?dof_Q_outside->beta(3):dof_Q_outside;
+                  not_down=took_opposite?final_map().beta(dof_Q_outside,3):dof_Q_outside;
 
-      if ( top->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(top)->info().is_empty )
         std::swap(not_top,top);
-      if ( down->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(down)->info().is_empty )
         std::swap(not_down,down);
-      CGAL_assertion( !top->template attribute<3>()->info().is_empty );
-      CGAL_assertion( !down->template attribute<3>()->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(top)->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(down)->info().is_empty );
 
       //P1Q or P1P2
-      sew_2_marked_darts( final_map(), dof_P1_outside->beta(3), top,
+      sew_2_marked_darts( final_map(), final_map().beta(dof_P1_outside,3), top,
                           mark_index, nodes, indices, polyline_info);
       //QP1 or P2P1
       sew_2_marked_darts( final_map(), down, dof_P1_outside,
@@ -470,17 +470,17 @@ private:
       // poly_first \cap poly_second          = took_opposite?QP2:P1Q
       // opposite( poly_first U poly_second ) = P2P1
       sew_2_marked_darts( final_map(),
-                          dof_P1_outside->beta(3),
-                          took_opposite?dof_Q_outside:dof_Q_outside->beta(3),
+                          final_map().beta(dof_P1_outside,3),
+                          took_opposite?dof_Q_outside:final_map().beta(dof_Q_outside,3),
                           mark_index, nodes, indices, polyline_info); //P1Q
       sew_2_marked_darts( final_map(),
-                          took_opposite?dof_Q_outside->beta(3):dof_Q_outside,
-                          dof_P2_outside->beta(3),mark_index, nodes, indices,
+                          took_opposite?final_map().beta(dof_Q_outside,3):dof_Q_outside,
+                          final_map().beta(dof_P2_outside,3),mark_index, nodes, indices,
                           polyline_info); //QP2
       sew_2_marked_darts( final_map(),
                           dof_P2_outside, dof_P1_outside, mark_index,
                           nodes, indices, polyline_info); //P2P1
-      dof_P1_outside->template attribute<3>()->info().outside
+      final_map().template attribute<3>(dof_P1_outside)->info().outside
         .insert(second_poly); //update P2P1 outside poly
     } else {
       // poly_first  - poly_second            = P1P2
@@ -489,16 +489,16 @@ private:
       // opposite( poly_first U poly_second ) = took_opposite?P2Q:QP1
       sew_2_marked_darts( final_map(),
                           dof_P2_outside,
-                          took_opposite?dof_Q_outside:dof_Q_outside->beta(3),
+                          took_opposite?dof_Q_outside:final_map().beta(dof_Q_outside,3),
                           mark_index, nodes, indices, polyline_info); //P2Q
       sew_2_marked_darts( final_map(),
-                          took_opposite?dof_Q_outside->beta(3):dof_Q_outside,
+                          took_opposite?final_map().beta(dof_Q_outside,3):dof_Q_outside,
                           dof_P1_outside,mark_index, nodes,
                           indices, polyline_info); //QP1
       sew_2_marked_darts( final_map(),
-                          dof_P1_outside->beta(3), dof_P2_outside->beta(3),
+                          final_map().beta(dof_P1_outside,3), final_map().beta(dof_P2_outside,3),
                           mark_index, nodes, indices, polyline_info); //P1P2
-      dof_P1_outside->beta(3)->template attribute<3>()->info().outside
+      final_map().template attribute<3>(final_map().beta(dof_P1_outside,3))->info().outside
         .insert(second_poly); //update P1P2 outside poly
     }
   }
@@ -538,22 +538,22 @@ private:
                  border_halfedges);
 
     if (index_p!=-1 && index_q!=-1 && index_p==index_q) {
-      Dart_handle top=dof_P_outside, not_top=dof_Q_outside->beta(3);
-      Dart_handle down=dof_P_outside->beta(3), not_down=dof_Q_outside;
+      Dart_handle top=dof_P_outside, not_top=final_map().beta(dof_Q_outside,3);
+      Dart_handle down=final_map().beta(dof_P_outside,3), not_down=dof_Q_outside;
 
       if (first_took_opposite==second_took_opposite) {
-        top=dof_P_outside->beta(3);
-        not_top=dof_Q_outside->beta(3);
+        top=final_map().beta(dof_P_outside,3);
+        not_top=final_map().beta(dof_Q_outside,3);
         down=dof_P_outside;
         not_down=dof_Q_outside;
       }
 
-      if ( top->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(top)->info().is_empty )
         std::swap(not_top,top);
-      if ( down->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(down)->info().is_empty )
         std::swap(not_down,down);
-      CGAL_assertion( !top->template attribute<3>()->info().is_empty );
-      CGAL_assertion( !down->template attribute<3>()->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(top)->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(down)->info().is_empty );
 
       sew_3_marked_darts( final_map(),not_top,not_down,top,down,mark_index,
                           darts_to_remove);
@@ -566,16 +566,16 @@ private:
     //since the edge is shared, the inside of each polyhedron must be on opposite orientation halfedges
     if (first_took_opposite==second_took_opposite) {
       //sew out with in
-      sew_2_marked_darts( final_map(),dof_P_outside->beta(3), dof_Q_outside,
+      sew_2_marked_darts( final_map(),final_map().beta(dof_P_outside,3), dof_Q_outside,
                           mark_index, nodes, indices, polyline_info); //PQ
-      sew_2_marked_darts( final_map(),dof_Q_outside->beta(3), dof_P_outside,
+      sew_2_marked_darts( final_map(),final_map().beta(dof_Q_outside,3), dof_P_outside,
                           mark_index, nodes, indices, polyline_info); //QP
     } else {
       //sew in with in
       sew_2_marked_darts( final_map(), dof_P_outside, dof_Q_outside,
                           mark_index, nodes, indices, polyline_info); //PQ
-      sew_2_marked_darts( final_map(),dof_Q_outside->beta(3),
-                          dof_P_outside->beta(3), mark_index, nodes, indices,
+      sew_2_marked_darts( final_map(),final_map().beta(dof_Q_outside,3),
+                          final_map().beta(dof_P_outside,3), mark_index, nodes, indices,
                           polyline_info); //QP
     }
   }
@@ -620,27 +620,27 @@ private:
                                  selected_hedge_to_dart);
 
     if( swap_in_out_Q ) {
-      dof_Q1_outside=dof_Q1_outside->beta(3);
-      dof_Q2_outside=dof_Q2_outside->beta(3);
+      dof_Q1_outside=final_map().beta(dof_Q1_outside,3);
+      dof_Q2_outside=final_map().beta(dof_Q2_outside,3);
     }
 
     if (Q1_is_between_P1P2) {
-      Dart_handle top=dof_Q2_outside->beta(3), not_top=dof_P2_outside->beta(3);
+      Dart_handle top=final_map().beta(dof_Q2_outside,3), not_top=final_map().beta(dof_P2_outside,3);
       Dart_handle down=dof_Q2_outside, not_down=dof_P2_outside;
-      if ( top->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(top)->info().is_empty )
         std::swap(not_top,top);
-      if ( down->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(down)->info().is_empty )
         std::swap(not_down,down);
-      CGAL_assertion( !top->template attribute<3>()->info().is_empty );
-      CGAL_assertion( !down->template attribute<3>()->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(top)->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(down)->info().is_empty );
 
       // poly_first  - poly_second            = P1Q1
       // poly_second - poly_first             = {0}
       // poly_first \cap poly_second          = Q1P2 or Q1Q2
       // opposite( poly_first U poly_second ) = Q2P1 or P2P1
-      sew_2_marked_darts( final_map(), dof_P1_outside->beta(3), dof_Q1_outside,
+      sew_2_marked_darts( final_map(), final_map().beta(dof_P1_outside,3), dof_Q1_outside,
                           mark_index, nodes, indices, polyline_info); //P1Q1
-      sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3),
+      sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3),
                           top, mark_index, nodes, indices,
                           polyline_info); //Q1P2 or Q1Q2
       sew_2_marked_darts( final_map(),down,
@@ -650,22 +650,22 @@ private:
                           darts_to_remove);
 
     } else {
-      Dart_handle top=dof_Q2_outside->beta(3), not_top=dof_P2_outside->beta(3);
+      Dart_handle top=final_map().beta(dof_Q2_outside,3), not_top=final_map().beta(dof_P2_outside,3);
       Dart_handle down=dof_Q2_outside, not_down=dof_P2_outside;
-      if ( top->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(top)->info().is_empty )
         std::swap(not_top,top);
-      if ( down->template attribute<3>()->info().is_empty )
+      if ( final_map().template attribute<3>(down)->info().is_empty )
         std::swap(not_down,down);
-      CGAL_assertion( !top->template attribute<3>()->info().is_empty );
-      CGAL_assertion( !down->template attribute<3>()->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(top)->info().is_empty );
+      CGAL_assertion( !final_map().template attribute<3>(down)->info().is_empty );
 
       // poly_first  - poly_second            = {0}
       // poly_second - poly_first             = Q1P1
       // poly_first \cap poly_second          = P1P2 or P1Q2
       // opposite( poly_first U poly_second ) = Q2Q1 or P2Q1
-      sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3), dof_P1_outside,
+      sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3), dof_P1_outside,
                           mark_index, nodes, indices, polyline_info); //Q1P1
-      sew_2_marked_darts( final_map(),dof_P1_outside->beta(3),
+      sew_2_marked_darts( final_map(),final_map().beta(dof_P1_outside,3),
                           top, mark_index, nodes, indices,
                           polyline_info); //P1P2 or P1Q2
       sew_2_marked_darts( final_map(),down,
@@ -704,24 +704,24 @@ private:
             Dart_handle dof_Q2_outside = get_associated_dart(second_hedge,
                                          selected_hedge_to_dart);
 
-            Dart_handle top_1=dof_P1_outside->beta(3),
-                        not_top_1=dof_Q1_outside->beta(3);
-            Dart_handle top_2=dof_P2_outside->beta(3),
-                        not_top_2=dof_Q2_outside->beta(3);
+            Dart_handle top_1=final_map().beta(dof_P1_outside,3),
+                        not_top_1=final_map().beta(dof_Q1_outside,3);
+            Dart_handle top_2=final_map().beta(dof_P2_outside,3),
+                        not_top_2=final_map().beta(dof_Q2_outside,3);
             Dart_handle down_1=dof_P1_outside, not_down_1=dof_Q1_outside;
             Dart_handle down_2=dof_P2_outside, not_down_2=dof_Q2_outside;
-            if ( top_1->template attribute<3>()->info().is_empty )
+            if ( final_map().template attribute<3>(top_1)->info().is_empty )
               std::swap(top_1,not_top_1);
-            if ( top_2->template attribute<3>()->info().is_empty )
+            if ( final_map().template attribute<3>(top_2)->info().is_empty )
               std::swap(top_2,not_top_2);
-            if ( down_1->template attribute<3>()->info().is_empty )
+            if ( final_map().template attribute<3>(down_1)->info().is_empty )
               std::swap(down_1,not_down_1);
-            if ( down_2->template attribute<3>()->info().is_empty )
+            if ( final_map().template attribute<3>(down_2)->info().is_empty )
               std::swap(down_2,not_down_2);
-            CGAL_assertion( !top_1->template attribute<3>()->info().is_empty );
-            CGAL_assertion( !top_2->template attribute<3>()->info().is_empty );
-            CGAL_assertion( !down_1->template attribute<3>()->info().is_empty );
-            CGAL_assertion( !down_2->template attribute<3>()->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(top_1)->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(top_2)->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(down_1)->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(down_2)->info().is_empty );
 
             // poly_first  - poly_second            = {0}
             // poly_second - poly_first             = {0}
@@ -760,22 +760,22 @@ private:
             Dart_handle dof_Q2_outside = get_associated_dart(second_hedge,
                                          selected_hedge_to_dart);
 
-            Dart_handle top_1=dof_P1_outside->beta(3), not_top_1=dof_Q2_outside;
-            Dart_handle top_2=dof_P2_outside->beta(3), not_top_2=dof_Q1_outside;
-            Dart_handle down_1=dof_P1_outside, not_down_1=dof_Q2_outside->beta(3);
-            Dart_handle down_2=dof_P2_outside, not_down_2=dof_Q1_outside->beta(3);
-            if ( top_1->template attribute<3>()->info().is_empty )
+            Dart_handle top_1=final_map().beta(dof_P1_outside,3), not_top_1=dof_Q2_outside;
+            Dart_handle top_2=final_map().beta(dof_P2_outside,3), not_top_2=dof_Q1_outside;
+            Dart_handle down_1=dof_P1_outside, not_down_1=final_map().beta(dof_Q2_outside,3);
+            Dart_handle down_2=dof_P2_outside, not_down_2=final_map().beta(dof_Q1_outside,3);
+            if ( final_map().template attribute<3>(top_1)->info().is_empty )
               std::swap(top_1,not_top_1);
-            if ( top_2->template attribute<3>()->info().is_empty )
+            if ( final_map().template attribute<3>(top_2)->info().is_empty )
               std::swap(top_2,not_top_2);
-            if ( down_1->template attribute<3>()->info().is_empty )
+            if ( final_map().template attribute<3>(down_1)->info().is_empty )
               std::swap(down_1,not_down_1);
-            if ( down_2->template attribute<3>()->info().is_empty )
+            if ( final_map().template attribute<3>(down_2)->info().is_empty )
               std::swap(down_2,not_down_2);
-            CGAL_assertion( !top_1->template attribute<3>()->info().is_empty );
-            CGAL_assertion( !top_2->template attribute<3>()->info().is_empty );
-            CGAL_assertion( !down_1->template attribute<3>()->info().is_empty );
-            CGAL_assertion( !down_2->template attribute<3>()->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(top_1)->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(top_2)->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(down_1)->info().is_empty );
+            CGAL_assertion( !final_map().template attribute<3>(down_2)->info().is_empty );
 
             // poly_first  - poly_second            = P1P2 or P1Q1 or Q2P2 or Q2Q1
             // poly_second - poly_first             = Q1Q2 or Q1P1 or P2P1 or P2Q2
@@ -948,7 +948,7 @@ public:
         //set the attribute for the opposite volume: represent a part inside current_poly
         attrib=final_map().template create_attribute<3>();
         attrib->info().inside.insert(current_poly);
-        final_map().template set_attribute<3>(d->beta(3),attrib);
+        final_map().template set_attribute<3>(final_map().beta(d, 3),attrib);
 
 #ifdef CGAL_COREFINEMENT_DEBUG
         final_map().display_characteristics(std::cout);
@@ -1084,22 +1084,22 @@ public:
               // poly_second - poly_first             = {0}
               // poly_first \cap poly_second          = Q1Q2
               // opposite( poly_first U poly_second ) = P2P1
-              sew_2_marked_darts( final_map(),dof_P1_outside->beta(3),
+              sew_2_marked_darts( final_map(),final_map().beta(dof_P1_outside, 3),
                                   dof_Q1_outside, mark_index, nodes,
                                   indices, polyline_info); //P1Q1
               sew_2_marked_darts( final_map(),dof_Q2_outside,
-                                  dof_P2_outside->beta(3),mark_index, nodes,
+                                  final_map().beta(dof_P2_outside,3),mark_index, nodes,
                                   indices, polyline_info); //Q2P2
-              sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3),
-                                  dof_Q2_outside->beta(3), mark_index, nodes,
+              sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3),
+                                  final_map().beta(dof_Q2_outside,3), mark_index, nodes,
                                   indices, polyline_info); //Q1Q2
               sew_2_marked_darts( final_map(),dof_P2_outside,
                                   dof_P1_outside, mark_index,
                                   nodes, indices, polyline_info); //P2P1
               //update inside outside info (because darts from the same volume have been merged)
-              dof_Q1_outside->beta(3)->template attribute<3>()->info().inside
+              final_map().template attribute<3>(final_map().beta(dof_Q1_outside,3))->info().inside
                 .insert(first_poly); //update Q1Q2 inside poly
-              dof_P2_outside->template attribute<3>()->info().outside
+              final_map().template attribute<3>(dof_P2_outside)->info().outside
                 .insert(second_poly);//update P2P1 outside poly
             } else {
               // poly_first  - poly_second            = Q2Q1
@@ -1112,16 +1112,16 @@ public:
               sew_2_marked_darts( final_map(),dof_P2_outside,
                                   dof_P1_outside, mark_index, nodes, indices,
                                   polyline_info); //P2P1
-              sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3),
-                                  dof_P2_outside->beta(3), mark_index, nodes,
+              sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3),
+                                  final_map().beta(dof_P2_outside,3), mark_index, nodes,
                                   indices, polyline_info); //Q1P2
-              sew_2_marked_darts( final_map(),dof_P1_outside->beta(3),
-                                  dof_Q2_outside->beta(3),mark_index, nodes,
+              sew_2_marked_darts( final_map(),final_map().beta(dof_P1_outside,3),
+                                  final_map().beta(dof_Q2_outside,3),mark_index, nodes,
                                   indices, polyline_info); //P1Q2
               //update inside outside info (because darts from the same volume have been merged)
-              dof_Q2_outside->template attribute<3>()->info().inside.insert(
+              final_map().template attribute<3>(dof_Q2_outside)->info().inside.insert(
                 first_poly); //update Q2Q1 inside poly
-              dof_P2_outside->template attribute<3>()->info().inside.insert(
+              final_map().template attribute<3>(dof_P2_outside)->info().inside.insert(
                 second_poly);//update P2P1 inside poly
             }
           } else {
@@ -1129,14 +1129,14 @@ public:
             // poly_second - poly_first             = P2Q2
             // poly_first \cap poly_second          = Q1P2
             // opposite( poly_first U poly_second ) = Q2P1
-            sew_2_marked_darts( final_map(),dof_P1_outside->beta(3),
+            sew_2_marked_darts( final_map(),final_map().beta(dof_P1_outside,3),
                                 dof_Q1_outside, mark_index, nodes,
                                 indices, polyline_info); //P1Q1
             sew_2_marked_darts( final_map(),dof_P2_outside,
-                                dof_Q2_outside->beta(3), mark_index, nodes,
+                                final_map().beta(dof_Q2_outside,3), mark_index, nodes,
                                 indices, polyline_info); //P2Q2
-            sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3),
-                                dof_P2_outside->beta(3), mark_index, nodes,
+            sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3),
+                                final_map().beta(dof_P2_outside,3), mark_index, nodes,
                                 indices, polyline_info); //Q1P2
             sew_2_marked_darts( final_map(),dof_Q2_outside,
                                 dof_P1_outside, mark_index, nodes,
@@ -1149,13 +1149,13 @@ public:
             // poly_first \cap poly_second          = P1Q2
             // opposite( poly_first U poly_second ) = P2Q1
             sew_2_marked_darts( final_map(),dof_Q2_outside,
-                                dof_P2_outside->beta(3), mark_index, nodes,
+                                final_map().beta(dof_P2_outside,3), mark_index, nodes,
                                 indices, polyline_info); //Q2P2
-            sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3),
+            sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3),
                                 dof_P1_outside, mark_index, nodes,
                                 indices, polyline_info); //Q1P1
-            sew_2_marked_darts( final_map(),dof_P1_outside->beta(3),
-                                dof_Q2_outside->beta(3),mark_index, nodes,
+            sew_2_marked_darts( final_map(),final_map().beta(dof_P1_outside,3),
+                                final_map().beta(dof_Q2_outside,3),mark_index, nodes,
                                 indices, polyline_info); //P1Q2
             sew_2_marked_darts( final_map(),dof_P2_outside,
                                 dof_Q1_outside, mark_index, nodes,
@@ -1170,11 +1170,11 @@ public:
               // poly_second - poly_first             = Q1Q2
               // poly_first \cap poly_second          = {0}
               // opposite( poly_first U poly_second ) = P2Q1 U Q2P1
-              sew_2_marked_darts( final_map(),dof_P1_outside->beta(3),
-                                  dof_P2_outside->beta(3), mark_index, nodes,
+              sew_2_marked_darts( final_map(),final_map().beta(dof_P1_outside,3),
+                                  final_map().beta(dof_P2_outside,3), mark_index, nodes,
                                   indices, polyline_info); //P1P2
-              sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3),
-                                  dof_Q2_outside->beta(3), mark_index, nodes,
+              sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3),
+                                  final_map().beta(dof_Q2_outside,3), mark_index, nodes,
                                   indices, polyline_info); //Q1Q2
               sew_2_marked_darts( final_map(),dof_P2_outside,
                                   dof_Q1_outside, mark_index, nodes,
@@ -1183,31 +1183,31 @@ public:
                                   dof_P1_outside, mark_index, nodes,
                                   indices, polyline_info); //Q2P1
               //update inside outside info (because darts from the same volume have been merged)
-              dof_Q1_outside->beta(3)->template attribute<3>()->info().outside
+              final_map().template attribute<3>(final_map().beta(dof_Q1_outside,3))->info().outside
                 .insert(first_poly); //update Q1Q2 outside poly
-              dof_P1_outside->beta(3)->template attribute<3>()->info().outside
+              final_map().template attribute<3>(final_map().beta(dof_P1_outside,3))->info().outside
                 .insert(second_poly);//update P2P1 outside poly
             } else {
               // poly_first  - poly_second            = {0}
               // poly_second - poly_first             = Q1P1 U P2Q2
               // poly_first \cap poly_second          = P1P2
               // opposite( poly_first U poly_second ) = Q2Q1
-              sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3),
+              sew_2_marked_darts( final_map(),final_map().beta(dof_Q1_outside,3),
                                   dof_P1_outside, mark_index, nodes,
                                   indices, polyline_info); //Q1P1
               sew_2_marked_darts( final_map(),dof_P2_outside,
-                                  dof_Q2_outside->beta(3), mark_index, nodes,
+                                  final_map().beta(dof_Q2_outside,3), mark_index, nodes,
                                   indices, polyline_info); //P2Q2
-              sew_2_marked_darts( final_map(),dof_P1_outside->beta(3),
-                                  dof_P2_outside->beta(3), mark_index, nodes,
+              sew_2_marked_darts( final_map(),final_map().beta(dof_P1_outside,3),
+                                  final_map().beta(dof_P2_outside,3), mark_index, nodes,
                                   indices, polyline_info); //P1P2
               sew_2_marked_darts( final_map(),dof_Q2_outside,
                                   dof_Q1_outside, mark_index, nodes, indices,
                                   polyline_info); //Q2Q1
               //update inside outside info (because darts from the same volume have been merged)
-              dof_P1_outside->beta(3)->template attribute<3>()->info().inside
+              final_map().template attribute<3>(final_map().beta(dof_P1_outside,3))->info().inside
                 .insert(second_poly); //update P1P2 inside poly
-              dof_Q2_outside->template attribute<3>()->info().outside
+              final_map().template attribute<3>(dof_Q2_outside)->info().outside
                 .insert(first_poly);//update Q2Q1 outside poly
             }
           }
@@ -1268,7 +1268,7 @@ public:
          it_end!= it; ++it )
     {
       internal_IOP::Volume_info<Polyhedron>& info =
-        it->template attribute<3>()->info();
+        final_map().template attribute<3>(it)->info();
       std::size_t inside_size = info.inside.size();
       std::size_t outside_size = info.outside.size();
 
@@ -1307,7 +1307,7 @@ public:
         // the bounday, we take the mid-point of an edge (which must not be on the boundary otherwise
         // it contradicts the fact that volumes are disjoint
         // We first use the dart we have since one_dart_per_incident_cell has a non-negligeable cost.
-        typename Kernel::Point_3 query=it->template attribute<0>()->point();
+        typename Kernel::Point_3 query=final_map().template attribute<0>(it)->point();
         CGAL::Bounded_side res = (*inside_test_ptr)(query);
         if (res==ON_BOUNDARY) {
           typedef typename Combinatorial_map_3::
@@ -1321,7 +1321,7 @@ public:
                           typename Combinatorial_map_3::Dart_handle(it) );
           ++vit;
           for ( ; vit!=vertex_range.end(); ++vit) {
-            query=vit->template attribute<0>()->point();
+            query=final_map().template attribute<0>(vit)->point();
             res = (*inside_test_ptr)(query);
             if ( res != ON_BOUNDARY ) break;
           }
@@ -1333,9 +1333,9 @@ public:
 #ifdef CGAL_COREFINEMENT_DEBUG
 #warning this is not exact!!!
 #endif
-            typename Kernel::Point_3 p1 = it->template attribute<0>()->point();
+            typename Kernel::Point_3 p1 = final_map().template attribute<0>(it)->point();
             typename Kernel::Point_3 p2 =
-              it->beta(1)->template attribute<0>()->point();
+              final_map().template attribute<0>(final_map().beta(it,1))->point();
             query=midpoint(p1,p2);
             res = (*inside_test_ptr)(query);
           }

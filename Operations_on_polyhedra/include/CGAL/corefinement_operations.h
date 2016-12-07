@@ -61,8 +61,8 @@ public:
          itend=map.template one_dart_per_incident_cell<0,3>(dart).end();
        it!=itend; ++it)
     {
-      points.push_back(it->template attribute<0>()->point());
-      vertex_map.insert(std::make_pair(&it->template attribute<0>()->point(),index++));
+      points.push_back(map.template attribute<0>(it)->point());
+      vertex_map.insert(std::make_pair(&map.template attribute<0>(it)->point(),index++));
     }
     
     //count the number of edges    
@@ -78,9 +78,9 @@ public:
       //         of a triangle indicates the outside of the object; thus 
       //         we need to reverse the orientation of the faces of the
       //         combinatorial map.
-      unsigned int i=vertex_map[&it->template attribute<0>()->point()];
-      unsigned int j=vertex_map[&it->beta(0)->template attribute<0>()->point()];
-      unsigned int k=vertex_map[&it->beta(1)->template attribute<0>()->point()];
+      unsigned int i=vertex_map[&map.template attribute<0>(it)->point()];
+      unsigned int j=vertex_map[&map.template attribute<0>(map.beta(it, 0))->point()];
+      unsigned int k=vertex_map[&map.template attribute<0>(map.beta(it, 1))->point()];
       faces.push_back(CGAL::cpp11::make_tuple(i,j,k));
     }
   }
@@ -106,9 +106,9 @@ public:
            itend=map.template one_dart_per_incident_cell<0,3>(dart).end();
          it!=itend; ++it)
       {
-        if ( vertex_map.insert(std::make_pair(&it->template attribute<0>()->point(),index)).second )
+        if ( vertex_map.insert(std::make_pair(&map.template attribute<0>(it)->point(),index)).second )
         {          
-          points.push_back(it->template attribute<0>()->point());
+          points.push_back(map.template attribute<0>(it)->point());
           ++index;
         }
       }
@@ -126,9 +126,9 @@ public:
         //         of a triangle indicates the outside of the object; thus 
         //         we need to reverse the orientation of the faces of the
         //         combinatorial map.        
-        unsigned int i=vertex_map[&it->template attribute<0>()->point()];
-        unsigned int j=vertex_map[&it->beta(0)->template attribute<0>()->point()];
-        unsigned int k=vertex_map[&it->beta(1)->template attribute<0>()->point()];
+        unsigned int i=vertex_map[&map.template attribute<0>(it)->point()];
+        unsigned int j=vertex_map[&map.template attribute<0>(map.beta(it, 0))->point()];
+        unsigned int k=vertex_map[&map.template attribute<0>(map.beta(it, 1))->point()];
         faces.push_back(CGAL::cpp11::make_tuple(i,j,k));
       }
     }
@@ -155,9 +155,9 @@ public:
            itend=map.template one_dart_per_incident_cell<0,3>(dart).end();
          it!=itend; ++it)
       {
-        if (vertex_map.insert(std::make_pair(&it->template attribute<0>()->point(),index)).second )
+        if (vertex_map.insert(std::make_pair(&map.template attribute<0>(it)->point(),index)).second )
         {
-          points.push_back(it->template attribute<0>()->point());
+          points.push_back(map.template attribute<0>(it)->point());
           ++index;
         }
       }
@@ -177,9 +177,9 @@ public:
         //         combinatorial map. Since to get the complementary we 
         //         also need to reverse the orientation, we finally do
         //         not change it.
-        unsigned int i=vertex_map[&it->template attribute<0>()->point()];
-        unsigned int j=vertex_map[&it->beta(1)->template attribute<0>()->point()];
-        unsigned int k=vertex_map[&it->beta(0)->template attribute<0>()->point()];
+        unsigned int i=vertex_map[&map.template attribute<0>(it)->point()];
+        unsigned int j=vertex_map[&map.template attribute<0>(map.beta(it, 1))->point()];
+        unsigned int k=vertex_map[&map.template attribute<0>(map.beta(it, 0))->point()];
         faces.push_back(CGAL::cpp11::make_tuple(i,j,k));
       }
     }
@@ -288,7 +288,7 @@ public:
       ++it )
     {
 
-      const Volume_info& info=it->template attribute<3>()->info();
+      const Volume_info& info=final_map.template attribute<3>(it)->info();
       std::size_t inside_size=info.inside.size();
       std::size_t outside_size=info.outside.size();
 
