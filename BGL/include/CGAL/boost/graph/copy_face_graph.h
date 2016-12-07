@@ -77,7 +77,7 @@ template <typename SourceMesh, typename TargetMesh,
           typename H2H = Emptyset_iterator,
           typename F2F = Emptyset_iterator,
           typename Src_vpm = typename boost::property_map<SourceMesh, vertex_point_t>::const_type,
-          typename Tgt_vpm = typename boost::property_map<TargetMesh, vertex_point_t>::type,>
+          typename Tgt_vpm = typename boost::property_map<TargetMesh, vertex_point_t>::type>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      V2V v2v = V2V(), H2H h2h = H2H(), F2F f2f = F2F(),
                      Src_vpm sm_vpm = get(vertex_point, sm),
