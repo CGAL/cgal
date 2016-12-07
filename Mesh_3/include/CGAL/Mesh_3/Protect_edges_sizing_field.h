@@ -509,7 +509,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   default:
     std::cerr << " ERROR dim=" << dim << " index=";
   }
-  std::cerr  << index << std::endl;
+  std::cerr  << CGAL::oformat(index) << std::endl;
   if(v == Vertex_handle()) std::cerr << "  HIDDEN!\n";
   std::cerr << "The weight was " << w << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
@@ -537,7 +537,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   std::cerr << "smart_insert_point( (" << p 
             << "), w=" << w
             << ", dim=" << dim
-            << ", index=" << index << ")\n";
+            << ", index=" << CGAL::oformat(index) << ")\n";
 #endif
   const Tr& tr = c3t3_.triangulation();
   typename Gt::Compute_squared_distance_3 sq_distance =
@@ -1211,7 +1211,7 @@ change_ball_size(const Vertex_handle& v, const FT size, const bool special_ball)
   std::cerr << "change_ball_size(v=" << (void*)(&*v) 
             << " (" << v->point()
             << ") dim=" << c3t3_.in_dimension(v) 
-            << " index=" << c3t3_.index(v)
+            << " index=" << CGAL::oformat(c3t3_.index(v))
             << " ,\n"
             << "                 size=" << size 
             << ", special_ball=" << std::boolalpha << special_ball << std::endl;
@@ -1345,7 +1345,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   std::cerr << "check_and_fix_vertex_along_edge(" 
             << (void*)(&*v) << "= (" << v->point() 
             << ") dim=" << get_dimension(v)
-            << " index=" << c3t3_.index(v)
+            << " index=" << CGAL::oformat(c3t3_.index(v))
             << " special=" << std::boolalpha << is_special(v)
             << ")\n";
 #endif
@@ -1511,7 +1511,7 @@ repopulate(InputIterator begin, InputIterator last,
             << " (" << (*last)->point() << ")\n"
             << "                  distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
-            << "           index=" << index << ")\n";
+            << "           index=" << CGAL::oformat(index) << ")\n";
 #endif
   CGAL_assertion( std::distance(begin,last) >= 0 );
   
@@ -1551,7 +1551,7 @@ repopulate(InputIterator begin, InputIterator last,
     default:
       std::cerr << " ERROR dim=" << get_dimension(*current)  << " index=";
     }
-    std::cerr  << c3t3_.index(*current) << std::endl;
+    std::cerr  << CGAL::oformat(c3t3_.index(*current)) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     *out++ = *current;
     c3t3_.triangulation().remove(*current);
@@ -1587,7 +1587,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
             << " (" << (*last)->point() << ")\n"
             << "                              distance(begin, last)=" 
             << std::distance(begin, last) << ",\n"
-            << "                       index=" << index << ")\n";
+            << "                       index=" << CGAL::oformat(index) << ")\n";
 #endif
   CGAL_assertion( std::distance(begin,last) >= 0 );
   
