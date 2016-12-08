@@ -84,7 +84,8 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, Vertex_hand
     _target = t->point();
     _s_vertex = Vertex_handle();
     _t_vertex = t;
-    
+
+    using CGAL::cpp11::get;
     get<0>(_cur) = _tr.locate( s, get<1>(_cur), get<2>(_cur), get<3>(_cur), hint );
 
     CGAL_triangulation_postcondition( get<0>(_cur) != Cell_handle() );
@@ -104,6 +105,7 @@ Triangulation_segment_cell_iterator_3( const Tr& tr, const Point& s, const Point
     _s_vertex = Vertex_handle();
     _t_vertex = Vertex_handle();
 
+    using CGAL::cpp11::get;
     get<0>(_cur) = _tr.locate( s, get<1>(_cur), get<2>(_cur), get<3>(_cur), hint );
 
     CGAL_triangulation_postcondition( get<0>(_cur) != Cell_handle() );
@@ -127,6 +129,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::end() const {
     sci._target = _target;
     sci._s_vertex = _s_vertex;
     sci._t_vertex = _t_vertex;
+    using CGAL::cpp11::get;
     get<0>(sci._cur) = Cell_handle();
     return sci;
 }
@@ -134,6 +137,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::end() const {
 template < class Tr, class Inc >
 inline Triangulation_segment_cell_iterator_3<Tr,Inc>&
 Triangulation_segment_cell_iterator_3<Tr,Inc>::operator++() {
+    using CGAL::cpp11::get;
     CGAL_triangulation_precondition( get<0>(_cur) != Cell_handle() );
     increment();
     return *this;
@@ -152,6 +156,7 @@ inline typename Triangulation_segment_cell_iterator_3<Tr,Inc>::Cell_handle
 Triangulation_segment_cell_iterator_3<Tr,Inc>::complete() {
     while( has_next() )
         increment();
+    using CGAL::cpp11::get;
     return get<0>(_prev);
 }
 
@@ -161,6 +166,7 @@ operator==( const SCI& sci ) const {
     // To be equal, the iterators must traverse the same triangulations
     // along the same line segment and they must have the same current cell.
     // Note that to limit cost, we just compare the triangulation pointers.
+    using CGAL::cpp11::get;
     return ( &_tr == &sci._tr &&
              ( _s_vertex == Vertex_handle() ? _source == sci._source : _s_vertex == sci._s_vertex ) &&
              ( _t_vertex == Vertex_handle() ? _target == sci._target : _t_vertex == sci._t_vertex ) &&
@@ -177,6 +183,7 @@ template < class Tr, class Inc >
 inline bool Triangulation_segment_cell_iterator_3<Tr,Inc>::
 operator==( Nullptr_t CGAL_triangulation_assertion_code(n) ) const {
     CGAL_triangulation_assertion( n == NULL );
+    using CGAL::cpp11::get;
     return get<0>(_cur) == Cell_handle();
 }
 
@@ -193,6 +200,7 @@ walk_to_next() {
     
     // Check if the target is in the current cell.
     int ti;
+    using CGAL::cpp11::get;
     if( get<0>(_cur)->has_vertex( _t_vertex, ti ) ) {
         // The target is inside the cell.
         _prev = Simplex( get<0>(_cur), Tr::VERTEX, ti, -1 );
@@ -255,6 +263,7 @@ bool Triangulation_segment_cell_iterator_3<Tr, Inc>::
 have_same_entry(const Simplex& s1, const Simplex& s2) const
 {
   //type
+  using CGAL::cpp11::get;
   if (get<1>(s1) != get<1>(s2))
     return false;
   switch (get<1>(s1))
@@ -283,6 +292,7 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_3()
 {
+    using CGAL::cpp11::get;
     boost::array<Point*, 4> vert
       = {&(get<0>(_cur)->vertex(0)->point()),
          &(get<0>(_cur)->vertex(1)->point()),
@@ -460,6 +470,7 @@ walk_to_next_3()
 template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_3_inf( int inf ) {
+    using CGAL::cpp11::get;
     CGAL_triangulation_precondition( _tr.is_infinite( get<0>(_cur)->vertex(inf) ) );
 
     // If this cell was reached by traversal from a finite one, it must be the final cell.
@@ -574,6 +585,7 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2()
 {
+    using CGAL::cpp11::get;
     boost::array<Point*, 3> vert
               = { &(get<0>(_cur)->vertex(0)->point()),
                   &(get<0>(_cur)->vertex(1)->point()),
@@ -845,6 +857,7 @@ walk_to_next_2()
 template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2_inf( int inf ) {
+    using CGAL::cpp11::get;
     CGAL_triangulation_precondition( _tr.is_infinite( get<0>(_cur)->vertex(3) ) );
     CGAL_triangulation_precondition( _tr.is_infinite( get<0>(_cur)->vertex(inf) ) );
 	

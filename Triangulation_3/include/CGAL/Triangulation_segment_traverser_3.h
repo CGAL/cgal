@@ -874,6 +874,8 @@ private:
       return !cell_has_facet(ch, get_facet());
     case 3 ://cell
       return ch != get_cell();
+    default:
+      CGAL_assertion(false);
     }
     //should not be reached
     CGAL_assertion(false);
