@@ -925,8 +925,6 @@ private:
   Operator Op;
 };//AddSubRep class
 
-template <class Operator>
-Operator AddSubRep<Operator>::Op;
 
   /// AddSubRep<Op>::computeExactFlags()
   ///     This function is the heart of Expr class,
