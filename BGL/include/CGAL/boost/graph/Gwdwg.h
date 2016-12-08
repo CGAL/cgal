@@ -115,8 +115,8 @@ Property forwarding
 -------------------
 All internal properties of the underlying graph are forwarded.
 
-Property maps can be wrapped with Graph_with_descriptor_with_graph_property_map.
-\tparam Graph must be a model of a `FaceListGraph` and a `HalfedgeListGraph`.
+Property maps can be wrapped with `Graph_with_descriptor_with_graph_property_map`.
+\tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
 
 \cgalModels `FaceListGraph`
 \cgalModels `HalfedgeListGraph`
