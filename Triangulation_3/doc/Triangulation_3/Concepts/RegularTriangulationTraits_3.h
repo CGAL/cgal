@@ -135,7 +135,7 @@ to the power distance
 between `p` and `r`. 
 
 \note This predicate is required if a call to
-`nearest_power_vertex` or `nearest_power_vertex_in_cell` is
+`nearest_power_vertex()` or `nearest_power_vertex_in_cell()` is
 issued.
 */ 
 typedef unspecified_type Compare_power_distance_3; 
