@@ -178,6 +178,9 @@ and <code>src/</code> directories).
     <li><b>Breaking change</b>:The number type of weighted points in regular triangulations is no longer
       a template parameter but the field type of the geometric traits class.
       Users who need this feature must use a version prior to 4.9</li>
+    <li>The class <code>Regular_triangulation_2</code> can take a kernel as template argument,
+      that is one no longer has to use <code>Regular_triangulation_euclidea_traits_2</code>,
+      although this still works.</li>
   </ul>
 
  <h3>3D Triangulations</h3>
@@ -187,6 +190,10 @@ and <code>src/</code> directories).
     <li><b>Breaking change</b>: The number type of weighted points in regular triangulations is no longer
         a template parameter but the field type of the geometric traits class.
         Users who need this feature must use a version prior to 4.9.</li>
+    <li>The class <code>Regular_triangulation_3</code> can take a kernel as template argument,
+      that is one no longer has to use <code>Regular_triangulation_euclidea_traits_3</code>,
+      although this still works.</li>
+  </ul>
   </ul>
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
