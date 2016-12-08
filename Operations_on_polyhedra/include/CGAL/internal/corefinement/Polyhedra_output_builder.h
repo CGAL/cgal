@@ -367,7 +367,7 @@ struct Surface_extension_helper<Polyhedron, false>
 
   Halfedge_handle get_hedge(Halfedge_handle qhedge)
   {
-    CGAL_assertion( Qhedge_to_Phedge.count(qhedge) );
+    CGAL_assertion( Qhedge_to_Phedge.count(qhedge)==1 );
     std::pair<Halfedge_handle, Halfedge_handle> key_and_value =
       *Qhedge_to_Phedge.find(qhedge);
     return key_and_value.first == qhedge

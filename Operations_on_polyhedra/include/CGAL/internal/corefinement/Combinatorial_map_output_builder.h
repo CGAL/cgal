@@ -231,7 +231,7 @@ typename Map::Dart_handle import_from_polyhedron_subset(
     Face_iterator faces_end,
     const Non_special_edge_predicate& is_non_special_edge,
     Halfedge_to_dart_map_& selected_hedge_to_dart,
-    int mark_index,
+    std::size_t mark_index,
     PolyhedronPointPMap ppmap
                                                        )
 {
@@ -864,7 +864,7 @@ public:
 
     internal_IOP::Non_intersection_halfedge<Polyhedron> criterium(border_halfedges);
 
-    int mark_index=
+    std::size_t mark_index=
       final_map().get_new_mark(); //mark used to tag dart that are on an intersection
 
     //define a map that will contain the correspondance between selected halfedges of the boundary and

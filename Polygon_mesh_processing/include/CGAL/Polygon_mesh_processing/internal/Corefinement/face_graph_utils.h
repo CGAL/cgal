@@ -1207,9 +1207,9 @@ void compute_inplace_operation_delay_removal_and_insideout(
   {
     halfedge_descriptor h1 = polylines.tm1[i];
     halfedge_descriptor h2 = polylines.tm2[i];
-    int nb_segments = polylines.lengths[i];
+    std::size_t nb_segments = polylines.lengths[i];
 
-    for (int k=0;;)
+    for (std::size_t k=0;;)
     {
       tm2_edge_to_tm1_edge[edge(h2, tm2)]=edge(h1, tm1);
       tm1_edge_to_tm2_edge[edge(h1, tm1)]=edge(h2, tm2);

@@ -202,10 +202,10 @@ int main()
 
   Constrained_edge_map ecm1 =
     tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst", false).first;
-  tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false).first;
+  tm1.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false);
   Constrained_edge_map ecm2 =
     tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst", false).first;
-  tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false).first;
+  tm2.add_property_map<Triangle_mesh::Edge_index,bool>("e:cst_out", false);
 
   mark_sharp_edge(tm1, get(CGAL::vertex_point, tm1), ecm1);
   mark_sharp_edge(tm2, get(CGAL::vertex_point, tm2), ecm2);

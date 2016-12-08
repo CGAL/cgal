@@ -919,9 +919,9 @@ public:
                           // (these are already constrained)
               //insert edges in the set of constraints
               CDT_Vertex_handle vh=vit;
-              Node_id nindex = curr->first->vertex((curr->second+1)%3)==vh
+              int nindex = curr->first->vertex((curr->second+1)%3)==vh
                              ? (curr->second+2)%3
-                             :(curr->second+1)%3;
+                             : (curr->second+1)%3;
               CDT_Vertex_handle vn=curr->first->vertex(nindex);
               if ( vit->info() > vn->info() || vn->info()>=nb_nodes)
                 continue; //take only one out of the two edges + skip input

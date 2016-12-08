@@ -48,7 +48,7 @@ void run_boolean_operations(
   Polyhedron& P_minus_Q,
   Polyhedron& Q_minus_P,
   std::string scenario,
-  int id)
+  std::size_t id)
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
@@ -138,7 +138,7 @@ void run_boolean_operations(
   Surface_mesh& tm1_minus_tm2,
   Surface_mesh& tm2_minus_tm1,
   std::string scenario,
-  int id)
+  std::size_t id)
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 

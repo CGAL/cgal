@@ -1704,13 +1704,13 @@ class Intersection_of_Polyhedra_3{
 
     Graph_node():degree(0){}
 
-    void insert(std::size_t i){
+    void insert(int i){
       ++degree;
       CGAL_assertion(neighbors.find(i)==neighbors.end());
       neighbors.insert(i);
     }
 
-    void erase(std::size_t i){
+    void erase(int i){
       CGAL_assertion(neighbors.find(i)!=neighbors.end());
       neighbors.erase(i);
     }
@@ -1774,7 +1774,7 @@ class Intersection_of_Polyhedra_3{
       Graph_node& node_i = graph[i];
       std::vector<typename Kernel::Point_3> polyline;
 
-      std::size_t j=node_i.top();
+      int j=node_i.top();
       visitor->start_new_polyline(i,j);
       CGAL_assertion(i!=j);
       node_i.pop();

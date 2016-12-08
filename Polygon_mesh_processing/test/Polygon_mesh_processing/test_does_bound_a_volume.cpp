@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     assert(input);
     Surface_mesh sm;
     input >> sm;
-    bool res = atoi(argv[2*(i+1)]);
+    bool res = atoi(argv[2*(i+1)])>0;
     assert(!"Result is not as expected (input orientation)" ||
            CGAL::Polygon_mesh_processing::does_bound_a_volume(sm)==res);
     CGAL::Polygon_mesh_processing::reverse_face_orientations(sm);
