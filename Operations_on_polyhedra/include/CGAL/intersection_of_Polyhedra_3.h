@@ -1770,7 +1770,7 @@ class Intersection_of_Polyhedra_3{
     //handle polylines
     while(terminal_nodes.any())
     {
-      std::size_t i=terminal_nodes.find_first();
+      int i= static_cast<int>(terminal_nodes.find_first());
       Graph_node& node_i = graph[i];
       std::vector<typename Kernel::Point_3> polyline;
 
