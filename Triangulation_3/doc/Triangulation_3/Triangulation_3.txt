@@ -250,38 +250,17 @@ class of `Delaunay_triangulation_3` must define predicates to test for the
 <I>empty sphere property</I>. It is described by the concept
 `DelaunayTriangulationTraits_3`, which refines `TriangulationTraits_3`.
 
-The kernels provided by \cgal: `Cartesian`, `Homogeneous`,
-`Simple_cartesian`, `Simple_homogeneous` and
-`Filtered_kernel` can all be used as models for the geometric traits
+In addition to the requirements described before, the geometric traits
+class of `Regular_triangulation_3` must define predicates to test for the
+<I>power distances</I> and orientation tests for <I>power spheres</I>. 
+It is described by the concept
+`RegularTriangulationTraits_3`, which refines `TriangulationTraits_3`.
+
+
+
+All kernels provided by \cgal can all be used as models for the geometric traits
 parameter.
-They supply the user with all the functionalities described for the concepts
-`TriangulationTraits_3` and
-`DelaunayTriangulationTraits_3`.
-In addition, the predefined kernels
-`Exact_predicates_inexact_constructions_kernel` and
-`Exact_predicates_exact_constructions_kernel`
-can also be used, the latter being recommended when the dual construction is
-used.
 
-In order to be used as the traits class for `Regular_triangulation_3`,
-a class must provide functions to compute the <I>power tests</I>
-(see Section \ref Triangulation3secclassRegulartriangulation).
-`Regular_triangulation_euclidean_traits_3<K,Weight>` is a traits class 
-designed to be used by the class
-`Regular_triangulation_3<RegularTriangulationTraits_3, TriangulationDataStructure_3>`. It provides
-`Weighted_point`, a class for weighted points
-needed by the regular triangulation, which derives from the three dimensional
-point class `K::Point_3`.
-It supplies the user with all the functionalities 
-described for the concept `RegularTriangulationTraits_3`. 
-It can be used as a traits class for
-`Regular_triangulation_3<RegularTriangulationTraits_3, TriangulationDataStructure_3>`.
-
-Note that for regular triangulations, plugging a filtered kernel such
-as `Exact_predicates_inexact_constructions_kernel` or
-`Exact_predicates_exact_constructions_kernel` in
-`Regular_triangulation_euclidean_traits_3<K,Weight>` will 
-provide exact and efficient filtered predicates.
 
 \subsection Triangulation3sectds The Triangulation Data Structure Parameter 
 

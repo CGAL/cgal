@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 \ingroup PkgTriangulation3
-Helper class used by `Regular_trangulation_3` to pass a weighted point as a point
+Helper class used by `Regular_triangulation_3` to pass a weighted point as a point
 to its based class `Triangulation_3`.
 \tparam Traits must be a model of the concept `RegularTriangulationTraits_3`
 */

@@ -172,12 +172,12 @@ typedef Traits::Ray Ray;
 /*!
 
 */ 
-typedef Traits::Bare_point Bare_point; 
+typedef Traits::Point_2 Bare_point; 
 
 /*!
 
 */ 
-typedef Traits::Weighted_point Weighted_point; 
+typedef Traits::Weighted_point_2 Weighted_point; 
 
 /*!
 An iterator that allows to enumerate the 
