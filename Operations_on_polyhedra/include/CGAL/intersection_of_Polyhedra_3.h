@@ -1464,6 +1464,7 @@ class Intersection_of_Polyhedra_3{
       internal_IOP::intersection_coplanar_facets<Kernel>(f1->halfedge(),f2->halfedge(),ppmap,inter_pts);
 //      std::cout << "found " << inter_pts.size() << " inter pts: ";
       std::size_t nb_pts=inter_pts.size();
+      if (inter_pts.empty()) continue;
       std::vector<int> cpln_nodes; cpln_nodes.reserve(nb_pts);
       for (typename std::list<Cpl_inter_pt>::iterator iti=inter_pts.begin();iti!=inter_pts.end();++iti){
         #ifdef CGAL_COREFINEMENT_DEBUG
