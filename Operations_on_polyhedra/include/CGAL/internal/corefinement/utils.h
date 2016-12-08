@@ -114,6 +114,16 @@ int node_index_of_incident_vertex(Halfedge_const_handle h,
   return -1;
 }
 
+template <class Vertex_handle, class Vertex_to_node_id>
+int get_node_id(Vertex_handle vh,
+                const Vertex_to_node_id& vertex_to_node_id)
+{
+  typename Vertex_to_node_id::const_iterator it=vertex_to_node_id.find(vh);
+  if (it==vertex_to_node_id.end())
+    return -1;
+  return it->second;
+}
+
 } } //end of namespace CGAL::Corefinement
 
 #endif // CGAL_INTERNAL_COREFINEMENT_UTILS_H

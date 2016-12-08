@@ -32,6 +32,7 @@
 #include <boost/dynamic_bitset.hpp>
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <bitset>
 
@@ -1108,6 +1109,7 @@ private:
   typedef typename Polyhedron::Halfedge_const_handle      Halfedge_const_handle;
   typedef typename Polyhedron::Halfedge_handle                  Halfedge_handle;
   typedef typename Polyhedron::Vertex_handle                      Vertex_handle;
+  typedef typename Polyhedron::Vertex_const_handle          Vertex_const_handle;
   typedef typename Polyhedron::Facet_handle                        Facet_handle;
 //Other typedefs
   typedef internal_IOP::Compare_unik_address<Polyhedron>            Cmp_unik_ad;
@@ -1630,6 +1632,17 @@ public:
     An_edge_per_polyline_map& an_edge_per_polyline,
     const Poly_to_map_node& /* polyhedron_to_map_node_to_polyhedron_vertex */)
   {
+    // first create and fill a map from vertex to node_id
+    boost::unordered_map<Vertex_const_handle, int> vertex_to_node_id;
+    for(typename std::map<Halfedge_const_handle,
+                         std::pair<int,int>,Cmp_unik_ad >::iterator it=border_halfedges.begin(),
+                                                                    it_end=border_halfedges.end();
+                                                                    it!=it_end;++it)
+    {
+      vertex_to_node_id[it->first->vertex()]=it->second.second;
+      vertex_to_node_id[it->first->opposite()->vertex()]=it->second.first;
+    }
+
     std::size_t num_facets_P = internal::corefinement::init_facet_indices(*P_ptr, P_facet_id_pmap);
     std::size_t num_facets_Q = internal::corefinement::init_facet_indices(*Q_ptr, Q_facet_id_pmap);
     boost::dynamic_bitset<> coplanar_facets_P(num_facets_P, 0);
@@ -1659,10 +1672,10 @@ public:
       // Vertex_handle Q1=second_hedge_opp->next()->vertex();
       // Vertex_handle Q2=second_hedge->next()->vertex();
 
-      int index_p1=node_index_of_incident_vertex(first_hedge_opp->next(),border_halfedges);
-      int index_p2=node_index_of_incident_vertex(first_hedge->next(),border_halfedges);
-      int index_q1=node_index_of_incident_vertex(second_hedge_opp->next(),border_halfedges);
-      int index_q2=node_index_of_incident_vertex(second_hedge->next(),border_halfedges);
+      int index_p1=get_node_id(first_hedge_opp->next()->vertex(),vertex_to_node_id);
+      int index_p2=get_node_id(first_hedge->next()->vertex(),vertex_to_node_id);
+      int index_q1=get_node_id(second_hedge_opp->next()->vertex(),vertex_to_node_id);
+      int index_q2=get_node_id(second_hedge->next()->vertex(),vertex_to_node_id);
 
       // set boolean for the position of P1 wrt to Q1 and Q2
       bool P1_eq_Q1=false, P1_eq_Q2=false;
@@ -1866,10 +1879,10 @@ public:
           //check if the third point of each triangular face is an original point (stay -1)
           //or a intersection point (in that case we need the index of the corresponding node to
           //have the exact value of the point)
-          int index_p1=node_index_of_incident_vertex(first_hedge->opposite()->next(),border_halfedges);
-          int index_p2=node_index_of_incident_vertex(first_hedge->next(),border_halfedges);
-          int index_q1=node_index_of_incident_vertex(second_hedge->opposite()->next(),border_halfedges);
-          int index_q2=node_index_of_incident_vertex(second_hedge->next(),border_halfedges);
+          int index_p1=get_node_id(first_hedge->opposite()->next()->vertex(),vertex_to_node_id);
+          int index_p2=get_node_id(first_hedge->next()->vertex(),vertex_to_node_id);
+          int index_q1=get_node_id(second_hedge->opposite()->next()->vertex(),vertex_to_node_id);
+          int index_q2=get_node_id(second_hedge->next()->vertex(),vertex_to_node_id);
 
           std::size_t patch_id_p1=P_patch_ids[ get(P_facet_id_pmap, first_hedge->opposite()->facet()) ];
           std::size_t patch_id_p2=P_patch_ids[ get(P_facet_id_pmap, first_hedge->facet()) ];
