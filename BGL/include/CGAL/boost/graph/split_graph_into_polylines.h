@@ -112,8 +112,9 @@ void duplicate_terminal_vertices(Graph& graph,
   BOOST_FOREACH(vertex_descriptor v, V)
   {
     typename boost::graph_traits<OrigGraph>::vertex_descriptor orig_v = graph[v];
-    CGAL_assertion(degree(v, graph) == degree(orig_v, orig));
-    if (is_terminal(orig_v, orig) || degree(v, graph) > 2)
+    typename boost::graph_traits<Graph>::degree_size_type deg = degree(v, graph);
+    CGAL_assertion(deg == degree(orig_v, orig));
+    if ((deg != 0 && is_terminal(orig_v, orig)) || deg > 2)
       {
         out_edge_iterator b, e;
         boost::tie(b, e) = out_edges(v, graph);
