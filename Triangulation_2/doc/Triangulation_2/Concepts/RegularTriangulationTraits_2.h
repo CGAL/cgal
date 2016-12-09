@@ -22,7 +22,6 @@ of Delaunay triangulations.
 \cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_2`
 
 \sa `TriangulationTraits_2`
-\sa `CGAL::Regular_triangulation_2<Traits,Tds>` 
 
 */
 

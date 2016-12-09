@@ -431,7 +431,7 @@ cell. It uses the default parameter of the `Triangulation_3` class.
 The following two examples show how the user can plug his own vertex base in a
 triangulation. Changing the cell base is similar.
 
-\subsection Triangulation3secexamplescolor Adding a Color 
+\subsubsection Triangulation3secexamplescolor Adding a Color 
 
 When the user doesn't need to add a type in a vertex which depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -442,7 +442,7 @@ this way.
 
 \cgalExample{Triangulation_3/color.cpp}
 
-\subsection Triangulation_3AddingHandles Adding Handles
+\subsubsection Triangulation_3AddingHandles Adding Handles
 
 When the user needs to add a type in a vertex which depends on the
 `TriangulationDataStructure_3` (e.g. a `Vertex_handle` or
@@ -504,13 +504,23 @@ simplices can be stored in a set.
 
 \subsection Triangulation_3RegularTriangulation Regular Triangulation
 
+\subsubsection Triangulation_3RegularTriangulationInfo Regular Triangulation with Defaults
+
 This example shows the building of a regular triangulation. In this
 triangulation, points have an associated weight, and some points can
 be hidden and do not result in vertices in the triangulation.
-Another difference is that a specific traits class has to be used
-(at least at the moment).
 
 \cgalExample{Triangulation_3/regular_3.cpp}
+
+
+\subsubsection Triangulation_3RegularTriangulationInfo Regular Triangulation with Custom Vertex
+
+This example shows that one must use the class `Regular_triangulation_vertex_base_3` as vertex base class,
+if one has to specifiy the template parameter. 
+
+\cgalExample{Triangulation_3/regular_with_info_3.cpp}
+
+
 
 \subsection Triangulation_3ParallelDelaunay Parallel Insertion in Delaunay Triangulation
 

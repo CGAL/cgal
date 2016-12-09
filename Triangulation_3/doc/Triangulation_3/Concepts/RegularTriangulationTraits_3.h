@@ -20,7 +20,6 @@ In addition to the requirements described for the traits class of
   `CGAL::Regular_triangulation_3` must fulfill the following requirements.
 
   \cgalHasModel All CGAL Kernels
-  \cgalHasModel CGAL::Regular_triangulation_euclidean_traits_3 
 
 */
 

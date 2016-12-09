@@ -4,6 +4,10 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3TraitsClasses
 
+\deprecated The class is deprecated since \cgal 4.10, as the weighted point and the function
+objects for weighted points are part of the concept `Kernel`. The class is kept for  backward 
+compatibility, but ignores the template parameter `Weight`. 
+
 The class `Regular_triangulation_euclidean_traits_3` is designed as a default traits class for the 
 class `Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>`
 and uses the type `K::Weighted_point_3` for weighted points`. 
@@ -11,8 +15,6 @@ and uses the type `K::Weighted_point_3` for weighted points`.
 \tparam K must be a model of the `Kernel` concept.
 
 \tparam Weight This template parameter is ignored, as `Kernel::Weighted_point_3` uses the type `Kernel::FT`.
-
-\deprecated The template parameter `Weight` is deprecated. Users who need this feature must use a CGAL version prior to 4.9.
 
 The class is a model of the concept `RegularTriangulationTraits_3`.
 
