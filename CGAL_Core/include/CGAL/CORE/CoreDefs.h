@@ -46,7 +46,7 @@
   #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
     inline TYPE & get_static_##NAME()               \
     {                                               \
-      static TYPE NAME = VALUE;                     \
+      static TYPE NAME(VALUE);                      \
       return NAME;                                  \
     }
   
