@@ -100,6 +100,7 @@ Polyhedron_demo::~Polyhedron_demo() {}
 
 void Polyhedron_demo::do_not_catch_exceptions() {
   d_ptr->catch_exceptions = false;
+  setProperty("no-try-catch", true);
 }
 
 bool Polyhedron_demo::notify(QObject* receiver, QEvent* event)
