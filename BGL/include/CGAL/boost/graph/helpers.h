@@ -469,31 +469,15 @@ make_triangle(const P& p0, const P& p1, const P& p2, Graph& g)
   return opposite(h2,g);
 }
 
-/** 
- * \ingroup PkgBGLHelperFct
- * Creates an isolated quad with border edges in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
- * \returns the non-border halfedge which has the target vertex associated with `p0`.
- **/ 
-template<typename Graph, typename P>
+template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
-make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
-{
-  typedef typename boost::graph_traits<Graph>              Traits;
-  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
-  typedef typename Traits::vertex_descriptor               vertex_descriptor;
-  typedef typename Traits::face_descriptor                 face_descriptor;
-  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
-  Point_property_map ppmap = get(CGAL::vertex_point, g);
-  vertex_descriptor v0, v1, v2, v3;
-  v0 = add_vertex(g);
-  v1 = add_vertex(g);
-  v2 = add_vertex(g);
-  v3 = add_vertex(g);
-
-  ppmap[v0] = p0;
-  ppmap[v1] = p1;
-  ppmap[v2] = p2;
-  ppmap[v3] = p3;
+make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
+          typename boost::graph_traits<Graph>::vertex_descriptor v1, 
+          typename boost::graph_traits<Graph>::vertex_descriptor v2,
+          typename boost::graph_traits<Graph>::vertex_descriptor v3, Graph& g)
+{ 
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
   halfedge_descriptor h0 = halfedge(add_edge(g),g);
   halfedge_descriptor h1 = halfedge(add_edge(g),g);
   halfedge_descriptor h2 = halfedge(add_edge(g),g);
@@ -537,6 +521,34 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 
 /** 
  * \ingroup PkgBGLHelperFct
+ * Creates an isolated quad with border edges in `g` having `p0`, `p1`, `p2`, and `p3` as points and adds it to the graph `g`.
+ * \returns the non-border halfedge which has the target vertex associated with `p0`.
+ **/ 
+template<typename Graph, typename P>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>              Traits;
+  typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  Point_property_map ppmap = get(CGAL::vertex_point, g);
+  vertex_descriptor v0, v1, v2, v3;
+  v0 = add_vertex(g);
+  v1 = add_vertex(g);
+  v2 = add_vertex(g);
+  v3 = add_vertex(g);
+
+  ppmap[v0] = p0;
+  ppmap[v1] = p1;
+  ppmap[v2] = p2;
+  ppmap[v3] = p3;
+  return make_quad(v0, v1, v2, v3);
+}
+
+/** 
+ * \ingroup PkgBGLHelperFct
  * Creates an isolated hexahedron in `g` having `p0`, `p1`, ...\ , and `p7` as points and adds it to the graph `g`.
  * \returns the halfedge which has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
  **/ 
@@ -547,9 +559,30 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 {
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
+  typedef typename Traits::vertex_descriptor               vertex_descriptor;
+  typedef typename Traits::face_descriptor                 face_descriptor;
+  typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
+  Point_property_map ppmap = get(CGAL::vertex_point, g);
+  vertex_descriptor v0, v1, v2, v3, v4, v5, v6, v7;
+  v0 = add_vertex(g);
+  v1 = add_vertex(g);
+  v2 = add_vertex(g);
+  v3 = add_vertex(g);
+  v4 = add_vertex(g);
+  v5 = add_vertex(g);
+  v6 = add_vertex(g);
+  v7 = add_vertex(g);
+  ppmap[v0] = p0;
+  ppmap[v1] = p1;
+  ppmap[v2] = p2;
+  ppmap[v3] = p3;
+  ppmap[v4] = p4;
+  ppmap[v5] = p5;
+  ppmap[v6] = p6;
+  ppmap[v7] = p7;
 
-  halfedge_descriptor hb = make_quad(p0, p1, p2, p3, g);
-  halfedge_descriptor ht = prev(make_quad(p4, p7, p6, p5, g),g);
+  halfedge_descriptor ht = make_quad(v7, v4, v5, v6, g);
+  halfedge_descriptor hb = prev(make_quad(v1, v0, v3, v2, g),g);
   for(int i=0; i <4; i++){
     halfedge_descriptor h = halfedge(add_edge(g),g);
     set_target(h,target(hb,g),g);
@@ -565,8 +598,8 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   for(int i=0; i <4; i++){
     Euler::fill_hole(opposite(hb,g),g);
     hb = next(hb,g);
-  }
-  return hb;
+  } 
+  return next(next(hb,g),g);
 }
 /** 
  * \ingroup PkgBGLHelperFct
