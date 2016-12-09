@@ -21,6 +21,9 @@
 #ifndef CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_3_HPP
 #define CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_3_HPP
 
+// See mail on cgal-develop from 1.Dec 2016
+#define CGAL_VORONOI_COVARIANCE_USE_CONSTRUCTIONS
+
 #include <list>
 #include <CGAL/array.h>
 #include <CGAL/internal/Voronoi_covariance_3/voronoi_covariance_sphere_3.h>
