@@ -1771,7 +1771,7 @@ class Intersection_of_Polyhedra_3{
     //handle polylines
     while(terminal_nodes.any())
     {
-      int i= static_cast<int>(terminal_nodes.find_first());
+      int i = static_cast<int>(terminal_nodes.find_first());
       Graph_node& node_i = graph[i];
       std::vector<typename Kernel::Point_3> polyline;
 
@@ -1782,14 +1782,12 @@ class Intersection_of_Polyhedra_3{
       if (node_i.empty())
         terminal_nodes.reset(i);
       polyline.push_back(nodes[i]);
-      visitor->add_node_to_polyline(i);
       while(true){
         Graph_node& node_j=graph[j];
         CGAL_assertion(!node_j.empty());
         node_j.erase(i);
         i=j;
         polyline.push_back(nodes[i]);
-        visitor->add_node_to_polyline(i);
         if (node_j.is_terminal())
         {
           if (node_j.empty())
@@ -1798,6 +1796,7 @@ class Intersection_of_Polyhedra_3{
         }
         else{
           j=node_j.top();
+          visitor->add_node_to_polyline(j);
           node_j.pop();
           CGAL_assertion(node_j.empty());
           interior_nodes.reset(i);
@@ -1817,7 +1816,6 @@ class Intersection_of_Polyhedra_3{
       visitor->start_new_polyline(i,j);
       interior_nodes.reset(i);
       polyline.push_back(nodes[i]);
-      visitor->add_node_to_polyline(i);
       int first=i;
       do{
         Graph_node& node_j=graph[j];
@@ -1825,11 +1823,10 @@ class Intersection_of_Polyhedra_3{
         node_j.erase(i);
         i=j;
         polyline.push_back(nodes[i]);
-        visitor->add_node_to_polyline(i);
         j=node_j.top();
+        visitor->add_node_to_polyline(j);
       }while(j!=first);
       polyline.push_back(nodes[j]);// we duplicate first point for cycles
-      visitor->add_node_to_polyline(j);
       *out++=polyline;
     }
   }

@@ -1006,7 +1006,7 @@ public:
 
       tm1_polylines.push_back(h1);
       tm2_polylines.push_back(h2);
-      polyline_lengths.push_back(polyline_info.second-1);
+      polyline_lengths.push_back(polyline_info.second+1);
     }
 
     typedef Patch_container<TriangleMesh,

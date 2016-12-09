@@ -2203,7 +2203,7 @@ public:
 
       P_polylines.push_back(phedge);
       Q_polylines.push_back(qhedge);
-      polyline_lengths.push_back(polyline_info.second-1);
+      polyline_lengths.push_back(polyline_info.second+1);
     }
 
     //store the patch description in a container to avoid recomputing it several times

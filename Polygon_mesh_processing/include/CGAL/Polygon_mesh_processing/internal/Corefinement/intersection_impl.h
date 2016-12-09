@@ -741,14 +741,12 @@ class Intersection_of_triangle_meshes
       if (node_i.empty())
         terminal_nodes.reset(i);
       polyline.push_back(nodes[i]);
-      visitor.add_node_to_polyline(i);
       while(true){
         Graph_node& node_j=graph[j];
         CGAL_assertion(!node_j.empty());
         node_j.erase(i);
         i=j;
         polyline.push_back(nodes[i]);
-        visitor.add_node_to_polyline(i);
         if (node_j.is_terminal())
         {
           if (node_j.empty())
@@ -757,6 +755,7 @@ class Intersection_of_triangle_meshes
         }
         else{
           j=node_j.top();
+          visitor.add_node_to_polyline(j);
           node_j.pop();
           CGAL_assertion(node_j.empty());
           interior_nodes.reset(i);
@@ -776,7 +775,6 @@ class Intersection_of_triangle_meshes
       visitor.start_new_polyline(i,j);
       interior_nodes.reset(i);
       polyline.push_back(nodes[i]);
-      visitor.add_node_to_polyline(i);
       Node_id first=i;
       do{
         Graph_node& node_j=graph[j];
@@ -784,11 +782,10 @@ class Intersection_of_triangle_meshes
         node_j.erase(i);
         i=j;
         polyline.push_back(nodes[i]);
-        visitor.add_node_to_polyline(i);
         j=node_j.top();
+        visitor.add_node_to_polyline(j);
       }while(j!=first);
       polyline.push_back(nodes[j]);// we duplicate first point for cycles
-      visitor.add_node_to_polyline(j);
       *out++=polyline;
     }
   }
