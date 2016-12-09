@@ -945,7 +945,7 @@ namespace INTERN_INTERVAL_NT {
       return approx.pair();
     }
     else
-      return std::pair<double,double>(l,l);
+      return std::pair<double,double>((double)l,(double)l);
   }
 } // namespace INTERN_INTERVAL_NT
 
