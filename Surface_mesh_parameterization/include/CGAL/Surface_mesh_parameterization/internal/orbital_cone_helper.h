@@ -119,6 +119,23 @@ NT_container get_angles_at_cones(const Orbifold_type orb_type)
 
 namespace internal {
 
+template<typename Cone_container>
+bool are_cones_unique(const Cone_container& cones)
+{
+  std::size_t n_of_cones = cones.size();
+  if(n_of_cones == 0) {
+    std::cerr << "Warning: Check cone uniquess with no cones...?" << std::endl;
+    return true;
+  }
+
+  typedef typename Cone_container::value_type   Cone;
+  boost::unordered_set<Cone> unique_cones;
+
+  unique_cones.insert(cones.begin(), cones.end());
+
+  return (n_of_cones == unique_cones.size());
+}
+
 /// Read the cones from the input file.
 template<typename Polygon_mesh>
 Error_code read_cones(const Polygon_mesh& pm, const char* filename,
@@ -137,15 +154,20 @@ Error_code read_cones(const Polygon_mesh& pm, const char* filename,
     cones.push_back(cone_index);
   }
 
+  std::cout << "Cones: ";
+  for(std::size_t i=0; i<cones.size(); ++i)
+    std::cout << cones[i] << " ";
+  std::cout << std::endl;
+
   if(cones.size() < 3 || cones.size() > 4) {
     std::cerr << "Error: Not enough or too many input cones" << std::endl;
     return ERROR_WRONG_PARAMETER;
   }
 
-  std::cout << "Cones: ";
-  for(std::size_t i=0; i<cones.size(); ++i)
-    std::cout << cones[i] << " ";
-  std::cout << std::endl;
+  if(!are_cones_unique(cones)) {
+    std::cerr << "Error: The input cones are not unique" << std::endl;
+    return ERROR_WRONG_PARAMETER;
+  }
 
   // Locate the cones in the underlying mesh 'pm'
   CGAL_assertion(cone_vds_in_pm.empty());
@@ -164,6 +186,68 @@ Error_code read_cones(const Polygon_mesh& pm, const char* filename,
   }
 
   return OK;
+}
+
+template<typename TriangleMesh,
+         typename Cones_in_Seam_mesh_map,
+         typename Cones_in_Base_mesh_container>
+bool check_seam_validity(const TriangleMesh& mesh,
+                         const Cones_in_Seam_mesh_map& cones,
+                         const Cones_in_Base_mesh_container& cone_tm_vds)
+{
+  // check cone numbers
+  if((cone_tm_vds.size() == 3 && cones.size() != 4) ||
+     (cone_tm_vds.size() == 4 && cones.size() != 6)) {
+    std::cerr << "Error: Problem in number of cones: " << std::endl;
+    std::cerr << cone_tm_vds.size() << " cones in the base mesh" << std::endl;
+    std::cerr << cones.size() << " cones in the seam mesh" << std::endl;
+    return false;
+  }
+
+  // check cone types
+  bool found_first_unique_cone = false, found_second_unique_cone = false;
+  int duplicated_cone_counter = 0;
+  typename Cones_in_Seam_mesh_map::const_iterator it = cones.begin(),
+                                                  end = cones.end();
+  for(; it!=end; ++it) {
+    if(it->second == First_unique_cone) {
+      if(found_first_unique_cone) {
+        std::cerr << "Error: More than one 'First_unique_cone'" << std::endl;
+        return false;
+      }
+      found_first_unique_cone = true;
+    }
+    else if(it->second == Second_unique_cone) {
+      if(found_first_unique_cone) {
+        std::cerr << "Error: More than one 'Second_unique_cone'" << std::endl;
+        return false;
+      }
+      found_second_unique_cone = true;
+    }
+    else {
+      if(it->second != Duplicated_cone) {
+        std::cerr << "Error: Unknow cone type: " << it->second << std::endl;
+        return false;
+      }
+      ++duplicated_cone_counter;
+    }
+  }
+
+  if(!found_first_unique_cone || !found_second_unique_cone) {
+    std::cerr << "Error: Missing unique cones" << std::endl;
+    return false;
+  }
+
+  if((cone_tm_vds.size() == 3 && duplicated_cone_counter != 2) ||
+     (cone_tm_vds.size() == 4 && duplicated_cone_counter != 4)) {
+    std::cerr << "Error: Wrong number of duplicated cones" << std::endl;
+    return false;
+  }
+
+  // check seams
+
+
+  return true;
 }
 
 template<typename vertex_descriptor,
