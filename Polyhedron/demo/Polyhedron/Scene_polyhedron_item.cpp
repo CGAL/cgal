@@ -965,18 +965,14 @@ Scene_polyhedron_item::load_obj(std::istream& in)
   std::vector<std::vector<std::size_t> > faces;
   bool failed = !CGAL::read_OBJ(in,points,faces);
 
-  if(CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces)){
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh( points,faces,*(d->poly));
-  }else{
-    std::cerr << "not orientable"<< std::endl;
-    return false;
+  CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces);
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh( points,faces,*(d->poly));
+  if ( (! failed) && !isEmpty() )
+  {
+    invalidateOpenGLBuffers();
+    return true;
   }
-    if ( (! failed) && !isEmpty() )
-    {
-        invalidateOpenGLBuffers();
-        return true;
-    }
-    return false;
+  return false;
 }
 
 // Write polyhedron to .OFF file
