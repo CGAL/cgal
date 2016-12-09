@@ -47,7 +47,7 @@ double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
   return edge_length(e);
 }
 
-/* The folowing is a workaround for a bug in the BGL upto and including version
+/* The following is a workaround for a bug in the BGL up to and including version
  * 103400.
  *
  * Unfortunately some of the calls to the get() function below from the BGL

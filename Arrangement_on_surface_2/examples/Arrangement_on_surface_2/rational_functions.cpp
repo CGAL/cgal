@@ -55,8 +55,8 @@ int main ()
   Polynomial_1 Q2 = 1+x*x;
   
   arcs.push_back(construct_arc(P2, Q2, Alg_real_1(-3), Alg_real_1(3)));
-  
-  // Create an arc supported by the parbola y = 8 - x^2,
+
+  // Create an arc supported by the parabola y = 8 - x^2,
   // defined over the interval [-2, 3]:
   Polynomial_1 P3 = 8 - x*x; 
   arcs.push_back(construct_arc(P3, Alg_real_1(-2), Alg_real_1(3)));

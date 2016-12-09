@@ -51,7 +51,7 @@ class Arr_default_overlay_traits :
  * An overlay-traits class for computing the overlay of two arrangement whose
  * face records are extended with auxiliary data fields, of type Data1 and
  * Data2, respectively. The resulting arrangement is also assumed to be
- * templated with the face-extended DCEL, where each face stores an auxiliart
+ * templated with the face-extended DCEL, where each face stores an auxiliary
  * Res_data field.
  * The resulting data object that corresponds to the overlay of two data
  * object of type Data1 and Data2 is computed using the functor

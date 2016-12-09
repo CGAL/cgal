@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     return (1);
   }
 
-  // Read the points from the file, and consturct their dual lines.
+  // Read the points from the file, and construct their dual lines.
   std::vector<Point_2>           points;
   std::list<X_monotone_curve_2>  dual_lines;
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
   }
   in_file.close();
 
-  // Construct the dual arrangement by aggragately inserting the lines.
+  // Construct the dual arrangement by aggregately inserting the lines.
   Arrangement_2 arr;
 
   insert(arr, dual_lines.begin(), dual_lines.end());

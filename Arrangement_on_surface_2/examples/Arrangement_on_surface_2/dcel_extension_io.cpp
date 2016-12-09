@@ -88,7 +88,7 @@ int main ()
 
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
   {
-    // Check if the halfegde has the same diretion as its associated
+    // Check if the halfedge has the same direction as its associated
     // segment. Note that its twin always has an opposite direction.
     flag = (eit->source()->point() == eit->curve().source());
     eit->set_data (flag);

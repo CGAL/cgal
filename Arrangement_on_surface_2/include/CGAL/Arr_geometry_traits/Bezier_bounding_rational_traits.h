@@ -1166,7 +1166,7 @@ private:
       return;
     }
 
-    // Consturct bounding boxes for the two curves and check whether they
+    // Construct bounding boxes for the two curves and check whether they
     // overlap.
     Bez_point_bbox      bbox1;
     Bez_point_bbox      bbox2;

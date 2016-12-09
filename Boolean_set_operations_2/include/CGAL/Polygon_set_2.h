@@ -51,12 +51,12 @@ public:
   typedef  typename Base::Arrangement_2                   Arrangement_2;
   typedef  typename Base::Size                            Size;
 
-  /*! Default consturctor. */
+  /*! Default constructor. */
   Polygon_set_2 () :
     Base()
   {}
 
-  /*! Consturctor from the base class. */
+  /*! Constructor from the base class. */
   Polygon_set_2 (const Base& base) :
     Base (base)
   {}

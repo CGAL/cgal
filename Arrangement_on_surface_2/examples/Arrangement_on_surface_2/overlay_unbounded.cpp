@@ -11,7 +11,7 @@
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
-// Define a functor for creating a label from a characer and an integer.
+// Define a functor for creating a label from a character and an integer.
 struct Overlay_label
 {
   std::string operator() (char c, int i) const
@@ -48,7 +48,7 @@ int main ()
   insert (arr1, Line_2 (Point_2(0, 0), Point_2(1, -1)));
 
   // Label the four (unbounded) face of the arrangement as 'A' to 'D'.
-  // We do so by traversing the incident faces to the halfedges aroung the 
+  // We do so by traversing the incident faces to the halfedges around the
   // single arrangement vertex (0, 0).
   CGAL_assertion (arr1.number_of_vertices() == 1);
 
