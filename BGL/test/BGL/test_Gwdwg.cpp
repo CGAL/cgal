@@ -55,6 +55,17 @@ int main()
   BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)){
     std::cout << get(ppm,vd) << std::endl;
   }
+
+  SM sm2;
+  sm2 = sm;
+  Mesh mesh2(sm2);
+  try {
+    if( target( *(halfedges(mesh).first), mesh2) == *(vertices(mesh).first)){
+      std::cerr << "We should not get here" << std::endl;
+    }
+  } catch(...){
+    std::cerr << "we catched it" << std::endl;
+  }
     std::cout << "done" << std::endl;
   return 0;
 }

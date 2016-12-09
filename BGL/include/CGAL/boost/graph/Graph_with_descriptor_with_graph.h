@@ -20,6 +20,7 @@
 #ifndef CGAL_BOOST_GRAPH_GWDWG_H
 #define CGAL_BOOST_GRAPH_GWDWG_H
 
+#include <CGAL/assertions.h>
 #include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -53,7 +54,7 @@ template<typename Graph,typename Descriptor>
 bool operator==(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
+  CGAL_assertion( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor == rhs.descriptor;
 }
 
@@ -68,7 +69,7 @@ template<typename Graph,typename Descriptor>
 bool operator<(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
+  CGAL_assertion( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor < rhs.descriptor;
 }
 
@@ -76,7 +77,7 @@ template<typename Graph,typename Descriptor>
 bool operator>(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
+  CGAL_assertion( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor > rhs.descriptor;
 }
 
@@ -84,7 +85,7 @@ template<typename Graph,typename Descriptor>
 bool operator<=(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
+  CGAL_assertion( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor <= rhs.descriptor;
 }
 
@@ -92,7 +93,7 @@ template<typename Graph,typename Descriptor>
 bool operator>=(const Gwdwg_descriptor<Graph,Descriptor>& lhs,
                 const Gwdwg_descriptor<Graph,Descriptor>& rhs)
 {
-  assert( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
+  CGAL_assertion( lhs.graph == rhs.graph || rhs.graph==NULL || lhs.graph==NULL);
   return lhs.descriptor >= rhs.descriptor;
 }
 
@@ -254,7 +255,7 @@ typename boost::graph_traits<Graph>::degree_size_type
 degree(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
        const Graph_with_descriptor_with_graph<Graph>& w)
 {
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(v,w));
   return degree(v.descriptor, *w.graph);
 }
 
@@ -263,7 +264,7 @@ typename boost::graph_traits<Graph>::degree_size_type
 out_degree(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
            const Graph_with_descriptor_with_graph<Graph>& w)
 {
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(v,w));
   return out_degree(v.descriptor, *w.graph);
 }
 
@@ -272,7 +273,7 @@ typename boost::graph_traits<Graph>::degree_size_type
 in_degree(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
           const Graph_with_descriptor_with_graph<Graph>& w)
 {
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(v,w));
   return in_degree(v.descriptor, *w.graph);
 }
 
@@ -282,7 +283,7 @@ source(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::e
        const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor vertex_descriptor;
-  assert(in_same_graph(e,w));
+  CGAL_assertion(in_same_graph(e,w));
   return vertex_descriptor(source(e.descriptor, *w.graph), *w.graph);
 }
 
@@ -292,7 +293,7 @@ target(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::e
        const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor vertex_descriptor;
-  assert(in_same_graph(e,w));
+  CGAL_assertion(in_same_graph(e,w));
   return vertex_descriptor(target(e.descriptor, *w.graph), *w.graph);
 }
 
@@ -304,8 +305,8 @@ edge(typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::ver
 {
   typedef typename boost::graph_traits<Graph>::edge_descriptor g_edge_descriptor;
   typedef typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::edge_descriptor edge_descriptor;
-  assert(in_same_graph(u,w));
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(u,w));
+  CGAL_assertion(in_same_graph(v,w));
   bool b;
   g_edge_descriptor ed;
   boost::tie(ed,b) = edge(u.descriptor, v.descriptor, *w.graph);
@@ -363,7 +364,7 @@ void
 remove_vertex(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
               Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(v,w));
   remove_vertex(v.descriptor, *w.graph);
 }
 
@@ -381,7 +382,7 @@ void
 remove_edge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::edge_descriptor e,
             Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(e,w));
+  CGAL_assertion(in_same_graph(e,w));
   remove_edge(e.descriptor, *w.graph);
 }
 
@@ -391,8 +392,8 @@ set_target(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph>
            typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor v,
            Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(h1,w));
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(h1,w));
+  CGAL_assertion(in_same_graph(v,w));
   set_target(h1.descriptor, v.descriptor, *w.graph);
 }
 
@@ -402,8 +403,8 @@ set_next(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
          typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor h2,
          Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(h1,w));
-  assert(in_same_graph(h2,w));
+  CGAL_assertion(in_same_graph(h1,w));
+  CGAL_assertion(in_same_graph(h2,w));
   set_next(h1.descriptor, h2.descriptor, *w.graph);
 }
 
@@ -429,7 +430,7 @@ add_face(InputIterator begin, InputIterator end,
   std::vector<G_vertex_descriptor> vertices;
   for(; begin != end; ++begin){
     typename boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor vd = *begin;
-    assert(in_same_graph(vd,w));
+    CGAL_assertion(in_same_graph(vd,w));
     vertices.push_back(vd.descriptor);
   }
   G_face_descriptor fd = add_face(vertices.begin(), vertices.end(), *w.graph);
@@ -442,7 +443,7 @@ void
 remove_face(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::face_descriptor f,
             Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(f,w));
+  CGAL_assertion(in_same_graph(f,w));
   remove_face(f.descriptor, *w.graph);
 }
 
@@ -452,8 +453,8 @@ set_face(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
          typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::face_descriptor f,
          const Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(h,w));
-  assert(f==boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::null_face() || in_same_graph(f,w));
+  CGAL_assertion(in_same_graph(h,w));
+  CGAL_assertion(f==boost::graph_traits<Graph_with_descriptor_with_graph<Graph> >::null_face() || in_same_graph(f,w));
   set_face(h.descriptor, f.descriptor, *w.graph);
 }
 
@@ -463,8 +464,8 @@ set_halfedge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Grap
              typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor h,
              Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(f,w));
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(f,w));
+  CGAL_assertion(in_same_graph(h,w));
   set_halfedge(f.descriptor, h.descriptor, *w.graph);
 }
 
@@ -474,8 +475,8 @@ set_halfedge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Grap
              typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor h,
              const Graph_with_descriptor_with_graph<Graph> & w)
 {
-  assert(in_same_graph(v,w));
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(h,w));
   set_halfedge(v.descriptor, h.descriptor, *w.graph);
 }
 
@@ -488,7 +489,7 @@ edge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::ha
      const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::edge_descriptor edge_descriptor;
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(h,w));
   return edge_descriptor(edge(h.descriptor, *w.graph), *w.graph);
 }
 
@@ -498,7 +499,7 @@ halfedge(typename boost::graph_traits<  Graph_with_descriptor_with_graph<Graph> 
          const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor halfedge_descriptor;
-  assert(in_same_graph(e,w));
+  CGAL_assertion(in_same_graph(e,w));
   return halfedge_descriptor(halfedge(e.descriptor, *w.graph), *w.graph);
 }
 
@@ -508,7 +509,7 @@ halfedge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
          const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor halfedge_descriptor;
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(v,w));
   return halfedge_descriptor(halfedge(v.descriptor, *w.graph), *w.graph);
 }
 
@@ -522,8 +523,8 @@ halfedge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor halfedge_descriptor;
   typename boost::graph_traits< Graph >::halfedge_descriptor hd;
   bool b;
-  assert(in_same_graph(u,w));
-  assert(in_same_graph(v,w));
+  CGAL_assertion(in_same_graph(u,w));
+  CGAL_assertion(in_same_graph(v,w));
   boost::tie(hd,b) = halfedge(u.descriptor, v.descriptor, *w.graph);
   return std::make_pair(halfedge_descriptor(hd,*w.graph),b);
 }
@@ -535,7 +536,7 @@ opposite(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
          const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor halfedge_descriptor;
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(h,w));
   return halfedge_descriptor(opposite(h.descriptor,*w.graph),*w.graph);
 }
 
@@ -545,7 +546,7 @@ source(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::
        const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor vertex_descriptor;
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(h,w));
   return vertex_descriptor(source(h.descriptor,*w.graph),*w.graph);
 }
 
@@ -555,7 +556,7 @@ target(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::
        const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::vertex_descriptor vertex_descriptor;
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(h,w));
   return vertex_descriptor(target(h.descriptor,*w.graph),*w.graph);
 }
 
@@ -565,7 +566,7 @@ next(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::ha
      const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor halfedge_descriptor;
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(h,w));
   return halfedge_descriptor(next(h.descriptor,*w.graph),*w.graph);
 }
 
@@ -575,7 +576,7 @@ prev(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::ha
      const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor halfedge_descriptor;
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(h,w));
   return halfedge_descriptor(prev(h.descriptor,*w.graph),*w.graph);
 }
 
@@ -609,7 +610,7 @@ face(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::ha
      const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::face_descriptor face_descriptor;
-  assert(in_same_graph(h,w));
+  CGAL_assertion(in_same_graph(h,w));
   return face_descriptor(face(h.descriptor,*w.graph),*w.graph);
 }
 
@@ -619,7 +620,7 @@ halfedge(typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >
          const Graph_with_descriptor_with_graph<Graph> & w)
 {
   typedef typename boost::graph_traits< Graph_with_descriptor_with_graph<Graph> >::halfedge_descriptor halfedge_descriptor;
-  assert(in_same_graph(f,w));
+  CGAL_assertion(in_same_graph(f,w));
   return halfedge_descriptor(halfedge(f.descriptor,*w.graph),*w.graph);
 }
 
@@ -685,8 +686,8 @@ struct Graph_with_descriptor_with_graph_property_map {
   reference
   get(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d)
   {
-    assert(gpm.graph!=NULL);
-    assert(d.graph == gpm.graph);
+    CGAL_assertion(gpm.graph!=NULL);
+    CGAL_assertion(d.graph == gpm.graph);
     return get(gpm.pm, d.descriptor);
   }
 
@@ -695,8 +696,8 @@ struct Graph_with_descriptor_with_graph_property_map {
   void
   put(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d,   const value_type& v)
   {
-    assert(gpm.graph!=NULL);
-    assert(d.graph == gpm.graph);
+    CGAL_assertion(gpm.graph!=NULL);
+    CGAL_assertion(d.graph == gpm.graph);
     put(gpm.pm, d.descriptor, v);
   }
 }; // class Graph_with_descriptor_with_graph_property_map
