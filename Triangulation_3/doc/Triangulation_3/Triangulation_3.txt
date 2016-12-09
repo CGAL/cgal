@@ -504,7 +504,7 @@ simplices can be stored in a set.
 
 \subsection Triangulation_3RegularTriangulation Regular Triangulation
 
-\subsubsection Triangulation_3RegularTriangulationInfo Regular Triangulation with Defaults
+\subsubsection Triangulation_3RegularTriangulationDefaults Regular Triangulation with Defaults
 
 This example shows the building of a regular triangulation. In this
 triangulation, points have an associated weight, and some points can
