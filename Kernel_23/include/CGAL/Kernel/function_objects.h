@@ -2215,9 +2215,52 @@ namespace CommonKernelFunctors {
         k.construct_supporting_plane_3_object();
       typename K::Construct_projected_point_3 projection =
         k.construct_projected_point_3_object();
+      typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
+
+      const typename K::Plane_3 plane = supporting_plane(triangle);
+      if(is_degenerate(plane)) {
+        // If the plane is degenerate, then the triangle is degenerate, and
+        // one tries to find to which segment it is equivalent.
+        typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
+        typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+        typename K::Compute_x_3 x = k.compute_x_3_object();
+        typename K::Compute_y_3 y = k.compute_y_3_object();
+        typename K::Compute_z_3 z = k.compute_z_3_object();
+        typedef typename K::FT FT;
+        typedef typename K::Vector_3 Vector_3;
+
+        const Point_3& a = vertex(triangle, 0);
+        const Point_3& b = vertex(triangle, 1);
+        const Point_3& c = vertex(triangle, 2);
+        const Vector_3 ab = vector(a, b);
+        const Vector_3 ac = vector(a, c);
+        const Vector_3 bc = vector(b, c);
+        const FT linf_ab = (std::max)((std::max)(x(ab), y(ab)), z(ab));
+        const FT linf_ac = (std::max)((std::max)(x(ac), y(ac)), z(ac));
+        const FT linf_bc = (std::max)((std::max)(x(bc), y(bc)), z(bc));
+
+        typename K::Construct_segment_3 seg = k.construct_segment_3_object();
+        if(linf_ab > linf_ac) {
+          if(linf_ab > linf_bc) {
+            // ab is the maximal segment
+            return this->operator()(origin, seg(a, b), k);
+          } else {
+            // ab > ac, bc >= ab, use bc
+            return this->operator()(origin, seg(b, c), k);
+          }
+        } else { // ab <= ac
+          if(linf_ac > linf_bc) {
+            // ac is the maximal segment
+            return this->operator()(origin, seg(a, c), k);
+          } else {
+            // ab <= ac, ac <= bc, use bc
+            return this->operator()(origin, seg(b, c), k);
+          }
+        }
+      } // degenerate plane
 
       // Project origin on triangle supporting plane
-      const Point_3 proj = projection(supporting_plane(triangle), origin);
+      const Point_3 proj = projection(plane, origin);
 
 
       Point_3 moved_point;
