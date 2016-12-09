@@ -120,6 +120,7 @@ Property maps can be wrapped with `Graph_with_descriptor_with_graph_property_map
 
 \cgalModels `FaceListGraph`
 \cgalModels `HalfedgeListGraph`
+\cgalModels `MutableFaceGraph` if `Graph` is a model of `MutableFaceGraph`
 */
 
 template<typename Graph>
