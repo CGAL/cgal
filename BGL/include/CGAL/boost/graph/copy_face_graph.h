@@ -160,9 +160,14 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h)
 { copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator(),
                   get(vertex_point, sm), get(vertex_point, tm)); }
 
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename Src_vpm>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, Src_vpm sm_vpm)
-{ copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator(),
+template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, F2F f2f)
+{ copy_face_graph(sm, tm, v2v, h2h, f2f,
+                  get(vertex_point, sm), get(vertex_point, tm)); }
+
+template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F, typename Src_vpm>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h, F2F f2f, Src_vpm sm_vpm)
+{ copy_face_graph(sm, tm, v2v, h2h, f2f,
                   sm_vpm, get(vertex_point, tm)); }
 #endif
 
