@@ -36,6 +36,7 @@ using namespace CGAL::Three;
 const QColor default_mesh_color(45,169,70);
 
 #include "Mesh_3_plugin_cgal_code.h" // declare functions `cgal_code_mesh_3`
+#include "split_polylines.h"
 
 class Mesh_3_plugin :
   public QObject,
@@ -67,15 +68,27 @@ public:
               this, SLOT(mesh_3_surface()));
     }
 
+    actionSplitPolylines = new QAction("Split polylines in a graph", mw);
+    actionSplitPolylines->setProperty("subMenuName",
+                                      "Tetrahedral Mesh Generation");
+    connect(actionSplitPolylines, &QAction::triggered,
+            this, &Mesh_3_plugin::splitPolylines);
+
     this->msg = msg_interface;
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionMesh_3 << actionMesh_3_surface;
+    return QList<QAction*>()
+      << actionMesh_3
+      << actionMesh_3_surface
+      << actionSplitPolylines;
   }
 
-
   bool applicable(QAction* a) const {
+    if(actionSplitPolylines) {
+      return qobject_cast<Scene_polylines_item*>
+        (scene->item(scene->mainSelectionIndex())) != 0;
+    }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())) != NULL
       && a == actionMesh_3)
@@ -101,6 +114,7 @@ public:
 public Q_SLOTS:
   void mesh_3_volume();
   void mesh_3_surface();
+  void splitPolylines();
   void meshing_done(Meshing_thread* t);
   void status_report(QString str);
 
@@ -112,6 +126,7 @@ private:
 private:
   QAction* actionMesh_3;
   QAction* actionMesh_3_surface;
+  QAction* actionSplitPolylines;
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
@@ -131,6 +146,20 @@ get_approximate(double d, int precision, int& decimals)
     while ( d < i ) { d = d*10.; --decimals; }
 
     return std::floor(d)*std::pow(10.,decimals);
+}
+
+void Mesh_3_plugin::splitPolylines() {
+  Scene_item* main_item = scene->item(scene->mainSelectionIndex());
+  Scene_polylines_item* polylines_item =
+    qobject_cast<Scene_polylines_item*>(main_item);
+  if(polylines_item == 0) return;
+
+  Scene_polylines_item* new_item = new Scene_polylines_item;
+  auto new_polylines = split_polylines(polylines_item->polylines);
+  new_item->polylines =
+    std::move(Polylines_container{new_polylines.begin(), new_polylines.end()});
+  new_item->setName(tr("%1 (split)").arg(polylines_item->name()));
+  scene->addItem(new_item);
 }
 
 void Mesh_3_plugin::mesh_3_surface()
