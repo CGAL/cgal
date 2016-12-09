@@ -8,7 +8,7 @@ namespace CGAL {
 objects for weighted points are part of the concept `Kernel`. The class is kept for  backward 
 compatibility, but ignores the template parameter `Weight`. 
 
-The class `Regular_triangulation_euclidean_traits_3` is designed as a default traits class for the 
+The class `Regular_triangulation_euclidean_traits_3` was the default traits class for the 
 class `Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>`
 and uses the type `K::Weighted_point_3` for weighted points`. 
 
