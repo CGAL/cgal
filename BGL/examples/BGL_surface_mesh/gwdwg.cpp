@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/Gwdwg.h>
+#include <CGAL/boost/graph/Graph_with_descriptor_with_graph.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <fstream>
