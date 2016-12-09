@@ -586,13 +586,13 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   Point_property_map ppmap = get(CGAL::vertex_point, g);
   vertex_descriptor v0, v1, v2, v3;
   v0 = add_vertex(g);
+  v2 = add_vertex(g); // this and the next line are switched to keep points in order
   v1 = add_vertex(g);
-  v2 = add_vertex(g);
   v3 = add_vertex(g);
 
   ppmap[v0] = p0;
-  ppmap[v1] = p1;
-  ppmap[v2] = p2;
+  ppmap[v1] = p2;// this and the next line are switched to reorient the surface
+  ppmap[v2] = p1;
   ppmap[v3] = p3;
   halfedge_descriptor h0 = halfedge(add_edge(g),g);
   halfedge_descriptor h1 = halfedge(add_edge(g),g);
