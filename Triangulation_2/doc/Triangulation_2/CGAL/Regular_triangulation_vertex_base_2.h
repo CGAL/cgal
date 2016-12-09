@@ -17,7 +17,7 @@ instantiated by `Triangulation_vertex_base_2<Traits>`.
 
 \cgalModels `RegularTriangulationVertexBase_2`
 
-\sa `CGA::Triangulation_vertex_base_2<Traits,Vb>` 
+\sa `CGAL::Triangulation_vertex_base_2<Traits,Vb>` 
 \sa `CGAL::Regular_triangulation_2<Traits,Tds>` 
 \sa `CGAL::Regular_triangulation_face_base_2<Traits,Fb>` 
 
