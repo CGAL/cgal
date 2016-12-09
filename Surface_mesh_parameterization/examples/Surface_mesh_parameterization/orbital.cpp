@@ -79,8 +79,8 @@ int main(int argc, char * argv[])
 
   // Read the cones and find the corresponding vertex_descriptor in the underlying mesh 'sm'
   typedef std::vector<SM_vertex_descriptor>       Cones_in_smesh_container;
-  Cones_in_smesh_container cone_vds_in_sm;
-  SMP::internal::read_cones<SurfaceMesh>(sm, cone_filename, cone_vds_in_sm);
+  Cones_in_smesh_container cone_sm_vds;
+  SMP::internal::read_cones<SurfaceMesh>(sm, cone_filename, cone_sm_vds);
 
   // Two property maps to store the seam edges and vertices
   Seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
@@ -94,7 +94,7 @@ int main(int argc, char * argv[])
   if(smhd == SM_halfedge_descriptor() ) {
     std::cout << "No seams were given in input, computing shortest paths between cones" << std::endl;
     std::list<SM_edge_descriptor> seam_edges;
-    SMP::internal::compute_shortest_paths_between_cones(sm, cone_vds_in_sm, seam_edges);
+    SMP::internal::compute_shortest_paths_between_cones(sm, cone_sm_vds, seam_edges);
 
     // Add the seams to the seam mesh
     BOOST_FOREACH(SM_edge_descriptor e, seam_edges) {
@@ -117,9 +117,9 @@ int main(int argc, char * argv[])
   // Mark the cones in the seam mesh
   typedef boost::unordered_map<vertex_descriptor, SMP::Cone_type>  Cones;
   Cones cmap;
-  SMP::internal::locate_cones<Mesh, SurfaceMesh,
+  SMP::internal::locate_cones<Mesh,
                               Cones_in_smesh_container,
-                              Cones>(mesh, cone_vds_in_sm, cmap);
+                              Cones>(mesh, cone_sm_vds, cmap);
 
   // The 2D points of the uv parametrisation will be written into this map
   // Note that this is a halfedge property map, and that uv values

@@ -166,43 +166,68 @@ Error_code read_cones(const Polygon_mesh& pm, const char* filename,
   return OK;
 }
 
+template<typename vertex_descriptor,
+         typename ConeMap,
+         typename VertexIndexMap>
+void find_start_cone(const ConeMap& cmap,
+                     VertexIndexMap vimap,
+                     vertex_descriptor& cone,
+                     int& cone_index)
+{
+  CGAL_precondition(!cmap.empty());
+
+  typename ConeMap::const_iterator cmit = cmap.begin(), cend = cmap.end();
+  for(; cmit!=cend; ++cmit) {
+    if(cmit->second != First_unique_cone)
+      continue;
+
+    cone = cmit->first;
+    cone_index = get(vimap, cone);
+
+    return;
+  }
+
+  std::cerr << "Error: did not find first cone" << std::endl;
+  CGAL_postcondition(false);
+}
+
 /// Locate the cones on the seam mesh (find the corresponding seam mesh
 /// vertex_descriptor) and mark them with a tag that indicates whether it is a
 /// simple cone or a duplicated cone.
 ///
 /// The cones are ordered: the first and last cones are the extremetities of the seam.
 ///
-/// \tparam Mesh is a seam mesh
-/// \tparam BaseMesh is the underlying mesh of `Mesh`
+/// \tparam SeamMesh is a seam mesh
 /// \tparam ConeMap a map vertex_descriptor --> Cone_type
-template<typename Mesh,
-         typename BaseMesh,
+template<typename SeamMesh,
          typename Cones_in_pmesh_vector,
          typename ConeMap>
-void locate_cones(const Mesh& mesh,
-                  const Cones_in_pmesh_vector& cone_vds_in_sm,
+void locate_cones(const SeamMesh& mesh,
+                  const Cones_in_pmesh_vector& cone_tm_vds,
                   ConeMap& cones)
 {
   CGAL_precondition(cones.empty());
 
-  typedef typename boost::graph_traits<BaseMesh>::vertex_descriptor   BM_vertex_descriptor;
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
+  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
 
-  // property map to go from BM_vertex_descriptor to Point_3
-  typedef typename Kernel_traits<BaseMesh>::PPM        PM_PPM;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
+  typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
+
+  // property map to go from TM_vertex_descriptor to Point_3
+  typedef typename Kernel_traits<TriangleMesh>::PPM                        PM_PPM;
   const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
 
   // property map to go from vertex_descriptor to Point_3
-  typedef typename Kernel_traits<Mesh>::PPM            PPM;
+  typedef typename Kernel_traits<SeamMesh>::PPM                            PPM;
   const PPM ppmap = get(boost::vertex_point, mesh);
 
   // the cones in the underlying mesh
-  std::size_t cvdss = cone_vds_in_sm.size();
+  std::size_t cvdss = cone_tm_vds.size();
 
   std::cout << cvdss << " cones to locate" << std::endl;
 
   for(std::size_t i=0; i<cvdss; ++i) {
-    BM_vertex_descriptor smvd = cone_vds_in_sm[i];
+    TM_vertex_descriptor smvd = cone_tm_vds[i];
     BOOST_FOREACH(vertex_descriptor vd, vertices(mesh)) {
       if(get(ppmap, vd) == get(pm_ppmap, smvd)) {
         Cone_type ct;
@@ -220,33 +245,30 @@ void locate_cones(const Mesh& mesh,
     }
   }
 
-  CGAL_postcondition((cone_vds_in_sm.size() == 3 && cones.size() == 4) ||
-                     (cone_vds_in_sm.size() == 4 && cones.size() == 6));
-
-  std::cout << cone_vds_in_sm.size() << " cones in sm" << std::endl;
-  std::cout << cones.size() << " cones in mesh" << std::endl;
+  check_seam_validity(mesh, cones, cone_tm_vds);
 }
 
 /// Same as above, but the cones are NOT ordered and we thus use seam mesh
 /// information to determine which cones are Duplicate_cones and which cones
 /// are unique
 ///
-/// \tparam Mesh is a seam mesh
-/// \tparam BaseMesh is the type of the underlying mesh in the seam mesh
-/// \tparam ConeMap a map vertex_descriptor --> Cone_type
-template<typename Mesh,
-         typename BaseMesh,
+/// \tparam SeamMesh is a seam mesh
+/// \tparam Cones_in_pmesh_set is a set of cones (vertex_descriptor of SeamMesh)
+/// \tparam ConeMap a map vertex_descriptor of SeamMesh  --> Cone_type
+template<typename SeamMesh,
          typename Cones_in_pmesh_set,
          typename ConeMap>
-void locate_unordered_cones(const Mesh& mesh,
-                            const Cones_in_pmesh_set& cone_vds_in_sm,
+void locate_unordered_cones(const SeamMesh& mesh,
+                            const Cones_in_pmesh_set& cone_tm_vds,
                             ConeMap& cones)
 {
   CGAL_precondition(cones.empty());
 
-  typedef typename boost::graph_traits<BaseMesh>::vertex_descriptor     BM_vertex_descriptor;
-  typedef typename boost::graph_traits<Mesh>::vertex_descriptor         vertex_descriptor;
-  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor       halfedge_descriptor;
+  typedef typename SeamMesh::TriangleMesh                                  TriangleMesh;
+
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    TM_vertex_descriptor;
+  typedef typename boost::graph_traits<SeamMesh>::vertex_descriptor        vertex_descriptor;
+  typedef typename boost::graph_traits<SeamMesh>::halfedge_descriptor      halfedge_descriptor;
 
   // find a vertex on the seam
   vertex_descriptor vertex_on_seam;
@@ -259,12 +281,12 @@ void locate_unordered_cones(const Mesh& mesh,
 
   CGAL_assertion(vertex_on_seam != vertex_descriptor());
 
-  // property map to go from BM_vertex_descriptor to Point_3
-  typedef typename Kernel_traits<BaseMesh>::PPM        PM_PPM;
+  // property map to go from TM_vertex_descriptor to Point_3
+  typedef typename Kernel_traits<TriangleMesh>::PPM          PM_PPM;
   const PM_PPM pm_ppmap = get(boost::vertex_point, mesh.mesh());
 
   // property map to go from vertex_descriptor to Point_3
-  typedef typename Kernel_traits<Mesh>::PPM            PPM;
+  typedef typename Kernel_traits<SeamMesh>::PPM              PPM;
   const PPM ppmap = get(boost::vertex_point, mesh);
 
   bool first_cone_met = false;
@@ -272,7 +294,7 @@ void locate_unordered_cones(const Mesh& mesh,
   // walk on the seam and mark if we encounter a cone
   vertex_descriptor end = vertex_on_seam;
   do {
-    BOOST_FOREACH(BM_vertex_descriptor smvd, cone_vds_in_sm) {
+    BOOST_FOREACH(TM_vertex_descriptor smvd, cone_tm_vds) {
       if(get(ppmap, vertex_on_seam) == get(pm_ppmap, smvd)) { // the seam mesh vertex is a cone
 
         // we have encountered a cone. Must check if the cone is a Unique_cone
@@ -314,11 +336,7 @@ void locate_unordered_cones(const Mesh& mesh,
 
   } while(vertex_on_seam != end);
 
-  CGAL_postcondition((cone_vds_in_sm.size() == 3 && cones.size() == 4) ||
-                     (cone_vds_in_sm.size() == 4 && cones.size() == 6));
-
-  std::cout << cone_vds_in_sm.size() << " cones in sm" << std::endl;
-  std::cout << cones.size() << " cones in mesh" << std::endl;
+  check_seam_validity(mesh, cones, cone_tm_vds);
 }
 
 } // namespace internal

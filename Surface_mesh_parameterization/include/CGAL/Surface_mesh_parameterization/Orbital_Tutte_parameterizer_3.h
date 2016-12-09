@@ -292,7 +292,7 @@ private:
     // Initialize some variables used in the seam walk
     int start_cone_index = -1; // index of the beginning of the seam
     vertex_descriptor start_cone;
-    find_start_cone(cmap, vimap, start_cone, start_cone_index);
+    internal::find_start_cone(cmap, vimap, start_cone, start_cone_index);
     CGAL_postcondition(start_cone != vertex_descriptor() && start_cone_index != -1);
 
     // parameterize the initial cone
