@@ -5,6 +5,7 @@
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -31,10 +32,13 @@
 #include <QGLViewer/qglviewer.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 #include "Kernel_type.h"
 
 #include <boost/function_output_iterator.hpp>
+#include <boost/graph/adjacency_list.hpp>
 #include <QMap>
+#include <QVector>
 
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
@@ -56,7 +60,7 @@ public:
 public: typedef std::list<Polyline_data> Polyline_data_list;
 private:
   struct List_iterator_comparator {
-    bool operator()(Polyline_data_list::const_iterator it_1, Polyline_data_list::const_iterator it_2) const 
+    bool operator()(Polyline_data_list::const_iterator it_1, Polyline_data_list::const_iterator it_2) const
     { return (&*it_1) < (&*it_2); }
   };
 public:
@@ -72,7 +76,7 @@ public:
     viewer->installEventFilter(this);
     mainWindow->installEventFilter(this);
 
-    connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed())); 
+    connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed()));
   }
   ~Scene_hole_visualizer() {
     clear();
@@ -104,9 +108,9 @@ public:
       if(it == active_hole) { viewer->glLineWidth(7.f); }
       else                  { viewer->glLineWidth(3.f); }
 
-      if(selected_holes.find(it) != selected_holes.end()) 
+      if(selected_holes.find(it) != selected_holes.end())
       { it->polyline->setRbgColor(255, 0, 0); }
-      else 
+      else
       { it->polyline->setRbgColor(0, 0, 255); }
 
       it->polyline->drawEdges(viewer);
@@ -141,13 +145,13 @@ public:
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       if(mouse_event->button() == Qt::LeftButton) {
         state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
-      }   
+      }
     }
 
     if(!visible()) { return false; } // if not visible just update event state but don't do any action
 
     // activate closest hole
-    if(event->type() == QEvent::HoverMove) 
+    if(event->type() == QEvent::HoverMove)
     {
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
@@ -200,7 +204,7 @@ private:
         do {
           CGAL_assertion(hf_around_facet->id() == 0);
           hf_around_facet->id() = 1;
-          const Polyhedron::Traits::Point_3& p = hf_around_facet->vertex()->point();          
+          const Polyhedron::Traits::Point_3& p = hf_around_facet->vertex()->point();
           polyline_data.polyline->polylines.front().push_back(p);
           center += qglviewer::Vec(p.x(), p.y(), p.z());
           ++counter;
@@ -257,7 +261,7 @@ private:
 #endif
     }
 
-    if(min_it == active_hole) { 
+    if(min_it == active_hole) {
       return false;
     }
     active_hole = min_it;
@@ -299,7 +303,8 @@ class Polyhedron_demo_hole_filling_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-  bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
+  bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())) ||
+        qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
 
@@ -315,12 +320,13 @@ public:
   }
 
 public Q_SLOTS:
-  void hole_filling_action() { 
+  void hole_filling_action() {
     dock_widget->show();
     dock_widget->raise();
     if(scene->numberOfEntries() < 2) { on_Visualize_holes_button(); }
   }
   void on_Select_all_holes_button();
+  void on_Fill_from_selection_button();
   void on_Deselect_all_holes_button();
   void on_Visualize_holes_button();
   void on_Fill_selected_holes_button();
@@ -356,9 +362,9 @@ private:
   // to ease the management of the visualizers
   QMap<Scene_polyhedron_item*, Scene_hole_visualizer*> visualizers;
   // hold created facet for accept reject functionality
-  std::vector<Polyhedron::Facet_handle> new_facets; 
+  std::vector<Polyhedron::Facet_handle> new_facets;
   Scene_polyhedron_item* last_active_item; // always keep it NULL while not active-reject state
- 
+
   bool fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
   bool self_intersecting(Polyhedron& polyhedron);
   void accept_reject_toggle(bool activate_accept_reject) {
@@ -412,8 +418,9 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 
   addDockWidget(dock_widget);
   
-  connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
-  connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
+  connect(ui_widget.Fill_from_selection_button,  SIGNAL(clicked()), this, SLOT(on_Fill_from_selection_button()));
+  connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));
+  connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button()));
   connect(ui_widget.Select_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_holes_button()));
   connect(ui_widget.Deselect_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Deselect_all_holes_button()));
   connect(ui_widget.Create_polyline_items_button,  SIGNAL(clicked()), this, SLOT(on_Create_polyline_items_button()));
@@ -421,7 +428,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   connect(ui_widget.Reject_button,  SIGNAL(clicked()), this, SLOT(on_Reject_button()));
   connect(ui_widget.Select_small_holes_button,  SIGNAL(clicked()), this, SLOT(on_Select_small_holes_button()));
 
-  if(Scene* scene_casted = dynamic_cast<Scene*>(scene_interface)) 
+  if(Scene* scene_casted = dynamic_cast<Scene*>(scene_interface))
   { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*))); }
 }
 
@@ -455,7 +462,7 @@ void Polyhedron_demo_hole_filling_plugin::dock_widget_closed() {
       scene->erase( scene->item_id(hole_visualizer) );
     }
   }
-  on_Accept_button(); 
+  on_Accept_button();
 }
 // creates a Scene_hole_visualizer and associate it with active Scene_polyhedron_item
 void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
@@ -501,7 +508,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   }
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  // fill selected holes  
+  // fill selected holes
   int counter = 0;
   int filled_counter = 0;
   for(Scene_hole_visualizer::Selected_holes_set::iterator it = hole_visualizer->selected_holes.begin();
@@ -580,7 +587,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Accept_button() {
   if(last_active_item == NULL) { return; }
 
   accept_reject_toggle(false);
-  if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(last_active_item)) 
+  if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(last_active_item))
   { hole_visualizer->poly_item_changed();}
 
   new_facets.clear();
@@ -591,7 +598,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
 
   accept_reject_toggle(false);
   for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
-   last_active_item->polyhedron()->erase_facet((*it)->halfedge());
+    last_active_item->polyhedron()->erase_facet((*it)->halfedge());
   }
   change_poly_item_by_blocking(last_active_item, get_hole_visualizer(last_active_item));
 
@@ -674,9 +681,9 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     timer.reset();
     // this part might need speed-up
     bool intersected = false;
-    for(Intersected_facets::iterator it = intersected_facets.begin(); 
+    for(Intersected_facets::iterator it = intersected_facets.begin();
       it != intersected_facets.end() && !intersected; ++it) {
-      for(std::vector<Polyhedron::Facet_handle>::iterator it_patch = patch.begin(); 
+      for(std::vector<Polyhedron::Facet_handle>::iterator it_patch = patch.begin();
         it_patch != patch.end() && !intersected; ++it_patch) {
         if(it->first == (*it_patch) || it->second == (*it_patch)) {
           intersected = true;
@@ -693,9 +700,141 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     }
     else { print_message("No Self intersection found, patch is valid."); }
   }
-  // save facets for accept-reject 
+  // save facets for accept-reject
   new_facets.insert(new_facets.end(), patch.begin(), patch.end());
   return true;
+}
+
+// fills selected holes on active Scene_hole_visualizer
+void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
+  // get selection item
+  Scene_polyhedron_selection_item* edge_selection = getSelectedItem<Scene_polyhedron_selection_item>();
+  if(!edge_selection ||
+     edge_selection->selected_edges.empty())
+  {
+    print_message("No edge selection found in the current item selection.");
+    return;
+  }
+  Polyhedron *poly = edge_selection->polyhedron();
+  QVector<Polyhedron::Vertex_handle> vertices;
+  std::vector<Polyhedron::Point_3> points;
+  bool use_DT = ui_widget.Use_delaunay_triangulation_check_box->isChecked();
+  poly->normalize_border();
+
+  // fill hole
+  boost::unordered_set<Polyhedron::Halfedge_handle, CGAL::Handle_hash_function> buffer;
+  //check if all selected edges are boder
+  //to do check that the seection is closed
+  BOOST_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor ed, edge_selection->selected_edges)
+  {
+    Polyhedron::Halfedge_handle h(halfedge(ed, *poly));
+    if(!h->is_border())
+    {
+      h = h->opposite();
+      if(!h->is_border())
+      {
+        print_message("A selected_border is not a border edge. Cannot fill something that is not a hole.");
+        return;
+      }
+    }
+    buffer.insert(h);
+  }
+  //fill the points
+    //order edges
+  QVector<Polyhedron::Halfedge_handle> b_edges;
+  Polyhedron::Halfedge_handle c_e = *buffer.begin();
+  b_edges.reserve(static_cast<int>(buffer.size()));
+  b_edges.push_back(c_e);
+  buffer.erase(c_e);
+  while(!buffer.empty())
+  {
+    bool found = false;
+    BOOST_FOREACH(Polyhedron::Halfedge_handle h, buffer)
+    {
+      //if h and c_e share a point
+     if(h->vertex() == c_e->vertex() ||
+        h->vertex() == c_e->opposite()->vertex() ||
+        h->opposite()->vertex() == c_e->vertex() ||
+        h->opposite()->vertex() == c_e->opposite()->vertex())
+     {
+       c_e = h;
+       b_edges.push_back(c_e);
+       buffer.erase(c_e);
+       found = true;
+     }
+    }
+    if(!found)
+    {
+      print_message("The selection is not valid. The edges must form a closed unique loop.");
+      return;
+    }
+  }
+
+  //fill points
+  //  if the point shared with the next edge is already added, add the other one.
+  //  else add the shared point.
+  for(int i=0; i<b_edges.size()-1; ++i)
+  {
+    Polyhedron::Vertex_handle shared_vertex;
+    Polyhedron::Vertex_handle other_vertex;
+    if(b_edges[i]->vertex() == b_edges[i+1]->vertex() ||
+       b_edges[i]->vertex() == b_edges[i+1]->opposite()->vertex()
+       )
+    {
+      shared_vertex = b_edges[i]->vertex();
+      other_vertex = b_edges[i]->opposite()->vertex();
+    }
+    else
+    {
+      shared_vertex = b_edges[i]->opposite()->vertex();
+      other_vertex = b_edges[i]->vertex();
+    }
+    if(!vertices.contains(shared_vertex))
+      vertices.push_back(shared_vertex);
+    else
+      vertices.push_back(other_vertex);
+  }
+  //close the loop
+  if(!vertices.contains(b_edges.back()->vertex()))
+    vertices.push_back(b_edges.back()->vertex());
+  else
+    vertices.push_back(b_edges.back()->opposite()->vertex());
+
+  Q_FOREACH(Polyhedron::Vertex_handle vh, vertices)
+  {
+    points.push_back(vh->point());
+  }
+
+  std::vector<CGAL::Triple<int, int, int> > patch;
+  CGAL::Polygon_mesh_processing::triangulate_hole_polyline(points,
+                                                           std::back_inserter(patch),
+                                                           CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+  if(patch.size()<3)
+    print_message("There is not enough points. Please try again.");
+  for(std::size_t i=0; i<patch.size(); ++i)
+  {
+    CGAL::Triple<int, int, int> indices = patch[i];
+    std::vector<Polyhedron::Vertex_handle> face;
+    face.push_back(vertices[indices.first]);
+    face.push_back(vertices[indices.second]);
+    face.push_back(vertices[indices.third]);
+    Polyhedron::Facet_handle new_fh = CGAL::Euler::add_face(face, *poly);
+   if(new_fh  == boost::graph_traits<Polyhedron>::null_face())
+   {
+     new_fh = CGAL::Euler::add_face(std::vector<Polyhedron::Vertex_handle>(face.rbegin(), face.rend()), *poly);
+     if( new_fh == boost::graph_traits<Polyhedron>::null_face())
+       print_message("The facet could not be added. Please try again.");
+   }
+   new_facets.push_back(new_fh);
+  }
+  if(!new_facets.empty())
+  {
+    last_active_item = edge_selection->polyhedron_item();
+    accept_reject_toggle(true);
+  }
+
+  edge_selection->polyhedron_item()->invalidateOpenGLBuffers();
+  edge_selection->polyhedron_item()->itemChanged();
 }
 
 // Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)
