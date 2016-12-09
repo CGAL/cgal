@@ -110,11 +110,11 @@ int main(int argc, char * argv[])
   std::freopen("/home/mrouxell/POLY_MESH.txt", "w", stdout);
 #endif
 
-  std::ifstream in((argc>1)?argv[1]:"../data/tiny_nef.off");
+//  std::ifstream in((argc>1)?argv[1]:"../data/tiny_nef.off");
 //  std::ifstream in((argc>1)?argv[1]:"../data/nefertiti.off");
 //  std::ifstream in((argc>1)?argv[1]:"../data/lion.off");
 //  std::ifstream in((argc>1)?argv[1]:"../data/blob.off");
-//  std::ifstream in((argc>1)?argv[1]:"/home/mrouxell/Data/OFF/mushroom.off");
+  std::ifstream in((argc>1)?argv[1]:"/home/mrouxell/Data/OFF/mushroom.off");
 //  std::ifstream in((argc>1)?argv[1]:"/home/mrouxell/Data/OFF/lion-head.off");
 //  std::ifstream in((argc>1)?argv[1]:"../data/three_peaks.off");
 //  std::ifstream in((argc>1)?argv[1]:"/home/mrouxell/Data/OFF/three_peaks_dense.off");
@@ -123,6 +123,9 @@ int main(int argc, char * argv[])
 //  std::ifstream in((argc>1)?argv[1]:"../data/cow_densified.off");
 //  std::ifstream in((argc>1)?argv[1]:"../data/mushroom_big_hole.off");
 //  std::ifstream in((argc>1)?argv[1]:"../data/mushroom_hole_1.off");
+
+//  const char* selection = "../data/lion.selection.txt";
+  const char* selection = "/home/mrouxell/mushroom.selection.txt";
 
   if(!in) {
     std::cerr << "Problem loading the input data" << std::endl;

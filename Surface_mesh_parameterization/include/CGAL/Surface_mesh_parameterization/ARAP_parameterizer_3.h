@@ -454,6 +454,7 @@ private:
       return ERROR_NON_TRIANGULAR_MESH;
 
     // Set w_ii in matrix
+//    std::cout << "setting wii at " << i << " : " << w_ii << std::endl;
     A.set_coef(i, i, w_ii, true /*new*/);
     return OK;
   }
@@ -791,7 +792,7 @@ private:
         b = b_roots[ind];
 #endif
 
-        std::cout << "ab: " << a << " " << b << std::endl;
+//        std::cout << "ab: " << a << " " << b << std::endl;
       }
 
       // Update the map faces --> optimal Lt matrices

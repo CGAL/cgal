@@ -50,14 +50,6 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char * argv[])
 {
-  std::cout.precision(20);
-
-#if (EIGEN_WORLD_VERSION == 3 && EIGEN_MAJOR_VERSION == 3)
-  std::cout << "Using eigen 3.3" << std::endl;
-#elif (EIGEN_WORLD_VERSION == 3 && EIGEN_MAJOR_VERSION == 2)
-  std::cout << "Using eigen 3.2" << std::endl;
-#endif
-
   CGAL::Timer task_timer;
   task_timer.start();
 
@@ -128,7 +120,7 @@ int main(int argc, char * argv[])
 
   // Parameterizer
   typedef SMP::Orbital_Tutte_parameterizer_3<Mesh>         Parameterizer;
-  Parameterizer parameterizer(SMP::Triangle);
+  Parameterizer parameterizer(SMP::Parallelogram, SMP::Cotangent);
 
   // a halfedge on the (possibly virtual) border
   // only used in output (will also be used to handle multiple connected components in the future)

@@ -511,7 +511,7 @@ private:
     // if vh_i is fixed, there is nothing to do: A(i,i)=1 and A(i,j)=0 for j!=i
     if(get(vpmap, vd_i))
     {
-      std::cout << i << " is fixed in A " << std::endl;
+//      std::cout << i << " is fixed in A " << std::endl;
       // @fixme unefficient A(i,i) is written as many times as i has neighbors
       A.set_coef(i, i, 1);
       return;
@@ -566,7 +566,7 @@ private:
     // but not in 'ct'.
 
     // Loop over the "outside" faces of ct
-    std::cout << "add from ct" << std::endl;
+//    std::cout << "add from ct" << std::endl;
     typename CT::Finite_faces_iterator fit = ct.finite_faces_begin(),
                                        fend = ct.finite_faces_end();
     for(; fit!=fend; ++fit)
@@ -578,7 +578,7 @@ private:
     }
 
     // Loop over the faces of 'mesh'
-    std::cout << "add from mesh" << std::endl;
+//    std::cout << "add from mesh" << std::endl;
     BOOST_FOREACH(face_descriptor fd, faces) {
       fill_linear_system_matrix_mvc_from_mesh_face(mesh, fd, uvmap, vimap, vpmap, A);
     }

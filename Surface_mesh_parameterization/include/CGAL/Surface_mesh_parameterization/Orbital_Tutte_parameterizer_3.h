@@ -263,7 +263,7 @@ private:
       std::cout << "v1/v2: " << s << " " << t << std::endl;
       CGAL_assertion(s != t);
 
-      // sending s to t is important to not get some reflexion of the result
+      // sending s to t (and _not_ t to s) is important to not get some reflexion of the result
       addTransConstraints(t0, s0, t, s, current_line_id_in_A, R, A, B);
     }
   }
@@ -295,11 +295,13 @@ private:
     internal::find_start_cone(cmap, vimap, start_cone, start_cone_index);
     CGAL_postcondition(start_cone != vertex_descriptor() && start_cone_index != -1);
 
+//    std::cout << "initial cone is " << start_cone << std::endl;
+
     // parameterize the initial cone
     addConstraint(A, B, current_line_id_in_A, start_cone_index,
                   1. /*entry in A*/, tcoords[0]);
 
-    // by property of the seam mesh, the canonical halfedge that points to `hd`
+    // by property of the seam mesh, the canonical halfedge that points to start_cone
     // is on the seam, and is not on the border
     halfedge_descriptor hd = halfedge(start_cone, mesh);
     CGAL_precondition(mesh.has_on_seam(hd));
@@ -353,9 +355,10 @@ private:
         NT ang = angs[segment_index];
         constrain_seam_segment(seam_segment, ang, current_line_id_in_A, A, B);
 
-        // the last cone of the seam is constrained
-        if(is_in_map->second == Second_unique_cone) { // reached the end of the seam
+        // Check if we have reached the end of the seam
+        if(is_in_map->second == Second_unique_cone) {
           CGAL_assertion(hd1_target == hd2_target);
+        // the last cone of the seam is constrained
           addConstraint(A, B, current_line_id_in_A, hd1t_index,
                         1. /*entry in A*/, tcoords.back());
           break;
