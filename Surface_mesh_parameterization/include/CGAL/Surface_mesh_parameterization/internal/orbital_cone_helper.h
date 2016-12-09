@@ -28,6 +28,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/unordered_set.hpp>
 
 #include <fstream>
 #include <set>
@@ -46,6 +47,75 @@ enum Cone_type
   Second_unique_cone,
   Duplicated_cone
 };
+
+enum Orbifold_type
+{
+  Square = 0,
+  Diamond,
+  Triangle,
+  Parallelogram
+};
+
+const char* get_orbifold_type(int orb_type)
+{
+  // Messages corresponding to Error_code list above. Must be kept in sync!
+  static const char* type[Parallelogram+1] = {
+    "Square",
+    "Diamond",
+    "Triangle",
+    "Parallelogram"
+  };
+
+  if(orb_type > Parallelogram || orb_type < 0)
+    return "Unknown orbifold type";
+  else
+    return type[orb_type];
+}
+
+// Orbifold type functions
+template<typename Point_container>
+Point_container get_cones_parameterized_coordinates(const Orbifold_type orb_type)
+{
+  typedef typename Point_container::value_type                Point;
+
+  Point_container tcoords;
+  if(orb_type == Square) {
+    tcoords.push_back(Point(-1, -1));
+    tcoords.push_back(Point(1, 1));
+  } else if(orb_type == Parallelogram) {
+    tcoords.push_back(Point(0, -0.5));
+    tcoords.push_back(Point(-1, -0.5));
+    tcoords.push_back(Point(0, 0.5));
+  } else { // if(orb_type == Diamond || orb_type == Triangle)
+    tcoords.push_back(Point(-1, 1));
+    tcoords.push_back(Point(-1, -1));
+  }
+
+  return tcoords;
+}
+
+/// Angles are minus as we go around the seam border in a counterclockwise manner
+template<typename NT_container>
+NT_container get_angles_at_cones(const Orbifold_type orb_type)
+{
+  NT_container angs;
+  if(orb_type == Square) {
+    angs.push_back(4.);
+    angs.push_back(4.);
+  } else if(orb_type == Diamond) {
+    angs.push_back(3.);
+    angs.push_back(3.);
+  } else if(orb_type == Triangle) {
+    angs.push_back(6.);
+    angs.push_back(2.);
+  } else { // if(orb_type == Parallelogram)
+    angs.push_back(2);
+    angs.push_back(1);
+    angs.push_back(2);
+  }
+
+  return angs;
+}
 
 namespace internal {
 

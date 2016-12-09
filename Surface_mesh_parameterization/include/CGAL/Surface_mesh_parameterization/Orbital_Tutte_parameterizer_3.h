@@ -68,35 +68,11 @@ namespace CGAL {
 
 namespace Surface_mesh_parameterization {
 
-enum Orbifold_type
-{
-  Square = 0,
-  Diamond,
-  Triangle,
-  Parallelogram
-};
-
 enum Weight_type
 {
   Cotangent = 0,
   Mean_value
 };
-
-const char* get_orbifold_type(int orb_type)
-{
-  // Messages corresponding to Error_code list above. Must be kept in sync!
-  static const char* type[Parallelogram+1] = {
-    "Square",
-    "Diamond",
-    "Triangle",
-    "Parallelogram"
-  };
-
-  if(orb_type > Parallelogram || orb_type < 0)
-    return "Unknown orbifold type";
-  else
-    return type[orb_type];
-}
 
 template
 <
@@ -175,65 +151,7 @@ private:
     return OK;
   }
 
-  // Orbifold type functions
-  std::vector<Point_2> get_cones_parameterized_coordinates() const
-  {
-    std::vector<Point_2> tcoords;
-    if(orb_type == Square) {
-      tcoords.push_back(Point_2(-1, -1));
-      tcoords.push_back(Point_2(1, 1));
-    } else if(orb_type == Parallelogram) {
-      tcoords.push_back(Point_2(0, -0.5));
-      tcoords.push_back(Point_2(-1, -0.5));
-      tcoords.push_back(Point_2(0, 0.5));
-    } else { // if(orb_type == Diamond || orb_type == Triangle)
-      tcoords.push_back(Point_2(-1, 1));
-      tcoords.push_back(Point_2(-1, -1));
-    }
-    return tcoords;
-  }
-
-  /// Angles are minus as we go around the seam border in a counterclockwise manner
-  std::vector<NT> get_angles_at_cones() const
-  {
-    std::vector<NT> angs;
-    if(orb_type == Square) {
-      angs.push_back(4.);
-      angs.push_back(4.);
-    } else if(orb_type == Diamond) {
-      angs.push_back(3.);
-      angs.push_back(3.);
-    } else if(orb_type == Triangle) {
-      angs.push_back(6.);
-      angs.push_back(2.);
-    } else { // if(orb_type == Parallelogram)
-      angs.push_back(2);
-      angs.push_back(1);
-      angs.push_back(2);
-    }
-    return angs;
-  }
-
   // Linear system
-  template<typename ConeMap,
-           typename VertexIndexMap>
-  void find_start_cone(const ConeMap& cmap,
-                       VertexIndexMap vimap,
-                       vertex_descriptor& cone,
-                       int& cone_index) const
-  {
-    typename ConeMap::const_iterator cmit = cmap.begin(), cend = cmap.end();
-    for(; cmit!=cend; ++cmit) {
-      if(cmit->second != First_unique_cone)
-        continue;
-
-      cone = cmit->first;
-      cone_index = get(vimap, cone);
-
-      return;
-    }
-  }
-
   /// Compute the number of linear constraints in the system.
   int number_of_linear_constraints(const TriangleMesh& mesh) const
   {
@@ -360,10 +278,13 @@ private:
                                Matrix& A, Vector& B) const
   {
     // positions of the cones in the plane
-    const std::vector<Point_2>& tcoords = get_cones_parameterized_coordinates();
+    typedef std::vector<Point_2>                      Point_container;
+    const Point_container& tcoords =
+                  get_cones_parameterized_coordinates<Point_container>(orb_type);
 
     // angles at the cones
-    const std::vector<NT>& angs = get_angles_at_cones();
+    typedef std::vector<NT>                           Angle_container;
+    const Angle_container& angs = get_angles_at_cones<Angle_container>(orb_type);
 
     // the index of the line in A that we are filling next
     int current_line_id_in_A = 0.;
