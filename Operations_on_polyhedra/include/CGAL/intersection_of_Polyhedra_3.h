@@ -1762,8 +1762,8 @@ class Intersection_of_Polyhedra_3{
     if (isolated_point_seen){
       for (std::size_t i=0;i<nb_nodes;++i)
         if (graph[i].degree==0){
-          *out++=std::vector<typename Kernel::Point_3>(1,nodes[i]);
-          visitor->start_new_polyline(i,i);
+          *out++=std::vector<typename Kernel::Point_3>(1,nodes[static_cast<int>(i)]);
+          visitor->start_new_polyline(static_cast<int>(i),static_cast<int>(i));
           terminal_nodes.reset(i);
         }
     }
@@ -1808,7 +1808,7 @@ class Intersection_of_Polyhedra_3{
     //handle cycles
     while(interior_nodes.any())
     {
-      std::size_t i=interior_nodes.find_first();
+      int i=static_cast<int>(interior_nodes.find_first());
       Graph_node& node_i=graph[i];
       std::vector<typename Kernel::Point_3> polyline;
 

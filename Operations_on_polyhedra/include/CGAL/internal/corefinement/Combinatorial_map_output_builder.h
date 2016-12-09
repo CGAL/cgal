@@ -43,7 +43,7 @@ boost::optional<typename Combinatorial_map_3::Dart_handle>
 next_marked_dart_around_target_vertex(
   Combinatorial_map_3& final_map,
   typename Combinatorial_map_3::Dart_handle dart,
-  int mark_index)
+  std::size_t mark_index)
 {
   CGAL_precondition(final_map.is_marked(dart,mark_index));
   typename Combinatorial_map_3::Dart_handle next=final_map.beta(dart,1);
@@ -66,7 +66,7 @@ typename Combinatorial_map_3::Dart_handle
 get_next_marked_dart_around_target_vertex(
   Combinatorial_map_3& final_map,
   typename Combinatorial_map_3::Dart_handle dart,
-  int mark_index)
+  std::size_t mark_index)
 {
   CGAL_precondition(final_map.is_marked(dart,mark_index));
   typename Combinatorial_map_3::Dart_handle next=final_map.beta(dart,1);
@@ -87,7 +87,7 @@ typename Combinatorial_map_3::Dart_handle
 get_next_marked_dart_around_source_vertex(
   Combinatorial_map_3& final_map,
   typename Combinatorial_map_3::Dart_handle dart,
-  int mark_index)
+  std::size_t mark_index)
 {
   CGAL_precondition(final_map.is_marked(dart,mark_index));
   typename Combinatorial_map_3::Dart_handle next=final_map.beta(dart,0);
@@ -109,7 +109,7 @@ template <class Combinatorial_map_3,class Nodes_vector>
 void sew_2_marked_darts( Combinatorial_map_3& final_map,
                          typename Combinatorial_map_3::Dart_handle dart_1,
                          typename Combinatorial_map_3::Dart_handle dart_2,
-                         int mark_index,
+                         std::size_t mark_index,
                          const Nodes_vector& nodes,
                          const std::pair<int,int>& indices,
                          const std::pair<bool,int>& polyline_info)
@@ -156,7 +156,7 @@ void sew_3_marked_darts( Combinatorial_map_3& final_map,
                          typename Combinatorial_map_3::Dart_handle not_down,
                          typename Combinatorial_map_3::Dart_handle top,
                          typename Combinatorial_map_3::Dart_handle down,
-                         int mark_index,
+                         std::size_t mark_index,
                          std::set<typename Combinatorial_map_3::Dart_handle>&
                             darts_to_remove
 ){
@@ -373,7 +373,7 @@ private:
                                   Halfedge_to_dart_map& selected_hedge_to_dart,
                                   Polyhedron* /*first_poly*/,
                                   Polyhedron* second_poly,
-                                  int mark_index,
+                                  std::size_t mark_index,
                                   std::set<Dart_handle>& darts_to_remove,
                                   const std::pair<bool,int>& polyline_info) {
     bool took_opposite=second_hedge->is_border();
@@ -511,7 +511,7 @@ private:
                                 Halfedge_handle second_hedge,
                                 Border_halfedges_map& border_halfedges,
                                 Halfedge_to_dart_map& selected_hedge_to_dart,
-                                int mark_index,
+                                std::size_t mark_index,
                                 std::set<Dart_handle>& darts_to_remove,
                                 const Nodes_vector& nodes,
                                 const std::pair<int,int>& indices,
@@ -589,7 +589,7 @@ private:
                                    const Nodes_vector& nodes,
                                    int index_p1, int index_p2, int index_q1,
                                    Halfedge_to_dart_map& selected_hedge_to_dart,
-                                   int mark_index,
+                                   std::size_t mark_index,
                                    std::set<Dart_handle>& darts_to_remove,
                                    const std::pair<bool,int>& polyline_info,
                                    bool swap_in_out_Q=false) {
@@ -684,7 +684,7 @@ private:
     int index_p1, int index_p2,
     int index_q1,int index_q2,
     Halfedge_to_dart_map& selected_hedge_to_dart,
-    int mark_index,
+    std::size_t mark_index,
     std::set<Dart_handle>& darts_to_remove,
     const std::pair<bool,int>& polyline_info
   ){

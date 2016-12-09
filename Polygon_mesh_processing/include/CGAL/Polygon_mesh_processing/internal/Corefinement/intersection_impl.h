@@ -504,7 +504,7 @@ class Intersection_of_triangle_meshes
           std::size_t stop=nb_pts + (nb_pts<3?-1:0);
           for (std::size_t k=0;k<stop;++k){
             typename Faces_to_nodes_map::iterator it_list=
-              f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,k+1),std::set<Node_id>()) ).first;
+              f_to_node.insert( std::make_pair( Face_pair_and_int(face_pair,static_cast<int>(k+1)),std::set<Node_id>()) ).first;
             it_list->second.insert( cpln_nodes[k] );
             it_list->second.insert( cpln_nodes[(k+1)%nb_pts] );
           }
