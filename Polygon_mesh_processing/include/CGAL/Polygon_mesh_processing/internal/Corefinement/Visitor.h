@@ -188,7 +188,7 @@ private:
 // data members
 private:
   // boost::dynamic_bitset<> non_manifold_nodes;
-  std::vector< std::set<Node_id> > graph_of_constraints;
+  std::vector< std::vector<Node_id> > graph_of_constraints;
   An_edge_per_polyline_map an_edge_per_polyline;
   //nb of intersection points between coplanar faces, see fixes XSL_TAG_CPL_VERT
   std::size_t number_coplanar_vertices;
@@ -228,7 +228,9 @@ public:
     {
     //   if (non_manifold_nodes.test(node_id))
     //     graph[node_id].make_terminal();
-      graph_of_constraints[node_id]=graph[node_id].neighbors;
+      graph_of_constraints[node_id].assign(
+        graph[node_id].neighbors.begin(),
+        graph[node_id].neighbors.end());
     }
   }
 
@@ -527,7 +529,7 @@ public:
     BOOST_FOREACH(Node_id id, node_ids)
     {
       CGAL_assertion(id < graph_of_constraints.size());
-      std::set<Node_id>& neighbors=graph_of_constraints[id];
+      std::vector<Node_id>& neighbors=graph_of_constraints[id];
       if (!neighbors.empty())
       {
         CDT_Vertex_handle vh=id_to_CDT_vh.find(id)->second;
@@ -610,7 +612,7 @@ public:
             ++it_node_2_hedge)
       {
         Node_id node_id_of_first=it_node_2_hedge->first;
-        std::set<Node_id>& neighbors=graph_of_constraints[node_id_of_first];
+        std::vector<Node_id>& neighbors=graph_of_constraints[node_id_of_first];
         if ( !neighbors.empty() )
         {
           BOOST_FOREACH(Node_id node_id, neighbors)
