@@ -83,7 +83,8 @@ namespace CGAL {
 
     template <class InputIterator>
     Weighted_Minkowski_distance (FT pow, int dim,
-				 InputIterator begin, InputIterator end,
+				 InputIterator begin,
+				 InputIterator CGAL_assertion_code(end),
                                  const SearchTraits& traits_=SearchTraits()) 
       : traits(traits_),power(pow)
     {
