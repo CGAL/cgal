@@ -68,18 +68,6 @@ namespace CGAL {
     //default copy constructor and destructor
     
 
-    Weighted_Minkowski_distance (FT pow, int dim,
-				 const Weight_vector& weights,
-                                 const SearchTraits& traits_=SearchTraits()) 
-      : traits(traits_),power(pow)
-    {
-      CGAL_assertion(power >= FT(0));
-      CGAL_assertion(dim==weights.size());
-      for (unsigned int i = 0; i < weights.size(); ++i)
-	CGAL_assertion(weights[i]>=FT(0));
-      the_weights = weights;
-    }
-
     template <class InputIterator>
     Weighted_Minkowski_distance (FT pow, int dim,
 				 InputIterator begin,
