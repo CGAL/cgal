@@ -289,19 +289,17 @@ public:
     Property_map() : Base() {}
     Property_map(const Base& pm): Base(pm) {}
 
-    template <class K>
     friend
     reference
-    get(const Property_map<I, T>& pa, const K& k) {
-      return pa[k];
+    get(const Property_map<I, T>& pa, const I& i) {
+      return pa[i];
     }
 
-    template <class K, class V>
     friend
     void
-    put(const Property_map<I, T>& pa, K k, const V& v)
+    put(const Property_map<I, T>& pa, I i, const T& t)
     {
-      pa[k] = v;
+      pa[i] = t;
     }
   };
 #endif // DOXYGEN_RUNNING
