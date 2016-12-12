@@ -42,6 +42,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/CORE/Real.h>
 #include <cmath>
+#include <limits>
 
 #if !defined CGAL_CFG_NO_CPP0X_ISFINITE
   #define CGAL_CORE_finite(x)	std::isfinite(x)
@@ -180,7 +181,7 @@ public:
 
   /// helper function (to avoid warning under some compilers)
   static double getDoubleInfty() {
-    return 2*DBL_MAX;
+    return std::numeric_limits<double>::infinity();
   }
   //@}
 }; //filteredFp class
