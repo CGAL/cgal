@@ -82,7 +82,7 @@ public:
     : _inf(i), _sup(i) {}
 
   Interval_nt(long long i)
-    : _inf((double)i), _sup((double)i)
+    : _inf(static_cast<double>(i)), _sup(static_cast<double>(i))
   {
     // gcc ignores -frounding-math when converting integers to floats.
 #ifdef __GNUC__
@@ -94,7 +94,7 @@ public:
   }
 
   Interval_nt(unsigned long long i)
-    : _inf((double)i), _sup((double)i)
+    : _inf(static_cast<double>(i)), _sup(static_cast<double>(i))
   {
 #ifdef __GNUC__
     unsigned long long safe = 1ULL << 52; // Use numeric_limits?
@@ -939,13 +939,13 @@ namespace INTERN_INTERVAL_NT {
       // On 64bit platforms, a long doesn't fit exactly in a double.
       // Well, a perfect fix would be to use std::numeric_limits<>, but...
       Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-      Interval_nt<false> approx ((double) l);
+      Interval_nt<false> approx (static_cast<double>(l));
       FPU_set_cw(CGAL_FE_UPWARD);
       approx += Interval_nt<false>::smallest();
       return approx.pair();
     }
     else
-      return std::pair<double,double>((double)l,(double)l);
+      return std::pair<double,double>(static_cast<double>(l),static_cast<double>(l));
   }
 } // namespace INTERN_INTERVAL_NT
 
