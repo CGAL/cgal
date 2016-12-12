@@ -180,8 +180,8 @@ void test_bool_op_no_copy(
                                                  params::no_parameters(params::edge_is_constrained_map(ecm_out_union)),
                                                  params::no_parameters(params::edge_is_constrained_map(ecm_out_union))));
 
-  dump_constrained_edges(*(*desired_output[0]), ecm_out_union, "out_cst_union.cgal");
-  dump_constrained_edges(*(*desired_output[1]), ecm_out_inter, "out_cst_inter.cgal");
+  // dump_constrained_edges(*(*desired_output[0]), ecm_out_union, "out_cst_union.cgal");
+  // dump_constrained_edges(*(*desired_output[1]), ecm_out_inter, "out_cst_inter.cgal");
 
   assert( count_constrained_edges(*(*desired_output[0]), ecm_out_union)==838 );
   assert( count_constrained_edges(*(*desired_output[1]), ecm_out_inter)==475 );
