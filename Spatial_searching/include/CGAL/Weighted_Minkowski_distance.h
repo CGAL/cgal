@@ -27,11 +27,24 @@
 #include <cmath>
 #include <vector>
 
+#include <CGAL/array.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/internal/Get_dimension_tag.h>
 
 namespace CGAL {
+  namespace internal {
+    template<class T, class Dim>
+      struct Array_or_vector_selector {
+	typedef std::vector<T> type;
+	static void resize(type&v, std::size_t d) { v.resize(d); }
+      };
+    template<class T, int D>
+      struct Array_or_vector_selector<T, Dimension_tag<D> > {
+	typedef cpp11::array<T,D> type;
+	static void resize(type&, std::size_t CGAL_assertion_code(d)) { CGAL_assertion(d==D); }
+      };
+  }
 
   template <class SearchTraits>
   class Weighted_Minkowski_distance {
@@ -41,8 +54,9 @@ namespace CGAL {
     typedef typename SearchTraits::Point_d Point_d;
     typedef Point_d                        Query_item;
     typedef typename SearchTraits::FT      FT;
-    typedef std::vector<FT>                Weight_vector;
     typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension Dimension;
+    typedef internal::Array_or_vector_selector<FT,Dimension> Weight_vector_traits;
+    typedef typename Weight_vector_traits::type Weight_vector;
 
     private:
 
@@ -76,7 +90,7 @@ namespace CGAL {
       : traits(traits_),power(pow)
     {
       CGAL_assertion(power >= FT(0));
-      the_weights.resize(dim);
+      Weight_vector_traits::resize(the_weights, dim);
       for (int i = 0; i < dim; ++i){
 	the_weights[i] = *begin;
 	++begin;
