@@ -131,7 +131,7 @@ Polyhedron clip_to_bbox(const Bbox_3& bbox, const Plane_3& plane)
     if (orientations[i2]==ON_ORIENTED_BOUNDARY) continue;
     if (orientations[i1]!=orientations[i2])
       intersection_points.push_back(
-        get<Point_3>(
+        boost::get<Point_3>(
           *CGAL::intersection(plane, Segment_3(corners[i1], corners[i2]) )
         )
       );
@@ -206,7 +206,7 @@ Polyhedron clip_bbox(const Bbox_3& bbox, const Plane_3& plane)
     if (orientations[i2]==ON_ORIENTED_BOUNDARY) continue;
     if (orientations[i1]!=orientations[i2])
       points.push_back(
-        get<Point_3>(
+        boost::get<Point_3>(
           *CGAL::intersection(plane, Segment_3(corners[i1], corners[i2]) )
         )
       );

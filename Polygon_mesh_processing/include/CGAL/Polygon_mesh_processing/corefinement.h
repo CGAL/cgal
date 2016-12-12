@@ -159,11 +159,11 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   if (!is_closed(tm)) return false;
   if (!is_triangle_mesh(tm)) return false;
 
-  Vpm vpm = choose_param(get_param(np, vertex_point),
-                         get_const_property_map(vertex_point, tm));
+  Vpm vpm = boost::choose_param(get_param(np, vertex_point),
+                                get_const_property_map(vertex_point, tm));
 
-  Fid_map fid_map = choose_param(get_param(np, face_index),
-                                 get_const_property_map(face_index, tm));
+  Fid_map fid_map = boost::choose_param(get_param(np, face_index),
+                                        get_const_property_map(face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -217,9 +217,8 @@ bool does_bound_a_volume(const TriangleMesh& tm)
   if (desired_output[i]!=boost::none) \
   { \
     vpm_out.push_back(  \
-        choose_param(get_param(cpp11::get<i>(nps_out), vertex_point), \
-                               get_property_map(vertex_point, \
-                                 *(*desired_output[i])))); \
+        boost::choose_param(get_param(cpp11::get<i>(nps_out), vertex_point), \
+                            get_property_map(vertex_point, *(*desired_output[i])))); \
     output_vpms[i]=&vpm_out.back(); \
   } \
   else \
@@ -270,11 +269,11 @@ boolean_operation(      TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = choose_param(get_param(np1, vertex_point),
-                          get_property_map(vertex_point, tm1));
+  Vpm vpm1 = boost::choose_param(get_param(np1, vertex_point),
+                                 get_property_map(vertex_point, tm1));
 
-  Vpm vpm2 = choose_param(get_param(np2, vertex_point),
-                          get_property_map(vertex_point, tm2));
+  Vpm vpm2 = boost::choose_param(get_param(np2, vertex_point),
+                                 get_property_map(vertex_point, tm2));
 
   //for output meshes
   cpp11::array<Vpm*, 4> output_vpms;
@@ -335,10 +334,10 @@ boolean_operation(      TriangleMesh& tm1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = choose_param( get_param(np1, edge_is_constrained),
-                            Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = choose_param( get_param(np2, edge_is_constrained),
-                            Corefinement::No_mark<TriangleMesh>() );
+  Ecm1 ecm1 = boost::choose_param( get_param(np1, edge_is_constrained),
+                                   Corefinement::No_mark<TriangleMesh>() );
+  Ecm2 ecm2 = boost::choose_param( get_param(np2, edge_is_constrained),
+                                   Corefinement::No_mark<TriangleMesh>() );
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
 
@@ -362,10 +361,10 @@ boolean_operation(      TriangleMesh& tm1,
     static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
   CGAL_static_assertion(same_fidmap);
 
-  Fid_map fid_map1 = choose_param(get_param(np1, face_index),
-                                  get_property_map(face_index, tm1));
-  Fid_map fid_map2 = choose_param(get_param(np2, face_index),
-                                  get_property_map(face_index, tm2));
+  Fid_map fid_map1 = boost::choose_param(get_param(np1, face_index),
+                                        get_property_map(face_index, tm1));
+  Fid_map fid_map2 = boost::choose_param(get_param(np2, face_index),
+                                         get_property_map(face_index, tm2));
   // surface intersection algorithm call
   typedef Corefinement::Default_node_visitor<TriangleMesh> Dnv;
   typedef Corefinement::Default_face_visitor<TriangleMesh> Dfv;
@@ -614,11 +613,11 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = choose_param(get_param(np1, vertex_point),
-                          get_property_map(vertex_point, tm1));
+  Vpm vpm1 = boost::choose_param(get_param(np1, vertex_point),
+                                 get_property_map(vertex_point, tm1));
 
-  Vpm vpm2 = choose_param(get_param(np2, vertex_point),
-                          get_property_map(vertex_point, tm2));
+  Vpm vpm2 = boost::choose_param(get_param(np2, vertex_point),
+                                 get_property_map(vertex_point, tm2));
 
 // Edge is-constrained maps
   typedef typename boost::lookup_named_param_def <
@@ -633,10 +632,10 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = choose_param( get_param(np1, edge_is_constrained),
-                            Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = choose_param( get_param(np2, edge_is_constrained),
-                            Corefinement::No_mark<TriangleMesh>() );
+  Ecm1 ecm1 = boost::choose_param( get_param(np1, edge_is_constrained),
+                                   Corefinement::No_mark<TriangleMesh>() );
+  Ecm2 ecm2 = boost::choose_param( get_param(np2, edge_is_constrained),
+                                   Corefinement::No_mark<TriangleMesh>() );
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;
 
