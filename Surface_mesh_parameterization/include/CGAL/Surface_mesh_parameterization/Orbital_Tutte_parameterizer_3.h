@@ -263,7 +263,7 @@ private:
       std::cout << "v1/v2: " << s << " " << t << std::endl;
       CGAL_assertion(s != t);
 
-      // sending s to t (and _not_ t to s) is important to not get some reflexion of the result
+      // sending s to t (and _not_ t to s !)
       addTransConstraints(t0, s0, t, s, current_line_id_in_A, R, A, B);
     }
   }

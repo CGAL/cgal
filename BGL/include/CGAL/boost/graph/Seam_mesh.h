@@ -127,6 +127,9 @@ class Seam_mesh
   typedef boost::associative_property_map<Seam_vertex_uhm>        Seam_vertex_pmap;
 
 public:
+  typedef TM                                                      TriangleMesh;
+
+public:
   typedef typename boost::graph_traits<TM>::degree_size_type      degree_size_type;
   typedef typename boost::graph_traits<TM>::vertices_size_type    vertices_size_type;
   typedef typename boost::graph_traits<TM>::edges_size_type       edges_size_type;

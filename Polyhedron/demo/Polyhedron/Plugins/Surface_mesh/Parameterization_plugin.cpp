@@ -770,8 +770,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       // mark cones in the seam mesh
       typedef boost::unordered_map<vertex_descriptor, SMP::Cone_type>  Cones;
       Cones cmap;
+
       SMP::internal::locate_unordered_cones<Seam_mesh,
-                                            Textured_polyhedron::Base,
                                             boost::unordered_set<T_vertex_descriptor>,
                                             Cones>(sMesh, unordered_cones, cmap);
 
