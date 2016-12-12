@@ -426,13 +426,15 @@ public:
 		return _gt;
 	}
 
-	const TDS& tds() const {
-		return _tds;
-	}
 
-	TDS tds() {
-		return _tds;
-	}
+	/// Returns the datastructure storing the triangulation.
+  const TDS & tds() const {
+    return _tds;
+  }
+  /// Returns the datastructure storing the triangulation.
+  TDS & tds() {
+    return _tds;
+  }
 
 	const Circle_2& domain() const {
 		return _domain;
@@ -907,8 +909,6 @@ public:
   	Vertex_handle create_initial_triangulation(const Point &p);
 
 public:
-  	std::vector<Vertex_handle> insert_dummy_points(bool rational = true);
-
     template <class Conflict_tester>
     Face_handle euclidean_visibility_locate(const Point& p, Locate_type& lt, int& li, Conflict_tester& tester, Face_handle f = Face_handle()) const;
 
@@ -932,7 +932,6 @@ protected:
     	return insert_in_conflict(p,lt,c,li,lj,tester,hider);
   	}
 
-
 private:
   	/** @name Removal helpers */ //@{
   	Vertex_triple make_vertex_triple(const Face& f) const {
@@ -946,13 +945,9 @@ private:
 
   	void make_hole(Vertex_handle v, std::map<Vertex_triple,Face> &outer_map, std::vector<Face_handle> &hole);
 
-  	template < class PointRemover >
-  	void periodic_remove(Vertex_handle v, PointRemover &remover); 
   
   
 protected:
-  	template < class PointRemover, class CT >
-  	void remove(Vertex_handle v, PointRemover &remover, CT &ct);
   
     template< class OutputEdgeIterator>
     void extract_boundary(const std::vector<Face_handle> faces, OutputEdgeIterator edges) const;
@@ -1414,15 +1409,14 @@ is_valid(bool verbose, int level) const {
 
   	bool error = false;
   	for (Face_iterator cit = faces_begin(); cit != faces_end(); ++cit) {
-    	for (int i=0; i<3; i++) {
+        for (int i=0; i<3; i++) {
       		CGAL_triangulation_assertion(cit != cit->neighbor(i));
-      		for (int j=i+1; j<3; j++) {            
-        		CGAL_triangulation_assertion(cit->neighbor(i) != cit->neighbor(j));
-        		CGAL_triangulation_assertion(cit->vertex(i) != cit->vertex(j));
-      		}
+            for (int j=i+1; j<3; j++) {
+              CGAL_triangulation_assertion(cit->neighbor(i) != cit->neighbor(j));
+        		  CGAL_triangulation_assertion(cit->vertex(i) != cit->vertex(j));
+            }
     	}
 
-    	// Check positive orientation:
     	if (orientation( cit->vertex(0)->point(), cit->vertex(1)->point(), cit->vertex(2)->point(), 
                    		 cit->offset(0),          cit->offset(1),          cit->offset(2) ) != POSITIVE) {
         if (verbose) {
@@ -1432,7 +1426,7 @@ is_valid(bool verbose, int level) const {
           }
         }
         error = true;
-    	}
+        }
   	}
 
   	if (!error) {

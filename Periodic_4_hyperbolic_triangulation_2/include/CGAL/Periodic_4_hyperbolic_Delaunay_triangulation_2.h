@@ -30,6 +30,7 @@
 #include <CGAL/Periodic_4_hyperbolic_triangulation_ds_face_base_2.h>
 #include <CGAL/Hyperbolic_octagon_word_4.h>
 
+#include <CGAL/Delaunay_triangulation_2.h>
 
 namespace CGAL {
 
@@ -39,8 +40,7 @@ namespace CGAL {
   Periodic_4_hyperbolic_triangulation_ds_face_base_2<GT> 
   >
   >
-  class Periodic_4_hyperbolic_Delaunay_triangulation_2 :
-  public Periodic_4_hyperbolic_triangulation_2<GT, TDS> {
+  class Periodic_4_hyperbolic_Delaunay_triangulation_2: public Periodic_4_hyperbolic_triangulation_2<GT, TDS> {
 
     typedef Periodic_4_hyperbolic_Delaunay_triangulation_2<GT, TDS>   Self;
     typedef Periodic_4_hyperbolic_triangulation_2<GT, TDS>            Base;
@@ -51,6 +51,7 @@ namespace CGAL {
     using Base::cw;
     using Base::ccw;
     using Base::geom_traits;
+    using Base::tds;
 #endif
 
     typedef typename Base::Locate_type                         Locate_type;
@@ -124,9 +125,10 @@ namespace CGAL {
     typedef const value_type&                                const_reference;
     typedef Tag_false                                        Weighted_tag;
 
-
   protected:
     mutable std::vector<Vertex_handle> v_offsets;
+
+        int f_cnt, v_cnt;
 
   public:
 
@@ -141,19 +143,16 @@ namespace CGAL {
     Periodic_4_hyperbolic_Delaunay_triangulation_2(const Periodic_4_hyperbolic_Delaunay_triangulation_2& tr) :
     Periodic_4_hyperbolic_triangulation_2<GT, TDS>(tr) { }
 
+    std::vector<Vertex_handle> insert_dummy_points(bool rational = true);
+
     Vertex_handle insert(const Point  &p,
      Face_handle start = Face_handle() );
 
-  template < class InputIterator >
+    template < class InputIterator >
     std::ptrdiff_t insert(InputIterator first, 
       InputIterator last);
 
-    bool locally_Delaunay(const Face_handle&, int);
-    void propagating_flip(Face_handle&, int);
-    void restore_Delaunay(Vertex_handle);
-    void flip_single_edge(Face_handle, int);
-    bool flippable(Face_handle, int);
-
+    void remove(Vertex_handle v);
 
     bool _side_of_octagon( const Face_handle& fh, const Offset& offset) const {
       int cnt = 0;
@@ -203,16 +202,17 @@ insert(const Point  &p,  Face_handle start) {
     std::vector<Face_handle> faces;
     this->find_conflicts(start, p, loff, std::back_inserter(faces));
     v = this->insert_in_hole(p, faces.begin(), faces.end());
+    v->set_idx(v_cnt++);
 
-    Face_circulator ifc = this->tds().incident_faces(v), done(ifc);
+    Face_circulator ifc = tds().incident_faces(v), done(ifc);
     do {
       ifc->restore_offsets(loff);
       ifc->tds_data().clear();
       ifc->make_canonical();
-
+      ifc->set_number(f_cnt++);
     } while (++ifc != done);
 
-    Vertex_circulator ivc = this->tds().incident_vertices(v), done_v(ivc);
+    Vertex_circulator ivc = tds().incident_vertices(v), done_v(ivc);
     do {
       ivc->remove_offset();
     } while (++ivc != done_v);
@@ -223,6 +223,146 @@ insert(const Point  &p,  Face_handle start) {
   }
 
   return Vertex_handle();
+}
+
+
+//------------------------------------------------------
+
+template < class Gt, class Tds >
+void
+Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
+remove(Vertex_handle v) {
+
+  typedef Delaunay_triangulation_2<Gt, Tds>           Delaunay;
+  typedef typename Delaunay::Finite_faces_iterator    Finite_Delaunay_faces_iterator;
+  typedef std::pair<Face_handle, int>                 Neighbor_pair;
+  typedef std::pair<Edge, Neighbor_pair>              Edge_neighbor;
+
+
+  Delaunay dt;
+
+  std::vector<Edge>             bdry_edges;
+  std::vector<Vertex_handle>    bdry_verts;
+  std::map<Edge, Neighbor_pair> bdry_nbrs;
+
+  Face_circulator nb = tds().incident_faces(v), done(nb);
+  std::vector<Face_handle> nbrs;
+  do {
+    int idx = nb->index(v);
+    Edge e = Edge(nb, idx);
+    bdry_edges.push_back(e);
+    Face_handle nbf = nb->neighbor(idx);
+    int nidx = 0;
+    if (nbf->neighbor(1) == nb) nidx = 1;
+    if (nbf->neighbor(2) == nb) nidx = 2;
+    CGAL_triangulation_assertion(nbf->neighbor(nidx) == nb);
+    bdry_nbrs.insert(Edge_neighbor(e, Neighbor_pair(nbf, nidx)));
+
+    nb->store_offsets(nb->offset(idx).inverse());
+    nbrs.push_back(nb);
+    nb++;
+  } while(nb != done);
+
+  for (int i = 0; i < bdry_edges.size(); i++) {
+    Edge e = bdry_edges[i];
+    Face_handle f = e.first;
+    int j = e.second;
+  }
+
+  std::map<Vertex_handle, Vertex_handle> vmap;
+
+  for (int i = 0; i < bdry_edges.size(); i++) {
+    Face_handle f = bdry_edges[i].first;
+    int j = bdry_edges[i].second;
+    Vertex_handle vh = f->vertex(ccw(j));
+    bdry_verts.push_back(vh);
+    Vertex_handle nv = dt.insert(vh->get_offset().apply(vh->point()));
+    vmap.insert(std::pair<Vertex_handle, Vertex_handle>(nv, vh));
+  }
+
+  int n_verts = bdry_verts.size();
+  std::vector<Face_handle> new_f;
+  for (Finite_Delaunay_faces_iterator fit = dt.finite_faces_begin(); fit != dt.finite_faces_end(); fit++) {
+    bool is_good = true;
+    for (int i = 0; i < 3; i++) {
+      Vertex_handle this_v = vmap[fit->vertex(i)];
+      Vertex_handle prev_v = bdry_verts[n_verts - 1];
+      Vertex_handle curr_v = bdry_verts[0];
+      for (int j = 1; curr_v != this_v; j = (j+1)%n_verts) {
+        prev_v = curr_v;
+        curr_v = bdry_verts[j];
+      }
+      if (vmap[fit->vertex(ccw(i))] == prev_v) {
+        is_good = false;
+        break;
+      }
+    }
+
+    if (is_good) {
+      Face_handle f = tds().create_face();
+      f->set_number(f_cnt++);
+      for (int j = 0; j < 3; j++) {
+        f->set_vertex(j, vmap[fit->vertex(j)]);
+      }
+      new_f.push_back(f);
+    }
+  }
+
+
+  int internb = 0;
+  int bdrynb = 0;
+  for (int i = 0; i < new_f.size(); i++) {
+    for (int k = 0; k < 3; k++) {
+      bool found_bdry = false;
+      for (int j = 0; j < bdry_verts.size(); j++) { 
+        if (new_f[i]->vertex(ccw(k)) == bdry_verts[j] && 
+            new_f[i]->vertex(cw(k)) == bdry_verts[(j+1)%n_verts]) {
+          found_bdry = true;
+          Neighbor_pair nb = bdry_nbrs[bdry_edges[j]];
+          Face_handle nbf = nb.first;
+          int nbidx = nb.second;
+          tds().set_adjacency(nbf, nbidx, new_f[i], k);
+          bdrynb++;
+          break;
+        } 
+      }
+      if (!found_bdry) {
+        for (int l = 0; l < new_f.size(); l++) {
+          if (l == i) continue;
+          for (int j = 0; j < 3; j++) {
+            if (new_f[i]->vertex(ccw(k)) == new_f[l]->vertex(cw(j)) &&
+                new_f[i]->vertex(cw(k))  == new_f[l]->vertex(ccw(j)) ) {
+              tds().set_adjacency(new_f[i], k, new_f[l], j);
+              internb++;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  for (int j = 0; j < new_f.size(); j++) {
+    for (int i = 0; i < 3; i++) {
+      new_f[j]->vertex(i)->set_face(new_f[j]);
+    }
+    new_f[j]->restore_offsets();
+    new_f[j]->make_canonical();
+  }
+
+  for (int j = 0; j < bdry_edges.size(); j++) {
+    Face_handle f = bdry_edges[j].first;
+    int i = bdry_edges[j].second;
+    f->vertex(ccw(i))->remove_offset();
+  }
+
+  for (int i = 0; i < nbrs.size(); i++) {
+    tds().delete_face(nbrs[i]);
+  }
+  tds().delete_vertex(v);
+
+  CGAL_triangulation_assertion(this->is_valid());
 }
 
 

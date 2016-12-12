@@ -159,6 +159,8 @@ public:
 
 
 	int index(const Vertex_handle& v) const {
+        //cout << "Index for face " << face_number << endl;
+    	//cout << "  Query is vertex " << v->idx() << endl;
     	if (v == V[0]) { return 0; }
     	if (v == V[1]) { return 1; }
     	CGAL_triangulation_assertion( v == V[2] );

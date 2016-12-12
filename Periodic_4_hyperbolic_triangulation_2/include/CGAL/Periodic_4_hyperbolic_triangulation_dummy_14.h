@@ -48,8 +48,8 @@ namespace CGAL {
 
 
     template < class GT, class TDS >
-    inline std::vector<typename Periodic_4_hyperbolic_triangulation_2<GT, TDS>::Vertex_handle >
-    Periodic_4_hyperbolic_triangulation_2<GT, TDS>::
+    inline std::vector<typename Periodic_4_hyperbolic_Delaunay_triangulation_2<GT, TDS>::Vertex_handle >
+    Periodic_4_hyperbolic_Delaunay_triangulation_2<GT, TDS>::
     insert_dummy_points(bool rational) {
 
         typedef typename GT::FT FT;
@@ -61,6 +61,9 @@ namespace CGAL {
 
         int fcount = 32;    // Faces count
         int vcount = 14;    // Vertices count
+
+        f_cnt = fcount;
+        v_cnt = vcount;
 
         std::vector<typename GT::Point_2> pts;
 
@@ -193,10 +196,9 @@ namespace CGAL {
         }
 
 
-
         Vertex_handle vertices[14];
         for (int i = 0; i < vcount; i++) {
-            vertices[i] = _tds.create_vertex();
+            vertices[i] = tds().create_vertex();
             vertices[i]->set_point(pts[i]);
             vertices[i]->set_idx(i);
         }
@@ -205,63 +207,67 @@ namespace CGAL {
         Face_handle faces[32];
         for (int i = 0; i < fcount; i++) {
             int x, y, z;
-            faces[i] = _tds.create_face(vertices[tri[i][0]], vertices[tri[i][1]], vertices[tri[i][2]]);
+            faces[i] = tds().create_face(vertices[tri[i][0]], vertices[tri[i][1]], vertices[tri[i][2]]);
             faces[i]->set_offsets(      off[i][0],           off[i][1],           off[i][2]);
             faces[i]->set_number(i);
         }
 
-        _tds.set_dimension(2);
+
+        cout << "Setting dimension!" << endl;
+        tds().set_dimension(2);
+        cout << "Dimension is now: " << tds().dimension() << endl;
+
 
         for (int i = 0; i < 4; i++) {
             int fn = i;
             int n0 = i+8;
             int n1 = i+1;
-            _tds.set_adjacency( faces[fn], 0, faces[n0], 0 );
-            _tds.set_adjacency( faces[fn], 1, faces[n1], 2 );
+            tds().set_adjacency( faces[fn], 0, faces[n0], 0 );
+            tds().set_adjacency( faces[fn], 1, faces[n1], 2 );
             
             fn = i+4;
             n0 = i+12;
             n1 = (i+5) % 8;
-            _tds.set_adjacency( faces[fn], 0, faces[n0], 0 );
-            _tds.set_adjacency( faces[fn], 1, faces[n1], 2 );
+            tds().set_adjacency( faces[fn], 0, faces[n0], 0 );
+            tds().set_adjacency( faces[fn], 1, faces[n1], 2 );
            
             fn = i+8;
             n0 = 2*(i+8);
             n1 = 2*(i+8)+1;
-            _tds.set_adjacency( faces[fn], 1, faces[n0], 1 );
-            _tds.set_adjacency( faces[fn], 2, faces[n1], 2 );
+            tds().set_adjacency( faces[fn], 1, faces[n0], 1 );
+            tds().set_adjacency( faces[fn], 2, faces[n1], 2 );
            
             fn = 2*(i+8);
             n0 = (i+12);
             n1 = 2*n0;
-            _tds.set_adjacency( faces[fn], 0, faces[n0], 2 );
-            _tds.set_adjacency( faces[fn], 2, faces[n1], 2 );
+            tds().set_adjacency( faces[fn], 0, faces[n0], 2 );
+            tds().set_adjacency( faces[fn], 2, faces[n1], 2 );
            
             fn = 2*(i+8) + 1;
             n0 = (i+12);
             n1 = 2*n0 + 1;
-            _tds.set_adjacency( faces[fn], 0, faces[n0], 1 );
-            _tds.set_adjacency( faces[fn], 1, faces[n1], 1 );
+            tds().set_adjacency( faces[fn], 0, faces[n0], 1 );
+            tds().set_adjacency( faces[fn], 1, faces[n1], 1 );
            
 
             if (i < 3) {
                 fn = 2*(i+12);
                 n0 = 24 + ((i+1)*2 + 1);
-                _tds.set_adjacency( faces[fn], 1, faces[n0], 2 );
+                tds().set_adjacency( faces[fn], 1, faces[n0], 2 );
 
                 fn = 2*(i+12)+1;
                 n0 = 25 + (i*2 + 1);
-                _tds.set_adjacency( faces[fn], 0, faces[n0], 0 );
+                tds().set_adjacency( faces[fn], 0, faces[n0], 0 );
             }
         }
 
         int fn = 24;
         int n0 = 30;
-        _tds.set_adjacency( faces[fn], 0, faces[n0], 1 );
+        tds().set_adjacency( faces[fn], 0, faces[n0], 1 );
 
         fn = 25;
         n0 = 31;
-        _tds.set_adjacency( faces[fn], 2, faces[n0], 0 );
+        tds().set_adjacency( faces[fn], 2, faces[n0], 0 );
 
 
         vertices[0]->set_face(faces[0]);
