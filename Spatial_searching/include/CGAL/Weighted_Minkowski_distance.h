@@ -77,7 +77,6 @@ namespace CGAL {
       CGAL_assertion(dim==weights.size());
       for (unsigned int i = 0; i < weights.size(); ++i)
 	CGAL_assertion(weights[i]>=FT(0));
-      the_weights.resize(weights.size());
       the_weights = weights;
     }
 
