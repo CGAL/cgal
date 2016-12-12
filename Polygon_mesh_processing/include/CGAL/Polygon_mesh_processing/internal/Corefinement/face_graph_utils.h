@@ -960,7 +960,7 @@ void fill_new_triangle_mesh(
   // this is the miminal number of edges that will be marked (intersection edge).
   // We cannot easily have the total number since some patch interior edges might be marked
   output_shared_edges.reserve(
-    std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),0) );
+                              std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),std::size_t(0)) );
 
   //add a polyline inside O for each intersection polyline
   std::size_t nb_polylines = polylines.lengths.size();
