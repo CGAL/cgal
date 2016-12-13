@@ -63,16 +63,16 @@ void translate(Triangle_mesh& tm,
     tm.point(vi) = tm.point(vi)+tslt;
 }
 
-void dump_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm, const char* fname)
-{
-  std::ofstream output(fname);
-  BOOST_FOREACH(Triangle_mesh::Edge_index e, tm.edges())
-  {
-    if ( get(ecm, e) )
-      output << "2 " << tm.point( tm.vertex(e, 0) )
-             <<  " " << tm.point( tm.vertex(e, 1) ) << "\n";
-  }
-}
+// void dump_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm, const char* fname)
+// {
+//  std::ofstream output(fname);
+// BOOST_FOREACH(Triangle_mesh::Edge_index e, tm.edges())
+//  {
+//    if ( get(ecm, e) )
+//      output << "2 " << tm.point( tm.vertex(e, 0) )
+//             <<  " " << tm.point( tm.vertex(e, 1) ) << "\n";
+//  }
+// }
 
 std::size_t
 count_constrained_edges(const Triangle_mesh& tm, const Constrained_edge_map& ecm)
